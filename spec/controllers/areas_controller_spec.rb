@@ -72,14 +72,14 @@ describe AreasController do
       area.update_attribute(:active, true)
       get 'deactivate', id: area.to_param, format: :js
       response.should be_success
-      area.reload.active?.should be_false
+      area.reload.active?.should be_falsey
     end
 
     it "activates an inactive area" do
       area.update_attribute(:active, false)
       get 'activate', id: area.to_param, format: :js
       response.should be_success
-      area.reload.active?.should be_true
+      area.reload.active?.should be_truthy
     end
   end
 

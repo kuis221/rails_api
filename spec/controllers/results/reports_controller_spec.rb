@@ -81,14 +81,14 @@ describe Results::ReportsController do
       report.update_attribute(:active, true)
       get 'deactivate', id: report.to_param, format: :js
       response.should be_success
-      report.reload.active?.should be_false
+      report.reload.active?.should be_falsey
     end
 
     it "activates an inactive report" do
       report.update_attribute(:active, false)
       get 'activate', id: report.to_param, format: :js
       response.should be_success
-      report.reload.active?.should be_true
+      report.reload.active?.should be_truthy
     end
   end
 

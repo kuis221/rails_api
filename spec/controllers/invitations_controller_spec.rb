@@ -7,7 +7,7 @@ describe InvitationsController do
       @user = sign_in_as_user
       @company = @user.current_company
     end
-    
+
     describe "GET 'new'" do
       it "returns http success" do
         get 'new', format: :js
@@ -18,9 +18,9 @@ describe InvitationsController do
 
       it "builds a new company user relationship on user" do
         get 'new', format: :js
-        assigns(:user).new_record?.should be_true
-        assigns(:user).company_users.any?.should be_true
-        assigns(:user).company_users.first.new_record?.should be_true
+        assigns(:user).new_record?.should be_truthy
+        assigns(:user).company_users.any?.should be_truthy
+        assigns(:user).company_users.first.new_record?.should be_truthy
       end
     end
 
@@ -79,7 +79,7 @@ describe InvitationsController do
           lambda{
             lambda {
               post 'create', user: {first_name: 'Ignored Name', last_name: 'Ignored Last', email: user.email, company_users_attributes: {"0" => {role_id: 1}}}, format: :js
-              assigns(:user).errors.empty?.should be_true
+              assigns(:user).errors.empty?.should be_truthy
             }.should_not change(User, :count)
           }.should change(CompanyUser, :count).by(1)
           user.reload.first_name.should == 'Tarzan'
@@ -92,7 +92,7 @@ describe InvitationsController do
           UserMailer.should_receive(:company_invitation).with(user, @company, @user).and_return(double(deliver: true))
           post 'create', user: {first_name: 'Some name', last_name: 'Last', email: user.email, company_users_attributes: {"0" => {role_id: 1}}}, format: :js
         end
-        
+
         it "should not reassign the user to the same company" do
           user = FactoryGirl.create(:user, email: 'existingemail4321@gmail.com', company_id: @company.id)
           lambda {
@@ -106,7 +106,7 @@ describe InvitationsController do
       end
     end
   end
-  
+
 
   describe('as a invited user') do
     before(:each) do
@@ -114,7 +114,7 @@ describe InvitationsController do
       @company = FactoryGirl.create(:company)
     end
     let(:user){ FactoryGirl.create(:invited_user, company_id: @company.id, role_id: FactoryGirl.create(:role).id) }
-    
+
     describe "POST 'send_invite'" do
       it "ask for resending the invitation's instructions" do
         post 'send_invite', user: {email: user.email}
@@ -127,7 +127,7 @@ describe InvitationsController do
         response.should redirect_to users_invitation_resend_path
       end
     end
-    
+
     describe "GET 'edit'" do
       it "should accept a company invitation email" do
         get 'edit', invitation_token: user.invitation_token, format: :js

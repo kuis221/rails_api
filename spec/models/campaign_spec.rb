@@ -241,7 +241,7 @@ describe Campaign do
 
     it "should return true if the campaing doesn't have areas or places assigned" do
       place = FactoryGirl.create(:place)
-      campaign.place_allowed_for_event?(place).should be_true
+      campaign.place_allowed_for_event?(place).should be_truthy
     end
 
     it "should return true if the place have been assigned to the campaign directly" do
@@ -249,11 +249,11 @@ describe Campaign do
       other_place = FactoryGirl.create(:place)
       campaign.places << other_place
 
-      campaign.place_allowed_for_event?(place).should be_false
+      campaign.place_allowed_for_event?(place).should be_falsey
 
       campaign.places << place
 
-      campaign.reload.place_allowed_for_event?(place).should be_true
+      campaign.reload.place_allowed_for_event?(place).should be_truthy
     end
 
     it "should return true if the place is part of any of the campaigns" do
@@ -263,11 +263,11 @@ describe Campaign do
       area.places << other_place
       campaign.areas << area
 
-      campaign.place_allowed_for_event?(place).should be_false
+      campaign.place_allowed_for_event?(place).should be_falsey
 
       area.places << place
 
-      campaign.reload.place_allowed_for_event?(place).should be_true
+      campaign.reload.place_allowed_for_event?(place).should be_truthy
     end
 
     it "should return true if the place is part of any city of an area associated to the campaign" do
@@ -278,13 +278,13 @@ describe Campaign do
       area.places << other_city
       campaign.areas << area
 
-      campaign.place_allowed_for_event?(place).should be_false
+      campaign.place_allowed_for_event?(place).should be_falsey
 
       # Assign San Francisco to the area
       area.places << city
 
       # Because the campaing cache the locations, load a new object with the same campaign ID
-      Campaign.find(campaign.id).place_allowed_for_event?(place).should be_true
+      Campaign.find(campaign.id).place_allowed_for_event?(place).should be_truthy
     end
 
     it "should work with places that are not yet saved" do
@@ -297,7 +297,7 @@ describe Campaign do
       area.places << city
 
       # Because the campaing cache the locations, load a new object with the same campaign ID
-      campaign.place_allowed_for_event?(place).should be_true
+      campaign.place_allowed_for_event?(place).should be_truthy
     end
   end
 
@@ -344,8 +344,8 @@ describe Campaign do
       expect(stats.first['executed_percentage']).to eql 0
       expect(stats.first['scheduled_percentage']).to eql 10
       expect(stats.first['remaining_percentage']).to eql 90
-      expect(stats.first.has_key?('today')).to be_false
-      expect(stats.first.has_key?('today_percentage')).to be_false
+      expect(stats.first.has_key?('today')).to be_falsey
+      expect(stats.first.has_key?('today_percentage')).to be_falsey
 
       expect(stats.last['id']).to eql area.id
       expect(stats.last['name']).to eql 'California'
@@ -357,8 +357,8 @@ describe Campaign do
       expect(stats.last['executed_percentage']).to eql 0
       expect(stats.last['scheduled_percentage']).to eql 10
       expect(stats.last['remaining_percentage']).to eql 90
-      expect(stats.last.has_key?('today')).to be_false
-      expect(stats.last.has_key?('today_percentage')).to be_false
+      expect(stats.last.has_key?('today')).to be_falsey
+      expect(stats.last.has_key?('today_percentage')).to be_falsey
 
     end
 
@@ -380,8 +380,8 @@ describe Campaign do
       expect(stats.first['executed_percentage']).to eql 0
       expect(stats.first['scheduled_percentage']).to eql 0
       expect(stats.first['remaining_percentage']).to eql 100
-      expect(stats.first.has_key?('today')).to be_false
-      expect(stats.first.has_key?('today_percentage')).to be_false
+      expect(stats.first.has_key?('today')).to be_falsey
+      expect(stats.first.has_key?('today_percentage')).to be_falsey
     end
 
     it "should set the today values correctly" do
@@ -652,28 +652,28 @@ describe Campaign do
   describe "#in_date_range?" do
     it "returns true if both dates are inside the start/end dates" do
       campaign = FactoryGirl.build(:campaign, start_date: '01/01/2014', end_date: '02/01/2014')
-      expect(campaign.in_date_range?(Date.new(2014, 1, 3), Date.new(2014, 1, 23))).to be_true
+      expect(campaign.in_date_range?(Date.new(2014, 1, 3), Date.new(2014, 1, 23))).to be_truthy
     end
 
     it "returns true if start date is inside the start/end dates" do
       campaign = FactoryGirl.build(:campaign, start_date: '01/01/2014', end_date: '02/01/2014')
-      expect(campaign.in_date_range?(Date.new(2014, 1, 3), Date.new(2014, 6, 23))).to be_true
+      expect(campaign.in_date_range?(Date.new(2014, 1, 3), Date.new(2014, 6, 23))).to be_truthy
     end
 
     it "returns true if end date is inside the start/end dates" do
       campaign = FactoryGirl.build(:campaign, start_date: '01/01/2014', end_date: '02/01/2014')
-      expect(campaign.in_date_range?(Date.new(2013, 1, 3), Date.new(2014, 1, 23))).to be_true
+      expect(campaign.in_date_range?(Date.new(2013, 1, 3), Date.new(2014, 1, 23))).to be_truthy
     end
 
     it "returns false if both dates are after the end date" do
       campaign = FactoryGirl.build(:campaign, start_date: '01/01/2014', end_date: '02/01/2014')
-      expect(campaign.in_date_range?(Date.new(2014, 3, 3), Date.new(2014, 3, 23))).to be_false
+      expect(campaign.in_date_range?(Date.new(2014, 3, 3), Date.new(2014, 3, 23))).to be_falsey
     end
 
 
     it "returns false if both dates are before the start date" do
       campaign = FactoryGirl.build(:campaign, start_date: '01/01/2014', end_date: '02/01/2014')
-      expect(campaign.in_date_range?(Date.new(2013, 1, 3), Date.new(2013, 2, 23))).to be_false
+      expect(campaign.in_date_range?(Date.new(2013, 1, 3), Date.new(2013, 2, 23))).to be_falsey
     end
   end
 

@@ -1090,13 +1090,13 @@ feature 'Events section' do
         # Mark the tasks as completed
         within('#event-tasks-container') do
           checkbox = find('.task-completed-checkbox', visible: :false)
-          checkbox['checked'].should be_false
+          checkbox['checked'].should be_falsey
           find('.task-completed-checkbox').trigger('click')
           wait_for_ajax
 
           # refresh the page to make sure the checkbox remains selected
           visit event_path(event)
-          find('.task-completed-checkbox', visible: :false)['checked'].should be_true
+          find('.task-completed-checkbox', visible: :false)['checked'].should be_truthy
         end
 
         # Check that the totals where properly updated

@@ -33,7 +33,7 @@ describe DateItemsController do
       date_item = DateItem.last
       date_item.start_date.should == Date.new(2013, 01, 24)
       date_item.end_date.should == Date.new(2013, 01, 24)
-      date_item.recurrence.should be_false
+      date_item.recurrence.should be_falsey
       date_item.recurrence_type.should == 'daily'
       date_item.recurrence_days.should be_nil
     end

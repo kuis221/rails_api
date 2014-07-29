@@ -101,7 +101,7 @@ describe CampaignsController do
           response.should be_success
         }.to change(campaign.date_ranges, :count).by(-1)
       }.to change(Goal, :count).by(-2)
-      expect(goal.reload).to be_true
+      expect(goal.reload).to be_truthy
     end
   end
 
@@ -169,7 +169,7 @@ describe CampaignsController do
           response.should be_success
         }.to change(campaign.day_parts, :count).by(-1)
       }.to change(Goal, :count).by(-2)
-      expect(goal.reload).to be_true
+      expect(goal.reload).to be_truthy
     end
   end
 
@@ -229,7 +229,7 @@ describe CampaignsController do
       campaign.update_attribute(:aasm_state, 'active')
       get 'deactivate', id: campaign.to_param, format: :js
       response.should be_success
-      campaign.reload.active?.should be_false
+      campaign.reload.active?.should be_falsey
     end
   end
 
@@ -237,10 +237,10 @@ describe CampaignsController do
     let(:campaign){ FactoryGirl.create(:campaign, company: @company, aasm_state: 'inactive') }
 
     it "activates an inactive campaign" do
-      campaign.active?.should be_false
+      campaign.active?.should be_falsey
       get 'activate', id: campaign.to_param, format: :js
       response.should be_success
-      campaign.reload.active?.should be_true
+      campaign.reload.active?.should be_truthy
     end
   end
 
@@ -268,7 +268,7 @@ describe CampaignsController do
       field = FormField.last
       expect(field.name).to eql 'Test Field'
       expect(field.ordering).to eql 0
-      expect(field.required).to be_true
+      expect(field.required).to be_truthy
       expect(field.type).to eql 'FormField::Text'
     end
 
@@ -288,7 +288,7 @@ describe CampaignsController do
       field = FormField.last
       expect(field.name).to eql 'New name'
       expect(field.ordering).to eql 0
-      expect(field.required).to be_false
+      expect(field.required).to be_falsey
       expect(field.type).to eql 'FormField::Text'
     end
 
@@ -359,7 +359,7 @@ describe CampaignsController do
           campaign.reload
         }.to change(campaign.users, :count).by(-1)
       }.to change(Goal, :count).by(-2)
-      expect(goal.reload).to be_true
+      expect(goal.reload).to be_truthy
     end
 
     it "should remove the team  from the campaign and remove any goal" do
@@ -379,7 +379,7 @@ describe CampaignsController do
           campaign.reload
         }.to change(campaign.teams, :count).by(-1)
       }.to change(Goal, :count).by(-2)
-      expect(goal.reload).to be_true
+      expect(goal.reload).to be_truthy
     end
 
     it "should not raise error if the user doesn't belongs to the campaign" do

@@ -61,7 +61,7 @@ before(:each) do
       portfolio = DateRange.last
       portfolio.name.should == 'Test date range'
       portfolio.description.should == 'Test date range description'
-      portfolio.active.should be_true
+      portfolio.active.should be_truthy
     end
 
     it "should render the form_dialog template if errors" do
@@ -81,14 +81,14 @@ before(:each) do
       date_range.update_attribute(:active, true)
       get 'deactivate', id: date_range.to_param, format: :js
       response.should be_success
-      date_range.reload.active?.should be_false
+      date_range.reload.active?.should be_falsey
     end
 
     it "activates an inactive date_range" do
       date_range.update_attribute(:active, false)
       get 'activate', id: date_range.to_param, format: :js
       response.should be_success
-      date_range.reload.active?.should be_true
+      date_range.reload.active?.should be_truthy
     end
   end
 

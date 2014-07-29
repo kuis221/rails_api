@@ -108,14 +108,14 @@ describe ActivitiesController do
       activity.update_attribute(:active, true)
       get 'deactivate', id: activity.to_param, format: :js
       response.should be_success
-      activity.reload.active?.should be_false
+      activity.reload.active?.should be_falsey
     end
 
     it "activates an inactive activity for a venue" do
       activity.update_attribute(:active, false)
       get 'activate', id: activity.to_param, format: :js
       response.should be_success
-      activity.reload.active?.should be_true
+      activity.reload.active?.should be_truthy
     end
   end
 end

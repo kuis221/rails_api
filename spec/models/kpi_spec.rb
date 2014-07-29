@@ -37,21 +37,21 @@ describe Kpi do
       kpi = FactoryGirl.create(:kpi, kpi_type: 'percentage', capture_mechanism: 'integer', company: company)
       goal = FactoryGirl.create(:goal, goalable: campaign, kpi: kpi)
 
-      kpi.invalid_goal?(goal).should be_true
+      kpi.invalid_goal?(goal).should be_truthy
     end
 
     it "should return false if Goal has a kpis_segment_id for a Kpi of type count" do
       kpi = FactoryGirl.create(:kpi, kpi_type: 'count', capture_mechanism: 'radio', company: company, kpis_segments: FactoryGirl.create_list(:kpis_segment, 2))
       goal = FactoryGirl.create(:goal, goalable: campaign, kpi: kpi, kpis_segment_id: 100)
 
-      kpi.invalid_goal?(goal).should be_false
+      kpi.invalid_goal?(goal).should be_falsey
     end
 
     it "should return false if Goal has a nil kpis_segment_id for a Kpi of type different to count or percentage" do
       kpi = FactoryGirl.create(:kpi, kpi_type: 'number', capture_mechanism: 'currency', company: company)
       goal = FactoryGirl.create(:goal, goalable: campaign, kpi: kpi)
 
-      kpi.invalid_goal?(goal).should be_false
+      kpi.invalid_goal?(goal).should be_falsey
     end
   end
 
@@ -61,28 +61,28 @@ describe Kpi do
     it "should return error if there are restrictions when capture_mechanism is radio and number od segments is less than 2" do
       kpi = FactoryGirl.build(:kpi, kpi_type: 'count', capture_mechanism: 'radio', company: company, kpis_segments: FactoryGirl.create_list(:kpis_segment, 1))
       kpi.save
-      expect(kpi.persisted?).to be_false
+      expect(kpi.persisted?).to be_falsey
       expect(kpi.errors.full_messages).to include("You need to add at least 2 segments for the selected capture mechanism")
     end
 
     it "should return error if there are restrictions when capture_mechanism is dropdown and number od segments is less than 1" do
       kpi = FactoryGirl.build(:kpi, kpi_type: 'count', capture_mechanism: 'dropdown', company: company)
       kpi.save
-      expect(kpi.persisted?).to be_false
+      expect(kpi.persisted?).to be_falsey
       expect(kpi.errors.full_messages).to include("You need to add at least 1 segments for the selected capture mechanism")
     end
 
     it "should return error if there are restrictions when capture_mechanism is checkbox and number od segments is less than 1" do
       kpi = FactoryGirl.build(:kpi, kpi_type: 'count', capture_mechanism: 'checkbox', company: company)
       kpi.save
-      expect(kpi.persisted?).to be_false
+      expect(kpi.persisted?).to be_falsey
       expect(kpi.errors.full_messages).to include("You need to add at least 1 segments for the selected capture mechanism")
     end
 
     it "should not return errors if capture_mechanism doesn't have segments quantity restrictions" do
       kpi = FactoryGirl.build(:kpi, kpi_type: 'number', capture_mechanism: 'decimal', company: company)
       kpi.save
-      expect(kpi.persisted?).to be_true
+      expect(kpi.persisted?).to be_truthy
       expect(kpi.errors.full_messages).to be_empty
     end
   end
@@ -277,7 +277,7 @@ describe Kpi do
         result.value = {seg11.id => '10', seg12.id => '90'}
 
         result = event.result_for_kpi(kpi2)
-        result.value = {seg11.id => '35', seg12.id => '65'}
+        result.value = {seg21.id => '35', seg22.id => '65'}
         event.save
       }.to change(FormFieldResult, :count).by(2)
 

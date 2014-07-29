@@ -10,7 +10,7 @@ describe Api::V1::SessionsController do
       expect(user.reload.authentication_token).to_not be_nil
       result = JSON.parse(response.body)
       response.should be_success
-      result['success'].should be_true
+      result['success'].should be_truthy
       result['info'].should == 'Logged in'
       result['data']['auth_token'].should == user.authentication_token
       result['data']['current_company_id'].should == company.id
@@ -27,7 +27,7 @@ describe Api::V1::SessionsController do
       post :create, email: user.email, password: 'PassDePrueba45', format: :json
       result = JSON.parse(response.body)
       response.should be_success
-      result['success'].should be_true
+      result['success'].should be_truthy
       result['data']['current_company_id'].should == other_company.id
     end
 
@@ -37,7 +37,7 @@ describe Api::V1::SessionsController do
       post :create, email: user.email, password: 'PassDePrueba45', format: :json
       result = JSON.parse(response.body)
       response.should be_success
-      result['success'].should be_true
+      result['success'].should be_truthy
       result['data']['current_company_id'].should == company.id
     end
 
@@ -45,7 +45,7 @@ describe Api::V1::SessionsController do
       post :create, email: user.email, password: 'XXXXXXXX', format: :json
       result = JSON.parse(response.body)
       response.response_code.should == 401
-      result['success'].should be_false
+      result['success'].should be_falsey
       result['info'].should == 'Login Failed'
       result['data'].should == {}
     end
@@ -65,7 +65,7 @@ describe Api::V1::SessionsController do
       delete :destroy, id: 'NOT_VALID', format: :json
       response.response_code.should == 404
       result = JSON.parse(response.body)
-      result["sucess"].should be_false
+      result["sucess"].should be_falsey
       result["info"].should == "Invalid token."
     end
   end

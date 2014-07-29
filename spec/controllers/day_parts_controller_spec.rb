@@ -61,7 +61,7 @@ describe DayPartsController do
       day_part = DayPart.last
       day_part.name.should == 'Test day part'
       day_part.description.should == 'Test day part description'
-      day_part.active.should be_true
+      day_part.active.should be_truthy
     end
 
     it "should render the form_dialog template if errors" do
@@ -81,14 +81,14 @@ describe DayPartsController do
       day_part.update_attribute(:active, true)
       get 'deactivate', id: day_part.to_param, format: :js
       response.should be_success
-      day_part.reload.active?.should be_false
+      day_part.reload.active?.should be_falsey
     end
 
     it "activates an inactive day_part" do
       day_part.update_attribute(:active, false)
       get 'activate', id: day_part.to_param, format: :js
       response.should be_success
-      day_part.reload.active?.should be_true
+      day_part.reload.active?.should be_truthy
     end
   end
 

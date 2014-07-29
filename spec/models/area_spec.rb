@@ -28,7 +28,7 @@ describe Area do
     it "should return the active value as true" do
       area.activate!
       area.reload
-      area.active.should be_true
+      area.active.should be_truthy
     end
   end
 
@@ -38,7 +38,7 @@ describe Area do
     it "should return the active value as false" do
       area.deactivate!
       area.reload
-      area.active.should be_false
+      area.active.should be_falsey
     end
   end
 
@@ -105,7 +105,7 @@ describe Area do
   describe "#place_in_scope?" do
     it "should return false if place is nil" do
       area = FactoryGirl.create(:area)
-      area.place_in_scope?(nil).should be_false
+      area.place_in_scope?(nil).should be_falsey
     end
 
     it "should return true if the place belogns to the area" do
@@ -113,14 +113,14 @@ describe Area do
       area = FactoryGirl.create(:area)
       area.places << FactoryGirl.create(:place, types: ['locality'], city: 'Los Angeles', state:'California', country:'US')
 
-      area.place_in_scope?(bar).should be_true
+      area.place_in_scope?(bar).should be_truthy
     end
 
     it "should return false if the place belogns to the area" do
       bar = FactoryGirl.create(:place, types: ['establishment'], route:'1st st', street_number: '12 sdfsd', city: 'San Francisco', state:'California', country:'US')
       area = FactoryGirl.create(:area)
       area.places << FactoryGirl.create(:place, types: ['locality'], city: 'Los Angeles', state:'California', country:'US')
-      area.place_in_scope?(bar).should be_false
+      area.place_in_scope?(bar).should be_falsey
     end
 
     it "should return false if the place is a state and the area has cities of that state" do
@@ -129,7 +129,7 @@ describe Area do
       area.places << FactoryGirl.create(:place, types: ['locality'], city: 'Los Angeles', state:'California', country:'US')
       area.places << FactoryGirl.create(:place, types: ['locality'], city: 'San Francisco', state:'California', country:'US')
 
-      area.place_in_scope?(california).should be_false
+      area.place_in_scope?(california).should be_falsey
     end
 
     it "should return true if the place is a neighborhood and the area includes the city" do
@@ -137,7 +137,7 @@ describe Area do
       area = FactoryGirl.create(:area)
       area.places << FactoryGirl.create(:place, types: ['locality'], city: 'Houston', state:'Texas', country:'US')
 
-      area.place_in_scope?(neighborhood).should be_true
+      area.place_in_scope?(neighborhood).should be_truthy
     end
   end
 end

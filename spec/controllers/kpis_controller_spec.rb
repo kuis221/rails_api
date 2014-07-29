@@ -73,12 +73,12 @@ describe KpisController do
       kpi.save
       goal = campaign.goals.for_kpi(kpi)
       goal.value = 33
-      goal.save.should be_true
+      goal.save.should be_truthy
 
       expect {
         expect {
           put 'update', campaign_id: campaign.to_param, id: kpi.to_param, kpi: {name: 'Test kpi', description: 'Test kpi description', goals_attributes: [{id: goal.id, goalable_id: campaign.to_param, goalable_type: 'Campaign', value: 44}]}, format: :js
-        }.to_not change(Goal, :count).by(1)
+        }.to_not change(Goal, :count)
       }.to_not change(Kpi, :count)
       response.should render_template(:update)
       response.should_not render_template(:form_dialog)
@@ -91,7 +91,7 @@ describe KpisController do
       kpi.save
       goal = campaign.goals.for_kpi(kpi)
       goal.value = 33
-      goal.save.should be_true
+      goal.save.should be_truthy
 
       expect {
         expect {

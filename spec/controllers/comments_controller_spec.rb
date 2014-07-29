@@ -124,7 +124,7 @@ describe CommentsController do
       get 'new', event_id: event.to_param, format: :js
       response.should render_template('comments/_form')
       response.should render_template(:form_dialog)
-      assigns(:comment).new_record?.should be_true
+      assigns(:comment).new_record?.should be_truthy
       assigns(:comment).commentable.should == event
     end
   end

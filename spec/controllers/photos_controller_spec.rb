@@ -33,7 +33,7 @@ describe PhotosController do
       get 'new', event_id: event.to_param, format: :js
       response.should render_template('photos/_form')
       response.should render_template(:form_dialog)
-      assigns(:photo).new_record?.should be_true
+      assigns(:photo).new_record?.should be_truthy
       assigns(:photo).attachable.should == event
     end
   end
@@ -51,7 +51,7 @@ describe PhotosController do
       photo.update_attribute(:active, true)
       get 'deactivate', event_id: event.to_param, id: photo.to_param, format: :js
       response.should be_success
-      photo.reload.active?.should be_false
+      photo.reload.active?.should be_falsey
     end
   end
 
@@ -59,10 +59,10 @@ describe PhotosController do
     let(:photo){ FactoryGirl.create(:photo, attachable: event, active: false) }
 
     it "activates an inactive campaign" do
-      photo.active?.should be_false
+      photo.active?.should be_falsey
       get 'activate',  event_id: event.to_param, id: photo.to_param, format: :js
       response.should be_success
-      photo.reload.active?.should be_true
+      photo.reload.active?.should be_truthy
     end
   end
 

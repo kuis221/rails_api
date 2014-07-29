@@ -103,7 +103,7 @@ describe BrandPortfoliosController do
       portfolio = BrandPortfolio.last
       portfolio.name.should == 'Test brand portfolio'
       portfolio.description.should == 'Test brand portfolio description'
-      portfolio.active.should be_true
+      portfolio.active.should be_truthy
     end
 
     it "should render the form_dialog template if errors" do
@@ -123,14 +123,14 @@ describe BrandPortfoliosController do
       brand_portfolio.update_attribute(:active, true)
       get 'deactivate', id: brand_portfolio.to_param, format: :js
       response.should be_success
-      brand_portfolio.reload.active?.should be_false
+      brand_portfolio.reload.active?.should be_falsey
     end
 
     it "activates an inactive brand_portfolio" do
       brand_portfolio.update_attribute(:active, false)
       get 'activate', id: brand_portfolio.to_param, format: :js
       response.should be_success
-      brand_portfolio.reload.active?.should be_true
+      brand_portfolio.reload.active?.should be_truthy
     end
   end
 

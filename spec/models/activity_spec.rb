@@ -33,7 +33,7 @@ describe Activity do
     it "should return the active value as true" do
       activity.activate!
       activity.reload
-      activity.active.should be_true
+      activity.active.should be_truthy
     end
   end
 
@@ -43,7 +43,7 @@ describe Activity do
     it "should return the active value as false" do
       activity.deactivate!
       activity.reload
-      activity.active.should be_false
+      activity.active.should be_falsey
     end
   end
 end

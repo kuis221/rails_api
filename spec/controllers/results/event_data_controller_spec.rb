@@ -206,12 +206,12 @@ describe Results::EventDataController do
       expect{
         event = FactoryGirl.build(:approved_event, company: @company, campaign: campaign)
         event.result_for_kpi(kpi).value = {seg1.id => '63', seg2.id => '37'}
-        expect(event.save).to be_true
+        expect(event.save).to be_truthy
 
         event = FactoryGirl.build(:approved_event, company: @company, campaign: campaign)
         event.result_for_kpi(kpi).value = nil
         event.result_for_kpi(another_kpi).value = 134
-        expect(event.save).to be_true
+        expect(event.save).to be_truthy
       }.to change(FormFieldResult, :count).by(3)
 
       Sunspot.commit

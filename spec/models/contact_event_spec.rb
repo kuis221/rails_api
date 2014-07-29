@@ -46,7 +46,7 @@ describe ContactEvent do
       contact_event.contactable.should be_nil
       contact_event.build_contactable
       contact_event.contactable.should be_a(Contact)
-      contact_event.contactable.new_record?.should be_true
+      contact_event.contactable.new_record?.should be_truthy
     end
   end
 end

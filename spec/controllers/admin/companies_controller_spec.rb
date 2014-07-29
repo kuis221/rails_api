@@ -19,7 +19,7 @@ describe Admin::CompaniesController do
     it "returns http success" do
       get :new
       response.should be_success
-      assigns(:company).new_record?.should be_true
+      assigns(:company).new_record?.should be_truthy
     end
   end
 

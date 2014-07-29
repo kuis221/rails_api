@@ -23,7 +23,7 @@ describe VenuesController do
     it "should allow display info for places from Google Places" do
       get 'show', id: '24d9cbaf29793a503e9298ba48a343a9546549c2', ref: 'CnRvAAAAjP74ZS9G_HaiDn3kQcryi2SgpsXnCVpQuj5l9GYfadTCLTbvaYPKgFXwlQxgr_EKIQXSCRuErewJDLHRu8vWiDsrl4BAfBhT-xlfdDRb-46Vp3kxdmfv95DksRNvVPFta6MQ05afANalVoMguLrcsxIQGKjnFkjuN6-xGxl3gcVS6hoUIkM79cK4aOPYfPeweDuLkZUo4OE'
       response.should be_success
-      assigns(:venue).new_record?.should be_true
+      assigns(:venue).new_record?.should be_truthy
     end
   end
 

@@ -53,7 +53,7 @@ describe Task do
     it "should return the active value as true" do
       task.activate!
       task.reload
-      task.active.should be_true
+      task.active.should be_truthy
     end
   end
 
@@ -63,7 +63,7 @@ describe Task do
     it "should return the active value as false" do
       task.deactivate!
       task.reload
-      task.active.should be_false
+      task.active.should be_falsey
     end
   end
 end

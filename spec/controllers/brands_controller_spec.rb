@@ -104,14 +104,14 @@ describe BrandsController do
       brand.update_attribute(:active, true)
       get 'deactivate', id: brand.to_param, format: :js
       response.should be_success
-      brand.reload.active?.should be_false
+      brand.reload.active?.should be_falsey
     end
 
     it "activates an inactive brand" do
       brand.update_attribute(:active, false)
       get 'activate', id: brand.to_param, format: :js
       response.should be_success
-      brand.reload.active?.should be_true
+      brand.reload.active?.should be_truthy
     end
   end
 

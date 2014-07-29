@@ -27,7 +27,7 @@ describe Role do
     it "should return the active value as true" do
       role.activate!
       role.reload
-      role.active.should be_true
+      role.active.should be_truthy
     end
   end
 
@@ -37,7 +37,7 @@ describe Role do
     it "should return the active value as false" do
       role.deactivate!
       role.reload
-      role.active.should be_false
+      role.active.should be_falsey
     end
   end
 end

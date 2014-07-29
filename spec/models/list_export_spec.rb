@@ -29,14 +29,14 @@ describe ListExport do
       Results::EventDataController.any_instance.should_receive(:export_list).with(exporter)
 
       # Prevent export to save and upload attachment to S3
-      exporter.should_receive(:save).any_number_of_times.and_return(true)
+      expect(exporter).to receive(:save).at_least(:once).and_return(true)
 
       exporter.file_file_name.should be_nil
       exporter.export_list
 
       exporter.file_file_name.should_not be_nil
       User.current.should == company_user.user
-      exporter.completed?.should be_true
+      exporter.completed?.should be_truthy
     end
   end
 
@@ -46,14 +46,14 @@ describe ListExport do
       EventsController.any_instance.should_receive(:export_list).with(exporter)
 
       # Prevent export to save and upload attachment to S3
-      exporter.should_receive(:save).any_number_of_times.and_return(true)
+      expect(exporter).to receive(:save).at_least(:once).and_return(true)
 
       exporter.file_file_name.should be_nil
       exporter.export_list
 
       exporter.file_file_name.should_not be_nil
       User.current.should == company_user.user
-      exporter.completed?.should be_true
+      exporter.completed?.should be_truthy
     end
   end
 end

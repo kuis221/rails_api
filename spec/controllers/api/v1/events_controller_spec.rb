@@ -165,11 +165,11 @@ describe Api::V1::EventsController do
       campaign = FactoryGirl.create(:campaign, company_id: company)
       field = FactoryGirl.create(:form_field_number, fieldable: campaign, kpi: FactoryGirl.create(:kpi, company_id: 1), required: true)
       event = FactoryGirl.create(:event, active: true, company: company, campaign: campaign)
-      lambda {
+      expect {
         put 'submit', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
         response.response_code.should == 422
         event.reload
-      }.should_not change(event, :submitted?).to(true)
+      }.to_not change(event, :submitted?)
     end
   end
 

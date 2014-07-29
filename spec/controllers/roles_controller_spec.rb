@@ -76,7 +76,7 @@ describe RolesController do
       role.update_attribute(:active, true)
       get 'deactivate', id: role.to_param, format: :js
       response.should be_success
-      role.reload.active?.should be_false
+      role.reload.active?.should be_falsey
     end
   end
 
@@ -84,10 +84,10 @@ describe RolesController do
     let(:role){ FactoryGirl.create(:role, company: @company, active: false) }
 
     it "activates an inactive `role" do
-      role.active?.should be_false
+      role.active?.should be_falsey
       get 'activate', id: role.to_param, format: :js
       response.should be_success
-      role.reload.active?.should be_true
+      role.reload.active?.should be_truthy
     end
   end
 

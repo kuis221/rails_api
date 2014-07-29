@@ -45,22 +45,22 @@ describe CompanyUsersController do
       let(:user){ FactoryGirl.create(:company_user, company_id: @company.id, active: true) }
 
       it "deactivates an active user" do
-        user.active.should be_true
+        user.active.should be_truthy
         get 'deactivate', id: user.to_param, format: :js
         response.should be_success
-        user.reload.active?.should be_false
-        user.active.should be_false
+        user.reload.active?.should be_falsey
+        user.active.should be_falsey
       end
     end
 
     describe "GET 'activate'" do
       let(:user){ FactoryGirl.create(:company_user, company_id: @company.id, active: false) }
       it "activates an inactive user" do
-        user.active.should be_false
+        user.active.should be_falsey
         get 'activate', id: user.to_param, format: :js
         response.should be_success
-        user.reload.active?.should be_true
-        user.active.should be_true
+        user.reload.active?.should be_truthy
+        user.active.should be_truthy
       end
     end
 
@@ -104,7 +104,7 @@ describe CompanyUsersController do
       it "user have to enter the phone number, country/state, city, street address and zip code information when editing his profile" do
         old_password = @user.encrypted_password
         controller.should_receive(:can?).twice.with(:super_update, @company_user).and_return false
-        controller.should_receive(:can?).any_number_of_times.and_return true
+        controller.should_receive(:can?).at_least(:once).and_return true
         put 'update', id: @company_user.to_param, company_user: {user_attributes: {id: user.user_id, first_name: 'Juanito', last_name: 'Perez', email: 'test@testing.com', phone_number: '', city: '', state: '', country: '', street_address: '', zip_code: '', password: 'Juanito123', password_confirmation: 'Juanito123'}}, format: :js
         response.should be_success
         assigns(:company_user).errors.count.should > 0
@@ -193,7 +193,7 @@ describe CompanyUsersController do
         campaign.brands << brand
         campaign2.brands << brand
 
-        user.memberships.create(parent: brand, memberable: brand).should be_true
+        user.memberships.create(parent: brand, memberable: brand).should be_truthy
         expect {
           delete 'remove_campaign', id: user.id, parent_id: brand.id, parent_type: 'Brand', campaign_id: campaign.id, format: :js
           response.should be_success

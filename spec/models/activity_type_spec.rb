@@ -35,7 +35,7 @@ describe ActivityType do
       expect {
         type.name = 'Changed name'
         type.save
-      }.to_not change(type.form_fields, :count).by(1)
+      }.to_not change(type.form_fields, :count)
       expect(FormField.last.type).to eql 'FormField::UserDate'
     end
   end

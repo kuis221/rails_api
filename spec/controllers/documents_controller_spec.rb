@@ -34,7 +34,7 @@ describe DocumentsController do
       get 'new', event_id: event.to_param, format: :js
       response.should render_template('documents/_form')
       response.should render_template(:form_dialog)
-      assigns(:document).new_record?.should be_true
+      assigns(:document).new_record?.should be_truthy
       assigns(:document).attachable.should == event
     end
   end

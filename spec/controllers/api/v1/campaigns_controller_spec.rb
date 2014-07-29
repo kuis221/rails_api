@@ -67,8 +67,8 @@ describe Api::V1::CampaignsController do
       expect(stats['areas'].first['executed_percentage']).to eql 0
       expect(stats['areas'].first['scheduled_percentage']).to eql 0
       expect(stats['areas'].first['remaining_percentage']).to eql 100
-      expect(stats['areas'].first.has_key?('today')).to be_false
-      expect(stats['areas'].first.has_key?('today_percentage')).to be_false
+      expect(stats['areas'].first.has_key?('today')).to be_falsey
+      expect(stats['areas'].first.has_key?('today_percentage')).to be_falsey
      end
   end
 end

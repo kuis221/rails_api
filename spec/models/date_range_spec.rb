@@ -24,18 +24,18 @@ describe DateRange do
   describe '#deactivate!' do
     it "should deactivate the date range" do
       date_range = FactoryGirl.create(:date_range, active: true)
-      date_range.active.should be_true
+      date_range.active.should be_truthy
       date_range.deactivate!
-      date_range.reload.active.should be_false
+      date_range.reload.active.should be_falsey
     end
   end
 
   describe '#activate!' do
     it "should activate the date range" do
       date_range = FactoryGirl.create(:date_range, active: true)
-      date_range.active.should be_true
+      date_range.active.should be_truthy
       date_range.deactivate!
-      date_range.reload.active.should be_false
+      date_range.reload.active.should be_falsey
     end
   end
 

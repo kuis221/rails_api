@@ -27,7 +27,7 @@ describe Report do
     it "should return the active value as true" do
       report.activate!
       report.reload
-      report.active.should be_true
+      report.active.should be_truthy
     end
   end
 
@@ -37,7 +37,7 @@ describe Report do
     it "should return the active value as false" do
       report.deactivate!
       report.reload
-      report.active.should be_false
+      report.active.should be_falsey
     end
   end
 

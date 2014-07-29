@@ -24,7 +24,7 @@ describe BrandPortfolio do
     it "should return the active value as true" do
       brand_portfolio.activate!
       brand_portfolio.reload
-      brand_portfolio.active.should be_true
+      brand_portfolio.active.should be_truthy
     end
   end
 
@@ -34,7 +34,7 @@ describe BrandPortfolio do
     it "should return the active value as false" do
       brand_portfolio.deactivate!
       brand_portfolio.reload
-      brand_portfolio.active.should be_false
+      brand_portfolio.active.should be_falsey
     end
   end
 end

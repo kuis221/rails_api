@@ -59,7 +59,7 @@ describe Event do
 
       event.results_for([field]).each {|r| r.value = 100}
       event.save
-      event.submit.should be_true
+      event.submit.should be_truthy
     end
   end
 
@@ -293,7 +293,7 @@ describe Event do
     let(:campaign) { FactoryGirl.create(:campaign) }
 
     it "should update campaign's first_event_id and first_event_at attributes" do
-      campaign.update_attributes({first_event_id: 999, first_event_at: '2013-02-01 12:00:00'}, without_protection: true).should be_true
+      campaign.update_attributes({first_event_id: 999, first_event_at: '2013-02-01 12:00:00'}, without_protection: true).should be_truthy
       event = FactoryGirl.create(:event, campaign: campaign, company: campaign.company, start_date: '01/01/2013', start_time: '01:00 AM', end_date:  '01/01/2013', end_time: '05:00 AM')
       campaign.reload
       campaign.first_event_id.should == event.id
@@ -301,7 +301,7 @@ describe Event do
     end
 
     it "should update campaign's first_event_id and first_event_at attributes" do
-      campaign.update_attributes({last_event_id: 999, last_event_at: '2013-01-01 12:00:00'}, without_protection: true).should be_true
+      campaign.update_attributes({last_event_id: 999, last_event_at: '2013-01-01 12:00:00'}, without_protection: true).should be_truthy
       event = FactoryGirl.create(:event, campaign: campaign, company: campaign.company, start_date: '02/01/2013', start_time: '01:00 AM', end_date:  '02/01/2013', end_time: '05:00 AM')
       campaign.reload
       campaign.last_event_id.should == event.id
@@ -355,13 +355,13 @@ describe Event do
     it "correctly calculates the number of promo hours before saving the event" do
       event = FactoryGirl.build(:event,  start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/21/2020', end_time: '05:00pm')
       event.promo_hours = nil
-      event.save.should be_true
+      event.save.should be_truthy
       event.reload.promo_hours.should == 5
     end
     it "accepts promo_hours hours with decimals" do
       event = FactoryGirl.build(:event,  start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/21/2020', end_time: '03:15pm')
       event.promo_hours = nil
-      event.save.should be_true
+      event.save.should be_truthy
       event.reload.promo_hours.should == 3.25
     end
   end
@@ -375,13 +375,13 @@ describe Event do
       Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 13)) do
         event = FactoryGirl.build(:event)
         event.end_at = Time.zone.local(2013, 07, 26, 12, 00)
-        event.in_past?.should be_true
+        event.in_past?.should be_truthy
 
         event.end_at = Time.zone.local(2013, 07, 26, 12, 12)
-        event.in_past?.should be_true
+        event.in_past?.should be_truthy
 
         event.end_at = Time.zone.local(2013, 07, 26, 12, 15)
-        event.in_past?.should be_false
+        event.in_past?.should be_falsey
       end
     end
 
@@ -389,16 +389,16 @@ describe Event do
       Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 13)) do
         event = FactoryGirl.build(:event)
         event.start_at = Time.zone.local(2013, 07, 26, 12, 00)
-        event.in_future?.should be_false
+        event.in_future?.should be_falsey
 
         event.start_at = Time.zone.local(2013, 07, 26, 12, 12)
-        event.in_future?.should be_false
+        event.in_future?.should be_falsey
 
         event.start_at = Time.zone.local(2013, 07, 26, 12, 15)
-        event.in_future?.should be_true
+        event.in_future?.should be_truthy
 
         event.start_at = Time.zone.local(2014, 07, 26, 12, 15)
-        event.in_future?.should be_true
+        event.in_future?.should be_truthy
       end
     end
   end
@@ -411,16 +411,16 @@ describe Event do
     it "should return true if the event is scheduled to happen in more than to days go" do
       Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 13)) do
         event = FactoryGirl.create(:event, start_date: '07/23/2013', end_date: '07/23/2013', start_time: '10:00 am', end_time: '2:00 pm')
-        event.is_late?.should be_true
+        event.is_late?.should be_truthy
 
         event = FactoryGirl.create(:event, start_date: '01/23/2013', end_date: '01/23/2013', start_time: '10:00 am', end_time: '2:00 pm')
-        event.is_late?.should be_true
+        event.is_late?.should be_truthy
       end
     end
     it "should return false if the event is end_date is less than two days ago" do
       Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 13)) do
         event = FactoryGirl.create(:event, start_date: '07/23/2013', end_date: '07/25/2013', start_time: '10:00 am', end_time: '2:00 pm')
-        event.is_late?.should be_false
+        event.is_late?.should be_falsey
       end
     end
   end
@@ -432,26 +432,26 @@ describe Event do
     it "should return true if the current day is between the start and end dates of the event" do
       Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 13)) do
         event = FactoryGirl.create(:event, start_date: '07/26/2013', end_date: '07/26/2013', start_time: '10:00 am', end_time: '2:00 pm')
-        event.happens_today?.should be_true
+        event.happens_today?.should be_truthy
 
         event = FactoryGirl.create(:event, start_date: '07/26/2013', end_date: '07/28/2013', start_time: '10:00 am', end_time: '2:00 pm')
-        event.happens_today?.should be_true
+        event.happens_today?.should be_truthy
 
         event = FactoryGirl.create(:event, start_date: '07/24/2013', end_date: '07/26/2013', start_time: '10:00 am', end_time: '2:00 pm')
-        event.happens_today?.should be_true
+        event.happens_today?.should be_truthy
 
         event = FactoryGirl.create(:event, start_date: '07/23/2013', end_date: '07/28/2013', start_time: '10:00 am', end_time: '2:00 pm')
-        event.happens_today?.should be_true
+        event.happens_today?.should be_truthy
       end
     end
 
     it "should return true if the current day is NOT between the start and end dates of the event" do
       Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 13)) do
         event = FactoryGirl.create(:event, start_date: '07/27/2013', end_date: '07/28/2013', start_time: '10:00 am', end_time: '2:00 pm')
-        event.happens_today?.should be_false
+        event.happens_today?.should be_falsey
 
         event = FactoryGirl.create(:event, start_date: '07/24/2013', end_date: '07/25/2013', start_time: '10:00 am', end_time: '2:00 pm')
-        event.happens_today?.should be_false
+        event.happens_today?.should be_falsey
       end
     end
   end
@@ -463,10 +463,10 @@ describe Event do
     it "should return true if the end_date is the day before" do
       Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 13)) do
         event = FactoryGirl.create(:event, start_date: '07/24/2013', end_date: '07/25/2013', start_time: '10:00 am', end_time: '2:00 pm')
-        event.was_yesterday?.should be_true
+        event.was_yesterday?.should be_truthy
 
         event = FactoryGirl.create(:event, start_date: '07/21/2013', end_date: '07/25/2013', start_time: '10:00 am', end_time: '2:00 pm')
-        event.was_yesterday?.should be_true
+        event.was_yesterday?.should be_truthy
 
       end
     end
@@ -474,14 +474,14 @@ describe Event do
     it "should return false if the event's end_date is other than yesterday" do
       Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 13)) do
         event = FactoryGirl.create(:event, start_date: '07/26/2013', end_date: '07/26/2013', start_time: '10:00 am', end_time: '2:00 pm')
-        event.was_yesterday?.should be_false
+        event.was_yesterday?.should be_falsey
 
         event = FactoryGirl.create(:event, start_date: '07/25/2013', end_date: '07/26/2013', start_time: '10:00 am', end_time: '2:00 pm')
-        event.was_yesterday?.should be_false
+        event.was_yesterday?.should be_falsey
 
 
         event = FactoryGirl.create(:event, start_date: '07/24/2013', end_date: '07/24/2013', start_time: '10:00 am', end_time: '2:00 pm')
-        event.was_yesterday?.should be_false
+        event.was_yesterday?.should be_falsey
       end
     end
   end
@@ -531,7 +531,7 @@ describe Event do
 
       # Changing the place should reindex all photos for the event
       event.place_id =  1199
-      event.save.should be_true
+      event.save.should be_truthy
       EventPhotosIndexer.should have_queued(event.id)
     end
 
@@ -542,7 +542,7 @@ describe Event do
 
       # Changing the place should reindex all photos for the event
       event.start_at = event.start_at - 1.hour
-      event.save.should be_true
+      event.save.should be_truthy
       EventPhotosIndexer.should_not have_queued(event.id)
     end
   end
@@ -559,7 +559,7 @@ describe Event do
       Place.any_instance.should_receive(:fetch_place_data)
       event.place_reference = 'some_reference||some_id'
       event.place.should_not be_nil
-      event.place.new_record?.should be_true
+      event.place.new_record?.should be_truthy
       event.place.place_id.should == 'some_id'
       event.place.reference.should == 'some_reference'
     end
@@ -570,7 +570,7 @@ describe Event do
       event = FactoryGirl.build(:event, place: nil)
       event.place_reference = "#{place.reference}||#{place.place_id}"
       event.place.should_not be_nil
-      event.place.new_record?.should be_false
+      event.place.new_record?.should be_falsey
       event.place.should == place
     end
   end
@@ -767,7 +767,7 @@ describe Event do
     it "should return the active value as true" do
       event.activate!
       event.reload
-      event.active.should be_true
+      event.active.should be_truthy
     end
   end
 
@@ -777,7 +777,7 @@ describe Event do
     it "should return the active value as false" do
       event.deactivate!
       event.reload
-      event.active.should be_false
+      event.active.should be_falsey
     end
   end
 
@@ -790,7 +790,7 @@ describe Event do
       campaign.assign_all_global_kpis
       result = event.result_for_kpi(Kpi.impressions)
       result.should be_an_instance_of(FormFieldResult)
-      result.new_record?.should be_true
+      result.new_record?.should be_truthy
 
       # Make sure the result is correctly initialized
       result.form_field_id.should_not be_nil
@@ -811,7 +811,7 @@ describe Event do
       results.count.should == 2
       results.each do |result|
         result.should be_an_instance_of(FormFieldResult)
-        result.new_record?.should be_true
+        result.new_record?.should be_truthy
 
         # Make sure the result is correctly initialized
         [Kpi.impressions.id, Kpi.interactions.id].should include(result.form_field.kpi_id)
@@ -854,7 +854,7 @@ describe Event do
       results.count.should == 2
 
       # They both should be new records
-      results.all?{|r| r.new_record? }.should be_true
+      results.all?{|r| r.new_record? }.should be_truthy
 
       results.map{|r| r.form_field.kpi_id }.should =~ [Kpi.impressions.id, Kpi.interactions.id]
     end
@@ -879,22 +879,22 @@ describe Event do
       campaign.places << place_LA
 
       event = FactoryGirl.build(:event, campaign: campaign, company: campaign.company, place: place_SF)
-      event.valid?.should be_false
+      event.valid?.should be_falsey
       event.errors[:place_reference].should include('is not valid for this campaign')
 
       event.place = place_LA
-      event.valid?.should be_true
+      event.valid?.should be_truthy
     end
 
     it "should not validate place if the event's place haven't changed" do
       campaign = FactoryGirl.create(:campaign)
 
       event = FactoryGirl.create(:event, campaign: campaign, company: campaign.company, place: place_SF)
-      event.save.should be_true
+      event.save.should be_truthy
 
       campaign.places << place_LA
 
-      event.reload.valid?.should be_true
+      event.reload.valid?.should be_truthy
     end
 
     it "should allow the event to have a blank place if the user is admin" do
@@ -905,7 +905,7 @@ describe Event do
 
       campaign = FactoryGirl.create(:campaign, company: company)
       event = FactoryGirl.build(:event, campaign: campaign, company: company, place: nil)
-      event.valid?.should be_true
+      event.valid?.should be_truthy
     end
 
     it "should NOT allow the event to have a blank place if the user is not admin" do
@@ -916,7 +916,7 @@ describe Event do
 
       campaign = FactoryGirl.create(:campaign, company: company)
       event = FactoryGirl.build(:event, campaign: campaign, place: nil)
-      event.valid?.should be_false
+      event.valid?.should be_falsey
       event.errors[:place_reference].should include('cannot be blank')
     end
 
@@ -933,16 +933,16 @@ describe Event do
       user.current_company_user.campaigns << campaign
 
       event = FactoryGirl.build(:event, campaign: campaign, company: company, place: place_SF)
-      event.valid?.should be_false
+      event.valid?.should be_falsey
       event.errors[:place_reference].should include('is not part of your authorized locations')
 
       event.place = place_LA
-      event.valid?.should be_true
+      event.valid?.should be_truthy
 
       bar_in_LA = FactoryGirl.create(:place, name: 'Bar Testing', route: 'Amargura St.', city: 'Los Angeles', state: 'California', country: 'US', types: ['establishment', 'bar'])
 
       event.place = bar_in_LA
-      event.valid?.should be_true
+      event.valid?.should be_truthy
     end
 
     it "should NOT give an error if the place is nil and a non admin is editing the event without modifying the place" do
@@ -956,7 +956,7 @@ describe Event do
       user.current_company = company
       User.current = user
 
-      event.valid?.should be_true
+      event.valid?.should be_truthy
     end
   end
 
@@ -1010,7 +1010,7 @@ describe Event do
       Time.use_zone('America/Guatemala') do
         event = Event.last
         event.summary = 'Just modifying any column'
-        event.save.should be_true
+        event.save.should be_truthy
         event.timezone.should == 'America/New_York'
       end
     end
@@ -1057,7 +1057,7 @@ describe Event do
 
       expect(event.user_ids).to match_array [user1.id, user2.id]
       expect(event.team_ids).to match_array [team1.id]
-      expect(event.new_record?).to be_true
+      expect(event.new_record?).to be_truthy
     end
   end
 end

@@ -18,7 +18,7 @@ describe Results::EventDataHelper do
 
       event = FactoryGirl.build(:approved_event, campaign: campaign)
       event.result_for_kpi(kpi).value = {seg1.id.to_s => '88', seg2.id.to_s => '12'}
-      expect(event.save).to be_true
+      expect(event.save).to be_truthy
 
       helper.custom_fields_to_export_headers.should == ['MY KPI: UNO', 'MY KPI: DOS']
       helper.custom_fields_to_export_values(event).should == [["Number", "percentage", 0.88], ["Number", "percentage", 0.12]]

@@ -9,10 +9,11 @@ describe Api::V1::ApiController do
   controller(Api::V1::ApiController) do
     skip_authorize_resource
     skip_authorization_check
+    skip_load_and_authorize_resource
     def index
     end
 
-    def test_record_not_found
+    def show
       raise ActiveRecord::RecordNotFound
     end
   end
@@ -40,11 +41,8 @@ describe Api::V1::ApiController do
   end
 
   describe "handling RecordNotFound exception" do
-    before do
-      routes.draw { get "test_record_not_found" => "anonymous#test_record_not_found" }
-    end
     it "renders failure HTTP Not Found" do
-      get :test_record_not_found, format: :json
+      get :show, id: 1, format: :json
       response.response_code.should == 404
       result = JSON.parse(response.body)
       result['success'].should == false

@@ -59,7 +59,7 @@ module BrandscopiSpecHelpers
   def spreadsheet_from_last_export
     require "rexml/document"
     export = ListExport.last
-    export.should_receive(:save).any_number_of_times.and_return(true)
+    expect(export).to receive(:save).at_least(:once).and_return(true)
     File.should_receive(:delete) do |path|
       file = File.new( path )
       yield REXML::Document.new(file)
@@ -77,4 +77,8 @@ module BrandscopiSpecHelpers
     end
     export.export_list
   end
+end
+
+RSpec.configure do |config|
+  config.include BrandscopiSpecHelpers
 end

@@ -97,14 +97,14 @@ describe SurveysController do
       survey.update_attribute(:active, true)
       get 'deactivate', event_id: survey.event_id, id: survey.to_param, format: :js
       response.should be_success
-      survey.reload.active?.should be_false
+      survey.reload.active?.should be_falsey
     end
 
     it "activates an inactive survey" do
       survey.update_attribute(:active, false)
       get 'activate', event_id: survey.event_id, id: survey.to_param, format: :js
       response.should be_success
-      survey.reload.active?.should be_true
+      survey.reload.active?.should be_truthy
     end
   end
 end

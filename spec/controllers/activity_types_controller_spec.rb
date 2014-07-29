@@ -64,7 +64,7 @@ describe ActivityTypesController do
       field = FormField.last
       expect(field.name).to eql 'Test Field'
       expect(field.ordering).to eql 0
-      expect(field.required).to be_true
+      expect(field.required).to be_truthy
       expect(field.type).to eql 'FormField::Text'
     end
 
@@ -84,7 +84,7 @@ describe ActivityTypesController do
       field = FormField.last
       expect(field.name).to eql 'New name'
       expect(field.ordering).to eql 0
-      expect(field.required).to be_false
+      expect(field.required).to be_falsey
       expect(field.type).to eql 'FormField::Text'
     end
 
@@ -147,7 +147,7 @@ describe ActivityTypesController do
       type = ActivityType.last
       type.name.should == 'Activity Type test'
       type.description.should == 'Activity Type description'
-      type.active.should be_true
+      type.active.should be_truthy
     end
 
     it "should render the form_dialog template if errors" do
@@ -167,14 +167,14 @@ describe ActivityTypesController do
       activity_type.update_attribute(:active, true)
       get 'deactivate', id: activity_type.to_param, format: :js
       response.should be_success
-      activity_type.reload.active?.should be_false
+      activity_type.reload.active?.should be_falsey
     end
 
     it "activates an inactive brand_portfolio" do
       activity_type.update_attribute(:active, false)
       get 'activate', id: activity_type.to_param, format: :js
       response.should be_success
-      activity_type.reload.active?.should be_true
+      activity_type.reload.active?.should be_truthy
     end
   end
 end

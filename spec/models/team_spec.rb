@@ -28,7 +28,7 @@ describe Team do
     it "should return the active value as true" do
       team.activate!
       team.reload
-      team.active.should be_true
+      team.active.should be_truthy
     end
   end
 
@@ -38,7 +38,7 @@ describe Team do
     it "should return the active value as false" do
       team.deactivate!
       team.reload
-      team.active.should be_false
+      team.active.should be_falsey
     end
   end
 

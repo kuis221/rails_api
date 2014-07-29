@@ -36,13 +36,13 @@ describe CompanyUser do
     it "should deactivate the status of the user on the current company" do
       user = FactoryGirl.create(:company_user, active: true)
       user.deactivate!
-      user.reload.active.should be_false
+      user.reload.active.should be_falsey
     end
 
     it "should activate the status of the user on the current company" do
       user = FactoryGirl.create(:company_user, active: false)
       user.activate!
-      user.reload.active.should be_true
+      user.reload.active.should be_truthy
     end
   end
 
@@ -131,12 +131,12 @@ describe CompanyUser do
     let(:place)  { FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles') }
 
     it "should return false if the user doesn't places associated" do
-      expect(user.allowed_to_access_place?(place)).to be_false
+      expect(user.allowed_to_access_place?(place)).to be_falsey
     end
 
     it "should return true if the user has access to the city" do
       user.places << FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
-      expect(user.allowed_to_access_place?(place)).to be_true
+      expect(user.allowed_to_access_place?(place)).to be_truthy
     end
 
     it "should return true if the user has access to an area that includes the place's city" do
@@ -144,7 +144,7 @@ describe CompanyUser do
       area = FactoryGirl.create(:area, company_id: 1)
       area.places << city
       user.areas << area
-      expect(user.allowed_to_access_place?(place)).to be_true
+      expect(user.allowed_to_access_place?(place)).to be_truthy
     end
 
     it "should work with places that are not yet saved" do
@@ -153,7 +153,7 @@ describe CompanyUser do
       area = FactoryGirl.create(:area, company_id: 1)
       area.places << city
       user.areas << area
-      expect(user.allowed_to_access_place?(place)).to be_true
+      expect(user.allowed_to_access_place?(place)).to be_truthy
     end
   end
 
@@ -205,7 +205,7 @@ describe CompanyUser do
     #It should be updated once the phone_number_confirmed? method is implemented correctly
     #Right now it just looks for the phone number existence
     it "should return true if the user has a confirmed phone number" do
-      expect(user.phone_number_confirmed?).to be_true
+      expect(user.phone_number_confirmed?).to be_truthy
     end
   end
 
@@ -213,12 +213,12 @@ describe CompanyUser do
     let(:user) { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
 
     it "should return false if the user is not allowed to receive a notification" do
-      expect(user.allow_notification?('new_campaign_sms')).to be_false
+      expect(user.allow_notification?('new_campaign_sms')).to be_falsey
     end
 
     it "sshould return false if the user is allowed to receive a notification" do
       user.update_attributes({notifications_settings: ['new_campaign_sms']})
-      expect(user.allow_notification?('new_campaign_sms')).to be_true
+      expect(user.allow_notification?('new_campaign_sms')).to be_truthy
     end
   end
 
@@ -226,12 +226,12 @@ describe CompanyUser do
     let(:user) { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
 
     it "should return false if the user hasn't the correct permissions" do
-      expect(user.notification_setting_permission?('new_campaign')).to be_false
+      expect(user.notification_setting_permission?('new_campaign')).to be_falsey
     end
 
     it "should return true if the user has the correct permissions" do
       user.role.permissions.create({action: :read, subject_class: 'Campaign'})
-      expect(user.notification_setting_permission?('new_campaign')).to be_true
+      expect(user.notification_setting_permission?('new_campaign')).to be_truthy
     end
   end
 

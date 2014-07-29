@@ -87,7 +87,7 @@ describe FormFieldResult do
       r.value = {form_field.options[0].id => 50, form_field.options[1].id => 50}
       r.valid?
       expect(r.hash_value).to eql({form_field.options[0].id => 50, form_field.options[1].id => 50})
-      expect(r.save).to be_true
+      expect(r.save).to be_truthy
     end
   end
 end

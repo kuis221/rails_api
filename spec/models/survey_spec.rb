@@ -26,7 +26,7 @@ describe Survey do
     it "should return the active value as true" do
       survey.activate!
       survey.reload
-      survey.active.should be_true
+      survey.active.should be_truthy
     end
   end
 
@@ -36,7 +36,7 @@ describe Survey do
     it "should return the active value as false" do
       survey.deactivate!
       survey.reload
-      survey.active.should be_false
+      survey.active.should be_falsey
     end
   end
 end

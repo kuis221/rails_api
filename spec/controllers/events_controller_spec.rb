@@ -564,11 +564,11 @@ describe EventsController do
         campaign = FactoryGirl.create(:campaign, company_id: @company)
         field = FactoryGirl.create(:form_field_number, fieldable: campaign, kpi: FactoryGirl.create(:kpi, company_id: 1), required: true)
         event = FactoryGirl.create(:event, active: true, company: @company, campaign: campaign)
-        lambda {
+        expect {
           put 'submit', id: event.to_param, format: :js
           response.should be_success
           event.reload
-        }.should_not change(event, :submitted?).to(true)
+        }.to_not change(event, :submitted?)
       end
     end
 

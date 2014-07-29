@@ -33,7 +33,7 @@ describe Venue do
     let(:venue) { FactoryGirl.create(:venue, company: company, place: FactoryGirl.create(:place)) }
 
     it "return succeed if there are no events for this venue" do
-      venue.compute_stats.should be_true
+      venue.compute_stats.should be_truthy
     end
 
     it "count the number of events for the company" do
