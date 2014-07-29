@@ -193,6 +193,11 @@ feature 'Events section' do
         end
 
         expect(page).to have_content('Edited summary content')
+
+        # Submit the event
+        visit event_path(event)
+        click_link 'submit'
+        expect(page).to have_content('Your post event report has been submitted for approval')
       end
 
       scenario "should allow 0 for not required percentage fields" do
@@ -263,7 +268,8 @@ feature 'Events section' do
       before { company_user.places << place }
       let(:permissions) { [
         [:index, 'Event'], [:view_list, 'Event'], [:show, 'Event'],
-        [:view_unsubmitted_data, 'Event'], [:edit_unsubmitted_data, 'Event']] }
+        [:view_unsubmitted_data, 'Event'], [:edit_unsubmitted_data, 'Event'],
+        [:submit, 'Event']] }
     end
   end
 
