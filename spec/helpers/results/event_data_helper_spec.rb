@@ -17,11 +17,11 @@ describe Results::EventDataHelper do
       campaign.add_kpi kpi
 
       event = FactoryGirl.build(:approved_event, campaign: campaign)
-      event.result_for_kpi(kpi).value = {seg1.id.to_s => '88', seg2.id.to_s => '22'}
+      event.result_for_kpi(kpi).value = {seg1.id.to_s => '88', seg2.id.to_s => '12'}
       expect(event.save).to be_true
 
       helper.custom_fields_to_export_headers.should == ['MY KPI: UNO', 'MY KPI: DOS']
-      helper.custom_fields_to_export_values(event).should == [["Number", "percentage", 0.88], ["Number", "percentage", 0.22]]
+      helper.custom_fields_to_export_values(event).should == [["Number", "percentage", 0.88], ["Number", "percentage", 0.12]]
     end
 
     it "correctly include segmented kpis and non-segmented kpis together" do
