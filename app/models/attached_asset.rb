@@ -239,7 +239,7 @@ class AttachedAsset < ActiveRecord::Base
   def move_uploaded_file
     direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
     paperclip_file_path = file.path(:original).sub(%r{\A/},'')
-    res = file.s3_bucket.objects[paperclip_file_path].copy_from(direct_upload_url_data[:path], acl: :public_read)
+    file.s3_bucket.objects[paperclip_file_path].copy_from(direct_upload_url_data[:path], acl: :public_read)
   end
 
   # Final upload processing step
