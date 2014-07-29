@@ -126,17 +126,20 @@
 	}
 	.team-assigned{
 		height: 30px;
-		b{
-			color: silver;
-			display: inline-block;
-			font-weight: 400;
-			margin-right: 20px;
-			width: auto;
-		}
-		span.label{
-			background-color: silver;
-			display: inline-block;
-			margin-right: 5px;
+		span{
+			&.assigned-to:before{
+				content: "\e61d";
+				color: $user_menu;
+				display: inline-block;
+				font-size: 17px;
+				margin-right: 12px;
+				top: 2px;
+				width: auto;
+			}
+			&.label{
+				display: inline-block;
+				margin-right: 5px;
+			}
 		}
 	}
 	.aditional-info{
