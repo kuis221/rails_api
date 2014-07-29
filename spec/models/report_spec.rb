@@ -18,8 +18,8 @@
 
 require 'spec_helper'
 
-describe Report do
-  it { should validate_presence_of(:name) }
+describe Report, :type => :model do
+  it { is_expected.to validate_presence_of(:name) }
 
   describe "#activate" do
     let(:report) { FactoryGirl.build(:report, active: false) }
@@ -27,7 +27,7 @@ describe Report do
     it "should return the active value as true" do
       report.activate!
       report.reload
-      report.active.should be_truthy
+      expect(report.active).to be_truthy
     end
   end
 
@@ -37,7 +37,7 @@ describe Report do
     it "should return the active value as false" do
       report.deactivate!
       report.reload
-      report.active.should be_falsey
+      expect(report.active).to be_falsey
     end
   end
 

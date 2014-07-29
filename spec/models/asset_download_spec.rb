@@ -18,17 +18,17 @@
 
 require 'spec_helper'
 
-describe AssetDownload do
-  it { should belong_to(:user) }
+describe AssetDownload, :type => :model do
+  it { is_expected.to belong_to(:user) }
 
-  it { should validate_presence_of(:uid) }
+  it { is_expected.to validate_presence_of(:uid) }
 
   describe "states" do
     let(:asset) { FactoryGirl.create(:asset_download) }
 
     describe ":new" do
       it 'should be an initial state' do
-        asset.should be_new
+        expect(asset).to be_new
       end
 
       it 'should change to :queued on :new or :complete' do
@@ -37,16 +37,16 @@ describe AssetDownload do
       end
 
       it 'should change to :processing on :queued or :new' do
-        asset.should_receive(:compress_assets)
+        expect(asset).to receive(:compress_assets)
         asset.process
-        asset.should be_processing
+        expect(asset).to be_processing
       end
 
       it 'should change to :completed on :processing' do
-        asset.should_receive(:compress_assets)
+        expect(asset).to receive(:compress_assets)
         asset.process
         asset.complete
-        asset.should be_completed
+        expect(asset).to be_completed
       end
     end
   end

@@ -145,8 +145,8 @@ module RequestsHelper
   include CapybaraBrandscopicHelpers
 
   matcher :have_error do |text|
-    match_for_should { |node| find("span[for=#{node['id']}].help-inline").has_content?(text) }
-    match_for_should_not { |node| find("span[for=#{node['id']}].help-inline").has_no_content?(text) }
+    match { |node| find("span[for=#{node['id']}].help-inline").has_content?(text) }
+    match_when_negated { |node| find("span[for=#{node['id']}].help-inline").has_no_content?(text) }
   end
 
   def visible_modal

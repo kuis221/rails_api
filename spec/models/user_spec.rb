@@ -45,47 +45,47 @@
 
 require 'spec_helper'
 
-describe User do
-  it { should have_many(:company_users) }
+describe User, :type => :model do
+  it { is_expected.to have_many(:company_users) }
 
-  it { should allow_value('guilleva@gmail.com').for(:email) }
+  it { is_expected.to allow_value('guilleva@gmail.com').for(:email) }
 
-  it { should allow_value("Avalidpassword1").for(:password) }
-  it { should allow_value("validPassw0rd").for(:password) }
-  it { should_not allow_value('Invalidpassword').for(:password).with_message(/should have at least one digit/) }
-  it { should_not allow_value('invalidpassword1').for(:password).with_message(/should have at least one upper case letter/) }
-  it { should validate_confirmation_of(:password) }
-  it { should_not validate_presence_of(:detected_time_zone) }
+  it { is_expected.to allow_value("Avalidpassword1").for(:password) }
+  it { is_expected.to allow_value("validPassw0rd").for(:password) }
+  it { is_expected.not_to allow_value('Invalidpassword').for(:password).with_message(/should have at least one digit/) }
+  it { is_expected.not_to allow_value('invalidpassword1').for(:password).with_message(/should have at least one upper case letter/) }
+  it { is_expected.to validate_confirmation_of(:password) }
+  it { is_expected.not_to validate_presence_of(:detected_time_zone) }
 
   describe "email uniqness" do
     before do
       @user = FactoryGirl.create(:user)
     end
-    it { should validate_uniqueness_of(:email) }
+    it { is_expected.to validate_uniqueness_of(:email) }
   end
 
   describe "validations when inviting user" do
     context do
       before { subject.inviting_user = true }
-      it { should_not validate_presence_of(:country) }
-      it { should_not validate_presence_of(:state) }
-      it { should_not validate_presence_of(:city) }
-      it { should_not validate_presence_of(:time_zone) }
-      it { should_not validate_presence_of(:password) }
+      it { is_expected.not_to validate_presence_of(:country) }
+      it { is_expected.not_to validate_presence_of(:state) }
+      it { is_expected.not_to validate_presence_of(:city) }
+      it { is_expected.not_to validate_presence_of(:time_zone) }
+      it { is_expected.not_to validate_presence_of(:password) }
     end
   end
 
   describe "validations when editing another user" do
     context do
       before { subject.updating_user = true }
-      it { should_not validate_presence_of(:phone_number) }
-      it { should_not validate_presence_of(:country) }
-      it { should_not validate_presence_of(:state) }
-      it { should_not validate_presence_of(:city) }
-      it { should_not validate_presence_of(:street_address) }
-      it { should_not validate_presence_of(:city) }
-      it { should_not validate_presence_of(:zip_code) }
-      it { should_not validate_presence_of(:password) }
+      it { is_expected.not_to validate_presence_of(:phone_number) }
+      it { is_expected.not_to validate_presence_of(:country) }
+      it { is_expected.not_to validate_presence_of(:state) }
+      it { is_expected.not_to validate_presence_of(:city) }
+      it { is_expected.not_to validate_presence_of(:street_address) }
+      it { is_expected.not_to validate_presence_of(:city) }
+      it { is_expected.not_to validate_presence_of(:zip_code) }
+      it { is_expected.not_to validate_presence_of(:password) }
     end
   end
 
@@ -95,11 +95,11 @@ describe User do
         subject.invitation_accepted_at = nil
         subject.accepting_invitation = true
       end
-      it { should validate_presence_of(:country) }
-      it { should validate_presence_of(:state) }
-      it { should validate_presence_of(:city) }
-      it { should validate_presence_of(:time_zone) }
-      it { should validate_presence_of(:password) }
+      it { is_expected.to validate_presence_of(:country) }
+      it { is_expected.to validate_presence_of(:state) }
+      it { is_expected.to validate_presence_of(:city) }
+      it { is_expected.to validate_presence_of(:time_zone) }
+      it { is_expected.to validate_presence_of(:password) }
     end
   end
 
@@ -108,11 +108,11 @@ describe User do
       before do
         subject.invitation_accepted_at = Time.now
       end
-      it { should validate_presence_of(:country) }
-      it { should validate_presence_of(:state) }
-      it { should validate_presence_of(:city) }
-      it { should validate_presence_of(:time_zone) }
-      it { should_not validate_presence_of(:password) }
+      it { is_expected.to validate_presence_of(:country) }
+      it { is_expected.to validate_presence_of(:state) }
+      it { is_expected.to validate_presence_of(:city) }
+      it { is_expected.to validate_presence_of(:time_zone) }
+      it { is_expected.not_to validate_presence_of(:password) }
     end
   end
 
@@ -120,51 +120,51 @@ describe User do
     let(:user) { FactoryGirl.build(:user, :first_name => 'Juanito', :last_name => 'Perez') }
 
     it "should return the first_name and last_name concatenated" do
-      user.full_name.should == 'Juanito Perez'
+      expect(user.full_name).to eq('Juanito Perez')
     end
 
     it "should return only the first_name if it doesn't have last_name" do
       user.last_name = nil
-      user.full_name.should == 'Juanito'
+      expect(user.full_name).to eq('Juanito')
     end
 
     it "should return only the last_name if it doesn't have first_name" do
       user.first_name = nil
-      user.full_name.should == 'Perez'
+      expect(user.full_name).to eq('Perez')
     end
   end
 
   describe "#country_name" do
     it "should return the correct country name" do
       user = FactoryGirl.build(:user, country: 'US')
-      user.country_name.should == 'United States'
+      expect(user.country_name).to eq('United States')
     end
 
     it "should return nil if the user doesn't have a country" do
       user = FactoryGirl.build(:user, country: nil)
-      user.country_name.should be_nil
+      expect(user.country_name).to be_nil
     end
 
     it "should return nil if the user has an invalid country" do
       user = FactoryGirl.build(:user, country: 'XYZ')
-      user.country_name.should be_nil
+      expect(user.country_name).to be_nil
     end
   end
 
   describe "#state_name" do
     it "should return the correct state name" do
       user = FactoryGirl.build(:user, country: 'US', state: 'FL')
-      user.state_name.should == 'Florida'
+      expect(user.state_name).to eq('Florida')
     end
 
     it "should return nil if the user doesn't have a state" do
       user = FactoryGirl.build(:user, country: 'US', state: nil)
-      user.state_name.should be_nil
+      expect(user.state_name).to be_nil
     end
 
     it "should return nil if the user has an invalid state" do
       user = FactoryGirl.build(:user, country: 'US', state: 'XYZ')
-      user.state_name.should be_nil
+      expect(user.state_name).to be_nil
     end
   end
 
@@ -184,8 +184,8 @@ describe User do
       end
 
       companies = user.companies_active_role
-      companies[0].should == companyA
-      companies[1].should == companyC
+      expect(companies[0]).to eq(companyA)
+      expect(companies[1]).to eq(companyC)
     end
   end
 
@@ -194,14 +194,14 @@ describe User do
       company = FactoryGirl.build(:company)
       user    = FactoryGirl.build(:user, current_company: company, company_users: [FactoryGirl.build(:company_user, company: company, role: FactoryGirl.build(:role, is_admin: true))])
       User.current = user
-      user.is_super_admin?.should be_truthy
+      expect(user.is_super_admin?).to be_truthy
     end
 
     it "should return false if the current role is admin" do
       company = FactoryGirl.build(:company)
       user    = FactoryGirl.build(:user, current_company: company, company_users: [FactoryGirl.build(:company_user, company: company, role: FactoryGirl.build(:role, is_admin: false))])
       User.current = user
-      user.is_super_admin?.should be_falsey
+      expect(user.is_super_admin?).to be_falsey
     end
   end
 end

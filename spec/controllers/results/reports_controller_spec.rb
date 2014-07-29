@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Results::ReportsController do
+describe Results::ReportsController, :type => :controller do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.companies.first
@@ -13,7 +13,7 @@ describe Results::ReportsController do
     it "returns http success" do
       report.reload
       get 'index'
-      response.should be_success
+      expect(response).to be_success
       expect(assigns(:reports)).to match_array [report]
     end
   end
@@ -21,9 +21,9 @@ describe Results::ReportsController do
   describe "GET 'new'" do
     it "returns http success" do
       get 'new', format: :js
-      response.should be_success
-      response.should render_template('new')
-      response.should render_template('_form')
+      expect(response).to be_success
+      expect(response).to render_template('new')
+      expect(response).to render_template('_form')
     end
   end
 
@@ -31,9 +31,9 @@ describe Results::ReportsController do
     let(:report) { FactoryGirl.create(:report, company: @company) }
     it "returns http success" do
       get 'preview', id: report.id, format: :js
-      response.should be_success
-      response.should render_template('preview')
-      response.should render_template('_report_preview')
+      expect(response).to be_success
+      expect(response).to render_template('preview')
+      expect(response).to render_template('_report_preview')
 
       expect(assigns(:report)).to be_new_record
     end
@@ -50,7 +50,7 @@ describe Results::ReportsController do
   describe "POST 'create'" do
     it "returns http success" do
       post 'create', format: :js
-      response.should be_success
+      expect(response).to be_success
     end
 
     it "should not render form_dialog if no errors" do
@@ -80,26 +80,26 @@ describe Results::ReportsController do
     it "deactivates an active report" do
       report.update_attribute(:active, true)
       get 'deactivate', id: report.to_param, format: :js
-      response.should be_success
-      report.reload.active?.should be_falsey
+      expect(response).to be_success
+      expect(report.reload.active?).to be_falsey
     end
 
     it "activates an inactive report" do
       report.update_attribute(:active, false)
       get 'activate', id: report.to_param, format: :js
-      response.should be_success
-      report.reload.active?.should be_truthy
+      expect(response).to be_success
+      expect(report.reload.active?).to be_truthy
     end
   end
 
   describe "PUT 'update'" do
     it "must update the report attributes" do
       put 'update', id: report.to_param, report: {name: 'Test Report', description: 'Test Report description'}
-      assigns(:report).should == report
-      response.should redirect_to([:results, report])
+      expect(assigns(:report)).to eq(report)
+      expect(response).to redirect_to([:results, report])
       report.reload
-      report.name.should == 'Test Report'
-      report.description.should == 'Test Report description'
+      expect(report.name).to eq('Test Report')
+      expect(report.description).to eq('Test Report description')
     end
 
     it "must update the report fields attributes" do
@@ -109,7 +109,7 @@ describe Results::ReportsController do
         values:  [{field: 'kpi:1', label: 'Impressions', aggregate: 'sum', precision: '1'}],
         filters:  [{field: 'place:name', label: 'Place'}]
       }, format: :js
-      assigns(:report).should == report
+      expect(assigns(:report)).to eq(report)
       expect(response).to render_template('update')
       report.reload
       expect(report.rows.map{|r| {field: r.field, label: r.label, aggregate: r.aggregate}}).to eql [{field: 'place:name', label: 'Venue Name', aggregate: 'sum'}]

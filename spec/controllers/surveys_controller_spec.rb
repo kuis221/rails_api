@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe SurveysController do
+describe SurveysController, :type => :controller do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.current_company
@@ -14,17 +14,17 @@ describe SurveysController do
   describe "GET 'new'" do
     it "returns http success" do
       get 'new', event_id: event.to_param, format: :js
-      response.should render_template('new')
-      response.should render_template('form')
-      response.should be_success
+      expect(response).to render_template('new')
+      expect(response).to render_template('form')
+      expect(response).to be_success
     end
   end
 
   describe "POST 'create'" do
     it "returns http success" do
       post 'create', event_id: event.to_param, format: :js
-      response.should be_success
-      response.should render_template('create')
+      expect(response).to be_success
+      expect(response).to render_template('create')
     end
 
     it "should not render form_dialog if no errors" do
@@ -38,7 +38,7 @@ describe SurveysController do
       age_answer = Kpi.age.kpis_segments.sample
       gender_answer = Kpi.gender.kpis_segments.sample
       ethnicity_answer = Kpi.ethnicity.kpis_segments.sample
-      lambda {
+      expect {
         post 'create', event_id: event.to_param, survey: {
           "surveys_answers_attributes"=>{
             "0"=>{"kpi_id"=>Kpi.gender.id, "question_id"=>"1", "answer"=>gender_answer.id},
@@ -54,18 +54,18 @@ describe SurveysController do
             "10"=>{"brand_id"=>brand2.to_param, "question_id"=>"4", "answer"=>"4"}
           },
         }, format: :js
-      }.should change(Survey, :count).by(1)
+      }.to change(Survey, :count).by(1)
 
       survey = Survey.last
-      survey.age.should == age_answer.text
-      survey.gender.should == gender_answer.text
-      survey.ethnicity.should == ethnicity_answer.text
-      response.should be_success
-      response.should render_template(:create)
-      response.should_not render_template(:form_dialog)
+      expect(survey.age).to eq(age_answer.text)
+      expect(survey.gender).to eq(gender_answer.text)
+      expect(survey.ethnicity).to eq(ethnicity_answer.text)
+      expect(response).to be_success
+      expect(response).to render_template(:create)
+      expect(response).not_to render_template(:form_dialog)
 
       survey = Survey.last
-      survey.event_id.should == event.id
+      expect(survey.event_id).to eq(event.id)
     end
   end
 
@@ -84,9 +84,9 @@ describe SurveysController do
         },
       }, format: :js
 
-      survey.age.should == age_answer.text
-      survey.gender.should == gender_answer.text
-      survey.ethnicity.should == ethnicity_answer.text
+      expect(survey.age).to eq(age_answer.text)
+      expect(survey.gender).to eq(gender_answer.text)
+      expect(survey.ethnicity).to eq(ethnicity_answer.text)
     end
   end
 
@@ -96,15 +96,15 @@ describe SurveysController do
     it "deactivates an active survey" do
       survey.update_attribute(:active, true)
       get 'deactivate', event_id: survey.event_id, id: survey.to_param, format: :js
-      response.should be_success
-      survey.reload.active?.should be_falsey
+      expect(response).to be_success
+      expect(survey.reload.active?).to be_falsey
     end
 
     it "activates an inactive survey" do
       survey.update_attribute(:active, false)
       get 'activate', event_id: survey.event_id, id: survey.to_param, format: :js
-      response.should be_success
-      survey.reload.active?.should be_truthy
+      expect(response).to be_success
+      expect(survey.reload.active?).to be_truthy
     end
   end
 end

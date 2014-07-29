@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe CompanyUsersController do
+describe CompanyUsersController, :type => :controller do
   describe "as registered user" do
     before(:each) do
       @user = sign_in_as_user
@@ -13,21 +13,21 @@ describe CompanyUsersController do
 
       it "returns http success" do
         get 'edit', id: user.to_param, format: :js
-        response.should be_success
+        expect(response).to be_success
       end
     end
 
     describe "GET 'index'" do
       it "returns http success" do
         get 'index'
-        response.should be_success
+        expect(response).to be_success
       end
     end
 
     describe "GET 'items'" do
       it "returns http success " do
         get 'index', format: :json
-        response.should be_success
+        expect(response).to be_success
       end
     end
 
@@ -36,8 +36,8 @@ describe CompanyUsersController do
 
       it "returns http success" do
         get 'show', id: user.to_param
-        response.should be_success
-        assigns(:company_user).should == user
+        expect(response).to be_success
+        expect(assigns(:company_user)).to eq(user)
       end
     end
 
@@ -45,22 +45,22 @@ describe CompanyUsersController do
       let(:user){ FactoryGirl.create(:company_user, company_id: @company.id, active: true) }
 
       it "deactivates an active user" do
-        user.active.should be_truthy
+        expect(user.active).to be_truthy
         get 'deactivate', id: user.to_param, format: :js
-        response.should be_success
-        user.reload.active?.should be_falsey
-        user.active.should be_falsey
+        expect(response).to be_success
+        expect(user.reload.active?).to be_falsey
+        expect(user.active).to be_falsey
       end
     end
 
     describe "GET 'activate'" do
       let(:user){ FactoryGirl.create(:company_user, company_id: @company.id, active: false) }
       it "activates an inactive user" do
-        user.active.should be_falsey
+        expect(user.active).to be_falsey
         get 'activate', id: user.to_param, format: :js
-        response.should be_success
-        user.reload.active?.should be_truthy
-        user.active.should be_truthy
+        expect(response).to be_success
+        expect(user.reload.active?).to be_truthy
+        expect(user.active).to be_truthy
       end
     end
 
@@ -68,60 +68,60 @@ describe CompanyUsersController do
       let(:user){ FactoryGirl.create(:company_user, company_id: @company.id) }
       it "must update the user data" do
         put 'update', id: user.to_param, company_user: {user_attributes: {id: user.user_id,first_name: 'Juanito', last_name: 'Perez'}}, format: :js
-        assigns(:company_user).should == user
+        expect(assigns(:company_user)).to eq(user)
 
-        response.should be_success
+        expect(response).to be_success
         user.reload
-        user.first_name.should == 'Juanito'
-        user.last_name.should == 'Perez'
+        expect(user.first_name).to eq('Juanito')
+        expect(user.last_name).to eq('Perez')
       end
 
       it "must update the user password" do
         old_password = user.user.encrypted_password
         put 'update', id: user.to_param, company_user: {user_attributes: {id: user.user_id, password: 'Juanito123', password_confirmation: 'Juanito123'}}, format: :js
-        assigns(:company_user).should == user
-        response.should be_success
+        expect(assigns(:company_user)).to eq(user)
+        expect(response).to be_success
         user.reload
-        user.user.encrypted_password.should_not == old_password
+        expect(user.user.encrypted_password).not_to eq(old_password)
       end
 
       it "must update its own profile data" do
         old_password = @user.encrypted_password
         put 'update', id: @company_user.to_param, company_user: {user_attributes: {id: @user.id, first_name: 'Juanito', last_name: 'Perez',  email: 'test@testing.com', city: 'Miami', state: 'FL', country: 'US', password: 'Juanito123', password_confirmation: 'Juanito123'}}, format: :js
-        assigns(:company_user).should == @company_user
-        response.should be_success
+        expect(assigns(:company_user)).to eq(@company_user)
+        expect(response).to be_success
         @user.reload
-        @user.first_name.should == 'Juanito'
-        @user.last_name.should == 'Perez'
-        @user.email.should == @user.email
-        @user.unconfirmed_email.should == 'test@testing.com'
-        @user.city.should == 'Miami'
-        @user.state.should == 'FL'
-        @user.country.should == 'US'
-        @user.encrypted_password.should_not == old_password
+        expect(@user.first_name).to eq('Juanito')
+        expect(@user.last_name).to eq('Perez')
+        expect(@user.email).to eq(@user.email)
+        expect(@user.unconfirmed_email).to eq('test@testing.com')
+        expect(@user.city).to eq('Miami')
+        expect(@user.state).to eq('FL')
+        expect(@user.country).to eq('US')
+        expect(@user.encrypted_password).not_to eq(old_password)
       end
 
       it "user have to enter the phone number, country/state, city, street address and zip code information when editing his profile" do
         old_password = @user.encrypted_password
-        controller.should_receive(:can?).twice.with(:super_update, @company_user).and_return false
-        controller.should_receive(:can?).at_least(:once).and_return true
+        expect(controller).to receive(:can?).twice.with(:super_update, @company_user).and_return false
+        expect(controller).to receive(:can?).at_least(:once).and_return true
         put 'update', id: @company_user.to_param, company_user: {user_attributes: {id: user.user_id, first_name: 'Juanito', last_name: 'Perez', email: 'test@testing.com', phone_number: '', city: '', state: '', country: '', street_address: '', zip_code: '', password: 'Juanito123', password_confirmation: 'Juanito123'}}, format: :js
-        response.should be_success
-        assigns(:company_user).errors.count.should > 0
-        assigns(:company_user).errors['user.phone_number'].should == ["can't be blank"]
-        assigns(:company_user).errors['user.country'].should == ["can't be blank"]
-        assigns(:company_user).errors['user.state'].should == ["can't be blank"]
-        assigns(:company_user).errors['user.city'].should == ["can't be blank"]
-        assigns(:company_user).errors['user.street_address'].should == ["can't be blank"]
-        assigns(:company_user).errors['user.zip_code'].should == ["can't be blank"]
+        expect(response).to be_success
+        expect(assigns(:company_user).errors.count).to be > 0
+        expect(assigns(:company_user).errors['user.phone_number']).to eq(["can't be blank"])
+        expect(assigns(:company_user).errors['user.country']).to eq(["can't be blank"])
+        expect(assigns(:company_user).errors['user.state']).to eq(["can't be blank"])
+        expect(assigns(:company_user).errors['user.city']).to eq(["can't be blank"])
+        expect(assigns(:company_user).errors['user.street_address']).to eq(["can't be blank"])
+        expect(assigns(:company_user).errors['user.zip_code']).to eq(["can't be blank"])
       end
 
       it "allows admin to update teams and role" do
         team = FactoryGirl.create(:team, company: @company)
         role = FactoryGirl.create(:role, company: @company)
         put 'update', id: user.to_param, company_user: {role_id: role.id, team_ids: [team.id], user_attributes: {id: user.user_id, first_name: 'Juanito', last_name: 'Perez',  email: 'test@testing.com',  password: 'Juanito123', password_confirmation: 'Juanito123'}}, format: :js
-        user.reload.role_id.should == role.id
-        user.teams.should == [team]
+        expect(user.reload.role_id).to eq(role.id)
+        expect(user.teams).to eq([team])
       end
 
       it "allows admin to update invited users" do
@@ -130,9 +130,9 @@ describe CompanyUsersController do
         team = FactoryGirl.create(:team, company: @company)
         role = FactoryGirl.create(:role, company: @company)
         put 'update', id: company_user.to_param, company_user: {team_ids: [team.id], role_id: role.id, notifications_settings: ["event_recap_late_sms", "event_recap_pending_approval_email", "new_event_team_app"], user_attributes: {id: invited_user.id, first_name: 'Juanito', last_name: 'Perez',  email: 'test@testing.com'}}, format: :js
-        company_user.reload.role_id.should == role.id
-        company_user.teams.should == [team]
-        company_user.notifications_settings.should include("event_recap_late_sms", "event_recap_pending_approval_email", "new_event_team_app")
+        expect(company_user.reload.role_id).to eq(role.id)
+        expect(company_user.teams).to eq([team])
+        expect(company_user.notifications_settings).to include("event_recap_late_sms", "event_recap_pending_approval_email", "new_event_team_app")
       end
     end
 
@@ -141,23 +141,23 @@ describe CompanyUsersController do
         another_company_id = FactoryGirl.create(:company).id
         FactoryGirl.create(:company_user, company_id: another_company_id, user: @user, role_id: FactoryGirl.create(:role, company_id: another_company_id).id).id
         get 'select_company', company_id: another_company_id
-        session[:current_company_id].should == another_company_id
-        response.should redirect_to root_path
+        expect(session[:current_company_id]).to eq(another_company_id)
+        expect(response).to redirect_to root_path
       end
 
       it 'should NOT update the session with a invalid company_id' do
         get 'select_company', company_id: 9999
-        session[:current_company_id].should_not == 9999
-        flash[:error].should == "You are not allowed login into this company"
-        response.should redirect_to root_path
+        expect(session[:current_company_id]).not_to eq(9999)
+        expect(flash[:error]).to eq("You are not allowed login into this company")
+        expect(response).to redirect_to root_path
       end
 
       it 'should NOT update the session with a company_id if the user is not active on it' do
         another_company_id = FactoryGirl.create(:company_user, company: FactoryGirl.create(:company), user: @user, active: false).company_id
         get 'select_company', company_id: another_company_id
-        session[:current_company_id].should_not == another_company_id
-        flash[:error].should == "You are not allowed login into this company"
-        response.should redirect_to root_path
+        expect(session[:current_company_id]).not_to eq(another_company_id)
+        expect(flash[:error]).to eq("You are not allowed login into this company")
+        expect(response).to redirect_to root_path
       end
     end
 
@@ -170,22 +170,22 @@ describe CompanyUsersController do
         user.campaigns << campaign
         expect {
           delete 'remove_campaign', id: user.id, campaign_id: campaign.id, format: :js
-          response.should be_success
+          expect(response).to be_success
           user.reload
         }.to change(user.campaigns, :count).by(-1)
 
-        response.should render_template('remove_campaign')
+        expect(response).to render_template('remove_campaign')
       end
 
       it 'should remove a campaing is assigned to the user through a brand' do
         user.memberships.create(parent: brand, memberable: campaign)
         expect {
           delete 'remove_campaign', id: user.id, parent_id: brand.id, parent_type: 'Brand', campaign_id: campaign.id, format: :js
-          response.should be_success
+          expect(response).to be_success
           user.reload
         }.to change(user.campaigns, :count).by(-1)
 
-        response.should render_template('remove_campaign')
+        expect(response).to render_template('remove_campaign')
       end
 
       it 'should deassign the brand from the user and assign any other campaigns that is part of this brand' do
@@ -193,16 +193,16 @@ describe CompanyUsersController do
         campaign.brands << brand
         campaign2.brands << brand
 
-        user.memberships.create(parent: brand, memberable: brand).should be_truthy
+        expect(user.memberships.create(parent: brand, memberable: brand)).to be_truthy
         expect {
           delete 'remove_campaign', id: user.id, parent_id: brand.id, parent_type: 'Brand', campaign_id: campaign.id, format: :js
-          response.should be_success
+          expect(response).to be_success
           user.reload
         }.to_not change(user.memberships, :count)  # Remove the parent and add the campaign2 as a member
 
-        user.memberships.map(&:memberable).should == [campaign2]
+        expect(user.memberships.map(&:memberable)).to eq([campaign2])
 
-        response.should render_template('remove_campaign')
+        expect(response).to render_template('remove_campaign')
       end
     end
 
@@ -215,13 +215,13 @@ describe CompanyUsersController do
         campaign.brands << brand
         expect {
           post 'add_campaign', id: user.id, parent_id: brand.id, parent_type: 'Brand', campaign_id: campaign.id, format: :js
-          response.should be_success
+          expect(response).to be_success
           user.reload
         }.to change(user.memberships, :count).by(1)
 
-        user.memberships.map(&:parent).should == [brand]
-        user.memberships.map(&:memberable).should == [campaign]
-        user.campaigns.should == [campaign]
+        expect(user.memberships.map(&:parent)).to eq([brand])
+        expect(user.memberships.map(&:memberable)).to eq([campaign])
+        expect(user.campaigns).to eq([campaign])
       end
     end
 
@@ -235,18 +235,18 @@ describe CompanyUsersController do
         user.brands << brand
         expect {
           post 'disable_campaigns', id: user.id, parent_id: brand.id, parent_type: 'Brand', format: :js
-          response.should be_success
+          expect(response).to be_success
           user.reload
         }.to change(user.brands, :count).by(-1)
 
-        user.memberships.map(&:parent).should == [brand]
-        user.memberships.map(&:memberable).should == [campaign]
-        user.campaigns.should == [campaign]
+        expect(user.memberships.map(&:parent)).to eq([brand])
+        expect(user.memberships.map(&:memberable)).to eq([campaign])
+        expect(user.campaigns).to eq([campaign])
       end
 
       it "should now fail if invalid parent params were provided" do
         post 'disable_campaigns', id: user.id, parent_id: '6669999', parent_type: 'Brand', format: :js
-        response.should be_success
+        expect(response).to be_success
       end
     end
 
@@ -260,13 +260,13 @@ describe CompanyUsersController do
         campaign.brands << brand
         expect {
           post 'enable_campaigns', id: user.id, parent_id: brand.id, parent_type: 'Brand', format: :js
-          response.should be_success
+          expect(response).to be_success
           user.reload
         }.to change(user.brands, :count).by(1)
 
-        user.memberships.map(&:parent).should == [nil]
-        user.memberships.map(&:memberable).should == [brand]
-        user.campaigns.should == []
+        expect(user.memberships.map(&:parent)).to eq([nil])
+        expect(user.memberships.map(&:memberable)).to eq([brand])
+        expect(user.campaigns).to eq([])
       end
 
       it "should not create another membership if there is one already" do
@@ -275,7 +275,7 @@ describe CompanyUsersController do
         user.reload
         expect {
           post 'enable_campaigns', id: user.id, parent_id: brand.id, parent_type: 'Brand', format: :js
-          response.should be_success
+          expect(response).to be_success
         }.to_not change(user.memberships, :count)
 
       end

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe PlacesController do
+describe PlacesController, :type => :controller do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.companies.first
@@ -13,16 +13,16 @@ describe PlacesController do
 
   describe "POST 'create'" do
     it "returns http success" do
-      Place.any_instance.should_receive(:fetch_place_data).and_return(true)
+      expect_any_instance_of(Place).to receive(:fetch_place_data).and_return(true)
       post 'create', area_id: area.id, place: {reference: ":ref||:id"}, format: :js
       expect(response).to be_success
     end
 
     it "should create a new place that is no found in google places" do
-      Place.any_instance.should_receive(:fetch_place_data).and_return(true)
-      GooglePlaces::Client.any_instance.should_receive(:spots).and_return([])
-      HTTParty.should_receive(:post).and_return({'reference' => 'ABC', 'id' => 'XYZ'})
-      PlacesController.any_instance.should_receive(:open).and_return(double(read: ActiveSupport::JSON.encode({'results' => [{'geometry' => { 'location' => {'lat' => '1.2322', lng: '-3.23455'}}}]})))
+      expect_any_instance_of(Place).to receive(:fetch_place_data).and_return(true)
+      expect_any_instance_of(GooglePlaces::Client).to receive(:spots).and_return([])
+      expect(HTTParty).to receive(:post).and_return({'reference' => 'ABC', 'id' => 'XYZ'})
+      expect_any_instance_of(PlacesController).to receive(:open).and_return(double(read: ActiveSupport::JSON.encode({'results' => [{'geometry' => { 'location' => {'lat' => '1.2322', lng: '-3.23455'}}}]})))
       expect {
         post 'create', area_id: area.to_param, add_new_place: true, place: {name: "Guille's place", street_number: '123 st', route: 'xyz 321', city: 'Curridabat', state: 'San José', zipcode: '12345', country: 'CR'}, format: :js
       }.to change(Place, :count).by(1)
@@ -43,12 +43,12 @@ describe PlacesController do
 
     context "the place already exists on API" do
       it "save the user's address data if spot have not address associated" do
-        GooglePlaces::Client.any_instance.should_receive(:spot).and_return(double(
+        expect_any_instance_of(GooglePlaces::Client).to receive(:spot).and_return(double(
           name: 'APIs place name', lat: '1.111', lng: '2.222', formatted_address: 'api fmt address', types: ['bar'],
           address_components: nil
         ))
-        GooglePlaces::Client.any_instance.should_receive(:spots).and_return([double(id: '123', reference: 'XYZ')])
-        PlacesController.any_instance.should_receive(:open).and_return(double(read: ActiveSupport::JSON.encode({'results' => [{'geometry' => { 'location' => {'lat' => '1.2322', lng: '-3.23455'}}}]})))
+        expect_any_instance_of(GooglePlaces::Client).to receive(:spots).and_return([double(id: '123', reference: 'XYZ')])
+        expect_any_instance_of(PlacesController).to receive(:open).and_return(double(read: ActiveSupport::JSON.encode({'results' => [{'geometry' => { 'location' => {'lat' => '1.2322', lng: '-3.23455'}}}]})))
         expect {
           post 'create', area_id: area.id, add_new_place: true, place: {name: "Guille's place", street_number: '123 st', route: 'xyz 321', city: 'Curridabat', state: 'San José', zipcode: '12345', country: 'CR'}, format: :js
         }.to change(Place, :count).by(1)
@@ -66,12 +66,12 @@ describe PlacesController do
         expect(place.longitude).to eql 2.222
         expect(place.locations.count).to eql 4
 
-        area.places.should == [place]
+        expect(area.places).to eq([place])
       end
 
       it "creates the place and associate its to the campaign" do
         Kpi.create_global_kpis
-        GooglePlaces::Client.any_instance.should_receive(:spot).and_return(double(
+        expect_any_instance_of(GooglePlaces::Client).to receive(:spot).and_return(double(
           name: 'APIs place name', lat: '1.111', lng: '2.222', formatted_address: 'api fmt address', types: ['bar'],
           address_components: [
             {'types' => ['country'],'short_name' => 'US', 'long_name' => 'United States'},
@@ -107,7 +107,7 @@ describe PlacesController do
           "north america/united states/california/manhattan beach"
         ]
 
-        campaign.places.should == [place]
+        expect(campaign.places).to eq([place])
       end
 
       it "keeps the actual data if the place already exists on the DB" do
@@ -117,8 +117,8 @@ describe PlacesController do
             city: 'Paraiso', state: 'Cartago', country: 'CR', latitude: 1.234, longitude: -1.234,
             place_id: '123', reference: 'XYZ'
         )
-        GooglePlaces::Client.any_instance.should_receive(:spots).and_return([double(id: '123', reference: 'XYZ')])
-        PlacesController.any_instance.should_receive(:open).and_return(double(read: ActiveSupport::JSON.encode({'results' => [{'geometry' => { 'location' => {'lat' => '1.2322', lng: '-3.23455'}}}]})))
+        expect_any_instance_of(GooglePlaces::Client).to receive(:spots).and_return([double(id: '123', reference: 'XYZ')])
+        expect_any_instance_of(PlacesController).to receive(:open).and_return(double(read: ActiveSupport::JSON.encode({'results' => [{'geometry' => { 'location' => {'lat' => '1.2322', lng: '-3.23455'}}}]})))
 
         expect {
           post 'create', area_id: area.id, add_new_place: true, place: {name: "Guille's place", street_number: '123 st', route: 'xyz 321', city: 'Curridabat', state: 'San Jose', zipcode: '12345', country: 'CR'}, format: :js
@@ -138,13 +138,13 @@ describe PlacesController do
         expect(place.latitude).to eql 1.234
         expect(place.longitude).to eql -1.234
 
-        area.places.should == [place]
+        expect(area.places).to eq([place])
       end
     end
 
     it "adds a place to the campaing and clears the cache" do
       Kpi.create_global_kpis
-      Rails.cache.should_receive(:delete).at_least(1).times.with("campaign_locations_#{campaign.id}")
+      expect(Rails.cache).to receive(:delete).at_least(1).times.with("campaign_locations_#{campaign.id}")
       post 'create', campaign_id: campaign.id, place: {reference: place.to_param}, format: :js
       expect(campaign.places).to include(place)
     end
@@ -216,7 +216,7 @@ describe PlacesController do
     end
 
     it "should delete the link within the campaign and the place" do
-      Rails.cache.should_receive(:delete).at_least(1).times.with("campaign_locations_#{campaign.id}")
+      expect(Rails.cache).to receive(:delete).at_least(1).times.with("campaign_locations_#{campaign.id}")
       campaign.places << place
       expect {
         expect {
@@ -229,7 +229,7 @@ describe PlacesController do
     it "should call the method update_common_denominators" do
       area.places << place
 
-      Area.any_instance.should_receive(:update_common_denominators)
+      expect_any_instance_of(Area).to receive(:update_common_denominators)
       expect {
         expect {
           delete 'destroy', area_id: area.to_param, id: place.id, format: :js

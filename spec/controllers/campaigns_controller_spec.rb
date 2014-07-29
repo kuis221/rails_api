@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe CampaignsController do
+describe CampaignsController, :type => :controller do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.current_company
@@ -12,28 +12,28 @@ describe CampaignsController do
   describe "GET 'edit'" do
     it "returns http success" do
       get 'edit', id: campaign.to_param, format: :js
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
   describe "GET 'new'" do
     it "returns http success" do
       get 'new', format: :js
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
   describe "GET 'index'" do
     it "returns http success" do
       get 'index'
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
   describe "GET 'items'" do
     it "returns http success" do
       get 'items'
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
@@ -42,9 +42,9 @@ describe CampaignsController do
       date_range = FactoryGirl.create(:date_range, company: @company)
       other_date_range = FactoryGirl.create(:date_range, company_id: @company.id + 1)
       get 'new_date_range', id: campaign.to_param, format: :js
-      response.should be_success
-      response.should render_template(:new_date_range)
-      assigns(:date_ranges).should == [date_range]
+      expect(response).to be_success
+      expect(response).to render_template(:new_date_range)
+      expect(assigns(:date_ranges)).to eq([date_range])
     end
 
     it "should not include the date ranges that are already assigned to the campaign" do
@@ -52,9 +52,9 @@ describe CampaignsController do
       assigned_range = FactoryGirl.create(:date_range, company: @company)
       campaign.date_ranges << assigned_range
       get 'new_date_range', id: campaign.to_param, format: :js
-      response.should be_success
-      response.should render_template(:new_date_range)
-      assigns(:date_ranges).should == [date_range]
+      expect(response).to be_success
+      expect(response).to render_template(:new_date_range)
+      expect(assigns(:date_ranges)).to eq([date_range])
     end
   end
 
@@ -64,21 +64,21 @@ describe CampaignsController do
       expect {
         post 'add_date_range', id: campaign.to_param, date_range_id: date_range.to_param, format: :js
       }.to change(campaign.date_ranges, :count).by(1)
-      response.should be_success
-      response.should render_template(:add_date_range)
-      campaign.date_ranges.should == [date_range]
+      expect(response).to be_success
+      expect(response).to render_template(:add_date_range)
+      expect(campaign.date_ranges).to eq([date_range])
     end
 
     it "adds the date range to the campaign" do
       date_range = FactoryGirl.create(:date_range, company: @company)
       campaign.date_ranges << date_range
-      campaign.reload.date_ranges.should == [date_range]
+      expect(campaign.reload.date_ranges).to eq([date_range])
       expect {
         post 'add_date_range', id: campaign.to_param, date_range_id: date_range.to_param, format: :js
       }.to_not change(campaign.date_ranges, :count)
-      response.should be_success
-      response.should render_template(:add_date_range)
-      campaign.reload.date_ranges.should == [date_range]
+      expect(response).to be_success
+      expect(response).to render_template(:add_date_range)
+      expect(campaign.reload.date_ranges).to eq([date_range])
     end
   end
 
@@ -98,7 +98,7 @@ describe CampaignsController do
           expect {
             delete 'delete_date_range', id: campaign.to_param, date_range_id: date_range.to_param, format: :js
           }.to_not change(DateRange, :count)
-          response.should be_success
+          expect(response).to be_success
         }.to change(campaign.date_ranges, :count).by(-1)
       }.to change(Goal, :count).by(-2)
       expect(goal.reload).to be_truthy
@@ -110,9 +110,9 @@ describe CampaignsController do
       day_part = FactoryGirl.create(:day_part, company: @company)
       other_date_range = FactoryGirl.create(:day_part, company_id: @company.id + 1)
       get 'new_day_part', id: campaign.to_param, format: :js
-      response.should be_success
-      response.should render_template(:new_day_part)
-      assigns(:day_parts).should == [day_part]
+      expect(response).to be_success
+      expect(response).to render_template(:new_day_part)
+      expect(assigns(:day_parts)).to eq([day_part])
     end
 
     it "should not include the day parts that are already assigned to the campaign" do
@@ -120,9 +120,9 @@ describe CampaignsController do
       assigned_part = FactoryGirl.create(:day_part, company: @company)
       campaign.day_parts << assigned_part
       get 'new_day_part', id: campaign.to_param, format: :js
-      response.should be_success
-      response.should render_template(:new_day_part)
-      assigns(:day_parts).should == [day_part]
+      expect(response).to be_success
+      expect(response).to render_template(:new_day_part)
+      expect(assigns(:day_parts)).to eq([day_part])
     end
   end
 
@@ -132,21 +132,21 @@ describe CampaignsController do
       expect {
         post 'add_day_part', id: campaign.to_param, day_part_id: day_part.to_param, format: :js
       }.to change(campaign.day_parts, :count).by(1)
-      response.should be_success
-      response.should render_template(:add_day_part)
-      campaign.day_parts.should == [day_part]
+      expect(response).to be_success
+      expect(response).to render_template(:add_day_part)
+      expect(campaign.day_parts).to eq([day_part])
     end
 
     it 'doesn\'t add the day part if it already exists ' do
       day_part = FactoryGirl.create(:day_part, company: @company)
       campaign.day_parts << day_part
-      campaign.reload.day_parts.should == [day_part]
+      expect(campaign.reload.day_parts).to eq([day_part])
       expect {
         post 'add_day_part', id: campaign.to_param, day_part_id: day_part.to_param, format: :js
       }.to_not change(campaign.day_parts, :count)
-      response.should be_success
-      response.should render_template(:add_day_part)
-      campaign.reload.day_parts.should == [day_part]
+      expect(response).to be_success
+      expect(response).to render_template(:add_day_part)
+      expect(campaign.reload.day_parts).to eq([day_part])
     end
   end
 
@@ -166,7 +166,7 @@ describe CampaignsController do
           expect {
             delete 'delete_day_part', id: campaign.to_param, day_part_id: day_part.to_param, format: :js
           }.to_not change(DayPart, :count)
-          response.should be_success
+          expect(response).to be_success
         }.to change(campaign.day_parts, :count).by(-1)
       }.to change(Goal, :count).by(-2)
       expect(goal.reload).to be_truthy
@@ -176,7 +176,7 @@ describe CampaignsController do
   describe "POST 'create'" do
     it "returns http success" do
       post 'create', format: :js
-      response.should be_success
+      expect(response).to be_success
     end
 
     it "should successfully create the new record" do
@@ -188,29 +188,29 @@ describe CampaignsController do
         }.to change(Campaign, :count).by(1)
       }.to change(Brand, :count).by(2)
       campaign = Campaign.last
-      campaign.name.should == 'Test Campaign'
-      campaign.description.should == 'Test Campaign description'
-      campaign.aasm_state.should == 'active'
-      campaign.brand_portfolios.should =~ portfolios
+      expect(campaign.name).to eq('Test Campaign')
+      expect(campaign.description).to eq('Test Campaign description')
+      expect(campaign.aasm_state).to eq('active')
+      expect(campaign.brand_portfolios).to match_array(portfolios)
 
-      campaign.brands.all.map(&:name).should =~ ['Anchor Steam','Jack Daniels','Cacique']
+      expect(campaign.brands.all.map(&:name)).to match_array(['Anchor Steam','Jack Daniels','Cacique'])
     end
 
     it "should not render form_dialog if no errors" do
-      lambda {
+      expect {
         post 'create', campaign: {name: 'Test Campaign', description: 'Test Campaign description'}, format: :js
-      }.should change(Campaign, :count).by(1)
-      response.should be_success
-      response.should render_template(:create)
-      response.should_not render_template(:form_dialog)
+      }.to change(Campaign, :count).by(1)
+      expect(response).to be_success
+      expect(response).to render_template(:create)
+      expect(response).not_to render_template(:form_dialog)
     end
 
     it "should render the form_dialog template if errors" do
-      lambda {
+      expect {
         post 'create', format: :js
-      }.should_not change(Campaign, :count)
-      response.should render_template(:create)
-      response.should render_template(:form_dialog)
+      }.not_to change(Campaign, :count)
+      expect(response).to render_template(:create)
+      expect(response).to render_template(:form_dialog)
       assigns(:campaign).errors.count > 0
     end
   end
@@ -218,8 +218,8 @@ describe CampaignsController do
   describe "GET 'show'" do
     it "assigns the loads the correct objects and templates" do
       get 'show', id: campaign.id
-      assigns(:campaign).should == campaign
-      response.should render_template(:show)
+      expect(assigns(:campaign)).to eq(campaign)
+      expect(response).to render_template(:show)
     end
   end
 
@@ -228,8 +228,8 @@ describe CampaignsController do
     it "deactivates an active campaign" do
       campaign.update_attribute(:aasm_state, 'active')
       get 'deactivate', id: campaign.to_param, format: :js
-      response.should be_success
-      campaign.reload.active?.should be_falsey
+      expect(response).to be_success
+      expect(campaign.reload.active?).to be_falsey
     end
   end
 
@@ -237,10 +237,10 @@ describe CampaignsController do
     let(:campaign){ FactoryGirl.create(:campaign, company: @company, aasm_state: 'inactive') }
 
     it "activates an inactive campaign" do
-      campaign.active?.should be_falsey
+      expect(campaign.active?).to be_falsey
       get 'activate', id: campaign.to_param, format: :js
-      response.should be_success
-      campaign.reload.active?.should be_truthy
+      expect(response).to be_success
+      expect(campaign.reload.active?).to be_truthy
     end
   end
 
@@ -248,11 +248,11 @@ describe CampaignsController do
     it "must update the campaign attributes" do
       t = FactoryGirl.create(:campaign, company: @company)
       put 'update', id: campaign.to_param, campaign: {name: 'Test Campaign', description: 'Test Campaign description'}
-      assigns(:campaign).should == campaign
-      response.should redirect_to(campaign_path(campaign))
+      expect(assigns(:campaign)).to eq(campaign)
+      expect(response).to redirect_to(campaign_path(campaign))
       campaign.reload
-      campaign.name.should == 'Test Campaign'
-      campaign.description.should == 'Test Campaign description'
+      expect(campaign.name).to eq('Test Campaign')
+      expect(campaign.description).to eq('Test Campaign description')
     end
 
     it "must allow create form fields" do
@@ -336,9 +336,9 @@ describe CampaignsController do
 
       expect(campaign.reload.enabled_modules.count).to eql 1
       expect(campaign.survey_brand_ids.count).to eql 2
-      campaign.survey_brand_ids.should include(brand.id)
+      expect(campaign.survey_brand_ids).to include(brand.id)
 
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
@@ -354,8 +354,8 @@ describe CampaignsController do
       expect {
         expect {
           delete 'delete_member', id: campaign.id, member_id: @company_user.id, format: :js
-          response.should be_success
-          assigns(:campaign).should == campaign
+          expect(response).to be_success
+          expect(assigns(:campaign)).to eq(campaign)
           campaign.reload
         }.to change(campaign.users, :count).by(-1)
       }.to change(Goal, :count).by(-2)
@@ -374,8 +374,8 @@ describe CampaignsController do
       expect {
         expect {
           delete 'delete_member', id: campaign.id, team_id: team.id, format: :js
-          response.should be_success
-          assigns(:campaign).should == campaign
+          expect(response).to be_success
+          expect(assigns(:campaign)).to eq(campaign)
           campaign.reload
         }.to change(campaign.teams, :count).by(-1)
       }.to change(Goal, :count).by(-2)
@@ -385,8 +385,8 @@ describe CampaignsController do
     it "should not raise error if the user doesn't belongs to the campaign" do
       delete 'delete_member', id: campaign.id, member_id: @user.id, format: :js
       campaign.reload
-      response.should be_success
-      assigns(:campaign).should == campaign
+      expect(response).to be_success
+      expect(assigns(:campaign)).to eq(campaign)
     end
   end
 
@@ -394,19 +394,19 @@ describe CampaignsController do
     let(:team){ FactoryGirl.create(:team, company: @company) }
     it "should remove the team from the campaign" do
       campaign.teams << team
-      lambda{
+      expect{
         delete 'delete_member', id: campaign.id, team_id: team.id, format: :js
-        response.should be_success
-        assigns(:campaign).should == campaign
+        expect(response).to be_success
+        expect(assigns(:campaign)).to eq(campaign)
         campaign.reload
-      }.should change(campaign.teams, :count).by(-1)
+      }.to change(campaign.teams, :count).by(-1)
     end
 
     it "should not raise error if the team doesn't belongs to the campaign" do
       delete 'delete_member', id: campaign.id, team_id: team.id, format: :js
       campaign.reload
-      response.should be_success
-      assigns(:campaign).should == campaign
+      expect(response).to be_success
+      expect(assigns(:campaign)).to eq(campaign)
     end
   end
 
@@ -414,37 +414,37 @@ describe CampaignsController do
     it 'should load all the company\'s users into @staff' do
       FactoryGirl.create(:user, company_id: @company.id+1)
       get 'new_member', id: campaign.id, format: :js
-      response.should be_success
-      assigns(:campaign).should == campaign
-      assigns(:staff).should == [{'id' => @company_user.id.to_s, 'name' => 'Test User', 'description' => 'Super Admin', 'type' => 'user'}]
+      expect(response).to be_success
+      expect(assigns(:campaign)).to eq(campaign)
+      expect(assigns(:staff)).to eq([{'id' => @company_user.id.to_s, 'name' => 'Test User', 'description' => 'Super Admin', 'type' => 'user'}])
     end
 
     it 'should not load the users that are already assigned to the campaign' do
       another_user = FactoryGirl.create(:company_user, company_id: @company.id, role_id: @company_user.role_id)
       campaign.users << @company_user
       get 'new_member', id: campaign.id, format: :js
-      response.should be_success
-      assigns(:campaign).should == campaign
-      assigns(:staff).should == [{'id' => another_user.id.to_s, 'name' => 'Test User', 'description' => 'Super Admin', 'type' => 'user'}]
+      expect(response).to be_success
+      expect(assigns(:campaign)).to eq(campaign)
+      expect(assigns(:staff)).to eq([{'id' => another_user.id.to_s, 'name' => 'Test User', 'description' => 'Super Admin', 'type' => 'user'}])
     end
 
     it 'should load teams with active users' do
       team = FactoryGirl.create(:team, name:'ABC', description: 'A sample team', company_id: @company.id)
       team.users << @company_user
       get 'new_member', id: campaign.id, format: :js
-      assigns(:assignable_teams).should == [team]
-        assigns(:staff).should == [
+      expect(assigns(:assignable_teams)).to eq([team])
+        expect(assigns(:staff)).to eq([
           {'id' => team.id.to_s, 'name' => 'ABC', 'description' => 'A sample team', 'type' => 'team'},
           {'id' => @company_user.id.to_s, 'name' => 'Test User', 'description' => 'Super Admin', 'type' => 'user'}
-        ]
+        ])
     end
 
     it 'should not load teams without assignable users' do
       team = FactoryGirl.create(:team, company_id: @company.id)
       campaign.users << @company_user
       get 'new_member', id: campaign.id, format: :js
-      assigns(:assignable_teams).should == []
-      assigns(:staff).should == []
+      expect(assigns(:assignable_teams)).to eq([])
+      expect(assigns(:staff)).to eq([])
     end
   end
 
@@ -453,50 +453,50 @@ describe CampaignsController do
       with_resque do
         @company_user.update_attributes({notifications_settings: ['new_campaign_sms', 'new_campaign_email']}, without_protection: true)
         message = "You have a new campaign http://localhost:5100/campaigns/#{campaign.id}"
-        UserMailer.should_receive(:notification).with(@company_user, "New Campaign", message).and_return(double(deliver: true))
+        expect(UserMailer).to receive(:notification).with(@company_user, "New Campaign", message).and_return(double(deliver: true))
         expect {
           post 'add_members', id: campaign.id, member_id: @company_user.to_param, format: :js
-          response.should be_success
-          assigns(:campaign).should == campaign
+          expect(response).to be_success
+          expect(assigns(:campaign)).to eq(campaign)
           campaign.reload
         }.to change(campaign.users, :count).by(1)
-        campaign.users.should == [@company_user]
+        expect(campaign.users).to eq([@company_user])
         open_last_text_message_for @user.phone_number
-        current_text_message.should have_body message
+        expect(current_text_message).to have_body message
       end
     end
 
     it 'should assign all the team\'s users to the campaign' do
       team = FactoryGirl.create(:team, company_id: @company.id)
-      lambda {
+      expect {
         post 'add_members', id: campaign.id, team_id: team.to_param, format: :js
-        response.should be_success
-        assigns(:campaign).should == campaign
-        assigns(:team_id).should == team.id.to_s
+        expect(response).to be_success
+        expect(assigns(:campaign)).to eq(campaign)
+        expect(assigns(:team_id)).to eq(team.id.to_s)
         campaign.reload
-      }.should change(campaign.teams, :count).by(1)
-      campaign.teams.should =~ [team]
+      }.to change(campaign.teams, :count).by(1)
+      expect(campaign.teams).to match_array([team])
     end
 
     it 'should not assign users to the campaign if they are already part of the campaign' do
       campaign.users << @company_user
-      lambda {
+      expect {
         post 'add_members', id: campaign.id, member_id: @company_user.to_param, format: :js
-        response.should be_success
-        assigns(:campaign).should == campaign
+        expect(response).to be_success
+        expect(assigns(:campaign)).to eq(campaign)
         campaign.reload
-      }.should_not change(campaign.users, :count)
+      }.not_to change(campaign.users, :count)
     end
 
     it 'should not assign teams to the campaign if they are already part of the campaign' do
       team = FactoryGirl.create(:team, company_id: @company.id)
       campaign.teams << team
-      lambda {
+      expect {
         post 'add_members', id: campaign.id, team_id: team.to_param, format: :js
-        response.should be_success
-        assigns(:campaign).should == campaign
+        expect(response).to be_success
+        expect(assigns(:campaign)).to eq(campaign)
         campaign.reload
-      }.should_not change(campaign.teams, :count)
+      }.not_to change(campaign.teams, :count)
     end
   end
 
@@ -508,41 +508,41 @@ describe CampaignsController do
       campaign.users << @company_user
       campaign.teams << FactoryGirl.create(:team, company: @company)
       get 'tab', id: campaign.id, tab: 'staff'
-      assigns(:campaign).should == campaign
-      response.should render_template(:staff)
-      response.should render_template(:goalable_list)
+      expect(assigns(:campaign)).to eq(campaign)
+      expect(response).to render_template(:staff)
+      expect(response).to render_template(:goalable_list)
     end
 
     it "loads the places tab" do
       campaign.places << FactoryGirl.create(:place, is_custom_place: true, reference: nil)
       campaign.areas << FactoryGirl.create(:area, company: @company)
       get 'tab', id: campaign.id, tab: 'places'
-      assigns(:campaign).should == campaign
-      response.should render_template(:places)
-      response.should render_template(:goalable_list)
+      expect(assigns(:campaign)).to eq(campaign)
+      expect(response).to render_template(:places)
+      expect(response).to render_template(:goalable_list)
     end
 
     it "loads the date_ranges tab" do
       campaign.date_ranges << FactoryGirl.create(:date_range, company: @company)
       get 'tab', id: campaign.id, tab: 'date_ranges'
-      assigns(:campaign).should == campaign
-      response.should render_template(:date_ranges)
-      response.should render_template(:goalable_list)
+      expect(assigns(:campaign)).to eq(campaign)
+      expect(response).to render_template(:date_ranges)
+      expect(response).to render_template(:goalable_list)
     end
 
     it "loads the day_parts tab" do
       campaign.day_parts << FactoryGirl.create(:day_part, company: @company)
       get 'tab', id: campaign.id, tab: 'day_parts'
-      assigns(:campaign).should == campaign
-      response.should render_template(:day_parts)
-      response.should render_template(:goalable_list)
+      expect(assigns(:campaign)).to eq(campaign)
+      expect(response).to render_template(:day_parts)
+      expect(response).to render_template(:goalable_list)
     end
 
     it "loads the documents tab" do
       campaign.documents << FactoryGirl.create(:attached_asset)
       get 'tab', id: campaign.id, tab: 'documents'
-      assigns(:campaign).should == campaign
-      response.should render_template(:documents)
+      expect(assigns(:campaign)).to eq(campaign)
+      expect(response).to render_template(:documents)
     end
   end
 
@@ -554,12 +554,12 @@ describe CampaignsController do
         post 'add_kpi', id: campaign.id, kpi_id: kpi.id, format: :js
       }.to change(FormField, :count).by(1)
 
-      campaign.form_fields.count.should == 1
+      expect(campaign.form_fields.count).to eq(1)
       field = campaign.form_fields.first
-      field.kpi_id.should == kpi.id
-      field.type.should == 'FormField::Number'
-      field.name.should == kpi.name
-      field.ordering.should == 1
+      expect(field.kpi_id).to eq(kpi.id)
+      expect(field.type).to eq('FormField::Number')
+      expect(field.name).to eq(kpi.name)
+      expect(field.ordering).to eq(1)
     end
 
     it "should NOT associate the kpi to the campaign if the campaing already have it assgined" do
@@ -575,9 +575,9 @@ describe CampaignsController do
         post 'add_kpi', id: campaign.id, kpi_id: kpi.id, format: :js
       }.to change(FormField, :count).by(1)
 
-      campaign.form_fields.count.should == 2
+      expect(campaign.form_fields.count).to eq(2)
       field = FormField.last
-      field.ordering.should == 2
+      expect(field.ordering).to eq(2)
     end
   end
 
@@ -604,7 +604,7 @@ describe CampaignsController do
       expect {
         post 'remove_activity_type', id: campaign.id, activity_type_id: activity_type.id, format: :js
       }.to change(ActivityTypeCampaign, :count).by(-1)
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
@@ -616,7 +616,7 @@ describe CampaignsController do
       expect {
         post 'remove_kpi', id: campaign.id, kpi_id: kpi.id, format: :js
       }.to change(FormField, :count).by(-1)
-      response.should be_success
+      expect(response).to be_success
     end
   end
 

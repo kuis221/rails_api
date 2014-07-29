@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Api::V1::SurveysController do
+describe Api::V1::SurveysController, :type => :controller do
   let(:user) { sign_in_as_user }
   let(:company) { user.company_users.first.company }
   let(:campaign) { FactoryGirl.create(:campaign, company: company, name: 'Test Campaign FY01') }
@@ -17,9 +17,9 @@ describe Api::V1::SurveysController do
       get :index, company_id: company.to_param, auth_token: 'XXXXXXXXXXXXXXXX', event_id: 100, format: :json
       expect(response.response_code).to eql 401
       result = JSON.parse(response.body)
-      result['success'].should == false
-      result['info'].should == 'Invalid auth token'
-      result['data'].should be_empty
+      expect(result['success']).to eq(false)
+      expect(result['info']).to eq('Invalid auth token')
+      expect(result['data']).to be_empty
     end
 
     it "returns the list of surveys for the event" do
@@ -28,9 +28,9 @@ describe Api::V1::SurveysController do
       survey2 = FactoryGirl.create(:survey, event: event)
 
       get :index, company_id: company.to_param, auth_token: user.authentication_token, event_id: event.to_param, format: :json
-      response.should be_success
+      expect(response).to be_success
       result = JSON.parse(response.body)
-      result.count.should == 2
+      expect(result.count).to eq(2)
       expect(result.first).to include({'id' => survey1.id})
       expect(result.last).to  include({'id' => survey2.id})
     end
@@ -46,16 +46,16 @@ describe Api::V1::SurveysController do
       get :show, company_id: company.to_param, auth_token: 'XXXXXXXXXXXXXXXX', event_id: 100, id: 1, format: :json
       expect(response.response_code).to eql 401
       result = JSON.parse(response.body)
-      result['success'].should == false
-      result['info'].should == 'Invalid auth token'
-      result['data'].should be_empty
+      expect(result['success']).to eq(false)
+      expect(result['info']).to eq('Invalid auth token')
+      expect(result['data']).to be_empty
     end
 
     it "returns the list of surveys for the event" do
       survey = FactoryGirl.create(:survey, event: event)
 
       get :show, company_id: company.to_param, auth_token: user.authentication_token, event_id: event.to_param, id: survey.id, format: :json
-      response.should be_success
+      expect(response).to be_success
       result = JSON.parse(response.body)
       expect(result).to include({'id' => survey.id})
     end
@@ -92,15 +92,15 @@ describe Api::V1::SurveysController do
       }.to change(Survey, :count).by(1)
 
       survey = Survey.last
-      survey.age.should == age_answer.text
-      survey.gender.should == gender_answer.text
-      survey.ethnicity.should == ethnicity_answer.text
-      response.should be_success
+      expect(survey.age).to eq(age_answer.text)
+      expect(survey.gender).to eq(gender_answer.text)
+      expect(survey.ethnicity).to eq(ethnicity_answer.text)
+      expect(response).to be_success
 
       result = JSON.parse(response.body)
 
       survey = Survey.last
-      survey.event_id.should == event.id
+      expect(survey.event_id).to eq(event.id)
     end
 
     it "should return error if the campaign doest have the surveys module enabled" do

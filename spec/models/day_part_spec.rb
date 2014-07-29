@@ -15,10 +15,10 @@
 
 require 'spec_helper'
 
-describe DayPart do
-  it { should belong_to(:company) }
+describe DayPart, :type => :model do
+  it { is_expected.to belong_to(:company) }
 
-  it { should validate_presence_of(:name) }
+  it { is_expected.to validate_presence_of(:name) }
 
   describe "#activate" do
     let(:day_part) { FactoryGirl.build(:day_part, active: false) }
@@ -26,7 +26,7 @@ describe DayPart do
     it "should return the active value as true" do
       day_part.activate!
       day_part.reload
-      day_part.active.should be_truthy
+      expect(day_part.active).to be_truthy
     end
   end
 
@@ -36,7 +36,7 @@ describe DayPart do
     it "should return the active value as false" do
       day_part.deactivate!
       day_part.reload
-      day_part.active.should be_falsey
+      expect(day_part.active).to be_falsey
     end
   end
 end

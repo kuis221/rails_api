@@ -14,9 +14,9 @@
 
 require 'spec_helper'
 
-describe Membership do
-  it { should belong_to(:company_user) }
-  it { should belong_to(:memberable) }
+describe Membership, :type => :model do
+  it { is_expected.to belong_to(:company_user) }
+  it { is_expected.to belong_to(:memberable) }
 
   describe "new campaign notification" do
     let(:campaign) { FactoryGirl.create(:campaign) }

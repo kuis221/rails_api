@@ -14,47 +14,47 @@
 
 require 'spec_helper'
 
-describe FormFieldResult do
-  it { should belong_to(:resultable) }
-  it { should belong_to(:form_field) }
+describe FormFieldResult, :type => :model do
+  it { is_expected.to belong_to(:resultable) }
+  it { is_expected.to belong_to(:form_field) }
 
-  it { should validate_presence_of(:form_field_id) }
-  it { should validate_numericality_of(:form_field_id) }
+  it { is_expected.to validate_presence_of(:form_field_id) }
+  it { is_expected.to validate_numericality_of(:form_field_id) }
 
   describe "for required fields" do
     before { subject.form_field = FactoryGirl.build(:form_field, type: 'FormField::Number', required: true) }
-    it { should_not allow_value(nil).for(:value) }
-    it { should_not allow_value('').for(:value) }
-    it { should allow_value('1').for(:value) }
-    it { should allow_value(1).for(:value) }
+    it { is_expected.not_to allow_value(nil).for(:value) }
+    it { is_expected.not_to allow_value('').for(:value) }
+    it { is_expected.to allow_value('1').for(:value) }
+    it { is_expected.to allow_value(1).for(:value) }
   end
 
   describe "for non required fields" do
     before { subject.form_field = FactoryGirl.build(:form_field, type: 'FormField::Number', required: false) }
-    it { should allow_value(nil).for(:value) }
-    it { should allow_value('').for(:value) }
-    it { should allow_value('1').for(:value) }
-    it { should allow_value(1).for(:value) }
+    it { is_expected.to allow_value(nil).for(:value) }
+    it { is_expected.to allow_value('').for(:value) }
+    it { is_expected.to allow_value('1').for(:value) }
+    it { is_expected.to allow_value(1).for(:value) }
   end
 
   describe "for numeric fields" do
     before { subject.form_field_id = FactoryGirl.create(:form_field, type: 'FormField::Number', fieldable: FactoryGirl.create(:activity_type, company_id: 1), required: false).id }
-    it { should validate_numericality_of(:value) }
-    it { should allow_value(nil).for(:value) }
-    it { should allow_value(nil).for(:value) }
-    it { should allow_value('').for(:value) }
-    it { should allow_value('1').for(:value) }
-    it { should allow_value(1).for(:value) }
+    it { is_expected.to validate_numericality_of(:value) }
+    it { is_expected.to allow_value(nil).for(:value) }
+    it { is_expected.to allow_value(nil).for(:value) }
+    it { is_expected.to allow_value('').for(:value) }
+    it { is_expected.to allow_value('1').for(:value) }
+    it { is_expected.to allow_value(1).for(:value) }
   end
 
   describe "for photo fields" do
     before { subject.form_field_id = FactoryGirl.create(:form_field, type: 'FormField::Photo', fieldable: FactoryGirl.create(:activity_type, company_id: 1), required: false).id }
-    it { should allow_value(nil).for(:value) }
-    it { should allow_value(nil).for(:value) }
-    it { should allow_value('').for(:value) }
-    it { should_not allow_value('sdfsd').for(:value).with_message('is not valid') }
-    it { should_not allow_value('https://s3.amazonaws.com/invalid-bucket/uploads/1233443/filename.jpg').for(:value).with_message('is not valid') }
-    it { should allow_value('https://s3.amazonaws.com/brandscopic-test/uploads/1233443/filename.jpg').for(:value) }
+    it { is_expected.to allow_value(nil).for(:value) }
+    it { is_expected.to allow_value(nil).for(:value) }
+    it { is_expected.to allow_value('').for(:value) }
+    it { is_expected.not_to allow_value('sdfsd').for(:value).with_message('is not valid') }
+    it { is_expected.not_to allow_value('https://s3.amazonaws.com/invalid-bucket/uploads/1233443/filename.jpg').for(:value).with_message('is not valid') }
+    it { is_expected.to allow_value('https://s3.amazonaws.com/brandscopic-test/uploads/1233443/filename.jpg').for(:value) }
   end
 
   describe "for percentage fields" do
@@ -64,15 +64,15 @@ describe FormFieldResult do
       fieldable: FactoryGirl.create(:activity_type, company_id: 1),
       required: false) }
     before { subject.form_field_id = form_field.id }
-    it { should allow_value(nil).for(:value) }
-    it { should allow_value(nil).for(:value) }
-    it { should allow_value('').for(:value) }
-    it { should allow_value({form_field.options[0].id => 50, form_field.options[1].id => 50}).for(:value) }
-    it { should allow_value({form_field.options[0].id.to_s => 50, form_field.options[1].id.to_s => 50}).for(:value) }
-    it { should_not allow_value({form_field.options[0].id => 40, form_field.options[1].id => 10}).for(:value) }
-    it { should_not allow_value({999 => 10, 888 => 90}).for(:value) }
-    it { should_not allow_value('sdfsd').for(:value) }
-    it { should_not allow_value(1).for(:value) }
+    it { is_expected.to allow_value(nil).for(:value) }
+    it { is_expected.to allow_value(nil).for(:value) }
+    it { is_expected.to allow_value('').for(:value) }
+    it { is_expected.to allow_value({form_field.options[0].id => 50, form_field.options[1].id => 50}).for(:value) }
+    it { is_expected.to allow_value({form_field.options[0].id.to_s => 50, form_field.options[1].id.to_s => 50}).for(:value) }
+    it { is_expected.not_to allow_value({form_field.options[0].id => 40, form_field.options[1].id => 10}).for(:value) }
+    it { is_expected.not_to allow_value({999 => 10, 888 => 90}).for(:value) }
+    it { is_expected.not_to allow_value('sdfsd').for(:value) }
+    it { is_expected.not_to allow_value(1).for(:value) }
   end
 
   describe "prepare_for_store" do

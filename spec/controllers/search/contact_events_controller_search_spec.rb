@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ContactEventsController, search: true do
+describe ContactEventsController, type: :controller, search: true do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.current_company
@@ -17,17 +17,17 @@ describe ContactEventsController, search: true do
       contact.reload # force the creation of the contact
       Sunspot.commit
       get 'list', event_id: event.to_param, term: @user.first_name, format: :js
-      response.should be_success
-      response.should render_template('list')
+      expect(response).to be_success
+      expect(response).to render_template('list')
 
-      assigns(:contacts).should =~ [company_user, contact]
+      expect(assigns(:contacts)).to match_array([company_user, contact])
     end
 
     it "should not load in @contacts the contacts that are already assigned to the event" do
       FactoryGirl.create(:contact_event, event: event, contactable: contact)
       Sunspot.commit
       get 'list', event_id: event.to_param, term: @user.first_name, format: :js
-      assigns(:contacts).should =~ [company_user]
+      expect(assigns(:contacts)).to match_array([company_user])
     end
 
     it "should not load in @contacts the users that are already assigned to the event" do
@@ -35,7 +35,7 @@ describe ContactEventsController, search: true do
       FactoryGirl.create(:contact_event, event: event, contactable: company_user)
       Sunspot.commit
       get 'list', event_id: event.to_param, term: @user.first_name, format: :js
-      assigns(:contacts).should =~ [contact]
+      expect(assigns(:contacts)).to match_array([contact])
     end
   end
 end

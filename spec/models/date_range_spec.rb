@@ -15,27 +15,27 @@
 
 require 'spec_helper'
 
-describe DateRange do
-  it { should belong_to(:company) }
-  it { should have_many(:date_items) }
+describe DateRange, :type => :model do
+  it { is_expected.to belong_to(:company) }
+  it { is_expected.to have_many(:date_items) }
 
-  it { should validate_presence_of(:name) }
+  it { is_expected.to validate_presence_of(:name) }
 
   describe '#deactivate!' do
     it "should deactivate the date range" do
       date_range = FactoryGirl.create(:date_range, active: true)
-      date_range.active.should be_truthy
+      expect(date_range.active).to be_truthy
       date_range.deactivate!
-      date_range.reload.active.should be_falsey
+      expect(date_range.reload.active).to be_falsey
     end
   end
 
   describe '#activate!' do
     it "should activate the date range" do
       date_range = FactoryGirl.create(:date_range, active: true)
-      date_range.active.should be_truthy
+      expect(date_range.active).to be_truthy
       date_range.deactivate!
-      date_range.reload.active.should be_falsey
+      expect(date_range.reload.active).to be_falsey
     end
   end
 

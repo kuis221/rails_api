@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ContactEventsController do
+describe ContactEventsController, :type => :controller do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.current_company
@@ -15,17 +15,17 @@ describe ContactEventsController do
   describe "GET 'new'" do
     it "returns http success" do
       get 'new', event_id: event.to_param, format: :js
-      response.should be_success
-      response.should render_template('new')
+      expect(response).to be_success
+      expect(response).to render_template('new')
     end
   end
 
   describe "GET 'edit'" do
     it "returns http success" do
       get 'edit', event_id: event.to_param, id: contact_event.id, format: :js
-      assigns(:contact_event).should == contact_event
-      response.should be_success
-      response.should render_template('edit')
+      expect(assigns(:contact_event)).to eq(contact_event)
+      expect(response).to be_success
+      expect(response).to render_template('edit')
     end
   end
 
@@ -33,8 +33,8 @@ describe ContactEventsController do
     it "returns http success" do
       contact.reload
       get 'add', event_id: event.to_param, format: :js
-      response.should be_success
-      response.should render_template('add')
+      expect(response).to be_success
+      expect(response).to render_template('add')
     end
   end
 
@@ -42,32 +42,32 @@ describe ContactEventsController do
     it "assigns the contact to the event" do
       expect {
         post 'create', event_id: event.to_param, contact_event: {contactable_id: contact.id, contactable_type: 'Contact'}, format: :js
-        response.should be_success
+        expect(response).to be_success
       }.to change(ContactEvent, :count).by(1)
       c = ContactEvent.last
-      c.contactable.should == contact
-      c.event_id.should == event.id
+      expect(c.contactable).to eq(contact)
+      expect(c.event_id).to eq(event.id)
     end
 
     it "loads the contact edit form if the contact record is invalid" do
       contact = Contact.new
-      contact.save(validate: false).should be_truthy
+      expect(contact.save(validate: false)).to be_truthy
       expect(contact.persisted?).to be_truthy
       expect {
         post 'create', event_id: event.to_param, contact_event: {contactable_id: contact.id, contactable_type: 'Contact'}, format: :js
-        response.should be_success
-        response.should render_template('contact_events/_form')
+        expect(response).to be_success
+        expect(response).to render_template('contact_events/_form')
       }.to_not change(ContactEvent, :count)
     end
 
     it "assigns the company user to the event" do
       expect {
         post 'create', event_id: event.to_param, contact_event: {contactable_id: company_user.id, contactable_type: 'CompanyUser'}, format: :js
-        response.should be_success
+        expect(response).to be_success
       }.to change(ContactEvent, :count).by(1)
       c = ContactEvent.last
-      c.contactable.should == company_user
-      c.event_id.should == event.id
+      expect(c.contactable).to eq(company_user)
+      expect(c.event_id).to eq(event.id)
     end
 
     it "adds the contact to the event saving the changes to an existing contact" do
@@ -75,38 +75,38 @@ describe ContactEventsController do
       expect {
         expect {
           post 'create', event_id: event.to_param,  contact_event: {contactable_type: 'Contact', contactable_id: contact.id, contactable_attributes: {id: contact.id, first_name: 'Fulanito', last_name: 'De Tal', email: 'email@test.com', country: 'US', state: 'CA', city: 'Los Angeles', phone_number: '12345678', zip_code: '12345'}}, format: :js
-          response.should be_success
+          expect(response).to be_success
         }.to_not change(Contact, :count)
       }.to change(ContactEvent, :count).by(1)
 
       contact.reload
-      contact.first_name.should == 'Fulanito'
-      contact.last_name.should == 'De Tal'
-      contact.email.should == 'email@test.com'
-      contact.phone_number.should == '12345678'
-      contact.country.should == 'US'
-      contact.state.should == 'CA'
-      contact.city.should == 'Los Angeles'
-      contact.zip_code.should == '12345'
+      expect(contact.first_name).to eq('Fulanito')
+      expect(contact.last_name).to eq('De Tal')
+      expect(contact.email).to eq('email@test.com')
+      expect(contact.phone_number).to eq('12345678')
+      expect(contact.country).to eq('US')
+      expect(contact.state).to eq('CA')
+      expect(contact.city).to eq('Los Angeles')
+      expect(contact.zip_code).to eq('12345')
     end
 
     it "creates a new contact and assigns it to the event" do
       expect {
         expect {
           post 'create', event_id: event.to_param, contact_event: {contactable_attributes: {first_name: 'Fulanito', last_name: 'De Tal', email: 'email@test.com', country: 'US', state: 'CA', city: 'Los Angeles', phone_number: '12345678', zip_code: '12345'}}, format: :js
-          response.should be_success
+          expect(response).to be_success
         }.to change(Contact, :count).by(1)
       }.to change(ContactEvent, :count).by(1)
 
       c = Contact.last
-      c.first_name.should == 'Fulanito'
-      c.last_name.should == 'De Tal'
-      c.email.should == 'email@test.com'
-      c.phone_number.should == '12345678'
-      c.country.should == 'US'
-      c.state.should == 'CA'
-      c.city.should == 'Los Angeles'
-      c.zip_code.should == '12345'
+      expect(c.first_name).to eq('Fulanito')
+      expect(c.last_name).to eq('De Tal')
+      expect(c.email).to eq('email@test.com')
+      expect(c.phone_number).to eq('12345678')
+      expect(c.country).to eq('US')
+      expect(c.state).to eq('CA')
+      expect(c.city).to eq('Los Angeles')
+      expect(c.zip_code).to eq('12345')
     end
   end
 
@@ -116,19 +116,19 @@ describe ContactEventsController do
       expect {
         expect {
           put 'update', event_id: event.to_param, id: contact_event.id, contact_event: {contactable_attributes: {id: contact_event.contactable.id, first_name: 'Fulanito', last_name: 'De Tal', email: 'email@test.com', country: 'US', state: 'CA', city: 'Los Angeles', phone_number: '12345678', zip_code: '12345'}}, format: :js
-          response.should be_success
+          expect(response).to be_success
         }.to_not change(Contact, :count)
       }.to_not change(ContactEvent, :count)
 
       c = Contact.last
-      c.first_name.should == 'Fulanito'
-      c.last_name.should == 'De Tal'
-      c.email.should == 'email@test.com'
-      c.phone_number.should == '12345678'
-      c.country.should == 'US'
-      c.state.should == 'CA'
-      c.city.should == 'Los Angeles'
-      c.zip_code.should == '12345'
+      expect(c.first_name).to eq('Fulanito')
+      expect(c.last_name).to eq('De Tal')
+      expect(c.email).to eq('email@test.com')
+      expect(c.phone_number).to eq('12345678')
+      expect(c.country).to eq('US')
+      expect(c.state).to eq('CA')
+      expect(c.city).to eq('Los Angeles')
+      expect(c.zip_code).to eq('12345')
     end
   end
 

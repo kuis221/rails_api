@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Analysis::CampaignsReportController do
+describe Analysis::CampaignsReportController, :type => :controller do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.companies.first
@@ -16,8 +16,8 @@ describe Analysis::CampaignsReportController do
 
       get 'index'
 
-      response.should be_success
-      assigns(:campaigns).should == campaigns
+      expect(response).to be_success
+      expect(assigns(:campaigns)).to eq(campaigns)
     end
   end
 
@@ -26,7 +26,7 @@ describe Analysis::CampaignsReportController do
 
     it "should render the campaign report" do
       get 'report', report: { campaign_id: campaign.to_param }, format: :js
-      response.should be_success
+      expect(response).to be_success
     end
 
     it "should assign the correct scope to @events_scope" do
@@ -38,8 +38,8 @@ describe Analysis::CampaignsReportController do
 
       get 'report', report: { campaign_id: campaign.to_param }, format: :js
 
-      response.should be_success
-      assigns(:events_scope).should =~ events
+      expect(response).to be_success
+      expect(assigns(:events_scope)).to match_array(events)
     end
 
     it "should load all the campaign's goals into @goals" do
@@ -53,8 +53,8 @@ describe Analysis::CampaignsReportController do
 
       get 'report', report: { campaign_id: campaign.to_param }, format: :js
 
-      response.should be_success
-      assigns(:goals).should =~ goals
+      expect(response).to be_success
+      expect(assigns(:goals)).to match_array(goals)
     end
 
 

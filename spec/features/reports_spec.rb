@@ -570,7 +570,7 @@ feature "Reports", js: true do
       field_list('values').find('li').click
       within ".report-field-settings" do
         select_from_chosen('Average', from: 'Summarize by')
-        find_field('Label').value.should == 'Average of Impressions'
+        expect(find_field('Label').value).to eq('Average of Impressions')
       end
       find('body').click
       click_button 'Save'

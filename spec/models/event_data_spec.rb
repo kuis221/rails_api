@@ -21,7 +21,7 @@
 
 require 'spec_helper'
 
-describe EventData do
+describe EventData, :type => :model do
   before do
     ResqueSpec.reset!
     Kpi.delete_all
@@ -38,20 +38,20 @@ describe EventData do
       event.event_data.update_data
 
       event.event_data.update_data
-      event.event_data.impressions.should  == 0
-      event.event_data.interactions.should == 0
-      event.event_data.samples.should      == 0
+      expect(event.event_data.impressions).to  eq(0)
+      expect(event.event_data.interactions).to eq(0)
+      expect(event.event_data.samples).to      eq(0)
 
-      event.event_data.spent.should == 0
+      expect(event.event_data.spent).to eq(0)
 
-      event.event_data.gender_female.should == 0.0
-      event.event_data.gender_male.should == 0.0
+      expect(event.event_data.gender_female).to eq(0.0)
+      expect(event.event_data.gender_male).to eq(0.0)
 
-      event.event_data.ethnicity_asian.should   ==  0.0
-      event.event_data.ethnicity_black.should   ==  0.0
-      event.event_data.ethnicity_hispanic.should == 0.0
-      event.event_data.ethnicity_native_american.should == 0.0
-      event.event_data.ethnicity_white.should == 0.0
+      expect(event.event_data.ethnicity_asian).to   eq(0.0)
+      expect(event.event_data.ethnicity_black).to   eq(0.0)
+      expect(event.event_data.ethnicity_hispanic).to eq(0.0)
+      expect(event.event_data.ethnicity_native_american).to eq(0.0)
+      expect(event.event_data.ethnicity_white).to eq(0.0)
     end
 
     it "should correctly count the values for each segment" do
@@ -93,20 +93,20 @@ describe EventData do
 
       # Call the method manually
       event.event_data.update_data
-      event.event_data.impressions.should  == 101
-      event.event_data.interactions.should == 102
-      event.event_data.samples.should      == 103
+      expect(event.event_data.impressions).to  eq(101)
+      expect(event.event_data.interactions).to eq(102)
+      expect(event.event_data.samples).to      eq(103)
 
-      event.event_data.spent.should      == 345
+      expect(event.event_data.spent).to      eq(345)
 
-      event.event_data.gender_female.should  == 70
-      event.event_data.gender_male.should    == 30
+      expect(event.event_data.gender_female).to  eq(70)
+      expect(event.event_data.gender_male).to    eq(30)
 
-      event.event_data.ethnicity_asian.should    == 30
-      event.event_data.ethnicity_black.should    == 20
-      event.event_data.ethnicity_hispanic.should    == 5
-      event.event_data.ethnicity_native_american.should    == 35
-      event.event_data.ethnicity_white.should    == 10
+      expect(event.event_data.ethnicity_asian).to    eq(30)
+      expect(event.event_data.ethnicity_black).to    eq(20)
+      expect(event.event_data.ethnicity_hispanic).to    eq(5)
+      expect(event.event_data.ethnicity_native_american).to    eq(35)
+      expect(event.event_data.ethnicity_white).to    eq(10)
     end
   end
 end

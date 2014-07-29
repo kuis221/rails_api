@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Api::V1::SessionsController do
+describe Api::V1::SessionsController, :type => :controller do
   describe "POST create" do
     let(:user) { FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, password: 'PassDePrueba45', password_confirmation: 'PassDePrueba45'), company: FactoryGirl.create(:company) ).user }
     let(:company) { user.companies.first }
@@ -9,11 +9,11 @@ describe Api::V1::SessionsController do
       post :create, email: user.email, password: 'PassDePrueba45', format: :json
       expect(user.reload.authentication_token).to_not be_nil
       result = JSON.parse(response.body)
-      response.should be_success
-      result['success'].should be_truthy
-      result['info'].should == 'Logged in'
-      result['data']['auth_token'].should == user.authentication_token
-      result['data']['current_company_id'].should == company.id
+      expect(response).to be_success
+      expect(result['success']).to be_truthy
+      expect(result['info']).to eq('Logged in')
+      expect(result['data']['auth_token']).to eq(user.authentication_token)
+      expect(result['data']['current_company_id']).to eq(company.id)
 
       # It should set the current_company_id if nil
       expect(user.reload.current_company_id).to eql user.companies.first.id
@@ -26,9 +26,9 @@ describe Api::V1::SessionsController do
 
       post :create, email: user.email, password: 'PassDePrueba45', format: :json
       result = JSON.parse(response.body)
-      response.should be_success
-      result['success'].should be_truthy
-      result['data']['current_company_id'].should == other_company.id
+      expect(response).to be_success
+      expect(result['success']).to be_truthy
+      expect(result['data']['current_company_id']).to eq(other_company.id)
     end
 
     it "should fix the current_company_id if not valid" do
@@ -36,18 +36,18 @@ describe Api::V1::SessionsController do
 
       post :create, email: user.email, password: 'PassDePrueba45', format: :json
       result = JSON.parse(response.body)
-      response.should be_success
-      result['success'].should be_truthy
-      result['data']['current_company_id'].should == company.id
+      expect(response).to be_success
+      expect(result['success']).to be_truthy
+      expect(result['data']['current_company_id']).to eq(company.id)
     end
 
     it "should return an error if not success" do
       post :create, email: user.email, password: 'XXXXXXXX', format: :json
       result = JSON.parse(response.body)
-      response.response_code.should == 401
-      result['success'].should be_falsey
-      result['info'].should == 'Login Failed'
-      result['data'].should == {}
+      expect(response.response_code).to eq(401)
+      expect(result['success']).to be_falsey
+      expect(result['info']).to eq('Login Failed')
+      expect(result['data']).to eq({})
     end
   end
 
@@ -56,17 +56,17 @@ describe Api::V1::SessionsController do
 
     it "should reset the authentication token" do
       delete :destroy, id: user.authentication_token, format: :json
-      response.should be_success
+      expect(response).to be_success
       user.reload
-      user.authentication_token.should_not == 'XYZ'
+      expect(user.authentication_token).not_to eq('XYZ')
     end
 
     it "return 404 if the authentication token is not found" do
       delete :destroy, id: 'NOT_VALID', format: :json
-      response.response_code.should == 404
+      expect(response.response_code).to eq(404)
       result = JSON.parse(response.body)
-      result["sucess"].should be_falsey
-      result["info"].should == "Invalid token."
+      expect(result["sucess"]).to be_falsey
+      expect(result["info"]).to eq("Invalid token.")
     end
   end
 end

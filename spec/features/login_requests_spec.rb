@@ -4,7 +4,7 @@ feature "Login", :js => true do
   scenario "should redirect the user to the login page" do
     visit root_path
 
-    current_path.should == new_user_session_path
+    expect(current_path).to eq(new_user_session_path)
     expect(page).to have_content("You need to sign in or sign up before continuing.")
   end
 
@@ -22,7 +22,7 @@ feature "Login", :js => true do
     fill_in('Password', with: 'SomeValidPassword01')
     click_button 'Login'
 
-    current_path.should == root_path
+    expect(current_path).to eq(root_path)
     expect(page).to have_text('ABC inc.')
     expect(page).to have_text(user.full_name)
   end
@@ -34,7 +34,7 @@ feature "Login", :js => true do
     fill_in('Password', with: 'SomeValidPassword01')
     click_button 'Login'
 
-    current_path.should == new_user_session_path
+    expect(current_path).to eq(new_user_session_path)
     expect(page).to have_content('Invalid email or password.')
   end
 end

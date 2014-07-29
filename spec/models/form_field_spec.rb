@@ -17,13 +17,13 @@
 
 require 'spec_helper'
 
-describe FormField do
-  it { should belong_to(:fieldable) }
+describe FormField, :type => :model do
+  it { is_expected.to belong_to(:fieldable) }
 
-  it { should validate_presence_of(:name) }
-  it { should validate_presence_of(:type) }
-  it { should validate_presence_of(:ordering) }
-  it { should validate_numericality_of(:ordering) }
+  it { is_expected.to validate_presence_of(:name) }
+  it { is_expected.to validate_presence_of(:type) }
+  it { is_expected.to validate_presence_of(:ordering) }
+  it { is_expected.to validate_numericality_of(:ordering) }
 
   let(:field) { FormField.new }
   describe "#field_options" do

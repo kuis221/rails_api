@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe UserMailer do
+describe UserMailer, :type => :mailer do
 
   describe "#company_invitation" do
     let(:user) { double(User, :first_name => 'Fulanito', :reset_password_token => 'qwerty', :email => 'fulanito@de-tal.com') }

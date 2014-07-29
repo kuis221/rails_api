@@ -60,7 +60,7 @@ module BrandscopiSpecHelpers
     require "rexml/document"
     export = ListExport.last
     expect(export).to receive(:save).at_least(:once).and_return(true)
-    File.should_receive(:delete) do |path|
+    expect(File).to receive(:delete) do |path|
       file = File.new( path )
       yield REXML::Document.new(file)
     end
@@ -70,8 +70,8 @@ module BrandscopiSpecHelpers
   def csv_from_last_export
     require "rexml/document"
     export = ListExport.last
-    export.should_receive(:save).any_number_of_times.and_return(true)
-    File.should_receive(:delete) do |path|
+    allow(export).to receive(:save).and_return(true)
+    expect(File).to receive(:delete) do |path|
       file = File.new( path )
       yield REXML::Document.new(file)
     end

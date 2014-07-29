@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe DocumentsController do
+describe DocumentsController, :type => :controller do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.current_company
@@ -12,19 +12,19 @@ describe DocumentsController do
   describe "POST 'create'", strategy: :deletion do
     it "queue a job for processing the photos" do
       ResqueSpec.reset!
-      AWS::S3.any_instance.should_receive(:buckets).and_return("brandscopic-test" => double(objects: {'uploads/dummy/test.jpg' => double(head: double(content_length: 100, content_type: 'image/jpeg', last_modified: Time.now))}))
-      AttachedAsset.any_instance.should_receive(:download_url).and_return('dummy.jpg')
+      expect_any_instance_of(AWS::S3).to receive(:buckets).and_return("brandscopic-test" => double(objects: {'uploads/dummy/test.jpg' => double(head: double(content_length: 100, content_type: 'image/jpeg', last_modified: Time.now))}))
+      expect_any_instance_of(AttachedAsset).to receive(:download_url).and_return('dummy.jpg')
       expect {
         post 'create', event_id: event.to_param, attached_asset: {direct_upload_url: 'https://s3.amazonaws.com/brandscopic-test/uploads/dummy/test.jpg'}, format: :js
       }.to change(AttachedAsset, :count).by(1)
-      response.should be_success
-      response.should render_template('document')
-      response.should render_template('create')
+      expect(response).to be_success
+      expect(response).to render_template('document')
+      expect(response).to render_template('create')
       document = AttachedAsset.last
-      document.attachable.should == event
-      document.asset_type.should == 'document'
-      document.direct_upload_url.should == 'https://s3.amazonaws.com/brandscopic-test/uploads/dummy/test.jpg'
-      AssetsUploadWorker.should have_queued(document.id)
+      expect(document.attachable).to eq(event)
+      expect(document.asset_type).to eq('document')
+      expect(document.direct_upload_url).to eq('https://s3.amazonaws.com/brandscopic-test/uploads/dummy/test.jpg')
+      expect(AssetsUploadWorker).to have_queued(document.id)
     end
   end
 
@@ -32,10 +32,10 @@ describe DocumentsController do
   describe "GET 'new'" do
     it "should render the comment form for a event comment" do
       get 'new', event_id: event.to_param, format: :js
-      response.should render_template('documents/_form')
-      response.should render_template(:form_dialog)
-      assigns(:document).new_record?.should be_truthy
-      assigns(:document).attachable.should == event
+      expect(response).to render_template('documents/_form')
+      expect(response).to render_template(:form_dialog)
+      expect(assigns(:document).new_record?).to be_truthy
+      expect(assigns(:document).attachable).to eq(event)
     end
   end
 

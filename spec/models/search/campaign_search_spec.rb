@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Campaign, search: true do
+describe Campaign, type: :model, search: true do
   it "should search for campaigns" do
     # First populate the Database with some data
     brand = FactoryGirl.create(:brand)
@@ -20,41 +20,41 @@ describe Campaign, search: true do
     Sunspot.commit
 
     # Search for all Campaigns on a given Company
-    Campaign.do_search(company_id: 1).results.should =~ [campaign, campaign2]
-    Campaign.do_search(company_id: 2).results.should =~ [company2_campaign]
+    expect(Campaign.do_search(company_id: 1).results).to match_array([campaign, campaign2])
+    expect(Campaign.do_search(company_id: 2).results).to match_array([company2_campaign])
 
     # Search for users associated to the Campaigns
-    Campaign.do_search(company_id: 1, q: "user,#{user.id}").results.should =~ [campaign, campaign2]
-    Campaign.do_search(company_id: 1, q: "user,#{user2.id}").results.should =~ [campaign2]
-    Campaign.do_search(company_id: 1, user: user.id).results.should =~ [campaign, campaign2]
-    Campaign.do_search(company_id: 1, user: user2.id).results.should =~ [campaign2]
-    Campaign.do_search(company_id: 1, user: [user.id, user2.id]).results.should =~ [campaign, campaign2]
+    expect(Campaign.do_search(company_id: 1, q: "user,#{user.id}").results).to match_array([campaign, campaign2])
+    expect(Campaign.do_search(company_id: 1, q: "user,#{user2.id}").results).to match_array([campaign2])
+    expect(Campaign.do_search(company_id: 1, user: user.id).results).to match_array([campaign, campaign2])
+    expect(Campaign.do_search(company_id: 1, user: user2.id).results).to match_array([campaign2])
+    expect(Campaign.do_search(company_id: 1, user: [user.id, user2.id]).results).to match_array([campaign, campaign2])
 
     # Search for teams associated to the Campaigns
-    Campaign.do_search(company_id: 1, q: "team,#{team.id}").results.should =~ [campaign, campaign2]
-    Campaign.do_search(company_id: 1, q: "team,#{team2.id}").results.should =~ [campaign2]
-    Campaign.do_search(company_id: 1, team: team.id).results.should =~ [campaign, campaign2]
-    Campaign.do_search(company_id: 1, team: team2.id).results.should =~ [campaign2]
-    Campaign.do_search(company_id: 1, team: [team.id, team2.id]).results.should =~ [campaign, campaign2]
+    expect(Campaign.do_search(company_id: 1, q: "team,#{team.id}").results).to match_array([campaign, campaign2])
+    expect(Campaign.do_search(company_id: 1, q: "team,#{team2.id}").results).to match_array([campaign2])
+    expect(Campaign.do_search(company_id: 1, team: team.id).results).to match_array([campaign, campaign2])
+    expect(Campaign.do_search(company_id: 1, team: team2.id).results).to match_array([campaign2])
+    expect(Campaign.do_search(company_id: 1, team: [team.id, team2.id]).results).to match_array([campaign, campaign2])
 
     # Search for brands associated to the Campaigns
-    Campaign.do_search(company_id: 1, q: "brand,#{brand.id}").results.should =~ [campaign, campaign2]
-    Campaign.do_search(company_id: 1, q: "brand,#{brand2.id}").results.should =~ [campaign2]
-    Campaign.do_search(company_id: 1, brand: brand.id).results.should =~ [campaign, campaign2]
-    Campaign.do_search(company_id: 1, brand: brand2.id).results.should =~ [campaign2]
-    Campaign.do_search(company_id: 1, brand: [brand.id, brand2.id]).results.should =~ [campaign, campaign2]
+    expect(Campaign.do_search(company_id: 1, q: "brand,#{brand.id}").results).to match_array([campaign, campaign2])
+    expect(Campaign.do_search(company_id: 1, q: "brand,#{brand2.id}").results).to match_array([campaign2])
+    expect(Campaign.do_search(company_id: 1, brand: brand.id).results).to match_array([campaign, campaign2])
+    expect(Campaign.do_search(company_id: 1, brand: brand2.id).results).to match_array([campaign2])
+    expect(Campaign.do_search(company_id: 1, brand: [brand.id, brand2.id]).results).to match_array([campaign, campaign2])
 
     # Search for brand portfolios associated to the Campaigns
-    Campaign.do_search(company_id: 1, q: "brand_portfolio,#{brand_portfolio.id}").results.should =~ [campaign, campaign2]
-    Campaign.do_search(company_id: 1, q: "brand_portfolio,#{brand_portfolio2.id}").results.should =~ [campaign2]
-    Campaign.do_search(company_id: 1, brand_portfolio: brand_portfolio.id).results.should =~ [campaign, campaign2]
-    Campaign.do_search(company_id: 1, brand_portfolio: brand_portfolio2.id).results.should =~ [campaign2]
-    Campaign.do_search(company_id: 1, brand_portfolio: [brand_portfolio.id, brand_portfolio2.id]).results.should =~ [campaign, campaign2]
+    expect(Campaign.do_search(company_id: 1, q: "brand_portfolio,#{brand_portfolio.id}").results).to match_array([campaign, campaign2])
+    expect(Campaign.do_search(company_id: 1, q: "brand_portfolio,#{brand_portfolio2.id}").results).to match_array([campaign2])
+    expect(Campaign.do_search(company_id: 1, brand_portfolio: brand_portfolio.id).results).to match_array([campaign, campaign2])
+    expect(Campaign.do_search(company_id: 1, brand_portfolio: brand_portfolio2.id).results).to match_array([campaign2])
+    expect(Campaign.do_search(company_id: 1, brand_portfolio: [brand_portfolio.id, brand_portfolio2.id]).results).to match_array([campaign, campaign2])
 
     # Search for a given Campaign
-    Campaign.do_search({company_id: 1, q: "campaign,#{campaign.id}"}, true).results.should =~ [campaign]
+    expect(Campaign.do_search({company_id: 1, q: "campaign,#{campaign.id}"}, true).results).to match_array([campaign])
 
     # Search for Campaigns on a given status
-    Campaign.do_search(company_id: 1, status: ['Active']).results.should =~ [campaign, campaign2]
+    expect(Campaign.do_search(company_id: 1, status: ['Active']).results).to match_array([campaign, campaign2])
   end
 end

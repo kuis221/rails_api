@@ -14,15 +14,15 @@
 
 require 'spec_helper'
 
-describe Brand do
+describe Brand, :type => :model do
 
-  it { should validate_presence_of(:name) }
-  it { should validate_uniqueness_of(:name).case_insensitive }
+  it { is_expected.to validate_presence_of(:name) }
+  it { is_expected.to validate_uniqueness_of(:name).case_insensitive }
 
-  it { should have_and_belong_to_many(:campaigns) }
-  it { should have_many(:brand_portfolios_brands) }
-  it { should have_many(:brand_portfolios) }
-  it { should have_many(:marques) }
+  it { is_expected.to have_and_belong_to_many(:campaigns) }
+  it { is_expected.to have_many(:brand_portfolios_brands) }
+  it { is_expected.to have_many(:brand_portfolios) }
+  it { is_expected.to have_many(:marques) }
 
   describe "marques_list" do
     it "should return the marques on a list separated by comma" do
@@ -30,7 +30,7 @@ describe Brand do
       brand.marques << FactoryGirl.create(:marque,  name: 'Marque 1')
       brand.marques << FactoryGirl.create(:marque,  name: 'Marque 2')
       brand.marques << FactoryGirl.create(:marque,  name: 'Marque 3')
-      brand.marques_list.should == 'Marque 1,Marque 2,Marque 3'
+      expect(brand.marques_list).to eq('Marque 1,Marque 2,Marque 3')
     end
   end
 
@@ -40,7 +40,7 @@ describe Brand do
       expect{
         brand.save!
       }.to change(Marque, :count).by(3)
-      brand.reload.marques.map(&:name).should == ['Marque 1','Marque 2','Marque 3']
+      expect(brand.reload.marques.map(&:name)).to eq(['Marque 1','Marque 2','Marque 3'])
     end
 
     it "should create only the marque that does not exists into the app for the brand and allow repeated marque names for different brands" do
@@ -53,8 +53,8 @@ describe Brand do
         brand.marques_list = 'Marque 1,Marque 2,Marque 3'
         brand.save!
       }.to change(Marque, :count).by(2)
-      brand.reload.marques.map(&:name).should == ['Marque 1','Marque 2','Marque 3']
-      Marque.all.map(&:name).should =~ ['Marque 1','Marque 2','Marque 3','Marque 3']
+      expect(brand.reload.marques.map(&:name)).to eq(['Marque 1','Marque 2','Marque 3'])
+      expect(Marque.all.map(&:name)).to match_array(['Marque 1','Marque 2','Marque 3','Marque 3'])
     end
 
     it "should remove any other marque from the brand not in the new list" do
@@ -62,14 +62,14 @@ describe Brand do
       FactoryGirl.create(:brand, marques_list: 'Marque 3')
       #Our brand with 3 marques initially
       brand = FactoryGirl.create(:brand, marques_list: 'Marque 1,Marque 2,Marque 3')
-      brand.reload.marques.count.should == 3
+      expect(brand.reload.marques.count).to eq(3)
       #Remove a marque from our brand
       expect{
         brand.marques_list = 'Marque 2,Marque 1'
         brand.save!
       }.to change(Marque, :count).by(-1)
-      brand.reload.marques.map(&:name).should == ['Marque 1','Marque 2']
-      Marque.all.map(&:name).should =~ ['Marque 1','Marque 2','Marque 3']
+      expect(brand.reload.marques.map(&:name)).to eq(['Marque 1','Marque 2'])
+      expect(Marque.all.map(&:name)).to match_array(['Marque 1','Marque 2','Marque 3'])
     end
   end
 end

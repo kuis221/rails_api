@@ -15,34 +15,34 @@
 
 require 'spec_helper'
 
-describe CompanyUser do
-  it { should belong_to(:user) }
-  it { should belong_to(:company) }
-  it { should belong_to(:role) }
-  it { should have_many(:tasks) }
-  it { should have_many(:memberships) }
-  it { should have_many(:teams).through(:memberships) }
-  it { should have_many(:campaigns).through(:memberships) }
-  it { should have_many(:events).through(:memberships) }
+describe CompanyUser, :type => :model do
+  it { is_expected.to belong_to(:user) }
+  it { is_expected.to belong_to(:company) }
+  it { is_expected.to belong_to(:role) }
+  it { is_expected.to have_many(:tasks) }
+  it { is_expected.to have_many(:memberships) }
+  it { is_expected.to have_many(:teams).through(:memberships) }
+  it { is_expected.to have_many(:campaigns).through(:memberships) }
+  it { is_expected.to have_many(:events).through(:memberships) }
 
-  it { should validate_presence_of(:role_id) }
-  it { should validate_numericality_of(:role_id) }
+  it { is_expected.to validate_presence_of(:role_id) }
+  it { is_expected.to validate_numericality_of(:role_id) }
 
-  it { should validate_presence_of(:company_id) }
-  it { should validate_numericality_of(:company_id) }
+  it { is_expected.to validate_presence_of(:company_id) }
+  it { is_expected.to validate_numericality_of(:company_id) }
 
 
   describe "#deactivate" do
     it "should deactivate the status of the user on the current company" do
       user = FactoryGirl.create(:company_user, active: true)
       user.deactivate!
-      user.reload.active.should be_falsey
+      expect(user.reload.active).to be_falsey
     end
 
     it "should activate the status of the user on the current company" do
       user = FactoryGirl.create(:company_user, active: false)
       user.activate!
-      user.reload.active.should be_truthy
+      expect(user.reload.active).to be_truthy
     end
   end
 
@@ -59,9 +59,9 @@ describe CompanyUser do
       other_team = FactoryGirl.create(:team)
       users.each{|u| team.users << u}
       other_users.each{|u| other_team.users << u}
-      CompanyUser.by_teams(team).all.should =~ users
-      CompanyUser.by_teams(other_team).all.should =~ other_users
-      CompanyUser.by_teams([team, other_team]).all.should =~ users + other_users
+      expect(CompanyUser.by_teams(team).all).to match_array(users)
+      expect(CompanyUser.by_teams(other_team).all).to match_array(other_users)
+      expect(CompanyUser.by_teams([team, other_team]).all).to match_array(users + other_users)
     end
   end
 
@@ -78,9 +78,9 @@ describe CompanyUser do
       other_event = FactoryGirl.create(:event)
       users.each{|u| event.users << u}
       other_users.each{|u| other_event.users << u}
-      CompanyUser.by_events(event).all.should =~ users
-      CompanyUser.by_events(other_event).all.should =~ other_users
-      CompanyUser.by_events([event, other_event]).all.should =~ users + other_users
+      expect(CompanyUser.by_events(event).all).to match_array(users)
+      expect(CompanyUser.by_events(other_event).all).to match_array(other_users)
+      expect(CompanyUser.by_events([event, other_event]).all).to match_array(users + other_users)
     end
   end
 
@@ -93,25 +93,25 @@ describe CompanyUser do
 
       it "should return the ids of campaigns assigend to the user" do
         user.campaigns << campaign
-        user.accessible_campaign_ids.should == [campaign.id]
+        expect(user.accessible_campaign_ids).to eq([campaign.id])
       end
 
       it "should return the ids of campaigns of a brand assigend to the user" do
         campaign.brands << brand
         user.brands << brand
-        user.accessible_campaign_ids.should == [campaign.id]
+        expect(user.accessible_campaign_ids).to eq([campaign.id])
       end
 
       it "should return the ids of campaigns of a brand assigend to the user" do
         campaign.brands << brand
         user.brands << brand
-        user.accessible_campaign_ids.should == [campaign.id]
+        expect(user.accessible_campaign_ids).to eq([campaign.id])
       end
 
       it "should return the ids of campaigns of a brand portfolio assigned to the user" do
         campaign.brand_portfolios << portfolio
         user.brand_portfolios << portfolio
-        user.accessible_campaign_ids.should == [campaign.id]
+        expect(user.accessible_campaign_ids).to eq([campaign.id])
       end
     end
     describe "as an admin user" do

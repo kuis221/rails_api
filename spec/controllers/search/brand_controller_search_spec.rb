@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe BrandsController, search: true do
+describe BrandsController, type: :controller, search: true do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.companies.first
@@ -11,10 +11,10 @@ describe BrandsController, search: true do
     it "should return the correct buckets in the right order" do
       Sunspot.commit
       get 'autocomplete'
-      response.should be_success
+      expect(response).to be_success
 
       buckets = JSON.parse(response.body)
-      buckets.map{|b| b['label']}.should == ['Brands']
+      expect(buckets.map{|b| b['label']}).to eq(['Brands'])
     end
 
   end
@@ -23,10 +23,10 @@ describe BrandsController, search: true do
     it "should return the correct filters in the right order" do
       Sunspot.commit
       get 'filters', format: :json
-      response.should be_success
+      expect(response).to be_success
 
       filters = JSON.parse(response.body)
-      filters['filters'].map{|b| b['label']}.should == ["Active State"]
+      expect(filters['filters'].map{|b| b['label']}).to eq(["Active State"])
     end
   end
 end

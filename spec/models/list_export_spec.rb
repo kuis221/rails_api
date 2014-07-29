@@ -19,41 +19,41 @@
 
 require 'spec_helper'
 
-describe ListExport do
+describe ListExport, :type => :model do
   let(:company_user) { FactoryGirl.create(:company_user) }
 
 
   describe "Results::EventDataController#export_list" do
     it "should call the export_list on the controller and set the required variables" do
       exporter = ListExport.new(controller: 'Results::EventDataController', company_user: company_user, export_format: 'xls', params: {})
-      Results::EventDataController.any_instance.should_receive(:export_list).with(exporter)
+      expect_any_instance_of(Results::EventDataController).to receive(:export_list).with(exporter)
 
       # Prevent export to save and upload attachment to S3
       expect(exporter).to receive(:save).at_least(:once).and_return(true)
 
-      exporter.file_file_name.should be_nil
+      expect(exporter.file_file_name).to be_nil
       exporter.export_list
 
-      exporter.file_file_name.should_not be_nil
-      User.current.should == company_user.user
-      exporter.completed?.should be_truthy
+      expect(exporter.file_file_name).not_to be_nil
+      expect(User.current).to eq(company_user.user)
+      expect(exporter.completed?).to be_truthy
     end
   end
 
   describe "EventsController#export_list" do
     it "should call the export_list on the controller and set the required variables" do
       exporter = ListExport.new(controller: 'EventsController', company_user: company_user, export_format: 'xls', params: {})
-      EventsController.any_instance.should_receive(:export_list).with(exporter)
+      expect_any_instance_of(EventsController).to receive(:export_list).with(exporter)
 
       # Prevent export to save and upload attachment to S3
       expect(exporter).to receive(:save).at_least(:once).and_return(true)
 
-      exporter.file_file_name.should be_nil
+      expect(exporter.file_file_name).to be_nil
       exporter.export_list
 
-      exporter.file_file_name.should_not be_nil
-      User.current.should == company_user.user
-      exporter.completed?.should be_truthy
+      expect(exporter.file_file_name).not_to be_nil
+      expect(User.current).to eq(company_user.user)
+      expect(exporter.completed?).to be_truthy
     end
   end
 end

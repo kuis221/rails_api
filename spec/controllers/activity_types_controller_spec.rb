@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe ActivityTypesController do
+describe ActivityTypesController, :type => :controller do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.current_company
@@ -12,8 +12,8 @@ describe ActivityTypesController do
     let(:activity_type){ FactoryGirl.create(:activity_type, company: @company) }
     it "returns http success" do
       get 'set_goal', campaign_id: campaign.to_param, activity_type_id: activity_type.to_param, format: :js
-      assigns(:campaign).should == campaign
-      response.should be_success
+      expect(assigns(:campaign)).to eq(campaign)
+      expect(response).to be_success
     end
   end
 
@@ -21,14 +21,14 @@ describe ActivityTypesController do
     let(:activity_type){ FactoryGirl.create(:activity_type, company: @company) }
     it "returns http success" do
       get 'edit', id: activity_type.to_param, format: :js
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
   describe "GET 'index'" do
     it "returns http success" do
       get 'index'
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
@@ -44,11 +44,11 @@ describe ActivityTypesController do
               }, format: :js
         }.to change(Goal, :count).by(1)
       }.to_not change(ActivityType, :count)
-      response.should render_template(:update)
-      response.should_not render_template(:form_dialog)
+      expect(response).to render_template(:update)
+      expect(response).not_to render_template(:form_dialog)
 
-      campaign.goals.for_activity_types([activity_type]).first.value.should == 23
-      assigns(:activity_type).should == activity_type
+      expect(campaign.goals.for_activity_types([activity_type]).first.value).to eq(23)
+      expect(assigns(:activity_type)).to eq(activity_type)
     end
 
     it "must allow create form fields" do
@@ -124,38 +124,38 @@ describe ActivityTypesController do
   describe "GET 'items'" do
     it "responds to .json format" do
       get 'items'
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
   describe "GET 'new'" do
     it "returns http success" do
       get 'new', format: :js
-      response.should be_success
+      expect(response).to be_success
     end
   end
 
     describe "POST 'create'" do
     it "should not render form_dialog if no errors" do
-      lambda {
+      expect {
         post 'create', activity_type: {name: 'Activity Type test', description: 'Activity Type description'}, format: :js
-      }.should change(ActivityType, :count).by(1)
-      response.should be_success
-      response.should render_template(:create)
-      response.should_not render_template(:form_dialog)
+      }.to change(ActivityType, :count).by(1)
+      expect(response).to be_success
+      expect(response).to render_template(:create)
+      expect(response).not_to render_template(:form_dialog)
 
       type = ActivityType.last
-      type.name.should == 'Activity Type test'
-      type.description.should == 'Activity Type description'
-      type.active.should be_truthy
+      expect(type.name).to eq('Activity Type test')
+      expect(type.description).to eq('Activity Type description')
+      expect(type.active).to be_truthy
     end
 
     it "should render the form_dialog template if errors" do
-      lambda {
+      expect {
         post 'create', format: :js
-      }.should_not change(ActivityType, :count)
-      response.should render_template(:create)
-      response.should render_template(:form_dialog)
+      }.not_to change(ActivityType, :count)
+      expect(response).to render_template(:create)
+      expect(response).to render_template(:form_dialog)
       assigns(:activity_type).errors.count > 0
     end
   end
@@ -166,15 +166,15 @@ describe ActivityTypesController do
     it "deactivates an active brand_portfolio" do
       activity_type.update_attribute(:active, true)
       get 'deactivate', id: activity_type.to_param, format: :js
-      response.should be_success
-      activity_type.reload.active?.should be_falsey
+      expect(response).to be_success
+      expect(activity_type.reload.active?).to be_falsey
     end
 
     it "activates an inactive brand_portfolio" do
       activity_type.update_attribute(:active, false)
       get 'activate', id: activity_type.to_param, format: :js
-      response.should be_success
-      activity_type.reload.active?.should be_truthy
+      expect(response).to be_success
+      expect(activity_type.reload.active?).to be_truthy
     end
   end
 end

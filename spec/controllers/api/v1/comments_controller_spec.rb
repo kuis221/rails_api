@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Api::V1::CommentsController do
+describe Api::V1::CommentsController, :type => :controller do
   let(:user) { sign_in_as_user }
   let(:company) { user.company_users.first.company }
   let(:campaign) { FactoryGirl.create(:campaign, company: company, name: 'Test Campaign FY01') }
@@ -9,11 +9,11 @@ describe Api::V1::CommentsController do
   describe "GET 'index'" do
     it "should return failure for invalid authorization token" do
       get :index, company_id: company.to_param, auth_token: 'XXXXXXXXXXXXXXXX', event_id: 100, format: :json
-      response.response_code.should == 401
+      expect(response.response_code).to eq(401)
       result = JSON.parse(response.body)
-      result['success'].should == false
-      result['info'].should == 'Invalid auth token'
-      result['data'].should be_empty
+      expect(result['success']).to eq(false)
+      expect(result['info']).to eq('Invalid auth token')
+      expect(result['data']).to be_empty
     end
 
     it "returns the list of comments for the event" do
@@ -26,10 +26,10 @@ describe Api::V1::CommentsController do
       Sunspot.commit
 
       get :index, company_id: company.to_param, auth_token: user.authentication_token, event_id: event.to_param, format: :json
-      response.should be_success
+      expect(response).to be_success
       result = JSON.parse(response.body)
-      result.count.should == 2
-      result.should == [{
+      expect(result.count).to eq(2)
+      expect(result).to eq([{
                          'id' => comment1.id,
                          'content' => 'Comment #1',
                          'created_at' => '2013-08-22T11:59:00-07:00'
@@ -38,7 +38,7 @@ describe Api::V1::CommentsController do
                          'id' => comment2.id,
                          'content' => 'Comment #2',
                          'created_at' => '2013-08-23T09:15:00-07:00'
-                        }]
+                        }])
     end
   end
 
@@ -51,8 +51,8 @@ describe Api::V1::CommentsController do
       expect(response).to be_success
       expect(response).to render_template('show')
       comment = Comment.last
-      comment.content.should == 'The very new comment'
-      event.comments.should == [comment]
+      expect(comment.content).to eq('The very new comment')
+      expect(event.comments).to eq([comment])
     end
   end
 
@@ -65,10 +65,10 @@ describe Api::V1::CommentsController do
       put 'update', auth_token: user.authentication_token, company_id: company.to_param,
                     id: comment.to_param, event_id: event.to_param,
                     comment: {content: 'New comment content' }, format: :json
-      assigns(:comment).should == comment
-      response.should be_success
+      expect(assigns(:comment)).to eq(comment)
+      expect(response).to be_success
       comment.reload
-      comment.content.should == 'New comment content'
+      expect(comment.content).to eq('New comment content')
     end
   end
 
@@ -83,7 +83,7 @@ describe Api::V1::CommentsController do
         delete 'destroy', auth_token: user.authentication_token, company_id: company.to_param,
                     id: comment.to_param, event_id: event.to_param, format: :json
       }.to change(Comment, :count).by(-1)
-      response.should be_success
+      expect(response).to be_success
     end
   end
 end

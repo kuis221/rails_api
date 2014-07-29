@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Analysis::ReportsHelper do
+describe Analysis::ReportsHelper, :type => :helper do
   before do
     @company = FactoryGirl.create(:company)
     @company_user = FactoryGirl.create(:company_user, company: @company)
@@ -43,45 +43,45 @@ describe Analysis::ReportsHelper do
 
       results = helper.each_events_goal
 
-      results[goals[0].id][:goal].kpi_id.should == kpi_impressions.id
-      results[goals[0].id][:goal].goalable_id.should == campaign.id
-      results[goals[0].id][:completed_percentage].should == 50.0
-      results[goals[0].id][:remaining_percentage].should == 50.0
-      results[goals[0].id][:remaining_count].should == 50.0
-      results[goals[0].id][:total_count].should == 50
-      results[goals[0].id][:submitted].should == 0
+      expect(results[goals[0].id][:goal].kpi_id).to eq(kpi_impressions.id)
+      expect(results[goals[0].id][:goal].goalable_id).to eq(campaign.id)
+      expect(results[goals[0].id][:completed_percentage]).to eq(50.0)
+      expect(results[goals[0].id][:remaining_percentage]).to eq(50.0)
+      expect(results[goals[0].id][:remaining_count]).to eq(50.0)
+      expect(results[goals[0].id][:total_count]).to eq(50)
+      expect(results[goals[0].id][:submitted]).to eq(0)
 
-      results[goals[1].id][:goal].kpi_id.should == kpi_events.id
-      results[goals[1].id][:goal].goalable_id.should == campaign.id
-      results[goals[1].id][:completed_percentage].should == 5.0
-      results[goals[1].id][:remaining_percentage].should == 95.0
-      results[goals[1].id][:remaining_count].should == 19.0
-      results[goals[1].id][:total_count].should == 1
-      results[goals[1].id][:submitted].should == 0
+      expect(results[goals[1].id][:goal].kpi_id).to eq(kpi_events.id)
+      expect(results[goals[1].id][:goal].goalable_id).to eq(campaign.id)
+      expect(results[goals[1].id][:completed_percentage]).to eq(5.0)
+      expect(results[goals[1].id][:remaining_percentage]).to eq(95.0)
+      expect(results[goals[1].id][:remaining_count]).to eq(19.0)
+      expect(results[goals[1].id][:total_count]).to eq(1)
+      expect(results[goals[1].id][:submitted]).to eq(0)
 
-      results[goals[2].id][:goal].kpi_id.should == kpi_interactions.id
-      results[goals[2].id][:goal].goalable_id.should == campaign.id
-      results[goals[2].id][:completed_percentage].should == 40.0
-      results[goals[2].id][:remaining_percentage].should == 60.0
-      results[goals[2].id][:remaining_count].should == 240.0
-      results[goals[2].id][:total_count].should == 160
-      results[goals[2].id][:submitted].should == 0
+      expect(results[goals[2].id][:goal].kpi_id).to eq(kpi_interactions.id)
+      expect(results[goals[2].id][:goal].goalable_id).to eq(campaign.id)
+      expect(results[goals[2].id][:completed_percentage]).to eq(40.0)
+      expect(results[goals[2].id][:remaining_percentage]).to eq(60.0)
+      expect(results[goals[2].id][:remaining_count]).to eq(240.0)
+      expect(results[goals[2].id][:total_count]).to eq(160)
+      expect(results[goals[2].id][:submitted]).to eq(0)
 
-      results[goals[3].id][:goal].activity_type_id.should == activity_type1.id
-      results[goals[3].id][:goal].goalable_id.should == campaign.id
-      results[goals[3].id][:completed_percentage].should == 20.0
-      results[goals[3].id][:remaining_percentage].should == 80.0
-      results[goals[3].id][:remaining_count].should == 4.0
-      results[goals[3].id][:total_count].should == 1
-      results[goals[3].id][:submitted].should == 0
+      expect(results[goals[3].id][:goal].activity_type_id).to eq(activity_type1.id)
+      expect(results[goals[3].id][:goal].goalable_id).to eq(campaign.id)
+      expect(results[goals[3].id][:completed_percentage]).to eq(20.0)
+      expect(results[goals[3].id][:remaining_percentage]).to eq(80.0)
+      expect(results[goals[3].id][:remaining_count]).to eq(4.0)
+      expect(results[goals[3].id][:total_count]).to eq(1)
+      expect(results[goals[3].id][:submitted]).to eq(0)
 
-      results[goals[4].id][:goal].activity_type_id.should == activity_type2.id
-      results[goals[4].id][:goal].goalable_id.should == campaign.id
-      results[goals[4].id][:completed_percentage].should == 10.0
-      results[goals[4].id][:remaining_percentage].should == 90.0
-      results[goals[4].id][:remaining_count].should == 9.0
-      results[goals[4].id][:total_count].should == 1
-      results[goals[4].id][:submitted].should == 0
+      expect(results[goals[4].id][:goal].activity_type_id).to eq(activity_type2.id)
+      expect(results[goals[4].id][:goal].goalable_id).to eq(campaign.id)
+      expect(results[goals[4].id][:completed_percentage]).to eq(10.0)
+      expect(results[goals[4].id][:remaining_percentage]).to eq(90.0)
+      expect(results[goals[4].id][:remaining_count]).to eq(9.0)
+      expect(results[goals[4].id][:total_count]).to eq(1)
+      expect(results[goals[4].id][:submitted]).to eq(0)
     end
   end
 
@@ -111,7 +111,7 @@ describe Analysis::ReportsHelper do
 
       result = helper.total_accounts_for_events
 
-      result.should == 2
+      expect(result).to eq(2)
     end
   end
 end
