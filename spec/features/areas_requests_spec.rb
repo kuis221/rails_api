@@ -38,6 +38,7 @@ feature "Areas", js: true, search: true  do
           name: 'Guillermitos Bar', street_number: '98',
           route: '3rd Ave', city: 'New York') )
       Sunspot.commit
+      company_user.places << venue.place
       visit area_path(area)
 
       click_js_link 'Add Place'
