@@ -43,5 +43,10 @@ FactoryGirl.define do
     do_not_connect_to_api true
 
     after(:build) {|u| u.types ||= ['establishment'] }
+
+    factory :city do
+      types ['political', 'locality']
+      after(:build) {|p| p.city = p.name }
+    end
   end
 end

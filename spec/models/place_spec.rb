@@ -172,4 +172,150 @@ describe Place, :type => :model do
       ])
     end
   end
+
+  describe "#combined_search", search: true do
+    let(:google_results) { {results: []} }
+    let(:company_user) { FactoryGirl.create(:company_user, role: FactoryGirl.create(:non_admin_role)) }
+    before{ expect(Place).to receive(:open).and_return(double(read: JSON.generate(google_results))) }
+
+    it "should return empty if no results" do
+      expect(Place.combined_search({q: 'aa'})).to eql []
+    end
+
+    it "should only places valid for the current user" do
+      venue = FactoryGirl.create(:venue,
+        place: FactoryGirl.create(:place, name: 'Qwerty', city: 'AB', state: 'California', country: 'CR'),
+        company: company_user.company)
+      FactoryGirl.create(:venue,
+        place: FactoryGirl.create(:place, name: 'Qwerty', city: 'XY', state: 'California', country: 'CR'),
+        company: company_user.company)
+
+      Sunspot.commit
+
+      company_user.places << FactoryGirl.create(:city, name: 'AB', state: 'California', country: 'CR')
+
+      params = {q: 'qw', current_company_user: company_user}
+      expect(Place.combined_search(params)).to eql [
+        {
+          value: "Qwerty, 123 My Street",
+          label: "Qwerty, 123 My Street",
+          id: venue.place_id,
+          valid: true
+        }
+      ]
+    end
+
+    describe "with results form Google API" do
+      let(:google_results) { {results: [{
+         "formatted_address" => "Los Angeles, CA, USA",
+         "id" => "PLACEID1",
+         "name" => "Los Angeles",
+         "reference" => "REFERENCE1",
+         "types" => [ "locality", "political" ]
+      },
+      {
+         "formatted_address" => "Los Angeles, ON, Canada",
+         "id" => "PLACEID2",
+         "name" => "Los Angeles",
+         "reference" => "REFERENCE2",
+         "types" => [ "locality", "political" ]
+      },{
+         "formatted_address" => "Tower 42, Los Angeles, CA 23211, United States",
+         "id" => "PLACEID3",
+         "name" => "Vertigo 42",
+         "reference" => "REFERENCE3",
+         "types" => [ "food", "bar", "establishment" ]
+      }]} }
+
+      it "should include all the places returned by google with the 'valid' flag set to false" do
+        params = {q: 'qw', current_company_user: company_user}
+        expect(Place.combined_search(params)).to eql [
+          {
+            value: "Los Angeles, CA, USA",
+            label: "Los Angeles, CA, USA",
+            id: 'REFERENCE1||PLACEID1',
+            valid: false
+          },
+          {
+            value: "Los Angeles, ON, Canada",
+            label: "Los Angeles, ON, Canada",
+            id: 'REFERENCE2||PLACEID2',
+            valid: false
+          },
+          {
+            value: "Vertigo 42, Tower 42, Los Angeles, CA 23211, United States",
+            label: "Vertigo 42, Tower 42, Los Angeles, CA 23211, United States",
+            id: 'REFERENCE3||PLACEID3',
+            valid: false
+          }
+        ]
+      end
+
+      it "should set the 'valid' flag to tru for places the user is allowed to access" do
+        company_user.places << FactoryGirl.create(:city, name: 'Los Angeles', state: 'California', country: 'US')
+        params = {q: 'qw', current_company_user: company_user}
+        expect(Place.combined_search(params)).to eql [
+          {
+            value: "Los Angeles, CA, USA",
+            label: "Los Angeles, CA, USA",
+            id: 'REFERENCE1||PLACEID1',
+            valid: true
+          },
+          {
+            value: "Vertigo 42, Tower 42, Los Angeles, CA 23211, United States",
+            label: "Vertigo 42, Tower 42, Los Angeles, CA 23211, United States",
+            id: 'REFERENCE3||PLACEID3',
+            valid: true
+          },
+          {
+            value: "Los Angeles, ON, Canada",
+            label: "Los Angeles, ON, Canada",
+            id: 'REFERENCE2||PLACEID2',
+            valid: false
+          }
+        ]
+      end
+
+      it "returns mixed places from google and the app listing app's places first " do
+        venue = FactoryGirl.create(:venue,
+          place: FactoryGirl.create(:place, name: 'Qwerty', city: 'Los Angeles', state: 'California', country: 'US'),
+          company: company_user.company)
+        FactoryGirl.create(:venue,
+          place: FactoryGirl.create(:place, name: 'Qwerty', city: 'XY', state: 'California', country: 'CR'),
+          company: company_user.company)
+
+        Sunspot.commit
+
+        company_user.places << FactoryGirl.create(:city, name: 'Los Angeles', state: 'California', country: 'US')
+
+        params = {q: 'Angeles', current_company_user: company_user}
+        expect(Place.combined_search(params)).to eql [
+          {
+            value: "Qwerty, 123 My Street",
+            label: "Qwerty, 123 My Street",
+            id: venue.place_id,
+            valid: true
+          },
+          {
+            value: "Los Angeles, CA, USA",
+            label: "Los Angeles, CA, USA",
+            id: 'REFERENCE1||PLACEID1',
+            valid: true
+          },
+          {
+            value: "Vertigo 42, Tower 42, Los Angeles, CA 23211, United States",
+            label: "Vertigo 42, Tower 42, Los Angeles, CA 23211, United States",
+            id: 'REFERENCE3||PLACEID3',
+            valid: true
+          },
+          {
+            value: "Los Angeles, ON, Canada",
+            label: "Los Angeles, ON, Canada",
+            id: 'REFERENCE2||PLACEID2',
+            valid: false
+          }
+        ]
+      end
+    end
+  end
 end

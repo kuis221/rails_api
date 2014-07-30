@@ -192,24 +192,71 @@ class Place < ActiveRecord::Base
   class << self
     # Combine search results from Google API and Existing places
     def combined_search(params)
-      local_results = Venue.do_search(params.merge({per_page: 5, search_address: true, sorting: 'score', sorting_dir: 'desc'})).results
+      local_results = Venue.do_search(combined_search_params(params)).results
       results = local_results.map do |p|
         address = (p.formatted_address || [p.city, (p.country == 'US' ? p.state : p.state_name), p.country].compact.join(', '))
-        {value: p.name + ', ' + address, label: p.name + ', ' + address, id: p.place_id}
+        {
+          value: p.name + ', ' + address,
+          label: p.name + ', ' + address,
+          id: p.place_id,
+          valid: true
+        }
       end
       local_references = local_results.map{|p| [p.reference, p.place.place_id]}.flatten.compact
 
+      valid_flag = ->(result){
+        params[:current_company_user].nil? ||
+        params[:current_company_user].is_admin? ||
+        params[:current_company_user].allowed_to_access_place?(build_from_autocoplete_result(result))
+      }
+
       google_results = JSON.parse(open("https://maps.googleapis.com/maps/api/place/textsearch/json?key=#{GOOGLE_API_KEY}&sensor=false&query=#{URI::encode(params[:q])}").read)
       if google_results && google_results['results'].present?
-        results += google_results['results'].reject{|p| local_references.include?(p['reference']) || local_references.include?(p['id']) }.map{|p| {value: p['name'] + ', ' + p['formatted_address'].to_s, label: p['name'] + ', ' + p['formatted_address'].to_s, id: "#{p['reference']}||#{p['id']}"} }
+        sort_index = {true => 0, false => 1} # elements with :valid=true should go first
+        results.concat(google_results['results'].
+          reject{|p| local_references.include?(p['reference']) || local_references.include?(p['id']) }.
+          map do |p|
+            name = p['formatted_address'].match(/\A#{p['name']}/i) ? nil : p['name']
+            label = [name, p['formatted_address'].to_s].compact.join(', ')
+            {
+              value: label,
+              label: label,
+              id: "#{p['reference']}||#{p['id']}",
+              valid: valid_flag.call(p)
+            }
+          end.sort!{|x,y| sort_index[x[:valid]] <=> sort_index[y[:valid]] }.slice!(0, 10-results.count))
       end
       results
+    end
+
+    def combined_search_params(params)
+      params.merge per_page: 5,
+          search_address: true,
+          sorting: 'score',
+          sorting_dir: 'desc'
     end
 
     def find_tdlinx_place(binds)
       connection.select_value(
         sanitize_sql_array(["select find_tdlinx_place(:name, :street, :city, :state, :zipcode)", binds])
       ).try(:to_i)
+    end
+
+    def build_from_autocoplete_result(result)
+      if result['formatted_address'] &&
+         (m = result['formatted_address'].match(/\A.*?,?\s*([^,]+)\s*,\s*([^,]+)\s*,\s*([^,]+)\s*\z/))
+        country = m[3]
+        country = Country.all.detect(->{[country, country]}){|c| b = Country.new(c[1]); b.alpha3 == country}[1] if country.match(/\A[A-Z]{3}\z/)
+        country = Country.all.detect(->{[country, country]}){|c| c[0].downcase == country.downcase}[1] unless country.match(/\A[A-Z]{2}\z/)
+        if (country_obj = Country.new(country)) && country_obj.data
+          state = m[2]
+          state.gsub!(/\s+[0-9\-]+\s*\z/, '') # Strip Zip code from stage if present
+          city = m[1]
+          p "state => #{state}"
+          state = country_obj.states[state]['name'] if country_obj.states.has_key?(state)
+          Place.new(name: result['name'], city: city, state: state, country: country, types: result['types'])
+        end
+      end
     end
   end
 

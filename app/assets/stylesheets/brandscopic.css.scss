@@ -6703,6 +6703,10 @@ table td.sub-level-1 {
 		.ui-state-focus {
 			background-color: #989898 !important;
 		}
+
+		&.invalid-place a {
+			color: $grey_one;
+		}
 	}
 }
 
