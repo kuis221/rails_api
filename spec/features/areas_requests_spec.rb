@@ -85,6 +85,7 @@ feature "Areas", js: true, search: true  do
 
     it_should_behave_like "a user that can edit areas" do
       let(:permissions) { [[:update, 'Area'], [:show, 'Area']] }
+      before{ company_user.places << FactoryGirl.create(:city, name: 'Lake Buena Vista', state:'Florida', country: 'US') }
     end
   end
 

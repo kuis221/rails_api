@@ -113,7 +113,7 @@ group :test do
   gem 'resque_spec'
   gem 'simplecov', require: false
   gem 'capybara-screenshot'
-  gem 'fuubar'
+  gem 'fuubar', '2.0.0.rc1'
   gem 'database_cleaner'
   #gem 'sms-spec', '~> 0.1.9'
   gem 'sms-spec'

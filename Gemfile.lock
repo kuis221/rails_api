@@ -155,8 +155,8 @@ GEM
     formatador (0.2.5)
     formtastic (2.2.1)
       actionpack (>= 3.0)
-    fuubar (1.3.3)
-      rspec (>= 2.14.0, < 3.1.0)
+    fuubar (2.0.0.rc1)
+      rspec (~> 3.0.rc1)
       ruby-progressbar (~> 1.4)
     gctools (0.2.3)
     geocoder (1.1.8)
@@ -491,7 +491,7 @@ DEPENDENCIES
   factory_girl_rails
   faker
   font_assets!
-  fuubar
+  fuubar (= 2.0.0.rc1)
   gctools
   geocoder
   google_places
