@@ -216,6 +216,8 @@ feature 'Events section' do
         click_js_button "Save"
 
         expect(page).to have_no_content("The sum of the segments should be 100%")
+        sleep(1)
+        screenshot_and_open_image
       end
 
       scenario "should NOT allow 0 or less for the sum of required percentage fields" do
@@ -575,8 +577,8 @@ feature 'Events section' do
                 campaign: FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: company),
                 place: FactoryGirl.create(:place, name: 'Place 2', city: 'Austin', state:'TX', country: 'US'))
               brands = [
-                FactoryGirl.create(:brand, name: 'Cacique'),
-                FactoryGirl.create(:brand, name: 'Smirnoff'),
+                FactoryGirl.create(:brand, name: 'Cacique', company: company),
+                FactoryGirl.create(:brand, name: 'Smirnoff', company: company),
               ]
               FactoryGirl.create(:brand, name: 'Centenario')  # Brand not added to the user/campaing
               ev1.campaign.brands << brands.first

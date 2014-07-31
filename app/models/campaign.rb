@@ -138,6 +138,10 @@ class Campaign < ActiveRecord::Base
     integer :brand_ids, multiple: true
 
     integer :brand_portfolio_ids, multiple: true
+
+    integer :company_user_ids, multiple: true do
+      user_ids
+    end
   end
 
   def has_date_range?

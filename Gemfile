@@ -107,7 +107,7 @@ group :test do
   gem "poltergeist"
   #gem 'selenium-webdriver'
   gem "email_spec", ">= 1.4.0"
-  gem 'shoulda'
+  gem 'shoulda-matchers', require: false
   gem 'launchy'
   gem "sunspot_test"
   gem 'resque_spec'

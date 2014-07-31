@@ -348,7 +348,6 @@ describe Event, :type => :model do
       goals.each{|g| g.value = 100; g.save}
       expect(event.kpi_goals).to eq({Kpi.impressions.id => 50})
     end
-
   end
 
   describe "before_save #set_promo_hours" do
