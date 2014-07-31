@@ -53,4 +53,14 @@ class FormField::LikertScale < FormField
       end.join('<br /> ').html_safe
     end
   end
+
+  protected
+    def valid_hash_keys
+      statements.pluck('id')
+    end
+
+    def is_valid_value_for_key?(key, value)
+      @_option_ids = options.pluck('id')
+      value_is_numeric?(value) && @_option_ids.include?(value.to_i)
+    end
 end

@@ -57,14 +57,9 @@ class FormField::Percentage < FormField
 
   def validate_result(result)
     super
-    if result.value.present?
-      if result.value.is_a?(Hash)
-        if (result.value.keys.map(&:to_i) - options_for_input.map{|o| o[1]}).any?
-          result.errors.add :value, :invalid  # If a invalid key was given
-        elsif result.value.values.map(&:to_f).reduce(:+).to_i != 100
-          result.errors.add :value, :invalid
-        end
-      else
+    unless result.errors.get(:value) || !result.value.is_a?(Hash)
+      total = result.value.values.map(&:to_f).reduce(:+).to_i
+      if (self.required && total != 100) || (!self.required && total != 100 && total != 0)
         result.errors.add :value, :invalid
       end
     end

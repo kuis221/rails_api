@@ -89,6 +89,21 @@ class FormField < ActiveRecord::Base
     if required? && (result.value.nil? || (result.value.is_a?(String) && result.value.empty?))
       result.errors.add(:value, I18n.translate('errors.messages.blank'))
     end
+    if is_hashed_value?
+      if required? && (result.value.nil? || (result.value.is_a?(Hash) && result.value.empty?))
+        result.errors.add(:value, I18n.translate('errors.messages.blank'))
+      elsif result.value.present?
+        if result.value.is_a?(Hash)
+          if result.value.any?{|k, v| v != '' && !is_valid_value_for_key?(k, v) }
+            result.errors.add :value, :invalid
+          elsif (result.value.keys.map(&:to_i) - valid_hash_keys).any?
+            result.errors.add :value, :invalid  # If a invalid key was given
+          end
+        else
+          result.errors.add :value, :invalid
+        end
+      end
+    end
   end
 
   def options_for_input
@@ -116,4 +131,13 @@ class FormField < ActiveRecord::Base
   def value_is_numeric?(value)
     true if Float(value) rescue false
   end
+
+  protected
+    def valid_hash_keys
+      options_for_input.map{|o| o[1]}
+    end
+
+    def is_valid_value_for_key?(key, value)
+      value_is_numeric?(value)
+    end
 end

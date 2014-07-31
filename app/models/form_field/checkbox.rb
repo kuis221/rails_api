@@ -54,4 +54,16 @@ class FormField::Checkbox < FormField
       {values => nil}
     end
   end
+
+  def validate_result(result)
+    if required? && (result.hash_value.nil? || result.hash_value.keys.empty?)
+      result.errors.add(:value, I18n.translate('errors.messages.blank'))
+    elsif result.hash_value.present?
+      if result.hash_value.any?{|k, v| v != '' && !is_valid_value_for_key?(k, v) }
+        result.errors.add :value, :invalid
+      elsif (result.hash_value.keys.map(&:to_s) - valid_hash_keys.map(&:to_s)).any?
+        result.errors.add :value, :invalid  # If a invalid key was given
+      end
+    end
+  end
 end
