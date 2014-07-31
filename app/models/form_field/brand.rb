@@ -17,7 +17,7 @@
 
 class FormField::Brand < FormField
   def field_options(result)
-    brands = brands_options(result)
+    brands = options(result)
     selected = brands.count == 1 ? brands.first.id : result.value
     { as: :select,
       collection: brands,
@@ -49,7 +49,7 @@ class FormField::Brand < FormField
     end
   end
 
-  def brands_options(result)
+  def options(result)
     result.resultable.present? && result.resultable.campaign ? result.resultable.campaign.brands : ::Company.current.brands
   end
 end
