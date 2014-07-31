@@ -65,6 +65,11 @@ class Kpi < ActiveRecord::Base
     where('id not in (?)', campaign.kpi_ids + [Kpi.events, Kpi.promo_hours].compact + [0]).
     reorder('name ASC')
   }
+  scope :form_assignable, -> {
+    where('id not in (?)', [Kpi.events, Kpi.promo_hours].compact + [0]).
+    where('module in (?)', ['custom', 'demographics', 'consumer_reach']).
+    reorder('name ASC')
+  }
 
   after_save :sync_segments_and_goals
 

@@ -191,6 +191,10 @@ class CampaignsController < FilteredController
     def grouped_assignable_kpis
       @grouped_assignable_kpis ||= Hash.new.tap do |h|
         labels = {}
+        h['Global'] = []
+        Kpi.global.form_assignable.find_each do |kpi|
+          h['Global'].push kpi
+        end
         Kpi.custom(current_company).each do |kpi|
           type = kpi.form_field_type
           labels[type] ||= I18n.translate("form_builder.field_types.#{type.split('::')[1].underscore}")
