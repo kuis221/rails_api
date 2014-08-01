@@ -23,7 +23,7 @@ $.widget 'nmk.photoGallery', {
 			@gallery.find('[data-photo-id='+id+']').remove()
 			true
 
-		$(document).on 'click', '.photoGallery a[data-toggle="gallery"]', (e) =>
+		@element.on 'click', 'a[data-toggle="gallery"]', (e) =>
 			image = if e.target.tagName is 'A' then $(e.target).find('img')[0] else e.target
 			e.stopPropagation()
 			e.preventDefault()
