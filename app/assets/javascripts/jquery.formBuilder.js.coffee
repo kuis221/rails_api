@@ -405,7 +405,7 @@ FormField = Class.extend {
 		if @attributes._destroy? && @attributes._destroy is true
 			{id: @attributes.id, _destroy: true }
 		else if @attributes.kpi_id 
-			{id: @attributes.id, name: @attributes.name, ordering: @attributes.ordering, required: @attributes.required, kpi_id: @attributes.kpi_id, field_type: @fieldType()}
+			{id: @attributes.id, name: @attributes.name, ordering: @attributes.ordering, required: @attributes.required, kpi_id: @attributes.kpi_id, field_type: @fieldType(), settings: @attributes.settings}
 		else
 			{id: @attributes.id, name: @attributes.name, ordering: @attributes.ordering, required: @attributes.required, field_type: @fieldType(), settings: @attributes.settings, options_attributes: @getOptionsAttributes(), statements_attributes: @getStatementsAttributes() }
 
@@ -432,6 +432,41 @@ FormField = Class.extend {
 						@form.setModified()
 						true
 				)
+			)
+		])
+
+
+	rangeField: (formats) ->
+		@attributes.settings ||= {}
+		$('<div class="control-group">').append([
+			$('<label class="control-label range" for="field_range_min">').text('RANGE'),
+			$('<div class="controls">').append(
+				$('<div class="range-part min">').append(
+					$('<label class="control-label" for="field_range_min">').text('Min'),
+					$('<input type="text" id="field_range_min" name="min">').val(@attributes.settings.range_min).on 'keyup', (e) =>
+						input = $(e.target)
+						@attributes.settings.range_min = input.val()
+						@form.setModified()
+						true
+				),
+				$('<div class="range-part max">').append(
+					$('<label class="control-label" for="field_range_max">').text('Max'),
+					$('<input type="text" id="field_range_max" name="max">').val(@attributes.settings.range_max).on 'keyup', (e) =>
+						input = $(e.target)
+						@attributes.settings.range_max = input.val()
+						@form.setModified()
+						true
+				),
+				$('<div class="range-part format">').append(
+					$('<label class="control-label" for="field_range_format">').text('Format'),
+					$('<select id="field_range_format" name="range">').append(
+						$.map formats, (name, key) => $('<option>').val(key).text(name).attr('selected', @attributes.settings.range_format is key )
+					).val(@attributes.settings.range_format).on 'change', (e) =>
+						input = $(e.target)
+						@attributes.settings.range_format = input.val()
+						@form.setModified()
+						true
+				),
 			)
 		])
 
@@ -631,6 +666,7 @@ TextAreaField = FormField.extend {
 		[
 			$('<h4>').text('Paragraph'),
 			@labelField(),
+			@rangeField({characters: 'Characters', words: 'Words'})
 			@requiredField()
 		]
 }

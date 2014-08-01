@@ -30,7 +30,12 @@ RSpec.shared_examples "a fieldable element" do
 
     within form_field_settings_for 'Paragraph' do
       fill_in 'Field label', with: 'My Text Field'
-      unicheck('Required')
+
+      # Range settings
+      fill_in 'Min', with: '10'
+      fill_in 'Max', with: '150'
+      select_from_chosen 'Words', from: 'Format'
+      unicheck 'Required'
     end
 
     expect(form_builder).to have_form_field('My Text Field')
@@ -50,6 +55,10 @@ RSpec.shared_examples "a fieldable element" do
 
     within form_field_settings_for 'My Text Field' do
       expect(find_field('Field label').value).to eql 'My Text Field'
+      expect(find_field('Min').value).to eql '10'
+      expect(find_field('Max').value).to eql '150'
+      expect(page).to have_text 'Words'
+      expect(find_field('Format', visible: false).value).to eql 'words'
       expect(find_field('Required')['checked']).to be_truthy
     end
   end

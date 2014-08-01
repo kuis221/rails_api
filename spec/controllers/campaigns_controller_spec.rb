@@ -281,7 +281,9 @@ describe CampaignsController, :type => :controller do
         expect {
           put 'update', id: campaign.to_param,
               campaign: {form_fields_attributes:
-                {id: field.id, field_type: 'FormField::Text', name: 'New name', ordering: 0, required: false}
+                {id: field.id, field_type: 'FormField::Text',
+                  name: 'New name', ordering: 0, required: false,
+                  settings: {description: 'some example', range_min: '100', range_max: '200', range_format: 'characters'}}
               }, format: :json
         }.to_not change(FormField, :count)
       }.to_not change(Campaign, :count)
@@ -289,6 +291,10 @@ describe CampaignsController, :type => :controller do
       expect(field.name).to eql 'New name'
       expect(field.ordering).to eql 0
       expect(field.required).to be_falsey
+      expect(field.settings['description']).to eql 'some example'
+      expect(field.settings['range_min']).to eql '100'
+      expect(field.settings['range_max']).to eql '200'
+      expect(field.settings['range_format']).to eql 'characters'
       expect(field.type).to eql 'FormField::Text'
     end
 

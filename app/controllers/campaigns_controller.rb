@@ -123,7 +123,7 @@ class CampaignsController < FilteredController
           enabled_modules: [],
           form_fields_attributes: [
             :id, :name, :field_type, :ordering, :required, :_destroy, :kpi_id,
-            {settings: [:description]},
+            {settings: [:description, :range_min, :range_max, :range_format]},
             {options_attributes: [:id, :name, :_destroy, :ordering]},
             {statements_attributes: [:id, :name, :_destroy, :ordering]}]})
       end
