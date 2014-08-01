@@ -2599,6 +2599,9 @@ ul.kpis-list{
 	}
 	ul#expenses-list{
 		li{
+			margin-bottom: 0;
+			overflow: visible;
+			width: 100%;
 			address{
 				width: auto !important;
 			}
@@ -6975,9 +6978,9 @@ table td.sub-level-1 {
 	-webkit-box-shadow: none;
 	box-shadow:none;
 	width:auto;
-	min-width: 780px; // .slider min-width + .panel width + .panel padding
 
 	// INITIAL VALUES, these will be overrided by JS based on image/windows sizes
+	min-width: 780px; // .slider min-width + .panel width + .panel padding
 	width: 780px;
 	margin-left: -390px;
 	left: 50%;
@@ -7082,6 +7085,13 @@ table td.sub-level-1 {
 			bottom: 0px;
 			right: 0px;
 			margin: auto;
+			z-index: -1;
+		}
+		.photo-toolbar-header {
+			display: inline-block;
+			position: absolute;
+			right: 15px;
+			top: 0px;
 		}
 		.photo-toolbar {
 			display: none;
