@@ -79,7 +79,7 @@ feature 'Post Event Data' do
         FactoryGirl.create(:form_field,
           name: 'Custom Checkbox',
           type: 'FormField::Checkbox',
-          options: [FactoryGirl.create(:form_field_option, name: 'Checkbox Opt1'), FactoryGirl.create(:form_field_option, name: 'Checkbox Opt2')],
+          options: [FactoryGirl.create(:form_field_option, name: 'Checkbox Opt1', ordering: 1), FactoryGirl.create(:form_field_option, name: 'Checkbox Opt2', ordering: 2)],
           fieldable: campaign,
           required: false)
 
