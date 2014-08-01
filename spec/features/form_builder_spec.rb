@@ -35,6 +35,7 @@ RSpec.shared_examples "a fieldable element" do
       fill_in 'Min', with: '10'
       fill_in 'Max', with: '150'
       select_from_chosen 'Words', from: 'Format'
+
       unicheck 'Required'
     end
 
@@ -72,6 +73,12 @@ RSpec.shared_examples "a fieldable element" do
 
     within form_field_settings_for 'Single line text' do
       fill_in 'Field label', with: 'My Text Field'
+
+      # Range settings
+      fill_in 'Min', with: '10'
+      fill_in 'Max', with: '150'
+      select_from_chosen 'Words', from: 'Format'
+
       unicheck('Required')
     end
 
@@ -93,6 +100,10 @@ RSpec.shared_examples "a fieldable element" do
 
     within form_field_settings_for 'My Text Field' do
       expect(find_field('Field label').value).to eql 'My Text Field'
+      expect(find_field('Min').value).to eql '10'
+      expect(find_field('Max').value).to eql '150'
+      expect(page).to have_text 'Words'
+      expect(find_field('Format', visible: false).value).to eql 'words'
       expect(find_field('Required')['checked']).to be_truthy
     end
   end
@@ -106,6 +117,12 @@ RSpec.shared_examples "a fieldable element" do
 
     within form_field_settings_for 'Number' do
       fill_in 'Field label', with: 'My Numeric Field'
+
+      # Range settings
+      fill_in 'Min', with: '10'
+      fill_in 'Max', with: '150'
+      select_from_chosen 'Value', from: 'Format'
+
       unicheck('Required')
     end
 
@@ -126,6 +143,10 @@ RSpec.shared_examples "a fieldable element" do
 
     within form_field_settings_for 'My Numeric Field' do
       expect(find_field('Field label').value).to eql 'My Numeric Field'
+      expect(find_field('Min').value).to eql '10'
+      expect(find_field('Max').value).to eql '150'
+      expect(page).to have_text 'Value'
+      expect(find_field('Format', visible: false).value).to eql 'value'
       expect(find_field('Required')['checked']).to be_truthy
     end
   end
@@ -140,6 +161,12 @@ RSpec.shared_examples "a fieldable element" do
 
     within form_field_settings_for 'Price' do
       fill_in 'Field label', with: 'My Price Field'
+
+      # Range settings
+      fill_in 'Min', with: '10'
+      fill_in 'Max', with: '150'
+      select_from_chosen 'Value', from: 'Format'
+
       unicheck('Required')
     end
 
@@ -160,6 +187,11 @@ RSpec.shared_examples "a fieldable element" do
 
     within form_field_settings_for 'My Price Field' do
       expect(find_field('Field label').value).to eql 'My Price Field'
+      expect(find_field('Min').value).to eql '10'
+      expect(find_field('Max').value).to eql '150'
+      expect(page).to have_text 'Value'
+      expect(find_field('Format', visible: false).value).to eql 'value'
+
       expect(find_field('Required')['checked']).to be_truthy
     end
   end

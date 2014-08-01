@@ -725,6 +725,7 @@ TextField = FormField.extend {
 		[
 			$('<h4>').text('Single line text'),
 			@labelField(),
+			@rangeField({characters: 'Characters', words: 'Words'})
 			@requiredField()
 		]
 }
@@ -756,6 +757,7 @@ NumberField = FormField.extend {
 		[
 			$('<h4>').text('Number'),
 			@labelField(),
+			@rangeField({digits: 'Digits', value: 'Value'})
 			@requiredField()
 		]
 }
@@ -787,6 +789,7 @@ CurrencyField = FormField.extend {
 		[
 			$('<h4>').text('Price'),
 			@labelField(),
+			@rangeField({digits: 'Digits', value: 'Value'})
 			@requiredField()
 		]
 }
