@@ -963,7 +963,7 @@ RSpec.shared_examples "a fieldable element that accept kpis" do
 
     within form_field_settings_for 'Impressions Custom Name' do
       expect(find_field('Field label').value).to eql 'Impressions Custom Name'
-      expect(find_field('Required')['checked']).to be_true
+      expect(find_field('Required')['checked']).to be_truthy
     end
 
     # Remove the impressions KPI form the form
