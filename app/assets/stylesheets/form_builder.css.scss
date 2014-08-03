@@ -332,6 +332,9 @@
 				&:hover {
 					background-color:$btnHover;
 				}
+				&.hidden {
+					display:none;
+				}
 			}
 			&.module {
 				display: block;
