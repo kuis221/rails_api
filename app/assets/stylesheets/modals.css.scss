@@ -1298,3 +1298,27 @@ div#spin{
 	opacity: 0.9;
 }
 
+
+/* Sidebar setting filters dialogue box */
+
+#settings-filters{
+	.row{
+		margin-left: 0;
+	}
+	.modal-body{
+		ul{
+			list-style: none;
+			margin-left: 0;
+			li{
+				margin-bottom: 10px;
+				label{
+					font-weight: bold;
+					.checker{
+						margin-right: 10px;
+					}
+				}
+			}
+		}
+	}
+}
+

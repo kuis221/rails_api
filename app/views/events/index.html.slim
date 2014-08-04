@@ -16,7 +16,156 @@
 
 .sidebar.collapsed#resource-filter-column
   #collection-list-filters
+
+  ul.dates-pref
+    li
+      a Today
+    li 
+      a 1w
+    li 
+      a 1m
+    li 
+      a 1y
+    li.active 
+      a Custom
+
+  /* This is exclusive for Custom Option*/
+
+  .custom-data-panel
+    .form-group
+      label Start date
+      input type="date"
+
+    span.separate -
+
+    .form-group
+      label End date
+      input type="date"
+
+  /* This should go at the end of the Ssidebar 
+
   #save-filters-btn.a.btn.btn-primary Save
+  #cancel-save-filters.a.btn.btn-cancel.lele Cancel
+  a.settings-for-filters data-target="#settings-filters" data-toggle="modal" 
+    span.icon-gear
+
+
+  /! Modal
+  #settings-filters.modal.fade aria-hidden="true" role="dialog" tabindex="-1" 
+    .modal-dialog
+      .modal-content
+        .modal-header
+          button.close data-dismiss="modal" type="button" 
+            //span aria-hidden="true"  &times;
+          h4#myModalLabel.modal-title Filtering options
+        .modal-body
+          .row
+            .span12
+              .span4
+                h6 BRAND PORTFOLIOS
+                ul
+                  li
+                    label
+                      .checker
+                        span
+                          input name="Active" type="checkbox" value="Active" /
+                      | Active
+                  li
+                    label
+                      .checker
+                        span
+                          input name="Inactive" type="checkbox" value="Inactive" /
+                      | Inactive
+
+              .span4
+                h6 CAMPAIGNS
+                ul
+                  li
+                    label
+                      .checker
+                        span
+                          input name="Active" type="checkbox" value="Active" /
+                      | Active
+                  li
+                    label
+                      .checker
+                        span
+                          input name="Inactive" type="checkbox" value="Inactive" /
+                      | Inactive
+
+              .span4
+                h6 AREAS
+                ul
+                  li
+                    label
+                      .checker
+                        span
+                          input name="Active" type="checkbox" value="Active" /
+                      | Active
+                  li
+                    label
+                      .checker
+                        span
+                          input name="Inactive" type="checkbox" value="Inactive" /
+                      | Inactive
+
+
+          .row
+            .span12
+              .span4
+                h6 USERS
+                ul
+                  li
+                    label
+                      .checker
+                        span
+                          input name="Active" type="checkbox" value="Active" /
+                      | Active
+                  li
+                    label
+                      .checker
+                        span
+                          input name="Inactive" type="checkbox" value="Inactive" /
+                      | Inactive
+
+              .span4
+                h6 TEAMS
+                ul
+                  li
+                    label
+                      .checker
+                        span
+                          input name="Active" type="checkbox" value="Active" /
+                      | Active
+                  li
+                    label
+                      .checker
+                        span
+                          input name="Inactive" type="checkbox" value="Inactive" /
+                      | Inactive
+
+            .row
+              .span12
+                h6 SAVED FILTERS
+                ul
+                  li 
+                    | Jameson campaigns in SF area
+                    span.icon-trash.pull-right
+
+                  li 
+                    | My campaigns
+                    span.icon-trash.pull-right
+
+                  li 
+                    | Absolut events this week
+                    span.icon-trash.pull-right
+
+        .modal-footer
+          .pull-left
+            button.btn.btn-primary type="button"  Done
+            button.btn.btn-cancel data-dismiss="modal" type="button"  Cancel
+
+
 .main
 
   #list-tools
