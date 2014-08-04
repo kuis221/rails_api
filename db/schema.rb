@@ -13,9 +13,9 @@
 
 ActiveRecord::Schema.define(:version => 20140722012255) do
 
-  add_extension "hstore"
   add_extension "pg_stat_statements"
   add_extension "tablefunc"
+  add_extension "hstore"
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -199,8 +199,6 @@ ActiveRecord::Schema.define(:version => 20140722012255) do
     t.integer  "company_id"
     t.boolean  "active",        :default => true
   end
-
-  add_index "brands", ["company_id"], :name => "index_brands_on_company_id"
 
   create_table "brands_campaigns", :force => true do |t|
     t.integer "brand_id"
