@@ -7084,7 +7084,9 @@ table td.sub-level-1 {
 			bottom: 0px;
 			right: 0px;
 			margin: auto;
-			z-index: -1;
+			&.unique {
+				z-index: -1;
+			}
 		}
 		.photo-toolbar-header {
 			display: inline-block;

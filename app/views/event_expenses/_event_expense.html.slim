@@ -9,7 +9,7 @@ li id="event_expense_#{event_expense.id}"
                 urls: {\
                   download: event_expense.receipt.download_url\
                 },\
-                permissions: photo_permissions(event_expense.receipt),\
+                permissions: {},\
                 id: event_expense.receipt.id\
               }
     = link_to '', edit_event_event_expense_path(event_expense.event, event_expense), remote: true, class: 'edit' if can?(:edit, event_expense)

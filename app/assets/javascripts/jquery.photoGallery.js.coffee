@@ -1,10 +1,6 @@
 photoGalleryCounter = 0
 $.widget 'nmk.photoGallery', {
 	options: {
-		month: null,
-		year: null,
-		eventsUrl: null,
-		renderMonthDay: null,
 		showSidebar: true
 	},
 
@@ -248,7 +244,12 @@ $.widget 'nmk.photoGallery', {
 		else
 			@gallery = $('<div class="gallery-modal modal hide fade">').append(
 				$('<div class="gallery-modal-inner">').append(
-					$('<div class="slider">').append($('<div class="photo-toolbar-header">').append('<a class="close" data-dismiss="modal" aria-hidden="true" title="Close"></a>')).append( $('<div class="slider-inner">').append( @carousel = @_createCarousel() ) ).append( @photoToolbar = $('<div class="photo-toolbar">') )
+					$('<div class="slider">').
+						append($('<div class="photo-toolbar-header">').
+							append('<a class="close" data-dismiss="modal" aria-hidden="true" title="Close"></a>')).
+						append( $('<div class="slider-inner unique">').
+							append( @carousel = @_createCarousel() ) ).
+						append( @photoToolbar = $('<div class="photo-toolbar">') )
 				).append($('<div class="clearfix">'))
 			)
 
