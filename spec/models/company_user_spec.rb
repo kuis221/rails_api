@@ -67,15 +67,15 @@ describe CompanyUser, :type => :model do
 
   describe "#by_events scope" do
     it "should return users that assigned to the specific events" do
+      event = FactoryGirl.create(:event)
       users = [
-        FactoryGirl.create(:company_user),
-        FactoryGirl.create(:company_user)
+        FactoryGirl.create(:company_user, company: event.company),
+        FactoryGirl.create(:company_user, company: event.company)
       ]
       other_users = [
-        FactoryGirl.create(:company_user)
+        FactoryGirl.create(:company_user, company: event.company)
       ]
-      event = FactoryGirl.create(:event)
-      other_event = FactoryGirl.create(:event)
+      other_event = FactoryGirl.create(:event, company: event.company)
       users.each{|u| event.users << u}
       other_users.each{|u| other_event.users << u}
       expect(CompanyUser.by_events(event).all).to match_array(users)
@@ -252,6 +252,47 @@ describe CompanyUser, :type => :model do
       expect(CompanyUser.with_notifications(['notification2'])).to match_array [user1]
 
       expect(CompanyUser.with_notifications(['notification1'])).to match_array [user1, user2]
+    end
+  end
+
+  describe "#campaigns_changed" do
+    let(:company) { FactoryGirl.create(:company) }
+    let(:company_user) { FactoryGirl.create(:company_user, company: company) }
+    let(:campaign) { FactoryGirl.create(:campaign, company: company) }
+    let(:brand) { FactoryGirl.create(:brand, company: company) }
+    let(:brand_portfolio) { FactoryGirl.create(:brand_portfolio, company: company) }
+
+    it "should clear cache after adding campaigns to user" do
+      expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{company_user.id}")
+      company_user.campaigns << campaign
+    end
+
+    it "should clear cache after adding brands to user" do
+      expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{company_user.id}")
+      company_user.brands << brand
+    end
+
+    it "should clear cache after adding brand portfolios to user" do
+      expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{company_user.id}")
+      company_user.brand_portfolios << brand_portfolio
+    end
+
+    it "should clear cache after adding campaigns to user" do
+      company_user.campaigns << campaign
+      expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{company_user.id}")
+      company_user.campaigns.destroy campaign
+    end
+
+    it "should clear cache after adding brands to user" do
+      company_user.brands << brand
+      expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{company_user.id}")
+      company_user.brands.destroy brand
+    end
+
+    it "should clear cache after adding brand portfolios to user" do
+      company_user.brand_portfolios << brand_portfolio
+      expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{company_user.id}")
+      company_user.brand_portfolios.destroy brand_portfolio
     end
   end
 end

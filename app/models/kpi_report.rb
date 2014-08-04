@@ -145,7 +145,7 @@ class KpiReport < ActiveRecord::Base
   end
 
   def sum_results(s, field)
-    field.nil? ? 0 : s.joins(:results).where(event_results: {form_field_id: field}).sum(:scalar_value).to_f || 0
+    field.nil? ? 0 : s.joins(:results).where(form_field_results: {form_field_id: field}).sum(:scalar_value).to_f || 0
   end
 
   def object_name

@@ -58,21 +58,172 @@ describe FormFieldResult, :type => :model do
   end
 
   describe "for percentage fields" do
+    describe "when not associated to a KPI" do
+      let(:form_field) { FactoryGirl.create(:form_field,
+        type: 'FormField::Percentage',
+        options: [FactoryGirl.create(:form_field_option, name: 'Opt1'), FactoryGirl.create(:form_field_option, name: 'Opt2')],
+        fieldable: FactoryGirl.create(:activity_type, company_id: 1),
+        required: false) }
+      before { subject.form_field_id = form_field.id }
+      it { is_expected.to allow_value(nil).for(:value) }
+      it { is_expected.to allow_value('').for(:value) }
+      it { is_expected.to allow_value({form_field.options[0].id => 50, form_field.options[1].id => 50}).for(:value) }
+      it { is_expected.to allow_value({form_field.options[0].id.to_s => 50, form_field.options[1].id.to_s => 50}).for(:value) }
+      it { is_expected.to allow_value({form_field.options[0].id => '', form_field.options[1].id => ''}).for(:value) }
+      it { is_expected.not_to allow_value({form_field.options[0].id => 'xx', form_field.options[1].id => 'uno'}).for(:value) }
+      it { is_expected.not_to allow_value({form_field.options[0].id => 40, form_field.options[1].id => 10}).for(:value) }
+      it { is_expected.not_to allow_value({999 => 10, 888 => 90}).for(:value) }
+      it { is_expected.not_to allow_value('sdfsd').for(:value) }
+      it { is_expected.not_to allow_value(1).for(:value) }
+
+      describe "when it is required" do
+        before { subject.form_field.required = true }
+        it { is_expected.not_to allow_value({999 => 10, 888 => 90}).for(:value) }
+        it { is_expected.not_to allow_value('sdfsd').for(:value) }
+        it { is_expected.not_to allow_value(1).for(:value) }
+        it { is_expected.to allow_value({form_field.options[0].id => 50, form_field.options[1].id => 50}).for(:value) }
+        it { is_expected.to allow_value({form_field.options[0].id.to_s => 50, form_field.options[1].id.to_s => 50}).for(:value) }
+        it { is_expected.to_not allow_value({form_field.options[0].id.to_s => 10, form_field.options[1].id.to_s => 10}).for(:value) }
+      end
+    end
+
+    describe "when associated to a KPI" do
+      let(:form_field) { FactoryGirl.create(:form_field,
+        type: 'FormField::Percentage',
+        kpi: kpi,
+        fieldable: FactoryGirl.create(:activity_type, company_id: 1),
+        required: false) }
+      let(:kpi) { FactoryGirl.create(:kpi,
+        kpi_type: 'percentage',
+        kpis_segments: [FactoryGirl.create(:kpis_segment), FactoryGirl.create(:kpis_segment)]) }
+      before { subject.form_field_id = form_field.id }
+      it { is_expected.to allow_value(nil).for(:value) }
+      it { is_expected.to allow_value('').for(:value) }
+      it { is_expected.to allow_value({kpi.kpis_segments[0].id => 50, kpi.kpis_segments[1].id => 50}).for(:value) }
+      it { is_expected.to allow_value({kpi.kpis_segments[0].id.to_s => 50, kpi.kpis_segments[1].id.to_s => 50}).for(:value) }
+      it { is_expected.to allow_value({kpi.kpis_segments[0].id => '', kpi.kpis_segments[1].id => ''}).for(:value) }
+      it { is_expected.not_to allow_value({kpi.kpis_segments[0].id => 'xx', kpi.kpis_segments[1].id => 'uno'}).for(:value) }
+      it { is_expected.not_to allow_value({kpi.kpis_segments[0].id => 40, kpi.kpis_segments[1].id => 10}).for(:value) }
+      it { is_expected.not_to allow_value({999 => 10, 888 => 90}).for(:value) }
+      it { is_expected.not_to allow_value('sdfsd').for(:value) }
+      it { is_expected.not_to allow_value(1).for(:value) }
+
+      describe "when it is required" do
+        before { subject.form_field.required = true }
+        it { is_expected.not_to allow_value({999 => 10, 888 => 90}).for(:value) }
+        it { is_expected.not_to allow_value('sdfsd').for(:value) }
+        it { is_expected.not_to allow_value(1).for(:value) }
+        it { is_expected.to allow_value({kpi.kpis_segments[0].id => 50, kpi.kpis_segments[1].id => 50}).for(:value) }
+        it { is_expected.to allow_value({kpi.kpis_segments[0].id.to_s => 50, kpi.kpis_segments[1].id.to_s => 50}).for(:value) }
+        it { is_expected.to_not allow_value({kpi.kpis_segments[0].id.to_s => 10, kpi.kpis_segments[1].id.to_s => 10}).for(:value) }
+      end
+    end
+  end
+
+  describe "for summation fields" do
     let(:form_field) { FactoryGirl.create(:form_field,
-      type: 'FormField::Percentage',
+      type: 'FormField::Summation',
       options: [FactoryGirl.create(:form_field_option, name: 'Opt1'), FactoryGirl.create(:form_field_option, name: 'Opt2')],
       fieldable: FactoryGirl.create(:activity_type, company_id: 1),
       required: false) }
     before { subject.form_field_id = form_field.id }
     it { is_expected.to allow_value(nil).for(:value) }
-    it { is_expected.to allow_value(nil).for(:value) }
     it { is_expected.to allow_value('').for(:value) }
-    it { is_expected.to allow_value({form_field.options[0].id => 50, form_field.options[1].id => 50}).for(:value) }
+    it { is_expected.to allow_value({form_field.options[0].id => 100, form_field.options[1].id => 200}).for(:value) }
     it { is_expected.to allow_value({form_field.options[0].id.to_s => 50, form_field.options[1].id.to_s => 50}).for(:value) }
-    it { is_expected.not_to allow_value({form_field.options[0].id => 40, form_field.options[1].id => 10}).for(:value) }
+    it { is_expected.to allow_value({form_field.options[0].id => '', form_field.options[1].id => ''}).for(:value) }
     it { is_expected.not_to allow_value({999 => 10, 888 => 90}).for(:value) }
     it { is_expected.not_to allow_value('sdfsd').for(:value) }
     it { is_expected.not_to allow_value(1).for(:value) }
+
+    describe "when it is required" do
+      before { subject.form_field.required = true }
+      it { is_expected.not_to allow_value({999 => 1000, 888 => 90}).for(:value) }
+      it { is_expected.not_to allow_value('sdfsd').for(:value) }
+      it { is_expected.not_to allow_value(1).for(:value) }
+      it { is_expected.to allow_value({form_field.options[0].id => 50, form_field.options[1].id => 50}).for(:value) }
+      it { is_expected.to allow_value({form_field.options[0].id.to_s => 50, form_field.options[1].id.to_s => 50}).for(:value) }
+    end
+  end
+
+  describe "for likert scale fields" do
+    let(:form_field) { FactoryGirl.create(:form_field,
+      type: 'FormField::LikertScale',
+      options: [FactoryGirl.create(:form_field_option, name: 'Opt1'), FactoryGirl.create(:form_field_option, name: 'Opt2')],
+      statements: [FactoryGirl.create(:form_field_statement, name: 'Stat1'), FactoryGirl.create(:form_field_statement, name: 'Stat2')],
+      fieldable: FactoryGirl.create(:activity_type, company_id: 1),
+      required: false) }
+    before { subject.form_field_id = form_field.id }
+    it { is_expected.to allow_value(nil).for(:value) }
+    it { is_expected.to allow_value('').for(:value) }
+    it { is_expected.to allow_value({form_field.statements[0].id => form_field.options[0].id, form_field.statements[1].id => form_field.options[0].id}).for(:value) }
+    it { is_expected.to allow_value({form_field.statements[0].id.to_s => form_field.options[0].id.to_s, form_field.statements[1].id.to_s => form_field.options[1].id.to_s}).for(:value) }
+    it { is_expected.to allow_value({form_field.statements[0].id => '', form_field.statements[1].id => ''}).for(:value) }
+    it { is_expected.to allow_value({form_field.statements[0].id => form_field.options[0].id.to_s, form_field.statements[1].id => ''}).for(:value) }
+    it { is_expected.not_to allow_value({999 => 10, 888 => 90}).for(:value) }
+    it { is_expected.not_to allow_value('sdfsd').for(:value) }
+    it { is_expected.not_to allow_value(1).for(:value) }
+
+    describe "when it is required" do
+      before { subject.form_field.required = true }
+      it { is_expected.not_to allow_value({999 => 1000, 888 => 90}).for(:value) }
+      it { is_expected.not_to allow_value('sdfsd').for(:value) }
+      it { is_expected.not_to allow_value(1).for(:value) }
+      it { is_expected.to allow_value({form_field.statements[0].id => form_field.options[0].id, form_field.statements[1].id => form_field.options[0].id}).for(:value) }
+      it { is_expected.to allow_value({form_field.statements[0].id.to_s => form_field.options[1].id, form_field.statements[1].id.to_s => form_field.options[0].id}).for(:value) }
+    end
+  end
+
+  describe "for checkbox fields" do
+    let(:form_field) { FactoryGirl.create(:form_field,
+      type: 'FormField::Checkbox',
+      options: [FactoryGirl.create(:form_field_option, name: 'Opt1'), FactoryGirl.create(:form_field_option, name: 'Opt2')],
+      fieldable: FactoryGirl.create(:activity_type, company_id: 1),
+      required: false) }
+    before { subject.form_field_id = form_field.id }
+    it { is_expected.to allow_value(nil).for(:value) }
+    it { is_expected.to allow_value([form_field.options[0].id, form_field.options[1].id]).for(:value) }
+    it { is_expected.to allow_value([form_field.options[0].id]).for(:value) }
+    it { is_expected.to_not allow_value(["#{form_field.options[1].id}x"]).for(:value) }
+    it { is_expected.to_not allow_value('').for(:value) }
+    it { is_expected.not_to allow_value([form_field.options[0].id+100]).for(:value) }
+    it { is_expected.not_to allow_value('sdfsd').for(:value) }
+
+    describe "when it is required" do
+      before { subject.form_field.required = true }
+      it { is_expected.not_to allow_value([]).for(:value) }
+      it { is_expected.not_to allow_value('sdfsd').for(:value) }
+      it { is_expected.not_to allow_value(' ').for(:value) }
+      it { is_expected.to allow_value([form_field.options[0].id, form_field.options[1].id]).for(:value) }
+      it { is_expected.to allow_value([form_field.options[0].id.to_s, form_field.options[1].id.to_s]).for(:value) }
+    end
+  end
+
+  describe "for radio fields" do
+    let(:form_field) { FactoryGirl.create(:form_field,
+      type: 'FormField::Radio',
+      options: [FactoryGirl.create(:form_field_option, name: 'Opt1'), FactoryGirl.create(:form_field_option, name: 'Opt2')],
+      fieldable: FactoryGirl.create(:activity_type, company_id: 1),
+      required: false) }
+    before { subject.form_field_id = form_field.id }
+    it { is_expected.to allow_value(nil).for(:value) }
+    it { is_expected.to allow_value(form_field.options[0].id).for(:value) }
+    it { is_expected.to allow_value(form_field.options[1].id.to_s).for(:value) }
+    it { is_expected.to allow_value('').for(:value) }
+    it { is_expected.to_not allow_value(0).for(:value) }
+    it { is_expected.to_not allow_value("#{form_field.options[1].id}x").for(:value) }
+    it { is_expected.not_to allow_value(form_field.options[0].id+100).for(:value) }
+    it { is_expected.not_to allow_value('sdfsd').for(:value) }
+
+    describe "when it is required" do
+      before { subject.form_field.required = true }
+      it { is_expected.not_to allow_value('').for(:value) }
+      it { is_expected.not_to allow_value(0).for(:value) }
+      it { is_expected.not_to allow_value(' ').for(:value) }
+      it { is_expected.not_to allow_value(nil).for(:value) }
+      it { is_expected.to allow_value(form_field.options[0].id).for(:value) }
+      it { is_expected.to allow_value(form_field.options[1].id.to_s).for(:value) }
+    end
   end
 
   describe "prepare_for_store" do

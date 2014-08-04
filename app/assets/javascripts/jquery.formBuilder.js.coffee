@@ -86,7 +86,7 @@ $.widget 'nmk.formBuilder', {
 						ui.item.replaceWith fieldHtml
 						applyFormUiFormatsTo fieldHtml
 						if field.attributes.kpi_id?
-							@fieldsWrapper.find("[data-kpi-id=#{field.attributes.kpi_id}]").hide()
+							@fieldsWrapper.find("[data-kpi-id=#{field.attributes.kpi_id}]").addClass('hidden')
 
 					@_updateOrdering();
 
@@ -132,9 +132,9 @@ $.widget 'nmk.formBuilder', {
 					field = @_addModuleToForm options
 					message = "Adding #{field.type} module at the bottom..."
 				else
-					field = @_addFieldToForm options
-					@_updateOrdering()
-					message = "Adding new #{field.attributes.name} field at the bottom..."
+					if field = @_addFieldToForm options
+						@_updateOrdering()
+						message = "Adding new #{field.attributes.name} field at the bottom..."
 				@setModified()
 				@fieldTooltip.data('title', message).tooltip 'show'
 				clearTimeout @_toolTipTimeout if @_toolTipTimeout
@@ -220,15 +220,18 @@ $.widget 'nmk.formBuilder', {
 			else
 				@element.find('.empty-form-legend').show()
 
-	_addFieldToForm: (field) ->
-		fieldHtml = @buildField(field)
+	_addFieldToForm: (options) ->
+		if options.kpi_id? && @kpiInForm(options)
+			return false
+
+		fieldHtml = @buildField(options)
 		@formWrapper.append fieldHtml
 		@formWrapper.sortable "refresh" if @options.canEdit
 		applyFormUiFormatsTo fieldHtml
 
 		field = fieldHtml.data('field')
 		if field.attributes.kpi_id?
-			@fieldsWrapper.find("[data-kpi-id=#{field.attributes.kpi_id}]").hide()
+			@fieldsWrapper.find("[data-kpi-id=#{field.attributes.kpi_id}]").addClass('hidden')
 
 		field
 
@@ -284,10 +287,14 @@ $.widget 'nmk.formBuilder', {
 		$.each @formFields(), (index, field) =>
 			if field.attributes.kpi_id is kpi_id
 				field.field.remove()
-				@fieldsWrapper.find("[data-kpi-id=#{kpi_id}]").show()
+				@fieldsWrapper.find("[data-kpi-id=#{kpi_id}]").removeClass('hidden')
 
 	addKpi: (options) ->
+		@element.find('.empty-form-legend').hide()
 		@_addFieldToForm options
+
+	kpiInForm: (field) ->
+		$.grep(@formFields(), (f) -> f.attributes.kpi_id == field.kpi_id).length > 0
 
 	setModified: () ->
 		@modified = true
@@ -513,7 +520,7 @@ FormField = Class.extend {
 					@form.setModified()
 					@form._hideFieldAttributes @field
 					if @attributes.kpi_id?
-						@form.fieldsWrapper.find("[data-kpi-id=#{@attributes.kpi_id}]").show()
+						@form.fieldsWrapper.find("[data-kpi-id=#{@attributes.kpi_id}]").removeClass('hidden')
 		else
 			bootbox.confirm @_removeConfirmationMessage(false), (result) =>
 				if result
@@ -542,7 +549,7 @@ FormField = Class.extend {
 
 	_onRemove: ->
 		if @attributes.kpi_id?
-			@form.fieldsWrapper.find("[data-kpi-id=#{@attributes.kpi_id}]").show()
+			@form.fieldsWrapper.find("[data-kpi-id=#{@attributes.kpi_id}]").removeClass('hidden')
 
 	_removeButton: ->
 		if (@form.options.canEdit && !@attributes.kpi_id) || (@form.options.canActivateKpis && @attributes.kpi_id)

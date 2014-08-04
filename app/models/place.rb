@@ -252,7 +252,6 @@ class Place < ActiveRecord::Base
           state = m[2]
           state.gsub!(/\s+[0-9\-]+\s*\z/, '') # Strip Zip code from stage if present
           city = m[1]
-          p "state => #{state}"
           state = country_obj.states[state]['name'] if country_obj.states.has_key?(state)
           Place.new(name: result['name'], city: city, state: state, country: country, types: result['types'])
         end

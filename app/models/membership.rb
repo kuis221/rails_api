@@ -28,6 +28,8 @@ class Membership < ActiveRecord::Base
   validates :memberable_id, presence: true
   validates :memberable_type, presence: true
 
+  validate :same_company
+
   belongs_to :parent, polymorphic: true
 
   private
@@ -63,9 +65,16 @@ class Membership < ActiveRecord::Base
       if memberable.is_a?(Area)
         Rails.cache.delete("user_accessible_locations_#{company_user_id}")
         Rails.cache.delete("user_accessible_places_#{company_user_id}")
-      elsif memberable.is_a?(Campaign)
+      elsif memberable.is_a?(Campaign) || memberable.is_a?(Brand) || memberable.is_a?(BrandPortfolio)
         Rails.cache.delete("user_accessible_campaigns_#{company_user_id}")
       end
       true
+    end
+
+    # Validates that the user and the memberable are from the same company
+    def same_company
+      if company_user.company_id != memberable.company_id
+        errors.add(:memberable_id, :invalid)
+      end
     end
 end

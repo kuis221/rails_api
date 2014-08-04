@@ -34,7 +34,7 @@ class CompanyUser < ActiveRecord::Base
   has_many :teams, :through => :memberships, :source => :memberable, :source_type => 'Team'
 
   # Campaigns-Users relationship
-  has_many :campaigns, :through => :memberships, :source => :memberable, :source_type => 'Campaign', after_add: :campaigns_changed do
+  has_many :campaigns, :through => :memberships, :source => :memberable, :source_type => 'Campaign' do
     def children_of(parent)
       where(memberships: {parent_id: parent.id, parent_type: parent.class.name})
     end
@@ -291,10 +291,6 @@ class CompanyUser < ActiveRecord::Base
 
 
   private
-    def campaigns_changed(campaign)
-      @accessible_campaign_ids = nil
-      Rails.cache.delete("user_accessible_campaigns_#{self.id}")
-    end
 
     def places_changed(campaign)
       # The cache is cleared in the placeable model

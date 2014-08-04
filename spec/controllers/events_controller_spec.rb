@@ -379,7 +379,7 @@ describe EventsController, :type => :controller do
       end
 
       it "should unassign any tasks assigned the team users" do
-        another_user = FactoryGirl.create(:company_user, company_id: 1)
+        another_user = FactoryGirl.create(:company_user, company: @company)
         team.users << another_user
         event.teams << team
         other_user = FactoryGirl.create(:company_user, company_id: 1)
@@ -396,7 +396,7 @@ describe EventsController, :type => :controller do
         team.users << @company_user
         event.teams << team
         event.users << @company_user
-        other_user = FactoryGirl.create(:company_user, company_id: 1)
+        other_user = FactoryGirl.create(:company_user, company: @company)
         user_tasks = FactoryGirl.create_list(:task, 3, event: event, company_user: @company_user)
         other_tasks = FactoryGirl.create_list(:task, 2, event: event, company_user: other_user)
         delete 'delete_member', id: event.id, team_id: team.id, format: :js

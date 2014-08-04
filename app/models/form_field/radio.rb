@@ -39,4 +39,13 @@ class FormField::Radio < FormField
       options_for_input.select{|option| option[1] == result.value.to_i }.map{|option| option[0]}.join(', ')
     end
   end
+
+  def validate_result(result)
+    super
+    unless result.errors.get(:value) || result.value.nil? || result.value == ''
+      unless valid_hash_keys.map(&:to_s).include?(result.value.to_s)
+        result.errors.add :value, :invalid
+      end
+    end
+  end
 end

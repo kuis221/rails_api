@@ -295,12 +295,11 @@ class Event < ActiveRecord::Base
   end
 
   def has_event_data?
-    # TODO: this should also check for values for hashed fields
     campaign_id.present? &&
     (
       results.active.where(
         '(form_field_results.value is not null AND form_field_results.value <> \'\') OR
-         (form_field_results.hash_value is not null AND form_field_results.hash_value <> \'\')').count > 0
+         (form_field_results.hash_value is not null AND btrim(array_to_string(avals(form_field_results.hash_value), \'\'))<>\'\')').count > 0
     )
   end
 

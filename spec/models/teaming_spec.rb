@@ -18,7 +18,7 @@ describe Teaming, :type => :model do
 
   describe "new event notification" do
     let(:event) { FactoryGirl.create(:event) }
-    let(:user) { FactoryGirl.create(:company_user) }
+    let(:user) { FactoryGirl.create(:company_user, company: event.company) }
 
     it "should generate a new notification" do
       expect {

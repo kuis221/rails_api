@@ -19,8 +19,9 @@ describe Membership, :type => :model do
   it { is_expected.to belong_to(:memberable) }
 
   describe "new campaign notification" do
-    let(:campaign) { FactoryGirl.create(:campaign) }
-    let(:user) { FactoryGirl.create(:company_user) }
+    let(:company) { FactoryGirl.create(:company) }
+    let(:campaign) { FactoryGirl.create(:campaign, company: company) }
+    let(:user) { FactoryGirl.create(:company_user, company: company) }
 
     it "should generate a new notification" do
       expect {
@@ -37,8 +38,9 @@ describe Membership, :type => :model do
   end
 
   describe "#delete_goals after_destroy callback" do
-    let(:campaign) { FactoryGirl.create(:campaign) }
-    let(:user) { FactoryGirl.create(:company_user) }
+    let(:company) { FactoryGirl.create(:company) }
+    let(:campaign) { FactoryGirl.create(:campaign, company: company) }
+    let(:user) { FactoryGirl.create(:company_user, company: company) }
     it "should remove the goals for the user" do
       campaign.users << user
       goal = FactoryGirl.create(:goal, parent: campaign, goalable: user, value: 100, kpi: FactoryGirl.create(:kpi))

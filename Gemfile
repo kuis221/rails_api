@@ -107,13 +107,13 @@ group :test do
   gem "poltergeist"
   #gem 'selenium-webdriver'
   gem "email_spec", ">= 1.4.0"
-  gem 'shoulda'
+  gem 'shoulda-matchers', require: false
   gem 'launchy'
   gem "sunspot_test"
   gem 'resque_spec'
   gem 'simplecov', require: false
   gem 'capybara-screenshot'
-  gem 'fuubar'
+  gem 'fuubar', '2.0.0.rc1'
   gem 'database_cleaner'
   #gem 'sms-spec', '~> 0.1.9'
   gem 'sms-spec'
