@@ -512,15 +512,16 @@ a.datepick-cmd:hover{
 	}
 	span.checked:after{
 		color: white;
-		content: "\e00f";
+		content: "\e624";
 		font-family: 'icons';
-		font-size: 14px;
-		left:3px;
+		font-size: 11px;
+		left:5px;
 		position: relative;
 		speak:none;
 		text-align: center;
 		text-shadow:none;
 		-webkit-font-smoothing: antialiased;
+		font-weight: bold;
 	}
 	input[type=checkbox]{
 		visibility: hidden;
