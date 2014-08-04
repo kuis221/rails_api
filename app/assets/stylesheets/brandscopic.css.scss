@@ -555,7 +555,7 @@ a.datepick-cmd:hover{
 	margin-bottom: 10px;
 }
 .datepick-month td .datepick-other-month {
-	color:$user_menu;
+	color:$grey_one;
 }
 .datepick-month{
 	border: 0;
@@ -585,35 +585,39 @@ a.datepick-cmd:hover{
 		padding: 2px 4px;
 	}
 	a{
-		color:$menu;
+		color: $text;
 		font-size: 12px;
 		opacity:0.8;
 		padding: 1px 2px;
 		filter:alpha(opacity=80); /* For IE8 and earlier */
 		&.datepick-today{
-			color: $grey_three;
+			background-color: $brand !important;
+			color: white;
 			font-size: 12px;
-			font-weight: bold;
 			opacity:1;
-			background-color: white !important;
+			-webkit-border-radius: 12px;
+			border-radius: 12px;
 		}
 		&.datepick-event{
 			color: $buttons;
-			font-weight: bold;
+			font-weight: 600;
+			&:hover{
+				color: $buttons;
+			}
 		}
 		&:focus{
 			outline:0;
 		}
-	}
-	a:hover{
-		display: block;
-		width: 100%;
-		padding: 1px 2px;
-		background-color: $grey_one !important;
-		color: $text;
-		text-decoration: none;
-		-webkit-border-radius: 3px;
-		border-radius: 3px;
+		&:hover{
+			display: block;
+			width: 100%;
+			padding: 1px 2px;
+			background-color: $grey_one !important;
+			color: $text;
+			text-decoration: none;
+			-webkit-border-radius: 12px;
+			border-radius: 12px;
+		}
 	}
 }
 .datepick-month td .datepick-selected {
@@ -659,6 +663,62 @@ a.more-options-link:after{
 	left:5px;
 	position: relative;
 	top:4px;
+}
+
+/*-- Date Preferences Panel -*/
+
+.dates-pref{
+	list-style: none;
+	margin-left: 0px;
+	li{
+		display: inline-block;
+		font-size: 12px;
+		font-weight: bold;
+		padding: 1px 7px;
+		margin-right: 0.15em;
+		margin-left: 2px;
+		&.active{
+			background-color: $brand;
+			font-weight: 300;
+			-webkit-border-radius: 6px;
+			border-radius: 6px;
+			a{
+				color: $app_bg;
+				&:hover{
+					border-bottom: 0;
+					color: $app_bg;
+				}
+			}
+		}
+		a{
+			color: $user_menu;
+			cursor: pointer;
+			&:hover{
+				border-bottom: 1px solid $brand;
+				color: $brand;
+				text-decoration: none;
+			}
+		}
+	}
+}
+
+.custom-data-panel{
+	.form-group{
+		display: inline-block;
+		width: 47% !important;
+		label{
+			color: $user_menu;
+			font-size: 12px;
+			font-weight: 300;
+		}
+		input[type="date"]{
+			width: 100%;
+		}
+		&+span{
+			text-align: center;
+			width: 12px;
+		}
+	}
 }
 
 /*-- BUTTON STYLES --*/
@@ -1952,8 +2012,18 @@ li#user_menu{
 	-moz-border-radius: 6px;
 	border-radius: 6px;
 	width:210px;
-	.btn-primary{
-		display: none;
+	.btn{
+		margin-right: 8px;
+		&+.btn{
+			margin-right: 5px;
+		}
+		&.btn-primary{
+			//display: none;
+		}
+	}
+	.icon-gear{
+		color: $user_menu;
+		font-size: 20px;
 	}
 }
 
