@@ -453,6 +453,7 @@ FormField = Class.extend {
 					$('<input type="text" id="field_range_min" name="min">').val(@attributes.settings.range_min).on 'keyup', (e) =>
 						input = $(e.target)
 						@attributes.settings.range_min = input.val()
+						@attributes.settings.range_format ||= $('#field_range_format').val()
 						@form.setModified()
 						true
 				),
@@ -461,6 +462,7 @@ FormField = Class.extend {
 					$('<input type="text" id="field_range_max" name="max">').val(@attributes.settings.range_max).on 'keyup', (e) =>
 						input = $(e.target)
 						@attributes.settings.range_max = input.val()
+						@attributes.settings.range_format ||= $('#field_range_format').val()
 						@form.setModified()
 						true
 				),
