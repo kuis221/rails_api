@@ -1317,6 +1317,13 @@ div#spin{
 						margin-right: 10px;
 					}
 				}
+				.icon-trash{
+					font-size: 14px;
+					color: $brand;
+					&:hover{
+						color: $grey_three;
+					}
+				}
 			}
 		}
 	}
