@@ -103,8 +103,21 @@ describe Results::EventDataController do
     it "should include the event data results only for the given campaign" do
       Kpi.create_global_kpis
       custom_kpi = FactoryGirl.create(:kpi, name: 'Test KPI', company: @company)
+      checkbox_kpi = FactoryGirl.create(:kpi, name: 'Event Type', kpi_type: "count", capture_mechanism: "checkbox",
+        kpis_segments: [
+          FactoryGirl.create(:kpis_segment, text: 'Event Type Opt 1'),
+          FactoryGirl.create(:kpis_segment, text: 'Event Type Opt 2'),
+          FactoryGirl.create(:kpis_segment, text: 'Event Type Opt 3')])
+      radio_kpi = FactoryGirl.create(:kpi, name: 'Radio Field Type', kpi_type: "count", capture_mechanism: "checkbox",
+        kpis_segments: [
+          FactoryGirl.create(:kpis_segment, text: 'Radio Field Opt 1'),
+          FactoryGirl.create(:kpis_segment, text: 'Radio Field Opt 2'),
+          FactoryGirl.create(:kpis_segment, text: 'Radio Field Opt 3')])
       campaign.assign_all_global_kpis
       campaign.add_kpi custom_kpi
+      campaign.add_kpi checkbox_kpi
+      campaign.add_kpi radio_kpi
+
       area = FactoryGirl.create(:area, name: 'Angeles Area', company: @company)
       area.places << FactoryGirl.create(:place, name: 'Los Angeles', city: 'Los Angeles', state: 'California', country: 'US', types: ['locality'])
       campaign.areas << area
@@ -114,6 +127,9 @@ describe Results::EventDataController do
       event.users << @company_user
       event.event_expenses.build(amount: 99.99, name: 'sample expense')
       event.result_for_kpi(custom_kpi).value = 8899
+      event.result_for_kpi(checkbox_kpi).value = [checkbox_kpi.kpis_segments.first.id]
+      event.result_for_kpi(radio_kpi).value = radio_kpi.kpis_segments.first.id
+
       set_event_results(event,
         impressions: 10, interactions: 11, samples: 12, gender_male: 40, gender_female: 60,
         ethnicity_asian: 18, ethnicity_native_american: 19, ethnicity_black: 20, ethnicity_hispanic: 21, ethnicity_white: 22)
@@ -136,12 +152,14 @@ describe Results::EventDataController do
           "EVENT STATUS", "TEAM MEMBERS","URL","START", "END", "PROMO HOURS", "IMPRESSIONS",
           "INTERACTIONS", "SAMPLED", "SPENT", "FEMALE", "MALE", "ASIAN", "BLACK/AFRICAN AMERICAN",
           "HISPANIC/LATINO", "NATIVE AMERICAN", "WHITE","AGE: < 12", "AGE: 12 – 17", "AGE: 18 – 24",
-          "AGE: 25 – 34", "AGE: 35 – 44", "AGE: 45 – 54", "AGE: 55 – 64", "AGE: 65+", "TEST KPI"]
+          "AGE: 25 – 34", "AGE: 35 – 44", "AGE: 45 – 54", "AGE: 55 – 64", "AGE: 65+", "TEST KPI", "EVENT TYPE",
+          "RADIO FIELD TYPE"]
         expect(rows[1].elements.to_a('Cell/Data').map{|d| d.text }).to match_array [
           "Test Campaign FY01", "Angeles Area", "344221", "Bar Prueba", "Bar Prueba, Los Angeles, California, 12345",
           "Los Angeles", "California", "12345","Active", "Approved","Test User","http://localhost:5100/events/#{event.id}",
           "2019-01-23T10:00", "2019-01-23T12:00", "2.0", "10", "11",
-          "12", "99.99", "0.600", "0.400", "0.180", "0.200", "0.210", "0.190", "0.220","0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.0", '8899.0']
+          "12", "99.99", "0.600", "0.400", "0.180", "0.200", "0.210", "0.190", "0.220","0.0", "0.0", "0.0", "0.0", "0.0", "0.0",
+          "0.0", "0.0", '8899.0', 'Event Type Opt 1', 'Radio Field Opt 1']
       end
     end
 

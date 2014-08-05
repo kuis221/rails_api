@@ -13,13 +13,17 @@ module Results
                   select('form_field_results.form_field_id, form_field_results.value, form_field_results.hash_value').to_sql
       ).each do |row|
         @result.form_field = custom_fields_to_export[row['form_field_id'].to_i]
-        @result.value = row['value']
+        if @result.form_field.is_hashed_value?
+          @result.hash_value = ActiveRecord::Coders::Hstore.load(row['hash_value'])
+        else
+          @result.value = row['value']
+        end
         id = @result.form_field.kpi_id.nil? ? "field_#{@result.form_field_id}" : "kpi_#{@result.form_field.kpi_id}"
         if @result.form_field.type == 'FormField::Percentage'
-          values = ActiveRecord::Coders::Hstore.load(row['hash_value'])
+          #values = ActiveRecord::Coders::Hstore.load(row['hash_value'])
           # TODO: we have to correctly map values for hash_value here
           @result.form_field.options_for_input.each do |option|
-            value = values[option[1].to_s]
+            value = @result.value[option[1].to_s]
             event_values["#{id}-#{option[1]}"] = ['Number', 'percentage', (value.present? && value != '' ? value.to_f : 0.0)/100]
           end
         else
