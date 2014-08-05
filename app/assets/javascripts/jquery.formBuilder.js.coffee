@@ -172,7 +172,7 @@ $.widget 'nmk.formBuilder', {
 				false
 			$(window).on 'beforeunload.formBuilder', =>
 				if @modified
-					'You are leaving the activity type details page without saving your work.'
+					'You are leaving the page without saving your changes in the form.'
 
 		true
 
