@@ -512,15 +512,16 @@ a.datepick-cmd:hover{
 	}
 	span.checked:after{
 		color: white;
-		content: "\e00f";
+		content: "\e624";
 		font-family: 'icons';
-		font-size: 14px;
-		left:3px;
+		font-size: 11px;
+		left:5px;
 		position: relative;
 		speak:none;
 		text-align: center;
 		text-shadow:none;
 		-webkit-font-smoothing: antialiased;
+		font-weight: bold;
 	}
 	input[type=checkbox]{
 		visibility: hidden;
@@ -2855,15 +2856,14 @@ ul.kpis-list{
 		}
 		.preview:after{
 			color: white;
-			content: "\e02a";
+			content: "\e016";
 			font-family: 'icons';
-			font-size: 22px;
-			margin-right: 3px;
+			font-size: 26px;
 			position: relative;
+			right: -6px;
 			speak:none;
-			text-align: center;
 			text-shadow:none;
-			top:8px;
+			top: 9px;
 		}
 		.share:after{
 			color:white;
@@ -5638,8 +5638,11 @@ body.campaigns{
 				color: $brand;
 				font-size: 11px;
 			}
-			h3 + #list-tools{
-				margin: 10px 0 0px 0;
+			h3{
+				margin-top: 45px;
+				&+#list-tools{
+					margin: 10px 0 0px 0;
+				} 
 			}
 			.simple_form{
 				display: inline-block;
@@ -5841,7 +5844,7 @@ body.campaigns{
 	h3{
 		font-size: 16px;
 		font-weight: bold;
-		margin: 45px 0 30px;
+		margin: 0 0 30px;
 	}
 	.links-data{
 		margin: 0 0 0 30px;
