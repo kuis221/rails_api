@@ -17,10 +17,55 @@
 
 class FormField::TextArea < FormField
   def field_options(result)
-    {as: :text, label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, required: (self.required? ? 'required' : nil)}}
+    {
+      as: :text,
+      label: self.name,
+      field_id: self.id,
+      options: self.settings,
+      required: self.required,
+      input_html: {
+        value: result.value,
+        class: field_classes,
+        data: field_data,
+        required: (self.required? ? 'required' : nil)
+      }
+    }
+  end
+
+  def field_classes
+    ['elements-range']
+  end
+
+  def field_data
+    data = {}
+    if self.settings.present?
+      data['range-format'] = self.settings['range_format'] if self.settings['range_format'].present?
+      data['range-min'] = self.settings['range_min'] if self.settings['range_min'].present?
+      data['range-max'] = self.settings['range_max'] if self.settings['range_max'].present?
+    end
+    data
   end
 
   def format_html(result)
     result.value.gsub(/\n/, '<br>').html_safe unless result.value.nil?
+  end
+
+  def validate_result(result)
+    super
+    unless result.errors.get(:value) || !result.value.is_a?(String) || result.value.blank?
+      val = result.value.strip
+      if self.settings['range_format'] == 'characters'
+        items = val.length
+      else
+        items = val.scan(/\w+/).size
+      end
+
+      min_result = self.settings['range_min'].present? ? items >= self.settings['range_min'].to_i : true
+      max_result = self.settings['range_max'].present? ? items <= self.settings['range_max'].to_i : true
+
+      if !min_result || !max_result
+        result.errors.add :value, :invalid
+      end
+    end
   end
 end

@@ -551,6 +551,23 @@ jQuery ->
 		return this.optional(element) || /^[0-1]?[0-9]\/[0-3]?[0-9]\/[0-2]0[0-9][0-9]$/.test(value);
 	, "MM/DD/YYYY");
 
+	$.validator.addMethod("elements-range", (value, element) ->
+		if value.length > 0
+			val = $.trim(value)
+			if $(element).data('range-format') is "characters"
+				items = val.length
+			else
+				items = val.replace(/\s+/g, " ").split(" ").length
+
+		minResult = if $(element).data('range-min') then items >= $(element).data('range-min') else true
+		maxResult = if $(element).data('range-max') then items <= $(element).data('range-max') else true
+
+		return minResult && maxResult
+	, (params, element) ->
+		message = if $(element).data('range-min') then 'more or equal to ' + $(element).data('range-min') + ' ' + $(element).data('range-format') else ''
+		message += if message.length > 0 && $(element).data('range-max') then ' and ' else ''
+		message += if $(element).data('range-max') then ' less or equal to ' + $(element).data('range-max') + ' ' + $(element).data('range-format') else ''
+		'Field should be ' + message);
 
 	$('.google-map[data-latitude]').each (index, container) ->
 		$container = $(container)

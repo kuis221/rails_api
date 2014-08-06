@@ -52,6 +52,10 @@ class FormField < ActiveRecord::Base
     ['input-xlarge'] + (is_numeric? ? ['number'] : [])
   end
 
+  def field_data
+    {}
+  end
+
   def store_value(value)
     value
   end

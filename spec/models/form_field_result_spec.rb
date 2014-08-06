@@ -41,7 +41,6 @@ describe FormFieldResult, :type => :model do
     before { subject.form_field_id = FactoryGirl.create(:form_field, type: 'FormField::Number', fieldable: FactoryGirl.create(:activity_type, company_id: 1), required: false).id }
     it { is_expected.to validate_numericality_of(:value) }
     it { is_expected.to allow_value(nil).for(:value) }
-    it { is_expected.to allow_value(nil).for(:value) }
     it { is_expected.to allow_value('').for(:value) }
     it { is_expected.to allow_value('1').for(:value) }
     it { is_expected.to allow_value(1).for(:value) }
@@ -50,11 +49,70 @@ describe FormFieldResult, :type => :model do
   describe "for photo fields" do
     before { subject.form_field_id = FactoryGirl.create(:form_field, type: 'FormField::Photo', fieldable: FactoryGirl.create(:activity_type, company_id: 1), required: false).id }
     it { is_expected.to allow_value(nil).for(:value) }
-    it { is_expected.to allow_value(nil).for(:value) }
     it { is_expected.to allow_value('').for(:value) }
     it { is_expected.not_to allow_value('sdfsd').for(:value).with_message('is not valid') }
     it { is_expected.not_to allow_value('https://s3.amazonaws.com/invalid-bucket/uploads/1233443/filename.jpg').for(:value).with_message('is not valid') }
     it { is_expected.to allow_value('https://s3.amazonaws.com/brandscopic-test/uploads/1233443/filename.jpg').for(:value) }
+  end
+
+  describe "for text fields" do
+    describe "when range format is characters" do
+      let(:form_field) { FactoryGirl.create(:form_field,
+        type: 'FormField::Text',
+        settings: {'range_format' => 'characters', 'range_min' => '2', 'range_max' => '4'},
+        fieldable: FactoryGirl.create(:activity_type, company_id: 1),
+        required: false) }
+      before { subject.form_field_id = form_field.id }
+      it { is_expected.to allow_value(nil).for(:value) }
+      it { is_expected.to allow_value('').for(:value) }
+      it { is_expected.not_to allow_value('a').for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value('hola').for(:value) }
+      it { is_expected.not_to allow_value('cinco').for(:value).with_message('is invalid') }
+    end
+
+    describe "when range format is words" do
+      let(:form_field) { FactoryGirl.create(:form_field,
+        type: 'FormField::Text',
+        settings: {'range_format' => 'words', 'range_min' => '2', 'range_max' => '4'},
+        fieldable: FactoryGirl.create(:activity_type, company_id: 1),
+        required: false) }
+      before { subject.form_field_id = form_field.id }
+      it { is_expected.to allow_value(nil).for(:value) }
+      it { is_expected.to allow_value('').for(:value) }
+      it { is_expected.not_to allow_value('uno').for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value('uno dos tres').for(:value) }
+      it { is_expected.not_to allow_value('uno dos tres cuatro cinco').for(:value).with_message('is invalid') }
+    end
+  end
+
+  describe "for text area fields" do
+    describe "when range format is characters" do
+      let(:form_field) { FactoryGirl.create(:form_field,
+        type: 'FormField::TextArea',
+        settings: {'range_format' => 'characters', 'range_min' => '2', 'range_max' => '4'},
+        fieldable: FactoryGirl.create(:activity_type, company_id: 1),
+        required: false) }
+      before { subject.form_field_id = form_field.id }
+      it { is_expected.to allow_value(nil).for(:value) }
+      it { is_expected.to allow_value('').for(:value) }
+      it { is_expected.not_to allow_value('a').for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value('hola').for(:value) }
+      it { is_expected.not_to allow_value('cinco').for(:value).with_message('is invalid') }
+    end
+
+    describe "when range format is words" do
+      let(:form_field) { FactoryGirl.create(:form_field,
+        type: 'FormField::Text',
+        settings: {'range_format' => 'words', 'range_min' => '2', 'range_max' => '4'},
+        fieldable: FactoryGirl.create(:activity_type, company_id: 1),
+        required: false) }
+      before { subject.form_field_id = form_field.id }
+      it { is_expected.to allow_value(nil).for(:value) }
+      it { is_expected.to allow_value('').for(:value) }
+      it { is_expected.not_to allow_value('uno').for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value('uno dos tres').for(:value) }
+      it { is_expected.not_to allow_value('uno dos tres cuatro cinco').for(:value).with_message('is invalid') }
+    end
   end
 
   describe "for percentage fields" do

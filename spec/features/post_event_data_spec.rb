@@ -45,12 +45,14 @@ feature 'Post Event Data' do
         FactoryGirl.create(:form_field,
           name: 'Custom Single Text',
           type: 'FormField::Text',
+          settings: {'range_format' => 'characters', 'range_min' => '5', 'range_max' => '20'},
           fieldable: campaign,
           required: false)
 
         FactoryGirl.create(:form_field,
           name: 'Custom TextArea',
           type: 'FormField::TextArea',
+          settings: {'range_format' => 'words', 'range_min' => '2', 'range_max' => '4'},
           fieldable: campaign,
           required: false)
 
