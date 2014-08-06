@@ -333,7 +333,7 @@ $.widget 'nmk.photoGallery', {
 				null
 			),
 			(if 'index_photo_results' in @image.data('permissions')
-				$('<a class="photo-download-link" title="Select Photo"></a>').attr('href', urls.download)
+				$('<a class="photo-download-link" title="Download"></a>').attr('href', urls.download)
 			else
 				null
 			)

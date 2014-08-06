@@ -145,6 +145,14 @@ class AttachedAsset < ActiveRecord::Base
       :response_content_disposition => "attachment; filename=#{file_file_name}").to_s
   end
 
+  def preview_url(style_name=:medium)
+    if is_pdf?
+      file.url(:thumbnail)
+    else
+      file.url(style_name)
+    end
+  end
+
   def is_thumbnable?
     %r{^(image|(x-)?application)/(bmp|gif|jpeg|jpg|pjpeg|png|x-png|pdf)$}.match(file_content_type).present?
   end
