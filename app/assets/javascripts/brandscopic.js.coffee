@@ -554,9 +554,9 @@ jQuery ->
 	$.validator.addMethod("elements-range", (value, element) ->
 		if value.length > 0
 			val = $.trim(value)
-			if $(element).data('range-format') is "characters"
+			if $(element).data('range-format') is "characters" || $(element).data('range-format') is "digits"
 				items = val.length
-			else
+			else if $(element).data('range-format') is "words"
 				items = val.replace(/\s+/g, " ").split(" ").length
 
 		minResult = if $(element).data('range-min') then items >= $(element).data('range-min') else true

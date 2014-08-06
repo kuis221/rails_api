@@ -25,11 +25,22 @@ class FormField::Number < FormField
       required: self.required,
       input_html: {
         value: result.value,
-        class: field_classes,
+        class: field_classes.push('elements-range'),
+        data: field_data,
         step: 'any',
         required: (self.required? ? 'required' : nil)
       }
     }
+  end
+
+  def field_data
+    data = {}
+    if self.settings.present?
+      data['range-format'] = self.settings['range_format'] if self.settings['range_format'].present?
+      data['range-min'] = self.settings['range_min'] if self.settings['range_min'].present?
+      data['range-max'] = self.settings['range_max'] if self.settings['range_max'].present?
+    end
+    data
   end
 
   def validate_result(result)
