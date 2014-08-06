@@ -103,12 +103,12 @@ describe Results::EventDataController, :type => :controller do
     it "should include the event data results only for the given campaign" do
       Kpi.create_global_kpis
       custom_kpi = FactoryGirl.create(:kpi, name: 'Test KPI', company: @company)
-      checkbox_kpi = FactoryGirl.create(:kpi, name: 'Event Type', kpi_type: "count", capture_mechanism: "checkbox",
+      checkbox_kpi = FactoryGirl.create(:kpi, name: 'Event Type', kpi_type: "count", capture_mechanism: "checkbox", company: @company,
         kpis_segments: [
           FactoryGirl.create(:kpis_segment, text: 'Event Type Opt 1'),
           FactoryGirl.create(:kpis_segment, text: 'Event Type Opt 2'),
           FactoryGirl.create(:kpis_segment, text: 'Event Type Opt 3')])
-      radio_kpi = FactoryGirl.create(:kpi, name: 'Radio Field Type', kpi_type: "count", capture_mechanism: "checkbox",
+      radio_kpi = FactoryGirl.create(:kpi, name: 'Radio Field Type', kpi_type: "count", capture_mechanism: "radio", company: @company,
         kpis_segments: [
           FactoryGirl.create(:kpis_segment, text: 'Radio Field Opt 1'),
           FactoryGirl.create(:kpis_segment, text: 'Radio Field Opt 2'),
