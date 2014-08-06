@@ -452,6 +452,10 @@ FormField = Class.extend {
 					$('<label class="control-label" for="field_range_min">').text('Min'),
 					$('<input type="text" id="field_range_min" name="min">').val(@attributes.settings.range_min).on 'keyup', (e) =>
 						input = $(e.target)
+						if @attributes.settings.range_format isnt 'value'
+							input.val(input.val().replace(/[^0-9]/, ''))
+						else
+							input.val(input.val().replace(/[^0-9\.]/, ''))
 						@attributes.settings.range_min = input.val()
 						@attributes.settings.range_format ||= $('#field_range_format').val()
 						@form.setModified()
@@ -461,6 +465,10 @@ FormField = Class.extend {
 					$('<label class="control-label" for="field_range_max">').text('Max'),
 					$('<input type="text" id="field_range_max" name="max">').val(@attributes.settings.range_max).on 'keyup', (e) =>
 						input = $(e.target)
+						if @attributes.settings.range_format isnt 'value'
+							input.val(input.val().replace(/[^0-9]/, ''))
+						else
+							input.val(input.val().replace(/[^0-9\.]/, ''))
 						@attributes.settings.range_max = input.val()
 						@attributes.settings.range_format ||= $('#field_range_format').val()
 						@form.setModified()

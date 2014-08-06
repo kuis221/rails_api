@@ -209,6 +209,37 @@ describe FormFieldResult, :type => :model do
       it { is_expected.to allow_value('uno dos tres').for(:value) }
       it { is_expected.not_to allow_value('uno dos tres cuatro cinco').for(:value).with_message('is invalid') }
     end
+
+    describe "when have a range-min but not range-max validation" do
+      let(:form_field) { FactoryGirl.create(:form_field,
+        type: 'FormField::Text',
+        settings: {'range_format' => 'words', 'range_min' => '2', 'range_max' => ''},
+        fieldable: FactoryGirl.create(:activity_type, company_id: 1),
+        required: false) }
+      before { subject.form_field_id = form_field.id }
+      it { is_expected.to allow_value(nil).for(:value) }
+      it { is_expected.to allow_value('').for(:value) }
+      it { is_expected.to allow_value('hola ahi').for(:value) }
+      it { is_expected.to allow_value('hola '*100).for(:value) }
+      it { is_expected.not_to allow_value('h').for(:value) }
+      it { is_expected.not_to allow_value('hola').for(:value) }
+    end
+
+    describe "when have a range-max but not range-min validation" do
+      let(:form_field) { FactoryGirl.create(:form_field,
+        type: 'FormField::Text',
+        settings: {'range_format' => 'characters', 'range_min' => '', 'range_max' => '2'},
+        fieldable: FactoryGirl.create(:activity_type, company_id: 1),
+        required: false) }
+      before { subject.form_field_id = form_field.id }
+      it { is_expected.to allow_value(nil).for(:value) }
+      it { is_expected.to allow_value('').for(:value) }
+      it { is_expected.to allow_value('12').for(:value) }
+      it { is_expected.to allow_value('ho').for(:value) }
+      it { is_expected.not_to allow_value('hol').for(:value) }
+      it { is_expected.not_to allow_value('hola ahi').for(:value) }
+    end
+
   end
 
   describe "for text area fields" do
