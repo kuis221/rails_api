@@ -99,7 +99,6 @@ describe Results::EventDataController, :type => :controller do
       end
     end
 
-
     it "should include the event data results only for the given campaign" do
       Kpi.create_global_kpis
       custom_kpi = FactoryGirl.create(:kpi, name: 'Test KPI', company: @company)

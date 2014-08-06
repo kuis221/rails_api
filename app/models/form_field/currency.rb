@@ -44,6 +44,13 @@ class FormField::Currency < FormField
     data
   end
 
+  def validate_result(result)
+    super
+    if result.value.present?
+      result.errors.add:value, I18n.translate('errors.messages.not_a_number') if !value_is_numeric?(result.value)
+    end
+  end
+
   def format_html(result)
     number_to_currency(result.value || 0, precision: 2)
   end

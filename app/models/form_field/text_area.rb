@@ -49,23 +49,4 @@ class FormField::TextArea < FormField
   def format_html(result)
     result.value.gsub(/\n/, '<br>').html_safe unless result.value.nil?
   end
-
-  def validate_result(result)
-    super
-    unless result.errors.get(:value) || !result.value.is_a?(String) || result.value.blank?
-      val = result.value.strip
-      if self.settings['range_format'] == 'characters'
-        items = val.length
-      else
-        items = val.scan(/\w+/).size
-      end
-
-      min_result = self.settings['range_min'].present? ? items >= self.settings['range_min'].to_i : true
-      max_result = self.settings['range_max'].present? ? items <= self.settings['range_max'].to_i : true
-
-      if !min_result || !max_result
-        result.errors.add :value, :invalid
-      end
-    end
-  end
 end

@@ -108,6 +108,26 @@ class FormField < ActiveRecord::Base
         end
       end
     end
+
+    if has_range_value_settings? && result.value.present? && !result.value.to_s.empty?
+      val = result.value.to_s.strip
+      if self.settings['range_format'] == 'characters'
+        items = val.length
+      elsif self.settings['range_format'] == 'words'
+        items = val.scan(/\w+/).size
+      elsif self.settings['range_format'] == 'digits'
+        items = val.gsub(/[\.\,\s]/, '').length
+      elsif self.settings['range_format'] == 'value'
+        items = val.to_f rescue 0
+      end
+
+      min_result = items >= self.settings['range_min'].to_i
+      max_result = items <= self.settings['range_max'].to_i
+
+      if !min_result || !max_result
+        result.errors.add :value, :invalid
+      end
+    end
   end
 
   def options_for_input
@@ -143,5 +163,12 @@ class FormField < ActiveRecord::Base
 
     def is_valid_value_for_key?(key, value)
       value_is_numeric?(value)
+    end
+
+    def has_range_value_settings?
+      self.settings &&
+      self.settings.has_key?('range_format') && self.settings['range_format'] &&
+      self.settings.has_key?('range_min') && self.settings['range_min'].present? &&
+      self.settings.has_key?('range_max') && self.settings['range_max'].present?
     end
 end

@@ -38,12 +38,111 @@ describe FormFieldResult, :type => :model do
   end
 
   describe "for numeric fields" do
-    before { subject.form_field_id = FactoryGirl.create(:form_field, type: 'FormField::Number', fieldable: FactoryGirl.create(:activity_type, company_id: 1), required: false).id }
-    it { is_expected.to validate_numericality_of(:value) }
-    it { is_expected.to allow_value(nil).for(:value) }
-    it { is_expected.to allow_value('').for(:value) }
-    it { is_expected.to allow_value('1').for(:value) }
-    it { is_expected.to allow_value(1).for(:value) }
+    describe "when doesn't have range validation rules" do
+      let(:form_field) { FactoryGirl.create(:form_field,
+        type: 'FormField::Number',
+        settings: {},
+        fieldable: FactoryGirl.create(:activity_type, company_id: 1),
+        required: false) }
+      before { subject.form_field_id = form_field.id }
+      it { is_expected.to validate_numericality_of(:value) }
+      it { is_expected.to allow_value(nil).for(:value) }
+      it { is_expected.to allow_value('').for(:value) }
+      it { is_expected.to allow_value('1').for(:value) }
+      it { is_expected.to allow_value(1).for(:value) }
+    end
+
+    describe "when range format is digits" do
+      let(:form_field) { FactoryGirl.create(:form_field,
+        type: 'FormField::Number',
+        settings: {'range_format' => 'digits', 'range_min' => '2', 'range_max' => '4'},
+        fieldable: FactoryGirl.create(:activity_type, company_id: 1),
+        required: false) }
+      before { subject.form_field_id = form_field.id }
+      it { is_expected.to allow_value(nil).for(:value) }
+      it { is_expected.to allow_value('').for(:value) }
+      it { is_expected.not_to allow_value('1').for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value(1234).for(:value) }
+      it { is_expected.to allow_value('1234').for(:value) }
+      it { is_expected.to allow_value('1.234').for(:value) }
+      it { is_expected.to allow_value(1.234).for(:value) }
+      it { is_expected.not_to allow_value('12345').for(:value).with_message('is invalid') }
+    end
+
+    describe "when range format is value" do
+      let(:form_field) { FactoryGirl.create(:form_field,
+        type: 'FormField::Number',
+        settings: {'range_format' => 'value', 'range_min' => '2', 'range_max' => '4'},
+        fieldable: FactoryGirl.create(:activity_type, company_id: 1),
+        required: false) }
+      before { subject.form_field_id = form_field.id }
+      it { is_expected.to allow_value(nil).for(:value) }
+      it { is_expected.to allow_value('').for(:value) }
+      it { is_expected.to allow_value(2).for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value(3).for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value(4).for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value(4.0).for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value('4').for(:value).with_message('is invalid') }
+      it { is_expected.not_to allow_value(1).for(:value).with_message('is invalid') }
+      it { is_expected.not_to allow_value(5).for(:value).with_message('is invalid') }
+      it { is_expected.not_to allow_value('4.1').for(:value).with_message('is invalid') }
+      it { is_expected.not_to allow_value(4.1).for(:value).with_message('is invalid') }
+      it { is_expected.not_to allow_value('5').for(:value).with_message('is invalid') }
+    end
+  end
+
+  describe "for currency fields" do
+    describe "when doesn't have range validation rules" do
+      let(:form_field) { FactoryGirl.create(:form_field,
+        type: 'FormField::Currency',
+        settings: {},
+        fieldable: FactoryGirl.create(:activity_type, company_id: 1),
+        required: false) }
+      before { subject.form_field_id = form_field.id }
+      it { is_expected.to validate_numericality_of(:value) }
+      it { is_expected.to allow_value(nil).for(:value) }
+      it { is_expected.to allow_value('').for(:value) }
+      it { is_expected.to allow_value('1').for(:value) }
+      it { is_expected.to allow_value(1).for(:value) }
+    end
+
+    describe "when range format is digits" do
+      let(:form_field) { FactoryGirl.create(:form_field,
+        type: 'FormField::Currency',
+        settings: {'range_format' => 'digits', 'range_min' => '2', 'range_max' => '4'},
+        fieldable: FactoryGirl.create(:activity_type, company_id: 1),
+        required: false) }
+      before { subject.form_field_id = form_field.id }
+      it { is_expected.to allow_value(nil).for(:value) }
+      it { is_expected.to allow_value('').for(:value) }
+      it { is_expected.not_to allow_value('1').for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value(1234).for(:value) }
+      it { is_expected.to allow_value('1234').for(:value) }
+      it { is_expected.to allow_value('1.234').for(:value) }
+      it { is_expected.to allow_value(1.234).for(:value) }
+      it { is_expected.not_to allow_value('12345').for(:value).with_message('is invalid') }
+    end
+
+    describe "when range format is value" do
+      let(:form_field) { FactoryGirl.create(:form_field,
+        type: 'FormField::Currency',
+        settings: {'range_format' => 'value', 'range_min' => '2', 'range_max' => '4'},
+        fieldable: FactoryGirl.create(:activity_type, company_id: 1),
+        required: false) }
+      before { subject.form_field_id = form_field.id }
+      it { is_expected.to allow_value(nil).for(:value) }
+      it { is_expected.to allow_value('').for(:value) }
+      it { is_expected.to allow_value(2).for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value(3).for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value(4).for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value(4.0).for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value('4').for(:value).with_message('is invalid') }
+      it { is_expected.not_to allow_value(1).for(:value).with_message('is invalid') }
+      it { is_expected.not_to allow_value(5).for(:value).with_message('is invalid') }
+      it { is_expected.not_to allow_value('4.1').for(:value).with_message('is invalid') }
+      it { is_expected.not_to allow_value(4.1).for(:value).with_message('is invalid') }
+      it { is_expected.not_to allow_value('5').for(:value).with_message('is invalid') }
+    end
   end
 
   describe "for photo fields" do
@@ -56,6 +155,33 @@ describe FormFieldResult, :type => :model do
   end
 
   describe "for text fields" do
+    describe "when it's required" do
+      let(:form_field) { FactoryGirl.create(:form_field,
+        type: 'FormField::Text',
+        settings: {},
+        fieldable: FactoryGirl.create(:activity_type, company_id: 1),
+        required: true) }
+      before { subject.form_field_id = form_field.id }
+      it { is_expected.to_not allow_value(nil).for(:value) }
+      it { is_expected.to_not allow_value('').for(:value) }
+      it { is_expected.to allow_value('hola'*100).for(:value) }
+      it { is_expected.to allow_value('a').for(:value) }
+    end
+
+    describe "when doesn't have range validation rules" do
+      let(:form_field) { FactoryGirl.create(:form_field,
+        type: 'FormField::Text',
+        settings: {},
+        fieldable: FactoryGirl.create(:activity_type, company_id: 1),
+        required: false) }
+      before { subject.form_field_id = form_field.id }
+      it { is_expected.to allow_value(nil).for(:value) }
+      it { is_expected.to allow_value('').for(:value) }
+      it { is_expected.to allow_value('h').for(:value) }
+      it { is_expected.to allow_value('hola ahi').for(:value) }
+      it { is_expected.to allow_value('hola '*100).for(:value) }
+    end
+
     describe "when range format is characters" do
       let(:form_field) { FactoryGirl.create(:form_field,
         type: 'FormField::Text',
@@ -86,6 +212,32 @@ describe FormFieldResult, :type => :model do
   end
 
   describe "for text area fields" do
+    describe "when it's required" do
+      let(:form_field) { FactoryGirl.create(:form_field,
+        type: 'FormField::TextArea',
+        settings: {},
+        fieldable: FactoryGirl.create(:activity_type, company_id: 1),
+        required: true) }
+      before { subject.form_field_id = form_field.id }
+      it { is_expected.to_not allow_value(nil).for(:value) }
+      it { is_expected.to_not allow_value('').for(:value) }
+      it { is_expected.to allow_value('hola'*100).for(:value) }
+      it { is_expected.to allow_value('a').for(:value) }
+    end
+
+    describe "when doesn't have range validation rules" do
+      let(:form_field) { FactoryGirl.create(:form_field,
+        type: 'FormField::TextArea',
+        settings: {},
+        fieldable: FactoryGirl.create(:activity_type, company_id: 1),
+        required: false) }
+      before { subject.form_field_id = form_field.id }
+      it { is_expected.to allow_value(nil).for(:value) }
+      it { is_expected.to allow_value('').for(:value) }
+      it { is_expected.to allow_value('hola').for(:value) }
+      it { is_expected.to allow_value('hola'*100).for(:value) }
+    end
+
     describe "when range format is characters" do
       let(:form_field) { FactoryGirl.create(:form_field,
         type: 'FormField::TextArea',

@@ -57,6 +57,20 @@ feature 'Post Event Data' do
           required: false)
 
         FactoryGirl.create(:form_field,
+          name: 'Custom Numeric',
+          type: 'FormField::Number',
+          settings: {'range_format' => 'value', 'range_min' => '5', 'range_max' => '20'},
+          fieldable: campaign,
+          required: false)
+
+        FactoryGirl.create(:form_field,
+          name: 'Custom Currency',
+          type: 'FormField::Currency',
+          settings: {'range_format' => 'digits', 'range_min' => '2', 'range_max' => '4'},
+          fieldable: campaign,
+          required: false)
+
+        FactoryGirl.create(:form_field,
           name: 'Custom Summation',
           type: 'FormField::Summation',
           options: [FactoryGirl.create(:form_field_option, name: 'Summation Opt1'), FactoryGirl.create(:form_field_option, name: 'Summation Opt2')],
@@ -130,6 +144,8 @@ feature 'Post Event Data' do
         # Fill in the custom (non KPI) fields
         fill_in 'Custom Single Text', with: 'Testing Single'
         fill_in 'Custom TextArea', with: 'Testing Area'
+        fill_in 'Custom Numeric', with: '10'
+        fill_in 'Custom Currency', with: '30'
 
         fill_in 'Summation Opt1', with: '100'
         fill_in 'Summation Opt2', with: '200'
@@ -180,6 +196,8 @@ feature 'Post Event Data' do
           expect(page).to have_content('RADIO OPT1 CUSTOM RADIO')
           expect(page).to have_content('TESTING SINGLE CUSTOM SINGLE TEXT')
           expect(page).to have_content('TESTING AREA CUSTOM TEXTAREA')
+          expect(page).to have_content('10 CUSTOM NUMERIC')
+          expect(page).to have_content('$30.00 CUSTOM CURRENCY')
         end
 
         visit event_path(event)
@@ -259,6 +277,46 @@ feature 'Post Event Data' do
         end
 
         fill_in('Female', with: 65)
+
+        click_js_button "Save"
+
+        expect(page).to have_no_content("Field should sum 100%")
+      end
+
+      scenario "should display correct messages for range validations" do
+        FactoryGirl.create(:form_field,
+          name: 'Numeric',
+          type: 'FormField::Number',
+          settings: {'range_format' => 'value', 'range_min' => '5', 'range_max' => '20'},
+          fieldable: campaign,
+          required: false)
+
+        FactoryGirl.create(:form_field,
+          name: 'Price',
+          type: 'FormField::Currency',
+          settings: {'range_format' => 'digits', 'range_min' => '2', 'range_max' => '4'},
+          fieldable: campaign,
+          required: false)
+
+        event = FactoryGirl.create(:event,
+          start_date: Date.yesterday.to_s(:slashes), end_date: Date.yesterday.to_s(:slashes),
+          campaign: campaign, place: place )
+
+        visit event_path(event)
+
+        fill_in('Numeric', with: 35)
+        fill_in('Price', with: 1)
+
+        click_js_button "Save"
+
+        expect(find_field('Numeric')).to have_error('should be between 5 and 20')
+        expect(find_field('Price')).to have_error('should have at least 2 but no more than 4 digits')
+
+        fill_in('Numeric', with: 10)
+        fill_in('Price', with: 1000)
+
+        expect(page).not_to have_text('should be between 5 and 20')
+        expect(page).not_to have_text('should have at least 2 but no more than 4 digits')
 
         click_js_button "Save"
 

@@ -46,18 +46,11 @@ class FormField::Number < FormField
   def validate_result(result)
     super
     if result.value.present?
-      result.errors.add:value, I18n.translate('errors.messages.not_a_number') if !parse_raw_value_as_a_number(result.value)
+      result.errors.add:value, I18n.translate('errors.messages.not_a_number') if !value_is_numeric?(result.value)
     end
   end
 
   def is_numeric?
     true
   end
-
-  protected
-    def parse_raw_value_as_a_number(raw_value)
-      Kernel.Float(raw_value) if raw_value !~ /\A0[xX]/
-    rescue ArgumentError, TypeError
-      nil
-    end
 end
