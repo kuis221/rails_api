@@ -47,20 +47,20 @@ class Campaign < ActiveRecord::Base
   validates_date :end_date, :on_or_after => :start_date, allow_nil: true, allow_blank: true, on_or_after_message: ''
 
   # Campaigns-Brands relationship
-  has_and_belongs_to_many :brands, :order => 'name ASC', :autosave => true
+  has_and_belongs_to_many :brands, :order => 'name ASC', conditions: { brands: {active: true} }, :autosave => true
 
   # Campaigns-Brand Portfolios relationship
-  has_and_belongs_to_many :brand_portfolios, :order => 'name ASC', :autosave => true, after_remove: :remove_child_goals_for
+  has_and_belongs_to_many :brand_portfolios, :order => 'name ASC', conditions: { brand_portfolios: {active: true} }, :autosave => true, after_remove: :remove_child_goals_for
   has_many :brand_portfolio_brands, through: :brand_portfolios, class_name: 'Brand', source: :brands
 
   # Campaigns-Areas relationship
-  has_and_belongs_to_many :areas, :order => 'name ASC', :autosave => true, after_remove: :clear_locations_cache, after_add: :clear_locations_cache
+  has_and_belongs_to_many :areas, :order => 'name ASC', conditions: {active: true}, :autosave => true, after_remove: :clear_locations_cache, after_add: :clear_locations_cache
 
   # Campaigns-Areas relationship
-  has_and_belongs_to_many :date_ranges, :order => 'name ASC', :autosave => true, after_remove: :remove_child_goals_for
+  has_and_belongs_to_many :date_ranges, :order => 'name ASC', conditions: {active: true}, :autosave => true, after_remove: :remove_child_goals_for
 
   # Campaigns-Areas relationship
-  has_and_belongs_to_many :day_parts, :order => 'name ASC', :autosave => true, after_remove: :remove_child_goals_for
+  has_and_belongs_to_many :day_parts, :order => 'name ASC', conditions: {active: true}, :autosave => true, after_remove: :remove_child_goals_for
 
   belongs_to :first_event, class_name: 'Event'
   belongs_to :last_event, class_name: 'Event'
