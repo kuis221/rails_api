@@ -5359,31 +5359,31 @@ svg{
 }
 
 .campaigns_report, .snapshot_report, .staff_report {
-	.details_box{
-		&.first{
-			-webkit-border-radius: 0px 7px 7px 7px;
-			border-radius: 0px 7px 7px 7px;
-			.chzn-container-single{
-				color: $brand;
-				.chzn-single{
-					height: 38px !important;
-					padding-top: 3px;
-					width: 365px !important;
-				}
-				.chzn-drop{
-					width: 280px !important;
-				}
-			}
-		}
-		.chzn-container-single{
-			.chzn-search input{
-				height: 25px;
-			}
-			.chzn-results{
-				margin: 0 0 4px 0;
-			}
-		}
-	}
+	// .details_box{
+	// 	&.first{
+	// 		-webkit-border-radius: 0px 7px 7px 7px;
+	// 		border-radius: 0px 7px 7px 7px;
+	// 		.chzn-container-single{
+	// 			color: $brand;
+	// 			.chzn-single{
+	// 				height: 38px !important;
+	// 				padding-top: 3px;
+	// 				width: 365px !important;
+	// 			}
+	// 			.chzn-drop{
+	// 				width: 280px !important;
+	// 			}
+	// 		}
+	// 	}
+	// 	.chzn-container-single{
+	// 		.chzn-search input{
+	// 			height: 25px;
+	// 		}
+	// 		.chzn-results{
+	// 			margin: 0 0 4px 0;
+	// 		}
+	// 	}
+	// }
 	.loading-spinner{
 		background: #fff image-url('loading-circle.gif') center center no-repeat;
 		display: block;
@@ -5602,14 +5602,12 @@ body.campaigns{
 
 			.controls{
 				.chzn-container-single{
-					width: 300px	!important;
 					height: 31px !important;
 					.chzn-single{
 						height: 32px !important;
 						padding-top: 0px !important;
-						width: 300px !important;
 						span{
-			    			line-height: 26px;
+							line-height: 26px;
 							height: 26px !important;
 							padding-top: 0px !important;
 							margin-top: 3px !important;
@@ -5622,13 +5620,10 @@ body.campaigns{
 					}
 					.chzn-drop{
 						margin-top: 6px !important;
-						width: 310px !important;
 						.chzn-search{
+							top: -39px;
 							input{
-								bottom:9px;
 								height: 30px;
-								margin-left: 8px;
-								width: 90% !important;
 							}
 						}
 					}
@@ -7514,20 +7509,8 @@ div.radio{
 }
 
 .chzn-container{
-	// width: 100% !important;
 	&.chzn-container-single{
-		.chzn-single{
-//			height: 40px;
-
-			// span{
-			// 	line-height: 40px;
-			// }
-		}
-	}/*
-	.chzn-drop{
-		border-top: 1px solid $brand !important;
-		width: 100% !important;
-	}*/
+	}
 	&.chzn-results{
 		padding: 0 !important;
 		li{

@@ -193,9 +193,10 @@ class Campaign < ActiveRecord::Base
     brands.each{|brand| brand.mark_for_destruction unless brands_names.include?(brand.name) }
   end
 
-  def promo_hours_graph_data
+  def promo_hours_graph_data(user)
     stats={}
-    queries = children_goals.with_value.includes(:goalable).where(kpi_id: [Kpi.events.id, Kpi.promo_hours.id]).for_areas(area_ids).map do |goal|
+    user_allowed_areas = areas.accessible_by_user(user).pluck('areas.id')
+    queries = children_goals.with_value.includes(:goalable).where(kpi_id: [Kpi.events.id, Kpi.promo_hours.id]).for_areas(user_allowed_areas).map do |goal|
       name, group = if goal.kpi_id == Kpi.events.id then ['EVENTS', 'COUNT(events.id)'] else ['PROMO HOURS', 'SUM(events.promo_hours)'] end
       stats["#{goal.goalable.id}-#{name}"] = {"id"=>goal.goalable.id, "name"=>goal.goalable.name, "goal"=>goal.value, "kpi"=>name, "executed"=>0.0, "scheduled"=>0.0}
       events.active.in_areas([goal.goalable]).

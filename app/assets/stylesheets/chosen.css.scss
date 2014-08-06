@@ -240,7 +240,6 @@ $chzn-single-height:39px;
 				input {
 					margin: 1px 0;
 					padding: 5px;
-					height: 15px;
 					outline: 0;
 					border: 0 !important;
 					background: transparent !important;
@@ -266,7 +265,6 @@ $chzn-single-height:39px;
 				background-image: -o-linear-gradient(#f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
 				background-image: linear-gradient(#f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
 				background-clip: padding-box;
-				box-shadow: 0 0 2px white inset, 0 1px 0 rgba(0, 0, 0, 0.05);
 				color: #333;
 				line-height: 13px;
 				cursor: default;
@@ -277,7 +275,7 @@ $chzn-single-height:39px;
 					display: block;
 					width: 12px;
 					height: 12px;
-					//background: url('chosen-sprite.png') -48px 1px no-repeat;
+					background: url('chosen-sprite.png') -48px 1px no-repeat;
 					font-size: 1px;
 					&:hover {
 						background-position: -48px -10px;
@@ -347,7 +345,6 @@ $chzn-single-height:39px;
 	}
 	.chzn-choices {
 		border: 1px solid #5897fb;
-		box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 		li.search-field input {
 			color: #111 !important;
 		}
@@ -452,7 +449,6 @@ $chzn-single-height:39px;
 		.chzn-single {
 			abbr, div b {
 				//background-image: url('chosen-sprite@2x.png') !important;
-				background-size: 52px 37px !important;
 				background-repeat: no-repeat !important;
 			}
 		}
