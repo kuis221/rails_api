@@ -5680,6 +5680,11 @@ body.campaigns{
 					margin-left: 10px;
 					position: relative;
 					top: 2px;
+					&:after {
+						content: "\e625";
+						font-family: 'icons';
+						font-size: 18px;
+					}
 				}
 			}
 		}
