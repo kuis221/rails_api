@@ -956,6 +956,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
         })
       elsif field.type == 'FormField::Checkbox'
         result.merge!({
+          value: r.value || [],
           segments: field.options_for_input.map{|s| {id: s[1], text: s[0], value: r.value.include?(s[1])}}
         })
       elsif field.type == 'FormField::Brand'
