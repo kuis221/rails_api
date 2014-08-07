@@ -3,16 +3,14 @@
 
 /* Icons */
 
-[class^="icon-"] {
+[class^="icon-"]:before {
   position:relative;
-  top:1px;
   display:inline-block;
   font-family: 'icons';
   font-style: normal;
   font-weight: normal;
   font-variant: normal;
   text-transform: none;
-  line-height: 1;
 
   /* Better Font Rendering =========== */
   -webkit-font-smoothing: antialiased;
