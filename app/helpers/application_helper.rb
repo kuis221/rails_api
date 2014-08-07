@@ -56,7 +56,7 @@ module ApplicationHelper
     content_tag(:div, id: 'resource-close-details', 'data-spy' => "affix", 'data-offset-top' => "20") do
       link_to(return_path || collection_path, class: 'close-details') do
         content_tag(:span, title, class: 'details-bar-pull-left') +
-        content_tag(:span, " ".html_safe, class: :close)
+        content_tag(:span, " ".html_safe, class: 'icon-close')
       end
     end
   end
