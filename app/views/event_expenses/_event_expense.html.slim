@@ -4,7 +4,7 @@ li id="event_expense_#{event_expense.id}"
   span.links
     //= link_to '', event_expense.download_url, 'data-preview-url' => event_expense.receipt.file.url(:thumbnail), :class => "preview" if event_expense.receipt.present?
     - if event_expense.receipt.present?
-      = link_to event_expense.receipt.preview_url, 'data-toggle' => 'gallery', title: 'View Receipt', class: 'icon-recipe' do
+      = link_to event_expense.receipt.preview_url, 'data-toggle' => 'gallery', title: 'View Receipt', class: 'icon-reciept' do
           = image_tag 'blank.gif', id: 'expense_image_'+event_expense.receipt.id.to_s, data: {\
                 urls: {\
                   download: event_expense.receipt.download_url\
