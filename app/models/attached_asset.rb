@@ -258,6 +258,7 @@ class AttachedAsset < ActiveRecord::Base
     end
     self.processed = true
 
+    direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
     file.s3_bucket.objects[direct_upload_url_data[:path]].delete if save
     @processing = false
   end
