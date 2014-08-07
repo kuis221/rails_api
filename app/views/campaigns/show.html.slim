@@ -15,12 +15,15 @@
       - if resource.has_date_range? || resource.first_event_at || resource.last_event_at
         .calendar-data
           - if resource.has_date_range?
+            i.icon-calendar
             = format_date_range(resource.start_date, resource.end_date, date_separator: ' - ')
           - else
+            i.icon-calendar
             = format_date_range(resource.first_event_at, resource.last_event_at, date_separator: ' - ')
 
       - if resource.description
         .description-data
+          i.icon-wired-description
           = resource.description
 
     .links-data

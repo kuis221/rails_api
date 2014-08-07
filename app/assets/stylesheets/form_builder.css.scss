@@ -275,8 +275,16 @@
 		}
 
 		.custom {
+			line-height: 16px;
 			.field:nth-child(odd) {
 				margin-right: 10px;
+			}
+			span{
+				font-size: 14px;
+				padding-top: 4px;
+			}
+			p{
+				line-height: 57px;
 			}
 		}
 

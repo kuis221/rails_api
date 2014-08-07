@@ -9,7 +9,7 @@ li id="team_#{team.id}" class="#{active_class(team)}"
       br>/
       | Members
   span.pull-right.tools
-    = link_to '', edit_team_path(team), remote: true, title: 'Edit', class: 'edit' if can?(:edit, Team)
+    = link_to '', edit_team_path(team), remote: true, title: 'Edit', class: 'icon-edit' if can?(:edit, Team)
     - if can?(:deactivate, Team)
       = link_to_deactivate team
-      = link_to '', activate_team_path(team), remote: true, title: I18n.t('confirmation.activate'), class: 'enable' unless team.active?
+      = link_to '', activate_team_path(team), remote: true, title: I18n.t('confirmation.activate'), class: 'icon-rounded-ok' unless team.active?

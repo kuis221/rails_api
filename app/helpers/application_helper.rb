@@ -56,7 +56,7 @@ module ApplicationHelper
     content_tag(:div, id: 'resource-close-details', 'data-spy' => "affix", 'data-offset-top' => "20") do
       link_to(return_path || collection_path, class: 'close-details') do
         content_tag(:span, title, class: 'details-bar-pull-left') +
-        content_tag(:span, " ".html_safe, class: :close)
+        content_tag(:span, " ".html_safe, class: 'icon-close')
       end
     end
   end
@@ -184,7 +184,7 @@ module ApplicationHelper
         content_tag(:div, "#{data.try(:[],'Female').try(:round) || 0} %", class: 'percent') +
         content_tag(:div, 'FEMALE', class: 'gender')
       end
-    end
+    end 
   end
 
   def link_to_if_permitted(permission_action, subject_class, options, html_options = {}, &block)
@@ -201,7 +201,7 @@ module ApplicationHelper
     opts[:url] ||= [:deactivate, model]
     model_sytem_name = model.class.name.underscore
     humanized_name = model.class.model_name.human.downcase
-    link_to '', opts[:url], remote: true, title: I18n.t('confirmation.deactivate') , class: 'disable', confirm: I18n.t('confirmation.deactivate_confirm_message', model: humanized_name) if model.active?
+    link_to '', opts[:url], remote: true, title: I18n.t('confirmation.deactivate') , class: 'icon-rounded-disable', confirm: I18n.t('confirmation.deactivate_confirm_message', model: humanized_name) if model.active?
   end
 
   def active_class(item)

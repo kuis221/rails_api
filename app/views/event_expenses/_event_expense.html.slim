@@ -4,7 +4,7 @@ li id="event_expense_#{event_expense.id}"
   span.links
     //= link_to '', event_expense.download_url, 'data-preview-url' => event_expense.receipt.file.url(:thumbnail), :class => "preview" if event_expense.receipt.present?
     - if event_expense.receipt.present?
-      = link_to event_expense.receipt.preview_url, 'data-toggle' => 'gallery', title: 'View Receipt', class: 'preview' do
+      = link_to event_expense.receipt.preview_url, 'data-toggle' => 'gallery', title: 'View Receipt', class: 'icon-recipe' do
           = image_tag 'blank.gif', id: 'expense_image_'+event_expense.receipt.id.to_s, data: {\
                 urls: {\
                   download: event_expense.receipt.download_url\
@@ -12,6 +12,6 @@ li id="event_expense_#{event_expense.id}"
                 permissions: ['index_photo_results'],\
                 id: event_expense.receipt.id\
               }
-    = link_to '', edit_event_event_expense_path(event_expense.event, event_expense), remote: true, class: 'edit' if can?(:edit, event_expense)
+    = link_to '', edit_event_event_expense_path(event_expense.event, event_expense), remote: true, class: 'icon-edit' if can?(:edit, event_expense)
     = "&nbsp;".html_safe
-    = link_to '', event_event_expense_path(event_expense.event, event_expense), remote: true, method: :delete, class: 'disable' if can?(:deactivate, event_expense)
+    = link_to '', event_event_expense_path(event_expense.event, event_expense), remote: true, method: :delete, class: 'icon-rounded-disable' if can?(:deactivate, event_expense)

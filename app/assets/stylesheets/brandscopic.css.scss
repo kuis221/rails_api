@@ -486,13 +486,22 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 
 a.datepick-cmd{
 	display: inline-block;
-	margin-top: 8px;
+	margin-top: 12px;
 	overflow: hidden;
 	position:relative;
-	text-indent: 200%;
+	text-indent: 13%;
 }
 a.datepick-cmd:hover{
 	background-color: $brand;
+}
+
+.datepick-cmd-next, .datepick-cmd-prev{
+	font-size: 12px;
+	color: white !important;
+}
+
+.datepick-cmd-prev{
+	right: 35%;
 }
 
 .checker{
@@ -748,6 +757,7 @@ a.more-options-link:after{
 .btn-small {
 	padding: 2px 10px;
 }
+
 .btn-group{
 	margin-left: 25px;
 	&>.btn+.btn{
@@ -756,6 +766,12 @@ a.more-options-link:after{
 	.btn{
 		border: 0;
 		box-shadow: none;
+		&.active{
+			color: $user_menu !important;
+		}
+		&:hover{
+			color: white !important; 
+		}
 		&.calendar{
 			border-left: 1px solid $buttons-border;
 			border-right: 1px solid $buttons-border;
@@ -824,16 +840,8 @@ a.more-options-link:after{
 #list-tools {
 	margin: 1px 0 25px 0;
 	position: relative;
-	button, a{
-		&.btn.download, &.btn.fullscreen{
-			box-sizing:border-box;
-			width: 55px;
-			padding: 8px 0;
-			height: 35px;
-			&:before, &:after{
-				font-size: 16px;
-			}
-		}
+	a, button{
+		color:white;
 	}
 	.download-photos-counter {
 		left: auto;
@@ -2437,7 +2445,7 @@ ul.kpis-list{
 						width: 53%;
 					}
 					&.pull-right{
-						margin-top: 18px;
+						margin-top: 20px;
 						position: relative;
 					}
 				}
@@ -2713,6 +2721,10 @@ ul.kpis-list{
 			width: 100%;
 			min-height: 100%;
 		}
+		.pull-right a{
+			display: none;
+		}
+		/*
 		.edit, .enable, .disable, .preview {
 			height: 30px;
 			display: inline-block;
@@ -2757,14 +2769,13 @@ ul.kpis-list{
 			margin-right: 2px;
 			text-align: center;
 			top: 3px;
-		}
+		}*/
 		&:hover{
 			background-color: $grey_one;
-			a:hover:after{
-				color: $grey_three;
-			}
-			.edit:after, .enable:after, .disable:after, .share:after, .load-comments-link:after, .preview:after{
-				color:$brand;
+			.pull-right a{
+				color: $brand;
+				display: inline-block;
+				margin-left: 10px;
 			}
 			.checker{
 				background-color: $user_menu;
@@ -2822,11 +2833,17 @@ ul.kpis-list{
 			padding-top: 8px;
 			width: 40%;
 		}
+		&.event-item{
+			.pull-right{
+				top: 40%;			
+			}
+		}
 		&.pull-right{
 			display: block;
 			position: absolute;
 			right: 15px;
-			top: 35%;
+			font-size: 16px;
+			top: 23%;
 		}
 	}
 	&.rows-no-link{
@@ -3114,25 +3131,11 @@ textarea::-webkit-input-placeholder {
 		text-decoration: none;
 		color: $grey_one;
 	}
-	.close {
-		opacity: 1;
-		position: relative;
+	.icon-close {
+		position: absolute;
 		text-shadow:none;
-		right: 35px;
-		&:before{
-			color: $grey_one;
-			content: "\e019";
-			display: block;
-			font-family: 'icons';
-			font-size: 14px;
-			font-weight: normal;
-			position: absolute;
-			right: 15px;
-			speak: none;
-			text-indent: 0;
-			top: 3px;
-			-webkit-font-smoothing: antialiased;
-		}
+		right: 15px;
+		top: 16px;
 	}
 	.details-bar-pull-left {
 		float: left;
@@ -3448,12 +3451,11 @@ textarea::-webkit-input-placeholder {
 .attachment-panel{
 	@include box-sizing(border-box);
 	border: 2px dashed $grey_one;
-	border-radius: 4px 4px 4px 4px;
-	color: #C0C0C0;
+	color: $user_menu;
 	font-size: 12px;
 	line-height: 17px;
 	margin-top: 15px;
-	padding: 30px 30px 20px;
+	padding: 40px 20px 20px;
 	text-align: center;
 	height: 150px;
 	width: 237px;
@@ -3468,6 +3470,7 @@ textarea::-webkit-input-placeholder {
 		h4, p{
 			color: $user_menu;
 			font-family: $baseFontFamily;
+			font-weight: normal;
 			text-align: left;
 		}
 		p{
@@ -3490,14 +3493,11 @@ textarea::-webkit-input-placeholder {
 				}
 			}
 		}
-		.icon-drag{
+		i{
+			font-size: 28px;
 			float: left;
-			height: 50px;
+			line-height: 30px;
 			margin-right: 10px;
-			&:before {
-				font-size: 30px;
-				margin-top: 5px;
-			}
 		}
 	}
 
@@ -4684,42 +4684,19 @@ body.roles{
 			.left-arrow {
 				margin-left: 50%;
 				float: left;
-				a.icon-angle-left:before{
-					color:$user_menu;
-					content: "\e01c";
-					display: inline-block;
-					font-family: 'icons';
-					font-size: 26px;
-					padding-bottom:5px;
-					position: relative;
-					speak: none;
-					text-align: center;
-					vertical-align: middle;
-					-webkit-font-smoothing: antialiased;
-				}
 			}
-
 			.right-arrow {
 				float: right;
 				width: 15px;
-				a.icon-angle-right:before{
-					color:$user_menu;
-					content: "\e01d";
-					display: inline-block;
-					font-family: 'icons';
-					font-size: 26px;
-					padding-bottom:5px;
-					position: relative;
-					speak: none;
-					text-align: center;
-					vertical-align: middle;
-					-webkit-font-smoothing: antialiased;
-				}
 			}
 
-			a:hover {
-				text-decoration: none;
-				cursor: pointer;
+			a{
+				font-size: 26px;
+				line-height: 50px;
+				&:hover {
+					text-decoration: none;
+					cursor: pointer;
+				}
 			}
 		}
 
@@ -5649,6 +5626,19 @@ body.campaigns{
 			&.links{
 				float: right;
 				margin: 30px 15px 0 0;
+				a{
+					color: $brand;
+					font-size: 16px;
+					margin-right: 10px;
+					vertical-align: top;
+					&.icon-recipe{
+						font-size: 22px;
+						margin-right: 5px;
+					}
+					&:last-child{
+						margin-right: 0;
+					}
+				}
 			}
 			&.total{
 				font-size: 16px;
@@ -6525,13 +6515,6 @@ input::-webkit-inner-spin-button {
 
 // FULLSCREEN MODE ICONS
 
-#main:-webkit-full-screen {
-	.btn.fullscreen:after {
-		content: "\e040";
-		font-family: 'icons';
-	}
-}
-
 table td.sub-level-1 {
 	padding-left: 20px;
 }
@@ -6938,8 +6921,19 @@ table td.sub-level-1 {
 
 	.gallery-modal-inner{
 		position: relative;
+		a{
+			color: white;
+		}
 		.select2-container .select2-input {
 			border-width: 0px !important;
+		}
+		button{
+			background-color: transparent;
+			border: 0;
+			color: white;
+			position: absolute;
+			right: 10px;
+			top: 15px;
 		}
 	}
 	.slider {
@@ -7190,60 +7184,38 @@ table td.sub-level-1 {
 	display: block;
 	min-height: 20px;
 	margin: 0 0 20px 30px;
+	position: relative;
 	width: 380px;
+	i{
+		color: $user_menu;
+		position: absolute;
+		left: -29px;
+		top: 5px;
+		font-size: 18px;
+	}
 }
+
+
+
 .links-data{
 	margin: 0 0 0 30px;
 }
+
 .calendar-data{
 	b{
 		font-size:16px;
 		font-weight: 400;
 	}
-	&:before{
-		color: $user_menu;
-		position: absolute;
-		left: 28px;
-		margin-top: 2px;
-		text-align: center;
-		vertical-align: middle;
-	}
 }
-.email-data{
-	&:before{
-		color: $user_menu;
-		padding-top: 6px;
-		position: absolute;
-		left: 28px;
-		text-align: center;
-		vertical-align: middle;
-	}
-}
+
 .place-data{
 	width: 500px;
-	&:before{
-		color: $user_menu;
-		font-size: 22px;
-		padding-top: 5px;
-		position: absolute;
-		left: 31px;
-		text-align: center;
-		vertical-align: middle;
-	}
-
 	address{
 		margin-bottom: 0px;
 	}
-}
-.phone-data{
-	&:before{
-		color: $user_menu;
-		padding-top: 3px;
-		position: absolute;
-		speak: none;
-		left: 29px;
-		text-align: center;
-		vertical-align: middle;
+	i{
+		font-size: 21px;
+		left: -26px;
 	}
 }
 

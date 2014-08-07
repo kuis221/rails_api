@@ -25,14 +25,19 @@
 
     .text-right
       button.btn.download.xlsx-download-link data-url="#{events_path(format:"xls")}" title="Download"
+        i.icon-download
+
       - if can?(:view_map, Event) || can?(:view_list, Event) || can?(:view_calendar, Event)
         #toggle-events-view.btn-group
           - if can?(:view_list, Event)
             a.btn.active.list href="#list-view" data-toggle="tab" title="List View"
+              i.icon-list
           - if can?(:view_calendar, Event)
             a.btn.calendar href="#calendar-view" data-toggle="tab" title="Calendar View"
+              i.icon-grid
           - if can?(:view_map, Event)
             a.btn.map href="#map-view" data-toggle="tab" title="Map View"
+              i.icon-venue
 
   .tab-content
     - if can?(:view_list, Event)

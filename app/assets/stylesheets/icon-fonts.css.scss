@@ -17,17 +17,27 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Datepick Icons */
+
+.datepick-cmd-next, .datepick-cmd-prev{
+  @extend [class^="icon-"];
+}
+
+
+
 /* Icon Breakdown */
 
 .icon-venue:before{
   content:"\e001";
 }
 
-.icon-arrow-right:before{
+.icon-arrow-right:before, 
+.datepick-cmd-next:before{
   content:"\e002";
 }
 
-.icon-arrow-left:before{
+.icon-arrow-left:before, 
+.datepick-cmd-prev:before{
   content:"\e003";
 }
 
@@ -39,7 +49,7 @@
   content:"\e006";
 }
 
-.icon-settings:before{
+.icon-gear:before{
   content:"\e007";
 }
 
@@ -63,8 +73,9 @@
   content: "\e010";
 }
 
-.icon-rounded-disable:before {
-  content: "\e625";
+.icon-rounded-disable:before, 
+.icon-remove-sign:before{
+  content: "\e011";
 }
 
 .icon-rounded-ok:before{
@@ -107,11 +118,11 @@
   content:"\e01b";
 }
 
-.icon-slimmed-arrow-left:before{
+.icon-slimmed-arrow-left:before, .icon-angle-left:before{
   content: "\e01c";
 }
 
-.icon-slimmed-arrow-right:before{
+.icon-slimmed-arrow-right:before, .icon-angle-right:before{
   content: "\e01d;"
 }
 
@@ -123,12 +134,17 @@
   content: "\e020";
 }
 
-.icon-rounded-add:before{
+.icon-rounded-add:before, 
+.icon-plus-sign:before{
   content: "\e021";
 }
 
 .icon-calendar:before{
   content:"\e022";
+}
+
+.icon-marque:before{
+  content: "\e60f";
 }
 
 .icon-team:before{
@@ -163,7 +179,7 @@
   content: "\e02a";
 }
 
-.icon-wired-document:before{
+.icon-wired-description:before{
   content: "\e02b";
 }
 
@@ -239,7 +255,7 @@
   content: "\e60a";
 }
 
-.icon-multiple-choice:before{
+.icon-radio:before{
   content: "\e60b";
 }
 

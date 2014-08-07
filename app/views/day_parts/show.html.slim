@@ -8,14 +8,14 @@
         = resource.description
     
     .links-data
-      = link_to '', edit_day_part_path(resource), remote: true, class: 'edit', title: 'Edit' if can?(:edit, resource)
+      = link_to '', edit_day_part_path(resource), remote: true, class: 'icon-edit', title: 'Edit' if can?(:edit, resource)
       = "&nbsp;".html_safe
       = active_inactive_buttons(resource) if can?(:deactivate, resource)
 
     // This info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
       h3= resource.name
-      = link_to '', edit_day_part_path(resource), title: 'Edit', remote: true, class: 'edit' if can?(:edit, resource)
+      = link_to '', edit_day_part_path(resource), title: 'Edit', remote: true, class: 'icon-edit' if can?(:edit, resource)
       = active_inactive_buttons(resource) if can?(:deactivate, resource)
 
   #time_ranges.details_box
