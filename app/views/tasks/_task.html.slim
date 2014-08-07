@@ -17,8 +17,8 @@ li id="task_#{task.id}" class="#{active_class(task)} #{task.statuses.join(' ').d
           br>/
           = task.user_full_name
       span.links.pull-right
-        = link_to '', task_comments_path(task), remote: true, class: 'load-comments-link' if can?(:comments, task)
-        = link_to '', edit_task_path(task), remote: true, class: 'edit' if can?(:edit, task)
+        = link_to '', task_comments_path(task), remote: true, class: 'icon-chat' if can?(:comments, task)
+        = link_to '', edit_task_path(task), remote: true, class: 'icon-edit' if can?(:edit, task)
         -  if can?(:deactivate, task)
           = link_to_deactivate task
           = link_to '', activate_task_path(task), remote: true, class: 'enable',title: I18n.t('confirmation.activate') unless task.active?
