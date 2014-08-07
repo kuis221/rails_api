@@ -21,13 +21,13 @@
         = resource.full_address
 
     .links-data
-      = link_to '', edit_company_user_path(resource), remote: true, title: 'Edit', class: 'edit' if can?(:edit, resource)
+      = link_to '', edit_company_user_path(resource), remote: true, title: 'Edit', class: '.icon-edit' if can?(:edit, resource)
       = active_inactive_buttons(resource) if can?(:deactivate, resource)
 
     // The is info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
       h3= resource.full_name
-      = link_to '', edit_company_user_path(resource), remote: true, class: 'edit' if can?(:edit, resource)
+      = link_to '', edit_company_user_path(resource), remote: true, class: 'icon-edit' if can?(:edit, resource)
       = active_inactive_buttons(resource) if can?(:deactivate, resource)
 
   #user-places.details_box
