@@ -29,7 +29,7 @@ SimpleNavigation::Configuration.run do |navigation|
   # This turns it off globally (for the whole plugin)
   # navigation.auto_highlight = false
   navigation.items do |primary|
-    primary.item :help_menu, '', '#help-modal', link: {'class' => 'single-link', 'data-toggle' => "modal", 'role' => "button"}
+    primary.item :help_menu, '', '#help-modal', link: {'class' => 'single-link', icon_class: 'icon-help', 'data-toggle' => "modal", 'role' => "button"}
 
     options = []
     options.push([:users, 'Users', company_users_path, highlights_on: %r(^/users.*)]) if can?(:index, CompanyUser)
@@ -45,7 +45,7 @@ SimpleNavigation::Configuration.run do |navigation|
 
 
     unless options.empty?
-      primary.item :admin, '', options.first[2], link: {'class' => "dropdown-toggle", 'data-toggle' => "dropdown"} do |secondary|
+      primary.item :admin, '', options.first[2], link: {class: "dropdown-toggle", 'data-toggle' => "dropdown", icon_class: 'icon-settings'} do |secondary|
         options.each {|option| secondary.item *option }
       end
     end
@@ -54,9 +54,9 @@ SimpleNavigation::Configuration.run do |navigation|
       secondary.item :loading, 'Wait...'
     end
 
-    primary.item :user_menu,  current_user.full_name, '#', link: {'class' => "dropdown-toggle", 'data-toggle' => "dropdown"}, if: lambda{ user_signed_in? } do |secondary|
+    primary.item :user_menu,  current_user.full_name, '#', link: {'class' => "dropdown-toggle", 'data-toggle' => "dropdown", icon_class: 'icon-arrow-down pull-right'}, if: lambda{ user_signed_in? } do |secondary|
       secondary.item :users, 'Edit Profile',  edit_company_user_path(current_company_user), link: {remote: true}
-      secondary.item :users, 'Logout', destroy_user_session_path, link: {method: :delete}
+      secondary.item :users, 'Logout', destroy_user_session_path, link: {method: :delete, icon_class: 'icon-on pull-right'}
     end
   end
 end

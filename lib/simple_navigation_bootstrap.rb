@@ -37,10 +37,17 @@ class SimpleNavigationBootstrap < SimpleNavigation::Renderer::Base
   protected
 
   def tag_for(item)
+    name = item.name
+    opts =  link_options_for(item)
+    p opts.inspect
+    if opts[:icon_class]
+      name = content_tag(:span, '', class: opts[:icon_class] ) + name
+      opts = opts.except(:icon_class)
+    end
     if item.url.nil?
-      content_tag('span', item.name, link_options_for(item).except(:method))
+      content_tag('span', name, opts.except(:method))
     else
-      link_to(item.name, item.url, link_options_for(item))
+      link_to(name, item.url, opts)
     end
   end
 
