@@ -51,7 +51,7 @@
   content:"\e006";
 }
 
-.icon-settings:before{
+.icon-gear:before{
   content:"\e007";
 }
 
@@ -75,7 +75,8 @@
   content: "\e010";
 }
 
-.icon-rounded-disable:before {
+.icon-rounded-disable:before, 
+.icon-remove-sign:before{
   content: "\e011";
 }
 
@@ -119,11 +120,11 @@
   content:"\e01b";
 }
 
-.icon-slimmed-arrow-left:before{
+.icon-slimmed-arrow-left:before, .icon-angle-left:before{
   content: "\e01c";
 }
 
-.icon-slimmed-arrow-right:before{
+.icon-slimmed-arrow-right:before, .icon-angle-right:before{
   content: "\e01d;"
 }
 
@@ -180,7 +181,7 @@
   content: "\e02a";
 }
 
-.icon-wired-document:before{
+.icon-wired-description:before{
   content: "\e02b";
 }
 
