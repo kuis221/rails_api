@@ -19,17 +19,27 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Datepick Icons */
+
+.datepick-cmd-next, .datepick-cmd-prev{
+  @extend [class^="icon-"];
+}
+
+
+
 /* Icon Breakdown */
 
 .icon-venue:before{
   content:"\e001";
 }
 
-.icon-arrow-right:before{
+.icon-arrow-right:before, 
+.datepick-cmd-next:before{
   content:"\e002";
 }
 
-.icon-arrow-left:before{
+.icon-arrow-left:before, 
+.datepick-cmd-prev:before{
   content:"\e003";
 }
 
@@ -66,7 +76,7 @@
 }
 
 .icon-rounded-disable:before {
-  content: "\e625";
+  content: "\e011";
 }
 
 .icon-rounded-ok:before{
@@ -125,7 +135,8 @@
   content: "\e020";
 }
 
-.icon-rounded-add:before{
+.icon-rounded-add:before, 
+.icon-plus-sign:before{
   content: "\e021";
 }
 
