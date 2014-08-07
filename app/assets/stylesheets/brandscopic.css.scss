@@ -817,16 +817,8 @@ a.more-options-link:after{
 #list-tools {
 	margin: 1px 0 25px 0;
 	position: relative;
-	button, a{
-		&.btn.download, &.btn.fullscreen{
-			box-sizing:border-box;
-			width: 55px;
-			padding: 8px 0;
-			height: 35px;
-			&:before, &:after{
-				font-size: 16px;
-			}
-		}
+	a, button{
+		color:white;
 	}
 	.download-photos-counter {
 		left: auto;
