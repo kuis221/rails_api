@@ -56,7 +56,9 @@ class AttachedAsset < ActiveRecord::Base
 
   before_validation :check_if_file_updated
 
-  validates :direct_upload_url, allow_nil: true, format: { with: DIRECT_UPLOAD_URL_FORMAT }
+  validates :direct_upload_url, allow_nil: true,
+    uniqueness: true,
+    format: { with: DIRECT_UPLOAD_URL_FORMAT }
   validates :direct_upload_url, presence: true, unless: :file
 
   delegate :company_id, to: :attachable
@@ -258,6 +260,7 @@ class AttachedAsset < ActiveRecord::Base
     end
     self.processed = true
 
+    direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
     file.s3_bucket.objects[direct_upload_url_data[:path]].delete if save
     @processing = false
   end
