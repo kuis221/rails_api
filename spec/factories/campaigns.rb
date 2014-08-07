@@ -2,22 +2,23 @@
 #
 # Table name: campaigns
 #
-#  id              :integer          not null, primary key
-#  name            :string(255)
-#  description     :text
-#  aasm_state      :string(255)
-#  created_by_id   :integer
-#  updated_by_id   :integer
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  company_id      :integer
-#  first_event_id  :integer
-#  last_event_id   :integer
-#  first_event_at  :datetime
-#  last_event_at   :datetime
-#  start_date      :date
-#  end_date        :date
-#  enabled_modules :string(255)      default([])
+#  id               :integer          not null, primary key
+#  name             :string(255)
+#  description      :text
+#  aasm_state       :string(255)
+#  created_by_id    :integer
+#  updated_by_id    :integer
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  company_id       :integer
+#  first_event_id   :integer
+#  last_event_id    :integer
+#  first_event_at   :datetime
+#  last_event_at    :datetime
+#  start_date       :date
+#  end_date         :date
+#  survey_brand_ids :integer          default([])
+#  modules          :text
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

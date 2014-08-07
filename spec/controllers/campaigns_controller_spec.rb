@@ -335,7 +335,7 @@ describe CampaignsController, :type => :controller do
       brand = FactoryGirl.create(:brand, company: @company, name: 'A brand')
       expect {
         put 'update', id: campaign.to_param, campaign: {
-          enabled_modules: ['surveys'],
+          modules: {'surveys' => {'name' => 'Surveys'}},
           survey_brand_ids: ['A brand', 'Another brand']
         }, format: :json
       }.to change(Brand, :count).by(1)
@@ -344,6 +344,18 @@ describe CampaignsController, :type => :controller do
       expect(campaign.survey_brand_ids.count).to eql 2
       expect(campaign.survey_brand_ids).to include(brand.id)
 
+      expect(response).to be_success
+    end
+
+    it "should accept empty modules" do
+      Kpi.create_global_kpis
+      brand = FactoryGirl.create(:brand, company: @company, name: 'A brand')
+      campaign.update_attribute :modules, {'surveys' => {}}
+      put 'update', id: campaign.to_param, campaign: {
+        modules: {'empty' => true}
+      }, format: :json
+
+      expect(campaign.reload.enabled_modules.count).to eql 0
       expect(response).to be_success
     end
   end
