@@ -2,7 +2,8 @@
 - active_kpis = resource.campaign.active_kpis
 - custom_fields = resource.campaign.form_fields.where('kpi_id not in (?) OR kpi_id is null', Kpi.global.pluck(:id))
 - enabled_modules = resource.campaign.enabled_modules
-- supported_field_types = ['FormField::Radio', 'FormField::Checkbox', 'FormField::Number', 'FormField::Currency', 'FormField::Text', 'FormField::TextArea']
+- supported_field_types = ['FormField::Radio', 'FormField::Checkbox', 'FormField::Number', 'FormField::Currency', 'FormField::Text', 'FormField::TextArea', 'FormField::Dropdown', 'FormField::Brand', 'FormField::Marque', 'FormField::Date', 'FormField::Time', 'FormField::Summation', 'FormField::LikertScale']
+- multi_data_field_types = ['FormField::Summation', 'FormField::LikertScale']
 
 .row-fluid
   .box_summary
@@ -83,9 +84,13 @@
             - custom_kpi_value = resource.results_for([custom_field]).first.try(:to_html)
             li
               div.metric
-                span
-                  = custom_kpi_value
-                = ' ' + custom_field.name
+                - if multi_data_field_types.include?(custom_field.type)
+                  .data = custom_kpi_value
+                  .title = custom_field.name
+                - else
+                  span
+                    = custom_kpi_value
+                  = ' ' + custom_field.name
 
 - if event_data
   #demographics.row-fluid

@@ -218,8 +218,14 @@ feature 'Post Event Data' do
           expect(page).to have_content('TESTING AREA CUSTOM TEXTAREA')
           expect(page).to have_content('10 CUSTOM NUMERIC')
           expect(page).to have_content('$30.00 CUSTOM CURRENCY')
+          expect(page).to have_content('MARQUE #2 FOR CACIQUE MARQUE')
+          expect(page).to have_content('CACIQUE BRAND')
+          expect(page).to have_content('200 SUMMATION OPT2')
+          expect(page).to have_content('100 SUMMATION OPT1')
+          expect(page).to have_content('300 TOTAL')
         end
 
+        #screenshot_and_open_image
         visit event_path(event)
 
         # expect(page).to still display the post-event format and not the form
