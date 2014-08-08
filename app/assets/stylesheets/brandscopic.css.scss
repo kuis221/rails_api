@@ -682,16 +682,17 @@ a.more-options-link:after{
 			-webkit-border-radius: 6px;
 			border-radius: 6px;
 			a{
-				color: $app_bg;
+				color: white;
 				&:hover{
 					border-bottom: 0;
-					color: $app_bg;
+					color: $grey_two;
 				}
 			}
 		}
 		a{
 			color: $user_menu;
 			cursor: pointer;
+			font-weight: 400;
 			&:hover{
 				border-bottom: 1px solid $brand;
 				color: $brand;
@@ -704,18 +705,30 @@ a.more-options-link:after{
 .custom-data-panel{
 	.form-group{
 		display: inline-block;
-		width: 47% !important;
+		width: 45% !important;
 		label{
 			color: $user_menu;
 			font-size: 12px;
 			font-weight: 300;
 		}
 		input[type="date"]{
+			color: $user_menu;
+			font-size: 0.88em;
+			height: auto;
+			padding:6px;
 			width: 100%;
+			&::-webkit-inner-spin-button,
+			&::-webkit-calendar-picker-indicator {
+			    display: none;
+			    -webkit-appearance: none;
+			}
 		}
 		&+span{
+			bottom: 3px;
+			color: $user_menu;
 			text-align: center;
-			width: 12px;
+			padding: 0 3px;
+			position: relative;
 		}
 	}
 }
@@ -2013,16 +2026,24 @@ li#user_menu{
 	width:210px;
 	.btn{
 		margin-right: 8px;
+		width: 85px;
 		&+.btn{
 			margin-right: 5px;
 		}
-		&.btn-primary{
+		&.btn-primary, &.btn-cancel{
 			//display: none;
+			padding: 8px 0;
 		}
 	}
-	.icon-gear{
-		color: $user_menu;
-		font-size: 20px;
+	a.settings-for-filters{
+		cursor: pointer;
+		top: 8px;
+		float: right;
+		position: relative;
+		.icon-gear{
+			color: $user_menu;
+			font-size: 20px;
+		}
 	}
 }
 
@@ -3032,9 +3053,9 @@ input.search-query {
 	background-image: image-url('search.svg');
 	background-position: center right;
 	background-repeat: no-repeat;
-	border: $grey_one;
+	border: 1px solid $grey_one;
 	box-shadow: none;
-	color: $user_menu;
+	color: $text;
 	font-family: $baseFontFamily;
 	height:35px;
 	margin-bottom: 10px;
@@ -3047,6 +3068,9 @@ input.search-query {
 	-moz-border-radius: 6px;
 	border-radius: 6px;
 	width:209px;
+	&:focus{
+		border: 1px solid $grey_four !important;
+	}
 }
 
 input.search-query:-moz-placeholder{
@@ -3110,21 +3134,20 @@ input.search-query:focus{
 	}
 }
 ul.ui-widget-content{
-	background: $brand !important;
+	background: $grey_one !important;
+	border: 1px solid $grey_four !important;
 	margin-top: 10px;
 }
 .ui-menu{
 	li{
 		&.ui-menu-item{
-			margin: 0 0 0 2px !important;
-			width: 98% !important;
 			a{
-				color: $menu;
+				color: $user_menu;
 				font-weight: normal !important;
 				padding: 7px 10px;
 				font-size: 13px;
 				&:active, &:hover{
-					background-color: $menu !important;
+					background-color: $tooltip !important;
 					background-image: none !important;
 					border:0;
 					color:white;
@@ -3133,15 +3156,19 @@ ul.ui-widget-content{
 					&.ui-corner-all{
 						border-radius: 0px !important;
 					}
+					i{
+						color: white;
+						font-weight: normal !important;
+					}
 				}
 				i{
-					color: white;
+					color: $text;
 					font-weight: normal !important;
 				}
 			}
 		}
 		&.ui-autocomplete-category{
-			color:$text;
+			color: $brand;
 			font-size: 13px;
 			font-weight: bold;
 			padding: 24px 10px 6px 10px;
@@ -3152,13 +3179,16 @@ ul.ui-widget-content{
 		}
 	}
 	.ui-state-hover, .ui-state-focus{
-		background-color: $menu !important;
+		background-color: $tooltip !important;
 		background-image: none !important;
 		border:0 !important;
 		border-radius: 0px !important;
 		color: white !important;
 		font-weight: normal !important;
 		padding: 8px 10px !important;
+		i{
+			color: white !important;
+		}
 	}
 }
 
