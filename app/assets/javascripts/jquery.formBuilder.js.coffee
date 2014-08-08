@@ -438,10 +438,10 @@ FormField = Class.extend {
 					true
 		])
 
-	requiredField: () ->
+	requiredField: (label = 'Required') ->
 		$('<div class="control-group">').append([
 			$('<div class="controls">').append(
-				$('<label class="control-label" for="option_required_chk">').text('Required').prepend(
+				$('<label class="control-label" for="option_required_chk">').text(label).prepend(
 					$('<input type="checkbox" id="option_required_chk" name="required"'+(if @attributes.required then ' checked="checked"' else '')+'">').on 'change', (e) =>
 						@attributes.required = (if e.target.checked then 'true' else 'false')
 						@form.setModified()
@@ -1478,7 +1478,8 @@ ExpensesField = Module.extend {
 	attributesForm: () ->
 		[
 			$('<h4>').text('Module Settings'),
-			@rangeField()
+			@rangeField(),
+			@requiredField('Receipts required')
 		]
 }
 

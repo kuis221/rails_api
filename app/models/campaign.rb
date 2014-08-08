@@ -354,7 +354,7 @@ class Campaign < ActiveRecord::Base
       "7" => {"ordering"=>"7", "name"=>"Impressions", "field_type"=>"FormField::Number", "kpi_id"=> Kpi.impressions.id},
       "8" => {"ordering"=>"8", "name"=>"Interactions", "field_type"=>"FormField::Number", "kpi_id"=> Kpi.interactions.id},
       "9" => {"ordering"=>"9", "name"=>"Samples", "field_type"=>"FormField::Number", "kpi_id"=> Kpi.samples.id},
-    }, enabled_modules: ['expenses', 'photos', 'surveys', 'videos', 'comments'])
+    }, modules: {'expenses' => {}, 'photos' => {}, 'surveys' => {}, 'videos' => {}, 'comments' => {}})
     save if autosave
   end
 
