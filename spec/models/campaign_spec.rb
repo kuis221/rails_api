@@ -38,13 +38,6 @@ describe Campaign, :type => :model do
 
   before { Company.current = company }
 
-  describe "enabled_modules validations" do
-    it { is_expected.to allow_value(['surveys', 'photos']).for(:enabled_modules) }
-    it { is_expected.to allow_value([]).for(:enabled_modules) }
-    it { is_expected.to allow_value(nil).for(:enabled_modules) }
-    it { is_expected.not_to allow_value(['unknown', 'photos']).for(:enabled_modules) }
-  end
-
   describe "states" do
     before(:each) do
       @campaign = FactoryGirl.create(:campaign)
@@ -89,7 +82,7 @@ describe Campaign, :type => :model do
   end
 
   describe "active_global_kpis" do
-    let(:campaign){ FactoryGirl.create(:campaign, enabled_modules: ['expenses', 'comments']) }
+    let(:campaign){ FactoryGirl.create(:campaign, modules: {'expenses' => {}, 'comments' => {}}) }
 
     it "should returns global kpis + enabled modules" do
       Kpi.create_global_kpis
@@ -102,7 +95,7 @@ describe Campaign, :type => :model do
   end
 
   describe "active_kpis" do
-    let(:campaign){ FactoryGirl.create(:campaign, enabled_modules: ['surveys']) }
+    let(:campaign){ FactoryGirl.create(:campaign, modules: {'surveys' => {}}) }
     it "should returns only events, promo hours and surveys if no custom kpis have been created for campaign" do
       Kpi.create_global_kpis
       expect(campaign.active_kpis).to match_array [Kpi.events, Kpi.promo_hours, Kpi.surveys]

@@ -1,4 +1,5 @@
 @import "variables";
+@import "mixins";
 
 /*-- COLOR PALETTE --*/
 $completed: #90bf43;
@@ -183,10 +184,6 @@ ul.select2-results{
 					}
 					.chzn-drop{
 						box-shadow: none;
-						//width: 250px !important;
-					}
-					.chzn-results{
-						//width: 248px !important;
 					}
 				}
 				&.task_due_at{
@@ -203,9 +200,6 @@ ul.select2-results{
 				&.chzn-container-single{
 					.chzn-single{
 						width: 390px;
-					}
-					.chzn-drop{
-						//width: 400px !important;
 					}
 				}
 			}
@@ -254,10 +248,6 @@ ul.select2-results{
 					}
 				}
 			}
-			.select-list-table-wrapper .link-list{
-				height: 257px;
-				overflow-y: scroll;
-			}
 			.control-group{
 				label{
 					display: inline-block;
@@ -269,31 +259,19 @@ ul.select2-results{
 				}
 			}
 
-			.staff-table, .brands-table, .campaigns-modals, .places-modals, .contacts-modals{
-				input[type="text"]{
-					background-image: image-url('search2.svg') !important;
-					background-position: center right;
-					background-repeat: no-repeat;
-					-webkit-border-radius: 20px;
-					border-radius: 20px;
-					padding-left: 2%;
-					padding-right: 2%;
-					&#staff-search-item, &#brands-search-item {
-						width: 95%;
-					}
-					&#place-search-box, &#contact-search-box, &#kpi-search-box {
-						width: 96%;
-					}
-					&#staff-search-item, &#brands-search-item, &#place-search-box, &#contact-search-box {
-						width: 100%;
-					}
-					&.places-autocomplete {
-						padding-left: 8%;
-						width: 385px !important;
-					}
-				}
-				.link-list{
-					margin-top: 0;
+			input.search-box {
+				@include box-sizing(border-box);
+				background-image: image-url('search2.svg') !important;
+				background-position: center right;
+				background-repeat: no-repeat;
+				-webkit-border-radius: 20px;
+				border-radius: 20px;
+				padding-left: 2%;
+				padding-right: 2%;
+				width: 100%;
+				&.places-autocomplete {
+					padding-left: 8%;
+					width: 385px !important;
 				}
 			}
 			.users{
@@ -490,7 +468,7 @@ ul.select2-results{
 						display: inline-block;
 						margin-right: 43px;
 						overflow: hidden;
-				    	text-overflow: ellipsis;
+						text-overflow: ellipsis;
 						white-space: nowrap;
 						width:255px;
 					}
@@ -508,45 +486,6 @@ ul.select2-results{
 				margin: 3px 15px 3px 0;
 				padding: 0;
 				width: 20px;
-				span{
-					background: image-url('radio-unchecked.svg') no-repeat center center !important;
-					display: block;
-					height: 25px;
-					width: 25px;
-					&.help-inline{
-						background-image: none !important;
-						border: 0;
-						width: 120px;
-						margin-left: 2px;
-						display: block;
-						margin-top: 0 !important;
-					}
-					&.ok-message{
-						background:none !important;
-						span{
-							background: none !important;
-						}
-					}
-				}
-				span.checked{
-					background: image-url('radio-checked.svg') no-repeat center center !important;
-					display: block;
-					height: 25px;
-					margin: 0;
-					padding:0;
-					width: 25px;
-				}
-				input[type="radio"] {
-					float: right;
-					margin-left: 0;
-					opacity:0;
-					height: 25px;
-					width: 25px;
-				}
-			}
-			.radio-group{
-				display:inline-block;
-				margin-bottom: 10px;
 			}
 		}
 	}
@@ -575,42 +514,6 @@ ul.select2-results{
 		max-height: 800px;
 		overflow: visible;
 		padding: 25px 30px 22px 30px;
-		.scroll-table-content, .select-list-table-wrapper{
-			max-height: 257px;
-			.row-fluid:after{
-				clear: none;
-			}
-			#new_place{
-				float: left;
-				margin-bottom: 40px;
-				width: 100%;
-			}
-			ul#select-brands-list, ul#staff-list, ul#contacts-list, ul.select-items-list{
-				li{
-					display: table;
-					min-height: 85px !important;
-					height: 85px;
-					width: 100%;
-					span, p{
-						&:first-child{
-							display: table-cell !important;
-							vertical-align: middle;
-							padding-left: 20px;
-							span{
-								padding: 0;
-							}
-						}
-						&.add-button{
-							display: table-cell;
-							vertical-align: middle;
-						}
-						&.member-data{
-							padding-left: 60px;
-						}
-					}
-				}
-			}
-		}
 		h3{
 			font-size: 22px;
 			font-weight: bold;
@@ -1123,8 +1026,6 @@ textarea.valid {
 div#spin{
 	background-color: red !important;
 }
-
-
 
 /* -- HELP CHAT SUPPORT CENTER -- */
 
