@@ -2986,7 +2986,7 @@ div.loading-spinner, li.loading-spinner {
 .search-filter-label,
 input.search-query {
 	background-color: $grey_one !important;
-	background-image: image-url('search.svg');
+	background-image: image-url('search-grey.svg');
 	background-position: center right;
 	background-repeat: no-repeat;
 	border: 1px solid $grey_one;
@@ -3003,7 +3003,7 @@ input.search-query {
 	-webkit-border-radius: 6px;
 	-moz-border-radius: 6px;
 	border-radius: 6px;
-	width:209px;
+	width:205px;
 	&:focus{
 		border: 1px solid $grey_four !important;
 	}
@@ -3029,7 +3029,7 @@ input.search-query:focus{
 	box-shadow: none;
 }
 .search-filter-label {
-	padding-top: 8px;
+	line-height: 36px;
 	span.close{
 	color: white;
 	opacity: 1;
@@ -3037,8 +3037,9 @@ input.search-query:focus{
 		i{
 			display: none;
 		}
-		&:before{
-			content: "\e011";
+		/*This should be replaced for the real icon? can be?*/
+		/*&:before{
+			content: "lala";
 			font-family: 'icons';
 			font-size: 16px;
 			font-weight: normal;
@@ -3047,7 +3048,7 @@ input.search-query:focus{
 			color: white;
 			-webkit-font-smoothing: antialiased;
 			-moz-osx-font-smoothing:grayscale;
-		}
+		}*/
 	}
 	.term{
 		overflow: hidden;

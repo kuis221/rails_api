@@ -1208,6 +1208,10 @@ div#spin{
 #settings-filters{
 	.row{
 		margin-left: 0;
+		margin-bottom: 30px;
+		&:last-child{
+			margin-bottom: 0;
+		}
 	}
 	.modal-body{
 		ul{
@@ -1216,7 +1220,8 @@ div#spin{
 			li{
 				margin-bottom: 10px;
 				label{
-					font-weight: bold;
+					color: $text;
+					font-size: 13px;
 					.checker{
 						margin-right: 10px;
 					}
