@@ -31,7 +31,7 @@ describe SurveysController, :type => :controller do
       brand1 = FactoryGirl.create(:brand, company: @company)
       brand2 = FactoryGirl.create(:brand, company: @company)
 
-      campaign.enabled_modules = ['surveys']
+      campaign.modules = {'surveys' => {}}
       campaign.survey_brand_ids = [brand1.id, brand2.id]
       campaign.save
 

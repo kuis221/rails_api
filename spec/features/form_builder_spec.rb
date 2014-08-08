@@ -1097,6 +1097,11 @@ RSpec.shared_examples "a fieldable element that accept modules" do
 
     expect(find('.form-wrapper')).to have_selector('.form-section.module[data-type=Photos]')
 
+    within form_field_settings_for(module_section('Gallery')) do
+      fill_in 'Min', with: '10'
+      fill_in 'Max', with: '150'
+    end
+
     # Save the form
     click_js_button 'Save'
     wait_for_ajax
@@ -1104,8 +1109,12 @@ RSpec.shared_examples "a fieldable element that accept modules" do
 
     visit fieldable_path
 
-    expect(find('.form-wrapper')).to have_selector('.form-section.module[data-type=Photos]')
-    within '.form-section.module[data-type=Photos]' do
+    within form_field_settings_for(module_section('Gallery')) do
+      expect(find_field('Min').value).to eql '10'
+      expect(find_field('Max').value).to eql '150'
+    end
+
+    within module_section('Gallery') do
       click_js_link 'Remove'
     end
 
@@ -1305,6 +1314,10 @@ end
 
 def module_field(module_name)
   find('.fields-wrapper .module', text: module_name)
+end
+
+def module_section(name)
+  find('.form-section.module', text: name + ' Module')
 end
 
 def form_builder
