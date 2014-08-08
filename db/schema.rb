@@ -11,11 +11,11 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140722012255) do
+ActiveRecord::Schema.define(:version => 20140807202736) do
 
-  add_extension "hstore"
   add_extension "pg_stat_statements"
   add_extension "tablefunc"
+  add_extension "hstore"
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -225,8 +225,8 @@ ActiveRecord::Schema.define(:version => 20140722012255) do
     t.datetime "last_event_at"
     t.date     "start_date"
     t.date     "end_date"
-    t.string   "enabled_modules",  :default => [],                 :array => true
     t.integer  "survey_brand_ids", :default => [],                 :array => true
+    t.text     "modules"
   end
 
   add_index "campaigns", ["company_id"], :name => "index_campaigns_on_company_id"

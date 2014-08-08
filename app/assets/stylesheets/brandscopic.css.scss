@@ -512,15 +512,16 @@ a.datepick-cmd:hover{
 	}
 	span.checked:after{
 		color: white;
-		content: "\e00f";
+		content: "\e624";
 		font-family: 'icons';
-		font-size: 14px;
-		left:3px;
+		font-size: 11px;
+		left:5px;
 		position: relative;
 		speak:none;
 		text-align: center;
 		text-shadow:none;
 		-webkit-font-smoothing: antialiased;
+		font-weight: bold;
 	}
 	input[type=checkbox]{
 		visibility: hidden;
@@ -2599,6 +2600,9 @@ ul.kpis-list{
 	}
 	ul#expenses-list{
 		li{
+			margin-bottom: 0;
+			overflow: visible;
+			width: 100%;
 			address{
 				width: auto !important;
 			}
@@ -2852,15 +2856,14 @@ ul.kpis-list{
 		}
 		.preview:after{
 			color: white;
-			content: "\e02a";
+			content: "\e016";
 			font-family: 'icons';
-			font-size: 22px;
-			margin-right: 3px;
+			font-size: 26px;
 			position: relative;
+			right: -6px;
 			speak:none;
-			text-align: center;
 			text-shadow:none;
-			top:8px;
+			top: 9px;
 		}
 		.share:after{
 			color:white;
@@ -3498,7 +3501,7 @@ textarea::-webkit-input-placeholder {
 	input.waiting-files {
 		width: auto !important;
 	}
-	input, select, textarea{
+	input, textarea{
 		width: 220px;
 	}
 	textarea{
@@ -3528,16 +3531,8 @@ textarea::-webkit-input-placeholder {
 			}
 		}
 	}
-	.chzn-container-single .chzn-single{
-		border: 1px solid rgba(192,192,192,0.6);
-		height: 40px;
+	select {
 		width: 190px;
-		div b{
-			background: url(/assets/triangle-down.svg) no-repeat 2px 17px !important;
-		}
-		span{
-			line-height: 40px;
-		}
 	}
 	table{
 		margin-bottom: 0;
@@ -4141,7 +4136,6 @@ body.show {
 		margin-top: 30px;
 		.btn {
 			color: #fff;
-			height: 26px;
 			line-height: 25px;
 			width: 104px;
 		}
@@ -5365,31 +5359,31 @@ svg{
 }
 
 .campaigns_report, .snapshot_report, .staff_report {
-	.details_box{
-		&.first{
-			-webkit-border-radius: 0px 7px 7px 7px;
-			border-radius: 0px 7px 7px 7px;
-			.chzn-container-single{
-				color: $brand;
-				.chzn-single{
-					height: 38px !important;
-					padding-top: 3px;
-					width: 365px !important;
-				}
-				.chzn-drop{
-					width: 280px !important;
-				}
-			}
-		}
-		.chzn-container-single{
-			.chzn-search input{
-				height: 25px;
-			}
-			.chzn-results{
-				margin: 0 0 4px 0;
-			}
-		}
-	}
+	// .details_box{
+	// 	&.first{
+	// 		-webkit-border-radius: 0px 7px 7px 7px;
+	// 		border-radius: 0px 7px 7px 7px;
+	// 		.chzn-container-single{
+	// 			color: $brand;
+	// 			.chzn-single{
+	// 				height: 38px !important;
+	// 				padding-top: 3px;
+	// 				width: 365px !important;
+	// 			}
+	// 			.chzn-drop{
+	// 				width: 280px !important;
+	// 			}
+	// 		}
+	// 	}
+	// 	.chzn-container-single{
+	// 		.chzn-search input{
+	// 			height: 25px;
+	// 		}
+	// 		.chzn-results{
+	// 			margin: 0 0 4px 0;
+	// 		}
+	// 	}
+	// }
 	.loading-spinner{
 		background: #fff image-url('loading-circle.gif') center center no-repeat;
 		display: block;
@@ -5608,14 +5602,12 @@ body.campaigns{
 
 			.controls{
 				.chzn-container-single{
-					width: 300px	!important;
 					height: 31px !important;
 					.chzn-single{
 						height: 32px !important;
 						padding-top: 0px !important;
-						width: 300px !important;
 						span{
-			    			line-height: 26px;
+							line-height: 26px;
 							height: 26px !important;
 							padding-top: 0px !important;
 							margin-top: 3px !important;
@@ -5628,13 +5620,10 @@ body.campaigns{
 					}
 					.chzn-drop{
 						margin-top: 6px !important;
-						width: 310px !important;
 						.chzn-search{
+							top: -39px;
 							input{
-								bottom:9px;
 								height: 30px;
-								margin-left: 8px;
-								width: 90% !important;
 							}
 						}
 					}
@@ -5644,8 +5633,11 @@ body.campaigns{
 				color: $brand;
 				font-size: 11px;
 			}
-			h3 + #list-tools{
-				margin: 10px 0 0px 0;
+			h3{
+				margin-top: 45px;
+				&+#list-tools{
+					margin: 10px 0 0px 0;
+				} 
 			}
 			.simple_form{
 				display: inline-block;
@@ -5688,6 +5680,11 @@ body.campaigns{
 					margin-left: 10px;
 					position: relative;
 					top: 2px;
+					&:after {
+						content: "\e625";
+						font-family: 'icons';
+						font-size: 18px;
+					}
 				}
 			}
 		}
@@ -5847,7 +5844,7 @@ body.campaigns{
 	h3{
 		font-size: 16px;
 		font-weight: bold;
-		margin: 45px 0 30px;
+		margin: 0 0 30px;
 	}
 	.links-data{
 		margin: 0 0 0 30px;
@@ -6975,9 +6972,9 @@ table td.sub-level-1 {
 	-webkit-box-shadow: none;
 	box-shadow:none;
 	width:auto;
-	min-width: 780px; // .slider min-width + .panel width + .panel padding
 
 	// INITIAL VALUES, these will be overrided by JS based on image/windows sizes
+	min-width: 780px; // .slider min-width + .panel width + .panel padding
 	width: 780px;
 	margin-left: -390px;
 	left: 50%;
@@ -7082,6 +7079,15 @@ table td.sub-level-1 {
 			bottom: 0px;
 			right: 0px;
 			margin: auto;
+			&.unique {
+				z-index: -1;
+			}
+		}
+		.photo-toolbar-header {
+			display: inline-block;
+			position: absolute;
+			right: 15px;
+			top: 0px;
 		}
 		.photo-toolbar {
 			display: none;
@@ -7508,62 +7514,8 @@ div.radio{
 }
 
 .chzn-container{
-	width: 100% !important;
 	&.chzn-container-single{
-		.chzn-single{
-			background: white;
-			border: 1px solid $grey_four;
-			box-shadow: 0 0 5px rgba(0, 0, 0, 0);
-			color: $text;
-			height: 40px;
-			outline:0;
-			&.chzn-single-with-drop{
-				border: 1px solid $brand !important;
-			}
-			div{
-				/* This z-index is not right, commeted out to avoid things like this:
-				   http://screencast.com/t/6ZpiuRYKs2
-				z-index: 9999; */
-				b{
-					background: image-url('triangle-down.svg') no-repeat 0px 17px !important;
-				}
-			}
-			span{
-				line-height: 40px;
-			}
-		}
-		.chzn-drop{
-			border: 1px solid $brand;
-			border-top: 1px solid $brand;
-			-webkit-border-radius: 6px !important;
-		    border-radius: 6px !important;
-			box-shadow:none;
-			margin-top: 3px !important;
-			ul.chzn-results{
-				margin: 0;
-				padding: 0;
-				li{
-					padding: 8px 6px !important;
-				}
-				li.highlighted{
-					background-color: $brand;
-					background-image: none;
-				}
-			}
-		}
-		.chzn-search input{
-			background: white;
-			border:0 !important;
-			bottom: 10px;
-			left:0;
-			position: absolute;
-			height: 38px;
-		}
-	}/*
-	.chzn-drop{
-		border-top: 1px solid $brand !important;
-		width: 100% !important;
-	}*/
+	}
 	&.chzn-results{
 		padding: 0 !important;
 		li{

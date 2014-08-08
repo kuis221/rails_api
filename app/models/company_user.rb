@@ -10,7 +10,7 @@
 #  updated_at             :datetime         not null
 #  active                 :boolean          default(TRUE)
 #  last_activity_at       :datetime
-#  notifications_settings :string(255)      default("{}")
+#  notifications_settings :string(255)      default([])
 #
 
 class CompanyUser < ActiveRecord::Base
@@ -31,10 +31,10 @@ class CompanyUser < ActiveRecord::Base
   has_many :contact_events, dependent: :destroy, as: :contactable
 
   # Teams-Users relationship
-  has_many :teams, :through => :memberships, :source => :memberable, :source_type => 'Team'
+  has_many :teams, :through => :memberships, :source => :memberable, :source_type => 'Team', conditions: {active: true}
 
   # Campaigns-Users relationship
-  has_many :campaigns, :through => :memberships, :source => :memberable, :source_type => 'Campaign' do
+  has_many :campaigns, :through => :memberships, :source => :memberable, :source_type => 'Campaign', conditions: {aasm_state: 'active'} do
     def children_of(parent)
       where(memberships: {parent_id: parent.id, parent_type: parent.class.name})
     end
@@ -44,13 +44,13 @@ class CompanyUser < ActiveRecord::Base
   has_many :events, :through => :memberships, :source => :memberable, :source_type => 'Event'
 
   # Area-User relationship
-  has_many :areas, through: :memberships, :source => :memberable, :source_type => 'Area', after_remove: :remove_child_goals_for
+  has_many :areas, through: :memberships, :source => :memberable, :source_type => 'Area', conditions: {active: true}, after_remove: :remove_child_goals_for
 
   # BrandPortfolio-User relationship
-  has_many :brand_portfolios, through: :memberships, :source => :memberable, :source_type => 'BrandPortfolio'
+  has_many :brand_portfolios, through: :memberships, :source => :memberable, :source_type => 'BrandPortfolio', conditions: {active: true}
 
   # BrandPortfolio-User relationship
-  has_many :brands, through: :memberships, :source => :memberable, :source_type => 'Brand'
+  has_many :brands, through: :memberships, :source => :memberable, :source_type => 'Brand', conditions: {active: true}
 
   # Places-Users relationship
   has_many :placeables, as: :placeable, dependent: :destroy

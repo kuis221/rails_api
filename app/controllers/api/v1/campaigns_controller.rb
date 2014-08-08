@@ -263,7 +263,7 @@ api :GET, '/api/v1/campaigns/:id/stats', "Returns the stats of events and promo 
                         .where(id: resource.id)
                         .order(:name)
                         .promo_hours_graph_data
-    areas_data = resource.promo_hours_graph_data
+    areas_data = resource.promo_hours_graph_data(current_company_user)
     data = {
       id: resource.id,
       name: resource.name,

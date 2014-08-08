@@ -3,7 +3,6 @@
 # Table name: form_field_results
 #
 #  id              :integer          not null, primary key
-#  activity_id     :integer
 #  form_field_id   :integer
 #  value           :text
 #  created_at      :datetime         not null

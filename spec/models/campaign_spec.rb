@@ -2,22 +2,23 @@
 #
 # Table name: campaigns
 #
-#  id              :integer          not null, primary key
-#  name            :string(255)
-#  description     :text
-#  aasm_state      :string(255)
-#  created_by_id   :integer
-#  updated_by_id   :integer
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  company_id      :integer
-#  first_event_id  :integer
-#  last_event_id   :integer
-#  first_event_at  :datetime
-#  last_event_at   :datetime
-#  start_date      :date
-#  end_date        :date
-#  enabled_modules :string(255)      default([])
+#  id               :integer          not null, primary key
+#  name             :string(255)
+#  description      :text
+#  aasm_state       :string(255)
+#  created_by_id    :integer
+#  updated_by_id    :integer
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  company_id       :integer
+#  first_event_id   :integer
+#  last_event_id    :integer
+#  first_event_at   :datetime
+#  last_event_at    :datetime
+#  start_date       :date
+#  end_date         :date
+#  survey_brand_ids :integer          default([])
+#  modules          :text
 #
 
 require 'spec_helper'
@@ -303,20 +304,21 @@ describe Campaign, :type => :model do
 
   describe "#promo_hours_graph_data" do
     let(:company) { FactoryGirl.create(:company) }
+    let(:user) { FactoryGirl.create(:company_user, company: company) }
     let(:campaign) { FactoryGirl.create(:campaign, company: company) }
     before(:each) do
       Kpi.create_global_kpis
     end
 
     it "should return empty if the campaign has no areas associated" do
-      stats = campaign.promo_hours_graph_data
+      stats = campaign.promo_hours_graph_data(user)
       expect(stats).to be_empty
     end
 
     it "should return empty if the campaign has areas but none have goals" do
       area = FactoryGirl.create(:area, name: 'California', company: company)
       campaign.areas << area
-      stats = campaign.promo_hours_graph_data
+      stats = campaign.promo_hours_graph_data(user)
 
       expect(stats).to be_empty
     end
@@ -331,7 +333,7 @@ describe Campaign, :type => :model do
       FactoryGirl.create(:goal, parent: campaign, goalable: area, kpi: Kpi.promo_hours, value: 20)
       FactoryGirl.create(:goal, parent: campaign, goalable: area, kpi: Kpi.events, value: 10)
       FactoryGirl.create(:event, campaign: campaign, place: FactoryGirl.create(:place, city: 'Los Angeles', state: 'California'))
-      stats = campaign.promo_hours_graph_data
+      stats = campaign.promo_hours_graph_data(user)
       expect(stats.count).to eql 2
 
       expect(stats.first['id']).to eql area.id
@@ -367,7 +369,7 @@ describe Campaign, :type => :model do
       area.places << FactoryGirl.create(:place, city: 'Los Angeles', state: 'California', types: ['political'])
       campaign.areas << area
       FactoryGirl.create(:goal, parent: campaign, goalable: area, kpi: Kpi.promo_hours, value: 10)
-      stats = campaign.promo_hours_graph_data
+      stats = campaign.promo_hours_graph_data(user)
       expect(stats.count).to eql 1
 
       expect(stats.first['id']).to eql area.id
@@ -403,7 +405,7 @@ describe Campaign, :type => :model do
         campaign: campaign, place: some_bar_in_los_angeles)
 
       Timecop.travel Date.new(2014, 01, 15) do
-        all_stats = campaign.promo_hours_graph_data
+        all_stats = campaign.promo_hours_graph_data(user)
         expect(all_stats.count).to eql 2
         stats = all_stats.detect{|r| r['kpi'] == 'PROMO HOURS'}
         expect(stats['today'].to_s).to eql "4.838709677419354839"
@@ -416,7 +418,7 @@ describe Campaign, :type => :model do
       end
 
       Timecop.travel Date.new(2014, 01, 25) do
-        all_stats = campaign.promo_hours_graph_data
+        all_stats = campaign.promo_hours_graph_data(user)
         expect(all_stats.count).to eql 2
 
         stats = all_stats.detect{|r| r['kpi'] == 'PROMO HOURS'}
@@ -430,7 +432,7 @@ describe Campaign, :type => :model do
 
       # When the campaing end date is before the current date
       Timecop.travel Date.new(2014, 02, 25) do
-        all_stats = campaign.promo_hours_graph_data
+        all_stats = campaign.promo_hours_graph_data(user)
         expect(all_stats.count).to eql 2
 
         stats = all_stats.detect{|r| r['kpi'] == 'PROMO HOURS'}
@@ -445,7 +447,7 @@ describe Campaign, :type => :model do
 
       # When the campaing start date is after the current date
       Timecop.travel Date.new(2013, 12, 25) do
-        all_stats = campaign.promo_hours_graph_data
+        all_stats = campaign.promo_hours_graph_data(user)
         expect(all_stats.count).to eql 2
 
         stats = all_stats.detect{|r| r['kpi'] == 'PROMO HOURS'}

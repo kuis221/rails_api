@@ -190,11 +190,11 @@ class CompanyUsersController < FilteredController
 
     def brands_campaigns_list
       list = {}
-      current_company.brand_portfolios.each do |portfolio|
+      current_company.brand_portfolios.active.each do |portfolio|
         enabled = resource.brand_portfolios.include?(portfolio)
         list[portfolio] = {enabled: enabled, campaigns: (enabled ? portfolio.campaigns.scoped_by_company_id(current_company.id) : resource.campaigns.scoped_by_company_id(current_company.id).children_of(portfolio) ) }
       end
-      current_company.brands.each do |brand|
+      current_company.brands.active.each do |brand|
         enabled = resource.brands.include?(brand)
         list[brand] = {enabled: enabled, campaigns: (enabled ? brand.campaigns.scoped_by_company_id(current_company.id) : resource.campaigns.scoped_by_company_id(current_company.id).children_of(brand) ) }
       end
