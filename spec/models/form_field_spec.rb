@@ -25,6 +25,23 @@ describe FormField, :type => :model do
   it { is_expected.to validate_presence_of(:ordering) }
   it { is_expected.to validate_numericality_of(:ordering) }
 
+  describe "settings" do
+    it { is_expected.to allow_value({'range_format' => 'digits'}).for(:settings) }
+    it { is_expected.to allow_value({'range_format' => 'words'}).for(:settings) }
+    it { is_expected.to allow_value({'range_format' => 'characters'}).for(:settings) }
+    it { is_expected.to allow_value({'range_format' => 'value'}).for(:settings) }
+    it { is_expected.not_to allow_value({'range_format' => 'strange'}).for(:settings) }
+
+    it { is_expected.to allow_value({'range_min' => '100', 'range_max' => '200'}).for(:settings) }
+    it { is_expected.to allow_value({'range_min' => '', 'range_max' => '200'}).for(:settings) }
+    it { is_expected.to allow_value({'range_min' => '100', 'range_max' => ''}).for(:settings) }
+    it { is_expected.to allow_value({'range_min' => nil, 'range_max' => nil}).for(:settings) }
+    it { is_expected.to allow_value({'range_min' => '100', 'range_max' => '100'}).for(:settings) }
+    it { is_expected.not_to allow_value({'range_min' => '100', 'range_max' => '1'}).for(:settings) }
+    it { is_expected.not_to allow_value({'range_min' => 'xx', 'range_max' => ''}).for(:settings) }
+    it { is_expected.not_to allow_value({'range_min' => '', 'range_max' => 'xx'}).for(:settings) }
+  end
+
   let(:field) { FormField.new }
   describe "#field_options" do
     it "should return basic options" do

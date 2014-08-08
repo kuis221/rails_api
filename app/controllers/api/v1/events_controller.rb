@@ -956,6 +956,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
         })
       elsif field.type == 'FormField::Checkbox'
         result.merge!({
+          value: r.value || [],
           segments: field.options_for_input.map{|s| {id: s[1], text: s[0], value: r.value.include?(s[1])}}
         })
       elsif field.type == 'FormField::Brand'
@@ -980,6 +981,9 @@ class Api::V1::EventsController < Api::V1::FilteredController
           result.merge!({segments: field.options_for_input.map{|s| {id: s[1], text: s[0], goal: (field.kpi_id.present? && resource.kpi_goals.has_key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][s[1]] : nil)}}})
         end
         v = field.value_is_numeric?(r.value) ? r.value.to_f : r.value
+        if field.settings && field.settings['range_format'] && field.settings['range_min'].to_s != '' && field.settings['range_max'].to_s != ''
+          result[:range] = {format: field.settings['range_format'], min: field.settings['range_min'], max: field.settings['range_max']}
+        end
         result.merge!({value: v})
       end
 

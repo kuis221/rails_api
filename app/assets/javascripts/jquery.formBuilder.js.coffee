@@ -172,7 +172,7 @@ $.widget 'nmk.formBuilder', {
 				false
 			$(window).on 'beforeunload.formBuilder', =>
 				if @modified
-					'You are leaving the activity type details page without saving your work.'
+					'You are leaving the page without saving your changes in the form.'
 
 		true
 
@@ -206,13 +206,13 @@ $.widget 'nmk.formBuilder', {
 			@wrapper.find('.field, .module').remove()
 			@modified = false
 			@_updateSaveButtonState()
-			if response.form_fields.length > 0 || response.enabled_modules.length > 0
+			if response.form_fields.length > 0 || (response.modules && Object.keys(response.modules).length > 0)
 				if response.form_fields.length > 0
 					for field in response.form_fields
 						@_addFieldToForm field
-				if response.enabled_modules && response.enabled_modules.length > 0
-					for moduleName in response.enabled_modules
-						field = {type: @_capitalize(moduleName.replace(/_/g, ' '))}
+				if response.modules
+					for own moduleName, options of response.modules
+						field = {type: @_capitalize(moduleName.replace(/_/g, ' ')), settings: options.settings}
 						if moduleName is 'surveys'
 							field.settings = {brands: response.survey_brand_ids}
 						@_addModuleToForm field
@@ -250,11 +250,15 @@ $.widget 'nmk.formBuilder', {
 		field.render()
 
 	saveFields: () ->
+		modules = {}
+		for field in @formModules()
+			attributes = field.getSaveAttributes()
+			modules[attributes.name] = attributes
+		modules = {'empty': true} if Object.keys(modules).length is 0
 		data = {
 			form_fields_attributes: $.map(@formFields(), (field) => field.getSaveAttributes())
-			enabled_modules: $.map(@formModules(), (field) => field.getSaveAttributes().name)
+			modules: modules
 		}
-		data.enabled_modules = ['empty'] if data.enabled_modules.length is 0
 		$.map @formModules(), (field) => 
 			attributes = field.getSaveAttributes()
 			if attributes.name is 'surveys'
@@ -262,6 +266,7 @@ $.widget 'nmk.formBuilder', {
 		@saveForm data
 
 	saveForm: (data) ->
+		@_hideFieldAttributes()
 		$('#save-report').data('text', $('#save-report').text()) unless $('#save-report').data('text')?
 		$('#save-report').text('Saving...').attr 'disabled', true
 		params = {}
@@ -309,26 +314,29 @@ $.widget 'nmk.formBuilder', {
 			$(element).data('field')
 
 	placeFieldAttributes: (field) ->
-		position = field.offset()
+		element = field;
+		if field.find('.module-wrapper').length
+			element = field.find('.module-wrapper');
+		position = element.offset()
 		@attributesPanel.removeClass('on-bottom on-left')
 		if field.data('type') is 'LikertScale'
-			left = position.left + ((field.outerWidth()-@attributesPanel.outerWidth())/2)
+			left = position.left + ((element.outerWidth()-@attributesPanel.outerWidth())/2)
 			left = Math.max(left, position.left)
 			@attributesPanel.removeClass('on-left').addClass('on-bottom').css
-				top: (position.top + field.outerHeight()+10) + 'px'
+				top: (position.top + element.outerHeight()+10) + 'px'
 				left: left+'px'
 				display: 'block'
 		else
 			@attributesPanel.addClass('on-left').removeClass('on-bottom').css
 				top: position.top + 'px'
-				left: (position.left + field.outerWidth())+'px'
+				left: (position.left + element.outerWidth())+'px'
 				display: 'block'
 		@
 
 	_showFieldAttributes: (field) ->
 		$field = field.data('field')
 		if form = $field.attributesForm()
-			@formWrapper.find('.selected').removeClass('selected')
+			@element.find('.selected').removeClass('selected')
 			field.addClass('selected')
 			$('#form-field-tabs a[href="#attributes"]').tab('show')
 			@attributesPanel.html('').append $('<div class="arrow">'), form
@@ -346,13 +354,13 @@ $.widget 'nmk.formBuilder', {
 			$(document).on 'click.fbuidler', (e) =>
 				select2open = $('.select2-drop').css('display') is 'block'
 				if $('.modal.in:visible').length is 0 and not e.ignoreClose? and !select2open
-					@_hideFieldAttributes field
+					@_hideFieldAttributes()
 		else
-			@_hideFieldAttributes field
+			@_hideFieldAttributes()
 
-	_hideFieldAttributes: (field) ->
+	_hideFieldAttributes: () ->
 		$(document).off 'click.fbuidler'
-		@formWrapper.find('.selected').removeClass('selected')
+		@element.find('.selected').removeClass('selected')
 		@attributesPanel.hide()
 		$('.select2-drop, .select2-drop-mask, .select2-sizer').remove()
 
@@ -412,7 +420,7 @@ FormField = Class.extend {
 		if @attributes._destroy? && @attributes._destroy is true
 			{id: @attributes.id, _destroy: true }
 		else if @attributes.kpi_id 
-			{id: @attributes.id, name: @attributes.name, ordering: @attributes.ordering, required: @attributes.required, kpi_id: @attributes.kpi_id, field_type: @fieldType()}
+			{id: @attributes.id, name: @attributes.name, ordering: @attributes.ordering, required: @attributes.required, kpi_id: @attributes.kpi_id, field_type: @fieldType(), settings: @attributes.settings}
 		else
 			{id: @attributes.id, name: @attributes.name, ordering: @attributes.ordering, required: @attributes.required, field_type: @fieldType(), settings: @attributes.settings, options_attributes: @getOptionsAttributes(), statements_attributes: @getStatementsAttributes() }
 
@@ -439,6 +447,52 @@ FormField = Class.extend {
 						@form.setModified()
 						true
 				)
+			)
+		])
+
+
+	rangeField: (formats=false) ->
+		@attributes.settings ||= {}
+		classes = if formats then '' else 'range-without-format'
+		$('<div class="control-group">').append([
+			$('<label class="control-label range" for="field_range_min">').text('RANGE'),
+			$('<div class="controls">').addClass(classes).append(
+				$('<div class="range-part min">').append(
+					$('<label class="control-label" for="field_range_min">').text('Min'),
+					$('<input type="text" id="field_range_min" name="min">').val(@attributes.settings.range_min).on 'keyup', (e) =>
+						input = $(e.target)
+						if @attributes.settings.range_format isnt 'value'
+							input.val(input.val().replace(/[^0-9]/, ''))
+						else
+							input.val(input.val().replace(/[^0-9\.]/, ''))
+						@attributes.settings.range_min = input.val()
+						@attributes.settings.range_format ||= $('#field_range_format').val()
+						@form.setModified()
+						true
+				),
+				$('<div class="range-part max">').append(
+					$('<label class="control-label" for="field_range_max">').text('Max'),
+					$('<input type="text" id="field_range_max" name="max">').val(@attributes.settings.range_max).on 'keyup', (e) =>
+						input = $(e.target)
+						if @attributes.settings.range_format isnt 'value'
+							input.val(input.val().replace(/[^0-9]/, ''))
+						else
+							input.val(input.val().replace(/[^0-9\.]/, ''))
+						@attributes.settings.range_max = input.val()
+						@attributes.settings.range_format ||= $('#field_range_format').val()
+						@form.setModified()
+						true
+				),
+				(if formats then $('<div class="range-part format">').append(
+					$('<label class="control-label" for="field_range_format">').text('Format'),
+					$('<select id="field_range_format" name="range">').append(
+						$.map formats, (name, key) => $('<option>').val(key).text(name).attr('selected', @attributes.settings.range_format is key )
+					).val(@attributes.settings.range_format).on 'change', (e) =>
+						input = $(e.target)
+						@attributes.settings.range_format = input.val()
+						@form.setModified()
+						true
+				) else null),
 			)
 		])
 
@@ -518,7 +572,7 @@ FormField = Class.extend {
 					@field.hide()
 					@attributes._destroy = true
 					@form.setModified()
-					@form._hideFieldAttributes @field
+					@form._hideFieldAttributes()
 					if @attributes.kpi_id?
 						@form.fieldsWrapper.find("[data-kpi-id=#{@attributes.kpi_id}]").removeClass('hidden')
 		else
@@ -526,7 +580,7 @@ FormField = Class.extend {
 				if result
 					@field.remove()
 					@form.setModified()
-					@form._hideFieldAttributes @field
+					@form._hideFieldAttributes()
 					@_onRemove()
 		false
 
@@ -638,6 +692,7 @@ TextAreaField = FormField.extend {
 		[
 			$('<h4>').text('Paragraph'),
 			@labelField(),
+			@rangeField({characters: 'Characters', words: 'Words'})
 			@requiredField()
 		]
 }
@@ -696,6 +751,7 @@ TextField = FormField.extend {
 		[
 			$('<h4>').text('Single line text'),
 			@labelField(),
+			@rangeField({characters: 'Characters', words: 'Words'})
 			@requiredField()
 		]
 }
@@ -727,6 +783,7 @@ NumberField = FormField.extend {
 		[
 			$('<h4>').text('Number'),
 			@labelField(),
+			@rangeField({digits: 'Digits', value: 'Value'})
 			@requiredField()
 		]
 }
@@ -758,6 +815,7 @@ CurrencyField = FormField.extend {
 		[
 			$('<h4>').text('Price'),
 			@labelField(),
+			@rangeField({digits: 'Digits', value: 'Value'})
 			@requiredField()
 		]
 }
@@ -1282,8 +1340,7 @@ Module =  FormField.extend {
 	render: () ->
 		@field ||= $('<div class="form-section module" data-type="' + @__proto__.type + '">')
 			.data('field', @)
-			.append (if @form.options.canEdit then $('<a class="close" href="#" title="Remove"><i class="icon-remove-circle"></i></a>').on('click', => @remove()) else null),
-					@_renderField()
+			.append @_renderField()
 
 	_onRemove: ->
 		@form.fieldsWrapper.find('.module[data-type='+@fieldType()+']').show()
@@ -1308,7 +1365,10 @@ SurveysField = Module.extend {
 	_renderField: () ->
 		[
 			$('<h2>Surveys Module</h2>'),
-			$('<img src="/assets/surveys.png" width="363" height="237" />')
+			$('<div class="module-wrapper">').append(
+				@_removeButton(),
+				$('<img src="/assets/surveys.png" width="363" height="237" />')
+			)
 		]
 
 	attributesForm: () ->
@@ -1341,7 +1401,7 @@ CommentsField = Module.extend {
 	init: (form, attributes) ->
 		@form = form
 		@attributes = $.extend({
-			name: 'Surveys'
+			name: 'Comments'
 		}, attributes)
 
 		@attributes.settings ||= {}
@@ -1351,11 +1411,17 @@ CommentsField = Module.extend {
 	_renderField: () ->
 		[
 			$('<h2>Comments Module</h2>'),
-			$('<img src="/assets/comments.png" width="363" height="337" />')
+			$('<div class="module-wrapper">').append(
+				@_removeButton(),
+				$('<img src="/assets/comments.png" width="363" height="337" />')
+			)
 		]
 
 	attributesForm: () ->
-		false
+		[
+			$('<h4>').text('Module Settings'),
+			@rangeField()
+		]
 }
 
 PhotosField = Module.extend {
@@ -1374,11 +1440,17 @@ PhotosField = Module.extend {
 	_renderField: () ->
 		[
 			$('<h2>Gallery Module</h2>'),
-			$('<img src="/assets/photos.png" width="363" height="337" />')
+			$('<div class="module-wrapper">').append(
+				@_removeButton(),
+				$('<img src="/assets/photos.png" width="363" height="337" />')
+			)
 		]
 
 	attributesForm: () ->
-		false
+		[
+			$('<h4>').text('Module Settings'),
+			@rangeField()
+		]
 }
 
 ExpensesField = Module.extend {
@@ -1397,11 +1469,17 @@ ExpensesField = Module.extend {
 	_renderField: () ->
 		[
 			$('<h2>Expenses Module</h2>'),
-			$('<img src="/assets/expenses.png" width="363" height="337" />')
+			$('<div class="module-wrapper">').append(
+				@_removeButton(),
+				$('<img src="/assets/expenses.png" width="363" height="337" />')
+			)
 		]
 
 	attributesForm: () ->
-		false
+		[
+			$('<h4>').text('Module Settings'),
+			@rangeField()
+		]
 }
 
 applyFormUiFormatsTo = (element) ->

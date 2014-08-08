@@ -56,7 +56,9 @@ class AttachedAsset < ActiveRecord::Base
 
   before_validation :check_if_file_updated
 
-  validates :direct_upload_url, allow_nil: true, format: { with: DIRECT_UPLOAD_URL_FORMAT }
+  validates :direct_upload_url, allow_nil: true,
+    uniqueness: true,
+    format: { with: DIRECT_UPLOAD_URL_FORMAT }
   validates :direct_upload_url, presence: true, unless: :file
 
   delegate :company_id, to: :attachable
@@ -143,6 +145,14 @@ class AttachedAsset < ActiveRecord::Base
       :force_path_style => true,
       :expires => 24*3600, # 24 hours
       :response_content_disposition => "attachment; filename=#{file_file_name}").to_s
+  end
+
+  def preview_url(style_name=:medium)
+    if is_pdf?
+      file.url(:thumbnail)
+    else
+      file.url(style_name)
+    end
   end
 
   def is_thumbnable?
@@ -250,6 +260,7 @@ class AttachedAsset < ActiveRecord::Base
     end
     self.processed = true
 
+    direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
     file.s3_bucket.objects[direct_upload_url_data[:path]].delete if save
     @processing = false
   end

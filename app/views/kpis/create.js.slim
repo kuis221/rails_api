@@ -5,3 +5,4 @@
   |
     $('.bootbox.modal').modal('hide');
     $(document).trigger('kpis:change');
+    $('.form-builder-wrapper').formBuilder('addKpi', #{resource.form_field_options.merge({id: @field.id}).to_json.html_safe});

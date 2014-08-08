@@ -25,9 +25,9 @@ class BrandPortfolio < ActiveRecord::Base
   validates :company_id, presence: true
 
   # Campaigns-Brands Portfolios relationship
-  has_and_belongs_to_many :campaigns
+  has_and_belongs_to_many :campaigns, :order => 'name ASC', conditions: {aasm_state: 'active'}
 
-  has_and_belongs_to_many :brands
+  has_and_belongs_to_many :brands, :order => 'name ASC', conditions: {brands: {active: true} }
 
   scope :active, where(:active => true)
 

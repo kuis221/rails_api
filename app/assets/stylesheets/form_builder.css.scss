@@ -29,12 +29,55 @@
 				width: 200px;
 			}
 		}
+		.field, .module {
+			a.close {
+				display: none;
+				position: absolute;
+				top: -10px;
+				right: -10px;
+				color: $brand;
+				opacity: 1;
+			}
+			&.selected {
+				background-color: $app_bg;
+				border: 1px solid $app_bg;
+				a.close {
+					background: image-url('more_less_sprite.png') -40px 0 no-repeat;
+					display: inline-block;
+					width: 20px;
+					height: 20px;
+					i, &:before{
+						display: none;
+					}
+				}
+				&:hover {
+					border: 1px solid $app_bg;
+				}
+				.attachment-panel {
+					background-color: white;
+				}
+			}
+		}
 		.form-section {
 			padding: 20px 20px 20px 20px;
 			background-color: #fff;
 			border-radius: 5px;
 			margin-right: 240px;
 			margin-bottom: 10px;
+
+			.module-wrapper {
+				border-radius: 5px;
+				padding: 10px;
+				display: inline-block;
+				position: relative;
+			}
+			&.module.selected {
+				border: 0px;
+				background-color: #fff;;
+				.module-wrapper {
+					background-color: $app_bg;
+				}
+			}
 		}
 		.form-fields {
 			padding-top: 80px;
@@ -60,36 +103,11 @@
 			label.radio .radio{
 				margin-right: 10px;
 			}
-			a.close {
-				display: none;
-				position: absolute;
-				top: -10px;
-				right: -10px;
-				color: $brand;
-				opacity: 1;
-			}
+
 			&:hover {
 				border: 1px dashed silver;
 			}
-			&.selected {
-				background-color: $app_bg;
-				border: 1px solid $app_bg;
-				a.close {
-					background: image-url('more_less_sprite.png') -40px 0 no-repeat;
-					display: inline-block;
-					width: 20px;
-					height: 20px;
-					i, &:before{
-						display: none;
-					}
-				}
-				&:hover {
-					border: 1px solid $app_bg;
-				}
-				.attachment-panel{
-					background-color: white;
-				}
-			}
+
 			&.ui-sortable-placeholder {
 				height: 2px !important;
 				opacity: 1;
@@ -396,21 +414,6 @@
 	.chzn-disabled {
 		opacity: 1 !important;
 	}
-	/*
-	input[disabled], select[disabled], textarea[disabled], input[readonly], select[readonly], textarea[readonly] {
-		background-color: white !important;
-		border: 1px solid silver;
-		box-shadow: none;
-		font-family: "Lato", sans-serif;
-		margin-bottom: 0;
-		padding-top: 0px;
-		//height: 36px;
-		cursor: auto;
-		&[type="number"]{
-			height: 33px;
-		}
-	}
-	*/
 }
 
 .field-attributes-panel {
@@ -418,6 +421,7 @@
 	border-radius: 5px;
 	border: 1px solid $grey_four;
 	padding: 15px 15px 5px 15px;
+	width:300px;
 
 	.checker{
 		background-color: #c2c2c2;
@@ -430,25 +434,40 @@
 		}
 	}
 
-	.chzn-container-single{
-		.chzn-drop{
-			width: 272px !important;
+	input {
+		box-sizing: border-box;
+		width: 100%;
+	}
+
+	.controls {
+		.range-part {
+			box-sizing: border-box;
+			display:inline-block;
+			width: 30%;
+			padding-right: 5px;
+			&.format {
+				width: 40%;
+				padding-right: 0px;
+			}
+
+			input, select {
+				width: 100%;
+			}
+			.chzn-container-single {
+				margin-bottom: 10px;
+			}
 		}
-		.chzn-results{
-			margin: 0 0 4px 0;
-			width: 270px;
-		}
-		.chzn-single{
-			border:0 !important;
-			height: 38px !important;
-			padding-top: 2px !important;
-			width: 263px !important;
-		}
-		.chzn-search input {
-			background-image: none !important;
-			bottom: 12px !important;
+		&.range-without-format {
+			.range-part {
+				width: 50%;
+			}
 		}
 	}
+	label.range {
+		font-weight: bold;
+		font-size: 13px;
+	}
+
 	h4{
 		margin-top: 0;
 	}
@@ -459,7 +478,6 @@
 		color: $text;
 		padding-left: 15px;
 		padding-right: 15px;
-		height: 40px;
 	}
 
 	textarea{
@@ -467,7 +485,7 @@
 		height: 80px;
 	}
 
-	label{
+	.control-group label{
 		color: $brand;
 		font-size: 11px;
 	}

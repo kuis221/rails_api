@@ -32,6 +32,8 @@ class Brand < ActiveRecord::Base
   scope :not_in_portfolio, lambda{|portfolio| where("brands.id not in (#{BrandPortfoliosBrand.select('brand_id').scoped_by_brand_portfolio_id(portfolio).to_sql})") }
   scope :accessible_by_user, lambda{|user| scoped }
 
+  scope :active, where(:active => true)
+
   searchable do
     integer :id
 

@@ -45,11 +45,14 @@ ul.select2-results{
 					input[type="text"]{
 						width:90%;
 					}
-					input[type="number"] {
-						background-color: white !important;
-						box-shadow: none !important;
-						margin-right: 0 !important;
-						width: 158px;
+					.input-prepend {
+						input {
+							background-color: white !important;
+							box-shadow: none !important;
+							margin-right: 0 !important;
+							width: 222px;
+
+						}						
 					}
 					&.event_expense_amount{
 						label{
@@ -715,7 +718,7 @@ ul.select2-results{
 			}
 		}
 		.input-append .add-on, .input-prepend .add-on {
-			height: 18px;
+			height: 15px;
 		}
 		.large-inputs{
 			.control-group{
@@ -767,7 +770,7 @@ ul.select2-results{
 		}
 		.controls{
 			input{
-				width: 100% !important;
+				width: 100%;
 				&[type="text"]{
 					color: $text !important;
 					&#campaign_start_date, &#campaign_end_date, &#event_start_date, &#event_end_date, &.goal_start_date, &.goal_end_date, &.field-type-date {

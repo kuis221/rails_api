@@ -7,7 +7,7 @@ class KpisController < FilteredController
       success.js do
         if params[:campaign_id].present?
           campaign = current_company.campaigns.find(params[:campaign_id])
-          campaign.add_kpi(resource)
+          @field = campaign.add_kpi(resource)
         end
       end
     end
