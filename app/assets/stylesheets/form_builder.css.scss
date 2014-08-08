@@ -428,9 +428,6 @@
 		margin: 0 10px 0 0;
 		span.checked{
 			background-color:$alert_grey !important;
-			&:after{
-				top:-20px;
-			}
 		}
 	}
 
