@@ -1,7 +1,7 @@
 .campaigns-modals
   p Add areas from the list below
 
-  input type="text" name="q" id="place-search-box"
+  input#place-search-box.search-box type="text" name="q"
   .select-list-table-wrapper
     .link-list
       ul.select-items-list
@@ -17,22 +17,22 @@
           li.empty-list-message
             p There are not assignable areas
 
-    .row-fluid
-      .span12
-        .divider
-          | OR
+  .row-fluid
+    .span12
+      .divider
+        | OR
 
-    p Search for places that you want to add
+  p Search for places that you want to add
 
-    = simple_form_for([parent, parent.places.new], remote: true) do |f|
-      = f.error_notification
+  = simple_form_for([parent, parent.places.new], remote: true) do |f|
+    = f.error_notification
 
-      .form-inputs
-        .row-fluid
-          .pull-left
-            = f.input :reference, :as => :location, wrapper_html: {class: 'form-horizontal'}
-          .pull-right
-            = f.button :submit, 'Add Place', class: 'btn-primary add-place-btn', disable_with: 'Please wait...'
+    .form-inputs
+      .row-fluid
+        .pull-left
+          = f.input :reference, :as => :location, input_html: {class: 'search-box'}, wrapper_html: {class: 'form-horizontal'}
+        .pull-right
+          = f.button :submit, 'Add Place', class: 'btn-primary add-place-btn', disable_with: 'Please wait...'
 
 javascript:
   $('.modal .places-autocomplete').placesAutocomplete();

@@ -58,7 +58,6 @@ gem "oink"
 #gem "allocation_stats"
 
 group :development do
-  gem 'style-guide'
   gem "rack-livereload"
   gem "guard-livereload", :require => false
   gem "annotate", ">=2.5.0"

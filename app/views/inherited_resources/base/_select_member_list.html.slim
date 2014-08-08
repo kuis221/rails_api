@@ -1,22 +1,20 @@
 - show_teams = resource.is_a?(Event) || resource.is_a?(Campaign)
-.tab-content
-  .staff-table
-    .row-fluid.scroll-table-header
-      span.scroll-table-filter
-        input type="text" name="q" id="staff-search-item"
-    .scroll-table-content
-      .link-list
-        ul#staff-list
-          - @staff.each do |member|
-            li id="staff-member-#{member['type']}-#{member['id']}"
-              span.member-data
-                span.member-name= member['name']
-                span.member-description= member['decription']
-              span.add-button.pull-right
-                - if member['type'] == 'user'
-                    = link_to '', url_for(action: :add_members, member_id: member['id']), id: "add-member-btn-#{member['id']}", data:{'user-id' => member['id']}, title: 'Add', class: 'icon-plus-sign', remote: true, method: :post
-                - else
-                    = link_to '', url_for(action: :add_members, team_id: member['id']), id: "add-member-btn-#{member['id']}", data:{'team-id' => member['id']}, title: 'Add', class: 'icon-plus-sign', remote: true, method: :post
+.staff-table
+  .row-fluid.scroll-table-header
+    input#staff-search-item.search-box type="text" name="q"
+  .select-list-table-wrapper
+    .link-list
+      ul#staff-list
+        - @staff.each do |member|
+          li id="staff-member-#{member['type']}-#{member['id']}"
+            span.member-data
+              span.member-name= member['name']
+              span.member-description= member['decription']
+            span.add-button.pull-right
+              - if member['type'] == 'user'
+                  = link_to '', url_for(action: :add_members, member_id: member['id']), id: "add-member-btn-#{member['id']}", data:{'user-id' => member['id']}, title: 'Add', class: 'icon-plus-sign', remote: true, method: :post
+              - else
+                  = link_to '', url_for(action: :add_members, team_id: member['id']), id: "add-member-btn-#{member['id']}", data:{'team-id' => member['id']}, title: 'Add', class: 'icon-plus-sign', remote: true, method: :post
 
 javascript:
   $('#staff-search-item').on('keyup', function () {
