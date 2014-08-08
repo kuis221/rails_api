@@ -17,7 +17,7 @@
 
 class FormField::Marque < FormField::Dropdown
   def field_options(result)
-    marques = options(result)
+    marques = options_for_field(result)
     {
       as: :select,
       collection: marques,
@@ -44,13 +44,13 @@ class FormField::Marque < FormField::Dropdown
     end
   end
 
-  def options(result)
+  def options_for_field(result)
     marques = []
     ff_brand  = FormField.where(fieldable_id: fieldable_id, fieldable_type: fieldable_type, type: 'FormField::Brand').first
     if ff_brand.present?
       if result.id
         results = result.resultable.results_for([ff_brand])
-        brand_id = results.first.value if results.present? &&  results.any?
+        brand_id = results.first.value if results.present? && results.any?
       elsif result.resultable.respond_to?(:campaign) && result.resultable.campaign
         ids = result.resultable.campaign.brand_ids
         brand_id = ids.first if ids.count == 1

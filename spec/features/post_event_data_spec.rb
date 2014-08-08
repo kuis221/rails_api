@@ -41,6 +41,11 @@ feature 'Post Event Data' do
             FactoryGirl.create(:kpis_segment, text: 'Checkbox Option 3')
           ])
 
+        brand = FactoryGirl.create(:brand, name: 'Cacique', company_id: company.to_param)
+        FactoryGirl.create(:marque, name: 'Marque #1 for Cacique', brand: brand)
+        FactoryGirl.create(:marque, name: 'Marque #2 for Cacique', brand: brand)
+        campaign.brands << brand
+
         # Create some custom fields of different types
         FactoryGirl.create(:form_field,
           name: 'Custom Single Text',
@@ -87,6 +92,18 @@ feature 'Post Event Data' do
           name: 'Custom Radio',
           type: 'FormField::Radio',
           options: [FactoryGirl.create(:form_field_option, name: 'Radio Opt1', ordering: 1), FactoryGirl.create(:form_field_option, name: 'Checkbox Opt2', ordering: 2)],
+          fieldable: campaign,
+          required: false)
+
+        FactoryGirl.create(:form_field,
+          name: 'Brand',
+          type: 'FormField::Brand',
+          fieldable: campaign,
+          required: false)
+
+        FactoryGirl.create(:form_field,
+          name: 'Marque',
+          type: 'FormField::Marque',
           fieldable: campaign,
           required: false)
 
@@ -139,6 +156,9 @@ feature 'Post Event Data' do
         unicheck 'Checkbox Opt2'
 
         choose 'Radio Opt1'
+
+        select_from_chosen('Cacique', from: 'Brand')
+        select_from_chosen('Marque #2 for Cacique', from: 'Marque')
 
         click_button 'Save'
 

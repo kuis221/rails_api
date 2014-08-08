@@ -961,7 +961,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
       elsif (field.type == 'FormField::Brand' || field.type == 'FormField::Marque')
         result.merge!({
           value: r.value.to_i,
-          segments: field.options(r).map{|s|
+          segments: field.options_for_field(r).map{|s|
             {id: s[:id], text: s[:name]}
           }
         })
