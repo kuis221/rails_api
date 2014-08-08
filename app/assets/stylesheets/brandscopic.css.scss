@@ -556,7 +556,7 @@ a.datepick-cmd:hover{
 	margin-bottom: 10px;
 }
 .datepick-month td .datepick-other-month {
-	color:$grey_one;
+	color: $grey_one;
 }
 .datepick-month{
 	border: 0;
@@ -564,7 +564,7 @@ a.datepick-cmd:hover{
 	table{
 		border: 1px solid $user_menu;
 		display: block;
-		padding: 5px 8px 7px 8px;
+		padding: 0 8px 4px 8px;
 		width: auto;
 	}
 	thead{
@@ -583,18 +583,19 @@ a.datepick-cmd:hover{
 		padding-top: 5px;
 	}
 	td{
-		padding: 2px 4px;
+		padding: 0.2em 0.6em 0.3em 0.1em;
 	}
 	a{
 		color: $text;
-		font-size: 12px;
-		opacity:0.8;
-		padding: 1px 2px;
-		filter:alpha(opacity=80); /* For IE8 and earlier */
+		font-size: 0.86em;
+		padding: 2px 3px;
+		-webkit-border-radius: 12px;
+		border-radius: 12px;
 		&.datepick-today{
 			background-color: $brand !important;
 			color: white;
-			font-size: 12px;
+			font-size: 0.86em;
+			font-weight: 300;
 			opacity:1;
 			-webkit-border-radius: 12px;
 			border-radius: 12px;
@@ -612,18 +613,15 @@ a.datepick-cmd:hover{
 		&:hover{
 			display: block;
 			width: 100%;
-			padding: 1px 2px;
 			background-color: $grey_one !important;
 			color: $text;
 			text-decoration: none;
-			-webkit-border-radius: 12px;
-			border-radius: 12px;
 		}
 	}
 }
 .datepick-month td .datepick-selected {
-	background-color: $brand !important;
-	color: white;
+	background-color: $grey_one !important;
+	color: $text !important;
 }
 .datepick-month td, .datepick-month a, .datepick-weekend {
 	background-color: white !important;
