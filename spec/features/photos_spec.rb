@@ -152,7 +152,7 @@ feature "Photos", js: true do
       end
 
       within gallery_modal do
-        select2_add_tag 'tag1'
+        select2_add_tag "Add tags", 'tag1'
         expect(find('.tags .list')).to have_content 'tag1'
 
         click_button 'Close'
