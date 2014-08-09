@@ -15,9 +15,12 @@
       | for more information about this section.
 
 .sidebar.collapsed#resource-filter-column
+
   #collection-list-filters
 
-  ul.dates-pref
+/* When the function it is ready to implement you should take out the class hide */
+
+  ul.dates-pref.hide
     li
       a Today
     li 
@@ -31,7 +34,7 @@
 
   /* This is exclusive for Custom Option*/
 
-  .custom-data-panel
+  .custom-data-panel.hide
     .form-group
       label Start date
       input type="date"
@@ -44,9 +47,9 @@
 
   /* This should go at the end of the Sidebar 
 
-  #save-filters-btn.a.btn.btn-primary Save
-  #cancel-save-filters.a.btn.btn-cancel.lele Reset
-  a.settings-for-filters data-target="#settings-filters" data-toggle="modal" 
+  #save-filters-btn.a.btn.btn-primary.hide Save
+  #cancel-save-filters.a.btn.btn-cancel.hide Reset
+  a.settings-for-filters.hide data-target="#settings-filters" data-toggle="modal" 
     span.icon-gear
 
 
