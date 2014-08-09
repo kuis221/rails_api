@@ -243,6 +243,59 @@ body.events.show{
 					overflow: hidden;
 					text-overflow: ellipsis;
 					white-space: nowrap;
+					span {
+						&:before{
+							color: $user_menu;
+							font-family: icons;
+							position: relative;
+							left: -8px;
+							text-align: center;
+							vertical-align: middle;
+						}
+						&.title-normal{
+							font-weight: bold;
+							text-transform: none;
+						}
+						&.title-grey{
+							color: $user_menu;
+							display: inline-block;
+							min-width: 50px;
+						}
+						&.data-date{
+							margin-left: 20px;
+							&:before{
+								content: "\e022";
+								font-size: 12px;
+							}
+						}
+						&.data-time{
+							margin-left: 20px;
+							&:before{
+								content: "\e01f";
+								font-size: 15px;
+							}
+						}
+						&.data-brand{
+							margin-left: 20px;
+							&:before{
+								content: "\e030";
+								font-size: 12px;
+							}
+						}
+						&.data-number, &.data-currency{
+							font-size: 20px;
+							color: #3E9CCF;
+						}
+						&.data-text, &.data-textarea{
+							display: block;
+							text-transform: none;
+							width: 30%;
+							white-space: normal;
+						}
+						&.data-dropdown, &.data-radio{
+							text-transform: none;
+						}
+					}
 				}
 			}
 		}
@@ -3811,14 +3864,14 @@ body.show {
 	}
 
 	.box_metrics{
-		width: 40%;
+		width: 100%;
 	}
 
 	ul.consumer-reach-metrics {
 		display: inline-block;
-		float: right;
 		font-size: 11px;
 		width: 100%;
+		margin-left: 0;
 		&.pull-right{
 			margin-top: 10px;
 			.metric{
@@ -3827,24 +3880,17 @@ body.show {
 		}
 		li {
 			list-style: none;
-			height: 30px;
+			margin-bottom: 10px;
 			text-transform: uppercase;
 			.metric {
-				float: right;
-				width: 80%;
+				width: 100%;
 				margin-right: 15px;
-				text-align: right;
 			}
 			.progress {
 				float: right;
 				margin-bottom: 0;
 				margin-right: 10px;
 			}
-		}
-		span {
-			font-size: 16px;
-			color: #3E9CCF;
-			margin-right: 3px;
 		}
 	}
 
@@ -5566,7 +5612,7 @@ body.campaigns{
 				margin-top: 45px;
 				&+#list-tools{
 					margin: 10px 0 0px 0;
-				} 
+				}
 			}
 			.simple_form{
 				display: inline-block;

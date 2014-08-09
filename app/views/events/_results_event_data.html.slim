@@ -11,7 +11,7 @@
     .summary-content= simple_format(resource.summary)
 
   - if event_data
-    .box_metrics.pull-right
+    .box_metrics
       ul.consumer-reach-metrics
         - if active_kpis.include?(Kpi.impressions)
           li
@@ -42,7 +42,7 @@
               = " Spent"
 
       - if enabled_modules.include?('expenses')
-        ul.consumer-reach-metrics.pull-right
+        ul.consumer-reach-metrics
           - if active_kpis.include?(Kpi.impressions) && event_data.spent.present? && event_data.impressions > 0
             li
               div.metric
@@ -60,7 +60,7 @@
               div.metric
                 span= number_to_currency(event_data.spent / event_data.samples, precision: 2)
                 = " / Sample"
-      ul.consumer-reach-metrics.pull-right
+      ul.consumer-reach-metrics
         - if enabled_modules.include?('photos')
           - photo_count = resource.active_photos.count
           li
@@ -77,15 +77,24 @@
               = " Surveys"
             = kpi_goal_progress_bar(resource.kpi_goals[Kpi.surveys.id], surveys_count)
 
-      ul.consumer-reach-metrics.pull-right
+      ul.consumer-reach-metrics
         - custom_fields.each do |custom_field|
           - if supported_field_types.include?(custom_field.type)
             - custom_kpi_value = resource.results_for([custom_field]).first.try(:to_html)
+            - css_class = custom_field.type_name.partition('::').last.downcase
             li
               div.metric
-                span
-                  = custom_kpi_value
-                = ' ' + custom_field.name
+                - if ['FormField::Date', 'FormField::Time', 'FormField::Brand'].include?(custom_field.type)
+                  span.title-grey = custom_field.name + ":"
+                  span class="data-#{css_class}" = custom_kpi_value
+                - if ['FormField::Number', 'FormField::Currency'].include?(custom_field.type)
+                  span.title-grey = custom_field.name
+                  br
+                  span class="data-#{css_class}" = custom_kpi_value
+                - if ['FormField::Text', 'FormField::TextArea', 'FormField::Dropdown', 'FormField::Radio'].include?(custom_field.type)
+                  span.title-normal = custom_field.name
+                  br
+                  span class="data-#{css_class}" = custom_kpi_value
 
 - if event_data
   #demographics.row-fluid
