@@ -293,6 +293,14 @@ a, i, .btn, span{
 	font-size: 19px;
 }
 
+.icon-gear:before{
+	content: "\e007";
+}
+
+.icon-trash:before{
+	content: "\e626";
+}
+
 .place-data:before{
 	content: "\e02c";
 	font-size: 22px;
