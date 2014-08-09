@@ -7,6 +7,7 @@
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
 #  timezone_support :boolean
+#  settings         :hstore
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

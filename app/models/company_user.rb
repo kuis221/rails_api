@@ -81,7 +81,8 @@ class CompanyUser < ActiveRecord::Base
       'new_campaign' => [{action: :read, subject_class: Campaign}]
   }
 
-  scope :active, where(:active => true)
+  scope :active, -> { where(:active => true) }
+  scope :admin, -> { joins(:role).where(roles: {is_admin: true}) }
   scope :by_teams, lambda{|teams| joins(:memberships).where(memberships: {memberable_id: teams, memberable_type: 'Team'}) }
   scope :by_campaigns, lambda{|campaigns| joins(:memberships).where(memberships: {memberable_id: campaigns, memberable_type: 'Campaign'}) }
   scope :by_events, lambda{|events| joins(:memberships).where(memberships: {memberable_id: events, memberable_type: 'Event'}) }

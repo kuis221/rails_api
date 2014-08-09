@@ -159,6 +159,7 @@ class Event < ActiveRecord::Base
   before_save :set_promo_hours, :check_results_changed
   after_save :reindex_associated
   after_commit :index_venue
+  after_commit :create_notifications
 
   delegate :name, to: :campaign, prefix: true, allow_nil: true
   delegate :name, :state, :city, :zipcode, :neighborhood, :street_number, :route, :latitude,:state_name,:longitude,:formatted_address,:name_with_location, :td_linx_code, to: :place, prefix: true, allow_nil: true
@@ -762,6 +763,7 @@ class Event < ActiveRecord::Base
       if place_id.present?
         Resque.enqueue(VenueIndexer, venue.id)
       end
+      true
     end
 
     def set_promo_hours
@@ -804,19 +806,10 @@ class Event < ActiveRecord::Base
       date
     end
 
-    # def add_team_members
-    #   if campaign.present?
-    #     campaign_team = campaign.staff.uniq
-    #     if campaign_team.present?
-    #       campaign_team.each do |member|
-    #         if member.is_a?(CompanyUser)
-    #           if member.accessible_places.include?(self.place_id)
-    #             self.users << member
-    #           end
-    #         end
-    #       end
-    #       Sunspot.index self.users
-    #     end
-    #   end
-    # end
+    def create_notifications
+      if company.setting(:event_alerts_policy) == Notification::EVENT_ALERT_POLICY_ALL
+        Resque.enqueue(EventNotifierWorker, self.id)
+      end
+      true
+    end
 end

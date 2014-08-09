@@ -80,6 +80,8 @@ class Campaign < ActiveRecord::Base
   has_many :teamings, :as => :teamable
   has_many :teams, :through => :teamings, :after_add => :reindex_associated_resource, :after_remove => :reindex_associated_resource
 
+  has_many :user_teams, :class_name => 'CompanyUser', source: :users, :through => :teams
+
   has_many :form_fields, :as => :fieldable, order: 'form_fields.ordering ASC'
 
   has_many :kpis, through: :form_fields
@@ -160,11 +162,23 @@ class Campaign < ActiveRecord::Base
   end
 
   def staff_users
-    staff_users = (
-      users.active +
-      CompanyUser.active.scoped_by_company_id(company_id).joins(:brands).where(brands: {id: brand_ids}) +
-      CompanyUser.active.scoped_by_company_id(company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids})
-    ).uniq
+    @staff_users ||= CompanyUser.find_by_sql("
+      #{users.active.to_sql} UNION
+      #{CompanyUser.active.scoped_by_company_id(company_id).joins(:brands).where(brands: {id: brand_ids}).to_sql} UNION
+      #{CompanyUser.active.scoped_by_company_id(company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids}).to_sql}
+    ")
+  end
+
+  # This is similar to #staff_users except that it also include users from the
+  # teams associated
+  def all_users_with_access
+    @staff_users ||= CompanyUser.find_by_sql("
+      #{users.active.to_sql} UNION
+      #{user_teams.active.to_sql} UNION
+      #{company.company_users.active.admin.to_sql} UNION
+      #{CompanyUser.active.scoped_by_company_id(company_id).joins(:brands).where(brands: {id: brand_ids}).to_sql} UNION
+      #{CompanyUser.active.scoped_by_company_id(company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids}).to_sql}
+    ")
   end
 
   def areas_and_places
