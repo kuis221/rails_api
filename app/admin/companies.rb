@@ -17,8 +17,8 @@ ActiveAdmin.register Company do
         as: :radio,
         hint: 'If "All users" selected, all users with permissions to see the event/task will receive the notification, otherwise, only users in the event\'s team will be notified',
         collection: [
-          ['Event Team', Notification::EVENT_ALERT_POLICY_TEAM],
-          ['All users', Notification::EVENT_ALERT_POLICY_ALL]
+          ['Event Team', Notification::EVENT_ALERT_POLICY_TEAM.to_i, {checked: f.object.settings['event_alerts_policy'].try(:to_i) == Notification::EVENT_ALERT_POLICY_TEAM.to_i}],
+          ['All users', Notification::EVENT_ALERT_POLICY_ALL.to_i, {checked: f.object.settings['event_alerts_policy'].try(:to_i) == Notification::EVENT_ALERT_POLICY_ALL.to_i}]
         ]
     end
     f.actions
