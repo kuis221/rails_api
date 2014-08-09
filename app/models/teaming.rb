@@ -25,9 +25,11 @@ class Teaming < ActiveRecord::Base
   private
     def create_notifications
       if teamable_type == 'Event'
-        team.users.each do |user|
-          if user.allowed_to_access_place?(teamable.place)
-            Notification.new_event(user, teamable, team)
+        if teamable.company.setting(:event_alerts_policy, Notification::EVENT_ALERT_POLICY_TEAM) == Notification::EVENT_ALERT_POLICY_TEAM
+          team.users.each do |user|
+            if user.allowed_to_access_place?(teamable.place)
+              Notification.new_event(user, teamable, team)
+            end
           end
         end
       end
