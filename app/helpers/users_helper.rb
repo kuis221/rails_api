@@ -59,7 +59,11 @@ module UsersHelper
 
     # User's teams late tasks
     if can?(:index_team, Task) && user.allow_notification?('late_team_task_app')
-      count = Task.do_search({company_id: company.id, status: ['Active'], task_status: ['Late'], team_members: [user.id], not_assigned_to: [user.id]}).total
+      task_search_params = {company_id: company.id, status: ['Active'], task_status: ['Late'], not_assigned_to: [user.id]}
+      unless user.company.setting(:event_alerts_policy) == Notification::EVENT_ALERT_POLICY_ALL
+        task_search_params.merge!(team_members: [user.id])
+      end
+      count = Task.do_search(task_search_params).total
       if count > 0
         alerts.push({
           message: I18n.translate('notifications.task_late_team', count: count), level: 'red',
