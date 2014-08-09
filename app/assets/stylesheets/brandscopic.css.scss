@@ -243,6 +243,15 @@ body.events.show{
 					overflow: hidden;
 					text-overflow: ellipsis;
 					white-space: nowrap;
+					.data{
+						float:left;
+						margin-bottom: 5px;
+						width: 87%;
+					}
+					.title{
+						float:right;
+						margin-top: 1px;
+					}
 				}
 			}
 		}
@@ -5670,7 +5679,7 @@ body.campaigns{
 				margin-top: 45px;
 				&+#list-tools{
 					margin: 10px 0 0px 0;
-				} 
+				}
 			}
 			.simple_form{
 				display: inline-block;
