@@ -3003,7 +3003,7 @@ input.search-query {
 	-webkit-border-radius: 6px;
 	-moz-border-radius: 6px;
 	border-radius: 6px;
-	width:205px;
+	width:207px;
 	&:focus{
 		border: 1px solid $grey_four !important;
 	}
@@ -3030,31 +3030,21 @@ input.search-query:focus{
 }
 .search-filter-label {
 	line-height: 36px;
+	width:191px !important;
 	span.close{
-	color: white;
-	opacity: 1;
-	text-shadow: 0px 0px;
+		display: inline-block;
+		width: 32px;
+		height: 34px;
 		i{
-			display: none;
+			font-size: 10px;
+			color: red;
 		}
-		/*This should be replaced for the real icon? can be?*/
-		/*&:before{
-			content: "lala";
-			font-family: 'icons';
-			font-size: 16px;
-			font-weight: normal;
-			position: relative;
-			top: -2px;
-			color: white;
-			-webkit-font-smoothing: antialiased;
-			-moz-osx-font-smoothing:grayscale;
-		}*/
 	}
 	.term{
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		width: 170px;
+		width: 150px;
 		float: left;
 		display: inline-block;
 	}
