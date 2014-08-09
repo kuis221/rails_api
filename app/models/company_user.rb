@@ -27,6 +27,8 @@ class CompanyUser < ActiveRecord::Base
   validates :role_id, presence: true, numericality: true
   validates :company_id, presence: true, numericality: true, uniqueness: {scope: :user_id}
 
+  before_validation :set_default_notifications_settings, :on => :create
+
   has_many :memberships, dependent: :destroy
   has_many :contact_events, dependent: :destroy, as: :contactable
 
@@ -228,7 +230,8 @@ class CompanyUser < ActiveRecord::Base
   end
 
   def allow_notification?(type)
-     phone_number_confirmed? && notifications_settings.is_a?(Array) && notifications_settings.include?(type)
+    (type.to_s[-4..-1] != '_sms' || phone_number_confirmed?) && # SMS notifications only if phone number is confirmed
+    notifications_settings.is_a?(Array) && notifications_settings.include?(type.to_s)
   end
 
   def phone_number_confirmed?
@@ -290,6 +293,11 @@ class CompanyUser < ActiveRecord::Base
     end
   end
 
+  def set_default_notifications_settings
+    if self.notifications_settings.nil? || self.notifications_settings.empty?
+      self.notifications_settings = NOTIFICATION_SETTINGS_TYPES.map{|n| "#{n}_app" }
+    end
+  end
 
   private
 

@@ -1,9 +1,13 @@
 module BrandscopiSpecHelpers
-  def sign_in_as_user
-    company = FactoryGirl.create(:company_with_user)
-    #role = FactoryGirl.create(:role, company: company, active: true, name: "Current User Role")
-    role = company.roles.first
-    User.current = user = company.company_users.first.user
+  def sign_in_as_user(company_user=nil)
+    if company_user.present?
+      company = company_user.company
+      user = company_user.user
+    else
+      company = FactoryGirl.create(:company_with_user)
+      user = company.company_users.first.user
+    end
+    User.current = user
     user.current_company = company
     user.ensure_authentication_token
     user.update_attributes(FactoryGirl.attributes_for(:user).reject{|k,v| ['password','password_confirmation','email'].include?(k.to_s)}, without_protection: true)

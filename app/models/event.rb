@@ -672,10 +672,13 @@ class Event < ActiveRecord::Base
   private
     def valid_campaign?
       if self.campaign_id.present? && (new_record? || campaign_id_changed?)
-        campaigns = Campaign.where(company_id: self.company_id)
-        campaigns = campaigns.accessible_by_user(User.current.current_company_user) if User.current.present? && User.current.current_company_user.present?
+        campaigns = if User.current.present? && User.current.current_company_user.present?
+          Campaign.accessible_by_user(User.current.current_company_user)
+        else
+          Campaign.where(company_id: self.company_id)
+        end
         unless campaigns.where(id: self.campaign_id).count > 0
-          errors.add :campaign_id, 'is not a valid'
+          errors.add :campaign_id, :invalid
         end
       end
     end

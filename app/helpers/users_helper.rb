@@ -6,7 +6,16 @@ module UsersHelper
     if can?(:view_list, Event)
       # Gets the counts with a single Solr request
       status_counts = {late: 0, due: 0, submitted: 0, rejected: 0}
-      events_search = Event.do_search({company_id: company.id, status: ['Active'], current_company_user: current_company_user, user: [user.id], team: user.team_ids}, true)
+      event_search_params = {
+        company_id: company.id,
+        status: ['Active'],
+        current_company_user: current_company_user }
+
+      # If the notification policy is set to only event team members
+      unless user.company.setting(:event_alerts_policy) == Notification::EVENT_ALERT_POLICY_ALL
+        event_search_params.merge!(user: [user.id], team: user.team_ids)
+      end
+      events_search = Event.do_search(event_search_params, true)
       events_search.facet(:status).rows.each{|r| status_counts[r.value] = r.count }
 
       # Due event recaps
@@ -18,7 +27,6 @@ module UsersHelper
           unread: true, icon: 'icon-notification-event', type: 'event_recaps_due',
         })
       end
-
       # Late event recaps
       if status_counts[:late] > 0 && user.allow_notification?('event_recap_late_app')
         alerts.push({
