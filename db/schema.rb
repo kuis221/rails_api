@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140807202736) do
+ActiveRecord::Schema.define(:version => 20140809221042) do
 
   add_extension "pg_stat_statements"
   add_extension "tablefunc"
@@ -267,6 +267,7 @@ ActiveRecord::Schema.define(:version => 20140807202736) do
     t.datetime "created_at",       :null => false
     t.datetime "updated_at",       :null => false
     t.boolean  "timezone_support"
+    t.hstore   "settings"
   end
 
   create_table "company_users", :force => true do |t|

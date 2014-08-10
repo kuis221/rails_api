@@ -41,6 +41,11 @@ feature 'Post Event Data' do
             FactoryGirl.create(:kpis_segment, text: 'Checkbox Option 3')
           ])
 
+        brand = FactoryGirl.create(:brand, name: 'Cacique', company_id: company.to_param)
+        FactoryGirl.create(:marque, name: 'Marque #1 for Cacique', brand: brand)
+        FactoryGirl.create(:marque, name: 'Marque #2 for Cacique', brand: brand)
+        campaign.brands << brand
+
         # Create some custom fields of different types
         FactoryGirl.create(:form_field,
           name: 'Custom Single Text',
@@ -106,6 +111,18 @@ feature 'Post Event Data' do
           fieldable: campaign,
           required: false)
 
+        FactoryGirl.create(:form_field,
+          name: 'Brand',
+          type: 'FormField::Brand',
+          fieldable: campaign,
+          required: false)
+
+        FactoryGirl.create(:form_field,
+          name: 'Marque',
+          type: 'FormField::Marque',
+          fieldable: campaign,
+          required: false)
+
         visit event_path(event)
 
         fill_in 'Summary', with: 'This is the summary'
@@ -158,6 +175,9 @@ feature 'Post Event Data' do
 
         choose 'Radio Opt1'
 
+        select_from_chosen('Cacique', from: 'Brand')
+        select_from_chosen('Marque #2 for Cacique', from: 'Marque')
+
         click_button 'Save'
 
         # Ensure the results are displayed on the page
@@ -198,8 +218,14 @@ feature 'Post Event Data' do
           expect(page).to have_content('TESTING AREA CUSTOM TEXTAREA')
           expect(page).to have_content('10 CUSTOM NUMERIC')
           expect(page).to have_content('$30.00 CUSTOM CURRENCY')
+          expect(page).to have_content('MARQUE #2 FOR CACIQUE MARQUE')
+          expect(page).to have_content('CACIQUE BRAND')
+          expect(page).to have_content('200 SUMMATION OPT2')
+          expect(page).to have_content('100 SUMMATION OPT1')
+          expect(page).to have_content('300 TOTAL')
         end
 
+        #screenshot_and_open_image
         visit event_path(event)
 
         # expect(page).to still display the post-event format and not the form

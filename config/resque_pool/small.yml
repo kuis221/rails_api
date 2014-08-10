@@ -1,1 +1,1 @@
-"indexing,sunspot,sms,email": <%= WORKER_CONCURRENCY_SMALL %>
+"indexing,sunspot,notification": <%= WORKER_CONCURRENCY_SMALL %>

@@ -235,71 +235,6 @@ label{
 /*-- EVENT DETAILS PAGES __*/
 
 body.events.show{
-	ul{
-		&.consumer-reach-metrics{
-			width: 100%;
-			li{
-				.metric{
-					overflow: hidden;
-					text-overflow: ellipsis;
-					white-space: nowrap;
-					span {
-						&:before{
-							color: $user_menu;
-							font-family: icons;
-							position: relative;
-							left: -8px;
-							text-align: center;
-							vertical-align: middle;
-						}
-						&.title-normal{
-							font-weight: bold;
-							text-transform: none;
-						}
-						&.title-grey{
-							color: $user_menu;
-							display: inline-block;
-							min-width: 50px;
-						}
-						&.data-date{
-							margin-left: 20px;
-							&:before{
-								content: "\e022";
-								font-size: 12px;
-							}
-						}
-						&.data-time{
-							margin-left: 20px;
-							&:before{
-								content: "\e01f";
-								font-size: 15px;
-							}
-						}
-						&.data-brand{
-							margin-left: 20px;
-							&:before{
-								content: "\e030";
-								font-size: 12px;
-							}
-						}
-						&.data-number, &.data-currency{
-							font-size: 20px;
-							color: #3E9CCF;
-						}
-						&.data-text, &.data-textarea{
-							display: block;
-							text-transform: none;
-							width: 30%;
-							white-space: normal;
-						}
-						&.data-dropdown, &.data-radio{
-							text-transform: none;
-						}
-					}
-				}
-			}
-		}
-	}
 
 	.event-contact {
 		a.edit {
@@ -561,7 +496,7 @@ a.datepick-cmd:hover{
 	margin-bottom: 10px;
 }
 .datepick-month td .datepick-other-month {
-	color:$user_menu;
+	color: $grey_one;
 }
 .datepick-month{
 	border: 0;
@@ -569,7 +504,7 @@ a.datepick-cmd:hover{
 	table{
 		border: 1px solid $user_menu;
 		display: block;
-		padding: 5px 8px 7px 8px;
+		padding: 0 8px 4px 8px;
 		width: auto;
 	}
 	thead{
@@ -588,43 +523,45 @@ a.datepick-cmd:hover{
 		padding-top: 5px;
 	}
 	td{
-		padding: 2px 4px;
+		padding: 0.2em 0.6em 0.3em 0.1em;
 	}
 	a{
-		color:$menu;
-		font-size: 12px;
-		opacity:0.8;
-		padding: 1px 2px;
-		filter:alpha(opacity=80); /* For IE8 and earlier */
+		color: $text;
+		font-size: 0.86em;
+		padding: 2px 3px;
+		-webkit-border-radius: 12px;
+		border-radius: 12px;
 		&.datepick-today{
-			color: $grey_three;
-			font-size: 12px;
-			font-weight: bold;
+			background-color: $brand !important;
+			color: white;
+			font-size: 0.86em;
+			font-weight: 300;
 			opacity:1;
-			background-color: white !important;
+			-webkit-border-radius: 12px;
+			border-radius: 12px;
 		}
 		&.datepick-event{
 			color: $buttons;
-			font-weight: bold;
+			font-weight: 600;
+			&:hover{
+				color: $buttons;
+			}
 		}
 		&:focus{
 			outline:0;
 		}
-	}
-	a:hover{
-		display: block;
-		width: 100%;
-		padding: 1px 2px;
-		background-color: $grey_one !important;
-		color: $text;
-		text-decoration: none;
-		-webkit-border-radius: 3px;
-		border-radius: 3px;
+		&:hover{
+			display: block;
+			width: 100%;
+			background-color: $grey_one !important;
+			color: $text;
+			text-decoration: none;
+		}
 	}
 }
 .datepick-month td .datepick-selected {
-	background-color: $brand !important;
-	color: white;
+	background-color: $grey_one !important;
+	color: $text !important;
 }
 .datepick-month td, .datepick-month a, .datepick-weekend {
 	background-color: white !important;
@@ -665,6 +602,75 @@ a.more-options-link:after{
 	left:5px;
 	position: relative;
 	top:4px;
+}
+
+/*-- Date Preferences Panel -*/
+
+.dates-pref{
+	list-style: none;
+	margin-left: 0px;
+	li{
+		display: inline-block;
+		font-size: 12px;
+		font-weight: bold;
+		padding: 1px 7px;
+		margin-right: 0.15em;
+		margin-left: 2px;
+		&.active{
+			background-color: $brand;
+			font-weight: 300;
+			-webkit-border-radius: 6px;
+			border-radius: 6px;
+			a{
+				color: white;
+				&:hover{
+					border-bottom: 0;
+					color: $grey_two;
+				}
+			}
+		}
+		a{
+			color: $user_menu;
+			cursor: pointer;
+			font-weight: 400;
+			&:hover{
+				border-bottom: 1px solid $brand;
+				color: $brand;
+				text-decoration: none;
+			}
+		}
+	}
+}
+
+.custom-data-panel{
+	.form-group{
+		display: inline-block;
+		width: 45% !important;
+		label{
+			color: $user_menu;
+			font-size: 12px;
+			font-weight: 300;
+		}
+		input[type="date"]{
+			color: $user_menu;
+			font-size: 0.88em;
+			height: auto;
+			padding:6px;
+			width: 100%;
+			&::-webkit-inner-spin-button,
+			&::-webkit-calendar-picker-indicator {
+			    display: none;
+			    -webkit-appearance: none;
+			}
+		}
+		&+span{
+			bottom: 3px;
+			color: $user_menu;
+			text-align: center;
+			padding: 0 3px;
+			position: relative;
+		}
+	}
 }
 
 /*-- BUTTON STYLES --*/
@@ -1942,8 +1948,26 @@ li#user_menu{
 	-moz-border-radius: 6px;
 	border-radius: 6px;
 	width:210px;
-	.btn-primary{
-		display: none;
+	.btn{
+		margin-right: 8px;
+		width: 85px;
+		&+.btn{
+			margin-right: 5px;
+		}
+		&.btn-primary, &.btn-cancel{
+			//display: none;
+			padding: 8px 0;
+		}
+	}
+	a.settings-for-filters{
+		cursor: pointer;
+		top: 8px;
+		float: right;
+		position: relative;
+		.icon-gear{
+			color: $user_menu;
+			font-size: 20px;
+		}
 	}
 }
 
@@ -2949,13 +2973,13 @@ div.loading-spinner, li.loading-spinner {
 }
 .search-filter-label,
 input.search-query {
-	background-color: $brand !important;
-	background-image: image-url('search.svg');
+	background-color: $grey_one !important;
+	background-image: image-url('search-grey.svg');
 	background-position: center right;
 	background-repeat: no-repeat;
-	border:$brand;
+	border: 1px solid $grey_one;
 	box-shadow: none;
-	color: white;
+	color: $text;
 	font-family: $baseFontFamily;
 	height:35px;
 	margin-bottom: 10px;
@@ -2967,8 +2991,25 @@ input.search-query {
 	-webkit-border-radius: 6px;
 	-moz-border-radius: 6px;
 	border-radius: 6px;
-	width:209px;
+	width:207px;
+	&:focus{
+		border: 1px solid $grey_four !important;
+	}
 }
+
+input.search-query:-moz-placeholder{
+	color: $user_menu;
+}
+
+input.search-query:-ms-input-placeholder{
+	color: $user_menu;
+}
+
+input.search-query::-webkit-input-placeholder{
+	color: $user_menu;
+}
+
+
 .search-filter-label,
 input.search-query:focus{
 	background-image: none;
@@ -2976,31 +3017,22 @@ input.search-query:focus{
 	box-shadow: none;
 }
 .search-filter-label {
-	padding-top: 8px;
+	line-height: 36px;
+	width:191px !important;
 	span.close{
-	color: white;
-	opacity: 1;
-	text-shadow: 0px 0px;
+		display: inline-block;
+		width: 32px;
+		height: 34px;
 		i{
-			display: none;
-		}
-		&:before{
-			content: "\e011";
-			font-family: 'icons';
-			font-size: 16px;
-			font-weight: normal;
-			position: relative;
-			top: -2px;
-			color: white;
-			-webkit-font-smoothing: antialiased;
-			-moz-osx-font-smoothing:grayscale;
+			font-size: 10px;
+			color: red;
 		}
 	}
 	.term{
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		width: 170px;
+		width: 150px;
 		float: left;
 		display: inline-block;
 	}
@@ -3017,21 +3049,20 @@ input.search-query:focus{
 	}
 }
 ul.ui-widget-content{
-	background: $brand !important;
+	background: $grey_one !important;
+	border: 1px solid $grey_four !important;
 	margin-top: 10px;
 }
 .ui-menu{
 	li{
 		&.ui-menu-item{
-			margin: 0 0 0 2px !important;
-			width: 98% !important;
 			a{
-				color: $menu;
+				color: $user_menu;
 				font-weight: normal !important;
 				padding: 7px 10px;
 				font-size: 13px;
 				&:active, &:hover{
-					background-color: $menu !important;
+					background-color: $tooltip !important;
 					background-image: none !important;
 					border:0;
 					color:white;
@@ -3040,15 +3071,19 @@ ul.ui-widget-content{
 					&.ui-corner-all{
 						border-radius: 0px !important;
 					}
+					i{
+						color: white;
+						font-weight: normal !important;
+					}
 				}
 				i{
-					color: white;
+					color: $text;
 					font-weight: normal !important;
 				}
 			}
 		}
 		&.ui-autocomplete-category{
-			color:$text;
+			color: $brand;
 			font-size: 13px;
 			font-weight: bold;
 			padding: 24px 10px 6px 10px;
@@ -3059,15 +3094,19 @@ ul.ui-widget-content{
 		}
 	}
 	.ui-state-hover, .ui-state-focus{
-		background-color: $menu !important;
+		background-color: $tooltip !important;
 		background-image: none !important;
 		border:0 !important;
 		border-radius: 0px !important;
 		color: white !important;
 		font-weight: normal !important;
 		padding: 8px 10px !important;
+		i{
+			color: white !important;
+		}
 	}
 }
+
 input:-moz-placeholder,
 textarea:-moz-placeholder {
 	color: white;
@@ -3789,6 +3828,68 @@ body.events.index {
 	overflow: hidden;
 }
 
+.form-results-box {
+	width: 100%;
+	.form-result {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		span {
+			&:before{
+				color: $user_menu;
+				font-family: icons;
+				position: relative;
+				left: -8px;
+				text-align: center;
+				vertical-align: middle;
+			}
+			&.title-normal{
+				font-weight: bold;
+				text-transform: none;
+			}
+			&.title-grey{
+				color: $user_menu;
+				display: inline-block;
+				min-width: 50px;
+			}
+			&.data-date{
+				margin-left: 20px;
+				&:before{
+					content: "\e022";
+					font-size: 12px;
+				}
+			}
+			&.data-time{
+				margin-left: 20px;
+				&:before{
+					content: "\e01f";
+					font-size: 15px;
+				}
+			}
+			&.data-brand{
+				margin-left: 20px;
+				&:before{
+					content: "\e030";
+					font-size: 12px;
+				}
+			}
+			&.data-number, &.data-currency{
+				font-size: 20px;
+				color: #3E9CCF;
+			}
+			&.data-text, &.data-textarea{
+				display: block;
+				text-transform: none;
+				width: 30%;
+				white-space: normal;
+			}
+			&.data-dropdown, &.data-radio{
+				text-transform: none;
+			}
+		}
+	}
+}
+
 
 body.show {
 	.details_box{
@@ -3861,10 +3962,6 @@ body.show {
 		left: -30px;
 		top: 13px;
 		vertical-align: middle;
-	}
-
-	.box_metrics{
-		width: 100%;
 	}
 
 	ul.consumer-reach-metrics {

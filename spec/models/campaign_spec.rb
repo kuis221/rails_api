@@ -230,6 +230,100 @@ describe Campaign, :type => :model do
     end
   end
 
+  describe "all_users_with_access" do
+    let(:company) { FactoryGirl.create(:company) }
+    let(:non_admin_role) { FactoryGirl.create(:non_admin_role, company: company) }
+    it "should include users that have the brands assigned to" do
+      brand = FactoryGirl.create(:brand, company: company)
+      campaign = FactoryGirl.create(:campaign, brand_ids: [brand.id], company: company)
+
+      # This is an user that is following all the campaigns of this brand
+      user = FactoryGirl.create(:company_user, brand_ids: [brand.id], company: company)
+
+      # Create another user related to another brand
+      FactoryGirl.create(:company_user,
+        brand_ids: [FactoryGirl.create(:brand, company: company).id],
+        role: non_admin_role, company: company)
+
+      expect(campaign.all_users_with_access).to eq([user])
+    end
+
+    it "should include users that have the brand portfolios assigned to" do
+      brand_portfolio = FactoryGirl.create(:brand_portfolio, company: company)
+      campaign = FactoryGirl.create(:campaign, brand_portfolio_ids: [brand_portfolio.id], company: company)
+
+      # This is an user that is following all the campaigns of this brand
+      user = FactoryGirl.create(:company_user, brand_portfolio_ids: [brand_portfolio.id], company: company)
+
+      # Create another user related to another brand portfolio
+      FactoryGirl.create(:company_user,
+        brand_portfolio_ids: [FactoryGirl.create(:brand_portfolio, company: company).id],
+        company: company, role: non_admin_role)
+
+      expect(campaign.all_users_with_access).to eq([user])
+    end
+
+    it "should include users that are directly assigned to the campaign" do
+      campaign = FactoryGirl.create(:campaign, company: company)
+
+      # This is an user that is assgined to the campaign
+      user = FactoryGirl.create(:company_user, company: company)
+      other_user = FactoryGirl.create(:company_user, company: company, role: non_admin_role)
+
+      campaign.users << user
+
+      expect(campaign.all_users_with_access).to eq([user])
+    end
+
+    it "should include all admin users" do
+      campaign = FactoryGirl.create(:campaign, company: company)
+
+      # This is an user that is assgined to the campaign
+      admin_user = FactoryGirl.create(:company_user, company: company)
+
+      expect(campaign.all_users_with_access).to match_array [admin_user]
+    end
+
+    it "should include users that belong to teams directly assigned to the campaign" do
+      campaign = FactoryGirl.create(:campaign, company: company)
+
+      # This is an user that is assgined to the campaign
+      user = FactoryGirl.create(:company_user, company: company)
+      team = FactoryGirl.create(:team, company: company)
+      team.users << user
+
+      campaign.teams << team
+
+      expect(campaign.all_users_with_access).to eq([user])
+    end
+
+    it "mixup between the diferent sources" do
+      brand_portfolio = FactoryGirl.create(:brand_portfolio, company: company)
+      brand = FactoryGirl.create(:brand, company: company)
+      brand2 = FactoryGirl.create(:brand, company: company)
+      campaign = FactoryGirl.create(:campaign, brand_portfolio_ids: [brand_portfolio.id], brand_ids: [brand.id, brand2.id], company: company)
+
+      team = FactoryGirl.create(:team, company: company)
+      not_assigned_team = FactoryGirl.create(:team, company: company)
+
+      # This is an user that is following all the campaigns of this brand
+      user = FactoryGirl.create(:company_user, brand_portfolio_ids: [brand_portfolio.id], brand_ids: [brand.id], company: company)
+      user2 = FactoryGirl.create(:company_user, brand_ids: [brand2.id], company: company)
+
+      not_assigned_user = FactoryGirl.create(:company_user, role: non_admin_role, company: company)
+
+      team.users << user
+      not_assigned_team.users << not_assigned_user
+
+      # Create another user related to another brand portfolio
+      FactoryGirl.create(:company_user,
+        brand_portfolio_ids: [FactoryGirl.create(:brand_portfolio, company: company).id],
+        role: non_admin_role, company: company)
+
+      expect(campaign.all_users_with_access).to match_array([user, user2])
+    end
+  end
+
   describe "place_allowed_for_event?" do
     let(:campaign) { FactoryGirl.create(:campaign) }
 
