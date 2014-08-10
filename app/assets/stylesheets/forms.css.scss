@@ -60,7 +60,7 @@ label.radio div.radio {
 	padding: 0;
 	width: 20px;
 	span{
-		background: image-url('radio-unchecked.svg') no-repeat center center !important;
+		background: image-url('radio-unchecked.svg') no-repeat center center;
 		display: block;
 		height: 25px;
 		width: 25px;
@@ -73,7 +73,7 @@ label.radio div.radio {
 		}
 	}
 	span.checked{
-		background: image-url('radio-checked.svg') no-repeat center center !important;
+		background: image-url('radio-checked.svg') no-repeat center center;
 		display: block;
 		height: 25px;
 		margin: 0;

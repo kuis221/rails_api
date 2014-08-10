@@ -3963,7 +3963,7 @@ body.events.index {
 				margin-bottom: 10px;
 			}
 			span.checked {
-				color: $blue;
+				background-image: image-url('radio-checked-blue.svg')
 			}
 			input, label {
 				cursor: default;
