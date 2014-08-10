@@ -3805,6 +3805,12 @@ body.events.index {
 
 .form-results-box {
 	width: 100%;
+	.edit {
+		margin-left: 20px;
+		&:after {
+			color: $brand;
+		}
+	}
 	.form-result {
 		overflow: hidden;
 		margin-bottom: 10px;

@@ -1,6 +1,6 @@
 .form-results-box
   h3
-    == "POST EVENT FORM "
+    = "POST EVENT FORM"
     = link_to '', edit_data_event_path(resource), remote: true, id: 'edit-event-data-btn', class: 'edit', title: 'Edit event data' if can?(:edit_data, resource)
 
   - if resource.summary
