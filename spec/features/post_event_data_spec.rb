@@ -196,28 +196,22 @@ feature 'Post Event Data' do
 
         # Ensure the results are displayed on the page
 
-        # within "#ethnicity-graph" do
-        #   expect(page).to have_content "20%"
-        #   expect(page).to have_content "12%"
-        #   expect(page).to have_content "13%"
-        #   expect(page).to have_content "34%"
-        #   expect(page).to have_content "21%"
-        # end
+        expect(page).to have_content "20%"
+        expect(page).to have_content "12%"
+        expect(page).to have_content "13%"
+        expect(page).to have_content "34%"
+        expect(page).to have_content "21%"
 
-        # within "#gender-graph" do
-        #   expect(page).to have_content "34 %"
-        #   expect(page).to have_content "66 %"
-        # end
+        expect(page).to have_content "34%"
+        expect(page).to have_content "66%"
 
-        # within "#age-graph" do
-        #   expect(page).to have_content "9%"
-        #   expect(page).to have_content "11%"
-        #   expect(page).to have_content "12%"
-        #   expect(page).to have_content "13%"
-        #   expect(page).to have_content "14%"
-        #   expect(page).to have_content "15%"
-        #   expect(page).to have_content "16%"
-        # end
+        expect(page).to have_content "9%"
+        expect(page).to have_content "11%"
+        expect(page).to have_content "12%"
+        expect(page).to have_content "13%"
+        expect(page).to have_content "14%"
+        expect(page).to have_content "15%"
+        expect(page).to have_content "16%"
 
         within ".form-results-box" do
           expect(page).to have_content('INTEGER FIELD 99')
@@ -245,9 +239,11 @@ feature 'Post Event Data' do
         visit event_path(event)
 
         # expect(page).to still display the post-event format and not the form
-        expect(page).to have_selector("#gender-graph")
-        expect(page).to have_selector("#ethnicity-graph")
-        expect(page).to have_selector("#age-graph")
+        within ".form-results-box" do
+          expect(page).to have_content('INTEGER FIELD 99')
+          expect(page).to have_content('DECIMAL FIELD 99.9')
+          expect(page).to have_content('CURRENCY FIELD $79.90')
+        end
 
         click_js_link 'Edit event data'
 

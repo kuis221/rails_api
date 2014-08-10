@@ -1,0 +1,13 @@
+- partial_field_types = ['FormField::Summation', 'FormField::LikertScale', 'FormField::Percentage', 'FormField::Section', 'FormField::Attachment', 'FormField::Photo', 'FormField::UserDate']
+
+- if form_fields.any?
+  - form_fields.each do |form_field|
+    - result = resource.results_for([form_field]).first
+    - field_class = form_field.type_name.partition('::').last.underscore
+    div.form-result class="result_#{field_class}"
+      - if partial_field_types.include?(form_field.type)
+        = render partial: 'form_fields/'+field_class, locals: {form_field: form_field, result: result}
+      - else
+        - custom_kpi_value = result.try(:to_html)
+        span.form-result-label = form_field.name
+        span.form-result-value = custom_kpi_value

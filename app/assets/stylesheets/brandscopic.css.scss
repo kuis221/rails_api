@@ -3416,6 +3416,9 @@ textarea::-webkit-input-placeholder {
 		margin-top: 20px;
 		input {
 			width: auto;
+			&.btn-primary {
+				min-width: 154px;
+			}
 		}
 	}
 	.control-group{
@@ -3678,34 +3681,6 @@ body.activities{
 		}
 		.links-data{
 			margin-top: 35px;
-		}
-	}
-
-	dl.activity-results {
-		margin-top: 0;
-		dt {
-			font-weight: normal;
-			display: inline-block;
-			float: left;
-			margin-right: 5px;
-			&.form_field_photo,
-			&.form_field_text_area,
-			&.form_field_summation,
-			&.form_field_likert_scale,
-			&.form_field_percentage {
-				float: none;
-				clear: both;
-			}
-		}
-		dd {
-			margin-bottom: 12px;
-			margin-left: 0px;
-			font-weight: bold;
-			&.form_field_text_area {
-				font-weight: normal;
-				margin-top: 10px;
-				width: 290px;
-			}
 		}
 	}
 }

@@ -159,7 +159,7 @@ ul.select2-results{
 			.control-group{
 				label{
 					display: inline-block;
-					&.radio {
+					&.radio, &.checkbox {
 						display: block;
 					}
 				}
@@ -660,7 +660,7 @@ ul.select2-results{
 			input{
 				width: 100%;
 			}
-			label{
+			label:not(.checkbox){
 				margin-bottom: 2px;
 			}
 			&.location, &.password {
