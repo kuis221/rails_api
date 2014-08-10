@@ -3970,6 +3970,24 @@ body.events.index {
 				}
 			}
 		}
+		&.result_percentage {
+			.chart-area {
+				height: 300px;
+				max-width: 600px;
+				min-width: 310px;
+			}
+		}
+		&.result_likert_scale {
+			.form-result-label {
+				margin-bottom: 10px;
+			}
+			span.checked {
+				color: $blue;
+			}
+			input, label {
+				cursor: default;
+			}
+		}
 	}
 }
 

@@ -1,1 +1,19 @@
 span.form-result-label= form_field.name
+table.table.likert-scale-table
+  thead
+    tr
+      th
+      - form_field.options.each do |option|
+        th
+          label= option.name
+  tbody
+    - form_field.statements.each do |statement|
+      - value = result.value.try(:[], statement.id.to_s).to_i
+      tr
+        td
+          label= statement.name
+        - form_field.options.each do |option|
+          td
+            label.radio
+              .radio
+                input type='radio' readonly='readonly'checked=(value == option.id ? 'checked' : false)
