@@ -33,7 +33,9 @@ class FormField::Checkbox < FormField
   def format_html(result)
     unless result.value.nil? || result.value.empty?
       selected = result.value.map(&:to_i)
-      options_for_input.select{|r| selected.include?(r[1].to_i) }.map{|v| v[0] }.to_sentence
+      options_for_input.select{|r| selected.include?(r[1].to_i) }.map do |v|
+        "<span>#{v[0]}</span>"
+      end.join.html_safe
     end
   end
 

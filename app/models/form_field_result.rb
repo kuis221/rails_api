@@ -20,6 +20,8 @@ class FormFieldResult < ActiveRecord::Base
   validate :valid_value?
   validates :form_field_id, numericality: true, presence: true
 
+  delegate :company_id, to: :resultable
+
   has_one :attached_asset, :as => :attachable, dependent: :destroy
 
   serialize :hash_value, ActiveRecord::Coders::Hstore

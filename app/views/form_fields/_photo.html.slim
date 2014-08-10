@@ -1,0 +1,7 @@
+span.form-result-label= form_field.name
+
+- if result.attached_asset.present? && result.attached_asset.processed?
+  a href="#{result.attached_asset.download_url}" title="Download"
+    img src="#{result.attached_asset.file.url(:thumbnail)}" alt=""
+- elsif result.attached_asset.present?
+  | The photo is being processed. It will be available soon..

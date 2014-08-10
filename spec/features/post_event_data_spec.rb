@@ -69,6 +69,18 @@ feature 'Post Event Data' do
           required: false)
 
         FactoryGirl.create(:form_field,
+          name: 'Custom Date',
+          type: 'FormField::Date',
+          fieldable: campaign,
+          required: false)
+
+        FactoryGirl.create(:form_field,
+          name: 'Custom Time',
+          type: 'FormField::Time',
+          fieldable: campaign,
+          required: false)
+
+        FactoryGirl.create(:form_field,
           name: 'Custom Currency',
           type: 'FormField::Currency',
           settings: {'range_format' => 'digits', 'range_min' => '2', 'range_max' => '4'},
@@ -163,9 +175,11 @@ feature 'Post Event Data' do
         fill_in 'Custom TextArea', with: 'Testing Area'
         fill_in 'Custom Numeric', with: '10'
         fill_in 'Custom Currency', with: '30'
+        fill_in 'Custom Date', with: '08/13/2013'
+        fill_in 'Custom Time', with: '2:30am'
 
         fill_in 'Summation Opt1', with: '100'
-        fill_in 'Summation Opt2', with: '200'
+        fill_in 'Summation Opt2', with: '2000'
 
         fill_in 'Percentage Opt1', with: '75'
         fill_in 'Percentage Opt2', with: '25'
@@ -182,47 +196,49 @@ feature 'Post Event Data' do
 
         # Ensure the results are displayed on the page
 
-        within "#ethnicity-graph" do
-          expect(page).to have_content "20%"
-          expect(page).to have_content "12%"
-          expect(page).to have_content "13%"
-          expect(page).to have_content "34%"
-          expect(page).to have_content "21%"
-        end
+        # within "#ethnicity-graph" do
+        #   expect(page).to have_content "20%"
+        #   expect(page).to have_content "12%"
+        #   expect(page).to have_content "13%"
+        #   expect(page).to have_content "34%"
+        #   expect(page).to have_content "21%"
+        # end
 
-        within "#gender-graph" do
-          expect(page).to have_content "34 %"
-          expect(page).to have_content "66 %"
-        end
+        # within "#gender-graph" do
+        #   expect(page).to have_content "34 %"
+        #   expect(page).to have_content "66 %"
+        # end
 
-        within "#age-graph" do
-          expect(page).to have_content "9%"
-          expect(page).to have_content "11%"
-          expect(page).to have_content "12%"
-          expect(page).to have_content "13%"
-          expect(page).to have_content "14%"
-          expect(page).to have_content "15%"
-          expect(page).to have_content "16%"
-        end
+        # within "#age-graph" do
+        #   expect(page).to have_content "9%"
+        #   expect(page).to have_content "11%"
+        #   expect(page).to have_content "12%"
+        #   expect(page).to have_content "13%"
+        #   expect(page).to have_content "14%"
+        #   expect(page).to have_content "15%"
+        #   expect(page).to have_content "16%"
+        # end
 
-        within ".box_metrics" do
-          expect(page).to have_content('99 INTEGER FIELD')
-          expect(page).to have_content('99.9 DECIMAL FIELD')
-          expect(page).to have_content('$79.90 CURRENCY FIELD')
-          expect(page).to have_content('$79.90 CURRENCY FIELD')
-          expect(page).to have_content('RADIO OPTION 1 RADIO FIELD')
-          expect(page).to have_content('CHECKBOX OPTION 1 AND CHECKBOX OPTION 2')
-          expect(page).to have_content('CHECKBOX OPT1 AND CHECKBOX OPT2 CUSTOM CHECKBOX')
-          expect(page).to have_content('RADIO OPT1 CUSTOM RADIO')
-          expect(page).to have_content('TESTING SINGLE CUSTOM SINGLE TEXT')
-          expect(page).to have_content('TESTING AREA CUSTOM TEXTAREA')
-          expect(page).to have_content('10 CUSTOM NUMERIC')
-          expect(page).to have_content('$30.00 CUSTOM CURRENCY')
-          expect(page).to have_content('MARQUE #2 FOR CACIQUE MARQUE')
-          expect(page).to have_content('CACIQUE BRAND')
-          expect(page).to have_content('200 SUMMATION OPT2')
-          expect(page).to have_content('100 SUMMATION OPT1')
-          expect(page).to have_content('300 TOTAL')
+        within ".form-results-box" do
+          expect(page).to have_content('INTEGER FIELD 99')
+          expect(page).to have_content('DECIMAL FIELD 99.9')
+          expect(page).to have_content('CURRENCY FIELD $79.90')
+          expect(page).to have_content('Radio field Radio Option 1')
+          expect(page).to have_content('Checkbox field Checkbox Option 1 Checkbox Option 2')
+          expect(page).to have_content('Custom Checkbox Checkbox Opt1 Checkbox Opt2')
+          expect(page).to have_content('Custom Radio Radio Opt1')
+          expect(page).to have_content('Custom Single Text Testing Single')
+          expect(page).to have_content('Custom TextArea Testing Area')
+          expect(page).to have_content('CUSTOM NUMERIC 10')
+          expect(page).to have_content('CUSTOM CURRENCY $30.00')
+          expect(page).to have_content('Marque Marque #2 for Cacique')
+          expect(page).to have_content('BRANDCacique')
+          expect(page).to have_content('CUSTOM DATETUE Aug 13, 2013')
+          expect(page).to have_content('CUSTOM TIME02:30 AM')
+
+          expect(page).to have_content('Summation Opt1 100')
+          expect(page).to have_content('Summation Opt2 2,000')
+          expect(page).to have_content('TOTAL:2,100')
         end
 
         #screenshot_and_open_image
@@ -242,7 +258,7 @@ feature 'Post Event Data' do
 
         click_button "Save"
 
-        within ".box_metrics" do
+        within ".form-results-box" do
           expect(page).to have_content('3,333')
           expect(page).to have_content('222,222')
           expect(page).to have_content('4,444,444')

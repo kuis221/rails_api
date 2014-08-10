@@ -1,29 +1,29 @@
 - event_data = resource.event_data
 - active_kpis = resource.campaign.active_kpis
-- custom_fields = resource.campaign.form_fields.where('kpi_id not in (?) OR kpi_id is null', Kpi.global.pluck(:id))
-- enabled_modules = resource.campaign.enabled_modules
+- campaign_fields = resource.campaign.form_fields
 - partial_field_types = ['FormField::Summation', 'FormField::LikertScale', 'FormField::Percentage', 'FormField::Section', 'FormField::Attachment', 'FormField::Photo']
 
 .row-fluid
-  h3 POST EVENT FORM
-  = link_to '', edit_data_event_path(resource), remote: true, id: 'edit-event-data-btn', class: 'edit', title: 'Edit event data' if can?(:edit_data, resource)
+  h3
+    == "POST EVENT FORM "
+    = link_to '', edit_data_event_path(resource), remote: true, id: 'edit-event-data-btn', class: 'edit', title: 'Edit event data' if can?(:edit_data, resource)
 
-  - if event_data
+  - if campaign_fields.any?
     .form-results-box
       - if resource.summary
         .form-result class="text_area"
           span.form-result-label Summary
           span.form-result-value= simple_format(resource.summary)
 
-      - custom_fields.each do |custom_field|
-        - result = resource.results_for([custom_field]).first
-        - field_class = custom_field.type_name.partition('::').last.underscore
+      - campaign_fields.each do |form_field|
+        - result = resource.results_for([form_field]).first
+        - field_class = form_field.type_name.partition('::').last.underscore
         div.form-result class="result_#{field_class}"
-          - if partial_field_types.include?(custom_field.type)
-            = render partial: 'form_fields/'+field_class, locals: {form_field: custom_field, result: result}
+          - if partial_field_types.include?(form_field.type)
+            = render partial: 'form_fields/'+field_class, locals: {form_field: form_field, result: result}
           - else
             - custom_kpi_value = result.try(:to_html)
-            span.form-result-label = custom_field.name
+            span.form-result-label = form_field.name
             span.form-result-value = custom_kpi_value
 
 
