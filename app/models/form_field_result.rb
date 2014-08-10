@@ -52,6 +52,10 @@ class FormFieldResult < ActiveRecord::Base
     form_field.format_html self
   end
 
+  def to_csv
+    form_field.format_csv self
+  end
+
   protected
     def valid_value?
       return if form_field.nil?
