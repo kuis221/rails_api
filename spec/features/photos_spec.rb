@@ -19,7 +19,7 @@ feature "Photos", js: true do
   let(:campaign) { FactoryGirl.create(:campaign, company: @company) }
   let(:event) { FactoryGirl.create(:late_event, company: @company, campaign:campaign) }
 
-  before { campaign.update_attribute :enabled_modules, ['photos']  }
+  before { campaign.update_attribute(:modules, {'photos' => {} })  }
 
   feature "Event Photo management" do
     scenario "A user can select a photo and attach it to the event" do

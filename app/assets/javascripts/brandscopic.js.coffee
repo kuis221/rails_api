@@ -564,8 +564,8 @@ jQuery ->
 			else if $element.data('range-format') is "digits"
 				items = val.replace(/[\s,\,\,]+/g, "").length
 
-		minResult = if $element.data('range-min') then items >= $element.data('range-min') else true
-		maxResult = if $element.data('range-max') then items <= $element.data('range-max') else true
+		minResult = if $element.data('range-min') && items then items >= $element.data('range-min') else true
+		maxResult = if $element.data('range-max') && items then items <= $element.data('range-max') else true
 
 		return minResult && maxResult
 	, (params, element) ->
@@ -576,12 +576,12 @@ jQuery ->
 			else if $element.data('range-min')
 				"should be greater than #{$element.data('range-min')}"
 			else if $element.data('range-max')
-				"should be smaller than #{$element.data('range-min')}"
+				"should be smaller than #{$element.data('range-max')}"
 		else
 			message = if $element.data('range-min') then "at least #{$element.data('range-min')}" else ''
 			message += if message.length > 0 && $element.data('range-max') then ' but ' else ''
 			message += if $element.data('range-max') then "no more than #{$element.data('range-max')}" else ''
-			
+
 			"should have #{message} #{$element.data('range-format')}"
 	);
 

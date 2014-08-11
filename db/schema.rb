@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140722012255) do
+ActiveRecord::Schema.define(:version => 20140807202736) do
 
   add_extension "pg_stat_statements"
   add_extension "tablefunc"
@@ -200,6 +200,8 @@ ActiveRecord::Schema.define(:version => 20140722012255) do
     t.boolean  "active",        :default => true
   end
 
+  add_index "brands", ["company_id"], :name => "index_brands_on_company_id"
+
   create_table "brands_campaigns", :force => true do |t|
     t.integer "brand_id"
     t.integer "campaign_id"
@@ -223,8 +225,8 @@ ActiveRecord::Schema.define(:version => 20140722012255) do
     t.datetime "last_event_at"
     t.date     "start_date"
     t.date     "end_date"
-    t.string   "enabled_modules",  :default => [],                 :array => true
     t.integer  "survey_brand_ids", :default => [],                 :array => true
+    t.text     "modules"
   end
 
   add_index "campaigns", ["company_id"], :name => "index_campaigns_on_company_id"

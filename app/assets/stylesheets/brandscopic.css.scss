@@ -504,54 +504,6 @@ a.datepick-cmd:hover{
 	right: 35%;
 }
 
-.checker{
-	background-color: $grey_one;
-	display: inline-block;
-	float:left;
-	height: 20px;
-	margin: 0px 0 0 0;
-	padding: 0;
-	width:20px;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	border-radius: 5px;
-	span.checked{
-		background-color: $brand;
-		display: block;
-		height: 20px;
-		margin: 0 15px 0 0;
-		padding:0;
-		width: 20px;
-		-webkit-border-radius: 5px;
-		-moz-border-radius: 5px;
-		border-radius: 5px;
-	}
-	span.checked:after{
-		color: white;
-		content: "\e624";
-		font-family: 'icons';
-		font-size: 11px;
-		left:5px;
-		position: relative;
-		speak:none;
-		text-align: center;
-		text-shadow:none;
-		-webkit-font-smoothing: antialiased;
-		font-weight: bold;
-	}
-	input[type=checkbox]{
-		visibility: hidden;
-	}
-}
-
-.permissions {
-	.checker {
-		span.checked:after {
-			top: -20px;
-		}
-	}
-}
-
 .task-list {
 	span.checked:after{
 		top: 0px
@@ -1537,17 +1489,6 @@ label{
 		letter-spacing: -0.5px;
 		line-height: 22px;
 		margin-bottom: 3px;
-		padding: 0 0 0 30px;
-	}
-	.checker{
-		margin:1px 5px 0 -30px;
-		span.checked{
-			background-color: $brand;
-			margin: 0;
-		}
-		span.checked:after{
-			top:-22px;
-		}
 	}
 
 	&.time-filter{
@@ -1832,11 +1773,6 @@ li#notifications{
 	border-radius: 7px;
 	&.no-margin {
 		margin-right: 0px;
-	}
-}
-.select-list-table-wrapper{
-	.link-list{
-		margin-top: 25px !important;
 	}
 }
 .sidebar{
@@ -3408,10 +3344,6 @@ textarea::-webkit-input-placeholder {
 		padding-left:0;
 		.checker{
 			margin-right: 15px;
-
-			span.checked:after {
-				top: -16px;
-			}
 		}
 	}
 	select {
@@ -3660,9 +3592,6 @@ body.company_users{
 				display: block;
 				float: none;
 				margin: 0 auto;
-				span.checked:after {
-					top: -20px;
-				}
 			}
 			&.title{
 				font-size: 16px;
@@ -5537,6 +5466,11 @@ body.campaigns{
 					margin-left: 10px;
 					position: relative;
 					top: 2px;
+					&:after {
+						content: "\e625";
+						font-family: 'icons';
+						font-size: 18px;
+					}
 				}
 			}
 		}
@@ -6407,37 +6341,74 @@ body{
 	}
 }
 
-// Modal Table List
-.scroll-table-content {
+// Selectable object list widget
+.select-list-table-wrapper {
+	max-height: 257px;
 	border: 1px solid $borders;
 	margin: 20px 0 10px 0;
-	max-height: 233px;
 	overflow: auto;
-	.link-list {
+	.row-fluid:after{
+		clear: none;
+	}
+	#new_place{
+		float: left;
+		margin-bottom: 40px;
+		width: 100%;
+	}
+	.link-list{
 		border: 0;
 		width: 100%;
-		li {
-			min-height: 65px;
-			.brand-data, .kpi-data {
-				padding: 12px;
-			}
-			.member-data, .brand-data, .kpi-data {
-				.member-name, .brand-name, .kpi-name {
-					font-size: 16px;
+		margin-top: 0;
+		ul {
+			li{
+				display: table;
+				min-height: 85px !important;
+				height: 85px;
+				width: 100%;
+				span, p{
+					&:first-child{
+						display: table-cell !important;
+						vertical-align: middle;
+						padding-left: 20px;
+						span{
+							padding: 0;
+						}
+					}
+					&.add-button{
+						display: table-cell;
+						vertical-align: middle;
+					}
+					&.member-data{
+						padding-left: 60px;
+					}
 				}
-				.member-description {
-					display: block;
-					line-height: 16px;
+				.brand-data, .kpi-data {
+					padding: 12px;
 				}
-			}
-			a {
-				color: $venues_blue;
-				text-decoration: none;
-				&.icon-plus-sign:before {
-					display: block;
-					font-size: 21px;
-					margin: 0 0 0 60px;
-					top: 2px;
+				.member-data, .brand-data, .kpi-data {
+					.member-name, .brand-name, .kpi-name {
+						font-size: 16px;
+					}
+					.member-description {
+						display: block;
+						line-height: 16px;
+					}
+				}
+				a {
+					color: $venues_blue;
+					text-decoration: none;
+					&.icon-plus-sign:before {
+						display: block;
+						font-size: 21px;
+						margin: 0 0 0 60px;
+						top: 2px;
+					}
+				}
+				&.empty-list-message {
+					display: none;
+				}
+				&.empty-list-message:first-child:last-child {
+					display: table;
 				}
 			}
 		}
@@ -7239,49 +7210,7 @@ table.table.likert-scale-table {
 	}
 }
 
-/*-- RADIO BUTTONS STYLES --*/
-
-div.radio{
-	display: inline-block;
-	margin: 0 15px 5px 0;
-	padding: 0;
-	width: 20px;
-	span{
-		background: image-url('radio-unchecked.svg') no-repeat center center !important;
-		display: block;
-		height: 25px;
-		width: 25px;
-		&.help-inline{
-			border: 0;
-			width: 120px;
-			margin-left: -3px;
-			margin-top: 21px;
-			display: block;
-		}
-	}
-	span.checked{
-		background: image-url('radio-checked.svg') no-repeat center center !important;
-		display: block;
-		height: 25px;
-		margin: 0;
-		padding:0;
-		width: 25px;
-	}
-	input[type="radio"] {
-		float: right;
-		margin-left: 0;
-		opacity:0;
-		height: 25px;
-		width: 25px;
-	}
-}
-.radio-group{
-	display:inline-block;
-	margin-bottom: 10px;
-}
-
 /*-- NEW FEATURES --*/
-
 .new-feature{
 	background-color: $grey_one;
 	border-radius: 5px;

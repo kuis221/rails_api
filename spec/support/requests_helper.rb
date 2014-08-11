@@ -96,7 +96,7 @@ module CapybaraBrandscopicHelpers
 
   def select2_add_tag(tag)
     find('.select2-container').find(".select2-search-field").click
-    find("input.select2-input").set(tag)
+    fill_in "Add tags", with: tag
     page.execute_script(%|$("input.select2-input:visible").keyup();|)
     [tag].flatten.each do |tag|
       find(:xpath, "//body").find(".select2-results li", text: tag).click

@@ -2,9 +2,8 @@ li id="event_expense_#{event_expense.id}"
   span.data= event_expense.name
   span.total= number_to_currency(event_expense.amount, precision: 2)
   span.links
-    //= link_to '', event_expense.download_url, 'data-preview-url' => event_expense.receipt.file.url(:thumbnail), :class => "preview" if event_expense.receipt.present?
-    - if event_expense.receipt.present?
-      = link_to event_expense.receipt.preview_url, 'data-toggle' => 'gallery', title: 'View Receipt', class: 'icon-reciept' do
+    - if event_expense.receipt.present? && event_expense.receipt.file_file_name.present?
+      = link_to event_expense.receipt.preview_url, 'data-toggle' => 'gallery', title: 'View Receipt', class: 'icon-recipe' do
           = image_tag 'blank.gif', id: 'expense_image_'+event_expense.receipt.id.to_s, data: {\
                 urls: {\
                   download: event_expense.receipt.download_url\
