@@ -75,10 +75,8 @@ label.radio div.radio {
 	span.checked{
 		background: image-url('radio-checked.svg') no-repeat center center;
 		display: block;
-		height: 25px;
 		margin: 0;
 		padding:0;
-		width: 25px;
 	}
 	input[type="radio"] {
 		float: right;

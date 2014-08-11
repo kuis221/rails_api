@@ -1195,6 +1195,8 @@ footer{
 		margin-left: 5px;
 		.positive, .neutral, .negative{
 			display: inline-block;
+			margin: 0;
+			padding: 0;
 			.radio{
 				width: 15px;
 				span, input[type="radio"]{
