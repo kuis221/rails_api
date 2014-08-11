@@ -96,7 +96,7 @@ describe CompanyUsersController, type: :controller, search: true do
           expect(response).to be_success
 
           notifications = JSON.parse(response.body)
-          expect(notifications).to include({"message" => "There is one late event recap", "level"=>"red", "url"=>"/events?end_date=&event_status%5B%5D=Late&start_date=&status%5B%5D=Active&user%5B%5D=#{company_user.id}", "unread"=>true, "icon"=>"icon-notification-event", "type"=>"event_recaps_late"})
+          expect(notifications).to include({"message" => "There is one late event recap", "level"=>"red", "url"=>"/events?end_date=&event_status%5B%5D=Late&start_date=&status%5B%5D=Active", "unread"=>true, "icon"=>"icon-notification-event", "type"=>"event_recaps_late"})
         end
 
         it "should return a notification if the user have a submitted event recap that is waiting for approval" do
@@ -109,7 +109,7 @@ describe CompanyUsersController, type: :controller, search: true do
           expect(response).to be_success
 
           notifications = JSON.parse(response.body)
-          expect(notifications).to include({"message"=>"There is one event recap that is pending approval", "level"=>"blue", "url"=>"/events?end_date=&event_status%5B%5D=Submitted&start_date=&status%5B%5D=Active&user%5B%5D=#{company_user.id}", "unread"=>true, "icon"=>"icon-notification-event", "type"=>"event_recaps_pending"})
+          expect(notifications).to include({"message"=>"There is one event recap that is pending approval", "level"=>"blue", "url"=>"/events?end_date=&event_status%5B%5D=Submitted&start_date=&status%5B%5D=Active", "unread"=>true, "icon"=>"icon-notification-event", "type"=>"event_recaps_pending"})
         end
 
         it "should return a notification if the user have a due event recap" do
@@ -122,7 +122,7 @@ describe CompanyUsersController, type: :controller, search: true do
           expect(response).to be_success
 
           notifications = JSON.parse(response.body)
-          expect(notifications).to include({"message"=>"There is one event recap that is due", "level"=>"grey", "url"=>"/events?end_date=&event_status%5B%5D=Due&start_date=&status%5B%5D=Active&user%5B%5D=#{company_user.id}", "unread"=>true, "icon"=>"icon-notification-event", "type"=>"event_recaps_due"})
+          expect(notifications).to include({"message"=>"There is one event recap that is due", "level"=>"grey", "url"=>"/events?end_date=&event_status%5B%5D=Due&start_date=&status%5B%5D=Active", "unread"=>true, "icon"=>"icon-notification-event", "type"=>"event_recaps_due"})
         end
       end
     end
@@ -438,7 +438,7 @@ describe CompanyUsersController, type: :controller, search: true do
           expect(response).to be_success
 
           notifications = JSON.parse(response.body)
-          expect(notifications).to include({"message" => "There is one late event recap", "level"=>"red", "url"=>"/events?end_date=&event_status%5B%5D=Late&start_date=&status%5B%5D=Active&user%5B%5D=#{company_user.id}", "unread"=>true, "icon"=>"icon-notification-event", "type"=>"event_recaps_late"})
+          expect(notifications).to include({"message" => "There is one late event recap", "level"=>"red", "url"=>"/events?end_date=&event_status%5B%5D=Late&start_date=&status%5B%5D=Active", "unread"=>true, "icon"=>"icon-notification-event", "type"=>"event_recaps_late"})
         end
 
         it "should return a notification if the user have a submitted event recap that is waiting for approval" do
@@ -455,7 +455,7 @@ describe CompanyUsersController, type: :controller, search: true do
           expect(response).to be_success
 
           notifications = JSON.parse(response.body)
-          expect(notifications).to include({"message"=>"There is one event recap that is pending approval", "level"=>"blue", "url"=>"/events?end_date=&event_status%5B%5D=Submitted&start_date=&status%5B%5D=Active&user%5B%5D=#{company_user.id}", "unread"=>true, "icon"=>"icon-notification-event", "type"=>"event_recaps_pending"})
+          expect(notifications).to include({"message"=>"There is one event recap that is pending approval", "level"=>"blue", "url"=>"/events?end_date=&event_status%5B%5D=Submitted&start_date=&status%5B%5D=Active", "unread"=>true, "icon"=>"icon-notification-event", "type"=>"event_recaps_pending"})
         end
 
         it "should return a notification if the user have a due event recap" do
@@ -473,7 +473,7 @@ describe CompanyUsersController, type: :controller, search: true do
           expect(response).to be_success
 
           notifications = JSON.parse(response.body)
-          expect(notifications).to include({"message"=>"There is one event recap that is due", "level"=>"grey", "url"=>"/events?end_date=&event_status%5B%5D=Due&start_date=&status%5B%5D=Active&user%5B%5D=#{company_user.id}", "unread"=>true, "icon"=>"icon-notification-event", "type"=>"event_recaps_due"})
+          expect(notifications).to include({"message"=>"There is one event recap that is due", "level"=>"grey", "url"=>"/events?end_date=&event_status%5B%5D=Due&start_date=&status%5B%5D=Active", "unread"=>true, "icon"=>"icon-notification-event", "type"=>"event_recaps_due"})
         end
       end
     end

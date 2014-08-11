@@ -279,6 +279,31 @@ feature "Notifications", search: true, js: true do
       visit campaign_path(company_user.campaigns.first)
       expect(page).to have_notification 'You have a new campaign'
     end
+
+    feature "notification alert policy set to ALL" do
+      before { company.update_attribute(:settings, {event_alerts_policy: Notification::EVENT_ALERT_POLICY_ALL}) }
+
+      it "should receive notifications for late events recaps" do
+        company_user.update_attributes({notifications_settings: ['event_recap_late_app']})
+        without_current_user do
+          FactoryGirl.create(:late_event, company: company, campaign: campaign, place: place)
+        end
+        Sunspot.commit
+
+        visit root_path
+        expect(page).to have_notification 'There is one late event recap'
+
+        without_current_user{ FactoryGirl.create(:late_event, company: company, campaign: campaign, place: place) }
+        Sunspot.commit
+        visit root_path
+        expect(page).to have_notification 'There are 2 late event recaps'
+
+        click_notification 'There are 2 late event recaps'
+
+        expect(current_path).to eql events_path
+        expect(page).to have_selector('#events-list li', count: 2)
+      end
+    end
   end
 
   feature "Admin user" do
