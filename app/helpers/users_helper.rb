@@ -11,9 +11,11 @@ module UsersHelper
         status: ['Active'],
         current_company_user: current_company_user }
 
+      user_params = nil
       # If the notification policy is set to only event team members
       unless user.company.setting(:event_alerts_policy) == Notification::EVENT_ALERT_POLICY_ALL
         event_search_params.merge!(user: [user.id], team: user.team_ids)
+        user_params = [user.id]
       end
       events_search = Event.do_search(event_search_params, true)
       events_search.facet(:status).rows.each{|r| status_counts[r.value] = r.count }
@@ -22,7 +24,7 @@ module UsersHelper
       if status_counts[:due] > 0 && user.allow_notification?('event_recap_due_app')
         alerts.push({
           message: I18n.translate('notifications.event_recaps_due', count: status_counts[:due]),
-          level: 'grey', url: events_path(user: [user.id], status: ['Active'],
+          level: 'grey', url: events_path(user: user_params, status: ['Active'],
           event_status: ['Due'], start_date: '', end_date: ''),
           unread: true, icon: 'icon-notification-event', type: 'event_recaps_due',
         })
@@ -31,7 +33,7 @@ module UsersHelper
       if status_counts[:late] > 0 && user.allow_notification?('event_recap_late_app')
         alerts.push({
           message: I18n.translate('notifications.event_recaps_late', count: status_counts[:late]),
-          level: 'red', url: events_path(user: [user.id], status: ['Active'],
+          level: 'red', url: events_path(user: user_params, status: ['Active'],
           event_status: ['Late'], start_date: '', end_date: ''),
           unread: true, icon: 'icon-notification-event', type: 'event_recaps_late'
         })
@@ -41,7 +43,7 @@ module UsersHelper
       if status_counts[:submitted] > 0 && user.allow_notification?('event_recap_pending_approval_app')
         alerts.push({
           message: I18n.translate('notifications.recaps_prending_approval', count: status_counts[:submitted]),
-          level: 'blue', url: events_path(user: [user.id], status: ['Active'],
+          level: 'blue', url: events_path(user: user_params, status: ['Active'],
           event_status: ['Submitted'], start_date: '', end_date: ''),
           unread: true, icon: 'icon-notification-event', type: 'event_recaps_pending'
         })
@@ -51,7 +53,7 @@ module UsersHelper
       if status_counts[:rejected] > 0 && user.allow_notification?('event_recap_rejected_app')
         alerts.push({
           message: I18n.translate('notifications.rejected_recaps', count: status_counts[:rejected]),
-          url: events_path(user: [user.id], status: ['Active'], event_status: ['Rejected'], start_date: '', end_date: ''),
+          url: events_path(user: user_params, status: ['Active'], event_status: ['Rejected'], start_date: '', end_date: ''),
           unread: true, level: 'red',  icon: 'icon-notification-event', type: 'event_recaps_rejected'
         })
       end
