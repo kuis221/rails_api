@@ -152,16 +152,17 @@ class Task < ActiveRecord::Base
             any_of do
               with(:campaign_id, company_user.accessible_campaign_ids + [0])
               all_of do
-                 with(:campaign_id, nil)
-                 with(:company_user_id, company_user.id)
-              end
-            end
+                with(:campaign_id, nil)
+                with(:company_user_id, company_user.id)
 
-            any_of do
-              locations = company_user.accessible_locations
-              places_ids = company_user.accessible_places
-              with(:place_id, places_ids + [0])
-              with(:location, locations + [0])
+                any_of do
+                  locations = company_user.accessible_locations
+                  places_ids = company_user.accessible_places
+                  with(:campaign_id, nil)
+                  with(:place_id, places_ids + [0])
+                  with(:location, locations + [0])
+                end
+              end
             end
           end
         end
