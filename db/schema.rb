@@ -13,9 +13,9 @@
 
 ActiveRecord::Schema.define(:version => 20140809221042) do
 
+  add_extension "hstore"
   add_extension "pg_stat_statements"
   add_extension "tablefunc"
-  add_extension "hstore"
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
