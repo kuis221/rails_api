@@ -192,7 +192,7 @@ describe CompanyUsersController, :type => :controller do
     describe "DELETE 'remove_campaign'" do
       let(:user){ FactoryGirl.create(:company_user, user: FactoryGirl.create(:user), company_id: @company.id) }
       let(:campaign){ FactoryGirl.create(:campaign, company_id: @company.id) }
-      let(:brand){ FactoryGirl.create(:brand) }
+      let(:brand){ FactoryGirl.create(:brand, company: @company) }
 
       it 'should remove a campaing is assigned to the user' do
         user.campaigns << campaign
@@ -241,6 +241,7 @@ describe CompanyUsersController, :type => :controller do
 
       it "should add a campaign to the user that belongs to a brand" do
         campaign.brands << brand
+        expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{user.id}")
         expect {
           post 'add_campaign', id: user.id, parent_id: brand.id, parent_type: 'Brand', campaign_id: campaign.id, format: :js
           expect(response).to be_success
@@ -256,11 +257,12 @@ describe CompanyUsersController, :type => :controller do
     describe "disable_campaigns" do
       let(:user){ FactoryGirl.create(:company_user, user: FactoryGirl.create(:user), company_id: @company.id) }
       let(:campaign){ FactoryGirl.create(:campaign, company_id: @company.id) }
-      let(:brand){ FactoryGirl.create(:brand) }
+      let(:brand){ FactoryGirl.create(:brand, company: @company) }
 
       it "remove the brand as a membership and assign any campaign to the user with the brand as parent" do
         campaign.brands << brand
         user.brands << brand
+        expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{user.id}").at_least(:once)
         expect {
           post 'disable_campaigns', id: user.id, parent_id: brand.id, parent_type: 'Brand', format: :js
           expect(response).to be_success
@@ -278,13 +280,14 @@ describe CompanyUsersController, :type => :controller do
       end
     end
 
-
     describe "enable_campaigns" do
       let(:user){ FactoryGirl.create(:company_user, user: FactoryGirl.create(:user), company_id: @company.id) }
       let(:campaign){ FactoryGirl.create(:campaign, company_id: @company.id) }
-      let(:brand){ FactoryGirl.create(:brand) }
+      let(:brand){ FactoryGirl.create(:brand, company: @company) }
+      let(:brand_portfolio){ FactoryGirl.create(:brand_portfolio, company: @company) }
 
       it "remove the brand as a membership and assign any campaign to the user with the brand as parent" do
+        expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{user.id}")
         campaign.brands << brand
         expect {
           post 'enable_campaigns', id: user.id, parent_id: brand.id, parent_type: 'Brand', format: :js
@@ -301,11 +304,25 @@ describe CompanyUsersController, :type => :controller do
         campaign.brands << brand
         user.memberships.create(memberable: brand)
         user.reload
+
+        expect(Rails.cache).to_not receive(:delete).with("user_accessible_campaigns_#{user.id}")
         expect {
           post 'enable_campaigns', id: user.id, parent_id: brand.id, parent_type: 'Brand', format: :js
           expect(response).to be_success
         }.to_not change(user.memberships, :count)
+      end
 
+      it "should create a relationship between users and brand portfolio" do
+        expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{user.id}")
+        expect {
+          post 'enable_campaigns', id: user.id, parent_id: brand_portfolio.id, parent_type: 'BrandPortfolio', format: :js
+          expect(response).to be_success
+          user.reload
+        }.to change(user.brand_portfolios, :count).by(1)
+
+        expect(user.memberships.map(&:parent)).to eq([nil])
+        expect(user.memberships.map(&:memberable)).to eq([brand_portfolio])
+        expect(user.campaigns).to eq([])
       end
     end
   end

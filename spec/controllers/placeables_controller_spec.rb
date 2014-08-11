@@ -56,6 +56,8 @@ describe PlaceablesController, :type => :controller do
     end
 
     it "should add the area to the company user" do
+      expect(Rails.cache).to receive(:delete).with("user_accessible_locations_#{company_user.id}")
+      expect(Rails.cache).to receive(:delete).with("user_accessible_places_#{company_user.id}")
       expect {
         post 'add_area', company_user_id: company_user.id, area: area.id, format: :js
       }.to change(company_user.areas, :count).by(1)
@@ -94,6 +96,8 @@ describe PlaceablesController, :type => :controller do
       area_goal.value = 100
       area_goal.save
 
+      expect(Rails.cache).to receive(:delete).with("user_accessible_locations_#{company_user.id}")
+      expect(Rails.cache).to receive(:delete).with("user_accessible_places_#{company_user.id}")
       expect {
         expect {
           delete 'remove_area', company_user_id: company_user.id, area: area.id, format: :js

@@ -13,7 +13,7 @@ describe Api::V1::SurveysController, :type => :controller do
 
   describe "GET 'index'" do
     it "should return failure for invalid authorization token" do
-      campaign.update_attribute(:enabled_modules, ['surveys'])
+      campaign.update_attribute(:modules, {'surveys' => {}})
       get :index, company_id: company.to_param, auth_token: 'XXXXXXXXXXXXXXXX', event_id: 100, format: :json
       expect(response.response_code).to eql 401
       result = JSON.parse(response.body)
@@ -23,7 +23,7 @@ describe Api::V1::SurveysController, :type => :controller do
     end
 
     it "returns the list of surveys for the event" do
-      campaign.update_attribute(:enabled_modules, ['surveys'])
+      campaign.update_attribute(:modules, {'surveys' => {}})
       survey1 = FactoryGirl.create(:survey, event: event)
       survey2 = FactoryGirl.create(:survey, event: event)
 
@@ -41,7 +41,7 @@ describe Api::V1::SurveysController, :type => :controller do
   end
 
   describe "GET 'show'" do
-    before { campaign.update_attribute(:enabled_modules, ['surveys']) }
+    before { campaign.update_attribute(:modules, {'surveys' => {}}) }
     it "should return failure for invalid authorization token" do
       get :show, company_id: company.to_param, auth_token: 'XXXXXXXXXXXXXXXX', event_id: 100, id: 1, format: :json
       expect(response.response_code).to eql 401
@@ -67,8 +67,8 @@ describe Api::V1::SurveysController, :type => :controller do
       brand2 = FactoryGirl.create(:brand)
 
       # Assign the surveys module and brands to the campaign
-      campaign.update_attributes enabled_modules: ['surveys'],
-          survey_brand_ids: [brand1.id, brand2.id]
+      campaign.update_attributes(modules: {'surveys' => {}},
+          survey_brand_ids: [brand1.id, brand2.id])
 
       age_answer = Kpi.age.kpis_segments.sample
       gender_answer = Kpi.gender.kpis_segments.sample

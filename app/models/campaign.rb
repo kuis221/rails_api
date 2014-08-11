@@ -2,22 +2,23 @@
 #
 # Table name: campaigns
 #
-#  id              :integer          not null, primary key
-#  name            :string(255)
-#  description     :text
-#  aasm_state      :string(255)
-#  created_by_id   :integer
-#  updated_by_id   :integer
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  company_id      :integer
-#  first_event_id  :integer
-#  last_event_id   :integer
-#  first_event_at  :datetime
-#  last_event_at   :datetime
-#  start_date      :date
-#  end_date        :date
-#  enabled_modules :string(255)      default([])
+#  id               :integer          not null, primary key
+#  name             :string(255)
+#  description      :text
+#  aasm_state       :string(255)
+#  created_by_id    :integer
+#  updated_by_id    :integer
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  company_id       :integer
+#  first_event_id   :integer
+#  last_event_id    :integer
+#  first_event_at   :datetime
+#  last_event_at    :datetime
+#  start_date       :date
+#  end_date         :date
+#  survey_brand_ids :integer          default([])
+#  modules          :text
 #
 
 class Campaign < ActiveRecord::Base
@@ -30,6 +31,8 @@ class Campaign < ActiveRecord::Base
   scoped_to_company
 
   attr_accessor :brands_list
+
+  serialize :modules
 
   # Required fields
   validates :name, presence: true
@@ -47,20 +50,20 @@ class Campaign < ActiveRecord::Base
   validates_date :end_date, :on_or_after => :start_date, allow_nil: true, allow_blank: true, on_or_after_message: ''
 
   # Campaigns-Brands relationship
-  has_and_belongs_to_many :brands, :order => 'name ASC', :autosave => true
+  has_and_belongs_to_many :brands, :order => 'name ASC', conditions: { brands: {active: true} }, :autosave => true
 
   # Campaigns-Brand Portfolios relationship
-  has_and_belongs_to_many :brand_portfolios, :order => 'name ASC', :autosave => true, after_remove: :remove_child_goals_for
+  has_and_belongs_to_many :brand_portfolios, :order => 'name ASC', conditions: { brand_portfolios: {active: true} }, :autosave => true, after_remove: :remove_child_goals_for
   has_many :brand_portfolio_brands, through: :brand_portfolios, class_name: 'Brand', source: :brands
 
   # Campaigns-Areas relationship
-  has_and_belongs_to_many :areas, :order => 'name ASC', :autosave => true, after_remove: :clear_locations_cache, after_add: :clear_locations_cache
+  has_and_belongs_to_many :areas, :order => 'name ASC', conditions: {active: true}, :autosave => true, after_remove: :clear_locations_cache, after_add: :clear_locations_cache
 
   # Campaigns-Areas relationship
-  has_and_belongs_to_many :date_ranges, :order => 'name ASC', :autosave => true, after_remove: :remove_child_goals_for
+  has_and_belongs_to_many :date_ranges, :order => 'name ASC', conditions: {active: true}, :autosave => true, after_remove: :remove_child_goals_for
 
   # Campaigns-Areas relationship
-  has_and_belongs_to_many :day_parts, :order => 'name ASC', :autosave => true, after_remove: :remove_child_goals_for
+  has_and_belongs_to_many :day_parts, :order => 'name ASC', conditions: {active: true}, :autosave => true, after_remove: :remove_child_goals_for
 
   belongs_to :first_event, class_name: 'Event'
   belongs_to :last_event, class_name: 'Event'
@@ -76,6 +79,8 @@ class Campaign < ActiveRecord::Base
   # Campaigns-Teams relationship
   has_many :teamings, :as => :teamable
   has_many :teams, :through => :teamings, :after_add => :reindex_associated_resource, :after_remove => :reindex_associated_resource
+
+  has_many :user_teams, :class_name => 'CompanyUser', source: :users, :through => :teams
 
   has_many :form_fields, :as => :fieldable, order: 'form_fields.ordering ASC'
 
@@ -138,6 +143,10 @@ class Campaign < ActiveRecord::Base
     integer :brand_ids, multiple: true
 
     integer :brand_portfolio_ids, multiple: true
+
+    integer :company_user_ids, multiple: true do
+      user_ids
+    end
   end
 
   def has_date_range?
@@ -153,11 +162,23 @@ class Campaign < ActiveRecord::Base
   end
 
   def staff_users
-    staff_users = (
-      users.active +
-      CompanyUser.active.scoped_by_company_id(company_id).joins(:brands).where(brands: {id: brand_ids}) +
-      CompanyUser.active.scoped_by_company_id(company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids})
-    ).uniq
+    @staff_users ||= CompanyUser.find_by_sql("
+      #{users.active.to_sql} UNION
+      #{CompanyUser.active.scoped_by_company_id(company_id).joins(:brands).where(brands: {id: brand_ids}).to_sql} UNION
+      #{CompanyUser.active.scoped_by_company_id(company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids}).to_sql}
+    ")
+  end
+
+  # This is similar to #staff_users except that it also include users from the
+  # teams associated
+  def all_users_with_access
+    @staff_users ||= CompanyUser.find_by_sql("
+      #{users.active.to_sql} UNION
+      #{user_teams.active.to_sql} UNION
+      #{company.company_users.active.admin.to_sql} UNION
+      #{CompanyUser.active.scoped_by_company_id(company_id).joins(:brands).where(brands: {id: brand_ids}).to_sql} UNION
+      #{CompanyUser.active.scoped_by_company_id(company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids}).to_sql}
+    ")
   end
 
   def areas_and_places
@@ -189,9 +210,10 @@ class Campaign < ActiveRecord::Base
     brands.each{|brand| brand.mark_for_destruction unless brands_names.include?(brand.name) }
   end
 
-  def promo_hours_graph_data
+  def promo_hours_graph_data(user)
     stats={}
-    queries = children_goals.with_value.includes(:goalable).where(kpi_id: [Kpi.events.id, Kpi.promo_hours.id]).for_areas(area_ids).map do |goal|
+    user_allowed_areas = areas.accessible_by_user(user).pluck('areas.id')
+    queries = children_goals.with_value.includes(:goalable).where(kpi_id: [Kpi.events.id, Kpi.promo_hours.id]).for_areas(user_allowed_areas).map do |goal|
       name, group = if goal.kpi_id == Kpi.events.id then ['EVENTS', 'COUNT(events.id)'] else ['PROMO HOURS', 'SUM(events.promo_hours)'] end
       stats["#{goal.goalable.id}-#{name}"] = {"id"=>goal.goalable.id, "name"=>goal.goalable.name, "goal"=>goal.value, "kpi"=>name, "executed"=>0.0, "scheduled"=>0.0}
       events.active.in_areas([goal.goalable]).
@@ -250,6 +272,14 @@ class Campaign < ActiveRecord::Base
 
   def reindex_associated_resource(resource)
     Sunspot.index(resource)
+  end
+
+  def enabled_modules
+    if modules
+      modules.keys
+    else
+      []
+    end
   end
 
   def enabled_modules_kpis
@@ -338,7 +368,7 @@ class Campaign < ActiveRecord::Base
       "7" => {"ordering"=>"7", "name"=>"Impressions", "field_type"=>"FormField::Number", "kpi_id"=> Kpi.impressions.id},
       "8" => {"ordering"=>"8", "name"=>"Interactions", "field_type"=>"FormField::Number", "kpi_id"=> Kpi.interactions.id},
       "9" => {"ordering"=>"9", "name"=>"Samples", "field_type"=>"FormField::Number", "kpi_id"=> Kpi.samples.id},
-    }, enabled_modules: ['expenses', 'photos', 'surveys', 'videos', 'comments'])
+    }, modules: {'expenses' => {}, 'photos' => {}, 'surveys' => {}, 'videos' => {}, 'comments' => {}})
     save if autosave
   end
 

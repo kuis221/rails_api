@@ -18,6 +18,7 @@
 class FormField < ActiveRecord::Base
   MIN_OPTIONS_ALLOWED = 1
   MIN_STATEMENTS_ALLOWED = 1
+  VALID_RANGE_FORMATS = %w(digits characters words value)
   belongs_to :fieldable, polymorphic: true
 
   has_many :options, class_name: 'FormFieldOption', conditions: {option_type: 'option'}, dependent: :destroy, inverse_of: :form_field, foreign_key: :form_field_id, order: 'form_field_options.ordering ASC'
@@ -34,6 +35,8 @@ class FormField < ActiveRecord::Base
   validates :type, presence: true,
     format: { with: /\AFormField::/ }
   validates :ordering, presence: true, numericality: true
+
+  validate :valid_range_settings?
 
   validates :kpi_id,
     uniqueness: { scope: [:fieldable_id, :fieldable_type], allow_blank: true, allow_nil: true }
@@ -52,11 +55,19 @@ class FormField < ActiveRecord::Base
     ['input-xlarge'] + (is_numeric? ? ['number'] : [])
   end
 
+  def field_data
+    {}
+  end
+
   def store_value(value)
     value
   end
 
   def format_html(result)
+    result.value
+  end
+
+  def format_csv(result)
     result.value
   end
 
@@ -89,6 +100,41 @@ class FormField < ActiveRecord::Base
     if required? && (result.value.nil? || (result.value.is_a?(String) && result.value.empty?))
       result.errors.add(:value, I18n.translate('errors.messages.blank'))
     end
+    if is_hashed_value?
+      if required? && (result.value.nil? || (result.value.is_a?(Hash) && result.value.empty?))
+        result.errors.add(:value, I18n.translate('errors.messages.blank'))
+      elsif result.value.present?
+        if result.value.is_a?(Hash)
+          if result.value.any?{|k, v| v != '' && !is_valid_value_for_key?(k, v) }
+            result.errors.add :value, :invalid
+          elsif (result.value.keys.map(&:to_i) - valid_hash_keys).any?
+            result.errors.add :value, :invalid  # If a invalid key was given
+          end
+        else
+          result.errors.add :value, :invalid
+        end
+      end
+    end
+
+    if has_range_value_settings? && result.value.present? && !result.value.to_s.empty?
+      val = result.value.to_s.strip
+      if self.settings['range_format'] == 'characters'
+        items = val.length
+      elsif self.settings['range_format'] == 'words'
+        items = val.scan(/\w+/).size
+      elsif self.settings['range_format'] == 'digits'
+        items = val.gsub(/[\.\,\s]/, '').length
+      elsif self.settings['range_format'] == 'value'
+        items = val.to_f rescue 0
+      end
+
+      min_result = !self.settings['range_min'].present? || (items >= self.settings['range_min'].to_i)
+      max_result = !self.settings['range_max'].present? || (items <= self.settings['range_max'].to_i)
+
+      if !min_result || !max_result
+        result.errors.add :value, :invalid
+      end
+    end
   end
 
   def options_for_input
@@ -116,4 +162,36 @@ class FormField < ActiveRecord::Base
   def value_is_numeric?(value)
     true if Float(value) rescue false
   end
+
+  protected
+    def valid_hash_keys
+      options_for_input.map{|o| o[1]}
+    end
+
+    def is_valid_value_for_key?(key, value)
+      value_is_numeric?(value)
+    end
+
+    def has_range_value_settings?
+      self.settings &&
+      self.settings.has_key?('range_format') && self.settings['range_format'] &&
+      (
+        (self.settings.has_key?('range_min') && self.settings['range_min'].present?) ||
+        (self.settings.has_key?('range_max') && self.settings['range_max'].present?)
+      )
+    end
+
+    def valid_range_settings?
+      if self.settings
+        errors.add :settings, :invalid if settings['range_format'] && !VALID_RANGE_FORMATS.include?(settings['range_format'])
+        errors.add :settings, :invalid if settings['range_max'].present? && !value_is_numeric?(settings['range_max'])
+        errors.add :settings, :invalid if settings['range_min'].present? && !value_is_numeric?(settings['range_min'])
+        if settings['range_min'].present? &&  settings['range_max'].present? &&
+          value_is_numeric?(settings['range_min']) && value_is_numeric?(settings['range_max']) &&
+          settings['range_min'].to_i > settings['range_max'].to_i
+          !value_is_numeric?(settings['range_min'])
+          errors.add :settings, :invalid
+        end
+      end
+    end
 end

@@ -85,7 +85,9 @@ class Results::GvaController < InheritedResources::Base
       if params[:group_by] == 'campaign'
         campaign.goals
       elsif params[:group_by] == 'place'
-        campaign.children_goals.for_areas_and_places(campaign.area_ids, campaign.place_ids)
+        campaign.children_goals.for_areas_and_places(
+          campaign.areas.accessible_by_user(current_company_user).pluck('areas.id'),
+          campaign.places.select{|place| current_company_user.allowed_to_access_place?(place) }.map(&:id))
       else
         campaign.children_goals.for_users_and_teams
       end.select('goalable_id, goalable_type').where('value IS NOT NULL').includes(:goalable).group('goalable_id, goalable_type').map(&:goalable).sort_by(&:name)

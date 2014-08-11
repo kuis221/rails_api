@@ -30,7 +30,13 @@ RSpec.shared_examples "a fieldable element" do
 
     within form_field_settings_for 'Paragraph' do
       fill_in 'Field label', with: 'My Text Field'
-      unicheck('Required')
+
+      # Range settings
+      fill_in 'Min', with: '10'
+      fill_in 'Max', with: '150'
+      select_from_chosen 'Words', from: 'Format'
+
+      unicheck 'Required'
     end
 
     expect(form_builder).to have_form_field('My Text Field')
@@ -50,6 +56,10 @@ RSpec.shared_examples "a fieldable element" do
 
     within form_field_settings_for 'My Text Field' do
       expect(find_field('Field label').value).to eql 'My Text Field'
+      expect(find_field('Min').value).to eql '10'
+      expect(find_field('Max').value).to eql '150'
+      expect(page).to have_text 'Words'
+      expect(find_field('Format', visible: false).value).to eql 'words'
       expect(find_field('Required')['checked']).to be_truthy
     end
   end
@@ -63,6 +73,12 @@ RSpec.shared_examples "a fieldable element" do
 
     within form_field_settings_for 'Single line text' do
       fill_in 'Field label', with: 'My Text Field'
+
+      # Range settings
+      fill_in 'Min', with: '10'
+      fill_in 'Max', with: '150'
+      select_from_chosen 'Words', from: 'Format'
+
       unicheck('Required')
     end
 
@@ -84,6 +100,10 @@ RSpec.shared_examples "a fieldable element" do
 
     within form_field_settings_for 'My Text Field' do
       expect(find_field('Field label').value).to eql 'My Text Field'
+      expect(find_field('Min').value).to eql '10'
+      expect(find_field('Max').value).to eql '150'
+      expect(page).to have_text 'Words'
+      expect(find_field('Format', visible: false).value).to eql 'words'
       expect(find_field('Required')['checked']).to be_truthy
     end
   end
@@ -97,6 +117,12 @@ RSpec.shared_examples "a fieldable element" do
 
     within form_field_settings_for 'Number' do
       fill_in 'Field label', with: 'My Numeric Field'
+
+      # Range settings
+      fill_in 'Min', with: '10'
+      fill_in 'Max', with: '150'
+      select_from_chosen 'Value', from: 'Format'
+
       unicheck('Required')
     end
 
@@ -117,6 +143,10 @@ RSpec.shared_examples "a fieldable element" do
 
     within form_field_settings_for 'My Numeric Field' do
       expect(find_field('Field label').value).to eql 'My Numeric Field'
+      expect(find_field('Min').value).to eql '10'
+      expect(find_field('Max').value).to eql '150'
+      expect(page).to have_text 'Value'
+      expect(find_field('Format', visible: false).value).to eql 'value'
       expect(find_field('Required')['checked']).to be_truthy
     end
   end
@@ -131,6 +161,12 @@ RSpec.shared_examples "a fieldable element" do
 
     within form_field_settings_for 'Price' do
       fill_in 'Field label', with: 'My Price Field'
+
+      # Range settings
+      fill_in 'Min', with: '10'
+      fill_in 'Max', with: '150'
+      select_from_chosen 'Value', from: 'Format'
+
       unicheck('Required')
     end
 
@@ -151,6 +187,11 @@ RSpec.shared_examples "a fieldable element" do
 
     within form_field_settings_for 'My Price Field' do
       expect(find_field('Field label').value).to eql 'My Price Field'
+      expect(find_field('Min').value).to eql '10'
+      expect(find_field('Max').value).to eql '150'
+      expect(page).to have_text 'Value'
+      expect(find_field('Format', visible: false).value).to eql 'value'
+
       expect(find_field('Required')['checked']).to be_truthy
     end
   end
@@ -893,6 +934,83 @@ RSpec.shared_examples "a fieldable element that accept kpis" do
     description: 'my custom kpi description',
     kpi_type: 'number', capture_mechanism: 'integer', company: fieldable.company) }
 
+  scenario "add a global KPIs to the form" do
+    Kpi.create_global_kpis
+    visit fieldable_path
+    expect(page).to have_selector('h2', text: fieldable.name)
+    find('.fields-wrapper .accordion-toggle', text: 'KPIs').click
+    find('.fields-wrapper .accordion-toggle', text: 'Fields').click # Hide fields
+
+    # Wait for accordeon effect to complate
+    within('.fields-wrapper') do
+      expect(page).to have_no_content('Dropdown')
+    end
+
+    within('.fields-wrapper') do
+      expect(page).to have_content('Impressions')
+      expect(page).to have_content('Interactions')
+      expect(page).to have_content('Samples')
+      expect(page).to have_content('Age')
+      expect(page).to have_content('Gender')
+      expect(page).to have_content('Ethnicity/Race')
+    end
+
+    kpi_field(Kpi.impressions).drag_to form_builder
+    kpi_field(Kpi.interactions).drag_to form_builder
+    kpi_field(Kpi.age).drag_to form_builder
+    kpi_field(Kpi.gender).drag_to form_builder
+    kpi_field(Kpi.ethnicity).drag_to form_builder
+    kpi_field(Kpi.samples).drag_to form_builder
+
+    # Make sure the KPIs are not longer available in the KPIs list
+    within('.fields-wrapper') do
+      expect(page).to have_no_content('Impressions')
+      expect(page).to have_no_content('Interactions')
+      expect(page).to have_no_content('Samples')
+      expect(page).to have_no_content('Age')
+      expect(page).to have_no_content('Gender')
+      expect(page).to have_no_content('Ethnicity/Race')
+    end
+
+    within form_field_settings_for 'Impressions' do
+      fill_in 'Field label', with: 'Impressions Custom Name'
+      unicheck('Required')
+    end
+
+    expect(form_builder).to have_form_field('Impressions Custom Name')
+
+    # Close the field settings form
+    form_builder.trigger 'click'
+    expect(page).to have_no_selector('.field-attributes-panel')
+
+    # Save the form
+    expect {
+      click_js_button 'Save'
+      wait_for_ajax
+    }.to change(FormField, :count).by(6)
+    field = fieldable.form_fields.where(kpi_id: Kpi.impressions).first
+    expect(field.name).to eql 'Impressions Custom Name'
+    expect(field.type).to eql 'FormField::Number'
+    expect(field.kpi_id).to eql field.kpi_id
+
+    within form_field_settings_for 'Impressions Custom Name' do
+      expect(find_field('Field label').value).to eql 'Impressions Custom Name'
+      expect(find_field('Required')['checked']).to be_truthy
+    end
+
+    # Remove the impressions KPI form the form
+    form_field_settings_for 'Impressions Custom Name'
+    within form_builder.find('.field.selected') do
+      click_js_link 'Remove'
+    end
+
+    confirm_prompt "Removing this field will remove all the entered data/answers associated with it. Are you sure you want to do this?"
+
+    # Make sure the KPI is again available in the KPIs list
+    within('.fields-wrapper') do
+      expect(page).to have_content('Impressions')
+    end
+  end
 
   scenario "add a kpi to the form" do
     kpi.save
@@ -979,6 +1097,11 @@ RSpec.shared_examples "a fieldable element that accept modules" do
 
     expect(find('.form-wrapper')).to have_selector('.form-section.module[data-type=Photos]')
 
+    within form_field_settings_for(module_section('Gallery')) do
+      fill_in 'Min', with: '10'
+      fill_in 'Max', with: '150'
+    end
+
     # Save the form
     click_js_button 'Save'
     wait_for_ajax
@@ -986,8 +1109,12 @@ RSpec.shared_examples "a fieldable element that accept modules" do
 
     visit fieldable_path
 
-    expect(find('.form-wrapper')).to have_selector('.form-section.module[data-type=Photos]')
-    within '.form-section.module[data-type=Photos]' do
+    within form_field_settings_for(module_section('Gallery')) do
+      expect(find_field('Min').value).to eql '10'
+      expect(find_field('Max').value).to eql '150'
+    end
+
+    within module_section('Gallery') do
       click_js_link 'Remove'
     end
 
@@ -1187,6 +1314,10 @@ end
 
 def module_field(module_name)
   find('.fields-wrapper .module', text: module_name)
+end
+
+def module_section(name)
+  find('.form-section.module', text: name + ' Module')
 end
 
 def form_builder

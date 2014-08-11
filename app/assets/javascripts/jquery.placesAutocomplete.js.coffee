@@ -9,6 +9,10 @@ $.widget 'nmk.placesAutocomplete', {
 				source: '/places/search.json',
 				appendTo: @element.parent(),
 				select: ( event, ui ) =>
+					if ui.item.valid is false
+						event.preventDefault()
+						return false
+					
 					$(@element.data('hidden')).val ui.item.id
 					@value = ui.item.label
 					if typeof @options.select is 'function'
@@ -34,7 +38,7 @@ $.widget "custom.places_autocomplete", $.ui.autocomplete, {
 			"<strong>$&</strong>");
 
 		$("<li></li>")
-			.addClass('ui-menu-item')
+			.addClass('ui-menu-item ' + (if item.valid then 'valid-place' else 'invalid-place'))
 			.data("item.autocomplete", item)
 			.append("<a>" + newText + "</a>")
 			.appendTo(ul)

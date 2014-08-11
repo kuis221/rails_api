@@ -24,7 +24,7 @@ feature 'Events section' do
 
     before do
       Kpi.create_global_kpis
-      event.campaign.update_attribute :enabled_modules, ['expenses']
+      event.campaign.update_attribute(:modules, {'expenses' => {}})
     end
     scenario "can attach a expense to event" do
       with_resque do # So the document is processed
@@ -53,6 +53,21 @@ feature 'Events section' do
         end
         asset = AttachedAsset.last
         expect(asset.file_file_name).to eql 'file.pdf'
+
+        # Test user can preview and download the receipt
+        within '.details_box.box_expenses' do
+          click_js_link 'View Receipt'
+        end
+
+        within visible_modal do
+          src = asset.file.url(:thumbnail, timestamp: false)
+          expect(page).to have_xpath("//img[starts-with(@src, \"#{src}\")]", wait: 10)
+          find('.slider').hover
+
+          src = asset.file.url(:original, timestamp: false).gsub('http:', 'https:')
+          expect(page).to have_link('Download')
+          expect(page).to have_xpath("//a[starts-with(@href, \"#{src}\")]")
+        end
       end
     end
   end

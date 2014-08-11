@@ -286,8 +286,8 @@ describe Api::V1::EventsController, :type => :controller do
     let(:event) { FactoryGirl.create(:event, company: company, campaign: FactoryGirl.create(:campaign, company: company)) }
     it "return a list of users" do
       users = [
-        FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Luis', last_name: 'Perez', email: "luis@gmail.com", street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12345), role: FactoryGirl.create(:role, name: 'Field Ambassador', company: event.company)),
-        FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Pedro', last_name: 'Guerra', email: "pedro@gmail.com", street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12345), role: FactoryGirl.create(:role, name: 'Coach', company: event.company))
+        FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Luis', last_name: 'Perez', email: "luis@gmail.com", street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12345), role: FactoryGirl.create(:role, name: 'Field Ambassador', company: event.company), company: event.company),
+        FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Pedro', last_name: 'Guerra', email: "pedro@gmail.com", street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12345), role: FactoryGirl.create(:role, name: 'Coach', company: event.company), company: event.company)
       ]
       event.users << users
 

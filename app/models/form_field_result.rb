@@ -3,7 +3,6 @@
 # Table name: form_field_results
 #
 #  id              :integer          not null, primary key
-#  activity_id     :integer
 #  form_field_id   :integer
 #  value           :text
 #  created_at      :datetime         not null
@@ -20,6 +19,8 @@ class FormFieldResult < ActiveRecord::Base
 
   validate :valid_value?
   validates :form_field_id, numericality: true, presence: true
+
+  delegate :company_id, to: :resultable
 
   has_one :attached_asset, :as => :attachable, dependent: :destroy
 
@@ -49,6 +50,10 @@ class FormFieldResult < ActiveRecord::Base
 
   def to_html
     form_field.format_html self
+  end
+
+  def to_csv
+    form_field.format_csv self
   end
 
   protected

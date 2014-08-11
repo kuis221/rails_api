@@ -10,7 +10,7 @@
 #  updated_at             :datetime         not null
 #  active                 :boolean          default(TRUE)
 #  last_activity_at       :datetime
-#  notifications_settings :string(255)      default("{}")
+#  notifications_settings :string(255)      default([])
 #
 
 require 'spec_helper'
@@ -67,15 +67,15 @@ describe CompanyUser, :type => :model do
 
   describe "#by_events scope" do
     it "should return users that assigned to the specific events" do
+      event = FactoryGirl.create(:event)
       users = [
-        FactoryGirl.create(:company_user),
-        FactoryGirl.create(:company_user)
+        FactoryGirl.create(:company_user, company: event.company),
+        FactoryGirl.create(:company_user, company: event.company)
       ]
       other_users = [
-        FactoryGirl.create(:company_user)
+        FactoryGirl.create(:company_user, company: event.company)
       ]
-      event = FactoryGirl.create(:event)
-      other_event = FactoryGirl.create(:event)
+      other_event = FactoryGirl.create(:event, company: event.company)
       users.each{|u| event.users << u}
       other_users.each{|u| other_event.users << u}
       expect(CompanyUser.by_events(event).all).to match_array(users)
@@ -210,15 +210,25 @@ describe CompanyUser, :type => :model do
   end
 
   describe "#allow_notification?" do
-    let(:user) { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
+    let(:user) { FactoryGirl.create(:company_user, company_id: 1,
+      role: FactoryGirl.create(:role, is_admin: false)) }
 
     it "should return false if the user is not allowed to receive a notification" do
       expect(user.allow_notification?('new_campaign_sms')).to be_falsey
     end
 
-    it "sshould return false if the user is allowed to receive a notification" do
+    it "should return true if the user is allowed to receive a notification" do
       user.update_attributes({notifications_settings: ['new_campaign_sms']})
       expect(user.allow_notification?('new_campaign_sms')).to be_truthy
+    end
+
+    describe "user without phone number" do
+      it "should return true if the user is allowed to receive a notification" do
+        user.user.phone_number = nil
+        user.update_attributes({notifications_settings: ['new_campaign_app', 'new_campaign_sms']})
+        expect(user.allow_notification?('new_campaign_app')).to be_truthy
+        expect(user.allow_notification?('new_campaign_sms')).to be_falsey
+      end
     end
   end
 
@@ -252,6 +262,56 @@ describe CompanyUser, :type => :model do
       expect(CompanyUser.with_notifications(['notification2'])).to match_array [user1]
 
       expect(CompanyUser.with_notifications(['notification1'])).to match_array [user1, user2]
+    end
+  end
+
+  describe "#campaigns_changed" do
+    let(:company) { FactoryGirl.create(:company) }
+    let(:company_user) { FactoryGirl.create(:company_user, company: company) }
+    let(:campaign) { FactoryGirl.create(:campaign, company: company) }
+    let(:brand) { FactoryGirl.create(:brand, company: company) }
+    let(:brand_portfolio) { FactoryGirl.create(:brand_portfolio, company: company) }
+
+    it "should clear cache after adding campaigns to user" do
+      expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{company_user.id}")
+      company_user.campaigns << campaign
+    end
+
+    it "should clear cache after adding brands to user" do
+      expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{company_user.id}")
+      company_user.brands << brand
+    end
+
+    it "should clear cache after adding brand portfolios to user" do
+      expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{company_user.id}")
+      company_user.brand_portfolios << brand_portfolio
+    end
+
+    it "should clear cache after adding campaigns to user" do
+      company_user.campaigns << campaign
+      expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{company_user.id}")
+      company_user.campaigns.destroy campaign
+    end
+
+    it "should clear cache after adding brands to user" do
+      company_user.brands << brand
+      expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{company_user.id}")
+      company_user.brands.destroy brand
+    end
+
+    it "should clear cache after adding brand portfolios to user" do
+      company_user.brand_portfolios << brand_portfolio
+      expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{company_user.id}")
+      company_user.brand_portfolios.destroy brand_portfolio
+    end
+  end
+
+  describe "default notifications settings" do
+    it "should assign all notifications settings on creation " do
+      user = FactoryGirl.create(:company_user, notifications_settings: nil)
+      expect(user.notifications_settings).not_to be_empty
+      expect(user.notifications_settings.length).to eql CompanyUser::NOTIFICATION_SETTINGS_TYPES.length
+      expect(user.notifications_settings).to include('event_recap_due_app')
     end
   end
 end

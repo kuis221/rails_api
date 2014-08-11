@@ -5,7 +5,7 @@ feature "Notifications", search: true, js: true do
   let(:campaign) { FactoryGirl.create(:campaign, company: company) }
   let(:user) { FactoryGirl.create(:user, company: company, role_id: role.id) }
   let(:company_user) { user.company_users.first }
-  let(:team) { FactoryGirl.create(:team, name: 'Team 1') }
+  let(:team) { FactoryGirl.create(:team, name: 'Team 1', company: company ) }
   let(:place) { FactoryGirl.create(:place, name: 'A Nice Place', country:'CR', city: 'Curridabat', state: 'San Jose') }
   let(:permissions) { [] }
 

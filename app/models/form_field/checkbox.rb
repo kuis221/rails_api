@@ -33,7 +33,18 @@ class FormField::Checkbox < FormField
   def format_html(result)
     unless result.value.nil? || result.value.empty?
       selected = result.value.map(&:to_i)
-      options_for_input.select{|r| selected.include?(r[1].to_i) }.map{|v| v[0] }.to_sentence
+      options_for_input.select{|r| selected.include?(r[1].to_i) }.map do |v|
+        "<span>#{v[0]}</span>"
+      end.join.html_safe
+    end
+  end
+
+  def format_csv(result)
+    unless result.value.nil? || result.value.empty?
+      selected = result.value.map(&:to_i)
+      options_for_input.select{|r| selected.include?(r[1].to_i) }.map do |v|
+        v[0]
+      end.join(',')
     end
   end
 
@@ -52,6 +63,18 @@ class FormField::Checkbox < FormField
       Hash[values.reject{|v| v.nil? || (v.respond_to?(:empty?) && v.empty?) }.map{|v| [v, 1] }]
     else
       {values => nil}
+    end
+  end
+
+  def validate_result(result)
+    if required? && (result.hash_value.nil? || result.hash_value.keys.empty?)
+      result.errors.add(:value, I18n.translate('errors.messages.blank'))
+    elsif result.hash_value.present?
+      if result.hash_value.any?{|k, v| v != '' && !is_valid_value_for_key?(k, v) }
+        result.errors.add :value, :invalid
+      elsif (result.hash_value.keys.map(&:to_s) - valid_hash_keys.map(&:to_s)).any?
+        result.errors.add :value, :invalid  # If a invalid key was given
+      end
     end
   end
 end

@@ -145,7 +145,8 @@ feature "BrandPortfolios", js: true, search: true do
 
     scenario 'allows the user to add brands to the portfolio' do
       portfolio = FactoryGirl.create(:brand_portfolio, company: @company)
-      brand = FactoryGirl.create(:brand, name: 'Guaro Cacique') # Create the brand to be added
+      brand = FactoryGirl.create(:brand, name: 'Guaro Cacique', company: @company) # Create the brand to be added
+      FactoryGirl.create(:brand, name: 'BrandOtherCompany', company: FactoryGirl.create(:company)) # Create the brand to be added
       visit brand_portfolio_path(portfolio)
 
       click_js_link 'Add Brand'
@@ -158,6 +159,7 @@ feature "BrandPortfolios", js: true, search: true do
       # Make sure the new brand was added to the portfolio
       within "#brands-list" do
         within("div.brand") do
+          expect(page).not_to have_content('BrandOtherCompany')
           expect(page).to have_content('Guaro Cacique')
           expect(page).to have_selector('a.remove-brand-btn', visible: :false)
         end

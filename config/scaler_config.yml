@@ -1,9 +1,9 @@
 upload:
   thresholds:
   - :workers: 1
-    :job_count: 1
+    :job_count: 0
   - :workers: 2
-    :job_count: 15
+    :job_count: 10
   - :workers: 3
     :job_count: 40
   - :workers: 4
@@ -14,6 +14,7 @@ upload:
     - production
     - staging
   worker_name: uploads
+  min_workers: 1
 
 export:
   thresholds:

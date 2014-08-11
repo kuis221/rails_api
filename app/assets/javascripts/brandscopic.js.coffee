@@ -551,6 +551,39 @@ jQuery ->
 		return this.optional(element) || /^[0-1]?[0-9]\/[0-3]?[0-9]\/[0-2]0[0-9][0-9]$/.test(value);
 	, "MM/DD/YYYY");
 
+	$.validator.addMethod("elements-range", (value, element) ->
+		$element = $(element)
+		if value.length > 0
+			val = $.trim(value)
+			if $element.data('range-format') is "characters" || $element.data('range-format') is "digits"
+				items = val.length
+			else if $element.data('range-format') is "words"
+				items = val.replace(/\s+/g, " ").split(" ").length
+			else if $element.data('range-format') is "value"
+				items = parseFloat(value, 10)
+			else if $element.data('range-format') is "digits"
+				items = val.replace(/[\s,\,\,]+/g, "").length
+
+		minResult = if $element.data('range-min') && items then items >= $element.data('range-min') else true
+		maxResult = if $element.data('range-max') && items then items <= $element.data('range-max') else true
+
+		return minResult && maxResult
+	, (params, element) ->
+		$element = $(element)
+		if $element.data('range-format') is 'value'
+			if $element.data('range-min') && $element.data('range-max')
+				"should be between #{$element.data('range-min')} and #{$element.data('range-max')}"
+			else if $element.data('range-min')
+				"should be greater than #{$element.data('range-min')}"
+			else if $element.data('range-max')
+				"should be smaller than #{$element.data('range-max')}"
+		else
+			message = if $element.data('range-min') then "at least #{$element.data('range-min')}" else ''
+			message += if message.length > 0 && $element.data('range-max') then ' but ' else ''
+			message += if $element.data('range-max') then "no more than #{$element.data('range-max')}" else ''
+
+			"should have #{message} #{$element.data('range-format')}"
+	);
 
 	$('.google-map[data-latitude]').each (index, container) ->
 		$container = $(container)

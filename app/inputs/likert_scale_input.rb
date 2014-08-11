@@ -11,7 +11,7 @@ class LikertScaleInput < SimpleForm::Inputs::Base
         field_name = "#{object_name}[#{attribute_name}][#{statement.id}]"
         field_id = "#{group}_#{statement.id}"
         checked = if value == option.id then ' checked="checked"' else '' end
-        '<td><input type="radio" name="'+field_name+'" id="'+field_id+'_'+option.id.to_s+'" value="'+option.id.to_s+'"'+checked+'></td>'
+        '<td><label class="radio"><div class="radio"><input type="radio" name="'+field_name+'" id="'+field_id+'_'+option.id.to_s+'" value="'+option.id.to_s+'"'+checked+'></div></label></td>'
       end.join + '</tr>'
     end.join + '</tbody></table>'.html_safe
   end

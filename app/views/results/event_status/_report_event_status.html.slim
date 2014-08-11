@@ -18,7 +18,7 @@
           .name= 'Overall'
           = campaign_promo_hours_chart(campaign)
 
-      - @campaign.promo_hours_graph_data.each do |campaign|
+      - @campaign.promo_hours_graph_data(current_company_user).each do |campaign|
         .kpi-trend
           .name= campaign['name']
           = campaign_promo_hours_chart(campaign)

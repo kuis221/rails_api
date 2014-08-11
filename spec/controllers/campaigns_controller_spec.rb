@@ -281,7 +281,9 @@ describe CampaignsController, :type => :controller do
         expect {
           put 'update', id: campaign.to_param,
               campaign: {form_fields_attributes:
-                {id: field.id, field_type: 'FormField::Text', name: 'New name', ordering: 0, required: false}
+                {id: field.id, field_type: 'FormField::Text',
+                  name: 'New name', ordering: 0, required: false,
+                  settings: {description: 'some example', range_min: '100', range_max: '200', range_format: 'characters'}}
               }, format: :json
         }.to_not change(FormField, :count)
       }.to_not change(Campaign, :count)
@@ -289,6 +291,10 @@ describe CampaignsController, :type => :controller do
       expect(field.name).to eql 'New name'
       expect(field.ordering).to eql 0
       expect(field.required).to be_falsey
+      expect(field.settings['description']).to eql 'some example'
+      expect(field.settings['range_min']).to eql '100'
+      expect(field.settings['range_max']).to eql '200'
+      expect(field.settings['range_format']).to eql 'characters'
       expect(field.type).to eql 'FormField::Text'
     end
 
@@ -329,7 +335,7 @@ describe CampaignsController, :type => :controller do
       brand = FactoryGirl.create(:brand, company: @company, name: 'A brand')
       expect {
         put 'update', id: campaign.to_param, campaign: {
-          enabled_modules: ['surveys'],
+          modules: {'surveys' => {'name' => 'Surveys'}},
           survey_brand_ids: ['A brand', 'Another brand']
         }, format: :json
       }.to change(Brand, :count).by(1)
@@ -338,6 +344,18 @@ describe CampaignsController, :type => :controller do
       expect(campaign.survey_brand_ids.count).to eql 2
       expect(campaign.survey_brand_ids).to include(brand.id)
 
+      expect(response).to be_success
+    end
+
+    it "should accept empty modules" do
+      Kpi.create_global_kpis
+      brand = FactoryGirl.create(:brand, company: @company, name: 'A brand')
+      campaign.update_attribute :modules, {'surveys' => {}}
+      put 'update', id: campaign.to_param, campaign: {
+        modules: {'empty' => true}
+      }, format: :json
+
+      expect(campaign.reload.enabled_modules.count).to eql 0
       expect(response).to be_success
     end
   end
@@ -351,6 +369,7 @@ describe CampaignsController, :type => :controller do
       goal = FactoryGirl.create(:goal, goalable: @company_user, kpi: FactoryGirl.create(:kpi))
 
       campaign.users << @company_user
+      expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{@company_user.id}")
       expect {
         expect {
           delete 'delete_member', id: campaign.id, member_id: @company_user.id, format: :js
@@ -454,6 +473,7 @@ describe CampaignsController, :type => :controller do
         @company_user.update_attributes({notifications_settings: ['new_campaign_sms', 'new_campaign_email']}, without_protection: true)
         message = "You have a new campaign http://localhost:5100/campaigns/#{campaign.id}"
         expect(UserMailer).to receive(:notification).with(@company_user, "New Campaign", message).and_return(double(deliver: true))
+        expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{@company_user.id}")
         expect {
           post 'add_members', id: campaign.id, member_id: @company_user.to_param, format: :js
           expect(response).to be_success

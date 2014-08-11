@@ -10,7 +10,7 @@
 #  updated_at             :datetime         not null
 #  active                 :boolean          default(TRUE)
 #  last_activity_at       :datetime
-#  notifications_settings :string(255)      default("{}")
+#  notifications_settings :string(255)      default([])
 #
 
 class CompanyUser < ActiveRecord::Base
@@ -27,14 +27,16 @@ class CompanyUser < ActiveRecord::Base
   validates :role_id, presence: true, numericality: true
   validates :company_id, presence: true, numericality: true, uniqueness: {scope: :user_id}
 
+  before_validation :set_default_notifications_settings, :on => :create
+
   has_many :memberships, dependent: :destroy
   has_many :contact_events, dependent: :destroy, as: :contactable
 
   # Teams-Users relationship
-  has_many :teams, :through => :memberships, :source => :memberable, :source_type => 'Team'
+  has_many :teams, :through => :memberships, :source => :memberable, :source_type => 'Team', conditions: {active: true}
 
   # Campaigns-Users relationship
-  has_many :campaigns, :through => :memberships, :source => :memberable, :source_type => 'Campaign', after_add: :campaigns_changed do
+  has_many :campaigns, :through => :memberships, :source => :memberable, :source_type => 'Campaign', conditions: {aasm_state: 'active'} do
     def children_of(parent)
       where(memberships: {parent_id: parent.id, parent_type: parent.class.name})
     end
@@ -44,13 +46,13 @@ class CompanyUser < ActiveRecord::Base
   has_many :events, :through => :memberships, :source => :memberable, :source_type => 'Event'
 
   # Area-User relationship
-  has_many :areas, through: :memberships, :source => :memberable, :source_type => 'Area', after_remove: :remove_child_goals_for
+  has_many :areas, through: :memberships, :source => :memberable, :source_type => 'Area', conditions: {active: true}, after_remove: :remove_child_goals_for
 
   # BrandPortfolio-User relationship
-  has_many :brand_portfolios, through: :memberships, :source => :memberable, :source_type => 'BrandPortfolio'
+  has_many :brand_portfolios, through: :memberships, :source => :memberable, :source_type => 'BrandPortfolio', conditions: {active: true}
 
   # BrandPortfolio-User relationship
-  has_many :brands, through: :memberships, :source => :memberable, :source_type => 'Brand'
+  has_many :brands, through: :memberships, :source => :memberable, :source_type => 'Brand', conditions: {active: true}
 
   # Places-Users relationship
   has_many :placeables, as: :placeable, dependent: :destroy
@@ -81,7 +83,8 @@ class CompanyUser < ActiveRecord::Base
       'new_campaign' => [{action: :read, subject_class: Campaign}]
   }
 
-  scope :active, where(:active => true)
+  scope :active, -> { where(:active => true) }
+  scope :admin, -> { joins(:role).where(roles: {is_admin: true}) }
   scope :by_teams, lambda{|teams| joins(:memberships).where(memberships: {memberable_id: teams, memberable_type: 'Team'}) }
   scope :by_campaigns, lambda{|campaigns| joins(:memberships).where(memberships: {memberable_id: campaigns, memberable_type: 'Campaign'}) }
   scope :by_events, lambda{|events| joins(:memberships).where(memberships: {memberable_id: events, memberable_type: 'Event'}) }
@@ -227,7 +230,8 @@ class CompanyUser < ActiveRecord::Base
   end
 
   def allow_notification?(type)
-     phone_number_confirmed? && notifications_settings.is_a?(Array) && notifications_settings.include?(type)
+    (type.to_s[-4..-1] != '_sms' || phone_number_confirmed?) && # SMS notifications only if phone number is confirmed
+    notifications_settings.is_a?(Array) && notifications_settings.include?(type.to_s)
   end
 
   def phone_number_confirmed?
@@ -289,12 +293,13 @@ class CompanyUser < ActiveRecord::Base
     end
   end
 
+  def set_default_notifications_settings
+    if self.notifications_settings.nil? || self.notifications_settings.empty?
+      self.notifications_settings = NOTIFICATION_SETTINGS_TYPES.map{|n| "#{n}_app" }
+    end
+  end
 
   private
-    def campaigns_changed(campaign)
-      @accessible_campaign_ids = nil
-      Rails.cache.delete("user_accessible_campaigns_#{self.id}")
-    end
 
     def places_changed(campaign)
       # The cache is cleared in the placeable model

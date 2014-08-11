@@ -9,8 +9,8 @@ describe Task, type: :model, search: true do
     campaign2 = FactoryGirl.create(:campaign, company: company)
     event = FactoryGirl.create(:event, company: company, campaign: campaign)
     event2 = FactoryGirl.create(:event, company: company, campaign: campaign2)
-    team = FactoryGirl.create(:team)
-    team2 = FactoryGirl.create(:team)
+    team = FactoryGirl.create(:team, company: company)
+    team2 = FactoryGirl.create(:team, company: company)
     user = FactoryGirl.create(:company_user, company: company, team_ids: [team.id], role: FactoryGirl.create(:role))
     user_tasks = FactoryGirl.create_list(:task, 2, due_at: Time.new(2013, 02, 22, 12, 00, 00), company_user: user, event: event)
 

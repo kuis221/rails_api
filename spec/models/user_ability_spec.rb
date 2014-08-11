@@ -827,7 +827,7 @@ describe "User", :type => :model do
           expect(ability).to be_able_to(:gva_report, Campaign)
         end
         it "should be able to view the GvA report for a specific campaign" do
-          campaign = FactoryGirl.create(:campaign)
+          campaign = FactoryGirl.create(:campaign, company: company)
           other_campaign = FactoryGirl.create(:campaign)
           expect(ability).not_to be_able_to(:gva_report, Campaign)
           expect(ability).not_to be_able_to(:gva_report_campaign, campaign)
@@ -838,6 +838,7 @@ describe "User", :type => :model do
           expect(ability).not_to be_able_to(:gva_report_campaign, campaign)
 
           User.current.current_company_user.campaigns << campaign
+          User.current.current_company_user.instance_variable_set(:@accessible_campaign_ids,  nil)
 
           expect(ability).to be_able_to(:gva_report, Campaign)
           expect(ability).to be_able_to(:gva_report_campaign, campaign)
@@ -863,7 +864,7 @@ describe "User", :type => :model do
         end
 
         it "should be able to view the Event Status report for a specific campaign" do
-          campaign = FactoryGirl.create(:campaign)
+          campaign = FactoryGirl.create(:campaign, company: company)
           other_campaign = FactoryGirl.create(:campaign)
           expect(ability).not_to be_able_to(:event_status, Campaign)
           expect(ability).not_to be_able_to(:event_status_report_campaign, campaign)
@@ -874,6 +875,7 @@ describe "User", :type => :model do
           expect(ability).not_to be_able_to(:event_status_report_campaign, campaign)
 
           User.current.current_company_user.campaigns << campaign
+          User.current.current_company_user.instance_variable_set(:@accessible_campaign_ids,  nil)
 
           expect(ability).to be_able_to(:event_status, Campaign)
           expect(ability).to be_able_to(:event_status_report_campaign, campaign)

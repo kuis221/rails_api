@@ -159,6 +159,7 @@ class Event < ActiveRecord::Base
   before_save :set_promo_hours, :check_results_changed
   after_save :reindex_associated
   after_commit :index_venue
+  after_commit :create_notifications
 
   delegate :name, to: :campaign, prefix: true, allow_nil: true
   delegate :name, :state, :city, :zipcode, :neighborhood, :street_number, :route, :latitude,:state_name,:longitude,:formatted_address,:name_with_location, :td_linx_code, to: :place, prefix: true, allow_nil: true
@@ -295,12 +296,11 @@ class Event < ActiveRecord::Base
   end
 
   def has_event_data?
-    # TODO: this should also check for values for hashed fields
     campaign_id.present? &&
     (
       results.active.where(
         '(form_field_results.value is not null AND form_field_results.value <> \'\') OR
-         (form_field_results.hash_value is not null AND form_field_results.hash_value <> \'\')').count > 0
+         (form_field_results.hash_value is not null AND btrim(array_to_string(avals(form_field_results.hash_value), \'\'))<>\'\')').count > 0
     )
   end
 
@@ -672,10 +672,13 @@ class Event < ActiveRecord::Base
   private
     def valid_campaign?
       if self.campaign_id.present? && (new_record? || campaign_id_changed?)
-        campaigns = Campaign.where(company_id: self.company_id)
-        campaigns = campaigns.accessible_by_user(User.current.current_company_user) if User.current.present? && User.current.current_company_user.present?
+        campaigns = if User.current.present? && User.current.current_company_user.present?
+          Campaign.accessible_by_user(User.current.current_company_user)
+        else
+          Campaign.where(company_id: self.company_id)
+        end
         unless campaigns.where(id: self.campaign_id).count > 0
-          errors.add :campaign_id, 'is not a valid'
+          errors.add :campaign_id, :invalid
         end
       end
     end
@@ -763,6 +766,7 @@ class Event < ActiveRecord::Base
       if place_id.present?
         Resque.enqueue(VenueIndexer, venue.id)
       end
+      true
     end
 
     def set_promo_hours
@@ -805,19 +809,10 @@ class Event < ActiveRecord::Base
       date
     end
 
-    # def add_team_members
-    #   if campaign.present?
-    #     campaign_team = campaign.staff.uniq
-    #     if campaign_team.present?
-    #       campaign_team.each do |member|
-    #         if member.is_a?(CompanyUser)
-    #           if member.accessible_places.include?(self.place_id)
-    #             self.users << member
-    #           end
-    #         end
-    #       end
-    #       Sunspot.index self.users
-    #     end
-    #   end
-    # end
+    def create_notifications
+      if company.setting(:event_alerts_policy) == Notification::EVENT_ALERT_POLICY_ALL
+        Resque.enqueue(EventNotifierWorker, self.id)
+      end
+      true
+    end
 end

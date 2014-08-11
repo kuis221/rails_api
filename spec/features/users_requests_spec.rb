@@ -113,9 +113,6 @@ feature "Users", :js => true do
           select_from_chosen 'Another Role', from: 'Role'
           fill_in 'Password', with: 'Pedrito123'
           fill_in 'Password confirmation', with: 'Pedrito123'
-          find("#notification_settings_event_recap_due_sms").trigger('click')
-          find("#notification_settings_event_recap_late_sms").trigger('click')
-          find("#notification_settings_event_recap_pending_approval_sms").trigger('click')
           click_js_button 'Save'
         end
         ensure_modal_was_closed
@@ -181,9 +178,6 @@ feature "Users", :js => true do
           fill_in 'City', with: 'Tres Rios'
           fill_in 'Password', with: 'Pedrito123'
           fill_in 'Password confirmation', with: 'Pedrito123'
-          find("#notification_settings_event_recap_due_sms").trigger('click')
-          find("#notification_settings_event_recap_late_sms").trigger('click')
-          find("#notification_settings_event_recap_pending_approval_sms").trigger('click')
           click_js_button 'Save'
         end
 
@@ -196,7 +190,6 @@ feature "Users", :js => true do
         expect(@company_user.country).to eq('CR')
         expect(@company_user.state).to eq('C')
         expect(@company_user.city).to eq('Tres Rios')
-        expect(@company_user.notifications_settings).to include("event_recap_due_sms", "event_recap_late_sms", "event_recap_pending_approval_sms")
       end
     end
 

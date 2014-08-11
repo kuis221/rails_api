@@ -70,10 +70,7 @@ class Venue < ActiveRecord::Base
       place.locations.pluck('locations.id') if place.present?
     end
 
-    integer :campaign_ids, multiple: true do
-      campaigns.map(&:id)
-    end
-
+    integer :campaign_ids, multiple: true
     string :status do
       'Active'
     end
@@ -252,7 +249,7 @@ class Venue < ActiveRecord::Base
       company_user = params[:current_company_user]
       if company_user.present?
         unless company_user.role.is_admin?
-          with(:campaign_ids, company_user.accessible_campaign_ids + [0])
+          #with(:campaign_ids, company_user.accessible_campaign_ids + [0])
           any_of do
             locations = company_user.accessible_locations
             places_ids = company_user.accessible_places
@@ -325,9 +322,9 @@ class Venue < ActiveRecord::Base
     end
   end
 
-
-  private
-    def campaigns
-      @campaigns ||= Campaign.select('DISTINCT campaigns.id, campaigns.name').joins(:events).where(events: {place_id: place_id}, company_id: company_id)
-    end
+  def campaign_ids
+    @campaign_ids ||= Campaign.joins(:events)
+        .where(events: {place_id: place_id}, company_id: company_id)
+        .pluck('DISTINCT(events.campaign_id)')
+  end
 end

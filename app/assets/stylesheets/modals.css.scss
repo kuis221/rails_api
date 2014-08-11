@@ -1,4 +1,5 @@
 @import "variables";
+@import "mixins";
 
 /*-- COLOR PALETTE --*/
 $completed: #90bf43;
@@ -45,11 +46,14 @@ ul.select2-results{
 					input[type="text"]{
 						width:90%;
 					}
-					input[type="number"] {
-						background-color: white !important;
-						box-shadow: none !important;
-						margin-right: 0 !important;
-						width: 158px;
+					.input-prepend {
+						input {
+							background-color: white !important;
+							box-shadow: none !important;
+							margin-right: 0 !important;
+							width: 222px;
+
+						}						
 					}
 					&.event_expense_amount{
 						label{
@@ -155,7 +159,7 @@ ul.select2-results{
 			.control-group{
 				label{
 					display: inline-block;
-					&.radio {
+					&.radio, &.checkbox {
 						display: block;
 					}
 				}
@@ -180,10 +184,6 @@ ul.select2-results{
 					}
 					.chzn-drop{
 						box-shadow: none;
-						//width: 250px !important;
-					}
-					.chzn-results{
-						//width: 248px !important;
 					}
 				}
 				&.task_due_at{
@@ -200,9 +200,6 @@ ul.select2-results{
 				&.chzn-container-single{
 					.chzn-single{
 						width: 390px;
-					}
-					.chzn-drop{
-						//width: 400px !important;
 					}
 				}
 			}
@@ -251,10 +248,6 @@ ul.select2-results{
 					}
 				}
 			}
-			.select-list-table-wrapper .link-list{
-				height: 257px;
-				overflow-y: scroll;
-			}
 			.control-group{
 				label{
 					display: inline-block;
@@ -266,31 +259,19 @@ ul.select2-results{
 				}
 			}
 
-			.staff-table, .brands-table, .campaigns-modals, .places-modals, .contacts-modals{
-				input[type="text"]{
-					background-image: image-url('search2.svg') !important;
-					background-position: center right;
-					background-repeat: no-repeat;
-					-webkit-border-radius: 20px;
-					border-radius: 20px;
-					padding-left: 2%;
-					padding-right: 2%;
-					&#staff-search-item, &#brands-search-item {
-						width: 95%;
-					}
-					&#place-search-box, &#contact-search-box, &#kpi-search-box {
-						width: 96%;
-					}
-					&#staff-search-item, &#brands-search-item, &#place-search-box, &#contact-search-box {
-						width: 100%;
-					}
-					&.places-autocomplete {
-						padding-left: 8%;
-						width: 385px !important;
-					}
-				}
-				.link-list{
-					margin-top: 0;
+			input.search-box {
+				@include box-sizing(border-box);
+				background-image: image-url('search2.svg') !important;
+				background-position: center right;
+				background-repeat: no-repeat;
+				-webkit-border-radius: 20px;
+				border-radius: 20px;
+				padding-left: 2%;
+				padding-right: 2%;
+				width: 100%;
+				&.places-autocomplete {
+					padding-left: 8%;
+					width: 385px !important;
 				}
 			}
 			.users{
@@ -310,6 +291,9 @@ ul.select2-results{
 				}
 			}
 	    }
+		&.select-kpis-modal{
+			top: 2%;
+		}
     }
     &.modal-xlarge{
     	left: 10%;
@@ -484,7 +468,7 @@ ul.select2-results{
 						display: inline-block;
 						margin-right: 43px;
 						overflow: hidden;
-				    	text-overflow: ellipsis;
+						text-overflow: ellipsis;
 						white-space: nowrap;
 						width:255px;
 					}
@@ -502,45 +486,6 @@ ul.select2-results{
 				margin: 3px 15px 3px 0;
 				padding: 0;
 				width: 20px;
-				span{
-					background: image-url('radio-unchecked.svg') no-repeat center center !important;
-					display: block;
-					height: 25px;
-					width: 25px;
-					&.help-inline{
-						background-image: none !important;
-						border: 0;
-						width: 120px;
-						margin-left: 2px;
-						display: block;
-						margin-top: 0 !important;
-					}
-					&.ok-message{
-						background:none !important;
-						span{
-							background: none !important;
-						}
-					}
-				}
-				span.checked{
-					background: image-url('radio-checked.svg') no-repeat center center !important;
-					display: block;
-					height: 25px;
-					margin: 0;
-					padding:0;
-					width: 25px;
-				}
-				input[type="radio"] {
-					float: right;
-					margin-left: 0;
-					opacity:0;
-					height: 25px;
-					width: 25px;
-				}
-			}
-			.radio-group{
-				display:inline-block;
-				margin-bottom: 10px;
 			}
 		}
 	}
@@ -569,42 +514,6 @@ ul.select2-results{
 		max-height: 800px;
 		overflow: visible;
 		padding: 25px 30px 22px 30px;
-		.scroll-table-content, .select-list-table-wrapper{
-			max-height: 257px;
-			.row-fluid:after{
-				clear: none;
-			}
-			#new_place{
-				float: left;
-				margin-bottom: 40px;
-				width: 100%;
-			}
-			ul#select-brands-list, ul#staff-list, ul#contacts-list, ul.select-items-list{
-				li{
-					display: table;
-					min-height: 85px !important;
-					height: 85px;
-					width: 100%;
-					span, p{
-						&:first-child{
-							display: table-cell !important;
-							vertical-align: middle;
-							padding-left: 20px;
-							span{
-								padding: 0;
-							}
-						}
-						&.add-button{
-							display: table-cell;
-							vertical-align: middle;
-						}
-						&.member-data{
-							padding-left: 60px;
-						}
-					}
-				}
-			}
-		}
 		h3{
 			font-size: 22px;
 			font-weight: bold;
@@ -712,7 +621,7 @@ ul.select2-results{
 			}
 		}
 		.input-append .add-on, .input-prepend .add-on {
-			height: 18px;
+			height: 15px;
 		}
 		.large-inputs{
 			.control-group{
@@ -751,7 +660,7 @@ ul.select2-results{
 			input{
 				width: 100%;
 			}
-			label{
+			label:not(.checkbox){
 				margin-bottom: 2px;
 			}
 			&.location, &.password {
@@ -764,7 +673,7 @@ ul.select2-results{
 		}
 		.controls{
 			input{
-				width: 100% !important;
+				width: 100%;
 				&[type="text"]{
 					color: $text !important;
 					&#campaign_start_date, &#campaign_end_date, &#event_start_date, &#event_end_date, &.goal_start_date, &.goal_end_date, &.field-type-date {
@@ -1118,8 +1027,6 @@ div#spin{
 	background-color: red !important;
 }
 
-
-
 /* -- HELP CHAT SUPPORT CENTER -- */
 
 .fancybox-type-iframe .fancybox-inner{
@@ -1293,5 +1200,41 @@ div#spin{
 .modal-backdrop, .modal-backdrop.fade.in{
 	background-color: #252525;
 	opacity: 0.9;
+}
+
+
+/* Sidebar setting filters dialogue box */
+
+#settings-filters{
+	.row{
+		margin-left: 0;
+		margin-bottom: 30px;
+		&:last-child{
+			margin-bottom: 0;
+		}
+	}
+	.modal-body{
+		ul{
+			list-style: none;
+			margin-left: 0;
+			li{
+				margin-bottom: 10px;
+				label{
+					color: $text;
+					font-size: 13px;
+					.checker{
+						margin-right: 10px;
+					}
+				}
+				.icon-trash{
+					font-size: 14px;
+					color: $brand;
+					&:hover{
+						color: $grey_three;
+					}
+				}
+			}
+		}
+	}
 }
 

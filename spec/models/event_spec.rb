@@ -136,6 +136,29 @@ describe Event, :type => :model do
     end
   end
 
+  describe "#create_notifications" do
+    let(:company){ FactoryGirl.create(:company, settings: {event_alerts_policy: Notification::EVENT_ALERT_POLICY_ALL}) }
+
+    it "should queue EventNotifierWorker worker" do
+      event = FactoryGirl.create(:event, company: company)
+      expect(EventNotifierWorker).to have_queued(event.id)
+    end
+
+    it "should NOT queue EventNotifierWorker if the company's setting is set to team only" do
+      company.settings = {event_alerts_policy: Notification::EVENT_ALERT_POLICY_TEAM}
+      company.save
+      event = FactoryGirl.create(:event, company: company)
+      expect(EventNotifierWorker).to_not have_queued(event.id)
+    end
+
+    it "should NOT queue EventNotifierWorker if the company's setting is not set" do
+      company.settings = {}
+      company.save
+      event = FactoryGirl.create(:event, company: company)
+      expect(EventNotifierWorker).to_not have_queued(event.id)
+    end
+  end
+
   describe "#accessible_by" do
     before do
       @event = FactoryGirl.create(:event, campaign: campaign, place: place)
@@ -384,7 +407,6 @@ describe Event, :type => :model do
       goals.each{|g| g.value = 100; g.save}
       expect(event.kpi_goals).to eq({Kpi.impressions.id => 50})
     end
-
   end
 
   describe "before_save #set_promo_hours" do

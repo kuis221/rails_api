@@ -56,7 +56,9 @@ class AttachedAsset < ActiveRecord::Base
 
   before_validation :check_if_file_updated
 
-  validates :direct_upload_url, allow_nil: true, format: { with: DIRECT_UPLOAD_URL_FORMAT }
+  validates :direct_upload_url, allow_nil: true,
+    uniqueness: true,
+    format: { with: DIRECT_UPLOAD_URL_FORMAT }
   validates :direct_upload_url, presence: true, unless: :file
 
   delegate :company_id, to: :attachable
@@ -143,6 +145,14 @@ class AttachedAsset < ActiveRecord::Base
       :force_path_style => true,
       :expires => 24*3600, # 24 hours
       :response_content_disposition => "attachment; filename=#{file_file_name}").to_s
+  end
+
+  def preview_url(style_name=:medium)
+    if is_pdf?
+      file.url(:thumbnail)
+    else
+      file.url(style_name)
+    end
   end
 
   def is_thumbnable?
@@ -235,18 +245,22 @@ class AttachedAsset < ActiveRecord::Base
     end
   end
 
+  # Moving the original file to final path
+  def move_uploaded_file
+    direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
+    paperclip_file_path = file.path(:original).sub(%r{\A/},'')
+    file.s3_bucket.objects[paperclip_file_path].copy_from(direct_upload_url_data[:path], acl: :public_read)
+  end
+
   # Final upload processing step
   def transfer_and_cleanup
-    direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
-
-    paperclip_file_path = file.path(:original).sub(%r{\A/},'')
-    file.s3_bucket.objects[paperclip_file_path].copy_from(direct_upload_url_data[:path])
     @processing = true
     if post_process_required?
       file.reprocess!
     end
     self.processed = true
 
+    direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
     file.s3_bucket.objects[direct_upload_url_data[:path]].delete if save
     @processing = false
   end
@@ -279,8 +293,7 @@ class AttachedAsset < ActiveRecord::Base
       tries ||= 3
       direct_url_changed = self.direct_upload_url.present? && self.direct_upload_url_changed?
       if ((new_record? and self.file_file_name.nil?) || direct_url_changed) && direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
-        s3 = AWS::S3.new
-        direct_upload_head = s3.buckets[S3_CONFIGS['bucket_name']].objects[direct_upload_url_data[:path]].head
+        direct_upload_head = file.s3_bucket.objects[direct_upload_url_data[:path]].head
 
         self.file_file_name     = file.send(:cleanup_filename, direct_upload_url_data[:filename])
         self.file_file_size     = direct_upload_head.content_length
@@ -306,6 +319,7 @@ class AttachedAsset < ActiveRecord::Base
     def queue_processing
       unless processed? || @processing
         if direct_upload_url.present?
+          move_uploaded_file
           if post_process_required?
             Resque.enqueue(AssetsUploadWorker, id)
           else

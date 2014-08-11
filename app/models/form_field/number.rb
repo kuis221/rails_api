@@ -25,28 +25,36 @@ class FormField::Number < FormField
       required: self.required,
       input_html: {
         value: result.value,
-        class: field_classes,
+        class: field_classes.push('elements-range'),
+        data: field_data,
         step: 'any',
         required: (self.required? ? 'required' : nil)
       }
     }
   end
 
+  def field_data
+    data = {}
+    if self.settings.present?
+      data['range-format'] = self.settings['range_format'] if self.settings['range_format'].present?
+      data['range-min'] = self.settings['range_min'] if self.settings['range_min'].present?
+      data['range-max'] = self.settings['range_max'] if self.settings['range_max'].present?
+    end
+    data
+  end
+
   def validate_result(result)
     super
     if result.value.present?
-      result.errors.add:value, I18n.translate('errors.messages.not_a_number') if !parse_raw_value_as_a_number(result.value)
+      result.errors.add:value, I18n.translate('errors.messages.not_a_number') if !value_is_numeric?(result.value)
     end
+  end
+
+  def format_html(result)
+    number_with_delimiter(result.value || 0)
   end
 
   def is_numeric?
     true
   end
-
-  protected
-    def parse_raw_value_as_a_number(raw_value)
-      Kernel.Float(raw_value) if raw_value !~ /\A0[xX]/
-    rescue ArgumentError, TypeError
-      nil
-    end
 end

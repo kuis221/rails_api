@@ -8,7 +8,7 @@ feature "Photos", js: true do
     @company = @user.companies.first
     sign_in @user
     Kpi.create_global_kpis
-    AttachedAsset.any_instance.stubs(:save_attached_files).returns(true)
+    allow_any_instance_of(AttachedAsset).to receive(:save_attached_files).and_return(true)
   end
 
   after do
@@ -19,7 +19,7 @@ feature "Photos", js: true do
   let(:campaign) { FactoryGirl.create(:campaign, company: @company) }
   let(:event) { FactoryGirl.create(:late_event, company: @company, campaign:campaign) }
 
-  before { campaign.update_attribute :enabled_modules, ['photos']  }
+  before { campaign.update_attribute(:modules, {'photos' => {} })  }
 
   feature "Event Photo management" do
     scenario "A user can select a photo and attach it to the event" do
@@ -152,7 +152,7 @@ feature "Photos", js: true do
       end
 
       within gallery_modal do
-        select2_add_tag 'tag1'
+        select2_add_tag "Add tags", 'tag1'
         expect(find('.tags .list')).to have_content 'tag1'
 
         click_button 'Close'

@@ -113,7 +113,7 @@ describe TasksController, :type => :controller do
 
   describe "GET 'index'" do
     before(:each) do
-      @team = FactoryGirl.create(:team)
+      @team = FactoryGirl.create(:team, company: @company)
       @company_user.teams << @team
     end
 

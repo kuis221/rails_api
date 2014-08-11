@@ -3,8 +3,8 @@ require 'spec_helper'
 describe Results::EventDataHelper, :type => :helper do
   let(:campaign) { FactoryGirl.create(:campaign, name: 'Test Campaign FY01') }
   before do
-    helper.stubs(:current_company_user).returns(FactoryGirl.build(:company_user, company: campaign.company))
-    helper.stubs(:params).returns({campaign: [campaign.id]})
+    allow(helper).to receive(:current_company_user).and_return(FactoryGirl.build(:company_user, company: campaign.company))
+    allow(helper).to receive(:params).and_return({campaign: [campaign.id]})
     Kpi.create_global_kpis
   end
 
@@ -54,7 +54,7 @@ describe Results::EventDataHelper, :type => :helper do
 
     it "returns nil for the fields that doesn't apply to the event's campaign" do
       campaign2 = FactoryGirl.create(:campaign, company: campaign.company)
-      helper.stubs(:params).returns({campaign: [campaign.id,campaign2.id]})
+      allow(helper).to receive(:params).and_return({campaign: [campaign.id,campaign2.id]})
 
       kpi = FactoryGirl.create(:kpi, company_id: campaign.company_id, name: 'A Custom KPI')
       kpi2 = FactoryGirl.create(:kpi, company_id: campaign.company_id, name: 'Another KPI')
@@ -100,7 +100,7 @@ describe Results::EventDataHelper, :type => :helper do
 
     it "returns custom kpis grouped on the same column" do
       campaign2 = FactoryGirl.create(:campaign, company: campaign.company)
-      helper.stubs(:params).returns({campaign: [campaign.id, campaign2.id]})
+      allow(helper).to receive(:params).and_return({campaign: [campaign.id, campaign2.id]})
 
       kpi = FactoryGirl.create(:kpi, company_id: campaign.company_id, name: 'A Custom KPI')
       kpi2 = FactoryGirl.create(:kpi, company_id: campaign.company_id, name: 'Another KPI')

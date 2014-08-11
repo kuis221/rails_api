@@ -172,11 +172,13 @@ class EventsController < FilteredController
         ed = hit.stored(:end_at).in_time_zone.to_date
         (sd..ed).each do |day|
           days[day] ||= {}
-          campaing_brands_map[hit.stored(:campaign_id).to_i].each do |brand_id|
-            brand = brands[brand_id]
-            days[day][brand.id] ||= {count: 0, title: brand.name, start: day, end: day, color: colors[all_brands.index(brand.id)%colors.count], url: events_path('brand[]' => brand.id, 'start_date' => day.to_s(:slashes))}
-            days[day][brand.id][:count] += 1
-            days[day][brand.id][:description] = "<b>#{brand.name}</b><br />#{days[day][brand.id][:count]} Events"
+          if campaing_brands_map[hit.stored(:campaign_id).to_i]
+            campaing_brands_map[hit.stored(:campaign_id).to_i].each do |brand_id|
+              brand = brands[brand_id]
+              days[day][brand.id] ||= {count: 0, title: brand.name, start: day, end: day, color: colors[all_brands.index(brand.id)%colors.count], url: events_path('brand[]' => brand.id, 'start_date' => day.to_s(:slashes))}
+              days[day][brand.id][:count] += 1
+              days[day][brand.id][:description] = "<b>#{brand.name}</b><br />#{days[day][brand.id][:count]} Events"
+            end
           end
         end
       end

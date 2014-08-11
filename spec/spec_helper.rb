@@ -9,9 +9,12 @@ end
 
 require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
+require 'shoulda/matchers'
 require 'capybara/rails'
+require 'capybara/rspec'
 require 'capybara/poltergeist'
 require 'database_cleaner'
+require 'capybara-screenshot'
 require 'capybara-screenshot/rspec'
 require 'sms-spec'
 
@@ -81,24 +84,6 @@ RSpec.configure do |config|
     Rails.logger.debug "***** EXAMPLE: #{example.full_description}"
     Rails.logger.debug "**************************************************************************************"
     DatabaseCleaner.start
-  end
-
-  if ENV['CI']
-    Capybara::Screenshot.autosave_on_failure = false
-    config.after(:each) do |example|
-      # Save screenshot to Amazon S3 on failure when running on the CI server
-      if Capybara.page.current_url != '' && example.exception
-        filename_prefix = Capybara::Screenshot.filename_prefix_for(:rspec, example)
-        saver = Capybara::Screenshot::Saver.new(Capybara, Capybara.page, true, filename_prefix)
-        saver.save
-
-        # Save it to S3
-        s3 = AWS::S3.new
-        bucket = s3.buckets[S3_CONFIGS['bucket_name']]
-        obj = bucket.objects[File.basename(saver.screenshot_path)].write(File.open(saver.screenshot_path))
-        example.metadata[:full_description] += "\n     Screenshot: #{obj.url_for(:read, :expires => 24*3600*100)}"
-      end
-    end
   end
 
   config.after(:each) do |example|

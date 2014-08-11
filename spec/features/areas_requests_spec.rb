@@ -38,6 +38,7 @@ feature "Areas", js: true, search: true  do
           name: 'Guillermitos Bar', street_number: '98',
           route: '3rd Ave', city: 'New York') )
       Sunspot.commit
+      company_user.places << venue.place
       visit area_path(area)
 
       click_js_link 'Add Place'
@@ -84,6 +85,7 @@ feature "Areas", js: true, search: true  do
 
     it_should_behave_like "a user that can edit areas" do
       let(:permissions) { [[:update, 'Area'], [:show, 'Area']] }
+      before{ company_user.places << FactoryGirl.create(:city, name: 'Lake Buena Vista', state:'Florida', country: 'US') }
     end
   end
 
