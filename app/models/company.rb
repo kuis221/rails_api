@@ -7,11 +7,14 @@
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
 #  timezone_support :boolean
+#  settings         :hstore
 #
 
 class Company < ActiveRecord::Base
   attr_accessor :admin_email
   attr_accessor :no_create_admin
+
+  serialize :settings, ActiveRecord::Coders::Hstore
 
   has_many :company_users, dependent: :destroy
   has_many :teams, dependent: :destroy
@@ -42,6 +45,15 @@ class Company < ActiveRecord::Base
 
   def self.current
     Thread.current[:company]
+  end
+
+  # Returns the value for setting #{name} if present, or the #{default} value if not set
+  def setting(name, default=nil)
+    if settings && settings.has_key?(name.to_s)
+      settings[name.to_s]
+    else
+      default
+    end
   end
 
   def team_member_options

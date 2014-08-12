@@ -11,6 +11,7 @@
       $('#edit_event_data_form').remove();
       $('.box_event_data').html("#{escape_javascript(render('results_event_data'))}").show();
       smoothScrollTo($('.box_event_data'));
+      setTimeout(function(){ $(window).resize() });
   - else
     |
       $('.bootbox.modal').modal('hide');

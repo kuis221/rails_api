@@ -120,21 +120,23 @@ class CampaignsController < FilteredController
       if can?(:view_event_form, Campaign)
         p.push({
           survey_brand_ids: [],
-          enabled_modules: [],
           form_fields_attributes: [
             :id, :name, :field_type, :ordering, :required, :_destroy, :kpi_id,
             {settings: [:description, :range_min, :range_max, :range_format]},
             {options_attributes: [:id, :name, :_destroy, :ordering]},
             {statements_attributes: [:id, :name, :_destroy, :ordering]}]})
       end
-      attrs = params.permit(campaign: p)[:campaign]
+      attrs = params.permit(campaign: p)[:campaign].tap do |whitelisted|
+        whitelisted[:modules] = params[:campaign][:modules] if params[:campaign] && params[:campaign].has_key?(:modules) &&  can?(:view_event_form, Campaign)
+      end
+
       if attrs && attrs[:survey_brand_ids].present? && attrs[:survey_brand_ids].any?
         normalize_brands attrs[:survey_brand_ids]
       end
 
       # Workaround to deal with jQuery not sending empty arrays
-      if attrs && attrs[:enabled_modules].present? && attrs[:enabled_modules] == ['empty']
-        attrs[:enabled_modules] = []
+      if attrs && attrs[:modules].present? && attrs[:modules].has_key?('empty')
+        attrs[:modules] = {}
       end
 
       attrs

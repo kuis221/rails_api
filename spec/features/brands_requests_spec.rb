@@ -66,8 +66,8 @@ feature "Brands", js: true do
 
       within visible_modal do
         fill_in 'Name', with: 'New brand name'
-        select2_add_tag 'Marque 1'
-        select2_add_tag 'Marque 2'
+        select2_add_tag 'Marques list', 'Marque 1'
+        select2_add_tag 'Marques list', 'Marque 2'
 
         click_button 'Create'
       end
@@ -111,7 +111,7 @@ feature "Brands", js: true do
 
       within visible_modal do
         fill_in 'Name', with: 'Edited brand name'
-        select2_add_tag 'Marque 1'
+        select2_add_tag 'Marques list', 'Marque 1'
 
         click_js_button 'Save'
       end

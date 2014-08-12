@@ -50,6 +50,10 @@ class FormField::Number < FormField
     end
   end
 
+  def format_html(result)
+    number_with_delimiter(result.value || 0)
+  end
+
   def is_numeric?
     true
   end

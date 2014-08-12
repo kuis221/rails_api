@@ -1,0 +1,58 @@
+span.form-result-label= form_field.name
+
+.chart-area id="percentage-chart-#{form_field.id}"
+
+- options_map = Hash[form_field.options_for_input.map{|o| [o[1], o[0]] }]
+
+javascript:
+  $(document).ready(function () {
+
+      // Build the chart
+      $('#percentage-chart-#{form_field.id}').highcharts({
+          credits: false,
+          colors: #{['#909090','#90bf43','#d93f99','#d7a23c','#606060','#d3c941','#a18740','#6c5f3c','#a766cf','#7e42a4','#7ca63a','#3e9ccf','#3881a8','#de4d43','#bbbbbb'].shuffle.to_json.html_safe},
+          chart: {
+              plotBackgroundColor: null,
+              plotBorderWidth: null,
+              plotShadow: false,
+          },
+          title: {
+              text: false
+          },
+          legend: {
+              verticalAlign: 'middle',
+              layout: 'vertical',
+              align: 'right',
+              itemMarginBottom: 10,
+              borderWidth: 0
+          },
+          tooltip: {
+              pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+          },
+          plotOptions: {
+              pie: {
+                  allowPointSelect: false,
+                  cursor: 'pointer',
+                  dataLabels: {
+                      enabled: false
+                  },
+                  showInLegend: true
+              },
+              series: {
+                  dataLabels: {
+                      enabled: true,
+                      formatter: function() {
+                          return Math.round(this.percentage*100)/100 + '%';
+                      },
+                      distance: -30,
+                      color:'white'
+                  }
+              }
+          },
+          series: [{
+              type: 'pie',
+              name: '#{j form_field.name}',
+              data: #{result.value.reject{|k, v| options_map[k.to_i].nil? || v.nil? || v == '' || v.to_f == 0.0}.map{|k, v| [h(options_map[k.to_i]), v.to_f] }.to_json.html_safe}
+          }]
+      });
+  });

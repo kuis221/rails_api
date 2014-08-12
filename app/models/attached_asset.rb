@@ -56,7 +56,9 @@ class AttachedAsset < ActiveRecord::Base
 
   before_validation :check_if_file_updated
 
-  validates :direct_upload_url, allow_nil: true, format: { with: DIRECT_UPLOAD_URL_FORMAT }
+  validates :direct_upload_url, allow_nil: true,
+    uniqueness: true,
+    format: { with: DIRECT_UPLOAD_URL_FORMAT }
   validates :direct_upload_url, presence: true, unless: :file
 
   delegate :company_id, to: :attachable

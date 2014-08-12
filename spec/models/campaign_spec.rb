@@ -2,22 +2,23 @@
 #
 # Table name: campaigns
 #
-#  id              :integer          not null, primary key
-#  name            :string(255)
-#  description     :text
-#  aasm_state      :string(255)
-#  created_by_id   :integer
-#  updated_by_id   :integer
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
-#  company_id      :integer
-#  first_event_id  :integer
-#  last_event_id   :integer
-#  first_event_at  :datetime
-#  last_event_at   :datetime
-#  start_date      :date
-#  end_date        :date
-#  enabled_modules :string(255)      default([])
+#  id               :integer          not null, primary key
+#  name             :string(255)
+#  description      :text
+#  aasm_state       :string(255)
+#  created_by_id    :integer
+#  updated_by_id    :integer
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#  company_id       :integer
+#  first_event_id   :integer
+#  last_event_id    :integer
+#  first_event_at   :datetime
+#  last_event_at    :datetime
+#  start_date       :date
+#  end_date         :date
+#  survey_brand_ids :integer          default([])
+#  modules          :text
 #
 
 require 'spec_helper'
@@ -36,13 +37,6 @@ describe Campaign, :type => :model do
   let(:company) { FactoryGirl.create(:company) }
 
   before { Company.current = company }
-
-  describe "enabled_modules validations" do
-    it { is_expected.to allow_value(['surveys', 'photos']).for(:enabled_modules) }
-    it { is_expected.to allow_value([]).for(:enabled_modules) }
-    it { is_expected.to allow_value(nil).for(:enabled_modules) }
-    it { is_expected.not_to allow_value(['unknown', 'photos']).for(:enabled_modules) }
-  end
 
   describe "states" do
     before(:each) do
@@ -88,7 +82,7 @@ describe Campaign, :type => :model do
   end
 
   describe "active_global_kpis" do
-    let(:campaign){ FactoryGirl.create(:campaign, enabled_modules: ['expenses', 'comments']) }
+    let(:campaign){ FactoryGirl.create(:campaign, modules: {'expenses' => {}, 'comments' => {}}) }
 
     it "should returns global kpis + enabled modules" do
       Kpi.create_global_kpis
@@ -101,7 +95,7 @@ describe Campaign, :type => :model do
   end
 
   describe "active_kpis" do
-    let(:campaign){ FactoryGirl.create(:campaign, enabled_modules: ['surveys']) }
+    let(:campaign){ FactoryGirl.create(:campaign, modules: {'surveys' => {}}) }
     it "should returns only events, promo hours and surveys if no custom kpis have been created for campaign" do
       Kpi.create_global_kpis
       expect(campaign.active_kpis).to match_array [Kpi.events, Kpi.promo_hours, Kpi.surveys]
@@ -233,6 +227,100 @@ describe Campaign, :type => :model do
       FactoryGirl.create(:company_user, brand_portfolio_ids: [FactoryGirl.create(:brand_portfolio).id], company_id: 1)
 
       expect(campaign.staff_users).to match_array([user, user2])
+    end
+  end
+
+  describe "all_users_with_access" do
+    let(:company) { FactoryGirl.create(:company) }
+    let(:non_admin_role) { FactoryGirl.create(:non_admin_role, company: company) }
+    it "should include users that have the brands assigned to" do
+      brand = FactoryGirl.create(:brand, company: company)
+      campaign = FactoryGirl.create(:campaign, brand_ids: [brand.id], company: company)
+
+      # This is an user that is following all the campaigns of this brand
+      user = FactoryGirl.create(:company_user, brand_ids: [brand.id], company: company)
+
+      # Create another user related to another brand
+      FactoryGirl.create(:company_user,
+        brand_ids: [FactoryGirl.create(:brand, company: company).id],
+        role: non_admin_role, company: company)
+
+      expect(campaign.all_users_with_access).to eq([user])
+    end
+
+    it "should include users that have the brand portfolios assigned to" do
+      brand_portfolio = FactoryGirl.create(:brand_portfolio, company: company)
+      campaign = FactoryGirl.create(:campaign, brand_portfolio_ids: [brand_portfolio.id], company: company)
+
+      # This is an user that is following all the campaigns of this brand
+      user = FactoryGirl.create(:company_user, brand_portfolio_ids: [brand_portfolio.id], company: company)
+
+      # Create another user related to another brand portfolio
+      FactoryGirl.create(:company_user,
+        brand_portfolio_ids: [FactoryGirl.create(:brand_portfolio, company: company).id],
+        company: company, role: non_admin_role)
+
+      expect(campaign.all_users_with_access).to eq([user])
+    end
+
+    it "should include users that are directly assigned to the campaign" do
+      campaign = FactoryGirl.create(:campaign, company: company)
+
+      # This is an user that is assgined to the campaign
+      user = FactoryGirl.create(:company_user, company: company)
+      other_user = FactoryGirl.create(:company_user, company: company, role: non_admin_role)
+
+      campaign.users << user
+
+      expect(campaign.all_users_with_access).to eq([user])
+    end
+
+    it "should include all admin users" do
+      campaign = FactoryGirl.create(:campaign, company: company)
+
+      # This is an user that is assgined to the campaign
+      admin_user = FactoryGirl.create(:company_user, company: company)
+
+      expect(campaign.all_users_with_access).to match_array [admin_user]
+    end
+
+    it "should include users that belong to teams directly assigned to the campaign" do
+      campaign = FactoryGirl.create(:campaign, company: company)
+
+      # This is an user that is assgined to the campaign
+      user = FactoryGirl.create(:company_user, company: company)
+      team = FactoryGirl.create(:team, company: company)
+      team.users << user
+
+      campaign.teams << team
+
+      expect(campaign.all_users_with_access).to eq([user])
+    end
+
+    it "mixup between the diferent sources" do
+      brand_portfolio = FactoryGirl.create(:brand_portfolio, company: company)
+      brand = FactoryGirl.create(:brand, company: company)
+      brand2 = FactoryGirl.create(:brand, company: company)
+      campaign = FactoryGirl.create(:campaign, brand_portfolio_ids: [brand_portfolio.id], brand_ids: [brand.id, brand2.id], company: company)
+
+      team = FactoryGirl.create(:team, company: company)
+      not_assigned_team = FactoryGirl.create(:team, company: company)
+
+      # This is an user that is following all the campaigns of this brand
+      user = FactoryGirl.create(:company_user, brand_portfolio_ids: [brand_portfolio.id], brand_ids: [brand.id], company: company)
+      user2 = FactoryGirl.create(:company_user, brand_ids: [brand2.id], company: company)
+
+      not_assigned_user = FactoryGirl.create(:company_user, role: non_admin_role, company: company)
+
+      team.users << user
+      not_assigned_team.users << not_assigned_user
+
+      # Create another user related to another brand portfolio
+      FactoryGirl.create(:company_user,
+        brand_portfolio_ids: [FactoryGirl.create(:brand_portfolio, company: company).id],
+        role: non_admin_role, company: company)
+
+      expect(campaign.all_users_with_access).to match_array([user, user2])
     end
   end
 

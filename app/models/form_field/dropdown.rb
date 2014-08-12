@@ -47,7 +47,13 @@ class FormField::Dropdown < FormField
 
   def format_html(result)
     unless result.value.nil? || result.value.empty?
-      options_for_input.select{|option| option[1] == result.value.to_i }.map{|option| option[0]}.join(', ')
+      options_for_input.detect(->{ [] }){|option| option[1] == result.value.to_i }[0]
+    end
+  end
+
+  def format_csv(result)
+    unless result.value.nil? || result.value.empty?
+      options_for_input.detect(->{ [] }){|option| option[1] == result.value.to_i }[0]
     end
   end
 end

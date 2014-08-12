@@ -29,12 +29,55 @@
 				width: 200px;
 			}
 		}
+		.field, .module {
+			a.close {
+				display: none;
+				position: absolute;
+				top: -10px;
+				right: -10px;
+				color: $brand;
+				opacity: 1;
+			}
+			&.selected {
+				background-color: $app_bg;
+				border: 1px solid $app_bg;
+				a.close {
+					background: image-url('more_less_sprite.png') -40px 0 no-repeat;
+					display: inline-block;
+					width: 20px;
+					height: 20px;
+					i, &:before{
+						display: none;
+					}
+				}
+				&:hover {
+					border: 1px solid $app_bg;
+				}
+				.attachment-panel {
+					background-color: white;
+				}
+			}
+		}
 		.form-section {
 			padding: 20px 20px 20px 20px;
 			background-color: #fff;
 			border-radius: 5px;
 			margin-right: 240px;
 			margin-bottom: 10px;
+
+			.module-wrapper {
+				border-radius: 5px;
+				padding: 10px;
+				display: inline-block;
+				position: relative;
+			}
+			&.module.selected {
+				border: 0px;
+				background-color: #fff;;
+				.module-wrapper {
+					background-color: $app_bg;
+				}
+			}
 		}
 		.form-fields {
 			padding-top: 80px;
@@ -60,36 +103,11 @@
 			label.radio .radio{
 				margin-right: 10px;
 			}
-			a.close {
-				display: none;
-				position: absolute;
-				top: -10px;
-				right: -10px;
-				color: $brand;
-				opacity: 1;
-			}
+
 			&:hover {
 				border: 1px dashed silver;
 			}
-			&.selected {
-				background-color: $app_bg;
-				border: 1px solid $app_bg;
-				a.close {
-					background: image-url('more_less_sprite.png') -40px 0 no-repeat;
-					display: inline-block;
-					width: 20px;
-					height: 20px;
-					i, &:before{
-						display: none;
-					}
-				}
-				&:hover {
-					border: 1px solid $app_bg;
-				}
-				.attachment-panel{
-					background-color: white;
-				}
-			}
+
 			&.ui-sortable-placeholder {
 				height: 2px !important;
 				opacity: 1;
@@ -410,9 +428,6 @@
 		margin: 0 10px 0 0;
 		span.checked{
 			background-color:$alert_grey !important;
-			&:after{
-				top:-20px;
-			}
 		}
 	}
 
@@ -438,19 +453,11 @@
 			.chzn-container-single {
 				margin-bottom: 10px;
 			}
-			// .chzn-container-single {
-			// 	.chzn-drop {
-			// 		width: 110px !important;
-			// 	}
-			// 	.chzn-results {
-			// 		width: 110px !important;
-			// 	}
-			// 	.chzn-search input {
-			// 		width: 110px !important;
-			// 		padding: 0;
-			// 		height: auto;
-			// 	}
-			// }
+		}
+		&.range-without-format {
+			.range-part {
+				width: 50%;
+			}
 		}
 	}
 	label.range {

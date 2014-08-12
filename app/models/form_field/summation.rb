@@ -49,10 +49,10 @@ class FormField::Summation < FormField
     if result.value
       total = 0
       (options.map do |option|
-        total += (result.value[option.id].to_i || 0)
-        "#{option.name}: #{result.value[option.id.to_s] || 0}"
+        total += (result.value[option.id.to_s].to_i || 0)
+        "<span>#{result.value[option.id.to_s] || 0}</span> #{option.name}"
       end.join('<br /> ') +
-      "<br/>TOTAL: #{total}"
+      "<br/><span>#{total}</span> TOTAL"
       ).html_safe
     end
   end

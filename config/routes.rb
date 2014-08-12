@@ -1,9 +1,5 @@
 Brandscopic::Application.routes.draw do
 
-  if ENV['WEB'] && Rails.env.development?
-    mount StyleGuide::Engine => "/style-guide"
-  end
-
   apipie if ENV['WEB']
 
   namespace :api do
@@ -70,6 +66,10 @@ Brandscopic::Application.routes.draw do
             get :photos
             get :comments
           end
+        end
+
+        resources :brands, only: [:index] do
+          get :marques, on: :member
         end
 
         resources :countries, only: [:index] do

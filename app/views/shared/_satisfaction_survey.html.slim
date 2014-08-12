@@ -26,11 +26,11 @@
       | succesfully submitted.
 
   .emotions_select
-    .positive
+    label.radio.positive
       = radio_button_tag('emotion', 'positive', current_rating == 'positive')
-    .neutral
+    label.radio.neutral
       = radio_button_tag('emotion', 'neutral', current_rating == 'neutral')
-    .negative
+    label.radio.negative
       = radio_button_tag('emotion', 'negative', current_rating == 'negative')
 
 javascript:

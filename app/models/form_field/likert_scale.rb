@@ -49,7 +49,7 @@ class FormField::LikertScale < FormField
   def format_html(result)
     if result.value
       statements.map do |statement|
-        "#{statement.name}: #{options.detect{|option| option.id.to_s == result.value[statement.id.to_s] }.try(:name)}"
+        "<span>#{options.detect{|option| option.id.to_s == result.value[statement.id.to_s] }.try(:name)}</span> #{statement.name}"
       end.join('<br /> ').html_safe
     end
   end
