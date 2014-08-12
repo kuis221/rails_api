@@ -96,14 +96,14 @@ label{
 	}
 }
 
-.calendar-data, .email-data, .phone-data, .place-data, 
+.calendar-data, .email-data, .phone-data, .place-data,
 .time-data, .description-data, .member-data{
 	margin:0 0 20px 30px;
 	width: 380px;
 }
 
 .communication-preferences{
-	.span10{
+	.span9{
 		margin-left: 0;
 	}
 	.span2{
@@ -3750,7 +3750,7 @@ body.company_users{
 }
 
 .notification-types{
-	margin-bottom: 30px;
+	margin: 30px 0;
 	.span12, .span12:first-child{
 		margin-left: 0px;
 		&.category{
@@ -3928,7 +3928,7 @@ body.events.index {
 				}
 			}
 			.summation-total {
-				border-top: 2px solid $grey_one; 
+				border-top: 2px solid $grey_one;
 				margin-top: 5px;
 				padding-top: 10px;
 				text-align: right;

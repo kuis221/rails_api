@@ -18,7 +18,7 @@
       .profile-data
         h2
           = resource.full_name
-          = link_to '', edit_company_user_path(resource), remote: true, class: 'edit' if can?(:edit, resource)
+          = link_to '', edit_company_user_path(resource), remote: true, class: 'edit preferences-edit-icon' if can?(:edit, resource)
 
         - if resource.role.present?
           .user-role.label.label-default
@@ -89,7 +89,8 @@
       #resource-goals-list.link-list
        = render partial: 'goals/goal', collection: resource.goals.base, locals: {parent: resource}
 
-  = render 'notifications_settings' if viewing_profile?
+  .communication-settings
+    = render 'notifications_settings' if viewing_profile?
 
 
 = render partial: 'help_tutorial'

@@ -232,6 +232,7 @@ Brandscopic::Application.routes.draw do
       get :select_campaigns
       delete :remove_campaign
       post :add_campaign
+      get :edit_communications
     end
   end
 
