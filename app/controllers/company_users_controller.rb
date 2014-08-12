@@ -5,7 +5,7 @@ class CompanyUsersController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update, :time_zone_change,:time_zone_update ]
   respond_to :json, only: [:index, :notifications]
 
-  helper_method :brands_campaigns_list
+  helper_method :brands_campaigns_list, :viewing_profile?
 
   custom_actions collection: [:complete, :time_zone_change, :time_zone_update]
 
@@ -27,6 +27,11 @@ class CompanyUsersController < FilteredController
     render :json => buckets.flatten
   end
 
+  def profile
+    @company_user = current_company_user
+    render :show
+  end
+
   def update
     resource.user.updating_user = true if can?(:super_update, resource)
     update! do |success, failure|
@@ -37,6 +42,17 @@ class CompanyUsersController < FilteredController
           resource.user.accept_invitation!
         end
       }
+      failure.js {
+        if params[:company_user][:user_attributes][:verification_code]
+          render 'verify_phone'
+        end
+      }
+    end
+  end
+
+  def verify_phone
+    if resource.user.phone_number.present?
+      resource.user.generate_and_send_phone_verification_code
     end
   end
 
@@ -150,7 +166,13 @@ class CompanyUsersController < FilteredController
 
   protected
     def permitted_params
-      allowed = {company_user: [{user_attributes: [:id, :first_name, :last_name, :email, :phone_number, :password, :password_confirmation, :country, :state, :city, :street_address, :unit_number, :zip_code, :time_zone]}, :notifications_settings => []] }
+      allowed = {
+        company_user: [
+          {user_attributes: [
+            :id, :first_name, :last_name, :email, :phone_number,
+            :password, :password_confirmation, :country, :state, :verification_code,
+            :city, :street_address, :unit_number, :zip_code, :time_zone]},
+          :notifications_settings => []] }
       if params[:id].present? && can?(:super_update, CompanyUser.find(params[:id]))
         allowed[:company_user] += [:role_id, {team_ids: []}]
       end
@@ -203,6 +225,10 @@ class CompanyUsersController < FilteredController
 
     def validate_parent
       raise CanCan::AccessDenied unless ['BrandPortfolio', 'Brand'].include?(params[:parent_type]) || params[:parent_type].nil?
+    end
+
+    def viewing_profile?
+      action_name == 'profile'
     end
 
 end

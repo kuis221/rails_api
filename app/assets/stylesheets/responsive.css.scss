@@ -779,3 +779,20 @@
 		display: none;
 	}
 }
+
+
+// USERS PROFILE
+
+@media only screen and (min-width:1420px) {
+	.user-data{
+		.items-container{
+			margin-left: -60px;
+			margin-right: -60px;
+			.box{
+				margin-right: 60px;
+				margin-left: 60px;
+				width: 340px;
+			}
+		}
+	}
+}

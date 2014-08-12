@@ -1,28 +1,63 @@
 .row-fluid.with-details-close-bar
   = resource_details_bar("You are viewing user details. Click to close.")
 
-  .details_box.padding-top-close-bar
-    h2= resource.full_name
+  .details_box.user-view.padding-top-close-bar
+    .basic-info
+      .profile-pic.big.icon-user.dropdown-toggle class="#{ resource.avatar.present? ? '' : '.no-pic'}" data-toggle="dropdown"
+        - if resource.avatar.present?
+          img alt="Brandscopic" border="0" src="#{root_url}#{image_path('profile-pic.jpg')}"
+      .dropdown-menu.edit-profile-pic
+        ul
+          li
+            a href="#" Upload photo
+          li
+            a href="#" Take photo
+          li
+            a href="#" Cancel
 
-    - if resource.role.present?
-      .user-role
-        = resource.role.name
+      .profile-data
+        h2
+          = resource.full_name
+          = link_to '', edit_company_user_path(resource), remote: true, class: 'edit preferences-edit-icon' if can?(:edit, resource)
 
-    - if resource.email.present?
-      .email-data
-        = resource.email
+        - if resource.role.present?
+          .user-role.label.label-default
+            = resource.role.name
 
-    - if resource.phone_number.present?
-      .phone-data
-        = resource.phone_number
+    - if resource.teams.any?
+      .team-assigned
+        span.assigned-to
+        - resource.teams.pluck(:name).each do |team_name|
+          span.label.label-team= team_name
 
-    - if resource.full_address.present?
-      .place-data
-        = resource.full_address
+    .aditional-info
+      - if resource.email.present?
+        .email-data
+          = resource.email
 
-    .links-data
-      = link_to '', edit_company_user_path(resource), remote: true, title: 'Edit', class: 'edit' if can?(:edit, resource)
-      = active_inactive_buttons(resource) if can?(:deactivate, resource)
+      - if resource.phone_number.present?
+        .phone-data
+          .number
+            = resource.phone_number
+          - if resource.user.phone_number_verified?
+            .verified
+              p Verified!
+          - elsif viewing_profile?
+            .verify
+              = link_to 'Get Verified', send_code_company_user_url(resource), class: "special", remote: true
+
+            .info
+              a.has-tooltip href="#" class="icon-info" title="This is a sample description of the verification function. Exact  copy for it is needed from Chris."
+
+
+
+      - if resource.full_address.present?
+        .place-data
+          = resource.full_address
+
+      //.links-data
+        //= link_to '', edit_company_user_path(resource), remote: true, title: 'Edit', class: 'edit' if can?(:edit, resource)
+        //= active_inactive_buttons(resource) if can?(:deactivate, resource)
 
     // The is info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
@@ -30,26 +65,33 @@
       = link_to '', edit_company_user_path(resource), remote: true, class: 'edit' if can?(:edit, resource)
       = active_inactive_buttons(resource) if can?(:deactivate, resource)
 
-  #user-places.details_box
-    h3 PLACES
-    #company_user-areas-list
-      = render partial: 'company_users/area', collection: resource.areas.order('areas.name ASC')
 
-    #company_user-places-list
-      = render 'places'
+  - unless viewing_profile?
+    #user-places.details_box
+      h3 PLACES
+      #company_user-areas-list
+       = render partial: 'company_users/area', collection: resource.areas.order('areas.name ASC')
 
-    .row-fluid.plus
-      = link_to "", new_company_user_placeable_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Area' if can?(:edit, resource)
+      #company_user-places-list
+       = render 'places'
 
-  #user-campaigns.details_box
-    h3 CAMPAIGNS
+      .row-fluid.plus
+       = link_to "", new_company_user_placeable_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Area' if can?(:edit, resource)
 
-    = render 'campaigns'
+  - unless viewing_profile?
+    #user-campaigns.details_box
+      h3 CAMPAIGNS
 
-  #user-goals.details_box
-    = link_to 'Add Goal', new_company_user_goal_path(resource), remote: true, class: 'btn btn-primary btn-add-goal' if can?(:edit, resource)
-    #resource-goals-list.link-list
-      = render partial: 'goals/goal', collection: resource.goals.base, locals: {parent: resource}
+      = render 'campaigns'
+
+    #user-goals.details_box
+      = link_to 'Add Goal', new_company_user_goal_path(resource), remote: true, class: 'btn btn-primary btn-add-goal' if can?(:edit, resource)
+      #resource-goals-list.link-list
+       = render partial: 'goals/goal', collection: resource.goals.base, locals: {parent: resource}
+
+  .communication-settings
+    = render 'notifications_settings' if viewing_profile?
+
 
 = render partial: 'help_tutorial'
 

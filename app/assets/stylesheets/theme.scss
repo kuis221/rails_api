@@ -1,0 +1,129 @@
+
+@import "mixins.scss";
+@import "variables.css.scss";
+
+
+a{
+	&.special{
+		color: $link-color;
+	}
+	&:before, &:after{
+		font-weight:normal;
+	}
+}
+
+html {
+	min-height: 100%;
+	height:100%;
+}
+
+//
+// Form elements
+// --------------------------------------------------
+
+select,
+textarea, 
+input[type="text"], 
+input[type="password"], 
+input[type="datetime"], 
+input[type="datetime-local"], 
+input[type="date"], 
+input[type="month"], 
+input[type="time"], 
+input[type="week"], 
+input[type="number"], 
+input[type="email"], 
+input[type="url"], 
+input[type="search"], 
+input[type="tel"], 
+input[type="color"], 
+.uneditable-input{
+	background-color: white;
+	border: 1px solid $grey_four;
+	box-shadow: none;
+	box-sizing: border-box;
+	font-family: $baseFontFamily;
+	font-size: 13px;
+	font-weight: normal;
+	-webkit-box-shadow: none;
+	height:39px;
+	padding: 10px;
+	width: 380px;
+	&:focus{
+		border: 1px solid $brand;
+		box-shadow: none;
+		-webkit-box-shadow: none;
+		outline:0;
+	}
+}
+
+input[disabled], select[disabled], textarea[disabled], 
+input[readonly], select[readonly], textarea[readonly]{
+	background-color: white;
+	border: 1px solid rgba(192, 192, 192, 0.6);
+	&:focus{
+		border: 1px solid rgba(192, 192, 192, 0.6)
+	}
+}
+
+
+//
+// Buttons
+// --------------------------------------------------
+
+.btn{
+	background-color: $user_menu;
+	background-image: none;
+	border: 0;
+	font-family: $baseFontFamily;
+	padding: 7px 17px;
+	text-shadow:none;
+	&[disabled]{
+		background-color: $grey_one;
+		opacity: 1;
+		&:hover{
+			background-color: $grey_one;
+		}
+	}
+}
+
+
+//
+// Labels
+// --------------------------------------------------
+
+.label {
+	font-size: 12px;
+	font-weight: 400;
+	@include border-radius(4px);
+	padding: 4px 8px;
+	text-shadow: none;
+	&.label-default{
+		background-color: $light-blue;
+	}
+	&.label-team{
+		background-color: $grey_four;
+		color: white;
+		@include border-radius(15px);
+		line-height: 24px;
+		padding: 0 15px 0 0;
+		position: relative;
+		&:after{
+			color: $glyphs-color;
+			content: "\e61d";
+			font-size: 14px;
+			left: 5px;
+			position: absolute;
+		}
+		&:before{
+			content: "";
+			background-color: $user_menu;
+			float: left;
+			height: 25px;
+			@include border-radius(15px);
+			margin-right: 6px;
+			position: relative;
+			width:25px;
+		}
+	}
+}

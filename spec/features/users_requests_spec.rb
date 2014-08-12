@@ -191,6 +191,30 @@ feature "Users", :js => true do
         expect(@company_user.state).to eq('C')
         expect(@company_user.city).to eq('Tres Rios')
       end
+
+      scenario 'allows the user to edit his communication preferences' do
+        visit company_user_path(@company_user)
+
+        within 'li#user_menu' do
+          click_js_link(@user.full_name)
+          click_js_link('View Profile')
+        end
+
+        click_js_link('edit-communications')
+
+        within("form#edit_company_user_#{@company_user.id}") do
+          find('#notification_settings_event_recap_due_app').trigger('click')
+          find('#notification_settings_event_recap_due_sms').trigger('click')
+          find('#notification_settings_event_recap_due_email').trigger('click')
+          click_js_button 'Save'
+        end
+
+        wait_for_ajax
+
+        @company_user.reload
+        expect(@company_user.notifications_settings).to include("event_recap_due_sms", "event_recap_due_email")
+        expect(@company_user.notifications_settings).to_not include("event_recap_due_app")
+      end
     end
 
   end
