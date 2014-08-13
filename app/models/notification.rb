@@ -19,8 +19,8 @@ class Notification < ActiveRecord::Base
   belongs_to :company_user
   attr_accessible :icon, :level, :message, :message_params, :extra_params, :params, :path
 
-  EVENT_ALERT_POLICY_TEAM = '1' # Notify only to users in the event team
-  EVENT_ALERT_POLICY_ALL = '2'  # Notify only to ALL users that can access the event
+  EVENT_ALERT_POLICY_TEAM = 1 # Notify only to users in the event team
+  EVENT_ALERT_POLICY_ALL = 2  # Notify only to ALL users that can access the event
 
   serialize :message_params
   serialize :extra_params

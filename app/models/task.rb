@@ -274,7 +274,7 @@ class Task < ActiveRecord::Base
         {user: [company_user.id]}
       elsif scope == 'teams'
         params = {not_assigned_to: [company_user.id]}
-        unless company_user.company.setting(:event_alerts_policy) == Notification::EVENT_ALERT_POLICY_ALL
+        unless company_user.company.setting(:event_alerts_policy).to_i == Notification::EVENT_ALERT_POLICY_ALL
           params.merge!(team_members: [company_user.id])
         end
         params
