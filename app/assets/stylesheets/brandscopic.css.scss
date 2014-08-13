@@ -486,7 +486,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 
 a.datepick-cmd{
 	display: inline-block;
-	margin-top: 12px;
+	margin-top: 10px;
 	overflow: hidden;
 	position:relative;
 	text-indent: 13%;
@@ -496,7 +496,7 @@ a.datepick-cmd:hover{
 }
 
 .datepick-cmd-next, .datepick-cmd-prev{
-	font-size: 12px;
+	font-size: 11px;
 	color: white !important;
 }
 
@@ -2085,6 +2085,7 @@ ul.kpis-list{
 	color: $brand;
 	font-size: 12px;
 	margin: 25px 0 0 0;
+	overflow: hidden;
 	padding: 0;
 	position: relative;
 	address{
@@ -2114,11 +2115,68 @@ ul.kpis-list{
 			top: 0px;
 		}
 	}
+	/* Fix for global styles -- lists of admin dropdown header menu */
 	ul{
 		padding: 0;
 		margin:0;
 		li{
 			color: $text;
+			display: table;
+			min-height: 85px;
+			position: relative;
+			width: 100%;
+			a{
+				display: table-cell;
+				vertical-align: middle;
+				float: none;
+				padding-top: 0;
+				padding-bottom: 0;
+				height: 85px;
+				span{
+					display: inline-block;
+					vertical-align: middle;
+				}
+			}
+			&:hover{
+				.pull-right{
+					opacity: 1;
+					a{
+						box-sizing: border-box;
+						color: $brand;
+						padding-left: 10px;
+						display: table-cell;
+						vertical-align: middle;
+					}
+				}
+			}
+			span{
+				display: inline-block;
+				vertical-align: top;
+				&.address{
+					line-height: 19px;
+					width: 45%;
+					overflow: hidden;
+					text-overflow:ellipsis;
+					white-space: nowrap;
+					address{
+						overflow: hidden;
+						text-overflow:ellipsis;
+						width: 95%;
+					}
+				}
+				&.date{
+					line-height: 20px;
+					width: 40%;
+				}
+				&.pull-right{
+					opacity: 0;
+					position: absolute;
+					right: 15px;
+					font-size: 16px;
+				}
+			}
+			/* End global change */
+
 			&.complete > span.task-list {
 				border-left: 5px solid $complete !important;
 			}
@@ -2133,11 +2191,12 @@ ul.kpis-list{
 				color:$user_menu;
 				}
 			}
+			/*
 			&:hover{
 				&.inactive a{
 					color:$text;
 				}
-			}
+			}*/
 		}
 	}
 	.empty-list-message {
@@ -2287,16 +2346,11 @@ ul.kpis-list{
 	}
 	ul#events-list{
 		li{
-			color: $text;
-			min-height: 70px;
-			padding: 9px 0 0 15px;
-
 			.address{
 				br{
 					display:block;
 				}
 			}
-
 			&.late {
 				border-left: 5px solid $late;
 			}
@@ -2310,9 +2364,28 @@ ul.kpis-list{
 				border-left: 5px solid $rejected;
 			}
 		}
-		span.event-item {
-			min-height: 82px;
-			width: 100%;
+		span{
+			&.event-item {
+				display: table-cell;
+				float: none;
+				padding: 0 15px;
+				vertical-align: middle;
+				a{
+					display: inline-block;
+					vertical-align: middle;
+					height: auto;
+					width: 100%;
+				}
+			}
+			&.pull-right{
+				right: 20px;
+				a{
+					width: auto;
+					height: 45px;
+					display: table-cell;
+					vertical-align: middle;
+				}
+			}
 		}
 	}
 	ul#my-tasks-list, ul#team-tasks-list{
@@ -2335,9 +2408,6 @@ ul.kpis-list{
 	}
 	ul#tasks-list{
 		li{
-			color: $text;
-			min-height:80px;
-
 			&.complete > span.task-list {
 				border-left: 5px solid $complete !important;
 			}
@@ -2348,7 +2418,7 @@ ul.kpis-list{
 				border-left: 5px solid $due_today;
 			}
 			span.task-list{
-				height: 80px;
+				height: 85px;
 				width: 100%;
 				span{
 					&:first-child{
@@ -2359,17 +2429,16 @@ ul.kpis-list{
 						margin: 0;
 					}
 					&.tasks-date{
-						margin: 10px 20px 0 0;
+						margin: 30px 20px 0 0;
 						width: 45%;
 					}
 					&.last{
-						margin-top: 10px;
 						width: 35%;
 					}
 					&.links{
 						display: inline-block;
 						float: right;
-						margin: 8px 5px 0 0;
+						margin: 0 5px 0 0;
 					}
 					&.title{
 						display: inline-block;
@@ -2381,7 +2450,6 @@ ul.kpis-list{
 						width: 53%;
 					}
 					&.pull-right{
-						margin-top: 20px;
 						position: relative;
 					}
 				}
@@ -2482,7 +2550,7 @@ ul.kpis-list{
 		span{
 			line-height: 20px;
 			&.user_name, &.user_city{
-				margin: 8px 20px 0 0;
+				margin: 0 20px 0 0;
 				width: 20%;
 			}
 			&.user_name{
@@ -2492,11 +2560,11 @@ ul.kpis-list{
 				}
 			}
 			&.user_mail{
-				margin: 8px 30px 0 0;
+				margin: 0 30px 0 0;
 				width: 24%;
 			}
 			&.user_date{
-				margin: 8px 0 0 0;
+				margin: 0;
 				width: 18%;
 			}
 		}
@@ -2526,11 +2594,11 @@ ul.kpis-list{
 				top:0;
 			}
 			&:first-child{
-				margin: 8px 100px 0 0;
+				margin: 0 100px 0 0;
 				width:50%;
 			}
 			&.members{
-				margin: 8px 0 0 0;
+				margin: 0;
 				width: 15%;
 				b {
 					font-size: 16px;
@@ -2545,7 +2613,6 @@ ul.kpis-list{
 				top:0;
 			}
 			&:first-child{
-				margin-top: 8px;
 				width: 50%;
 			}
 		}
@@ -2560,7 +2627,7 @@ ul.kpis-list{
 				top:0;
 			}
 			&:first-child{
-				margin: 8px 80px 0 0;
+				margin: 0 80px 0 0;
 				width: 45%;
 			}
 			&.first{
@@ -2568,7 +2635,7 @@ ul.kpis-list{
 				width: 15%;
 			}
 			&.first, &.last{
-				margin-top: 8px;
+				margin-top: 0;
 				b{
 					top:-2px;
 				}
@@ -2579,13 +2646,6 @@ ul.kpis-list{
 		li{
 			display: table;
 			width: 100%;
-			a{
-				display: table-cell;
-				vertical-align: middle;
-				span{
-					margin:0 !important;
-				}
-			}
 		}
 	}
 	ul#venues-list{
@@ -2652,67 +2712,13 @@ ul.kpis-list{
 		}
 		&>a{
 			display: block;
-			padding: 13px 15px 11px 15px;
+			padding: 0 15px;
 			@include box-sizing(border-box);
 			width: 100%;
 			min-height: 100%;
 		}
-		.pull-right a{
-			display: none;
-		}
-		/*
-		.edit, .enable, .disable, .preview {
-			height: 30px;
-			display: inline-block;
-		}
-		.edit:after{
-			color: white;
-			font-size: 18px;
-			margin-left: 10px;
-		}
-		.enable:after{
-			color: white;
-			margin-left: 10px;
-			text-align: center;
-			top:2px;
-		}
-		.disable:after{
-			color: white;
-			font-size: 18px;
-			margin-left: 10px;
-			text-align: center;
-			top:2px;
-		}
-		.load-comments-link:after{
-			color: white;
-			margin-left: 10px;
-			text-align: center;
-			top:3px;
-		}
-		.preview:after{
-			color: white;
-			content: "\e016";
-			font-family: 'icons';
-			font-size: 26px;
-			position: relative;
-			right: -6px;
-			speak:none;
-			text-shadow:none;
-			top: 9px;
-		}
-		.share:after{
-			color:white;
-			margin-right: 2px;
-			text-align: center;
-			top: 3px;
-		}*/
 		&:hover{
 			background-color: $grey_one;
-			.pull-right a{
-				color: $brand;
-				display: inline-block;
-				margin-left: 10px;
-			}
 			.checker{
 				background-color: $user_menu;
 			}
@@ -2746,40 +2752,6 @@ ul.kpis-list{
 			.due-date{
 				width: 10%;
 			}
-		}
-	}
-	span{
-		display: inline-block;
-		vertical-align: top;
-		&.address{
-			line-height: 19px;
-			padding-top: 8px;
-			width: 45%;
-			overflow: hidden;
-			text-overflow:ellipsis;
-			white-space: nowrap;
-			address{
-				overflow: hidden;
-				text-overflow:ellipsis;
-				width: 95%;
-			}
-		}
-		&.date{
-			line-height: 20px;
-			padding-top: 8px;
-			width: 40%;
-		}
-		&.event-item{
-			.pull-right{
-				top: 40%;			
-			}
-		}
-		&.pull-right{
-			display: block;
-			position: absolute;
-			right: 15px;
-			font-size: 16px;
-			top: 23%;
 		}
 	}
 	&.rows-no-link{
@@ -3071,7 +3043,7 @@ textarea::-webkit-input-placeholder {
 		position: absolute;
 		text-shadow:none;
 		right: 15px;
-		top: 16px;
+		top: 13px;
 	}
 	.details-bar-pull-left {
 		float: left;
@@ -7154,15 +7126,19 @@ table td.sub-level-1 {
 .calendar-data, .email-data, .phone-data, .place-data, .time-data, .description-data{
 	display: block;
 	min-height: 20px;
-	margin: 0 0 20px 30px;
+	margin: 0 0 20px 0;
 	position: relative;
 	width: 380px;
 	i{
 		color: $user_menu;
-		position: absolute;
-		left: -29px;
-		top: 5px;
-		font-size: 18px;
+		font-size: 17px;
+		display: inline-block;
+		margin-right: 10px;
+		margin-top: 4px;
+		vertical-align: top;
+	}
+	span{
+		display: inline-block;
 	}
 }
 
