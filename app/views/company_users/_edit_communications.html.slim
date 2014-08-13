@@ -11,6 +11,7 @@
           .span2 IN-APP
           .span2 SMS
           .span2 EMAIL
+      = hidden_field_tag("company_user[notifications_settings][]", nil)
       - CompanyUser::NOTIFICATION_SETTINGS_TYPES.each do |type|
         -if resource.notification_setting_permission?(type)
           .row-fluid
