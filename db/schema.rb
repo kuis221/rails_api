@@ -11,11 +11,15 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
+<<<<<<< HEAD
 ActiveRecord::Schema.define(:version => 20140807202736) do
+=======
+ActiveRecord::Schema.define(:version => 20140809221042) do
+>>>>>>> ced7e461543d2c640d1731dd47891104984f3953
 
+  add_extension "hstore"
   add_extension "pg_stat_statements"
   add_extension "tablefunc"
-  add_extension "hstore"
 
   create_table "active_admin_comments", :force => true do |t|
     t.string   "resource_id",   :null => false
@@ -267,6 +271,7 @@ ActiveRecord::Schema.define(:version => 20140807202736) do
     t.datetime "created_at",       :null => false
     t.datetime "updated_at",       :null => false
     t.boolean  "timezone_support"
+    t.hstore   "settings"
   end
 
   create_table "company_users", :force => true do |t|
@@ -799,12 +804,12 @@ ActiveRecord::Schema.define(:version => 20140807202736) do
   create_table "users", :force => true do |t|
     t.string   "first_name"
     t.string   "last_name"
-    t.string   "email",                               :default => "", :null => false
-    t.string   "encrypted_password",                  :default => ""
+    t.string   "email",                                  :default => "", :null => false
+    t.string   "encrypted_password",                     :default => ""
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",                       :default => 0
+    t.integer  "sign_in_count",                          :default => 0
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
@@ -813,9 +818,9 @@ ActiveRecord::Schema.define(:version => 20140807202736) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string   "unconfirmed_email"
-    t.datetime "created_at",                                          :null => false
-    t.datetime "updated_at",                                          :null => false
-    t.string   "country",                :limit => 4
+    t.datetime "created_at",                                             :null => false
+    t.datetime "updated_at",                                             :null => false
+    t.string   "country",                   :limit => 4
     t.string   "state"
     t.string   "city"
     t.integer  "created_by_id"
@@ -835,6 +840,12 @@ ActiveRecord::Schema.define(:version => 20140807202736) do
     t.string   "zip_code"
     t.string   "authentication_token"
     t.datetime "invitation_created_at"
+    t.string   "avatar_file_name"
+    t.string   "avatar_content_type"
+    t.integer  "avatar_file_size"
+    t.datetime "avatar_updated_at"
+    t.boolean  "phone_number_verified"
+    t.string   "phone_number_verification"
   end
 
   add_index "users", ["email"], :name => "index_users_on_email", :unique => true

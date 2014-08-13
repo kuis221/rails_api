@@ -1,6 +1,6 @@
 .row-fluid.with-details-close-bar
   = resource_details_bar("You are viewing activity details. Click to close.")
-  .details_box
+  .details_box.form-results-box
     h2.special = resource.activity_type.name
     - if resource.campaign.present?
       p.big= resource.campaign.name

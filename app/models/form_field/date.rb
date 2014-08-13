@@ -23,4 +23,13 @@ class FormField::Date < FormField
   def field_classes
     ['field-type-date']
   end
+
+  def format_html(result)
+    date = Timeliness.parse(result.value) rescue false if result.value
+    if date && date.year == ::Time.now.year
+      date.strftime('<i>%^a</i> %b %d').html_safe rescue nil
+    else
+      date.strftime('<i>%^a</i> %b %d, %Y').html_safe rescue nil
+    end
+  end
 end

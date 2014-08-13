@@ -11,5 +11,6 @@
 require 'spec_helper'
 
 describe ReportSharing, :type => :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it { is_expected.to belong_to(:report) }
+  it { is_expected.to belong_to(:shared_with) }
 end

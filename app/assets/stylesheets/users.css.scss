@@ -1,0 +1,261 @@
+@import "variables";
+@import "mixins.scss";
+
+// Profile Pic - User Pic Styles
+// --------------------------------------------------
+
+.edit-profile-pic{
+	background-color: white;
+	border: 1px solid $user_menu;
+	bottom: -100px;
+	position: absolute;
+	height: 90px;
+	left: -15px;
+	min-width: 0;
+	@include border-radius(6px);
+	width: 122px;
+	ul{
+		list-style: none;
+		margin:0;
+		position: absolute;
+		width: 100%;
+		z-index: 999999;
+		li {
+			border-bottom: 1px solid $user_menu;
+			padding: 5px 10px;
+			a{
+				color: $text;
+			}
+			&:last-child{
+				border-bottom: 0;
+			}
+			&:hover{
+				background-color: $brand;
+				a{
+					color: white;
+				}
+			}
+		}
+	}
+	&:before{
+		content: '';
+		background: white;
+		height: 15px;
+		width: 15px;
+		position: absolute;
+		top: -7px;
+		left: 45%;
+		z-index: 4;
+		-webkit-transform: rotate(45deg);
+		transform: rotate(45deg);
+		box-shadow: -1px -1px 0px $user_menu;
+		border: 0;
+	}
+}
+
+.profile-pic{
+	background-color: $grey_four;
+	display: inline-block;
+	float: left;
+	overflow: hidden;
+	position: relative;
+	&.big{
+		height: 96px;
+		@include border-radius(50px);
+		width: 96px;
+		img{
+			height: 96px;
+			left: -25%;
+			position: absolute;
+			max-width: 200%;
+		}
+		&.icon-user:before{
+			font-size: 60px;
+			padding: 17px 21px;
+		}
+		&.icon-staff:before{
+			font-size: 60px;
+			padding: 20px 17px;
+		}
+		&:hover{
+			&:after{
+				content: " ";
+				background: image-url('update-photo.png') rgba(79,79,79,0.8);
+				@extend .profile-pic.big;
+				position: absolute;
+				top: 0;
+			}
+		}
+	}
+}
+
+.items-container{
+	margin-bottom: 40px;
+}
+
+// View Profile Styles
+// --------------------------------------------------
+
+.user-view{
+	.basic-info{
+		display: block;
+		margin: 10px 0 30px 0;
+		position: relative;
+		width: 100%;
+		h2{
+			margin: 0 0 15px 0 !important;
+		}
+		.profile-pic{
+			display: inline-block;
+			margin-right: 20px;
+			overflow: hidden;
+			position: relative;
+			top: -15px;
+		}
+		.profile-data{
+			margin: 20px 0 0 20px;
+			h2 .icon-remove-sign {
+				margin-left: 10px;
+				&:before {
+					top: 1px;
+					font-size: 18px;
+				}
+			}
+		}
+	}
+	.team-assigned{
+		height: 30px;
+		span{
+			&.assigned-to:before{
+				content: "\e61d";
+				color: $user_menu;
+				display: inline-block;
+				font-size: 17px;
+				margin-right: 12px;
+				top: 2px;
+				width: auto;
+			}
+			&.label{
+				display: inline-block;
+				margin-right: 5px;
+			}
+		}
+	}
+	.aditional-info{
+		margin: 20px 0 30px 0;
+		width: 100%;
+		.email-data, .phone-data, .place-data{
+			margin-bottom: 8px;
+		}
+	}
+	.user-data{
+		a{
+			color: $text;
+			margin-top: 0;
+			&:hover{
+				border-bottom: 1px solid $text;
+			}
+		}
+		.items-container{
+			.box{
+				display: inline-block;
+				height: 35px;
+				margin-bottom: 15px;
+				padding-left: 45px;
+				width: 45%;
+				&.special-icon{
+					&:after{
+						top: 10px;
+					}
+					&:before{
+						left: 0;
+						position: absolute;
+						top: 4px;
+					}
+					&.venue-icon{
+						margin-bottom: 25px;
+						p{
+							color: $brand;
+						}
+					}
+				}
+				b{
+					display: inline-block;
+					margin-top: 8px;
+				}
+			}
+			&+ a{
+				color: $brand;
+				margin-left: 28px;
+				position: relative;
+				&:before{
+					color: $brand;
+					content: "\e021";
+					font-size: 20px;
+					left: -24px;
+					position: absolute;
+					top: 2px;
+				}
+			}
+		}
+	}
+}
+
+.control-group{
+	&.percentage{
+		width:390px;
+		input[type="text"]{
+			-webkit-border-radius: 4px 0px 0px 4px;
+			border-radius: 4px 0px 0px 4px;
+			width: 172px !important;
+		}
+		span.add-on{
+			background-color: $user_menu;
+			border:0 !important;
+			border-radius: 0px 4px 4px 0px;
+			color: white;
+			display: inline-block;
+			-webkit-border-radius: 0px 4px 4px 0px;
+			padding: 10px 5px 11px 4px;
+			text-align: center;
+			text-shadow:none !important;
+			width: 40px;
+		}
+		label.control-label{
+			display: inline-block;
+			float: right;
+			font-size: 13px;
+			margin-top: 12px;
+			margin-right: 5px;
+			width: 150px;
+		}
+	}
+	&.error{
+		input, textarea{
+			&:focus{
+				box-shadow: none;
+				-webkit-box-shadow: none;
+			}
+		}
+	}
+}
+
+.control-group.percentage,
+.control-group.summation {
+	.help-inline.valid {
+		display: none !important;
+	}
+}
+
+.chzn-default span {
+	color: $user_menu;
+}
+
+.preferences-edit-icon{
+	margin-left: 10px;
+	&:after{
+		font-size: 16px !important;
+		color: $brand !important;
+		top: 0 !important;
+	}
+}

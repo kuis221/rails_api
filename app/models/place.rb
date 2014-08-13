@@ -268,6 +268,7 @@ class Place < ActiveRecord::Base
         self.longitude = spot.lng
         self.formatted_address = spot.formatted_address
         self.types = spot.types
+        self.types ||= []
         sublocality = nil
 
         # Parse the address components
@@ -314,8 +315,8 @@ class Place < ActiveRecord::Base
         end
 
         sublocality = self.neighborhood
-        sublocality ||= self.route if types.include?('establishment')
-        sublocality ||= self.zipcode if types.include?('establishment')
+        sublocality ||= self.route if self.types && self.types.include?('establishment')
+        sublocality ||= self.zipcode if self.types && self.types.include?('establishment')
 
         # There are cases where the API doesn't give a city but a neighborhood (sublocality)
         if !self.city && !self.types.include?('administrative_area_level_2') && sublocality

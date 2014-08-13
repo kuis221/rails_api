@@ -943,7 +943,7 @@ feature 'Events section' do
         click_js_link "submit"
 
         expect(page).to have_content("Your post event report has been submitted for approval.")
-        expect(page).to have_content("98765 TEST FIELD")
+        expect(page).to have_content("TEST FIELD 98,765")
       end
 
       scenario "should not submit the event data if there are validation errors" do

@@ -959,10 +959,10 @@ class Api::V1::EventsController < Api::V1::FilteredController
           value: r.value || [],
           segments: field.options_for_input.map{|s| {id: s[1], text: s[0], value: r.value.include?(s[1])}}
         })
-      elsif field.type == 'FormField::Brand'
+      elsif (field.type == 'FormField::Brand' || field.type == 'FormField::Marque')
         result.merge!({
           value: r.value.to_i,
-          segments: field.brands_options(r).map{|s|
+          segments: field.options_for_field(r).map{|s|
             {id: s[:id], text: s[:name]}
           }
         })

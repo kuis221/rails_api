@@ -1143,7 +1143,7 @@ LikertScaleField = FormField.extend {
 						$.map @attributes.statements, (statement, index) =>
 							$('<tr>').append($('<td>').append($('<label>').text(statement.name))).append(
 								$.map @attributes.options, (option, index) =>
-									$('<td>').append($('<input type="radio">'))
+									$('<td>').append($('<label class="radio"><div class="radio"><input type="radio"></div></label>'))
 							)
 					)
 				)

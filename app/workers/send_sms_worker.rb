@@ -1,6 +1,6 @@
 class SendSmsWorker
   include Resque::Plugins::UniqueJob
-  @queue = :sms
+  @queue = :notification
 
   def self.perform(phone_number, message)
     begin

@@ -27,6 +27,8 @@ class CompanyUser < ActiveRecord::Base
   validates :role_id, presence: true, numericality: true
   validates :company_id, presence: true, numericality: true, uniqueness: {scope: :user_id}
 
+  before_validation :set_default_notifications_settings, :on => :create
+
   has_many :memberships, dependent: :destroy
   has_many :contact_events, dependent: :destroy, as: :contactable
 
@@ -56,7 +58,7 @@ class CompanyUser < ActiveRecord::Base
   has_many :placeables, as: :placeable, dependent: :destroy
   has_many :places, through: :placeables, after_add: :places_changed
 
-  delegate :name, :email, :phone_number, :role_name, :time_zone, :invited_to_sign_up?, to: :user
+  delegate :name, :email, :phone_number, :role_name, :time_zone, :avatar, :invited_to_sign_up?, to: :user
   delegate :full_address, :country, :state, :city, :street_address, :unit_number, :zip_code, :country_name, :state_name, to: :user
   delegate :is_admin?, to: :role, prefix: false
 
@@ -81,7 +83,8 @@ class CompanyUser < ActiveRecord::Base
       'new_campaign' => [{action: :read, subject_class: Campaign}]
   }
 
-  scope :active, where(:active => true)
+  scope :active, -> { where(:active => true) }
+  scope :admin, -> { joins(:role).where(roles: {is_admin: true}) }
   scope :by_teams, lambda{|teams| joins(:memberships).where(memberships: {memberable_id: teams, memberable_type: 'Team'}) }
   scope :by_campaigns, lambda{|campaigns| joins(:memberships).where(memberships: {memberable_id: campaigns, memberable_type: 'Campaign'}) }
   scope :by_events, lambda{|events| joins(:memberships).where(memberships: {memberable_id: events, memberable_type: 'Event'}) }
@@ -227,7 +230,8 @@ class CompanyUser < ActiveRecord::Base
   end
 
   def allow_notification?(type)
-     phone_number_confirmed? && notifications_settings.is_a?(Array) && notifications_settings.include?(type)
+    (type.to_s[-4..-1] != '_sms' || phone_number_confirmed?) && # SMS notifications only if phone number is confirmed
+    notifications_settings.is_a?(Array) && notifications_settings.include?(type.to_s)
   end
 
   def phone_number_confirmed?
@@ -289,6 +293,11 @@ class CompanyUser < ActiveRecord::Base
     end
   end
 
+  def set_default_notifications_settings
+    if self.notifications_settings.nil? || self.notifications_settings.empty?
+      self.notifications_settings = NOTIFICATION_SETTINGS_TYPES.map{|n| "#{n}_app" }
+    end
+  end
 
   private
 

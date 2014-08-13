@@ -210,15 +210,25 @@ describe CompanyUser, :type => :model do
   end
 
   describe "#allow_notification?" do
-    let(:user) { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
+    let(:user) { FactoryGirl.create(:company_user, company_id: 1,
+      role: FactoryGirl.create(:role, is_admin: false)) }
 
     it "should return false if the user is not allowed to receive a notification" do
       expect(user.allow_notification?('new_campaign_sms')).to be_falsey
     end
 
-    it "sshould return false if the user is allowed to receive a notification" do
+    it "should return true if the user is allowed to receive a notification" do
       user.update_attributes({notifications_settings: ['new_campaign_sms']})
       expect(user.allow_notification?('new_campaign_sms')).to be_truthy
+    end
+
+    describe "user without phone number" do
+      it "should return true if the user is allowed to receive a notification" do
+        user.user.phone_number = nil
+        user.update_attributes({notifications_settings: ['new_campaign_app', 'new_campaign_sms']})
+        expect(user.allow_notification?('new_campaign_app')).to be_truthy
+        expect(user.allow_notification?('new_campaign_sms')).to be_falsey
+      end
     end
   end
 
@@ -293,6 +303,15 @@ describe CompanyUser, :type => :model do
       company_user.brand_portfolios << brand_portfolio
       expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{company_user.id}")
       company_user.brand_portfolios.destroy brand_portfolio
+    end
+  end
+
+  describe "default notifications settings" do
+    it "should assign all notifications settings on creation " do
+      user = FactoryGirl.create(:company_user, notifications_settings: nil)
+      expect(user.notifications_settings).not_to be_empty
+      expect(user.notifications_settings.length).to eql CompanyUser::NOTIFICATION_SETTINGS_TYPES.length
+      expect(user.notifications_settings).to include('event_recap_due_app')
     end
   end
 end

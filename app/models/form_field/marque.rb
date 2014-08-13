@@ -17,26 +17,7 @@
 
 class FormField::Marque < FormField::Dropdown
   def field_options(result)
-    marques = []
-    ff_brand  = FormField.where(fieldable_id: fieldable_id, fieldable_type: fieldable_type, type: 'FormField::Brand').first
-    # ff_brand = if result.resultable.is_a?(Activity)
-    #   result.resultable.activity_type.form_fields.select{|f| f.type == 'FormField::Brand' }
-    # elsif result.resultable.respond_to?
-    #   result.resultable.form_fields.select{|f| f.type == 'FormField::Brand' }
-    # end
-    if ff_brand.present?
-      if result.id
-        results = result.resultable.results_for([ff_brand])
-        brand_id = results.first.value if results.present? &&  results.any?
-      elsif result.resultable.respond_to?(:campaign) && result.resultable.campaign
-        ids = result.resultable.campaign.brand_ids
-        brand_id = ids.first if ids.count == 1
-      end
-
-      if brand_id.present?
-        marques = ::Marque.where(brand_id: brand_id)
-      end
-    end
+    marques = options_for_field(result)
     {
       as: :select,
       collection: marques,
@@ -61,5 +42,24 @@ class FormField::Marque < FormField::Dropdown
     unless result.value.nil? || result.value.empty?
       ::Marque.where(id: result.value).pluck(:name).join(', ')
     end
+  end
+
+  def options_for_field(result)
+    marques = []
+    ff_brand  = FormField.where(fieldable_id: fieldable_id, fieldable_type: fieldable_type, type: 'FormField::Brand').first
+    if ff_brand.present?
+      if result.id
+        results = result.resultable.results_for([ff_brand])
+        brand_id = results.first.value if results.present? && results.any?
+      elsif result.resultable.respond_to?(:campaign) && result.resultable.campaign
+        ids = result.resultable.campaign.brand_ids
+        brand_id = ids.first if ids.count == 1
+      end
+
+      if brand_id.present?
+        marques = ::Marque.where(brand_id: brand_id)
+      end
+    end
+    marques
   end
 end
