@@ -6,24 +6,34 @@ module UsersHelper
     if can?(:view_list, Event)
       # Gets the counts with a single Solr request
       status_counts = {late: 0, due: 0, submitted: 0, rejected: 0}
-      events_search = Event.do_search({company_id: company.id, status: ['Active'], current_company_user: current_company_user, user: [user.id], team: user.team_ids}, true)
+      event_search_params = {
+        company_id: company.id,
+        status: ['Active'],
+        current_company_user: current_company_user }
+
+      user_params = nil
+      # If the notification policy is set to only event team members
+      unless user.company.setting(:event_alerts_policy).to_i == Notification::EVENT_ALERT_POLICY_ALL
+        event_search_params.merge!(user: [user.id], team: user.team_ids)
+        user_params = [user.id]
+      end
+      events_search = Event.do_search(event_search_params, true)
       events_search.facet(:status).rows.each{|r| status_counts[r.value] = r.count }
 
       # Due event recaps
       if status_counts[:due] > 0 && user.allow_notification?('event_recap_due_app')
         alerts.push({
           message: I18n.translate('notifications.event_recaps_due', count: status_counts[:due]),
-          level: 'grey', url: events_path(user: [user.id], status: ['Active'],
+          level: 'grey', url: events_path(user: user_params, status: ['Active'],
           event_status: ['Due'], start_date: '', end_date: ''),
           unread: true, icon: 'icon-notification-event', type: 'event_recaps_due',
         })
       end
-
       # Late event recaps
       if status_counts[:late] > 0 && user.allow_notification?('event_recap_late_app')
         alerts.push({
           message: I18n.translate('notifications.event_recaps_late', count: status_counts[:late]),
-          level: 'red', url: events_path(user: [user.id], status: ['Active'],
+          level: 'red', url: events_path(user: user_params, status: ['Active'],
           event_status: ['Late'], start_date: '', end_date: ''),
           unread: true, icon: 'icon-notification-event', type: 'event_recaps_late'
         })
@@ -33,7 +43,7 @@ module UsersHelper
       if status_counts[:submitted] > 0 && user.allow_notification?('event_recap_pending_approval_app')
         alerts.push({
           message: I18n.translate('notifications.recaps_prending_approval', count: status_counts[:submitted]),
-          level: 'blue', url: events_path(user: [user.id], status: ['Active'],
+          level: 'blue', url: events_path(user: user_params, status: ['Active'],
           event_status: ['Submitted'], start_date: '', end_date: ''),
           unread: true, icon: 'icon-notification-event', type: 'event_recaps_pending'
         })
@@ -43,7 +53,7 @@ module UsersHelper
       if status_counts[:rejected] > 0 && user.allow_notification?('event_recap_rejected_app')
         alerts.push({
           message: I18n.translate('notifications.rejected_recaps', count: status_counts[:rejected]),
-          url: events_path(user: [user.id], status: ['Active'], event_status: ['Rejected'], start_date: '', end_date: ''),
+          url: events_path(user: user_params, status: ['Active'], event_status: ['Rejected'], start_date: '', end_date: ''),
           unread: true, level: 'red',  icon: 'icon-notification-event', type: 'event_recaps_rejected'
         })
       end
@@ -51,11 +61,16 @@ module UsersHelper
 
     # User's teams late tasks
     if can?(:index_team, Task) && user.allow_notification?('late_team_task_app')
-      count = Task.do_search({company_id: company.id, status: ['Active'], task_status: ['Late'], team_members: [user.id], not_assigned_to: [user.id]}).total
+      team_params = nil
+      unless user.company.setting(:event_alerts_policy).to_i == Notification::EVENT_ALERT_POLICY_ALL
+        team_params = [user.id]
+      end
+      task_search_params = {company_id: company.id, status: ['Active'], task_status: ['Late'], not_assigned_to: [user.id], team_members: team_params}
+      count = Task.do_search(task_search_params).total
       if count > 0
         alerts.push({
           message: I18n.translate('notifications.task_late_team', count: count), level: 'red',
-          url: my_teams_tasks_path(status: ['Active'], task_status: ['Late'], team_members: [user.id], not_assigned_to: [user.id], start_date: '', end_date: ''),
+          url: my_teams_tasks_path(status: ['Active'], task_status: ['Late'], team_members: team_params, not_assigned_to: [user.id], start_date: '', end_date: ''),
           unread: true, icon: 'icon-notification-task', type: 'team_tasks_late'
         })
       end

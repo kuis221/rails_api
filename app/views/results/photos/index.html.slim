@@ -21,13 +21,12 @@
 .main.with-details-close-bar
   = resource_details_bar("You are viewing Photos report. Click to close.")
   .tab-content
-    #list-view.tab-pane.active
-      #list-tools.row-fluid
-        .pull-right
-          a.btn.download id="download-photos-button" href="" title="Download"
-          #download-photos-counter-container
-      .gallery.select-for-download.photo-results
-        ul id="#{controller_name}-list"
+  #list-view.tab-pane.active
+    #list-tools.text-right
+      a.btn.download id="download-photos-button" href="" title="Download"
+        #download-photos-counter-container
+    .gallery.select-for-download.photo-results
+      ul id="#{controller_name}-list"
 
 = render partial: 'help_tutorial'
 

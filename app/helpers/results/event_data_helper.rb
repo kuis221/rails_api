@@ -28,9 +28,9 @@ module Results
           end
         else
           event_values[id] = if @result.form_field.is_numeric?
-            ['Number', 'normal', (Float(@result.to_html) rescue nil)]
+            ['Number', 'normal', (Float(@result.to_csv) rescue nil)]
           else
-            ['String', 'normal', @result.to_html]
+            ['String', 'normal', @result.to_csv]
           end
         end
       end

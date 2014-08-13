@@ -68,6 +68,10 @@ Brandscopic::Application.routes.draw do
           end
         end
 
+        resources :brands, only: [:index] do
+          get :marques, on: :member
+        end
+
         resources :countries, only: [:index] do
           get :states, on: :member
         end
@@ -200,6 +204,7 @@ Brandscopic::Application.routes.draw do
   end
 
   resources :company_users, except: [:new, :create, :destroy], path: 'users' do
+    get :profile, on: :collection
     get :autocomplete, on: :collection
     get :time_zone_change, on: :collection
     post :time_zone_change, on: :collection
@@ -218,6 +223,8 @@ Brandscopic::Application.routes.draw do
       end
     end
     member do
+      post :verify_phone
+      get :send_code
       get :deactivate
       get :activate
       post :enable_campaigns
@@ -225,6 +232,7 @@ Brandscopic::Application.routes.draw do
       get :select_campaigns
       delete :remove_campaign
       post :add_campaign
+      get :edit_communications
     end
   end
 

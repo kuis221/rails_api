@@ -40,6 +40,12 @@ class FormField::Radio < FormField
     end
   end
 
+  def format_csv(result)
+    unless result.value.nil? || result.value.empty?
+      options_for_input.detect(->{ [] }){|option| option[1] == result.value.to_i }[0]
+    end
+  end
+
   def validate_result(result)
     super
     unless result.errors.get(:value) || result.value.nil? || result.value == ''

@@ -55,6 +55,12 @@ class Task < ActiveRecord::Base
       company_id
     end
 
+    integer :place_id
+
+    integer :location, multiple: true do
+      event.place.location_ids if event.present? && event.place.present?
+    end
+
     integer :team_members, multiple: true do
       event.memberships.map(&:company_user_id) + event.teams.map{|t| t.memberships.map(&:company_user_id) }.flatten.uniq if event.present?
     end
@@ -146,8 +152,16 @@ class Task < ActiveRecord::Base
             any_of do
               with(:campaign_id, company_user.accessible_campaign_ids + [0])
               all_of do
-                 with(:campaign_id, nil)
-                 with(:company_user_id, company_user.id)
+                with(:campaign_id, nil)
+                with(:company_user_id, company_user.id)
+
+                any_of do
+                  locations = company_user.accessible_locations
+                  places_ids = company_user.accessible_places
+                  with(:campaign_id, nil)
+                  with(:place_id, places_ids + [0])
+                  with(:location, locations + [0])
+                end
               end
             end
           end
@@ -259,7 +273,11 @@ class Task < ActiveRecord::Base
       if scope == 'user'
         {user: [company_user.id]}
       elsif scope == 'teams'
-        {team_members: [company_user.id], not_assigned_to: [company_user.id]}
+        params = {not_assigned_to: [company_user.id]}
+        unless company_user.company.setting(:event_alerts_policy).to_i == Notification::EVENT_ALERT_POLICY_ALL
+          params.merge!(team_members: [company_user.id])
+        end
+        params
       else
         {}
       end
