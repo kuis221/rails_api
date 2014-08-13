@@ -34,7 +34,6 @@ class Ability
 
       # All users can update their own information
       can :update, CompanyUser, id: user.current_company_user.id
-      can :update, Campaign, id: user.current_company_user.id
 
       can :super_update, CompanyUser do |cu|
         user.current_company_user.role.is_admin? || user.current_company_user.role.has_permission?(:update, CompanyUser)

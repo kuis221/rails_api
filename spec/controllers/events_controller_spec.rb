@@ -222,7 +222,9 @@ describe EventsController, :type => :controller do
 
       it "should assign current_company_user to the new event" do
         with_resque do
-          @company_user.update_attributes({notifications_settings: ['new_event_team_sms', 'new_event_team_email']}, without_protection: true)
+          @company_user.update_attributes(
+            notifications_settings: ['new_event_team_sms', 'new_event_team_email'],
+            user_attributes: {phone_number_verified: true} )
           expect(UserMailer).to receive(:notification).with(@company_user, "Added to Event", /You have a new event http:\/\/localhost:5100\/events\/[0-9]+/).and_return(double(deliver: true))
           expect {
             post 'create', event: {
@@ -542,21 +544,21 @@ describe EventsController, :type => :controller do
 
     describe "PUT 'submit'" do
       it "should submit event" do
-        Timecop.freeze do
-          with_resque do
-            event = FactoryGirl.create(:event, active: true, company: @company)
-            event.users << @company_user
-            @company_user.update_attributes({notifications_settings: ['event_recap_pending_approval_sms', 'event_recap_pending_approval_email']}, without_protection: true)
-            message = "You have an event recap that is pending approval http://localhost:5100/events/#{event.id}"
-            expect(UserMailer).to receive(:notification).with(@company_user, "Event Recaps Pending Approval", message).and_return(double(deliver: true))
-            expect {
-              put 'submit', id: event.to_param, format: :js
-              expect(response).to be_success
-              event.reload
-            }.to change(event, :submitted?).to(true)
-            open_last_text_message_for @user.phone_number
-            expect(current_text_message).to have_body message
-          end
+        with_resque do
+          event = FactoryGirl.create(:event, active: true, company: @company)
+          @company_user.update_attributes(
+            notifications_settings: ['event_recap_pending_approval_sms', 'event_recap_pending_approval_email'],
+            user_attributes: {phone_number_verified: true} )
+          event.users << @company_user
+          message = "You have an event recap that is pending approval http://localhost:5100/events/#{event.id}"
+          expect(UserMailer).to receive(:notification).with(@company_user, "Event Recaps Pending Approval", message).and_return(double(deliver: true))
+          expect {
+            put 'submit', id: event.to_param, format: :js
+            expect(response).to be_success
+            event.reload
+          }.to change(event, :submitted?).to(true)
+          open_last_text_message_for @user.phone_number
+          expect(current_text_message).to have_body message
         end
       end
 
@@ -588,8 +590,10 @@ describe EventsController, :type => :controller do
         Timecop.freeze do
           with_resque do
             event = FactoryGirl.create(:submitted_event, active: true, company: @company)
+            @company_user.update_attributes(
+              notifications_settings: ['event_recap_rejected_sms', 'event_recap_rejected_email'],
+              user_attributes: {phone_number_verified: true} )
             event.users << @company_user
-            @company_user.update_attributes({notifications_settings: ['event_recap_rejected_sms', 'event_recap_rejected_email']}, without_protection: true)
             message = "You have a rejected event recap http://localhost:5100/events/#{event.id}"
             expect(UserMailer).to receive(:notification).with(@company_user, "Rejected Event Recaps", message).and_return(double(deliver: true))
             expect {
