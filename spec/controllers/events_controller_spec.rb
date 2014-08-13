@@ -225,7 +225,7 @@ describe EventsController, :type => :controller do
           @company_user.update_attributes(
             notifications_settings: ['new_event_team_sms', 'new_event_team_email'],
             user_attributes: {phone_number_verified: true} )
-          expect(UserMailer).to receive(:notification).with(@company_user, "Added to Event", /You have a new event http:\/\/localhost:5100\/events\/[0-9]+/).and_return(double(deliver: true))
+          expect(UserMailer).to receive(:notification).with(@company_user.id, "Added to Event", /You have a new event http:\/\/localhost:5100\/events\/[0-9]+/).and_return(double(deliver: true))
           expect {
             post 'create', event: {
               campaign_id: campaign.id, team_members: ["company_user:#{@company_user.id}"],
@@ -551,7 +551,7 @@ describe EventsController, :type => :controller do
             user_attributes: {phone_number_verified: true} )
           event.users << @company_user
           message = "You have an event recap that is pending approval http://localhost:5100/events/#{event.id}"
-          expect(UserMailer).to receive(:notification).with(@company_user, "Event Recaps Pending Approval", message).and_return(double(deliver: true))
+          expect(UserMailer).to receive(:notification).with(@company_user.id, "Event Recaps Pending Approval", message).and_return(double(deliver: true))
           expect {
             put 'submit', id: event.to_param, format: :js
             expect(response).to be_success
@@ -595,7 +595,7 @@ describe EventsController, :type => :controller do
               user_attributes: {phone_number_verified: true} )
             event.users << @company_user
             message = "You have a rejected event recap http://localhost:5100/events/#{event.id}"
-            expect(UserMailer).to receive(:notification).with(@company_user, "Rejected Event Recaps", message).and_return(double(deliver: true))
+            expect(UserMailer).to receive(:notification).with(@company_user.id, "Rejected Event Recaps", message).and_return(double(deliver: true))
             expect {
               put 'reject', id: event.to_param, reason: 'blah blah blah', format: :js
               expect(response).to be_success

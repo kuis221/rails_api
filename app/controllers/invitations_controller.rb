@@ -51,7 +51,7 @@ class InvitationsController < Devise::InvitationsController
         self.resource = invited_user
         self.resource.assign_attributes({inviting_user: true, company_users_attributes: resource_params[:company_users_attributes]}, without_protection: true)
         if self.resource.save and self.resource.errors.empty?
-          UserMailer.company_invitation(self.resource, current_company, current_user).deliver
+          UserMailer.company_invitation(self.resource.id, current_company.id, current_user.id).deliver
         end
       end
     else

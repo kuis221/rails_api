@@ -58,7 +58,7 @@ describe TasksController, :type => :controller do
             company_id: @company.id, notifications_settings: ['new_task_assignment_sms', 'new_task_assignment_email'],
             user_attributes: {phone_number_verified: true} )
           message = "You have a new task http://localhost:5100/tasks/mine?new_at=#{Time.now.to_i}"
-          expect(UserMailer).to receive(:notification).with(@company_user, "New Task Assignment", message).and_return(double(deliver: true))
+          expect(UserMailer).to receive(:notification).with(@company_user.id, "New Task Assignment", message).and_return(double(deliver: true))
           expect {
             post 'create', event_id: event.to_param, task: {title: "Some test task", due_at: '05/23/2020', company_user_id: @company_user.to_param}, format: :js
           }.to change(Task, :count).by(1)

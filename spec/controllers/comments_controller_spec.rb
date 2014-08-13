@@ -63,7 +63,7 @@ describe CommentsController, :type => :controller do
             user_attributes: {phone_number_verified: true} )
           task.update_attributes(company_user_id: @company_user.to_param)
           message = "You have a new comment http://localhost:5100/tasks/mine?q=task%2C#{task.id}#comments-#{task.id}"
-          expect(UserMailer).to receive(:notification).with(@company_user, "New Comment", message).and_return(double(deliver: true))
+          expect(UserMailer).to receive(:notification).with(@company_user.id, "New Comment", message).and_return(double(deliver: true))
           expect {
             post 'create', task_id: task.to_param, comment: {content: 'this is a test'}, format: :js
           }.to change(Comment, :count).by(1)
@@ -91,7 +91,7 @@ describe CommentsController, :type => :controller do
           event.users << @company_user
           event.users << other_user
           message = "You have a new team comment http://localhost:5100/tasks/mine?q=task%2C#{task.id}#comments-#{task.id}"
-          expect(UserMailer).to receive(:notification).with(@company_user, "New Team Comment", message).and_return(double(deliver: true))
+          expect(UserMailer).to receive(:notification).with(@company_user.id, "New Team Comment", message).and_return(double(deliver: true))
           expect {
             post 'create', task_id: task.to_param, comment: {content: 'this is a test'}, format: :js
           }.to change(Comment, :count).by(1)
