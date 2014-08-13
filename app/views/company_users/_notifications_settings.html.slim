@@ -18,11 +18,11 @@
           .span3
             b = t("notification_types.#{type}")
           .span2
-            - if resource.allow_notification?(type+'_app')
+            - if resource.notifications_settings.include?(type+'_app')
               .icon-ok
           .span2
-            - if resource.allow_notification?(type+'_sms')
+            - if resource.notifications_settings.include?(type+'_sms')
               .icon-ok
           .span2
-            - if resource.allow_notification?(type+'_email')
+            - if resource.notifications_settings.include?(type+'_email')
               .icon-ok
