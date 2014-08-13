@@ -178,6 +178,7 @@ class User < ActiveRecord::Base
 
   def generate_and_send_phone_verification_code
     self.update_column :phone_number_verification, sprintf('%06d', rand(5**10))[0..5]
+    Resque.enqueue(SendSmsWorker, phone_number, "Your Brandscopic verification code is #{phone_number_verification}")
   end
 
   # Method for Devise to make that only active users can login into the app
