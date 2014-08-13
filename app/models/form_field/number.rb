@@ -15,6 +15,8 @@
 #  kpi_id         :integer
 #
 
+include ActionView::Helpers::NumberHelper
+
 class FormField::Number < FormField
   def field_options(result)
     {
