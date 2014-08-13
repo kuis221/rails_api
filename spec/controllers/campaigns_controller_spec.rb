@@ -470,9 +470,12 @@ describe CampaignsController, :type => :controller do
   describe "POST 'add_members" do
     it 'should assign the user to the campaign' do
       with_resque do
-        @company_user.update_attributes({notifications_settings: ['new_campaign_sms', 'new_campaign_email']}, without_protection: true)
+        @company_user.update_attributes(
+          notifications_settings: ['new_campaign_sms', 'new_campaign_email'],
+          user_attributes: {phone_number_verified: true}
+        )
         message = "You have a new campaign http://localhost:5100/campaigns/#{campaign.id}"
-        expect(UserMailer).to receive(:notification).with(@company_user, "New Campaign", message).and_return(double(deliver: true))
+        expect(UserMailer).to receive(:notification).with(@company_user.id, "New Campaign", message).and_return(double(deliver: true))
         expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{@company_user.id}")
         expect {
           post 'add_members', id: campaign.id, member_id: @company_user.to_param, format: :js

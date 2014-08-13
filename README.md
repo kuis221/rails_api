@@ -84,7 +84,7 @@
 
 13. Start the local server
 
-        foreman start
+        foreman start -f Procfile.dev
 
 14. Go to http://localhost:5100/ and you should be able to login using:
 

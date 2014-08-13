@@ -328,6 +328,8 @@ GEM
       trollop (~> 1.16)
     resque-timeout (1.0.0)
       resque (~> 1.0)
+    resque_mailer (2.2.6)
+      actionmailer (>= 3.0)
     resque_spec (0.15.0)
       resque (>= 1.19.0)
       rspec-core (>= 2.5.0)
@@ -517,6 +519,7 @@ DEPENDENCIES
   resque-loner
   resque-pool (~> 0.4.0.rc2)
   resque-timeout
+  resque_mailer
   resque_spec
   rspec-mocks
   rspec-rails (~> 3.0.0)

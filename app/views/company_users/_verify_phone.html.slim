@@ -8,7 +8,7 @@ p Enter the security code you've received into the filed below.
         .span5
           = uf.input :verification_code, label: false, placeholder: '6-digit code', required: true, input_html: { class: 'required' }
         .span6
-          = link_to "Resend code", verify_phone_company_user_path(resource), remote: true
+          = link_to "Resend code", verify_phone_company_user_path(resource), remote: true, method: :post, class: 'resend-verification'
 
   .form-actions
     = f.button :submit, 'Verify', class: 'btn btn-primary', disable_with: 'Please wait...'

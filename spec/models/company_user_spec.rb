@@ -199,16 +199,6 @@ describe CompanyUser, :type => :model do
      end
   end
 
-  describe "#phone_number_confirmed?" do
-    let(:user) { FactoryGirl.create(:company_user, company_id: 1, role: FactoryGirl.create(:role, is_admin: false)) }
-
-    #It should be updated once the phone_number_confirmed? method is implemented correctly
-    #Right now it just looks for the phone number existence
-    it "should return true if the user has a confirmed phone number" do
-      expect(user.phone_number_confirmed?).to be_truthy
-    end
-  end
-
   describe "#allow_notification?" do
     let(:user) { FactoryGirl.create(:company_user, company_id: 1,
       role: FactoryGirl.create(:role, is_admin: false)) }
@@ -218,7 +208,8 @@ describe CompanyUser, :type => :model do
     end
 
     it "should return true if the user is allowed to receive a notification" do
-      user.update_attributes({notifications_settings: ['new_campaign_sms']})
+      user.update_attributes(notifications_settings: ['new_campaign_sms'],
+        user_attributes: {phone_number_verified: true} )
       expect(user.allow_notification?('new_campaign_sms')).to be_truthy
     end
 
