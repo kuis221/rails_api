@@ -40,7 +40,7 @@ feature "User Profile", js: true do
       end
       ensure_modal_was_closed
 
-      expect(user.reload.phone_number_verified).to be_true
+      expect(user.reload.phone_number_verified).to be_truthy
 
       expect(page).to have_content "Verified"
     end

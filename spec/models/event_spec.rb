@@ -77,11 +77,11 @@ describe Event, :type => :model do
     it "should set phone_number_verified to false when the number is changed" do
       user.update_column(:phone_number_verified, true)
       user.reload
-      expect(user.phone_number_verified).to be_true
+      expect(user.phone_number_verified).to be_truthy
 
       user.phone_number = '123213211'
       user.save
-      expect(user.phone_number_verified).to be_false
+      expect(user.phone_number_verified).to be_falsey
     end
 
     it "should set phone_number_verification to nil when the number is changed" do
@@ -99,11 +99,11 @@ describe Event, :type => :model do
       user.update_column(:phone_number_verified, false)
       user.reload
       expect(user.phone_number_verification).to eql '122322'
-      expect(user.phone_number_verified).to be_false
+      expect(user.phone_number_verified).to be_falsey
 
       user.verification_code = '122322'
-      expect(user.save).to be_true
-      expect(user.phone_number_verified).to be_true
+      expect(user.save).to be_truthy
+      expect(user.phone_number_verified).to be_truthy
     end
   end
 

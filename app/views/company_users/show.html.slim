@@ -3,22 +3,24 @@
 
   .details_box.user-view.padding-top-close-bar
     .basic-info
-      .profile-pic.big.icon-user.dropdown-toggle class="#{ resource.avatar.present? ? '' : '.no-pic'}" data-toggle="dropdown"
-        - if resource.avatar.present?
-          img alt="Brandscopic" border="0" src="#{root_url}#{image_path('profile-pic.jpg')}"
-      .dropdown-menu.edit-profile-pic
-        ul
-          li
-            a href="#" Upload photo
-          li
-            a href="#" Take photo
-          li
-            a href="#" Cancel
+      - if false
+        .profile-pic.big.icon-user.dropdown-toggle class="#{ resource.avatar.present? ? '' : '.no-pic'}" data-toggle="dropdown"
+          - if resource.avatar.present?
+            img alt="Brandscopic" border="0" src="#{root_url}#{image_path('profile-pic.jpg')}"
+        .dropdown-menu.edit-profile-pic
+          ul
+            li
+              a href="#" Upload photo
+            li
+              a href="#" Take photo
+            li
+              a href="#" Cancel
 
       .profile-data
         h2
           = resource.full_name
-          = link_to '', edit_company_user_path(resource), remote: true, class: 'edit preferences-edit-icon' if can?(:edit, resource)
+          = link_to '', edit_company_user_path(resource), remote: true, class: 'edit preferences-edit-icon', title: (viewing_profile? ? 'Edit Profile Data' : 'Edit User Data') if can?(:edit, resource)
+          = active_inactive_buttons(resource) if can?(:deactivate, resource) && !viewing_profile?
 
         - if resource.role.present?
           .user-role.label.label-default
