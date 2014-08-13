@@ -12,7 +12,9 @@
 
     - if resource.description.present?
       .description-data
-        = resource.description
+        i.icon-wired-description
+        span
+          = resource.description
 
     .links-data
       = link_to '', edit_activity_type_path(resource), remote: true, class: 'icon-edit', title: 'Edit' if can?(:edit, resource)

@@ -41,10 +41,14 @@
     h2.special = resource.campaign_name
 
     .calendar-data
-      = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at))
+      i.icon-calendar
+      span
+        = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at))
     - unless resource.place.nil?
       .place-data
-        = place_address(resource.place, true) if resource.place
+        i.icon-wired-venue
+        span
+          = place_address(resource.place, true) if resource.place
     .links-data
       = link_to '', edit_event_path(resource), remote: true, class: 'edit' if can_edit
       = active_inactive_buttons(resource) if can? :deactivate, resource

@@ -5,7 +5,9 @@
     - if resource.campaign.present?
       p.big= resource.campaign.name
     .calendar-data
-      = format_date(event_date(resource, :activity_date))
+      i.icon-calendar
+      span
+        = format_date(event_date(resource, :activity_date))
     .member-data
       b= resource.company_user.name
     = render partial: 'event_info', locals: { event: resource.activitable }
