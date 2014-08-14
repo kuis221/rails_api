@@ -58,8 +58,10 @@ class CompanyUser < ActiveRecord::Base
   has_many :placeables, as: :placeable, dependent: :destroy
   has_many :places, through: :placeables, after_add: :places_changed
 
-  delegate :name, :email, :phone_number, :role_name, :time_zone, :avatar, :invited_to_sign_up?, to: :user
-  delegate :full_address, :country, :state, :city, :street_address, :unit_number, :zip_code, :country_name, :state_name, to: :user
+  delegate :name, :email, :phone_number, :role_name, :time_zone, :avatar, :invited_to_sign_up?,
+          :full_address, :country, :state, :city, :street_address, :unit_number,
+          :zip_code, :country_name, :state_name, :phone_number_verified?,
+          to: :user
   delegate :is_admin?, to: :role, prefix: false
 
   NOTIFICATION_SETTINGS_TYPES = [
@@ -230,12 +232,8 @@ class CompanyUser < ActiveRecord::Base
   end
 
   def allow_notification?(type)
-    (type.to_s[-4..-1] != '_sms' || phone_number_confirmed?) && # SMS notifications only if phone number is confirmed
+    (type.to_s[-4..-1] != '_sms' || phone_number_verified?) && # SMS notifications only if phone number is confirmed
     notifications_settings.is_a?(Array) && notifications_settings.include?(type.to_s)
-  end
-
-  def phone_number_confirmed?
-    phone_number.present?
   end
 
   def dismiss_alert(alert, version=1)
