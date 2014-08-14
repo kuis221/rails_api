@@ -50,13 +50,13 @@
         span
           = place_address(resource.place, true) if resource.place
     .links-data
-      = link_to '', edit_event_path(resource), remote: true, class: 'edit' if can_edit
+      = link_to '', edit_event_path(resource), remote: true, class: 'icon-edit' if can_edit
       = active_inactive_buttons(resource) if can? :deactivate, resource
 
     // The is info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
       h3= resource.campaign_name
-      = link_to '', edit_event_path(resource), remote: true, class: 'edit' if can_edit
+      = link_to '', edit_event_path(resource), remote: true, class: 'icon-edit' if can_edit
       = active_inactive_buttons(resource) if can? :deactivate, resource
       br>/
       = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at), date_separator: ' ')

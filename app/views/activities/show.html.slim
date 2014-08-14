@@ -14,7 +14,7 @@
     = render 'details'
 
     .links-data
-      = link_to '', [:edit, resource], remote: true, class: 'edit' if can?(:edit, resource)
+      = link_to '', [:edit, resource], remote: true, class: 'icon-edit' if can?(:edit, resource)
       = active_inactive_buttons(resource) if can? :deactivate, resource
 
 javascript:

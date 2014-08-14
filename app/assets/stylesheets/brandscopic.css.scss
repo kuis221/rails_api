@@ -41,8 +41,12 @@ $footer-height: 35px;
 
 .menubar-icon {
 	display: block;
+	margin-left: 5px;
 	&:before {
 		font-size: 27px;
+	}
+	&.icon-results, &.icon-analysis{
+		margin-left: 0;
 	}
 }
 
@@ -123,73 +127,22 @@ label{
 	width: 380px;
 }
 
-.member-data{
+.member-data, .calendar-data{
 	font-size: 12px;
 	b{
 		font-size:16px;
 		font-weight: 400;
 	}
-	&:before{
-		color: $user_menu;
-		font-size: 19px;
-		position: absolute;
-		left: 20px;
-		text-align: center;
-		vertical-align: middle;
-	}
 }
-.calendar-data{
-	font-size: 12px;
-	b{
-		font-size:16px;
-		font-weight: 400;
-	}
-	&:before{
-		color: $user_menu;
-		font-size: 19px;
-		position: absolute;
-		left: 28px;
-		text-align: center;
-		vertical-align: middle;
-	}
-}
-.email-data{
-	&:before{
-		color: $user_menu;
-		font-size: 19px;
-		padding-top: 6px;
-		position: absolute;
-		left: 28px;
-		text-align: center;
-		vertical-align: middle;
-	}
-}
+
 .place-data{
 	width: 500px;
-	&:before{
-		color: $user_menu;
-		font-size: 22px;
-		padding-top: 5px;
-		position: absolute;
-		left: 31px;
-		text-align: center;
-		vertical-align: middle;
-	}
-
 	address{
 		margin-bottom: 0px;
 	}
 }
+
 .phone-data{
-	&:before{
-		color: $user_menu;
-		font-size: 18px;
-		padding-top: 3px;
-		position: absolute;
-		left: 29px;
-		text-align: center;
-		vertical-align: middle;
-	}
 	div{
 		display: inline-block;
 		width: auto;
@@ -202,16 +155,6 @@ label{
 				margin-left: 30px;
 			}
 		}
-	}
-}
-.time-data{
-	&:before{
-		color: $user_menu;
-		padding-top: 3px;
-		position: absolute;
-		left: 27px;
-		text-align: center;
-		vertical-align: middle;
 	}
 }
 
@@ -3078,7 +3021,7 @@ textarea::-webkit-input-placeholder {
 		}
 	}
 	input[type="text"]{
-		height: 37px;
+		height: 36px;
 		width: 100%;
 	}
 
@@ -7343,8 +7286,7 @@ table td.sub-level-1 {
 
 /*--ICONS FOR ALL DATA SECTIONS --*/
 
-
-.calendar-data, .email-data, .phone-data, .place-data, .time-data, .description-data{
+[class$='-data']{
 	display: block;
 	min-height: 20px;
 	margin: 0 0 20px 0;
@@ -7360,6 +7302,14 @@ table td.sub-level-1 {
 	}
 	span{
 		display: inline-block;
+	}
+}
+.place-data {
+	@extend [class$='-data'];
+	i{
+		font-size: 22px;
+		left: 2px;
+		position: relative;
 	}
 }
 
