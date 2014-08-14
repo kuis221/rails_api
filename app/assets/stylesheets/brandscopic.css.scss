@@ -7289,7 +7289,7 @@ table td.sub-level-1 {
 [class$='-data']{
 	display: block;
 	min-height: 20px;
-	margin: 0 0 20px 0;
+	margin: 0 0 10px 0;
 	position: relative;
 	width: 380px;
 	i{
@@ -7309,6 +7309,14 @@ table td.sub-level-1 {
 	i{
 		font-size: 22px;
 		left: 2px;
+		position: relative;
+	}
+}
+
+.phone-data {
+	@extend [class$='-data'];
+	i{
+		top:-2px;
 		position: relative;
 	}
 }
