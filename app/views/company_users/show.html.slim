@@ -35,10 +35,12 @@
     .aditional-info
       - if resource.email.present?
         .email-data
+          i.icon-wired-email
           = resource.email
 
       - if resource.phone_number.present?
         .phone-data
+          i.icon-wired-phone
           .number
             = resource.phone_number
           - if resource.user.phone_number_verified?
@@ -55,7 +57,9 @@
 
       - if resource.full_address.present?
         .place-data
-          = resource.full_address
+          i.icon-wired-venue
+          span
+            = resource.full_address
 
       //.links-data
         //= link_to '', edit_company_user_path(resource), remote: true, title: 'Edit', class: 'edit' if can?(:edit, resource)
