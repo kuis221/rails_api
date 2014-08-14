@@ -1,5 +1,25 @@
 
-/*-- COLOR PALETTE --*/
+//
+// Variables
+// --------------------------------------------------
+
+
+// Color pallete
+// --------------------------------------------------
+
+
+// Grays
+// -------------------------
+
+$gray-darker:            lighten(#000, 13.5%); // #222
+$gray-dark:              lighten(#000, 20%);   // #333
+$gray:                   lighten(#000, 33.5%); // #555
+$gray-light:             lighten(#000, 60%);   // #999
+$gray-lighter:           lighten(#000, 93.5%); // #eee
+
+$green: #90bf43;
+
+
 $app_bg: #ececec;
 $assigned: #d6d64b;
 $borders: #d3d3d3;
@@ -8,7 +28,9 @@ $buttons: #de4d43;
 $buttons-border: #acacac;
 $buttons-hover: #cc4137;
 $btnHover: #d6d6d6;
-$complete: #90bf43;
+
+$complete: $green;
+
 $grey_one: #dfdfdf;
 $grey_two: #ececec;
 $grey_three: #7a7a7a;
@@ -19,21 +41,45 @@ $dark_green: #6B9323;
 $header: #363636; 
 $menu: #4f4f4f;
 $stars: #cfc53e;
-$text: #666666;
+
 $blue: #3e9ccf;
 $dark_blue: #347B9B; 
 $blue_hover:#327da6;
+
 $due_today:#3e9ccf;
+
 $user_menu:#c0c0c0;
 $venues_blue:#3e9ccf;
 $late:#de4d43;
 $submitted:#3e9ccf;
 $approved:#90bf43;
 $rejected:#de4d43;
+
 $alert_red: #de4d43;
 $alert_blue: #3e9ccf;
 $alert_grey: #7a7a7a;
+
 $tooltip: #7a7a7a;
 
-/*-- FONT FAMILY STYLES --*/
+$light-blue: #3e9ccf;
+
+// Typography
+// -------------------------
+
 $baseFontFamily:'Lato', sans-serif;
+$text: #666666;
+$text-light: $brand;
+
+// Links
+// -------------------------
+
+$link-color:            $light-blue;
+//$link-hover-color:     ;
+
+
+// Glyphs
+// -------------------------
+
+$glyphs-color: #fcfcfc;
+
+

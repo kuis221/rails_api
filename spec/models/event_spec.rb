@@ -71,6 +71,42 @@ describe Event, :type => :model do
     it { is_expected.to allow_value(Time.zone.local(2016,1,20,12,10,0)).for(:end_at) }
   end
 
+  describe "reset_verification" do
+    let(:user){ FactoryGirl.create(:user) }
+
+    it "should set phone_number_verified to false when the number is changed" do
+      user.update_column(:phone_number_verified, true)
+      user.reload
+      expect(user.phone_number_verified).to be_truthy
+
+      user.phone_number = '123213211'
+      user.save
+      expect(user.phone_number_verified).to be_falsey
+    end
+
+    it "should set phone_number_verification to nil when the number is changed" do
+      user.update_column(:phone_number_verification, '122322')
+      user.reload
+      expect(user.phone_number_verification).to eql '122322'
+
+      user.phone_number = '123213211'
+      user.save
+      expect(user.phone_number_verification).to be_nil
+    end
+
+    it "should set phone_number_verified true if a valid code is given" do
+      user.update_column(:phone_number_verification, '122322')
+      user.update_column(:phone_number_verified, false)
+      user.reload
+      expect(user.phone_number_verification).to eql '122322'
+      expect(user.phone_number_verified).to be_falsey
+
+      user.verification_code = '122322'
+      expect(user.save).to be_truthy
+      expect(user.phone_number_verified).to be_truthy
+    end
+  end
+
   describe "states" do
     before(:each) do
       @event = FactoryGirl.create(:event)

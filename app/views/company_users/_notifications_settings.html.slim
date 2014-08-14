@@ -1,0 +1,28 @@
+.details_box
+  h3
+    = 'COMMUNICATION PREFERENCES'
+    = link_to '', edit_communications_company_user_path(resource), remote: true, id: 'edit-communications', class: 'edit preferences-edit-icon'
+  .row-fluid.communication-preferences
+    .span9
+      .span3
+      .span2
+        p IN-APP
+      .span2
+        p SMS
+      .span2
+        p EMAIL
+
+    - CompanyUser::NOTIFICATION_SETTINGS_TYPES.each do |type|
+      - if resource.notification_setting_permission?(type)
+        .span9
+          .span3
+            b = t("notification_types.#{type}")
+          .span2
+            - if resource.notifications_settings.include?(type+'_app')
+              .icon-ok
+          .span2
+            - if resource.notifications_settings.include?(type+'_sms')
+              .icon-ok
+          .span2
+            - if resource.notifications_settings.include?(type+'_email')
+              .icon-ok

@@ -19,8 +19,8 @@ class Notification < ActiveRecord::Base
   belongs_to :company_user
   attr_accessible :icon, :level, :message, :message_params, :extra_params, :params, :path
 
-  EVENT_ALERT_POLICY_TEAM = '1' # Notify only to users in the event team
-  EVENT_ALERT_POLICY_ALL = '2'  # Notify only to ALL users that can access the event
+  EVENT_ALERT_POLICY_TEAM = 1 # Notify only to users in the event team
+  EVENT_ALERT_POLICY_ALL = 2  # Notify only to ALL users that can access the event
 
   serialize :message_params
   serialize :extra_params
@@ -48,7 +48,7 @@ class Notification < ActiveRecord::Base
       end
       if user.allow_notification?('new_campaign_email')
         email_message = I18n.translate("notifications_email.new_campaign", url: Rails.application.routes.url_helpers.campaign_url(campaign))
-        UserMailer.notification(user, I18n.translate("notification_types.new_campaign"), email_message).deliver
+        UserMailer.notification(user.id, I18n.translate("notification_types.new_campaign"), email_message).deliver
       end
       notification = user.notifications.create(path: path, level: 'grey', message: 'new_campaign', icon: 'campaign', params: {campaign_id: campaign.id})
     end
@@ -65,7 +65,7 @@ class Notification < ActiveRecord::Base
       end
       if user.allow_notification?('new_event_team_email')
         email_message = I18n.translate("notifications_email.new_event", url: Rails.application.routes.url_helpers.event_url(event))
-        UserMailer.notification(user, I18n.translate("notification_types.new_event"), email_message).deliver
+        UserMailer.notification(user.id, I18n.translate("notification_types.new_event"), email_message).deliver
       end
       notification = user.notifications.create(path: path, level: 'grey', message: message, icon: 'event', message_params: message_params, params: {event_id: event.id})
     end
@@ -93,7 +93,7 @@ class Notification < ActiveRecord::Base
       end
       if (!team && user.allow_notification?('new_task_assignment_email')) ||
          (team && user.allow_notification?('new_unassigned_team_task_email'))
-        UserMailer.notification(user, email_subject, email_message).deliver
+        UserMailer.notification(user.id, email_subject, email_message).deliver
       end
       notification = user.notifications.create(path: path, level: 'grey', message: message, message_params: {task: task.title}, icon: 'task', params: {task_id: task.id})
     end

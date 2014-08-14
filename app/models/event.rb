@@ -810,7 +810,7 @@ class Event < ActiveRecord::Base
     end
 
     def create_notifications
-      if company.setting(:event_alerts_policy) == Notification::EVENT_ALERT_POLICY_ALL
+      if company.setting(:event_alerts_policy).to_i == Notification::EVENT_ALERT_POLICY_ALL
         Resque.enqueue(EventNotifierWorker, self.id)
       end
       true

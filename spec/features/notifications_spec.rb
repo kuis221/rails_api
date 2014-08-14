@@ -303,6 +303,41 @@ feature "Notifications", search: true, js: true do
         expect(current_path).to eql events_path
         expect(page).to have_selector('#events-list li', count: 2)
       end
+
+      it "should receive notifications for new tasks not assigned to him as tasks for the team" do
+        company_user.update_attributes({notifications_settings: ['late_team_task_app']})
+        event = FactoryGirl.create(:event, company: company, campaign: campaign, place: place)
+        task = FactoryGirl.create(:task, title: 'My Team Task #1', event: event, company_user: nil, due_at: 2.days.ago.to_s(:slashes))
+
+        Sunspot.commit
+
+        visit root_path
+        expect(page).to have_notification 'Your team has one late task'
+
+        click_notification 'Your team has one late task'
+
+        expect(current_path).to eql my_teams_tasks_path
+        expect(page).to have_content('My Team Task #1')
+
+        # Create two new tasks and make sure the notification is correct and then click
+        # on it. The app should only list those two late tasks without showing the old one
+        FactoryGirl.create(:task, title: 'My Team Task #2', event: event, due_at: 2.days.ago.to_s(:slashes))
+        FactoryGirl.create(:task, title: 'My Team Task #3', event: event, due_at: 2.days.ago.to_s(:slashes))
+        Sunspot.commit
+
+        visit root_path
+        expect(page).to have_notification 'Your team has 3 late tasks'
+
+        click_notification 'Your team has 3 late tasks'
+
+        expect(current_path).to eql my_teams_tasks_path
+        expect(page).to have_content('My Team Task #1')
+        expect(page).to have_content('My Team Task #2')
+        expect(page).to have_content('My Team Task #3')
+
+        # Make sure the notification is still there
+        expect(page).to have_notification 'Your team has 3 late tasks'
+      end
     end
   end
 

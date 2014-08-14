@@ -34,7 +34,6 @@ class Ability
 
       # All users can update their own information
       can :update, CompanyUser, id: user.current_company_user.id
-      can :update, Campaign, id: user.current_company_user.id
 
       can :super_update, CompanyUser do |cu|
         user.current_company_user.role.is_admin? || user.current_company_user.role.has_permission?(:update, CompanyUser)
@@ -112,6 +111,14 @@ class Ability
 
       can [:add_place, :remove_place], [Area, CompanyUser] do |object|
          can?(:edit, object)
+      end
+
+      can :profile, CompanyUser do |company_user|
+        user.current_company_user.id == company_user.id
+      end
+
+      can [:verify_phone, :send_code], CompanyUser do |company_user|
+        can?(:update, company_user)
       end
 
       # Custom Reports

@@ -89,7 +89,7 @@ describe InvitationsController, :type => :controller do
 
         it "should send a company invitation email" do
           user = FactoryGirl.create(:user, company_id: 987)
-          expect(UserMailer).to receive(:company_invitation).with(user, @company, @user).and_return(double(deliver: true))
+          expect(UserMailer).to receive(:company_invitation).with(user.id, @company.id, @user.id).and_return(double(deliver: true))
           post 'create', user: {first_name: 'Some name', last_name: 'Last', email: user.email, company_users_attributes: {"0" => {role_id: 1}}}, format: :js
         end
 

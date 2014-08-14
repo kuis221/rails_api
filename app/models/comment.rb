@@ -62,7 +62,7 @@ class Comment < ActiveRecord::Base
           end
           if commentable.company_user.allow_notification?('new_comment_email')
             email_message = I18n.translate("notifications_email.new_comment", url: Rails.application.routes.url_helpers.mine_tasks_url(q: "task,#{commentable_id}", anchor: "comments-#{commentable_id}"))
-            UserMailer.notification(commentable.company_user, I18n.translate("notification_types.new_comment"), email_message).deliver
+            UserMailer.notification(commentable.company_user.id, I18n.translate("notification_types.new_comment"), email_message).deliver
           end
         else #Case when Task has not an assigned user, send messages to all event's team
           sms_message = I18n.translate("notifications_sms.new_team_comment", url: Rails.application.routes.url_helpers.mine_tasks_url(q: "task,#{commentable_id}", anchor: "comments-#{commentable_id}"))
@@ -72,7 +72,7 @@ class Comment < ActiveRecord::Base
             end
             if user.allow_notification?('new_team_comment_email')
               email_message = I18n.translate("notifications_email.new_team_comment", url: Rails.application.routes.url_helpers.mine_tasks_url(q: "task,#{commentable_id}", anchor: "comments-#{commentable_id}"))
-              UserMailer.notification(user, I18n.translate("notification_types.new_team_comment"), email_message).deliver
+              UserMailer.notification(user.id, I18n.translate("notification_types.new_team_comment"), email_message).deliver
             end
           end
         end
