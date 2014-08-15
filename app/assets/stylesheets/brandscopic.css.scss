@@ -3041,6 +3041,8 @@ textarea::-webkit-input-placeholder {
 	}
 }
 
+/* Info bar for details pages (Below the header) */
+
 #resource-close-details {
 	position: absolute;
 	top: 0;
@@ -3062,7 +3064,7 @@ textarea::-webkit-input-placeholder {
 	a.close-details {
 		display: inline-block;
 		width: 99%;
-		padding: 10px 0 7px 16px;
+		padding: 12px 0 10px 16px;
 		text-decoration: none;
 		color: $grey_one;
 	}
@@ -3077,36 +3079,28 @@ textarea::-webkit-input-placeholder {
 		margin: 0 10px 0 0;
 	}
 
-	h3 {
-		font-size: 16px;
-		display: inline-block;
-		margin-bottom: 0;
-	}
-
-	a a {
-		font-size: 18px;
-		margin-left: 15px;
+	a{
+		color: $brand;
+		font-size: 14px;
 		text-decoration: none;
+		h3 {
+			color: $grey_one;
+			font-size: 16px;
+			display: inline-block;
+			margin-bottom: 0;
+		}
 		i{
 			position: relative;
-			top: 2px;
-			&.icon-remove-sign:before{
-				font-size: 16px;
-			}
 			&:hover{
 				&:before{
 					color:$app_bg;
 				}
 			}
 		}
-		&.edit{
-			&:after{
-				color:$brand;
-			}
+		&.icon-edit, &.icon-rounded-disable{
+			margin: 0 10px 0 15px;
 			&:hover{
-				&:after{
-					color:$app_bg;
-				}
+				color:$app_bg;
 			}
 		}
 	}
