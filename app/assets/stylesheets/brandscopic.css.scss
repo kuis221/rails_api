@@ -3773,14 +3773,27 @@ body.show {
 	.place, .area-user{
 		font-family: $baseFontFamily;
 		font-size: 16px;
-		padding: 0 0 0 32px;
 		margin: 0 10% 30px 0;
 		.pull-left{
 			width: 90%;
+			i{
+				background-color: #cccccc;
+				color: white;
+				display: inline-block;
+				height: 32px;
+				margin-right: 10px;
+				line-height: 33px;
+				text-align: center;
+				@include border-radius(20px);
+				width: 32px;
+			}
 			.place-address{
 				font-size: 11px;
 				margin-top: 5px;
 			}
+		}
+		.pull-right{
+			margin-top: 8px;
 		}
 	}
 	.team-member, .team, .brand, .area-place {
@@ -5278,31 +5291,6 @@ svg{
 }
 
 .campaigns_report, .snapshot_report, .staff_report {
-	// .details_box{
-	// 	&.first{
-	// 		-webkit-border-radius: 0px 7px 7px 7px;
-	// 		border-radius: 0px 7px 7px 7px;
-	// 		.chzn-container-single{
-	// 			color: $brand;
-	// 			.chzn-single{
-	// 				height: 38px !important;
-	// 				padding-top: 3px;
-	// 				width: 365px !important;
-	// 			}
-	// 			.chzn-drop{
-	// 				width: 280px !important;
-	// 			}
-	// 		}
-	// 	}
-	// 	.chzn-container-single{
-	// 		.chzn-search input{
-	// 			height: 25px;
-	// 		}
-	// 		.chzn-results{
-	// 			margin: 0 0 4px 0;
-	// 		}
-	// 	}
-	// }
 	.loading-spinner{
 		background: #fff image-url('loading-circle.gif') center center no-repeat;
 		display: block;
@@ -5370,6 +5358,9 @@ body.campaigns{
 
 	a{
 		font-weight: bold;
+		&.icon-edit, &.icon-rounded-disable, &.icon-remove-sign, &.icon-plus-sign{
+			color: $brand;
+		}
 	}
 
 	p{
@@ -7304,8 +7295,20 @@ table td.sub-level-1 {
 		display: inline-block;
 	}
 }
+
+.links-data{
+	margin: 0 0 0 30px;
+	.icon-edit, .icon-rounded-disable{
+		font-size: 17px;
+		margin-right: 10px;
+	}
+	i{
+		color: $brand;
+		margin-top: 0;
+	}
+}
+
 .place-data {
-	@extend [class$='-data'];
 	i{
 		font-size: 22px;
 		left: 2px;
@@ -7314,17 +7317,10 @@ table td.sub-level-1 {
 }
 
 .phone-data {
-	@extend [class$='-data'];
 	i{
 		top:-2px;
 		position: relative;
 	}
-}
-
-
-
-.links-data{
-	margin: 0 0 0 30px;
 }
 
 .calendar-data{
