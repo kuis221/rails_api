@@ -3513,12 +3513,6 @@ body.company_users{
 				margin: 6px 15px 0 8px;
 			}
 		}
-		.campaigns-group-body{
-			a.icon-plus-sign:before{
-				margin: 15px 0 10px 15px;
-				top: 0;
-			}
-		}
 		margin-bottom: 20px;
 
 		.campaigns-list {
@@ -3526,6 +3520,7 @@ body.company_users{
 			width: auto;
 			.user-campaign{
 				margin-left: 0;
+				min-height: 50px;
 				padding: 10px 25px 15px 7px;
 				width: 33%;
 				.pull-left{
