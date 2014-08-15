@@ -120,6 +120,17 @@ a.resend-verification {
 		}
 		.profile-data{
 			margin: 20px 0 0 0;
+			a{
+				color: $brand;
+				font-size: 16px;
+				margin-right: 8px;
+				&:first-child{
+					margin-left: 15px;
+				}
+				i{
+					color:$brand;
+				}
+			}
 			h2 .icon-remove-sign {
 				margin-left: 10px;
 				&:before {
@@ -254,11 +265,3 @@ a.resend-verification {
 	color: $user_menu;
 }
 
-.preferences-edit-icon{
-	margin-left: 10px;
-	&:after{
-		font-size: 16px !important;
-		color: $brand !important;
-		top: 0 !important;
-	}
-}
