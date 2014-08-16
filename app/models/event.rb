@@ -426,6 +426,7 @@ class Event < ActiveRecord::Base
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false, &block)
+      current_company = Company.current || Company.new
       ss = solr_search(include: [:campaign, :place]) do
         (start_at_field, end_at_field, timezone) = [:start_at, :end_at, Time.zone.name]
         if Company.current && Company.current.timezone_support?
@@ -435,6 +436,7 @@ class Event < ActiveRecord::Base
         Time.use_zone(timezone) do
           company_user = params[:current_company_user]
           if company_user.present?
+            current_company = company_user.company
             unless company_user.role.is_admin?
               with(:campaign_id, company_user.accessible_campaign_ids + [0])
               any_of do
@@ -578,11 +580,11 @@ class Event < ActiveRecord::Base
             facet :status do
               row(:late) do
                 with(:status, 'Unsent')
-                with(end_at_field).less_than(2.days.ago)
+                with(end_at_field).less_than(current_company.late_event_end_date)
               end
               row(:due) do
                 with(:status, 'Unsent')
-                with(end_at_field, Date.yesterday.beginning_of_day..Time.zone.now)
+                with(end_at_field, current_company.due_event_start_date..current_company.due_event_end_date)
               end
               row(:rejected) do
                 with(:status, 'Rejected')
