@@ -16,8 +16,6 @@ class SurveysAnswer < ActiveRecord::Base
   belongs_to :survey
   belongs_to :kpi
 
-  attr_accessible :answer, :brand_id, :question_id, :kpi_id
-
   validate :valid_answer?
 
   validates :answer, presence: true, unless: :question2?

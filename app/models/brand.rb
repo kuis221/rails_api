@@ -27,12 +27,12 @@ class Brand < ActiveRecord::Base
 
   has_many :brand_portfolios_brands, dependent: :destroy
   has_many :brand_portfolios, through: :brand_portfolios_brands
-  has_many :marques, :order => 'name ASC', :autosave => true, dependent: :destroy
+  has_many :marques, -> { order 'name ASC' }, :autosave => true, dependent: :destroy
 
   scope :not_in_portfolio, lambda{|portfolio| where("brands.id not in (#{BrandPortfoliosBrand.select('brand_id').scoped_by_brand_portfolio_id(portfolio).to_sql})") }
   scope :accessible_by_user, lambda{|user| scoped }
 
-  scope :active, where(:active => true)
+  scope :active, ->{ where(:active => true) }
 
   searchable do
     integer :id
@@ -73,7 +73,7 @@ class Brand < ActiveRecord::Base
     marques_names = list.split(',')
     existing_ids = self.marques.map(&:id)
     marques_names.each do |marque_name|
-      marque = Marque.find_or_initialize_by_name_and_brand_id(marque_name, id)
+      marque = Marque.find_or_initialize_by(name: marque_name, brand_id: id)
       self.marques << marque unless existing_ids.include?(marque.id)
     end
     marques.each{|marque| marque.mark_for_destruction unless marques_names.include?(marque.name) }

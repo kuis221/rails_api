@@ -24,8 +24,6 @@ class FormFieldResult < ActiveRecord::Base
 
   has_one :attached_asset, :as => :attachable, dependent: :destroy
 
-  serialize :hash_value, ActiveRecord::Coders::Hstore
-
   before_validation :prepare_for_store
 
   scope :for_kpi, -> (kpi){ joins(:form_field).where(form_fields: {kpi_id: kpi}) }

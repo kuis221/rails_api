@@ -57,10 +57,10 @@ module PlacesHelper
 
       if @place.persisted?
         has_parent ||= parent.present? rescue false
-        parent.update_attributes({place_ids: parent.place_ids + [@place.id]}, without_protection: true) if has_parent
+        parent.update_attributes(place_ids: parent.place_ids + [@place.id]) if has_parent
 
         # Create a Venue for this place on the current company
-        @venue = Venue.find_or_create_by_company_id_and_place_id(current_company.id, @place.id)
+        @venue = Venue.find_or_create_by(company_id: current_company.id, place_id: @place.id)
       end
 
       @place.persisted?

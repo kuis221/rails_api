@@ -455,7 +455,7 @@ feature 'Activities management' do
 
   def add_permissions(permissions)
     permissions.each do |p|
-      company_user.role.permissions.create({action: p[0], subject_class: p[1]}, without_protection: true)
+      company_user.role.permissions.create(action: p[0], subject_class: p[1])
     end
   end
 end

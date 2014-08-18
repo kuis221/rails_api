@@ -16,7 +16,7 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
       before { Kpi.create_global_kpis }
 
       scenario "a user can play and dismiss the video tutorial" do
-        company_user.role.permissions.create({action: :gva_report, subject_class: 'Campaign'}, without_protection: true)
+        company_user.role.permissions.create(action: :gva_report, subject_class: 'Campaign')
 
         visit results_gva_path
 
@@ -41,7 +41,7 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
       end
 
       scenario "should display the GvA stats for selected campaign and grouping" do
-        company_user.role.permissions.create({action: :gva_report, subject_class: 'Campaign'}, without_protection: true)
+        company_user.role.permissions.create(action: :gva_report, subject_class: 'Campaign')
         campaign = FactoryGirl.create(:campaign, name: 'Test Campaign FY01', start_date: '07/21/2013', end_date: '03/30/2014', company: company)
         kpi = Kpi.samples
         campaign.add_kpi kpi
@@ -156,7 +156,7 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
       end
 
       scenario "should remove items from GvA results" do
-        company_user.role.permissions.create({action: :gva_report, subject_class: 'Campaign'}, without_protection: true)
+        company_user.role.permissions.create(action: :gva_report, subject_class: 'Campaign')
         campaign = FactoryGirl.create(:campaign, name: 'Test Campaign FY01', company: company)
         kpi = FactoryGirl.create(:kpi, name: 'Interactions', company: company)
         campaign.add_kpi kpi
@@ -190,7 +190,7 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
       end
 
       scenario "should export the overall campaign GvA to Excel" do
-        company_user.role.permissions.create({action: :gva_report, subject_class: 'Campaign'}, without_protection: true)
+        company_user.role.permissions.create(action: :gva_report, subject_class: 'Campaign')
         campaign = FactoryGirl.create(:campaign, name: 'Test Campaign FY01', start_date: '07/21/2013', end_date: '03/30/2014', company: company)
         kpi = Kpi.samples
         kpi2 = Kpi.events
@@ -240,7 +240,7 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
       end
 
       scenario "should export the GvA grouped by Place to Excel" do
-        company_user.role.permissions.create({action: :gva_report, subject_class: 'Campaign'}, without_protection: true)
+        company_user.role.permissions.create(action: :gva_report, subject_class: 'Campaign')
         campaign = FactoryGirl.create(:campaign, name: 'Test Campaign FY01', start_date: '07/21/2013', end_date: '03/30/2014', company: company)
         kpi = Kpi.samples
         kpi2 = Kpi.events
@@ -297,7 +297,7 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
       end
 
       scenario "should export the GvA grouped by Staff to Excel" do
-        company_user.role.permissions.create({action: :gva_report, subject_class: 'Campaign'}, without_protection: true)
+        company_user.role.permissions.create(action: :gva_report, subject_class: 'Campaign')
         campaign = FactoryGirl.create(:campaign, name: 'Test Campaign FY01', start_date: '07/21/2013', end_date: '03/30/2014', company: company)
         kpi = Kpi.samples
         kpi2 = Kpi.events

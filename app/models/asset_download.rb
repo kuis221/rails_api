@@ -20,7 +20,6 @@ require 'zip'
 
 class AssetDownload < ActiveRecord::Base
   belongs_to :user
-  attr_accessible :last_downloaded, :uid, :assets_ids
 
   validates :uid, presence: true
 

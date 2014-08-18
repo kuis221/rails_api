@@ -28,7 +28,7 @@ class CampaignFormField < ActiveRecord::Base
   delegate :name, :module, to: :kpi, allow_nil: true, prefix: true
 
   # For field - sections relationship
-  has_many :fields, class_name: 'CampaignFormField', foreign_key: :section_id, order: 'ordering ASC', dependent: :destroy
+  has_many :fields, ->{ order 'ordering ASC' }, class_name: 'CampaignFormField', foreign_key: :section_id, dependent: :destroy
   accepts_nested_attributes_for :fields
 
   def field_options(result)

@@ -65,7 +65,7 @@ class User < ActiveRecord::Base
 
   has_many :company_users, dependent: :destroy
 
-  has_many :companies, through: :company_users, order: 'companies.name ASC'
+  has_many :companies, ->{ order 'companies.name ASC' }, through: :company_users
   belongs_to :current_company, class_name: 'Company'
 
   validates :first_name, presence: true
@@ -103,12 +103,12 @@ class User < ActiveRecord::Base
 
   delegate :name, :id, :permissions, to: :role, prefix: true, allow_nil: true
 
-  scope :active_eq, where('invitation_accepted_at is not null')
-  scope :active, where('invitation_accepted_at is not null')
-  scope :active_in_company, lambda{|company| active.joins(:company_users).where(company_users: {company_id: company, active: true}) }
-  scope :in_company, lambda{|company| active_in_company(company) }
+  scope :active_eq, -> { where('invitation_accepted_at is not null') }
+  scope :active, -> { where('invitation_accepted_at is not null') }
+  scope :active_in_company, ->(company){ active.joins(:company_users).where(company_users: {company_id: company, active: true}) }
+  scope :in_company, ->(company){ active_in_company(company) }
 
-  search_methods :active_eq if ENV['WEB']
+  #search_methods :active_eq if ENV['WEB']
 
   # Tasks-Users relationship
   has_many :tasks, through: :company_users

@@ -38,13 +38,13 @@ class Campaign < ActiveRecord::Base
   validates :name, presence: true
   validates :company_id, presence: true, numericality: true
 
-  DATE_FORMAT = /^[0-1]?[0-9]\/[0-3]?[0-9]\/[0-2]0[0-9][0-9]$/
+  DATE_FORMAT = /\A[0-1]?[0-9]\/[0-3]?[0-9]\/[0-2]0[0-9][0-9]\z/
   validates :start_date, format: { with: DATE_FORMAT, message: 'MM/DD/YYYY' }, allow_nil: true
   validates :end_date, format: { with: DATE_FORMAT, message: 'MM/DD/YYYY' }, allow_nil: true
   validates :end_date, presence: true, if: :start_date
   validates :start_date, presence: true, if: :end_date
 
-  validates :enabled_modules, enum: { presence: false, inclusion: { in: %w{ surveys photos expenses comments videos} } }
+  validate :valid_modules?
 
   validates_date :start_date, before: :end_date,  allow_nil: true, allow_blank: true, before_message: 'must be before'
   validates_date :end_date, :on_or_after => :start_date, allow_nil: true, allow_blank: true, on_or_after_message: ''
@@ -74,7 +74,7 @@ class Campaign < ActiveRecord::Base
                    :after_add => :reindex_associated_resource, :after_remove => :reindex_associated_resource
 
   # Campaigns-Events relationship
-  has_many :events, :order => 'start_at ASC', inverse_of: :campaign
+  has_many :events, -> { order 'start_at ASC' }, inverse_of: :campaign
 
   # Campaigns-Teams relationship
   has_many :teamings, :as => :teamable
@@ -82,7 +82,7 @@ class Campaign < ActiveRecord::Base
 
   has_many :user_teams, :class_name => 'CompanyUser', source: :users, :through => :teams
 
-  has_many :form_fields, :as => :fieldable, order: 'form_fields.ordering ASC'
+  has_many :form_fields, ->{ order 'form_fields.ordering ASC' }, :as => :fieldable
 
   has_many :kpis, through: :form_fields
 
@@ -98,14 +98,14 @@ class Campaign < ActiveRecord::Base
       where(company_id: company_user.company_id, id: company_user.accessible_campaign_ids)
     end
   }
-  scope :active, lambda { where(aasm_state: 'active') }
+  scope :active, -> { where(aasm_state: 'active') }
 
   # Campaigns-Places relationship
   has_many :placeables, as: :placeable
   has_many :places, through: :placeables, after_remove: :clear_locations_cache, after_add: :clear_locations_cache
 
   # Attached Documents
-  has_many :documents, conditions: {asset_type: :document}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
+  has_many :documents, ->{ order("created_at DESC").where(asset_type: :document) }, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable
 
   accepts_nested_attributes_for :form_fields, allow_destroy: true
 
@@ -162,23 +162,27 @@ class Campaign < ActiveRecord::Base
   end
 
   def staff_users
-    @staff_users ||= CompanyUser.find_by_sql("
-      #{users.active.to_sql} UNION
-      #{CompanyUser.active.scoped_by_company_id(company_id).joins(:brands).where(brands: {id: brand_ids}).to_sql} UNION
-      #{CompanyUser.active.scoped_by_company_id(company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids}).to_sql}
-    ")
+    @staff_users ||= Campaign.connection.unprepared_statement do
+      CompanyUser.find_by_sql("
+        #{users.active.to_sql} UNION
+        #{CompanyUser.active.where(company_id: company_id).joins(:brands).where(brands: {id: brand_ids}).to_sql} UNION
+        #{CompanyUser.active.where(company_id: company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids}).to_sql}
+      ")
+    end
   end
 
   # This is similar to #staff_users except that it also include users from the
   # teams associated
   def all_users_with_access
-    @staff_users ||= CompanyUser.find_by_sql("
-      #{users.active.to_sql} UNION
-      #{user_teams.active.to_sql} UNION
-      #{company.company_users.active.admin.to_sql} UNION
-      #{CompanyUser.active.scoped_by_company_id(company_id).joins(:brands).where(brands: {id: brand_ids}).to_sql} UNION
-      #{CompanyUser.active.scoped_by_company_id(company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids}).to_sql}
-    ")
+    @staff_users ||= Campaign.connection.unprepared_statement do
+      CompanyUser.find_by_sql("
+        #{users.active.to_sql} UNION
+        #{user_teams.active.to_sql} UNION
+        #{company.company_users.active.admin.to_sql} UNION
+        #{CompanyUser.active.where(company_id: company_id).joins(:brands).where(brands: {id: brand_ids}).to_sql} UNION
+        #{CompanyUser.active.where(company_id: company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids}).to_sql}
+      ")
+    end
   end
 
   def areas_and_places
@@ -204,7 +208,7 @@ class Campaign < ActiveRecord::Base
     brands_names = list.split(',')
     existing_ids = self.brands.map(&:id)
     brands_names.each do |brand_name|
-      brand = Company.current.brands.find_or_initialize_by_name(brand_name)
+      brand = Company.current.brands.find_or_initialize_by(name: brand_name)
       self.brands << brand unless existing_ids.include?(brand.id)
     end
     brands.each{|brand| brand.mark_for_destruction unless brands_names.include?(brand.name) }
@@ -213,12 +217,14 @@ class Campaign < ActiveRecord::Base
   def promo_hours_graph_data(user)
     stats={}
     user_allowed_areas = areas.accessible_by_user(user).pluck('areas.id')
-    queries = children_goals.with_value.includes(:goalable).where(kpi_id: [Kpi.events.id, Kpi.promo_hours.id]).for_areas(user_allowed_areas).map do |goal|
-      name, group = if goal.kpi_id == Kpi.events.id then ['EVENTS', 'COUNT(events.id)'] else ['PROMO HOURS', 'SUM(events.promo_hours)'] end
-      stats["#{goal.goalable.id}-#{name}"] = {"id"=>goal.goalable.id, "name"=>goal.goalable.name, "goal"=>goal.value, "kpi"=>name, "executed"=>0.0, "scheduled"=>0.0}
-      events.active.in_areas([goal.goalable]).
-        select("ARRAY['#{goal.goalable.id}', '#{name}'], '#{name}' as kpi, CASE WHEN events.end_at < '#{Time.now.to_s(:db)}' THEN 'executed' ELSE 'scheduled' END as status, #{group}").
-        reorder(nil).group('1, 2, 3').to_sql
+    queries = Campaign.connection.unprepared_statement do
+      children_goals.with_value.includes(:goalable).where(kpi_id: [Kpi.events.id, Kpi.promo_hours.id]).for_areas(user_allowed_areas).map do |goal|
+        name, group = if goal.kpi_id == Kpi.events.id then ['EVENTS', 'COUNT(events.id)'] else ['PROMO HOURS', 'SUM(events.promo_hours)'] end
+        stats["#{goal.goalable.id}-#{name}"] = {"id"=>goal.goalable.id, "name"=>goal.goalable.name, "goal"=>goal.value, "kpi"=>name, "executed"=>0.0, "scheduled"=>0.0}
+        events.active.in_areas([goal.goalable]).
+          select("ARRAY['#{goal.goalable.id}', '#{name}'], '#{name}' as kpi, CASE WHEN events.end_at < '#{Time.now.to_s(:db)}' THEN 'executed' ELSE 'scheduled' END as status, #{group}").
+          reorder(nil).group('1, 2, 3').to_sql
+      end
     end
 
     ActiveRecord::Base.connection.select_all("
@@ -425,12 +431,12 @@ class Campaign < ActiveRecord::Base
       q = with_goals_for(Kpi.promo_hours).joins(:events).where(events: {active: true}).
          select("campaigns.id, campaigns.name, campaigns.start_date, campaigns.end_date, goals.value as goal, 'PROMO HOURS' as kpi, CASE WHEN events.end_at < '#{Time.now.to_s(:db)}' THEN 'executed' ELSE 'scheduled' END as status, SUM(events.promo_hours)").
          order('2, 1').group('1, 2, 3, 4, 5, 6, 7').to_sql.gsub(/'/,"''")
-      data = ActiveRecord::Base.connection.select_all("SELECT * FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int, name varchar, start_date date, end_date date, goal numeric, kpi varchar, executed numeric, scheduled numeric)")
+      data = ActiveRecord::Base.connection.select_all("SELECT * FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int, name varchar, start_date date, end_date date, goal numeric, kpi varchar, executed numeric, scheduled numeric)").to_a
 
       q = with_goals_for(Kpi.events).joins(:events).where(events: {active: true}).
          select("campaigns.id, campaigns.name, campaigns.start_date, campaigns.end_date, goals.value as goal, 'EVENTS' as kpi, CASE WHEN events.end_at < '#{Time.now.to_s(:db)}' THEN 'executed' ELSE 'scheduled' END as status, COUNT(events.id)").
          order('2, 1').group('1, 2, 3, 4, 5, 6, 7').to_sql.gsub(/'/,"''")
-      data += ActiveRecord::Base.connection.select_all("SELECT * FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int, name varchar, start_date date, end_date date, goal numeric, kpi varchar, executed numeric, scheduled numeric)")
+      data += ActiveRecord::Base.connection.select_all("SELECT * FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int, name varchar, start_date date, end_date date, goal numeric, kpi varchar, executed numeric, scheduled numeric)").to_a
       data.sort!{|a, b| a['name'] <=> b['name'] }
 
       data.each do |r|
@@ -468,6 +474,14 @@ class Campaign < ActiveRecord::Base
       ActiveRecord::Base.connection.select_all(
         self.select("campaigns.name, campaigns.id").to_sql
       ).map{|r| [r['name'], r['id']] }
+    end
+  end
+
+
+  def valid_modules?
+    modules = %w{ surveys photos expenses comments videos }
+    if (enabled_modules - modules).any?
+      errors.add :modules, :invalid
     end
   end
 

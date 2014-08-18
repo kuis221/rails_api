@@ -2,7 +2,9 @@ source 'https://rubygems.org'
 
 ruby '2.1.2'
 
-gem 'rails', '3.2.18'
+gem 'rails', '4.1.0'
+gem 'rails-observers'
+gem 'activerecord-session_store'
 gem "rack-timeout"
 
 # Bundle edge Rails instead:
@@ -42,14 +44,11 @@ gem 'resque-pool', '~> 0.4.0.rc2'
 gem 'resque-timeout'
 gem 'resque_mailer'
 gem 'unread'
-gem 'strong_parameters'
 gem 'nearest_time_zone'
 gem "memcachier"
 gem 'rack-cache'
 gem 'dalli'
 gem 'kgio'
-gem 'activerecord-postgres-hstore'  # Remove when upgrading to Rails4
-gem 'postgres_ext' # gem added to allow arrays. Remove when upgrading to Rails4
 gem 'apipie-rails'
 gem 'heroku-resque-workers-scaler', github: 'guilleva/heroku-resque-workers-scaler'
 gem 'twilio-ruby'
@@ -69,8 +68,7 @@ end
 # workers loading not needed libraries
 group :web do
   gem 'font_assets', path: 'vendor/gems/font_assets'
-  gem 'activeadmin'
-  gem "meta_search", '>= 1.1.0.pre'
+  gem 'activeadmin', github: 'activeadmin/active_admin'
   gem 'unicorn'
   gem 'simple_form'
   gem "nested_form"
@@ -79,8 +77,8 @@ end
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
-  gem 'sass-rails',   '~> 3.2.3'
-  gem 'coffee-rails', '~> 3.2.1'
+  gem 'sass-rails'
+  gem 'coffee-rails'
   gem "twitter-bootstrap-rails"
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
 

@@ -265,34 +265,40 @@ describe CompanyUser, :type => :model do
 
     it "should clear cache after adding campaigns to user" do
       expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{company_user.id}")
+      expect(Rails.cache).to receive(:delete).with("user_notifications_#{company_user.id}").at_least(:once)
       company_user.campaigns << campaign
     end
 
     it "should clear cache after adding brands to user" do
       expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{company_user.id}")
+      expect(Rails.cache).to receive(:delete).with("user_notifications_#{company_user.id}").at_least(:once)
       company_user.brands << brand
     end
 
     it "should clear cache after adding brand portfolios to user" do
       expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{company_user.id}")
+      expect(Rails.cache).to receive(:delete).with("user_notifications_#{company_user.id}").at_least(:once)
       company_user.brand_portfolios << brand_portfolio
     end
 
     it "should clear cache after adding campaigns to user" do
       company_user.campaigns << campaign
       expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{company_user.id}")
+      expect(Rails.cache).to receive(:delete).with("user_notifications_#{company_user.id}").at_least(:once)
       company_user.campaigns.destroy campaign
     end
 
     it "should clear cache after adding brands to user" do
       company_user.brands << brand
       expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{company_user.id}")
+      expect(Rails.cache).to receive(:delete).with("user_notifications_#{company_user.id}").at_least(:once)
       company_user.brands.destroy brand
     end
 
     it "should clear cache after adding brand portfolios to user" do
       company_user.brand_portfolios << brand_portfolio
       expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{company_user.id}")
+      expect(Rails.cache).to receive(:delete).with("user_notifications_#{company_user.id}").at_least(:once)
       company_user.brand_portfolios.destroy brand_portfolio
     end
   end

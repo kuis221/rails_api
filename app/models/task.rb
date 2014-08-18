@@ -20,7 +20,7 @@ class Task < ActiveRecord::Base
 
   belongs_to :event
   belongs_to :company_user
-  has_many :comments, :as => :commentable, order: 'comments.created_at ASC'
+  has_many :comments, ->{ order 'comments.created_at ASC' }, :as => :commentable
 
   after_save :create_notifications
 
@@ -35,13 +35,13 @@ class Task < ActiveRecord::Base
   validates :company_user_id, numericality: true, allow_nil: true
   validates :company_user_id, presence: true, unless: :event_id
 
-  scope :incomplete, lambda{ where(completed: false) }
-  scope :active, lambda{ where(active: true) }
-  scope :by_companies, lambda{|companies| where(events: {company_id: companies}).joins(:event) }
-  scope :late, lambda{ where(['due_at is not null and due_at < ? and completed = ?', Date.today, false]) }
-  scope :due_today, lambda{ where(['due_at BETWEEN ? and ? and completed = ?', Date.today, Date.tomorrow, false]) }
-  scope :due_today_and_late, lambda{ where(['due_at is not null and due_at <= ? and completed = ?', Date.today.end_of_day, false]) }
-  scope :assigned_to, lambda{|users| where(company_user_id: users) }
+  scope :incomplete, ->{ where(completed: false) }
+  scope :active, ->{ where(active: true) }
+  scope :by_companies, ->(companies){ where(events: {company_id: companies}).joins(:event) }
+  scope :late, ->{ where(['due_at is not null and due_at < ? and completed = ?', Date.today, false]) }
+  scope :due_today, ->{ where(['due_at BETWEEN ? and ? and completed = ?', Date.today, Date.tomorrow, false]) }
+  scope :due_today_and_late, ->{ where(['due_at is not null and due_at <= ? and completed = ?', Date.today.end_of_day, false]) }
+  scope :assigned_to, ->(users){ where(company_user_id: users) }
 
   searchable do
     integer :id

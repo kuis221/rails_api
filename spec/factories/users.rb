@@ -85,7 +85,7 @@ FactoryGirl.define do
       role_id = evaluator.role_id
       role_id ||= FactoryGirl.create(:role, company_id: company_id).id unless company_id.nil? || role_id.present?
       if company_id and role_id
-        user.company_users.build({role_id: role_id, company_id: company_id, active: evaluator.active}, without_protection: true)
+        user.company_users.build(role_id: role_id, company_id: company_id, active: evaluator.active)
       end
     end
 

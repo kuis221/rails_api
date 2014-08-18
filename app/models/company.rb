@@ -14,7 +14,7 @@ class Company < ActiveRecord::Base
   attr_accessor :admin_email
   attr_accessor :no_create_admin
 
-  serialize :settings, ActiveRecord::Coders::Hstore
+  store_accessor :settings, :event_alerts_policy
 
   has_many :company_users, dependent: :destroy
   has_many :teams, dependent: :destroy
@@ -30,7 +30,7 @@ class Company < ActiveRecord::Base
   has_many :kpis, dependent: :destroy
   has_many :reports, dependent: :destroy
   has_many :activity_types, dependent: :destroy
-  has_many :tags, :order => 'name ASC', :autosave => true, dependent: :destroy
+  has_many :tags, ->{ order 'name ASC' }, :autosave => true, dependent: :destroy
 
   validates :name, presence: true, uniqueness: true
   validates :admin_email, presence: true, on: :create, unless: :no_create_admin
@@ -57,12 +57,14 @@ class Company < ActiveRecord::Base
   end
 
   def team_member_options
-    ActiveRecord::Base.connection.select_all("
-      #{company_users.active.select('company_users.id, users.first_name || \' \' || users.last_name as name, \'company_user\' as type').joins(:user).to_sql}
-      UNION ALL
-      #{teams.active.select('teams.id, teams.name, \'team\' as type').to_sql}
-      ORDER BY name ASC
-    ").map{|r| [r['name'], "#{r['type']}:#{r['id']}", {class: r['type']}] }
+    Company.connection.unprepared_statement do
+      ActiveRecord::Base.connection.select_all("
+        #{company_users.active.select('company_users.id, users.first_name || \' \' || users.last_name as name, \'company_user\' as type').joins(:user).to_sql}
+        UNION ALL
+        #{teams.active.select('teams.id, teams.name, \'team\' as type').to_sql}
+        ORDER BY name ASC
+      ").map{|r| [r['name'], "#{r['type']}:#{r['id']}", {class: r['type']}] }
+    end
   end
 
   def late_event_end_date
@@ -92,17 +94,17 @@ class Company < ActiveRecord::Base
   private
     def create_admin_role_and_user
       if admin_email
-        role = self.roles.create({name: 'Super Admin', is_admin: true}, without_protection: true)
+        role = self.roles.create(name: 'Super Admin', is_admin: true)
         if user = User.where(["lower(users.email) = '%s'", admin_email.downcase]).first
-          new_company_user = self.company_users.build({role_id: role.id, user: user}, without_protection: true)
+          new_company_user = self.company_users.build(role_id: role.id, user: user)
           new_company_user.save validate: false
           UserMailer.company_existing_admin_invitation(user.id, self).deliver
         else
           new_user = User.create({email: admin_email, first_name: 'Admin', last_name: 'User', inviting_user: true}, as: :admin)
-          new_company_user = self.company_users.create({role_id: role.id, user: new_user}, without_protection: true)
+          new_company_user = self.company_users.create(role_id: role.id, user: new_user)
           new_user.skip_invitation = true
           new_user.invite!
-          new_user.update_attributes({invitation_sent_at: Time.now.utc}, without_protection: true)
+          new_user.update_attributes(invitation_sent_at: Time.now.utc)
           UserMailer.company_admin_invitation(new_user.id).deliver
         end
       end

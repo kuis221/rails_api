@@ -441,7 +441,7 @@ describe EventsController, :type => :controller do
 
       it 'should load teams with active users' do
         event.users << @company_user
-        @company_user.user.update_attributes({first_name: 'CDE', last_name: 'FGH'}, without_protection: true)
+        @company_user.user.update_attributes(first_name: 'CDE', last_name: 'FGH')
         team = FactoryGirl.create(:team, name: 'ABC', description: 'A sample team', company_id: @company.id)
         other_user = FactoryGirl.create(:company_user, company_id: @company.id, role_id: @company_user.role_id)
         team.users << other_user

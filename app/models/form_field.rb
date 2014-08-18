@@ -21,8 +21,8 @@ class FormField < ActiveRecord::Base
   VALID_RANGE_FORMATS = %w(digits characters words value)
   belongs_to :fieldable, polymorphic: true
 
-  has_many :options, class_name: 'FormFieldOption', conditions: {option_type: 'option'}, dependent: :destroy, inverse_of: :form_field, foreign_key: :form_field_id, order: 'form_field_options.ordering ASC'
-  has_many :statements, class_name: 'FormFieldOption', conditions: {option_type: 'statement'}, dependent: :destroy, inverse_of: :form_field, foreign_key: :form_field_id, order: 'form_field_options.ordering ASC'
+  has_many :options, ->{ order('form_field_options.ordering ASC').where(option_type: 'option') }, class_name: 'FormFieldOption', dependent: :destroy, inverse_of: :form_field, foreign_key: :form_field_id
+  has_many :statements, ->{ order('form_field_options.ordering ASC').where(option_type: 'statement') }, class_name: 'FormFieldOption', dependent: :destroy, inverse_of: :form_field, foreign_key: :form_field_id
   belongs_to :kpi
   accepts_nested_attributes_for :options, allow_destroy: true
   accepts_nested_attributes_for :statements, allow_destroy: true

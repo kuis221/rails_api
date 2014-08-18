@@ -44,14 +44,14 @@ describe Contact, :type => :model do
 
   describe "state validation" do
     describe "when country is nil" do
-      subject{ Contact.new({country: nil}, without_protection: true) }
+      subject { Contact.new(country: nil) }
 
       it {is_expected.not_to allow_value('CA').for(:state).with_message('is not valid') }
       it {is_expected.not_to allow_value('ON').for(:state).with_message('is not valid') }
     end
 
     describe "with United States as country" do
-      subject{ Contact.new({country: 'US'}, without_protection: true) }
+      subject{ Contact.new(country: 'US') }
 
       it {is_expected.to allow_value('CA').for(:state) }
       it {is_expected.not_to allow_value('ON').for(:state).with_message('is not valid') }

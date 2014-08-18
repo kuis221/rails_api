@@ -28,10 +28,10 @@ class Event < ActiveRecord::Base
   belongs_to :campaign
   belongs_to :place, autosave: true
 
-  has_many :tasks, :order => 'due_at ASC', dependent: :destroy, inverse_of: :event
-  has_many :photos, conditions: {asset_type: 'photo'}, class_name: 'AttachedAsset', dependent: :destroy, :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
-  has_many :active_photos, conditions: {asset_type: 'photo', active: true}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
-  has_many :documents, conditions: {asset_type: 'document'}, class_name: 'AttachedAsset', dependent: :destroy, :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
+  has_many :tasks, ->{ order 'due_at ASC' }, dependent: :destroy, inverse_of: :event
+  has_many :photos, ->{ order("created_at DESC").where(asset_type: 'photo') }, class_name: 'AttachedAsset', dependent: :destroy, :as => :attachable, inverse_of: :attachable
+  has_many :active_photos, ->{ order("created_at DESC").where(asset_type: 'photo', active: true) }, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable
+  has_many :documents, ->{ order("created_at DESC").where(asset_type: 'photo') }, class_name: 'AttachedAsset', dependent: :destroy, :as => :attachable, inverse_of: :attachable
   has_many :teamings, :as => :teamable, dependent: :destroy
   has_many :teams, :through => :teamings, :after_remove => :after_remove_member
   has_many :results, as: :resultable, dependent: :destroy, class_name: 'FormFieldResult', inverse_of: :resultable do
@@ -40,14 +40,14 @@ class Event < ActiveRecord::Base
     end
   end
   has_many :event_expenses, dependent: :destroy, inverse_of: :event, autosave: true
-  has_many :activities, as: :activitable, dependent: :destroy, order: 'activity_date ASC' do
+  has_many :activities, ->{ order('activity_date ASC') }, as: :activitable, dependent: :destroy do
     def active
       joins(activity_type: :activity_type_campaigns).where(active: true, activity_type_campaigns: {campaign_id: proxy_association.owner.campaign_id})
     end
   end
   has_one :event_data, autosave: true, dependent: :destroy
 
-  has_many :comments, dependent: :destroy, :as => :commentable, order: 'comments.created_at ASC'
+  has_many :comments, ->{ order 'comments.created_at ASC' }, dependent: :destroy, :as => :commentable
 
   has_many :surveys, dependent: :destroy,  inverse_of: :event
 
@@ -66,9 +66,9 @@ class Event < ActiveRecord::Base
 
   attr_accessor :place_reference, :team_members
 
-  scope :upcomming, lambda{ where('start_at >= ?', Time.zone.now) }
-  scope :active, lambda{ where(active: true) }
-  scope :between_dates, lambda {|start_date, end_date|
+  scope :upcomming, -> { where('start_at >= ?', Time.zone.now) }
+  scope :active, -> { where(active: true) }
+  scope :between_dates, ->(start_date, end_date) {
     prefix = ''
     if Company.current.present? && Company.current.timezone_support?
       prefix = 'local_'
@@ -78,18 +78,18 @@ class Event < ActiveRecord::Base
     where("#{prefix}end_at > ? AND #{prefix}start_at < ?", start_date, end_date)
   }
 
-  scope :by_campaigns, lambda{|campaigns| where(campaign_id: campaigns) }
-  scope :with_user_in_team, lambda{|user|
+  scope :by_campaigns, ->(campaigns) { where(campaign_id: campaigns) }
+  scope :with_user_in_team, ->(user) {
       joins('LEFT JOIN teamings ON teamings.teamable_id=events.id AND teamable_type=\'Event\'').
       joins('LEFT JOIN memberships ON (memberships.memberable_id=events.id AND memberable_type=\'Event\') OR (memberships.memberable_id=teamings.team_id AND memberable_type=\'Team\')').
       where('memberships.company_user_id in (?)', user) }
 
-  scope :in_past, lambda{ where('events.end_at < ?', Time.now) }
-  scope :with_team, lambda{|team|
+  scope :in_past, -> { where('events.end_at < ?', Time.now) }
+  scope :with_team, ->(team) {
     joins(:teamings).
     where(teamings: {team_id: team} ) }
 
-  scope :for_campaigns_accessible_by, lambda{|company_user|
+  scope :for_campaigns_accessible_by, ->(company_user) {
     if company_user.is_admin?
       where(company_id: company_user.company_id)
     else
@@ -139,7 +139,7 @@ class Event < ActiveRecord::Base
   validates :start_at, presence: true
   validates :end_at, presence: true
 
-  DATE_FORMAT = /^[0-1]?[0-9]\/[0-3]?[0-9]\/[0-2]0[0-9][0-9]$/
+  DATE_FORMAT = /\A[0-1]?[0-9]\/[0-3]?[0-9]\/[0-2]0[0-9][0-9]\z/
   validates :start_date, format: { with: DATE_FORMAT, message: 'MM/DD/YYYY' }
   validates :end_date, format: { with: DATE_FORMAT, message: 'MM/DD/YYYY' }
 
@@ -306,7 +306,7 @@ class Event < ActiveRecord::Base
 
   def venue
     unless place_id.nil?
-      @venue ||= Venue.find_or_create_by_company_id_and_place_id(company_id, place_id)
+      @venue ||= Venue.find_or_create_by(company_id: company_id, place_id: place_id)
       @venue.place = self.place if self.association(:place).loaded?
     end
     @venue
@@ -726,7 +726,7 @@ class Event < ActiveRecord::Base
         users = [member]
       end
 
-      self.tasks.scoped_by_company_user_id(users).update_all(company_user_id: nil)
+      self.tasks.where(company_user_id: users).update_all(company_user_id: nil)
       Sunspot.index(self.tasks)
     end
 
@@ -754,7 +754,7 @@ class Event < ActiveRecord::Base
       if place_id_changed?
         Resque.enqueue(EventPhotosIndexer, self.id)
         if place_id_was.present?
-          previous_venue = Venue.find_by_company_id_and_place_id(company_id, place_id_was)
+          previous_venue = Venue.find_by(company_id: company_id, place_id: place_id_was)
           Resque.enqueue(VenueIndexer, previous_venue.id) unless previous_venue.nil?
         end
       end

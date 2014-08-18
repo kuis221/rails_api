@@ -173,13 +173,6 @@ Brandscopic::Application.routes.draw do
     post :staff_report, to: 'staff_report#report'
   end
 
-  # This couple of routes are for tasks
-  get ":controller/:scope/filters", format: :json, as: :filters
-  get ":controller/:scope/items", format: :html, as: :items
-
-  get ":controller/filters", format: :json, as: :filters
-  get ":controller/items", format: :html, as: :items
-
   scope "/research" do
     resources :venues, only: [:index, :show] do
       member do
@@ -197,6 +190,9 @@ Brandscopic::Application.routes.draw do
 
   resources :roles do
     get :autocomplete, on: :collection
+    get :filters, on: :collection, format: :json
+    get :items, on: :collection, format: :html
+
     member do
       get :deactivate
       get :activate
@@ -204,6 +200,9 @@ Brandscopic::Application.routes.draw do
   end
 
   resources :company_users, except: [:new, :create, :destroy], path: 'users' do
+    get :filters, on: :collection, format: :json
+    get :items, on: :collection, format: :html
+
     get :profile, on: :collection
     get :autocomplete, on: :collection
     get :time_zone_change, on: :collection
@@ -238,6 +237,9 @@ Brandscopic::Application.routes.draw do
 
   resources :teams do
     get :autocomplete, on: :collection
+    get :filters, on: :collection, format: :json
+    get :items, on: :collection, format: :html
+
     member do
       get :deactivate
       get :activate
@@ -259,6 +261,8 @@ Brandscopic::Application.routes.draw do
     end
     resources :places, only: [:destroy, :create]
     get :autocomplete, on: :collection
+    get :filters, on: :collection, format: :json
+    get :items, on: :collection, format: :html
     get :find_similar_kpi, on: :collection
     member do
       get :post_event_form
@@ -301,6 +305,9 @@ Brandscopic::Application.routes.draw do
 
   resources :events do
     get :autocomplete, on: :collection
+    get :filters, on: :collection, format: :json
+    get :items, on: :collection, format: :html
+
     get :calendar, on: :collection
     get :tasks, on: :member
     get :edit_data, on: :member
@@ -363,6 +370,9 @@ Brandscopic::Application.routes.draw do
   resources :tasks, only: [:new, :create, :edit, :update] do
     collection do
       get :autocomplete
+      get :filters, format: :json
+      get :items, format: :html
+
       get :mine, to: :index, :defaults => {:scope => "user"}, :constraints => { :scope => 'user' }
       get :my_teams, to: :index, :defaults => {:scope => "teams"}, :constraints => { :scope => 'teams' }
     end
@@ -375,6 +385,8 @@ Brandscopic::Application.routes.draw do
 
   resources :brand_portfolios do
     get :autocomplete, on: :collection
+    get :filters, on: :collection, format: :json
+    get :items, on: :collection, format: :html
     resources :brands, only: [:new, :create]
     member do
       get :deactivate
@@ -388,6 +400,9 @@ Brandscopic::Application.routes.draw do
 
   resources :brands do
     get :autocomplete, on: :collection
+    get :filters, on: :collection, format: :json
+    get :items, on: :collection, format: :html
+
     resources :marques, only: [:index]
     member do
       get :deactivate
@@ -397,6 +412,9 @@ Brandscopic::Application.routes.draw do
 
   resources :areas do
     get :autocomplete, on: :collection
+    get :filters, on: :collection, format: :json
+    get :items, on: :collection, format: :html
+
     resources :places, only: [:new, :create, :destroy]
     member do
       get :deactivate
@@ -421,6 +439,9 @@ Brandscopic::Application.routes.draw do
 
   resources :date_ranges do
     get :autocomplete, on: :collection
+    get :filters, on: :collection, format: :json
+    get :items, on: :collection, format: :html
+
     resources :date_items, path: 'dates', only: [:new, :create, :destroy]
     member do
       get :deactivate
@@ -430,6 +451,8 @@ Brandscopic::Application.routes.draw do
 
   resources :day_parts do
     get :autocomplete, on: :collection
+    get :filters, on: :collection, format: :json
+    get :items, on: :collection, format: :html
     resources :day_items, path: 'days', only: [:new, :create, :destroy]
     member do
       get :deactivate
@@ -446,6 +469,8 @@ Brandscopic::Application.routes.draw do
 
   resources :activity_types  do
     get :autocomplete, on: :collection
+    get :filters, on: :collection, format: :json
+    get :items, on: :collection, format: :html
     member do
       get :deactivate
       get :activate

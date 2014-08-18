@@ -13,7 +13,7 @@ class NotificationSweeper < ActionController::Caching::Sweeper
 
   private
     def expire_cache_notifications(notification)
-      expire_action(controller: "company_users", action: "notifications", company_user_id: notification.company_user_id, format: :json)
+      Rails.cache.delete "user_notifications_#{notification.company_user_id}"
     end
 
     def instantiate_controller

@@ -14,7 +14,7 @@
 class ActivityType < ActiveRecord::Base
   belongs_to :company
   scoped_to_company
-  has_many :form_fields, :as => :fieldable, order: 'form_fields.ordering ASC'
+  has_many :form_fields, ->{ order 'form_fields.ordering ASC' }, :as => :fieldable
   has_many :companies, through: :activity_type_campaigns
 
   validates :name, presence: true
@@ -29,7 +29,7 @@ class ActivityType < ActiveRecord::Base
 
   accepts_nested_attributes_for :goals
   accepts_nested_attributes_for :form_fields, allow_destroy: true
-  scope :active, lambda{ where(active: true) }
+  scope :active, ->{ where(active: true) }
   attr_accessor :partial_path
 
   before_save :ensure_user_date_field

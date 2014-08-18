@@ -7,7 +7,7 @@ module ApplicationHelper
       place_city = place.city
 
       if link_name
-        venue = Venue.find_by_company_id_and_place_id(current_company.id, place.id)
+        venue = Venue.find_by(company_id: current_company.id, place_id: place.id)
         if venue.present?
           if place.name == place.city
             place_city = link_to place.city, venue_path(venue)

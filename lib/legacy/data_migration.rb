@@ -6,8 +6,6 @@ class Legacy::DataMigration < ActiveRecord::Base
 
   accepts_nested_attributes_for :local
 
-  attr_accessible :local, :company_id
-
   validates :company_id, presence: true, numericality: true
 
   validates :remote_id, presence: true, numericality: true
