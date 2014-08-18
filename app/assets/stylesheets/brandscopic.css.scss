@@ -689,6 +689,8 @@ a.more-options-link{
 	padding: 2px 10px;
 }
 
+/* According to the Style Guide there is no hover effect for this element */
+
 .btn-group{
 	margin-left: 25px;
 	&>.btn+.btn{
@@ -697,11 +699,18 @@ a.more-options-link{
 	.btn{
 		border: 0;
 		box-shadow: none;
+		color: white;
 		&.active{
-			color: $user_menu !important;
+			background-color: $brand;
+			color: $user_menu;
+			&:hover{
+				background-color: $brand;
+				color: $user_menu;
+			}
 		}
 		&:hover{
-			color: white !important;
+			background-color: $user_menu;
+			color: white;
 		}
 		&.calendar{
 			border-left: 1px solid $buttons-border;
@@ -712,6 +721,8 @@ a.more-options-link{
 		}
 	}
 }
+
+/* End btn-group */
 
 .btn-primary{
 	background-color: $buttons !important;
@@ -6702,28 +6713,23 @@ table td.sub-level-1 {
 			&:hover, &.chardinjs-show-element {
 				.thumbnail-toolbar{
 					background-color: rgba(0, 0, 0, 0.6);
+					box-sizing: border-box;
 					bottom: 0;
 					left: 0;
 					right: 0;
 					margin: 0 5px;
 					display: block;
+					padding: 8px 0;
 					position: absolute;
-					height: 35px;
 					list-style-type: none;
 					overflow:hidden;
 					a{
 						color: white;
+						font-size: 16px;
 						float: right;
-						margin: 10px;
+						margin: 0 10px 0 0;
 						opacity: 1 !important;
 						text-decoration: none;
-						&:before{
-							color: white;
-							font-size: 15px;
-							speak: none;
-							text-align: center;
-							vertical-align: middle;
-						}
 						&.photo-download-link{
 							float:right;
 							margin: 7px 0;
@@ -6731,17 +6737,6 @@ table td.sub-level-1 {
 							&.icon-minus, &.icon-plus{
 								margin: 11px 0;
 							}
-						}
-						&.icon-remove-circle{
-							float:right;
-							margin: 10px;
-							position: relative;
-						}
-						&.icon-ok-circle:before{
-							color: $grey_one;
-							font-size: 15px;
-							text-align: center;
-							vertical-align: middle;
 						}
 					}
 				}
