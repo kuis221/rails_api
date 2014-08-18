@@ -14,7 +14,7 @@ describe ContactEventsController, :type => :controller do
 
   describe "GET 'new'" do
     it "returns http success" do
-      get 'new', event_id: event.to_param, format: :js
+      xhr :get, 'new', event_id: event.to_param, format: :js
       expect(response).to be_success
       expect(response).to render_template('new')
     end
@@ -22,7 +22,7 @@ describe ContactEventsController, :type => :controller do
 
   describe "GET 'edit'" do
     it "returns http success" do
-      get 'edit', event_id: event.to_param, id: contact_event.id, format: :js
+      xhr :get, 'edit', event_id: event.to_param, id: contact_event.id, format: :js
       expect(assigns(:contact_event)).to eq(contact_event)
       expect(response).to be_success
       expect(response).to render_template('edit')
@@ -32,7 +32,7 @@ describe ContactEventsController, :type => :controller do
   describe "GET 'add'" do
     it "returns http success" do
       contact.reload
-      get 'add', event_id: event.to_param, format: :js
+      xhr :get, 'add', event_id: event.to_param, format: :js
       expect(response).to be_success
       expect(response).to render_template('add')
     end
@@ -41,7 +41,7 @@ describe ContactEventsController, :type => :controller do
   describe "POST 'create'" do
     it "assigns the contact to the event" do
       expect {
-        post 'create', event_id: event.to_param, contact_event: {contactable_id: contact.id, contactable_type: 'Contact'}, format: :js
+        xhr :post, 'create', event_id: event.to_param, contact_event: {contactable_id: contact.id, contactable_type: 'Contact'}, format: :js
         expect(response).to be_success
       }.to change(ContactEvent, :count).by(1)
       c = ContactEvent.last
@@ -54,7 +54,7 @@ describe ContactEventsController, :type => :controller do
       expect(contact.save(validate: false)).to be_truthy
       expect(contact.persisted?).to be_truthy
       expect {
-        post 'create', event_id: event.to_param, contact_event: {contactable_id: contact.id, contactable_type: 'Contact'}, format: :js
+        xhr :post, 'create', event_id: event.to_param, contact_event: {contactable_id: contact.id, contactable_type: 'Contact'}, format: :js
         expect(response).to be_success
         expect(response).to render_template('contact_events/_form')
       }.to_not change(ContactEvent, :count)
@@ -62,7 +62,7 @@ describe ContactEventsController, :type => :controller do
 
     it "assigns the company user to the event" do
       expect {
-        post 'create', event_id: event.to_param, contact_event: {contactable_id: company_user.id, contactable_type: 'CompanyUser'}, format: :js
+        xhr :post, 'create', event_id: event.to_param, contact_event: {contactable_id: company_user.id, contactable_type: 'CompanyUser'}, format: :js
         expect(response).to be_success
       }.to change(ContactEvent, :count).by(1)
       c = ContactEvent.last
@@ -74,7 +74,7 @@ describe ContactEventsController, :type => :controller do
       contact = FactoryGirl.create(:contact, company: @company)
       expect {
         expect {
-          post 'create', event_id: event.to_param,  contact_event: {contactable_type: 'Contact', contactable_id: contact.id, contactable_attributes: {id: contact.id, first_name: 'Fulanito', last_name: 'De Tal', email: 'email@test.com', country: 'US', state: 'CA', city: 'Los Angeles', phone_number: '12345678', zip_code: '12345'}}, format: :js
+          xhr :post, 'create', event_id: event.to_param,  contact_event: {contactable_type: 'Contact', contactable_id: contact.id, contactable_attributes: {id: contact.id, first_name: 'Fulanito', last_name: 'De Tal', email: 'email@test.com', country: 'US', state: 'CA', city: 'Los Angeles', phone_number: '12345678', zip_code: '12345'}}, format: :js
           expect(response).to be_success
         }.to_not change(Contact, :count)
       }.to change(ContactEvent, :count).by(1)
@@ -93,7 +93,7 @@ describe ContactEventsController, :type => :controller do
     it "creates a new contact and assigns it to the event" do
       expect {
         expect {
-          post 'create', event_id: event.to_param, contact_event: {contactable_attributes: {first_name: 'Fulanito', last_name: 'De Tal', email: 'email@test.com', country: 'US', state: 'CA', city: 'Los Angeles', phone_number: '12345678', zip_code: '12345'}}, format: :js
+          xhr :post, 'create', event_id: event.to_param, contact_event: {contactable_attributes: {first_name: 'Fulanito', last_name: 'De Tal', email: 'email@test.com', country: 'US', state: 'CA', city: 'Los Angeles', phone_number: '12345678', zip_code: '12345'}}, format: :js
           expect(response).to be_success
         }.to change(Contact, :count).by(1)
       }.to change(ContactEvent, :count).by(1)
@@ -115,7 +115,7 @@ describe ContactEventsController, :type => :controller do
       contact_event.reload
       expect {
         expect {
-          put 'update', event_id: event.to_param, id: contact_event.id, contact_event: {contactable_attributes: {id: contact_event.contactable.id, first_name: 'Fulanito', last_name: 'De Tal', email: 'email@test.com', country: 'US', state: 'CA', city: 'Los Angeles', phone_number: '12345678', zip_code: '12345'}}, format: :js
+          xhr :put, 'update', event_id: event.to_param, id: contact_event.id, contact_event: {contactable_attributes: {id: contact_event.contactable.id, first_name: 'Fulanito', last_name: 'De Tal', email: 'email@test.com', country: 'US', state: 'CA', city: 'Los Angeles', phone_number: '12345678', zip_code: '12345'}}, format: :js
           expect(response).to be_success
         }.to_not change(Contact, :count)
       }.to_not change(ContactEvent, :count)

@@ -37,7 +37,7 @@ describe VenuesController, :type => :controller do
       assigned_area = FactoryGirl.create(:area, company: @company)
 
       venue.place.areas << assigned_area
-      get 'select_areas', id: venue.to_param, format: :js
+      xhr :get, 'select_areas', id: venue.to_param, format: :js
       expect(response).to be_success
       expect(response).to render_template('select_areas')
 
@@ -51,7 +51,7 @@ describe VenuesController, :type => :controller do
     it "adds the area to the place" do
       area = FactoryGirl.create(:area, company: @company)
       expect {
-        post 'add_areas', id: venue.to_param, area_id: area.to_param, format: :js
+        xhr :post, 'add_areas', id: venue.to_param, area_id: area.to_param, format: :js
       }.to change(venue.place.areas, :count).by(1)
     end
   end
@@ -71,7 +71,7 @@ describe VenuesController, :type => :controller do
   describe "GET 'index'" do
     it "queue the job for export the list" do
       expect{
-        get :index, format: :xls
+        xhr :get, :index, format: :xls
       }.to change(ListExport, :count).by(1)
       export = ListExport.last
       expect(ListExportWorker).to have_queued(export.id)

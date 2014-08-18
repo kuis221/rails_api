@@ -32,12 +32,12 @@ describe Api::V1::CommentsController, :type => :controller do
       expect(result).to eq([{
                          'id' => comment1.id,
                          'content' => 'Comment #1',
-                         'created_at' => '2013-08-22T11:59:00-07:00'
+                         'created_at' => '2013-08-22T11:59:00.000-07:00'
                         },
                         {
                          'id' => comment2.id,
                          'content' => 'Comment #2',
-                         'created_at' => '2013-08-23T09:15:00-07:00'
+                         'created_at' => '2013-08-23T09:15:00.000-07:00'
                         }])
     end
   end

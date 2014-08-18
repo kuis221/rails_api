@@ -14,27 +14,27 @@ describe GoalsController, :type => :controller do
 
   describe "GET 'new'" do
     it "returns http success" do
-      get 'new', company_user_id: company_user.to_param, format: :js
+      xhr :get, 'new', company_user_id: company_user.to_param, format: :js
       expect(response).to be_success
       expect(response).to render_template('new')
-      expect(response).to render_template('form')
+      expect(response).to render_template('_form')
     end
   end
 
   describe "POST 'create'" do
     it "returns http success" do
-      post 'create', company_user_id: company_user.to_param, goal: {value: '100', kpi_id: kpi.id}, format: :js
+      xhr :post, 'create', company_user_id: company_user.to_param, goal: {value: '100', kpi_id: kpi.id}, format: :js
       expect(response).to be_success
       expect(response).to render_template('create')
     end
 
     it "should create a goal for the company user" do
       expect {
-        post 'create', company_user_id: company_user.to_param, goal: {value: '100', kpi_id: kpi.id, title: 'Goal Title', start_date: '01/31/2012', due_date: '01/31/2013'}, format: :js
+        xhr :post, 'create', company_user_id: company_user.to_param, goal: {value: '100', kpi_id: kpi.id, title: 'Goal Title', start_date: '01/31/2012', due_date: '01/31/2013'}, format: :js
       }.to change(Goal, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template(:create)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
 
       goal = Goal.last
       expect(goal.parent).to be_nil
@@ -52,7 +52,7 @@ describe GoalsController, :type => :controller do
       }.to change(Goal, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template(:create)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
 
       goal = Goal.last
       expect(goal.parent).to eq(campaign)
@@ -70,7 +70,7 @@ describe GoalsController, :type => :controller do
       }.to change(Goal, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template(:create)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
 
       goal = Goal.last
       expect(goal.parent).to eq(campaign)
@@ -85,7 +85,7 @@ describe GoalsController, :type => :controller do
       }.to change(Goal, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template(:create)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
 
       goal = Goal.last
       expect(goal.parent).to eq(campaign)
@@ -96,10 +96,10 @@ describe GoalsController, :type => :controller do
 
     it "should render the form_dialog template if errors" do
       expect {
-        post 'create', company_user_id: company_user.to_param, goal: {start_date: '99/99/9999'}, format: :js
+        xhr :post, 'create', company_user_id: company_user.to_param, goal: {start_date: '99/99/9999'}, format: :js
       }.not_to change(Goal, :count)
       expect(response).to render_template(:create)
-      expect(response).to render_template(:form_dialog)
+      expect(response).to render_template('_form_dialog')
       assigns(:goal).errors.count > 0
     end
   end
@@ -107,7 +107,7 @@ describe GoalsController, :type => :controller do
   describe "GET 'edit'" do
     it "returns http success" do
       goal = FactoryGirl.create(:goal, goalable: company_user, activity_type_id: activity_type.id)
-      get 'edit', company_user_id: company_user.to_param, id: goal.to_param, format: :js
+      xhr :get, 'edit', company_user_id: company_user.to_param, id: goal.to_param, format: :js
       expect(response).to be_success
       expect(assigns(:company_user)).to eq(company_user)
       expect(assigns(:goal)).to eq(goal)
@@ -118,11 +118,11 @@ describe GoalsController, :type => :controller do
     it "should update the goal attributes for the company user" do
       goal = FactoryGirl.create(:goal, goalable: company_user, activity_type_id: activity_type.id)
       expect {
-        put 'update', company_user_id: company_user.to_param, id: goal.to_param, goal: {value: '100', kpi_id: kpi.id, title: 'Goal Title', start_date: '01/31/2012', due_date: '01/31/2013'}, format: :js
+        xhr :put, 'update', company_user_id: company_user.to_param, id: goal.to_param, goal: {value: '100', kpi_id: kpi.id, title: 'Goal Title', start_date: '01/31/2012', due_date: '01/31/2013'}, format: :js
       }.to_not change(Goal, :count)
       expect(response).to be_success
       expect(response).to render_template(:update)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
 
       goal.reload
       expect(goal.parent).to be_nil
@@ -141,7 +141,7 @@ describe GoalsController, :type => :controller do
       }.to_not change(Goal, :count)
       expect(response).to be_success
       expect(response).to render_template(:update)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
 
       goal.reload
       expect(goal.parent).to eq(campaign)
@@ -158,7 +158,7 @@ describe GoalsController, :type => :controller do
       }.to_not change(Goal, :count)
       expect(response).to be_success
       expect(response).to render_template(:update)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
 
       area_goal.reload
       expect(area_goal.parent).to eq(campaign)
@@ -175,7 +175,7 @@ describe GoalsController, :type => :controller do
       }.to_not change(Goal, :count)
       expect(response).to be_success
       expect(response).to render_template(:update)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
 
       user_goal.reload
       expect(user_goal.parent).to eq(campaign)

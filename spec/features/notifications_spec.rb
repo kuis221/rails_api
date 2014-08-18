@@ -337,7 +337,7 @@ feature "Notifications", search: true, js: true do
     end
 
     feature "notification alert policy set to ALL" do
-      before { company.update_attribute(:settings, {event_alerts_policy: Notification::EVENT_ALERT_POLICY_ALL}) }
+      before { company.update_attribute(:event_alerts_policy, Notification::EVENT_ALERT_POLICY_ALL) }
 
       it "should receive notifications for late events recaps" do
         company_user.update_attributes({notifications_settings: ['event_recap_late_app']})

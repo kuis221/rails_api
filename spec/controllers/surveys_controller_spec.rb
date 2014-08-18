@@ -13,16 +13,16 @@ describe SurveysController, :type => :controller do
 
   describe "GET 'new'" do
     it "returns http success" do
-      get 'new', event_id: event.to_param, format: :js
+      xhr :get, 'new', event_id: event.to_param, format: :js
       expect(response).to render_template('new')
-      expect(response).to render_template('form')
+      expect(response).to render_template('_form')
       expect(response).to be_success
     end
   end
 
   describe "POST 'create'" do
     it "returns http success" do
-      post 'create', event_id: event.to_param, format: :js
+      xhr :post, 'create', event_id: event.to_param, format: :js
       expect(response).to be_success
       expect(response).to render_template('create')
     end
@@ -62,7 +62,7 @@ describe SurveysController, :type => :controller do
       expect(survey.ethnicity).to eq(ethnicity_answer.text)
       expect(response).to be_success
       expect(response).to render_template(:create)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
 
       survey = Survey.last
       expect(survey.event_id).to eq(event.id)
@@ -95,14 +95,14 @@ describe SurveysController, :type => :controller do
 
     it "deactivates an active survey" do
       survey.update_attribute(:active, true)
-      get 'deactivate', event_id: survey.event_id, id: survey.to_param, format: :js
+      xhr :get, 'deactivate', event_id: survey.event_id, id: survey.to_param, format: :js
       expect(response).to be_success
       expect(survey.reload.active?).to be_falsey
     end
 
     it "activates an inactive survey" do
       survey.update_attribute(:active, false)
-      get 'activate', event_id: survey.event_id, id: survey.to_param, format: :js
+      xhr :get, 'activate', event_id: survey.event_id, id: survey.to_param, format: :js
       expect(response).to be_success
       expect(survey.reload.active?).to be_truthy
     end

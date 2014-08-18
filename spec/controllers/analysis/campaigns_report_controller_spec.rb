@@ -25,7 +25,7 @@ describe Analysis::CampaignsReportController, :type => :controller do
     let(:campaign) { FactoryGirl.create(:campaign, company: @company) }
 
     it "should render the campaign report" do
-      get 'report', report: { campaign_id: campaign.to_param }, format: :js
+      xhr :get, 'report', report: { campaign_id: campaign.to_param }, format: :js
       expect(response).to be_success
     end
 
@@ -36,7 +36,7 @@ describe Analysis::CampaignsReportController, :type => :controller do
       FactoryGirl.create(:approved_event, company: @company, campaign_id: campaign.id + 1)
       FactoryGirl.create(:approved_event, company_id: @company.id+1, campaign_id: campaign.id + 1)
 
-      get 'report', report: { campaign_id: campaign.to_param }, format: :js
+      xhr :get, 'report', report: { campaign_id: campaign.to_param }, format: :js
 
       expect(response).to be_success
       expect(assigns(:events_scope)).to match_array(events)
@@ -51,15 +51,10 @@ describe Analysis::CampaignsReportController, :type => :controller do
         FactoryGirl.create(:goal, goalable: campaign, kpi_id: Kpi.interactions.id)
       ]
 
-      get 'report', report: { campaign_id: campaign.to_param }, format: :js
+      xhr :get, 'report', report: { campaign_id: campaign.to_param }, format: :js
 
       expect(response).to be_success
       expect(assigns(:goals)).to match_array(goals)
     end
-
-
-
   end
-
-
 end

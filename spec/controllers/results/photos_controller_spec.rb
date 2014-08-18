@@ -84,7 +84,7 @@ describe Results::PhotosController, type: :controller, search: true do
   describe "GET 'download'" do
     let(:attached_asset){ FactoryGirl.create(:attached_asset) }
     it "should download a photo" do
-      post 'new_download', photos: [attached_asset.id], format: :js
+      xhr :post, 'new_download', photos: [attached_asset.id], format: :js
       expect(response).to render_template("results/photos/_download")
       expect(response).to render_template("results/photos/new_download")
     end

@@ -13,8 +13,7 @@ require 'spec_helper'
 describe Teaming, :type => :model do
   it { is_expected.to belong_to(:team) }
   it { is_expected.to belong_to(:teamable) }
-  it { is_expected.to validate_presence_of(:teamable_id) }
-  it { is_expected.to validate_presence_of(:teamable_type) }
+  it { is_expected.to validate_presence_of(:teamable) }
 
   describe "new event notification" do
     let(:event) { FactoryGirl.create(:event) }

@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 ruby '2.1.2'
 
-gem 'rails', '4.1.0'
+gem 'rails', '4.1.4'
 gem 'rails-observers'
 gem 'activerecord-session_store'
 gem "rack-timeout"
@@ -28,7 +28,7 @@ gem 'newrelic_rpm'
 gem "paperclip", "~> 4.1"
 gem "aws-sdk"
 gem 'google_places'
-gem 'validates_timeliness', '~> 3.0'
+gem 'jc-validates_timeliness'
 gem 'sunspot_rails'
 gem 'sunspot_stats'
 gem "sunspot-queue"
@@ -71,6 +71,7 @@ group :web do
   gem 'activeadmin', github: 'activeadmin/active_admin'
   gem 'unicorn'
   gem 'simple_form'
+  gem 'country_select'
   gem "nested_form"
 end
 

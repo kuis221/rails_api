@@ -23,10 +23,10 @@ describe BrandsController, :type => :controller do
 
     describe "GET 'new'" do
       it "returns http success" do
-        get 'new', brand_portfolio_id: brand_portfolio.to_param, format: :js
+        xhr :get, 'new', brand_portfolio_id: brand_portfolio.to_param, format: :js
         expect(response).to be_success
         expect(response).to render_template('new')
-        expect(response).to render_template('form')
+        expect(response).to render_template('_form')
       end
     end
 
@@ -34,7 +34,7 @@ describe BrandsController, :type => :controller do
       it "should assign the new brand to the brand portfolio" do
         expect {
           expect {
-            post 'create', brand_portfolio_id: brand_portfolio.to_param, brand: {name: 'Test Brand', marques_list: 'Marque 1'}, format: :js
+            xhr :post, 'create', brand_portfolio_id: brand_portfolio.to_param, brand: {name: 'Test Brand', marques_list: 'Marque 1'}, format: :js
           }.to change(Brand, :count).by(1)
         }.to change(brand_portfolio.brands, :count).by(1)
       end
@@ -44,7 +44,7 @@ describe BrandsController, :type => :controller do
   describe "GET 'edit'" do
     let(:brand){ FactoryGirl.create(:brand, company: @company) }
     it "returns http success" do
-      get 'edit', id: brand.to_param, format: :js
+      xhr :get, 'edit', id: brand.to_param, format: :js
       expect(response).to be_success
     end
   end
@@ -102,14 +102,14 @@ describe BrandsController, :type => :controller do
 
     it "deactivates an active brand" do
       brand.update_attribute(:active, true)
-      get 'deactivate', id: brand.to_param, format: :js
+      xhr :get, 'deactivate', id: brand.to_param, format: :js
       expect(response).to be_success
       expect(brand.reload.active?).to be_falsey
     end
 
     it "activates an inactive brand" do
       brand.update_attribute(:active, false)
-      get 'activate', id: brand.to_param, format: :js
+      xhr :get, 'activate', id: brand.to_param, format: :js
       expect(response).to be_success
       expect(brand.reload.active?).to be_truthy
     end
@@ -117,17 +117,17 @@ describe BrandsController, :type => :controller do
 
   describe "POST 'create'" do
     it "returns http success" do
-      post 'create', format: :js
+      xhr :post, 'create', format: :js
       expect(response).to be_success
     end
 
     it "should not render form_dialog if no errors" do
       expect {
-        post 'create', brand: {name: 'Test Brand', marques_list: 'Marque 1,Marque 2'}, format: :js
+        xhr :post, 'create', brand: {name: 'Test Brand', marques_list: 'Marque 1,Marque 2'}, format: :js
       }.to change(Brand, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template(:create)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
 
       brand = Brand.last
       expect(brand.name).to eq('Test Brand')
@@ -136,10 +136,10 @@ describe BrandsController, :type => :controller do
 
     it "should render the form_dialog template if errors" do
       expect {
-        post 'create', format: :js
+        xhr :post, 'create', format: :js
       }.not_to change(Brand, :count)
       expect(response).to render_template(:create)
-      expect(response).to render_template(:form_dialog)
+      expect(response).to render_template('_form_dialog')
       expect(assigns(:brand).errors.count).to be > 0
     end
   end

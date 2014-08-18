@@ -22,7 +22,7 @@ describe DayPartsController, :type => :controller do
 
   describe "GET 'new'" do
     it "returns http success" do
-      get 'new', format: :js
+      xhr :get, 'new', format: :js
       expect(response).to be_success
     end
   end
@@ -30,7 +30,7 @@ describe DayPartsController, :type => :controller do
   describe "GET 'edit'" do
     let(:day_part){ FactoryGirl.create(:day_part, company: @company) }
     it "returns http success" do
-      get 'edit', id: day_part.to_param, format: :js
+      xhr :get, 'edit', id: day_part.to_param, format: :js
       expect(response).to be_success
     end
   end
@@ -46,17 +46,17 @@ describe DayPartsController, :type => :controller do
 
   describe "POST 'create'" do
     it "returns http success" do
-      post 'create', format: :js
+      xhr :post, 'create', format: :js
       expect(response).to be_success
     end
 
     it "should not render form_dialog if no errors" do
       expect {
-        post 'create', day_part: {name: 'Test day part', description: 'Test day part description'}, format: :js
+        xhr :post, 'create', day_part: {name: 'Test day part', description: 'Test day part description'}, format: :js
       }.to change(DayPart, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template(:create)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
 
       day_part = DayPart.last
       expect(day_part.name).to eq('Test day part')
@@ -66,10 +66,10 @@ describe DayPartsController, :type => :controller do
 
     it "should render the form_dialog template if errors" do
       expect {
-        post 'create', format: :js
+        xhr :post, 'create', format: :js
       }.not_to change(DayPart, :count)
       expect(response).to render_template(:create)
-      expect(response).to render_template(:form_dialog)
+      expect(response).to render_template('_form_dialog')
       assigns(:day_part).errors.count > 0
     end
   end
@@ -79,14 +79,14 @@ describe DayPartsController, :type => :controller do
 
     it "deactivates an active day_part" do
       day_part.update_attribute(:active, true)
-      get 'deactivate', id: day_part.to_param, format: :js
+      xhr :get, 'deactivate', id: day_part.to_param, format: :js
       expect(response).to be_success
       expect(day_part.reload.active?).to be_falsey
     end
 
     it "activates an inactive day_part" do
       day_part.update_attribute(:active, false)
-      get 'activate', id: day_part.to_param, format: :js
+      xhr :get, 'activate', id: day_part.to_param, format: :js
       expect(response).to be_success
       expect(day_part.reload.active?).to be_truthy
     end

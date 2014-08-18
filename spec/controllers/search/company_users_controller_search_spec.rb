@@ -84,7 +84,7 @@ describe CompanyUsersController, type: :controller, search: true do
 
       describe "when notification policy is set to EVENT_ALERT_POLICY_ALL" do
         let(:campaign) { FactoryGirl.create(:campaign, company: company) }
-        before { company.update_attribute(:settings, {event_alerts_policy: Notification::EVENT_ALERT_POLICY_ALL}) }
+        before { company.update_attribute(:event_alerts_policy, Notification::EVENT_ALERT_POLICY_ALL) }
 
         it "should notify all users about late events that they have access to" do
           company_user.update_attributes({notifications_settings: ['event_recap_late_app']})

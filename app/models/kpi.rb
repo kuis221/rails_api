@@ -56,7 +56,7 @@ class Kpi < ActiveRecord::Base
   accepts_nested_attributes_for :goals, reject_if: :invalid_goal?
 
   scope :global, lambda{ where('company_id is null').order('ordering ASC') }
-  scope :custom, lambda{|company| scoped_by_company_id(company).order('name ASC') }
+  scope :custom, lambda{|company| where(company_id: company).order('name ASC') }
   scope :global_and_custom, lambda{|company| where('company_id is null or company_id=?', company).order('company_id DESC, id ASC') }
   scope :in_module, lambda{ where('module is not null and module != \'\'') }
   scope :not_segmented, lambda{ where(['kpi_type not in (?) ', ['percentage', 'count'] ]) }

@@ -32,17 +32,6 @@ FactoryGirl.define do
     created_by_id 1
     updated_by_id 1
 
-    ignore do
-      user_ids nil
-      team_ids nil
-    end
-
-    after(:create) do |event, evaluator|
-      event.team_ids = evaluator.team_ids if evaluator.team_ids
-      event.user_ids = evaluator.user_ids if evaluator.user_ids
-      event.save if evaluator.team_ids || evaluator.user_ids
-    end
-
     factory :inactive_campaign do
       aasm_state 'inactive'
     end

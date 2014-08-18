@@ -47,13 +47,10 @@ class Company < ActiveRecord::Base
     Thread.current[:company]
   end
 
-  # Returns the value for setting #{name} if present, or the #{default} value if not set
-  def setting(name, default=nil)
-    if settings && settings.has_key?(name.to_s)
-      settings[name.to_s]
-    else
-      default
-    end
+  # Return the value stored in "settings" or the default
+  # Notification::EVENT_ALERT_POLICY_TEAM if not set
+  def event_alerts_policy
+    (super || Notification::EVENT_ALERT_POLICY_TEAM).to_i
   end
 
   def team_member_options
@@ -100,7 +97,7 @@ class Company < ActiveRecord::Base
           new_company_user.save validate: false
           UserMailer.company_existing_admin_invitation(user.id, self).deliver
         else
-          new_user = User.create({email: admin_email, first_name: 'Admin', last_name: 'User', inviting_user: true}, as: :admin)
+          new_user = User.create(email: admin_email, first_name: 'Admin', last_name: 'User', inviting_user: true)
           new_company_user = self.company_users.create(role_id: role.id, user: new_user)
           new_user.skip_invitation = true
           new_user.invite!

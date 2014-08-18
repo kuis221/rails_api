@@ -112,8 +112,10 @@ class Results::GvaController < InheritedResources::Base
         campaign.goals.base
       end
 
+      sub_query = Campaign.connection.unprepared_statement{ campaign.activity_types.active.select(:id).to_sql }
+
       goals = goals.where('goals.value is not null and goals.value <> 0')
-      goals_activities = goals.joins(:activity_type).where(activity_type_id: campaign.activity_types.active).includes(:activity_type)
+      goals_activities =  goals.joins(:activity_type).where("activity_type_id in (#{sub_query})").includes(:activity_type)
       goals_kpis = goals.joins(:kpi).where(kpi_id: campaign.active_kpis).includes(:kpi)
       # Following KPIs should be displayed in this specific order at the beginning. Rest of KPIs and Activity Types should be next in the list ordered by name
       promotables = ['Events', 'Promo Hours', 'Expenses', 'Samples', 'Interactions', 'Impressions']

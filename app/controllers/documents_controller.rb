@@ -19,7 +19,7 @@ class DocumentsController < InheritedResources::Base
 
   protected
     def build_resource_params
-      [permitted_params || {}]
+      [(permitted_params || {}).merge(asset_type: 'document')]
     end
 
     def permitted_params

@@ -284,10 +284,9 @@ class CompanyUser < ActiveRecord::Base
     end
 
     def for_dropdown
-      ActiveRecord::Base.connection.select_all(
-        self.select("users.first_name || \' \' || users.last_name as name, company_users.id").
-        joins(:user).order('lower(users.first_name || \' \' || users.last_name)').to_sql
-      ).map{|r| [r['name'], r['id']] }
+      self.joins(:user).
+        order('lower(users.first_name || \' \' || users.last_name)').
+        pluck('users.first_name || \' \' || users.last_name as name, company_users.id')
     end
   end
 

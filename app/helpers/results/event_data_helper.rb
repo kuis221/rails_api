@@ -8,13 +8,13 @@ module Results
       # We are reusing the same object for each result to reduce memory usage
       @result ||= FormFieldResult.new
       event_values = empty_values_hash
-      ActiveRecord::Base.connection.select_all(
+      ActiveRecord::Base.connection.select_all( ActiveRecord::Base.connection.unprepared_statement{
         event.results.where(form_field_id: active_fields_for_campaign(event.campaign_id)).
                   select('form_field_results.form_field_id, form_field_results.value, form_field_results.hash_value').to_sql
-      ).each do |row|
+      }).each do |row|
         @result.form_field = custom_fields_to_export[row['form_field_id'].to_i]
         if @result.form_field.is_hashed_value?
-          @result.hash_value = ActiveRecord::Coders::Hstore.load(row['hash_value'])
+          @result.hash_value = row['hash_value']
         else
           @result.value = row['value']
         end
@@ -42,12 +42,14 @@ module Results
     end
 
     def team_member_for_event(event)
-      ActiveRecord::Base.connection.select_values("
-        #{event.users.joins(:user).select('users.first_name || \' \' || users.last_name AS name' ).reorder(nil).to_sql}
-        UNION ALL
-        #{event.teams.select('teams.name').reorder(nil).to_sql}
-        ORDER BY name
-      ").join(', ')
+      ActiveRecord::Base.connection.unprepared_statement do
+        ActiveRecord::Base.connection.select_values("
+          #{event.users.joins(:user).select('users.first_name || \' \' || users.last_name AS name' ).reorder(nil).to_sql}
+          UNION ALL
+          #{event.teams.select('teams.name').reorder(nil).to_sql}
+          ORDER BY name
+        ").join(', ')
+      end
     end
 
     def url_for_event(event)

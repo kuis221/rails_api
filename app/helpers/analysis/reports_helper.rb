@@ -44,7 +44,7 @@ module Analysis
       tz = ActiveSupport::TimeZone.zones_map[Time.zone.name].tzinfo.identifier
 
       # Find the first and last event on scope
-      result = @events_scope.select("to_char(TIMEZONE('UTC', min(start_at)) AT TIME ZONE '#{tz}', 'YYYY/MM/DD') as first_event_at, to_char(TIMEZONE('UTC', max(start_at)) AT TIME ZONE '#{tz}', 'YYYY/MM/DD') as last_event_at, count(events.id) as qty_events").first
+      result = @events_scope.select("to_char(TIMEZONE('UTC', min(start_at)) AT TIME ZONE '#{tz}', 'YYYY/MM/DD') as first_event_at, to_char(TIMEZONE('UTC', max(start_at)) AT TIME ZONE '#{tz}', 'YYYY/MM/DD') as last_event_at, count(events.id) as qty_events").reorder(nil).first
 
       return data if result.nil? || result.first_event_at.nil? || result.first_event_at.empty? || result.qty_events == 0
 

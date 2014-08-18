@@ -29,11 +29,11 @@ class Event < ActiveRecord::Base
   belongs_to :place, autosave: true
 
   has_many :tasks, ->{ order 'due_at ASC' }, dependent: :destroy, inverse_of: :event
-  has_many :photos, ->{ order("created_at DESC").where(asset_type: 'photo') }, class_name: 'AttachedAsset', dependent: :destroy, :as => :attachable, inverse_of: :attachable
-  has_many :active_photos, ->{ order("created_at DESC").where(asset_type: 'photo', active: true) }, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable
-  has_many :documents, ->{ order("created_at DESC").where(asset_type: 'photo') }, class_name: 'AttachedAsset', dependent: :destroy, :as => :attachable, inverse_of: :attachable
-  has_many :teamings, :as => :teamable, dependent: :destroy
-  has_many :teams, :through => :teamings, :after_remove => :after_remove_member
+  has_many :photos, ->{ order("created_at DESC").where(asset_type: 'photo') }, class_name: 'AttachedAsset', dependent: :destroy, as: :attachable, inverse_of: :attachable
+  has_many :active_photos, ->{ order("created_at DESC").where(asset_type: 'photo', active: true) }, class_name: 'AttachedAsset', as: :attachable, inverse_of: :attachable
+  has_many :documents, ->{ order("created_at DESC").where(asset_type: 'photo') }, class_name: 'AttachedAsset', dependent: :destroy, as: :attachable, inverse_of: :attachable
+  has_many :teamings, as: :teamable, dependent: :destroy, inverse_of: :teamable
+  has_many :teams, through: :teamings, after_remove: :after_remove_member
   has_many :results, as: :resultable, dependent: :destroy, class_name: 'FormFieldResult', inverse_of: :resultable do
     def active
       where(form_field_id: proxy_association.owner.campaign.form_field_ids)
@@ -47,13 +47,13 @@ class Event < ActiveRecord::Base
   end
   has_one :event_data, autosave: true, dependent: :destroy
 
-  has_many :comments, ->{ order 'comments.created_at ASC' }, dependent: :destroy, :as => :commentable
+  has_many :comments, ->{ order 'comments.created_at ASC' }, dependent: :destroy, as: :commentable
 
   has_many :surveys, dependent: :destroy,  inverse_of: :event
 
   # Events-Users relationship
-  has_many :memberships, dependent: :destroy, :as => :memberable
-  has_many :users, :class_name => 'CompanyUser', source: :company_user, :through => :memberships, :after_remove => :after_remove_member
+  has_many :memberships, dependent: :destroy, as: :memberable, inverse_of: :memberable
+  has_many :users, class_name: 'CompanyUser', source: :company_user, through: :memberships, after_remove: :after_remove_member
 
   has_many :contact_events, dependent: :destroy
 
@@ -132,7 +132,7 @@ class Event < ActiveRecord::Base
 
   track_who_does_it
 
-  #validates_attachment_content_type :file, :content_type => ['image/jpeg', 'image/png']
+  #validates_attachment_content_type :file, content_type: ['image/jpeg', 'image/png']
   validates :campaign_id, presence: true, numericality: true
   validate :valid_campaign?
   validates :company_id, presence: true, numericality: true
@@ -146,7 +146,7 @@ class Event < ActiveRecord::Base
   validate :event_place_valid?
 
   validates_datetime :start_at
-  validates_datetime :end_at, :on_or_after => :start_at, on_or_after_message: 'must be after'
+  validates_datetime :end_at, on_or_after: :start_at, on_or_after_message: 'must be after'
 
   attr_accessor :start_date, :start_time, :end_date, :end_time
 
@@ -166,21 +166,21 @@ class Event < ActiveRecord::Base
   delegate :impressions, :interactions, :samples, :spent, :gender_female, :gender_male, :ethnicity_asian, :ethnicity_black, :ethnicity_hispanic, :ethnicity_native_american, :ethnicity_white, to: :event_data, allow_nil: true
 
   aasm do
-    state :unsent, :initial => true
+    state :unsent, initial: true
     state :submitted
     state :approved
     state :rejected
 
     event :submit do
-      transitions :from => [:unsent, :rejected], :to => :submitted, :guard => :valid_results?
+      transitions from: [:unsent, :rejected], to: :submitted, guard: :valid_results?
     end
 
     event :approve do
-      transitions :from => :submitted, :to => :approved
+      transitions from: :submitted, to: :approved
     end
 
     event :reject do
-      transitions :from => :submitted, :to => :rejected
+      transitions from: :submitted, to: :rejected
     end
   end
 
@@ -557,19 +557,19 @@ class Event < ActiveRecord::Base
           with :place_id, params[:place] if params[:place].present?
 
           if params.has_key?(:event_data_stats) && params[:event_data_stats]
-            stat(:promo_hours, :type => "sum")
-            stat(:impressions, :type => "sum")
-            stat(:interactions, :type => "sum")
-            stat(:samples, :type => "sum")
-            stat(:spent, :type => "sum")
-            stat(:gender_female, :type => "mean")
-            stat(:gender_male, :type => "mean")
-            stat(:gender_male, :type => "mean")
-            stat(:ethnicity_asian, :type => "mean")
-            stat(:ethnicity_black, :type => "mean")
-            stat(:ethnicity_hispanic, :type => "mean")
-            stat(:ethnicity_native_american, :type => "mean")
-            stat(:ethnicity_white, :type => "mean")
+            stat(:promo_hours, type: "sum")
+            stat(:impressions, type: "sum")
+            stat(:interactions, type: "sum")
+            stat(:samples, type: "sum")
+            stat(:spent, type: "sum")
+            stat(:gender_female, type: "mean")
+            stat(:gender_male, type: "mean")
+            stat(:gender_male, type: "mean")
+            stat(:ethnicity_asian, type: "mean")
+            stat(:ethnicity_black, type: "mean")
+            stat(:ethnicity_hispanic, type: "mean")
+            stat(:ethnicity_native_american, type: "mean")
+            stat(:ethnicity_white, type: "mean")
           end
 
           if include_facets
@@ -620,7 +620,7 @@ class Event < ActiveRecord::Base
           end
 
           order_by(params[:sorting] || start_at_field , params[:sorting_dir] || :asc)
-          paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+          paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
 
           yield self if block_given?
         end
@@ -812,7 +812,7 @@ class Event < ActiveRecord::Base
     end
 
     def create_notifications
-      if company.setting(:event_alerts_policy).to_i == Notification::EVENT_ALERT_POLICY_ALL
+      if company.event_alerts_policy == Notification::EVENT_ALERT_POLICY_ALL
         Resque.enqueue(EventNotifierWorker, self.id)
       end
       true

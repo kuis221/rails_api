@@ -47,42 +47,45 @@ class Campaign < ActiveRecord::Base
   validate :valid_modules?
 
   validates_date :start_date, before: :end_date,  allow_nil: true, allow_blank: true, before_message: 'must be before'
-  validates_date :end_date, :on_or_after => :start_date, allow_nil: true, allow_blank: true, on_or_after_message: ''
+  validates_date :end_date, on_or_after: :start_date, allow_nil: true, allow_blank: true, on_or_after_message: ''
 
   # Campaigns-Brands relationship
-  has_and_belongs_to_many :brands, :order => 'name ASC', conditions: { brands: {active: true} }, :autosave => true
+  has_and_belongs_to_many :brands, order: 'name ASC', conditions: { brands: {active: true} }, autosave: true
 
   # Campaigns-Brand Portfolios relationship
-  has_and_belongs_to_many :brand_portfolios, :order => 'name ASC', conditions: { brand_portfolios: {active: true} }, :autosave => true, after_remove: :remove_child_goals_for
+  has_and_belongs_to_many :brand_portfolios, order: 'name ASC', conditions: { brand_portfolios: {active: true} }, autosave: true, after_remove: :remove_child_goals_for
   has_many :brand_portfolio_brands, through: :brand_portfolios, class_name: 'Brand', source: :brands
 
   # Campaigns-Areas relationship
-  has_and_belongs_to_many :areas, :order => 'name ASC', conditions: {active: true}, :autosave => true, after_remove: :clear_locations_cache, after_add: :clear_locations_cache
+  has_and_belongs_to_many :areas, order: 'name ASC', conditions: {active: true}, autosave: true, after_remove: :clear_locations_cache, after_add: :clear_locations_cache
 
   # Campaigns-Areas relationship
-  has_and_belongs_to_many :date_ranges, :order => 'name ASC', conditions: {active: true}, :autosave => true, after_remove: :remove_child_goals_for
+  has_and_belongs_to_many :date_ranges, order: 'name ASC', conditions: {active: true}, autosave: true, after_remove: :remove_child_goals_for
 
   # Campaigns-Areas relationship
-  has_and_belongs_to_many :day_parts, :order => 'name ASC', conditions: {active: true}, :autosave => true, after_remove: :remove_child_goals_for
+  has_and_belongs_to_many :day_parts, order: 'name ASC', conditions: {active: true}, autosave: true, after_remove: :remove_child_goals_for
 
   belongs_to :first_event, class_name: 'Event'
   belongs_to :last_event, class_name: 'Event'
 
   # Campaigns-Users relationship
-  has_many :memberships, :as => :memberable
-  has_many :users, :class_name => 'CompanyUser', source: :company_user, :through => :memberships,
-                   :after_add => :reindex_associated_resource, :after_remove => :reindex_associated_resource
+  has_many :memberships, as: :memberable, inverse_of: :memberable
+  has_many :users, class_name: 'CompanyUser', source: :company_user, through: :memberships,
+                   after_add: :reindex_associated_resource,
+                   after_remove: :reindex_associated_resource
 
   # Campaigns-Events relationship
   has_many :events, -> { order 'start_at ASC' }, inverse_of: :campaign
 
   # Campaigns-Teams relationship
-  has_many :teamings, :as => :teamable
-  has_many :teams, :through => :teamings, :after_add => :reindex_associated_resource, :after_remove => :reindex_associated_resource
+  has_many :teamings, as: :teamable, inverse_of: :teamable
+  has_many :teams, through: :teamings,
+              after_add: :reindex_associated_resource,
+              after_remove: :reindex_associated_resource
 
-  has_many :user_teams, :class_name => 'CompanyUser', source: :users, :through => :teams
+  has_many :user_teams, class_name: 'CompanyUser', source: :users, through: :teams
 
-  has_many :form_fields, ->{ order 'form_fields.ordering ASC' }, :as => :fieldable
+  has_many :form_fields, ->{ order 'form_fields.ordering ASC' }, as: :fieldable
 
   has_many :kpis, through: :form_fields
 
@@ -105,21 +108,21 @@ class Campaign < ActiveRecord::Base
   has_many :places, through: :placeables, after_remove: :clear_locations_cache, after_add: :clear_locations_cache
 
   # Attached Documents
-  has_many :documents, ->{ order("created_at DESC").where(asset_type: :document) }, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable
+  has_many :documents, ->{ order("created_at DESC").where(asset_type: :document) }, class_name: 'AttachedAsset', as: :attachable, inverse_of: :attachable
 
   accepts_nested_attributes_for :form_fields, allow_destroy: true
 
   aasm do
-    state :active, :initial => true
+    state :active, initial: true
     state :inactive
     state :closed
 
     event :activate do
-      transitions :from => [:inactive, :closed], :to => :active
+      transitions from: [:inactive, :closed], to: :active
     end
 
     event :deactivate do
-      transitions :from => :active, :to => :inactive
+      transitions from: :active, to: :inactive
     end
   end
 
@@ -416,7 +419,7 @@ class Campaign < ActiveRecord::Base
         end
 
         order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
-        paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+        paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
       end
     end
 
@@ -428,52 +431,51 @@ class Campaign < ActiveRecord::Base
 
     # Returns an array of data indication the progress of the campaigns based on the events/promo hours goals
     def promo_hours_graph_data
-      q = with_goals_for(Kpi.promo_hours).joins(:events).where(events: {active: true}).
-         select("campaigns.id, campaigns.name, campaigns.start_date, campaigns.end_date, goals.value as goal, 'PROMO HOURS' as kpi, CASE WHEN events.end_at < '#{Time.now.to_s(:db)}' THEN 'executed' ELSE 'scheduled' END as status, SUM(events.promo_hours)").
-         order('2, 1').group('1, 2, 3, 4, 5, 6, 7').to_sql.gsub(/'/,"''")
-      data = ActiveRecord::Base.connection.select_all("SELECT * FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int, name varchar, start_date date, end_date date, goal numeric, kpi varchar, executed numeric, scheduled numeric)").to_a
+      Campaign.connection.unprepared_statement do
+        q = with_goals_for(Kpi.promo_hours).joins(:events).where(events: {active: true}).
+           select("campaigns.id, campaigns.name, campaigns.start_date, campaigns.end_date, goals.value as goal, 'PROMO HOURS' as kpi, CASE WHEN events.end_at < '#{Time.now.to_s(:db)}' THEN 'executed' ELSE 'scheduled' END as status, SUM(events.promo_hours)").
+           order('2, 1').group('1, 2, 3, 4, 5, 6, 7').to_sql.gsub(/'/,"''")
+        data = ActiveRecord::Base.connection.select_all("SELECT * FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int, name varchar, start_date date, end_date date, goal numeric, kpi varchar, executed numeric, scheduled numeric)").to_a
 
-      q = with_goals_for(Kpi.events).joins(:events).where(events: {active: true}).
-         select("campaigns.id, campaigns.name, campaigns.start_date, campaigns.end_date, goals.value as goal, 'EVENTS' as kpi, CASE WHEN events.end_at < '#{Time.now.to_s(:db)}' THEN 'executed' ELSE 'scheduled' END as status, COUNT(events.id)").
-         order('2, 1').group('1, 2, 3, 4, 5, 6, 7').to_sql.gsub(/'/,"''")
-      data += ActiveRecord::Base.connection.select_all("SELECT * FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int, name varchar, start_date date, end_date date, goal numeric, kpi varchar, executed numeric, scheduled numeric)").to_a
-      data.sort!{|a, b| a['name'] <=> b['name'] }
+        q = with_goals_for(Kpi.events).joins(:events).where(events: {active: true}).
+           select("campaigns.id, campaigns.name, campaigns.start_date, campaigns.end_date, goals.value as goal, 'EVENTS' as kpi, CASE WHEN events.end_at < '#{Time.now.to_s(:db)}' THEN 'executed' ELSE 'scheduled' END as status, COUNT(events.id)").
+           order('2, 1').group('1, 2, 3, 4, 5, 6, 7').to_sql.gsub(/'/,"''")
+        data += ActiveRecord::Base.connection.select_all("SELECT * FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int, name varchar, start_date date, end_date date, goal numeric, kpi varchar, executed numeric, scheduled numeric)").to_a
+        data.sort!{|a, b| a['name'] <=> b['name'] }
 
-      data.each do |r|
-        r['id'] = r['id'].to_i
-        r['goal'] = r['goal'].to_f
-        r['executed'] = r['executed'].to_f
-        r['scheduled'] = r['scheduled'].to_f
-        r['remaining'] = r['goal']-(r['scheduled']+r['executed'])
-        r['executed_percentage'] = (r['executed']*100/r['goal']).to_i rescue 100
-        r['executed_percentage'] = [100, r['executed_percentage']].min
-        r['scheduled_percentage'] = (r['scheduled']*100/r['goal']).to_i rescue 0
-        r['scheduled_percentage'] = [r['scheduled_percentage'], (100-r['executed_percentage'])].min
-        r['remaining_percentage'] = 100-r['executed_percentage']-r['scheduled_percentage']
-        if r['start_date'] && r['end_date'] && r['goal'] > 0
-          r['start_date'] = Timeliness.parse(r['start_date']).to_date
-          r['end_date'] = Timeliness.parse(r['end_date']).to_date
-          days = (r['end_date']-r['start_date']).to_i
-          if Date.today > r['start_date'] && Date.today < r['end_date'] && days > 0
-            r['today'] = ((Date.today-r['start_date']).to_i+1) * r['goal'] / days
-          elsif Date.today > r['end_date']
-            r['today'] = r['goal']
-          else
-            r['today'] = 0
+        data.each do |r|
+          r['id'] = r['id'].to_i
+          r['goal'] = r['goal'].to_f
+          r['executed'] = r['executed'].to_f
+          r['scheduled'] = r['scheduled'].to_f
+          r['remaining'] = r['goal']-(r['scheduled']+r['executed'])
+          r['executed_percentage'] = (r['executed']*100/r['goal']).to_i rescue 100
+          r['executed_percentage'] = [100, r['executed_percentage']].min
+          r['scheduled_percentage'] = (r['scheduled']*100/r['goal']).to_i rescue 0
+          r['scheduled_percentage'] = [r['scheduled_percentage'], (100-r['executed_percentage'])].min
+          r['remaining_percentage'] = 100-r['executed_percentage']-r['scheduled_percentage']
+          if r['start_date'] && r['end_date'] && r['goal'] > 0
+            r['start_date'] = Timeliness.parse(r['start_date']).to_date
+            r['end_date'] = Timeliness.parse(r['end_date']).to_date
+            days = (r['end_date']-r['start_date']).to_i
+            if Date.today > r['start_date'] && Date.today < r['end_date'] && days > 0
+              r['today'] = ((Date.today-r['start_date']).to_i+1) * r['goal'] / days
+            elsif Date.today > r['end_date']
+              r['today'] = r['goal']
+            else
+              r['today'] = 0
+            end
+            r['today_percentage'] = [(r['today']*100/r['goal']).to_i, 100].min
           end
-          r['today_percentage'] = [(r['today']*100/r['goal']).to_i, 100].min
         end
+        data
       end
-      data
     end
 
     # Returns an Array of campaigns ready to be used for a dropdown. Use this
     # to reduce the amount of memory by avoiding the load bunch of activerecord objects.
-    # TODO: use pluck(:name, :id) when upgraded to Rails 4
     def for_dropdown
-      ActiveRecord::Base.connection.select_all(
-        self.select("campaigns.name, campaigns.id").to_sql
-      ).map{|r| [r['name'], r['id']] }
+      self.order('campaigns.name').pluck("campaigns.name, campaigns.id")
     end
   end
 

@@ -137,7 +137,7 @@ describe Event, :type => :model do
   end
 
   describe "#create_notifications" do
-    let(:company){ FactoryGirl.create(:company, settings: {event_alerts_policy: Notification::EVENT_ALERT_POLICY_ALL}) }
+    let(:company){ FactoryGirl.create(:company, event_alerts_policy: Notification::EVENT_ALERT_POLICY_ALL) }
 
     it "should queue EventNotifierWorker worker" do
       event = FactoryGirl.create(:event, company: company)

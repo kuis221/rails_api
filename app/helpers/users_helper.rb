@@ -14,7 +14,7 @@ module UsersHelper
 
         user_params = nil
         # If the notification policy is set to only event team members
-        unless user.company.setting(:event_alerts_policy).to_i == Notification::EVENT_ALERT_POLICY_ALL
+        unless user.company.event_alerts_policy == Notification::EVENT_ALERT_POLICY_ALL
           event_search_params.merge!(user: [user.id], team: user.team_ids)
           user_params = [user.id]
         end
@@ -63,7 +63,7 @@ module UsersHelper
       # User's teams late tasks
       if can?(:index_team, Task) && user.allow_notification?('late_team_task_app')
         team_params = nil
-        unless user.company.setting(:event_alerts_policy).to_i == Notification::EVENT_ALERT_POLICY_ALL
+        unless user.company.event_alerts_policy == Notification::EVENT_ALERT_POLICY_ALL
           team_params = [user.id]
         end
         task_search_params = {company_id: company.id, status: ['Active'], task_status: ['Late'], not_assigned_to: [user.id], team_members: team_params}

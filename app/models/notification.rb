@@ -98,7 +98,9 @@ class Notification < ActiveRecord::Base
   end
 
   def self.grouped_notifications_counts(notifications)
-    Hash[connection.select_rows(notifications.select('message, count(notifications.id)').group('notifications.message').to_sql)]
+    Hash[connection.select_rows(connection.unprepared_statement{
+      notifications.select('message, count(notifications.id)').group('notifications.message').to_sql
+    })]
   end
 
   # Sends late/due events notifications to users that have it enabled

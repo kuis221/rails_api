@@ -12,8 +12,7 @@ class Teaming < ActiveRecord::Base
   belongs_to :team
   belongs_to :teamable, polymorphic: true
 
-  validates :teamable_id, presence: true
-  validates :teamable_type, presence: true
+  validates :teamable, presence: true
 
   after_create :create_notifications
   after_create :update_tasks
@@ -25,7 +24,7 @@ class Teaming < ActiveRecord::Base
   private
     def create_notifications
       if teamable_type == 'Event'
-        if teamable.company.setting(:event_alerts_policy, Notification::EVENT_ALERT_POLICY_TEAM).to_i == Notification::EVENT_ALERT_POLICY_TEAM
+        if teamable.company.event_alerts_policy == Notification::EVENT_ALERT_POLICY_TEAM
           team.users.each do |user|
             if user.allowed_to_access_place?(teamable.place)
               Notification.new_event(user, teamable, team)

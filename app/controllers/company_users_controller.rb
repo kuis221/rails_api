@@ -110,7 +110,7 @@ class CompanyUsersController < FilteredController
       # If the parent is directly assigned to the user, then remove the parent and assign all the
       # current campaigns to the user
       unless membership.nil?
-        membership.memberable.campaigns.scoped_by_company_id(current_company.id).each do |campaign|
+        membership.memberable.campaigns.where(company_id: current_company.id).each do |campaign|
           unless campaign.id == params[:campaign_id].to_i
             resource.memberships.create(memberable: campaign, parent: membership.memberable)
           end

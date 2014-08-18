@@ -39,7 +39,7 @@ module PlacesHelper
       if reference_value and !reference_value.nil? and !reference_value.empty?
         if reference_value =~ /(.*)\|\|(.*)/
           reference, place_id = reference_value.split('||')
-          @place = Place.find_or_create_by_place_id(place_id, {reference: reference})
+          @place = Place.create_with(reference: reference).find_or_create_by(place_id: place_id)
         else
           @place = Place.find(reference_value)
         end

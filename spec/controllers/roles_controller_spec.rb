@@ -9,7 +9,7 @@ describe RolesController, :type => :controller do
   describe "GET 'edit'" do
     let(:role){ FactoryGirl.create(:role, company: @company) }
     it "returns http success" do
-      get 'edit', id: role.to_param, format: :js
+      xhr :get, 'edit', id: role.to_param, format: :js
       expect(response).to be_success
     end
   end
@@ -23,10 +23,10 @@ describe RolesController, :type => :controller do
 
   describe "GET 'new'" do
     it "returns http success" do
-      get 'new', format: :js
+      xhr :get, 'new', format: :js
       expect(response).to be_success
       expect(response).to render_template('new')
-      expect(response).to render_template('form')
+      expect(response).to render_template('_form')
     end
   end
 
@@ -40,7 +40,7 @@ describe RolesController, :type => :controller do
   describe "POST 'create'" do
     it "should successfully create the new record" do
       expect {
-        post 'create', role: {name: 'Test Role', description: 'Test Role description'}, format: :js
+        xhr :post, 'create', role: {name: 'Test Role', description: 'Test Role description'}, format: :js
       }.to change(Role, :count).by(1)
       role = Role.last
       expect(role.name).to eq('Test Role')
@@ -52,19 +52,19 @@ describe RolesController, :type => :controller do
 
     it "should not render form_dialog if no errors" do
       expect {
-        post 'create', role: {name: 'Test Role', description: 'Test Role description'}, format: :js
+        xhr :post, 'create', role: {name: 'Test Role', description: 'Test Role description'}, format: :js
       }.to change(Role, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template(:create)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
     end
 
     it "should render the form_dialog template if errors" do
       expect {
-        post 'create', format: :js
+        xhr :post, 'create', format: :js
       }.not_to change(Role, :count)
       expect(response).to render_template(:create)
-      expect(response).to render_template(:form_dialog)
+      expect(response).to render_template('_form_dialog')
       assigns(:role).errors.count > 0
     end
   end
@@ -74,7 +74,7 @@ describe RolesController, :type => :controller do
 
     it "deactivates an active role" do
       role.update_attribute(:active, true)
-      get 'deactivate', id: role.to_param, format: :js
+      xhr :get, 'deactivate', id: role.to_param, format: :js
       expect(response).to be_success
       expect(role.reload.active?).to be_falsey
     end
@@ -85,7 +85,7 @@ describe RolesController, :type => :controller do
 
     it "activates an inactive `role" do
       expect(role.active?).to be_falsey
-      get 'activate', id: role.to_param, format: :js
+      xhr :get, 'activate', id: role.to_param, format: :js
       expect(response).to be_success
       expect(role.reload.active?).to be_truthy
     end
@@ -121,7 +121,7 @@ describe RolesController, :type => :controller do
       permission2 = FactoryGirl.create(:permission, role_id: role.id, action: 'upcomings_events_module', subject_class: 'Symbol', subject_id: 'dashboard')
       permission3 = FactoryGirl.create(:permission, role_id: role.id, action: 'demographics_module', subject_class: 'Symbol', subject_id: 'dashboard')
       expect {
-        put 'update', id: role.to_param, role: {permissions_attributes: [{enabled: '0', id: permission1.id}, {enabled: '0', id: permission2.id}, {enabled: '0', id: permission3.id}]}, partial: "dashboard_permissions", format: :js
+        xhr :put, 'update', id: role.to_param, role: {permissions_attributes: [{enabled: '0', id: permission1.id}, {enabled: '0', id: permission2.id}, {enabled: '0', id: permission3.id}]}, partial: "dashboard_permissions", format: :js
       }.to change(role.permissions, :count).by(-3)
       expect(response).to render_template('update_partial')
     end

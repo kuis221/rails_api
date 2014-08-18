@@ -11,25 +11,25 @@ describe DayItemsController, :type => :controller do
 
   describe "GET 'new'" do
     it "returns http success" do
-      get 'new', day_part_id: day_part.to_param, format: :js
+      xhr :get, 'new', day_part_id: day_part.to_param, format: :js
       expect(response).to be_success
     end
   end
 
   describe "POST 'create'" do
     it "returns http success" do
-      post 'create', day_part_id: day_part.to_param, format: :js
+      xhr :post, 'create', day_part_id: day_part.to_param, format: :js
       expect(response).to be_success
       expect(response).to render_template('create')
     end
 
     it "should not render form_dialog if no errors" do
       expect {
-        post 'create', day_part_id: day_part.to_param, day_item: {start_time: '9:00 AM', end_time: '6:00 PM'}, format: :js
+        xhr :post, 'create', day_part_id: day_part.to_param, day_item: {start_time: '9:00 AM', end_time: '6:00 PM'}, format: :js
       }.to change(DayItem, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template(:create)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
 
       day_item = DayItem.last
       expect(day_item.start_time.to_s(:time_only)).to eq(' 9:00 AM')
@@ -38,10 +38,10 @@ describe DayItemsController, :type => :controller do
 
     it "should render the form_dialog template if errors" do
       expect {
-        post 'create', day_part_id: day_part.to_param, format: :js
+        xhr :post, 'create', day_part_id: day_part.to_param, format: :js
       }.not_to change(DayItem, :count)
       expect(response).to render_template(:create)
-      expect(response).to render_template(:form_dialog)
+      expect(response).to render_template('_form_dialog')
       assigns(:day_item).errors.count > 0
     end
   end

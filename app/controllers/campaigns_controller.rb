@@ -42,7 +42,7 @@ class CampaignsController < FilteredController
   end
 
   def remove_kpi
-    @field = resource.form_fields.where(kpi_id: params[:kpi_id]).find(:first)
+    @field = resource.form_fields.where(kpi_id: params[:kpi_id]).first
     @field.destroy
   end
 

@@ -10,25 +10,25 @@ describe DateItemsController, :type => :controller do
 
   describe "GET 'new'" do
     it "returns http success" do
-      get 'new', date_range_id: date_range.to_param, format: :js
+      xhr :get, 'new', date_range_id: date_range.to_param, format: :js
       expect(response).to be_success
     end
   end
 
   describe "POST 'create'" do
     it "returns http success" do
-      post 'create', date_range_id: date_range.to_param, format: :js
+      xhr :post, 'create', date_range_id: date_range.to_param, format: :js
       expect(response).to be_success
       expect(response).to render_template('create')
     end
 
     it "should not render form_dialog if no errors" do
       expect {
-        post 'create', date_range_id: date_range.to_param, date_item: {start_date: '01/24/2013', end_date: '01/24/2013'}, format: :js
+        xhr :post, 'create', date_range_id: date_range.to_param, date_item: {start_date: '01/24/2013', end_date: '01/24/2013'}, format: :js
       }.to change(DateItem, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template(:create)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
 
       date_item = DateItem.last
       expect(date_item.start_date).to eq(Date.new(2013, 01, 24))
@@ -40,10 +40,10 @@ describe DateItemsController, :type => :controller do
 
     it "should render the form_dialog template if errors" do
       expect {
-        post 'create', date_range_id: date_range.to_param, format: :js
+        xhr :post, 'create', date_range_id: date_range.to_param, format: :js
       }.not_to change(DateItem, :count)
       expect(response).to render_template(:create)
-      expect(response).to render_template(:form_dialog)
+      expect(response).to render_template('_form_dialog')
       assigns(:date_item).errors.count > 0
     end
   end

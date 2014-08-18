@@ -29,8 +29,8 @@ class Brand < ActiveRecord::Base
   has_many :brand_portfolios, through: :brand_portfolios_brands
   has_many :marques, -> { order 'name ASC' }, :autosave => true, dependent: :destroy
 
-  scope :not_in_portfolio, lambda{|portfolio| where("brands.id not in (#{BrandPortfoliosBrand.select('brand_id').scoped_by_brand_portfolio_id(portfolio).to_sql})") }
-  scope :accessible_by_user, lambda{|user| scoped }
+  scope :not_in_portfolio, ->(portfolio) { where("brands.id not in (#{BrandPortfoliosBrand.where(brand_portfolio_id: portfolio).select('brand_id').to_sql})") }
+  scope :accessible_by_user, ->(user) { all }
 
   scope :active, ->{ where(:active => true) }
 

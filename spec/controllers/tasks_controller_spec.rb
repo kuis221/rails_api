@@ -11,40 +11,40 @@ describe TasksController, :type => :controller do
 
   describe "GET 'new'" do
     it "returns http success" do
-      get 'new', event_id: event.to_param, format: :js
+      xhr :get, 'new', event_id: event.to_param, format: :js
       expect(response).to be_success
       expect(response).to render_template('new')
-      expect(response).to render_template('form')
+      expect(response).to render_template('_form')
     end
   end
 
   describe "POST 'create'" do
     it "returns http success" do
-      post 'create', event_id: event.to_param, format: :js
+      xhr :post, 'create', event_id: event.to_param, format: :js
       expect(response).to be_success
     end
 
     it "should not render form_dialog if no errors" do
       expect {
-        post 'create', event_id: event.to_param, task: {title: "Some test task", due_at: '05/23/2020', company_user_id: @company_user.to_param}, format: :js
+        xhr :post, 'create', event_id: event.to_param, task: {title: "Some test task", due_at: '05/23/2020', company_user_id: @company_user.to_param}, format: :js
       }.to change(Task, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template(:create)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
     end
 
     it "should render the form_dialog template if errors" do
       expect {
-        post 'create', event_id: event.to_param, format: :js
+        xhr :post, 'create', event_id: event.to_param, format: :js
       }.not_to change(Task, :count)
       expect(response).to render_template(:create)
-      expect(response).to render_template(:form_dialog)
+      expect(response).to render_template('_form_dialog')
       assigns(:event).errors.count > 0
     end
 
     it "should assign the correct event id" do
       expect {
-        post 'create', event_id: event.to_param, task: {title: "Some test task", due_at: '05/23/2020', company_user_id: @company_user.to_param}, format: :js
+        xhr :post, 'create', event_id: event.to_param, task: {title: "Some test task", due_at: '05/23/2020', company_user_id: @company_user.to_param}, format: :js
       }.to change(Task, :count).by(1)
       expect(assigns(:event)).to eq(event)
       expect(assigns(:task).event_id).to eq(event.id)
@@ -60,7 +60,7 @@ describe TasksController, :type => :controller do
           message = "You have a new task http://localhost:5100/tasks/mine?new_at=#{Time.now.to_i}"
           expect(UserMailer).to receive(:notification).with(@company_user.id, "New Task Assignment", message).and_return(double(deliver: true))
           expect {
-            post 'create', event_id: event.to_param, task: {title: "Some test task", due_at: '05/23/2020', company_user_id: @company_user.to_param}, format: :js
+            xhr :post, 'create', event_id: event.to_param, task: {title: "Some test task", due_at: '05/23/2020', company_user_id: @company_user.to_param}, format: :js
           }.to change(Task, :count).by(1)
           expect(assigns(:task).company_user_id).to eq(@company_user.id)
           open_last_text_message_for @user.phone_number
@@ -73,7 +73,7 @@ describe TasksController, :type => :controller do
   describe "GET 'edit'" do
     let(:task) { FactoryGirl.create(:task, event_id: event.id, company_user: @company_user) }
     it "returns http success" do
-      get 'edit', company_user_id: @company_user.to_param, id: task.to_param, format: :js
+      xhr :get, 'edit', company_user_id: @company_user.to_param, id: task.to_param, format: :js
       expect(response).to be_success
       expect(assigns(:company_user)).to eq(@company_user)
       expect(assigns(:task)).to eq(task)
@@ -83,7 +83,7 @@ describe TasksController, :type => :controller do
   describe "PUT 'update'" do
     let(:task){ FactoryGirl.create(:task, event_id: event.id, company_user: @company_user) }
     it "must update the task attributes" do
-      put 'update', event_id: event.to_param, id: task.to_param, task: {title: 'New task title', due_at: '12/31/2013', company_user_id: @company_user.to_param}, format: :js
+      xhr :put, 'update', event_id: event.to_param, id: task.to_param, task: {title: 'New task title', due_at: '12/31/2013', company_user_id: @company_user.to_param}, format: :js
       expect(assigns(:task)).to eq(task)
       expect(response).to be_success
       task.reload
@@ -93,7 +93,7 @@ describe TasksController, :type => :controller do
     end
 
     it "must update the task completed attribute" do
-      put 'update', event_id: event.to_param, id: task.to_param, task: {completed: true}, format: :js
+      xhr :put, 'update', event_id: event.to_param, id: task.to_param, task: {completed: true}, format: :js
       expect(assigns(:task)).to eq(task)
       expect(response).to be_success
       task.reload

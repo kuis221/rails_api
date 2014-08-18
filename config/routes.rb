@@ -181,6 +181,8 @@ Brandscopic::Application.routes.draw do
         match 'areas/add' => 'venues#add_areas', via: :post, as: :add_area
         match 'areas' => 'venues#areas', via: :get, as: :areas
       end
+      get :filters, on: :collection
+      get :items, on: :collection
       resources :events, only: [:new, :create]
       resources :activities, only: [:new, :create] do
         get :form, on: :collection

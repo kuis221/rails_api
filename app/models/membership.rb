@@ -25,8 +25,9 @@ class Membership < ActiveRecord::Base
   after_destroy :clear_cache
   after_destroy :delete_goals
 
-  validates :memberable_id, presence: true
-  validates :memberable_type, presence: true
+  # validates :memberable_id, presence: true
+  # validates :memberable_type, presence: true
+  validates :memberable, presence: true
 
   validate :same_company
 
@@ -37,7 +38,7 @@ class Membership < ActiveRecord::Base
       if memberable_type == 'Campaign' && company_user.role.has_permission?(:read, Campaign)
         Notification.new_campaign(company_user, memberable)
       elsif memberable_type == 'Event' &&
-        memberable.company.setting(:event_alerts_policy, Notification::EVENT_ALERT_POLICY_TEAM).to_i == Notification::EVENT_ALERT_POLICY_TEAM &&
+        memberable.company.event_alerts_policy == Notification::EVENT_ALERT_POLICY_TEAM &&
         company_user.allowed_to_access_place?(memberable.place)
           Notification.new_event(company_user, memberable)
       end
@@ -47,7 +48,7 @@ class Membership < ActiveRecord::Base
       if memberable_type == 'Campaign'
         company_user.notifications.where(path: Rails.application.routes.url_helpers.campaign_path(memberable)).destroy_all
       elsif memberable_type == 'Event' &&
-        memberable.company.setting(:event_alerts_policy, Notification::EVENT_ALERT_POLICY_TEAM).to_i == Notification::EVENT_ALERT_POLICY_TEAM
+        memberable.company.event_alerts_policy == Notification::EVENT_ALERT_POLICY_TEAM
           company_user.notifications.where(path: Rails.application.routes.url_helpers.event_path(memberable)).destroy_all
           company_user.notifications.where("params->'task_id' in (?)", memberable.task_ids.map{|n| n.to_s}).destroy_all
       end

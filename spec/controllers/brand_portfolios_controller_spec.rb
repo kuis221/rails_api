@@ -9,7 +9,7 @@ describe BrandPortfoliosController, :type => :controller do
   describe "GET 'edit'" do
     let(:brand_portfolio){ FactoryGirl.create(:brand_portfolio, company: @company) }
     it "returns http success" do
-      get 'edit', id: brand_portfolio.to_param, format: :js
+      xhr :get, 'edit', id: brand_portfolio.to_param, format: :js
       expect(response).to be_success
     end
   end
@@ -23,7 +23,7 @@ describe BrandPortfoliosController, :type => :controller do
 
   describe "GET 'new'" do
     it "returns http success" do
-      get 'new', format: :js
+      xhr :get, 'new', format: :js
       expect(response).to be_success
     end
   end
@@ -38,7 +38,7 @@ describe BrandPortfoliosController, :type => :controller do
   describe "GET 'select_brands'" do
     let(:brand_portfolio){ FactoryGirl.create(:brand_portfolio, company: @company) }
     it "returns http success" do
-      get 'select_brands', id: brand_portfolio.to_param, format: :js
+      xhr :get, 'select_brands', id: brand_portfolio.to_param, format: :js
       expect(response).to be_success
       expect(assigns(:brand_portfolio)).to eq(brand_portfolio)
     end
@@ -49,7 +49,7 @@ describe BrandPortfoliosController, :type => :controller do
     it "should add the brand to the portfolio" do
       brand = FactoryGirl.create(:brand)
       expect {
-        post 'add_brands', id: brand_portfolio.to_param, brand_id: brand.to_param, format: :js
+        xhr :post, 'add_brands', id: brand_portfolio.to_param, brand_id: brand.to_param, format: :js
       }.to change(BrandPortfoliosBrand, :count).by(1)
       expect(response).to be_success
       expect(assigns(:brand_portfolio)).to eq(brand_portfolio)
@@ -60,7 +60,7 @@ describe BrandPortfoliosController, :type => :controller do
       brand = FactoryGirl.create(:brand)
       brand_portfolio.brands << brand
       expect {
-        post 'add_brands', id: brand_portfolio.to_param, brand_id: brand.to_param, format: :js
+        xhr :post, 'add_brands', id: brand_portfolio.to_param, brand_id: brand.to_param, format: :js
       }.to_not change(BrandPortfoliosBrand, :count)
       expect(response).to be_success
       expect(assigns(:brand_portfolio)).to eq(brand_portfolio)
@@ -94,11 +94,11 @@ describe BrandPortfoliosController, :type => :controller do
   describe "POST 'create'" do
     it "should not render form_dialog if no errors" do
       expect {
-        post 'create', brand_portfolio: {name: 'Test brand portfolio', description: 'Test brand portfolio description'}, format: :js
+        xhr :post, 'create', brand_portfolio: {name: 'Test brand portfolio', description: 'Test brand portfolio description'}, format: :js
       }.to change(BrandPortfolio, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template(:create)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
 
       portfolio = BrandPortfolio.last
       expect(portfolio.name).to eq('Test brand portfolio')
@@ -108,10 +108,10 @@ describe BrandPortfoliosController, :type => :controller do
 
     it "should render the form_dialog template if errors" do
       expect {
-        post 'create', format: :js
+        xhr :post, 'create', format: :js
       }.not_to change(BrandPortfolio, :count)
       expect(response).to render_template(:create)
-      expect(response).to render_template(:form_dialog)
+      expect(response).to render_template('_form_dialog')
       assigns(:brand_portfolio).errors.count > 0
     end
   end
@@ -121,14 +121,14 @@ describe BrandPortfoliosController, :type => :controller do
 
     it "deactivates an active brand_portfolio" do
       brand_portfolio.update_attribute(:active, true)
-      get 'deactivate', id: brand_portfolio.to_param, format: :js
+      xhr :get, 'deactivate', id: brand_portfolio.to_param, format: :js
       expect(response).to be_success
       expect(brand_portfolio.reload.active?).to be_falsey
     end
 
     it "activates an inactive brand_portfolio" do
       brand_portfolio.update_attribute(:active, false)
-      get 'activate', id: brand_portfolio.to_param, format: :js
+      xhr :get, 'activate', id: brand_portfolio.to_param, format: :js
       expect(response).to be_success
       expect(brand_portfolio.reload.active?).to be_truthy
     end

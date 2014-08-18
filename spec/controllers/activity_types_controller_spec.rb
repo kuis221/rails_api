@@ -11,7 +11,7 @@ describe ActivityTypesController, :type => :controller do
   describe "GET 'set_goal'" do
     let(:activity_type){ FactoryGirl.create(:activity_type, company: @company) }
     it "returns http success" do
-      get 'set_goal', campaign_id: campaign.to_param, activity_type_id: activity_type.to_param, format: :js
+      xhr :get, 'set_goal', campaign_id: campaign.to_param, activity_type_id: activity_type.to_param, format: :js
       expect(assigns(:campaign)).to eq(campaign)
       expect(response).to be_success
     end
@@ -20,7 +20,7 @@ describe ActivityTypesController, :type => :controller do
   describe "GET 'edit'" do
     let(:activity_type){ FactoryGirl.create(:activity_type, company: @company) }
     it "returns http success" do
-      get 'edit', id: activity_type.to_param, format: :js
+      xhr :get, 'edit', id: activity_type.to_param, format: :js
       expect(response).to be_success
     end
   end
@@ -45,7 +45,7 @@ describe ActivityTypesController, :type => :controller do
         }.to change(Goal, :count).by(1)
       }.to_not change(ActivityType, :count)
       expect(response).to render_template(:update)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
 
       expect(campaign.goals.for_activity_types([activity_type]).first.value).to eq(23)
       expect(assigns(:activity_type)).to eq(activity_type)
@@ -130,7 +130,7 @@ describe ActivityTypesController, :type => :controller do
 
   describe "GET 'new'" do
     it "returns http success" do
-      get 'new', format: :js
+      xhr :get, 'new', format: :js
       expect(response).to be_success
     end
   end
@@ -138,11 +138,11 @@ describe ActivityTypesController, :type => :controller do
     describe "POST 'create'" do
     it "should not render form_dialog if no errors" do
       expect {
-        post 'create', activity_type: {name: 'Activity Type test', description: 'Activity Type description'}, format: :js
+        xhr :post, 'create', activity_type: {name: 'Activity Type test', description: 'Activity Type description'}, format: :js
       }.to change(ActivityType, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template(:create)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
 
       type = ActivityType.last
       expect(type.name).to eq('Activity Type test')
@@ -152,10 +152,10 @@ describe ActivityTypesController, :type => :controller do
 
     it "should render the form_dialog template if errors" do
       expect {
-        post 'create', format: :js
+        xhr :post, 'create', format: :js
       }.not_to change(ActivityType, :count)
       expect(response).to render_template(:create)
-      expect(response).to render_template(:form_dialog)
+      expect(response).to render_template('_form_dialog')
       assigns(:activity_type).errors.count > 0
     end
   end
@@ -165,14 +165,14 @@ describe ActivityTypesController, :type => :controller do
 
     it "deactivates an active brand_portfolio" do
       activity_type.update_attribute(:active, true)
-      get 'deactivate', id: activity_type.to_param, format: :js
+      xhr :get, 'deactivate', id: activity_type.to_param, format: :js
       expect(response).to be_success
       expect(activity_type.reload.active?).to be_falsey
     end
 
     it "activates an inactive brand_portfolio" do
       activity_type.update_attribute(:active, false)
-      get 'activate', id: activity_type.to_param, format: :js
+      xhr :get, 'activate', id: activity_type.to_param, format: :js
       expect(response).to be_success
       expect(activity_type.reload.active?).to be_truthy
     end
