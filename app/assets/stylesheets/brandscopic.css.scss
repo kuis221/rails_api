@@ -757,22 +757,16 @@ a.more-options-link{
 
 .btn-info{
 	background-color: $user_menu !important;
+	color: white !important;
 	font-size: 13px;
 	padding-bottom:9px;
 	padding-top: 9px;
-	&.icon-angle-right-after{
-		color: white;
-		font-family: $baseFontFamily;
-		font-weight: bold;
-		&:after{
-			color: white !important;
-			font-size: 20px !important;
-			top: 7px;
-			left: 15px;
-		}
-		&:before{
-			display:none;
-		}
+	i{
+		line-height: 5px;
+		font-size: 19px;
+		position: relative;
+		top: 6px;
+		right: -12px;
 	}
 	&:hover{
 		background-color: $brand !important;
