@@ -23,6 +23,12 @@
   @extend [class^="icon-"];
 }
 
+.alert-icon{
+  font-family: 'icons';
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
 
 /* Icon Breakdown */
@@ -31,12 +37,12 @@
   content:"\e001";
 }
 
-.icon-arrow-right:before, 
+.icon-arrow-right:before,
 .datepick-cmd-next:before{
   content:"\e002";
 }
 
-.icon-arrow-left:before, 
+.icon-arrow-left:before,
 .datepick-cmd-prev:before{
   content:"\e003";
 }
@@ -73,7 +79,7 @@
   content: "\e010";
 }
 
-.icon-rounded-disable:before, 
+.icon-rounded-disable:before,
 .icon-remove-sign:before{
   content: "\e011";
 }
@@ -123,7 +129,7 @@
 }
 
 .icon-slimmed-arrow-right:before, .icon-angle-right:before{
-  content: "\e01d;"
+  content: "\e01d"
 }
 
 .icon-time:before{
@@ -134,7 +140,7 @@
   content: "\e020";
 }
 
-.icon-rounded-add:before, 
+.icon-rounded-add:before,
 .icon-plus-sign:before{
   content: "\e021";
 }
@@ -148,11 +154,11 @@
 }
 
 .icon-team:before{
-  content: "\e023";
+  content: "\e61d";
 }
 
 .icon-user:before{
-  content: "\e024";
+  content: "\e61e";
 }
 
 .icon-help:before{
@@ -334,15 +340,3 @@
 .icon-wired-campaign:before{
   content: "\e61f";
 }
-
-.icon-assinged-user:before{
-  content: "\e61e";
-}
-
-.icon-assigned-group:before{
-  content: "\e61d";
-}
-
-
-
-
