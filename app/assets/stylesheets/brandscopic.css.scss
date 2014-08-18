@@ -1283,10 +1283,21 @@ header{
 							color: $grey_two;
 							font-weight: bold;
 							padding: 6px 15px;
+							span{
+								color: $grey_two;
+								font-size: 15px;
+								margin-right: 10px;
+								&.icon-on{
+									position: relative;
+									top: 1px;
+								}
+							}
 							&:hover{
 								color: white;
 								background-color: $menu;
-								color: white;
+								span{
+									color: white;
+								}
 							}
 						}
 					}
@@ -1317,12 +1328,6 @@ header{
 						top: 4px;
 						right: -5px;
 					}
-					.icon-on:before {
-						font-size: 14px;
-						top:-1px;
-						color: $grey_two;
-						right: -6px;
-					}
 					ul.dropdown-menu{
 						box-shadow: none;
 						margin-top: 12px;
@@ -1334,10 +1339,6 @@ header{
 							left:155px;
 						}
 					}
-				}
-
-				li a span:before, li a {
-					color: silver;
 				}
 
 				li#notifications {
@@ -1590,6 +1591,15 @@ li#notifications{
 		margin-bottom: 2px;
 		overflow-y: auto;
 		overflow-x: hidden;
+		ul li{
+			width: 100%;
+			i{
+				font-size: 17px;
+				margin: 0 10px;
+				top: 2px;
+				position: relative;
+			}
+		}
 
 		.jspVerticalBar {
 			width: 7px;
@@ -1661,9 +1671,8 @@ li#notifications{
 					display: inline-block;
 					font-weight: 500;
 					font-size: 13px;
-					width: 240px;
+					width: 230px;
 					line-height: 16px;
-					padding-left: 32px;
 					span{
 						color: $grey_one;
 					}
@@ -1685,22 +1694,9 @@ li#notifications{
 					vertical-align: middle;
 					height: 32px;
 					i{
-						margin-right: 5px;
-						&:before{
-							color: white;
-						}
 						&.icon-angle-right{
 							position: absolute;
 							top: 21px;
-							&:before{
-								font-size: 22px !important;
-								left:16px !important;
-								top: 4px;
-							}
-						}
-						&.alert-icon{
-							margin-left: 8px;
-							position: absolute;
 						}
 					}
 					&:hover{
