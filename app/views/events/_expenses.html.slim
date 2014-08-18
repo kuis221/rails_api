@@ -3,11 +3,12 @@
 
   .link-list.expenses-gallery
     ul#expenses-list
-      = render resource.event_expenses
-      li.total-expenses
-        span TOTAL:
-        span
-          b= number_to_currency(resource.event_expenses.map(&:amount).compact.sum, precision: 2)
+	    = render resource.event_expenses
+	    li.total-expenses
+			span.expenses
+		        span TOTAL:
+		        span
+		            b= number_to_currency(resource.event_expenses.map(&:amount).compact.sum, precision: 2)
 
 javascript:
 

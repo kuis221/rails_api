@@ -1,24 +1,25 @@
 - show_user ||= false
 li id="task_#{task.id}" class="#{active_class(task)} #{task.statuses.join(' ').downcase}"
   span.task-list
-    span.task-completed
-      - if can?(:deactivate_task, Event)
-        = simple_form_for task, remote: true do |f|
-          = f.input :completed, :label => false, :input_html => {:class => 'task-completed-checkbox'}
-    span.title
-      b= task.title
-      br
-      = task.campaign_name
+    span.tasks
+      span.task-completed
+        - if can?(:deactivate_task, Event)
+          = simple_form_for task, remote: true do |f|
+            = f.input :completed, :label => false, :input_html => {:class => 'task-completed-checkbox'}
+      span.title
+        b= task.title
+        br
+        = task.campaign_name
 
-    span.last
-      span.tasks-date
-        = format_date(task.due_at)
-        - if show_user
-          br>/
-          = task.user_full_name
-      span.links.pull-right
-        = link_to '', task_comments_path(task), remote: true, class: 'icon-chat' if can?(:comments, task)
-        = link_to '', edit_task_path(task), remote: true, class: 'icon-edit' if can?(:edit, task)
-        -  if can?(:deactivate, task)
-          = link_to_deactivate task
-          = link_to '', activate_task_path(task), remote: true, class: 'icon-rounded-ok',title: I18n.t('confirmation.activate') unless task.active?
+      span.last
+        span.tasks-date
+          = format_date(task.due_at)
+          - if show_user
+            br>/
+            = task.user_full_name
+        span.links.pull-right
+          = link_to '', task_comments_path(task), remote: true, class: 'icon-chat' if can?(:comments, task)
+          = link_to '', edit_task_path(task), remote: true, class: 'icon-edit' if can?(:edit, task)
+          -  if can?(:deactivate, task)
+            = link_to_deactivate task
+            = link_to '', activate_task_path(task), remote: true, class: 'icon-rounded-ok',title: I18n.t('confirmation.activate') unless task.active?
