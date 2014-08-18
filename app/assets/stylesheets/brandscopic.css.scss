@@ -183,16 +183,16 @@ body.events.show{
 		a.edit {
 			display: none;
 			margin-right: 6px;
-			&:after {
-				color: #989898;
-				top: 0;
-				font-size: 16px;
-			}
 		}
 		&:hover {
 			a.edit {
 				display: inline-block;
 			}
+		}
+	}
+	a,i{
+		&.icon-plus-sign{
+			margin-left:30px;
 		}
 	}
 }
@@ -552,15 +552,6 @@ a.more-options-link{
 		color: $text;
 	}
 }
-a.more-options-link:after{
-	content: "\e004";
-	display: inline-block;
-	font-family: "icons";
-	font-size: 12px;
-	left:5px;
-	position: relative;
-	top:4px;
-}
 
 /*-- Date Preferences Panel -*/
 
@@ -710,7 +701,7 @@ a.more-options-link:after{
 			color: $user_menu !important;
 		}
 		&:hover{
-			color: white !important; 
+			color: white !important;
 		}
 		&.calendar{
 			border-left: 1px solid $buttons-border;
@@ -1289,7 +1280,7 @@ header{
 						}
 					}
 				}
-				li.dropdown.open, 
+				li.dropdown.open,
 				li.dropdown.active,
 				li.dropdown.open.active {
 					&>.dropdown-toggle {
@@ -1313,7 +1304,7 @@ header{
 					.icon-arrow-down:before {
 						font-size: 12px;
 						top: 4px;
-						right: -5px; 
+						right: -5px;
 					}
 					.icon-on:before {
 						font-size: 14px;
@@ -2115,7 +2106,6 @@ ul.kpis-list{
 		font-size: 16px;
 		font-weight: normal;
 		position: relative;
-		top: -2px;
 	}
 	.clean-date {
 		b{
@@ -2387,9 +2377,10 @@ ul.kpis-list{
 			}
 			&.pull-right{
 				right: 20px;
+				top: 20px;
 				a{
 					width: auto;
-					height: 65px;
+					height: 45px;
 					display: table-cell;
 					vertical-align: middle;
 				}
@@ -2425,40 +2416,40 @@ ul.kpis-list{
 			&.due > span.task-list {
 				border-left: 5px solid $due_today;
 			}
-			span.task-list{
-				height: 85px;
-				width: 100%;
-				span{
-					&:first-child{
-					margin:30px 20px 0 0;
+			span{
+				vertical-align: middle;
+				&.task-list{
+					display: table;
+					min-height: 85px;
+					width: 100%;
+					span.tasks{
+						display: table-cell;
+						vertical-align: middle !important;
+						.task-completed{
+							height: 20px;
+							margin-right: 15px;
+						}
+						.tasks-date{
+							margin: 0 20px 0 0;
+							width: 45%;
+						}
+						.last{
+							width: 35%;
+						}
+						.links{
+							top: 32px;
+						}
+						.title{
+							display: inline-block;
+							position: relative;
+							overflow: hidden;
+							text-overflow:ellipsis;
+							white-space: nowrap;
+							width: 53%;
+						}
 					}
-					&:last-child{
-						float: right;
-						margin: 0;
-					}
-					&.tasks-date{
-						margin: 30px 20px 0 0;
-						width: 45%;
-					}
-					&.last{
-						width: 35%;
-					}
-					&.links{
-						display: inline-block;
-						float: right;
-						margin: 0 5px 0 0;
-					}
-					&.title{
-						display: inline-block;
-						position: relative;
-						margin-top: 20px;
-						overflow: hidden;
-						text-overflow:ellipsis;
-						white-space: nowrap;
-						width: 53%;
-					}
-					&.pull-right{
-						position: relative;
+					a{
+						height: auto;
 					}
 				}
 			}
@@ -2509,25 +2500,77 @@ ul.kpis-list{
 		li{
 			margin-bottom: 0;
 			overflow: visible;
+			vertical-align: middle;
 			width: 100%;
 			address{
 				width: auto !important;
 			}
-			span{
-				&.data{
-					font-size: 16px;
-					margin: 30px 0 0 20px;
-					overflow: hidden;
-					text-overflow: ellipsis;
-					white-space: nowrap;
-					width: 380px;
+			&:hover{
+				.links{
+					display: block;
+					float: right;
+					margin: 0 15px 0 0;
+					a{
+						color: $brand;
+						font-size: 16px;
+						margin-right: 10px;
+						vertical-align: top;
+						&.icon-receipt{
+							font-size: 24px;
+							margin-right: 5px;
+							position: relative;
+							top: 4px;
+						}
+						&:last-child{
+							margin-right: 0;
+						}
+					}
 				}
-				&.expense-date{
-					margin:32px 0 0 0;
+			}
+			&.total-expenses{
+				span{
+				font-size: 16px;
+					&:first-child{
+						margin: 0 0 0 54px;
+						text-align: right;
+						width: 30%;
+					}
+					&:last-child{
+						text-align: right;
+						width: 115px;
+						b{
+							font-weight: bold !important;
+						}
+					}
+				}
+			}
+			span{
+				a{
+					display: inline-block;
+					height: auto;
+				}
+				&.expenses{
+					display: table-cell;
+					vertical-align: middle;
+					.total{
+						font-size: 16px;
+						width: 20%;
+					}
+					.data{
+						font-size: 16px;
+						overflow: hidden;
+						padding-left: 20px;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+						width: 70%;
+					}
+				}
+				&.links{
+					display:none;
 				}
 				&.currency{
 					font-size: 16px;
-					margin:25px 0 0 0;
+					margin: 0 0;
 				}
 			}
 		}
@@ -2580,7 +2623,8 @@ ul.kpis-list{
 	ul#surveys-list{
 		span{
 			&:first-child{
-				margin: 23px 0 0 15px;
+				float: left;
+				margin: 0 0 0 15px;
 				width: 330px;
 				.survey-age{
 					font-size: 16px;
@@ -2588,8 +2632,9 @@ ul.kpis-list{
 				}
 			}
 			&.date{
+				display: inline-block;
 				line-height: 16px;
-				margin: 19px 50px 0 0;
+				margin: 0 50px 0 0;
 				width: 180px;
 			}
 		}
@@ -3520,11 +3565,6 @@ body.company_users{
 				.pull-left{
 					width: 85%;
 				}
-				.pull-right{
-					a.icon-remove-sign:before{
-						font-size: 16px;
-					}
-				}
 			}
 			&+.row-fluid{
 				height: 65px;
@@ -4100,8 +4140,10 @@ body.show {
 	}
 	.dialogue-photos {
 		margin-left: 30px;
-		&:before {
-			top: 5px;
+		&.icon-plus-sign{
+			color: $brand;
+			position: relative;
+			top: 3px;
 		}
 	}
 }
@@ -4146,18 +4188,6 @@ ul.thumbnails{
 						float:right;
 						margin: 10px 5px 12px 12px;
 						position: relative;
-						&:before{
-							color: $grey_one;
-								content: "\e00b" !important;
-								display: inline-block;
-								font-family: 'icons';
-								font-size: 15px;
-								position: relative;
-								speak: none;
-								text-align: center;
-								vertical-align: middle;
-								-webkit-font-smoothing: antialiased;
-						}
 					}
 					&.icon-remove-circle{
 						float:right;
@@ -4543,7 +4573,7 @@ body.roles{
 
 	#venue-score{
 		color: $venues_blue;
-	width: 100px;
+		width: 100px;
 	}
 
 	#venue-score-narrative{
@@ -4668,6 +4698,12 @@ body.roles{
 				.link-list {
 					margin: 80px 0px 20px;
 				}
+			}
+		}
+
+		.tools-icons{
+			.icon-plus-sign{
+				margin-left: 30px;
 			}
 		}
 
@@ -4841,7 +4877,7 @@ body.roles{
 			.event-info {
 				@include box-sizing(border-box);
 				float: left;
-				width: 55%;
+				width: 23%;
 			}
 		}
 
@@ -5345,10 +5381,11 @@ body.campaigns{
 		}
 	}
 
-	a{
+	a, i{
 		font-weight: bold;
 		&.icon-edit, &.icon-rounded-disable, &.icon-remove-sign, &.icon-plus-sign{
 			color: $brand;
+			font-size: 18px;
 		}
 	}
 
@@ -5572,9 +5609,6 @@ body.campaigns{
 					margin-left: 10px;
 					position: relative;
 					top: 2px;
-					&:before{
-						font-size: 17px !important;
-					}
 				}
 				&.icon-check-sign{
 					color: $brand;
@@ -5582,11 +5616,6 @@ body.campaigns{
 					margin-left: 10px;
 					position: relative;
 					top: 2px;
-					&:after {
-						content: "\e625";
-						font-family: 'icons';
-						font-size: 18px;
-					}
 				}
 			}
 		}
@@ -5631,7 +5660,8 @@ body.campaigns{
 			color:$text;
 			span{
 				&:first-child{
-					margin: 22px 0 0 20px;
+					float: left;
+					margin: 0 0 0 20px;
 					width: 440px;
 					.survey-age{
 						font-size: 16px;
@@ -5639,7 +5669,7 @@ body.campaigns{
 					}
 				}
 				&.date{
-					margin-top: 16px;
+					display: inline-block;
 					width: 300px;
 				}
 				&.pull-right{
@@ -5648,72 +5678,9 @@ body.campaigns{
 			}
 		}
 	}
-	ul#expenses-list{
-		li{
-			&.total-expenses{
-				span{
-				font-size: 16px;
-					&:first-child{
-						margin: 32px 0 0 54px;
-						text-align: right;
-						width: 70% !important;
-					}
-					&:last-child{
-						margin-top: 32px;
-						text-align: right;
-						width: 115px;
-						b{
-							font-weight: bold !important;
-						}
-					}
-				}
-			}
-		}
-		span{
-			&:first-child{
-				width: 70% !important;
-			}
-			&.links{
-				float: right;
-				margin: 30px 15px 0 0;
-				a{
-					color: $brand;
-					font-size: 16px;
-					margin-right: 10px;
-					vertical-align: top;
-					&.icon-reciept{
-						font-size: 22px;
-						margin-right: 5px;
-					}
-					&:last-child{
-						margin-right: 0;
-					}
-				}
-			}
-			&.total{
-				font-size: 16px;
-				margin-top: 30px;
-				text-align: right;
-				width: 150px;
-			}
-		}
-	}
-	i.icon-plus-sign:before{
-		margin-left: 30px;
-	}
 	a{
 		color: $venues_blue;
 		text-decoration: none;
-		&.icon-plus-sign:before{
-			font-size: 21px;
-			margin: 0 0 0 30px;
-			top: 15px;
-		}
-		&.icon-calendar:before{
-			font-size: 17px;
-			margin: 0 5px 0;
-			bottom: 3px;
-		}
 		&.underline{
 			color:$text;
 			&:hover{
@@ -5726,13 +5693,7 @@ body.campaigns{
 			clear: both;
 		}
 		.link-list ul#tasks-list li span.task-list span.tasks-date {
-			margin-top: 10px;
 			width: 50%;
-		}
-		.task-list{
-			span.pull-right{
-				margin-top: 5% !important;
-			}
 		}
 		.task-comments{
 			#comment-form-container{
@@ -6513,12 +6474,6 @@ body{
 				a {
 					color: $venues_blue;
 					text-decoration: none;
-					&.icon-plus-sign:before {
-						display: block;
-						font-size: 21px;
-						margin: 0 0 0 60px;
-						top: 2px;
-					}
 				}
 				&.empty-list-message {
 					display: none;
