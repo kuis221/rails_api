@@ -22,7 +22,9 @@
       #map-canvas.google-map
 
   .text-right
-    = link_to 'View All', events_path, class: 'btn btn-info icon-angle-right-after'
+    = link_to events_path, class: 'btn btn-info' do
+      = "View All"
+      i class="icon-angle-right"
 
 - @events = upcoming_events_list
 javascript:
