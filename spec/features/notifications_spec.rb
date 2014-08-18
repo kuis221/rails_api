@@ -78,6 +78,62 @@ feature "Notifications", search: true, js: true do
       expect(page).to have_selector('#events-list li', count: 2)
     end
 
+    it "should receive notifications when user is added to a event's team" do
+      company_user.update_attributes(notifications_settings: ['new_event_team_app'])
+      event = without_current_user { FactoryGirl.create(:event, company: company, campaign: campaign, place: place) }
+      Sunspot.commit
+
+      visit event_path(event)
+
+      expect(page).not_to have_notification 'You have a new event'
+
+      click_js_link 'Add Team Member'
+      within visible_modal do
+        fill_in 'staff-search-item', with: user.name
+        click_js_link("Add")
+      end
+      close_modal
+
+      visit events_path
+      expect(page).to have_selector('#events-list li', count: 1)
+
+      # Visit event and make sure the notification is removed
+      visit event_path(event)
+
+      expect(page).not_to have_notification 'You have a new event'
+    end
+
+
+    it "should receive notifications when user's team is added to a event's team" do
+      company_user.update_attributes(notifications_settings: ['new_event_team_app'])
+      event = without_current_user { FactoryGirl.create(:event, company: company, campaign: campaign, place: place) }
+      Sunspot.commit
+
+      team = FactoryGirl.create(:team, name: 'SuperAmigos', company: company)
+      team.users << company_user
+
+      visit event_path(event)
+
+      expect(page).not_to have_notification 'You have a new event'
+
+      click_js_link 'Add Team Member'
+      within visible_modal do
+        fill_in 'staff-search-item', with: 'SuperAmigos'
+        click_js_link("Add")
+        expect(page).not_to have_content('SuperAmigos')
+      end
+      close_modal
+      expect(event.teams).to include(team)
+
+      visit events_path
+      expect(page).to have_selector('#events-list li', count: 1)
+
+      # Visit event and make sure the notification is removed
+      visit event_path(event)
+
+      expect(page).not_to have_notification 'You have a new event'
+    end
+
     it "should remove notifications for new events visited" do
       company_user.update_attributes({notifications_settings: ['new_event_team_app']})
       without_current_user do # so the permissions are not validated during the event creation
@@ -354,7 +410,7 @@ feature "Notifications", search: true, js: true do
       before { company_user.campaigns << [campaign] }
       before { company_user.places << place }
       let(:permissions) { [
-        [:index, 'Event'], [:view_list, 'Event'], [:show, 'Event'],
+        [:index, 'Event'], [:view_list, 'Event'], [:show, 'Event'], [:add_members, 'Event'], [:view_members, 'Event'],
         [:index_my, 'Task'], [:index_team, 'Task'], [:read, 'Campaign']
       ] }
     end
