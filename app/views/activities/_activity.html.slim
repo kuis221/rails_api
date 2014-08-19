@@ -2,16 +2,17 @@ li id="activity_#{activity.id}"
   span.event-item
     / a href="#{activity_path(activity)}"
     = link_to_if_permitted(:show, Activity, activity_path(activity), title: 'Activity Details')
+      span.name= activity.activity_type.name
       span.data
           = format_date(activity.activity_date)
           br>/
           = activity.company_user.full_name
-      span.name= activity.activity_type.name
+
     span.links.pull-right
-      = link_to '', [:edit, activity], remote: true, class: 'edit', title: 'Edit' if can?(:edit, Activity)
+      = link_to '', [:edit, activity], remote: true, class: 'icon-edit', title: 'Edit' if can?(:edit, Activity)
       = "&nbsp;".html_safe
       - if can?(:deactivate, Activity)
         - if activity.active?
-          = link_to '', {controller: :activities, action: :deactivate, id: activity.id}, remote: true, class: 'disable', title: 'Deactivate', confirm: I18n.t('confirmation.deactivate_confirm_message', model: 'activity')
+          = link_to '', {controller: :activities, action: :deactivate, id: activity.id}, remote: true, class: 'icon-rounded-disable', title: 'Deactivate', confirm: I18n.t('confirmation.deactivate_confirm_message', model: 'activity')
         - else
-          = link_to '', {controller: :activities, action: :activate, id: activity.id}, remote: true, class: 'enable', title: 'Activate'
+          = link_to '', {controller: :activities, action: :activate, id: activity.id}, remote: true, class: 'icon-rounded-ok', title: 'Activate'

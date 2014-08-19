@@ -2580,7 +2580,7 @@ ul.kpis-list{
 		li{
 			span{
 				&.data{
-					margin: 20px 0 0 35px;
+					margin: 0 35px;
 					overflow: hidden;
 					text-overflow: ellipsis;
 					white-space: nowrap;
@@ -2588,12 +2588,21 @@ ul.kpis-list{
 				}
 				&.name{
 					font-size: 16px;
-					margin:20px 0 0 0;
+					margin-left: 15px;
 					width: 45%;
 				}
 				&.event-item {
-					min-height: 82px;
+					display: table;
+					vertical-align: middle;
 					width: 100%;
+					a{
+						display: table-cell;
+					}
+				}
+				&.links{
+					a{
+						display: inline-block;
+					}
 				}
 			}
 		}
