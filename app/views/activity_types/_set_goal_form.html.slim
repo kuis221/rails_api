@@ -11,6 +11,6 @@
       = gf.hidden_field :activity_type_id, value: resource.id
 
   .form-actions
-    = f.button :submit, class: 'btn-primary', disable_with: 'Please wait...'
+    = f.button :submit, class: 'btn-primary', data: {disable_with: 'Please wait...'}
     = "&nbsp;".html_safe
     = f.button :button, 'Cancel', class: 'btn-cancel'

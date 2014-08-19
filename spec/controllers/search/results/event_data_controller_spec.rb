@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Results::EventDataController, type: :controller, search: true do
   before(:each) do

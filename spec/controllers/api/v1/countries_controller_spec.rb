@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Api::V1::CountriesController, :type => :controller do
   let(:user) { sign_in_as_user }

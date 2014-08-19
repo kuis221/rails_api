@@ -10,7 +10,7 @@
 #  ordering   :integer
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe KpisSegment, :type => :model do
   it { is_expected.to belong_to(:kpi) }

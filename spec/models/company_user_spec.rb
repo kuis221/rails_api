@@ -13,7 +13,7 @@
 #  notifications_settings :string(255)      default([])
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe CompanyUser, :type => :model do
   it { is_expected.to belong_to(:user) }

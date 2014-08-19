@@ -34,7 +34,7 @@
         .span6
           = uf.input :zip_code, input_html: {class: 'input-large'}
   .form-actions
-    = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'
+    = f.button :submit, 'Save', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
     = "&nbsp;".html_safe
     = f.button :button, 'Cancel', class: 'btn btn-cancel'
 

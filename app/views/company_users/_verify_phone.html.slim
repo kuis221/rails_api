@@ -11,6 +11,6 @@ p Enter the security code you've received into the filed below.
           = link_to "Resend code", verify_phone_company_user_path(resource), remote: true, method: :post, class: 'resend-verification'
 
   .form-actions
-    = f.button :submit, 'Verify', class: 'btn btn-primary', disable_with: 'Please wait...'
+    = f.button :submit, 'Verify', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
     = "&nbsp;".html_safe
     = f.button :button, 'Cancel', class: 'btn btn-cancel'

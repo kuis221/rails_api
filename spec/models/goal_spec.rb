@@ -18,7 +18,7 @@
 #  activity_type_id :integer
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe Goal, :type => :model do
 

@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe SurveysController, :type => :controller do
   before(:each) do

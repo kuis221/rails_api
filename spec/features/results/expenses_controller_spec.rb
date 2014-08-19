@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 feature "Results Expenses Page", js: true, search: true  do
 

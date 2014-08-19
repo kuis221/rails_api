@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe EventExpensesController, :type => :controller do
   let(:event){ FactoryGirl.create(:event, company: @company) }

@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 require 'sunspot_test/rspec'
 
 describe VenuesController, :type => :controller do

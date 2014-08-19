@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe CompanyUsersController, :type => :controller do
   describe "as registered user" do
@@ -140,7 +140,7 @@ describe CompanyUsersController, :type => :controller do
       it 'should render the correct template' do
         get 'profile'
         expect(assigns(:company_user)).to eql @company_user
-        response.should render_template 'show'
+        expect(response).to render_template 'show'
       end
     end
 

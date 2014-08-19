@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe CompanyUsersController, type: :controller, search: true do
   let(:company) { FactoryGirl.create(:company) }

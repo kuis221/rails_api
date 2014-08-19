@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe PlaceablesController, :type => :controller do
   before(:each) do

@@ -16,7 +16,7 @@
 //= require jquery-migrate-1.2.1
 //= require jquery-ui-1.10.4.custom
 //= require s3_direct_upload
-//= require twitter/bootstrap
+//= require bootstrap
 //= require jquery_nested_form
 //= require bootbox
 //= require bootstrap-toggle

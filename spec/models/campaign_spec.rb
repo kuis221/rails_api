@@ -21,7 +21,7 @@
 #  modules          :text
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe Campaign, :type => :model do
   it { is_expected.to belong_to(:company) }

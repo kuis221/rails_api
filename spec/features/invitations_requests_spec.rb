@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-require 'spec_helper'
+require 'rails_helper'
 
 feature "Invitations", :js => true do
   feature 'send invitation' do

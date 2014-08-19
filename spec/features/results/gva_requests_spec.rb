@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 feature "Results Goals vs Actuals Page", js: true, search: true  do
 

@@ -29,7 +29,7 @@
       = f.select :team_members, current_company.team_member_options , {}, class: 'input-xlarge chosen-enabled', multiple: true, 'data-placeholder' => " "
 
   .form-actions
-    = f.button :submit, class: 'btn btn-primary', disable_with: 'Please wait...'
+    = f.button :submit, class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
     = "&nbsp;".html_safe
     = f.button :button, 'Cancel', class: 'btn btn-cancel'
 

@@ -11,7 +11,7 @@
       = render partial: 'custom', locals: { f: f }
 
   .form-actions.pull-left
-    = f.button :submit, class: 'btn-primary', disable_with: 'Please wait...'
+    = f.button :submit, class: 'btn-primary', data: {disable_with: 'Please wait...'}
     = "&nbsp;".html_safe
     = f.button :button, 'Cancel', id: 'btn-cancel-kpi', class: 'btn-cancel'
 
