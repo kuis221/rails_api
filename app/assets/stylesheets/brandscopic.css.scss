@@ -2234,19 +2234,11 @@ ul.kpis-list{
 					}
 				}
 				&:last-child{
-					.add:before{
+					.icon-rounded-add{
 						color: $brand;
-						content: "\e021";
-						display: inline-block;
-						font-family: 'icons';
 						font-size: 21px;
-						right:5px;
 						position: relative;
-						speak: none;
-						text-align: center;
-						top: 5px;
-						vertical-align: middle;
-						-webkit-font-smoothing: antialiased;
+						top: 2px;
 					}
 				}
 			}
@@ -2600,6 +2592,7 @@ ul.kpis-list{
 					}
 				}
 				&.links{
+					top: 32px;
 					a{
 						display: inline-block;
 					}
