@@ -7083,20 +7083,6 @@ table td.sub-level-1 {
 			.place-data, .calendar-data{
 				position: relative;
 				width: 290px;
-				&:before{
-					color: $grey_one;
-					display: inline-block;
-					left: -28px;
-					position:absolute;
-					width: auto;
-					-webkit-font-smoothing: antialiased;
-				}
-			}
-			.calendar-data:before{
-				top:4px;
-			}
-			.place-data:before{
-				left: -26px;
 			}
 			p{
 				display: inline-block;
@@ -7249,6 +7235,12 @@ table td.sub-level-1 {
 	i{
 		top:-2px;
 		position: relative;
+	}
+}
+
+.time-data {
+	i{
+		font-size:20px;
 	}
 }
 
