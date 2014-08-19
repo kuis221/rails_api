@@ -53,7 +53,7 @@ ul.select2-results{
 							margin-right: 0 !important;
 							width: 222px;
 
-						}						
+						}
 					}
 					&.event_expense_amount{
 						label{
@@ -627,7 +627,7 @@ ul.select2-results{
 			.control-group{
 				width: 400px;
 				textarea{
-					width: 386px;
+					width: 100%;
 				}
 				.chzn-container-single{
 					.chzn-single{
@@ -1237,4 +1237,3 @@ div#spin{
 		}
 	}
 }
-
