@@ -48,9 +48,9 @@ input[type="color"],
 	-webkit-box-shadow: none;
 	height:39px;
 	padding: 10px;
-	width: 380px;
+	width: 100%;
 	&:focus{
-		border:0;
+		border: 1px solid $grey_four;
 		box-shadow: none;
 		-webkit-box-shadow: none;
 		outline:0;
