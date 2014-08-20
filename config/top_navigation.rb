@@ -46,7 +46,7 @@ SimpleNavigation::Configuration.run do |navigation|
 
     unless options.empty?
       primary.item :admin, '', options.first[2], link: {'class' => "dropdown-toggle", 'data-toggle' => "dropdown"} do |secondary|
-        options.each {|option| secondary.item *option }
+        options.each {|option| secondary.item(*option) }
       end
     end
 

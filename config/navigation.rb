@@ -47,7 +47,7 @@ SimpleNavigation::Configuration.run do |navigation|
 
     unless options.empty?
       primary.item :analysis, 'Analysis', options.first[2], highlights_on: %r(/analysis) do |secondary|
-        options.each {|option| secondary.item *option }
+        options.each {|option| secondary.item(*option) }
       end
     end
   end
