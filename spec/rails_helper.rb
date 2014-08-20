@@ -13,8 +13,8 @@ require 'shoulda/matchers'
 require 'capybara/rails'
 require 'capybara/poltergeist'
 require 'database_cleaner'
-# require 'capybara-screenshot'
-# require 'capybara-screenshot/rspec'
+require 'capybara-screenshot'
+require 'capybara-screenshot/rspec'
 require 'sms-spec'
 
 # Requires supporting ruby files with custom matchers and macros, etc,

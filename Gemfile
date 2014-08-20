@@ -55,7 +55,6 @@ gem 'heroku-resque-workers-scaler', github: 'guilleva/heroku-resque-workers-scal
 gem 'twilio-ruby'
 
 #For memory debugging
-gem "oink"
 #gem "allocation_stats"
 
 group :development do
@@ -63,6 +62,7 @@ group :development do
   gem "guard-livereload", :require => false
   gem "annotate", ">=2.5.0"
   gem "quiet_assets", ">= 1.0.1"
+  gem "oink"
 end
 
 # Gems that are only required for the web process, to prevent
@@ -107,7 +107,7 @@ group :test do
   gem "sunspot_test"
   gem 'resque_spec'
   gem 'simplecov', require: false
-  #gem 'capybara-screenshot'
+  gem 'capybara-screenshot'
   gem 'fuubar', '2.0.0'
   gem 'database_cleaner'
   #gem 'sms-spec', '~> 0.1.9'

@@ -3,7 +3,7 @@ require 'rails_helper'
 describe Api::V1::EventExpensesController, :type => :controller do
   let(:user) { sign_in_as_user }
   let(:company) { user.company_users.first.company }
-  let(:campaign) { FactoryGirl.create(:campaign, company: company, name: 'Test Campaign FY01') }
+  let(:campaign) { FactoryGirl.create(:campaign, company: company, name: 'Test Campaign FY01', modules: {'expenses' => {}}) }
   let(:place) { FactoryGirl.create(:place) }
 
   describe "GET 'index'" do
@@ -59,13 +59,13 @@ describe Api::V1::EventExpensesController, :type => :controller do
       s3object = double()
       allow(s3object).to receive(:copy_from).and_return(true)
       expect_any_instance_of(AWS::S3).to receive(:buckets).at_least(:once).and_return(
-        "brandscopic-test" => double(objects: {
+        "brandscopic-dev" => double(objects: {
           'uploads/dummy/test.jpg' => double(head: double(content_length: 100, content_type: 'image/jpeg', last_modified: Time.now)),
           'attached_assets/original/test.jpg' => s3object
         } ))
       expect_any_instance_of(Paperclip::Attachment).to receive(:path).at_least(:once).and_return('/attached_assets/original/test.jpg')
       expect {
-        post 'create', auth_token: user.authentication_token, company_id: company.to_param, event_id: event.to_param, event_expense: {name: 'Expense #1', amount: '350', receipt_attributes: {direct_upload_url: 'https://s3.amazonaws.com/brandscopic-test/uploads/dummy/test.jpg'}}, format: :json
+        post 'create', auth_token: user.authentication_token, company_id: company.to_param, event_id: event.to_param, event_expense: {name: 'Expense #1', amount: '350', receipt_attributes: {direct_upload_url: 'https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg'}}, format: :json
       }.to change(AttachedAsset, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template('show')
@@ -74,8 +74,21 @@ describe Api::V1::EventExpensesController, :type => :controller do
       expect(expense.amount).to eq(350)
       expect(expense.receipt.attachable).to eq(expense)
       expect(expense.receipt.asset_type).to eq(nil)
-      expect(expense.receipt.direct_upload_url).to eq('https://s3.amazonaws.com/brandscopic-test/uploads/dummy/test.jpg')
+      expect(expense.receipt.direct_upload_url).to eq('https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg')
       expect(AssetsUploadWorker).to have_queued(expense.receipt.id)
+    end
+  end
+
+  describe "GET 'form'" do
+    it "returns the required information" do
+      event = FactoryGirl.create(:approved_event, company: company, campaign: campaign, place: place)
+      Sunspot.commit
+
+      get :form, company_id: company.to_param, auth_token: user.authentication_token, event_id: event.to_param, format: :json
+      expect(response).to be_success
+      result = JSON.parse(response.body)
+      expect(result.keys).to match_array(["fields", "url"])
+      expect(result['fields'].keys).to match_array(["AWSAccessKeyId", "Secure", "key", "policy", "signature", "acl", "success_action_status"])
     end
   end
 end

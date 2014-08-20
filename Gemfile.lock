@@ -100,6 +100,10 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (~> 2.0)
+    capybara-screenshot (0.3.21)
+      capybara (>= 1.0, < 3)
+      colorize
+      launchy
     celluloid (0.15.2)
       timers (~> 1.1.0)
     clerk (0.2.2)
@@ -119,6 +123,7 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.7.1)
+    colorize (0.7.3)
     countries (0.9.3)
       currencies (~> 0.4.2)
     country_select (2.0.0.rc1)
@@ -469,6 +474,7 @@ DEPENDENCIES
   aws-sdk
   cancancan (~> 1.9)
   capybara
+  capybara-screenshot
   clerk
   coffee-rails
   company_scoped!
