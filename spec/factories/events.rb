@@ -76,7 +76,9 @@ FactoryGirl.define do
     factory :due_event do
       aasm_state 'unsent'
       start_date { Date.yesterday.to_s(:slashes) }
+      start_time { Time.now.strftime('%I:00 %P') }
       end_date { Date.yesterday.to_s(:slashes) }
+      end_time { (Time.now+1.hour).strftime('%I:00 %P') }
     end
 
     factory :late_event do

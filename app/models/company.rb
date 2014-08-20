@@ -65,6 +65,29 @@ class Company < ActiveRecord::Base
     ").map{|r| [r['name'], "#{r['type']}:#{r['id']}", {class: r['type']}] }
   end
 
+  def late_event_end_date
+    if timezone_support?
+      Timeliness.parse(2.days.ago.strftime('%Y-%m-%d 23:59:59'), zone: 'UTC')
+    else
+      2.days.ago.end_of_day
+    end
+  end
+
+  def due_event_start_date
+    if timezone_support?
+      Timeliness.parse(Date.yesterday.strftime('%Y-%m-%d 00:00:00'), zone: 'UTC')
+    else
+      Date.yesterday.beginning_of_day
+    end
+  end
+
+  def due_event_end_date
+    if timezone_support?
+      Timeliness.parse(Time.now.strftime('%Y-%m-%d 00:00:00'), zone: 'UTC')
+    else
+      Time.now.in_time_zone(Time.zone)
+    end
+  end
 
   private
     def create_admin_role_and_user

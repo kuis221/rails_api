@@ -56,7 +56,7 @@ class CampaignsController < FilteredController
   end
 
   def select_kpis
-    @kpis = (Kpi.campaign_assignable(resource) + ActivityType.active).sort_by(&:name)
+    @kpis = (Kpi.campaign_assignable(resource) + current_company.activity_types.active).sort_by(&:name)
   end
 
   def remove_activity_type
