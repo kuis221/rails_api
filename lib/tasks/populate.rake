@@ -33,7 +33,7 @@ namespace :db do
 
       emails = User.select('email').map(&:email)
       Company.all.each do |company|
-        role_ids = Role.scoped_by_company_id(company.id).map(&:id)
+        role_ids = Role.where(company_id: company.id).map(&:id)
         User.populate(40) do |user|
           email = nil
           begin
@@ -144,7 +144,7 @@ namespace :db do
       Company.all.each do |company|
         user_ids = company.company_users.active.map(&:id)
         team_ids = company.teams.active.map(&:id)
-        Campaign.scoped_by_company_id(company.id).all.each do |campaign|
+        Campaign.where(company_id: company.id).all.each do |campaign|
           Event.populate(rand(10..20)) do |event|
             event.start_at = rand(0..10).send([:weeks,:days,:months].sample).send([:ago, :from_now].sample) + rand(1..24).hours + rand(0..60).minutes
             event.end_at = event.start_at + rand(1..2).send([:days, :hours].sample)

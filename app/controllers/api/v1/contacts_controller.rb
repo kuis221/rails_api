@@ -1,7 +1,7 @@
 class Api::V1::ContactsController < Api::V1::ApiController
   inherit_resources
 
-  skip_before_filter :verify_authenticity_token,
+  skip_before_action :verify_authenticity_token,
                      :if => Proc.new { |c| c.request.format == 'application/json' }
 
   def_param_group :contact do

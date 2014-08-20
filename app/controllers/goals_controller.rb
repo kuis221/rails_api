@@ -5,7 +5,7 @@ class GoalsController < FilteredController
   actions :create, :update, :new, :edit
 
   #skip_authorize_resource only: [:create, :update]
-  #before_filter :authorize_actions, only: [:create, :update]
+  #before_action :authorize_actions, only: [:create, :update]
 
   private
     def permitted_params

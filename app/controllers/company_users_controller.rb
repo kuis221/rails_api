@@ -9,7 +9,7 @@ class CompanyUsersController < FilteredController
 
   custom_actions collection: [:complete, :time_zone_change, :time_zone_update]
 
-  before_filter :validate_parent, only: [:enable_campaigns, :disable_campaigns, :remove_campaign, :select_campaigns, :add_campaign]
+  before_action :validate_parent, only: [:enable_campaigns, :disable_campaigns, :remove_campaign, :select_campaigns, :add_campaign]
 
   skip_load_and_authorize_resource only: [:export_status]
 
@@ -128,7 +128,7 @@ class CompanyUsersController < FilteredController
       membership = resource.memberships.where(memberable_type: params[:parent_type], memberable_id: params[:parent_id]).first
       if membership.nil?
         parent = params['parent_type'].constantize.find(params['parent_id'])
-        @campaigns = parent.campaigns.scoped_by_company_id(current_company.id).where(['campaigns.id not in (?)', resource.campaigns.children_of(parent).map(&:id)+[0]])
+        @campaigns = parent.campaigns.where(company_id: current_company.id).where(['campaigns.id not in (?)', resource.campaigns.children_of(parent).map(&:id)+[0]])
       end
     end
   end
@@ -212,11 +212,11 @@ class CompanyUsersController < FilteredController
       list = {}
       current_company.brand_portfolios.active.each do |portfolio|
         enabled = resource.brand_portfolios.include?(portfolio)
-        list[portfolio] = {enabled: enabled, campaigns: (enabled ? portfolio.campaigns.scoped_by_company_id(current_company.id) : resource.campaigns.scoped_by_company_id(current_company.id).children_of(portfolio) ) }
+        list[portfolio] = {enabled: enabled, campaigns: (enabled ? portfolio.campaigns.where(company_id: current_company.id) : resource.campaigns.where(company_id: current_company.id).children_of(portfolio) ) }
       end
       current_company.brands.active.each do |brand|
         enabled = resource.brands.include?(brand)
-        list[brand] = {enabled: enabled, campaigns: (enabled ? brand.campaigns.scoped_by_company_id(current_company.id) : resource.campaigns.scoped_by_company_id(current_company.id).children_of(brand) ) }
+        list[brand] = {enabled: enabled, campaigns: (enabled ? brand.campaigns.where(company_id: current_company.id) : resource.campaigns.where(company_id: current_company.id).children_of(brand) ) }
       end
       list
     end

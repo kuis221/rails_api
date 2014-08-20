@@ -1,11 +1,11 @@
 class Results::ReportsController < InheritedResources::Base
   respond_to :js, only: [:new, :create, :edit, :update, :share_form, :show]
   respond_to :json, only: [:filters]
-  before_filter :set_report_params, only: [:show, :rows, :preview]
+  before_action :set_report_params, only: [:show, :rows, :preview]
 
   load_and_authorize_resource except: [:index]
 
-  before_filter :autorize_results, only: [:index]
+  before_action :autorize_results, only: [:index]
 
   helper_method :return_path
 

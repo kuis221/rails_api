@@ -189,6 +189,21 @@ describe CompanyUsersController, :type => :controller do
       end
     end
 
+    describe "GET 'select_campaigns'" do
+      let(:user){ FactoryGirl.create(:company_user, user: FactoryGirl.create(:user), company_id: @company.id) }
+      let(:campaign){ FactoryGirl.create(:campaign, company_id: @company.id) }
+      let(:brand){ FactoryGirl.create(:brand) }
+
+      it "should render success" do
+        campaign.brands << brand
+        xhr :get, 'select_campaigns', id: user.id, parent_id: brand.id, parent_type: 'Brand', format: :js
+        expect(assigns(:campaigns).to_a).to eql [campaign]
+        expect(response).to be_success
+        expect(response).to render_template('select_campaigns')
+        expect(response).to render_template('_select_campaigns')
+      end
+    end
+
     describe "DELETE 'remove_campaign'" do
       let(:user){ FactoryGirl.create(:company_user, user: FactoryGirl.create(:user), company_id: @company.id) }
       let(:campaign){ FactoryGirl.create(:campaign, company_id: @company.id) }

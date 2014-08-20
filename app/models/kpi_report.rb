@@ -69,6 +69,8 @@ class KpiReport < ActiveRecord::Base
     self.save
     self.succeed!
     rescue Exception => e
+      Rails.logger.debug e.message
+      Rails.logger.debug e.backtrace.join("\n")
       self.fail!
       raise e
   end
@@ -92,10 +94,10 @@ class KpiReport < ActiveRecord::Base
         sampled_field = campaign.form_field_for_kpi(::Kpi.samples)
         show_progress(i+=1, total)
         brands = campaign.brands.map(&:name).to_sentence
-        scoped_events = ::Event.scoped_by_campaign_id(campaign.id).active.approved
+        scoped_events = ::Event.where(campaign_id: campaign.id).active.approved
         places = Place.where(id: scoped_events.select('DISTINCT(place_id) as place_id'))
         places.each do |place|
-          place_events = scoped_events.scoped_by_place_id(place)
+          place_events = scoped_events.where(place_id: place)
           place_events_fytd = place_events.between_dates(fytd_start, fytd_end)
           place_events_cm = place_events.between_dates(the_month.beginning_of_month.beginning_of_day, the_month.end_of_month.end_of_day)
           csv << [
