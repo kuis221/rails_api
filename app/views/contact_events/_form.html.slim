@@ -25,7 +25,7 @@
         = uf.input :street2, label: false, input_html: {class: 'input-xxlarge'}
       .row-fluid.users
         .span6
-          = uf.input :country, required: true, input_html: {class: 'input-large chosen-enabled'}
+          = uf.input :country, required: true, priority: ['US'], input_html: {class: 'input-large chosen-enabled'}
         .span6
           = uf.input :city, required: true, input_html: {class: 'input-large'}
       .row-fluid.users

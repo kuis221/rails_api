@@ -251,7 +251,7 @@ class CompanyUser < ActiveRecord::Base
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)
       options = {include: [:user, :role]}
-      ss = solr_search(options) do
+      solr_search(options) do
         with(:company_id, params[:company_id])
         with(:campaign_ids, params[:campaign]) if params.has_key?(:campaign) and params[:campaign]
         with(:team_ids, params[:team]) if params.has_key?(:team) and params[:team]

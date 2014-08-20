@@ -24,8 +24,6 @@ class Task < ActiveRecord::Base
 
   after_save :create_notifications
 
-  validates_datetime :due_at, allow_nil: true, allow_blank: true
-
   delegate :full_name, to: :company_user, prefix: :user, allow_nil: true
   delegate :campaign_name, :place_id, to: :event, allow_nil: true
 
@@ -143,7 +141,7 @@ class Task < ActiveRecord::Base
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)
-      ss = solr_search({include: [{:company_user => :user}, :event]}) do
+      solr_search({include: [{:company_user => :user}, :event]}) do
 
         # Filter by user permissions
         company_user = params[:current_company_user]

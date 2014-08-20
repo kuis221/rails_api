@@ -30,7 +30,6 @@ class Activity < ActiveRecord::Base
   validates :activitable_type, presence: true
   validates :company_user_id, presence: true, numericality: true
   validates :activity_date, presence: true
-  validates_datetime :activity_date, allow_nil: false, allow_blank: false
 
   scope :active, ->{ where(active: true) }
 

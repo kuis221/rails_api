@@ -64,8 +64,6 @@ class Event < ActiveRecord::Base
 
   scoped_to_company
 
-  attr_accessor :place_reference, :team_members
-
   scope :upcomming, -> { where('start_at >= ?', Time.zone.now) }
   scope :active, -> { where(active: true) }
   scope :between_dates, ->(start_date, end_date) {
@@ -137,16 +135,13 @@ class Event < ActiveRecord::Base
   validate :valid_campaign?
   validates :company_id, presence: true, numericality: true
   validates :start_at, presence: true
-  validates :end_at, presence: true
+  validates :end_at, presence: true, date: { on_or_after: :start_at, message: 'must be after' }
 
   DATE_FORMAT = /\A[0-1]?[0-9]\/[0-3]?[0-9]\/[0-2]0[0-9][0-9]\z/
   validates :start_date, format: { with: DATE_FORMAT, message: 'MM/DD/YYYY' }
   validates :end_date, format: { with: DATE_FORMAT, message: 'MM/DD/YYYY' }
 
   validate :event_place_valid?
-
-  validates_datetime :start_at
-  validates_datetime :end_at, on_or_after: :start_at, on_or_after_message: 'must be after'
 
   attr_accessor :start_date, :start_time, :end_date, :end_time
 
@@ -308,8 +303,8 @@ class Event < ActiveRecord::Base
     unless place_id.nil?
       @venue ||= Venue.find_or_create_by(company_id: company_id, place_id: place_id)
       @venue.place = self.place if self.association(:place).loaded?
+      @venue
     end
-    @venue
   end
 
   def contacts
@@ -355,21 +350,19 @@ class Event < ActiveRecord::Base
   end
 
   def kpi_goals
-    unless @goals
-      @goals = {}
+    @goals ||= Hash.new.tap do |h|
       total_campaign_events = campaign.events.count
       if total_campaign_events > 0
         campaign.goals.base.each do |goal|
           if goal.kpis_segment_id.present?
-            @goals[goal.kpi_id] ||= {}
-            @goals[goal.kpi_id][goal.kpis_segment_id] = goal.value unless goal.value.nil?
+            h[goal.kpi_id] ||= {}
+            h[goal.kpi_id][goal.kpis_segment_id] = goal.value unless goal.value.nil?
           else
-            @goals[goal.kpi_id] = goal.value / total_campaign_events unless goal.value.nil?
+            h[goal.kpi_id] = goal.value / total_campaign_events unless goal.value.nil?
           end
         end
       end
     end
-    @goals
   end
 
   def demographics_graph_data
@@ -427,7 +420,7 @@ class Event < ActiveRecord::Base
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false, &block)
       current_company = Company.current || Company.new
-      ss = solr_search(include: [:campaign, :place]) do
+      solr_search(include: [:campaign, :place]) do
         (start_at_field, end_at_field, timezone) = [:start_at, :end_at, Time.zone.name]
         if Company.current && Company.current.timezone_support?
           (start_at_field, end_at_field, timezone) = [:local_start_at, :local_end_at, 'UTC']
@@ -695,12 +688,10 @@ class Event < ActiveRecord::Base
 
     def parse_start_end
       unless self.start_date.nil? or self.start_date.empty?
-        parts = self.start_date.split("/")
-        self.start_at = Time.zone.parse([[parts[1],parts[0],parts[2]].join('/'), self.start_time].join(' '))
+        self.start_at = Timeliness.parse([self.start_date, self.start_time].compact.join(' ').strip, zone: :current)
       end
       unless self.end_date.nil? or self.end_date.empty?
-        parts = self.end_date.split("/")
-        self.end_at = Time.zone.parse([[parts[1],parts[0],parts[2]].join('/'), self.end_time].join(' '))
+        self.end_at = Timeliness.parse([self.end_date, self.end_time].compact.join(' ').strip, zone: :current)
       end
     end
 

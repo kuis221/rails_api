@@ -143,69 +143,72 @@ class Results::GvaController < InheritedResources::Base
           items[goalable.class.name][kpi].push goalable if goal_keys.include?("#{goalable.class.name}_#{goalable.id}_#{Kpi.send(kpi).id}")
         end
       end
+      queries = ActiveRecord::Base.connection.unprepared_statement do
+        items.map do |goalable_type, goaleables_ids|
+          ['promo_hours', 'events', 'samples', 'expenses'].map do |kpi|
+            events_scope = campaign.events.active.where(aasm_state: ['approved', 'rejected', 'submitted']).group('1').reorder(nil)
+            query = if goaleables_ids[kpi].any?
+              if goalable_type == 'Area'
+                events_scope.in_areas(goaleables_ids[kpi]).select("ARRAY[areas_places.area_id::varchar, '#{goalable_type}'], '{KPI_NAME}', {KPI_AGGR}")
+              elsif goalable_type == 'Place'
+                events_scope.in_places(goaleables_ids[kpi]).select("ARRAY[places.id::varchar, '#{goalable_type}'], '{KPI_NAME}', {KPI_AGGR}")
+              elsif goalable_type == 'CompanyUser'
+                events_scope.with_user_in_team(goaleables_ids[kpi]).select("ARRAY[memberships.company_user_id::varchar, '#{goalable_type}'], '{KPI_NAME}', {KPI_AGGR}")
+              elsif goalable_type == 'Team'
+                events_scope.with_team(goaleables_ids[kpi]).select("ARRAY[teams.id::varchar, '#{goalable_type}'], '{KPI_NAME}', {KPI_AGGR}")
+              else
+                events_scope.select("ARRAY[events.campaign_id::varchar, 'Campaign'], '{KPI_NAME}', {KPI_AGGR}")
+              end
+            end
 
-      queries = items.map do |goalable_type, goaleables_ids|
-        ['promo_hours', 'events', 'samples', 'expenses'].map do |kpi|
-          events_scope = campaign.events.active.where(aasm_state: ['approved', 'rejected', 'submitted']).group('1').reorder(nil)
-          query = if goaleables_ids[kpi].any?
-            if goalable_type == 'Area'
-              events_scope.in_areas(goaleables_ids[kpi]).select("ARRAY[areas_places.area_id::varchar, '#{goalable_type}'], '{KPI_NAME}', {KPI_AGGR}")
-            elsif goalable_type == 'Place'
-              events_scope.in_places(goaleables_ids[kpi]).select("ARRAY[places.id::varchar, '#{goalable_type}'], '{KPI_NAME}', {KPI_AGGR}")
-            elsif goalable_type == 'CompanyUser'
-              events_scope.with_user_in_team(goaleables_ids[kpi]).select("ARRAY[memberships.company_user_id::varchar, '#{goalable_type}'], '{KPI_NAME}', {KPI_AGGR}")
-            elsif goalable_type == 'Team'
-              events_scope.with_team(goaleables_ids[kpi]).select("ARRAY[teams.id::varchar, '#{goalable_type}'], '{KPI_NAME}', {KPI_AGGR}")
-            else
-              events_scope.select("ARRAY[events.campaign_id::varchar, 'Campaign'], '{KPI_NAME}', {KPI_AGGR}")
+            if query
+              if kpi == 'promo_hours'
+                goaleables_ids['promo_hours'].any? ? query.to_sql.gsub('{KPI_NAME}', 'PROMO HOURS').gsub('{KPI_AGGR}', 'SUM(events.promo_hours)') : nil
+              elsif kpi == 'events'
+                goaleables_ids['events'].any? ? query.to_sql.gsub('{KPI_NAME}', 'EVENTS').gsub('{KPI_AGGR}', 'COUNT(events.id)') : nil
+              elsif kpi == 'samples'
+                goaleables_ids['samples'].any? ? query.joins(results: :form_field).where(form_fields: {kpi_id: Kpi.samples.id}).to_sql.gsub('{KPI_NAME}', 'SAMPLES').gsub('{KPI_AGGR}', 'SUM(form_field_results.scalar_value)') : nil
+              elsif kpi == 'expenses'
+                goaleables_ids['expenses'].any? ? query.joins(:event_expenses).to_sql.gsub('{KPI_NAME}', 'EXPENSES').gsub('{KPI_AGGR}', 'SUM(event_expenses.amount)') : nil
+              end
             end
           end
-
-          if query
-            if kpi == 'promo_hours'
-              goaleables_ids['promo_hours'].any? ? query.to_sql.gsub('{KPI_NAME}', 'PROMO HOURS').gsub('{KPI_AGGR}', 'SUM(events.promo_hours)') : nil
-            elsif kpi == 'events'
-              goaleables_ids['events'].any? ? query.to_sql.gsub('{KPI_NAME}', 'EVENTS').gsub('{KPI_AGGR}', 'COUNT(events.id)') : nil
-            elsif kpi == 'samples'
-              goaleables_ids['samples'].any? ? query.joins(results: :form_field).where(form_fields: {kpi_id: Kpi.samples.id}).to_sql.gsub('{KPI_NAME}', 'SAMPLES').gsub('{KPI_AGGR}', 'SUM(form_field_results.scalar_value)') : nil
-            elsif kpi == 'expenses'
-              goaleables_ids['expenses'].any? ? query.joins(:event_expenses).to_sql.gsub('{KPI_NAME}', 'EXPENSES').gsub('{KPI_AGGR}', 'SUM(event_expenses.amount)') : nil
-            end
-          end
-        end
-      end.flatten.compact
+        end.flatten.compact
+      end
 
       if queries.any?
-        Hash[ActiveRecord::Base.connection.select_all("
-          SELECT keys[1] as id, keys[2] as type, promo_hours, events, samples, expenses FROM crosstab('#{queries.join(' UNION ALL ').gsub('\'','\'\'')} ORDER by 1',
-            'SELECT unnest(ARRAY[''PROMO HOURS'', ''EVENTS'', ''SAMPLES'', ''EXPENSES''])') AS ct(keys varchar[], promo_hours numeric, events numeric, samples numeric, expenses numeric)").map do |r|
+        ActiveRecord::Base.connection.unprepared_statement do
+          Hash[ActiveRecord::Base.connection.select_all("
+            SELECT keys[1] as id, keys[2] as type, promo_hours, events, samples, expenses FROM crosstab('#{queries.join(' UNION ALL ').gsub('\'','\'\'')} ORDER by 1',
+              'SELECT unnest(ARRAY[''PROMO HOURS'', ''EVENTS'', ''SAMPLES'', ''EXPENSES''])') AS ct(keys varchar[], promo_hours numeric, events numeric, samples numeric, expenses numeric)").map do |r|
 
-          r['events'] = if goals["#{r['type']}_#{r['id']}_#{Kpi.events.id}"].present?
-            r['events'].to_f * 100 / goals["#{r['type']}_#{r['id']}_#{Kpi.events.id}"].value
-          else
-            nil
-          end
+            r['events'] = if goals["#{r['type']}_#{r['id']}_#{Kpi.events.id}"].present?
+              r['events'].to_f * 100 / goals["#{r['type']}_#{r['id']}_#{Kpi.events.id}"].value
+            else
+              nil
+            end
 
-          r['promo_hours'] = if goals["#{r['type']}_#{r['id']}_#{Kpi.promo_hours.id}"].present?
-            r['promo_hours'].to_f * 100 / goals["#{r['type']}_#{r['id']}_#{Kpi.promo_hours.id}"].value
-          else
-            nil
-          end
+            r['promo_hours'] = if goals["#{r['type']}_#{r['id']}_#{Kpi.promo_hours.id}"].present?
+              r['promo_hours'].to_f * 100 / goals["#{r['type']}_#{r['id']}_#{Kpi.promo_hours.id}"].value
+            else
+              nil
+            end
 
-          r['samples'] = if goals["#{r['type']}_#{r['id']}_#{Kpi.samples.id}"].present?
-            r['samples'].to_f * 100 / goals["#{r['type']}_#{r['id']}_#{Kpi.samples.id}"].value
-          else
-            nil
-          end
+            r['samples'] = if goals["#{r['type']}_#{r['id']}_#{Kpi.samples.id}"].present?
+              r['samples'].to_f * 100 / goals["#{r['type']}_#{r['id']}_#{Kpi.samples.id}"].value
+            else
+              nil
+            end
 
-          r['expenses'] = if goals["#{r['type']}_#{r['id']}_#{Kpi.expenses.id}"].present?
-            r['expenses'].to_f * 100 / goals["#{r['type']}_#{r['id']}_#{Kpi.expenses.id}"].value
-          else
-            nil
-          end
+            r['expenses'] = if goals["#{r['type']}_#{r['id']}_#{Kpi.expenses.id}"].present?
+              r['expenses'].to_f * 100 / goals["#{r['type']}_#{r['id']}_#{Kpi.expenses.id}"].value
+            else
+              nil
+            end
 
-          ["#{r['type']}#{r['id']}", r]
-        end]
+            ["#{r['type']}#{r['id']}", r]
+          end]
+        end
       else
         {}
       end

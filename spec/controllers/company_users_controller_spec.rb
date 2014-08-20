@@ -159,7 +159,7 @@ describe CompanyUsersController, :type => :controller do
         expect(@company_user.user.phone_number_verification).to be_nil
         xhr :get, 'verify_phone', id: @company_user.to_param, format: :js
         expect(assigns(:company_user)).to eql @company_user
-        response.should render_template 'verify_phone'
+        expect(response).to render_template 'verify_phone'
         expect(@company_user.user.reload.phone_number_verification).to_not be_nil
       end
     end

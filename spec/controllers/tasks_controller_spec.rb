@@ -26,7 +26,7 @@ describe TasksController, :type => :controller do
 
     it "should not render form_dialog if no errors" do
       expect {
-        xhr :post, 'create', event_id: event.to_param, task: {title: "Some test task", due_at: '05/23/2020', company_user_id: @company_user.to_param}, format: :js
+        xhr :post, 'create', event_id: event.to_param, task: {title: "Some test task", due_at: '05/12/2020', company_user_id: @company_user.to_param}, format: :js
       }.to change(Task, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template(:create)

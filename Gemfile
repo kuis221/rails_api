@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 ruby '2.1.2'
 
-gem 'rails', '4.1.4'
+gem 'rails', '4.1.5'
 gem 'rails-observers'
 gem 'activerecord-session_store'
 gem "rack-timeout"
@@ -28,7 +28,8 @@ gem 'newrelic_rpm'
 gem "paperclip", "~> 4.1"
 gem "aws-sdk"
 gem 'google_places'
-gem 'jc-validates_timeliness'
+gem 'timeliness'
+gem 'american_date'
 gem 'sunspot_rails'
 gem 'sunspot_stats'
 gem "sunspot-queue"
@@ -71,13 +72,13 @@ group :web do
   gem 'activeadmin', github: 'activeadmin/active_admin'
   gem 'unicorn'
   gem 'simple_form'
-  gem 'country_select'
+  gem 'country_select', '2.0.0.rc1'
   gem "nested_form"
 end
 
 # Gems used only for assets and not required
 # in production environments by default.
-gem 'sass-rails'
+gem 'sass-rails', '~> 4.0.3'
 gem 'coffee-rails'
 gem 'uglifier', '>= 1.3.0'
 
@@ -102,19 +103,19 @@ group :test do
   #gem 'selenium-webdriver'
   gem "email_spec", ">= 1.4.0"
   gem 'shoulda-matchers', require: false
-  gem 'launchy'
+  #gem 'launchy'
   gem "sunspot_test"
   gem 'resque_spec'
   gem 'simplecov', require: false
   gem 'capybara-screenshot'
-  gem 'fuubar', '2.0.0.rc1'
+  gem 'fuubar', '2.0.0'
   gem 'database_cleaner'
   #gem 'sms-spec', '~> 0.1.9'
   gem 'sms-spec'
 end
 
-gem 'airbrake'
-  group :production do
+group :production do
+  gem 'airbrake'
 end
 
 # To use ActiveModel has_secure_password

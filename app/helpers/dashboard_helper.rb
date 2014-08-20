@@ -28,7 +28,6 @@ module DashboardHelper
   end
 
   def campaign_promo_hours_chart(c)
-    remaining_percentage = 100-c['executed_percentage']-c['scheduled_percentage']
     today_bar_indicator = ''.html_safe
     if c['today_percentage']
       color_class = if c['today_percentage'] < c['executed_percentage']

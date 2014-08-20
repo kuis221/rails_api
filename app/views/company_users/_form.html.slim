@@ -33,7 +33,7 @@
           = uf.input :unit_number, label: false, input_html: {class: 'input-xxlarge'}, required: false
         .row-fluid.users
           .span6
-            = uf.input :country, input_html: {class: 'input-large chosen-enabled'}, required: !is_admin
+            = uf.input :country, input_html: {class: 'input-large chosen-enabled'}, priority: ['US'], iso_codes: true, required: !is_admin
           .span6
             = uf.input :city, input_html: {class: 'input-large'}, required: !is_admin
         .row-fluid.users

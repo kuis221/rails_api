@@ -17,8 +17,6 @@ class Brand < ActiveRecord::Base
 
   scoped_to_company
 
-  attr_accessor :marques_list
-
   # Required fields
   validates :name, presence: true, uniqueness: {scope: :company_id, case_sensitive: false}
 
@@ -47,7 +45,7 @@ class Brand < ActiveRecord::Base
     integer :company_id
   end
 
-    def activate!
+  def activate!
     update_attribute :active, true
   end
 
@@ -82,7 +80,7 @@ class Brand < ActiveRecord::Base
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)
-      ss = solr_search do
+      solr_search do
         with(:company_id, params[:company_id])
         with(:id, Campaign.where(id: params[:campaign_id]).joins(:brands).pluck('brands_campaigns.brand_id'))
         with(:id, BrandPortfolio.where(id: params[:brand_portfolio_id]).joins(:brands).pluck('brand_portfolios_brands.brand_id'))

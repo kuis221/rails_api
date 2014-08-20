@@ -13,7 +13,6 @@ describe BrandsController, :type => :controller do
       it "returns http success" do
         get 'index', campaign_id: campaign.to_param, format: :json
         expect(response).to be_success
-        expect(response).to render_template('index')
       end
     end
   end

@@ -190,7 +190,7 @@ Brandscopic::Application.routes.draw do
     end
   end
 
-  resources :roles do
+  resources :roles, except: [:destroy] do
     get :autocomplete, on: :collection
     get :filters, on: :collection, format: :json
     get :items, on: :collection, format: :html
@@ -237,7 +237,7 @@ Brandscopic::Application.routes.draw do
     end
   end
 
-  resources :teams do
+  resources :teams, except: [:destroy] do
     get :autocomplete, on: :collection
     get :filters, on: :collection, format: :json
     get :items, on: :collection, format: :html
@@ -251,7 +251,7 @@ Brandscopic::Application.routes.draw do
     end
   end
 
-  resources :campaigns do
+  resources :campaigns, except: [:destroy] do
     resources :brands, only: [:index]
     resources :kpis, only: [:new, :create, :edit, :update]
     resources :activity_types, only: [] do
@@ -305,7 +305,7 @@ Brandscopic::Application.routes.draw do
     end
   end
 
-  resources :events do
+  resources :events, except: [:destroy] do
     get :autocomplete, on: :collection
     get :filters, on: :collection, format: :json
     get :items, on: :collection, format: :html
@@ -372,8 +372,8 @@ Brandscopic::Application.routes.draw do
   resources :tasks, only: [:new, :create, :edit, :update] do
     collection do
       get :autocomplete
-      get :filters, format: :json
-      get :items, format: :html
+      get ':scope/filters', to: 'tasks#filters', :constraints => { :scope => /user|teams/ }, format: :json
+      get ':scope/items', to: 'tasks#items', :constraints => { :scope => /user|teams/ }, format: :json
 
       get :mine, to: :index, :defaults => {:scope => "user"}, :constraints => { :scope => 'user' }
       get :my_teams, to: :index, :defaults => {:scope => "teams"}, :constraints => { :scope => 'teams' }
@@ -385,7 +385,7 @@ Brandscopic::Application.routes.draw do
     resources :comments, only: [:create, :index]
   end
 
-  resources :brand_portfolios do
+  resources :brand_portfolios, except: [:destroy] do
     get :autocomplete, on: :collection
     get :filters, on: :collection, format: :json
     get :items, on: :collection, format: :html
@@ -400,7 +400,7 @@ Brandscopic::Application.routes.draw do
     end
   end
 
-  resources :brands do
+  resources :brands, except: [:destroy] do
     get :autocomplete, on: :collection
     get :filters, on: :collection, format: :json
     get :items, on: :collection, format: :html
@@ -412,7 +412,7 @@ Brandscopic::Application.routes.draw do
     end
   end
 
-  resources :areas do
+  resources :areas, except: [:destroy] do
     get :autocomplete, on: :collection
     get :filters, on: :collection, format: :json
     get :items, on: :collection, format: :html
@@ -439,7 +439,7 @@ Brandscopic::Application.routes.draw do
     end
   end
 
-  resources :date_ranges do
+  resources :date_ranges, except: [:destroy] do
     get :autocomplete, on: :collection
     get :filters, on: :collection, format: :json
     get :items, on: :collection, format: :html
@@ -451,7 +451,7 @@ Brandscopic::Application.routes.draw do
     end
   end
 
-  resources :day_parts do
+  resources :day_parts, except: [:destroy] do
     get :autocomplete, on: :collection
     get :filters, on: :collection, format: :json
     get :items, on: :collection, format: :html
@@ -469,7 +469,7 @@ Brandscopic::Application.routes.draw do
     end
   end
 
-  resources :activity_types  do
+  resources :activity_types, except: [:destroy]  do
     get :autocomplete, on: :collection
     get :filters, on: :collection, format: :json
     get :items, on: :collection, format: :html

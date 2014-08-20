@@ -30,8 +30,6 @@ class Campaign < ActiveRecord::Base
 
   scoped_to_company
 
-  attr_accessor :brands_list
-
   serialize :modules
 
   # Required fields
@@ -41,19 +39,19 @@ class Campaign < ActiveRecord::Base
   DATE_FORMAT = /\A[0-1]?[0-9]\/[0-3]?[0-9]\/[0-2]0[0-9][0-9]\z/
   validates :start_date, format: { with: DATE_FORMAT, message: 'MM/DD/YYYY' }, allow_nil: true
   validates :end_date, format: { with: DATE_FORMAT, message: 'MM/DD/YYYY' }, allow_nil: true
-  validates :end_date, presence: true, if: :start_date
+  validates :end_date, presence: true, date: { on_or_after: :start_date, message: 'must be after' }, if: :start_date
   validates :start_date, presence: true, if: :end_date
 
   validate :valid_modules?
 
-  validates_date :start_date, before: :end_date,  allow_nil: true, allow_blank: true, before_message: 'must be before'
-  validates_date :end_date, on_or_after: :start_date, allow_nil: true, allow_blank: true, on_or_after_message: ''
+  # validates_date :start_date, before: :end_date,  allow_nil: true, allow_blank: true, before_message: 'must be before'
+  # validates_date :end_date, on_or_after: :start_date, allow_nil: true, allow_blank: true, on_or_after_message: ''
 
   # Campaigns-Brands relationship
-  has_and_belongs_to_many :brands, order: 'name ASC', conditions: { brands: {active: true} }, autosave: true
+  has_and_belongs_to_many :brands, -> { order('brands.name ASC').where(brands: {active: true}) }, autosave: true
 
   # Campaigns-Brand Portfolios relationship
-  has_and_belongs_to_many :brand_portfolios, order: 'name ASC', conditions: { brand_portfolios: {active: true} }, autosave: true, after_remove: :remove_child_goals_for
+  has_and_belongs_to_many :brand_portfolios, -> { order('brand_portfolios.name ASC').where(brand_portfolios: {active: true}) }, autosave: true, after_remove: :remove_child_goals_for
   has_many :brand_portfolio_brands, through: :brand_portfolios, class_name: 'Brand', source: :brands
 
   # Campaigns-Areas relationship
@@ -161,7 +159,7 @@ class Campaign < ActiveRecord::Base
   end
 
   def staff
-    (staff_users+teams).sort_by &:name
+    (staff_users+teams).sort_by(&:name)
   end
 
   def staff_users
@@ -189,7 +187,7 @@ class Campaign < ActiveRecord::Base
   end
 
   def areas_and_places
-    (areas+places).sort_by &:name
+    (areas+places).sort_by(&:name)
   end
 
   def place_allowed_for_event?(place)
@@ -205,6 +203,10 @@ class Campaign < ActiveRecord::Base
         places.where(is_location: true).reorder(nil).pluck('places.location_id')
       ).map(&:to_i)
     end
+  end
+
+  def brands_list
+    brands.map(&:name).join ','
   end
 
   def brands_list=(list)
@@ -261,10 +263,6 @@ class Campaign < ActiveRecord::Base
     end
 
     stats.values.sort{|a, b| a['name']+a['kpi'] <=> b['name']+b['kpi'] }
-  end
-
-  def brands_list
-    brands.map(&:name).join ','
   end
 
   def associated_brands
@@ -389,7 +387,7 @@ class Campaign < ActiveRecord::Base
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)
-      ss = solr_search do
+      solr_search do
         with(:company_id, params[:company_id])
         with(:user_ids, params[:user]) if params.has_key?(:user) and params[:user].present?
         with(:team_ids, params[:team]) if params.has_key?(:team) and params[:team].present?

@@ -70,7 +70,7 @@ class ActivityType < ActiveRecord::Base
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)
-      ss = solr_search do
+      solr_search do
         with(:company_id, params[:company_id])
         with(:status, params[:status]) if params.has_key?(:status) and params[:status].present?
         if params.has_key?(:q) and params[:q].present?

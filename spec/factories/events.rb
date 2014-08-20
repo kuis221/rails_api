@@ -52,7 +52,7 @@ FactoryGirl.define do
 
     before(:create) do |event, evaluator|
       evaluator.expenses.each do |attrs|
-        ex = event.event_expenses.build(attrs, without_protection: true)
+        ex = event.event_expenses.build(attrs)
       end
 
       if results = evaluator.results

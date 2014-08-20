@@ -119,7 +119,7 @@ describe CompanyUser, :type => :model do
 
       it "should return the ids of campaigns assigend to the user" do
         campaigns = FactoryGirl.create_list(:campaign, 3, company: user.company)
-        other_campaigns = FactoryGirl.create_list(:campaign, 2, company_id: user.company.id+1)
+        FactoryGirl.create_list(:campaign, 2, company_id: user.company.id+1)
         expect(user.accessible_campaign_ids).to match_array campaigns.map(&:id)
       end
     end

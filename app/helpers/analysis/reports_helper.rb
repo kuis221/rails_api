@@ -1,5 +1,5 @@
 module Analysis
-	module ReportsHelper
+  module ReportsHelper
     #
     # ___________.__                _____                          __
     # \__    ___/|  |__   ____     /     \   ____   ____   _______/  |_  ___________

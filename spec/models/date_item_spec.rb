@@ -26,6 +26,15 @@ describe DateItem, :type => :model do
   it { is_expected.to allow_value(nil).for(:recurrence_days)}
   it { is_expected.to allow_value(['']).for(:recurrence_days)}
 
+
+  describe "end_after_start validation" do
+    subject { DateItem.new(start_date: '01/22/2013') }
+
+    it { is_expected.not_to allow_value('01/21/2013').for(:end_date).with_message("must be after") }
+    it { is_expected.to allow_value('01/22/2013').for(:end_date) }
+    it { is_expected.to allow_value('01/23/2013').for(:end_date) }
+  end
+
   describe "#label" do
     it "returns a valid description when has start_date and end_date" do
       date = DateItem.new(start_date: '01/01/2013', end_date: '01/31/2013')

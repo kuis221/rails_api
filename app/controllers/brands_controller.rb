@@ -25,6 +25,13 @@ class BrandsController < FilteredController
     end
   end
 
+  def index
+    respond_to do |format|
+      format.html
+      format.json { render json: collection.map{|b| {id: b.id, name: b.name}} }
+    end
+  end
+
   protected
     def permitted_params
       params.permit(brand: [:name, :marques_list])[:brand]

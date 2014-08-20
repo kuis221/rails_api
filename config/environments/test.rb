@@ -21,7 +21,7 @@ Brandscopic::Application.configure do
   config.action_controller.perform_caching = false
 
   # Raise exceptions instead of rendering exception templates.
-  config.action_dispatch.show_exceptions = false
+  config.action_dispatch.show_exceptions = true
 
   # Disable request forgery protection in test environment.
   config.action_controller.allow_forgery_protection = false
@@ -39,7 +39,7 @@ Brandscopic::Application.configure do
 
   config.action_mailer.default_url_options = {:host => "example.com"}
 
-  config.active_support.deprecation = :log
+  config.active_support.deprecation = :stderr
 
   ENV["REDISTOGO_URL"] = 'redis://localhost:9999'
 
