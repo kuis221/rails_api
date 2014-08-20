@@ -54,7 +54,7 @@ class Area < ActiveRecord::Base
   def locations
     @locations ||= Rails.cache.fetch("area_locations_#{id}") do
       Location.joins('INNER JOIN places ON places.location_id=locations.id').
-        where(places: {id: self.place_ids, is_location: true}).group('locations.id')
+        where(places: {id: self.place_ids, is_location: true}).group('locations.id').to_a
     end
   end
 
