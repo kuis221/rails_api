@@ -2,16 +2,17 @@
 #
 # Table name: areas
 #
-#  id                  :integer          not null, primary key
-#  name                :string(255)
-#  description         :text
-#  active              :boolean          default(TRUE)
-#  company_id          :integer
-#  created_by_id       :integer
-#  updated_by_id       :integer
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
-#  common_denominators :text
+#  id                            :integer          not null, primary key
+#  name                          :string(255)
+#  description                   :text
+#  active                        :boolean          default(TRUE)
+#  company_id                    :integer
+#  created_by_id                 :integer
+#  updated_by_id                 :integer
+#  created_at                    :datetime         not null
+#  updated_at                    :datetime         not null
+#  common_denominators           :text
+#  common_denominators_locations :integer          default([]), is an Array
 #
 
 class Area < ActiveRecord::Base
@@ -30,7 +31,7 @@ class Area < ActiveRecord::Base
 
   scope :active, ->{ where(active: true) }
   scope :not_in_venue, ->(place) { where("areas.id not in (?)", place.area_ids + [0]) }
-  scope :accessible_by_user, ->(company_user) { company_user.is_admin? ? all : where(id: company_user.area_ids) }
+  scope :accessible_by_user, ->(company_user) { company_user.is_admin? ? all : where('areas.id in (?) OR common_denominators_locations && \'{?}\'::int[]', company_user.area_ids,  company_user.accessible_locations + [-1]) }
   serialize :common_denominators
 
   before_save :initialize_common_denominators
@@ -144,7 +145,7 @@ class Area < ActiveRecord::Base
     # if all the places on the area are within Los Angeles
     def update_common_denominators
       denominators = []
-      list_places = places.select{|p| !p.types.nil? && (p.types & ['sublocality', 'locality', 'administrative_area_level_1', 'administrative_area_level_2', 'administrative_area_level_3', 'country', 'natural_feature']).count > 0 }
+      list_places = places.all.to_a.select{|p| !p.types.nil? && (p.types & ['sublocality', 'locality', 'administrative_area_level_1', 'administrative_area_level_2', 'administrative_area_level_3', 'country', 'natural_feature']).count > 0 }
       continents = list_places.map(&:continent_name)
       if continents.compact.size == list_places.size and continents.uniq.size == 1
         denominators.push continents.first
@@ -161,7 +162,9 @@ class Area < ActiveRecord::Base
           end
         end
       end
-      update_attribute :common_denominators, denominators
+      paths = denominators.count.times.map { |i| denominators.slice(0, i+1).compact.join('/').downcase }
+      common_locations = paths.map{|path| Location.find_or_create_by(path: path).id }
+      update_attributes common_denominators: denominators, common_denominators_locations: common_locations
     end
 
     def initialize_common_denominators

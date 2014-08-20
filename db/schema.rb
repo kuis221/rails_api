@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140820045702) do
+ActiveRecord::Schema.define(version: 20140820194232) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -102,15 +102,17 @@ ActiveRecord::Schema.define(version: 20140820045702) do
   create_table "areas", force: true do |t|
     t.string   "name"
     t.text     "description"
-    t.boolean  "active",              default: true
+    t.boolean  "active",                        default: true
     t.integer  "company_id"
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
-    t.datetime "created_at",                         null: false
-    t.datetime "updated_at",                         null: false
+    t.datetime "created_at",                                   null: false
+    t.datetime "updated_at",                                   null: false
     t.text     "common_denominators"
+    t.integer  "common_denominators_locations", default: [],                array: true
   end
 
+  add_index "areas", ["common_denominators_locations"], name: "index_areas_on_common_denominators_locations", using: :gin
   add_index "areas", ["company_id"], name: "index_areas_on_company_id", using: :btree
 
   create_table "areas_campaigns", force: true do |t|
