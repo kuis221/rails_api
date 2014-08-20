@@ -81,7 +81,7 @@ class ListExport < ActiveRecord::Base
     end
 
     name = controller.send(:export_file_name)
-    self.file = StringIO.new(controller.send(:export_list, self) || '')
+    self.file = StringIO.new(controller.send(:export_list, self))
     self.file_file_name = "#{name}-#{self.id}.#{export_format}"
     self.file_content_type = "application/xml"
 
