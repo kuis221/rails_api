@@ -4,6 +4,8 @@ class CampaignsController < FilteredController
 
   helper_method :grouped_assignable_kpis
 
+  before_action :search_params, only: [:index]
+
   include DeactivableHelper
 
   # This helper provide the methods to add/remove campaigns members to the event

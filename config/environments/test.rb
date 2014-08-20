@@ -39,8 +39,6 @@ Brandscopic::Application.configure do
 
   config.action_mailer.default_url_options = {:host => "example.com"}
 
-  config.active_support.deprecation = :stderr
-
   ENV["REDISTOGO_URL"] = 'redis://localhost:9999'
 
   config.cache_store = :null_store

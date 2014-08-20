@@ -688,10 +688,10 @@ class Event < ActiveRecord::Base
 
     def parse_start_end
       unless self.start_date.nil? or self.start_date.empty?
-        self.start_at = Timeliness.parse([self.start_date, self.start_time].compact.join(' ').strip, zone: :current)
+        self.start_at = Timeliness.parse([self.start_date, self.start_time.to_s.strip].compact.join(' ').strip, zone: :current)
       end
       unless self.end_date.nil? or self.end_date.empty?
-        self.end_at = Timeliness.parse([self.end_date, self.end_time].compact.join(' ').strip, zone: :current)
+        self.end_at = Timeliness.parse([self.end_date, self.end_time.to_s.strip].compact.join(' ').strip, zone: :current)
       end
     end
 

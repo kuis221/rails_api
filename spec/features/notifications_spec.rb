@@ -311,7 +311,7 @@ feature "Notifications", search: true, js: true do
 
       visit current_url
 
-      # reload page and make sure that only the two events are still there
+      # reload page and make sure that the two campaigns are still there
       expect(current_path).to eql campaigns_path
       expect(page).to have_selector('#campaigns-list li', count: 2)
     end
