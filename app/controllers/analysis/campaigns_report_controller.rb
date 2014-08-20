@@ -1,7 +1,7 @@
 class Analysis::CampaignsReportController < ApplicationController
-  before_filter :campaign, except: :index
+  before_action :campaign, except: :index
 
-  before_filter :authorize_actions
+  before_action :authorize_actions
 
   def index
     @campaigns = current_company.campaigns.accessible_by_user(current_company_user).order('name ASC')

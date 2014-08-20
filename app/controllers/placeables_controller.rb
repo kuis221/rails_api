@@ -5,7 +5,7 @@ class PlaceablesController < FilteredController
 
   skip_authorize_resource
 
-  before_filter :authorize_parent
+  before_action :authorize_parent
 
   def new
     @areas = current_company.areas.active.where('areas.id not in (?)', parent.area_ids + [0]).order('name ASC')

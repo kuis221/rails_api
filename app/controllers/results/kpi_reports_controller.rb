@@ -1,5 +1,5 @@
 class Results::KpiReportsController < ApplicationController
-  #before_filter :authorize_actions
+  #before_action :authorize_actions
 
   def index
     campaigns

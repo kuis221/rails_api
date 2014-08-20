@@ -8,7 +8,7 @@ class FilteredController < InheritedResources::Base
   CUSTOM_VALIDATION_ACTIONS = [:index, :items, :filters, :autocomplete, :export, :new_export]
   load_and_authorize_resource except: CUSTOM_VALIDATION_ACTIONS
 
-  before_filter :authorize_actions, only: CUSTOM_VALIDATION_ACTIONS
+  before_action :authorize_actions, only: CUSTOM_VALIDATION_ACTIONS
 
   after_filter :remove_resource_new_notifications, only: :show
 

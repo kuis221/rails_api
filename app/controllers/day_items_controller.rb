@@ -5,7 +5,7 @@ class DayItemsController < FilteredController
   actions :all, :except => [:show, :edit, :index]
 
   skip_authorize_resource
-  before_filter :edit_authorize_parent
+  before_action :edit_authorize_parent
 
   private
     def permitted_params

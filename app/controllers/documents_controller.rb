@@ -12,7 +12,7 @@ class DocumentsController < InheritedResources::Base
   load_and_authorize_resource class: AttachedAsset, through: :parent
 
   skip_load_and_authorize_resource only: [:create, :new]
-  before_filter :authorize_create, only: [:create, :new]
+  before_action :authorize_create, only: [:create, :new]
 
   helper_method :describe_filters
 

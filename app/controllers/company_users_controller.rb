@@ -9,7 +9,7 @@ class CompanyUsersController < FilteredController
 
   custom_actions collection: [:complete, :time_zone_change, :time_zone_update]
 
-  before_filter :validate_parent, only: [:enable_campaigns, :disable_campaigns, :remove_campaign, :select_campaigns, :add_campaign]
+  before_action :validate_parent, only: [:enable_campaigns, :disable_campaigns, :remove_campaign, :select_campaigns, :add_campaign]
 
   skip_load_and_authorize_resource only: [:export_status]
 
