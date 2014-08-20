@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 feature 'Activities management' do
   let(:company) { FactoryGirl.create(:company) }
@@ -94,7 +94,7 @@ feature 'Activities management' do
         select_from_chosen('Activity Type #1', from: 'Activity type')
         select_from_chosen('Brand #2', from: 'Brand')
         wait_for_ajax
-        select2("Marque #1 for Brand #2", from: "Marque")
+        select_from_chosen("Marque #1 for Brand #2", from: "Marque")
         fill_in 'Form Field #1', with: '122'
         select_from_chosen('Dropdown option #2', from: 'Form Field #2')
         select_from_chosen('Juanito Bazooka', from: 'User')
@@ -155,7 +155,7 @@ feature 'Activities management' do
       end
     end
 
-    scenario 'allows the user to add an activity to a Venue, see it displayed in the Activities list and then deactivate it' do
+    scenario 'allows the user to add an activity to a Venue, see it displayed in the Activities list and then deactivate it', search: true do
       venue = FactoryGirl.create(:venue, company: company, place: FactoryGirl.create(:place, is_custom_place: true, reference: nil))
       FactoryGirl.create(:user, company: company, first_name: 'Juanito', last_name: 'Bazooka')
       campaign = FactoryGirl.create(:campaign, name: 'Campaign #1', company: company)
@@ -174,6 +174,7 @@ feature 'Activities management' do
       dropdown_field = FactoryGirl.create(:form_field, name: 'Form Field #2', type: 'FormField::Dropdown', fieldable: activity_type, ordering: 4)
       FactoryGirl.create(:form_field_option, name: 'Dropdown option #1', form_field: dropdown_field, ordering: 1)
       FactoryGirl.create(:form_field_option, name: 'Dropdown option #2', form_field: dropdown_field, ordering: 2)
+      Sunspot.commit
 
       campaign.activity_types << activity_type
 
@@ -187,7 +188,7 @@ feature 'Activities management' do
         select_from_chosen('Activity Type #1', from: 'Activity type')
         select_from_chosen('Campaign #1', from: 'Campaign')
         select_from_chosen('Brand #2', from: 'Brand')
-        select2("Marque #1 for Brand #2", from: "Marque")
+        select_from_chosen("Marque #1 for Brand #2", from: "Marque")
         fill_in 'Form Field #1', with: '122'
         select_from_chosen('Dropdown option #2', from: 'Form Field #2')
         select_from_chosen('Juanito Bazooka', from: 'User')
@@ -248,7 +249,6 @@ feature 'Activities management' do
     end
 
     scenario "user can attach a photo to an activity" do
-      allow_any_instance_of(AttachedAsset).to receive(:save_attached_files).and_return(true)
       activity_type = FactoryGirl.create(:activity_type, name: 'Activity Type #1', company: company)
       form_field = FactoryGirl.create(:form_field,
         fieldable: activity_type, type: 'FormField::Photo')
@@ -321,7 +321,6 @@ feature 'Activities management' do
     end
 
     scenario "user can attach a document to an activity" do
-      allow_any_instance_of(AttachedAsset).to receive(:save_attached_files).and_return(true)
       activity_type = FactoryGirl.create(:activity_type, name: 'Activity Type #1', company: company)
       form_field = FactoryGirl.create(:form_field,
         fieldable: activity_type, type: 'FormField::Attachment')
@@ -443,7 +442,7 @@ feature 'Activities management' do
     end
   end
 
-  feature "non admin user", js: true, search: true do
+  feature "non admin user", js: true do
     let(:role) { FactoryGirl.create(:non_admin_role, company: company) }
 
     it_should_behave_like "a user that view the activiy details" do
@@ -455,7 +454,7 @@ feature 'Activities management' do
 
   def add_permissions(permissions)
     permissions.each do |p|
-      company_user.role.permissions.create({action: p[0], subject_class: p[1]}, without_protection: true)
+      company_user.role.permissions.create(action: p[0], subject_class: p[1])
     end
   end
 end

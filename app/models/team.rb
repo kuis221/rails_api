@@ -33,7 +33,7 @@ class Team < ActiveRecord::Base
   has_many :teamings
   has_many :campaigns, through: :teamings, :source => :teamable, :source_type => 'Campaign'
 
-  scope :active, where(:active => true)
+  scope :active, ->{ where(:active => true) }
 
   scope :with_users, joins(:users).group('teams.id')
   scope :with_user, lambda{|company_user| joins(:users).where(company_users: {id: company_user}).group('teams.id')  }

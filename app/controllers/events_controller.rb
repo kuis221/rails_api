@@ -1,7 +1,7 @@
 class EventsController < FilteredController
   belongs_to :venue, :optional => true
 
-  # before_filter :search_params, only: [:index, :filters, :items]
+  # before_action :search_params, only: [:index, :filters, :items]
 
   # This helper provide the methods to add/remove team members to the event
   extend TeamMembersHelper
@@ -22,7 +22,7 @@ class EventsController < FilteredController
   layout false, only: :tasks
 
   skip_load_and_authorize_resource only: :update
-  before_filter :authorize_update, only: :update
+  before_action :authorize_update, only: :update
 
   def autocomplete
     buckets = autocomplete_buckets({

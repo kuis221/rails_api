@@ -10,7 +10,7 @@ class ContactEventsController < InheritedResources::Base
 
   load_and_authorize_resource
 
-  before_filter do
+  before_action do
     authorize! :show, parent
   end
 

@@ -13,7 +13,7 @@
 #  resultable_type :string(255)
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe FormFieldResult, :type => :model do
   it { is_expected.to belong_to(:resultable) }
@@ -315,7 +315,6 @@ describe FormFieldResult, :type => :model do
       it { is_expected.not_to allow_value({form_field.options[0].id => 'xx', form_field.options[1].id => 'uno'}).for(:value) }
       it { is_expected.not_to allow_value({form_field.options[0].id => 40, form_field.options[1].id => 10}).for(:value) }
       it { is_expected.not_to allow_value({999 => 10, 888 => 90}).for(:value) }
-      it { is_expected.not_to allow_value('sdfsd').for(:value) }
       it { is_expected.not_to allow_value(1).for(:value) }
 
       describe "when it is required" do
@@ -347,7 +346,6 @@ describe FormFieldResult, :type => :model do
       it { is_expected.not_to allow_value({kpi.kpis_segments[0].id => 'xx', kpi.kpis_segments[1].id => 'uno'}).for(:value) }
       it { is_expected.not_to allow_value({kpi.kpis_segments[0].id => 40, kpi.kpis_segments[1].id => 10}).for(:value) }
       it { is_expected.not_to allow_value({999 => 10, 888 => 90}).for(:value) }
-      it { is_expected.not_to allow_value('sdfsd').for(:value) }
       it { is_expected.not_to allow_value(1).for(:value) }
 
       describe "when it is required" do
@@ -375,7 +373,6 @@ describe FormFieldResult, :type => :model do
     it { is_expected.to allow_value({form_field.options[0].id.to_s => 50, form_field.options[1].id.to_s => 50}).for(:value) }
     it { is_expected.to allow_value({form_field.options[0].id => '', form_field.options[1].id => ''}).for(:value) }
     it { is_expected.not_to allow_value({999 => 10, 888 => 90}).for(:value) }
-    it { is_expected.not_to allow_value('sdfsd').for(:value) }
     it { is_expected.not_to allow_value(1).for(:value) }
 
     describe "when it is required" do
@@ -403,7 +400,6 @@ describe FormFieldResult, :type => :model do
     it { is_expected.to allow_value({form_field.statements[0].id => '', form_field.statements[1].id => ''}).for(:value) }
     it { is_expected.to allow_value({form_field.statements[0].id => form_field.options[0].id.to_s, form_field.statements[1].id => ''}).for(:value) }
     it { is_expected.not_to allow_value({999 => 10, 888 => 90}).for(:value) }
-    it { is_expected.not_to allow_value('sdfsd').for(:value) }
     it { is_expected.not_to allow_value(1).for(:value) }
 
     describe "when it is required" do
@@ -429,7 +425,6 @@ describe FormFieldResult, :type => :model do
     it { is_expected.to_not allow_value(["#{form_field.options[1].id}x"]).for(:value) }
     it { is_expected.to_not allow_value('').for(:value) }
     it { is_expected.not_to allow_value([form_field.options[0].id+100]).for(:value) }
-    it { is_expected.not_to allow_value('sdfsd').for(:value) }
 
     describe "when it is required" do
       before { subject.form_field.required = true }
@@ -479,7 +474,7 @@ describe FormFieldResult, :type => :model do
       r = FactoryGirl.build(:form_field_result, form_field_id: form_field.id)
       r.value = {form_field.options[0].id => 50, form_field.options[1].id => 50}
       r.valid?
-      expect(r.hash_value).to eql({form_field.options[0].id => 50, form_field.options[1].id => 50})
+      expect(r.hash_value).to eql({form_field.options[0].id.to_s => '50', form_field.options[1].id.to_s => '50'})
       expect(r.save).to be_truthy
     end
   end

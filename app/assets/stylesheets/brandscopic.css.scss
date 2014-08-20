@@ -6956,13 +6956,14 @@ table td.sub-level-1 {
 		.select2-container .select2-input {
 			border-width: 0px !important;
 		}
-		button{
-			background-color: transparent;
-			border: 0;
+		a.close-gallery {
 			color: white;
 			position: absolute;
 			right: 10px;
 			top: 15px;
+		}
+		a.remove-tag {
+			margin-right: 5px;
 		}
 	}
 	.slider {

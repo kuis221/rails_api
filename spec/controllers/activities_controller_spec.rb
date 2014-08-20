@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe ActivitiesController, :type => :controller do
   before(:each) do
@@ -15,38 +15,38 @@ describe ActivitiesController, :type => :controller do
 
   describe "GET 'new'" do
     it "returns http success" do
-      get 'new', venue_id: venue.to_param, format: :js
+      xhr :get, 'new', venue_id: venue.to_param, format: :js
       expect(response).to be_success
     end
   end
 
   describe "POST 'create'" do
     it "returns http success" do
-      post 'create', venue_id: venue.to_param, format: :js
+      xhr :post, 'create', venue_id: venue.to_param, format: :js
       expect(response).to be_success
     end
 
     it "should not render form_dialog if no errors" do
       expect {
-        post 'create', venue_id: venue.to_param, activity: {activity_type_id: activity_type.to_param, campaign_id: campaign.to_param, company_user_id: @company_user.to_param}, format: :js
+        xhr :post, 'create', venue_id: venue.to_param, activity: {activity_type_id: activity_type.to_param, campaign_id: campaign.to_param, company_user_id: @company_user.to_param}, format: :js
       }.to change(Activity, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template(:create)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
     end
 
     it "should render the form_dialog template if errors" do
       expect {
-        post 'create', venue_id: venue.to_param, format: :js
+        xhr :post, 'create', venue_id: venue.to_param, format: :js
       }.not_to change(Activity, :count)
       expect(response).to render_template(:create)
-      expect(response).to render_template(:form_dialog)
+      expect(response).to render_template('_form_dialog')
       assigns(:venue).errors.count > 0
     end
 
     it "should assign the correct venue id" do
       expect {
-        post 'create', venue_id: venue.to_param, activity: {activity_type_id: activity_type.to_param, campaign_id: campaign.to_param, company_user_id: @company_user.to_param, activity_date: '05/23/2020'}, format: :js
+        xhr :post, 'create', venue_id: venue.to_param, activity: {activity_type_id: activity_type.to_param, campaign_id: campaign.to_param, company_user_id: @company_user.to_param, activity_date: '05/23/2020'}, format: :js
       }.to change(Activity, :count).by(1)
       expect(assigns(:venue)).to eq(venue)
       expect(assigns(:activity).activitable_id).to eq(venue.id)
@@ -82,7 +82,7 @@ describe ActivitiesController, :type => :controller do
 
   describe "GET 'edit'" do
     it "returns http success" do
-      get 'edit', venue_id: venue.to_param, id: activity.to_param, format: :js
+      xhr :get, 'edit', venue_id: venue.to_param, id: activity.to_param, format: :js
       expect(response).to be_success
     end
   end
@@ -93,7 +93,7 @@ describe ActivitiesController, :type => :controller do
 
     it "must update the activity attributes" do
       another_campaign.activity_types << activity_type
-      put 'update', venue_id: venue.to_param, id: activity.to_param, activity: {campaign_id: another_campaign.id, company_user_id: another_user.id, activity_date: '12/31/2013'}, format: :js
+      xhr :put, 'update', venue_id: venue.to_param, id: activity.to_param, activity: {campaign_id: another_campaign.id, company_user_id: another_user.id, activity_date: '12/31/2013'}, format: :js
       expect(assigns(:activity)).to eq(activity)
       expect(response).to be_success
       activity.reload
@@ -106,14 +106,14 @@ describe ActivitiesController, :type => :controller do
   describe "GET 'deactivate'" do
     it "deactivates an active activity for a venue" do
       activity.update_attribute(:active, true)
-      get 'deactivate', id: activity.to_param, format: :js
+      xhr :get, 'deactivate', id: activity.to_param, format: :js
       expect(response).to be_success
       expect(activity.reload.active?).to be_falsey
     end
 
     it "activates an inactive activity for a venue" do
       activity.update_attribute(:active, false)
-      get 'activate', id: activity.to_param, format: :js
+      xhr :get, 'activate', id: activity.to_param, format: :js
       expect(response).to be_success
       expect(activity.reload.active?).to be_truthy
     end

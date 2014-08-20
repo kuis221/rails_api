@@ -11,7 +11,7 @@
 #  option_type   :string(255)
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe FormFieldOption, :type => :model do
   it { is_expected.to belong_to(:form_field) }

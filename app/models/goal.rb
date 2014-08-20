@@ -34,16 +34,15 @@ class Goal < ActiveRecord::Base
 
   validates :kpi_id, uniqueness: { scope: [:parent_id, :parent_type, :goalable_id, :goalable_type, :kpis_segment_id] }, if: :kpi_id
 
-  validates_datetime :start_date, allow_nil: true, allow_blank: true
-  validates_datetime :due_date, allow_nil: true, allow_blank: true, :on_or_after => :start_date
+  validates :due_date, date: { on_or_after: :start_date }
 
-  scope :for_areas, lambda{|areas| where(goalable_type: 'Area', goalable_id: areas) }
-  scope :for_areas_and_places, lambda{|area_ids, place_ids| where('(goalable_type = ? and goalable_id in (?)) OR (goalable_type = ? and goalable_id in (?))', 'Area', area_ids, 'Place', place_ids) }
-  scope :for_users_and_teams, lambda{ where(goalable_type: ['CompanyUser', 'Team']) }
-  scope :in, lambda{|parent| where(parent_type: parent.class.name, parent_id: parent.id) }
-  scope :for, lambda{|goalable| where(goalable_type: goalable.class.name, goalable_id: goalable.id) }
-  scope :base, lambda{ where('parent_type is null') }
-  scope :with_value, lambda{ where('value is not null and value <> 0') }
+  scope :for_areas, ->(areas) { where(goalable_type: 'Area', goalable_id: areas) }
+  scope :for_areas_and_places, ->(area_ids, place_ids) { where('(goalable_type = ? and goalable_id in (?)) OR (goalable_type = ? and goalable_id in (?))', 'Area', area_ids, 'Place', place_ids) }
+  scope :for_users_and_teams, -> { where(goalable_type: ['CompanyUser', 'Team']) }
+  scope :in, ->(parent) { where(parent_type: parent.class.name, parent_id: parent.id) }
+  scope :for, ->(goalable) { where(goalable_type: goalable.class.name, goalable_id: goalable.id) }
+  scope :base, -> { where('parent_type is null') }
+  scope :with_value, -> { where('value is not null and value <> 0') }
 
   before_validation :set_kpi_id
 

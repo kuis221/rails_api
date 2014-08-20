@@ -9,11 +9,9 @@ class CompanyUsersController < FilteredController
 
   custom_actions collection: [:complete, :time_zone_change, :time_zone_update]
 
-  before_filter :validate_parent, only: [:enable_campaigns, :disable_campaigns, :remove_campaign, :select_campaigns, :add_campaign]
+  before_action :validate_parent, only: [:enable_campaigns, :disable_campaigns, :remove_campaign, :select_campaigns, :add_campaign]
 
   skip_load_and_authorize_resource only: [:export_status]
-
-  caches_action :notifications, expires_in: 15.minutes, cache_path: Proc.new { {company_user_id: current_company_user.id} }
 
   def autocomplete
     buckets = autocomplete_buckets({
@@ -67,7 +65,7 @@ class CompanyUsersController < FilteredController
 
   def select_company
     begin
-      company_user = current_user.company_users.find_by_company_id_and_active(params[:company_id], true) or raise ActiveRecord::RecordNotFound
+      company_user = current_user.company_users.find_by(company_id: params[:company_id], active: true) or raise ActiveRecord::RecordNotFound
       current_user.current_company = company_user.company
       current_user.update_column(:current_company_id, company_user.company.id)
       session[:current_company_id] = company_user.company_id
@@ -79,7 +77,7 @@ class CompanyUsersController < FilteredController
 
   def enable_campaigns
     if params[:parent_type] && params[:parent_id]
-      parent_membership = resource.memberships.find_or_create_by_memberable_type_and_memberable_id(params[:parent_type], params[:parent_id])
+      parent_membership = resource.memberships.find_or_create_by(memberable_type: params[:parent_type], memberable_id: params[:parent_id])
       @parent = parent_membership.memberable
       @campaigns = @parent.campaigns
       # Delete all campaign associations assigned to this user directly under this brand/portfolio
@@ -89,12 +87,12 @@ class CompanyUsersController < FilteredController
 
   def disable_campaigns
     if params[:parent_type] && params[:parent_id]
-      membership = resource.memberships.find_by_memberable_type_and_memberable_id(params[:parent_type], params[:parent_id])
+      membership = resource.memberships.find_by(memberable_type: params[:parent_type], memberable_id: params[:parent_id])
       unless membership.nil?
         resource.memberships.where(parent_id: membership.memberable.id, parent_type: membership.memberable.class.name).destroy_all
         # Assign all the campaings directly to the user
         membership.memberable.campaigns.each do |campaign|
-          resource.memberships.create({memberable: campaign, parent: membership.memberable}, without_protection: true)
+          resource.memberships.create(memberable: campaign, parent: membership.memberable)
         end
         membership.destroy
       end
@@ -112,9 +110,9 @@ class CompanyUsersController < FilteredController
       # If the parent is directly assigned to the user, then remove the parent and assign all the
       # current campaigns to the user
       unless membership.nil?
-        membership.memberable.campaigns.scoped_by_company_id(current_company.id).each do |campaign|
+        membership.memberable.campaigns.where(company_id: current_company.id).each do |campaign|
           unless campaign.id == params[:campaign_id].to_i
-            resource.memberships.create({memberable: campaign, parent: membership.memberable}, without_protection: true)
+            resource.memberships.create(memberable: campaign, parent: membership.memberable)
           end
         end
         membership.destroy
@@ -130,7 +128,7 @@ class CompanyUsersController < FilteredController
       membership = resource.memberships.where(memberable_type: params[:parent_type], memberable_id: params[:parent_id]).first
       if membership.nil?
         parent = params['parent_type'].constantize.find(params['parent_id'])
-        @campaigns = parent.campaigns.scoped_by_company_id(current_company.id).where(['campaigns.id not in (?)', resource.campaigns.children_of(parent).map(&:id)+[0]])
+        @campaigns = parent.campaigns.where(company_id: current_company.id).where(['campaigns.id not in (?)', resource.campaigns.children_of(parent).map(&:id)+[0]])
       end
     end
   end
@@ -139,14 +137,14 @@ class CompanyUsersController < FilteredController
     if params[:parent_type] && params[:parent_id] && params[:campaign_id]
       @parent = params['parent_type'].constantize.find(params['parent_id'])
       campaign = current_company.campaigns.find(params[:campaign_id])
-      resource.memberships.create({memberable: campaign, parent: @parent}, without_protection: true)
+      resource.memberships.create(memberable: campaign, parent: @parent)
       @campaigns = resource.campaigns.children_of(@parent)
     end
   end
 
   def export_status
     url = nil
-    export = ListExport.find_by_id_and_company_user_id(params[:download_id], current_company_user.id)
+    export = ListExport.find_by(id: params[:download_id], company_user_id: current_company_user.id)
     url = export.download_url if export.completed? && export.file_file_name
     respond_to do |format|
       format.json { render json:  {status: export.aasm_state, progress: export.progress, url: url} }
@@ -214,11 +212,11 @@ class CompanyUsersController < FilteredController
       list = {}
       current_company.brand_portfolios.active.each do |portfolio|
         enabled = resource.brand_portfolios.include?(portfolio)
-        list[portfolio] = {enabled: enabled, campaigns: (enabled ? portfolio.campaigns.scoped_by_company_id(current_company.id) : resource.campaigns.scoped_by_company_id(current_company.id).children_of(portfolio) ) }
+        list[portfolio] = {enabled: enabled, campaigns: (enabled ? portfolio.campaigns.where(company_id: current_company.id) : resource.campaigns.where(company_id: current_company.id).children_of(portfolio) ) }
       end
       current_company.brands.active.each do |brand|
         enabled = resource.brands.include?(brand)
-        list[brand] = {enabled: enabled, campaigns: (enabled ? brand.campaigns.scoped_by_company_id(current_company.id) : resource.campaigns.scoped_by_company_id(current_company.id).children_of(brand) ) }
+        list[brand] = {enabled: enabled, campaigns: (enabled ? brand.campaigns.where(company_id: current_company.id) : resource.campaigns.where(company_id: current_company.id).children_of(brand) ) }
       end
       list
     end

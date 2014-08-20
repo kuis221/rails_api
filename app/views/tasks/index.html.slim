@@ -18,7 +18,7 @@
 
     .main
       #list-view.tab-pane.active
-        = render partial: 'table', locals: {source: url_for(action: :items)}
+        = render partial: 'table', locals: {source: url_for(action: :items, scope: params[:scope] )}
 
 = render partial: 'help_tutorial'
 

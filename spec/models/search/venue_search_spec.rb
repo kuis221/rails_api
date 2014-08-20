@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Venue, type: :model, search: true do
   it "should search for venues" do

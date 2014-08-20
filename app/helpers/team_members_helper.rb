@@ -70,7 +70,7 @@ module TeamMembersHelper
       end
 
       def company_users
-        @company_users ||= CompanyUser.active.scoped_by_company_id(current_company).joins(:user, :role).where('users.invitation_accepted_at is not null')
+        @company_users ||= CompanyUser.active.where(company_id: current_company).joins(:user, :role).where('users.invitation_accepted_at is not null')
       end
       def company_teams
         @company_teams ||= current_company.teams.active.order('teams.name ASC')
@@ -89,12 +89,14 @@ module TeamMembersHelper
 
       def assignable_staff_members
         users = company_users.where(['company_users.id not in (?)', resource.user_ids+[0]])
-        ActiveRecord::Base.connection.select_all("
-          #{users.select('company_users.id, users.first_name || \' \' || users.last_name AS name, roles.name as description, \'user\' as type').reorder(nil).to_sql}
-          UNION ALL
-          #{assignable_teams.select('teams.id, teams.name, teams.description, \'team\' as type').reorder(nil).to_sql}
-          ORDER BY name
-        ")
+        ActiveRecord::Base.connection.unprepared_statement do
+          ActiveRecord::Base.connection.select_all("
+            #{users.select('company_users.id, users.first_name || \' \' || users.last_name AS name, roles.name as description, \'user\' as type').reorder(nil).to_sql}
+            UNION ALL
+            #{assignable_teams.select('teams.id, teams.name, teams.description, \'team\' as type').reorder(nil).to_sql}
+            ORDER BY name
+          ")
+        end
       end
   end
 

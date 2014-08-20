@@ -27,32 +27,32 @@ class CompanyUser < ActiveRecord::Base
   validates :role_id, presence: true, numericality: true
   validates :company_id, presence: true, numericality: true, uniqueness: {scope: :user_id}
 
-  before_validation :set_default_notifications_settings, :on => :create
+  before_validation :set_default_notifications_settings, on: :create
 
   has_many :memberships, dependent: :destroy
   has_many :contact_events, dependent: :destroy, as: :contactable
 
   # Teams-Users relationship
-  has_many :teams, :through => :memberships, :source => :memberable, :source_type => 'Team', conditions: {active: true}
+  has_many :teams, ->{ where active: true }, through: :memberships, source: :memberable, source_type: 'Team'
 
   # Campaigns-Users relationship
-  has_many :campaigns, :through => :memberships, :source => :memberable, :source_type => 'Campaign', conditions: {aasm_state: 'active'} do
+  has_many :campaigns, ->{ where(aasm_state: 'active') }, through: :memberships, source: :memberable, source_type: 'Campaign' do
     def children_of(parent)
       where(memberships: {parent_id: parent.id, parent_type: parent.class.name})
     end
   end
 
   # Events-Users relationship
-  has_many :events, :through => :memberships, :source => :memberable, :source_type => 'Event'
+  has_many :events, through: :memberships, source: :memberable, source_type: 'Event'
 
   # Area-User relationship
-  has_many :areas, through: :memberships, :source => :memberable, :source_type => 'Area', conditions: {active: true}, after_remove: :remove_child_goals_for
+  has_many :areas, ->{ where active: true }, through: :memberships, source: :memberable, source_type: 'Area', after_remove: :remove_child_goals_for
 
   # BrandPortfolio-User relationship
-  has_many :brand_portfolios, through: :memberships, :source => :memberable, :source_type => 'BrandPortfolio', conditions: {active: true}
+  has_many :brand_portfolios, ->{ where active: true }, through: :memberships, source: :memberable, source_type: 'BrandPortfolio'
 
   # BrandPortfolio-User relationship
-  has_many :brands, through: :memberships, :source => :memberable, :source_type => 'Brand', conditions: {active: true}
+  has_many :brands, ->{ where active: true }, through: :memberships, source: :memberable, source_type: 'Brand'
 
   # Places-Users relationship
   has_many :placeables, as: :placeable, dependent: :destroy
@@ -85,20 +85,20 @@ class CompanyUser < ActiveRecord::Base
       'new_campaign' => [{action: :read, subject_class: Campaign}]
   }
 
-  scope :active, -> { where(:active => true) }
+  scope :active, -> { where(active: true) }
   scope :admin, -> { joins(:role).where(roles: {is_admin: true}) }
-  scope :by_teams, lambda{|teams| joins(:memberships).where(memberships: {memberable_id: teams, memberable_type: 'Team'}) }
-  scope :by_campaigns, lambda{|campaigns| joins(:memberships).where(memberships: {memberable_id: campaigns, memberable_type: 'Campaign'}) }
-  scope :by_events, lambda{|events| joins(:memberships).where(memberships: {memberable_id: events, memberable_type: 'Event'}) }
+  scope :by_teams, ->(teams) { joins(:memberships).where(memberships: {memberable_id: teams, memberable_type: 'Team'}) }
+  scope :by_campaigns, ->(campaigns) { joins(:memberships).where(memberships: {memberable_id: campaigns, memberable_type: 'Campaign'}) }
+  scope :by_events, ->(events) { joins(:memberships).where(memberships: {memberable_id: events, memberable_type: 'Event'}) }
 
   # Returns all users that have at least one of the given notifications
   scope :with_notifications, ->(notifications) { where(notifications.map{|n| '? = ANY(notifications_settings)' }.join(' OR '), *notifications) }
 
-  scope :with_confirmed_phone_number, -> { joins(:user).where('users.phone_number is not null') }
+  scope :with_confirmed_phone_number, -> { joins(:user).where('users.phone_number is not null AND users.phone_number_verified=?', true) }
 
   scope :with_timezone, -> { joins(:user).where('users.time_zone is not null') }
 
-  scope :with_user_and_role, lambda{ joins([:role, :user]).includes([:role, :user]) }
+  scope :with_user_and_role, -> { joins([:role, :user]).includes([:role, :user]) }
 
   searchable do
     integer :id
@@ -162,8 +162,8 @@ class CompanyUser < ActiveRecord::Base
       else
         (
           campaign_ids +
-          Campaign.scoped_by_company_id(company_id).joins(:brands).where(brands: {id: brand_ids}).pluck('campaigns.id') +
-          Campaign.scoped_by_company_id(company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids}).pluck('campaigns.id')
+          Campaign.where(company_id: company_id).joins(:brands).where(brands: {id: brand_ids}).pluck('campaigns.id') +
+          Campaign.where(company_id: company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids}).pluck('campaigns.id')
         ).uniq
       end
     end
@@ -237,7 +237,7 @@ class CompanyUser < ActiveRecord::Base
   end
 
   def dismiss_alert(alert, version=1)
-    alerts.find_or_create_by_name_and_version(alert, version)
+    alerts.find_or_create_by(name: alert, version: version)
   end
 
   def notification_setting_permission?(type)
@@ -251,7 +251,7 @@ class CompanyUser < ActiveRecord::Base
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)
       options = {include: [:user, :role]}
-      ss = solr_search(options) do
+      solr_search(options) do
         with(:company_id, params[:company_id])
         with(:campaign_ids, params[:campaign]) if params.has_key?(:campaign) and params[:campaign]
         with(:team_ids, params[:team]) if params.has_key?(:team) and params[:team]
@@ -279,15 +279,14 @@ class CompanyUser < ActiveRecord::Base
         end
 
         order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
-        paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+        paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
       end
     end
 
     def for_dropdown
-      ActiveRecord::Base.connection.select_all(
-        self.select("users.first_name || \' \' || users.last_name as name, company_users.id").
-        joins(:user).order('lower(users.first_name || \' \' || users.last_name)').to_sql
-      ).map{|r| [r['name'], r['id']] }
+      self.joins(:user).
+        order('lower(users.first_name || \' \' || users.last_name)').
+        pluck('users.first_name || \' \' || users.last_name as name, company_users.id')
     end
   end
 

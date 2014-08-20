@@ -8,7 +8,7 @@
         .pull-left
           = f.input :reference, :as => :location, label: 'Place', input_html: {class: 'seach-box'}, wrapper_html: {class: 'form-horizontal'}
         .pull-right
-          = f.button :submit, 'Add Place', class: 'btn-primary', disable_with: 'Please wait...'
+          = f.button :submit, 'Add Place', class: 'btn-primary', data: {disable_with: 'Please wait...'}
 
 javascript:
   $('.modal .places-autocomplete').placesAutocomplete();

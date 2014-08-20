@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe TagsController, :type => :controller do
   before(:each) do
@@ -15,7 +15,7 @@ describe TagsController, :type => :controller do
 
     it "removes an active tag from a photo" do
       @attached_asset.tags << @tag
-      get 'remove', id: @tag.to_param, attached_asset_id: @attached_asset.to_param, format: :js
+      xhr :get, 'remove', id: @tag.to_param, attached_asset_id: @attached_asset.to_param, format: :js
       expect(response).to be_success
     end
   end
@@ -23,7 +23,7 @@ describe TagsController, :type => :controller do
   describe "GET 'activate'" do
 
     it "activates an inactive campaign" do
-      get 'activate', id: @tag.to_param, attached_asset_id: @attached_asset.to_param, format: :js
+      xhr :get, 'activate', id: @tag.to_param, attached_asset_id: @attached_asset.to_param, format: :js
       expect(response).to be_success
       #campaign.reload.active?.should be_truthy
     end

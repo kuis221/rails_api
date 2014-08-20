@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Results::EventDataController, :type => :controller do
   before(:each) do
@@ -18,14 +18,14 @@ describe Results::EventDataController, :type => :controller do
     it "should return http success" do
       get 'items'
       expect(response).to be_success
-      expect(response).to render_template('totals')
+      expect(response).to render_template('_totals')
     end
   end
 
   describe "GET 'index'" do
     it "queue the job for export the list" do
       expect{
-        get :index, format: :xls
+        xhr :get, :index, format: :xls
       }.to change(ListExport, :count).by(1)
       export = ListExport.last
       expect(ListExportWorker).to have_queued(export.id)
@@ -38,7 +38,7 @@ describe Results::EventDataController, :type => :controller do
     end
     let(:campaign) { FactoryGirl.create(:campaign, company: @company, name: 'Test Campaign FY01') }
     it "should return an empty book with the correct headers" do
-      expect { get 'index', format: :xls }.to change(ListExport, :count).by(1)
+      expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
       spreadsheet_from_last_export do |doc|
         rows = doc.elements.to_a('//Row')
         expect(rows.count).to eql 1
@@ -69,7 +69,7 @@ describe Results::EventDataController, :type => :controller do
         ethnicity_asian: 18, ethnicity_native_american: 19, ethnicity_black: 20, ethnicity_hispanic: 21, ethnicity_white: 22)
       Sunspot.commit
 
-      expect { get 'index', format: :xls }.to change(ListExport, :count).by(1)
+      expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
       spreadsheet_from_last_export do |doc|
         rows = doc.elements.to_a('//Row')
         expect(rows[1].elements.to_a('Cell/Data').map{|d| d.text }).to eql [
@@ -91,7 +91,7 @@ describe Results::EventDataController, :type => :controller do
       event.save
       Sunspot.commit
 
-      expect { get 'index', campaign: [campaign.id], format: :xls }.to change(ListExport, :count).by(1)
+      expect { xhr :get, 'index', campaign: [campaign.id], format: :xls }.to change(ListExport, :count).by(1)
       spreadsheet_from_last_export do |doc|
         rows = doc.elements.to_a('//Row')
         expect(rows[0].elements.to_a('Cell/Data').map{|d| d.text }).to include('A CUSTOM KPI')
@@ -142,7 +142,7 @@ describe Results::EventDataController, :type => :controller do
 
       Sunspot.commit
 
-      expect { get 'index', campaign: [campaign.id], format: :xls }.to change(ListExport, :count).by(1)
+      expect { xhr :get, 'index', campaign: [campaign.id], format: :xls }.to change(ListExport, :count).by(1)
       spreadsheet_from_last_export do |doc|
         rows = doc.elements.to_a('//Row')
         expect(rows.count).to eql 2
@@ -179,7 +179,7 @@ describe Results::EventDataController, :type => :controller do
 
       Sunspot.commit
 
-      expect { get 'index', campaign: [campaign.id, campaign2.id], format: :xls }.to change(ListExport, :count).by(1)
+      expect { xhr :get, 'index', campaign: [campaign.id, campaign2.id], format: :xls }.to change(ListExport, :count).by(1)
       spreadsheet_from_last_export do |doc|
         rows = doc.elements.to_a('//Row')
         expect(rows[0].elements.to_a('Cell/Data').map{|d| d.text }).to include('A CUSTOM KPI', 'ANOTHER KPI')
@@ -201,7 +201,7 @@ describe Results::EventDataController, :type => :controller do
 
       Sunspot.commit
 
-      expect { get 'index', format: :xls, campaign: [campaign.id] }.to change(ListExport, :count).by(1)
+      expect { xhr :get, 'index', format: :xls, campaign: [campaign.id] }.to change(ListExport, :count).by(1)
       spreadsheet_from_last_export do |doc|
         rows = doc.elements.to_a('//Row')
         expect(rows.count).to eql 2
@@ -233,7 +233,7 @@ describe Results::EventDataController, :type => :controller do
 
       Sunspot.commit
 
-      expect { get 'index', campaign: [campaign.id], format: :xls }.to change(ListExport, :count).by(1)
+      expect { xhr :get, 'index', campaign: [campaign.id], format: :xls }.to change(ListExport, :count).by(1)
       spreadsheet_from_last_export do |doc|
         rows = doc.elements.to_a('//Row')
         expect(rows.count).to eql 3

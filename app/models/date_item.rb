@@ -18,11 +18,9 @@ class DateItem < ActiveRecord::Base
   RECURRENCE_TYPES = %w(daily weekly monthly yearly)
 
   validates :date_range_id, presence: true, numericality: true
+  validates :end_date, date: { on_or_after: :start_date, message: 'must be after' }
 
   belongs_to :date_range
-
-  validates_date :start_date, allow_nil: true, allow_blank: true
-  validates_date :end_date, on_or_after: :start_date, allow_blank: true
 
   delegate :company_id, to: :date_range
 

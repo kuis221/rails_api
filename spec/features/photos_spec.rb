@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 feature "Photos", js: true do
 
@@ -8,7 +8,6 @@ feature "Photos", js: true do
     @company = @user.companies.first
     sign_in @user
     Kpi.create_global_kpis
-    allow_any_instance_of(AttachedAsset).to receive(:save_attached_files).and_return(true)
   end
 
   after do
@@ -78,7 +77,7 @@ feature "Photos", js: true do
         find('.rating span:nth-child(3)').trigger('click')
         wait_for_ajax
         expect(photo.reload.rating).to eql 3
-        click_button 'Close'
+        click_js_link 'Close'
       end
       ensure_modal_was_closed
 
@@ -155,7 +154,7 @@ feature "Photos", js: true do
         select2_add_tag "Add tags", 'tag1'
         expect(find('.tags .list')).to have_content 'tag1'
 
-        click_button 'Close'
+        click_js_link 'Close'
       end
 
       within gallery_box do
@@ -165,14 +164,14 @@ feature "Photos", js: true do
       within gallery_modal do
         within find('.tags .list .tag') do
           expect(page).to have_content 'tag1'
-          find('button.close').trigger('click')
+          click_js_link 'Remove Tag'
           wait_for_ajax
         end
       end
 
       within gallery_modal do
         expect(page).to have_no_content 'tag1'
-        click_js_button 'Close'
+        click_js_link 'Close'
       end
 
       within gallery_box do

@@ -2,12 +2,12 @@
   .row-fluid.campaigns-group-header
     .pull-left
       div class="switch-toggle #{enabled ? 'active' : 'inactive'}" id="campaigns-toggle-#{parent.class.name}-#{parent.id}"
-        a.btn.btn-small.toggle-on-btn href="#" id="toggle-bucket-off" data-parent-id="#{parent.id}" data-parent-type="#{parent.class.name}"
+        a.btn.btn-small.toggle-on-btn href="#" id="toggle-bucket-off" title="Toggle OFF" data-parent-id="#{parent.id}" data-parent-type="#{parent.class.name}"
           .on ALL
           span
-        a.btn.btn-small.toggle-off-btn href="#" id="toggle-bucket-on" data-parent-id="#{parent.id}" data-parent-type="#{parent.class.name}"
+        a.btn.btn-small.toggle-off-btn href="#" id="toggle-bucket-on" title="Toggle ON" data-parent-id="#{parent.id}" data-parent-type="#{parent.class.name}"
           span
-          .off 
+          .off
     .pull-left
       h4 = parent.name
 

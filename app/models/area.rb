@@ -28,9 +28,9 @@ class Area < ActiveRecord::Base
 
   has_and_belongs_to_many :campaigns, :order => 'name ASC'
 
-  scope :active, lambda{ where(active: true) }
-  scope :not_in_venue, lambda{|place| where("areas.id not in (?)", place.area_ids + [0]) }
-  scope :accessible_by_user, lambda {|company_user| company_user.is_admin? ? scoped() : where(id: company_user.area_ids) }
+  scope :active, ->{ where(active: true) }
+  scope :not_in_venue, ->(place) { where("areas.id not in (?)", place.area_ids + [0]) }
+  scope :accessible_by_user, ->(company_user) { company_user.is_admin? ? all : where(id: company_user.area_ids) }
   serialize :common_denominators
 
   before_save :initialize_common_denominators
@@ -54,7 +54,7 @@ class Area < ActiveRecord::Base
   def locations
     @locations ||= Rails.cache.fetch("area_locations_#{id}") do
       Location.joins('INNER JOIN places ON places.location_id=locations.id').
-        where(places: {id: self.places, is_location: true}).group('locations.id')
+        where(places: {id: self.place_ids, is_location: true}).group('locations.id').to_a
     end
   end
 
@@ -102,7 +102,7 @@ class Area < ActiveRecord::Base
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)
-      ss = solr_search do
+      solr_search do
         with(:company_id, params[:company_id])
         with(:status, params[:status]) if params.has_key?(:status) and params[:status].present?
         if params.has_key?(:q) and params[:q].present?

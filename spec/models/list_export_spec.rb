@@ -17,7 +17,7 @@
 #  progress          :integer          default(0)
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe ListExport, :type => :model do
   let(:company_user) { FactoryGirl.create(:company_user) }

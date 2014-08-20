@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 feature 'Events section' do
   let(:company) { FactoryGirl.create(:company) }
@@ -719,6 +719,7 @@ feature 'Events section' do
         hover_and_click('#event-team-members #event-member-'+pablo_user.id.to_s, 'Remove Member')
 
         confirm_prompt 'Any tasks that are assigned to Pablo Baltodano must be reassigned. Would you like to remove Pablo Baltodano from the event team?'
+        expect(page).not_to have_content('Pablo Baltodano')
 
         # Refresh the page and make sure the user is not there
         visit event_path(event)
@@ -812,7 +813,7 @@ feature 'Events section' do
           fill_in 'Email', with: 'pedro@racadura.com'
           fill_in 'Phone number', with: '+1 505 22343222'
           fill_in 'Address', with: 'ABC 123'
-          select_from_chosen('United States', :from => 'Country')
+          select_from_chosen('United States of America', :from => 'Country')
           select_from_chosen('California', :from => 'State')
           fill_in 'City', with: 'Los Angeles'
           fill_in 'Zip code', with: '12345'
@@ -915,6 +916,7 @@ feature 'Events section' do
         # is refreshed and the task unassigned
         hover_and_click("#event-member-#{juanito_user.id.to_s}", 'Remove Member')
         confirm_prompt 'Any tasks that are assigned to Juanito Bazooka must be reassigned. Would you like to remove Juanito Bazooka from the event team?'
+        expect(page).to_not have_content('Juanito Bazooka')
 
         # refresh the page to make that the tasks were unassigned
         # TODO: the refresh should not be necessary but it looks like that it's not

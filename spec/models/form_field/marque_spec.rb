@@ -9,7 +9,7 @@
 #  updated_at :datetime         not null
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe FormField::Marque, :type => :model do
   describe "#field_options" do

@@ -7,11 +7,11 @@ class Api::V1::ApiController < ActionController::Base
   rescue_from 'Api::V1::InvalidCompany', with: :invalid_company
   rescue_from 'ActiveRecord::RecordNotFound', with: :record_not_found
 
-  before_filter :ensure_valid_request
-  before_filter :cors_preflight_check
+  before_action :ensure_valid_request
+  before_action :cors_preflight_check
   after_filter :set_access_control_headers
 
-  before_filter :set_user
+  before_action :set_user
 
   load_and_authorize_resource only: [:show, :edit, :update, :destroy], unless: :skip_default_validation
   authorize_resource only: [:create, :index], unless: :skip_default_validation

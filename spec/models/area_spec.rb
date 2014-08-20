@@ -14,7 +14,7 @@
 #  common_denominators :text
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe Area, :type => :model do
   it { is_expected.to belong_to(:company) }

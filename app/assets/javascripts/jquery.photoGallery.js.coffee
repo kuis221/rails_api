@@ -130,8 +130,9 @@ $.widget 'nmk.photoGallery', {
 
 	setTagCloseButton: (tag) ->
 		if 'deactivate_tag' in @image.data('permissions')
-			button = $('<button class="icon-close">').on 'click', (e) =>
+			button = $('<a href="#" class="icon-close remove-tag" title="Remove Tag">').on 'click', (e) =>
 				@removeTag(tag)
+				false
 
 	removeTag: (tag) ->
 		$.ajax "/attached_assets/"+@image.data('id')+'/tags/'+tag['id']+'/remove', {
@@ -231,7 +232,7 @@ $.widget 'nmk.photoGallery', {
 			@gallery = $('<div class="gallery-modal modal hide fade">').append(
 				$('<div class="gallery-modal-inner">').append(
 					$('<div class="panel">').
-						append('<button class="icon-close" data-dismiss="modal" aria-hidden="true" title="Close"></button>').
+						append('<a href="#" class="icon-close close-gallery" data-dismiss="modal" aria-hidden="true" title="Close"></a>').
 						append(
 							$('<div class="description">').append( @title ).append( @date ).append( @address ),
 							$('<div class="mini-slider">').append( @miniCarousel = @_createCarousel('small') ),

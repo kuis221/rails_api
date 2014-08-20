@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 require 'open-uri'
 
 feature "Reports", js: true do

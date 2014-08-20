@@ -13,7 +13,7 @@
 #  description   :text
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe BrandPortfolio, :type => :model do
   it { is_expected.to validate_presence_of(:name) }

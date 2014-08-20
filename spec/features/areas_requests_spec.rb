@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 feature "Areas", js: true, search: true  do
   let(:company) { FactoryGirl.create(:company) }
@@ -108,15 +108,15 @@ feature "Areas", js: true, search: true  do
           within("li#area_#{areas[0].id}") do
             expect(page).to have_text('Gran Area Metropolitana')
             expect(page).to have_text('Ciudades principales de Costa Rica')
-            expect(page).to have_selector('a.edit')
-            expect(page).to have_selector('a.disable')
+            expect(page).to have_link('Edit')
+            expect(page).to have_link('Deactivate')
           end
           # Second Row
           within("li#area_#{areas[1].id}") do
             expect(page).to have_text('Zona Norte')
             expect(page).to have_text('Ciudades del Norte de Costa Rica')
-            expect(page).to have_selector('a.edit')
-            expect(page).to have_selector('a.disable')
+            expect(page).to have_link('Edit')
+            expect(page).to have_link('Deactivate')
           end
         end
       end

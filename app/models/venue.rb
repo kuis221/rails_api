@@ -29,7 +29,7 @@ class Venue < ActiveRecord::Base
   belongs_to :place
 
   has_many :events, through: :place
-  has_many :activities, as: :activitable, :order => 'activity_date ASC' do
+  has_many :activities, -> { order('activity_date ASC') }, as: :activitable do
     def include_from_events
       events_activities = Activity.
         where(

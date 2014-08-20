@@ -31,7 +31,7 @@ class Legacy::Program  < Legacy::Record
 
   def synchronize(company, attributes={})
     attributes.merge!({company_id: company.id})
-    campaing = ::Campaign.where('lower(name) = ? and company_id=?', name.strip.downcase, company.id).first || ::Campaign.new({name: name.strip}, without_protection: true)
+    campaing = ::Campaign.where('lower(name) = ? and company_id=?', name.strip.downcase, company.id).first || ::Campaign.new(name: name.strip)
     migration = data_migrations.find_or_initialize_by_company_id(company.id, local: campaing)
     if migration.local.new_record? || migration.local.form_fields.count == 0
       migration.local.assign_all_global_kpis(false)

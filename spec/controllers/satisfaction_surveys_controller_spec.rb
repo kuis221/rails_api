@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe SatisfactionSurveysController, :type => :controller do
   before(:each) do
@@ -13,7 +13,7 @@ describe SatisfactionSurveysController, :type => :controller do
 
     it "should create a new satisfaction survey" do
       expect {
-        post 'create', rating: 'neutral', feedback: 'This is my feeling', format: :js
+        xhr :post, 'create', rating: 'neutral', feedback: 'This is my feeling', format: :js
       }.to change(SatisfactionSurvey, :count).by(1)
       expect(response).to be_success
       satisfaction = SatisfactionSurvey.last
@@ -24,7 +24,7 @@ describe SatisfactionSurveysController, :type => :controller do
 
     it "should not create a new satisfaction survey" do
       expect {
-        post 'create', format: :js
+        xhr :post, 'create', format: :js
       }.to_not change(SatisfactionSurvey, :count)
     end
 

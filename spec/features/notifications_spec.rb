@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 feature "Notifications", search: true, js: true do
   let(:company) { FactoryGirl.create(:company) }
@@ -76,6 +76,62 @@ feature "Notifications", search: true, js: true do
       # reload page and make sure that only the two events are still there
       expect(current_path).to eql events_path
       expect(page).to have_selector('#events-list li', count: 2)
+    end
+
+    it "should receive notifications when user is added to a event's team" do
+      company_user.update_attributes(notifications_settings: ['new_event_team_app'])
+      event = without_current_user { FactoryGirl.create(:event, company: company, campaign: campaign, place: place) }
+      Sunspot.commit
+
+      visit event_path(event)
+
+      expect(page).not_to have_notification 'You have a new event'
+
+      click_js_link 'Add Team Member'
+      within visible_modal do
+        fill_in 'staff-search-item', with: user.name
+        click_js_link("Add")
+      end
+      close_modal
+
+      visit events_path
+      expect(page).to have_selector('#events-list li', count: 1)
+
+      # Visit event and make sure the notification is removed
+      visit event_path(event)
+
+      expect(page).not_to have_notification 'You have a new event'
+    end
+
+
+    it "should receive notifications when user's team is added to a event's team" do
+      company_user.update_attributes(notifications_settings: ['new_event_team_app'])
+      event = without_current_user { FactoryGirl.create(:event, company: company, campaign: campaign, place: place) }
+      Sunspot.commit
+
+      team = FactoryGirl.create(:team, name: 'SuperAmigos', company: company)
+      team.users << company_user
+
+      visit event_path(event)
+
+      expect(page).not_to have_notification 'You have a new event'
+
+      click_js_link 'Add Team Member'
+      within visible_modal do
+        fill_in 'staff-search-item', with: 'SuperAmigos'
+        click_js_link("Add")
+        expect(page).not_to have_content('SuperAmigos')
+      end
+      close_modal
+      expect(event.teams).to include(team)
+
+      visit events_path
+      expect(page).to have_selector('#events-list li', count: 1)
+
+      # Visit event and make sure the notification is removed
+      visit event_path(event)
+
+      expect(page).not_to have_notification 'You have a new event'
     end
 
     it "should remove notifications for new events visited" do
@@ -255,7 +311,7 @@ feature "Notifications", search: true, js: true do
 
       visit current_url
 
-      # reload page and make sure that only the two events are still there
+      # reload page and make sure that the two campaigns are still there
       expect(current_path).to eql campaigns_path
       expect(page).to have_selector('#campaigns-list li', count: 2)
     end
@@ -281,7 +337,7 @@ feature "Notifications", search: true, js: true do
     end
 
     feature "notification alert policy set to ALL" do
-      before { company.update_attribute(:settings, {event_alerts_policy: Notification::EVENT_ALERT_POLICY_ALL}) }
+      before { company.update_attribute(:event_alerts_policy, Notification::EVENT_ALERT_POLICY_ALL) }
 
       it "should receive notifications for late events recaps" do
         company_user.update_attributes({notifications_settings: ['event_recap_late_app']})
@@ -354,7 +410,7 @@ feature "Notifications", search: true, js: true do
       before { company_user.campaigns << [campaign] }
       before { company_user.places << place }
       let(:permissions) { [
-        [:index, 'Event'], [:view_list, 'Event'], [:show, 'Event'],
+        [:index, 'Event'], [:view_list, 'Event'], [:show, 'Event'], [:add_members, 'Event'], [:view_members, 'Event'],
         [:index_my, 'Task'], [:index_team, 'Task'], [:read, 'Campaign']
       ] }
     end
@@ -370,7 +426,7 @@ feature "Notifications", search: true, js: true do
 
   def add_permissions(permissions)
     permissions.each do |p|
-      company_user.role.permissions.create({action: p[0], subject_class: p[1]}, without_protection: true)
+      company_user.role.permissions.create(action: p[0], subject_class: p[1])
     end
   end
 end

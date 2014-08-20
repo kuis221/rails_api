@@ -18,8 +18,8 @@
 
 # for storing a pulldown menu choice
 class Metric::Select < Metric
-  has_many :metric_options, :foreign_key => :metric_id, :dependent => :destroy, :order => "id ASC"
-  accepts_nested_attributes_for :metric_options, :allow_destroy => false, :reject_if => proc { |attributes| attributes['name'].blank? }
+  has_many :metric_options, ->{ order "id ASC" }, :foreign_key => :metric_id, :dependent => :destroy
+  accepts_nested_attributes_for :metric_options, :allow_destroy => false, reject_if: ->(attributes){ attributes['name'].blank? }
 
   validates_presence_of :style
   validates_inclusion_of :style, :in => %w( select radio )

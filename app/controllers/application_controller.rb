@@ -3,9 +3,9 @@ class ApplicationController < ActionController::Base
 
   around_filter :scope_current_user
 
-  skip_before_filter :verify_authenticity_token, :if =>lambda{ params[:authenticity_token].present? && params[:authenticity_token] == 'S3CR37Master70k3N' }
+  skip_before_action :verify_authenticity_token, :if =>lambda{ params[:authenticity_token].present? && params[:authenticity_token] == 'S3CR37Master70k3N' }
 
-  before_filter :authenticate_user!
+  before_action :authenticate_user!
   after_filter :update_user_last_activity
 
   layout :set_layout

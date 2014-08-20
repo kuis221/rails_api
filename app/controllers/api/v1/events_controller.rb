@@ -1484,7 +1484,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   EOS
   def add_contact
     authorize! :create_contacts, resource
-    contact = resource.contact_events.build({contactable: load_contactable_from_request}, without_protection: true)
+    contact = resource.contact_events.build(contactable: load_contactable_from_request)
     if contact.save
       result = { :success => true,
                  :info => "Contact successfully added to event",
@@ -1599,9 +1599,9 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
     def build_memberable_from_request
       if params[:memberable_type] == 'team'
-        resource.teamings.build({team: current_company.teams.find(params[:memberable_id])}, without_protection: true)
+        resource.teamings.build(team: current_company.teams.find(params[:memberable_id]))
       else
-        resource.memberships.build({company_user: current_company.company_users.find(params[:memberable_id])}, without_protection: true)
+        resource.memberships.build(company_user: current_company.company_users.find(params[:memberable_id]))
       end
     end
 

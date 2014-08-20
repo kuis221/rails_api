@@ -17,14 +17,12 @@
 
 class Notification < ActiveRecord::Base
   belongs_to :company_user
-  attr_accessible :icon, :level, :message, :message_params, :extra_params, :params, :path
 
   EVENT_ALERT_POLICY_TEAM = 1 # Notify only to users in the event team
   EVENT_ALERT_POLICY_ALL = 2  # Notify only to ALL users that can access the event
 
   serialize :message_params
   serialize :extra_params
-  serialize :params, ActiveRecord::Coders::Hstore
 
   scope :new_tasks, -> { where(message: 'new_task').where("params ? 'task_id'") }
   scope :new_events, -> { where(message: 'new_event').where("params ? 'event_id'") }
@@ -67,7 +65,7 @@ class Notification < ActiveRecord::Base
         email_message = I18n.translate("notifications_email.new_event", url: Rails.application.routes.url_helpers.event_url(event))
         UserMailer.notification(user.id, I18n.translate("notification_types.new_event"), email_message).deliver
       end
-      notification = user.notifications.create(path: path, level: 'grey', message: message, icon: 'event', message_params: message_params, params: {event_id: event.id})
+      notification = user.notifications.create(path: path, level: 'grey', message: message, icon: 'events', message_params: message_params, params: {event_id: event.id})
     end
   end
 
@@ -95,30 +93,27 @@ class Notification < ActiveRecord::Base
          (team && user.allow_notification?('new_unassigned_team_task_email'))
         UserMailer.notification(user.id, email_subject, email_message).deliver
       end
-      notification = user.notifications.create(path: path, level: 'grey', message: message, message_params: {task: task.title}, icon: 'task', params: {task_id: task.id})
+      notification = user.notifications.create(path: path, level: 'grey', message: message, message_params: {task: task.title}, icon: 'tasks', params: {task_id: task.id})
     end
   end
 
   def self.grouped_notifications_counts(notifications)
-    Hash[connection.select_rows(notifications.select('message, count(notifications.id)').group('notifications.message').to_sql)]
+    Hash[connection.select_rows(connection.unprepared_statement{
+      notifications.select('message, count(notifications.id)').group('notifications.message').to_sql
+    })]
   end
 
   # Sends late/due events notifications to users that have it enabled
   def self.send_late_event_sms_notifications
-    late_date = 2.days.ago.strftime('%Y-%m-%d')
-    due_date = Date.today.strftime('%Y-%m-%d %H:%M:%S')
     CompanyUser.includes(:company).active.with_confirmed_phone_number.with_timezone.
-    with_notifications(['event_recap_late', 'event_recap_due']).find_each do |user|
+    with_notifications(['event_recap_late_sms', 'event_recap_due_sms']).find_each do |user|
       date_field = (user.company.timezone_support? ? :local_end_at : :end_at)
-      due_date = user.company.timezone_support? ?
-                    Timeliness.parse(Time.now.strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC') :
-                    Time.now.utc
-      late_date = (due_date - 2.days).beginning_of_day.strftime('%Y-%m-%d %H:%M:%S')
-      due_date = due_date.strftime('%Y-%m-%d %H:%M:%S')
+      due_date = user.company.due_event_end_date.utc
+      late_date = user.company.late_event_end_date.utc
 
       events_scope = Event.active.unsent.accessible_by_user(user).with_user_in_team(user)
-      late_count = user.allow_notification?('event_recap_late') ? events_scope.where("#{date_field} < ?", late_date).count : 0
-      due_count = user.allow_notification?('event_recap_due') ? events_scope.where("#{date_field} < ? AND #{date_field} > ?", due_date, late_date).count : 0
+      late_count = user.allow_notification?('event_recap_late_sms') ? events_scope.where("#{date_field} < ?", late_date).count : 0
+      due_count = user.allow_notification?('event_recap_due_sms') ? events_scope.where("#{date_field} < :due AND #{date_field} > :late", due: due_date, late: late_date).count : 0
       message = if late_count > 0 && due_count > 0
         I18n.translate('notifications_sms.event_recap_late_and_due',
           late_count: late_count,

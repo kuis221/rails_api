@@ -7,7 +7,7 @@ module ApplicationHelper
       place_city = place.city
 
       if link_name
-        venue = Venue.find_by_company_id_and_place_id(current_company.id, place.id)
+        venue = Venue.find_by(company_id: current_company.id, place_id: place.id)
         if venue.present?
           if place.name == place.city
             place_city = link_to place.city, venue_path(venue)
@@ -184,7 +184,7 @@ module ApplicationHelper
         content_tag(:div, "#{data.try(:[],'Female').try(:round) || 0} %", class: 'percent') +
         content_tag(:div, 'FEMALE', class: 'gender')
       end
-    end 
+    end
   end
 
   def link_to_if_permitted(permission_action, subject_class, options, html_options = {}, &block)
@@ -199,9 +199,7 @@ module ApplicationHelper
 
   def link_to_deactivate(model, opts={})
     opts[:url] ||= [:deactivate, model]
-    model_sytem_name = model.class.name.underscore
-    humanized_name = model.class.model_name.human.downcase
-    link_to '', opts[:url], remote: true, title: I18n.t('confirmation.deactivate') , class: 'icon-rounded-disable', confirm: I18n.t('confirmation.deactivate_confirm_message', model: humanized_name) if model.active?
+    link_to '', opts[:url], remote: true, title: I18n.t('confirmation.deactivate') , class: 'icon-rounded-disable', data: { confirm: I18n.t('confirmation.deactivate_confirm_message', model: model.class.model_name.human.downcase) } if model.active?
   end
 
   def active_class(item)

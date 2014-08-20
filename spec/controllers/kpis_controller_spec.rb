@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe KpisController, :type => :controller do
   before(:each) do
@@ -10,7 +10,7 @@ describe KpisController, :type => :controller do
 
   describe "GET 'new'" do
     it "returns http success" do
-      get 'new', campaign_id: campaign.to_param, format: :js
+      xhr :get, 'new', campaign_id: campaign.to_param, format: :js
       expect(assigns(:campaign)).to eq(campaign)
       expect(response).to be_success
     end
@@ -19,7 +19,7 @@ describe KpisController, :type => :controller do
   describe "GET 'edit'" do
     let(:kpi){ FactoryGirl.create(:kpi, company: @company) }
     it "returns http success" do
-      get 'edit',  campaign_id: campaign.to_param, id: kpi.to_param, format: :js
+      xhr :get, 'edit',  campaign_id: campaign.to_param, id: kpi.to_param, format: :js
       expect(assigns(:campaign)).to eq(campaign)
       expect(response).to be_success
     end
@@ -28,12 +28,12 @@ describe KpisController, :type => :controller do
   describe "POST 'create'" do
     it "should not render form_dialog if no errors" do
       expect {
-        post 'create', campaign_id: campaign.to_param, kpi: {name: 'Test kpi', description: 'Test kpi description', kpi_type: 'number'}, format: :js
+        xhr :post, 'create', campaign_id: campaign.to_param, kpi: {name: 'Test kpi', description: 'Test kpi description', kpi_type: 'number'}, format: :js
          expect(response).to be_success
       }.to change(Kpi, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template(:create)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
 
       kpi = Kpi.last
       expect(kpi.name).to eq('Test kpi')
@@ -45,7 +45,7 @@ describe KpisController, :type => :controller do
         post 'create', campaign_id: campaign.to_param, format: :js, kpi: {}
       }.not_to change(Kpi, :count)
       expect(response).to render_template(:create)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
       assigns(:kpi).errors.count > 0
     end
   end
@@ -56,11 +56,11 @@ describe KpisController, :type => :controller do
       kpi.save
       expect {
         expect {
-          put 'update', campaign_id: campaign.to_param, id: kpi.to_param, kpi: {name: 'Test kpi', description: 'Test kpi description', goals_attributes: [{goalable_id: campaign.to_param, goalable_type: 'Campaign', value: 13}]}, format: :js
+          xhr :put, 'update', campaign_id: campaign.to_param, id: kpi.to_param, kpi: {name: 'Test kpi', description: 'Test kpi description', goals_attributes: [{goalable_id: campaign.to_param, goalable_type: 'Campaign', value: 13}]}, format: :js
         }.to change(Goal, :count).by(1)
       }.to_not change(Kpi, :count)
       expect(response).to render_template(:update)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
 
       expect(campaign.goals.for_kpi(kpi).value).to eq(13)
       expect(assigns(:kpi)).to eq(kpi)
@@ -77,11 +77,11 @@ describe KpisController, :type => :controller do
 
       expect {
         expect {
-          put 'update', campaign_id: campaign.to_param, id: kpi.to_param, kpi: {name: 'Test kpi', description: 'Test kpi description', goals_attributes: [{id: goal.id, goalable_id: campaign.to_param, goalable_type: 'Campaign', value: 44}]}, format: :js
+          xhr :put, 'update', campaign_id: campaign.to_param, id: kpi.to_param, kpi: {name: 'Test kpi', description: 'Test kpi description', goals_attributes: [{id: goal.id, goalable_id: campaign.to_param, goalable_type: 'Campaign', value: 44}]}, format: :js
         }.to_not change(Goal, :count)
       }.to_not change(Kpi, :count)
       expect(response).to render_template(:update)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
 
       expect(campaign.reload.goals.for_kpi(kpi).value).to eq(44)
     end
@@ -95,11 +95,11 @@ describe KpisController, :type => :controller do
 
       expect {
         expect {
-          put 'update', campaign_id: campaign.to_param, id: kpi.to_param, kpi: {name: 'Test kpi', kpi_type: 'count', description: 'Test kpi description', kpis_segments_attributes: [{text: 'An option'}, {text: 'Another option'}]}, format: :js
+          xhr :put, 'update', campaign_id: campaign.to_param, id: kpi.to_param, kpi: {name: 'Test kpi', kpi_type: 'count', description: 'Test kpi description', kpis_segments_attributes: [{text: 'An option'}, {text: 'Another option'}]}, format: :js
         }.to change(KpisSegment, :count).by(2)
       }.to_not change(Kpi, :count)
       expect(response).to render_template(:update)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
     end
 
     it "should save the goals for the associated segments" do
@@ -116,15 +116,15 @@ describe KpisController, :type => :controller do
         }.to change(KpisSegment, :count).by(2)
       }.to_not change(Kpi, :count)
       expect(response).to render_template(:update)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
     end
 
 
     it "should not allow update global kpis' attributes" do
       Kpi.create_global_kpis
-      put 'update', campaign_id: campaign.to_param, id: Kpi.impressions.to_param, kpi: {name: 'Test kpi', description: 'Test kpi description'}, format: :js
+      xhr :put, 'update', campaign_id: campaign.to_param, id: Kpi.impressions.to_param, kpi: {name: 'Test kpi', description: 'Test kpi description'}, format: :js
       expect(response).to render_template(:update)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
       expect(assigns(:kpi)).to eq(Kpi.impressions)
       Kpi.impressions.reload
       expect(Kpi.impressions.name).not_to eq('Test kpi')

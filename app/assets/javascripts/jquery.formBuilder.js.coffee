@@ -8,9 +8,10 @@ $.widget 'nmk.formBuilder', {
 
 		@wrapper = @element.find('.form-wrapper')
 		if @options.canEdit
-			@wrapper.append $('<div class="form-builder-actions" data-spy="affix" data-offset-top="340">')
-							 .append('<button id="save-report" class="btn btn-primary">Save</button>')
-							 .append('<div data-placement="left" class="invisible pull-right field-tooltip-trigger"></div>')
+			@wrapper.append $('<div class="form-builder-actions" data-spy="affix" data-offset-top="340"></div>').append(
+				$('<button id="save-report" class="btn btn-primary">Save</button>'),
+				$('<div data-placement="left" class="invisible pull-right field-tooltip-trigger"></div>')
+			)
 
 			@fieldTooltip = @wrapper.find('.field-tooltip-trigger').tooltip 
 				placement: 'left'
@@ -112,6 +113,7 @@ $.widget 'nmk.formBuilder', {
 				appendTo: @fieldsWrapper
 				helper: (a, b) =>
 					$target = $(a.target)
+					$target = $target.closest('.field') unless $target.hasClass('field')
 					options = {type: $target.data('type')}
 					if $target.data('options')
 						options = $target.data('options');
@@ -126,6 +128,7 @@ $.widget 'nmk.formBuilder', {
 					e.target.adding = false
 				, 1000
 				target = $(e.target)
+				target = target.closest('.field') unless target.hasClass('field')
 				options = {type: target.data('type')}
 				options = target.data('options') if target.data('options')
 				if target.hasClass('module')

@@ -8,7 +8,7 @@ class FilteredController < InheritedResources::Base
   CUSTOM_VALIDATION_ACTIONS = [:index, :items, :filters, :autocomplete, :export, :new_export]
   load_and_authorize_resource except: CUSTOM_VALIDATION_ACTIONS
 
-  before_filter :authorize_actions, only: CUSTOM_VALIDATION_ACTIONS
+  before_action :authorize_actions, only: CUSTOM_VALIDATION_ACTIONS
 
   after_filter :remove_resource_new_notifications, only: :show
 
@@ -32,7 +32,7 @@ class FilteredController < InheritedResources::Base
 
   def index
     if request.format.xls?
-      @export = ListExport.create({controller: self.class.name,  params: search_params, export_format: 'xls', company_user: current_company_user}, without_protection: true)
+      @export = ListExport.create(controller: self.class.name,  params: search_params, export_format: 'xls', company_user: current_company_user)
       if @export.new?
         @export.queue!
       end
@@ -108,11 +108,11 @@ class FilteredController < InheritedResources::Base
             set_collection_ivar(@solr_search.results)
           else
             current_page = params[:page] || nil
-            c = end_of_association_chain.accessible_by_user(current_user).scoped(sorting_options)
+            c = end_of_association_chain.accessible_by_user(current_user)
             c = controller_filters(c)
             @collection_count_scope = c
             c = c.page(current_page).per(items_per_page) unless current_page.nil?
-            set_collection_ivar(c.respond_to?(:scoped) ? c.scoped : c.all)
+            set_collection_ivar(c)
           end
         end
       end
@@ -133,18 +133,6 @@ class FilteredController < InheritedResources::Base
 
     def controller_filters(c)
       c
-    end
-
-    def sorting_options
-      if params.has_key?(:sorting) &&  sort_options[params[:sorting]] && params[:sorting_dir]
-        options = sort_options[params[:sorting]].dup
-        options[:order] = options[:order] + ' ' + params[:sorting_dir] if sort_options.has_key?(params[:sorting])
-        options
-      end
-    end
-
-    def sort_options
-      {}
     end
 
     # Makes sure that the resource is immediate indexed.

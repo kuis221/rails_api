@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe TasksController, type: :controller, search: true do
   before(:each) do
@@ -93,7 +93,7 @@ describe TasksController, type: :controller, search: true do
   describe "GET 'filters'" do
     it "should return the correct buckets in the right order" do
       Sunspot.commit
-      get 'filters', format: :json, scope: :user
+      get 'filters', format: :json, scope: 'user'
       expect(response).to be_success
 
       filters = JSON.parse(response.body)
@@ -102,7 +102,7 @@ describe TasksController, type: :controller, search: true do
 
     it "should return the correct buckets in the right order" do
       Sunspot.commit
-      get 'filters', format: :json, scope: :teams
+      get 'filters', format: :json, scope: 'teams'
       expect(response).to be_success
 
       filters = JSON.parse(response.body)

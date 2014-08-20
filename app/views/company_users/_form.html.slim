@@ -33,7 +33,7 @@
           = uf.input :unit_number, label: false, input_html: {class: 'input-xxlarge'}, required: false
         .row-fluid.users
           .span6
-            = uf.input :country, input_html: {class: 'input-large chosen-enabled'}, required: !is_admin
+            = uf.input :country, input_html: {class: 'input-large chosen-enabled'}, priority: ['US'], iso_codes: true, required: !is_admin
           .span6
             = uf.input :city, input_html: {class: 'input-large'}, required: !is_admin
         .row-fluid.users
@@ -45,7 +45,7 @@
           = uf.input :time_zone, input_html: {class: 'input-large chosen-enabled'}, required: !is_admin
 
   .form-actions
-    = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'
+    = f.button :submit, 'Save', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
     = "&nbsp;".html_safe
     = f.button :button, 'Cancel', class: 'btn btn-cancel'
 

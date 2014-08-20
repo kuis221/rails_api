@@ -1,6 +1,6 @@
 class Results::EventStatusController < ApplicationController
-  before_filter :campaign, except: :index
-  before_filter :authorize_actions
+  before_action :campaign, except: :index
+  before_action :authorize_actions
 
   helper_method :return_path
 

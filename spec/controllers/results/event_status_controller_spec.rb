@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Results::EventStatusController, :type => :controller do
   before(:each) do
@@ -13,7 +13,7 @@ describe Results::EventStatusController, :type => :controller do
       expect(response).to be_success
     end
   end
-  
+
   let(:campaign) { FactoryGirl.create(:campaign, company: @company, name: 'Test Campaign FY01') }
   describe "POST 'index'" do
     it "should return http success" do

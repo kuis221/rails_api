@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-require 'spec_helper'
+require 'rails_helper'
 
 feature "Invitations", :js => true do
   feature 'send invitation' do
@@ -104,7 +104,7 @@ feature "Invitations", :js => true do
       fill_in('Last name', with: 'Marmol')
       fill_in('Email', with: 'pablo@rocadura.com')
       fill_in('Phone number', with: '(506)22506633')
-      select_from_chosen('United States', from: 'Country', match: :first)
+      select_from_chosen('United States of America', from: 'Country', match: :first)
       select_from_chosen('Texas', from: 'State')
       fill_in('City', with: 'Texas')
       fill_in('user_street_address', with: 'A different street address')

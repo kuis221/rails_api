@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe DashboardController, :type => :controller do
   before(:each) do
@@ -11,12 +11,12 @@ describe DashboardController, :type => :controller do
   it "should render all modules" do
     get 'index'
     expect(response).to be_success
-    expect(response).to render_template('incomplete_tasks')
-    expect(response).to render_template('kpi_trends')
-    expect(response).to render_template('upcoming_events')
-    expect(response).to render_template('recent_photos')
-    expect(response).to render_template('recent_comments')
-    expect(response).to render_template('venue_performance')
-    expect(response).to render_template('campaign_overview')
+    expect(response).to render_template('_incomplete_tasks')
+    expect(response).to render_template('_kpi_trends')
+    expect(response).to render_template('_upcoming_events')
+    expect(response).to render_template('_recent_photos')
+    expect(response).to render_template('_recent_comments')
+    expect(response).to render_template('_venue_performance')
+    expect(response).to render_template('_campaign_overview')
   end
 end

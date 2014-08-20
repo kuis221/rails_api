@@ -32,7 +32,7 @@
           = permission_checkbox(f, :gva_report, Campaign)
 
       .span7
-        .span5 Event Status 
+        .span5 Event Status
         .span5
           = permission_checkbox(f, :event_status, Campaign)
 
@@ -70,4 +70,4 @@
           = permission_checkbox(f, :share, Report)
 
   = hidden_field_tag :partial, :results_permissions
-  = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'
+  = f.button :submit, 'Save', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}

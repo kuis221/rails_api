@@ -113,7 +113,7 @@ class Ability
          can?(:edit, object)
       end
 
-      can :profile, CompanyUser do |company_user|
+      can [:profile, :edit_communications], CompanyUser do |company_user|
         user.current_company_user.id == company_user.id
       end
 

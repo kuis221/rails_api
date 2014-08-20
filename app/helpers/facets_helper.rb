@@ -38,7 +38,6 @@ module FacetsHelper
 
   def build_areas_bucket(search)
     places = current_company_user.places
-    list = {label: :root, items: [], id: nil, path: nil}
 
     areas = current_company.areas.accessible_by_user(current_company_user).order(:name).active.all
     places.each do |p|

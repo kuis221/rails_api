@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe ContactEventsController, type: :controller, search: true do
   before(:each) do
@@ -16,7 +16,7 @@ describe ContactEventsController, type: :controller, search: true do
     it "returns http success" do
       contact.reload # force the creation of the contact
       Sunspot.commit
-      get 'list', event_id: event.to_param, term: @user.first_name, format: :js
+      xhr :get, 'list', event_id: event.to_param, term: @user.first_name, format: :js
       expect(response).to be_success
       expect(response).to render_template('list')
 
@@ -26,7 +26,7 @@ describe ContactEventsController, type: :controller, search: true do
     it "should not load in @contacts the contacts that are already assigned to the event" do
       FactoryGirl.create(:contact_event, event: event, contactable: contact)
       Sunspot.commit
-      get 'list', event_id: event.to_param, term: @user.first_name, format: :js
+      xhr :get, 'list', event_id: event.to_param, term: @user.first_name, format: :js
       expect(assigns(:contacts)).to match_array([company_user])
     end
 
@@ -34,7 +34,7 @@ describe ContactEventsController, type: :controller, search: true do
       contact.reload
       FactoryGirl.create(:contact_event, event: event, contactable: company_user)
       Sunspot.commit
-      get 'list', event_id: event.to_param, term: @user.first_name, format: :js
+      xhr :get, 'list', event_id: event.to_param, term: @user.first_name, format: :js
       expect(assigns(:contacts)).to match_array([contact])
     end
   end

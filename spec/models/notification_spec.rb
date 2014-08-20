@@ -15,7 +15,7 @@
 #  params          :hstore
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe Notification, :type => :model do
   it { is_expected.to belong_to(:company_user) }
@@ -23,9 +23,11 @@ describe Notification, :type => :model do
   describe "send_late_event_sms_notifications" do
     let(:user) { FactoryGirl.create(:company_user, company: FactoryGirl.create(:company),
         user: FactoryGirl.create(:user, phone_number: '+15558888888'),
-        notifications_settings: ['event_recap_late', 'event_recap_due'])
+        notifications_settings: ['event_recap_late_sms', 'event_recap_due_sms'])
     }
     let(:campaign) { FactoryGirl.create(:campaign, company: user.company ) }
+
+    before { user.user.update_attribute :phone_number_verified, true }
 
     it "should not call enqueue any SendSmsWorker" do
       event = FactoryGirl.create(:event, campaign: campaign)
