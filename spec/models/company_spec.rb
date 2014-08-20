@@ -10,7 +10,7 @@
 #  settings         :hstore
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe Company, :type => :model do
   it { is_expected.to have_many(:company_users) }

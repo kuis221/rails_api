@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Results::ExpensesController, :type => :controller do
   before(:each) do
@@ -26,7 +26,7 @@ describe Results::ExpensesController, :type => :controller do
   describe "GET 'index'" do
     it "queue the job for export the list" do
       expect{
-        get :index, format: :xls
+        xhr :get, :index, format: :xls
       }.to change(ListExport, :count).by(1)
       export = ListExport.last
       expect(ListExportWorker).to have_queued(export.id)

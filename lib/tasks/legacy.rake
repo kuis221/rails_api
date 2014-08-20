@@ -95,7 +95,7 @@ namespace :legacy do
             brands_names=row['Brands list'].split(/,|,? and /).map(&:strip).compact.reject{|n| n == ''}
             brands_names.each do|name|
               member = BrandPortfolio.find_by_name(name.strip) || Brand.find_by_name(name.strip)
-              company_user.memberships.create({memberable: member}, without_protection: true) unless member.nil? || company_user.memberships.any?{|m| m.memberable == member}
+              company_user.memberships.create(memberable: member) unless member.nil? || company_user.memberships.any?{|m| m.memberable == member}
             end
           end
 

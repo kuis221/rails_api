@@ -15,7 +15,7 @@
 #  kpi_id         :integer
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe FormField::Brand, :type => :model do
   let(:field) { FactoryGirl.create(:form_field_brand, settings: {}, fieldable: activity_type) }

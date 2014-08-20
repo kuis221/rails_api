@@ -3,7 +3,7 @@
   - row_levels_count = resource.rows.count
   - @report_header_cols_rows.each_with_index do |row, index|
     - if resource.values.count > 1 || resource.columns.count == 1 || index != resource.columns.index{|v| v['field'] == 'values' }
-      tr.row-headers class="#{if index == @report_header_cols_rows.count-1 then 'last-header' else '' end}"
+      tr.row-headers class="#{index == @report_header_cols_rows.count-1 ? 'last-header' : ''}"
         td.row_label
         = row.join.html_safe
 

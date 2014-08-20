@@ -2,7 +2,9 @@ source 'https://rubygems.org'
 
 ruby '2.1.2'
 
-gem 'rails', '3.2.18'
+gem 'rails', '4.1.5'
+gem 'rails-observers'
+gem 'activerecord-session_store'
 gem "rack-timeout"
 
 # Bundle edge Rails instead:
@@ -26,7 +28,8 @@ gem 'newrelic_rpm'
 gem "paperclip", "~> 4.1"
 gem "aws-sdk"
 gem 'google_places'
-gem 'validates_timeliness', '~> 3.0'
+gem 'timeliness'
+gem 'american_date'
 gem 'sunspot_rails'
 gem 'sunspot_stats'
 gem "sunspot-queue"
@@ -42,14 +45,11 @@ gem 'resque-pool', '~> 0.4.0.rc2'
 gem 'resque-timeout'
 gem 'resque_mailer'
 gem 'unread'
-gem 'strong_parameters'
 gem 'nearest_time_zone'
 gem "memcachier"
 gem 'rack-cache'
 gem 'dalli'
 gem 'kgio'
-gem 'activerecord-postgres-hstore'  # Remove when upgrading to Rails4
-gem 'postgres_ext' # gem added to allow arrays. Remove when upgrading to Rails4
 gem 'apipie-rails'
 gem 'heroku-resque-workers-scaler', github: 'guilleva/heroku-resque-workers-scaler'
 gem 'twilio-ruby'
@@ -69,23 +69,18 @@ end
 # workers loading not needed libraries
 group :web do
   gem 'font_assets', path: 'vendor/gems/font_assets'
-  gem 'activeadmin'
-  gem "meta_search", '>= 1.1.0.pre'
+  gem 'activeadmin', github: 'activeadmin/active_admin'
   gem 'unicorn'
   gem 'simple_form'
+  gem 'country_select', '2.0.0.rc1'
   gem "nested_form"
 end
 
 # Gems used only for assets and not required
 # in production environments by default.
-group :assets do
-  gem 'sass-rails',   '~> 3.2.3'
-  gem 'coffee-rails', '~> 3.2.1'
-  gem "twitter-bootstrap-rails"
-  # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-
-  gem 'uglifier', '>= 1.0.3'
-end
+gem 'sass-rails', '~> 4.0.3'
+gem 'coffee-rails'
+gem 'uglifier', '>= 1.3.0'
 
 gem 'jquery-rails'
 
@@ -108,19 +103,19 @@ group :test do
   #gem 'selenium-webdriver'
   gem "email_spec", ">= 1.4.0"
   gem 'shoulda-matchers', require: false
-  gem 'launchy'
+  #gem 'launchy'
   gem "sunspot_test"
   gem 'resque_spec'
   gem 'simplecov', require: false
   gem 'capybara-screenshot'
-  gem 'fuubar', '2.0.0.rc1'
+  gem 'fuubar', '2.0.0'
   gem 'database_cleaner'
   #gem 'sms-spec', '~> 0.1.9'
   gem 'sms-spec'
 end
 
-gem 'airbrake'
-  group :production do
+group :production do
+  gem 'airbrake'
 end
 
 # To use ActiveModel has_secure_password

@@ -17,14 +17,12 @@
 
 class Notification < ActiveRecord::Base
   belongs_to :company_user
-  attr_accessible :icon, :level, :message, :message_params, :extra_params, :params, :path
 
   EVENT_ALERT_POLICY_TEAM = 1 # Notify only to users in the event team
   EVENT_ALERT_POLICY_ALL = 2  # Notify only to ALL users that can access the event
 
   serialize :message_params
   serialize :extra_params
-  serialize :params, ActiveRecord::Coders::Hstore
 
   scope :new_tasks, -> { where(message: 'new_task').where("params ? 'task_id'") }
   scope :new_events, -> { where(message: 'new_event').where("params ? 'event_id'") }
@@ -67,7 +65,7 @@ class Notification < ActiveRecord::Base
         email_message = I18n.translate("notifications_email.new_event", url: Rails.application.routes.url_helpers.event_url(event))
         UserMailer.notification(user.id, I18n.translate("notification_types.new_event"), email_message).deliver
       end
-      notification = user.notifications.create(path: path, level: 'grey', message: message, icon: 'event', message_params: message_params, params: {event_id: event.id})
+      notification = user.notifications.create(path: path, level: 'grey', message: message, icon: 'events', message_params: message_params, params: {event_id: event.id})
     end
   end
 
@@ -95,12 +93,14 @@ class Notification < ActiveRecord::Base
          (team && user.allow_notification?('new_unassigned_team_task_email'))
         UserMailer.notification(user.id, email_subject, email_message).deliver
       end
-      notification = user.notifications.create(path: path, level: 'grey', message: message, message_params: {task: task.title}, icon: 'task', params: {task_id: task.id})
+      notification = user.notifications.create(path: path, level: 'grey', message: message, message_params: {task: task.title}, icon: 'tasks', params: {task_id: task.id})
     end
   end
 
   def self.grouped_notifications_counts(notifications)
-    Hash[connection.select_rows(notifications.select('message, count(notifications.id)').group('notifications.message').to_sql)]
+    Hash[connection.select_rows(connection.unprepared_statement{
+      notifications.select('message, count(notifications.id)').group('notifications.message').to_sql
+    })]
   end
 
   # Sends late/due events notifications to users that have it enabled

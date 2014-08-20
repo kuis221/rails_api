@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe DocumentsController, :type => :controller do
   before(:each) do
@@ -22,10 +22,11 @@ describe DocumentsController, :type => :controller do
       expect_any_instance_of(Paperclip::Attachment).to receive(:path).at_least(:once).and_return('/attached_assets/original/test.jpg')
       expect_any_instance_of(AttachedAsset).to receive(:download_url).and_return('dummy.jpg')
       expect {
-        post 'create', event_id: event.to_param, attached_asset: {direct_upload_url: 'https://s3.amazonaws.com/brandscopic-test/uploads/dummy/test.jpg'}, format: :js
+        xhr :post, 'create', event_id: event.to_param, attached_asset: {direct_upload_url: 'https://s3.amazonaws.com/brandscopic-test/uploads/dummy/test.jpg'}, format: :js
       }.to change(AttachedAsset, :count).by(1)
       expect(response).to be_success
-      expect(response).to render_template('document')
+      expect(response).to render_template('_document')
+      expect(response).to render_template('_attached_asset')
       expect(response).to render_template('create')
       document = AttachedAsset.last
       expect(document.attachable).to eq(event)
@@ -38,9 +39,9 @@ describe DocumentsController, :type => :controller do
 
   describe "GET 'new'" do
     it "should render the comment form for a event comment" do
-      get 'new', event_id: event.to_param, format: :js
+      xhr :get, 'new', event_id: event.to_param, format: :js
       expect(response).to render_template('documents/_form')
-      expect(response).to render_template(:form_dialog)
+      expect(response).to render_template('_form_dialog')
       expect(assigns(:document).new_record?).to be_truthy
       expect(assigns(:document).attachable).to eq(event)
     end

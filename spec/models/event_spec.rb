@@ -22,7 +22,7 @@
 #  local_end_at   :datetime
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe Event, :type => :model do
   it { is_expected.to belong_to(:company) }
@@ -64,7 +64,7 @@ describe Event, :type => :model do
   end
 
   describe "end_after_start validation" do
-    subject { Event.new({start_at: Time.zone.local(2016,1,20,12,5,0)}, without_protection: true) }
+    subject { Event.new(start_at: Time.zone.local(2016,1,20,12,5,0)) }
 
     it { is_expected.not_to allow_value(Time.zone.local(2016,1,20,12,0,0)).for(:end_at).with_message("must be after") }
     it { is_expected.to allow_value(Time.zone.local(2016,1,20,12,5,0)).for(:end_at) }
@@ -137,7 +137,7 @@ describe Event, :type => :model do
   end
 
   describe "#create_notifications" do
-    let(:company){ FactoryGirl.create(:company, settings: {event_alerts_policy: Notification::EVENT_ALERT_POLICY_ALL}) }
+    let(:company){ FactoryGirl.create(:company, event_alerts_policy: Notification::EVENT_ALERT_POLICY_ALL) }
 
     it "should queue EventNotifierWorker worker" do
       event = FactoryGirl.create(:event, company: company)
@@ -352,7 +352,7 @@ describe Event, :type => :model do
     let(:campaign) { FactoryGirl.create(:campaign) }
 
     it "should update campaign's first_event_id and first_event_at attributes" do
-      expect(campaign.update_attributes({first_event_id: 999, first_event_at: '2013-02-01 12:00:00'}, without_protection: true)).to be_truthy
+      expect(campaign.update_attributes(first_event_id: 999, first_event_at: '2013-02-01 12:00:00')).to be_truthy
       event = FactoryGirl.create(:event, campaign: campaign, company: campaign.company, start_date: '01/01/2013', start_time: '01:00 AM', end_date:  '01/01/2013', end_time: '05:00 AM')
       campaign.reload
       expect(campaign.first_event_id).to eq(event.id)
@@ -360,7 +360,7 @@ describe Event, :type => :model do
     end
 
     it "should update campaign's first_event_id and first_event_at attributes" do
-      expect(campaign.update_attributes({last_event_id: 999, last_event_at: '2013-01-01 12:00:00'}, without_protection: true)).to be_truthy
+      expect(campaign.update_attributes(last_event_id: 999, last_event_at: '2013-01-01 12:00:00')).to be_truthy
       event = FactoryGirl.create(:event, campaign: campaign, company: campaign.company, start_date: '02/01/2013', start_time: '01:00 AM', end_date:  '02/01/2013', end_time: '05:00 AM')
       campaign.reload
       expect(campaign.last_event_id).to eq(event.id)
@@ -559,7 +559,7 @@ describe Event, :type => :model do
       ResqueSpec.reset!
       expect {
         field = campaign.form_fields.detect{|f| f.kpi_id == Kpi.impressions.id}
-        event.update_attributes({results_attributes: {"1" => {form_field_id: field.id, value: '100' }}})
+        event.update_attributes(results_attributes: {"1" => {form_field_id: field.id, value: '100' }})
       }.to change(FormFieldResult, :count).by(1)
       expect(VenueIndexer).to have_queued(event.venue.id)
     end
@@ -719,8 +719,8 @@ describe Event, :type => :model do
       expect(tasks[2].reload.company_user_id).to eq(user.id)
 
       expect(Sunspot).to receive(:index) do |taks_list|
-        expect(taks_list).to be_an_instance_of(Array)
-        expect(taks_list).to match_array(tasks)
+        expect(taks_list.to_a).to be_an_instance_of(Array)
+        expect(taks_list.to_a).to match_array(tasks)
       end
 
       event.users.delete(user)
@@ -747,8 +747,8 @@ describe Event, :type => :model do
       expect(tasks[2].reload.company_user_id).to eq(team_user2.id)
 
       expect(Sunspot).to receive(:index) do |taks_list|
-        expect(taks_list).to be_an_instance_of(Array)
-        expect(taks_list).to match_array(tasks)
+        expect(taks_list.to_a).to be_an_instance_of(Array)
+        expect(taks_list.to_a).to match_array(tasks)
       end
 
       event.teams.delete(team)

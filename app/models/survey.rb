@@ -51,9 +51,9 @@ class Survey < ActiveRecord::Base
 
   def answer_for(question_id, brand_id, kpi_id=nil)
     if kpi_id.nil?
-      surveys_answers.select{|a| a.question_id == question_id && a.brand_id == brand_id}.first || surveys_answers.build({question_id: question_id, brand_id: brand_id}, without_protection: true)
+      surveys_answers.select{|a| a.question_id == question_id && a.brand_id == brand_id}.first || surveys_answers.build(question_id: question_id, brand_id: brand_id)
     else
-      surveys_answers.select{|a| a.question_id == question_id && a.kpi_id == kpi_id}.first || surveys_answers.build({question_id: question_id, kpi_id: kpi_id}, without_protection: true)
+      surveys_answers.select{|a| a.question_id == question_id && a.kpi_id == kpi_id}.first || surveys_answers.build(question_id: question_id, kpi_id: kpi_id)
     end
   end
 

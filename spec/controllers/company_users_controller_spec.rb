@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe CompanyUsersController, :type => :controller do
   describe "as registered user" do
@@ -12,7 +12,7 @@ describe CompanyUsersController, :type => :controller do
       let(:user){ FactoryGirl.create(:company_user, user: FactoryGirl.create(:user), company_id: @company.id) }
 
       it "returns http success" do
-        get 'edit', id: user.to_param, format: :js
+        xhr :get, 'edit', id: user.to_param, format: :js
         expect(response).to be_success
       end
     end
@@ -46,7 +46,7 @@ describe CompanyUsersController, :type => :controller do
 
       it "deactivates an active user" do
         expect(user.active).to be_truthy
-        get 'deactivate', id: user.to_param, format: :js
+        xhr :get, 'deactivate', id: user.to_param, format: :js
         expect(response).to be_success
         expect(user.reload.active?).to be_falsey
         expect(user.active).to be_falsey
@@ -57,7 +57,7 @@ describe CompanyUsersController, :type => :controller do
       let(:user){ FactoryGirl.create(:company_user, company_id: @company.id, active: false) }
       it "activates an inactive user" do
         expect(user.active).to be_falsey
-        get 'activate', id: user.to_param, format: :js
+        xhr :get, 'activate', id: user.to_param, format: :js
         expect(response).to be_success
         expect(user.reload.active?).to be_truthy
         expect(user.active).to be_truthy
@@ -67,7 +67,7 @@ describe CompanyUsersController, :type => :controller do
     describe "PUT 'update'" do
       let(:user){ FactoryGirl.create(:company_user, company_id: @company.id) }
       it "must update the user data" do
-        put 'update', id: user.to_param, company_user: {user_attributes: {id: user.user_id,first_name: 'Juanito', last_name: 'Perez'}}, format: :js
+        xhr :put, 'update', id: user.to_param, company_user: {user_attributes: {id: user.user_id,first_name: 'Juanito', last_name: 'Perez'}}, format: :js
         expect(assigns(:company_user)).to eq(user)
 
         expect(response).to be_success
@@ -78,7 +78,7 @@ describe CompanyUsersController, :type => :controller do
 
       it "must update the user password" do
         old_password = user.user.encrypted_password
-        put 'update', id: user.to_param, company_user: {user_attributes: {id: user.user_id, password: 'Juanito123', password_confirmation: 'Juanito123'}}, format: :js
+        xhr :put, 'update', id: user.to_param, company_user: {user_attributes: {id: user.user_id, password: 'Juanito123', password_confirmation: 'Juanito123'}}, format: :js
         expect(assigns(:company_user)).to eq(user)
         expect(response).to be_success
         user.reload
@@ -87,7 +87,7 @@ describe CompanyUsersController, :type => :controller do
 
       it "must update its own profile data" do
         old_password = @user.encrypted_password
-        put 'update', id: @company_user.to_param, company_user: {user_attributes: {id: @user.id, first_name: 'Juanito', last_name: 'Perez',  email: 'test@testing.com', city: 'Miami', state: 'FL', country: 'US', password: 'Juanito123', password_confirmation: 'Juanito123'}}, format: :js
+        xhr :put, 'update', id: @company_user.to_param, company_user: {user_attributes: {id: @user.id, first_name: 'Juanito', last_name: 'Perez',  email: 'test@testing.com', city: 'Miami', state: 'FL', country: 'US', password: 'Juanito123', password_confirmation: 'Juanito123'}}, format: :js
         expect(assigns(:company_user)).to eq(@company_user)
         expect(response).to be_success
         @user.reload
@@ -105,7 +105,7 @@ describe CompanyUsersController, :type => :controller do
         old_password = @user.encrypted_password
         expect(controller).to receive(:can?).twice.with(:super_update, @company_user).and_return false
         expect(controller).to receive(:can?).at_least(:once).and_return true
-        put 'update', id: @company_user.to_param, company_user: {user_attributes: {id: user.user_id, first_name: 'Juanito', last_name: 'Perez', email: 'test@testing.com', phone_number: '', city: '', state: '', country: '', street_address: '', zip_code: '', password: 'Juanito123', password_confirmation: 'Juanito123'}}, format: :js
+        xhr :put, 'update', id: @company_user.to_param, company_user: {user_attributes: {id: user.user_id, first_name: 'Juanito', last_name: 'Perez', email: 'test@testing.com', phone_number: '', city: '', state: '', country: '', street_address: '', zip_code: '', password: 'Juanito123', password_confirmation: 'Juanito123'}}, format: :js
         expect(response).to be_success
         expect(assigns(:company_user).errors.count).to be > 0
         expect(assigns(:company_user).errors['user.phone_number']).to eq(["can't be blank"])
@@ -119,7 +119,7 @@ describe CompanyUsersController, :type => :controller do
       it "allows admin to update teams and role" do
         team = FactoryGirl.create(:team, company: @company)
         role = FactoryGirl.create(:role, company: @company)
-        put 'update', id: user.to_param, company_user: {role_id: role.id, team_ids: [team.id], user_attributes: {id: user.user_id, first_name: 'Juanito', last_name: 'Perez',  email: 'test@testing.com',  password: 'Juanito123', password_confirmation: 'Juanito123'}}, format: :js
+        xhr :put, 'update', id: user.to_param, company_user: {role_id: role.id, team_ids: [team.id], user_attributes: {id: user.user_id, first_name: 'Juanito', last_name: 'Perez',  email: 'test@testing.com',  password: 'Juanito123', password_confirmation: 'Juanito123'}}, format: :js
         expect(user.reload.role_id).to eq(role.id)
         expect(user.teams).to eq([team])
       end
@@ -129,7 +129,7 @@ describe CompanyUsersController, :type => :controller do
         company_user = invited_user.company_users.first
         team = FactoryGirl.create(:team, company: @company)
         role = FactoryGirl.create(:role, company: @company)
-        put 'update', id: company_user.to_param, company_user: {team_ids: [team.id], role_id: role.id, notifications_settings: ["event_recap_late_sms", "event_recap_pending_approval_email", "new_event_team_app"], user_attributes: {id: invited_user.id, first_name: 'Juanito', last_name: 'Perez',  email: 'test@testing.com'}}, format: :js
+        xhr :put, 'update', id: company_user.to_param, company_user: {team_ids: [team.id], role_id: role.id, notifications_settings: ["event_recap_late_sms", "event_recap_pending_approval_email", "new_event_team_app"], user_attributes: {id: invited_user.id, first_name: 'Juanito', last_name: 'Perez',  email: 'test@testing.com'}}, format: :js
         expect(company_user.reload.role_id).to eq(role.id)
         expect(company_user.teams).to eq([team])
         expect(company_user.notifications_settings).to include("event_recap_late_sms", "event_recap_pending_approval_email", "new_event_team_app")
@@ -140,26 +140,26 @@ describe CompanyUsersController, :type => :controller do
       it 'should render the correct template' do
         get 'profile'
         expect(assigns(:company_user)).to eql @company_user
-        response.should render_template 'show'
+        expect(response).to render_template 'show'
       end
     end
 
     describe "GET 'send_code'" do
       it 'should render the correct templates' do
-        get 'send_code', id: @company_user.to_param, format: :js
+        xhr :get, 'send_code', id: @company_user.to_param, format: :js
         expect(assigns(:company_user)).to eql @company_user
-        response.should render_template 'send_code'
-        response.should render_template '_form_dialog'
-        response.should render_template '_send_code'
+        expect(response).to render_template 'send_code'
+        expect(response).to render_template '_form_dialog'
+        expect(response).to render_template '_send_code'
       end
     end
 
     describe "POST 'verify_phone'" do
       it 'should update the phone_number_verification for the user' do
         expect(@company_user.user.phone_number_verification).to be_nil
-        get 'verify_phone', id: @company_user.to_param, format: :js
+        xhr :get, 'verify_phone', id: @company_user.to_param, format: :js
         expect(assigns(:company_user)).to eql @company_user
-        response.should render_template 'verify_phone'
+        expect(response).to render_template 'verify_phone'
         expect(@company_user.user.reload.phone_number_verification).to_not be_nil
       end
     end
@@ -242,8 +242,9 @@ describe CompanyUsersController, :type => :controller do
       it "should add a campaign to the user that belongs to a brand" do
         campaign.brands << brand
         expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{user.id}")
+        expect(Rails.cache).to receive(:delete).with("user_notifications_#{user.id}").at_least(:once)
         expect {
-          post 'add_campaign', id: user.id, parent_id: brand.id, parent_type: 'Brand', campaign_id: campaign.id, format: :js
+          xhr :post, 'add_campaign', id: user.id, parent_id: brand.id, parent_type: 'Brand', campaign_id: campaign.id, format: :js
           expect(response).to be_success
           user.reload
         }.to change(user.memberships, :count).by(1)
@@ -263,8 +264,9 @@ describe CompanyUsersController, :type => :controller do
         campaign.brands << brand
         user.brands << brand
         expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{user.id}").at_least(:once)
+        expect(Rails.cache).to receive(:delete).with("user_notifications_#{user.id}").at_least(:once)
         expect {
-          post 'disable_campaigns', id: user.id, parent_id: brand.id, parent_type: 'Brand', format: :js
+          xhr :post, 'disable_campaigns', id: user.id, parent_id: brand.id, parent_type: 'Brand', format: :js
           expect(response).to be_success
           user.reload
         }.to change(user.brands, :count).by(-1)
@@ -275,7 +277,7 @@ describe CompanyUsersController, :type => :controller do
       end
 
       it "should now fail if invalid parent params were provided" do
-        post 'disable_campaigns', id: user.id, parent_id: '6669999', parent_type: 'Brand', format: :js
+        xhr :post, 'disable_campaigns', id: user.id, parent_id: '6669999', parent_type: 'Brand', format: :js
         expect(response).to be_success
       end
     end
@@ -288,9 +290,10 @@ describe CompanyUsersController, :type => :controller do
 
       it "remove the brand as a membership and assign any campaign to the user with the brand as parent" do
         expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{user.id}")
+        expect(Rails.cache).to receive(:delete).with("user_notifications_#{user.id}").at_least(:once)
         campaign.brands << brand
         expect {
-          post 'enable_campaigns', id: user.id, parent_id: brand.id, parent_type: 'Brand', format: :js
+          xhr :post, 'enable_campaigns', id: user.id, parent_id: brand.id, parent_type: 'Brand', format: :js
           expect(response).to be_success
           user.reload
         }.to change(user.brands, :count).by(1)
@@ -307,15 +310,16 @@ describe CompanyUsersController, :type => :controller do
 
         expect(Rails.cache).to_not receive(:delete).with("user_accessible_campaigns_#{user.id}")
         expect {
-          post 'enable_campaigns', id: user.id, parent_id: brand.id, parent_type: 'Brand', format: :js
+          xhr :post, 'enable_campaigns', id: user.id, parent_id: brand.id, parent_type: 'Brand', format: :js
           expect(response).to be_success
         }.to_not change(user.memberships, :count)
       end
 
       it "should create a relationship between users and brand portfolio" do
         expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{user.id}")
+        expect(Rails.cache).to receive(:delete).with("user_notifications_#{user.id}").at_least(:once)
         expect {
-          post 'enable_campaigns', id: user.id, parent_id: brand_portfolio.id, parent_type: 'BrandPortfolio', format: :js
+          xhr :post, 'enable_campaigns', id: user.id, parent_id: brand_portfolio.id, parent_type: 'BrandPortfolio', format: :js
           expect(response).to be_success
           user.reload
         }.to change(user.brand_portfolios, :count).by(1)

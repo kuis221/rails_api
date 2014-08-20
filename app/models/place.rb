@@ -145,8 +145,8 @@ class Place < ActiveRecord::Base
   def update_locations
     ary = Place.political_division(self)
     paths = ary.count.times.map { |i| ary.slice(0, i+1).compact.join('/').downcase }
-    self.locations = paths.map{|path| Location.find_or_create_by_path(path) }
-    self.location = Location.find_or_create_by_path(paths.last)
+    self.locations = paths.map{|path| Location.find_or_create_by(path: path) }
+    self.location = Location.find_or_create_by(path: paths.last)
     self.is_location = (self.types.present? && (self.types & ['sublocality', 'political', 'locality', 'administrative_area_level_1', 'administrative_area_level_2', 'administrative_area_level_3', 'country', 'natural_feature']).count > 0)
     true
   end
@@ -162,7 +162,8 @@ class Place < ActiveRecord::Base
 
   class << self
     def load_by_place_id(place_id, reference)
-      Place.find_or_initialize_by_place_id({place_id: place_id, reference: reference}, without_protection: true) do |p|
+      Place.find_or_initialize_by(place_id: place_id) do |p|
+        p.reference = reference
         p.send(:fetch_place_data)
       end
     end

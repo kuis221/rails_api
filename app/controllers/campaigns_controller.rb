@@ -4,6 +4,8 @@ class CampaignsController < FilteredController
 
   helper_method :grouped_assignable_kpis
 
+  before_action :search_params, only: [:index]
+
   include DeactivableHelper
 
   # This helper provide the methods to add/remove campaigns members to the event
@@ -42,7 +44,7 @@ class CampaignsController < FilteredController
   end
 
   def remove_kpi
-    @field = resource.form_fields.where(kpi_id: params[:kpi_id]).find(:first)
+    @field = resource.form_fields.where(kpi_id: params[:kpi_id]).first
     @field.destroy
   end
 

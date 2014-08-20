@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Results::EventDataHelper, :type => :helper do
   let(:campaign) { FactoryGirl.create(:campaign, name: 'Test Campaign FY01') }

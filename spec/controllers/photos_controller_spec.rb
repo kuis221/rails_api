@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe PhotosController, :type => :controller do
   before(:each) do
@@ -22,10 +22,10 @@ describe PhotosController, :type => :controller do
       expect_any_instance_of(Paperclip::Attachment).to receive(:path).and_return('/attached_assets/original/test.jpg')
       expect_any_instance_of(AttachedAsset).to receive(:download_url).and_return('dummy.jpg')
       expect {
-        post 'create', event_id: event.to_param, attached_asset: {direct_upload_url: 'https://s3.amazonaws.com/brandscopic-test/uploads/dummy/test.jpg'}, format: :js
+        xhr :post, 'create', event_id: event.to_param, attached_asset: {direct_upload_url: 'https://s3.amazonaws.com/brandscopic-test/uploads/dummy/test.jpg'}, format: :js
       }.to change(AttachedAsset, :count).by(1)
       expect(response).to be_success
-      expect(response).to render_template('photo')
+      expect(response).to render_template('_photo')
       expect(response).to render_template('create')
       photo = AttachedAsset.last
       expect(photo.attachable).to eq(event)
@@ -37,9 +37,9 @@ describe PhotosController, :type => :controller do
 
   describe "GET 'new'" do
     it "should render the comment form for a event comment" do
-      get 'new', event_id: event.to_param, format: :js
+      xhr :get, 'new', event_id: event.to_param, format: :js
       expect(response).to render_template('photos/_form')
-      expect(response).to render_template(:form_dialog)
+      expect(response).to render_template('_form_dialog')
       expect(assigns(:photo).new_record?).to be_truthy
       expect(assigns(:photo).attachable).to eq(event)
     end
@@ -47,7 +47,7 @@ describe PhotosController, :type => :controller do
 
   describe "GET 'processing_status'" do
     it "should return the photos status" do
-      get 'processing_status', event_id: event.to_param, photos: [photo.id], format: :js
+      xhr :get, 'processing_status', event_id: event.to_param, photos: [photo.id], format: :js
       expect(response).to be_success
       expect(response).to render_template('processing_status')
     end
@@ -56,7 +56,7 @@ describe PhotosController, :type => :controller do
   describe "GET 'deactivate'" do
     it "deactivates an active photo" do
       photo.update_attribute(:active, true)
-      get 'deactivate', event_id: event.to_param, id: photo.to_param, format: :js
+      xhr :get, 'deactivate', event_id: event.to_param, id: photo.to_param, format: :js
       expect(response).to be_success
       expect(photo.reload.active?).to be_falsey
     end
@@ -67,7 +67,7 @@ describe PhotosController, :type => :controller do
 
     it "activates an inactive campaign" do
       expect(photo.active?).to be_falsey
-      get 'activate',  event_id: event.to_param, id: photo.to_param, format: :js
+      xhr :get, 'activate',  event_id: event.to_param, id: photo.to_param, format: :js
       expect(response).to be_success
       expect(photo.reload.active?).to be_truthy
     end

@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe AreasController, :type => :controller do
   before(:each) do
@@ -10,14 +10,14 @@ describe AreasController, :type => :controller do
 
   describe "GET 'edit'" do
     it "returns http success" do
-      get 'edit', id: area.to_param, format: :js
+      xhr :get, 'edit', id: area.to_param, format: :js
       expect(response).to be_success
     end
   end
 
   describe "GET 'new'" do
     it "returns http success" do
-      get 'new', format: :js
+      xhr :get, 'new', format: :js
       expect(response).to be_success
     end
   end
@@ -47,22 +47,22 @@ describe AreasController, :type => :controller do
   describe "POST 'create'" do
     it "should not render form_dialog if no errors" do
       expect {
-        post 'create', area: {name: 'Test Area', description: 'Test Area description'}, format: :js
+        xhr :post, 'create', area: {name: 'Test Area', description: 'Test Area description'}, format: :js
       }.to change(Area, :count).by(1)
       area = Area.last
       expect(area.name).to eq('Test Area')
       expect(area.description).to eq('Test Area description')
       expect(response).to be_success
       expect(response).to render_template(:create)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
     end
 
     it "should render the form_dialog template if errors" do
       expect {
-        post 'create', format: :js
+        xhr :post, 'create', format: :js
       }.not_to change(Area, :count)
       expect(response).to render_template(:create)
-      expect(response).to render_template(:form_dialog)
+      expect(response).to render_template('_form_dialog')
       assigns(:area).errors.count > 0
     end
   end
@@ -70,14 +70,14 @@ describe AreasController, :type => :controller do
   describe "GET 'deactivate'" do
     it "deactivates an active area" do
       area.update_attribute(:active, true)
-      get 'deactivate', id: area.to_param, format: :js
+      xhr :get, 'deactivate', id: area.to_param, format: :js
       expect(response).to be_success
       expect(area.reload.active?).to be_falsey
     end
 
     it "activates an inactive area" do
       area.update_attribute(:active, false)
-      get 'activate', id: area.to_param, format: :js
+      xhr :get, 'activate', id: area.to_param, format: :js
       expect(response).to be_success
       expect(area.reload.active?).to be_truthy
     end

@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe EventExpensesController, :type => :controller do
   let(:event){ FactoryGirl.create(:event, company: @company) }
@@ -12,14 +12,14 @@ describe EventExpensesController, :type => :controller do
 
   describe "GET 'edit'" do
     it "returns http success" do
-      get 'edit', event_id: event.to_param, id: event_expense.id, format: :js
+      xhr :get, 'edit', event_id: event.to_param, id: event_expense.id, format: :js
       expect(response).to be_success
     end
 
     it 'cannot edit an event expense on other company' do
       other_event = without_current_user{ FactoryGirl.create(:event, company: FactoryGirl.create(:company)) }
       other_expense = FactoryGirl.create(:event_expense, event: other_event)
-      get 'edit', event_id: other_event.to_param, id: other_expense.id, format: :js
+      xhr :get, 'edit', event_id: other_event.to_param, id: other_expense.id, format: :js
       expect(response).to be_success
       expect(response).to render_template('access_denied')
     end
@@ -28,12 +28,12 @@ describe EventExpensesController, :type => :controller do
   describe "POST 'create'" do
     it "should not render form_dialog if no errors" do
       expect {
-        post 'create', event_id: event.to_param, event_expense: { amount: '100', name: 'Test expense' }, format: :js
+        xhr :post, 'create', event_id: event.to_param, event_expense: { amount: '100', name: 'Test expense' }, format: :js
       }.to change(EventExpense, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template(:create)
       expect(response).to render_template('events/_expenses')
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
 
       event_expense = EventExpense.last
       expect(event_expense.amount).to eq(100)
@@ -42,7 +42,7 @@ describe EventExpensesController, :type => :controller do
 
     it "should not render the template events/expenses if errors" do
       expect {
-        post 'create', event_id: event.to_param, format: :js
+        xhr :post, 'create', event_id: event.to_param, format: :js
       }.not_to change(EventExpense, :count)
       expect(response).to be_success
       expect(response).not_to render_template('events/expenses')
@@ -64,10 +64,10 @@ describe EventExpensesController, :type => :controller do
 
   describe "GET 'new'" do
     it "returns http success" do
-      get 'new', event_id: event.to_param, format: :js
+      xhr :get, 'new', event_id: event.to_param, format: :js
       expect(response).to be_success
       expect(response).to render_template('new')
-      expect(response).to render_template('form')
+      expect(response).to render_template('_form')
     end
   end
 end

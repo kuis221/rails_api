@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Analysis::StaffReportController, :type => :controller do
   before(:each) do
@@ -23,7 +23,7 @@ describe Analysis::StaffReportController, :type => :controller do
   describe "GET 'index'" do
 
     it "should render the user report" do
-      get 'report', report: { user_id: @company_user.to_param }, format: :js
+      xhr :get, 'report', report: { user_id: @company_user.to_param }, format: :js
       expect(response).to be_success
     end
 
@@ -34,7 +34,7 @@ describe Analysis::StaffReportController, :type => :controller do
       FactoryGirl.create(:approved_event, company: @company)
       without_current_user { FactoryGirl.create(:approved_event, company_id: @company.id+1) }
 
-      get 'report', report: { user_id: company_user.to_param }, format: :js
+      xhr :get, 'report', report: { user_id: company_user.to_param }, format: :js
 
       expect(response).to be_success
       expect(assigns(:events_scope)).to match_array(events)
@@ -48,7 +48,7 @@ describe Analysis::StaffReportController, :type => :controller do
         FactoryGirl.create(:goal, goalable: @company_user, kpi_id: Kpi.interactions.id)
       ]
 
-      get 'report', report: { user_id: @company_user.to_param }, format: :js
+      xhr :get, 'report', report: { user_id: @company_user.to_param }, format: :js
 
       expect(response).to be_success
       expect(assigns(:goals)).to match_array(goals)
@@ -64,12 +64,12 @@ describe Analysis::StaffReportController, :type => :controller do
         FactoryGirl.create(:goal, goalable: @company_user, kpi_id: Kpi.interactions.id)
       ]
 
-      get 'report', report: { user_id: @company_user.to_param }, format: :js
+      xhr :get, 'report', report: { user_id: @company_user.to_param }, format: :js
 
       expect(response).to be_success
-      expect(response).to render_template('report_section_events')
-      expect(response).to render_template('report_section_promo_hours')
-      expect(response).to render_template('report_section_objectives')
+      expect(response).to render_template('_report_section_events')
+      expect(response).to render_template('_report_section_promo_hours')
+      expect(response).to render_template('_report_section_objectives')
     end
 
   end

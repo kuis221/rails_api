@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe DateRangesController, :type => :controller do
 before(:each) do
@@ -9,14 +9,14 @@ before(:each) do
   describe "GET 'edit'" do
     let(:date_range){ FactoryGirl.create(:date_range, company: @company) }
     it "returns http success" do
-      get 'edit', id: date_range.to_param, format: :js
+      xhr :get, 'edit', id: date_range.to_param, format: :js
       expect(response).to be_success
     end
   end
 
   describe "GET 'new'" do
     it "returns http success" do
-      get 'new', format: :js
+      xhr :get, 'new', format: :js
       expect(response).to be_success
     end
   end
@@ -46,17 +46,17 @@ before(:each) do
 
   describe "POST 'create'" do
     it "returns http success" do
-      post 'create', format: :js
+      xhr :post, 'create', format: :js
       expect(response).to be_success
     end
 
     it "should not render form_dialog if no errors" do
       expect {
-        post 'create', date_range: {name: 'Test date range', description: 'Test date range description'}, format: :js
+        xhr :post, 'create', date_range: {name: 'Test date range', description: 'Test date range description'}, format: :js
       }.to change(DateRange, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template(:create)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
 
       portfolio = DateRange.last
       expect(portfolio.name).to eq('Test date range')
@@ -66,10 +66,10 @@ before(:each) do
 
     it "should render the form_dialog template if errors" do
       expect {
-        post 'create', format: :js
+        xhr :post, 'create', format: :js
       }.not_to change(DateRange, :count)
       expect(response).to render_template(:create)
-      expect(response).to render_template(:form_dialog)
+      expect(response).to render_template('_form_dialog')
       assigns(:date_range).errors.count > 0
     end
   end
@@ -79,14 +79,14 @@ before(:each) do
 
     it "deactivates an active date_range" do
       date_range.update_attribute(:active, true)
-      get 'deactivate', id: date_range.to_param, format: :js
+      xhr :get, 'deactivate', id: date_range.to_param, format: :js
       expect(response).to be_success
       expect(date_range.reload.active?).to be_falsey
     end
 
     it "activates an inactive date_range" do
       date_range.update_attribute(:active, false)
-      get 'activate', id: date_range.to_param, format: :js
+      xhr :get, 'activate', id: date_range.to_param, format: :js
       expect(response).to be_success
       expect(date_range.reload.active?).to be_truthy
     end
@@ -104,6 +104,4 @@ before(:each) do
       expect(date_range.description).to eq('Test date_range description')
     end
   end
-
-
 end

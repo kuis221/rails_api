@@ -37,6 +37,8 @@ FactoryGirl.define do
     ignore do
       results false
       expenses []
+      # user_ids nil
+      # team_ids nil
     end
 
     # To keep the associations between campaign and company correct
@@ -50,7 +52,7 @@ FactoryGirl.define do
 
     before(:create) do |event, evaluator|
       evaluator.expenses.each do |attrs|
-        ex = event.event_expenses.build(attrs, without_protection: true)
+        ex = event.event_expenses.build(attrs)
       end
 
       if results = evaluator.results
@@ -58,8 +60,12 @@ FactoryGirl.define do
         event.campaign.assign_all_global_kpis if event.campaign.form_fields.empty?
         set_event_results(event, results, false)
       end
-
     end
+    # after(:create) do |event, evaluator|
+    #   event.team_ids = evaluator.team_ids if evaluator.team_ids
+    #   event.user_ids = evaluator.user_ids if evaluator.user_ids
+    #   event.save if evaluator.team_ids || evaluator.user_ids
+    # end
 
     factory :approved_event do
       aasm_state 'approved'

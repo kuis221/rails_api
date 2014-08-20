@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Api::V1::TasksController, :type => :controller do
   let(:user) { sign_in_as_user }
@@ -92,7 +92,7 @@ describe Api::V1::TasksController, :type => :controller do
       expect(result).to eq([{
                          'id' => comment1.id,
                          'content' => 'Comment #1',
-                         'created_at' => '2013-08-22T11:59:00-07:00',
+                         'created_at' => '2013-08-22T11:59:00.000-07:00',
                          'created_by' => {
                            'id' => comment1.created_by_id,
                            'full_name' => comment1.user.full_name
@@ -101,7 +101,7 @@ describe Api::V1::TasksController, :type => :controller do
                         {
                          'id' => comment2.id,
                          'content' => 'Comment #2',
-                         'created_at' => '2013-08-23T09:15:00-07:00',
+                         'created_at' => '2013-08-23T09:15:00.000-07:00',
                          'created_by' => {
                            'id' => comment2.created_by_id,
                            'full_name' => comment2.user.full_name

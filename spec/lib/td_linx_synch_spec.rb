@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 require 'td_linx'
 
 describe TdLinxSynch do

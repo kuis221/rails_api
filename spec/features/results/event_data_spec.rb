@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 feature "Results Event Data Page", js: true, search: true  do
 

@@ -44,9 +44,9 @@ class AttachedAsset < ActiveRecord::Base
 
   do_not_validate_attachment_file_type :file
 
-  scope :for_events, lambda{|events| where(attachable_type: 'Event', attachable_id: events) }
-  scope :photos, lambda{ where(asset_type: 'photo') }
-  scope :active, lambda{ where(active: true) }
+  scope :for_events, ->(events ){ where(attachable_type: 'Event', attachable_id: events) }
+  scope :photos, ->{ where(asset_type: 'photo') }
+  scope :active, ->{ where(active: true) }
 
   validate :valid_file_format?
 

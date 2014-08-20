@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 feature "Notifications", search: true, js: true do
   let(:company) { FactoryGirl.create(:company) }
@@ -311,7 +311,7 @@ feature "Notifications", search: true, js: true do
 
       visit current_url
 
-      # reload page and make sure that only the two events are still there
+      # reload page and make sure that the two campaigns are still there
       expect(current_path).to eql campaigns_path
       expect(page).to have_selector('#campaigns-list li', count: 2)
     end
@@ -337,7 +337,7 @@ feature "Notifications", search: true, js: true do
     end
 
     feature "notification alert policy set to ALL" do
-      before { company.update_attribute(:settings, {event_alerts_policy: Notification::EVENT_ALERT_POLICY_ALL}) }
+      before { company.update_attribute(:event_alerts_policy, Notification::EVENT_ALERT_POLICY_ALL) }
 
       it "should receive notifications for late events recaps" do
         company_user.update_attributes({notifications_settings: ['event_recap_late_app']})
@@ -426,7 +426,7 @@ feature "Notifications", search: true, js: true do
 
   def add_permissions(permissions)
     permissions.each do |p|
-      company_user.role.permissions.create({action: p[0], subject_class: p[1]}, without_protection: true)
+      company_user.role.permissions.create(action: p[0], subject_class: p[1])
     end
   end
 end

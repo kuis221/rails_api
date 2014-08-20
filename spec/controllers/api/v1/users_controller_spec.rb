@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Api::V1::UsersController, :type => :controller do
   let(:user) { sign_in_as_user }
@@ -273,8 +273,8 @@ describe Api::V1::UsersController, :type => :controller do
       role = FactoryGirl.create(:non_admin_role, company: company,)
       non_admin = FactoryGirl.create(:user, company_users: [FactoryGirl.create(:company_user, company: company, role: role)])
 
-      role.permissions.create({action: :create, subject_class: 'Event'}, without_protection: true)
-      role.permissions.create({action: :view_list, subject_class: 'Event'}, without_protection: true)
+      role.permissions.create(action: :create, subject_class: 'Event')
+      role.permissions.create(action: :view_list, subject_class: 'Event')
 
       get 'permissions', auth_token: non_admin.authentication_token, company_id: company.id, format: :json
 

@@ -19,12 +19,11 @@ class Role < ActiveRecord::Base
   has_many :company_users
   has_many :permissions, after_add: :clear_cached_permissions, after_remove: :clear_cached_permissions
 
-  attr_accessible :name, :description, :permissions_attributes
   validates :name, presence: true
 
   accepts_nested_attributes_for :permissions, reject_if: proc { |attributes| !attributes['enabled'] }
 
-  scope :active, where(:active => true)
+  scope :active, ->{ where(:active => true) }
 
   searchable do
     integer :id
@@ -52,7 +51,7 @@ class Role < ActiveRecord::Base
   end
 
   def permission_for(action, subject_class, subject = nil)
-    cached_permissions.detect{|p| p.action.to_s == action.to_s && p.subject_class.to_s == subject_class.to_s && p.subject_id == subject } || permissions.build({action: action, subject_class: subject_class.to_s, subject_id: subject}, without_protection: true)
+    cached_permissions.detect{|p| p.action.to_s == action.to_s && p.subject_class.to_s == subject_class.to_s && p.subject_id == subject } || permissions.build(action: action, subject_class: subject_class.to_s, subject_id: subject)
   end
 
   def has_permission?(action, subject_class)
@@ -73,7 +72,7 @@ class Role < ActiveRecord::Base
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)
-      ss = solr_search do
+      solr_search do
         with(:company_id, params[:company_id])
         with(:status, params[:status]) if params.has_key?(:status) and params[:status].present?
         if params.has_key?(:q) and params[:q].present?

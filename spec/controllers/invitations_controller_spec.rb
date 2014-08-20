@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe InvitationsController, :type => :controller do
   describe "as registered user" do
@@ -10,14 +10,14 @@ describe InvitationsController, :type => :controller do
 
     describe "GET 'new'" do
       it "returns http success" do
-        get 'new', format: :js
+        xhr :get, 'new', format: :js
         expect(response).to be_success
         expect(response).to render_template('new')
-        expect(response).to render_template('form')
+        expect(response).to render_template('_form')
       end
 
       it "builds a new company user relationship on user" do
-        get 'new', format: :js
+        xhr :get, 'new', format: :js
         expect(assigns(:user).new_record?).to be_truthy
         expect(assigns(:user).company_users.any?).to be_truthy
         expect(assigns(:user).company_users.first.new_record?).to be_truthy
@@ -27,26 +27,26 @@ describe InvitationsController, :type => :controller do
     describe "POST 'create'" do
       it "should not render form_dialog if no errors" do
         expect {
-          post 'create', user: {first_name: 'Test', last_name: 'Test', email: 'test@testing.com', company_users_attributes: {"0" => {role_id: 1}}}, format: :js
+          xhr :post, 'create', user: {first_name: 'Test', last_name: 'Test', email: 'test@testing.com', company_users_attributes: {"0" => {role_id: 1}}}, format: :js
         }.to change(User, :count).by(1)
         expect(response).to be_success
         expect(response).to render_template(:create)
-        expect(response).not_to render_template(:form_dialog)
+        expect(response).not_to render_template('_form_dialog')
       end
 
       it "should render the form_dialog template if errors" do
         expect {
-          post 'create', user: {}, format: :js
+          xhr :post, 'create', user: {}, format: :js
         }.not_to change(User, :count)
         expect(response).to render_template(:create)
-        expect(response).to render_template(:form_dialog)
+        expect(response).to render_template('_form_dialog')
         assigns(:user).errors.count > 0
       end
 
       it "should assign current_user's company_id to the new user" do
         expect {
           expect {
-            post 'create', user: {first_name: 'Test', last_name: 'Test', email: 'test@testing.com', company_users_attributes: {"0" => {role_id: 123}}}, format: :js
+            xhr :post, 'create', user: {first_name: 'Test', last_name: 'Test', email: 'test@testing.com', company_users_attributes: {"0" => {role_id: 123}}}, format: :js
           }.to change(User, :count).by(1)
         }.to change(CompanyUser, :count).by(1)
         expect(assigns(:user).companies.count).to eq(1)
@@ -58,7 +58,7 @@ describe InvitationsController, :type => :controller do
       it "should require the role_id" do
         expect {
           expect {
-            post 'create', user: {first_name: 'Test', last_name: 'Test', email: 'test@testing.com', company_users_attributes: {}}, format: :js
+            xhr :post, 'create', user: {first_name: 'Test', last_name: 'Test', email: 'test@testing.com', company_users_attributes: {}}, format: :js
           }.not_to change(User, :count)
         }.not_to change(CompanyUser, :count)
         expect(assigns(:user).company_users.first.errors[:role_id]).to eq(["can't be blank", "is not a number"])
@@ -68,7 +68,7 @@ describe InvitationsController, :type => :controller do
         expect(UserMailer).not_to receive(:company_invitation)
         expect {
           expect {
-            post 'create', user: {first_name: 'Test', last_name: 'Test', email: 'test@testing.com', company_users_attributes: {"0" => {role_id: 123}}}, format: :js
+            xhr :post, 'create', user: {first_name: 'Test', last_name: 'Test', email: 'test@testing.com', company_users_attributes: {"0" => {role_id: 123}}}, format: :js
           }.to change(User, :count).by(1)
         }.to change(CompanyUser, :count).by(1)
       end
@@ -78,7 +78,7 @@ describe InvitationsController, :type => :controller do
           user = FactoryGirl.create(:user,first_name: 'Tarzan', last_name: 'de la Selva', company_id: 987)
           expect{
             expect {
-              post 'create', user: {first_name: 'Ignored Name', last_name: 'Ignored Last', email: user.email, company_users_attributes: {"0" => {role_id: 1}}}, format: :js
+              xhr :post, 'create', user: {first_name: 'Ignored Name', last_name: 'Ignored Last', email: user.email, company_users_attributes: {"0" => {role_id: 1}}}, format: :js
               expect(assigns(:user).errors.empty?).to be_truthy
             }.not_to change(User, :count)
           }.to change(CompanyUser, :count).by(1)
@@ -90,14 +90,14 @@ describe InvitationsController, :type => :controller do
         it "should send a company invitation email" do
           user = FactoryGirl.create(:user, company_id: 987)
           expect(UserMailer).to receive(:company_invitation).with(user.id, @company.id, @user.id).and_return(double(deliver: true))
-          post 'create', user: {first_name: 'Some name', last_name: 'Last', email: user.email, company_users_attributes: {"0" => {role_id: 1}}}, format: :js
+          xhr :post, 'create', user: {first_name: 'Some name', last_name: 'Last', email: user.email, company_users_attributes: {"0" => {role_id: 1}}}, format: :js
         end
 
         it "should not reassign the user to the same company" do
           user = FactoryGirl.create(:user, email: 'existingemail4321@gmail.com', company_id: @company.id)
           expect {
             expect {
-              post 'create', user: {first_name: 'Test', last_name: 'Test', email: 'existingemail4321@gmail.com', company_users_attributes: {"0" => {role_id: 123}}}, format: :js
+              xhr :post, 'create', user: {first_name: 'Test', last_name: 'Test', email: 'existingemail4321@gmail.com', company_users_attributes: {"0" => {role_id: 123}}}, format: :js
             }.not_to change(User, :count)
           }.not_to change(CompanyUser, :count)
           expect(assigns(:user).company_users.size).to eq(1)
@@ -130,7 +130,7 @@ describe InvitationsController, :type => :controller do
 
     describe "GET 'edit'" do
       it "should accept a company invitation email" do
-        get 'edit', invitation_token: user.invitation_token, format: :js
+        xhr :get, 'edit', invitation_token: user.invitation_token, format: :js
         expect(response).to be_success
       end
     end

@@ -23,7 +23,7 @@ namespace :db do
     task :roles => :environment do
       Company.all.each do |company|
         ['Admin', 'Field Director', 'Field Manager', 'Field Staff', 'Client', 'Brand Ambassadors'].each do |name|
-          Role.find_or_create_by_company_id_and_name({company_id: company.id, name: name, active: true}, without_protection: true)
+          Role.create_with(active: true).find_or_create_by(company_id: company.id, name: name)
         end
       end
     end
@@ -86,10 +86,10 @@ namespace :db do
       brands = YAML.load_file(File.join(Rails.root,'lib','assets','brands.yml'))
       Company.all.each do |company|
         brands.each do |portfolio_name, brands|
-          portfolio = company.brand_portfolios.find_or_create_by_name(portfolio_name)
+          portfolio = company.brand_portfolios.find_or_create_by(name: portfolio_name)
           actual_brands = portfolio.brands.map(&:name)
           (brands - actual_brands).each do |brand_name|
-            portfolio.brands << Brand.find_or_create_by_name(brand_name)
+            portfolio.brands << Brand.find_or_create_by(name: brand_name)
           end
         end
       end

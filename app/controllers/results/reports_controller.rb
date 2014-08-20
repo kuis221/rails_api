@@ -26,7 +26,7 @@ class Results::ReportsController < InheritedResources::Base
 
   def show
     if request.format.csv?
-      @export = ListExport.create({controller: self.class.name,  params: filter_params, export_format: :csv, company_user: current_company_user}, without_protection: true)
+      @export = ListExport.create(controller: self.class.name,  params: filter_params, export_format: :csv, company_user: current_company_user)
       if @export.new?
         @export.queue!
       end
@@ -39,14 +39,16 @@ class Results::ReportsController < InheritedResources::Base
   end
 
   def share_form
-    @sharing_collection = ActiveRecord::Base.connection.select_all("
-      #{current_company.company_users.select('company_users.id, users.first_name || \' \' || users.last_name as name, \'company_user\' as type').active.joins(:user).to_sql}
-      UNION ALL
-      #{current_company.roles.select('roles.id, roles.name, \'role\' as type').active.to_sql}
-      UNION ALL
-      #{current_company.teams.select('teams.id, teams.name, \'team\' as type').active.to_sql}
-      ORDER BY name ASC
-    ").map{|r| [r['name'], "#{r['type']}:#{r['id']}", {class: r['type']}] }
+    @sharing_collection = ActiveRecord::Base.connection.unprepared_statement do
+      ActiveRecord::Base.connection.select_all("
+        #{current_company.company_users.select('company_users.id, users.first_name || \' \' || users.last_name as name, \'company_user\' as type').active.joins(:user).to_sql}
+        UNION ALL
+        #{current_company.roles.select('roles.id, roles.name, \'role\' as type').active.to_sql}
+        UNION ALL
+        #{current_company.teams.select('teams.id, teams.name, \'team\' as type').active.to_sql}
+        ORDER BY name ASC
+      ").map{|r| [r['name'], "#{r['type']}:#{r['id']}", {class: r['type']}] }
+    end
   end
 
   def filters

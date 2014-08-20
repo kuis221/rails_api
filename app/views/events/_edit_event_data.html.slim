@@ -11,7 +11,7 @@
       = render partial: 'event_data', locals: {fields: fields, f: f}
 
       .form-actions
-        = f.button :submit, id: 'save-data', class: 'btn-primary', disable_with: 'Please wait...'
+        = f.button :submit, id: 'save-data', class: 'btn-primary', data: {disable_with: 'Please wait...'}
         - if allow_cancel
           = "&nbsp;".html_safe
           = f.button :button, 'Cancel', id: 'cancel-edit', class: 'btn btn-cancel'

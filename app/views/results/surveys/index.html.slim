@@ -30,8 +30,8 @@
 
 javascript:
   $('#collection-list-filters').filteredList({
-    'source': '#{items_path(controller: 'results/surveys')}',
-    'filtersUrl': '#{filters_path(controller: :events, with_surveys_only: true)}',
+    'source': '#{url_for(controller: 'results/surveys', action: :items)}',
+    'filtersUrl': '#{filters_events_path(with_surveys_only: true)}',
     'listContainer': '#surveys-list',
     'sorting': 'start_at',
     'sorting_dir': 'asc',

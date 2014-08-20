@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Results::ReportsController, :type => :controller do
   before(:each) do
@@ -20,7 +20,7 @@ describe Results::ReportsController, :type => :controller do
 
   describe "GET 'new'" do
     it "returns http success" do
-      get 'new', format: :js
+      xhr :get, 'new', format: :js
       expect(response).to be_success
       expect(response).to render_template('new')
       expect(response).to render_template('_form')
@@ -30,7 +30,7 @@ describe Results::ReportsController, :type => :controller do
   describe "GET 'preview'" do
     let(:report) { FactoryGirl.create(:report, company: @company) }
     it "returns http success" do
-      get 'preview', id: report.id, format: :js
+      xhr :get, 'preview', id: report.id, format: :js
       expect(response).to be_success
       expect(response).to render_template('preview')
       expect(response).to render_template('_report_preview')
@@ -49,13 +49,13 @@ describe Results::ReportsController, :type => :controller do
 
   describe "POST 'create'" do
     it "returns http success" do
-      post 'create', format: :js
+      xhr :post, 'create', format: :js
       expect(response).to be_success
     end
 
     it "should not render form_dialog if no errors" do
       expect {
-        post 'create', report: {name: 'Test report', description: 'Test report description'}, format: :js
+        xhr :post, 'create', report: {name: 'Test report', description: 'Test report description'}, format: :js
       }.to change(Report, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template(:create)
@@ -68,7 +68,7 @@ describe Results::ReportsController, :type => :controller do
 
     it "should render the form_dialog template if errors" do
       expect {
-        post 'create', format: :js
+        xhr :post, 'create', format: :js
       }.to_not change(Report, :count)
       expect(response).to render_template(:create)
       expect(response).to render_template('_form_dialog')
@@ -79,14 +79,14 @@ describe Results::ReportsController, :type => :controller do
   describe "GET 'deactivate'" do
     it "deactivates an active report" do
       report.update_attribute(:active, true)
-      get 'deactivate', id: report.to_param, format: :js
+      xhr :get, 'deactivate', id: report.to_param, format: :js
       expect(response).to be_success
       expect(report.reload.active?).to be_falsey
     end
 
     it "activates an inactive report" do
       report.update_attribute(:active, false)
-      get 'activate', id: report.to_param, format: :js
+      xhr :get, 'activate', id: report.to_param, format: :js
       expect(response).to be_success
       expect(report.reload.active?).to be_truthy
     end
@@ -118,7 +118,7 @@ describe Results::ReportsController, :type => :controller do
     end
 
     it "must update the sharing attributes" do
-      put 'update', id: report.to_param, report: {sharing: 'everyone'}, format: :js
+      xhr :put, 'update', id: report.to_param, report: {sharing: 'everyone'}, format: :js
       expect(assigns(:report)).to eql report
       expect(response).to render_template('update')
       report.reload

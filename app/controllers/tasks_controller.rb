@@ -27,7 +27,7 @@ class TasksController < FilteredController
   def assignable_users
     if resource.event.present?
       ( company_users.active.by_events(resource.event).for_dropdown +
-        company_users.active.by_teams(resource.event.teams).for_dropdown
+        company_users.active.by_teams(resource.event.team_ids).for_dropdown
       ).uniq.sort_by{|a| a[0].downcase }
     else
       current_company.company_users.active.for_dropdown
