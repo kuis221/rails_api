@@ -461,7 +461,6 @@ describe Event, :type => :model do
     end
   end
 
-
   describe "is_late?" do
     after do
       Timecop.return

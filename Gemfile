@@ -13,7 +13,7 @@ gem "rack-timeout"
 gem 'pg'
 gem 'devise'
 gem 'devise_invitable', '~> 1.3.0'
-gem "cancan", ">= 1.6.8"
+gem 'cancancan', '~> 1.9'
 gem "slim-rails"
 gem 'inherited_resources'
 gem 'has_scope'
@@ -107,7 +107,7 @@ group :test do
   gem "sunspot_test"
   gem 'resque_spec'
   gem 'simplecov', require: false
-  gem 'capybara-screenshot'
+  #gem 'capybara-screenshot'
   gem 'fuubar', '2.0.0'
   gem 'database_cleaner'
   #gem 'sms-spec', '~> 0.1.9'

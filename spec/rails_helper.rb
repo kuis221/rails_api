@@ -13,8 +13,8 @@ require 'shoulda/matchers'
 require 'capybara/rails'
 require 'capybara/poltergeist'
 require 'database_cleaner'
-require 'capybara-screenshot'
-require 'capybara-screenshot/rspec'
+# require 'capybara-screenshot'
+# require 'capybara-screenshot/rspec'
 require 'sms-spec'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
@@ -97,7 +97,7 @@ RSpec.configure do |config|
   #Capybara.javascript_driver = :selenium
   Capybara.javascript_driver = :poltergeist
   Capybara.default_wait_time = 5
-  Capybara.server_host = 'localhost'
+  # Capybara.server_host = 'localhost'
   Devise.stretches = 1
   #Rails.logger.level = 4
 

@@ -81,11 +81,9 @@ class ListExport < ActiveRecord::Base
     end
 
     name = controller.send(:export_file_name)
-    buffer = controller.send(:export_list, self)
-    tmp_filename = "#{Rails.root}/tmp/#{name}-#{self.id}.#{export_format}"
-    File.open(tmp_filename, 'w'){|f| f.write(buffer) }
-    buffer = nil
-    self.file = File.open(tmp_filename)
+    self.file = StringIO.new(controller.send(:export_list, self) || '')
+    self.file_file_name = "#{name}-#{self.id}.#{export_format}"
+    self.file_content_type = "application/xml"
 
     # Save export with retry to handle errors on S3 comunications
     tries = 3
@@ -100,10 +98,6 @@ class ListExport < ActiveRecord::Base
         false
       end
     end
-
-    # Delete tempfile
-    File.delete(tmp_filename)
-
     # Mark export as completed
     self.complete!
   end
