@@ -116,6 +116,7 @@ end
 
 group :production do
   gem 'airbrake'
+  gem 'rails_12factor'
 end
 
 # To use ActiveModel has_secure_password
