@@ -10,7 +10,7 @@
 #  updated_at             :datetime         not null
 #  active                 :boolean          default(TRUE)
 #  last_activity_at       :datetime
-#  notifications_settings :string(255)      default([])
+#  notifications_settings :string(255)      default([]), is an Array
 #
 
 class CompanyUser < ActiveRecord::Base
@@ -58,7 +58,7 @@ class CompanyUser < ActiveRecord::Base
   has_many :placeables, as: :placeable, dependent: :destroy
   has_many :places, through: :placeables, after_add: :places_changed
 
-  delegate :name, :email, :phone_number, :role_name, :time_zone, :avatar, :invited_to_sign_up?,
+  delegate :name, :email, :phone_number, :time_zone, :avatar, :invited_to_sign_up?,
           :full_address, :country, :state, :city, :street_address, :unit_number,
           :zip_code, :country_name, :state_name, :phone_number_verified?,
           to: :user

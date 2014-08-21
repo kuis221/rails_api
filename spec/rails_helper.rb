@@ -60,28 +60,24 @@ RSpec.configure do |config|
     DatabaseCleaner.logger = Rails.logger
   end
 
-  config.before(:all) do
-    DeferredGarbageCollection.start
-  end
-
-  config.after(:all) do
-    DeferredGarbageCollection.reconsider
-  end
-
   config.before(:each) do |example|
     #Resque::Worker.stub(:working).and_return([])
     allow(Resque::Worker).to receive_messages(:working => [])
+  end
+
+  config.around(:each) do |example|
     Rails.logger.debug "\n\n\n\n\n\n\n\n\n\n"
     Rails.logger.debug "**************************************************************************************"
     Rails.logger.debug "***** EXAMPLE: #{example.full_description}"
     Rails.logger.debug "**************************************************************************************"
-    DatabaseCleaner.start
+    DatabaseCleaner.cleaning do
+      example.run
+    end
   end
 
   config.after(:each) do |example|
     if example.metadata[:js]
       wait_for_ajax
-      #Capybara.reset_sessions!
     end
     User.current = nil
     Time.zone = Rails.application.config.time_zone
@@ -90,14 +86,13 @@ RSpec.configure do |config|
     ['events', 'promo_hours', 'impressions', 'interactions', 'impressions', 'interactions', 'samples', 'expenses', 'gender', 'age', 'ethnicity', 'photos', 'videos', 'surveys', 'comments'].each do |kpi|
       Kpi.instance_variable_set("@#{kpi}".to_sym, nil)
     end
-    DatabaseCleaner.clean
   end
 
   # Capybara.javascript_driver = :webkit
   #Capybara.javascript_driver = :selenium
   Capybara.javascript_driver = :poltergeist
   Capybara.default_wait_time = 5
-  Capybara.server_host = 'localhost'
+  # Capybara.server_host = 'localhost'
   Devise.stretches = 1
   #Rails.logger.level = 4
 

@@ -31,7 +31,7 @@ class Event < ActiveRecord::Base
   has_many :tasks, ->{ order 'due_at ASC' }, dependent: :destroy, inverse_of: :event
   has_many :photos, ->{ order("created_at DESC").where(asset_type: 'photo') }, class_name: 'AttachedAsset', dependent: :destroy, as: :attachable, inverse_of: :attachable
   has_many :active_photos, ->{ order("created_at DESC").where(asset_type: 'photo', active: true) }, class_name: 'AttachedAsset', as: :attachable, inverse_of: :attachable
-  has_many :documents, ->{ order("created_at DESC").where(asset_type: 'photo') }, class_name: 'AttachedAsset', dependent: :destroy, as: :attachable, inverse_of: :attachable
+  has_many :documents, ->{ order("created_at DESC").where(asset_type: 'document') }, class_name: 'AttachedAsset', dependent: :destroy, as: :attachable, inverse_of: :attachable
   has_many :teamings, as: :teamable, dependent: :destroy, inverse_of: :teamable
   has_many :teams, through: :teamings, after_remove: :after_remove_member
   has_many :results, as: :resultable, dependent: :destroy, class_name: 'FormFieldResult', inverse_of: :resultable do
@@ -113,12 +113,17 @@ class Event < ActiveRecord::Base
       joins('LEFT JOIN users ON users.id=company_users.user_id')
   }
 
-  scope :in_areas, ->(areas) {
-    subquery = Place.select('DISTINCT places.location_id, placeables.placeable_id area_id').joins(:placeables).where(placeables: { placeable_type: 'Area', placeable_id: areas }, is_location: true)
-    place_query = "select place_id, locations.area_id FROM locations_places INNER JOIN (#{subquery.to_sql}) locations on locations.location_id=locations_places.location_id"
-    area_query = Placeable.select('place_id, placeable_id area_id').where(placeable_type: 'Area', placeable_id: areas).to_sql
+  # Returns the events that are inside the campaigns scope, considering the
+  # custom exclusions
+  scope :in_campaign_area, ->(area_campaign) {
+    has_exclusions = area_campaign.exclusions.any?
+    subquery = Place.select('DISTINCT places.location_id, placeables.placeable_id area_id').joins(:placeables).where(placeables: { placeable_type: 'Area', placeable_id: area_campaign.area_id }, is_location: true)
+    subquery = subquery.where.not(placeables: {place_id: area_campaign.exclusions})
+    place_query = "SELECT place_id, locations.area_id FROM locations_places INNER JOIN (#{subquery.to_sql}) locations on locations.location_id=locations_places.location_id" + (has_exclusions ? " WHERE place_id not in (#{area_campaign.exclusions.join(',')})" : '')
+    area_query = Placeable.select('place_id, placeable_id area_id').where(placeable_type: 'Area', placeable_id: area_campaign.area_id)
+    area_query = area_query.where.not(place_id: area_campaign.exclusions) if has_exclusions
     joins(:place).
-    joins("INNER JOIN (#{area_query} UNION #{place_query}) areas_places ON events.place_id=areas_places.place_id")
+    joins("INNER JOIN (#{area_query.to_sql} UNION #{place_query}) areas_places ON events.place_id=areas_places.place_id")
   }
 
   scope :in_places, ->(places) {

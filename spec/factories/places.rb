@@ -48,5 +48,14 @@ FactoryGirl.define do
       types ['political', 'locality']
       after(:build) {|p| p.city = p.name }
     end
+
+    factory :country do
+      types ['political', 'country']
+      after(:build) do |p|
+        p.state = nil
+        p.city = nil
+        p.country = p.name
+      end
+    end
   end
 end

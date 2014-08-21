@@ -152,7 +152,7 @@ describe FormFieldResult, :type => :model do
     it { is_expected.to allow_value('').for(:value) }
     it { is_expected.not_to allow_value('sdfsd').for(:value).with_message('is not valid') }
     it { is_expected.not_to allow_value('https://s3.amazonaws.com/invalid-bucket/uploads/1233443/filename.jpg').for(:value).with_message('is not valid') }
-    it { is_expected.to allow_value('https://s3.amazonaws.com/brandscopic-test/uploads/1233443/filename.jpg').for(:value) }
+    it { is_expected.to allow_value('https://s3.amazonaws.com/brandscopic-dev/uploads/1233443/filename.jpg').for(:value) }
   end
 
   describe "for text fields" do

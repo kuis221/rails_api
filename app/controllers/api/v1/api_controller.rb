@@ -96,7 +96,7 @@ class Api::V1::ApiController < ActionController::Base
     end
 
     def set_access_control_headers
-      unless Rails.env.production?
+      unless ENV['HEROKU_APP_NAME'] == 'brandscopic'
         headers['Access-Control-Allow-Origin'] = '*'
       else
         headers['Access-Control-Allow-Origin'] = 'http://m.brandscopic.com'
@@ -110,7 +110,7 @@ class Api::V1::ApiController < ActionController::Base
 
     def cors_preflight_check
       if request.method == 'OPTIONS'
-        unless Rails.env.production?
+        unless ENV['HEROKU_APP_NAME'] == 'brandscopic'
           headers['Access-Control-Allow-Origin'] = '*'
         else
           headers['Access-Control-Allow-Origin'] = 'http://m.brandscopic.com'

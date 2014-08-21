@@ -1,4 +1,6 @@
 require "timeout"
+require "rexml/document"
+require 'open-uri'
 
 module CapybaraBrandscopicHelpers
   def wait_for_ajax(timeout = Capybara.default_wait_time)
@@ -98,8 +100,8 @@ module CapybaraBrandscopicHelpers
     find('.select2-container').find(".select2-search-field").click
     fill_in field_name, with: tag
     page.execute_script(%|$("input.select2-input:visible").keyup();|)
-    [tag].flatten.each do |tag|
-      find(:xpath, "//body").find(".select2-results li", text: tag).click
+    [tag].flatten.each do |t|
+      find(:xpath, "//body").find(".select2-results li", text: t).click
     end
   end
 
@@ -131,10 +133,9 @@ module CapybaraBrandscopicHelpers
   end
 
   def spreadsheet_from_last_export
-    require "rexml/document"
-    require 'open-uri'
-    file = open(URI.parse(ListExport.last.file.url(:original, timestamp: false)))
-    yield REXML::Document.new(file)
+    open(URI.parse(ListExport.last.file.url(:original, timestamp: false))) do |file|
+      yield REXML::Document.new(file)
+    end
   end
 end
 

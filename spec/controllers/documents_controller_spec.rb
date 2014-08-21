@@ -15,14 +15,14 @@ describe DocumentsController, :type => :controller do
       s3object = double()
       allow(s3object).to receive(:copy_from).and_return(true)
       expect_any_instance_of(AWS::S3).to receive(:buckets).at_least(:once).and_return(
-        "brandscopic-test" => double(objects: {
+        "brandscopic-dev" => double(objects: {
           'uploads/dummy/test.jpg' => double(head: double(content_length: 100, content_type: 'image/jpeg', last_modified: Time.now)),
           'attached_assets/original/test.jpg' => s3object
         } ))
       expect_any_instance_of(Paperclip::Attachment).to receive(:path).at_least(:once).and_return('/attached_assets/original/test.jpg')
       expect_any_instance_of(AttachedAsset).to receive(:download_url).and_return('dummy.jpg')
       expect {
-        xhr :post, 'create', event_id: event.to_param, attached_asset: {direct_upload_url: 'https://s3.amazonaws.com/brandscopic-test/uploads/dummy/test.jpg'}, format: :js
+        xhr :post, 'create', event_id: event.to_param, attached_asset: {direct_upload_url: 'https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg'}, format: :js
       }.to change(AttachedAsset, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template('_document')
@@ -31,7 +31,7 @@ describe DocumentsController, :type => :controller do
       document = AttachedAsset.last
       expect(document.attachable).to eq(event)
       expect(document.asset_type).to eq('document')
-      expect(document.direct_upload_url).to eq('https://s3.amazonaws.com/brandscopic-test/uploads/dummy/test.jpg')
+      expect(document.direct_upload_url).to eq('https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg')
       expect(AssetsUploadWorker).to have_queued(document.id)
     end
   end
