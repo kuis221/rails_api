@@ -1,3 +1,4 @@
+$stdout.sync = true
 Brandscopic::Application.configure do
   # Settings specified here will take precedence over those in config/application.rb
 
@@ -17,7 +18,7 @@ Brandscopic::Application.configure do
   config.action_mailer.raise_delivery_errors = false
 
   # Print deprecation notices to the Rails logger
-  config.active_support.deprecation = :stderr
+  config.active_support.deprecation = :log
 
   # Raise an error on page load if there are pending migrations
   config.active_record.migration_error = :page_load
@@ -35,9 +36,8 @@ Brandscopic::Application.configure do
 
   config.cache_store = :dalli_store
 
-
   # We want to see the logs on the console for the workers :)
-  unless $rails_rake_task && !ENV['LOG_CONSOLE']
+  if ENV['LOG_CONSOLE']
     config.logger = Logger.new(STDOUT)
     config.logger.level = Logger.const_get(
       ENV['LOG_LEVEL'] ? ENV['LOG_LEVEL'].upcase : 'DEBUG'
