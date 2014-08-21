@@ -31,7 +31,7 @@ class Event < ActiveRecord::Base
   has_many :tasks, ->{ order 'due_at ASC' }, dependent: :destroy, inverse_of: :event
   has_many :photos, ->{ order("created_at DESC").where(asset_type: 'photo') }, class_name: 'AttachedAsset', dependent: :destroy, as: :attachable, inverse_of: :attachable
   has_many :active_photos, ->{ order("created_at DESC").where(asset_type: 'photo', active: true) }, class_name: 'AttachedAsset', as: :attachable, inverse_of: :attachable
-  has_many :documents, ->{ order("created_at DESC").where(asset_type: 'photo') }, class_name: 'AttachedAsset', dependent: :destroy, as: :attachable, inverse_of: :attachable
+  has_many :documents, ->{ order("created_at DESC").where(asset_type: 'document') }, class_name: 'AttachedAsset', dependent: :destroy, as: :attachable, inverse_of: :attachable
   has_many :teamings, as: :teamable, dependent: :destroy, inverse_of: :teamable
   has_many :teams, through: :teamings, after_remove: :after_remove_member
   has_many :results, as: :resultable, dependent: :destroy, class_name: 'FormFieldResult', inverse_of: :resultable do
