@@ -1,1 +1,0 @@
-export: <%= WORKER_CONCURRENCY_EXPORT %>

@@ -41,7 +41,6 @@ gem 'rubyzip'
 gem 'redis'
 gem "resque" #, require: "resque/server"
 gem 'resque-loner'
-gem 'resque-pool', '~> 0.4.0.rc2'
 gem 'resque-timeout'
 gem 'resque_mailer'
 gem 'unread'
