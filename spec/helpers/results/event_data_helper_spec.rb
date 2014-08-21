@@ -127,4 +127,53 @@ describe Results::EventDataHelper, :type => :helper do
       expect(helper.custom_fields_to_export_values(event2)).to eq([["Number", "normal", 3333], ["Number", "normal", 4444]])
     end
   end
+
+  describe "#area_for_event" do
+    let(:company) { FactoryGirl.create(:company) }
+    let(:campaign) { FactoryGirl.create(:campaign, company: company) }
+
+    it "should return the area name" do
+      place_la = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      event = FactoryGirl.create(:event, campaign: campaign, place: place_la)
+
+      city_la = FactoryGirl.create(:city, name: 'Los Angeles', country: 'US', state: 'California')
+      area = FactoryGirl.create(:area, name: 'MyArea', company: company)
+
+      area.places << city_la
+      campaign.areas << area
+
+      expect(area_for_event(event)).to eql 'MyArea'
+    end
+
+    it "should return the area names separated by comma if more than one" do
+      place_la = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      event = FactoryGirl.create(:event, campaign: campaign, place: place_la)
+
+      city_la = FactoryGirl.create(:city, name: 'Los Angeles', country: 'US', state: 'California')
+      area1 = FactoryGirl.create(:area, name: 'MyArea1', company: company)
+      area2 = FactoryGirl.create(:area, name: 'MyArea2', company: company)
+
+      area1.places << city_la
+      area2.places << place_la
+      campaign.areas << [area1, area2]
+
+      expect(area_for_event(event)).to eql 'MyArea1, MyArea2'
+    end
+
+    it "should NOT include the area if the place was excluded from it" do
+      place_la = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      event = FactoryGirl.create(:event, campaign: campaign, place: place_la)
+
+      city_la = FactoryGirl.create(:city, name: 'Los Angeles', country: 'US', state: 'California')
+      area1 = FactoryGirl.create(:area, name: 'MyArea1', company: company)
+      area2 = FactoryGirl.create(:area, name: 'MyArea2', company: company)
+
+      area1.places << city_la
+      area2.places << place_la
+      FactoryGirl.create(:areas_campaign, area: area1, campaign: campaign)
+      FactoryGirl.create(:areas_campaign, area: area2, campaign: campaign, exclusions: [place_la.id])
+
+      expect(area_for_event(event)).to eql 'MyArea1'
+    end
+  end
 end

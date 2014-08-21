@@ -97,6 +97,7 @@ describe Results::GvaController, :type => :controller do
 
       area = FactoryGirl.create(:area, company: campaign.company)
       area.places << place
+      campaign.areas << area
 
       campaign.add_kpi kpi
       goal = campaign.goals.for_kpi(kpi)

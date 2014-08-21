@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140820194232) do
+ActiveRecord::Schema.define(version: 20140821114202) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -118,6 +118,7 @@ ActiveRecord::Schema.define(version: 20140820194232) do
   create_table "areas_campaigns", force: true do |t|
     t.integer "area_id"
     t.integer "campaign_id"
+    t.integer "exclusions",  default: [], array: true
   end
 
   create_table "asset_downloads", force: true do |t|
