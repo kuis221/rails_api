@@ -38,7 +38,7 @@ class Metric < Legacy::Record
         if kpi.nil?
           kpi = campaign.form_fields.detect{|f| f.name.gsub(/[:#\.,;]/,'').strip.downcase ==  name.gsub(/[:#\.,;]/,'').strip.downcase && f.field_type == map_type}.try(:kpi)
         end
-        kpi ||= ::Kpi.new({company_id: company.id, name: name}, without_protection: true)
+        kpi ||= ::Kpi.new(company_id: company.id, name: name)
         migration.local = kpi
       end
       #raise "Conflicting KPI found for metric #{self.name}[#{self.id}]: #{kpi.inspect}" if migration.local.persisted? && migration.new_record?

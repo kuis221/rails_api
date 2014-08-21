@@ -30,8 +30,8 @@
 
 javascript:
   $('#collection-list-filters').filteredList({
-    'source': '#{items_path(controller: 'results/expenses')}',
-    'filtersUrl': '#{filters_path(controller: :events, with_expenses_only: true)}',
+    'source': '#{url_for(controller: 'results/expenses', action: :items)}',
+    'filtersUrl': '#{filters_events_path(with_expenses_only: true)}',
     'listContainer': '#expenses-list',
     'sorting': 'start_at',
     'sorting_dir': 'asc',

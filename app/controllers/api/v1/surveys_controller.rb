@@ -1,6 +1,6 @@
 class Api::V1::SurveysController < Api::V1::ApiController
 
-  before_filter :check_surveys_enabled_for_event
+  before_action :check_surveys_enabled_for_event
 
   inherit_resources
 

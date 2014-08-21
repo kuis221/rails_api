@@ -14,8 +14,8 @@ class DayItem < ActiveRecord::Base
   validates :day_part_id, presence: true, numericality: true
   validates :start_time, presence: true
 
-  validates_time :start_time
-  validates_time :end_time, on_or_after: :start_time, allow_nil: true, allow_blank: true
+  # validates_time :start_time
+  # validates_time :end_time, on_or_after: :start_time, allow_nil: true, allow_blank: true
 
   belongs_to :day_part
 

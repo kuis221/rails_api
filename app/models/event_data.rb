@@ -26,8 +26,6 @@ class EventData < ActiveRecord::Base
   }
 
   belongs_to :event
-  attr_accessible :spent, :ethnicity_asian, :ethnicity_black, :ethnicity_hispanic, :ethnicity_native_american, :ethnicity_white, :gender_female, :gender_male, :impressions, :interactions, :samples
-
   scope :scoped_by_place_id_and_company_id, lambda{|places, companies| joins(:event).where(events: {place_id: places, company_id: companies}) }
 
   scope :scoped_by_company_id, lambda{|companies| joins(:event).where(events: {company_id: companies}) }
@@ -49,7 +47,11 @@ class EventData < ActiveRecord::Base
     [:gender, :ethnicity].each do |kpi|
       segments = Kpi.send(kpi).try(:kpis_segments)
       result = e.result_for_kpi(Kpi.send(kpi))
-      segments.each{|s| self.send("#{kpi}_#{SEGMENTS_NAMES_MAP[kpi][s.text]}=", result.value.try(:[], s.id.to_s).to_f) if result.value.has_key?(s.id.to_s)} if result.present? && segments
+      if result.present? && result.value.present? && segments
+        segments.each do |s|
+          self.send("#{kpi}_#{SEGMENTS_NAMES_MAP[kpi][s.text]}=", result.value.try(:[], s.id.to_s).to_f) if result.value.has_key?(s.id.to_s)
+        end
+      end
     end
 
     self

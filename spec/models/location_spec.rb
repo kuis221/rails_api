@@ -6,7 +6,7 @@
 #  path :string(500)
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe Location, :type => :model do
   it { is_expected.to have_and_belong_to_many(:places) }

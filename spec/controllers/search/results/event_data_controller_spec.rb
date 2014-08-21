@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Results::EventDataController, type: :controller, search: true do
   before(:each) do
@@ -33,7 +33,7 @@ describe Results::EventDataController, type: :controller, search: true do
 
       get 'items'
       expect(response).to be_success
-      expect(response).to render_template('totals')
+      expect(response).to render_template('_totals')
 
       expect(assigns(:data_totals)['events_count']).to eq(1)
       expect(assigns(:data_totals)['promo_hours']).to eq(3)

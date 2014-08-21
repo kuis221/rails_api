@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 feature "User Profile", js: true do
   let(:company) { FactoryGirl.create(:company) }

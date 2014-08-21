@@ -49,7 +49,7 @@ class InvitationsController < Devise::InvitationsController
         self.resource.errors.add(:email, "This user with the email address #{params[:user][:email]} already exists. Email addresses must be unique.")
       else
         self.resource = invited_user
-        self.resource.assign_attributes({inviting_user: true, company_users_attributes: resource_params[:company_users_attributes]}, without_protection: true)
+        self.resource.assign_attributes(inviting_user: true, company_users_attributes: resource_params[:company_users_attributes])
         if self.resource.save and self.resource.errors.empty?
           UserMailer.company_invitation(self.resource.id, current_company.id, current_user.id).deliver
         end

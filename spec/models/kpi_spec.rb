@@ -16,7 +16,7 @@
 #  ordering          :integer
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe Kpi, :type => :model do
   it { is_expected.to belong_to(:company) }

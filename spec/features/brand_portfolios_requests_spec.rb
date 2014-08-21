@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 feature "BrandPortfolios", js: true, search: true do
 

@@ -10,5 +10,5 @@
       = f.input :content, label: false, input_html: {rows: 1, class: 'input-xlarge'}
 
     .form-actions
-      = f.button :submit, class: 'btn-primary', disable_with: 'Please wait...'
+      = f.button :submit, class: 'btn-primary', data: {disable_with: 'Please wait...'}
       = f.button :button, 'Cancel', class: 'btn-cancel'

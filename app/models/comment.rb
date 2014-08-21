@@ -24,8 +24,6 @@ class Comment < ActiveRecord::Base
 
   delegate :company_id, to: :commentable
 
-  attr_accessible :content
-
   validates :content, presence: true
   validates :commentable_id, presence: true, numericality: true
   validates :commentable_type, presence: true

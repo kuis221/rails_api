@@ -10,7 +10,7 @@
 #  updated_at             :datetime         not null
 #  active                 :boolean          default(TRUE)
 #  last_activity_at       :datetime
-#  notifications_settings :string(255)      default([])
+#  notifications_settings :string(255)      default([]), is an Array
 #
 
 class CompanyUser < ActiveRecord::Base
@@ -33,10 +33,10 @@ class CompanyUser < ActiveRecord::Base
   has_many :contact_events, dependent: :destroy, as: :contactable
 
   # Teams-Users relationship
-  has_many :teams, through: :memberships, source: :memberable, source_type: 'Team', conditions: {active: true}
+  has_many :teams, ->{ where active: true }, through: :memberships, source: :memberable, source_type: 'Team'
 
   # Campaigns-Users relationship
-  has_many :campaigns, through: :memberships, source: :memberable, source_type: 'Campaign', conditions: {aasm_state: 'active'} do
+  has_many :campaigns, ->{ where(aasm_state: 'active') }, through: :memberships, source: :memberable, source_type: 'Campaign' do
     def children_of(parent)
       where(memberships: {parent_id: parent.id, parent_type: parent.class.name})
     end
@@ -46,19 +46,19 @@ class CompanyUser < ActiveRecord::Base
   has_many :events, through: :memberships, source: :memberable, source_type: 'Event'
 
   # Area-User relationship
-  has_many :areas, through: :memberships, source: :memberable, source_type: 'Area', conditions: {active: true}, after_remove: :remove_child_goals_for
+  has_many :areas, ->{ where active: true }, through: :memberships, source: :memberable, source_type: 'Area', after_remove: :remove_child_goals_for
 
   # BrandPortfolio-User relationship
-  has_many :brand_portfolios, through: :memberships, source: :memberable, source_type: 'BrandPortfolio', conditions: {active: true}
+  has_many :brand_portfolios, ->{ where active: true }, through: :memberships, source: :memberable, source_type: 'BrandPortfolio'
 
   # BrandPortfolio-User relationship
-  has_many :brands, through: :memberships, source: :memberable, source_type: 'Brand', conditions: {active: true}
+  has_many :brands, ->{ where active: true }, through: :memberships, source: :memberable, source_type: 'Brand'
 
   # Places-Users relationship
   has_many :placeables, as: :placeable, dependent: :destroy
   has_many :places, through: :placeables, after_add: :places_changed
 
-  delegate :name, :email, :phone_number, :role_name, :time_zone, :avatar, :invited_to_sign_up?,
+  delegate :name, :email, :phone_number, :time_zone, :avatar, :invited_to_sign_up?,
           :full_address, :country, :state, :city, :street_address, :unit_number,
           :zip_code, :country_name, :state_name, :phone_number_verified?,
           to: :user
@@ -162,8 +162,8 @@ class CompanyUser < ActiveRecord::Base
       else
         (
           campaign_ids +
-          Campaign.scoped_by_company_id(company_id).joins(:brands).where(brands: {id: brand_ids}).pluck('campaigns.id') +
-          Campaign.scoped_by_company_id(company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids}).pluck('campaigns.id')
+          Campaign.where(company_id: company_id).joins(:brands).where(brands: {id: brand_ids}).pluck('campaigns.id') +
+          Campaign.where(company_id: company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids}).pluck('campaigns.id')
         ).uniq
       end
     end
@@ -237,7 +237,7 @@ class CompanyUser < ActiveRecord::Base
   end
 
   def dismiss_alert(alert, version=1)
-    alerts.find_or_create_by_name_and_version(alert, version)
+    alerts.find_or_create_by(name: alert, version: version)
   end
 
   def notification_setting_permission?(type)
@@ -251,7 +251,7 @@ class CompanyUser < ActiveRecord::Base
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)
       options = {include: [:user, :role]}
-      ss = solr_search(options) do
+      solr_search(options) do
         with(:company_id, params[:company_id])
         with(:campaign_ids, params[:campaign]) if params.has_key?(:campaign) and params[:campaign]
         with(:team_ids, params[:team]) if params.has_key?(:team) and params[:team]
@@ -284,10 +284,9 @@ class CompanyUser < ActiveRecord::Base
     end
 
     def for_dropdown
-      ActiveRecord::Base.connection.select_all(
-        self.select("users.first_name || \' \' || users.last_name as name, company_users.id").
-        joins(:user).order('lower(users.first_name || \' \' || users.last_name)').to_sql
-      ).map{|r| [r['name'], r['id']] }
+      self.joins(:user).
+        order('lower(users.first_name || \' \' || users.last_name)').
+        pluck('users.first_name || \' \' || users.last_name as name, company_users.id')
     end
   end
 

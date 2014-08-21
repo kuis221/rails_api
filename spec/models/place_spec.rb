@@ -26,7 +26,7 @@
 #  is_location            :boolean
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe Place, :type => :model do
 

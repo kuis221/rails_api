@@ -10,7 +10,7 @@
 #  settings         :hstore
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe Company, :type => :model do
   it { is_expected.to have_many(:company_users) }
@@ -48,4 +48,48 @@ describe Company, :type => :model do
     end
   end
 
+  describe "#late_event_end_date" do
+    it "should return the correct date when timezone_support is not enabled" do
+      Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 13)) do
+        company = FactoryGirl.build(:company, timezone_support: false)
+        expect(company.late_event_end_date.strftime('%Y-%m-%d %H:%M:%S %z')).to eql '2013-07-24 23:59:59 -0700'
+      end
+    end
+    it "should return the correct date when timezone_support is enabled" do
+      Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 13)) do
+        company = FactoryGirl.build(:company, timezone_support: true)
+        expect(company.late_event_end_date.strftime('%Y-%m-%d %H:%M:%S %z')).to eql '2013-07-24 23:59:59 +0000'
+      end
+    end
+  end
+
+  describe "#due_event_start_date" do
+    it "should return the correct date when timezone_support is not enabled" do
+      Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 13)) do
+        company = FactoryGirl.build(:company, timezone_support: false)
+        expect(company.due_event_start_date.strftime('%Y-%m-%d %H:%M:%S %z')).to eql '2013-07-25 00:00:00 -0700'
+      end
+    end
+    it "should return the correct date when timezone_support is enabled" do
+      Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 13)) do
+        company = FactoryGirl.build(:company, timezone_support: true)
+        expect(company.due_event_start_date.strftime('%Y-%m-%d %H:%M:%S %z')).to eql '2013-07-25 00:00:00 +0000'
+      end
+    end
+  end
+
+  describe "#due_event_end_date" do
+    it "should return the correct date when timezone_support is not enabled" do
+      Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 13)) do
+        company = FactoryGirl.build(:company, timezone_support: false)
+        expect(company.due_event_end_date.strftime('%Y-%m-%d %H:%M:%S %z')).to eql '2013-07-26 12:13:00 -0700'
+      end
+    end
+    it "should return the correct date when timezone_support is enabled" do
+      Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 13)) do
+        company = FactoryGirl.build(:company, timezone_support: true)
+        expect(company.due_event_end_date.strftime('%Y-%m-%d %H:%M:%S %z')).to eql '2013-07-26 00:00:00 +0000'
+      end
+    end
+  end
 end

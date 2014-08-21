@@ -22,7 +22,7 @@ class FormField::Brand < FormField
     { as: :select,
       collection: brands,
       selected: selected,
-      include_blank: true,
+      include_blank: 'Select a brand',
       label: self.name,
       field_id: self.id,
       options: self.settings,

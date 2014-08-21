@@ -20,7 +20,7 @@
 #  rating            :integer          default(0)
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe AttachedAsset, :type => :model do
   it { is_expected.to belong_to(:attachable) }

@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 feature "Users", :js => true do
 
@@ -158,6 +158,58 @@ feature "Users", :js => true do
         hover_and_click('.hover-item', 'Remove Area')
         expect(page).to have_no_content('San Francisco Area')
       end
+    end
+
+    scenario "should be able to assign brand portfolios to the user" do
+      company_user = FactoryGirl.create(:company_user, company_id: @company.id)
+      brand_portfolio = FactoryGirl.create(:brand_portfolio, name: 'Guisqui', company: @company)
+      brand_portfolio2 = FactoryGirl.create(:brand_portfolio, name: 'Guaro', company: @company)
+      visit company_user_path(company_user)
+
+      within "#campaigns-toggle-BrandPortfolio-#{brand_portfolio.id}" do
+        click_js_link 'Toggle ON'
+        expect(page).not_to have_link('Toggle ON')
+        expect(page).to have_link('Toggle OFF')
+      end
+      wait_for_ajax
+      expect(company_user.reload.brand_portfolios.to_a).to eql [brand_portfolio]
+
+      visit company_user_path(company_user)
+
+
+      within "#campaigns-toggle-BrandPortfolio-#{brand_portfolio.id}" do
+        click_js_link 'Toggle OFF'
+        expect(page).not_to have_link('Toggle OFF')
+        expect(page).to have_link('Toggle ON')
+      end
+      wait_for_ajax
+      expect(company_user.reload.brand_portfolios.to_a).to be_empty
+    end
+
+    scenario "should be able to assign brands to the user" do
+      company_user = FactoryGirl.create(:company_user, company_id: @company.id)
+      brand = FactoryGirl.create(:brand, name: 'Guisqui Rojo', company: @company)
+      brand2 = FactoryGirl.create(:brand, name: 'Cacique', company: @company)
+      visit company_user_path(company_user)
+
+      within "#campaigns-toggle-Brand-#{brand.id}" do
+        click_js_link 'Toggle ON'
+        expect(page).not_to have_link('Toggle ON')
+        expect(page).to have_link('Toggle OFF')
+      end
+      wait_for_ajax
+      expect(company_user.reload.brands.to_a).to eql [brand]
+
+      visit company_user_path(company_user)
+
+
+      within "#campaigns-toggle-Brand-#{brand.id}" do
+        click_js_link 'Toggle OFF'
+        expect(page).not_to have_link('Toggle OFF')
+        expect(page).to have_link('Toggle ON')
+      end
+      wait_for_ajax
+      expect(company_user.reload.brands.to_a).to be_empty
     end
   end
 

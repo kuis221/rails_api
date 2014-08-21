@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 feature "Dashboard", search: true, js: true do
   let(:company) { FactoryGirl.create(:company) }
@@ -266,7 +266,7 @@ feature "Dashboard", search: true, js: true do
 
   def add_permissions(permissions)
     permissions.each do |p|
-      company_user.role.permissions.create({action: p[0], subject_class: p[1], subject_id: p[2]}, without_protection: true)
+      company_user.role.permissions.create(action: p[0], subject_class: p[1], subject_id: p[2])
     end
   end
 

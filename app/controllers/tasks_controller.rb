@@ -12,7 +12,7 @@ class TasksController < FilteredController
 
   helper_method :assignable_users, :status_counters, :calendar_highlights
 
-  before_filter :set_body_class, only: :index
+  before_action :set_body_class, only: :index
   after_filter :force_resource_reindex, only: [:create, :update]
 
   def autocomplete
@@ -27,7 +27,7 @@ class TasksController < FilteredController
   def assignable_users
     if resource.event.present?
       ( company_users.active.by_events(resource.event).for_dropdown +
-        company_users.active.by_teams(resource.event.teams).for_dropdown
+        company_users.active.by_teams(resource.event.team_ids).for_dropdown
       ).uniq.sort_by{|a| a[0].downcase }
     else
       current_company.company_users.active.for_dropdown

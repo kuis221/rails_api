@@ -10,7 +10,7 @@ module BrandscopiSpecHelpers
     User.current = user
     user.current_company = company
     user.ensure_authentication_token
-    user.update_attributes(FactoryGirl.attributes_for(:user).reject{|k,v| ['password','password_confirmation','email'].include?(k.to_s)}, without_protection: true)
+    user.update_attributes(FactoryGirl.attributes_for(:user).reject{|k,v| ['password','password_confirmation','email'].include?(k.to_s)})
     sign_in user
     user
   end
@@ -64,22 +64,8 @@ module BrandscopiSpecHelpers
     require "rexml/document"
     export = ListExport.last
     expect(export).to receive(:save).at_least(:once).and_return(true)
-    expect(File).to receive(:delete) do |path|
-      file = File.new( path )
-      yield REXML::Document.new(file)
-    end
     export.export_list
-  end
-
-  def csv_from_last_export
-    require "rexml/document"
-    export = ListExport.last
-    allow(export).to receive(:save).and_return(true)
-    expect(File).to receive(:delete) do |path|
-      file = File.new( path )
-      yield REXML::Document.new(file)
-    end
-    export.export_list
+    yield REXML::Document.new(export.file.instance_variable_get(:@file).read)
   end
 end
 

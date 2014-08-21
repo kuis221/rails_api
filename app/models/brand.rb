@@ -17,8 +17,6 @@ class Brand < ActiveRecord::Base
 
   scoped_to_company
 
-  attr_accessor :marques_list
-
   # Required fields
   validates :name, presence: true, uniqueness: {scope: :company_id, case_sensitive: false}
 
@@ -27,12 +25,12 @@ class Brand < ActiveRecord::Base
 
   has_many :brand_portfolios_brands, dependent: :destroy
   has_many :brand_portfolios, through: :brand_portfolios_brands
-  has_many :marques, :order => 'name ASC', :autosave => true, dependent: :destroy
+  has_many :marques, -> { order 'name ASC' }, :autosave => true, dependent: :destroy
 
-  scope :not_in_portfolio, lambda{|portfolio| where("brands.id not in (#{BrandPortfoliosBrand.select('brand_id').scoped_by_brand_portfolio_id(portfolio).to_sql})") }
-  scope :accessible_by_user, lambda{|user| scoped }
+  scope :not_in_portfolio, ->(portfolio) { where("brands.id not in (#{BrandPortfoliosBrand.where(brand_portfolio_id: portfolio).select('brand_id').to_sql})") }
+  scope :accessible_by_user, ->(user) { all }
 
-  scope :active, where(:active => true)
+  scope :active, ->{ where(:active => true) }
 
   searchable do
     integer :id
@@ -47,7 +45,7 @@ class Brand < ActiveRecord::Base
     integer :company_id
   end
 
-    def activate!
+  def activate!
     update_attribute :active, true
   end
 
@@ -73,7 +71,7 @@ class Brand < ActiveRecord::Base
     marques_names = list.split(',')
     existing_ids = self.marques.map(&:id)
     marques_names.each do |marque_name|
-      marque = Marque.find_or_initialize_by_name_and_brand_id(marque_name, id)
+      marque = Marque.find_or_initialize_by(name: marque_name, brand_id: id)
       self.marques << marque unless existing_ids.include?(marque.id)
     end
     marques.each{|marque| marque.mark_for_destruction unless marques_names.include?(marque.name) }
@@ -82,7 +80,7 @@ class Brand < ActiveRecord::Base
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)
-      ss = solr_search do
+      solr_search do
         with(:company_id, params[:company_id])
         with(:id, Campaign.where(id: params[:campaign_id]).joins(:brands).pluck('brands_campaigns.brand_id'))
         with(:id, BrandPortfolio.where(id: params[:brand_portfolio_id]).joins(:brands).pluck('brand_portfolios_brands.brand_id'))

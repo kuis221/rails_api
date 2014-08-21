@@ -49,7 +49,7 @@
 #  phone_number_verification :string(255)
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe User, :type => :model do
   it { is_expected.to have_many(:company_users) }

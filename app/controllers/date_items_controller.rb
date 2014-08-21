@@ -4,7 +4,7 @@ class DateItemsController < FilteredController
   actions :new, :create, :destroy
 
   skip_authorize_resource
-  before_filter :edit_authorize_parent
+  before_action :edit_authorize_parent
 
   protected
 

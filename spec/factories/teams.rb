@@ -23,5 +23,16 @@ FactoryGirl.define do
     updated_by_id 1
     active true
     company_id 1
+
+    ignore do
+      user_ids nil
+      campaign_ids nil
+    end
+
+    after(:create) do |event, evaluator|
+      event.campaign_ids = evaluator.campaign_ids if evaluator.campaign_ids
+      event.user_ids = evaluator.user_ids if evaluator.user_ids
+      event.save if evaluator.campaign_ids || evaluator.user_ids
+    end
   end
 end

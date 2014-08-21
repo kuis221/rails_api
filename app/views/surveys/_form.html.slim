@@ -9,7 +9,7 @@
             = f.simple_fields_for :surveys_answers, resource.answer_for(1, nil, kpi.id) do |qf|
               = qf.hidden_field :kpi_id
               = qf.hidden_field :question_id
-              = qf.input :answer, collection: kpi.kpis_segments.map{|s| [s.text, s.id]}, as: :radio_buttons, label: kpi.name, required: true 
+              = qf.input :answer, collection: kpi.kpis_segments.map{|s| [s.text, s.id]}, as: :radio_buttons, label: kpi.name, required: true
 
       fieldset
         legend.competitive Competitive awareness & usage
@@ -59,16 +59,16 @@
         ul.conversion
           li
             .titles
-              span 
+              span
                 | VERY UNLIKELY
                 br
                 | 1
               span 2
               span 3
               span 4
-              span 
+              span
                 | VERY LIKELY
-                br 
+                br
                 | 5
           - resource.brands.each do |brand|
             li
@@ -90,7 +90,7 @@
         ul.recommend
           li
             .titles
-              span 
+              span
                 | VERY UNLIKELY
                 br
                 | 1
@@ -102,9 +102,9 @@
               span 7
               span 8
               span 9
-              span 
+              span
                 | VERY LIKELY
-                br 
+                br
                 | 10
           tbody
             - resource.brands.each do |brand|
@@ -126,7 +126,7 @@
                       = qf.radio_button :answer, '10', class: 'required'
 
     .form-actions
-      = f.button :submit, 'Save', id: 'submit-expense-btn', class: 'btn btn-primary', disable_with: 'Please wait...'
+      = f.button :submit, 'Save', id: 'submit-expense-btn', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
       = "&nbsp;".html_safe
       = f.button :button, 'Cancel', class: 'btn btn-cancel'
 

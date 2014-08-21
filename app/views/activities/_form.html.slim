@@ -27,7 +27,7 @@
                   = rf.input :form_field_id, as: :hidden, wrapper: false
 
           .form-actions
-            = f.button :submit, id: 'save-activity-btn', class: 'btn btn-primary', disable_with: 'Please wait...'
+            = f.button :submit, id: 'save-activity-btn', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
             = "&nbsp;".html_safe
             = f.button :button, 'Cancel', class: 'btn btn-cancel'
         - else

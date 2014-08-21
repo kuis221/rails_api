@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 feature "Photos", js: true do
 
@@ -8,7 +8,6 @@ feature "Photos", js: true do
     @company = @user.companies.first
     sign_in @user
     Kpi.create_global_kpis
-    allow_any_instance_of(AttachedAsset).to receive(:save_attached_files).and_return(true)
   end
 
   after do

@@ -98,8 +98,8 @@ javascript:
   })
 
   $('#collection-list-filters').filteredList({
-    'source': '#{items_path(controller: :venues)}',
-    'filtersUrl': '#{filters_path(controller: :venues)}',
+    'source': '#{url_for(controller: :venues, action: :items)}',
+    'filtersUrl': '#{url_for(controller: :venues, action: :filters)}',
     'listContainer' : '#venues-list',
     'sorting': 'name',
     'sorting_dir': 'asc',

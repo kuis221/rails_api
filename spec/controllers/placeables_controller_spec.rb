@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe PlaceablesController, :type => :controller do
   before(:each) do
@@ -15,7 +15,7 @@ describe PlaceablesController, :type => :controller do
       area = FactoryGirl.create(:area, company: @company)
       inactive_area = FactoryGirl.create(:area, company: @company, active: false)
 
-      get :new, campaign_id: campaign.id, format: :js
+      xhr :get, :new, campaign_id: campaign.id, format: :js
 
       expect(response).to be_success
 
@@ -26,7 +26,7 @@ describe PlaceablesController, :type => :controller do
       area = FactoryGirl.create(:area, company: @company)
       assigned_area = FactoryGirl.create(:area, company: @company)
       campaign.areas << assigned_area
-      get :new, campaign_id: campaign.id, format: :js
+      xhr :get, :new, campaign_id: campaign.id, format: :js
 
       expect(response).to be_success
 
@@ -37,7 +37,7 @@ describe PlaceablesController, :type => :controller do
       area = FactoryGirl.create(:area, company: @company)
       assigned_area = FactoryGirl.create(:area, company: @company)
       company_user.areas << assigned_area
-      get :new, company_user_id: company_user.id, format: :js
+      xhr :get, :new, company_user_id: company_user.id, format: :js
 
       expect(response).to be_success
 
@@ -49,7 +49,7 @@ describe PlaceablesController, :type => :controller do
     let(:area) {FactoryGirl.create(:area, company: @company)}
     it "should add the area to the campaign" do
       expect {
-        post 'add_area', campaign_id: campaign.id, area: area.id, format: :js
+        xhr :post, 'add_area', campaign_id: campaign.id, area: area.id, format: :js
       }.to change(campaign.areas, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template('placeables/add_area')
@@ -59,7 +59,7 @@ describe PlaceablesController, :type => :controller do
       expect(Rails.cache).to receive(:delete).with("user_accessible_locations_#{company_user.id}")
       expect(Rails.cache).to receive(:delete).with("user_accessible_places_#{company_user.id}")
       expect {
-        post 'add_area', company_user_id: company_user.id, area: area.id, format: :js
+        xhr :post, 'add_area', company_user_id: company_user.id, area: area.id, format: :js
       }.to change(company_user.areas, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template('placeables/add_area')

@@ -42,4 +42,4 @@
           = permission_checkbox(f, :recent_comments_module, Symbol, 'dashboard')
 
   = hidden_field_tag :partial, :dashboard_permissions
-  = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'
+  = f.button :submit, 'Save', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}

@@ -23,7 +23,7 @@
 class AttachedAsset < ActiveRecord::Base
   track_who_does_it
   has_and_belongs_to_many :tags, :order => 'name ASC', :autosave => true
-  DIRECT_UPLOAD_URL_FORMAT = %r{\Ahttps:\/\/s3\.amazonaws\.com\/#{S3_CONFIGS['bucket_name']}\/(?<path>uploads\/.+\/(?<filename>.+))\z}.freeze
+  DIRECT_UPLOAD_URL_FORMAT = %r{\Ahttps:\/\/s3\.amazonaws\.com\/#{ENV['S3_BUCKET_NAME']}\/(?<path>uploads\/.+\/(?<filename>.+))\z}.freeze
   belongs_to :attachable, :polymorphic => true
   has_attached_file :file, PAPERCLIP_SETTINGS.merge({
     styles: -> (a) {
@@ -44,9 +44,9 @@ class AttachedAsset < ActiveRecord::Base
 
   do_not_validate_attachment_file_type :file
 
-  scope :for_events, lambda{|events| where(attachable_type: 'Event', attachable_id: events) }
-  scope :photos, lambda{ where(asset_type: 'photo') }
-  scope :active, lambda{ where(active: true) }
+  scope :for_events, ->(events ){ where(attachable_type: 'Event', attachable_id: events) }
+  scope :photos, ->{ where(asset_type: 'photo') }
+  scope :active, ->{ where(active: true) }
 
   validate :valid_file_format?
 

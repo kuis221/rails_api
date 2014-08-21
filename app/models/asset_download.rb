@@ -20,7 +20,6 @@ require 'zip'
 
 class AssetDownload < ActiveRecord::Base
   belongs_to :user
-  attr_accessible :last_downloaded, :uid, :assets_ids
 
   validates :uid, presence: true
 
@@ -57,7 +56,7 @@ class AssetDownload < ActiveRecord::Base
 
   def self.find_or_create_by_assets_ids(ids, params)
     uid = Digest::MD5.hexdigest(ids.join(','))
-    find_or_create_by_uid(uid, params)
+    create_with(params).find_or_create_by(uid: uid)
   end
 
   def download_url(style_name=:original)
