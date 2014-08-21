@@ -22,21 +22,21 @@ html {
 // --------------------------------------------------
 
 select,
-textarea, 
-input[type="text"], 
-input[type="password"], 
-input[type="datetime"], 
-input[type="datetime-local"], 
-input[type="date"], 
-input[type="month"], 
-input[type="time"], 
-input[type="week"], 
-input[type="number"], 
-input[type="email"], 
-input[type="url"], 
-input[type="search"], 
-input[type="tel"], 
-input[type="color"], 
+textarea,
+input[type="text"],
+input[type="password"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="date"],
+input[type="month"],
+input[type="time"],
+input[type="week"],
+input[type="number"],
+input[type="email"],
+input[type="url"],
+input[type="search"],
+input[type="tel"],
+input[type="color"],
 .uneditable-input{
 	background-color: white;
 	border: 1px solid $grey_four;
@@ -48,16 +48,16 @@ input[type="color"],
 	-webkit-box-shadow: none;
 	height:39px;
 	padding: 10px;
-	width: 380px;
+	width: 100%;
 	&:focus{
-		border: 1px solid $brand;
+		border: 1px solid $grey_four;
 		box-shadow: none;
 		-webkit-box-shadow: none;
 		outline:0;
 	}
 }
 
-input[disabled], select[disabled], textarea[disabled], 
+input[disabled], select[disabled], textarea[disabled],
 input[readonly], select[readonly], textarea[readonly]{
 	background-color: white;
 	border: 1px solid rgba(192, 192, 192, 0.6);
