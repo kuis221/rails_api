@@ -141,8 +141,8 @@
           - else
             li.photo-item
               div.thumbnail-inner
-                a data-toggle='gallery' title="View Photo" href="https://maps.googleapis.com/maps/api/place/photo?maxheight=700&maxwidth=700&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}"
-                  = image_tag "https://maps.googleapis.com/maps/api/place/photo?maxwidth=180&photoreference=#{photo[:photo_reference]}&sensor=true&key=#{GOOGLE_API_KEY}", class: 'google-images', data: {\
+                a data-toggle='gallery' title="View Photo" href="https://maps.googleapis.com/maps/api/place/photo?maxheight=700&maxwidth=700&photoreference=#{photo.photo_reference}&sensor=true&key=#{GOOGLE_API_KEY}"
+                  = image_tag "https://maps.googleapis.com/maps/api/place/photo?maxwidth=180&photoreference=#{photo.photo_reference}&sensor=true&key=#{GOOGLE_API_KEY}", class: 'google-images', data: {\
                       title:  resource.name,\
                       url: '',\
                       urls: [],\
