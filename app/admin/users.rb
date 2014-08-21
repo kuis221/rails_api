@@ -9,6 +9,10 @@ ActiveAdmin.register User do
     column :email
     column :current_sign_in_at
     column :last_sign_in_at
+    column :last_activity_mobile_at do |user|
+      last_activity = user.company_users.first.last_activity_mobile_at
+      last_activity.strftime("%B %e, %Y %H:%M") if last_activity.present?
+    end
     column :sign_in_count
     default_actions
   end
@@ -74,6 +78,9 @@ ActiveAdmin.register User do
     column :zip_code
     column :current_sign_in_at
     column :last_sign_in_at
+    column :last_activity_mobile_at do |user|
+      user.company_users.first.last_activity_mobile_at
+    end
     column :sign_in_count
   end
 
