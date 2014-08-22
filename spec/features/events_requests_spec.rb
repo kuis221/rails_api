@@ -437,7 +437,8 @@ feature 'Events section' do
     end
 
     feature "custom filters" do
-      let(:event1) { FactoryGirl.create(:submitted_event, campaign: FactoryGirl.create(:campaign, name: 'Campaign 1', company: company)) }
+      let(:campaign1) { FactoryGirl.create(:campaign, name: 'Campaign 1', company: company) }
+      let(:event1) { FactoryGirl.create(:submitted_event, campaign: campaign1) }
       let(:event2) { FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign 2', company: company)) }
       let(:user1) { FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Roberto', last_name: 'Gomez'), company: company) }
       let(:user2) { FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Mario', last_name: 'Cantinflas'), company: company) }
@@ -466,7 +467,7 @@ feature 'Events section' do
           expect(custom_filter.company_user_id).to eq(company_user.id)
           expect(custom_filter.name).to eq('My Custom Filter')
           expect(custom_filter.apply_to).to eq('events')
-          expect(custom_filter.filters).to eq('campaign%5B%5D=1&user%5B%5D=2&event_status%5B%5D=Submitted&status%5B%5D=Active')
+          expect(custom_filter.filters).to eq('campaign%5B%5D='+campaign1.to_param+'&user%5B%5D='+user1.to_param+'&event_status%5B%5D=Submitted&status%5B%5D=Active')
         end
         ensure_modal_was_closed
 

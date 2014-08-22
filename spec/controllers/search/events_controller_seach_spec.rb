@@ -105,7 +105,7 @@ describe EventsController, type: :controller, search: true do
         expect(response).to be_success
 
         filters = JSON.parse(response.body)
-        expect(filters['filters'].map{|b| b['label']}).to eq(["Campaigns", "Brands", "Areas", "People", "Event Status", "Active State"])
+        expect(filters['filters'].map{|b| b['label']}).to eq(["Campaigns", "Brands", "Areas", "People", "Event Status", "Active State", "Saved Filters"])
       end
 
 
@@ -132,7 +132,7 @@ describe EventsController, type: :controller, search: true do
         expect(response).to be_success
         filters = JSON.parse(response.body)
 
-        expect(filters['filters'].map{|b| b['label']}).to eq(["Campaigns", "Brands", "Areas", "People", "Event Status", "Active State"])
+        expect(filters['filters'].map{|b| b['label']}).to eq(["Campaigns", "Brands", "Areas", "People", "Event Status", "Active State", "Saved Filters"])
         expect(filters['filters'][0]['items'].count).to eq(1)
         expect(filters['filters'][0]['items'].first['label']).to eq(campaign.name)
       end
