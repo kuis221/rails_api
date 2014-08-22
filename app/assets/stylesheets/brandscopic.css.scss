@@ -2798,27 +2798,35 @@ ul.kpis-list{
 	&#resource-goals-list{
 		li{
 			span{
-				margin-top: 23px;
-				&.pull-right{
-					margin-top: 0;
+				display: table-cell;
+				min-height: 84px;
+				vertical-align:middle;
+				&.goals-list{
+					display: table;
+					width: 100%;
+				}
+				&.title{
+					font-size: 11px;
+					padding-left: 20px;
+					width: 30%;
+					.goal-title{
+						font-size: 16px;
+					}
+				}
+				&.goal-value, .start-date, &.due-date{
+					width: 20%;
+				}
+				&.edit-goal{
+					opacity: 0;
+					padding-right: 20px;
+					text-align: right;
+					width: 10%;
 				}
 			}
-			.goal-value{
-				width: 30%;
-			}
-			.title{
-				font-size: 11px;
-				margin-left: 20px;
-				width: 30%;
-				.goal-title{
-					font-size: 16px;
+			&:hover{
+				.edit-goal{
+					opacity: 1;
 				}
-			}
-			.start-date{
-				width: 15%;
-			}
-			.due-date{
-				width: 10%;
 			}
 		}
 	}
