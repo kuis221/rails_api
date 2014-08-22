@@ -27,9 +27,10 @@ describe Campaign, :type => :model do
   it { is_expected.to belong_to(:company) }
   it { is_expected.to have_many(:memberships) }
   it { is_expected.to have_many(:users).through(:memberships) }
+  it { is_expected.to have_many(:areas) }
+  it { is_expected.to have_many(:areas_campaigns) }
   it { is_expected.to have_and_belong_to_many(:brands) }
   it { is_expected.to have_and_belong_to_many(:brand_portfolios) }
-  it { is_expected.to have_and_belong_to_many(:areas) }
   it { is_expected.to have_and_belong_to_many(:date_ranges) }
   it { is_expected.to have_and_belong_to_many(:day_parts) }
   it { is_expected.to validate_presence_of(:name) }

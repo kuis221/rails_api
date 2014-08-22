@@ -27,7 +27,8 @@ class Area < ActiveRecord::Base
   has_many :placeables, as: :placeable, inverse_of: :placeable #, after_add: :update_common_denominators, after_remove: :update_common_denominators
   has_many :places, through: :placeables
 
-  has_and_belongs_to_many :campaigns, :order => 'name ASC'
+  has_many :areas_campaigns, inverse_of: :area
+  has_many :campaigns, -> { order('name ASC') }, through: :areas_campaigns
 
   scope :active, ->{ where(active: true) }
   scope :not_in_venue, ->(place) { where("areas.id not in (?)", place.area_ids + [0]) }
@@ -70,6 +71,8 @@ class Area < ActiveRecord::Base
   # includes Los Angeles or any parent (like California)
   def place_in_scope?(place)
     if place.present?
+      @place_ids ||= place_ids
+      return true if place.persisted? && @place_ids.include?(place.id)
       political_location = Place.political_division(place).join('/').downcase
       locations.any?{|location| political_location.include?(location.path) }
     else
@@ -128,6 +131,7 @@ class Area < ActiveRecord::Base
       Rails.cache.delete("area_locations_#{area.id}")
       area.campaign_ids.each do |id|
         Rails.cache.delete("campaign_locations_#{id}")
+        Rails.cache.delete("area_campaign_locations_#{area.id}_#{id}")
       end
     end
   end

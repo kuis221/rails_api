@@ -538,7 +538,6 @@ feature 'Events section' do
             find_field('Start time').set '4:00pm'
             find_field('End time').click
             expect(find_field('End time').value).to eql '5:00pm'
-
           end
         end
       end

@@ -145,6 +145,9 @@ select.chosen-enabled{
 			font-size: 1em;
 			font-family: sans-serif;
 			border: 0;
+			&:focus{
+				border:0;
+			}
 		}
 	}
 	.chzn-drop {

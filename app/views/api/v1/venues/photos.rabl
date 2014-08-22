@@ -6,6 +6,6 @@ node do |photo|
     partial "api/v1/photos/photo", :object => photo
   else
     node(:type) { :google }
-    partial "api/v1/photos/google", :object => OpenStruct.new(photo)
+    partial "api/v1/photos/google", :object => photo
   end
 end

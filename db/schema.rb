@@ -118,6 +118,7 @@ ActiveRecord::Schema.define(version: 20140821175739) do
   create_table "areas_campaigns", force: true do |t|
     t.integer "area_id"
     t.integer "campaign_id"
+    t.integer "exclusions",  default: [], array: true
   end
 
   create_table "asset_downloads", force: true do |t|
