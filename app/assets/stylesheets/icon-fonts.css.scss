@@ -1,5 +1,6 @@
 
 @import "variables";
+@import "mixins";
 
 /* Icons */
 
@@ -339,4 +340,19 @@
 
 .icon-wired-campaign:before{
   content: "\e61f";
+}
+
+/* To create icons with grey circle background */
+.special-icon {
+  background-color: $grey_four;
+  display: inline-block;
+  height: 32px;
+  @include border-radius(18px);
+  width: 32px;
+  &:before {
+    color: #fff;
+    font-size: 16px;
+    top: 5px;
+    left: 8px;
+  }
 }

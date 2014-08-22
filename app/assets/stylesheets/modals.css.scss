@@ -259,21 +259,6 @@ ul.select2-results{
 				}
 			}
 
-			input.search-box {
-				@include box-sizing(border-box);
-				background-image: image-url('search2.svg') !important;
-				background-position: center right;
-				background-repeat: no-repeat;
-				-webkit-border-radius: 20px;
-				border-radius: 20px;
-				padding-left: 2%;
-				padding-right: 2%;
-				width: 100%;
-				&.places-autocomplete {
-					padding-left: 8%;
-					width: 385px !important;
-				}
-			}
 			.users{
 				.span6{
 					margin-bottom: 8px;
@@ -749,6 +734,21 @@ ul.select2-results{
 			width: 47.2%;
 			.control-group:last-child{
 				margin: 0;
+			}
+		}
+		input.search-box {
+			@include box-sizing(border-box);
+			background-image: image-url('search2.svg') !important;
+			background-position: center right;
+			background-repeat: no-repeat;
+			-webkit-border-radius: 20px;
+			border-radius: 20px;
+			padding-left: 2%;
+			padding-right: 2%;
+			width: 100%;
+			&.places-autocomplete {
+				padding-left: 8%;
+				width: 385px !important;
 			}
 		}
 	}

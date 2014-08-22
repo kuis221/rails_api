@@ -42,6 +42,10 @@ class Ability
       can [:enable_campaigns, :disable_campaigns, :remove_campaign, :select_campaigns, :add_campaign], CompanyUser do |cu|
         can?(:edit, cu)
       end
+
+      can [:update, :exclude_place, :include_place], AreasCampaign do |areas_campaign|
+        can? :add_place, areas_campaign.campaign
+      end
     end
 
     # AdminUsers (logged in on Active Admin)

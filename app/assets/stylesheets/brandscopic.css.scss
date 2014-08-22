@@ -2242,6 +2242,22 @@ ul.kpis-list{
 					}
 				}
 			}
+			&.inactive {
+				color:$user_menu;
+			}
+			&:hover {
+				.activate-btn {
+					display: none !important;
+				}
+				&.inactive {
+					.deactivate-btn {
+						display: none !important;
+					}
+					.activate-btn {
+						display: table-cell !important;
+					}
+				}
+			}
 		}
 	}
 	ul#activity_types-list{
@@ -6013,15 +6029,16 @@ div.chardinjs-tooltip
 			}
 			a {
 				color: $grey_three;
-				font-size: 30px;
+				font-size: 22px;
 				&.arrow {
 					margin: 0 20px;
+					font-size: 30px;
 				}
 				&.arrow-left {
 					display: none;
 				}
-				&.icon-remove-sign {
-					font-size: 22px;
+				&.icon-gear {
+					margin-right: 5px;
 				}
 				&:hover{
 					text-decoration: none;
@@ -6484,6 +6501,21 @@ body{
 				&.empty-list-message:first-child:last-child {
 					display: table;
 				}
+				.special-icon {
+					margin-right: 10px;
+				}
+			}
+		}
+	}
+	&.compact {
+		.link-list ul li {
+			height: 65px;
+			min-height: 65px !important;
+			span:first-child{
+				padding-left: 10px;
+			}
+			a {
+				height: 65px;
 			}
 		}
 	}
