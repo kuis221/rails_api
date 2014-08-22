@@ -2,16 +2,17 @@
 #
 # Table name: areas
 #
-#  id                  :integer          not null, primary key
-#  name                :string(255)
-#  description         :text
-#  active              :boolean          default(TRUE)
-#  company_id          :integer
-#  created_by_id       :integer
-#  updated_by_id       :integer
-#  created_at          :datetime         not null
-#  updated_at          :datetime         not null
-#  common_denominators :text
+#  id                            :integer          not null, primary key
+#  name                          :string(255)
+#  description                   :text
+#  active                        :boolean          default(TRUE)
+#  company_id                    :integer
+#  created_by_id                 :integer
+#  updated_by_id                 :integer
+#  created_at                    :datetime         not null
+#  updated_at                    :datetime         not null
+#  common_denominators           :text
+#  common_denominators_locations :integer          default([]), is an Array
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

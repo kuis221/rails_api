@@ -38,7 +38,9 @@ module Results
     end
 
     def area_for_event(event)
-      campaign_from_cache(event.campaign_id).areas.select{|a| a.place_in_scope?(event.place) }.map(&:name).join(', ') unless event.place.nil?
+      campaign_from_cache(event.campaign_id).areas_campaigns.select{|ac|
+        ac.place_in_scope?(event.place)
+      }.map{|ac| ac.area.name }.join(', ') unless event.place.nil?
     end
 
     def team_member_for_event(event)

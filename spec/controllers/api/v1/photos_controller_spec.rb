@@ -3,10 +3,10 @@ require 'rails_helper'
 describe Api::V1::PhotosController, :type => :controller do
   let(:user) { sign_in_as_user }
   let(:company) { user.company_users.first.company }
+  let(:campaign) { FactoryGirl.create(:campaign, company: company, modules: {'photos' => {}}) }
 
   describe "GET 'index'", search: true do
     it "return a list of photos" do
-      campaign = FactoryGirl.create(:campaign, company: company)
       place = FactoryGirl.create(:place)
       event = FactoryGirl.create(:event, company: company, campaign: campaign, place: place)
       photos = FactoryGirl.create_list(:photo, 3, attachable: event)
@@ -41,7 +41,6 @@ describe Api::V1::PhotosController, :type => :controller do
     end
 
     it "return a list of photos filtered by place id" do
-      campaign = FactoryGirl.create(:campaign, company: company)
       place = FactoryGirl.create(:place)
       other_place = FactoryGirl.create(:place)
       event = FactoryGirl.create(:event, company: company, campaign: campaign, place: place)
@@ -58,7 +57,6 @@ describe Api::V1::PhotosController, :type => :controller do
     end
 
     it "return a list of active photos filtered by status" do
-      campaign = FactoryGirl.create(:campaign, company: company)
       place = FactoryGirl.create(:place)
       event = FactoryGirl.create(:event, company: company, campaign: campaign, place: place)
       active_photos = FactoryGirl.create_list(:photo, 6, attachable: event, active: true)
@@ -75,27 +73,40 @@ describe Api::V1::PhotosController, :type => :controller do
   end
 
   describe "POST 'create'", strategy: :deletion  do
-    let(:event) {FactoryGirl.create(:event, company: company, campaign: FactoryGirl.create(:campaign, company: company))}
+    let(:event) {FactoryGirl.create(:event, company: company, campaign: campaign)}
     it "queue a job for processing the photos" do
       ResqueSpec.reset!
       s3object = double()
       allow(s3object).to receive(:copy_from).and_return(true)
       expect_any_instance_of(AWS::S3).to receive(:buckets).at_least(:once).and_return(
-        "brandscopic-test" => double(objects: {
+        "brandscopic-dev" => double(objects: {
           'uploads/dummy/test.jpg' => double(head: double(content_length: 100, content_type: 'image/jpeg', last_modified: Time.now)),
           'attached_assets/original/test.jpg' => s3object
         } ))
       expect_any_instance_of(Paperclip::Attachment).to receive(:path).at_least(:once).and_return('/attached_assets/original/test.jpg')
       expect {
-        post 'create', auth_token: user.authentication_token, company_id: company.to_param, event_id: event.to_param, attached_asset: {direct_upload_url: 'https://s3.amazonaws.com/brandscopic-test/uploads/dummy/test.jpg'}, format: :json
+        post 'create', auth_token: user.authentication_token, company_id: company.to_param, event_id: event.to_param, attached_asset: {direct_upload_url: 'https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg'}, format: :json
       }.to change(AttachedAsset, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template('show')
       photo = AttachedAsset.last
       expect(photo.attachable).to eq(event)
       expect(photo.asset_type).to eq('photo')
-      expect(photo.direct_upload_url).to eq('https://s3.amazonaws.com/brandscopic-test/uploads/dummy/test.jpg')
+      expect(photo.direct_upload_url).to eq('https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg')
       expect(AssetsUploadWorker).to have_queued(photo.id)
+    end
+  end
+
+  describe "GET 'form'" do
+    it "returns the required information" do
+      event = FactoryGirl.create(:event, company: company, campaign: campaign)
+      Sunspot.commit
+
+      get :form, company_id: company.to_param, auth_token: user.authentication_token, event_id: event.to_param, format: :json
+      expect(response).to be_success
+      result = JSON.parse(response.body)
+      expect(result.keys).to match_array(["fields", "url"])
+      expect(result['fields'].keys).to match_array(["AWSAccessKeyId", "Secure", "key", "policy", "signature", "acl", "success_action_status"])
     end
   end
 end

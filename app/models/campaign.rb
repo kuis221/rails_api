@@ -17,7 +17,7 @@
 #  last_event_at    :datetime
 #  start_date       :date
 #  end_date         :date
-#  survey_brand_ids :integer          default([])
+#  survey_brand_ids :integer          default([]), is an Array
 #  modules          :text
 #
 
@@ -51,17 +51,22 @@ class Campaign < ActiveRecord::Base
   has_and_belongs_to_many :brands, -> { order('brands.name ASC').where(brands: {active: true}) }, autosave: true
 
   # Campaigns-Brand Portfolios relationship
-  has_and_belongs_to_many :brand_portfolios, -> { order('brand_portfolios.name ASC').where(brand_portfolios: {active: true}) }, autosave: true, after_remove: :remove_child_goals_for
+  has_and_belongs_to_many :brand_portfolios, -> { order('brand_portfolios.name ASC').where(brand_portfolios: {active: true}) },
+        autosave: true, after_remove: :remove_child_goals_for
   has_many :brand_portfolio_brands, through: :brand_portfolios, class_name: 'Brand', source: :brands
 
   # Campaigns-Areas relationship
-  has_and_belongs_to_many :areas, order: 'name ASC', conditions: {active: true}, autosave: true, after_remove: :clear_locations_cache, after_add: :clear_locations_cache
+  has_many :areas_campaigns, inverse_of: :campaign
+  has_many :areas, -> { order('areas.name ASC').where(active: true) }, through: :areas_campaigns,
+        autosave: true, after_remove: :clear_locations_cache, after_add: :clear_locations_cache
 
   # Campaigns-Areas relationship
-  has_and_belongs_to_many :date_ranges, order: 'name ASC', conditions: {active: true}, autosave: true, after_remove: :remove_child_goals_for
+  has_and_belongs_to_many :date_ranges, -> { order('date_ranges.name ASC').where(active: true) },
+        autosave: true, after_remove: :remove_child_goals_for
 
   # Campaigns-Areas relationship
-  has_and_belongs_to_many :day_parts, order: 'name ASC', conditions: {active: true}, autosave: true, after_remove: :remove_child_goals_for
+  has_and_belongs_to_many :day_parts, -> { order('day_parts.name ASC').where(active: true) },
+        autosave: true, after_remove: :remove_child_goals_for
 
   belongs_to :first_event, class_name: 'Event'
   belongs_to :last_event, class_name: 'Event'
@@ -83,7 +88,7 @@ class Campaign < ActiveRecord::Base
 
   has_many :user_teams, class_name: 'CompanyUser', source: :users, through: :teams
 
-  has_many :form_fields, ->{ order 'form_fields.ordering ASC' }, as: :fieldable
+  has_many :form_fields, ->{ order('form_fields.ordering ASC') }, as: :fieldable
 
   has_many :kpis, through: :form_fields
 
@@ -91,8 +96,8 @@ class Campaign < ActiveRecord::Base
   has_many :activity_type_campaigns
   has_many :activity_types, through: :activity_type_campaigns
 
-  scope :with_goals_for, lambda {|kpi| joins(:goals).where(goals: {kpi_id: kpi}).where('goals.value is not NULL AND goals.value > 0') }
-  scope :accessible_by_user, lambda {|company_user|
+  scope :with_goals_for, ->(kpi) { joins(:goals).where(goals: {kpi_id: kpi}).where('goals.value is not NULL AND goals.value > 0') }
+  scope :accessible_by_user, ->(company_user) {
     if company_user.is_admin?
       where(company_id: company_user.company_id)
     else
@@ -226,7 +231,7 @@ class Campaign < ActiveRecord::Base
       children_goals.with_value.includes(:goalable).where(kpi_id: [Kpi.events.id, Kpi.promo_hours.id]).for_areas(user_allowed_areas).map do |goal|
         name, group = if goal.kpi_id == Kpi.events.id then ['EVENTS', 'COUNT(events.id)'] else ['PROMO HOURS', 'SUM(events.promo_hours)'] end
         stats["#{goal.goalable.id}-#{name}"] = {"id"=>goal.goalable.id, "name"=>goal.goalable.name, "goal"=>goal.value, "kpi"=>name, "executed"=>0.0, "scheduled"=>0.0}
-        events.active.in_areas([goal.goalable]).
+        events.active.in_campaign_area(areas_campaigns.find_by(area_id: goal.goalable)).
           select("ARRAY['#{goal.goalable.id}', '#{name}'], '#{name}' as kpi, CASE WHEN events.end_at < '#{Time.now.to_s(:db)}' THEN 'executed' ELSE 'scheduled' END as status, #{group}").
           reorder(nil).group('1, 2, 3').to_sql
       end

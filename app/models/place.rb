@@ -211,7 +211,7 @@ class Place < ActiveRecord::Base
         params[:current_company_user].allowed_to_access_place?(build_from_autocoplete_result(result))
       }
 
-      google_results = JSON.parse(open("https://maps.googleapis.com/maps/api/place/textsearch/json?key=#{GOOGLE_API_KEY}&sensor=false&query=#{URI::encode(params[:q])}").read)
+      google_results = JSON.parse(open("https://maps.googleapis.com/maps/api/place/textsearch/json?key=#{GOOGLE_API_KEY}&sensor=false&query=#{CGI::escape(params[:q])}").read)
       if google_results && google_results['results'].present?
         sort_index = {true => 0, false => 1} # elements with :valid=true should go first
         results.concat(google_results['results'].

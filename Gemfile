@@ -13,7 +13,7 @@ gem "rack-timeout"
 gem 'pg'
 gem 'devise'
 gem 'devise_invitable', '~> 1.3.0'
-gem "cancan", ">= 1.6.8"
+gem 'cancancan', '~> 1.9'
 gem "slim-rails"
 gem 'inherited_resources'
 gem 'has_scope'
@@ -41,7 +41,6 @@ gem 'rubyzip'
 gem 'redis'
 gem "resque" #, require: "resque/server"
 gem 'resque-loner'
-gem 'resque-pool', '~> 0.4.0.rc2'
 gem 'resque-timeout'
 gem 'resque_mailer'
 gem 'unread'
@@ -55,7 +54,6 @@ gem 'heroku-resque-workers-scaler', github: 'guilleva/heroku-resque-workers-scal
 gem 'twilio-ruby'
 
 #For memory debugging
-gem "oink"
 #gem "allocation_stats"
 
 group :development do
@@ -63,6 +61,7 @@ group :development do
   gem "guard-livereload", :require => false
   gem "annotate", ">=2.5.0"
   gem "quiet_assets", ">= 1.0.1"
+  gem "oink"
 end
 
 # Gems that are only required for the web process, to prevent
@@ -116,6 +115,7 @@ end
 
 group :production do
   gem 'airbrake'
+  gem 'rails_12factor'
 end
 
 # To use ActiveModel has_secure_password
