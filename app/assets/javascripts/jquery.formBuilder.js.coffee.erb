@@ -1370,7 +1370,7 @@ SurveysField = Module.extend {
 			$('<h2>Surveys Module</h2>'),
 			$('<div class="module-wrapper">').append(
 				@_removeButton(),
-				$('<img src="/assets/surveys.png" width="363" height="237" />')
+				$('<img src="<%= asset_path('surveys.png') %>" width="363" height="237" />')
 			)
 		]
 
@@ -1416,7 +1416,7 @@ CommentsField = Module.extend {
 			$('<h2>Comments Module</h2>'),
 			$('<div class="module-wrapper">').append(
 				@_removeButton(),
-				$('<img src="/assets/comments.png" width="363" height="337" />')
+				$('<img src="<%= asset_path('comments.png') %>" width="363" height="337" />')
 			)
 		]
 
@@ -1445,7 +1445,7 @@ PhotosField = Module.extend {
 			$('<h2>Gallery Module</h2>'),
 			$('<div class="module-wrapper">').append(
 				@_removeButton(),
-				$('<img src="/assets/photos.png" width="363" height="337" />')
+				$('<img src="<%= asset_path('photos.png') %>" width="363" height="337" />')
 			)
 		]
 
@@ -1474,7 +1474,7 @@ ExpensesField = Module.extend {
 			$('<h2>Expenses Module</h2>'),
 			$('<div class="module-wrapper">').append(
 				@_removeButton(),
-				$('<img src="/assets/expenses.png" width="363" height="337" />')
+				$('<img src="<%= asset_path('expenses.png') %>" width="363" height="337" />')
 			)
 		]
 

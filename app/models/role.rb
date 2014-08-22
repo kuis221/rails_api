@@ -60,7 +60,7 @@ class Role < ActiveRecord::Base
 
   def cached_permissions
     @cached_permissions ||= Rails.cache.fetch("role_permissions_#{id}") do
-      permissions.all
+      permissions.all.to_a
     end
   end
 

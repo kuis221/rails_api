@@ -10,6 +10,7 @@ class Api::V1::ApiController < ActionController::Base
   before_action :ensure_valid_request
   before_action :cors_preflight_check
   after_filter :set_access_control_headers
+  after_filter :update_user_last_activity_mobile
 
   before_action :set_user
 
@@ -106,6 +107,10 @@ class Api::V1::ApiController < ActionController::Base
       headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS, HEAD'
       headers['Access-Control-Allow-Headers'] = '*,x-requested-with,Content-Type,If-Modified-Since,If-None-Match'
       headers['Access-Control-Max-Age'] = '86400'
+    end
+
+    def update_user_last_activity_mobile
+      @current_company_user.update_column(:last_activity_mobile_at, DateTime.now) if user_signed_in? && @current_company_user.present?
     end
 
     def cors_preflight_check
