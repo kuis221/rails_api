@@ -487,5 +487,7 @@ Brandscopic::Application.routes.draw do
 
   resources :tags, only: [:index]
 
+  resources :custom_filters, only: [:index, :new, :create]
+
   root :to => 'dashboard#index'
 end

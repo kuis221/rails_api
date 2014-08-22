@@ -2,15 +2,16 @@
 #
 # Table name: company_users
 #
-#  id                     :integer          not null, primary key
-#  company_id             :integer
-#  user_id                :integer
-#  role_id                :integer
-#  created_at             :datetime         not null
-#  updated_at             :datetime         not null
-#  active                 :boolean          default(TRUE)
-#  last_activity_at       :datetime
-#  notifications_settings :string(255)      default([]), is an Array
+#  id                      :integer          not null, primary key
+#  company_id              :integer
+#  user_id                 :integer
+#  role_id                 :integer
+#  created_at              :datetime         not null
+#  updated_at              :datetime         not null
+#  active                  :boolean          default(TRUE)
+#  last_activity_at        :datetime
+#  notifications_settings  :string(255)      default([]), is an Array
+#  last_activity_mobile_at :datetime
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

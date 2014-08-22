@@ -18,7 +18,8 @@ $.widget 'nmk.filteredList', {
 		selectedDate: new Date(),
 		selectDefaultDateRange: false,
 		calendarHighlights: null,
-		scope: null
+		scope: null,
+		applyTo: null
 	},
 
 	_create: () ->
@@ -52,10 +53,18 @@ $.widget 'nmk.filteredList', {
 					@_cleanFilters()
 			).appendTo(@form)
 
-
 		@formFilters = $('<div class="form-facet-filters">').appendTo(@form)
 		if @options.filters
 			@setFilters(@options.filters)
+
+		$('<div class="a btn btn-primary" id="save-filters-btn">')
+			.text('Save')
+				.on 'click', (e) =>
+					@_saveFilters()
+			.appendTo(@form)
+
+		$(document).on 'custom-filters:change', (e) =>
+			@reloadFilters()
 
 		@filtersPopup = false
 
@@ -510,6 +519,12 @@ $.widget 'nmk.filteredList', {
 			@acInput.show().val ""
 			@searchLabel.hide().find('span.term').text ''
 
+		false
+
+	_saveFilters: () ->
+		data = @_serializeFilters()
+		if data
+			$.get '/custom_filters/new.js', {apply_to: @options.applyTo, filters: data}
 		false
 
 	setCalendarHighlights: (highlights) ->

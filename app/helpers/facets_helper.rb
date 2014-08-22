@@ -89,6 +89,11 @@ module FacetsHelper
     { label: 'Campaigns', items: items }
   end
 
+  def build_custom_filters_bucket
+    items = current_company_user.custom_filters.by_type(controller_name).map{|cf| build_facet_item({id: cf.filters+'&id='+cf.id.to_s, label: cf.name, name: :custom_filter, count: 1}) }
+    {label: "Saved Filters", items: items}
+  end
+
   # Returns the facets for the events controller
   def events_facets
     @events_facets ||= Array.new.tap do |f|
@@ -103,6 +108,7 @@ module FacetsHelper
 
       f.push build_status_bucket( facet_search )
       f.push build_state_bucket( facet_search )
+      f.push build_custom_filters_bucket
     end
   end
 
