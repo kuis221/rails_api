@@ -10,7 +10,7 @@ $.widget 'nmk.photoGallery', {
 
 		$(document).on 'attached_asset:activated', (e, id) =>
 			@image.data('status', true)
-			@gallery.find('a.photo-deactivate-link').replaceWith($('<a class="icon-rounded-disable photo-deactivate-link" title="Deactivate" data-remote="true" data-confirm="Are you sure you want to deactivate this photo?"></a>').attr('href', @image.data('urls').deactivate))
+			@gallery.find('a.icon-rounded-disable').replaceWith($('<a class="icon-rounded-disable" title="Deactivate" data-remote="true" data-confirm="Are you sure you want to deactivate this photo?"></a>').attr('href', @image.data('urls').deactivate))
 			true
 
 		$(document).on 'attached_asset:deactivated', (e, id) =>
@@ -345,8 +345,8 @@ $.widget 'nmk.photoGallery', {
 		$carousel = $('<div id="'+id+'" class="gallery-carousel carousel">').addClass(carouselClass).append($('<div class="carousel-inner">'))
 		if @options.showSidebar
 			$carousel.append(
-				$('<a class="carousel-control left" data-slide="prev" href="#'+id+'"><img /><span></span></a>'),
-				$('<a class="carousel-control right" data-slide="next" href="#'+id+'"><img /><span></span></a>')
+				$('<a class="carousel-control left" data-slide="prev" href="#'+id+'"><img /><span><i class="icon-slimmed-arrow-left-rounded"></i></span></a>'),
+				$('<a class="carousel-control right" data-slide="next" href="#'+id+'"><img /><span><i class="icon-slimmed-arrow-right-rounded"></i></span></a>')
 			)
 
 		$carousel
