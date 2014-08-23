@@ -33,7 +33,7 @@ ActiveAdmin.register Place do
     column :state
     column :country
     column :types
-    default_actions
+    actions
 
   end
 
