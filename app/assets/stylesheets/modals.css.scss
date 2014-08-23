@@ -259,21 +259,6 @@ ul.select2-results{
 				}
 			}
 
-			input.search-box {
-				@include box-sizing(border-box);
-				background-image: image-url('search2.svg') !important;
-				background-position: center right;
-				background-repeat: no-repeat;
-				-webkit-border-radius: 20px;
-				border-radius: 20px;
-				padding-left: 2%;
-				padding-right: 2%;
-				width: 100%;
-				&.places-autocomplete {
-					padding-left: 8%;
-					width: 385px !important;
-				}
-			}
 			.users{
 				.span6{
 					margin-bottom: 8px;
@@ -401,7 +386,7 @@ ul.select2-results{
 						white-space: nowrap;
 						width: 220px;
 					}
-					label.radio{
+					label.radio-brand{
 						float: left;
 						margin-right: 43px;
 						overflow: hidden;
@@ -409,7 +394,7 @@ ul.select2-results{
 						white-space: nowrap;
 						width: 255px;
 					}
-					.radio{
+					label.radio{
 						margin-right: 90px;
 						&:last-child{
 							margin: 0;
@@ -434,7 +419,7 @@ ul.select2-results{
 							}
 						}
 					}
-					label.radio{
+					label.radio-brand{
 						display:inline-block;
 						margin-right: 43px;
 						overflow: hidden;
@@ -442,7 +427,7 @@ ul.select2-results{
 						white-space: nowrap;
 						width: 255px;
 					}
-					.radio{
+					label.radio {
 						margin: 0 90px 0px 0;
 					}
 				}
@@ -464,7 +449,7 @@ ul.select2-results{
 							}
 						}
 					}
-					label.radio{
+					label.radio-brand{
 						display: inline-block;
 						margin-right: 43px;
 						overflow: hidden;
@@ -472,7 +457,7 @@ ul.select2-results{
 						white-space: nowrap;
 						width:255px;
 					}
-					.radio{
+					label.radio{
 						margin: 0 47px 0px 0;
 						&:last-child{
 							margin-right: 0;
@@ -749,6 +734,21 @@ ul.select2-results{
 			width: 47.2%;
 			.control-group:last-child{
 				margin: 0;
+			}
+		}
+		input.search-box {
+			@include box-sizing(border-box);
+			background-image: image-url('search2.svg') !important;
+			background-position: center right;
+			background-repeat: no-repeat;
+			-webkit-border-radius: 20px;
+			border-radius: 20px;
+			padding-left: 2%;
+			padding-right: 2%;
+			width: 100%;
+			&.places-autocomplete {
+				padding-left: 8%;
+				width: 385px !important;
 			}
 		}
 	}

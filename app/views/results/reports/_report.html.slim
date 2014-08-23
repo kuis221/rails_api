@@ -6,7 +6,7 @@ li id="report_#{report.id}"
 
   span.pull-right
     - if can?(:edit, report)
-      = link_to('', share_results_report_path(report, format: :js), class: 'share', title: 'Share', remote: true, method: :get)  if can?(:share, report)
-      = link_to '', edit_results_report_path(report), remote: true, class: 'edit', title: 'Edit'
+      = link_to('', share_results_report_path(report, format: :js), class: 'icon-share', title: 'Share', remote: true, method: :get)  if can?(:share, report)
+      = link_to '', edit_results_report_path(report), remote: true, class: 'icon-edit', title: 'Edit'
       = link_to_deactivate report, url: deactivate_results_report_path(report) if can?(:deactivate, report)
-      = link_to '', activate_results_report_path(report), remote: true, class: 'enable', title: I18n.t('confirmation.activate') unless report.active?
+      = link_to '', activate_results_report_path(report), remote: true, class: 'icon-rounded-ok', title: I18n.t('confirmation.activate') unless report.active?
