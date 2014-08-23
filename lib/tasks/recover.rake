@@ -34,7 +34,7 @@ namespace :remote do
           end
           if remote_result.nil?
             field = remote_field_for(remote_kpi, result.campaign_id)
-            remote_result = Remote::EventResult.new({kpi_id: remote_kpi.id, form_field_id: field.try(:id), event_id: result.event_id}, without_protection: true)
+            remote_result = Remote::EventResult.new(kpi_id: remote_kpi.id, form_field_id: field.try(:id), event_id: result.event_id)
           end
           remote_result.scalar_value = value.try(:to_f) unless kpi_from.kpi_type == 'count'
           remote_result.value = value

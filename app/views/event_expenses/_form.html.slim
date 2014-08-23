@@ -7,7 +7,7 @@
       = f.input :amount, as: :currency, label: false, size: 50, class: 'string required'
 
       .form-actions.inside-form
-        = submit_tag 'Save', id: 'save-expense-btn', class: 'btn btn-primary', disable_with: 'Please wait...'
+        = submit_tag 'Save', id: 'save-expense-btn', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
         = "&nbsp;".html_safe
       .expense-file-form
         = f.fields_for :receipt do |rf|

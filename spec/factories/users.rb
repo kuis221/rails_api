@@ -2,45 +2,51 @@
 #
 # Table name: users
 #
-#  id                     :integer          not null, primary key
-#  first_name             :string(255)
-#  last_name              :string(255)
-#  email                  :string(255)      default(""), not null
-#  encrypted_password     :string(255)      default("")
-#  reset_password_token   :string(255)
-#  reset_password_sent_at :datetime
-#  remember_created_at    :datetime
-#  sign_in_count          :integer          default(0)
-#  current_sign_in_at     :datetime
-#  last_sign_in_at        :datetime
-#  current_sign_in_ip     :string(255)
-#  last_sign_in_ip        :string(255)
-#  confirmation_token     :string(255)
-#  confirmed_at           :datetime
-#  confirmation_sent_at   :datetime
-#  unconfirmed_email      :string(255)
-#  created_at             :datetime         not null
-#  updated_at             :datetime         not null
-#  country                :string(4)
-#  state                  :string(255)
-#  city                   :string(255)
-#  created_by_id          :integer
-#  updated_by_id          :integer
-#  invitation_token       :string(255)
-#  invitation_sent_at     :datetime
-#  invitation_accepted_at :datetime
-#  invitation_limit       :integer
-#  invited_by_id          :integer
-#  invited_by_type        :string(255)
-#  current_company_id     :integer
-#  time_zone              :string(255)
-#  detected_time_zone     :string(255)
-#  phone_number           :string(255)
-#  street_address         :string(255)
-#  unit_number            :string(255)
-#  zip_code               :string(255)
-#  authentication_token   :string(255)
-#  invitation_created_at  :datetime
+#  id                        :integer          not null, primary key
+#  first_name                :string(255)
+#  last_name                 :string(255)
+#  email                     :string(255)      default(""), not null
+#  encrypted_password        :string(255)      default("")
+#  reset_password_token      :string(255)
+#  reset_password_sent_at    :datetime
+#  remember_created_at       :datetime
+#  sign_in_count             :integer          default(0)
+#  current_sign_in_at        :datetime
+#  last_sign_in_at           :datetime
+#  current_sign_in_ip        :string(255)
+#  last_sign_in_ip           :string(255)
+#  confirmation_token        :string(255)
+#  confirmed_at              :datetime
+#  confirmation_sent_at      :datetime
+#  unconfirmed_email         :string(255)
+#  created_at                :datetime         not null
+#  updated_at                :datetime         not null
+#  country                   :string(4)
+#  state                     :string(255)
+#  city                      :string(255)
+#  created_by_id             :integer
+#  updated_by_id             :integer
+#  invitation_token          :string(255)
+#  invitation_sent_at        :datetime
+#  invitation_accepted_at    :datetime
+#  invitation_limit          :integer
+#  invited_by_id             :integer
+#  invited_by_type           :string(255)
+#  current_company_id        :integer
+#  time_zone                 :string(255)
+#  detected_time_zone        :string(255)
+#  phone_number              :string(255)
+#  street_address            :string(255)
+#  unit_number               :string(255)
+#  zip_code                  :string(255)
+#  authentication_token      :string(255)
+#  invitation_created_at     :datetime
+#  avatar_file_name          :string(255)
+#  avatar_content_type       :string(255)
+#  avatar_file_size          :integer
+#  avatar_updated_at         :datetime
+#  phone_number_verified     :boolean
+#  phone_number_verification :string(255)
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl
@@ -50,7 +56,8 @@ FactoryGirl.define do
     first_name 'Test'
     last_name 'User'
     sequence(:email) {|n| "testuser#{n}@brandscopic.com" }
-    phone_number '+14108675309'
+    phone_number '+1000000000'
+    phone_number_verified true
     password 'Changeme123'
     password_confirmation 'Changeme123'
     city 'Curridabat'
@@ -78,7 +85,7 @@ FactoryGirl.define do
       role_id = evaluator.role_id
       role_id ||= FactoryGirl.create(:role, company_id: company_id).id unless company_id.nil? || role_id.present?
       if company_id and role_id
-        user.company_users.build({role_id: role_id, company_id: company_id, active: evaluator.active}, without_protection: true)
+        user.company_users.build(role_id: role_id, company_id: company_id, active: evaluator.active)
       end
     end
 

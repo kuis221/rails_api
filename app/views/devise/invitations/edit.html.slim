@@ -23,7 +23,7 @@
         = f.input :unit_number, label: false
       .row-fluid
         .span6
-          = f.input :country, priority: ['United States'], required: true, input_html: {class: 'chosen-enabled'}
+          = f.input :country, priority: ['US'], iso_codes: true, required: true, input_html: {class: 'chosen-enabled'}
         .span6
           = f.input :city, required: true
       .row-fluid

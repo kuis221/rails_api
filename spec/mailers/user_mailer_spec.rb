@@ -3,10 +3,14 @@ require "spec_helper"
 describe UserMailer, :type => :mailer do
 
   describe "#company_invitation" do
-    let(:user) { double(User, :first_name => 'Fulanito', :reset_password_token => 'qwerty', :email => 'fulanito@de-tal.com') }
-    let(:inviter) { double(User, :full_name => 'Menganito Perez') }
-    let(:company) { double(Company, :name => 'Tres Patitos') }
-    let(:mail) { UserMailer.company_invitation(user, company, inviter) }
+    let(:user) { FactoryGirl.build_stubbed(:user, :first_name => 'Fulanito', :reset_password_token => 'qwerty', :email => 'fulanito@de-tal.com') }
+    let(:inviter) { FactoryGirl.build_stubbed(:user, :first_name => 'Menganito', :last_name => 'Perez') }
+    let(:company) { FactoryGirl.build_stubbed(:company, :name => 'Tres Patitos') }
+    let(:mail) { UserMailer.company_invitation(user.id, company.id, inviter.id) }
+
+    before { allow(User).to receive(:find).with(user.id).and_return(user) }
+    before { allow(User).to receive(:find).with(inviter.id).and_return(inviter) }
+    before { allow(Company).to receive(:find).with(company.id).and_return(company) }
 
     #ensure that the subject is correct
     it 'renders the subject' do
@@ -41,7 +45,7 @@ describe UserMailer, :type => :mailer do
 
   describe "#company_admin_invitation" do
     let(:user) { FactoryGirl.create(:user, :first_name => 'Fulanito', :reset_password_token => 'qwerty', :email => 'fulanito@de-tal.com', :invitation_token => '7d739a11e81b4f477f45a31f8f0bf119a1cb5754db0017e3bc1d6a02c5961ac0') }
-    let(:mail) { UserMailer.company_admin_invitation(user) }
+    let(:mail) { UserMailer.company_admin_invitation(user.id) }
 
     #ensure that the subject is correct
     it 'renders the subject' do
@@ -70,9 +74,11 @@ describe UserMailer, :type => :mailer do
   end
 
   describe "#company_existing_admin_invitation" do
-    let(:user) { double(User, :first_name => 'Fulanito', :reset_password_token => 'qwerty', :email => 'fulanito@de-tal.com') }
-    let(:company) { double(Company, :name => 'Tres Patitos') }
-    let(:mail) { UserMailer.company_existing_admin_invitation(user, company) }
+    let(:user) { FactoryGirl.build_stubbed(:user, :first_name => 'Fulanito', :reset_password_token => 'qwerty', :email => 'fulanito@de-tal.com') }
+    let(:company) { FactoryGirl.build_stubbed(:company, :name => 'Tres Patitos') }
+    let(:mail) { UserMailer.company_existing_admin_invitation(user.id, company.id) }
+    before { allow(User).to receive(:find).with(user.id).and_return(user) }
+    before { allow(Company).to receive(:find).with(company.id).and_return(company) }
 
     #ensure that the subject is correct
     it 'renders the subject' do
@@ -101,10 +107,11 @@ describe UserMailer, :type => :mailer do
   end
 
   describe "#notification" do
-    let(:user) { double(User, :first_name => 'Fulanito', :reset_password_token => 'qwerty', :email => 'fulanito@de-tal.com') }
+    let(:user) { FactoryGirl.build_stubbed(:company_user, user: FactoryGirl.build_stubbed(:user, :first_name => 'Fulanito', :reset_password_token => 'qwerty', :email => 'fulanito@de-tal.com')) }
     let(:subject) { "Rejected Event Recaps" }
     let(:message) { "You have a rejected event recap http://localhost:5100/events/10908" }
-    let(:mail) { UserMailer.notification(user, subject, message) }
+    let(:mail) { UserMailer.notification(user.id, subject, message) }
+    before { allow(CompanyUser).to receive(:find).with(user.id).and_return(user) }
 
     #ensure that the subject is correct
     it 'renders the subject' do

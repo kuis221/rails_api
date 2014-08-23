@@ -22,7 +22,7 @@
 #  local_end_at   :datetime
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe Event, :type => :model do
   it { is_expected.to belong_to(:company) }
@@ -64,11 +64,47 @@ describe Event, :type => :model do
   end
 
   describe "end_after_start validation" do
-    subject { Event.new({start_at: Time.zone.local(2016,1,20,12,5,0)}, without_protection: true) }
+    subject { Event.new(start_at: Time.zone.local(2016,1,20,12,5,0)) }
 
     it { is_expected.not_to allow_value(Time.zone.local(2016,1,20,12,0,0)).for(:end_at).with_message("must be after") }
     it { is_expected.to allow_value(Time.zone.local(2016,1,20,12,5,0)).for(:end_at) }
     it { is_expected.to allow_value(Time.zone.local(2016,1,20,12,10,0)).for(:end_at) }
+  end
+
+  describe "reset_verification" do
+    let(:user){ FactoryGirl.create(:user) }
+
+    it "should set phone_number_verified to false when the number is changed" do
+      user.update_column(:phone_number_verified, true)
+      user.reload
+      expect(user.phone_number_verified).to be_truthy
+
+      user.phone_number = '123213211'
+      user.save
+      expect(user.phone_number_verified).to be_falsey
+    end
+
+    it "should set phone_number_verification to nil when the number is changed" do
+      user.update_column(:phone_number_verification, '122322')
+      user.reload
+      expect(user.phone_number_verification).to eql '122322'
+
+      user.phone_number = '123213211'
+      user.save
+      expect(user.phone_number_verification).to be_nil
+    end
+
+    it "should set phone_number_verified true if a valid code is given" do
+      user.update_column(:phone_number_verification, '122322')
+      user.update_column(:phone_number_verified, false)
+      user.reload
+      expect(user.phone_number_verification).to eql '122322'
+      expect(user.phone_number_verified).to be_falsey
+
+      user.verification_code = '122322'
+      expect(user.save).to be_truthy
+      expect(user.phone_number_verified).to be_truthy
+    end
   end
 
   describe "states" do
@@ -101,7 +137,7 @@ describe Event, :type => :model do
   end
 
   describe "#create_notifications" do
-    let(:company){ FactoryGirl.create(:company, settings: {event_alerts_policy: Notification::EVENT_ALERT_POLICY_ALL}) }
+    let(:company){ FactoryGirl.create(:company, event_alerts_policy: Notification::EVENT_ALERT_POLICY_ALL) }
 
     it "should queue EventNotifierWorker worker" do
       event = FactoryGirl.create(:event, company: company)
@@ -189,7 +225,7 @@ describe Event, :type => :model do
     end
   end
 
-  describe "#in_areas" do
+  describe "#in_campaign_area" do
     let(:company) {FactoryGirl.create(:company)}
     let(:campaign) {FactoryGirl.create(:campaign, company: company)}
 
@@ -206,9 +242,11 @@ describe Event, :type => :model do
       area_la.places << FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
       area_sf.places << FactoryGirl.create(:place, country: 'US', state: 'California', city: 'San Francisco', types: ['locality'])
 
-      expect(Event.in_areas([area_la])).to match_array [event_la]
-      expect(Event.in_areas([area_sf])).to match_array [event_sf]
-      expect(Event.in_areas([area_la, area_sf])).to match_array [event_la, event_sf]
+      area_campaign_la = FactoryGirl.create(:areas_campaign, area: area_la, campaign: campaign)
+      area_campaign_sf = FactoryGirl.create(:areas_campaign, area: area_sf, campaign: campaign)
+
+      expect(Event.in_campaign_area(area_campaign_la)).to match_array [event_la]
+      expect(Event.in_campaign_area(area_campaign_sf)).to match_array [event_sf]
     end
 
     it "should include events that are scheduled on places that are part of the areas" do
@@ -224,9 +262,46 @@ describe Event, :type => :model do
       area_la.places << place_la
       area_sf.places << place_sf
 
-      expect(Event.in_areas([area_la])).to match_array [event_la]
-      expect(Event.in_areas([area_sf])).to match_array [event_sf]
-      expect(Event.in_areas([area_la, area_sf])).to match_array [event_la, event_sf]
+      area_campaign_la = FactoryGirl.create(:areas_campaign, area: area_la, campaign: campaign)
+      area_campaign_sf = FactoryGirl.create(:areas_campaign, area: area_sf, campaign: campaign)
+
+      expect(Event.in_campaign_area(area_campaign_la)).to match_array [event_la]
+      expect(Event.in_campaign_area(area_campaign_sf)).to match_array [event_sf]
+    end
+
+    it "should exclude events that are scheduled on places that were excluded from the campaign" do
+      place_la = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      event_la = FactoryGirl.create(:event, campaign: campaign, place: place_la)
+
+      place_sf = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'San Francisco')
+      event_sf = FactoryGirl.create(:event, campaign: campaign, place: place_sf)
+
+      area_la = FactoryGirl.create(:area, company: company)
+      area_sf = FactoryGirl.create(:area, company: company)
+
+      area_la.places << place_la
+      area_sf.places << place_sf
+
+      area_campaign_la = FactoryGirl.create(:areas_campaign, area: area_la, campaign: campaign, exclusions: [place_la.id])
+      area_campaign_sf = FactoryGirl.create(:areas_campaign, area: area_sf, campaign: campaign)
+      expect(Event.in_campaign_area(area_campaign_la)).to be_empty
+      expect(Event.in_campaign_area(area_campaign_sf)).to match_array [event_sf]
+    end
+
+    it "should exclude events that are scheduled on places inside an excluded city" do
+      place_la = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      event_la = FactoryGirl.create(:event, campaign: campaign, place: place_la)
+
+      city_la = FactoryGirl.create(:city, name: 'Los Angeles', country: 'US', state: 'California')
+      area_la = FactoryGirl.create(:area, company: company)
+
+      area_la.places << city_la
+
+      area_campaign_la = FactoryGirl.create(:areas_campaign, area: area_la, campaign: campaign)
+      expect(Event.in_campaign_area(area_campaign_la)).to match_array [event_la]
+
+      area_campaign_la.exclusions = [city_la.id]
+      expect(Event.in_campaign_area(area_campaign_la)).to be_empty
     end
   end
 
@@ -243,7 +318,6 @@ describe Event, :type => :model do
 
       expect(Event.in_places([place_la])).to match_array [event_la]
       expect(Event.in_places([place_sf])).to match_array [event_sf]
-      expect(Event.in_places([place_la, place_sf])).to match_array [event_la, event_sf]
     end
 
 
@@ -316,7 +390,7 @@ describe Event, :type => :model do
     let(:campaign) { FactoryGirl.create(:campaign) }
 
     it "should update campaign's first_event_id and first_event_at attributes" do
-      expect(campaign.update_attributes({first_event_id: 999, first_event_at: '2013-02-01 12:00:00'}, without_protection: true)).to be_truthy
+      expect(campaign.update_attributes(first_event_id: 999, first_event_at: '2013-02-01 12:00:00')).to be_truthy
       event = FactoryGirl.create(:event, campaign: campaign, company: campaign.company, start_date: '01/01/2013', start_time: '01:00 AM', end_date:  '01/01/2013', end_time: '05:00 AM')
       campaign.reload
       expect(campaign.first_event_id).to eq(event.id)
@@ -324,7 +398,7 @@ describe Event, :type => :model do
     end
 
     it "should update campaign's first_event_id and first_event_at attributes" do
-      expect(campaign.update_attributes({last_event_id: 999, last_event_at: '2013-01-01 12:00:00'}, without_protection: true)).to be_truthy
+      expect(campaign.update_attributes(last_event_id: 999, last_event_at: '2013-01-01 12:00:00')).to be_truthy
       event = FactoryGirl.create(:event, campaign: campaign, company: campaign.company, start_date: '02/01/2013', start_time: '01:00 AM', end_date:  '02/01/2013', end_time: '05:00 AM')
       campaign.reload
       expect(campaign.last_event_id).to eq(event.id)
@@ -425,7 +499,6 @@ describe Event, :type => :model do
     end
   end
 
-
   describe "is_late?" do
     after do
       Timecop.return
@@ -523,7 +596,7 @@ describe Event, :type => :model do
       ResqueSpec.reset!
       expect {
         field = campaign.form_fields.detect{|f| f.kpi_id == Kpi.impressions.id}
-        event.update_attributes({results_attributes: {"1" => {form_field_id: field.id, value: '100' }}})
+        event.update_attributes(results_attributes: {"1" => {form_field_id: field.id, value: '100' }})
       }.to change(FormFieldResult, :count).by(1)
       expect(VenueIndexer).to have_queued(event.venue.id)
     end
@@ -683,8 +756,8 @@ describe Event, :type => :model do
       expect(tasks[2].reload.company_user_id).to eq(user.id)
 
       expect(Sunspot).to receive(:index) do |taks_list|
-        expect(taks_list).to be_an_instance_of(Array)
-        expect(taks_list).to match_array(tasks)
+        expect(taks_list.to_a).to be_an_instance_of(Array)
+        expect(taks_list.to_a).to match_array(tasks)
       end
 
       event.users.delete(user)
@@ -711,8 +784,8 @@ describe Event, :type => :model do
       expect(tasks[2].reload.company_user_id).to eq(team_user2.id)
 
       expect(Sunspot).to receive(:index) do |taks_list|
-        expect(taks_list).to be_an_instance_of(Array)
-        expect(taks_list).to match_array(tasks)
+        expect(taks_list.to_a).to be_an_instance_of(Array)
+        expect(taks_list.to_a).to match_array(tasks)
       end
 
       event.teams.delete(team)

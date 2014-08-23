@@ -8,13 +8,13 @@ module Results
       # We are reusing the same object for each result to reduce memory usage
       @result ||= FormFieldResult.new
       event_values = empty_values_hash
-      ActiveRecord::Base.connection.select_all(
+      ActiveRecord::Base.connection.select_all( ActiveRecord::Base.connection.unprepared_statement{
         event.results.where(form_field_id: active_fields_for_campaign(event.campaign_id)).
                   select('form_field_results.form_field_id, form_field_results.value, form_field_results.hash_value').to_sql
-      ).each do |row|
+      }).each do |row|
         @result.form_field = custom_fields_to_export[row['form_field_id'].to_i]
         if @result.form_field.is_hashed_value?
-          @result.hash_value = ActiveRecord::Coders::Hstore.load(row['hash_value'])
+          @result.hash_value = row['hash_value']
         else
           @result.value = row['value']
         end
@@ -38,16 +38,20 @@ module Results
     end
 
     def area_for_event(event)
-      campaign_from_cache(event.campaign_id).areas.select{|a| a.place_in_scope?(event.place) }.map(&:name).join(', ') unless event.place.nil?
+      campaign_from_cache(event.campaign_id).areas_campaigns.select{|ac|
+        ac.place_in_scope?(event.place)
+      }.map{|ac| ac.area.name }.join(', ') unless event.place.nil?
     end
 
     def team_member_for_event(event)
-      ActiveRecord::Base.connection.select_values("
-        #{event.users.joins(:user).select('users.first_name || \' \' || users.last_name AS name' ).reorder(nil).to_sql}
-        UNION ALL
-        #{event.teams.select('teams.name').reorder(nil).to_sql}
-        ORDER BY name
-      ").join(', ')
+      ActiveRecord::Base.connection.unprepared_statement do
+        ActiveRecord::Base.connection.select_values("
+          #{event.users.joins(:user).select('users.first_name || \' \' || users.last_name AS name' ).reorder(nil).to_sql}
+          UNION ALL
+          #{event.teams.select('teams.name').reorder(nil).to_sql}
+          ORDER BY name
+        ").join(', ')
+      end
     end
 
     def url_for_event(event)

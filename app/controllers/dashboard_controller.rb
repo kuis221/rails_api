@@ -1,5 +1,5 @@
 class DashboardController < ApplicationController
-  before_filter :set_variables
+  before_action :set_variables
 
   def index
   end

@@ -11,9 +11,8 @@
 
 class Marque < ActiveRecord::Base
   belongs_to :brand
-  attr_accessible :name
 
   validates :name, presence: true
 
-  scope :accessible_by_user, lambda{|user| scoped }
+  scope :accessible_by_user, lambda{|user| all }
 end

@@ -12,6 +12,6 @@ li id="activity_#{activity.id}"
       = "&nbsp;".html_safe
       - if can?(:deactivate, Activity)
         - if activity.active?
-          = link_to '', {controller: :activities, action: :deactivate, id: activity.id}, remote: true, class: 'disable', title: 'Deactivate', confirm: I18n.t('confirmation.deactivate_confirm_message', model: 'activity')
+          = link_to '', {controller: :activities, action: :deactivate, id: activity.id}, remote: true, class: 'disable', title: 'Deactivate', data: {confirm: I18n.t('confirmation.deactivate_confirm_message', model: 'activity')}
         - else
           = link_to '', {controller: :activities, action: :activate, id: activity.id}, remote: true, class: 'enable', title: 'Activate'

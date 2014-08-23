@@ -9,7 +9,7 @@ class CommentsController < InheritedResources::Base
 
   authorize_resource except: [:index]
 
-  before_filter :authorize_actions, only: :index
+  before_action :authorize_actions, only: :index
 
 
   private

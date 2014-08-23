@@ -5,6 +5,14 @@
 
 $footer-height: 35px;
 
+//
+// Brandscopic Specific Styles
+// --------------------------------------------------
+
+
+// Font Face
+// --------------------------------------------------
+
 @font-face {
 	font-family: 'icons';
 	src:font-url('icons.eot');
@@ -28,59 +36,8 @@ $footer-height: 35px;
 }
 
 
-/*-- GENERAL STYLES --*/
-a:before, a:after{
-	font-weight:normal;
-}
-
-html {
-	min-height: 100%;
-	height:100%;
-}
-
-select,
-textarea,
-input[type="text"],
-input[type="password"],
-input[type="datetime"],
-input[type="datetime-local"],
-input[type="date"],
-input[type="month"],
-input[type="time"],
-input[type="week"],
-input[type="number"],
-input[type="email"],
-input[type="url"],
-input[type="search"],
-input[type="tel"],
-input[type="color"],
-.uneditable-input{
-	background-color: white;
-	border: 1px solid $grey_four;
-	box-shadow: none;
-	box-sizing: border-box;
-	font-family: $baseFontFamily;
-	font-size: 13px;
-	font-weight: normal;
-	-webkit-box-shadow: none;
-	height:39px;
-	padding: 10px;
-	width: 380px;
-	&:focus{
-		border: 1px solid $brand;
-		box-shadow: none;
-		-webkit-box-shadow: none;
-		outline:0;
-	}
-}
-
-input[disabled], select[disabled], textarea[disabled], input[readonly], select[readonly], textarea[readonly]{
-	background-color: white;
-	border: 1px solid rgba(192, 192, 192, 0.6);
-	&:focus{
-		border: 1px solid rgba(192, 192, 192, 0.6)
-	}
-}
+// General Styles
+// --------------------------------------------------
 
 .help-inline.valid{
 	display:none !important;
@@ -111,15 +68,18 @@ body{
 	}
 }
 
-
 abbr[title]{
 	border:0;
 }
 
+/*
 label{
 	color: $brand;
 	font-size: 13px;
-}
+}*/
+
+// Rating for photos
+// --------------------------------------------------
 
 .rating{
 	margin-left: 8%;
@@ -136,9 +96,19 @@ label{
 	}
 }
 
-.calendar-data, .email-data, .phone-data, .place-data, .time-data, .description-data, .member-data{
+.calendar-data, .email-data, .phone-data, .place-data,
+.time-data, .description-data, .member-data{
 	margin:0 0 20px 30px;
 	width: 380px;
+}
+
+.communication-preferences{
+	.span9{
+		margin-left: 0;
+	}
+	.span2{
+		text-align: center;
+	}
 }
 
 .marques-data{
@@ -213,6 +183,19 @@ label{
 		text-align: center;
 		vertical-align: middle;
 	}
+	div{
+		display: inline-block;
+		width: auto;
+		&+div{
+			margin-left: 10px;
+			&.info{
+				margin-left: 5px;
+			}
+			&.verified{
+				margin-left: 30px;
+			}
+		}
+	}
 }
 .time-data{
 	&:before{
@@ -244,7 +227,6 @@ label{
 }
 
 /*-- EVENT DETAILS PAGES __*/
-
 body.events.show{
 
 	.event-contact {
@@ -308,7 +290,10 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	height: 21px;
 	padding: 9px 5px;
 }
-// PROGRESS BAR
+
+// Progress Bar Styles (Event Data)
+// --------------------------------------------------
+
 .counter{
 	color: $brand !important;
 }
@@ -397,7 +382,9 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	text-transform: uppercase;
 }
 
-/*-- Alert Messages -- */
+// Alert Messages
+// --------------------------------------------------
+
 .alert{
 	border: red;
 	border-radius: 0px 0px 8px 8px;
@@ -494,7 +481,8 @@ a.datepick-cmd:hover{
 }
 
 
-// Events Calendar picker
+// Events Calendar Datepicker
+// --------------------------------------------------
 
 .calendar-months-arrows{
 	a:hover{
@@ -687,19 +675,6 @@ a.more-options-link:after{
 /*-- BUTTON STYLES --*/
 
 .btn{
-	background-color: $user_menu;
-	background-image: none;
-	border: 0;
-	font-family: $baseFontFamily;
-	padding: 7px 17px;
-	text-shadow:none;
-	&[disabled]{
-		background-color: $grey_one;
-		opacity: 1;
-		&:hover{
-			background-color: $grey_one;
-		}
-	}
 	&.active{
 		background-color: $brand;
 		border: 0;
@@ -3233,6 +3208,10 @@ textarea::-webkit-input-placeholder {
 			list-style: none;
 		}
 	}
+	input[type="text"]{
+		height: 37px;
+		width: 100%;
+	}
 
 	.filter-wrapper {
 		li ul {
@@ -3771,7 +3750,7 @@ body.company_users{
 }
 
 .notification-types{
-	margin-bottom: 30px;
+	margin: 30px 0;
 	.span12, .span12:first-child{
 		margin-left: 0px;
 		&.category{
@@ -3949,7 +3928,7 @@ body.events.index {
 				}
 			}
 			.summation-total {
-				border-top: 2px solid $grey_one; 
+				border-top: 2px solid $grey_one;
 				margin-top: 5px;
 				padding-top: 10px;
 				text-align: right;
@@ -3997,6 +3976,7 @@ body.show {
 		//margin: 0 -12% 0 0;
 	}
 	.place, .area-user{
+		font-family: $baseFontFamily;
 		font-size: 16px;
 		padding: 0 0 0 32px;
 		margin: 0 10% 30px 0;
@@ -5616,6 +5596,10 @@ body.campaigns{
 		}
 	}
 
+	a{
+		font-weight: bold;
+	}
+
 	p{
 		margin-bottom: -1px;
 	}
@@ -5766,7 +5750,6 @@ body.campaigns{
 	}
 
 		&.first{
-
 			.controls{
 				.chzn-container-single{
 					height: 31px !important;
@@ -6001,7 +5984,7 @@ body.campaigns{
 		}
 	}
 	h2{
-		font-size: 30px;
+		font-size: 28px;
 		margin-top: 10px;
 		margin-bottom: 30px;
 		&.special{
@@ -7562,17 +7545,6 @@ table td.sub-level-1 {
 
 	address{
 		margin-bottom: 0px;
-	}
-}
-.phone-data{
-	&:before{
-		color: $user_menu;
-		padding-top: 3px;
-		position: absolute;
-		speak: none;
-		left: 29px;
-		text-align: center;
-		vertical-align: middle;
 	}
 }
 

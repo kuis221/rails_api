@@ -1,0 +1,16 @@
+
+p Enter the security code you've received into the filed below.
+
+= simple_form_for(resource, remote: true) do |f|
+  = f.fields_for :user do |uf|
+    .form-inputs
+      .row-fluid
+        .span5
+          = uf.input :verification_code, label: false, placeholder: '6-digit code', required: true, input_html: { class: 'required' }
+        .span6
+          = link_to "Resend code", verify_phone_company_user_path(resource), remote: true, method: :post, class: 'resend-verification'
+
+  .form-actions
+    = f.button :submit, 'Verify', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
+    = "&nbsp;".html_safe
+    = f.button :button, 'Cancel', class: 'btn btn-cancel'

@@ -2,45 +2,51 @@
 #
 # Table name: users
 #
-#  id                     :integer          not null, primary key
-#  first_name             :string(255)
-#  last_name              :string(255)
-#  email                  :string(255)      default(""), not null
-#  encrypted_password     :string(255)      default("")
-#  reset_password_token   :string(255)
-#  reset_password_sent_at :datetime
-#  remember_created_at    :datetime
-#  sign_in_count          :integer          default(0)
-#  current_sign_in_at     :datetime
-#  last_sign_in_at        :datetime
-#  current_sign_in_ip     :string(255)
-#  last_sign_in_ip        :string(255)
-#  confirmation_token     :string(255)
-#  confirmed_at           :datetime
-#  confirmation_sent_at   :datetime
-#  unconfirmed_email      :string(255)
-#  created_at             :datetime         not null
-#  updated_at             :datetime         not null
-#  country                :string(4)
-#  state                  :string(255)
-#  city                   :string(255)
-#  created_by_id          :integer
-#  updated_by_id          :integer
-#  invitation_token       :string(255)
-#  invitation_sent_at     :datetime
-#  invitation_accepted_at :datetime
-#  invitation_limit       :integer
-#  invited_by_id          :integer
-#  invited_by_type        :string(255)
-#  current_company_id     :integer
-#  time_zone              :string(255)
-#  detected_time_zone     :string(255)
-#  phone_number           :string(255)
-#  street_address         :string(255)
-#  unit_number            :string(255)
-#  zip_code               :string(255)
-#  authentication_token   :string(255)
-#  invitation_created_at  :datetime
+#  id                        :integer          not null, primary key
+#  first_name                :string(255)
+#  last_name                 :string(255)
+#  email                     :string(255)      default(""), not null
+#  encrypted_password        :string(255)      default("")
+#  reset_password_token      :string(255)
+#  reset_password_sent_at    :datetime
+#  remember_created_at       :datetime
+#  sign_in_count             :integer          default(0)
+#  current_sign_in_at        :datetime
+#  last_sign_in_at           :datetime
+#  current_sign_in_ip        :string(255)
+#  last_sign_in_ip           :string(255)
+#  confirmation_token        :string(255)
+#  confirmed_at              :datetime
+#  confirmation_sent_at      :datetime
+#  unconfirmed_email         :string(255)
+#  created_at                :datetime         not null
+#  updated_at                :datetime         not null
+#  country                   :string(4)
+#  state                     :string(255)
+#  city                      :string(255)
+#  created_by_id             :integer
+#  updated_by_id             :integer
+#  invitation_token          :string(255)
+#  invitation_sent_at        :datetime
+#  invitation_accepted_at    :datetime
+#  invitation_limit          :integer
+#  invited_by_id             :integer
+#  invited_by_type           :string(255)
+#  current_company_id        :integer
+#  time_zone                 :string(255)
+#  detected_time_zone        :string(255)
+#  phone_number              :string(255)
+#  street_address            :string(255)
+#  unit_number               :string(255)
+#  zip_code                  :string(255)
+#  authentication_token      :string(255)
+#  invitation_created_at     :datetime
+#  avatar_file_name          :string(255)
+#  avatar_content_type       :string(255)
+#  avatar_file_size          :integer
+#  avatar_updated_at         :datetime
+#  phone_number_verified     :boolean
+#  phone_number_verification :string(255)
 #
 
 class User < ActiveRecord::Base
@@ -59,13 +65,17 @@ class User < ActiveRecord::Base
 
   has_many :company_users, dependent: :destroy
 
-  has_many :companies, through: :company_users, order: 'companies.name ASC'
+  has_many :companies, ->{ order 'companies.name ASC' }, through: :company_users
   belongs_to :current_company, class_name: 'Company'
 
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :email, presence: true
   validates :detected_time_zone, allow_nil: true, :inclusion => { :in => ActiveSupport::TimeZone.all.map{ |m| m.name.to_s } }
+
+  validate :valid_verification_code?, if: :verification_code
+
+  has_attached_file :avatar, :styles  => { :small => "100x100#", :large => "500x500>" }, :processors => [:cropper]
 
   with_options unless: :inviting_user_or_invited? do |user|
     user.validates :phone_number, presence: true
@@ -93,12 +103,17 @@ class User < ActiveRecord::Base
 
   delegate :name, :id, :permissions, to: :role, prefix: true, allow_nil: true
 
-  scope :active_eq, where('invitation_accepted_at is not null')
-  scope :active, where('invitation_accepted_at is not null')
-  scope :active_in_company, lambda{|company| active.joins(:company_users).where(company_users: {company_id: company, active: true}) }
-  scope :in_company, lambda{|company| active_in_company(company) }
+  scope :active_eq, -> { where('invitation_accepted_at is not null') }
+  scope :active, -> { where('invitation_accepted_at is not null') }
+  scope :active_in_company, ->(company){ active.joins(:company_users).where(company_users: {company_id: company, active: true}) }
+  scope :in_company, ->(company){ active_in_company(company) }
 
-  search_methods :active_eq if ENV['WEB']
+  #search_methods :active_eq if ENV['WEB']
+  if ENV['WEB']
+    ransacker :active do
+      Arel.sql("#{table_name}.invitation_accepted_at is not null")
+    end
+  end
 
   # Tasks-Users relationship
   has_many :tasks, through: :company_users
@@ -107,8 +122,12 @@ class User < ActiveRecord::Base
 
   before_save :ensure_authentication_token
   after_save :reindex_related
+  before_validation :reset_verification
   after_invitation_accepted :reindex_company_users
+  after_update :reprocess_avatar, :if => :cropping?
 
+  attr_accessor :verification_code
+  attr_accessor :crop_x, :crop_y, :crop_w, :crop_h
   attr_accessor :inviting_user
   attr_accessor :updating_user
   attr_accessor :accepting_invitation
@@ -156,6 +175,15 @@ class User < ActiveRecord::Base
 
   def load_country
     @the_country ||= Country.new(country) if country
+  end
+
+  def cropping?
+    !crop_x.blank? && !crop_y.blank? && !crop_w.blank? && !crop_h.blank?
+  end
+
+  def generate_and_send_phone_verification_code
+    self.update_column :phone_number_verification, sprintf('%06d', rand(5**10))[0..5]
+    Resque.enqueue(SendSmsWorker, phone_number, "Your Brandscopic verification code is #{phone_number_verification}")
   end
 
   # Method for Devise to make that only active users can login into the app
@@ -302,6 +330,25 @@ class User < ActiveRecord::Base
       loop do
         token = Devise.friendly_token
         break token unless User.where(authentication_token: token).first
+      end
+    end
+
+    def reprocess_avatar
+      avatar.reprocess!
+    end
+
+    def valid_verification_code?
+      errors.add :verification_code, :invalid if self.verification_code != self.phone_number_verification
+    end
+
+    def reset_verification
+      if phone_number_changed?
+        self.assign_attributes(
+          phone_number_verified: false,
+          phone_number_verification: nil )
+      elsif self.verification_code.present? && self.verification_code == phone_number_verification
+        self.assign_attributes(
+          phone_number_verified: true )
       end
     end
 end

@@ -20,11 +20,9 @@ class Task < ActiveRecord::Base
 
   belongs_to :event
   belongs_to :company_user
-  has_many :comments, :as => :commentable, order: 'comments.created_at ASC'
+  has_many :comments, ->{ order 'comments.created_at ASC' }, :as => :commentable
 
   after_save :create_notifications
-
-  validates_datetime :due_at, allow_nil: true, allow_blank: true
 
   delegate :full_name, to: :company_user, prefix: :user, allow_nil: true
   delegate :campaign_name, :place_id, to: :event, allow_nil: true
@@ -35,13 +33,13 @@ class Task < ActiveRecord::Base
   validates :company_user_id, numericality: true, allow_nil: true
   validates :company_user_id, presence: true, unless: :event_id
 
-  scope :incomplete, lambda{ where(completed: false) }
-  scope :active, lambda{ where(active: true) }
-  scope :by_companies, lambda{|companies| where(events: {company_id: companies}).joins(:event) }
-  scope :late, lambda{ where(['due_at is not null and due_at < ? and completed = ?', Date.today, false]) }
-  scope :due_today, lambda{ where(['due_at BETWEEN ? and ? and completed = ?', Date.today, Date.tomorrow, false]) }
-  scope :due_today_and_late, lambda{ where(['due_at is not null and due_at <= ? and completed = ?', Date.today.end_of_day, false]) }
-  scope :assigned_to, lambda{|users| where(company_user_id: users) }
+  scope :incomplete, ->{ where(completed: false) }
+  scope :active, ->{ where(active: true) }
+  scope :by_companies, ->(companies){ where(events: {company_id: companies}).joins(:event) }
+  scope :late, ->{ where(['due_at is not null and due_at < ? and completed = ?', Date.today, false]) }
+  scope :due_today, ->{ where(['due_at BETWEEN ? and ? and completed = ?', Date.today, Date.tomorrow, false]) }
+  scope :due_today_and_late, ->{ where(['due_at is not null and due_at <= ? and completed = ?', Date.today.end_of_day, false]) }
+  scope :assigned_to, ->(users){ where(company_user_id: users) }
 
   searchable do
     integer :id
@@ -143,7 +141,7 @@ class Task < ActiveRecord::Base
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)
-      ss = solr_search({include: [{:company_user => :user}, :event]}) do
+      solr_search({include: [{:company_user => :user}, :event]}) do
 
         # Filter by user permissions
         company_user = params[:current_company_user]
@@ -274,7 +272,7 @@ class Task < ActiveRecord::Base
         {user: [company_user.id]}
       elsif scope == 'teams'
         params = {not_assigned_to: [company_user.id]}
-        unless company_user.company.setting(:event_alerts_policy) == Notification::EVENT_ALERT_POLICY_ALL
+        unless company_user.company.event_alerts_policy == Notification::EVENT_ALERT_POLICY_ALL
           params.merge!(team_members: [company_user.id])
         end
         params

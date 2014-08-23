@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Results::GvaController, :type => :controller do
   before(:each) do
@@ -17,7 +17,7 @@ describe Results::GvaController, :type => :controller do
   describe "POST 'report'" do
     let(:campaign){ FactoryGirl.create(:campaign, company: @company) }
     it "should return http success" do
-      post 'report', report: {campaign_id: campaign.id}, format: :js
+      xhr :post, 'report', report: {campaign_id: campaign.id}, format: :js
       expect(response).to be_success
       expect(response).to render_template('results/gva/report')
       expect(response).to render_template('results/gva/_report')
@@ -32,7 +32,7 @@ describe Results::GvaController, :type => :controller do
       goal = campaign.goals.for_kpi(kpi)
       goal.value = 100
       goal.save
-      post 'report', report: {campaign_id: campaign.id}, format: :js
+      xhr :post, 'report', report: {campaign_id: campaign.id}, format: :js
 
       expect(assigns(:events_scope)).to match_array events
       expect(assigns(:goals)).to match_array [goal]
@@ -57,7 +57,7 @@ describe Results::GvaController, :type => :controller do
       user_goal.value = 100
       user_goal.save
 
-      post 'report', report: {campaign_id: campaign.id}, item_type: 'CompanyUser', item_id: user.id, format: :js
+      xhr :post, 'report', report: {campaign_id: campaign.id}, item_type: 'CompanyUser', item_id: user.id, format: :js
 
       expect(assigns(:events_scope)).to match_array events
       expect(assigns(:goals)).to match_array [user_goal]
@@ -82,7 +82,7 @@ describe Results::GvaController, :type => :controller do
       team_goal.value = 100
       team_goal.save
 
-      post 'report', report: {campaign_id: campaign.id}, item_type: 'Team', item_id: team.id, format: :js
+      xhr :post, 'report', report: {campaign_id: campaign.id}, item_type: 'Team', item_id: team.id, format: :js
 
       expect(assigns(:events_scope)).to match_array events
       expect(assigns(:goals)).to match_array [team_goal]
@@ -97,6 +97,7 @@ describe Results::GvaController, :type => :controller do
 
       area = FactoryGirl.create(:area, company: campaign.company)
       area.places << place
+      campaign.areas << area
 
       campaign.add_kpi kpi
       goal = campaign.goals.for_kpi(kpi)
@@ -108,7 +109,7 @@ describe Results::GvaController, :type => :controller do
       area_goal.value = 100
       area_goal.save
 
-      post 'report', report: {campaign_id: campaign.id}, item_type: 'Area', item_id: area.id, format: :js
+      xhr :post, 'report', report: {campaign_id: campaign.id}, item_type: 'Area', item_id: area.id, format: :js
 
       expect(assigns(:events_scope)).to match_array events
       expect(assigns(:goals)).to match_array [area_goal]
@@ -130,7 +131,7 @@ describe Results::GvaController, :type => :controller do
       place_goal.value = 100
       place_goal.save
 
-      post 'report', report: {campaign_id: campaign.id}, item_type: 'Place', item_id: place.id, format: :js
+      xhr :post, 'report', report: {campaign_id: campaign.id}, item_type: 'Place', item_id: place.id, format: :js
 
       expect(assigns(:events_scope)).to match_array events
       expect(assigns(:goals)).to match_array [place_goal]

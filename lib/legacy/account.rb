@@ -87,6 +87,6 @@ class Legacy::Account < Legacy::Record
   end
 
   def address
-    @address ||= Legacy::Address.find_by_addressable_type_and_addressable_id('Account', self.id)
+    @address ||= Legacy::Address.find_by(addressable_type: 'Account', addressable_id: self.id)
   end
 end

@@ -23,17 +23,15 @@ RSpec::Matchers.define :have_filter_section do |filter|
 
 
   failure_message do |actual|
-    message = @errors.join("\n")
-    message
+    @errors.join("\n")
   end
 
   failure_message_when_negated do |actual|
-    message = @errors.join("\n")
-    message
+    @errors.join("\n")
   end
 
   description do
-    message = "has filter section for #{filter[:title]}"
+    "has filter section for #{filter[:title]}"
   end
 
 end
@@ -48,17 +46,15 @@ RSpec::Matchers.define :have_file_in_queue do |file_name|
 
 
   failure_message do |actual|
-    message = "expected queue to include '#{file_name}' but have [#{@queued.join(',')}]"
-    message
+    "expected queue to include '#{file_name}' but have [#{@queued.join(',')}]"
   end
 
   failure_message_when_negated do |actual|
-    message = "expected queue to NOT include '#{file_name}' but it did"
-    message
+    "expected queue to NOT include '#{file_name}' but it did"
   end
 
   description do
-    message = "has #{file_name} queued"
+    "has #{file_name} queued"
   end
 end
 
@@ -133,17 +129,15 @@ RSpec::Matchers.define :have_form_field do |name, filter={}|
 
 
   failure_message do |actual|
-    message = @errors.join("\n")
-    message
+    @errors.join("\n")
   end
 
   failure_message_when_negated do |actual|
-    message = @errors.join("\n")
-    message
+    @errors.join("\n")
   end
 
   description do
-    message = "has form field #{filter[:name]}"
+    "has form field #{filter[:name]}"
   end
 
 end
@@ -170,17 +164,15 @@ RSpec::Matchers.define :have_notification do |text, filter={}|
 
 
   failure_message do |actual|
-    message = "Expected to have " + @errors.join("\n")
-    message
+    "Expected to have " + @errors.join("\n")
   end
 
   failure_message_when_negated do |actual|
-    message = "Expected to not have #{filter[:count] == 1 ? 'a notification' :  filter[:count].to_s + ' notifications'} with text \"#{text}\", but it did"
-    message
+    "Expected to not have #{filter[:count] == 1 ? 'a notification' :  filter[:count].to_s + ' notifications'} with text \"#{text}\", but it did"
   end
 
   description do
-    message = "has notification #{text}"
+    "has notification #{text}"
   end
 
 end

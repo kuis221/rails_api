@@ -23,13 +23,13 @@
   ul.dates-pref.hide
     li
       a Today
-    li 
+    li
       a 1w
-    li 
+    li
       a 1m
-    li 
+    li
       a 1y
-    li.active 
+    li.active
       a Custom
 
   /* This is exclusive for Custom Option*/
@@ -45,20 +45,20 @@
       label End date
       input type="date"
 
-  /* This should go at the end of the Sidebar 
+  /* This should go at the end of the Sidebar
 
   #save-filters-btn.a.btn.btn-primary.hide Save
   #cancel-save-filters.a.btn.btn-cancel.hide Reset
-  a.settings-for-filters.hide data-target="#settings-filters" data-toggle="modal" 
+  a.settings-for-filters.hide data-target="#settings-filters" data-toggle="modal"
     span.icon-gear
 
 
   /! Modal
-  #settings-filters.modal.fade aria-hidden="true" role="dialog" tabindex="-1" 
+  #settings-filters.modal.fade aria-hidden="true" role="dialog" tabindex="-1"
     .modal-dialog
       .modal-content
         .modal-header
-          button.close data-dismiss="modal" type="button" 
+          button.close data-dismiss="modal" type="button"
             //span aria-hidden="true"  &times;
           h4.modal-title Filtering options
         .modal-body
@@ -151,15 +151,15 @@
             .span12
               h6 SAVED FILTERS
               ul
-                li 
+                li
                   | Jameson campaigns in SF area
                   span.icon-trash.pull-right
 
-                li 
+                li
                   | My campaigns
                   span.icon-trash.pull-right
 
-                li 
+                li
                   | Absolut events this week
                   span.icon-trash.pull-right
 
@@ -205,8 +205,8 @@
 - if can?(:view_list, Event)
   javascript:
     $('#collection-list-filters').filteredList({
-      'source': '#{items_path(controller: :events)}',
-      'filtersUrl': '#{filters_path(controller: :events)}',
+      'source': '#{url_for(controller: :events, action: :items)}',
+      'filtersUrl': '#{url_for(controller: :events, action: :filters)}',
       'listContainer' : '#events-list',
       'sorting': 'start_at',
       'sorting_dir': 'asc',

@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe PlacesController, :type => :controller do
   before(:each) do
@@ -14,7 +14,7 @@ describe PlacesController, :type => :controller do
   describe "POST 'create'" do
     it "returns http success" do
       expect_any_instance_of(Place).to receive(:fetch_place_data).and_return(true)
-      post 'create', area_id: area.id, place: {reference: ":ref||:id"}, format: :js
+      xhr :post, 'create', area_id: area.id, place: {reference: ":ref||:id"}, format: :js
       expect(response).to be_success
     end
 
@@ -24,7 +24,7 @@ describe PlacesController, :type => :controller do
       expect(HTTParty).to receive(:post).and_return({'reference' => 'ABC', 'id' => 'XYZ'})
       expect_any_instance_of(PlacesController).to receive(:open).and_return(double(read: ActiveSupport::JSON.encode({'results' => [{'geometry' => { 'location' => {'lat' => '1.2322', lng: '-3.23455'}}}]})))
       expect {
-        post 'create', area_id: area.to_param, add_new_place: true, place: {name: "Guille's place", street_number: '123 st', route: 'xyz 321', city: 'Curridabat', state: 'San José', zipcode: '12345', country: 'CR'}, format: :js
+        xhr :post, 'create', area_id: area.to_param, add_new_place: true, place: {name: "Guille's place", street_number: '123 st', route: 'xyz 321', city: 'Curridabat', state: 'San José', zipcode: '12345', country: 'CR'}, format: :js
       }.to change(Place, :count).by(1)
       place = Place.last
       expect(place.name).to eql "Guille's place"
@@ -50,7 +50,7 @@ describe PlacesController, :type => :controller do
         expect_any_instance_of(GooglePlaces::Client).to receive(:spots).and_return([double(id: '123', reference: 'XYZ')])
         expect_any_instance_of(PlacesController).to receive(:open).and_return(double(read: ActiveSupport::JSON.encode({'results' => [{'geometry' => { 'location' => {'lat' => '1.2322', lng: '-3.23455'}}}]})))
         expect {
-          post 'create', area_id: area.id, add_new_place: true, place: {name: "Guille's place", street_number: '123 st', route: 'xyz 321', city: 'Curridabat', state: 'San José', zipcode: '12345', country: 'CR'}, format: :js
+          xhr :post, 'create', area_id: area.id, add_new_place: true, place: {name: "Guille's place", street_number: '123 st', route: 'xyz 321', city: 'Curridabat', state: 'San José', zipcode: '12345', country: 'CR'}, format: :js
         }.to change(Place, :count).by(1)
         place = Place.last
         expect(place.name).to eql "APIs place name"
@@ -85,7 +85,7 @@ describe PlacesController, :type => :controller do
         # GooglePlaces::Client.any_instance.should_receive(:spots).and_return([double(id: '123', reference: 'XYZ')])
         # PlacesController.any_instance.should_receive(:open).and_return(double(read: ActiveSupport::JSON.encode({'results' => [{'geometry' => { 'location' => {'lat' => '1.2322', lng: '-3.23455'}}}]})))
         expect {
-          post 'create', campaign_id: campaign.id, place: {reference: 'XXXXXXXXXXX||YYYYYYYYYY'}, format: :js
+          xhr :post, 'create', campaign_id: campaign.id, place: {reference: 'XXXXXXXXXXX||YYYYYYYYYY'}, format: :js
         }.to change(Place, :count).by(1)
         place = Place.last
         expect(place.name).to eql "APIs place name"
@@ -121,7 +121,7 @@ describe PlacesController, :type => :controller do
         expect_any_instance_of(PlacesController).to receive(:open).and_return(double(read: ActiveSupport::JSON.encode({'results' => [{'geometry' => { 'location' => {'lat' => '1.2322', lng: '-3.23455'}}}]})))
 
         expect {
-          post 'create', area_id: area.id, add_new_place: true, place: {name: "Guille's place", street_number: '123 st', route: 'xyz 321', city: 'Curridabat', state: 'San Jose', zipcode: '12345', country: 'CR'}, format: :js
+          xhr :post, 'create', area_id: area.id, add_new_place: true, place: {name: "Guille's place", street_number: '123 st', route: 'xyz 321', city: 'Curridabat', state: 'San Jose', zipcode: '12345', country: 'CR'}, format: :js
         }.to_not change(Place, :count)
 
         place = Place.last
@@ -145,21 +145,21 @@ describe PlacesController, :type => :controller do
     it "adds a place to the campaing and clears the cache" do
       Kpi.create_global_kpis
       expect(Rails.cache).to receive(:delete).at_least(1).times.with("campaign_locations_#{campaign.id}")
-      post 'create', campaign_id: campaign.id, place: {reference: place.to_param}, format: :js
+      xhr :post, 'create', campaign_id: campaign.id, place: {reference: place.to_param}, format: :js
       expect(campaign.places).to include(place)
     end
 
     it "validates the address" do
       expect {
-        post 'create', area_id: area.to_param, add_new_place: true, place: {name: "Guille's place", street_number: '123 st', route: 'QWERTY 321', city: 'YYYYYYYYYY', state: 'XXXXXXXXXXX', zipcode: '12345', country: 'Costa Rica'}, format: :js
+        xhr :post, 'create', area_id: area.to_param, add_new_place: true, place: {name: "Guille's place", street_number: '123 st', route: 'QWERTY 321', city: 'YYYYYYYYYY', state: 'XXXXXXXXXXX', zipcode: '12345', country: 'CR'}, format: :js
       }.to_not change(Place, :count)
       expect(assigns(:place).errors[:base]).to include("The entered address doesn't seems to be valid")
-      expect(response).to render_template('new_place_form')
+      expect(response).to render_template('_new_place_form')
     end
 
     it "should render the form for new place if the place was not selected from the autocomplete for an area" do
       expect {
-        post 'create', area_id: area.to_param, place: {reference: ""}, reference_display_name: "blah blah blah", format: :js
+        xhr :post, 'create', area_id: area.to_param, place: {reference: ""}, reference_display_name: "blah blah blah", format: :js
       }.to_not change(Place,:count)
       expect(response).to be_success
       expect(response).to render_template('places/_new_place_form')
@@ -168,7 +168,7 @@ describe PlacesController, :type => :controller do
 
     it "should render the form for new place if the place was not selected from the autocomplete for a campaign" do
       expect {
-        post 'create', campaign_id: campaign.to_param, place: {reference: ""}, reference_display_name: "blah blah blah", format: :js
+        xhr :post, 'create', campaign_id: campaign.to_param, place: {reference: ""}, reference_display_name: "blah blah blah", format: :js
       }.to_not change(Place,:count)
       expect(response).to be_success
       expect(response).to render_template('places/_new_place_form')
@@ -177,7 +177,7 @@ describe PlacesController, :type => :controller do
 
     it "should render the form for new place if the place was not selected from the autocomplete for a company user" do
       expect {
-        post 'create', company_user_id: company_user.to_param, place: {reference: ""}, reference_display_name: "blah blah blah", format: :js
+        xhr :post, 'create', company_user_id: company_user.to_param, place: {reference: ""}, reference_display_name: "blah blah blah", format: :js
       }.to_not change(Place,:count)
       expect(response).to be_success
       expect(response).to render_template('places/_new_place_form')
@@ -187,10 +187,10 @@ describe PlacesController, :type => :controller do
 
   describe "GET 'new'" do
     it "returns http success" do
-      get 'new', area_id: area.id, format: :js
+      xhr :get, 'new', area_id: area.id, format: :js
       expect(response).to be_success
       expect(response).to render_template('new')
-      expect(response).to render_template('form')
+      expect(response).to render_template('_form')
     end
   end
 

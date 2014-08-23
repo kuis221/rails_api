@@ -1,11 +1,10 @@
- S3_CONFIGS = YAML::load(ERB.new(IO.read("#{Rails.root}/config/amazon_s3.yml")).result)[Rails.env]
- AWS.config(S3_CONFIGS)
+ AWS.config({use_ssl: true })
 
  PAPERCLIP_SETTINGS = {
   :s3_credentials => {
-    :access_key_id =>  S3_CONFIGS['access_key_id'],
-    :secret_code => S3_CONFIGS['secret_access_key']
+    :access_key_id =>  ENV['AWS_ACCESS_KEY_ID'],
+    :secret_code => ENV['AWS_SECRET_ACCESS_KEY']
   },
-  :bucket => S3_CONFIGS['bucket_name'],
+  :bucket => ENV['S3_BUCKET_NAME'],
   :storage => :s3
  }

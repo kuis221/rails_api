@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 feature 'Post Event Data' do
   let(:company) { FactoryGirl.create(:company) }

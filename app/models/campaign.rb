@@ -17,7 +17,7 @@
 #  last_event_at    :datetime
 #  start_date       :date
 #  end_date         :date
-#  survey_brand_ids :integer          default([])
+#  survey_brand_ids :integer          default([]), is an Array
 #  modules          :text
 #
 
@@ -30,59 +30,65 @@ class Campaign < ActiveRecord::Base
 
   scoped_to_company
 
-  attr_accessor :brands_list
-
   serialize :modules
 
   # Required fields
   validates :name, presence: true
   validates :company_id, presence: true, numericality: true
 
-  DATE_FORMAT = /^[0-1]?[0-9]\/[0-3]?[0-9]\/[0-2]0[0-9][0-9]$/
+  DATE_FORMAT = /\A[0-1]?[0-9]\/[0-3]?[0-9]\/[0-2]0[0-9][0-9]\z/
   validates :start_date, format: { with: DATE_FORMAT, message: 'MM/DD/YYYY' }, allow_nil: true
   validates :end_date, format: { with: DATE_FORMAT, message: 'MM/DD/YYYY' }, allow_nil: true
-  validates :end_date, presence: true, if: :start_date
+  validates :end_date, presence: true, date: { on_or_after: :start_date, message: 'must be after' }, if: :start_date
   validates :start_date, presence: true, if: :end_date
 
-  validates :enabled_modules, enum: { presence: false, inclusion: { in: %w{ surveys photos expenses comments videos} } }
+  validate :valid_modules?
 
-  validates_date :start_date, before: :end_date,  allow_nil: true, allow_blank: true, before_message: 'must be before'
-  validates_date :end_date, :on_or_after => :start_date, allow_nil: true, allow_blank: true, on_or_after_message: ''
+  # validates_date :start_date, before: :end_date,  allow_nil: true, allow_blank: true, before_message: 'must be before'
+  # validates_date :end_date, on_or_after: :start_date, allow_nil: true, allow_blank: true, on_or_after_message: ''
 
   # Campaigns-Brands relationship
-  has_and_belongs_to_many :brands, :order => 'name ASC', conditions: { brands: {active: true} }, :autosave => true
+  has_and_belongs_to_many :brands, -> { order('brands.name ASC').where(brands: {active: true}) }, autosave: true
 
   # Campaigns-Brand Portfolios relationship
-  has_and_belongs_to_many :brand_portfolios, :order => 'name ASC', conditions: { brand_portfolios: {active: true} }, :autosave => true, after_remove: :remove_child_goals_for
+  has_and_belongs_to_many :brand_portfolios, -> { order('brand_portfolios.name ASC').where(brand_portfolios: {active: true}) },
+        autosave: true, after_remove: :remove_child_goals_for
   has_many :brand_portfolio_brands, through: :brand_portfolios, class_name: 'Brand', source: :brands
 
   # Campaigns-Areas relationship
-  has_and_belongs_to_many :areas, :order => 'name ASC', conditions: {active: true}, :autosave => true, after_remove: :clear_locations_cache, after_add: :clear_locations_cache
+  has_many :areas_campaigns, inverse_of: :campaign
+  has_many :areas, -> { order('areas.name ASC').where(active: true) }, through: :areas_campaigns,
+        autosave: true, after_remove: :clear_locations_cache, after_add: :clear_locations_cache
 
   # Campaigns-Areas relationship
-  has_and_belongs_to_many :date_ranges, :order => 'name ASC', conditions: {active: true}, :autosave => true, after_remove: :remove_child_goals_for
+  has_and_belongs_to_many :date_ranges, -> { order('date_ranges.name ASC').where(active: true) },
+        autosave: true, after_remove: :remove_child_goals_for
 
   # Campaigns-Areas relationship
-  has_and_belongs_to_many :day_parts, :order => 'name ASC', conditions: {active: true}, :autosave => true, after_remove: :remove_child_goals_for
+  has_and_belongs_to_many :day_parts, -> { order('day_parts.name ASC').where(active: true) },
+        autosave: true, after_remove: :remove_child_goals_for
 
   belongs_to :first_event, class_name: 'Event'
   belongs_to :last_event, class_name: 'Event'
 
   # Campaigns-Users relationship
-  has_many :memberships, :as => :memberable
-  has_many :users, :class_name => 'CompanyUser', source: :company_user, :through => :memberships,
-                   :after_add => :reindex_associated_resource, :after_remove => :reindex_associated_resource
+  has_many :memberships, as: :memberable, inverse_of: :memberable
+  has_many :users, class_name: 'CompanyUser', source: :company_user, through: :memberships,
+                   after_add: :reindex_associated_resource,
+                   after_remove: :reindex_associated_resource
 
   # Campaigns-Events relationship
-  has_many :events, :order => 'start_at ASC', inverse_of: :campaign
+  has_many :events, -> { order 'start_at ASC' }, inverse_of: :campaign
 
   # Campaigns-Teams relationship
-  has_many :teamings, :as => :teamable
-  has_many :teams, :through => :teamings, :after_add => :reindex_associated_resource, :after_remove => :reindex_associated_resource
+  has_many :teamings, as: :teamable, inverse_of: :teamable
+  has_many :teams, through: :teamings,
+              after_add: :reindex_associated_resource,
+              after_remove: :reindex_associated_resource
 
-  has_many :user_teams, :class_name => 'CompanyUser', source: :users, :through => :teams
+  has_many :user_teams, class_name: 'CompanyUser', source: :users, through: :teams
 
-  has_many :form_fields, :as => :fieldable, order: 'form_fields.ordering ASC'
+  has_many :form_fields, ->{ order('form_fields.ordering ASC') }, as: :fieldable
 
   has_many :kpis, through: :form_fields
 
@@ -90,36 +96,36 @@ class Campaign < ActiveRecord::Base
   has_many :activity_type_campaigns
   has_many :activity_types, through: :activity_type_campaigns
 
-  scope :with_goals_for, lambda {|kpi| joins(:goals).where(goals: {kpi_id: kpi}).where('goals.value is not NULL AND goals.value > 0') }
-  scope :accessible_by_user, lambda {|company_user|
+  scope :with_goals_for, ->(kpi) { joins(:goals).where(goals: {kpi_id: kpi}).where('goals.value is not NULL AND goals.value > 0') }
+  scope :accessible_by_user, ->(company_user) {
     if company_user.is_admin?
       where(company_id: company_user.company_id)
     else
       where(company_id: company_user.company_id, id: company_user.accessible_campaign_ids)
     end
   }
-  scope :active, lambda { where(aasm_state: 'active') }
+  scope :active, -> { where(aasm_state: 'active') }
 
   # Campaigns-Places relationship
   has_many :placeables, as: :placeable
   has_many :places, through: :placeables, after_remove: :clear_locations_cache, after_add: :clear_locations_cache
 
   # Attached Documents
-  has_many :documents, conditions: {asset_type: :document}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
+  has_many :documents, ->{ order("created_at DESC").where(asset_type: :document) }, class_name: 'AttachedAsset', as: :attachable, inverse_of: :attachable
 
   accepts_nested_attributes_for :form_fields, allow_destroy: true
 
   aasm do
-    state :active, :initial => true
+    state :active, initial: true
     state :inactive
     state :closed
 
     event :activate do
-      transitions :from => [:inactive, :closed], :to => :active
+      transitions from: [:inactive, :closed], to: :active
     end
 
     event :deactivate do
-      transitions :from => :active, :to => :inactive
+      transitions from: :active, to: :inactive
     end
   end
 
@@ -158,31 +164,35 @@ class Campaign < ActiveRecord::Base
   end
 
   def staff
-    (staff_users+teams).sort_by &:name
+    (staff_users+teams).sort_by(&:name)
   end
 
   def staff_users
-    @staff_users ||= CompanyUser.find_by_sql("
-      #{users.active.to_sql} UNION
-      #{CompanyUser.active.scoped_by_company_id(company_id).joins(:brands).where(brands: {id: brand_ids}).to_sql} UNION
-      #{CompanyUser.active.scoped_by_company_id(company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids}).to_sql}
-    ")
+    @staff_users ||= Campaign.connection.unprepared_statement do
+      CompanyUser.find_by_sql("
+        #{users.active.to_sql} UNION
+        #{CompanyUser.active.where(company_id: company_id).joins(:brands).where(brands: {id: brand_ids}).to_sql} UNION
+        #{CompanyUser.active.where(company_id: company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids}).to_sql}
+      ")
+    end
   end
 
   # This is similar to #staff_users except that it also include users from the
   # teams associated
   def all_users_with_access
-    @staff_users ||= CompanyUser.find_by_sql("
-      #{users.active.to_sql} UNION
-      #{user_teams.active.to_sql} UNION
-      #{company.company_users.active.admin.to_sql} UNION
-      #{CompanyUser.active.scoped_by_company_id(company_id).joins(:brands).where(brands: {id: brand_ids}).to_sql} UNION
-      #{CompanyUser.active.scoped_by_company_id(company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids}).to_sql}
-    ")
+    @staff_users ||= Campaign.connection.unprepared_statement do
+      CompanyUser.find_by_sql("
+        #{users.active.to_sql} UNION
+        #{user_teams.active.to_sql} UNION
+        #{company.company_users.active.admin.to_sql} UNION
+        #{CompanyUser.active.where(company_id: company_id).joins(:brands).where(brands: {id: brand_ids}).to_sql} UNION
+        #{CompanyUser.active.where(company_id: company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids}).to_sql}
+      ")
+    end
   end
 
   def areas_and_places
-    (areas+places).sort_by &:name
+    (areas+places).sort_by(&:name)
   end
 
   def place_allowed_for_event?(place)
@@ -200,11 +210,15 @@ class Campaign < ActiveRecord::Base
     end
   end
 
+  def brands_list
+    brands.map(&:name).join ','
+  end
+
   def brands_list=(list)
     brands_names = list.split(',')
     existing_ids = self.brands.map(&:id)
     brands_names.each do |brand_name|
-      brand = Company.current.brands.find_or_initialize_by_name(brand_name)
+      brand = Company.current.brands.find_or_initialize_by(name: brand_name)
       self.brands << brand unless existing_ids.include?(brand.id)
     end
     brands.each{|brand| brand.mark_for_destruction unless brands_names.include?(brand.name) }
@@ -213,12 +227,14 @@ class Campaign < ActiveRecord::Base
   def promo_hours_graph_data(user)
     stats={}
     user_allowed_areas = areas.accessible_by_user(user).pluck('areas.id')
-    queries = children_goals.with_value.includes(:goalable).where(kpi_id: [Kpi.events.id, Kpi.promo_hours.id]).for_areas(user_allowed_areas).map do |goal|
-      name, group = if goal.kpi_id == Kpi.events.id then ['EVENTS', 'COUNT(events.id)'] else ['PROMO HOURS', 'SUM(events.promo_hours)'] end
-      stats["#{goal.goalable.id}-#{name}"] = {"id"=>goal.goalable.id, "name"=>goal.goalable.name, "goal"=>goal.value, "kpi"=>name, "executed"=>0.0, "scheduled"=>0.0}
-      events.active.in_areas([goal.goalable]).
-        select("ARRAY['#{goal.goalable.id}', '#{name}'], '#{name}' as kpi, CASE WHEN events.end_at < '#{Time.now.to_s(:db)}' THEN 'executed' ELSE 'scheduled' END as status, #{group}").
-        reorder(nil).group('1, 2, 3').to_sql
+    queries = Campaign.connection.unprepared_statement do
+      children_goals.with_value.includes(:goalable).where(kpi_id: [Kpi.events.id, Kpi.promo_hours.id]).for_areas(user_allowed_areas).map do |goal|
+        name, group = if goal.kpi_id == Kpi.events.id then ['EVENTS', 'COUNT(events.id)'] else ['PROMO HOURS', 'SUM(events.promo_hours)'] end
+        stats["#{goal.goalable.id}-#{name}"] = {"id"=>goal.goalable.id, "name"=>goal.goalable.name, "goal"=>goal.value, "kpi"=>name, "executed"=>0.0, "scheduled"=>0.0}
+        events.active.in_campaign_area(areas_campaigns.find_by(area_id: goal.goalable)).
+          select("ARRAY['#{goal.goalable.id}', '#{name}'], '#{name}' as kpi, CASE WHEN events.end_at < '#{Time.now.to_s(:db)}' THEN 'executed' ELSE 'scheduled' END as status, #{group}").
+          reorder(nil).group('1, 2, 3').to_sql
+      end
     end
 
     ActiveRecord::Base.connection.select_all("
@@ -252,10 +268,6 @@ class Campaign < ActiveRecord::Base
     end
 
     stats.values.sort{|a, b| a['name']+a['kpi'] <=> b['name']+b['kpi'] }
-  end
-
-  def brands_list
-    brands.map(&:name).join ','
   end
 
   def associated_brands
@@ -380,7 +392,7 @@ class Campaign < ActiveRecord::Base
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)
-      ss = solr_search do
+      solr_search do
         with(:company_id, params[:company_id])
         with(:user_ids, params[:user]) if params.has_key?(:user) and params[:user].present?
         with(:team_ids, params[:team]) if params.has_key?(:team) and params[:team].present?
@@ -410,7 +422,7 @@ class Campaign < ActiveRecord::Base
         end
 
         order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
-        paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+        paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
       end
     end
 
@@ -422,52 +434,59 @@ class Campaign < ActiveRecord::Base
 
     # Returns an array of data indication the progress of the campaigns based on the events/promo hours goals
     def promo_hours_graph_data
-      q = with_goals_for(Kpi.promo_hours).joins(:events).where(events: {active: true}).
-         select("campaigns.id, campaigns.name, campaigns.start_date, campaigns.end_date, goals.value as goal, 'PROMO HOURS' as kpi, CASE WHEN events.end_at < '#{Time.now.to_s(:db)}' THEN 'executed' ELSE 'scheduled' END as status, SUM(events.promo_hours)").
-         order('2, 1').group('1, 2, 3, 4, 5, 6, 7').to_sql.gsub(/'/,"''")
-      data = ActiveRecord::Base.connection.select_all("SELECT * FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int, name varchar, start_date date, end_date date, goal numeric, kpi varchar, executed numeric, scheduled numeric)")
+      Campaign.connection.unprepared_statement do
+        q = with_goals_for(Kpi.promo_hours).joins(:events).where(events: {active: true}).
+           select("campaigns.id, campaigns.name, campaigns.start_date, campaigns.end_date, goals.value as goal, 'PROMO HOURS' as kpi, CASE WHEN events.end_at < '#{Time.now.to_s(:db)}' THEN 'executed' ELSE 'scheduled' END as status, SUM(events.promo_hours)").
+           order('2, 1').group('1, 2, 3, 4, 5, 6, 7').to_sql.gsub(/'/,"''")
+        data = ActiveRecord::Base.connection.select_all("SELECT * FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int, name varchar, start_date date, end_date date, goal numeric, kpi varchar, executed numeric, scheduled numeric)").to_a
 
-      q = with_goals_for(Kpi.events).joins(:events).where(events: {active: true}).
-         select("campaigns.id, campaigns.name, campaigns.start_date, campaigns.end_date, goals.value as goal, 'EVENTS' as kpi, CASE WHEN events.end_at < '#{Time.now.to_s(:db)}' THEN 'executed' ELSE 'scheduled' END as status, COUNT(events.id)").
-         order('2, 1').group('1, 2, 3, 4, 5, 6, 7').to_sql.gsub(/'/,"''")
-      data += ActiveRecord::Base.connection.select_all("SELECT * FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int, name varchar, start_date date, end_date date, goal numeric, kpi varchar, executed numeric, scheduled numeric)")
-      data.sort!{|a, b| a['name'] <=> b['name'] }
+        q = with_goals_for(Kpi.events).joins(:events).where(events: {active: true}).
+           select("campaigns.id, campaigns.name, campaigns.start_date, campaigns.end_date, goals.value as goal, 'EVENTS' as kpi, CASE WHEN events.end_at < '#{Time.now.to_s(:db)}' THEN 'executed' ELSE 'scheduled' END as status, COUNT(events.id)").
+           order('2, 1').group('1, 2, 3, 4, 5, 6, 7').to_sql.gsub(/'/,"''")
+        data += ActiveRecord::Base.connection.select_all("SELECT * FROM crosstab('#{q}', 'SELECT unnest(ARRAY[''executed'', ''scheduled''])') AS ct(id int, name varchar, start_date date, end_date date, goal numeric, kpi varchar, executed numeric, scheduled numeric)").to_a
+        data.sort!{|a, b| a['name'] <=> b['name'] }
 
-      data.each do |r|
-        r['id'] = r['id'].to_i
-        r['goal'] = r['goal'].to_f
-        r['executed'] = r['executed'].to_f
-        r['scheduled'] = r['scheduled'].to_f
-        r['remaining'] = r['goal']-(r['scheduled']+r['executed'])
-        r['executed_percentage'] = (r['executed']*100/r['goal']).to_i rescue 100
-        r['executed_percentage'] = [100, r['executed_percentage']].min
-        r['scheduled_percentage'] = (r['scheduled']*100/r['goal']).to_i rescue 0
-        r['scheduled_percentage'] = [r['scheduled_percentage'], (100-r['executed_percentage'])].min
-        r['remaining_percentage'] = 100-r['executed_percentage']-r['scheduled_percentage']
-        if r['start_date'] && r['end_date'] && r['goal'] > 0
-          r['start_date'] = Timeliness.parse(r['start_date']).to_date
-          r['end_date'] = Timeliness.parse(r['end_date']).to_date
-          days = (r['end_date']-r['start_date']).to_i
-          if Date.today > r['start_date'] && Date.today < r['end_date'] && days > 0
-            r['today'] = ((Date.today-r['start_date']).to_i+1) * r['goal'] / days
-          elsif Date.today > r['end_date']
-            r['today'] = r['goal']
-          else
-            r['today'] = 0
+        data.each do |r|
+          r['id'] = r['id'].to_i
+          r['goal'] = r['goal'].to_f
+          r['executed'] = r['executed'].to_f
+          r['scheduled'] = r['scheduled'].to_f
+          r['remaining'] = r['goal']-(r['scheduled']+r['executed'])
+          r['executed_percentage'] = (r['executed']*100/r['goal']).to_i rescue 100
+          r['executed_percentage'] = [100, r['executed_percentage']].min
+          r['scheduled_percentage'] = (r['scheduled']*100/r['goal']).to_i rescue 0
+          r['scheduled_percentage'] = [r['scheduled_percentage'], (100-r['executed_percentage'])].min
+          r['remaining_percentage'] = 100-r['executed_percentage']-r['scheduled_percentage']
+          if r['start_date'] && r['end_date'] && r['goal'] > 0
+            r['start_date'] = Timeliness.parse(r['start_date']).to_date
+            r['end_date'] = Timeliness.parse(r['end_date']).to_date
+            days = (r['end_date']-r['start_date']).to_i
+            if Date.today > r['start_date'] && Date.today < r['end_date'] && days > 0
+              r['today'] = ((Date.today-r['start_date']).to_i+1) * r['goal'] / days
+            elsif Date.today > r['end_date']
+              r['today'] = r['goal']
+            else
+              r['today'] = 0
+            end
+            r['today_percentage'] = [(r['today']*100/r['goal']).to_i, 100].min
           end
-          r['today_percentage'] = [(r['today']*100/r['goal']).to_i, 100].min
         end
+        data
       end
-      data
     end
 
     # Returns an Array of campaigns ready to be used for a dropdown. Use this
     # to reduce the amount of memory by avoiding the load bunch of activerecord objects.
-    # TODO: use pluck(:name, :id) when upgraded to Rails 4
     def for_dropdown
-      ActiveRecord::Base.connection.select_all(
-        self.select("campaigns.name, campaigns.id").to_sql
-      ).map{|r| [r['name'], r['id']] }
+      self.order('campaigns.name').pluck("campaigns.name, campaigns.id")
+    end
+  end
+
+
+  def valid_modules?
+    modules = %w{ surveys photos expenses comments videos }
+    if (enabled_modules - modules).any?
+      errors.add :modules, :invalid
     end
   end
 

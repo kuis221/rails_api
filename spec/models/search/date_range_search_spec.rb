@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe DateRange, type: :model, search: true do
   it "should search for date ranges" do

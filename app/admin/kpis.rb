@@ -63,6 +63,6 @@ ActiveAdmin.register Kpi do
     column :kpi_type
     column :capture_mechanism
     column :company_id
-    default_actions
+    actions
   end
 end

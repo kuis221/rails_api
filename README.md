@@ -15,7 +15,7 @@
 
         cd brandscopic
 
-4. Create a database.yml file inside the config folder with the following content:
+3. Create a database.yml file inside the config folder with the following content:
 
         development:
           adapter: postgresql
@@ -34,7 +34,13 @@
           server: 127.0.0.1
           min_messages: WARNING
 
-3. Make sure you have [PhantomJS](http://phantomjs.org/download.html):
+4. Create a local_env.yml file inside the config folder with the following content (ask for the S3 KEYS to a teammate):
+        AWS_S3_KEY_ID: ''
+        AWS_S3_ACCESS_KEY: ''
+        MEMCACHIER_SERVERS: 'localhost:11211'
+        REDISTOGO_URL: 'redis://localhost:6379'
+
+5. Make sure you have [PhantomJS](http://phantomjs.org/download.html):
 
   For MacOS, type:
 
@@ -42,51 +48,50 @@
 
   For Linux Download the correct package from [here](http://phantomjs.org/download.html) and copy to any folder in your $PATH
 
-4. Install the required gems:
+6. Install the required gems:
 
         bundle install
 
-5. Create the local database
+7. Create the local database
 
         rake db:create db:migrate
 
 
-6. Run the local Solr server
+8. Run the local Solr server
 
         rake sunspot:solr:start
 
-7. Insert the initial data
+9. Insert the initial data
 
         rake db:seed
 
-8. Run the tests to make sure everything works (optional)
+10. Run the tests to make sure everything works (optional)
 
         rake
 
-9. Load some test data into the app
+11. Load some test data into the app
 
         rake db:populate:all
 
-10. Reindex the data we just created
+12. Reindex the data we just created
 
         rake sunspot:reindex
 
-11. Stop the local Solr server because it will be executed on the next step
+13. Stop the local Solr server because it will be executed on the next step
 
         rake sunspot:solr:stop
 
-12. Copy the following text in the .env in the project's root folder:
+14. Copy the following text in the .env in the project's root folder:
     RACK_ENV=development
     RAILS_ENV=development
     PORT=5000
-    REDISTOGO_URL=redis://localhost:6379
     TERM_CHILD=1
 
-13. Start the local server
+15. Start the local server
 
-        foreman start
+        foreman start -f Procfile.dev
 
-14. Go to http://localhost:5100/ and you should be able to login using:
+16. Go to http://localhost:5100/ and you should be able to login using:
 
         Email: admin@brandscopic.com
         Password: Adminpass12

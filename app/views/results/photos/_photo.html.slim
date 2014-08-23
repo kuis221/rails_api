@@ -2,11 +2,11 @@
 
 - show_date_details ||= true
 li.photo-item id="attached_asset_#{photo.id}" data-photo-id="#{photo.id}" data-processed="#{photo.processed?.to_s}"
-  div.thumbnail-inner 
+  div.thumbnail-inner
     .thumbnail-toolbar
       - if can? :deactivate_photo, Event
         - if photo.active?
-          = link_to '', deactivate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-remove-circle photo-deactivate-link', :confirm=> I18n.t('confirmation.deactivate_confirm_message', model: 'photo'), title: 'Deactivate'
+          = link_to '', deactivate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-remove-circle photo-deactivate-link', data: { :confirm=> I18n.t('confirmation.deactivate_confirm_message', model: 'photo') }, title: 'Deactivate'
         - else
           = link_to '', activate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-ok-circle photo-deactivate-link', title: 'Activate'
       = link_to '', photo.download_url, class: 'photo-download-link', title: "Select Photo", id: 'photo-download-add' if can?(:index_photo_results, AttachedAsset)
@@ -31,4 +31,4 @@ li.photo-item id="attached_asset_#{photo.id}" data-photo-id="#{photo.id}" data-p
     - else
       .image-loading-container
 
-  
+

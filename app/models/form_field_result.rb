@@ -24,8 +24,6 @@ class FormFieldResult < ActiveRecord::Base
 
   has_one :attached_asset, :as => :attachable, dependent: :destroy
 
-  serialize :hash_value, ActiveRecord::Coders::Hstore
-
   before_validation :prepare_for_store
 
   scope :for_kpi, -> (kpi){ joins(:form_field).where(form_fields: {kpi_id: kpi}) }
@@ -39,7 +37,7 @@ class FormFieldResult < ActiveRecord::Base
       if form_field.type == 'FormField::Checkbox'
         (self.attributes['hash_value'].try(:keys) || []).map(&:to_i)
       else
-        self.attributes['hash_value']
+        self.attributes['hash_value'] || {}
       end
     elsif form_field.present? && form_field.settings.present? && form_field.settings.has_key?('multiple') && form_field.settings['multiple']
       self.attributes['value'].try(:split, ',')

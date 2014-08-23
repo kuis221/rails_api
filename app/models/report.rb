@@ -116,7 +116,7 @@ class Report < ActiveRecord::Base
       type, id = selection.split(':')
       case type
       when 'company_user', 'role', 'team'
-        self.sharings.find_or_initialize_by_shared_with_id_and_shared_with_type(shared_with_type: type.classify, shared_with_id: id)
+        self.sharings.find_or_initialize_by(shared_with_type: type.classify, shared_with_id: id)
       end
     end
   end
@@ -293,79 +293,81 @@ class Report < ActiveRecord::Base
 
     def values_sql(rc)
       unless values.nil? || rows.nil? || rows.empty?
-        i = 0
-        rows_field = "ARRAY[#{rc.keys.map{|k| k+'::text'}.join(', ')}]"
-        values.map do |value|
-          value_field = value['field']
-          s = add_filters_conditions(add_joins_scopes(base_events_scope, value).group('1'))
-          s = add_page_conditions_to_scope(s) if rc.has_key?(rows.first.table_column[0]) && page.present?
+        Report.connection.unprepared_statement do
+          i = 0
+          rows_field = "ARRAY[#{rc.keys.map{|k| k+'::text'}.join(', ')}]"
+          values.map do |value|
+            value_field = value['field']
+            s = add_filters_conditions(add_joins_scopes(base_events_scope, value).group('1'))
+            s = add_page_conditions_to_scope(s) if rc.has_key?(rows.first.table_column[0]) && page.present?
 
-          if value.kpi.present?
-            # When the value is for a KPI
-            if value.kpi.is_segmented?
-              value.kpi.kpis_segments.map do |segment|
-                value_field = value_aggregate_sql(value['aggregate'], 'COALESCE(NULLIF(event_results.hash_value->\''+segment.id.to_s+'\', \'\'), \'0\')::NUMERIC')
-                s.where("form_fields.kpi_id=#{value.kpi.id} and event_results.hash_value ? '#{segment.id}'").
-                  select("#{rows_field}, #{i+=1}, #{value_field}").to_sql
+            if value.kpi.present?
+              # When the value is for a KPI
+              if value.kpi.is_segmented?
+                value.kpi.kpis_segments.map do |segment|
+                  value_field = value_aggregate_sql(value['aggregate'], 'COALESCE(NULLIF(event_results.hash_value->\''+segment.id.to_s+'\', \'\'), \'0\')::NUMERIC')
+                  s.where("form_fields.kpi_id=#{value.kpi.id} and event_results.hash_value ? '#{segment.id}'").
+                    select("#{rows_field}, #{i+=1}, #{value_field}").to_sql
+                end
+              elsif value.kpi.kpi_type == 'count'
+                if value['aggregate'] == 'count'
+                  value_field = value_aggregate_sql(value['aggregate'], 'event_results.scalar_value')
+                else
+                  value_field = '0'
+                end
+                value.kpi.kpis_segments.map{|segment| s.where('form_fields.kpi_id=? and event_results.value=?', value.kpi.id, segment.id.to_s).select("#{rows_field}, #{i+=1}, #{value_field}").to_sql }
+              else
+                if Kpi.promo_hours.id == value.kpi.id
+                  value_field = value_aggregate_sql(value['aggregate'], 'events.promo_hours')
+                elsif Kpi.events.id == value.kpi.id
+                  value_field = value_aggregate_sql(value['aggregate'], '1')
+                elsif Kpi.photos.id == value.kpi.id
+                  value_field = value_aggregate_sql('COUNT', 'photos.id')
+                elsif Kpi.comments.id == value.kpi.id
+                  value_field = value_aggregate_sql('COUNT', 'comments.id')
+                elsif Kpi.expenses.id == value.kpi.id
+                  value_field = value_aggregate_sql(value['aggregate'], 'event_expenses.amount')
+                else
+                  value_field = value_aggregate_sql(value['aggregate'], 'event_results.scalar_value')
+                  s = s.where('form_fields.kpi_id=?', value.kpi.id)
+                end
+                s.select("#{rows_field}, #{i+=1}, #{value_field}").to_sql
               end
-            elsif value.kpi.kpi_type == 'count'
+            elsif value.form_field.present?
+              if value.form_field.is_optionable? && value.form_field.is_hashed_value?
+                value.form_field.options.map do |option|
+                  value_field = value_aggregate_sql(value['aggregate'], 'COALESCE(NULLIF(activity_results.hash_value->\''+option.id.to_s+'\', \'\'), \'0\')::NUMERIC')
+                  s.where("activity_results.form_field_id=#{value.form_field.id} and activity_results.hash_value ? '#{option.id}'").
+                    select("#{rows_field}, #{i+=1}, #{value_field}").to_sql
+                end
+              elsif value.form_field.is_optionable?
+                value_field = value['aggregate'] == 'count' ? value_aggregate_sql(value['aggregate'], 'activity_results.id') : 0
+                value.form_field.options.map do |option|
+                  s.where('activity_results.form_field_id=? and activity_results.value=?', value.form_field.id, option.id.to_s).
+                    select("#{rows_field}, #{i+=1}, #{value_field}").to_sql
+                end
+              else
+                if value.form_field.is_numeric?
+                  value_field = value_aggregate_sql(value.aggregate, 'activity_results.scalar_value')
+                elsif value.aggregate.downcase == 'count'
+                  value_field = value_aggregate_sql('count', 'activity_results.value')
+                else
+                  value_field = '0'
+                end
+                s.select("#{rows_field}, #{i+=1}, #{value_field}").to_sql
+              end
+            elsif m = /\A(.*):([a-z_]+)\z/.match(value['field'])
               if value['aggregate'] == 'count'
-                value_field = value_aggregate_sql(value['aggregate'], 'event_results.scalar_value')
-              else
-                value_field = '0'
-              end
-              value.kpi.kpis_segments.map{|segment| s.where('form_fields.kpi_id=? and event_results.value=?', value.kpi.id, segment.id.to_s).select("#{rows_field}, #{i+=1}, #{value_field}").to_sql }
-            else
-              if Kpi.promo_hours.id == value.kpi.id
-                value_field = value_aggregate_sql(value['aggregate'], 'events.promo_hours')
-              elsif Kpi.events.id == value.kpi.id
-                value_field = value_aggregate_sql(value['aggregate'], '1')
-              elsif Kpi.photos.id == value.kpi.id
-                value_field = value_aggregate_sql('COUNT', 'photos.id')
-              elsif Kpi.comments.id == value.kpi.id
-                value_field = value_aggregate_sql('COUNT', 'comments.id')
-              elsif Kpi.expenses.id == value.kpi.id
-                value_field = value_aggregate_sql(value['aggregate'], 'event_expenses.amount')
-              else
-                value_field = value_aggregate_sql(value['aggregate'], 'event_results.scalar_value')
-                s = s.where('form_fields.kpi_id=?', value.kpi.id)
-              end
-              s.select("#{rows_field}, #{i+=1}, #{value_field}").to_sql
-            end
-          elsif value.form_field.present?
-            if value.form_field.is_optionable? && value.form_field.is_hashed_value?
-              value.form_field.options.map do |option|
-                value_field = value_aggregate_sql(value['aggregate'], 'COALESCE(NULLIF(activity_results.hash_value->\''+option.id.to_s+'\', \'\'), \'0\')::NUMERIC')
-                s.where("activity_results.form_field_id=#{value.form_field.id} and activity_results.hash_value ? '#{option.id}'").
-                  select("#{rows_field}, #{i+=1}, #{value_field}").to_sql
-              end
-            elsif value.form_field.is_optionable?
-              value_field = value['aggregate'] == 'count' ? value_aggregate_sql(value['aggregate'], 'activity_results.id') : 0
-              value.form_field.options.map do |option|
-                s.where('activity_results.form_field_id=? and activity_results.value=?', value.form_field.id, option.id.to_s).
-                  select("#{rows_field}, #{i+=1}, #{value_field}").to_sql
-              end
-            else
-              if value.form_field.is_numeric?
-                value_field = value_aggregate_sql(value.aggregate, 'activity_results.scalar_value')
-              elsif value.aggregate.downcase == 'count'
-                value_field = value_aggregate_sql('count', 'activity_results.value')
+                value_field = value_aggregate_sql(value['aggregate'], value.table_column[0])
               else
                 value_field = '0'
               end
               s.select("#{rows_field}, #{i+=1}, #{value_field}").to_sql
-            end
-          elsif m = /\A(.*):([a-z_]+)\z/.match(value['field'])
-            if value['aggregate'] == 'count'
-              value_field = value_aggregate_sql(value['aggregate'], value.table_column[0])
             else
-              value_field = '0'
+              nil
             end
-            s.select("#{rows_field}, #{i+=1}, #{value_field}").to_sql
-          else
-            nil
-          end
-        end.flatten
+          end.flatten
+        end
       end
     end
 

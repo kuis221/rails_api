@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe CommentsController, :type => :controller do
   before(:each) do
@@ -15,7 +15,7 @@ describe CommentsController, :type => :controller do
   describe "GET 'index'" do
     it "should be able index task's comments" do
       task_comment.save
-      get 'index', task_id: task.to_param, format: :js
+      xhr :get, 'index', task_id: task.to_param, format: :js
       expect(response).to be_success
       expect(response).to render_template('comments/index')
       expect(response).to render_template('comments/_comments_list')
@@ -26,7 +26,7 @@ describe CommentsController, :type => :controller do
   describe "POST 'create'" do
     it "should be able to create a comment for a event" do
       expect {
-        post 'create', event_id: event.to_param, comment: {content: 'this is a test'}, format: :js
+        xhr :post, 'create', event_id: event.to_param, comment: {content: 'this is a test'}, format: :js
       }.to change(Comment, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template('create')
@@ -37,7 +37,7 @@ describe CommentsController, :type => :controller do
 
     it "should be able to create a comment for a task" do
       expect {
-        post 'create', task_id: task.to_param, comment: {content: 'this is a test'}, format: :js
+        xhr :post, 'create', task_id: task.to_param, comment: {content: 'this is a test'}, format: :js
       }.to change(Comment, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template('create')
@@ -48,7 +48,7 @@ describe CommentsController, :type => :controller do
 
     it "should render the form_dialog template if errors" do
       expect {
-        post 'create', event_id: event.to_param, comment: {content: ''}, format: :js
+        xhr :post, 'create', event_id: event.to_param, comment: {content: ''}, format: :js
       }.not_to change(Comment, :count)
       expect(response).to render_template(:create)
       expect(response).to render_template('comments/_form')
@@ -58,12 +58,14 @@ describe CommentsController, :type => :controller do
     it "should be able to create a comment for an assigned task and send a SMS to the owner" do
       Timecop.freeze do
         with_resque do
-          @company_user.update_attributes({notifications_settings: ['new_comment_sms', 'new_comment_email']}, without_protection: true)
-          task.update_attributes({company_user_id: @company_user.to_param}, without_protection: true)
+          @company_user.update_attributes(
+            notifications_settings: ['new_comment_sms', 'new_comment_email'],
+            user_attributes: {phone_number_verified: true} )
+          task.update_attributes(company_user_id: @company_user.to_param)
           message = "You have a new comment http://localhost:5100/tasks/mine?q=task%2C#{task.id}#comments-#{task.id}"
-          expect(UserMailer).to receive(:notification).with(@company_user, "New Comment", message).and_return(double(deliver: true))
+          expect(UserMailer).to receive(:notification).with(@company_user.id, "New Comment", message).and_return(double(deliver: true))
           expect {
-            post 'create', task_id: task.to_param, comment: {content: 'this is a test'}, format: :js
+            xhr :post, 'create', task_id: task.to_param, comment: {content: 'this is a test'}, format: :js
           }.to change(Comment, :count).by(1)
           comment = Comment.last
           expect(comment.content).to eq('this is a test')
@@ -77,15 +79,21 @@ describe CommentsController, :type => :controller do
     it "should be able to create a comment for a unassigned task and send a SMS to the event team members" do
       Timecop.freeze do
         with_resque do
-          @company_user.update_attributes({notifications_settings: ['new_team_comment_sms', 'new_team_comment_email']}, without_protection: true)
-          other_user = FactoryGirl.create(:company_user, company_id: @company.id, notifications_settings: ['new_team_comment_sms'])
-          task.update_attributes({event_id: event.to_param}, without_protection: true)
+          @company_user.update_attributes(
+            notifications_settings: ['new_team_comment_sms', 'new_team_comment_email'],
+            user_attributes: {phone_number_verified: true} )
+
+          other_user = FactoryGirl.create(:company_user, company_id: @company.id,
+            notifications_settings: ['new_team_comment_sms'],
+            user_attributes: {phone_number_verified: true} )
+
+          task.update_attributes(event_id: event.to_param)
           event.users << @company_user
           event.users << other_user
           message = "You have a new team comment http://localhost:5100/tasks/mine?q=task%2C#{task.id}#comments-#{task.id}"
-          expect(UserMailer).to receive(:notification).with(@company_user, "New Team Comment", message).and_return(double(deliver: true))
+          expect(UserMailer).to receive(:notification).with(@company_user.id, "New Team Comment", message).and_return(double(deliver: true))
           expect {
-            post 'create', task_id: task.to_param, comment: {content: 'this is a test'}, format: :js
+            xhr :post, 'create', task_id: task.to_param, comment: {content: 'this is a test'}, format: :js
           }.to change(Comment, :count).by(1)
           comment = Comment.last
           expect(comment.content).to eq('this is a test')
@@ -101,10 +109,10 @@ describe CommentsController, :type => :controller do
 
   describe "PUT 'update'" do
     it "should update the event comment attributes" do
-      put 'update', event_id: event.to_param, id: event_comment.to_param, comment: {content: 'new content for comment'}, format: :js
+      xhr :put, 'update', event_id: event.to_param, id: event_comment.to_param, comment: {content: 'new content for comment'}, format: :js
       expect(response).to be_success
       expect(response).to render_template(:update)
-      expect(response).not_to render_template(:form_dialog)
+      expect(response).not_to render_template('_form_dialog')
 
       expect(event_comment.reload.content).to eq('new content for comment')
     end
@@ -112,18 +120,18 @@ describe CommentsController, :type => :controller do
 
   describe "GET 'edit'" do
     it "should render the comment form for a event comment" do
-      get 'edit', event_id: event.to_param, id: event_comment.to_param, format: :js
+      xhr :get, 'edit', event_id: event.to_param, id: event_comment.to_param, format: :js
       expect(response).to render_template('comments/_form')
-      expect(response).to render_template(:form_dialog)
+      expect(response).to render_template('_form_dialog')
       expect(assigns(:comment)).to eq(event_comment)
     end
   end
 
   describe "GET 'new'" do
     it "should render the comment form for a event comment" do
-      get 'new', event_id: event.to_param, format: :js
+      xhr :get, 'new', event_id: event.to_param, format: :js
       expect(response).to render_template('comments/_form')
-      expect(response).to render_template(:form_dialog)
+      expect(response).to render_template('_form_dialog')
       expect(assigns(:comment).new_record?).to be_truthy
       expect(assigns(:comment).commentable).to eq(event)
     end

@@ -28,7 +28,6 @@ module DashboardHelper
   end
 
   def campaign_promo_hours_chart(c)
-    remaining_percentage = 100-c['executed_percentage']-c['scheduled_percentage']
     today_bar_indicator = ''.html_safe
     if c['today_percentage']
       color_class = if c['today_percentage'] < c['executed_percentage']
@@ -167,7 +166,7 @@ module DashboardHelper
             group('1, 2, 3').
             select("events.campaign_id, EXTRACT(WEEK FROM #{prefix}start_at) as week_start, EXTRACT(WEEK FROM #{prefix}end_at) as week_end").
             each do |event|
-          (event.week_start..event.week_end).each do |week|
+          (event.week_start.to_i..event.week_end.to_i).each do |week|
             data[event.campaign_id] ||= {}
             data[event.campaign_id][week.to_i]=true if start_week_number <= week.to_i
           end

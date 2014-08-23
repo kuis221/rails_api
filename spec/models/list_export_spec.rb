@@ -17,7 +17,7 @@
 #  progress          :integer          default(0)
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe ListExport, :type => :model do
   let(:company_user) { FactoryGirl.create(:company_user) }
@@ -26,7 +26,7 @@ describe ListExport, :type => :model do
   describe "Results::EventDataController#export_list" do
     it "should call the export_list on the controller and set the required variables" do
       exporter = ListExport.new(controller: 'Results::EventDataController', company_user: company_user, export_format: 'xls', params: {})
-      expect_any_instance_of(Results::EventDataController).to receive(:export_list).with(exporter)
+      expect_any_instance_of(Results::EventDataController).to receive(:export_list).with(exporter).and_return('')
 
       # Prevent export to save and upload attachment to S3
       expect(exporter).to receive(:save).at_least(:once).and_return(true)
@@ -43,7 +43,7 @@ describe ListExport, :type => :model do
   describe "EventsController#export_list" do
     it "should call the export_list on the controller and set the required variables" do
       exporter = ListExport.new(controller: 'EventsController', company_user: company_user, export_format: 'xls', params: {})
-      expect_any_instance_of(EventsController).to receive(:export_list).with(exporter)
+      expect_any_instance_of(EventsController).to receive(:export_list).with(exporter).and_return('')
 
       # Prevent export to save and upload attachment to S3
       expect(exporter).to receive(:save).at_least(:once).and_return(true)

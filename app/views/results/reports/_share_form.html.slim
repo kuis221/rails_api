@@ -17,7 +17,7 @@
     .option-help Share this report with all users
 
   .form-actions
-    = f.button :submit, class: 'btn btn-primary', disable_with: 'Please wait...'
+    = f.button :submit, class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
     = "&nbsp;".html_safe
     = f.button :button, 'Cancel', class: 'btn btn-cancel'
 

@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 feature "Login", :js => true do
   scenario "should redirect the user to the login page" do

@@ -28,32 +28,32 @@ class Event < ActiveRecord::Base
   belongs_to :campaign
   belongs_to :place, autosave: true
 
-  has_many :tasks, :order => 'due_at ASC', dependent: :destroy, inverse_of: :event
-  has_many :photos, conditions: {asset_type: 'photo'}, class_name: 'AttachedAsset', dependent: :destroy, :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
-  has_many :active_photos, conditions: {asset_type: 'photo', active: true}, class_name: 'AttachedAsset', :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
-  has_many :documents, conditions: {asset_type: 'document'}, class_name: 'AttachedAsset', dependent: :destroy, :as => :attachable, inverse_of: :attachable, order: "created_at DESC"
-  has_many :teamings, :as => :teamable, dependent: :destroy
-  has_many :teams, :through => :teamings, :after_remove => :after_remove_member
+  has_many :tasks, ->{ order 'due_at ASC' }, dependent: :destroy, inverse_of: :event
+  has_many :photos, ->{ order("created_at DESC").where(asset_type: 'photo') }, class_name: 'AttachedAsset', dependent: :destroy, as: :attachable, inverse_of: :attachable
+  has_many :active_photos, ->{ order("created_at DESC").where(asset_type: 'photo', active: true) }, class_name: 'AttachedAsset', as: :attachable, inverse_of: :attachable
+  has_many :documents, ->{ order("created_at DESC").where(asset_type: 'document') }, class_name: 'AttachedAsset', dependent: :destroy, as: :attachable, inverse_of: :attachable
+  has_many :teamings, as: :teamable, dependent: :destroy, inverse_of: :teamable
+  has_many :teams, through: :teamings, after_remove: :after_remove_member
   has_many :results, as: :resultable, dependent: :destroy, class_name: 'FormFieldResult', inverse_of: :resultable do
     def active
       where(form_field_id: proxy_association.owner.campaign.form_field_ids)
     end
   end
   has_many :event_expenses, dependent: :destroy, inverse_of: :event, autosave: true
-  has_many :activities, as: :activitable, dependent: :destroy, order: 'activity_date ASC' do
+  has_many :activities, ->{ order('activity_date ASC') }, as: :activitable, dependent: :destroy do
     def active
       joins(activity_type: :activity_type_campaigns).where(active: true, activity_type_campaigns: {campaign_id: proxy_association.owner.campaign_id})
     end
   end
   has_one :event_data, autosave: true, dependent: :destroy
 
-  has_many :comments, dependent: :destroy, :as => :commentable, order: 'comments.created_at ASC'
+  has_many :comments, ->{ order 'comments.created_at ASC' }, dependent: :destroy, as: :commentable
 
   has_many :surveys, dependent: :destroy,  inverse_of: :event
 
   # Events-Users relationship
-  has_many :memberships, dependent: :destroy, :as => :memberable
-  has_many :users, :class_name => 'CompanyUser', source: :company_user, :through => :memberships, :after_remove => :after_remove_member
+  has_many :memberships, dependent: :destroy, as: :memberable, inverse_of: :memberable
+  has_many :users, class_name: 'CompanyUser', source: :company_user, through: :memberships, after_remove: :after_remove_member
 
   has_many :contact_events, dependent: :destroy
 
@@ -64,11 +64,9 @@ class Event < ActiveRecord::Base
 
   scoped_to_company
 
-  attr_accessor :place_reference, :team_members
-
-  scope :upcomming, lambda{ where('start_at >= ?', Time.zone.now) }
-  scope :active, lambda{ where(active: true) }
-  scope :between_dates, lambda {|start_date, end_date|
+  scope :upcomming, -> { where('start_at >= ?', Time.zone.now) }
+  scope :active, -> { where(active: true) }
+  scope :between_dates, ->(start_date, end_date) {
     prefix = ''
     if Company.current.present? && Company.current.timezone_support?
       prefix = 'local_'
@@ -78,18 +76,18 @@ class Event < ActiveRecord::Base
     where("#{prefix}end_at > ? AND #{prefix}start_at < ?", start_date, end_date)
   }
 
-  scope :by_campaigns, lambda{|campaigns| where(campaign_id: campaigns) }
-  scope :with_user_in_team, lambda{|user|
+  scope :by_campaigns, ->(campaigns) { where(campaign_id: campaigns) }
+  scope :with_user_in_team, ->(user) {
       joins('LEFT JOIN teamings ON teamings.teamable_id=events.id AND teamable_type=\'Event\'').
       joins('LEFT JOIN memberships ON (memberships.memberable_id=events.id AND memberable_type=\'Event\') OR (memberships.memberable_id=teamings.team_id AND memberable_type=\'Team\')').
       where('memberships.company_user_id in (?)', user) }
 
-  scope :in_past, lambda{ where('events.end_at < ?', Time.now) }
-  scope :with_team, lambda{|team|
+  scope :in_past, -> { where('events.end_at < ?', Time.now) }
+  scope :with_team, ->(team) {
     joins(:teamings).
     where(teamings: {team_id: team} ) }
 
-  scope :for_campaigns_accessible_by, lambda{|company_user|
+  scope :for_campaigns_accessible_by, ->(company_user) {
     if company_user.is_admin?
       where(company_id: company_user.company_id)
     else
@@ -115,6 +113,20 @@ class Event < ActiveRecord::Base
       joins('LEFT JOIN users ON users.id=company_users.user_id')
   }
 
+  # Returns the events that are inside the campaigns scope, considering the
+  # custom exclusions
+  scope :in_campaign_area, ->(area_campaign) {
+    has_exclusions = area_campaign.exclusions.any?
+    subquery = Place.select('DISTINCT places.location_id, placeables.placeable_id area_id').joins(:placeables).where(placeables: { placeable_type: 'Area', placeable_id: area_campaign.area_id }, is_location: true)
+    subquery = subquery.where.not(placeables: {place_id: area_campaign.exclusions})
+    place_query = "SELECT place_id, locations.area_id FROM locations_places INNER JOIN (#{subquery.to_sql}) locations on locations.location_id=locations_places.location_id" + (has_exclusions ? " WHERE place_id not in (#{area_campaign.exclusions.join(',')})" : '')
+    area_query = Placeable.select('place_id, placeable_id area_id').where(placeable_type: 'Area', placeable_id: area_campaign.area_id)
+    area_query = area_query.where.not(place_id: area_campaign.exclusions) if has_exclusions
+    joins(:place).
+    joins("INNER JOIN (#{area_query.to_sql} UNION #{place_query}) areas_places ON events.place_id=areas_places.place_id")
+  }
+
+  # TODO: This should be removed in favor of `in_campaign_area`
   scope :in_areas, ->(areas) {
     subquery = Place.select('DISTINCT places.location_id, placeables.placeable_id area_id').joins(:placeables).where(placeables: { placeable_type: 'Area', placeable_id: areas }, is_location: true)
     place_query = "select place_id, locations.area_id FROM locations_places INNER JOIN (#{subquery.to_sql}) locations on locations.location_id=locations_places.location_id"
@@ -132,21 +144,18 @@ class Event < ActiveRecord::Base
 
   track_who_does_it
 
-  #validates_attachment_content_type :file, :content_type => ['image/jpeg', 'image/png']
+  #validates_attachment_content_type :file, content_type: ['image/jpeg', 'image/png']
   validates :campaign_id, presence: true, numericality: true
   validate :valid_campaign?
   validates :company_id, presence: true, numericality: true
   validates :start_at, presence: true
-  validates :end_at, presence: true
+  validates :end_at, presence: true, date: { on_or_after: :start_at, message: 'must be after' }
 
-  DATE_FORMAT = /^[0-1]?[0-9]\/[0-3]?[0-9]\/[0-2]0[0-9][0-9]$/
+  DATE_FORMAT = /\A[0-1]?[0-9]\/[0-3]?[0-9]\/[0-2]0[0-9][0-9]\z/
   validates :start_date, format: { with: DATE_FORMAT, message: 'MM/DD/YYYY' }
   validates :end_date, format: { with: DATE_FORMAT, message: 'MM/DD/YYYY' }
 
   validate :event_place_valid?
-
-  validates_datetime :start_at
-  validates_datetime :end_at, :on_or_after => :start_at, on_or_after_message: 'must be after'
 
   attr_accessor :start_date, :start_time, :end_date, :end_time
 
@@ -166,21 +175,21 @@ class Event < ActiveRecord::Base
   delegate :impressions, :interactions, :samples, :spent, :gender_female, :gender_male, :ethnicity_asian, :ethnicity_black, :ethnicity_hispanic, :ethnicity_native_american, :ethnicity_white, to: :event_data, allow_nil: true
 
   aasm do
-    state :unsent, :initial => true
+    state :unsent, initial: true
     state :submitted
     state :approved
     state :rejected
 
     event :submit do
-      transitions :from => [:unsent, :rejected], :to => :submitted, :guard => :valid_results?
+      transitions from: [:unsent, :rejected], to: :submitted, guard: :valid_results?
     end
 
     event :approve do
-      transitions :from => :submitted, :to => :approved
+      transitions from: :submitted, to: :approved
     end
 
     event :reject do
-      transitions :from => :submitted, :to => :rejected
+      transitions from: :submitted, to: :rejected
     end
   end
 
@@ -306,10 +315,10 @@ class Event < ActiveRecord::Base
 
   def venue
     unless place_id.nil?
-      @venue ||= Venue.find_or_create_by_company_id_and_place_id(company_id, place_id)
+      @venue ||= Venue.find_or_create_by(company_id: company_id, place_id: place_id)
       @venue.place = self.place if self.association(:place).loaded?
+      @venue
     end
-    @venue
   end
 
   def contacts
@@ -355,21 +364,19 @@ class Event < ActiveRecord::Base
   end
 
   def kpi_goals
-    unless @goals
-      @goals = {}
+    @goals ||= Hash.new.tap do |h|
       total_campaign_events = campaign.events.count
       if total_campaign_events > 0
         campaign.goals.base.each do |goal|
           if goal.kpis_segment_id.present?
-            @goals[goal.kpi_id] ||= {}
-            @goals[goal.kpi_id][goal.kpis_segment_id] = goal.value unless goal.value.nil?
+            h[goal.kpi_id] ||= {}
+            h[goal.kpi_id][goal.kpis_segment_id] = goal.value unless goal.value.nil?
           else
-            @goals[goal.kpi_id] = goal.value / total_campaign_events unless goal.value.nil?
+            h[goal.kpi_id] = goal.value / total_campaign_events unless goal.value.nil?
           end
         end
       end
     end
-    @goals
   end
 
   def demographics_graph_data
@@ -426,7 +433,8 @@ class Event < ActiveRecord::Base
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false, &block)
-      ss = solr_search(include: [:campaign, :place]) do
+      current_company = Company.current || Company.new
+      solr_search(include: [:campaign, :place]) do
         (start_at_field, end_at_field, timezone) = [:start_at, :end_at, Time.zone.name]
         if Company.current && Company.current.timezone_support?
           (start_at_field, end_at_field, timezone) = [:local_start_at, :local_end_at, 'UTC']
@@ -435,6 +443,7 @@ class Event < ActiveRecord::Base
         Time.use_zone(timezone) do
           company_user = params[:current_company_user]
           if company_user.present?
+            current_company = company_user.company
             unless company_user.role.is_admin?
               with(:campaign_id, company_user.accessible_campaign_ids + [0])
               any_of do
@@ -555,19 +564,19 @@ class Event < ActiveRecord::Base
           with :place_id, params[:place] if params[:place].present?
 
           if params.has_key?(:event_data_stats) && params[:event_data_stats]
-            stat(:promo_hours, :type => "sum")
-            stat(:impressions, :type => "sum")
-            stat(:interactions, :type => "sum")
-            stat(:samples, :type => "sum")
-            stat(:spent, :type => "sum")
-            stat(:gender_female, :type => "mean")
-            stat(:gender_male, :type => "mean")
-            stat(:gender_male, :type => "mean")
-            stat(:ethnicity_asian, :type => "mean")
-            stat(:ethnicity_black, :type => "mean")
-            stat(:ethnicity_hispanic, :type => "mean")
-            stat(:ethnicity_native_american, :type => "mean")
-            stat(:ethnicity_white, :type => "mean")
+            stat(:promo_hours, type: "sum")
+            stat(:impressions, type: "sum")
+            stat(:interactions, type: "sum")
+            stat(:samples, type: "sum")
+            stat(:spent, type: "sum")
+            stat(:gender_female, type: "mean")
+            stat(:gender_male, type: "mean")
+            stat(:gender_male, type: "mean")
+            stat(:ethnicity_asian, type: "mean")
+            stat(:ethnicity_black, type: "mean")
+            stat(:ethnicity_hispanic, type: "mean")
+            stat(:ethnicity_native_american, type: "mean")
+            stat(:ethnicity_white, type: "mean")
           end
 
           if include_facets
@@ -578,11 +587,11 @@ class Event < ActiveRecord::Base
             facet :status do
               row(:late) do
                 with(:status, 'Unsent')
-                with(end_at_field).less_than(2.days.ago)
+                with(end_at_field).less_than(current_company.late_event_end_date)
               end
               row(:due) do
                 with(:status, 'Unsent')
-                with(end_at_field, Date.yesterday.beginning_of_day..Time.zone.now)
+                with(end_at_field, current_company.due_event_start_date..current_company.due_event_end_date)
               end
               row(:rejected) do
                 with(:status, 'Rejected')
@@ -618,7 +627,7 @@ class Event < ActiveRecord::Base
           end
 
           order_by(params[:sorting] || start_at_field , params[:sorting_dir] || :asc)
-          paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+          paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
 
           yield self if block_given?
         end
@@ -693,12 +702,10 @@ class Event < ActiveRecord::Base
 
     def parse_start_end
       unless self.start_date.nil? or self.start_date.empty?
-        parts = self.start_date.split("/")
-        self.start_at = Time.zone.parse([[parts[1],parts[0],parts[2]].join('/'), self.start_time].join(' '))
+        self.start_at = Timeliness.parse([self.start_date, self.start_time.to_s.strip].compact.join(' ').strip, zone: :current)
       end
       unless self.end_date.nil? or self.end_date.empty?
-        parts = self.end_date.split("/")
-        self.end_at = Time.zone.parse([[parts[1],parts[0],parts[2]].join('/'), self.end_time].join(' '))
+        self.end_at = Timeliness.parse([self.end_date, self.end_time.to_s.strip].compact.join(' ').strip, zone: :current)
       end
     end
 
@@ -724,7 +731,7 @@ class Event < ActiveRecord::Base
         users = [member]
       end
 
-      self.tasks.scoped_by_company_user_id(users).update_all(company_user_id: nil)
+      self.tasks.where(company_user_id: users).update_all(company_user_id: nil)
       Sunspot.index(self.tasks)
     end
 
@@ -752,7 +759,7 @@ class Event < ActiveRecord::Base
       if place_id_changed?
         Resque.enqueue(EventPhotosIndexer, self.id)
         if place_id_was.present?
-          previous_venue = Venue.find_by_company_id_and_place_id(company_id, place_id_was)
+          previous_venue = Venue.find_by(company_id: company_id, place_id: place_id_was)
           Resque.enqueue(VenueIndexer, previous_venue.id) unless previous_venue.nil?
         end
       end
@@ -810,7 +817,7 @@ class Event < ActiveRecord::Base
     end
 
     def create_notifications
-      if company.setting(:event_alerts_policy) == Notification::EVENT_ALERT_POLICY_ALL
+      if company.event_alerts_policy == Notification::EVENT_ALERT_POLICY_ALL
         Resque.enqueue(EventNotifierWorker, self.id)
       end
       true

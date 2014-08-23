@@ -1,15 +1,21 @@
 # == Schema Information
 #
-# Table name: marques
+# Table name: form_fields
 #
-#  id         :integer          not null, primary key
-#  brand_id   :integer
-#  name       :string(255)
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id             :integer          not null, primary key
+#  fieldable_id   :integer
+#  fieldable_type :string(255)
+#  name           :string(255)
+#  type           :string(255)
+#  settings       :text
+#  ordering       :integer
+#  required       :boolean
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#  kpi_id         :integer
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe FormField::Marque, :type => :model do
   describe "#field_options" do

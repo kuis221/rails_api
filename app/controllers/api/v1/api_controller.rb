@@ -7,11 +7,12 @@ class Api::V1::ApiController < ActionController::Base
   rescue_from 'Api::V1::InvalidCompany', with: :invalid_company
   rescue_from 'ActiveRecord::RecordNotFound', with: :record_not_found
 
-  before_filter :ensure_valid_request
-  before_filter :cors_preflight_check
+  before_action :ensure_valid_request
+  before_action :cors_preflight_check
   after_filter :set_access_control_headers
+  after_filter :update_user_last_activity_mobile
 
-  before_filter :set_user
+  before_action :set_user
 
   load_and_authorize_resource only: [:show, :edit, :update, :destroy], unless: :skip_default_validation
   authorize_resource only: [:create, :index], unless: :skip_default_validation
@@ -96,7 +97,7 @@ class Api::V1::ApiController < ActionController::Base
     end
 
     def set_access_control_headers
-      unless Rails.env.production?
+      unless ENV['HEROKU_APP_NAME'] == 'brandscopic'
         headers['Access-Control-Allow-Origin'] = '*'
       else
         headers['Access-Control-Allow-Origin'] = 'http://m.brandscopic.com'
@@ -108,9 +109,13 @@ class Api::V1::ApiController < ActionController::Base
       headers['Access-Control-Max-Age'] = '86400'
     end
 
+    def update_user_last_activity_mobile
+      @current_company_user.update_column(:last_activity_mobile_at, DateTime.now) if user_signed_in? && @current_company_user.present?
+    end
+
     def cors_preflight_check
       if request.method == 'OPTIONS'
-        unless Rails.env.production?
+        unless ENV['HEROKU_APP_NAME'] == 'brandscopic'
           headers['Access-Control-Allow-Origin'] = '*'
         else
           headers['Access-Control-Allow-Origin'] = 'http://m.brandscopic.com'

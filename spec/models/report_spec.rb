@@ -16,7 +16,7 @@
 #  sharing       :string(255)      default("owner")
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe Report, :type => :model do
   it { is_expected.to validate_presence_of(:name) }
@@ -1762,14 +1762,14 @@ describe Report, :type => :model do
       campaign.assign_all_global_kpis
       kpi = FactoryGirl.create(:kpi, company: company, kpi_type: 'number')
       campaign.add_kpi kpi
-      event1 = FactoryGirl.create(:event, start_date: '01/01/2014', start_time: '10:00:00 AM',
-        end_date: '01/01/2014', end_time: '11:00:00 AM', campaign: campaign,
+      event1 = FactoryGirl.create(:event, start_date: '01/01/2014', start_time: '10:00 AM',
+        end_date: '01/01/2014', end_time: '11:00 AM', campaign: campaign,
         results: {impressions: 100, interactions: 50})
       event1.result_for_kpi(kpi).value = 200
       event1.save
 
-      event2 = FactoryGirl.create(:event, start_date: '01/12/2014', start_time: '01:00:00 AM',
-        end_date: '01/12/2014', end_time: '03:00:00 AM', campaign: campaign,
+      event2 = FactoryGirl.create(:event, start_date: '01/12/2014', start_time: '01:00 AM',
+        end_date: '01/12/2014', end_time: '03:00 AM', campaign: campaign,
         results: {impressions: 200, interactions: 150})
 
       report = FactoryGirl.create(:report,
@@ -1831,14 +1831,14 @@ describe Report, :type => :model do
       campaign.assign_all_global_kpis
       kpi = FactoryGirl.create(:kpi, company: company, kpi_type: 'number')
       campaign.add_kpi kpi
-      event1 = FactoryGirl.create(:event, start_date: '01/01/2014', start_time: '10:00:00 AM',
-        end_date: '01/01/2014', end_time: '11:00:00 AM', campaign: campaign,
+      event1 = FactoryGirl.create(:event, start_date: '01/01/2014', start_time: '10:00 AM',
+        end_date: '01/01/2014', end_time: '11:00 AM', campaign: campaign,
         results: {impressions: 100, interactions: 50})
       event1.result_for_kpi(kpi).value = 200
       event1.save
 
-      event2 = FactoryGirl.create(:event, start_date: '01/12/2014', start_time: '01:00:00 AM',
-        end_date: '01/12/2014', end_time: '03:00:00 AM', campaign: campaign,
+      event2 = FactoryGirl.create(:event, start_date: '01/12/2014', start_time: '01:00 AM',
+        end_date: '01/12/2014', end_time: '03:00 AM', campaign: campaign,
         results: {impressions: 200, interactions: 150})
 
       report = FactoryGirl.create(:report,

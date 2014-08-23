@@ -1,4 +1,4 @@
-if Rails.env.production? or Rails.env.staging? or Rails.env.demo?
+if Rails.env.production?
   require 'resque/failure/redis'
   require 'resque/failure/multiple'
   require 'resque/failure/airbrake'
@@ -10,6 +10,7 @@ if Rails.env.production? or Rails.env.staging? or Rails.env.demo?
     config.host        = 'errors.jaskotmedia.com'
     config.port        = 80
     config.secure      = config.port == 443
-    config.development_environments = ['development', 'test']
+    config.development_environments = []
+    config.environment_name = ENV['HEROKU_APP_NAME'] || Rails.env
   end
 end

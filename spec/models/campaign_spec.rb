@@ -17,19 +17,20 @@
 #  last_event_at    :datetime
 #  start_date       :date
 #  end_date         :date
-#  survey_brand_ids :integer          default([])
+#  survey_brand_ids :integer          default([]), is an Array
 #  modules          :text
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
 describe Campaign, :type => :model do
   it { is_expected.to belong_to(:company) }
   it { is_expected.to have_many(:memberships) }
   it { is_expected.to have_many(:users).through(:memberships) }
+  it { is_expected.to have_many(:areas) }
+  it { is_expected.to have_many(:areas_campaigns) }
   it { is_expected.to have_and_belong_to_many(:brands) }
   it { is_expected.to have_and_belong_to_many(:brand_portfolios) }
-  it { is_expected.to have_and_belong_to_many(:areas) }
   it { is_expected.to have_and_belong_to_many(:date_ranges) }
   it { is_expected.to have_and_belong_to_many(:day_parts) }
   it { is_expected.to validate_presence_of(:name) }
@@ -37,6 +38,14 @@ describe Campaign, :type => :model do
   let(:company) { FactoryGirl.create(:company) }
 
   before { Company.current = company }
+
+  describe "end_after_start validation" do
+    subject { Campaign.new(start_date: '01/22/2013') }
+
+    it { is_expected.not_to allow_value('01/21/2013').for(:end_date).with_message("must be after") }
+    it { is_expected.to allow_value('01/22/2013').for(:end_date) }
+    it { is_expected.to allow_value('01/23/2013').for(:end_date) }
+  end
 
   describe "states" do
     before(:each) do
@@ -86,7 +95,7 @@ describe Campaign, :type => :model do
 
     it "should returns global kpis + enabled modules" do
       Kpi.create_global_kpis
-      form_field  = FactoryGirl.create(:form_field_number,
+      FactoryGirl.create(:form_field_number,
             fieldable: campaign,
             kpi: FactoryGirl.build(:kpi, company_id: campaign.company_id))
 
@@ -268,7 +277,7 @@ describe Campaign, :type => :model do
 
       # This is an user that is assgined to the campaign
       user = FactoryGirl.create(:company_user, company: company)
-      other_user = FactoryGirl.create(:company_user, company: company, role: non_admin_role)
+      FactoryGirl.create(:company_user, company: company, role: non_admin_role)
 
       campaign.users << user
 
@@ -558,7 +567,7 @@ describe Campaign, :type => :model do
     end
 
     it "should return empty when there are campaigns but no goals" do
-      campaign = FactoryGirl.create(:campaign)
+      FactoryGirl.create(:campaign)
       stats = Campaign.promo_hours_graph_data
       expect(stats).to be_empty
     end
@@ -568,7 +577,7 @@ describe Campaign, :type => :model do
       campaign.goals.for_kpi(Kpi.events).value = 10
       campaign.save
 
-      event = FactoryGirl.create(:approved_event, start_date: "01/23/2013", end_date: "01/23/2013", campaign: campaign)
+      FactoryGirl.create(:approved_event, start_date: "01/23/2013", end_date: "01/23/2013", campaign: campaign)
 
       stats = Campaign.promo_hours_graph_data
       expect(stats.count).to eql 1
@@ -589,7 +598,7 @@ describe Campaign, :type => :model do
       campaign.goals.for_kpi(Kpi.promo_hours).value = 10
       campaign.save
 
-      event = FactoryGirl.create(:approved_event, start_date: "01/23/2013", end_date: "01/23/2013", start_time: '8:00pm', end_time: '11:00pm', campaign: campaign)
+      FactoryGirl.create(:approved_event, start_date: "01/23/2013", end_date: "01/23/2013", start_time: '8:00pm', end_time: '11:00pm', campaign: campaign)
 
       stats = Campaign.promo_hours_graph_data
       expect(stats.count).to eql 1
@@ -611,7 +620,7 @@ describe Campaign, :type => :model do
       campaign.goals.for_kpi(Kpi.events).value = 5
       campaign.save
 
-      event = FactoryGirl.create(:approved_event, start_date: "01/23/2013", end_date: "01/23/2013", start_time: '8:00pm', end_time: '11:00pm', campaign: campaign)
+      FactoryGirl.create(:approved_event, start_date: "01/23/2013", end_date: "01/23/2013", start_time: '8:00pm', end_time: '11:00pm', campaign: campaign)
 
       stats = Campaign.promo_hours_graph_data
       expect(stats.count).to eql 2
@@ -644,10 +653,10 @@ describe Campaign, :type => :model do
       campaign.goals.for_kpi(Kpi.events).value = 5
       campaign.save
 
-      event = FactoryGirl.create(:approved_event, start_date: "01/23/2013", end_date: "01/23/2013", start_time: '8:00pm', end_time: '11:00pm', campaign: campaign)
-      event = FactoryGirl.create(:rejected_event, start_time: '9:00pm', end_time: '10:00pm', campaign: campaign)
-      event = FactoryGirl.create(:submitted_event, start_time: '9:00pm', end_time: '10:00pm', campaign: campaign)
-      event = FactoryGirl.create(:event, start_time: '9:00pm', end_time: '10:00pm', campaign: campaign)
+      FactoryGirl.create(:approved_event, start_date: "01/23/2013", end_date: "01/23/2013", start_time: '8:00pm', end_time: '11:00pm', campaign: campaign)
+      FactoryGirl.create(:rejected_event, start_time: '9:00pm', end_time: '10:00pm', campaign: campaign)
+      FactoryGirl.create(:submitted_event, start_time: '9:00pm', end_time: '10:00pm', campaign: campaign)
+      FactoryGirl.create(:event, start_time: '9:00pm', end_time: '10:00pm', campaign: campaign)
 
       stats = Campaign.promo_hours_graph_data
       expect(stats.count).to eql 2
@@ -680,10 +689,10 @@ describe Campaign, :type => :model do
       campaign.goals.for_kpi(Kpi.events).value = 5
       campaign.save
 
-      event = FactoryGirl.create(:approved_event, start_time: '8:00pm', end_time: '11:00pm', campaign: campaign)
-      event = FactoryGirl.create(:event, start_time: '9:00pm', end_time: '10:00pm', campaign: campaign)
-      event = FactoryGirl.create(:event, start_time: '9:00pm', end_time: '10:00pm', campaign: campaign)
-      event = FactoryGirl.create(:event, start_time: '9:00pm', end_time: '10:00pm', campaign: campaign)
+      FactoryGirl.create(:approved_event, start_time: '8:00pm', end_time: '11:00pm', campaign: campaign)
+      FactoryGirl.create(:event, start_time: '9:00pm', end_time: '10:00pm', campaign: campaign)
+      FactoryGirl.create(:event, start_time: '9:00pm', end_time: '10:00pm', campaign: campaign)
+      FactoryGirl.create(:event, start_time: '9:00pm', end_time: '10:00pm', campaign: campaign)
 
       Timecop.travel Date.new(2014, 01, 15) do
         stats = Campaign.promo_hours_graph_data

@@ -39,7 +39,7 @@ module PlacesHelper
       if reference_value and !reference_value.nil? and !reference_value.empty?
         if reference_value =~ /(.*)\|\|(.*)/
           reference, place_id = reference_value.split('||')
-          @place = Place.find_or_create_by_place_id(place_id, {reference: reference})
+          @place = Place.create_with(reference: reference).find_or_create_by(place_id: place_id)
         else
           @place = Place.find(reference_value)
         end
@@ -57,10 +57,10 @@ module PlacesHelper
 
       if @place.persisted?
         has_parent ||= parent.present? rescue false
-        parent.update_attributes({place_ids: parent.place_ids + [@place.id]}, without_protection: true) if has_parent
+        parent.update_attributes(place_ids: parent.place_ids + [@place.id]) if has_parent
 
         # Create a Venue for this place on the current company
-        @venue = Venue.find_or_create_by_company_id_and_place_id(current_company.id, @place.id)
+        @venue = Venue.find_or_create_by(company_id: current_company.id, place_id: @place.id)
       end
 
       @place.persisted?

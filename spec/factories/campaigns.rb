@@ -17,7 +17,7 @@
 #  last_event_at    :datetime
 #  start_date       :date
 #  end_date         :date
-#  survey_brand_ids :integer          default([])
+#  survey_brand_ids :integer          default([]), is an Array
 #  modules          :text
 #
 

@@ -25,7 +25,7 @@ class DateRange < ActiveRecord::Base
 
   has_many :date_items
 
-  scope :active, where(:active => true)
+  scope :active, -> { where(:active => true) }
 
   searchable do
     integer :id

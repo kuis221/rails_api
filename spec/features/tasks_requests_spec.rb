@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 feature "Tasks", js: true, search: true do
 
@@ -116,7 +116,7 @@ feature "Tasks", js: true, search: true do
     scenario "GET index should display a table with the events" do
       team1 = FactoryGirl.create(:team, company: @company)
       team2 = FactoryGirl.create(:team, company: @company)
-      @company_user.update_attributes({:team_ids => [team1.id, team2.id]}, without_protection: true)
+      @company_user.update_attributes(:team_ids => [team1.id, team2.id])
 
 
       user_task = FactoryGirl.create(:task, title: 'User task', company_user: @company_user , active: true, event: FactoryGirl.create(:event, company: @company, campaign: FactoryGirl.create(:campaign, name: 'Cacique FY14', company: @company)))

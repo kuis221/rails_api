@@ -3,7 +3,7 @@ $.widget 'nmk.activityForm', {
 		formUrl: null
 	},
 	_create: () ->
-		@element.on "change", "#activity_activity_type_id", (e) =>
+		@element.off('change.activityType').on "change.activityType", "#activity_activity_type_id", (e) =>
 			if $(e.target).val()
 				$.get "#{@options.formUrl}?activity[activity_type_id]=#{$(e.target).val()}", (result) =>
 					@element.html('').append $(result).find('.activity-form')
@@ -11,42 +11,50 @@ $.widget 'nmk.activityForm', {
 
 			return
 
-		@element.on "change", "#activity_campaign_id", =>
+		@element.off('change.activityCampaign').on "change.activityCampaign", "#activity_campaign_id", (e) =>
 			brands  = @element.find(".form-field-brand")
 			marques = @element.find("select.form-field-marque")
-			if selectedOption = @value
+			target = @element.find('#activity_campaign_id')
+			if selectedOption = target.val()
 				$.get "/campaigns/#{selectedOption}/brands.json", (list) ->
 					brands.empty()
 					marques.empty()
+					marques.trigger('liszt:updated')
 					brands.append $("<option>",
 						value: ""
 						text: ""
 						selected: true
 					)
-					marques.select2 "data", null, false
-					for i of list
+					for item in list
 						brands.append $("<option>",
-							value: list[i].id
-							text: list[i].name
+							value: item.id
+							text: item.name
 						)
 					brands.trigger "liszt:updated"
 					return
+			else
+				brands.empty()
+				marques.empty()
+				marques.trigger('liszt:updated')
+				brands.trigger "liszt:updated"
 
 			return
 
-		@element.on "change", ".form-field-brand", ->
+		@element.off('change.activityBrand').on "change.activityBrand", ".form-field-brand", ->
+			marques = $("select.form-field-marque")
 			if selectedOption = @value
 				$.get "/brands/#{selectedOption}/marques.json", (options) ->
-					marques = $("select.form-field-marque")
 					marques.empty().select2 "destroy"
 					for i of options
 						marques.append $("<option>",
 							value: options[i].id
 							text: options[i].name
 						)
-					marques.select2()
+					marques.trigger('liszt:updated')
 					return
-
+			else
+				marques.empty()
+				marques.trigger('liszt:updated')
 			return
 
 		@element.on "keyup.activity", "input.summation", ->

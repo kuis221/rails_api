@@ -9,17 +9,6 @@ production:
   auto_commit_after_request: true
   auto_commit_after_delete_request: true
 
-staging:
-  solr:
-    hostname: localhost
-    port: 8983
-    log_level: WARNING
-    path: /solr/production
-    read_timeout: 10
-    open_timeout: 4
-  auto_commit_after_request: true
-  auto_commit_after_delete_request: true
-
 development:
   solr:
     hostname: localhost

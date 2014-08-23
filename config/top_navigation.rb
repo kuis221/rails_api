@@ -46,7 +46,7 @@ SimpleNavigation::Configuration.run do |navigation|
 
     unless options.empty?
       primary.item :admin, '', options.first[2], link: {'class' => "dropdown-toggle", 'data-toggle' => "dropdown"} do |secondary|
-        options.each {|option| secondary.item *option }
+        options.each {|option| secondary.item(*option) }
       end
     end
 
@@ -55,7 +55,7 @@ SimpleNavigation::Configuration.run do |navigation|
     end
 
     primary.item :user_menu,  current_user.full_name, '#', link: {'class' => "dropdown-toggle", 'data-toggle' => "dropdown"}, if: lambda{ user_signed_in? } do |secondary|
-      secondary.item :users, 'Edit Profile',  edit_company_user_path(current_company_user), link: {remote: true}
+      secondary.item :users, 'View Profile',  profile_company_users_path
       secondary.item :users, 'Logout', destroy_user_session_path, link: {method: :delete}
     end
   end
