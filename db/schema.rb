@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140821175739) do
+ActiveRecord::Schema.define(version: 20140822232819) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -460,6 +460,7 @@ ActiveRecord::Schema.define(version: 20140821175739) do
     t.string   "timezone"
     t.datetime "local_start_at"
     t.datetime "local_end_at"
+    t.text     "description"
   end
 
   add_index "events", ["aasm_state"], name: "index_events_on_aasm_state", using: :btree

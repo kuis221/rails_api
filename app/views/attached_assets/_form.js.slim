@@ -18,7 +18,7 @@
 
       .row-fluid.file-drag-drop
         .span12
-          #drop-zone 
+          #drop-zone
             | Drag and drop file here to upload
 
     .uploading-panel
@@ -47,6 +47,7 @@
 
 javascript:
   $(function() {
+    var assetsPath = #{Hash[Dir.glob("#{Rails.root}/app/assets/images/file-types/32px/*.png").map{ |image| name = image.split('/').last; ext = name.split('.').first; [ext, asset_path("file-types/32px/" + name)]; }].to_json.html_safe};
     $('#s3_uploader').S3Uploader(
       {
         remove_completed_progress_bar: false,
@@ -67,7 +68,10 @@ javascript:
       data.context.find('.upload-file-status').text(progress+'%');
       if (!data._icon){
         var file_extension = data.files[0].name.split('.').pop().toLowerCase();
-        data._icon = data.context.find('.upload-file-icon').html($('<img src="/assets/file-types/32px/'+file_extension+'.png">'));
+        if (file_extension == 'jpeg'){
+          file_extension = 'jpg';
+        }
+        data._icon = data.context.find('.upload-file-icon').html($('<img src="'+assetsPath[file_extension]+'">'));
       }
     }).bind('fileuploaddone', function (e, data) {
       data.context.addClass('complete').find('.upload-file-status').html($('<i class="icon-ok-sign"></i>'), $('<i class="icon-minus-sign"></i>'));
