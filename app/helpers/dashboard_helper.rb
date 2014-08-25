@@ -35,7 +35,7 @@ module DashboardHelper
       elsif c['today_percentage'] < c['executed_percentage']+c['scheduled_percentage']
         'blue'
       end
-      today_bar_indicator = content_tag(:div, '', class: "today-line-indicator #{color_class}", style: "left: #{c['today_percentage'] - 0.5}%")
+      today_bar_indicator = content_tag(:div, '', class: "icon-arrow-down today-line-indicator #{color_class}", style: "left: #{c['today_percentage'] - 0.5}%")
     end
     content_tag(:div, class: 'chart-bar') do
       today_bar_indicator +
