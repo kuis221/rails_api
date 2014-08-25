@@ -454,7 +454,7 @@ feature 'Events section' do
         filter_section('PEOPLE').unicheck('Roberto Gomez')
         filter_section('EVENT STATUS').unicheck('Submitted')
 
-        find('#save-filters-btn').trigger('click')
+        click_button 'Save'
 
         within visible_modal do
           fill_in('Filter name', with: 'My Custom Filter')

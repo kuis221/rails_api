@@ -57,17 +57,15 @@ $.widget 'nmk.filteredList', {
 		if @options.filters
 			@setFilters(@options.filters)
 
-		$('<div class="a btn btn-primary" id="save-filters-btn">')
-			.text('Save')
-				.on 'click', (e) =>
-					@_saveFilters()
-			.appendTo(@form)
+		$('<input class="btn btn-primary" id="save-filters-btn" type="submit" value="Save">')
+			.on 'click', (e) =>
+				@_saveFilters()
+		.appendTo(@form)
 
-		$('<div class="a btn btn-cancel" id="cancel-save-filters">')
-			.text('Reset')
-				.on 'click', (e) =>
-					false
-			.appendTo(@form)
+		$('<input class="btn btn-cancel" id="cancel-save-filters" type="reset" value="Reset">')
+			.on 'click', (e) =>
+				false
+		.appendTo(@form)
 
 		$('<a class="settings-for-filters" href="#"><span class="icon-gear"></span></a>')
 			.on 'click', (e) =>
