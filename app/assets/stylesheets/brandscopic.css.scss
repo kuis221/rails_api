@@ -6485,9 +6485,11 @@ body{
 					&.add-button{
 						display: table-cell;
 						vertical-align: middle;
-					}
-					&.member-data{
-						padding-left: 60px;
+						width: 8%;
+						i{
+							font-size: 18px;
+							color: red;
+						}
 					}
 				}
 				.brand-data, .kpi-data {
