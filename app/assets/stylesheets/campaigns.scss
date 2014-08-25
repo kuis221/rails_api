@@ -2,7 +2,9 @@
 
 .campaigns.show {
 	.nav-tabs li a {
-		width: 94px;
+		padding-left: 6px;
+		padding-right: 6px;
+		width: 100px;
 	}
 	.kpis-list {
 		list-style: none;
@@ -16,10 +18,6 @@
 		span.kpi-goal {
 			width: 280px;
 			float: right;
-		}
-
-		span.pull-right{
-			top: 35%;
 		}
 
 		.kpi-goals-list {

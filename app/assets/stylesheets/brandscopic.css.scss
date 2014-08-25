@@ -63,7 +63,7 @@ $footer-height: 35px;
 body{
 	color:$text;
 	font-family: $baseFontFamily;
-	font-size: 13px;
+	//font-size: 13px;
 	font-weight: 400;
 	min-height: 100%;
 	position: relative;
@@ -2129,6 +2129,7 @@ ul.kpis-list{
 			color: $text;
 			display: table;
 			min-height: 85px;
+			height: 85px;
 			position: relative;
 			width: 100%;
 			a{
@@ -2451,6 +2452,7 @@ ul.kpis-list{
 					span.tasks{
 						display: table-cell;
 						vertical-align: middle !important;
+						height: 85px;
 						.task-completed{
 							height: 20px;
 							margin-right: 15px;
@@ -5384,21 +5386,14 @@ body.campaigns{
 		h2{
 			margin-bottom: 8px;
 		}
-		&.padding-top-close-bar{
-			span{
-				display: block;
-				margin-top: 30px;
-				.calendar-data{
-					font-size: 16px;
-				}
-			}
-		}
+	}
+	.campaign-brands{
+		font-size: 16px;
+		margin-bottom: 30px;
 	}
 }
 
-.campaign-brands{
-	font-size: 16px;
-}
+
 
 // DETAILS PAGES
 
