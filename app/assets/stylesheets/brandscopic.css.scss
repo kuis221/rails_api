@@ -3881,7 +3881,7 @@ body.show {
 			a.remove-member-btn, a.remove-area-btn, a.remove-brand-btn, a.remove-contact-btn, .event-contacts-list a.edit {
 				color: $brand;
 				display:inline-block;
-				font-size: 18px;
+				font-size: 16px;
 				float: right;
 			}
 		}
@@ -3889,6 +3889,7 @@ body.show {
 			display:none;
 		}
 		.icon-wired-star{
+			color: $user_menu;
 			font-size: 18px;
 			margin-right: 10px;
 		}
@@ -3897,23 +3898,20 @@ body.show {
 		}
 	}
 
-	.team-member:before{
-		display: block;
-		font-size: 20px;
-		left: -30px;
-		position: relative;
-		top: 15px;
-		vertical-align: middle;
+	.team-member, .team{
+		.icon-user, .icon-team{
+			color: $user_menu;
+			float: left;
+			font-size: 18px;
+			margin-right: 15px;
+			position: relative;
+			top: 2px;
+		}
+		span{
+			display: inline-block;
+		}
 	}
 
-	.team:before{
-		display: block;
-		font-size: 20px;
-		left: -40px;
-		position: relative;
-		top: 15px;
-		vertical-align: middle;
-	}
 
 	.area-place:before{
 		display: block;
@@ -7276,9 +7274,12 @@ table td.sub-level-1 {
 	}
 }
 
-.time-data {
+.time-data, .description-data {
 	i{
 		font-size:20px;
+		&+span{
+			width: 90%;
+		}
 	}
 }
 

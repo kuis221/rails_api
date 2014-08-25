@@ -7,7 +7,8 @@
     - if resource.description.present?
       .description-data
         i.icon-wired-description
-        = resource.description
+        span
+          = resource.description
 
     .links-data
       = link_to '', edit_role_path(resource), remote: true, class: 'icon-edit' if can?(:edit, resource)
