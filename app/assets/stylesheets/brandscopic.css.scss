@@ -453,6 +453,10 @@ a.datepick-cmd:hover{
 	a:hover{
 		text-decoration: none;
 	}
+	.icon-angle-left:before, .icon-angle-right:before {
+		font-size: 26px;
+		color: silver;
+	}
 }
 .datepick{
 	background-color: white;
