@@ -7335,8 +7335,12 @@ table.table.likert-scale-table {
 		position: absolute;
 		right: 25px;
 		top: 5px;
-		&:before{
+		&:before {
 			color: $brand;
+			left: 0;
+			top: 4px;
+			font-size: 12px;
+			position: absolute;
 		}
 	}
 	.video-thumbnail{
