@@ -2722,9 +2722,6 @@ ul.kpis-list{
 			}
 			&.first, &.last{
 				margin-top: 0;
-				b{
-					top:-2px;
-				}
 			}
 		}
 	}
@@ -2732,6 +2729,14 @@ ul.kpis-list{
 		li{
 			display: table;
 			width: 100%;
+		}
+	}
+	ul#brand_portfolios-list{
+		span{
+			width: 80%;
+			&.pull-right{
+				width: auto;
+			}
 		}
 	}
 	ul#venues-list{
@@ -2793,7 +2798,6 @@ ul.kpis-list{
 		.description{
 			display: block;
 			@extend .crop-text;
-			width: 80%;
 		}
 		&>a{
 			display: block;
