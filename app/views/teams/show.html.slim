@@ -20,7 +20,7 @@
       = active_inactive_buttons(resource) if can?(:deactivate, resource)
 
   #team-members.details_box
-    h3 Team Members
+    h3 TEAM MEMBERS
     #team-members-list
       = render 'members'
     = link_to "", new_member_team_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Team Member' if can?(:edit, resource)
