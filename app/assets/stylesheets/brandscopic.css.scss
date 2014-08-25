@@ -1597,6 +1597,7 @@ li#notifications{
 				font-size: 17px;
 				margin: 0 10px;
 				position: relative;
+				top: 2px;
 			}
 		}
 
@@ -1688,7 +1689,6 @@ li#notifications{
 				a{
 					color: white;
 					font-size: 11px;
-					line-height: 15px;
 					display: table-cell;
 					vertical-align: middle;
 					height: 32px;
@@ -3658,16 +3658,16 @@ body.events.index {
 }
 
 
-#event-contacts.details_box, #event-members.details_box, #event-documents.details_box {
+#event-contacts.details_box, #event-members.details_box,
+#event-documents.details_box {
 	overflow: hidden;
 }
 
 .form-results-box {
 	width: 100%;
-	.edit {
-		margin-left: 20px;
-		&:after {
-			color: $brand;
+	h3{
+		a#edit-event-data-btn{
+			margin-left: 15px;
 		}
 	}
 	.form-result {
