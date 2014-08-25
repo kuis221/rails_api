@@ -24,7 +24,8 @@
       - if resource.description
         .description-data
           i.icon-wired-description
-          = resource.description
+          span
+            = resource.description
 
     .links-data
       = link_to '', edit_campaign_path(resource), remote: true, class: 'icon-edit', title: 'Edit' if can?(:edit, resource)
