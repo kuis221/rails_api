@@ -39,6 +39,12 @@ $footer-height: 35px;
 // General Styles
 // --------------------------------------------------
 
+.crop-text{
+	overflow:hidden;
+	text-overflow: ellipsis;
+	white-space:nowrap;
+}
+
 .menubar-icon {
 	display: block;
 	margin-left: 5px;
@@ -2080,6 +2086,7 @@ ul.kpis-list{
 }
 
 /*-- LISTS OF ELEMENTS - EVENTS --*/
+
 .link-list{
 	border:1px solid $borders;
 	color: $brand;
@@ -2267,12 +2274,10 @@ ul.kpis-list{
 			-moz-box-sizing: border-box;
 			display: table !important;
 			min-height: 86px;
-			padding-left: 25px;
 			height: 86px;
 			width: 100%;
 			a, span{
 				display: table-cell !important;
-				padding-left:0;
 				vertical-align: middle;
 			}
 			&.inactive{
@@ -2702,9 +2707,6 @@ ul.kpis-list{
 		}
 	}
 	ul#campaigns-list{
-		li{
-			min-height: 97px;
-		}
 		span{
 			line-height: 20px;
 			b{
@@ -2790,9 +2792,8 @@ ul.kpis-list{
 		}
 		.description{
 			display: block;
-			overflow: hidden;
-			text-overflow:ellipsis;
-			white-space: nowrap;
+			@extend .crop-text;
+			width: 80%;
 		}
 		&>a{
 			display: block;

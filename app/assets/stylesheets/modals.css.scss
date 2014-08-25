@@ -288,6 +288,11 @@ ul.select2-results{
 			.control-group {
 				margin-bottom: 50px;
 				width: 100%;
+				.radio-group{
+					label.radio{
+						width: auto;
+					}
+				}
 				.hidden-label{
 					display: inline-block;
 					float: left;
