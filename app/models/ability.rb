@@ -12,6 +12,7 @@ class Ability
     alias_action :remove_kpi, :to => :activate_kpis
     alias_action :add_activity_type, :to => :activate_kpis
     alias_action :remove_activity_type, :to => :activate_kpis
+    alias_action :reject, :to => :approve
     alias_action :post_event_form, :update_post_event_form, :to => :view_event_form
 
     # All users
@@ -400,10 +401,6 @@ class Ability
 
       can :view_promo_hours_data, Campaign do |campaign|
         user.current_company_user.accessible_campaign_ids.include?(campaign.id)
-      end
-
-      can :reject, Event do |event|
-        can?(:approve, event)
       end
     end
   end
