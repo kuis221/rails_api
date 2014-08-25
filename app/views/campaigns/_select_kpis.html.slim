@@ -4,7 +4,7 @@
   input#kpi-search-box.search-box type="text" name="q" placeholder="Search"
   .select-list-table-wrapper
     .link-list
-      ul.select-items-list
+      ul
         - if @kpis.present?
           - @kpis.each do |kpi|
             - type = kpi.is_a?(Kpi) ? 'kpi' : 'activity_type'
@@ -13,15 +13,15 @@
                 .kpi_name= kpi.name
                 .kpi_description= kpi.description
               span.pull-right
-                = link_to '', send("add_#{type}_campaign_path", resource, "#{type}_id" => kpi.id), id: "add-#{type}-btn-#{kpi.id}", data:{'#{type}-id' => kpi.id}, remote: true, method: :post, enable_with: '...', class: 'add', title: 'Add KPI'
+                = link_to '', send("add_#{type}_campaign_path", resource, "#{type}_id" => kpi.id), id: "add-#{type}-btn-#{kpi.id}", data:{'#{type}-id' => kpi.id}, remote: true, method: :post, enable_with: '...', class: 'icon-rounded-add', title: 'Add KPI'
         - else
           li.empty-list-message
             p There are not assignable KPIs
-    - if can?(:create_custom_kpis, resource)
-      .row-fluid
-        .span12
-          .divider
-            | OR
+- if can?(:create_custom_kpis, resource)
+  .row-fluid
+    .span12
+      .divider
+        | OR
 
 javascript:
   $('#kpi-search-box').on('keyup', function () {

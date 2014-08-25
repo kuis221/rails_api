@@ -126,6 +126,15 @@ class Event < ActiveRecord::Base
     joins("INNER JOIN (#{area_query.to_sql} UNION #{place_query}) areas_places ON events.place_id=areas_places.place_id")
   }
 
+  # TODO: This should be removed in favor of `in_campaign_area`
+  scope :in_areas, ->(areas) {
+    subquery = Place.select('DISTINCT places.location_id, placeables.placeable_id area_id').joins(:placeables).where(placeables: { placeable_type: 'Area', placeable_id: areas }, is_location: true)
+    place_query = "select place_id, locations.area_id FROM locations_places INNER JOIN (#{subquery.to_sql}) locations on locations.location_id=locations_places.location_id"
+    area_query = Placeable.select('place_id, placeable_id area_id').where(placeable_type: 'Area', placeable_id: areas).to_sql
+    joins(:place).
+    joins("INNER JOIN (#{area_query} UNION #{place_query}) areas_places ON events.place_id=areas_places.place_id")
+  }
+
   scope :in_places, ->(places) {
     joins(:place).where(
       'events.place_id in (?) or events.place_id in (

@@ -256,12 +256,13 @@ describe EventsController, :type => :controller do
         expect {
           post 'create', event: {
               campaign_id: campaign.id, team_members: ["company_user:#{user.id}", "team:#{team.id}"],
-              start_date: '05/21/2020', start_time: '12:00pm',
+              start_date: '05/21/2020', start_time: '12:00pm', description: 'some description',
               end_date: '05/21/2020', end_time: '01:00pm'}, format: :js
         }.to change(Event, :count).by(1)
         event = Event.last
         expect(event.start_at).to eq(Time.zone.parse('2020/05/21 12:00pm'))
         expect(event.end_at).to eq(Time.zone.parse('2020/05/21 01:00pm'))
+        expect(event.description).to eq('some description')
         expect(event.promo_hours).to eq(1)
         expect(event.users.to_a).to eql [user]
         expect(event.teams.to_a).to eql [team]

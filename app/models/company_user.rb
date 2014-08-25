@@ -162,8 +162,8 @@ class CompanyUser < ActiveRecord::Base
       else
         (
           campaign_ids +
-          Campaign.where(company_id: company_id).joins(:brands).where(brands: {id: brand_ids}).pluck('campaigns.id') +
-          Campaign.where(company_id: company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids}).pluck('campaigns.id')
+          Campaign.where(company_id: company_id).joins(:brands).where(brands: {id: brand_ids}).reorder(nil).pluck('campaigns.id') +
+          Campaign.where(company_id: company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids}).reorder(nil).pluck('campaigns.id')
         ).uniq
       end
     end

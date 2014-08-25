@@ -96,7 +96,7 @@ javascript:
   $('#campaign-tabs a[data-content]').on('show', function(e){
     $target = $(e.target);
     $content = $('.tab-content ' + $target.attr('href'))
-    $content.html('<img src="/assets/loading.gif" />')
+    $content.html('<img src="#{asset_path('loading.gif')}" />')
     $content.load($target.data('content'))
   });
 

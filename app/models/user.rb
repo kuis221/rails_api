@@ -109,6 +109,11 @@ class User < ActiveRecord::Base
   scope :in_company, ->(company){ active_in_company(company) }
 
   #search_methods :active_eq if ENV['WEB']
+  if ENV['WEB']
+    ransacker :active do
+      Arel.sql("#{table_name}.invitation_accepted_at is not null")
+    end
+  end
 
   # Tasks-Users relationship
   has_many :tasks, through: :company_users

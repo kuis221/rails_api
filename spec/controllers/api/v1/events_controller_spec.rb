@@ -111,7 +111,11 @@ describe Api::V1::EventsController, :type => :controller do
     it "must update the event attributes" do
       new_campaign = FactoryGirl.create(:campaign, company: company)
       place = FactoryGirl.create(:place)
-      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, event: {campaign_id: new_campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm', place_id: place.id}, format: :json
+      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, event: {
+        campaign_id: new_campaign.id,
+        start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm',
+        place_id: place.id, description: 'this is the test description'
+      }, format: :json
       expect(assigns(:event)).to eq(event)
       expect(response).to be_success
       event.reload
@@ -120,6 +124,7 @@ describe Api::V1::EventsController, :type => :controller do
       expect(event.end_at).to eq(Time.zone.parse('2020-05-22 13:00:00'))
       expect(event.place_id).to eq(place.id)
       expect(event.promo_hours.to_i).to eq(25)
+      expect(event.description).to eq('this is the test description')
     end
 
     it "must deactivate the event" do
