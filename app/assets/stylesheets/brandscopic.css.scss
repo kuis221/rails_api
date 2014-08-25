@@ -6313,13 +6313,14 @@ body.gva {
 									&:before{
 										color: $user_menu;
 										margin-top: 9px;
+										font-size: 24px;
 									}
 								}
 							}
 							&.remove-item{
 								float: right;
 								width: 20px;
-								&:after{
+								&:before{
 									color: $user_menu;
 									font-size: 15px;
 									margin-top: 15px;

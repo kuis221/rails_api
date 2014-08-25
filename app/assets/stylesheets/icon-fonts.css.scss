@@ -4,7 +4,7 @@
 
 /* Icons */
 
-[class^="icon-"]:before {
+[class^="icon-"]:before, .icon:before {
   position:relative;
   display:inline-block;
   font-family: 'icons';
@@ -131,6 +131,13 @@
 
 .icon-slimmed-arrow-right:before, .icon-angle-right:before{
   content: "\e01d"
+}
+
+.icon-collapsed:before, .icon-angle-down:before{
+  content: "\e616";
+}
+.icon-expanded:before, .icon-angle-up:before{
+  content: "\e61a";
 }
 
 .icon-time:before{
