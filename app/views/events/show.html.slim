@@ -49,6 +49,11 @@
         i.icon-wired-venue
         span
           = place_address(resource.place, true) if resource.place
+
+    - unless resource.description.nil? || resource.description.empty?
+      .description-data
+        i.icon-wired-description
+        span= simple_format resource.description
     .links-data
       = link_to '', edit_event_path(resource), remote: true, class: 'icon-edit' if can_edit
       = active_inactive_buttons(resource) if can? :deactivate, resource
