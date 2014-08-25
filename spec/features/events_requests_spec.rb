@@ -475,6 +475,40 @@ feature 'Events section' do
           expect(page).to have_content('My Custom Filter')
         end
       end
+
+      scenario "allows to remove custom filters" do
+        FactoryGirl.create(:custom_filter, company_user_id: company_user.to_param, name: 'Custom Filter 1', apply_to: 'events', filters: 'Filters 1')
+        cf2 = FactoryGirl.create(:custom_filter, company_user_id: company_user.to_param, name: 'Custom Filter 2', apply_to: 'events', filters: 'Filters 2')
+        FactoryGirl.create(:custom_filter, company_user_id: company_user.to_param, name: 'Custom Filter 3', apply_to: 'events', filters: 'Filters 3')
+
+        visit events_path
+
+        find('.settings-for-filters').trigger('click')
+
+        within visible_modal do
+          expect(page).to have_content('Custom Filter 1')
+          expect(page).to have_content('Custom Filter 2')
+          expect(page).to have_content('Custom Filter 3')
+
+          expect {
+            hover_and_click('#saved-filters-container #custom-filter-'+cf2.id.to_s, 'Remove Custom Filter')
+            wait_for_ajax
+          }.to change(CustomFilter, :count).by(-1)
+
+          expect(page).to have_content('Custom Filter 1')
+          expect(page).to_not have_content('Custom Filter 2')
+          expect(page).to have_content('Custom Filter 3')
+
+          click_js_link 'Done'
+        end
+        ensure_modal_was_closed
+
+        within '.form-facet-filters' do
+          expect(page).to have_content('Custom Filter 1')
+          expect(page).to_not have_content('Custom Filter 2')
+          expect(page).to have_content('Custom Filter 3')
+        end
+      end
     end
 
     feature "create a event" do

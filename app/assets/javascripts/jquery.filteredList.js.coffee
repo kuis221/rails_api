@@ -63,6 +63,19 @@ $.widget 'nmk.filteredList', {
 					@_saveFilters()
 			.appendTo(@form)
 
+		$('<div class="a btn btn-cancel" id="cancel-save-filters">')
+			.text('Reset')
+				.on 'click', (e) =>
+					false
+			.appendTo(@form)
+
+		$('<a class="settings-for-filters" href="#"><span class="icon-gear"></span></a>')
+			.on 'click', (e) =>
+				e.preventDefault()
+				e.stopPropagation()
+				$.get '/custom_filters/configure.js', {apply_to: @options.applyTo}
+		.appendTo(@form)
+
 		$(document).on 'custom-filters:change', (e) =>
 			@reloadFilters()
 
