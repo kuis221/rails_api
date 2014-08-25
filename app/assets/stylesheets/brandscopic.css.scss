@@ -2921,9 +2921,7 @@ input.search-query:focus{
 		}
 	}
 	.term{
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
+		@extend .crop-text;
 		width: 150px;
 		float: left;
 		display: inline-block;
@@ -3872,9 +3870,7 @@ body.show {
 		height: 70px;
 		.full-name, .address-name, .brand-name{
 			font-size: 16px;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
+			@extend .crop-text;
 		}
 		&:hover{
 			a.remove-member-btn, a.remove-area-btn, a.remove-brand-btn, a.remove-contact-btn, .event-contacts-list a.edit {
@@ -4105,9 +4101,7 @@ body.show {
 				.upload-file-name {
 					position: absolute;
 					left: 40px;
-					overflow: hidden;
-					text-overflow: ellipsis;
-					white-space: nowrap;
+					@extend .crop-text;
 					top: 12px;
 					width: 70%;
 				}
@@ -4328,11 +4322,9 @@ ul{
 			text-align: left;
 			.campaign-name{
 				font-size: 16px;
-				overflow: hidden;
-				text-overflow:ellipsis;
 				padding: 17px 0 0 25px;
 				width: 400px;
-				white-space: nowrap;
+				@extend .crop-text;
 			}
 			.event-date{
 				font-size: 11px;
@@ -4340,11 +4332,9 @@ ul{
 			}
 			.photo-location{
 				font-size: 11px;
-				overflow: hidden;
-				text-overflow:ellipsis;
 				padding: 0 0 25px 25px;
 				width: 400px;
-				white-space: nowrap;
+				@extend .crop-text;
 			}
 			.pull-right{
 				margin: 25px 15px 0 0;
@@ -5549,10 +5539,8 @@ body.campaigns{
 		a{
 			color: $menu;
 			float: left;
-			overflow: hidden;
 			position: relative;
-			text-overflow: ellipsis;
-			white-space: nowrap;
+			@extend .crop-text;
 			width: 85%;
 		}
 		img{
@@ -5945,9 +5933,7 @@ div.chardinjs-tooltip
 		.goalable-name {
 			font-size: 16px;
 			margin-top: 35px;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
+			@extend .crop-text;
 			width: 200px;
 		}
 		.goal-title {
