@@ -23,10 +23,10 @@ ActiveAdmin.register SatisfactionSurvey do
     column "Date/Time", sortable: :created_at do |survey|
       survey.created_at
     end
-    default_actions
+    actions
   end
 
-  filter :company_id, as: :select, collection: proc { Company.all(order: :name) }
+  filter :company_id, as: :select, collection: proc { Company.order(:name).pluck(:name, :id) }
   filter :company_user_id, as: :select, collection: proc { CompanyUser.for_dropdown }
   filter :rating, as: :check_boxes, collection: SatisfactionSurvey::RATING_OPTIONS
   filter :feedback
