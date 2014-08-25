@@ -217,7 +217,7 @@ class Place < ActiveRecord::Base
         results.concat(google_results['results'].
           reject{|p| local_references.include?(p['reference']) || local_references.include?(p['id']) }.
           map do |p|
-            name = p['formatted_address'].match(/\A#{p['name']}/i) ? nil : p['name']
+            name = p['formatted_address'].match(/\A#{Regexp.escape(p['name'])}/i) ? nil : p['name']
             label = [name, p['formatted_address'].to_s].compact.join(', ')
             {
               value: label,
