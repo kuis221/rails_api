@@ -2,28 +2,29 @@
   - if goalable.is_a?(Kpi)
     - unless ['Videos', 'Competitive Analysis'].include?(goalable.name)
       li id="campaign-kpi-#{goalable.id}"
-        span.kpi-info
-          .kpi-name
-            = goalable.name
-          = goalable.description
-        span.kpi-goal
-          - if goalable.is_segmented? || goalable.kpi_type == 'count'
-            - suffix = goalable.kpi_type == 'percentage' ? '%' : ''
-            ul.kpi-goals-list
-              - goals = resource.goals.for_kpis_segments(goalable, false)
-              - goalable.kpis_segments.each do |segment|
-                - goal = goals.detect{|g| g.kpis_segment_id == segment.id }
-                li
-                  span.value= "#{goal.present? && goal.value.present? ? goal.value : '--'}#{suffix}"
-                  | &nbsp;
-                  span.segment_name= segment.text
-          - else
-            - goal = resource.goals.for_kpi(goalable, false)
-            span.value= goal.try(:value)
-        span.pull-right
-          = link_to '', edit_campaign_kpi_path(resource, goalable.id), remote: true, class: 'icon-edit', title: 'Edit'
-          = link_to '', remove_kpi_campaign_path(resource, goalable.id), remote: true, method: :delete, class: 'icon-rounded-disable', title: 'Remove', data: { confirm: 'Please confirm you want to remove this KPI?'} unless [Kpi.events, Kpi.promo_hours].include? goalable
-        .clearfix
+        span.kpis-container
+          span.kpi-info.crop-text
+            .kpi-name.crop-text
+              = goalable.name
+            = goalable.description
+          span.kpi-goal
+            - if goalable.is_segmented? || goalable.kpi_type == 'count'
+              - suffix = goalable.kpi_type == 'percentage' ? '%' : ''
+              ul.kpi-goals-list
+                - goals = resource.goals.for_kpis_segments(goalable, false)
+                - goalable.kpis_segments.each do |segment|
+                  - goal = goals.detect{|g| g.kpis_segment_id == segment.id }
+                  li
+                    span.value= "#{goal.present? && goal.value.present? ? goal.value : '--'}#{suffix}"
+                    | &nbsp;
+                    span.segment_name= segment.text
+            - else
+              - goal = resource.goals.for_kpi(goalable, false)
+              span.value= goal.try(:value)
+          span.pull-right
+            = link_to '', edit_campaign_kpi_path(resource, goalable.id), remote: true, class: 'icon-edit', title: 'Edit'
+            = link_to '', remove_kpi_campaign_path(resource, goalable.id), remote: true, method: :delete, class: 'icon-rounded-disable', title: 'Remove', data: { confirm: 'Please confirm you want to remove this KPI?'} unless [Kpi.events, Kpi.promo_hours].include? goalable
+          .clearfix
   - else
     li id="campaign-activity-type-#{goalable.id}"
       span.kpi-info
