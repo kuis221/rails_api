@@ -30,7 +30,7 @@ class Company < ActiveRecord::Base
   has_many :kpis, dependent: :destroy
   has_many :reports, dependent: :destroy
   has_many :activity_types, dependent: :destroy
-  has_many :tags, ->{ order 'name ASC' }, :autosave => true, dependent: :destroy
+  has_many :tags, ->{ order 'tags.name ASC' }, :autosave => true, dependent: :destroy
 
   validates :name, presence: true, uniqueness: true
   validates :admin_email, presence: true, on: :create, unless: :no_create_admin
@@ -85,6 +85,14 @@ class Company < ActiveRecord::Base
       Timeliness.parse(Time.now.strftime('%Y-%m-%d 00:00:00'), zone: 'UTC')
     else
       Time.now.in_time_zone(Time.zone)
+    end
+  end
+
+  def late_task_date
+    if timezone_support?
+      Timeliness.parse(Date.yesterday.strftime('%Y-%m-%d 00:00:00'), zone: 'UTC')
+    else
+      Date.yesterday.beginning_of_day
     end
   end
 

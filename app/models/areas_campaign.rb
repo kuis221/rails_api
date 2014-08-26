@@ -12,6 +12,10 @@ class AreasCampaign < ActiveRecord::Base
   belongs_to :area
   belongs_to :campaign
 
+  def self.find_by_area_id!(area_id)
+    find_by!(area_id: area_id)
+  end
+
   # If place is in /North America/United States/California/Los Angeles and the area
   # includes Los Angeles or any parent (like California)
   def place_in_scope?(place)

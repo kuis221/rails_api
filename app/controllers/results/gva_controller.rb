@@ -149,7 +149,7 @@ class Results::GvaController < InheritedResources::Base
             events_scope = campaign.events.active.where(aasm_state: ['approved', 'rejected', 'submitted']).group('1').reorder(nil)
             query = if goaleables_ids[kpi].any?
               if goalable_type == 'Area'
-                events_scope.in_areas(goaleables_ids[kpi]).select("ARRAY[areas_places.area_id::varchar, '#{goalable_type}'], '{KPI_NAME}', {KPI_AGGR}")
+                events_scope.in_campaign_areas(campaign, goaleables_ids[kpi]).select("ARRAY[areas_places.area_id::varchar, '#{goalable_type}'], '{KPI_NAME}', {KPI_AGGR}")
               elsif goalable_type == 'Place'
                 events_scope.in_places(goaleables_ids[kpi]).select("ARRAY[places.id::varchar, '#{goalable_type}'], '{KPI_NAME}', {KPI_AGGR}")
               elsif goalable_type == 'CompanyUser'

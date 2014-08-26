@@ -36,8 +36,234 @@ $footer-height: 35px;
 }
 
 
-// General Styles
+// GENERAL STYLES
 // --------------------------------------------------
+
+a{
+	color:$text;
+	outline: 0;
+	&:focus{
+		color:$text;
+		outline:0;
+	}
+	&.more-options-link{
+		font-size: 13px;
+		margin-left:30px;
+		margin-bottom:35px;
+		&:hover{
+			color: $text;
+		}
+	}
+}
+
+abbr[title]{
+	border:0;
+}
+
+.close {
+	opacity: 1;
+	right: 25px;
+	text-shadow:none;
+	&:hover{
+		opacity: 1 !important;
+	}
+}
+
+.container-fluid{
+	padding: 0;
+}
+
+.crop-text{
+	overflow:hidden;
+	text-overflow: ellipsis;
+	white-space:nowrap;
+}
+
+h1, h2, h3{
+	font-family: $baseFontFamily;
+	font-weight: normal;
+	line-height: 20px;
+	margin-top: 0;
+}
+
+p{
+	&.big{
+		font-size: 16px;
+	}
+}
+
+table{
+	border: 0;
+}
+
+.uppercase{
+	text-transform: uppercase;
+}
+
+// BUTTON STYLES
+// --------------------------------------------------
+
+.btn{
+	&.active{
+		background-color: $brand;
+		border: 0;
+		box-shadow: none;
+		&.list, &.map, &.calendar, &.table, &.graph{
+			&:after{
+				color: $user_menu;
+			}
+		}
+	}
+	&.download{
+		&[disabled]{
+			background-color: $grey_one;
+			color: #f2f2f2;
+			&:hover{
+				background-color: $grey_one;
+				color:#f2f2f2;
+			}
+		}
+	}
+	&:focus{
+		outline:0;
+	}
+	&:hover{
+		background-color: $btnHover;
+		border: 0;
+		box-shadow: none;
+	}
+	&.list:after, &.table:after{
+		font-size: 14px;
+		top:1px;
+	}
+	&.map:after{
+		font-size: 15px;
+		left: 2px;
+		top:1px;
+	}
+	&.calendar:after{
+		font-size: 15px;
+		top: 2px;
+	}
+	&.graph:after{
+		font-size: 14px;
+		top: 1px;
+	}
+	.icon-calendar:before{
+		font-size: 19px;
+		left: 2px;
+		top:1px;
+	}
+	&.btn-primary, &.btn-cancel{
+		box-sizing: border-box;
+		padding: 8px 25px;
+		height: 35px;
+		&.fileinput-button{
+			width: 140px;
+		}
+	}
+}
+
+.btn-small {
+	padding: 2px 10px;
+}
+
+// BTN GROUP
+// According to the Style Guide there is no hover effect for this element
+// ----------------------------------------------------------------------
+
+.btn-group{
+	margin-left: 25px;
+	&>.btn+.btn{
+		margin-left: 0;
+	}
+	.btn{
+		border: 0;
+		box-shadow: none;
+		color: white;
+		&.active{
+			background-color: $brand;
+			color: $user_menu;
+			&:hover{
+				background-color: $brand;
+				color: $user_menu;
+			}
+		}
+		&:hover{
+			background-color: $user_menu;
+			color: white;
+		}
+		&.calendar{
+			border-left: 1px solid $buttons-border;
+			border-right: 1px solid $buttons-border;
+			&:last-child{
+				border-right: none;
+			}
+		}
+	}
+}
+
+.btn-primary{
+	background-color: $buttons !important;
+	background-image:none !important;
+	border: 0;
+	box-shadow: none;
+	color: white !important;
+	font-size: 14px;
+	padding: 7px 25px;
+	text-decoration: none !important;
+	text-shadow:none;
+	&:hover{
+		background-color: $buttons-hover !important;
+	}
+	&:active{
+		background-color: $buttons-hover;
+		box-shadow: none;
+	}
+	&.fileinput-button{
+		padding: 7px 23px;
+	}
+}
+
+.btn-cancel{
+	background-color: $user_menu;
+	color: white;
+	&:hover{
+		color: white;
+		background-color: $brand;
+	}
+}
+
+.btn-info{
+	background-color: $user_menu !important;
+	color: white !important;
+	font-size: 13px;
+	padding-bottom:9px;
+	padding-top: 9px;
+	i{
+		line-height: 5px;
+		font-size: 19px;
+		position: relative;
+		top: 6px;
+		right: -12px;
+	}
+	&:hover{
+		background-color: $brand !important;
+	}
+}
+
+// End buttons styles
+
+.menubar-icon {
+	display: block;
+	margin-left: 5px;
+	&:before {
+		font-size: 27px;
+	}
+	&.icon-results, &.icon-analysis{
+		margin-left: 0;
+	}
+}
 
 .help-inline.valid{
 	display:none !important;
@@ -46,7 +272,7 @@ $footer-height: 35px;
 body{
 	color:$text;
 	font-family: $baseFontFamily;
-	font-size: 13px;
+	//font-size: 13px;
 	font-weight: 400;
 	min-height: 100%;
 	position: relative;
@@ -66,19 +292,14 @@ body{
 			color:white;
 		}
 	}
+	&.sessions, &.passwords{
+		.alert{
+			margin: 0;
+		}
+	}
 }
 
-abbr[title]{
-	border:0;
-}
-
-/*
-label{
-	color: $brand;
-	font-size: 13px;
-}*/
-
-// Rating for photos
+// RATING FOR PHOTOS
 // --------------------------------------------------
 
 .rating{
@@ -96,12 +317,6 @@ label{
 	}
 }
 
-.calendar-data, .email-data, .phone-data, .place-data,
-.time-data, .description-data, .member-data{
-	margin:0 0 20px 30px;
-	width: 380px;
-}
-
 .communication-preferences{
 	.span9{
 		margin-left: 0;
@@ -111,78 +326,55 @@ label{
 	}
 }
 
-.marques-data{
+
+// STYLES FOR ALL DATA SECTIONS
+// --------------------------------------------------
+
+[class$='-data']{
+	display: block;
+	min-height: 20px;
+	margin: 0 0 10px 0;
+	position: relative;
+	width: 380px;
+	i{
+		color: $user_menu;
+		font-size: 17px;
+		display: inline-block;
+		margin-right: 10px;
+		margin-top: 4px;
+		vertical-align: top;
+	}
+	span{
+		display: inline-block;
+	}
+}
+
+.calendar-data, .email-data, .phone-data, .place-data,
+.time-data, .description-data, .member-data{
 	margin:0 0 20px 0;
 	width: 380px;
 }
 
-.member-data{
-	font-size: 12px;
-	b{
-		font-size:16px;
-		font-weight: 400;
-	}
-	&:before{
-		color: $user_menu;
-		font-size: 19px;
-		position: absolute;
-		left: 20px;
-		text-align: center;
-		vertical-align: middle;
-	}
-}
 .calendar-data{
-	font-size: 12px;
 	b{
 		font-size:16px;
 		font-weight: 400;
 	}
-	&:before{
-		color: $user_menu;
-		font-size: 19px;
-		position: absolute;
-		left: 28px;
-		text-align: center;
-		vertical-align: middle;
-	}
 }
-.email-data{
-	&:before{
-		color: $user_menu;
-		font-size: 19px;
-		padding-top: 6px;
-		position: absolute;
-		left: 28px;
-		text-align: center;
-		vertical-align: middle;
-	}
-}
-.place-data{
-	width: 500px;
-	&:before{
-		color: $user_menu;
-		font-size: 22px;
-		padding-top: 5px;
-		position: absolute;
-		left: 31px;
-		text-align: center;
-		vertical-align: middle;
-	}
 
-	address{
-		margin-bottom: 0px;
+.links-data{
+	margin: 0 0 0 30px;
+	.icon-edit, .icon-rounded-disable{
+		font-size: 17px;
+		margin-right: 10px;
+	}
+	i{
+		color: $brand;
+		margin-top: 0;
 	}
 }
+
 .phone-data{
-	&:before{
-		color: $user_menu;
-		font-size: 18px;
-		padding-top: 3px;
-		position: absolute;
-		left: 29px;
-		text-align: center;
-		vertical-align: middle;
-	}
 	div{
 		display: inline-block;
 		width: auto;
@@ -196,53 +388,60 @@ label{
 			}
 		}
 	}
-}
-.time-data{
-	&:before{
-		color: $user_menu;
-		padding-top: 3px;
-		position: absolute;
-		left: 27px;
-		text-align: center;
-		vertical-align: middle;
+	i{
+		top:-2px;
+		position: relative;
 	}
 }
 
-.control-group{
-	label.control-label{
-		color:$text;
-	}
-	&.error {
-		input, textarea {
-			&:focus {
-				box-shadow: none;
-				-webkit-box-shadow: none;
-			}
+.time-data, .description-data {
+	i{
+		font-size:20px;
+		&+span{
+			width: 90%;
 		}
 	}
 }
 
-.chzn-default span {
-	color: $user_menu;
+.place-data{
+	width: 500px;
+	address{
+		margin-bottom: 0px;
+	}
+	i{
+		font-size: 22px;
+		left: 2px;
+		position: relative;
+	}
 }
 
-/*-- EVENT DETAILS PAGES __*/
-body.events.show{
+.marques-data{
+	margin:0 0 20px 0;
+	width: 380px;
+}
 
+.member-data, .calendar-data{
+	font-size: 12px;
+}
+
+// EVENT DETAILS PAGES
+// --------------------------------------------------
+
+body.events.show{
 	.event-contact {
 		a.edit {
 			display: none;
 			margin-right: 6px;
-			&:after {
-				color: #989898;
-				top: 0;
-				font-size: 16px;
-			}
 		}
 		&:hover {
 			a.edit {
 				display: inline-block;
 			}
+		}
+	}
+	a,i{
+		&.icon-plus-sign{
+			margin-left:30px;
 		}
 	}
 }
@@ -255,15 +454,6 @@ body.events.show{
 
 #application-content {
 	padding: 0 10px;
-}
-
-a{
-	color:$text;
-	outline: 0;
-	&:focus{
-		color:$text;
-		outline:0;
-	}
 }
 
 .tab-content{
@@ -378,11 +568,8 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	}
 }
 
-.uppercase{
-	text-transform: uppercase;
-}
 
-// Alert Messages
+// ALERT MESSAGES
 // --------------------------------------------------
 
 .alert{
@@ -452,378 +639,227 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	}
 }
 
-/*-- Datepick Sidebar -- */
-
-.datepick-nav{
-	float: right;
-	margin-right:15px;
-	width: 34px;
-}
-.datepick-nav .datepick-cmd{
-	width: 15px;
-}
-
-a.datepick-cmd{
-	display: inline-block;
-	margin-top: 8px;
-	overflow: hidden;
-	position:relative;
-	text-indent: 200%;
-}
-a.datepick-cmd:hover{
-	background-color: $brand;
-}
-
-.task-list {
-	span.checked:after{
-		top: 0px
-	}
-}
-
-
-// Events Calendar Datepicker
+// SIDEBAR STYLES
 // --------------------------------------------------
 
-.calendar-months-arrows{
-	a:hover{
-		text-decoration: none;
+// Datepick styles
+
+	.datepick-nav{
+		float: right;
+		margin-right:15px;
+		width: 34px;
 	}
-}
-.datepick{
-	background-color: white;
-	border: 0;
-	margin-bottom: 10px;
-}
-.datepick-month td .datepick-other-month {
-	color: $grey_one;
-}
-.datepick-month{
-	border: 0;
-	width: 208px;
-	table{
-		border: 1px solid $user_menu;
-		display: block;
-		padding: 0 8px 4px 8px;
-		width: auto;
+	.datepick-nav .datepick-cmd{
+		width: 15px;
 	}
-	thead{
-		border-bottom: 0;
-		tr{
-			border: 0;
-			padding-bottom: 7px;
+
+	a.datepick-cmd{
+		display: inline-block;
+		margin-top: 8px;
+		overflow: hidden;
+		position:relative;
+		text-indent: 13%;
+	}
+	a.datepick-cmd:hover{
+		background-color: $brand;
+	}
+
+	.datepick-cmd-next, .datepick-cmd-prev{
+		font-size: 11px;
+		color: white !important;
+	}
+
+	.datepick-cmd-prev{
+		right: 35%;
+	}
+
+	.task-list {
+		span.checked:after{
+			top: 0px
 		}
 	}
-	th{
-		background-color: white;
-		border: 0;
-		color:$grey_three;
-		font-size: 12px;
-		font-weight: bold;
-		padding-top: 5px;
-	}
-	td{
-		padding: 0.2em 0.6em 0.3em 0.1em;
-	}
-	a{
-		color: $text;
-		font-size: 0.86em;
-		padding: 2px 3px;
-		-webkit-border-radius: 12px;
-		border-radius: 12px;
-		&.datepick-today{
-			background-color: $brand !important;
-			color: white;
-			font-size: 0.86em;
-			font-weight: 300;
-			opacity:1;
-			-webkit-border-radius: 12px;
-			border-radius: 12px;
-		}
-		&.datepick-event{
-			color: $buttons;
-			font-weight: 600;
-			&:hover{
-				color: $buttons;
-			}
-		}
-		&:focus{
-			outline:0;
-		}
-		&:hover{
-			display: block;
-			width: 100%;
-			background-color: $grey_one !important;
-			color: $text;
+
+
+// Events calendar datepicker
+
+	.calendar-months-arrows{
+		a:hover{
 			text-decoration: none;
 		}
+		.icon-angle-left:before, .icon-angle-right:before {
+			font-size: 26px;
+			color: silver;
+		}
 	}
-}
-.datepick-month td .datepick-selected {
-	background-color: $grey_one !important;
-	color: $text !important;
-}
-.datepick-month td, .datepick-month a, .datepick-weekend {
-	background-color: white !important;
-}
-.datepick-month-header{
-	background-color:$brand;
-	color: white;
-	font-weight: normal;
-	height:25px;
-	line-height: 16px;
-	padding: 10px 0 0 15px;
-	text-align: left;
-	width: 193px;
-	-webkit-border-top-left-radius: 6px;
-	-webkit-border-top-right-radius: 6px;
-	-moz-border-radius-topleft: 6px;
-	-moz-border-radius-topright: 6px;
-	border-top-left-radius: 6px;
-	border-top-right-radius: 6px;
-}
-table{
-	border: 0;
-}
-
-a.more-options-link{
-	font-size: 13px;
-	margin-left:30px;
-	margin-bottom:35px;
-	&:hover{
-		color: $text;
+	.datepick{
+		background-color: white;
+		border: 0;
+		margin-bottom: 10px;
 	}
-}
-a.more-options-link:after{
-	content: "\e004";
-	display: inline-block;
-	font-family: "icons";
-	font-size: 12px;
-	left:5px;
-	position: relative;
-	top:4px;
-}
-
-/*-- Date Preferences Panel -*/
-
-.dates-pref{
-	list-style: none;
-	margin-left: 0px;
-	li{
-		display: inline-block;
-		font-size: 12px;
-		font-weight: bold;
-		padding: 1px 7px;
-		margin-right: 0.15em;
-		margin-left: 2px;
-		&.active{
-			background-color: $brand;
-			font-weight: 300;
-			-webkit-border-radius: 6px;
-			border-radius: 6px;
-			a{
-				color: white;
-				&:hover{
-					border-bottom: 0;
-					color: $grey_two;
-				}
+	.datepick-month td .datepick-other-month {
+		color: $grey_one;
+	}
+	.datepick-month{
+		border: 0;
+		width: 208px;
+		table{
+			border: 1px solid $user_menu;
+			display: block;
+			font-size: 13px;
+			padding: 0 6px 4px;
+			width: auto;
+		}
+		thead{
+			border-bottom: 0;
+			tr{
+				border: 0;
+				padding-bottom: 7px;
 			}
 		}
+		th{
+			background-color: white;
+			border: 0;
+			color:$grey_three;
+			font-size: 12px;
+			font-weight: bold;
+			padding-top: 5px;
+		}
+		td{
+			padding: 0.2em 0.6em 0.3em 0.1em;
+		}
 		a{
-			color: $user_menu;
-			cursor: pointer;
-			font-weight: 400;
+			color: $text;
+			font-size: 0.86em;
+			padding: 2px 3px;
+			-webkit-border-radius: 12px;
+			border-radius: 12px;
+			&.datepick-today{
+				background-color: $brand !important;
+				color: white;
+				font-size: 0.86em;
+				font-weight: 300;
+				opacity:1;
+				-webkit-border-radius: 12px;
+				border-radius: 12px;
+			}
+			&.datepick-event{
+				color: $buttons;
+				font-weight: 600;
+				&:hover{
+					color: $buttons;
+				}
+			}
+			&:focus{
+				outline:0;
+			}
 			&:hover{
-				border-bottom: 1px solid $brand;
-				color: $brand;
+				display: block;
+				width: 100%;
+				background-color: $grey_one !important;
+				color: $text;
 				text-decoration: none;
 			}
 		}
 	}
-}
+	.datepick-month td .datepick-selected {
+		background-color: $grey_one !important;
+		color: $text !important;
+	}
+	.datepick-month td, .datepick-month a, .datepick-weekend {
+		background-color: white !important;
+	}
+	.datepick-month-header{
+		background-color:$brand;
+		color: white;
+		font-weight: normal;
+		height:25px;
+		line-height: 16px;
+		padding: 10px 0 0 15px;
+		text-align: left;
+		width: 193px;
+		-webkit-border-top-left-radius: 6px;
+		-webkit-border-top-right-radius: 6px;
+		-moz-border-radius-topleft: 6px;
+		-moz-border-radius-topright: 6px;
+		border-top-left-radius: 6px;
+		border-top-right-radius: 6px;
+	}
 
-.custom-data-panel{
-	.form-group{
-		display: inline-block;
-		width: 45% !important;
-		label{
-			color: $user_menu;
+
+// Date Preferences Panel (sidebar)
+
+	.dates-pref{
+		list-style: none;
+		margin-left: 0px;
+		li{
+			display: inline-block;
 			font-size: 12px;
-			font-weight: 300;
-		}
-		input[type="date"]{
-			color: $user_menu;
-			font-size: 0.88em;
-			height: auto;
-			padding:6px;
-			width: 100%;
-			&::-webkit-inner-spin-button,
-			&::-webkit-calendar-picker-indicator {
-			    display: none;
-			    -webkit-appearance: none;
+			font-weight: bold;
+			padding: 1px 7px;
+			margin-right: 0.15em;
+			margin-left: 2px;
+			&.active{
+				background-color: $brand;
+				font-weight: 300;
+				-webkit-border-radius: 6px;
+				border-radius: 6px;
+				a{
+					color: white;
+					&:hover{
+						border-bottom: 0;
+						color: $grey_two;
+					}
+				}
 			}
-		}
-		&+span{
-			bottom: 3px;
-			color: $user_menu;
-			text-align: center;
-			padding: 0 3px;
-			position: relative;
-		}
-	}
-}
-
-/*-- BUTTON STYLES --*/
-
-.btn{
-	&.active{
-		background-color: $brand;
-		border: 0;
-		box-shadow: none;
-		&.list, &.map, &.calendar, &.table, &.graph{
-			&:after{
+			a{
 				color: $user_menu;
+				cursor: pointer;
+				font-weight: 400;
+				&:hover{
+					border-bottom: 1px solid $brand;
+					color: $brand;
+					text-decoration: none;
+				}
 			}
 		}
 	}
-	&.download{
-		&[disabled]{
-			background-color: $grey_one;
-			color: #f2f2f2;
-			&:hover{
-				background-color: $grey_one;
-				color:#f2f2f2;
+
+	.custom-data-panel{
+		.form-group{
+			display: inline-block;
+			width: 45% !important;
+			label{
+				color: $user_menu;
+				font-size: 12px;
+				font-weight: 300;
+			}
+			input[type="date"]{
+				color: $user_menu;
+				font-size: 0.88em;
+				height: auto;
+				padding:6px;
+				width: 100%;
+				&::-webkit-inner-spin-button,
+				&::-webkit-calendar-picker-indicator {
+				    display: none;
+				    -webkit-appearance: none;
+				}
+			}
+			&+span{
+				bottom: 3px;
+				color: $user_menu;
+				text-align: center;
+				padding: 0 3px;
+				position: relative;
 			}
 		}
 	}
-	&:focus{
-		outline:0;
-	}
-	&:hover{
-		background-color: $btnHover;
-		border: 0;
-		box-shadow: none;
-	}
-	&.list:after, &.table:after{
-		font-size: 14px;
-		top:1px;
-	}
-	&.map:after{
-		font-size: 15px;
-		left: 2px;
-		top:1px;
-	}
-	&.calendar:after{
-		font-size: 15px;
-		top: 2px;
-	}
-	&.graph:after{
-		font-size: 14px;
-		top: 1px;
-	}
-	.icon-calendar:before{
-		font-size: 19px;
-		left: 2px;
-		top:1px;
-	}
-	&.btn-primary, &.btn-cancel{
-		box-sizing: border-box;
-		padding: 8px 25px;
-		height: 35px;
-		&.fileinput-button{
-			width: 140px;
-		}
-	}
-}
-
-.btn-small {
-	padding: 2px 10px;
-}
-.btn-group{
-	margin-left: 25px;
-	&>.btn+.btn{
-		margin-left: 0;
-	}
-	.btn{
-		border: 0;
-		box-shadow: none;
-		&.calendar{
-			border-left: 1px solid $buttons-border;
-			border-right: 1px solid $buttons-border;
-			&:last-child{
-				border-right: none;
-			}
-		}
-	}
-}
-
-.btn-primary{
-	background-color: $buttons !important;
-	background-image:none !important;
-	border: 0;
-	box-shadow: none;
-	color: white !important;
-	font-size: 14px;
-	padding: 7px 25px;
-	text-decoration: none !important;
-	text-shadow:none;
-	&:hover{
-		background-color: $buttons-hover !important;
-	}
-	&:active{
-		background-color: $buttons-hover;
-		box-shadow: none;
-	}
-	&.fileinput-button{
-		padding: 7px 23px;
-	}
-}
-
-.btn-cancel{
-	background-color: $user_menu;
-	color: white;
-	&:hover{
-		color: white;
-		background-color: $brand;
-	}
-}
-
-.btn-info{
-	background-color: $user_menu !important;
-	font-size: 13px;
-	padding-bottom:9px;
-	padding-top: 9px;
-	&.icon-angle-right-after{
-		color: white;
-		font-family: $baseFontFamily;
-		font-weight: bold;
-		&:after{
-			color: white !important;
-			font-size: 20px !important;
-			top: 7px;
-			left: 15px;
-		}
-		&:before{
-			display:none;
-		}
-	}
-	&:hover{
-		background-color: $brand !important;
-	}
-}
 
 #list-tools {
 	margin: 1px 0 25px 0;
 	position: relative;
-	button, a{
-		&.btn.download, &.btn.fullscreen{
-			box-sizing:border-box;
-			width: 55px;
-			padding: 8px 0;
-			height: 35px;
-			&:before, &:after{
-				font-size: 16px;
-			}
-		}
+	a, button{
+		color:white;
 	}
 	.download-photos-counter {
 		left: auto;
@@ -865,17 +901,8 @@ a.more-options-link:after{
 	margin-bottom: 28px;
 }
 
-.container-fluid{
-	padding: 0;
-}
-
-p{
-	&.big{
-		font-size: 16px;
-	}
-}
-
-/*-- Login styles --*/
+// LOGIN STYLES
+// --------------------------------------------------
 
 .login_box{
 	background-color: $menu;
@@ -907,7 +934,7 @@ p{
 			}
 		}
 
-		input[type=text]:focus, input[type=password]:focus, input[type=email]:focus {
+		input[type=text]:focus, input[type=password]:focus, input[type=email]:focus{
 			background-color: #fff !important;
 		}
 		span.help-inline {
@@ -1045,7 +1072,8 @@ p{
 				}
 			}
 		}
-		.email, .tel, .user_street_address, .user_unit_number, .password, .time_zone{
+		.email, .tel, .user_street_address, .user_unit_number, .password,
+		.time_zone{
 			.controls{
 				width:575px;
 			}
@@ -1055,7 +1083,8 @@ p{
 			box-shadow: none !important;
 			width: 250px;
 		}
-		input[type="email"],input[type="tel"],input#user_street_address[type="text"],input#user_unit_number[type="text"],input[type="password"]{
+		input[type="email"],input[type="tel"],input#user_street_address[type="text"]
+		,input#user_unit_number[type="text"],input[type="password"]{
 			background-color: white !important;
 			width:556px !important;
 		}
@@ -1142,6 +1171,10 @@ p{
 		}
 	}
 }
+
+// FORMS STYLES
+// --------------------------------------------------
+
 .form-actions{
 	background-color: white;
 	border:0;
@@ -1152,6 +1185,45 @@ p{
 form{
 	margin: 0;
 }
+
+control-group{
+	label.control-label{
+		color:$text;
+	}
+	&.error {
+		input, textarea {
+			&:focus {
+				box-shadow: none;
+				-webkit-box-shadow: none;
+			}
+		}
+	}
+}
+
+.chzn-default span {
+	color: $user_menu;
+}
+
+// Input styles
+
+input:-moz-placeholder,
+textarea:-moz-placeholder {
+	color: white;
+}
+
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+	color: white;
+}
+
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+	color: white;
+}
+
+
+// FOOTER STYLES
+// --------------------------------------------------
 
 footer{
 	bottom: 0;
@@ -1293,43 +1365,186 @@ footer{
 		}
 	}
 }
+
+// Back to top link
+
+.totop {
+	background-color: $header;
+	color: $user_menu;
+	font-size: 12px;
+	padding-top: 4px;
+	position: fixed;
+	bottom: 0px;
+	height: 30px;
+	margin-right: 10px;
+	right: 0px;
+	text-align: center;
+	width: 36px;
+	z-index: 104400;
+	-webkit-border-radius: 6px 6px 0px 0px;
+	border-radius: 6px 6px 0px 0px;
+
+	a,  a:visited {
+		color: $user_menu;
+		display: block;
+		font-weight: 400;
+		height: 38px;
+		text-align: center;
+		line-height: 4px;
+		text-decoration:  none;
+		width: 35px;
+		&:hover{
+			color: $user_menu;
+		}
+	}
+
+	a:before{
+		color: $user_menu;
+		content: "\e012";
+		display: block;
+		font-family: 'icons';
+		font-size: 14px;
+		padding: 1px 0 12px 0;
+		position: relative;
+		speak: none;
+		text-align: center;
+		vertical-align: middle;
+		-webkit-font-smoothing: antialiased;
+	}
+}
+
+// HEADER STYLES
+// --------------------------------------------------
+
 header{
 	&.navbar-inverse {
 		.navbar-inner {
 			background-color: $header;
 			padding: 0;
 			background-image: none;
-		}
-		.nav-pills>li>a {
-			padding-top: 12px;
-			margin-right: 8px;
-		}
+			border-bottom: 0;
 
-		.nav li#notifications ul li a {
-			padding-left: 0;
-			padding-right: 0;
-		}
+			.nav {
+				margin: 0;
+				>li>a{
+					border-radius: 0px;
+					margin: 0 8px 0 0 ;
+					padding: 13px 12px 12px;
+					line-height: 16px;
+					&:hover {
+						background-color: $menu;
+					}
+				}
 
-		.nav li a{
-			text-shadow: none;
-			color: white;
+				ul.dropdown-menu{
+					background-color: $alert_grey;
+					box-shadow: none;
+					margin-top: 12px;
+					border:1px solid #707070;
+					li{
+						a {
+							color: $grey_two;
+							font-weight: bold;
+							padding: 6px 15px;
+							span{
+								color: $grey_two;
+								font-size: 15px;
+								margin-right: 10px;
+								&.icon-on{
+									position: relative;
+									top: 1px;
+								}
+							}
+							&:hover{
+								color: white;
+								background-color: $menu;
+								span{
+									color: white;
+								}
+							}
+						}
+					}
+				}
+				li.dropdown.open,
+				li.dropdown.active,
+				li.dropdown.open.active {
+					&>.dropdown-toggle {
+						color: silver;
+						background-color: $menu;
+					}
+				}
+				.dropdown-menu>li>a:hover,
+				.dropdown-menu>li>a:focus,
+				.active ul li.active a,
+				.dropdown-submenu:hover>a,
+				.dropdown-submenu:focus>a {
+					background-image: none;
+					background-color: $menu;
+				}
+				li#user_menu {
+					>a {
+						padding-top: 14px;
+						padding-bottom: 13px;
+					}
+					.icon-arrow-down:before {
+						font-size: 12px;
+						top: 4px;
+						right: -5px;
+					}
+					ul.dropdown-menu{
+						box-shadow: none;
+						margin-top: 12px;
+						width: 186px !important;
+						right: 8px !important;
+						left: auto !important;
+						&:before{
+							border-bottom: 10px solid $alert_grey;
+							left:155px;
+						}
+					}
+				}
+
+				li#notifications {
+					a {
+						color: white;
+					}
+					ul li a {
+						padding-left: 0;
+						padding-right: 0;
+					}
+				}
+				li#help_menu {
+					span:before {
+						left: 4px;
+						font-size: 16px;
+						vertical-align: middle;
+					}
+				}
+				li#admin{
+					ul.dropdown-menu{
+						min-width: 200px;
+						left: -161px;
+						&:before{
+							border-bottom: 10px solid $alert_grey;
+							left: 170px;
+						}
+					}
+					.icon-gear:before {
+						font-size: 16px;
+					}
+				}
+			}
 		}
 	}
-}
-
-h1, h2, h3{
-	font-family: 'Lato', sans-serif;
-	font-weight: normal;
-	line-height: 20px;
-	margin-top: 0;
-}
-.icon-chevron-up{
-	margin-right: 15px;
 }
 
 li.dropdown a{
 	color:$user_menu;
 }
+
+// NAV TAB STYLES
+// --------------------------------------------------
+
 .nav{
 	margin-bottom: 0;
 }
@@ -1364,176 +1579,6 @@ li.dropdown a{
 		border-left:0;
 		border-right: 0;
 		border-top: 0;
-	}
-}
-
-.nav-pills > li > a.single-link{
-	margin-right: 6px;
-}
-
-.navbar-inverse {
-	.navbar-inner {
-		border-bottom: 0;
-	}
-	.nav {
-		margin: 0;
-		li.dropdown.open>.dropdown-toggle{
-			background-color: $menu;
-		}
-		li>a{
-			padding-left: 12px;
-			padding-right: 12px;
-		}
-		li#admin, li#user_menu{
-			ul.dropdown-menu{
-				border:1px solid #707070;
-				li a{
-					color: $app_bg;
-					font-weight: bold;
-					padding: 6px 15px;
-					&:hover{
-						background-color: $menu;
-						color: white;
-					}
-				}
-			}
-		}
-		li#admin{
-			ul.dropdown-menu{
-				min-width:200px !important;
-				left: -161px;
-				width: 200px !important;
-				&:before{
-					left: 170px;
-				}
-			}
-		}
-
-		li#admin{
-			ul.dropdown-menu{
-				min-width:200px !important;
-				left: -161px;
-				width: 200px !important;
-				&:before{
-					left: 170px;
-				}
-			}
-		}
-
-		li#admin a, li#user_menu a{
-			color:$user_menu;
-		}
-		li.dropdown.open>.dropdown-toggle,
-		li.dropdown.active>.dropdown-toggle,
-		li.dropdown.open.active>.dropdown-toggle,
-		.dropdown-toggle:hover,
-		.dropdown-toggle:focus,
-		.single-link:hover,
-		.single-link:focus {
-			background-color: $menu;
-			border-radius: 0;
-			height: 19px;
-			margin-top:0;
-			padding-top: 14px;
-		}
-		.dropdown-menu>li>a:hover,
-		.dropdown-menu>li>a:focus,
-		.active ul li.active a,
-		.dropdown-submenu:hover>a,
-		.dropdown-submenu:focus>a {
-			background-image: none;
-			background-color: $menu;
-		}
-		.nav-pills>.active>a,
-		.nav-pills>.active>a:hover,
-		.nav-pills>.active>a:focus {
-			background-color: $menu;
-		}
-
-	}
-}
-.nav-tabs .open .dropdown-toggle, .nav-pills .open .dropdown-toggle, .nav>li.dropdown.open.active>a:hover, .nav>li.dropdown.open.active>a:focus{
-	background-color: $menu;
-	border-radius: 0;
-	height: 19px;
-	margin: 0 8px 0 0;
-	padding-top: 14px;
-}
-
-.dropdown-menu>.active>a{
-	background-color: $header;
-	background-image: none;
-	&:hover{
-		background-color: $header;
-		background-image: none;
-	}
-}
-.nav-pills>.active>a{
-	background-color: $menu;
-	border-radius: 0;
-	color: $user_menu;
-	height: 19px;
-	margin: 0 8px 0 0;
-	padding-top: 14px;
-}
-.nav-pills>.active>a:hover{
-	background-color: $menu;
-	border-radius: 0;
-	color: $user_menu;
-	height: 19px;
-	margin: 0 8px 0 0;
-	padding-top: 14px;
-}
-.nav-pills > .active > a, .nav-pills > .active > a:hover, .nav-pills > .active > a:focus {
-	background-color: $menu;
-}
-.dropdown-menu>li>a:hover, .dropdown-menu>li>a:focus, .dropdown-submenu:hover>a, .dropdown-submenu:focus>a {
-	background-image:none;
-}
-li#help_menu{
-	.single-link:before{
-		color: $user_menu;
-		content: "\e025";
-		display: inline-block;
-		font-family: 'icons';
-		font-size: 16px;
-		left: 4px;
-		position: relative;
-		speak: none;
-		text-align: center;
-		vertical-align: middle;
-		-webkit-font-smoothing: antialiased;
-	}
-}
-li.dropdown#admin{
-	.dropdown-toggle:before{
-		content: "\e007";
-		display: inline-block;
-		font-family: 'icons';
-		font-size: 16px;
-		padding-bottom:5px;
-		position: relative;
-		speak: none;
-		text-align: center;
-		vertical-align: middle;
-		-webkit-font-smoothing: antialiased;
-	}
-}
-
-li.dropdown#user_menu{
-	.dropdown-toggle:after{
-	content: "\e004";
-	display: inline-block;
-	font-family: 'icons';
-	font-size: 12px;
-	left: 5px;
-	padding-bottom:5px;
-	position: relative;
-	top:5px;
-	speak: none;
-	text-align: center;
-	vertical-align: middle;
-	-webkit-font-smoothing: antialiased;
 	}
 }
 
@@ -1662,18 +1707,7 @@ label{
 		padding:35px 0 15px 0;
 	}
 }
-li#admin{
-	ul.dropdown-menu{
-		background-color: $alert_grey;
-		box-shadow: none;
-		margin-top: 12px;
-		min-width: 148px;
-		left: -107px;
-		&:before{
-			border-bottom: 10px solid $alert_grey;
-		}
-	}
-}
+
 li#notifications{
 
 	&.has-notifications {
@@ -1714,6 +1748,15 @@ li#notifications{
 		margin-bottom: 2px;
 		overflow-y: auto;
 		overflow-x: hidden;
+		ul li{
+			width: 100%;
+			i{
+				font-size: 17px;
+				margin: 0 10px;
+				position: relative;
+				top: 2px;
+			}
+		}
 
 		.jspVerticalBar {
 			width: 7px;
@@ -1785,9 +1828,8 @@ li#notifications{
 					display: inline-block;
 					font-weight: 500;
 					font-size: 13px;
-					width: 240px;
+					width: 220px;  /* leave room for the scrollbar */
 					line-height: 16px;
-					padding-left: 32px;
 					span{
 						color: $grey_one;
 					}
@@ -1795,7 +1837,10 @@ li#notifications{
 
 				&:hover{
 					background-color: $app_bg;
-					.icon-notification-event:before, .icon-notification-task:before, .icon-notification-comment:before, .icon-notification-campaign:before, .icon-notification-action:before, .icon-notification-group:before, .icon-notification-venue:before, .icon-angle-right:before{
+					.icon-notification-event:before, .icon-notification-task:before,
+					.icon-notification-comment:before, .icon-notification-campaign:before,
+					.icon-notification-action:before, .icon-notification-group:before,
+					.icon-notification-venue:before, .icon-angle-right:before{
 						color:white;
 					}
 				}
@@ -1804,27 +1849,13 @@ li#notifications{
 				a{
 					color: white;
 					font-size: 11px;
-					line-height: 15px;
 					display: table-cell;
 					vertical-align: middle;
 					height: 32px;
 					i{
-						margin-right: 5px;
-						&:before{
-							color: white;
-						}
 						&.icon-angle-right{
 							position: absolute;
 							top: 21px;
-							&:before{
-								font-size: 22px !important;
-								left:16px !important;
-								top: 4px;
-							}
-						}
-						&.alert-icon{
-							margin-left: 8px;
-							position: absolute;
 						}
 					}
 					&:hover{
@@ -1847,43 +1878,7 @@ li#notifications{
 		height: 17px;
 	}
 }
-li#user_menu{
-	ul.dropdown-menu{
-		background-color: $alert_grey;
-		box-shadow: none;
-		margin-top: 12px;
-		width: 186px !important;
-		right: 8px !important;
-		left: auto !important;
-		li{
-			a:hover{
-				color: white;
-			}
-		}
-		li#users:last-child{
-			a:after{
-			content: "\e013";
-			font-family: 'icons';
-			font-size: 14px;
-			left:108px;
-			position: relative;
-			speak:none;
-			text-align: center;
-			text-shadow:none;
-			top:1px;
-			-webkit-font-smoothing: antialiased;
-			-moz-osx-font-smoothing: grayscale;
-			}
-			a:hover:after{
-			color: white;
-			}
-		}
-		&:before{
-			border-bottom: 10px solid $alert_grey;
-			left:155px;
-		}
-	}
-}
+
 .dropdown-menu:before{
 	position: absolute;
 	top: -8px;
@@ -1959,24 +1954,8 @@ li#user_menu{
 	}
 }
 
-ul.kpis-list{
-	li{
-		min-height: 20px;
-		padding:10px 0 10px 0;
-		.kpi-goal{
-			font-size: 16px;
-			margin-top: 10px;
-		}
-	}
-	.kpi-info{
-		font-size: 11px;
-		margin: 10px 0 0 10px;
-		.kpi-name{
-			font-size: 16px;
-		}
-	}
-}
-
+// CAMPAIGNS
+// --------------------------------------------------
 
 .kpi-trends-stats {
 	line-height: 30px;
@@ -2002,6 +1981,7 @@ ul.kpis-list{
 }
 
 // Graphical visualization for Goals
+
 #kpis-trends-bars {
 	a{
 		color:$grey_three;
@@ -2249,12 +2229,15 @@ ul.kpis-list{
 	}
 }
 
-/*-- LISTS OF ELEMENTS - EVENTS --*/
+// LISTS OF ELEMENTS - EVENTS
+// --------------------------------------------------
+
 .link-list{
 	border:1px solid $borders;
 	color: $brand;
 	font-size: 12px;
 	margin: 25px 0 0 0;
+	overflow: hidden;
 	padding: 0;
 	position: relative;
 	address{
@@ -2276,7 +2259,6 @@ ul.kpis-list{
 		font-size: 16px;
 		font-weight: normal;
 		position: relative;
-		top: -2px;
 	}
 	.clean-date {
 		b{
@@ -2284,11 +2266,69 @@ ul.kpis-list{
 			top: 0px;
 		}
 	}
+	/* Fix for global styles -- lists of admin dropdown header menu */
 	ul{
 		padding: 0;
 		margin:0;
 		li{
 			color: $text;
+			display: table;
+			min-height: 85px;
+			height: 85px;
+			position: relative;
+			width: 100%;
+			a{
+				display: table-cell;
+				vertical-align: middle;
+				float: none;
+				padding-top: 0;
+				padding-bottom: 0;
+				height: 85px;
+				span{
+					display: inline-block;
+					vertical-align: middle;
+				}
+			}
+			&:hover{
+				.pull-right{
+					opacity: 1;
+					a{
+						box-sizing: border-box;
+						color: $brand;
+						padding-left: 10px;
+						display: table-cell;
+						vertical-align: middle;
+					}
+				}
+			}
+			span{
+				display: inline-block;
+				vertical-align: middle;
+				&.address{
+					line-height: 19px;
+					width: 45%;
+					overflow: hidden;
+					text-overflow:ellipsis;
+					white-space: nowrap;
+					address{
+						overflow: hidden;
+						text-overflow:ellipsis;
+						width: 95%;
+					}
+				}
+				&.date{
+					line-height: 20px;
+					width: 40%;
+				}
+				&.pull-right{
+					opacity: 0;
+					position: absolute;
+					right: 15px;
+					font-size: 18px;
+				}
+			}
+			/* End global change */
+
 			&.complete > span.task-list {
 				border-left: 5px solid $complete !important;
 			}
@@ -2301,11 +2341,6 @@ ul.kpis-list{
 			&.inactive{
 				a{
 				color:$user_menu;
-				}
-			}
-			&:hover{
-				&.inactive a{
-					color:$text;
 				}
 			}
 		}
@@ -2346,19 +2381,27 @@ ul.kpis-list{
 					}
 				}
 				&:last-child{
-					.add:before{
+					.icon-rounded-add{
 						color: $brand;
-						content: "\e021";
-						display: inline-block;
-						font-family: 'icons';
 						font-size: 21px;
-						right:5px;
 						position: relative;
-						speak: none;
-						text-align: center;
-						top: 5px;
-						vertical-align: middle;
-						-webkit-font-smoothing: antialiased;
+						top: 2px;
+					}
+				}
+			}
+			&.inactive {
+				color:$user_menu;
+			}
+			&:hover {
+				.activate-btn {
+					display: none !important;
+				}
+				&.inactive {
+					.deactivate-btn {
+						display: none !important;
+					}
+					.activate-btn {
+						display: table-cell !important;
 					}
 				}
 			}
@@ -2370,12 +2413,10 @@ ul.kpis-list{
 			-moz-box-sizing: border-box;
 			display: table !important;
 			min-height: 86px;
-			padding-left: 25px;
 			height: 86px;
 			width: 100%;
 			a, span{
 				display: table-cell !important;
-				padding-left:0;
 				vertical-align: middle;
 			}
 			&.inactive{
@@ -2457,16 +2498,11 @@ ul.kpis-list{
 	}
 	ul#events-list{
 		li{
-			color: $text;
-			min-height: 70px;
-			padding: 9px 0 0 15px;
-
 			.address{
 				br{
 					display:block;
 				}
 			}
-
 			&.late {
 				border-left: 5px solid $late;
 			}
@@ -2480,21 +2516,52 @@ ul.kpis-list{
 				border-left: 5px solid $rejected;
 			}
 		}
-		span.event-item {
-			min-height: 82px;
-			width: 100%;
+		span{
+			&.event-item {
+				display: table-cell;
+				float: none;
+				padding: 0 15px;
+				vertical-align: middle;
+				a{
+					display: inline-block;
+					vertical-align: middle;
+					height: auto;
+					width: 100%;
+				}
+			}
+			&.pull-right{
+				right: 20px;
+				top: 20px;
+				a{
+					width: auto;
+					height: 45px;
+					display: table-cell;
+					vertical-align: middle;
+				}
+			}
 		}
 	}
 	ul#my-tasks-list, ul#team-tasks-list{
 		li{
 			.task-list{
-				min-height: 63px;
-				padding: 20px 0 0 0;
+				display: table-cell;
+				min-height: 85px;
+				padding: 0;
+				vertical-align: middle;
 				width: 100%;
 				span{
+					&.tasks{
+						width:100%;
+					}
 					&.title{
 						margin-left: 18px;
 						width: 60%;
+					}
+					&.last, &.last span{
+						vertical-align:middle;
+						a{
+							display: inline-block;
+						}
 					}
 					&.task-completed{
 						vertical-align: bottom;
@@ -2505,9 +2572,6 @@ ul.kpis-list{
 	}
 	ul#tasks-list{
 		li{
-			color: $text;
-			min-height:80px;
-
 			&.complete > span.task-list {
 				border-left: 5px solid $complete !important;
 			}
@@ -2517,42 +2581,41 @@ ul.kpis-list{
 			&.due > span.task-list {
 				border-left: 5px solid $due_today;
 			}
-			span.task-list{
-				height: 80px;
-				width: 100%;
-				span{
-					&:first-child{
-					margin:30px 20px 0 0;
+			span{
+				vertical-align: middle;
+				&.task-list{
+					display: table;
+					min-height: 85px;
+					width: 100%;
+					span.tasks{
+						display: table-cell;
+						vertical-align: middle !important;
+						height: 85px;
+						.task-completed{
+							height: 20px;
+							margin-right: 15px;
+						}
+						.tasks-date{
+							margin: 0 20px 0 0;
+							width: 45%;
+						}
+						.last{
+							width: 35%;
+						}
+						.links{
+							top: 32px;
+						}
+						.title{
+							display: inline-block;
+							position: relative;
+							overflow: hidden;
+							text-overflow:ellipsis;
+							white-space: nowrap;
+							width: 53%;
+						}
 					}
-					&:last-child{
-						float: right;
-						margin: 0;
-					}
-					&.tasks-date{
-						margin: 10px 20px 0 0;
-						width: 45%;
-					}
-					&.last{
-						margin-top: 10px;
-						width: 35%;
-					}
-					&.links{
-						display: inline-block;
-						float: right;
-						margin: 8px 5px 0 0;
-					}
-					&.title{
-						display: inline-block;
-						position: relative;
-						margin-top: 20px;
-						overflow: hidden;
-						text-overflow:ellipsis;
-						white-space: nowrap;
-						width: 53%;
-					}
-					&.pull-right{
-						margin-top: 18px;
-						position: relative;
+					a{
+						height: auto;
 					}
 				}
 			}
@@ -2603,25 +2666,77 @@ ul.kpis-list{
 		li{
 			margin-bottom: 0;
 			overflow: visible;
+			vertical-align: middle;
 			width: 100%;
 			address{
 				width: auto !important;
 			}
-			span{
-				&.data{
-					font-size: 16px;
-					margin: 30px 0 0 20px;
-					overflow: hidden;
-					text-overflow: ellipsis;
-					white-space: nowrap;
-					width: 380px;
+			&:hover{
+				.links{
+					display: block;
+					float: right;
+					margin: 0 15px 0 0;
+					a{
+						color: $brand;
+						font-size: 16px;
+						margin-right: 10px;
+						vertical-align: top;
+						&.icon-receipt{
+							font-size: 24px;
+							margin-right: 5px;
+							position: relative;
+							top: 4px;
+						}
+						&:last-child{
+							margin-right: 0;
+						}
+					}
 				}
-				&.expense-date{
-					margin:32px 0 0 0;
+			}
+			&.total-expenses{
+				span{
+				font-size: 16px;
+					&:first-child{
+						margin: 0 0 0 54px;
+						text-align: right;
+						width: 30%;
+					}
+					&:last-child{
+						text-align: right;
+						width: 115px;
+						b{
+							font-weight: bold !important;
+						}
+					}
+				}
+			}
+			span{
+				a{
+					display: inline-block;
+					height: auto;
+				}
+				&.expenses{
+					display: table-cell;
+					vertical-align: middle;
+					.total{
+						font-size: 16px;
+						width: 20%;
+					}
+					.data{
+						font-size: 16px;
+						overflow: hidden;
+						padding-left: 20px;
+						text-overflow: ellipsis;
+						white-space: nowrap;
+						width: 70%;
+					}
+				}
+				&.links{
+					display:none;
 				}
 				&.currency{
 					font-size: 16px;
-					margin:25px 0 0 0;
+					margin: 0 0;
 				}
 			}
 		}
@@ -2630,7 +2745,7 @@ ul.kpis-list{
 		li{
 			span{
 				&.data{
-					margin: 20px 0 0 35px;
+					margin: 0 35px;
 					overflow: hidden;
 					text-overflow: ellipsis;
 					white-space: nowrap;
@@ -2638,12 +2753,22 @@ ul.kpis-list{
 				}
 				&.name{
 					font-size: 16px;
-					margin:20px 0 0 0;
+					margin-left: 15px;
 					width: 45%;
 				}
 				&.event-item {
-					min-height: 82px;
+					display: table;
+					vertical-align: middle;
 					width: 100%;
+					a{
+						display: table-cell;
+					}
+				}
+				&.links{
+					top: 32px;
+					a{
+						display: inline-block;
+					}
 				}
 			}
 		}
@@ -2652,7 +2777,7 @@ ul.kpis-list{
 		span{
 			line-height: 20px;
 			&.user_name, &.user_city{
-				margin: 8px 20px 0 0;
+				margin: 0 20px 0 0;
 				width: 20%;
 			}
 			&.user_name{
@@ -2662,11 +2787,11 @@ ul.kpis-list{
 				}
 			}
 			&.user_mail{
-				margin: 8px 30px 0 0;
+				margin: 0 30px 0 0;
 				width: 24%;
 			}
 			&.user_date{
-				margin: 8px 0 0 0;
+				margin: 0;
 				width: 18%;
 			}
 		}
@@ -2674,7 +2799,8 @@ ul.kpis-list{
 	ul#surveys-list{
 		span{
 			&:first-child{
-				margin: 23px 0 0 15px;
+				float: left;
+				margin: 0 0 0 15px;
 				width: 330px;
 				.survey-age{
 					font-size: 16px;
@@ -2682,8 +2808,9 @@ ul.kpis-list{
 				}
 			}
 			&.date{
+				display: inline-block;
 				line-height: 16px;
-				margin: 19px 50px 0 0;
+				margin: 0 50px 0 0;
 				width: 180px;
 			}
 		}
@@ -2696,11 +2823,11 @@ ul.kpis-list{
 				top:0;
 			}
 			&:first-child{
-				margin: 8px 100px 0 0;
+				margin: 0 100px 0 0;
 				width:50%;
 			}
 			&.members{
-				margin: 8px 0 0 0;
+				margin: 0;
 				width: 15%;
 				b {
 					font-size: 16px;
@@ -2715,22 +2842,18 @@ ul.kpis-list{
 				top:0;
 			}
 			&:first-child{
-				margin-top: 8px;
 				width: 50%;
 			}
 		}
 	}
 	ul#campaigns-list{
-		li{
-			min-height: 97px;
-		}
 		span{
 			line-height: 20px;
 			b{
 				top:0;
 			}
 			&:first-child{
-				margin: 8px 80px 0 0;
+				margin: 0 80px 0 0;
 				width: 45%;
 			}
 			&.first{
@@ -2738,23 +2861,22 @@ ul.kpis-list{
 				width: 15%;
 			}
 			&.first, &.last{
-				margin-top: 8px;
-				b{
-					top:-2px;
-				}
+				margin-top: 0;
 			}
 		}
 	}
-	ul#brands-list, ul#brand_portfolios-list, ul#date_ranges-list, ul#day_parts-list{
+	ul#brands-list, ul#brand_portfolios-list, ul#date_ranges-list,
+	ul#day_parts-list{
 		li{
 			display: table;
 			width: 100%;
-			a{
-				display: table-cell;
-				vertical-align: middle;
-				span{
-					margin:0 !important;
-				}
+		}
+	}
+	ul#brand_portfolios-list{
+		span{
+			width: 80%;
+			&.pull-right{
+				width: auto;
 			}
 		}
 	}
@@ -2816,70 +2938,17 @@ ul.kpis-list{
 		}
 		.description{
 			display: block;
-			overflow: hidden;
-			text-overflow:ellipsis;
-			white-space: nowrap;
+			@extend .crop-text;
 		}
 		&>a{
 			display: block;
-			padding: 13px 15px 11px 15px;
+			padding: 0 15px;
 			@include box-sizing(border-box);
 			width: 100%;
 			min-height: 100%;
 		}
-		.edit, .enable, .disable, .preview {
-			height: 30px;
-			display: inline-block;
-		}
-		.edit:after{
-			color: white;
-			font-size: 18px;
-			margin-left: 10px;
-		}
-		.enable:after{
-			color: white;
-			margin-left: 10px;
-			text-align: center;
-			top:2px;
-		}
-		.disable:after{
-			color: white;
-			font-size: 18px;
-			margin-left: 10px;
-			text-align: center;
-			top:2px;
-		}
-		.load-comments-link:after{
-			color: white;
-			margin-left: 10px;
-			text-align: center;
-			top:3px;
-		}
-		.preview:after{
-			color: white;
-			content: "\e016";
-			font-family: 'icons';
-			font-size: 26px;
-			position: relative;
-			right: -6px;
-			speak:none;
-			text-shadow:none;
-			top: 9px;
-		}
-		.share:after{
-			color:white;
-			margin-right: 2px;
-			text-align: center;
-			top: 3px;
-		}
 		&:hover{
 			background-color: $grey_one;
-			a:hover:after{
-				color: $grey_three;
-			}
-			.edit:after, .enable:after, .disable:after, .share:after, .load-comments-link:after, .preview:after{
-				color:$brand;
-			}
 			.checker{
 				background-color: $user_menu;
 			}
@@ -2891,56 +2960,36 @@ ul.kpis-list{
 	&#resource-goals-list{
 		li{
 			span{
-				margin-top: 23px;
-				&.pull-right{
-					margin-top: 0;
+				display: table-cell;
+				min-height: 84px;
+				vertical-align:middle;
+				&.goals-list{
+					display: table;
+					width: 100%;
+				}
+				&.title{
+					font-size: 11px;
+					padding-left: 20px;
+					width: 30%;
+					.goal-title{
+						font-size: 16px;
+					}
+				}
+				&.goal-value, .start-date, &.due-date{
+					width: 20%;
+				}
+				&.edit-goal{
+					opacity: 0;
+					padding-right: 20px;
+					text-align: right;
+					width: 10%;
 				}
 			}
-			.goal-value{
-				width: 30%;
-			}
-			.title{
-				font-size: 11px;
-				margin-left: 20px;
-				width: 30%;
-				.goal-title{
-					font-size: 16px;
+			&:hover{
+				.edit-goal{
+					opacity: 1;
 				}
 			}
-			.start-date{
-				width: 15%;
-			}
-			.due-date{
-				width: 10%;
-			}
-		}
-	}
-	span{
-		display: inline-block;
-		vertical-align: top;
-		&.address{
-			line-height: 19px;
-			padding-top: 8px;
-			width: 45%;
-			overflow: hidden;
-			text-overflow:ellipsis;
-			white-space: nowrap;
-			address{
-				overflow: hidden;
-				text-overflow:ellipsis;
-				width: 95%;
-			}
-		}
-		&.date{
-			line-height: 20px;
-			padding-top: 8px;
-			width: 40%;
-		}
-		&.pull-right{
-			display: block;
-			position: absolute;
-			right: 15px;
-			top: 35%;
 		}
 	}
 	&.rows-no-link{
@@ -3017,9 +3066,7 @@ input.search-query:focus{
 		}
 	}
 	.term{
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
+		@extend .crop-text;
 		width: 150px;
 		float: left;
 		display: inline-block;
@@ -3095,21 +3142,6 @@ ul.ui-widget-content{
 	}
 }
 
-input:-moz-placeholder,
-textarea:-moz-placeholder {
-	color: white;
-}
-
-input:-ms-input-placeholder,
-textarea:-ms-input-placeholder {
-	color: white;
-}
-
-input::-webkit-input-placeholder,
-textarea::-webkit-input-placeholder {
-	color: white;
-}
-
 #company-name {
 	font-size: 20px;
 	margin-bottom: 0;
@@ -3176,13 +3208,6 @@ textarea::-webkit-input-placeholder {
 	margin-top: 36px;
 }
 
-#top-admin-home-navigation {
-	height: 43px;
-	#home.active {
-		display: none;
-	}
-}
-
 #resource-index-container {
 	padding-right: 250px;
 	#resource-filter-column {
@@ -3209,7 +3234,7 @@ textarea::-webkit-input-placeholder {
 		}
 	}
 	input[type="text"]{
-		height: 37px;
+		height: 36px;
 		width: 100%;
 	}
 
@@ -3228,6 +3253,8 @@ textarea::-webkit-input-placeholder {
 		}
 	}
 }
+
+/* Info bar for details pages (Below the header) */
 
 #resource-close-details {
 	position: absolute;
@@ -3250,65 +3277,43 @@ textarea::-webkit-input-placeholder {
 	a.close-details {
 		display: inline-block;
 		width: 99%;
-		padding: 10px 0 7px 16px;
+		padding: 12px 0 10px 16px;
 		text-decoration: none;
 		color: $grey_one;
 	}
-	.close {
-		opacity: 1;
-		position: relative;
+	.icon-close {
+		position: absolute;
 		text-shadow:none;
-		right: 35px;
-		&:before{
-			color: $grey_one;
-			content: "\e019";
-			display: block;
-			font-family: 'icons';
-			font-size: 14px;
-			font-weight: normal;
-			position: absolute;
-			right: 15px;
-			speak: none;
-			text-indent: 0;
-			top: 3px;
-			-webkit-font-smoothing: antialiased;
-		}
+		right: 15px;
+		top: 13px;
 	}
 	.details-bar-pull-left {
 		float: left;
 		margin: 0 10px 0 0;
 	}
 
-	h3 {
-		font-size: 16px;
-		display: inline-block;
-		margin-bottom: 0;
-	}
-
-	a a {
-		font-size: 18px;
-		margin-left: 15px;
+	a{
+		color: $brand;
+		font-size: 14px;
 		text-decoration: none;
+		h3 {
+			color: $grey_one;
+			font-size: 16px;
+			display: inline-block;
+			margin-bottom: 0;
+		}
 		i{
 			position: relative;
-			top: 2px;
-			&.icon-remove-sign:before{
-				font-size: 16px;
-			}
 			&:hover{
 				&:before{
 					color:$app_bg;
 				}
 			}
 		}
-		&.edit{
-			&:after{
-				color:$brand;
-			}
+		&.icon-edit, &.icon-rounded-disable{
+			margin: 0 10px 0 15px;
 			&:hover{
-				&:after{
-					color:$app_bg;
-				}
+				color:$app_bg;
 			}
 		}
 	}
@@ -3387,7 +3392,8 @@ textarea::-webkit-input-placeholder {
 	}
 }
 
-/*-- DATA FORM STYLES (ACTIVITIES AND POST EVENT DATA) --*/
+// DATA FORM STYLES (ACTIVITIES AND POST EVENT DATA)
+// --------------------------------------------------
 
 .data-form-wrapper {
 	.help-inline {
@@ -3582,17 +3588,17 @@ textarea::-webkit-input-placeholder {
 	}
 }
 
-/*-- ATTACHMENT PANEL FOR PHOTOS UPLOAD --*/
+// ATTACHMENT PANEL FOR PHOTOS UPLOAD
+// --------------------------------------------------
 
 .attachment-panel{
 	@include box-sizing(border-box);
 	border: 2px dashed $grey_one;
-	border-radius: 4px 4px 4px 4px;
-	color: #C0C0C0;
+	color: $user_menu;
 	font-size: 12px;
 	line-height: 17px;
 	margin-top: 15px;
-	padding: 30px 30px 20px;
+	padding: 40px 20px 20px;
 	text-align: center;
 	height: 150px;
 	width: 237px;
@@ -3607,6 +3613,7 @@ textarea::-webkit-input-placeholder {
 		h4, p{
 			color: $user_menu;
 			font-family: $baseFontFamily;
+			font-weight: normal;
 			text-align: left;
 		}
 		p{
@@ -3629,14 +3636,11 @@ textarea::-webkit-input-placeholder {
 				}
 			}
 		}
-		.icon-drag{
+		i{
+			font-size: 28px;
 			float: left;
-			height: 50px;
+			line-height: 30px;
 			margin-right: 10px;
-			&:before {
-				font-size: 30px;
-				margin-top: 5px;
-			}
 		}
 	}
 
@@ -3718,12 +3722,6 @@ body.company_users{
 				margin: 6px 15px 0 8px;
 			}
 		}
-		.campaigns-group-body{
-			a.icon-plus-sign:before{
-				margin: 15px 0 10px 15px;
-				top: 0;
-			}
-		}
 		margin-bottom: 20px;
 
 		.campaigns-list {
@@ -3731,15 +3729,11 @@ body.company_users{
 			width: auto;
 			.user-campaign{
 				margin-left: 0;
+				min-height: 50px;
 				padding: 10px 25px 15px 7px;
 				width: 33%;
 				.pull-left{
 					width: 85%;
-				}
-				.pull-right{
-					a.icon-remove-sign:before{
-						font-size: 16px;
-					}
 				}
 			}
 			&+.row-fluid{
@@ -3791,16 +3785,16 @@ body.events.index {
 }
 
 
-#event-contacts.details_box, #event-members.details_box, #event-documents.details_box {
+#event-contacts.details_box, #event-members.details_box,
+#event-documents.details_box {
 	overflow: hidden;
 }
 
 .form-results-box {
 	width: 100%;
-	.edit {
-		margin-left: 20px;
-		&:after {
-			color: $brand;
+	h3{
+		a#edit-event-data-btn{
+			margin-left: 15px;
 		}
 	}
 	.form-result {
@@ -3971,65 +3965,84 @@ body.show {
 			min-width: 130px;
 		}
 	}
-	#company_user-areas-list, #company_user-places-list, #event-contacts-list, #event-team-members, #team-members-list, #area-places-list {
+	#company_user-areas-list, #company_user-places-list,
+	#event-contacts-list, #event-team-members, #team-members-list,
+	#area-places-list {
 		clear: both;
-		//margin: 0 -12% 0 0;
 	}
 	.place, .area-user{
 		font-family: $baseFontFamily;
 		font-size: 16px;
-		padding: 0 0 0 32px;
 		margin: 0 10% 30px 0;
 		.pull-left{
 			width: 90%;
+			i{
+				background-color: #cccccc;
+				color: white;
+				display: inline-block;
+				height: 32px;
+				margin-right: 10px;
+				line-height: 33px;
+				text-align: center;
+				@include border-radius(20px);
+				width: 32px;
+			}
 			.place-address{
 				font-size: 11px;
 				margin-top: 5px;
 			}
 		}
+		.pull-right{
+			margin-top: 8px;
+		}
 	}
 	.team-member, .team, .brand, .area-place {
 		font-size: 11px;
-		padding: 0 0 0 32px;
+		//padding: 0 0 0 32px;
 		margin: 0 10% 0 0;
 		height: 70px;
 		.full-name, .address-name, .brand-name{
 			font-size: 16px;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
+			line-height: 16px;
+			@extend .crop-text;
 		}
 		&:hover{
-			a.remove-member-btn, a.remove-area-btn, a.remove-brand-btn, a.remove-contact-btn, .event-contacts-list a.edit {
+			a.remove-member-btn, a.remove-area-btn, a.remove-brand-btn,
+			a.remove-contact-btn, .event-contacts-list a.edit {
+				color: $brand;
 				display:inline-block;
+				font-size: 16px;
 				float: right;
-				i.icon-remove-circle:before{
-					font-size: 18px;
-				}
 			}
 		}
-		a.remove-member-btn, a.remove-area-btn, a.remove-brand-btn, a.remove-contact-btn, .event-contacts-list a.edit {
+		a.remove-member-btn, a.remove-area-btn, a.remove-brand-btn,
+		a.remove-contact-btn, .event-contacts-list a.edit {
 			display:none;
+		}
+		.icon-wired-star{
+			color: $user_menu;
+			font-size: 18px;
+			margin-right: 10px;
+		}
+		.brand-name{
+			display: inline-block;
 		}
 	}
 
-	.team-member:before{
-		display: block;
-		font-size: 20px;
-		left: -30px;
-		position: relative;
-		top: 15px;
-		vertical-align: middle;
+	.team-member, .team{
+		.icon-user, .icon-team{
+			color: $user_menu;
+			float: left;
+			font-size: 18px;
+			margin-right: 15px;
+			position: relative;
+			top: 2px;
+		}
+		span{
+			display: inline-block;
+		}
 	}
 
-	.team:before{
-		display: block;
-		font-size: 20px;
-		left: -40px;
-		position: relative;
-		top: 15px;
-		vertical-align: middle;
-	}
 
 	.area-place:before{
 		display: block;
@@ -4228,9 +4241,7 @@ body.show {
 				.upload-file-name {
 					position: absolute;
 					left: 40px;
-					overflow: hidden;
-					text-overflow: ellipsis;
-					white-space: nowrap;
+					@extend .crop-text;
 					top: 12px;
 					width: 70%;
 				}
@@ -4295,7 +4306,8 @@ body.show {
 	}
 }
 
-//PHOTOS VIEWS ----------------------------------
+// PHOTOS VIEWS
+// --------------------------------------------------
 
 .box_photos{
 	h3 {
@@ -4303,8 +4315,10 @@ body.show {
 	}
 	.dialogue-photos {
 		margin-left: 30px;
-		&:before {
-			top: 5px;
+		&.icon-plus-sign{
+			color: $brand;
+			position: relative;
+			top: 3px;
 		}
 	}
 }
@@ -4349,18 +4363,6 @@ ul.thumbnails{
 						float:right;
 						margin: 10px 5px 12px 12px;
 						position: relative;
-						&:before{
-							color: $grey_one;
-								content: "\e00b" !important;
-								display: inline-block;
-								font-family: 'icons';
-								font-size: 15px;
-								position: relative;
-								speak: none;
-								text-align: center;
-								vertical-align: middle;
-								-webkit-font-smoothing: antialiased;
-						}
 					}
 					&.icon-remove-circle{
 						float:right;
@@ -4385,6 +4387,8 @@ ul.thumbnails{
 }
 
 // Photo list for venues an details boxes
+// --------------------------------------------------
+
 #event-photos{
 	span.btn-primary{
 		margin-bottom: 20px;
@@ -4428,7 +4432,8 @@ ul{
 	}
 }
 
-// Photo list - Fancybox styles
+// PHOTO LIST - FANCYBOX STYLES
+// --------------------------------------------------
 
 .fancybox-inner{
 	height: auto;
@@ -4461,11 +4466,9 @@ ul{
 			text-align: left;
 			.campaign-name{
 				font-size: 16px;
-				overflow: hidden;
-				text-overflow:ellipsis;
 				padding: 17px 0 0 25px;
 				width: 400px;
-				white-space: nowrap;
+				@extend .crop-text;
 			}
 			.event-date{
 				font-size: 11px;
@@ -4473,11 +4476,9 @@ ul{
 			}
 			.photo-location{
 				font-size: 11px;
-				overflow: hidden;
-				text-overflow:ellipsis;
 				padding: 0 0 25px 25px;
 				width: 400px;
-				white-space: nowrap;
+				@extend .crop-text;
 			}
 			.pull-right{
 				margin: 25px 15px 0 0;
@@ -4581,6 +4582,8 @@ ul{
 }
 
 // ROLES DETAILS
+// --------------------------------------------------
+
 body.roles{
 	table.table tbody tr:hover td{
 		background-color: white !important;
@@ -4671,6 +4674,7 @@ body.roles{
 }
 
 // VENUES
+// --------------------------------------------------
 
 .venues {
 	&.index {
@@ -4746,7 +4750,7 @@ body.roles{
 
 	#venue-score{
 		color: $venues_blue;
-	width: 100px;
+		width: 100px;
 	}
 
 	#venue-score-narrative{
@@ -4874,6 +4878,11 @@ body.roles{
 			}
 		}
 
+		.tools-icons{
+			.icon-plus-sign{
+				margin-left: 30px;
+			}
+		}
 	}
 
 	.filter-wrapper{
@@ -4897,6 +4906,7 @@ body.roles{
 }
 
 // EVENT DATA
+// --------------------------------------------------
 
 .event_data, .comments, .expenses, .surveys, .photos {
 	.main.with-details-close-bar {
@@ -4951,42 +4961,19 @@ body.roles{
 			.left-arrow {
 				margin-left: 50%;
 				float: left;
-				a.icon-angle-left:before{
-					color:$user_menu;
-					content: "\e01c";
-					display: inline-block;
-					font-family: 'icons';
-					font-size: 26px;
-					padding-bottom:5px;
-					position: relative;
-					speak: none;
-					text-align: center;
-					vertical-align: middle;
-					-webkit-font-smoothing: antialiased;
-				}
 			}
-
 			.right-arrow {
 				float: right;
 				width: 15px;
-				a.icon-angle-right:before{
-					color:$user_menu;
-					content: "\e01d";
-					display: inline-block;
-					font-family: 'icons';
-					font-size: 26px;
-					padding-bottom:5px;
-					position: relative;
-					speak: none;
-					text-align: center;
-					vertical-align: middle;
-					-webkit-font-smoothing: antialiased;
-				}
 			}
 
-			a:hover {
-				text-decoration: none;
-				cursor: pointer;
+			a{
+				font-size: 26px;
+				line-height: 50px;
+				&:hover {
+					text-decoration: none;
+					cursor: pointer;
+				}
 			}
 		}
 
@@ -5067,7 +5054,7 @@ body.roles{
 			.event-info {
 				@include box-sizing(border-box);
 				float: left;
-				width: 55%;
+				width: 23%;
 			}
 		}
 
@@ -5239,6 +5226,7 @@ table.table td.comments-container {
 		color: white;
 	}
 }
+
 // Comments List
 .comment-row{
 	margin: 20px 0 0 62px;
@@ -5296,6 +5284,8 @@ table.table td.comments-container {
 }
 
 // TASKS STYLES
+// --------------------------------------------------
+
 .tasks{
 	b{
 		font-size: 16px;
@@ -5387,52 +5377,6 @@ svg{
 	width: 480px;
 }
 
-/* back to top link */
-.totop {
-	background-color: $header;
-	color: $user_menu;
-	font-size: 12px;
-	padding-top: 4px;
-	position: fixed;
-	bottom: 0px;
-	height: 30px;
-	margin-right: 10px;
-	right: 0px;
-	text-align: center;
-	width: 36px;
-	z-index: 104400;
-	-webkit-border-radius: 6px 6px 0px 0px;
-	border-radius: 6px 6px 0px 0px;
-
-	a,  a:visited {
-		color: $user_menu;
-		display: block;
-		font-weight: 400;
-		height: 38px;
-		text-align: center;
-		line-height: 4px;
-		text-decoration:  none;
-		width: 35px;
-		&:hover{
-			color: $user_menu;
-		}
-	}
-
-	a:before{
-		color: $user_menu;
-		content: "\e012";
-		display: block;
-		font-family: 'icons';
-		font-size: 14px;
-		padding: 1px 0 12px 0;
-		position: relative;
-		speak: none;
-		text-align: center;
-		vertical-align: middle;
-		-webkit-font-smoothing: antialiased;
-	}
-}
-
 #upload-progress-list {
 	position: fixed;
 	bottom: 0px;
@@ -5506,31 +5450,6 @@ svg{
 }
 
 .campaigns_report, .snapshot_report, .staff_report {
-	// .details_box{
-	// 	&.first{
-	// 		-webkit-border-radius: 0px 7px 7px 7px;
-	// 		border-radius: 0px 7px 7px 7px;
-	// 		.chzn-container-single{
-	// 			color: $brand;
-	// 			.chzn-single{
-	// 				height: 38px !important;
-	// 				padding-top: 3px;
-	// 				width: 365px !important;
-	// 			}
-	// 			.chzn-drop{
-	// 				width: 280px !important;
-	// 			}
-	// 		}
-	// 	}
-	// 	.chzn-container-single{
-	// 		.chzn-search input{
-	// 			height: 25px;
-	// 		}
-	// 		.chzn-results{
-	// 			margin: 0 0 4px 0;
-	// 		}
-	// 	}
-	// }
 	.loading-spinner{
 		background: #fff image-url('loading-circle.gif') center center no-repeat;
 		display: block;
@@ -5560,21 +5479,14 @@ body.campaigns{
 		h2{
 			margin-bottom: 8px;
 		}
-		&.padding-top-close-bar{
-			span{
-				display: block;
-				margin-top: 30px;
-				.calendar-data{
-					font-size: 16px;
-				}
-			}
-		}
+	}
+	.campaign-brands{
+		font-size: 16px;
+		margin-bottom: 30px;
 	}
 }
 
-.campaign-brands{
-	font-size: 16px;
-}
+
 
 // DETAILS PAGES
 
@@ -5596,8 +5508,12 @@ body.campaigns{
 		}
 	}
 
-	a{
+	a, i{
 		font-weight: bold;
+		&.icon-edit, &.icon-rounded-disable, &.icon-remove-sign, &.icon-plus-sign{
+			color: $brand;
+			font-size: 18px;
+		}
 	}
 
 	p{
@@ -5720,10 +5636,8 @@ body.campaigns{
 		a{
 			color: $menu;
 			float: left;
-			overflow: hidden;
 			position: relative;
-			text-overflow: ellipsis;
-			white-space: nowrap;
+			@extend .crop-text;
 			width: 85%;
 		}
 		img{
@@ -5820,9 +5734,6 @@ body.campaigns{
 					margin-left: 10px;
 					position: relative;
 					top: 2px;
-					&:before{
-						font-size: 17px !important;
-					}
 				}
 				&.icon-check-sign{
 					color: $brand;
@@ -5830,11 +5741,6 @@ body.campaigns{
 					margin-left: 10px;
 					position: relative;
 					top: 2px;
-					&:after {
-						content: "\e625";
-						font-family: 'icons';
-						font-size: 18px;
-					}
 				}
 			}
 		}
@@ -5879,7 +5785,8 @@ body.campaigns{
 			color:$text;
 			span{
 				&:first-child{
-					margin: 22px 0 0 20px;
+					float: left;
+					margin: 0 0 0 20px;
 					width: 440px;
 					.survey-age{
 						font-size: 16px;
@@ -5887,7 +5794,7 @@ body.campaigns{
 					}
 				}
 				&.date{
-					margin-top: 16px;
+					display: inline-block;
 					width: 300px;
 				}
 				&.pull-right{
@@ -5896,59 +5803,9 @@ body.campaigns{
 			}
 		}
 	}
-	ul#expenses-list{
-		li{
-			&.total-expenses{
-				span{
-				font-size: 16px;
-					&:first-child{
-						margin: 32px 0 0 54px;
-						text-align: right;
-						width: 70% !important;
-					}
-					&:last-child{
-						margin-top: 32px;
-						text-align: right;
-						width: 115px;
-						b{
-							font-weight: bold !important;
-						}
-					}
-				}
-			}
-		}
-		span{
-			&:first-child{
-				width: 70% !important;
-			}
-			&.links{
-				float: right;
-				margin: 30px 15px 0 0;
-			}
-			&.total{
-				font-size: 16px;
-				margin-top: 30px;
-				text-align: right;
-				width: 150px;
-			}
-		}
-	}
-	i.icon-plus-sign:before{
-		margin-left: 30px;
-	}
 	a{
 		color: $venues_blue;
 		text-decoration: none;
-		&.icon-plus-sign:before{
-			font-size: 21px;
-			margin: 0 0 0 30px;
-			top: 15px;
-		}
-		&.icon-calendar:before{
-			font-size: 17px;
-			margin: 0 5px 0;
-			bottom: 3px;
-		}
 		&.underline{
 			color:$text;
 			&:hover{
@@ -5961,13 +5818,7 @@ body.campaigns{
 			clear: both;
 		}
 		.link-list ul#tasks-list li span.task-list span.tasks-date {
-			margin-top: 10px;
 			width: 50%;
-		}
-		.task-list{
-			span.pull-right{
-				margin-top: 5% !important;
-			}
 		}
 		.task-comments{
 			#comment-form-container{
@@ -6156,156 +6007,9 @@ div.chardinjs-tooltip
 	}
 }
 
-.goalable-errors{
-	.alert-danger{
-		margin: 30px 0 0 0;
-		padding: 10px 20px;
-	}
-}
 
-.goalable-list {
-	list-style: none;
-	margin: 20px 0 0 15px;
-	li {
-		position: relative;
-		&> div {
-			vertical-align: middle;
-			display: inline-block;
-		}
-		height: 110px;
-		width: 100%;
-		overflow: hidden;
-		white-space: nowrap;
-		.goalable-name {
-			font-size: 16px;
-			margin-top: 35px;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
-			width: 200px;
-		}
-		.goal-title {
-			display: block;
-			font-size: 11px;
-			margin-top: 5px;
-			min-height: 20px;
-			text-align: center;
-		}
-		.goals {
-			float: right;
-			position: absolute;
-			overflow: hidden;
-			left: 350px;
-			right: 0;
-			height: 110px;
 
-			.goals-inner {
-				position: absolute;
-				top: 10px;
-				left: 0;
-			}
-
-			.kpi-segment-group:hover,
-			.kpi-goal:hover,
-			.activity-type-goal:hover {
-				background-color: $grey_one;
-				-webkit-border-radius: 4px;
-				-moz-border-radius: 4px;
-				border-radius: 4px;
-				input {
-					background-color: $grey_one;
-				}
-			}
-
-			.kpi-goal, .activity-type-goal {
-				margin: 0 3px;
-				padding: 5px 10px 5px 10px;
-				display: inline-block;
-
-				&.kpi-competitive_analysis{
-					width: 130px;
-				}
-
-				input {
-					background-color:white !important;
-					box-shadow: none;
-					font-size: 22px;
-					font-weight: 100;
-					width: 60px;
-					display: block;
-					border: 1px solid white !important;
-					&:hover, &.active{
-						border: 1px solid $user_menu !important;
-					}
-					&:-moz-placeholder{
-						color: $grey_three;
-					}
-					&:-ms-input-placeholder{
-						color: $grey_three;
-					}
-					&::-webkit-input-placeholder {
-						color: $grey_three;
-					}
-				}
-
-				label{
-					.kpi-name, .activity-type-name {
-						font-size: 11px;
-						padding: 14px 0 0 6px;
-					}
-				}
-			}
-
-			.error {
-				input {
-					border: 1px solid $buttons !important;
-				}
-			}
-
-			.kpi-segment-group {
-				display: inline-block;
-			}
-		}
-		.goals-controls {
-			position: absolute;
-			left: 275px;
-			right: 0;
-			height: 0;
-			z-index: 3;
-			.pull-left {
-				height: 100px;
-				padding: 25px 0 0 0;
-				background-color: #fff;
-			}
-			.pull-right{
-				height: 100px;
-				padding: 25px 15px 0 0;
-				background-color: #fff;
-			}
-			a {
-				color: $grey_three;
-				font-size: 30px;
-				&.arrow {
-					margin: 0 20px;
-				}
-				&.arrow-left {
-					display: none;
-				}
-				&.icon-remove-sign {
-					font-size: 22px;
-				}
-				&:hover{
-					text-decoration: none;
-				}
-				&.icon-angle-right:before, &.icon-angle-left:before{
-					top:6px;
-				}
-			}
-		}
-	}
-}
-
-/*-- REPORTS --*/
+// REPORTS
 
 .report-kpi-chart-name {
 	color: $venues_blue;
@@ -6351,6 +6055,8 @@ div.chardinjs-tooltip
 		color: $venues_blue;
 	}
 }
+
+// GVA - GOALS VS ACTUAL
 
 body.gva {
 	.tab-content{
@@ -6551,13 +6257,14 @@ body.gva {
 									&:before{
 										color: $user_menu;
 										margin-top: 9px;
+										font-size: 24px;
 									}
 								}
 							}
 							&.remove-item{
 								float: right;
 								width: 20px;
-								&:after{
+								&:before{
 									color: $user_menu;
 									font-size: 15px;
 									margin-top: 15px;
@@ -6589,11 +6296,6 @@ body.event_status {
 	.tab-content {
 		overflow: visible;
 	}
-}
-
-body.gva, body.event_status{
-
-
 }
 
 body.campaigns_report,
@@ -6682,15 +6384,7 @@ body.campaigns_report, body.staff_report {
 	}
 }
 
-// Sessions
 
-body{
-	&.sessions, &.passwords{
-		.alert{
-			margin: 0;
-		}
-	}
-}
 
 // Selectable object list widget
 .select-list-table-wrapper {
@@ -6727,10 +6421,12 @@ body{
 					}
 					&.add-button{
 						display: table-cell;
+						font-size: 18px;
 						vertical-align: middle;
-					}
-					&.member-data{
-						padding-left: 60px;
+						width: 7%;
+						.icon-plus-sign{
+							font-size: 18px;
+						}
 					}
 				}
 				.brand-data, .kpi-data {
@@ -6746,14 +6442,7 @@ body{
 					}
 				}
 				a {
-					color: $venues_blue;
-					text-decoration: none;
-					&.icon-plus-sign:before {
-						display: block;
-						font-size: 21px;
-						margin: 0 0 0 60px;
-						top: 2px;
-					}
+					color: $brand;
 				}
 				&.empty-list-message {
 					display: none;
@@ -6761,6 +6450,21 @@ body{
 				&.empty-list-message:first-child:last-child {
 					display: table;
 				}
+				.special-icon {
+					margin-right: 10px;
+				}
+			}
+		}
+	}
+	&.compact {
+		.link-list ul li {
+			height: 65px;
+			min-height: 65px !important;
+			span:first-child{
+				padding-left: 10px;
+			}
+			a {
+				height: 65px;
 			}
 		}
 	}
@@ -6836,13 +6540,6 @@ input::-webkit-inner-spin-button {
 }
 
 // FULLSCREEN MODE ICONS
-
-#main:-webkit-full-screen {
-	.btn.fullscreen:after {
-		content: "\e040";
-		font-family: 'icons';
-	}
-}
 
 table td.sub-level-1 {
 	padding-left: 20px;
@@ -6989,28 +6686,23 @@ table td.sub-level-1 {
 			&:hover, &.chardinjs-show-element {
 				.thumbnail-toolbar{
 					background-color: rgba(0, 0, 0, 0.6);
+					box-sizing: border-box;
 					bottom: 0;
 					left: 0;
 					right: 0;
 					margin: 0 5px;
 					display: block;
+					padding: 8px 0;
 					position: absolute;
-					height: 35px;
 					list-style-type: none;
 					overflow:hidden;
 					a{
 						color: white;
+						font-size: 16px;
 						float: right;
-						margin: 10px;
+						margin: 0 10px 0 0;
 						opacity: 1 !important;
 						text-decoration: none;
-						&:before{
-							color: white;
-							font-size: 15px;
-							speak: none;
-							text-align: center;
-							vertical-align: middle;
-						}
 						&.photo-download-link{
 							float:right;
 							margin: 7px 0;
@@ -7019,17 +6711,6 @@ table td.sub-level-1 {
 								margin: 11px 0;
 							}
 						}
-						&.icon-remove-circle{
-							float:right;
-							margin: 10px;
-							position: relative;
-						}
-						&.icon-ok-circle:before{
-							color: $grey_one;
-							font-size: 15px;
-							text-align: center;
-							vertical-align: middle;
-						}
 					}
 				}
 			}
@@ -7037,7 +6718,8 @@ table td.sub-level-1 {
 	}
 }
 
-/*-- STYLES FOR THE NEW GALLERY MODAL --*/
+// STYLES FOR THE NEW GALLERY MODAL
+// ----------------------------------------------------------------------
 
 .modal-backdrop, .modal-backdrop.fade.in {
 	opacity: 0.96;
@@ -7188,7 +6870,6 @@ table td.sub-level-1 {
 				}
 				&.left{
 					left: 0;
-					//width: 20%;
 					span:before {
 						display:block;
 						line-height: 63px;
@@ -7212,7 +6893,6 @@ table td.sub-level-1 {
 				}
 				&.right{
 					right: 0;
-					//width: 80%;
 					span {
 						right: 0;
 						&:before {
@@ -7250,8 +6930,20 @@ table td.sub-level-1 {
 
 	.gallery-modal-inner{
 		position: relative;
+		a{
+			color: white;
+		}
 		.select2-container .select2-input {
 			border-width: 0px !important;
+		}
+		a.close-gallery {
+			color: white;
+			position: absolute;
+			right: 10px;
+			top: 15px;
+		}
+		a.remove-tag {
+			margin-right: 5px;
 		}
 	}
 	.slider {
@@ -7289,7 +6981,8 @@ table td.sub-level-1 {
 				position: absolute;
 				right: 0;
 				a{
-					color: white;
+					color: $grey_two;
+					font-size: 20px;
 					float: right;
 					margin: 10px;
 					opacity: 1 !important;
@@ -7298,27 +6991,11 @@ table td.sub-level-1 {
 						float:right;
 						margin: 16px 5px 12px 12px;
 						position: relative;
-						&:before{
-							color: $grey_one;
-							font-size: 15px;
-						}
 					}
 					&.icon-remove-circle{
 						float:right;
-						margin: 17px 15px 0 10px;
+						margin: 10px 15px 0 5px;
 						position: relative;
-						&:before{
-							color: $grey_one;
-							font-size: 15px;
-							text-align: center;
-							vertical-align: middle;
-						}
-					}
-					&.icon-ok-circle:before{
-						color: $grey_one;
-						font-size: 15px;
-						text-align: center;
-						vertical-align: middle;
 					}
 				}
 			}
@@ -7374,20 +7051,6 @@ table td.sub-level-1 {
 			.place-data, .calendar-data{
 				position: relative;
 				width: 290px;
-				&:before{
-					color: $grey_one;
-					display: inline-block;
-					left: -28px;
-					position:absolute;
-					width: auto;
-					-webkit-font-smoothing: antialiased;
-				}
-			}
-			.calendar-data:before{
-				top:4px;
-			}
-			.place-data:before{
-				left: -26px;
 			}
 			p{
 				display: inline-block;
@@ -7495,58 +7158,7 @@ table td.sub-level-1 {
 	}
 }
 
-/*--ICONS FOR ALL DATA SECTIONS --*/
 
-
-.calendar-data, .email-data, .phone-data, .place-data, .time-data, .description-data{
-	display: block;
-	min-height: 20px;
-	margin: 0 0 20px 30px;
-	width: 380px;
-}
-.links-data{
-	margin: 0 0 0 30px;
-}
-.calendar-data{
-	b{
-		font-size:16px;
-		font-weight: 400;
-	}
-	&:before{
-		color: $user_menu;
-		position: absolute;
-		left: 28px;
-		margin-top: 2px;
-		text-align: center;
-		vertical-align: middle;
-	}
-}
-.email-data{
-	&:before{
-		color: $user_menu;
-		padding-top: 6px;
-		position: absolute;
-		left: 28px;
-		text-align: center;
-		vertical-align: middle;
-	}
-}
-.place-data{
-	width: 500px;
-	&:before{
-		color: $user_menu;
-		font-size: 22px;
-		padding-top: 5px;
-		position: absolute;
-		left: 31px;
-		text-align: center;
-		vertical-align: middle;
-	}
-
-	address{
-		margin-bottom: 0px;
-	}
-}
 
 table.table.likert-scale-table {
 	width: auto;
@@ -7568,7 +7180,9 @@ table.table.likert-scale-table {
 	}
 }
 
-/*-- NEW FEATURES --*/
+// NEW FEATURE
+// ----------------------------------------------------------------------
+
 .new-feature{
 	background-color: $grey_one;
 	border-radius: 5px;
@@ -7585,8 +7199,12 @@ table.table.likert-scale-table {
 		position: absolute;
 		right: 25px;
 		top: 5px;
-		&:before{
+		&:before {
 			color: $brand;
+			left: 0;
+			top: 4px;
+			font-size: 12px;
+			position: absolute;
 		}
 	}
 	.video-thumbnail{
@@ -7746,16 +7364,6 @@ table.table.likert-scale-table {
 		font-weight: bold;
 	}
 }
-
-.close {
-	opacity: 1;
-	right: 25px;
-	text-shadow:none;
-	&:hover{
-		opacity: 1 !important;
-	}
-}
-
 
 .kpi-desc-tooltip {
 	opacity: 1;

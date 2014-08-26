@@ -1,23 +1,24 @@
 li id="goal_#{goal.id}"
-  span.title
-    .goal-title
-      = goal.title
-    = goal.kpi.name
+  span.goals-list
+    span.title
+      .goal-title
+        = goal.title
+      = goal.kpi.name
 
-  span.goal-value
-    = goal.value
-    br>/
-    | Goal
+    span.goal-value
+      = goal.value
+      br>/
+      | Goal
 
-  span.start-date
-    = format_date(goal.start_date)
-    br>/
-    | Start date
+    span.start-date
+      = format_date(goal.start_date)
+      br>/
+      | Start date
 
-  span.due-date
-    = format_date(goal.due_date)
-    br>/
-    | Due date
+    span.due-date
+      = format_date(goal.due_date)
+      br>/
+      | Due date
 
-  span.pull-right
-    = link_to '', [:edit, parent, goal], remote: true, class: 'edit', title: 'Edit'
+    span.edit-goal
+      = link_to '', [:edit, parent, goal], remote: true, class: 'icon-edit', title: 'Edit'

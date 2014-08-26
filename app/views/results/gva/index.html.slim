@@ -1,6 +1,6 @@
 = user_new_feature('results_gva_index') do
   h5 Getting Started: Goals vs. Actual
-  a.close.btn-dismiss-alert href="#" title="Dismiss"
+  a.close.btn-dismiss-alert.icon.icon-close href="#" title="Dismiss"
   a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/znpVTUlgEWI?rel=0" data-width="640" data-height="360"
     img src="#{image_path('video_arrow.png')}" width="70" height="70" /
   .feature-description
@@ -29,11 +29,14 @@
 
         .view-style-box
           #view-style.btn-group
-            a.btn.graph class="#{params[:view_style].nil? || params[:view_style]=='graph' ? 'active' : nil}" href="#" data-type="graph" data-toggle="tab" title="Graph View"
-            a.btn.table class="#{params[:view_style]=='table' ? 'active' : nil}" href="#" data-type="table" data-toggle="tab" title="Table View"
+            a.btn class="#{params[:view_style].nil? || params[:view_style]=='graph' ? 'active' : nil}" href="#" data-type="graph" data-toggle="tab" title="Graph View"
+              i.icon-analysis
+            a.btn class="#{params[:view_style]=='table' ? 'active' : nil}" href="#" data-type="table" data-toggle="tab" title="Table View"
+              i.icon-list
 
         .export-xls.pull-right
-          = link_to '', '#', :id => 'download-gva-btn', class: 'btn download', title: 'Download'
+          a#download-gva-btn.btn href="#" title="Download"
+            i.icon-download
 
   #report-container
     #kpis-trends-bars.details_box.content
@@ -94,6 +97,7 @@ javascript:
     if ($('#report_campaign_id').val()) {
       $.get('#{results_gva_path(format: :xls)}?report[campaign_id]='+$('#report_campaign_id').val()+'&group_by='+$("#group_by").val());
     }
+    return false;
   });
 
   $(window).on('popstate', function(){

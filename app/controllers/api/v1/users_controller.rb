@@ -394,6 +394,17 @@ class Api::V1::UsersController < Api::V1::FilteredController
   * _events_show_: Can access the event details page
   * _events_edit_: Can edit a event
   * _events_deactivate_: Can deactivate a event
+  * _events_view_unsubmitted_data_: Can view the data for unsubmitted events
+  * _events_view_submitted_data_: Can view the data for submitted events
+  * _events_view_approved_data_: Can view the data for approved events
+  * _events_view_rejected_data_: Can view the data for rejected events
+  * _events_edit_unsubmitted_data_: Can edit the data for unsubmitted events
+  * _events_edit_submitted_data_: Can edit the data for submitted events
+  * _events_edit_approved_data_: Can edit the data for approved events
+  * _events_edit_rejected_data_: Can edit the data for rejected events
+  * _events_submit_: Can submit a event for approval
+  * _events_approve_: Can approve a submitted event
+  * _events_reject_: Can reject a submitted event
   * _events_team_members_: Can see event's the team members
   * _events_add_team_members_: Can add existing users to a event as part of the event team
   * _events_delete_team_members_: Can delete members from the event's team
@@ -493,6 +504,17 @@ class Api::V1::UsersController < Api::V1::FilteredController
       permissions.push 'events_show' if current_company_user.role.has_permission?(:show, Event)
       permissions.push 'events_edit' if can?(:update, Event)
       permissions.push 'events_deactivate' if can?(:deactivate, Event)
+      permissions.push 'events_view_unsubmitted_data' if can?(:events_view_unsubmitted_data, Event)
+      permissions.push 'events_view_submitted_data' if can?(:events_view_submitted_data, Event)
+      permissions.push 'events_view_approved_data' if can?(:events_view_approved_data, Event)
+      permissions.push 'events_view_rejected_data' if can?(:events_view_rejected_data, Event)
+      permissions.push 'events_edit_unsubmitted_data' if can?(:events_edit_unsubmitted_data, Event)
+      permissions.push 'events_edit_submitted_data' if can?(:events_edit_submitted_data, Event)
+      permissions.push 'events_edit_approved_data' if can?(:events_edit_approved_data, Event)
+      permissions.push 'events_edit_rejected_data' if can?(:events_edit_rejected_data, Event)
+      permissions.push 'events_submit' if can?(:submit, Event)
+      permissions.push 'events_approve' if can?(:approve, Event)
+      permissions.push 'events_reject' if can?(:reject, Event)
       permissions.push 'events_team_members' if current_company_user.role.has_permission?(:view_members, Event)
       permissions.push 'events_add_team_members' if current_company_user.role.has_permission?(:add_members, Event)
       permissions.push 'events_delete_team_members' if current_company_user.role.has_permission?(:delete_member, Event)

@@ -9,4 +9,6 @@
             // The content is loaded by ajax when the user scrolls down to the photos section
             li= image_tag 'loading-circle.gif'
       .pull-right
-        = link_to 'View All', results_photos_path, class: 'btn btn-info icon-angle-right-after'
+        = link_to events_path, class: 'btn btn-info' do
+          = "View All"
+          i class="icon-angle-right"

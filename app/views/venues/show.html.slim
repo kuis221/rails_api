@@ -1,6 +1,6 @@
 = user_new_feature('venue_details') do
   h5 Getting Started: Venue Details
-  a.close.btn-dismiss-alert href="#" title="Dismiss"
+  a.close.btn-dismiss-alert.icon.icon-close href="#" title="Dismiss"
   a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/56AJmnAtWIU?rel=0" data-width="640" data-height="360"
     img src="#{image_path('video_arrow.png')}" width="70" height="70" /
   .feature-description
@@ -23,23 +23,27 @@
     h2= resource.name
     .row-fluid
       .place-data
-        = venue_address
-        - if resource.formatted_address.present?
-          br>/
-        = resource.formatted_phone_number
-        - if resource.website
-          .link
-            = place_website(resource.website)
-        = resource.price_level.times.map{ '$' }.join
-        = " "
-        = resource.types_without_establishment.map{|type| t("venue_types.#{type}") }.join(', ')
+        i.icon-wired-venue
+        span
+          = venue_address
+          - if resource.formatted_address.present?
+            br>/
+          = resource.formatted_phone_number
+          - if resource.website
+            .link
+              = place_website(resource.website)
+          = resource.price_level.times.map{ '$' }.join
+          = " "
+          = resource.types_without_establishment.map{|type| t("venue_types.#{type}") }.join(', ')
 
-        - if resource.place.td_linx_code
-          br>/
-          = 'TD Linx Code ' + resource.place.td_linx_code
+          - if resource.place.td_linx_code
+            br>/
+            = 'TD Linx Code ' + resource.place.td_linx_code
       - if resource.opening_hours
         .time-data
-          = place_opening_hours_formatted(resource.opening_hours)
+          i.icon-time
+          span
+            = place_opening_hours_formatted(resource.opening_hours)
       / .description-data
       /   p Cocktails “made with mixers like Hawaiian Punch and Tang”, beer “served in a brown paper bag” and “junk food” like “deep-fried Twinkies and chili cheese tater tots” conjure up “college days” at this “kitschy” SoMa bar with a “trailer park theme”; it may be “gimmicky” and the “dive bar decor” is a little “rough around the edges”, but most are buttered up by the “super-fun” vibe.º
 
@@ -51,7 +55,7 @@
 
       - if resource.persisted?
         .tools-icons
-          = link_to '', select_areas_venue_path(resource), remote: true, class: 'add-area-venue icon-plus-sign'
+          = link_to '', select_areas_venue_path(resource), remote: true, class: 'icon-plus-sign'
         #venue-areas.row-fluid
           = render partial: 'areas', locals: {areas: resource.place.areas}
 

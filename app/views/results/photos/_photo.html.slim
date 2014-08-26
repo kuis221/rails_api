@@ -6,10 +6,10 @@ li.photo-item id="attached_asset_#{photo.id}" data-photo-id="#{photo.id}" data-p
     .thumbnail-toolbar
       - if can? :deactivate_photo, Event
         - if photo.active?
-          = link_to '', deactivate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-remove-circle photo-deactivate-link', data: { :confirm=> I18n.t('confirmation.deactivate_confirm_message', model: 'photo') }, title: 'Deactivate'
+          = link_to '', deactivate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-rounded-disable photo-deactivate-link', data: { :confirm=> I18n.t('confirmation.deactivate_confirm_message', model: 'photo') }, title: 'Deactivate'
         - else
-          = link_to '', activate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-ok-circle photo-deactivate-link', title: 'Activate'
-      = link_to '', photo.download_url, class: 'photo-download-link', title: "Select Photo", id: 'photo-download-add' if can?(:index_photo_results, AttachedAsset)
+          = link_to '', activate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-rounded-ok icon-rounded-disable', title: 'Activate'
+      = link_to '', photo.download_url, class: 'icon-download', title: "Select Photo", id: 'photo-download-add' if can?(:index_photo_results, AttachedAsset)
     - if photo.processed?
       = link_to photo.file.url(:medium), 'data-toggle' => 'gallery', title: 'View Photo' do
           = image_tag photo.file.url(:thumbnail), id: 'thumbnail_'+photo.id.to_s, data: {\

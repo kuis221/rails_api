@@ -490,10 +490,12 @@ feature 'Events section' do
           expect(page).to have_content(company_user.full_name)
           select_from_chosen('ABSOLUT Vodka', from: 'Campaign')
           select_from_chosen('Other User', from: 'Event staff')
+          fill_in 'Description', with: 'some event description'
           click_button 'Create'
         end
         ensure_modal_was_closed
         expect(page).to have_content('ABSOLUT Vodka')
+        expect(page).to have_content('some event description')
         within '#event-team-members' do
           expect(page).to have_content('Other User')
         end

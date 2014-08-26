@@ -21,6 +21,7 @@
 	-webkit-box-sizing: $value;
 }
 
+// Special mixin kpi-desc-tooltip
 @mixin kpi-desc-tooltip {
 	opacity: 1;
 	.tooltip-inner {

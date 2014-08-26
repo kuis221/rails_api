@@ -7,8 +7,8 @@
             .accordion-heading
               a href="#toggle-item-#{item.class.name}#{item.id}" class="accordion-toggle" data-toggle="collapse" title="#{item.name}"
                 = render partial: 'report_goals_actual_item_summary', locals: {item: item}
-                span.pull-right.icon-collapsed
-                a href="#" class="remove-item" title="Remove #{item.name}"
+                span.icon.pull-right.icon-collapsed
+                a href="#" class="icon-close remove-item" title="Remove #{item.name}"
             .accordion-body.collapse id="toggle-item-#{item.class.name}#{item.id}" data-type="#{item.class.name}" data-id="#{item.id}"
               .accordion-inner.goals-actual
     - else

@@ -142,10 +142,11 @@ class Task < ActiveRecord::Base
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets=false)
       solr_search({include: [{:company_user => :user}, :event]}) do
-
+        current_company = Company.current || Company.new
         # Filter by user permissions
         company_user = params[:current_company_user]
         if company_user.present?
+          current_company = company_user.company
           unless company_user.role.is_admin?
             any_of do
               with(:campaign_id, company_user.accessible_campaign_ids + [0])
@@ -188,7 +189,7 @@ class Task < ActiveRecord::Base
             with :statusm, params[:task_status].uniq unless params[:task_status].empty?
             if late.present?
               all_of do
-                with(:due_at).less_than(Date.yesterday.beginning_of_day)
+                with(:due_at).less_than(current_company.late_task_date)
                 with(:completed, false)
               end
             end
@@ -211,7 +212,7 @@ class Task < ActiveRecord::Base
         end
 
         if params[:late]
-          with(:due_at).less_than(Date.yesterday.beginning_of_day)
+          with(:due_at).less_than(current_company.late_task_date)
           with :completed, false
         end
 
@@ -228,8 +229,8 @@ class Task < ActiveRecord::Base
           facet :campaign_id
           facet :status do
             row(:late) do
-              with(:statusm, 'Incomplete')
-              with(:due_at).less_than(Date.yesterday.beginning_of_day)
+              with(:due_at).less_than(current_company.late_task_date)
+              with :completed, false
             end
             row(:unassigned) do
               with(:statusm, 'Unassigned')

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140821175739) do
+ActiveRecord::Schema.define(version: 20140822232819) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -205,6 +205,8 @@ ActiveRecord::Schema.define(version: 20140821175739) do
     t.boolean  "active",        default: true
   end
 
+  add_index "brands", ["company_id"], name: "index_brands_on_company_id", using: :btree
+
   create_table "brands_campaigns", force: true do |t|
     t.integer "brand_id"
     t.integer "campaign_id"
@@ -315,17 +317,6 @@ ActiveRecord::Schema.define(version: 20140821175739) do
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
   end
-
-  create_table "custom_filters", force: true do |t|
-    t.integer  "company_user_id"
-    t.string   "name"
-    t.string   "apply_to"
-    t.text     "filters"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "custom_filters", ["company_user_id"], name: "index_custom_filters_on_company_user_id", using: :btree
 
   create_table "data_migrations", force: true do |t|
     t.integer  "remote_id"
@@ -460,6 +451,7 @@ ActiveRecord::Schema.define(version: 20140821175739) do
     t.string   "timezone"
     t.datetime "local_start_at"
     t.datetime "local_end_at"
+    t.text     "description"
   end
 
   add_index "events", ["aasm_state"], name: "index_events_on_aasm_state", using: :btree
@@ -482,17 +474,15 @@ ActiveRecord::Schema.define(version: 20140821175739) do
   create_table "form_field_results", force: true do |t|
     t.integer  "form_field_id"
     t.text     "value"
-    t.datetime "created_at",                                                  null: false
-    t.datetime "updated_at",                                                  null: false
-    t.integer  "form_field_option_id"
+    t.datetime "created_at",                                             null: false
+    t.datetime "updated_at",                                             null: false
     t.hstore   "hash_value"
-    t.decimal  "scalar_value",         precision: 10, scale: 2, default: 0.0
+    t.decimal  "scalar_value",    precision: 10, scale: 2, default: 0.0
     t.integer  "resultable_id"
     t.string   "resultable_type"
   end
 
   add_index "form_field_results", ["form_field_id"], name: "index_activity_results_on_form_field_id", using: :btree
-  add_index "form_field_results", ["form_field_option_id"], name: "index_activity_results_on_form_field_option_id", using: :btree
   add_index "form_field_results", ["hash_value"], name: "index_activity_results_on_hash_value", using: :gist
   add_index "form_field_results", ["resultable_id", "resultable_type", "form_field_id"], name: "index_ff_results_on_resultable_and_form_field_id", using: :btree
   add_index "form_field_results", ["resultable_id", "resultable_type"], name: "index_form_field_results_on_resultable_id_and_resultable_type", using: :btree
@@ -532,8 +522,7 @@ ActiveRecord::Schema.define(version: 20140821175739) do
   add_index "goals", ["kpi_id"], name: "index_goals_on_kpi_id", using: :btree
   add_index "goals", ["kpis_segment_id"], name: "index_goals_on_kpis_segment_id", using: :btree
 
-  create_table "kpi_reports", id: false, force: true do |t|
-    t.integer  "id",                default: "nextval('reports_id_seq'::regclass)", null: false
+  create_table "kpi_reports", force: true do |t|
     t.integer  "company_user_id"
     t.text     "params"
     t.string   "aasm_state"
@@ -542,8 +531,8 @@ ActiveRecord::Schema.define(version: 20140821175739) do
     t.string   "file_content_type"
     t.integer  "file_file_size"
     t.datetime "file_updated_at"
-    t.datetime "created_at",                                                        null: false
-    t.datetime "updated_at",                                                        null: false
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
   end
 
   create_table "kpis", force: true do |t|

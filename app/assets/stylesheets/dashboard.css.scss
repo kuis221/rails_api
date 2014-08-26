@@ -319,24 +319,21 @@
 						padding: 0 15px;
 					}
 					.comment-actions {
+						font-size: 16px;
 						position: absolute;
 						bottom: 0px;
 						display: none;
 						background-color: $grey_three;
 						width: 100%;
-						padding: 13px 0 7px 0;
+						padding: 9px 0;
 						text-align: right;
 						color: #fff;
 						opacity: 0.85;
-						.icon-remove-sign:before {
-							color: #fff;
-							font-size: 15px;
-						}
-						a {
-							margin-right: 10px;
-						}
-						.edit:after {
-							top: 0;
+						a, a i {
+							color: $grey_one;
+							font-size: 16px;
+							margin-right: 5px;
+							margin-left: 2px;
 						}
 					}
 					&:hover {
