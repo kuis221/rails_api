@@ -1675,7 +1675,7 @@ li#notifications{
 					display: inline-block;
 					font-weight: 500;
 					font-size: 13px;
-					width: 230px;
+					width: 220px;  /* leave room for the scrollbar */
 					line-height: 16px;
 					span{
 						color: $grey_one;
