@@ -357,7 +357,7 @@
   @include border-radius(18px);
   text-align: center;
   width: 32px;
-  &:before {
+  &:before { /*probably will need adjustments for another icons inside*/
     color: #fff;
     font-size: 22px;
     top: 7px;
