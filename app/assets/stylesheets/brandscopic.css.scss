@@ -36,14 +36,214 @@ $footer-height: 35px;
 }
 
 
-// General Styles
+// GENERAL STYLES
 // --------------------------------------------------
+
+a{
+	color:$text;
+	outline: 0;
+	&:focus{
+		color:$text;
+		outline:0;
+	}
+	&.more-options-link{
+		font-size: 13px;
+		margin-left:30px;
+		margin-bottom:35px;
+		&:hover{
+			color: $text;
+		}
+	}
+}
+
+abbr[title]{
+	border:0;
+}
+
+.container-fluid{
+	padding: 0;
+}
 
 .crop-text{
 	overflow:hidden;
 	text-overflow: ellipsis;
 	white-space:nowrap;
 }
+
+h1, h2, h3{
+	font-family: $baseFontFamily;
+	font-weight: normal;
+	line-height: 20px;
+	margin-top: 0;
+}
+
+p{
+	&.big{
+		font-size: 16px;
+	}
+}
+
+table{
+	border: 0;
+}
+
+.uppercase{
+	text-transform: uppercase;
+}
+
+// BUTTON STYLES
+// --------------------------------------------------
+
+.btn{
+	&.active{
+		background-color: $brand;
+		border: 0;
+		box-shadow: none;
+		&.list, &.map, &.calendar, &.table, &.graph{
+			&:after{
+				color: $user_menu;
+			}
+		}
+	}
+	&.download{
+		&[disabled]{
+			background-color: $grey_one;
+			color: #f2f2f2;
+			&:hover{
+				background-color: $grey_one;
+				color:#f2f2f2;
+			}
+		}
+	}
+	&:focus{
+		outline:0;
+	}
+	&:hover{
+		background-color: $btnHover;
+		border: 0;
+		box-shadow: none;
+	}
+	&.list:after, &.table:after{
+		font-size: 14px;
+		top:1px;
+	}
+	&.map:after{
+		font-size: 15px;
+		left: 2px;
+		top:1px;
+	}
+	&.calendar:after{
+		font-size: 15px;
+		top: 2px;
+	}
+	&.graph:after{
+		font-size: 14px;
+		top: 1px;
+	}
+	.icon-calendar:before{
+		font-size: 19px;
+		left: 2px;
+		top:1px;
+	}
+	&.btn-primary, &.btn-cancel{
+		box-sizing: border-box;
+		padding: 8px 25px;
+		height: 35px;
+		&.fileinput-button{
+			width: 140px;
+		}
+	}
+}
+
+.btn-small {
+	padding: 2px 10px;
+}
+
+// BTN GROUP
+// According to the Style Guide there is no hover effect for this element
+// ----------------------------------------------------------------------
+
+.btn-group{
+	margin-left: 25px;
+	&>.btn+.btn{
+		margin-left: 0;
+	}
+	.btn{
+		border: 0;
+		box-shadow: none;
+		color: white;
+		&.active{
+			background-color: $brand;
+			color: $user_menu;
+			&:hover{
+				background-color: $brand;
+				color: $user_menu;
+			}
+		}
+		&:hover{
+			background-color: $user_menu;
+			color: white;
+		}
+		&.calendar{
+			border-left: 1px solid $buttons-border;
+			border-right: 1px solid $buttons-border;
+			&:last-child{
+				border-right: none;
+			}
+		}
+	}
+}
+
+.btn-primary{
+	background-color: $buttons !important;
+	background-image:none !important;
+	border: 0;
+	box-shadow: none;
+	color: white !important;
+	font-size: 14px;
+	padding: 7px 25px;
+	text-decoration: none !important;
+	text-shadow:none;
+	&:hover{
+		background-color: $buttons-hover !important;
+	}
+	&:active{
+		background-color: $buttons-hover;
+		box-shadow: none;
+	}
+	&.fileinput-button{
+		padding: 7px 23px;
+	}
+}
+
+.btn-cancel{
+	background-color: $user_menu;
+	color: white;
+	&:hover{
+		color: white;
+		background-color: $brand;
+	}
+}
+
+.btn-info{
+	background-color: $user_menu !important;
+	color: white !important;
+	font-size: 13px;
+	padding-bottom:9px;
+	padding-top: 9px;
+	i{
+		line-height: 5px;
+		font-size: 19px;
+		position: relative;
+		top: 6px;
+		right: -12px;
+	}
+	&:hover{
+		background-color: $brand !important;
+	}
+}
+
+// End buttons styles
 
 .menubar-icon {
 	display: block;
@@ -85,17 +285,7 @@ body{
 	}
 }
 
-abbr[title]{
-	border:0;
-}
-
-/*
-label{
-	color: $brand;
-	font-size: 13px;
-}*/
-
-// Rating for photos
+// RATING FOR PHOTOS
 // --------------------------------------------------
 
 .rating{
@@ -113,12 +303,6 @@ label{
 	}
 }
 
-.calendar-data, .email-data, .phone-data, .place-data,
-.time-data, .description-data, .member-data{
-	margin:0 0 20px 30px;
-	width: 380px;
-}
-
 .communication-preferences{
 	.span9{
 		margin-left: 0;
@@ -128,23 +312,51 @@ label{
 	}
 }
 
-.marques-data{
+
+// STYLES FOR ALL DATA SECTIONS
+// --------------------------------------------------
+
+[class$='-data']{
+	display: block;
+	min-height: 20px;
+	margin: 0 0 10px 0;
+	position: relative;
+	width: 380px;
+	i{
+		color: $user_menu;
+		font-size: 17px;
+		display: inline-block;
+		margin-right: 10px;
+		margin-top: 4px;
+		vertical-align: top;
+	}
+	span{
+		display: inline-block;
+	}
+}
+
+.calendar-data, .email-data, .phone-data, .place-data,
+.time-data, .description-data, .member-data{
 	margin:0 0 20px 0;
 	width: 380px;
 }
 
-.member-data, .calendar-data{
-	font-size: 12px;
+.calendar-data{
 	b{
 		font-size:16px;
 		font-weight: 400;
 	}
 }
 
-.place-data{
-	width: 500px;
-	address{
-		margin-bottom: 0px;
+.links-data{
+	margin: 0 0 0 30px;
+	.icon-edit, .icon-rounded-disable{
+		font-size: 17px;
+		margin-right: 10px;
+	}
+	i{
+		color: $brand;
+		margin-top: 0;
 	}
 }
 
@@ -162,29 +374,46 @@ label{
 			}
 		}
 	}
+	i{
+		top:-2px;
+		position: relative;
+	}
 }
 
-.control-group{
-	label.control-label{
-		color:$text;
-	}
-	&.error {
-		input, textarea {
-			&:focus {
-				box-shadow: none;
-				-webkit-box-shadow: none;
-			}
+.time-data, .description-data {
+	i{
+		font-size:20px;
+		&+span{
+			width: 90%;
 		}
 	}
 }
 
-.chzn-default span {
-	color: $user_menu;
+.place-data{
+	width: 500px;
+	address{
+		margin-bottom: 0px;
+	}
+	i{
+		font-size: 22px;
+		left: 2px;
+		position: relative;
+	}
 }
 
-/*-- EVENT DETAILS PAGES __*/
-body.events.show{
+.marques-data{
+	margin:0 0 20px 0;
+	width: 380px;
+}
 
+.member-data, .calendar-data{
+	font-size: 12px;
+}
+
+// EVENT DETAILS PAGES
+// --------------------------------------------------
+
+body.events.show{
 	.event-contact {
 		a.edit {
 			display: none;
@@ -211,15 +440,6 @@ body.events.show{
 
 #application-content {
 	padding: 0 10px;
-}
-
-a{
-	color:$text;
-	outline: 0;
-	&:focus{
-		color:$text;
-		outline:0;
-	}
 }
 
 .tab-content{
@@ -334,11 +554,8 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	}
 }
 
-.uppercase{
-	text-transform: uppercase;
-}
 
-// Alert Messages
+// ALERT MESSAGES
 // --------------------------------------------------
 
 .alert{
@@ -408,380 +625,220 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	}
 }
 
-/*-- Datepick Sidebar -- */
-
-.datepick-nav{
-	float: right;
-	margin-right:15px;
-	width: 34px;
-}
-.datepick-nav .datepick-cmd{
-	width: 15px;
-}
-
-a.datepick-cmd{
-	display: inline-block;
-	margin-top: 10px;
-	overflow: hidden;
-	position:relative;
-	text-indent: 13%;
-}
-a.datepick-cmd:hover{
-	background-color: $brand;
-}
-
-.datepick-cmd-next, .datepick-cmd-prev{
-	font-size: 11px;
-	color: white !important;
-}
-
-.datepick-cmd-prev{
-	right: 35%;
-}
-
-.task-list {
-	span.checked:after{
-		top: 0px
-	}
-}
-
-
-// Events Calendar Datepicker
+// SIDEBAR STYLES
 // --------------------------------------------------
 
-.calendar-months-arrows{
-	a:hover{
-		text-decoration: none;
+// Datepick styles
+
+	.datepick-nav{
+		float: right;
+		margin-right:15px;
+		width: 34px;
 	}
-	.icon-angle-left:before, .icon-angle-right:before {
-		font-size: 26px;
-		color: silver;
+	.datepick-nav .datepick-cmd{
+		width: 15px;
 	}
-}
-.datepick{
-	background-color: white;
-	border: 0;
-	margin-bottom: 10px;
-}
-.datepick-month td .datepick-other-month {
-	color: $grey_one;
-}
-.datepick-month{
-	border: 0;
-	width: 208px;
-	table{
-		border: 1px solid $user_menu;
-		display: block;
-		padding: 0 8px 4px 8px;
-		width: auto;
+
+	a.datepick-cmd{
+		display: inline-block;
+		margin-top: 10px;
+		overflow: hidden;
+		position:relative;
+		text-indent: 13%;
 	}
-	thead{
-		border-bottom: 0;
-		tr{
-			border: 0;
-			padding-bottom: 7px;
+	a.datepick-cmd:hover{
+		background-color: $brand;
+	}
+
+	.datepick-cmd-next, .datepick-cmd-prev{
+		font-size: 11px;
+		color: white !important;
+	}
+
+	.datepick-cmd-prev{
+		right: 35%;
+	}
+
+	.task-list {
+		span.checked:after{
+			top: 0px
 		}
 	}
-	th{
-		background-color: white;
-		border: 0;
-		color:$grey_three;
-		font-size: 12px;
-		font-weight: bold;
-		padding-top: 5px;
-	}
-	td{
-		padding: 0.2em 0.6em 0.3em 0.1em;
-	}
-	a{
-		color: $text;
-		font-size: 0.86em;
-		padding: 2px 3px;
-		-webkit-border-radius: 12px;
-		border-radius: 12px;
-		&.datepick-today{
-			background-color: $brand !important;
-			color: white;
-			font-size: 0.86em;
-			font-weight: 300;
-			opacity:1;
-			-webkit-border-radius: 12px;
-			border-radius: 12px;
-		}
-		&.datepick-event{
-			color: $buttons;
-			font-weight: 600;
-			&:hover{
-				color: $buttons;
-			}
-		}
-		&:focus{
-			outline:0;
-		}
-		&:hover{
-			display: block;
-			width: 100%;
-			background-color: $grey_one !important;
-			color: $text;
+
+
+// Events calendar datepicker
+
+	.calendar-months-arrows{
+		a:hover{
 			text-decoration: none;
 		}
+		.icon-angle-left:before, .icon-angle-right:before {
+			font-size: 26px;
+			color: silver;
+		}
 	}
-}
-.datepick-month td .datepick-selected {
-	background-color: $grey_one !important;
-	color: $text !important;
-}
-.datepick-month td, .datepick-month a, .datepick-weekend {
-	background-color: white !important;
-}
-.datepick-month-header{
-	background-color:$brand;
-	color: white;
-	font-weight: normal;
-	height:25px;
-	line-height: 16px;
-	padding: 10px 0 0 15px;
-	text-align: left;
-	width: 193px;
-	-webkit-border-top-left-radius: 6px;
-	-webkit-border-top-right-radius: 6px;
-	-moz-border-radius-topleft: 6px;
-	-moz-border-radius-topright: 6px;
-	border-top-left-radius: 6px;
-	border-top-right-radius: 6px;
-}
-table{
-	border: 0;
-}
-
-a.more-options-link{
-	font-size: 13px;
-	margin-left:30px;
-	margin-bottom:35px;
-	&:hover{
-		color: $text;
+	.datepick{
+		background-color: white;
+		border: 0;
+		margin-bottom: 10px;
 	}
-}
-
-/*-- Date Preferences Panel -*/
-
-.dates-pref{
-	list-style: none;
-	margin-left: 0px;
-	li{
-		display: inline-block;
-		font-size: 12px;
-		font-weight: bold;
-		padding: 1px 7px;
-		margin-right: 0.15em;
-		margin-left: 2px;
-		&.active{
-			background-color: $brand;
-			font-weight: 300;
-			-webkit-border-radius: 6px;
-			border-radius: 6px;
-			a{
-				color: white;
-				&:hover{
-					border-bottom: 0;
-					color: $grey_two;
-				}
+	.datepick-month td .datepick-other-month {
+		color: $grey_one;
+	}
+	.datepick-month{
+		border: 0;
+		width: 208px;
+		table{
+			border: 1px solid $user_menu;
+			display: block;
+			padding: 0 8px 4px 8px;
+			width: auto;
+		}
+		thead{
+			border-bottom: 0;
+			tr{
+				border: 0;
+				padding-bottom: 7px;
 			}
 		}
+		th{
+			background-color: white;
+			border: 0;
+			color:$grey_three;
+			font-size: 12px;
+			font-weight: bold;
+			padding-top: 5px;
+		}
+		td{
+			padding: 0.2em 0.6em 0.3em 0.1em;
+		}
 		a{
-			color: $user_menu;
-			cursor: pointer;
-			font-weight: 400;
+			color: $text;
+			font-size: 0.86em;
+			padding: 2px 3px;
+			-webkit-border-radius: 12px;
+			border-radius: 12px;
+			&.datepick-today{
+				background-color: $brand !important;
+				color: white;
+				font-size: 0.86em;
+				font-weight: 300;
+				opacity:1;
+				-webkit-border-radius: 12px;
+				border-radius: 12px;
+			}
+			&.datepick-event{
+				color: $buttons;
+				font-weight: 600;
+				&:hover{
+					color: $buttons;
+				}
+			}
+			&:focus{
+				outline:0;
+			}
 			&:hover{
-				border-bottom: 1px solid $brand;
-				color: $brand;
+				display: block;
+				width: 100%;
+				background-color: $grey_one !important;
+				color: $text;
 				text-decoration: none;
 			}
 		}
 	}
-}
+	.datepick-month td .datepick-selected {
+		background-color: $grey_one !important;
+		color: $text !important;
+	}
+	.datepick-month td, .datepick-month a, .datepick-weekend {
+		background-color: white !important;
+	}
+	.datepick-month-header{
+		background-color:$brand;
+		color: white;
+		font-weight: normal;
+		height:25px;
+		line-height: 16px;
+		padding: 10px 0 0 15px;
+		text-align: left;
+		width: 193px;
+		-webkit-border-top-left-radius: 6px;
+		-webkit-border-top-right-radius: 6px;
+		-moz-border-radius-topleft: 6px;
+		-moz-border-radius-topright: 6px;
+		border-top-left-radius: 6px;
+		border-top-right-radius: 6px;
+	}
 
-.custom-data-panel{
-	.form-group{
-		display: inline-block;
-		width: 45% !important;
-		label{
-			color: $user_menu;
+
+// Date Preferences Panel
+
+	.dates-pref{
+		list-style: none;
+		margin-left: 0px;
+		li{
+			display: inline-block;
 			font-size: 12px;
-			font-weight: 300;
-		}
-		input[type="date"]{
-			color: $user_menu;
-			font-size: 0.88em;
-			height: auto;
-			padding:6px;
-			width: 100%;
-			&::-webkit-inner-spin-button,
-			&::-webkit-calendar-picker-indicator {
-			    display: none;
-			    -webkit-appearance: none;
-			}
-		}
-		&+span{
-			bottom: 3px;
-			color: $user_menu;
-			text-align: center;
-			padding: 0 3px;
-			position: relative;
-		}
-	}
-}
-
-/*-- BUTTON STYLES --*/
-
-.btn{
-	&.active{
-		background-color: $brand;
-		border: 0;
-		box-shadow: none;
-		&.list, &.map, &.calendar, &.table, &.graph{
-			&:after{
-				color: $user_menu;
-			}
-		}
-	}
-	&.download{
-		&[disabled]{
-			background-color: $grey_one;
-			color: #f2f2f2;
-			&:hover{
-				background-color: $grey_one;
-				color:#f2f2f2;
-			}
-		}
-	}
-	&:focus{
-		outline:0;
-	}
-	&:hover{
-		background-color: $btnHover;
-		border: 0;
-		box-shadow: none;
-	}
-	&.list:after, &.table:after{
-		font-size: 14px;
-		top:1px;
-	}
-	&.map:after{
-		font-size: 15px;
-		left: 2px;
-		top:1px;
-	}
-	&.calendar:after{
-		font-size: 15px;
-		top: 2px;
-	}
-	&.graph:after{
-		font-size: 14px;
-		top: 1px;
-	}
-	.icon-calendar:before{
-		font-size: 19px;
-		left: 2px;
-		top:1px;
-	}
-	&.btn-primary, &.btn-cancel{
-		box-sizing: border-box;
-		padding: 8px 25px;
-		height: 35px;
-		&.fileinput-button{
-			width: 140px;
-		}
-	}
-}
-
-.btn-small {
-	padding: 2px 10px;
-}
-
-/* According to the Style Guide there is no hover effect for this element */
-
-.btn-group{
-	margin-left: 25px;
-	&>.btn+.btn{
-		margin-left: 0;
-	}
-	.btn{
-		border: 0;
-		box-shadow: none;
-		color: white;
-		&.active{
-			background-color: $brand;
-			color: $user_menu;
-			&:hover{
+			font-weight: bold;
+			padding: 1px 7px;
+			margin-right: 0.15em;
+			margin-left: 2px;
+			&.active{
 				background-color: $brand;
+				font-weight: 300;
+				-webkit-border-radius: 6px;
+				border-radius: 6px;
+				a{
+					color: white;
+					&:hover{
+						border-bottom: 0;
+						color: $grey_two;
+					}
+				}
+			}
+			a{
 				color: $user_menu;
-			}
-		}
-		&:hover{
-			background-color: $user_menu;
-			color: white;
-		}
-		&.calendar{
-			border-left: 1px solid $buttons-border;
-			border-right: 1px solid $buttons-border;
-			&:last-child{
-				border-right: none;
+				cursor: pointer;
+				font-weight: 400;
+				&:hover{
+					border-bottom: 1px solid $brand;
+					color: $brand;
+					text-decoration: none;
+				}
 			}
 		}
 	}
-}
 
-/* End btn-group */
-
-.btn-primary{
-	background-color: $buttons !important;
-	background-image:none !important;
-	border: 0;
-	box-shadow: none;
-	color: white !important;
-	font-size: 14px;
-	padding: 7px 25px;
-	text-decoration: none !important;
-	text-shadow:none;
-	&:hover{
-		background-color: $buttons-hover !important;
+	.custom-data-panel{
+		.form-group{
+			display: inline-block;
+			width: 45% !important;
+			label{
+				color: $user_menu;
+				font-size: 12px;
+				font-weight: 300;
+			}
+			input[type="date"]{
+				color: $user_menu;
+				font-size: 0.88em;
+				height: auto;
+				padding:6px;
+				width: 100%;
+				&::-webkit-inner-spin-button,
+				&::-webkit-calendar-picker-indicator {
+				    display: none;
+				    -webkit-appearance: none;
+				}
+			}
+			&+span{
+				bottom: 3px;
+				color: $user_menu;
+				text-align: center;
+				padding: 0 3px;
+				position: relative;
+			}
+		}
 	}
-	&:active{
-		background-color: $buttons-hover;
-		box-shadow: none;
-	}
-	&.fileinput-button{
-		padding: 7px 23px;
-	}
-}
-
-.btn-cancel{
-	background-color: $user_menu;
-	color: white;
-	&:hover{
-		color: white;
-		background-color: $brand;
-	}
-}
-
-.btn-info{
-	background-color: $user_menu !important;
-	color: white !important;
-	font-size: 13px;
-	padding-bottom:9px;
-	padding-top: 9px;
-	i{
-		line-height: 5px;
-		font-size: 19px;
-		position: relative;
-		top: 6px;
-		right: -12px;
-	}
-	&:hover{
-		background-color: $brand !important;
-	}
-}
 
 #list-tools {
 	margin: 1px 0 25px 0;
@@ -829,17 +886,8 @@ a.more-options-link{
 	margin-bottom: 28px;
 }
 
-.container-fluid{
-	padding: 0;
-}
-
-p{
-	&.big{
-		font-size: 16px;
-	}
-}
-
-/*-- Login styles --*/
+// LOGIN STYLES
+// --------------------------------------------------
 
 .login_box{
 	background-color: $menu;
@@ -871,7 +919,7 @@ p{
 			}
 		}
 
-		input[type=text]:focus, input[type=password]:focus, input[type=email]:focus {
+		input[type=text]:focus, input[type=password]:focus, input[type=email]:focus{
 			background-color: #fff !important;
 		}
 		span.help-inline {
@@ -1009,7 +1057,8 @@ p{
 				}
 			}
 		}
-		.email, .tel, .user_street_address, .user_unit_number, .password, .time_zone{
+		.email, .tel, .user_street_address, .user_unit_number, .password,
+		.time_zone{
 			.controls{
 				width:575px;
 			}
@@ -1019,7 +1068,8 @@ p{
 			box-shadow: none !important;
 			width: 250px;
 		}
-		input[type="email"],input[type="tel"],input#user_street_address[type="text"],input#user_unit_number[type="text"],input[type="password"]{
+		input[type="email"],input[type="tel"],input#user_street_address[type="text"]
+		,input#user_unit_number[type="text"],input[type="password"]{
 			background-color: white !important;
 			width:556px !important;
 		}
@@ -1106,6 +1156,10 @@ p{
 		}
 	}
 }
+
+// FORMS STYLES
+// --------------------------------------------------
+
 .form-actions{
 	background-color: white;
 	border:0;
@@ -1116,6 +1170,45 @@ p{
 form{
 	margin: 0;
 }
+
+control-group{
+	label.control-label{
+		color:$text;
+	}
+	&.error {
+		input, textarea {
+			&:focus {
+				box-shadow: none;
+				-webkit-box-shadow: none;
+			}
+		}
+	}
+}
+
+.chzn-default span {
+	color: $user_menu;
+}
+
+// Input styles
+
+input:-moz-placeholder,
+textarea:-moz-placeholder {
+	color: white;
+}
+
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+	color: white;
+}
+
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+	color: white;
+}
+
+
+// FOOTER STYLES
+// --------------------------------------------------
 
 footer{
 	bottom: 0;
@@ -1257,6 +1350,57 @@ footer{
 		}
 	}
 }
+
+// Back to top link
+
+.totop {
+	background-color: $header;
+	color: $user_menu;
+	font-size: 12px;
+	padding-top: 4px;
+	position: fixed;
+	bottom: 0px;
+	height: 30px;
+	margin-right: 10px;
+	right: 0px;
+	text-align: center;
+	width: 36px;
+	z-index: 104400;
+	-webkit-border-radius: 6px 6px 0px 0px;
+	border-radius: 6px 6px 0px 0px;
+
+	a,  a:visited {
+		color: $user_menu;
+		display: block;
+		font-weight: 400;
+		height: 38px;
+		text-align: center;
+		line-height: 4px;
+		text-decoration:  none;
+		width: 35px;
+		&:hover{
+			color: $user_menu;
+		}
+	}
+
+	a:before{
+		color: $user_menu;
+		content: "\e012";
+		display: block;
+		font-family: 'icons';
+		font-size: 14px;
+		padding: 1px 0 12px 0;
+		position: relative;
+		speak: none;
+		text-align: center;
+		vertical-align: middle;
+		-webkit-font-smoothing: antialiased;
+	}
+}
+
+// HEADER STYLES
+// --------------------------------------------------
+
 header{
 	&.navbar-inverse {
 		.navbar-inner {
@@ -1379,19 +1523,13 @@ header{
 	}
 }
 
-h1, h2, h3{
-	font-family: 'Lato', sans-serif;
-	font-weight: normal;
-	line-height: 20px;
-	margin-top: 0;
-}
-.icon-chevron-up{
-	margin-right: 15px;
-}
-
 li.dropdown a{
 	color:$user_menu;
 }
+
+// NAV TAB STYLES
+// --------------------------------------------------
+
 .nav{
 	margin-bottom: 0;
 }
@@ -1684,7 +1822,10 @@ li#notifications{
 
 				&:hover{
 					background-color: $app_bg;
-					.icon-notification-event:before, .icon-notification-task:before, .icon-notification-comment:before, .icon-notification-campaign:before, .icon-notification-action:before, .icon-notification-group:before, .icon-notification-venue:before, .icon-angle-right:before{
+					.icon-notification-event:before, .icon-notification-task:before,
+					.icon-notification-comment:before, .icon-notification-campaign:before,
+					.icon-notification-action:before, .icon-notification-group:before,
+					.icon-notification-venue:before, .icon-angle-right:before{
 						color:white;
 					}
 				}
@@ -1841,6 +1982,7 @@ ul.kpis-list{
 }
 
 // Graphical visualization for Goals
+
 #kpis-trends-bars {
 	a{
 		color:$grey_three;
@@ -2088,7 +2230,8 @@ ul.kpis-list{
 	}
 }
 
-/*-- LISTS OF ELEMENTS - EVENTS --*/
+// LISTS OF ELEMENTS - EVENTS
+// --------------------------------------------------
 
 .link-list{
 	border:1px solid $borders;
@@ -2162,7 +2305,6 @@ ul.kpis-list{
 			span{
 				display: inline-block;
 				vertical-align: middle;
-				//vertical-align: top;
 				&.address{
 					line-height: 19px;
 					width: 45%;
@@ -2183,7 +2325,7 @@ ul.kpis-list{
 					opacity: 0;
 					position: absolute;
 					right: 15px;
-					font-size: 16px;
+					font-size: 18px;
 				}
 			}
 			/* End global change */
@@ -2202,12 +2344,6 @@ ul.kpis-list{
 				color:$user_menu;
 				}
 			}
-			/*
-			&:hover{
-				&.inactive a{
-					color:$text;
-				}
-			}*/
 		}
 	}
 	.empty-list-message {
@@ -2730,7 +2866,8 @@ ul.kpis-list{
 			}
 		}
 	}
-	ul#brands-list, ul#brand_portfolios-list, ul#date_ranges-list, ul#day_parts-list{
+	ul#brands-list, ul#brand_portfolios-list, ul#date_ranges-list,
+	ul#day_parts-list{
 		li{
 			display: table;
 			width: 100%;
@@ -3006,21 +3143,6 @@ ul.ui-widget-content{
 	}
 }
 
-input:-moz-placeholder,
-textarea:-moz-placeholder {
-	color: white;
-}
-
-input:-ms-input-placeholder,
-textarea:-ms-input-placeholder {
-	color: white;
-}
-
-input::-webkit-input-placeholder,
-textarea::-webkit-input-placeholder {
-	color: white;
-}
-
 #company-name {
 	font-size: 20px;
 	margin-bottom: 0;
@@ -3271,7 +3393,8 @@ textarea::-webkit-input-placeholder {
 	}
 }
 
-/*-- DATA FORM STYLES (ACTIVITIES AND POST EVENT DATA) --*/
+// DATA FORM STYLES (ACTIVITIES AND POST EVENT DATA)
+// --------------------------------------------------
 
 .data-form-wrapper {
 	.help-inline {
@@ -3466,7 +3589,8 @@ textarea::-webkit-input-placeholder {
 	}
 }
 
-/*-- ATTACHMENT PANEL FOR PHOTOS UPLOAD --*/
+// ATTACHMENT PANEL FOR PHOTOS UPLOAD
+// --------------------------------------------------
 
 .attachment-panel{
 	@include box-sizing(border-box);
@@ -3842,9 +3966,10 @@ body.show {
 			min-width: 130px;
 		}
 	}
-	#company_user-areas-list, #company_user-places-list, #event-contacts-list, #event-team-members, #team-members-list, #area-places-list {
+	#company_user-areas-list, #company_user-places-list,
+	#event-contacts-list, #event-team-members, #team-members-list,
+	#area-places-list {
 		clear: both;
-		//margin: 0 -12% 0 0;
 	}
 	.place, .area-user{
 		font-family: $baseFontFamily;
@@ -3883,14 +4008,16 @@ body.show {
 			@extend .crop-text;
 		}
 		&:hover{
-			a.remove-member-btn, a.remove-area-btn, a.remove-brand-btn, a.remove-contact-btn, .event-contacts-list a.edit {
+			a.remove-member-btn, a.remove-area-btn, a.remove-brand-btn,
+			a.remove-contact-btn, .event-contacts-list a.edit {
 				color: $brand;
 				display:inline-block;
 				font-size: 16px;
 				float: right;
 			}
 		}
-		a.remove-member-btn, a.remove-area-btn, a.remove-brand-btn, a.remove-contact-btn, .event-contacts-list a.edit {
+		a.remove-member-btn, a.remove-area-btn, a.remove-brand-btn,
+		a.remove-contact-btn, .event-contacts-list a.edit {
 			display:none;
 		}
 		.icon-wired-star{
@@ -4180,7 +4307,8 @@ body.show {
 	}
 }
 
-//PHOTOS VIEWS ----------------------------------
+// PHOTOS VIEWS
+// --------------------------------------------------
 
 .box_photos{
 	h3 {
@@ -4260,6 +4388,8 @@ ul.thumbnails{
 }
 
 // Photo list for venues an details boxes
+// --------------------------------------------------
+
 #event-photos{
 	span.btn-primary{
 		margin-bottom: 20px;
@@ -4303,7 +4433,8 @@ ul{
 	}
 }
 
-// Photo list - Fancybox styles
+// PHOTO LIST - FANCYBOX STYLES
+// --------------------------------------------------
 
 .fancybox-inner{
 	height: auto;
@@ -4452,6 +4583,8 @@ ul{
 }
 
 // ROLES DETAILS
+// --------------------------------------------------
+
 body.roles{
 	table.table tbody tr:hover td{
 		background-color: white !important;
@@ -4542,6 +4675,7 @@ body.roles{
 }
 
 // VENUES
+// --------------------------------------------------
 
 .venues {
 	&.index {
@@ -4750,7 +4884,6 @@ body.roles{
 				margin-left: 30px;
 			}
 		}
-
 	}
 
 	.filter-wrapper{
@@ -4774,6 +4907,7 @@ body.roles{
 }
 
 // EVENT DATA
+// --------------------------------------------------
 
 .event_data, .comments, .expenses, .surveys, .photos {
 	.main.with-details-close-bar {
@@ -5093,6 +5227,7 @@ table.table td.comments-container {
 		color: white;
 	}
 }
+
 // Comments List
 .comment-row{
 	margin: 20px 0 0 62px;
@@ -5150,6 +5285,8 @@ table.table td.comments-container {
 }
 
 // TASKS STYLES
+// --------------------------------------------------
+
 .tasks{
 	b{
 		font-size: 16px;
@@ -5239,52 +5376,6 @@ svg{
 .survey-column-graph {
 	margin: 40px 0 80px 0;
 	width: 480px;
-}
-
-/* back to top link */
-.totop {
-	background-color: $header;
-	color: $user_menu;
-	font-size: 12px;
-	padding-top: 4px;
-	position: fixed;
-	bottom: 0px;
-	height: 30px;
-	margin-right: 10px;
-	right: 0px;
-	text-align: center;
-	width: 36px;
-	z-index: 104400;
-	-webkit-border-radius: 6px 6px 0px 0px;
-	border-radius: 6px 6px 0px 0px;
-
-	a,  a:visited {
-		color: $user_menu;
-		display: block;
-		font-weight: 400;
-		height: 38px;
-		text-align: center;
-		line-height: 4px;
-		text-decoration:  none;
-		width: 35px;
-		&:hover{
-			color: $user_menu;
-		}
-	}
-
-	a:before{
-		color: $user_menu;
-		content: "\e012";
-		display: block;
-		font-family: 'icons';
-		font-size: 14px;
-		padding: 1px 0 12px 0;
-		position: relative;
-		speak: none;
-		text-align: center;
-		vertical-align: middle;
-		-webkit-font-smoothing: antialiased;
-	}
 }
 
 #upload-progress-list {
@@ -6488,10 +6579,12 @@ body{
 					}
 					&.add-button{
 						display: table-cell;
+						font-size: 18px;
 						vertical-align: middle;
-					}
-					&.member-data{
-						padding-left: 60px;
+						width: 7%;
+						.icon-plus-sign{
+							font-size: 18px;
+						}
 					}
 				}
 				.brand-data, .kpi-data {
@@ -6507,8 +6600,7 @@ body{
 					}
 				}
 				a {
-					color: $venues_blue;
-					text-decoration: none;
+					color: $brand;
 				}
 				&.empty-list-message {
 					display: none;
@@ -7225,76 +7317,7 @@ table td.sub-level-1 {
 	}
 }
 
-/*--ICONS FOR ALL DATA SECTIONS --*/
 
-[class$='-data']{
-	display: block;
-	min-height: 20px;
-	margin: 0 0 10px 0;
-	position: relative;
-	width: 380px;
-	i{
-		color: $user_menu;
-		font-size: 17px;
-		display: inline-block;
-		margin-right: 10px;
-		margin-top: 4px;
-		vertical-align: top;
-	}
-	span{
-		display: inline-block;
-	}
-}
-
-.links-data{
-	margin: 0 0 0 30px;
-	.icon-edit, .icon-rounded-disable{
-		font-size: 17px;
-		margin-right: 10px;
-	}
-	i{
-		color: $brand;
-		margin-top: 0;
-	}
-}
-
-.place-data {
-	i{
-		font-size: 22px;
-		left: 2px;
-		position: relative;
-	}
-}
-
-.phone-data {
-	i{
-		top:-2px;
-		position: relative;
-	}
-}
-
-.time-data, .description-data {
-	i{
-		font-size:20px;
-		&+span{
-			width: 90%;
-		}
-	}
-}
-
-.calendar-data{
-	b{
-		font-size:16px;
-		font-weight: 400;
-	}
-}
-
-.place-data{
-	width: 500px;
-	address{
-		margin-bottom: 0px;
-	}
-}
 
 table.table.likert-scale-table {
 	width: auto;
@@ -7317,6 +7340,7 @@ table.table.likert-scale-table {
 }
 
 /*-- NEW FEATURES --*/
+
 .new-feature{
 	background-color: $grey_one;
 	border-radius: 5px;
