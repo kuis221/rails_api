@@ -486,14 +486,14 @@ class Event < ActiveRecord::Base
               unless late.nil?
                 all_of do
                   with(:status, 'Unsent')
-                  with(end_at_field).less_than(2.days.ago)
+                  with(end_at_field).less_than(current_company.late_event_end_date)
                 end
               end
 
               unless due.nil?
                 all_of do
                   with(:status, 'Unsent')
-                  with(end_at_field, Date.yesterday.beginning_of_day..Time.zone.now)
+                  with(end_at_field, current_company.due_event_start_date..current_company.due_event_end_date)
                 end
               end
 
