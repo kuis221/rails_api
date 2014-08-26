@@ -641,7 +641,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 
 	a.datepick-cmd{
 		display: inline-block;
-		margin-top: 10px;
+		margin-top: 8px;
 		overflow: hidden;
 		position:relative;
 		text-indent: 13%;
@@ -691,7 +691,8 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		table{
 			border: 1px solid $user_menu;
 			display: block;
-			padding: 0 8px 4px 8px;
+			font-size: 13px;
+			padding: 0 6px 4px;
 			width: auto;
 		}
 		thead{
@@ -771,7 +772,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	}
 
 
-// Date Preferences Panel
+// Date Preferences Panel (sidebar)
 
 	.dates-pref{
 		list-style: none;
@@ -1939,24 +1940,8 @@ li#notifications{
 	}
 }
 
-ul.kpis-list{
-	li{
-		min-height: 20px;
-		padding:10px 0 10px 0;
-		.kpi-goal{
-			font-size: 16px;
-			margin-top: 10px;
-		}
-	}
-	.kpi-info{
-		font-size: 11px;
-		margin: 10px 0 0 10px;
-		.kpi-name{
-			font-size: 16px;
-		}
-	}
-}
-
+// CAMPAIGNS 
+// --------------------------------------------------
 
 .kpi-trends-stats {
 	line-height: 30px;
