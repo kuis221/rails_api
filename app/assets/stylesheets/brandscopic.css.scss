@@ -316,8 +316,6 @@ body{
 // STYLES FOR ALL DATA SECTIONS
 // --------------------------------------------------
 
-/*--ICONS FOR ALL DATA SECTIONS --*/
-
 [class$='-data']{
 	display: block;
 	min-height: 20px;
@@ -339,7 +337,7 @@ body{
 
 .calendar-data, .email-data, .phone-data, .place-data,
 .time-data, .description-data, .member-data{
-	margin:0 0 20px 30px;
+	margin:0 0 20px 0;
 	width: 380px;
 }
 
@@ -1350,6 +1348,53 @@ footer{
 				}
 			}
 		}
+	}
+}
+
+// Back to top link
+
+.totop {
+	background-color: $header;
+	color: $user_menu;
+	font-size: 12px;
+	padding-top: 4px;
+	position: fixed;
+	bottom: 0px;
+	height: 30px;
+	margin-right: 10px;
+	right: 0px;
+	text-align: center;
+	width: 36px;
+	z-index: 104400;
+	-webkit-border-radius: 6px 6px 0px 0px;
+	border-radius: 6px 6px 0px 0px;
+
+	a,  a:visited {
+		color: $user_menu;
+		display: block;
+		font-weight: 400;
+		height: 38px;
+		text-align: center;
+		line-height: 4px;
+		text-decoration:  none;
+		width: 35px;
+		&:hover{
+			color: $user_menu;
+		}
+	}
+
+	a:before{
+		color: $user_menu;
+		content: "\e012";
+		display: block;
+		font-family: 'icons';
+		font-size: 14px;
+		padding: 1px 0 12px 0;
+		position: relative;
+		speak: none;
+		text-align: center;
+		vertical-align: middle;
+		-webkit-font-smoothing: antialiased;
 	}
 }
 
@@ -3348,7 +3393,8 @@ ul.ui-widget-content{
 	}
 }
 
-/*-- DATA FORM STYLES (ACTIVITIES AND POST EVENT DATA) --*/
+// DATA FORM STYLES (ACTIVITIES AND POST EVENT DATA)
+// --------------------------------------------------
 
 .data-form-wrapper {
 	.help-inline {
@@ -3543,7 +3589,8 @@ ul.ui-widget-content{
 	}
 }
 
-/*-- ATTACHMENT PANEL FOR PHOTOS UPLOAD --*/
+// ATTACHMENT PANEL FOR PHOTOS UPLOAD
+// --------------------------------------------------
 
 .attachment-panel{
 	@include box-sizing(border-box);
@@ -3919,9 +3966,10 @@ body.show {
 			min-width: 130px;
 		}
 	}
-	#company_user-areas-list, #company_user-places-list, #event-contacts-list, #event-team-members, #team-members-list, #area-places-list {
+	#company_user-areas-list, #company_user-places-list,
+	#event-contacts-list, #event-team-members, #team-members-list,
+	#area-places-list {
 		clear: both;
-		//margin: 0 -12% 0 0;
 	}
 	.place, .area-user{
 		font-family: $baseFontFamily;
@@ -3960,14 +4008,16 @@ body.show {
 			@extend .crop-text;
 		}
 		&:hover{
-			a.remove-member-btn, a.remove-area-btn, a.remove-brand-btn, a.remove-contact-btn, .event-contacts-list a.edit {
+			a.remove-member-btn, a.remove-area-btn, a.remove-brand-btn,
+			a.remove-contact-btn, .event-contacts-list a.edit {
 				color: $brand;
 				display:inline-block;
 				font-size: 16px;
 				float: right;
 			}
 		}
-		a.remove-member-btn, a.remove-area-btn, a.remove-brand-btn, a.remove-contact-btn, .event-contacts-list a.edit {
+		a.remove-member-btn, a.remove-area-btn, a.remove-brand-btn,
+		a.remove-contact-btn, .event-contacts-list a.edit {
 			display:none;
 		}
 		.icon-wired-star{
@@ -4257,7 +4307,8 @@ body.show {
 	}
 }
 
-//PHOTOS VIEWS ----------------------------------
+// PHOTOS VIEWS
+// --------------------------------------------------
 
 .box_photos{
 	h3 {
@@ -4337,6 +4388,8 @@ ul.thumbnails{
 }
 
 // Photo list for venues an details boxes
+// --------------------------------------------------
+
 #event-photos{
 	span.btn-primary{
 		margin-bottom: 20px;
@@ -4380,7 +4433,8 @@ ul{
 	}
 }
 
-// Photo list - Fancybox styles
+// PHOTO LIST - FANCYBOX STYLES
+// --------------------------------------------------
 
 .fancybox-inner{
 	height: auto;
@@ -4529,6 +4583,8 @@ ul{
 }
 
 // ROLES DETAILS
+// --------------------------------------------------
+
 body.roles{
 	table.table tbody tr:hover td{
 		background-color: white !important;
@@ -4619,6 +4675,7 @@ body.roles{
 }
 
 // VENUES
+// --------------------------------------------------
 
 .venues {
 	&.index {
@@ -4827,7 +4884,6 @@ body.roles{
 				margin-left: 30px;
 			}
 		}
-
 	}
 
 	.filter-wrapper{
@@ -4851,6 +4907,7 @@ body.roles{
 }
 
 // EVENT DATA
+// --------------------------------------------------
 
 .event_data, .comments, .expenses, .surveys, .photos {
 	.main.with-details-close-bar {
@@ -5170,6 +5227,7 @@ table.table td.comments-container {
 		color: white;
 	}
 }
+
 // Comments List
 .comment-row{
 	margin: 20px 0 0 62px;
@@ -5227,6 +5285,8 @@ table.table td.comments-container {
 }
 
 // TASKS STYLES
+// --------------------------------------------------
+
 .tasks{
 	b{
 		font-size: 16px;
@@ -5316,52 +5376,6 @@ svg{
 .survey-column-graph {
 	margin: 40px 0 80px 0;
 	width: 480px;
-}
-
-/* back to top link */
-.totop {
-	background-color: $header;
-	color: $user_menu;
-	font-size: 12px;
-	padding-top: 4px;
-	position: fixed;
-	bottom: 0px;
-	height: 30px;
-	margin-right: 10px;
-	right: 0px;
-	text-align: center;
-	width: 36px;
-	z-index: 104400;
-	-webkit-border-radius: 6px 6px 0px 0px;
-	border-radius: 6px 6px 0px 0px;
-
-	a,  a:visited {
-		color: $user_menu;
-		display: block;
-		font-weight: 400;
-		height: 38px;
-		text-align: center;
-		line-height: 4px;
-		text-decoration:  none;
-		width: 35px;
-		&:hover{
-			color: $user_menu;
-		}
-	}
-
-	a:before{
-		color: $user_menu;
-		content: "\e012";
-		display: block;
-		font-family: 'icons';
-		font-size: 14px;
-		padding: 1px 0 12px 0;
-		position: relative;
-		speak: none;
-		text-align: center;
-		vertical-align: middle;
-		-webkit-font-smoothing: antialiased;
-	}
 }
 
 #upload-progress-list {
