@@ -88,6 +88,7 @@ select.chosen-enabled{
 			text-overflow: ellipsis;
 			white-space: nowrap;
 			line-height: $chzn-single-height;
+			color: #444;
 		}
 		&.chzn-default span{
 			color: $user_menu;
@@ -284,7 +285,7 @@ select.chosen-enabled{
 					display: block;
 					width: 12px;
 					height: 12px;
-					background: url('chosen-sprite.png') -48px 1px no-repeat;
+					background: image-url('chosen-sprite.png') -48px 1px no-repeat;
 					font-size: 1px;
 					&:hover {
 						background-position: -48px -10px;

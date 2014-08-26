@@ -56,7 +56,7 @@ module ApplicationHelper
     content_tag(:div, id: 'resource-close-details', 'data-spy' => "affix", 'data-offset-top' => "20") do
       link_to(return_path || collection_path, class: 'close-details') do
         content_tag(:span, title, class: 'details-bar-pull-left') +
-        content_tag(:span, " ".html_safe, class: :close)
+        content_tag(:span, " ".html_safe, class: 'icon-close')
       end
     end
   end
@@ -199,7 +199,7 @@ module ApplicationHelper
 
   def link_to_deactivate(model, opts={})
     opts[:url] ||= [:deactivate, model]
-    link_to '', opts[:url], remote: true, title: I18n.t('confirmation.deactivate') , class: 'disable', data: { confirm: I18n.t('confirmation.deactivate_confirm_message', model: model.class.model_name.human.downcase) } if model.active?
+    link_to '', opts[:url], remote: true, title: I18n.t('confirmation.deactivate') , class: 'icon-rounded-disable', data: { confirm: I18n.t('confirmation.deactivate_confirm_message', model: model.class.model_name.human.downcase) } if model.active?
   end
 
   def active_class(item)

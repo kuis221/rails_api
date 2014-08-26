@@ -10,7 +10,7 @@ $.widget 'nmk.photoGallery', {
 
 		$(document).on 'attached_asset:activated', (e, id) =>
 			@image.data('status', true)
-			@gallery.find('a.photo-deactivate-link').replaceWith($('<a class="icon-remove-circle photo-deactivate-link" title="Deactivate" data-remote="true" data-confirm="Are you sure you want to deactivate this photo?"></a>').attr('href', @image.data('urls').deactivate))
+			@gallery.find('a.icon-rounded-disable').replaceWith($('<a class="icon-rounded-disable" title="Deactivate" data-remote="true" data-confirm="Are you sure you want to deactivate this photo?"></a>').attr('href', @image.data('urls').deactivate))
 			true
 
 		$(document).on 'attached_asset:deactivated', (e, id) =>
@@ -130,8 +130,9 @@ $.widget 'nmk.photoGallery', {
 
 	setTagCloseButton: (tag) ->
 		if 'deactivate_tag' in @image.data('permissions')
-			button = $('<button class="close">').on 'click', (e) =>
+			button = $('<a href="#" class="icon-close remove-tag" title="Remove Tag">').on 'click', (e) =>
 				@removeTag(tag)
+				false
 
 	removeTag: (tag) ->
 		$.ajax "/attached_assets/"+@image.data('id')+'/tags/'+tag['id']+'/remove', {
@@ -231,7 +232,7 @@ $.widget 'nmk.photoGallery', {
 			@gallery = $('<div class="gallery-modal modal hide fade">').append(
 				$('<div class="gallery-modal-inner">').append(
 					$('<div class="panel">').
-						append('<button class="close" data-dismiss="modal" aria-hidden="true" title="Close"></button>').
+						append('<a href="#" class="icon-close close-gallery" data-dismiss="modal" aria-hidden="true" title="Close"></a>').
 						append(
 							$('<div class="description">').append( @title ).append( @date ).append( @address ),
 							$('<div class="mini-slider">').append( @miniCarousel = @_createCarousel('small') ),
@@ -246,7 +247,7 @@ $.widget 'nmk.photoGallery', {
 				$('<div class="gallery-modal-inner">').append(
 					$('<div class="slider">').
 						append($('<div class="photo-toolbar-header">').
-							append('<a class="close" data-dismiss="modal" aria-hidden="true" title="Close"></a>')).
+							append('<a class="icon-close" data-dismiss="modal" aria-hidden="true" title="Close"></a>')).
 						append( $('<div class="slider-inner unique">').
 							append( @carousel = @_createCarousel() ) ).
 						append( @photoToolbar = $('<div class="photo-toolbar">') )
@@ -333,7 +334,7 @@ $.widget 'nmk.photoGallery', {
 				null
 			),
 			(if 'index_photo_results' in @image.data('permissions')
-				$('<a class="photo-download-link" title="Download"></a>').attr('href', urls.download)
+				$('<a class="icon-download" title="Download"></a>').attr('href', urls.download)
 			else
 				null
 			)
@@ -344,8 +345,8 @@ $.widget 'nmk.photoGallery', {
 		$carousel = $('<div id="'+id+'" class="gallery-carousel carousel">').addClass(carouselClass).append($('<div class="carousel-inner">'))
 		if @options.showSidebar
 			$carousel.append(
-				$('<a class="carousel-control left" data-slide="prev" href="#'+id+'"><img /><span></span></a>'),
-				$('<a class="carousel-control right" data-slide="next" href="#'+id+'"><img /><span></span></a>')
+				$('<a class="carousel-control left" data-slide="prev" href="#'+id+'"><img /><span><i class="icon-slimmed-arrow-left-rounded"></i></span></a>'),
+				$('<a class="carousel-control right" data-slide="next" href="#'+id+'"><img /><span><i class="icon-slimmed-arrow-right-rounded"></i></span></a>')
 			)
 
 		$carousel

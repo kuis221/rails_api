@@ -5,7 +5,7 @@ li id="activity_type_#{activity_type.id}" class="#{active_class(activity_type)}"
       span.description
         = activity_type.description
   span.pull-right
-    = link_to '', edit_activity_type_path(activity_type), remote: true, title: 'Edit', class: 'edit' if can?(:edit, ActivityType)
+    = link_to '', edit_activity_type_path(activity_type), remote: true, title: 'Edit', class: 'icon-edit' if can?(:edit, ActivityType)
     - if can?(:deactivate, ActivityType)
       = link_to_deactivate activity_type
-      = link_to '', activate_activity_type_path(activity_type), remote: true, class: 'enable',title: I18n.t('confirmation.activate') unless activity_type.active?
+      = link_to '', activate_activity_type_path(activity_type), remote: true, class: 'icon-rounded-ok',title: I18n.t('confirmation.activate') unless activity_type.active?

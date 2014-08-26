@@ -1,6 +1,6 @@
 = user_new_feature('results_comments') do
   h5 Getting Started: Comments Report
-  a.close.btn-dismiss-alert href="#" title="Dismiss"
+  a.close.btn-dismiss-alert.icon.icon-close href="#" title="Dismiss"
   a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/U8-H27dxhTE?rel=0" data-width="640" data-height="360"
     img src="#{image_path('video_arrow.png')}" width="70" height="70" /
   .feature-description
@@ -20,6 +20,7 @@
       #list-tools.row-fluid
         .pull-right
           button.btn.download.xlsx-download-link data-url="#{results_comments_path(format: "xls")}" title="Download" data-disable-with="..."
+            span.icon-download
       .link-list
         ul#comment-list
           li.placeholder

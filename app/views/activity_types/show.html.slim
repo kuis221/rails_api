@@ -12,16 +12,18 @@
 
     - if resource.description.present?
       .description-data
-        = resource.description
+        i.icon-wired-description
+        span
+          = resource.description
 
     .links-data
-      = link_to '', edit_activity_type_path(resource), remote: true, class: 'edit', title: 'Edit' if can?(:edit, resource)
+      = link_to '', edit_activity_type_path(resource), remote: true, class: 'icon-edit', title: 'Edit' if can?(:edit, resource)
       = active_inactive_buttons(resource) if can?(:activate, resource)
 
     // The is info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
       h3= resource.name
-      = link_to '', edit_activity_type_path(resource), remote: true, class: 'edit' if can?(:edit, resource)
+      = link_to '', edit_activity_type_path(resource), remote: true, class: 'icon-edit' if can?(:edit, resource)
       = active_inactive_buttons(resource) if can?(:activate, resource)
 
   .form-builder-wrapper
@@ -31,23 +33,88 @@
     .fields-wrapper
       p Drag fields to add
       .custom
-        .field data-type="Dropdown" Dropdown
-        .field data-type="Section" Section
-        .field data-type="Checkbox" Checkboxes
-        .field data-type="Photo" Photo
-        .field data-type="Radio" Multiple Choice
-        .field data-type="Attachment" Attachment
-        .field data-type="Percentage" Percent
-        .field data-type="Summation" Summation
-        .field data-type="Number" Number
-        .field data-type="Date" Date
-        .field data-type="Currency" Price
-        .field data-type="Time" Time
-        .field data-type="Text" Single line text
-        .field data-type="LikertScale" Likert scale
-        .field data-type="TextArea" Paragraph
-        .field data-type="Brand" Brand
-        .field data-type="Marque" Marque
+        .field data-type="Dropdown" 
+          span.icon-dropdown 
+          br
+          | Dropdown
+
+        .field data-type="Section"
+          span.icon-dropdown 
+          br
+          | Section
+
+        .field data-type="Checkbox"
+          span.icon-checkbox
+          br
+          | Checkboxes
+
+        .field data-type="Photo"
+          span.icon-photo
+          br
+          | Photo
+
+        .field data-type="Radio" 
+          span.icon-radio
+          br
+          | Multiple Choice
+
+        .field data-type="Attachment" 
+          span.icon-attach
+          br
+          | Attachment
+                 
+        .field data-type="Percentage"
+          span.icon-percent
+          br
+          | Percent
+
+        .field data-type="Summation"
+          span.icon-summation
+          br
+          | Summation
+
+        .field data-type="Number" 
+          span.icon-number
+          br
+          | Number
+
+        .field data-type="Date" 
+          span.icon-calendar
+          br
+          | Date
+
+        .field data-type="Currency" 
+          span.icon-price
+          br
+          | Price
+
+        .field data-type="Time" 
+          span.icon-time
+          br
+          | Time
+
+        .field data-type="Text" 
+          span.icon-text
+          br
+          | Single line text
+
+        .field data-type="LikertScale" 
+          p Likert scale
+
+        .field data-type="TextArea" 
+          span.icon-paragraph
+          br
+          | Paragraph
+
+        .field data-type="Brand" 
+          span.icon-wired-star
+          br
+          | Brand
+
+        .field data-type="Marque" 
+          span.icon-marque
+          br
+          | Marque
 
 = render partial: 'help_tutorial'
 

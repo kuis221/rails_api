@@ -1,0 +1,33 @@
+p Deactivate or re-activate cities and places from the area
+.row-fluid.scroll-table-header
+  input#areas-places-search.search-box type="text" name="q"
+.select-list-table-wrapper.compact
+  .link-list
+    ul.select-items-list
+      - resource.area.places.each do |place|
+        li id="area-campaign-place-#{place.id}" class="#{resource.exclusions.include?(place.id) ? 'inactive' : ''}"
+          span
+            - if place.is_location?
+              i.icon-wired-map.special-icon.pull-left
+            - else
+              i.icon-wired-venue.special-icon.pull-left
+            .area_name= place.name
+            .area_description= place.formatted_address
+          span.pull-right
+            = link_to '', exclude_place_campaign_areas_campaign_path(resource.campaign_id, resource.area_id, place_id: place.id), remote: true, method: :post, data: {disable_with: ''}, title: 'Deactivate', class: 'icon-rounded-disable deactivate-btn'
+            = link_to '', include_place_campaign_areas_campaign_path(resource.campaign_id, resource.area_id, place_id: place.id), remote: true, method: :post, data: {disable_with: ''}, title: 'Activate', class: 'icon-rounded-ok activate-btn'
+
+button class="btn btn-primary" data-dismiss="modal" Done
+
+javascript:
+  $('#areas-places-search').on('keyup', function () {
+    var value = $(this).val().toLowerCase();
+    $(".select-items-list > li").each(function() {
+      if ($(this).text().toLowerCase().search(value) > -1) {
+        $(this).show();
+      }
+      else {
+        $(this).hide();
+      }
+    });
+  });

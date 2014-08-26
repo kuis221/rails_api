@@ -15,22 +15,26 @@
       - if resource.has_date_range? || resource.first_event_at || resource.last_event_at
         .calendar-data
           - if resource.has_date_range?
+            i.icon-calendar
             = format_date_range(resource.start_date, resource.end_date, date_separator: ' - ')
           - else
+            i.icon-calendar
             = format_date_range(resource.first_event_at, resource.last_event_at, date_separator: ' - ')
 
       - if resource.description
         .description-data
-          = resource.description
+          i.icon-wired-description
+          span
+            = resource.description
 
     .links-data
-      = link_to '', edit_campaign_path(resource), remote: true, class: 'edit', title: 'Edit' if can?(:edit, resource)
+      = link_to '', edit_campaign_path(resource), remote: true, class: 'icon-edit', title: 'Edit' if can?(:edit, resource)
       = active_inactive_buttons(resource) if can?(:deactivate, resource)
 
     // This info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
       h3= resource.name
-      = link_to '', edit_campaign_path(resource), title: 'Edit', remote: true, class: 'edit' if can?(:edit, resource)
+      = link_to '', edit_campaign_path(resource), title: 'Edit', remote: true, class: 'icon-edit' if can?(:edit, resource)
       = active_inactive_buttons(resource) if can?(:deactivate, resource)
       br>/
       = format_date_range(resource.first_event_at, resource.last_event_at, date_separator: ' - ')
@@ -92,7 +96,7 @@ javascript:
   $('#campaign-tabs a[data-content]').on('show', function(e){
     $target = $(e.target);
     $content = $('.tab-content ' + $target.attr('href'))
-    $content.html('<img src="/assets/loading.gif" />')
+    $content.html('<img src="#{asset_path('loading.gif')}" />')
     $content.load($target.data('content'))
   });
 

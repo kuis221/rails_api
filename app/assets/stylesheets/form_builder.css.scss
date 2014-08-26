@@ -291,8 +291,18 @@
 		}
 
 		.custom {
+			line-height: 16px;
 			.field:nth-child(odd) {
 				margin-right: 10px;
+			}
+			span{
+				font-size: 14px;
+				top: 3px;
+				line-height: 21px;
+				position: relative;
+			}
+			p{
+				line-height: 57px;
 			}
 		}
 

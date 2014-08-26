@@ -5,7 +5,7 @@
 
 = user_new_feature('events_list') do
   h5 Getting Started: Events
-  a.close.btn-dismiss-alert href="#" title="Dismiss"
+  a.close.btn-dismiss-alert.icon.icon-close href="#" title="Dismiss"
   a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/gwF6WU0EvWs?rel=0" data-width="640" data-height="360"
     img src="#{image_path('video_arrow.png')}" width="70" height="70" /
   .feature-description
@@ -175,14 +175,19 @@
 
     .text-right
       button.btn.download.xlsx-download-link data-url="#{events_path(format:"xls")}" title="Download"
+        i.icon-download
+
       - if can?(:view_map, Event) || can?(:view_list, Event) || can?(:view_calendar, Event)
         #toggle-events-view.btn-group
           - if can?(:view_list, Event)
             a.btn.active.list href="#list-view" data-toggle="tab" title="List View"
+              i.icon-list
           - if can?(:view_calendar, Event)
             a.btn.calendar href="#calendar-view" data-toggle="tab" title="Calendar View"
+              i.icon-grid
           - if can?(:view_map, Event)
             a.btn.map href="#map-view" data-toggle="tab" title="Map View"
+              i.icon-venue
 
   .tab-content
     - if can?(:view_list, Event)

@@ -1,5 +1,5 @@
 @import "variables";
-@import "mixins.scss";
+@import "mixins";
 
 // Profile Pic - User Pic Styles
 // --------------------------------------------------
@@ -119,7 +119,18 @@ a.resend-verification {
 			top: -15px;
 		}
 		.profile-data{
-			margin: 20px 0 0 20px;
+			margin: 20px 0 0 0;
+			a{
+				color: $brand;
+				font-size: 16px;
+				margin-right: 8px;
+				&:first-child{
+					margin-left: 15px;
+				}
+				i{
+					color:$brand;
+				}
+			}
 			h2 .icon-remove-sign {
 				margin-left: 10px;
 				&:before {
@@ -150,9 +161,6 @@ a.resend-verification {
 	.aditional-info{
 		margin: 20px 0 30px 0;
 		width: 100%;
-		.email-data, .phone-data, .place-data{
-			margin-bottom: 8px;
-		}
 	}
 	.user-data{
 		a{
@@ -229,7 +237,6 @@ a.resend-verification {
 		}
 		label.control-label{
 			display: inline-block;
-			float: right;
 			font-size: 13px;
 			margin-top: 12px;
 			margin-right: 5px;
@@ -257,11 +264,3 @@ a.resend-verification {
 	color: $user_menu;
 }
 
-.preferences-edit-icon{
-	margin-left: 10px;
-	&:after{
-		font-size: 16px !important;
-		color: $brand !important;
-		top: 0 !important;
-	}
-}

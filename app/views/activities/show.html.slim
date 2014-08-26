@@ -5,14 +5,16 @@
     - if resource.campaign.present?
       p.big= resource.campaign.name
     .calendar-data
-      = format_date(event_date(resource, :activity_date))
+      i.icon-calendar
+      span
+        = format_date(event_date(resource, :activity_date))
     .member-data
       b= resource.company_user.name
     = render partial: 'event_info', locals: { event: resource.activitable }
     = render 'details'
 
     .links-data
-      = link_to '', [:edit, resource], remote: true, class: 'edit' if can?(:edit, resource)
+      = link_to '', [:edit, resource], remote: true, class: 'icon-edit' if can?(:edit, resource)
       = active_inactive_buttons(resource) if can? :deactivate, resource
 
 javascript:

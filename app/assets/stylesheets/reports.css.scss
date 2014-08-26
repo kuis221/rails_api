@@ -1,5 +1,5 @@
-@import "variables"; 
-@import "mixins"; 
+@import "variables";
+@import "mixins";
 
 // REPORTS
 
@@ -24,7 +24,6 @@ ul.reports-list {
 		float: none;
 		width: 100%;
 		a {	
-			float: left;
 			padding: 0;
 		}
 	}
@@ -145,15 +144,15 @@ ul.reports-list {
 		}
 
 		:-moz-placeholder { /* Firefox 18- */
-		   color: $user_menu;  
+		   color: $user_menu;
 		}
 
 		::-moz-placeholder {  /* Firefox 19+ */
-		   color: $user_menu;  
+		   color: $user_menu;
 		}
 
-		:-ms-input-placeholder {  
-		   color: $user_menu;  
+		:-ms-input-placeholder {
+		   color: $user_menu;
 		}
 	}
 	.btn[disabled=disabled] {
@@ -205,7 +204,7 @@ ul.reports-list {
 				}
 			}
 		}
-	
+
 		&> ul, ul.sortable-list {
 			//margin: 7px -5px 30px -5px;
 			overflow: visible;
@@ -398,12 +397,12 @@ ul.reports-list {
 			background-color: #fff !important;
 			-webkit-box-shadow: none;
 			-moz-box-shadow: none;
-			box-shadow: none; 
+			box-shadow: none;
 		}
 
 		.arrow-up {
-			width: 0; 
-			height: 0; 
+			width: 0;
+			height: 0;
 			margin-left: 150px;
 			border-left: 10px solid transparent;
 			border-right: 10px solid transparent;
@@ -467,7 +466,7 @@ ul.reports-list {
 			.chzn-search input{
 				background-image:none;
 				bottom: 9px;
-				width: 70% !important;				
+				width: 70% !important;
 			}
 			.chzn-drop{
 				width: 184px !important;
@@ -574,7 +573,7 @@ $report_border_color: #ccc;
 					padding: 5px;
 				}
 				&.last-header, &.grand-total {
-					th, td { 
+					th, td {
 						text-align: right;
 					}
 
@@ -628,7 +627,7 @@ $report_border_color: #ccc;
 			tr.level_0 {
 				border-top: thin solid $report_border_color;
 				font-weight: bold;
-				.row_label{ 
+				.row_label{
 					border-top: thin solid $report_border_color;
 					font-weight:bold;
 					margin-top: -1px;
@@ -650,12 +649,11 @@ $report_border_color: #ccc;
 @media (max-height: 810px) {
 
 	#report-builder{
-		.field-list { 
+		.field-list {
 			height: 55px;
 			.fields-group{
 				margin-top: 0;
 			}
-		} 
+		}
 	}
 }
-

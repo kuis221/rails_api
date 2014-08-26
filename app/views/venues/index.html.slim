@@ -1,6 +1,6 @@
 = user_new_feature('venues_list') do
   h5 Getting Started: Venues
-  a.close.btn-dismiss-alert href="#" title="Dismiss"
+  a.close.btn-dismiss-alert.icon.icon-close href="#" title="Dismiss"
   a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/DaWPtXrek-A?rel=0" data-width="640" data-height="360"
     img src="#{image_path('video_arrow.png')}" width="70" height="70" /
   .feature-description
@@ -29,6 +29,7 @@
 .main
   #list-tools.text-right
     button.btn.download.xlsx-download-link data-url="#{venues_path(format:"xls")}" title="Download" class="hidden" id="venue-download-button"
+      span.icon-download
   .tab-content
     #list-view.tab-pane.active
       #venues-totals

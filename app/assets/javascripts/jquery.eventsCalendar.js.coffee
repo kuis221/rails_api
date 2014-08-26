@@ -45,8 +45,8 @@ $.widget 'nmk.eventsCalendar', {
 		@element.append "<div class=\"calendar-controls\">
 			<div class=\"calendar-month-name\"></div>
 			<div class=\"calendar-months-arrows\">
-				<a class=\"prev-month-btn icon-angle-left\" href=\"#\"></a>
-				<a class=\"next-month-btn icon-angle-right\" href=\"#\"></a>
+				<a class=\"icon-angle-left prev-month-btn\" href=\"#\"></a>
+				<a class=\"icon-angle-right next-month-btn\" href=\"#\"></a>
 			</div>
 		</div>"
 
