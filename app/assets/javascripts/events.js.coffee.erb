@@ -176,21 +176,21 @@ jQuery ->
 				markerCluster = new MarkerClusterer(map, markersArray, {styles: clusterStyles = [
 						{
 							textColor: 'white',
-							url: '/assets/small-bubble.png',
+							url: '<%= asset_path('small-bubble.png'); %>',
 							height: 50,
 							textSize: 11,
 							width: 50
 						},
 						{
 							textColor: 'white',
-							url: '/assets/medium-bubble.png',
+							url: '<%= asset_path('medium-bubble.png'); %>',
 							height: 50,
 							textSize: 11,
 							width: 50
 						},
 						{
 							textColor: 'white',
-							url: '/assets/big-bubble.png',
+							url: '<%= asset_path('big-bubble.png'); %>',
 							height: 50,
 							textSize: 11,
 							width: 50
