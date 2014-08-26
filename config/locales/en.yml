@@ -205,7 +205,7 @@ en:
         report: "Edit Report"
         activity: "Edit Activity"
         activity_type: "Edit Activity Type"
-        areas_campaign: "Customize area"
+        areas_campaign: "Customize %{name} Area"
 
   form_builder:
     modules:

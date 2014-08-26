@@ -193,6 +193,7 @@ feature "Campaigns", js: true do
       end
 
       within visible_modal do
+        expect(page).to have_content('Customize San Francisco Area')
         expect(page).to have_content 'One place name'
         expect(page).to have_content 'Another place name'
         fill_in 'q', with: 'one'
