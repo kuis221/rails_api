@@ -14,4 +14,9 @@ class AreasCampaignsController < FilteredController
     resource.exclusions = resource.exclusions - [params[:place_id].to_i]
     resource.save
   end
+
+  protected
+    def modal_dialog_title
+      I18n.translate("modals.title.#{resource.new_record? ? 'new' : 'edit'}.areas_campaign", name: resource.area.try(:name))
+    end
 end

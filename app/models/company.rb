@@ -88,6 +88,14 @@ class Company < ActiveRecord::Base
     end
   end
 
+  def late_task_date
+    if timezone_support?
+      Timeliness.parse(Date.yesterday.strftime('%Y-%m-%d 00:00:00'), zone: 'UTC')
+    else
+      Date.yesterday.beginning_of_day
+    end
+  end
+
   private
     def create_admin_role_and_user
       if admin_email
