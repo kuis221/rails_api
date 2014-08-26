@@ -18,33 +18,6 @@
 
   #collection-list-filters
 
-/* When the function it is ready to implement you should take out the class hide */
-
-  ul.dates-pref.hide
-    li
-      a Today
-    li
-      a 1w
-    li
-      a 1m
-    li
-      a 1y
-    li.active
-      a Custom
-
-  /* This is exclusive for Custom Option*/
-
-  .custom-data-panel.hide
-    .form-group
-      label Start date
-      input type="date"
-
-    span.separate -
-
-    .form-group
-      label End date
-      input type="date"
-
   /* This should go at the end of the Sidebar
 
   #save-filters-btn.a.btn.btn-primary.hide Save
@@ -222,6 +195,7 @@
       'includeAutoComplete': true,
       'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
       'defaultParams': [{name: 'status[]', value: 'Active'}, {name: 'start_date', value:'#{Time.zone.now.strftime("%m/%d/%Y")}'}, {name: 'end_date', value:'#{(Time.zone.now + 10.years).strftime("%m/%d/%Y")}'}],
+      'applyTo': '#{controller.controller_name}',
       'clearFilterParams': [{name: 'status[]', value: 'Active'}],
       'onChange': function(filterBox){
         $(document).trigger('events-filter:changed')
