@@ -60,6 +60,15 @@ abbr[title]{
 	border:0;
 }
 
+.close {
+	opacity: 1;
+	right: 25px;
+	text-shadow:none;
+	&:hover{
+		opacity: 1 !important;
+	}
+}
+
 .container-fluid{
 	padding: 0;
 }
@@ -281,6 +290,11 @@ body{
 		}
 		h2{
 			color:white;
+		}
+	}
+	&.sessions, &.passwords{
+		.alert{
+			margin: 0;
 		}
 	}
 }
@@ -1940,7 +1954,7 @@ li#notifications{
 	}
 }
 
-// CAMPAIGNS 
+// CAMPAIGNS
 // --------------------------------------------------
 
 .kpi-trends-stats {
@@ -5993,155 +6007,9 @@ div.chardinjs-tooltip
 	}
 }
 
-.goalable-errors{
-	.alert-danger{
-		margin: 30px 0 0 0;
-		padding: 10px 20px;
-	}
-}
 
-.goalable-list {
-	list-style: none;
-	margin: 20px 0 0 15px;
-	li {
-		position: relative;
-		&> div {
-			vertical-align: middle;
-			display: inline-block;
-		}
-		height: 110px;
-		width: 100%;
-		overflow: hidden;
-		white-space: nowrap;
-		.goalable-name {
-			font-size: 16px;
-			margin-top: 35px;
-			@extend .crop-text;
-			width: 200px;
-		}
-		.goal-title {
-			display: block;
-			font-size: 11px;
-			margin-top: 5px;
-			min-height: 20px;
-			text-align: center;
-		}
-		.goals {
-			float: right;
-			position: absolute;
-			overflow: hidden;
-			left: 350px;
-			right: 0;
-			height: 110px;
 
-			.goals-inner {
-				position: absolute;
-				top: 10px;
-				left: 0;
-			}
-
-			.kpi-segment-group:hover,
-			.kpi-goal:hover,
-			.activity-type-goal:hover {
-				background-color: $grey_one;
-				-webkit-border-radius: 4px;
-				-moz-border-radius: 4px;
-				border-radius: 4px;
-				input {
-					background-color: $grey_one;
-				}
-			}
-
-			.kpi-goal, .activity-type-goal {
-				margin: 0 3px;
-				padding: 5px 10px 5px 10px;
-				display: inline-block;
-
-				&.kpi-competitive_analysis{
-					width: 130px;
-				}
-
-				input {
-					background-color:white !important;
-					box-shadow: none;
-					font-size: 22px;
-					font-weight: 100;
-					width: 60px;
-					display: block;
-					border: 1px solid white !important;
-					&:hover, &.active{
-						border: 1px solid $user_menu !important;
-					}
-					&:-moz-placeholder{
-						color: $grey_three;
-					}
-					&:-ms-input-placeholder{
-						color: $grey_three;
-					}
-					&::-webkit-input-placeholder {
-						color: $grey_three;
-					}
-				}
-
-				label{
-					.kpi-name, .activity-type-name {
-						font-size: 11px;
-						padding: 14px 0 0 6px;
-					}
-				}
-			}
-
-			.error {
-				input {
-					border: 1px solid $buttons !important;
-				}
-			}
-
-			.kpi-segment-group {
-				display: inline-block;
-			}
-		}
-		.goals-controls {
-			position: absolute;
-			left: 275px;
-			right: 0;
-			height: 0;
-			z-index: 3;
-			.pull-left {
-				height: 100px;
-				padding: 25px 0 0 0;
-				background-color: #fff;
-			}
-			.pull-right{
-				height: 100px;
-				padding: 25px 15px 0 0;
-				background-color: #fff;
-			}
-			a {
-				color: $grey_three;
-				font-size: 22px;
-				&.arrow {
-					margin: 0 20px;
-					font-size: 30px;
-				}
-				&.arrow-left {
-					display: none;
-				}
-				&.icon-gear {
-					margin-right: 5px;
-				}
-				&:hover{
-					text-decoration: none;
-				}
-				&.icon-angle-right:before, &.icon-angle-left:before{
-					top:6px;
-				}
-			}
-		}
-	}
-}
-
-/*-- REPORTS --*/
+// REPORTS
 
 .report-kpi-chart-name {
 	color: $venues_blue;
@@ -6187,6 +6055,8 @@ div.chardinjs-tooltip
 		color: $venues_blue;
 	}
 }
+
+// GVA - GOALS VS ACTUAL
 
 body.gva {
 	.tab-content{
@@ -6428,11 +6298,6 @@ body.event_status {
 	}
 }
 
-body.gva, body.event_status{
-
-
-}
-
 body.campaigns_report,
 body.staff_report  {
 	.tab-content {
@@ -6519,15 +6384,7 @@ body.campaigns_report, body.staff_report {
 	}
 }
 
-// Sessions
 
-body{
-	&.sessions, &.passwords{
-		.alert{
-			margin: 0;
-		}
-	}
-}
 
 // Selectable object list widget
 .select-list-table-wrapper {
@@ -6861,7 +6718,8 @@ table td.sub-level-1 {
 	}
 }
 
-/*-- STYLES FOR THE NEW GALLERY MODAL --*/
+// STYLES FOR THE NEW GALLERY MODAL
+// ----------------------------------------------------------------------
 
 .modal-backdrop, .modal-backdrop.fade.in {
 	opacity: 0.96;
@@ -7012,7 +6870,6 @@ table td.sub-level-1 {
 				}
 				&.left{
 					left: 0;
-					//width: 20%;
 					span:before {
 						display:block;
 						line-height: 63px;
@@ -7036,7 +6893,6 @@ table td.sub-level-1 {
 				}
 				&.right{
 					right: 0;
-					//width: 80%;
 					span {
 						right: 0;
 						&:before {
@@ -7324,7 +7180,8 @@ table.table.likert-scale-table {
 	}
 }
 
-/*-- NEW FEATURES --*/
+// NEW FEATURE
+// ----------------------------------------------------------------------
 
 .new-feature{
 	background-color: $grey_one;
@@ -7507,16 +7364,6 @@ table.table.likert-scale-table {
 		font-weight: bold;
 	}
 }
-
-.close {
-	opacity: 1;
-	right: 25px;
-	text-shadow:none;
-	&:hover{
-		opacity: 1 !important;
-	}
-}
-
 
 .kpi-desc-tooltip {
 	opacity: 1;
