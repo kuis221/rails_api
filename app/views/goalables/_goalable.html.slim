@@ -3,7 +3,7 @@
     - unless ['Videos', 'Competitive Analysis'].include?(goalable.name)
       li id="campaign-kpi-#{goalable.id}"
         span.kpis-container
-          span.kpi-info
+          span.kpi-info.crop-text
             .kpi-name.crop-text
               = goalable.name
             = goalable.description
