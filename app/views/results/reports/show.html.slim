@@ -24,7 +24,7 @@
 
     .pull-right
       - if resource.can_be_generated?
-        button.btn.download.report-link data-url="#{results_report_path(resource, format: :csv)}" title="Download"
+        button.btn.icon.icon-download.report-link data-url="#{results_report_path(resource, format: :csv)}" title="Download"
 
     - if can?(:edit, resource)
       .text-left
