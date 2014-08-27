@@ -47,32 +47,23 @@ $.widget 'nmk.filteredList', {
 
 		@element.parent().append $('<a class="btn list-filter-btn" href="#" data-toggle="filterbar" title="Filter">').append('<i class="icon-filter">')
 
-		$('<div class="clear-filters">')
-			.append($('<a>',{href: '#', class:''}).text('Clear filters')
-				.on 'click', (e) =>
-					@_cleanFilters()
-			).appendTo(@form)
-
 		@formFilters = $('<div class="form-facet-filters">').appendTo(@form)
 		if @options.filters
-			@setFilters(@options.filters)
+			@setFilters @options.filters
 
-		$('<input class="btn btn-primary" id="save-filters-btn" type="submit" value="Save">')
-			.on 'click', (e) =>
+		@form.append(
+			$('<input class="btn btn-primary" id="save-filters-btn" type="submit" value="Save">').on 'click', (e) =>
 				@_saveFilters()
-		.appendTo(@form)
 
-		$('<input class="btn btn-cancel" id="cancel-save-filters" type="reset" value="Reset">')
-			.on 'click', (e) =>
+			$('<input class="btn btn-cancel" id="cancel-save-filters" type="reset" value="Reset">').on 'click', (e) =>
 				@_cleanFilters()
-		.appendTo(@form)
 
-		$('<a class="settings-for-filters" href="#"><span class="icon-gear"></span></a>')
-			.on 'click', (e) =>
-				e.preventDefault()
-				e.stopPropagation()
-				$.get '/custom_filters/configure.js', {apply_to: @options.applyTo}
-		.appendTo(@form)
+			$('<a class="settings-for-filters" href="#"><span class="icon-gear"></span></a>')
+				.on 'click', (e) =>
+					e.preventDefault()
+					e.stopPropagation()
+					$.get '/custom_filters/configure.js', {apply_to: @options.applyTo}
+		)
 
 		$(document).on 'custom-filters:change', (e) =>
 			@reloadFilters()
@@ -131,14 +122,15 @@ $.widget 'nmk.filteredList', {
 			@setFilters json.filters
 
 	_deselectDates: ->
-		@form.find('.dates-range-filter').datepick('clear')
-		@form.find('.dates-range-filter').datepick('update')
+		@calendar.datepick('clear')
+		@calendar.datepick('update')
 
 	getFilters: () ->
 		data = @form.serializeArray()
 		p = []
 		for param in data
-			p.push param if param.value != '' && param.name != 'custom_filter[]'
+			if param.name isnt 'custom_start_date' and param.name isnt 'custom_end_date'
+				p.push param if param.value != '' && param.name != 'custom_filter[]'
 
 		for param in @defaultParams
 			p.push param
@@ -558,7 +550,7 @@ $.widget 'nmk.filteredList', {
 				if param.name is 'end_date'
 					@endDateInput.val param.value
 
-		$('<div class="dates-range-filter">').appendTo(@form).datepick {
+		@calendar = $('<div class="dates-range-filter">').appendTo(@form).datepick {
 			rangeSelect: true,
 			monthsToShow: 1,
 			changeMonth: false,
@@ -581,9 +573,54 @@ $.widget 'nmk.filteredList', {
 				if @initialized == true
 					if @_previousDates != @_datesToString(dates)
 						@_previousDates = @_datesToString(dates)
+						@customDatesFilter.find('input[name=custom_start_date]').datepicker('setDate', dates[0])
+						@customDatesFilter.find('input[name=custom_end_date]').datepicker('setDate', dates[1])
 						@_filtersChanged()
 						#@reloadFilters()
 		}
+
+		$('<ul class="dates-pref">').appendTo(@form).append(
+			$('<li>').append($('<a href="#">').data('selection', 'today').text('Today')),
+			$('<li>').append($('<a href="#">').data('selection', '1w').text('1w')),
+			$('<li>').append($('<a href="#">').data('selection', '1m').text('1m')),
+			$('<li>').append($('<a href="#">').data('selection', '1y').text('1y')),
+			$('<li>').append($('<a href="#">').data('selection', 'custom').text('Custom'))
+		).find('a').on 'click', (e) =>
+			$(e.target).closest('ul').find('.active').removeClass('active')
+			$(e.target).closest('li').addClass('active')
+			@setCalendarRange $(e.target).data('selection')
+			false
+
+		customDateSelected = (date) =>
+			date1 = @customDatesFilter.find("[name=custom_start_date]").datepicker('getDate')
+			date2 = @customDatesFilter.find("[name=custom_end_date]").datepicker('getDate')
+			if date1 and date2
+				@calendar.datepick('setDate', [date1, date2])
+
+
+		@customDatesFilter = $('<div class="custom-data-panel">').appendTo(@form).append(
+			$('<div class="form-group">').append(
+				$('<label>').text('Start date'),
+				$('<input type="text" name="custom_start_date">').datepicker
+					showOtherMonths:true
+					selectOtherMonths:true
+					dateFormat:"mm/dd/yy"
+					onSelect: customDateSelected
+					onClose: ( selectedDate ) =>
+						@customDatesFilter.find("[name=custom_end_date]").datepicker "option", "minDate", selectedDate
+			),
+			$('<span class="separate">').text('-'),
+			$('<div class="form-group">').append(
+				$('<label>').text('End date'),
+				$('<input type="text" name="custom_end_date">').datepicker
+					showOtherMonths:true
+					selectOtherMonths:true
+					dateFormat:"mm/dd/yy"
+					onSelect: customDateSelected
+					onClose: ( selectedDate ) =>
+						@customDatesFilter.find("[name=custom_start_date]").datepicker "option", "maxDate", selectedDate
+			)
+		).hide()
 
 		if @options.selectDefaultDateRange
 			start_date = @_findDefaultParam('start_date')
@@ -591,12 +628,30 @@ $.widget 'nmk.filteredList', {
 			if start_date.length > 0 && end_date.length > 0
 				@selectCalendarDates start_date[0].value, end_date[0].value
 
+
+	setCalendarRange: (range) ->
+		@customDatesFilter.hide() if range isnt 'custom'
+		dates = switch range
+			when "today" then [new Date(), new Date()]
+			when "1w" then @getWeekRange()
+			when "1m" then @getMonthRange()
+			when "1y" then @getYearRange()
+			when "custom"
+				dates = @calendar.datepick('getDate')
+				@customDatesFilter.find('input[name=custom_start_date]').datepicker('setDate', dates[0])
+				@customDatesFilter.find('input[name=custom_end_date]').datepicker('setDate', dates[1])
+				@customDatesFilter.show()
+				dates
+
+		if dates.length > 0
+			@selectCalendarDates dates[0], dates[1]
+
 	selectCalendarDates: (start_date, end_date) ->
-		@element.find('.dates-range-filter').datepick('setDate', [start_date, end_date])
+		@calendar.datepick('setDate', [start_date, end_date])
 		@_setCalendarDatesFromCalendar()
 
 	_setCalendarDatesFromCalendar: () ->
-		dates = @element.find('.dates-range-filter').datepick('getDate')
+		dates = @calendar.datepick('getDate')
 		if dates.length > 0
 			start_date = @_formatDate(dates[0])
 			@startDateInput.val start_date
@@ -623,6 +678,25 @@ $.widget 'nmk.filteredList', {
 	_parseDate: (date) ->
 		parts = date.split('/')
 		new Date(parts[2], parseInt(parts[0])-1, parts[1],0,0,0)
+
+	getWeekRange: () ->
+		today = new Date();
+		today.setHours(0, 0, 0, 0)
+		date = today.getDate() - today.getDay();
+
+		# Grabbing Start/End Dates
+		StartDate = new Date(today.setDate(date));
+		EndDate = new Date(today.setDate(date + 6));
+		[StartDate, EndDate]
+
+	getMonthRange: () ->
+		date = new Date()
+		y = date.getFullYear()
+		m = date.getMonth()
+		[new Date(y, m, 1), new Date(y, m + 1, 0)]
+
+	getYearRange: () ->
+		[new Date(new Date().getFullYear(), 0, 1), new Date(new Date().getFullYear(), 11, 31)]
 
 	_filtersChanged: (updateState=true) ->
 		if @options.includeCalendars

@@ -3174,9 +3174,10 @@ ul.ui-widget-content{
 		min-width:260px;
 		li a{
 			font-weight: bold;
-		}
-		li a:hover{
-			background-color: $menu !important;
+			&:hover{
+				background-color: $menu !important;
+				background-image: none;
+			}
 		}
 	}
 	.dropdown.open{
@@ -6769,15 +6770,13 @@ table td.sub-level-1 {
 		margin-bottom: 25px;
 		.carousel-control{
 			background-color: transparent;
-			top: 37%;
 			&.right{
+				text-align: right;
 				right: -16px;
 			}
 			&.left{
+				text-align: left;
 				left: 0;
-				&:before{
-					padding-right:10px;
-				}
 			}
 			&.right, &.left{
 				&:before{
@@ -6797,7 +6796,7 @@ table td.sub-level-1 {
 			}
 		}
 		.carousel-inner{
-			margin-left: 30px;
+			margin-left: 32px;
 			width: 261px;
 			text-align: center;
 		}
@@ -6821,9 +6820,8 @@ table td.sub-level-1 {
 		border-radius: 0;
 		-webkit-border-radius: 0;
 		-moz-border-radius: 0;
-		height: 64px;
-		width: 47px;
-		top: 50%;
+		top: 0;
+		line-height: 31px;
 		&.left{
 			left: 0;
 		}
@@ -6852,7 +6850,9 @@ table td.sub-level-1 {
 		height: 400px;
 		.gallery-carousel {
 			.carousel-control{
+				font-size: 40px;
 				top: 0;
+				line-height: 64px;
 				height: 100%;
 				background-color: transparent;
 				&:before {
@@ -6864,22 +6864,8 @@ table td.sub-level-1 {
 					background-color: #050505;
 					display: block;
 					top: 50%;
-					margin-top: -32px;
 					background-color: #050505;
 					position: absolute;
-				}
-				&.left{
-					left: 0;
-					span:before {
-						display:block;
-						line-height: 63px;
-						font-size: 40px;
-						color: #fff;
-						opacity: 0.5;
-					}
-					&:hover span:before {
-						opacity: 0.8;
-					}
 				}
 				img {
 					opacity: 0;
@@ -6891,21 +6877,27 @@ table td.sub-level-1 {
 					left: 0px;
 					right: 0px;
 				}
+				&.left{
+					i{
+						margin-left: 10px;
+					}
+				}
 				&.right{
-					right: 0;
 					span {
 						right: 0;
-						&:before {
-							display:block;
-							line-height: 63px;
-							font-size: 40px;
-							color: #fff;
-							margin-left: 14px;
-							opacity: 0.5;
-						}
 					}
-					&:hover span:before {
-						opacity: 1;
+					i{
+						margin-left: 15px;
+					}
+				}
+				&.left, &.right{
+					i{
+						opacity: 0.5;
+					}
+					&:hover{
+						i{
+							opacity: 1;
+						}
 					}
 				}
 				img {
@@ -6943,7 +6935,14 @@ table td.sub-level-1 {
 			top: 15px;
 		}
 		a.remove-tag {
-			margin-right: 5px;
+			margin-left: 5px;
+			position: relative;
+			top: 1px;
+		}
+		.mini-slider{
+			.carousel-control{
+				font-size: 25px;
+			}
 		}
 	}
 	.slider {
@@ -7046,11 +7045,17 @@ table td.sub-level-1 {
 		}
 		.description{
 			height: 200px;
-			margin-bottom: 30px;
 			width: 320px;
 			.place-data, .calendar-data{
+				float: left;
 				position: relative;
 				width: 290px;
+				i{
+					margin-right:15px;
+				}
+				span{
+					width: 255px;
+				}
 			}
 			p{
 				display: inline-block;
@@ -7059,12 +7064,6 @@ table td.sub-level-1 {
 		.tags{
 			margin-left: 30px;
 			position: relative;
-			&:before{
-				font-size: 16px;
-				left: -27px;
-				top: 7px;
-				position: absolute;
-			}
 			.typeahead {
 				border: 1px solid $grey_three !important;
 			}
@@ -7078,8 +7077,8 @@ table td.sub-level-1 {
 					border: 1px solid $grey_one;
 					color: white;
 					display: inline-block;
-					margin: 9px 7px 6px 0;
-					padding: 0px 7px 4px 5px;
+					margin: 6px 7px 0 0;
+					padding: 0px 5px 4px 5px;
 					-webkit-border-radius: 3px;
 					-moz-border-radius: 3px;
 					border-radius: 3px;

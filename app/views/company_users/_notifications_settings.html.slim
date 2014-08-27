@@ -1,7 +1,7 @@
 .details_box
   h3
     = 'COMMUNICATION PREFERENCES'
-    = link_to '', edit_communications_company_user_path(resource), remote: true, id: 'edit-communications', class: 'edit preferences-edit-icon'
+    = link_to '', edit_communications_company_user_path(resource), remote: true, id: 'edit-communications', class: 'icon-edit preferences-edit-icon'
   .row-fluid.communication-preferences
     .span9
       .span3
@@ -19,10 +19,10 @@
             b = t("notification_types.#{type}")
           .span2
             - if resource.notifications_settings.include?(type+'_app')
-              .icon-ok
+              .icon-checked
           .span2
             - if resource.notifications_settings.include?(type+'_sms')
-              .icon-ok
+              .icon-checked
           .span2
             - if resource.notifications_settings.include?(type+'_email')
-              .icon-ok
+              .icon-checked

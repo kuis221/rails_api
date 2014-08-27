@@ -215,6 +215,16 @@ a.resend-verification {
 	}
 }
 
+
+.communication-settings {
+	h3 .icon-edit {
+		margin-left: 10px;
+	}
+	.icon-checked {
+		color: $blue;
+	}
+}
+
 .control-group{
 	&.percentage{
 		width:390px;
