@@ -64,7 +64,7 @@ $.widget 'nmk.filteredList', {
 
 		$('<input class="btn btn-cancel" id="cancel-save-filters" type="reset" value="Reset">')
 			.on 'click', (e) =>
-				false
+				@_cleanFilters()
 		.appendTo(@form)
 
 		$('<a class="settings-for-filters" href="#"><span class="icon-gear"></span></a>')
@@ -82,7 +82,7 @@ $.widget 'nmk.filteredList', {
 		@listContainer = $(@options.listContainer)
 
 		@defaultParams = @options.defaultParams
-		@_parseQueryString()
+		@_parseQueryString(window.location.search)
 		@loadFacets = true
 		firstTime = true
 		$(window).on 'popstate', =>
@@ -90,7 +90,7 @@ $.widget 'nmk.filteredList', {
 				firstTime = false
 			else
 				#@reloadFilters()
-				@_parseQueryString()
+				@_parseQueryString(window.location.search)
 				@_filtersChanged(false)
 
 		$(window).on 'resize scroll', () =>
@@ -138,7 +138,7 @@ $.widget 'nmk.filteredList', {
 		data = @form.serializeArray()
 		p = []
 		for param in data
-			p.push param if param.value != ''
+			p.push param if param.value != '' && param.name != 'custom_filter[]'
 
 		for param in @defaultParams
 			p.push param
@@ -282,7 +282,7 @@ $.widget 'nmk.filteredList', {
 			optionsCount = top5.length + items.length
 
 		for option in @_sortOptionsAlpha(top5)
-			$list.append @_buildFilterOption(option).change( (e) => @_filtersChanged() )
+			$list.append @_buildFilterOption(option)
 
 		@formFilters.append $filter
 		if optionsCount > 5
@@ -458,7 +458,11 @@ $.widget 'nmk.filteredList', {
 					li.siblings().find('.child_div').hide()
 				li = null
 				true
-			.append $('<label>').append($('<input>',{type:'checkbox', value: option.id, name: "#{option.name}[]", checked: (option.selected is true or option.selected is 'true')}), option.label)
+			.append $('<label>').append(
+				$('<input>',{type:'checkbox', value: option.id, name: "#{option.name}[]", checked: (option.selected is true or option.selected is 'true')}), option.label
+			).on 'change', () =>
+				@_updateCustomFiltersCheckboxes(option)
+				@_filtersChanged()
 
 	_addAutocompleteBox: () ->
 		previousValue = '';
@@ -626,7 +630,9 @@ $.widget 'nmk.filteredList', {
 
 		if @options.source
 			@reloadData
-		data = @_serializeFilters()
+
+		data = @_getCustomFilters()
+		data = @_serializeFilters() if !data
 		if @form.data('serializedData') != data
 			@form.data('serializedData', data)
 			@_storeFilters data
@@ -650,17 +656,49 @@ $.widget 'nmk.filteredList', {
 		if typeof(Storage) isnt "undefined"
 			sessionStorage["filters#{@storageScope}"]
 
+	_getCustomFilters: () ->
+		data = @form.serializeArray()
+		p = ''
+		custom_filter = $.grep(data, (p) ->
+		  p.name is "custom_filter[]"
+		)
+		p = custom_filter[0].value.split('&id')[0] if custom_filter.length > 0
+
 	_serializeFilters: () ->
 		jQuery.param( @getFilters() )
 
 	buildParams: (params=[]) ->
-		data = @getFilters()
+		data = @_deparam(@_getCustomFilters())
+		data = @getFilters() if !data.length
 		for param in data
 			params.push(param)
 		params
 
+	_deparam: (queryString) ->
+		params = []
+		if queryString
+			queryString = queryString.substring(queryString.indexOf("?") + 1).split("&")
+			pair = null
+			decode = decodeURIComponent
+			i = queryString.length
+			while i > 0
+				pair = queryString[--i].split("=")
+				params.push {'name': decode(pair[0]), 'value': decode(pair[1])}
+		params
+
 	paramsQueryString: () ->
 		@_serializeFilters()
+
+	_updateCustomFiltersCheckboxes: (option=null) ->
+		e = @element.find('input[name="custom_filter\\[\\]"][value="'+option.id+'"]')
+		@element.find('input[name="custom_filter\\[\\]"]:checked').not(e).prop 'checked', false
+		if e.length
+			if e.prop('checked') == true
+				@element.find('input[type="checkbox"]:checked').not(e).prop 'checked', false
+				@_parseQueryString(option.id.split('&id')[0])
+			else
+				@_cleanFilters()
+		false
 
 	_loadingSpinner: () ->
 		if @options.spinnerElement?
@@ -769,10 +807,10 @@ $.widget 'nmk.filteredList', {
 			@listContainer.infiniteScrollHelper 'destroy'
 			@infiniteScroller = false
 
-	_parseQueryString: () ->
+	_parseQueryString: (query) ->
 		@initialized = false
 		@_cleanSearchFilter()
-		query = window.location.search.replace(/^\?/,"")
+		query = query.replace(/^\?/,"")
 		if query != ''
 			if query.match(/_stored=true/)
 				query = @_loadStoredFilters()
@@ -797,7 +835,9 @@ $.widget 'nmk.filteredList', {
 					field = @form.find("[name=\"#{name}\"]")
 					if field.length
 						if field.attr('type') == 'checkbox'
-							console.log('checking checkboxes not implemented yet!!')
+							for element in field
+								if element.value == value
+									element.checked = true
 						else
 							field.val(value)
 					else

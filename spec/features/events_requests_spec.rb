@@ -438,10 +438,11 @@ feature 'Events section' do
 
     feature "custom filters" do
       let(:campaign1) { FactoryGirl.create(:campaign, name: 'Campaign 1', company: company) }
+      let(:campaign2) { FactoryGirl.create(:campaign, name: 'Campaign 2', company: company) }
       let(:event1) { FactoryGirl.create(:submitted_event, campaign: campaign1) }
-      let(:event2) { FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign 2', company: company)) }
+      let(:event2) { FactoryGirl.create(:late_event, campaign: campaign2) }
       let(:user1) { FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Roberto', last_name: 'Gomez'), company: company) }
-      let(:user2) { FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Mario', last_name: 'Cantinflas'), company: company) }
+      let(:user2) { FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Mario', last_name: 'Moreno'), company: company) }
 
       scenario "allows to create a new custom filter" do
         event1.users << user1
@@ -473,6 +474,78 @@ feature 'Events section' do
 
         within '.form-facet-filters' do
           expect(page).to have_content('My Custom Filter')
+        end
+      end
+
+      scenario "allows to apply custom filters" do
+        event1.users << user1
+        event2.users << user2
+        Sunspot.commit
+
+        FactoryGirl.create(:custom_filter, company_user_id: company_user.to_param, name: 'Custom Filter 1', apply_to: 'events', filters: 'campaign%5B%5D='+campaign1.to_param+'&user%5B%5D='+user1.to_param+'&event_status%5B%5D=Submitted&status%5B%5D=Active')
+        FactoryGirl.create(:custom_filter, company_user_id: company_user.to_param, name: 'Custom Filter 2', apply_to: 'events', filters: 'campaign%5B%5D='+campaign2.to_param+'&user%5B%5D='+user2.to_param+'&event_status%5B%5D=Late&status%5B%5D=Active')
+
+        visit events_path
+
+        #Using Custom Filter 1
+        filter_section('SAVED FILTERS').unicheck('Custom Filter 1')
+
+        within '#events-list' do
+          expect(page).to have_content('Campaign 1')
+        end
+
+        within '.form-facet-filters' do
+          expect(find_field('Campaign 1')['checked']).to be_truthy
+          expect(find_field('Campaign 2')['checked']).to be_falsey
+          expect(find_field('Roberto Gomez')['checked']).to be_truthy
+          expect(find_field('Mario Moreno')['checked']).to be_falsey
+          expect(find_field('Submitted')['checked']).to be_truthy
+          expect(find_field('Late')['checked']).to be_falsey
+          expect(find_field('Active')['checked']).to be_truthy
+          expect(find_field('Inactive')['checked']).to be_falsey
+          expect(find_field('Custom Filter 1')['checked']).to be_truthy
+          expect(find_field('Custom Filter 2')['checked']).to be_falsey
+        end
+
+        #Using Custom Filter 2 should update results and checked/unchecked checkboxes
+        filter_section('SAVED FILTERS').unicheck('Custom Filter 2')
+
+        within '#events-list' do
+          expect(page).to have_content('Campaign 2')
+        end
+
+        within '.form-facet-filters' do
+          expect(find_field('Campaign 1')['checked']).to be_falsey
+          expect(find_field('Campaign 2')['checked']).to be_truthy
+          expect(find_field('Roberto Gomez')['checked']).to be_falsey
+          expect(find_field('Mario Moreno')['checked']).to be_truthy
+          expect(find_field('Submitted')['checked']).to be_falsey
+          expect(find_field('Late')['checked']).to be_truthy
+          expect(find_field('Active')['checked']).to be_truthy
+          expect(find_field('Inactive')['checked']).to be_falsey
+          expect(find_field('Custom Filter 1')['checked']).to be_falsey
+          expect(find_field('Custom Filter 2')['checked']).to be_truthy
+        end
+
+        #Using Custom Filter 2 again should reset filters
+        filter_section('SAVED FILTERS').unicheck('Custom Filter 2')
+
+        within '#events-list' do
+          expect(page).to have_content('Campaign 1')
+          expect(page).to have_content('Campaign 2')
+        end
+
+        within '.form-facet-filters' do
+          expect(find_field('Campaign 1')['checked']).to be_falsey
+          expect(find_field('Campaign 2')['checked']).to be_falsey
+          expect(find_field('Roberto Gomez')['checked']).to be_falsey
+          expect(find_field('Mario Moreno')['checked']).to be_falsey
+          expect(find_field('Submitted')['checked']).to be_falsey
+          expect(find_field('Late')['checked']).to be_falsey
+          expect(find_field('Active')['checked']).to be_truthy
+          expect(find_field('Inactive')['checked']).to be_falsey
+          expect(find_field('Custom Filter 1')['checked']).to be_falsey
+          expect(find_field('Custom Filter 2')['checked']).to be_falsey
         end
       end
 
