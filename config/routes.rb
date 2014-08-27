@@ -494,5 +494,15 @@ Brandscopic::Application.routes.draw do
 
   resources :custom_filters, only: [:index, :new, :create]
 
-  root :to => 'dashboard#index'
+  namespace :brand_ambassadors do
+    resources :visits, except: [:index, :destroy] do
+      member do
+        get :deactivate
+        get :activate
+      end
+    end
+    root to: 'dashboard#index'
+  end
+
+  root to: 'dashboard#index'
 end

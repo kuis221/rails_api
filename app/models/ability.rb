@@ -79,7 +79,7 @@ class Ability
 
       can :edit_data, Event
 
-      can :access, :results
+      can :access, [:results, :brand_ambassadors]
 
     # A logged in user
     elsif user.id
@@ -158,6 +158,12 @@ class Ability
         user.current_company_user.role.has_permission?(:index_photo_results, AttachedAsset) ||
         user.current_company_user.role.has_permission?(:gva_report, Campaign) ||
         user.current_company_user.role.has_permission?(:event_status, Campaign)
+      end
+
+      can :access, :brand_ambassadors do
+        user.current_company_user.role.has_permission?(:index, BrandAmbassadors::Visit) ||
+        user.current_company_user.role.has_permission?(:calendar, BrandAmbassadors::Visit) ||
+        user.current_company_user.role.has_permission?(:index, BrandAmbassadors::Document)
       end
 
       can [:build, :preview, :update], Report do |report|

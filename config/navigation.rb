@@ -39,6 +39,7 @@ SimpleNavigation::Configuration.run do |navigation|
       secondary.item :venues, 'Venues', venues_path, highlights_on: %r(/research/venues)
     end
 
+    primary.item :brand_ambassadors, 'Brand Ambassadors', brand_ambassadors_root_path, highlights_on: %r(/brand_ambassadors), link: { icon_class: 'icon-results menubar-icon' } if can?(:access, :brand_ambassadors)
     primary.item :results, 'Results', results_reports_path, highlights_on: %r(/results), link: { icon_class: 'icon-results menubar-icon' } if can?(:access, :results)
 
     options = []

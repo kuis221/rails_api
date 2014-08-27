@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140822232819) do
+ActiveRecord::Schema.define(version: 20140826223825) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -165,6 +165,20 @@ ActiveRecord::Schema.define(version: 20140822232819) do
   add_index "attached_assets_tags", ["attached_asset_id"], name: "index_attached_assets_tags_on_attached_asset_id", using: :btree
   add_index "attached_assets_tags", ["tag_id"], name: "index_attached_assets_tags_on_tag_id", using: :btree
 
+  create_table "brand_ambassadors_visits", force: true do |t|
+    t.string   "name"
+    t.integer  "company_id"
+    t.integer  "company_user_id"
+    t.date     "start_date"
+    t.date     "end_date"
+    t.boolean  "active",          default: true
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "brand_ambassadors_visits", ["company_id"], name: "index_brand_ambassadors_visits_on_company_id", using: :btree
+  add_index "brand_ambassadors_visits", ["company_user_id"], name: "index_brand_ambassadors_visits_on_company_user_id", using: :btree
+
   create_table "brand_portfolios", force: true do |t|
     t.string   "name"
     t.boolean  "active",        default: true
@@ -317,6 +331,17 @@ ActiveRecord::Schema.define(version: 20140822232819) do
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
   end
+
+  create_table "custom_filters", force: true do |t|
+    t.integer  "company_user_id"
+    t.string   "name"
+    t.string   "apply_to"
+    t.text     "filters"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "custom_filters", ["company_user_id"], name: "index_custom_filters_on_company_user_id", using: :btree
 
   create_table "data_migrations", force: true do |t|
     t.integer  "remote_id"

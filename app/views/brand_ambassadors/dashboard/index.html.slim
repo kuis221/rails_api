@@ -1,0 +1,12 @@
+.main
+  h2 Visits
+
+  #list-tools
+    .pull-left
+      = button_to 'Create', new_brand_ambassadors_visit_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn'} if can? :create, BrandAmbassadors::Visit
+    .clearfix
+
+  #list-view
+    .link-list
+      ul#visits-list
+        = render @visits

@@ -180,6 +180,7 @@ en:
         activity: "New Activity"
         activity_type: "New Activity Type"
         custom_filter: "Save filter"
+        brand_ambassadors/visit: "New Visit"
       edit:
         company_user: "Edit User"
         event: "Edit Event"
@@ -207,6 +208,7 @@ en:
         activity: "Edit Activity"
         activity_type: "Edit Activity Type"
         areas_campaign: "Customize %{name} Area"
+        brand_ambassadors/visit: "Edit Visit"
 
   form_builder:
     modules:

@@ -1,0 +1,10 @@
+.row-fluid.with-details-close-bar
+  = resource_details_bar("You are viewing visit details. Click to close.")
+
+  .details_box.padding-top-close-bar
+    h2= resource.name
+
+    .description-data
+      i.icon-user
+      span
+        = resource.company_user.try(:name)

@@ -1562,7 +1562,7 @@ li.dropdown a{
 	border: 0;
 	color: $brand;
 	text-align: center;
-	width: 92px;
+	min-width: 92px;
 }
 .nav-tabs li a:hover{
 	background-color: $user_menu;
@@ -2518,6 +2518,39 @@ li#notifications{
 		}
 		span{
 			&.event-item {
+				display: table-cell;
+				float: none;
+				padding: 0 15px;
+				vertical-align: middle;
+				a{
+					display: inline-block;
+					vertical-align: middle;
+					height: auto;
+					width: 100%;
+				}
+			}
+			&.pull-right{
+				right: 20px;
+				top: 20px;
+				a{
+					width: auto;
+					height: 45px;
+					display: table-cell;
+					vertical-align: middle;
+				}
+			}
+		}
+	}
+	ul#visits-list{
+		li{
+			.name{
+				br{
+					display:block;
+				}
+			}
+		}
+		span{
+			&.visit-item {
 				display: table-cell;
 				float: none;
 				padding: 0 15px;
