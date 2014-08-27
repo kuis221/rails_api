@@ -23,7 +23,9 @@
     - else
       .row-fluid.google-places
         = f.error :place
-        = f.input :place_reference, :as => :location, label: 'Place', input_html: {display_value: params[:place_reference_display_name] || @event.place_name_with_location }
+        = f.input :place_reference, :as => :location, label: 'Place', input_html: {display_value: params[:place_reference_display_name] || @event.place_name_with_location, placeholder: 'Search for places' }
+
+    = f.input :description, input_html: { placeholder: 'Enter a short description of your event' }
 
     = f.input :team_members, label: 'Event staff' do
       = f.select :team_members, current_company.team_member_options , {}, class: 'input-xlarge chosen-enabled', multiple: true, 'data-placeholder' => " "

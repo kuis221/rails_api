@@ -225,7 +225,7 @@ describe Event, :type => :model do
     end
   end
 
-  describe "#in_areas" do
+  describe "#in_campaign_area" do
     let(:company) {FactoryGirl.create(:company)}
     let(:campaign) {FactoryGirl.create(:campaign, company: company)}
 
@@ -242,9 +242,11 @@ describe Event, :type => :model do
       area_la.places << FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
       area_sf.places << FactoryGirl.create(:place, country: 'US', state: 'California', city: 'San Francisco', types: ['locality'])
 
-      expect(Event.in_areas([area_la])).to match_array [event_la]
-      expect(Event.in_areas([area_sf])).to match_array [event_sf]
-      expect(Event.in_areas([area_la, area_sf])).to match_array [event_la, event_sf]
+      area_campaign_la = FactoryGirl.create(:areas_campaign, area: area_la, campaign: campaign)
+      area_campaign_sf = FactoryGirl.create(:areas_campaign, area: area_sf, campaign: campaign)
+
+      expect(Event.in_campaign_area(area_campaign_la)).to match_array [event_la]
+      expect(Event.in_campaign_area(area_campaign_sf)).to match_array [event_sf]
     end
 
     it "should include events that are scheduled on places that are part of the areas" do
@@ -260,9 +262,135 @@ describe Event, :type => :model do
       area_la.places << place_la
       area_sf.places << place_sf
 
-      expect(Event.in_areas([area_la])).to match_array [event_la]
-      expect(Event.in_areas([area_sf])).to match_array [event_sf]
-      expect(Event.in_areas([area_la, area_sf])).to match_array [event_la, event_sf]
+      area_campaign_la = FactoryGirl.create(:areas_campaign, area: area_la, campaign: campaign)
+      area_campaign_sf = FactoryGirl.create(:areas_campaign, area: area_sf, campaign: campaign)
+
+      expect(Event.in_campaign_area(area_campaign_la)).to match_array [event_la]
+      expect(Event.in_campaign_area(area_campaign_sf)).to match_array [event_sf]
+    end
+
+    it "should exclude events that are scheduled on places that were excluded from the campaign" do
+      place_la = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      event_la = FactoryGirl.create(:event, campaign: campaign, place: place_la)
+
+      place_sf = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'San Francisco')
+      event_sf = FactoryGirl.create(:event, campaign: campaign, place: place_sf)
+
+      area_la = FactoryGirl.create(:area, company: company)
+      area_sf = FactoryGirl.create(:area, company: company)
+
+      area_la.places << place_la
+      area_sf.places << place_sf
+
+      area_campaign_la = FactoryGirl.create(:areas_campaign, area: area_la, campaign: campaign, exclusions: [place_la.id])
+      area_campaign_sf = FactoryGirl.create(:areas_campaign, area: area_sf, campaign: campaign)
+      expect(Event.in_campaign_area(area_campaign_la)).to be_empty
+      expect(Event.in_campaign_area(area_campaign_sf)).to match_array [event_sf]
+    end
+
+    it "should exclude events that are scheduled on places inside an excluded city" do
+      place_la = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      event_la = FactoryGirl.create(:event, campaign: campaign, place: place_la)
+
+      city_la = FactoryGirl.create(:city, name: 'Los Angeles', country: 'US', state: 'California')
+      area_la = FactoryGirl.create(:area, company: company)
+
+      area_la.places << city_la
+
+      area_campaign_la = FactoryGirl.create(:areas_campaign, area: area_la, campaign: campaign)
+      expect(Event.in_campaign_area(area_campaign_la)).to match_array [event_la]
+
+      area_campaign_la.exclusions = [city_la.id]
+      expect(Event.in_campaign_area(area_campaign_la)).to be_empty
+    end
+  end
+
+
+  describe "#in_campaign_areas" do
+    let(:company) {FactoryGirl.create(:company)}
+    let(:campaign) {FactoryGirl.create(:campaign, company: company)}
+
+    it "should include only events within the given areas" do
+      event_la = FactoryGirl.create(:event, campaign: campaign,
+        place: FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles'))
+
+      event_sf = FactoryGirl.create(:event, campaign: campaign,
+        place: FactoryGirl.create(:place, country: 'US', state: 'California', city: 'San Francisco'))
+
+      area_la = FactoryGirl.create(:area, company: company)
+      area_sf = FactoryGirl.create(:area, company: company)
+
+      campaign.areas << [area_la, area_sf]
+
+      area_la.places << FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
+      area_sf.places << FactoryGirl.create(:place, country: 'US', state: 'California', city: 'San Francisco', types: ['locality'])
+
+      area_campaign_la = FactoryGirl.create(:areas_campaign, area: area_la, campaign: campaign)
+      area_campaign_sf = FactoryGirl.create(:areas_campaign, area: area_sf, campaign: campaign)
+
+      expect(Event.in_campaign_areas(campaign, [area_la])).to match_array [event_la]
+      expect(Event.in_campaign_areas(campaign, [area_sf])).to match_array [event_sf]
+      expect(Event.in_campaign_areas(campaign, [area_la, area_sf])).to match_array [event_la, event_sf]
+    end
+
+    it "should include events that are scheduled on places that are part of the areas" do
+      place_la = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      event_la = FactoryGirl.create(:event, campaign: campaign, place: place_la)
+
+      place_sf = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'San Francisco')
+      event_sf = FactoryGirl.create(:event, campaign: campaign, place: place_sf)
+
+      area_la = FactoryGirl.create(:area, company: company)
+      area_sf = FactoryGirl.create(:area, company: company)
+
+      area_la.places << place_la
+      area_sf.places << place_sf
+
+      campaign.areas << [area_la, area_sf]
+
+      # Create another campaign just to test
+      campaign2 = FactoryGirl.create(:campaign, company: company)
+      campaign2.areas << [area_la, area_sf]
+
+      expect(Event.in_campaign_areas(campaign, [area_la])).to match_array [event_la]
+      expect(Event.in_campaign_areas(campaign, [area_sf])).to match_array [event_sf]
+      expect(Event.in_campaign_areas(campaign, [area_la, area_sf])).to match_array [event_la, event_sf]
+    end
+
+    it "should exclude events that are scheduled on places that were excluded from the campaign" do
+      place_la = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      event_la = FactoryGirl.create(:event, campaign: campaign, place: place_la)
+
+      place_sf = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'San Francisco')
+      event_sf = FactoryGirl.create(:event, campaign: campaign, place: place_sf)
+
+      area_la = FactoryGirl.create(:area, company: company)
+      area_sf = FactoryGirl.create(:area, company: company)
+
+      area_la.places << place_la
+      area_sf.places << place_sf
+
+      area_campaign_la = FactoryGirl.create(:areas_campaign, area: area_la, campaign: campaign, exclusions: [place_la.id])
+      area_campaign_sf = FactoryGirl.create(:areas_campaign, area: area_sf, campaign: campaign)
+
+      expect(Event.in_campaign_areas(campaign, [area_la])).to be_empty
+      expect(Event.in_campaign_areas(campaign, [area_sf])).to match_array [event_sf]
+    end
+
+    it "should exclude events that are scheduled on places inside an excluded city" do
+      place_la = FactoryGirl.create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      event_la = FactoryGirl.create(:event, campaign: campaign, place: place_la)
+
+      city_la = FactoryGirl.create(:city, name: 'Los Angeles', country: 'US', state: 'California')
+      area_la = FactoryGirl.create(:area, company: company)
+
+      area_la.places << city_la
+
+      area_campaign_la = FactoryGirl.create(:areas_campaign, area: area_la, campaign: campaign)
+      expect(Event.in_campaign_areas(campaign, [area_la])).to match_array [event_la]
+
+      area_campaign_la.update_attribute :exclusions, [city_la.id]
+      expect(Event.in_campaign_areas(campaign, [area_la])).to be_empty
     end
   end
 
@@ -279,7 +407,6 @@ describe Event, :type => :model do
 
       expect(Event.in_places([place_la])).to match_array [event_la]
       expect(Event.in_places([place_sf])).to match_array [event_sf]
-      expect(Event.in_places([place_la, place_sf])).to match_array [event_la, event_sf]
     end
 
 

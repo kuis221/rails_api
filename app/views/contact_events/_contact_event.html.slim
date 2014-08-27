@@ -8,5 +8,5 @@ div.span3.team-member.event-contact.clearfix id="contact_event_#{contact_event.i
       = contact_event.title
   - if can_edit || can_delete
     .pull-right
-      = link_to('',  edit_event_contact_event_path(parent, contact_event), title: 'Edit Contact', class: 'edit', remote: true) if contact_event.contactable.is_a?(Contact) and can_edit
+      = link_to('',  edit_event_contact_event_path(parent, contact_event), title: 'Edit Contact', class: 'icon-edit', remote: true) if contact_event.contactable.is_a?(Contact) and can_edit
       = link_to(content_tag(:i,'', class: 'icon-remove-circle'),  event_contact_event_path(parent, contact_event), title: 'Remove Contact', class: 'remove-contact-btn', remote: true, method: :delete) if can_delete

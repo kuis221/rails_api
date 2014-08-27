@@ -48,7 +48,7 @@ module TasksFacetsHelper
   end
 
   def facet_params
-    search_params.select{|k, v| %w(q current_company_user start_date end_date user company_id event_id not_assigned_to team_members).include?(k)}
+    search_params.select{|k, v| %w(q current_company_user start_date end_date user company_id event_id not_assigned_to team_members status).include?(k)}
   end
 
   def is_my_teams_view?

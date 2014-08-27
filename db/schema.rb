@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140820194232) do
+ActiveRecord::Schema.define(version: 20140822232819) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -118,6 +118,7 @@ ActiveRecord::Schema.define(version: 20140820194232) do
   create_table "areas_campaigns", force: true do |t|
     t.integer "area_id"
     t.integer "campaign_id"
+    t.integer "exclusions",  default: [], array: true
   end
 
   create_table "asset_downloads", force: true do |t|
@@ -278,11 +279,12 @@ ActiveRecord::Schema.define(version: 20140820194232) do
     t.integer  "company_id"
     t.integer  "user_id"
     t.integer  "role_id"
-    t.datetime "created_at",                            null: false
-    t.datetime "updated_at",                            null: false
-    t.boolean  "active",                 default: true
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
+    t.boolean  "active",                  default: true
     t.datetime "last_activity_at"
-    t.string   "notifications_settings", default: [],                array: true
+    t.string   "notifications_settings",  default: [],                array: true
+    t.datetime "last_activity_mobile_at"
   end
 
   add_index "company_users", ["company_id"], name: "index_company_users_on_company_id", using: :btree
@@ -449,6 +451,7 @@ ActiveRecord::Schema.define(version: 20140820194232) do
     t.string   "timezone"
     t.datetime "local_start_at"
     t.datetime "local_end_at"
+    t.text     "description"
   end
 
   add_index "events", ["aasm_state"], name: "index_events_on_aasm_state", using: :btree

@@ -19,7 +19,7 @@ class AttachedAssetInput < SimpleForm::Inputs::Base
     output_html << '<div class="attachment-panel" data-id="'+(has_attached_asset ? attached_asset.id.to_s : '')+'" >
                       <div class="attachment-select-file-view"'+ (has_attached_asset ? 'style="display: none"' : '') + '>
                         <div class="drag-box">
-                          <i class="icon-drag"></i>
+                          <i class="icon-upload"></i>
                           <h4>DRAG &amp; DROP</h4>
                           <p>'+I18n.translate(options[:browse_legend], browse: '<span class="file-browse">browse<input id="fileupload" type="file" name="file" data-accept-file-types="(\.|\/)(gif|jpe?g|png)$" data-max-file-size="'+max_file_size.to_s+'" /></span>')+'</p>
                           <a href="#" class="cancel-upload"'+ (has_attached_asset ? '' : 'style="display: none"') + '>Cancel</a>

@@ -250,6 +250,8 @@ describe Api::V1::UsersController, :type => :controller do
       expect(response).to be_success
       permissions = JSON.parse(response.body)
       expect(permissions).to match_array(["events", "events_add_contacts", "events_add_team_members", "events_contacts", "events_create", "events_create_documents",
+        "events_approve", "events_reject", "events_submit", "events_view_unsubmitted_data", "events_view_submitted_data", "events_view_approved_data", "events_view_rejected_data",
+        "events_edit_approved_data", "events_edit_rejected_data", "events_edit_submitted_data", "events_edit_unsubmitted_data",
         "events_create_expenses", "events_create_photos", "events_create_surveys", "events_create_tasks", "events_deactivate_documents", "events_deactivate_expenses",
         "events_deactivate_photos", "events_deactivate_surveys", "events_delete_contacts", "events_delete_team_members", "events_documents", "events_edit_contacts",
         "events_edit_expenses", "events_edit_surveys", "events_edit_tasks", "events_expenses", "events_deactivate", "events_edit", "events_photos", "events_show", "events_surveys", "events_tasks",

@@ -19,7 +19,7 @@
       .profile-data
         h2
           = resource.full_name
-          = link_to '', edit_company_user_path(resource), remote: true, class: 'edit preferences-edit-icon', title: (viewing_profile? ? 'Edit Profile Data' : 'Edit User Data') if can?(:edit, resource)
+          = link_to '', edit_company_user_path(resource), remote: true, class: 'icon-edit preferences-edit-icon', title: (viewing_profile? ? 'Edit Profile Data' : 'Edit User Data') if can?(:edit, resource)
           = active_inactive_buttons(resource) if can?(:deactivate, resource) && !viewing_profile?
 
         - if resource.role.present?
@@ -35,10 +35,12 @@
     .aditional-info
       - if resource.email.present?
         .email-data
+          i.icon-wired-email
           = resource.email
 
       - if resource.phone_number.present?
         .phone-data
+          i.icon-wired-phone
           .number
             = resource.phone_number
           - if resource.user.phone_number_verified?
@@ -49,22 +51,24 @@
               = link_to 'Get Verified', send_code_company_user_url(resource), class: "special", remote: true
 
             .info
-              a.has-tooltip href="#" class="icon-info" title="This is a sample description of the verification function. Exact  copy for it is needed from Chris."
+              a.icon-info.has-tooltip href="#" title="Before Brandscopic can send you SMS alerts, we need to verify that you own the phone number you entered.  Brandscopic will only use this number to send you SMS alerts and we will never share your number with other companies or use it for marketing purposes. Standard text messaging rates may apply."
 
 
 
       - if resource.full_address.present?
         .place-data
-          = resource.full_address
+          i.icon-wired-venue
+          span
+            = resource.full_address
 
       //.links-data
-        //= link_to '', edit_company_user_path(resource), remote: true, title: 'Edit', class: 'edit' if can?(:edit, resource)
+        //= link_to '', edit_company_user_path(resource), remote: true, title: 'Edit', class: 'icon-edit' if can?(:edit, resource)
         //= active_inactive_buttons(resource) if can?(:deactivate, resource)
 
     // The is info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
       h3= resource.full_name
-      = link_to '', edit_company_user_path(resource), remote: true, class: 'edit' if can?(:edit, resource)
+      = link_to '', edit_company_user_path(resource), remote: true, class: 'icon-edit' if can?(:edit, resource)
       = active_inactive_buttons(resource) if can?(:deactivate, resource)
 
 

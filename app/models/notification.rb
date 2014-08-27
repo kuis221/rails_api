@@ -65,7 +65,7 @@ class Notification < ActiveRecord::Base
         email_message = I18n.translate("notifications_email.new_event", url: Rails.application.routes.url_helpers.event_url(event))
         UserMailer.notification(user.id, I18n.translate("notification_types.new_event"), email_message).deliver
       end
-      notification = user.notifications.create(path: path, level: 'grey', message: message, icon: 'event', message_params: message_params, params: {event_id: event.id})
+      notification = user.notifications.create(path: path, level: 'grey', message: message, icon: 'events', message_params: message_params, params: {event_id: event.id})
     end
   end
 
@@ -93,7 +93,7 @@ class Notification < ActiveRecord::Base
          (team && user.allow_notification?('new_unassigned_team_task_email'))
         UserMailer.notification(user.id, email_subject, email_message).deliver
       end
-      notification = user.notifications.create(path: path, level: 'grey', message: message, message_params: {task: task.title}, icon: 'task', params: {task_id: task.id})
+      notification = user.notifications.create(path: path, level: 'grey', message: message, message_params: {task: task.title}, icon: 'tasks', params: {task_id: task.id})
     end
   end
 

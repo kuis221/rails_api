@@ -5,7 +5,7 @@ li id="date_range_#{date_range.id}" class="#{active_class(date_range)}"
       span.description
         = date_range.description
   span.pull-right
-    = link_to '', edit_date_range_path(date_range), remote: true, class: 'edit' if can?(:edit, DateRange)
+    = link_to '', edit_date_range_path(date_range), remote: true, class: 'icon-edit' if can?(:edit, DateRange)
     - if can?(:deactivate, DateRange)
       = link_to_deactivate date_range
-      = link_to '', activate_date_range_path(date_range), remote: true,title: I18n.t('confirmation.activate'), class: 'enable' unless date_range.active?
+      = link_to '', activate_date_range_path(date_range), remote: true,title: I18n.t('confirmation.activate'), class: 'icon-rounded-ok' unless date_range.active?

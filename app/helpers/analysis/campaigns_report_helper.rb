@@ -54,7 +54,7 @@ module Analysis
           content_tag(:div, "#{(100 - complete).round}%", class: 'bar bar-remaining', style: "height: #{[0,(100 - complete).round].max}%;") +
           content_tag(:div, "#{complete.round}%", class: 'bar bar-success', style: "height: #{[100,complete.round].min}%;")
         end +
-        content_tag(:div, '', class: 'today-line-indicator', style: "bottom: #{today.to_i}%")
+        content_tag(:div, '', class: 'icon-arrow-down today-line-indicator', style: "bottom: #{today.to_i}%")
       end
     end
 

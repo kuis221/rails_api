@@ -1,7 +1,7 @@
 redis-server: redis-server
 
-web: env WEB=1 bundle exec unicorn -p $PORT -c ./config/unicorn.rb
-worker: env LOG_CONSOLE=1 TERM_CHILD=1 INTERVAL=0.5   bundle exec resque-pool -c config/resque_pool/all.yml
+web: env LOG_CONSOLE=1 WEB=1 bundle exec unicorn -p $PORT -c ./config/unicorn.rb
+worker: env LOG_CONSOLE=1 TERM_CHILD=1 INTERVAL=0.5   QUEUE=* bin/rake resque:work
 
 guard-livereload: bundle exec guard
 search-solr: bundle exec rake sunspot:solr:run

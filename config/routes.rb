@@ -252,6 +252,11 @@ Brandscopic::Application.routes.draw do
   end
 
   resources :campaigns, except: [:destroy] do
+    resources :areas_campaigns, only: [:edit, :update] do
+      post :exclude_place, on: :member
+      post :include_place, on: :member
+    end
+
     resources :brands, only: [:index]
     resources :kpis, only: [:new, :create, :edit, :update]
     resources :activity_types, only: [] do
@@ -486,6 +491,8 @@ Brandscopic::Application.routes.draw do
   end
 
   resources :tags, only: [:index]
+
+  resources :custom_filters, only: [:index, :new, :create]
 
   root :to => 'dashboard#index'
 end

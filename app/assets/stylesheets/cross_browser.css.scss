@@ -2,7 +2,7 @@
 /*Internet Explorer----------------------------------*/
 .msie{
 
-} 
+}
 
 /*Mozilla Firefox----------------------------------*/
 .mozilla{
@@ -10,17 +10,8 @@
 		&:focus{
 			text-decoration: none;
 		}
-		&.icon-notification-event:before{
-			top: 4px;
-		}
-	}
-	i.icon-notification-event:before{
-		top:4px;
 	}
 	.btn{
-		&.btn-primary, &.btn-cancel{
-			padding: 5px 25px;
-		}
 		&.calendar:after{
 			font-size: 14px;
 			top: 1px;
@@ -35,7 +26,7 @@
 	.checker span.checked:after{
 		top: -8px;
 	}
-	.goalable-list li{ 
+	.goalable-list li{
 		.goals-controls{
 			a:hover, a:focus  {
 				text-decoration: none;
@@ -44,9 +35,6 @@
 		.goalable-name {
 			float: left;
 		}
-	}
-	li#notifications .dropdown-menu ul li a i.alert-icon {
-		top: 18px;
 	}
 	li#notifications .dropdown-menu ul li a i.icon-angle-right:before{
 		top:8px;
@@ -67,7 +55,7 @@
 	   .btn.fullscreen:after {
 	       content: "\e040";
 		   font-family: 'icons';
-	   } 
+	   }
 	}
 	.activity-form{
 		.field{
@@ -90,23 +78,23 @@
 			#report-fields{
 				min-height: 108px;
 			}
-			.field-list { 
+			.field-list {
 				height: 48px;
 				.fields-group{
 					height: 70px;
 					margin-top: 0;
 				}
-			} 
+			}
 		}
 	}
 
 
-} 
+}
 
 /*Webkit Browsers----------------------------------*/
 .webkit{
 
-} 
+}
 
 /*Opera--------------------------------------------*/
 .opera{

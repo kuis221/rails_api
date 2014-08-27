@@ -25,7 +25,7 @@
 //= require chardinjs
 //= require chosen.jquery
 //= require desk.widget
-//= require events.js
+//= require events
 //= require highcharts.src.js
 //= require detect_timezone
 //= require jquery.detect_timezone

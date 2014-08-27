@@ -10,7 +10,9 @@
           li= image_tag 'loading-circle.gif'
 
     .pull-right
-      = link_to 'View All', results_comments_path, class: 'btn btn-info icon-angle-right-after'
+      = link_to events_path, class: 'btn btn-info' do
+        = "View All"
+        i class="icon-angle-right"
 
     javascript:
       $(document).off('comments:change.dashboard, comments:deleted.dashboard').on('comments:change.dashboard, comments:deleted.dashboard', function(){

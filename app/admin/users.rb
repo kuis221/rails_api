@@ -9,16 +9,21 @@ ActiveAdmin.register User do
     column :email
     column :current_sign_in_at
     column :last_sign_in_at
+    column :last_activity_mobile_at do |user|
+      last_activity = user.company_users.first.last_activity_mobile_at
+      last_activity.strftime("%B %e, %Y %H:%M") if last_activity.present?
+    end
     column :sign_in_count
-    default_actions
+    actions
   end
 
   filter :email
   filter :first_name
   filter :last_name
   filter :company_users_company_id, :as => :select, :collection => proc { Company.all }
-  filter :company_users_active_is_true, as: :boolean, default: true, label: 'Active'
+  filter :company_users_active, as: :boolean, default: true, label: 'Active'
   filter :active, as: :boolean, default: true, label: 'Invitation Accepted'
+  #filter :active, as: :boolean, default: true, label: 'Invitation Accepted'
 
   form do |f|
     f.inputs "User Details" do
@@ -74,6 +79,9 @@ ActiveAdmin.register User do
     column :zip_code
     column :current_sign_in_at
     column :last_sign_in_at
+    column :last_activity_mobile_at do |user|
+      user.company_users.first.last_activity_mobile_at
+    end
     column :sign_in_count
   end
 

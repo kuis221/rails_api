@@ -4,7 +4,7 @@
 - if resource.approved?
   = user_new_feature('event_details_approved') do
     h5 Getting Started: Event Details
-    a.close.btn-dismiss-alert href="#" title="Dismiss"
+    a.close.btn-dismiss-alert.icon.icon-close href="#" title="Dismiss"
     a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/plxyWGK0LCU?rel=0" data-width="640" data-height="360"
       img src="#{image_path('video_arrow.png')}" width="70" height="70" /
     .feature-description
@@ -15,7 +15,7 @@
 - else
   = user_new_feature('event_details_scheduled') do
     h5 Getting Started: Event Details
-    a.close.btn-dismiss-alert href="#" title="Dismiss"
+    a.close.btn-dismiss-alert.icon.icon-close href="#" title="Dismiss"
     a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/IFqNZ4r14Uo?rel=0" data-width="640" data-height="360"
       img src="#{image_path('video_arrow.png')}" width="70" height="70" /
     .feature-description
@@ -41,18 +41,27 @@
     h2.special = resource.campaign_name
 
     .calendar-data
-      = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at))
+      i.icon-calendar
+      span
+        = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at))
     - unless resource.place.nil?
       .place-data
-        = place_address(resource.place, true) if resource.place
+        i.icon-wired-venue
+        span
+          = place_address(resource.place, true) if resource.place
+
+    - unless resource.description.nil? || resource.description.empty?
+      .description-data
+        i.icon-wired-description
+        span= simple_format resource.description
     .links-data
-      = link_to '', edit_event_path(resource), remote: true, class: 'edit' if can_edit
+      = link_to '', edit_event_path(resource), remote: true, class: 'icon-edit' if can_edit
       = active_inactive_buttons(resource) if can? :deactivate, resource
 
     // The is info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
       h3= resource.campaign_name
-      = link_to '', edit_event_path(resource), remote: true, class: 'edit' if can_edit
+      = link_to '', edit_event_path(resource), remote: true, class: 'icon-edit' if can_edit
       = active_inactive_buttons(resource) if can? :deactivate, resource
       br>/
       = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at), date_separator: ' ')

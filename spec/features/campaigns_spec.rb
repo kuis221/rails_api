@@ -174,6 +174,37 @@ feature "Campaigns", js: true do
       end
     end
 
+    scenario "should be able to deactivate places from areas assigned to the campaign" do
+      Kpi.create_global_kpis
+      campaign = FactoryGirl.create(:campaign, company: @company)
+      area = FactoryGirl.create(:area, name: 'San Francisco Area', company: @company)
+      place1 = FactoryGirl.create(:place, name: 'One place name')
+      place2 = FactoryGirl.create(:place, name: 'Another place name')
+      area.places << [place1, place2]
+
+      campaign.areas << [area]
+      visit campaign_path(campaign)
+
+      tab = open_tab('Places')
+
+      within tab do
+        expect(page).to have_content('San Francisco Area')
+        find('a[data-original-title="Customize area"]').click # tooltip changes the title
+      end
+
+      within visible_modal do
+        expect(page).to have_content('Customize San Francisco Area')
+        expect(page).to have_content 'One place name'
+        expect(page).to have_content 'Another place name'
+        fill_in 'q', with: 'one'
+        expect(page).not_to have_content 'Another place name'
+        find("li#area-campaign-place-#{place1.id}").click_js_link 'Deactivate'
+        expect(page).to have_selector("li#area-campaign-place-#{place1.id}.inactive")
+      end
+
+      expect(campaign.areas_campaigns.find_by(area_id: area.id).exclusions).to eql [place1.id]
+    end
+
     feature "Add KPIs", search: false do
 
       feature "with a non admin user", search: false do

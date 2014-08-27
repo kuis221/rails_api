@@ -5,7 +5,7 @@
 
 = user_new_feature('events_list') do
   h5 Getting Started: Events
-  a.close.btn-dismiss-alert href="#" title="Dismiss"
+  a.close.btn-dismiss-alert.icon.icon-close href="#" title="Dismiss"
   a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/gwF6WU0EvWs?rel=0" data-width="640" data-height="360"
     img src="#{image_path('video_arrow.png')}" width="70" height="70" /
   .feature-description
@@ -17,33 +17,6 @@
 .sidebar.collapsed#resource-filter-column
 
   #collection-list-filters
-
-/* When the function it is ready to implement you should take out the class hide */
-
-  ul.dates-pref.hide
-    li
-      a Today
-    li
-      a 1w
-    li
-      a 1m
-    li
-      a 1y
-    li.active
-      a Custom
-
-  /* This is exclusive for Custom Option*/
-
-  .custom-data-panel.hide
-    .form-group
-      label Start date
-      input type="date"
-
-    span.separate -
-
-    .form-group
-      label End date
-      input type="date"
 
   /* This should go at the end of the Sidebar
 
@@ -177,14 +150,19 @@
 
     .text-right
       button.btn.download.xlsx-download-link data-url="#{events_path(format:"xls")}" title="Download"
+        i.icon-download
+
       - if can?(:view_map, Event) || can?(:view_list, Event) || can?(:view_calendar, Event)
         #toggle-events-view.btn-group
           - if can?(:view_list, Event)
             a.btn.active.list href="#list-view" data-toggle="tab" title="List View"
+              i.icon-list
           - if can?(:view_calendar, Event)
             a.btn.calendar href="#calendar-view" data-toggle="tab" title="Calendar View"
+              i.icon-grid
           - if can?(:view_map, Event)
             a.btn.map href="#map-view" data-toggle="tab" title="Map View"
+              i.icon-venue
 
   .tab-content
     - if can?(:view_list, Event)
@@ -217,6 +195,7 @@
       'includeAutoComplete': true,
       'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
       'defaultParams': [{name: 'status[]', value: 'Active'}, {name: 'start_date', value:'#{Time.zone.now.strftime("%m/%d/%Y")}'}, {name: 'end_date', value:'#{(Time.zone.now + 10.years).strftime("%m/%d/%Y")}'}],
+      'applyTo': '#{controller.controller_name}',
       'clearFilterParams': [{name: 'status[]', value: 'Active'}],
       'onChange': function(filterBox){
         $(document).trigger('events-filter:changed')

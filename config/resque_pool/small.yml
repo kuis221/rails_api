@@ -1,1 +1,0 @@
-"indexing,sunspot,notification,mailer": <%= WORKER_CONCURRENCY_SMALL %>

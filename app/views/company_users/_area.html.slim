@@ -1,5 +1,6 @@
 .span3.area-user.clearfix.hover-item id="company_user-area-#{area.id}"
   .pull-left
+  	i.icon-wired-map
     = area.name
   .pull-right
     = link_to '',  remove_area_company_user_placeables_path(resource, area: area.id), method: :delete, remote: true, class: 'icon-remove-sign', title: 'Remove Area'

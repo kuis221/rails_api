@@ -16,7 +16,7 @@ li id="company_user_#{company_user.id}" class="#{active_class(company_user)}"
         br>/
         | Last activity
   span.pull-right.tools
-    = link_to '', edit_company_user_path(company_user), remote: true, class: 'edit' if can?(:edit, company_user)
+    = link_to '', edit_company_user_path(company_user), remote: true, class: 'icon-edit' if can?(:edit, company_user)
     - if can?(:deactivate, CompanyUser)
       = link_to_deactivate company_user
-      = link_to '', activate_company_user_path(company_user),title: I18n.t('confirmation.activate'), remote: true, class: 'enable' unless company_user.active?
+      = link_to '', activate_company_user_path(company_user),title: I18n.t('confirmation.activate'), remote: true, class: 'icon-rounded-ok' unless company_user.active?

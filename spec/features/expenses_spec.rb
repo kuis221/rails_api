@@ -55,9 +55,7 @@ feature 'Events section' do
         expect(asset.file_file_name).to eql 'file.pdf'
 
         # Test user can preview and download the receipt
-        within '.details_box.box_expenses' do
-          click_js_link 'View Receipt'
-        end
+        hover_and_click '#expenses-list li[id^="event_expense"]', 'View Receipt'
 
         within visible_modal do
           src = asset.file.url(:thumbnail, timestamp: false)

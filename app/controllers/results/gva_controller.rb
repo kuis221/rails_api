@@ -49,7 +49,7 @@ class Results::GvaController < InheritedResources::Base
     end
 
     def area
-      @area ||= current_company.areas.find(params[:item_id]) if params[:item_type].present? && params[:item_type] == 'Area'
+      @area ||= campaign.areas.find(params[:item_id]) if params[:item_type].present? && params[:item_type] == 'Area'
     end
 
     def place
@@ -74,7 +74,7 @@ class Results::GvaController < InheritedResources::Base
 
     def filter_events_scope
       scope = Event.active.accessible_by_user(current_company_user).by_campaigns(campaign.id)
-      scope = scope.in_areas([area]) unless area.nil?
+      scope = scope.in_campaign_area(campaign.areas_campaigns.find_by(area: area.id)) unless area.nil?
       scope = scope.in_places([place]) unless place.nil?
       scope = scope.with_user_in_team(company_user) unless company_user.nil?
       scope = scope.with_team(team) unless team.nil?
@@ -149,7 +149,7 @@ class Results::GvaController < InheritedResources::Base
             events_scope = campaign.events.active.where(aasm_state: ['approved', 'rejected', 'submitted']).group('1').reorder(nil)
             query = if goaleables_ids[kpi].any?
               if goalable_type == 'Area'
-                events_scope.in_areas(goaleables_ids[kpi]).select("ARRAY[areas_places.area_id::varchar, '#{goalable_type}'], '{KPI_NAME}', {KPI_AGGR}")
+                events_scope.in_campaign_areas(campaign, goaleables_ids[kpi]).select("ARRAY[areas_places.area_id::varchar, '#{goalable_type}'], '{KPI_NAME}', {KPI_AGGR}")
               elsif goalable_type == 'Place'
                 events_scope.in_places(goaleables_ids[kpi]).select("ARRAY[places.id::varchar, '#{goalable_type}'], '{KPI_NAME}', {KPI_AGGR}")
               elsif goalable_type == 'CompanyUser'
