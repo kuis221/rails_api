@@ -6819,7 +6819,8 @@ table td.sub-level-1 {
 		border-radius: 0;
 		-webkit-border-radius: 0;
 		-moz-border-radius: 0;
-		line-height: 19px;
+		top: 0;
+		line-height: 31px;
 		&.left{
 			left: 0;
 		}
@@ -7045,8 +7046,15 @@ table td.sub-level-1 {
 			height: 200px;
 			width: 320px;
 			.place-data, .calendar-data{
+				float: left;
 				position: relative;
 				width: 290px;
+				i{
+					margin-right:15px;
+				}
+				span{
+					width: 255px;
+				}
 			}
 			p{
 				display: inline-block;
