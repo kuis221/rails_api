@@ -91,3 +91,156 @@ label.radio div.radio {
 	display:inline-block;
 	margin-bottom: 10px;
 }
+
+
+
+// BUTTON STYLES
+// --------------------------------------------------
+
+.btn{
+	color: #fff;
+	&[disabled]{
+		background-color: $grey_one;
+		color: #f2f2f2;
+		&:hover{
+			background-color: $grey_one;
+			color:#f2f2f2;
+		}
+	}
+	&.active{
+		background-color: $brand;
+		border: 0;
+		box-shadow: none;
+		&.list, &.map, &.calendar, &.table, &.graph{
+			&:after{
+				color: $user_menu;
+			}
+		}
+	}
+	&:focus{
+		outline:0;
+	}
+	&:hover{
+		background-color: $btnHover;
+		border: 0;
+		box-shadow: none;
+		color: #fff;
+	}
+	&.list:after, &.table:after{
+		font-size: 14px;
+		top:1px;
+	}
+	&.map:after{
+		font-size: 15px;
+		left: 2px;
+		top:1px;
+	}
+	&.calendar:after{
+		font-size: 15px;
+		top: 2px;
+	}
+	&.graph:after{
+		font-size: 14px;
+		top: 1px;
+	}
+	.icon-calendar:before{
+		font-size: 19px;
+		left: 2px;
+		top:1px;
+	}
+	&.btn-primary, &.btn-cancel{
+		box-sizing: border-box;
+		padding: 8px 25px;
+		height: 35px;
+		&.fileinput-button{
+			width: 140px;
+		}
+	}
+}
+
+.btn-small {
+	padding: 2px 10px;
+}
+
+// BTN GROUP
+// According to the Style Guide there is no hover effect for this element
+// ----------------------------------------------------------------------
+
+.btn-group{
+	margin-left: 25px;
+	&>.btn+.btn{
+		margin-left: 0;
+	}
+	.btn{
+		border: 0;
+		box-shadow: none;
+		color: white;
+		&.active{
+			background-color: $brand;
+			color: $user_menu;
+			&:hover{
+				background-color: $brand;
+				color: $user_menu;
+			}
+		}
+		&:hover{
+			background-color: $user_menu;
+			color: white;
+		}
+		&.calendar{
+			border-left: 1px solid $buttons-border;
+			border-right: 1px solid $buttons-border;
+			&:last-child{
+				border-right: none;
+			}
+		}
+	}
+}
+
+.btn-primary{
+	background-color: $buttons !important;
+	background-image:none !important;
+	border: 0;
+	box-shadow: none;
+	font-size: 14px;
+	padding: 7px 25px;
+	text-decoration: none !important;
+	text-shadow:none;
+	&:hover{
+		background-color: $buttons-hover !important;
+	}
+	&:active{
+		background-color: $buttons-hover;
+		box-shadow: none;
+	}
+	&.fileinput-button{
+		padding: 7px 23px;
+	}
+}
+
+.btn-cancel{
+	background-color: $user_menu;
+	&:hover{
+		color: white;
+		background-color: $brand;
+	}
+}
+
+.btn-info{
+	background-color: $user_menu !important;
+	font-size: 13px;
+	padding-bottom:9px;
+	padding-top: 9px;
+	i{
+		line-height: 5px;
+		font-size: 19px;
+		position: relative;
+		top: 6px;
+		right: -12px;
+	}
+	&:hover{
+		background-color: $brand !important;
+	}
+}
+
+// End buttons styles
