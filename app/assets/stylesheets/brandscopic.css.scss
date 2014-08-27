@@ -3174,9 +3174,10 @@ ul.ui-widget-content{
 		min-width:260px;
 		li a{
 			font-weight: bold;
-		}
-		li a:hover{
-			background-color: $menu !important;
+			&:hover{
+				background-color: $menu !important;
+				background-image: none;
+			}
 		}
 	}
 	.dropdown.open{
