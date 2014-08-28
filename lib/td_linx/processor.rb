@@ -1,13 +1,16 @@
 require 'net/ftp'
 require 'zip'
+require 'open-uri'
 
 module TdLinxSynch
   class Processor
     attr_accessor :csv_path
 
-    def self.download_and_process_file
-      path = 'tmp/td_linx_code.csv'
-      self.download_file(path)
+    def self.download_and_process_file(file)
+      path = file || 'tmp/td_linx_code.csv'
+      unless file
+        self.download_file(path)
+      end
       self.process(path)
     rescue Exception => e
       TdlinxMailer.td_linx_process_failed(e).deliver
@@ -24,11 +27,13 @@ module TdLinxSynch
       }
 
       # Create and open all CSV files
-      files = Hash[paths.map{|k, path| [k, CSV.open(path, 'w')]}]
+      files = Hash[paths.map{|k, p| [k, CSV.open(p, 'w')]}]
 
       # Here it comes... read each line in the downloaded CSV file
       # and look for a match in the database
       CSV.foreach(path) do |row|
+        row[2].gsub!(/,\s*#{row[3]}\s*,\s*#{row[4]}\s*,\s*#{row[5]}\s*/,'')
+        row[2].gsub!(/\A\s*#{row[1]}\s*,?\s*/,'')
         if place_id = find_place_for_row(row)
           place = Place.find(place_id)
           if place.td_linx_code != row[0]
@@ -61,21 +66,22 @@ module TdLinxSynch
         paths.each{|k, path|  zip.add(File.basename(path), path) }
       end
 
-      TdlinxMailer.td_linx_process_completed(path).deliver
+      TdlinxMailer.td_linx_process_completed(zip_path).deliver
 
       files = {}
+      File.delete zip_path
       paths
     ensure
       files.each{|k, file| file.close rescue true }
     end
 
     def self.find_place_for_row(row)
-      Place.find_tdlinx_place(name: row[1], street: row[2], city: row[3],
-        state: state_name(row[4]), zipcode: row[5])
+      Place.find_tdlinx_place(name: row[1].try(:strip), street: row[2].try(:strip), city: row[3].try(:strip),
+        state: state_name(row[4].try(:strip)), zipcode: row[5].try(:strip))
     end
 
     def self.state_name(state_code)
-      country.states[state_code]['name']
+      state_code.match(/\A[A-Z]{2}\z/i) ? country.states[state_code]['name'] : state_code
     end
 
     protected
