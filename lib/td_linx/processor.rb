@@ -1,6 +1,7 @@
 require 'net/ftp'
 require 'zip'
 require 'open-uri'
+require 'tempfile'
 
 module TdLinxSynch
   class Processor
@@ -10,13 +11,6 @@ module TdLinxSynch
       path = file || 'tmp/td_linx_code.csv'
       unless file
         self.download_file(path)
-      end
-      if path.match(/\Ahttp(s)?:\/\//)
-        p "Downloading file #{path}"
-        t = Tempfile.new("tdlinx_remote", nil, encoding:  'ascii-8bit')
-        t.write(open(path, 'rb').read)
-        path = t.path
-        t.close
       end
       p "Processing #{path}"
       self.process(path)
