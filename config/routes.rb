@@ -492,7 +492,9 @@ Brandscopic::Application.routes.draw do
 
   resources :tags, only: [:index]
 
-  resources :custom_filters, only: [:index, :new, :create]
+  resources :custom_filters, only: [:index, :new, :create, :destroy] do
+    get :configure, on: :collection
+  end
 
   namespace :brand_ambassadors do
     resources :visits, except: [:index, :destroy] do

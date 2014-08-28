@@ -1,8 +1,8 @@
 class CustomFiltersController < InheritedResources::Base
 
-  respond_to :js, only: [:index, :new, :create]
+  respond_to :js, only: [:index, :new, :create, :destroy, :configure]
 
-  actions :index, :new, :create
+  actions :index, :new, :create, :destroy, :configure
 
   private
     def build_resource_params

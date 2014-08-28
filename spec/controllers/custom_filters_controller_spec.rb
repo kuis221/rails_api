@@ -38,4 +38,16 @@ describe CustomFiltersController, :type => :controller do
       assigns(:custom_filter).errors.count > 0
     end
   end
+
+  describe "DELETE 'destroy'" do
+    let(:custom_filter) { FactoryGirl.create(:custom_filter, company_user_id: @company_user.to_param, name: 'My Custom Filter', apply_to: 'events', filters: 'Filters') }
+    it "should delete the custom filter" do
+      custom_filter.save # Make sure record is created before the expect block
+      expect {
+        delete 'destroy', id: custom_filter.to_param, format: :js
+        expect(response).to be_success
+        expect(response).to render_template(:destroy)
+      }.to change(CustomFilter, :count).by(-1)
+    end
+  end
 end
