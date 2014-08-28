@@ -12,11 +12,13 @@ module TdLinxSynch
         self.download_file(path)
       end
       if path.match(/\Ahttp(s)?:\/\//)
+        p "Downloading file #{path}"
         t = Tempfile.new("tdlinx_remote", nil, encoding:  'ascii-8bit')
         t.write(open(path, 'rb').read)
         path = t.path
         t.close
       end
+      p "Processing #{path}"
       self.process(path)
     rescue Exception => e
       TdlinxMailer.td_linx_process_failed(e).deliver
@@ -52,6 +54,8 @@ module TdLinxSynch
           files[:master_only] << row
         end
       end
+      p "File processed"
+      p "Searching for venues without TD Linx code"
 
       # Search for establishments related to venues in LegacyCompany that doesn't
       # have a code and add it to missing.csv file
@@ -64,18 +68,21 @@ module TdLinxSynch
            .find_each do |place|
         files[:missing] << [place.name, place.street, place.city, place.state, place.zipcode, place.visits_count]
       end
-
+      p "Closing files"
       files.each{|k, file| file.close() }
 
+      p "Generating ZIP file"
       zip_path = Dir::Tmpname.make_tmpname('tmp/tdlinx_', nil)
       Zip::File.open(zip_path, Zip::File::CREATE) do |zip|
         paths.each{|k, path|  zip.add(File.basename(path), path) }
       end
 
+      p "Sending success email"
       TdlinxMailer.td_linx_process_completed(zip_path).deliver
 
       files = {}
       File.delete zip_path
+      p "Done!"
       paths
     ensure
       files.each{|k, file| file.close rescue true }
