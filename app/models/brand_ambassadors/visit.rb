@@ -27,8 +27,11 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
 
   validates :name, presence: true
   validates :company_user, presence: true
+  validates :company, presence: true
+
   validates :start_date, presence: true
-  validates :end_date, presence: true, date: { on_or_after: :start_date, message: 'must be after' }
+  validates :end_date, presence: true,
+      date: { on_or_after: :start_date, message: 'must be after' }
 
   searchable do
     integer :id, stored: true

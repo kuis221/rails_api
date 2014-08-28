@@ -8,16 +8,18 @@ $.widget 'nmk.photoGallery', {
 		@element.addClass('photoGallery')
 		@_createGalleryModal()
 
-		$(document).on 'attached_asset:activated', (e, id) =>
-			@image.data('status', true)
-			@gallery.find('a.icon-rounded-disable').replaceWith($('<a class="icon-rounded-disable" title="Deactivate" data-remote="true" data-confirm="Are you sure you want to deactivate this photo?"></a>').attr('href', @image.data('urls').deactivate))
-			true
+		$(document).on 'attached-asset:activated', (e, id) =>
+			if @image && @image.data('id') is id
+				@image.data('status', true)
+				@gallery.find('a.icon-rounded-ok').replaceWith($('<a class="icon-remove-circle" title="Deactivate" data-remote="true" data-confirm="Are you sure you want to deactivate this photo?"></a>').attr('href', @image.data('urls').deactivate))
+				true
 
-		$(document).on 'attached_asset:deactivated', (e, id) =>
-			@photoToolbar.html ''
-			$('.carousel', @gallery).carousel('next')
-			@gallery.find('[data-photo-id='+id+']').remove()
-			true
+		$(document).on 'attached-asset:deactivated', (e, id) =>
+			if @image && @image.data('id') is id
+				@photoToolbar.html ''
+				$('.carousel', @gallery).carousel('next')
+				@gallery.find('[data-photo-id='+id+']').remove()
+				true
 
 		@element.on 'click', 'a[data-toggle="gallery"]', (e) =>
 			image = if e.target.tagName is 'A' then $(e.target).find('img')[0] else e.target
@@ -329,7 +331,7 @@ $.widget 'nmk.photoGallery', {
 				if @image.data('status') == true
 					$('<a class="icon-remove-circle photo-deactivate-link" title="Deactivate" data-remote="true" data-confirm="Are you sure you want to deactivate this photo?"></a>').attr('href', urls.deactivate)
 				else
-					$('<a class="icon-ok-circle photo-deactivate-link" title="Activate" data-remote="true"></a>').attr('href', urls.activate)
+					$('<a class="icon-rounded-ok photo-deactivate-link" title="Activate" data-remote="true"></a>').attr('href', urls.activate)
 			else
 				null
 			),

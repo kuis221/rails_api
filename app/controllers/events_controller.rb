@@ -133,7 +133,8 @@ class EventsController < FilteredController
         parameters[:end_date] = t.to_s(:slashes)
         parameters[:end_time] = t.to_s(:time_only)
       else
-        allowed  = [:end_date, :end_time, :start_date, :start_time, :campaign_id, :place_id, :place_reference, :description, :visit_id, {team_members: []}] if can?(:update, Event) || can?(:create, Event)
+        allowed = []
+        allowed += [:end_date, :end_time, :start_date, :start_time, :campaign_id, :place_id, :place_reference, :description, :visit_id, {team_members: []}] if can?(:update, Event) || can?(:create, Event)
         allowed += [:summary, {results_attributes: [:id, :form_field_id, :value, {value: []}]}] if can?(:edit_data, Event)
         parameters = params.require(:event).permit(*allowed)
       end
