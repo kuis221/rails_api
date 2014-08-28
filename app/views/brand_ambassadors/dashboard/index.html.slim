@@ -1,3 +1,6 @@
+.sidebar.collapsed#resource-filter-column.hide
+  #collection-list-filters
+
 .main
   h2 Visits
 
@@ -6,7 +9,30 @@
       = button_to 'Create', new_brand_ambassadors_visit_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn'} if can? :create, BrandAmbassadors::Visit
     .clearfix
 
-  #list-view
-    .link-list
-      ul#visits-list
-        = render @visits
+  #visits-scoller-outer.link-list
+   ul#visits-list
+
+  #brand-ambassador-documents
+    h3 DOCUMENTS
+
+    #event-documents-list
+    .row-fluid
+      .pull-left
+        = link_to content_tag(:i,'', class: 'icon-plus-sign'), '#', remote: true if can? :create,  BrandAmbassadors::Document
+
+- if can?(:list, BrandAmbassadors::Visit)
+  javascript:
+    $('#collection-list-filters').filteredList({
+      'source': '#{url_for(controller: 'brand_ambassadors/visits', action: :items)}',
+      'filtersUrl': '#{url_for(controller: 'brand_ambassadors/visits', action: :filters)}',
+      'listContainer' : '#visits-list',
+      'sorting': 'start_date',
+      'sorting_dir': 'asc',
+      'includeCalendars': false,
+      'selectDefaultDate': false,
+      'selectDefaultDateRange': false,
+      'includeAutoComplete': false,
+      'defaultParams': [{name: 'status[]', value: 'Active'}],
+      'applyTo': '#{controller.controller_name}',
+      'clearFilterParams': [{name: 'status[]', value: 'Active'}]
+    });

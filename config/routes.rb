@@ -496,10 +496,13 @@ Brandscopic::Application.routes.draw do
 
   namespace :brand_ambassadors do
     resources :visits, except: [:index, :destroy] do
+      get :filters, on: :collection, format: :json
+      get :items, on: :collection, format: :html
       member do
         get :deactivate
         get :activate
       end
+      resources :events, only: [:new, :create], controller: '/events'
     end
     root to: 'dashboard#index'
   end

@@ -161,9 +161,14 @@ class Ability
       end
 
       can :access, :brand_ambassadors do
-        user.current_company_user.role.has_permission?(:index, BrandAmbassadors::Visit) ||
+        user.current_company_user.role.has_permission?(:list, BrandAmbassadors::Visit) ||
         user.current_company_user.role.has_permission?(:calendar, BrandAmbassadors::Visit) ||
         user.current_company_user.role.has_permission?(:index, BrandAmbassadors::Document)
+      end
+
+      can :index, BrandAmbassadors::Visit do
+        user.current_company_user.role.has_permission?(:list, BrandAmbassadors::Visit) ||
+        user.current_company_user.role.has_permission?(:calendar, BrandAmbassadors::Visit)
       end
 
       can [:build, :preview, :update], Report do |report|

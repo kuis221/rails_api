@@ -20,12 +20,14 @@
 #  timezone       :string(255)
 #  local_start_at :datetime
 #  local_end_at   :datetime
+#  description    :text
 #
 
 class Event < ActiveRecord::Base
   include AASM
 
   belongs_to :campaign
+  belongs_to :visit, class_name: 'BrandAmbassadors::Visit'
   belongs_to :place, autosave: true
 
   has_many :tasks, ->{ order 'due_at ASC' }, dependent: :destroy, inverse_of: :event

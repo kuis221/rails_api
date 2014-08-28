@@ -7264,3 +7264,9 @@ table.table.likert-scale-table {
 	}
 	width: 156px;
 }
+
+#visits-scoller-outer {
+	max-height: 435px;
+	overflow-y: auto;
+	min-height: 100px;
+}

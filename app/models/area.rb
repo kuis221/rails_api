@@ -45,6 +45,7 @@ class Area < ActiveRecord::Base
     text :name, stored: true
 
     string :name
+
     string :status
 
     boolean :active

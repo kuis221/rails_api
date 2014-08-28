@@ -12,32 +12,32 @@
       .span12
         .span2.title Visits
         .span2
-        .span2 = permission_checkbox(f, :create, BrandAmbassador::Visit)
-        .span2 = permission_checkbox(f, :update, BrandAmbassador::Visit)
-        .span2 = permission_checkbox(f, :deactivate, BrandAmbassador::Visit)
+        .span2 = permission_checkbox(f, :create, BrandAmbassadors::Visit)
+        .span2 = permission_checkbox(f, :update, BrandAmbassadors::Visit)
+        .span2 = permission_checkbox(f, :deactivate, BrandAmbassadors::Visit)
 
       .span12
         .span2 List
-        .span2 = permission_checkbox(f, :index, BrandAmbassador::Visit)
+        .span2 = permission_checkbox(f, :list, BrandAmbassadors::Visit)
 
       .span12
         .span2 Calendar
-        .span2 = permission_checkbox(f, :calendar, BrandAmbassador::Visit)
+        .span2 = permission_checkbox(f, :calendar, BrandAmbassadors::Visit)
 
       .span12
         .span2 Details
-        .span2 = permission_checkbox(f, :show, BrandAmbassador::Visit)
+        .span2 = permission_checkbox(f, :show, BrandAmbassadors::Visit)
 
       .span12.separate
         .span2.title Documents
         .span2
-        .span2 = permission_checkbox(f, :create, BrandAmbassador::Document)
-        .span2 = permission_checkbox(f, :update, BrandAmbassador::Document)
-        .span2 = permission_checkbox(f, :deactivate, BrandAmbassador::Document)
+        .span2 = permission_checkbox(f, :create, BrandAmbassadors::Document)
+        .span2 = permission_checkbox(f, :update, BrandAmbassadors::Document)
+        .span2 = permission_checkbox(f, :deactivate, BrandAmbassadors::Document)
 
       .span12
         .span2 List
-        .span2 = permission_checkbox(f, :index, BrandAmbassador::Document)
+        .span2 = permission_checkbox(f, :index, BrandAmbassadors::Document)
 
   = hidden_field_tag :partial, :brand_ambassadors_permissions
   = f.button :submit, 'Save', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-feature "Brand Ambassadors Visits", js: true do
+feature "Brand Ambassadors Visits" do
   let(:company) { FactoryGirl.create(:company) }
   let(:campaign) { FactoryGirl.create(:campaign, company: company) }
   let(:user) { FactoryGirl.create(:user, company: company, role_id: role.id) }
@@ -27,6 +27,7 @@ feature "Brand Ambassadors Visits", js: true do
       FactoryGirl.create(:brand_ambassadors_visit, company: company,
         start_date: '02/02/2014', end_date: '02/03/2014',
         name: 'Visit2', company_user: company_user, active: true)
+      Sunspot.commit
       visit brand_ambassadors_root_path
 
       within("ul#visits-list") do
@@ -74,6 +75,7 @@ feature "Brand Ambassadors Visits", js: true do
       FactoryGirl.create(:brand_ambassadors_visit, company: company,
         start_date: '02/01/2014', end_date: '02/02/2014',
         name: 'Visit1', company_user: company_user, active: true)
+      Sunspot.commit
       visit brand_ambassadors_root_path
 
       within("ul#visits-list") do
@@ -97,6 +99,7 @@ feature "Brand Ambassadors Visits", js: true do
       FactoryGirl.create(:brand_ambassadors_visit, company: company,
         start_date: '02/01/2014', end_date: '02/02/2014',
         name: 'Visit1', company_user: company_user, active: true)
+      Sunspot.commit
       visit brand_ambassadors_root_path
 
       within("ul#visits-list") do
@@ -111,23 +114,69 @@ feature "Brand Ambassadors Visits", js: true do
     end
   end
 
+  shared_examples_for 'a user that can view visits details' do
+    let(:campaign){ FactoryGirl.create(:campaign, company: company, name: 'ABSOLUT Vodka') }
+
+    scenario "allows to create a new event" do
+      FactoryGirl.create(:company_user, company: company,
+        user: FactoryGirl.create(:user, first_name: 'Other', last_name: 'User'))
+      campaign.save
+
+      visit = FactoryGirl.create(:brand_ambassadors_visit,
+        company: company, company_user: company_user)
+
+      visit brand_ambassadors_visit_path(visit)
+
+      within "#visit-events" do
+        click_button 'Create'
+      end
+
+      within visible_modal do
+        expect(page).to have_content(company_user.full_name)
+        select_from_chosen('ABSOLUT Vodka', from: 'Campaign')
+        select_from_chosen('Other User', from: 'Event staff')
+        fill_in 'Description', with: 'some event description'
+        click_button 'Create'
+      end
+      ensure_modal_was_closed
+      expect(page).to have_content('ABSOLUT Vodka')
+      expect(page).to have_content('some event description')
+      within '#event-team-members' do
+        expect(page).to have_content('Other User')
+      end
+
+      click_link 'You are viewing event details. Click to close.'
+
+      expect(current_path).to eq(brand_ambassadors_visit_path(visit))
+      within "#visit-events" do
+        expect(page).to have_content('BSOLUT Vodka')
+      end
+    end
+  end
+
   feature "Non Admin User", js: true, search: true do
     let(:role) { FactoryGirl.create(:non_admin_role, company: company) }
 
     it_should_behave_like "a user that can view the list of visits" do
-      let(:permissions) { [[:index, 'BrandAmbassadors::Visit']]}
+      let(:permissions) { [[:list, 'BrandAmbassadors::Visit']]}
     end
 
     it_should_behave_like "a user that can deactivate visits" do
-      let(:permissions) { [[:index, 'BrandAmbassadors::Visit'], [:deactivate, 'BrandAmbassadors::Visit']]}
+      let(:permissions) { [[:list, 'BrandAmbassadors::Visit'], [:deactivate, 'BrandAmbassadors::Visit']]}
     end
 
     it_should_behave_like "a user that can edit visits" do
-      let(:permissions) { [[:index, 'BrandAmbassadors::Visit'], [:update, 'BrandAmbassadors::Visit']]}
+      let(:permissions) { [[:list, 'BrandAmbassadors::Visit'], [:update, 'BrandAmbassadors::Visit']]}
     end
 
     it_should_behave_like "a user that can create visits" do
-      let(:permissions) { [[:index, 'BrandAmbassadors::Visit'], [:create, 'BrandAmbassadors::Visit'], [:show, 'BrandAmbassadors::Visit']]}
+      let(:permissions) { [[:list, 'BrandAmbassadors::Visit'], [:create, 'BrandAmbassadors::Visit'], [:show, 'BrandAmbassadors::Visit']]}
     end
+  end
+
+feature "Admin User", js: true, search: true do
+    let(:role) { FactoryGirl.create(:role, company: company) }
+
+    it_behaves_like "a user that can view visits details"
   end
 end

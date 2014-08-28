@@ -8,3 +8,12 @@
       i.icon-user
       span
         = resource.company_user.try(:name)
+
+  #visit-events.details_box
+    h3 EVENTS
+    - if can?(:create, Event)
+      = button_to 'Create', new_brand_ambassadors_visit_event_path(resource), remote: true, class: 'btn btn-primary', :id => 'new-event-btn', method: :get
+
+    .link-list
+      ul#events-list
+        = render partial: 'events/event', collection: resource.events.accessible_by_user(current_company_user)

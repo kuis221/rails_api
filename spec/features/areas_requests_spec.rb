@@ -44,7 +44,7 @@ feature "Areas", js: true, search: true  do
       click_js_link 'Add Place'
 
       within visible_modal do
-        select_from_autocomplete 'Enter a place', 'Guillermitos Bar'
+        select_from_autocomplete 'Search for a place', 'Guillermitos Bar'
         click_js_button 'Add Place'
       end
       ensure_modal_was_closed
@@ -65,7 +65,7 @@ feature "Areas", js: true, search: true  do
 
       expect{
         within visible_modal do
-          select_from_autocomplete 'Enter a place', 'Walt Disney World Dolphin, 1500 Epcot Resorts Blvd'
+          select_from_autocomplete 'Search for a place', 'Walt Disney World Dolphin, 1500 Epcot Resorts Blvd'
           click_js_button 'Add Place'
         end
         ensure_modal_was_closed
