@@ -11,7 +11,7 @@
 
 .sidebar#resource-filter-column
   #collection-list-filters
-  a.btn.btn-primary Save
+
 .main
   .pull-left
     = button_to 'Invite user', new_user_invitation_path, {method: :get, remote: true, class: 'btn btn-primary'} if can?(:create, resource_class)
