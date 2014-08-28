@@ -10,17 +10,14 @@ DECLARE
     normalized_address VARCHAR;
     normalized_address2 VARCHAR;
 BEGIN
-    FOR place IN SELECT * FROM places WHERE lower(city)=lower(pcity) AND lower(state)=lower(pstate) AND lower(zipcode)=lower(pzipcode) AND lower(street_number|| ' ' || route)=lower(pstreet) LOOP
+    FOR place IN SELECT * FROM places WHERE lower(city)=lower(pcity) AND lower(state)=lower(pstate) AND lower(zipcode)=lower(pzipcode) AND lower(coalesce(places.street_number, '') || ' ' || coalesce(places.route, ''))=lower(pstreet) LOOP
         return place.id;
     END LOOP;
 
     normalized_address := lower(normalize_addresss(pstreet));
 
-    FOR place IN SELECT * FROM places WHERE lower(city)=lower(pcity) AND lower(state)=lower(pstate) AND lower(zipcode)=lower(pzipcode)  LOOP
-    	normalized_address2 := lower(normalize_addresss(place.street_number || ' ' || place.route));
-    	IF normalized_address = normalized_address2 THEN
-    		return place.id;
-    	END IF;
+    FOR place IN SELECT * FROM places WHERE lower(city)=lower(pcity) AND lower(state)=lower(pstate) AND lower(zipcode)=lower(pzipcode) AND lower(normalize_addresss(coalesce(places.street_number, '') || ' ' || coalesce(places.route, ''))) = normalized_address  LOOP
+        return place.id;
     END LOOP;
 
     RETURN NULL;
@@ -48,6 +45,6 @@ BEGIN
     address := regexp_replace(address, '(\s|,|^)(pkwy\.?)(\s|,|$)', '\1Parkway\3', 'ig');
     address := regexp_replace(address, '[\.,]+', '', 'ig');
     address := regexp_replace(address, '\s+', ' ', 'ig');
-    RETURN address;
+    RETURN trim(both ' ' from address);
 END;
 $$ LANGUAGE plpgsql;
