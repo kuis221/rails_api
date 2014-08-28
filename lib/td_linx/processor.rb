@@ -11,6 +11,12 @@ module TdLinxSynch
       unless file
         self.download_file(path)
       end
+      if path.match(/\Ahttp(s)?:\/\//)
+        t = Tempfile.new("tdlinx_remote", nil, encoding:  'ascii-8bit')
+        t.write(open(path, 'rb').read)
+        path = t.path
+        t.close
+      end
       self.process(path)
     rescue Exception => e
       TdlinxMailer.td_linx_process_failed(e).deliver
