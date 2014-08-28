@@ -333,7 +333,7 @@ feature 'Events section' do
             expect(page).to have_content('1 Active event taking place today and in the future')
             expect(page).to have_selector('ul#events-list li', count: 1)
 
-            click_link 'Clear filters'
+            click_button 'Reset'
             expect(page).to have_content('2 Active events')  # The list shouldn't be filtered by date
             expect(page).to have_selector('ul#events-list li', count: 2)
 
