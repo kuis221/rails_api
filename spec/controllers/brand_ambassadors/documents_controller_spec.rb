@@ -14,6 +14,15 @@ RSpec.describe BrandAmbassadors::DocumentsController, :type => :controller do
       expect(response).to render_template('new')
       expect(response).to render_template('_form')
     end
+
+    it "returns http success" do
+      ba_visit = FactoryGirl.create(:brand_ambassadors_visit,
+        company: company, company_user: user)
+      xhr :get, 'new', visit_id: ba_visit.id, format: :js
+      expect(response).to be_success
+      expect(response).to render_template('new')
+      expect(response).to render_template('_form')
+    end
   end
 
   describe "POST 'create'" do

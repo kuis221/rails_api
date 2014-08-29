@@ -20,14 +20,13 @@
   #visits-scoller-outer.link-list
    ul#visits-list
 
-.details_box
-  #brand-ambassador-documents
-    h3 DOCUMENTS
+#brand-ambassador-documents.details_box
+  h3 DOCUMENTS
 
-    #documents-list.documents-list
-      = render :partial => "documents/document", :collection => current_company.brand_ambassadors_documents.active, :locals => { parent: current_company }
-    .row-fluid
-      = link_to '', new_brand_ambassadors_document_path, class: 'icon-plus-sign', title: 'Add Documents', remote: true if can? :create,  BrandAmbassadors::Document
+  #documents-list.documents-list
+    = render :partial => "documents/document", :collection => current_company.brand_ambassadors_documents.active, :locals => { parent: current_company }
+  .row-fluid
+    = link_to '', new_brand_ambassadors_document_path, class: 'icon-plus-sign', title: 'Add Documents', remote: true if can? :create,  BrandAmbassadors::Document
 
 - if can?(:list, BrandAmbassadors::Visit)
   javascript:

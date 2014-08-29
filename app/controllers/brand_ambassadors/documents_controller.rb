@@ -26,6 +26,6 @@ class BrandAmbassadors::DocumentsController < ::DocumentsController
     end
 
     def begin_of_association_chain
-      current_company
+      params[:visit_id].present? ? current_company : super
     end
 end

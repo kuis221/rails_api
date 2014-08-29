@@ -57,7 +57,7 @@ feature "Brand Ambassadors Documents", js: true do
 
         visit brand_ambassadors_visit_path(ba_visit)
 
-        documents_section.click_js_link 'Add Documents'
+        visit_documents_section.click_js_link 'Add Documents'
 
         within visible_modal do
           expect(page).to have_content 'New Document'
@@ -70,7 +70,7 @@ feature "Brand Ambassadors Documents", js: true do
 
         document = BrandAmbassadors::Document.last
         # Check that the image appears on the page
-        within documents_section do
+        within visit_documents_section do
           src = document.file.url(:original, timestamp: false).gsub(/\Ahttp(s)?/, 'https')
           expect(page).to have_xpath("//a[starts-with(@href, \"#{src}\")]", wait: 10)
         end
@@ -79,6 +79,10 @@ feature "Brand Ambassadors Documents", js: true do
   end
 
   def documents_section
+    find('#brand-ambassador-documents')
+  end
+
+  def visit_documents_section
     find('#visit-documents')
   end
 
