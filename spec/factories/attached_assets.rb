@@ -18,6 +18,7 @@
 #  direct_upload_url :string(255)
 #  processed         :boolean          default(FALSE), not null
 #  rating            :integer          default(0)
+#  folder_id         :integer
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

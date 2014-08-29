@@ -21,6 +21,7 @@
 #  local_start_at :datetime
 #  local_end_at   :datetime
 #  description    :text
+#  visit_id       :integer
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

@@ -564,7 +564,7 @@ describe CampaignsController, :type => :controller do
     end
 
     it "loads the documents tab" do
-      campaign.documents << FactoryGirl.create(:attached_asset)
+      FactoryGirl.create(:attached_asset, attachable: campaign)
       get 'tab', id: campaign.id, tab: 'documents'
       expect(assigns(:campaign)).to eq(campaign)
       expect(response).to render_template('_documents')

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140828001108) do
+ActiveRecord::Schema.define(version: 20140828232932) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -153,9 +153,11 @@ ActiveRecord::Schema.define(version: 20140828001108) do
     t.string   "direct_upload_url"
     t.boolean  "processed",         default: false, null: false
     t.integer  "rating",            default: 0
+    t.integer  "folder_id"
   end
 
   add_index "attached_assets", ["attachable_type", "attachable_id"], name: "index_attached_assets_on_attachable_type_and_attachable_id", using: :btree
+  add_index "attached_assets", ["folder_id"], name: "index_attached_assets_on_folder_id", using: :btree
 
   create_table "attached_assets_tags", force: true do |t|
     t.integer "attached_asset_id"
@@ -218,6 +220,8 @@ ActiveRecord::Schema.define(version: 20140828001108) do
     t.integer  "company_id"
     t.boolean  "active",        default: true
   end
+
+  add_index "brands", ["company_id"], name: "index_brands_on_company_id", using: :btree
 
   create_table "brands_campaigns", force: true do |t|
     t.integer "brand_id"
@@ -409,6 +413,19 @@ ActiveRecord::Schema.define(version: 20140828001108) do
 
   add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
 
+  create_table "document_folders", force: true do |t|
+    t.string   "name"
+    t.integer  "parent_id"
+    t.boolean  "active"
+    t.integer  "documents_count"
+    t.integer  "company_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "document_folders", ["company_id"], name: "index_document_folders_on_company_id", using: :btree
+  add_index "document_folders", ["parent_id"], name: "index_document_folders_on_parent_id", using: :btree
+
   create_table "event_data", force: true do |t|
     t.integer  "event_id"
     t.integer  "impressions",                                        default: 0
@@ -499,17 +516,15 @@ ActiveRecord::Schema.define(version: 20140828001108) do
   create_table "form_field_results", force: true do |t|
     t.integer  "form_field_id"
     t.text     "value"
-    t.datetime "created_at",                                                  null: false
-    t.datetime "updated_at",                                                  null: false
-    t.integer  "form_field_option_id"
+    t.datetime "created_at",                                             null: false
+    t.datetime "updated_at",                                             null: false
     t.hstore   "hash_value"
-    t.decimal  "scalar_value",         precision: 10, scale: 2, default: 0.0
+    t.decimal  "scalar_value",    precision: 10, scale: 2, default: 0.0
     t.integer  "resultable_id"
     t.string   "resultable_type"
   end
 
   add_index "form_field_results", ["form_field_id"], name: "index_activity_results_on_form_field_id", using: :btree
-  add_index "form_field_results", ["form_field_option_id"], name: "index_activity_results_on_form_field_option_id", using: :btree
   add_index "form_field_results", ["hash_value"], name: "index_activity_results_on_hash_value", using: :gist
   add_index "form_field_results", ["resultable_id", "resultable_type", "form_field_id"], name: "index_ff_results_on_resultable_and_form_field_id", using: :btree
   add_index "form_field_results", ["resultable_id", "resultable_type"], name: "index_form_field_results_on_resultable_id_and_resultable_type", using: :btree
@@ -549,8 +564,7 @@ ActiveRecord::Schema.define(version: 20140828001108) do
   add_index "goals", ["kpi_id"], name: "index_goals_on_kpi_id", using: :btree
   add_index "goals", ["kpis_segment_id"], name: "index_goals_on_kpis_segment_id", using: :btree
 
-  create_table "kpi_reports", id: false, force: true do |t|
-    t.integer  "id",                default: "nextval('reports_id_seq'::regclass)", null: false
+  create_table "kpi_reports", force: true do |t|
     t.integer  "company_user_id"
     t.text     "params"
     t.string   "aasm_state"
@@ -559,8 +573,8 @@ ActiveRecord::Schema.define(version: 20140828001108) do
     t.string   "file_content_type"
     t.integer  "file_file_size"
     t.datetime "file_updated_at"
-    t.datetime "created_at",                                                        null: false
-    t.datetime "updated_at",                                                        null: false
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
   end
 
   create_table "kpis", force: true do |t|
