@@ -17,3 +17,12 @@
     .link-list
       ul#events-list
         = render partial: 'events/event', collection: resource.events.accessible_by_user(current_company_user)
+
+
+  #visit-documents.details_box
+    h3 DOCUMENTS
+
+    #brand_ambassadors_visit-documents-list.documents-list
+      = render :partial => "documents/document", :collection => resource.documents.active, :locals => { parent: resource }
+    .row-fluid
+      = link_to '', new_brand_ambassadors_visit_document_path(resource), class: 'icon-plus-sign', title: 'Add Documents', remote: true if can? :create,  BrandAmbassadors::Document

@@ -505,6 +505,12 @@ Brandscopic::Application.routes.draw do
         get :activate
       end
       resources :events, only: [:new, :create], controller: '/events'
+      resources :documents, only: [:new, :create] do
+        member do
+          get :deactivate
+          get :activate
+        end
+      end
     end
     resources :documents, only: [:new, :create] do
       member do

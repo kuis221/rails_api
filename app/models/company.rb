@@ -30,8 +30,11 @@ class Company < ActiveRecord::Base
   has_many :kpis, dependent: :destroy
   has_many :reports, dependent: :destroy
   has_many :activity_types, dependent: :destroy
-  has_many :brand_ambassadors_visits, ->{ order 'brand_ambassadors_visits.start_date ASC' }, class_name: 'BrandAmbassadors::Visit', dependent: :destroy
-  has_many :brand_ambassadors_documents, ->{ order('attached_assets.file_file_name ASC') }, class_name: 'BrandAmbassadors::Document', as: :attachable, dependent: :destroy
+  has_many :brand_ambassadors_visits, ->{ order 'brand_ambassadors_visits.start_date ASC' },
+      class_name: 'BrandAmbassadors::Visit', dependent: :destroy
+  has_many :brand_ambassadors_documents, ->{ order('attached_assets.file_file_name ASC') },
+      class_name: 'BrandAmbassadors::Document', as: :attachable,
+      inverse_of: :attachable, dependent: :destroy
   has_many :document_folders, ->{ order('document_folders.name ASC').where(parent_id: nil) }
 
   has_many :tags, ->{ order('tags.name ASC') }, :autosave => true, dependent: :destroy

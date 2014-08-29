@@ -4,7 +4,7 @@
 .details_box
   #list-tools
     .pull-left
-      = button_to 'Create', new_brand_ambassadors_visit_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn'} if can? :create, BrandAmbassadors::Visit
+      = button_to 'New Visit', new_brand_ambassadors_visit_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn'} if can? :create, BrandAmbassadors::Visit
     .text-right
       button.btn.download.xlsx-download-link data-url="#{events_path(format:"xls")}" title="Download"
         i.icon-download

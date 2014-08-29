@@ -25,6 +25,10 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
 
   scope :accessible_by_user, ->(company_user) { where(company_id: company_user.company_id) }
 
+  has_many :documents, ->{ order('attached_assets.file_file_name ASC') },
+      class_name: 'BrandAmbassadors::Document', as: :attachable, inverse_of: :attachable,
+      dependent: :destroy
+
   validates :name, presence: true
   validates :company_user, presence: true
   validates :company, presence: true

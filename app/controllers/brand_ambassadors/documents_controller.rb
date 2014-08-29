@@ -1,7 +1,7 @@
 class BrandAmbassadors::DocumentsController < ::DocumentsController
   respond_to :js, only: [:create, :new]
 
-  belongs_to :visit, polymorphic: true, optional: true
+  belongs_to :brand_ambassadors_visits, param: :visit_id, polymorphic: true, optional: true
 
   defaults :resource_class => ::BrandAmbassadors::Document
 
@@ -23,5 +23,9 @@ class BrandAmbassadors::DocumentsController < ::DocumentsController
 
     def authorize_create
       authorize! :create, BrandAmbassadors::Document
+    end
+
+    def begin_of_association_chain
+      current_company
     end
 end

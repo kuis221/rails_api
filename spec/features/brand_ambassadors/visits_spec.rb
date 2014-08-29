@@ -53,7 +53,7 @@ feature "Brand Ambassadors Visits" do
     scenario 'allows the user to create a new visit' do
       visit brand_ambassadors_root_path
 
-      click_js_button 'Create'
+      click_js_button 'New Visit'
 
       within visible_modal do
         fill_in 'Name', with: 'new visit name'
@@ -122,10 +122,10 @@ feature "Brand Ambassadors Visits" do
         user: FactoryGirl.create(:user, first_name: 'Other', last_name: 'User'))
       campaign.save
 
-      visit = FactoryGirl.create(:brand_ambassadors_visit,
+      ba_visit = FactoryGirl.create(:brand_ambassadors_visit,
         company: company, company_user: company_user)
 
-      visit brand_ambassadors_visit_path(visit)
+      visit brand_ambassadors_visit_path(ba_visit)
 
       within "#visit-events" do
         click_button 'Create'
@@ -147,7 +147,7 @@ feature "Brand Ambassadors Visits" do
 
       click_link 'You are viewing event details. Click to close.'
 
-      expect(current_path).to eq(brand_ambassadors_visit_path(visit))
+      expect(current_path).to eq(brand_ambassadors_visit_path(ba_visit))
       within "#visit-events" do
         expect(page).to have_content('BSOLUT Vodka')
       end

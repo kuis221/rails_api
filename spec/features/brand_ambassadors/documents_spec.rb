@@ -33,7 +33,38 @@ feature "Brand Ambassadors Documents", js: true do
           attach_file "file", 'spec/fixtures/file.pdf'
           expect(upload_queue).to have_file_in_queue('file.pdf')
           wait_for_ajax(30) # For the file to upload to S3
-          find('#btn-upload-ok').click
+          click_js_link 'OK'
+        end
+        ensure_modal_was_closed
+
+        document = BrandAmbassadors::Document.last
+        # Check that the image appears on the page
+        within documents_section do
+          src = document.file.url(:original, timestamp: false).gsub(/\Ahttp(s)?/, 'https')
+          expect(page).to have_xpath("//a[starts-with(@href, \"#{src}\")]", wait: 10)
+        end
+      end
+    end
+  end
+
+  feature "Brand Ambassador Visit documents" do
+    let(:role) { FactoryGirl.create(:non_admin_role, company: company) }
+    let(:permissions) { [[:create, 'BrandAmbassadors::Document'], [:index, 'BrandAmbassadors::Document'], [:show, 'BrandAmbassadors::Visit']] }
+    let(:ba_visit) { FactoryGirl.create(:brand_ambassadors_visit,
+        company: company, company_user: company_user) }
+    scenario "A user can upload a document to a brand ambassador visit" do
+      with_resque do
+
+        visit brand_ambassadors_visit_path(ba_visit)
+
+        documents_section.click_js_link 'Add Documents'
+
+        within visible_modal do
+          expect(page).to have_content 'New Document'
+          attach_file "file", 'spec/fixtures/file.pdf'
+          expect(upload_queue).to have_file_in_queue('file.pdf')
+          wait_for_ajax(30) # For the file to upload to S3
+          click_js_link 'OK'
         end
         ensure_modal_was_closed
 
@@ -48,7 +79,7 @@ feature "Brand Ambassadors Documents", js: true do
   end
 
   def documents_section
-    find('#brand-ambassador-documents')
+    find('#visit-documents')
   end
 
   def upload_queue
