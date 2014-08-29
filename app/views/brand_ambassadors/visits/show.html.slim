@@ -4,6 +4,11 @@
   .details_box.padding-top-close-bar
     h2= resource.name
 
+    .calendar-data
+      i.icon-calendar
+      span
+        = [format_date(resource.start_date), format_date(resource.end_date)].uniq.join(' - ').html_safe
+
     .description-data
       i.icon-user
       span
