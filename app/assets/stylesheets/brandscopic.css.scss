@@ -1432,7 +1432,7 @@ li.dropdown a{
 .nav-stacked{
 	li{
 		position: relative;
-		&.active {
+		&.active, &:hover {
 			background-color: $app_bg;
 			&:after {
 				background-color: transparent;
