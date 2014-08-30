@@ -166,9 +166,9 @@ class CampaignsController < FilteredController
         facet_search = resource_class.do_search(facet_params, true)
 
         f.push build_brands_bucket
-        f.push build_brand_portfolio_bucket facet_search
+        f.push build_brand_portfolio_bucket
 
-        f.push build_people_bucket facet_search
+        f.push build_people_bucket
         f.push build_state_bucket facet_search
       end
     end

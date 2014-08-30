@@ -2,7 +2,7 @@ class CompanyUsersController < FilteredController
   include DeactivableHelper
   include UsersHelper
 
-  respond_to :js, only: [:new, :create, :edit, :update, :time_zone_change,:time_zone_update ]
+  respond_to :js, only: [:new, :create, :edit, :update, :time_zone_change, :time_zone_update]
   respond_to :json, only: [:index, :notifications]
 
   helper_method :brands_campaigns_list, :viewing_profile?
@@ -184,12 +184,12 @@ class CompanyUsersController < FilteredController
     def facets
       @facets ||= Array.new.tap do |f|
         # select what params should we use for the facets search
-        facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| %w(q company_id current_company_user).include?(k)})
-        facet_search = resource_class.do_search(facet_params, true)
+        #facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| %w(q company_id current_company_user).include?(k)})
+        #facet_search = resource_class.do_search(facet_params, true)
 
-        f.push build_role_bucket facet_search
+        f.push build_role_bucket
         f.push build_campaign_bucket
-        f.push build_team_bucket facet_search
+        f.push build_team_bucket
         # f.push(label: "Active State", items: facet_search.facet(:status).rows.map{|x| build_facet_item({label: x.value, id: x.value, name: :status, count: x.count}) })
         f.push build_state_bucket
       end

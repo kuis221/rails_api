@@ -29,30 +29,47 @@ module FacetsHelper
   end
 
   def build_brands_bucket
-    brands = Brand.joins(:campaigns).where(campaigns: {aasm_state: 'active', id: current_company_user.accessible_campaign_ids}).
-        for_dropdown.map do |b|
+    status = current_company_user.filter_settings_for('brands', controller_name)
+    brands = Brand.where("active in (?)", status).joins(:campaigns).where(campaigns: {aasm_state: 'active', id: current_company_user.accessible_campaign_ids}).for_dropdown.map do |b|
       build_facet_item({label: b[0], id: b[1], name: :brand})
     end
     {label: 'Brands', items: brands}
   end
 
-  def build_areas_bucket(search)
-    places = current_company_user.places
+  def build_areas_bucket
+    status = current_company_user.filter_settings_for('areas', controller_name)
 
-    areas = current_company.areas.accessible_by_user(current_company_user).order(:name).active.all
+    places = current_company_user.places
+    areas = current_company.areas.where("active in (?)", status).accessible_by_user(current_company_user).order(:name).all
+
     places.each do |p|
-      areas = (areas + Area.where(company_id: current_company.id).where('id NOT IN (?)', areas.map(&:id)+[0]).select{|a| a.place_in_locations?(p) })
+      areas = (areas + Area.where(company_id: current_company.id).where("active in (?)", status || [true, false]).where('id NOT IN (?)', areas.map(&:id)+[0]).select{|a| a.place_in_locations?(p) })
     end
 
     areas = areas.sort_by(&:name).map{|a| build_facet_item({label: a.name, id: a.id, count: a.events_count, name: :area}) }
     {label: 'Areas', items: areas}
   end
 
-  def build_people_bucket(facet_search)
-    users = build_facet(CompanyUser, 'User', :user, facet_search.facet(:user_ids).rows)[:items]
-    teams = build_facet(Team, 'Team', :team, facet_search.facet(:team_ids).rows)[:items]
+  def build_people_bucket
+    users_status = current_company_user.filter_settings_for('users', controller_name)
+    teams_status = current_company_user.filter_settings_for('teams', controller_name)
+
+    users = Company.connection.unprepared_statement do
+      ActiveRecord::Base.connection.select_all("
+        #{current_company.company_users.where("company_users.active in (?)", users_status).select('company_users.id, users.first_name || \' \' || users.last_name as name').joins(:user).to_sql}
+        ORDER BY name ASC
+      ").map{|r| build_facet_item({label: r['name'], id: r['id'], name: :user, count: 1}) }
+    end
+
+    teams = Company.connection.unprepared_statement do
+      ActiveRecord::Base.connection.select_all("
+        #{current_company.teams.where("teams.active in (?)", teams_status).select('teams.id, teams.name').to_sql}
+        ORDER BY name ASC
+      ").map{|r| build_facet_item({label: r['name'], id: r['id'], name: :team, count: 1}) }
+    end
+
     people = (users + teams).sort{ |a, b| a[:label] <=> b[:label] }
-    {label: 'People', items: people }
+    {label: 'People', items: people}
   end
 
   def build_state_bucket(facet_search)
@@ -60,18 +77,27 @@ module FacetsHelper
     {label: 'Active State', items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: counters.try(:[], x) || 0}) }}
   end
 
-  def build_role_bucket(facet_search)
-    items = build_facet(Role, 'Role', :role, facet_search.facet(:role_id).rows)[:items]
+  def build_role_bucket
+    status = current_company_user.filter_settings_for('roles', controller_name)
+    items = current_company.roles.where("active in (?)", status).order(:name).pluck(:name, :id).map do |r|
+      build_facet_item({label: r[0], id: r[1], name: :role, count: 1})
+    end
     {label: "Roles", items: items}
   end
 
-  def build_team_bucket(facet_search)
-    items = build_facet(Team, 'Team', :team, facet_search.facet(:team_ids).rows)[:items]
+  def build_team_bucket
+    status = current_company_user.filter_settings_for('teams', controller_name)
+    items = current_company.teams.where("active in (?)", status).order(:name).pluck(:name, :id).map do |r|
+      build_facet_item({label: r[0], id: r[1], name: :team, count: 1})
+    end
     {label: "Teams", items: items}
   end
 
-  def build_brand_portfolio_bucket(facet_search)
-    items = build_facet(BrandPortfolio, 'Brand Portfolios', :brand_portfolio, facet_search.facet(:brand_portfolio_ids).rows)[:items]
+  def build_brand_portfolio_bucket
+    status = current_company_user.filter_settings_for('brand_portfolios', controller_name)
+    items = current_company.brand_portfolios.where("active in (?)", status).order(:name).pluck(:name, :id).map do |r|
+      build_facet_item({label: r[0], id: r[1], name: :brand_portfolio, count: 1})
+    end
     {label: "Brand Portfolios", items: items}
   end
 
@@ -83,10 +109,12 @@ module FacetsHelper
   end
 
   def build_campaign_bucket
-    items = Campaign.accessible_by_user(current_company_user).order(:name).for_dropdown.map do |r|
+    status = current_company_user.filter_settings_for('campaigns', controller_name, true)
+    items = Campaign.accessible_by_user(current_company_user).where("aasm_state in (?)", status).order(:name).pluck(:name, :id).map do |r|
       build_facet_item({label: r[0], id: r[1], name: :campaign, count: 1})
     end
-    { label: 'Campaigns', items: items }
+    Campaign.accessible_by_user(current_company_user).where("aasm_state in (?)", status).order(:name).inspect
+    {label: 'Campaigns', items: items}
   end
 
   def build_custom_filters_bucket
@@ -103,8 +131,8 @@ module FacetsHelper
 
       f.push build_campaign_bucket
       f.push build_brands_bucket
-      f.push build_areas_bucket( facet_search )
-      f.push build_people_bucket( facet_search )
+      f.push build_areas_bucket
+      f.push build_people_bucket
 
       f.push build_status_bucket( facet_search )
       f.push build_state_bucket( facet_search )
@@ -146,7 +174,7 @@ module FacetsHelper
       ]
       f.push(label: "Price", items: prices )
 
-      f.push build_areas_bucket(facet_search)
+      f.push build_areas_bucket
       #f.push(label: "Campaigns", items: facet_search.facet(:campaigns).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :campaign, count: x.count}) })
       f.push build_campaign_bucket
       f.push build_brands_bucket

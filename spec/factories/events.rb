@@ -20,6 +20,7 @@
 #  timezone       :string(255)
 #  local_start_at :datetime
 #  local_end_at   :datetime
+#  description    :text
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

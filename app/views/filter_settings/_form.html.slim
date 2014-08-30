@@ -1,0 +1,30 @@
+- apply_to = params[:apply_to]
+= simple_form_for(current_company_user.filter_settings.find_or_initialize_by(apply_to: apply_to), remote: true) do |f|
+  = f.error_notification
+
+  .form-inputs
+    .row-fluid
+      .span12
+        = f.hidden_field 'settings[]', as: :hidden, value: nil
+        - params[:filters_labels].each do |filter_label|
+          - unless ['Saved Filters', 'Event Status', 'Active State'].include?(filter_label)
+            .span4.filter-item.clearfix
+              h6 = filter_label.upcase
+              ul
+                li
+                  = custom_filter_setting_checkbox(filter_label, apply_to, 'Active')
+                li
+                  = custom_filter_setting_checkbox(filter_label, apply_to, 'Inactive')
+
+        = f.hidden_field :company_user_id, as: :hidden, value: current_company_user.id
+        = f.hidden_field :apply_to, as: :hidden, value: apply_to
+
+    .row-fluid.saved-filters
+      .span12
+        h6 SAVED FILTERS
+        = render partial: 'custom_filters/custom_filters', locals: {apply_to: apply_to}
+
+  .form-actions
+    = f.button :submit, "Done", class: 'btn-primary', data: {disable_with: 'Please wait...'}
+    = "&nbsp;".html_safe
+    = f.button :button, 'Cancel', class: 'btn-cancel'
