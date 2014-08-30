@@ -58,7 +58,7 @@ $.widget 'nmk.filteredList', {
 			$('<input class="btn btn-cancel" id="cancel-save-filters" type="reset" value="Reset">').on 'click', (e) =>
 				@_cleanFilters()
 
-			$('<a class="settings-for-filters" href="#"><span class="icon-gear"></span></a>')
+			$('<a class="settings-for-filters" title="Filter Settings" href="#"><span class="icon-gear"></span></a>')
 				.on 'click', (e) =>
 					e.preventDefault()
 					e.stopPropagation()

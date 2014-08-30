@@ -10,6 +10,8 @@ class FilterSettingsController < InheritedResources::Base
     end
 
     def permitted_params
-      params.permit(filter_setting: [:id, :company_user_id, :apply_to, :settings => []])[:filter_setting]
+      params.permit(filter_setting: [:id, :company_user_id, :apply_to, :settings => []])[:filter_setting].tap do |p|
+        p[:settings] ||= []
+      end if params[:filter_setting]
     end
 end
