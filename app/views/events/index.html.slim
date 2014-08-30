@@ -195,7 +195,7 @@
       'includeAutoComplete': true,
       'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
       'defaultParams': [{name: 'status[]', value: 'Active'}, {name: 'start_date', value:'#{Time.zone.now.strftime("%m/%d/%Y")}'}, {name: 'end_date', value:'#{(Time.zone.now + 10.years).strftime("%m/%d/%Y")}'}],
-      'applyTo': '#{controller.controller_name}',
+      'applyTo': '#{controller_name}',
       'clearFilterParams': [{name: 'status[]', value: 'Active'}],
       'onChange': function(filterBox){
         $(document).trigger('events-filter:changed')
