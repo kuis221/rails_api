@@ -12,9 +12,9 @@
               h6 = filter_label.upcase
               ul
                 li
-                  = custom_filter_setting_checkbox(filter_label, apply_to, 'Active')
+                  = custom_filter_setting_checkbox(filter_label, apply_to, 'Active', f.object)
                 li
-                  = custom_filter_setting_checkbox(filter_label, apply_to, 'Inactive')
+                  = custom_filter_setting_checkbox(filter_label, apply_to, 'Inactive', f.object)
 
         = f.hidden_field :company_user_id, as: :hidden, value: current_company_user.id
         = f.hidden_field :apply_to, as: :hidden, value: apply_to

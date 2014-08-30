@@ -52,7 +52,7 @@ feature "Filter Settings", search: true, js: true do
         expect(page).to have_content('Test User')
         expect(page).to have_content('EVENT STATUS')
         expect(page).to have_content('ACTIVE STATE')
-        find('.settings-for-filters').trigger('click')
+        click_js_link 'Filter Settings'
       end
 
       within visible_modal do
@@ -61,7 +61,23 @@ feature "Filter Settings", search: true, js: true do
         expect(page).to have_content('AREAS')
         expect(page).to have_content('USERS')
         expect(page).to have_content('TEAMS')
-        unicheck('Inactive')
+        unicheck('Active') # Unchecks all active checkboxes
+        screenshot_and_open_image
+        click_button 'Done'
+      end
+
+      within '#collection-list-filters' do
+        # checks that the filter sections were hidden
+        expect(page).to_not have_content('CAMPAIGNS')
+        expect(page).to_not have_content('BRANDS')
+        expect(page).to_not have_content('PEOPLE')
+        expect(page).to have_content('EVENT STATUS')
+        expect(page).to have_content('ACTIVE STATE')
+        click_js_link 'Filter Settings'
+      end
+
+      within visible_modal do
+        unicheck('Inactive') # Checks all inactive checkboxes
         click_button 'Done'
       end
       ensure_modal_was_closed
