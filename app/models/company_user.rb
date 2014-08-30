@@ -23,6 +23,7 @@ class CompanyUser < ActiveRecord::Base
   has_many :tasks, dependent: :nullify
   has_many :notifications, dependent: :destroy
   has_many :custom_filters, dependent: :destroy
+  has_many :filter_settings, dependent: :destroy
   has_many :alerts, class_name: 'AlertsUser', dependent: :destroy
   has_many :satisfaction_surveys
 
@@ -247,6 +248,10 @@ class CompanyUser < ActiveRecord::Base
     if permissions.present?
       permissions.all?{|permission| self.role.has_permission?(permission[:action], permission[:subject_class])}
     end
+  end
+
+  def filter_settings_for(bucket, controller_name, aasm=false)
+    filter_settings.find_by(apply_to: controller_name).try(:filter_settings_for, bucket, controller_name, aasm) || (aasm ? ['active'] : [true])
   end
 
   class << self

@@ -503,6 +503,16 @@ ActiveRecord::Schema.define(version: 20140829225956) do
   add_index "events", ["place_id"], name: "index_events_on_place_id", using: :btree
   add_index "events", ["visit_id"], name: "index_events_on_visit_id", using: :btree
 
+  create_table "filter_settings", force: true do |t|
+    t.integer  "company_user_id"
+    t.string   "apply_to"
+    t.text     "settings"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "filter_settings", ["company_user_id"], name: "index_filter_settings_on_company_user_id", using: :btree
+
   create_table "form_field_options", force: true do |t|
     t.integer  "form_field_id"
     t.string   "name"

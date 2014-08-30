@@ -184,6 +184,7 @@ en:
         brand_ambassadors/visit: "New Visit"
         brand_ambassadors/document: "New Document"
         document_folder: "New Folder"
+        filter_setting: "Filtering options"
       edit:
         company_user: "Edit User"
         event: "Edit Event"
