@@ -18,6 +18,7 @@ describe CustomFilter, :type => :model do
   it { is_expected.to validate_presence_of(:company_user_id) }
   it { is_expected.to validate_presence_of(:name) }
   it { is_expected.to validate_presence_of(:apply_to) }
+  it { is_expected.to validate_presence_of(:filters) }
   it { is_expected.to validate_numericality_of(:company_user_id) }
 
   describe "#by_type" do

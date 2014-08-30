@@ -46,7 +46,7 @@ class Results::PhotosController < FilteredController
 
         f.push build_campaign_bucket
         f.push build_brands_bucket
-        f.push build_areas_bucket(facet_search)
+        f.push build_areas_bucket
         f.push build_status_bucket facet_search
       end
     end

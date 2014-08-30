@@ -1,3 +1,3 @@
 |
   $('#saved-filters-container').replaceWith('#{j render(partial: 'custom_filters', locals: {apply_to: params[:apply_to]})}')
-  $(document).trigger('custom-filters:change');
+  $(document).trigger('filter-box:change');

@@ -237,7 +237,6 @@ describe CompanyUser, :type => :model do
     end
   end
 
-
   describe "#with_notifications" do
     it "should return empty if no users have the any of the notifications enabled" do
       FactoryGirl.create(:company_user)
@@ -301,6 +300,20 @@ describe CompanyUser, :type => :model do
       expect(Rails.cache).to receive(:delete).with("user_accessible_campaigns_#{company_user.id}")
       expect(Rails.cache).to receive(:delete).with("user_notifications_#{company_user.id}").at_least(:once)
       company_user.brand_portfolios.destroy brand_portfolio
+    end
+  end
+
+  describe "#filter_settings_for" do
+    let(:company) { FactoryGirl.create(:company) }
+    let(:company_user) { FactoryGirl.create(:company_user, company: company) }
+
+    it "should include only custom filters for events" do
+      expect(company_user.filter_settings_for('Brands', 'events')).to match_array [true]
+      filter_setting = FactoryGirl.create(:filter_setting, company_user_id: company_user.to_param, apply_to: 'events', settings: '["campaigns_events_active", "brands_events_active", "brands_events_inactive", "users_events_active"]')
+      expect(company_user.filter_settings_for('Campaigns', 'events', true)).to match_array ['active']
+      expect(company_user.filter_settings_for('Brands', 'events')).to match_array [true, false]
+      expect(company_user.filter_settings_for('Users', 'events')).to match_array [true]
+      expect(company_user.filter_settings_for('Brand Portfolios', 'events')).to match_array []
     end
   end
 

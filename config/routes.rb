@@ -492,9 +492,9 @@ Brandscopic::Application.routes.draw do
 
   resources :tags, only: [:index]
 
-  resources :custom_filters, only: [:index, :new, :create, :destroy] do
-    get :configure, on: :collection
-  end
+  resources :custom_filters, only: [:index, :new, :create, :destroy]
+
+  resources :filter_settings, only: [:index, :new, :create, :update]
 
   root :to => 'dashboard#index'
 end
