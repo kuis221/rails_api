@@ -29,6 +29,9 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
       class_name: 'BrandAmbassadors::Document', as: :attachable, inverse_of: :attachable,
       dependent: :destroy
 
+  has_many :document_folders, ->{ order('document_folders.name ASC').where(parent_id: nil) },
+      as: :folderable, inverse_of: :folderable
+
   validates :name, presence: true
   validates :company_user, presence: true
   validates :company, presence: true

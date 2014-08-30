@@ -45,6 +45,36 @@ feature "Brand Ambassadors Documents", js: true do
         end
       end
     end
+
+    scenario "A user can create and deactivate folders" do
+      visit brand_ambassadors_root_path
+
+      documents_section.click_js_link 'Create Folder'
+
+      within visible_modal do
+        expect(page).to have_content 'New Folder'
+        fill_in 'Name', with: 'New Folder Name'
+        click_js_button 'Create'
+      end
+      ensure_modal_was_closed
+
+      folder = DocumentFolder.last
+      # Check that the folder appears on the page
+      within documents_section do
+        expect(page).to have_content folder.name
+      end
+
+      # Deactivate the folder
+      within documents_section do
+        hover_and_click '.document', 'Deactivate'
+      end
+      confirm_prompt "Are you sure you want to deactivate this folder?"
+
+      # Check that the folder was removed
+      within documents_section do
+        expect(page).not_to have_content folder.name
+      end
+    end
   end
 
   feature "Brand Ambassador Visit documents" do
@@ -74,6 +104,36 @@ feature "Brand Ambassadors Documents", js: true do
           src = document.file.url(:original, timestamp: false).gsub(/\Ahttp(s)?/, 'https')
           expect(page).to have_xpath("//a[starts-with(@href, \"#{src}\")]", wait: 10)
         end
+      end
+    end
+
+    scenario "A user can create and deactivate folders" do
+      visit brand_ambassadors_visit_path(ba_visit)
+
+      visit_documents_section.click_js_link 'Create Folder'
+
+      within visible_modal do
+        expect(page).to have_content 'New Folder'
+        fill_in 'Name', with: 'New Folder Name'
+        click_js_button 'Create'
+      end
+      ensure_modal_was_closed
+
+      folder = DocumentFolder.last
+      # Check that the folder appears on the page
+      within visit_documents_section do
+        expect(page).to have_content folder.name
+      end
+
+      # Deactivate the folder
+      within visit_documents_section do
+        hover_and_click '.document', 'Deactivate'
+      end
+      confirm_prompt "Are you sure you want to deactivate this folder?"
+
+      # Check that the folder was removed
+      within visit_documents_section do
+        expect(page).not_to have_content folder.name
       end
     end
   end
