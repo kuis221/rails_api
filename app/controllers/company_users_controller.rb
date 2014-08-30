@@ -2,7 +2,7 @@ class CompanyUsersController < FilteredController
   include DeactivableHelper
   include UsersHelper
 
-  respond_to :js, only: [:new, :create, :edit, :update, :time_zone_change, :time_zone_update, :filter_settings]
+  respond_to :js, only: [:new, :create, :edit, :update, :time_zone_change, :time_zone_update]
   respond_to :json, only: [:index, :notifications]
 
   helper_method :brands_campaigns_list, :viewing_profile?

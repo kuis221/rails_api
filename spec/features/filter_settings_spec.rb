@@ -62,7 +62,7 @@ feature "Filter Settings", search: true, js: true do
         expect(page).to have_content('USERS')
         expect(page).to have_content('TEAMS')
         unicheck('Inactive')
-        click_button 'Save'
+        click_button 'Done'
       end
       ensure_modal_was_closed
 

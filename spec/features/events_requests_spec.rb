@@ -572,7 +572,7 @@ feature 'Events section' do
           expect(page).to_not have_content('Custom Filter 2')
           expect(page).to have_content('Custom Filter 3')
 
-          click_js_link 'Done'
+          click_button 'Done'
         end
         ensure_modal_was_closed
 
