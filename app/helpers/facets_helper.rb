@@ -6,6 +6,10 @@ module FacetsHelper
     end
   end
 
+  def filter_settings_scope
+    params[:apply_to] || controller_name
+  end
+
   # Facet helper methods
   def build_facet(klass, title, name, facets)
     items = if klass.name == 'CompanyUser'
@@ -29,7 +33,7 @@ module FacetsHelper
   end
 
   def build_brands_bucket
-    status = current_company_user.filter_settings_for('brands', controller_name)
+    status = current_company_user.filter_settings_for('brands', filter_settings_scope)
     brands = Brand.where("active in (?)", status).joins(:campaigns).where(campaigns: {aasm_state: 'active', id: current_company_user.accessible_campaign_ids}).for_dropdown.map do |b|
       build_facet_item({label: b[0], id: b[1], name: :brand})
     end
@@ -37,7 +41,7 @@ module FacetsHelper
   end
 
   def build_areas_bucket
-    status = current_company_user.filter_settings_for('areas', controller_name)
+    status = current_company_user.filter_settings_for('areas', filter_settings_scope)
 
     places = current_company_user.places
     areas = current_company.areas.where("active in (?)", status).accessible_by_user(current_company_user).order(:name).all
@@ -51,8 +55,8 @@ module FacetsHelper
   end
 
   def build_people_bucket
-    users_status = current_company_user.filter_settings_for('users', controller_name)
-    teams_status = current_company_user.filter_settings_for('teams', controller_name)
+    users_status = current_company_user.filter_settings_for('users', filter_settings_scope)
+    teams_status = current_company_user.filter_settings_for('teams', filter_settings_scope)
 
     users = Company.connection.unprepared_statement do
       ActiveRecord::Base.connection.select_all("
@@ -78,7 +82,7 @@ module FacetsHelper
   end
 
   def build_role_bucket
-    status = current_company_user.filter_settings_for('roles', controller_name)
+    status = current_company_user.filter_settings_for('roles', filter_settings_scope)
     items = current_company.roles.where("active in (?)", status).order(:name).pluck(:name, :id).map do |r|
       build_facet_item({label: r[0], id: r[1], name: :role, count: 1})
     end
@@ -86,7 +90,7 @@ module FacetsHelper
   end
 
   def build_team_bucket
-    status = current_company_user.filter_settings_for('teams', controller_name)
+    status = current_company_user.filter_settings_for('teams', filter_settings_scope)
     items = current_company.teams.where("active in (?)", status).order(:name).pluck(:name, :id).map do |r|
       build_facet_item({label: r[0], id: r[1], name: :team, count: 1})
     end
@@ -94,7 +98,7 @@ module FacetsHelper
   end
 
   def build_brand_portfolio_bucket
-    status = current_company_user.filter_settings_for('brand_portfolios', controller_name)
+    status = current_company_user.filter_settings_for('brand_portfolios', filter_settings_scope)
     items = current_company.brand_portfolios.where("active in (?)", status).order(:name).pluck(:name, :id).map do |r|
       build_facet_item({label: r[0], id: r[1], name: :brand_portfolio, count: 1})
     end
@@ -109,7 +113,7 @@ module FacetsHelper
   end
 
   def build_campaign_bucket
-    status = current_company_user.filter_settings_for('campaigns', controller_name, true)
+    status = current_company_user.filter_settings_for('campaigns', filter_settings_scope, true)
     items = Campaign.accessible_by_user(current_company_user).where("aasm_state in (?)", status).order(:name).pluck(:name, :id).map do |r|
       build_facet_item({label: r[0], id: r[1], name: :campaign, count: 1})
     end
@@ -118,7 +122,7 @@ module FacetsHelper
   end
 
   def build_custom_filters_bucket
-    items = current_company_user.custom_filters.by_type(controller_name).map{|cf| build_facet_item({id: cf.filters+'&id='+cf.id.to_s, label: cf.name, name: :custom_filter, count: 1}) }
+    items = current_company_user.custom_filters.by_type(filter_settings_scope).map{|cf| build_facet_item({id: cf.filters+'&id='+cf.id.to_s, label: cf.name, name: :custom_filter, count: 1}) }
     {label: "Saved Filters", items: items}
   end
 
