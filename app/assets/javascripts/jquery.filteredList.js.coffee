@@ -151,7 +151,7 @@ $.widget 'nmk.filteredList', {
 		@formFilters.html('')
 		@filtersLabels = []
 		for filter in filters
-			if filter.label == 'People'
+			if filter.label is 'People'
 				@filtersLabels.push 'Users'
 				@filtersLabels.push 'Teams'
 			else

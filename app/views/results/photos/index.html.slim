@@ -16,7 +16,6 @@
 
 .sidebar#resource-filter-column
   #collection-list-filters
-  #save-filters-btn.a.btn.btn-primary Save
 
 .main.with-details-close-bar
   = resource_details_bar("You are viewing Photos report. Click to close.")
@@ -42,6 +41,7 @@ javascript:
     'selectDefaultDate': false,
     'includeSearchBox': false,
     'includeAutoComplete': true,
+    'applyTo': 'results_photos',
     'autoCompletePath': '#{url_for(controller: 'results/photos', action: :autocomplete, format: :json)}',
     'defaultParams': [{name: 'status[]', value: 'Active'}],
     'onItemsLoad': function(response, page){

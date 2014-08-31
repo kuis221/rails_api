@@ -11,7 +11,6 @@
 
 .sidebar#resource-filter-column
   #collection-list-filters
-  a.btn.btn-primary Save
 
 #main.main.with-details-close-bar
   = resource_details_bar("You are viewing Expenses report. Click to close.")
@@ -31,7 +30,7 @@
 javascript:
   $('#collection-list-filters').filteredList({
     'source': '#{url_for(controller: 'results/expenses', action: :items)}',
-    'filtersUrl': '#{filters_events_path(with_expenses_only: true)}',
+    'filtersUrl': '#{filters_events_path(with_expenses_only: true, apply_to: :results_expenses).html_safe}',
     'listContainer': '#expenses-list',
     'sorting': 'start_at',
     'sorting_dir': 'asc',
@@ -39,21 +38,22 @@ javascript:
     'includeCalendars': true,
     'selectDefaultDate': false,
     'includeAutoComplete': true,
+    'applyTo': 'results_expenses',
     'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
     'defaultParams': [{name: 'status[]', value: 'Active'}],
     'onChange': function(filterBox){
-      $(document).trigger('expenses-filter:changed')
+      $(document).trigger('expenses-filter:changed');
     },
     'onItemsLoad': function(response, page){
       if (response.find('div[data-content="totals-results"]').length > 0){
-        $('#expenses-totals').html(response.find('div[data-content="totals-results"]').html())
+        $('#expenses-totals').html(response.find('div[data-content="totals-results"]').html());
       }
     },
     'onItemsChange': function(response, page){
       if ($('#expenses-list li').length > 0) {
-        $('#list-tools').show()
+        $('#list-tools').show();
       } else {
-        $('#list-tools').hide()
+        $('#list-tools').hide();
         $('#expenses-list').append("<li class='placeholder'><p>No results. Select other filters to see results</p></li>");
       }
     }

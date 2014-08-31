@@ -62,7 +62,6 @@ feature "Filter Settings", search: true, js: true do
         expect(page).to have_content('USERS')
         expect(page).to have_content('TEAMS')
         unicheck('Active') # Unchecks all active checkboxes
-        screenshot_and_open_image
         click_button 'Done'
       end
 

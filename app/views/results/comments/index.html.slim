@@ -11,7 +11,6 @@
 
 .sidebar#resource-filter-column
   #collection-list-filters
-  a.btn.btn-primary Save
 
 #main.main.with-details-close-bar
   = resource_details_bar("You are viewing Comments report. Click to close.")
@@ -39,6 +38,7 @@ javascript:
     'includeCalendars': true,
     'selectDefaultDate': false,
     'includeAutoComplete': true,
+    'applyTo': 'results_comments',
     'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
     'defaultParams': [{name: 'status[]', value: 'Active'}],
     'onChange': function(filterBox){
