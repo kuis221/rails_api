@@ -98,7 +98,7 @@ label.radio div.radio {
 // --------------------------------------------------
 
 .btn{
-	color: #fff;
+	color: #fff !important;
 	&[disabled]{
 		background-color: $grey_one;
 		color: #f2f2f2;

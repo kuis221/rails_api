@@ -92,7 +92,6 @@ feature 'Events section' do
 
       feature "Close bar" do
         let(:events){[
-
             FactoryGirl.create(:event, aasm_state: 'submitted', start_date: "08/21/2013", end_date: "08/21/2013", start_time: '10:00am', end_time: '11:00am', campaign: FactoryGirl.create(:campaign, name: 'Campaign #1 FY2012',company: company), active: true, place: FactoryGirl.create(:place, name: 'Place 1'), company: company),
             FactoryGirl.create(:event, aasm_state: 'submitted', start_date: "08/28/2013", end_date: "08/29/2013", start_time: '11:00am', end_time: '12:00pm', campaign: FactoryGirl.create(:campaign, name: 'Campaign #2 FY2012',company: company), active: true, place: FactoryGirl.create(:place, name: 'Place 2'), company: company),
             FactoryGirl.create(:event, aasm_state: 'submitted', start_date: "08/28/2013", end_date: "08/29/2013", start_time: '11:00am', end_time: '12:00pm', campaign: FactoryGirl.create(:campaign, name: 'Campaign #3 FY2012',company: company), active: true, place: FactoryGirl.create(:place, name: 'Place 3'), company: company),
@@ -334,7 +333,7 @@ feature 'Events section' do
             expect(page).to have_content('1 Active event taking place today and in the future')
             expect(page).to have_selector('ul#events-list li', count: 1)
 
-            click_link 'Clear filters'
+            click_button 'Reset'
             expect(page).to have_content('2 Active events')  # The list shouldn't be filtered by date
             expect(page).to have_selector('ul#events-list li', count: 2)
 
@@ -369,6 +368,7 @@ feature 'Events section' do
             end
           end
         end
+
         feature "filters" do
           scenario "Users must be able to filter on all brands they have permissions to access " do
             today = Time.zone.local(Time.now.year, Time.now.month, 18, 12, 00)
@@ -432,6 +432,154 @@ feature 'Events section' do
             visit events_path
             expect(page).to have_filter_section(title: 'AREAS', options: ['Gran Area Metropolitana', 'Zona Norte'])
           end
+        end
+      end
+    end
+
+    feature "custom filters" do
+      let(:campaign1) { FactoryGirl.create(:campaign, name: 'Campaign 1', company: company) }
+      let(:campaign2) { FactoryGirl.create(:campaign, name: 'Campaign 2', company: company) }
+      let(:event1) { FactoryGirl.create(:submitted_event, campaign: campaign1) }
+      let(:event2) { FactoryGirl.create(:late_event, campaign: campaign2) }
+      let(:user1) { FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Roberto', last_name: 'Gomez'), company: company) }
+      let(:user2) { FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Mario', last_name: 'Moreno'), company: company) }
+
+      scenario "allows to create a new custom filter" do
+        event1.users << user1
+        event2.users << user2
+        Sunspot.commit
+
+        visit events_path
+
+        filter_section('CAMPAIGNS').unicheck('Campaign 1')
+        filter_section('PEOPLE').unicheck('Roberto Gomez')
+        filter_section('EVENT STATUS').unicheck('Submitted')
+
+        click_button 'Save'
+
+        within visible_modal do
+          fill_in('Filter name', with: 'My Custom Filter')
+          expect {
+            click_button 'Save'
+            wait_for_ajax
+          }.to change(CustomFilter, :count).by(1)
+
+          custom_filter = CustomFilter.last
+          expect(custom_filter.company_user_id).to eq(company_user.id)
+          expect(custom_filter.name).to eq('My Custom Filter')
+          expect(custom_filter.apply_to).to eq('events')
+          expect(custom_filter.filters).to eq('campaign%5B%5D='+campaign1.to_param+'&user%5B%5D='+user1.to_param+'&event_status%5B%5D=Submitted&status%5B%5D=Active')
+        end
+        ensure_modal_was_closed
+
+        within '.form-facet-filters' do
+          expect(page).to have_content('My Custom Filter')
+        end
+      end
+
+      scenario "allows to apply custom filters" do
+        event1.users << user1
+        event2.users << user2
+        Sunspot.commit
+
+        FactoryGirl.create(:custom_filter, company_user_id: company_user.to_param, name: 'Custom Filter 1', apply_to: 'events', filters: 'campaign%5B%5D='+campaign1.to_param+'&user%5B%5D='+user1.to_param+'&event_status%5B%5D=Submitted&status%5B%5D=Active')
+        FactoryGirl.create(:custom_filter, company_user_id: company_user.to_param, name: 'Custom Filter 2', apply_to: 'events', filters: 'campaign%5B%5D='+campaign2.to_param+'&user%5B%5D='+user2.to_param+'&event_status%5B%5D=Late&status%5B%5D=Active')
+
+        visit events_path
+
+        #Using Custom Filter 1
+        filter_section('SAVED FILTERS').unicheck('Custom Filter 1')
+
+        within '#events-list' do
+          expect(page).to have_content('Campaign 1')
+        end
+
+        within '.form-facet-filters' do
+          expect(find_field('Campaign 1')['checked']).to be_truthy
+          expect(find_field('Campaign 2')['checked']).to be_falsey
+          expect(find_field('Roberto Gomez')['checked']).to be_truthy
+          expect(find_field('Mario Moreno')['checked']).to be_falsey
+          expect(find_field('Submitted')['checked']).to be_truthy
+          expect(find_field('Late')['checked']).to be_falsey
+          expect(find_field('Active')['checked']).to be_truthy
+          expect(find_field('Inactive')['checked']).to be_falsey
+          expect(find_field('Custom Filter 1')['checked']).to be_truthy
+          expect(find_field('Custom Filter 2')['checked']).to be_falsey
+        end
+
+        #Using Custom Filter 2 should update results and checked/unchecked checkboxes
+        filter_section('SAVED FILTERS').unicheck('Custom Filter 2')
+
+        within '#events-list' do
+          expect(page).to have_content('Campaign 2')
+        end
+
+        within '.form-facet-filters' do
+          expect(find_field('Campaign 1')['checked']).to be_falsey
+          expect(find_field('Campaign 2')['checked']).to be_truthy
+          expect(find_field('Roberto Gomez')['checked']).to be_falsey
+          expect(find_field('Mario Moreno')['checked']).to be_truthy
+          expect(find_field('Submitted')['checked']).to be_falsey
+          expect(find_field('Late')['checked']).to be_truthy
+          expect(find_field('Active')['checked']).to be_truthy
+          expect(find_field('Inactive')['checked']).to be_falsey
+          expect(find_field('Custom Filter 1')['checked']).to be_falsey
+          expect(find_field('Custom Filter 2')['checked']).to be_truthy
+        end
+
+        #Using Custom Filter 2 again should reset filters
+        filter_section('SAVED FILTERS').unicheck('Custom Filter 2')
+
+        within '#events-list' do
+          expect(page).to have_content('Campaign 1')
+          expect(page).to have_content('Campaign 2')
+        end
+
+        within '.form-facet-filters' do
+          expect(find_field('Campaign 1')['checked']).to be_falsey
+          expect(find_field('Campaign 2')['checked']).to be_falsey
+          expect(find_field('Roberto Gomez')['checked']).to be_falsey
+          expect(find_field('Mario Moreno')['checked']).to be_falsey
+          expect(find_field('Submitted')['checked']).to be_falsey
+          expect(find_field('Late')['checked']).to be_falsey
+          expect(find_field('Active')['checked']).to be_truthy
+          expect(find_field('Inactive')['checked']).to be_falsey
+          expect(find_field('Custom Filter 1')['checked']).to be_falsey
+          expect(find_field('Custom Filter 2')['checked']).to be_falsey
+        end
+      end
+
+      scenario "allows to remove custom filters" do
+        FactoryGirl.create(:custom_filter, company_user_id: company_user.to_param, name: 'Custom Filter 1', apply_to: 'events', filters: 'Filters 1')
+        cf2 = FactoryGirl.create(:custom_filter, company_user_id: company_user.to_param, name: 'Custom Filter 2', apply_to: 'events', filters: 'Filters 2')
+        FactoryGirl.create(:custom_filter, company_user_id: company_user.to_param, name: 'Custom Filter 3', apply_to: 'events', filters: 'Filters 3')
+
+        visit events_path
+
+        find('.settings-for-filters').trigger('click')
+
+        within visible_modal do
+          expect(page).to have_content('Custom Filter 1')
+          expect(page).to have_content('Custom Filter 2')
+          expect(page).to have_content('Custom Filter 3')
+
+          expect {
+            hover_and_click('#saved-filters-container #custom-filter-'+cf2.id.to_s, 'Remove Custom Filter')
+            wait_for_ajax
+          }.to change(CustomFilter, :count).by(-1)
+
+          expect(page).to have_content('Custom Filter 1')
+          expect(page).to_not have_content('Custom Filter 2')
+          expect(page).to have_content('Custom Filter 3')
+
+          click_button 'Done'
+        end
+        ensure_modal_was_closed
+
+        within '.form-facet-filters' do
+          expect(page).to have_content('Custom Filter 1')
+          expect(page).to_not have_content('Custom Filter 2')
+          expect(page).to have_content('Custom Filter 3')
         end
       end
     end
@@ -504,7 +652,6 @@ feature 'Events section' do
         end
       end
     end
-
 
     feature "edit a event" do
       scenario "allows to edit a event" do
@@ -727,7 +874,6 @@ feature 'Events section' do
         expect(all('#event-team-members .team-member').count).to eq(0)
       end
 
-
       scenario "allows to add a user as contact to the event", :js => true do
         event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: company), company: company)
         pablo = FactoryGirl.create(:user, first_name:'Pablo', last_name:'Baltodano', email: 'palinair@gmail.com', company_id: company.id, role_id: company_user.role_id)
@@ -763,7 +909,6 @@ feature 'Events section' do
         expect(page).to_not have_content('Pablo Baltodano')
       end
 
-
       scenario "allows to add a contact as contact to the event", :js => true do
         event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: company), company: company)
         contact = FactoryGirl.create(:contact, first_name:'Guillermo', last_name:'Vargas', email: 'guilleva@gmail.com', company_id: company.id)
@@ -798,7 +943,6 @@ feature 'Events section' do
         expect(page).to_not have_content('Guillermo Vargas')
       end
 
-
       scenario "allows to create a contact", :js => true do
         event = FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: company), company: company)
         Sunspot.commit
@@ -822,7 +966,6 @@ feature 'Events section' do
         end
 
         ensure_modal_was_closed
-
 
         # Test the user was added to the list of event members and it can be removed
         within "#event-contacts-list" do

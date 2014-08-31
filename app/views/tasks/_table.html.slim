@@ -20,6 +20,7 @@ javascript:
     'includeAutoComplete': true,
     'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
     'defaultParams': [{name: 'status[]', value: 'Active'}],
+    'applyTo': '#{controller_name}',
     'onItemsLoad': function(response, page){
       if (response.find('div[data-content="counters"]').length > 0){
         $('.tasks-progress-bar').html(response.find('div[data-content="counters"]'));

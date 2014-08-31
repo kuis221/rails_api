@@ -100,12 +100,12 @@ $.widget 'nmk.photoGallery', {
 
 	setDate: (date) ->
 		if date
-			@date.html(date).show()
+			@date.show().find('span').html(date)
 		else
-			@date.html('').hide()
+			@date.hide().find('span').html('')
 
 	setAddress: (address) ->
-		@address.html address
+		@address.find('span').html address
 
 	setTag: (tag) ->
 		if tag.added
@@ -210,8 +210,8 @@ $.widget 'nmk.photoGallery', {
 
 	_createGalleryModal: () ->
 		@title = $('<h3>')
-		@address = $('<div class="place-data">')
-		@date = $('<div class="calendar-data">')
+		@address = $('<div class="place-data"><i class="icon-wired-venue"></i><span></span></div>')
+		@date = $('<div class="calendar-data"><i class="icon-calendar"></i><span></span></div>')
 		@rating = $('<div class="rating">')
 			.mouseleave (e) =>
 				@rating.find('span').removeClass('full').addClass('empty')

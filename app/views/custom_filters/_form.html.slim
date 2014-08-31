@@ -1,0 +1,14 @@
+- remote ||= false
+= simple_form_for(resource, remote: remote || false) do |f|
+  = f.error_notification
+
+  .form-inputs
+    = f.input :name, label: 'Filter name', :input_html => {class: 'input-xlarge'}
+    = f.hidden_field :company_user_id, as: :hidden, value: current_company_user.id
+    = f.hidden_field :apply_to, as: :hidden, value: params[:apply_to]
+    = f.hidden_field :filters, as: :hidden, value: params[:filters]
+
+  .form-actions
+    = f.button :submit, "Save" ,class: 'btn-primary', data: {disable_with: 'Please wait...'}
+    = "&nbsp;".html_safe
+    = f.button :button, 'Cancel', class: 'btn-cancel'

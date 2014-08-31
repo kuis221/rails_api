@@ -2,15 +2,16 @@
 #
 # Table name: company_users
 #
-#  id                     :integer          not null, primary key
-#  company_id             :integer
-#  user_id                :integer
-#  role_id                :integer
-#  created_at             :datetime         not null
-#  updated_at             :datetime         not null
-#  active                 :boolean          default(TRUE)
-#  last_activity_at       :datetime
-#  notifications_settings :string(255)      default([]), is an Array
+#  id                      :integer          not null, primary key
+#  company_id              :integer
+#  user_id                 :integer
+#  role_id                 :integer
+#  created_at              :datetime         not null
+#  updated_at              :datetime         not null
+#  active                  :boolean          default(TRUE)
+#  last_activity_at        :datetime
+#  notifications_settings  :string(255)      default([]), is an Array
+#  last_activity_mobile_at :datetime
 #
 
 class CompanyUser < ActiveRecord::Base
@@ -21,6 +22,8 @@ class CompanyUser < ActiveRecord::Base
   belongs_to :role
   has_many :tasks, dependent: :nullify
   has_many :notifications, dependent: :destroy
+  has_many :custom_filters, dependent: :destroy
+  has_many :filter_settings, dependent: :destroy
   has_many :alerts, class_name: 'AlertsUser', dependent: :destroy
   has_many :satisfaction_surveys
 
@@ -245,6 +248,10 @@ class CompanyUser < ActiveRecord::Base
     if permissions.present?
       permissions.all?{|permission| self.role.has_permission?(permission[:action], permission[:subject_class])}
     end
+  end
+
+  def filter_settings_for(bucket, controller_name, aasm=false)
+    filter_settings.find_by(apply_to: controller_name).try(:filter_settings_for, bucket, controller_name, aasm) || (aasm ? ['active'] : [true])
   end
 
   class << self

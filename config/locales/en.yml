@@ -102,10 +102,10 @@ en:
     new_team_task: "A new task was created for your event: %{task}"
 
   notifications_sms:
-    event_recap_late: 
+    event_recap_late:
       one: 'You have one late event recap'
       other: 'You have %{count} late event recaps'
-    event_recap_due: 
+    event_recap_due:
       one: 'You have one due event recap'
       other: 'You have %{count} due event recaps'
     event_recap_late_and_due: 'You have %{due_count} due and %{late_count} late event recaps'
@@ -179,6 +179,8 @@ en:
         report: "New Report"
         activity: "New Activity"
         activity_type: "New Activity Type"
+        custom_filter: "Save filter"
+        filter_setting: "Filtering options"
       edit:
         company_user: "Edit User"
         event: "Edit Event"

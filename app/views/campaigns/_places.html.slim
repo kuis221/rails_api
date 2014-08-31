@@ -4,6 +4,6 @@
   - if can?(:remove_place, resource)
     - if goalable.is_a?(Area)
       = link_to '', edit_campaign_areas_campaign_path(resource, goalable), remote: true, class: 'icon-gear has-tooltip', title: 'Customize area', 'data-container' => 'body'
-      = link_to '', remove_area_campaign_placeables_path(resource, area: goalable.id), method: :delete, remote: true, class: 'icon-remove-sign', title: 'Remove Area'
+      = link_to '', remove_area_campaign_placeables_path(resource, area: goalable.id), method: :delete, remote: true, class: 'icon-remove-circle', title: 'Remove Area'
     - else
-      = link_to '', campaign_place_path(resource, goalable), remote: true, method: :delete, remote: true, class: 'icon-remove-sign', title: 'Remove Place'
+      = link_to '', campaign_place_path(resource, goalable), remote: true, method: :delete, remote: true, class: 'icon-remove-circle', title: 'Remove Place'
