@@ -1019,56 +1019,6 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	}
 }
 
-// FORMS STYLES
-// --------------------------------------------------
-
-.form-actions{
-	background-color: white;
-	border:0;
-	margin: 0;
-	padding: 0;
-}
-
-form{
-	margin: 0;
-}
-
-control-group{
-	label.control-label{
-		color:$text;
-	}
-	&.error {
-		input, textarea {
-			&:focus {
-				box-shadow: none;
-				-webkit-box-shadow: none;
-			}
-		}
-	}
-}
-
-.chzn-default span {
-	color: $user_menu;
-}
-
-// Input styles
-
-input:-moz-placeholder,
-textarea:-moz-placeholder {
-	color: white;
-}
-
-input:-ms-input-placeholder,
-textarea:-ms-input-placeholder {
-	color: white;
-}
-
-input::-webkit-input-placeholder,
-textarea::-webkit-input-placeholder {
-	color: white;
-}
-
-
 // FOOTER STYLES
 // --------------------------------------------------
 
@@ -2211,6 +2161,15 @@ li#notifications{
 				a{
 				color:$user_menu;
 				}
+			}
+
+			&.hide {
+				display: none;
+			}
+			&.collapse{
+				height:0;
+				min-height: 0;
+				display: block;
 			}
 		}
 	}
@@ -5527,88 +5486,51 @@ body.campaigns{
 			margin-bottom: 50px;
 		}
 	}
-	.documents-list{
-		margin:0 -11% 0 0;
-	}
-	.document{
-		display: inline-block;
-		margin: 0 50px 35px 20px;
-		width: 25%;
-		a{
-			color: $menu;
-			float: left;
-			position: relative;
-			@extend .crop-text;
-			width: 85%;
-		}
-		img{
-			height: 40px;
-			margin-right: 15px;
-			width: 32px;
-		}
-		span.remove{
-			visibility: hidden;
-			float:right;
-			a{
-				margin-top: 8px;
-				width: 100%;
-			}
-			&.chardinjs-show-element{
-				visibility: visible;
-			}
-		}
-		&:hover{
-			span.remove{
-				visibility: visible;
-			}
-		}
-	}
 
-		&.first{
-			.controls{
-				.chzn-container-single{
-					height: 31px !important;
-					.chzn-single{
-						height: 32px !important;
+	&.first{
+		.controls{
+			.chzn-container-single{
+				height: 31px !important;
+				.chzn-single{
+					height: 32px !important;
+					padding-top: 0px !important;
+					span{
+						line-height: 26px;
+						height: 26px !important;
 						padding-top: 0px !important;
-						span{
-							line-height: 26px;
-							height: 26px !important;
-							padding-top: 0px !important;
-							margin-top: 3px !important;
-						}
-						b{
-							margin-top: -4px !important;
-							margin-right: 75px !important;
-							margin-left: -1px !important;
-						}
+						margin-top: 3px !important;
 					}
-					.chzn-drop{
-						margin-top: 6px !important;
-						.chzn-search{
-							top: -39px;
-							input{
-								height: 30px;
-							}
+					b{
+						margin-top: -4px !important;
+						margin-right: 75px !important;
+						margin-left: -1px !important;
+					}
+				}
+				.chzn-drop{
+					margin-top: 6px !important;
+					.chzn-search{
+						top: -39px;
+						input{
+							height: 30px;
 						}
 					}
 				}
-			}
-			label{
-				color: $brand;
-				font-size: 11px;
-			}
-			h3{
-				margin-top: 45px;
-				&+#list-tools{
-					margin: 10px 0 0px 0;
-				}
-			}
-			.simple_form{
-				display: inline-block;
 			}
 		}
-
+		label{
+			color: $brand;
+			font-size: 11px;
+		}
+		h3{
+			margin-top: 45px;
+			&+#list-tools{
+				margin: 10px 0 0px 0;
+			}
+		}
+		.simple_form{
+			display: inline-block;
+		}
+	}
 
 	label{
 		margin-bottom: 4px;
@@ -7290,3 +7212,6 @@ table.table.likert-scale-table {
 	overflow-y: auto;
 	min-height: 85px;
 }
+
+
+@import 'widgets/documents_list'

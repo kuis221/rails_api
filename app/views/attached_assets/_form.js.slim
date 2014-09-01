@@ -1,5 +1,5 @@
 #asset_upload_dialog
-  = s3_uploader_form callback_url: url_for(action: :create, "#{parent.class.name.underscore}_id" => parent.to_param, format: :js), id: "s3_uploader", callback_param: "attached_asset[direct_upload_url]", expiration: 24.hours.from_now.utc.iso8601, max_file_size: 60.megabytes do
+  = s3_uploader_form callback_url: url_for(action: :create, "#{parent.class.name.underscore}_id" => parent.to_param, folder_id: params[:folder_id], format: :js), id: "s3_uploader", callback_param: "attached_asset[direct_upload_url]", expiration: 24.hours.from_now.utc.iso8601, max_file_size: 60.megabytes do
 
     .selecting-panel
       .row-fluid

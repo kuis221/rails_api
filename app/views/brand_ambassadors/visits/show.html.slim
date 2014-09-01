@@ -25,12 +25,4 @@
 
 
   #visit-documents.details_box
-    h3
-      | DOCUMENTS
-      = link_to '', new_brand_ambassadors_visit_document_folder_path(resource), class: 'icon-plus-sign', title: 'Create Folder', remote: true if can? :create,  BrandAmbassadors::Document
-
-    #brand_ambassadors_visit-documents-list.documents-list
-      = render :partial => "document_folders/document_folder", :collection => resource.document_folders.active, :locals => { parent: resource }
-      = render :partial => "documents/document", :collection => resource.documents.active, :locals => { parent: resource }
-    .row-fluid
-      = link_to '', new_brand_ambassadors_visit_document_path(resource), class: 'icon-plus-sign', title: 'Add Documents', remote: true if can? :create,  BrandAmbassadors::Document
+    = render partial: 'brand_ambassadors/document_folders/index', locals: {children: (resource.document_folders.root_children.active + resource.documents.root_children.active).sort_by(&:name) }

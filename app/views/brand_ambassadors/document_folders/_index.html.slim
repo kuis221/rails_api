@@ -1,0 +1,23 @@
+#documents-container
+  h3
+    - if @folder.is_a?(DocumentFolder)
+      = link_to 'DOCUMENTS', brand_ambassadors_document_folders_path(format: :js), remote: true
+      - folder_parents(@folder).each do |p|
+        i.icon-angle-right
+        = link_to p.name, brand_ambassadors_document_folders_path(parent_id: p.id, format: :js), remote: true
+      i.icon-angle-right
+      = @folder.name
+    - else
+      | DOCUMENTS
+  = button_to 'Upload', new_brand_ambassadors_document_path(folder_id: params[:parent_id]), class: 'btn btn-primary', title: 'Add Documents', remote: true, method: :get if can? :create,  BrandAmbassadors::Document
+  = link_to 'Create Folder', "#new-folder-form", class: 'btn', 'data-toggle' => 'collapse' if can? :create,  BrandAmbassadors::Document
+
+  .link-list.documents-list
+    ul#documents-list
+      li#new-folder-form.collapse
+        a.icon-close.pull-right href="#new-folder-form"  data-toggle="collapse"
+        = simple_form_for [@visit || :brand_ambassadors, DocumentFolder.new(parent_id: params[:parent_id])], remote: true do |f|
+          = f.input :parent_id, as: :hidden, wrapper: false, label: false
+          = f.input :name, label: false, :input_html => {placeholder: 'Please name your folder'}
+
+      = render children
