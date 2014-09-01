@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140822232819) do
+ActiveRecord::Schema.define(version: 20140828171718) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -467,6 +467,16 @@ ActiveRecord::Schema.define(version: 20140822232819) do
   add_index "events", ["campaign_id"], name: "index_events_on_campaign_id", using: :btree
   add_index "events", ["company_id"], name: "index_events_on_company_id", using: :btree
   add_index "events", ["place_id"], name: "index_events_on_place_id", using: :btree
+
+  create_table "filter_settings", force: true do |t|
+    t.integer  "company_user_id"
+    t.string   "apply_to"
+    t.text     "settings"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "filter_settings", ["company_user_id"], name: "index_filter_settings_on_company_user_id", using: :btree
 
   create_table "form_field_options", force: true do |t|
     t.integer  "form_field_id"

@@ -3564,11 +3564,11 @@ body.company_users{
 	#company_user-areas-list,
 	#company_user-places-list,
 	.campaigns-list {
-		.icon-remove-sign {
+		.icon-remove-circle {
 			display: none;
 		}
 		.hover-item:hover {
-			.icon-remove-sign {
+			.icon-remove-circle {
 				display: inline;
 			}
 		}
@@ -4450,9 +4450,7 @@ body.roles{
 	table.table tbody tr:hover td{
 		background-color: white !important;
 	}
-	input[type="submit"].btn {
-		width: 120px;
-	}
+
 }
 
 .permissions{
@@ -5372,7 +5370,7 @@ body.campaigns{
 
 	a, i{
 		font-weight: bold;
-		&.icon-edit, &.icon-rounded-disable, &.icon-remove-sign, &.icon-plus-sign{
+		&.icon-edit, &.icon-rounded-disable, &.icon-remove-circle, &.icon-plus-sign{
 			color: $brand;
 			font-size: 18px;
 		}

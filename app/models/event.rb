@@ -20,6 +20,7 @@
 #  timezone       :string(255)
 #  local_start_at :datetime
 #  local_end_at   :datetime
+#  description    :text
 #
 
 class Event < ActiveRecord::Base

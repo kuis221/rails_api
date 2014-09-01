@@ -180,6 +180,7 @@ en:
         activity: "New Activity"
         activity_type: "New Activity Type"
         custom_filter: "Save filter"
+        filter_setting: "Filtering options"
       edit:
         company_user: "Edit User"
         event: "Edit Event"

@@ -58,15 +58,17 @@ $.widget 'nmk.filteredList', {
 			$('<input class="btn btn-cancel" id="cancel-save-filters" type="reset" value="Reset">').on 'click', (e) =>
 				@_cleanFilters()
 
-			$('<a class="settings-for-filters" href="#"><span class="icon-gear"></span></a>')
+			$('<a class="settings-for-filters" title="Filter Settings" href="#"><span class="icon-gear"></span></a>')
 				.on 'click', (e) =>
 					e.preventDefault()
 					e.stopPropagation()
-					$.get '/custom_filters/configure.js', {apply_to: @options.applyTo}
+					$.get '/filter_settings/new.js', {apply_to: @options.applyTo, filters_labels: @filtersLabels}
 		)
 
-		$(document).on 'custom-filters:change', (e) =>
+		$(document).on 'filter-box:change', (e) =>
 			@reloadFilters()
+
+		@filtersLabels = []
 
 		@filtersPopup = false
 
@@ -146,7 +148,14 @@ $.widget 'nmk.filteredList', {
 	setFilters: (filters) ->
 		$.loadingContent += 1
 		@formFilters.html('')
+		@filtersLabels = []
 		for filter in filters
+			if filter.label is 'People'
+				@filtersLabels.push 'Users'
+				@filtersLabels.push 'Teams'
+			else
+				@filtersLabels.push filter.label
+
 			if filter.items? and (filter.items.length > 0 or (filter.top_items? and filter.top_items.length))
 				@addFilterSection filter
 			else if filter.max? and filter.min?

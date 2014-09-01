@@ -7,4 +7,4 @@
   - if comment.commentable_type == 'Event'
     .links-data
       = link_to '', edit_event_comment_path(comment.commentable_id, comment), remote: true, class: 'icon-edit' if can?(:edit_comment, Event)
-      = link_to(content_tag(:i,'', class: 'icon-remove-sign'),  event_comment_path(comment.commentable_id, comment.to_param), class: 'remove-comment-btn', title: 'Remove', remote: true, method: :delete) if can?(:deactivate_comment, Event)
+      = link_to(content_tag(:i,'', class: 'icon-remove-circle'),  event_comment_path(comment.commentable_id, comment.to_param), class: 'remove-comment-btn', title: 'Remove', remote: true, method: :delete) if can?(:deactivate_comment, Event)
