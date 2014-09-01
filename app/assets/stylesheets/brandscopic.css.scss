@@ -1473,6 +1473,14 @@ li.dropdown a{
 				padding: 28px 0 20px 0 !important;
 			}
 		}
+		&#brand_ambassadors{
+			a{
+				line-height: 12px;
+				span:before{
+					top: -5px;
+				}
+			}
+		}
 	}
 }
 label{
