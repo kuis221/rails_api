@@ -1,0 +1,9 @@
+- remote ||= false
+= simple_form_for([parent || :brand_ambassadors, resource], remote: remote || false) do |f|
+
+  .form-inputs
+    = f.input :name, :input_html => {class: 'input-xlarge'}
+
+  .form-actions
+    = f.button :submit, class: 'btn-primary'
+    = f.button :button, 'Cancel', class: 'btn-cancel'

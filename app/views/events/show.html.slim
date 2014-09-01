@@ -103,7 +103,7 @@
     #event-documents.details_box
       h3 DOCUMENTS
 
-      #event-documents-list
+      #event-documents-list.documents-list
         = render :partial => "documents/document", :collection => resource.documents.active + resource.campaign.documents, :locals => { parent: resource }
       .row-fluid
         .pull-left

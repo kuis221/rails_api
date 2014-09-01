@@ -1,0 +1,49 @@
+.sidebar.collapsed#resource-filter-column.hide
+  #collection-list-filters
+
+.details_box
+  #list-tools
+    .pull-left
+      = button_to 'New Visit', new_brand_ambassadors_visit_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn'} if can? :create, BrandAmbassadors::Visit
+    .text-right
+      button.btn.download.xlsx-download-link data-url="#{events_path(format:"xls")}" title="Download"
+        i.icon-download
+
+      #toggle-events-view.btn-group
+        - if can?(:list, BrandAmbassadors::Visit)
+          a.btn.active.list href="#list-view" data-toggle="tab" title="List View"
+            i.icon-list
+        - if can?(:calendar, BrandAmbassadors::Visit)
+          a.btn.calendar href="#calendar-view" data-toggle="tab" title="Calendar View"
+            i.icon-grid
+
+  #visits-scoller-outer.link-list
+   ul#visits-list
+
+#brand-ambassador-documents.details_box
+  h3
+    | DOCUMENTS
+    = link_to '', new_brand_ambassadors_document_folder_path, class: 'icon-plus-sign', title: 'Create Folder', remote: true if can? :create,  BrandAmbassadors::Document
+  #documents-list.documents-list
+    = render :partial => "document_folders/document_folder", :collection => current_company.document_folders.active
+
+    = render :partial => "documents/document", :collection => current_company.brand_ambassadors_documents.active, :locals => { parent: current_company }
+  .row-fluid
+    = link_to '', new_brand_ambassadors_document_path, class: 'icon-plus-sign', title: 'Add Documents', remote: true if can? :create,  BrandAmbassadors::Document
+
+- if can?(:list, BrandAmbassadors::Visit)
+  javascript:
+    $('#collection-list-filters').filteredList({
+      'source': '#{url_for(controller: 'brand_ambassadors/visits', action: :items)}',
+      'filtersUrl': '#{url_for(controller: 'brand_ambassadors/visits', action: :filters)}',
+      'listContainer' : '#visits-list',
+      'sorting': 'start_date',
+      'sorting_dir': 'asc',
+      'includeCalendars': false,
+      'selectDefaultDate': false,
+      'selectDefaultDateRange': false,
+      'includeAutoComplete': false,
+      'defaultParams': [{name: 'status[]', value: 'Active'}],
+      'applyTo': '#{controller.controller_name}',
+      'clearFilterParams': [{name: 'status[]', value: 'Active'}]
+    });

@@ -30,7 +30,15 @@ class Company < ActiveRecord::Base
   has_many :kpis, dependent: :destroy
   has_many :reports, dependent: :destroy
   has_many :activity_types, dependent: :destroy
-  has_many :tags, ->{ order 'tags.name ASC' }, :autosave => true, dependent: :destroy
+  has_many :brand_ambassadors_visits, ->{ order 'brand_ambassadors_visits.start_date ASC' },
+      class_name: 'BrandAmbassadors::Visit', dependent: :destroy
+  has_many :brand_ambassadors_documents, ->{ order('attached_assets.file_file_name ASC') },
+      class_name: 'BrandAmbassadors::Document', as: :attachable,
+      inverse_of: :attachable, dependent: :destroy
+  has_many :document_folders, ->{ order('document_folders.name ASC').where(parent_id: nil) }
+
+  has_many :tags, ->{ order('tags.name ASC') }, :autosave => true, dependent: :destroy
+
 
   validates :name, presence: true, uniqueness: true
   validates :admin_email, presence: true, on: :create, unless: :no_create_admin
@@ -51,6 +59,10 @@ class Company < ActiveRecord::Base
   # Notification::EVENT_ALERT_POLICY_TEAM if not set
   def event_alerts_policy
     (super || Notification::EVENT_ALERT_POLICY_TEAM).to_i
+  end
+
+  def company_id
+    self.id
   end
 
   def team_member_options

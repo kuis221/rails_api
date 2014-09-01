@@ -496,5 +496,37 @@ Brandscopic::Application.routes.draw do
 
   resources :filter_settings, only: [:index, :new, :create, :update]
 
-  root :to => 'dashboard#index'
+  namespace :brand_ambassadors do
+    resources :visits, except: [:index, :destroy] do
+      get :filters, on: :collection, format: :json
+      get :items, on: :collection, format: :html
+      member do
+        get :deactivate
+        get :activate
+      end
+      resources :events, only: [:new, :create], controller: '/events'
+      resources :document_folders, controller: '/document_folders', path: 'folders', only: [:new, :create]
+      resources :documents, only: [:new, :create] do
+        member do
+          get :deactivate
+          get :activate
+        end
+      end
+    end
+    resources :document_folders, controller: '/document_folders', path: 'folders', only: [:new, :create] do
+      member do
+        get :deactivate
+        get :activate
+      end
+    end
+    resources :documents, only: [:new, :create] do
+      member do
+        get :deactivate
+        get :activate
+      end
+    end
+    root to: 'dashboard#index'
+  end
+
+  root to: 'dashboard#index'
 end

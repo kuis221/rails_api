@@ -1,0 +1,17 @@
+li id="brand_ambassadors_visit_#{visit.id}" class="#{active_class(visit)}"
+  span.visit-item
+    = link_to_if_permitted(:show, BrandAmbassadors::Visit, brand_ambassadors_visit_path(visit), title: 'Visit Details') do
+      span.date
+        = format_date(visit.start_date)
+        br
+        = format_date(visit.end_date)
+      span.name
+        b= visit.name
+        br
+        span.user= visit.company_user.try(:name)
+
+    span.pull-right
+      = link_to '', edit_brand_ambassadors_visit_path(visit), remote: true, class: 'icon-edit', title: 'Edit' if can? :edit, BrandAmbassadors::Visit
+      - if can? :deactivate, BrandAmbassadors::Visit
+        = link_to_deactivate visit
+        = link_to '', activate_brand_ambassadors_visit_path(visit), remote: true, class: 'icon-rounded-ok', title: I18n.t('confirmation.activate') unless visit.active?

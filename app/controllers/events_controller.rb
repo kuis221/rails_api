@@ -117,6 +117,10 @@ class EventsController < FilteredController
       end
     end
 
+    def begin_of_association_chain
+      params[:visit_id] ? BrandAmbassadors::Visit.find(params[:visit_id]) : super
+    end
+
     def permitted_params
       parameters = {}
       if action_name == 'new'
@@ -130,7 +134,7 @@ class EventsController < FilteredController
         parameters[:end_time] = t.to_s(:time_only)
       else
         allowed = []
-        allowed += [:end_date, :end_time, :start_date, :start_time, :campaign_id, :place_id, :place_reference, :description, {team_members: []}] if can?(:update, Event) || can?(:create, Event)
+        allowed += [:end_date, :end_time, :start_date, :start_time, :campaign_id, :place_id, :place_reference, :description, :visit_id, {team_members: []}] if can?(:update, Event) || can?(:create, Event)
         allowed += [:summary, {results_attributes: [:id, :form_field_id, :value, {value: []}]}] if can?(:edit_data, Event)
         parameters = params.require(:event).permit(*allowed)
       end

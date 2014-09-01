@@ -137,8 +137,12 @@ feature "Photos", js: true do
 
       # Activate the image from the link inside the gallery modal
       within gallery_modal do
-        hover_and_click('.slider', 'Activate')
-        expect(page).to have_selector('a.icon-rounded-disable')
+        find('.slider').hover
+        within '.slider' do
+          click_js_link 'Activate'
+          expect(page).not_to have_link('Activate')
+          expect(page).to have_link('Deactivate')
+        end
       end
     end
 

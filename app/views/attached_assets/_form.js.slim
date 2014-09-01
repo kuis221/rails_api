@@ -25,7 +25,7 @@
       #uploads_container
 
       .action-buttons
-        a#btn-upload-ok.btn.btn-primary data-dismiss="modal" aria-hidden="true" OK
+        a#btn-upload-ok.btn.btn-primary data-dismiss="modal" href="#" aria-hidden="true" OK
         span.btn.fileinput-button
           span Add more files
           = file_field_tag :file, multiple: true, 'data-no-uniform' => "true"
@@ -71,7 +71,11 @@ javascript:
         if (file_extension == 'jpeg'){
           file_extension = 'jpg';
         }
-        data._icon = data.context.find('.upload-file-icon').html($('<img src="'+assetsPath[file_extension]+'">'));
+        var icon = assetsPath._blank;
+        if (typeof assetsPath[file_extension] != 'undefined') {
+          icon = assetsPath[file_extension];
+        }
+        data._icon = data.context.find('.upload-file-icon').html($('<img src="'+icon+'">'));
       }
     }).bind('fileuploaddone', function (e, data) {
       data.context.addClass('complete').find('.upload-file-status').html($('<i class="icon-ok-sign"></i>'), $('<i class="icon-minus-sign"></i>'));

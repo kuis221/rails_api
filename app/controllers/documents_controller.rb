@@ -16,7 +16,6 @@ class DocumentsController < InheritedResources::Base
 
   helper_method :describe_filters
 
-
   protected
     def build_resource_params
       [(permitted_params || {}).merge(asset_type: 'document')]

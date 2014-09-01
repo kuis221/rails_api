@@ -124,8 +124,9 @@ $.widget 'nmk.filteredList', {
 			@setFilters json.filters
 
 	_deselectDates: ->
-		@calendar.datepick('clear')
-		@calendar.datepick('update')
+		if @calendar
+			@calendar.datepick('clear')
+			@calendar.datepick('update')
 
 	getFilters: () ->
 		data = @form.serializeArray()
