@@ -2371,7 +2371,8 @@ li#notifications{
 	}
 	ul#visits-list{
 		li{
-			.name{
+			.name, .date{
+				font-weight: normal;
 				br{
 					display:block;
 				}
