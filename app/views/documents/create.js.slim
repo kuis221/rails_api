@@ -3,7 +3,4 @@
 - else
   - if respond_to?(:parent?) && parent?
     |
-      $('##{parent.class.name.underscore.gsub!('/', '_')}-documents-list').prepend('#{j render(resource)}');
-  - else
-    |
       $('#documents-list').prepend('#{j render(resource)}');

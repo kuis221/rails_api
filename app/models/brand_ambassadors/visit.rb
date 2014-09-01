@@ -27,10 +27,18 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
 
   has_many :documents, ->{ order('attached_assets.file_file_name ASC') },
       class_name: 'BrandAmbassadors::Document', as: :attachable, inverse_of: :attachable,
-      dependent: :destroy
+      dependent: :destroy do
+    def root_children
+      self.where(folder_id: nil)
+    end
+  end
 
-  has_many :document_folders, ->{ order('document_folders.name ASC').where(parent_id: nil) },
-      as: :folderable, inverse_of: :folderable
+  has_many :document_folders, ->{ order('document_folders.name ASC') },
+      as: :folderable, inverse_of: :folderable do
+    def root_children
+      self.where(parent_id: nil)
+    end
+  end
 
   validates :name, presence: true
   validates :company_user, presence: true

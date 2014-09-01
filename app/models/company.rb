@@ -34,8 +34,16 @@ class Company < ActiveRecord::Base
       class_name: 'BrandAmbassadors::Visit', dependent: :destroy
   has_many :brand_ambassadors_documents, ->{ order('attached_assets.file_file_name ASC') },
       class_name: 'BrandAmbassadors::Document', as: :attachable,
-      inverse_of: :attachable, dependent: :destroy
-  has_many :document_folders, ->{ order('document_folders.name ASC').where(parent_id: nil) }
+      inverse_of: :attachable, dependent: :destroy  do
+    def root_children
+      self.where(folder_id: nil)
+    end
+  end
+  has_many :document_folders, ->{ order('document_folders.name ASC') } do
+    def root_children
+      self.where(parent_id: nil)
+    end
+  end
 
   has_many :tags, ->{ order('tags.name ASC') }, :autosave => true, dependent: :destroy
 

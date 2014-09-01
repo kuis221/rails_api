@@ -27,7 +27,7 @@ feature "Brand Ambassadors Documents", js: true do
       with_resque do
         visit brand_ambassadors_root_path
 
-        documents_section.click_js_link 'Add Documents'
+        documents_section.click_button 'Upload'
 
         within visible_modal do
           attach_file "file", 'spec/fixtures/file.pdf'
@@ -51,18 +51,13 @@ feature "Brand Ambassadors Documents", js: true do
 
       documents_section.click_js_link 'Create Folder'
 
-      within visible_modal do
-        expect(page).to have_content 'New Folder'
-        fill_in 'Name', with: 'New Folder Name'
-        click_js_button 'Create'
+      within documents_section do
+        fill_in 'Please name your folder', with: 'New Folder Name'
+        page.execute_script("$('form#new_document_folder').submit()")
+        expect(page).to have_link('New Folder Name')
       end
-      ensure_modal_was_closed
 
       folder = DocumentFolder.last
-      # Check that the folder appears on the page
-      within documents_section do
-        expect(page).to have_content folder.name
-      end
 
       # Deactivate the folder
       within documents_section do
@@ -82,12 +77,12 @@ feature "Brand Ambassadors Documents", js: true do
     let(:permissions) { [[:create, 'BrandAmbassadors::Document'], [:index, 'BrandAmbassadors::Document'], [:show, 'BrandAmbassadors::Visit']] }
     let(:ba_visit) { FactoryGirl.create(:brand_ambassadors_visit,
         company: company, company_user: company_user) }
+
     scenario "A user can upload a document to a brand ambassador visit" do
       with_resque do
-
         visit brand_ambassadors_visit_path(ba_visit)
 
-        visit_documents_section.click_js_link 'Add Documents'
+        documents_section.click_button 'Upload'
 
         within visible_modal do
           expect(page).to have_content 'New Document'
@@ -100,7 +95,7 @@ feature "Brand Ambassadors Documents", js: true do
 
         document = BrandAmbassadors::Document.last
         # Check that the image appears on the page
-        within visit_documents_section do
+        within documents_section do
           src = document.file.url(:original, timestamp: false).gsub(/\Ahttp(s)?/, 'https')
           expect(page).to have_xpath("//a[starts-with(@href, \"#{src}\")]", wait: 10)
         end
@@ -110,40 +105,31 @@ feature "Brand Ambassadors Documents", js: true do
     scenario "A user can create and deactivate folders" do
       visit brand_ambassadors_visit_path(ba_visit)
 
-      visit_documents_section.click_js_link 'Create Folder'
+      documents_section.click_js_link 'Create Folder'
 
-      within visible_modal do
-        expect(page).to have_content 'New Folder'
-        fill_in 'Name', with: 'New Folder Name'
-        click_js_button 'Create'
+      within documents_section do
+        fill_in 'Please name your folder', with: 'New Folder Name'
+        page.execute_script("$('form#new_document_folder').submit()")
+        expect(page).to have_link('New Folder Name')
       end
-      ensure_modal_was_closed
 
       folder = DocumentFolder.last
-      # Check that the folder appears on the page
-      within visit_documents_section do
-        expect(page).to have_content folder.name
-      end
 
       # Deactivate the folder
-      within visit_documents_section do
+      within documents_section do
         hover_and_click '.document', 'Deactivate'
       end
       confirm_prompt "Are you sure you want to deactivate this folder?"
 
       # Check that the folder was removed
-      within visit_documents_section do
+      within documents_section do
         expect(page).not_to have_content folder.name
       end
     end
   end
 
   def documents_section
-    find('#brand-ambassador-documents')
-  end
-
-  def visit_documents_section
-    find('#visit-documents')
+    find('#documents-container')
   end
 
   def upload_queue

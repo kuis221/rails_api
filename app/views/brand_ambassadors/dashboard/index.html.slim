@@ -21,15 +21,8 @@
    ul#visits-list
 
 #brand-ambassador-documents.details_box
-  h3
-    | DOCUMENTS
-    = link_to '', new_brand_ambassadors_document_folder_path, class: 'icon-plus-sign', title: 'Create Folder', remote: true if can? :create,  BrandAmbassadors::Document
-  #documents-list.documents-list
-    = render :partial => "document_folders/document_folder", :collection => current_company.document_folders.active
+  = render partial: 'brand_ambassadors/document_folders/index', locals: {children: (current_company.document_folders.root_children.active + current_company.brand_ambassadors_documents.root_children.active).sort_by(&:name) }
 
-    = render :partial => "documents/document", :collection => current_company.brand_ambassadors_documents.active, :locals => { parent: current_company }
-  .row-fluid
-    = link_to '', new_brand_ambassadors_document_path, class: 'icon-plus-sign', title: 'Add Documents', remote: true if can? :create,  BrandAmbassadors::Document
 
 - if can?(:list, BrandAmbassadors::Visit)
   javascript:
