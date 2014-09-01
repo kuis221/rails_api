@@ -7199,6 +7199,12 @@ table.table.likert-scale-table {
 	width: 156px;
 }
 
+body.dashboard.index {
+	.tab-content {
+		overflow: visible;
+	}
+}
+
 #visits-scoller-outer {
 	max-height: 435px;
 	overflow-y: auto;

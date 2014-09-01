@@ -497,6 +497,9 @@ Brandscopic::Application.routes.draw do
   resources :filter_settings, only: [:index, :new, :create, :update]
 
   namespace :brand_ambassadors do
+    resources :dashboard, only: [:index] do
+      get :calendar, on: :collection
+    end
     resources :visits, except: [:index, :destroy] do
       get :filters, on: :collection, format: :json
       get :items, on: :collection, format: :html
