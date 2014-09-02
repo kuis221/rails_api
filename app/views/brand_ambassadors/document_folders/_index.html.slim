@@ -10,7 +10,7 @@
     - else
       | DOCUMENTS
   = button_to 'Upload', new_brand_ambassadors_document_path(folder_id: params[:parent_id]), class: 'btn btn-primary', title: 'Add Documents', remote: true, method: :get if can? :create,  BrandAmbassadors::Document
-  = link_to 'Create Folder', "#new-folder-form", class: 'btn', 'data-toggle' => 'collapse' if can? :create,  BrandAmbassadors::Document
+  = link_to 'New Folder', "#new-folder-form", class: 'btn', 'data-toggle' => 'collapse' if can? :create,  BrandAmbassadors::Document
 
   .link-list.documents-list
     ul#documents-list

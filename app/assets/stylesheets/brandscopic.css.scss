@@ -5367,6 +5367,9 @@ body.campaigns{
 	-webkit-border-radius: 7px;
 	-moz-border-radius: 7px;
 	border-radius: 7px;
+	&.thinner{
+		padding: 15px 12px 12px 12px;
+	}
 	.google-map + h2{
 		margin-top: 40px !important;
 	}
