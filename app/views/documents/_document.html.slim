@@ -1,5 +1,5 @@
 - unless parent.is_a?(Event) && document.attachable_type == 'Campaign' && !document.active?
-  li.document.clearfix id="attached_asset_#{document.id}"
+  li.document.clearfix id="#{document.class.name.underscore.downcase.gsub('/','_')}_#{document.id}"
     span.document-item
       a href="#{document.download_url}"
         span.document-name
@@ -14,10 +14,10 @@
         a.icon-download title="Download" href="#{document.download_url}"
         - if parent == document.attachable && can?(:deactivate, document)
           - if document.active?
-            = link_to '', {controller: :documents, action: :deactivate, id: document.id, "#{parent.class.name.underscore}_id" => parent.id}, remote: true, class: 'icon-remove-circle'
+            = link_to '', {controller: :documents, action: :deactivate, id: document.id, "#{parent.class.name.underscore}_id" => parent.id}, remote: true, class: 'icon-remove-circle', data: { confirm: I18n.t('confirmation.deactivate_confirm_message', model: 'Document') }
           - else
             = link_to '', {controller: :documents, action: :activate, id: document.id, "#{parent.class.name.underscore}_id" => parent.id}, remote: true, class: 'icon-ok-circle'
 
-        a.icon-edit
-        a.icon-folder
-        a.icon-trash
+        / a.icon-edit
+        / a.icon-folder
+        / a.icon-trash

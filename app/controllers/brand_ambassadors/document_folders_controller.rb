@@ -8,7 +8,7 @@ class BrandAmbassadors::DocumentFoldersController < InheritedResources::Base
   include DeactivableHelper
 
   def index
-    @folder_children = (folder.document_folders + folder.brand_ambassadors_documents).sort_by(&:name)
+    @folder_children = (folder.document_folders.active.where(parent_id: params[:parent_id]) + folder.brand_ambassadors_documents.active.where(folder_id: params[:parent_id])).sort_by(&:name)
   end
 
   private
