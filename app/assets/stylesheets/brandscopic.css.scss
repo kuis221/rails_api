@@ -572,14 +572,17 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			padding-top: 5px;
 		}
 		td{
-			padding: 0.2em 0.6em 0.3em 0.1em;
+			padding: 2px;
 		}
 		a{
+			box-sizing: border-box;
 			color: $text;
 			font-size: 0.86em;
 			padding: 2px 3px;
 			-webkit-border-radius: 12px;
 			border-radius: 12px;
+			width: 24px;
+			height: 24px;
 			&.datepick-today{
 				background-color: $brand !important;
 				color: white;
