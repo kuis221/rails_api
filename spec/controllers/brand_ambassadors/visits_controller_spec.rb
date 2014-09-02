@@ -7,6 +7,13 @@ RSpec.describe BrandAmbassadors::VisitsController, :type => :controller do
 
   before{ sign_in_as_user user }
 
+  describe "GET 'index'" do
+    it "returns http success" do
+      get 'index', format: :json
+      expect(response).to be_success
+    end
+  end
+
   describe "GET 'edit'" do
     let(:visit){ FactoryGirl.create(:brand_ambassadors_visit, company: company) }
     it "returns http success" do

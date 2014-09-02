@@ -49,31 +49,30 @@ feature "Brand Ambassadors Visits" do
     end
   end
 
-  # shared_examples_for 'a user that can view the calendar of visits' do
-  #   scenario "a calendar of visits is displayed" do
-  #     FactoryGirl.create(:brand_ambassadors_visit, company: company,
-  #       start_date: '01/15/2014', end_date: '01/16/2014',
-  #       name: 'Visit1', company_user: company_user, active: true)
-  #     FactoryGirl.create(:brand_ambassadors_visit, company: company,
-  #       start_date: '01/16/2014', end_date: '01/18/2014',
-  #       name: 'Visit2', company_user: company_user, active: true)
-  #     Sunspot.commit
+  shared_examples_for 'a user that can view the calendar of visits' do
+    scenario "a calendar of visits is displayed" do
+      month_number = Time.now.strftime('%m')
+      month_name = Time.now.strftime('%B')
+      FactoryGirl.create(:brand_ambassadors_visit, company: company,
+        start_date: "#{month_number}/15/2014", end_date: "#{month_number}/16/2014",
+        name: 'Visit1', company_user: company_user, active: true)
+      FactoryGirl.create(:brand_ambassadors_visit, company: company,
+        start_date: "#{month_number}/16/2014", end_date: "#{month_number}/18/2014",
+        name: 'Visit2', company_user: company_user, active: true)
+      Sunspot.commit
 
-  #     # Today is Tuesday, Jan 11
-  #     Timecop.freeze(Time.zone.local(2014, 01, 14, 12, 00)) do
+      visit brand_ambassadors_root_path
 
-  #       visit brand_ambassadors_root_path
+      click_link "Calendar View"
 
-  #       click_link "Calendar View"
-
-  #       wait_for_ajax
-  #       screenshot_and_open_image
-  #       within("div#calendar-view") do
-  #         expect(find('.fc-toolbar .fc-left h2')).to have_content('January, 2014')
-  #       end
-  #     end
-  #   end
-  # end
+      wait_for_ajax
+      within("div#calendar-view") do
+        expect(find('.fc-toolbar .fc-left h2')).to have_content("#{month_name}, 2014")
+        expect(page).to have_content 'Visit2 Test User'
+        expect(page).to have_content 'Visit1 Test User'
+      end
+    end
+  end
 
   shared_examples_for 'a user that can create visits' do
     scenario 'allows the user to create a new visit' do
@@ -219,9 +218,9 @@ feature "Brand Ambassadors Visits" do
       let(:permissions) { [[:list, 'BrandAmbassadors::Visit'], [:create, 'BrandAmbassadors::Visit'], [:show, 'BrandAmbassadors::Visit']]}
     end
 
-    # it_should_behave_like "a user that can view the calendar of visits" do
-    #   let(:permissions) { [[:calendar, 'BrandAmbassadors::Visit']]}
-    # end
+    it_should_behave_like "a user that can view the calendar of visits" do
+      let(:permissions) { [[:calendar, 'BrandAmbassadors::Visit']]}
+    end
 
     it_should_behave_like "a user that can view visits details and deactivate visits" do
       let(:permissions) { [[:list, 'BrandAmbassadors::Visit'], [:deactivate, 'BrandAmbassadors::Visit'], [:show, 'BrandAmbassadors::Visit']]}

@@ -7,8 +7,4 @@ class BrandAmbassadors::DashboardController < ApplicationController
     @visits = current_company.brand_ambassadors_visits
     @folder = current_company
   end
-
-  def calendar
-    @visits = current_company.brand_ambassadors_visits
-  end
 end
