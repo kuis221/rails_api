@@ -502,7 +502,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 
 	a.datepick-cmd{
 		display: inline-block;
-		margin-top: 8px;
+		margin-top: 9px;
 		overflow: hidden;
 		position:relative;
 		text-indent: 13%;
@@ -581,10 +581,11 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			padding: 2px 3px;
 			-webkit-border-radius: 12px;
 			border-radius: 12px;
+			line-height:17px;
 			width: 24px;
 			height: 24px;
 			&.datepick-today{
-				background-color: $brand !important;
+				background-color: #3381a8 !important;
 				color: white;
 				font-size: 0.86em;
 				font-weight: 300;
@@ -593,10 +594,15 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 				border-radius: 12px;
 			}
 			&.datepick-event{
-				color: $buttons;
 				font-weight: 600;
-				&:hover{
-					color: $buttons;
+				position: relative;
+				&:after{
+					color: $user_menu;
+					content:"\2022";
+					font-size: 7px;
+					position: absolute;
+					bottom: -4px;
+					right: 10px;
 				}
 			}
 			&:focus{
@@ -612,8 +618,12 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		}
 	}
 	.datepick-month td .datepick-selected {
-		background-color: $grey_one !important;
-		color: $text !important;
+		background-color: $brand !important;
+		color: white !important;
+		font-weight: 400;
+		&:after{
+			color: white;
+		}
 	}
 	.datepick-month td, .datepick-month a, .datepick-weekend {
 		background-color: white !important;
@@ -1510,6 +1520,13 @@ label{
 		letter-spacing: -0.5px;
 		line-height: 22px;
 		margin-bottom: 3px;
+		padding-left: 28px;
+		position: relative;
+		.checker{
+			left: 0px;
+			top: 2px;
+			position: absolute;
+		}
 	}
 
 	&.time-filter{
