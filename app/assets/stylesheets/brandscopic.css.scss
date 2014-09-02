@@ -46,6 +46,9 @@ a{
 		color:$text;
 		outline:0;
 	}
+	&.btn{
+		font-weight: normal;
+	}
 	&.more-options-link{
 		font-size: 13px;
 		margin-left:30px;
@@ -4056,13 +4059,36 @@ body.show {
 		}
 	}
 	#drop-zone {
-		border: 1px dashed $user_menu;
-		-webkit-border-radius: 4px;
-		border-radius: 4px;
+		border: 2px dashed $user_menu;
 		color: $user_menu;
 		font-size: 16px;
 		text-align: center;
-		padding: 20px;
+		padding: 30px 20px 20px 20px;
+		min-height: 50px;
+		a{
+			color: $brand;
+			font-size: 14px;
+			font-weight: normal;
+			text-decoration: underline;
+		}
+		h3{
+			margin-bottom: 0;
+		}
+		p{
+			color: $user_menu;
+			font-size: 14px;
+			font-weight:normal;
+		}
+		span{
+			display: inline-block;
+			margin-left: 10px;
+			text-align: left;
+		}
+		i{
+			font-size: 30px;
+			position: relative;
+			top: -2px;
+		}
 		&.dragging {
 			border-color: $buttons;
 		}
@@ -5382,6 +5408,9 @@ body.campaigns{
 
 	a, i{
 		font-weight: bold;
+		&.btn{
+			font-weight:normal;
+		}
 		&.icon-edit, &.icon-rounded-disable, &.icon-remove-circle, &.icon-plus-sign{
 			color: $brand;
 			font-size: 18px;

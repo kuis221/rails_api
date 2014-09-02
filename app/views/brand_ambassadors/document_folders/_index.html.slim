@@ -6,9 +6,18 @@
         i.icon-angle-right
         = link_to p.name, brand_ambassadors_document_folders_path(parent_id: p.id, format: :js), remote: true
       i.icon-angle-right
-      = @folder.name
+      p
+        = @folder.name
     - else
       | DOCUMENTS
+      #asset_upload_dialog
+        #drop-zone
+          i.icon-upload
+          span
+            h3 DRAG & DROP
+            p your files or
+            a  browse
+
   = button_to 'Upload', new_brand_ambassadors_document_path(folder_id: params[:parent_id]), class: 'btn btn-primary', title: 'Add Documents', remote: true, method: :get if can? :create,  BrandAmbassadors::Document
   = link_to 'New Folder', "#new-folder-form", class: 'btn', 'data-toggle' => 'collapse' if can? :create,  BrandAmbassadors::Document
 
@@ -18,6 +27,7 @@
         a.icon-close.pull-right href="#new-folder-form"  data-toggle="collapse"
         = simple_form_for [@visit || :brand_ambassadors, DocumentFolder.new(parent_id: params[:parent_id])], remote: true do |f|
           = f.input :parent_id, as: :hidden, wrapper: false, label: false
+          span.icon-folder
           = f.input :name, label: false, :input_html => {placeholder: 'Please name your folder'}
 
       = render children
