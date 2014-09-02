@@ -5,7 +5,7 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
     Style ss:ID="s1"
       Font ss:Bold="1"
     Style ss:ID="s2"
-      NumberFormat ss:Format="mm/dd/yy hh:mm AM/PM"
+      NumberFormat ss:Format="mm/dd/yyyy"
   Worksheet ss:Name="Visits"
 
     Table
@@ -28,9 +28,9 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
           Cell
             Data ss:Type="String"= visit.name
           Cell ss:StyleID="s2"
-            Data ss:Type="DateTime"= Timeliness.parse(event_date(visit, :start_date).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%FT%R')
+            Data ss:Type="DateTime"= Timeliness.parse(visit.start_date.strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%F')
           Cell ss:StyleID="s2"
-            Data ss:Type="DateTime"= Timeliness.parse(event_date(visit, :end_date).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%FT%R')
+            Data ss:Type="DateTime"= Timeliness.parse(visit.end_date.strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%F')
           Cell
             Data ss:Type="String"= visit.company_user.full_name
 
