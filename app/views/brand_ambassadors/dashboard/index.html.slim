@@ -80,6 +80,9 @@
               borderColor: '#3e9ccf',
               textColor: 'white'
             },
+            timeFormat: {
+              'default': function(){ return ''; }
+            },
             eventRender: function(visit, element) {
               element.find('.fc-title').append("<br/><span class='user-name'>" + visit.company_user.full_name + "</span>");
             }
