@@ -75,7 +75,7 @@ describe Api::V1::EventExpensesController, :type => :controller do
       expect(expense.receipt.attachable).to eq(expense)
       expect(expense.receipt.asset_type).to eq(nil)
       expect(expense.receipt.direct_upload_url).to eq('https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg')
-      expect(AssetsUploadWorker).to have_queued(expense.receipt.id)
+      expect(AssetsUploadWorker).to have_queued(expense.receipt.id, 'AttachedAsset')
     end
   end
 

@@ -1,6 +1,6 @@
 #
 # Ascii art generated with http://patorjk.com/software/taag/#p=display&c=bash&f=Crawford2&t=Task%20Comments
-require "spec_helper"
+require "rails_helper"
 require "cancan/matchers"
 
 describe "User", :type => :model do
@@ -108,9 +108,15 @@ describe "User", :type => :model do
         let(:event) { without_current_user { FactoryGirl.create(:event, campaign: campaign,
           place: FactoryGirl.create(:place)) } }
 
+        let(:event_in_other_company) { without_current_user { FactoryGirl.create(:event, campaign: FactoryGirl.create(:campaign),
+          place: FactoryGirl.create(:place)) } }
+
         it "should be able to update event if can see the event and has permission :edit_data" do
           expect(ability).not_to be_able_to(:update, event)
           expect(ability).not_to be_able_to(:edit_data, event)
+
+          expect(ability).not_to be_able_to(:update, event_in_other_company)
+          expect(ability).not_to be_able_to(:edit_data, event_in_other_company)
 
           user.role.permission_for(:edit_unsubmitted_data, Event).save
 
@@ -120,9 +126,16 @@ describe "User", :type => :model do
 
           user.current_company_user.campaigns << campaign
           user.current_company_user.places << event.place
+
           expect(ability).to be_able_to(:access, event)
+          expect(ability).not_to be_able_to(:access, event_in_other_company)
+
           expect(ability).to be_able_to(:edit_data, event)
+          expect(ability).not_to be_able_to(:edit_data, event_in_other_company)
+
           expect(ability).not_to be_able_to(:update, event)
+          expect(ability).not_to be_able_to(:update, event_in_other_company)
+
           expect(ability).not_to be_able_to(:edit, Event)
         end
 
@@ -136,13 +149,21 @@ describe "User", :type => :model do
       describe "Campaign permissions" do
         it "should be able to activate kpis if has the :activate_kpis permission" do
           campaign = FactoryGirl.create(:campaign, company: company)
+          campaign_in_other_comapany = FactoryGirl.create(:campaign, company: FactoryGirl.create(:company))
+
           expect(ability).not_to be_able_to(:add_kpi, campaign)
           expect(ability).not_to be_able_to(:remove_kpi, campaign)
+
+          expect(ability).not_to be_able_to(:add_kpi, campaign_in_other_comapany)
+          expect(ability).not_to be_able_to(:remove_kpi, campaign_in_other_comapany)
 
           user.role.permission_for(:activate_kpis, Campaign).save
 
           expect(ability).to be_able_to(:add_kpi, campaign)
           expect(ability).to be_able_to(:remove_kpi, campaign)
+
+          expect(ability).not_to be_able_to(:add_kpi, campaign_in_other_comapany)
+          expect(ability).not_to be_able_to(:remove_kpi, campaign_in_other_comapany)
         end
 
         it "should be able to activate activity types if has the :activate_kpis permission" do
@@ -390,12 +411,12 @@ describe "User", :type => :model do
 
         it "should be able to create a document in a event if has the permission :create_document on Event" do
           document = FactoryGirl.create(:document, attachable: event)
-          expect(ability).not_to be_able_to(:create, document)
+          expect(ability).not_to be_able_to(:create_document, Event)
 
           user.role.permission_for(:show, Event).save
           user.role.permission_for(:create_document, Event).save
 
-          expect(ability).to be_able_to(:create, document)
+          expect(ability).to be_able_to(:create_document, Event)
         end
 
         it "should be able to list document in a event if has the permission :index_documents on Event" do
@@ -434,12 +455,14 @@ describe "User", :type => :model do
 
         it "should be able to create a photo in a event if has the permission :create_photo on Event" do
           photo = FactoryGirl.create(:photo, attachable: event)
-          expect(ability).not_to be_able_to(:create, photo)
+          expect(ability).not_to be_able_to(:create, AttachedAsset)
+          expect(ability).not_to be_able_to(:create, Event)
 
           user.role.permission_for(:show, Event).save
           user.role.permission_for(:create_photo, Event).save
 
-          expect(ability).to be_able_to(:create, photo)
+          expect(ability).not_to be_able_to(:create, AttachedAsset)
+          expect(ability).to be_able_to(:create_photo, Event)
         end
 
         it "should be able to list photo in a event if has the permission :index_photos on Event" do
@@ -454,7 +477,7 @@ describe "User", :type => :model do
         end
 
         it "should be able to view rate of the photo" do
-          asset = FactoryGirl.build(:photo, attachable: Event.new)
+          asset = FactoryGirl.build(:photo, attachable: Event.new(company: company))
           expect(ability).not_to be_able_to(:view_rate, asset)
 
           user.role.permission_for(:view_rate, AttachedAsset).save
@@ -464,7 +487,7 @@ describe "User", :type => :model do
 
 
         it "should be able to rate a photo" do
-          asset = FactoryGirl.build(:photo, attachable: Event.new)
+          asset = FactoryGirl.build(:photo, attachable: Event.new(company: company))
           expect(ability).not_to be_able_to(:rate, asset)
 
           user.role.permission_for(:rate, AttachedAsset).save
@@ -784,7 +807,7 @@ describe "User", :type => :model do
       #
       describe "Event photo tag permissions" do
         it "should be able to deactivate a tag if has the permission :deactivate on Tag" do
-          tag = FactoryGirl.create(:tag)
+          tag = FactoryGirl.create(:tag, company: company)
           expect(ability).not_to be_able_to(:remove, tag)
 
           user.role.permission_for(:remove, Tag).save
@@ -792,7 +815,7 @@ describe "User", :type => :model do
           expect(ability).to be_able_to(:remove, tag)
         end
         it "should be able to activate a tag if has the permission :activate on Tag" do
-          tag = FactoryGirl.create(:tag)
+          tag = FactoryGirl.create(:tag, company: company)
           expect(ability).not_to be_able_to(:activate, tag)
 
           user.role.permission_for(:activate, Tag).save
@@ -801,7 +824,7 @@ describe "User", :type => :model do
         end
 
         it "should NOT be able to activate a tag if has the permission :remove on Tag but not the :activate permission" do
-          tag = FactoryGirl.create(:tag)
+          tag = FactoryGirl.create(:tag, company: company)
           expect(ability).not_to be_able_to(:activate, tag)
 
           user.role.permission_for(:remove, Tag).save
@@ -1005,7 +1028,60 @@ describe "User", :type => :model do
           expect(ability).to be_able_to(:share, report)
         end
       end
-    end
 
+      #   ____    ____      ___     ___     __  __ __  ___ ___    ___  ____   ______  _____
+      #  |    \  /    |    |   \   /   \   /  ]|  |  ||   |   |  /  _]|    \ |      |/ ___/
+      #  |  o  )|  o  |    |    \ |     | /  / |  |  || _   _ | /  [_ |  _  ||      (   \_
+      #  |     ||     |    |  D  ||  O  |/  /  |  |  ||  \_/  ||    _]|  |  ||_|  |_|\__  |
+      #  |  O  ||  _  |    |     ||     /   \_ |  :  ||   |   ||   [_ |  |  |  |  |  /  \ |
+      #  |     ||  |  |    |     ||     \     ||     ||   |   ||     ||  |  |  |  |  \    |
+      #  |_____||__|__|    |_____| \___/ \____| \__,_||___|___||_____||__|__|  |__|   \___|
+      #
+      describe "Brand ambassador documents permissions" do
+        it "should be able to list documents if has the permission :index on BrandAmbassadors::Document" do
+          expect(ability).not_to be_able_to(:index, BrandAmbassadors::Document)
+
+          user.role.permission_for(:index, BrandAmbassadors::Document).save
+
+          expect(ability).to be_able_to(:index, BrandAmbassadors::Document)
+        end
+
+        it "should be able to create documents if has the permission :create on BrandAmbassadors::Document" do
+          expect(ability).not_to be_able_to(:create, BrandAmbassadors::Document)
+          expect(ability).not_to be_able_to(:new, BrandAmbassadors::Document)
+
+          user.role.permission_for(:create, BrandAmbassadors::Document).save
+
+          expect(ability).to be_able_to(:create, BrandAmbassadors::Document)
+          expect(ability).to be_able_to(:new, BrandAmbassadors::Document)
+        end
+
+        it "should be able to update  documents if has the permission :update on BrandAmbassadors::Document" do
+          document = FactoryGirl.create(:brand_ambassadors_document, attachable: company)
+          document_not_allowed = FactoryGirl.create(:brand_ambassadors_document, attachable: FactoryGirl.create(:company))
+          expect(ability).not_to be_able_to(:update, document)
+          expect(ability).not_to be_able_to(:edit, document)
+
+          user.role.permission_for(:update, BrandAmbassadors::Document).save
+
+          expect(ability).to be_able_to(:update, document)
+          expect(ability).to be_able_to(:edit, document)
+
+          expect(ability).not_to be_able_to(:update, document_not_allowed)
+          expect(ability).not_to be_able_to(:edit, document_not_allowed)
+        end
+
+        it "should be able to activate/deactivate  documents if has the permission :update on BrandAmbassadors::Document" do
+          document = BrandAmbassadors::Document.new(attachable: company)
+          expect(ability).not_to be_able_to(:deactivate, document)
+          expect(ability).not_to be_able_to(:activate, document)
+
+          user.role.permission_for(:deactivate, BrandAmbassadors::Document).save
+
+          expect(ability).to be_able_to(:deactivate, document)
+          expect(ability).to be_able_to(:activate, document)
+        end
+      end
+    end
   end
 end

@@ -1382,7 +1382,7 @@ li.dropdown a{
 .nav-stacked{
 	li{
 		position: relative;
-		&.active, &:hover {
+		&.active{
 			background-color: $app_bg;
 			&:after {
 				background-color: transparent;
@@ -1412,6 +1412,11 @@ li.dropdown a{
 				background-repeat: no-repeat,no-repeat;
 				z-index: 100;
 			}
+			&:hover{
+				&:before{
+					background-image: none;
+				}
+			}
 		}
 		a{
 			color:$grey_three;
@@ -1419,8 +1424,18 @@ li.dropdown a{
 			padding: 28px 0 20px 0;
 			height:40px;
 			&:hover{
+				background-color: $text;
+				color: $user_menu;
 				height: 40px !important;
 				padding: 28px 0 20px 0 !important;
+			}
+		}
+		&#brand_ambassadors{
+			a{
+				line-height: 12px;
+				span:before{
+					top: -5px;
+				}
 			}
 		}
 	}
@@ -1509,7 +1524,7 @@ label{
 .menu{
 	background-color: $menu;
 	float: left;
-	font-size: 11px;
+	font-size: 9px;
 	text-align: center;
 	text-transform: uppercase;
 	width:80px;
@@ -2077,6 +2092,7 @@ li#notifications{
 			top: 0px;
 		}
 	}
+
 	/* Fix for global styles -- lists of admin dropdown header menu */
 	ul{
 		padding: 0;
@@ -2363,7 +2379,8 @@ li#notifications{
 	}
 	ul#visits-list{
 		li{
-			.name{
+			.name, .date{
+				font-weight: normal;
 				br{
 					display:block;
 				}
@@ -7208,7 +7225,7 @@ body.dashboard.index {
 #visits-scoller-outer {
 	max-height: 435px;
 	overflow-y: auto;
-	min-height: 100px;
+	min-height: 85px;
 }
 
 

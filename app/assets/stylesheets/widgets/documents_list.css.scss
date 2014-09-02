@@ -1,21 +1,30 @@
 @import "variables";
 .documents-list{
-	margin:0;
+	margin:20px 0 0 0;
 	.document{
 		display: block;
 		margin: 0;
+		padding: 0 15px;
 		a{
 			color: $menu;
-			float: left;
+			//float: left;
 			position: relative;
 			@extend .crop-text;
 			width: 85%;
+		}
+		.folder-item{
+			i{
+				font-size: 25px;
+			}
 		}
 		img{
 			height: 40px;
 			margin-right: 15px;
 			width: 32px;
 		}
+	}
+	li{
+		border-top: 0;
 	}
 	#new-folder-form {
 		background-color: $grey_one;
@@ -38,7 +47,7 @@
 				color: $grey_four;
 			}
 
-			&:-ms-input-placeholder {  
+			&:-ms-input-placeholder {
 				color: $grey_four;
 			}
 		}

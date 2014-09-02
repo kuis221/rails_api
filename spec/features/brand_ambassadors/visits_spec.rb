@@ -180,6 +180,26 @@ feature "Brand Ambassadors Visits" do
     end
   end
 
+  shared_examples_for 'a user that can view visits details and deactivate visits' do
+    scenario "can activate/deactivate a visit from the details view" do
+      ba_visit = FactoryGirl.create(:brand_ambassadors_visit,
+        company: company, company_user: company_user)
+
+      visit brand_ambassadors_visit_path(ba_visit)
+
+      within('.links-data') do
+        click_js_link('Deactivate')
+      end
+
+      confirm_prompt "Are you sure you want to deactivate this visit?"
+
+      within('.links-data') do
+        click_js_link('Activate')
+        expect(page).to have_link('Deactivate') # test the link have changed
+      end
+    end
+  end
+
   feature "Non Admin User", js: true, search: true do
     let(:role) { FactoryGirl.create(:non_admin_role, company: company) }
 
@@ -202,11 +222,20 @@ feature "Brand Ambassadors Visits" do
     # it_should_behave_like "a user that can view the calendar of visits" do
     #   let(:permissions) { [[:calendar, 'BrandAmbassadors::Visit']]}
     # end
+
+    it_should_behave_like "a user that can view visits details and deactivate visits" do
+      let(:permissions) { [[:list, 'BrandAmbassadors::Visit'], [:deactivate, 'BrandAmbassadors::Visit'], [:show, 'BrandAmbassadors::Visit']]}
+    end
   end
 
   feature "Admin User", js: true, search: true do
     let(:role) { FactoryGirl.create(:role, company: company) }
 
+    it_behaves_like "a user that can view the list of visits"
+    it_behaves_like "a user that can deactivate visits"
+    it_behaves_like "a user that can edit visits"
+    it_behaves_like "a user that can create visits"
     it_behaves_like "a user that can view visits details"
+    it_behaves_like "a user that can view visits details and deactivate visits"
   end
 end

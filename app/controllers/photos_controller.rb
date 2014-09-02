@@ -3,6 +3,9 @@ class PhotosController < InheritedResources::Base
 
   belongs_to :event, optional: true
 
+  skip_load_and_authorize_resource only: [:new, :create]
+  before_action :authorize_create, only: [:new, :create]
+
   include DeactivableHelper
   include PhotosHelper
 
@@ -22,8 +25,12 @@ class PhotosController < InheritedResources::Base
     def build_resource_params
       [permitted_params || {}]
     end
+
     def permitted_params
       params.permit(attached_asset: [:direct_upload_url])[:attached_asset]
     end
 
+    def authorize_create
+      authorize! :create_photo, parent
+    end
 end
