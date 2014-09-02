@@ -17,3 +17,7 @@
             = link_to '', {controller: :documents, action: :deactivate, id: document.id, "#{parent.class.name.underscore}_id" => parent.id}, remote: true, class: 'icon-remove-circle'
           - else
             = link_to '', {controller: :documents, action: :activate, id: document.id, "#{parent.class.name.underscore}_id" => parent.id}, remote: true, class: 'icon-ok-circle'
+
+        a.icon-edit
+        a.icon-folder
+        a.icon-trash
