@@ -49,7 +49,7 @@ input[type="color"],
 	padding: 10px;
 	width: 100%;
 	&:focus{
-		border: 1px solid $grey_four;
+		border: 1px solid $brand;
 		box-shadow: none;
 		-webkit-box-shadow: none;
 		outline:0;
@@ -64,6 +64,32 @@ input[readonly], select[readonly], textarea[readonly]{
 		border: 1px solid rgba(192, 192, 192, 0.6)
 	}
 }
+
+// Percentage fields - form wrapper
+
+.data-form-wrapper{
+	.input-append{
+		input[type="text"],
+		input[type="password"],
+		input[type="datetime"],
+		input[type="datetime-local"],
+		input[type="date"],
+		input[type="month"],
+		input[type="time"],
+		input[type="week"],
+		input[type="number"],
+		input[type="email"],
+		input[type="url"],
+		input[type="search"],
+		input[type="tel"],
+		input[type="color"]{
+			&:focus{
+				border: 1px solid $grey_four;
+			}
+		}
+	}
+}
+
 
 
 //

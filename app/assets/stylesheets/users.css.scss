@@ -226,6 +226,9 @@ a.resend-verification {
 }
 
 .control-group{
+	&.event_results_value{
+		width: 390px;
+	}
 	&.percentage{
 		width:390px;
 		input[type="text"]{
@@ -250,7 +253,6 @@ a.resend-verification {
 			font-size: 13px;
 			margin-top: 12px;
 			margin-right: 5px;
-			width: 150px;
 		}
 	}
 	&.error{
