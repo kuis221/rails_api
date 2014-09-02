@@ -7,7 +7,7 @@
       ul.draggable-list data-group="#{group_name}"
         - items.each do |id, name, tooltip|
           li.report-field id="#{id}" data-field-id="#{id}" data-group="#{group_name}" data-title="#{tooltip}"
-            a.field-remove-btn.icon-remove href="#" title="Remove"
+            a.field-remove-btn.icon.icon-close href="#" title="Remove"
             .field-label= name
             i.field-settings-btn.icon-caret-down
             .clearfix

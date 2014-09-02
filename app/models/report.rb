@@ -266,7 +266,7 @@ class Report < ActiveRecord::Base
   end
 
   def base_events_scope
-    company.events.active
+    company.events
   end
 
   def reload(options = nil)
@@ -395,7 +395,12 @@ class Report < ActiveRecord::Base
                   end
                 end
               elsif filter_params[filter.field].is_a?(Array)
-                condition = "#{filter.filter_column} IN (?)", filter_params[filter.field]
+                opts = if filter.filter_column.match(/\.active\z/)
+                  filter_params[filter.field].select{|o| ['true', 'false', true, false].include?(o) }.map{|o| o.to_s == 'true' ? true : false }
+                else
+                  filter_params[filter.field]
+                end
+                condition = "#{filter.filter_column} IN (?)", opts
               end
               s = if condition[0] =~ /COUNT|SUM|AVG|MIN|MAX/
                 s.having(condition)

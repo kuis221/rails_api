@@ -668,7 +668,7 @@ class Event < ActiveRecord::Base
         start_time:   { title: 'Start time', column: -> { "to_char(#{prefix}start_at, 'HH12:MI AM')" }, filter_column: -> { start_time_filter }, filter: ->(field) { { name: 'event:start_time', type: 'time', label: field.label  } } },
         end_date:     { title: 'End date', column: -> { "to_char(#{prefix}end_at, 'YYYY/MM/DD')" }, filter_column: -> { "#{prefix}end_at" }, filter: ->(field) { { name: 'event:end_date', type: 'calendar' } } },
         end_time:     { title: 'End time', column: -> { "to_char(#{prefix}end_at, 'HH12:MI AM')" }, filter_column: -> { end_time_filter }, filter: ->(field) { { name: 'event:end_time', type: 'time', label: field.label } } },
-        event_active: { title: 'Active State' },
+        event_active: { title: 'Active State', filter_column: -> { 'events.active' }, filter: ->(field) { { name: 'event:event_active', label: field.label, items: [{id: 'true', label: 'Active', count: 1, name: 'event:event_active'}, {id: 'false', label: 'Inactive', count: 1, name: 'event:event_active'}] } } },
         event_status: { title: 'Event Status' }
       }
     end

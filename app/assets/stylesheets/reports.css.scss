@@ -181,7 +181,7 @@ ul.reports-list {
 			min-height: 71px;
 			margin-top: 8px;
 			overflow: auto;
-			a.field-remove-btn.icon-remove{
+			a.field-remove-btn.icon-close{
 				display: none;
 			}
 		}
@@ -261,10 +261,8 @@ ul.reports-list {
 					}
 				}
 
-				.icon-remove:before {
-					content:"\e019";
+				.icon-close:before {
 					font-size: 11px;
-					top: 5px;
 				}
 
 				.field-remove-btn {

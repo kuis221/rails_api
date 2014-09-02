@@ -138,7 +138,7 @@ describe Report, :type => :model do
       expect(report.format_values(results[1]['values'])).to eql ['66.67%', '33.33%', '40.0%', '30.0%', '80%', '86%']
     end
 
-    it "should olny apply the 'display' formula to values that have any selected - with columns" do
+    it "should only apply the 'display' formula to values that have any selected - with columns" do
       campaign1 = FactoryGirl.create(:campaign, company: company, name: 'Campaign 1')
       campaign2 = FactoryGirl.create(:campaign, company: company, name: 'Campaign 2')
       FactoryGirl.create(:event, campaign: campaign1,
@@ -1931,6 +1931,47 @@ describe Report, :type => :model do
       expect(report.fetch_page).to eql [
           {"event_start_date"=>"2014/01/01", "values" => [100.00]},
           {"event_start_date"=>"2014/01/12", "values" => [200.00]}
+      ]
+    end
+
+    it "can filter by event active state" do
+      # Events on campaing
+      FactoryGirl.create(:event, campaign: campaign, active: false, results: {impressions: 100, interactions: 50})
+      FactoryGirl.create(:event, campaign: campaign, active: false, results: {impressions: 300, interactions: 300})
+
+      # Events on other campaing
+      campaign2 = FactoryGirl.create(:campaign, name: 'Zeta 2014', company: company)
+      campaign2.assign_all_global_kpis
+      FactoryGirl.create(:event, campaign: campaign2, results: {impressions: 100, interactions: 50})
+      FactoryGirl.create(:event, campaign: campaign2, results: {impressions: 200, interactions: 100})
+      FactoryGirl.create(:event, campaign: campaign2, results: {impressions: 300, interactions: 300})
+
+      report = FactoryGirl.create(:report,
+        company: company,
+        filters: [{"field"=>"event:event_active", "label"=>"Active State"}],
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"campaign:name", "label"=>"Campaign"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      page = report.fetch_page
+      expect(page).to eql [
+        {"campaign_name"=>campaign.name, "values" => [400.00]},
+        {"campaign_name"=>campaign2.name, "values" => [600.00]}
+      ]
+
+      # with filter
+      report = FactoryGirl.create(:report,
+        company: company,
+        filters: [{"field"=>"event:event_active", "label"=>"Active State"}],
+        columns: [{"field"=>"values", "label"=>"Values"}],
+        rows:    [{"field"=>"campaign:name", "label"=>"Campaign"}],
+        values:  [{"field"=>"kpi:#{Kpi.impressions.id}", "label"=>"Impressions", "aggregate"=>"sum"}]
+      )
+      report.filter_params = {"event:event_active" => ['true']}
+
+      page = report.fetch_page
+      expect(page).to eql [
+        {"campaign_name"=>campaign2.name, "values" => [600.00]}
       ]
     end
 
