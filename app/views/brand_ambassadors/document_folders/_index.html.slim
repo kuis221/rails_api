@@ -18,6 +18,7 @@
         a.icon-close.pull-right href="#new-folder-form"  data-toggle="collapse"
         = simple_form_for [@visit || :brand_ambassadors, DocumentFolder.new(parent_id: params[:parent_id])], remote: true do |f|
           = f.input :parent_id, as: :hidden, wrapper: false, label: false
+          span.icon-folder
           = f.input :name, label: false, :input_html => {placeholder: 'Please name your folder'}
 
       = render children
