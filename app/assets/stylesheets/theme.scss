@@ -68,7 +68,7 @@ input[readonly], select[readonly], textarea[readonly]{
 // Percentage fields - form wrapper
 
 .data-form-wrapper{
-	.input-append{
+	.input-append, .input-prepend{
 		input[type="text"],
 		input[type="password"],
 		input[type="datetime"],
