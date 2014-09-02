@@ -3683,7 +3683,10 @@ body.events.index {
 	width: 100%;
 	h3{
 		a#edit-event-data-btn{
-			margin-left: 15px;
+			margin-left: 10px;
+			top: 1px;
+			font-size: 16px;
+			position: relative;
 		}
 	}
 	.form-result {
