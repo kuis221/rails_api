@@ -14,10 +14,13 @@
 			width: 85%;
 		}
 		.folder-item{
+			font-size: 14px;
 			i{
 				color: $grey_four;
 				font-size: 25px;
 				margin-right: 15px;
+				position: relative;
+				top: 3px;
 			}
 		}
 		.document-item{
