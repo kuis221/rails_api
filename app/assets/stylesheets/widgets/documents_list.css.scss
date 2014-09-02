@@ -7,7 +7,8 @@
 		padding: 0 20px;
 		width: auto;
 		a{
-			color: $menu;
+			color: $text;
+			font-weight: normal;
 			position: relative;
 			@extend .crop-text;
 			width: 85%;
@@ -17,6 +18,19 @@
 				color: $grey_four;
 				font-size: 25px;
 				margin-right: 15px;
+			}
+		}
+		.document-item{
+			display: table;
+			width: 100%;
+			.document-name{
+				font-size: 14px;
+				@extend .crop-text;
+				padding-right: 50px;
+				width: 50%;
+			}
+			.document-type, .document-date{
+				width:20%;
 			}
 		}
 		.pull-right{
@@ -89,5 +103,21 @@
 				color: $grey_four;
 			}
 		}
+	}
+}
+
+#documents-container{
+	h3{
+		color: $user_menu;
+		p{
+			color: $brand;
+			display:inline-block;
+		}
+	}
+	i.icon-angle-right{
+		color: $grey_one;
+		margin-left: 8px;
+		position: relative;
+		top: 3px;
 	}
 }
