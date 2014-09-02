@@ -46,6 +46,9 @@ a{
 		color:$text;
 		outline:0;
 	}
+	&.btn{
+		font-weight: normal;
+	}
 	&.more-options-link{
 		font-size: 13px;
 		margin-left:30px;
@@ -5382,6 +5385,9 @@ body.campaigns{
 
 	a, i{
 		font-weight: bold;
+		&.btn{
+			font-weight:normal;
+		}
 		&.icon-edit, &.icon-rounded-disable, &.icon-remove-circle, &.icon-plus-sign{
 			color: $brand;
 			font-size: 18px;
