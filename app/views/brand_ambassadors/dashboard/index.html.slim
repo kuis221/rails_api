@@ -9,16 +9,23 @@
       button.btn.download.xlsx-download-link data-url="#{events_path(format:"xls")}" title="Download"
         i.icon-download
 
-      #toggle-events-view.btn-group
+      #toggle-visits-view.btn-group
         - if can?(:list, BrandAmbassadors::Visit)
-          a.btn.active.list href="#list-view" data-toggle="tab" title="List View"
+          a.btn.active.list href="#visits-scoller-outer" data-toggle="tab" title="List View"
             i.icon-list
         - if can?(:calendar, BrandAmbassadors::Visit)
           a.btn.calendar href="#calendar-view" data-toggle="tab" title="Calendar View"
             i.icon-grid
 
-  #visits-scoller-outer.link-list
-   ul#visits-list
+  .tab-content
+    - if can?(:list, BrandAmbassadors::Visit)
+      #visits-scoller-outer.tab-pane.active
+        .link-list
+          ul#visits-list
+
+    - if can?(:calendar, BrandAmbassadors::Visit)
+      #calendar-view.tab-pane
+        #calendar-canvas
 
 - if can?(:index, BrandAmbassadors::Document)
   #brand-ambassador-documents.details_box
@@ -41,3 +48,44 @@
       'applyTo': '#{controller.controller_name}',
       'clearFilterParams': [{name: 'status[]', value: 'Active'}]
     });
+
+- if can?(:calendar, BrandAmbassadors::Visit)
+  javascript:
+    var visitsCalendar = false;
+    $('#toggle-visits-view a').on('shown', function(e){
+      $('#toggle-visits-view a').removeClass('active');
+      $(e.target).addClass('active')
+      if (e.target.getAttribute('href') == '#calendar-view'){
+        if (!visitsCalendar) {
+          visitsCalendar = $('#calendar-canvas').fullCalendar({
+            header: {
+              left: 'title',
+              center: '',
+              right: 'prev,next'
+            },
+            aspectRatio: 2.3,
+            titleFormat: {
+              month: 'MMMM, YYYY'
+            },
+            buttonIcons: false,
+            buttonText: {
+              prev: ' ',
+              next: ' '
+            },
+            eventLimit: false,
+            events: {
+              url: '/brand_ambassadors/visits.json',
+              className: 'visit-item',
+              backgroundColor: '#3e9ccf',
+              borderColor: '#3e9ccf',
+              textColor: 'white'
+            },
+            eventRender: function(visit, element) {
+              element.find('.fc-title').append("<br/><span class='user-name'>" + visit.company_user.full_name + "</span>");
+            }
+          });
+        }
+      } else {
+
+      }
+    })
