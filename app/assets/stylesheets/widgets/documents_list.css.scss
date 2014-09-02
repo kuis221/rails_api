@@ -28,6 +28,14 @@
 	}
 	#new-folder-form {
 		background-color: $grey_one;
+		border-bottom: 1px solid $grey_four;
+		padding: 16px;
+		.control-group{
+			margin-bottom: 0;
+			input{
+				margin-bottom: 0;
+			}
+		}
 		.icon-close {
 			height: 21px;
 			width: 21px;

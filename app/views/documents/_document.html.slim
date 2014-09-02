@@ -10,10 +10,10 @@
         span.document-date
           = document.created_at.to_s(:document)
 
-        span.pull-right
-          a.icon-download title="Download" href="#{document.download_url}"
-          - if parent == document.attachable && can?(:deactivate, document)
-            - if document.active?
-              = link_to '', {controller: :documents, action: :deactivate, id: document.id, "#{parent.class.name.underscore}_id" => parent.id}, remote: true, class: 'icon-remove-circle'
-            - else
-              = link_to '', {controller: :documents, action: :activate, id: document.id, "#{parent.class.name.underscore}_id" => parent.id}, remote: true, class: 'icon-ok-circle'
+      span.pull-right
+        a.icon-download title="Download" href="#{document.download_url}"
+        - if parent == document.attachable && can?(:deactivate, document)
+          - if document.active?
+            = link_to '', {controller: :documents, action: :deactivate, id: document.id, "#{parent.class.name.underscore}_id" => parent.id}, remote: true, class: 'icon-remove-circle'
+          - else
+            = link_to '', {controller: :documents, action: :activate, id: document.id, "#{parent.class.name.underscore}_id" => parent.id}, remote: true, class: 'icon-ok-circle'

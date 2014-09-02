@@ -1,7 +1,7 @@
 .sidebar.collapsed#resource-filter-column.hide
   #collection-list-filters
 
-.details_box
+.details_box.thinner
   #list-tools
     .pull-left
       = button_to 'New Visit', new_brand_ambassadors_visit_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn'} if can? :create, BrandAmbassadors::Visit
@@ -28,7 +28,7 @@
         #calendar-canvas
 
 - if can?(:index, BrandAmbassadors::Document)
-  #brand-ambassador-documents.details_box
+  #brand-ambassador-documents.details_box.thinner
     = render partial: 'brand_ambassadors/document_folders/index', locals: { children: (current_company.document_folders.root_children.active + current_company.brand_ambassadors_documents.root_children.active).sort_by(&:name) }
 
 
