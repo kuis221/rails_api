@@ -49,7 +49,7 @@ feature "Brand Ambassadors Documents", js: true do
     scenario "A user can create and deactivate folders" do
       visit brand_ambassadors_root_path
 
-      documents_section.click_js_link 'Create Folder'
+      documents_section.click_js_link 'New Folder'
 
       within documents_section do
         fill_in 'Please name your folder', with: 'New Folder Name'
@@ -105,7 +105,7 @@ feature "Brand Ambassadors Documents", js: true do
     scenario "A user can create and deactivate folders" do
       visit brand_ambassadors_visit_path(ba_visit)
 
-      documents_section.click_js_link 'Create Folder'
+      documents_section.click_js_link 'New Folder'
 
       within documents_section do
         fill_in 'Please name your folder', with: 'New Folder Name'
