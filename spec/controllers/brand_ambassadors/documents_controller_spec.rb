@@ -36,7 +36,7 @@ RSpec.describe BrandAmbassadors::DocumentsController, :type => :controller do
           'attached_assets/original/test.jpg' => s3object
         } ))
       expect_any_instance_of(Paperclip::Attachment).to receive(:path).and_return('/attached_assets/original/test.jpg')
-      expect_any_instance_of(AttachedAsset).to receive(:download_url).and_return('dummy.jpg')
+      expect_any_instance_of(AttachedAsset).to receive(:download_url).at_least(:once).and_return('dummy.jpg')
       expect {
         xhr :post, 'create', attached_asset: {direct_upload_url: 'https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg'}, format: :js
       }.to change(AttachedAsset, :count).by(1)
@@ -48,7 +48,7 @@ RSpec.describe BrandAmbassadors::DocumentsController, :type => :controller do
       expect(document.attachable).to eq(company)
       expect(document.asset_type).to eq('ba_document')
       expect(document.direct_upload_url).to eq('https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg')
-      expect(AssetsUploadWorker).to have_queued(document.id)
+      expect(AssetsUploadWorker).to have_queued(document.id, 'BrandAmbassadors::Document')
     end
 
     it "should successfully create the new record for a visit" do
@@ -61,7 +61,7 @@ RSpec.describe BrandAmbassadors::DocumentsController, :type => :controller do
           'attached_assets/original/test.jpg' => s3object
         } ))
       expect_any_instance_of(Paperclip::Attachment).to receive(:path).and_return('/attached_assets/original/test.jpg')
-      expect_any_instance_of(AttachedAsset).to receive(:download_url).and_return('dummy.jpg')
+      expect_any_instance_of(AttachedAsset).to receive(:download_url).at_least(:once).and_return('dummy.jpg')
 
       visit = FactoryGirl.create(:brand_ambassadors_visit,
         company: company, company_user: user)
@@ -76,7 +76,7 @@ RSpec.describe BrandAmbassadors::DocumentsController, :type => :controller do
       expect(document.attachable).to eq(visit)
       expect(document.asset_type).to eq('ba_document')
       expect(document.direct_upload_url).to eq('https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg')
-      expect(AssetsUploadWorker).to have_queued(document.id)
+      expect(AssetsUploadWorker).to have_queued(document.id, 'BrandAmbassadors::Document')
     end
 
     it "should render the form_dialog template if errors" do

@@ -3,11 +3,11 @@ require "rails_helper"
 describe 'routes for document folders', :type => :routing do
   describe 'nested within brand_ambassadors namespace' do
     it "doesn't routes to #index" do
-      expect(get: "/brand_ambassadors/folders").not_to be_routable
+      expect(get: "/brand_ambassadors/folders").to route_to("brand_ambassadors/document_folders#index")
     end
 
     it "routes to #new" do
-      expect(get: "/brand_ambassadors/folders/new").to route_to("document_folders#new")
+      expect(get: "/brand_ambassadors/folders/new").to route_to("brand_ambassadors/document_folders#new")
     end
 
     it "doesn't routes to #show" do
@@ -19,7 +19,7 @@ describe 'routes for document folders', :type => :routing do
     end
 
     it "routes to #create" do
-      expect(post: "/brand_ambassadors/folders").to route_to("document_folders#create")
+      expect(post: "/brand_ambassadors/folders").to route_to("brand_ambassadors/document_folders#create")
     end
 
     it "doesn't routes to #update" do
@@ -33,11 +33,11 @@ describe 'routes for document folders', :type => :routing do
 
   describe 'nested within brand_ambassadors#visits' do
     it "doesn't routes to #index" do
-      expect(get: "/brand_ambassadors/folders").not_to be_routable
+      expect(get: "/brand_ambassadors/folders").to route_to("brand_ambassadors/document_folders#index")
     end
 
     it "routes to #new" do
-      expect(get: "/brand_ambassadors/visits/1/folders/new").to route_to("document_folders#new", visit_id: '1')
+      expect(get: "/brand_ambassadors/visits/1/folders/new").to route_to("brand_ambassadors/document_folders#new", visit_id: '1')
     end
 
     it "doesn't routes to #show" do
@@ -49,7 +49,7 @@ describe 'routes for document folders', :type => :routing do
     end
 
     it "routes to #create" do
-      expect(post: "/brand_ambassadors/visits/1/folders/").to route_to("document_folders#create", visit_id: '1')
+      expect(post: "/brand_ambassadors/visits/1/folders/").to route_to("brand_ambassadors/document_folders#create", visit_id: '1')
     end
 
     it "doesn't routes to #update" do

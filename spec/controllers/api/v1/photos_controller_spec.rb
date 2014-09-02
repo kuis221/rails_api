@@ -93,7 +93,7 @@ describe Api::V1::PhotosController, :type => :controller do
       expect(photo.attachable).to eq(event)
       expect(photo.asset_type).to eq('photo')
       expect(photo.direct_upload_url).to eq('https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg')
-      expect(AssetsUploadWorker).to have_queued(photo.id)
+      expect(AssetsUploadWorker).to have_queued(photo.id, 'AttachedAsset')
     end
   end
 

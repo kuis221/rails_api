@@ -1,6 +1,4 @@
 - if resource.errors.any?
   = render 'form_dialog'
 - else
-  - if respond_to?(:parent?) && parent?
-    |
-      $('#documents-list').prepend('#{j render(resource)}');
+  | $('#documents-list').prepend('#{j render(resource)}');

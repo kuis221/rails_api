@@ -14,6 +14,10 @@
       span
         = resource.company_user.try(:name)
 
+    .links-data
+      = link_to '', edit_brand_ambassadors_visit_path(resource), remote: true, title: 'Edit', class: 'icon-edit' if can?(:edit, resource)
+      = active_inactive_buttons(resource) if can?(:deactivate, resource)
+
   #visit-events.details_box
     h3 EVENTS
     - if can?(:create, Event)
@@ -21,7 +25,7 @@
 
     .link-list
       ul#events-list
-        = render partial: 'events/event', collection: resource.events.accessible_by_user(current_company_user)
+        = render partial: 'events/event', collection: resource.events.accessible_by_user(current_company_user).order('events.start_at ASC')
 
 
   #visit-documents.details_box

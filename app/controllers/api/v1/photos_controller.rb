@@ -4,7 +4,7 @@ class Api::V1::PhotosController < Api::V1::FilteredController
 
   defaults :resource_class => AttachedAsset
 
-  authorize_resource class: AttachedAsset, only: [:show, :create, :update, :destroy]
+  authorize_resource class: AttachedAsset, only: [:show, :update, :destroy]
 
   resource_description do
     short 'Photos'
@@ -100,6 +100,7 @@ class Api::V1::PhotosController < Api::V1::FilteredController
   }
   EOS
   def create
+    authorize!(:create_photo, parent)
     create! do |success, failure|
       success.json { render :show }
       success.xml { render :show }
