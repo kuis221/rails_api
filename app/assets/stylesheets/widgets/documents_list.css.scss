@@ -30,11 +30,9 @@
 		background-color: $grey_one;
 		border-bottom: 1px solid $grey_four;
 		padding: 16px;
+		min-height: 40px;
 		.control-group{
 			margin-bottom: 0;
-			input{
-				margin-bottom: 0;
-			}
 		}
 		.icon-close {
 			height: 21px;
