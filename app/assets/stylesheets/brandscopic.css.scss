@@ -3432,7 +3432,8 @@ ul.ui-widget-content{
 		margin-right: 15px;
 		margin-bottom: 0;
 	 	.add-on{
-			background-color: $user_menu;
+			background-color: $brand;
+			border: 1px solid $brand;
 			color: white;
 			height: 19px;
 			text-shadow: none;

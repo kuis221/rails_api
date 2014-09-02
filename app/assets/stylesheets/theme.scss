@@ -83,8 +83,9 @@ input[readonly], select[readonly], textarea[readonly]{
 		input[type="search"],
 		input[type="tel"],
 		input[type="color"]{
+			border: 1px solid $brand;
 			&:focus{
-				border: 1px solid $grey_four;
+				border: 1px solid $brand;
 			}
 		}
 	}
