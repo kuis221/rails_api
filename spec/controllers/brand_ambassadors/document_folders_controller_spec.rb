@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe DocumentFoldersController, type: :controller do
+RSpec.describe BrandAmbassadors::DocumentFoldersController , type: :controller do
 
   let(:company){ FactoryGirl.create(:company) }
   let(:user){ FactoryGirl.create(:company_user, company: company) }
