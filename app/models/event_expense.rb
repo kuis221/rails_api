@@ -25,7 +25,7 @@ class EventExpense < ActiveRecord::Base
 
   delegate :company_id, to: :event
 
-  has_one :receipt, class_name: 'AttachedAsset', as: :attachable
+  has_one :receipt, class_name: 'AttachedAsset', as: :attachable, inverse_of: :attachable
 
   delegate :download_url, to: :receipt
 

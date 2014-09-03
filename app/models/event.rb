@@ -21,12 +21,14 @@
 #  local_start_at :datetime
 #  local_end_at   :datetime
 #  description    :text
+#  visit_id       :integer
 #
 
 class Event < ActiveRecord::Base
   include AASM
 
   belongs_to :campaign
+  belongs_to :visit, class_name: 'BrandAmbassadors::Visit'
   belongs_to :place, autosave: true
 
   has_many :tasks, ->{ order 'due_at ASC' }, dependent: :destroy, inverse_of: :event
@@ -666,7 +668,7 @@ class Event < ActiveRecord::Base
         start_time:   { title: 'Start time', column: -> { "to_char(#{prefix}start_at, 'HH12:MI AM')" }, filter_column: -> { start_time_filter }, filter: ->(field) { { name: 'event:start_time', type: 'time', label: field.label  } } },
         end_date:     { title: 'End date', column: -> { "to_char(#{prefix}end_at, 'YYYY/MM/DD')" }, filter_column: -> { "#{prefix}end_at" }, filter: ->(field) { { name: 'event:end_date', type: 'calendar' } } },
         end_time:     { title: 'End time', column: -> { "to_char(#{prefix}end_at, 'HH12:MI AM')" }, filter_column: -> { end_time_filter }, filter: ->(field) { { name: 'event:end_time', type: 'time', label: field.label } } },
-        event_active: { title: 'Active State' },
+        event_active: { title: 'Active State', filter_column: -> { 'events.active' }, filter: ->(field) { { name: 'event:event_active', label: field.label, items: [{id: 'true', label: 'Active', count: 1, name: 'event:event_active'}, {id: 'false', label: 'Inactive', count: 1, name: 'event:event_active'}] } } },
         event_status: { title: 'Event Status' }
       }
     end

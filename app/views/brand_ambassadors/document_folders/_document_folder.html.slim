@@ -1,0 +1,9 @@
+li.document.clearfix id="document_folder_#{document_folder.id}"
+  span.folder-item
+    = link_to (content_tag(:i, '', class: 'icon-folder') + document_folder.name).html_safe, brand_ambassadors_document_folders_path(parent_id: document_folder.id, format: :js), remote: true
+    - if can?(:deactivate, BrandAmbassadors::Document)
+      span.pull-right
+        - if document_folder.active?
+          = link_to_deactivate document_folder, url: deactivate_brand_ambassadors_document_folder_path(document_folder)
+        - else
+          = link_to '', {controller: 'document_folders', action: :activate, id: document_folder.id}, remote: true, class: 'icon-ok-circle', title: 'Deactivate'

@@ -101,10 +101,11 @@
 
   - if can? :documents, resource
     #event-documents.details_box
-      h3 DOCUMENTS
 
-      #event-documents-list
-        = render :partial => "documents/document", :collection => resource.documents.active + resource.campaign.documents, :locals => { parent: resource }
+      h3 DOCUMENTS
+      .link-list.documents-list
+        ul#documents-list
+          = render :partial => "documents/document", :collection => resource.documents.active + resource.campaign.documents, :locals => { parent: resource }
       .row-fluid
         .pull-left
           = link_to content_tag(:i,'', class: 'icon-plus-sign'), new_event_document_path(resource), remote: true if can? :create_document, resource

@@ -20,7 +20,7 @@ describe DocumentsController, :type => :controller do
           'attached_assets/original/test.jpg' => s3object
         } ))
       expect_any_instance_of(Paperclip::Attachment).to receive(:path).at_least(:once).and_return('/attached_assets/original/test.jpg')
-      expect_any_instance_of(AttachedAsset).to receive(:download_url).and_return('dummy.jpg')
+      expect_any_instance_of(AttachedAsset).to receive(:download_url).at_least(:once).and_return('dummy.jpg')
       expect {
         xhr :post, 'create', event_id: event.to_param, attached_asset: {direct_upload_url: 'https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg'}, format: :js
       }.to change(AttachedAsset, :count).by(1)
@@ -32,7 +32,7 @@ describe DocumentsController, :type => :controller do
       expect(document.attachable).to eq(event)
       expect(document.asset_type).to eq('document')
       expect(document.direct_upload_url).to eq('https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg')
-      expect(AssetsUploadWorker).to have_queued(document.id)
+      expect(AssetsUploadWorker).to have_queued(document.id, 'AttachedAsset')
     end
   end
 

@@ -18,7 +18,7 @@ describe Api::V1::EventExpensesController, :type => :controller do
 
     it "returns the list of expenses for the event" do
       event = FactoryGirl.create(:approved_event, company: company, campaign: campaign, place: place)
-      receipt1 = FactoryGirl.create(:attached_asset, created_at: Time.zone.local(2013, 8, 22, 11, 59))
+      receipt1 = FactoryGirl.build(:attached_asset, created_at: Time.zone.local(2013, 8, 22, 11, 59))
       expense1 = FactoryGirl.create(:event_expense, amount: 99.99, name: 'Expense #1', receipt: receipt1, event: event)
       expense2 = FactoryGirl.create(:event_expense, amount: 159.15, name: 'Expense #2', event: event)
       Sunspot.commit
@@ -75,7 +75,7 @@ describe Api::V1::EventExpensesController, :type => :controller do
       expect(expense.receipt.attachable).to eq(expense)
       expect(expense.receipt.asset_type).to eq(nil)
       expect(expense.receipt.direct_upload_url).to eq('https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg')
-      expect(AssetsUploadWorker).to have_queued(expense.receipt.id)
+      expect(AssetsUploadWorker).to have_queued(expense.receipt.id, 'AttachedAsset')
     end
   end
 

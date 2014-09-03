@@ -15,6 +15,19 @@
       | for more information about this section.
 
 .sidebar.collapsed#resource-filter-column
+  .dropdown
+    a.dropdown-toggle data-toggle="dropdown" href="#"  Choose a date range
+    ul.dropdown-menu aria-labelledby="dLabel" role="menu"
+      li.options
+       .row
+        .col-lg-4
+          | la
+        .col-lg-4
+      li.ranges
+      | \...
+      li
+        input type="submit" class="btn btn-primary" value="Apply"
+
   #collection-list-filters
 
 .main

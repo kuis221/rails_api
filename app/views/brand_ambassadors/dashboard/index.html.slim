@@ -1,0 +1,96 @@
+.sidebar.collapsed#resource-filter-column.hide
+  #collection-list-filters
+
+.details_box.thinner
+  #list-tools
+    .pull-left
+      = button_to 'New Visit', new_brand_ambassadors_visit_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn'} if can? :create, BrandAmbassadors::Visit
+    .text-right
+      button.btn.download.xlsx-download-link data-url="#{brand_ambassadors_visits_path(format:"xls")}" title="Download"
+        i.icon-download
+
+      #toggle-visits-view.btn-group
+        - if can?(:list, BrandAmbassadors::Visit)
+          a.btn.active.list href="#visits-scoller-outer" data-toggle="tab" title="List View"
+            i.icon-list
+        - if can?(:calendar, BrandAmbassadors::Visit)
+          a.btn.calendar href="#calendar-view" data-toggle="tab" title="Calendar View"
+            i.icon-grid
+
+  .tab-content
+    - if can?(:list, BrandAmbassadors::Visit)
+      #visits-scoller-outer.tab-pane.active
+        .link-list
+          ul#visits-list
+
+    - if can?(:calendar, BrandAmbassadors::Visit)
+      #calendar-view.tab-pane
+        #calendar-canvas
+
+- if can?(:index, BrandAmbassadors::Document)
+  #brand-ambassador-documents.details_box.thinner
+    = render partial: 'brand_ambassadors/document_folders/index', locals: { children: (current_company.document_folders.root_children.active + current_company.brand_ambassadors_documents.root_children.active).sort_by(&:name) }
+
+- if can?(:calendar, BrandAmbassadors::Visit)
+  javascript:
+    var visitsCalendar = false;
+    $('#toggle-visits-view a').on('shown', function(e){
+      $('#toggle-visits-view a').removeClass('active');
+      $(e.target).addClass('active')
+      if (e.target.getAttribute('href') == '#calendar-view'){
+        if (!visitsCalendar) {
+          visitsCalendar = $('#calendar-canvas').fullCalendar({
+            header: {
+              left: 'title',
+              center: '',
+              right: 'prev,next'
+            },
+            aspectRatio: 2.3,
+            titleFormat: {
+              month: 'MMMM, YYYY'
+            },
+            buttonIcons: false,
+            buttonText: {
+              prev: ' ',
+              next: ' '
+            },
+            eventLimit: false,
+            events: {
+              url: '/brand_ambassadors/visits.json',
+              className: 'visit-item',
+              backgroundColor: '#3e9ccf',
+              borderColor: '#3e9ccf',
+              textColor: 'white'
+            },
+            timeFormat: {
+              'default': function(){ return ''; }
+            },
+            eventRender: function(visit, element) {
+              element.find('.fc-title').append("<br/><span class='user-name'>" + visit.company_user.full_name + "</span>");
+            }
+          });
+        }
+      } else {
+
+      }
+    })
+
+- if can?(:list, BrandAmbassadors::Visit)
+  javascript:
+    $('#collection-list-filters').filteredList({
+      'source': '#{url_for(controller: 'brand_ambassadors/visits', action: :items)}',
+      'filtersUrl': '#{url_for(controller: 'brand_ambassadors/visits', action: :filters)}',
+      'listContainer' : '#visits-list',
+      'sorting': 'start_date',
+      'sorting_dir': 'asc',
+      'includeCalendars': false,
+      'selectDefaultDate': false,
+      'selectDefaultDateRange': false,
+      'includeAutoComplete': false,
+      'defaultParams': [{name: 'status[]', value: 'Active'}],
+      'applyTo': '#{controller.controller_name}',
+      'clearFilterParams': [{name: 'status[]', value: 'Active'}]
+    });
+- else
+  javascript:
+    $('#toggle-visits-view a.calendar').tab('show');

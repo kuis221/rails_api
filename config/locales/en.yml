@@ -5,6 +5,7 @@ en:
   activerecord:
     models:
       company_user: "User"
+      document_folder: "Folder"
     attributes:
       activity:
         start_date_date: "Start date"
@@ -180,6 +181,9 @@ en:
         activity: "New Activity"
         activity_type: "New Activity Type"
         custom_filter: "Save filter"
+        brand_ambassadors/visit: "New Visit"
+        brand_ambassadors/document: "New Document"
+        document_folder: "New Folder"
         filter_setting: "Filtering options"
       edit:
         company_user: "Edit User"
@@ -208,6 +212,9 @@ en:
         activity: "Edit Activity"
         activity_type: "Edit Activity Type"
         areas_campaign: "Customize %{name} Area"
+        brand_ambassadors/visit: "Edit Visit"
+        brand_ambassadors/document: "Edit Document"
+        document_folder: "Edit Folder"
 
   form_builder:
     modules:

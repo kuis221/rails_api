@@ -18,6 +18,7 @@
 #  direct_upload_url :string(255)
 #  processed         :boolean          default(FALSE), not null
 #  rating            :integer          default(0)
+#  folder_id         :integer
 #
 
 class AttachedAsset < ActiveRecord::Base
@@ -25,6 +26,8 @@ class AttachedAsset < ActiveRecord::Base
   has_and_belongs_to_many :tags, :order => 'name ASC', :autosave => true
   DIRECT_UPLOAD_URL_FORMAT = %r{\Ahttps:\/\/s3\.amazonaws\.com\/#{ENV['S3_BUCKET_NAME']}\/(?<path>uploads\/.+\/(?<filename>.+))\z}.freeze
   belongs_to :attachable, :polymorphic => true
+  belongs_to :folder, class_name: 'DocumentFolder'
+
   has_attached_file :file, PAPERCLIP_SETTINGS.merge({
     styles: -> (a) {
       if a.instance.is_pdf?
@@ -56,10 +59,12 @@ class AttachedAsset < ActiveRecord::Base
 
   before_validation :check_if_file_updated
 
+  validates :attachable, presence: true
+
   validates :direct_upload_url, allow_nil: true,
     uniqueness: true,
     format: { with: DIRECT_UPLOAD_URL_FORMAT }
-  validates :direct_upload_url, presence: true, unless: :file
+  validates :direct_upload_url, presence: true, unless: :file_file_name
 
   delegate :company_id, to: :attachable
 
@@ -321,7 +326,7 @@ class AttachedAsset < ActiveRecord::Base
         if direct_upload_url.present?
           move_uploaded_file
           if post_process_required?
-            Resque.enqueue(AssetsUploadWorker, id)
+            Resque.enqueue(AssetsUploadWorker, id, self.class.name)
           else
             transfer_and_cleanup
           end

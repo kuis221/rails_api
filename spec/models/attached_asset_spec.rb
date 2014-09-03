@@ -18,12 +18,22 @@
 #  direct_upload_url :string(255)
 #  processed         :boolean          default(FALSE), not null
 #  rating            :integer          default(0)
+#  folder_id         :integer
 #
 
 require 'rails_helper'
 
 describe AttachedAsset, :type => :model do
   it { is_expected.to belong_to(:attachable) }
+  it { is_expected.to belong_to(:folder) }
+
+  it { is_expected.to validate_presence_of(:attachable) }
+
+  describe "direct_upload_url validations" do
+    before { subject.file_file_name = nil }
+
+    it { is_expected.to validate_presence_of(:direct_upload_url) }
+  end
 
   describe "#activate" do
     let(:attached_asset) { FactoryGirl.build(:attached_asset, active: false) }

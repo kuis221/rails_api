@@ -42,6 +42,8 @@
             a href="#activities_permissions" Activities
           li
             a href="#admin_permissions" Admin
+          li
+            a href="#brand_ambassadors_permissions" Brand Ambassadors
 
         .campaigns_box
           .tab-content
@@ -73,6 +75,10 @@
               = render 'admin_permissions'
 
             #admin_permissions.tab-pane
+              = render 'admin_permissions'
+
+            #brand_ambassadors_permissions.tab-pane
+              = render 'brand_ambassadors_permissions'
 
 = render partial: 'help_tutorial'
 

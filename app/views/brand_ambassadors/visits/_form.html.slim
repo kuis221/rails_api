@@ -1,0 +1,22 @@
+- remote ||= false
+= simple_form_for(resource, remote: remote || false) do |f|
+
+  .form-inputs.edit-event
+    .chosen-campaign
+      = f.input :name
+
+    .row-fluid
+      .span12
+        .pull-left
+          = f.input :start_date, :as => :date_picker
+        .to.pull-left to
+        .pull-left
+          = f.input :end_date, :as => :date_picker
+
+
+    = f.association :company_user, collection:  current_company.company_users.for_dropdown, input_html: {class: 'chosen-enabled', 'data-placeholder' => " "}, label: 'Employee'
+
+  .form-actions
+    = f.button :submit, class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
+    = "&nbsp;".html_safe
+    = f.button :button, 'Cancel', class: 'btn btn-cancel'

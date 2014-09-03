@@ -1,5 +1,57 @@
 @import "variables";
 
+form.button_to {
+	display: inline-block;
+	margin-right: 10px;
+}
+
+
+.form-actions{
+	background-color: white;
+	border:0;
+	margin: 0;
+	padding: 0;
+}
+
+form{
+	margin: 0;
+}
+
+control-group{
+	label.control-label{
+		color:$text;
+	}
+	&.error {
+		input, textarea {
+			&:focus {
+				box-shadow: none;
+				-webkit-box-shadow: none;
+			}
+		}
+	}
+}
+
+.chzn-default span {
+	color: $user_menu;
+}
+
+// Input styles
+
+input:-moz-placeholder,
+textarea:-moz-placeholder {
+	color: white;
+}
+
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+	color: white;
+}
+
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+	color: white;
+}
+
 /* Checkboxes */
 .checker {
 	background-color: $grey_one;

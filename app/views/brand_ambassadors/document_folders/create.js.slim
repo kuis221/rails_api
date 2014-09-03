@@ -1,0 +1,15 @@
+- if resource.errors.any?
+  = render 'form_dialog'
+- else
+  - list_class = "documents-list"
+  - if respond_to?(:parent?) && parent?
+    |
+      $('##{list_class}').prepend('#{j render(resource)}');
+  - else
+    |
+      $('##{list_class}').prepend('#{j render(resource)}');
+  |
+     $('.bootbox.modal').modal('hide');
+     $('##{list_class} #new-folder-form').collapse('hide');
+     $('##{list_class}').prepend($('#documents-list #new-folder-form'));
+     $('##{list_class} #new-folder-form #document_folder_name').val('');

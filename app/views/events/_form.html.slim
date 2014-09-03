@@ -1,7 +1,7 @@
 - remote ||= false
 - venue = parent if parent.present? && parent.is_a?(Venue)
 = simple_form_for(@event, remote: remote || false) do |f|
-
+  = f.hidden_field :visit_id
   .form-inputs.edit-event
     .chosen-campaign
       = f.association :campaign, collection: allowed_campaigns(venue), input_html: {class: 'chosen-enabled'}

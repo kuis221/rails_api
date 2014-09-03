@@ -79,17 +79,20 @@ class Ability
 
       can :edit_data, Event
 
-      can :access, :results
+      can :access, [:results, :brand_ambassadors]
 
     # A logged in user
     elsif user.id
       can do |action, subject_class, subject|
         Rails.logger.debug "Checking #{action} on #{subject_class.to_s} :: #{subject}"
         user.role.cached_permissions.select{|p| aliases_for_action(action).map(&:to_s).include?(p.action.to_s)}.any? do |permission|
+          # p "a: #{subject.nil?}"
+          # p "b: #{( subject.respond_to?(:company_id) && ((subject.company_id.nil? && [:create, :new].include?(action)) || subject.company_id == user.current_company.id) )}"
+          # p "c: #{permission.subject_id.nil?} || (#{subject.respond_to?(:id)} ? #{permission.subject_id == subject.id} : #{permission.subject_id == subject.to_s}) )}"
           permission.subject_class == subject_class.to_s &&
           (   subject.nil? ||
             ( subject.respond_to?(:company_id) && ((subject.company_id.nil? && [:create, :new].include?(action)) || subject.company_id == user.current_company.id) ) ||
-            ( permission.subject_id.nil? || (subject.respond_to?(:id) ? permission.subject_id == subject.id : permission.subject_id == subject.to_s) )
+            ( !subject.respond_to?(:company_id) && ( permission.subject_id.nil? || (subject.respond_to?(:id) ? permission.subject_id == subject.id : permission.subject_id == subject.to_s) ))
           )
         end
       end
@@ -158,6 +161,17 @@ class Ability
         user.current_company_user.role.has_permission?(:index_photo_results, AttachedAsset) ||
         user.current_company_user.role.has_permission?(:gva_report, Campaign) ||
         user.current_company_user.role.has_permission?(:event_status, Campaign)
+      end
+
+      can :access, :brand_ambassadors do
+        user.current_company_user.role.has_permission?(:list, BrandAmbassadors::Visit) ||
+        user.current_company_user.role.has_permission?(:calendar, BrandAmbassadors::Visit) ||
+        user.current_company_user.role.has_permission?(:index, BrandAmbassadors::Document)
+      end
+
+      can :index, BrandAmbassadors::Visit do
+        user.current_company_user.role.has_permission?(:list, BrandAmbassadors::Visit) ||
+        user.current_company_user.role.has_permission?(:calendar, BrandAmbassadors::Visit)
       end
 
       can [:build, :preview, :update], Report do |report|
@@ -309,9 +323,15 @@ class Ability
         user.role.has_permission?(:index_documents, Event) && can?(:show, event)
       end
 
-      can :create, AttachedAsset do |asset|
-        asset.attachable.is_a?(Event) && asset.asset_type == 'document' && user.role.has_permission?(:create_document, Event) && can?(:show, asset.attachable)
+      if user.role.has_permission?(:create_photo, Event) || user.role.has_permission?(:create_document, Event)
+        can [:new, :create], AttachedAsset
       end
+      # can :create, AttachedAsset do |asset|
+      #   can?(:show, asset.attachable) && asset.attachable.is_a?(Event) && (
+      #     ( asset.asset_type == 'document' && user.role.has_permission?(:create_document, Event) ) ||
+      #     ( asset.asset_type == 'photo' && user.role.has_permission?(:create_photo, Event) )
+      #   )
+      # end
 
       can [:deactivate, :activate], AttachedAsset do |asset|
         asset.attachable.is_a?(Event) && asset.asset_type == 'document' && user.role.has_permission?(:deactivate_document, Event) && can?(:show, asset.attachable)
@@ -320,10 +340,6 @@ class Ability
       # Photos permissions
       can :photos, Event do |event|
         user.role.has_permission?(:index_photos, Event) && can?(:show, event)
-      end
-
-      can :create, AttachedAsset do |asset|
-        asset.attachable.is_a?(Event) && asset.asset_type == 'photo' && user.role.has_permission?(:create_photo, Event) && can?(:show, asset.attachable)
       end
 
       can [:deactivate, :activate], AttachedAsset do |asset|

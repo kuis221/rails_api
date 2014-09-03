@@ -1,0 +1,32 @@
+.row-fluid.with-details-close-bar
+  = resource_details_bar("You are viewing visit details. Click to close.")
+
+  .details_box.padding-top-close-bar
+    h2= resource.name
+
+    .calendar-data
+      i.icon-calendar
+      span
+        = [format_date(resource.start_date), format_date(resource.end_date)].uniq.join(' - ').html_safe
+
+    .description-data
+      i.icon-user
+      span
+        = resource.company_user.try(:name)
+
+    .links-data
+      = link_to '', edit_brand_ambassadors_visit_path(resource), remote: true, title: 'Edit', class: 'icon-edit' if can?(:edit, resource)
+      = active_inactive_buttons(resource) if can?(:deactivate, resource)
+
+  #visit-events.details_box
+    h3 EVENTS
+    - if can?(:create, Event)
+      = button_to 'Create', new_brand_ambassadors_visit_event_path(resource), remote: true, class: 'btn btn-primary', :id => 'new-event-btn', method: :get
+
+    .link-list
+      ul#events-list
+        = render partial: 'events/event', collection: resource.events.accessible_by_user(current_company_user).order('events.start_at ASC')
+
+
+  #visit-documents.details_box
+    = render partial: 'brand_ambassadors/document_folders/index', locals: {children: (resource.document_folders.root_children.active + resource.documents.root_children.active).sort_by(&:name) }
