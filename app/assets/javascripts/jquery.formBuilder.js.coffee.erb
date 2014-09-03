@@ -500,57 +500,92 @@ FormField = Class.extend {
 		])
 
 	optionsField: (type='option') ->
-		return if @attributes.kpi_id
 		list = if type is 'statement' then @attributes.statements else @attributes.options
 		min_fields_allowed = if type is 'statement' then @attributes.min_statements_allowed else @attributes.min_options_allowed
 		visible_items = list.filter (item) -> not item._destroy
 		titles = {'option': ['Option','Options'], 'statement': ['Statement', 'Statements']}
 		$('<div class="control-group field-options" data-type="'+type+'">').append($('<label class="control-label">').text(titles[type][1])).append(
 			$.map list, (option, index) =>
-				$('<div class="controls field-option">').data('option', option).append([
+				optionHidden = option._destroy is '1'
+				$('<div class="controls field-option">').addClass(if @_optionIsExcluded(option) then 'disabled-option' else '' ).data('option', option).append([
 					$('<input type="hidden" name="'+type+'['+index+'][id]">').val(option.id),
 					$('<input type="hidden" name="'+type+'['+index+'][_destroy]">'),
-					$('<input type="text" name="'+type+'['+index+'][name]">').val(option.name).on 'keyup', (e) =>
-						option = $(e.target).closest('.field-option').data('option')
-						option.name = $(e.target).val()
-						@form.setModified()
-						@refresh()
-						true
-					$('<div class="option-actions">').append(
-						# Button for adding a new option to the field
-						$('<a href="#" class="add-option-btn" title="Add option after this"><i class="icon-plus-sign"></i></a>').on 'click', (e) =>
+					$('<input type="text" name="'+type+'['+index+'][name]">').attr('readonly', (@attributes.kpi_id || !@form.options.canEdit)).val(option.name).on 'keyup', (e) =>
+						if @form.options.canEdit
 							option = $(e.target).closest('.field-option').data('option')
-							index = list.indexOf(option)+1
-							list.splice(index,0, {id: null, name: titles[type][0] + ' ' + (list.length+1), ordering: index})
-							item.ordering = i for item,i in list
-							$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
-							@refresh()
+							option.name = $(e.target).val()
 							@form.setModified()
-							false
-
-						# Button for removing an option of the field
-						if @form.options.canEdit && visible_items.length > min_fields_allowed 
-							$('<a href="#" class="remove-option-btn" title="Remove this option"><i class="icon-minus-sign"></i></a>').on 'click', (e) =>
-								option = $(e.target).closest('.field-option').data('option')
-								if option.id isnt null
-									bootbox.confirm "Removing this " + type + " will remove all the entered data/answers associated with it.<br/>&nbsp;<p>Are you sure you want to do this? This cannot be undone</p>", (result) =>
-										if result
-											option._destroy = '1'
+							@refresh()
+							true
+					$('<div class="option-actions">').append(
+						if @attributes.kpi_id
+							[
+								if @_optionIsExcluded(option)
+									# Button for adding a new option to the field
+									$('<a href="#" class="icon icon-rounded-ok disabled-kpi-option" title="Activate this option"></a>').on 'click', (e) =>
+										option = $(e.target).closest('.field-option').data('option')
+										if @attributes.settings.disabled_segments
+											index = @attributes.settings.disabled_segments.indexOf("#{option.id}")
+											@attributes.settings.disabled_segments.splice(index, 1)
 											$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
 											@refresh()
 											@form.setModified()
+										false
 								else
-									bootbox.confirm "Are you sure you want to remove this " + type + "?", (result) =>
-										if result
-											list.splice(list.indexOf(option),1)
-											$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
-											@refresh()
-											@form.setModified()
-								false
+									# Button for deactivating a segment for a KPI field
+									$('<a href="#" class="icon icon-remove-circle enabled-kpi-option" title="Deactivate this option"></a>').on 'click', (e) =>
+										bootbox.confirm "Are you sure you want to disable the #{type} \"#{option.name}\" for this KPI?", (result) =>
+											if result
+												option = $(e.target).closest('.field-option').data('option')
+												@attributes.settings ||= {}
+												@attributes.settings.disabled_segments ||= []
+												@attributes.settings.disabled_segments.push "#{option.id}"
+												$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
+												@refresh()
+												@form.setModified()
+										false
+							]
 						else
-							null
+							[
+								if @form.options.canEdit
+									# Button for adding a new option to the field
+									$('<a href="#" class="add-option-btn" title="Add option after this"></a>').on 'click', (e) =>
+										option = $(e.target).closest('.field-option').data('option')
+										index = list.indexOf(option)+1
+										list.splice(index,0, {id: null, name: titles[type][0] + ' ' + (list.length+1), ordering: index})
+										item.ordering = i for item,i in list
+										$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
+										@refresh()
+										@form.setModified()
+										false
+								else
+									null
+
+								# Button for removing an option of the field
+								if @form.options.canEdit && visible_items.length > min_fields_allowed 
+									$('<a href="#" class="remove-option-btn" title="Remove this option"></a>').on 'click', (e) =>
+										option = $(e.target).closest('.field-option').data('option')
+										if option.id isnt null
+											bootbox.confirm "Removing this " + type + " will remove all the entered data/answers associated with it.<br/>&nbsp;<p>Are you sure you want to do this? This cannot be undone</p>", (result) =>
+												if result
+													option._destroy = '1'
+													$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
+													@refresh()
+													@form.setModified()
+										else
+											bootbox.confirm "Are you sure you want to remove this " + type + "?", (result) =>
+												if result
+													list.splice(list.indexOf(option),1)
+													$('.field-options[data-type='+type+']').replaceWith @optionsField(type)
+													@refresh()
+													@form.setModified()
+										false
+								else
+									null
+							]
+
 					)
-				]).css(display: (if option._destroy is '1' then 'none' else ''))
+				]).css(display: (if optionHidden then 'none' else '' ))
 		)
 
 	getOptionsAttributes: () ->
@@ -592,6 +627,9 @@ FormField = Class.extend {
 			"Removing this field will remove all the entered data/answers associated with it.<br/>&nbsp;<p>Are you sure you want to do this?</p>"
 		else
 			"Are you sure you want to remove this field?"
+
+	_optionIsExcluded: (option) ->
+		(@attributes.kpi_id && @attributes.settings.disabled_segments && @attributes.settings.disabled_segments.indexOf("#{option.id}") >= 0)
 
 	refresh: () ->
 		@field.html('').append(
@@ -851,9 +889,7 @@ DropdownField = FormField.extend {
 			$('<div class="controls">').append($('<select disabled="disabled">').append(
 				$('<option>').attr('value', '').text(''),
 				$.map @attributes.options, (option, index) =>
-					if option._destroy is '1'
-						''
-					else
+					if option._destroy isnt '1' and not @_optionIsExcluded(option)
 						$('<option>').attr('value', option.id).text(option.name)
 			))
 		]
@@ -895,7 +931,7 @@ RadioField = FormField.extend {
 			$('<label class="control-label control-group-label">').text(@attributes.name),
 			$('<div class="controls">').append(
 				$.map @attributes.options, (option, index) =>
-					if option._destroy isnt '1'
+					if option._destroy isnt '1' and not @_optionIsExcluded(option)
 						$('<label>').addClass('radio').append(
 							$('<input>').attr('type', 'radio').attr('value', option.id)
 						).append(' '+ option.name)
@@ -948,7 +984,7 @@ PercentageField = FormField.extend {
 				</div>'),
 				$.map @attributes.options, (option, index) =>
 					id = "form_field_option_#{Math.floor(Math.random() * 100) + 1}_#{index}"
-					if option._destroy isnt '1'
+					if option._destroy isnt '1' and not @_optionIsExcluded(option)
 						$('<div class="control-group">').append(
 							$('<div class="input-append"><input type="text" id="'+id+'" readonly="readonly"><span class="add-on">%</span>')
 							$('<label for="'+id+'">').addClass('segment-label').text(' '+ option.name)
@@ -1075,7 +1111,7 @@ SummationField = FormField.extend {
 			$('<label class="control-label control-group-label">').text(@attributes.name),
 			$('<div class="controls">').append(
 				$.map @attributes.options, (option, index) =>
-					if option._destroy isnt '1'
+					if option._destroy isnt '1' and not @_optionIsExcluded(option)
 						$('<div class="field-option">').append(
 							$('<label for="option-'+fieldId+index+'">').addClass('summation').text(option.name+ ' '),
 							$('<input name="option-'+fieldId+index+'" id="option-'+fieldId+index+'" type="text" readonly="readonly">')
@@ -1190,7 +1226,7 @@ CheckboxField = FormField.extend {
 			$('<label class="control-label control-group-label">').text(@attributes.name),
 			$('<div class="controls">').append(
 				$.map @attributes.options, (option, index) =>
-					if option._destroy isnt '1'
+					if option._destroy isnt '1' and not @_optionIsExcluded(option)
 						$('<label>').addClass('checkbox').append(
 							$('<input>').attr('type', 'checkbox').attr('value', option.id)
 						).append(' '+ option.name)

@@ -63,6 +63,47 @@ describe FormField, :type => :model do
     end
   end
 
+  describe "#options_for_input" do
+    let(:campaign) { FactoryGirl.create(:campaign) }
+    it "should return the kpis segments for a KPI form field" do
+      kpi =  FactoryGirl.create(:kpi, name: 'My Custom KPI',
+        description: 'my custom kpi description',
+        kpi_type: 'count', capture_mechanism: 'dropdown', company: campaign.company,
+        kpis_segments: [
+          segment1 = FactoryGirl.create(:kpis_segment, text: 'Option1'),
+          segment2 = FactoryGirl.create(:kpis_segment, text: 'Option2')] )
+
+      field = campaign.add_kpi(kpi)
+
+      expect(field.options_for_input).to eql [['Option1', segment1.id], ['Option2', segment2.id]]
+    end
+
+    it "should NOT return the kpis segments that were excluded" do
+      kpi =  FactoryGirl.create(:kpi, name: 'My Custom KPI',
+        description: 'my custom kpi description',
+        kpi_type: 'count', capture_mechanism: 'dropdown', company: campaign.company,
+        kpis_segments: [
+          segment1 = FactoryGirl.create(:kpis_segment, text: 'Option1'),
+          segment2 = FactoryGirl.create(:kpis_segment, text: 'Option2')] )
+
+      field = campaign.add_kpi(kpi)
+      field.settings ||= {}
+      field.settings['disabled_segments'] = [segment1.id.to_s]
+
+      expect(field.options_for_input).to eql [['Option2', segment2.id]]
+    end
+
+    it "should return the form field options" do
+      field = FactoryGirl.create(:form_field, type: 'FormField::Dropdown',
+        fieldable: campaign, kpi_id: nil,
+        options: [
+          option1 = FactoryGirl.create(:form_field_option, name: 'Option1'),
+          option2 = FactoryGirl.create(:form_field_option, name: 'Option2')] )
+
+      expect(field.options_for_input).to eql [['Option1', option1.id], ['Option2', option2.id]]
+    end
+  end
+
   describe "#format_html" do
     it "should return the values as is" do
       expect(field.format_html(FactoryGirl.build(:form_field_result, value: nil, form_field: field))).to eql nil

@@ -1032,7 +1032,7 @@ RSpec.shared_examples "a fieldable element that accept kpis" do
     end
 
     within form_field_settings_for 'My Custom KPI' do
-      fill_in 'Field label', with: 'My Custom KPI'
+      fill_in 'Field label', with: 'My Custom KPI custom name'
       unicheck('Required')
     end
 
@@ -1048,17 +1048,17 @@ RSpec.shared_examples "a fieldable element that accept kpis" do
       wait_for_ajax
     }.to change(FormField, :count).by(1)
     field = FormField.last
-    expect(field.name).to eql 'My Custom KPI'
+    expect(field.name).to eql 'My Custom KPI custom name'
     expect(field.type).to eql 'FormField::Number'
     expect(field.kpi_id).to eql field.kpi_id
 
-    within form_field_settings_for 'My Custom KPI' do
-      expect(find_field('Field label').value).to eql 'My Custom KPI'
+    within form_field_settings_for 'My Custom KPI custom name' do
+      expect(find_field('Field label').value).to eql 'My Custom KPI custom name'
       expect(find_field('Required')['checked']).to be_truthy
     end
 
     # Remove the KPI form the form
-    form_field_settings_for 'My Custom KPI'
+    form_field_settings_for 'My Custom KPI custom name'
     within form_builder.find('.field.selected') do
       click_js_link 'Remove'
     end
@@ -1068,6 +1068,64 @@ RSpec.shared_examples "a fieldable element that accept kpis" do
     # Make sure the KPI is again available in the KPIs list
     within('.fields-wrapper') do
       expect(page).to have_content('My Custom KPI')
+    end
+  end
+
+  scenario "disable KPI's segments in form builder" do
+    kpi =  FactoryGirl.create(:kpi, name: 'My Custom KPI',
+        description: 'my custom kpi description',
+        kpi_type: 'count', capture_mechanism: 'dropdown', company: fieldable.company,
+        kpis_segments: [
+          segment1 = FactoryGirl.create(:kpis_segment, text: 'Option1'),
+          segment2 = FactoryGirl.create(:kpis_segment, text: 'Option2')] )
+
+    visit fieldable_path
+
+    expect(page).to have_selector('h2', text: fieldable.name)
+    find('.fields-wrapper .accordion-toggle', text: 'KPIs').click
+    find('.fields-wrapper .accordion-toggle', text: 'Fields').click # Hide fields
+
+    # Wait for accordeon effect to complate
+    within('.fields-wrapper') do
+      expect(page).to have_no_content('Dropdown')
+    end
+
+    kpi_field(kpi).drag_to form_builder
+
+    expect(form_builder).to have_form_field('My Custom KPI', options: ['Option1', 'Option2'])
+
+    within form_field_settings_for 'My Custom KPI' do
+      within find('.field-option', match: :first) do
+        expect(find('input[type="text"]').value).to eql 'Option1'
+        click_js_link 'Deactivate this option'
+        confirm_prompt 'Are you sure you want to disable the option "Option1" for this KPI?'
+        expect(page).to have_link('Activate this option')
+      end
+    end
+
+    expect(form_builder).to have_form_field('My Custom KPI', options: ['Option2'])
+
+    # Close the field settings form
+    form_builder.trigger 'click'
+    expect(page).to have_no_selector('.field-attributes-panel')
+
+    # Save the form
+    expect {
+      click_js_button 'Save'
+      wait_for_ajax
+    }.to change(FormField, :count).by(1)
+    field = FormField.last
+    expect(field.name).to eql 'My Custom KPI'
+    expect(field.type).to eql 'FormField::Dropdown'
+    expect(field.kpi_id).to eql field.kpi_id
+    expect(field.settings['disabled_segments']).to eql [segment1.id.to_s]
+
+    within form_field_settings_for 'My Custom KPI' do
+      expect(find_field('Field label').value).to eql 'My Custom KPI'
+      within find('.field-option', match: :first) do
+        expect(find('input[type="text"]').value).to eql 'Option1'
+        expect(page).to have_link('Activate this option')
+      end
     end
   end
 end

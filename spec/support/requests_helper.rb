@@ -44,7 +44,7 @@ module CapybaraBrandscopicHelpers
   end
 
   def confirm_prompt(message)
-    within find('.modal.confirm-dialog.in', visible: true) do
+    within find(:xpath, '//div[contains(@class, \'modal\') and contains(@class, \'confirm-dialog\') and contains(@class, \'in\')]', visible: true) do
       expect(page).to have_content(message)
       # For some reason, the click_link function doesn't always works, so we are using JS
       # for this instead
