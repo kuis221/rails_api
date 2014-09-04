@@ -679,18 +679,23 @@ ul.dates-pref{ /*Take out this class when implemented the new design*/
 				display: block;
 				padding: 6px 8px;
 				width: 100%;
+				&:hover, &:focus{
+					text-decoration: none;
+				}
 			}
 		}
 		.btn{
 			width: 100%;
 		}
 		label{
+			color: $user_menu;
 			font-size: 11px;
 		}
 		ul{
 			box-shadow: none;
 			left: auto;
 			right: 0;
+			margin: 10px 0 0;
 			min-width: 305px;
 			-webkit-box-shadow: none;
 			&:before{
@@ -715,6 +720,18 @@ ul.dates-pref{ /*Take out this class when implemented the new design*/
 					}
 				}
 				&.ranges{
+					.separate{
+						display: inline-block;
+						float: left;
+						margin:30px 0;
+						text-align: center;
+						width: 5%;
+					}
+					.start-date, .end-date{
+						display: inline-block;
+						float: left;
+						width: 47.5%;
+					}
 				}
 			}
 		}
