@@ -54,6 +54,9 @@ input[type="color"],
 		-webkit-box-shadow: none;
 		outline:0;
 	}
+	&.date_picker[readonly]{
+		color: silver;
+	}
 	&.input-calendar{
 		background: url(/assets/calendar.svg) no-repeat left !important;
 		text-align: right;

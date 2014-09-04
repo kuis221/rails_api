@@ -673,9 +673,10 @@ ul.dates-pref{ /*Take out this class when implemented the new design*/
 				text-decoration: underline;
 			}
 			&.dropdown-toggle{
-				border: 1px solid red;
+				border: 1px solid $grey_four;
 				box-sizing: border-box;
-				@include border-radius (4px);
+				color: $user_menu;
+				@include border-radius (6px);
 				display: block;
 				padding: 6px 8px;
 				width: 100%;
@@ -699,8 +700,18 @@ ul.dates-pref{ /*Take out this class when implemented the new design*/
 			min-width: 305px;
 			-webkit-box-shadow: none;
 			&:before{
-				border-bottom: 10px solid white;
+				content: '';
+				background: white;
+				height: 12px;
+				width: 12px;
+				position: absolute;
+				border: 0;
 				left: 265px;
+				z-index: 118;
+				-webkit-transform: rotate(45deg);
+				transform: rotate(45deg);
+				box-shadow: -1px -1px 0px 0px rgba(0, 0, 0, 0.15);
+				top: -5px;
 			}
 			.row-fluid{
 				[class^='span']{
@@ -1230,7 +1241,8 @@ footer{
 			    background: $grey_one;
 			    height: 15px; width: 15px;
 			    position: absolute;
-			    bottom: -7px; left: 45%;
+			    bottom: -7px;
+					left: 47%;
 			    z-index: 4;
 			    -webkit-transform: rotate(45deg);
 			    transform: rotate(45deg);
@@ -1344,6 +1356,7 @@ header{
 					li{
 						a {
 							color: $grey_two;
+							font-size: 13px;
 							font-weight: bold;
 							padding: 6px 15px;
 							span{
