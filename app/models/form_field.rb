@@ -139,7 +139,7 @@ class FormField < ActiveRecord::Base
 
   def options_for_input
     if kpi_id.present?
-      kpi.kpis_segments.map{|s| [s.text, s.id]}
+      kpi.kpis_segments.where.not(id: (settings.try(:[], 'disabled_segments') || [0]).map(&:to_i)).pluck(:text, :id)
     else
       self.options.order(:ordering).map{|o| [o.name, o.id]}
     end

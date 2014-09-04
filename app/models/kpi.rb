@@ -129,7 +129,7 @@ class Kpi < ActiveRecord::Base
       name: name,
       type: form_field_type,
       kpi_id: self.id,
-      options: (['count', 'percentage'].include?(kpi_type) ? kpis_segments.pluck(:text).each_with_index.map{|text, i| {id: i, name: text, ordering: i} } : [])
+      options: (['count', 'percentage'].include?(kpi_type) ? kpis_segments.pluck(:text, :id).each_with_index.map{|opt, i| {id: opt[1], name: opt[0], ordering: i} } : [])
     }
   end
 
