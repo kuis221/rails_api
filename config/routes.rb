@@ -499,6 +499,7 @@ Brandscopic::Application.routes.draw do
   namespace :brand_ambassadors do
     resources :dashboard, only: [:index]
     resources :visits, except: [:destroy] do
+      get :autocomplete, on: :collection
       get :filters, on: :collection, format: :json
       get :items, on: :collection, format: :html
       member do

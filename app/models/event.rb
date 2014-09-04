@@ -179,7 +179,7 @@ class Event < ActiveRecord::Base
   after_validation :set_event_timezone
 
   before_save :set_promo_hours, :check_results_changed
-  after_save :reindex_associated
+  after_commit :reindex_associated
   after_commit :index_venue
   after_commit :create_notifications
 
@@ -525,7 +525,7 @@ class Event < ActiveRecord::Base
           with(:has_surveys, true) if params[:with_surveys_only].present?
           with(:has_comments, true) if params[:with_comments_only].present?
           if params.has_key?(:brand) and params[:brand].present?
-            campaing_ids = Campaign.select('DISTINCT(campaigns.id)').joins(:brands).where(brands: {id: params[:brand]}, company_id: params[:company_id]).map(&:id)
+            campaing_ids = Campaign.joins(:brands).where(brands: {id: params[:brand]}, company_id: params[:company_id]).pluck('DISTINCT(campaigns.id)')
             with "campaign_id", campaing_ids + [0]
           end
 
@@ -548,7 +548,7 @@ class Event < ActiveRecord::Base
             (attribute, value) = params[:q].split(',')
             case attribute
             when 'brand'
-              campaigns = Campaign.select('campaigns.id').joins(:brands).where(brands: {id: value}).map(&:id)
+              campaigns = Campaign.select('campaigns.id').joins(:brands).where(brands: {id: value}).pluck('campaigns.id')
               campaigns = '-1' if campaigns.empty?
               with "campaign_id", campaigns
             when 'campaign', 'place'
@@ -761,6 +761,10 @@ class Event < ActiveRecord::Base
         campaign.first_event = self if campaign.first_event_at.nil? || campaign.first_event_at > self.start_at
         campaign.last_event  = self if campaign.last_event_at.nil?  || campaign.last_event_at  < self.start_at
         campaign.save if campaign.changed?
+      end
+
+      if visit.present?
+        Sunspot.index visit
       end
 
       if @refresh_event_data
