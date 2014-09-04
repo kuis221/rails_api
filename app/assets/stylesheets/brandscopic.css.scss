@@ -59,6 +59,15 @@ a{
 	}
 }
 
+.link{
+	&.link-blue{
+		&:hover{
+			color: $blue;
+			text-decoration:underline;
+		}
+	}
+}
+
 abbr[title]{
 	border:0;
 }
@@ -505,7 +514,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 
 	a.datepick-cmd{
 		display: inline-block;
-		margin-top: 8px;
+		margin-top: 9px;
 		overflow: hidden;
 		position:relative;
 		text-indent: 13%;
@@ -575,16 +584,20 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			padding-top: 5px;
 		}
 		td{
-			padding: 0.2em 0.6em 0.3em 0.1em;
+			padding: 2px;
 		}
 		a{
+			box-sizing: border-box;
 			color: $text;
 			font-size: 0.86em;
 			padding: 2px 3px;
 			-webkit-border-radius: 12px;
 			border-radius: 12px;
+			line-height:17px;
+			width: 24px;
+			height: 24px;
 			&.datepick-today{
-				background-color: $brand !important;
+				background-color: #3381a8 !important;
 				color: white;
 				font-size: 0.86em;
 				font-weight: 300;
@@ -593,10 +606,15 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 				border-radius: 12px;
 			}
 			&.datepick-event{
-				color: $buttons;
 				font-weight: 600;
-				&:hover{
-					color: $buttons;
+				position: relative;
+				&:after{
+					color: $user_menu;
+					content:"\2022";
+					font-size: 7px;
+					position: absolute;
+					bottom: -4px;
+					right: 10px;
 				}
 			}
 			&:focus{
@@ -612,8 +630,12 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		}
 	}
 	.datepick-month td .datepick-selected {
-		background-color: $grey_one !important;
-		color: $text !important;
+		background-color: $brand !important;
+		color: white !important;
+		font-weight: 400;
+		&:after{
+			color: white;
+		}
 	}
 	.datepick-month td, .datepick-month a, .datepick-weekend {
 		background-color: white !important;
@@ -638,6 +660,95 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 
 // Date Preferences Panel (sidebar)
 
+ul.dates-pref{ /*Take out this class when implemented the new design*/
+	display: none;
+}
+
+.dates-pref{
+  .dropdown.select-ranges{
+		a{
+			color: $brand;
+			&:hover{
+				color: $blue;
+				text-decoration: underline;
+			}
+			&.dropdown-toggle{
+				border: 1px solid $grey_four;
+				box-sizing: border-box;
+				color: $user_menu;
+				@include border-radius (6px);
+				display: block;
+				padding: 6px 8px;
+				width: 100%;
+				&:hover, &:focus{
+					text-decoration: none;
+				}
+			}
+		}
+		.btn{
+			width: 100%;
+		}
+		label{
+			color: $user_menu;
+			font-size: 11px;
+		}
+		ul{
+			box-shadow: none;
+			left: auto;
+			right: 0;
+			margin: 10px 0 0;
+			min-width: 305px;
+			-webkit-box-shadow: none;
+			&:before{
+				content: '';
+				background: white;
+				height: 12px;
+				width: 12px;
+				position: absolute;
+				border: 0;
+				left: 265px;
+				z-index: 118;
+				-webkit-transform: rotate(45deg);
+				transform: rotate(45deg);
+				box-shadow: -1px -1px 0px 0px rgba(0, 0, 0, 0.15);
+				top: -5px;
+			}
+			.row-fluid{
+				[class^='span']{
+					font-size: 11px;
+					font-weight: bold;
+					margin: 0 2px;
+					min-height: 25px;
+				}
+			}
+			li{
+				padding: 10px;
+				padding-bottom: 5px;
+				&.options{
+					border-bottom: 1px solid $grey_four;
+					[class^='span']{
+						text-align: center;
+					}
+				}
+				&.ranges{
+					.separate{
+						display: inline-block;
+						float: left;
+						margin:30px 0;
+						text-align: center;
+						width: 5%;
+					}
+					.start-date, .end-date{
+						display: inline-block;
+						float: left;
+						width: 47.5%;
+					}
+				}
+			}
+		}
+	}
+}
+/*
 	.dates-pref{
 		list-style: none;
 		margin-left: 0px;
@@ -672,7 +783,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 				}
 			}
 		}
-	}
+	}*/
 
 	.custom-data-panel{
 		.form-group{
@@ -1130,7 +1241,8 @@ footer{
 			    background: $grey_one;
 			    height: 15px; width: 15px;
 			    position: absolute;
-			    bottom: -7px; left: 45%;
+			    bottom: -7px;
+					left: 47%;
 			    z-index: 4;
 			    -webkit-transform: rotate(45deg);
 			    transform: rotate(45deg);
@@ -1244,6 +1356,7 @@ header{
 					li{
 						a {
 							color: $grey_two;
+							font-size: 13px;
 							font-weight: bold;
 							padding: 6px 15px;
 							span{
@@ -1468,6 +1581,13 @@ label{
 		letter-spacing: -0.5px;
 		line-height: 22px;
 		margin-bottom: 3px;
+		padding-left: 28px;
+		position: relative;
+		.checker{
+			left: 0px;
+			top: 2px;
+			position: absolute;
+		}
 	}
 
 	&.time-filter{
@@ -3308,29 +3428,32 @@ ul.ui-widget-content{
 				}
 			}
 		}
-		label.control-label {
-			color: $brand;
-			display: inline-block;
-			&.field-label{
-				color: $text;
+		label{
+			&.checkbox{
+				display: block;
+				width: initial;
+				margin-bottom: 10px;
 			}
-		}
-
-		label.control-group-label{
-			font-weight: bold;
-			margin-bottom: 10px;
 			&.control-label{
-				color: $text;
-				font-size: 13px;
+				color: $brand;
+				font-size: 12px;
+				margin-bottom:0;
+				display: inline-block;
+				&.field-label{
+					color: $text;
+				}
 			}
-		}
-		label.radio {
-			padding: 0;
-		}
-		label.checkbox {
-			display: block;
-			width: initial;
-			margin-bottom: 10px;
+			&.control-group-label{
+				font-weight: bold;
+				margin-bottom: 10px;
+				&.control-label{
+					color: $text;
+					font-size: 13px;
+				}
+			}
+			&.radio{
+				padding:0;
+			}
 		}
 	}
 	.form_field_percentage,
@@ -3405,7 +3528,7 @@ ul.ui-widget-content{
 		width: auto !important;
 	}
 	input, textarea{
-		width: 220px;
+		width: 390px;
 	}
 	textarea{
 		height: 80px;
@@ -3414,7 +3537,8 @@ ul.ui-widget-content{
 		margin-right: 15px;
 		margin-bottom: 0;
 	 	.add-on{
-			background-color: $user_menu;
+			background-color: $brand;
+			border: 1px solid $brand;
 			color: white;
 			height: 19px;
 			text-shadow: none;
@@ -3668,7 +3792,10 @@ body.events.index {
 	width: 100%;
 	h3{
 		a#edit-event-data-btn{
-			margin-left: 15px;
+			margin-left: 10px;
+			top: 1px;
+			font-size: 16px;
+			position: relative;
 		}
 	}
 	.form-result {
