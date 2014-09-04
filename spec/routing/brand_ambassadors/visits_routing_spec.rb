@@ -28,4 +28,16 @@ describe 'routes for brand ambassadors visits', :type => :routing do
   it "doesn't routes to #destroy" do
     expect(delete: "/brand_ambassadors/visits/1/folders/1").not_to be_routable
   end
+
+  it "routes to #autocomplete" do
+    expect(get: "/brand_ambassadors/visits/autocomplete").to route_to("brand_ambassadors/visits#autocomplete")
+  end
+
+  it "routes to #filters" do
+    expect(get: "/brand_ambassadors/visits/filters").to route_to("brand_ambassadors/visits#filters")
+  end
+
+  it "routes to #items" do
+    expect(get: "/brand_ambassadors/visits/items").to route_to("brand_ambassadors/visits#items")
+  end
 end
