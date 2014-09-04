@@ -59,6 +59,15 @@ a{
 	}
 }
 
+.link{
+	&.link-blue{
+		&:hover{
+			color: $blue;
+			text-decoration:underline;
+		}
+	}
+}
+
 abbr[title]{
 	border:0;
 }
@@ -651,6 +660,67 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 
 // Date Preferences Panel (sidebar)
 
+ul.dates-pref{ /*Take out this class when implemented the new design*/
+	display: none;
+}
+
+.dates-pref{
+  .dropdown.select-ranges{
+		a{
+			color: $brand;
+			&:hover{
+				color: $blue;
+				text-decoration: underline;
+			}
+			&.dropdown-toggle{
+				border: 1px solid red;
+				box-sizing: border-box;
+				@include border-radius (4px);
+				display: block;
+				padding: 6px 8px;
+				width: 100%;
+			}
+		}
+		.btn{
+			width: 100%;
+		}
+		label{
+			font-size: 11px;
+		}
+		ul{
+			box-shadow: none;
+			left: auto;
+			right: 0;
+			min-width: 305px;
+			-webkit-box-shadow: none;
+			&:before{
+				border-bottom: 10px solid white;
+				left: 265px;
+			}
+			.row-fluid{
+				[class^='span']{
+					font-size: 11px;
+					font-weight: bold;
+					margin: 0 2px;
+					min-height: 25px;
+				}
+			}
+			li{
+				padding: 10px;
+				padding-bottom: 5px;
+				&.options{
+					border-bottom: 1px solid $grey_four;
+					[class^='span']{
+						text-align: center;
+					}
+				}
+				&.ranges{
+				}
+			}
+		}
+	}
+}
+/*
 	.dates-pref{
 		list-style: none;
 		margin-left: 0px;
@@ -685,7 +755,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 				}
 			}
 		}
-	}
+	}*/
 
 	.custom-data-panel{
 		.form-group{
