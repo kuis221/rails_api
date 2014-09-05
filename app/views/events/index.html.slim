@@ -15,6 +15,41 @@
       | for more information about this section.
 
 .sidebar.collapsed#resource-filter-column
+
+  /**/
+
+  .dates-pref.hide
+    .dropdown.select-ranges
+      a.dropdown-toggle data-toggle="dropdown" href="#"  Choose a date range
+      ul.dropdown-menu aria-labelledby="dLabel" role="menu"
+        li.options
+          .row-fluid
+            .span4
+              a href="#" Current week
+            .span4
+              a href="#" Current month
+            .span4
+              a href="#" Today
+          .row-fluid
+           .span4
+             a href="#" Previous week
+           .span4
+             a href="#" Previous month
+           .span4
+             a href="#" YTD
+        li.ranges
+          .start-date
+            label Start date
+            input type="text" class="input-calendar date_picker" value="mm/dd/yyyy" readonly="readonly"
+          .separate -
+          .end-date
+            label End date
+            input type="text" class="input-calendar date_picker" value="mm/dd/yyyy" readonly="readonly"
+        li
+          input type="submit" class="btn btn-primary " value="Apply"
+
+  /**/
+
   #collection-list-filters
 
 .main
