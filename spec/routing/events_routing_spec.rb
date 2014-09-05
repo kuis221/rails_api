@@ -29,6 +29,14 @@ describe 'routes for events', :type => :routing do
     expect(get: "/events/1/edit").to route_to("events#edit", :id => "1")
   end
 
+  it "routes to #activate" do
+    expect(get: "/events/1/activate").to route_to("events#activate", :id => "1")
+  end
+
+  it "routes to #deactivate" do
+    expect(get: "/events/1/deactivate").to route_to("events#deactivate", :id => "1")
+  end
+
   it "routes to #create" do
     expect(post: "/events").to route_to("events#create")
   end

@@ -4,6 +4,8 @@ RSpec.describe BrandAmbassadors::Visit, :type => :model do
   it { is_expected.to belong_to(:company) }
   it { is_expected.to belong_to(:company_user) }
   it { is_expected.to have_many(:events) }
+  it { is_expected.to have_many(:brand_ambassadors_documents) }
+  it { is_expected.to have_many(:document_folders) }
 
   it { is_expected.to validate_presence_of(:company_user) }
   it { is_expected.to validate_presence_of(:company) }

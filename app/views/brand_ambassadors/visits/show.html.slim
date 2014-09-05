@@ -29,4 +29,4 @@
 
 
   #visit-documents.details_box
-    = render partial: 'brand_ambassadors/document_folders/index', locals: {children: (resource.document_folders.root_children.active + resource.documents.root_children.active).sort_by(&:name) }
+    = render partial: 'brand_ambassadors/document_folders/index', locals: {children: (resource.document_folders.root_children.active + resource.brand_ambassadors_documents.root_children.active).sort_by(&:name), parent: resource }

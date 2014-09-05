@@ -521,10 +521,11 @@ Brandscopic::Application.routes.draw do
         get :activate
       end
     end
-    resources :documents, only: [:new, :create] do
+    resources :documents, only: [:new, :edit, :create, :update] do
       member do
         get :deactivate
         get :activate
+        get :move
       end
     end
     root to: 'dashboard#index'

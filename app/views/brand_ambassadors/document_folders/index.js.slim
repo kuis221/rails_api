@@ -1,2 +1,8 @@
 |
-  $('#documents-container').replaceWith('#{j render partial: 'index', locals: {children: @folder_children} }')
+  $('#documents-container').replaceWith('#{j render partial: 'index', locals: {children: @folder_children} }');
+
+  $(document).off('documents:change.docs').on('documents:change.docs', function(e){
+    $.get('#{url_for(params)}');
+  });
+
+  $('.bootbox.modal').modal('hide');

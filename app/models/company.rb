@@ -39,7 +39,7 @@ class Company < ActiveRecord::Base
       self.where(folder_id: nil)
     end
   end
-  has_many :document_folders, ->{ order('document_folders.name ASC') } do
+  has_many :document_folders, ->{ order('lower(document_folders.name) ASC') } do
     def root_children
       self.where(parent_id: nil)
     end

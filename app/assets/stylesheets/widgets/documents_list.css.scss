@@ -128,3 +128,26 @@
 		top: 3px;
 	}
 }
+
+
+#folders-tree {
+	max-height: 290px;
+	overflow: auto;
+	border: 1px solid $borders;
+	ul {
+		list-style: none;
+		li {
+			.folder-arrow-indicator{
+				float: left;
+				margin-left: -20px;
+				cursor: pointer;
+			}
+		} 
+	}
+	label.radio {
+		padding: 0;
+		div.radio {
+			display: none;
+		}
+	}
+}

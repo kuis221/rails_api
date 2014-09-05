@@ -19,5 +19,6 @@
             = link_to '', {controller: :documents, action: :activate, id: document.id, "#{parent.class.name.underscore}_id" => parent.id}, remote: true, class: 'icon-ok-circle'
 
         / a.icon-edit
-        / a.icon-folder
+        - if document.is_a?(BrandAmbassadors::Document)
+          = link_to '', move_brand_ambassadors_document_path(document, format: :js), remote: true, class: 'icon-folder', title: 'Move'
         / a.icon-trash

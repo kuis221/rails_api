@@ -1,0 +1,19 @@
+= simple_form_for(resource, remote: true) do |f|
+  #folders-tree
+    = f.input :folder_id, label: 'Documents', as: :folder_select, root_folder: resource.attachable
+
+  .form-actions
+    = f.button :submit, 'Move', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
+    = "&nbsp;".html_safe
+    = f.button :button, 'Cancel', class: 'btn btn-cancel'
+
+javascript:
+  $('ul.folder-contents').off('hidden.folderSelect').on('hidden.folderSelect', function(e){
+    e.stopPropagation();
+  }).off('hide.folderSelect').on('hide.folderSelect', function(e){
+    e.stopPropagation();
+    $('.folder-arrow-indicator[data-target="#'+$(e.target).attr('id')+'"]').removeClass('icon-arrow-down').addClass('icon-arrow-right');
+  }).off('show.folderSelect').on('show.folderSelect', function(e){
+    e.stopPropagation();
+    $('.folder-arrow-indicator[data-target="#'+$(e.target).attr('id')+'"]').removeClass('icon-arrow-right').addClass('icon-arrow-down');
+  });

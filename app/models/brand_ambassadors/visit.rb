@@ -25,7 +25,7 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
 
   scope :accessible_by_user, ->(company_user) { where(company_id: company_user.company_id) }
 
-  has_many :documents, ->{ order('attached_assets.file_file_name ASC') },
+  has_many :brand_ambassadors_documents, ->{ order('attached_assets.file_file_name ASC') },
       class_name: 'BrandAmbassadors::Document', as: :attachable, inverse_of: :attachable,
       dependent: :destroy do
     def root_children
