@@ -49,13 +49,98 @@ feature "Brand Ambassadors Visits" do
     end
   end
 
+  shared_examples_for 'a user that can filter the list of visits' do
+    let(:today) { Time.zone.local(Time.now.year, Time.now.month, 18, 12, 00) }
+    let(:another_user){ FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Roberto', last_name: 'Gomez'), company: company) }
+    let(:place1){ FactoryGirl.create(:place, name: 'Place 1', city: 'Los Angeles', state:'CA', country: 'US') }
+    let(:place2){ FactoryGirl.create(:place, name: 'Place 2', city: 'Austin', state:'TX', country: 'US') }
+    let(:campaign1){ FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: company) }
+    let(:campaign2){ FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: company) }
+    let(:ba_visit1){ FactoryGirl.create(:brand_ambassadors_visit, company: company,
+                      start_date: today, end_date: (today+1.day).to_s(:slashes),
+                      name: 'Visit1', description: 'Visit1 description',
+                      company_user: company_user, active: true) }
+    let(:ba_visit2){ FactoryGirl.create(:brand_ambassadors_visit, company: company,
+                      start_date: (today+1.day).to_s(:slashes), end_date: (today+4.day).to_s(:slashes),
+                      name: 'Visit2', description: 'Visit2 description',
+                      company_user: another_user, active: true) }
+    let(:event1){ FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: company, active: true,
+                      end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
+                      campaign: campaign1, place: place1) }
+    let(:event2){ FactoryGirl.create(:event, start_date: (today+1.day).to_s(:slashes), company: company, active: true,
+                      end_date: (today+2.day).to_s(:slashes), start_time: '11:00am',  end_time: '12:00pm',
+                      campaign: campaign2, place: place2) }
+
+    before do
+      company_user.places << place1
+      company_user.places << place2
+      company_user.campaigns << campaign1
+      company_user.campaigns << campaign2
+      event1.users << another_user
+    end
+
+    scenario "should allow filter visits and see the correct message" do
+      Timecop.travel(today) do
+        ba_visit1.events << event1
+        ba_visit2.events << event2
+        Sunspot.commit
+
+        visit brand_ambassadors_root_path
+
+        expect(page).to have_content('2 Active visits')
+
+        within("ul#visits-list") do
+          expect(page).to have_content('Visit1')
+          expect(page).to have_content('Visit2')
+        end
+
+        expect(page).to have_filter_section(title: 'BRAND AMBASSADORS', options: ['Roberto Gomez', 'Test User'])
+
+        filter_section('BRAND AMBASSADORS').unicheck('Test User')
+
+        expect(page).to have_content('1 visit assigned to Test User')
+
+        within("ul#visits-list") do
+          expect(page).to have_content('Visit1')
+          expect(page).to have_no_content('Visit2')
+        end
+
+        filter_section('BRAND AMBASSADORS').unicheck('Roberto Gomez')
+
+        within("ul#visits-list") do
+          expect(page).to have_content('Visit1')
+          expect(page).to have_content('Visit2')
+        end
+
+        expect(page).to have_content('2 visits assigned to Roberto Gomez or Test User')
+
+        select_filter_calendar_day("18")
+        within("ul#visits-list") do
+          expect(page).to have_content('Visit1')
+          expect(page).to have_no_content('Visit2')
+        end
+
+        expect(page).to have_content("1 visit taking place today and assigned to Roberto Gomez or Test User")
+
+        select_filter_calendar_day("18", "19")
+        within("ul#visits-list") do
+          expect(page).to have_content('Visit1')
+          expect(page).to have_content('Visit2')
+        end
+
+        expect(page).to have_content("2 visits taking place between today and tomorrow and assigned to Roberto Gomez or Test User")
+      end
+    end
+  end
+
   shared_examples_for 'a user that can view the calendar of visits' do
     scenario "a calendar of visits is displayed" do
       month_number = Time.now.strftime('%m')
       month_name = Time.now.strftime('%B')
-      FactoryGirl.create(:brand_ambassadors_visit, company: company,
-        start_date: "#{month_number}/15/2014", end_date: "#{month_number}/16/2014",
-        name: 'Visit1', company_user: company_user, active: true)
+      ba_visit1 = FactoryGirl.create(:brand_ambassadors_visit, company: company,
+                    start_date: "#{month_number}/15/2014", end_date: "#{month_number}/16/2014",
+                    name: 'Visit1', description: 'Visit1 description',
+                    company_user: company_user, active: true)
       FactoryGirl.create(:brand_ambassadors_visit, company: company,
         start_date: "#{month_number}/16/2014", end_date: "#{month_number}/18/2014",
         name: 'Visit2', company_user: company_user, active: true)
@@ -70,7 +155,14 @@ feature "Brand Ambassadors Visits" do
         expect(find('.fc-toolbar .fc-left h2')).to have_content("#{month_name}, 2014")
         expect(page).to have_content 'Visit2 Test User'
         expect(page).to have_content 'Visit1 Test User'
+
+        click_link 'Visit1'
       end
+
+      expect(current_path).to eql brand_ambassadors_visit_path(ba_visit1)
+      expect(page).to have_selector('h2', text: 'Visit1')
+      expect(page).to have_content 'Test User'
+      expect(page).to have_content 'Visit1 description'
     end
   end
 
@@ -82,6 +174,7 @@ feature "Brand Ambassadors Visits" do
 
       within visible_modal do
         fill_in 'Name', with: 'new visit name'
+        fill_in 'Description', with: 'new visit description'
         fill_in 'Start date', with: '01/23/2014'
         fill_in 'End date', with: '01/24/2014'
         select_from_chosen(company_user.name, from: 'Employee')
@@ -91,6 +184,7 @@ feature "Brand Ambassadors Visits" do
 
       find('h2', text: 'new visit name') # Wait for the page to load
       expect(page).to have_selector('h2', text: 'new visit name')
+      expect(page).to have_content('new visit description')
       expect(page).to have_content(company_user.name)
     end
   end
@@ -99,7 +193,8 @@ feature "Brand Ambassadors Visits" do
     scenario 'allows the user to edit a visit' do
       FactoryGirl.create(:brand_ambassadors_visit, company: company,
         start_date: '02/01/2014', end_date: '02/02/2014',
-        name: 'Visit1', company_user: company_user, active: true)
+        name: 'Visit1', description: 'Visit1 description',
+        company_user: company_user, active: true)
       Sunspot.commit
       visit brand_ambassadors_root_path
 
@@ -109,6 +204,7 @@ feature "Brand Ambassadors Visits" do
 
       within visible_modal do
         fill_in 'Name', with: 'new visit name'
+        fill_in 'Description', with: 'new visit description'
         click_js_button 'Save'
       end
       ensure_modal_was_closed
@@ -141,6 +237,34 @@ feature "Brand Ambassadors Visits" do
 
   shared_examples_for 'a user that can view visits details' do
     let(:campaign){ FactoryGirl.create(:campaign, company: company, name: 'ABSOLUT Vodka') }
+    let(:ba_visit){ FactoryGirl.create(:brand_ambassadors_visit, company: company,
+                      start_date: '02/01/2014', end_date: '02/02/2014',
+                      name: 'Visit1', description: 'Visit1 description',
+                      company_user: company_user, active: true) }
+
+    scenario "should display the visit details page" do
+      visit brand_ambassadors_visit_path(ba_visit)
+      expect(page).to have_selector('h2', text: 'Visit1')
+      expect(page).to have_content('Visit1 description')
+      expect(page).to have_content(company_user.full_name)
+    end
+
+    scenario 'allows the user to edit a visit' do
+      visit brand_ambassadors_visit_path(ba_visit)
+
+      click_js_link('Edit')
+
+      within visible_modal do
+        fill_in 'Name', with: 'new visit name'
+        fill_in 'Description', with: 'new visit description'
+        click_js_button 'Save'
+      end
+      ensure_modal_was_closed
+
+      expect(page).to have_selector('h2', text: 'new visit name')
+      expect(page).to have_content 'Test User'
+      expect(page).to have_content 'new visit description'
+    end
 
     scenario "allows to create a new event" do
       FactoryGirl.create(:company_user, company: company,
@@ -206,6 +330,10 @@ feature "Brand Ambassadors Visits" do
       let(:permissions) { [[:list, 'BrandAmbassadors::Visit']]}
     end
 
+    it_should_behave_like "a user that can filter the list of visits" do
+      let(:permissions) { [[:list, 'BrandAmbassadors::Visit']]}
+    end
+
     it_should_behave_like "a user that can deactivate visits" do
       let(:permissions) { [[:list, 'BrandAmbassadors::Visit'], [:deactivate, 'BrandAmbassadors::Visit']]}
     end
@@ -219,7 +347,7 @@ feature "Brand Ambassadors Visits" do
     end
 
     it_should_behave_like "a user that can view the calendar of visits" do
-      let(:permissions) { [[:calendar, 'BrandAmbassadors::Visit']]}
+      let(:permissions) { [[:calendar, 'BrandAmbassadors::Visit'], [:show, 'BrandAmbassadors::Visit']]}
     end
 
     it_should_behave_like "a user that can view visits details and deactivate visits" do
@@ -231,6 +359,7 @@ feature "Brand Ambassadors Visits" do
     let(:role) { FactoryGirl.create(:role, company: company) }
 
     it_behaves_like "a user that can view the list of visits"
+    it_behaves_like "a user that can filter the list of visits"
     it_behaves_like "a user that can deactivate visits"
     it_behaves_like "a user that can edit visits"
     it_behaves_like "a user that can create visits"
