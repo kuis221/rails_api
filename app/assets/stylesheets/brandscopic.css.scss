@@ -210,7 +210,7 @@ body{
 
 .calendar-data, .email-data, .phone-data, .place-data,
 .time-data, .description-data, .member-data{
-	margin:0 0 20px 0;
+	margin:0 0 5px 0;
 	width: 380px;
 }
 
@@ -241,6 +241,11 @@ body{
 			margin-left: 10px;
 			&.info{
 				margin-left: 5px;
+				position: relative;
+				top:2px;
+			}
+			&.verify{
+				font-size:12px;
 			}
 			&.verified{
 				margin-left: 30px;
@@ -5842,7 +5847,7 @@ body.campaigns{
 		margin: 0 0 30px;
 	}
 	.links-data{
-		margin: 0 0 0 30px;
+		margin: 20px 0 0 30px;
 	}
 
 	.alert {
