@@ -241,13 +241,18 @@ body{
 			margin-left: 10px;
 			&.info{
 				margin-left: 5px;
-				position: relative;
-				top:2px;
+				a.icon-info{
+					color: $user_menu;
+					font-size: 18px;
+					position: absolute;
+					top: 0;
+				}
 			}
 			&.verify{
 				font-size:12px;
 			}
 			&.verified{
+				font-size:12px;
 				margin-left: 30px;
 			}
 		}
@@ -1534,7 +1539,7 @@ li.dropdown a{
 				z-index: 100;
 			}
 			&:hover{
-				&:before{
+				&:before, &:after{
 					background-image: none;
 				}
 			}
@@ -3261,7 +3266,7 @@ ul.ui-widget-content{
 	position: absolute;
 	top: 0;
 	left: 0;
-	height: 40px;
+	min-height: 40px;
 	z-index: 200;
 	-webkit-border-radius: 7px 7px 0px 0px;
 
