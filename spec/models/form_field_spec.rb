@@ -93,6 +93,21 @@ describe FormField, :type => :model do
       expect(field.options_for_input).to eql [['Option2', segment2.id]]
     end
 
+    it "should return the kpis segments that were excluded if include_excluded is true" do
+      kpi =  FactoryGirl.create(:kpi, name: 'My Custom KPI',
+        description: 'my custom kpi description',
+        kpi_type: 'count', capture_mechanism: 'dropdown', company: campaign.company,
+        kpis_segments: [
+          segment1 = FactoryGirl.create(:kpis_segment, text: 'Option1'),
+          segment2 = FactoryGirl.create(:kpis_segment, text: 'Option2')] )
+
+      field = campaign.add_kpi(kpi)
+      field.settings ||= {}
+      field.settings['disabled_segments'] = [segment1.id.to_s]
+
+      expect(field.options_for_input(true)).to eql [['Option1', segment1.id], ['Option2', segment2.id]]
+    end
+
     it "should return the form field options" do
       field = FactoryGirl.create(:form_field, type: 'FormField::Dropdown',
         fieldable: campaign, kpi_id: nil,
