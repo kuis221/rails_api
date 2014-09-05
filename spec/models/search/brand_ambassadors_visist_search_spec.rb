@@ -90,4 +90,17 @@ describe BrandAmbassadors::Visit, type: :model, search: true do
     expect(BrandAmbassadors::Visit.do_search(company_id: company.id, start_date: '01/21/2013', end_date: '01/23/2013').results).to eq([])
 
   end
+
+  it "should not fail if a brand without campaings is given" do
+    company = FactoryGirl.create(:company)
+    FactoryGirl.create(:event, company: company)
+
+    Sunspot.commit
+    # Invalid brand
+    expect(BrandAmbassadors::Visit.do_search(company_id: company.id, brand: 1).results).to match_array([])
+
+    # Brand without campaings
+    brand = FactoryGirl.create(:brand)
+    expect(BrandAmbassadors::Visit.do_search(company_id: company.id, brand: brand.id).results).to match_array([])
+  end
 end

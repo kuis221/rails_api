@@ -753,6 +753,16 @@ class Event < ActiveRecord::Base
       if results.any?{|r| r.changed?} || event_expenses.any?{|e| e.changed?}
         @refresh_event_data = true
       end
+
+      @reindex_place = place_id_changed?
+      @reindex_tasks = active_changed?
+
+      if @refresh_event_data
+        build_event_data unless event_data.present?
+        event_data.update_data
+        event_data.save
+      end
+
       true
     end
 
@@ -767,13 +777,7 @@ class Event < ActiveRecord::Base
         Sunspot.index visit
       end
 
-      if @refresh_event_data
-        build_event_data unless event_data.present?
-        event_data.update_data
-        event_data.save
-      end
-
-      if place_id_changed?
+      if @reindex_place
         Resque.enqueue(EventPhotosIndexer, self.id)
         if place_id_was.present?
           previous_venue = Venue.find_by(company_id: company_id, place_id: place_id_was)
@@ -781,9 +785,7 @@ class Event < ActiveRecord::Base
         end
       end
 
-      if active_changed?
-        Sunspot.index self.tasks
-      end
+      Sunspot.index self.tasks if @reindex_tasks
     end
 
     def index_venue
