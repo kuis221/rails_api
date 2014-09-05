@@ -226,6 +226,9 @@ a.resend-verification {
 }
 
 .control-group{
+	&.event_results_value{
+		width: 390px;
+	}
 	&.percentage{
 		width:390px;
 		input[type="text"]{
@@ -233,24 +236,11 @@ a.resend-verification {
 			border-radius: 4px 0px 0px 4px;
 			width: 172px !important;
 		}
-		span.add-on{
-			background-color: $user_menu;
-			border:0 !important;
-			border-radius: 0px 4px 4px 0px;
-			color: white;
-			display: inline-block;
-			-webkit-border-radius: 0px 4px 4px 0px;
-			padding: 10px 5px 10px 4px;
-			text-align: center;
-			text-shadow:none !important;
-			width: 40px;
-		}
 		label.control-label{
 			display: inline-block;
 			font-size: 13px;
 			margin-top: 12px;
 			margin-right: 5px;
-			width: 150px;
 		}
 	}
 	&.error{

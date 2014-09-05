@@ -179,6 +179,7 @@ class Event < ActiveRecord::Base
   after_validation :set_event_timezone
 
   before_save :set_promo_hours, :check_results_changed
+  after_save :generate_event_data_record
   after_commit :reindex_associated
   after_commit :index_venue
   after_commit :create_notifications
@@ -753,6 +754,20 @@ class Event < ActiveRecord::Base
       if results.any?{|r| r.changed?} || event_expenses.any?{|e| e.changed?}
         @refresh_event_data = true
       end
+
+      @reindex_place = place_id_changed?
+      @reindex_tasks = active_changed?
+
+      true
+    end
+
+    def generate_event_data_record
+      if @refresh_event_data
+        build_event_data unless event_data.present?
+        event_data.update_data
+        event_data.save
+      end
+
       true
     end
 
@@ -767,13 +782,7 @@ class Event < ActiveRecord::Base
         Sunspot.index visit
       end
 
-      if @refresh_event_data
-        build_event_data unless event_data.present?
-        event_data.update_data
-        event_data.save
-      end
-
-      if place_id_changed?
+      if @reindex_place
         Resque.enqueue(EventPhotosIndexer, self.id)
         if place_id_was.present?
           previous_venue = Venue.find_by(company_id: company_id, place_id: place_id_was)
@@ -781,9 +790,7 @@ class Event < ActiveRecord::Base
         end
       end
 
-      if active_changed?
-        Sunspot.index self.tasks
-      end
+      Sunspot.index self.tasks if @reindex_tasks
     end
 
     def index_venue
