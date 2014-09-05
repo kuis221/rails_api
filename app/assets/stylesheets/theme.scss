@@ -122,6 +122,11 @@ input[readonly], select[readonly], textarea[readonly]{
 			background-color: $grey_one;
 		}
 	}
+	&[title="Download"], &[title="Fullscreen"]{ /* This should be the style for every downlaod and fullscreen button */
+		box-sizing:border-box;
+		height: 34px;
+		width:54px;
+	}
 }
 
 
