@@ -34,10 +34,11 @@ RSpec.describe BrandAmbassadors::VisitsController, :type => :controller do
   describe "POST 'create'" do
     it "should successfully create the new record" do
       expect {
-        xhr :post, 'create', brand_ambassadors_visit: {name: 'Test Visit', company_user_id: user.id, start_date: '01/23/2014', end_date: '01/24/2014'}, format: :js
+        xhr :post, 'create', brand_ambassadors_visit: {name: 'Test Visit', description: 'Test Visit description', company_user_id: user.id, start_date: '01/23/2014', end_date: '01/24/2014'}, format: :js
       }.to change(BrandAmbassadors::Visit, :count).by(1)
       visit = BrandAmbassadors::Visit.last
       expect(visit.name).to eq('Test Visit')
+      expect(visit.description).to eq('Test Visit description')
       expect(visit.company_user_id).to eq(user.id)
       expect(visit.company_id).to eq(company.id)
       expect(visit.active).to eq(true)
@@ -82,11 +83,12 @@ RSpec.describe BrandAmbassadors::VisitsController, :type => :controller do
     let(:visit){ FactoryGirl.create(:brand_ambassadors_visit, company: company) }
 
     it "must update the visit attributes" do
-      put 'update', id: visit.to_param, brand_ambassadors_visit: {name: 'New Visit Name', company_user_id: user.id, start_date: '01/23/2014', end_date: '01/24/2014'}
+      put 'update', id: visit.to_param, brand_ambassadors_visit: {name: 'New Visit Name', description: 'New Visit description', company_user_id: user.id, start_date: '01/23/2014', end_date: '01/24/2014'}
       expect(assigns(:visit)).to eq(visit)
       expect(response).to redirect_to(brand_ambassadors_visit_path(visit))
       visit.reload
       expect(visit.name).to eq('New Visit Name')
+      expect(visit.description).to eq('New Visit description')
       expect(visit.start_date).to eql Date.new(2014, 01, 23)
       expect(visit.end_date).to eql Date.new(2014, 01, 24)
     end

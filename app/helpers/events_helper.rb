@@ -233,6 +233,7 @@ module EventsHelper
       end
 
       if names.size > 0
+        names = names.sort{|a, b| a.downcase <=> b.downcase}
         "assigned to #{names.to_sentence(two_words_connector: ' or ', last_word_connector: ', or ')}"
       else
         ""

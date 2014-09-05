@@ -11,6 +11,7 @@
 #  active          :boolean          default(TRUE)
 #  created_at      :datetime
 #  updated_at      :datetime
+#  description     :text
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl
@@ -18,6 +19,7 @@
 FactoryGirl.define do
   factory :brand_ambassadors_visit, :class => 'BrandAmbassadors::Visit' do
     name "MyString"
+    description "Visit description"
     company nil
     association :company_user
     start_date "08/26/2014"

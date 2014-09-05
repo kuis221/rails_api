@@ -14,6 +14,12 @@
       span
         = resource.company_user.try(:name)
 
+    - if resource.description.present?
+      .description-data
+        i.icon-wired-description
+        span
+          = resource.description
+
     .links-data
       = link_to '', edit_brand_ambassadors_visit_path(resource), remote: true, title: 'Edit', class: 'icon-edit' if can?(:edit, resource)
       = active_inactive_buttons(resource) if can?(:deactivate, resource)
@@ -30,3 +36,8 @@
 
   #visit-documents.details_box
     = render partial: 'brand_ambassadors/document_folders/index', locals: {children: (resource.document_folders.root_children.active + resource.documents.root_children.active).sort_by(&:name) }
+
+javascript:
+  $(document).on('brand_ambassadors_visits:change', function(){
+    window.location.reload(true);
+  })

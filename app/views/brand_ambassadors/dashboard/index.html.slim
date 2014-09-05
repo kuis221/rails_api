@@ -1,3 +1,8 @@
+- content_for :alerts
+  div class="alert collection-list-description"
+    a.close data-dismiss="alert"
+    .filter-label
+
 .sidebar.collapsed#resource-filter-column
   #collection-list-filters
 
@@ -67,6 +72,10 @@
             },
             eventRender: function(visit, element) {
               element.find('.fc-title').append("<br/><span class='user-name'>" + visit.company_user.full_name + "</span>");
+            },
+            eventClick: function(visit) {
+              window.location.href = visit.url;
+              return false;
             }
           });
         }
@@ -89,7 +98,12 @@
       'includeAutoComplete': false,
       'defaultParams': [{name: 'status[]', value: 'Active'}],
       'applyTo': '#{controller.controller_name}',
-      'clearFilterParams': [{name: 'status[]', value: 'Active'}]
+      'clearFilterParams': [{name: 'status[]', value: 'Active'}],
+      'onItemsLoad': function(response, page){
+        if (response.find('div[data-content="filters-description"]').length > 0){
+          $('.collection-list-description .filter-label').html(response.find('div[data-content="filters-description"]'))
+        }
+      }
     });
 - else
   javascript:
