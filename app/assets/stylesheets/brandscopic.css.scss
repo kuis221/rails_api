@@ -3251,14 +3251,16 @@ ul.ui-widget-content{
 /* Info bar for details pages (Below the header) */
 
 #resource-close-details {
+	background-color: $menu;
+	border-radius: 7px 7px 0px 0px;
 	position: absolute;
 	top: 0;
 	left: 0;
-	width: 100%;
-	background-color: $menu;
+	height: 40px;
 	z-index: 200;
 	-webkit-border-radius: 7px 7px 0px 0px;
-	border-radius: 7px 7px 0px 0px;
+
+	width: 100%;
 	&.affix {
 		position: fixed;
 		top: 40px;
@@ -3271,18 +3273,19 @@ ul.ui-widget-content{
 	a.close-details {
 		display: inline-block;
 		width: 99%;
-		padding: 12px 0 10px 16px;
+		padding: 10px 0 5px 16px;
 		text-decoration: none;
 		color: $grey_one;
 	}
 	.icon-close {
 		position: absolute;
 		text-shadow:none;
+		line-height: 22px;
 		right: 15px;
-		top: 13px;
 	}
 	.details-bar-pull-left {
 		float: left;
+		font-size: 12px;
 		margin: 0 10px 0 0;
 	}
 
