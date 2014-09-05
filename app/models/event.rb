@@ -179,6 +179,7 @@ class Event < ActiveRecord::Base
   after_validation :set_event_timezone
 
   before_save :set_promo_hours, :check_results_changed
+  after_save :generate_event_data_record
   after_commit :reindex_associated
   after_commit :index_venue
   after_commit :create_notifications
@@ -757,6 +758,10 @@ class Event < ActiveRecord::Base
       @reindex_place = place_id_changed?
       @reindex_tasks = active_changed?
 
+      true
+    end
+
+    def generate_event_data_record
       if @refresh_event_data
         build_event_data unless event_data.present?
         event_data.update_data
