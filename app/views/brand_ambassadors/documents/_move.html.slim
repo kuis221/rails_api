@@ -1,5 +1,6 @@
 = simple_form_for(resource, remote: true) do |f|
   #folders-tree
+    .folder-item-bg
     = f.input :folder_id, label: 'Documents', as: :folder_select, root_folder: resource.attachable
 
   .form-actions
@@ -16,4 +17,12 @@ javascript:
   }).off('show.folderSelect').on('show.folderSelect', function(e){
     e.stopPropagation();
     $('.folder-arrow-indicator[data-target="#'+$(e.target).attr('id')+'"]').removeClass('icon-arrow-right').addClass('icon-arrow-down');
+  });
+
+  $('#folders-tree').on('change', 'input:radio', function(e){
+    $('#folders-tree').find('li.selected').removeClass('selected');
+    var $li = $(e.target).closest('li').addClass('selected');
+    // $('#folders-tree div.folder-item-bg').css({top: ($li.position().top + $('#folders-tree').scrollTop()) + 'px', height: $li.find('>label.radio').height()}).show();
+    $li.prepend($('#folders-tree div.folder-item-bg').css({height: $li.find('>label.radio').height()+'px'}).show());
+
   });

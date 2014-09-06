@@ -134,13 +134,32 @@
 	max-height: 290px;
 	overflow: auto;
 	border: 1px solid $borders;
+	position: relative;
+	font-size: 15px;
+	div.folder-item-bg {
+		position: absolute;
+		display: none;
+		background-color: $gray-lighter;
+		width: 100%;
+		left: 0;
+		z-index: -1;
+	}
 	ul {
 		list-style: none;
+		&.collapse {
+			position: initial;
+		}
 		li {
 			.folder-arrow-indicator{
 				float: left;
 				margin-left: -20px;
 				cursor: pointer;
+			}
+			.icon-folder {
+				margin-right: 5px;
+			}
+			.icon-arrow-right:before {
+				font-size: 10px;
 			}
 		} 
 	}
