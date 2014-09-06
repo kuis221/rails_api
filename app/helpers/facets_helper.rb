@@ -76,9 +76,8 @@ module FacetsHelper
     {label: 'People', items: people}
   end
 
-  def build_state_bucket(facet_search)
-    counters = Hash[facet_search.facet(:status).rows.map{|r| [r.value.to_s.capitalize, r.count]}]
-    {label: 'Active State', items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: counters.try(:[], x) || 0}) }}
+  def build_state_bucket
+    {label: 'Active State', items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) }}
   end
 
   def build_role_bucket
@@ -140,12 +139,11 @@ module FacetsHelper
   def visits_facets
     @events_facets ||= Array.new.tap do |f|
       # select what params should we use for the facets search
-      facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| %w(company_id current_company_user with_event_data_only with_surveys_only).include?(k)})
-      facet_search = resource_class.do_search(facet_params, true)
 
       f.push build_users_bucket('Brand Ambassadors')
       f.push build_areas_bucket
       f.push build_brands_bucket
+      f.push build_state_bucket
 
       f.push build_custom_filters_bucket
     end
@@ -164,7 +162,7 @@ module FacetsHelper
       f.push build_people_bucket
 
       f.push build_status_bucket( facet_search )
-      f.push build_state_bucket( facet_search )
+      f.push build_state_bucket
       f.push build_custom_filters_bucket
     end
   end

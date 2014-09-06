@@ -162,14 +162,11 @@ class CampaignsController < FilteredController
     def facets
       @facets ||= Array.new.tap do |f|
         # select what params should we use for the facets search
-        facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| %w(q company_id).include?(k)})
-        facet_search = resource_class.do_search(facet_params, true)
-
         f.push build_brands_bucket
         f.push build_brand_portfolio_bucket
 
         f.push build_people_bucket
-        f.push build_state_bucket facet_search
+        f.push build_state_bucket
       end
     end
 

@@ -25,8 +25,8 @@ describe 'routes for brand ambassadors documents', :type => :routing do
     expect(put: "/brand_ambassadors/documents/1").to route_to("brand_ambassadors/documents#update", id: '1')
   end
 
-  it "doesn't routes to #destroy" do
-    expect(delete: "/brand_ambassadors/documents/1").not_to be_routable
+  it "routes to #destroy" do
+    expect(delete: "/brand_ambassadors/documents/1").to route_to("brand_ambassadors/documents#destroy", id: '1')
   end
 
   it "routes to #activate" do
