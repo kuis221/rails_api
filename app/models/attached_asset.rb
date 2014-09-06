@@ -28,6 +28,8 @@ class AttachedAsset < ActiveRecord::Base
   belongs_to :attachable, :polymorphic => true
   belongs_to :folder, class_name: 'DocumentFolder'
 
+  attr_accessor :new_name
+
   has_attached_file :file, PAPERCLIP_SETTINGS.merge({
     styles: -> (a) {
       if a.instance.is_pdf?
@@ -54,6 +56,7 @@ class AttachedAsset < ActiveRecord::Base
   validate :valid_file_format?
 
   before_validation :set_upload_attributes
+  before_save :rename_file
   after_commit :queue_processing
   before_post_process :post_process_required?
 

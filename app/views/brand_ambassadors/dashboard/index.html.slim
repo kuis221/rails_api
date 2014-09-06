@@ -43,6 +43,7 @@
       $('#toggle-visits-view a').removeClass('active');
       $(e.target).addClass('active')
       if (e.target.getAttribute('href') == '#calendar-view'){
+        $('.dates-range-filter').slideUp()
         if (!visitsCalendar) {
           visitsCalendar = $('#calendar-canvas').fullCalendar({
             header: {
@@ -62,6 +63,17 @@
             eventLimit: false,
             events: {
               url: '/brand_ambassadors/visits.json',
+              events: function(start, end, timezone, callback){
+                var url = '/brand_ambassadors/visits.json';
+                $.ajax({
+                    url: url,
+                    dataType: 'json',
+                    data: $('#collection-list-filters').filteredList('paramsQueryString')+"&start="+start+"&end="+end,
+                    success: function(events) {
+                        callback(events);
+                    }
+                });
+              },
               className: 'visit-item',
               backgroundColor: '#3e9ccf',
               borderColor: '#3e9ccf',
@@ -78,9 +90,11 @@
               return false;
             }
           });
+        } else {
+          visitsCalendar.fullCalendar('refetchEvents');
         }
       } else {
-
+        $('.dates-range-filter').slideDown()
       }
     })
 
@@ -104,6 +118,11 @@
       'onItemsLoad': function(response, page){
         if (response.find('div[data-content="filters-description"]').length > 0){
           $('.collection-list-description .filter-label').html(response.find('div[data-content="filters-description"]'))
+        }
+      },
+      'onChange': function() {
+        if (visitsCalendar) {
+         visitsCalendar.fullCalendar('refetchEvents');
         }
       }
     });

@@ -199,6 +199,8 @@
           if (options === 'destroy') { // for the destroy method, must remove Calendar object data
             element.removeData('fullCalendar');
           }
+        } else if (calendar[options]) {
+          res = calendar[options];
         }
       }
       // a new calendar initialization

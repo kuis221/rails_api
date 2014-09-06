@@ -124,6 +124,13 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
         with :campaign_ids, campaing_ids + [0]
       end
 
+      if params[:start] && params[:end]
+        start_date = DateTime.strptime(params[:start],'%Q')
+        end_date = DateTime.strptime(params[:end],'%Q')
+        params[:start_date] = start_date.to_s(:slashes)
+        params[:end_date] = end_date.to_s(:slashes)
+      end
+
       if params[:start_date].present? and params[:end_date].present?
         d1 = Timeliness.parse(params[:start_date], zone: 'UTC').to_date
         d2 = Timeliness.parse(params[:end_date], zone: 'UTC').to_date
