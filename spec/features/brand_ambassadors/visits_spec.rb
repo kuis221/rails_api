@@ -77,6 +77,8 @@ feature "Brand Ambassadors Visits" do
       company_user.campaigns << campaign1
       company_user.campaigns << campaign2
       event1.users << another_user
+      ba_visit1.save
+      ba_visit2.save
     end
 
     scenario "should allow filter visits and see the correct message" do
@@ -98,7 +100,7 @@ feature "Brand Ambassadors Visits" do
 
         filter_section('BRAND AMBASSADORS').unicheck('Test User')
 
-        expect(page).to have_content('1 visit assigned to Test User')
+        expect(page).to have_content('1 Active visit assigned to Test User')
 
         within("ul#visits-list") do
           expect(page).to have_content('Visit1')
@@ -112,7 +114,7 @@ feature "Brand Ambassadors Visits" do
           expect(page).to have_content('Visit2')
         end
 
-        expect(page).to have_content('2 visits assigned to Roberto Gomez or Test User')
+        expect(page).to have_content('2 Active visits assigned to Roberto Gomez or Test User')
 
         select_filter_calendar_day("18")
         within("ul#visits-list") do
@@ -120,7 +122,7 @@ feature "Brand Ambassadors Visits" do
           expect(page).to have_no_content('Visit2')
         end
 
-        expect(page).to have_content("1 visit taking place today and assigned to Roberto Gomez or Test User")
+        expect(page).to have_content("1 Active visit taking place today and assigned to Roberto Gomez or Test User")
 
         select_filter_calendar_day("18", "19")
         within("ul#visits-list") do
@@ -128,7 +130,7 @@ feature "Brand Ambassadors Visits" do
           expect(page).to have_content('Visit2')
         end
 
-        expect(page).to have_content("2 visits taking place between today and tomorrow and assigned to Roberto Gomez or Test User")
+        expect(page).to have_content("2 Active visits taking place between today and tomorrow and assigned to Roberto Gomez or Test User")
       end
     end
   end
