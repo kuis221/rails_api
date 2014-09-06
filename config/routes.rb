@@ -508,12 +508,7 @@ Brandscopic::Application.routes.draw do
       end
       resources :events, only: [:new, :create], controller: '/events'
       resources :document_folders, path: 'folders', only: [:new, :create]
-      resources :documents, only: [:new, :create] do
-        member do
-          get :deactivate
-          get :activate
-        end
-      end
+      resources :documents, only: [:new, :create, :destroy]
     end
     resources :document_folders, path: 'folders', only: [:new, :create, :index] do
       member do
@@ -521,12 +516,8 @@ Brandscopic::Application.routes.draw do
         get :activate
       end
     end
-    resources :documents, only: [:new, :edit, :create, :update] do
-      member do
-        get :deactivate
-        get :activate
-        get :move
-      end
+    resources :documents, only: [:new, :edit, :create, :update, :destroy] do
+      get :move, on: :member
     end
     root to: 'dashboard#index'
   end

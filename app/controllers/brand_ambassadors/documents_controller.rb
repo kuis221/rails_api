@@ -1,5 +1,5 @@
 class BrandAmbassadors::DocumentsController < ::DocumentsController
-  respond_to :js, only: [:create, :new, :move, :update]
+  respond_to :js, only: [:create, :new, :move, :update, :destroy]
 
   belongs_to :brand_ambassadors_visits, param: :visit_id, polymorphic: true, optional: true
 

@@ -169,6 +169,10 @@ class Ability
         user.current_company_user.role.has_permission?(:index, BrandAmbassadors::Document)
       end
 
+      if can?(:create, BrandAmbassadors::Document)
+        can [:destroy, :move, :edit, :update], BrandAmbassadors::Document
+      end
+
       can :index, BrandAmbassadors::Visit do
         user.current_company_user.role.has_permission?(:list, BrandAmbassadors::Visit) ||
         user.current_company_user.role.has_permission?(:calendar, BrandAmbassadors::Visit)

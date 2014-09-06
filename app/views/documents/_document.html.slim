@@ -12,7 +12,7 @@
 
       span.pull-right
         a.icon-download title="Download" href="#{document.download_url}"
-        - if parent == document.attachable && can?(:deactivate, document)
+        - if parent == document.attachable && can?(:deactivate, document) && !document.is_a?(BrandAmbassadors::Document)
           - if document.active?
             = link_to '', {controller: :documents, action: :deactivate, id: document.id, "#{parent.class.name.underscore}_id" => parent.id}, remote: true, class: 'icon-remove-circle', data: { confirm: I18n.t('confirmation.deactivate_confirm_message', model: 'Document') }
           - else
@@ -21,4 +21,4 @@
         / a.icon-edit
         - if document.is_a?(BrandAmbassadors::Document)
           = link_to '', move_brand_ambassadors_document_path(document, format: :js), remote: true, class: 'icon-folder', title: 'Move'
-        / a.icon-trash
+        = link_to '', brand_ambassadors_document_path(document, format: :js), remote: true, class: 'icon-trash', title: 'Delete', method: :delete, data: { confirm: 'Are you sure you want to delete this document?' }
