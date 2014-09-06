@@ -56,7 +56,7 @@ class AttachedAsset < ActiveRecord::Base
   validate :valid_file_format?
 
   before_validation :set_upload_attributes
-  before_save :rename_file
+
   after_commit :queue_processing
   before_post_process :post_process_required?
 
