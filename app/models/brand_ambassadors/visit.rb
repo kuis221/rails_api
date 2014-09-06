@@ -151,6 +151,8 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
           with :company_user_id, value
         when 'place'
           with :place_ids, value
+        when 'venue'
+          with :place_ids, Venue.find(value).place_id
         when 'area'
           any_of do
             with :place_ids, Area.where(id: value).joins(:places).where(places: {is_location: false}).pluck('places.id').uniq + [0]
