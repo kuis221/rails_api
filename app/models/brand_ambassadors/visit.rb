@@ -11,6 +11,7 @@
 #  active          :boolean          default(TRUE)
 #  created_at      :datetime
 #  updated_at      :datetime
+#  description     :text
 #
 
 class BrandAmbassadors::Visit < ActiveRecord::Base
