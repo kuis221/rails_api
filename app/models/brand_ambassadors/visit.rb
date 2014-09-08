@@ -11,6 +11,7 @@
 #  active          :boolean          default(TRUE)
 #  created_at      :datetime
 #  updated_at      :datetime
+#  description     :text
 #
 
 class BrandAmbassadors::Visit < ActiveRecord::Base
@@ -25,7 +26,7 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
 
   scope :accessible_by_user, ->(company_user) { where(company_id: company_user.company_id) }
 
-  has_many :documents, ->{ order('attached_assets.file_file_name ASC') },
+  has_many :brand_ambassadors_documents, ->{ order('attached_assets.file_file_name ASC') },
       class_name: 'BrandAmbassadors::Document', as: :attachable, inverse_of: :attachable,
       dependent: :destroy do
     def root_children
@@ -123,6 +124,13 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
         with :campaign_ids, campaing_ids + [0]
       end
 
+      if params[:start] && params[:end]
+        start_date = DateTime.strptime(params[:start],'%Q')
+        end_date = DateTime.strptime(params[:end],'%Q')
+        params[:start_date] = start_date.to_s(:slashes)
+        params[:end_date] = end_date.to_s(:slashes)
+      end
+
       if params[:start_date].present? and params[:end_date].present?
         d1 = Timeliness.parse(params[:start_date], zone: 'UTC').to_date
         d2 = Timeliness.parse(params[:end_date], zone: 'UTC').to_date
@@ -151,6 +159,8 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
           with :company_user_id, value
         when 'place'
           with :place_ids, value
+        when 'venue'
+          with :place_ids, Venue.find(value).place_id
         when 'area'
           any_of do
             with :place_ids, Area.where(id: value).joins(:places).where(places: {is_location: false}).pluck('places.id').uniq + [0]

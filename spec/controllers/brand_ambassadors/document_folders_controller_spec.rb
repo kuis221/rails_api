@@ -9,6 +9,54 @@ RSpec.describe BrandAmbassadors::DocumentFoldersController , type: :controller d
 
   before{ sign_in_as_user user }
 
+  describe "GET index" do
+    it "returns http success" do
+      xhr :get, 'index', format: :js
+      expect(response).to be_success
+      expect(response).to render_template('index')
+    end
+
+    it "only load the company's documents/folders" do
+      company_folder = FactoryGirl.create(:document_folder, folderable: company)
+      company_document = FactoryGirl.create(:brand_ambassadors_document, attachable: company)
+
+      FactoryGirl.create(:document_folder, folderable: visit)
+      FactoryGirl.create(:brand_ambassadors_document, attachable: visit)
+      xhr :get, 'index', format: :js
+      expect(assigns(:folder_children)).to match_array([company_folder, company_document])
+    end
+
+    it "does not load the company's documents/folders that belongs to a subfolder" do
+      company_folder = FactoryGirl.create(:document_folder, folderable: company)
+      company_document = FactoryGirl.create(:brand_ambassadors_document, attachable: company)
+
+      FactoryGirl.create(:document_folder, folderable: visit, folderable: company, parent_id: 19999)
+      FactoryGirl.create(:brand_ambassadors_document, attachable: visit, attachable: company, folder_id: 19999)
+      xhr :get, 'index', format: :js
+      expect(assigns(:folder_children)).to match_array([company_folder, company_document])
+    end
+
+    it "only load the company's documents/folders that belongs to the given subfolder" do
+      parent = FactoryGirl.create(:document_folder, folderable: company)
+      FactoryGirl.create(:brand_ambassadors_document, attachable: company)
+
+      company_folder = FactoryGirl.create(:document_folder, folderable: visit, folderable: company, parent_id: parent.id)
+      company_document =  FactoryGirl.create(:brand_ambassadors_document, attachable: visit, attachable: company, folder_id: parent.id)
+      xhr :get, 'index', parent_id: parent.id, format: :js
+      expect(assigns(:folder_children)).to match_array([company_folder, company_document])
+    end
+
+    it "only load the visit's documents/folders" do
+      FactoryGirl.create(:document_folder, folderable: company)
+      FactoryGirl.create(:brand_ambassadors_document, attachable: company)
+
+      visit_folder   = FactoryGirl.create(:document_folder, folderable: visit)
+      visit_document = FactoryGirl.create(:brand_ambassadors_document, attachable: visit)
+      xhr :get, 'index', visit_id: 1, format: :js
+      expect(assigns(:folder_children)).to match_array([visit_folder, visit_document])
+    end
+  end
+
   describe "GET 'new'" do
     it "returns http success" do
       xhr :get, 'new', format: :js

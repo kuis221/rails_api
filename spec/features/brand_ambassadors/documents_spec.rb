@@ -43,6 +43,27 @@ feature "Brand Ambassadors Documents", js: true do
           src = document.file.url(:original, timestamp: false).gsub(/\Ahttp(s)?/, 'https')
           expect(page).to have_xpath("//a[starts-with(@href, \"#{src}\")]", wait: 10)
         end
+
+        expect(document.attachable).to eql(company)
+
+        # Make sure the document is still there after reloading page
+        visit current_path
+        # Check that the image appears on the page
+        within documents_section do
+          src = document.file.url(:original, timestamp: false).gsub(/\Ahttp(s)?/, 'https')
+          expect(page).to have_xpath("//a[starts-with(@href, \"#{src}\")]", wait: 10)
+        end
+
+        # Delete the document
+        within documents_section do
+          hover_and_click 'li.document', 'Delete'
+        end
+        confirm_prompt "Are you sure you want to delete this document?"
+
+        # Check that the document was removed
+        within documents_section do
+          expect(page).not_to have_selector 'li.document'
+        end
       end
     end
 
@@ -57,6 +78,12 @@ feature "Brand Ambassadors Documents", js: true do
         expect(page).to have_link('New Folder Name')
       end
 
+      # Make sure the folder is still there after reloading
+      visit current_path
+      within documents_section do
+        expect(page).to have_link('New Folder Name')
+      end
+
       folder = DocumentFolder.last
 
       # Deactivate the folder
@@ -68,6 +95,49 @@ feature "Brand Ambassadors Documents", js: true do
       # Check that the folder was removed
       within documents_section do
         expect(page).not_to have_content folder.name
+      end
+    end
+
+    scenario "A user can move documents to another folder" do
+      with_resque do
+        visit brand_ambassadors_root_path
+
+        documents_section.click_js_link 'New Folder'
+
+        within documents_section do
+          fill_in 'Please name your folder', with: 'My Folder'
+          page.execute_script("$('form#new_document_folder').submit()")
+          expect(page).to have_link('My Folder')
+        end
+
+        documents_section.click_button 'Upload'
+        within visible_modal do
+          expect(page).to have_content 'New Document'
+          attach_file "file", 'spec/fixtures/file.pdf'
+          expect(upload_queue).to have_file_in_queue('file.pdf')
+          wait_for_ajax(30) # For the file to upload to S3
+          click_js_link 'OK'
+        end
+        ensure_modal_was_closed
+
+        document = BrandAmbassadors::Document.last
+        folder = DocumentFolder.last
+        hover_and_click "#brand_ambassadors_document_#{document.id}", 'Move'
+
+        within visible_modal do
+          find('label.radio', text: 'My Folder').click
+          click_js_button 'Move'
+        end
+        ensure_modal_was_closed
+        expect(document.reload.folder_id).to eql folder.id
+        expect(page).not_to have_content 'file'
+
+        # open the folder
+        within documents_section do
+          click_js_link 'Open Folder'
+        end
+
+        expect(page).to have_content 'file'
       end
     end
   end
@@ -99,6 +169,16 @@ feature "Brand Ambassadors Documents", js: true do
           src = document.file.url(:original, timestamp: false).gsub(/\Ahttp(s)?/, 'https')
           expect(page).to have_xpath("//a[starts-with(@href, \"#{src}\")]", wait: 10)
         end
+
+        expect(document.attachable).to eql(ba_visit)
+
+        # Make sure the document is still there after reloading page
+        visit current_path
+        # Check that the image appears on the page
+        within documents_section do
+          src = document.file.url(:original, timestamp: false).gsub(/\Ahttp(s)?/, 'https')
+          expect(page).to have_xpath("//a[starts-with(@href, \"#{src}\")]", wait: 10)
+        end
       end
     end
 
@@ -110,6 +190,12 @@ feature "Brand Ambassadors Documents", js: true do
       within documents_section do
         fill_in 'Please name your folder', with: 'New Folder Name'
         page.execute_script("$('form#new_document_folder').submit()")
+        expect(page).to have_link('New Folder Name')
+      end
+
+      # Make sure the folder is still there after reloading
+      visit current_path
+      within documents_section do
         expect(page).to have_link('New Folder Name')
       end
 

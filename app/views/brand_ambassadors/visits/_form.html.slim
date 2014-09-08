@@ -16,6 +16,10 @@
 
     = f.association :company_user, collection:  current_company.company_users.for_dropdown, input_html: {class: 'chosen-enabled', 'data-placeholder' => " "}, label: 'Employee'
 
+    .row-fluid
+      .span12
+        = f.input :description, :input_html => {:rows => 6, class: 'input-xlarge'}
+
   .form-actions
     = f.button :submit, class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
     = "&nbsp;".html_safe

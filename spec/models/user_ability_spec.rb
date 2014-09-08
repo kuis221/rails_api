@@ -1046,13 +1046,23 @@ describe "User", :type => :model do
           expect(ability).to be_able_to(:index, BrandAmbassadors::Document)
         end
 
-        it "should be able to create documents if has the permission :create on BrandAmbassadors::Document" do
+        it "should be able to create/move/edit/destory documents if has the permission :create on BrandAmbassadors::Document" do
           expect(ability).not_to be_able_to(:create, BrandAmbassadors::Document)
+          expect(ability).not_to be_able_to(:move, BrandAmbassadors::Document)
+          expect(ability).not_to be_able_to(:update, BrandAmbassadors::Document)
+          expect(ability).not_to be_able_to(:edit, BrandAmbassadors::Document)
+          expect(ability).not_to be_able_to(:destroy, BrandAmbassadors::Document)
           expect(ability).not_to be_able_to(:new, BrandAmbassadors::Document)
 
           user.role.permission_for(:create, BrandAmbassadors::Document).save
 
+          ability = Ability.new(user)
+
           expect(ability).to be_able_to(:create, BrandAmbassadors::Document)
+          expect(ability).to be_able_to(:move, BrandAmbassadors::Document)
+          expect(ability).to be_able_to(:update, BrandAmbassadors::Document)
+          expect(ability).to be_able_to(:edit, BrandAmbassadors::Document)
+          expect(ability).to be_able_to(:destroy, BrandAmbassadors::Document)
           expect(ability).to be_able_to(:new, BrandAmbassadors::Document)
         end
 

@@ -10,6 +10,6 @@
       $('##{list_class}').prepend('#{j render(resource)}');
   |
      $('.bootbox.modal').modal('hide');
-     $('##{list_class} #new-folder-form').collapse('hide');
      $('##{list_class}').prepend($('#documents-list #new-folder-form'));
+     $('##{list_class} #new-folder-form').collapse('hide');
      $('##{list_class} #new-folder-form #document_folder_name').val('');

@@ -1,3 +1,8 @@
+- content_for :alerts
+  div class="alert collection-list-description"
+    a.close data-dismiss="alert"
+    .filter-label
+
 .sidebar.collapsed#resource-filter-column
   #collection-list-filters
 
@@ -38,6 +43,7 @@
       $('#toggle-visits-view a').removeClass('active');
       $(e.target).addClass('active')
       if (e.target.getAttribute('href') == '#calendar-view'){
+        $('.dates-range-filter').slideUp()
         if (!visitsCalendar) {
           visitsCalendar = $('#calendar-canvas').fullCalendar({
             header: {
@@ -57,6 +63,17 @@
             eventLimit: false,
             events: {
               url: '/brand_ambassadors/visits.json',
+              events: function(start, end, timezone, callback){
+                var url = '/brand_ambassadors/visits.json';
+                $.ajax({
+                    url: url,
+                    dataType: 'json',
+                    data: $('#collection-list-filters').filteredList('paramsQueryString')+"&start="+start+"&end="+end,
+                    success: function(events) {
+                        callback(events);
+                    }
+                });
+              },
               className: 'visit-item',
               backgroundColor: '#3e9ccf',
               borderColor: '#3e9ccf',
@@ -67,11 +84,17 @@
             },
             eventRender: function(visit, element) {
               element.find('.fc-title').append("<br/><span class='user-name'>" + visit.company_user.full_name + "</span>");
+            },
+            eventClick: function(visit) {
+              window.location.href = visit.url;
+              return false;
             }
           });
+        } else {
+          visitsCalendar.fullCalendar('refetchEvents');
         }
       } else {
-
+        $('.dates-range-filter').slideDown()
       }
     })
 
@@ -86,10 +109,22 @@
       'includeCalendars': true,
       'selectDefaultDate': false,
       'selectDefaultDateRange': false,
-      'includeAutoComplete': false,
+      'includeAutoComplete': true,
+      'autoCompletePath': '#{autocomplete_brand_ambassadors_visits_path(format: :json)}',
+      'fixListHeight': false,
       'defaultParams': [{name: 'status[]', value: 'Active'}],
       'applyTo': '#{controller.controller_name}',
-      'clearFilterParams': [{name: 'status[]', value: 'Active'}]
+      'clearFilterParams': [{name: 'status[]', value: 'Active'}],
+      'onItemsLoad': function(response, page){
+        if (response.find('div[data-content="filters-description"]').length > 0){
+          $('.collection-list-description .filter-label').html(response.find('div[data-content="filters-description"]'))
+        }
+      },
+      'onChange': function() {
+        if (visitsCalendar) {
+         visitsCalendar.fullCalendar('refetchEvents');
+        }
+      }
     });
 - else
   javascript:

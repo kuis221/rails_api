@@ -15,7 +15,7 @@ RSpec.describe BrandAmbassadors::DocumentsController, :type => :controller do
       expect(response).to render_template('_form')
     end
 
-    it "returns http success" do
+    it "returns http success for a visit" do
       ba_visit = FactoryGirl.create(:brand_ambassadors_visit,
         company: company, company_user: user)
       xhr :get, 'new', visit_id: ba_visit.id, format: :js
@@ -38,7 +38,7 @@ RSpec.describe BrandAmbassadors::DocumentsController, :type => :controller do
       expect_any_instance_of(Paperclip::Attachment).to receive(:path).and_return('/attached_assets/original/test.jpg')
       expect_any_instance_of(AttachedAsset).to receive(:download_url).at_least(:once).and_return('dummy.jpg')
       expect {
-        xhr :post, 'create', attached_asset: {direct_upload_url: 'https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg'}, format: :js
+        xhr :post, 'create', brand_ambassadors_document: {direct_upload_url: 'https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg'}, format: :js
       }.to change(AttachedAsset, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template('documents/create')
@@ -66,7 +66,7 @@ RSpec.describe BrandAmbassadors::DocumentsController, :type => :controller do
       visit = FactoryGirl.create(:brand_ambassadors_visit,
         company: company, company_user: user)
       expect {
-        xhr :post, 'create', visit_id: visit.id, attached_asset: {direct_upload_url: 'https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg'}, format: :js
+        xhr :post, 'create', visit_id: visit.id, brand_ambassadors_document: {direct_upload_url: 'https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg'}, format: :js
       }.to change(AttachedAsset, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template('documents/create')
@@ -82,10 +82,30 @@ RSpec.describe BrandAmbassadors::DocumentsController, :type => :controller do
     it "should render the form_dialog template if errors" do
       expect {
         xhr :post, 'create', format: :js
-      }.not_to change(BrandAmbassadors::Visit, :count)
+      }.not_to change(BrandAmbassadors::Document, :count)
       expect(response).to render_template(:create)
       expect(response).to render_template('_form_dialog')
       assigns(:document).errors.count > 0
+    end
+  end
+
+  describe "PATH update" do
+    let(:document) { FactoryGirl.create(:brand_ambassadors_document, attachable: company) }
+    it "should update the document" do
+      document.save
+      expect {
+        xhr :patch, 'update', id: document.to_param, brand_ambassadors_document: {folder_id: 99}, format: :js
+      }.not_to change(BrandAmbassadors::Document, :count)
+      expect(document.reload.folder_id).to eql 99
+      expect(response).to render_template('update')
+    end
+  end
+
+  describe "GET move" do
+    let(:document) { FactoryGirl.create(:brand_ambassadors_document, attachable: company) }
+    it "should update the document" do
+      xhr :get, 'move', id: document.to_param, format: :js
+      expect(response).to render_template('move')
     end
   end
 

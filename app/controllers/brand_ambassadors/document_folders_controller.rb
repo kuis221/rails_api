@@ -8,7 +8,11 @@ class BrandAmbassadors::DocumentFoldersController < InheritedResources::Base
   include DeactivableHelper
 
   def index
-    @folder_children = (folder.document_folders.active.where(parent_id: params[:parent_id]) + folder.brand_ambassadors_documents.active.where(folder_id: params[:parent_id])).sort_by(&:name)
+    @folder_children = (
+      parent_document_folders.where(parent_id: params[:parent_id]) +
+      folder.brand_ambassadors_documents.active.where(folder_id: params[:parent_id])
+    ).sort_by{|a| a.name.downcase }
+    #).sort{|a, b| a.name.downcase! <=> b.name.downcase!}
   end
 
   private
@@ -18,7 +22,15 @@ class BrandAmbassadors::DocumentFoldersController < InheritedResources::Base
       else
          current_company.document_folders
       end
-      @folder ||= params[:parent_id] ? folders_chain.find(params[:parent_id]) : current_company
+      @folder ||= params[:parent_id] ? folders_chain.find(params[:parent_id]) : (params[:visit_id] ? parent : current_company)
+    end
+
+    def parent_document_folders
+      if params[:visit_id]
+        folder.document_folders.active
+      else
+         folder.document_folders.active.where(folderable_id: current_company.id, folderable_type: 'Company')
+      end
     end
 
     def build_resource_params

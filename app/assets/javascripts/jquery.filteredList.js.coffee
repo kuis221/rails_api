@@ -19,7 +19,8 @@ $.widget 'nmk.filteredList', {
 		selectDefaultDateRange: false,
 		calendarHighlights: null,
 		scope: null,
-		applyTo: null
+		applyTo: null,
+		fixListHeight: true
 	},
 
 	_create: () ->
@@ -822,8 +823,9 @@ $.widget 'nmk.filteredList', {
 			if @infiniteScroller
 				@listContainer.infiniteScrollHelper 'resetPageCount'
 
-			$('.main').css {'min-height': $('#resource-filter-column').outerHeight(), '-moz-box-sizing': 'border-box'}
-			@listContainer.css {height: @listContainer.outerHeight()}
+			if @options.fixListHeight
+				$('.main').css {'min-height': $('#resource-filter-column').outerHeight(), '-moz-box-sizing': 'border-box'}
+				@listContainer.css {height: @listContainer.outerHeight()}
 			@listContainer.html ''
 
 		@emptyState.remove() if @emptyState
