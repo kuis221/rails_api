@@ -3718,6 +3718,9 @@ body.company_users{
 
 	.user-role{
 		margin-bottom: 25px;
+		&:hover{
+			color:$grey_one;
+		}
 	}
 
 	#company_user-areas-list,
