@@ -45,6 +45,7 @@
             = resource.phone_number
           - if resource.user.phone_number_verified?
             .verified
+              i.icon-checked
               p Verified!
           - elsif viewing_profile?
             .verify

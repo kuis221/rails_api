@@ -252,8 +252,18 @@ body{
 				font-size:12px;
 			}
 			&.verified{
+				color: $approved;
 				font-size:12px;
 				margin-left: 30px;
+				i, p{
+					color: $approved;
+					display: inline-block;
+				}
+				i{
+					font-size: 14px;
+					margin-right: 5px;
+					top: -3px;
+				}
 			}
 		}
 	}
