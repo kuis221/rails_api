@@ -14,7 +14,6 @@
 	.form-wrapper {
 		position: relative;
 		.form-builder-actions {
-
 			position: absolute;
 			top: 0;
 			border-bottom: 1px solid $grey_four;
@@ -182,9 +181,6 @@
 			}
 
 			&[data-type="Dropdown"]{
-				label{
-					margin-bottom: 10px;
-				}
 				&.selected{
 					.icon-remove-circle:before{
 						font-size: 18px !important;
@@ -201,7 +197,6 @@
 			&[data-type="Radio"] {
 				label.radio{
 					display:block;
-					margin-bottom: 8px;
 					.radio{
 						margin-right: 10px;
 					}
@@ -250,6 +245,7 @@
 	.fields-wrapper {
 		background-color: #fff;
 		border-radius: 5px;
+		font-weight: 400;
 		position: absolute;
 		top: 0;
 		right: 0;
@@ -279,6 +275,10 @@
 				border: 1px solid $grey_one;
 				padding: 3px;
 			}
+		}
+		p.drag-field-title{
+			color: $user_menu;
+			text-align: center;
 		}
 		.search-fields {
 			margin-top: 5px;

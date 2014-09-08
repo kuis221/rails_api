@@ -3438,6 +3438,7 @@ ul.ui-widget-content{
 		}
 	}
 	.control-group{
+		margin-bottom:0;
 		.segment-total{
 			display: none;
 		}
@@ -3453,15 +3454,15 @@ ul.ui-widget-content{
 			}
 		}
 		label{
+			font-weight: bold;
+			margin-bottom: 6px;
 			&.checkbox{
 				display: block;
 				width: initial;
 				margin-bottom: 10px;
 			}
 			&.control-label{
-				color: $brand;
-				font-size: 12px;
-				margin-bottom:0;
+				color: $text;
 				display: inline-block;
 				&.field-label{
 					color: $text;
@@ -3469,14 +3470,16 @@ ul.ui-widget-content{
 			}
 			&.control-group-label{
 				font-weight: bold;
-				margin-bottom: 10px;
 				&.control-label{
 					color: $text;
-					font-size: 13px;
 				}
 			}
 			&.radio{
+				font-weight: normal;
 				padding:0;
+				div.radio{
+					margin:0;
+				}
 			}
 		}
 	}
