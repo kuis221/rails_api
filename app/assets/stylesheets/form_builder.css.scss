@@ -1,5 +1,5 @@
 @import "variables";
-@import "mixins"; 
+@import "mixins";
 
 .form-builder-wrapper {
 	position: relative;
@@ -14,15 +14,20 @@
 	.form-wrapper {
 		position: relative;
 		.form-builder-actions {
+
 			position: absolute;
 			top: 0;
+			border-bottom: 1px solid $grey_four;
 			border-top-right-radius: 5px;
-			padding: 20px 5px;
+			padding: 18px 30px;
 			&.affix {
 				position: fixed;
 				top: 99px;
 				z-index: 99;
 				background-color: #fff;
+			}
+			.btn{
+				width: 101px;
 			}
 			.tooltip {
 				font-size: 13px;
@@ -536,11 +541,11 @@
 	}
 
 	.arrow-up {
-		width: 0; 
-		height: 0; 
+		width: 0;
+		height: 0;
 		border-left: 14px solid transparent;
 		border-right: 14px solid transparent;
-		
+
 		border-bottom: 14px solid black;
 	}
 
@@ -551,7 +556,7 @@
 			height: 0;
 			border-left: 14px solid transparent;
 			border-right: 14px solid transparent;
-			
+
 			border-bottom: 14px solid $grey_four;
 			position: absolute;
 			top: -14px;
@@ -562,7 +567,7 @@
 				height: 0;
 				border-left: 14px solid transparent;
 				border-right: 14px solid transparent;
-				
+
 				border-bottom: 14px solid $grey_one;
 				position: absolute;
 				top: 1px;
