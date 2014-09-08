@@ -112,9 +112,11 @@ input[readonly], select[readonly], textarea[readonly]{
 	background-color: $user_menu;
 	background-image: none;
 	border: 0;
+	box-shadow:none;
 	font-family: $baseFontFamily;
 	padding: 8px 17px;
 	text-shadow:none;
+	-webkit-box-shadow: none;
 	&[disabled]{
 		background-color: $grey_one;
 		opacity: 1;
