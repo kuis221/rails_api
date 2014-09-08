@@ -84,7 +84,7 @@
 			}
 		}
 		.form-fields {
-			padding-top: 80px;
+			padding-top: 90px;
 			min-height: 550px;
 			padding-bottom: 20px;
 			&.sorting {
@@ -603,5 +603,204 @@
 
 	.field-not-customizable-message {
 		padding: 40px 50px;
+	}
+}
+
+.data-form-wrapper {
+	.help-inline {
+		margin-bottom: 0;
+		padding-left: 5px;
+		&.segment-title-label, &.segment-error-label {
+			padding-left: 0;
+			display:block;
+			&:after {
+				display: table;
+				content: "";
+				line-height: 0;
+				clear: both;
+			}
+		}
+	}
+	.form-actions {
+		margin-top: 20px;
+		input {
+			width: auto;
+			&.btn-primary {
+				min-width: 154px;
+			}
+		}
+	}
+	.control-group{
+		margin-bottom:0;
+		.segment-total{
+			display: none;
+		}
+		&.error {
+			.input-append, .input-prepend {
+				input[type="text"]{
+					border-color: $alert_red !important;
+				}
+				span.add-on{
+					background-color: $alert_red;
+					color: #fff;
+				}
+			}
+		}
+		label{
+			font-weight: bold;
+			margin-bottom: 6px;
+			&.checkbox{
+				display: block;
+				width: initial;
+				margin-bottom: 10px;
+			}
+			&.control-label{
+				color: $text;
+				display: inline-block;
+				&.field-label{
+					color: $text;
+				}
+			}
+			&.control-group-label{
+				font-weight: bold;
+				&.control-label{
+					color: $text;
+				}
+			}
+			&.radio{
+				font-weight: normal;
+				padding:0;
+				div.radio{
+					margin:0;
+				}
+			}
+		}
+	}
+	.form_field_percentage,
+	.form_field_summation {
+		.help-inline {
+			float: left;
+			padding-left: 0;
+			color: $alert_red;
+			font-size: 11px;
+		}
+		.help-inline.valid {
+			display: none !important;
+		}
+
+		.segment-label {
+			margin-bottom: 0;
+			display: inline-block;
+		}
+	}
+	.form_field_summation {
+		display: inline-block;
+		.field-option {
+			text-align: right;
+			width: auto;
+			label {
+				text-align: left;
+				color: text;
+			}
+			input {
+				text-align: left;
+			}
+			&.error input {
+				border-color: #B94A49;
+			}
+		}
+		.summation-total-field {
+			border-top: 2px solid $grey_four;
+			padding-top: 10px;
+		}
+	}
+	.form_field_summation .field-option label {
+		width: 100px;
+		display: inline-block;
+		overflow: hidden;
+		height: 20px;
+	}
+	.form_field_section {
+		margin-top: 40px;
+	}
+	h3.section-title {
+		margin-bottom: 20px;
+		color: $brand;
+		font-size: 20px;
+		font-weight: normal;
+	}
+	p.section-description {
+		margin-top: -20px;
+		margin-bottom: 20px;
+	}
+
+	.fields-wrapper{
+		&>p{
+			color: $user_menu;
+			margin: 5px auto 15px auto;
+			text-align: center;
+		}
+	}
+	input.waiting-files {
+		width: auto !important;
+	}
+	input, textarea{
+		margin-bottom:0;
+		width: 390px;
+	}
+	textarea{
+		height: 80px;
+		margin-bottom:0;
+	}
+	.input-append, .input-prepend{
+		margin-right: 15px;
+		margin-bottom: 0;
+		.add-on{
+			background-color: $brand;
+			border: 1px solid $brand;
+			color: white;
+			height: 19px;
+			text-shadow: none;
+			width: 34px;
+		}
+		input{
+			width: 175px;
+		}
+	}
+	.checkbox{
+		padding-left:0;
+		.checker{
+			margin-right: 15px;
+		}
+	}
+	select {
+		width: 190px;
+	}
+	table{
+		margin-bottom: 0;
+	}
+	input.date_picker {
+		@include box-sizing(border-box);
+		text-align: right;
+		width: 120px;
+		background: image-url('calendar.svg') no-repeat 0px 7px;
+		height: 40px;
+		padding: 2px 10px 0 0;
+		width: 120px;
+		font-size: 12px;
+		&[readonly] {
+			color: silver;
+		}
+	}
+	input.time_picker {
+		@include box-sizing(border-box);
+		text-align: right;
+		height: 40px;
+		width: 120px;
+		padding: 2px 18px 0 0;
+		background: image-url('time.svg') no-repeat 3px 7px;
+		&[readonly] {
+			color: silver;
+		}
 	}
 }
