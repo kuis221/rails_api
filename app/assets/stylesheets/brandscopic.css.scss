@@ -1549,8 +1549,9 @@ li.dropdown a{
 				z-index: 100;
 			}
 			&:hover{
-				&:before, &:after{
-					background-image: none;
+				a{
+					background-color: $app_bg;
+					color: $grey_three;
 				}
 			}
 		}
