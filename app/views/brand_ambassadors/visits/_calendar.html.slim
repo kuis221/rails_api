@@ -1,0 +1,73 @@
+#calendar-canvas
+
+javascript:
+  window.status='loading';
+  var visitsCalendar, buildCalendar = function() {
+    $('#calendar-canvas').fullCalendar({
+      header: {
+        left: 'title',
+        center: '',
+        right: 'prev,next'
+      },
+      height: 'auto',
+      titleFormat: {
+        month: 'MMMM, YYYY'
+      },
+      buttonIcons: {
+          prev: 'bc icon icon-angle-left',
+          next: 'bc icon icon-angle-right',
+          prevYear: 'bc icon icon-angle-left',
+          nextYear: 'bc icon icon-angle-right'
+      },
+      fixedWeekCount: false,
+      eventLimit: false,
+      events: {
+        events: function(start, end, timezone, callback){
+          var data = '#{j params.to_query.html_safe}';
+          if ($('#collection-list-filters').length > 0) {
+            data = $('#collection-list-filters').filteredList('paramsQueryString');
+          }
+          $.ajax({
+              url: '#{brand_ambassadors_visits_url(format: :json)}',
+              dataType: 'json',
+              data: data+"&start="+start+"&end="+end,
+              success: function(events) {
+                  callback(events);
+                  window.status = 'completed';
+              }
+          });
+        },
+        className: 'visit-item',
+        backgroundColor: '#3e9ccf',
+        borderColor: '#3e9ccf',
+        textColor: 'white'
+      },
+      timeFormat: {
+        'default': function(){ return ''; }
+      },
+      eventRender: function(visit, element) {
+        element.find('.fc-title').append("<br/><span class='user-name'>" + visit.company_user.full_name + "</span>");
+      }
+    });
+  };
+
+  if ($('#toggle-visits-view a').length == 0) {
+    buildCalendar();
+  } else {
+    $('#toggle-visits-view a').on('shown', function(e){
+      $('#toggle-visits-view a').removeClass('active');
+      $(e.target).addClass('active')
+      if (e.target.getAttribute('href') == '#calendar-view'){
+        $('#pdf-export').data('url', '#{brand_ambassadors_visits_path(mode: :calendar, format: :pdf)}');
+        $('.dates-range-filter').slideUp()
+        if (typeof visitsCalendar == 'undefined') {
+          visitsCalendar = buildCalendar();
+        } else {
+          visitsCalendar.fullCalendar('refetchEvents');
+        }
+      } else {
+        $('#pdf-export').data('url', '#{brand_ambassadors_visits_path(format: :pdf)}');
+        $('.dates-range-filter').slideDown()
+      }
+    });
+  }

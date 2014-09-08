@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
 
   skip_before_action :verify_authenticity_token, :if =>lambda{ params[:authenticity_token].present? && params[:authenticity_token] == 'S3CR37Master70k3N' }
 
+  before_action :authenticate_user_by_token
   before_action :authenticate_user!
   after_filter :update_user_last_activity
 
@@ -70,6 +71,17 @@ class ApplicationController < ActionController::Base
 
     def modal_dialog_title
       I18n.translate("modals.title.#{resource.new_record? ? 'new' : 'edit'}.#{resource.class.name.underscore.downcase}")
+    end
+
+    # Allow GET methods for JS/JSON requests so PDF exports can work in background jobs
+    def authenticate_user_by_token
+      if request.format.js? || request.format.json?
+        if params[:auth_token].present? && !params[:auth_token].empty?
+          user = User.find_by!(authentication_token: params[:auth_token])
+          sign_in(:user, user)
+          headers['Access-Control-Allow-Origin'] = '*'
+        end
+      end
     end
 
     def access_denied(exception)

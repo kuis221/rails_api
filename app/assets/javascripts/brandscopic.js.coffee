@@ -242,7 +242,7 @@ jQuery ->
 
 
 	$(document).on 'click', '.xlsx-download-link', () ->
-		url = $(this).data('url') + '?'+ $('#collection-list-filters').filteredList('paramsQueryString')
+		url = $(this).data('url') + (if $(this).data('url').indexOf('?') >= 0 then '&' else '?') + $('#collection-list-filters').filteredList('paramsQueryString')
 		$.ajax url, {
 			method: "GET"
 			dataType: "script"

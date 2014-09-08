@@ -8,7 +8,10 @@ class Results::GvaController < InheritedResources::Base
 
   def index
     if request.format.xls?
-      @export = ListExport.create(controller: self.class.name, params: params, export_format: 'xls', company_user: current_company_user)
+      @export = ListExport.create(
+        controller: self.class.name, params: params,
+        url_options: url_options,
+        export_format: 'xls', company_user: current_company_user)
       if @export.new?
         @export.queue!
       end

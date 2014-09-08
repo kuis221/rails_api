@@ -1,4 +1,5 @@
 require 'rails_helper'
+require_relative '../../../app/controllers/brand_ambassadors/visits_controller'
 
 feature "Brand Ambassadors Visits" do
   let(:company) { FactoryGirl.create(:company) }
@@ -13,6 +14,7 @@ feature "Brand Ambassadors Visits" do
     add_permissions permissions
     sign_in user
     Company.current = company
+    ResqueSpec.reset!
   end
 
   after do
@@ -20,7 +22,7 @@ feature "Brand Ambassadors Visits" do
   end
 
   shared_examples_for 'a user that can view the list of visits' do
-    scenario "a list of visits is displayed" do
+    before do
       FactoryGirl.create(:brand_ambassadors_visit, company: company,
         start_date: '02/01/2014', end_date: '02/02/2014',
         name: 'Visit1', company_user: company_user, active: true)
@@ -28,6 +30,9 @@ feature "Brand Ambassadors Visits" do
         start_date: '02/02/2014', end_date: '02/03/2014',
         name: 'Visit2', company_user: company_user, active: true)
       Sunspot.commit
+    end
+
+    scenario "a list of visits is displayed" do
       visit brand_ambassadors_root_path
 
       within("ul#visits-list") do
@@ -46,6 +51,42 @@ feature "Brand Ambassadors Visits" do
           expect(page).to have_content('MON Feb 3')
         end
       end
+    end
+
+    scenario "should be able to export as xls" do
+      visit brand_ambassadors_root_path
+
+      click_button 'Export to Excel'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        expect(ListExportWorker).to have_queued(ListExport.last.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      expect(ListExport.last).to have_rows([
+        ["NAME", "START DATE", "END DATE", "EMPLOYEE"],
+        ["Visit1", "2014-02-01", "2014-02-02", "Test User"],
+        ["Visit2", "2014-02-02", "2014-02-03", "Test User"]
+      ])
+    end
+
+    scenario "should be able to export as PDF" do
+      visit brand_ambassadors_root_path
+
+      # Now export it to PDF
+      click_button 'Export to PDF'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      #TODO: Test for generated PDF.. read and check for data
     end
   end
 
@@ -71,18 +112,14 @@ feature "Brand Ambassadors Visits" do
                       end_date: (today+2.day).to_s(:slashes), start_time: '11:00am',  end_time: '12:00pm',
                       campaign: campaign2, place: place2) }
 
-    before do
-      company_user.places << place1
-      company_user.places << place2
-      company_user.campaigns << campaign1
-      company_user.campaigns << campaign2
-      event1.users << another_user
-      ba_visit1.save
-      ba_visit2.save
-    end
 
     scenario "should allow filter visits and see the correct message" do
       Timecop.travel(today) do
+        company_user.places << place1
+        company_user.places << place2
+        company_user.campaigns << campaign1
+        company_user.campaigns << campaign2
+        event1.users << another_user
         ba_visit1.events << event1
         ba_visit2.events << event2
         Sunspot.commit
@@ -165,6 +202,28 @@ feature "Brand Ambassadors Visits" do
       expect(page).to have_selector('h2', text: 'Visit1')
       expect(page).to have_content 'Test User'
       expect(page).to have_content 'Visit1 description'
+    end
+
+    scenario "should be able to export the calendar view as PDF" do
+      visit brand_ambassadors_root_path
+
+      click_link "Calendar View"
+
+      # Now export it to PDF
+      click_button 'Export to PDF'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      export = ListExport.last
+      expect(export.params).to include(mode: 'calendar')
+
+      #TODO: Test for generated PDF.. read and check for data
     end
   end
 

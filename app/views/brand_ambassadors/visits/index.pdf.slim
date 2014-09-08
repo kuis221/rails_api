@@ -1,0 +1,4 @@
+- if params[:mode] == 'calendar' && can?(:calendar, BrandAmbassadors::Visit)
+  = render 'calendar'
+- else
+  = render template: 'inherited_resources/base/index'

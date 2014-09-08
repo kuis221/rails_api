@@ -52,6 +52,8 @@ gem 'kgio'
 gem 'apipie-rails'
 gem 'heroku-resque-workers-scaler', github: 'guilleva/heroku-resque-workers-scaler'
 gem 'twilio-ruby'
+gem "nested_form"
+gem 'wicked_pdf'
 
 #For memory debugging
 #gem "allocation_stats"
@@ -72,7 +74,6 @@ group :web do
   gem 'unicorn'
   gem 'simple_form'
   gem 'country_select', '2.0.0.rc1'
-  gem "nested_form"
 end
 
 # Gems used only for assets and not required

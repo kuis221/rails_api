@@ -15,8 +15,8 @@ class ListExportWorker
 
   rescue  Exception => e
     Rails.logger.debug e.message
-    Rails.logger.debug e.backtrace.inspect
-    export.fail!
+    Rails.logger.debug e.backtrace.join("\n")
+    export.fail! if export
     raise e
   end
 end

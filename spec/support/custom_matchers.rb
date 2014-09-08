@@ -1,3 +1,6 @@
+require 'rspec/expectations'
+require "rexml/document"
+
 # Use: it { should accept_nested_attributes_for(:association_name).and_accept({valid_values => true}).but_reject({ :reject_if_nil => nil })}
 RSpec::Matchers.define :accept_nested_attributes_for do |association|
   match do |model|
@@ -35,5 +38,28 @@ RSpec::Matchers.define :accept_nested_attributes_for do |association|
 
   chain :and_accept do |accept|
     @accept = accept
+  end
+end
+
+RSpec::Matchers.define :have_rows do |rows|
+  match do |export|
+    @rows = rows
+    doc = REXML::Document.new(open(export.file.url).read)
+    @doc_rows = doc.elements.to_a('//Row').map do |r|
+      r.elements.to_a('Cell/Data').map{|d| d.text }
+    end
+    @rows == @doc_rows
+  end
+
+  failure_message do |export|
+    "Expected export to have rows:\n#{@rows}\nbut instead it had:\n#{@doc_rows}"
+  end
+
+  failure_message_when_negated do |export|
+    "Expected export to NOT have rows:\n#{@rows}\nbut it did"
+  end
+
+  description do
+    "have rows #{expected}"
   end
 end

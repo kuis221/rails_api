@@ -31,8 +31,14 @@ class FilteredController < InheritedResources::Base
   end
 
   def index
-    if request.format.xls?
-      @export = ListExport.create(controller: self.class.name,  params: search_params, export_format: 'xls', company_user: current_company_user)
+    if request.format.xls? || request.format.pdf?
+      @export = ListExport.create(
+        controller: self.class.name,
+        params: search_params,
+        url_options: url_options,
+        export_format: params[:format],
+        company_user: current_company_user
+      )
       if @export.new?
         @export.queue!
       end
@@ -78,7 +84,7 @@ class FilteredController < InheritedResources::Base
       set_collection_ivar(@solr_search.results)
 
       Slim::Engine.with_options(pretty: true, sort_attrs: false, streaming: false) do
-        render_to_string :index, handlers: [:slim], formats: [:xls], layout: false
+        render_to_string :index, handlers: [:slim], formats: [export.export_format], layout: export.export_format
       end
     end
 

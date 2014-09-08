@@ -1,0 +1,7 @@
+.main
+  .pull-left
+  .tab-content
+    .link-list
+      ul id="#{controller_name}-list"
+        - each_collection_item do |item|
+          = render item

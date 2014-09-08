@@ -24,5 +24,6 @@ FactoryGirl.define do
     association :company_user
     start_date "08/26/2014"
     end_date "08/27/2014"
+    active true
   end
 end

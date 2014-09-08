@@ -52,7 +52,7 @@ RSpec.describe BrandAmbassadors::DocumentFoldersController , type: :controller d
 
       visit_folder   = FactoryGirl.create(:document_folder, folderable: visit)
       visit_document = FactoryGirl.create(:brand_ambassadors_document, attachable: visit)
-      xhr :get, 'index', visit_id: 1, format: :js
+      xhr :get, 'index', visit_id: visit.id, format: :js
       expect(assigns(:folder_children)).to match_array([visit_folder, visit_document])
     end
   end

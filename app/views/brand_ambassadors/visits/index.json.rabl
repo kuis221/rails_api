@@ -7,7 +7,7 @@ node :end do |visit|
 end
 
 node :url do |visit|
-  brand_ambassadors_visit_path(visit)
+  brand_ambassadors_visit_url(visit)
 end
 
 child :company_user do

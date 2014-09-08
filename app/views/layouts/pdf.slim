@@ -1,0 +1,23 @@
+doctype html
+html lang="en"
+  head
+    = wicked_pdf_stylesheet_link_tag "application", :media => "all"
+    = wicked_pdf_javascript_include_tag "application"
+    css:
+      body.app-layout {
+        background: #fff !important;
+      }
+
+  body class="app-layout #{controller_name} #{action_name} #{custom_body_class} #{user_signed_in? ? 'with-fixed-top' : ''}"
+
+    #main-container.container
+      #application-content
+        .row-fluid
+          .span12
+            = yield
+
+    javascript:
+      if (typeof window.status !== 'undefined') {
+        window.status='completed';
+      }
+
