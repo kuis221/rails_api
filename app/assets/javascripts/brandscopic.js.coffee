@@ -42,6 +42,9 @@ jQuery ->
 		}
 	)
 
+	$(document).on 'click', '.dropdown-menu li a', (e) ->
+		$(this).closest(".dropdown-menu").prev().dropdown("toggle");
+
 	$(document).on 'click', (e) ->
 		$('.has-popover').each () ->
 			if !$(this).is(e.target) && $(this).has(e.target).length is 0 && $('.popover').has(e.target).length is 0

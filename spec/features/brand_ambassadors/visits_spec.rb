@@ -56,7 +56,8 @@ feature "Brand Ambassadors Visits" do
     scenario "should be able to export as xls" do
       visit brand_ambassadors_root_path
 
-      click_button 'Export to Excel'
+      click_js_link 'Download'
+      click_js_link 'Download as XLS'
 
       within visible_modal do
         expect(page).to have_content('We are processing your request, the download will start soon...')
@@ -75,8 +76,8 @@ feature "Brand Ambassadors Visits" do
     scenario "should be able to export as PDF" do
       visit brand_ambassadors_root_path
 
-      # Now export it to PDF
-      click_button 'Export to PDF'
+      click_js_link 'Download'
+      click_js_link 'Download as PDF'
 
       within visible_modal do
         expect(page).to have_content('We are processing your request, the download will start soon...')
@@ -209,8 +210,8 @@ feature "Brand Ambassadors Visits" do
 
       click_link "Calendar View"
 
-      # Now export it to PDF
-      click_button 'Export to PDF'
+      click_js_link 'Download'
+      click_js_link 'Download as PDF'
 
       within visible_modal do
         expect(page).to have_content('We are processing your request, the download will start soon...')

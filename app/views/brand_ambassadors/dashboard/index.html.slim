@@ -11,11 +11,17 @@
     .pull-left
       = button_to 'New Visit', new_brand_ambassadors_visit_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn'} if can? :create, BrandAmbassadors::Visit
     .text-right
-      button.btn.download.xlsx-download-link data-url="#{brand_ambassadors_visits_path(format:"xls")}" title="Export to Excel"
-        i.icon-download
-
-      button#pdf-export.btn.download.xlsx-download-link data-url="#{brand_ambassadors_visits_path(format:"pdf")}" title="Export to PDF"
-        | PDF
+      .dropdown.btn-download
+        a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+          i.icon-download
+          i.icon-arrow-down
+        ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+          li
+            a.xlsx-download-link href="#" role="menuitem" data-url="#{brand_ambassadors_visits_path(format: :xls)}"
+              | Download as XLS
+          li
+            a#pdf-export.xlsx-download-link href="#" role="menuitem" data-url="#{brand_ambassadors_visits_path(format:"pdf")}"
+              | Download as PDF
 
       #toggle-visits-view.btn-group
         - if can?(:list, BrandAmbassadors::Visit)
