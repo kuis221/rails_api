@@ -35,5 +35,5 @@
         span.value= resource.goals.for_activity_type(goalable, false).try(:value)
       span.pull-right
         = link_to '', campaign_activity_type_set_goal_path(resource, goalable.id), remote: true, class: 'icon-edit', title: 'Edit'
-        = link_to '', remove_activity_type_campaign_path(resource, goalable.id), remote: true, method: :delete, class: 'disable', title: 'Remove', confirm: 'Please confirm you want to remove this KPI?'
+        = link_to '', remove_activity_type_campaign_path(resource, goalable.id), remote: true, method: :delete, class: 'icon-rounded-disable', title: 'Remove', confirm: 'Please confirm you want to remove this KPI?'
       .clearfix

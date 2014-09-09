@@ -471,11 +471,35 @@ feature "Campaigns", js: true do
     feature "Activity Types", search: false do
       scenario "Set goals for Activity Types" do
         campaign = FactoryGirl.create(:campaign, company: @company)
-        activity_type = FactoryGirl.create(:activity_type, name: 'Activity Type #1', company: @company, campaign_ids: [campaign.id])
+        activity_type = FactoryGirl.create(:activity_type, name: 'Activity Type #1', company: @company)
 
         visit campaign_path(campaign)
 
         click_js_link 'KPIs'
+
+        click_js_link 'Add KPI'
+
+        within visible_modal do
+          expect(page).to have_content('Add KPI')
+          fill_in 'Search', with: 'Activity Type #1'
+          within '.select-list-table-wrapper' do
+            expect(page).to have_content('Activity Type #1')
+            hover_and_click 'li', 'Add Activity Type'
+            expect(page).not_to have_content('Activity Type #1')
+          end
+        end
+        close_modal
+
+        # Reopen the modal and make sure the activity type is not there
+        click_js_link 'Add KPI'
+        within visible_modal do
+          expect(page).to have_content('Add KPI')
+          fill_in 'Search', with: 'Activity Type #1'
+          within '.select-list-table-wrapper' do
+            expect(page).not_to have_content('Activity Type #1')
+          end
+        end
+        close_modal
 
         within "#global-kpis" do
           expect(page).to have_content('Activity Type #1')
@@ -491,6 +515,22 @@ feature "Campaigns", js: true do
 
         within "#global-kpis" do
           expect(page).to have_content('123.0')
+
+          # Remove the activity type from the list
+          expect(page).to have_content('Activity Type #1')
+          hover_and_click('li#campaign-activity-type-'+activity_type.id.to_s, 'Remove')
+
+          expect(page).not_to have_content('Activity Type #1')
+        end
+
+        # Reopen the modal and make sure the activity type is againg available to be added
+        click_js_link 'Add KPI'
+        within visible_modal do
+          expect(page).to have_content('Add KPI')
+          fill_in 'Search', with: 'Activity Type #1'
+          within '.select-list-table-wrapper' do
+            expect(page).to have_content('Activity Type #1')
+          end
         end
       end
     end
