@@ -1,12 +1,13 @@
 |
+  var downloaded#{@export.id} = false;
   var downloadDialog = bootbox.dialog('#{j render('export')}', [{
     "label" : "Cancel",
     "class" : "btn btn-primary",
     "callback": function() {
-        downloadDialog.modal('hide');
         if (downloadInterval){
           clearInterval(downloadInterval)
         }
+        downloadDialog.modal('hide');
     }
   }], {'onEscape': false, animate: (!$.fx.off)})
 
@@ -15,7 +16,10 @@
       if (response.status == 'completed') {
         clearInterval(downloadInterval);
         downloadDialog.modal('hide');
-        window.location = response.url;
+        if (!downloaded#{@export.id}){
+          downloaded#{@export.id} = true;
+          window.location = response.url;
+        }
       } else if (response.status == 'failed') {
         clearInterval(downloadInterval);
         downloadDialog.modal('hide');
