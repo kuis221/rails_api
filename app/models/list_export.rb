@@ -103,7 +103,10 @@ class ListExport < ActiveRecord::Base
 
       tempfile = Tempfile.new(["export-#{self.controller.underscore.gsub('/', '-')}", ".pdf"], Rails.root.join('tmp'))
       tempfile.binmode
-      tempfile.write WickedPdf.new.pdf_from_string(html, javascript_delay: 1000, extra: '--window-status completed --debug-javascript')
+      tempfile.write(WickedPdf.new.pdf_from_string(html,
+        javascript_delay: 1000,
+        header: { content: controller.render_to_string(template: 'shared/pdf_header.pdf.slim') },
+        extra: '--window-status completed --debug-javascript'))
       tempfile.close
 
       self.file = File.open(tempfile.path)

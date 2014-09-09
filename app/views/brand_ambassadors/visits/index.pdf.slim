@@ -1,3 +1,7 @@
+div class="alert collection-list-description"
+  .filter-label
+    = describe_filters
+
 - if params[:mode] == 'calendar' && can?(:calendar, BrandAmbassadors::Visit)
   = render 'calendar'
 - else

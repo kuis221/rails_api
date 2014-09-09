@@ -1,0 +1,28 @@
+doctype html
+html lang="en"
+  head
+    css:
+      body {
+        padding-top: 10px;
+        color:  #dfdfdf;
+      }
+      .span6 {
+        width: 48%;
+        margin:0;
+        padding:0;
+        display: inline-block;
+      }
+      .text-right {
+        text-align: right;
+      }
+
+  body
+    .span6
+      .text-left
+        h2= current_company.name
+    .span6
+      .text-right
+        = I18n.t("exports.pdf.title.#{controller_name.underscore}")
+
+    javascript:
+      window.status='completed';

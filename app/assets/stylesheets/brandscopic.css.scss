@@ -869,6 +869,7 @@ ul.dates-pref{ /*Take out this class when implemented the new design*/
 		.download-options-menu {
 			right: 0;
 			left: initial;
+			text-align: left;
 			&:before {
 				border: none;
 			}

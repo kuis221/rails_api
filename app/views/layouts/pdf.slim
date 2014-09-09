@@ -17,7 +17,7 @@ html lang="en"
             = yield
 
     javascript:
-      if (typeof window.status !== 'undefined') {
+      if (typeof window.status === 'undefined' || window.status === '') {
         window.status='completed';
       }
 

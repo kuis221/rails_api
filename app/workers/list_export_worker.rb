@@ -7,6 +7,7 @@ class ListExportWorker
   def self.perform(download_id)
     export = ListExport.find(download_id)
     export.export_list
+    export = nil
 
   rescue Resque::TermException
     # if the worker gets killed, (when deploying for example)

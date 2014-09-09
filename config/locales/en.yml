@@ -36,6 +36,11 @@ en:
       one: 'year'
       other: '%{count} years'
 
+  exports:
+    pdf:
+      title:
+        visits: 'Brand Ambassadors Visits'
+
   buttons:
     new:
       team: "New Team"
