@@ -42,8 +42,11 @@ jQuery ->
 		}
 	)
 
-	$(document).on 'click', '.dropdown-menu li a', (e) ->
-		$(this).closest(".dropdown-menu").prev().dropdown("toggle");
+	$(document).off('click.closeMenu').on 'click.closeMenu', '.dropdown-menu li a', (e) ->
+		menu = $(this).closest(".dropdown-menu")
+		if menu.parent().hasClass('open')
+			menu.prev().dropdown("toggle")
+		true
 
 	$(document).on 'click', (e) ->
 		$('.has-popover').each () ->
