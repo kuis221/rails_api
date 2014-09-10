@@ -15,6 +15,7 @@
 #  updated_at        :datetime         not null
 #  controller        :string(255)
 #  progress          :integer          default(0)
+#  url_options       :text
 #
 
 class ListExport < ActiveRecord::Base
@@ -25,8 +26,11 @@ class ListExport < ActiveRecord::Base
   do_not_validate_attachment_file_type :file
 
   serialize :params
+  serialize :url_options
 
   include AASM
+
+  View = Struct.new(:layout, :action, :locals, :format, :path)
 
   aasm do
     state :new, :initial => true
@@ -64,26 +68,53 @@ class ListExport < ActiveRecord::Base
   end
 
   def export_list
-    self.process!
+    self.process! if self.queued? || self.new?
     controller = self.controller.constantize.new
 
     User.current = company_user.user
     Company.current = company_user.user.current_company = company_user.company
+
+    # So ajax requests work as expected
+    if User.current.authentication_token.nil?
+      User.current.ensure_authentication_token
+      User.current.save
+    end
 
     controller.instance_variable_set(:@_params, params)
     controller.instance_variable_set(:@_current_user, company_user.user)
     controller.instance_variable_set(:@current_user, company_user.user)
     controller.instance_variable_set(:@current_company, company_user.company)
     controller.instance_variable_set(:@current_company_user, company_user)
+    controller.instance_variable_set(:@_url_options, url_options.merge(only_path: false, auth_token: User.current.authentication_token))
 
     if company_user.user.time_zone.present?
       Time.zone = company_user.user.time_zone
     end
 
     name = controller.send(:export_file_name)
-    self.file = StringIO.new(controller.send(:export_list, self))
+    if export_format == 'pdf'
+      html = controller.send(:export_list, self)
+
+      if Rails.env.development?
+        tempfile = Tempfile.new(["export-#{self.controller.underscore.gsub('/', '-')}", ".html"], Rails.root.join('tmp'))
+        tempfile.write html
+        tempfile.close
+      end
+
+      tempfile = Tempfile.new(["export-#{self.controller.underscore.gsub('/', '-')}", ".pdf"], Rails.root.join('tmp'))
+      tempfile.binmode
+      tempfile.write(WickedPdf.new.pdf_from_string(html,
+        javascript_delay: 1000,
+        header: { content: controller.render_to_string(template: 'shared/pdf_header.pdf.slim') },
+        extra: '--window-status completed --debug-javascript'))
+      tempfile.close
+
+      self.file = File.open(tempfile.path)
+      self.file_content_type = "application/pdf"
+    else
+      self.file = StringIO.new(controller.send(:export_list, self))
+    end
     self.file_file_name = "#{name}-#{self.id}.#{export_format}"
-    self.file_content_type = "application/xml"
 
     # Save export with retry to handle errors on S3 comunications
     tries = 3
@@ -99,6 +130,6 @@ class ListExport < ActiveRecord::Base
       end
     end
     # Mark export as completed
-    self.complete!
+    self.complete! unless self.completed?
   end
 end

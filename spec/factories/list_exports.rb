@@ -15,6 +15,7 @@
 #  updated_at        :datetime         not null
 #  controller        :string(255)
 #  progress          :integer          default(0)
+#  url_options       :text
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

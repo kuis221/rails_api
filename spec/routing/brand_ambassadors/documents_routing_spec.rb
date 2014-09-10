@@ -28,14 +28,6 @@ describe 'routes for brand ambassadors documents', :type => :routing do
   it "routes to #destroy" do
     expect(delete: "/brand_ambassadors/documents/1").to route_to("brand_ambassadors/documents#destroy", id: '1')
   end
-
-  it "routes to #activate" do
-    expect(get: "/events/1/activate").to route_to("events#activate", :id => "1")
-  end
-
-  it "routes to #deactivate" do
-    expect(get: "/events/1/deactivate").to route_to("events#deactivate", :id => "1")
-  end
 end
 
 
@@ -66,13 +58,5 @@ describe 'routes for brand ambassadors documents nested inside a visit', :type =
 
   it "doesn't routes to #destroy" do
     expect(delete: "/brand_ambassadors/visits/1/documents/1").not_to be_routable
-  end
-
-  it "routes to #activate" do
-    expect(get: "/brand_ambassadors/visits/1/documents/1/activate").to route_to("brand_ambassadors/documents#activate", visit_id: '1', :id => "1")
-  end
-
-  it "routes to #deactivate" do
-    expect(get: "/brand_ambassadors/visits/1/documents/1/deactivate").to route_to("brand_ambassadors/documents#deactivate", visit_id: '1', :id => "1")
   end
 end

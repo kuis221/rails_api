@@ -14,7 +14,7 @@ feature "Results Event Data Page", js: true, search: true  do
 
   let(:campaign) { FactoryGirl.create(:campaign, company: @company, name: 'Test Campaign FY01') }
 
-  feature "export as xls" do
+  feature "video tutorial" do
     scenario "a user can play and dismiss the video tutorial" do
       visit results_event_data_path
 
@@ -37,7 +37,9 @@ feature "Results Event Data Page", js: true, search: true  do
       visit results_event_data_path
       expect(page).to have_no_selector('h5', text: feature_name)
     end
+  end
 
+  feature "export as xls" do
     scenario "should include any custom kpis from all the campaigns" do
       with_resque do
         kpi = FactoryGirl.create(:kpi, company: @company, name: 'A Custom KPI')

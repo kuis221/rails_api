@@ -13,7 +13,7 @@
                 .kpi_name= kpi.name
                 .kpi_description= kpi.description
               span.pull-right
-                = link_to '', send("add_#{type}_campaign_path", resource, "#{type}_id" => kpi.id), id: "add-#{type}-btn-#{kpi.id}", data:{'#{type}-id' => kpi.id}, remote: true, method: :post, enable_with: '...', class: 'icon-rounded-add', title: 'Add KPI'
+                = link_to '', send("add_#{type}_campaign_path", resource, "#{type}_id" => kpi.id), id: "add-#{type}-btn-#{kpi.id}", data:{'#{type}-id' => kpi.id}, remote: true, method: :post, enable_with: '...', class: 'icon-rounded-add', title: 'Add ' + t("activerecord.models.#{type}")
         - else
           li.empty-list-message
             p There are not assignable KPIs

@@ -10,6 +10,21 @@ describe BrandAmbassadors::VisitsController, type: :controller, search: true do
 
     let(:campaign){ FactoryGirl.create(:campaign, company: @company) }
 
+    it "returns the list of events" do
+      visit = FactoryGirl.create(:brand_ambassadors_visit,
+        name: 'My Visit to Costa Rica', start_date: '08/26/2014', end_date: '08/27/2014',
+        company: @company, active: true)
+      Sunspot.commit
+      get 'index', format: :json
+      expect(response).to be_success
+      result = JSON.parse(response.body)
+      expect(result).to eql [
+        {"title"=>'My Visit to Costa Rica', "start"=>"2014-08-26", "end"=>"2014-08-27T23:59:59.999-07:00",
+          "url"=>"http://test.host/brand_ambassadors/visits/#{visit.id}",
+          "company_user"=>{"full_name"=>@user.full_name}}
+      ]
+    end
+
     describe "GET 'autocomplete'" do
       it "should return the correct buckets in the right order" do
         Sunspot.commit
@@ -93,7 +108,7 @@ describe BrandAmbassadors::VisitsController, type: :controller, search: true do
         expect(response).to be_success
 
         filters = JSON.parse(response.body)
-        expect(filters['filters'].map{|b| b['label']}).to eq(["Brand Ambassadors", "Areas", "Brands", "Saved Filters"])
+        expect(filters['filters'].map{|b| b['label']}).to eq(["Brand Ambassadors", "Areas", "Brands", "Active State", "Saved Filters"])
       end
     end
   end

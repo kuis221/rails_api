@@ -26,7 +26,13 @@ class Results::ReportsController < InheritedResources::Base
 
   def show
     if request.format.csv?
-      @export = ListExport.create(controller: self.class.name,  params: filter_params, export_format: :csv, company_user: current_company_user)
+      @export = ListExport.create(
+        controller: self.class.name,
+        url_options: url_options,
+        params: filter_params,
+        export_format: :csv,
+        company_user: current_company_user)
+
       if @export.new?
         @export.queue!
       end

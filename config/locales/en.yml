@@ -6,6 +6,8 @@ en:
     models:
       company_user: "User"
       document_folder: "Folder"
+      kpi: "KPI"
+      activity_type: "Activity Type"
     attributes:
       activity:
         start_date_date: "Start date"
@@ -35,6 +37,11 @@ en:
     yearly:
       one: 'year'
       other: '%{count} years'
+
+  exports:
+    pdf:
+      title:
+        visits: 'Brand Ambassadors Visits'
 
   buttons:
     new:

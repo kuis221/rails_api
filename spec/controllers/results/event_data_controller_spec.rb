@@ -1,10 +1,11 @@
 require 'rails_helper'
 
 describe Results::EventDataController, :type => :controller do
-  before(:each) do
+  before do
     @user = sign_in_as_user
     @company = @user.companies.first
     @company_user = @user.current_company_user
+    ResqueSpec.reset!
   end
 
   describe "GET 'index'" do
@@ -39,15 +40,16 @@ describe Results::EventDataController, :type => :controller do
     let(:campaign) { FactoryGirl.create(:campaign, company: @company, name: 'Test Campaign FY01') }
     it "should return an empty book with the correct headers" do
       expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
-      spreadsheet_from_last_export do |doc|
-        rows = doc.elements.to_a('//Row')
-        expect(rows.count).to eql 1
-        expect(rows[0].elements.to_a('Cell/Data').map{|d| d.text }).to eql [
-          "CAMPAIGN NAME", "AREAS", "TD LINX CODE", "VENUE NAME", "ADDRESS", "CITY", "STATE", "ZIP","ACTIVE STATE",
+      export = ListExport.last
+      expect(ListExportWorker).to have_queued(export.id)
+      ResqueSpec.perform_all(:export)
+
+      expect(export.reload).to have_rows([
+        ["CAMPAIGN NAME", "AREAS", "TD LINX CODE", "VENUE NAME", "ADDRESS", "CITY", "STATE", "ZIP","ACTIVE STATE",
           "EVENT STATUS", "TEAM MEMBERS","URL", "START", "END", "PROMO HOURS", "IMPRESSIONS",
           "INTERACTIONS", "SAMPLED", "SPENT", "FEMALE", "MALE", "ASIAN", "BLACK/AFRICAN AMERICAN",
           "HISPANIC/LATINO", "NATIVE AMERICAN", "WHITE"]
-      end
+      ])
     end
 
     it "should include the event data results" do
@@ -70,16 +72,21 @@ describe Results::EventDataController, :type => :controller do
       Sunspot.commit
 
       expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
-      spreadsheet_from_last_export do |doc|
-        rows = doc.elements.to_a('//Row')
-        expect(rows[1].elements.to_a('Cell/Data').map{|d| d.text }).to eql [
-          "Test Campaign FY01",'My area', '443321', "Bar Prueba", "Bar Prueba, Los Angeles, California, 12345",
+      export = ListExport.last
+      expect(ListExportWorker).to have_queued(export.id)
+      ResqueSpec.perform_all(:export)
+
+      expect(export.reload).to have_rows([
+        ["CAMPAIGN NAME","AREAS","TD LINX CODE", "VENUE NAME", "ADDRESS", "CITY", "STATE", "ZIP", "ACTIVE STATE",
+          "EVENT STATUS", "TEAM MEMBERS","URL","START", "END", "PROMO HOURS", "IMPRESSIONS",
+          "INTERACTIONS", "SAMPLED", "SPENT", "FEMALE", "MALE", "ASIAN", "BLACK/AFRICAN AMERICAN",
+          "HISPANIC/LATINO", "NATIVE AMERICAN", "WHITE"],
+        ["Test Campaign FY01",'My area', '443321', "Bar Prueba", "Bar Prueba, Los Angeles, California, 12345",
            "Los Angeles", "California", "12345", "Active", "Approved", "Test User, zteam",
            "http://localhost:5100/events/#{event.id}", "2019-01-23T10:00", "2019-01-23T12:00",
            "2.0", "10", "11", "12", "99.99", "0.600", "0.400", "0.180", "0.200", "0.210", "0.190",
            "0.220"]
-        #1.upto(oo.last_column).map{|col| oo.cell(3, col) }.should == ["", "Test Campaign FY01", "Bar Prueba", "Bar Prueba, Los Angeles, California, 12345", "Los Angeles", "California", 12345.0,"Active", "Approved","Test User, zteam",Rails.application.routes.url_helpers.event_url(event), "Wed, 23 Jan 2019 09:59:59 +0000", "Wed, 23 Jan 2019 12:00:00 +0000", 2.0, 10.0, 11.0, 12.0, 99.99, "60.00%", "40.00%", "18.00%", "20.00%", "21.00%", "19.00%", "22.00%"]
-      end
+      ])
     end
 
     it "should include any custom kpis in the export" do
@@ -143,23 +150,23 @@ describe Results::EventDataController, :type => :controller do
       Sunspot.commit
 
       expect { xhr :get, 'index', campaign: [campaign.id], format: :xls }.to change(ListExport, :count).by(1)
-      spreadsheet_from_last_export do |doc|
-        rows = doc.elements.to_a('//Row')
-        expect(rows.count).to eql 2
-        expect(rows[0].elements.to_a('Cell/Data').map{|d| d.text }).to match_array [
-          "CAMPAIGN NAME","AREAS","TD LINX CODE", "VENUE NAME", "ADDRESS", "CITY", "STATE", "ZIP", "ACTIVE STATE",
+      export = ListExport.last
+      expect(ListExportWorker).to have_queued(export.id)
+      ResqueSpec.perform_all(:export)
+
+      expect(export.reload).to have_rows([
+        ["CAMPAIGN NAME","AREAS","TD LINX CODE", "VENUE NAME", "ADDRESS", "CITY", "STATE", "ZIP", "ACTIVE STATE",
           "EVENT STATUS", "TEAM MEMBERS","URL","START", "END", "PROMO HOURS", "IMPRESSIONS",
           "INTERACTIONS", "SAMPLED", "SPENT", "FEMALE", "MALE", "ASIAN", "BLACK/AFRICAN AMERICAN",
           "HISPANIC/LATINO", "NATIVE AMERICAN", "WHITE","AGE: < 12", "AGE: 12 – 17", "AGE: 18 – 24",
-          "AGE: 25 – 34", "AGE: 35 – 44", "AGE: 45 – 54", "AGE: 55 – 64", "AGE: 65+", "TEST KPI", "EVENT TYPE",
-          "RADIO FIELD TYPE"]
-        expect(rows[1].elements.to_a('Cell/Data').map{|d| d.text }).to match_array [
-          "Test Campaign FY01", "Angeles Area", "344221", "Bar Prueba", "Bar Prueba, Los Angeles, California, 12345",
+          "AGE: 25 – 34", "AGE: 35 – 44", "AGE: 45 – 54", "AGE: 55 – 64", "AGE: 65+", "EVENT TYPE",
+          "RADIO FIELD TYPE", "TEST KPI"],
+        ["Test Campaign FY01", "Angeles Area", "344221", "Bar Prueba", "Bar Prueba, Los Angeles, California, 12345",
           "Los Angeles", "California", "12345","Active", "Approved","Test User","http://localhost:5100/events/#{event.id}",
           "2019-01-23T10:00", "2019-01-23T12:00", "2.0", "10", "11",
           "12", "99.99", "0.600", "0.400", "0.180", "0.200", "0.210", "0.190", "0.220","0.0", "0.0", "0.0", "0.0", "0.0", "0.0",
-          "0.0", "0.0", '8899.0', 'Event Type Opt 1', 'Radio Field Opt 1']
-      end
+          "0.0", "0.0", 'Event Type Opt 1', 'Radio Field Opt 1', '8899.0']
+      ])
     end
 
     it "should include any custom kpis from all the campaigns" do

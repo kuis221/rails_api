@@ -1,0 +1,23 @@
+css:
+  .fc-toolbar .fc-right {
+    display: none;
+  }
+  .fc-toolbar .fc-center {
+    display: none;
+  }
+  .fc-toolbar .fc-left {
+    width: 100%;
+  }
+  .fc-toolbar .fc-left h2 {
+    white-space: nowrap;
+  }
+  .filter-description {
+    padding: 10px 0;
+  }
+.filter-description
+  = describe_filters
+
+- if params[:mode] == 'calendar' && can?(:calendar, BrandAmbassadors::Visit)
+  = render 'calendar'
+- else
+  = render template: 'inherited_resources/base/index'

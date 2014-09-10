@@ -7,6 +7,7 @@ class ListExportWorker
   def self.perform(download_id)
     export = ListExport.find(download_id)
     export.export_list
+    export = nil
 
   rescue Resque::TermException
     # if the worker gets killed, (when deploying for example)
@@ -15,8 +16,8 @@ class ListExportWorker
 
   rescue  Exception => e
     Rails.logger.debug e.message
-    Rails.logger.debug e.backtrace.inspect
-    export.fail!
+    Rails.logger.debug e.backtrace.join("\n")
+    export.fail! if export
     raise e
   end
 end

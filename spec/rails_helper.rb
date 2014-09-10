@@ -92,14 +92,6 @@ RSpec.configure do |config|
     end
   end
 
-  # Capybara.javascript_driver = :webkit
-  #Capybara.javascript_driver = :selenium
-  Capybara.javascript_driver = :poltergeist
-  Capybara.default_wait_time = 5
-  # Capybara.server_host = 'localhost'
-  Devise.stretches = 1
-  #Rails.logger.level = 4
-
   config.include(SmsSpec::Helpers)
   config.include(SmsSpec::Matchers)
 

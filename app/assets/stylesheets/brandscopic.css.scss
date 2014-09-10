@@ -158,6 +158,18 @@ body{
 	}
 }
 
+
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus,
+.dropdown-submenu:hover > a,
+.dropdown-submenu:focus > a {
+  color: #fff;
+  text-decoration: none;
+  background-color: $brand;
+  background-image: none;
+  filter: none;
+}
+
 // RATING FOR PHOTOS
 // --------------------------------------------------
 
@@ -860,13 +872,46 @@ ul.dates-pref{ /*Take out this class when implemented the new design*/
 	.btn-primary{
 		padding: 8px 25px;
 	}
-	.xlsx-download-link {
+	.btn.download {
 		margin: 0px 3px;
 		text-decoration: none;
 	}
 	.fullscreen-link{
 		margin: 0px 0 0 15px;
 		text-decoration: none;
+	}
+	.btn-download {
+		display: inline-block;
+		.icon-arrow-down:before {
+			top: 3px;
+			right: -12px;
+		}
+		.download-options-menu {
+			right: 0;
+			left: initial;
+			text-align: left;
+			&:before {
+				border: none;
+			}
+			padding: 0;
+			li:first-child a {
+				border-top-right-radius: 5px;
+				border-top-left-radius: 5px;
+			}			
+			li:last-child a {
+				border-bottom-right-radius: 5px;
+				border-bottom-left-radius: 5px;
+			}
+			&> li > a {
+				color: $text;
+			}
+			&> li > a:hover,
+			&> li > a:focus,
+			.dropdown-submenu:hover > a,
+			.dropdown-submenu:focus > a {
+				color: #fff;
+			}
+		}
 	}
 }
 

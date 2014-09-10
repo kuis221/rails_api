@@ -197,16 +197,22 @@ describe User, :type => :model do
 
   describe "is_super_admin?" do
     it "should return true if the current role is admin" do
-      company = FactoryGirl.build(:company)
-      user    = FactoryGirl.build(:user, current_company: company, company_users: [FactoryGirl.build(:company_user, company: company, role: FactoryGirl.build(:role, is_admin: true))])
-      User.current = user
+      company = FactoryGirl.create(:company)
+      user    = FactoryGirl.create(:user, current_company_id: company.id,
+        company_users: [
+          FactoryGirl.create(:company_user,
+            company: company,
+            role: FactoryGirl.create(:role, is_admin: true))])
       expect(user.is_super_admin?).to be_truthy
     end
 
     it "should return false if the current role is admin" do
-      company = FactoryGirl.build(:company)
-      user    = FactoryGirl.build(:user, current_company: company, company_users: [FactoryGirl.build(:company_user, company: company, role: FactoryGirl.build(:role, is_admin: false))])
-      User.current = user
+      company = FactoryGirl.create(:company)
+      user    = FactoryGirl.create(:user, current_company_id: company.id,
+        company_users: [
+          FactoryGirl.create(:company_user,
+            company: company,
+            role: FactoryGirl.create(:role, is_admin: false))])
       expect(user.is_super_admin?).to be_falsey
     end
   end

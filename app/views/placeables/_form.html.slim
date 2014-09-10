@@ -12,7 +12,7 @@
                 .area_name= area.name
                 .area_description= area.description
               span.pull-right
-                = link_to '', url_for({controller: :placeables, action: :add_area, "#{parent.class.name.underscore.downcase}_id" => parent.id, area: area.id}), remote: true, method: :post, enable_with: '...', class: 'add', title: 'Add Area' if area.active?
+                = link_to '', url_for({controller: :placeables, action: :add_area, "#{parent.class.name.underscore.downcase}_id" => parent.id, area: area.id}), remote: true, method: :post, enable_with: '...', class: 'icon-plus-sign', title: 'Add Area' if area.active?
         - else
           li.empty-list-message
             p There are not assignable areas

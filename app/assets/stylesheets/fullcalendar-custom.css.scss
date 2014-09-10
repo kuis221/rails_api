@@ -19,7 +19,6 @@ $brand: #989898;
 				color: silver;
 				display: inline-block;
 				font-family: 'icons';
-				font-size: 26px;
 				font-style: normal;
 				font-weight: normal;
 				font-variant: normal;
@@ -29,19 +28,6 @@ $brand: #989898;
 				outline: none;
 				outline-offset: 0;
   				text-transform: none;
-
-				&.fc-prev-button:before{
-					content: "\e01c";
-					-webkit-font-smoothing: antialiased;
-					-moz-osx-font-smoothing: grayscale;
-				}
-
-				&.fc-next-button:before{
-					content: "\e01d";
-					margin-left: 15px;
-					-webkit-font-smoothing: antialiased;
-					-moz-osx-font-smoothing: grayscale;
-				}
 			}
 		}
 	}
@@ -91,5 +77,17 @@ $brand: #989898;
 				}
 			}
 		}
+	}
+
+	.fc-state-default.fc-corner-left { /* non-theme */
+		border-top-left-radius: 0;
+		border-bottom-left-radius: 0;
+		box-shadow: none;
+	}
+
+	.fc-state-default.fc-corner-right { /* non-theme */
+		border-top-right-radius: 0;
+		border-bottom-right-radius: 0;
+		box-shadow: none;
 	}
 }

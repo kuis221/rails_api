@@ -175,9 +175,8 @@ body .fc { /* extra precedence to overcome jqui */
 
 .fc-state-down,
 .fc-state-active {
-	background-color: #cccccc;
 	background-image: none;
-	box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+	box-shadow: none;
 }
 
 .fc-state-disabled {
@@ -637,7 +636,6 @@ a.fc-more:hover {
 
 .fc-basic-view tbody .fc-row {
 	min-height: 120px;  /* ensure that all rows are at least this tall - used to be 4em*/
-	height: 120px;
 }
 
 /* a "rigid" row will take up a constant amount of height because content-skeleton is absolute */

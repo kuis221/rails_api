@@ -215,11 +215,11 @@ class User < ActiveRecord::Base
 
   def current_company_user
     @current_company_user ||= begin
-      if User.current && User.current.current_company
+      if current_company_id.present?
         if company_users.loaded?
-          company_users.select{|cu| cu.company_id ==  User.current.current_company.id}.first
+          company_users.select{|cu| cu.company_id ==  current_company_id}.first
         else
-          company_users.where(company_id: User.current.current_company).first
+          company_users.where(company_id: current_company_id).first
         end
       end
     end
