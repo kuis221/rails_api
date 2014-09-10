@@ -1,2 +1,3 @@
 h3.section-title= form_field.name
-p.section-desciption= form_field.settings['description']
+- if form_field.settings.present?
+  p.section-desciption= form_field.settings['description']
