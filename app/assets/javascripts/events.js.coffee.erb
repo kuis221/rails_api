@@ -46,9 +46,11 @@ jQuery ->
 			$('.help-title-map').show()
 			$('body.events.index #collection-list-filters').filteredList 'disableScrolling'
 			$('.dates-range-filter').slideDown()
+			$('.dates-pref').slideDown()
 			initializeMap()
 		else if $(this).attr('href') is '#calendar-view'
 			$('.dates-range-filter').slideUp()
+			$('.dates-pref').slideUp()
 			calendarIsVisible = true
 			mapIsVisible = false
 			$('.help-title').show()
@@ -79,6 +81,7 @@ jQuery ->
 				$('#calendar-canvas').eventsCalendar 'loadEvents'
 		else
 			$('.dates-range-filter').slideDown()
+			$('.dates-pref').slideDown()
 			mapIsVisible = false
 			calendarIsVisible = false
 			$('.help-title').show()

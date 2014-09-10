@@ -100,6 +100,7 @@ $.widget 'nmk.filteredList', {
 
 		@defaultParams = []
 		@initialized = true
+		@dateRange = false
 		@_serializeFilters()
 
 	destroy: ->
@@ -574,6 +575,7 @@ $.widget 'nmk.filteredList', {
 			selectOtherMonths: true,
 			highlightClass: 'datepick-event',
 			daysHighlighted: @options.calendarHighlights,
+			dayNamesMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
 			renderer: $.extend(
 						{}, $.datepick.defaultRenderer,
 						{picker: '<div class="datepick">' +
@@ -582,56 +584,96 @@ $.widget 'nmk.filteredList', {
 								'<div class="datepick-clear-fix"></div></div>'}),
 			onSelect: (dates) =>
 				if @initialized == true
+					if @dateRange == false
+						@customDatesPanel.find('ul .active').removeClass('active')
+						@_updateDateRangeInput()
+					@dateRange = false
+
 					if @_previousDates != @_datesToString(dates)
+						@calendar.find('.datepick-month a').removeClass('first-selected last-selected')
+						@calendar.find('.datepick-selected:first').addClass('first-selected')
+						@calendar.find('.datepick-selected:last').addClass('last-selected')
 						@_previousDates = @_datesToString(dates)
 						@customDatesFilter.find('input[name=custom_start_date]').datepicker('setDate', dates[0])
 						@customDatesFilter.find('input[name=custom_end_date]').datepicker('setDate', dates[1])
 						@_filtersChanged()
-						#@reloadFilters()
+				else
+					@calendar.find('.datepick-selected:first').addClass('first-selected')
+					@calendar.find('.datepick-selected:last').addClass('last-selected')
 		}
 
-		$('<ul class="dates-pref">').appendTo(@form).append(
-			$('<li>').append($('<a href="#">').data('selection', 'today').text('Today')),
-			$('<li>').append($('<a href="#">').data('selection', '1w').text('1w')),
-			$('<li>').append($('<a href="#">').data('selection', '1m').text('1m')),
-			$('<li>').append($('<a href="#">').data('selection', '1y').text('1y')),
-			$('<li>').append($('<a href="#">').data('selection', 'custom').text('Custom'))
-		).find('a').on 'click', (e) =>
-			$(e.target).closest('ul').find('.active').removeClass('active')
-			$(e.target).closest('li').addClass('active')
-			@setCalendarRange $(e.target).data('selection')
-			false
-
-		customDateSelected = (date) =>
-			date1 = @customDatesFilter.find("[name=custom_start_date]").datepicker('getDate')
-			date2 = @customDatesFilter.find("[name=custom_end_date]").datepicker('getDate')
-			if date1 and date2
-				@calendar.datepick('setDate', [date1, date2])
-
-
-		@customDatesFilter = $('<div class="custom-data-panel">').appendTo(@form).append(
-			$('<div class="form-group">').append(
-				$('<label>').text('Start date'),
-				$('<input type="text" name="custom_start_date">').datepicker
-					showOtherMonths:true
-					selectOtherMonths:true
-					dateFormat:"mm/dd/yy"
-					onSelect: customDateSelected
+		@customDatesFilter = $('<div class="custom-dates-inputs">').appendTo(@form).append(
+			$('<div class="start-date">').append(
+				$('<label for="custom_start_date">').text('Start date'),
+				$('<input type="text" class="input-calendar date_picker disabled" id="custom_start_date" name="custom_start_date">').val('mm/dd/yyyy').datepicker
+					showOtherMonths: true
+					selectOtherMonths: true
+					dateFormat: "mm/dd/yy"
+					onSelect: () =>
+						@customDatesFilter.find("[name=custom_start_date]").removeClass('disabled')
 					onClose: ( selectedDate ) =>
 						@customDatesFilter.find("[name=custom_end_date]").datepicker "option", "minDate", selectedDate
 			),
-			$('<span class="separate">').text('-'),
-			$('<div class="form-group">').append(
-				$('<label>').text('End date'),
-				$('<input type="text" name="custom_end_date">').datepicker
-					showOtherMonths:true
-					selectOtherMonths:true
-					dateFormat:"mm/dd/yy"
-					onSelect: customDateSelected
+			$('<div class="separate">').text('-'),
+			$('<div class="end-date">').append(
+				$('<label for="custom_end_date">').text('End date'),
+				$('<input type="text" class="input-calendar date_picker disabled" id="custom_end_date" name="custom_end_date">').val('mm/dd/yyyy').datepicker
+					showOtherMonths: true
+					selectOtherMonths: true
+					dateFormat: "mm/dd/yy"
+					onSelect: () =>
+						@customDatesFilter.find("[name=custom_end_date]").removeClass('disabled')
 					onClose: ( selectedDate ) =>
 						@customDatesFilter.find("[name=custom_start_date]").datepicker "option", "maxDate", selectedDate
 			)
-		).hide()
+		)
+
+		@customDatesPanel = $('<div class="dates-pref">').appendTo(@form).append(
+			$('<div class="dropdown select-ranges">').append(
+				$('<label>').text('Date ranges'),
+				$('<a class="dropdown-toggle off" data-toggle="dropdown" href="#" title="Date ranges">').text('Choose a date range'),
+				$('<ul aria-labelledby="dLabel" class="dropdown-menu" role="menu">').append(
+					$('<li class="options">').append(
+						$('<div class="row-fluid">').append(
+							$('<div class="span4">').append(
+								$('<a href="#">').data('selection', 'cw').text('Current week')
+							),
+							$('<div class="span4">').append(
+								$('<a href="#">').data('selection', 'cm').text('Current month')
+							),
+							$('<div class="span4">').append(
+								$('<a href="#">').data('selection', 'today').text('Today')
+							)
+						),
+						$('<div class="row-fluid">').append(
+							$('<div class="span4">').append(
+								$('<a href="#">').data('selection', 'pw').text('Previous week')
+							),
+							$('<div class="span4">').append(
+								$('<a href="#">').data('selection', 'pm').text('Previous month')
+							),
+							$('<div class="span4">').append(
+								$('<a href="#">').data('selection', 'ytd').text('YTD')
+							)
+						)
+					).on 'click', (e) =>
+						$(e.target).closest('ul').find('.active').removeClass('active')
+						$(e.target).addClass('active')
+						@dateRange = true
+						@setCalendarRange $(e.target).data('selection')
+						false
+					$('<li class="ranges">').append(
+						@customDatesFilter.show()
+					)
+					$('<li>').append(
+						$('<input class="btn btn-primary" id="apply-ranges-btn" type="submit" value="Apply">').on 'click', (e) =>
+							@dateRange = false
+							@customDateSelected()
+					)
+				).on 'click', (e) =>
+					false
+			)
+		)
 
 		if @options.selectDefaultDateRange
 			start_date = @_findDefaultParam('start_date')
@@ -639,38 +681,52 @@ $.widget 'nmk.filteredList', {
 			if start_date.length > 0 && end_date.length > 0
 				@selectCalendarDates start_date[0].value, end_date[0].value
 
+	customDateSelected: () ->
+		date1 = @customDatesFilter.find("[name=custom_start_date]").datepicker('getDate')
+		date2 = @customDatesFilter.find("[name=custom_end_date]").datepicker('getDate')
+		if date1 and date2
+			@selectCalendarDates date1, date2
+			@_updateDateRangeInput date1, date2
+			#@calendar.datepick('setDate', [date1, date2])
 
 	setCalendarRange: (range) ->
-		@customDatesFilter.hide() if range isnt 'custom'
 		dates = switch range
 			when "today" then [new Date(), new Date()]
-			when "1w" then @getWeekRange()
-			when "1m" then @getMonthRange()
-			when "1y" then @getYearRange()
-			when "custom"
-				dates = @calendar.datepick('getDate')
-				@customDatesFilter.find('input[name=custom_start_date]').datepicker('setDate', dates[0])
-				@customDatesFilter.find('input[name=custom_end_date]').datepicker('setDate', dates[1])
-				@customDatesFilter.show()
-				dates
+			when "cw" then @getWeekRange(1)
+			when "cm" then @getMonthRange(1)
+			when "pw" then @getWeekRange(-1)
+			when "pm" then @getMonthRange(-1)
+			when "ytd" then @getYearRange()
+			else []
 
 		if dates.length > 0
 			@selectCalendarDates dates[0], dates[1]
+			@_updateDateRangeInput dates[0], dates[1]
 
-	selectCalendarDates: (start_date, end_date) ->
-		@calendar.datepick('setDate', [start_date, end_date])
+	_updateDateRangeInput: (startDate, endDate) ->
+		dropdown = @customDatesPanel.find('a.dropdown-toggle')
+		if startDate and endDate
+			dates = @_formatDate(startDate) + ' - ' + @_formatDate(endDate)
+			dropdown.removeClass('off')
+		else
+			dates = 'Choose a date range'
+			dropdown.addClass('off')
+		dropdown.text(dates)
+
+	selectCalendarDates: (startDate, endDate) ->
+		@calendar.datepick('setDate', [startDate, endDate])
 		@_setCalendarDatesFromCalendar()
 
 	_setCalendarDatesFromCalendar: () ->
 		dates = @calendar.datepick('getDate')
 		if dates.length > 0
-			start_date = @_formatDate(dates[0])
-			@startDateInput.val start_date
+			startDate = @_formatDate(dates[0])
+			@startDateInput.val startDate
 
 			@endDateInput.val ''
 			if dates[0].toLocaleString() != dates[1].toLocaleString()
-				end_date = @_formatDate(dates[1])
-				@endDateInput.val end_date
+				endDate = @_formatDate(dates[1])
+				@endDateInput.val endDate
 		else
 			@startDateInput.val ''
 			@endDateInput.val ''
@@ -690,21 +746,29 @@ $.widget 'nmk.filteredList', {
 		parts = date.split('/')
 		new Date(parts[2], parseInt(parts[0])-1, parts[1],0,0,0)
 
-	getWeekRange: () ->
+	getWeekRange: (weeks=1) ->
 		today = new Date();
 		today.setHours(0, 0, 0, 0)
 		date = today.getDate() - today.getDay();
 
 		# Grabbing Start/End Dates
-		StartDate = new Date(today.setDate(date));
-		EndDate = new Date(today.setDate(date + 6));
+		if (weeks >= 0)
+			StartDate = new Date(today.setDate(date));
+			EndDate = new Date(today.setDate(date + (weeks*6)));
+		else
+			EndDate = new Date(today.setDate(date));
+			StartDate = new Date(today.setDate(date + (weeks*6) - 1));
+
 		[StartDate, EndDate]
 
-	getMonthRange: () ->
+	getMonthRange: (months=1) ->
 		date = new Date()
 		y = date.getFullYear()
 		m = date.getMonth()
-		[new Date(y, m, 1), new Date(y, m + 1, 0)]
+		if (months >= 0)
+			[new Date(y, m, 1), new Date(y, m + months, 0)]
+		else
+			[new Date(y, m + months, 1), new Date(y, m, 0)]
 
 	getYearRange: () ->
 		[new Date(new Date().getFullYear(), 0, 1), new Date(new Date().getFullYear(), 11, 31)]
