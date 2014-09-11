@@ -6093,68 +6093,76 @@ div.chardinjs-tooltip
 }
 
 // GVA - GOALS VS ACTUAL
-
-body.gva {
-	.tab-content{
-		overflow: visible;
-		.tab-pane{
-			.tool-box{
-				color: $brand;
-				h3{
-					color: $text;
+#report-settings {
+	color: $brand;
+	.control-group {
+		display: inline-block;
+		margin-left: 57px;
+		&.report_campaign_id {
+			margin-left: 0;
+		}
+		&.report_group_by label {
+			display: inline-block;
+			font-size: 11px;
+			vertical-align: middle;
+		}
+		.export-xls {
+			margin-top: 22px;
+		}
+		.btn-group {
+			margin: 4px 0 0 8px;
+			.btn {
+				background-color: $user_menu;
+				box-shadow: none;
+				color: #FFFFFF;
+				font-weight: bold;
+				font-size: 13px;
+				padding: 7px 10px;
+				width: 60px;
+				&:first-child{
+					border-bottom-left-radius: 6px;
+					border-top-left-radius: 6px;
 				}
-				.group-by-box, .view-style-box, .export-xls{
-					display: inline-block;
-					margin-left: 57px;
-					margin-top: 20px;
-					#group-by-title{
-						font-size: 11px;
-						vertical-align: middle;
+				&:last-child{
+				    border-bottom-right-radius: 6px;
+				    border-top-right-radius: 6px;
+				}
+				&.active{
+					background-color: $brand;
+					color: $grey_one;
+				}
+				&.campaign{
+					border-right: 1px solid $buttons-border;
+				}
+				&.place{
+					border-right: 1px solid $buttons-border;
+					&:before{
+						display: none;
 					}
-					.btn-group{
-						margin: 0 0 0 8px;
-						.btn{
-							background-color: $user_menu;
-							box-shadow: none;
-							color: #FFFFFF;
-							font-weight: bold;
-							font-size: 13px;
-							padding: 7px 10px;
-							width: 60px;
-							&:first-child{
-								border-bottom-left-radius: 6px;
-								border-top-left-radius: 6px;
-							}
-							&:last-child{
-							    border-bottom-right-radius: 6px;
-							    border-top-right-radius: 6px;
-							}
-							&.active{
-								background-color: $brand;
-								color: $grey_one;
-							}
-							&.campaign{
-								border-right: 1px solid $buttons-border;
-							}
-							&.place{
-								border-right: 1px solid $buttons-border;
-								&:before{
-									display: none;
-								}
-							}
-							&.list, &.table, &.graph{
-								width: 30px;
-								padding: 6px 10px;
-								&:after{
-									font-size: 16px;
-									font-weight: normal;
-								}
-							}
-						}
+				}
+				&.list, &.table, &.graph{
+					width: 30px;
+					padding: 6px 10px;
+					&:after{
+						font-size: 16px;
+						font-weight: normal;
 					}
 				}
 			}
 		}
+	}
+}
+
+body.gva, body.event_status {
+	#list-tools {
+		.export-xls {
+			margin-top: 22px;
+		}
+	}
+}
+body.gva {
+	.tab-content{
+		overflow: visible;
 
 		#report-container {
 			.total-venues {

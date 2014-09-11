@@ -55,6 +55,22 @@ jQuery ->
 
 	bootbox.setBtnClasses {CANCEL: 'btn-cancel', OK: 'btn-primary', CONFIRM: 'btn-primary'}
 
+	$(document).on 'click touchend', ".btn-group .btn input:radio", (e) ->
+		$(@).closest('.btn').parent().find('.btn.active').removeClass('active')
+		$(@).closest('.btn').addClass('active')
+		true
+
+	$(document).on 'click', '.toggle-input .btn', () ->
+		$this = $(this);
+		$this.parent().find('.btn').removeClass('btn-success btn-danger active')
+		if $this.hasClass('set-on-btn')
+			$this.addClass('btn-success active')
+		else
+			$this.addClass('btn-danger active')
+
+		$this.parent().find('.toggle-input-hidden').val($this.data('value')).trigger 'click'
+		false
+
 	$('header .nav #notifications').notifications();
 
 	$(window).load () =>
@@ -84,23 +100,15 @@ jQuery ->
 		$('.has-popover').popover({html: true})
 		$("input:checkbox, input:radio").not('[data-no-uniform="true"],#uniform-is-ajax').uniform()
 
-		$('.toggle-input .btn').click ->
-			$this = $(this);
-			$this.parent().find('.btn').removeClass('btn-success btn-danger active')
-			if $this.hasClass('set-on-btn')
-				$this.addClass('btn-success active')
-			else
-				$this.addClass('btn-danger active')
-
-			$this.parent().find('.toggle-input-hidden').val($this.data('value')).trigger 'click'
-			false
-
 		$(".fancybox").fancybox {
 			padding : 0,
 			helpers : { title: { type: 'inside' } },
 			beforeLoad: () ->
 				this.title = $(this.element).attr('caption')
 		}
+
+		$(".btn-group .btn .checked input:radio").each (i, btn) ->
+			$(btn).closest('.btn').addClass('active')
 
 		$("a.smooth-scroll[href^='#']").off('click.branscopic').on 'click.branscopic', (e) ->
 			e.preventDefault()

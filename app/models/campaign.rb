@@ -224,14 +224,30 @@ class Campaign < ActiveRecord::Base
     brands.each{|brand| brand.mark_for_destruction unless brands_names.include?(brand.name) }
   end
 
-  def promo_hours_graph_data(user)
-    stats={}
+  def event_status_data_by_areas(user)
     user_allowed_areas = areas.accessible_by_user(user).pluck('areas.id')
+    event_status_graph_data children_goals.for_areas(user_allowed_areas), ->(goalable) {
+      events.active.in_campaign_area(areas_campaigns.find_by(area_id: goalable))
+    }
+  end
+
+  def event_status_data_by_staff
+    event_status_graph_data children_goals.for_staff(user_ids, team_ids), ->(goalable) {
+      if goalable.is_a?(CompanyUser)
+        events.active.with_user_in_team(goalable)
+      else
+        events.active.with_team(goalable)
+      end
+    }
+  end
+
+  def event_status_graph_data(children_goals_scope, events_scope)
+    stats={}
     queries = Campaign.connection.unprepared_statement do
-      children_goals.with_value.includes(:goalable).where(kpi_id: [Kpi.events.id, Kpi.promo_hours.id]).for_areas(user_allowed_areas).map do |goal|
+      children_goals_scope.with_value.includes(:goalable).where(kpi_id: [Kpi.events.id, Kpi.promo_hours.id]).map do |goal|
         name, group = if goal.kpi_id == Kpi.events.id then ['EVENTS', 'COUNT(events.id)'] else ['PROMO HOURS', 'SUM(events.promo_hours)'] end
         stats["#{goal.goalable.id}-#{name}"] = {"id"=>goal.goalable.id, "name"=>goal.goalable.name, "goal"=>goal.value, "kpi"=>name, "executed"=>0.0, "scheduled"=>0.0}
-        events.active.in_campaign_area(areas_campaigns.find_by(area_id: goal.goalable)).
+        events_scope.call(goal.goalable).
           select("ARRAY['#{goal.goalable.id}', '#{name}'], '#{name}' as kpi, CASE WHEN events.end_at < '#{Time.now.to_s(:db)}' THEN 'executed' ELSE 'scheduled' END as status, #{group}").
           reorder(nil).group('1, 2, 3').to_sql
       end
