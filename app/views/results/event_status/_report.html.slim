@@ -1,7 +1,7 @@
 #kpis-trends-module
   .details_box
-    - if @campaign.events.count > 0
+    - if @data.count > 0
       = render 'report_event_status'
     - else
       .empty-state
-        p.text-center This campaign has no events
+        p.text-center No Event or Promo Hour goals have been set for this campaign. Please set these goals or select another campaign to run the report against.

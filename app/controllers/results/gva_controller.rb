@@ -4,7 +4,7 @@ class Results::GvaController < InheritedResources::Base
   before_action :campaign, except: :index
   before_action :authorize_actions
 
-  helper_method :return_path
+  helper_method :return_path, :report_view_mode, :report_group_by
 
   def index
     if request.format.xls?
@@ -48,7 +48,7 @@ class Results::GvaController < InheritedResources::Base
 
   private
     def campaign
-      @campaign ||= current_company.campaigns.find(params[:report][:campaign_id])
+      @campaign ||= current_company.campaigns.find(params[:report][:campaign_id]) if params[:report] && params[:report][:campaign_id].present?
     end
 
     def area
@@ -85,9 +85,9 @@ class Results::GvaController < InheritedResources::Base
     end
 
     def goalables_by_type
-      if params[:group_by] == 'campaign'
+      if report_group_by == 'campaign'
         campaign.goals
-      elsif params[:group_by] == 'place'
+      elsif report_group_by == 'place'
         campaign.children_goals.for_areas_and_places(
           campaign.areas.accessible_by_user(current_company_user).pluck('areas.id'),
           campaign.places.select{|place| current_company_user.allowed_to_access_place?(place) }.map(&:id))
@@ -97,7 +97,7 @@ class Results::GvaController < InheritedResources::Base
     end
 
     def set_report_scopes_for(goalable)
-      if params[:format] == 'xls' && (params[:group_by] == 'place' || params[:group_by] == 'staff')
+      if params[:format] == 'xls' && (report_group_by == 'place' || report_group_by == 'staff')
         @area, @place, @company_user, @team = nil, nil, nil, nil
         params.merge!(item_type: goalable.class.name, item_id: goalable.id)
       end
@@ -214,6 +214,22 @@ class Results::GvaController < InheritedResources::Base
         end
       else
         {}
+      end
+    end
+
+    def report_group_by
+      @_group_by ||= if params[:report].present? && params[:report][:group_by].present?
+        params[:report][:group_by]
+      else
+        'campaign'
+      end
+    end
+
+    def report_view_mode
+      @_view_mode ||= if params[:report].present? && params[:report][:view_mode].present?
+        params[:report][:view_mode]
+      else
+        'graph'
       end
     end
 
