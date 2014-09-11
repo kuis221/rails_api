@@ -508,7 +508,7 @@ Brandscopic::Application.routes.draw do
       end
       resources :events, only: [:new, :create], controller: '/events'
       resources :document_folders, path: 'folders', only: [:new, :create]
-      resources :documents, only: [:new, :create, :destroy]
+      resources :documents, only: [:new, :create]
     end
     resources :document_folders, path: 'folders', only: [:new, :create, :index] do
       member do
