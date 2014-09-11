@@ -605,24 +605,40 @@ $.widget 'nmk.filteredList', {
 		@customDatesFilter = $('<div class="custom-dates-inputs">').appendTo(@form).append(
 			$('<div class="start-date">').append(
 				$('<label for="custom_start_date">').text('Start date'),
-				$('<input type="text" class="input-calendar date_picker disabled" id="custom_start_date" name="custom_start_date">').val('mm/dd/yyyy').datepicker
+				$('<input type="text" class="input-calendar date_picker disabled" id="custom_start_date" name="custom_start_date" readonly="readonly">').val('mm/dd/yyyy').datepicker
 					showOtherMonths: true
 					selectOtherMonths: true
 					dateFormat: "mm/dd/yy"
 					onSelect: () =>
-						@customDatesFilter.find("[name=custom_start_date]").removeClass('disabled')
+						startDateInput = @customDatesFilter.find("[name=custom_start_date]")
+						endDateInput = @customDatesFilter.find("[name=custom_end_date]")
+						applyButton = @customDatesPanel.find("#apply-ranges-btn")
+						if startDateInput.val() != 'mm/dd/yyyy' && endDateInput.val() != 'mm/dd/yyyy' && startDateInput.val() != '' && endDateInput.val() != ''
+							applyButton.attr('disabled', false)
+						else
+							applyButton.attr('disabled', true)
+
+						startDateInput.removeClass('disabled')
 					onClose: ( selectedDate ) =>
 						@customDatesFilter.find("[name=custom_end_date]").datepicker "option", "minDate", selectedDate
 			),
 			$('<div class="separate">').text('-'),
 			$('<div class="end-date">').append(
 				$('<label for="custom_end_date">').text('End date'),
-				$('<input type="text" class="input-calendar date_picker disabled" id="custom_end_date" name="custom_end_date">').val('mm/dd/yyyy').datepicker
+				$('<input type="text" class="input-calendar date_picker disabled" id="custom_end_date" name="custom_end_date" readonly="readonly">').val('mm/dd/yyyy').datepicker
 					showOtherMonths: true
 					selectOtherMonths: true
 					dateFormat: "mm/dd/yy"
 					onSelect: () =>
-						@customDatesFilter.find("[name=custom_end_date]").removeClass('disabled')
+						startDateInput = @customDatesFilter.find("[name=custom_start_date]")
+						endDateInput = @customDatesFilter.find("[name=custom_end_date]")
+						applyButton = @customDatesPanel.find("#apply-ranges-btn")
+						if startDateInput.val() != 'mm/dd/yyyy' && endDateInput.val() != 'mm/dd/yyyy' && startDateInput.val() != '' && endDateInput.val() != ''
+							applyButton.attr('disabled', false)
+						else
+							applyButton.attr('disabled', true)
+
+						endDateInput.removeClass('disabled')
 					onClose: ( selectedDate ) =>
 						@customDatesFilter.find("[name=custom_start_date]").datepicker "option", "maxDate", selectedDate
 			)
@@ -666,7 +682,7 @@ $.widget 'nmk.filteredList', {
 						@customDatesFilter.show()
 					)
 					$('<li>').append(
-						$('<input class="btn btn-primary" id="apply-ranges-btn" type="submit" value="Apply">').on 'click', (e) =>
+						$('<input class="btn btn-primary" id="apply-ranges-btn" type="submit" value="Apply">').attr('disabled', true).on 'click', (e) =>
 							@dateRange = false
 							@customDateSelected()
 					)
@@ -696,7 +712,7 @@ $.widget 'nmk.filteredList', {
 			when "cm" then @getMonthRange(1)
 			when "pw" then @getWeekRange(-1)
 			when "pm" then @getMonthRange(-1)
-			when "ytd" then @getYearRange()
+			when "ytd" then @getYearTodayRange()
 			else []
 
 		if dates.length > 0
@@ -770,8 +786,8 @@ $.widget 'nmk.filteredList', {
 		else
 			[new Date(y, m + months, 1), new Date(y, m, 0)]
 
-	getYearRange: () ->
-		[new Date(new Date().getFullYear(), 0, 1), new Date(new Date().getFullYear(), 11, 31)]
+	getYearTodayRange: () ->
+		[new Date(new Date().getFullYear(), 0, 1), new Date()]
 
 	_filtersChanged: (updateState=true) ->
 		if @options.includeCalendars

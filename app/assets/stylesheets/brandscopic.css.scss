@@ -698,6 +698,9 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		}
 		.btn{
 			width: 100%;
+			&:disabled{
+				opacity: 0.7;
+			}
 		}
 		label{
 			color: $user_menu;
@@ -705,6 +708,10 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		}
 		input{
 			&.input-calendar{
+				&[readonly]{
+					color: $text;
+					cursor: auto;
+				}
 				&.disabled{
 					color: $user_menu;
 				}
@@ -883,7 +890,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			li:first-child a {
 				border-top-right-radius: 5px;
 				border-top-left-radius: 5px;
-			}			
+			}
 			li:last-child a {
 				border-bottom-right-radius: 5px;
 				border-bottom-left-radius: 5px;
