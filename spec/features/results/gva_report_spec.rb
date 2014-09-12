@@ -76,7 +76,7 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
 
         visit results_gva_path
 
-        select_from_chosen('Test Campaign FY01', from: 'Campaign')
+        choose_campaign('Test Campaign FY01')
 
         within('.container-kpi-trend') do
           expect(page).to have_content('Samples')
@@ -93,9 +93,7 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
         end
 
         #Testing group by Place
-        within('#group-by-criterion') do
-          click_js_link('Place')
-        end
+        report_form.find('label', text: 'Place').click
 
         within('.item-summary') do
           expect(page).to have_content('Place 1')
@@ -125,9 +123,7 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
         end
 
         #Testing group by Staff
-        within('#group-by-criterion') do
-          click_js_link('Staff')
-        end
+        report_form.find('label', text: 'Staff').click
 
         within('.item-summary') do
           expect(page).to have_content('Juanito Bazooka')
@@ -174,11 +170,9 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
 
         visit results_gva_path
 
-        within('#group-by-criterion') do
-          click_js_link('Place')
-        end
+        report_form.find('label', text: 'Place').click
 
-        select_from_chosen('Test Campaign FY01', from: 'Campaign')
+        choose_campaign('Test Campaign FY01')
 
         within('#gva-results') do
           expect(page).to have_content('Place 1')
@@ -215,7 +209,7 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
 
         visit results_gva_path
 
-        select_from_chosen('Test Campaign FY01', from: 'Campaign')
+        choose_campaign('Test Campaign FY01')
 
         # Export
         with_resque do
@@ -267,11 +261,9 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
 
         visit results_gva_path
 
-        select_from_chosen('Test Campaign FY01', from: 'Campaign')
+        choose_campaign('Test Campaign FY01')
 
-        within('#group-by-criterion') do
-          click_js_link('Place')
-        end
+        report_form.find('label', text: 'Place').click
 
         # Export
         with_resque do
@@ -325,11 +317,9 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
 
         visit results_gva_path
 
-        select_from_chosen('Test Campaign FY01', from: 'Campaign')
+        choose_campaign('Test Campaign FY01')
 
-        within('#group-by-criterion') do
-          click_js_link('Staff')
-        end
+        report_form.find('label', text: 'Staff').click
 
         # Export
         with_resque do
@@ -353,5 +343,13 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
         end
       end
     end
+  end
+
+  def report_form
+    find('form#report-settings')
+  end
+
+  def choose_campaign(name)
+    select_from_chosen(name, from: 'report[campaign_id]')
   end
 end

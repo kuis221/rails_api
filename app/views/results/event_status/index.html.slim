@@ -12,11 +12,13 @@
 .tab-content.with-details-close-bar
   = resource_details_bar("You are viewing the Event Status report. Click to close.")
   #list-view.tab-pane.active
-    .details_box.first
+    .details_box.tool-box.first
       h3 EVENT STATUS
       #list-tools
-        = simple_form_for :report, url: results_event_status_path, remote: true do |f|
-          = f.input :campaign_id, collection: campaigns_list_for_dropdown, selected: params[:campaign_id], wrapper: false, include_blank: '', required: false, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Select a campaign" } }
+        = simple_form_for :report, url: results_event_status_path, remote: true, html: { id: 'report-settings' } do |f|
+          = f.input :campaign_id, collection: campaigns_list_for_dropdown, selected: params[:campaign_id], include_blank: '', required: false, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Select a campaign" } }
+          = f.input :group_by, label: 'GROUP BY:', required: false, checked: report_group_by, label_html: {id: '#group-by-title'}, wrapper: :btn_group, as: :radio_buttons, collection: [['Campaign', 'campaign'],['Place', 'place'],['Staff', 'staff']], wrapper_html: { id: 'group-by-criterion' }, item_wrapper_class: 'btn'
+
 
   #report-container
     #kpis-trends-module
@@ -33,6 +35,9 @@ javascript:
       } else {
         $('#kpis-trends-module .details_box').empty().append( $('<div class="text-center empty-state">').text('Select a campaign from the list above') );
       }
+    });
+    $('#report-settings input:radio').on('click', function(e){
+      $('#report_campaign_id').trigger('change');
     });
     $(window).ready(function(){
       $('#report_campaign_id').change()
