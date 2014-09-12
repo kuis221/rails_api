@@ -87,7 +87,19 @@ feature "Brand Ambassadors Visits" do
       end
       ensure_modal_was_closed
 
-      #TODO: Test for generated PDF.. read and check for data
+      export = ListExport.last
+      # Test the generated PDF...
+      require 'open-uri'
+      reader = PDF::Reader.new(open(export.file.url))
+      reader.pages.each do |page|
+        expect(page.text).to include '2 Active visits'
+        expect(page.text).to include Date.today.strftime("Visit1")
+        expect(page.text).to include Date.today.strftime("SAT Feb 1")
+        expect(page.text).to include Date.today.strftime("SUN Feb 2")
+        expect(page.text).to include Date.today.strftime("Visit2")
+        expect(page.text).to include Date.today.strftime("SAT Feb 1")
+        expect(page.text).to include Date.today.strftime("SUN Feb 2")
+      end
     end
   end
 
@@ -176,13 +188,14 @@ feature "Brand Ambassadors Visits" do
   shared_examples_for 'a user that can view the calendar of visits' do
     scenario "a calendar of visits is displayed" do
       month_number = Time.now.strftime('%m')
+      year = Time.now.strftime('%Y')
       month_name = Time.now.strftime('%B')
       ba_visit1 = FactoryGirl.create(:brand_ambassadors_visit, company: company,
-                    start_date: "#{month_number}/15/2014", end_date: "#{month_number}/16/2014",
+                    start_date: "#{month_number}/15/#{year}", end_date: "#{month_number}/16/#{year}",
                     name: 'Visit1', description: 'Visit1 description',
                     company_user: company_user, active: true)
       FactoryGirl.create(:brand_ambassadors_visit, company: company,
-        start_date: "#{month_number}/16/2014", end_date: "#{month_number}/18/2014",
+        start_date: "#{month_number}/16/#{year}", end_date: "#{month_number}/18/#{year}",
         name: 'Visit2', company_user: company_user, active: true)
       Sunspot.commit
 
@@ -192,7 +205,7 @@ feature "Brand Ambassadors Visits" do
 
       wait_for_ajax
       within("div#calendar-view") do
-        expect(find('.fc-toolbar .fc-left h2')).to have_content("#{month_name}, 2014")
+        expect(find('.fc-toolbar .fc-left h2')).to have_content("#{month_name}, #{year}")
         expect(page).to have_content 'Visit2 Test User'
         expect(page).to have_content 'Visit1 Test User'
 
@@ -206,6 +219,15 @@ feature "Brand Ambassadors Visits" do
     end
 
     scenario "should be able to export the calendar view as PDF" do
+      month_number = Time.now.strftime('%m')
+      year = Time.now.strftime('%Y')
+      FactoryGirl.create(:brand_ambassadors_visit, company: company,
+            start_date: "#{month_number}/15/#{year}", end_date: "#{month_number}/16/#{year}",
+            name: 'Visit to NY', description: 'Visit1 description',
+            company_user: company_user, active: true)
+      FactoryGirl.create(:brand_ambassadors_visit, company: company,
+            start_date: "#{month_number}/16/#{year}", end_date: "#{month_number}/18/#{year}",
+            name: 'Visit to SF', company_user: company_user, active: true)
       visit brand_ambassadors_root_path
 
       click_link "Calendar View"
@@ -224,7 +246,15 @@ feature "Brand Ambassadors Visits" do
       export = ListExport.last
       expect(export.params).to include(mode: 'calendar')
 
-      #TODO: Test for generated PDF.. read and check for data
+      # Test the generated PDF...
+      require 'open-uri'
+      reader = PDF::Reader.new(open(export.file.url))
+      reader.pages.each do |page|
+        expect(page.text).to include '2 Active visits'
+        expect(page.text).to include Date.today.strftime("%B, %Y")
+        expect(page.text).to include Date.today.strftime("Visit to NY")
+        expect(page.text).to include Date.today.strftime("Visit to SF")
+      end
     end
   end
 
