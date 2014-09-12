@@ -58,6 +58,7 @@ class AttachedAsset < ActiveRecord::Base
   before_validation :set_upload_attributes
 
   after_commit :queue_processing
+  after_update :rename_existing_file, :if => proc { |o| o.processed? }
   before_post_process :post_process_required?
 
   before_validation :check_if_file_updated
@@ -258,6 +259,21 @@ class AttachedAsset < ActiveRecord::Base
     direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
     paperclip_file_path = file.path(:original).sub(%r{\A/},'')
     file.s3_bucket.objects[paperclip_file_path].copy_from(direct_upload_url_data[:path], acl: :public_read)
+  end
+
+  # Rename existing file in S3
+  def rename_existing_file
+    return unless file_file_name_changed?
+
+    (file.styles.keys+[:original]).each do |style|
+      dirname = File.dirname(file.path(style).sub(%r{\A/},''))
+      old_path = "#{dirname}/#{file_file_name_was}"
+      new_path = "#{dirname}/#{file_file_name}"
+      begin
+        file.s3_bucket.objects[old_path].move_to(new_path, acl: :public_read)
+      rescue AWS::S3::Errors::NoSuchKey
+      end
+    end
   end
 
   # Final upload processing step

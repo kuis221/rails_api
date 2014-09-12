@@ -1,5 +1,5 @@
 class BrandAmbassadors::DocumentsController < ::DocumentsController
-  respond_to :js, only: [:create, :new, :move, :update, :destroy]
+  respond_to :js, only: [:create, :new, :edit, :move, :update, :destroy]
 
   belongs_to :brand_ambassadors_visits, param: :visit_id, polymorphic: true, optional: true
 
@@ -21,7 +21,7 @@ class BrandAmbassadors::DocumentsController < ::DocumentsController
     end
 
     def permitted_params
-      params.permit(brand_ambassadors_document: [:direct_upload_url, :folder_id])[:brand_ambassadors_document]
+      params.permit(brand_ambassadors_document: [:file_file_name, :direct_upload_url, :folder_id])[:brand_ambassadors_document]
     end
 
     def authorize_create
