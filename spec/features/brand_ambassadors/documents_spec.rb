@@ -67,6 +67,49 @@ feature "Brand Ambassadors Documents", js: true do
       end
     end
 
+    scenario "A user can modify the name of a document placed in the Brand Ambassadors section" do
+      with_resque do
+        visit brand_ambassadors_root_path
+
+        documents_section.click_button 'Upload'
+
+        within visible_modal do
+          attach_file "file", 'spec/fixtures/file.pdf'
+          expect(upload_queue).to have_file_in_queue('file.pdf')
+          wait_for_ajax(30) # For the file to upload to S3
+          click_js_link 'OK'
+        end
+        ensure_modal_was_closed
+
+        document = BrandAmbassadors::Document.last
+
+        expect(document.file_file_name).to eql('file.pdf')
+
+        # Modify the name of the document
+        within documents_section do
+          hover_and_click 'li.document', 'Edit'
+        end
+
+        within visible_modal do
+          fill_in 'Document name', with: 'renamed.pdf'
+          click_js_button 'Save'
+          wait_for_ajax(30) # For the file to be modified at S3
+        end
+        ensure_modal_was_closed
+
+        document.reload
+        expect(document.file_file_name).to eql('renamed.pdf')
+
+        within documents_section do
+          expect(page).to have_content('renamed')
+        end
+
+        dirname = File.dirname(document.file.path(:original).sub(%r{\A/},''))
+        expect(document.file.s3_bucket.objects["#{dirname}/file.pdf"].exists?).to be_falsey
+        expect(document.file.s3_bucket.objects["#{dirname}/renamed.pdf"].exists?).to be_truthy
+      end
+    end
+
     scenario "A user can create and deactivate folders" do
       visit brand_ambassadors_root_path
 
@@ -179,6 +222,49 @@ feature "Brand Ambassadors Documents", js: true do
           src = document.file.url(:original, timestamp: false).gsub(/\Ahttp(s)?/, 'https')
           expect(page).to have_xpath("//a[starts-with(@href, \"#{src}\")]", wait: 10)
         end
+      end
+    end
+
+    scenario "A user can modify the name of a document placed in brand ambassadors visit" do
+      with_resque do
+        visit brand_ambassadors_visit_path(ba_visit)
+
+        documents_section.click_button 'Upload'
+
+        within visible_modal do
+          attach_file "file", 'spec/fixtures/file.pdf'
+          expect(upload_queue).to have_file_in_queue('file.pdf')
+          wait_for_ajax(30) # For the file to upload to S3
+          click_js_link 'OK'
+        end
+        ensure_modal_was_closed
+
+        document = BrandAmbassadors::Document.last
+
+        expect(document.file_file_name).to eql('file.pdf')
+
+        # Modify the name of the document
+        within documents_section do
+          hover_and_click 'li.document', 'Edit'
+        end
+
+        within visible_modal do
+          fill_in 'Document name', with: 'renamed.pdf'
+          click_js_button 'Save'
+          wait_for_ajax(30) # For the file to be modified at S3
+        end
+        ensure_modal_was_closed
+
+        document.reload
+        expect(document.file_file_name).to eql('renamed.pdf')
+
+        within documents_section do
+          expect(page).to have_content('renamed')
+        end
+
+        dirname = File.dirname(document.file.path(:original).sub(%r{\A/},''))
+        expect(document.file.s3_bucket.objects["#{dirname}/file.pdf"].exists?).to be_falsey
+        expect(document.file.s3_bucket.objects["#{dirname}/renamed.pdf"].exists?).to be_truthy
       end
     end
 
