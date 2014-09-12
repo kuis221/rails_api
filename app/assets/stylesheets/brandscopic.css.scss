@@ -3456,11 +3456,19 @@ ul.ui-widget-content{
 }
 
 
-// DATA FORM STYLES (ACTIVITY TYPES AND POST EVENT DATA)
-// Affects the event details page
+// DATA FORM STYLES
+// Affects the event details page and form builder
 // --------------------------------------------------
 
 .data-form-wrapper{
+	.box_event_data{
+		.control-group{
+			margin-bottom: 25px;
+		}
+		.form-field-number{
+			margin-bottom: 25px;
+		}
+	}
 	.help-inline {
 		margin-bottom: 0;
 		padding-left: 5px;
@@ -3485,7 +3493,6 @@ ul.ui-widget-content{
 		}
 	}
 	.control-group{
-		margin-bottom:0;
 		.segment-total{
 			display: none;
 		}
@@ -3525,7 +3532,7 @@ ul.ui-widget-content{
 				font-weight: normal;
 				padding:0;
 				div.radio{
-					margin:0;
+					margin:0 10px 0 0;
 				}
 			}
 		}
@@ -3600,7 +3607,7 @@ ul.ui-widget-content{
 		width: 390px;
 	}
 	textarea{
-		height: 80px;
+		height: 120px;
 		margin-bottom:0;
 	}
 	.input-append, .input-prepend{
