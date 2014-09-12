@@ -398,23 +398,116 @@ describe Campaign, :type => :model do
     end
   end
 
-  describe "#promo_hours_graph_data" do
+  describe "#event_status_data_by_staff" do
+    let(:company) { FactoryGirl.create(:company) }
+    let(:campaign) { FactoryGirl.create(:campaign, company: company) }
+    before(:each) { Kpi.create_global_kpis }
+
+    it "should return empty if the campaign has no users or teams associated" do
+      stats = campaign.event_status_data_by_staff
+      expect(stats).to be_empty
+    end
+
+    it "should return empty if the campaign has users but none have goals" do
+      area = FactoryGirl.create(:area, name: 'California', company: company)
+      campaign.users << FactoryGirl.create(:company_user, company: company)
+      stats = campaign.event_status_data_by_staff
+
+      expect(stats).to be_empty
+    end
+
+    it "should not include include only users with goals" do
+      area = FactoryGirl.create(:area, name: 'California', company: company)
+      user1 = FactoryGirl.create(:company_user, company: company)
+      user2 = FactoryGirl.create(:company_user, company: company)
+      campaign.users << [user1, user2]
+      FactoryGirl.create(:goal, parent: campaign, goalable: user1, kpi: Kpi.promo_hours, value: 20)
+
+      stats = campaign.event_status_data_by_staff
+
+      expect(stats).to eql [{
+        "id"=>user1.id,
+        "name"=>user1.full_name,
+        "goal"=>20,
+        "kpi"=>"PROMO HOURS",
+        "executed"=>0.0,
+        "scheduled"=>0.0,
+        "remaining"=>20,
+        "executed_percentage"=>0,
+        "scheduled_percentage"=>0,
+        "remaining_percentage"=>100
+      }]
+    end
+
+    it "should count approved past events as executed" do
+      area = FactoryGirl.create(:area, name: 'California', company: company)
+      user = FactoryGirl.create(:company_user, company: company)
+      campaign.users << user
+      FactoryGirl.create(:goal, parent: campaign, goalable: user, kpi: Kpi.promo_hours, value: 20)
+
+      # Should count events in the past as executed
+      FactoryGirl.create(:approved_event, campaign: campaign, user_ids: [user.id],
+          start_time: '08:00AM', end_time: '10:00AM', start_date: "01/23/2013", end_date: "01/23/2013")
+
+      stats = campaign.event_status_data_by_staff
+
+      expect(stats).to eql [{
+        "id"=>user.id,
+        "name"=>user.full_name,
+        "goal"=>20,
+        "kpi"=>"PROMO HOURS",
+        "executed"=>2.0,
+        "scheduled"=>0.0,
+        "remaining"=>18,
+        "executed_percentage"=>10,
+        "scheduled_percentage"=>0,
+        "remaining_percentage"=>90
+      }]
+    end
+
+    it "should count approved upcoming events as executed" do
+      area = FactoryGirl.create(:area, name: 'California', company: company)
+      user = FactoryGirl.create(:company_user, company: company)
+      campaign.users << user
+      FactoryGirl.create(:goal, parent: campaign, goalable: user, kpi: Kpi.promo_hours, value: 20)
+
+      # Should count events in the past as executed
+      FactoryGirl.create(:approved_event, campaign: campaign, user_ids: [user.id],
+          start_time: '08:00AM', end_time: '10:00AM',
+          start_date: 2.days.from_now.to_s(:slashes), end_date: 2.days.from_now.to_s(:slashes))
+
+      stats = campaign.event_status_data_by_staff
+
+      expect(stats).to eql [{
+        "id"=>user.id,
+        "name"=>user.full_name,
+        "goal"=>20,
+        "kpi"=>"PROMO HOURS",
+        "executed"=>0.0,
+        "scheduled"=>2.0,
+        "remaining"=>18,
+        "executed_percentage"=>0,
+        "scheduled_percentage"=>10,
+        "remaining_percentage"=>90
+      }]
+    end
+  end
+
+  describe "#event_status_data_by_areas" do
     let(:company) { FactoryGirl.create(:company) }
     let(:user) { FactoryGirl.create(:company_user, company: company) }
     let(:campaign) { FactoryGirl.create(:campaign, company: company) }
-    before(:each) do
-      Kpi.create_global_kpis
-    end
+    before(:each) { Kpi.create_global_kpis }
 
     it "should return empty if the campaign has no areas associated" do
-      stats = campaign.promo_hours_graph_data(user)
+      stats = campaign.event_status_data_by_areas(user)
       expect(stats).to be_empty
     end
 
     it "should return empty if the campaign has areas but none have goals" do
       area = FactoryGirl.create(:area, name: 'California', company: company)
       campaign.areas << area
-      stats = campaign.promo_hours_graph_data(user)
+      stats = campaign.event_status_data_by_areas(user)
 
       expect(stats).to be_empty
     end
@@ -429,7 +522,7 @@ describe Campaign, :type => :model do
       FactoryGirl.create(:goal, parent: campaign, goalable: area, kpi: Kpi.promo_hours, value: 20)
       FactoryGirl.create(:goal, parent: campaign, goalable: area, kpi: Kpi.events, value: 10)
       FactoryGirl.create(:event, campaign: campaign, place: FactoryGirl.create(:place, city: 'Los Angeles', state: 'California'))
-      stats = campaign.promo_hours_graph_data(user)
+      stats = campaign.event_status_data_by_areas(user)
       expect(stats.count).to eql 2
 
       expect(stats.first['id']).to eql area.id
@@ -465,7 +558,7 @@ describe Campaign, :type => :model do
       area.places << FactoryGirl.create(:place, city: 'Los Angeles', state: 'California', types: ['political'])
       campaign.areas << area
       FactoryGirl.create(:goal, parent: campaign, goalable: area, kpi: Kpi.promo_hours, value: 10)
-      stats = campaign.promo_hours_graph_data(user)
+      stats = campaign.event_status_data_by_areas(user)
       expect(stats.count).to eql 1
 
       expect(stats.first['id']).to eql area.id
@@ -501,7 +594,7 @@ describe Campaign, :type => :model do
         campaign: campaign, place: some_bar_in_los_angeles)
 
       Timecop.travel Date.new(2014, 01, 15) do
-        all_stats = campaign.promo_hours_graph_data(user)
+        all_stats = campaign.event_status_data_by_areas(user)
         expect(all_stats.count).to eql 2
         stats = all_stats.detect{|r| r['kpi'] == 'PROMO HOURS'}
         expect(stats['today'].to_s).to eql "4.838709677419354839"
@@ -514,7 +607,7 @@ describe Campaign, :type => :model do
       end
 
       Timecop.travel Date.new(2014, 01, 25) do
-        all_stats = campaign.promo_hours_graph_data(user)
+        all_stats = campaign.event_status_data_by_areas(user)
         expect(all_stats.count).to eql 2
 
         stats = all_stats.detect{|r| r['kpi'] == 'PROMO HOURS'}
@@ -528,7 +621,7 @@ describe Campaign, :type => :model do
 
       # When the campaing end date is before the current date
       Timecop.travel Date.new(2014, 02, 25) do
-        all_stats = campaign.promo_hours_graph_data(user)
+        all_stats = campaign.event_status_data_by_areas(user)
         expect(all_stats.count).to eql 2
 
         stats = all_stats.detect{|r| r['kpi'] == 'PROMO HOURS'}
@@ -543,7 +636,7 @@ describe Campaign, :type => :model do
 
       # When the campaing start date is after the current date
       Timecop.travel Date.new(2013, 12, 25) do
-        all_stats = campaign.promo_hours_graph_data(user)
+        all_stats = campaign.event_status_data_by_areas(user)
         expect(all_stats.count).to eql 2
 
         stats = all_stats.detect{|r| r['kpi'] == 'PROMO HOURS'}

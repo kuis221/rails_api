@@ -9,7 +9,7 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
   Worksheet ss:Name="Goals Vs. Actual"
 
     Table
-      - if params[:group_by] == 'place' || params[:group_by] == 'staff'
+      - if report_group_by == 'place' || report_group_by == 'staff'
         Column ss:Width="100"
       Column ss:Width="200"
       Column ss:Width="100"
@@ -18,10 +18,10 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
       Column ss:Width="100"
       Column ss:Width="100"
       Row ss:StyleID="s1"
-        - if params[:group_by] == 'place'
+        - if report_group_by == 'place'
           Cell
             Data ss:Type="String"= "PLACE/AREA"
-        - if params[:group_by] == 'staff'
+        - if report_group_by == 'staff'
           Cell
             Data ss:Type="String"= "USER/TEAM"
         Cell
@@ -44,7 +44,7 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
           - actual_percentage = event_goal[:completed_percentage]/100
           - pending_percentage = pending_and_total/event_goal[:goal].value
           Row
-            - if params[:group_by] == 'place' || params[:group_by] == 'staff'
+            - if report_group_by == 'place' || report_group_by == 'staff'
               Cell
                 Data ss:Type="String"= goalable[:name]
             Cell

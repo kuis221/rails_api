@@ -207,7 +207,8 @@ class Venue < ActiveRecord::Base
     stats_by_day.each do |s|
       @overall_graphs_data[:impressions_promo][(s.weekday == '0' ? 6 : s.weekday.to_i-1)] = s.impressions_sum.to_f / s.promo_hours_sum.to_f if s.promo_hours_sum.to_f > 0
       @overall_graphs_data[:cost_impression][(s.weekday == '0' ? 6 : s.weekday.to_i-1)] = s.cost.to_f / s.impressions_sum.to_f if s.impressions_sum.to_f > 0
-      event_counts[(s.weekday == '0' ? 6 : s.weekday.to_i-1)] = s.counting.to_i
+      event_counts[(s.weekday.to_i == 0 ? 6 : s.weekday.to_i-1)] = s.counting.to_i
+      p "wday => #{(s.weekday.to_i == 0 ? 6 : s.weekday.to_i-1)}"
     end
 
     # Then we handle the case when the events ends on a different day manually because coudn't think on a better way to do it
@@ -216,7 +217,7 @@ class Venue < ActiveRecord::Base
          .where(["date_trunc('day', TIMEZONE('UTC', start_at) AT TIME ZONE ?) <> date_trunc('day', TIMEZONE('UTC', end_at) AT TIME ZONE ?)", tz, tz])
     events.each do |e|
       (e.start_at.to_date..e.end_at.to_date).each do |day|
-        wday = (day.wday == 0 ? 6 : day.wday-1)
+        wday = (day.wday.to_i == 0 ? 6 : day.wday-1)
         if e.promo_hours.to_i > 0
           hours = ([e.end_at, day.end_of_day].min - [e.start_at, day.beginning_of_day].max) / 3600
           @overall_graphs_data[:impressions_promo][wday] += (e.impressions.to_i/e.promo_hours * hours)
@@ -230,8 +231,12 @@ class Venue < ActiveRecord::Base
       end
     end
 
+    puts @overall_graphs_data.inspect
     event_counts.each do |wday, counting|
       if counting > 0
+        p "counting ==> #{counting}"
+        p "wday ==> #{wday}"
+        p "@overall_graphs_data[:cost_impression][wday] ==> #{@overall_graphs_data[:cost_impression][wday]}"
         @overall_graphs_data[:impressions_promo][wday] = @overall_graphs_data[:impressions_promo][wday] / counting
         @overall_graphs_data[:cost_impression][wday] = @overall_graphs_data[:cost_impression][wday] / counting
       end
