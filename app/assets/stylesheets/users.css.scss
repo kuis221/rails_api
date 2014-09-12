@@ -231,6 +231,7 @@ a.resend-verification {
 	}
 }
 
+/*
 .control-group{
 	&.event_results_value{
 		width: 390px;
@@ -240,7 +241,7 @@ a.resend-verification {
 		input[type="text"]{
 			-webkit-border-radius: 4px 0px 0px 4px;
 			border-radius: 4px 0px 0px 4px;
-			width: 172px !important;
+			width: 176px;
 		}
 		label.control-label{
 			display: inline-block;
@@ -258,6 +259,7 @@ a.resend-verification {
 		}
 	}
 }
+*/
 
 .control-group.percentage,
 .control-group.summation {

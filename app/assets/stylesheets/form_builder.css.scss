@@ -93,6 +93,9 @@
 				}
 			}
 		}
+		[class*='form_field']{
+			margin-bottom: 5px;
+		}
 		.form-fields {
 			padding-top: 90px;
 			min-height: 550px;
@@ -107,7 +110,7 @@
 		.field {
 			float: left;
 			clear: both;
-			padding: 5px 10px 10px 10px;
+			padding: 8px 10px 10px 10px;
 			border: 1px dashed #fff;
 			position: relative;
 			border-radius: 5px;

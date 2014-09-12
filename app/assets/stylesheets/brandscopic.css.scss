@@ -3461,14 +3461,6 @@ ul.ui-widget-content{
 // --------------------------------------------------
 
 .data-form-wrapper{
-	.box_event_data{
-		.control-group{
-			margin-bottom: 25px;
-		}
-		.form-field-number{
-			margin-bottom: 25px;
-		}
-	}
 	.help-inline {
 		margin-bottom: 0;
 		padding-left: 5px;
@@ -3483,6 +3475,11 @@ ul.ui-widget-content{
 			}
 		}
 	}
+
+	[class*='form_field']{
+		margin-bottom:25px;
+	}
+
 	.form-actions {
 		margin-top: 20px;
 		input {
@@ -3493,6 +3490,13 @@ ul.ui-widget-content{
 		}
 	}
 	.control-group{
+		margin-bottom: 0;
+		.controls{
+			width: 220px;
+		}
+		&.event_summary{
+			margin-bottom: 20px;
+		}
 		.segment-total{
 			display: none;
 		}
@@ -3518,6 +3522,7 @@ ul.ui-widget-content{
 			&.control-label{
 				color: $text;
 				display: inline-block;
+				font-size: 14px;
 				&.field-label{
 					color: $text;
 				}
@@ -3534,7 +3539,15 @@ ul.ui-widget-content{
 				div.radio{
 					margin:0 10px 0 0;
 				}
+				&:last-child{
+					margin-bottom: 0;
+				}
 			}
+		}
+	}
+	.form_field_percentage{
+		.controls .control-group{
+			margin-bottom: 15px;
 		}
 	}
 	.form_field_percentage,
@@ -3548,10 +3561,12 @@ ul.ui-widget-content{
 		.help-inline.valid {
 			display: none !important;
 		}
-
 		.segment-label {
 			margin-bottom: 0;
 			display: inline-block;
+		}
+		.controls{
+			width:auto;
 		}
 	}
 	.form_field_summation {
@@ -3628,7 +3643,7 @@ ul.ui-widget-content{
 			}
 		}*/
 		input{
-			width: 175px;
+			width: 176px;
 		}
 	}
 	.checkbox{
