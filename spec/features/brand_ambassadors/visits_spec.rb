@@ -93,12 +93,12 @@ feature "Brand Ambassadors Visits" do
       reader = PDF::Reader.new(open(export.file.url))
       reader.pages.each do |page|
         expect(page.text).to include '2 Active visits'
-        expect(page.text).to include Date.today.strftime("Visit1")
-        expect(page.text).to include Date.today.strftime("SAT Feb 1")
-        expect(page.text).to include Date.today.strftime("SUN Feb 2")
-        expect(page.text).to include Date.today.strftime("Visit2")
-        expect(page.text).to include Date.today.strftime("SAT Feb 1")
-        expect(page.text).to include Date.today.strftime("SUN Feb 2")
+        expect(page.text).to include "Visit1"
+        expect(page.text).to include "SAT Feb 1"
+        expect(page.text).to include "SUN Feb 2"
+        expect(page.text).to include "Visit2"
+        expect(page.text).to include "SAT Feb 1"
+        expect(page.text).to include "SUN Feb 2"
       end
     end
   end
@@ -252,8 +252,8 @@ feature "Brand Ambassadors Visits" do
       reader.pages.each do |page|
         expect(page.text).to include '2 Active visits'
         expect(page.text).to include Date.today.strftime("%B, %Y")
-        expect(page.text).to include Date.today.strftime("Visit to NY")
-        expect(page.text).to include Date.today.strftime("Visit to SF")
+        expect(page.text).to include "Visit to NY"
+        expect(page.text).to include "Visit to SF"
       end
     end
   end
