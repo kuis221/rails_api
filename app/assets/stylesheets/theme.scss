@@ -94,9 +94,9 @@ input[readonly], select[readonly], textarea[readonly]{
 		input[type="search"],
 		input[type="tel"],
 		input[type="color"]{
-			border: 1px solid $brand;
+			border: 1px solid silver;
 			&:focus{
-				border: 1px solid $brand;
+				border: 1px solid silver;
 			}
 		}
 	}
