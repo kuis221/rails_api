@@ -208,7 +208,6 @@ class Venue < ActiveRecord::Base
       @overall_graphs_data[:impressions_promo][(s.weekday == '0' ? 6 : s.weekday.to_i-1)] = s.impressions_sum.to_f / s.promo_hours_sum.to_f if s.promo_hours_sum.to_f > 0
       @overall_graphs_data[:cost_impression][(s.weekday == '0' ? 6 : s.weekday.to_i-1)] = s.cost.to_f / s.impressions_sum.to_f if s.impressions_sum.to_f > 0
       event_counts[(s.weekday.to_i == 0 ? 6 : s.weekday.to_i-1)] = s.counting.to_i
-      p "wday => #{(s.weekday.to_i == 0 ? 6 : s.weekday.to_i-1)}"
     end
 
     # Then we handle the case when the events ends on a different day manually because coudn't think on a better way to do it
@@ -231,12 +230,8 @@ class Venue < ActiveRecord::Base
       end
     end
 
-    puts @overall_graphs_data.inspect
     event_counts.each do |wday, counting|
       if counting > 0
-        p "counting ==> #{counting}"
-        p "wday ==> #{wday}"
-        p "@overall_graphs_data[:cost_impression][wday] ==> #{@overall_graphs_data[:cost_impression][wday]}"
         @overall_graphs_data[:impressions_promo][wday] = @overall_graphs_data[:impressions_promo][wday] / counting
         @overall_graphs_data[:cost_impression][wday] = @overall_graphs_data[:cost_impression][wday] / counting
       end
