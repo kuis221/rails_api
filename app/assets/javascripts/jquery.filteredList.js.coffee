@@ -647,7 +647,7 @@ $.widget 'nmk.filteredList', {
 		@customDatesPanel = $('<div class="dates-pref">').appendTo(@form).append(
 			$('<div class="dropdown select-ranges">').append(
 				$('<label>').text('Date ranges'),
-				$('<a class="dropdown-toggle off" data-toggle="dropdown" href="#" title="Date ranges">').text('Choose a date range'),
+				$('<a class="dropdown-toggle off" data-toggle="dropdown" href="#" title="Date ranges">').text('Choose a date range').append($('<i class="icon-arrow-down pull-right"></i>')),
 				$('<ul aria-labelledby="dLabel" class="dropdown-menu" role="menu">').append(
 					$('<li class="options">').append(
 						$('<div class="row-fluid">').append(

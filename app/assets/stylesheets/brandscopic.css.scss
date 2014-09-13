@@ -690,6 +690,9 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 				&:hover, &:focus{
 					text-decoration: none;
 				}
+				.icon-arrow-down {
+					margin-top: 5px;
+				}
 			}
 		}
 		.btn{
