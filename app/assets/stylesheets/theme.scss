@@ -127,7 +127,6 @@ input[readonly], select[readonly], textarea[readonly]{
 	&[title="Download"], &[title="Fullscreen"]{ /* This should be the style for every downlaod and fullscreen button */
 		box-sizing:border-box;
 		height: 34px;
-		width:54px;
 	}
 }
 
