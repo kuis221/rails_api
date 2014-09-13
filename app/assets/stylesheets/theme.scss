@@ -94,9 +94,9 @@ input[readonly], select[readonly], textarea[readonly]{
 		input[type="search"],
 		input[type="tel"],
 		input[type="color"]{
-			border: 1px solid $brand;
+			border: 1px solid silver;
 			&:focus{
-				border: 1px solid $brand;
+				border: 1px solid silver;
 			}
 		}
 	}
@@ -112,15 +112,22 @@ input[readonly], select[readonly], textarea[readonly]{
 	background-color: $user_menu;
 	background-image: none;
 	border: 0;
+	box-shadow:none;
 	font-family: $baseFontFamily;
 	padding: 8px 17px;
 	text-shadow:none;
+	-webkit-box-shadow: none;
 	&[disabled]{
 		background-color: $grey_one;
 		opacity: 1;
 		&:hover{
 			background-color: $grey_one;
 		}
+	}
+	&[title="Download"], &[title="Fullscreen"]{ /* This should be the style for every downlaod and fullscreen button */
+		box-sizing:border-box;
+		height: 34px;
+		width:54px;
 	}
 }
 
@@ -145,22 +152,5 @@ input[readonly], select[readonly], textarea[readonly]{
 		line-height: 24px;
 		padding: 0 15px 0 0;
 		position: relative;
-		&:after{
-			color: $glyphs-color;
-			content: "\e61d";
-			font-size: 14px;
-			left: 5px;
-			position: absolute;
-		}
-		&:before{
-			content: "";
-			background-color: $user_menu;
-			float: left;
-			height: 25px;
-			@include border-radius(15px);
-			margin-right: 6px;
-			position: relative;
-			width:25px;
-		}
 	}
 }

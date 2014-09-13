@@ -218,7 +218,7 @@ body{
 
 .calendar-data, .email-data, .phone-data, .place-data,
 .time-data, .description-data, .member-data{
-	margin:0 0 20px 0;
+	margin:0 0 5px 0;
 	width: 380px;
 }
 
@@ -249,9 +249,29 @@ body{
 			margin-left: 10px;
 			&.info{
 				margin-left: 5px;
+				a.icon-info{
+					color: $user_menu;
+					font-size: 18px;
+					position: absolute;
+					top: 0;
+				}
+			}
+			&.verify{
+				font-size:12px;
 			}
 			&.verified{
+				color: $approved;
+				font-size:12px;
 				margin-left: 30px;
+				i, p{
+					color: $approved;
+					display: inline-block;
+				}
+				i{
+					font-size: 14px;
+					margin-right: 5px;
+					top: -3px;
+				}
 			}
 		}
 	}
@@ -1586,8 +1606,9 @@ li.dropdown a{
 				z-index: 100;
 			}
 			&:hover{
-				&:before{
-					background-image: none;
+				a{
+					background-color: $app_bg;
+					color: $grey_three;
 				}
 			}
 		}
@@ -3308,14 +3329,16 @@ ul.ui-widget-content{
 /* Info bar for details pages (Below the header) */
 
 #resource-close-details {
+	background-color: $menu;
+	border-radius: 7px 7px 0px 0px;
 	position: absolute;
 	top: 0;
 	left: 0;
-	width: 100%;
-	background-color: $menu;
+	min-height: 40px;
 	z-index: 200;
 	-webkit-border-radius: 7px 7px 0px 0px;
-	border-radius: 7px 7px 0px 0px;
+
+	width: 100%;
 	&.affix {
 		position: fixed;
 		top: 40px;
@@ -3328,18 +3351,19 @@ ul.ui-widget-content{
 	a.close-details {
 		display: inline-block;
 		width: 99%;
-		padding: 12px 0 10px 16px;
+		padding: 10px 0 5px 16px;
 		text-decoration: none;
 		color: $grey_one;
 	}
 	.icon-close {
 		position: absolute;
 		text-shadow:none;
+		line-height: 22px;
 		right: 15px;
-		top: 13px;
 	}
 	.details-bar-pull-left {
 		float: left;
+		font-size: 12px;
 		margin: 0 10px 0 0;
 	}
 
@@ -3443,10 +3467,12 @@ ul.ui-widget-content{
 	}
 }
 
-// DATA FORM STYLES (ACTIVITIES AND POST EVENT DATA)
+
+// DATA FORM STYLES
+// Affects the event details page and form builder
 // --------------------------------------------------
 
-.data-form-wrapper {
+.data-form-wrapper{
 	.help-inline {
 		margin-bottom: 0;
 		padding-left: 5px;
@@ -3461,6 +3487,11 @@ ul.ui-widget-content{
 			}
 		}
 	}
+
+	[class*='form_field']{
+		margin-bottom:25px;
+	}
+
 	.form-actions {
 		margin-top: 20px;
 		input {
@@ -3471,6 +3502,13 @@ ul.ui-widget-content{
 		}
 	}
 	.control-group{
+		margin-bottom: 0;
+		.controls{
+			width: 220px;
+		}
+		&.event_summary{
+			margin-bottom: 20px;
+		}
 		.segment-total{
 			display: none;
 		}
@@ -3486,31 +3524,42 @@ ul.ui-widget-content{
 			}
 		}
 		label{
+			font-weight: bold;
+			margin-bottom: 6px;
 			&.checkbox{
 				display: block;
 				width: initial;
 				margin-bottom: 10px;
 			}
 			&.control-label{
-				color: $brand;
-				font-size: 12px;
-				margin-bottom:0;
+				color: $text;
 				display: inline-block;
+				font-size: 14px;
 				&.field-label{
 					color: $text;
 				}
 			}
 			&.control-group-label{
 				font-weight: bold;
-				margin-bottom: 10px;
 				&.control-label{
 					color: $text;
-					font-size: 13px;
 				}
 			}
 			&.radio{
+				font-weight: normal;
 				padding:0;
+				div.radio{
+					margin:0 10px 0 0;
+				}
+				&:last-child{
+					margin-bottom: 0;
+				}
 			}
+		}
+	}
+	.form_field_percentage{
+		.controls .control-group{
+			margin-bottom: 15px;
 		}
 	}
 	.form_field_percentage,
@@ -3524,10 +3573,12 @@ ul.ui-widget-content{
 		.help-inline.valid {
 			display: none !important;
 		}
-
 		.segment-label {
 			margin-bottom: 0;
 			display: inline-block;
+		}
+		.controls{
+			width:auto;
 		}
 	}
 	.form_field_summation {
@@ -3560,9 +3611,6 @@ ul.ui-widget-content{
 	.form_field_section {
 		margin-top: 40px;
 	}
-	.form_field_radio, .form_field_checkbox {
-		margin-bottom: 30px;
-	}
 	h3.section-title {
 		margin-bottom: 20px;
 		color: $brand;
@@ -3581,28 +3629,33 @@ ul.ui-widget-content{
 			text-align: center;
 		}
 	}
-	input.waiting-files {
-		width: auto !important;
-	}
 	input, textarea{
+		margin-bottom:0;
 		width: 390px;
 	}
 	textarea{
-		height: 80px;
+		height: 120px;
+		margin-bottom:0;
 	}
 	.input-append, .input-prepend{
 		margin-right: 15px;
 		margin-bottom: 0;
-	 	.add-on{
-			background-color: $brand;
-			border: 1px solid $brand;
+		.add-on{
+			background-color: silver;
+			border: 1px solid silver;
 			color: white;
 			height: 19px;
 			text-shadow: none;
 			width: 34px;
-		}
+		}/*
+		input:focus{
+			&+ .add-on{
+				background-color: $brand;
+				border: 1px solid $brand;
+			}
+		}*/
 		input{
-			width: 175px;
+			width: 176px;
 		}
 	}
 	.checkbox{
@@ -3617,31 +3670,37 @@ ul.ui-widget-content{
 	table{
 		margin-bottom: 0;
 	}
-	input.date_picker {
-		@include box-sizing(border-box);
-		text-align: right;
-		width: 120px;
-		background: image-url('calendar.svg') no-repeat 0px 7px;
-		height: 40px;
-		padding: 2px 10px 0 0;
-		width: 120px;
-		font-size: 12px;
-		&[readonly] {
-			color: silver;
+	input{
+		&.date_picker{
+			@include box-sizing(border-box);
+			text-align: right;
+			width: 120px;
+			background: image-url('calendar.svg') no-repeat 0px 7px;
+			height: 40px;
+			padding: 2px 10px 0 0;
+			width: 120px;
+			font-size: 12px;
+			&[readonly] {
+				color: silver;
+			}
 		}
-	}
-	input.time_picker {
-		@include box-sizing(border-box);
-		text-align: right;
-		height: 40px;
-		width: 120px;
-		padding: 2px 18px 0 0;
-		background: image-url('time.svg') no-repeat 3px 7px;
-		&[readonly] {
-			color: silver;
+		&.time_picker{
+			@include box-sizing(border-box);
+			text-align: right;
+			height: 40px;
+			width: 120px;
+			padding: 2px 18px 0 0;
+			background: image-url('time.svg') no-repeat 3px 7px;
+			&[readonly] {
+				color: silver;
+			}
+		}
+		&.waiting-files {
+			width: auto !important;
 		}
 	}
 }
+
 
 // ATTACHMENT PANEL FOR PHOTOS UPLOAD
 // --------------------------------------------------
@@ -3752,6 +3811,9 @@ body.company_users{
 
 	.user-role{
 		margin-bottom: 25px;
+		&:hover{
+			color:$grey_one;
+		}
 	}
 
 	#company_user-areas-list,
@@ -5896,7 +5958,7 @@ body.campaigns{
 		margin: 0 0 30px;
 	}
 	.links-data{
-		margin: 0 0 0 30px;
+		margin: 20px 0 0 30px;
 	}
 
 	.alert {
