@@ -15,11 +15,7 @@ $footer-height: 35px;
 
 @font-face {
 	font-family: 'icons';
-	src:font-url('icons.eot');
-	src:url(font-path('icons.eot') + '?#iefix') format('embedded-opentype'),
-		font-url('icons.woff') format('woff'),
-		font-url('icons.ttf') format('truetype'),
-		font-url('icons.svg#icons') format('svg');
+	src:font-url('icons.ttf') format('truetype');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -222,7 +218,7 @@ body{
 
 .calendar-data, .email-data, .phone-data, .place-data,
 .time-data, .description-data, .member-data{
-	margin:0 0 20px 0;
+	margin:0 0 5px 0;
 	width: 380px;
 }
 
@@ -253,9 +249,29 @@ body{
 			margin-left: 10px;
 			&.info{
 				margin-left: 5px;
+				a.icon-info{
+					color: $user_menu;
+					font-size: 18px;
+					position: absolute;
+					top: 0;
+				}
+			}
+			&.verify{
+				font-size:12px;
 			}
 			&.verified{
+				color: $approved;
+				font-size:12px;
 				margin-left: 30px;
+				i, p{
+					color: $approved;
+					display: inline-block;
+				}
+				i{
+					font-size: 14px;
+					margin-right: 5px;
+					top: -3px;
+				}
 			}
 		}
 	}
@@ -591,7 +607,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			background-color: white;
 			border: 0;
 			color:$grey_three;
-			font-size: 12px;
+			font-size: 11px;
 			font-weight: bold;
 			padding-top: 5px;
 		}
@@ -671,38 +687,54 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 
 
 // Date Preferences Panel (sidebar)
-
-ul.dates-pref{ /*Take out this class when implemented the new design*/
-	display: none;
-}
-
 .dates-pref{
-  .dropdown.select-ranges{
+	margin-bottom: 20px;
+	.select-ranges{
 		a{
 			color: $brand;
-			&:hover{
+			&:hover, &.active{
 				color: $blue;
 				text-decoration: underline;
 			}
 			&.dropdown-toggle{
 				border: 1px solid $grey_four;
 				box-sizing: border-box;
-				color: $user_menu;
 				@include border-radius (6px);
+				color: $text;
 				display: block;
-				padding: 6px 8px;
+				padding: 6px 10px;
 				width: 100%;
+				&.off{
+					color: $user_menu;
+				}
 				&:hover, &:focus{
 					text-decoration: none;
+				}
+				.icon-arrow-down {
+					margin-top: 5px;
 				}
 			}
 		}
 		.btn{
 			width: 100%;
+			&:disabled{
+				opacity: 0.7;
+			}
 		}
 		label{
 			color: $user_menu;
 			font-size: 11px;
+		}
+		input{
+			&.input-calendar{
+				&[readonly]{
+					color: $text;
+					cursor: auto;
+				}
+				&.disabled{
+					color: $user_menu;
+				}
+			}
 		}
 		ul{
 			box-shadow: none;
@@ -877,7 +909,7 @@ ul.dates-pref{ /*Take out this class when implemented the new design*/
 			li:first-child a {
 				border-top-right-radius: 5px;
 				border-top-left-radius: 5px;
-			}			
+			}
 			li:last-child a {
 				border-bottom-right-radius: 5px;
 				border-bottom-left-radius: 5px;
@@ -1574,8 +1606,9 @@ li.dropdown a{
 				z-index: 100;
 			}
 			&:hover{
-				&:before{
-					background-image: none;
+				a{
+					background-color: $app_bg;
+					color: $grey_three;
 				}
 			}
 		}
@@ -2156,8 +2189,8 @@ li#notifications{
 		.progress-label {
 			position: absolute;
 			top: -43px;
-			width: 200px;
-			right: -190px;
+			width: 250px;
+			right: -250px;
 			text-align: center;
 			&.percentage {
 				font-size: 26px;
@@ -3296,14 +3329,16 @@ ul.ui-widget-content{
 /* Info bar for details pages (Below the header) */
 
 #resource-close-details {
+	background-color: $menu;
+	border-radius: 7px 7px 0px 0px;
 	position: absolute;
 	top: 0;
 	left: 0;
-	width: 100%;
-	background-color: $menu;
+	min-height: 40px;
 	z-index: 200;
 	-webkit-border-radius: 7px 7px 0px 0px;
-	border-radius: 7px 7px 0px 0px;
+
+	width: 100%;
 	&.affix {
 		position: fixed;
 		top: 40px;
@@ -3316,18 +3351,19 @@ ul.ui-widget-content{
 	a.close-details {
 		display: inline-block;
 		width: 99%;
-		padding: 12px 0 10px 16px;
+		padding: 10px 0 5px 16px;
 		text-decoration: none;
 		color: $grey_one;
 	}
 	.icon-close {
 		position: absolute;
 		text-shadow:none;
+		line-height: 22px;
 		right: 15px;
-		top: 13px;
 	}
 	.details-bar-pull-left {
 		float: left;
+		font-size: 12px;
 		margin: 0 10px 0 0;
 	}
 
@@ -3431,10 +3467,12 @@ ul.ui-widget-content{
 	}
 }
 
-// DATA FORM STYLES (ACTIVITIES AND POST EVENT DATA)
+
+// DATA FORM STYLES
+// Affects the event details page and form builder
 // --------------------------------------------------
 
-.data-form-wrapper {
+.data-form-wrapper{
 	.help-inline {
 		margin-bottom: 0;
 		padding-left: 5px;
@@ -3449,6 +3487,11 @@ ul.ui-widget-content{
 			}
 		}
 	}
+
+	[class*='form_field']{
+		margin-bottom:25px;
+	}
+
 	.form-actions {
 		margin-top: 20px;
 		input {
@@ -3459,6 +3502,13 @@ ul.ui-widget-content{
 		}
 	}
 	.control-group{
+		margin-bottom: 0;
+		.controls{
+			width: 220px;
+		}
+		&.event_summary{
+			margin-bottom: 20px;
+		}
 		.segment-total{
 			display: none;
 		}
@@ -3474,31 +3524,42 @@ ul.ui-widget-content{
 			}
 		}
 		label{
+			font-weight: bold;
+			margin-bottom: 6px;
 			&.checkbox{
 				display: block;
 				width: initial;
 				margin-bottom: 10px;
 			}
 			&.control-label{
-				color: $brand;
-				font-size: 12px;
-				margin-bottom:0;
+				color: $text;
 				display: inline-block;
+				font-size: 14px;
 				&.field-label{
 					color: $text;
 				}
 			}
 			&.control-group-label{
 				font-weight: bold;
-				margin-bottom: 10px;
 				&.control-label{
 					color: $text;
-					font-size: 13px;
 				}
 			}
 			&.radio{
+				font-weight: normal;
 				padding:0;
+				div.radio{
+					margin:0 10px 0 0;
+				}
+				&:last-child{
+					margin-bottom: 0;
+				}
 			}
+		}
+	}
+	.form_field_percentage{
+		.controls .control-group{
+			margin-bottom: 15px;
 		}
 	}
 	.form_field_percentage,
@@ -3512,10 +3573,12 @@ ul.ui-widget-content{
 		.help-inline.valid {
 			display: none !important;
 		}
-
 		.segment-label {
 			margin-bottom: 0;
 			display: inline-block;
+		}
+		.controls{
+			width:auto;
 		}
 	}
 	.form_field_summation {
@@ -3548,9 +3611,6 @@ ul.ui-widget-content{
 	.form_field_section {
 		margin-top: 40px;
 	}
-	.form_field_radio, .form_field_checkbox {
-		margin-bottom: 30px;
-	}
 	h3.section-title {
 		margin-bottom: 20px;
 		color: $brand;
@@ -3569,28 +3629,33 @@ ul.ui-widget-content{
 			text-align: center;
 		}
 	}
-	input.waiting-files {
-		width: auto !important;
-	}
 	input, textarea{
+		margin-bottom:0;
 		width: 390px;
 	}
 	textarea{
-		height: 80px;
+		height: 120px;
+		margin-bottom:0;
 	}
 	.input-append, .input-prepend{
 		margin-right: 15px;
 		margin-bottom: 0;
-	 	.add-on{
-			background-color: $brand;
-			border: 1px solid $brand;
+		.add-on{
+			background-color: silver;
+			border: 1px solid silver;
 			color: white;
 			height: 19px;
 			text-shadow: none;
 			width: 34px;
-		}
+		}/*
+		input:focus{
+			&+ .add-on{
+				background-color: $brand;
+				border: 1px solid $brand;
+			}
+		}*/
 		input{
-			width: 175px;
+			width: 176px;
 		}
 	}
 	.checkbox{
@@ -3605,31 +3670,37 @@ ul.ui-widget-content{
 	table{
 		margin-bottom: 0;
 	}
-	input.date_picker {
-		@include box-sizing(border-box);
-		text-align: right;
-		width: 120px;
-		background: image-url('calendar.svg') no-repeat 0px 7px;
-		height: 40px;
-		padding: 2px 10px 0 0;
-		width: 120px;
-		font-size: 12px;
-		&[readonly] {
-			color: silver;
+	input{
+		&.date_picker{
+			@include box-sizing(border-box);
+			text-align: right;
+			width: 120px;
+			background: image-url('calendar.svg') no-repeat 0px 7px;
+			height: 40px;
+			padding: 2px 10px 0 0;
+			width: 120px;
+			font-size: 12px;
+			&[readonly] {
+				color: silver;
+			}
 		}
-	}
-	input.time_picker {
-		@include box-sizing(border-box);
-		text-align: right;
-		height: 40px;
-		width: 120px;
-		padding: 2px 18px 0 0;
-		background: image-url('time.svg') no-repeat 3px 7px;
-		&[readonly] {
-			color: silver;
+		&.time_picker{
+			@include box-sizing(border-box);
+			text-align: right;
+			height: 40px;
+			width: 120px;
+			padding: 2px 18px 0 0;
+			background: image-url('time.svg') no-repeat 3px 7px;
+			&[readonly] {
+				color: silver;
+			}
+		}
+		&.waiting-files {
+			width: auto !important;
 		}
 	}
 }
+
 
 // ATTACHMENT PANEL FOR PHOTOS UPLOAD
 // --------------------------------------------------
@@ -3740,6 +3811,9 @@ body.company_users{
 
 	.user-role{
 		margin-bottom: 25px;
+		&:hover{
+			color:$grey_one;
+		}
 	}
 
 	#company_user-areas-list,
@@ -5884,7 +5958,7 @@ body.campaigns{
 		margin: 0 0 30px;
 	}
 	.links-data{
-		margin: 0 0 0 30px;
+		margin: 20px 0 0 30px;
 	}
 
 	.alert {
@@ -6093,68 +6167,76 @@ div.chardinjs-tooltip
 }
 
 // GVA - GOALS VS ACTUAL
-
-body.gva {
-	.tab-content{
-		overflow: visible;
-		.tab-pane{
-			.tool-box{
-				color: $brand;
-				h3{
-					color: $text;
+#report-settings {
+	color: $brand;
+	.control-group {
+		display: inline-block;
+		margin-left: 57px;
+		&.report_campaign_id {
+			margin-left: 0;
+		}
+		&.report_group_by label {
+			display: inline-block;
+			font-size: 11px;
+			vertical-align: middle;
+		}
+		.export-xls {
+			margin-top: 22px;
+		}
+		.btn-group {
+			margin: 4px 0 0 8px;
+			.btn {
+				background-color: $user_menu;
+				box-shadow: none;
+				color: #FFFFFF;
+				font-weight: bold;
+				font-size: 13px;
+				padding: 7px 10px;
+				width: 60px;
+				&:first-child{
+					border-bottom-left-radius: 6px;
+					border-top-left-radius: 6px;
 				}
-				.group-by-box, .view-style-box, .export-xls{
-					display: inline-block;
-					margin-left: 57px;
-					margin-top: 20px;
-					#group-by-title{
-						font-size: 11px;
-						vertical-align: middle;
+				&:last-child{
+				    border-bottom-right-radius: 6px;
+				    border-top-right-radius: 6px;
+				}
+				&.active{
+					background-color: $brand;
+					color: $grey_one;
+				}
+				&.campaign{
+					border-right: 1px solid $buttons-border;
+				}
+				&.place{
+					border-right: 1px solid $buttons-border;
+					&:before{
+						display: none;
 					}
-					.btn-group{
-						margin: 0 0 0 8px;
-						.btn{
-							background-color: $user_menu;
-							box-shadow: none;
-							color: #FFFFFF;
-							font-weight: bold;
-							font-size: 13px;
-							padding: 7px 10px;
-							width: 60px;
-							&:first-child{
-								border-bottom-left-radius: 6px;
-								border-top-left-radius: 6px;
-							}
-							&:last-child{
-							    border-bottom-right-radius: 6px;
-							    border-top-right-radius: 6px;
-							}
-							&.active{
-								background-color: $brand;
-								color: $grey_one;
-							}
-							&.campaign{
-								border-right: 1px solid $buttons-border;
-							}
-							&.place{
-								border-right: 1px solid $buttons-border;
-								&:before{
-									display: none;
-								}
-							}
-							&.list, &.table, &.graph{
-								width: 30px;
-								padding: 6px 10px;
-								&:after{
-									font-size: 16px;
-									font-weight: normal;
-								}
-							}
-						}
+				}
+				&.list, &.table, &.graph{
+					width: 30px;
+					padding: 6px 10px;
+					&:after{
+						font-size: 16px;
+						font-weight: normal;
 					}
 				}
 			}
 		}
+	}
+}
+
+body.gva, body.event_status {
+	#list-tools {
+		.export-xls {
+			margin-top: 22px;
+		}
+	}
+}
+body.gva {
+	.tab-content{
+		overflow: visible;
 
 		#report-container {
 			.total-venues {
@@ -6219,7 +6301,7 @@ body.gva {
 				font-size: 12px;
 				margin: 15px 250px 30px 0;
 				text-align: right;
-				span {
+				span.circle {
 					margin-right: 11px;
 					&:before {
 						content: '';
@@ -6246,19 +6328,14 @@ body.gva {
 							background: $rejected;
 						}
 					}
-					&.today{
-						margin-right: 0;
-						&:before {
-							color: $brand;
-							content: "\e004";
-							font-family: "icons";
-							font-size: 14px;
-							position: relative;
-							top: 6px;
-						}
-					}
-
 				}
+				span.today{
+					.icon-arrow-down:before {
+						font-size: 14px;
+						top: 4px;
+					}
+				}
+
 			}
 			.container-kpi-trend{
 				margin-left: 0;

@@ -68,6 +68,7 @@ class ListExport < ActiveRecord::Base
   end
 
   def export_list
+    self.queue! if self.failed?
     self.process! if self.queued? || self.new?
     controller = self.controller.constantize.new
 
@@ -94,7 +95,6 @@ class ListExport < ActiveRecord::Base
     name = controller.send(:export_file_name)
     if export_format == 'pdf'
       html = controller.send(:export_list, self)
-
       if Rails.env.development?
         tempfile = Tempfile.new(["export-#{self.controller.underscore.gsub('/', '-')}", ".html"], Rails.root.join('tmp'))
         tempfile.write html

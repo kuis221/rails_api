@@ -42,6 +42,7 @@ en:
     pdf:
       title:
         visits: 'Brand Ambassadors Visits'
+        gva: 'Goals vs. Actual'
 
   buttons:
     new:

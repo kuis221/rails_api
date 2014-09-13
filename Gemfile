@@ -112,6 +112,7 @@ group :test do
   gem 'database_cleaner'
   #gem 'sms-spec', '~> 0.1.9'
   gem 'sms-spec'
+  gem 'pdf-reader'
 end
 
 group :production do

@@ -1,8 +1,13 @@
 @import "variables";
-@import "mixins"; 
+@import "mixins";
 
-.form-builder-wrapper {
+// EXCLUSIVE FORM BUILDER STYLES (ACTIVITY TYPES AND CAMPAIGNS)
+// Only applied to the form builder
+// --------------------------------------------------
+
+.form-builder-wrapper{
 	position: relative;
+
 	.tooltip {
 		@include kpi-desc-tooltip;
 	}
@@ -10,19 +15,23 @@
 	.field-tooltip-trigger {
 		height: 30px;
 	}
-
 	.form-wrapper {
 		position: relative;
+
 		.form-builder-actions {
 			position: absolute;
 			top: 0;
+			border-bottom: 1px solid $grey_four;
 			border-top-right-radius: 5px;
-			padding: 20px 5px;
+			padding: 18px 30px;
 			&.affix {
 				position: fixed;
 				top: 99px;
 				z-index: 99;
 				background-color: #fff;
+			}
+			.btn{
+				width: 101px;
 			}
 			.tooltip {
 				font-size: 13px;
@@ -71,16 +80,24 @@
 				display: inline-block;
 				position: relative;
 			}
-			&.module.selected {
-				border: 0px;
-				background-color: #fff;;
-				.module-wrapper {
-					background-color: $app_bg;
+			&.module{
+				h3{
+					color: $user_menu;
+				}
+				&.selected {
+					border: 0px;
+					background-color: #fff;;
+					.module-wrapper {
+						background-color: $app_bg;
+					}
 				}
 			}
 		}
+		[class*='form_field']{
+			margin-bottom: 5px;
+		}
 		.form-fields {
-			padding-top: 80px;
+			padding-top: 90px;
 			min-height: 550px;
 			padding-bottom: 20px;
 			&.sorting {
@@ -93,7 +110,7 @@
 		.field {
 			float: left;
 			clear: both;
-			padding: 5px 10px 10px 10px;
+			padding: 8px 10px 10px 10px;
 			border: 1px dashed #fff;
 			position: relative;
 			border-radius: 5px;
@@ -177,9 +194,6 @@
 			}
 
 			&[data-type="Dropdown"]{
-				label{
-					margin-bottom: 10px;
-				}
 				&.selected{
 					.icon-remove-circle:before{
 						font-size: 18px !important;
@@ -196,7 +210,6 @@
 			&[data-type="Radio"] {
 				label.radio{
 					display:block;
-					margin-bottom: 8px;
 					.radio{
 						margin-right: 10px;
 					}
@@ -245,6 +258,7 @@
 	.fields-wrapper {
 		background-color: #fff;
 		border-radius: 5px;
+		font-weight: 400;
 		position: absolute;
 		top: 0;
 		right: 0;
@@ -274,6 +288,10 @@
 				border: 1px solid $grey_one;
 				padding: 3px;
 			}
+		}
+		p.drag-field-title{
+			color: $user_menu;
+			text-align: center;
 		}
 		.search-fields {
 			margin-top: 5px;
@@ -536,11 +554,11 @@
 	}
 
 	.arrow-up {
-		width: 0; 
-		height: 0; 
+		width: 0;
+		height: 0;
 		border-left: 14px solid transparent;
 		border-right: 14px solid transparent;
-		
+
 		border-bottom: 14px solid black;
 	}
 
@@ -551,7 +569,7 @@
 			height: 0;
 			border-left: 14px solid transparent;
 			border-right: 14px solid transparent;
-			
+
 			border-bottom: 14px solid $grey_four;
 			position: absolute;
 			top: -14px;
@@ -562,7 +580,7 @@
 				height: 0;
 				border-left: 14px solid transparent;
 				border-right: 14px solid transparent;
-				
+
 				border-bottom: 14px solid $grey_one;
 				position: absolute;
 				top: 1px;

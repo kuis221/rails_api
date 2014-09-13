@@ -77,8 +77,8 @@ class ApplicationController < ActionController::Base
     def authenticate_user_by_token
       if request.format.js? || request.format.json?
         if params[:auth_token].present? && !params[:auth_token].empty?
-          user = User.find_by!(authentication_token: params[:auth_token])
-          sign_in(:user, user)
+          @_current_user = User.find_by!(authentication_token: params[:auth_token])
+          sign_in(:user, @_current_user)
           headers['Access-Control-Allow-Origin'] = '*'
         end
       end
@@ -96,7 +96,11 @@ class ApplicationController < ActionController::Base
     def scope_current_user
       User.current = current_user
       if user_signed_in?
-        Company.current = current_user.current_company = current_company
+        Company.current = current_company
+        unless current_user.current_company_id == Company.current.id
+          current_user.update_column :current_company_id, Company.current.id
+          current_user.current_company = Company.current
+        end
         Time.zone = current_user.time_zone
         ::NewRelic::Agent.add_custom_parameters(:user_id => current_user.id)
         ::NewRelic::Agent.add_custom_parameters(:company_user_id => current_company_user.id)

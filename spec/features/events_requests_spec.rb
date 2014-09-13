@@ -170,7 +170,7 @@ feature 'Events section' do
           end
         end
 
-        scenario "should allow allow filter events by date range" do
+        scenario "should allow allow filter events by date range selected from the calendar" do
           today = Time.zone.local(Time.now.year, Time.now.month, 18, 12, 00)
           tomorrow = today+1.day
           Timecop.travel(today) do
@@ -225,8 +225,120 @@ feature 'Events section' do
               expect(page).to have_content('Another Campaign April 03')
               expect(page).to have_content('Campaign FY2012')
             end
+          end
+        end
 
-            expect(page).to have_content("2 Active events taking place between today and tomorrow as part of Another Campaign April 03 and Campaign FY2012")
+        feature "date ranges box" do
+          before do
+            campaign1 = FactoryGirl.create(:campaign, name: 'Campaign FY2012', company: company)
+            campaign2 = FactoryGirl.create(:campaign, name: 'Another Campaign April 03', company: company)
+            campaign3 = FactoryGirl.create(:campaign, name: 'New Brand Campaign', company: company)
+            FactoryGirl.create(:event, start_date: Date.today.beginning_of_week.to_s(:slashes), end_date: Date.today.beginning_of_week.to_s(:slashes), campaign: campaign1)
+            FactoryGirl.create(:event, start_date: Date.today.to_s(:slashes), end_date: Date.today.to_s(:slashes), campaign: campaign1)
+            FactoryGirl.create(:event, start_date: Date.today.end_of_week.to_s(:slashes), end_date: Date.today.end_of_week.to_s(:slashes), campaign: campaign1)
+            FactoryGirl.create(:event, start_date: 1.week.ago.to_s(:slashes), end_date: 1.week.ago.to_s(:slashes), campaign: campaign2)
+            FactoryGirl.create(:event, start_date: 1.week.from_now.to_s(:slashes), end_date: 1.week.from_now.to_s(:slashes), campaign: campaign2)
+            FactoryGirl.create(:event, start_date: 1.month.ago.to_s(:slashes), end_date: 1.month.ago.to_s(:slashes), campaign: campaign3)
+            Sunspot.commit
+          end
+
+          scenario "can filter the events by predefined dates ranges options" do
+            visit events_path
+
+            click_js_link 'Date ranges'
+
+            within 'ul.dropdown-menu' do
+              click_js_link 'Current week'
+            end
+
+            within 'ul.dropdown-menu' do
+              click_js_link 'Today'
+            end
+
+            expect(page).to have_selector('ul#events-list li', count: 1)
+            within("ul#events-list") do
+              expect(page).to have_content('Campaign FY2012')
+              expect(page).to have_no_content('Another Campaign April 03')
+              expect(page).to have_no_content('New Brand Campaign')
+            end
+
+            within 'ul.dropdown-menu' do
+              click_js_link 'Current week'
+            end
+
+            expect(page).to have_selector('ul#events-list li', count: 2)
+            within("ul#events-list") do
+              expect(page).to have_content('Campaign FY2012')
+              expect(page).to have_no_content('Another Campaign April 03')
+              expect(page).to have_no_content('New Brand Campaign')
+            end
+
+            within 'ul.dropdown-menu' do
+              click_js_link 'Current month'
+            end
+
+            expect(page).to have_selector('ul#events-list li', count: 5)
+            within("ul#events-list") do
+              expect(page).to have_content('Campaign FY2012')
+              expect(page).to have_content('Another Campaign April 03')
+              expect(page).to have_no_content('New Brand Campaign')
+            end
+
+            within 'ul.dropdown-menu' do
+              click_js_link 'Previous week'
+            end
+
+            expect(page).to have_selector('ul#events-list li', count: 1)
+            within("ul#events-list") do
+              expect(page).to have_no_content('Campaign FY2012')
+              expect(page).to have_content('Another Campaign April 03')
+              expect(page).to have_no_content('New Brand Campaign')
+            end
+
+            within 'ul.dropdown-menu' do
+              click_js_link 'Previous month'
+            end
+
+            expect(page).to have_selector('ul#events-list li', count: 1)
+            within("ul#events-list") do
+              expect(page).to have_no_content('Campaign FY2012')
+              expect(page).to have_no_content('Another Campaign April 03')
+              expect(page).to have_content('New Brand Campaign')
+            end
+
+            within 'ul.dropdown-menu' do
+              click_js_link 'YTD'
+            end
+
+            expect(page).to have_selector('ul#events-list li', count: 6)
+            within("ul#events-list") do
+              expect(page).to have_content('Campaign FY2012')
+              expect(page).to have_content('Another Campaign April 03')
+              expect(page).to have_content('New Brand Campaign')
+            end
+          end
+
+          scenario "can filter the events by custom date range selecting start and end dates" do
+            visit events_path
+
+            click_js_link 'Date ranges'
+
+            within 'ul.dropdown-menu' do
+              expect(page).to have_button('Apply', disabled: true)
+              find_field('Start date').click
+              select_and_fill_from_datepicker('custom_start_date', Date.today.beginning_of_week.to_s(:slashes))
+              find_field('End date').click
+              select_and_fill_from_datepicker('custom_end_date', Date.today.end_of_week.to_s(:slashes))
+              expect(page).to have_button('Apply', disabled: false)
+              click_js_button 'Apply'
+            end
+
+            expect(page).to have_selector('ul#events-list li', count: 3)
+            within("ul#events-list") do
+              expect(page).to have_content('Campaign FY2012')
+              expect(page).to have_no_content('Another Campaign April 03')
+              expect(page).to have_no_content('New Brand Campaign')
+            end
           end
         end
 

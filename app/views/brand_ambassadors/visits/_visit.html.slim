@@ -1,4 +1,4 @@
-li id="brand_ambassadors_visit_#{visit.id}" class="#{active_class(visit)}"
+li.pdf-keeptogether id="brand_ambassadors_visit_#{visit.id}" class="#{active_class(visit)}"
   span.visit-item
     = link_to_if_permitted(:show, BrandAmbassadors::Visit, brand_ambassadors_visit_url(visit), title: 'Visit Details') do
       span.date

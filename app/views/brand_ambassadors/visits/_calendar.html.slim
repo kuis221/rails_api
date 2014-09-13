@@ -59,7 +59,8 @@ javascript:
       $(e.target).addClass('active')
       if (e.target.getAttribute('href') == '#calendar-view'){
         $('#pdf-export').data('url', '#{brand_ambassadors_visits_path(mode: :calendar, format: :pdf)}');
-        $('.dates-range-filter').slideUp()
+        $('.dates-range-filter').slideUp();
+        $('.dates-pref').slideUp();
         if (typeof visitsCalendar == 'undefined') {
           visitsCalendar = buildCalendar();
         } else {
@@ -67,7 +68,8 @@ javascript:
         }
       } else {
         $('#pdf-export').data('url', '#{brand_ambassadors_visits_path(format: :pdf)}');
-        $('.dates-range-filter').slideDown()
+        $('.dates-range-filter').slideDown();
+        $('.dates-pref').slideDown();
       }
     });
   }
