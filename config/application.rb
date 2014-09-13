@@ -70,6 +70,7 @@ module Brandscopic
     config.assets.initialize_on_precompile = false
 
     config.assets.precompile += %w[
+      pdf.css
       admin/active_admin.css admin/active_admin.js
       jquery.placesAutocomplete.js
       reports.css jquery.reportBuilder.js jquery.reportTableScroller.js
