@@ -84,7 +84,7 @@ class FilteredController < InheritedResources::Base
       set_collection_ivar(@solr_search.results)
 
       Slim::Engine.with_options(pretty: true, sort_attrs: false, streaming: false) do
-        render_to_string :index, handlers: [:slim], formats: [export.export_format], layout: export.export_format
+        render_to_string :index, handlers: [:slim], formats: export.export_format.to_sym, layout: 'application'
       end
     end
 

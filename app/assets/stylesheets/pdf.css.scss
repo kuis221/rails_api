@@ -1,0 +1,18 @@
+/*
+ *= require 'application'
+ */
+@font-face {
+	font-family: 'icons';
+	src:font-url('icons.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+body.app-layout {
+	background: #fff !important;
+}
+.pdf-keeptogether {
+	page-break-inside: avoid;
+}
+#main-container{
+	padding: 0;
+}

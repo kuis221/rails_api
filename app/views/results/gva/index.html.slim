@@ -22,8 +22,20 @@
           = f.input :view_mode, label: false, checked: report_view_mode, required: false, label_html: {id: '#group-by-title'}, wrapper: :btn_group, as: :radio_buttons, collection: [[content_tag(:i, '', class: 'icon-analysis'), 'graph'],[content_tag(:i, '', class: 'icon-list'), 'table']], wrapper_html: { id: 'group-by-criterion' }, item_wrapper_class: 'btn'
 
         .export-xls.pull-right
-          a#download-gva-btn.btn href="#" title="Download"
-            i.icon-download
+          / a#download-gva-btn.btn href="#" title="Download"
+          /   i.icon-download
+
+          .dropdown.btn-download
+            a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+              i.icon-download
+              i.icon-arrow-down
+            ul#download-gva-btn.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+              li
+                a href="#" role="menuitem" data-url="#{results_gva_path(format: :xls)}"
+                  | Download as XLS
+              li
+                a href="#" role="menuitem" data-url="#{results_gva_path(format: :pdf)}"
+                  | Download as PDF
 
   #report-container
     #kpis-trends-bars.details_box.content
@@ -74,10 +86,11 @@ javascript:
     $('#'+view+'-view').removeClass('hide');
   });
 
-  $('#download-gva-btn').on('click', function(e){
+  $('#download-gva-btn a').on('click', function(e){
     var groupBy = $('input:radio[name="report[group_by]"]:checked').val();
+    var viewMode = $('input:radio[name="report[view_mode]"]:checked').val();
     if ($('#report_campaign_id').val()) {
-      $.get('#{results_gva_path(format: :xls)}?report[campaign_id]='+$('#report_campaign_id').val()+'&report[group_by]='+groupBy);
+      $.get($(this).data('url') + '?report[campaign_id]='+$('#report_campaign_id').val()+'&report[group_by]='+groupBy+'&report[view_mode]='+viewMode);
     }
     return false;
   });

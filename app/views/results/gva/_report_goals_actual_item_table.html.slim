@@ -1,3 +1,4 @@
+- data ||= each_events_goal
 .goals-actual
   .row-fluid
     .span12.category
@@ -7,7 +8,7 @@
       .span2.text-right.title Actual %
       .span2.text-right.title Pending
       .span2.text-right.title Pending %
-    - each_events_goal.each do |id, event_goal|
+    - data.each do |id, event_goal|
       - if event_goal[:goal].kpi.present?
         - pending_and_total = (event_goal[:submitted] || 0) + event_goal[:total_count]
         .span12 class="#{cycle("", "dark-bg")}"

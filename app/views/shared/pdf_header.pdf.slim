@@ -3,13 +3,14 @@ html lang="en"
   head
     css:
       body {
-        padding-top: 10px;
         color:  #dfdfdf;
+        padding: 20px 0;
+        width: 100%;
       }
       .span6 {
         width: 48%;
         margin:0;
-        padding:0;
+        padding: 10px 0;
         display: inline-block;
       }
       .text-right {
@@ -17,12 +18,13 @@ html lang="en"
       }
 
   body
-    .span6
-      .text-left
-        h2= current_company.name
-    .span6
-      .text-right
-        = I18n.t("exports.pdf.title.#{controller_name.underscore}")
+    .row-container
+      .span6
+        .text-left
+          h2= current_company.name
+      .span6
+        .text-right
+          = I18n.t("exports.pdf.title.#{controller_name.underscore}")
 
     javascript:
       window.status='completed';

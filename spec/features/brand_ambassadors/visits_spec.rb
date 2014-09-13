@@ -1,4 +1,6 @@
 require 'rails_helper'
+require 'open-uri'
+
 require_relative '../../../app/controllers/brand_ambassadors/visits_controller'
 
 feature "Brand Ambassadors Visits" do
@@ -89,16 +91,15 @@ feature "Brand Ambassadors Visits" do
 
       export = ListExport.last
       # Test the generated PDF...
-      require 'open-uri'
       reader = PDF::Reader.new(open(export.file.url))
       reader.pages.each do |page|
         expect(page.text).to include '2 Active visits'
         expect(page.text).to include "Visit1"
-        expect(page.text).to include "SAT Feb 1"
-        expect(page.text).to include "SUN Feb 2"
+        expect(page.text).to match /SAT\s?Feb 1/
+        expect(page.text).to match /SUN\s?Feb 2/
         expect(page.text).to include "Visit2"
-        expect(page.text).to include "SAT Feb 1"
-        expect(page.text).to include "SUN Feb 2"
+        expect(page.text).to match /SAT\s?Feb 1/
+        expect(page.text).to match /SUN\s?Feb 2/
       end
     end
   end
@@ -228,6 +229,7 @@ feature "Brand Ambassadors Visits" do
       FactoryGirl.create(:brand_ambassadors_visit, company: company,
             start_date: "#{month_number}/16/#{year}", end_date: "#{month_number}/18/#{year}",
             name: 'Visit to SF', company_user: company_user, active: true)
+      Sunspot.commit
       visit brand_ambassadors_root_path
 
       click_link "Calendar View"

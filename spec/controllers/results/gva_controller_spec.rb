@@ -1,4 +1,5 @@
 require 'rails_helper'
+require 'open-uri'
 
 describe Results::GvaController, :type => :controller do
   before(:each) do
@@ -11,6 +12,135 @@ describe Results::GvaController, :type => :controller do
     it "should return http success" do
       get 'index'
       expect(response).to be_success
+    end
+
+    describe "XLS export" do
+      before { ResqueSpec.reset! }
+      it "queue the job for export the list" do
+        expect{
+          xhr :get, :index, format: :xls
+        }.to change(ListExport, :count).by(1)
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+      end
+    end
+
+    describe "PDF export" do
+      let(:campaign) { FactoryGirl.create(:campaign, name: 'My Super campaign', company: @company) }
+      let(:kpi) { FactoryGirl.create(:kpi, name: 'My Custom KPI', company: @company ) }
+      before { ResqueSpec.reset! }
+      before { campaign.add_kpi kpi }
+
+      it "queue the job for export the list" do
+        expect{
+          xhr :get, :index, report: { campaign_id: campaign.id, group_by: 'campaign', view_mode: 'graph' }, format: :pdf
+        }.to change(ListExport, :count).by(1)
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+      end
+
+      it "should render the PDF even if no data" do
+        expect{
+          xhr :get, :index, report: { campaign_id: campaign.id, group_by: 'campaign', view_mode: 'graph' }, format: :pdf
+        }.to change(ListExport, :count).by(1)
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+        ResqueSpec.perform_all(:export)
+
+        reader = PDF::Reader.new(open(export.reload.file.url))
+        reader.pages.each do |page|
+          expect(page.text).to include 'Goals vs. Actual'
+        end
+      end
+
+      it "should render the report for the campaign" do
+        event = FactoryGirl.create(:approved_event, company: @company, campaign: campaign)
+        event.result_for_kpi(kpi).value = '25'
+        event.save
+
+        event = FactoryGirl.create(:submitted_event, company: @company, campaign: campaign)
+        event.result_for_kpi(kpi).value = '20'
+        event.save
+
+        FactoryGirl.create(:goal, goalable: campaign, kpi: kpi, value: '100')
+
+        expect{
+          xhr :get, :index, report: { campaign_id: campaign.id, group_by: 'campaign', view_mode: 'graph' }, format: :pdf
+        }.to change(ListExport, :count).by(1)
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+        ResqueSpec.perform_all(:export)
+
+        reader = PDF::Reader.new(open(export.reload.file.url))
+        reader.pages.each do |page|
+          expect(page.text).to include 'My Super campaign'
+          expect(page.text).to include 'Goals vs. Actual'
+          expect(page.text).to include 'My Custom KPI'
+          expect(page.text).to include '45%'
+          expect(page.text).to include '45 OF 100 GOAL'
+        end
+      end
+
+      it "should render the report for the campaign" do
+        event = FactoryGirl.create(:approved_event, company: @company, campaign: campaign)
+        event.result_for_kpi(kpi).value = '25'
+        event.save
+
+        event = FactoryGirl.create(:submitted_event, company: @company, campaign: campaign)
+        event.result_for_kpi(kpi).value = '20'
+        event.save
+
+        FactoryGirl.create(:goal, goalable: campaign, kpi: kpi, value: '100')
+
+        expect{
+          xhr :get, :index, report: { campaign_id: campaign.id, group_by: 'campaign', view_mode: 'graph' }, format: :pdf
+        }.to change(ListExport, :count).by(1)
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+        ResqueSpec.perform_all(:export)
+
+        reader = PDF::Reader.new(open(export.reload.file.url))
+        reader.pages.each do |page|
+          expect(page.text).to include 'My Super campaign'
+          expect(page.text).to include 'Goals vs. Actual'
+          expect(page.text).to include 'My Custom KPI'
+          expect(page.text).to include '45%'
+          expect(page.text).to include '45 OF 100 GOAL'
+        end
+      end
+
+      it "should render the report for the campaign" do
+        campaign.add_kpi kpi
+        @company_user.campaigns << campaign
+
+        FactoryGirl.create(:goal, parent: campaign, goalable: @company_user, kpi: kpi, value: 50)
+
+        event = FactoryGirl.create(:approved_event, company: @company, campaign: campaign, user_ids: [@company_user.id])
+        event.result_for_kpi(kpi).value = '25'
+        event.save
+
+        event = FactoryGirl.create(:submitted_event, company: @company, campaign: campaign, user_ids: [@company_user.id])
+        event.result_for_kpi(kpi).value = '20'
+        event.save
+
+        FactoryGirl.create(:goal, goalable: campaign, kpi: kpi, value: '100')
+
+        expect{
+          xhr :get, :index, report: { campaign_id: campaign.id, group_by: 'staff', view_mode: 'graph' }, format: :pdf
+        }.to change(ListExport, :count).by(1)
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+        ResqueSpec.perform_all(:export)
+
+        reader = PDF::Reader.new(open(export.reload.file.url))
+        reader.pages.each do |page|
+          expect(page.text).to include 'My Super campaign'
+          expect(page.text).to include 'Goals vs. Actual'
+          expect(page.text).to include 'My Custom KPI'
+          expect(page.text).to include '90%'
+          expect(page.text).to include '45 OF 50 GOAL'
+        end
+      end
     end
   end
 

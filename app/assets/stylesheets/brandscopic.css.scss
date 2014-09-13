@@ -15,11 +15,7 @@ $footer-height: 35px;
 
 @font-face {
 	font-family: 'icons';
-	src:font-url('icons.eot');
-	src:url(font-path('icons.eot') + '?#iefix') format('embedded-opentype'),
-		font-url('icons.woff') format('woff'),
-		font-url('icons.ttf') format('truetype'),
-		font-url('icons.svg#icons') format('svg');
+	src:font-url('icons.ttf') format('truetype');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -2156,8 +2152,8 @@ li#notifications{
 		.progress-label {
 			position: absolute;
 			top: -43px;
-			width: 200px;
-			right: -190px;
+			width: 250px;
+			right: -250px;
 			text-align: center;
 			&.percentage {
 				font-size: 26px;
@@ -6227,7 +6223,7 @@ body.gva {
 				font-size: 12px;
 				margin: 15px 250px 30px 0;
 				text-align: right;
-				span {
+				span.circle {
 					margin-right: 11px;
 					&:before {
 						content: '';
@@ -6254,19 +6250,14 @@ body.gva {
 							background: $rejected;
 						}
 					}
-					&.today{
-						margin-right: 0;
-						&:before {
-							color: $brand;
-							content: "\e004";
-							font-family: "icons";
-							font-size: 14px;
-							position: relative;
-							top: 6px;
-						}
-					}
-
 				}
+				span.today{
+					.icon-arrow-down:before {
+						font-size: 14px;
+						top: 4px;
+					}
+				}
+
 			}
 			.container-kpi-trend{
 				margin-left: 0;

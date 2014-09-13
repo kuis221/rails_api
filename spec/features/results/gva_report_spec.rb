@@ -186,25 +186,23 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
       scenario "should export the overall campaign GvA to Excel" do
         company_user.role.permissions.create(action: :gva_report, subject_class: 'Campaign')
         campaign = FactoryGirl.create(:campaign, name: 'Test Campaign FY01', start_date: '07/21/2013', end_date: '03/30/2014', company: company)
-        kpi = Kpi.samples
-        kpi2 = Kpi.events
-        campaign.add_kpi kpi
-        campaign.add_kpi kpi2
+        campaign.add_kpi Kpi.samples
+        campaign.add_kpi Kpi.events
 
         place1 = FactoryGirl.create(:place, name: 'Place 1')
         campaign.places << place1
         company_user.campaigns << campaign
         company_user.places << place1
 
-        FactoryGirl.create(:goal, goalable: campaign, kpi: kpi, value: '100')
-        FactoryGirl.create(:goal, goalable: campaign, kpi: kpi2, value: '2')
+        FactoryGirl.create(:goal, goalable: campaign, kpi: Kpi.samples, value: '100')
+        FactoryGirl.create(:goal, goalable: campaign, kpi: Kpi.events, value: '2')
 
         event1 = FactoryGirl.create(:approved_event, company: company, campaign: campaign, place: place1)
-        event1.result_for_kpi(kpi).value = '25'
+        event1.result_for_kpi(Kpi.samples).value = '25'
         event1.save
 
         event2 = FactoryGirl.create(:submitted_event, company: company, campaign: campaign, place: place1)
-        event2.result_for_kpi(kpi).value = '20'
+        event2.result_for_kpi(Kpi.samples).value = '20'
         event2.save
 
         visit results_gva_path
@@ -212,17 +210,7 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
         choose_campaign('Test Campaign FY01')
 
         # Export
-        with_resque do
-          expect {
-            click_js_link('Download')
-            wait_for_ajax(10)
-            within visible_modal do
-              expect(page).to have_content('We are processing your request, the download will start soon...')
-            end
-            wait_for_ajax(30)
-            ensure_modal_was_closed
-          }.to change(ListExport, :count).by(1)
-        end
+        export_report
 
         spreadsheet_from_last_export do |doc|
           rows = doc.elements.to_a('//Row')
@@ -266,17 +254,7 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
         report_form.find('label', text: 'Place').click
 
         # Export
-        with_resque do
-          expect {
-            click_js_link('Download')
-            wait_for_ajax(10)
-            within visible_modal do
-              expect(page).to have_content('We are processing your request, the download will start soon...')
-            end
-            wait_for_ajax(30)
-            ensure_modal_was_closed
-          }.to change(ListExport, :count).by(1)
-        end
+        export_report
 
         spreadsheet_from_last_export do |doc|
           rows = doc.elements.to_a('//Row')
@@ -322,17 +300,7 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
         report_form.find('label', text: 'Staff').click
 
         # Export
-        with_resque do
-          expect {
-            click_js_link('Download')
-            wait_for_ajax(10)
-            within visible_modal do
-              expect(page).to have_content('We are processing your request, the download will start soon...')
-            end
-            wait_for_ajax(30)
-            ensure_modal_was_closed
-          }.to change(ListExport, :count).by(1)
-        end
+        export_report
 
         spreadsheet_from_last_export do |doc|
           rows = doc.elements.to_a('//Row')
@@ -351,5 +319,20 @@ feature "Results Goals vs Actuals Page", js: true, search: true  do
 
   def choose_campaign(name)
     select_from_chosen(name, from: 'report[campaign_id]')
+  end
+
+  def export_report(format='XLS')
+    with_resque do
+      expect {
+        click_js_link('Download')
+        click_js_link("Download as #{format}")
+        wait_for_ajax(10)
+        within visible_modal do
+          expect(page).to have_content('We are processing your request, the download will start soon...')
+        end
+        wait_for_ajax(30)
+        ensure_modal_was_closed
+      }.to change(ListExport, :count).by(1)
+    end
   end
 end
