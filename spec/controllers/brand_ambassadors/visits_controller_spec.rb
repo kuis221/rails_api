@@ -6,6 +6,7 @@ RSpec.describe BrandAmbassadors::VisitsController, :type => :controller do
   let(:user){ FactoryGirl.create(:company_user, company: company) }
 
   before{ sign_in_as_user user }
+  before{ ResqueSpec.reset! }
 
   describe "GET 'index'" do
     it "returns http success", search: true do
@@ -59,6 +60,8 @@ RSpec.describe BrandAmbassadors::VisitsController, :type => :controller do
       Sunspot.commit
 
       expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+      expect(ListExportWorker).to have_queued(ListExport.last.id)
+      ResqueSpec.perform_all(:export)
       spreadsheet_from_last_export do |doc|
         rows = doc.elements.to_a('//Row')
         expect(rows.count).to eql 2

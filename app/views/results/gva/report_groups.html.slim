@@ -28,7 +28,7 @@ javascript:
       $(e.target).closest('.accordion-group').find(".icon-collapsed").removeClass("icon-collapsed").addClass("icon-expanded").prop('title', 'Collapse');
       //if (!$target.data('loaded')) {
         $('#' + $target.attr('id') + ' .accordion-inner').empty().addClass('loading-spinner');
-        $.post("#{results_gva_path}", {item_type: $target.data('type'),item_id: $target.data('id'), view_style: $("#view_style").val(), report: {campaign_id: "#{@campaign.id}"} }, function(){
+        $.post("#{results_gva_path}", {item_type: $target.data('type'),item_id: $target.data('id'), report: {campaign_id: "#{@campaign.id}", view_mode: $('input:radio[name="report[view_mode]"]:checked').val()} }, function(){
           //$target.data('loaded', true);
           $('#' + $target.attr('id') + ' .accordion-inner').removeClass('loading-spinner');
         });

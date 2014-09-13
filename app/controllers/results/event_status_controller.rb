@@ -2,10 +2,18 @@ class Results::EventStatusController < ApplicationController
   before_action :campaign, except: :index
   before_action :authorize_actions
 
-  helper_method :return_path
+  helper_method :return_path, :report_group_by
 
   def report
-    authorize_actions
+
+    @data = if report_group_by == 'campaign'
+      Campaign.where(id: campaign.id).promo_hours_graph_data
+    elsif report_group_by == 'place'
+      @campaign.event_status_data_by_areas(current_company_user)
+    elsif report_group_by == 'staff'
+      @campaign.event_status_data_by_staff
+    end
+
   end
 
   private
@@ -23,5 +31,13 @@ class Results::EventStatusController < ApplicationController
 
     def return_path
       results_reports_path
+    end
+
+    def report_group_by
+      @_view_mode ||= if params[:report] && params[:report][:group_by]
+        params[:report][:group_by]
+      else
+        'campaign'
+      end
     end
 end

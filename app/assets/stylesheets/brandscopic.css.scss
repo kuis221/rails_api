@@ -15,11 +15,7 @@ $footer-height: 35px;
 
 @font-face {
 	font-family: 'icons';
-	src:font-url('icons.eot');
-	src:url(font-path('icons.eot') + '?#iefix') format('embedded-opentype'),
-		font-url('icons.woff') format('woff'),
-		font-url('icons.ttf') format('truetype'),
-		font-url('icons.svg#icons') format('svg');
+	src:font-url('icons.ttf') format('truetype');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -2169,8 +2165,8 @@ li#notifications{
 		.progress-label {
 			position: absolute;
 			top: -43px;
-			width: 200px;
-			right: -190px;
+			width: 250px;
+			right: -250px;
 			text-align: center;
 			&.percentage {
 				font-size: 26px;
@@ -6106,68 +6102,76 @@ div.chardinjs-tooltip
 }
 
 // GVA - GOALS VS ACTUAL
-
-body.gva {
-	.tab-content{
-		overflow: visible;
-		.tab-pane{
-			.tool-box{
-				color: $brand;
-				h3{
-					color: $text;
+#report-settings {
+	color: $brand;
+	.control-group {
+		display: inline-block;
+		margin-left: 57px;
+		&.report_campaign_id {
+			margin-left: 0;
+		}
+		&.report_group_by label {
+			display: inline-block;
+			font-size: 11px;
+			vertical-align: middle;
+		}
+		.export-xls {
+			margin-top: 22px;
+		}
+		.btn-group {
+			margin: 4px 0 0 8px;
+			.btn {
+				background-color: $user_menu;
+				box-shadow: none;
+				color: #FFFFFF;
+				font-weight: bold;
+				font-size: 13px;
+				padding: 7px 10px;
+				width: 60px;
+				&:first-child{
+					border-bottom-left-radius: 6px;
+					border-top-left-radius: 6px;
 				}
-				.group-by-box, .view-style-box, .export-xls{
-					display: inline-block;
-					margin-left: 57px;
-					margin-top: 20px;
-					#group-by-title{
-						font-size: 11px;
-						vertical-align: middle;
+				&:last-child{
+				    border-bottom-right-radius: 6px;
+				    border-top-right-radius: 6px;
+				}
+				&.active{
+					background-color: $brand;
+					color: $grey_one;
+				}
+				&.campaign{
+					border-right: 1px solid $buttons-border;
+				}
+				&.place{
+					border-right: 1px solid $buttons-border;
+					&:before{
+						display: none;
 					}
-					.btn-group{
-						margin: 0 0 0 8px;
-						.btn{
-							background-color: $user_menu;
-							box-shadow: none;
-							color: #FFFFFF;
-							font-weight: bold;
-							font-size: 13px;
-							padding: 7px 10px;
-							width: 60px;
-							&:first-child{
-								border-bottom-left-radius: 6px;
-								border-top-left-radius: 6px;
-							}
-							&:last-child{
-							    border-bottom-right-radius: 6px;
-							    border-top-right-radius: 6px;
-							}
-							&.active{
-								background-color: $brand;
-								color: $grey_one;
-							}
-							&.campaign{
-								border-right: 1px solid $buttons-border;
-							}
-							&.place{
-								border-right: 1px solid $buttons-border;
-								&:before{
-									display: none;
-								}
-							}
-							&.list, &.table, &.graph{
-								width: 30px;
-								padding: 6px 10px;
-								&:after{
-									font-size: 16px;
-									font-weight: normal;
-								}
-							}
-						}
+				}
+				&.list, &.table, &.graph{
+					width: 30px;
+					padding: 6px 10px;
+					&:after{
+						font-size: 16px;
+						font-weight: normal;
 					}
 				}
 			}
 		}
+	}
+}
+
+body.gva, body.event_status {
+	#list-tools {
+		.export-xls {
+			margin-top: 22px;
+		}
+	}
+}
+body.gva {
+	.tab-content{
+		overflow: visible;
 
 		#report-container {
 			.total-venues {
@@ -6232,7 +6236,7 @@ body.gva {
 				font-size: 12px;
 				margin: 15px 250px 30px 0;
 				text-align: right;
-				span {
+				span.circle {
 					margin-right: 11px;
 					&:before {
 						content: '';
@@ -6259,19 +6263,14 @@ body.gva {
 							background: $rejected;
 						}
 					}
-					&.today{
-						margin-right: 0;
-						&:before {
-							color: $brand;
-							content: "\e004";
-							font-family: "icons";
-							font-size: 14px;
-							position: relative;
-							top: 6px;
-						}
-					}
-
 				}
+				span.today{
+					.icon-arrow-down:before {
+						font-size: 14px;
+						top: 4px;
+					}
+				}
+
 			}
 			.container-kpi-trend{
 				margin-left: 0;

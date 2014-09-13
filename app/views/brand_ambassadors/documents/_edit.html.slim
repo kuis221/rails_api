@@ -1,0 +1,11 @@
+- remote ||= false
+= simple_form_for(resource, remote: remote || false) do |f|
+  = f.error_notification
+
+  .form-inputs
+    = f.input :file_file_name, label: 'Document name', :input_html => {class: 'input-xlarge', maxlength: 255}
+
+  .form-actions
+    = f.button :submit, "Save", class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
+    = "&nbsp;".html_safe
+    = f.button :button, 'Cancel', class: 'btn btn-cancel'

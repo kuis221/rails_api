@@ -1,17 +1,20 @@
 class Results::GvaController < InheritedResources::Base
-  respond_to :xls, only: :index
+  respond_to :xls, :pdf, only: :index
 
   before_action :campaign, except: :index
   before_action :authorize_actions
+  before_action :set_scopes , if: ->{ action_name == 'report' || request.format.pdf? }
 
-  helper_method :return_path
+  helper_method :return_path, :report_view_mode, :report_group_by
 
   def index
-    if request.format.xls?
+    if request.format.xls? || request.format.pdf?
       @export = ListExport.create(
-        controller: self.class.name, params: params,
+        controller: self.class.name,
+        params: params,
         url_options: url_options,
-        export_format: 'xls', company_user: current_company_user)
+        export_format: params[:format],
+        company_user: current_company_user)
       if @export.new?
         @export.queue!
       end
@@ -19,13 +22,8 @@ class Results::GvaController < InheritedResources::Base
     end
   end
 
-  def report
-    set_report_scopes_for(area || place || company_user || team || campaign)
-  end
-
   def report_groups
     @goalables = goalables_by_type
-
     @group_header_data = kpis_headers_data(@goalables)
 
     render layout: false
@@ -34,11 +32,11 @@ class Results::GvaController < InheritedResources::Base
   def export_list(export)
     @goalables_data = goalables_by_type.map do |goalable|
       set_report_scopes_for(goalable)
-      {name: goalable.name , event_goal: view_context.each_events_goal}
+      {name: goalable.name, item: goalable, event_goal: view_context.each_events_goal}
     end
 
     Slim::Engine.with_options(pretty: true, sort_attrs: false, streaming: false) do
-      render_to_string :index, handlers: [:slim], formats: [:xls], layout: false
+      render_to_string :index, handlers: [:slim], formats: export.export_format.to_sym, layout: 'application'
     end
   end
 
@@ -47,8 +45,12 @@ class Results::GvaController < InheritedResources::Base
   end
 
   private
+    def set_scopes
+      set_report_scopes_for(area || place || company_user || team || campaign)
+    end
+
     def campaign
-      @campaign ||= current_company.campaigns.find(params[:report][:campaign_id])
+      @campaign ||= current_company.campaigns.find(params[:report][:campaign_id]) if params[:report] && params[:report][:campaign_id].present?
     end
 
     def area
@@ -85,9 +87,9 @@ class Results::GvaController < InheritedResources::Base
     end
 
     def goalables_by_type
-      if params[:group_by] == 'campaign'
+      if report_group_by == 'campaign'
         campaign.goals
-      elsif params[:group_by] == 'place'
+      elsif report_group_by == 'place'
         campaign.children_goals.for_areas_and_places(
           campaign.areas.accessible_by_user(current_company_user).pluck('areas.id'),
           campaign.places.select{|place| current_company_user.allowed_to_access_place?(place) }.map(&:id))
@@ -97,7 +99,7 @@ class Results::GvaController < InheritedResources::Base
     end
 
     def set_report_scopes_for(goalable)
-      if params[:format] == 'xls' && (params[:group_by] == 'place' || params[:group_by] == 'staff')
+      if ['xls', 'pdf'].include?(params[:format]) && (report_group_by == 'place' || report_group_by == 'staff')
         @area, @place, @company_user, @team = nil, nil, nil, nil
         params.merge!(item_type: goalable.class.name, item_id: goalable.id)
       end
@@ -214,6 +216,22 @@ class Results::GvaController < InheritedResources::Base
         end
       else
         {}
+      end
+    end
+
+    def report_group_by
+      @_group_by ||= if params[:report].present? && params[:report][:group_by].present?
+        params[:report][:group_by]
+      else
+        'campaign'
+      end
+    end
+
+    def report_view_mode
+      @_view_mode ||= if params[:report].present? && params[:report][:view_mode].present?
+        params[:report][:view_mode]
+      else
+        'graph'
       end
     end
 

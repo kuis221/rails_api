@@ -23,6 +23,8 @@
 
 class BrandAmbassadors::Document < ::AttachedAsset
 
+  validates :file_file_name, presence: true, length: { maximum: 255 }
+
   default_scope -> { where(asset_type: 'ba_document') }
 
   scope :active, -> { where(active: true) }

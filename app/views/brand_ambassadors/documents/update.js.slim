@@ -1,2 +1,6 @@
-|
-  $(document).trigger('documents:change');
+- render 'settings'
+- if resource.errors.any?
+  = render partial: 'form_dialog', locals: { form_partial: 'edit', modal_dialog_title: 'Edit Document' }
+- else
+  |
+    $(document).trigger('documents:change');

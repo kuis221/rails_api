@@ -37,6 +37,7 @@ class Goal < ActiveRecord::Base
   validates :due_date, date: { on_or_after: :start_date }
 
   scope :for_areas, ->(areas) { where(goalable_type: 'Area', goalable_id: areas) }
+  scope :for_staff, ->(user_ids, team_ids) { where('(goalable_type = ? and goalable_id in (?)) OR (goalable_type = ? and goalable_id in (?))', 'CompanyUser', user_ids, 'Team', team_ids) }
   scope :for_areas_and_places, ->(area_ids, place_ids) { where('(goalable_type = ? and goalable_id in (?)) OR (goalable_type = ? and goalable_id in (?))', 'Area', area_ids, 'Place', place_ids) }
   scope :for_users_and_teams, -> { where(goalable_type: ['CompanyUser', 'Team']) }
   scope :in, ->(parent) { where(parent_type: parent.class.name, parent_id: parent.id) }
