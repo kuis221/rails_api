@@ -105,11 +105,11 @@ a.resend-verification {
 .user-view{
 	.basic-info{
 		display: block;
-		margin: 10px 0 30px 0;
+		margin: 10px 0;
 		position: relative;
 		width: 100%;
 		h2{
-			margin: 0 0 15px 0 !important;
+			font-weight: bold;
 		}
 		.profile-pic{
 			display: inline-block;
@@ -142,19 +142,25 @@ a.resend-verification {
 	}
 	.team-assigned{
 		height: 30px;
-		span{
-			&.assigned-to:before{
-				content: "\e61d";
-				color: $user_menu;
-				display: inline-block;
-				font-size: 17px;
-				margin-right: 12px;
-				top: 2px;
-				width: auto;
-			}
-			&.label{
-				display: inline-block;
-				margin-right: 5px;
+		.icon-team{
+			color: $user_menu;
+			font-size: 16px;
+			margin-right: 10px;
+		}
+		.label-team{
+			display: inline-block;
+			margin-right: 5px;
+			.icon-team{
+				background-color: $user_menu;
+				color: white;
+				float: left;
+				font-size: 14px;
+				height: 25px;
+				@include border-radius(15px);
+				line-height: 25px;
+				position: relative;
+				text-align: center;
+				width:25px;
 			}
 		}
 	}
@@ -225,6 +231,7 @@ a.resend-verification {
 	}
 }
 
+/*
 .control-group{
 	&.event_results_value{
 		width: 390px;
@@ -234,7 +241,7 @@ a.resend-verification {
 		input[type="text"]{
 			-webkit-border-radius: 4px 0px 0px 4px;
 			border-radius: 4px 0px 0px 4px;
-			width: 172px !important;
+			width: 176px;
 		}
 		label.control-label{
 			display: inline-block;
@@ -252,6 +259,7 @@ a.resend-verification {
 		}
 	}
 }
+*/
 
 .control-group.percentage,
 .control-group.summation {

@@ -1,5 +1,5 @@
 .row-fluid.with-details-close-bar
-  = resource_details_bar("You are viewing user details. Click to close.")
+  = resource_details_bar("Viewing User details. Click to close.")
 
   .details_box.user-view.padding-top-close-bar
     .basic-info
@@ -28,9 +28,11 @@
 
     - if resource.teams.any?
       .team-assigned
-        span.assigned-to
+        i.icon-team
         - resource.teams.pluck(:name).each do |team_name|
-          span.label.label-team= team_name
+          .label.label-team
+            i.icon-team
+            = team_name
 
     .aditional-info
       - if resource.email.present?
@@ -40,11 +42,12 @@
 
       - if resource.phone_number.present?
         .phone-data
-          i.icon-wired-phone
+          i.icon-mobile
           .number
             = resource.phone_number
           - if resource.user.phone_number_verified?
             .verified
+              i.icon-checked
               p Verified!
           - elsif viewing_profile?
             .verify
