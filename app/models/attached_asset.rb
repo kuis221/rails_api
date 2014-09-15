@@ -72,7 +72,7 @@ class AttachedAsset < ActiveRecord::Base
 
   delegate :company_id, to: :attachable
 
-  searchable do
+  searchable if: :processed? do
     string :status
     string :asset_type
     string :attachable_type
