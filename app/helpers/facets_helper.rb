@@ -114,10 +114,9 @@ module FacetsHelper
     {label: "Brand Portfolios", items: items}
   end
 
-  def build_status_bucket(facet_search)
-    counters = Hash[facet_search.facet(:status).rows.map{|r| [r.value.to_s.capitalize, r.count]}]
+  def build_status_bucket
     {label: 'Event Status', items: ['Late', 'Due', 'Submitted', 'Rejected', 'Approved'].
-        map{|x| build_facet_item({label: x, id: x, name: :event_status, count: counters.try(:[], x) || 0}) }.
+        map{|x| build_facet_item({label: x, id: x, name: :event_status, count: 1}) }.
         sort{ |a, b| a[:label] <=> b[:label] }}
   end
 
@@ -152,16 +151,12 @@ module FacetsHelper
   # Returns the facets for the events controller
   def events_facets
     @events_facets ||= Array.new.tap do |f|
-      # select what params should we use for the facets search
-      facet_params = HashWithIndifferentAccess.new(search_params.select{|k, v| %w(company_id current_company_user with_event_data_only with_surveys_only).include?(k)})
-      facet_search = resource_class.do_search(facet_params, true)
-
       f.push build_campaign_bucket
       f.push build_brands_bucket
       f.push build_areas_bucket
       f.push build_people_bucket
 
-      f.push build_status_bucket( facet_search )
+      f.push build_status_bucket
       f.push build_state_bucket
       f.push build_custom_filters_bucket
     end
