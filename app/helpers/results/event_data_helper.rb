@@ -77,6 +77,7 @@ module Results
       def custom_fields_to_export
         @kpis_to_export ||= begin
           exclude_kpis = [Kpi.impressions.id, Kpi.interactions.id, Kpi.samples.id, Kpi.gender.id, Kpi.ethnicity.id]
+          exclude_field_types = ['FormField::Attachment', 'FormField::Photo', 'FormField::Section']
           campaign_ids = []
           campaign_ids = params[:campaign] if params[:campaign] && params[:campaign].any?
           if params[:q].present? && match = /\Acampaign,([0-9]+)/.match(params[:q])
@@ -91,7 +92,10 @@ module Results
             end
           end
           if campaign_ids.any?
-            fields_scope = FormField.for_events_in_company(current_company_user.company_id).where('form_fields.kpi_id not in (?)', exclude_kpis).order('form_fields.name ASC')
+            fields_scope = FormField.for_events_in_company(current_company_user.company_id).
+                            where('form_fields.kpi_id not in (?) OR kpi_id is NULL', exclude_kpis).
+                            where.not(type: exclude_field_types).
+                            order('form_fields.name ASC')
             fields_scope = fields_scope.where(campaigns: {id: campaign_ids}) unless current_company_user.is_admin? and campaign_ids.empty?
             Hash[fields_scope.map{|field| [field.id, field]}]
           else

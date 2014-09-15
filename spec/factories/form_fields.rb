@@ -33,6 +33,24 @@ FactoryGirl.define do
     ordering 1
   end
 
+  factory :form_field_radio, :class => FormField::Radio do |f|
+    sequence(:name) {|n| "Form Field Radio #{n}" }
+    type "FormField::Radio"
+    ordering 1
+  end
+
+  factory :form_field_checkbox, :class => FormField::Checkbox do |f|
+    sequence(:name) {|n| "Form Field Checkbox #{n}" }
+    type "FormField::Checkbox"
+    ordering 1
+  end
+
+  factory :form_field_dropdown, :class => FormField::Dropdown do |f|
+    sequence(:name) {|n| "Form Field Dropdown #{n}" }
+    type "FormField::Dropdown"
+    ordering 1
+  end
+
   factory :form_field_brand, :class => FormField::Brand do |f|
     sequence(:name) {|n| "Form Field Brand #{n}" }
     type "FormField::Brand"

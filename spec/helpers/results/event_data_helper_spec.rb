@@ -9,6 +9,87 @@ describe Results::EventDataHelper, :type => :helper do
   end
 
   describe "#custom_fields_to_export_values and #custom_fields_to_export_headers" do
+    it "include NUMBER fields that are not linked to a KPI" do
+      field = FactoryGirl.create(:form_field_number, name: 'My Numeric Field', fieldable: campaign)
+
+      event = FactoryGirl.build(:approved_event, campaign: campaign)
+      event.results_for([field]).first.value = 123
+      expect(event.save).to be_truthy
+
+      expect(helper.custom_fields_to_export_headers).to eq(['MY NUMERIC FIELD'])
+      expect(helper.custom_fields_to_export_values(event)).to eq([["Number", "normal", 123]])
+    end
+
+    it "include RADIO fields that are not linked to a KPI" do
+      field = FactoryGirl.create(:form_field_radio, name: 'My Radio Field',
+        fieldable: campaign, options: [
+          option = FactoryGirl.create(:form_field_option, name: 'Radio Opt1'),
+          FactoryGirl.create(:form_field_option, name: 'Radio Opt2') ])
+
+      event = FactoryGirl.build(:approved_event, campaign: campaign)
+      event.results_for([field]).first.value = option.id
+      expect(event.save).to be_truthy
+
+      expect(helper.custom_fields_to_export_headers).to eq(['MY RADIO FIELD'])
+      expect(helper.custom_fields_to_export_values(event)).to eq([["String", "normal", "Radio Opt1"]])
+    end
+
+    it "include CHECKBOX fields that are not linked to a KPI" do
+      field = FactoryGirl.create(:form_field_checkbox, name: 'My Chk Field',
+        fieldable: campaign, options: [
+          option1 = FactoryGirl.create(:form_field_option, name: 'Chk Opt1'),
+          option2 = FactoryGirl.create(:form_field_option, name: 'Chk Opt2') ])
+
+      event = FactoryGirl.build(:approved_event, campaign: campaign)
+      event.results_for([field]).first.value = {option1.id.to_s => 1, option2.id.to_s => 1}
+      event.save
+      expect(event.save).to be_truthy
+
+      expect(helper.custom_fields_to_export_headers).to eq(['MY CHK FIELD'])
+      expect(helper.custom_fields_to_export_values(event)).to eq([["String", "normal", "Chk Opt1,Chk Opt2"]])
+    end
+
+    it "include DROPDOWN fields that are not linked to a KPI" do
+      field = FactoryGirl.create(:form_field_dropdown, name: 'My Ddown Field',
+        fieldable: campaign, options: [
+          option1 = FactoryGirl.create(:form_field_option, name: 'Ddwon Opt1'),
+          option2 = FactoryGirl.create(:form_field_option, name: 'Ddwon Opt2') ])
+
+      event = FactoryGirl.build(:approved_event, campaign: campaign)
+      event.results_for([field]).first.value = option1.id
+      event.save
+      expect(event.save).to be_truthy
+
+      expect(helper.custom_fields_to_export_headers).to eq(['MY DDOWN FIELD'])
+      expect(helper.custom_fields_to_export_values(event)).to eq([["String", "normal", "Ddwon Opt1"]])
+    end
+
+    it "include TIME fields that are not linked to a KPI" do
+      field = FactoryGirl.create(:form_field, type: 'FormField::Time', name: 'My Time Field',
+        fieldable: campaign)
+
+      event = FactoryGirl.build(:approved_event, campaign: campaign)
+      event.results_for([field]).first.value = '12:22 pm'
+      event.save
+      expect(event.save).to be_truthy
+
+      expect(helper.custom_fields_to_export_headers).to eq(['MY TIME FIELD'])
+      expect(helper.custom_fields_to_export_values(event)).to eq([["String", "normal", "12:22 pm"]])
+    end
+
+    it "include DATE fields that are not linked to a KPI" do
+      field = FactoryGirl.create(:form_field, type: 'FormField::Date', name: 'My Date Field',
+        fieldable: campaign)
+
+      event = FactoryGirl.build(:approved_event, campaign: campaign)
+      event.results_for([field]).first.value = '01/31/2014'
+      event.save
+      expect(event.save).to be_truthy
+
+      expect(helper.custom_fields_to_export_headers).to eq(['MY DATE FIELD'])
+      expect(helper.custom_fields_to_export_values(event)).to eq([["String", "normal", "01/31/2014"]])
+    end
+
     it "returns all the segments results in order" do
       kpi = FactoryGirl.build(:kpi, company: campaign.company, kpi_type: 'percentage', name: 'My KPI')
       seg1 = kpi.kpis_segments.build(text: 'Uno')
