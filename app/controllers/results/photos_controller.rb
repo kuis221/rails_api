@@ -48,7 +48,7 @@ class Results::PhotosController < FilteredController
     end
 
     def build_status_bucket
-      {label: 'Active State', items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) }}
+      {label: 'Status', items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) }}
     end
 
     def search_params

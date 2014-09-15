@@ -1375,7 +1375,7 @@ def module_field(module_name)
 end
 
 def module_section(name)
-  find('.form-section.module', text: name + ' Module')
+  find('.form-section.module', text: name.upcase + ' MODULE')
 end
 
 def form_builder
