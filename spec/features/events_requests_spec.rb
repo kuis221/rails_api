@@ -310,7 +310,7 @@ feature 'Events section' do
               click_js_link 'YTD'
             end
 
-            expect(page).to have_selector('ul#events-list li', count: 6)
+            expect(page).to have_selector('ul#events-list li', count: 4)
             within("ul#events-list") do
               expect(page).to have_content('Campaign FY2012')
               expect(page).to have_content('Another Campaign April 03')

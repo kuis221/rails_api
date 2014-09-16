@@ -41,7 +41,7 @@
 javascript:
   $('#collection-list-filters').filteredList({
     'source': '#{url_for(controller: 'results/event_data', action: :items)}',
-    'filtersUrl': '#{filters_events_path(with_event_data_only: true)}',
+    'filtersUrl': '#{filters_events_path(with_event_data_only: true, apply_to: controller_name)}',
     'listContainer': '#event-data-list',
     'sorting': 'start_at',
     'sorting_dir': 'asc',
@@ -50,7 +50,9 @@ javascript:
     'selectDefaultDate': false,
     'includeAutoComplete': true,
     'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
+    'applyTo': '#{controller_name}',
     'defaultParams': [{name: 'status[]', value: 'Active'}],
+    'clearFilterParams': [{name: 'status[]', value: 'Active'}],
     'onChange': function(filterBox){
       $(document).trigger('event-data-filter:changed')
     },

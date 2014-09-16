@@ -68,7 +68,7 @@ describe Api::V1::EventsController, :type => :controller do
       expect(result['results'].count).to eq(4)
       expect(result['facets'].map{|f| f['label'] }).to match_array(["Campaigns", "Brands", "Areas", "People", "Active State", "Event Status", "Saved Filters"])
 
-      expect(result['facets'].detect{|f| f['label'] == 'Event Status' }['items'].map{|i| [i['label'], i['count']]}).to match_array([["Late", 1], ["Due", 0], ["Submitted", 1], ["Rejected", 1], ["Approved", 1]])
+      expect(result['facets'].detect{|f| f['label'] == 'Event Status' }['items'].map{|i| [i['label'], i['count']]}).to match_array([["Late", 1], ["Due", 1], ["Submitted", 1], ["Rejected", 1], ["Approved", 1]])
     end
 
     it "should not include the facets when the page is greater than 1" do
