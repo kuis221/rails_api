@@ -42,6 +42,7 @@ javascript:
     'applyTo': 'results_expenses',
     'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
     'defaultParams': [{name: 'status[]', value: 'Active'}],
+    'clearFilterParams': [{name: 'status[]', value: 'Active'}],
     'onChange': function(filterBox){
       $(document).trigger('expenses-filter:changed');
     },

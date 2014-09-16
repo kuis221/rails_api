@@ -77,7 +77,7 @@ describe Results::PhotosController, type: :controller, search: true do
       expect(response).to be_success
 
       filters = JSON.parse(response.body)
-      expect(filters['filters'].map{|b| b['label']}).to eq(["Campaigns", "Brands", "Areas", "Status"])
+      expect(filters['filters'].map{|b| b['label']}).to eq(["Campaigns", "Brands", "Areas", "Status", "Saved Filters"])
     end
   end
 

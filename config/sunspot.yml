@@ -5,7 +5,7 @@ production:
     log_level: WARNING
     path: /solr/production
     read_timeout: 10
-    open_timeout: 4
+    open_timeout: 10
   auto_commit_after_request: true
   auto_commit_after_delete_request: true
 

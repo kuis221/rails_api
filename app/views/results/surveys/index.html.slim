@@ -11,7 +11,6 @@
 
 .sidebar#resource-filter-column
   #collection-list-filters
-  a.btn.btn-primary Save
 
 #main.main.with-details-close-bar
   = resource_details_bar("You are viewing Surveys report. Click to close.")
@@ -31,7 +30,7 @@
 javascript:
   $('#collection-list-filters').filteredList({
     'source': '#{url_for(controller: 'results/surveys', action: :items)}',
-    'filtersUrl': '#{filters_events_path(with_surveys_only: true)}',
+    'filtersUrl': '#{filters_events_path(with_surveys_only: true, apply_to: controller_name)}',
     'listContainer': '#surveys-list',
     'sorting': 'start_at',
     'sorting_dir': 'asc',
@@ -39,6 +38,7 @@ javascript:
     'includeCalendars': true,
     'selectDefaultDate': false,
     'includeAutoComplete': true,
+    'applyTo': '#{controller_name}',
     'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
     'defaultParams': [{name: 'status[]', value: 'Active'}],
     'onChange': function(filterBox){
