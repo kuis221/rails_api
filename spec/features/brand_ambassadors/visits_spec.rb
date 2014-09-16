@@ -100,11 +100,11 @@ feature "Brand Ambassadors Visits" do
       reader.pages.each do |page|
         expect(page.text).to include '2 Active visits'
         expect(page.text).to include "Visit1"
-        expect(page.text).to match /SAT\s?Feb 1/
-        expect(page.text).to match /SUN\s?Feb 2/
+        expect(page.text).to match /#{month_name} 18/
+        expect(page.text).to match /#{month_name} 19/
         expect(page.text).to include "Visit2"
-        expect(page.text).to match /SAT\s?Feb 1/
-        expect(page.text).to match /SUN\s?Feb 2/
+        expect(page.text).to match /#{month_name} 20/
+        expect(page.text).to match /#{month_name} 21/
       end
     end
   end
