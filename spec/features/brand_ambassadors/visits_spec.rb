@@ -24,12 +24,17 @@ feature "Brand Ambassadors Visits" do
   end
 
   shared_examples_for 'a user that can view the list of visits' do
+    let(:month_number) { Time.now.strftime('%m') }
+    let(:month_name) { Time.now.strftime('%b') }
+    let(:year_number) { Time.now.strftime('%Y') }
+    let(:today) { Time.zone.local(year_number, month_number, 18, 12, 00) }
+
     before do
       FactoryGirl.create(:brand_ambassadors_visit, company: company,
-        start_date: '02/01/2014', end_date: '02/02/2014',
+        start_date: today, end_date: (today+1.day).to_s(:slashes),
         name: 'Visit1', company_user: company_user, active: true)
       FactoryGirl.create(:brand_ambassadors_visit, company: company,
-        start_date: '02/02/2014', end_date: '02/03/2014',
+        start_date: (today+2.day).to_s(:slashes), end_date: (today+3.day).to_s(:slashes),
         name: 'Visit2', company_user: company_user, active: true)
       Sunspot.commit
     end
@@ -42,15 +47,15 @@ feature "Brand Ambassadors Visits" do
         within("li:nth-child(1)") do
           expect(page).to have_content('Visit1')
           expect(page).to have_content(company_user.full_name)
-          expect(page).to have_content('SAT Feb 1')
-          expect(page).to have_content('SUN Feb 2')
+          expect(page).to have_content("#{month_name} 18")
+          expect(page).to have_content("#{month_name} 19")
         end
         # Second Row
         within("li:nth-child(2)") do
           expect(page).to have_content('Visit2')
           expect(page).to have_content(company_user.full_name)
-          expect(page).to have_content('SUN Feb 2')
-          expect(page).to have_content('MON Feb 3')
+          expect(page).to have_content("#{month_name} 20")
+          expect(page).to have_content("#{month_name} 21")
         end
       end
     end
@@ -70,8 +75,8 @@ feature "Brand Ambassadors Visits" do
 
       expect(ListExport.last).to have_rows([
         ["NAME", "START DATE", "END DATE", "EMPLOYEE"],
-        ["Visit1", "2014-02-01", "2014-02-02", "Test User"],
-        ["Visit2", "2014-02-02", "2014-02-03", "Test User"]
+        ["Visit1", "#{year_number}-#{month_number}-18", "#{year_number}-#{month_number}-19", "Test User"],
+        ["Visit2", "#{year_number}-#{month_number}-20", "#{year_number}-#{month_number}-21", "Test User"]
       ])
     end
 
@@ -285,8 +290,9 @@ feature "Brand Ambassadors Visits" do
 
   shared_examples_for 'a user that can edit visits' do
     scenario 'allows the user to edit a visit' do
+      today = Time.zone.local(Time.now.strftime('%Y'), Time.now.strftime('%m'), 18, 12, 00)
       FactoryGirl.create(:brand_ambassadors_visit, company: company,
-        start_date: '02/01/2014', end_date: '02/02/2014',
+        start_date: today, end_date: (today+1.day).to_s(:slashes),
         name: 'Visit1', description: 'Visit1 description',
         company_user: company_user, active: true)
       Sunspot.commit
@@ -311,8 +317,9 @@ feature "Brand Ambassadors Visits" do
 
   shared_examples_for 'a user that can deactivate visits' do
     scenario "can deactivate a visit and it's removed from the view" do
+      today = Time.zone.local(Time.now.strftime('%Y'), Time.now.strftime('%m'), 18, 12, 00)
       FactoryGirl.create(:brand_ambassadors_visit, company: company,
-        start_date: '02/01/2014', end_date: '02/02/2014',
+        start_date: today, end_date: (today+1.day).to_s(:slashes),
         name: 'Visit1', company_user: company_user, active: true)
       Sunspot.commit
       visit brand_ambassadors_root_path
