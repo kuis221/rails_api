@@ -14,7 +14,7 @@
           = f.input :end_date, :as => :date_picker
 
 
-    = f.association :company_user, collection:  current_company.company_users.for_dropdown, input_html: {class: 'chosen-enabled', 'data-placeholder' => " "}, label: 'Employee'
+    = f.association :company_user, collection:  brand_ambassadors_users.for_dropdown, input_html: {class: 'chosen-enabled', 'data-placeholder' => " "}, label: 'Employee'
 
     .row-fluid
       .span12

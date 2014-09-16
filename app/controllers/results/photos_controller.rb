@@ -44,6 +44,7 @@ class Results::PhotosController < FilteredController
         f.push build_brands_bucket
         f.push build_areas_bucket
         f.push build_status_bucket
+        f.push build_custom_filters_bucket
       end
     end
 
