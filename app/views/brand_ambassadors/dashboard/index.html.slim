@@ -59,7 +59,7 @@
       'includeAutoComplete': true,
       'autoCompletePath': '#{autocomplete_brand_ambassadors_visits_path(format: :json)}',
       'fixListHeight': false,
-      'defaultParams': [{name: 'status[]', value: 'Active'}],
+      'defaultParams': [{name: 'status[]', value: 'Active'}, {name: 'start_date', value:'#{Time.zone.now.strftime("%m/%d/%Y")}'}, {name: 'end_date', value:'#{(Time.zone.now + 10.years).strftime("%m/%d/%Y")}'}],
       'applyTo': '#{controller.controller_name}',
       'clearFilterParams': [{name: 'status[]', value: 'Active'}],
       'onItemsLoad': function(response, page){
