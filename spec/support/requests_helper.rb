@@ -202,6 +202,10 @@ module RequestsHelper
     expect(page).to have_no_selector('.modal.in', visible: true)
   end
 
+  def ensure_date_ranges_was_closed
+    expect(page).to have_no_selector('.select-ranges.open', visible: true)
+  end
+
   def ensure_on(path)
     visit(path) unless current_path == path
   end

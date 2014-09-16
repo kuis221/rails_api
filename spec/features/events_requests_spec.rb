@@ -246,14 +246,10 @@ feature 'Events section' do
             visit events_path
 
             click_js_link 'Date ranges'
-
-            within 'ul.dropdown-menu' do
-              click_js_link 'Current week'
-            end
-
             within 'ul.dropdown-menu' do
               click_js_link 'Today'
             end
+            ensure_date_ranges_was_closed
 
             expect(page).to have_selector('ul#events-list li', count: 1)
             within("ul#events-list") do
@@ -262,9 +258,11 @@ feature 'Events section' do
               expect(page).to have_no_content('New Brand Campaign')
             end
 
+            click_js_link 'Date ranges'
             within 'ul.dropdown-menu' do
               click_js_link 'Current week'
             end
+            ensure_date_ranges_was_closed
 
             expect(page).to have_selector('ul#events-list li', count: 2)
             within("ul#events-list") do
@@ -273,9 +271,11 @@ feature 'Events section' do
               expect(page).to have_no_content('New Brand Campaign')
             end
 
+            click_js_link 'Date ranges'
             within 'ul.dropdown-menu' do
               click_js_link 'Current month'
             end
+            ensure_date_ranges_was_closed
 
             expect(page).to have_selector('ul#events-list li', count: 5)
             within("ul#events-list") do
@@ -284,9 +284,11 @@ feature 'Events section' do
               expect(page).to have_no_content('New Brand Campaign')
             end
 
+            click_js_link 'Date ranges'
             within 'ul.dropdown-menu' do
               click_js_link 'Previous week'
             end
+            ensure_date_ranges_was_closed
 
             expect(page).to have_selector('ul#events-list li', count: 1)
             within("ul#events-list") do
@@ -295,9 +297,11 @@ feature 'Events section' do
               expect(page).to have_no_content('New Brand Campaign')
             end
 
+            click_js_link 'Date ranges'
             within 'ul.dropdown-menu' do
               click_js_link 'Previous month'
             end
+            ensure_date_ranges_was_closed
 
             expect(page).to have_selector('ul#events-list li', count: 1)
             within("ul#events-list") do
@@ -306,9 +310,11 @@ feature 'Events section' do
               expect(page).to have_content('New Brand Campaign')
             end
 
+            click_js_link 'Date ranges'
             within 'ul.dropdown-menu' do
               click_js_link 'YTD'
             end
+            ensure_date_ranges_was_closed
 
             expect(page).to have_selector('ul#events-list li', count: 4)
             within("ul#events-list") do
@@ -332,6 +338,7 @@ feature 'Events section' do
               expect(page).to have_button('Apply', disabled: false)
               click_js_button 'Apply'
             end
+            ensure_date_ranges_was_closed
 
             expect(page).to have_selector('ul#events-list li', count: 3)
             within("ul#events-list") do

@@ -677,6 +677,7 @@ $.widget 'nmk.filteredList', {
 						$(e.target).addClass('active')
 						@dateRange = true
 						@setCalendarRange $(e.target).data('selection')
+						$('.select-ranges.open .dropdown-toggle').dropdown('toggle')
 						false
 					$('<li class="ranges">').append(
 						@customDatesFilter.show()
@@ -685,6 +686,7 @@ $.widget 'nmk.filteredList', {
 						$('<input class="btn btn-primary" id="apply-ranges-btn" type="submit" value="Apply">').attr('disabled', true).on 'click', (e) =>
 							@dateRange = false
 							@customDateSelected()
+							$('.select-ranges.open .dropdown-toggle').dropdown('toggle')
 					)
 				).on 'click', (e) =>
 					false
