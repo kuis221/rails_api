@@ -9,20 +9,8 @@
  * compiled file, but it's generally better to create a new file per style scope.
  *
  *= require_self
- *= require 'jquery-ui-1.10.3.custom'
- *= require 'bootstrap'
  *= require colors
- *= require 'jquery.datepick.css'
- *= require 'jquery.timepicker.css'
- *= require 'jquery.jscrollpane.css'
- *= require 'jqslider-classic.css'
- *= require 'jquery.fancybox.css'
- *= require 'superfish.css'
- *= require 'uniform.default.css'
- *= require 'superfish-vertical.css'
  *= require 'eventsCalendar.css'
- *= require 'select2.css'
- *= require 'chardinjs.css'
  *= require 'brandscopic.datepick.css'
  *= require 'brandscopic'
  *= require 'forms'
@@ -34,9 +22,8 @@
  *= require 'campaigns'
  *= require 'users'
  *= require 'cross_browser'
- *= require 'responsive'
  *= require 'icon-fonts'
  *= require 'theme'
- *= require 'fullcalendar'
  *= require 'fullcalendar-custom'
+ *= require 'responsive'
  */

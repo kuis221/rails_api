@@ -110,6 +110,26 @@ describe BrandAmbassadors::VisitsController, type: :controller, search: true do
         filters = JSON.parse(response.body)
         expect(filters['filters'].map{|b| b['label']}).to eq(["Brand Ambassadors", "Areas", "Brands", "Active State", "Saved Filters"])
       end
+
+      it "should return only users in the configured role for brand ambassadors section" do
+        role = FactoryGirl.create(:role, company: @company)
+        user = FactoryGirl.create(:company_user, company: @company,
+          user: FactoryGirl.create(:user, first_name: 'Julio', last_name: 'Cesar'), role: role)
+        @company.brand_ambassadors_role_ids = [role.id]
+        @company.save
+        Sunspot.commit
+        get 'filters', format: :json
+        expect(response).to be_success
+
+        filters = JSON.parse(response.body)
+        expect(filters['filters'].detect{|b| b['label'] == "Brand Ambassadors"}['items']).to eq([{
+          "label"=>"Julio Cesar",
+          "id"=> user.id,
+          "name"=>"user",
+          "count"=>1,
+          "selected"=>false }
+        ])
+      end
     end
   end
 
