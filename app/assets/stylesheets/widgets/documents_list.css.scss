@@ -10,7 +10,6 @@
 			color: $text;
 			font-weight: normal;
 			position: relative;
-			@extend .crop-text;
 			width: 85%;
 		}
 		.folder-item{
@@ -28,7 +27,6 @@
 			width: 100%;
 			.document-name{
 				font-size: 14px;
-				@extend .crop-text;
 				padding-right: 50px;
 				width: 50%;
 			}

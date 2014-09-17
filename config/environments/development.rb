@@ -11,7 +11,7 @@ Brandscopic::Application.configure do
   config.eager_load = true
 
   # Show full error reports and disable caching
-  config.consider_all_requests_local       = true
+  config.consider_all_requests_local       = false
   config.action_controller.perform_caching = false
 
   # Don't care if the mailer can't send
@@ -24,7 +24,12 @@ Brandscopic::Application.configure do
   config.active_record.migration_error = :page_load
 
   # Expands the lines which load the assets
-  config.assets.debug = true
+  config.assets.debug = false
+  config.static_cache_control = "public, max-age=2592000"
+  config.assets.js_compressor = :uglifier
+  config.assets.compile = true
+  config.assets.css_compressor = :sass
+  config.assets.compress = true
 
   Rails.application.routes.default_url_options[:host] = "localhost"
   Rails.application.routes.default_url_options[:port] = 5100
