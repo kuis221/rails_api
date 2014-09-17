@@ -1,7 +1,21 @@
 
 /*Internet Explorer----------------------------------*/
-.msie{
+.msie {
+	header .nav li {
+		a {
+			white-space: nowrap;
+		}
+		&#user_menu {
+			a {
 
+			}
+		}
+	}
+	.progress {
+		.bar {
+			filter: none;
+		}
+	}
 }
 
 /*Mozilla Firefox----------------------------------*/

@@ -30,7 +30,6 @@ Brandscopic::Application.configure do
   Rails.application.routes.default_url_options[:port] = 5100
 
   config.action_mailer.default_url_options = {:host => "localhost:5100"}
-  config.action_controller.asset_host = "http://localhost:5100"
 
   #Paperclip options
   Paperclip.options[:command_path] = "/usr/local/bin"
