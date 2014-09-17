@@ -25,11 +25,7 @@ Brandscopic::Application.configure do
 
   # Expands the lines which load the assets
   config.assets.debug = false
-  config.static_cache_control = "public, max-age=2592000"
-  config.assets.js_compressor = :uglifier
   config.assets.compile = true
-  config.assets.css_compressor = :sass
-  config.assets.compress = true
 
   Rails.application.routes.default_url_options[:host] = "localhost"
   Rails.application.routes.default_url_options[:port] = 5100
