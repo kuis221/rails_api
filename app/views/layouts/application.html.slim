@@ -13,6 +13,7 @@ head
   meta name="robots"
   title= content_for?(:title) ? yield(:title) : "Brandscopic"
   meta content=(content_for?(:description) ? yield(:description) :"Brandscopic") name="description"
+    = stylesheet_link_tag 'http://fonts.googleapis.com/css?family=Lato:100,300,400,700', :media => "all"
     = stylesheet_link_tag "application", :media => "all"
     = stylesheet_link_tag "https://d218iqt4mo6adh.cloudfront.net/assets/widget_embed_191.css"
     = javascript_include_tag "application"
