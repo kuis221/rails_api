@@ -179,6 +179,14 @@ module RequestsHelper
     section
   end
 
+  def choose_predefined_date_range(option)
+    click_js_link 'Date ranges'
+    within 'ul.dropdown-menu' do
+      click_js_link option
+    end
+    ensure_date_ranges_was_closed
+  end
+
   def open_tab(tab_name)
     link = find('.nav-tabs a', text: tab_name)
     link.click
