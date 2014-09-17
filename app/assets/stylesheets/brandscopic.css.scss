@@ -547,7 +547,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 
 	a.datepick-cmd{
 		display: inline-block;
-		margin-top: 9px;
+		margin-top: 13px;
 		overflow: hidden;
 		position:relative;
 		text-indent: 13%;
@@ -637,7 +637,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 				font-weight: 300;
 				opacity:1;
 				&.datepick-selected{
-					@include border-radius(12px);
+					//@include border-radius(12px);
 				}
 			}
 			&.datepick-event{
@@ -675,9 +675,19 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			display: inline-block;
 			height: 100%;
 			position: absolute;
-			right: -4px;
+			right: -2px;
 			top:0;
-			width:6px;
+			width:2px;
+		}
+		&:before{
+			background-color: #3e9ccf;
+			content: "";
+			display: inline-block;
+			height: 100%;
+			position: absolute;
+			left: -2px;
+			top:0;
+			width:2px;
 		}
 		&.first-selected.last-selected{
 			background-color: $brand;
@@ -690,6 +700,9 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			-moz-border-radius-bottomleft: 12px;
 			border-top-left-radius: 12px;
 			border-bottom-left-radius: 12px;
+			&:before{
+				display:none;
+			}
 		}
 		&.last-selected{
 			-webkit-border-top-right-radius: 12px;
@@ -697,10 +710,10 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			-moz-border-radius-topright: 12px;
 			-moz-border-radius-bottomright: 12px;
 			border-top-right-radius: 12px;
-			border-bottom-right-radius: 12px;	
+			border-bottom-right-radius: 12px;
 			&:after{
 				display:none;
-			}	
+			}
 		}
 	}
 	.datepick-month td, .datepick-month a, .datepick-weekend {
