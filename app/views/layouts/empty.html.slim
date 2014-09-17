@@ -12,12 +12,13 @@ head
   meta name="viewport" content="width=device-width, initial-scale=1.0"
   title= content_for?(:title) ? yield(:title) : "Brandscopic"
   meta content=(content_for?(:description) ? yield(:description) :"Brandscopic") name="description"
+    = stylesheet_link_tag "plugins", :media => "all"
     = stylesheet_link_tag "application", :media => "all"
     = javascript_include_tag "application"
     = csrf_meta_tags
     = yield(:head)
   = render 'layouts/icons'
-  
+
 body class="empty-layout #{controller_name} #{action_name}"
 
   .container-fluid
@@ -31,4 +32,4 @@ body class="empty-layout #{controller_name} #{action_name}"
                 div
                     = render 'layouts/messages'
                     = yield
-| </html> 
+| </html>
