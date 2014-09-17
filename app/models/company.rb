@@ -14,7 +14,7 @@ class Company < ActiveRecord::Base
   attr_accessor :admin_email
   attr_accessor :no_create_admin
 
-  store_accessor :settings, :event_alerts_policy
+  store_accessor :settings, :event_alerts_policy, :brand_ambassadors_role_ids
 
   has_many :company_users, dependent: :destroy
   has_many :teams, dependent: :destroy
@@ -67,6 +67,14 @@ class Company < ActiveRecord::Base
   # Notification::EVENT_ALERT_POLICY_TEAM if not set
   def event_alerts_policy
     (super || Notification::EVENT_ALERT_POLICY_TEAM).to_i
+  end
+
+  def brand_ambassadors_role_ids
+    (super || '').split(',').map(&:to_i)
+  end
+
+  def brand_ambassadors_role_ids=(roles)
+    super roles.reject{|r| r.nil? || r == '' }.join(',')
   end
 
   def company_id

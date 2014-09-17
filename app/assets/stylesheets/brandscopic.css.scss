@@ -15,7 +15,11 @@ $footer-height: 35px;
 
 @font-face {
 	font-family: 'icons';
-	src:font-url('icons.ttf') format('truetype');
+ 	src:font-url('icons.eot');
+	src:url(font-path('icons.eot') + '?#iefix') format('embedded-opentype'),
+		font-url('icons.woff') format('woff'),
+		font-url('icons.ttf') format('truetype'),
+		font-url('icons.svg#icons') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -396,6 +400,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		background-color: $due_today!important;
 		background-image: none !important;
 		box-shadow: none !important;
+		filter: none;
 		&.bar-success {
 			background-color: $green !important;
 		}
@@ -1420,6 +1425,7 @@ header{
 					margin: 0 8px 0 0 ;
 					padding: 13px 12px 12px;
 					line-height: 16px;
+					white-space: nowrap;
 					&:hover {
 						background-color: $menu;
 					}

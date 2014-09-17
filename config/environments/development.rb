@@ -11,7 +11,7 @@ Brandscopic::Application.configure do
   config.eager_load = true
 
   # Show full error reports and disable caching
-  config.consider_all_requests_local       = true
+  config.consider_all_requests_local       = false
   config.action_controller.perform_caching = false
 
   # Don't care if the mailer can't send
@@ -24,13 +24,12 @@ Brandscopic::Application.configure do
   config.active_record.migration_error = :page_load
 
   # Expands the lines which load the assets
-  config.assets.debug = true
+  config.assets.debug = false
 
   Rails.application.routes.default_url_options[:host] = "localhost"
   Rails.application.routes.default_url_options[:port] = 5100
 
   config.action_mailer.default_url_options = {:host => "localhost:5100"}
-  config.action_controller.asset_host = "http://localhost:5100"
 
   #Paperclip options
   Paperclip.options[:command_path] = "/usr/local/bin"

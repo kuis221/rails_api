@@ -96,14 +96,14 @@ module FacetsHelper
     {label: "Teams", items: items}
   end
 
-  def build_users_bucket(title='Users')
+  def build_users_bucket
     status = current_company_user.filter_settings_for('users', filter_settings_scope)
     users = current_company.company_users.where("company_users.active in (?)", status).
       joins(:user).order('2 ASC').
       pluck('company_users.id, users.first_name || \' \' || users.last_name as name').map do |r|
         build_facet_item({label: r[1], id: r[0], name: :user, count: 1})
     end
-    {label: title, items: users}
+    {label: 'Users', items: users}
   end
 
   def build_brand_portfolio_bucket
@@ -132,20 +132,6 @@ module FacetsHelper
   def build_custom_filters_bucket
     items = current_company_user.custom_filters.by_type(filter_settings_scope).map{|cf| build_facet_item({id: cf.filters+'&id='+cf.id.to_s, label: cf.name, name: :custom_filter, count: 1}) }
     {label: "Saved Filters", items: items}
-  end
-
-  # Returns the facets for the events controller
-  def visits_facets
-    @events_facets ||= Array.new.tap do |f|
-      # select what params should we use for the facets search
-
-      f.push build_users_bucket('Brand Ambassadors')
-      f.push build_areas_bucket
-      f.push build_brands_bucket
-      f.push build_state_bucket
-
-      f.push build_custom_filters_bucket
-    end
   end
 
   # Returns the facets for the events controller

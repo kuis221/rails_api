@@ -1,18 +1,19 @@
 doctype html
 /[if lt IE 7]
-  | <html class="ie6">
+  | <html class="msie ie6">
 /[if IE 7]
-  | <html class="ie7">
+  | <html class="msie ie7">
 /[if IE 8]
-  | <html class="ie8">
+  | <html class="msie ie8">
 /[if IE 9]
-  | <html class="ie9">
+  | <html class="msie ie9">
 | <!--[if (gte IE 9)|!(IE)]<!--> <html> <!--<![endif]-->
 head
   meta name="viewport" content="width=device-width, initial-scale=1.0"
-  meta name="robots"
+  meta charset="utf-8"
   title= content_for?(:title) ? yield(:title) : "Brandscopic"
   meta content=(content_for?(:description) ? yield(:description) :"Brandscopic") name="description"
+    = stylesheet_link_tag "plugins", :media => "all"
     = stylesheet_link_tag "application", :media => "all"
     = stylesheet_link_tag "https://d218iqt4mo6adh.cloudfront.net/assets/widget_embed_191.css"
     = javascript_include_tag "application"
