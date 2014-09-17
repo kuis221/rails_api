@@ -98,13 +98,17 @@ feature "Brand Ambassadors Visits" do
       # Test the generated PDF...
       reader = PDF::Reader.new(open(export.file.url))
       reader.pages.each do |page|
-        expect(page.text).to include '2 Active visits'
-        expect(page.text).to include "Visit1"
-        expect(page.text).to match /#{month_name} 18/
-        expect(page.text).to match /#{month_name} 19/
-        expect(page.text).to include "Visit2"
-        expect(page.text).to match /#{month_name} 20/
-        expect(page.text).to match /#{month_name} 21/
+        # PDF to text seems to not always return the same results
+        # with white spaces, so, remove them and look for strings
+        # without whitespaces
+        text = page.text.gsub(/[\s\n]/, '')
+        expect(text).to include '2Activevisits'
+        expect(text).to include "Visit1"
+        expect(text).to match /#{month_name}18/
+        expect(text).to match /#{month_name}19/
+        expect(text).to include "Visit2"
+        expect(text).to match /#{month_name}20/
+        expect(text).to match /#{month_name}21/
       end
     end
   end
@@ -229,8 +233,7 @@ feature "Brand Ambassadors Visits" do
       year = Time.now.strftime('%Y')
       FactoryGirl.create(:brand_ambassadors_visit, company: company,
             start_date: "#{month_number}/15/#{year}", end_date: "#{month_number}/16/#{year}",
-            name: 'Visit to NY', description: 'Visit1 description',
-            company_user: company_user, active: true)
+            name: 'Visit to NY', company_user: company_user, active: true)
       FactoryGirl.create(:brand_ambassadors_visit, company: company,
             start_date: "#{month_number}/16/#{year}", end_date: "#{month_number}/18/#{year}",
             name: 'Visit to SF', company_user: company_user, active: true)
@@ -238,6 +241,8 @@ feature "Brand Ambassadors Visits" do
       visit brand_ambassadors_root_path
 
       click_link "Calendar View"
+      expect(page).to have_content('Visit to NY')
+      expect(page).to have_content('Visit to SF')
 
       click_js_link 'Download'
       click_js_link 'Download as PDF'
@@ -257,10 +262,14 @@ feature "Brand Ambassadors Visits" do
       require 'open-uri'
       reader = PDF::Reader.new(open(export.file.url))
       reader.pages.each do |page|
-        expect(page.text).to include '2 Active visits'
-        expect(page.text).to include Date.today.strftime("%B, %Y")
-        expect(page.text).to include "Visit to NY"
-        expect(page.text).to include "Visit to SF"
+        # PDF to text seems to not always return the same results
+        # with white spaces, so, remove them and look for strings
+        # without whitespaces
+        text = page.text.gsub(/[\s\n]/, '')
+        expect(text).to include '2Activevisits'
+        expect(text).to include Date.today.strftime("%B,%Y")
+        expect(text).to include "VisittoNY"
+        expect(text).to include "VisittoSF"
       end
     end
   end

@@ -732,6 +732,7 @@ $.widget 'nmk.filteredList', {
 	selectCalendarDates: (startDate, endDate) ->
 		@calendar.datepick('setDate', [startDate, endDate])
 		@_setCalendarDatesFromCalendar()
+		@
 
 	_setCalendarDatesFromCalendar: () ->
 		dates = @calendar.datepick('getDate')
