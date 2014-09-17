@@ -25,7 +25,6 @@ Brandscopic::Application.configure do
 
   # Expands the lines which load the assets
   config.assets.debug = false
-  config.assets.compile = true
 
   Rails.application.routes.default_url_options[:host] = "localhost"
   Rails.application.routes.default_url_options[:port] = 5100
