@@ -10,16 +10,16 @@ describe BrandAmbassadors::VisitsController, type: :controller, search: true do
 
     let(:campaign){ FactoryGirl.create(:campaign, company: @company) }
 
-    it "returns the list of events" do
+    it "returns the list of visits" do
       visit = FactoryGirl.create(:brand_ambassadors_visit,
-        name: 'My Visit to Costa Rica', start_date: '08/26/2014', end_date: '08/27/2014',
+        visit_type: 'market_visit', start_date: '08/26/2014', end_date: '08/27/2014',
         company: @company, active: true)
       Sunspot.commit
       get 'index', format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
       expect(result).to eql [
-        {"title"=>'My Visit to Costa Rica', "start"=>"2014-08-26", "end"=>"2014-08-27T23:59:59.999-07:00",
+        {"visit_type_name"=>'Market Visit', "start"=>"2014-08-26", "end"=>"2014-08-27T23:59:59.999-07:00",
           "url"=>"http://test.host/brand_ambassadors/visits/#{visit.id}",
           "company_user"=>{"full_name"=>@user.full_name}}
       ]
@@ -32,7 +32,7 @@ describe BrandAmbassadors::VisitsController, type: :controller, search: true do
         expect(response).to be_success
 
         buckets = JSON.parse(response.body)
-        expect(buckets.map{|b| b['label']}).to eq(['Campaigns', 'Brands', 'Places', 'People'])
+        expect(buckets.map{|b| b['label']}).to eq(['Brands', 'Places', 'People'])
       end
 
       it "should return the users in the People Bucket" do
@@ -62,18 +62,6 @@ describe BrandAmbassadors::VisitsController, type: :controller, search: true do
         expect(people_bucket['value']).to eq([{"label"=>"Guillermo <i>Va</i>rgas", "value"=>company_user.id.to_s, "type"=>"company_user"}])
       end
 
-      it "should return the campaigns in the Campaigns Bucket" do
-        campaign = FactoryGirl.create(:campaign, name: 'Cacique para todos', company_id: @company.id)
-        Sunspot.commit
-
-        get 'autocomplete', q: 'cac'
-        expect(response).to be_success
-
-        buckets = JSON.parse(response.body)
-        campaigns_bucket = buckets.select{|b| b['label'] == 'Campaigns'}.first
-        expect(campaigns_bucket['value']).to eq([{"label"=>"<i>Cac</i>ique para todos", "value"=>campaign.id.to_s, "type"=>"campaign"}])
-      end
-
       it "should return the brands in the Brands Bucket" do
         brand = FactoryGirl.create(:brand, name: 'Cacique', company_id: @company.id)
         Sunspot.commit
@@ -84,19 +72,6 @@ describe BrandAmbassadors::VisitsController, type: :controller, search: true do
         buckets = JSON.parse(response.body)
         brands_bucket = buckets.select{|b| b['label'] == 'Brands'}.first
         expect(brands_bucket['value']).to eq([{"label"=>"<i>Cac</i>ique", "value"=>brand.id.to_s, "type"=>"brand"}])
-      end
-
-      it "should return the venues in the Places Bucket" do
-        expect_any_instance_of(Place).to receive(:fetch_place_data).and_return(true)
-        venue = FactoryGirl.create(:venue, company_id: @company.id, place: FactoryGirl.create(:place, name: 'Motel Paraiso'))
-        Sunspot.commit
-
-        get 'autocomplete', q: 'mot'
-        expect(response).to be_success
-
-        buckets = JSON.parse(response.body)
-        places_bucket = buckets.select{|b| b['label'] == 'Places'}.first
-        expect(places_bucket['value']).to eq([{"label"=>"<i>Mot</i>el Paraiso", "value"=>venue.id.to_s, "type"=>"venue"}])
       end
     end
 

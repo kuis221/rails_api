@@ -11,9 +11,8 @@ class BrandAmbassadors::VisitsController < FilteredController
 
   def autocomplete
     buckets = autocomplete_buckets({
-      campaigns: [Campaign],
       brands: [Brand, BrandPortfolio],
-      places: [Venue, Area],
+      places: [Area],
       people: [CompanyUser]
     })
     render :json => buckets.flatten
