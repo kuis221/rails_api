@@ -32,7 +32,6 @@
 javascript:
   $('#brand_ambassadors_visit_area_id').change(function(){
     $.get('/areas/'+$(this).val()+'/cities.json', function(cities){
-      debugger;
       $('#brand_ambassadors_visit_city').empty().append($('<option>').val('').text('')).append($.map(cities, function(city){
         return $('<option>').val(city).text(city);
       })).trigger('liszt:updated');
