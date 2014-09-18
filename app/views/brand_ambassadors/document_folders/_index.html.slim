@@ -19,7 +19,7 @@
       /       p your files or
       /       a  browse
 
-  = button_to 'Upload', url_for(controller: 'brand_ambassadors/documents', action: :new, "#{parent.class.name.underscore.split('/').last}_id" => parent.to_param, folder_id: params[:folder_id], format: :js), class: 'btn btn-primary', title: 'Add Documents', remote: true, method: :get if can? :create,  BrandAmbassadors::Document
+  = button_to 'Upload', url_for(controller: 'brand_ambassadors/documents', action: :new, "#{parent.class.name.underscore.split('/').last}_id" => parent.to_param, folder_id: params[:parent_id], format: :js), class: 'btn btn-primary', title: 'Add Documents', remote: true, method: :get if can? :create,  BrandAmbassadors::Document
   = link_to 'New Folder', "#new-folder-form", class: 'btn', 'data-toggle' => 'collapse' if can? :create,  BrandAmbassadors::Document
 
   .link-list.documents-list
