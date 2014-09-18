@@ -109,7 +109,7 @@ feature "Brand Ambassadors Visits" do
         # with white spaces, so, remove them and look for strings
         # without whitespaces
         text = page.text.gsub(/[\s\n]/, '')
-        expect(text).to include '2Activevisits'
+        expect(text).to include '2visits'
         expect(text).to include "MarketVisit"
         expect(text).to match /#{month_name}18/
         expect(text).to match /#{month_name}19/
@@ -161,7 +161,7 @@ feature "Brand Ambassadors Visits" do
 
         visit brand_ambassadors_root_path
 
-        expect(page).to have_content('2 Active visits')
+        expect(page).to have_content('2 visits')
 
         within("ul#visits-list") do
           expect(page).to have_content('Brand Program')
@@ -172,7 +172,7 @@ feature "Brand Ambassadors Visits" do
 
         filter_section('BRAND AMBASSADORS').unicheck('Test User')
 
-        expect(page).to have_content('1 Active visit assigned to Test User')
+        expect(page).to have_content('1 visit assigned to Test User')
 
         within("ul#visits-list") do
           expect(page).to have_content('Brand Program')
@@ -186,7 +186,7 @@ feature "Brand Ambassadors Visits" do
           expect(page).to have_content('Market Visit')
         end
 
-        expect(page).to have_content('2 Active visits assigned to Roberto Gomez or Test User')
+        expect(page).to have_content('2 visits assigned to Roberto Gomez or Test User')
 
         filter_section('AREAS').unicheck('California')
 
@@ -195,7 +195,7 @@ feature "Brand Ambassadors Visits" do
           expect(page).to have_no_content('Market Visit')
         end
 
-        expect(page).to have_content('1 Active visit in California and assigned to Roberto Gomez or Test User')
+        expect(page).to have_content('1 visit in California and assigned to Roberto Gomez or Test User')
 
         filter_section('AREAS').unicheck('Texas')
 
@@ -204,7 +204,7 @@ feature "Brand Ambassadors Visits" do
           expect(page).to have_content('Market Visit')
         end
 
-        expect(page).to have_content('2 Active visits in California or Texas and assigned to Roberto Gomez or Test User')
+        expect(page).to have_content('2 visits in California or Texas and assigned to Roberto Gomez or Test User')
 
         filter_section('AREAS').unicheck('California')
         filter_section('AREAS').unicheck('Texas')
@@ -215,7 +215,7 @@ feature "Brand Ambassadors Visits" do
           expect(page).to have_no_content('Market Visit')
         end
 
-        expect(page).to have_content('1 Active visit in Los Angeles and assigned to Roberto Gomez or Test User')
+        expect(page).to have_content('1 visit in Los Angeles and assigned to Roberto Gomez or Test User')
 
         filter_section('CITIES').unicheck('Austin')
 
@@ -224,7 +224,7 @@ feature "Brand Ambassadors Visits" do
           expect(page).to have_content('Market Visit')
         end
 
-        expect(page).to have_content('2 Active visits in Austin or Los Angeles and assigned to Roberto Gomez or Test User')
+        expect(page).to have_content('2 visits in Austin or Los Angeles and assigned to Roberto Gomez or Test User')
 
         select_filter_calendar_day("18")
         within("ul#visits-list") do
@@ -232,7 +232,7 @@ feature "Brand Ambassadors Visits" do
           expect(page).to have_no_content('Market Visit')
         end
 
-        expect(page).to have_content("1 Active visit taking place today in Austin or Los Angeles and assigned to Roberto Gomez or Test User")
+        expect(page).to have_content("1 visit taking place today in Austin or Los Angeles and assigned to Roberto Gomez or Test User")
 
         select_filter_calendar_day("18", "19")
         within("ul#visits-list") do
@@ -240,7 +240,7 @@ feature "Brand Ambassadors Visits" do
           expect(page).to have_content('Market Visit')
         end
 
-        expect(page).to have_content("2 Active visits taking place between today and tomorrow in Austin or Los Angeles and assigned to Roberto Gomez or Test User")
+        expect(page).to have_content("2 visits taking place between today and tomorrow in Austin or Los Angeles and assigned to Roberto Gomez or Test User")
       end
     end
   end
@@ -316,7 +316,7 @@ feature "Brand Ambassadors Visits" do
         # with white spaces, so, remove them and look for strings
         # without whitespaces
         text = page.text.gsub(/[\s\n]/, '')
-        expect(text).to include '2Activevisits'
+        expect(text).to include '2visits'
         expect(text).to include Date.today.strftime("%B,%Y")
         expect(text).to include "MarketVisit"
         expect(text).to include "BrandProgram"

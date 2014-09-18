@@ -25,7 +25,7 @@ class BrandAmbassadors::VisitsController < FilteredController
       first_part = nil if first_part.empty?
       second_part = "#{describe_people}".strip
       second_part = nil if second_part.empty?
-      "#{view_context.pluralize(number_with_delimiter(collection_count), "#{describe_status} visit")} #{[first_part, second_part].compact.join(' and ')}"
+      "#{view_context.pluralize(number_with_delimiter(collection_count), "visit")} #{[first_part, second_part].compact.join(' and ')}"
     end
 
     def permitted_params
@@ -72,7 +72,6 @@ class BrandAmbassadors::VisitsController < FilteredController
         f.push build_areas_bucket
         f.push build_city_bucket
         f.push build_brands_bucket
-        f.push build_state_bucket
 
         f.push build_custom_filters_bucket
       end

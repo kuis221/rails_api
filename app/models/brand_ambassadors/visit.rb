@@ -84,8 +84,6 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
     integer :brand_id
     integer :area_id
     string :city
-
-    string :status
   end
 
   def activate!
@@ -107,7 +105,6 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
   def self.do_search(params, include_facets=false)
     solr_search do
       with :company_id, params[:company_id]
-      with :status, params[:status] if params.has_key?(:status) and params[:status].present?
       with :place_ids, params[:place] if params.has_key?(:place) and params[:place].present?
 
       if params[:start_date].present? and params[:end_date].present?
