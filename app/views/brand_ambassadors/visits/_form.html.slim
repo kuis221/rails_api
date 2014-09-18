@@ -16,7 +16,7 @@
 
     = f.association :area, collection: current_company.areas.active.accessible_by_user(current_company_user).order(:name), input_html: {class: 'chosen-enabled'}
 
-    //City field should be here
+    = f.input :city, collection: (resource.area.present? ? resource.area.cities : []), input_html: {class: 'chosen-enabled'}
 
     = f.input :visit_type, collection: BrandAmbassadors::Visit::VISIT_TYPE_OPTIONS, include_blank: '', required: true, input_html: {class: 'chosen-enabled', data: {placeholder: "Select the type"}}
 
@@ -28,3 +28,13 @@
     = f.button :submit, class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
     = "&nbsp;".html_safe
     = f.button :button, 'Cancel', class: 'btn btn-cancel'
+
+javascript:
+  $('#brand_ambassadors_visit_area_id').change(function(){
+    $.get('/areas/'+$(this).val()+'/cities.json', function(cities){
+      debugger;
+      $('#brand_ambassadors_visit_city').empty().append($('<option>').val('').text('')).append($.map(cities, function(city){
+        return $('<option>').val(city).text(city);
+      })).trigger('liszt:updated');
+    });
+  });

@@ -36,6 +36,16 @@ describe AreasController, :type => :controller do
     end
   end
 
+  describe "GET 'cities'" do
+    it "assigns the loads the correct objects and templates" do
+      expect_any_instance_of(Area).to receive(:cities).and_return(['My Cool City'])
+      get 'cities', id: area.id, format: :json
+      expect(assigns(:area)).to eq(area)
+      cities = JSON.parse(response.body)
+      expect(cities).to eql ['My Cool City']
+    end
+  end
+
   describe "GET 'show'" do
     it "assigns the loads the correct objects and templates" do
       get 'show', id: area.id

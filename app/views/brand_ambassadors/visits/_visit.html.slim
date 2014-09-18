@@ -1,12 +1,22 @@
 li.pdf-keeptogether id="brand_ambassadors_visit_#{visit.id}" class="#{active_class(visit)}"
   span.visit-item
     = link_to_if_permitted(:show, BrandAmbassadors::Visit, brand_ambassadors_visit_url(visit), title: 'Visit Details') do
-      span.date
+      span.item-info.date
         = format_date(visit.start_date)
         br
         = format_date(visit.end_date)
-      span.name
+      span.item-info.name
         span.user= visit.company_user.try(:name)
+        br
+        span.area
+          = visit.area_name
+          = " (#{visit.city})" if visit.city
+
+      span.item-info.brand-type
+        span.brand= visit.brand_name
+        br
+        span.type= visit.visit_type_name
+
 
     span.pull-right
       = link_to '', edit_brand_ambassadors_visit_path(visit), remote: true, class: 'icon-edit', title: 'Edit' if can? :edit, BrandAmbassadors::Visit

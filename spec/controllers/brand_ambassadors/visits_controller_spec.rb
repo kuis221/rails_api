@@ -44,7 +44,7 @@ RSpec.describe BrandAmbassadors::VisitsController, :type => :controller do
         rows = doc.elements.to_a('//Row')
         expect(rows.count).to eql 1
         expect(rows[0].elements.to_a('Cell/Data').map{|d| d.text }).to eql [
-          "START DATE", "END DATE", "EMPLOYEE"
+          "START DATE", "END DATE", "EMPLOYEE", "AREA", "CITY", "BRAND", "TYPE"
         ]
       end
     end
@@ -71,12 +71,11 @@ RSpec.describe BrandAmbassadors::VisitsController, :type => :controller do
         rows = doc.elements.to_a('//Row')
         expect(rows.count).to eql 2
         expect(rows[1].elements.to_a('Cell/Data').map{|d| d.text }).to eql [
-          "2014-01-23", "2014-01-24", "Michale Jackson"
+          "2014-01-23", "2014-01-24", "Michale Jackson", "Area 1", "Test City", "Imperial", "PTO"
         ]
       end
     end
   end
-
 
   describe "GET 'edit'" do
     let(:visit){ FactoryGirl.create(:brand_ambassadors_visit, company: company) }

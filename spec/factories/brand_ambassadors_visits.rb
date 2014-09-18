@@ -3,7 +3,6 @@
 # Table name: brand_ambassadors_visits
 #
 #  id              :integer          not null, primary key
-#  name            :string(255)
 #  company_id      :integer
 #  company_user_id :integer
 #  start_date      :date
@@ -12,6 +11,10 @@
 #  created_at      :datetime
 #  updated_at      :datetime
 #  description     :text
+#  visit_type      :string(255)
+#  brand_id        :integer
+#  area_id         :integer
+#  city            :string(255)
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

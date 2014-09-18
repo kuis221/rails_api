@@ -19,6 +19,14 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
           Data ss:Type="String" END DATE
         Cell
           Data ss:Type="String" EMPLOYEE
+        Cell
+          Data ss:Type="String" AREA
+        Cell
+          Data ss:Type="String" CITY
+        Cell
+          Data ss:Type="String" BRAND
+        Cell
+          Data ss:Type="String" TYPE
 
       - each_collection_item do |visit|
         Row
@@ -27,5 +35,13 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
           Cell ss:StyleID="s2"
             Data ss:Type="DateTime"= Timeliness.parse(visit.end_date.strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%F')
           Cell
-            Data ss:Type="String"= visit.company_user.full_name
+            Data ss:Type="String"= visit.company_user.try(:full_name)
+          Cell
+            Data ss:Type="String"= visit.area_name
+          Cell
+            Data ss:Type="String"= visit.city
+          Cell
+            Data ss:Type="String"= visit.brand_name
+          Cell
+            Data ss:Type="String"= visit.visit_type_name
 

@@ -426,6 +426,7 @@ Brandscopic::Application.routes.draw do
     member do
       get :deactivate
       get :activate
+      get :cities
     end
   end
 

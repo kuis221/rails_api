@@ -2584,12 +2584,15 @@ li#notifications{
 	}
 	ul#visits-list{
 		li{
-			.name, .date{
+			.item-info {
 				font-weight: normal;
 				br{
 					display:block;
 				}
 			}
+			.date { width: 30%; }
+			.name { width: 35%; }
+			.brand-type { width: 35%; }
 		}
 		span{
 			&.visit-item {

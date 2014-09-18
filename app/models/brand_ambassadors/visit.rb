@@ -3,7 +3,6 @@
 # Table name: brand_ambassadors_visits
 #
 #  id              :integer          not null, primary key
-#  name            :string(255)
 #  company_id      :integer
 #  company_user_id :integer
 #  start_date      :date
@@ -12,6 +11,10 @@
 #  created_at      :datetime
 #  updated_at      :datetime
 #  description     :text
+#  visit_type      :string(255)
+#  brand_id        :integer
+#  area_id         :integer
+#  city            :string(255)
 #
 
 class BrandAmbassadors::Visit < ActiveRecord::Base
@@ -23,6 +26,9 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
   belongs_to :area
 
   has_many :events, inverse_of: :visit
+
+  delegate :name, to: :area, allow_nil: true, prefix: true
+  delegate :name, to: :brand, allow_nil: true, prefix: true
 
   scoped_to_company
 
@@ -91,6 +97,10 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
 
   def status
     self.active? ? 'Active' : 'Inactive'
+  end
+
+  def visit_type_name
+    BrandAmbassadors::Visit::VISIT_TYPE_OPTIONS.detect{|k,v| v == visit_type }.try(:[], 0) if visit_type
   end
 
   def self.do_search(params, include_facets=false)

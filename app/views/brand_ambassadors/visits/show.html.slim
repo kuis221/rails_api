@@ -2,7 +2,7 @@
   = resource_details_bar("You are viewing visit details. Click to close.")
 
   .details_box.padding-top-close-bar
-    //h2= resource.name
+    h2= resource.visit_type_name
 
     .calendar-data
       i.icon-calendar
@@ -13,6 +13,18 @@
       i.icon-user
       span
         = resource.company_user.try(:name)
+
+    .description-data
+      i.icon-wired-star
+      span
+        = resource.brand_name
+
+    .place-data
+      i.icon-wired-venue
+      span
+        = resource.area_name
+        = " (#{resource.city})" if resource.city
+
 
     - if resource.description.present?
       .description-data
