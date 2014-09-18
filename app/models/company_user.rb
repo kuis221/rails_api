@@ -295,6 +295,12 @@ class CompanyUser < ActiveRecord::Base
         order('1').
         pluck('users.first_name || \' \' || users.last_name as name, company_users.id')
     end
+
+    def for_dropdown_with_role
+      self.joins(:user, :role).order('1').
+        pluck('users.first_name || \' \' || users.last_name as name, company_users.id, roles.name as role').
+        map{|r| [r[0].html_safe, r[1], {'data-role' => r[2]}] }
+    end
   end
 
   def set_default_notifications_settings

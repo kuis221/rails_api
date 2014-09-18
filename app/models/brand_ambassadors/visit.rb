@@ -19,6 +19,8 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
 
   belongs_to :company_user
   belongs_to :company
+  belongs_to :brand
+  belongs_to :area
 
   has_many :events, inverse_of: :visit
 
@@ -41,13 +43,19 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
     end
   end
 
-  validates :name, presence: true
+  VISIT_TYPE_OPTIONS = {"Brand Program" => "brand_program",
+                        "PTO" => "pto",
+                        "Market Visit" => "market_visit",
+                        "Local Market Request" => "local_market_request"}
+
   validates :company_user, presence: true
   validates :company, presence: true
-
   validates :start_date, presence: true
   validates :end_date, presence: true,
       date: { on_or_after: :start_date, message: 'must be after' }
+  validates :visit_type, presence: true
+  validates :brand_id, presence: true, numericality: true
+  validates :area_id, presence: true, numericality: true
 
   searchable do
     integer :id, stored: true
@@ -66,7 +74,9 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
     date :start_date, stored: true
     date :end_date, stored: true
 
-    string :name
+    string :visit_type
+    integer :brand_id
+    integer :area_id
 
     string :status
   end

@@ -6,8 +6,6 @@ li.pdf-keeptogether id="brand_ambassadors_visit_#{visit.id}" class="#{active_cla
         br
         = format_date(visit.end_date)
       span.name
-        b= visit.name
-        br
         span.user= visit.company_user.try(:name)
 
     span.pull-right

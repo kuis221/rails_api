@@ -9,13 +9,10 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
   Worksheet ss:Name="Visits"
 
     Table
-      Column ss:Width="150"
       Column ss:Width="100"
       Column ss:Width="100"
       Column ss:Width="150"
       Row ss:StyleID="s1"
-        Cell
-          Data ss:Type="String" NAME
         Cell
           Data ss:Type="String" START DATE
         Cell
@@ -25,8 +22,6 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
 
       - each_collection_item do |visit|
         Row
-          Cell
-            Data ss:Type="String"= visit.name
           Cell ss:StyleID="s2"
             Data ss:Type="DateTime"= Timeliness.parse(visit.start_date.strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%F')
           Cell ss:StyleID="s2"

@@ -18,12 +18,15 @@
 
 FactoryGirl.define do
   factory :brand_ambassadors_visit, :class => 'BrandAmbassadors::Visit' do
-    name "MyString"
     description "Visit description"
     company nil
     association :company_user
     start_date "08/26/2014"
     end_date "08/27/2014"
     active true
+    visit_type "brand_program"
+    brand_id 1
+    area_id 1
+    city "Test City"
   end
 end
