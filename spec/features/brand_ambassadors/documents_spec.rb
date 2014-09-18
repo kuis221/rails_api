@@ -38,11 +38,9 @@ feature "Brand Ambassadors Documents", js: true do
         ensure_modal_was_closed
 
         document = BrandAmbassadors::Document.last
-        # Check that the image appears on the page
-        within documents_section do
-          src = document.file.url(:original, timestamp: false).gsub(/\Ahttp(s)?/, 'https')
-          expect(page).to have_xpath("//a[starts-with(@href, \"#{src}\")]", wait: 10)
-        end
+
+        # Check that the document appears is in the document list
+        expect_to_have_document_in_list document
 
         expect(document.attachable).to eql(company)
 
@@ -128,6 +126,31 @@ feature "Brand Ambassadors Documents", js: true do
       end
 
       folder = DocumentFolder.last
+
+      # Upload a document to the folder
+      open_folder 'New Folder Name'
+      documents_section.click_button 'Upload'
+
+      within visible_modal do
+        attach_file "file", 'spec/fixtures/file.pdf'
+        expect(upload_queue).to have_file_in_queue('file.pdf')
+        wait_for_ajax(30) # For the file to upload to S3
+        click_js_link 'OK'
+      end
+      ensure_modal_was_closed
+
+      # Check that the document appears is in the document list
+      document = BrandAmbassadors::Document.last
+      expect_to_have_document_in_list document
+
+      # Go to the root documents folder
+      open_root_folder
+      expect(page).not_to have_content(document.name)
+
+      # Open the folder again and check the document is there
+      open_folder 'New Folder Name'
+      expect_to_have_document_in_list document
+      open_root_folder
 
       # Deactivate the folder
       within documents_section do
@@ -306,5 +329,23 @@ feature "Brand Ambassadors Documents", js: true do
 
   def upload_queue
     find('#uploads_container')
+  end
+
+  def open_folder(name)
+    within documents_section do
+      click_js_link name
+    end
+    expect(documents_section.find('h3')).to have_content(name)
+  end
+
+  def expect_to_have_document_in_list(document)
+    within documents_section do
+      src = document.file.url(:original, timestamp: false).gsub(/\Ahttp(s)?/, 'https')
+      expect(page).to have_xpath("//a[starts-with(@href, \"#{src}\")]", wait: 10)
+    end
+  end
+
+  def open_root_folder
+    documents_section.click_js_link('DOCUMENTS')
   end
 end

@@ -6,7 +6,6 @@ class FolderSelectInput < SimpleForm::Inputs::Base
 
   def document_folder_tree(folder, children, list_class=nil)
     template.content_tag(:ul, id: "folder-#{folder.class.name.underscore}-#{folder.id}", class: "folder-contents #{list_class}") do
-      puts "FOLDER: #{folder.name}[#{folder.id}]" + children.map{|c| [c.id, c.name]}.to_s
       children.map do |sub_folder|
         has_children = sub_folder.document_folders.any?
         template.content_tag(:li, class: 'subfolder '+(has_children ? 'with-children' : ''.html_safe)) do
