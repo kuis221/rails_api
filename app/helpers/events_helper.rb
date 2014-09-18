@@ -171,6 +171,25 @@ module EventsHelper
       areas.compact
     end
 
+    def describe_cities
+      cities = city_params
+      if cities.size > 0
+        names = cities.sort.to_sentence(last_word_connector: ', or ', two_words_connector: ' or ')
+        "in #{names}"
+      else
+        ""
+      end
+    end
+
+    def city_params
+      cities = params[:city]
+      cities = [cities] unless cities.is_a?(Array)
+      if params.has_key?(:q) && params[:q] =~ /^city,/
+        cities.push params[:q].gsub('city,','')
+      end
+      cities.compact
+    end
+
     def describe_locations
       places = location_params
       place_ids = places.select{|p| p =~  /^[0-9]+$/}

@@ -122,16 +122,20 @@ feature "Brand Ambassadors Visits" do
   shared_examples_for 'a user that can filter the list of visits' do
     let(:today) { Time.zone.local(Time.now.year, Time.now.month, 18, 12, 00) }
     let(:another_user){ FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Roberto', last_name: 'Gomez'), company: company) }
-    let(:place1){ FactoryGirl.create(:place, name: 'Place 1', city: 'Los Angeles', state:'CA', country: 'US') }
-    let(:place2){ FactoryGirl.create(:place, name: 'Place 2', city: 'Austin', state:'TX', country: 'US') }
+    let(:area1){ FactoryGirl.create(:area, name: 'California', company: company) }
+    let(:area2){ FactoryGirl.create(:area, name: 'Texas', company: company) }
+    let(:place1){ FactoryGirl.create(:place, name: 'Place 1', city: 'Los Angeles', state:'CA', country: 'US', types: ['political', 'locality']) }
+    let(:place2){ FactoryGirl.create(:place, name: 'Place 2', city: 'Austin', state:'TX', country: 'US', types: ['political', 'locality']) }
     let(:campaign1){ FactoryGirl.create(:campaign, name: 'Campaign FY2012',company: company) }
     let(:campaign2){ FactoryGirl.create(:campaign, name: 'Another Campaign April 03',company: company) }
     let(:ba_visit1){ FactoryGirl.create(:brand_ambassadors_visit, company: company,
                       start_date: today, end_date: (today+1.day).to_s(:slashes),
+                      city: 'Los Angeles', area: area1,
                       visit_type: 'brand_program', description: 'Visit1 description',
                       company_user: company_user, active: true) }
     let(:ba_visit2){ FactoryGirl.create(:brand_ambassadors_visit, company: company,
                       start_date: (today+1.day).to_s(:slashes), end_date: (today+4.day).to_s(:slashes),
+                      city: 'Austin', area: area2,
                       visit_type: 'market_visit', description: 'Visit2 description',
                       company_user: another_user, active: true) }
     let(:event1){ FactoryGirl.create(:event, start_date: today.to_s(:slashes), company: company, active: true,
@@ -144,6 +148,8 @@ feature "Brand Ambassadors Visits" do
 
     scenario "should allow filter visits and see the correct message" do
       Timecop.travel(today) do
+        area1.places << place1
+        area2.places << place2
         company_user.places << place1
         company_user.places << place2
         company_user.campaigns << campaign1
@@ -182,13 +188,51 @@ feature "Brand Ambassadors Visits" do
 
         expect(page).to have_content('2 Active visits assigned to Roberto Gomez or Test User')
 
+        filter_section('AREAS').unicheck('California')
+
+        within("ul#visits-list") do
+          expect(page).to have_content('Brand Program')
+          expect(page).to have_no_content('Market Visit')
+        end
+
+        expect(page).to have_content('1 Active visit in California and assigned to Roberto Gomez or Test User')
+
+        filter_section('AREAS').unicheck('Texas')
+
+        within("ul#visits-list") do
+          expect(page).to have_content('Brand Program')
+          expect(page).to have_content('Market Visit')
+        end
+
+        expect(page).to have_content('2 Active visits in California or Texas and assigned to Roberto Gomez or Test User')
+
+        filter_section('AREAS').unicheck('California')
+        filter_section('AREAS').unicheck('Texas')
+        filter_section('CITIES').unicheck('Los Angeles')
+
+        within("ul#visits-list") do
+          expect(page).to have_content('Brand Program')
+          expect(page).to have_no_content('Market Visit')
+        end
+
+        expect(page).to have_content('1 Active visit in Los Angeles and assigned to Roberto Gomez or Test User')
+
+        filter_section('CITIES').unicheck('Austin')
+
+        within("ul#visits-list") do
+          expect(page).to have_content('Brand Program')
+          expect(page).to have_content('Market Visit')
+        end
+
+        expect(page).to have_content('2 Active visits in Austin or Los Angeles and assigned to Roberto Gomez or Test User')
+
         select_filter_calendar_day("18")
         within("ul#visits-list") do
           expect(page).to have_content('Brand Program')
           expect(page).to have_no_content('Market Visit')
         end
 
-        expect(page).to have_content("1 Active visit taking place today and assigned to Roberto Gomez or Test User")
+        expect(page).to have_content("1 Active visit taking place today in Austin or Los Angeles and assigned to Roberto Gomez or Test User")
 
         select_filter_calendar_day("18", "19")
         within("ul#visits-list") do
@@ -196,7 +240,7 @@ feature "Brand Ambassadors Visits" do
           expect(page).to have_content('Market Visit')
         end
 
-        expect(page).to have_content("2 Active visits taking place between today and tomorrow and assigned to Roberto Gomez or Test User")
+        expect(page).to have_content("2 Active visits taking place between today and tomorrow in Austin or Los Angeles and assigned to Roberto Gomez or Test User")
       end
     end
   end
