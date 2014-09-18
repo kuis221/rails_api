@@ -82,7 +82,7 @@ describe BrandAmbassadors::VisitsController, type: :controller, search: true do
         expect(response).to be_success
 
         filters = JSON.parse(response.body)
-        expect(filters['filters'].map{|b| b['label']}).to eq(["Brand Ambassadors", "Areas", "Cities", "Brands", "Active State", "Saved Filters"])
+        expect(filters['filters'].map{|b| b['label']}).to eq(["Brand Ambassadors", "Areas", "Cities", "Brands", "Saved Filters"])
       end
 
       it "should return only users in the configured role for brand ambassadors section" do
