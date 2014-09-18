@@ -32,6 +32,7 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
 
   scoped_to_company
 
+  scope :active, ->{ where(active: true) }
   scope :accessible_by_user, ->(company_user) { where(company_id: company_user.company_id) }
 
   has_many :brand_ambassadors_documents, ->{ order('attached_assets.file_file_name ASC') },
@@ -53,6 +54,8 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
                         "PTO" => "pto",
                         "Market Visit" => "market_visit",
                         "Local Market Request" => "local_market_request"}
+
+  before_validation { self.city = nil if self.city == '' }
 
   validates :company_user, presence: true
   validates :company, presence: true
@@ -80,6 +83,7 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
     string :visit_type
     integer :brand_id
     integer :area_id
+    string :city
 
     string :status
   end
@@ -130,7 +134,7 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
 
       with :area_id, params[:area] if params.has_key?(:area) and params[:area].present?
       with :brand_id, params[:brand] if params.has_key?(:brand) and params[:brand].present?
-
+      with :city, params[:city] if params.has_key?(:city) and params[:city].present?
 
       if params[:start] && params[:end]
         start_date = DateTime.strptime(params[:start],'%Q')
