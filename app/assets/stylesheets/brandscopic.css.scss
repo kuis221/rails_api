@@ -544,7 +544,6 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	.datepick-nav .datepick-cmd{
 		width: 15px;
 	}
-
 	a.datepick-cmd{
 		display: inline-block;
 		margin-top: 13px;
@@ -619,6 +618,22 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		td{
 			padding: 2px;
 		}
+		tr{
+			td:first-child{
+				.datepick-selected.datepick-weekend{
+					border-top-left-radius:12px;
+					border-top-right-radius:0;
+					border-bottom-left-radius:12px;
+					border-bottom-right-radius:0;
+					&:after{
+						display:inline-block;
+					}
+					&:before{
+						display:none;
+					}
+				}
+			}
+		}
 		a{
 			box-sizing: border-box;
 			color: $text;
@@ -626,7 +641,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			padding: 2px 3px;
 			-webkit-border-radius: 12px;
 			border-radius: 12px;
-			line-height:17px;
+			//line-height:17px;
 			width: 24px;
 			height: 24px;
 			position: relative;
@@ -636,9 +651,6 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 				font-size: 0.86em;
 				font-weight: 300;
 				opacity:1;
-				&.datepick-selected{
-					//@include border-radius(12px);
-				}
 			}
 			&.datepick-event{
 				font-weight: 600;
@@ -648,7 +660,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 					content:"\2022";
 					font-size: 7px;
 					position: absolute;
-					bottom: -4px;
+					bottom: -7px;
 					right: 10px;
 				}
 			}
@@ -658,9 +670,12 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			&:hover{
 				display: block;
 				width: 100%;
-				background-color: $grey_one !important;
+				background-color: $grey_one;
 				color: $text;
 				text-decoration: none;
+				&:after{
+					content:"";
+				}
 			}
 		}
 	}
@@ -669,6 +684,16 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		border-radius: 0;
 		color: white;
 		font-weight: 400;
+		&.datepick-weekend{
+			border-top-right-radius:12px;
+			border-bottom-right-radius:12px;
+			&:after{
+				display:none;
+			}
+		}
+		&:hover{
+			background-color: #3e9ccf;
+		}
 		&:after{
 			background-color: #3e9ccf;
 			content: "";
@@ -693,7 +718,6 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			background-color: $brand;
 		}
 		&.first-selected{
-			//background-color: red; /*changed*/
 			-webkit-border-top-left-radius: 12px;
 			-webkit-border-bottom-left-radius: 12px;
 			-moz-border-radius-topleft: 12px;
