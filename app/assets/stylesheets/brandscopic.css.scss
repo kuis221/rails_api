@@ -555,7 +555,10 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 
 	.datepick-cmd-next, .datepick-cmd-prev{
 		font-size: 11px;
-		color: white !important;
+		color: transparent !important;
+		&:before{
+			color: white;
+		}
 	}
 
 	.datepick-cmd-prev{
@@ -644,11 +647,15 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			height: 24px;
 			position: relative;
 			&.datepick-today{
-				background-color: #3381a8 !important;
+				background-color: $brand;
 				color: white;
 				font-size: 0.86em;
 				font-weight: 300;
 				opacity:1;
+				&:hover{
+					background-color: $brand;
+					color: white;
+				}
 			}
 			&.datepick-event{
 				font-weight: 600;
@@ -682,6 +689,12 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		border-radius: 0;
 		color: white;
 		font-weight: 400;
+		&.datepick-today{
+			background-color: #3381a8;
+			&:hover{
+				background-color: #3381a8;
+			}
+		}
 		&.datepick-weekend{
 			border-top-right-radius:12px;
 			border-bottom-right-radius:12px;
