@@ -57,8 +57,9 @@ class BrandAmbassadors::VisitsController < FilteredController
     end
 
     def build_city_bucket
-      cities = current_company.brand_ambassadors_visits.active.where("city <> ''").reorder(:city).pluck('DISTINCT brand_ambassadors_visits.city').map do |r|
-        build_facet_item({label: r, id: r, name: :city, count: 1})
+      cities = current_company.brand_ambassadors_visits.
+        active.where.not(city: '').reorder(:city).pluck('DISTINCT brand_ambassadors_visits.city').map do |r|
+          build_facet_item({label: r, id: r, name: :city, count: 1})
       end
       {label: 'Cities', items: cities}
     end
