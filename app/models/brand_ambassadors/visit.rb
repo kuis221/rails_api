@@ -66,7 +66,7 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
   validates :brand_id, presence: true, numericality: true
   validates :area_id, presence: true, numericality: true
 
-  searchable do
+  searchable if: :active do
     integer :id, stored: true
     integer :company_id
     integer :company_user_id
@@ -76,7 +76,6 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
     integer :location, multiple: true do
       events.joins(place: :locations).pluck('DISTINCT(locations.id)')
     end
-    boolean :active
     date :start_date, stored: true
     date :end_date, stored: true
 
@@ -92,10 +91,6 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
 
   def deactivate!
     update_attribute :active, false
-  end
-
-  def status
-    self.active? ? 'Active' : 'Inactive'
   end
 
   def visit_type_name

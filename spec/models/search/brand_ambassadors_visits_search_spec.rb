@@ -38,6 +38,9 @@ describe BrandAmbassadors::Visit, type: :model, search: true do
     company2_campaign = FactoryGirl.create(:campaign)
     company2_visit = FactoryGirl.create(:brand_ambassadors_visit, company: company2_campaign.company)
 
+    # Inactive visit should never be returned
+    FactoryGirl.create(:brand_ambassadors_visit, company: company, active: false)
+
     Sunspot.commit
 
     # Make some test searches
