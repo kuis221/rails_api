@@ -61,6 +61,10 @@ class Area < ActiveRecord::Base
     end
   end
 
+  def cities
+    places.order('places.name ASC').select{|p| p.types.present? && p.types.include?('locality') }.map(&:name)
+  end
+
   def count_events(place, parents, count)
     self.events_count ||= 0
     if parents.join('/').include?((common_denominators || []).join('/'))

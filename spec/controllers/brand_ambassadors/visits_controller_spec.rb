@@ -44,7 +44,7 @@ RSpec.describe BrandAmbassadors::VisitsController, :type => :controller do
         rows = doc.elements.to_a('//Row')
         expect(rows.count).to eql 1
         expect(rows[0].elements.to_a('Cell/Data').map{|d| d.text }).to eql [
-          "NAME", "START DATE", "END DATE", "EMPLOYEE"
+          "START DATE", "END DATE", "EMPLOYEE", "AREA", "CITY", "BRAND", "TYPE"
         ]
       end
     end
@@ -54,9 +54,14 @@ RSpec.describe BrandAmbassadors::VisitsController, :type => :controller do
         user: FactoryGirl.create(:user, first_name: 'Michale', last_name: 'Jackson'),
         company: company, role: user.role)
 
+      brand = FactoryGirl.create(:brand, name: 'Imperial', company_id: company.to_param)
+
+      area = FactoryGirl.create(:area, name: 'Area 1', company_id: company.to_param)
+
       visit = FactoryGirl.create(:brand_ambassadors_visit,
-        name: 'Visit to NY',
-        company_user: visit_user, company: company)
+        visit_type: 'pto', description: 'Test Visit description', company_user: visit_user,
+        start_date: '01/23/2014', end_date: '01/24/2014', brand: brand, area: area,
+        city: 'Test City', company: company)
       Sunspot.commit
 
       expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
@@ -66,12 +71,11 @@ RSpec.describe BrandAmbassadors::VisitsController, :type => :controller do
         rows = doc.elements.to_a('//Row')
         expect(rows.count).to eql 2
         expect(rows[1].elements.to_a('Cell/Data').map{|d| d.text }).to eql [
-          'Visit to NY', "2014-08-26", "2014-08-27", "Michale Jackson"
+          "2014-01-23", "2014-01-24", "Michale Jackson", "Area 1", "Test City", "Imperial", "PTO"
         ]
       end
     end
   end
-
 
   describe "GET 'edit'" do
     let(:visit){ FactoryGirl.create(:brand_ambassadors_visit, company: company) }
@@ -93,13 +97,15 @@ RSpec.describe BrandAmbassadors::VisitsController, :type => :controller do
   describe "POST 'create'" do
     it "should successfully create the new record" do
       expect {
-        xhr :post, 'create', brand_ambassadors_visit: {name: 'Test Visit', description: 'Test Visit description', company_user_id: user.id, start_date: '01/23/2014', end_date: '01/24/2014'}, format: :js
+        xhr :post, 'create', brand_ambassadors_visit: {visit_type: 'pto', description: 'Test Visit description', company_user_id: user.id, start_date: '01/23/2014', end_date: '01/24/2014', brand_id: 10, area_id: 20, city: 'Test City'}, format: :js
       }.to change(BrandAmbassadors::Visit, :count).by(1)
       visit = BrandAmbassadors::Visit.last
-      expect(visit.name).to eq('Test Visit')
+      expect(visit.visit_type).to eq('pto')
       expect(visit.description).to eq('Test Visit description')
       expect(visit.company_user_id).to eq(user.id)
       expect(visit.company_id).to eq(company.id)
+      expect(visit.brand_id).to eq(10)
+      expect(visit.area_id).to eq(20)
       expect(visit.active).to eq(true)
 
       expect(response).to render_template(:create)
@@ -140,16 +146,20 @@ RSpec.describe BrandAmbassadors::VisitsController, :type => :controller do
 
   describe "PUT 'update'" do
     let(:visit){ FactoryGirl.create(:brand_ambassadors_visit, company: company) }
+    let(:another_user){ FactoryGirl.create(:company_user, company: company) }
 
     it "must update the visit attributes" do
-      put 'update', id: visit.to_param, brand_ambassadors_visit: {name: 'New Visit Name', description: 'New Visit description', company_user_id: user.id, start_date: '01/23/2014', end_date: '01/24/2014'}
+      xhr :put, 'update', id: visit.to_param, brand_ambassadors_visit: {visit_type: 'pto', description: 'New Visit description', company_user_id: another_user.id, start_date: '01/23/2014', end_date: '01/24/2014', brand_id: 15, area_id: 25, city: 'New Test City'}, format: :js
       expect(assigns(:visit)).to eq(visit)
-      expect(response).to redirect_to(brand_ambassadors_visit_path(visit))
+      expect(response).to be_success
       visit.reload
-      expect(visit.name).to eq('New Visit Name')
+      expect(visit.visit_type).to eq('pto')
       expect(visit.description).to eq('New Visit description')
+      expect(visit.company_user_id).to eq(another_user.id)
       expect(visit.start_date).to eql Date.new(2014, 01, 23)
       expect(visit.end_date).to eql Date.new(2014, 01, 24)
+      expect(visit.brand_id).to eq(15)
+      expect(visit.area_id).to eq(25)
     end
   end
 

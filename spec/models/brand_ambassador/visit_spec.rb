@@ -3,6 +3,8 @@ require 'rails_helper'
 RSpec.describe BrandAmbassadors::Visit, :type => :model do
   it { is_expected.to belong_to(:company) }
   it { is_expected.to belong_to(:company_user) }
+  it { is_expected.to belong_to(:brand) }
+  it { is_expected.to belong_to(:area) }
   it { is_expected.to have_many(:events) }
   it { is_expected.to have_many(:brand_ambassadors_documents) }
   it { is_expected.to have_many(:document_folders) }
@@ -14,6 +16,14 @@ RSpec.describe BrandAmbassadors::Visit, :type => :model do
   it { is_expected.to validate_presence_of(:end_date) }
 
   it { is_expected.to allow_value("12/31/2012").for(:start_date) }
+
+  it { is_expected.to validate_presence_of(:visit_type) }
+
+  it { is_expected.to validate_presence_of(:brand_id) }
+  it { is_expected.to validate_numericality_of(:brand_id) }
+
+  it { is_expected.to validate_presence_of(:area_id) }
+  it { is_expected.to validate_numericality_of(:area_id) }
 
   describe "end date validations" do
     before { subject.start_date = '12/31/2012' }

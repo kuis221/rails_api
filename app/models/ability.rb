@@ -47,6 +47,8 @@ class Ability
       can [:update, :exclude_place, :include_place], AreasCampaign do |areas_campaign|
         can? :add_place, areas_campaign.campaign
       end
+
+      can :cities, Area
     end
 
     # AdminUsers (logged in on Active Admin)

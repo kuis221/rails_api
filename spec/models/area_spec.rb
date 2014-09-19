@@ -195,4 +195,26 @@ describe Area, :type => :model do
       end
     end
   end
+
+  describe "#cities" do
+    let(:area){ FactoryGirl.create(:area, company: FactoryGirl.create(:company)) }
+
+    it "should return emtpy if the area has no cities" do
+      expect(area.cities).to eql []
+    end
+
+    it "should return the cities added to the area" do
+      area.places << FactoryGirl.create(:city, name: 'Los Angeles', state: 'California')
+      area.places << FactoryGirl.create(:city, name: 'Austin', state: 'Texas')
+      area.places << FactoryGirl.create(:city, name: 'Houston', state: 'Texas')
+      expect(area.cities).to eql ['Austin', 'Houston', 'Los Angeles']
+    end
+
+    it "should not return non cities" do
+      area.places << FactoryGirl.create(:place, city: 'Los Angeles', state: 'California')
+      area.places << FactoryGirl.create(:state, name: 'California', country: 'US')
+      area.places << FactoryGirl.create(:country, name: 'United States')
+      expect(area.cities).to eql []
+    end
+  end
 end

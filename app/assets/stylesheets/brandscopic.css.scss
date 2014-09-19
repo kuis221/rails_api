@@ -1,8 +1,6 @@
 @import "variables";
 @import "mixins";
 
-@import url(http://fonts.googleapis.com/css?family=Lato:100,300,400,700);
-
 $footer-height: 35px;
 
 //
@@ -2586,12 +2584,15 @@ li#notifications{
 	}
 	ul#visits-list{
 		li{
-			.name, .date{
+			.item-info {
 				font-weight: normal;
-				br{
-					display:block;
+				&>span {
+					display:  block;
 				}
 			}
+			.date { width: 30%; }
+			.name { width: 35%; }
+			.brand-type { width: 35%; }
 		}
 		span{
 			&.visit-item {

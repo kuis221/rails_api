@@ -25,12 +25,14 @@ javascript:
         events: function(start, end, timezone, callback){
           var data = '#{j params.to_query.html_safe}';
           if ($('#collection-list-filters').length > 0) {
-            data = $('#collection-list-filters').filteredList('paramsQueryString');
+            data = $('#collection-list-filters').filteredList('selectCalendarDates', start.toDate(), end.toDate()).filteredList('paramsQueryString');
+          } else {
+            data += "&start="+start+"&end="+end;
           }
           $.ajax({
               url: '#{brand_ambassadors_visits_url(format: :json)}',
               dataType: 'json',
-              data: data+"&start="+start+"&end="+end,
+              data: data,
               success: function(events) {
                   callback(events);
                   window.status = 'completed';
@@ -46,7 +48,7 @@ javascript:
         'default': function(){ return ''; }
       },
       eventRender: function(visit, element) {
-        element.find('.fc-title').append("<br/><span class='user-name'>" + visit.company_user.full_name + "</span>");
+        element.find('.fc-title').html((visit.visit_type_name || '') + "<br/><span class='user-name'>" + visit.company_user.full_name + "</span>");
       }
     });
   };

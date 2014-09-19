@@ -49,12 +49,20 @@ FactoryGirl.define do
       after(:build) {|p| p.city = p.name }
     end
 
+    factory :state do
+      types ['political', 'administrative_area_level_1']
+      after(:build) do |p|
+        p.state = p.name
+        p.city = nil
+      end
+    end
+
     factory :country do
       types ['political', 'country']
       after(:build) do |p|
         p.state = nil
         p.city = nil
-        p.country = p.name
+        p.country = Country.all.detect{|c| c[0] == 'United States'}[1]
       end
     end
   end

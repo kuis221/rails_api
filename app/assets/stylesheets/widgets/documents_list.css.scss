@@ -144,10 +144,12 @@
 	}
 	ul {
 		list-style: none;
+		margin-left: 0;
 		&.collapse {
 			position: initial;
 		}
 		li {
+			padding-left: 25px;
 			.folder-arrow-indicator{
 				float: left;
 				margin-left: -20px;
@@ -157,7 +159,10 @@
 				margin-right: 5px;
 			}
 			.icon-arrow-right:before {
-				font-size: 10px;
+				font-size: 12px;
+			}
+			.icon-arrow-down:before {
+				top: 4px;
 			}
 		} 
 	}

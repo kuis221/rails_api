@@ -84,6 +84,7 @@ RSpec.configure do |config|
       wait_for_ajax
     end
     User.current = nil
+    Company.current = nil
     Time.zone = Rails.application.config.time_zone
 
     # Reset all KPIs values to nil
