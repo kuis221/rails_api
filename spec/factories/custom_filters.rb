@@ -18,6 +18,7 @@ FactoryGirl.define do
     owner nil
     sequence(:name) {|n| "Area #{n}" }
     apply_to "events"
-    filters "MyText"
+    filters "param=true"
+    group "Saved Filters"
   end
 end

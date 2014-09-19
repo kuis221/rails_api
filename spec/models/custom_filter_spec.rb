@@ -17,6 +17,7 @@ describe CustomFilter, :type => :model do
   it { is_expected.to belong_to(:owner) }
   it { is_expected.to validate_presence_of(:owner) }
   it { is_expected.to validate_presence_of(:name) }
+  it { is_expected.to validate_presence_of(:group) }
   it { is_expected.to validate_presence_of(:apply_to) }
   it { is_expected.to validate_presence_of(:filters) }
 

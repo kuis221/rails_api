@@ -74,7 +74,9 @@ class BrandAmbassadors::VisitsController < FilteredController
         f.push build_city_bucket
         f.push build_brands_bucket
 
-        f.push build_custom_filters_bucket
+        p build_custom_filters_bucket
+
+        f.concat build_custom_filters_bucket
       end
     end
 end

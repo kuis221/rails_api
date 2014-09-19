@@ -17,7 +17,7 @@ describe CustomFiltersController, :type => :controller do
   describe "POST 'create'" do
     it "should be able to create a custom filter" do
       expect {
-        xhr :post, 'create', custom_filter: {name: 'My Custom Filter', apply_to: 'events', filters: 'Filters'}, format: :js
+        xhr :post, 'create', custom_filter: {name: 'My Custom Filter', group: 'Saved Filters', apply_to: 'events', filters: 'Filters'}, format: :js
       }.to change(CustomFilter, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template('create')
@@ -27,6 +27,7 @@ describe CustomFiltersController, :type => :controller do
       expect(custom_filter.name).to eq('My Custom Filter')
       expect(custom_filter.apply_to).to eq('events')
       expect(custom_filter.filters).to eq('Filters')
+      expect(custom_filter.group).to eq('Saved Filters')
     end
 
     it "should render the form_dialog template if errors" do
