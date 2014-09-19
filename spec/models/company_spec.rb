@@ -17,6 +17,7 @@ describe Company, :type => :model do
   it { is_expected.to have_many(:teams) }
   it { is_expected.to have_many(:campaigns) }
   it { is_expected.to have_many(:roles) }
+  it { is_expected.to have_many(:custom_filters) }
 
   it { is_expected.to validate_presence_of(:name) }
 

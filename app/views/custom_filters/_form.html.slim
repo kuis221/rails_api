@@ -4,7 +4,6 @@
 
   .form-inputs
     = f.input :name, label: 'Filter name', :input_html => {class: 'input-xlarge'}
-    = f.hidden_field :company_user_id, as: :hidden, value: current_company_user.id
     = f.hidden_field :apply_to, as: :hidden, value: params[:apply_to]
     = f.hidden_field :filters, as: :hidden, value: params[:filters]
 

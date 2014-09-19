@@ -15,7 +15,7 @@
 
 FactoryGirl.define do
   factory :custom_filter do
-    company_user_id nil
+    owner nil
     sequence(:name) {|n| "Area #{n}" }
     apply_to "events"
     filters "MyText"

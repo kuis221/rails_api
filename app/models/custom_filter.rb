@@ -12,12 +12,12 @@
 #
 
 class CustomFilter < ActiveRecord::Base
-  belongs_to :company_user
+  belongs_to :owner, polymorphic: true
 
   serialize :filters
 
   # Required fields
-  validates :company_user_id, presence: true, numericality: true
+  validates :owner, presence: true
   validates :name, presence: true
   validates :apply_to, presence: true
   validates :filters, presence: true
