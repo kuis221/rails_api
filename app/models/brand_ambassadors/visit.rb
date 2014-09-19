@@ -32,6 +32,7 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
 
   scoped_to_company
 
+  scope :active, ->{ where(active: true) }
   scope :accessible_by_user, ->(company_user) { where(company_id: company_user.company_id) }
 
   has_many :brand_ambassadors_documents, ->{ order('attached_assets.file_file_name ASC') },
@@ -54,6 +55,8 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
                         "Market Visit" => "market_visit",
                         "Local Market Request" => "local_market_request"}
 
+  before_validation { self.city = nil if self.city == '' }
+
   validates :company_user, presence: true
   validates :company, presence: true
   validates :start_date, presence: true
@@ -63,7 +66,7 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
   validates :brand_id, presence: true, numericality: true
   validates :area_id, presence: true, numericality: true
 
-  searchable do
+  searchable if: :active do
     integer :id, stored: true
     integer :company_id
     integer :company_user_id
@@ -73,15 +76,13 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
     integer :location, multiple: true do
       events.joins(place: :locations).pluck('DISTINCT(locations.id)')
     end
-    boolean :active
     date :start_date, stored: true
     date :end_date, stored: true
 
     string :visit_type
     integer :brand_id
     integer :area_id
-
-    string :status
+    string :city
   end
 
   def activate!
@@ -92,10 +93,6 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
     update_attribute :active, false
   end
 
-  def status
-    self.active? ? 'Active' : 'Inactive'
-  end
-
   def visit_type_name
     BrandAmbassadors::Visit::VISIT_TYPE_OPTIONS.detect{|k,v| v == visit_type }.try(:[], 0) if visit_type
   end
@@ -103,7 +100,6 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
   def self.do_search(params, include_facets=false)
     solr_search do
       with :company_id, params[:company_id]
-      with :status, params[:status] if params.has_key?(:status) and params[:status].present?
       with :place_ids, params[:place] if params.has_key?(:place) and params[:place].present?
 
       if params[:start_date].present? and params[:end_date].present?
@@ -130,7 +126,7 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
 
       with :area_id, params[:area] if params.has_key?(:area) and params[:area].present?
       with :brand_id, params[:brand] if params.has_key?(:brand) and params[:brand].present?
-
+      with :city, params[:city] if params.has_key?(:city) and params[:city].present?
 
       if params[:start] && params[:end]
         start_date = DateTime.strptime(params[:start],'%Q')

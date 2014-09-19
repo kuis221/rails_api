@@ -10,7 +10,7 @@
         - if filters_labels.present?
           - filters_labels.each do |filter_label|
             = hidden_field_tag 'filters_labels[]', filter_label
-            - unless ['Saved Filters', 'Event Status', 'Active State'].include?(filter_label)
+            - unless ['Saved Filters', 'Event Status', 'Active State', 'Cities'].include?(filter_label)
               .span4.filter-item.clearfix
                 h6 = filter_label.upcase
                 ul

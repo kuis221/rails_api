@@ -75,7 +75,6 @@ describe BrandAmbassadors::VisitsController, type: :controller, search: true do
       end
     end
 
-
     describe "GET 'filters'" do
       it "should return the correct buckets in the right order" do
         Sunspot.commit
@@ -83,7 +82,7 @@ describe BrandAmbassadors::VisitsController, type: :controller, search: true do
         expect(response).to be_success
 
         filters = JSON.parse(response.body)
-        expect(filters['filters'].map{|b| b['label']}).to eq(["Brand Ambassadors", "Areas", "Brands", "Active State", "Saved Filters"])
+        expect(filters['filters'].map{|b| b['label']}).to eq(["Brand Ambassadors", "Areas", "Cities", "Brands", "Saved Filters"])
       end
 
       it "should return only users in the configured role for brand ambassadors section" do
