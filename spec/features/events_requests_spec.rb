@@ -711,8 +711,6 @@ feature 'Events section' do
           click_button 'Create'
 
           within visible_modal do
-            event = Event.new
-
             # Test both dates are the same
             expect(find_field('Start date').value).to eql '07/30/2013'
             expect(find_field('End date').value).to eql '07/30/2013'

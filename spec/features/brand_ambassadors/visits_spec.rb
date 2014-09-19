@@ -8,7 +8,7 @@ feature "Brand Ambassadors Visits" do
   let(:campaign) { FactoryGirl.create(:campaign, company: company) }
   let(:user) { FactoryGirl.create(:user, company: company, role_id: role.id) }
   let(:company_user) { user.company_users.first }
-  let(:place) { FactoryGirl.create(:place, name: 'A Nice Place', country:'CR', city: 'Curridabat', state: 'San Jose') }
+  let(:place) { FactoryGirl.create(:place, name: 'A Nice Place in the APP', country:'CR', city: 'Curridabat', state: 'San Jose') }
   let(:permissions) { [] }
   let(:area) { FactoryGirl.create(:area, name: 'My Area', company: company) }
   let(:brand) { FactoryGirl.create(:brand, name: 'My Brand', company: company) }
@@ -394,6 +394,9 @@ feature "Brand Ambassadors Visits" do
     end
 
     scenario "allows to create a new event" do
+      expect(Place).to receive(:open).and_return(double(read: '{}')) # So we don't search in google places
+
+      Venue.create(place_id: place.id, company: company)
       FactoryGirl.create(:company_user, company: company,
         user: FactoryGirl.create(:user, first_name: 'Other', last_name: 'User'))
       campaign.save
@@ -401,6 +404,7 @@ feature "Brand Ambassadors Visits" do
       ba_visit = FactoryGirl.create(:brand_ambassadors_visit,
         brand: brand, area: area,
         company: company, company_user: company_user)
+      Sunspot.commit
 
       visit brand_ambassadors_visit_path(ba_visit)
 
@@ -412,21 +416,20 @@ feature "Brand Ambassadors Visits" do
         expect(page).to have_content(company_user.full_name)
         select_from_chosen('ABSOLUT Vodka', from: 'Campaign')
         select_from_chosen('Other User', from: 'Event staff')
+        select_from_autocomplete 'Search for a place', place.name
+
         fill_in 'Description', with: 'some event description'
         click_button 'Create'
       end
       ensure_modal_was_closed
       expect(page).to have_content('ABSOLUT Vodka')
       expect(page).to have_content('some event description')
-      within '#event-team-members' do
-        expect(page).to have_content('Other User')
-      end
 
       click_link 'You are viewing event details. Click to close.'
 
       expect(current_path).to eq(brand_ambassadors_visit_path(ba_visit))
       within "#visit-events" do
-        expect(page).to have_content('BSOLUT Vodka')
+        expect(page).to have_content('ABSOLUT Vodka')
       end
     end
   end
@@ -481,7 +484,14 @@ feature "Brand Ambassadors Visits" do
     end
 
     it_should_behave_like "a user that can view visits details" do
-      let(:permissions) { [[:list, 'BrandAmbassadors::Visit'], [:deactivate, 'BrandAmbassadors::Visit'], [:show, 'BrandAmbassadors::Visit']]}
+      let(:permissions) { [
+        [:list, 'BrandAmbassadors::Visit'], [:deactivate, 'BrandAmbassadors::Visit'],
+        [:show, 'BrandAmbassadors::Visit'], [:update, 'BrandAmbassadors::Visit'],
+        [:create, 'Event'], [:show, 'Event']] }
+      before{ company_user.campaigns << campaign }
+      before{ company_user.places << place }
+      before{ campaign.places << place }
+      before{ company_user.areas << area }
     end
 
     it_should_behave_like "a user that can view visits details and deactivate visits" do
