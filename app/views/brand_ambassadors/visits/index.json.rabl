@@ -1,6 +1,6 @@
 collection @visits, :root => false, :object_root => false
 
-attributes :name => :title, :start_date => :start
+attributes :visit_type_name => :visit_type_name, :start_date => :start
 
 node :end do |visit|
   visit.end_date.end_of_day

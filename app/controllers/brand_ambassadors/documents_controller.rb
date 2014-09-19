@@ -17,7 +17,9 @@ class BrandAmbassadors::DocumentsController < ::DocumentsController
 
   protected
     def build_resource_params
-      [(permitted_params || {}).merge(asset_type: 'ba_document')]
+      p = (permitted_params || {}).merge(asset_type: 'ba_document')
+      p[:folder_id] ||= params[:folder_id]
+      [p]
     end
 
     def permitted_params

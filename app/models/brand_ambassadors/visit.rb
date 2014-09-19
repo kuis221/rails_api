@@ -3,7 +3,6 @@
 # Table name: brand_ambassadors_visits
 #
 #  id              :integer          not null, primary key
-#  name            :string(255)
 #  company_id      :integer
 #  company_user_id :integer
 #  start_date      :date
@@ -12,6 +11,10 @@
 #  created_at      :datetime
 #  updated_at      :datetime
 #  description     :text
+#  visit_type      :string(255)
+#  brand_id        :integer
+#  area_id         :integer
+#  city            :string(255)
 #
 
 class BrandAmbassadors::Visit < ActiveRecord::Base
@@ -19,11 +22,17 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
 
   belongs_to :company_user
   belongs_to :company
+  belongs_to :brand
+  belongs_to :area
 
   has_many :events, inverse_of: :visit
 
+  delegate :name, to: :area, allow_nil: true, prefix: true
+  delegate :name, to: :brand, allow_nil: true, prefix: true
+
   scoped_to_company
 
+  scope :active, ->{ where(active: true) }
   scope :accessible_by_user, ->(company_user) { where(company_id: company_user.company_id) }
 
   has_many :brand_ambassadors_documents, ->{ order('attached_assets.file_file_name ASC') },
@@ -41,15 +50,23 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
     end
   end
 
-  validates :name, presence: true
+  VISIT_TYPE_OPTIONS = {"Brand Program" => "brand_program",
+                        "PTO" => "pto",
+                        "Market Visit" => "market_visit",
+                        "Local Market Request" => "local_market_request"}
+
+  before_validation { self.city = nil if self.city == '' }
+
   validates :company_user, presence: true
   validates :company, presence: true
-
   validates :start_date, presence: true
   validates :end_date, presence: true,
       date: { on_or_after: :start_date, message: 'must be after' }
+  validates :visit_type, presence: true
+  validates :brand_id, presence: true, numericality: true
+  validates :area_id, presence: true, numericality: true
 
-  searchable do
+  searchable if: :active do
     integer :id, stored: true
     integer :company_id
     integer :company_user_id
@@ -59,16 +76,13 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
     integer :location, multiple: true do
       events.joins(place: :locations).pluck('DISTINCT(locations.id)')
     end
-    integer :campaign_ids, multiple: true do
-      events.pluck(:campaign_id)
-    end
-    boolean :active
     date :start_date, stored: true
     date :end_date, stored: true
 
-    string :name
-
-    string :status
+    string :visit_type
+    integer :brand_id
+    integer :area_id
+    string :city
   end
 
   def activate!
@@ -79,16 +93,14 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
     update_attribute :active, false
   end
 
-  def status
-    self.active? ? 'Active' : 'Inactive'
+  def visit_type_name
+    BrandAmbassadors::Visit::VISIT_TYPE_OPTIONS.detect{|k,v| v == visit_type }.try(:[], 0) if visit_type
   end
 
   def self.do_search(params, include_facets=false)
     solr_search do
       with :company_id, params[:company_id]
-      with :status, params[:status] if params.has_key?(:status) and params[:status].present?
       with :place_ids, params[:place] if params.has_key?(:place) and params[:place].present?
-      with :campaign_ids, params[:campaign] if params.has_key?(:campaign) and params[:campaign].present?
 
       if params[:start_date].present? and params[:end_date].present?
         d1 = Timeliness.parse(params[:start_date], zone: :current)
@@ -112,17 +124,9 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
         with :company_user_id, user_ids.uniq
       end
 
-      if params[:area].present?
-        any_of do
-          with :place_ids, Area.where(id: params[:area]).joins(:places).where(places: {is_location: false}).pluck('places.id').uniq + [0]
-          with :location, Area.where(id: params[:area]).map{|a| a.locations.map(&:id) }.flatten + [0]
-        end
-      end
-
-      if params.has_key?(:brand) and params[:brand].present?
-        campaing_ids = Campaign.joins(:brands).where(brands: {id: params[:brand]}, company_id: params[:company_id]).pluck('DISTINCT(campaigns.id)')
-        with :campaign_ids, campaing_ids + [0]
-      end
+      with :area_id, params[:area] if params.has_key?(:area) and params[:area].present?
+      with :brand_id, params[:brand] if params.has_key?(:brand) and params[:brand].present?
+      with :city, params[:city] if params.has_key?(:city) and params[:city].present?
 
       if params[:start] && params[:end]
         start_date = DateTime.strptime(params[:start],'%Q')
@@ -150,11 +154,7 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
         (attribute, value) = params[:q].split(',')
         case attribute
         when 'brand'
-          campaigns = Campaign.select('campaigns.id').joins(:brands).where(brands: {id: value}).pluck('campaigns.id')
-          campaigns = '-1' if campaigns.empty?
-          with :campaign_ids, campaigns
-        when 'campaign'
-          with :campaign_ids, value
+          with :brand_id, value
         when 'company_user'
           with :company_user_id, value
         when 'place'
@@ -162,10 +162,7 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
         when 'venue'
           with :place_ids, Venue.find(value).place_id
         when 'area'
-          any_of do
-            with :place_ids, Area.where(id: value).joins(:places).where(places: {is_location: false}).pluck('places.id').uniq + [0]
-            with :location, Area.find(value).locations.map(&:id) + [0]
-          end
+          with :area_id, value
         end
       end
 

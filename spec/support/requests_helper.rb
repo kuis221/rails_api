@@ -76,6 +76,7 @@ module CapybaraBrandscopicHelpers
   def select_from_autocomplete(selector, text)
     field = find_field(selector)
     page.execute_script %Q{$('##{field['id']}').val('#{text}').keydown()}
+    expect(page).to have_selector('ul.ui-autocomplete li.ui-menu-item a')
     find('ul.ui-autocomplete li.ui-menu-item a', match: :first).click
   end
 
@@ -179,6 +180,14 @@ module RequestsHelper
     section
   end
 
+  def choose_predefined_date_range(option)
+    click_js_link 'Date ranges'
+    within 'ul.dropdown-menu' do
+      click_js_link option
+    end
+    ensure_date_ranges_was_closed
+  end
+
   def open_tab(tab_name)
     link = find('.nav-tabs a', text: tab_name)
     link.click
@@ -200,6 +209,10 @@ module RequestsHelper
 
   def ensure_modal_was_closed
     expect(page).to have_no_selector('.modal.in', visible: true)
+  end
+
+  def ensure_date_ranges_was_closed
+    expect(page).to have_no_selector('.select-ranges.open', visible: true)
   end
 
   def ensure_on(path)

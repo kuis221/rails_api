@@ -1,5 +1,6 @@
 class AreasController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update]
+  respond_to :json, only: [:cities]
 
   belongs_to :place, optional: true
 
@@ -24,6 +25,10 @@ class AreasController < FilteredController
         render :create
       end
     end
+  end
+
+  def cities
+    render json: resource.cities
   end
 
   private

@@ -32,6 +32,12 @@ $chzn-single-height:39px;
 			padding: 0;
 			li{
 				padding: 8px 6px !important;
+				&:after{
+					color: #ccc;
+					content: attr(data-role);
+					font-size: 11px;
+					margin-left: 20px;
+				}
 			}
 			li.highlighted{
 				background-color: $brand;
