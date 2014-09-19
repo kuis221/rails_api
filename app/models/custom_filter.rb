@@ -25,7 +25,7 @@ class CustomFilter < ActiveRecord::Base
 
   scope :for_company_user, ->(company_user) {
     where(
-      '((owner_type=? AND owner_id=?) OR (owner_type=? AND owner_id=?))',
+      '(owner_type=? AND owner_id=?) OR (owner_type=? AND owner_id=?)',
       'Company', company_user.company_id, 'CompanyUser', company_user.id
     ) }
 end
