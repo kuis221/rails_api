@@ -2,6 +2,9 @@
 # See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
 
 en:
+  other_areas:
+    one: 'and one more areas'
+    one: 'and %{count} other areas'
   activerecord:
     models:
       company_user: "User"

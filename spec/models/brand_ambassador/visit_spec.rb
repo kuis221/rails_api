@@ -22,9 +22,6 @@ RSpec.describe BrandAmbassadors::Visit, :type => :model do
   it { is_expected.to validate_presence_of(:brand_id) }
   it { is_expected.to validate_numericality_of(:brand_id) }
 
-  it { is_expected.to validate_presence_of(:area_id) }
-  it { is_expected.to validate_numericality_of(:area_id) }
-
   describe "end date validations" do
     before { subject.start_date = '12/31/2012' }
     it { is_expected.to allow_value("12/31/2012").for(:end_date) }

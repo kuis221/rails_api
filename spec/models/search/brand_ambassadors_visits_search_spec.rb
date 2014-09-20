@@ -30,13 +30,20 @@ describe BrandAmbassadors::Visit, type: :model, search: true do
     area2 = FactoryGirl.create(:area, company: company)
     area2.places << place
 
-    visit = FactoryGirl.create(:brand_ambassadors_visit, company: company, company_user: user3, area: area, brand: brand, start_date: "02/22/2013", end_date: "02/23/2013")
-    visit2 = FactoryGirl.create(:brand_ambassadors_visit, company: company, company_user: user4, area: area2, brand: brand2, start_date: "03/22/2013", end_date: "03/22/2013")
+    visit = FactoryGirl.create(:brand_ambassadors_visit, company: company,
+      company_user: user3, area: area, brand: brand, city: 'Los Angeles',
+      start_date: "02/22/2013", end_date: "02/23/2013")
+    visit2 = FactoryGirl.create(:brand_ambassadors_visit, company: company,
+      company_user: user4, area: area2, brand: brand2, city: 'San Jose',
+      start_date: "03/22/2013", end_date: "03/22/2013")
 
 
     # Create a Campaign and an Event on company 2
     company2_campaign = FactoryGirl.create(:campaign)
     company2_visit = FactoryGirl.create(:brand_ambassadors_visit, company: company2_campaign.company)
+
+    # Inactive visit should never be returned
+    FactoryGirl.create(:brand_ambassadors_visit, company: company, active: false)
 
     Sunspot.commit
 
@@ -58,6 +65,11 @@ describe BrandAmbassadors::Visit, type: :model, search: true do
     expect(BrandAmbassadors::Visit.do_search(company_id: company.id, area: [area.id]).results).to match_array([visit])
     expect(BrandAmbassadors::Visit.do_search(company_id: company.id, q: "area,#{area2.id}").results).to match_array([visit2])
     expect(BrandAmbassadors::Visit.do_search(company_id: company.id, area: [area2.id]).results).to match_array([visit2])
+
+
+    # Search for a visits in a city
+    expect(BrandAmbassadors::Visit.do_search(company_id: company.id, city: ['Los Angeles']).results).to match_array([visit])
+    expect(BrandAmbassadors::Visit.do_search(company_id: company.id, city: ['San Jose']).results).to match_array([visit2])
 
     # Search for brands associated to the Events
     expect(BrandAmbassadors::Visit.do_search(company_id: company.id, q: "brand,#{brand.id}").results).to match_array([visit])

@@ -21,11 +21,11 @@ class BrandAmbassadors::VisitsController < FilteredController
   protected
 
     def describe_filters
-      first_part  = "#{describe_date_ranges} #{describe_brands} #{describe_areas}".strip
+      first_part  = "#{describe_date_ranges} #{describe_brands} #{describe_areas} #{describe_cities}".strip
       first_part = nil if first_part.empty?
       second_part = "#{describe_people}".strip
       second_part = nil if second_part.empty?
-      "#{view_context.pluralize(number_with_delimiter(collection_count), "#{describe_status} visit")} #{[first_part, second_part].compact.join(' and ')}"
+      "#{view_context.pluralize(number_with_delimiter(collection_count), "visit")} #{[first_part, second_part].compact.join(' and ')}"
     end
 
     def permitted_params
@@ -56,17 +56,25 @@ class BrandAmbassadors::VisitsController < FilteredController
       {label: 'Brand Ambassadors', items: users}
     end
 
+    def build_city_bucket
+      cities = current_company.brand_ambassadors_visits.
+        active.where.not(city: '').reorder(:city).pluck('DISTINCT brand_ambassadors_visits.city').map do |r|
+          build_facet_item({label: r, id: r, name: :city, count: 1})
+      end
+      {label: 'Cities', items: cities}
+    end
+
     # Returns the facets for the events controller
     def facets
       @events_facets ||= Array.new.tap do |f|
         # select what params should we use for the facets search
+        f.concat build_custom_filters_bucket
 
         f.push build_brand_ambassadors_bucket
         f.push build_areas_bucket
+        f.push build_city_bucket
         f.push build_brands_bucket
-        f.push build_state_bucket
 
-        f.push build_custom_filters_bucket
       end
     end
 end

@@ -1566,6 +1566,17 @@ class Api::V1::EventsController < Api::V1::FilteredController
   end
 
   protected
+    def facets
+      @facets ||= Array.new.tap do |f|
+        f.push build_campaign_bucket
+        f.push build_brands_bucket
+        f.push build_areas_bucket
+        f.push build_people_bucket
+
+        f.push build_status_bucket
+        f.push build_state_bucket
+      end
+    end
 
     def permitted_params
       parameters = {}
