@@ -64,7 +64,6 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
       date: { on_or_after: :start_date, message: 'must be after' }
   validates :visit_type, presence: true
   validates :brand_id, presence: true, numericality: true
-  validates :area_id, presence: true, numericality: true
 
   searchable if: :active do
     integer :id, stored: true

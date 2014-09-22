@@ -59,6 +59,10 @@ describe Api::V1::EventsController, :type => :controller do
       FactoryGirl.create(:rejected_event, company: company, campaign: campaign, place: place)
       FactoryGirl.create(:submitted_event, company: company, campaign: campaign, place: place)
       FactoryGirl.create(:late_event, company: company, campaign: campaign, place: place)
+
+      # Make sure custom filters are not returned
+      FactoryGirl.create(:custom_filter, owner: company, group: 'SAVED FILTERS', apply_to: 'events')
+
       Sunspot.commit
 
       get :index, auth_token: user.authentication_token, company_id: company.to_param, format: :json
@@ -66,7 +70,7 @@ describe Api::V1::EventsController, :type => :controller do
       result = JSON.parse(response.body)
 
       expect(result['results'].count).to eq(4)
-      expect(result['facets'].map{|f| f['label'] }).to match_array(["Campaigns", "Brands", "Areas", "People", "Active State", "Event Status", "Saved Filters"])
+      expect(result['facets'].map{|f| f['label'] }).to match_array(["Campaigns", "Brands", "Areas", "People", "Active State", "Event Status"])
 
       expect(result['facets'].detect{|f| f['label'] == 'Event Status' }['items'].map{|i| [i['label'], i['count']]}).to match_array([["Late", 1], ["Due", 1], ["Submitted", 1], ["Rejected", 1], ["Approved", 1]])
     end

@@ -17,21 +17,22 @@ describe CustomFiltersController, :type => :controller do
   describe "POST 'create'" do
     it "should be able to create a custom filter" do
       expect {
-        xhr :post, 'create', custom_filter: {company_user_id: @company_user.to_param, name: 'My Custom Filter', apply_to: 'events', filters: 'Filters'}, format: :js
+        xhr :post, 'create', custom_filter: {name: 'My Custom Filter', group: 'Saved Filters', apply_to: 'events', filters: 'Filters'}, format: :js
       }.to change(CustomFilter, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template('create')
       expect(response).not_to render_template('_form_dialog')
       custom_filter = CustomFilter.last
-      expect(custom_filter.company_user_id).to eq(@company_user.id)
+      expect(custom_filter.owner).to eq(@company_user)
       expect(custom_filter.name).to eq('My Custom Filter')
       expect(custom_filter.apply_to).to eq('events')
       expect(custom_filter.filters).to eq('Filters')
+      expect(custom_filter.group).to eq('Saved Filters')
     end
 
     it "should render the form_dialog template if errors" do
       expect {
-        xhr :post, 'create', custom_filter: {company_user_id: @company_user.to_param, name: '', apply_to: '', filters: ''}, format: :js
+        xhr :post, 'create', custom_filter: {name: '', apply_to: '', filters: ''}, format: :js
       }.not_to change(CustomFilter, :count)
       expect(response).to render_template('create')
       expect(response).to render_template('_form_dialog')
@@ -40,7 +41,7 @@ describe CustomFiltersController, :type => :controller do
   end
 
   describe "DELETE 'destroy'" do
-    let(:custom_filter) { FactoryGirl.create(:custom_filter, company_user_id: @company_user.to_param, name: 'My Custom Filter', apply_to: 'events', filters: 'Filters') }
+    let(:custom_filter) { FactoryGirl.create(:custom_filter, owner: @company_user, name: 'My Custom Filter', apply_to: 'events', filters: 'Filters') }
     it "should delete the custom filter" do
       custom_filter.save # Make sure record is created before the expect block
       expect {

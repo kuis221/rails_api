@@ -130,8 +130,15 @@ module FacetsHelper
   end
 
   def build_custom_filters_bucket
-    items = current_company_user.custom_filters.by_type(filter_settings_scope).map{|cf| build_facet_item({id: cf.filters+'&id='+cf.id.to_s, label: cf.name, name: :custom_filter, count: 1}) }
-    {label: "Saved Filters", items: items}
+    groups = {}
+    CustomFilter.for_company_user(current_company_user).order('custom_filters.name ASC').by_type(filter_settings_scope).each do |filter|
+      groups[filter.group.upcase] ||= []
+      groups[filter.group.upcase].push filter
+    end
+
+    groups.map do |group, filters|
+      {label: group, items: filters.map{|cf| build_facet_item({id: cf.filters+'&id='+cf.id.to_s, label: cf.name, name: :custom_filter, count: 1}) } }
+    end
   end
 
   # Returns the facets for the events controller
@@ -144,7 +151,7 @@ module FacetsHelper
 
       f.push build_status_bucket
       f.push build_state_bucket
-      f.push build_custom_filters_bucket
+      f.concat build_custom_filters_bucket
     end
   end
 

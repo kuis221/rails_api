@@ -22,7 +22,7 @@ class CompanyUser < ActiveRecord::Base
   belongs_to :role
   has_many :tasks, dependent: :nullify
   has_many :notifications, dependent: :destroy
-  has_many :custom_filters, dependent: :destroy
+  has_many :custom_filters, dependent: :destroy, as: :owner, inverse_of: :owner
   has_many :filter_settings, dependent: :destroy
   has_many :alerts, class_name: 'AlertsUser', dependent: :destroy
   has_many :satisfaction_surveys
