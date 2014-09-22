@@ -617,14 +617,14 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			padding-top: 5px;
 		}
 		td{
-			padding: 2px;
+			padding: 0;
 		}
 		tr{
 			td:first-child{
 				.datepick-selected.datepick-weekend{
-					border-top-left-radius:12px;
+					border-top-left-radius:14px;
 					border-top-right-radius:0;
-					border-bottom-left-radius:12px;
+					border-bottom-left-radius:14px;
 					border-bottom-right-radius:0;
 					&:after{
 						display:inline-block;
@@ -639,12 +639,13 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			box-sizing: border-box;
 			color: $text;
 			font-size: 0.86em;
-			padding: 2px 3px;
-			-webkit-border-radius: 12px;
-			border-radius: 12px;
+			margin: 1px 0;
+			padding: 4px;
+			-webkit-border-radius: 14px;
+			border-radius: 14px;
 			//line-height:17px;
-			width: 24px;
-			height: 24px;
+			width: 28px;
+			height: 28px;
 			position: relative;
 			&.datepick-today{
 				background-color: $brand;
@@ -691,20 +692,24 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		font-weight: 400;
 		&.datepick-today{
 			background-color: #3381a8;
+			background-image: image-url('rounded-circle.png');
 			&:hover{
 				background-color: #3381a8;
 			}
 		}
+		&.datepick-event:after{
+			opacity:0;
+		}
 		&.datepick-weekend{
-			border-top-right-radius:12px;
-			border-bottom-right-radius:12px;
+			border-top-right-radius:14px;
+			border-bottom-right-radius:14px;
 			&:after{
 				display:none;
 			}
 		}
 		&:hover{
 			background-color: #3e9ccf;
-		}
+		}/*
 		&:after{
 			background-color: #3e9ccf;
 			content: "";
@@ -724,28 +729,28 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			left: -2px;
 			top:0;
 			width:2px;
-		}
+		}*/
 		&.first-selected.last-selected{
 			background-color: $brand;
 		}
 		&.first-selected{
-			-webkit-border-top-left-radius: 12px;
-			-webkit-border-bottom-left-radius: 12px;
-			-moz-border-radius-topleft: 12px;
-			-moz-border-radius-bottomleft: 12px;
-			border-top-left-radius: 12px;
-			border-bottom-left-radius: 12px;
+			-webkit-border-top-left-radius: 14px;
+			-webkit-border-bottom-left-radius: 14px;
+			-moz-border-radius-topleft: 14px;
+			-moz-border-radius-bottomleft: 14px;
+			border-top-left-radius: 14px;
+			border-bottom-left-radius: 14px;
 			&:before{
 				display:none;
 			}
 		}
 		&.last-selected{
-			-webkit-border-top-right-radius: 12px;
-			-webkit-border-bottom-right-radius: 12px;
-			-moz-border-radius-topright: 12px;
-			-moz-border-radius-bottomright: 12px;
-			border-top-right-radius: 12px;
-			border-bottom-right-radius: 12px;
+			-webkit-border-top-right-radius: 14px;
+			-webkit-border-bottom-right-radius:14px;
+			-moz-border-radius-topright: 14px;
+			-moz-border-radius-bottomright: 14px;
+			border-top-right-radius: 14px;
+			border-bottom-right-radius: 14px;
 			&:after{
 				display:none;
 			}
