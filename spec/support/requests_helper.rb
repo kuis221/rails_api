@@ -117,17 +117,10 @@ module CapybaraBrandscopicHelpers
     find('div.dates-range-filter div.datepick-month').click_js_link(day1).click_js_link(day2)
   end
 
-  def select_and_fill_from_datepicker(name, date, format = '%m/%d/%y')
-    if date.class.in?([Time, DateTime, Date])
-      date = date.strftime(format)
-    end
-    #Click on random date to trigger onSelect event
-    page.execute_script %Q{ $("a.ui-state-default:contains('15')").trigger("click") }
-    #Fill corresponding field
-    wrapped_name = "#{name}"
-    id = find(:xpath, "//input[contains(@name, '#{wrapped_name}')]")[:id]
-    page.execute_script("$('##{id}').removeAttr('readonly')")
-    fill_in name, :with => date
+  def select_and_fill_from_datepicker(name, date)
+    date = date.to_s(:slashes) if date.class.in?([Time, DateTime, Date])
+    (month, day, year) = date.split('/')
+    find(:xpath, "//td[@data-year='#{year}' and @data-month='#{month.to_i-1}']", text: day.to_s).click_js_link(day)
   end
 
   def unicheck(option)

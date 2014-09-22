@@ -28,7 +28,7 @@ FactoryGirl.define do
     end_date "08/27/2014"
     active true
     visit_type "brand_program"
-    brand_id 1
+    campaign { FactoryGirl.create(:campaign, company: company) }
     area_id 1
     city "Test City"
   end

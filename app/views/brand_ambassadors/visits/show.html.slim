@@ -14,16 +14,18 @@
       span
         = resource.company_user.try(:name)
 
-    .description-data
-      i.icon-wired-star
-      span
-        = resource.brand_name
+    - if resource.campaign.present?
+      .description-data
+        i.icon-campaign
+        span
+          = resource.campaign_name
 
-    .place-data
-      i.icon-wired-venue
-      span
-        = resource.area_name
-        = " (#{resource.city})" if resource.city
+    - if resource.area || resource.city
+      .place-data
+        i.icon-wired-venue
+        span
+          = resource.area_name
+          = " (#{resource.city})" if resource.city
 
 
     - if resource.description.present?
