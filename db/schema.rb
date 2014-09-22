@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140919052349) do
+ActiveRecord::Schema.define(version: 20140920000541) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -177,13 +177,13 @@ ActiveRecord::Schema.define(version: 20140919052349) do
     t.datetime "updated_at"
     t.text     "description"
     t.string   "visit_type"
-    t.integer  "brand_id"
     t.integer  "area_id"
     t.string   "city"
+    t.integer  "campaign_id"
   end
 
   add_index "brand_ambassadors_visits", ["area_id"], name: "index_brand_ambassadors_visits_on_area_id", using: :btree
-  add_index "brand_ambassadors_visits", ["brand_id"], name: "index_brand_ambassadors_visits_on_brand_id", using: :btree
+  add_index "brand_ambassadors_visits", ["campaign_id"], name: "index_brand_ambassadors_visits_on_campaign_id", using: :btree
   add_index "brand_ambassadors_visits", ["company_id"], name: "index_brand_ambassadors_visits_on_company_id", using: :btree
   add_index "brand_ambassadors_visits", ["company_user_id"], name: "index_brand_ambassadors_visits_on_company_user_id", using: :btree
 

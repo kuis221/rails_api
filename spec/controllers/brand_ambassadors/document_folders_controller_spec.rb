@@ -3,8 +3,9 @@ require 'rails_helper'
 RSpec.describe BrandAmbassadors::DocumentFoldersController , type: :controller do
 
   let(:company){ FactoryGirl.create(:company) }
+  let(:campaign){ FactoryGirl.create(:campaign, company: company) }
   let(:user){ FactoryGirl.create(:company_user, company: company) }
-  let(:visit) { FactoryGirl.create(:brand_ambassadors_visit,
+  let(:visit) { FactoryGirl.create(:brand_ambassadors_visit, campaign: campaign,
         company: company, company_user: user) }
 
   before{ sign_in_as_user user }
@@ -66,7 +67,7 @@ RSpec.describe BrandAmbassadors::DocumentFoldersController , type: :controller d
     end
 
     it "returns http success" do
-      visit = FactoryGirl.create(:brand_ambassadors_visit,
+      visit = FactoryGirl.create(:brand_ambassadors_visit, campaign: campaign,
         company: company, company_user: user)
       xhr :get, 'new', visit_id: visit.id, format: :js
       expect(response).to be_success
