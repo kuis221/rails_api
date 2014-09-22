@@ -44,6 +44,7 @@ class Company < ActiveRecord::Base
       self.where(parent_id: nil)
     end
   end
+  has_many :custom_filters, dependent: :destroy, as: :owner, inverse_of: :owner
 
   has_many :tags, ->{ order('tags.name ASC') }, :autosave => true, dependent: :destroy
 

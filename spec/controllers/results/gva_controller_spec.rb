@@ -73,11 +73,15 @@ describe Results::GvaController, :type => :controller do
 
         reader = PDF::Reader.new(open(export.reload.file.url))
         reader.pages.each do |page|
-          expect(page.text).to include 'My Super campaign'
-          expect(page.text).to include 'Goals vs. Actual'
-          expect(page.text).to include 'My Custom KPI'
-          expect(page.text).to include '45%'
-          expect(page.text).to include '45 OF 100 GOAL'
+          # PDF to text seems to not always return the same results
+          # with white spaces, so, remove them and look for strings
+          # without whitespaces
+          text = page.text.gsub(/[\s\n]/, '')
+          expect(text).to include 'MySupercampaign'
+          expect(text).to include 'Goalsvs.Actual'
+          expect(text).to include 'MyCustomKPI'
+          expect(text).to include '45%'
+          expect(text).to include '45OF100GOAL'
         end
       end
 
@@ -101,11 +105,15 @@ describe Results::GvaController, :type => :controller do
 
         reader = PDF::Reader.new(open(export.reload.file.url))
         reader.pages.each do |page|
-          expect(page.text).to include 'My Super campaign'
-          expect(page.text).to include 'Goals vs. Actual'
-          expect(page.text).to include 'My Custom KPI'
-          expect(page.text).to include '45%'
-          expect(page.text).to include '45 OF 100 GOAL'
+          # PDF to text seems to not always return the same results
+          # with white spaces, so, remove them and look for strings
+          # without whitespaces
+          text = page.text.gsub(/[\s\n]/, '')
+          expect(text).to include 'MySupercampaign'
+          expect(text).to include 'Goalsvs.Actual'
+          expect(text).to include 'MyCustomKPI'
+          expect(text).to include '45%'
+          expect(text).to include '45OF100GOAL'
         end
       end
 
@@ -134,11 +142,15 @@ describe Results::GvaController, :type => :controller do
 
         reader = PDF::Reader.new(open(export.reload.file.url))
         reader.pages.each do |page|
-          expect(page.text).to include 'My Super campaign'
-          expect(page.text).to include 'Goals vs. Actual'
-          expect(page.text).to include 'My Custom KPI'
-          expect(page.text).to include '90%'
-          expect(page.text).to include '45 OF 50 GOAL'
+          # PDF to text seems to not always return the same results
+          # with white spaces, so, remove them and look for strings
+          # without whitespaces
+          text = page.text.gsub(/[\s\n]/, '')
+          expect(text).to include 'MySupercampaign'
+          expect(text).to include 'Goalsvs.Actual'
+          expect(text).to include 'MyCustomKPI'
+          expect(text).to include '90%'
+          expect(text).to include '45OF50GOAL'
         end
       end
     end

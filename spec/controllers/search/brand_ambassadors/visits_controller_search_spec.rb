@@ -77,12 +77,13 @@ describe BrandAmbassadors::VisitsController, type: :controller, search: true do
 
     describe "GET 'filters'" do
       it "should return the correct buckets in the right order" do
+        FactoryGirl.create(:custom_filter, owner: @company_user, group: 'DIVISIONS', apply_to: 'visits')
         Sunspot.commit
         get 'filters', format: :json
         expect(response).to be_success
 
         filters = JSON.parse(response.body)
-        expect(filters['filters'].map{|b| b['label']}).to eq(["Brand Ambassadors", "Areas", "Cities", "Brands", "Saved Filters"])
+        expect(filters['filters'].map{|b| b['label']}).to eq(["DIVISIONS", "Brand Ambassadors", "Areas", "Cities", "Brands"])
       end
 
       it "should return only users in the configured role for brand ambassadors section" do

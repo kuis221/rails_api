@@ -49,7 +49,7 @@
   javascript:
     $('#collection-list-filters').filteredList({
       'source': '#{url_for(controller: 'brand_ambassadors/visits', action: :items)}',
-      'filtersUrl': '#{url_for(controller: 'brand_ambassadors/visits', action: :filters)}',
+      'filtersUrl': '#{url_for(controller: 'brand_ambassadors/visits', action: :filters, apply_to: :visits)}',
       'listContainer' : '#visits-list',
       'sorting': 'start_date',
       'sorting_dir': 'asc',
@@ -60,7 +60,7 @@
       'autoCompletePath': '#{autocomplete_brand_ambassadors_visits_path(format: :json)}',
       'fixListHeight': false,
       'defaultParams': [{name: 'start_date', value:'#{Time.zone.now.strftime("%m/%d/%Y")}'}, {name: 'end_date', value:'#{(Time.zone.now + 10.years).strftime("%m/%d/%Y")}'}],
-      'applyTo': '#{controller.controller_name}',
+      'applyTo': 'visits',
       'clearFilterParams': [],
       'onItemsLoad': function(response, page){
         if (response.find('div[data-content="filters-description"]').length > 0){

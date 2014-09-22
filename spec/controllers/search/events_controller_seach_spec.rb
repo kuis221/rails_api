@@ -97,17 +97,17 @@ describe EventsController, type: :controller, search: true do
       end
     end
 
-
     describe "GET 'filters'" do
       it "should return the correct buckets in the right order" do
         Sunspot.commit
+        FactoryGirl.create(:custom_filter, owner: @company_user, group: 'SAVED FILTERS', apply_to: 'events')
+
         get 'filters', format: :json
         expect(response).to be_success
 
         filters = JSON.parse(response.body)
-        expect(filters['filters'].map{|b| b['label']}).to eq(["Campaigns", "Brands", "Areas", "People", "Event Status", "Active State", "Saved Filters"])
+        expect(filters['filters'].map{|b| b['label']}).to eq(["Campaigns", "Brands", "Areas", "People", "Event Status", "Active State", 'SAVED FILTERS'])
       end
-
 
       it "should return the correct buckets in the right order" do
         Kpi.create_global_kpis
@@ -125,6 +125,7 @@ describe EventsController, type: :controller, search: true do
           ethnicity_hispanic: 26,
           ethnicity_white: 12
         )
+        FactoryGirl.create(:custom_filter, owner: @company_user, group: 'SAVED FILTERS', apply_to: 'events')
         Sunspot.commit
 
         get 'filters', with_event_data_only: true, format: :json
@@ -132,7 +133,7 @@ describe EventsController, type: :controller, search: true do
         expect(response).to be_success
         filters = JSON.parse(response.body)
 
-        expect(filters['filters'].map{|b| b['label']}).to eq(["Campaigns", "Brands", "Areas", "People", "Event Status", "Active State", "Saved Filters"])
+        expect(filters['filters'].map{|b| b['label']}).to eq(["Campaigns", "Brands", "Areas", "People", "Event Status", "Active State", "SAVED FILTERS"])
         expect(filters['filters'][0]['items'].count).to eq(1)
         expect(filters['filters'][0]['items'].first['label']).to eq(campaign.name)
       end

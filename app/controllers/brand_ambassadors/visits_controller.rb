@@ -57,8 +57,9 @@ class BrandAmbassadors::VisitsController < FilteredController
     end
 
     def build_city_bucket
-      cities = current_company.brand_ambassadors_visits.active.where("city <> ''").reorder(:city).pluck('DISTINCT brand_ambassadors_visits.city').map do |r|
-        build_facet_item({label: r, id: r, name: :city, count: 1})
+      cities = current_company.brand_ambassadors_visits.
+        active.where.not(city: '').reorder(:city).pluck('DISTINCT brand_ambassadors_visits.city').map do |r|
+          build_facet_item({label: r, id: r, name: :city, count: 1})
       end
       {label: 'Cities', items: cities}
     end
@@ -67,13 +68,13 @@ class BrandAmbassadors::VisitsController < FilteredController
     def facets
       @events_facets ||= Array.new.tap do |f|
         # select what params should we use for the facets search
+        f.concat build_custom_filters_bucket
 
         f.push build_brand_ambassadors_bucket
         f.push build_areas_bucket
         f.push build_city_bucket
         f.push build_brands_bucket
 
-        f.push build_custom_filters_bucket
       end
     end
 end

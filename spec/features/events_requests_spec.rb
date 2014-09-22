@@ -560,7 +560,7 @@ feature 'Events section' do
           }.to change(CustomFilter, :count).by(1)
 
           custom_filter = CustomFilter.last
-          expect(custom_filter.company_user_id).to eq(company_user.id)
+          expect(custom_filter.owner).to eq(company_user)
           expect(custom_filter.name).to eq('My Custom Filter')
           expect(custom_filter.apply_to).to eq('events')
           expect(custom_filter.filters).to eq('campaign%5B%5D='+campaign1.to_param+'&user%5B%5D='+user1.to_param+'&event_status%5B%5D=Submitted&status%5B%5D=Active')
@@ -577,8 +577,8 @@ feature 'Events section' do
         event2.users << user2
         Sunspot.commit
 
-        FactoryGirl.create(:custom_filter, company_user_id: company_user.to_param, name: 'Custom Filter 1', apply_to: 'events', filters: 'campaign%5B%5D='+campaign1.to_param+'&user%5B%5D='+user1.to_param+'&event_status%5B%5D=Submitted&status%5B%5D=Active')
-        FactoryGirl.create(:custom_filter, company_user_id: company_user.to_param, name: 'Custom Filter 2', apply_to: 'events', filters: 'campaign%5B%5D='+campaign2.to_param+'&user%5B%5D='+user2.to_param+'&event_status%5B%5D=Late&status%5B%5D=Active')
+        FactoryGirl.create(:custom_filter, owner: company_user, name: 'Custom Filter 1', apply_to: 'events', filters: 'campaign%5B%5D='+campaign1.to_param+'&user%5B%5D='+user1.to_param+'&event_status%5B%5D=Submitted&status%5B%5D=Active')
+        FactoryGirl.create(:custom_filter, owner: company_user, name: 'Custom Filter 2', apply_to: 'events', filters: 'campaign%5B%5D='+campaign2.to_param+'&user%5B%5D='+user2.to_param+'&event_status%5B%5D=Late&status%5B%5D=Active')
 
         visit events_path
 
@@ -645,9 +645,9 @@ feature 'Events section' do
       end
 
       scenario "allows to remove custom filters" do
-        FactoryGirl.create(:custom_filter, company_user_id: company_user.to_param, name: 'Custom Filter 1', apply_to: 'events', filters: 'Filters 1')
-        cf2 = FactoryGirl.create(:custom_filter, company_user_id: company_user.to_param, name: 'Custom Filter 2', apply_to: 'events', filters: 'Filters 2')
-        FactoryGirl.create(:custom_filter, company_user_id: company_user.to_param, name: 'Custom Filter 3', apply_to: 'events', filters: 'Filters 3')
+        FactoryGirl.create(:custom_filter, owner: company_user, name: 'Custom Filter 1', apply_to: 'events', filters: 'Filters 1')
+        cf2 = FactoryGirl.create(:custom_filter, owner: company_user, name: 'Custom Filter 2', apply_to: 'events', filters: 'Filters 2')
+        FactoryGirl.create(:custom_filter, owner: company_user, name: 'Custom Filter 3', apply_to: 'events', filters: 'Filters 3')
 
         visit events_path
 

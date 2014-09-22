@@ -9,7 +9,11 @@ class CustomFiltersController < InheritedResources::Base
       [permitted_params || {}]
     end
 
+    def begin_of_association_chain
+      current_company_user
+    end
+
     def permitted_params
-      params.permit(custom_filter: [:id, :company_user_id, :name, :apply_to, :filters])[:custom_filter]
+      params.permit(custom_filter: [:id, :name, :group, :apply_to, :filters])[:custom_filter]
     end
 end
