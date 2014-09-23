@@ -9,14 +9,24 @@
     .row-fluid
       .span12
         .pull-left
-          = f.input :start_date, :as => :date_picker
-        .pull-left
-          = f.input :start_time, :as => :time_picker, inline: true
+          = f.input :start_date, label: 'Start', wrapper_html: { class: 'visit_event_start_date' } do
+            .pull-left
+              .event_start_date
+                = f.input_field :start_date, :as => :date_picker, label: false
+            .pull-left
+              .event_start_time
+                = f.input_field :start_time, :as => :time_picker, label: false
+          end
         .to.pull-left to
         .pull-left
-          = f.input :end_date, :as => :date_picker
-        .pull-left
-          = f.input :end_time, :as => :time_picker, inline: true
+          = f.input :end_date, label: 'End', wrapper_html: { class: 'visit_event_end_date' } do
+            .pull-left
+              .event_end_date
+                = f.input_field :end_date, :as => :date_picker, label: false
+            .pull-left
+              .event_end_time
+                = f.input_field :end_time, :as => :time_picker, label: false
+          end
 
     - if parent.is_a?(Venue)
         = f.hidden_field :place_reference, as: :hidden, value: parent.place_id
@@ -30,6 +40,9 @@
     = f.input :team_members, label: 'Event staff' do
       = f.select :team_members, current_company.team_member_options , {}, class: 'input-xlarge chosen-enabled', multiple: true, 'data-placeholder' => " "
 
+    - if params[:visit_id].present?
+      = hidden_field_tag :visit_id, params[:visit_id]
+
   .form-actions
     = f.button :submit, class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
     = "&nbsp;".html_safe
@@ -37,11 +50,15 @@
 
 javascript:
   val = $('#calendar_start_date').text();
+  visitStartDate = "#{params[:visit_id] ? current_company.brand_ambassadors_visits.find(params[:visit_id]).start_date : ''}";
+  visitEndDate = "#{params[:visit_id] ? current_company.brand_ambassadors_visits.find(params[:visit_id]).end_date : ''}";
   $('#event_start_date').datepicker({
     showOtherMonths: true,
     selectOtherMonths: true,
     dateFormat: "mm/dd/yy",
     defaultDate: $('#calendar_start_date').data('date'),
+    minDate: visitStartDate,
+    maxDate: visitEndDate,
     onClose: function( selectedDate ) {
       var pattern = /(\d{2})\/(\d{2})\/(\d{4})/;
       var prevDate = $('#event_start_date').data('previous-date');
@@ -51,7 +68,7 @@ javascript:
         var diff =  Math.abs(endDate.getTime() - prevDate.getTime());
         var ed = new Date();
         ed.setTime(startDate.getTime() + diff)
-        $('#event_end_date').datepicker( "setDate",  ed);
+        $('#event_end_date').datepicker("setDate", ed);
       }
       $('#event_start_date').data('previous-date', startDate);
     }
@@ -60,7 +77,9 @@ javascript:
   $('#event_end_date').datepicker({
     showOtherMonths: true,
     selectOtherMonths: true,
-    dateFormat: "mm/dd/yy"
+    dateFormat: "mm/dd/yy",
+    minDate: visitStartDate,
+    maxDate: visitEndDate
   });
 
   $('#event_start_time').on('change hideTimepicker', function(){

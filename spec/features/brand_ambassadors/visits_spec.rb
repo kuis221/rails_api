@@ -447,6 +447,7 @@ feature "Brand Ambassadors Visits" do
     end
 
     scenario "allows to create a new event" do
+      today = Time.zone.local(Time.now.strftime('%Y'), Time.now.strftime('%m'), 18, 12, 00)
       expect(Place).to receive(:open).and_return(double(read: '{}')) # So we don't search in google places
 
       Venue.create(place_id: place.id, company: company)
@@ -456,6 +457,7 @@ feature "Brand Ambassadors Visits" do
 
       ba_visit = FactoryGirl.create(:brand_ambassadors_visit,
         campaign: campaign, area: area,
+        start_date: today, end_date: (today+1.day).to_s(:slashes),
         company: company, company_user: company_user)
       Sunspot.commit
 
@@ -467,6 +469,10 @@ feature "Brand Ambassadors Visits" do
 
       within visible_modal do
         expect(page).to have_content(company_user.full_name)
+        find_field('event_start_date').click
+        select_and_fill_from_datepicker('event_start_date', today.to_s(:slashes))
+        find_field('event_end_date').click
+        select_and_fill_from_datepicker('event_end_date', today.to_s(:slashes))
         select_from_chosen('ABSOLUT Vodka', from: 'Campaign')
         select_from_chosen('Other User', from: 'Event staff')
         select_from_autocomplete 'Search for a place', place.name
