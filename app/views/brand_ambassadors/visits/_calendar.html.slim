@@ -2,60 +2,91 @@
 
 javascript:
   window.status='loading';
-  var visitsCalendar, buildCalendar = function() {
-    return $('#calendar-canvas').fullCalendar({
-      header: {
-        left: 'title',
-        center: '',
-        right: 'prev,next'
-      },
-      height: 'auto',
-      titleFormat: {
-        month: 'MMMM, YYYY'
-      },
-      buttonIcons: {
-          prev: 'bc icon icon-angle-left',
-          next: 'bc icon icon-angle-right',
-          prevYear: 'bc icon icon-angle-left',
-          nextYear: 'bc icon icon-angle-right'
-      },
-      fixedWeekCount: false,
-      eventLimit: false,
-      events: {
-        events: function(start, end, timezone, callback){
-          var data = '#{j params.to_query.html_safe}';
-          if ($('#collection-list-filters').length > 0) {
-            data = $('#collection-list-filters').filteredList('selectCalendarDates', start.toDate(), end.toDate()).filteredList('paramsQueryString');
-          } else {
-            data += "&start="+start+"&end="+end;
-          }
-          $.ajax({
-              url: '#{brand_ambassadors_visits_url(format: :json)}',
-              dataType: 'json',
-              data: data,
-              success: function(events) {
-                  callback(events);
-                  window.status = 'completed';
-              }
-          });
+  var visitsCalendar,
+    colorIndex = 0,
+    campaignColors = {},
+    colors = [
+      ['#d3c941', '#fff'],
+      ['#606060', '#fff'],
+      ['#a18740', '#fff'],
+      ['#d93f99', '#fff'],
+      ['#a766cf', '#fff'],
+      ['#7e42a4', '#fff'],
+      ['#d7a23c', '#fff'],
+      ['#6c5f3c', '#fff'],
+      ['#bfbfbf', '#fff'],
+      ['#909090', '#fff']
+    ],
+    buildCalendar = function() {
+      return $('#calendar-canvas').fullCalendar({
+        header: {
+          left: 'title',
+          center: '',
+          right: 'prev,next'
         },
-        className: 'visit-item',
-        backgroundColor: '#3e9ccf',
-        borderColor: '#3e9ccf',
-        textColor: 'white'
-      },
-      timeFormat: {
-        'default': function(){ return ''; }
-      },
-      eventRender: function(visit, element) {
-        var title = [(visit.visit_type_name || null), (visit.campaign_name || null)].filter(function(e) { return e; }).join(' - ');
-        element.find('.fc-title').html(
-          title + "<br/>" +
-          "<span class='user-name'>" + visit.company_user.full_name + "</span>" +
-          (visit.city ? " - <span class='city-name'>" + visit.city + "</span>" : '')
-        );
-      }
-    });
+        height: 'auto',
+        titleFormat: {
+          month: 'MMMM, YYYY'
+        },
+        buttonIcons: {
+            prev: 'bc icon icon-angle-left',
+            next: 'bc icon icon-angle-right',
+            prevYear: 'bc icon icon-angle-left',
+            nextYear: 'bc icon icon-angle-right'
+        },
+        fixedWeekCount: false,
+        eventLimit: false,
+        events: {
+          events: function(start, end, timezone, callback){
+            var data = '#{j params.to_query.html_safe}';
+            if ($('#collection-list-filters').length > 0) {
+              data = $('#collection-list-filters').filteredList('selectCalendarDates', start.toDate(), end.toDate()).filteredList('paramsQueryString');
+            } else {
+              data += "&start="+start+"&end="+end;
+            }
+            $.ajax({
+                url: '#{brand_ambassadors_visits_url(format: :json)}',
+                dataType: 'json',
+                data: data,
+                success: function(events) {
+                    $.each(events, function(i, event){
+                      var campaignColors;
+                      if (event.campaign_name) {
+                        campaignColors = getCampaignColor(event.campaign_name);
+                        event.backgroundColor = campaignColors[0];
+                        event.borderColor = campaignColors[0];
+                        event.eventTextColor = campaignColors[1];
+                      }
+                    });
+                    callback(events);
+                    window.status = 'completed';
+                }
+            });
+          },
+          className: 'visit-item',
+          backgroundColor: '#3e9ccf',
+          borderColor: '#3e9ccf',
+          textColor: 'white'
+        },
+        timeFormat: {
+          'default': function(){ return ''; }
+        },
+        eventRender: function(visit, element) {
+          var title = [(visit.visit_type_name || null), (visit.campaign_name || null)].filter(function(e) { return e; }).join(' - ');
+          element.find('.fc-title').html(
+            title + "<br/>" +
+            "<span class='user-name'>" + visit.company_user.full_name + "</span>" +
+            (visit.city ? " - <span class='city-name'>" + visit.city + "</span>" : '')
+          );
+        }
+      });
+  },
+  getCampaignColor = function(campaign_name){
+    if (typeof campaignColors[campaign_name] === 'undefined') {
+      if (colorIndex >= colors.length){ colorIndex = 0; }
+      campaignColors[campaign_name] = colors[colorIndex++];
+    }
+    return campaignColors[campaign_name];
   };
 
   if ($('#toggle-visits-view a').length == 0) {
