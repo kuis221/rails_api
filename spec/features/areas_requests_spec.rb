@@ -18,7 +18,7 @@ feature "Areas", js: true, search: true  do
     scenario 'allows the user to edit the area' do
       visit area_path(area)
 
-      click_js_link('Edit')
+      within('.links-data') { click_js_button 'Edit Area' }
 
       within visible_modal do
         fill_in 'Name', with: 'edited area name'

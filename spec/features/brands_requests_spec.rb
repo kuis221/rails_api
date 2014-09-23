@@ -107,7 +107,7 @@ feature "Brands", js: true do
       Sunspot.commit
       visit brand_path(brand)
 
-      click_js_link('Edit')
+      within('.links-data') { click_js_button 'Edit Brand' }
 
       within visible_modal do
         fill_in 'Name', with: 'Edited brand name'
@@ -121,12 +121,12 @@ feature "Brands", js: true do
       expect(page).to have_selector('div.marques-data', text: 'Marque(s): Marque 1')
     end
 
-    scenario 'allows the user to edit the brand' do
+    scenario 'allows the user to remove a marquee' do
       brand = FactoryGirl.create(:brand, name: 'Brand 1', marques_list: 'Marque 1,Marque 2', company_id: @company.id)
       Sunspot.commit
       visit brand_path(brand)
 
-      click_js_link('Edit')
+      within('.links-data') { click_js_button 'Edit Brand' }
 
       within visible_modal do
         select2_remove_tag('Marque 1')

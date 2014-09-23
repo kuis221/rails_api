@@ -23,7 +23,7 @@ feature "Photos", js: true do
       with_resque do
         visit event_path(event)
 
-        gallery_box.click_js_link 'Add Photos'
+        gallery_box.click_js_button 'Add Photos'
 
         within visible_modal do
           attach_file "file", 'spec/fixtures/photo.jpg'

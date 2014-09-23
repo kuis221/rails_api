@@ -929,7 +929,7 @@ feature 'Events section' do
 
         visit event_path(event)
 
-        click_js_link 'Add Team Member'
+        click_js_button 'Add Team Member'
         within visible_modal do
           fill_in 'staff-search-item', with: 'Pab'
           expect(page).to have_selector("li#staff-member-user-#{pablo_user.id}")
@@ -943,7 +943,7 @@ feature 'Events section' do
         close_modal
 
         # Re-open the modal to make sure it's not added again to the list
-        click_js_link 'Add Team Member'
+        click_js_button 'Add Team Member'
         within visible_modal do
           expect(page).to have_no_selector("#staff-member-user-#{pablo_user.id}") # The user does not longer appear on the list after it was added to the event's team
           expect(page).to have_selector("#staff-member-user-#{anonymous_user.id}")
@@ -975,7 +975,7 @@ feature 'Events section' do
 
         visit event_path(event)
 
-        click_js_link 'Add Contact'
+        click_js_button 'Add Contact'
         within visible_modal do
           fill_in 'contact-search-box', with: 'Pab'
           expect(page).to have_selector("li#contact-company_user-#{pablo_user.id}")
@@ -1009,7 +1009,7 @@ feature 'Events section' do
 
         visit event_path(event)
 
-        click_js_link 'Add Contact'
+        click_js_button 'Add Contact'
         within visible_modal do
           fill_in 'contact-search-box', with: 'Gui'
           expect(page).to have_selector("li#contact-contact-#{contact.id}")
@@ -1042,7 +1042,7 @@ feature 'Events section' do
 
         visit event_path(event)
 
-        click_js_link 'Add Contact'
+        click_js_button 'Add Contact'
         visible_modal.click_js_link("Create New Contact")
 
         within ".contactevent_modal" do

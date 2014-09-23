@@ -120,7 +120,7 @@ feature "Campaigns", js: true do
       campaign = FactoryGirl.create(:campaign, company: @company)
       visit campaign_path(campaign)
 
-      find('.links-data').click_js_link('Edit')
+      within('.links-data') { click_js_button 'Edit Campaign' }
 
       within("form#edit_campaign_#{campaign.id}") do
         fill_in 'Name', with: 'edited campaign name'

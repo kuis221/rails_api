@@ -235,7 +235,7 @@ body{
 	margin: 0 0 0 30px;
 	.icon-edit, .icon-rounded-disable{
 		font-size: 17px;
-		margin-right: 10px;
+		margin-right: 0px;
 	}
 	i{
 		color: $brand;
@@ -328,10 +328,8 @@ body.events.show{
 			}
 		}
 	}
-	a,i{
-		&.icon-plus-sign{
-			margin-left:30px;
-		}
+	.button_to_add {
+		margin-left:30px;
 	}
 }
 
@@ -3392,11 +3390,15 @@ ul.ui-widget-content{
 				}
 			}
 		}
-		&.icon-edit, &.icon-rounded-disable{
-			margin: 0 10px 0 15px;
-			&:hover{
-				color:$app_bg;
-			}
+	}
+	.button_to_edit {
+		margin-right: 0;
+	}
+	.icon-edit, .icon-rounded-disable{
+		margin: 0 0 0 15px;
+		color: $brand;
+		&:hover{
+			color:$app_bg;
 		}
 	}
 }
@@ -4464,8 +4466,7 @@ body.show {
 		display: inline-block;
 	}
 	.dialogue-photos {
-		margin-left: 30px;
-		&.icon-plus-sign{
+		.icon-plus-sign{
 			color: $brand;
 			position: relative;
 			top: 3px;

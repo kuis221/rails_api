@@ -17,13 +17,13 @@
           = resource.description
 
     .links-data
-      = link_to '', edit_activity_type_path(resource), remote: true, class: 'icon-edit', title: 'Edit' if can?(:edit, resource)
+      = button_to_edit resource  if can?(:edit, resource)
       = active_inactive_buttons(resource) if can?(:activate, resource)
 
     // The is info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
       h3= resource.name
-      = link_to '', edit_activity_type_path(resource), remote: true, class: 'icon-edit' if can?(:edit, resource)
+      = button_to_edit resource if can?(:edit, resource)
       = active_inactive_buttons(resource) if can?(:activate, resource)
 
   .form-builder-wrapper

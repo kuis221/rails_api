@@ -87,7 +87,7 @@ feature "Notifications", search: true, js: true do
 
       expect(page).not_to have_notification 'You have a new event'
 
-      click_js_link 'Add Team Member'
+      click_js_button 'Add Team Member'
       within visible_modal do
         fill_in 'staff-search-item', with: user.name
         click_js_link("Add")
@@ -116,7 +116,7 @@ feature "Notifications", search: true, js: true do
 
       expect(page).not_to have_notification 'You have a new event'
 
-      click_js_link 'Add Team Member'
+      click_js_button 'Add Team Member'
       within visible_modal do
         fill_in 'staff-search-item', with: 'SuperAmigos'
         click_js_link("Add")

@@ -114,7 +114,7 @@ feature "Activity Types", js: true do
       visit activity_type_path(activity_type)
 
       expect(page).to have_selector('h2', text: 'A test activity type')
-      find('.links-data').click_js_link('Edit')
+      find('.links-data').click_js_button('Edit Activity Type')
 
       within visible_modal do
         fill_in 'Name', with: 'Drink feature'
