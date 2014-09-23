@@ -183,7 +183,7 @@ module RequestsHelper
 
   def open_tab(tab_name)
     link = find('.nav-tabs a', text: tab_name)
-    link.click
+    link.trigger('click')
     find(link['href'].gsub(/^.*#/, '#'))
   end
 

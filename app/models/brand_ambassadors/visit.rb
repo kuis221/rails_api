@@ -69,11 +69,8 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
     integer :id, stored: true
     integer :company_id
     integer :company_user_id
-    integer :place_ids, multiple: true do
-      events.pluck(:place_id)
-    end
     integer :location, multiple: true do
-      events.joins(place: :locations).pluck('DISTINCT(locations.id)')
+      area.cities.detect{|c| c.name == city}.try(:location_ids) if area && city
     end
     date :start_date, stored: true
     date :end_date, stored: true
@@ -99,7 +96,15 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
   def self.do_search(params, include_facets=false)
     solr_search do
       with :company_id, params[:company_id]
-      with :place_ids, params[:place] if params.has_key?(:place) and params[:place].present?
+
+      company_user = params[:current_company_user]
+      if company_user.present?
+        current_company = company_user.company
+        unless company_user.role.is_admin?
+          with :campaign_id, company_user.accessible_campaign_ids + [0]
+          with :location, company_user.accessible_locations + [0]
+        end
+      end
 
       if params[:start_date].present? and params[:end_date].present?
         d1 = Timeliness.parse(params[:start_date], zone: :current)
@@ -156,10 +161,6 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
           with :campaign_id, value
         when 'company_user'
           with :company_user_id, value
-        when 'place'
-          with :place_ids, value
-        when 'venue'
-          with :place_ids, Venue.find(value).place_id
         when 'area'
           with :area_id, value
         end

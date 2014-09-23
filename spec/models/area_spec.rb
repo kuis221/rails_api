@@ -207,14 +207,14 @@ describe Area, :type => :model do
       area.places << FactoryGirl.create(:city, name: 'Los Angeles', state: 'California')
       area.places << FactoryGirl.create(:city, name: 'Austin', state: 'Texas')
       area.places << FactoryGirl.create(:city, name: 'Houston', state: 'Texas')
-      expect(area.cities).to eql ['Austin', 'Houston', 'Los Angeles']
+      expect(area.cities.map(&:name)).to eql ['Austin', 'Houston', 'Los Angeles']
     end
 
     it "should not return non cities" do
       area.places << FactoryGirl.create(:place, city: 'Los Angeles', state: 'California')
       area.places << FactoryGirl.create(:state, name: 'California', country: 'US')
       area.places << FactoryGirl.create(:country, name: 'United States')
-      expect(area.cities).to eql []
+      expect(area.cities.map(&:name)).to eql []
     end
   end
 end

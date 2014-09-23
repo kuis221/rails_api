@@ -11,6 +11,7 @@ feature "Brand Ambassadors Visits" do
   let(:place) { FactoryGirl.create(:place, name: 'A Nice Place in the APP', country:'CR', city: 'Curridabat', state: 'San Jose') }
   let(:permissions) { [] }
   let(:area) { FactoryGirl.create(:area, name: 'My Area', company: company) }
+  before { area.places << FactoryGirl.create(:city, name: 'New York') }
 
   before do
     Warden.test_mode!
@@ -29,17 +30,16 @@ feature "Brand Ambassadors Visits" do
     let(:month_name) { Time.now.strftime('%b') }
     let(:year_number) { Time.now.strftime('%Y') }
     let(:today) { Time.zone.local(year_number, month_number, 18, 12, 00) }
-    let(:area) { FactoryGirl.create(:area, name: 'Gran Area Metropolitana', company: company) }
 
     before do
       FactoryGirl.create(:brand_ambassadors_visit, company: company,
         start_date: today, end_date: (today+1.day).to_s(:slashes),
-        city: 'San Jose', area: area, campaign: campaign,
+        city: 'New York', area: area, campaign: campaign,
         visit_type: 'market_visit', company_user: company_user, active: true)
       FactoryGirl.create(:brand_ambassadors_visit, company: company,
         start_date: (today+2.days).to_s(:slashes), end_date: (today+3.days).to_s(:slashes),
-        city: 'Cartago', area: area, campaign: campaign,
-        visit_type: 'market_visit', company_user: company_user, active: true)
+        city: 'New York', area: area, campaign: campaign,
+        visit_type: 'brand_program', company_user: company_user, active: true)
       Sunspot.commit
     end
 
@@ -52,15 +52,15 @@ feature "Brand Ambassadors Visits" do
         # First Row
         within("li:nth-child(1)") do
           expect(page).to have_content('Market Visit')
-          expect(page).to have_content('Gran Area Metropolitana (San Jose)')
+          expect(page).to have_content('My Area (New York)')
           expect(page).to have_content(company_user.full_name)
           expect(page).to have_content("#{month_name} 18")
           expect(page).to have_content("#{month_name} 19")
         end
         # Second Row
         within("li:nth-child(2)") do
-          expect(page).to have_content('Market Visit')
-          expect(page).to have_content('Gran Area Metropolitana (Cartago)')
+          expect(page).to have_content('Brand Program')
+          expect(page).to have_content('My Area (New York)')
           expect(page).to have_content(company_user.full_name)
           expect(page).to have_content("#{month_name} 20")
           expect(page).to have_content("#{month_name} 21")
@@ -84,8 +84,8 @@ feature "Brand Ambassadors Visits" do
 
       expect(ListExport.last).to have_rows([
         ["START DATE", "END DATE", "EMPLOYEE", "AREA", "CITY", "CAMPAIGN", "TYPE"],
-        ["2014-09-18", "2014-09-19", "Test User", "Gran Area Metropolitana", "San Jose", 'My Campaign', "Market Visit"],
-        ["2014-09-20", "2014-09-21", "Test User", "Gran Area Metropolitana", "Cartago", 'My Campaign', "Market Visit"]
+        ["2014-09-18", "2014-09-19", "Test User", "My Area", "New York", 'My Campaign', "Market Visit"],
+        ["2014-09-20", "2014-09-21", "Test User", "My Area", "New York", 'My Campaign', "Brand Program"]
       ])
     end
 
@@ -115,6 +115,7 @@ feature "Brand Ambassadors Visits" do
         text = page.text.gsub(/[\s\n]/, '')
         expect(text).to include '2visits'
         expect(text).to include "MarketVisit"
+        expect(text).to include "BrandProgram"
         expect(text).to match /#{month_name}18/
         expect(text).to match /#{month_name}19/
         expect(text).to match /#{month_name}20/
@@ -152,8 +153,11 @@ feature "Brand Ambassadors Visits" do
 
     scenario "should allow filter visits and see the correct message" do
       Timecop.travel(today) do
-        area1.places << place1
-        area2.places << place2
+        la = FactoryGirl.create(:city, name: 'Los Angeles', state:'CA', country: 'US')
+        au = FactoryGirl.create(:city, name: 'Austin', state:'TX', country: 'US')
+        area1.places << [la, au]
+        area2.places << [la, au]
+        company_user.areas << [area1, area2]
         company_user.places << place1
         company_user.places << place2
         company_user.campaigns << campaign1
@@ -257,9 +261,11 @@ feature "Brand Ambassadors Visits" do
       ba_visit1 = FactoryGirl.create(:brand_ambassadors_visit, company: company,
                     start_date: "#{month_number}/15/#{year}", end_date: "#{month_number}/16/#{year}",
                     visit_type: 'market_visit', description: 'Visit1 description',
+                    city: 'New York', area: area,
                     company_user: company_user, active: true, campaign: campaign)
       FactoryGirl.create(:brand_ambassadors_visit, company: company,
         start_date: "#{month_number}/16/#{year}", end_date: "#{month_number}/18/#{year}",
+        city: 'New York', area: area,
         visit_type: 'brand_program', company_user: company_user, active: true, campaign: campaign)
       Sunspot.commit
 
@@ -270,8 +276,8 @@ feature "Brand Ambassadors Visits" do
       wait_for_ajax
       within("div#calendar-view") do
         expect(find('.fc-toolbar .fc-left h2')).to have_content("#{month_name}, #{year}")
-        expect(page).to have_content 'Brand Program - My Campaign Test User - Test City'
-        expect(page).to have_content 'Market Visit - My Campaign Test User - Test City'
+        expect(page).to have_content 'Brand Program - My Campaign Test User - New York'
+        expect(page).to have_content 'Market Visit - My Campaign Test User - New York'
 
         click_link 'Market Visit'
       end
@@ -287,9 +293,11 @@ feature "Brand Ambassadors Visits" do
       year = Time.now.strftime('%Y')
       FactoryGirl.create(:brand_ambassadors_visit, company: company,
             start_date: "#{month_number}/15/#{year}", end_date: "#{month_number}/16/#{year}",
+            city: 'New York', area: area,
             visit_type: 'market_visit', company_user: company_user, active: true, campaign: campaign)
       FactoryGirl.create(:brand_ambassadors_visit, company: company,
             start_date: "#{month_number}/16/#{year}", end_date: "#{month_number}/18/#{year}",
+            city: 'New York', area: area,
             visit_type: 'brand_program', company_user: company_user, active: true, campaign: campaign)
       Sunspot.commit
       visit brand_ambassadors_root_path
@@ -365,7 +373,7 @@ feature "Brand Ambassadors Visits" do
       FactoryGirl.create(:brand_ambassadors_visit, company: company,
         start_date: today, end_date: (today+1.day).to_s(:slashes), campaign: campaign,
         visit_type: 'market_visit', description: 'Visit1 description',
-        company_user: company_user, active: true)
+        area: area, city: 'New York', company_user: company_user, active: true)
       Sunspot.commit
       visit brand_ambassadors_root_path
       choose_predefined_date_range 'Current month'
@@ -394,7 +402,7 @@ feature "Brand Ambassadors Visits" do
     scenario "can deactivate a visit and it's removed from the view" do
       today = Time.zone.local(Time.now.strftime('%Y'), Time.now.strftime('%m'), 18, 12, 00)
       FactoryGirl.create(:brand_ambassadors_visit, company: company,
-        campaign: campaign,
+        campaign: campaign, area: area, city: 'New York',
         start_date: today, end_date: (today+1.day).to_s(:slashes),
         company_user: company_user, active: true)
       Sunspot.commit
@@ -515,6 +523,8 @@ feature "Brand Ambassadors Visits" do
 
   feature "Non Admin User", js: true, search: true do
     let(:role) { FactoryGirl.create(:non_admin_role, company: company) }
+    before{ company_user.campaigns << campaign }
+    before{ company_user.areas << area }
 
     it_should_behave_like "a user that can view the list of visits" do
       let(:permissions) { [[:list, 'BrandAmbassadors::Visit']]}
@@ -530,14 +540,10 @@ feature "Brand Ambassadors Visits" do
 
     it_should_behave_like "a user that can edit visits" do
       let(:permissions) { [[:list, 'BrandAmbassadors::Visit'], [:update, 'BrandAmbassadors::Visit']]}
-      before{ company_user.areas << area }
-      before{ company_user.campaigns << campaign }
     end
 
     it_should_behave_like "a user that can create visits" do
       let(:permissions) { [[:list, 'BrandAmbassadors::Visit'], [:create, 'BrandAmbassadors::Visit'], [:show, 'BrandAmbassadors::Visit']]}
-      before{ company_user.areas << area }
-      before{ company_user.campaigns << campaign }
     end
 
     it_should_behave_like "a user that can view the calendar of visits" do
@@ -549,7 +555,6 @@ feature "Brand Ambassadors Visits" do
         [:list, 'BrandAmbassadors::Visit'], [:deactivate, 'BrandAmbassadors::Visit'],
         [:show, 'BrandAmbassadors::Visit'], [:update, 'BrandAmbassadors::Visit'],
         [:create, 'Event'], [:show, 'Event']] }
-      before{ company_user.campaigns << campaign }
       before{ company_user.places << place }
       before{ campaign.places << place }
       before{ company_user.areas << area }

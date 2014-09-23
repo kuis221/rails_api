@@ -28,7 +28,7 @@ class AreasController < FilteredController
   end
 
   def cities
-    render json: resource.cities
+    render json: resource.cities.map(&:name)
   end
 
   private
