@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-feature "Results Comments Page", js: true, search: true  do
+feature "Results Surveys Page", js: true, search: true  do
 
   before do
     Kpi.destroy_all
@@ -9,7 +9,6 @@ feature "Results Comments Page", js: true, search: true  do
     @company_user = @user.company_users.first
     @company = @user.companies.first
     sign_in @user
-    allow_any_instance_of(Place).to receive(:fetch_place_data).and_return(true)
   end
 
   after do
@@ -19,59 +18,40 @@ feature "Results Comments Page", js: true, search: true  do
   let(:campaign1){ FactoryGirl.create(:campaign, name: 'First Campaign', company: @company) }
   let(:campaign2){ FactoryGirl.create(:campaign, name: 'Second Campaign', company: @company) }
 
-  feature "/results/comments", js: true, search: true  do
-    scenario "a user can play and dismiss the video tutorial" do
-      visit results_comments_path
-
-      feature_name = 'Getting Started: Comments Report'
-
-      expect(page).to have_content(feature_name)
-      expect(page).to have_content("Get to know your consumers")
-      click_link 'Play Video'
-
-      within visible_modal do
-        click_js_link 'Close'
-      end
-      ensure_modal_was_closed
-
-      within('.new-feature') do
-        click_js_link 'Dismiss'
-      end
-      wait_for_ajax
-
-      visit results_comments_path
-      expect(page).to have_no_content(feature_name)
-    end
-
-    scenario "GET index should display a table with the comments" do
+  feature "Surveys index", js: true, search: true  do
+    scenario "GET index should display a table with the surveys" do
       Kpi.create_global_kpis
-      campaign1.add_kpi(Kpi.comments)
-      event = FactoryGirl.create(:approved_event, campaign: campaign1, company: @company, start_date: "08/21/2013", end_date: "08/21/2013", start_time: '8:00pm', end_time: '11:00pm', place: FactoryGirl.create(:place, name: 'Place 1'))
-      comment = FactoryGirl.create(:comment, content: 'Comment #1', commentable: event, created_at: Time.zone.local(2013, 8, 22, 11, 59))
-      comment2 = FactoryGirl.create(:comment, content: 'Comment #2', commentable: event, created_at: Time.zone.local(2013, 8, 23, 9, 15))
-      event.comments << comment
-      event.comments << comment2
-      event.save
+      campaign1.add_kpi(Kpi.surveys)
+      age_answer = Kpi.age.kpis_segments.sample
+      gender_answer = Kpi.gender.kpis_segments.sample
+      ethnicity_answer = Kpi.ethnicity.kpis_segments.sample
+
+      survey1 = FactoryGirl.create(:survey)
+      survey1.surveys_answers.build(kpi_id: Kpi.age.id, question_id: 1, answer: age_answer.id)
+      survey1.surveys_answers.build(kpi_id: Kpi.gender.id, question_id: 1, answer: gender_answer.id)
+      survey2 = FactoryGirl.create(:survey)
+      survey2.surveys_answers.build(kpi_id: Kpi.ethnicity.id, question_id: 1, answer: ethnicity_answer.id)
+
+      event1 = FactoryGirl.build(:approved_event, campaign: campaign1, company: @company, start_date: "08/21/2013", end_date: "08/21/2013", start_time: '8:00pm', end_time: '11:00pm', place: FactoryGirl.create(:place, name: 'Place 1'))
+      event1.surveys << survey1
+      event1.save
+
+      event2 = FactoryGirl.build(:approved_event, campaign: campaign1, company: @company, start_date: "08/25/2013", end_date: "08/25/2013", start_time: '9:00am', end_time: '10:00am', place: FactoryGirl.create(:place, name: 'Place 2'))
+      event2.surveys << survey2
+      event2.save
 
       Sunspot.commit
-      visit results_comments_path
+      visit results_surveys_path
 
-      within("ul#comment-list") do
+      within("ul#surveys-list") do
         # First Row
         within("li:nth-child(1)") do
-          expect(page).to have_content('First Campaign')
-          expect(page).to have_content('WED Aug 21, 2013 8:00 PM - 11:00 PM')
-          expect(page).to have_content('Place 1, New York City, NY, 12345')
-          expect(page).to have_content('Comment #1')
-          expect(page).to have_content('Aug 22 @ 11:59 AM')
+          expect(page).to have_content(age_answer.text)
+          expect(page).to have_content(gender_answer.text)
         end
         # Second Row
         within("li:nth-child(2)") do
-          expect(page).to have_content('First Campaign')
-          expect(page).to have_content('WED Aug 21, 2013 8:00 PM - 11:00 PM')
-          expect(page).to have_content('Place 1, New York City, NY, 12345')
-          expect(page).to have_content('Comment #2')
-          expect(page).to have_content('Aug 23 @ 9:15 AM')
+          expect(page).to have_content(ethnicity_answer.text)
         end
       end
     end
@@ -82,24 +62,31 @@ feature "Results Comments Page", js: true, search: true  do
     let(:event2) { FactoryGirl.create(:approved_event, campaign: campaign2, company: @company, start_date: "08/22/2013", end_date: "08/22/2013", start_time: '8:00pm', end_time: '11:00pm', place: FactoryGirl.create(:place, name: 'Place 2')) }
     let(:user1) { FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Roberto', last_name: 'Gomez'), company: @company) }
     let(:user2) { FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Mario', last_name: 'Moreno'), company: @company) }
-    let(:comment1) { FactoryGirl.create(:comment, content: 'Comment #1', commentable: event1, created_at: Time.zone.local(2013, 8, 22, 11, 59)) }
-    let(:comment2) { FactoryGirl.create(:comment, content: 'Comment #2', commentable: event2, created_at: Time.zone.local(2013, 8, 23, 9, 15)) }
+    let(:survey1){ FactoryGirl.create(:survey) }
+    let(:survey2){ FactoryGirl.create(:survey) }
 
     before do
       Kpi.create_global_kpis
-      campaign1.add_kpi(Kpi.comments)
-      campaign2.add_kpi(Kpi.comments)
+      campaign1.add_kpi(Kpi.surveys)
+      campaign2.add_kpi(Kpi.surveys)
+      @age_answer = Kpi.age.kpis_segments.sample
+      @gender_answer = Kpi.gender.kpis_segments.sample
+      @ethnicity_answer = Kpi.ethnicity.kpis_segments.sample
+
+      survey1.surveys_answers.build(kpi_id: Kpi.age.id, question_id: 1, answer: @age_answer.id)
+      survey1.surveys_answers.build(kpi_id: Kpi.gender.id, question_id: 1, answer: @gender_answer.id)
+      survey2.surveys_answers.build(kpi_id: Kpi.ethnicity.id, question_id: 1, answer: @ethnicity_answer.id)
       event1.users << user1
       event2.users << user2
-      event1.comments << comment1
-      event2.comments << comment2
+      event1.surveys << survey1
+      event2.surveys << survey2
       event1.save
       event2.save
       Sunspot.commit
     end
 
     scenario "allows to create a new custom filter" do
-      visit results_comments_path
+      visit results_surveys_path
 
       filter_section('CAMPAIGNS').unicheck('First Campaign')
       filter_section('PEOPLE').unicheck('Roberto Gomez')
@@ -117,7 +104,7 @@ feature "Results Comments Page", js: true, search: true  do
         custom_filter = CustomFilter.last
         expect(custom_filter.owner).to eq(@company_user)
         expect(custom_filter.name).to eq('My Custom Filter')
-        expect(custom_filter.apply_to).to eq('results_comments')
+        expect(custom_filter.apply_to).to eq('surveys')
         expect(custom_filter.filters).to eq('campaign%5B%5D='+campaign1.to_param+'&user%5B%5D='+user1.to_param+'&event_status%5B%5D=Approved&status%5B%5D=Active')
       end
       ensure_modal_was_closed
@@ -128,16 +115,17 @@ feature "Results Comments Page", js: true, search: true  do
     end
 
     scenario "allows to apply custom filters" do
-      FactoryGirl.create(:custom_filter, owner: @company_user, name: 'Custom Filter 1', apply_to: 'results_comments', filters: 'campaign%5B%5D='+campaign1.to_param+'&user%5B%5D='+user1.to_param+'&event_status%5B%5D=Approved&status%5B%5D=Active')
-      FactoryGirl.create(:custom_filter, owner: @company_user, name: 'Custom Filter 2', apply_to: 'results_comments', filters: 'campaign%5B%5D='+campaign2.to_param+'&user%5B%5D='+user2.to_param+'&event_status%5B%5D=Approved&status%5B%5D=Active')
+      FactoryGirl.create(:custom_filter, owner: @company_user, name: 'Custom Filter 1', apply_to: 'surveys', filters: 'campaign%5B%5D='+campaign1.to_param+'&user%5B%5D='+user1.to_param+'&event_status%5B%5D=Approved&status%5B%5D=Active')
+      FactoryGirl.create(:custom_filter, owner: @company_user, name: 'Custom Filter 2', apply_to: 'surveys', filters: 'campaign%5B%5D='+campaign2.to_param+'&user%5B%5D='+user2.to_param+'&event_status%5B%5D=Approved&status%5B%5D=Active')
 
-      visit results_comments_path
+      visit results_surveys_path
 
       #Using Custom Filter 1
       filter_section('SAVED FILTERS').unicheck('Custom Filter 1')
 
-      within '#comment-list' do
-        expect(page).to have_content('First Campaign')
+      within '#surveys-list' do
+        expect(page).to have_content(@age_answer.text)
+        expect(page).to have_content(@gender_answer.text)
       end
 
       within '.form-facet-filters' do
@@ -155,8 +143,8 @@ feature "Results Comments Page", js: true, search: true  do
       #Using Custom Filter 2 should update results and checked/unchecked checkboxes
       filter_section('SAVED FILTERS').unicheck('Custom Filter 2')
 
-      within '#comment-list' do
-        expect(page).to have_content('Second Campaign')
+      within '#surveys-list' do
+        expect(page).to have_content(@ethnicity_answer.text)
       end
 
       within '.form-facet-filters' do
@@ -174,9 +162,10 @@ feature "Results Comments Page", js: true, search: true  do
       #Using Custom Filter 2 again should reset filters
       filter_section('SAVED FILTERS').unicheck('Custom Filter 2')
 
-      within '#comment-list' do
-        expect(page).to have_content('First Campaign')
-        expect(page).to have_content('Second Campaign')
+      within '#surveys-list' do
+        expect(page).to have_content(@age_answer.text)
+        expect(page).to have_content(@gender_answer.text)
+        expect(page).to have_content(@ethnicity_answer.text)
       end
 
       within '.form-facet-filters' do
@@ -193,11 +182,11 @@ feature "Results Comments Page", js: true, search: true  do
     end
 
     scenario "allows to remove custom filters" do
-      FactoryGirl.create(:custom_filter, owner: @company_user, name: 'Custom Filter 1', apply_to: 'results_comments', filters: 'Filters 1')
-      cf2 = FactoryGirl.create(:custom_filter, owner: @company_user, name: 'Custom Filter 2', apply_to: 'results_comments', filters: 'Filters 2')
-      FactoryGirl.create(:custom_filter, owner: @company_user, name: 'Custom Filter 3', apply_to: 'results_comments', filters: 'Filters 3')
+      FactoryGirl.create(:custom_filter, owner: @company_user, name: 'Custom Filter 1', apply_to: 'surveys', filters: 'Filters 1')
+      cf2 = FactoryGirl.create(:custom_filter, owner: @company_user, name: 'Custom Filter 2', apply_to: 'surveys', filters: 'Filters 2')
+      FactoryGirl.create(:custom_filter, owner: @company_user, name: 'Custom Filter 3', apply_to: 'surveys', filters: 'Filters 3')
 
-      visit results_comments_path
+      visit results_surveys_path
 
       find('.settings-for-filters').trigger('click')
 
