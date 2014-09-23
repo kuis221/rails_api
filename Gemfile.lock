@@ -285,8 +285,6 @@ GEM
     rabl (0.11.0)
       activesupport (>= 2.3.14)
     rack (1.5.2)
-    rack-cache (1.2)
-      rack (>= 0.4)
     rack-livereload (0.3.15)
       rack
     rack-protection (1.5.3)
@@ -510,7 +508,6 @@ DEPENDENCIES
   heroku-resque-workers-scaler!
   inherited_resources
   jquery-rails
-  kgio
   memcachier
   nearest_time_zone
   nested_form
@@ -525,7 +522,6 @@ DEPENDENCIES
   progress_bar
   quiet_assets (>= 1.0.1)
   rabl
-  rack-cache
   rack-livereload
   rack-timeout
   rails (= 4.1.5)
