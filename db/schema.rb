@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140920000541) do
+ActiveRecord::Schema.define(version: 20140923182037) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -157,6 +157,7 @@ ActiveRecord::Schema.define(version: 20140920000541) do
   end
 
   add_index "attached_assets", ["attachable_type", "attachable_id"], name: "index_attached_assets_on_attachable_type_and_attachable_id", using: :btree
+  add_index "attached_assets", ["direct_upload_url"], name: "index_attached_assets_on_direct_upload_url", unique: true, using: :btree
   add_index "attached_assets", ["folder_id"], name: "index_attached_assets_on_folder_id", using: :btree
 
   create_table "attached_assets_tags", force: true do |t|
