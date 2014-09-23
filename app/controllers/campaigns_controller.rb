@@ -2,8 +2,6 @@ class CampaignsController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update, :new_date_range]
   respond_to :json, only: [:show, :update]
 
-  helper_method :grouped_assignable_kpis
-
   before_action :search_params, only: [:index]
 
   include DeactivableHelper
@@ -188,22 +186,6 @@ class CampaignsController < FilteredController
         end
 
         @search_params
-      end
-    end
-
-    def grouped_assignable_kpis
-      @grouped_assignable_kpis ||= Hash.new.tap do |h|
-        labels = {}
-        h['Global'] = []
-        Kpi.global.form_assignable.find_each do |kpi|
-          h['Global'].push kpi
-        end
-        Kpi.custom(current_company).each do |kpi|
-          type = kpi.form_field_type
-          labels[type] ||= I18n.translate("form_builder.field_types.#{type.split('::')[1].underscore}")
-          h[labels[type]] ||= []
-          h[labels[type]].push kpi
-        end
       end
     end
 end

@@ -95,7 +95,7 @@ module Results
         tooltip << kpi.kpi_type.capitalize
         if ['percentage', 'count'].include?(kpi.kpi_type)
           tooltip << "<b>OPTIONS</b>"
-          tooltip << kpi.kpis_segments.map(&:text).join(', ')
+          tooltip << kpi.segments_names.join(', ')
         end
         tooltip
       end

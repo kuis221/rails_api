@@ -941,7 +941,7 @@ RSpec.shared_examples "a fieldable element that accept kpis" do
     find('.fields-wrapper .accordion-toggle', text: 'KPIs').click
     find('.fields-wrapper .accordion-toggle', text: 'Fields').click # Hide fields
 
-    # Wait for accordeon effect to complate
+    # Wait for accordeon effect to complete
     within('.fields-wrapper') do
       expect(page).to have_no_content('Dropdown')
     end
@@ -1233,7 +1233,11 @@ feature "Campaign Form Builder", js: true do
       visit campaign_path(campaign)
 
       # The kpi is in the list of KPIs in the sidebar
+      find('.fields-wrapper .accordion-toggle', text: 'KPIs').click
+      find('.fields-wrapper .accordion-toggle', text: 'Fields').click # Hide fields
+
       within('.fields-wrapper') do
+        expect(page).to have_no_content('Dropdown')  # Wait for accordeon effect to complete
         expect(page).to have_content('My Custom KPI')
       end
 
@@ -1259,6 +1263,13 @@ feature "Campaign Form Builder", js: true do
       # reload page and test the field is still there...
       visit campaign_path(campaign)
       expect(form_builder).to have_form_field 'My Custom KPI'
+      find('.fields-wrapper .accordion-toggle', text: 'KPIs').click
+      find('.fields-wrapper .accordion-toggle', text: 'Fields').click # Hide fields
+
+      within('.fields-wrapper') do
+        expect(page).to have_no_content('Dropdown')  # Wait for accordeon effect to complete
+        expect(page).to have_no_content('My Custom KPI')
+      end
 
       # Now test the removal of the KPI from the list
       open_tab 'KPIs'
@@ -1278,6 +1289,7 @@ feature "Campaign Form Builder", js: true do
       expect(form_builder).to_not have_form_field 'My Custom KPI'
 
       # The KPI should be again available in the KPIs list
+      find('.fields-wrapper .accordion-toggle', text: 'KPIs').click
       within('.fields-wrapper') do
         expect(page).to have_content('My Custom KPI')
       end
