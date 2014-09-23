@@ -7,7 +7,7 @@ class BrandAmbassadors::VisitsController < FilteredController
 
   include EventsHelper
 
-  helper_method :describe_filters, :brand_ambassadors_users
+  helper_method :describe_filters, :brand_ambassadors_users, :return_path
 
   def autocomplete
     buckets = autocomplete_buckets({
@@ -75,6 +75,15 @@ class BrandAmbassadors::VisitsController < FilteredController
         f.push build_city_bucket
         f.push build_brands_bucket
 
+      end
+    end
+
+    def return_path
+      super.tap do |r|
+        if params['tab'].present?
+          r = r + "&tab=#{params['tab']}"
+        end
+        return r
       end
     end
 end

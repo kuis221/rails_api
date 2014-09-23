@@ -73,6 +73,13 @@
         }
       }
     });
+
+    $(document).ready(function() {
+      tab = "#{params[:tab]}";
+      if (tab == 'calendar-view') {
+        $('#toggle-visits-view a.calendar').tab('show');
+      }
+    });
 - else
   javascript:
     $('#toggle-visits-view a.calendar').tab('show');

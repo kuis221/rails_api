@@ -54,6 +54,12 @@ javascript:
           "<span class='user-name'>" + visit.company_user.full_name + "</span>" +
           (visit.city ? " - <span class='city-name'>" + visit.city + "</span>" : '')
         );
+      },
+      eventClick: function(event) {
+        if (event.url) {
+          window.location.href = event.url+'?tab=calendar-view';
+          return false;
+        }
       }
     });
   };
