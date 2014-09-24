@@ -712,35 +712,35 @@ feature 'Events section' do
 
           within visible_modal do
             # Test both dates are the same
-            expect(find_field('Start date').value).to eql '07/30/2013'
-            expect(find_field('End date').value).to eql '07/30/2013'
+            expect(find_field('event_start_date').value).to eql '07/30/2013'
+            expect(find_field('event_end_date').value).to eql '07/30/2013'
 
 
             #Change the start date and make sure the end date is changed automatically
-            find_field('Start date').click
-            find_field('Start date').set '07/29/2013'
-            find_field('End date').click
-            expect(find_field('End date').value).to eql '07/29/2013'
+            find_field('event_start_date').click
+            find_field('event_start_date').set '07/29/2013'
+            find_field('event_end_date').click
+            expect(find_field('event_end_date').value).to eql '07/29/2013'
 
             # Now, change the end data to make them different and test that the difference
             # is kept after changing start date
-            find_field('End date').set '07/31/2013'
-            find_field('Start date').click
-            find_field('Start date').set '07/20/2013'
-            find_field('End date').click
-            expect(find_field('End date').value).to eql '07/22/2013'
+            find_field('event_end_date').set '07/31/2013'
+            find_field('event_start_date').click
+            find_field('event_start_date').set '07/20/2013'
+            find_field('event_end_date').click
+            expect(find_field('event_end_date').value).to eql '07/22/2013'
 
             #Change the start time and make sure the end date is changed automatically
             #to one hour later
-            find_field('Start time').click
-            find_field('Start time').set '08:00am'
-            find_field('End time').click
-            expect(find_field('End time').value).to eql '9:00am'
+            find_field('event_start_time').click
+            find_field('event_start_time').set '08:00am'
+            find_field('event_end_time').click
+            expect(find_field('event_end_time').value).to eql '9:00am'
 
-            find_field('Start time').click
-            find_field('Start time').set '4:00pm'
-            find_field('End time').click
-            expect(find_field('End time').value).to eql '5:00pm'
+            find_field('event_start_time').click
+            find_field('event_start_time').set '4:00pm'
+            find_field('event_end_time').click
+            expect(find_field('event_end_time').value).to eql '5:00pm'
           end
         end
       end
@@ -762,10 +762,10 @@ feature 'Events section' do
         end
 
         within visible_modal do
-          expect(find_field('Start date').value).to eq(3.days.from_now.to_s(:slashes))
-          expect(find_field('End date').value).to eq(3.days.from_now.to_s(:slashes))
-          expect(find_field('Start time').value).to eq('8:00pm')
-          expect(find_field('End time').value).to eq('11:00pm')
+          expect(find_field('event_start_date').value).to eq(3.days.from_now.to_s(:slashes))
+          expect(find_field('event_end_date').value).to eq(3.days.from_now.to_s(:slashes))
+          expect(find_field('event_start_time').value).to eq('8:00pm')
+          expect(find_field('event_end_time').value).to eq('11:00pm')
 
           select_from_chosen('ABSOLUT Vodka FY2013', from: 'Campaign')
           click_js_button 'Save'
@@ -798,13 +798,13 @@ feature 'Events section' do
             end
 
             within visible_modal do
-              expect(find_field('Start date').value).to eq(date)
-              expect(find_field('End date').value).to eq(date)
-              expect(find_field('Start time').value).to eq('8:00pm')
-              expect(find_field('End time').value).to eq('11:00pm')
+              expect(find_field('event_start_date').value).to eq(date)
+              expect(find_field('event_end_date').value).to eq(date)
+              expect(find_field('event_start_time').value).to eq('8:00pm')
+              expect(find_field('event_end_time').value).to eq('11:00pm')
 
-              fill_in('Start time', with: '10:00pm')
-              fill_in('End time', with: '11:00pm')
+              fill_in('event_start_time', with: '10:00pm')
+              fill_in('event_end_time', with: '11:00pm')
 
               click_button 'Save'
             end

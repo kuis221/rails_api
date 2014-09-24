@@ -49,7 +49,7 @@ describe Event, :type => :model do
   end
 
   describe "event results validations" do
-    it "should not allow submitting the event if the resuls are not valid" do
+    it "should not allow submitting the event if the results are not valid" do
       campaign = FactoryGirl.create(:campaign)
       field = FactoryGirl.create(:form_field_number, fieldable: campaign, kpi: FactoryGirl.create(:kpi, company_id: 1), required: true)
       field = FormField.find(field.id)
@@ -71,6 +71,22 @@ describe Event, :type => :model do
     it { is_expected.not_to allow_value(Time.zone.local(2016,1,20,12,0,0)).for(:end_at).with_message("must be after") }
     it { is_expected.to allow_value(Time.zone.local(2016,1,20,12,5,0)).for(:end_at) }
     it { is_expected.to allow_value(Time.zone.local(2016,1,20,12,10,0)).for(:end_at) }
+  end
+
+  describe "between_visit_date_range validation" do
+    let(:company) {FactoryGirl.create(:company)}
+    let(:visit) {FactoryGirl.create(:brand_ambassadors_visit, company: company,
+                      start_date: '02/01/2016', end_date: '02/02/2016',
+                      company_user: FactoryGirl.create(:company_user, company: company))}
+
+    subject { Event.new(start_at: Time.zone.local(2016,2,1,11,5,0),
+                        end_at: Time.zone.local(2016,2,1,12,5,0),
+                        visit_id: visit.id) }
+
+    it { is_expected.not_to allow_value(Time.zone.local(2016,1,31,12,0,0).to_s(:slashes)).for(:start_date).with_message("should be after 01/31/2016") }
+    it { is_expected.not_to allow_value(Time.zone.local(2016,2,3,12,5,0).to_s(:slashes)).for(:end_date).with_message("should be before 02/03/2016") }
+    it { is_expected.to allow_value(Time.zone.local(2016,2,1,12,5,0).to_s(:slashes)).for(:start_date) }
+    it { is_expected.to allow_value(Time.zone.local(2016,2,2,12,5,0).to_s(:slashes)).for(:end_date) }
   end
 
   describe "reset_verification" do
