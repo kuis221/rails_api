@@ -122,7 +122,7 @@ feature "DateRanges", search: true, js: true do
       visit date_range_path(date_range)
       expect(page).to have_content('Old name')
 
-      find('.links-data').click_js_link('Edit')
+      find('.links-data').click_js_button('Edit Date Range')
 
       within("form#edit_date_range_#{date_range.id}") do
         fill_in 'Name', with: 'edited date range name'

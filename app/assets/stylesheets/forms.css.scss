@@ -3,8 +3,13 @@
 form.button_to {
 	display: inline-block;
 	margin-right: 10px;
+	.button-with-icon {
+		border: 0;
+		padding: 0;
+		background: none;
+		outline:none;
+	}
 }
-
 
 .form-actions{
 	background-color: white;
@@ -17,7 +22,7 @@ form{
 	margin: 0;
 }
 
-control-group{
+control-group {
 	label.control-label{
 		color:$text;
 	}

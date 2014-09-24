@@ -1,12 +1,15 @@
 require 'rails_helper'
 
 feature "Photos", js: true do
+  let(:company) { FactoryGirl.create(:company)}
+  let(:role) { FactoryGirl.create(:role, company: company)}
+  let(:user) { FactoryGirl.create(:user, company_id: company.id, role_id: role.id) }
+  let(:campaign) { FactoryGirl.create(:campaign, company: company, modules: {'photos' => {} }) }
+  let(:event) { FactoryGirl.create(:late_event, company: company, campaign:campaign) }
 
   before do
     Warden.test_mode!
-    @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
-    @company = @user.companies.first
-    sign_in @user
+    sign_in user
     Kpi.create_global_kpis
   end
 
@@ -15,17 +18,12 @@ feature "Photos", js: true do
     Warden.test_reset!
   end
 
-  let(:campaign) { FactoryGirl.create(:campaign, company: @company) }
-  let(:event) { FactoryGirl.create(:late_event, company: @company, campaign:campaign) }
-
-  before { campaign.update_attribute(:modules, {'photos' => {} })  }
-
   feature "Event Photo management" do
     scenario "A user can select a photo and attach it to the event" do
       with_resque do
         visit event_path(event)
 
-        gallery_box.click_js_link 'Add Photos'
+        gallery_box.click_js_button 'Add Photos'
 
         within visible_modal do
           attach_file "file", 'spec/fixtures/photo.jpg'
@@ -119,10 +117,7 @@ feature "Photos", js: true do
 
     scenario "a user can activate a photo", search: true do
       #This should be done from Photo Results section
-      event = FactoryGirl.create(:approved_event, company: @company, campaign: campaign)
       FactoryGirl.create(:photo, attachable: event, active: false)
-      event.save
-
       Sunspot.commit
 
       visit results_photos_path

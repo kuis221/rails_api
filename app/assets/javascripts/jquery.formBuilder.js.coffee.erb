@@ -41,18 +41,6 @@ $.widget 'nmk.formBuilder', {
 
 		@fieldsWrapper = @element.find('.fields-wrapper')
 
-		@fieldsWrapper.find('.field[data-title]').tooltip
-			html: true, container: @element, delay: 0, animation: false
-			title: (a, b) ->
-				$(this).data('title')
-			placement: (tooltip, field) ->
-				window.setTimeout ->
-					$(tooltip).css
-						left: (parseInt($(tooltip).css('left'))-15)+'px'
-				10
-
-				return 'left';
-
 		@wrapper.droppable
 			accept: ".field.module"
 			drop: (event, ui) =>
@@ -60,8 +48,6 @@ $.widget 'nmk.formBuilder', {
 				@_addModuleToForm options
 				@setModified()
 				true
-
-		@element.find('.scrollable-list').jScrollPane verticalDragMinHeight: 10
 
 		@element.find('.field-search-input').on 'keyup', (e) =>
 			@searchFieldList $(e.target).val().toLowerCase()
@@ -81,7 +67,8 @@ $.widget 'nmk.formBuilder', {
 				stop: (e, ui) =>
 					if ui.item.hasClass('ui-draggable')
 						options = {type: ui.item.data('type')}
-						options = ui.item.data('options') if ui.item.data('options')
+						if ui.item.data('kpi-id')
+							options = @fieldsWrapper.find('.field[data-kpi-id="'+ui.item.data('kpi-id')+'"]').data('options')
 						fieldHtml = @buildField(options)
 						field = fieldHtml.data('field')
 						ui.item.replaceWith fieldHtml
@@ -107,56 +94,7 @@ $.widget 'nmk.formBuilder', {
 						@element.find('.empty-form-legend').hide()
 
 		if @options.canEdit
-			@fieldsWrapper.find('.field:not(.module)').draggable
-				connectToSortable: ".form-fields"
-				revert: "invalid"
-				appendTo: @fieldsWrapper
-				helper: (a, b) =>
-					$target = $(a.target)
-					$target = $target.closest('.field') unless $target.hasClass('field')
-					options = {type: $target.data('type')}
-					if $target.data('options')
-						options = $target.data('options');
-					@buildField options
-				start: (e, ui) =>
-					ui.helper.css({width: ui.helper.outerWidth(), height: ui.helper.outerHeight()})
-					applyFormUiFormatsTo(ui.helper)
-
-			@fieldsWrapper.find('.field, .module').on 'click', (e) =>
-				return if e.target.adding
-				e.target.adding = setTimeout () ->
-					e.target.adding = false
-				, 1000
-				target = $(e.target)
-				target = target.closest('.field') unless target.hasClass('field')
-				options = {type: target.data('type')}
-				options = target.data('options') if target.data('options')
-				if target.hasClass('module')
-					field = @_addModuleToForm options
-					message = "Adding #{field.type} module at the bottom..."
-				else
-					if field = @_addFieldToForm options
-						@_updateOrdering()
-						message = "Adding new #{field.attributes.name} field at the bottom..."
-				@setModified()
-				@fieldTooltip.data('title', message).tooltip 'show'
-				clearTimeout @_toolTipTimeout if @_toolTipTimeout
-				@_toolTipTimeout = setTimeout =>
-					@fieldTooltip.tooltip 'hide'
-				, 1000
-
-			@fieldsWrapper.find('.field.module').draggable
-				revert: "invalid"
-				appendTo: @fieldsWrapper
-				helper: (a, b) =>
-					$target = $(a.target)
-					options = {type: $target.data('type')}
-					if $target.data('options')
-						options = $target.data('options')
-					@buildField options
-				start: (e, ui) =>
-					ui.helper.css({width: ui.helper.outerWidth(), height: ui.helper.outerHeight()})
-					applyFormUiFormatsTo(ui.helper)
+			@makeFieldsDraggable @fieldsWrapper
 
 			# Display Field Attributes Dialog
 			@wrapper.on 'click', '.field, .module', (e) =>
@@ -177,6 +115,41 @@ $.widget 'nmk.formBuilder', {
 				if @modified
 					'You are leaving the page without saving your changes in the form.'
 
+		$('#kpis-fields').on 'show.first', (e) =>
+			$('#kpis-fields').off 'show.first'
+			list = $('#kpis-fields').find('.scrollable-list').empty()
+			$.get '/kpis.json', (kpiList) =>
+				for group, kpis of kpiList
+					list.append $('<div class="group-name">').text(group),
+						$('<div class="fields-list">').append $.map kpis, (kpi) =>
+							tooltip = "<p class=\"name\">#{kpi.name}</p>" +
+								"<p class=\"description\">#{kpi.description}</p>" +
+								"<b>TYPE</b>" +
+								(if kpi.options and kpi.options.options then "<b>OPTIONS</b>" + kpi.options.options.map( (i, o) => o.name ) .join(', ') else '')
+
+
+							$('<div class="field flat">').attr({
+								'data-title': tooltip,
+								'data-type': kpi.type,
+								'data-group': group,
+								'data-kpi-id': kpi.id
+							}).data('options', kpi.options).text(kpi.name).addClass(if @kpiInForm(kpi.options) then 'hidden' else '')
+				list.jScrollPane verticalDragMinHeight: 10
+				@makeFieldsDraggable list
+
+				list.find('.field[data-title]').tooltip
+					html: true, container: @element, delay: 0, animation: false
+					title: (a, b) ->
+						$(this).data('title')
+					placement: (tooltip, field) ->
+						window.setTimeout ->
+							$(tooltip).css
+								left: (parseInt($(tooltip).css('left'))-15)+'px'
+						10
+
+						return 'left';
+
+
 		true
 
 	searchFieldList: (value) ->
@@ -192,12 +165,64 @@ $.widget 'nmk.formBuilder', {
 			group_name = $(group).text()
 			if $list.find('.field[data-group="'+group_name+'"]:visible').length is 0
 				$(group).hide()
-				$list.find('.field[data-group="'+group_name+'"]').hide()
+				$list.find('.field[data-group="'+group_name+'"]:not(.hidden)').hide()
 			else
 				$(group).show()
 		scrollerApi = $('.searchable-field-list .scrollable-list').data('jsp')
 		scrollerApi.reinitialise()
 		true
+
+	makeFieldsDraggable: (container) ->
+		container.find('.field:not(.module)').draggable
+			connectToSortable: ".form-fields"
+			revert: "invalid"
+			appendTo: @fieldsWrapper
+			helper: (a, b) =>
+				$target = $(a.target)
+				$target = $target.closest('.field') unless $target.hasClass('field')
+				options = {type: $target.data('type')}
+				if $target.data('options')
+					options = $target.data('options');
+				@buildField options
+			start: (e, ui) =>
+				ui.helper.css({width: ui.helper.outerWidth(), height: ui.helper.outerHeight()})
+				applyFormUiFormatsTo(ui.helper)
+
+		container.find('.field, .module').on 'click', (e) =>
+			return if e.target.adding
+			e.target.adding = setTimeout () ->
+				e.target.adding = false
+			, 1000
+			target = $(e.target)
+			target = target.closest('.field') unless target.hasClass('field')
+			options = {type: target.data('type')}
+			options = target.data('options') if target.data('options')
+			if target.hasClass('module')
+				field = @_addModuleToForm options
+				message = "Adding #{field.type} module at the bottom..."
+			else
+				if field = @_addFieldToForm options
+					@_updateOrdering()
+					message = "Adding new #{field.attributes.name} field at the bottom..."
+			@setModified()
+			@fieldTooltip.data('title', message).tooltip 'show'
+			clearTimeout @_toolTipTimeout if @_toolTipTimeout
+			@_toolTipTimeout = setTimeout =>
+				@fieldTooltip.tooltip 'hide'
+			, 1000
+
+		container.find('.field.module').draggable
+			revert: "invalid"
+			appendTo: @fieldsWrapper
+			helper: (a, b) =>
+				$target = $(a.target)
+				options = {type: $target.data('type')}
+				if $target.data('options')
+					options = $target.data('options')
+				@buildField options
+			start: (e, ui) =>
+				ui.helper.css({width: ui.helper.outerWidth(), height: ui.helper.outerHeight()})
+				applyFormUiFormatsTo(ui.helper)
 
 	_updateOrdering: () ->
 		$.map @formWrapper.find("> div.field"), (field, index) =>

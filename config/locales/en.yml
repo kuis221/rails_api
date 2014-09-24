@@ -49,6 +49,7 @@ en:
 
   buttons:
     new:
+      event: "New Event"
       team: "New Team"
       campaign: "New Campaign"
       brand: "New Brand"
@@ -59,13 +60,16 @@ en:
       day_part: "New Day Part"
       activity_type: "New Activity Type"
     edit:
+      event: "Edit Event"
       team: "Edit Team"
       campaign: "Edit Campaign"
       role: "Edit Role"
       area: "Edit Area"
+      brand: "Edit Brand"
       brand_portfolio: "Edit Brand Portfolio"
       date_range: "Edit Date Range"
       day_part: "Edit Day Part"
+      activity_type: "Edit Activity Type"
 
   inputs:
     attached_asset:

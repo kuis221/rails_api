@@ -251,6 +251,8 @@ Brandscopic::Application.routes.draw do
     end
   end
 
+  resources :kpis, only: [:index]
+
   resources :campaigns, except: [:destroy] do
     resources :areas_campaigns, only: [:edit, :update] do
       post :exclude_place, on: :member
@@ -276,7 +278,6 @@ Brandscopic::Application.routes.draw do
       post :update_post_event_form
       get :deactivate
       get :activate
-      get :kpis
       get :places
       match 'members/:member_id' => 'campaigns#delete_member', via: :delete, as: :delete_member
       match 'teams/:team_id' => 'campaigns#delete_member', via: :delete, as: :delete_team
@@ -498,7 +499,6 @@ Brandscopic::Application.routes.draw do
   resources :filter_settings, only: [:index, :new, :create, :update]
 
   namespace :brand_ambassadors do
-    resources :dashboard, only: [:index]
     resources :visits, except: [:destroy] do
       get :autocomplete, on: :collection
       get :filters, on: :collection, format: :json
@@ -520,6 +520,7 @@ Brandscopic::Application.routes.draw do
     resources :documents, only: [:new, :edit, :create, :update, :destroy] do
       get :move, on: :member
     end
+    get '/:tab', constraints: { tab: /calendar/ }, to: 'dashboard#index'
     root to: 'dashboard#index'
   end
 

@@ -11,13 +11,13 @@
           = resource.description
 
     .links-data
-      = link_to '', edit_role_path(resource), remote: true, class: 'icon-edit' if can?(:edit, resource)
+      = button_to_edit resource if can?(:edit, resource)
       = active_inactive_buttons(resource, resource.name + " users can no longer login if you deactivate that role. Would you like to continue?") if can?(:deactivate, resource)
 
     // The is info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
       h3= resource.name
-      = link_to '', edit_role_path(resource), remote: true, class: '.icon-edit' if can?(:edit, resource)
+      = button_to_edit resource if can?(:edit, resource)
       = active_inactive_buttons(resource, resource.name + " users can no longer login if you deactivate that role. Would you like to continue?") if can?(:deactivate, resource)
 
   - if can?(:edit, resource)

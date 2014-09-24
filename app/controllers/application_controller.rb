@@ -104,6 +104,7 @@ class ApplicationController < ActionController::Base
         Time.zone = current_user.time_zone
         ::NewRelic::Agent.add_custom_parameters(:user_id => current_user.id)
         ::NewRelic::Agent.add_custom_parameters(:company_user_id => current_company_user.id)
+        ::NewRelic::Agent.set_user_attributes(user: current_user.email, account: current_company.name)
       end
       yield
     ensure
