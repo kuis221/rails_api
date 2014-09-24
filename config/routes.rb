@@ -498,7 +498,6 @@ Brandscopic::Application.routes.draw do
   resources :filter_settings, only: [:index, :new, :create, :update]
 
   namespace :brand_ambassadors do
-    resources :dashboard, only: [:index]
     resources :visits, except: [:destroy] do
       get :autocomplete, on: :collection
       get :filters, on: :collection, format: :json
@@ -520,6 +519,7 @@ Brandscopic::Application.routes.draw do
     resources :documents, only: [:new, :edit, :create, :update, :destroy] do
       get :move, on: :member
     end
+    get '/:tab', constraints: { tab: /calendar/ }, to: 'dashboard#index'
     root to: 'dashboard#index'
   end
 

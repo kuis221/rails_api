@@ -13,6 +13,7 @@ javascript:
       titleFormat: {
         month: 'MMMM, YYYY'
       },
+      defaultDate: "#{(params[:start_date] && params[:end_date] ? Timeliness.parse(params[:start_date]) + 15.days : Date.today).to_s(:full_calendar) }",
       buttonIcons: {
           prev: 'bc icon icon-angle-left',
           next: 'bc icon icon-angle-right',
@@ -54,12 +55,6 @@ javascript:
           "<span class='user-name'>" + visit.company_user.full_name + "</span>" +
           (visit.city ? " - <span class='city-name'>" + visit.city + "</span>" : '')
         );
-      },
-      eventClick: function(event) {
-        if (event.url) {
-          window.location.href = event.url+'?tab=calendar-view';
-          return false;
-        }
       }
     });
   };
@@ -67,9 +62,16 @@ javascript:
   if ($('#toggle-visits-view a').length == 0) {
     buildCalendar();
   } else {
+    $('#toggle-visits-view a').click(function(e){
+      if (e.currentTarget.getAttribute('href') === '#calendar-view' && document.location.pathname.indexOf('/calendar') < 0){
+        history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname.replace('/calendar', '') + '/calendar');
+      } else if (e.currentTarget.getAttribute('href') !== '#calendar-view' && document.location.pathname.indexOf('/calendar') >= 0) {
+        history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname.replace('/calendar', ''));
+      }
+    });
     $('#toggle-visits-view a').on('shown', function(e){
       $('#toggle-visits-view a').removeClass('active');
-      $(e.target).addClass('active')
+      $(e.target).addClass('active');
       if (e.target.getAttribute('href') == '#calendar-view'){
         $('#pdf-export').data('url', '#{brand_ambassadors_visits_path(mode: :calendar, format: :pdf)}');
         $('.dates-range-filter').slideUp();
@@ -86,3 +88,11 @@ javascript:
       }
     });
   }
+
+  $(window).on('popstate', function(){
+    if (document.location.pathname.indexOf('/calendar') >= 0 && !$('#toggle-visits-view a.calendar').hasClass('active')) {
+      $('#toggle-visits-view a.calendar').tab('show');
+    } else if (document.location.pathname.indexOf('/calendar') < 0 && !$('#toggle-visits-view a.list').hasClass('active')) {
+      $('#toggle-visits-view a.list').tab('show');
+    }
+  });

@@ -77,13 +77,4 @@ class BrandAmbassadors::VisitsController < FilteredController
 
       end
     end
-
-    def return_path
-      super.tap do |r|
-        if params['tab'].present?
-          r = r + "&tab=#{params['tab']}"
-        end
-        return r
-      end
-    end
 end
