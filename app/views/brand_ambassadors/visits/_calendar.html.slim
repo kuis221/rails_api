@@ -36,6 +36,7 @@ javascript:
         },
         fixedWeekCount: false,
         eventLimit: false,
+        defaultDate: "#{(params[:start_date] && params[:end_date] ? Timeliness.parse(params[:start_date]) + 15.days : Date.today).to_s(:full_calendar) }",
         events: {
           events: function(start, end, timezone, callback){
             var data = '#{j params.to_query.html_safe}';
@@ -92,9 +93,16 @@ javascript:
   if ($('#toggle-visits-view a').length == 0) {
     buildCalendar();
   } else {
+    $('#toggle-visits-view a').click(function(e){
+      if (e.currentTarget.getAttribute('href') === '#calendar-view' && document.location.pathname.indexOf('/calendar') < 0){
+        history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname.replace('/calendar', '') + '/calendar' + document.location.search);
+      } else if (e.currentTarget.getAttribute('href') !== '#calendar-view' && document.location.pathname.indexOf('/calendar') >= 0) {
+        history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname.replace('/calendar', '') + document.location.search);
+      }
+    });
     $('#toggle-visits-view a').on('shown', function(e){
       $('#toggle-visits-view a').removeClass('active');
-      $(e.target).addClass('active')
+      $(e.target).addClass('active');
       if (e.target.getAttribute('href') == '#calendar-view'){
         $('#pdf-export').data('url', '#{brand_ambassadors_visits_path(mode: :calendar, format: :pdf)}');
         $('.dates-range-filter').slideUp();
@@ -111,3 +119,11 @@ javascript:
       }
     });
   }
+
+  $(window).on('popstate', function(){
+    if (document.location.pathname.indexOf('/calendar') >= 0 && !$('#toggle-visits-view a.calendar').hasClass('active')) {
+      $('#toggle-visits-view a.calendar').tab('show');
+    } else if (document.location.pathname.indexOf('/calendar') < 0 && !$('#toggle-visits-view a.list').hasClass('active')) {
+      $('#toggle-visits-view a.list').tab('show');
+    }
+  });

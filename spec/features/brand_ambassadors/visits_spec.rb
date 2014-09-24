@@ -286,6 +286,12 @@ feature "Brand Ambassadors Visits" do
       expect(page).to have_selector('h2', text: "Market Visit")
       expect(page).to have_content 'Test User'
       expect(page).to have_content 'Visit1 description'
+
+      #Ensure that the "close" link is going to the calendar view
+      click_link 'You are viewing visit details. Click to close.'
+
+      expect(page).to have_css('div#calendar-view.tab-pane.active')
+      expect(page).to have_no_css('div#visits-scoller-outer.tab-pane.active')
     end
 
     scenario "should be able to export the calendar view as PDF" do
