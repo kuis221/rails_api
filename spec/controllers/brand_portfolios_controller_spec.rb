@@ -47,7 +47,7 @@ describe BrandPortfoliosController, :type => :controller do
   describe "POST 'add_brands'" do
     let(:brand_portfolio){ FactoryGirl.create(:brand_portfolio, company: @company) }
     it "should add the brand to the portfolio" do
-      brand = FactoryGirl.create(:brand)
+      brand = FactoryGirl.create(:brand, company: @company)
       expect {
         xhr :post, 'add_brands', id: brand_portfolio.to_param, brand_id: brand.to_param, format: :js
       }.to change(BrandPortfoliosBrand, :count).by(1)
@@ -57,7 +57,7 @@ describe BrandPortfoliosController, :type => :controller do
     end
 
     it "should not add duplicated brands to portfolios" do
-      brand = FactoryGirl.create(:brand)
+      brand = FactoryGirl.create(:brand, company: @company)
       brand_portfolio.brands << brand
       expect {
         xhr :post, 'add_brands', id: brand_portfolio.to_param, brand_id: brand.to_param, format: :js
