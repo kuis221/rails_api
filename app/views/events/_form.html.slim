@@ -40,9 +40,6 @@
     = f.input :team_members, label: 'Event staff' do
       = f.select :team_members, current_company.team_member_options , {}, class: 'input-xlarge chosen-enabled', multiple: true, 'data-placeholder' => " "
 
-    - if params[:visit_id].present?
-      = hidden_field_tag :visit_id, params[:visit_id]
-
   .form-actions
     = f.button :submit, class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
     = "&nbsp;".html_safe
@@ -50,8 +47,8 @@
 
 javascript:
   val = $('#calendar_start_date').text();
-  visitStartDate = "#{params[:visit_id] ? current_company.brand_ambassadors_visits.find(params[:visit_id]).start_date : ''}";
-  visitEndDate = "#{params[:visit_id] ? current_company.brand_ambassadors_visits.find(params[:visit_id]).end_date : ''}";
+  visitStartDate = "#{resource.visit_id ? current_company.brand_ambassadors_visits.find(resource.visit_id).start_date : ''}";
+  visitEndDate = "#{resource.visit_id ? current_company.brand_ambassadors_visits.find(resource.visit_id).end_date : ''}";
   $('#event_start_date').datepicker({
     showOtherMonths: true,
     selectOtherMonths: true,
