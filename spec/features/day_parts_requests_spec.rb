@@ -122,7 +122,7 @@ feature "DayParts", js: true do
       visit day_part_path(day_part)
 
       expect(page).to have_content('Old name')
-      find('.links-data').click_js_link('Edit')
+      find('.links-data').click_js_button('Edit Day Part')
 
       within("form#edit_day_part_#{day_part.id}") do
         fill_in 'Name', with: 'edited day part name'

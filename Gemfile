@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-ruby '2.1.3'
+ruby ENV['CUSTOM_RUBY_VERSION'] || '2.1.3'
 
 gem 'rails', '4.1.5'
 gem 'rails-observers'
@@ -46,9 +46,7 @@ gem 'resque_mailer'
 gem 'unread'
 gem 'nearest_time_zone'
 gem "memcachier"
-gem 'rack-cache'
 gem 'dalli'
-gem 'kgio'
 gem 'apipie-rails'
 gem 'heroku-resque-workers-scaler', github: 'guilleva/heroku-resque-workers-scaler'
 gem 'twilio-ruby'

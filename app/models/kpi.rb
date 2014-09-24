@@ -36,7 +36,7 @@ class Kpi < ActiveRecord::Base
                         "dropdown"  => 1,
                         "checkbox"  => 1}
 
-  validates :name, presence: true, uniqueness: {scope: :company_id}
+  validates :name, presence: true, uniqueness: { scope: :company_id }
   validates :company_id, numericality: true, allow_nil: true
   validates :kpi_type, :inclusion => {:in => COMPLETE_TYPE_OPTIONS, :message => "%{value} is not valid"}
 
@@ -47,10 +47,10 @@ class Kpi < ActiveRecord::Base
   validate :segments_count_valid?
 
   # KPIs-Segments relationship
-  has_many :kpis_segments, ->{ order 'ordering ASC, id ASC' }, dependent: :destroy
+  has_many :kpis_segments, ->{ order 'ordering ASC, id ASC' }, inverse_of: :kpi, dependent: :destroy
 
   # KPIs-Goals relationship
-  has_many :goals, dependent: :destroy
+  has_many :goals, inverse_of: :kpi, dependent: :destroy
 
   accepts_nested_attributes_for :kpis_segments, reject_if: lambda { |x| x[:text].blank? && x[:id].blank? }, allow_destroy: true
   accepts_nested_attributes_for :goals, reject_if: :invalid_goal?
@@ -129,8 +129,16 @@ class Kpi < ActiveRecord::Base
       name: name,
       type: form_field_type,
       kpi_id: self.id,
-      options: (['count', 'percentage'].include?(kpi_type) ? kpis_segments.pluck(:text, :id).each_with_index.map{|opt, i| {id: opt[1], name: opt[0], ordering: i} } : [])
+      options: (['count', 'percentage'].include?(kpi_type) ? segments.each_with_index.map{|s, i| {id: s[0], name: s[1], ordering: i} } : [])
     }
+  end
+
+  def segments_names
+    segments.map{|s| s[1]}
+  end
+
+  def segments
+    @segments ||= kpis_segments.pluck(:id, :text)
   end
 
   class << self

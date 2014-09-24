@@ -1,3 +1,7 @@
+# Countries Controller class
+#
+# This class handle the requests for managing the Countries
+#
 class CountriesController < ApplicationController
   skip_before_action :authenticate_user!
 

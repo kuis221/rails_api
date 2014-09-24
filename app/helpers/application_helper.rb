@@ -35,6 +35,33 @@ module ApplicationHelper
     end
   end
 
+  def icon_button_to(icon, options={}, html_options={})
+    html_options[:class] ||= ''
+    html_options[:class] = [html_options[:class], 'button-with-icon'].join(' ')
+    button_to options, html_options do
+      content_tag(:i, nil, class: "icon #{icon}")
+    end
+  end
+
+  def button_to_add(title, url, options={})
+    icon_button_to 'icon-plus-sign', url, options.merge(
+      remote: true,
+      method: :get,
+      title: title,
+      form_class: 'button_to button_to_add'
+    )
+  end
+
+  def button_to_edit(resource, title: nil, url: nil)
+    url = url_for([:edit, resource])
+    title = I18n.t("buttons.edit.#{resource.class.name.underscore}")
+    icon_button_to 'icon-edit', url,
+      remote: true,
+      method: :get,
+      title: title,
+      form_class: 'button_to button_to_edit'
+  end
+
   def event_place_address(event, link_name = false, line_separator = '<br />', name_separator='<br />')
     street = "#{event.place_street_number} #{event.place_route}".strip
     address = Array.new

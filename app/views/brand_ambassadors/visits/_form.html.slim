@@ -12,7 +12,7 @@
 
     = f.association :company_user, collection: brand_ambassadors_users.for_dropdown_with_role, input_html: {class: 'chosen-enabled', 'data-placeholder' => " "}, label: 'Employee'
 
-    = f.association :brand, collection: current_company.brands.active.accessible_by_user(current_company_user).order(:name), input_html: {class: 'chosen-enabled'}
+    = f.association :campaign, collection: allowed_campaigns, input_html: {class: 'chosen-enabled'}
 
     = f.association :area, collection: current_company.areas.active.accessible_by_user(current_company_user).order(:name), input_html: {class: 'chosen-enabled'}
 

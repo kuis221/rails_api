@@ -211,7 +211,7 @@ feature "Brand Ambassadors Documents", js: true do
   feature "Brand Ambassador Visit documents" do
     let(:role) { FactoryGirl.create(:non_admin_role, company: company) }
     let(:permissions) { [[:create, 'BrandAmbassadors::Document'], [:index, 'BrandAmbassadors::Document'], [:show, 'BrandAmbassadors::Visit']] }
-    let(:ba_visit) { FactoryGirl.create(:brand_ambassadors_visit,
+    let(:ba_visit) { FactoryGirl.create(:brand_ambassadors_visit, campaign: campaign,
         company: company, company_user: company_user) }
 
     scenario "A user can upload a document to a brand ambassador visit" do

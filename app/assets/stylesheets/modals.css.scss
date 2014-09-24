@@ -768,6 +768,19 @@ ul.select2-results{
 			width: 120px;
 		}
 	}
+	&.visit_event_start_date, &.visit_event_end_date{
+		margin-right: 0 !important;
+		.controls{
+			width: 100%;
+			.event_start_date, .event_end_date{
+				margin-right: 17px;
+				width: 120px;
+			}
+			.event_start_time, .event_end_time{
+				width: 120px;
+			}
+		}
+	}
 }
 
 .divider{

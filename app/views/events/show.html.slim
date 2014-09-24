@@ -55,13 +55,13 @@
         i.icon-wired-description
         span= simple_format resource.description
     .links-data
-      = link_to '', edit_event_path(resource), remote: true, class: 'icon-edit' if can_edit
+      = button_to_edit resource if can_edit
       = active_inactive_buttons(resource) if can? :deactivate, resource
 
     // The is info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
       h3= resource.campaign_name
-      = link_to '', edit_event_path(resource), remote: true, class: 'icon-edit' if can_edit
+      = button_to_edit resource if can_edit
       = active_inactive_buttons(resource) if can? :deactivate, resource
       br>/
       = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at), date_separator: ' ')
@@ -72,7 +72,7 @@
       h3 EVENT STAFF
       #event-team-members
         = render partial: 'team_member_list', locals: {can_delete: can?(:delete_member, resource)}
-      = link_to "", new_member_event_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Team Member' if can?(:add_members, resource)
+      = button_to_add 'Add Team Member', new_member_event_path(resource) if can?(:add_members, resource)
 
 
   - if can?(:view_contacts, resource)
@@ -80,7 +80,7 @@
       h3 CONTACTS
       #event-contacts-list
         = render 'contacts'
-      = link_to "", add_event_contact_events_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Contact' if can?(:create_contacts, resource)
+      = button_to_add 'Add Contact', add_event_contact_events_path(resource) if can?(:create_contacts, resource)
 
   - resource.results.each{|r| r.errors.clear}
   - if resource.has_event_data? && !resource.rejected?
@@ -108,7 +108,7 @@
           = render :partial => "documents/document", :collection => resource.documents.active + resource.campaign.documents, :locals => { parent: resource }
       .row-fluid
         .pull-left
-          = link_to content_tag(:i,'', class: 'icon-plus-sign'), new_event_document_path(resource), remote: true if can? :create_document, resource
+          = button_to_add 'Add Document', new_event_document_path(resource) if can?(:create_document, resource)
 
 = render partial: 'help_tutorial'
 

@@ -129,7 +129,7 @@ feature "BrandPortfolios", js: true, search: true do
       portfolio = FactoryGirl.create(:brand_portfolio, name: 'Old name', company: @company)
       visit brand_portfolio_path(portfolio)
       expect(page).to have_content('Old name')
-      click_js_link('Edit')
+      within('.links-data') { click_js_button 'Edit Brand Portfolio' }
 
       within("form#edit_brand_portfolio_#{portfolio.id}") do
         fill_in 'Name', with: 'edited portfolio name'

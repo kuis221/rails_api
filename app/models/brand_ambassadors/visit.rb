@@ -22,13 +22,13 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
 
   belongs_to :company_user
   belongs_to :company
-  belongs_to :brand
+  belongs_to :campaign
   belongs_to :area
 
   has_many :events, inverse_of: :visit
 
   delegate :name, to: :area, allow_nil: true, prefix: true
-  delegate :name, to: :brand, allow_nil: true, prefix: true
+  delegate :name, to: :campaign, allow_nil: true, prefix: true
 
   scoped_to_company
 
@@ -63,23 +63,20 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
   validates :end_date, presence: true,
       date: { on_or_after: :start_date, message: 'must be after' }
   validates :visit_type, presence: true
-  validates :brand_id, presence: true, numericality: true
+  validates :campaign, presence: true
 
   searchable if: :active do
     integer :id, stored: true
     integer :company_id
     integer :company_user_id
-    integer :place_ids, multiple: true do
-      events.pluck(:place_id)
-    end
     integer :location, multiple: true do
-      events.joins(place: :locations).pluck('DISTINCT(locations.id)')
+      area.cities.detect{|c| c.name == city}.try(:location_ids) if area && city
     end
     date :start_date, stored: true
     date :end_date, stored: true
 
     string :visit_type
-    integer :brand_id
+    integer :campaign_id
     integer :area_id
     string :city
   end
@@ -99,7 +96,15 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
   def self.do_search(params, include_facets=false)
     solr_search do
       with :company_id, params[:company_id]
-      with :place_ids, params[:place] if params.has_key?(:place) and params[:place].present?
+
+      company_user = params[:current_company_user]
+      if company_user.present?
+        current_company = company_user.company
+        unless company_user.role.is_admin?
+          with :campaign_id, company_user.accessible_campaign_ids + [0]
+          with :location, company_user.accessible_locations + [0]
+        end
+      end
 
       if params[:start_date].present? and params[:end_date].present?
         d1 = Timeliness.parse(params[:start_date], zone: :current)
@@ -124,7 +129,7 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
       end
 
       with :area_id, params[:area] if params.has_key?(:area) and params[:area].present?
-      with :brand_id, params[:brand] if params.has_key?(:brand) and params[:brand].present?
+      with :campaign_id, params[:campaign] if params.has_key?(:campaign) and params[:campaign].present?
       with :city, params[:city] if params.has_key?(:city) and params[:city].present?
 
       if params[:start] && params[:end]
@@ -152,14 +157,10 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
       if params.has_key?(:q) and params[:q].present?
         (attribute, value) = params[:q].split(',')
         case attribute
-        when 'brand'
-          with :brand_id, value
+        when 'campaign'
+          with :campaign_id, value
         when 'company_user'
           with :company_user_id, value
-        when 'place'
-          with :place_ids, value
-        when 'venue'
-          with :place_ids, Venue.find(value).place_id
         when 'area'
           with :area_id, value
         end

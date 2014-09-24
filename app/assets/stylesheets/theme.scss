@@ -58,11 +58,11 @@ input[type="color"],
 		color: silver;
 	}
 	&.input-calendar{
-		background: url(/assets/calendar.svg) no-repeat left !important;
+		background: image-url('calendar.svg') no-repeat left !important;
 		text-align: right;
 	}
 	&.input-time{
-		background: url(/assets/time.svg) no-repeat left !important;
+		background: image-url('time.svg') no-repeat left !important;
 		text-align: right;
 	}
 }
