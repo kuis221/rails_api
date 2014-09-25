@@ -14,7 +14,7 @@ describe Event, type: :model, search: true do
     campaign2 = create(:campaign, company: company, brand_ids: [brand.id, brand2.id])
     team = create(:team, company: company)
     team2 = create(:team, company: company)
-    user = create(:company_user, company: company, team_ids: [team.id], role: create(:role, company: company))
+    create(:company_user, company: company, team_ids: [team.id], role: create(:role, company: company))
     user2 = create(:company_user, company: company, team_ids: [team.id, team2.id], role: create(:role, company: company))
     user3 = create(:company_user, company: company, role: create(:role, company: company))
     user4 = create(:company_user, company: company, role: create(:role, company: company))

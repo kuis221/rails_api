@@ -80,82 +80,111 @@ class Event < ActiveRecord::Base
   }
 
   scope :by_campaigns, ->(campaigns) { where(campaign_id: campaigns) }
-  scope :with_user_in_team, ->(user) {
+  scope :in_past, -> { where('events.end_at < ?', Time.now) }
+  scope :with_team, ->(team) { joins(:teamings) .where(teamings: { team_id: team } ) }
+
+  def self.with_user_in_team(user)
     joins('LEFT JOIN teamings ON teamings.teamable_id=events.id AND teamable_type=\'Event\'')
     .joins('LEFT JOIN memberships ON (memberships.memberable_id=events.id AND memberable_type=\'Event\') OR (memberships.memberable_id=teamings.team_id AND memberable_type=\'Team\')')
     .where('memberships.company_user_id in (?)', user)
-  }
+  end
 
-  scope :in_past, -> { where('events.end_at < ?', Time.now) }
-  scope :with_team, ->(team) {
-    joins(:teamings)
-    .where(teamings: { team_id: team })
-  }
-
-  scope :for_campaigns_accessible_by, ->(company_user) {
+  def self.for_campaigns_accessible_by(company_user)
     if company_user.is_admin?
       where(company_id: company_user.company_id)
     else
       where(company_id: company_user.company_id, campaign_id: company_user.accessible_campaign_ids + [0])
     end
-  }
+  end
 
-  scope :accessible_by_user, ->(company_user) {
+  def self.accessible_by_user(company_user)
     if company_user.is_admin?
       where(company_id: company_user.company_id)
     else
       where(company_id: company_user.company_id).for_campaigns_accessible_by(company_user).in_user_accessible_locations(company_user)
     end
-  }
+  end
 
-  scope :in_user_accessible_locations, ->(company_user) { company_user.is_admin? ? scoped : joins(:place).where('events.place_id in (?) or events.place_id in (select place_id FROM locations_places where location_id in (?))', company_user.accessible_places + [0], company_user.accessible_locations + [0]) }
+  def self.in_user_accessible_locations(company_user)
+    if  company_user.is_admin?
+      self
+    else
+      joins(:place)
+        .where('events.place_id in (?) OR events.place_id in (
+                select place_id FROM locations_places where location_id in (?))',
+                company_user.accessible_places + [0],
+                company_user.accessible_locations + [0]
+        )
+    end
+  end
 
-  scope :joins_for_user_teams, -> {
+  def self.joins_for_user_teams
     joins('LEFT JOIN teamings ON teamings.teamable_id=events.id AND teamable_type=\'Event\'')
-    .joins('LEFT JOIN teams ON teams.id=teamings.team_id')
-    .joins('LEFT JOIN memberships ON (memberships.memberable_id=events.id AND memberable_type=\'Event\') OR (memberships.memberable_id=teams.id AND memberable_type=\'Team\')')
-    .joins('LEFT JOIN company_users ON company_users.id=memberships.company_user_id')
-    .joins('LEFT JOIN users ON users.id=company_users.user_id')
-  }
+      .joins('LEFT JOIN teams ON teams.id=teamings.team_id')
+      .joins('LEFT JOIN memberships ON
+                (memberships.memberable_id=events.id AND memberable_type=\'Event\') OR
+                (memberships.memberable_id=teams.id AND memberable_type=\'Team\')')
+      .joins('LEFT JOIN company_users ON company_users.id=memberships.company_user_id')
+      .joins('LEFT JOIN users ON users.id=company_users.user_id')
+  end
 
   # Returns the events that are inside the campaigns scope, considering the
   # custom exclusions
-  scope :in_campaign_area, ->(area_campaign) {
+  def self.in_campaign_area(area_campaign)
     has_exclusions = area_campaign.exclusions.any?
-    subquery = Place.select('DISTINCT places.location_id, placeables.placeable_id area_id').joins(:placeables).where(placeables: { placeable_type: 'Area', placeable_id: area_campaign.area_id }, is_location: true)
+    subquery =
+      Place.select('DISTINCT places.location_id, placeables.placeable_id area_id')
+        .joins(:placeables)
+        .where(
+            is_location: true,
+            placeables: { placeable_type: 'Area', placeable_id: area_campaign.area_id })
     subquery = subquery.where.not(placeables: { place_id: area_campaign.exclusions })
-    place_query = "SELECT place_id, locations.area_id FROM locations_places INNER JOIN (#{subquery.to_sql}) locations on locations.location_id=locations_places.location_id" + (has_exclusions ? " WHERE place_id not in (#{area_campaign.exclusions.join(',')})" : '')
-    area_query = Placeable.select('place_id, placeable_id area_id').where(placeable_type: 'Area', placeable_id: area_campaign.area_id)
+    place_query =
+      "SELECT place_id, locations.area_id FROM locations_places
+       INNER JOIN (#{subquery.to_sql}) locations on locations.location_id=locations_places.location_id " +
+       (has_exclusions ? "WHERE place_id not in (#{area_campaign.exclusions.join(',')})" : '')
+    area_query =
+      Placeable.select('place_id, placeable_id area_id')
+          .where(placeable_type: 'Area', placeable_id: area_campaign.area_id)
     area_query = area_query.where.not(place_id: area_campaign.exclusions) if has_exclusions
     joins(:place)
     .joins("INNER JOIN (#{area_query.to_sql} UNION #{place_query}) areas_places ON events.place_id=areas_places.place_id")
-  }
+  end
 
   # Similar to in_campaign_area, except that this accepts severals areas and filter
   # the events based on given areas scope validating the custom exclusions for that area in that campaign
-  scope :in_campaign_areas, ->(campaign, areas) {
-    subquery = Place.select('DISTINCT places.location_id, placeables.placeable_id area_id').joins(:placeables).where(placeables: { placeable_type: 'Area', placeable_id: areas }, is_location: true).joins('INNER JOIN areas_campaigns ON areas_campaigns.campaign_id=' + campaign.id.to_s + ' AND areas_campaigns.area_id=placeables.placeable_id').where('NOT (places.id = ANY (areas_campaigns.exclusions))')
+  def self.in_campaign_areas(campaign, areas)
+    subquery =
+      Place.select('DISTINCT places.location_id, placeables.placeable_id area_id')
+          .joins(:placeables)
+          .where(placeables: { placeable_type: 'Area', placeable_id: areas }, is_location: true)
+          .joins('INNER JOIN areas_campaigns
+                    ON areas_campaigns.campaign_id=' + campaign.id.to_s + ' AND
+                    areas_campaigns.area_id=placeables.placeable_id')
+          .where('NOT (places.id = ANY (areas_campaigns.exclusions))')
     place_query = "select place_id, locations.area_id FROM locations_places INNER JOIN (#{subquery.to_sql}) locations ON locations.location_id=locations_places.location_id"
     area_query = Placeable.select('place_id, placeable_id area_id').where(placeable_type: 'Area', placeable_id: areas).joins('INNER JOIN areas_campaigns ON areas_campaigns.campaign_id=' + campaign.id.to_s + ' AND areas_campaigns.area_id=placeables.placeable_id').where('NOT (place_id = ANY (areas_campaigns.exclusions))').to_sql
     joins(:place)
     .joins("INNER JOIN (#{area_query} UNION #{place_query}) areas_places ON events.place_id=areas_places.place_id")
-  }
+  end
 
   #
-  scope :in_areas, ->(areas) {
+  def self.in_areas(areas)
     subquery = Place.select('DISTINCT places.location_id, placeables.placeable_id area_id').joins(:placeables).where(placeables: { placeable_type: 'Area', placeable_id: areas }, is_location: true)
     place_query = "select place_id, locations.area_id FROM locations_places INNER JOIN (#{subquery.to_sql}) locations on locations.location_id=locations_places.location_id"
     area_query = Placeable.select('place_id, placeable_id area_id').where(placeable_type: 'Area', placeable_id: areas).to_sql
     joins(:place)
     .joins("INNER JOIN (#{area_query} UNION #{place_query}) areas_places ON events.place_id=areas_places.place_id")
-  }
+  end
 
-  scope :in_places, ->(places) {
+  def self.in_places(places)
     joins(:place).where(
       'events.place_id in (?) or events.place_id in (
           select place_id FROM locations_places where location_id in (?)
-      )', places.map(&:id).uniq + [0], places.map { |p| p.is_location? ? p.location_id : nil }.compact.uniq + [0])
-  }
+      )',
+      places.map(&:id).uniq + [0],
+      places.select(&:is_location?).map(&:location_id).compact.uniq + [0])
+  end
 
   track_who_does_it
 
