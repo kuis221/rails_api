@@ -33,38 +33,38 @@ class ListExport < ActiveRecord::Base
   View = Struct.new(:layout, :action, :locals, :format, :path)
 
   aasm do
-    state :new, :initial => true
+    state :new, initial: true
     state :queued, after_enter: :queue_process
     state :processing
     state :completed
     state :failed
 
     event :queue do
-      transitions :from => [:new, :complete, :failed], :to => :queued
+      transitions from: [:new, :complete, :failed], to: :queued
     end
 
     event :process do
-      transitions :from => [:queued, :new, :failed], :to => :processing
+      transitions from: [:queued, :new, :failed], to: :processing
     end
 
     event :complete do
-      transitions :from => :processing, :to => :completed
+      transitions from: :processing, to: :completed
     end
 
     event :fail do
-      transitions :from => :processing, :to => :failed
+      transitions from: :processing, to: :failed
     end
   end
 
   def queue_process
-    Resque.enqueue(ListExportWorker, self.id)
+    Resque.enqueue(ListExportWorker, id)
   end
 
-  def download_url(style_name=:original)
+  def download_url(style_name = :original)
     file.s3_bucket.objects[file.s3_object(style_name).key].url_for(:read,
-      :secure => true,
-      :expires => 300, # 5 minutes
-      :response_content_disposition => "attachment; filename=#{file_file_name}").to_s unless file_file_name.nil? || file.nil? || file.s3_object(style_name).nil?
+                                                                   secure: true,
+                                                                   expires: 300, # 5 minutes
+                                                                   response_content_disposition: "attachment; filename=#{file_file_name}").to_s unless file_file_name.nil? || file.nil? || file.s3_object(style_name).nil?
   end
 
   def export_list
@@ -96,31 +96,31 @@ class ListExport < ActiveRecord::Base
     if export_format == 'pdf'
       html = controller.send(:export_list, self)
       if Rails.env.development?
-        tempfile = Tempfile.new(["export-#{self.controller.underscore.gsub('/', '-')}", ".html"], Rails.root.join('tmp'))
+        tempfile = Tempfile.new(["export-#{self.controller.underscore.gsub('/', '-')}", '.html'], Rails.root.join('tmp'))
         tempfile.write html
         tempfile.close
       end
 
-      tempfile = Tempfile.new(["export-#{self.controller.underscore.gsub('/', '-')}", ".pdf"], Rails.root.join('tmp'))
+      tempfile = Tempfile.new(["export-#{self.controller.underscore.gsub('/', '-')}", '.pdf'], Rails.root.join('tmp'))
       tempfile.binmode
       tempfile.write(WickedPdf.new.pdf_from_string(html,
-        javascript_delay: 1000,
-        header: { content: controller.render_to_string(template: 'shared/pdf_header.pdf.slim') },
-        extra: '--window-status completed --debug-javascript'))
+                                                   javascript_delay: 1000,
+                                                   header: { content: controller.render_to_string(template: 'shared/pdf_header.pdf.slim') },
+                                                   extra: '--window-status completed --debug-javascript'))
       tempfile.close
 
       self.file = File.open(tempfile.path)
-      self.file_content_type = "application/pdf"
+      self.file_content_type = 'application/pdf'
     else
       self.file = StringIO.new(controller.send(:export_list, self))
     end
-    self.file_file_name = "#{name}-#{self.id}.#{export_format}"
+    self.file_file_name = "#{name}-#{id}.#{export_format}"
 
     # Save export with retry to handle errors on S3 comunications
     tries = 3
     begin
-      self.save
-    rescue Exception => e
+      save
+    rescue => e
       tries -= 1
       if tries > 0
         sleep(3)

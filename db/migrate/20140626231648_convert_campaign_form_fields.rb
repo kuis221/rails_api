@@ -6,7 +6,7 @@ class ConvertCampaignFormFields < ActiveRecord::Migration
     add_column :campaigns, :enabled_modules, :string, array: true, default: []
     add_column :form_fields, :kpi_id, :integer
     change_table :form_field_results do |t|
-      t.references :resultable, :polymorphic => true
+      t.references :resultable, polymorphic: true
     end
     execute("UPDATE form_field_results set resultable_id=activity_id, resultable_type='Activity'")
     remove_column :form_field_results, :activity_id
@@ -45,10 +45,10 @@ class ConvertCampaignFormFields < ActiveRecord::Migration
               (SELECT event_id, \'Event\', #{field.id}, value, scalar_value, created_at, updated_at
                FROM event_results WHERE form_field_id=#{cff.id} AND kpis_segment_id is null)"
           end
-        elsif ["videos", "expenses", "comments", "photos", "surveys"].include?(cff.field_type)
+        elsif %w(videos expenses comments photos surveys).include?(cff.field_type)
           enabled_modules.push cff.field_type
         else
-          raise "Unnknow field_type #{cff.field_type}"
+          fail "Unnknow field_type #{cff.field_type}"
         end
       end
       campaign.update_column :enabled_modules, enabled_modules if enabled_modules.any?
@@ -56,6 +56,7 @@ class ConvertCampaignFormFields < ActiveRecord::Migration
 
     drop_table :campaign_form_fields
   end
+
   def down
   end
 end

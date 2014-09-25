@@ -20,7 +20,6 @@
 #
 
 class Contact < ActiveRecord::Base
-
   scoped_to_company
 
   has_many :contact_events, dependent: :destroy, as: :contactable
@@ -28,13 +27,12 @@ class Contact < ActiveRecord::Base
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :country, presence: true,
-                      inclusion: { in: proc { Country.all.map{|c| c[1]} }, message: 'is not valid' }
+                      inclusion: { in: proc { Country.all.map { |c| c[1] } }, message: 'is not valid' }
   validates :state,   presence: true,
-                      inclusion: { in: proc {|event| Country[event.country].states.keys rescue [] }, message: 'is not valid' }
+                      inclusion: { in: proc { |event| Country[event.country].states.keys rescue [] }, message: 'is not valid' }
   validates :city,    presence: true
 
-  validates_format_of     :email, :with  => /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/, :allow_blank => true, :if => :email_changed?
-
+  validates_format_of :email, with: /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/, allow_blank: true, if: :email_changed?
 
   searchable do
     integer :id
@@ -59,6 +57,6 @@ class Contact < ActiveRecord::Base
   end
 
   def street_address
-    [street1, street2].reject{|v| v.nil? || v == ''}.join(', ')
+    [street1, street2].reject { |v| v.nil? || v == '' }.join(', ')
   end
 end

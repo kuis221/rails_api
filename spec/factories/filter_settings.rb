@@ -15,7 +15,7 @@
 FactoryGirl.define do
   factory :filter_setting do
     company_user nil
-    apply_to "events"
-    settings "MyText"
+    apply_to 'events'
+    settings 'MyText'
   end
 end

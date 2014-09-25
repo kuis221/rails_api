@@ -20,18 +20,17 @@ class KpisSegment < ActiveRecord::Base
 
   validates_associated :goals
 
-  validates :text, presence: true, uniqueness: {scope: :kpi_id}
+  validates :text, presence: true, uniqueness: { scope: :kpi_id }
 
   def has_results?
-    FormFieldResult.for_kpi(kpi_id).where("form_field_results.value='#{self.id}' or (form_field_results.hash_value ? '#{self.id}' AND form_field_results.hash_value->'#{self.id}' <> '')").count > 0
+    FormFieldResult.for_kpi(kpi_id).where("form_field_results.value='#{id}' or (form_field_results.hash_value ? '#{id}' AND form_field_results.hash_value->'#{id}' <> '')").count > 0
   end
-
 
   protected
 
-    def check_results_for_segment
-      errors.add :base, "cannot delete with results" if has_results?
+  def check_results_for_segment
+    errors.add :base, 'cannot delete with results' if has_results?
 
-      errors.blank?
-    end
+    errors.blank?
+  end
 end

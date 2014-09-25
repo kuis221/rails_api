@@ -1,10 +1,10 @@
 require 'rails_helper'
 
-feature "Tasks", js: true, search: true do
+feature 'Tasks', js: true, search: true do
 
   before do
     Warden.test_mode!
-    @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
+    @user = create(:user, company_id: create(:company).id, role_id: create(:role).id)
     @company = @user.companies.first
     @company_user = @user.company_users.first
     sign_in @user
@@ -14,8 +14,8 @@ feature "Tasks", js: true, search: true do
     Warden.test_reset!
   end
 
-  feature "video tutorial" do
-    scenario "a user can play and dismiss the video tutorial" do
+  feature 'video tutorial' do
+    scenario 'a user can play and dismiss the video tutorial' do
       visit mine_tasks_path
 
       feature_name = 'Getting Started: Tasks'
@@ -39,25 +39,25 @@ feature "Tasks", js: true, search: true do
     end
   end
 
-  feature "/tasks/mine" do
-    scenario "GET index should display a table with the events" do
+  feature '/tasks/mine' do
+    scenario 'GET index should display a table with the events' do
       tasks = [
-        FactoryGirl.create(:task, title: 'Pick up kidz at school', company_user: @company_user, due_at: '2013-09-01', active: true, event: FactoryGirl.create(:event, company: @company, campaign: FactoryGirl.create(:campaign, name: 'Cacique FY14', company: @company))),
-        FactoryGirl.create(:task, title: 'Bring beers to the party', company_user: @company_user, due_at: '2013-09-02' , active: true, event: FactoryGirl.create(:event, company: @company, campaign: FactoryGirl.create(:campaign, name: 'Centenario FY14', company: @company)))
+        create(:task, title: 'Pick up kidz at school', company_user: @company_user, due_at: '2013-09-01', active: true, event: create(:event, company: @company, campaign: create(:campaign, name: 'Cacique FY14', company: @company))),
+        create(:task, title: 'Bring beers to the party', company_user: @company_user, due_at: '2013-09-02', active: true, event: create(:event, company: @company, campaign: create(:campaign, name: 'Centenario FY14', company: @company)))
       ]
       Sunspot.commit
       visit mine_tasks_path
 
-      within("ul#tasks-list") do
+      within('ul#tasks-list') do
         # First Row
-        within("li:nth-child(1)") do
+        within('li:nth-child(1)') do
           expect(page).to have_content('Pick up kidz at school')
           expect(page).to have_content('SUN Sep 1')
           expect(page).to have_content('Cacique FY14')
         end
 
         # Second Row
-        within("li:nth-child(2)") do
+        within('li:nth-child(2)') do
           expect(page).to have_content('Bring beers to the party')
           expect(page).to have_content('MON Sep 2')
           expect(page).to have_content('Centenario FY14')
@@ -65,16 +65,16 @@ feature "Tasks", js: true, search: true do
       end
     end
 
-    scenario "allows the user to activate/deactivate tasks" do
-      FactoryGirl.create(:task,
-        title: 'Pick up kidz at school',
-        company_user: @company_user, due_at: '2013-09-01', active: true,
-        event: FactoryGirl.create(:event, company: @company,
-          campaign: FactoryGirl.create(:campaign, name: 'Cacique FY14', company: @company)))
+    scenario 'allows the user to activate/deactivate tasks' do
+      create(:task,
+                         title: 'Pick up kidz at school',
+                         company_user: @company_user, due_at: '2013-09-01', active: true,
+                         event: create(:event, company: @company,
+                                                           campaign: create(:campaign, name: 'Cacique FY14', company: @company)))
       Sunspot.commit
       visit mine_tasks_path
 
-      within("ul#tasks-list li:nth-child(1)") do
+      within('ul#tasks-list li:nth-child(1)') do
         click_js_link 'Deactivate'
       end
 
@@ -82,24 +82,24 @@ feature "Tasks", js: true, search: true do
 
       filter_section('ACTIVE STATE').unicheck('Active')
       filter_section('ACTIVE STATE').unicheck('Inactive')
-      within "ul#tasks-list li:nth-child(1)" do
+      within 'ul#tasks-list li:nth-child(1)' do
         expect(page).to have_content('Pick up kidz at school')
         click_js_link 'Activate'
       end
-      within "ul#tasks-list" do
+      within 'ul#tasks-list' do
         expect(page).to have_no_content('Pick up kidz at school')
       end
     end
   end
 
-  scenario "allows to create a new task" do
+  scenario 'allows to create a new task' do
     visit mine_tasks_path
 
     click_js_button 'Create'
     within('form#new_task') do
       fill_in 'Title', with: 'Do the math homework'
       fill_in 'Due at', with: '05/16/2013'
-      select_from_chosen('Test User', :from => 'Assigned To')
+      select_from_chosen('Test User', from: 'Assigned To')
       click_js_button 'Submit'
     end
 
@@ -112,23 +112,22 @@ feature "Tasks", js: true, search: true do
     end
   end
 
-  feature "/tasks/my_teams"  do
-    scenario "GET index should display a table with the events" do
-      team1 = FactoryGirl.create(:team, company: @company)
-      team2 = FactoryGirl.create(:team, company: @company)
-      @company_user.update_attributes(:team_ids => [team1.id, team2.id])
+  feature '/tasks/my_teams'  do
+    scenario 'GET index should display a table with the events' do
+      team1 = create(:team, company: @company)
+      team2 = create(:team, company: @company)
+      @company_user.update_attributes(team_ids: [team1.id, team2.id])
 
-
-      user_task = FactoryGirl.create(:task, title: 'User task', company_user: @company_user , active: true, event: FactoryGirl.create(:event, company: @company, campaign: FactoryGirl.create(:campaign, name: 'Cacique FY14', company: @company)))
+      user_task = create(:task, title: 'User task', company_user: @company_user, active: true, event: create(:event, company: @company, campaign: create(:campaign, name: 'Cacique FY14', company: @company)))
 
       team_tasks = [
-        FactoryGirl.create(:task, title: 'Team task 1', due_at: '2013-09-01', active: true, event: FactoryGirl.create(:event, company: @company, user_ids: [@company_user.id], campaign: FactoryGirl.create(:campaign, name: 'Centenario FY14', company: @company))),
-        FactoryGirl.create(:task, title: 'Team task 2', due_at: nil, active: true, event: FactoryGirl.create(:event, company: @company, team_ids: [team1.id], campaign: FactoryGirl.create(:campaign, name: 'Absolut FY13', company: @company)))
+        create(:task, title: 'Team task 1', due_at: '2013-09-01', active: true, event: create(:event, company: @company, user_ids: [@company_user.id], campaign: create(:campaign, name: 'Centenario FY14', company: @company))),
+        create(:task, title: 'Team task 2', due_at: nil, active: true, event: create(:event, company: @company, team_ids: [team1.id], campaign: create(:campaign, name: 'Absolut FY13', company: @company)))
       ]
       Sunspot.commit
       visit my_teams_tasks_path
 
-      within("ul#tasks-list") do
+      within('ul#tasks-list') do
         team_tasks.each do |task|
           # Find task Row
           within("li#task_#{task.id}") do

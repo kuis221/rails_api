@@ -28,7 +28,7 @@ class CompanyUser < ActiveRecord::Base
   has_many :satisfaction_surveys
 
   validates :role_id, presence: true, numericality: true
-  validates :company_id, presence: true, numericality: true, uniqueness: {scope: :user_id}
+  validates :company_id, presence: true, numericality: true, uniqueness: { scope: :user_id }
 
   before_validation :set_default_notifications_settings, on: :create
 
@@ -36,12 +36,12 @@ class CompanyUser < ActiveRecord::Base
   has_many :contact_events, dependent: :destroy, as: :contactable
 
   # Teams-Users relationship
-  has_many :teams, ->{ where active: true }, through: :memberships, source: :memberable, source_type: 'Team'
+  has_many :teams, -> { where active: true }, through: :memberships, source: :memberable, source_type: 'Team'
 
   # Campaigns-Users relationship
-  has_many :campaigns, ->{ where(aasm_state: 'active') }, through: :memberships, source: :memberable, source_type: 'Campaign' do
+  has_many :campaigns, -> { where(aasm_state: 'active') }, through: :memberships, source: :memberable, source_type: 'Campaign' do
     def children_of(parent)
-      where(memberships: {parent_id: parent.id, parent_type: parent.class.name})
+      where(memberships: { parent_id: parent.id, parent_type: parent.class.name })
     end
   end
 
@@ -49,53 +49,49 @@ class CompanyUser < ActiveRecord::Base
   has_many :events, through: :memberships, source: :memberable, source_type: 'Event'
 
   # Area-User relationship
-  has_many :areas, ->{ where active: true }, through: :memberships, source: :memberable, source_type: 'Area', after_remove: :remove_child_goals_for
+  has_many :areas, -> { where active: true }, through: :memberships, source: :memberable, source_type: 'Area', after_remove: :remove_child_goals_for
 
   # BrandPortfolio-User relationship
-  has_many :brand_portfolios, ->{ where active: true }, through: :memberships, source: :memberable, source_type: 'BrandPortfolio'
+  has_many :brand_portfolios, -> { where active: true }, through: :memberships, source: :memberable, source_type: 'BrandPortfolio'
 
   # BrandPortfolio-User relationship
-  has_many :brands, ->{ where active: true }, through: :memberships, source: :memberable, source_type: 'Brand'
+  has_many :brands, -> { where active: true }, through: :memberships, source: :memberable, source_type: 'Brand'
 
   # Places-Users relationship
   has_many :placeables, as: :placeable, dependent: :destroy
   has_many :places, through: :placeables, after_add: :places_changed
 
   delegate :name, :email, :phone_number, :time_zone, :avatar, :invited_to_sign_up?,
-          :full_address, :country, :state, :city, :street_address, :unit_number,
-          :zip_code, :country_name, :state_name, :phone_number_verified?,
-          to: :user
+           :full_address, :country, :state, :city, :street_address, :unit_number,
+           :zip_code, :country_name, :state_name, :phone_number_verified?,
+           to: :user
   delegate :is_admin?, to: :role, prefix: false
 
-  NOTIFICATION_SETTINGS_TYPES = [
-      'event_recap_due', 'event_recap_late', 'event_recap_pending_approval', 'event_recap_rejected',
-      'new_event_team', 'late_task', 'late_team_task', 'new_comment', 'new_team_comment',
-      'new_unassigned_team_task', 'new_task_assignment', 'new_campaign'
-  ]
+  NOTIFICATION_SETTINGS_TYPES = %w(event_recap_due event_recap_late event_recap_pending_approval event_recap_rejected new_event_team late_task late_team_task new_comment new_team_comment new_unassigned_team_task new_task_assignment new_campaign)
 
   NOTIFICATION_SETTINGS_PERMISSIONS = {
-      'event_recap_due' => [{action: :view_list, subject_class: Event}],
-      'event_recap_late' => [{action: :view_list, subject_class: Event}],
-      'event_recap_pending_approval' => [{action: :view_list, subject_class: Event}],
-      'event_recap_rejected' => [{action: :view_list, subject_class: Event}],
-      'new_event_team' => [{action: :view_list, subject_class: Event}],
-      'late_task' => [{action: :index_my, subject_class: Task}],
-      'late_team_task' => [{action: :index_team, subject_class: Task}],
-      'new_comment' => [{action: :index_my, subject_class: Task}, {action: :index_my_comments, subject_class: Task}],
-      'new_team_comment' => [{action: :index_team, subject_class: Task}, {action: :index_team_comments, subject_class: Task}],
-      'new_unassigned_team_task' => [{action: :index_team, subject_class: Task}],
-      'new_task_assignment' => [{action: :index_my, subject_class: Task}],
-      'new_campaign' => [{action: :read, subject_class: Campaign}]
+    'event_recap_due' => [{ action: :view_list, subject_class: Event }],
+    'event_recap_late' => [{ action: :view_list, subject_class: Event }],
+    'event_recap_pending_approval' => [{ action: :view_list, subject_class: Event }],
+    'event_recap_rejected' => [{ action: :view_list, subject_class: Event }],
+    'new_event_team' => [{ action: :view_list, subject_class: Event }],
+    'late_task' => [{ action: :index_my, subject_class: Task }],
+    'late_team_task' => [{ action: :index_team, subject_class: Task }],
+    'new_comment' => [{ action: :index_my, subject_class: Task }, { action: :index_my_comments, subject_class: Task }],
+    'new_team_comment' => [{ action: :index_team, subject_class: Task }, { action: :index_team_comments, subject_class: Task }],
+    'new_unassigned_team_task' => [{ action: :index_team, subject_class: Task }],
+    'new_task_assignment' => [{ action: :index_my, subject_class: Task }],
+    'new_campaign' => [{ action: :read, subject_class: Campaign }]
   }
 
   scope :active, -> { where(active: true) }
-  scope :admin, -> { joins(:role).where(roles: {is_admin: true}) }
-  scope :by_teams, ->(teams) { joins(:memberships).where(memberships: {memberable_id: teams, memberable_type: 'Team'}) }
-  scope :by_campaigns, ->(campaigns) { joins(:memberships).where(memberships: {memberable_id: campaigns, memberable_type: 'Campaign'}) }
-  scope :by_events, ->(events) { joins(:memberships).where(memberships: {memberable_id: events, memberable_type: 'Event'}) }
+  scope :admin, -> { joins(:role).where(roles: { is_admin: true }) }
+  scope :by_teams, ->(teams) { joins(:memberships).where(memberships: { memberable_id: teams, memberable_type: 'Team' }) }
+  scope :by_campaigns, ->(campaigns) { joins(:memberships).where(memberships: { memberable_id: campaigns, memberable_type: 'Campaign' }) }
+  scope :by_events, ->(events) { joins(:memberships).where(memberships: { memberable_id: events, memberable_type: 'Event' }) }
 
   # Returns all users that have at least one of the given notifications
-  scope :with_notifications, ->(notifications) { where(notifications.map{|n| '? = ANY(notifications_settings)' }.join(' OR '), *notifications) }
+  scope :with_notifications, ->(notifications) { where(notifications.map { |_n| '? = ANY(notifications_settings)' }.join(' OR '), *notifications) }
 
   scope :with_confirmed_phone_number, -> { joins(:user).where('users.phone_number is not null AND users.phone_number_verified=?', true) }
 
@@ -155,25 +151,25 @@ class CompanyUser < ActiveRecord::Base
   end
 
   def find_users_in_my_teams
-    @user_in_my_teams ||= CompanyUser.joins(:teams).where(teams: {company_id: company_id, id: teams.select('teams.id').active.map(&:id)}).map(&:id).uniq.reject{|aid| aid == self.id }
+    @user_in_my_teams ||= CompanyUser.joins(:teams).where(teams: { company_id: company_id, id: teams.select('teams.id').active.map(&:id) }).map(&:id).uniq.reject { |aid| aid == id }
   end
 
   def accessible_campaign_ids
-    @accessible_campaign_ids ||= Rails.cache.fetch("user_accessible_campaigns_#{self.id}", expires_in: 10.minutes) do
+    @accessible_campaign_ids ||= Rails.cache.fetch("user_accessible_campaigns_#{id}", expires_in: 10.minutes) do
       if is_admin?
         company.campaign_ids
       else
         (
           campaign_ids +
-          Campaign.where(company_id: company_id).joins(:brands).where(brands: {id: brand_ids}).reorder(nil).pluck('campaigns.id') +
-          Campaign.where(company_id: company_id).joins(:brand_portfolios).where(brand_portfolios: {id: brand_portfolio_ids}).reorder(nil).pluck('campaigns.id')
+          Campaign.where(company_id: company_id).joins(:brands).where(brands: { id: brand_ids }).reorder(nil).pluck('campaigns.id') +
+          Campaign.where(company_id: company_id).joins(:brand_portfolios).where(brand_portfolios: { id: brand_portfolio_ids }).reorder(nil).pluck('campaigns.id')
         ).uniq
       end
     end
   end
 
   def accessible_locations
-    @accessible_locations ||= Rails.cache.fetch("user_accessible_locations_#{self.id}", expires_in: 10.minutes) do
+    @accessible_locations ||= Rails.cache.fetch("user_accessible_locations_#{id}", expires_in: 10.minutes) do
       (
         areas.joins(:places).where(places: { is_location: true }).pluck('places.location_id') +
         places.where(places: { is_location: true }).pluck('places.location_id')
@@ -182,10 +178,10 @@ class CompanyUser < ActiveRecord::Base
   end
 
   def accessible_places
-    @accessible_places ||= Rails.cache.fetch("user_accessible_places_#{self.id}", expires_in: 10.minutes) do
+    @accessible_places ||= Rails.cache.fetch("user_accessible_places_#{id}", expires_in: 10.minutes) do
       (
         place_ids +
-        self.areas.joins(:places).pluck('places.id')
+        areas.joins(:places).pluck('places.id')
       ).flatten.uniq
     end
   end
@@ -196,41 +192,41 @@ class CompanyUser < ActiveRecord::Base
     (
       place.present? &&
       (
-        place.location_ids.any?{|location| accessible_locations.include?(location)} ||
+        place.location_ids.any? { |location| accessible_locations.include?(location) } ||
         accessible_places.include?(place.id)
       )
     )
   end
 
   def full_name
-    "#{self.first_name} #{self.last_name}".strip
+    "#{first_name} #{last_name}".strip
   end
 
   def first_name
-    if self.attributes.has_key?('first_name')
-      self.read_attribute('first_name')
+    if attributes.key?('first_name')
+      read_attribute('first_name')
     else
       user.try(:first_name)
     end
   end
 
   def last_name
-    if self.attributes.has_key?('last_name')
-      self.read_attribute('last_name')
+    if attributes.key?('last_name')
+      read_attribute('last_name')
     else
       user.try(:last_name)
     end
   end
 
   def role_name
-    if self.attributes.has_key?('role_name')
-      self.read_attribute('role_name')
+    if attributes.key?('role_name')
+      read_attribute('role_name')
     else
       role.try(:name)
     end
   end
 
-  def dismissed_alert?(alert, version=1)
+  def dismissed_alert?(alert, version = 1)
     alerts.where(name: alert, version: version).any?
   end
 
@@ -239,32 +235,32 @@ class CompanyUser < ActiveRecord::Base
     notifications_settings.is_a?(Array) && notifications_settings.include?(type.to_s)
   end
 
-  def dismiss_alert(alert, version=1)
+  def dismiss_alert(alert, version = 1)
     alerts.find_or_create_by(name: alert, version: version)
   end
 
   def notification_setting_permission?(type)
     permissions = NOTIFICATION_SETTINGS_PERMISSIONS[type]
     if permissions.present?
-      permissions.all?{|permission| self.role.has_permission?(permission[:action], permission[:subject_class])}
+      permissions.all? { |permission| role.has_permission?(permission[:action], permission[:subject_class]) }
     end
   end
 
-  def filter_settings_for(bucket, controller_name, aasm=false)
+  def filter_settings_for(bucket, controller_name, aasm = false)
     filter_settings.find_by(apply_to: controller_name).try(:filter_settings_for, bucket, controller_name, aasm) || (aasm ? ['active'] : [true])
   end
 
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
-    def do_search(params, include_facets=false)
-      options = {include: [:user, :role]}
+    def do_search(params, include_facets = false)
+      options = { include: [:user, :role] }
       solr_search(options) do
         with(:company_id, params[:company_id])
-        with(:campaign_ids, params[:campaign]) if params.has_key?(:campaign) and params[:campaign]
-        with(:team_ids, params[:team]) if params.has_key?(:team) and params[:team]
-        with(:role_id, params[:role]) if params.has_key?(:role) and params[:role].present?
-        with(:status, params[:status]) if params.has_key?(:status) and params[:status].present?
-        if params.has_key?(:q) and params[:q].present?
+        with(:campaign_ids, params[:campaign]) if params.key?(:campaign) && params[:campaign]
+        with(:team_ids, params[:team]) if params.key?(:team) && params[:team]
+        with(:role_id, params[:role]) if params.key?(:role) && params[:role].present?
+        with(:status, params[:status]) if params.key?(:status) && params[:status].present?
+        if params.key?(:q) && params[:q].present?
           (attribute, value) = params[:q].split(',')
           case attribute
           when 'company_user'
@@ -291,30 +287,30 @@ class CompanyUser < ActiveRecord::Base
     end
 
     def for_dropdown
-      self.joins(:user).
-        order('1').
-        pluck('users.first_name || \' \' || users.last_name as name, company_users.id')
+      joins(:user)
+        .order('1')
+        .pluck('users.first_name || \' \' || users.last_name as name, company_users.id')
     end
 
     def for_dropdown_with_role
-      self.joins(:user, :role).order('1').
-        pluck('users.first_name || \' \' || users.last_name as name, company_users.id, roles.name as role').
-        map{|r| [r[0].html_safe, r[1], {'data-role' => r[2]}] }
+      joins(:user, :role).order('1')
+        .pluck('users.first_name || \' \' || users.last_name as name, company_users.id, roles.name as role')
+        .map { |r| [r[0].html_safe, r[1], { 'data-role' => r[2] }] }
     end
   end
 
   def set_default_notifications_settings
-    if self.notifications_settings.nil? || self.notifications_settings.empty?
-      self.notifications_settings = NOTIFICATION_SETTINGS_TYPES.map{|n| "#{n}_app" }
+    if notifications_settings.nil? || notifications_settings.empty?
+      self.notifications_settings = NOTIFICATION_SETTINGS_TYPES.map { |n| "#{n}_app" }
     end
   end
 
   private
 
-    def places_changed(campaign)
-      # The cache is cleared in the placeable model
-      @accessible_places = nil
-      @accessible_locations = nil
-      @allowed_places_cache = nil
-    end
+  def places_changed(_campaign)
+    # The cache is cleared in the placeable model
+    @accessible_places = nil
+    @accessible_locations = nil
+    @allowed_places_cache = nil
+  end
 end

@@ -22,27 +22,27 @@ class FormFieldResult < ActiveRecord::Base
 
   delegate :company_id, to: :resultable
 
-  has_one :attached_asset, :as => :attachable, dependent: :destroy, inverse_of: :attachable
+  has_one :attached_asset, as: :attachable, dependent: :destroy, inverse_of: :attachable
 
   before_validation :prepare_for_store
 
-  scope :for_kpi, -> (kpi){ joins(:form_field).where(form_fields: {kpi_id: kpi}) }
+  scope :for_kpi, -> (kpi) { joins(:form_field).where(form_fields: { kpi_id: kpi }) }
 
-  scope :for_event_campaign, -> (campaign){ joins('INNER JOIN events ON events.id=form_field_results.resultable_id AND form_field_results.resultable_type=\'Event\'').where(events: {campaign_id: campaign}) }
+  scope :for_event_campaign, -> (campaign) { joins('INNER JOIN events ON events.id=form_field_results.resultable_id AND form_field_results.resultable_type=\'Event\'').where(events: { campaign_id: campaign }) }
 
-  scope :for_place_in_company, -> (place, company){ joins('INNER JOIN events ON events.id=form_field_results.resultable_id AND form_field_results.resultable_type=\'Event\'').where(events: {company_id: company, place_id: place}) }
+  scope :for_place_in_company, -> (place, company) { joins('INNER JOIN events ON events.id=form_field_results.resultable_id AND form_field_results.resultable_type=\'Event\'').where(events: { company_id: company, place_id: place }) }
 
   def value
     if form_field.present? && form_field.is_hashed_value?
       if form_field.type == 'FormField::Checkbox'
-        (self.attributes['hash_value'].try(:keys) || []).map(&:to_i)
+        (attributes['hash_value'].try(:keys) || []).map(&:to_i)
       else
-        self.attributes['hash_value'] || {}
+        attributes['hash_value'] || {}
       end
-    elsif form_field.present? && form_field.settings.present? && form_field.settings.has_key?('multiple') && form_field.settings['multiple']
-      self.attributes['value'].try(:split, ',')
+    elsif form_field.present? && form_field.settings.present? && form_field.settings.key?('multiple') && form_field.settings['multiple']
+      attributes['value'].try(:split, ',')
     else
-      self.attributes['value']
+      attributes['value']
     end
   end
 
@@ -55,21 +55,22 @@ class FormFieldResult < ActiveRecord::Base
   end
 
   protected
-    def valid_value?
-      return if form_field.nil?
-      form_field.validate_result(self)
-    end
 
-    def prepare_for_store
-      if self.value_changed?
-        self.value = form_field.store_value(self.attributes['value'])
-        if form_field.is_hashed_value?
-          (self.hash_value, self.value) = [self.attributes['value'], nil]
-        elsif form_field.is_attachable?
-          self.build_attached_asset(direct_upload_url: self.value) unless self.value.nil? || self.value == ''
-        end
+  def valid_value?
+    return if form_field.nil?
+    form_field.validate_result(self)
+  end
+
+  def prepare_for_store
+    if self.value_changed?
+      self.value = form_field.store_value(attributes['value'])
+      if form_field.is_hashed_value?
+        (self.hash_value, self.value) = [attributes['value'], nil]
+      elsif form_field.is_attachable?
+        build_attached_asset(direct_upload_url: value) unless value.nil? || value == ''
       end
-      self.scalar_value = self.value.to_f rescue 0 if self.value.present? && self.value.to_s =~ /\A[0-9\.\,]+\z/
-      true
     end
+    self.scalar_value = value.to_f rescue 0 if value.present? && value.to_s =~ /\A[0-9\.\,]+\z/
+    true
+  end
 end

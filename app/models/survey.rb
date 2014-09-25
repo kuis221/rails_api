@@ -27,17 +27,17 @@ class Survey < ActiveRecord::Base
   end
 
   def age
-    answer = surveys_answers.select{|a| a.kpi_id == Kpi.age.id }.first
+    answer = surveys_answers.select { |a| a.kpi_id == Kpi.age.id }.first
     answer.segment.text unless answer.nil? || answer.segment.nil?
   end
 
   def gender
-    answer = surveys_answers.select{|a| a.kpi_id == Kpi.gender.id }.first
+    answer = surveys_answers.select { |a| a.kpi_id == Kpi.gender.id }.first
     answer.segment.text unless answer.nil? || answer.segment.nil?
   end
 
   def ethnicity
-    answer = surveys_answers.select{|a| a.kpi_id == Kpi.ethnicity.id }.first
+    answer = surveys_answers.select { |a| a.kpi_id == Kpi.ethnicity.id }.first
     answer.segment.text unless answer.nil? || answer.segment.nil?
   end
 
@@ -49,20 +49,20 @@ class Survey < ActiveRecord::Base
     update_attribute :active, false
   end
 
-  def answer_for(question_id, brand_id, kpi_id=nil)
+  def answer_for(question_id, brand_id, kpi_id = nil)
     if kpi_id.nil?
-      surveys_answers.select{|a| a.question_id == question_id && a.brand_id == brand_id}.first || surveys_answers.build(question_id: question_id, brand_id: brand_id)
+      surveys_answers.select { |a| a.question_id == question_id && a.brand_id == brand_id }.first || surveys_answers.build(question_id: question_id, brand_id: brand_id)
     else
-      surveys_answers.select{|a| a.question_id == question_id && a.kpi_id == kpi_id}.first || surveys_answers.build(question_id: question_id, kpi_id: kpi_id)
+      surveys_answers.select { |a| a.question_id == question_id && a.kpi_id == kpi_id }.first || surveys_answers.build(question_id: question_id, kpi_id: kpi_id)
     end
   end
 
   protected
 
-    def reindex_event
-      # if this is the first survey for the event, then reindex it to set the flag "has_surveys" true
-      if event.present? && event.surveys.count == 1
-        Sunspot.index event
-      end
+  def reindex_event
+    # if this is the first survey for the event, then reindex it to set the flag "has_surveys" true
+    if event.present? && event.surveys.count == 1
+      Sunspot.index event
     end
+  end
 end

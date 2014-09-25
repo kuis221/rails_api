@@ -22,34 +22,35 @@ class Teaming < ActiveRecord::Base
   after_destroy :delete_goals
 
   private
-    def create_notifications
-      if teamable_type == 'Event'
-        if teamable.company.event_alerts_policy == Notification::EVENT_ALERT_POLICY_TEAM
-          team.users.each do |user|
-            if user.allowed_to_access_place?(teamable.place)
-              Notification.new_event(user, teamable, team)
-            end
+
+  def create_notifications
+    if teamable_type == 'Event'
+      if teamable.company.event_alerts_policy == Notification::EVENT_ALERT_POLICY_TEAM
+        team.users.each do |user|
+          if user.allowed_to_access_place?(teamable.place)
+            Notification.new_event(user, teamable, team)
           end
         end
       end
     end
+  end
 
-    def delete_goals
-      teamable.remove_child_goals_for(self.team) if teamable.respond_to?(:remove_child_goals_for)
-    end
+  def delete_goals
+    teamable.remove_child_goals_for(team) if teamable.respond_to?(:remove_child_goals_for)
+  end
 
-    def delete_notifications
-      if teamable_type == 'Event'
-        team.users.each do |user|
-          user.notifications.where(path: Rails.application.routes.url_helpers.event_path(teamable), message: 'new_team_event').destroy_all
-          #user.notifications.where("params->'task_id' in (?)", teamable.task_ids.map{|n| n.to_s}).destroy_all
-        end
+  def delete_notifications
+    if teamable_type == 'Event'
+      team.users.each do |user|
+        user.notifications.where(path: Rails.application.routes.url_helpers.event_path(teamable), message: 'new_team_event').destroy_all
+        # user.notifications.where("params->'task_id' in (?)", teamable.task_ids.map{|n| n.to_s}).destroy_all
       end
     end
+  end
 
-    def update_tasks
-      if teamable_type == 'Event'
-        Sunspot.index(teamable.tasks)
-      end
+  def update_tasks
+    if teamable_type == 'Event'
+      Sunspot.index(teamable.tasks)
     end
+  end
 end

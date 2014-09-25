@@ -1,18 +1,17 @@
 class Api::V1::CampaignsController < Api::V1::FilteredController
-
-  skip_authorization_check :only => [:all, :overall_stats]
+  skip_authorization_check only: [:all, :overall_stats]
 
   resource_description do
     short 'Campaigns'
-    formats ['json', 'xml']
-    error 404, "Missing"
-    error 401, "Unauthorized access"
-    error 500, "Server crashed for some reason"
+    formats %w(json xml)
+    error 404, 'Missing'
+    error 401, 'Unauthorized access'
+    error 500, 'Server crashed for some reason'
     param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
     param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
   end
 
-  api :GET, '/api/v1/campaigns/all', "Returns a list of active campaigns. Useful for generating dropdown elements"
+  api :GET, '/api/v1/campaigns/all', 'Returns a list of active campaigns. Useful for generating dropdown elements'
   description <<-EOS
     Returns a list of campaigns sorted by name. Only those campaigns that are accessible for the user will be returned.
 
@@ -44,7 +43,7 @@ class Api::V1::CampaignsController < Api::V1::FilteredController
     @campaigns = current_company.campaigns.active.accessible_by_user(current_company_user).order(:name)
   end
 
-  api :GET, '/api/v1/campaigns/overall_stats', "Returns a list of categories with the results for the events and promo hours goals."
+  api :GET, '/api/v1/campaigns/overall_stats', 'Returns a list of categories with the results for the events and promo hours goals.'
   description <<-EOS
     Returns a list of categories with the results for the events and promo hours goals.
 
@@ -133,18 +132,18 @@ class Api::V1::CampaignsController < Api::V1::FilteredController
   def overall_stats
     data = current_company.campaigns.active.accessible_by_user(current_company_user).order(:name).promo_hours_graph_data
     respond_to do |format|
-        format.json {
-          render :status => 200,
-                 :json => data
-        }
-        format.xml {
-          render :status => 200,
-                 :xml => data.to_xml(root: 'results')
-        }
+      format.json do
+        render status: 200,
+               json: data
+      end
+      format.xml do
+        render status: 200,
+               xml: data.to_xml(root: 'results')
+      end
     end
   end
 
-api :GET, '/api/v1/campaigns/:id/stats', "Returns the stats of events and promo hours goals grouped by area for a given campaign."
+  api :GET, '/api/v1/campaigns/:id/stats', 'Returns the stats of events and promo hours goals grouped by area for a given campaign.'
   description <<-EOS
     Returns a list of areas with the results for the events and promo hours goals.
 
@@ -271,14 +270,14 @@ api :GET, '/api/v1/campaigns/:id/stats', "Returns the stats of events and promo 
       areas: areas_data
     }
     respond_to do |format|
-        format.json {
-          render :status => 200,
-                 :json => data
-        }
-        format.xml {
-          render :status => 200,
-                 :xml => data.to_xml(root: 'results')
-        }
+      format.json do
+        render status: 200,
+               json: data
+      end
+      format.xml do
+        render status: 200,
+               xml: data.to_xml(root: 'results')
+      end
     end
   end
 end

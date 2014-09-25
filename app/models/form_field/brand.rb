@@ -23,10 +23,10 @@ class FormField::Brand < FormField
       collection: brands,
       selected: selected,
       include_blank: 'Select a brand',
-      label: self.name,
-      field_id: self.id,
-      options: self.settings,
-      required: self.required,
+      label: name,
+      field_id: id,
+      options: settings,
+      required: required,
       input_html: {
         value: result.value,
         class: field_classes.push('chosen-enabled form-field-brand'),
@@ -36,7 +36,7 @@ class FormField::Brand < FormField
   end
 
   def format_html(result)
-    unless result.value.nil? || (result.value.is_a?(Array) && result.value.empty?) || result.value== ''
+    unless result.value.nil? || (result.value.is_a?(Array) && result.value.empty?) || result.value == ''
       ::Brand.where(id: result.value).pluck(:name).join(', ')
     end
   end

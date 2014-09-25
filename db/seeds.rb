@@ -6,8 +6,7 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-
-AdminUser.create!(:email => 'admin@brandscopic.com', :password => 'AdminPazBC', :password_confirmation => 'AdminPazBC') if AdminUser.count == 0
+AdminUser.create!(email: 'admin@brandscopic.com', password: 'AdminPazBC', password_confirmation: 'AdminPazBC') if AdminUser.count == 0
 
 c = Company.find_or_create_by_name(name: 'Brandscopic', admin_email: 'admin@brandscopic.com')
 u = User.find_by_email('admin@brandscopic.com')

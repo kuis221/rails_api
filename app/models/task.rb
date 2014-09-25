@@ -20,7 +20,7 @@ class Task < ActiveRecord::Base
 
   belongs_to :event
   belongs_to :company_user
-  has_many :comments, ->{ order 'comments.created_at ASC' }, :as => :commentable
+  has_many :comments, -> { order 'comments.created_at ASC' }, as: :commentable
 
   after_save :create_notifications
 
@@ -33,13 +33,13 @@ class Task < ActiveRecord::Base
   validates :company_user_id, numericality: true, allow_nil: true
   validates :company_user_id, presence: true, unless: :event_id
 
-  scope :incomplete, ->{ where(completed: false) }
-  scope :active, ->{ where(active: true) }
-  scope :by_companies, ->(companies){ where(events: {company_id: companies}).joins(:event) }
-  scope :late, ->{ where(['due_at is not null and due_at < ? and completed = ?', Date.today, false]) }
-  scope :due_today, ->{ where(['due_at BETWEEN ? and ? and completed = ?', Date.today, Date.tomorrow, false]) }
-  scope :due_today_and_late, ->{ where(['due_at is not null and due_at <= ? and completed = ?', Date.today.end_of_day, false]) }
-  scope :assigned_to, ->(users){ where(company_user_id: users) }
+  scope :incomplete, -> { where(completed: false) }
+  scope :active, -> { where(active: true) }
+  scope :by_companies, ->(companies) { where(events: { company_id: companies }).joins(:event) }
+  scope :late, -> { where(['due_at is not null and due_at < ? and completed = ?', Date.today, false]) }
+  scope :due_today, -> { where(['due_at BETWEEN ? and ? and completed = ?', Date.today, Date.tomorrow, false]) }
+  scope :due_today_and_late, -> { where(['due_at is not null and due_at <= ? and completed = ?', Date.today.end_of_day, false]) }
+  scope :assigned_to, ->(users) { where(company_user_id: users) }
 
   searchable do
     integer :id
@@ -60,14 +60,14 @@ class Task < ActiveRecord::Base
     end
 
     integer :team_members, multiple: true do
-      event.memberships.map(&:company_user_id) + event.teams.map{|t| t.memberships.map(&:company_user_id) }.flatten.uniq if event.present?
+      event.memberships.map(&:company_user_id) + event.teams.map { |t| t.memberships.map(&:company_user_id) }.flatten.uniq if event.present?
     end
 
     integer :campaign_id do
       campaign_id
     end
 
-    time :due_at, :trie => true
+    time :due_at, trie: true
     time :last_activity
 
     string :user_name do
@@ -109,11 +109,11 @@ class Task < ActiveRecord::Base
   end
 
   def assigned?
-    self.company_user_id.present?
+    company_user_id.present?
   end
 
   def last_activity
-    self.updated_at
+    updated_at
   end
 
   def statuses
@@ -140,8 +140,8 @@ class Task < ActiveRecord::Base
 
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
-    def do_search(params, include_facets=false)
-      solr_search({include: [{:company_user => :user}, :event]}) do
+    def do_search(params, include_facets = false)
+      solr_search(include: [{ company_user: :user }, :event]) do
         current_company = Company.current || Company.new
         # Filter by user permissions
         company_user = params[:current_company_user]
@@ -166,24 +166,24 @@ class Task < ActiveRecord::Base
           end
         end
 
-        with :id, params[:id] if params.has_key?(:id) and params[:id]
+        with :id, params[:id] if params.key?(:id) && params[:id]
         with :company_id, params[:company_id]
-        with :campaign_id, params[:campaign]  if params.has_key?(:campaign) and params[:campaign]
-        with :company_user_id, params[:user] if params.has_key?(:user) and params[:user].present?
-        with :event_id, params[:event_id] if params.has_key?(:event_id) and params[:event_id]
-        with :team_members, params[:team_members] if params.has_key?(:team_members) and params[:team_members]
+        with :campaign_id, params[:campaign]  if params.key?(:campaign) && params[:campaign]
+        with :company_user_id, params[:user] if params.key?(:user) && params[:user].present?
+        with :event_id, params[:event_id] if params.key?(:event_id) && params[:event_id]
+        with :team_members, params[:team_members] if params.key?(:team_members) && params[:team_members]
 
-        with :company_user_id, CompanyUser.joins(:teams).where(teams: {id: params[:team]}).map(&:id) if params.has_key?(:team) and !params[:team].empty?
-        without :company_user_id, params[:not_assigned_to] if params.has_key?(:not_assigned_to) and !params[:not_assigned_to].empty?
+        with :company_user_id, CompanyUser.joins(:teams).where(teams: { id: params[:team] }).map(&:id) if params.key?(:team) && !params[:team].empty?
+        without :company_user_id, params[:not_assigned_to] if params.key?(:not_assigned_to) && !params[:not_assigned_to].empty?
 
-        if params.has_key?(:status) and params[:status]
+        if params.key?(:status) && params[:status]
           late = params[:status].delete('Late')
           with(:status, params[:status].uniq) unless params[:status].empty?
 
           params[:late] = true if late.present?
         end
 
-        if params.has_key?(:task_status) and params[:task_status]
+        if params.key?(:task_status) && params[:task_status]
           late = params[:task_status].delete('Late')
           any_of do
             with :statusm, params[:task_status].uniq unless params[:task_status].empty?
@@ -197,7 +197,7 @@ class Task < ActiveRecord::Base
         end
 
         # Handles the cases from the autocomplete
-        if params.has_key?(:q) and params[:q].present?
+        if params.key?(:q) && params[:q].present?
           (attribute, value) = params[:q].split(',')
           case attribute
           when 'task'
@@ -207,7 +207,7 @@ class Task < ActiveRecord::Base
           when 'company_user'
             with :company_user_id, value
           when 'team'
-            with :company_user_id, CompanyUser.select('company_users.id').joins(:teams).where(teams: {id: value}).map(&:id)
+            with :company_user_id, CompanyUser.select('company_users.id').joins(:teams).where(teams: { id: value }).map(&:id)
           end
         end
 
@@ -216,7 +216,7 @@ class Task < ActiveRecord::Base
           with :completed, false
         end
 
-        if params[:start_date].present? and params[:end_date].present?
+        if params[:start_date].present? && params[:end_date].present?
           d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day
           d2 = Timeliness.parse(params[:end_date], zone: :current).end_of_day
           with :due_at, d1..d2
@@ -255,7 +255,7 @@ class Task < ActiveRecord::Base
         end
 
         order_by(params[:sorting] || :due_at, params[:sorting_dir] || :asc)
-        paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+        paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
       end
     end
 
@@ -270,9 +270,9 @@ class Task < ActiveRecord::Base
 
     def search_params_for_scope(scope, company_user)
       if scope == 'user'
-        {user: [company_user.id]}
+        { user: [company_user.id] }
       elsif scope == 'teams'
-        params = {not_assigned_to: [company_user.id]}
+        params = { not_assigned_to: [company_user.id] }
         unless company_user.company.event_alerts_policy == Notification::EVENT_ALERT_POLICY_ALL
           params.merge!(team_members: [company_user.id])
         end
@@ -284,23 +284,24 @@ class Task < ActiveRecord::Base
   end
 
   private
-    def create_notifications
-      if (id_changed? || company_user_id_changed?) && company_user_id.present?
-        #Delete notification for previous task owner
-        if !id_changed? && company_user_id_was.present? && company_user_id != company_user_id_was
-          notification = CompanyUser.find(company_user_id_was).notifications.where("params->'task_id' = (?)", id.to_s).first
-          notification.destroy if notification.present?
-        end
 
-        #New task with assigned user or assigning user to existing task
-        unless event.present? && !company_user.allowed_to_access_place?(event.place)
-          Notification.new_task(company_user, self)
-        end
+  def create_notifications
+    if (id_changed? || company_user_id_changed?) && company_user_id.present?
+      # Delete notification for previous task owner
+      if !id_changed? && company_user_id_was.present? && company_user_id != company_user_id_was
+        notification = CompanyUser.find(company_user_id_was).notifications.where("params->'task_id' = (?)", id.to_s).first
+        notification.destroy if notification.present?
+      end
+
+      # New task with assigned user or assigning user to existing task
+      unless event.present? && !company_user.allowed_to_access_place?(event.place)
+        Notification.new_task(company_user, self)
+      end
       # elsif id_changed? && company_user_id.nil?
       #   #New task without assigned user
       #   event.all_users.each do |user|
       #     Notification.new_task(user, self, true)
       #   end
-      end
     end
+  end
 end

@@ -1,13 +1,13 @@
 require 'rails_helper'
 
 feature 'Events section' do
-  let(:company) { FactoryGirl.create(:company) }
-  let(:campaign) { FactoryGirl.create(:campaign, company: company) }
-  let(:user) { FactoryGirl.create(:user, company: company, role_id: role.id) }
+  let(:company) { create(:company) }
+  let(:campaign) { create(:campaign, company: company) }
+  let(:user) { create(:user, company: company, role_id: role.id) }
   let(:company_user) { user.company_users.first }
-  let(:place) { FactoryGirl.create(:place, name: 'A Nice Place', country:'CR', city: 'Curridabat', state: 'San Jose') }
+  let(:place) { create(:place, name: 'A Nice Place', country: 'CR', city: 'Curridabat', state: 'San Jose') }
   let(:permissions) { [] }
-  let(:event) { FactoryGirl.create(:event, campaign: campaign, company: company) }
+  let(:event) { create(:event, campaign: campaign, company: company) }
 
   before do
     Warden.test_mode!
@@ -17,23 +17,25 @@ feature 'Events section' do
   after { Warden.test_reset! }
 
   shared_examples_for 'a user that can attach expenses to events' do
-    let(:event) { FactoryGirl.create(:event,
-          start_date: "08/21/2013", end_date: "08/21/2013",
-          start_time: '10:00am', end_time: '11:00am',
-          campaign: campaign, active: true, place: place) }
+    let(:event) do
+      create(:event,
+                         start_date: '08/21/2013', end_date: '08/21/2013',
+                         start_time: '10:00am', end_time: '11:00am',
+                         campaign: campaign, active: true, place: place)
+    end
 
     before do
       Kpi.create_global_kpis
-      event.campaign.update_attribute(:modules, {'expenses' => {}})
+      event.campaign.update_attribute(:modules, 'expenses' => {})
     end
-    scenario "can attach a expense to event" do
+    scenario 'can attach a expense to event' do
       with_resque do # So the document is processed
         visit event_path(event)
 
         click_js_link 'Add Expense'
 
         within visible_modal do
-          attach_file "file", 'spec/fixtures/file.pdf'
+          attach_file 'file', 'spec/fixtures/file.pdf'
 
           # Test validations
           click_js_button 'Save'
@@ -70,10 +72,9 @@ feature 'Events section' do
     end
   end
 
+  feature 'admin user', js: true, search: true do
+    let(:role) { create(:role, company: company) }
 
-  feature "admin user", js: true, search: true do
-    let(:role) { FactoryGirl.create(:role, company: company) }
-
-    it_behaves_like "a user that can attach expenses to events"
+    it_behaves_like 'a user that can attach expenses to events'
   end
 end

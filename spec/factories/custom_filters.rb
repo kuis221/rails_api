@@ -16,9 +16,9 @@
 FactoryGirl.define do
   factory :custom_filter do
     owner nil
-    sequence(:name) {|n| "Area #{n}" }
-    apply_to "events"
-    filters "param=true"
-    group "Saved Filters"
+    sequence(:name) { |n| "Area #{n}" }
+    apply_to 'events'
+    filters 'param=true'
+    group 'Saved Filters'
   end
 end

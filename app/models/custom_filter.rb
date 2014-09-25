@@ -21,11 +21,12 @@ class CustomFilter < ActiveRecord::Base
   validates :apply_to, presence: true
   validates :filters, presence: true
 
-  scope :by_type, ->(type) { order("id ASC").where(apply_to: type) }
+  scope :by_type, ->(type) { order('id ASC').where(apply_to: type) }
 
   scope :for_company_user, ->(company_user) {
     where(
       '(owner_type=? AND owner_id=?) OR (owner_type=? AND owner_id=?)',
       'Company', company_user.company_id, 'CompanyUser', company_user.id
-    ) }
+    )
+  }
 end

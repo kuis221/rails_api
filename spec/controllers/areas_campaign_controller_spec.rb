@@ -5,14 +5,13 @@ describe AreasCampaignsController, type: :controller do
     @user = sign_in_as_user
   end
 
-  let(:company){ @user.companies.first }
-  let(:area){ FactoryGirl.create(:area, company: company) }
-  let(:campaign){ FactoryGirl.create(:campaign, company: company) }
-
+  let(:company) { @user.companies.first }
+  let(:area) { create(:area, company: company) }
+  let(:campaign) { create(:campaign, company: company) }
 
   describe "GET 'edit'" do
-    before{ campaign.areas << area }
-    it "response is success" do
+    before { campaign.areas << area }
+    it 'response is success' do
       xhr :get, 'edit', campaign_id: campaign.id, id: area.to_param, format: :js
       expect(response).to be_success
       expect(response).to render_template '_form'
@@ -20,8 +19,8 @@ describe AreasCampaignsController, type: :controller do
   end
 
   describe "POST 'exclude_place'" do
-    before{ campaign.areas << area }
-    it "add the place to the exclusions list" do
+    before { campaign.areas << area }
+    it 'add the place to the exclusions list' do
       xhr :post, 'exclude_place', campaign_id: campaign.id, id: area.to_param, place_id: 99, format: :js
       expect(response).to be_success
       expect(response).to render_template 'exclude_place'
@@ -30,9 +29,9 @@ describe AreasCampaignsController, type: :controller do
   end
 
   describe "POST 'include_place'" do
-    before{ campaign.areas << area }
-    it "add the place to the exclusions list" do
-      campaign.areas_campaigns.first.update_column :exclusions, [99,100]
+    before { campaign.areas << area }
+    it 'add the place to the exclusions list' do
+      campaign.areas_campaigns.first.update_column :exclusions, [99, 100]
       xhr :post, 'include_place', campaign_id: campaign.id, id: area.to_param, place_id: 99, format: :js
       expect(response).to be_success
       expect(response).to render_template 'include_place'

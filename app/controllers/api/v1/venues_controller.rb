@@ -3,35 +3,34 @@ class Api::V1::VenuesController < Api::V1::FilteredController
 
   skip_authorization_check only: [:new_password, :companies, :permissions, :notifications]
 
-
   resource_description do
     short 'Venues'
-    formats ['json', 'xml']
-    error 404, "Missing"
-    error 401, "Unauthorized access"
-    error 500, "Server crashed for some reason"
+    formats %w(json xml)
+    error 404, 'Missing'
+    error 401, 'Unauthorized access'
+    error 500, 'Server crashed for some reason'
     param :auth_token, String, required: true
-    param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the "
+    param :company_id, :number, required: true, desc: 'One of the allowed company ids returned by the '
     description <<-EOS
 
     EOS
   end
 
   def_param_group :venue do
-    param :venue, Hash, required: true, :action_aware => true do
-      param :name, String, required: true, desc: "The Venue name"
-      param :types, String, required: true, desc: "A comma separated string with one or more of the possible types venue types. See venues#types for more info"
-      param :street_number, String, required: true, desc: "The Venue street_number (address 1)"
+    param :venue, Hash, required: true, action_aware: true do
+      param :name, String, required: true, desc: 'The Venue name'
+      param :types, String, required: true, desc: 'A comma separated string with one or more of the possible types venue types. See venues#types for more info'
+      param :street_number, String, required: true, desc: 'The Venue street_number (address 1)'
       param :route, String, required: false, desc: "The Venue's route (address 2)"
-      param :country, String, required: true, desc: "The Venue country code. Eg. US"
-      param :city, String, required: true, desc: "The Venue city"
+      param :country, String, required: true, desc: 'The Venue country code. Eg. US'
+      param :city, String, required: true, desc: 'The Venue city'
       param :state, String, required: true, desc: "The Venue state, use the full name and not the code. Eg \"California\" or \"Florida\" "
       param :zipcode, String, required: true, desc: "The Venue's zipcode"
     end
   end
 
   api :GET, '/api/v1/venues/:id', 'Return a venue\'s details'
-  param :id, :number, required: true, desc: "Venue ID"
+  param :id, :number, required: true, desc: 'Venue ID'
   example <<-EOS
   {
       "id": 2,
@@ -72,7 +71,7 @@ class Api::V1::VenuesController < Api::V1::FilteredController
   end
 
   api :GET, '/api/v1/venues/:id/analysis', 'Return a venue\'s analysis information'
-  param :id, :number, required: true, desc: "Venue ID"
+  param :id, :number, required: true, desc: 'Venue ID'
   description <<-EOS
   This method returns the analysis informaction for a given venue. The result have the following attributes:
   * *overview*: have the statistics for different KPIs (events, promo hours, impressions, interactions, sampled)
@@ -147,10 +146,10 @@ class Api::V1::VenuesController < Api::V1::FilteredController
     end
   end
 
-  api :GET, '/api/v1/venues', "Search for a list of venues"
-  param :location, String, :desc => "A pair of latitude and longitude seperated by a comma. This will make the list to include only those that are in a radius of +radius+ kilometers."
-  param :campaign, Array, :desc => "A list of campaign ids to filter the results"
-  param :page, :number, :desc => "The number of the page, Default: 1"
+  api :GET, '/api/v1/venues', 'Search for a list of venues'
+  param :location, String, desc: 'A pair of latitude and longitude seperated by a comma. This will make the list to include only those that are in a radius of +radius+ kilometers.'
+  param :campaign, Array, desc: 'A list of campaign ids to filter the results'
+  param :page, :number, desc: 'The number of the page, Default: 1'
 
   description <<-EOS
     Returns a list of venues filtered by the given params. The results are returned on groups of 30 per request. To obtain the next 30 results provide the <page> param.
@@ -436,7 +435,7 @@ class Api::V1::VenuesController < Api::V1::FilteredController
     end
   end
 
-  api :GET, '/api/v1/venues/types', "Get a list of possible venue types"
+  api :GET, '/api/v1/venues/types', 'Get a list of possible venue types'
   description <<-EOS
   Returns a list of valid venue types that can be used to generate a dropdown when
   creating a new venue
@@ -469,15 +468,15 @@ class Api::V1::VenuesController < Api::V1::FilteredController
   EOS
   def types
     authorize! :index, Venue
-    types = I18n.translate('venue_types').map{|k,v| {name: v, value: k}}
+    types = I18n.translate('venue_types').map { |k, v| { name: v, value: k } }
     respond_to do |format|
       format.json { render json: types }
       format.xml { render xml: types }
     end
   end
 
-  api :GET, '/api/v1/venues/:id/photos', "Get a list of photos for a Venue"
-  param :id, :number, required: true, desc: "Venue ID"
+  api :GET, '/api/v1/venues/:id/photos', 'Get a list of photos for a Venue'
+  param :id, :number, required: true, desc: 'Venue ID'
   description <<-EOS
     Returns a mixed list of photos uploaded from the app + photos obtained from Google that are associated to the venue
 
@@ -536,8 +535,8 @@ class Api::V1::VenuesController < Api::V1::FilteredController
     @photos = resource.photos
   end
 
-  api :GET, '/api/v1/venues/:id/comments', "Get a list of comments for a Venue"
-  param :id, :number, required: true, desc: "Venue ID"
+  api :GET, '/api/v1/venues/:id/comments', 'Get a list of comments for a Venue'
+  param :id, :number, required: true, desc: 'Venue ID'
   description <<-EOS
     Returns a list of comments associated to a given venue.
 
@@ -580,8 +579,8 @@ class Api::V1::VenuesController < Api::V1::FilteredController
     @comments = resource.reviews
   end
 
-  api :GET, '/api/v1/venues/search', "Search for a list of venues matching a term"
-  param :term, String, :desc => "The search term", required: true
+  api :GET, '/api/v1/venues/search', 'Search for a list of venues matching a term'
+  param :term, String, desc: 'The search term', required: true
   description <<-EOS
     Returns a list of venues matching the search +term+ ordered by relevance limited to 10 results.
 
@@ -609,9 +608,8 @@ class Api::V1::VenuesController < Api::V1::FilteredController
     render json: @venues.first(10)
   end
 
-
   api :GET, '/api/v1/venues/autocomplete', 'Return a list of results grouped by categories'
-  param :q, String, required: true, desc: "The search term"
+  param :q, String, required: true, desc: 'The search term'
   description <<-EOS
   Returns a list of results matching the searched term grouped in the following categories
   * *Campaigns*: Includes categories
@@ -659,20 +657,20 @@ class Api::V1::VenuesController < Api::V1::FilteredController
   EOS
   def autocomplete
     authorize! :index, Venue
-    buckets = autocomplete_buckets({
-      campaigns: [Campaign],
-      brands: [Brand, BrandPortfolio],
-      areas: [Area],
-      people: [CompanyUser, Team]
-    })
-    render :json => buckets.flatten
+    buckets = autocomplete_buckets(campaigns: [Campaign],
+                                   brands: [Brand, BrandPortfolio],
+                                   areas: [Area],
+                                   people: [CompanyUser, Team])
+    render json: buckets.flatten
   end
 
   protected
-    def permitted_params
-      params.permit(venue: [:name, :types, :street_number, :route, :city, :state, :zipcode, :country])[:venue]
-    end
-    def permitted_search_params
-      params.permit(:page, {campaign: []}, {place: []}, {area: []}, {user: []}, {team: []}, {brand: []}, {brand_porfolio: []}, :location, :radius)
-    end
+
+  def permitted_params
+    params.permit(venue: [:name, :types, :street_number, :route, :city, :state, :zipcode, :country])[:venue]
+  end
+
+  def permitted_search_params
+    params.permit(:page, { campaign: [] }, { place: [] }, { area: [] }, { user: [] }, { team: [] }, { brand: [] }, { brand_porfolio: [] }, :location, :radius)
+  end
 end

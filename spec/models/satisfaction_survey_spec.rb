@@ -13,7 +13,7 @@
 
 require 'rails_helper'
 
-describe SatisfactionSurvey, :type => :model do
+describe SatisfactionSurvey, type: :model do
   it { is_expected.to belong_to(:company_user) }
   it { is_expected.to validate_presence_of(:rating) }
 end

@@ -53,76 +53,77 @@ class Results::ReportsController < InheritedResources::Base
         UNION ALL
         #{current_company.teams.select('teams.id, teams.name, \'team\' as type').active.to_sql}
         ORDER BY name ASC
-      ").map{|r| [r['name'], "#{r['type']}:#{r['id']}", {class: r['type']}] }
+      ").map { |r| [r['name'], "#{r['type']}:#{r['id']}", { class: r['type'] }] }
     end
   end
 
   def filters
     respond_to do |format|
-      format.json { render json: {filters: resource.filters.map(&:as_filter) } }
+      format.json { render json: { filters: resource.filters.map(&:as_filter) } }
     end
   end
 
   private
-    def export_list(export)
-      render_to_string(text: resource.to_csv {|total, i| export.update_column(:progress, (i*100/total).round) })
-    end
 
-    def build_resource_params
-      [permitted_params || {}]
-    end
+  def export_list(export)
+    render_to_string(text: resource.to_csv { |total, i| export.update_column(:progress, (i * 100 / total).round) })
+  end
 
-    def permitted_params
-      allowed =if params[:id].present?
-        if can?(:edit, resource)
-          [ :name, :description,
-            { rows: [:field, :label, :aggregate] },
-            { columns: [:field, :label] },
-            { values: [:field, :label, :aggregate, :precision, :display] },
-            { filters: [:field, :label] } ]
-        else
-          []
-        end
-      else
-        [ :name, :description ]
-      end
-      allowed += [:sharing, {sharing_selections: []}] if params[:id].present? && can?(:share, resource)
-      params.permit(report: allowed)[:report] || {}
-    end
+  def build_resource_params
+    [permitted_params || {}]
+  end
 
-    def filter_params
-      params.permit(:id, *resource.filters.map{|f| f.allowed_filter_params } )
+  def permitted_params
+    allowed = if params[:id].present?
+                if can?(:edit, resource)
+                  [:name, :description,
+                   { rows: [:field, :label, :aggregate] },
+                   { columns: [:field, :label] },
+                   { values: [:field, :label, :aggregate, :precision, :display] },
+                   { filters: [:field, :label] }]
+                else
+                  []
+                end
+    else
+      [:name, :description]
     end
+    allowed += [:sharing, { sharing_selections: [] }] if params[:id].present? && can?(:share, resource)
+    params.permit(report: allowed)[:report] || {}
+  end
 
-    def export_file_name
-      sanitize_filename resource.name
+  def filter_params
+    params.permit(:id, *resource.filters.map(&:allowed_filter_params))
+  end
+
+  def export_file_name
+    sanitize_filename resource.name
+  end
+
+  def sanitize_filename(filename)
+    filename.strip.tap do |name|
+      # NOTE: File.basename doesn't work right with Windows paths on Unix
+      # get only the filename, not the whole path
+      name.gsub!(/^.*(\\|\/)/, '')
+
+      # Strip out the non-ascii character
+      name.gsub!(/[^0-9A-Za-z.\-]/, '_')
     end
+  end
 
-    def sanitize_filename(filename)
-      filename.strip.tap do |name|
-       # NOTE: File.basename doesn't work right with Windows paths on Unix
-       # get only the filename, not the whole path
-       name.gsub!(/^.*(\\|\/)/, '')
+  def set_report_params
+    resource.page = (params[:page].try(:to_i) || 1)
+    resource.filter_params = filter_params unless action_name == 'show'
+  end
 
-       # Strip out the non-ascii character
-       name.gsub!(/[^0-9A-Za-z.\-]/, '_')
-      end
+  def return_path
+    if action_name == 'build'
+      resource_path
+    else
+      collection_path
     end
+  end
 
-    def set_report_params
-      resource.page = (params[:page].try(:to_i) || 1)
-      resource.filter_params = filter_params unless action_name == 'show'
-    end
-
-    def return_path
-      if action_name == 'build'
-        resource_path
-      else
-        collection_path
-      end
-    end
-
-    def autorize_results
-      authorize! :access, :results
-    end
+  def autorize_results
+    authorize! :access, :results
+  end
 end

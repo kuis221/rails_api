@@ -19,10 +19,10 @@ class FormField::TextArea < FormField
   def field_options(result)
     {
       as: :text,
-      label: self.name,
-      field_id: self.id,
-      options: self.settings,
-      required: self.required,
+      label: name,
+      field_id: id,
+      options: settings,
+      required: required,
       input_html: {
         value: result.value,
         class: field_classes,
@@ -38,10 +38,10 @@ class FormField::TextArea < FormField
 
   def field_data
     data = {}
-    if self.settings.present?
-      data['range-format'] = self.settings['range_format'] if self.settings['range_format'].present?
-      data['range-min'] = self.settings['range_min'] if self.settings['range_min'].present?
-      data['range-max'] = self.settings['range_max'] if self.settings['range_max'].present?
+    if settings.present?
+      data['range-format'] = settings['range_format'] if settings['range_format'].present?
+      data['range-min'] = settings['range_min'] if settings['range_min'].present?
+      data['range-max'] = settings['range_max'] if settings['range_max'].present?
     end
     data
   end

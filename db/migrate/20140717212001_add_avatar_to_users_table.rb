@@ -4,6 +4,7 @@ class AddAvatarToUsersTable < ActiveRecord::Migration
       t.attachment :avatar
     end
   end
+
   def down
     remove_column :users, :avatar_file_name
     remove_column :users, :avatar_content_type

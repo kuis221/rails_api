@@ -21,8 +21,8 @@ class FormField < ActiveRecord::Base
   VALID_RANGE_FORMATS = %w(digits characters words value)
   belongs_to :fieldable, polymorphic: true
 
-  has_many :options, ->{ order('form_field_options.ordering ASC').where(option_type: 'option') }, class_name: 'FormFieldOption', dependent: :destroy, inverse_of: :form_field, foreign_key: :form_field_id
-  has_many :statements, ->{ order('form_field_options.ordering ASC').where(option_type: 'statement') }, class_name: 'FormFieldOption', dependent: :destroy, inverse_of: :form_field, foreign_key: :form_field_id
+  has_many :options, -> { order('form_field_options.ordering ASC').where(option_type: 'option') }, class_name: 'FormFieldOption', dependent: :destroy, inverse_of: :form_field, foreign_key: :form_field_id
+  has_many :statements, -> { order('form_field_options.ordering ASC').where(option_type: 'statement') }, class_name: 'FormFieldOption', dependent: :destroy, inverse_of: :form_field, foreign_key: :form_field_id
   belongs_to :kpi
   accepts_nested_attributes_for :options, allow_destroy: true
   accepts_nested_attributes_for :statements, allow_destroy: true
@@ -33,22 +33,23 @@ class FormField < ActiveRecord::Base
   validates :fieldable_type, presence: true
   validates :name, presence: true
   validates :type, presence: true,
-    format: { with: /\AFormField::/ }
+                   format: { with: /\AFormField::/ }
   validates :ordering, presence: true, numericality: true
 
   validate :valid_range_settings?
 
   validates :kpi_id,
-    uniqueness: { scope: [:fieldable_id, :fieldable_type], allow_blank: true, allow_nil: true }
+            uniqueness: { scope: [:fieldable_id, :fieldable_type], allow_blank: true, allow_nil: true }
 
-  scope :for_events_in_company, ->(companies) { joins(
+  scope :for_events_in_company, ->(companies) {
+    joins(
       'INNER JOIN campaigns ON campaigns.id=form_fields.fieldable_id AND
       form_fields.fieldable_type=\'Campaign\''
-    ).where(campaigns: {company_id: companies})
+    ).where(campaigns: { company_id: companies })
   }
 
-  def field_options(result)
-    {as: :string}
+  def field_options(_result)
+    { as: :string }
   end
 
   def field_classes
@@ -105,7 +106,7 @@ class FormField < ActiveRecord::Base
         result.errors.add(:value, I18n.translate('errors.messages.blank'))
       elsif result.value.present?
         if result.value.is_a?(Hash)
-          if result.value.any?{|k, v| v != '' && !is_valid_value_for_key?(k, v) }
+          if result.value.any? { |k, v| v != '' && !is_valid_value_for_key?(k, v) }
             result.errors.add :value, :invalid
           elsif (result.value.keys.map(&:to_i) - valid_hash_keys).any?
             result.errors.add :value, :invalid  # If a invalid key was given
@@ -118,18 +119,18 @@ class FormField < ActiveRecord::Base
 
     if has_range_value_settings? && result.value.present? && !result.value.to_s.empty?
       val = result.value.to_s.strip
-      if self.settings['range_format'] == 'characters'
+      if settings['range_format'] == 'characters'
         items = val.length
-      elsif self.settings['range_format'] == 'words'
+      elsif settings['range_format'] == 'words'
         items = val.scan(/\w+/).size
-      elsif self.settings['range_format'] == 'digits'
+      elsif settings['range_format'] == 'digits'
         items = val.gsub(/[\.\,\s]/, '').length
-      elsif self.settings['range_format'] == 'value'
+      elsif settings['range_format'] == 'value'
         items = val.to_f rescue 0
       end
 
-      min_result = !self.settings['range_min'].present? || (items >= self.settings['range_min'].to_i)
-      max_result = !self.settings['range_max'].present? || (items <= self.settings['range_max'].to_i)
+      min_result = !settings['range_min'].present? || (items >= settings['range_min'].to_i)
+      max_result = !settings['range_max'].present? || (items <= settings['range_max'].to_i)
 
       if !min_result || !max_result
         result.errors.add :value, :invalid
@@ -137,7 +138,7 @@ class FormField < ActiveRecord::Base
     end
   end
 
-  def options_for_input(include_excluded=false)
+  def options_for_input(include_excluded = false)
     if kpi_id.present?
       if include_excluded
         kpi.kpis_segments
@@ -145,7 +146,7 @@ class FormField < ActiveRecord::Base
         kpi.kpis_segments.where.not(id: (settings.try(:[], 'disabled_segments') || [0]).map(&:to_i))
       end.pluck(:text, :id)
     else
-      self.options.order(:ordering).map{|o| [o.name, o.id]}
+      options.order(:ordering).map { |o| [o.name, o.id] }
     end
   end
 
@@ -168,34 +169,35 @@ class FormField < ActiveRecord::Base
   end
 
   protected
-    def valid_hash_keys
-      options_for_input.map{|o| o[1]}
-    end
 
-    def is_valid_value_for_key?(key, value)
-      value_is_numeric?(value)
-    end
+  def valid_hash_keys
+    options_for_input.map { |o| o[1] }
+  end
 
-    def has_range_value_settings?
-      self.settings &&
-      self.settings.has_key?('range_format') && self.settings['range_format'] &&
-      (
-        (self.settings.has_key?('range_min') && self.settings['range_min'].present?) ||
-        (self.settings.has_key?('range_max') && self.settings['range_max'].present?)
-      )
-    end
+  def is_valid_value_for_key?(_key, value)
+    value_is_numeric?(value)
+  end
 
-    def valid_range_settings?
-      if self.settings
-        errors.add :settings, :invalid if settings['range_format'] && !VALID_RANGE_FORMATS.include?(settings['range_format'])
-        errors.add :settings, :invalid if settings['range_max'].present? && !value_is_numeric?(settings['range_max'])
-        errors.add :settings, :invalid if settings['range_min'].present? && !value_is_numeric?(settings['range_min'])
-        if settings['range_min'].present? &&  settings['range_max'].present? &&
-          value_is_numeric?(settings['range_min']) && value_is_numeric?(settings['range_max']) &&
-          settings['range_min'].to_i > settings['range_max'].to_i
-          !value_is_numeric?(settings['range_min'])
-          errors.add :settings, :invalid
-        end
+  def has_range_value_settings?
+    settings &&
+    settings.key?('range_format') && settings['range_format'] &&
+    (
+      (settings.key?('range_min') && settings['range_min'].present?) ||
+      (settings.key?('range_max') && settings['range_max'].present?)
+    )
+  end
+
+  def valid_range_settings?
+    if settings
+      errors.add :settings, :invalid if settings['range_format'] && !VALID_RANGE_FORMATS.include?(settings['range_format'])
+      errors.add :settings, :invalid if settings['range_max'].present? && !value_is_numeric?(settings['range_max'])
+      errors.add :settings, :invalid if settings['range_min'].present? && !value_is_numeric?(settings['range_min'])
+      if settings['range_min'].present? &&  settings['range_max'].present? &&
+        value_is_numeric?(settings['range_min']) && value_is_numeric?(settings['range_max']) &&
+        settings['range_min'].to_i > settings['range_max'].to_i
+        !value_is_numeric?(settings['range_min'])
+        errors.add :settings, :invalid
       end
     end
+  end
 end

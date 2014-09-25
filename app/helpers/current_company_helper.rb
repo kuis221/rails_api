@@ -1,5 +1,4 @@
 module CurrentCompanyHelper
-
   def company_users
     current_company.company_users
   end

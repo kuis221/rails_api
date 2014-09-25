@@ -1,10 +1,10 @@
 require 'rails_helper'
 
-feature "DateRanges", search: true, js: true do
+feature 'DateRanges', search: true, js: true do
 
   before do
     Warden.test_mode!
-    @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
+    @user = create(:user, company_id: create(:company).id, role_id: create(:role).id)
     @company = @user.companies.first
     sign_in @user
     allow_any_instance_of(Place).to receive(:fetch_place_data).and_return(true)
@@ -14,41 +14,41 @@ feature "DateRanges", search: true, js: true do
     Warden.test_reset!
   end
 
-  feature "/date_ranges" do
-    scenario "GET index should display a table with the date_ranges" do
+  feature '/date_ranges' do
+    scenario 'GET index should display a table with the date_ranges' do
       date_ranges = [
-        FactoryGirl.create(:date_range, company: @company, name: 'Weekdays', description: 'From monday to friday', active: true),
-        FactoryGirl.create(:date_range, company: @company, name: 'Weekends', description: 'Saturday and Sunday', active: true)
+        create(:date_range, company: @company, name: 'Weekdays', description: 'From monday to friday', active: true),
+        create(:date_range, company: @company, name: 'Weekends', description: 'Saturday and Sunday', active: true)
       ]
       Sunspot.commit
       visit date_ranges_path
 
-      within("ul#date_ranges-list") do
+      within('ul#date_ranges-list') do
         # First Row
-        within("li:nth-child(1)") do
+        within('li:nth-child(1)') do
           expect(page).to have_content('Weekdays')
           expect(page).to have_content('From monday to friday')
         end
         # Second Row
-        within("li:nth-child(2)") do
+        within('li:nth-child(2)') do
           expect(page).to have_content('Weekends')
           expect(page).to have_content('Saturday and Sunday')
         end
       end
     end
 
-    scenario "should allow user to activate/deactivate Date Ranges" do
-      FactoryGirl.create(:date_range, company: @company, name: 'Weekdays', description: 'From monday to friday', active: true)
+    scenario 'should allow user to activate/deactivate Date Ranges' do
+      create(:date_range, company: @company, name: 'Weekdays', description: 'From monday to friday', active: true)
       Sunspot.commit
       visit date_ranges_path
 
-      within("ul#date_ranges-list") do
+      within('ul#date_ranges-list') do
         click_js_link('Deactivate')
       end
 
       confirm_prompt 'Are you sure you want to deactivate this date range?'
 
-      within("ul#date_ranges-list") do
+      within('ul#date_ranges-list') do
         expect(page).to have_no_selector('li')
       end
 
@@ -56,7 +56,7 @@ feature "DateRanges", search: true, js: true do
       filter_section('ACTIVE STATE').unicheck('Inactive')
       filter_section('ACTIVE STATE').unicheck('Active')
 
-      within("ul#date_ranges-list") do
+      within('ul#date_ranges-list') do
         expect(page).to have_content('Weekdays')
         click_js_link('Activate')
         expect(page).to have_no_content('Weekdays')
@@ -81,35 +81,35 @@ feature "DateRanges", search: true, js: true do
     end
   end
 
-  feature "/date_ranges/:date_range_id", :js => true do
-    scenario "GET show should display the date_range details page" do
-      date_range = FactoryGirl.create(:date_range, company: @company, name: 'Some Date Range', description: 'a date range description')
+  feature '/date_ranges/:date_range_id', js: true do
+    scenario 'GET show should display the date_range details page' do
+      date_range = create(:date_range, company: @company, name: 'Some Date Range', description: 'a date range description')
       visit date_range_path(date_range)
       expect(page).to have_selector('h2', text: 'Some Date Range')
       expect(page).to have_selector('div.description-data', text: 'a date range description')
     end
 
     scenario 'diplays a table of dates within the date range' do
-      date_range = FactoryGirl.create(:date_range, company: @company)
-      date_items = [FactoryGirl.create(:date_item, start_date: '01/01/2013', end_date: nil), FactoryGirl.create(:date_item, start_date: '03/03/2013', end_date: nil)]
-      date_items.map {|b| date_range.date_items << b }
+      date_range = create(:date_range, company: @company)
+      date_items = [create(:date_item, start_date: '01/01/2013', end_date: nil), create(:date_item, start_date: '03/03/2013', end_date: nil)]
+      date_items.map { |b| date_range.date_items << b }
       visit date_range_path(date_range)
       within('#date_range-dates-list') do
-        within(".date-item:nth-child(1)") do
+        within('.date-item:nth-child(1)') do
           expect(page).to have_content('On 01/01/2013')
         end
-        within(".date-item:nth-child(2)") do
+        within('.date-item:nth-child(2)') do
           expect(page).to have_content('On 03/03/2013')
         end
       end
     end
 
     scenario 'allows the user to activate/deactivate a date range' do
-      date_range = FactoryGirl.create(:date_range, company: @company, active: true)
+      date_range = create(:date_range, company: @company, active: true)
       visit date_range_path(date_range)
       find('.links-data').click_js_link('Deactivate')
 
-      confirm_prompt "Are you sure you want to deactivate this date range?"
+      confirm_prompt 'Are you sure you want to deactivate this date range?'
 
       within('.links-data') do
         click_js_link('Activate')
@@ -118,7 +118,7 @@ feature "DateRanges", search: true, js: true do
     end
 
     scenario 'allows the user to edit the date_range' do
-      date_range = FactoryGirl.create(:date_range, name: 'Old name', company: @company)
+      date_range = create(:date_range, name: 'Old name', company: @company)
       visit date_range_path(date_range)
       expect(page).to have_content('Old name')
 
@@ -137,21 +137,21 @@ feature "DateRanges", search: true, js: true do
     end
 
     scenario 'allows the user to add and remove date items to the date range' do
-      date_range = FactoryGirl.create(:date_range, company: @company)
+      date_range = create(:date_range, company: @company)
       visit date_range_path(date_range)
 
       click_js_link('Add Date')
 
       within visible_modal do
-        find("#calendar_start_date").click_js_link '25'
-        find("#calendar_end_date").click_js_link '26'
-        click_js_button "Create"
+        find('#calendar_start_date').click_js_link '25'
+        find('#calendar_end_date').click_js_link '26'
+        click_js_button 'Create'
       end
 
       ensure_modal_was_closed
 
       expect(page).to have_selector('#date_range-dates-list div[id^=date_item]')
-      within("#date_range-dates-list .date-item") do
+      within('#date_range-dates-list .date-item') do
         click_js_link 'Remove'
       end
       expect(page).to have_no_selector('#date_range-dates-list div[id^=date_item]')

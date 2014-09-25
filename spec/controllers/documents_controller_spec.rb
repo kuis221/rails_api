@@ -1,29 +1,29 @@
 require 'rails_helper'
 
-describe DocumentsController, :type => :controller do
+describe DocumentsController, type: :controller do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.current_company
   end
 
-  let(:event) {FactoryGirl.create(:event, company: @company)}
-  let(:document) {FactoryGirl.create(:document, attachable: event)}
+  let(:event) { create(:event, company: @company) }
+  let(:document) { create(:document, attachable: event) }
 
   describe "POST 'create'", strategy: :deletion do
-    it "queue a job for processing the photos" do
+    it 'queue a job for processing the photos' do
       ResqueSpec.reset!
-      s3object = double()
+      s3object = double
       allow(s3object).to receive(:copy_from).and_return(true)
       expect_any_instance_of(AWS::S3).to receive(:buckets).at_least(:once).and_return(
-        "brandscopic-dev" => double(objects: {
-          'uploads/dummy/test.jpg' => double(head: double(content_length: 100, content_type: 'image/jpeg', last_modified: Time.now)),
-          'attached_assets/original/test.jpg' => s3object
-        } ))
+        'brandscopic-dev' => double(objects: {
+                                      'uploads/dummy/test.jpg' => double(head: double(content_length: 100, content_type: 'image/jpeg', last_modified: Time.now)),
+                                      'attached_assets/original/test.jpg' => s3object
+                                    }))
       expect_any_instance_of(Paperclip::Attachment).to receive(:path).at_least(:once).and_return('/attached_assets/original/test.jpg')
       expect_any_instance_of(AttachedAsset).to receive(:download_url).at_least(:once).and_return('dummy.jpg')
-      expect {
-        xhr :post, 'create', event_id: event.to_param, attached_asset: {direct_upload_url: 'https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg'}, format: :js
-      }.to change(AttachedAsset, :count).by(1)
+      expect do
+        xhr :post, 'create', event_id: event.to_param, attached_asset: { direct_upload_url: 'https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg' }, format: :js
+      end.to change(AttachedAsset, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template('_document')
       expect(response).to render_template('_attached_asset')
@@ -36,9 +36,8 @@ describe DocumentsController, :type => :controller do
     end
   end
 
-
   describe "GET 'new'" do
-    it "should render the comment form for a event comment" do
+    it 'should render the comment form for a event comment' do
       xhr :get, 'new', event_id: event.to_param, format: :js
       expect(response).to render_template('documents/_form')
       expect(response).to render_template('_form_dialog')

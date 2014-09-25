@@ -25,19 +25,18 @@ class Team < ActiveRecord::Base
   validates :company_id, presence: true, numericality: true
 
   # Teams-Users relationship
-  has_many :memberships, :as => :memberable
-  has_many :users, :class_name => 'CompanyUser', source: :company_user, :through => :memberships,
-                   :after_add => :reindex_user, :after_remove => :reindex_user
-
+  has_many :memberships, as: :memberable
+  has_many :users, class_name: 'CompanyUser', source: :company_user, through: :memberships,
+                   after_add: :reindex_user, after_remove: :reindex_user
 
   has_many :teamings
-  has_many :campaigns, through: :teamings, :source => :teamable, :source_type => 'Campaign'
+  has_many :campaigns, through: :teamings, source: :teamable, source_type: 'Campaign'
 
-  scope :active, ->{ where(:active => true) }
+  scope :active, -> { where(active: true) }
 
   scope :with_users, joins(:users).group('teams.id')
-  scope :with_user, lambda{|company_user| joins(:users).where(company_users: {id: company_user}).group('teams.id')  }
-  scope :with_active_users, lambda{|companies| joins(:users).where(:company_users => {:active => true, :company_id => companies}).group('teams.id') }
+  scope :with_user, lambda { |company_user| joins(:users).where(company_users: { id: company_user }).group('teams.id')  }
+  scope :with_active_users, lambda { |companies| joins(:users).where(company_users: { active: true, company_id: companies }).group('teams.id') }
 
   searchable do
     integer :id
@@ -57,7 +56,7 @@ class Team < ActiveRecord::Base
       campaigns.map(&:id)
     end
     string :campaigns, multiple: true, references: Campaign do
-      campaigns.map{|c| c.id.to_s + '||' + c.name}
+      campaigns.map { |c| c.id.to_s + '||' + c.name }
     end
   end
 
@@ -79,13 +78,13 @@ class Team < ActiveRecord::Base
 
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
-    def do_search(params, include_facets=false)
+    def do_search(params, include_facets = false)
       ss = solr_search do
 
         with(:company_id, params[:company_id])
-        with(:campaign_ids, params[:campaign]) if params.has_key?(:campaign) and params[:campaign].present?
-        with(:status, params[:status]) if params.has_key?(:status) and params[:status].present?
-        if params.has_key?(:q) and params[:q].present?
+        with(:campaign_ids, params[:campaign]) if params.key?(:campaign) && params[:campaign].present?
+        with(:status, params[:status]) if params.key?(:status) && params[:status].present?
+        if params.key?(:q) && params[:q].present?
           (attribute, value) = params[:q].split(',')
           case attribute
           when 'team'
@@ -103,7 +102,7 @@ class Team < ActiveRecord::Base
         end
 
         order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
-        paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+        paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
       end
     end
 

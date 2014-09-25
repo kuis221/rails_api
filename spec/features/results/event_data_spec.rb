@@ -1,11 +1,11 @@
 require 'rails_helper'
 
-feature "Results Event Data Page", js: true, search: true  do
+feature 'Results Event Data Page', js: true, search: true  do
 
   before do
     Kpi.destroy_all
     Warden.test_mode!
-    @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
+    @user = create(:user, company_id: create(:company).id, role_id: create(:role).id)
     @company_user = @user.company_users.first
     @company = @user.companies.first
     Kpi.create_global_kpis
@@ -13,17 +13,17 @@ feature "Results Event Data Page", js: true, search: true  do
     allow_any_instance_of(Place).to receive(:fetch_place_data).and_return(true)
   end
 
-  let(:campaign1){ FactoryGirl.create(:campaign, name: 'First Campaign', company: @company) }
-  let(:campaign2){ FactoryGirl.create(:campaign, name: 'Second Campaign', company: @company) }
+  let(:campaign1) { create(:campaign, name: 'First Campaign', company: @company) }
+  let(:campaign2) { create(:campaign, name: 'Second Campaign', company: @company) }
 
-  feature "video tutorial" do
-    scenario "a user can play and dismiss the video tutorial" do
+  feature 'video tutorial' do
+    scenario 'a user can play and dismiss the video tutorial' do
       visit results_event_data_path
 
       feature_name = 'Getting Started: Event Data Report'
 
       expect(page).to have_selector('h5', text: feature_name)
-      expect(page).to have_content("The Event Data Report holds all of your post event data")
+      expect(page).to have_content('The Event Data Report holds all of your post event data')
       click_link 'Play Video'
 
       within visible_modal do
@@ -41,13 +41,13 @@ feature "Results Event Data Page", js: true, search: true  do
     end
   end
 
-  feature "custom filters" do
-    let(:event1) { FactoryGirl.create(:approved_event, campaign: campaign1, company: @company, start_date: "08/21/2013", end_date: "08/21/2013", start_time: '8:00pm', end_time: '11:00pm', place: FactoryGirl.create(:place, name: 'Place 1')) }
-    let(:event2) { FactoryGirl.create(:approved_event, campaign: campaign2, company: @company, start_date: "08/22/2013", end_date: "08/22/2013", start_time: '8:00pm', end_time: '11:00pm', place: FactoryGirl.create(:place, name: 'Place 2')) }
-    let(:user1) { FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Roberto', last_name: 'Gomez'), company: @company) }
-    let(:user2) { FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Mario', last_name: 'Moreno'), company: @company) }
-    let(:kpi1) { FactoryGirl.create(:kpi, company: @company, name: 'A Custom KPI') }
-    let(:kpi2) { FactoryGirl.create(:kpi, company: @company, name: 'Another KPI') }
+  feature 'custom filters' do
+    let(:event1) { create(:approved_event, campaign: campaign1, company: @company, start_date: '08/21/2013', end_date: '08/21/2013', start_time: '8:00pm', end_time: '11:00pm', place: create(:place, name: 'Place 1')) }
+    let(:event2) { create(:approved_event, campaign: campaign2, company: @company, start_date: '08/22/2013', end_date: '08/22/2013', start_time: '8:00pm', end_time: '11:00pm', place: create(:place, name: 'Place 2')) }
+    let(:user1) { create(:company_user, user: create(:user, first_name: 'Roberto', last_name: 'Gomez'), company: @company) }
+    let(:user2) { create(:company_user, user: create(:user, first_name: 'Mario', last_name: 'Moreno'), company: @company) }
+    let(:kpi1) { create(:kpi, company: @company, name: 'A Custom KPI') }
+    let(:kpi2) { create(:kpi, company: @company, name: 'Another KPI') }
 
     before do
       event1.users << user1
@@ -61,7 +61,7 @@ feature "Results Event Data Page", js: true, search: true  do
       Sunspot.commit
     end
 
-    scenario "allows to create a new custom filter" do
+    scenario 'allows to create a new custom filter' do
       visit results_event_data_path
 
       filter_section('CAMPAIGNS').unicheck('First Campaign')
@@ -72,16 +72,16 @@ feature "Results Event Data Page", js: true, search: true  do
 
       within visible_modal do
         fill_in('Filter name', with: 'My Custom Filter')
-        expect {
+        expect do
           click_button 'Save'
           wait_for_ajax
-        }.to change(CustomFilter, :count).by(1)
+        end.to change(CustomFilter, :count).by(1)
 
         custom_filter = CustomFilter.last
         expect(custom_filter.owner).to eq(@company_user)
         expect(custom_filter.name).to eq('My Custom Filter')
         expect(custom_filter.apply_to).to eq('event_data')
-        expect(custom_filter.filters).to eq('campaign%5B%5D='+campaign1.to_param+'&user%5B%5D='+user1.to_param+'&event_status%5B%5D=Approved&status%5B%5D=Active')
+        expect(custom_filter.filters).to eq('campaign%5B%5D=' + campaign1.to_param + '&user%5B%5D=' + user1.to_param + '&event_status%5B%5D=Approved&status%5B%5D=Active')
       end
       ensure_modal_was_closed
 
@@ -90,13 +90,13 @@ feature "Results Event Data Page", js: true, search: true  do
       end
     end
 
-    scenario "allows to apply custom filters" do
-      FactoryGirl.create(:custom_filter, owner: @company_user, name: 'Custom Filter 1', apply_to: 'event_data', filters: 'campaign%5B%5D='+campaign1.to_param+'&user%5B%5D='+user1.to_param+'&event_status%5B%5D=Approved&status%5B%5D=Active')
-      FactoryGirl.create(:custom_filter, owner: @company_user, name: 'Custom Filter 2', apply_to: 'event_data', filters: 'campaign%5B%5D='+campaign2.to_param+'&user%5B%5D='+user2.to_param+'&event_status%5B%5D=Approved&status%5B%5D=Active')
+    scenario 'allows to apply custom filters' do
+      create(:custom_filter, owner: @company_user, name: 'Custom Filter 1', apply_to: 'event_data', filters: 'campaign%5B%5D=' + campaign1.to_param + '&user%5B%5D=' + user1.to_param + '&event_status%5B%5D=Approved&status%5B%5D=Active')
+      create(:custom_filter, owner: @company_user, name: 'Custom Filter 2', apply_to: 'event_data', filters: 'campaign%5B%5D=' + campaign2.to_param + '&user%5B%5D=' + user2.to_param + '&event_status%5B%5D=Approved&status%5B%5D=Active')
 
       visit results_event_data_path
 
-      #Using Custom Filter 1
+      # Using Custom Filter 1
       filter_section('SAVED FILTERS').unicheck('Custom Filter 1')
 
       within '#event-data-list' do
@@ -115,7 +115,7 @@ feature "Results Event Data Page", js: true, search: true  do
         expect(find_field('Custom Filter 2')['checked']).to be_falsey
       end
 
-      #Using Custom Filter 2 should update results and checked/unchecked checkboxes
+      # Using Custom Filter 2 should update results and checked/unchecked checkboxes
       filter_section('SAVED FILTERS').unicheck('Custom Filter 2')
 
       within '#event-data-list' do
@@ -134,7 +134,7 @@ feature "Results Event Data Page", js: true, search: true  do
         expect(find_field('Custom Filter 2')['checked']).to be_truthy
       end
 
-      #Using Custom Filter 2 again should reset filters
+      # Using Custom Filter 2 again should reset filters
       filter_section('SAVED FILTERS').unicheck('Custom Filter 2')
 
       within '#event-data-list' do
@@ -155,10 +155,10 @@ feature "Results Event Data Page", js: true, search: true  do
       end
     end
 
-    scenario "allows to remove custom filters" do
-      FactoryGirl.create(:custom_filter, owner: @company_user, name: 'Custom Filter 1', apply_to: 'event_data', filters: 'Filters 1')
-      cf2 = FactoryGirl.create(:custom_filter, owner: @company_user, name: 'Custom Filter 2', apply_to: 'event_data', filters: 'Filters 2')
-      FactoryGirl.create(:custom_filter, owner: @company_user, name: 'Custom Filter 3', apply_to: 'event_data', filters: 'Filters 3')
+    scenario 'allows to remove custom filters' do
+      create(:custom_filter, owner: @company_user, name: 'Custom Filter 1', apply_to: 'event_data', filters: 'Filters 1')
+      cf2 = create(:custom_filter, owner: @company_user, name: 'Custom Filter 2', apply_to: 'event_data', filters: 'Filters 2')
+      create(:custom_filter, owner: @company_user, name: 'Custom Filter 3', apply_to: 'event_data', filters: 'Filters 3')
 
       visit results_event_data_path
 
@@ -169,10 +169,10 @@ feature "Results Event Data Page", js: true, search: true  do
         expect(page).to have_content('Custom Filter 2')
         expect(page).to have_content('Custom Filter 3')
 
-        expect {
-          hover_and_click('#saved-filters-container #custom-filter-'+cf2.id.to_s, 'Remove Custom Filter')
+        expect do
+          hover_and_click('#saved-filters-container #custom-filter-' + cf2.id.to_s, 'Remove Custom Filter')
           wait_for_ajax
-        }.to change(CustomFilter, :count).by(-1)
+        end.to change(CustomFilter, :count).by(-1)
 
         expect(page).to have_content('Custom Filter 1')
         expect(page).to_not have_content('Custom Filter 2')
@@ -190,19 +190,19 @@ feature "Results Event Data Page", js: true, search: true  do
     end
   end
 
-  feature "export as xls" do
-    scenario "should include any custom kpis from all the campaigns" do
+  feature 'export as xls' do
+    scenario 'should include any custom kpis from all the campaigns' do
       with_resque do
-        kpi = FactoryGirl.create(:kpi, company: @company, name: 'A Custom KPI')
-        kpi2 = FactoryGirl.create(:kpi, company: @company, name: 'Another KPI')
+        kpi = create(:kpi, company: @company, name: 'A Custom KPI')
+        kpi2 = create(:kpi, company: @company, name: 'Another KPI')
         campaign1.add_kpi kpi
         campaign2.add_kpi kpi2
 
-        event = FactoryGirl.build(:approved_event, company: @company, campaign: campaign1)
+        event = build(:approved_event, company: @company, campaign: campaign1)
         event.result_for_kpi(kpi).value = '9876'
         event.save
 
-        event = FactoryGirl.build(:approved_event, company: @company, campaign: campaign2)
+        event = build(:approved_event, company: @company, campaign: campaign2)
         event.result_for_kpi(kpi2).value = '7654'
         event.save
 

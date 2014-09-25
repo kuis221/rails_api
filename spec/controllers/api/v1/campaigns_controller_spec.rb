@@ -1,32 +1,31 @@
 require 'rails_helper'
 
-describe Api::V1::CampaignsController, :type => :controller do
+describe Api::V1::CampaignsController, type: :controller do
   let(:user) { sign_in_as_user }
   let(:company) { user.company_users.first.company }
 
   describe "GET 'all'"do
-    it "return a list of events" do
-      campaign = FactoryGirl.create(:campaign, company: company, name: 'Cerveza Imperial FY14')
-      FactoryGirl.create(:campaign, company: company, name: 'Cerveza Imperial FY14', aasm_state: 'closed')
-      FactoryGirl.create(:campaign, company: company, name: 'Cerveza Imperial FY14', aasm_state: 'inactive')
+    it 'return a list of events' do
+      campaign = create(:campaign, company: company, name: 'Cerveza Imperial FY14')
+      create(:campaign, company: company, name: 'Cerveza Imperial FY14', aasm_state: 'closed')
+      create(:campaign, company: company, name: 'Cerveza Imperial FY14', aasm_state: 'inactive')
 
       get :all, auth_token: user.authentication_token, company_id: company.to_param, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
 
-      expect(result).to match_array([{"id"=> campaign.id, "name"=>'Cerveza Imperial FY14'}])
+      expect(result).to match_array([{ 'id' => campaign.id, 'name' => 'Cerveza Imperial FY14' }])
     end
   end
 
-
   describe "GET 'overall_stats'"do
     before { Kpi.create_global_kpis }
-    it "return a list of campaings with the info" do
-      campaign = FactoryGirl.create(:campaign, company: company, name: 'Cerveza Imperial FY14')
-      FactoryGirl.create(:campaign, company: company, name: 'Cerveza Imperial FY14', aasm_state: 'closed')
-      FactoryGirl.create(:campaign, company: company, name: 'Cerveza Imperial FY14', aasm_state: 'inactive')
+    it 'return a list of campaings with the info' do
+      campaign = create(:campaign, company: company, name: 'Cerveza Imperial FY14')
+      create(:campaign, company: company, name: 'Cerveza Imperial FY14', aasm_state: 'closed')
+      create(:campaign, company: company, name: 'Cerveza Imperial FY14', aasm_state: 'inactive')
 
-      FactoryGirl.create(:event, campaign: campaign)
+      create(:event, campaign: campaign)
       goal = campaign.goals.for_kpi(Kpi.events)
       goal.value = 200
       goal.save
@@ -38,20 +37,20 @@ describe Api::V1::CampaignsController, :type => :controller do
       expect(response).to be_success
       results = JSON.parse(response.body)
 
-      expect(results.first).to include({"id"=> campaign.id, "name"=>'Cerveza Imperial FY14', "goal" => 100.0, "kpi" => 'PROMO HOURS'})
-      expect(results.second).to include({"id"=> campaign.id, "name"=>'Cerveza Imperial FY14', "goal" => 200.0, "kpi" => 'EVENTS'})
+      expect(results.first).to include('id' => campaign.id, 'name' => 'Cerveza Imperial FY14', 'goal' => 100.0, 'kpi' => 'PROMO HOURS')
+      expect(results.second).to include('id' => campaign.id, 'name' => 'Cerveza Imperial FY14', 'goal' => 200.0, 'kpi' => 'EVENTS')
     end
   end
 
   describe "GET 'stats'"do
     before { Kpi.create_global_kpis }
-    it "return a list of campaings with the info" do
-      campaign = FactoryGirl.create(:campaign, company: company, name: 'Cerveza Imperial FY14')
+    it 'return a list of campaings with the info' do
+      campaign = create(:campaign, company: company, name: 'Cerveza Imperial FY14')
 
-      area = FactoryGirl.create(:area, name: 'California', company: company)
-      area.places << FactoryGirl.create(:place, city: 'Los Angeles', state: 'California', types: ['political'])
+      area = create(:area, name: 'California', company: company)
+      area.places << create(:place, city: 'Los Angeles', state: 'California', types: ['political'])
       campaign.areas << area
-      FactoryGirl.create(:goal, parent: campaign, goalable: area, kpi: Kpi.promo_hours, value: 10)
+      create(:goal, parent: campaign, goalable: area, kpi: Kpi.promo_hours, value: 10)
 
       get :stats, auth_token: user.authentication_token, company_id: company.to_param, id: campaign.to_param, format: :json
       expect(response).to be_success
@@ -67,8 +66,8 @@ describe Api::V1::CampaignsController, :type => :controller do
       expect(stats['areas'].first['executed_percentage']).to eql 0
       expect(stats['areas'].first['scheduled_percentage']).to eql 0
       expect(stats['areas'].first['remaining_percentage']).to eql 100
-      expect(stats['areas'].first.has_key?('today')).to be_falsey
-      expect(stats['areas'].first.has_key?('today_percentage')).to be_falsey
-     end
+      expect(stats['areas'].first.key?('today')).to be_falsey
+      expect(stats['areas'].first.key?('today_percentage')).to be_falsey
+    end
   end
 end

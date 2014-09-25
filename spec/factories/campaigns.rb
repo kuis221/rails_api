@@ -25,9 +25,9 @@
 
 FactoryGirl.define do
   factory :campaign do
-    sequence(:name) {|n| "Campaign #{n}" }
-    description "Test Campaign description"
-    aasm_state "active"
+    sequence(:name) { |n| "Campaign #{n}" }
+    description 'Test Campaign description'
+    aasm_state 'active'
     association :company
     created_by_id 1
     updated_by_id 1

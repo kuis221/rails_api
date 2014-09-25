@@ -18,11 +18,11 @@
 
 # for storing a pulldown menu choice
 class Metric::Select < Metric
-  has_many :metric_options, ->{ order "id ASC" }, :foreign_key => :metric_id, :dependent => :destroy
-  accepts_nested_attributes_for :metric_options, :allow_destroy => false, reject_if: ->(attributes){ attributes['name'].blank? }
+  has_many :metric_options, -> { order 'id ASC' }, foreign_key: :metric_id, dependent: :destroy
+  accepts_nested_attributes_for :metric_options, allow_destroy: false, reject_if: ->(attributes) { attributes['name'].blank? }
 
   validates_presence_of :style
-  validates_inclusion_of :style, :in => %w( select radio )
+  validates_inclusion_of :style, in: %w( select radio )
   def style_options
     %w( select radio )
   end
@@ -30,12 +30,15 @@ class Metric::Select < Metric
   def collection
     @collection ||= metric_options.not_deleted.map { |o| [o.name, o.id] }
   end
+
   def form_options
-    super.merge({:as => style || :select, :collection => collection, :include_blank => 'Select one'})
+    super.merge(as: style || :select, collection: collection, include_blank: 'Select one')
   end
+
   def format_result(result)
     metric_options.find(result.value).name
   end
+
   def format_pdf(pdf, result)
     if result && result.print_values?
       super
@@ -43,8 +46,9 @@ class Metric::Select < Metric
       pdf.font_size(10) { pdf.indent(5) { pdf.text metric_options.map(&:name).join(' / ') } }
     end
   end
+
   def result_hash(result)
-    {name => format_result(result)}
+    { name => format_result(result) }
   end
   def self.targetable?
     false
@@ -52,9 +56,11 @@ class Metric::Select < Metric
   def field_type_symbol
     'ABC'
   end
+
   def validate_result(result)
     result.errors.add(:value, 'Pick one') unless metric_options.exists?(cast_value(result.value))
   end
+
   def cast_value(value)
     value.to_i
   end

@@ -1,7 +1,7 @@
 ActiveAdmin.register SatisfactionSurvey do
   actions :index, :show
 
-  menu parent: "Users"
+  menu parent: 'Users'
 
   index do
     column :first_name, sortable: 'users.first_name' do |survey|
@@ -20,7 +20,7 @@ ActiveAdmin.register SatisfactionSurvey do
       survey.rating.capitalize
     end
     column :feedback
-    column "Date/Time", sortable: :created_at do |survey|
+    column 'Date/Time', sortable: :created_at do |survey|
       survey.created_at
     end
     actions

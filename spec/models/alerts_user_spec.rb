@@ -12,6 +12,6 @@
 
 require 'rails_helper'
 
-describe AlertsUser, :type => :model do
+describe AlertsUser, type: :model do
   it { is_expected.to belong_to(:company_user) }
 end

@@ -13,8 +13,8 @@ class VenuesController < FilteredController
     if places = get_collection_ivar
       @extended_places ||= begin
         google_results = load_google_places
-        ids = places.map{|p| p.place.place_id}
-        places += google_results.reject{|gp| ids.include?(gp.id) }
+        ids = places.map { |p| p.place.place_id }
+        places += google_results.reject { |gp| ids.include?(gp.id) }
         places
       end
     end
@@ -38,58 +38,59 @@ class VenuesController < FilteredController
   end
 
   protected
-    def permitted_params
-      params.permit(venue: [:place_id, :company_id])[:venue]
+
+  def permitted_params
+    params.permit(venue: [:place_id, :company_id])[:venue]
+  end
+
+  def load_google_places
+    places = []
+    if params[:location].present?
+      (lat, lng) = params[:location].split(',')
+      places = google_places_client.spots(lat, lng, keyword: params[:q], radius: 50_000)
     end
+    places
+  end
 
-    def load_google_places
-      places=[]
-      if params[:location].present?
-        (lat,lng) = params[:location].split(',')
-        places = google_places_client.spots(lat, lng, keyword: params[:q], radius: 50000)
-      end
-      places
-    end
-
-    def resource
-      if params[:id] =~ /^[0-9]+$/
-        @place ||= Venue.find(params[:id])
-      else
-        @place ||= begin
-          venue = Venue.new(place_id: nil, company_id: current_company.id)
-          venue.place = Place.load_by_place_id(params[:id], params[:ref])
-          venue
-        end
-      end
-      @place
-    end
-
-    def google_places_client
-      @google_places_client = GooglePlaces::Client.new(GOOGLE_API_KEY)
-    end
-
-    def search_params
-      @search_params ||= begin
-        super
-        unless @search_params.has_key?(:types) && !@search_params[:types].empty?
-          @search_params[:types] = %w(establishment)
-        end
-
-        [:events_count, :promo_hours, :impressions, :interactions, :sampled, :spent, :venue_score].each do |param|
-          @search_params[param] ||= {}
-          @search_params[param][:min] = nil unless @search_params[:location].present? || @search_params[param][:min].present?
-          @search_params[param][:max] = nil if @search_params[param][:max].nil? || @search_params[param][:max].empty?
-        end
-        @search_params
+  def resource
+    if params[:id] =~ /^[0-9]+$/
+      @place ||= Venue.find(params[:id])
+    else
+      @place ||= begin
+        venue = Venue.new(place_id: nil, company_id: current_company.id)
+        venue.place = Place.load_by_place_id(params[:id], params[:ref])
+        venue
       end
     end
+    @place
+  end
 
-    def data_totals
-      @data_totals ||= Hash.new.tap do |totals|
-        totals['events_count'] = @solr_search.stat_response['stats_fields']["events_count_is"]['sum'] rescue 0
-        totals['promo_hours'] = @solr_search.stat_response['stats_fields']["promo_hours_es"]['sum'] rescue 0
-        totals['spent'] = @solr_search.stat_response['stats_fields']["spent_es"]['sum'] rescue 0
+  def google_places_client
+    @google_places_client = GooglePlaces::Client.new(GOOGLE_API_KEY)
+  end
+
+  def search_params
+    @search_params ||= begin
+      super
+      unless @search_params.key?(:types) && !@search_params[:types].empty?
+        @search_params[:types] = %w(establishment)
       end
-      @data_totals
+
+      [:events_count, :promo_hours, :impressions, :interactions, :sampled, :spent, :venue_score].each do |param|
+        @search_params[param] ||= {}
+        @search_params[param][:min] = nil unless @search_params[:location].present? || @search_params[param][:min].present?
+        @search_params[param][:max] = nil if @search_params[param][:max].nil? || @search_params[param][:max].empty?
+      end
+      @search_params
     end
+  end
+
+  def data_totals
+    @data_totals ||= Hash.new.tap do |totals|
+      totals['events_count'] = @solr_search.stat_response['stats_fields']['events_count_is']['sum'] rescue 0
+      totals['promo_hours'] = @solr_search.stat_response['stats_fields']['promo_hours_es']['sum'] rescue 0
+      totals['spent'] = @solr_search.stat_response['stats_fields']['spent_es']['sum'] rescue 0
+    end
+    @data_totals
+  end
 end

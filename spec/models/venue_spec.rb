@@ -24,23 +24,23 @@
 
 require 'rails_helper'
 
-describe Venue, :type => :model do
+describe Venue, type: :model do
   it { is_expected.to belong_to(:place) }
   it { is_expected.to belong_to(:company) }
 
-  describe "compute_stats" do
-    let(:company) { FactoryGirl.create(:company) }
-    let(:venue) { FactoryGirl.create(:venue, company: company, place: FactoryGirl.create(:place)) }
+  describe 'compute_stats' do
+    let(:company) { create(:company) }
+    let(:venue) { create(:venue, company: company, place: create(:place)) }
 
-    it "return succeed if there are no events for this venue" do
+    it 'return succeed if there are no events for this venue' do
       expect(venue.compute_stats).to be_truthy
     end
 
-    it "count the number of events for the company" do
+    it 'count the number of events for the company' do
       venue.save
-      e = FactoryGirl.create(:event, place_id: venue.place_id, company: company, start_date: "01/23/2019", end_date: "01/23/2019", start_time: '8:00am', end_time: '11:00am')
-      FactoryGirl.create(:event, company: company, place_id: FactoryGirl.create(:place).id) # Create another event for other place
-      FactoryGirl.create(:event, place_id: venue.place_id) # Create another event for other company
+      e = create(:event, place_id: venue.place_id, company: company, start_date: '01/23/2019', end_date: '01/23/2019', start_time: '8:00am', end_time: '11:00am')
+      create(:event, company: company, place_id: create(:place).id) # Create another event for other place
+      create(:event, place_id: venue.place_id) # Create another event for other company
 
       venue.compute_stats
       venue.reload
@@ -51,15 +51,15 @@ describe Venue, :type => :model do
     end
   end
 
-  describe "compute_scoring", search: true do
-    it "should correctly compute the scoring based on the venues in a radius of 5KM" do
-      place1 = FactoryGirl.create(:venue, place: FactoryGirl.create(:place, latitude: 9.930713, longitude: -84.050045),
+  describe 'compute_scoring', search: true do
+    it 'should correctly compute the scoring based on the venues in a radius of 5KM' do
+      place1 = create(:venue, place: create(:place, latitude: 9.930713, longitude: -84.050045),
         avg_impressions_hour: 142, avg_impressions_cost: 167)
-      place2 = FactoryGirl.create(:venue, place: FactoryGirl.create(:place, latitude: 9.929967, longitude: -84.047492),
+      place2 = create(:venue, place: create(:place, latitude: 9.929967, longitude: -84.047492),
         avg_impressions_hour: 183, avg_impressions_cost: 217)
-      place3 = FactoryGirl.create(:venue, place: FactoryGirl.create(:place, latitude: 9.931795, longitude: -84.044348),
+      place3 = create(:venue, place: create(:place, latitude: 9.931795, longitude: -84.044348),
         avg_impressions_hour: 217, avg_impressions_cost: 183)
-      place4 = FactoryGirl.create(:venue, place: FactoryGirl.create(:place, latitude: 9.931795, longitude: -84.044348),
+      place4 = create(:venue, place: create(:place, latitude: 9.931795, longitude: -84.044348),
         avg_impressions_hour: 167, avg_impressions_cost: 142)
 
       Venue.reindex
@@ -87,63 +87,63 @@ describe Venue, :type => :model do
 
     end
 
-    describe "#overall_graphs_data" do
-      let(:campaign) { FactoryGirl.create(:campaign) }
-      let(:venue) { FactoryGirl.create(:venue, company_id: campaign.company_id, place: FactoryGirl.create(:place)) }
+    describe '#overall_graphs_data' do
+      let(:campaign) { create(:campaign) }
+      let(:venue) { create(:venue, company_id: campaign.company_id, place: create(:place)) }
 
-      it "should correctly count the amounts for :age, :gender and :ethnicity" do
+      it 'should correctly count the amounts for :age, :gender and :ethnicity' do
         Kpi.create_global_kpis
         campaign.assign_all_global_kpis
-        event = FactoryGirl.create(:event, campaign: campaign, place_id: venue.place_id, start_date: "01/23/2013", end_date: "01/23/2013", start_time: '6:00pm', end_time: '9:00pm')
+        event = create(:event, campaign: campaign, place_id: venue.place_id, start_date: '01/23/2013', end_date: '01/23/2013', start_time: '6:00pm', end_time: '9:00pm')
         set_event_results(event,
-          gender_male: 35,  gender_female: 65,
-          ethnicity_asian: 15,
-          ethnicity_native_american: 23,
-          ethnicity_black: 24,
-          ethnicity_hispanic: 26,
-          ethnicity_white: 12,
-          age_12: 1,
-          age_12_17: 2,
-          age_18_24: 4,
-          age_25_34: 8,
-          age_35_44: 16,
-          age_45_54: 32,
-          age_55_64: 24,
-          age_65: 13
+                          gender_male: 35,  gender_female: 65,
+                          ethnicity_asian: 15,
+                          ethnicity_native_american: 23,
+                          ethnicity_black: 24,
+                          ethnicity_hispanic: 26,
+                          ethnicity_white: 12,
+                          age_12: 1,
+                          age_12_17: 2,
+                          age_18_24: 4,
+                          age_25_34: 8,
+                          age_35_44: 16,
+                          age_45_54: 32,
+                          age_55_64: 24,
+                          age_65: 13
         )
 
-        event = FactoryGirl.create(:event, campaign: campaign, place_id: venue.place_id, start_date: "01/23/2013", end_date: "01/23/2013", start_time: '6:00pm', end_time: '9:00pm')
+        event = create(:event, campaign: campaign, place_id: venue.place_id, start_date: '01/23/2013', end_date: '01/23/2013', start_time: '6:00pm', end_time: '9:00pm')
         set_event_results(event,
-          gender_male: 20,  gender_female: 80,
-          ethnicity_asian: 15,
-          ethnicity_native_american: 23,
-          ethnicity_black: 24,
-          ethnicity_hispanic: 26,
-          ethnicity_white: 12,
-          age_12: 1,
-          age_12_17: 2,
-          age_18_24: 4,
-          age_25_34: 8,
-          age_35_44: 16,
-          age_45_54: 32,
-          age_55_64: 24,
-          age_65: 13
+                          gender_male: 20,  gender_female: 80,
+                          ethnicity_asian: 15,
+                          ethnicity_native_american: 23,
+                          ethnicity_black: 24,
+                          ethnicity_hispanic: 26,
+                          ethnicity_white: 12,
+                          age_12: 1,
+                          age_12_17: 2,
+                          age_18_24: 4,
+                          age_25_34: 8,
+                          age_35_44: 16,
+                          age_45_54: 32,
+                          age_55_64: 24,
+                          age_65: 13
         )
         data = venue.overall_graphs_data
 
-        expect(data[:age]).to eq({"< 12"=>1.0, "12 – 17"=>2.0, "18 – 24"=>4.0, "25 – 34"=>8.0, "35 – 44"=>16.0, "45 – 54"=>32.0, "55 – 64"=>24.0, "65+"=>13.0})
-        expect(data[:gender]).to eq({"Female"=>72.5, "Male"=>27.5})
-        expect(data[:ethnicity]).to eq({"Asian"=>15.0, "Black / African American"=>24.0, "Hispanic / Latino"=>26.0, "Native American"=>23.0, "White"=>12.0})
+        expect(data[:age]).to eq('< 12' => 1.0, '12 – 17' => 2.0, '18 – 24' => 4.0, '25 – 34' => 8.0, '35 – 44' => 16.0, '45 – 54' => 32.0, '55 – 64' => 24.0, '65+' => 13.0)
+        expect(data[:gender]).to eq('Female' => 72.5, 'Male' => 27.5)
+        expect(data[:ethnicity]).to eq('Asian' => 15.0, 'Black / African American' => 24.0, 'Hispanic / Latino' => 26.0, 'Native American' => 23.0, 'White' => 12.0)
 
       end
 
-      it "should correctly distribute the promo hours for events happening in the same day" do
+      it 'should correctly distribute the promo hours for events happening in the same day' do
         Kpi.create_global_kpis
         campaign.assign_all_global_kpis
-        event = FactoryGirl.create(:event, campaign: campaign, place_id: venue.place_id, start_date: "01/23/2013", end_date: "01/23/2013", start_time: '6:00pm', end_time: '9:00pm')
+        event = create(:event, campaign: campaign, place_id: venue.place_id, start_date: '01/23/2013', end_date: '01/23/2013', start_time: '6:00pm', end_time: '9:00pm')
         set_event_results(event, impressions: 100)
 
-        event = FactoryGirl.create(:event, campaign: campaign, place_id: venue.place_id, start_date: "01/24/2013", end_date: "01/24/2013", start_time: '8:00pm', end_time: '10:00pm')
+        event = create(:event, campaign: campaign, place_id: venue.place_id, start_date: '01/24/2013', end_date: '01/24/2013', start_time: '8:00pm', end_time: '10:00pm')
         set_event_results(event, impressions: 50)
 
         data = venue.overall_graphs_data
@@ -157,10 +157,10 @@ describe Venue, :type => :model do
 
       end
 
-      it "should correctly distribute the promo hours for events happening in more than one day" do
+      it 'should correctly distribute the promo hours for events happening in more than one day' do
         Kpi.create_global_kpis
         campaign.assign_all_global_kpis
-        event = FactoryGirl.create(:event, campaign: campaign, place_id: venue.place_id, start_date: "01/23/2013", end_date: "01/24/2013", start_time: '8:00pm', end_time: '03:00am')
+        event = create(:event, campaign: campaign, place_id: venue.place_id, start_date: '01/23/2013', end_date: '01/24/2013', start_time: '8:00pm', end_time: '03:00am')
         event.event_expenses.create(amount: 1000, name: 'Test expense')
         set_event_results(event, impressions: 100)
 

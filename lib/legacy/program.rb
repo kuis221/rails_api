@@ -17,20 +17,20 @@
 #
 
 class Legacy::Program  < Legacy::Record
-  self.table_name = "legacy_programs"
+  self.table_name = 'legacy_programs'
 
   has_and_belongs_to_many :accounts
-  has_many      :events, inverse_of: :program
-  belongs_to    :brand
+  has_many :events, inverse_of: :program
+  belongs_to :brand
 
   delegate :name, to: :brand, allow_nil: true, prefix: true
 
   has_many :data_migrations, as: :remote
 
-  has_one       :form_template
+  has_one :form_template
 
-  def synchronize(company, attributes={})
-    attributes.merge!({company_id: company.id})
+  def synchronize(company, attributes = {})
+    attributes.merge!(company_id: company.id)
     campaing = ::Campaign.where('lower(name) = ? and company_id=?', name.strip.downcase, company.id).first || ::Campaign.new(name: name.strip)
     migration = data_migrations.find_or_initialize_by_company_id(company.id, local: campaing)
     if migration.local.new_record? || migration.local.form_fields.count == 0
@@ -41,15 +41,15 @@ class Legacy::Program  < Legacy::Record
 
     synchronize_custom_kpis(company, migration.local)
 
-    #synchronize_venues(company, migration.local)
+    # synchronize_venues(company, migration.local)
 
     migration
   end
 
-  def migration_attributes(attributes={})
+  def migration_attributes(_attributes = {})
     {
       brands_list: brand_name,
-      aasm_state: ( active ? 'active' : 'inactive' ),
+      aasm_state: (active ? 'active' : 'inactive'),
       created_at: created_at,
       updated_at: updated_at
     }
@@ -66,7 +66,7 @@ class Legacy::Program  < Legacy::Record
   def synchronize_venues(company, campaign)
     accounts.each do |account|
       migration = account.synchronize(company)
-      if migration.local.present? and migration.local.persisted?
+      if migration.local.present? && migration.local.persisted?
         campaign.places << migration.local unless campaign.places.include?(migration.local)
       end
     end

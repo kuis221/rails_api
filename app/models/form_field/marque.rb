@@ -21,17 +21,17 @@ class FormField::Marque < FormField::Dropdown
     {
       as: :select,
       collection: marques,
-      label: self.name,
-      field_id: self.id,
-      options: self.settings,
-      required: self.required,
+      label: name,
+      field_id: id,
+      options: settings,
+      required: required,
       input_html: {
         value: result.value,
         class: field_classes.push('chosen-enabled form-field-marque'),
         multiple: self.multiple?,
         required: (self.required? ? 'required' : nil)
-        }
       }
+    }
   end
 
   def is_optionable?

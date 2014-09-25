@@ -2,15 +2,15 @@ class Api::V1::UsersController < Api::V1::FilteredController
   include UsersHelper
 
   skip_before_action :verify_authenticity_token,
-                     :if => Proc.new { |c| c.request.format == 'application/json' }
+                     if: proc { |c| c.request.format == 'application/json' }
 
   skip_authorization_check only: [:new_password, :companies, :permissions, :notifications]
 
   defaults resource_class: CompanyUser
 
   def_param_group :user do
-    param :company_user, Hash, required: true, :action_aware => true do
-      param :user_attributes, Hash, required: true, :action_aware => true do
+    param :company_user, Hash, required: true, action_aware: true do
+      param :user_attributes, Hash, required: true, action_aware: true do
         param :first_name, String, required: true, desc: "User's first name"
         param :last_name, String, required: true, desc: "User's last name"
         param :email, String, required: true, desc: "User's email address"
@@ -24,17 +24,17 @@ class Api::V1::UsersController < Api::V1::FilteredController
         param :city, String, required: true, desc: "User's city"
         param :zip_code, String, required: true, desc: "User's ZIP code"
         param :time_zone, String, required: true, desc: "User's time zone"
-        param :id, :number, required: true, desc: "User ID"
+        param :id, :number, required: true, desc: 'User ID'
       end
     end
   end
 
   resource_description do
     short 'Users'
-    formats ['json', 'xml']
-    error 404, "Missing"
-    error 401, "Unauthorized access"
-    error 500, "Server crashed for some reason"
+    formats %w(json xml)
+    error 404, 'Missing'
+    error 401, 'Unauthorized access'
+    error 500, 'Server crashed for some reason'
     description <<-EOS
 
     EOS
@@ -46,21 +46,21 @@ class Api::V1::UsersController < Api::V1::FilteredController
     resource = User.send_reset_password_instructions(params)
 
     if resource.persisted?
-      render :status => 200,
-             :json => { :success => true,
-                        :info => "Reset password instructions sent",
-                        :data => {} }
+      render status: 200,
+             json: { success: true,
+                     info: 'Reset password instructions sent',
+                     data: {} }
     else
       failure
     end
   end
 
-  api :GET, '/api/v1/users', "Get a list of users for a specific company"
+  api :GET, '/api/v1/users', 'Get a list of users for a specific company'
   param :auth_token, String, required: true
   param :company_id, :number, required: true
-  param :campaign, Array, :desc => "A list of campaign ids. If given, the list will include only users that are assigned to these campaigns"
-  param :team, Array, :desc => "A list of team ids. If given, the list will include only users that are members of these teams"
-  param :role, Array, :desc => "A list of role ids. If given, the list will include only users with there roles"
+  param :campaign, Array, desc: 'A list of campaign ids. If given, the list will include only users that are assigned to these campaigns'
+  param :team, Array, desc: 'A list of team ids. If given, the list will include only users that are members of these teams'
+  param :role, Array, desc: 'A list of role ids. If given, the list will include only users with there roles'
   description <<-EOS
     Returns a full list of the existing users in the company. Only active users are returned.
     Each user have the following attributes:
@@ -128,9 +128,8 @@ class Api::V1::UsersController < Api::V1::FilteredController
     end
   end
 
-
   api :GET, '/api/v1/users/:id', 'Return a user\'s details'
-  param :id, :number, required: true, desc: "User ID"
+  param :id, :number, required: true, desc: 'User ID'
   description <<-EOS
     Returns the details of a give user
       * *id*: the user id
@@ -181,9 +180,9 @@ class Api::V1::UsersController < Api::V1::FilteredController
   api :PUT, '/api/v1/users/:id', 'Update a user\'s details'
   param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
   param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
-  param :id, :number, required: true, desc: "Company User ID"
+  param :id, :number, required: true, desc: 'Company User ID'
   param_group :user
-  param :team_ids, Array, required: false, desc: "Teams that the user belongs"
+  param :team_ids, Array, required: false, desc: 'Teams that the user belongs'
   param :role_id, :number, required: false, desc: "User's role ID"
   description <<-EOS
   Updates the user's data and returns all the user's updated info.
@@ -252,7 +251,7 @@ class Api::V1::UsersController < Api::V1::FilteredController
     end
   end
 
-  api :GET, '/api/v1/companies', "Get a list of companies the user has access to"
+  api :GET, '/api/v1/companies', 'Get a list of companies the user has access to'
   param :auth_token, String, required: true
   example <<-EOS
     GET /api/v1/companies?auth_token=XXXXXYYYYYZZZZZ
@@ -270,16 +269,16 @@ class Api::V1::UsersController < Api::V1::FilteredController
   EOS
   def companies
     if current_user.present?
-      companies = current_user.companies_active_role.map{|c| {name: c.name, id: c.id} }
+      companies = current_user.companies_active_role.map { |c| { name: c.name, id: c.id } }
       respond_to do |format|
-        format.json {
-          render :status => 200,
-                 :json => companies
-        }
-        format.xml {
-          render :status => 200,
-                 :xml => companies.to_xml(root: 'companies')
-        }
+        format.json do
+          render status: 200,
+                 json: companies
+        end
+        format.xml do
+          render status: 200,
+                 xml: companies.to_xml(root: 'companies')
+        end
       end
     else
       failure
@@ -355,24 +354,23 @@ class Api::V1::UsersController < Api::V1::FilteredController
   EOS
   def notifications
     if current_user.present?
-      notifications = notifications_for_company_user(current_company_user).map{|n| n.delete(:url); n.delete(:unread); n }
+      notifications = notifications_for_company_user(current_company_user).map { |n| n.delete(:url); n.delete(:unread); n }
 
-      companies = current_user.companies_active_role.map{|c| {name: c.name, id: c.id} }
+      companies = current_user.companies_active_role.map { |c| { name: c.name, id: c.id } }
       respond_to do |format|
-        format.json {
-          render :status => 200,
-                 :json => notifications
-        }
-        format.xml {
-          render :status => 200,
-                 :xml => notifications.to_xml(root: 'notifications')
-        }
+        format.json do
+          render status: 200,
+                 json: notifications
+        end
+        format.xml do
+          render status: 200,
+                 xml: notifications.to_xml(root: 'notifications')
+        end
       end
     else
       failure
     end
   end
-
 
   api :GET, '/api/v1/users/permissions', "Get a list of the user's permissions"
   param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
@@ -457,14 +455,14 @@ class Api::V1::UsersController < Api::V1::FilteredController
   def permissions
     if current_user.present?
       respond_to do |format|
-        format.json {
-          render :status => 200,
-                 :json => user_permissions
-        }
-        format.xml {
-          render :status => 200,
-                 :xml => user_permissions.to_xml(root: 'permissions')
-        }
+        format.json do
+          render status: 200,
+                 json: user_permissions
+        end
+        format.xml do
+          render status: 200,
+                 xml: user_permissions.to_xml(root: 'permissions')
+        end
       end
     else
       failure
@@ -472,101 +470,101 @@ class Api::V1::UsersController < Api::V1::FilteredController
   end
 
   def failure
-    render :status => 401,
-           :json => { :success => false,
-                      :info => "Action Failed",
-                      :data => {} }
+    render status: 401,
+           json: { success: false,
+                   info: 'Action Failed',
+                   data: {} }
   end
 
   private
-    def permitted_params
-      allowed = {company_user: [{user_attributes: [:id, :first_name, :last_name, :email, :phone_number, :password, :password_confirmation, :country, :state, :city, :street_address, :unit_number, :zip_code, :time_zone]}] }
-      if params[:id].present? && can?(:super_update, CompanyUser.find(params[:id]))
-        allowed[:company_user] += [:role_id, {team_ids: []}]
-      end
-      params.permit(allowed)[:company_user]
+
+  def permitted_params
+    allowed = { company_user: [{ user_attributes: [:id, :first_name, :last_name, :email, :phone_number, :password, :password_confirmation, :country, :state, :city, :street_address, :unit_number, :zip_code, :time_zone] }] }
+    if params[:id].present? && can?(:super_update, CompanyUser.find(params[:id]))
+      allowed[:company_user] += [:role_id, { team_ids: [] }]
     end
+    params.permit(allowed)[:company_user]
+  end
 
-    def search_params
-      super
-      @search_params[:status] = ['Active']
-      @search_params
-    end
+  def search_params
+    super
+    @search_params[:status] = ['Active']
+    @search_params
+  end
 
-    def permitted_search_params
-      params.permit({role: []}, {status: []}, {team: []}, {campaign: []})
-    end
+  def permitted_search_params
+    params.permit({ role: [] }, { status: [] }, { team: [] }, { campaign: [] })
+  end
 
-    def user_permissions
-      permissions = []
-      permissions.push 'events' if can?(:view_list, Event)
-      permissions.push 'events_create' if can?(:create, Event)
-      permissions.push 'events_show' if current_company_user.role.has_permission?(:show, Event)
-      permissions.push 'events_edit' if can?(:update, Event)
-      permissions.push 'events_deactivate' if can?(:deactivate, Event)
-      permissions.push 'events_view_unsubmitted_data' if can?(:events_view_unsubmitted_data, Event)
-      permissions.push 'events_view_submitted_data' if can?(:events_view_submitted_data, Event)
-      permissions.push 'events_view_approved_data' if can?(:events_view_approved_data, Event)
-      permissions.push 'events_view_rejected_data' if can?(:events_view_rejected_data, Event)
-      permissions.push 'events_edit_unsubmitted_data' if can?(:events_edit_unsubmitted_data, Event)
-      permissions.push 'events_edit_submitted_data' if can?(:events_edit_submitted_data, Event)
-      permissions.push 'events_edit_approved_data' if can?(:events_edit_approved_data, Event)
-      permissions.push 'events_edit_rejected_data' if can?(:events_edit_rejected_data, Event)
-      permissions.push 'events_submit' if can?(:submit, Event)
-      permissions.push 'events_approve' if can?(:approve, Event)
-      permissions.push 'events_reject' if can?(:reject, Event)
-      permissions.push 'events_team_members' if current_company_user.role.has_permission?(:view_members, Event)
-      permissions.push 'events_add_team_members' if current_company_user.role.has_permission?(:add_members, Event)
-      permissions.push 'events_delete_team_members' if current_company_user.role.has_permission?(:delete_member, Event)
-      permissions.push 'events_contacts' if current_company_user.role.has_permission?(:view_contacts, Event)
-      permissions.push 'events_add_contacts' if current_company_user.role.has_permission?(:create_contacts, Event)
-      permissions.push 'events_edit_contacts' if current_company_user.role.has_permission?(:edit_contacts, Event)
-      permissions.push 'events_delete_contacts' if current_company_user.role.has_permission?(:delete_contact, Event)
-      permissions.push 'events_tasks' if can?(:index_tasks, Event)
-      permissions.push 'events_create_tasks' if can?(:create_task, Event)
-      permissions.push 'events_edit_tasks' if can?(:edit_task, Event)
-      permissions.push 'events_documents' if can?(:index_documents, Event)
-      permissions.push 'events_create_documents' if can?(:create_document, Event)
-      permissions.push 'events_deactivate_documents' if can?(:deactivate_document, Event)
-      permissions.push 'events_photos' if can?(:index_photos, Event)
-      permissions.push 'events_create_photos' if can?(:create_photo, Event)
-      permissions.push 'events_deactivate_photos' if can?(:deactivate_photo, Event)
-      permissions.push 'events_expenses' if can?(:index_expenses, Event)
-      permissions.push 'events_create_expenses' if can?(:create_expense, Event)
-      permissions.push 'events_edit_expenses' if can?(:edit_expense, Event)
-      permissions.push 'events_deactivate_expenses' if can?(:deactivate_expense, Event)
-      permissions.push 'events_surveys' if can?(:index_surveys, Event)
-      permissions.push 'events_create_surveys' if can?(:create_survey, Event)
-      permissions.push 'events_edit_surveys' if can?(:edit_survey, Event)
-      permissions.push 'events_deactivate_surveys' if can?(:deactivate_survey, Event)
-      permissions.push 'events_comments' if can?(:index_comments, Event)
-      permissions.push 'events_create_comments' if can?(:create_comment, Event)
-      permissions.push 'events_edit_comments' if can?(:edit_comment, Event)
-      permissions.push 'events_deactivate_comments' if can?(:deactivate_comment, Event)
+  def user_permissions
+    permissions = []
+    permissions.push 'events' if can?(:view_list, Event)
+    permissions.push 'events_create' if can?(:create, Event)
+    permissions.push 'events_show' if current_company_user.role.has_permission?(:show, Event)
+    permissions.push 'events_edit' if can?(:update, Event)
+    permissions.push 'events_deactivate' if can?(:deactivate, Event)
+    permissions.push 'events_view_unsubmitted_data' if can?(:events_view_unsubmitted_data, Event)
+    permissions.push 'events_view_submitted_data' if can?(:events_view_submitted_data, Event)
+    permissions.push 'events_view_approved_data' if can?(:events_view_approved_data, Event)
+    permissions.push 'events_view_rejected_data' if can?(:events_view_rejected_data, Event)
+    permissions.push 'events_edit_unsubmitted_data' if can?(:events_edit_unsubmitted_data, Event)
+    permissions.push 'events_edit_submitted_data' if can?(:events_edit_submitted_data, Event)
+    permissions.push 'events_edit_approved_data' if can?(:events_edit_approved_data, Event)
+    permissions.push 'events_edit_rejected_data' if can?(:events_edit_rejected_data, Event)
+    permissions.push 'events_submit' if can?(:submit, Event)
+    permissions.push 'events_approve' if can?(:approve, Event)
+    permissions.push 'events_reject' if can?(:reject, Event)
+    permissions.push 'events_team_members' if current_company_user.role.has_permission?(:view_members, Event)
+    permissions.push 'events_add_team_members' if current_company_user.role.has_permission?(:add_members, Event)
+    permissions.push 'events_delete_team_members' if current_company_user.role.has_permission?(:delete_member, Event)
+    permissions.push 'events_contacts' if current_company_user.role.has_permission?(:view_contacts, Event)
+    permissions.push 'events_add_contacts' if current_company_user.role.has_permission?(:create_contacts, Event)
+    permissions.push 'events_edit_contacts' if current_company_user.role.has_permission?(:edit_contacts, Event)
+    permissions.push 'events_delete_contacts' if current_company_user.role.has_permission?(:delete_contact, Event)
+    permissions.push 'events_tasks' if can?(:index_tasks, Event)
+    permissions.push 'events_create_tasks' if can?(:create_task, Event)
+    permissions.push 'events_edit_tasks' if can?(:edit_task, Event)
+    permissions.push 'events_documents' if can?(:index_documents, Event)
+    permissions.push 'events_create_documents' if can?(:create_document, Event)
+    permissions.push 'events_deactivate_documents' if can?(:deactivate_document, Event)
+    permissions.push 'events_photos' if can?(:index_photos, Event)
+    permissions.push 'events_create_photos' if can?(:create_photo, Event)
+    permissions.push 'events_deactivate_photos' if can?(:deactivate_photo, Event)
+    permissions.push 'events_expenses' if can?(:index_expenses, Event)
+    permissions.push 'events_create_expenses' if can?(:create_expense, Event)
+    permissions.push 'events_edit_expenses' if can?(:edit_expense, Event)
+    permissions.push 'events_deactivate_expenses' if can?(:deactivate_expense, Event)
+    permissions.push 'events_surveys' if can?(:index_surveys, Event)
+    permissions.push 'events_create_surveys' if can?(:create_survey, Event)
+    permissions.push 'events_edit_surveys' if can?(:edit_survey, Event)
+    permissions.push 'events_deactivate_surveys' if can?(:deactivate_survey, Event)
+    permissions.push 'events_comments' if can?(:index_comments, Event)
+    permissions.push 'events_create_comments' if can?(:create_comment, Event)
+    permissions.push 'events_edit_comments' if can?(:edit_comment, Event)
+    permissions.push 'events_deactivate_comments' if can?(:deactivate_comment, Event)
 
-      permissions.push 'venues' if can?(:index, Venue)
-      permissions.push 'venues_create' if can?(:create, Venue)
-      permissions.push 'venues_show' if can?(:show, Venue)
-      permissions.push 'venues_analysis' if can?(:analysis, Venue.new)
-      permissions.push 'venues_kpis' if can?(:view_kpis, Venue)
-      permissions.push 'venues_score' if can?(:view_score, Venue)
-      permissions.push 'venues_trends' if can?(:view_trends_day_week, Venue)
-      permissions.push 'venues_photos' if can?(:view_photos, Venue)
-      permissions.push 'venues_comments' if can?(:view_comments, Venue)
+    permissions.push 'venues' if can?(:index, Venue)
+    permissions.push 'venues_create' if can?(:create, Venue)
+    permissions.push 'venues_show' if can?(:show, Venue)
+    permissions.push 'venues_analysis' if can?(:analysis, Venue.new)
+    permissions.push 'venues_kpis' if can?(:view_kpis, Venue)
+    permissions.push 'venues_score' if can?(:view_score, Venue)
+    permissions.push 'venues_trends' if can?(:view_trends_day_week, Venue)
+    permissions.push 'venues_photos' if can?(:view_photos, Venue)
+    permissions.push 'venues_comments' if can?(:view_comments, Venue)
 
-      permissions.push 'tasks_own' if can?(:index_my, Task)
-      permissions.push 'tasks_edit_own' if can?(:edit_my, Task)
-      permissions.push 'tasks_deactivate_own' if can?(:edit_my, Task)
-      permissions.push 'tasks_comments_own' if can?(:index_my_comments, Task)
-      permissions.push 'tasks_create_comments_own' if can?(:create_my_comment, Task)
+    permissions.push 'tasks_own' if can?(:index_my, Task)
+    permissions.push 'tasks_edit_own' if can?(:edit_my, Task)
+    permissions.push 'tasks_deactivate_own' if can?(:edit_my, Task)
+    permissions.push 'tasks_comments_own' if can?(:index_my_comments, Task)
+    permissions.push 'tasks_create_comments_own' if can?(:create_my_comment, Task)
 
-      permissions.push 'tasks_team' if can?(:index_team, Task)
-      permissions.push 'tasks_edit_team' if can?(:edit_team, Task)
-      permissions.push 'tasks_deactivate_team' if can?(:edit_team, Task)
-      permissions.push 'tasks_comments_team' if can?(:index_team_comments, Task)
-      permissions.push 'tasks_create_comments_team' if can?(:create_team_comment, Task)
+    permissions.push 'tasks_team' if can?(:index_team, Task)
+    permissions.push 'tasks_edit_team' if can?(:edit_team, Task)
+    permissions.push 'tasks_deactivate_team' if can?(:edit_team, Task)
+    permissions.push 'tasks_comments_team' if can?(:index_team_comments, Task)
+    permissions.push 'tasks_create_comments_team' if can?(:create_team_comment, Task)
 
-      permissions
-    end
-
+    permissions
+  end
 end

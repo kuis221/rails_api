@@ -18,19 +18,19 @@ class Brand < ActiveRecord::Base
   scoped_to_company
 
   # Required fields
-  validates :name, presence: true, uniqueness: {scope: :company_id, case_sensitive: false}
+  validates :name, presence: true, uniqueness: { scope: :company_id, case_sensitive: false }
 
   # Campaigns-Brands relationship
   has_and_belongs_to_many :campaigns
 
   has_many :brand_portfolios_brands, dependent: :destroy
   has_many :brand_portfolios, through: :brand_portfolios_brands
-  has_many :marques, -> { order 'marques.name ASC' }, :autosave => true, dependent: :destroy
+  has_many :marques, -> { order 'marques.name ASC' }, autosave: true, dependent: :destroy
 
   scope :not_in_portfolio, ->(portfolio) { where("brands.id not in (#{BrandPortfoliosBrand.where(brand_portfolio_id: portfolio).select('brand_id').to_sql})") }
-  scope :accessible_by_user, ->(user) { all }
+  scope :accessible_by_user, ->(_user) { all }
 
-  scope :active, ->{ where(:active => true) }
+  scope :active, -> { where(active: true) }
 
   searchable do
     integer :id
@@ -69,23 +69,23 @@ class Brand < ActiveRecord::Base
 
   def marques_list=(list)
     marques_names = list.split(',')
-    existing_ids = self.marques.map(&:id)
+    existing_ids = marques.map(&:id)
     marques_names.each do |marque_name|
       marque = Marque.find_or_initialize_by(name: marque_name, brand_id: id)
-      self.marques << marque unless existing_ids.include?(marque.id)
+      marques << marque unless existing_ids.include?(marque.id)
     end
-    marques.each{|marque| marque.mark_for_destruction unless marques_names.include?(marque.name) }
+    marques.each { |marque| marque.mark_for_destruction unless marques_names.include?(marque.name) }
   end
 
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
-    def do_search(params, include_facets=false)
+    def do_search(params, include_facets = false)
       solr_search do
         with(:company_id, params[:company_id])
         with(:id, Campaign.where(id: params[:campaign_id]).joins(:brands).pluck('brands_campaigns.brand_id'))
         with(:id, BrandPortfolio.where(id: params[:brand_portfolio_id]).joins(:brands).pluck('brand_portfolios_brands.brand_id'))
-        with(:status, params[:status]) if params.has_key?(:status) and params[:status].present?
-        if params.has_key?(:q) and params[:q].present?
+        with(:status, params[:status]) if params.key?(:status) && params[:status].present?
+        if params.key?(:q) && params[:q].present?
           (attribute, value) = params[:q].split(',')
           case attribute
           when 'brand'
@@ -100,7 +100,7 @@ class Brand < ActiveRecord::Base
         end
 
         order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
-        paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+        paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
       end
     end
 
@@ -109,9 +109,8 @@ class Brand < ActiveRecord::Base
     # TODO: use pluck(:name, :id) when upgraded to Rails 4
     def for_dropdown
       ActiveRecord::Base.connection.select_all(
-        self.select("brands.name, brands.id").group('1, 2').order('1').to_sql
-      ).map{|r| [r['name'], r['id']] }
+        select('brands.name, brands.id').group('1, 2').order('1').to_sql
+      ).map { |r| [r['name'], r['id']] }
     end
   end
-
 end

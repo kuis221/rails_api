@@ -25,18 +25,19 @@ class DayItem < ActiveRecord::Base
     description = describe_times
     description.strip!
     # Make sure the first letter is in upper case without changing the others
-    description = description.slice(0,1).capitalize + description.slice(1..-1) unless description.empty?
+    description = description.slice(0, 1).capitalize + description.slice(1..-1) unless description.empty?
     description
   end
 
   private
-    def describe_times
-      if start_time and end_time
-        "From #{start_time.to_s(:time_only)} to #{end_time.to_s(:time_only)}"
-      elsif start_time
-        "At #{start_time.to_s(:time_only)}"
-      else
-        ""
-      end
+
+  def describe_times
+    if start_time && end_time
+      "From #{start_time.to_s(:time_only)} to #{end_time.to_s(:time_only)}"
+    elsif start_time
+      "At #{start_time.to_s(:time_only)}"
+    else
+      ''
     end
+  end
 end

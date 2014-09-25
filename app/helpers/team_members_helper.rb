@@ -1,7 +1,5 @@
 module TeamMembersHelper
-
   module InstanceMethods
-
     def delete_member
       if member
         user = member.dup
@@ -49,55 +47,53 @@ module TeamMembersHelper
     end
 
     private
-      def member
-        begin
-          @member = resource.users.find(params[:member_id])
-        rescue ActiveRecord::RecordNotFound
-          nil
-        end
-      end
 
-      def resource_members
-        @members ||= resource.users.includes(:user).order('users.first_name ASC, users.first_name ASC')
-      end
+    def member
+      @member = resource.users.find(params[:member_id])
+    rescue ActiveRecord::RecordNotFound
+      nil
+    end
 
-      def team
-        begin
-          @team = resource.teams.find(params[:team_id]) if resource.respond_to?(:teams)
-        rescue ActiveRecord::RecordNotFound
-          nil
-        end
-      end
+    def resource_members
+      @members ||= resource.users.includes(:user).order('users.first_name ASC, users.first_name ASC')
+    end
 
-      def company_users
-        @company_users ||= CompanyUser.active.where(company_id: current_company).joins(:user, :role).where('users.invitation_accepted_at is not null')
-      end
-      def company_teams
-        @company_teams ||= current_company.teams.active.order('teams.name ASC')
-      end
+    def team
+      @team = resource.teams.find(params[:team_id]) if resource.respond_to?(:teams)
+    rescue ActiveRecord::RecordNotFound
+      nil
+    end
 
-      def assignable_teams
-         @assignable_teams ||= if resource.is_a?(Team)
-          company_teams.where('0=1')
-        else
-          company_teams.with_active_users(current_company).where('teams.id not in (?)', resource.team_ids+[0])
-          # @assignable_teams ||= company_teams.with_active_users(current_company).order('teams.name ASC').select do |team|
-          #   !resource.team_ids.include?(team.id)
-          # end
-        end
-      end
+    def company_users
+      @company_users ||= CompanyUser.active.where(company_id: current_company).joins(:user, :role).where('users.invitation_accepted_at is not null')
+    end
 
-      def assignable_staff_members
-        users = company_users.where(['company_users.id not in (?)', resource.user_ids+[0]])
-        ActiveRecord::Base.connection.unprepared_statement do
-          ActiveRecord::Base.connection.select_all("
-            #{users.select('company_users.id, users.first_name || \' \' || users.last_name AS name, roles.name as description, \'user\' as type').reorder(nil).to_sql}
-            UNION ALL
-            #{assignable_teams.select('teams.id, teams.name, teams.description, \'team\' as type').reorder(nil).to_sql}
-            ORDER BY name
-          ")
-        end
+    def company_teams
+      @company_teams ||= current_company.teams.active.order('teams.name ASC')
+    end
+
+    def assignable_teams
+      @assignable_teams ||= if resource.is_a?(Team)
+                              company_teams.where('0=1')
+     else
+       company_teams.with_active_users(current_company).where('teams.id not in (?)', resource.team_ids + [0])
+       # @assignable_teams ||= company_teams.with_active_users(current_company).order('teams.name ASC').select do |team|
+       #   !resource.team_ids.include?(team.id)
+       # end
+     end
+    end
+
+    def assignable_staff_members
+      users = company_users.where(['company_users.id not in (?)', resource.user_ids + [0]])
+      ActiveRecord::Base.connection.unprepared_statement do
+        ActiveRecord::Base.connection.select_all("
+          #{users.select('company_users.id, users.first_name || \' \' || users.last_name AS name, roles.name as description, \'user\' as type').reorder(nil).to_sql}
+          UNION ALL
+          #{assignable_teams.select('teams.id, teams.name, teams.description, \'team\' as type').reorder(nil).to_sql}
+          ORDER BY name
+        ")
       end
+    end
   end
 
   def self.extended(receiver)

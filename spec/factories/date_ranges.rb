@@ -17,8 +17,8 @@
 
 FactoryGirl.define do
   factory :date_range do
-    sequence(:name) {|n| "Date Range #{n}"}
-    description "Some Date Range description"
+    sequence(:name) { |n| "Date Range #{n}" }
+    description 'Some Date Range description'
     active true
     company_id 1
     created_by_id 1

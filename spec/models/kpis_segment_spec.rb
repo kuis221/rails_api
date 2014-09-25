@@ -12,7 +12,7 @@
 
 require 'rails_helper'
 
-describe KpisSegment, :type => :model do
+describe KpisSegment, type: :model do
   it { is_expected.to belong_to(:kpi) }
   it { is_expected.to have_many(:goals) }
 

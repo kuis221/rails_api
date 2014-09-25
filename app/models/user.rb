@@ -50,7 +50,6 @@
 #
 
 class User < ActiveRecord::Base
-
   track_who_does_it
 
   acts_as_reader
@@ -65,17 +64,17 @@ class User < ActiveRecord::Base
 
   has_many :company_users, dependent: :destroy
 
-  has_many :companies, ->{ order 'companies.name ASC' }, through: :company_users
+  has_many :companies, -> { order 'companies.name ASC' }, through: :company_users
   belongs_to :current_company, class_name: 'Company'
 
   validates :first_name, presence: true
   validates :last_name, presence: true
   validates :email, presence: true
-  validates :detected_time_zone, allow_nil: true, :inclusion => { :in => ActiveSupport::TimeZone.all.map{ |m| m.name.to_s } }
+  validates :detected_time_zone, allow_nil: true, inclusion: { in: ActiveSupport::TimeZone.all.map { |m| m.name.to_s } }
 
   validate :valid_verification_code?, if: :verification_code
 
-  has_attached_file :avatar, :styles  => { :small => "100x100#", :large => "500x500>" }, :processors => [:cropper]
+  has_attached_file :avatar, styles: { small: '100x100#', large: '500x500>' }, processors: [:cropper]
 
   with_options unless: :inviting_user_or_invited? do |user|
     user.validates :phone_number, presence: true
@@ -84,19 +83,19 @@ class User < ActiveRecord::Base
     user.validates :city,    presence: true
     user.validates :street_address,    presence: true
     user.validates :zip_code,    presence: true
-    user.validates :time_zone,    presence: true, :inclusion => { :in => ActiveSupport::TimeZone.all.map{ |m| m.name.to_s }  }
+    user.validates :time_zone,    presence: true, inclusion: { in: ActiveSupport::TimeZone.all.map { |m| m.name.to_s }  }
     user.validates :password, presence: true, if: :should_require_password?
     user.validates :password, confirmation: true, if: :password
   end
 
-  #validates_associated :company_users
+  # validates_associated :company_users
 
-  validates_uniqueness_of :email, :allow_blank => true, :if => :email_changed?
-  validates_format_of     :email, :with  => /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/, :allow_blank => true, :if => :email_changed?
+  validates_uniqueness_of :email, allow_blank: true, if: :email_changed?
+  validates_format_of :email, with: /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/, allow_blank: true, if: :email_changed?
 
-  validates_length_of     :password, :within => 8..128, :allow_blank => true
-  validates_format_of     :password, :with  => /[A-Z]/, :allow_blank => true, :message => 'should have at least one upper case letter'
-  validates_format_of     :password, :with  => /[0-9]/, :allow_blank => true, :message => 'should have at least one digit'
+  validates_length_of :password, within: 8..128, allow_blank: true
+  validates_format_of :password, with: /[A-Z]/, allow_blank: true, message: 'should have at least one upper case letter'
+  validates_format_of :password, with: /[0-9]/, allow_blank: true, message: 'should have at least one digit'
   validates_confirmation_of :password
 
   accepts_nested_attributes_for :company_users, allow_destroy: false
@@ -105,10 +104,10 @@ class User < ActiveRecord::Base
 
   scope :active_eq, -> { where('invitation_accepted_at is not null') }
   scope :active, -> { where('invitation_accepted_at is not null') }
-  scope :active_in_company, ->(company){ active.joins(:company_users).where(company_users: {company_id: company, active: true}) }
-  scope :in_company, ->(company){ active_in_company(company) }
+  scope :active_in_company, ->(company) { active.joins(:company_users).where(company_users: { company_id: company, active: true }) }
+  scope :in_company, ->(company) { active_in_company(company) }
 
-  #search_methods :active_eq if ENV['WEB']
+  # search_methods :active_eq if ENV['WEB']
   if ENV['WEB']
     ransacker :active do
       Arel.sql("#{table_name}.invitation_accepted_at is not null")
@@ -124,7 +123,7 @@ class User < ActiveRecord::Base
   after_save :reindex_related
   before_validation :reset_verification
   after_invitation_accepted :reindex_company_users
-  after_update :reprocess_avatar, :if => :cropping?
+  after_update :reprocess_avatar, if: :cropping?
 
   attr_accessor :verification_code
   attr_accessor :crop_x, :crop_y, :crop_w, :crop_h
@@ -139,21 +138,21 @@ class User < ActiveRecord::Base
   end
   alias_method :name, :full_name
 
-	def is_fully_valid?
-    if !phone_number.present? or
-    !country.present? or
-    !state.present? or
-    !city.present? or
-    !street_address.present? or
-    !zip_code.present?
+  def is_fully_valid?
+    if !phone_number.present? ||
+   !country.present? ||
+   !state.present? ||
+   !city.present? ||
+   !street_address.present? ||
+   !zip_code.present?
       return false
-    else
-      return true
-    end
+   else
+     return true
+   end
   end
 
   def full_address
-    address = Array.new
+    address = []
     city_parts = []
     city_parts.push city if city.present?
     city_parts.push state if state.present?
@@ -170,7 +169,7 @@ class User < ActiveRecord::Base
   end
 
   def state_name
-    load_country.states[state]['name'] rescue nil if load_country and state
+    load_country.states[state]['name'] rescue nil if load_country && state
   end
 
   def load_country
@@ -182,19 +181,19 @@ class User < ActiveRecord::Base
   end
 
   def generate_and_send_phone_verification_code
-    self.update_column :phone_number_verification, sprintf('%06d', rand(5**10))[0..5]
+    update_column :phone_number_verification, sprintf('%06d', rand(5**10))[0..5]
     Resque.enqueue(SendSmsWorker, phone_number, "Your Brandscopic verification code is #{phone_number_verification}")
   end
 
   # Method for Devise to make that only active users can login into the app
   def active_for_authentication?
-    super && company_users.any?{|cu| cu.active? && cu.role.active?}
+    super && company_users.any? { |cu| cu.active? && cu.role.active? }
   end
 
   def inactive_message
-    if company_users.any?{|cu| cu.role.active?}
+    if company_users.any? { |cu| cu.role.active? }
       super
-    elsif company_users.any?{|cu| cu.active?}
+    elsif company_users.any?(&:active?)
       :invalid
     else
       super
@@ -206,7 +205,7 @@ class User < ActiveRecord::Base
   end
 
   def companies_active_role
-    self.company_users.select{|cu| cu.active? && cu.role.active?}.map(&:company).sort_by(&:name)
+    company_users.select { |cu| cu.active? && cu.role.active? }.map(&:company).sort_by(&:name)
   end
 
   def is_super_admin?
@@ -217,7 +216,7 @@ class User < ActiveRecord::Base
     @current_company_user ||= begin
       if current_company_id.present?
         if company_users.loaded?
-          company_users.select{|cu| cu.company_id ==  current_company_id}.first
+          company_users.select { |cu| cu.company_id ==  current_company_id }.first
         else
           company_users.where(company_id: current_company_id).first
         end
@@ -226,7 +225,7 @@ class User < ActiveRecord::Base
   end
 
   def inviting_user_or_invited?
-    self.inviting_user || (invited_to_sign_up? and !accepting_invitation) || self.updating_user
+    inviting_user || (invited_to_sign_up? && !accepting_invitation) || updating_user
   end
 
   def should_require_password?
@@ -234,8 +233,8 @@ class User < ActiveRecord::Base
   end
 
   def reindex_related
-    if first_name_changed? or last_name_changed?
-      Sunspot.index self.tasks
+    if first_name_changed? || last_name_changed?
+      Sunspot.index tasks
     end
   end
 
@@ -252,7 +251,7 @@ class User < ActiveRecord::Base
     clear_reset_password_token
     after_password_reset
 
-    self.save(:validate => false)
+    save(validate: false)
   end
 
   class << self
@@ -285,8 +284,8 @@ class User < ActiveRecord::Base
     # password instructions to it. If user is not found, returns a new user
     # with an email not found error.
     # Attributes must contain the user's email
-    def send_reset_password_instructions(attributes={})
-      recoverable = User.joins(:company_users => :role).where(company_users: {active: true}, roles:{active: true}).where(["lower(users.email) = ?", attributes[:email].downcase]).first
+    def send_reset_password_instructions(attributes = {})
+      recoverable = User.joins(company_users: :role).where(company_users: { active: true }, roles: { active: true }).where(['lower(users.email) = ?', attributes[:email].downcase]).first
       if recoverable.nil?
         recoverable = User.new(attributes.permit(:email))
         recoverable.errors.add(:base, :reset_email_not_found)
@@ -303,7 +302,7 @@ class User < ActiveRecord::Base
       invitation_token = Devise.token_generator.digest(self, :invitation_token, original_token)
 
       invitable = find_or_initialize_with_error_by(:invitation_token, invitation_token)
-      if !invitable.persisted? # && Devise.allow_insecure_token_lookup
+      unless invitable.persisted? # && Devise.allow_insecure_token_lookup
         invitable = find_or_initialize_with_error_by(:invitation_token, original_token)
       end
       invitable.errors.add(:invitation_token, :invalid) if invitable.invitation_token && invitable.persisted? && !invitable.valid_invitation?
@@ -321,34 +320,34 @@ class User < ActiveRecord::Base
   def reset_authentication_token!
     self.authentication_token = nil
     ensure_authentication_token
-    save :validate => false
+    save validate: false
   end
 
   private
 
-    def generate_authentication_token
-      loop do
-        token = Devise.friendly_token
-        break token unless User.where(authentication_token: token).first
-      end
+  def generate_authentication_token
+    loop do
+      token = Devise.friendly_token
+      break token unless User.where(authentication_token: token).first
     end
+  end
 
-    def reprocess_avatar
-      avatar.reprocess!
-    end
+  def reprocess_avatar
+    avatar.reprocess!
+  end
 
-    def valid_verification_code?
-      errors.add :verification_code, :invalid if self.verification_code != self.phone_number_verification
-    end
+  def valid_verification_code?
+    errors.add :verification_code, :invalid if verification_code != phone_number_verification
+  end
 
-    def reset_verification
-      if phone_number_changed?
-        self.assign_attributes(
-          phone_number_verified: false,
-          phone_number_verification: nil )
-      elsif self.verification_code.present? && self.verification_code == phone_number_verification
-        self.assign_attributes(
-          phone_number_verified: true )
-      end
+  def reset_verification
+    if phone_number_changed?
+      assign_attributes(
+        phone_number_verified: false,
+        phone_number_verification: nil)
+    elsif verification_code.present? && verification_code == phone_number_verification
+      assign_attributes(
+        phone_number_verified: true)
     end
+  end
 end

@@ -4,16 +4,15 @@ class Ability
   def initialize(user)
     user ||= User.new # guest user (not logged in)
 
-
-    alias_action :activate, :to => :deactivate
-    alias_action :new_member, :to => :add_members
-    alias_action :new_member, :to => :add_members
-    alias_action :add_kpi, :to => :activate_kpis
-    alias_action :remove_kpi, :to => :activate_kpis
-    alias_action :add_activity_type, :to => :activate_kpis
-    alias_action :remove_activity_type, :to => :activate_kpis
-    alias_action :reject, :to => :approve
-    alias_action :post_event_form, :update_post_event_form, :to => :view_event_form
+    alias_action :activate, to: :deactivate
+    alias_action :new_member, to: :add_members
+    alias_action :new_member, to: :add_members
+    alias_action :add_kpi, to: :activate_kpis
+    alias_action :remove_kpi, to: :activate_kpis
+    alias_action :add_activity_type, to: :activate_kpis
+    alias_action :remove_activity_type, to: :activate_kpis
+    alias_action :reject, to: :approve
+    alias_action :post_event_form, :update_post_event_form, to: :view_event_form
 
     # All users
     if user.id && !user.is_a?(AdminUser)
@@ -36,7 +35,7 @@ class Ability
       # All users can update their own information
       can :update, CompanyUser, id: user.current_company_user.id
 
-      can :super_update, CompanyUser do |cu|
+      can :super_update, CompanyUser do |_cu|
         user.current_company_user.role.is_admin? || user.current_company_user.role.has_permission?(:update, CompanyUser)
       end
 
@@ -62,15 +61,15 @@ class Ability
 
       # Super Admin Users can manage any object on the same company
       can do |action, subject_class, subject|
-        Rails.logger.debug "Checking #{action} on #{subject_class.to_s} :: #{subject}"
-        subject.nil? || ( subject.respond_to?(:company_id) && ((subject.company_id.nil? && [:create, :new].include?(action)) || subject.company_id == user.current_company.id) )
+        Rails.logger.debug "Checking #{action} on #{subject_class} :: #{subject}"
+        subject.nil? || (subject.respond_to?(:company_id) && ((subject.company_id.nil? && [:create, :new].include?(action)) || subject.company_id == user.current_company.id))
       end
 
-      cannot do |action, subject_class, subject|
+      cannot do |_action, subject_class, _subject|
         [Company].include?(subject_class)
       end
 
-      can [:new, :create], Kpi do |kpi|
+      can [:new, :create], Kpi do |_kpi|
         can?(:edit, Campaign)
       end
 
@@ -86,15 +85,15 @@ class Ability
     # A logged in user
     elsif user.id
       can do |action, subject_class, subject|
-        Rails.logger.debug "Checking #{action} on #{subject_class.to_s} :: #{subject}"
-        user.role.cached_permissions.select{|p| aliases_for_action(action).map(&:to_s).include?(p.action.to_s)}.any? do |permission|
+        Rails.logger.debug "Checking #{action} on #{subject_class} :: #{subject}"
+        user.role.cached_permissions.select { |p| aliases_for_action(action).map(&:to_s).include?(p.action.to_s) }.any? do |permission|
           # p "a: #{subject.nil?}"
           # p "b: #{( subject.respond_to?(:company_id) && ((subject.company_id.nil? && [:create, :new].include?(action)) || subject.company_id == user.current_company.id) )}"
           # p "c: #{permission.subject_id.nil?} || (#{subject.respond_to?(:id)} ? #{permission.subject_id == subject.id} : #{permission.subject_id == subject.to_s}) )}"
           permission.subject_class == subject_class.to_s &&
-          (   subject.nil? ||
-            ( subject.respond_to?(:company_id) && ((subject.company_id.nil? && [:create, :new].include?(action)) || subject.company_id == user.current_company.id) ) ||
-            ( !subject.respond_to?(:company_id) && ( permission.subject_id.nil? || (subject.respond_to?(:id) ? permission.subject_id == subject.id : permission.subject_id == subject.to_s) ))
+          (subject.nil? ||
+            (subject.respond_to?(:company_id) && ((subject.company_id.nil? && [:create, :new].include?(action)) || subject.company_id == user.current_company.id)) ||
+            (!subject.respond_to?(:company_id) && (permission.subject_id.nil? || (subject.respond_to?(:id) ? permission.subject_id == subject.id : permission.subject_id == subject.to_s)))
           )
         end
       end
@@ -120,7 +119,7 @@ class Ability
       end
 
       can [:add_place, :remove_place], [Area, CompanyUser] do |object|
-         can?(:edit, object)
+        can?(:edit, object)
       end
 
       can [:profile, :edit_communications, :filter_settings], CompanyUser do |company_user|
@@ -136,7 +135,7 @@ class Ability
       #   report.created_by_id == user.id
       # end
 
-      can [:analysis], Venue do |venue|
+      can [:analysis], Venue do |_venue|
         user.current_company_user.role.has_permission?(:show, Venue) && (
           user.current_company_user.role.has_permission?(:view_kpis, Venue) ||
           user.current_company_user.role.has_permission?(:view_score, Venue) ||
@@ -213,10 +212,10 @@ class Ability
       end
 
       can :view_data, Event do |event|
-       (event.unsent? && can?(:view_unsubmitted_data, event)) ||
-       (event.submitted? && can?(:view_submitted_data, event)) ||
-       (event.approved? && can?(:view_approved_data, event)) ||
-       (event.rejected? && can?(:view_rejected_data, event))
+        (event.unsent? && can?(:view_unsubmitted_data, event)) ||
+        (event.submitted? && can?(:view_submitted_data, event)) ||
+        (event.approved? && can?(:view_approved_data, event)) ||
+        (event.rejected? && can?(:view_rejected_data, event))
       end
 
       can :view_or_edit_data, Event do |event|
@@ -231,8 +230,8 @@ class Ability
         cannot?(:access, event)
       end
 
-      cannot :activate, Tag do |tag|
-         !user.current_company_user.role.has_permission?(:activate, Tag)
+      cannot :activate, Tag do |_tag|
+        !user.current_company_user.role.has_permission?(:activate, Tag)
       end
 
       can :gva_report_campaign, Campaign do |campaign|
@@ -287,7 +286,7 @@ class Ability
 
       # Allow users to create kpis if have permissions to create custom kpis,
       # the controller will decide what permissions can be modified based on those permissions
-      can [:new, :create], Kpi do |kpi|
+      can [:new, :create], Kpi do |_kpi|
         can?(:edit, Campaign) && user.role.has_permission?(:create_custom_kpis, Campaign)
       end
 
@@ -297,7 +296,7 @@ class Ability
 
       # Allow users to update kpis if have permissions to edit custom kpis or edit goals for the kpis,
       # the controller will decide what permissions can be modified based on those permissions
-      can [:edit, :update], Kpi do |kpi|
+      can [:edit, :update], Kpi do |_kpi|
         can?(:show, Campaign) &&
         (user.role.has_permission?(:edit_custom_kpi, Campaign) || user.role.has_permission?(:edit_kpi_goals, Campaign))
       end
@@ -408,7 +407,7 @@ class Ability
       end
       can :comments, Task do |task|
         (user.role.has_permission?(:index_my_comments, Task) && task.company_user_id == user.current_company_user.id) ||
-        (user.role.has_permission?(:index_team_comments, Task) && task.company_user_id != user.current_company_user.id && task.event.user_in_team?(user.current_company_user) )
+        (user.role.has_permission?(:index_team_comments, Task) && task.company_user_id != user.current_company_user.id && task.event.user_in_team?(user.current_company_user))
       end
 
       can :update, Comment do |comment|

@@ -7,7 +7,7 @@ module ExportsHelper
       search.results.each do |result|
         yield result
       end
-      @_export.update_column(:progress, (page*100/@total_pages).round) unless @_export.nil?
+      @_export.update_column(:progress, (page * 100 / @total_pages).round) unless @_export.nil?
     end
   end
 end

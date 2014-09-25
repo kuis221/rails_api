@@ -19,8 +19,8 @@ FactoryGirl.define do
     campaign nil
     kpi nil
     ordering 1
-    name "MyString"
-    field_type "number"
+    name 'MyString'
+    field_type 'number'
     options {}
     section_id nil
   end

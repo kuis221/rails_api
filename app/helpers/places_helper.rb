@@ -5,10 +5,10 @@ module PlacesHelper
 
       if attributes[:country] && attributes[:state]
         country = Country.new(attributes[:country])
-        if country.valid? && country.states.has_key?(attributes[:state])
+        if country.valid? && country.states.key?(attributes[:state])
           attributes[:state] = country.states[attributes[:state]]['name']
         else
-          attributes[:state] = nil unless country.valid? && country.states.detect{|k,v| v['name'] == attributes[:state] }.present?
+          attributes[:state] = nil unless country.valid? && country.states.find { |_k, v| v['name'] == attributes[:state] }.present?
         end
       end
 
@@ -29,14 +29,14 @@ module PlacesHelper
               @place.save
             end
           else
-            reference_value = spot.reference+'||'+spot.id
+            reference_value = spot.reference + '||' + spot.id
           end
         else
           @place.errors.add(:base, 'The entered address doesn\'t seems to be valid')
         end
       end
 
-      if reference_value and !reference_value.nil? and !reference_value.empty?
+      if reference_value && !reference_value.nil? && !reference_value.empty?
         if reference_value =~ /(.*)\|\|(.*)/
           reference, place_id = reference_value.split('||')
           @place = Place.create_with(reference: reference).find_or_create_by(place_id: place_id)
@@ -69,15 +69,15 @@ module PlacesHelper
     # Try to find the latitude and logitude based on a physicical address and returns
     # true if found or false if not
     def set_lat_lon_from_address(place)
-      address_txt = URI::encode([place.street_number,
-                                 place.route,
-                                 place.city,
-                                 place.state.to_s + ' ' + place.zipcode,
-                                 place.country].join(', '))
+      address_txt = URI.encode([place.street_number,
+                                place.route,
+                                place.city,
+                                place.state.to_s + ' ' + place.zipcode,
+                                place.country].join(', '))
 
       data = JSON.parse(open("http://maps.googleapis.com/maps/api/geocode/json?address=#{address_txt}&sensor=true").read)
       if data['results'].count > 0
-        result = data['results'].detect{|r| r['geometry'].present? && r['geometry']['location'].present?}
+        result = data['results'].find { |r| r['geometry'].present? && r['geometry']['location'].present? }
         if result
           place.latitude = result['geometry']['location']['lat']
           place.longitude = result['geometry']['location']['lng']
@@ -94,7 +94,7 @@ module PlacesHelper
     # the spot if found or nil if not
     def search_place_in_google_api_by_name(place)
       spot = nil
-      spots = api_client.spots(place.latitude, place.longitude, name: place.name, :radius => 1000)
+      spots = api_client.spots(place.latitude, place.longitude, name: place.name, radius: 1000)
       spot = spots.first unless spots.empty?
       spot
     end
@@ -105,17 +105,17 @@ module PlacesHelper
       types = place.types || []
       types = types.split(/\s*,\s*/) unless types.is_a?(Array)
       address = {
-        :location => {
-          :lat => place.latitude,
-          :lng => place.longitude
+        location: {
+          lat: place.latitude,
+          lng: place.longitude
         },
-        :accuracy => 50,
-        :name => place.name,
-        :types => types
+        accuracy: 50,
+        name: place.name,
+        types: types
       }
       result = HTTParty.post("https://maps.googleapis.com/maps/api/place/add/json?sensor=true&key=#{GOOGLE_API_KEY}",
-                              :body => address.to_json,
-                              :headers => { 'Content-Type' => 'application/json' }
+                             body: address.to_json,
+                             headers: { 'Content-Type' => 'application/json' }
                             )
       if result['reference'].present? && result['id'].present?
         place.reference = result['reference']
@@ -132,9 +132,8 @@ module PlacesHelper
     end
   end
 
-
   def place_website(url)
-    link_to url.gsub(/https?:\/\//,'').gsub(/\/$/,''), url
+    link_to url.gsub(/https?:\/\//, '').gsub(/\/$/, ''), url
   end
 
   def venue_score_narrative(venue)
@@ -170,11 +169,11 @@ module PlacesHelper
   def venue_trend_week_day_narrative(venue)
     stats = resource.overall_graphs_data[:impressions_promo]
     days_names = %w(Monday Tuesday Wednesday Thursday Friday Saturday Sunday)
-    days_with_events = stats.map{|x,y| days_names[x] if y > 0 }.compact
+    days_with_events = stats.map { |x, y| days_names[x] if y > 0 }.compact
     days_count = days_with_events.count
     if days_count > 1
       max = stats.values.max
-      best_days = stats.select{|x,y| y == max }.keys.map{|d| days_names[d] }
+      best_days = stats.select { |_x, y| y == max }.keys.map { |d| days_names[d] }
       "#{venue.name} has had events on #{days_with_events.to_sentence} and has performed best on #{best_days.to_sentence}. Specifically, #{venue.name} yields more impressions per hour on #{best_days.to_sentence} than on any other day of the week."
     elsif days_count == 1
       "#{venue.name} has only had events on #{days_with_events.first}. Without having events on other days of the week, it is difficult to draw conclusions about what day of the week has shown the best performance at #{venue.name} in the past."
@@ -183,15 +182,15 @@ module PlacesHelper
 
   def place_opening_hours(opening_hours)
     days = %w(Monday Tuesday Wednesday Thursday Friday Saturday Sunday)
-    if opening_hours && opening_hours.has_key?("periods")
+    if opening_hours && opening_hours.key?('periods')
       (0..6).map do |i|
         day = (i == 6 ? 0 : i + 1)
-        period = opening_hours['periods'].detect{|p| p['open']['day'].to_i == day }
+        period = opening_hours['periods'].find { |p| p['open']['day'].to_i == day }
         day_name = days[day]
         if period
-          if period.has_key?('open') && period.has_key?('close')
+          if period.key?('open') && period.key?('close')
             "#{day_name} #{Time.parse(period['open']['time'].gsub(/(^[0-9]{2})/, '\1:')).to_s(:time_only)} - #{Time.parse(period['close']['time'].gsub(/(^[0-9]{2})/, '\1:')).to_s(:time_only)}"
-          elsif period.has_key?('open')
+          elsif period.key?('open')
             "#{day_name} #{Time.parse(period['open']['time'].gsub(/(^[0-9]{2})/, '\1:')).to_s(:time_only)}"
           end
         else
@@ -206,64 +205,61 @@ module PlacesHelper
   end
 
   private
-    def score_calification_for(score)
-      if score > 66
-        'well relative to'
-      elsif score > 33
+
+  def score_calification_for(score)
+    if score > 66
+      'well relative to'
+    elsif score > 33
+      'on par with'
+    else
+      'poorly relative to'
+    end
+  end
+
+  def avg_impressions_cost_performance_for(venue)
+    if stats = avg_stats_for_venue(venue)
+      if venue.avg_impressions_hour > stats[:avg_impressions_cost]
+        'higher than'
+      elsif  venue.avg_impressions == stats[:avg_impressions_cost]
         'on par with'
       else
-        'poorly relative to'
+        'lower than'
       end
     end
+  end
 
-    def avg_impressions_cost_performance_for(venue)
-      if stats = avg_stats_for_venue(venue)
-        if venue.avg_impressions_hour > stats[:avg_impressions_cost]
-          'higher than'
-        elsif  venue.avg_impressions == stats[:avg_impressions_cost]
-          'on par with'
-        else
-          'lower than'
-        end
+  def avg_impressions_hour_performance_for(venue)
+    if stats = avg_stats_for_venue(venue)
+      if venue.avg_impressions_hour > stats[:avg_impressions_hour]
+        'above average'
+      elsif  venue.avg_impressions == stats[:avg_impressions_hour]
+        'average'
+      else
+        'below average'
       end
     end
+  end
 
+  def avg_stats_for_venue(venue)
+    @stats ||= {}
+    @stats[venue.id] ||= begin
+      search = Venue.solr_search do
+        with(:company_id, venue.company_id)
+        with(:location).in_radius(venue.latitude, venue.longitude, 5)
+        with(:types, venue.types_without_establishment)
+        with(:avg_impressions).greater_than(0)
 
-    def avg_impressions_hour_performance_for(venue)
-      if stats = avg_stats_for_venue(venue)
-        if venue.avg_impressions_hour > stats[:avg_impressions_hour]
-          'above average'
-        elsif  venue.avg_impressions == stats[:avg_impressions_hour]
-          'average'
-        else
-          'below average'
-        end
+        stat(:avg_impressions, type: 'mean')
+        stat(:avg_impressions_hour, type: 'mean')
+        stat(:avg_impressions_cost, type: 'mean')
+      end
+      unless search.stat_response['stats_fields']['avg_impressions_es'].nil?
+        {
+          avg_impressions: search.stat_response['stats_fields']['avg_impressions_es']['mean'],
+          avg_impressions_hour: search.stat_response['stats_fields']['avg_impressions_hour_es']['mean'],
+          avg_impressions_cost: search.stat_response['stats_fields']['avg_impressions_cost_es']['mean']
+        }
       end
     end
-
-
-    def avg_stats_for_venue(venue)
-      @stats ||= {}
-      @stats[venue.id] ||= begin
-        search = Venue.solr_search do
-          with(:company_id, venue.company_id)
-          with(:location).in_radius(venue.latitude, venue.longitude, 5)
-          with(:types, venue.types_without_establishment )
-          with(:avg_impressions).greater_than(0)
-
-          stat(:avg_impressions, :type => "mean")
-          stat(:avg_impressions_hour, :type => "mean")
-          stat(:avg_impressions_cost, :type => "mean")
-        end
-        unless search.stat_response['stats_fields']["avg_impressions_es"].nil?
-          {
-            avg_impressions: search.stat_response['stats_fields']["avg_impressions_es"]['mean'],
-            avg_impressions_hour: search.stat_response['stats_fields']["avg_impressions_hour_es"]['mean'],
-            avg_impressions_cost: search.stat_response['stats_fields']["avg_impressions_cost_es"]['mean']
-          }
-        end
-      end
-    end
-
-
+  end
 end

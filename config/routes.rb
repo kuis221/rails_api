@@ -36,12 +36,12 @@ Brandscopic::Application.routes.draw do
             put :approve
             get :results
             get :members
-            post :members, to: "events#add_member"
-            delete :members, to: "events#delete_member"
+            post :members, to: 'events#add_member'
+            delete :members, to: 'events#delete_member'
             get :assignable_members
             get :contacts
-            post :contacts, to: "events#add_contact"
-            delete :contacts, to: "events#delete_contact"
+            post :contacts, to: 'events#add_contact'
+            delete :contacts, to: 'events#delete_contact'
             get :assignable_contacts
           end
         end
@@ -83,8 +83,8 @@ Brandscopic::Application.routes.draw do
             get :comments
           end
           collection do
-            get :mine, to: :index, :defaults => {:scope => "user"}, :constraints => { :scope => 'user' }
-            get :team, to: :index, :defaults => {:scope => "teams"}, :constraints => { :scope => 'teams' }
+            get :mine, to: :index, defaults: { scope: 'user' }, constraints: { scope: 'user' }
+            get :team, to: :index, defaults: { scope: 'teams' }, constraints: { scope: 'teams' }
           end
         end
       end
@@ -95,27 +95,27 @@ Brandscopic::Application.routes.draw do
     devise_for :admin_users, ActiveAdmin::Devise.config
     ActiveAdmin.routes(self)
 
-    mount Resque::Server.new, :at => '/resque' unless Rails.env.test?
+    mount Resque::Server.new, at: '/resque' unless Rails.env.test?
   end
 
-  devise_for :users, :controllers => { :invitations => 'invitations', :passwords => "passwords" }
+  devise_for :users, controllers: { invitations: 'invitations', passwords: 'passwords' }
 
   devise_scope :user do
     put '/users/confirmation', to: 'confirmations#update'
     get '/users/invitation/resend', to: 'invitations#resend'
     post '/users/invitation/resend', to: 'invitations#send_invite'
-    get "/users/password/thanks", to: 'passwords#thanks', as: :passwords_thanks
+    get '/users/password/thanks', to: 'passwords#thanks', as: :passwords_thanks
   end
 
   get '/users/complete-profile', to: 'users#complete', as: :complete_profile
   put '/users/update-profile', to: 'users#update_profile', as: :update_profile
   put '/users/dismiss_alert', to: 'company_users#dismiss_alert'
 
-  get 'select-company/:company_id', to: 'company_users#select_company', as: :select_company, constraints: {company_id: /[0-9]+/}
+  get 'select-company/:company_id', to: 'company_users#select_company', as: :select_company, constraints: { company_id: /[0-9]+/ }
 
-  get "countries/states"
+  get 'countries/states'
 
-  get "/notifications.json", to: 'company_users#notifications', format: :json
+  get '/notifications.json', to: 'company_users#notifications', format: :json
 
   get 'exports/:download_id/status', to: 'company_users#export_status', as: :export_status, format: :json
 
@@ -173,7 +173,7 @@ Brandscopic::Application.routes.draw do
     post :staff_report, to: 'staff_report#report'
   end
 
-  scope "/research" do
+  scope '/research' do
     resources :venues, only: [:index, :show] do
       member do
         match 'areas/:area_id' => 'venues#delete_area', via: :delete, as: :delete_area
@@ -285,7 +285,7 @@ Brandscopic::Application.routes.draw do
       match 'members' => 'campaigns#add_members', via: :post, as: :add_member
       match 'members' => 'campaigns#members', via: :get, as: :members
       match 'teams' => 'campaigns#teams', via: :get, as: :teams
-      match 'tab/:tab' => 'campaigns#tab', via: :get, as: :tab, constraints: {tab: /staff|places|date_ranges|day_parts|documents|kpis/}
+      match 'tab/:tab' => 'campaigns#tab', via: :get, as: :tab, constraints: { tab: /staff|places|date_ranges|day_parts|documents|kpis/ }
 
       match 'date_ranges/new' => 'campaigns#new_date_range', via: :get, as: :new_date_range
       match 'date_ranges' => 'campaigns#add_date_range', via: :post, as: :add_date_range
@@ -378,11 +378,11 @@ Brandscopic::Application.routes.draw do
   resources :tasks, only: [:new, :create, :edit, :update] do
     collection do
       get :autocomplete
-      get ':scope/filters', to: 'tasks#filters', :constraints => { :scope => /user|teams/ }, format: :json
-      get ':scope/items', to: 'tasks#items', :constraints => { :scope => /user|teams/ }, format: :json
+      get ':scope/filters', to: 'tasks#filters', constraints: { scope: /user|teams/ }, format: :json
+      get ':scope/items', to: 'tasks#items', constraints: { scope: /user|teams/ }, format: :json
 
-      get :mine, to: :index, :defaults => {:scope => "user"}, :constraints => { :scope => 'user' }
-      get :my_teams, to: :index, :defaults => {:scope => "teams"}, :constraints => { :scope => 'teams' }
+      get :mine, to: :index, defaults: { scope: 'user' }, constraints: { scope: 'user' }
+      get :my_teams, to: :index, defaults: { scope: 'teams' }, constraints: { scope: 'teams' }
     end
     member do
       get :deactivate
@@ -489,7 +489,7 @@ Brandscopic::Application.routes.draw do
   resources :satisfaction_surveys, path: 'satisfaction', only: [:create]
 
   resources :dashboard, only: [] do
-    match 'modules/:module' => 'dashboard#module', via: :get, on: :collection, constraints: {module: /recent_comments|recent_photos|recent_comments/}
+    match 'modules/:module' => 'dashboard#module', via: :get, on: :collection, constraints: { module: /recent_comments|recent_photos|recent_comments/ }
   end
 
   resources :tags, only: [:index]

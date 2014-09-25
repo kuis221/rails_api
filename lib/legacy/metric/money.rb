@@ -19,28 +19,34 @@
 # For storing monetary values, with decimal place
 class Metric::Money < Metric
   def form_options
-    super.merge({:hint => 'Dollars and cents', :wrapper_html => {:class => :monetary}})
+    super.merge(hint: 'Dollars and cents', wrapper_html: { class: :monetary })
   end
+
   def format_result(result)
     ActionController::Base.helpers.number_to_currency(result.value)
   end
+
   def format_total(total)
     ActionController::Base.helpers.number_to_currency(total)
   end
+
   def format_pdf(pdf, result)
     if result && result.print_values?
       super
     else
-      pdf.font_size(10) { pdf.text '$', :align => :left, :valign => :center }
+      pdf.font_size(10) { pdf.text '$', align: :left, valign: :center }
     end
   end
+
   def field_type_symbol
     '$'
   end
+
   def validate_result(result)
     result.errors.add(:value, 'must be a number') unless value_is_float?(result.value)
     result.errors.add(:value, 'cannot be negative') if cast_value(result.value) < 0
   end
+
   def cast_value(value)
     value.to_f
   end

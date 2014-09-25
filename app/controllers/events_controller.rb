@@ -103,9 +103,9 @@ class EventsController < FilteredController
     @calendar_highlights ||= Hash.new.tap do |hsh|
       tz = ActiveSupport::TimeZone.zones_map[Time.zone.name].tzinfo.identifier
       events_scope = if current_company.timezone_support?
-        Event.select(
-          'to_char(local_start_at, \'YYYY/MM/DD\') as start,
-           to_char(local_end_at, \'YYYY/MM/DD\') as end, count(events.id) as count')
+                       Event.select(
+                         'to_char(local_start_at, \'YYYY/MM/DD\') as start,
+                          to_char(local_end_at, \'YYYY/MM/DD\') as end, count(events.id) as count')
       else
         Event.select(
           "to_char(TIMEZONE('UTC', start_at) AT TIME ZONE '#{tz}', 'YYYY/MM/DD') as start,

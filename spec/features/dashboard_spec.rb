@@ -1,11 +1,11 @@
 require 'rails_helper'
 
-feature "Dashboard", search: true, js: true do
-  let(:company) { FactoryGirl.create(:company) }
-  let(:campaign) { FactoryGirl.create(:campaign, company: company) }
-  let(:user) { FactoryGirl.create(:user, company: company, role_id: role.id) }
+feature 'Dashboard', search: true, js: true do
+  let(:company) { create(:company) }
+  let(:campaign) { create(:campaign, company: company) }
+  let(:user) { create(:user, company: company, role_id: role.id) }
   let(:company_user) { user.company_users.first }
-  let(:place) { FactoryGirl.create(:place, name: 'A Nice Place', country:'CR', city: 'Curridabat', state: 'San Jose') }
+  let(:place) { create(:place, name: 'A Nice Place', country: 'CR', city: 'Curridabat', state: 'San Jose') }
   let(:permissions) { [] }
 
   before do
@@ -20,13 +20,13 @@ feature "Dashboard", search: true, js: true do
   end
 
   shared_examples_for 'a user that can view the recent comments module' do
-    scenario "should display only 9 comments" do
-      FactoryGirl.create_list(:comment, 15, commentable: FactoryGirl.create(:event,
-        campaign: campaign,
-        company: company, place: place))
+    scenario 'should display only 9 comments' do
+      create_list(:comment, 15, commentable: create(:event,
+                                                                            campaign: campaign,
+                                                                            company: company, place: place))
 
       visit root_path
-      page.execute_script "window.scrollBy(0,10000)" # Scrolls down to the bottom of the page
+      page.execute_script 'window.scrollBy(0,10000)' # Scrolls down to the bottom of the page
 
       within recent_comments_module do
         expect(page).to have_selector('ul#comments-list-container li', count: 9)
@@ -35,15 +35,15 @@ feature "Dashboard", search: true, js: true do
   end
 
   shared_examples_for 'a user that can view the recent photos module' do
-    scenario "should display latest photos module" do
-      FactoryGirl.create_list(:photo, 15, attachable: FactoryGirl.create(:event,
-        campaign: campaign,
-        company: company, place: place))
+    scenario 'should display latest photos module' do
+      create_list(:photo, 15, attachable: create(:event,
+                                                                         campaign: campaign,
+                                                                         company: company, place: place))
 
       Sunspot.commit
 
       visit root_path
-      page.execute_script "window.scrollBy(0,10000)" # Scrolls down to the bottom of the page
+      page.execute_script 'window.scrollBy(0,10000)' # Scrolls down to the bottom of the page
 
       within recent_photos_module do
         expect(page).to have_selector('ul#photos-thumbs li', count: 12)
@@ -52,25 +52,33 @@ feature "Dashboard", search: true, js: true do
   end
 
   shared_examples_for 'a user that can view the upcoming events module' do
-    let(:campaign1) { FactoryGirl.create(:campaign,  company: company,
-        name: 'Jameson + Kahlua Rum Campaign',
-        brands_list: 'Jameson,Kahlua Rum,Guaro Cacique,Ron Centenario,Ron Abuelo,Absolut Vodka') }
+    let(:campaign1) do
+      create(:campaign,  company: company,
+                                     name: 'Jameson + Kahlua Rum Campaign',
+                                     brands_list: 'Jameson,Kahlua Rum,Guaro Cacique,Ron Centenario,Ron Abuelo,Absolut Vodka')
+    end
 
-    let(:campaign2) { FactoryGirl.create(:campaign, company: company,
-      name: 'Mama Walker\'s + Martel Campaign',
-      brands_list: 'Mama Walker\'s,Martel') }
+    let(:campaign2) do
+      create(:campaign, company: company,
+                                    name: 'Mama Walker\'s + Martel Campaign',
+                                    brands_list: 'Mama Walker\'s,Martel')
+    end
 
-    let(:campaign3) { FactoryGirl.create(:campaign, company: company,
-      name: 'Paddy Irish Whiskey Campaign',
-      brands_list: 'Paddy Irish Whiskey') }
+    let(:campaign3) do
+      create(:campaign, company: company,
+                                    name: 'Paddy Irish Whiskey Campaign',
+                                    brands_list: 'Paddy Irish Whiskey')
+    end
 
-    let(:events) {[
-      FactoryGirl.create(:event, campaign: campaign1, place: place, start_date: '01/14/2014', end_date: '01/15/2014'),
-      FactoryGirl.create(:event, campaign: campaign2, place: place, start_date: '01/27/2014', end_date: '01/27/2014'),
-      FactoryGirl.create(:event, campaign: campaign3, place: place, start_date: '01/14/2014', end_date: '01/14/2014') ]}
+    let(:events) do
+      [
+        create(:event, campaign: campaign1, place: place, start_date: '01/14/2014', end_date: '01/15/2014'),
+        create(:event, campaign: campaign2, place: place, start_date: '01/27/2014', end_date: '01/27/2014'),
+        create(:event, campaign: campaign3, place: place, start_date: '01/14/2014', end_date: '01/14/2014')]
+    end
 
-    feature "video tutorial" do
-      scenario "a user can play and dismiss the video tutorial" do
+    feature 'video tutorial' do
+      scenario 'a user can play and dismiss the video tutorial' do
         visit root_path
 
         feature_name = 'Getting Started: Dashboard'
@@ -94,9 +102,9 @@ feature "Dashboard", search: true, js: true do
       end
     end
 
-    feature "Events List View" do
+    feature 'Events List View' do
       before { events.count; Sunspot.commit } # Create the events
-      scenario "should display a list of upcoming events" do
+      scenario 'should display a list of upcoming events' do
         Timecop.travel(Time.zone.local(2014, 01, 14, 12, 00)) do
           visit root_path
           within upcoming_events_module do
@@ -109,7 +117,7 @@ feature "Dashboard", search: true, js: true do
       end
     end
 
-    feature "Events Calendar View" do
+    feature 'Events Calendar View' do
       before { events.count; Sunspot.commit } # Create the events
 
       scenario "should start with today's day and show 2 weeks" do
@@ -119,7 +127,7 @@ feature "Dashboard", search: true, js: true do
           visit root_path
 
           within upcoming_events_module do
-            click_link "Calendar View"
+            click_link 'Calendar View'
 
             # Check that the calendar was correctly created starting with current week day
             expect(find('.calendar-header th:nth-child(1)')).to have_content('TUE')
@@ -134,7 +142,7 @@ feature "Dashboard", search: true, js: true do
             expect(find('.calendar-table tbody tr:nth-child(2) td:nth-child(7)')).to have_content('27')
 
             # Check that the brands appears on the correct cells
-            #01/14/2014
+            # 01/14/2014
             expect(find('.calendar-table tbody tr:nth-child(1) td:nth-child(1)')).to have_content('Jameson')
             expect(find('.calendar-table tbody tr:nth-child(1) td:nth-child(1)')).to have_content('Kahlua Rum')
             expect(find('.calendar-table tbody tr:nth-child(1) td:nth-child(1)')).to have_content('Paddy Irish Whiskey')
@@ -144,20 +152,20 @@ feature "Dashboard", search: true, js: true do
             expect(find('.calendar-table tbody tr:nth-child(1) td:nth-child(2)')).to have_content('Kahlua Rum')
             expect(find('.calendar-table tbody tr:nth-child(1) td:nth-child(2)')).to have_no_content('Paddy Irish Whiskey')
 
-            #01/27/2014
+            # 01/27/2014
             expect(find('.calendar-table tbody tr:nth-child(2) td:nth-child(7)')).to have_content('Mama Walker\'s')
             expect(find('.calendar-table tbody tr:nth-child(2) td:nth-child(7)')).to have_content('Martel')
           end
         end
       end
 
-      scenario "clicking on the day should take the user to the event list for that day" do
+      scenario 'clicking on the day should take the user to the event list for that day' do
 
         Timecop.travel(Time.zone.local(2014, 01, 14, 12, 00)) do
           visit root_path
 
           within upcoming_events_module do
-            click_link "Calendar View"
+            click_link 'Calendar View'
 
             click_link '14'
           end
@@ -167,7 +175,7 @@ feature "Dashboard", search: true, js: true do
           # The 14 should appear selected in the calendar
           expect(page).to have_selector('a.datepick-event.datepick-selected', text: 14)
 
-          within("ul#events-list") do
+          within('ul#events-list') do
             expect(all('li').count).to be 2
             expect(page).to have_content('Jameson + Kahlua Rum Campaign')
             expect(page).to have_content('Paddy Irish Whiskey Campaign')
@@ -175,12 +183,12 @@ feature "Dashboard", search: true, js: true do
         end
       end
 
-      scenario "clicking on the brand should take the user to the event list filtered for that date and brand" do
+      scenario 'clicking on the brand should take the user to the event list filtered for that date and brand' do
         Timecop.travel(Time.zone.local(2014, 01, 14, 12, 00)) do
           visit root_path
 
           within upcoming_events_module do
-            click_link "Calendar View"
+            click_link 'Calendar View'
 
             click_link 'Paddy Irish Whiskey'
           end
@@ -190,7 +198,7 @@ feature "Dashboard", search: true, js: true do
           # The 14 should appear selected in the calendar
           expect(page).to have_selector('a.datepick-event.datepick-selected', text: 14)
 
-          within("ul#events-list") do
+          within('ul#events-list') do
             expect(all('li').count).to be 1
             expect(page).to have_content('Paddy Irish Whiskey Campaign')
           end
@@ -199,15 +207,15 @@ feature "Dashboard", search: true, js: true do
 
       scenario "a day with more than 6 brands should display a 'more' link" do
         Timecop.travel(Time.zone.local(2014, 01, 14, 12, 00)) do
-          FactoryGirl.create(:event,
-              campaign: campaign1, place: place,
-              start_date: '01/14/2014', end_date: '01/14/2014')
+          create(:event,
+                             campaign: campaign1, place: place,
+                             start_date: '01/14/2014', end_date: '01/14/2014')
           Sunspot.commit
 
           visit root_path
 
           within upcoming_events_module do
-            click_link "Calendar View"
+            click_link 'Calendar View'
 
             within '.calendar-table tbody tr:nth-child(1) td:nth-child(1)' do
               expect(page).to have_link('+1 More')
@@ -221,31 +229,31 @@ feature "Dashboard", search: true, js: true do
     end
   end
 
-  feature "Admin User" do
-    let(:role) { FactoryGirl.create(:role, company: company) }
+  feature 'Admin User' do
+    let(:role) { create(:role, company: company) }
 
-    it_behaves_like "a user that can view the upcoming events module"
+    it_behaves_like 'a user that can view the upcoming events module'
 
-    it_behaves_like "a user that can view the recent comments module"
+    it_behaves_like 'a user that can view the recent comments module'
 
-    it_behaves_like "a user that can view the recent photos module"
+    it_behaves_like 'a user that can view the recent photos module'
 
   end
 
-  feature "Non Admin User", js: true, search: true do
-    let(:role) { FactoryGirl.create(:non_admin_role, company: company) }
+  feature 'Non Admin User', js: true, search: true do
+    let(:role) { create(:non_admin_role, company: company) }
 
-    it_should_behave_like "a user that can view the upcoming events module" do
+    it_should_behave_like 'a user that can view the upcoming events module' do
       before { company_user.campaigns << [campaign, campaign1, campaign2, campaign3] }
-      before { company_user.places << FactoryGirl.create(:place, city: nil, state: 'San Jose', country: 'CR', types: ['locality']) }
+      before { company_user.places << create(:place, city: nil, state: 'San Jose', country: 'CR', types: ['locality']) }
       let(:permissions) { [[:upcomings_events_module, 'Symbol', 'dashboard'], [:index, 'Event'],  [:view_list, 'Event']] }
     end
-    it_should_behave_like "a user that can view the recent comments module" do
+    it_should_behave_like 'a user that can view the recent comments module' do
       before { company_user.campaigns << [campaign] }
       before { company_user.places << place }
       let(:permissions) { [[:recent_comments_module, 'Symbol', 'dashboard'], [:index, 'Event'],  [:view_list, 'Event']] }
     end
-    it_should_behave_like "a user that can view the recent photos module" do
+    it_should_behave_like 'a user that can view the recent photos module' do
       before { company_user.campaigns << [campaign] }
       before { company_user.places << place }
       let(:permissions) { [[:recent_photos_module, 'Symbol', 'dashboard']] }

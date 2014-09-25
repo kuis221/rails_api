@@ -17,6 +17,6 @@
 
 require 'rails_helper'
 
-describe KpiReport, :type => :model do
+describe KpiReport, type: :model do
   it { is_expected.to belong_to(:company_user) }
 end

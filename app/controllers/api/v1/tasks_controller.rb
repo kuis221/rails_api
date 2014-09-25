@@ -1,15 +1,14 @@
 class Api::V1::TasksController < Api::V1::FilteredController
-
   include TasksFacetsHelper
 
   belongs_to :event, optional: true
 
   resource_description do
     short 'Tasks'
-    formats ['json', 'xml']
-    error 404, "Missing"
-    error 401, "Unauthorized access"
-    error 500, "Server crashed for some reason"
+    formats %w(json xml)
+    error 404, 'Missing'
+    error 401, 'Unauthorized access'
+    error 500, 'Server crashed for some reason'
     param :auth_token, String, required: true
     param :company_id, :number, required: true
     description <<-EOS
@@ -17,13 +16,13 @@ class Api::V1::TasksController < Api::V1::FilteredController
     EOS
   end
 
-  api :GET, '/api/v1/events/:event_id/tasks', "Get a list of taks for an Event"
+  api :GET, '/api/v1/events/:event_id/tasks', 'Get a list of taks for an Event'
   api :GET, '/api/v1/tasks/teams', "Get a list of taks for the user's teams"
-  api :GET, '/api/v1/tasks/mine', "Get a list of taks for the user"
-  param :event_id, :number, required: false, desc: "Event ID, required when getting the list of tasks for a event"
-  param :status, Array, :desc => "A list of photo status to filter the results. Options: Active, Inactive"
-  param :task_status, Array, :desc => "A list of photo status to filter the results. Options: Late, Complete, Incomplete, Assigned, Unassigned"
-  param :page, :number, :desc => "The number of the page, Default: 1"
+  api :GET, '/api/v1/tasks/mine', 'Get a list of taks for the user'
+  param :event_id, :number, required: false, desc: 'Event ID, required when getting the list of tasks for a event'
+  param :status, Array, desc: 'A list of photo status to filter the results. Options: Active, Inactive'
+  param :task_status, Array, desc: 'A list of photo status to filter the results. Options: Late, Complete, Incomplete, Assigned, Unassigned'
+  param :page, :number, desc: 'The number of the page, Default: 1'
   example <<-EOS
     Get a list of active tasks
     GET /api/v1/events/4924/tasks.json?auth_token=ehWs_NZ2Uq5-39tGzWpZ&company_id=2&status[]=Active
@@ -126,8 +125,8 @@ class Api::V1::TasksController < Api::V1::FilteredController
     collection
   end
 
-  api :GET, '/api/v1/tasks/:id/comments', "Get a list of comments for a Task"
-  param :id, :number, required: true, desc: "Task ID"
+  api :GET, '/api/v1/tasks/:id/comments', 'Get a list of comments for a Task'
+  param :id, :number, required: true, desc: 'Task ID'
   description <<-EOS
     Returns a list of comments associated to a given task.
 
@@ -175,12 +174,12 @@ class Api::V1::TasksController < Api::V1::FilteredController
 
   protected
 
-    def permitted_search_params
-      params.permit(:event_id, {status: []}, {task_status: []})
-    end
+  def permitted_search_params
+    params.permit(:event_id, { status: [] }, task_status: [])
+  end
 
-    def search_params
-      super
-      @search_params.merge!(Task.search_params_for_scope(params[:scope], current_company_user))
-    end
+  def search_params
+    super
+    @search_params.merge!(Task.search_params_for_scope(params[:scope], current_company_user))
+  end
 end

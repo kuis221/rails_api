@@ -14,5 +14,5 @@ class Marque < ActiveRecord::Base
 
   validates :name, presence: true
 
-  scope :accessible_by_user, lambda{|user| all }
+  scope :accessible_by_user, lambda { |_user| all }
 end

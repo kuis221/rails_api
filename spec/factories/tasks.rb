@@ -20,8 +20,8 @@
 FactoryGirl.define do
   factory :task do
     event_id 1
-    title "MyString"
-    due_at "2013-05-02 15:56:44"
+    title 'MyString'
+    due_at '2013-05-02 15:56:44'
     company_user_id nil
     completed false
 

@@ -21,8 +21,8 @@
 FactoryGirl.define do
   factory :report do
     company_id 1
-    sequence(:name) {|n| "Report #{n}" }
-    description "Report description"
+    sequence(:name) { |n| "Report #{n}" }
+    description 'Report description'
     created_by_id 1
     updated_by_id 1
     active true

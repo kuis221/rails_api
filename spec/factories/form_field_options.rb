@@ -17,8 +17,8 @@ FactoryGirl.define do
   factory :form_field_option do
     form_field nil
     option_type 'option'
-    sequence(:name) {|n| "Form Field Option #{n}" }
-    sequence(:ordering) {|n| n }
+    sequence(:name) { |n| "Form Field Option #{n}" }
+    sequence(:ordering) { |n| n }
     factory :form_field_statement do
       option_type 'statement'
     end

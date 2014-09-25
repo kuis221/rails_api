@@ -2,11 +2,11 @@
 
 require 'rails_helper'
 
-feature "Invitations", :js => true do
+feature 'Invitations', js: true do
   feature 'send invitation' do
     before do
       Warden.test_mode!
-      @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
+      @user = create(:user, company_id: create(:company).id, role_id: create(:role).id)
       @company = @user.companies.first
       sign_in @user
     end
@@ -15,14 +15,14 @@ feature "Invitations", :js => true do
       Warden.test_reset!
     end
 
-    scenario "should allow the user fill the invitation form and send the invitation" do
-      role = FactoryGirl.create(:role, name: 'Test role', company: @company)
-      team = FactoryGirl.create(:team, name: 'Test team', company: @company)
+    scenario 'should allow the user fill the invitation form and send the invitation' do
+      role = create(:role, name: 'Test role', company: @company)
+      team = create(:team, name: 'Test team', company: @company)
       visit company_users_path
 
       click_button 'Invite user'
 
-      within("form#new_user") do
+      within('form#new_user') do
         fill_in('First name', with: 'Pablo')
         fill_in('Last name', with: 'Marmol')
         select_from_chosen('Test team', from: 'Teams', match: :first)
@@ -41,7 +41,7 @@ feature "Invitations", :js => true do
       expect(new_user.email).to eq('pablo@rocadura.com')
     end
 
-    scenario "should validate the required fields" do
+    scenario 'should validate the required fields' do
       visit company_users_path
       click_button 'Invite user'
 
@@ -62,20 +62,20 @@ feature "Invitations", :js => true do
   feature 'accept invitation' do
     before do
       Warden.test_mode!
-      @user = FactoryGirl.create(:invited_user,
-        first_name: 'Pedro',
-        last_name: 'Picapiedra',
-        email: 'pedro@rocadura.com',
-        phone_number: '(506)22728899',
-        country: 'CR',
-        state: 'SJ',
-        city: 'Curridabat',
-        street_address: 'This is the street address',
-        unit_number: 'This is the unit number',
-        zip_code: '90210',
-        invitation_token: 'XYZ123',
-        role_id: FactoryGirl.create(:role).id,
-        company_id: FactoryGirl.create(:company).id
+      @user = create(:invited_user,
+                                 first_name: 'Pedro',
+                                 last_name: 'Picapiedra',
+                                 email: 'pedro@rocadura.com',
+                                 phone_number: '(506)22728899',
+                                 country: 'CR',
+                                 state: 'SJ',
+                                 city: 'Curridabat',
+                                 street_address: 'This is the street address',
+                                 unit_number: 'This is the unit number',
+                                 zip_code: '90210',
+                                 invitation_token: 'XYZ123',
+                                 role_id: create(:role).id,
+                                 company_id: create(:company).id
       )
       Kpi.destroy_all
       Kpi.create_global_kpis
@@ -84,7 +84,7 @@ feature "Invitations", :js => true do
       Warden.test_reset!
     end
 
-    scenario "should allow the user to complete the profile and log him in after that" do
+    scenario 'should allow the user to complete the profile and log him in after that' do
       visit accept_user_invitation_path(invitation_token: 'XYZ123')
       expect(find_field('First name').value).to eq('Pedro')
       expect(find_field('Last name').value).to eq('Picapiedra')
@@ -98,7 +98,6 @@ feature "Invitations", :js => true do
       expect(find_field('Zip code').value).to eq('90210')
       expect(find_field('New Password', match: :first).value).to eq('')
       expect(find_field('Confirm New Password').value).to eq('')
-
 
       fill_in('First name', with: 'Pablo')
       fill_in('Last name', with: 'Marmol')
@@ -119,13 +118,13 @@ feature "Invitations", :js => true do
       expect(page).to have_content('Your password was set successfully. You are now signed in.')
     end
 
-    scenario "should display an error if the token is not valid" do
+    scenario 'should display an error if the token is not valid' do
       visit accept_user_invitation_path(invitation_token: 'INVALIDTOKEN')
       expect(page).to have_content("It looks like you've already completed your profile. Sign in using the form below or click here to reset your password.")
       expect(current_path).to eq(new_user_session_path)
     end
 
-    scenario "should validate the required fields" do
+    scenario 'should validate the required fields' do
       visit accept_user_invitation_path(invitation_token: 'XYZ123')
 
       fill_in('First name', with: '')

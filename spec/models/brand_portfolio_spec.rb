@@ -15,23 +15,23 @@
 
 require 'rails_helper'
 
-describe BrandPortfolio, :type => :model do
+describe BrandPortfolio, type: :model do
   it { is_expected.to validate_presence_of(:name) }
 
-  describe "#activate" do
-    let(:brand_portfolio) { FactoryGirl.build(:brand_portfolio, active: false) }
+  describe '#activate' do
+    let(:brand_portfolio) { build(:brand_portfolio, active: false) }
 
-    it "should return the active value as true" do
+    it 'should return the active value as true' do
       brand_portfolio.activate!
       brand_portfolio.reload
       expect(brand_portfolio.active).to be_truthy
     end
   end
 
-  describe "#deactivate" do
-    let(:brand_portfolio) { FactoryGirl.build(:brand_portfolio, active: false) }
+  describe '#deactivate' do
+    let(:brand_portfolio) { build(:brand_portfolio, active: false) }
 
-    it "should return the active value as false" do
+    it 'should return the active value as false' do
       brand_portfolio.deactivate!
       brand_portfolio.reload
       expect(brand_portfolio.active).to be_falsey
