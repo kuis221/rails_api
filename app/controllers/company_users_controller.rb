@@ -216,7 +216,7 @@ class CompanyUsersController < FilteredController
   end
 
   def build_state_bucket
-    items = %(Active Inactive Invited).map do |x|
+    items = %w(Active Inactive Invited).map do |x|
       build_facet_item(label: x, id: x, name: :status, count: 1)
     end
     items = items.sort { |a, b| a[:label] <=> b[:label] }
