@@ -235,78 +235,137 @@ feature 'Events section' do
         end
 
         feature 'date ranges box' do
-          before do
-            campaign1 = create(:campaign, name: 'Campaign FY2012', company: company)
-            campaign2 = create(:campaign, name: 'Another Campaign April 03', company: company)
-            campaign3 = create(:campaign, name: 'New Brand Campaign', company: company)
-            create(:event, start_date: Date.today.beginning_of_week.to_s(:slashes), end_date: Date.today.beginning_of_week.to_s(:slashes), campaign: campaign1)
-            create(:event, start_date: Date.today.to_s(:slashes), end_date: Date.today.to_s(:slashes), campaign: campaign1)
-            create(:event, start_date: Date.today.end_of_week.to_s(:slashes), end_date: Date.today.end_of_week.to_s(:slashes), campaign: campaign1)
-            create(:event, start_date: 1.week.ago.to_s(:slashes), end_date: 1.week.ago.to_s(:slashes), campaign: campaign2)
-            create(:event, start_date: 1.week.from_now.to_s(:slashes), end_date: 1.week.from_now.to_s(:slashes), campaign: campaign2)
-            create(:event, start_date: 1.month.ago.to_s(:slashes), end_date: 1.month.ago.to_s(:slashes), campaign: campaign3)
-            Sunspot.commit
-          end
+          let(:today) { Time.zone.local(Time.now.year, Time.now.month, Time.now.day, 12, 00) }
+          let(:month_number) { Time.now.strftime('%m')}
+          let(:year) { Time.now.strftime('%Y') }
+          let(:campaign1) { create(:campaign, name: 'Campaign FY2012', company: company) }
+          let(:campaign2) { create(:campaign, name: 'Another Campaign April 03', company: company) }
+          let(:campaign3) { create(:campaign, name: 'New Brand Campaign', company: company) }
 
-          scenario 'can filter the events by predefined dates ranges options' do
+          scenario "can filter the events by predefined 'Today' date range option" do
+            create(:event, start_date: today.to_s(:slashes), end_date: today.to_s(:slashes), campaign: campaign1)
+            create(:event, start_date: today.to_s(:slashes), end_date: today.to_s(:slashes), campaign: campaign2)
+            create(:event, start_date: (today + 1.day).to_s(:slashes), end_date: (today + 1.day).to_s(:slashes), campaign: campaign3)
+            Sunspot.commit
+
             visit events_path
 
             choose_predefined_date_range 'Today'
-
-            expect(page).to have_selector('ul#events-list li', count: 1)
-            within('ul#events-list') do
-              expect(page).to have_content('Campaign FY2012')
-              expect(page).to have_no_content('Another Campaign April 03')
-              expect(page).to have_no_content('New Brand Campaign')
-            end
-
-            choose_predefined_date_range 'Current week'
+            wait_for_ajax
 
             expect(page).to have_selector('ul#events-list li', count: 2)
             within('ul#events-list') do
               expect(page).to have_content('Campaign FY2012')
-              expect(page).to have_no_content('Another Campaign April 03')
-              expect(page).to have_no_content('New Brand Campaign')
-            end
-
-            choose_predefined_date_range 'Current month'
-
-            expect(page).to have_selector('ul#events-list li', count: 5)
-            within('ul#events-list') do
-              expect(page).to have_content('Campaign FY2012')
               expect(page).to have_content('Another Campaign April 03')
               expect(page).to have_no_content('New Brand Campaign')
             end
+          end
 
-            choose_predefined_date_range 'Previous week'
+          scenario "can filter the events by predefined 'Current week' date range option" do
+            create(:event, start_date: today.to_s(:slashes), end_date: today.to_s(:slashes), campaign: campaign2)
+            create(:event, start_date: today.to_s(:slashes), end_date: today.to_s(:slashes), campaign: campaign3)
+            create(:event, start_date: (today - 2.weeks).to_s(:slashes), end_date: (today - 2.weeks).to_s(:slashes), campaign: campaign1)
+            Sunspot.commit
 
-            expect(page).to have_selector('ul#events-list li', count: 1)
+            visit events_path
+
+            choose_predefined_date_range 'Current week'
+            wait_for_ajax
+
+            expect(page).to have_selector('ul#events-list li', count: 2)
             within('ul#events-list') do
               expect(page).to have_no_content('Campaign FY2012')
-              expect(page).to have_content('Another Campaign April 03')
-              expect(page).to have_no_content('New Brand Campaign')
-            end
-
-            choose_predefined_date_range 'Previous month'
-
-            expect(page).to have_selector('ul#events-list li', count: 1)
-            within('ul#events-list') do
-              expect(page).to have_no_content('Campaign FY2012')
-              expect(page).to have_no_content('Another Campaign April 03')
-              expect(page).to have_content('New Brand Campaign')
-            end
-
-            choose_predefined_date_range 'YTD'
-
-            expect(page).to have_selector('ul#events-list li', count: 4)
-            within('ul#events-list') do
-              expect(page).to have_content('Campaign FY2012')
               expect(page).to have_content('Another Campaign April 03')
               expect(page).to have_content('New Brand Campaign')
             end
           end
 
+          scenario "can filter the events by predefined 'Current month' date range option" do
+            create(:event, start_date: "#{month_number}/15/#{year}", end_date: "#{month_number}/15/#{year}", campaign: campaign3)
+            create(:event, start_date: "#{month_number}/16/#{year}", end_date: "#{month_number}/16/#{year}", campaign: campaign2)
+            create(:event, start_date: "#{month_number.to_i+1}/15/#{year}", end_date: "#{month_number.to_i+1}/15/#{year}", campaign: campaign1)
+            Sunspot.commit
+
+            visit events_path
+
+            choose_predefined_date_range 'Current month'
+            wait_for_ajax
+
+            expect(page).to have_selector('ul#events-list li', count: 2)
+            within('ul#events-list') do
+              expect(page).to have_no_content('Campaign FY2012')
+              expect(page).to have_content('Another Campaign April 03')
+              expect(page).to have_content('New Brand Campaign')
+            end
+          end
+
+          scenario "can filter the events by predefined 'Previous week' date range option" do
+            create(:event, start_date: today.to_s(:slashes), end_date: today.to_s(:slashes), campaign: campaign2)
+            create(:event, start_date: today.to_s(:slashes), end_date: today.to_s(:slashes), campaign: campaign3)
+            create(:event, start_date: (today - 1.week).to_s(:slashes), end_date: (today - 1.week).to_s(:slashes), campaign: campaign1)
+            Sunspot.commit
+
+            visit events_path
+
+            choose_predefined_date_range 'Previous week'
+            wait_for_ajax
+
+            expect(page).to have_selector('ul#events-list li', count: 1)
+            within('ul#events-list') do
+              expect(page).to have_content('Campaign FY2012')
+              expect(page).to have_no_content('Another Campaign April 03')
+              expect(page).to have_no_content('New Brand Campaign')
+            end
+          end
+
+          scenario "can filter the events by predefined 'Previous month' date range option" do
+            create(:event, start_date: "#{month_number}/15/#{year}", end_date: "#{month_number}/15/#{year}", campaign: campaign2)
+            create(:event, start_date: "#{month_number.to_i-1}/15/#{year}", end_date: "#{month_number.to_i-1}/15/#{year}", campaign: campaign1)
+            create(:event, start_date: "#{month_number.to_i-1}/16/#{year}", end_date: "#{month_number.to_i-1}/16/#{year}", campaign: campaign1)
+            create(:event, start_date: "#{month_number.to_i-1}/17/#{year}", end_date: "#{month_number.to_i-1}/17/#{year}", campaign: campaign3)
+            Sunspot.commit
+
+            visit events_path
+
+            choose_predefined_date_range 'Previous month'
+            wait_for_ajax
+
+            expect(page).to have_selector('ul#events-list li', count: 3)
+            within('ul#events-list') do
+              expect(page).to have_content('Campaign FY2012')
+              expect(page).to have_no_content('Another Campaign April 03')
+              expect(page).to have_content('New Brand Campaign')
+            end
+          end
+
+          scenario "can filter the events by predefined 'YTD' date range option" do
+            create(:event, start_date: "01/01/#{year}", end_date: "01/01/#{year}", campaign: campaign1)
+            create(:event, start_date: "01/01/#{year}", end_date: "01/01/#{year}", campaign: campaign1)
+            create(:event, start_date: "01/01/#{year}", end_date: "01/01/#{year}", campaign: campaign2)
+            create(:event, start_date: "07/17/#{year.to_i-1}", end_date: "07/17/#{year.to_i-1}", campaign: campaign3)
+            Sunspot.commit
+
+            visit events_path
+
+            choose_predefined_date_range 'YTD'
+            wait_for_ajax
+
+            expect(page).to have_selector('ul#events-list li', count: 3)
+            within('ul#events-list') do
+              expect(page).to have_content('Campaign FY2012')
+              expect(page).to have_content('Another Campaign April 03')
+              expect(page).to have_no_content('New Brand Campaign')
+            end
+          end
+
           scenario 'can filter the events by custom date range selecting start and end dates' do
+            create(:event, start_date: (today - 2.weeks).to_s(:slashes), end_date: (today - 2.weeks).to_s(:slashes), campaign: campaign1)
+            create(:event, start_date: today.to_s(:slashes), end_date: today.to_s(:slashes), campaign: campaign2)
+            create(:event, start_date: Date.today.beginning_of_week.to_s(:slashes), end_date: Date.today.beginning_of_week.to_s(:slashes), campaign: campaign2)
+            create(:event, start_date: today.to_s(:slashes), end_date: today.to_s(:slashes), campaign: campaign3)
+            create(:event, start_date: Date.today.end_of_week.to_s(:slashes), end_date: Date.today.end_of_week.to_s(:slashes), campaign: campaign3)
+            Sunspot.commit
+
             visit events_path
 
             click_js_link 'Date ranges'
@@ -322,11 +381,11 @@ feature 'Events section' do
             end
             ensure_date_ranges_was_closed
 
-            expect(page).to have_selector('ul#events-list li', count: 3)
+            expect(page).to have_selector('ul#events-list li', count: 4)
             within('ul#events-list') do
-              expect(page).to have_content('Campaign FY2012')
-              expect(page).to have_no_content('Another Campaign April 03')
-              expect(page).to have_no_content('New Brand Campaign')
+              expect(page).to have_no_content('Campaign FY2012')
+              expect(page).to have_content('Another Campaign April 03')
+              expect(page).to have_content('New Brand Campaign')
             end
           end
         end
