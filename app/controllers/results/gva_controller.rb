@@ -152,8 +152,10 @@ class Results::GvaController < InheritedResources::Base
     queries = ActiveRecord::Base.connection.unprepared_statement do
       items.map do |goalable_type, goaleables_ids|
         ['promo_hours', 'events', 'samples', 'expenses'].map do |kpi|
+          next unless goaleables_ids[kpi].any?
           events_scope = campaign.events.active.where(aasm_state: ['approved', 'rejected', 'submitted']).group('1').reorder(nil)
-          query = if goaleables_ids[kpi].any?
+
+          query =
             if goalable_type == 'Area'
               events_scope.in_campaign_areas(campaign, goaleables_ids[kpi]).select("ARRAY[areas_places.area_id::varchar, '#{goalable_type}'], '{KPI_NAME}', {KPI_AGGR}")
             elsif goalable_type == 'Place'
@@ -165,18 +167,15 @@ class Results::GvaController < InheritedResources::Base
             else
               events_scope.select("ARRAY[events.campaign_id::varchar, 'Campaign'], '{KPI_NAME}', {KPI_AGGR}")
             end
-          end
 
-          if query
-            if kpi == 'promo_hours'
-              goaleables_ids['promo_hours'].any? ? query.to_sql.gsub('{KPI_NAME}', 'PROMO HOURS').gsub('{KPI_AGGR}', 'SUM(events.promo_hours)') : nil
-            elsif kpi == 'events'
-              goaleables_ids['events'].any? ? query.to_sql.gsub('{KPI_NAME}', 'EVENTS').gsub('{KPI_AGGR}', 'COUNT(events.id)') : nil
-            elsif kpi == 'samples'
-              goaleables_ids['samples'].any? ? query.joins(results: :form_field).where(form_fields: {kpi_id: Kpi.samples.id}).to_sql.gsub('{KPI_NAME}', 'SAMPLES').gsub('{KPI_AGGR}', 'SUM(form_field_results.scalar_value)') : nil
-            elsif kpi == 'expenses'
-              goaleables_ids['expenses'].any? ? query.joins(:event_expenses).to_sql.gsub('{KPI_NAME}', 'EXPENSES').gsub('{KPI_AGGR}', 'SUM(event_expenses.amount)') : nil
-            end
+          if kpi == 'promo_hours'
+            goaleables_ids['promo_hours'].any? ? query.to_sql.gsub('{KPI_NAME}', 'PROMO HOURS').gsub('{KPI_AGGR}', 'SUM(events.promo_hours)') : nil
+          elsif kpi == 'events'
+            goaleables_ids['events'].any? ? query.to_sql.gsub('{KPI_NAME}', 'EVENTS').gsub('{KPI_AGGR}', 'COUNT(events.id)') : nil
+          elsif kpi == 'samples'
+            goaleables_ids['samples'].any? ? query.joins(results: :form_field).where(form_fields: {kpi_id: Kpi.samples.id}).to_sql.gsub('{KPI_NAME}', 'SAMPLES').gsub('{KPI_AGGR}', 'SUM(form_field_results.scalar_value)') : nil
+          elsif kpi == 'expenses'
+            goaleables_ids['expenses'].any? ? query.joins(:event_expenses).to_sql.gsub('{KPI_NAME}', 'EXPENSES').gsub('{KPI_AGGR}', 'SUM(event_expenses.amount)') : nil
           end
         end
       end.flatten.compact

@@ -156,12 +156,13 @@ module Analysis
 
     def each_events_goal
       fields_select_kpis = '(each(CASE
-            WHEN kpis.kpi_type=\'percentage\'
-                THEN hash_value
-            WHEN kpis.kpi_type=\'count\'
-                THEN hstore(value::VARCHAR, \'1\')
+            WHEN kpis.kpi_type=\'percentage\' OR
+                 (kpis.kpi_type=\'count\' AND kpis.capture_mechanism=\'checkbox\') THEN
+              hash_value
+            WHEN kpis.kpi_type=\'count\' THEN
+              hstore(value::VARCHAR, \'1\')
             ELSE
-                hstore(\'\', scalar_value::VARCHAR)
+              hstore(\'\', scalar_value::VARCHAR)
             END
           )).*, form_fields.kpi_id, form_field_results.id'
       scope =  @events_scope.joins(results: { form_field: :kpi })
@@ -172,20 +173,27 @@ module Analysis
       rejected_totals_kpis = get_kpis_totals_for_scope(scope.where(aasm_state: ['rejected']))
 
       fields_select_activities = 'count(activities.id) as total_count, activities.activity_type_id'
-      approved_totals_activities = @events_scope.joins(:activities).where(activities: { activity_type_id: @goals.map(&:activity_type), active: true }).where(aasm_state: 'approved')
+      approved_totals_activities = @events_scope.joins(:activities)
+                          .where(activities: { activity_type_id: @goals.map(&:activity_type), active: true })
+                          .where(aasm_state: 'approved')
                           .select(fields_select_activities)
                           .group('2')
 
-      submitted_totals_activities = @events_scope.joins(:activities).where(activities: { activity_type_id: @goals.map(&:activity_type), active: true }).where(aasm_state: ['submitted'])
+      submitted_totals_activities = @events_scope.joins(:activities)
+                          .where(activities: { activity_type_id: @goals.map(&:activity_type), active: true })
+                          .where(aasm_state: ['submitted'])
                           .select(fields_select_activities)
                           .group('2')
 
-      rejected_totals_activities = @events_scope.joins(:activities).where(activities: { activity_type_id: @goals.map(&:activity_type), active: true }).where(aasm_state: ['rejected'])
+      rejected_totals_activities = @events_scope.joins(:activities)
+                          .where(activities: { activity_type_id: @goals.map(&:activity_type), active: true })
+                          .where(aasm_state: ['rejected'])
                           .select(fields_select_activities)
                           .group('2')
 
       if @campaign.present?
-        venues_totals_activities = Venue.where(place_id: @campaign.place_ids).joins(:activities).where(activities: { activity_type_id: @goals.map(&:activity_type), active: true })
+        venues_totals_activities = Venue.where(place_id: @campaign.place_ids).joins(:activities)
+                          .where(activities: { activity_type_id: @goals.map(&:activity_type), active: true })
                           .select(fields_select_activities)
                           .group('2')
       end
@@ -226,45 +234,38 @@ module Analysis
         today_percentage = today = nil
         if @campaign.present? && @campaign.start_date && @campaign.end_date && goal_value
           days = (@campaign.end_date - @campaign.start_date).to_i
-          if Date.today > @campaign.start_date && Date.today < @campaign.end_date && days > 0
-            today = ((Date.today - @campaign.start_date).to_i + 1) * goal_value / days
-          elsif Date.today > @campaign.end_date
-            today = goal_value
-          else
-            today = 0
-          end
+          today =
+            if Date.today > @campaign.start_date && Date.today < @campaign.end_date && days > 0
+              ((Date.today - @campaign.start_date).to_i + 1) * goal_value / days
+            elsif Date.today > @campaign.end_date
+              goal_value
+            else
+              today = 0
+            end
           today_percentage = [(today * 100 / goal_value).to_i, 100].min
         end
 
-        if completed.nil?
-          goals_result[goal.id] = {
-            goal: goal,
-            completed_percentage: 0,
-            remaining_percentage: 100,
-            remaining_count: goal_value,
-            total_count: 0,
-            submitted: submitted,
-            submitted_percentage: submitted_percentage,
-            rejected: rejected,
-            rejected_percentage: rejected_percentage,
-            today: today,
-            today_percentage: today_percentage
-          }
-        else
-          goals_result[goal.id] = {
-            goal: goal,
-            completed_percentage: completed_percentage,
-            remaining_percentage: 100 - completed_percentage,
-            remaining_count: remaining_count,
-            total_count: total_count,
-            submitted: submitted,
-            submitted_percentage: submitted_percentage,
-            rejected: rejected,
-            rejected_percentage: rejected_percentage,
-            today: today,
-            today_percentage: today_percentage
-          }
-        end
+        goals_result[goal.id] = {
+          goal: goal,
+          completed_percentage: 0,
+          remaining_percentage: 100,
+          remaining_count: goal_value,
+          total_count: 0,
+          submitted: submitted,
+          submitted_percentage: submitted_percentage,
+          rejected: rejected,
+          rejected_percentage: rejected_percentage,
+          today: today,
+          today_percentage: today_percentage
+        }
+        next if completed.nil?
+
+        goals_result[goal.id].merge!(
+          completed_percentage: completed_percentage,
+          remaining_percentage: 100 - completed_percentage,
+          remaining_count: remaining_count,
+          total_count: total_count
+        )
       end
       goals_result
     end
@@ -281,35 +282,38 @@ module Analysis
       case goal.kpi.kpi_type
       when 'expenses'
         goal_scope.where(aasm_state: status).joins(:event_data).sum('event_data.spent').to_i
-      when 'promo_hours'
-        goal_scope.where(aasm_state: status).sum('promo_hours')
-      when 'events_count'
-        goal_scope.where(aasm_state: status).count
-      when 'photos'
-        AttachedAsset.photos.for_events(goal_scope).count
-      else
-        if goal.start_date.present? || goal.due_date.present?
-          result = goal_scope.joins(results: :form_field).where(aasm_state: status)
-                      .select('sum(scalar_value) as total_value')
-                      .where(form_fields: { kpi_id: goal.kpi_id })
-                      .group('form_fields.kpi_id').first
-          data = { 'total_value' => result.total_value, 'total_count' => result.total_count }
-        else
-          data = totals.find { |row| row['kpi_id'].to_i == goal.kpi_id.to_i && row['kpis_segment_id'].to_i == goal.kpis_segment_id.to_i }
-        end
+      when 'promo_hours' then goal_scope.where(aasm_state: status).sum('promo_hours')
+      when 'events_count' then goal_scope.where(aasm_state: status).count
+      when 'photos' then AttachedAsset.photos.for_events(goal_scope).count
+      else get_kpi_total_by_status goal_scope, goal, totals, status
+      end
+    end
 
-        unless data.nil?
-          if goal.kpis_segment_id.nil?
-            case goal.kpi.capture_mechanism
-            when 'integer'
-              data['total_value'].to_i
-            when 'decimal'
-              data['total_value'].to_f
-            end
-          else
-            data['total_count'].to_i
-          end
+    def get_kpi_total_by_status(goal_scope, goal, totals, status)
+      if goal.start_date.present? || goal.due_date.present?
+        result = goal_scope.joins(results: :form_field).where(aasm_state: status)
+                    .select('sum(scalar_value) as total_value')
+                    .where(form_fields: { kpi_id: goal.kpi_id })
+                    .group('form_fields.kpi_id').first
+        data = { 'total_value' => result.total_value, 'total_count' => result.total_count }
+      else
+        data = totals.find do |row|
+          row['kpi_id'].to_i == goal.kpi_id.to_i &&
+          row['kpis_segment_id'].to_i == goal.kpis_segment_id.to_i
         end
+      end
+
+      return if data.nil?
+
+      if goal.kpis_segment_id.nil?
+        case goal.kpi.capture_mechanism
+        when 'integer'
+          data['total_value'].to_i
+        when 'decimal'
+          data['total_value'].to_f
+        end
+      else
+        data['total_count'].to_i
       end
     end
 
