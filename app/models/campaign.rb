@@ -36,11 +36,18 @@ class Campaign < ActiveRecord::Base
   validates :name, presence: true
   validates :company_id, presence: true, numericality: true
 
-  DATE_FORMAT = /\A[0-1]?[0-9]\/[0-3]?[0-9]\/[0-2]0[0-9][0-9]\z/
+  AVAILABLE_COLORS =
+      %w(d3c941 606060 a18740 d93f99 a766cf 7e42a4
+         d7a23c 6c5f3c bfbfbf 909090 606060 0033a0
+         01afc7 0a1e2c 1d5632 de4d43 5a1e1e)
+
+  DATE_FORMAT = %r{\A[0-1]?[0-9]/[0-3]?[0-9]/[0-2]0[0-9][0-9]\z}
+
   validates :start_date, format: { with: DATE_FORMAT, message: 'MM/DD/YYYY' }, allow_nil: true
   validates :end_date, format: { with: DATE_FORMAT, message: 'MM/DD/YYYY' }, allow_nil: true
   validates :end_date, presence: true, date: { on_or_after: :start_date, message: 'must be after' }, if: :start_date
   validates :start_date, presence: true, if: :end_date
+  validates :color, inclusion: {in: AVAILABLE_COLORS.map{ |c| "##{c}" } }, allow_nil: true, allow_blank: true
 
   validate :valid_modules?
 

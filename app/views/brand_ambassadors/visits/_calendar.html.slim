@@ -5,19 +5,7 @@ javascript:
   var visitsCalendar,
     colorIndex = 0,
     campaignColors = {},
-    colors = [
-      ['#d3c941', '#fff'],
-      ['#606060', '#fff'],
-      ['#a18740', '#fff'],
-      ['#d93f99', '#fff'],
-      ['#a766cf', '#fff'],
-      ['#7e42a4', '#fff'],
-      ['#d7a23c', '#fff'],
-      ['#6c5f3c', '#fff'],
-      ['#bfbfbf', '#fff'],
-      ['#909090', '#fff'],
-      ['#606060', '#fff']
-    ],
+    colors = #{Campaign::AVAILABLE_COLORS.map{ |c| "##{c}" }.to_json.html_safe},
     buildCalendar = function() {
       return $('#calendar-canvas').fullCalendar({
         header: {
@@ -54,10 +42,12 @@ javascript:
                     $.each(events, function(i, event){
                       var campaignColors;
                       if (event.campaign_name) {
-                        campaignColors = getCampaignColor(event.campaign_name);
-                        event.backgroundColor = campaignColors[0];
-                        event.borderColor = campaignColors[0];
-                        event.eventTextColor = campaignColors[1];
+                        if (!event.color) {
+                          event.color = getRandomColor(event.campaign_name);
+                        }
+                        event.backgroundColor =event.color;
+                        event.borderColor = event.color;
+                        event.eventTextColor = '#ffffff';
                       }
                     });
                     callback(events);
@@ -83,7 +73,7 @@ javascript:
         }
       });
   },
-  getCampaignColor = function(campaign_name){
+  getRandomColor = function(campaign_name, color){
     if (typeof campaignColors[campaign_name] === 'undefined') {
       if (colorIndex >= colors.length){ colorIndex = 0; }
       campaignColors[campaign_name] = colors[colorIndex++];

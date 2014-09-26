@@ -125,7 +125,7 @@ class CampaignsController < FilteredController
   protected
 
   def permitted_params
-    p = [:name, :start_date, :end_date, :description, :brands_list, { brand_portfolio_ids: [] }]
+    p = [:name, :start_date, :end_date, :description, :color, :brands_list, { brand_portfolio_ids: [] }]
     if can?(:view_event_form, Campaign)
       p.push(
         survey_brand_ids: [],
