@@ -23,11 +23,6 @@ RSpec.describe DocumentFolder, type: :model do
 
   it { is_expected.to validate_presence_of(:name) }
 
-  describe 'uniqueness' do
-    before {  create(:document_folder) }
-    it { is_expected.to validate_uniqueness_of(:name) }
-  end
-
   describe '#activate' do
     let(:folder) { build(:document_folder, active: false) }
 
