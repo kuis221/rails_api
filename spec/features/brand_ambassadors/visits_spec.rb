@@ -398,6 +398,11 @@ feature 'Brand Ambassadors Visits' do
       end
 
       within visible_modal do
+        expect(find_field('Visit type', visible: false).value).to eql 'market_visit'
+        expect(find_field('Area', visible: false).value).to eql area.id.to_s
+        expect(find_field('Campaign', visible: false).value).to eql campaign.id.to_s
+        expect(find_field('City', visible: false).value).to eql 'New York'
+        expect(find_field('Description', visible: false).value).to eql 'Visit1 description'
         select_from_chosen 'Brand Program', from: 'Visit type'
         select_from_chosen 'My Area', from: 'Area'
         select_from_chosen 'My Campaign', from: 'Campaign'
@@ -408,6 +413,9 @@ feature 'Brand Ambassadors Visits' do
       ensure_modal_was_closed
 
       within('ul#visits-list') do
+        expect(page).to have_content company_user.full_name
+        expect(page).to have_content 'My Area (My City)'
+        expect(page).to have_content campaign.name
         expect(page).to have_content 'Brand Program'
       end
     end
