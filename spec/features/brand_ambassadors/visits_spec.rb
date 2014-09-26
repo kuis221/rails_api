@@ -35,11 +35,13 @@ feature 'Brand Ambassadors Visits' do
       create(:brand_ambassadors_visit, company: company,
         start_date: today, end_date: (today + 1.day).to_s(:slashes),
         city: 'New York', area: area, campaign: campaign,
-        visit_type: 'market_visit', company_user: company_user, active: true)
+        visit_type: 'market_visit', company_user: company_user,
+        description: 'The first visit description', active: true)
       create(:brand_ambassadors_visit, company: company,
         start_date: (today + 2.days).to_s(:slashes), end_date: (today + 3.days).to_s(:slashes),
         city: 'New York', area: area, campaign: campaign,
-        visit_type: 'brand_program', company_user: company_user, active: true)
+        visit_type: 'brand_program', company_user: company_user,
+        description: 'The second visit description', active: true)
       Sunspot.commit
     end
 
@@ -83,9 +85,9 @@ feature 'Brand Ambassadors Visits' do
       ensure_modal_was_closed
 
       expect(ListExport.last).to have_rows([
-        ['START DATE', 'END DATE', 'EMPLOYEE', 'AREA', 'CITY', 'CAMPAIGN', 'TYPE'],
-        ['2014-09-18', '2014-09-19', 'Test User', 'My Area', 'New York', 'My Campaign', 'Market Visit'],
-        ['2014-09-20', '2014-09-21', 'Test User', 'My Area', 'New York', 'My Campaign', 'Brand Program']
+        ['START DATE', 'END DATE', 'EMPLOYEE', 'AREA', 'CITY', 'CAMPAIGN', 'TYPE', 'DESCRIPTION'],
+        ['2014-09-18', '2014-09-19', 'Test User', 'My Area', 'New York', 'My Campaign', 'Market Visit', 'The first visit description'],
+        ['2014-09-20', '2014-09-21', 'Test User', 'My Area', 'New York', 'My Campaign', 'Brand Program', 'The second visit description']
       ])
     end
 
