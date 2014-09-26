@@ -33,8 +33,7 @@ class DocumentFolder < ActiveRecord::Base
 
   scope :active, -> { where(active: true) }
 
-  validates :name, presence: true,
-                   uniqueness: { scope: [:folderable_type, :folderable_id, :parent_id] }
+  validates :name, presence: true
 
   before_validation on: :create do
     self.folderable ||= Company.current

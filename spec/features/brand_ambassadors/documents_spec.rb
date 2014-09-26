@@ -108,6 +108,28 @@ feature 'Brand Ambassadors Documents', js: true do
       end
     end
 
+    scenario 'A user can create folders with duplicate names' do
+      visit brand_ambassadors_root_path
+
+      documents_section.click_js_link 'New Folder'
+
+      within documents_section do
+        fill_in 'Please name your folder', with: 'Duplicate Folder Name'
+        page.execute_script("$('form#new_document_folder').submit()")
+        wait_for_ajax
+        expect(page).to have_selector('ul#documents-list li.document', count: 1)
+      end
+
+      documents_section.click_js_link 'New Folder'
+
+      within documents_section do
+        fill_in 'Please name your folder', with: 'Duplicate Folder Name'
+        page.execute_script("$('form#new_document_folder').submit()")
+        wait_for_ajax
+        expect(page).to have_selector('ul#documents-list li.document', count: 2)
+      end
+    end
+
     scenario 'A user can create and deactivate folders' do
       visit brand_ambassadors_root_path
 
