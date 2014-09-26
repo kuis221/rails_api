@@ -36,6 +36,14 @@ class BrandAmbassadors::VisitsController < FilteredController
     end
   end
 
+  def search_params
+    if params[:start_date] && params[:end_date] && request.format.json?
+      super.merge!(per_page: 1000)
+    else
+      super
+    end
+  end
+
   def brand_ambassadors_users
     @brand_ambassadors_users ||= begin
       s = current_company.company_users.active

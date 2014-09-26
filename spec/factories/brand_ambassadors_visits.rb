@@ -24,8 +24,8 @@ FactoryGirl.define do
     description 'Visit description'
     company nil
     association :company_user
-    start_date '08/26/2014'
-    end_date '08/27/2014'
+    start_date { Date.today.to_s(:slashes) }
+    end_date { Date.today.to_s(:slashes) }
     active true
     visit_type 'brand_program'
     campaign { create(:campaign, company: company) }

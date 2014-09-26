@@ -141,8 +141,8 @@ class Event < ActiveRecord::Base
     subquery = subquery.where.not(placeables: { place_id: area_campaign.exclusions })
     place_query =
       "SELECT place_id, locations.area_id FROM locations_places
-       INNER JOIN (#{subquery.to_sql}) locations on locations.location_id=locations_places.location_id " +
-       (has_exclusions ? "WHERE place_id not in (#{area_campaign.exclusions.join(',')})" : '')
+       INNER JOIN (#{subquery.to_sql}) locations on locations.location_id=locations_places.location_id" +
+       (has_exclusions ? " WHERE place_id not in (#{area_campaign.exclusions.join(',')})" : '')
     area_query =
       Placeable.select('place_id, placeable_id area_id')
           .where(placeable_type: 'Area', placeable_id: area_campaign.area_id)

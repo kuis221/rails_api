@@ -28,7 +28,7 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
   has_many :events, inverse_of: :visit
 
   delegate :name, to: :area, allow_nil: true, prefix: true
-  delegate :name, to: :campaign, allow_nil: true, prefix: true
+  delegate :name, :color, to: :campaign, allow_nil: true, prefix: true
 
   scoped_to_company
 

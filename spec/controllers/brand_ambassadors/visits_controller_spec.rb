@@ -15,6 +15,11 @@ RSpec.describe BrandAmbassadors::VisitsController, type: :controller do
       expect(response).to be_success
     end
 
+    it 'set per_page to 100 for json resquests that have start/end dates' do
+      get 'index', start_date: '01/01/2014', end_date: '01/01/2014', format: :json
+      expect(assigns(:search_params)).to include(per_page: 1000)
+    end
+
     it 'queue the job for export the list' do
       expect do
         xhr :get, :index, format: :xls

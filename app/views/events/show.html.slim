@@ -119,10 +119,6 @@
     });
 
 javascript:
-  $(document).on('events:change', function(){
-    window.location.reload(true);
-  });
-
   if (#{can_tasks}){
     $(document).on('tasks:change', function(){
       $.get('#{tasks_event_path(resource)}', function(response){
@@ -132,3 +128,5 @@ javascript:
       })
     });
   }
+
+- reload_page_on_edit_resource

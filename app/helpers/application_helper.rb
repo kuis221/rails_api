@@ -81,10 +81,22 @@ module ApplicationHelper
 
   def resource_details_bar(title)
     content_tag(:div, id: 'resource-close-details', 'data-spy' => 'affix', 'data-offset-top' => '20') do
-      link_to(return_path || collection_path, class: 'close-details') do
+      link_to(return_path || collection_path, class: 'close-details', title: title) do
         content_tag(:span, title, class: 'details-bar-pull-left') +
         content_tag(:span, ' '.html_safe, class: 'icon-close')
       end
+    end
+  end
+
+  # Adds a script at the bottom of the page to reload the page
+  # when the resource is edited
+  def reload_page_on_edit_resource
+    content_for :footer do
+      javascript_tag <<-EOF
+        $(document).on('#{resource.class.name.pluralize.underscore.gsub('/','_')}:change', function(){
+          window.location = '#{url_for params: {return: return_path}}'
+        });
+      EOF
     end
   end
 

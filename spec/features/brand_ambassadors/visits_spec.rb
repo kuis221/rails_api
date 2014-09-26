@@ -116,10 +116,10 @@ feature 'Brand Ambassadors Visits' do
         expect(text).to include '2visits'
         expect(text).to include 'MarketVisit'
         expect(text).to include 'BrandProgram'
-        expect(text).to match /#{month_name}18/
-        expect(text).to match /#{month_name}19/
-        expect(text).to match /#{month_name}20/
-        expect(text).to match /#{month_name}21/
+        expect(text).to match(/#{month_name}18/)
+        expect(text).to match(/#{month_name}19/)
+        expect(text).to match(/#{month_name}20/)
+        expect(text).to match(/#{month_name}21/)
       end
     end
   end
@@ -379,15 +379,17 @@ feature 'Brand Ambassadors Visits' do
   end
 
   shared_examples_for 'a user that can edit visits' do
-    before { campaign.save  }
-    scenario 'allows the user to edit a visit' do
-      area.places << create(:city, name: 'My City')
-      today = Time.zone.local(Time.now.strftime('%Y'), Time.now.strftime('%m'), 18, 12, 00)
-      create(:brand_ambassadors_visit, company: company,
-        start_date: today, end_date: (today + 1.day).to_s(:slashes), campaign: campaign,
+    let(:ba_visit) do
+      create(:brand_ambassadors_visit, company: company, campaign: campaign,
         visit_type: 'market_visit', description: 'Visit1 description',
         area: area, city: 'New York', company_user: company_user, active: true)
+    end
+    before do
+      ba_visit.save
       Sunspot.commit
+    end
+    scenario 'allows the user to edit a visit' do
+      area.places << create(:city, name: 'My City')
       visit brand_ambassadors_root_path
       choose_predefined_date_range 'Current month'
 
@@ -408,6 +410,26 @@ feature 'Brand Ambassadors Visits' do
       within('ul#visits-list') do
         expect(page).to have_content 'Brand Program'
       end
+    end
+
+    scenario 'user is redirected to the list of visits after editing' do
+      visit brand_ambassadors_root_path
+
+      within('ul#visits-list li') do
+        click_link 'Visit Details'
+      end
+      expect(current_path).to eql brand_ambassadors_visit_path(ba_visit)
+
+      within('.links-data') { click_js_button 'Edit Visit' }
+      within visible_modal do
+        fill_in 'Description', with: 'Some description'
+        click_js_button 'Save'
+      end
+
+      expect(page).to have_text('Some description')
+
+      click_link 'You are viewing visit details. Click to close.'
+      expect(current_path).to eql brand_ambassadors_root_path
     end
   end
 
@@ -455,7 +477,7 @@ feature 'Brand Ambassadors Visits' do
     scenario 'allows the user to edit a visit' do
       visit brand_ambassadors_visit_path(ba_visit)
 
-      click_js_link('Edit')
+      click_js_button('Edit')
 
       within visible_modal do
         select_from_chosen 'Brand Program', from: 'Visit type'
@@ -554,7 +576,7 @@ feature 'Brand Ambassadors Visits' do
     end
 
     it_should_behave_like 'a user that can edit visits' do
-      let(:permissions) { [[:list, 'BrandAmbassadors::Visit'], [:update, 'BrandAmbassadors::Visit']] }
+      let(:permissions) { [[:list, 'BrandAmbassadors::Visit'], [:show, 'BrandAmbassadors::Visit'], [:update, 'BrandAmbassadors::Visit']] }
     end
 
     it_should_behave_like 'a user that can create visits' do
