@@ -5,7 +5,7 @@
 unless ENV['RAILS_ENV'] == 'production'
   require File.expand_path('../config/application', __FILE__)
   require 'rubocop/rake_task'
+  RuboCop::RakeTask.new
 end
 
-RuboCop::RakeTask.new
 Brandscopic::Application.load_tasks
