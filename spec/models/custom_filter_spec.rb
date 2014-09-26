@@ -2,13 +2,15 @@
 #
 # Table name: custom_filters
 #
-#  id              :integer          not null, primary key
-#  company_user_id :integer
-#  name            :string(255)
-#  apply_to        :string(255)
-#  filters         :text
-#  created_at      :datetime
-#  updated_at      :datetime
+#  id         :integer          not null, primary key
+#  name       :string(255)
+#  apply_to   :string(255)
+#  filters    :text
+#  created_at :datetime
+#  updated_at :datetime
+#  owner_id   :integer
+#  owner_type :string(255)
+#  group      :string(255)
 #
 
 require 'rails_helper'

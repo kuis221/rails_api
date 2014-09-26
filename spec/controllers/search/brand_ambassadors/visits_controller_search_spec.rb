@@ -35,7 +35,7 @@ describe BrandAmbassadors::VisitsController, type: :controller, search: true do
         expect(response).to be_success
 
         buckets = JSON.parse(response.body)
-        expect(buckets.map { |b| b['label'] }).to eq(%w(Brands Places People))
+        expect(buckets.map { |b| b['label'] }).to eq(%w(Campaigns Places People))
       end
 
       it 'should return the users in the People Bucket' do
@@ -65,16 +65,16 @@ describe BrandAmbassadors::VisitsController, type: :controller, search: true do
         expect(people_bucket['value']).to eq([{ 'label' => 'Guillermo <i>Va</i>rgas', 'value' => company_user.id.to_s, 'type' => 'company_user' }])
       end
 
-      it 'should return the brands in the Brands Bucket' do
-        brand = create(:brand, name: 'Cacique', company_id: @company.id)
+      it 'should return the campaigns in the Campaigns Bucket' do
+        campaign = create(:campaign, name: 'Cosmos', company_id: @company.id)
         Sunspot.commit
 
-        get 'autocomplete', q: 'cac'
+        get 'autocomplete', q: 'cos'
         expect(response).to be_success
 
         buckets = JSON.parse(response.body)
-        brands_bucket = buckets.select { |b| b['label'] == 'Brands' }.first
-        expect(brands_bucket['value']).to eq([{ 'label' => '<i>Cac</i>ique', 'value' => brand.id.to_s, 'type' => 'brand' }])
+        campaigns_bucket = buckets.select { |b| b['label'] == 'Campaigns' }.first
+        expect(campaigns_bucket['value']).to eq([{ 'label' => '<i>Cos</i>mos', 'value' => campaign.id.to_s, 'type' => 'campaign' }])
       end
     end
 
@@ -86,7 +86,7 @@ describe BrandAmbassadors::VisitsController, type: :controller, search: true do
         expect(response).to be_success
 
         filters = JSON.parse(response.body)
-        expect(filters['filters'].map { |b| b['label'] }).to eq(['DIVISIONS', 'Brand Ambassadors', 'Areas', 'Cities', 'Brands'])
+        expect(filters['filters'].map { |b| b['label'] }).to eq(['DIVISIONS', 'Brand Ambassadors', 'Campaigns', 'Areas', 'Cities'])
       end
 
       it 'should return only users in the configured role for brand ambassadors section' do

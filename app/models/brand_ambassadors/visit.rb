@@ -12,9 +12,9 @@
 #  updated_at      :datetime
 #  description     :text
 #  visit_type      :string(255)
-#  brand_id        :integer
 #  area_id         :integer
 #  city            :string(255)
+#  campaign_id     :integer
 #
 
 class BrandAmbassadors::Visit < ActiveRecord::Base

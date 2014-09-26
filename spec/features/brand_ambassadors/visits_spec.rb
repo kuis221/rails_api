@@ -183,8 +183,19 @@ feature 'Brand Ambassadors Visits' do
           expect(page).to have_content('Market Visit')
         end
 
+        filter_section('CAMPAIGNS').unicheck('My Campaign')
+
+        expect(page).to have_content('2 visits as part of My Campaign')
+
+        within('ul#visits-list') do
+          expect(page).to have_content('My Campaign')
+          expect(page).to have_no_content('Campaign FY2012')
+          expect(page).to have_no_content('Another Campaign April 03')
+        end
+
         expect(page).to have_filter_section(title: 'BRAND AMBASSADORS', options: ['Roberto Gomez', 'Test User'])
 
+        filter_section('CAMPAIGNS').unicheck('My Campaign')
         filter_section('BRAND AMBASSADORS').unicheck('Test User')
 
         expect(page).to have_content('1 visit assigned to Test User')
