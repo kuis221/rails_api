@@ -2,7 +2,7 @@
 #
 # Table name: kpi_reports
 #
-#  id                :integer          not null, primary key
+#  id                :integer          not null
 #  company_user_id   :integer
 #  params            :text
 #  aasm_state        :string(255)

@@ -10,7 +10,7 @@ class BrandAmbassadors::VisitsController < FilteredController
   helper_method :describe_filters, :brand_ambassadors_users, :return_path
 
   def autocomplete
-    buckets = autocomplete_buckets(brands: [Brand, BrandPortfolio],
+    buckets = autocomplete_buckets(campaigns: [Campaign],
                                    places: [Area],
                                    people: [CompanyUser])
     render json: buckets.flatten
@@ -19,7 +19,7 @@ class BrandAmbassadors::VisitsController < FilteredController
   protected
 
   def describe_filters
-    first_part  = "#{describe_date_ranges} #{describe_brands} #{describe_areas} #{describe_cities}".strip
+    first_part  = "#{describe_date_ranges} #{describe_campaigns} #{describe_areas} #{describe_cities}".strip
     first_part = nil if first_part.empty?
     second_part = "#{describe_people}".strip
     second_part = nil if second_part.empty?
@@ -77,10 +77,9 @@ class BrandAmbassadors::VisitsController < FilteredController
       f.concat build_custom_filters_bucket
 
       f.push build_brand_ambassadors_bucket
+      f.push build_campaign_bucket
       f.push build_areas_bucket
       f.push build_city_bucket
-      f.push build_brands_bucket
-
     end
   end
 end
