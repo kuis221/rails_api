@@ -29,7 +29,7 @@ FactoryGirl.define do
     description 'Test Campaign description'
     aasm_state 'active'
     association :company
-    color { '#' + Campaign::AVAILABLE_COLORS.sample }
+    color { Campaign::AVAILABLE_COLORS.sample }
     created_by_id 1
     updated_by_id 1
 

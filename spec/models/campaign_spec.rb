@@ -38,6 +38,7 @@ describe Campaign, type: :model do
   it { is_expected.to allow_value('').for(:color) }
   it { is_expected.to allow_value(nil).for(:color) }
   it { is_expected.to allow_value('#d7a23c').for(:color) }
+  it { is_expected.not_to allow_value('d7a23c').for(:color) }
   it { is_expected.not_to allow_value('#123456').for(:color) }
 
   let(:company) { create(:company) }

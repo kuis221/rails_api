@@ -33,5 +33,5 @@ javascript:
   $('.color-picker').colorPicker({
     showHexField: false,
     pickerDefault: '',
-    colors: #{Campaign::AVAILABLE_COLORS.to_json.html_safe}
+    colors: #{Campaign::AVAILABLE_COLORS.map{ |c| c.gsub('#', '') }.to_json.html_safe}
     });
