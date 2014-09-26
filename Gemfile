@@ -92,6 +92,7 @@ group :test, :development do
   gem 'timecop'
   gem 'faker'
   gem 'rubocop', require: false
+  gem 'rubocop-rspec', require: false
 end
 
 group :test do
