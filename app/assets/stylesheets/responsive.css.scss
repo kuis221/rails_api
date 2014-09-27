@@ -24,7 +24,7 @@
 		}
 	}
 	.collection-list-description {
-		margin: 0 10px 10px 11px;
+		margin: 40px 10px 10px 11px;
 	}
 
 	.main-nav-collapse {
@@ -155,6 +155,22 @@
 			width: 50px;
 		}
 	}
+
+	/*Fullcalendar*/
+	.fc{
+		.fc-view-container{
+			thead{
+				div.fc-widget-header{
+					&.affix {
+						left: 22px;
+						right: 22px;
+						top: 40px;
+					}
+				}
+			}
+		}
+	}
+
 }
 
 @media (max-width: 767px) {
