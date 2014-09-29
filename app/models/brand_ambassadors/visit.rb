@@ -70,7 +70,7 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
     integer :company_id
     integer :company_user_id
     integer :location, multiple: true do
-      area.cities.find { |c| c.name == city }.try(:location_ids) if area && city
+      area && city ? area.cities.find { |c| c.name == city }.try(:location_ids) : 0
     end
     date :start_date, stored: true
     date :end_date, stored: true

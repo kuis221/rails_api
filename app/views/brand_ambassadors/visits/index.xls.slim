@@ -31,9 +31,9 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
       - each_collection_item do |visit|
         Row
           Cell ss:StyleID="s2"
-            Data ss:Type="DateTime"= Timeliness.parse(visit.start_date.strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%F')
+            Data ss:Type="DateTime"= Timeliness.parse(visit.start_date.strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%FT%R')
           Cell ss:StyleID="s2"
-            Data ss:Type="DateTime"= Timeliness.parse(visit.end_date.strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%F')
+            Data ss:Type="DateTime"= Timeliness.parse(visit.end_date.strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%FT%R')
           Cell
             Data ss:Type="String"= visit.company_user.try(:full_name)
           Cell

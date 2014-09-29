@@ -40,6 +40,10 @@ feature 'Brand Ambassadors Visits' do
         start_date: (today + 2.days).to_s(:slashes), end_date: (today + 3.days).to_s(:slashes),
         city: 'New York', area: area, campaign: campaign,
         visit_type: 'brand_program', company_user: company_user, active: true)
+      create(:brand_ambassadors_visit, company: company,
+        start_date: (today + 4.days).to_s(:slashes), end_date: (today + 5.days).to_s(:slashes),
+        city: nil, area: nil, campaign: campaign,
+        visit_type: 'pto', company_user: company_user, active: true)
       Sunspot.commit
     end
 
@@ -65,6 +69,13 @@ feature 'Brand Ambassadors Visits' do
           expect(page).to have_content("#{month_name} 20")
           expect(page).to have_content("#{month_name} 21")
         end
+        # Third Row
+        within('li:nth-child(3)') do
+          expect(page).to have_content('PTO')
+          expect(page).to have_content(company_user.full_name)
+          expect(page).to have_content("#{month_name} 22")
+          expect(page).to have_content("#{month_name} 23")
+        end
       end
     end
 
@@ -85,7 +96,8 @@ feature 'Brand Ambassadors Visits' do
       expect(ListExport.last).to have_rows([
         ['START DATE', 'END DATE', 'EMPLOYEE', 'AREA', 'CITY', 'CAMPAIGN', 'TYPE'],
         ['2014-09-18', '2014-09-19', 'Test User', 'My Area', 'New York', 'My Campaign', 'Market Visit'],
-        ['2014-09-20', '2014-09-21', 'Test User', 'My Area', 'New York', 'My Campaign', 'Brand Program']
+        ['2014-09-20', '2014-09-21', 'Test User', 'My Area', 'New York', 'My Campaign', 'Brand Program'],
+        ["2014-09-22", "2014-09-23", "Test User", nil, nil, "My Campaign", "PTO"]
       ])
     end
 
@@ -113,13 +125,16 @@ feature 'Brand Ambassadors Visits' do
         # with white spaces, so, remove them and look for strings
         # without whitespaces
         text = page.text.gsub(/[\s\n]/, '')
-        expect(text).to include '2visits'
+        expect(text).to include '3visits'
         expect(text).to include 'MarketVisit'
         expect(text).to include 'BrandProgram'
+        expect(text).to include 'PTO'
         expect(text).to match(/#{month_name}18/)
         expect(text).to match(/#{month_name}19/)
         expect(text).to match(/#{month_name}20/)
         expect(text).to match(/#{month_name}21/)
+        expect(text).to match(/#{month_name}22/)
+        expect(text).to match(/#{month_name}23/)
       end
     end
   end
