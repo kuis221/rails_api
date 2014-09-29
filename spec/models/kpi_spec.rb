@@ -62,28 +62,28 @@ describe Kpi, type: :model do
       kpi = build(:kpi, kpi_type: 'count', capture_mechanism: 'radio', company: company, kpis_segments: create_list(:kpis_segment, 1))
       kpi.save
       expect(kpi.persisted?).to be_falsey
-      expect(kpi.errors.full_messages).to include('You need to add at least 2 segments for the selected capture mechanism')
+      expect(kpi.errors[:kpi_type]).to include('You need to add at least 2 segments for the selected capture mechanism')
     end
 
     it 'should return error if there are restrictions when capture_mechanism is dropdown and number od segments is less than 1' do
       kpi = build(:kpi, kpi_type: 'count', capture_mechanism: 'dropdown', company: company)
       kpi.save
       expect(kpi.persisted?).to be_falsey
-      expect(kpi.errors.full_messages).to include('You need to add at least 1 segments for the selected capture mechanism')
+      expect(kpi.errors[:kpi_type]).to include('You need to add at least 1 segments for the selected capture mechanism')
     end
 
     it 'should return error if there are restrictions when capture_mechanism is checkbox and number od segments is less than 1' do
       kpi = build(:kpi, kpi_type: 'count', capture_mechanism: 'checkbox', company: company)
       kpi.save
       expect(kpi.persisted?).to be_falsey
-      expect(kpi.errors.full_messages).to include('You need to add at least 1 segments for the selected capture mechanism')
+      expect(kpi.errors[:kpi_type]).to include('You need to add at least 1 segments for the selected capture mechanism')
     end
 
     it "should not return errors if capture_mechanism doesn't have segments quantity restrictions" do
       kpi = build(:kpi, kpi_type: 'number', capture_mechanism: 'decimal', company: company)
       kpi.save
       expect(kpi.persisted?).to be_truthy
-      expect(kpi.errors.full_messages).to be_empty
+      expect(kpi.errors[:kpi_type]).to be_empty
     end
   end
 

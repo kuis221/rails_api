@@ -1,8 +1,7 @@
-li id="brand_#{brand.id}" class="#{active_class(brand)}"
-  = link_to_if_permitted :show, Brand, brand_path(brand) do
-    span.details
-      b= brand.name
-  span.pull-right.tools
+div.resource-item id="brand_#{brand.id}" class="#{active_class(brand)}"
+  = link_to_if_permitted :show, Brand, brand_path(brand), class: 'resource-item-link' do
+    .text-large= brand.name
+  div.resource-item-actions
     = link_to '', edit_brand_path(brand), remote: true, title: 'Edit', class: 'icon-edit' if can?(:edit, Brand)
     - if can?(:deactivate, Brand)
       = link_to_deactivate brand

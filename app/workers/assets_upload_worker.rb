@@ -17,7 +17,7 @@ class AssetsUploadWorker
     Resque.enqueue(AssetsUploadWorker, asset_id, asset_class)
 
   # AWS connections sometimes fail, so let's retry it a few times before raising the error
-  rescue Errno::ECONNRESET, Net::ReadTimeout, Net::ReadTimeout => e
+  rescue Errno::ECONNRESET, Net::ReadTimeout, Net::OpenTimeout => e
     tries -= 1
     if tries > 0
       sleep(3)

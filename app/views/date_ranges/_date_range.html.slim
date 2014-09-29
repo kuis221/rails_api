@@ -1,10 +1,8 @@
-li id="date_range_#{date_range.id}" class="#{active_class(date_range)}"
-  = link_to_if_permitted :show, DateRange, date_range_path(date_range) do
-    span
-      b= date_range.name
-      span.description
-        = date_range.description
-  span.pull-right
+div.resource-item id="date_range_#{date_range.id}" class="#{active_class(date_range)}"
+  = link_to_if_permitted :show, DateRange, date_range_path(date_range), class: 'resource-item-link' do
+    .text-large= date_range.name
+    .crop-text= date_range.description
+  div.resource-item-actions
     = link_to '', edit_date_range_path(date_range), remote: true, class: 'icon-edit' if can?(:edit, DateRange)
     - if can?(:deactivate, DateRange)
       = link_to_deactivate date_range

@@ -1,8 +1,5 @@
 - remote ||= false
 = simple_nested_form_for([@campaign, resource], remote: remote || false) do |f|
-  = f.error_notification
-
-  #kpi_errors.alert.alert-error.hidden
 
   .form-inputs
     - if resource.out_of_the_box?
@@ -10,7 +7,7 @@
     - else
       = render partial: 'custom', locals: { f: f }
 
-  .form-actions.pull-left
+  .form-actions
     = f.button :submit, class: 'btn-primary', data: {disable_with: 'Please wait...'}
     = "&nbsp;".html_safe
     = f.button :button, 'Cancel', id: 'btn-cancel-kpi', class: 'btn-cancel'

@@ -1,18 +1,16 @@
-li id="campaign_#{campaign.id}" class="#{active_class(campaign)}"
-  = link_to_if_permitted :read, Campaign, campaign_path(campaign) do
-    span.details
-      b= campaign.name
-      span.description
+div.resource-item id="campaign_#{campaign.id}" class="#{active_class(campaign)}"
+  = link_to_if_permitted :read, Campaign, campaign_path(campaign), class: 'resource-item-link' do
+    .span6
+      span.text-large= campaign.name
+      .crop-text
         = campaign.description
-    span.first
-      = format_date campaign.first_event_at
-      br>/
+    .span3.first
+      .date= format_date campaign.first_event_at
       | First event
-    span.last
-      = format_date campaign.last_event_at
-      br>/
+    .span3.last
+      .date= format_date campaign.last_event_at
       | Last event
-  span.pull-right
+  div.resource-item-actions
     = link_to '', edit_campaign_path(campaign), remote: true, class: 'icon-edit' if can?(:edit, Campaign)
     - if can?(:deactivate, Campaign)
       = link_to_deactivate campaign

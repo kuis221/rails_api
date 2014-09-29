@@ -7,7 +7,6 @@ feature 'Events section' do
   let(:company_user) { user.company_users.first }
   let(:place) { create(:place, name: 'A Nice Place', country: 'CR', city: 'Curridabat', state: 'San Jose') }
   let(:permissions) { [] }
-  let(:event) { create(:event, campaign: campaign, company: company) }
 
   before do
     Warden.test_mode!
@@ -17,12 +16,7 @@ feature 'Events section' do
   after { Warden.test_reset! }
 
   shared_examples_for 'a user that can attach expenses to events' do
-    let(:event) do
-      create(:event,
-                         start_date: '08/21/2013', end_date: '08/21/2013',
-                         start_time: '10:00am', end_time: '11:00am',
-                         campaign: campaign, active: true, place: place)
-    end
+    let(:event) { create(:due_event, campaign: campaign, place: place) }
 
     before do
       Kpi.create_global_kpis
@@ -57,7 +51,7 @@ feature 'Events section' do
         expect(asset.file_file_name).to eql 'file.pdf'
 
         # Test user can preview and download the receipt
-        hover_and_click '#expenses-list li[id^="event_expense"]', 'View Receipt'
+        hover_and_click '#expenses-list [id^="event_expense"]', 'View Receipt'
 
         within visible_modal do
           src = asset.file.url(:thumbnail, timestamp: false)

@@ -1,11 +1,13 @@
 module DocumentsHelper
   def document_icon(file_extension)
     icon_folder = 'file-types/32px/'
-    icon_filename = icon_folder + file_extension.to_s + '.png'
+    file_extension = file_extension.to_s.downcase
+    file_extension = 'jpg' if file_extension == 'jpeg'
+    icon_filename = icon_folder + file_extension + '.png'
     unless File.exist?("#{Rails.root}/app/assets/images/#{icon_filename}")
       icon_filename = icon_folder + '_blank.png'
     end
-    image_tag(icon_filename)
+    image_tag(icon_filename, class: 'document-icon')
   end
 
   def document_type(document)

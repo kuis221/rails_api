@@ -51,8 +51,8 @@ feature 'Users', js: true do
       user = create(:user, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: @company.id)
       Sunspot.commit
       visit company_users_path
-      within('ul#users-list') do
-        hover_and_click "li#company_user_#{user.company_users.first.id}", 'Deactivate'
+      within resource_item list: '#users-list' do
+        click_js_link 'Deactivate'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this user?'
@@ -60,11 +60,12 @@ feature 'Users', js: true do
       # Make it show only the inactive elements
       filter_section('ACTIVE STATE').unicheck('Inactive')
       filter_section('ACTIVE STATE').unicheck('Active')
-      within('ul#users-list') do
+      within resource_item list: '#users-list' do
         expect(page).to have_content('Pedro Navaja')
-        hover_and_click 'li:nth-child(1)', 'Activate'
-        expect(page).to have_no_content('Pedro Navaja')
+        click_js_link 'Activate'
       end
+
+      expect(page).to have_no_content('Pedro Navaja')
     end
   end
 
@@ -133,11 +134,13 @@ feature 'Users', js: true do
 
       within visible_modal do
         fill_in 'place-search-box', with: 'San'
-        expect(page).to have_selector("li#area-#{area.id}")
-        expect(page).to have_no_selector("li#area-#{area2.id}")
+        expect(page).to have_selector("#area-#{area.id}")
+        expect(page).to have_no_selector("#area-#{area2.id}")
         expect(page).to have_content('San Francisco Area')
         expect(page).to have_no_content('Los Angeles Area')
-        find("#area-#{area.id}").click_js_link('Add Area')
+        within resource_item area do
+          click_js_link('Add Area')
+        end
         expect(page).to have_no_selector("#area-#{area.id}") # The area was removed from the available areas list
       end
       close_modal

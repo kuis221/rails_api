@@ -1,47 +1,46 @@
 - if event.event_data.present?
-  li id="event_data_#{event.id}"
-    = link_to_if_permitted(:show, Event, event_path(event.id), id: "event-link-#{event.id}") do
-      .event-data-row
-        span.event-info
-          b= event.campaign_name
-          br>/
-          .clean-date
-            = format_date_range(event_date(event, :start_at), event_date(event, :end_at), date_separator: ' ')
-          = place_address(event.place, false, ', ', ', ')
-        .results-box-container
-          span.event-data-column.promo-hours-box
-            = number_with_precision(event.promo_hours, precision: 1)
-          span.event-data-column.impressions-box
-            - if event.event_data.impressions.present?
-              = number_with_delimiter(event.event_data.impressions)
-          span.event-data-column.interactions-box
-            - if event.event_data.interactions.present?
-              = number_with_delimiter(event.event_data.interactions)
-          span.event-data-column.samples-box
-            - if event.event_data.samples.present?
-              = number_with_delimiter(event.event_data.samples)
-          span.event-data-column.spent-box
-            - if event.event_data.spent.present?
-              = number_to_currency(event.event_data.spent)
-          span.event-data-column.gender-female-box
-            - if event.event_data.gender_female.present? && event.event_data.gender_male.present?
-              = number_to_percentage(event.event_data.gender_female, precision: 0)
-          span.event-data-column.gender-female-box
-            - if event.event_data.gender_male.present?
-              = number_to_percentage(event.event_data.gender_male, precision: 0)
-          span.event-data-column.ethnicity-asian-box
-            - if event.event_data.ethnicity_asian.present?
-              = number_to_percentage(event.event_data.ethnicity_asian, precision: 0)
-          span.event-data-column.ethnicity-black-box
-            - if event.event_data.ethnicity_black.present?
-              = number_to_percentage(event.event_data.ethnicity_black, precision: 0)
-          span.event-data-column.ethnicity-hispanic-box
-            - if event.event_data.ethnicity_hispanic.present?
-              = number_to_percentage(event.event_data.ethnicity_hispanic, precision: 0)
-          span.event-data-column.ethnicity-native-american-box
-            - if event.event_data.ethnicity_native_american.present?
-              = number_to_percentage(event.event_data.ethnicity_native_american, precision: 0)
-          span.event-data-column.ethnicity-white-box
-            - if event.event_data.ethnicity_white.present?
-              = number_to_percentage(event.event_data.ethnicity_white, precision: 0)
+  div.resource-item id="event_data_#{event.id}"
+    = link_to_if_permitted(:show, Event, event_path(event.id), id: "event-link-#{event.id}", class: 'resource-item-link event-data-row') do
+      span.event-info
+        b= event.campaign_name
+        br>/
+        .clean-date
+          = format_date_range(event_date(event, :start_at), event_date(event, :end_at), date_separator: ' ')
+        = place_address(event.place, false, ', ', ', ')
+      .results-box-container
+        span.event-data-column.promo-hours-box
+          = number_with_precision(event.promo_hours, precision: 1)
+        span.event-data-column.impressions-box
+          - if event.event_data.impressions.present?
+            = number_with_delimiter(event.event_data.impressions)
+        span.event-data-column.interactions-box
+          - if event.event_data.interactions.present?
+            = number_with_delimiter(event.event_data.interactions)
+        span.event-data-column.samples-box
+          - if event.event_data.samples.present?
+            = number_with_delimiter(event.event_data.samples)
+        span.event-data-column.spent-box
+          - if event.event_data.spent.present?
+            = number_to_currency(event.event_data.spent)
+        span.event-data-column.gender-female-box
+          - if event.event_data.gender_female.present? && event.event_data.gender_male.present?
+            = number_to_percentage(event.event_data.gender_female, precision: 0)
+        span.event-data-column.gender-female-box
+          - if event.event_data.gender_male.present?
+            = number_to_percentage(event.event_data.gender_male, precision: 0)
+        span.event-data-column.ethnicity-asian-box
+          - if event.event_data.ethnicity_asian.present?
+            = number_to_percentage(event.event_data.ethnicity_asian, precision: 0)
+        span.event-data-column.ethnicity-black-box
+          - if event.event_data.ethnicity_black.present?
+            = number_to_percentage(event.event_data.ethnicity_black, precision: 0)
+        span.event-data-column.ethnicity-hispanic-box
+          - if event.event_data.ethnicity_hispanic.present?
+            = number_to_percentage(event.event_data.ethnicity_hispanic, precision: 0)
+        span.event-data-column.ethnicity-native-american-box
+          - if event.event_data.ethnicity_native_american.present?
+            = number_to_percentage(event.event_data.ethnicity_native_american, precision: 0)
+        span.event-data-column.ethnicity-white-box
+          - if event.event_data.ethnicity_white.present?
+            = number_to_percentage(event.event_data.ethnicity_white, precision: 0)
     .clearfix

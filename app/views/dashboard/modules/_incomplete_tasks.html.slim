@@ -8,17 +8,15 @@
   #dasboard-tasks-content.details_box.tab-content
     #my-incomplete-tasks.tab-pane.active
       h3 INCOMPLETE TASKS
-      .link-list
-        ul#my-tasks-list
-          = render my_incomplete_tasks
+      #my-tasks-list.resource-list
+        = render my_incomplete_tasks
       .pull-right
         = link_to events_path, class: 'btn btn-info' do
           = "View All"
           i class="icon-angle-right"
     #team-incomplete-tasks.tab-pane
       h3 INCOMPLETE TASKS
-      .link-list
-        ul#team-tasks-list
+      #team-tasks-list.resource-list
           = render team_incomplete_tasks
       .pull-right
         = link_to events_path, class: 'btn btn-info' do

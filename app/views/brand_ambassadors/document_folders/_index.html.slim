@@ -22,16 +22,15 @@
   = button_to 'Upload', url_for(controller: 'brand_ambassadors/documents', action: :new, "#{parent.class.name.underscore.split('/').last}_id" => parent.to_param, folder_id: params[:parent_id], format: :js), class: 'btn btn-primary', title: 'Add Documents', remote: true, method: :get if can? :create,  BrandAmbassadors::Document
   = link_to 'New Folder', "#new-folder-form", class: 'btn', 'data-toggle' => 'collapse' if can? :create,  BrandAmbassadors::Document
 
-  .link-list.documents-list
-    ul#documents-list
-      li#new-folder-form.collapse
-        a.icon-close.pull-right href="#new-folder-form"  data-toggle="collapse"
-        = simple_form_for [@visit || :brand_ambassadors, DocumentFolder.new(parent_id: params[:parent_id])], remote: true do |f|
-          = f.input :parent_id, as: :hidden, wrapper: false, label: false
-          span.icon-folder
-          = f.input :name, label: false, :input_html => {placeholder: 'Please name your folder'}
+  .resource-list.documents-list#documents-list
+    div#new-folder-form.collapse
+      a.icon-close.pull-right href="#new-folder-form"  data-toggle="collapse"
+      = simple_form_for [@visit || :brand_ambassadors, DocumentFolder.new(parent_id: params[:parent_id])], remote: true do |f|
+        = f.input :parent_id, as: :hidden, wrapper: false, label: false
+        span.icon-folder
+        = f.input :name, label: false, :input_html => {placeholder: 'Please name your folder'}
 
-      = render children
+    = render children
 
 javascript:
   $(document).off('documents:change.docs').on('documents:change.docs', function(e){

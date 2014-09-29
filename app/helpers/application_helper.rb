@@ -227,9 +227,11 @@ module ApplicationHelper
   end
 
   def link_to_if_permitted(permission_action, subject_class, options, html_options = {}, &block)
-    name = capture(&block)
+    content = capture(&block)
     allowed = current_company_user.role.has_permission?(permission_action, subject_class)
-    link_to_if allowed, name, options, html_options
+    link_to_if allowed, content, options, html_options do
+      content_tag(:div, content, html_options)
+    end
   end
 
   def campaigns_list_for_dropdown

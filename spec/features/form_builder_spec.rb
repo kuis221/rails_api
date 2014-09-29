@@ -1273,7 +1273,7 @@ feature 'Campaign Form Builder', js: true do
       # Now test the removal of the KPI from the list
       open_tab 'KPIs'
 
-      within '.kpis-list' do
+      within resource_item 1, list: '.kpis-list' do
         expect(page).to have_content 'My Custom KPI'
         click_js_link 'Remove'
       end

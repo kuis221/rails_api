@@ -23,19 +23,8 @@ $.widget 'nmk.formBuilder', {
 		@wrapper.find('.form-builder-actions').affix
 			offset: {
 				top: () =>
-					@formWrapper.offset().top - (parseInt($('#resource-close-details').css('top'),10) + $('#resource-close-details').outerHeight())
+					@formWrapper.offset().top - (parseInt($('#resource-close-details').css('top'),10) - 3 + $('#resource-close-details').outerHeight())
 			}
-
-		$(window).on 'resize scroll', () =>
-			@wrapper.find('.form-builder-actions:not(.affix)').each (index, bar) =>
-				$(bar).css
-					width: (@formWrapper.outerWidth() - parseInt($(bar).css('padding-left')) - parseInt($(bar).css('padding-right'))),
-					top: '0'
-
-			@wrapper.find('.form-builder-actions.affix').each (index, bar) =>
-				$(bar).css
-					width: (@formWrapper.outerWidth() - parseInt($(bar).css('padding-left')) - parseInt($(bar).css('padding-right'))),
-					top: (parseInt($('#resource-close-details').css('top')) + $('#resource-close-details').height())+'px'
 
 		$(window).resize()
 

@@ -108,7 +108,7 @@ feature 'Dashboard', search: true, js: true do
         Timecop.travel(Time.zone.local(2014, 01, 14, 12, 00)) do
           visit root_path
           within upcoming_events_module do
-            expect(all('li').count).to eql 3
+            expect(all('.resource-item').count).to eql 3
             expect(page).to have_content('Jameson + Kahlua Rum Campaign')
             expect(page).to have_content('Mama Walker\'s + Martel Campaign')
             expect(page).to have_content('Paddy Irish Whiskey Campaign')
@@ -175,8 +175,8 @@ feature 'Dashboard', search: true, js: true do
           # The 14 should appear selected in the calendar
           expect(page).to have_selector('a.datepick-event.datepick-selected', text: 14)
 
-          within('ul#events-list') do
-            expect(all('li').count).to be 2
+          within('#events-list') do
+            expect(all('.resource-item').count).to be 2
             expect(page).to have_content('Jameson + Kahlua Rum Campaign')
             expect(page).to have_content('Paddy Irish Whiskey Campaign')
           end
@@ -198,8 +198,8 @@ feature 'Dashboard', search: true, js: true do
           # The 14 should appear selected in the calendar
           expect(page).to have_selector('a.datepick-event.datepick-selected', text: 14)
 
-          within('ul#events-list') do
-            expect(all('li').count).to be 1
+          within('#events-list') do
+            expect(all('.resource-item').count).to be 1
             expect(page).to have_content('Paddy Irish Whiskey Campaign')
           end
         end

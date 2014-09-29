@@ -23,7 +23,7 @@
     h3 BRANDS
     #brands-list
       = render 'brands'
-    = link_to "", select_brands_brand_portfolio_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Brand'  if can?(:edit, resource)
+    = button_to_add 'Add Brand', select_brands_brand_portfolio_path(resource) if can?(:edit, resource)
 
 = render partial: 'help_tutorial'
 

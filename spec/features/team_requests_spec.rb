@@ -20,19 +20,17 @@ feature 'Teams', js: true do
 
       visit teams_path
 
-      within('ul#teams-list') do
-        # First Row
-        within('li:nth-child(1)') do
-          expect(page).to have_content('Costa Rica Team')
-          expect(page).to have_selector('span.members>b', text: '3')
-          expect(page).to have_content('el grupo de ticos')
-        end
-        # Second Row
-        within('li:nth-child(2)') do
-          expect(page).to have_content('San Francisco Team')
-          expect(page).to have_selector('span.members>b', text: '2')
-          expect(page).to have_content('the guys from SF')
-        end
+      # First Row
+      within resource_item 1 do
+        expect(page).to have_content('Costa Rica Team')
+        expect(page).to have_text('3 Members')
+        expect(page).to have_content('el grupo de ticos')
+      end
+      # Second Row
+      within resource_item 2 do
+        expect(page).to have_content('San Francisco Team')
+        expect(page).to have_text('2 Members')
+        expect(page).to have_content('the guys from SF')
       end
     end
 
@@ -42,26 +40,24 @@ feature 'Teams', js: true do
 
       visit teams_path
 
-      within('ul#teams-list') do
+      within resource_item do
         expect(page).to have_content('Costa Rica Team')
-        hover_and_click 'li', 'Deactivate'
+        click_js_link 'Deactivate'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this team?'
 
-      within('ul#teams-list') do
-        expect(page).to have_no_content('Costa Rica Team')
-      end
+      expect(page).to have_no_content('Costa Rica Team')
 
       # Make it show only the inactive elements
       filter_section('ACTIVE STATE').unicheck('Inactive')
       filter_section('ACTIVE STATE').unicheck('Active')
 
-      within('ul#teams-list') do
+      within resource_item do
         expect(page).to have_content('Costa Rica Team')
-        hover_and_click 'li', 'Activate'
-        expect(page).to have_no_content('Costa Rica Team')
+        click_js_link 'Activate'
       end
+      expect(page).to have_no_content('Costa Rica Team')
     end
 
     scenario 'allows the user to create a new team' do
@@ -93,8 +89,12 @@ feature 'Teams', js: true do
     scenario 'diplays a list of users within the team details page' do
       team = create(:team, company_id: company.id)
       users = [
-        create(:user, first_name: 'First1', last_name: 'Last1', company_id: company.id, role_id: create(:role, company: company, name: 'Brand Manager').id, city: 'Miami', state: 'FL', country: 'US', email: 'user1@example.com'),
-        create(:user, first_name: 'First2', last_name: 'Last2', company_id: company.id, role_id: create(:role, company: company, name: 'Staff').id, city: 'Brooklyn', state: 'NY', country: 'US', email: 'user2@example.com')
+        create(:user, first_name: 'First1', last_name: 'Last1', company_id: company.id,
+               role_id: create(:role, company: company, name: 'Brand Manager').id,
+               city: 'Miami', state: 'FL', country: 'US', email: 'user1@example.com'),
+        create(:user, first_name: 'First2', last_name: 'Last2', company_id: company.id,
+               role_id: create(:role, company: company, name: 'Staff').id,
+               city: 'Brooklyn', state: 'NY', country: 'US', email: 'user2@example.com')
       ]
       users.each { |u| u.company_users.each { |cu |team.users << cu.reload } }
       Sunspot.commit
@@ -161,7 +161,8 @@ feature 'Teams', js: true do
       click_js_link('Add Team Member')
 
       within visible_modal do
-        find("#staff-member-user-#{company_user.id}").click_js_link('Add')
+        find("#staff-member-user-#{company_user.id}").hover
+        click_js_link('Add')
       end
 
       close_modal

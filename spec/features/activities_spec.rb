@@ -105,7 +105,7 @@ feature 'Activities management' do
 
       ensure_modal_was_closed
 
-      within('#activities-list li') do
+      within resource_item do
         expect(page).to have_content('Juanito Bazooka')
         expect(page).to have_content('THU May 16')
         expect(page).to have_content('Activity Type #1')
@@ -149,7 +149,7 @@ feature 'Activities management' do
 
       ensure_modal_was_closed
 
-      within('#activities-list li') do
+      within resource_item do
         expect(page).to have_content('Juanito Bazooka')
         expect(page).to have_content('THU May 16')
         expect(page).to have_content('Activity Type #1')
@@ -199,11 +199,11 @@ feature 'Activities management' do
 
       ensure_modal_was_closed
 
-      within('#activities-list li') do
+      within resource_item do
         expect(page).to have_content('Juanito Bazooka')
         expect(page).to have_content('THU May 16')
         expect(page).to have_content('Activity Type #1')
-        click_js_link('Deactivate')
+        click_js_link 'Deactivate'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this activity?'
@@ -215,9 +215,12 @@ feature 'Activities management' do
 
     scenario 'user can insert data for percentage fields' do
       activity_type = create(:activity_type, name: 'Activity Type #1', company: company)
-      form_field = create(:form_field,
-                                      fieldable: activity_type, type: 'FormField::Percentage',
-                                      options: [create(:form_field_option, name: 'Option 1', ordering: 0), create(:form_field_option, name: 'Option 2', ordering: 1)])
+      create(:form_field,
+             fieldable: activity_type,
+             type: 'FormField::Percentage',
+             options: [
+               create(:form_field_option, name: 'Option 1', ordering: 0),
+               create(:form_field_option, name: 'Option 2', ordering: 1)])
 
       campaign.activity_types << activity_type
 
@@ -235,7 +238,7 @@ feature 'Activities management' do
       end
       ensure_modal_was_closed
 
-      within('#activities-list li') do
+      within resource_item do
         expect(page).to have_content(user.name)
         expect(page).to have_content('THU May 16')
         expect(page).to have_content('Activity Type #1')
@@ -250,8 +253,7 @@ feature 'Activities management' do
 
     scenario 'user can attach a photo to an activity' do
       activity_type = create(:activity_type, name: 'Activity Type #1', company: company)
-      form_field = create(:form_field,
-                                      fieldable: activity_type, type: 'FormField::Photo')
+      create(:form_field, fieldable: activity_type, type: 'FormField::Photo')
 
       campaign.activity_types << activity_type
 
@@ -281,7 +283,7 @@ feature 'Activities management' do
         end
         ensure_modal_was_closed
 
-        within('#activities-list li') do
+        within resource_item do
           expect(page).to have_content(user.name)
           expect(page).to have_content('THU May 16')
           expect(page).to have_content('Activity Type #1')
@@ -293,7 +295,7 @@ feature 'Activities management' do
         expect(photo.file_file_name).to eql 'photo.jpg'
 
         # Change the photo
-        within('#activities-list li') do
+        within resource_item do
           click_js_link('Edit')
         end
         within visible_modal do
@@ -309,7 +311,7 @@ feature 'Activities management' do
         end
         ensure_modal_was_closed
 
-        within('#activities-list li') do
+        within resource_item do
           click_js_link('Activity Details')
         end
         expect(page).to have_selector('h2', text: 'Activity Type #1')
@@ -322,8 +324,7 @@ feature 'Activities management' do
 
     scenario 'user can attach a document to an activity' do
       activity_type = create(:activity_type, name: 'Activity Type #1', company: company)
-      form_field = create(:form_field,
-                                      fieldable: activity_type, type: 'FormField::Attachment')
+      create(:form_field, fieldable: activity_type, type: 'FormField::Attachment')
 
       campaign.activity_types << activity_type
 
@@ -349,7 +350,7 @@ feature 'Activities management' do
         end
         ensure_modal_was_closed
 
-        within('#activities-list li') do
+        within resource_item do
           expect(page).to have_content(user.name)
           expect(page).to have_content('THU May 16')
           expect(page).to have_content('Activity Type #1')
@@ -360,7 +361,7 @@ feature 'Activities management' do
         expect(photo.attachable).to be_a FormFieldResult
         expect(photo.file_file_name).to eql 'file.pdf'
 
-        within('#activities-list li') do
+        within resource_item do
           click_js_link('Activity Details')
         end
         expect(page).to have_selector('h2', text: 'Activity Type #1')
@@ -372,7 +373,7 @@ feature 'Activities management' do
         visit event_path(event)
 
         # Remove the file
-        within('#activities-list li') do
+        within resource_item do
           click_js_link('Edit')
         end
         expect do
@@ -390,9 +391,11 @@ feature 'Activities management' do
     end
 
     scenario 'activities from events should be displayed within the venue' do
-      event_activity = create(:activity,
-                                          company_user: company_user, activitable: event,
-                                          activity_type: create(:activity_type, name: 'Test ActivityType', company: company, campaign_ids: [campaign.id]))
+      create(:activity,
+             company_user: company_user, activitable: event,
+             activity_type: create(:activity_type,
+                                   name: 'Test ActivityType',
+                                   company: company, campaign_ids: [campaign.id]))
 
       visit venue_path(event.venue)
 
@@ -423,7 +426,9 @@ feature 'Activities management' do
 
       visit venue_path(venue)
 
-      hover_and_click("#activities-list #activity_#{activity.id}", 'Edit')
+      within resource_item do
+        click_js_link 'Edit'
+      end
 
       within visible_modal do
         select_from_chosen('Juanito Bazooka', from: 'User')
@@ -433,7 +438,7 @@ feature 'Activities management' do
 
       ensure_modal_was_closed
 
-      within('#activities-list li') do
+      within resource_item do
         expect(page).to have_content('Juanito Bazooka')
         expect(page).to have_content('THU May 16')
         expect(page).to have_content('Activity Type #1')

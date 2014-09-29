@@ -21,10 +21,7 @@
           button.btn.download.xlsx-download-link data-url="#{results_expenses_path(format: "xls")}" title="Download" data-disable-with="..."
            span.icon-download
       #expenses-totals
-      .link-list
-        ul#expenses-list
-          li.placeholder
-            p Select any filter to see results
+      #expenses-list.resource-list.no-top-margin.without-actions
 
 = render partial: 'help_tutorial'
 
@@ -52,11 +49,10 @@ javascript:
       }
     },
     'onItemsChange': function(response, page){
-      if ($('#expenses-list li').length > 0) {
+      if ($('#expenses-list .resource-item').length > 0) {
         $('#list-tools').show();
       } else {
         $('#list-tools').hide();
-        $('#expenses-list').append("<li class='placeholder'><p>No results. Select other filters to see results</p></li>");
       }
     }
   });

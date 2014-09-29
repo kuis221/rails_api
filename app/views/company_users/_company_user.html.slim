@@ -1,21 +1,20 @@
-li id="company_user_#{company_user.id}" class="#{active_class(company_user)}"
-  = link_to_if_permitted :show, CompanyUser, company_user_path(company_user) do
-    span.user_name
-      b= company_user.full_name
-      br>/
+div.resource-item id="company_user_#{company_user.id}" class="#{active_class(company_user)}"
+  = link_to_if_permitted :show, CompanyUser, company_user_path(company_user), class: 'resource-item-link' do
+    .span3
+      .text-large= company_user.full_name
       = company_user.role_name
-    span.user_city
+    .span3
       = [company_user.city, company_user.state].join(', ')
       br>/
       = [company_user.country_name].join(', ')
-    span.user_mail
+    .span3
       = company_user.email
     - unless company_user.last_activity_at.nil?
-      span.user_date
+    .span3
         = time_ago_in_words(company_user.last_activity_at)
         br>/
         | Last activity
-  span.pull-right.tools
+  div.resource-item-actions
     = link_to '', edit_company_user_path(company_user), remote: true, class: 'icon-edit' if can?(:edit, company_user)
     - if can?(:deactivate, CompanyUser)
       = link_to_deactivate company_user

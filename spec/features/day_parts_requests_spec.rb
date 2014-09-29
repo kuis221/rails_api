@@ -1,13 +1,13 @@
 require 'rails_helper'
 
 feature 'DayParts', js: true do
+  let(:user) { create(:user, company: company, role_id: create(:role).id) }
+  let(:company) { create(:company) }
+  let(:company_user) { user.company_users.first }
 
   before do
     Warden.test_mode!
-    @user = create(:user, company_id: create(:company).id, role_id: create(:role).id)
-    @company = @user.companies.first
-    sign_in @user
-    allow_any_instance_of(Place).to receive(:fetch_place_data).and_return(true)
+    sign_in user
   end
 
   after do
@@ -16,51 +16,48 @@ feature 'DayParts', js: true do
 
   feature '/day_parts', search: true do
     scenario 'GET index should display a table with the day_parts' do
-      day_parts = [
-        create(:day_part, company: @company, name: 'Morningns', description: 'From 8 to 11am', active: true),
-        create(:day_part, company: @company, name: 'Afternoons', description: 'From 1 to 6pm', active: true)
-      ]
+      create(:day_part, company: company,
+             name: 'Morningns', description: 'From 8 to 11am', active: true)
+      create(:day_part, company: company,
+             name: 'Afternoons', description: 'From 1 to 6pm', active: true)
       Sunspot.commit
       visit day_parts_path
 
-      within('ul#day_parts-list') do
-        # First Row
-        within('li:nth-child(1)') do
-          expect(page).to have_content('Afternoons')
-          expect(page).to have_content('From 1 to 6pm')
-        end
-        # Second Row
-        within('li:nth-child(2)') do
-          expect(page).to have_content('Morningns')
-          expect(page).to have_content('From 8 to 11am')
-        end
+      # First Row
+      within resource_item 1, list: '#day_parts-list' do
+        expect(page).to have_content('Afternoons')
+        expect(page).to have_content('From 1 to 6pm')
+      end
+
+      # Second Row
+      within resource_item 2, list: '#day_parts-list' do
+        expect(page).to have_content('Morningns')
+        expect(page).to have_content('From 8 to 11am')
       end
     end
 
     scenario 'should allow user to activate/deactivate Day Parts' do
-      create(:day_part, company: @company, name: 'Morning', active: true)
+      create(:day_part, company: company, name: 'Morning', active: true)
       Sunspot.commit
       visit day_parts_path
 
-      within('ul#day_parts-list') do
+      within resource_item do
         click_js_link('Deactivate')
       end
 
       confirm_prompt 'Are you sure you want to deactivate this day part?'
 
-      within('ul#day_parts-list') do
-        expect(page).to have_no_content('Morning')
-      end
+      expect(page).to have_no_content('Morning')
 
       # Make it show only the inactive elements
       filter_section('ACTIVE STATE').unicheck('Inactive')
       filter_section('ACTIVE STATE').unicheck('Active')
 
-      within('ul#day_parts-list') do
+      within resource_item do
         expect(page).to have_content('Morning')
         click_js_link('Activate')
-        expect(page).to have_no_content('Morning')
       end
+      expect(page).to have_no_content('Morning')
     end
 
     scenario 'allows the user to create a new day part' do
@@ -83,18 +80,18 @@ feature 'DayParts', js: true do
 
   feature '/day_parts/:day_part_id' do
     scenario 'GET show should display the day_part details page' do
-      day_part = create(:day_part, company: @company, name: 'Some day part', description: 'a day part description')
+      day_part = create(:day_part, company: company, name: 'Some day part', description: 'a day part description')
       visit day_part_path(day_part)
       expect(page).to have_selector('h2', text: 'Some day part')
       expect(page).to have_selector('div.description-data', text: 'a day part description')
     end
 
     scenario 'diplays a table of dates within the day part' do
-      day_part = create(:day_part, company: @company,
-                                               day_items: [
-                                                 create(:day_item, start_time: '12:00pm', end_time: '4:00pm'),
-                                                 create(:day_item, start_time: '1:00pm', end_time: '3:00pm')
-                                               ]
+      day_part = create(:day_part, company: company,
+                                   day_items: [
+                                     create(:day_item, start_time: '12:00pm', end_time: '4:00pm'),
+                                     create(:day_item, start_time: '1:00pm', end_time: '3:00pm')
+                                   ]
       )
       visit day_part_path(day_part)
       within('#day-part-days-list') do
@@ -108,7 +105,7 @@ feature 'DayParts', js: true do
     end
 
     scenario 'allows the user to activate/deactivate a day part' do
-      day_part = create(:day_part, company: @company, active: true)
+      day_part = create(:day_part, company: company, active: true)
       visit day_part_path(day_part)
       find('.links-data').click_js_link('Deactivate')
 
@@ -118,7 +115,7 @@ feature 'DayParts', js: true do
     end
 
     scenario 'allows the user to edit the day_part' do
-      day_part = create(:day_part, name: 'Old name', company: @company)
+      day_part = create(:day_part, name: 'Old name', company: company)
       visit day_part_path(day_part)
 
       expect(page).to have_content('Old name')
@@ -136,8 +133,7 @@ feature 'DayParts', js: true do
     end
 
     scenario 'allows the user to add and remove date items to the day part' do
-      day_part = create(:day_part, company: @company)
-      date_item = create(:date_item) # Create the date_item to be added
+      day_part = create(:day_part, company: company)
       visit day_part_path(day_part)
 
       click_js_link('Add Time')

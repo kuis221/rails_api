@@ -1,14 +1,15 @@
 #event-expenses-container
   = link_to 'Add Expense', new_event_event_expense_path(resource), remote: true, class: 'btn btn-primary' if can?(:create_expense, resource)
 
-  .link-list.expenses-gallery
-    ul#expenses-list
-	    = render resource.event_expenses
-	    li.total-expenses
-			span.expenses
-		        span TOTAL:
-		        span
-		            b= number_to_currency(resource.event_expenses.map(&:amount).compact.sum, precision: 2)
+  .expenses-gallery
+    div#expenses-list.resource-list
+      = render resource.event_expenses
+      div.resource-item.total-expenses.text-large
+        .span10
+        .span2
+          .pull-left.text-large TOTAL:
+          .pull-right.text-large
+            b= number_to_currency(resource.event_expenses.map(&:amount).compact.sum, precision: 2)
 
 javascript:
 

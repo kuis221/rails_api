@@ -34,6 +34,10 @@ class Contact < ActiveRecord::Base
 
   validates_format_of :email, with: /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/, allow_blank: true, if: :email_changed?
 
+  before_validation do
+    self.country ||= 'US'
+  end
+
   searchable do
     integer :id
     integer :company_id

@@ -34,15 +34,15 @@ feature 'Reports', js: true do
   end
 
   scenario 'allows the user to activate/deactivate reports' do
-    create(:report, name: 'Events by Venue',
+    report = create(:report, name: 'Events by Venue',
       description: 'a resume of events by venue',
       active: true, company: @company)
 
     visit results_reports_path
 
-    within reports_list do
+    within resource_item report, list: reports_list do
       expect(page).to have_content('Events by Venue')
-      hover_and_click 'li', 'Deactivate'
+      click_link 'Deactivate'
     end
 
     confirm_prompt 'Are you sure you want to deactivate this report?'
@@ -59,9 +59,9 @@ feature 'Reports', js: true do
 
     visit results_reports_path
 
-    within reports_list do
+    within resource_item report, list: reports_list do
       expect(page).to have_content('My Report')
-      hover_and_click 'li', 'Edit'
+      click_link 'Edit'
     end
 
     within visible_modal do
@@ -71,8 +71,8 @@ feature 'Reports', js: true do
     end
 
     within reports_list do
-      expect(page).to have_selector('b', text: 'Edited Report Name')
-      expect(page).to have_selector('p', text: 'Edited Report Description')
+      expect(page).to have_text('Edited Report Name')
+      expect(page).to have_text('Edited Report Description')
     end
   end
 
@@ -785,7 +785,7 @@ feature 'Reports', js: true do
   end
 
   def reports_list
-    'ul#custom-reports-list'
+    '#custom-reports-list'
   end
 
   def report_fields

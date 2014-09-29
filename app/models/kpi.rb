@@ -350,7 +350,7 @@ class Kpi < ActiveRecord::Base
     # than the quantity permitted for the selected capture mechanism
     min_count = SEGMENTS_COUNT_MIN[capture_mechanism] if SEGMENTS_COUNT_MIN.key?(capture_mechanism)
     if min_count && kpis_segments.reject(&:marked_for_destruction?).count < min_count
-      errors.add :base, "You need to add at least #{min_count} segments for the selected capture mechanism"
+      errors.add :kpi_type, "You need to add at least #{min_count} segments for the selected capture mechanism"
     end
   end
 end

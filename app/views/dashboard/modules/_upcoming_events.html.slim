@@ -11,9 +11,8 @@
 
   .tab-content
     #list-view.tab-pane.active
-      .link-list
-        ul#events-list
-          = render upcoming_events_list
+      #events-list.resource-list
+        = render upcoming_events_list
 
     #calendar-view.tab-pane
       #calendar-canvas
