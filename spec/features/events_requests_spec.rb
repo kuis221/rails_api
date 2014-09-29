@@ -363,7 +363,7 @@ feature 'Events section' do
             create(:event, start_date: today.to_s(:slashes), end_date: today.to_s(:slashes), campaign: campaign2)
             create(:event, start_date: Date.today.beginning_of_week.to_s(:slashes), end_date: Date.today.beginning_of_week.to_s(:slashes), campaign: campaign2)
             create(:event, start_date: today.to_s(:slashes), end_date: today.to_s(:slashes), campaign: campaign3)
-            create(:event, start_date: Date.today.end_of_week.to_s(:slashes), end_date: Date.today.end_of_week.to_s(:slashes), campaign: campaign3)
+            create(:event, start_date: (Date.today.beginning_of_week + 5.days).to_s(:slashes), end_date: (Date.today.beginning_of_week + 5.days).to_s(:slashes), campaign: campaign3)
             Sunspot.commit
 
             visit events_path
@@ -375,7 +375,7 @@ feature 'Events section' do
               find_field('Start date').click
               select_and_fill_from_datepicker('custom_start_date', Date.today.beginning_of_week.to_s(:slashes))
               find_field('End date').click
-              select_and_fill_from_datepicker('custom_end_date', Date.today.end_of_week.to_s(:slashes))
+              select_and_fill_from_datepicker('custom_end_date', (Date.today.beginning_of_week + 5.days).to_s(:slashes))
               expect(page).to have_button('Apply', disabled: false)
               click_js_button 'Apply'
             end

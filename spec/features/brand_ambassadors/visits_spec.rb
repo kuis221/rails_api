@@ -95,9 +95,9 @@ feature 'Brand Ambassadors Visits' do
 
       expect(ListExport.last).to have_rows([
         ['START DATE', 'END DATE', 'EMPLOYEE', 'AREA', 'CITY', 'CAMPAIGN', 'TYPE'],
-        ['2014-09-18', '2014-09-19', 'Test User', 'My Area', 'New York', 'My Campaign', 'Market Visit'],
-        ['2014-09-20', '2014-09-21', 'Test User', 'My Area', 'New York', 'My Campaign', 'Brand Program'],
-        ["2014-09-22", "2014-09-23", "Test User", nil, nil, "My Campaign", "PTO"]
+        ['2014-09-18T00:00', '2014-09-19T00:00', 'Test User', 'My Area', 'New York', 'My Campaign', 'Market Visit'],
+        ['2014-09-20T00:00', '2014-09-21T00:00', 'Test User', 'My Area', 'New York', 'My Campaign', 'Brand Program'],
+        ["2014-09-22T00:00", "2014-09-23T00:00", "Test User", nil, nil, "My Campaign", "PTO"]
       ])
     end
 
