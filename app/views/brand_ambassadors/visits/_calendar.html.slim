@@ -70,6 +70,13 @@ javascript:
             "<span class='user-name'>" + visit.company_user.full_name + "</span>" +
             (visit.city ? " - <span class='city-name'>" + visit.city + "</span>" : '')
           );
+        },
+        eventAfterAllRender: function( view ) {
+          $("div.fc-widget-header").affix({
+              offset: {
+                top: 170
+            }
+          });
         }
       });
   },
