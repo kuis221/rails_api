@@ -34,7 +34,7 @@
   .tab-content
     - if can?(:list, BrandAmbassadors::Visit)
       #visits-scoller-outer.tab-pane.active
-        div#visits-list.resource-list
+        div#visits-list.resource-list.no-top-margin
 
     - if can?(:calendar, BrandAmbassadors::Visit)
       #calendar-view.tab-pane
