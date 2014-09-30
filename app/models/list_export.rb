@@ -103,17 +103,17 @@ class ListExport < ActiveRecord::Base
   end
 
   def build_file_from_html(html, name)
-    self.file_file_name = name
     if export_format == 'pdf'
       build_pdf_file(html)
     else
       build_xlsx_file(html)
     end
+    self.file_file_name = name
   end
 
   def build_xlsx_file(html)
     self.file = StringIO.new(html)
-    self.file_content_type = 'application/pdf'
+    self.file_content_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
   end
 
   # Builds a PDF file from an
