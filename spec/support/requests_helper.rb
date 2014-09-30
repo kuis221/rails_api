@@ -119,7 +119,8 @@ module CapybaraBrandscopicHelpers
   def select_and_fill_from_datepicker(_name, date)
     date = date.to_s(:slashes) if date.class.in?([Time, DateTime, Date])
     (month, day, year) = date.split('/')
-    find(:xpath, "//td[@data-year='#{year}' and @data-month='#{month.to_i - 1}']", text: day.to_i.to_s).click_js_link(day.to_i)
+    day = day.to_i.to_s
+    find(:xpath, "//td[@data-year='#{year}' and @data-month='#{month.to_i - 1}']", text: day).click_js_link(day)
   end
 
   def unicheck(option)

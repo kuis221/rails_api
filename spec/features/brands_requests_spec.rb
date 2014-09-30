@@ -45,7 +45,7 @@ feature 'Brands', js: true do
 
       confirm_prompt 'Are you sure you want to deactivate this brand?'
 
-      within('ul#brands-list') do
+      within('#brands-list') do
         expect(page).to have_no_content('Brand 1')
       end
 

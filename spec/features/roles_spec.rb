@@ -17,17 +17,15 @@ feature 'Roles', js: true do
 
       visit roles_path
 
-      within('ul#roles-list') do
-        # First Row
-        within('li:nth-child(1)') do
-          expect(page).to have_content('Buenos Aires Role')
-          expect(page).to have_content('the guys from BAs')
-        end
-        # Second Row
-        within('li:nth-child(2)') do
-          expect(page).to have_content('Costa Rica Role')
-          expect(page).to have_content('el grupo de ticos')
-        end
+      # First Row
+      within resource_item 1 do
+        expect(page).to have_content('Buenos Aires Role')
+        expect(page).to have_content('the guys from BAs')
+      end
+      # Second Row
+      within resource_item 2 do
+        expect(page).to have_content('Costa Rica Role')
+        expect(page).to have_content('el grupo de ticos')
       end
     end
 
@@ -37,14 +35,14 @@ feature 'Roles', js: true do
 
       visit roles_path
 
-      within('ul#roles-list li:nth-child(1)') do
+      within resource_item 1 do
         expect(page).to have_content('Costa Rica Role')
         click_js_link 'Deactivate'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this role?'
 
-      within('ul#roles-list') do
+      within('#roles-list') do
         expect(page).to have_no_content('Costa Rica Role')
       end
 
@@ -52,7 +50,7 @@ feature 'Roles', js: true do
       filter_section('ACTIVE STATE').unicheck('Inactive')
       filter_section('ACTIVE STATE').unicheck('Active')
 
-      within('ul#roles-list li:nth-child(1)') do
+      within resource_item 1 do
         expect(page).to have_content('Costa Rica Role')
         click_js_link 'Activate'
       end

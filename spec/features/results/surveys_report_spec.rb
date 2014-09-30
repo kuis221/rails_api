@@ -43,16 +43,14 @@ feature 'Results Surveys Page', js: true, search: true  do
       Sunspot.commit
       visit results_surveys_path
 
-      within('ul#surveys-list') do
-        # First Row
-        within('li:nth-child(1)') do
-          expect(page).to have_content(age_answer.text)
-          expect(page).to have_content(gender_answer.text)
-        end
-        # Second Row
-        within('li:nth-child(2)') do
-          expect(page).to have_content(ethnicity_answer.text)
-        end
+      # First Row
+      within resource_item 1 do
+        expect(page).to have_content(age_answer.text)
+        expect(page).to have_content(gender_answer.text)
+      end
+      # Second Row
+      within resource_item 2 do
+        expect(page).to have_content(ethnicity_answer.text)
       end
     end
   end
