@@ -136,6 +136,16 @@ $item-height: 55px;
 		}
 	}
 
+	&.pdf-export{ 
+		margin-top: 0; 
+		.resource-item-link {
+			width: 100%;
+		}
+		.resource-item-actions {
+			display: none;
+		}
+	}
+
 	// Selectable object list widget
 	&.select-list {
 		max-height: 257px;
