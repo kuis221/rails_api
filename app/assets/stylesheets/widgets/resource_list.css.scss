@@ -27,14 +27,14 @@ $item-height: 55px;
 		.resource-item-link {
 			display: block;
 			min-height: $item-height;
-			width:89%;
+			width: calc(100% - 110px);
 			font-weight: normal;
 			text-decoration: none;
 			float: left;
 		}
 		.resource-item-actions {
 			display: none;
-			width:10%;
+			width:109px;
 			text-align: right;
 			padding-top: 15px;
 			a {

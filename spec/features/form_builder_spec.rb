@@ -1245,7 +1245,8 @@ feature 'Campaign Form Builder', js: true do
       within visible_modal do
         fill_in 'Search', with: 'custom'
         expect(page).to have_content 'My Custom KPI'
-        click_js_link 'Add KPI'
+
+        within(resource_item kpi) { click_js_link 'Add KPI' }
         expect(page).to have_no_content 'My Custom KPI'
       end
       close_modal
