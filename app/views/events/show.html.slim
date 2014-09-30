@@ -103,30 +103,29 @@
     #event-documents.details_box
 
       h3 DOCUMENTS
-      .link-list.documents-list
-        ul#documents-list
+      .documents-list
+        #documents-list.resource-list
           = render :partial => "documents/document", :collection => resource.documents.active + resource.campaign.documents, :locals => { parent: resource }
-      .row-fluid
-        .pull-left
-          = button_to_add 'Add Document', new_event_document_path(resource) if can?(:create_document, resource)
+      = button_to_add 'Add Document', new_event_document_path(resource) if can?(:create_document, resource)
 
 = render partial: 'help_tutorial'
+- content_for :footer do
+  - unless resource.place.nil?
+    javascript:
+      $(document).ready(function() {
+        $(this).scrollTop(400);
+      });
 
-- unless resource.place.nil?
-  javascript:
-    $(document).ready(function() {
-      $(this).scrollTop(400);
-    });
+  - if can_tasks
+    javascript:
+      if (#{can_tasks}){
+        $(document).on('tasks:change', function(){
+          $.get('#{tasks_event_path(resource)}', function(response){
+            $response = $('<div>').append(response);
+            $('#event-tasks-container').html($response.find('[data-content="tasks"]').html());
+            $('#event-tasks-counters').html($response.find('[data-content="counters"]').html());
+          })
+        });
+      }
 
-javascript:
-  if (#{can_tasks}){
-    $(document).on('tasks:change', function(){
-      $.get('#{tasks_event_path(resource)}', function(response){
-        $response = $('<div>').append(response);
-        $('#event-tasks-container').html($response.find('[data-content="tasks"]').html());
-        $('#event-tasks-counters').html($response.find('[data-content="counters"]').html());
-      })
-    });
-  }
-
-- reload_page_on_edit_resource
+  - reload_page_on_edit_resource

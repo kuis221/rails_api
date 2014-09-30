@@ -20,10 +20,9 @@
         .pull-right
           button.btn.download.xlsx-download-link data-url="#{results_comments_path(format: "xls")}" title="Download" data-disable-with="..."
             span.icon-download
-      .link-list
-        ul#comment-list
-          li.placeholder
-            p Select any filter to see results
+      #comment-list.resource-list.without-actions
+        div.placeholder
+          p Select any filter to see results
 
 = render partial: 'help_tutorial'
 
@@ -46,11 +45,10 @@ javascript:
       $(document).trigger('comments-filter:changed')
     },
     'onItemsChange': function(response, page){
-      if ($('#comment-list li').length > 0) {
+      if ($('#comment-list .resource-item').length > 0) {
         $('#list-tools').show()
       } else {
         $('#list-tools').hide()
-        $('#comment-list').append("<li class='placeholder'><p>No results. Select other filters to see results</p></li>");
       }
     }
   });

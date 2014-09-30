@@ -3,10 +3,11 @@ require 'rails_helper'
 feature 'Campaigns', js: true do
 
   let(:user) { create(:user, company_id: create(:company).id, role_id: create(:role).id) }
+  let(:company) { user.companies.first }
 
   before do
     Warden.test_mode!
-    @company = user.companies.first
+    company = user.companies.first
     sign_in user
   end
 
@@ -17,33 +18,31 @@ feature 'Campaigns', js: true do
   feature 'Index', search: true  do
     scenario 'should display a table with the campaigns' do
       campaigns = [
-        create(:campaign, name: 'Cacique FY13', description: 'test campaign for guaro cacique', company: @company),
-        create(:campaign, name: 'Centenario FY12', description: 'ron Centenario test campaign', company: @company)
+        create(:campaign, name: 'Cacique FY13', description: 'test campaign for guaro cacique', company: company),
+        create(:campaign, name: 'Centenario FY12', description: 'ron Centenario test campaign', company: company)
       ]
       Sunspot.commit
       visit campaigns_path
 
-      within('ul#campaigns-list') do
-        # First Row
-        within('li:nth-child(1)') do
-          expect(page).to have_content(campaigns[0].name)
-          expect(page).to have_content(campaigns[0].description)
-        end
-        # Second Row
-        within('li:nth-child(2)') do
-          expect(page).to have_content(campaigns[1].name)
-          expect(page).to have_content(campaigns[1].description)
-        end
+      # First Row
+      within resource_item 1 do
+        expect(page).to have_content(campaigns[0].name)
+        expect(page).to have_content(campaigns[0].description)
+      end
+      # Second Row
+      within resource_item 2 do
+        expect(page).to have_content(campaigns[1].name)
+        expect(page).to have_content(campaigns[1].description)
       end
     end
 
     scenario 'should allow user to deactivate campaigns' do
-      create(:campaign, name: 'Cacique FY13', description: 'test campaign for guaro cacique', company: @company)
+      create(:campaign, name: 'Cacique FY13', description: 'test campaign for guaro cacique', company: company)
       Sunspot.commit
       visit campaigns_path
 
       expect(page).to have_content('Cacique FY13')
-      within('ul#campaigns-list li:nth-child(1)') do
+      within resource_item 1 do
         click_js_link('Deactivate')
       end
 
@@ -53,7 +52,7 @@ feature 'Campaigns', js: true do
     end
 
     scenario 'should allow user to activate campaigns' do
-      campaign = create(:inactive_campaign, name: 'Cacique FY13', description: 'test campaign for guaro cacique', company: @company)
+      campaign = create(:inactive_campaign, name: 'Cacique FY13', description: 'test campaign for guaro cacique', company: company)
       Sunspot.commit
       visit campaigns_path
 
@@ -61,7 +60,7 @@ feature 'Campaigns', js: true do
       filter_section('ACTIVE STATE').unicheck('Active')
 
       expect(page).to have_content('Cacique FY13')
-      within('ul#campaigns-list li:nth-child(1)') do
+      within resource_item 1 do
         expect(page).to have_content('Cacique FY13')
         click_js_link('Activate')
       end
@@ -69,7 +68,7 @@ feature 'Campaigns', js: true do
     end
 
     scenario 'allows the user to create a new campaign' do
-      porfolio = create(:brand_portfolio, name: 'Test portfolio', company: @company)
+      porfolio = create(:brand_portfolio, name: 'Test portfolio', company: company)
       visit campaigns_path
 
       click_js_button 'New Campaign'
@@ -95,14 +94,14 @@ feature 'Campaigns', js: true do
 
   feature 'Details page', js: true do
     scenario 'GET show should display the campaign details page' do
-      campaign = create(:campaign, name: 'Some Campaign', description: 'a campaign description', company: @company)
+      campaign = create(:campaign, name: 'Some Campaign', description: 'a campaign description', company: company)
       visit campaign_path(campaign)
       expect(page).to have_selector('h2', text: 'Some Campaign')
       expect(page).to have_selector('div.description-data', text: 'a campaign description')
     end
 
     scenario 'allows the user to activate/deactivate a campaign' do
-      campaign = create(:campaign, name: 'Some Campaign', description: 'a campaign description', company: @company)
+      campaign = create(:campaign, name: 'Some Campaign', description: 'a campaign description', company: company)
       visit campaign_path(campaign)
       within('.links-data') do
         click_js_link('Deactivate')
@@ -117,7 +116,7 @@ feature 'Campaigns', js: true do
     end
 
     scenario 'allows the user to edit the campaign' do
-      campaign = create(:campaign, company: @company)
+      campaign = create(:campaign, company: company)
       visit campaign_path(campaign)
 
       within('.links-data') { click_js_button 'Edit Campaign' }
@@ -135,9 +134,9 @@ feature 'Campaigns', js: true do
 
     scenario 'should be able to assign areas to the campaign' do
       Kpi.create_global_kpis
-      campaign = create(:campaign, company: @company)
-      area = create(:area, name: 'San Francisco Area', company: @company)
-      area2 = create(:area, name: 'Los Angeles Area', company: @company)
+      campaign = create(:campaign, company: company)
+      area = create(:area, name: 'San Francisco Area', company: company)
+      area2 = create(:area, name: 'Los Angeles Area', company: company)
       visit campaign_path(campaign)
 
       tab = open_tab('Places')
@@ -146,11 +145,9 @@ feature 'Campaigns', js: true do
 
       within visible_modal do
         fill_in 'place-search-box', with: 'San'
-        expect(page).to have_selector("li#area-#{area.id}")
-        expect(page).to have_no_selector("li#area-#{area2.id}")
         expect(page).to have_content('San Francisco Area')
         expect(page).to have_no_content('Los Angeles Area')
-        find("#area-#{area.id}").click_js_link('Add Area')
+        within(resource_item(area)) { click_js_link('Add Area') }
         expect(page).to have_no_selector("#area-#{area.id}") # The area was removed from the available areas list
       end
       close_modal
@@ -176,8 +173,8 @@ feature 'Campaigns', js: true do
 
     scenario 'should be able to deactivate places from areas assigned to the campaign' do
       Kpi.create_global_kpis
-      campaign = create(:campaign, company: @company)
-      area = create(:area, name: 'San Francisco Area', company: @company)
+      campaign = create(:campaign, company: company)
+      area = create(:area, name: 'San Francisco Area', company: company)
       place1 = create(:place, name: 'One place name')
       place2 = create(:place, name: 'Another place name')
       area.places << [place1, place2]
@@ -198,8 +195,8 @@ feature 'Campaigns', js: true do
         expect(page).to have_content 'Another place name'
         fill_in 'q', with: 'one'
         expect(page).not_to have_content 'Another place name'
-        find("li#area-campaign-place-#{place1.id}").click_js_link 'Deactivate'
-        expect(page).to have_selector("li#area-campaign-place-#{place1.id}.inactive")
+        within(resource_item("#area-campaign-place-#{place1.id}")) { click_js_link 'Deactivate' }
+        expect(page).to have_selector("#area-campaign-place-#{place1.id}.inactive")
       end
 
       expect(campaign.areas_campaigns.find_by(area_id: area.id).exclusions).to eql [place1.id]
@@ -227,7 +224,7 @@ feature 'Campaigns', js: true do
 
       scenario 'Add existing KPI to campaign' do
         Kpi.create_global_kpis
-        campaign = create(:campaign, company: @company)
+        campaign = create(:campaign, company: company)
 
         visit campaign_path(campaign)
 
@@ -239,7 +236,7 @@ feature 'Campaigns', js: true do
           fill_in 'Search', with: 'Gender'
           expect(page).to have_content('Gender')
           expect(page).to have_no_content('Events')
-          click_js_link('Add KPI')
+          within(resource_item(Kpi.gender)) { click_js_link 'Add KPI' }
           expect(page).to have_no_content('Gender') # The KPI was removed from the available KPIs list
         end
         close_modal
@@ -260,7 +257,7 @@ feature 'Campaigns', js: true do
 
       scenario 'Add a new KPI to campaign and set the goal' do
         Kpi.create_global_kpis
-        campaign = create(:campaign, company: @company)
+        campaign = create(:campaign, company: company)
 
         visit campaign_path(campaign)
 
@@ -287,7 +284,7 @@ feature 'Campaigns', js: true do
         within '#global-kpis' do
           expect(page).to have_content('My Custom KPI')
           expect(page).to have_content('My custom KPI description')
-          hover_and_click('li#campaign-kpi-' + kpi.id.to_s, 'Edit')
+          hover_and_click('#campaign-kpi-' + kpi.id.to_s, 'Edit')
         end
 
         within visible_modal do
@@ -303,7 +300,7 @@ feature 'Campaigns', js: true do
       end
 
       scenario 'Get errors when create a new KPI without enough segments for the selected capture mechanism' do
-        campaign = create(:campaign, company: @company)
+        campaign = create(:campaign, company: company)
 
         visit campaign_path(campaign)
 
@@ -328,11 +325,11 @@ feature 'Campaigns', js: true do
       end
     end
 
-    feature 'Remove KPIs', search: false do
+    feature 'Remove KPIs' do
       scenario 'Remove existing KPI from campaign' do
         Kpi.create_global_kpis
-        campaign = create(:campaign, company: @company)
-        kpi = create(:kpi, name: 'My Custom KPI', description: 'My custom kpi description', kpi_type: 'number', capture_mechanism: 'currency', company: @company)
+        campaign = create(:campaign, company: company)
+        kpi = create(:kpi, name: 'My Custom KPI', description: 'My custom kpi description', kpi_type: 'number', capture_mechanism: 'currency', company: company)
         campaign.add_kpi kpi
 
         visit campaign_path(campaign)
@@ -341,7 +338,7 @@ feature 'Campaigns', js: true do
 
         within '#global-kpis' do
           expect(page).to have_content('My Custom KPI')
-          hover_and_click('li#campaign-kpi-' + kpi.id.to_s, 'Remove')
+          hover_and_click('#campaign-kpi-' + kpi.id.to_s, 'Remove')
         end
 
         confirm_prompt 'Please confirm you want to remove this KPI?'
@@ -381,7 +378,7 @@ feature 'Campaigns', js: true do
 
           within '#global-kpis' do
             expect(page).to have_content('My Custom KPI')
-            hover_and_click('li#campaign-kpi-' + kpi.id.to_s, 'Edit')
+            hover_and_click('#campaign-kpi-' + kpi.id.to_s, 'Edit')
           end
 
           within visible_modal do
@@ -404,7 +401,7 @@ feature 'Campaigns', js: true do
             expect(page).to have_content('My Custom KPI')
             expect(page).to have_content('100.0')
             expect(page).to have_content('my custom kpi description')
-            hover_and_click('li#campaign-kpi-' + kpi.id.to_s, 'Edit')
+            hover_and_click('#campaign-kpi-' + kpi.id.to_s, 'Edit')
           end
 
           within visible_modal do
@@ -425,8 +422,8 @@ feature 'Campaigns', js: true do
 
       scenario 'Edit Custom KPI' do
         Kpi.create_global_kpis
-        campaign = create(:campaign, company: @company)
-        kpi = create(:kpi, name: 'My Custom KPI', description: 'my custom kpi description', kpi_type: 'number', capture_mechanism: 'currency', company: @company)
+        campaign = create(:campaign, company: company)
+        kpi = create(:kpi, name: 'My Custom KPI', description: 'my custom kpi description', kpi_type: 'number', capture_mechanism: 'currency', company: company)
         campaign.add_kpi(kpi)
         create(:goal, goalable: campaign, kpi: kpi, value: 100)
 
@@ -436,7 +433,7 @@ feature 'Campaigns', js: true do
 
         within '#global-kpis' do
           expect(page).to have_content('My Custom KPI')
-          hover_and_click('li#campaign-kpi-' + kpi.id.to_s, 'Edit')
+          hover_and_click('#campaign-kpi-' + kpi.id.to_s, 'Edit')
         end
 
         within visible_modal do
@@ -453,7 +450,7 @@ feature 'Campaigns', js: true do
         within '#global-kpis' do
           expect(page).to have_content('My Modified KPI')
           expect(page).to have_content('my modified kpi description')
-          hover_and_click('li#campaign-kpi-' + kpi.id.to_s, 'Edit')
+          hover_and_click('#campaign-kpi-' + kpi.id.to_s, 'Edit')
         end
 
         within visible_modal do
@@ -470,8 +467,8 @@ feature 'Campaigns', js: true do
 
     feature 'Activity Types', search: false do
       scenario 'Set goals for Activity Types' do
-        campaign = create(:campaign, company: @company)
-        activity_type = create(:activity_type, name: 'Activity Type #1', company: @company)
+        campaign = create(:campaign, company: company)
+        activity_type = create(:activity_type, name: 'Activity Type #1', company: company)
 
         visit campaign_path(campaign)
 
@@ -482,9 +479,9 @@ feature 'Campaigns', js: true do
         within visible_modal do
           expect(page).to have_content('Add KPI')
           fill_in 'Search', with: 'Activity Type #1'
-          within '.select-list-table-wrapper' do
+          within '.resource-list' do
             expect(page).to have_content('Activity Type #1')
-            hover_and_click 'li', 'Add Activity Type'
+            hover_and_click '.resource-item', 'Add Activity Type'
             expect(page).not_to have_content('Activity Type #1')
           end
         end
@@ -495,7 +492,7 @@ feature 'Campaigns', js: true do
         within visible_modal do
           expect(page).to have_content('Add KPI')
           fill_in 'Search', with: 'Activity Type #1'
-          within '.select-list-table-wrapper' do
+          within '.select-list' do
             expect(page).not_to have_content('Activity Type #1')
           end
         end
@@ -503,7 +500,7 @@ feature 'Campaigns', js: true do
 
         within '#global-kpis' do
           expect(page).to have_content('Activity Type #1')
-          hover_and_click('li#campaign-activity-type-' + activity_type.id.to_s, 'Edit')
+          hover_and_click('#campaign-activity-type-' + activity_type.id.to_s, 'Edit')
         end
 
         within visible_modal do
@@ -518,7 +515,7 @@ feature 'Campaigns', js: true do
 
           # Remove the activity type from the list
           expect(page).to have_content('Activity Type #1')
-          hover_and_click('li#campaign-activity-type-' + activity_type.id.to_s, 'Remove')
+          hover_and_click('#campaign-activity-type-' + activity_type.id.to_s, 'Remove')
 
           expect(page).not_to have_content('Activity Type #1')
         end
@@ -528,7 +525,7 @@ feature 'Campaigns', js: true do
         within visible_modal do
           expect(page).to have_content('Add KPI')
           fill_in 'Search', with: 'Activity Type #1'
-          within '.select-list-table-wrapper' do
+          within '.select-list' do
             expect(page).to have_content('Activity Type #1')
           end
         end

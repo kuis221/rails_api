@@ -54,13 +54,13 @@ feature 'Brand Ambassadors Documents', js: true do
 
         # Delete the document
         within documents_section do
-          hover_and_click 'li.document', 'Delete'
+          hover_and_click '.resource-item', 'Delete'
         end
         confirm_prompt 'Are you sure you want to delete this document?'
 
         # Check that the document was removed
         within documents_section do
-          expect(page).not_to have_selector 'li.document'
+          expect(page).not_to have_selector '.resource-item'
         end
       end
     end
@@ -85,7 +85,7 @@ feature 'Brand Ambassadors Documents', js: true do
 
         # Modify the name of the document
         within documents_section do
-          hover_and_click 'li.document', 'Edit'
+          hover_and_click '.resource-item', 'Edit'
         end
 
         within visible_modal do
@@ -117,7 +117,7 @@ feature 'Brand Ambassadors Documents', js: true do
         fill_in 'Please name your folder', with: 'Duplicate Folder Name'
         page.execute_script("$('form#new_document_folder').submit()")
         wait_for_ajax
-        expect(page).to have_selector('ul#documents-list li.document', count: 1)
+        expect(page).to have_selector('#documents-list .resource-item', count: 1)
       end
 
       documents_section.click_js_link 'New Folder'
@@ -126,7 +126,7 @@ feature 'Brand Ambassadors Documents', js: true do
         fill_in 'Please name your folder', with: 'Duplicate Folder Name'
         page.execute_script("$('form#new_document_folder').submit()")
         wait_for_ajax
-        expect(page).to have_selector('ul#documents-list li.document', count: 2)
+        expect(page).to have_selector('#documents-list .resource-item', count: 2)
       end
     end
 
@@ -176,7 +176,7 @@ feature 'Brand Ambassadors Documents', js: true do
 
       # Deactivate the folder
       within documents_section do
-        hover_and_click '.document', 'Deactivate'
+        hover_and_click '.resource-item', 'Deactivate'
       end
       confirm_prompt 'Are you sure you want to deactivate this folder?'
 
@@ -292,7 +292,7 @@ feature 'Brand Ambassadors Documents', js: true do
 
         # Modify the name of the document
         within documents_section do
-          hover_and_click 'li.document', 'Edit'
+          hover_and_click '.resource-item', 'Edit'
         end
 
         within visible_modal do
@@ -336,7 +336,7 @@ feature 'Brand Ambassadors Documents', js: true do
 
       # Deactivate the folder
       within documents_section do
-        hover_and_click '.document', 'Deactivate'
+        hover_and_click '.resource-item', 'Deactivate'
       end
       confirm_prompt 'Are you sure you want to deactivate this folder?'
 

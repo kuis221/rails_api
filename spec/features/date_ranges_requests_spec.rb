@@ -23,17 +23,15 @@ feature 'DateRanges', search: true, js: true do
       Sunspot.commit
       visit date_ranges_path
 
-      within('ul#date_ranges-list') do
-        # First Row
-        within('li:nth-child(1)') do
-          expect(page).to have_content('Weekdays')
-          expect(page).to have_content('From monday to friday')
-        end
-        # Second Row
-        within('li:nth-child(2)') do
-          expect(page).to have_content('Weekends')
-          expect(page).to have_content('Saturday and Sunday')
-        end
+      # First Row
+      within resource_item 1 do
+        expect(page).to have_content('Weekdays')
+        expect(page).to have_content('From monday to friday')
+      end
+      # Second Row
+      within resource_item 2 do
+        expect(page).to have_content('Weekends')
+        expect(page).to have_content('Saturday and Sunday')
       end
     end
 
@@ -42,25 +40,23 @@ feature 'DateRanges', search: true, js: true do
       Sunspot.commit
       visit date_ranges_path
 
-      within('ul#date_ranges-list') do
+      within resource_item 1 do
         click_js_link('Deactivate')
       end
 
       confirm_prompt 'Are you sure you want to deactivate this date range?'
 
-      within('ul#date_ranges-list') do
-        expect(page).to have_no_selector('li')
-      end
+      expect(page).to have_no_text 'Weekdays'
 
       # Make it show only the inactive elements
       filter_section('ACTIVE STATE').unicheck('Inactive')
       filter_section('ACTIVE STATE').unicheck('Active')
 
-      within('ul#date_ranges-list') do
+      within resource_item 1 do
         expect(page).to have_content('Weekdays')
         click_js_link('Activate')
-        expect(page).to have_no_content('Weekdays')
       end
+      expect(page).to have_no_content('Weekdays')
     end
 
     scenario 'allows the user to create a new date_range' do

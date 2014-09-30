@@ -2,7 +2,7 @@ require 'rails_helper'
 
 feature 'Events section' do
   let(:company) { create(:company) }
-  let(:campaign) { create(:campaign, company: company) }
+  let(:campaign) { create(:campaign, company: company, name: 'Campaign FY2012') }
   let(:user) { create(:user, company: company, role_id: role.id) }
   let(:company_user) { user.company_users.first }
   let(:place) { create(:place, name: 'A Nice Place', country: 'CR', city: 'Curridabat', state: 'San Jose') }
@@ -19,18 +19,20 @@ feature 'Events section' do
   shared_examples_for 'a user that can activate/deactivate events' do
     let(:events)do
       [
-        create(:event, start_date: '08/21/2013', end_date: '08/21/2013', start_time: '10:00am', end_time: '11:00am', campaign: campaign, active: true, place: place),
-        create(:event, start_date: '08/28/2013', end_date: '08/29/2013', start_time: '11:00am', end_time: '12:00pm', campaign: campaign, active: true, place: place)
+        create(:event, start_date: '08/21/2013', end_date: '08/21/2013',
+               start_time: '10:00am', end_time: '11:00am', campaign: campaign, place: place),
+        create(:event, start_date: '08/28/2013', end_date: '08/29/2013',
+               start_time: '11:00am', end_time: '12:00pm', campaign: campaign, place: place)
       ]
     end
     scenario 'should allow user to deactivate events from the event list' do
       Timecop.travel(Time.zone.local(2013, 07, 30, 12, 01)) do
-        events.size  # make sure events are created before
-        Sunspot.index events
+        events  # make sure events are created before
         Sunspot.commit
         visit events_path
 
-        within event_list_item events.first do
+        expect(page).to have_selector event_list_item(events.first)
+        within resource_item events.first do
           click_js_link 'Deactivate'
         end
 
@@ -50,7 +52,8 @@ feature 'Events section' do
         filter_section('ACTIVE STATE').unicheck('Inactive')
         filter_section('ACTIVE STATE').unicheck('Active')
 
-        within event_list_item events.first do
+        expect(page).to have_selector event_list_item(events.first)
+        within resource_item events.first do
           click_js_link('Activate')
         end
         expect(page).to have_no_selector event_list_item(events.first)
@@ -95,36 +98,49 @@ feature 'Events section' do
       feature 'Close bar' do
         let(:events)do
           [
-            create(:event, aasm_state: 'submitted', start_date: '08/21/2013', end_date: '08/21/2013', start_time: '10:00am', end_time: '11:00am', campaign: create(:campaign, name: 'Campaign #1 FY2012', company: company), active: true, place: create(:place, name: 'Place 1'), company: company),
-            create(:event, aasm_state: 'submitted', start_date: '08/28/2013', end_date: '08/29/2013', start_time: '11:00am', end_time: '12:00pm', campaign: create(:campaign, name: 'Campaign #2 FY2012', company: company), active: true, place: create(:place, name: 'Place 2'), company: company),
-            create(:event, aasm_state: 'submitted', start_date: '08/28/2013', end_date: '08/29/2013', start_time: '11:00am', end_time: '12:00pm', campaign: create(:campaign, name: 'Campaign #3 FY2012', company: company), active: true, place: create(:place, name: 'Place 3'), company: company),
-            create(:event, start_date: '08/21/2014', end_date: '08/21/2014', start_time: '10:00am', end_time: '11:00am', campaign: create(:campaign, name: 'Campaign #4 FY2012', company: company), active: true, place: create(:place, name: 'Place 1'), company: company)
+            create(:submitted_event,
+                   start_date: '08/21/2013', end_date: '08/21/2013',
+                   campaign: create(:campaign, name: 'Campaign #1 FY2012', company: company)),
+            create(:submitted_event,
+                   start_date: '08/28/2013', end_date: '08/29/2013',
+                   campaign: create(:campaign, name: 'Campaign #2 FY2012', company: company)),
+            create(:submitted_event, start_date: '08/28/2013', end_date: '08/29/2013',
+                   campaign: create(:campaign, name: 'Campaign #3 FY2012', company: company)),
+            create(:event, campaign: create(:campaign, name: 'Campaign #4 FY2012', company: company))
           ]
         end
 
         scenario 'Close bar should return the list of events' do
-          events.size  # make sure users are created before
+          events  # make sure users are created before
           Sunspot.commit
           visit events_path
-          expect(page).to have_selector('ul#events-list li', count: 1)
+          expect(page).to have_selector('#events-list .resource-item', count: 1)
           filter_section('EVENT STATUS').unicheck('Submitted')
-          expect(page).to have_selector('ul#events-list li', count: 3)
-          find('ul#events-list li:nth-child(2)').click
+          expect(page).to have_selector('#events-list .resource-item', count: 3)
+          resource_item(2).click
           within('.alert') do
             click_link 'approve'
           end
           expect(page).to have_content('Your post event report has been approved.')
           find('#resource-close-details').click
-          expect(page).to have_selector('ul#events-list li', count: 2)
+          expect(page).to have_selector('#events-list .resource-item', count: 2)
         end
 
       end
 
       feature 'GET index' do
-        let(:events)do
+        let(:events) do
           [
-            create(:event, start_date: '08/21/2013', end_date: '08/21/2013', start_time: '10:00am', end_time: '11:00am', campaign: create(:campaign, name: 'Campaign FY2012', company: company), active: true, place: create(:place, name: 'Place 1'), company: company),
-            create(:event, start_date: '08/28/2013', end_date: '08/29/2013', start_time: '11:00am', end_time: '12:00pm', campaign: create(:campaign, name: 'Another Campaign April 03', company: company), active: true, place: create(:place, name: 'Place 2'), company: company)
+            create(:event,
+                   start_date: '08/21/2013', end_date: '08/21/2013',
+                   start_time: '10:00am', end_time: '11:00am',
+                   campaign: campaign, active: true,
+                   place: create(:place, name: 'Place 1')),
+            create(:event,
+                   start_date: '08/28/2013', end_date: '08/29/2013',
+                   start_time: '11:00am', end_time: '12:00pm',
+                   campaign: create(:campaign, name: 'Another Campaign April 03', company: company),
+                   place: create(:place, name: 'Place 2'), company: company)
           ]
         end
 
@@ -153,25 +169,23 @@ feature 'Events section' do
 
         scenario 'should display a list of events' do
           Timecop.travel(Time.zone.local(2013, 07, 21, 12, 01)) do
-            events.size  # make sure users are created before
+            events  # make sure users are created before
             Sunspot.commit
             visit events_path
 
-            within('ul#events-list') do
-              # First Row
-              within('li:nth-child(1)') do
-                expect(page).to have_content('WED Aug 21')
-                expect(page).to have_content('10:00 AM - 11:00 AM')
-                expect(page).to have_content(events[0].place_name)
-                expect(page).to have_content('Campaign FY2012')
-              end
-              # Second Row
-              within('li:nth-child(2)')  do
-                expect(page).to have_content(events[1].start_at.strftime('WED Aug 28 at 11:00 AM'))
-                expect(page).to have_content(events[1].end_at.strftime('THU Aug 29 at 12:00 PM'))
-                expect(page).to have_content(events[1].place_name)
-                expect(page).to have_content('Another Campaign April 03')
-              end
+            # First Row
+            within resource_item 1 do
+              expect(page).to have_content('WED Aug 21')
+              expect(page).to have_content('10:00 AM - 11:00 AM')
+              expect(page).to have_content(events[0].place_name)
+              expect(page).to have_content('Campaign FY2012')
+            end
+            # Second Row
+            within resource_item 2  do
+              expect(page).to have_content(events[1].start_at.strftime('WED Aug 28 at 11:00 AM'))
+              expect(page).to have_content(events[1].end_at.strftime('THU Aug 29 at 12:00 PM'))
+              expect(page).to have_content(events[1].place_name)
+              expect(page).to have_content('Another Campaign April 03')
             end
           end
         end
@@ -180,37 +194,39 @@ feature 'Events section' do
           today = Time.zone.local(Time.now.year, Time.now.month, 18, 12, 00)
           tomorrow = today + 1.day
           Timecop.travel(today) do
-            create(:event, start_date: today.to_s(:slashes), company: company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
-              campaign: create(:campaign, name: 'Campaign FY2012', company: company),
-              place: create(:place, name: 'Place 1', city: 'Los Angeles', state: 'CA', country: 'US'))
-            create(:event, start_date: tomorrow.to_s(:slashes), company: company, active: true, end_date: tomorrow.to_s(:slashes), start_time: '11:00am',  end_time: '12:00pm',
-              campaign: create(:campaign, name: 'Another Campaign April 03', company: company),
-              place: create(:place, name: 'Place 2', city: 'Austin', state: 'TX', country: 'US'))
+            create(:event, start_date: today.to_s(:slashes), end_date: today.to_s(:slashes),
+                   start_time: '10:00am', end_time: '11:00am', campaign: campaign,
+                   place: create(:place, name: 'Place 1', city: 'Los Angeles', state: 'CA', country: 'US'))
+            create(:event, start_date: tomorrow.to_s(:slashes), end_date: tomorrow.to_s(:slashes),
+                   start_time: '11:00am',  end_time: '12:00pm',
+                   campaign: create(:campaign, name: 'Another Campaign April 03', company: company),
+                   place: create(:place, name: 'Place 2', city: 'Austin', state: 'TX', country: 'US'))
             Sunspot.commit
 
             visit events_path
 
             expect(page).to have_content('2 Active events taking place today and in the future')
 
-            within('ul#events-list') do
+            within events_list do
               expect(page).to have_content('Campaign FY2012')
               expect(page).to have_content('Another Campaign April 03')
             end
 
-            expect(page).to have_filter_section(title: 'CAMPAIGNS', options: ['Campaign FY2012', 'Another Campaign April 03'])
+            expect(page).to have_filter_section(title: 'CAMPAIGNS',
+                                                options: ['Campaign FY2012', 'Another Campaign April 03'])
             # expect(page).to have_filter_section(title: 'LOCATIONS', options: ['Los Angeles', 'Austin'])
 
             filter_section('CAMPAIGNS').unicheck('Campaign FY2012')
 
             expect(page).to have_content('1 Active event as part of Campaign FY2012')
 
-            within('ul#events-list') do
+            within events_list do
               expect(page).to have_no_content('Another Campaign April 03')
               expect(page).to have_content('Campaign FY2012')
             end
 
             filter_section('CAMPAIGNS').unicheck('Another Campaign April 03')
-            within('ul#events-list') do
+            within events_list do
               expect(page).to have_content('Another Campaign April 03')
               expect(page).to have_content('Campaign FY2012')
             end
@@ -219,7 +235,7 @@ feature 'Events section' do
 
             select_filter_calendar_day('18')
             expect(find('#collection-list-filters')).to have_content('Another Campaign April 03')
-            within('ul#events-list') do
+            within events_list do
               expect(page).to have_no_content('Another Campaign April 03')
               expect(page).to have_content('Campaign FY2012')
             end
@@ -227,7 +243,7 @@ feature 'Events section' do
             expect(page).to have_content('1 Active event taking place today as part of Another Campaign April 03 and Campaign FY2012')
 
             select_filter_calendar_day('18', '19')
-            within('ul#events-list') do
+            within events_list do
               expect(page).to have_content('Another Campaign April 03')
               expect(page).to have_content('Campaign FY2012')
             end
@@ -253,8 +269,8 @@ feature 'Events section' do
             choose_predefined_date_range 'Today'
             wait_for_ajax
 
-            expect(page).to have_selector('ul#events-list li', count: 2)
-            within('ul#events-list') do
+            expect(page).to have_selector('#events-list .resource-item', count: 2)
+            within events_list do
               expect(page).to have_content('Campaign FY2012')
               expect(page).to have_content('Another Campaign April 03')
               expect(page).to have_no_content('New Brand Campaign')
@@ -272,8 +288,8 @@ feature 'Events section' do
             choose_predefined_date_range 'Current week'
             wait_for_ajax
 
-            expect(page).to have_selector('ul#events-list li', count: 2)
-            within('ul#events-list') do
+            expect(page).to have_selector('#events-list .resource-item', count: 2)
+            within events_list do
               expect(page).to have_no_content('Campaign FY2012')
               expect(page).to have_content('Another Campaign April 03')
               expect(page).to have_content('New Brand Campaign')
@@ -291,8 +307,8 @@ feature 'Events section' do
             choose_predefined_date_range 'Current month'
             wait_for_ajax
 
-            expect(page).to have_selector('ul#events-list li', count: 2)
-            within('ul#events-list') do
+            expect(page).to have_selector('#events-list .resource-item', count: 2)
+            within events_list do
               expect(page).to have_no_content('Campaign FY2012')
               expect(page).to have_content('Another Campaign April 03')
               expect(page).to have_content('New Brand Campaign')
@@ -310,8 +326,8 @@ feature 'Events section' do
             choose_predefined_date_range 'Previous week'
             wait_for_ajax
 
-            expect(page).to have_selector('ul#events-list li', count: 1)
-            within('ul#events-list') do
+            expect(page).to have_selector('#events-list .resource-item', count: 1)
+            within events_list do
               expect(page).to have_content('Campaign FY2012')
               expect(page).to have_no_content('Another Campaign April 03')
               expect(page).to have_no_content('New Brand Campaign')
@@ -319,10 +335,14 @@ feature 'Events section' do
           end
 
           scenario "can filter the events by predefined 'Previous month' date range option" do
-            create(:event, start_date: "#{month_number}/15/#{year}", end_date: "#{month_number}/15/#{year}", campaign: campaign2)
-            create(:event, start_date: "#{month_number.to_i-1}/15/#{year}", end_date: "#{month_number.to_i-1}/15/#{year}", campaign: campaign1)
-            create(:event, start_date: "#{month_number.to_i-1}/16/#{year}", end_date: "#{month_number.to_i-1}/16/#{year}", campaign: campaign1)
-            create(:event, start_date: "#{month_number.to_i-1}/17/#{year}", end_date: "#{month_number.to_i-1}/17/#{year}", campaign: campaign3)
+            create(:event, campaign: campaign2,
+                   start_date: "#{month_number}/15/#{year}", end_date: "#{month_number}/15/#{year}")
+            create(:event, campaign: campaign1,
+                   start_date: "#{month_number.to_i-1}/15/#{year}", end_date: "#{month_number.to_i-1}/15/#{year}")
+            create(:event, campaign: campaign1,
+                   start_date: "#{month_number.to_i-1}/16/#{year}", end_date: "#{month_number.to_i-1}/16/#{year}")
+            create(:event, campaign: campaign3,
+                   start_date: "#{month_number.to_i-1}/17/#{year}", end_date: "#{month_number.to_i-1}/17/#{year}")
             Sunspot.commit
 
             visit events_path
@@ -330,8 +350,8 @@ feature 'Events section' do
             choose_predefined_date_range 'Previous month'
             wait_for_ajax
 
-            expect(page).to have_selector('ul#events-list li', count: 3)
-            within('ul#events-list') do
+            expect(page).to have_selector('#events-list .resource-item', count: 3)
+            within events_list do
               expect(page).to have_content('Campaign FY2012')
               expect(page).to have_no_content('Another Campaign April 03')
               expect(page).to have_content('New Brand Campaign')
@@ -350,8 +370,8 @@ feature 'Events section' do
             choose_predefined_date_range 'YTD'
             wait_for_ajax
 
-            expect(page).to have_selector('ul#events-list li', count: 3)
-            within('ul#events-list') do
+            expect(page).to have_selector('#events-list .resource-item', count: 3)
+            within events_list do
               expect(page).to have_content('Campaign FY2012')
               expect(page).to have_content('Another Campaign April 03')
               expect(page).to have_no_content('New Brand Campaign')
@@ -381,8 +401,8 @@ feature 'Events section' do
             end
             ensure_date_ranges_was_closed
 
-            expect(page).to have_selector('ul#events-list li', count: 4)
-            within('ul#events-list') do
+            expect(page).to have_selector('#events-list .resource-item', count: 4)
+            within events_list do
               expect(page).to have_no_content('Campaign FY2012')
               expect(page).to have_content('Another Campaign April 03')
               expect(page).to have_content('New Brand Campaign')
@@ -406,20 +426,20 @@ feature 'Events section' do
           expect(page).to have_filter_section(title: 'PEOPLE',
                                               options: ['Mario Cantinflas', 'Roberto Gomez'])
 
-          within('ul#events-list') do
+          within events_list do
             expect(page).to have_content('Campaña1')
             expect(page).to have_content('Campaña2')
           end
 
           filter_section('PEOPLE').unicheck('Roberto Gomez') # Select
-          within('ul#events-list') do
+          within events_list do
             expect(page).to have_content('Campaña1')
             expect(page).to have_no_content('Campaña2')
           end
 
           filter_section('PEOPLE').unicheck('Roberto Gomez') # Deselect
           filter_section('PEOPLE').unicheck('Mario Cantinflas') # Select
-          within('ul#events-list') do
+          within events_list do
             expect(page).to have_content('Campaña2')
             expect(page).to have_no_content('Campaña1')
           end
@@ -429,12 +449,16 @@ feature 'Events section' do
           today = Time.zone.local(Time.now.year, Time.now.month, 18, 12, 00)
           tomorrow = today + 1.day
           Timecop.travel(today) do
-            ev1 = create(:event, start_date: today.to_s(:slashes), company: company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
-              campaign: create(:campaign, name: 'Campaign FY2012', company: company),
-              place: create(:place, name: 'Place 1', city: 'Los Angeles', state: 'CA', country: 'US'))
-            ev2 = create(:event, start_date: tomorrow.to_s(:slashes), company: company, active: true, end_date: tomorrow.to_s(:slashes), start_time: '11:00am',  end_time: '12:00pm',
-              campaign: create(:campaign, name: 'Another Campaign April 03', company: company),
-              place: create(:place, name: 'Place 2', city: 'Austin', state: 'TX', country: 'US'))
+            ev1 = create(:event, campaign: campaign,
+                         start_date: today.to_s(:slashes), end_date: today.to_s(:slashes),
+                         start_time: '10:00am', end_time: '11:00am',
+                         place: create(:place, name: 'Place 1', city: 'Los Angeles', state: 'CA', country: 'US'))
+
+            create(:event,
+                   start_date: tomorrow.to_s(:slashes), end_date: tomorrow.to_s(:slashes),
+                   start_time: '11:00am',  end_time: '12:00pm',
+                   campaign: create(:campaign, name: 'Another Campaign April 03', company: company),
+                   place: create(:place, name: 'Place 2', city: 'Austin', state: 'TX', country: 'US'))
             Sunspot.commit
 
             visit events_path
@@ -442,11 +466,11 @@ feature 'Events section' do
             filter_section('CAMPAIGNS').unicheck('Campaign FY2012')
             select_filter_calendar_day('18')
 
-            within('ul#events-list') do
+            within events_list do
               click_js_link('Event Details')
             end
 
-            expect(page).to have_selector('h2', text: ev1.campaign_name)
+            expect(page).to have_selector('h2', text: 'Campaign FY2012')
             expect(current_path).to eq(event_path(ev1))
 
             close_resource_details
@@ -454,7 +478,7 @@ feature 'Events section' do
             expect(page).to have_content('1 Active event taking place today as part of Campaign FY2012')
             expect(current_path).to eq(events_path)
 
-            within('ul#events-list') do
+            within events_list do
               expect(page).to have_no_content('Another Campaign April 03')
               expect(page).to have_content('Campaign FY2012')
             end
@@ -463,43 +487,41 @@ feature 'Events section' do
 
         scenario 'first filter should make the list show events in the past' do
           Timecop.travel(Time.zone.local(2013, 07, 21, 12, 01)) do
-            campaign    = create(:campaign, name: 'ABSOLUT BA FY14', company: company)
-            past_event  = create(:event, campaign: campaign, company: company,
-              start_date: '07/07/2013', end_date: '07/07/2013')
-            today_event = create(:event, campaign: campaign, company: company,
-              start_date: '07/21/2013', end_date: '07/21/2013')
+            create(:event, campaign: campaign,
+                   start_date: '07/07/2013', end_date: '07/07/2013')
+            create(:event, campaign: campaign,
+                   start_date: '07/21/2013', end_date: '07/21/2013')
             Sunspot.commit
 
             visit events_path
             expect(page).to have_content('1 Active event taking place today and in the future')
-            expect(page).to have_selector('ul#events-list li', count: 1)
+            expect(page).to have_selector('#events-list .resource-item', count: 1)
 
-            filter_section('CAMPAIGNS').unicheck('ABSOLUT BA FY14')
-            expect(page).to have_content('2 Active events as part of ABSOLUT BA FY14')  # The list shouldn't be filtered by date
-            expect(page).to have_selector('ul#events-list li', count: 2)
+            filter_section('CAMPAIGNS').unicheck('Campaign FY2012')
+            expect(page).to have_content('2 Active events as part of Campaign FY2012')  # The list shouldn't be filtered by date
+            expect(page).to have_selector('#events-list .resource-item', count: 2)
           end
         end
 
         scenario 'clear filters should also exclude reset the default dates filter' do
           Timecop.travel(Time.zone.local(2013, 07, 21, 12, 01)) do
-            campaign    = create(:campaign, name: 'ABSOLUT BA FY14', company: company)
-            past_event  = create(:event, campaign: campaign, company: company,
-              start_date: '07/11/2013', end_date: '07/11/2013')
-            today_event = create(:event, campaign: campaign, company: company,
-              start_date: '07/21/2013', end_date: '07/21/2013')
+            create(:event, campaign: campaign,
+                   start_date: '07/11/2013', end_date: '07/11/2013')
+            create(:event, campaign: campaign,
+                   start_date: '07/21/2013', end_date: '07/21/2013')
             Sunspot.commit
 
             visit events_path
             expect(page).to have_content('1 Active event taking place today and in the future')
-            expect(page).to have_selector('ul#events-list li', count: 1)
+            expect(page).to have_selector('#events-list .resource-item', count: 1)
 
             click_button 'Reset'
             expect(page).to have_content('2 Active events')  # The list shouldn't be filtered by date
-            expect(page).to have_selector('ul#events-list li', count: 2)
+            expect(page).to have_selector('#events-list .resource-item', count: 2)
 
-            filter_section('CAMPAIGNS').unicheck('ABSOLUT BA FY14')
-            expect(page).to have_content('2 Active events as part of ABSOLUT BA FY14')  # The list shouldn't be filtered by date
-            expect(page).to have_selector('ul#events-list li', count: 2)
+            filter_section('CAMPAIGNS').unicheck('Campaign FY2012')
+            expect(page).to have_content('2 Active events as part of Campaign FY2012')  # The list shouldn't be filtered by date
+            expect(page).to have_selector('#events-list .resource-item', count: 2)
           end
         end
 
@@ -521,7 +543,7 @@ feature 'Events section' do
               Sunspot.commit
               visit events_path
 
-              within('ul#events-list li:nth-child(1)') do
+              within resource_item 1 do
                 expect(page).to have_content('WED Aug 21')
                 expect(page).to have_content('10:00 AM - 11:00 AM')
               end
@@ -534,12 +556,16 @@ feature 'Events section' do
             today = Time.zone.local(Time.now.year, Time.now.month, 18, 12, 00)
             tomorrow = today + 1.day
             Timecop.travel(today) do
-              ev1 = create(:event, start_date: today.to_s(:slashes), company: company, active: true, end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
-                campaign: create(:campaign, name: 'Campaign FY2012', company: company),
-                place: create(:place, name: 'Place 1', city: 'Los Angeles', state: 'CA', country: 'US'))
-              ev2 = create(:event, start_date: tomorrow.to_s(:slashes), company: company, active: true, end_date: tomorrow.to_s(:slashes), start_time: '11:00am',  end_time: '12:00pm',
-                campaign: create(:campaign, name: 'Another Campaign April 03', company: company),
-                place: create(:place, name: 'Place 2', city: 'Austin', state: 'TX', country: 'US'))
+              ev1 = create(:event,
+                           start_date: today.to_s(:slashes), end_date: today.to_s(:slashes),
+                           start_time: '10:00am', end_time: '11:00am',
+                           campaign: campaign,
+                           place: create(:place, name: 'Place 1', city: 'Los Angeles', state: 'CA', country: 'US'))
+              ev2 = create(:event,
+                           start_date: tomorrow.to_s(:slashes), end_date: tomorrow.to_s(:slashes),
+                           start_time: '11:00am',  end_time: '12:00pm',
+                           campaign: create(:campaign, name: 'Another Campaign April 03', company: company),
+                           place: create(:place, name: 'Place 2', city: 'Austin', state: 'TX', country: 'US'))
               brands = [
                 create(:brand, name: 'Cacique', company: company),
                 create(:brand, name: 'Smirnoff', company: company)
@@ -552,21 +578,21 @@ feature 'Events section' do
               visit events_path
               expect(page).to have_filter_section(title: 'BRANDS', options: %w(Cacique Smirnoff))
 
-              within('ul#events-list') do
+              within events_list do
                 expect(page).to have_content('Campaign FY2012')
                 expect(page).to have_content('Another Campaign April 03')
               end
 
               filter_section('BRANDS').unicheck('Cacique')
 
-              within('ul#events-list') do
+              within events_list do
                 expect(page).to have_content('Campaign FY2012')
                 expect(page).to have_no_content('Another Campaign April 03')
               end
               filter_section('BRANDS').unicheck('Cacique')   # Deselect Cacique
               filter_section('BRANDS').unicheck('Smirnoff')
 
-              within('ul#events-list') do
+              within events_list do
                 expect(page).to have_no_content('Campaign FY2012')
                 expect(page).to have_content('Another Campaign April 03')
               end
@@ -574,15 +600,13 @@ feature 'Events section' do
           end
 
           scenario 'Users must be able to filter on all areas they have permissions to access ' do
-            ev1 = create(:event, company: company, active: true,
-              campaign: create(:campaign, name: 'Campaign FY2012', company: company),
-              place: create(:place, name: 'Place 1', city: 'Los Angeles', state: 'CA', country: 'US'))
-            ev2 = create(:event, company: company, active: true,
-              campaign: create(:campaign, name: 'Another Campaign April 03', company: company),
-              place: create(:place, name: 'Place 2', city: 'Austin', state: 'TX', country: 'US'))
             areas = [
-              create(:area, name: 'Gran Area Metropolitana', description: 'Ciudades principales de Costa Rica', active: true, company: company),
-              create(:area, name: 'Zona Norte', description: 'Ciudades del Norte de Costa Rica', active: true, company: company)
+              create(:area, name: 'Gran Area Metropolitana',
+                     description: 'Ciudades principales de Costa Rica', company: company),
+              create(:area, name: 'Zona Norte',
+                     description: 'Ciudades del Norte de Costa Rica', company: company),
+              create(:area, name: 'Inactive Area', active: false,
+                     description: 'This should not appear', company: company)
             ]
             areas.each do |area|
               company_user.areas << area
@@ -590,7 +614,8 @@ feature 'Events section' do
             Sunspot.commit
 
             visit events_path
-            expect(page).to have_filter_section(title: 'AREAS', options: ['Gran Area Metropolitana', 'Zona Norte'])
+            expect(page).to have_filter_section(title: 'AREAS',
+                                                options: ['Gran Area Metropolitana', 'Zona Norte'])
           end
         end
       end
@@ -650,7 +675,7 @@ feature 'Events section' do
         # Using Custom Filter 1
         filter_section('SAVED FILTERS').unicheck('Custom Filter 1')
 
-        within '#events-list' do
+        within events_list do
           expect(page).to have_content('Campaign 1')
         end
 
@@ -670,7 +695,7 @@ feature 'Events section' do
         # Using Custom Filter 2 should update results and checked/unchecked checkboxes
         filter_section('SAVED FILTERS').unicheck('Custom Filter 2')
 
-        within '#events-list' do
+        within events_list do
           expect(page).to have_content('Campaign 2')
         end
 
@@ -690,7 +715,7 @@ feature 'Events section' do
         # Using Custom Filter 2 again should reset filters
         filter_section('SAVED FILTERS').unicheck('Custom Filter 2')
 
-        within '#events-list' do
+        within events_list do
           expect(page).to have_content('Campaign 1')
           expect(page).to have_content('Campaign 2')
         end
@@ -813,15 +838,16 @@ feature 'Events section' do
     feature 'edit a event' do
       scenario 'allows to edit a event' do
         create(:campaign, company: company, name: 'ABSOLUT Vodka FY2013')
-        event = create(:event,
-                                   start_date: 3.days.from_now.to_s(:slashes), end_date: 3.days.from_now.to_s(:slashes),
-                                   start_time: '8:00 PM', end_time: '11:00 PM',
-                                   campaign: create(:campaign, name: 'ABSOLUT Vodka FY2012', company: company), company: company)
+        create(:event,
+               start_date: 3.days.from_now.to_s(:slashes),
+               end_date: 3.days.from_now.to_s(:slashes),
+               start_time: '8:00 PM', end_time: '11:00 PM',
+               campaign: create(:campaign, name: 'ABSOLUT Vodka FY2012', company: company))
         Sunspot.commit
 
         visit events_path
 
-        within('ul#events-list') do
+        within resource_item do
           click_js_link 'Edit'
         end
 
@@ -846,18 +872,17 @@ feature 'Events section' do
         scenario "should display the dates relative to event's timezone" do
           date = 3.days.from_now.to_s(:slashes)
           Time.use_zone('America/Guatemala') do
-            event = create(:event,
-                                       start_date: date, end_date: date,
-                                       start_time: '8:00 PM', end_time: '11:00 PM',
-                                       campaign: create(:campaign, name: 'ABSOLUT Vodka FY2012', company: company), company: company)
+            create(:event,
+                   start_date: date, end_date: date,
+                   start_time: '8:00 PM', end_time: '11:00 PM',
+                   campaign: create(:campaign, name: 'ABSOLUT Vodka FY2012', company: company))
           end
-
           Sunspot.commit
 
           Time.use_zone('America/New_York') do
             visit events_path
 
-            within('ul#events-list') do
+            within resource_item do
               click_js_link 'Edit'
             end
 
@@ -879,7 +904,7 @@ feature 'Events section' do
           # Check that the event's time is displayed with the same time in a different tiem zone
           Time.use_zone('America/Los_Angeles') do
             visit events_path
-            within('ul#events-list') do
+            within events_list do
               expect(page).to have_content('10:00 PM - 11:00 PM')
             end
           end
@@ -890,9 +915,9 @@ feature 'Events section' do
     feature '/events/:event_id', js: true do
       scenario 'a user can play and dismiss the video tutorial (scheduled event)' do
         event = create(:event,
-                                   start_date: '08/28/2013', end_date: '08/28/2013',
-                                   start_time: '8:00 PM', end_time: '11:00 PM',
-                                   campaign: create(:campaign, company: company), company: company)
+                       start_date: '08/28/2013', end_date: '08/28/2013',
+                       start_time: '8:00 PM', end_time: '11:00 PM',
+                       campaign: create(:campaign, company: company))
         visit event_path(event)
 
         feature_name = 'Getting Started: Event Details'
@@ -916,10 +941,10 @@ feature 'Events section' do
       end
 
       scenario 'a user can play and dismiss the video tutorial (executed event)' do
-        event = create(:event,
-                                   start_date: '08/28/2013', end_date: '08/28/2013',
-                                   start_time: '8:00 PM', end_time: '11:00 PM',
-                                   campaign: create(:campaign, company: company), aasm_state: 'approved', company: company)
+        event = create(:approved_event,
+                       start_date: '08/28/2013', end_date: '08/28/2013',
+                       start_time: '8:00 PM', end_time: '11:00 PM',
+                       campaign: create(:campaign, company: company))
         visit event_path(event)
 
         feature_name = 'Getting Started: Event Details'
@@ -943,10 +968,10 @@ feature 'Events section' do
       end
 
       scenario 'GET show should display the event details page' do
-        event = create(:event,
-                                   start_date: '08/28/2013', end_date: '08/28/2013',
-                                   start_time: '8:00 PM', end_time: '11:00 PM',
-                                   campaign: create(:campaign, name: 'Campaign FY2012', company: company), company: company)
+        event = create(:event, campaign: campaign,
+                       start_date: '08/28/2013', end_date: '08/28/2013',
+                       start_time: '8:00 PM', end_time: '11:00 PM',
+                       campaign: create(:campaign, name: 'Campaign FY2012', company: company))
         visit event_path(event)
         expect(page).to have_selector('h2', text: 'Campaign FY2012')
         within('.calendar-data') do
@@ -965,9 +990,9 @@ feature 'Events section' do
           event = nil
           # Create a event with the time zone "Central America"
           Time.use_zone('Central America') do
-            event = create(:event,
-                                       start_date: '08/21/2013', end_date: '08/21/2013', start_time: '10:00am', end_time: '11:00am',
-                                       campaign: create(:campaign, company: company), company: company)
+            event = create(:event, campaign: campaign,
+                           start_date: '08/21/2013', end_date: '08/21/2013',
+                           start_time: '10:00am', end_time: '11:00am')
           end
 
           # Just to make sure the current user is not in the same timezone
@@ -984,11 +1009,12 @@ feature 'Events section' do
       end
 
       scenario 'allows to add a member to the event', js: true do
-        event = create(:event, campaign: create(:campaign, name: 'Campaign FY2012', company: company), company: company)
-        pablo = create(:user, first_name: 'Pablo', last_name: 'Baltodano', email: 'palinair@gmail.com', company_id: company.id, role_id: company_user.role_id)
-        pablo_user = pablo.company_users.first
-        anonymous = create(:user, first_name: 'Anonymous', last_name: 'User', email: 'anonymous@gmail.com', company_id: company.id, role_id: company_user.role_id)
-        anonymous_user = anonymous.company_users.first
+        pablo = create(:user,
+                       first_name: 'Pablo', last_name: 'Baltodano', email: 'palinair@gmail.com',
+                       company_id: company.id, role_id: company_user.role_id).company_users.first
+        create(:user,
+               first_name: 'Anonymous', last_name: 'User', email: 'anonymous@gmail.com',
+               company_id: company.id, role_id: company_user.role_id)
         Sunspot.commit
 
         visit event_path(event)
@@ -996,34 +1022,32 @@ feature 'Events section' do
         click_js_button 'Add Team Member'
         within visible_modal do
           fill_in 'staff-search-item', with: 'Pab'
-          expect(page).to have_selector("li#staff-member-user-#{pablo_user.id}")
-          expect(page).to have_no_selector("li#staff-member-user-#{anonymous_user.id}")
-          expect(page).to have_content('Pablo Baltodano')
-          expect(page).to have_no_content('Anonymous User')
-          click_js_link("add-member-btn-#{pablo_user.id}")
+          expect(page).to have_text 'Pablo Baltodano'
+          expect(page).to have_no_text 'Anonymous User'
+          within resource_item("#staff-member-user-#{pablo.id}") do
+            click_js_link "Add"
+          end
 
-          expect(page).to have_no_selector("li#staff-member-user-#{pablo_user.id}")
+          expect(page).to have_no_text("Pablo Baltodano")
         end
         close_modal
 
         # Re-open the modal to make sure it's not added again to the list
         click_js_button 'Add Team Member'
         within visible_modal do
-          expect(page).to have_no_selector("#staff-member-user-#{pablo_user.id}") # The user does not longer appear on the list after it was added to the event's team
-          expect(page).to have_selector("#staff-member-user-#{anonymous_user.id}")
+          expect(page).to have_no_text("Pablo Baltodano")
+          expect(page).to have_text("Anonymous User")
         end
         close_modal
 
         # Test the user was added to the list of event members and it can be removed
-        within event_team_member(pablo_user) do
+        within event_team_member(pablo) do
           expect(page).to have_content('Pablo Baltodano')
-          # find('a.remove-member-btn').click
+          click_js_link 'Remove Member'
         end
 
-        # Test removal of the user
-        hover_and_click('#event-team-members #event-member-' + pablo_user.id.to_s, 'Remove Member')
-
-        confirm_prompt 'Any tasks that are assigned to Pablo Baltodano must be reassigned. Would you like to remove Pablo Baltodano from the event team?'
+        confirm_prompt 'Any tasks that are assigned to Pablo Baltodano must be reassigned. ' +
+                       'Would you like to remove Pablo Baltodano from the event team?'
         expect(page).not_to have_content('Pablo Baltodano')
 
         # Refresh the page and make sure the user is not there
@@ -1032,9 +1056,9 @@ feature 'Events section' do
       end
 
       scenario 'allows to add a user as contact to the event', js: true do
-        event = create(:event, campaign: create(:campaign, name: 'Campaign FY2012', company: company), company: company)
-        pablo = create(:user, first_name: 'Pablo', last_name: 'Baltodano', email: 'palinair@gmail.com', company_id: company.id, role_id: company_user.role_id)
-        pablo_user = pablo.company_users.first
+        create(:user, first_name: 'Pablo', last_name: 'Baltodano',
+               email: 'palinair@gmail.com', company_id: company.id,
+               role_id: company_user.role_id)
         Sunspot.commit
 
         visit event_path(event)
@@ -1042,23 +1066,20 @@ feature 'Events section' do
         click_js_button 'Add Contact'
         within visible_modal do
           fill_in 'contact-search-box', with: 'Pab'
-          expect(page).to have_selector("li#contact-company_user-#{pablo_user.id}")
-          expect(page).to have_content('Pablo')
-          expect(page).to have_content('Baltodano')
-          click_js_link("add-contact-btn-company_user-#{pablo_user.id}")
+          expect(page).to have_content('Pablo Baltodano')
+          within resource_item do
+            click_js_link "Add"
+          end
 
-          expect(page).to have_no_selector("li#contact-company_user-#{pablo_user.id}")
+          expect(page).to have_no_content('Pablo Baltodano')
         end
         close_modal
 
         # Test the user was added to the list of event members and it can be removed
         within '#event-contacts-list' do
           expect(page).to have_content('Pablo Baltodano')
-          # find('a.remove-member-btn').click
+          hover_and_click('.event-contact', 'Remove Contact')
         end
-
-        # Test removal of the user
-        hover_and_click('#event-contacts-list .event-contact', 'Remove Contact')
 
         # Refresh the page and make sure the user is not there
         visit event_path(event)
@@ -1068,7 +1089,9 @@ feature 'Events section' do
 
       scenario 'allows to add a contact as contact to the event', js: true do
         event = create(:event, campaign: create(:campaign, name: 'Campaign FY2012', company: company), company: company)
-        contact = create(:contact, first_name: 'Guillermo', last_name: 'Vargas', email: 'guilleva@gmail.com', company_id: company.id)
+        create(:contact,
+               first_name: 'Guillermo', last_name: 'Vargas',
+               email: 'guilleva@gmail.com', company_id: company.id)
         Sunspot.commit
 
         visit event_path(event)
@@ -1076,23 +1099,20 @@ feature 'Events section' do
         click_js_button 'Add Contact'
         within visible_modal do
           fill_in 'contact-search-box', with: 'Gui'
-          expect(page).to have_selector("li#contact-contact-#{contact.id}")
-          expect(page).to have_content('Guillermo')
-          expect(page).to have_content('Vargas')
-          click_js_link("add-contact-btn-contact-#{contact.id}")
+          expect(page).to have_content('Guillermo Vargas')
+          within resource_item do
+            click_js_link "Add"
+          end
 
-          expect(page).to have_no_selector("li#contact-contact-#{contact.id}")
+          expect(page).to have_no_content 'Guillermo Vargas'
         end
         close_modal
 
         # Test the user was added to the list of event members and it can be removed
         within '#event-contacts-list' do
           expect(page).to have_content('Guillermo Vargas')
-          # find('a.remove-member-btn').click
+          hover_and_click('.event-contact', 'Remove Contact')
         end
-
-        # Test removal of the user
-        hover_and_click('#event-contacts-list .event-contact', 'Remove Contact')
 
         # Refresh the page and make sure the user is not there
         visit event_path(event)
@@ -1189,7 +1209,7 @@ feature 'Events section' do
         expect(page).to have_text('1 ASSIGNED')
         expect(page).to have_text('1 LATE')
 
-        within('#event-tasks-container li') do
+        within resource_item list: '#tasks-list' do
           expect(page).to have_content('Pick up the kidz at school')
           expect(page).to have_content('Juanito Bazooka')
           expect(page).to have_content('THU May 16')
@@ -1236,8 +1256,9 @@ feature 'Events section' do
         campaign.add_kpi kpi
 
         event = create(:event,
-                                   start_date: Date.yesterday.to_s(:slashes), end_date: Date.yesterday.to_s(:slashes),
-                                   campaign: campaign)
+                       start_date: Date.yesterday.to_s(:slashes),
+                       end_date: Date.yesterday.to_s(:slashes),
+                       campaign: campaign)
 
         visit event_path(event)
 
@@ -1258,8 +1279,9 @@ feature 'Events section' do
         field.save
 
         event = create(:event,
-                                   start_date: Date.yesterday.to_s(:slashes), end_date: Date.yesterday.to_s(:slashes),
-                                   campaign: campaign)
+                       start_date: Date.yesterday.to_s(:slashes),
+                       end_date: Date.yesterday.to_s(:slashes),
+                       campaign: campaign)
 
         visit event_path(event)
 
@@ -1273,6 +1295,10 @@ feature 'Events section' do
   end
 
   def event_list_item(event)
-    "li#event_#{event.id}"
+    ".resource-item#event_#{event.id}"
+  end
+
+  def events_list
+    "#events-list"
   end
 end

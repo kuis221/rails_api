@@ -48,7 +48,7 @@ RSpec.describe BrandAmbassadors::VisitsController, type: :controller do
         rows = doc.elements.to_a('//Row')
         expect(rows.count).to eql 1
         expect(rows[0].elements.to_a('Cell/Data').map(&:text)).to eql [
-          'START DATE', 'END DATE', 'EMPLOYEE', 'AREA', 'CITY', 'CAMPAIGN', 'TYPE'
+          'START DATE', 'END DATE', 'EMPLOYEE', 'AREA', 'CITY', 'CAMPAIGN', 'TYPE', 'DESCRIPTION'
         ]
       end
     end
@@ -75,7 +75,8 @@ RSpec.describe BrandAmbassadors::VisitsController, type: :controller do
         rows = doc.elements.to_a('//Row')
         expect(rows.count).to eql 2
         expect(rows[1].elements.to_a('Cell/Data').map(&:text)).to eql [
-          '2014-01-23T00:00', '2014-01-24T00:00', 'Michale Jackson', 'Area 1', 'Test City', 'Imperial FY14', 'PTO'
+          '2014-01-23T00:00', '2014-01-24T00:00', 'Michale Jackson', 'Area 1', 'Test City',
+          'Imperial FY14', 'PTO', 'Test Visit description'
         ]
       end
     end

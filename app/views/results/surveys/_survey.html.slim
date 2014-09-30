@@ -1,18 +1,19 @@
-li id="survey_#{survey.id}"
-  span
-    .survey-age
+.resource-item id="survey_#{survey.id}"
+  .resource-item-link
+    .span4.text-large
       - if age = survey.age
         = "#{age} year old"
-    = "#{survey.ethnicity} #{survey.gender}"
-  span.date
-    = time_ago_in_words(survey.created_at)
-    br>/
-    | Completed
-  span.date
-    = time_ago_in_words(survey.updated_at)
-    br>/
-    | Modified
-  span.pull-right
+      br>/
+      = "#{survey.ethnicity} #{survey.gender}"
+    .span4.date
+      = time_ago_in_words(survey.created_at)
+      br>/
+      | Completed
+    .span4.date
+      = time_ago_in_words(survey.updated_at)
+      br>/
+      | Modified
+  .resource-item-actions
     = link_to '', edit_event_survey_path(survey.event, survey), remote: true, class: 'icon-edit'
     = link_to '', deactivate_event_survey_path(survey.event, survey), remote: true, class: 'icon-rounded-disable', data: { confirm: I18n.t('confirmation.deactivate_confirm_message', model: survey.class.name) } if survey.active?
     = link_to '', activate_event_survey_path(survey.event, survey),title: I18n.t('confirmation.activate'), remote: true, class: 'icon-rounded-ok' unless survey.active?

@@ -24,10 +24,20 @@ describe ListExport, type: :model do
   let(:company_user) { create(:company_user) }
 
   describe 'Results::EventDataController#export_list' do
-    it 'should call the export_list on the controller and set the required variables' do
-      exporter = ListExport.new(controller: 'Results::EventDataController', company_user: company_user, export_format: 'xls', url_options: {}, params: {})
-      expect_any_instance_of(Results::EventDataController).to receive(:export_list).with(exporter).and_return('')
+    let(:exporter) do
+      described_class.new(
+        controller: 'Results::EventDataController',
+        company_user: company_user,
+        export_format: 'xls',
+        url_options: {}, params: {}
+      )
+    end
+    before do
+      expect_any_instance_of(Results::EventDataController)
+        .to receive(:export_list).with(exporter).and_return('')
+    end
 
+    it 'calls the export_list on the controller and set the required variables' do
       # Prevent export to save and upload attachment to S3
       expect(exporter).to receive(:save).at_least(:once).and_return(true)
 
@@ -35,8 +45,18 @@ describe ListExport, type: :model do
       exporter.export_list
 
       expect(exporter.file_file_name).not_to be_nil
-      expect(User.current).to eq(company_user.user)
+      expect(User.current).to be_nil
       expect(exporter.completed?).to be_truthy
+    end
+
+    it 'retry to save three times in case of a network error' do
+      expect_any_instance_of(Paperclip::Attachment).to receive(:save).exactly(4).times.and_raise(Net::OpenTimeout)
+      expect(exporter).not_to receive(:queue!)
+      expect(exporter).to receive(:process!).once
+      expect(exporter).to receive(:sleep).exactly(3).times # So it doesn't really sleep
+      expect(exporter).not_to receive(:complete!)
+      expect{ exporter.export_list }.to raise_error(Net::OpenTimeout)
+
     end
   end
 
@@ -52,7 +72,7 @@ describe ListExport, type: :model do
       exporter.export_list
 
       expect(exporter.file_file_name).not_to be_nil
-      expect(User.current).to eq(company_user.user)
+      expect(User.current).to be_nil
       expect(exporter.completed?).to be_truthy
     end
   end

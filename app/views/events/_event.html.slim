@@ -1,15 +1,12 @@
-li id="event_#{event.id}" class="#{active_class(event)} #{event.aasm_state}#{event.is_late? && event.unsent? ? ' late' : '' }"
-  span.event-item
-    / a href="#{event_path(event)}"
-    = link_to_if_permitted(:show, Event, event_path(event), title: 'Event Details') do
-      span.date= format_date_range(event_date(event, :start_at), event_date(event, :end_at))
-      span.address
-        =
-        b= event.campaign_name
-        = event_place_address(event, false, ', ')
+.resource-item id="event_#{event.id}" class="#{active_class(event)} #{event.aasm_state}#{event.is_late? && event.unsent? ? ' late' : '' }"
+  = link_to_if_permitted :show, Event, event_path(event), title: 'Event Details', class: 'resource-item-link' do
+    .span5.date= format_date_range(event_date(event, :start_at), event_date(event, :end_at))
+    .span7
+      .text-large= event.campaign_name
+      = event_place_address(event, false, ', ')
 
-    span.pull-right
-      = link_to '', edit_event_path(event), remote: true, class: 'icon-edit', title: 'Edit' if can? :edit, Event
-      - if can? :deactivate, Event
-        = link_to_deactivate event
-        = link_to '', activate_event_path(event), remote: true, class: 'icon-rounded-ok', title: I18n.t('confirmation.activate') unless event.active?
+  .resource-item-actions
+    = link_to '', edit_event_path(event), remote: true, class: 'icon-edit', title: 'Edit' if can? :edit, Event
+    - if can? :deactivate, Event
+      = link_to_deactivate event
+      = link_to '', activate_event_path(event), remote: true, class: 'icon-rounded-ok', title: I18n.t('confirmation.activate') unless event.active?

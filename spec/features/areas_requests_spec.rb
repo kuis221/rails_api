@@ -105,14 +105,14 @@ feature 'Areas', js: true, search: true  do
 
         within('#areas-list') do
           # First Row
-          within("li#area_#{areas[0].id}") do
+          within resource_item areas[0] do
             expect(page).to have_text('Gran Area Metropolitana')
             expect(page).to have_text('Ciudades principales de Costa Rica')
             expect(page).to have_link('Edit')
             expect(page).to have_link('Deactivate')
           end
           # Second Row
-          within("li#area_#{areas[1].id}") do
+          within resource_item areas[1] do
             expect(page).to have_text('Zona Norte')
             expect(page).to have_text('Ciudades del Norte de Costa Rica')
             expect(page).to have_link('Edit')
@@ -127,7 +127,7 @@ feature 'Areas', js: true, search: true  do
         visit areas_path
 
         expect(page).to have_text('Wild Wild West')
-        within('ul#areas-list li:nth-child(1)') do
+        within resource_item 1 do
           click_js_link('Deactivate')
         end
         confirm_prompt 'Are you sure you want to deactivate this area?'
@@ -143,13 +143,11 @@ feature 'Areas', js: true, search: true  do
         filter_section('ACTIVE STATE').unicheck('Inactive')
         filter_section('ACTIVE STATE').unicheck('Active')
 
-        within('ul#areas-list li:nth-child(1)') do
+        within resource_item 1 do
           expect(page).to have_text('Wild Wild West')
           click_js_link('Activate')
         end
-        within('ul#areas-list') do
-          expect(page).to have_no_content('Wild Wild West')
-        end
+        expect(page).to have_no_content('Wild Wild West')
       end
     end
 

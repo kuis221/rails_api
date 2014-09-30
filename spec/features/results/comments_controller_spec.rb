@@ -56,9 +56,9 @@ feature 'Results Comments Page', js: true, search: true  do
       Sunspot.commit
       visit results_comments_path
 
-      within('ul#comment-list') do
+      within('#comment-list') do
         # First Row
-        within('li:nth-child(1)') do
+        within resource_item 1 do
           expect(page).to have_content('First Campaign')
           expect(page).to have_content('WED Aug 21, 2013 8:00 PM - 11:00 PM')
           expect(page).to have_content('Place 1, New York City, NY, 12345')
@@ -66,7 +66,7 @@ feature 'Results Comments Page', js: true, search: true  do
           expect(page).to have_content('Aug 22 @ 11:59 AM')
         end
         # Second Row
-        within('li:nth-child(2)') do
+        within resource_item 2 do
           expect(page).to have_content('First Campaign')
           expect(page).to have_content('WED Aug 21, 2013 8:00 PM - 11:00 PM')
           expect(page).to have_content('Place 1, New York City, NY, 12345')

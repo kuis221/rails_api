@@ -1,6 +1,5 @@
-#campaign-documents.details_box
-  #campaign-documents-list
-    = render :partial => "documents/document", :collection => resource.documents, :locals => { parent: resource }
-  .row-fluid
-    .pull-left
-      = link_to content_tag(:i,'', class: 'icon-plus-sign'), new_campaign_document_path(resource), remote: true
+.details_box
+  .documents-list
+    #documents-list.resource-list
+      = render :partial => "documents/document", :collection => resource.documents, :locals => { parent: resource }
+  = button_to_add 'Add Document', new_campaign_document_path(resource)

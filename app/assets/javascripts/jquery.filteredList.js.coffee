@@ -46,7 +46,7 @@ $.widget 'nmk.filteredList', {
 			@storageScope = window.location.pathname.replace('/','_')
 
 
-		@element.parent().append $('<a class="btn list-filter-btn" href="#" data-toggle="filterbar" title="Filter">').append('<i class="icon-filter">')
+		@element.parent().append $('<a class="list-filter-btn" href="#" data-toggle="filterbar" title="Filter">').append('<i class="icon-gear">')
 
 		@formFilters = $('<div class="form-facet-filters">').appendTo(@form)
 		if @options.filters
@@ -884,7 +884,7 @@ $.widget 'nmk.filteredList', {
 		if @options.placeholderElement?
 			@options.placeholderElement(message)
 		else
-			$('<li class="placeholder-empty-state">'+message+'</li>').appendTo @listContainer
+			$('<div class="placeholder-empty-state">').html(message).appendTo @listContainer
 
 	reloadData: () ->
 		@_loadPage 1

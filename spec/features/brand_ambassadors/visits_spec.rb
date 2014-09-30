@@ -35,7 +35,8 @@ feature 'Brand Ambassadors Visits' do
       create(:brand_ambassadors_visit, company: company,
         start_date: today, end_date: (today + 1.day).to_s(:slashes),
         city: 'New York', area: area, campaign: campaign,
-        visit_type: 'market_visit', company_user: company_user, active: true)
+        visit_type: 'market_visit', company_user: company_user,
+        description: 'The first visit description', active: true)
       create(:brand_ambassadors_visit, company: company,
         start_date: (today + 2.days).to_s(:slashes), end_date: (today + 3.days).to_s(:slashes),
         city: 'New York', area: area, campaign: campaign,
@@ -52,30 +53,28 @@ feature 'Brand Ambassadors Visits' do
 
       choose_predefined_date_range 'Current month'
 
-      within('ul#visits-list') do
-        # First Row
-        within('li:nth-child(1)') do
-          expect(page).to have_content('Market Visit')
-          expect(page).to have_content('My Area (New York)')
-          expect(page).to have_content(company_user.full_name)
-          expect(page).to have_content("#{month_name} 18")
-          expect(page).to have_content("#{month_name} 19")
-        end
-        # Second Row
-        within('li:nth-child(2)') do
-          expect(page).to have_content('Brand Program')
-          expect(page).to have_content('My Area (New York)')
-          expect(page).to have_content(company_user.full_name)
-          expect(page).to have_content("#{month_name} 20")
-          expect(page).to have_content("#{month_name} 21")
-        end
-        # Third Row
-        within('li:nth-child(3)') do
-          expect(page).to have_content('PTO')
-          expect(page).to have_content(company_user.full_name)
-          expect(page).to have_content("#{month_name} 22")
-          expect(page).to have_content("#{month_name} 23")
-        end
+      # First Row
+      within resource_item 1 do
+        expect(page).to have_content('Market Visit')
+        expect(page).to have_content('My Area (New York)')
+        expect(page).to have_content(company_user.full_name)
+        expect(page).to have_content("#{month_name} 18")
+        expect(page).to have_content("#{month_name} 19")
+      end
+      # Second Row
+      within resource_item 2 do
+        expect(page).to have_content('Brand Program')
+        expect(page).to have_content('My Area (New York)')
+        expect(page).to have_content(company_user.full_name)
+        expect(page).to have_content("#{month_name} 20")
+        expect(page).to have_content("#{month_name} 21")
+      end
+      # Third Row
+      within resource_item 3 do
+        expect(page).to have_content('PTO')
+        expect(page).to have_content(company_user.full_name)
+        expect(page).to have_content("#{month_name} 22")
+        expect(page).to have_content("#{month_name} 23")
       end
     end
 
@@ -94,10 +93,10 @@ feature 'Brand Ambassadors Visits' do
       ensure_modal_was_closed
 
       expect(ListExport.last).to have_rows([
-        ['START DATE', 'END DATE', 'EMPLOYEE', 'AREA', 'CITY', 'CAMPAIGN', 'TYPE'],
-        ['2014-09-18T00:00', '2014-09-19T00:00', 'Test User', 'My Area', 'New York', 'My Campaign', 'Market Visit'],
-        ['2014-09-20T00:00', '2014-09-21T00:00', 'Test User', 'My Area', 'New York', 'My Campaign', 'Brand Program'],
-        ["2014-09-22T00:00", "2014-09-23T00:00", "Test User", nil, nil, "My Campaign", "PTO"]
+        ['START DATE', 'END DATE', 'EMPLOYEE', 'AREA', 'CITY', 'CAMPAIGN', 'TYPE', 'DESCRIPTION'],
+        ['2014-09-18T00:00', '2014-09-19T00:00', 'Test User', 'My Area', 'New York', 'My Campaign', 'Market Visit', 'The first visit description'],
+        ['2014-09-20T00:00', '2014-09-21T00:00', 'Test User', 'My Area', 'New York', 'My Campaign', 'Brand Program', 'Visit description'],
+        ['2014-09-22T00:00', '2014-09-23T00:00', 'Test User', nil, nil, 'My Campaign', 'PTO', 'Visit description']
       ])
     end
 
@@ -193,7 +192,7 @@ feature 'Brand Ambassadors Visits' do
 
         expect(page).to have_content('2 visits')
 
-        within('ul#visits-list') do
+        within '#visits-list' do
           expect(page).to have_content('Brand Program')
           expect(page).to have_content('Market Visit')
         end
@@ -202,7 +201,7 @@ feature 'Brand Ambassadors Visits' do
 
         expect(page).to have_content('2 visits as part of My Campaign')
 
-        within('ul#visits-list') do
+        within '#visits-list' do
           expect(page).to have_content('My Campaign')
           expect(page).to have_no_content('Campaign FY2012')
           expect(page).to have_no_content('Another Campaign April 03')
@@ -215,14 +214,14 @@ feature 'Brand Ambassadors Visits' do
 
         expect(page).to have_content('1 visit assigned to Test User')
 
-        within('ul#visits-list') do
+        within '#visits-list' do
           expect(page).to have_content('Brand Program')
           expect(page).to have_no_content('Market Visit')
         end
 
         filter_section('BRAND AMBASSADORS').unicheck('Roberto Gomez')
 
-        within('ul#visits-list') do
+        within '#visits-list' do
           expect(page).to have_content('Brand Program')
           expect(page).to have_content('Market Visit')
         end
@@ -231,7 +230,7 @@ feature 'Brand Ambassadors Visits' do
 
         filter_section('AREAS').unicheck('California')
 
-        within('ul#visits-list') do
+        within '#visits-list' do
           expect(page).to have_content('Brand Program')
           expect(page).to have_no_content('Market Visit')
         end
@@ -240,7 +239,7 @@ feature 'Brand Ambassadors Visits' do
 
         filter_section('AREAS').unicheck('Texas')
 
-        within('ul#visits-list') do
+        within '#visits-list' do
           expect(page).to have_content('Brand Program')
           expect(page).to have_content('Market Visit')
         end
@@ -251,7 +250,7 @@ feature 'Brand Ambassadors Visits' do
         filter_section('AREAS').unicheck('Texas')
         filter_section('CITIES').unicheck('Los Angeles')
 
-        within('ul#visits-list') do
+        within '#visits-list' do
           expect(page).to have_content('Brand Program')
           expect(page).to have_no_content('Market Visit')
         end
@@ -260,7 +259,7 @@ feature 'Brand Ambassadors Visits' do
 
         filter_section('CITIES').unicheck('Austin')
 
-        within('ul#visits-list') do
+        within '#visits-list' do
           expect(page).to have_content('Brand Program')
           expect(page).to have_content('Market Visit')
         end
@@ -268,7 +267,7 @@ feature 'Brand Ambassadors Visits' do
         expect(page).to have_content('2 visits in Austin or Los Angeles and assigned to Roberto Gomez or Test User')
 
         select_filter_calendar_day('18')
-        within('ul#visits-list') do
+        within '#visits-list' do
           expect(page).to have_content('Brand Program')
           expect(page).to have_no_content('Market Visit')
         end
@@ -276,7 +275,7 @@ feature 'Brand Ambassadors Visits' do
         expect(page).to have_content('1 visit taking place today in Austin or Los Angeles and assigned to Roberto Gomez or Test User')
 
         select_filter_calendar_day('18', '19')
-        within('ul#visits-list') do
+        within '#visits-list' do
           expect(page).to have_content('Brand Program')
           expect(page).to have_content('Market Visit')
         end
@@ -419,7 +418,7 @@ feature 'Brand Ambassadors Visits' do
       visit brand_ambassadors_root_path
       choose_predefined_date_range 'Current month'
 
-      within('ul#visits-list') do
+      within resource_item do
         click_js_link('Edit')
       end
 
@@ -438,7 +437,7 @@ feature 'Brand Ambassadors Visits' do
       end
       ensure_modal_was_closed
 
-      within('ul#visits-list') do
+      within resource_item do
         expect(page).to have_content company_user.full_name
         expect(page).to have_content 'My Area (My City)'
         expect(page).to have_content campaign.name
@@ -449,7 +448,7 @@ feature 'Brand Ambassadors Visits' do
     scenario 'user is redirected to the list of visits after editing' do
       visit brand_ambassadors_root_path
 
-      within('ul#visits-list li') do
+      within resource_item do
         click_link 'Visit Details'
       end
       expect(current_path).to eql brand_ambassadors_visit_path(ba_visit)
@@ -479,14 +478,14 @@ feature 'Brand Ambassadors Visits' do
 
       choose_predefined_date_range 'Current month'
 
-      within('ul#visits-list') do
+      within resource_item do
         click_js_link('Deactivate')
       end
 
       confirm_prompt 'Are you sure you want to deactivate this visit?'
 
-      within('ul#visits-list') do
-        expect(page).to have_no_selector('li')
+      within '#visits-list' do
+        expect(page).to have_no_selector('.resource-item')
       end
     end
   end

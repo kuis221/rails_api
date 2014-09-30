@@ -40,6 +40,7 @@
 
 coffee:
   $('#contact_event_contactable_attributes_country').change () ->
+    return true unless $(this).val()
     $.get '/countries/states.json', {country: $(this).val()}, (response) ->
       states = $('#contact_event_contactable_attributes_state')
       val = states.val()
@@ -51,3 +52,5 @@ coffee:
             option.attr('selected', 'selected')
           states.append(option)
       states.trigger('liszt:updated')
+
+  $('#contact_event_contactable_attributes_country').change()

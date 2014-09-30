@@ -40,12 +40,12 @@ describe KpisController, type: :controller do
       expect(kpi.description).to eq('Test kpi description')
     end
 
-    it 'should not render the form_dialog template if errors' do
+    it 'should render the form_dialog template if errors' do
       expect do
         post 'create', campaign_id: campaign.to_param, format: :js, kpi: {}
       end.not_to change(Kpi, :count)
       expect(response).to render_template(:create)
-      expect(response).not_to render_template('_form_dialog')
+      expect(response).to render_template('_form_dialog')
       assigns(:kpi).errors.count > 0
     end
   end

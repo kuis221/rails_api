@@ -40,13 +40,13 @@ feature 'Notifications', search: true, js: true do
       click_notification 'You have 2 new events'
 
       expect(current_path).to eql events_path
-      expect(page).to have_selector('#events-list li', count: 2)
+      expect(page).to have_selector('#events-list .resource-item', count: 2)
 
       visit current_url
 
       # reload page and make sure that only the two events are still there
       expect(current_path).to eql events_path
-      expect(page).to have_selector('#events-list li', count: 2)
+      expect(page).to have_selector('#events-list .resource-item', count: 2)
     end
 
     it 'should receive notifications for new team events' do
@@ -69,13 +69,13 @@ feature 'Notifications', search: true, js: true do
       click_notification 'Your team Team 1 has 2 new events'
 
       expect(current_path).to eql events_path
-      expect(page).to have_selector('#events-list li', count: 2)
+      expect(page).to have_selector('#events-list .resource-item', count: 2)
 
       visit current_url
 
       # reload page and make sure that only the two events are still there
       expect(current_path).to eql events_path
-      expect(page).to have_selector('#events-list li', count: 2)
+      expect(page).to have_selector('#events-list .resource-item', count: 2)
     end
 
     it "should receive notifications when user is added to a event's team" do
@@ -90,12 +90,12 @@ feature 'Notifications', search: true, js: true do
       click_js_button 'Add Team Member'
       within visible_modal do
         fill_in 'staff-search-item', with: user.name
-        click_js_link('Add')
+        within(resource_item("#staff-member-user-#{company_user.id}")) { click_js_link 'Add' }
       end
       close_modal
 
       visit events_path
-      expect(page).to have_selector('#events-list li', count: 1)
+      expect(page).to have_selector('#events-list .resource-item', count: 1)
 
       # Visit event and make sure the notification is removed
       visit event_path(event)
@@ -118,14 +118,14 @@ feature 'Notifications', search: true, js: true do
       click_js_button 'Add Team Member'
       within visible_modal do
         fill_in 'staff-search-item', with: 'SuperAmigos'
-        click_js_link('Add')
+        within(resource_item("#staff-member-team-#{team.id}")) { click_js_link 'Add' }
         expect(page).not_to have_content('SuperAmigos')
       end
       close_modal
       expect(event.teams).to include(team)
 
       visit events_path
-      expect(page).to have_selector('#events-list li', count: 1)
+      expect(page).to have_selector('#events-list .resource-item', count: 1)
 
       # Visit event and make sure the notification is removed
       visit event_path(event)
@@ -169,7 +169,7 @@ feature 'Notifications', search: true, js: true do
       click_notification 'There are 2 event recaps that are due'
 
       expect(current_path).to eql events_path
-      expect(page).to have_selector('#events-list li', count: 2)
+      expect(page).to have_selector('#events-list .resource-item', count: 2)
     end
 
     it 'should receive notifications for late events recaps' do
@@ -191,7 +191,7 @@ feature 'Notifications', search: true, js: true do
       click_notification 'There are 2 late event recaps'
 
       expect(current_path).to eql events_path
-      expect(page).to have_selector('#events-list li', count: 2)
+      expect(page).to have_selector('#events-list .resource-item', count: 2)
     end
 
     it 'should receive notifications for pending approval events recaps' do
@@ -213,7 +213,7 @@ feature 'Notifications', search: true, js: true do
       click_notification 'There are 2 event recaps that are pending approval'
 
       expect(current_path).to eql events_path
-      expect(page).to have_selector('#events-list li', count: 2)
+      expect(page).to have_selector('#events-list .resource-item', count: 2)
     end
 
     it 'should receive notifications for rejected events recaps' do
@@ -235,7 +235,7 @@ feature 'Notifications', search: true, js: true do
       click_notification 'There are 2 event recaps that have been rejected'
 
       expect(current_path).to eql events_path
-      expect(page).to have_selector('#events-list li', count: 2)
+      expect(page).to have_selector('#events-list .resource-item', count: 2)
     end
 
     it 'should receive notifications for new tasks assigned to him' do
@@ -304,7 +304,7 @@ feature 'Notifications', search: true, js: true do
       click_notification 'You have 2 new campaigns'
 
       expect(current_path).to eql campaigns_path
-      expect(page).to have_selector('#campaigns-list li', count: 2)
+      expect(page).to have_selector('#campaigns-list .resource-item', count: 2)
 
       expect(page).to_not have_notification 'You have 2 new campaigns'
 
@@ -312,7 +312,7 @@ feature 'Notifications', search: true, js: true do
 
       # reload page and make sure that the two campaigns are still there
       expect(current_path).to eql campaigns_path
-      expect(page).to have_selector('#campaigns-list li', count: 2)
+      expect(page).to have_selector('#campaigns-list .resource-item', count: 2)
     end
 
     it 'should remove notifications for new campaigns visited' do
@@ -356,13 +356,15 @@ feature 'Notifications', search: true, js: true do
         click_notification 'There are 2 late event recaps'
 
         expect(current_path).to eql events_path
-        expect(page).to have_selector('#events-list li', count: 2)
+        expect(page).to have_selector('#events-list .resource-item', count: 2)
       end
 
       it 'should receive notifications for new tasks not assigned to him as tasks for the team' do
         company_user.update_attributes(notifications_settings: ['late_team_task_app'])
         event = create(:event, company: company, campaign: campaign, place: place)
-        task = create(:task, title: 'My Team Task #1', event: event, company_user: nil, due_at: 2.days.ago.to_s(:slashes))
+        task = create(:task,
+                      title: 'My Team Task #1', event: event,
+                      company_user: nil, due_at: 2.days.ago.to_s(:slashes))
 
         Sunspot.commit
 

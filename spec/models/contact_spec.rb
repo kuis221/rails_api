@@ -25,7 +25,6 @@ describe Contact, type: :model do
   it { is_expected.to have_many(:contact_events) }
   it { is_expected.to validate_presence_of(:first_name) }
   it { is_expected.to validate_presence_of(:last_name) }
-  it { is_expected.to validate_presence_of(:country) }
   it { is_expected.to validate_presence_of(:state) }
   it { is_expected.to validate_presence_of(:city) }
 
@@ -43,13 +42,6 @@ describe Contact, type: :model do
   it { is_expected.not_to allow_value('United States').for(:country).with_message('is not valid') }
 
   describe 'state validation' do
-    describe 'when country is nil' do
-      subject { Contact.new(country: nil) }
-
-      it { is_expected.not_to allow_value('CA').for(:state).with_message('is not valid') }
-      it { is_expected.not_to allow_value('ON').for(:state).with_message('is not valid') }
-    end
-
     describe 'with United States as country' do
       subject { Contact.new(country: 'US') }
 

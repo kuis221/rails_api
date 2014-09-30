@@ -1,10 +1,8 @@
-li id="day_part_#{day_part.id}" class="#{active_class(day_part)}"
-  = link_to_if_permitted :show, DayPart, day_part_path(day_part) do
-    span
-      b= day_part.name
-      span.description
-        = day_part.description
-  span.pull-right
+div.resource-item id="day_part_#{day_part.id}" class="#{active_class(day_part)}"
+  = link_to_if_permitted :show, DayPart, day_part_path(day_part), class: 'resource-item-link' do
+    .text-large= day_part.name
+    .crop-text= day_part.description
+  div.resource-item-actions
     = link_to '', edit_day_part_path(day_part), remote: true, class: 'icon-edit' if can?(:edit, DayPart)
     - if can?(:deactivate, DayPart)
       = link_to_deactivate day_part

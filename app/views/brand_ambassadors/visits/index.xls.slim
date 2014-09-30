@@ -12,6 +12,11 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
       Column ss:Width="100"
       Column ss:Width="100"
       Column ss:Width="150"
+      Column ss:Width="100"
+      Column ss:Width="150"
+      Column ss:Width="200"
+      Column ss:Width="150"
+      Column ss:Width="250"
       Row ss:StyleID="s1"
         Cell
           Data ss:Type="String" START DATE
@@ -27,6 +32,8 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
           Data ss:Type="String" CAMPAIGN
         Cell
           Data ss:Type="String" TYPE
+        Cell
+          Data ss:Type="String" DESCRIPTION
 
       - each_collection_item do |visit|
         Row
@@ -44,4 +51,5 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
             Data ss:Type="String"= visit.campaign_name
           Cell
             Data ss:Type="String"= visit.visit_type_name
-
+          Cell
+            Data ss:Type="String"= visit.description

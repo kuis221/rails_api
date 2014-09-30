@@ -1,14 +1,12 @@
-li id="team_#{team.id}" class="#{active_class(team)}"
-  = link_to_if_permitted :show, Team, team_path(team) do
-    span.details
-      b= team.name
-      span.description
-        = team.description
-    span.members
-      b= team.users.active.count
-      br>/
+div.resource-item id="team_#{team.id}" class="#{active_class(team)}"
+  = link_to_if_permitted :show, Team, team_path(team), class: 'resource-item-link' do
+    .span7
+      .text-large= team.name
+      .crop-text= team.description
+    .span5
+      .text-large= team.users.active.count
       | Members
-  span.pull-right.tools
+  div.resource-item-actions
     = link_to '', edit_team_path(team), remote: true, title: 'Edit', class: 'icon-edit' if can?(:edit, Team)
     - if can?(:deactivate, Team)
       = link_to_deactivate team

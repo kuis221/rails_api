@@ -509,26 +509,6 @@ ul.select2-results{
 			font-size: 22px;
 			font-weight: bold;
 		}
-		.new_kpi, .edit_kpi{
-			input[type="text"]#kpi_name, textarea{
-				width: 387px;
-			}
-			input[type="number"] {
-				background-color: white !important;
-				box-shadow: none !important;
-				margin-right: 0 !important;
-				margin-top: 3px !important;
-				width: 386px;
-			}
-			.chzn-container-single{
-				.chzn-results{
-					margin: 0 0 4px 0;
-				}
-				.chzn-single{
-					width: 390px;
-				}
-			}
-		}
 		&.help{
 			.help-title{
 				p{
@@ -788,27 +768,6 @@ ul.select2-results{
 	font-size: 16px;
 	margin: 40px 0;
 	text-align: center;
-}
-
-// CAMPAIGNS MODALS
-
-.campaigns-modals{
-	color: $brand;
-	.select-list-table-wrapper .link-list {
-		ul.select-items-list{
-			min-height: 82px;
-			overflow-y: auto;
-			overflow-x: hidden;
-			.pull-left{
-				margin: 21px 0 0 20px;
-			}
-			li{
-				span:last-child .add:before{
-					top:2px;
-				}
-			}
-		}
-	}
 }
 
 

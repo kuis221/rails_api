@@ -13,11 +13,8 @@
   #collection-list-filters
 
 .main
-  .pull-left
-    = button_to 'Invite user', new_user_invitation_path, {method: :get, remote: true, class: 'btn btn-primary'} if can?(:create, resource_class)
-  .tab-content
-    .link-list
-      ul#users-list
+  = button_to 'Invite user', new_user_invitation_path, {method: :get, remote: true, class: 'btn btn-primary'} if can?(:create, resource_class)
+  div#users-list.resource-list
 
 = render partial: 'help_tutorial'
 

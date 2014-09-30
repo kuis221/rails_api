@@ -31,10 +31,10 @@
           .right-arrow
             a.icon-angle-right
         #event-data-totals
-      .link-list
-        ul#event-data-list
-          li.placeholder
-            p Select any filter to see results
+
+      #event-data-list.resource-list
+        div.placeholder
+          p Select any filter to see results
 
 = render partial: 'help_tutorial'
 
@@ -63,11 +63,10 @@ javascript:
       }
     },
     'onItemsChange': function(response, page){
-      if ($('#event-data-list li').length > 0) {
+      if ($('#event-data-list .resource-item').length > 0) {
         $('#list-tools').show()
       } else {
         $('#list-tools').hide()
-        $('#event-data-list').append("<li class='placeholder'><p>No results. Select other filters to see results</p></li>");
       }
     }
   });

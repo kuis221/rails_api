@@ -1,10 +1,8 @@
-li id="activity_type_#{activity_type.id}" class="#{active_class(activity_type)}"
-  = link_to_if_permitted :show, ActivityType, activity_type_path(activity_type) do
-    span
-      b= activity_type.name
-      span.description
-        = activity_type.description
-  span.pull-right
+div.resource-item id="activity_type_#{activity_type.id}" class="#{active_class(activity_type)}"
+  = link_to_if_permitted :show, ActivityType, activity_type_path(activity_type), class: 'resource-item-link' do
+    .text-large= activity_type.name
+    .crop-text= activity_type.description
+  div.resource-item-actions
     = link_to '', edit_activity_type_path(activity_type), remote: true, title: 'Edit', class: 'icon-edit' if can?(:edit, ActivityType)
     - if can?(:deactivate, ActivityType)
       = link_to_deactivate activity_type

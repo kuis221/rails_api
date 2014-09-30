@@ -211,9 +211,26 @@ module RequestsHelper
     visit(path) unless current_path == path
   end
 
+  def resource_item(resource=1, list: nil)
+    root = page
+    root = find(list) unless list.nil?
+    item =
+      if resource.is_a?(Integer)
+        root.find(".resource-item:nth-child(#{resource})")
+      elsif resource.is_a?(String)
+        root.find(".resource-item#{resource}")
+      else
+        root.find(".resource-item##{resource.class.name.underscore}_#{resource.id}, .resource-item##{resource.class.name.underscore}-#{resource.id}")
+      end
+    item.hover
+    item
+  end
+
   # Helpers for events section
   def event_team_member(member)
-    find('#event-team-members #event-member-' + member.id.to_s)
+    div = find('#event-team-members #event-member-' + member.id.to_s)
+    div.hover
+    div
   end
 
   def add_permissions(permissions)
