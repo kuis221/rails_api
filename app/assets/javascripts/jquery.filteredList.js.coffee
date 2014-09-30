@@ -837,7 +837,9 @@ $.widget 'nmk.filteredList', {
 		p = custom_filter[0].value.split('&id')[0] if custom_filter.length > 0
 
 	_serializeFilters: () ->
-		jQuery.param( @getFilters() )
+		data = @_deparam(@_getCustomFilters())
+		data = @getFilters() if !data.length
+		jQuery.param( data )
 
 	buildParams: (params=[]) ->
 		data = @_deparam(@_getCustomFilters())
