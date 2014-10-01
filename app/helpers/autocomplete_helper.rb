@@ -26,11 +26,11 @@ module AutocompleteHelper
     end
 
     # Sort by scoring if we are grouping multiple clasess into one bucket
-    results = results.sort{|a, b| b.score <=> a.score }.first(5) if klasess.size > 1
-    {label: bucket_name.to_s.gsub(/[_]+/, ' ').capitalize, value: get_bucket_results(results)}
+    results = results.sort { |a, b| b.score <=> a.score }.first(5) if klasess.size > 1
+    { label: bucket_name.to_s.gsub(/[_]+/, ' ').capitalize, value: get_bucket_results(results) }
   end
 
   def get_bucket_results(results)
-    results.map{|x| {label: (x.highlight(:name).nil? ? x.stored(:name) : x.highlight(:name).format{|word| "<i>#{word}</i>" }), value: x.primary_key, type: x.class_name.underscore.downcase} }
+    results.map { |x| { label: (x.highlight(:name).nil? ? x.stored(:name) : x.highlight(:name).format { |word| "<i>#{word}</i>" }), value: x.primary_key, type: x.class_name.underscore.downcase } }
   end
 end

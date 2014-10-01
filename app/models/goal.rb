@@ -39,7 +39,7 @@ class Goal < ActiveRecord::Base
   scope :for_areas, ->(areas) { where(goalable_type: 'Area', goalable_id: areas) }
   scope :for_staff, ->(user_ids, team_ids) { where('(goalable_type = ? and goalable_id in (?)) OR (goalable_type = ? and goalable_id in (?))', 'CompanyUser', user_ids, 'Team', team_ids) }
   scope :for_areas_and_places, ->(area_ids, place_ids) { where('(goalable_type = ? and goalable_id in (?)) OR (goalable_type = ? and goalable_id in (?))', 'Area', area_ids, 'Place', place_ids) }
-  scope :for_users_and_teams, -> { where(goalable_type: ['CompanyUser', 'Team']) }
+  scope :for_users_and_teams, -> { where(goalable_type: %w(CompanyUser Team)) }
   scope :in, ->(parent) { where(parent_type: parent.class.name, parent_id: parent.id) }
   scope :for, ->(goalable) { where(goalable_type: goalable.class.name, goalable_id: goalable.id) }
   scope :base, -> { where('parent_type is null') }
@@ -49,9 +49,9 @@ class Goal < ActiveRecord::Base
 
   protected
 
-    def set_kpi_id
-      if self.kpi_id.nil? && self.kpis_segment_id.present?
-        self.kpi_id = self.kpis_segment.try(:kpi_id)
-      end
+  def set_kpi_id
+    if kpi_id.nil? && kpis_segment_id.present?
+      self.kpi_id = kpis_segment.try(:kpi_id)
     end
+  end
 end

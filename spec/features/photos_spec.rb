@@ -1,12 +1,15 @@
 require 'rails_helper'
 
-feature "Photos", js: true do
+feature 'Photos', js: true do
+  let(:company) { create(:company) }
+  let(:role) { create(:role, company: company) }
+  let(:user) { create(:user, company_id: company.id, role_id: role.id) }
+  let(:campaign) { create(:campaign, company: company, modules: { 'photos' => {} }) }
+  let(:event) { create(:late_event, company: company, campaign: campaign) }
 
   before do
     Warden.test_mode!
-    @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
-    @company = @user.companies.first
-    sign_in @user
+    sign_in user
     Kpi.create_global_kpis
   end
 
@@ -15,20 +18,15 @@ feature "Photos", js: true do
     Warden.test_reset!
   end
 
-  let(:campaign) { FactoryGirl.create(:campaign, company: @company) }
-  let(:event) { FactoryGirl.create(:late_event, company: @company, campaign:campaign) }
-
-  before { campaign.update_attribute(:modules, {'photos' => {} })  }
-
-  feature "Event Photo management" do
-    scenario "A user can select a photo and attach it to the event" do
+  feature 'Event Photo management' do
+    scenario 'A user can select a photo and attach it to the event' do
       with_resque do
         visit event_path(event)
 
-        gallery_box.click_js_link 'Add Photos'
+        gallery_box.click_js_button 'Add Photos'
 
         within visible_modal do
-          attach_file "file", 'spec/fixtures/photo.jpg'
+          attach_file 'file', 'spec/fixtures/photo.jpg'
           expect(upload_queue).to have_file_in_queue('photo.jpg')
           wait_for_ajax(30) # For the image to upload to S3
           find('#btn-upload-ok').click
@@ -44,8 +42,8 @@ feature "Photos", js: true do
       end
     end
 
-    scenario "A user can deactivate a photo" do
-      photo = FactoryGirl.create(:photo, attachable: event)
+    scenario 'A user can deactivate a photo' do
+      photo = create(:photo, attachable: event)
       visit event_path(event)
 
       # Check that the image appears on the page
@@ -54,14 +52,14 @@ feature "Photos", js: true do
         hover_and_click 'li', 'Deactivate'
       end
 
-      confirm_prompt "Are you sure you want to deactivate this photo?"
+      confirm_prompt 'Are you sure you want to deactivate this photo?'
       expect(gallery_box).to have_no_selector('li')
     end
   end
 
-  feature "Photo Gallery" do
-    scenario "can rate a photo" do
-      photo = FactoryGirl.create(:photo, attachable: event, rating: 2)
+  feature 'Photo Gallery' do
+    scenario 'can rate a photo' do
+      photo = create(:photo, attachable: event, rating: 2)
       visit event_path(event)
 
       # Check that the image appears on the page
@@ -72,8 +70,8 @@ feature "Photos", js: true do
 
       within gallery_modal do
         find('.rating span.full', match: :first)
-        expect(page.all(".rating span.full").count).to eql(2)
-        expect(page.all(".rating span.empty").count).to eql(3)
+        expect(page.all('.rating span.full').count).to eql(2)
+        expect(page.all('.rating span.empty').count).to eql(3)
         find('.rating span:nth-child(3)').trigger('click')
         wait_for_ajax
         expect(photo.reload.rating).to eql 3
@@ -88,13 +86,13 @@ feature "Photos", js: true do
       end
       within gallery_modal do
         find('.rating span.full', match: :first)
-        expect(page.all(".rating span.full").count).to eql(3)
-        expect(page.all(".rating span.empty").count).to eql(2)
+        expect(page.all('.rating span.full').count).to eql(3)
+        expect(page.all('.rating span.empty').count).to eql(2)
       end
     end
 
-    scenario "a user can deactivate a photo" do
-      FactoryGirl.create(:photo, attachable: event)
+    scenario 'a user can deactivate a photo' do
+      create(:photo, attachable: event)
       visit event_path(event)
 
       # Check that the image appears on the page
@@ -108,7 +106,7 @@ feature "Photos", js: true do
         hover_and_click('.slider', 'Deactivate')
       end
 
-      confirm_prompt "Are you sure you want to deactivate this photo?"
+      confirm_prompt 'Are you sure you want to deactivate this photo?'
 
       within gallery_modal do
         expect(page).to have_no_selector('a.photo-deactivate-link')
@@ -117,12 +115,9 @@ feature "Photos", js: true do
       expect(gallery_box).to have_no_selector('a.photo-deactivate-link')
     end
 
-    scenario "a user can activate a photo", search: true do
-      #This should be done from Photo Results section
-      event = FactoryGirl.create(:approved_event, company: @company, campaign: campaign)
-      FactoryGirl.create(:photo, attachable: event, active: false)
-      event.save
-
+    scenario 'a user can activate a photo', search: true do
+      # This should be done from Photo Results section
+      create(:photo, attachable: event, active: false)
       Sunspot.commit
 
       visit results_photos_path
@@ -146,8 +141,8 @@ feature "Photos", js: true do
       end
     end
 
-    scenario "a user can tag photos" do
-      FactoryGirl.create(:photo, attachable: event)
+    scenario 'a user can tag photos' do
+      create(:photo, attachable: event)
       visit event_path(event)
 
       within gallery_box do
@@ -155,7 +150,7 @@ feature "Photos", js: true do
       end
 
       within gallery_modal do
-        select2_add_tag "Add tags", 'tag1'
+        select2_add_tag 'Add tags', 'tag1'
         expect(find('.tags .list')).to have_content 'tag1'
 
         click_js_link 'Close'

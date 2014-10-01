@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140919052349) do
+ActiveRecord::Schema.define(version: 20140926011109) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -157,6 +157,7 @@ ActiveRecord::Schema.define(version: 20140919052349) do
   end
 
   add_index "attached_assets", ["attachable_type", "attachable_id"], name: "index_attached_assets_on_attachable_type_and_attachable_id", using: :btree
+  add_index "attached_assets", ["direct_upload_url"], name: "index_attached_assets_on_direct_upload_url", unique: true, using: :btree
   add_index "attached_assets", ["folder_id"], name: "index_attached_assets_on_folder_id", using: :btree
 
   create_table "attached_assets_tags", force: true do |t|
@@ -177,13 +178,13 @@ ActiveRecord::Schema.define(version: 20140919052349) do
     t.datetime "updated_at"
     t.text     "description"
     t.string   "visit_type"
-    t.integer  "brand_id"
     t.integer  "area_id"
     t.string   "city"
+    t.integer  "campaign_id"
   end
 
   add_index "brand_ambassadors_visits", ["area_id"], name: "index_brand_ambassadors_visits_on_area_id", using: :btree
-  add_index "brand_ambassadors_visits", ["brand_id"], name: "index_brand_ambassadors_visits_on_brand_id", using: :btree
+  add_index "brand_ambassadors_visits", ["campaign_id"], name: "index_brand_ambassadors_visits_on_campaign_id", using: :btree
   add_index "brand_ambassadors_visits", ["company_id"], name: "index_brand_ambassadors_visits_on_company_id", using: :btree
   add_index "brand_ambassadors_visits", ["company_user_id"], name: "index_brand_ambassadors_visits_on_company_user_id", using: :btree
 
@@ -243,8 +244,8 @@ ActiveRecord::Schema.define(version: 20140919052349) do
     t.string   "aasm_state"
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
+    t.datetime "created_at",                               null: false
+    t.datetime "updated_at",                               null: false
     t.integer  "company_id"
     t.integer  "first_event_id"
     t.integer  "last_event_id"
@@ -252,8 +253,9 @@ ActiveRecord::Schema.define(version: 20140919052349) do
     t.datetime "last_event_at"
     t.date     "start_date"
     t.date     "end_date"
-    t.integer  "survey_brand_ids", default: [],              array: true
+    t.integer  "survey_brand_ids",            default: [],              array: true
     t.text     "modules"
+    t.string   "color",            limit: 10
   end
 
   add_index "campaigns", ["company_id"], name: "index_campaigns_on_company_id", using: :btree

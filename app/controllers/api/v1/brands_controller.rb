@@ -6,10 +6,10 @@ class Api::V1::BrandsController < Api::V1::ApiController
 
   resource_description do
     short 'Brands'
-    formats ['json', 'xml']
-    error 404, "Missing"
-    error 401, "Unauthorized access"
-    error 500, "Server crashed for some reason"
+    formats %w(json xml)
+    error 404, 'Missing'
+    error 401, 'Unauthorized access'
+    error 500, 'Server crashed for some reason'
     param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
     param :company_id, :number, required: true
     description <<-EOS
@@ -17,7 +17,7 @@ class Api::V1::BrandsController < Api::V1::ApiController
     EOS
   end
 
-  api :GET, '/api/v1/brands', "Get a list of brands"
+  api :GET, '/api/v1/brands', 'Get a list of brands'
   description <<-EOS
     Returns a list of brands sorted by name. Only those brands that are accessible for the user will be returned.
 
@@ -52,7 +52,7 @@ class Api::V1::BrandsController < Api::V1::ApiController
     @brands = current_company.brands.active.accessible_by_user(current_company_user).order(:name)
   end
 
-  api :GET, '/api/v1/brands/:id/marques', "Get a list of marques for a brand"
+  api :GET, '/api/v1/brands/:id/marques', 'Get a list of marques for a brand'
   param :id, :number, required: true, desc: "The brand's ID."
   see 'brands#index'
   description <<-EOS

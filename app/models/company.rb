@@ -30,29 +30,28 @@ class Company < ActiveRecord::Base
   has_many :kpis, dependent: :destroy
   has_many :reports, dependent: :destroy
   has_many :activity_types, dependent: :destroy
-  has_many :brand_ambassadors_visits, ->{ order 'brand_ambassadors_visits.start_date ASC' },
-      class_name: 'BrandAmbassadors::Visit', dependent: :destroy
-  has_many :brand_ambassadors_documents, ->{ order('attached_assets.file_file_name ASC') },
-      class_name: 'BrandAmbassadors::Document', as: :attachable,
-      inverse_of: :attachable, dependent: :destroy  do
+  has_many :brand_ambassadors_visits, -> { order 'brand_ambassadors_visits.start_date ASC' },
+           class_name: 'BrandAmbassadors::Visit', dependent: :destroy
+  has_many :brand_ambassadors_documents, -> { order('attached_assets.file_file_name ASC') },
+           class_name: 'BrandAmbassadors::Document', as: :attachable,
+           inverse_of: :attachable, dependent: :destroy  do
     def root_children
-      self.where(folder_id: nil)
+      where(folder_id: nil)
     end
   end
-  has_many :document_folders, ->{ order('lower(document_folders.name) ASC') } do
+  has_many :document_folders, -> { order('lower(document_folders.name) ASC') } do
     def root_children
-      self.where(parent_id: nil)
+      where(parent_id: nil)
     end
   end
   has_many :custom_filters, dependent: :destroy, as: :owner, inverse_of: :owner
 
-  has_many :tags, ->{ order('tags.name ASC') }, :autosave => true, dependent: :destroy
-
+  has_many :tags, -> { order('tags.name ASC') }, autosave: true, dependent: :destroy
 
   validates :name, presence: true, uniqueness: true
   validates :admin_email, presence: true, on: :create, unless: :no_create_admin
 
-  validates_format_of :admin_email, :with => /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/, :allow_blank => true
+  validates_format_of :admin_email, with: /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/, allow_blank: true
 
   after_create :create_admin_role_and_user
 
@@ -75,11 +74,11 @@ class Company < ActiveRecord::Base
   end
 
   def brand_ambassadors_role_ids=(roles)
-    super roles.reject{|r| r.nil? || r == '' }.join(',')
+    super roles.reject { |r| r.nil? || r == '' }.join(',')
   end
 
   def company_id
-    self.id
+    id
   end
 
   def team_member_options
@@ -89,7 +88,7 @@ class Company < ActiveRecord::Base
         UNION ALL
         #{teams.active.select('teams.id, teams.name, \'team\' as type').to_sql}
         ORDER BY name ASC
-      ").map{|r| [r['name'], "#{r['type']}:#{r['id']}", {class: r['type']}] }
+      ").map { |r| [r['name'], "#{r['type']}:#{r['id']}", { class: r['type'] }] }
     end
   end
 
@@ -126,21 +125,22 @@ class Company < ActiveRecord::Base
   end
 
   private
-    def create_admin_role_and_user
-      if admin_email
-        role = self.roles.create(name: 'Super Admin', is_admin: true)
-        if user = User.where(["lower(users.email) = '%s'", admin_email.downcase]).first
-          new_company_user = self.company_users.build(role_id: role.id, user: user)
-          new_company_user.save validate: false
-          UserMailer.company_existing_admin_invitation(user.id, self).deliver
-        else
-          new_user = User.create(email: admin_email, first_name: 'Admin', last_name: 'User', inviting_user: true)
-          new_company_user = self.company_users.create(role_id: role.id, user: new_user)
-          new_user.skip_invitation = true
-          new_user.invite!
-          new_user.update_attributes(invitation_sent_at: Time.now.utc)
-          UserMailer.company_admin_invitation(new_user.id).deliver
-        end
+
+  def create_admin_role_and_user
+    if admin_email
+      role = roles.create(name: 'Super Admin', is_admin: true)
+      if user = User.where(["lower(users.email) = '%s'", admin_email.downcase]).first
+        new_company_user = company_users.build(role_id: role.id, user: user)
+        new_company_user.save validate: false
+        UserMailer.company_existing_admin_invitation(user.id, id).deliver
+      else
+        new_user = User.create(email: admin_email, first_name: 'Admin', last_name: 'User', inviting_user: true)
+        new_company_user = company_users.create(role_id: role.id, user: new_user)
+        new_user.skip_invitation = true
+        new_user.invite!
+        new_user.update_attributes(invitation_sent_at: Time.now.utc)
+        UserMailer.company_admin_invitation(new_user.id).deliver
       end
     end
+  end
 end

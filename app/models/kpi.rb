@@ -22,23 +22,23 @@ class Kpi < ActiveRecord::Base
 
   scoped_to_company
 
-  CUSTOM_TYPE_OPTIONS = {"number"     => ["integer", "decimal", "currency"],
-                         "count"      => ["radio", "dropdown", "checkbox"],
-                         "percentage" => ["integer", "decimal"]}
+  CUSTOM_TYPE_OPTIONS = { 'number'     => %w(integer decimal currency),
+                          'count'      => %w(radio dropdown checkbox),
+                          'percentage' => %w(integer decimal) }
 
-  OUT_BOX_TYPE_OPTIONS = ['promo_hours', 'events_count', 'photos', 'videos', 'surveys', 'expenses', 'comments']
+  OUT_BOX_TYPE_OPTIONS = %w(promo_hours events_count photos videos surveys expenses comments)
 
   GOAL_ONLY_TYPE_OPTIONS = OUT_BOX_TYPE_OPTIONS + ['number']
 
   COMPLETE_TYPE_OPTIONS = CUSTOM_TYPE_OPTIONS.keys + OUT_BOX_TYPE_OPTIONS
 
-  SEGMENTS_COUNT_MIN = {"radio"     => 2,
-                        "dropdown"  => 1,
-                        "checkbox"  => 1}
+  SEGMENTS_COUNT_MIN = { 'radio'     => 2,
+                         'dropdown'  => 1,
+                         'checkbox'  => 1 }
 
-  validates :name, presence: true, uniqueness: {scope: :company_id}
+  validates :name, presence: true, uniqueness: { scope: :company_id }
   validates :company_id, numericality: true, allow_nil: true
-  validates :kpi_type, :inclusion => {:in => COMPLETE_TYPE_OPTIONS, :message => "%{value} is not valid"}
+  validates :kpi_type, inclusion: { in: COMPLETE_TYPE_OPTIONS, message: '%{value} is not valid' }
 
   validates_associated :kpis_segments
 
@@ -47,28 +47,28 @@ class Kpi < ActiveRecord::Base
   validate :segments_count_valid?
 
   # KPIs-Segments relationship
-  has_many :kpis_segments, ->{ order 'ordering ASC, id ASC' }, dependent: :destroy
+  has_many :kpis_segments, -> { order 'ordering ASC, id ASC' }, inverse_of: :kpi, dependent: :destroy
 
   # KPIs-Goals relationship
-  has_many :goals, dependent: :destroy
+  has_many :goals, inverse_of: :kpi, dependent: :destroy
 
   accepts_nested_attributes_for :kpis_segments, reject_if: lambda { |x| x[:text].blank? && x[:id].blank? }, allow_destroy: true
   accepts_nested_attributes_for :goals, reject_if: :invalid_goal?
 
-  scope :global, lambda{ where('company_id is null').order('ordering ASC') }
-  scope :custom, lambda{|company| where(company_id: company).order('name ASC') }
-  scope :global_and_custom, lambda{|company| where('company_id is null or company_id=?', company).order('company_id DESC, id ASC') }
-  scope :in_module, lambda{ where('module is not null and module != \'\'') }
-  scope :not_segmented, lambda{ where(['kpi_type not in (?) ', ['percentage', 'count'] ]) }
+  scope :global, lambda { where('company_id is null').order('ordering ASC') }
+  scope :custom, lambda { |company| where(company_id: company).order('name ASC') }
+  scope :global_and_custom, lambda { |company| where('company_id is null or company_id=?', company).order('company_id DESC, id ASC') }
+  scope :in_module, lambda { where('module is not null and module != \'\'') }
+  scope :not_segmented, lambda { where(['kpi_type not in (?) ', %w(percentage count)]) }
   scope :campaign_assignable, ->(campaign) {
-    global_and_custom(campaign.company).
-    where('id not in (?)', campaign.kpi_ids + [Kpi.events, Kpi.promo_hours].compact + [0]).
-    reorder('name ASC')
+    global_and_custom(campaign.company)
+    .where('id not in (?)', campaign.kpi_ids + [Kpi.events, Kpi.promo_hours].compact + [0])
+    .reorder('name ASC')
   }
   scope :form_assignable, -> {
-    where('id not in (?)', [Kpi.events, Kpi.promo_hours].compact + [0]).
-    where('module in (?)', ['custom', 'demographics', 'consumer_reach']).
-    reorder('name ASC')
+    where('id not in (?)', [Kpi.events, Kpi.promo_hours].compact + [0])
+    .where('module in (?)', %w(custom demographics consumer_reach))
+    .reorder('name ASC')
   }
 
   after_save :sync_segments_and_goals
@@ -93,10 +93,10 @@ class Kpi < ActiveRecord::Base
 
   def sync_segments_and_goals
     unless self.out_of_the_box?
-      if GOAL_ONLY_TYPE_OPTIONS.include?(self.kpi_type)
-        self.kpis_segments.destroy_all
+      if GOAL_ONLY_TYPE_OPTIONS.include?(kpi_type)
+        kpis_segments.destroy_all
       else
-        self.goals.where(kpis_segment_id: nil).delete_all
+        goals.where(kpis_segment_id: nil).delete_all
       end
     end
   end
@@ -128,9 +128,17 @@ class Kpi < ActiveRecord::Base
     {
       name: name,
       type: form_field_type,
-      kpi_id: self.id,
-      options: (['count', 'percentage'].include?(kpi_type) ? kpis_segments.pluck(:text, :id).each_with_index.map{|opt, i| {id: opt[1], name: opt[0], ordering: i} } : [])
+      kpi_id: id,
+      options: (%w(count percentage).include?(kpi_type) ? segments.each_with_index.map { |s, i| { id: s[0], name: s[1], ordering: i } } : [])
     }
+  end
+
+  def segments_names
+    segments.map { |s| s[1] }
+  end
+
+  def segments
+    @segments ||= kpis_segments.pluck(:id, :text)
   end
 
   class << self
@@ -210,7 +218,7 @@ class Kpi < ActiveRecord::Base
         @age.kpis_segments.create(text: segment)
       end
 
-      ['Female', 'Male'].each do |segment|
+      %w(Female Male).each do |segment|
         @gender.kpis_segments.create(text: segment)
       end
 
@@ -224,7 +232,7 @@ class Kpi < ActiveRecord::Base
 
       # Only to prevent a terrible mistake :p, do not allow
       # this being called for more than one out-of-the-box KPIs
-      return false if kpis.select{|k| k.out_of_the_box? }.count > 1
+      return false if kpis.select(&:out_of_the_box?).count > 1
 
       campaings = FormField.includes(:fieldable).where(kpi_id: kpis, fieldable_type: 'Campaign').map(&:fieldable)
       Kpi.transaction do
@@ -234,8 +242,8 @@ class Kpi < ActiveRecord::Base
         # Campaing A has KPI: "# impressions"
         # Campaing A has KPI: "# of impressions"
         campaings.each do |campaign|
-          kpi_keep = kpis.detect{|k| k.id == options['master_kpi'][campaign.id.to_s].to_i }
-          kpis_to_remove = campaign.active_kpis.select{|k| kpis.include?(k) && k.id != kpi_keep.id }
+          kpi_keep = kpis.find { |k| k.id == options['master_kpi'][campaign.id.to_s].to_i }
+          kpis_to_remove = campaign.active_kpis.select { |k| kpis.include?(k) && k.id != kpi_keep.id }
 
           if kpi_keep
             # If this campaing has at leas more than one
@@ -250,7 +258,7 @@ class Kpi < ActiveRecord::Base
                         values_to_copy = event.result_for_kpi(k)
                         if values_to_copy.map(&:value).map(&:to_i) != 0
                           values_to_copy.each do |result_copy|
-                            if result = results.detect{|r| r.kpis_segment.text.downcase.strip == result_copy.kpis_segment.text.downcase.strip}
+                            if result = results.find { |r| r.kpis_segment.text.downcase.strip == result_copy.kpis_segment.text.downcase.strip }
                               result.value = result_copy.value
                               result.save
                             end
@@ -263,10 +271,10 @@ class Kpi < ActiveRecord::Base
                     value = result.value
                     # If the event doesn't have a value for that field, then try looking for a value on another KPI
                     if value.nil? || value == ''
-                      value ||= kpis_to_remove.map{|k| r = event.result_for_kpi(k); r.value }.compact.first
+                      value ||= kpis_to_remove.map { |k| r = event.result_for_kpi(k); r.value }.compact.first
                       if kpi_keep.kpi_type == 'count'
                         option_text = KpisSegment.find(value).text.downcase.strip rescue nil
-                        value = kpi_keep.kpis_segments.detect{|s| s.text.downcase.strip == option_text}.try(:id) if option_text
+                        value = kpi_keep.kpis_segments.find { |s| s.text.downcase.strip == option_text }.try(:id) if option_text
                       end
                       result.value = value
                       result.save
@@ -292,28 +300,28 @@ class Kpi < ActiveRecord::Base
       remaining_kpis = all.to_a
       kpi_keep = nil
       if remaining_kpis.count > 0
-        kpi_keep = remaining_kpis.detect(Proc.new{ remaining_kpis.first}){|k| k.out_of_the_box? }
-        remaining_kpis.reject!{|k| k == kpi_keep }
+        kpi_keep = remaining_kpis.find(proc { remaining_kpis.first }) { |k| k.out_of_the_box? }
+        remaining_kpis.reject! { |k| k == kpi_keep }
         FormField.where(kpi_id: remaining_kpis).each do |field|
           if field.kpi.kpi_type == 'percentage'
             field.kpi.kpis_segments.each do |segment|
-              if new_segment = kpi_keep.kpis_segments.detect{|s| s.text.downcase.strip == segment.text.downcase.strip}
-                #EventResult.where(kpi_id: field.kpi.id, kpis_segment_id: segment.id).update_all(kpi_id: kpi_keep.id, kpis_segment_id: new_segment.id)
+              if new_segment = kpi_keep.kpis_segments.find { |s| s.text.downcase.strip == segment.text.downcase.strip }
+                # EventResult.where(kpi_id: field.kpi.id, kpis_segment_id: segment.id).update_all(kpi_id: kpi_keep.id, kpis_segment_id: new_segment.id)
                 FormFieldResult.for_kpi(field.kpi).update_all("hash_value = delete(hash_value || hstore(ARRAY['#{new_segment.id}', hash_value->'#{segment.id}']), '#{segment.id}')")
               end
             end
           elsif field.kpi.kpi_type == 'count'
             field.kpi.kpis_segments.each do |segment|
-              if new_segment = kpi_keep.kpis_segments.detect{|s| s.text.downcase.strip == segment.text.downcase.strip}
+              if new_segment = kpi_keep.kpis_segments.find { |s| s.text.downcase.strip == segment.text.downcase.strip }
                 FormFieldResult.for_kpi(field.kpi).where(value: segment.id.to_s).update_all(value: new_segment.id)
               end
             end
-          # else
-          #   FormFieldResult.for_kpi(remaining_kpis).for_event_campaign(field.fieldable).update_all(kpi_id: kpi_keep)
+            # else
+            #   FormFieldResult.for_kpi(remaining_kpis).for_event_campaign(field.fieldable).update_all(kpi_id: kpi_keep)
           end
         end
         FormField.where(kpi_id: remaining_kpis).update_all(kpi_id: kpi_keep)
-        remaining_kpis.each{|k| k.destroy unless k.out_of_the_box? }
+        remaining_kpis.each { |k| k.destroy unless k.out_of_the_box? }
       else
         kpi_keep = remaining_kpis.first
       end
@@ -327,23 +335,22 @@ class Kpi < ActiveRecord::Base
     end
   end
 
-
   def segments_can_be_deleted?
-    kpis_segments.select{|s| s.marked_for_destruction? }.each do |segment|
+    kpis_segments.select(&:marked_for_destruction?).each do |segment|
       errors.add :base, 'Cannot delete segments with results' if segment.has_results?
     end
   end
 
   def invalid_goal?(goal)
-    goal['kpis_segment_id'].nil? && ['count', 'percentage'].include?(kpi_type)
+    goal['kpis_segment_id'].nil? && %w(count percentage).include?(kpi_type)
   end
 
   def segments_count_valid?
-    #Valid if no restrictions for the selected capture mechanism or if segments count is less
-    #than the quantity permitted for the selected capture mechanism
-    min_count = SEGMENTS_COUNT_MIN[capture_mechanism] if SEGMENTS_COUNT_MIN.has_key?(capture_mechanism)
+    # Valid if no restrictions for the selected capture mechanism or if segments count is less
+    # than the quantity permitted for the selected capture mechanism
+    min_count = SEGMENTS_COUNT_MIN[capture_mechanism] if SEGMENTS_COUNT_MIN.key?(capture_mechanism)
     if min_count && kpis_segments.reject(&:marked_for_destruction?).count < min_count
-      errors.add :base, "You need to add at least #{min_count} segments for the selected capture mechanism"
+      errors.add :kpi_type, "You need to add at least #{min_count} segments for the selected capture mechanism"
     end
   end
 end

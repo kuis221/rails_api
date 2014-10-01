@@ -29,26 +29,26 @@ SimpleNavigation::Configuration.run do |navigation|
   # This turns it off globally (for the whole plugin)
   # navigation.auto_highlight = false
   navigation.items do |primary|
-    primary.item :dashboard, 'Dashboard', root_path,  highlights_on: %r(/$), link: { icon_class: 'icon-dashboard menubar-icon' }
-    primary.item :events, 'Events', events_path, highlights_on: %r(/events), link: { icon_class: 'icon-events menubar-icon' }, :if => Proc.new { can?(:index, Event) }
-    primary.item :tasks, 'Tasks', mine_tasks_path, highlights_on: %r(/tasks), link: { icon_class: 'icon-tasks menubar-icon' }, :if => Proc.new { can?(:index_my, Task) || can?(:index_team, Task) } do |secondary|
-      secondary.item :mine_tasks, 'My Tasks', mine_tasks_path, highlights_on: %r(/tasks/mine), :if => Proc.new { can?(:index_my, Task) }
-      secondary.item :team_tasks, 'Team Tasks', my_teams_tasks_path, highlights_on: %r(/tasks/my_teams), :if => Proc.new { can?(:index_team, Task) }
+    primary.item :dashboard, 'Dashboard', root_path,  highlights_on: %r{/$}, link: { icon_class: 'icon-dashboard menubar-icon' }
+    primary.item :events, 'Events', events_path, highlights_on: %r{/events}, link: { icon_class: 'icon-events menubar-icon' }, if: proc { can?(:index, Event) }
+    primary.item :tasks, 'Tasks', mine_tasks_path, highlights_on: %r{/tasks}, link: { icon_class: 'icon-tasks menubar-icon' }, if: proc { can?(:index_my, Task) || can?(:index_team, Task) } do |secondary|
+      secondary.item :mine_tasks, 'My Tasks', mine_tasks_path, highlights_on: %r{/tasks/mine}, if: proc { can?(:index_my, Task) }
+      secondary.item :team_tasks, 'Team Tasks', my_teams_tasks_path, highlights_on: %r{/tasks/my_teams}, if: proc { can?(:index_team, Task) }
     end
-    primary.item :venues, 'Venues', venues_path, highlights_on: %r(/research), link: { icon_class: 'icon-venue menubar-icon' }, :if => Proc.new { can?(:index, Venue) } do |secondary|
-      secondary.item :venues, 'Venues', venues_path, highlights_on: %r(/research/venues)
+    primary.item :venues, 'Venues', venues_path, highlights_on: %r{/research}, link: { icon_class: 'icon-venue menubar-icon' }, if: proc { can?(:index, Venue) } do |secondary|
+      secondary.item :venues, 'Venues', venues_path, highlights_on: %r{/research/venues}
     end
 
-    primary.item :brand_ambassadors, 'Brand Ambassadors', brand_ambassadors_root_path, highlights_on: %r(/brand_ambassadors), link: { icon_class: 'icon-campaign menubar-icon' } if can?(:access, :brand_ambassadors)
-    primary.item :results, 'Results', results_reports_path, highlights_on: %r(/results), link: { icon_class: 'icon-results menubar-icon' } if can?(:access, :results)
+    primary.item :brand_ambassadors, 'Brand Ambassadors', brand_ambassadors_root_path, highlights_on: %r{/brand_ambassadors}, link: { icon_class: 'icon-campaign menubar-icon' } if can?(:access, :brand_ambassadors)
+    primary.item :results, 'Results', results_reports_path, highlights_on: %r{/results}, link: { icon_class: 'icon-results menubar-icon' } if can?(:access, :results)
 
     options = []
-    options.push([:campaigns_report, 'Campaigns Report', analysis_campaigns_report_path, highlights_on: %r(/analysis/campaigns_report)]) if can?(:show_analysis, Campaign )
-    options.push([:staff_performance, 'Staff Performance', analysis_staff_report_path, highlights_on: %r(/analysis/staff_report)]) if can?(:show_analysis, CompanyUser)
+    options.push([:campaigns_report, 'Campaigns Report', analysis_campaigns_report_path, highlights_on: %r{/analysis/campaigns_report}]) if can?(:show_analysis, Campaign)
+    options.push([:staff_performance, 'Staff Performance', analysis_staff_report_path, highlights_on: %r{/analysis/staff_report}]) if can?(:show_analysis, CompanyUser)
 
     unless options.empty?
-      primary.item :analysis, 'Analysis', options.first[2], highlights_on: %r(/analysis), link: { icon_class: 'icon-analysis menubar-icon' } do |secondary|
-        options.each {|option| secondary.item(*option) }
+      primary.item :analysis, 'Analysis', options.first[2], highlights_on: %r{/analysis}, link: { icon_class: 'icon-analysis menubar-icon' } do |secondary|
+        options.each { |option| secondary.item(*option) }
       end
     end
   end

@@ -35,13 +35,25 @@ $brand: #989898;
 
 	.fc-view-container{
 		thead{
-			.fc-day-header{
-				background-color: $brand;
-				border-color: $brand;
-				color: #fff;
-				text-transform: uppercase;
-				text-align: left;
-				padding: 5px 0 5px 10px;
+			div.fc-widget-header{
+				&.affix {
+					left: 102px;
+					position: fixed;
+					right: 262px;
+					top: 45px;
+					width: auto;
+					z-index: 10;
+					-webkit-border-radius: 0px;
+					border-radius: 0px;
+				}
+				.fc-day-header{
+					background-color: $brand;
+					border-color: $brand;
+					color: #fff;
+					text-transform: uppercase;
+					text-align: left;
+					padding: 5px 0 5px 10px;
+				}
 			}
 		}
 
@@ -72,7 +84,7 @@ $brand: #989898;
 			.fc-event{
 				border-radius: 20px;
 				font-size: 14px;
-				.user-name{
+				.user-name, .city-name{
 					font-size: 12px;
 					font-weight: normal;
 				}

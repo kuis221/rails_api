@@ -27,10 +27,10 @@
 # Read about factories at https://github.com/thoughtbot/factory_girl
 FactoryGirl.define do
   factory :event do
-    start_date "01/23/2019"
-    start_time "10:00am"
-    end_date "01/23/2019"
-    end_time "12:00pm"
+    start_date '01/23/2019'
+    start_time '10:00am'
+    end_date '01/23/2019'
+    end_time '12:00pm'
     aasm_state 'unsent'
     active true
     place_id nil
@@ -44,11 +44,11 @@ FactoryGirl.define do
     end
 
     # To keep the associations between campaign and company correct
-    after(:build) do |event, evaluator|
+    after(:build) do |event, _evaluator|
       if event.company.present?
-        event.campaign ||= FactoryGirl.create(:campaign, company: event.company)
+        event.campaign ||= create(:campaign, company: event.company)
       end
-      event.campaign ||= FactoryGirl.create(:campaign)
+      event.campaign ||= create(:campaign)
       event.company ||= event.campaign.company if event.campaign.present?
     end
 
@@ -83,10 +83,10 @@ FactoryGirl.define do
 
     factory :due_event do
       aasm_state 'unsent'
-      start_date { (Time.now-1.day).to_s(:slashes) }
-      start_time { (Time.now-1.day).strftime('%I:00 %P') }
-      end_date { (Time.now-1.day+1.hour).to_s(:slashes) }
-      end_time { (Time.now-1.day+1.hour).strftime('%I:00 %P') }
+      start_date { (Time.now - 1.day).to_s(:slashes) }
+      start_time { (Time.now - 1.day).strftime('%I:00 %P') }
+      end_date { (Time.now - 1.day + 1.hour).to_s(:slashes) }
+      end_time { (Time.now - 1.day + 1.hour).strftime('%I:00 %P') }
     end
 
     factory :late_event do

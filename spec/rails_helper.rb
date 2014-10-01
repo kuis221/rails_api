@@ -1,13 +1,13 @@
 # encoding: utf-8
 # This file is copied to spec/ when you run 'rails generate rspec:install'
-ENV["RAILS_ENV"] ||= 'test'
+ENV['RAILS_ENV'] ||= 'test'
 require 'spec_helper'
 require 'simplecov'
-SimpleCov.start "rails" do
+SimpleCov.start 'rails' do
   add_filter 'lib/legacy'
 end
 
-require File.expand_path("../../config/environment", __FILE__)
+require File.expand_path('../../config/environment', __FILE__)
 require 'rspec/rails'
 require 'shoulda/matchers'
 require 'capybara/rails'
@@ -19,7 +19,7 @@ require 'sms-spec'
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
-Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
+Dir[Rails.root.join('spec/support/**/*.rb')].each { |f| require f }
 
 include BrandscopiSpecHelpers
 
@@ -37,7 +37,7 @@ RSpec.configure do |config|
   # config.mock_with :rr
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
-  #config.fixture_path = "#{::Rails.root}/spec/fixtures"
+  # config.fixture_path = "#{::Rails.root}/spec/fixtures"
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
@@ -53,30 +53,17 @@ RSpec.configure do |config|
   # rspec-rails.
   config.infer_base_class_for_anonymous_controllers = false
 
-
-  #config.include Capybara::DSL, :type => :request
-  config.include SignHelper, :type => :feature
-  config.include RequestsHelper, :type => :feature
-
-  config.before(:suite) do
-    DatabaseCleaner.strategy = :deletion
-    DatabaseCleaner.clean_with(:truncation)
-    DatabaseCleaner.logger = Rails.logger
-  end
+  # config.include Capybara::DSL, :type => :request
+  config.include SignHelper, type: :feature
+  config.include RequestsHelper, type: :feature
 
   config.before(:each) do |example|
-    #Resque::Worker.stub(:working).and_return([])
-    allow(Resque::Worker).to receive_messages(:working => [])
-  end
+    allow(Resque::Worker).to receive_messages(working: [])
 
-  config.around(:each) do |example|
     Rails.logger.debug "\n\n\n\n\n\n\n\n\n\n"
-    Rails.logger.debug "**************************************************************************************"
+    Rails.logger.debug '**************************************************************************************'
     Rails.logger.debug "***** EXAMPLE: #{example.full_description}"
-    Rails.logger.debug "**************************************************************************************"
-    DatabaseCleaner.cleaning do
-      example.run
-    end
+    Rails.logger.debug '**************************************************************************************'
   end
 
   config.after(:each) do |example|
@@ -86,9 +73,10 @@ RSpec.configure do |config|
     User.current = nil
     Company.current = nil
     Time.zone = Rails.application.config.time_zone
+    Date.beginning_of_week=:monday
 
     # Reset all KPIs values to nil
-    ['events', 'promo_hours', 'impressions', 'interactions', 'impressions', 'interactions', 'samples', 'expenses', 'gender', 'age', 'ethnicity', 'photos', 'videos', 'surveys', 'comments'].each do |kpi|
+    %w(events promo_hours impressions interactions impressions interactions samples expenses gender age ethnicity photos videos surveys comments).each do |kpi|
       Kpi.instance_variable_set("@#{kpi}".to_sym, nil)
     end
   end
@@ -96,5 +84,5 @@ RSpec.configure do |config|
   config.include(SmsSpec::Helpers)
   config.include(SmsSpec::Matchers)
 
-  SmsSpec.driver = :"twilio-ruby" #this can be any available sms-spec driver
+  SmsSpec.driver = :"twilio-ruby" # this can be any available sms-spec driver
 end

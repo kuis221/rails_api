@@ -1,7 +1,7 @@
-.comment-row id = "comment_#{comment.id}"
+div.resource-item.comment-row id="comment_#{comment.id}"
   - if comment.commentable_type != 'Event'
-   .user = comment.user_full_name
-   .date = comment_date(comment)
+   .user= comment.user_full_name
+   .date= comment_date(comment)
   p.content
     = comment.content
   - if comment.commentable_type == 'Event'

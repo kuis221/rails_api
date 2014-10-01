@@ -2,21 +2,19 @@
   p Add an existing KPI from the list below
 
   input#kpi-search-box.search-box type="text" name="q" placeholder="Search"
-  .select-list-table-wrapper
-    .link-list
-      ul
-        - if @kpis.present?
-          - @kpis.each do |kpi|
-            - type = kpi.is_a?(Kpi) ? 'kpi' : 'activity_type'
-            li id="#{type}-#{kpi.id}"
-              span
-                .kpi_name= kpi.name
-                .kpi_description= kpi.description
-              span.pull-right
-                = link_to '', send("add_#{type}_campaign_path", resource, "#{type}_id" => kpi.id), id: "add-#{type}-btn-#{kpi.id}", data:{'#{type}-id' => kpi.id}, remote: true, method: :post, enable_with: '...', class: 'icon-rounded-add', title: 'Add ' + t("activerecord.models.#{type}")
-        - else
-          li.empty-list-message
-            p There are not assignable KPIs
+  #select-kpi-list.resource-list.select-list
+    - if @kpis.present?
+      - @kpis.each do |kpi|
+        - type = kpi.is_a?(Kpi) ? 'kpi' : 'activity_type'
+        div.resource-item id="#{type}-#{kpi.id}"
+          .resource-item-link
+            .kpi_name= kpi.name
+            .kpi_description= kpi.description
+          .resource-item-actions
+            = link_to '', send("add_#{type}_campaign_path", resource, "#{type}_id" => kpi.id), id: "add-#{type}-btn-#{kpi.id}", data:{'#{type}-id' => kpi.id}, remote: true, method: :post, enable_with: '...', class: 'icon-rounded-add', title: 'Add ' + t("activerecord.models.#{type}")
+    - else
+      div.empty-list-message
+        p There are not assignable KPIs
 - if can?(:create_custom_kpis, resource)
   .row-fluid
     .span12
@@ -26,7 +24,7 @@
 javascript:
   $('#kpi-search-box').on('keyup', function () {
     var value = $(this).val().toLowerCase();
-    $(".select-list-table-wrapper .link-list ul > li:not(.empty-list-message)").each(function() {
+    $("#select-kpi-list .resource-item").each(function() {
       if ($(this).text().toLowerCase().search(value) > -1) {
         $(this).show();
       }

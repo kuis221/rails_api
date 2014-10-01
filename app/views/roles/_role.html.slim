@@ -1,10 +1,9 @@
-li id="role_#{role.id}" class="#{active_class(role)}"
-  = link_to_if_permitted :show, Role, role_path(role) do
-    span
-      b= role.name
-      span.description
-        = role.description
-  span.pull-right
+div.resource-item id="role_#{role.id}" class="#{active_class(role)}"
+  = link_to_if_permitted :show, Role, role_path(role), class: 'resource-item-link' do
+    .span7
+      .text-large= role.name
+      .crop-text= role.description
+  div.resource-item-actions
     = link_to '', edit_role_path(role), remote: true, class: 'icon-edit' if can?(:edit, Role)
     - if can?(:deactivate, Role)
       = link_to_deactivate role

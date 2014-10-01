@@ -21,9 +21,9 @@ class AreasCampaign < ActiveRecord::Base
   def place_in_scope?(place)
     if place.present?
       @place_ids ||= area.place_ids
-      return true if place.persisted? && (@place_ids-exclusions).include?(place.id)
+      return true if place.persisted? && (@place_ids - exclusions).include?(place.id)
       political_location = Place.political_division(place).join('/').downcase
-      locations.any?{|location| political_location.include?(location.path) }
+      locations.any? { |location| political_location.include?(location.path) }
     else
       false
     end
@@ -31,10 +31,10 @@ class AreasCampaign < ActiveRecord::Base
 
   def locations
     @locations ||= Rails.cache.fetch("area_campaign_locations_#{area_id}_#{campaign.id}") do
-      Location.joins('INNER JOIN places ON places.location_id=locations.id').
-        where(places: {id: area.place_ids, is_location: true}).
-        where.not(places: {id: self.exclusions+[0]}).
-        group('locations.id')
+      Location.joins('INNER JOIN places ON places.location_id=locations.id')
+        .where(places: { id: area.place_ids, is_location: true })
+        .where.not(places: { id: exclusions + [0] })
+        .group('locations.id')
     end
   end
 end

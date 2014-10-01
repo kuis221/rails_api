@@ -1,11 +1,11 @@
 require 'rails_helper'
 
-feature "Brand Ambassadors Documents", js: true do
-  let(:company) { FactoryGirl.create(:company) }
-  let(:campaign) { FactoryGirl.create(:campaign, company: company) }
-  let(:user) { FactoryGirl.create(:user, company: company, role_id: role.id) }
+feature 'Brand Ambassadors Documents', js: true do
+  let(:company) { create(:company) }
+  let(:campaign) { create(:campaign, company: company) }
+  let(:user) { create(:user, company: company, role_id: role.id) }
   let(:company_user) { user.company_users.first }
-  let(:place) { FactoryGirl.create(:place, name: 'A Nice Place', country:'CR', city: 'Curridabat', state: 'San Jose') }
+  let(:place) { create(:place, name: 'A Nice Place', country: 'CR', city: 'Curridabat', state: 'San Jose') }
   let(:permissions) { [] }
 
   before do
@@ -19,18 +19,18 @@ feature "Brand Ambassadors Documents", js: true do
     Warden.test_reset!
   end
 
-  feature "Global Brand Ambassador documents" do
-    let(:role) { FactoryGirl.create(:non_admin_role, company: company) }
+  feature 'Global Brand Ambassador documents' do
+    let(:role) { create(:non_admin_role, company: company) }
     let(:permissions) { [[:create, 'BrandAmbassadors::Document'], [:index, 'BrandAmbassadors::Document']] }
 
-    scenario "A user can upload a document to the Brand Ambassadors section" do
+    scenario 'A user can upload a document to the Brand Ambassadors section' do
       with_resque do
         visit brand_ambassadors_root_path
 
         documents_section.click_button 'Upload'
 
         within visible_modal do
-          attach_file "file", 'spec/fixtures/file.pdf'
+          attach_file 'file', 'spec/fixtures/file.pdf'
           expect(upload_queue).to have_file_in_queue('file.pdf')
           wait_for_ajax(30) # For the file to upload to S3
           click_js_link 'OK'
@@ -54,25 +54,25 @@ feature "Brand Ambassadors Documents", js: true do
 
         # Delete the document
         within documents_section do
-          hover_and_click 'li.document', 'Delete'
+          hover_and_click '.resource-item', 'Delete'
         end
-        confirm_prompt "Are you sure you want to delete this document?"
+        confirm_prompt 'Are you sure you want to delete this document?'
 
         # Check that the document was removed
         within documents_section do
-          expect(page).not_to have_selector 'li.document'
+          expect(page).not_to have_selector '.resource-item'
         end
       end
     end
 
-    scenario "A user can modify the name of a document placed in the Brand Ambassadors section" do
+    scenario 'A user can modify the name of a document placed in the Brand Ambassadors section' do
       with_resque do
         visit brand_ambassadors_root_path
 
         documents_section.click_button 'Upload'
 
         within visible_modal do
-          attach_file "file", 'spec/fixtures/file.pdf'
+          attach_file 'file', 'spec/fixtures/file.pdf'
           expect(upload_queue).to have_file_in_queue('file.pdf')
           wait_for_ajax(30) # For the file to upload to S3
           click_js_link 'OK'
@@ -85,7 +85,7 @@ feature "Brand Ambassadors Documents", js: true do
 
         # Modify the name of the document
         within documents_section do
-          hover_and_click 'li.document', 'Edit'
+          hover_and_click '.resource-item', 'Edit'
         end
 
         within visible_modal do
@@ -102,13 +102,35 @@ feature "Brand Ambassadors Documents", js: true do
           expect(page).to have_content('renamed')
         end
 
-        dirname = File.dirname(document.file.path(:original).sub(%r{\A/},''))
+        dirname = File.dirname(document.file.path(:original).sub(%r{\A/}, ''))
         expect(document.file.s3_bucket.objects["#{dirname}/file.pdf"].exists?).to be_falsey
         expect(document.file.s3_bucket.objects["#{dirname}/renamed.pdf"].exists?).to be_truthy
       end
     end
 
-    scenario "A user can create and deactivate folders" do
+    scenario 'A user can create folders with duplicate names' do
+      visit brand_ambassadors_root_path
+
+      documents_section.click_js_link 'New Folder'
+
+      within documents_section do
+        fill_in 'Please name your folder', with: 'Duplicate Folder Name'
+        page.execute_script("$('form#new_document_folder').submit()")
+        wait_for_ajax
+        expect(page).to have_selector('#documents-list .resource-item', count: 1)
+      end
+
+      documents_section.click_js_link 'New Folder'
+
+      within documents_section do
+        fill_in 'Please name your folder', with: 'Duplicate Folder Name'
+        page.execute_script("$('form#new_document_folder').submit()")
+        wait_for_ajax
+        expect(page).to have_selector('#documents-list .resource-item', count: 2)
+      end
+    end
+
+    scenario 'A user can create and deactivate folders' do
       visit brand_ambassadors_root_path
 
       documents_section.click_js_link 'New Folder'
@@ -132,7 +154,7 @@ feature "Brand Ambassadors Documents", js: true do
       documents_section.click_button 'Upload'
 
       within visible_modal do
-        attach_file "file", 'spec/fixtures/file.pdf'
+        attach_file 'file', 'spec/fixtures/file.pdf'
         expect(upload_queue).to have_file_in_queue('file.pdf')
         wait_for_ajax(30) # For the file to upload to S3
         click_js_link 'OK'
@@ -154,9 +176,9 @@ feature "Brand Ambassadors Documents", js: true do
 
       # Deactivate the folder
       within documents_section do
-        hover_and_click '.document', 'Deactivate'
+        hover_and_click '.resource-item', 'Deactivate'
       end
-      confirm_prompt "Are you sure you want to deactivate this folder?"
+      confirm_prompt 'Are you sure you want to deactivate this folder?'
 
       # Check that the folder was removed
       within documents_section do
@@ -164,7 +186,7 @@ feature "Brand Ambassadors Documents", js: true do
       end
     end
 
-    scenario "A user can move documents to another folder" do
+    scenario 'A user can move documents to another folder' do
       with_resque do
         visit brand_ambassadors_root_path
 
@@ -179,7 +201,7 @@ feature "Brand Ambassadors Documents", js: true do
         documents_section.click_button 'Upload'
         within visible_modal do
           expect(page).to have_content 'New Document'
-          attach_file "file", 'spec/fixtures/file.pdf'
+          attach_file 'file', 'spec/fixtures/file.pdf'
           expect(upload_queue).to have_file_in_queue('file.pdf')
           wait_for_ajax(30) # For the file to upload to S3
           click_js_link 'OK'
@@ -208,13 +230,15 @@ feature "Brand Ambassadors Documents", js: true do
     end
   end
 
-  feature "Brand Ambassador Visit documents" do
-    let(:role) { FactoryGirl.create(:non_admin_role, company: company) }
+  feature 'Brand Ambassador Visit documents' do
+    let(:role) { create(:non_admin_role, company: company) }
     let(:permissions) { [[:create, 'BrandAmbassadors::Document'], [:index, 'BrandAmbassadors::Document'], [:show, 'BrandAmbassadors::Visit']] }
-    let(:ba_visit) { FactoryGirl.create(:brand_ambassadors_visit,
-        company: company, company_user: company_user) }
+    let(:ba_visit) do
+      create(:brand_ambassadors_visit, campaign: campaign,
+        company: company, company_user: company_user)
+    end
 
-    scenario "A user can upload a document to a brand ambassador visit" do
+    scenario 'A user can upload a document to a brand ambassador visit' do
       with_resque do
         visit brand_ambassadors_visit_path(ba_visit)
 
@@ -222,7 +246,7 @@ feature "Brand Ambassadors Documents", js: true do
 
         within visible_modal do
           expect(page).to have_content 'New Document'
-          attach_file "file", 'spec/fixtures/file.pdf'
+          attach_file 'file', 'spec/fixtures/file.pdf'
           expect(upload_queue).to have_file_in_queue('file.pdf')
           wait_for_ajax(30) # For the file to upload to S3
           click_js_link 'OK'
@@ -248,14 +272,14 @@ feature "Brand Ambassadors Documents", js: true do
       end
     end
 
-    scenario "A user can modify the name of a document placed in brand ambassadors visit" do
+    scenario 'A user can modify the name of a document placed in brand ambassadors visit' do
       with_resque do
         visit brand_ambassadors_visit_path(ba_visit)
 
         documents_section.click_button 'Upload'
 
         within visible_modal do
-          attach_file "file", 'spec/fixtures/file.pdf'
+          attach_file 'file', 'spec/fixtures/file.pdf'
           expect(upload_queue).to have_file_in_queue('file.pdf')
           wait_for_ajax(30) # For the file to upload to S3
           click_js_link 'OK'
@@ -268,7 +292,7 @@ feature "Brand Ambassadors Documents", js: true do
 
         # Modify the name of the document
         within documents_section do
-          hover_and_click 'li.document', 'Edit'
+          hover_and_click '.resource-item', 'Edit'
         end
 
         within visible_modal do
@@ -285,13 +309,13 @@ feature "Brand Ambassadors Documents", js: true do
           expect(page).to have_content('renamed')
         end
 
-        dirname = File.dirname(document.file.path(:original).sub(%r{\A/},''))
+        dirname = File.dirname(document.file.path(:original).sub(%r{\A/}, ''))
         expect(document.file.s3_bucket.objects["#{dirname}/file.pdf"].exists?).to be_falsey
         expect(document.file.s3_bucket.objects["#{dirname}/renamed.pdf"].exists?).to be_truthy
       end
     end
 
-    scenario "A user can create and deactivate folders" do
+    scenario 'A user can create and deactivate folders' do
       visit brand_ambassadors_visit_path(ba_visit)
 
       documents_section.click_js_link 'New Folder'
@@ -312,9 +336,9 @@ feature "Brand Ambassadors Documents", js: true do
 
       # Deactivate the folder
       within documents_section do
-        hover_and_click '.document', 'Deactivate'
+        hover_and_click '.resource-item', 'Deactivate'
       end
-      confirm_prompt "Are you sure you want to deactivate this folder?"
+      confirm_prompt 'Are you sure you want to deactivate this folder?'
 
       # Check that the folder was removed
       within documents_section do

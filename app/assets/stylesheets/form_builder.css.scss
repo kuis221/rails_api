@@ -4,7 +4,7 @@
 // EXCLUSIVE FORM BUILDER STYLES (ACTIVITY TYPES AND CAMPAIGNS)
 // Only applied to the form builder
 // --------------------------------------------------
-
+$margin-right: 240px;
 .form-builder-wrapper{
 	position: relative;
 
@@ -24,11 +24,16 @@
 			border-bottom: 1px solid $grey_four;
 			border-top-right-radius: 5px;
 			padding: 18px 30px;
+			left: 0px;
+			right: $margin-right;
 			&.affix {
 				position: fixed;
-				top: 99px;
+				top: 97px;
 				z-index: 99;
 				background-color: #fff;
+				width: auto;
+				left: 90px;
+				right: ($margin-right + 10);
 			}
 			.btn{
 				width: 101px;
@@ -71,7 +76,7 @@
 			padding: 20px 20px 20px 20px;
 			background-color: #fff;
 			border-radius: 5px;
-			margin-right: 240px;
+			margin-right: $margin-right;
 			margin-bottom: 10px;
 
 			.module-wrapper {

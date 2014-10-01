@@ -16,14 +16,13 @@
 #  ordering          :integer
 #
 
-
 FactoryGirl.define do
   factory :kpi do
-    sequence(:name){|n| "Kpi #{n}"}
-    description "MyText"
-    kpi_type "number"
-    capture_mechanism "integer"
-    "module" "custom"
+    sequence(:name) { |n| "Kpi #{n}" }
+    description 'MyText'
+    kpi_type 'number'
+    capture_mechanism 'integer'
+    'module' 'custom'
     company_id 1
   end
 end

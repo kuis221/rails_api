@@ -1,21 +1,21 @@
 require 'rails_helper'
 
 describe Campaign, type: :model, search: true do
-  it "should search for campaigns" do
+  it 'should search for campaigns' do
     # First populate the Database with some data
-    brand = FactoryGirl.create(:brand)
-    brand2 = FactoryGirl.create(:brand)
-    brand_portfolio = FactoryGirl.create(:brand_portfolio, company_id: 1, brand_ids: [brand.id])
-    brand_portfolio2 = FactoryGirl.create(:brand_portfolio, company_id: 1, brand_ids: [brand.id, brand2.id])
-    user = FactoryGirl.create(:company_user, company_id: 1)
-    user2 = FactoryGirl.create(:company_user, company_id: 1)
-    team = FactoryGirl.create(:team, company_id: 1)
-    team2 = FactoryGirl.create(:team, company_id: 1)
-    campaign = FactoryGirl.create(:campaign, company_id: 1, user_ids: [user.id], team_ids: [team.id], brand_portfolio_ids: [brand_portfolio.id], brand_ids: [brand.id])
-    campaign2 = FactoryGirl.create(:campaign, company_id: 1, user_ids: [user.id, user2.id], team_ids: [team.id, team2.id], brand_portfolio_ids: [brand_portfolio.id, brand_portfolio2.id], brand_ids: [brand.id, brand2.id])
+    brand = create(:brand)
+    brand2 = create(:brand)
+    brand_portfolio = create(:brand_portfolio, company_id: 1, brand_ids: [brand.id])
+    brand_portfolio2 = create(:brand_portfolio, company_id: 1, brand_ids: [brand.id, brand2.id])
+    user = create(:company_user, company_id: 1)
+    user2 = create(:company_user, company_id: 1)
+    team = create(:team, company_id: 1)
+    team2 = create(:team, company_id: 1)
+    campaign = create(:campaign, company_id: 1, user_ids: [user.id], team_ids: [team.id], brand_portfolio_ids: [brand_portfolio.id], brand_ids: [brand.id])
+    campaign2 = create(:campaign, company_id: 1, user_ids: [user.id, user2.id], team_ids: [team.id, team2.id], brand_portfolio_ids: [brand_portfolio.id, brand_portfolio2.id], brand_ids: [brand.id, brand2.id])
 
     # Create a Campaign on company 2
-    company2_campaign = FactoryGirl.create(:campaign, company_id: 2)
+    company2_campaign = create(:campaign, company_id: 2)
 
     Sunspot.commit
 
@@ -52,7 +52,7 @@ describe Campaign, type: :model, search: true do
     expect(Campaign.do_search(company_id: 1, brand_portfolio: [brand_portfolio.id, brand_portfolio2.id]).results).to match_array([campaign, campaign2])
 
     # Search for a given Campaign
-    expect(Campaign.do_search({company_id: 1, q: "campaign,#{campaign.id}"}, true).results).to match_array([campaign])
+    expect(Campaign.do_search({ company_id: 1, q: "campaign,#{campaign.id}" }, true).results).to match_array([campaign])
 
     # Search for Campaigns on a given status
     expect(Campaign.do_search(company_id: 1, status: ['Active']).results).to match_array([campaign, campaign2])

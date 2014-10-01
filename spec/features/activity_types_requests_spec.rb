@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-feature "Activity Types", js: true do
+feature 'Activity Types', js: true do
   before do
     Warden.test_mode!
-    @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
+    @user = create(:user, company_id: create(:company).id, role_id: create(:role).id)
     @company = @user.companies.first
     sign_in @user
     allow_any_instance_of(Place).to receive(:fetch_place_data).and_return(true)
@@ -13,26 +13,26 @@ feature "Activity Types", js: true do
     Warden.test_reset!
   end
 
-  feature "List view", search: true  do
-    scenario "GET index should display a table with the day_parts" do
+  feature 'List view', search: true  do
+    scenario 'GET index should display a table with the day_parts' do
       activity_types = [
-        FactoryGirl.create(:activity_type, company: @company, name: 'Morningns', description: 'From 8 to 11am', active: true),
-        FactoryGirl.create(:activity_type, company: @company, name: 'Afternoons', description: 'From 1 to 6pm', active: true)
+        create(:activity_type, company: @company, name: 'Morningns',
+               description: 'From 8 to 11am', active: true),
+        create(:activity_type, company: @company, name: 'Afternoons',
+               description: 'From 1 to 6pm', active: true)
       ]
       Sunspot.commit
       visit activity_types_path
 
-      within("ul#activity_types-list") do
-        # First Row
-        within("li:nth-child(1)") do
-          expect(page).to have_content('Afternoons')
-          expect(page).to have_content('From 1 to 6pm')
-        end
-        # Second Row
-        within("li:nth-child(2)") do
-          expect(page).to have_content('Morningns')
-          expect(page).to have_content('From 8 to 11am')
-        end
+      # First Row
+      within resource_item 1 do
+        expect(page).to have_content('Afternoons')
+        expect(page).to have_content('From 1 to 6pm')
+      end
+      # Second Row
+      within resource_item 2 do
+        expect(page).to have_content('Morningns')
+        expect(page).to have_content('From 8 to 11am')
       end
     end
 
@@ -53,13 +53,13 @@ feature "Activity Types", js: true do
       expect(page).to have_selector('div.description-data', text: 'activity type description')
     end
 
-    scenario "should allow user to deactivate activity types" do
-      FactoryGirl.create(:activity_type, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: true, company: @company)
+    scenario 'should allow user to deactivate activity types' do
+      create(:activity_type, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: true, company: @company)
       Sunspot.commit
       visit activity_types_path
 
       expect(page).to have_content('A Vinos ticos')
-      within("ul#activity_types-list li:nth-child(1)") do
+      within resource_item 1 do
         click_js_link('Deactivate')
       end
       confirm_prompt 'Are you sure you want to deactivate this activity type?'
@@ -67,8 +67,9 @@ feature "Activity Types", js: true do
       expect(page).to have_no_content('A Vinos ticos')
     end
 
-    scenario "should allow user to activate activity type" do
-      FactoryGirl.create(:activity_type, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: false, company: @company)
+    scenario 'should allow user to activate activity type' do
+      create(:activity_type, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica',
+             active: false, company: @company)
       Sunspot.commit
       visit activity_types_path
 
@@ -76,19 +77,19 @@ feature "Activity Types", js: true do
       filter_section('ACTIVE STATE').unicheck('Active')
 
       expect(page).to have_content('A Vinos ticos')
-      within("ul#activity_types-list li:nth-child(1)") do
+      within resource_item 1 do
         click_js_link('Activate')
       end
       expect(page).to have_no_content('A Vinos ticos')
     end
 
-    scenario "should allow user to edit an activity type" do
-      FactoryGirl.create(:activity_type, name: 'A test activity type', description: 'Algunos vinos de Costa Rica', company: @company)
+    scenario 'should allow user to edit an activity type' do
+      create(:activity_type, name: 'A test activity type', description: 'Algunos vinos de Costa Rica', company: @company)
       Sunspot.commit
       visit activity_types_path
 
       expect(page).to have_content('A test activity type')
-      within("ul#activity_types-list li:nth-child(1)") do
+      within resource_item 1 do
         click_js_link('Edit')
       end
 
@@ -99,7 +100,7 @@ feature "Activity Types", js: true do
       end
       ensure_modal_was_closed
 
-      within("ul#activity_types-list li:nth-child(1)") do
+      within resource_item 1 do
         expect(page).to have_no_content('A test activity type')
         expect(page).to have_content('Drink feature')
         expect(page).to have_content('A description for drink feature type')
@@ -107,14 +108,16 @@ feature "Activity Types", js: true do
     end
   end
 
-  feature "Details view" do
-    scenario "should allow user to edit an activity type" do
-      activity_type = FactoryGirl.create(:activity_type, name: 'A test activity type', description: 'Algunos vinos de Costa Rica', company: @company)
+  feature 'Details view' do
+    scenario 'should allow user to edit an activity type' do
+      activity_type = create(:activity_type, name: 'A test activity type',
+                             description: 'Algunos vinos de Costa Rica',
+                             company: @company)
       Sunspot.commit
       visit activity_type_path(activity_type)
 
       expect(page).to have_selector('h2', text: 'A test activity type')
-      find('.links-data').click_js_link('Edit')
+      find('.links-data').click_js_button('Edit Activity Type')
 
       within visible_modal do
         fill_in 'Name', with: 'Drink feature'

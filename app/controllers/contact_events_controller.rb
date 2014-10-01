@@ -1,12 +1,15 @@
+# Contact Events Controller class
+#
+# This class handle the requests for managing the Contact Events
+#
 class ContactEventsController < InheritedResources::Base
-
   belongs_to :event
 
   actions :new, :create, :destroy, :update, :edit
 
   custom_actions collection: [:add, :list]
 
-  defaults :resource_class => ContactEvent
+  defaults resource_class: ContactEvent
 
   load_and_authorize_resource
 
@@ -25,21 +28,28 @@ class ContactEventsController < InheritedResources::Base
   end
 
   protected
-    def build_resource(*args)
-      @contact_event ||= super
-      @contact_event.build_contactable if action_name == 'new' && @contact_event.contactable.nil?
-      @contact_event
-    end
 
-    def build_resource_params
-      [permitted_params || {}]
-    end
+  def build_resource(*args)
+    @contact_event ||= super
+    @contact_event.build_contactable if action_name == 'new' && @contact_event.contactable.nil?
+    @contact_event
+  end
 
-    def permitted_params
-      params.permit(contact_event: [:id, :contactable_id, :contactable_type, {contactable_attributes: [:id, :street1, :street2, :city, :company_id, :country, :email, :first_name, :last_name, :phone_number, :state, :title, :zip_code]}])[:contact_event]
-    end
+  def build_resource_params
+    [permitted_params || {}]
+  end
 
-    def modal_dialog_title
-      I18n.translate("modals.title.#{resource.contactable.new_record? ? 'new' : 'edit'}.#{resource.class.name.underscore.downcase}")
-    end
+  def permitted_params
+    params.permit(
+      contact_event: [
+        :id, :contactable_id, :contactable_type,
+        { contactable_attributes: [
+          :id, :street1, :street2, :city, :company_id, :country, :email, :first_name,
+          :last_name, :phone_number, :state, :title, :zip_code] }])[:contact_event]
+  end
+
+  def modal_dialog_title
+    I18n.translate(
+      "modals.title.#{resource.contactable.new_record? ? 'new' : 'edit'}.contact_event")
+  end
 end

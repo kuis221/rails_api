@@ -14,7 +14,7 @@
 class ActivityType < ActiveRecord::Base
   belongs_to :company
   scoped_to_company
-  has_many :form_fields, ->{ order 'form_fields.ordering ASC' }, :as => :fieldable
+  has_many :form_fields, -> { order 'form_fields.ordering ASC' }, as: :fieldable
   has_many :companies, through: :activity_type_campaigns
 
   validates :name, presence: true
@@ -29,7 +29,7 @@ class ActivityType < ActiveRecord::Base
 
   accepts_nested_attributes_for :goals
   accepts_nested_attributes_for :form_fields, allow_destroy: true
-  scope :active, ->{ where(active: true) }
+  scope :active, -> { where(active: true) }
   attr_accessor :partial_path
 
   before_save :ensure_user_date_field
@@ -60,20 +60,17 @@ class ActivityType < ActiveRecord::Base
   end
 
   def autocomplete
-    buckets = autocomplete_buckets({
-        activity_types: [ActivityType]
-      })
-    render :json => buckets.flatten
+    buckets = autocomplete_buckets(activity_types: [ActivityType])
+    render json: buckets.flatten
   end
-
 
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
-    def do_search(params, include_facets=false)
+    def do_search(params, include_facets = false)
       solr_search do
         with(:company_id, params[:company_id])
-        with(:status, params[:status]) if params.has_key?(:status) and params[:status].present?
-        if params.has_key?(:q) and params[:q].present?
+        with(:status, params[:status]) if params.key?(:status) && params[:status].present?
+        if params.key?(:q) && params[:q].present?
           (attribute, value) = params[:q].split(',')
           case attribute
           when 'activity_type'
@@ -86,7 +83,7 @@ class ActivityType < ActiveRecord::Base
         end
 
         order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
-        paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+        paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
       end
     end
 
@@ -102,9 +99,9 @@ class ActivityType < ActiveRecord::Base
 
   private
 
-    def ensure_user_date_field
-      if form_fields.empty? || !form_fields.map(&:type).include?('FormField::UserDate')
-        form_fields << FormField::UserDate.new(name: 'User/Date', ordering: (form_fields.map(&:ordering).max || 0)+1)
-      end
+  def ensure_user_date_field
+    if form_fields.empty? || !form_fields.map(&:type).include?('FormField::UserDate')
+      form_fields << FormField::UserDate.new(name: 'User/Date', ordering: (form_fields.map(&:ordering).max || 0) + 1)
     end
+  end
 end

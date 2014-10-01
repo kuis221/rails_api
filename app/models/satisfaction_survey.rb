@@ -12,11 +12,11 @@
 #
 
 class SatisfactionSurvey < ActiveRecord::Base
-  RATING_OPTIONS = ['neutral', 'negative', 'positive']
+  RATING_OPTIONS = %w(neutral negative positive)
   scoped_to_company
 
   belongs_to :company_user
-  has_one :company, :through => :company_user
+  has_one :company, through: :company_user
 
   validates :rating, presence: true, inclusion: { in: RATING_OPTIONS }
   validates :session_id, uniqueness: { scope: :company_user_id }

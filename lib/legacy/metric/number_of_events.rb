@@ -21,15 +21,17 @@
 # autopopulates with 1
 require 'legacy/metric/whole'
 class Metric::NumberOfEvents < Metric::Whole
-  validates_presence_of :program_id, :message => "must be a program metric"
-  validates_uniqueness_of :type, :scope => :program_id
+  validates_presence_of :program_id, message: 'must be a program metric'
+  validates_uniqueness_of :type, scope: :program_id
 
   def form_options
-    super.merge({:hint => 'Whole numbers, no decimals'})
+    super.merge(hint: 'Whole numbers, no decimals')
   end
+
   def field_type_symbol
     '!NE'
   end
+
   def validate_result(result)
     super
     result.errors.add(:value, 'must be positive') if result.errors.empty? && cast_value(result.value) < 0
@@ -39,6 +41,7 @@ class Metric::NumberOfEvents < Metric::Whole
     super # call super to ALSO store the data in the result - TODO does this make sense?
     result.event_recap.update_attribute(:number_of_events, cast_value(value)) if result.event_recap
   end
+
   def fetch_result(result)
     result.event_recap.number_of_events if result.event_recap
   end

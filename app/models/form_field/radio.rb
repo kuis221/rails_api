@@ -20,10 +20,10 @@ class FormField::Radio < FormField
     {
       as: :radio_buttons,
       collection: options_for_input,
-      label: self.name,
-      field_id: self.id,
-      options: self.settings,
-      required: self.required,
+      label: name,
+      field_id: id,
+      options: settings,
+      required: required,
       label_html: { class: 'control-group-label' },
       input_html: {
         value: result.value,
@@ -36,13 +36,13 @@ class FormField::Radio < FormField
 
   def format_html(result)
     unless result.value.nil? || result.value.empty?
-      options_for_input.select{|option| option[1] == result.value.to_i }.map{|option| option[0]}.join(', ')
+      options_for_input.select { |option| option[1] == result.value.to_i }.map { |option| option[0] }.join(', ')
     end
   end
 
   def format_csv(result)
     unless result.value.nil? || result.value.empty?
-      options_for_input.detect(->{ [] }){|option| option[1] == result.value.to_i }[0]
+      options_for_input.find(-> { [] }) { |option| option[1] == result.value.to_i }[0]
     end
   end
 

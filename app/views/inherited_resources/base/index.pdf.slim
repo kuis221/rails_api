@@ -1,7 +1,5 @@
-.main
-  .pull-left
-  .tab-content
-    .link-list
-      ul id="#{controller_name}-list"
-        - each_collection_item do |item|
-          = render item
+- counter_name = "#{resource_class.name.split('::').last.underscore}_counter"
+- counter = 0
+div.resource-list.pdf-export id="#{controller_name}-list"
+  - each_collection_item do |item|
+    = render partial: item, locals: {counter_name.to_sym => (counter+=1)}

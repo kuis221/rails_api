@@ -1,5 +1,5 @@
 require 'rails_helper'
 
-describe EventsHelper, :type => :helper do
+describe EventsHelper, type: :helper do
 
 end

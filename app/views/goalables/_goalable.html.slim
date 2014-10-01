@@ -1,13 +1,12 @@
 - if goalable.present?
   - if goalable.is_a?(Kpi)
     - unless ['Videos', 'Competitive Analysis'].include?(goalable.name)
-      li id="campaign-kpi-#{goalable.id}"
-        span.kpis-container
-          span.kpi-info.crop-text
-            .kpi-name.crop-text
-              = goalable.name
+      .resource-item.clearfix id="campaign-kpi-#{goalable.id}"
+        .resource-item-link
+          .span6.crop-text
+            .text-large= goalable.name
             = goalable.description
-          span.kpi-goal
+          .span6
             - if goalable.is_segmented? || goalable.kpi_type == 'count'
               - suffix = goalable.kpi_type == 'percentage' ? '%' : ''
               ul.kpi-goals-list
@@ -15,25 +14,26 @@
                 - goalable.kpis_segments.each do |segment|
                   - goal = goals.detect{|g| g.kpis_segment_id == segment.id }
                   li
-                    span.value= "#{goal.present? && goal.value.present? ? goal.value : '--'}#{suffix}"
+                    span.goal-value
+                      - if goal.present? && goal.value.present?
+                       = goal.value
+                      - else
+                        = ' - -'
+                      = suffix
                     | &nbsp;
-                    span.segment_name= segment.text
+                    span.segment-name= segment.text
             - else
-              - goal = resource.goals.for_kpi(goalable, false)
-              span.value= goal.try(:value)
-          span.pull-right
-            = link_to '', edit_campaign_kpi_path(resource, goalable.id), remote: true, class: 'icon-edit', title: 'Edit'
-            = link_to '', remove_kpi_campaign_path(resource, goalable.id), remote: true, method: :delete, class: 'icon-rounded-disable', title: 'Remove', data: { confirm: 'Please confirm you want to remove this KPI?'} unless [Kpi.events, Kpi.promo_hours].include? goalable
-          .clearfix
+              span.goal-value= resource.goals.for_kpi(goalable, false).try(:value)
+        .resource-item-actions
+          = link_to '', edit_campaign_kpi_path(resource, goalable.id), remote: true, class: 'icon-edit', title: 'Edit'
+          = link_to '', remove_kpi_campaign_path(resource, goalable.id), remote: true, method: :delete, class: 'icon-rounded-disable', title: 'Remove', data: { confirm: 'Please confirm you want to remove this KPI?'} unless [Kpi.events, Kpi.promo_hours].include? goalable
   - else
-    li id="campaign-activity-type-#{goalable.id}"
-      span.kpi-info
-        .kpi-name
-          = goalable.name
-        = goalable.description
-      span.kpi-goal
-        span.value= resource.goals.for_activity_type(goalable, false).try(:value)
-      span.pull-right
+    .resource-item id="campaign-activity-type-#{goalable.id}"
+      .resource-item-link
+        .span6
+          .text-large= goalable.name
+          = goalable.description
+        .span6.kpi-goal= resource.goals.for_activity_type(goalable, false).try(:value)
+      .resource-item-actions
         = link_to '', campaign_activity_type_set_goal_path(resource, goalable.id), remote: true, class: 'icon-edit', title: 'Edit'
         = link_to '', remove_activity_type_campaign_path(resource, goalable.id), remote: true, method: :delete, class: 'icon-rounded-disable', title: 'Remove', confirm: 'Please confirm you want to remove this KPI?'
-      .clearfix

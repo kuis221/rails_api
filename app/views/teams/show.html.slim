@@ -10,13 +10,13 @@
         = resource.description
 
     .links-data
-      = link_to '', edit_team_path(resource), remote: true, title: 'Edit', class: 'icon-edit' if can?(:edit, resource)
+      = button_to_edit resource if can?(:edit, resource)
       = active_inactive_buttons(resource) if can?(:deactivate, resource)
 
     // The is info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
       h3= resource.name
-      = link_to '', edit_team_path(resource), remote: true, class: 'icon-edit' if can?(:edit, resource)
+      = button_to_edit resource if can?(:edit, resource)
       = active_inactive_buttons(resource) if can?(:deactivate, resource)
 
   #team-members.details_box
@@ -27,7 +27,4 @@
 
 = render partial: 'help_tutorial'
 
-javascript:
-  $(document).on('teams:change', function(){
-    window.location.reload(true);
-  })
+- reload_page_on_edit_resource

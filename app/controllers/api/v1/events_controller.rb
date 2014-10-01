@@ -3,12 +3,12 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   resource_description do
     short 'Events'
-    formats ['json', 'xml']
-    error 401, "Unauthorized access"
-    error 404, "The requested resource was not found"
-    error 406, "The server cannot return data in the requested format"
-    error 422, "Unprocessable Entity: The change could not be processed because of errors on the data"
-    error 500, "Server crashed for some reason. Possible because of missing required params or wrong parameters"
+    formats %w(json xml)
+    error 401, 'Unauthorized access'
+    error 404, 'The requested resource was not found'
+    error 406, 'The server cannot return data in the requested format'
+    error 422, 'Unprocessable Entity: The change could not be processed because of errors on the data'
+    error 500, 'Server crashed for some reason. Possible because of missing required params or wrong parameters'
     param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
     param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
     description <<-EOS
@@ -17,8 +17,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
   end
 
   def_param_group :event do
-    param :event, Hash, required: true, :action_aware => true do
-      param :campaign_id, :number, required: true, desc: "Campaign ID"
+    param :event, Hash, required: true, action_aware: true do
+      param :campaign_id, :number, required: true, desc: 'Campaign ID'
       param :start_date, String, required: true, desc: "Event's start date"
       param :end_date, String, required: true, desc: "Event's end date"
       param :start_time, String, required: true, desc: "Event's start time'"
@@ -31,20 +31,20 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
   end
 
-  api :GET, '/api/v1/events', "Search for a list of events"
-  param :start_date, String, :desc => "A date to filter the event list. When provided a start_date without an +end_date+, the result will only include events that happen on this day. The date should be in the format MM/DD/YYYY."
-  param :end_date, String, :desc => "A date to filter the event list. This should be provided together with the +start_date+ param and when provided will filter the list with those events that are between that range. The date should be in the format MM/DD/YYYY."
-  param :campaign, Array, :desc => "A list of campaign ids to filter the results"
-  param :place, Array, :desc => "A list of places to filter the results"
-  param :area, Array, :desc => "A list of areas to filter the results"
-  param :user, Array, :desc => "A list of users to filter the results"
-  param :team, Array, :desc => "A list of teams to filter the results"
-  param :brand, Array, :desc => "A list of brands to filter the results"
-  param :brand_porfolio, Array, :desc => "A list of brand portfolios to filter the results"
-  param :status, Array, :desc => "A list of event status to filter the results. The possible options are: 'Active', 'Inactive'"
-  param :event_status, Array, :desc => "A list of event recap status to filter the results. The possible options are: 'Scheduled', 'Executed', 'Submitted', 'Approved', 'Rejected', 'Late', 'Due'"
-  param :page, :number, :desc => "The number of the page, Default: 1"
-  see "users#companies", "User companies"
+  api :GET, '/api/v1/events', 'Search for a list of events'
+  param :start_date, String, desc: 'A date to filter the event list. When provided a start_date without an +end_date+, the result will only include events that happen on this day. The date should be in the format MM/DD/YYYY.'
+  param :end_date, String, desc: 'A date to filter the event list. This should be provided together with the +start_date+ param and when provided will filter the list with those events that are between that range. The date should be in the format MM/DD/YYYY.'
+  param :campaign, Array, desc: 'A list of campaign ids to filter the results'
+  param :place, Array, desc: 'A list of places to filter the results'
+  param :area, Array, desc: 'A list of areas to filter the results'
+  param :user, Array, desc: 'A list of users to filter the results'
+  param :team, Array, desc: 'A list of teams to filter the results'
+  param :brand, Array, desc: 'A list of brands to filter the results'
+  param :brand_porfolio, Array, desc: 'A list of brand portfolios to filter the results'
+  param :status, Array, desc: "A list of event status to filter the results. The possible options are: 'Active', 'Inactive'"
+  param :event_status, Array, desc: "A list of event recap status to filter the results. The possible options are: 'Scheduled', 'Executed', 'Submitted', 'Approved', 'Rejected', 'Late', 'Due'"
+  param :page, :number, desc: 'The number of the page, Default: 1'
+  see 'users#companies', 'User companies'
 
   description <<-EOS
     Returns a list of events filtered by the given params. The results are returned on groups of 30 per request. To obtain the next 30 results provide the <page> param.
@@ -156,7 +156,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   end
 
   api :GET, '/api/v1/events/autocomplete', 'Return a list of results grouped by categories'
-  param :q, String, required: true, desc: "The search term"
+  param :q, String, required: true, desc: 'The search term'
   description <<-EOS
   Returns a list of results matching the searched term grouped in the following categories
   * *Campaigns*: Includes categories
@@ -224,17 +224,15 @@ class Api::V1::EventsController < Api::V1::FilteredController
   EOS
   def autocomplete
     authorize! :index, Event
-    buckets = autocomplete_buckets({
-      campaigns: [Campaign],
-      brands: [Brand, BrandPortfolio],
-      places: [Venue, Area],
-      people: [CompanyUser, Team]
-    })
-    render :json => buckets.flatten
+    buckets = autocomplete_buckets(campaigns: [Campaign],
+                                   brands: [Brand, BrandPortfolio],
+                                   places: [Venue, Area],
+                                   people: [CompanyUser, Team])
+    render json: buckets.flatten
   end
 
   api :GET, '/api/v1/events/:id', 'Return a event\'s details'
-  param :id, :number, required: true, desc: "Event ID"
+  param :id, :number, required: true, desc: 'Event ID'
 
   description <<-EOS
   Returns the event's details, including the actions that a user can perform on this
@@ -335,7 +333,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   end
 
   api :PUT, '/api/v1/events/:id', 'Update a event\'s details'
-  param :id, :number, required: true, desc: "Event ID"
+  param :id, :number, required: true, desc: 'Event ID'
   param_group :event
   def update
     update! do |success, failure|
@@ -347,7 +345,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   end
 
   api :PUT, '/api/v1/events/:id/submit', 'Submits a event for approval'
-  param :id, :number, required: true, desc: "Event ID"
+  param :id, :number, required: true, desc: 'Event ID'
   example <<-EOS
   Response when the event was successfully submitted
   PUT /api/v1/events/123/approve.json?auth_token=XXXXX&company_id=1
@@ -373,20 +371,20 @@ class Api::V1::EventsController < Api::V1::FilteredController
     if resource.unsent? || resource.rejected?
       begin
         resource.submit!
-        result = { :success => true,
-                   :info => "Event successfully submitted",
-                   :data => {} }
+        result = { success: true,
+                   info: 'Event successfully submitted',
+                   data: {} }
       rescue AASM::InvalidTransition => e
         status = :unprocessable_entity
-        result = { :success => false,
-                   :info => resource.errors.full_messages.join("\n"),
-                   :data => {} }
+        result = { success: false,
+                   info: resource.errors.full_messages.join("\n"),
+                   data: {} }
       end
     else
       status = :unprocessable_entity
-      result = { :success => false,
-                   :info => "Event cannot transition to submitted from #{resource.aasm_state}",
-                   :data => {} }
+      result = { success: false,
+                 info: "Event cannot transition to submitted from #{resource.aasm_state}",
+                 data: {} }
     end
     respond_to do |format|
       format.json { render json: result, status: status  }
@@ -395,7 +393,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   end
 
   api :PUT, '/api/v1/events/:id/approve', 'Mark a event as approved'
-  param :id, :number, required: true, desc: "Event ID"
+  param :id, :number, required: true, desc: 'Event ID'
   example <<-EOS
   Response when the event was successfully approved
   PUT /api/v1/events/123/approve.json?auth_token=XXXXX&company_id=1
@@ -421,20 +419,20 @@ class Api::V1::EventsController < Api::V1::FilteredController
     if resource.submitted?
       begin
         resource.approve!
-        result = { :success => true,
-             :info => "Event successfully approved",
-             :data => {} }
+        result = { success: true,
+                   info: 'Event successfully approved',
+                   data: {} }
       rescue AASM::InvalidTransition => e
         status = :unprocessable_entity
-        result = { :success => false,
-                   :info => resource.errors.full_messages.join("\n"),
-                   :data => {} }
+        result = { success: false,
+                   info: resource.errors.full_messages.join("\n"),
+                   data: {} }
       end
     else
       status = :unprocessable_entity
-      result = { :success => false,
-                   :info => "Event cannot transition to approved from #{resource.aasm_state}",
-                   :data => {} }
+      result = { success: false,
+                 info: "Event cannot transition to approved from #{resource.aasm_state}",
+                 data: {} }
     end
     respond_to do |format|
       format.json { render json: result, status: status  }
@@ -443,8 +441,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
   end
 
   api :PUT, '/api/v1/events/:id/reject', 'Mark a event as rejected'
-  param :id, :number, required: true, desc: "Event ID"
-  param :reason, String, required: true, desc: "Rejection reason (required when rejecting a event)"
+  param :id, :number, required: true, desc: 'Event ID'
+  param :reason, String, required: true, desc: 'Rejection reason (required when rejecting a event)'
   example <<-EOS
   Response when the event was successfully rejected
   PUT /api/v1/events/123/reject.json?auth_token=XXXXX&company_id=1
@@ -479,27 +477,27 @@ class Api::V1::EventsController < Api::V1::FilteredController
     reject_reason = params[:reason].try(:strip)
     if reject_reason.nil? || reject_reason.empty?
       status = :unprocessable_entity
-      result = { :success => false,
-                 :info => "Must provide a reason for rejection",
-                 :data => {} }
+      result = { success: false,
+                 info: 'Must provide a reason for rejection',
+                 data: {} }
     elsif resource.submitted?
       begin
         resource.reject!
         resource.update_column(:reject_reason, reject_reason)
-        result = { :success => true,
-             :info => "Event successfully rejected",
-             :data => {} }
+        result = { success: true,
+                   info: 'Event successfully rejected',
+                   data: {} }
       rescue AASM::InvalidTransition => e
         status = :unprocessable_entity
-        result = { :success => false,
-                   :info => resource.errors.full_messages.join("\n"),
-                   :data => {} }
+        result = { success: false,
+                   info: resource.errors.full_messages.join("\n"),
+                   data: {} }
       end
     else
       status = :unprocessable_entity
-      result = { :success => false,
-                   :info => "Event cannot transition to rejected from #{resource.aasm_state}",
-                   :data => {} }
+      result = { success: false,
+                 info: "Event cannot transition to rejected from #{resource.aasm_state}",
+                 data: {} }
     end
     respond_to do |format|
       format.json { render json: result, status: status  }
@@ -508,7 +506,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   end
 
   api :GET, '/api/v1/events/:id/results', 'Get the list of results for the events'
-  param :id, :number, required: true, desc: "Event ID"
+  param :id, :number, required: true, desc: 'Event ID'
   description <<-EOS
   Returns a list of form fields based on the event's campaign. The fields are grouped by category/module.
   Each category have the followign attributes:
@@ -567,7 +565,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     * *required:* indicates whether this field is required or not
 
   EOS
-  example  <<-EOS
+  example <<-EOS
     A response with all the different kind of fields
     GET /api/v1/events/123/results.json?auth_token=AYUjmsdi-jau123&company_id=1
     [
@@ -942,52 +940,42 @@ class Api::V1::EventsController < Api::V1::FilteredController
     fields = resource.campaign.form_fields.includes(:kpi)
 
     # Save the results so they are returned with an ID
-    resource.results_for(fields).each{|r| r.save(validate: false) if r.new_record? }
+    resource.results_for(fields).each { |r| r.save(validate: false) if r.new_record? }
 
     results = fields.map do |field|
       r = resource.results_for([field]).first
-      result = {name: field.name, ordering: field.ordering, type: field.type, required: field.required?, description: nil}
+      result = { name: field.name, ordering: field.ordering, type: field.type, required: field.required?, description: nil }
       result[:module] = field.kpi.module unless field.kpi.nil?
       result[:goal] = resource.kpi_goals[field.kpi_id] unless field.is_optionable?
       result[:module] ||= 'custom'
       result[:id] = r.id
       if field.type == 'FormField::Percentage'
-        result.merge!({
-          segments: field.options_for_input.map{|s|
-            {id: s[1], text: s[0], value: r.value[s[1].to_s], goal: (resource.kpi_goals.has_key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][s[1]] : nil)}
-          }
-        })
+        result.merge!(segments: field.options_for_input.map do|s|
+                                  { id: s[1], text: s[0], value: r.value[s[1].to_s], goal: (resource.kpi_goals.key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][s[1]] : nil) }
+                                end)
       elsif field.type == 'FormField::Checkbox'
-        result.merge!({
-          value: r.value || [],
-          segments: field.options_for_input.map{|s| {id: s[1], text: s[0], value: r.value.include?(s[1])}}
-        })
-      elsif (field.type == 'FormField::Brand' || field.type == 'FormField::Marque')
-        result.merge!({
-          value: r.value.to_i,
-          segments: field.options_for_field(r).map{|s|
-            {id: s[:id], text: s[:name]}
-          }
-        })
+        result.merge!(value: r.value || [],
+                      segments: field.options_for_input.map { |s| { id: s[1], text: s[0], value: r.value.include?(s[1]) } })
+      elsif field.type == 'FormField::Brand' || field.type == 'FormField::Marque'
+        result.merge!(value: r.value.to_i,
+                      segments: field.options_for_field(r).map do|s|
+                                  { id: s[:id], text: s[:name] }
+                                end)
       elsif field.type == 'FormField::Summation'
-        result.merge!({
-          value: r.value.map{|s| s[1].to_f}.reduce(0, :+),
-          segments: field.options_for_input.map{|s| {id: s[1], text: s[0], value: r.value[s[1].to_s]}}
-        })
+        result.merge!(value: r.value.map { |s| s[1].to_f }.reduce(0, :+),
+                      segments: field.options_for_input.map { |s| { id: s[1], text: s[0], value: r.value[s[1].to_s] } })
       elsif field.type == 'FormField::LikertScale'
-        result.merge!({
-          statements: field.statements.order(:ordering).map{|s| {id: s.id, text: s.name, value: r.value[s.id.to_s]}},
-          segments: field.options_for_input.map{|s| {id: s[1], text: s[0]}}
-        })
+        result.merge!(statements: field.statements.order(:ordering).map { |s| { id: s.id, text: s.name, value: r.value[s.id.to_s] } },
+                      segments: field.options_for_input.map { |s| { id: s[1], text: s[0] } })
       else
         if field.is_optionable?
-          result.merge!({segments: field.options_for_input.map{|s| {id: s[1], text: s[0], goal: (field.kpi_id.present? && resource.kpi_goals.has_key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][s[1]] : nil)}}})
+          result.merge!(segments: field.options_for_input.map { |s| { id: s[1], text: s[0], goal: (field.kpi_id.present? && resource.kpi_goals.key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][s[1]] : nil) } })
         end
         v = field.value_is_numeric?(r.value) ? r.value.to_f : r.value
         if field.settings && field.settings['range_format'] && field.settings['range_min'].to_s != '' && field.settings['range_max'].to_s != ''
-          result[:range] = {format: field.settings['range_format'], min: field.settings['range_min'], max: field.settings['range_max']}
+          result[:range] = { format: field.settings['range_format'], min: field.settings['range_min'], max: field.settings['range_max'] }
         end
-        result.merge!({value: v})
+        result.merge!(value: v)
       end
 
       result.merge!(description: field.kpi.description) if field.kpi.present?
@@ -996,11 +984,11 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
 
     grouped = []
-    group=nil
+    group = nil
     results.each do |result|
       if group.nil? || result[:module] != group[:module]
         group = { module: result[:module], fields: [], label:  I18n.translate("form_builder.modules.#{result[:module]}") }
-        if result[:module] != 'custom' && exising = grouped.detect{|g| g[:module] == result[:module]} # Try to find the module in the current list
+        if result[:module] != 'custom' && exising = grouped.find { |g| g[:module] == result[:module] } # Try to find the module in the current list
           group = exising
         else
           grouped.push group
@@ -1010,20 +998,20 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
 
     respond_to do |format|
-        format.json {
-          render :status => 200,
-                 :json => grouped
-        }
-        format.xml {
-          render :status => 200,
-                 :xml => grouped.to_xml(root: 'results')
-        }
+      format.json do
+        render status: 200,
+               json: grouped
+      end
+      format.xml do
+        render status: 200,
+               xml: grouped.to_xml(root: 'results')
+      end
     end
   end
 
-  api :GET, '/api/v1/events/:id/members', "Get a list of users and teams associated to the event"
-  param :id, :number, required: true, desc: "Event ID"
-  param :type, ['user', 'team'], required: false, desc: "Filter the results by type"
+  api :GET, '/api/v1/events/:id/members', 'Get a list of users and teams associated to the event'
+  param :id, :number, required: true, desc: 'Event ID'
+  param :type, %w(user team), required: false, desc: 'Filter the results by type'
   description <<-EOS
     Returns a mixed list of teams and users that are part of the event's team. The items are sorted by name.
 
@@ -1104,7 +1092,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
     ]
   EOS
 
-
   example <<-EOS
     An example requesting only the teams and not the users
     GET: /api/v1/events/8383/members.json?type=team&auth_token=swyonWjtcZsbt7N8LArj&company_id=1
@@ -1127,11 +1114,11 @@ class Api::V1::EventsController < Api::V1::FilteredController
     @users = @teams = []
     @users = resource.users.with_user_and_role.order('users.first_name, users.last_name') unless params[:type] == 'team'
     @teams = resource.teams.order(:name) unless params[:type] == 'user'
-    @members = (@users + @teams).sort{|a, b| a.name.downcase <=> b.name.downcase }
+    @members = (@users + @teams).sort { |a, b| a.name.downcase <=> b.name.downcase }
   end
 
   api :GET, '/api/v1/events/:id/assignable_members', "Get a list of users+teams that can be associated to the event's team"
-  param :id, :number, required: true, desc: "Event ID"
+  param :id, :number, required: true, desc: 'Event ID'
   description <<-EOS
     Returns a list of contacts that can be associated to the event, including users but excluding those that are already associted.
 
@@ -1165,20 +1152,20 @@ class Api::V1::EventsController < Api::V1::FilteredController
   def assignable_members
     authorize! :add_members, resource
     respond_to do |format|
-      format.json {
-        render :status => 200,
-               :json => assignable_staff_members
-      }
-      format.xml {
-        render :status => 200,
-               :xml => assignable_staff_members
-      }
+      format.json do
+        render status: 200,
+               json: assignable_staff_members
+      end
+      format.xml do
+        render status: 200,
+               xml: assignable_staff_members
+      end
     end
   end
 
   api :POST, '/api/v1/events/:id/members', 'Associate an user or team to the event\'s team'
   param :memberable_id, :number, required: true, desc: 'The ID of team/user to be added as a member'
-  param :memberable_type, ['user','team'], required: true, desc: 'The type of element to be added as a member'
+  param :memberable_type, %w(user team), required: true, desc: 'The type of element to be added as a member'
   see 'events#assignable_members'
 
   example <<-EOS
@@ -1219,17 +1206,17 @@ class Api::V1::EventsController < Api::V1::FilteredController
     memberable = build_memberable_from_request
     if memberable.save
       resource.solr_index
-      result = { :success => true,
-                 :info => "Member successfully added to event",
-                 :data => {} }
+      result = { success: true,
+                 info: 'Member successfully added to event',
+                 data: {} }
       respond_to do |format|
         format.json do
-          render :status => 200,
-                 :json => result
+          render status: 200,
+                 json: result
         end
         format.xml do
-          render :status => 200,
-                 :xml => result.to_xml(root: 'result')
+          render status: 200,
+                 xml: result.to_xml(root: 'result')
         end
       end
     else
@@ -1242,7 +1229,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   api :DELETE, '/api/v1/events/:id/members', 'Delete an user or team from the event\'s team'
   param :memberable_id, :number, required: true, desc: 'The ID of team/user to be deleted as a member'
-  param :memberable_type, ['user','team'], required: true, desc: 'The type of element to be deleted as a member'
+  param :memberable_type, %w(user team), required: true, desc: 'The type of element to be deleted as a member'
   example <<-EOS
     Deleting an user from the event members
     DELETE: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
@@ -1282,10 +1269,10 @@ class Api::V1::EventsController < Api::V1::FilteredController
     if memberable.present?
       if memberable.destroy
         resource.solr_index
-        render :status => 200,
-               :json => { :success => true,
-                          :info => "Member successfully deleted from event",
-                          :data => {}
+        render status: 200,
+               json: { success: true,
+                       info: 'Member successfully deleted from event',
+                       data: {}
                         }
       else
         render json: memberable.errors, status: :unprocessable_entity
@@ -1295,8 +1282,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
   end
 
-  api :GET, '/api/v1/events/:id/contacts', "Get a list of users+contacts associated to the event"
-  param :id, :number, required: true, desc: "Event ID"
+  api :GET, '/api/v1/events/:id/contacts', 'Get a list of users+contacts associated to the event'
+  param :id, :number, required: true, desc: 'Event ID'
   description <<-EOS
     Returns a mixed list of users+contacts that are associated to the event. The results are sorted by the contact's full name.
 
@@ -1391,9 +1378,9 @@ class Api::V1::EventsController < Api::V1::FilteredController
     @contacts = resource.contacts
   end
 
-  api :GET, '/api/v1/events/:id/assignable_contacts', "Get a list of contacts+users that can be associated to the event as a contact"
-  param :id, :number, required: true, desc: "Event ID"
-  param :term, String, required: false, desc: "A search term to filter the list of contacts/events"
+  api :GET, '/api/v1/events/:id/assignable_contacts', 'Get a list of contacts+users that can be associated to the event as a contact'
+  param :id, :number, required: true, desc: 'Event ID'
+  param :term, String, required: false, desc: 'A search term to filter the list of contacts/events'
   description <<-EOS
     Returns a list of contacts that can be associated to the event, including users but excluding those that are already associted.
 
@@ -1449,7 +1436,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   api :POST, '/api/v1/events/:id/contacts', 'Associate a contact to the event'
   param :contactable_id, :number, required: true, desc: 'The ID of contact/user to be added as a contact'
-  param :contactable_type, ['user','contact'], required: true, desc: 'The type of element to be added as a contact'
+  param :contactable_type, %w(user contact), required: true, desc: 'The type of element to be added as a contact'
   see 'events#assignable_contacts'
 
   example <<-EOS
@@ -1489,17 +1476,17 @@ class Api::V1::EventsController < Api::V1::FilteredController
     authorize! :create_contacts, resource
     contact = resource.contact_events.build(contactable: load_contactable_from_request)
     if contact.save
-      result = { :success => true,
-                 :info => "Contact successfully added to event",
-                 :data => {} }
+      result = { success: true,
+                 info: 'Contact successfully added to event',
+                 data: {} }
       respond_to do |format|
         format.json do
-          render :status => 200,
-                 :json => result
+          render status: 200,
+                 json: result
         end
         format.xml do
-          render :status => 200,
-                 :xml => result.to_xml(root: 'result')
+          render status: 200,
+                 xml: result.to_xml(root: 'result')
         end
       end
     else
@@ -1512,7 +1499,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   api :DELETE, '/api/v1/events/:id/contacts', 'Delete a contact from the event'
   param :contactable_id, :number, required: true, desc: 'The ID of contact/user to be deleted as a contact'
-  param :contactable_type, ['user','contact'], required: true, desc: 'The type of element to be deleted as a contact'
+  param :contactable_type, %w(user contact), required: true, desc: 'The type of element to be deleted as a contact'
   example <<-EOS
     Deleting an user from the event contacts
     DELETE: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
@@ -1552,10 +1539,10 @@ class Api::V1::EventsController < Api::V1::FilteredController
     if contact.present?
       if contact.destroy
         resource.solr_index
-        render :status => 200,
-               :json => { :success => true,
-                          :info => "Contact successfully deleted from event",
-                          :data => {}
+        render status: 200,
+               json: { success: true,
+                       info: 'Contact successfully deleted from event',
+                       data: {}
                         }
       else
         render json: contact.errors, status: :unprocessable_entity
@@ -1566,65 +1553,65 @@ class Api::V1::EventsController < Api::V1::FilteredController
   end
 
   protected
-    def facets
-      @facets ||= Array.new.tap do |f|
-        f.push build_campaign_bucket
-        f.push build_brands_bucket
-        f.push build_areas_bucket
-        f.push build_people_bucket
 
-        f.push build_status_bucket
-        f.push build_state_bucket
-      end
+  def facets
+    @facets ||= Array.new.tap do |f|
+      f.push build_campaign_bucket
+      f.push build_brands_bucket
+      f.push build_areas_bucket
+      f.push build_people_bucket
+
+      f.push build_status_bucket
+      f.push build_state_bucket
     end
+  end
 
-    def permitted_params
-      parameters = {}
-      allowed = []
-      allowed += [:end_date, :end_time, :start_date, :start_time, :campaign_id, :place_id, :place_reference, :description] if can?(:update, Event) || can?(:create, Event)
-      allowed += [:summary, {results_attributes: [:value, :id, {value: []}]}] if can?(:edit_data, Event)
-      allowed += [:active] if can?(:deactivate, Event)
-      parameters = params.require(:event).permit(*allowed)
-      parameters.tap do |whielisted|
-        unless whielisted.nil? || whielisted[:results_attributes].nil?
-          whielisted[:results_attributes].each_with_index do |value, i|
-            value[:value] = params[:event][:results_attributes][i][:value]
-          end
+  def permitted_params
+    parameters = {}
+    allowed = []
+    allowed += [:end_date, :end_time, :start_date, :start_time, :campaign_id, :place_id, :place_reference, :description] if can?(:update, Event) || can?(:create, Event)
+    allowed += [:summary, { results_attributes: [:value, :id, { value: [] }] }] if can?(:edit_data, Event)
+    allowed += [:active] if can?(:deactivate, Event)
+    parameters = params.require(:event).permit(*allowed)
+    parameters.tap do |whielisted|
+      unless whielisted.nil? || whielisted[:results_attributes].nil?
+        whielisted[:results_attributes].each_with_index do |value, i|
+          value[:value] = params[:event][:results_attributes][i][:value]
         end
       end
     end
+  end
 
-    def permitted_search_params
-      params.permit(:page, :start_date, :end_date, {campaign: []}, {place: []}, {area: []}, {user: []}, {team: []}, {brand: []}, {brand_porfolio: []}, {status: []}, {event_status: []})
+  def permitted_search_params
+    params.permit(:page, :start_date, :end_date, { campaign: [] }, { place: [] }, { area: [] }, { user: [] }, { team: [] }, { brand: [] }, { brand_porfolio: [] }, { status: [] }, event_status: [])
+  end
+
+  def load_contactable_from_request
+    if params[:contactable_type] == 'user'
+      current_company.company_users.find(params[:contactable_id])
+    else
+      current_company.contacts.find(params[:contactable_id])
     end
+  end
 
-    def load_contactable_from_request
-      if params[:contactable_type] == 'user'
-        current_company.company_users.find(params[:contactable_id])
-      else
-        current_company.contacts.find(params[:contactable_id])
-      end
+  def find_contactable_from_request
+    contactable_type = params[:contactable_type] == 'user' ? 'CompanyUser' : 'Contact'
+    resource.contact_events.where(contactable_id: params[:contactable_id], contactable_type: contactable_type).first
+  end
+
+  def build_memberable_from_request
+    if params[:memberable_type] == 'team'
+      resource.teamings.build(team: current_company.teams.find(params[:memberable_id]))
+    else
+      resource.memberships.build(company_user: current_company.company_users.find(params[:memberable_id]))
     end
+  end
 
-    def find_contactable_from_request
-      contactable_type = params[:contactable_type] == 'user' ? 'CompanyUser' : 'Contact'
-      resource.contact_events.where(contactable_id: params[:contactable_id], contactable_type: contactable_type).first
+  def find_memberable_from_request
+    if params[:memberable_type] == 'team'
+      resource.teamings.where(team_id: params[:memberable_id], teamable_id: params[:id]).first
+    else
+      resource.memberships.where(company_user_id: params[:memberable_id], memberable_id: params[:id]).first
     end
-
-    def build_memberable_from_request
-      if params[:memberable_type] == 'team'
-        resource.teamings.build(team: current_company.teams.find(params[:memberable_id]))
-      else
-        resource.memberships.build(company_user: current_company.company_users.find(params[:memberable_id]))
-      end
-    end
-
-    def find_memberable_from_request
-      if params[:memberable_type] == 'team'
-        resource.teamings.where(team_id: params[:memberable_id], teamable_id: params[:id]).first
-      else
-        resource.memberships.where(company_user_id: params[:memberable_id], memberable_id: params[:id]).first
-      end
-    end
-
+  end
 end

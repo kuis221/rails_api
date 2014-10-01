@@ -1,49 +1,48 @@
 require 'rails_helper'
 
-feature "BrandPortfolios", js: true, search: true do
+feature 'BrandPortfolios', js: true, search: true do
+  let(:user) { create(:user, company: company, role_id: create(:role).id) }
+  let(:company) { create(:company) }
+  let(:company_user) { user.company_users.first }
 
   before do
     Warden.test_mode!
-    @user = FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id)
-    @company = @user.companies.first
-    sign_in @user
+    sign_in user
   end
 
   after do
     Warden.test_reset!
   end
 
-  feature "/brand_portfolios" do
-    feature "GET index" do
-      scenario "should display a table with the portfolios" do
+  feature '/brand_portfolios' do
+    feature 'GET index' do
+      scenario 'should display a table with the portfolios' do
         portfolios = [
-          FactoryGirl.create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: true, company: @company),
-          FactoryGirl.create(:brand_portfolio, name: 'B Licores Costarricenses', description: 'Licores ticos', active: true, company: @company)
+          create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: true, company: company),
+          create(:brand_portfolio, name: 'B Licores Costarricenses', description: 'Licores ticos', active: true, company: company)
         ]
         Sunspot.commit
         visit brand_portfolios_path
 
-        within("ul#brand_portfolios-list") do
-          # First Row
-          within("li:nth-child(1)") do
-            expect(page).to have_content(portfolios[0].name)
-            expect(page).to have_content(portfolios[0].description)
-          end
-          # Second Row
-          within("li:nth-child(2)") do
-            expect(page).to have_content(portfolios[1].name)
-            expect(page).to have_content(portfolios[1].description)
-          end
+        # First Row
+        within resource_item 1, list: '#brand_portfolios-list' do
+          expect(page).to have_content(portfolios[0].name)
+          expect(page).to have_content(portfolios[0].description)
+        end
+        # Second Row
+        within resource_item 2, list: '#brand_portfolios-list' do
+          expect(page).to have_content(portfolios[1].name)
+          expect(page).to have_content(portfolios[1].description)
         end
       end
 
-      scenario "should allow user to deactivate brand portfolios" do
-        FactoryGirl.create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: true, company: @company)
+      scenario 'should allow user to deactivate brand portfolios' do
+        create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: true, company: company)
         Sunspot.commit
         visit brand_portfolios_path
 
         expect(page).to have_content('A Vinos ticos')
-        within("ul#brand_portfolios-list li:nth-child(1)") do
+        within resource_item do
           click_js_link('Deactivate')
         end
         confirm_prompt 'Are you sure you want to deactivate this brand portfolio?'
@@ -51,8 +50,8 @@ feature "BrandPortfolios", js: true, search: true do
         expect(page).to have_no_content('A Vinos ticos')
       end
 
-      scenario "should allow user to activate brand portfolios" do
-        FactoryGirl.create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: false, company: @company)
+      scenario 'should allow user to activate brand portfolios' do
+        create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: false, company: company)
         Sunspot.commit
         visit brand_portfolios_path
 
@@ -60,7 +59,7 @@ feature "BrandPortfolios", js: true, search: true do
         filter_section('ACTIVE STATE').unicheck('Active')
 
         expect(page).to have_content('A Vinos ticos')
-        within("ul#brand_portfolios-list li:nth-child(1)") do
+        within resource_item do
           click_js_link('Activate')
         end
         expect(page).to have_no_content('A Vinos ticos')
@@ -72,7 +71,7 @@ feature "BrandPortfolios", js: true, search: true do
 
       click_js_button 'New Brand Portfolio'
 
-      within("form#new_brand_portfolio") do
+      within('form#new_brand_portfolio') do
         fill_in 'Name', with: 'new portfolio name'
         fill_in 'Description', with: 'new portfolio description'
         click_js_button 'Create'
@@ -85,18 +84,18 @@ feature "BrandPortfolios", js: true, search: true do
     end
   end
 
-  feature "/brand_portfolios/:brand_portfolio_id", :js => true do
-    scenario "GET show should display the portfolio details page" do
-      portfolio = FactoryGirl.create(:brand_portfolio, name: 'Some Brand Portfolio', description: 'a portfolio description', company: @company)
+  feature '/brand_portfolios/:brand_portfolio_id', js: true do
+    scenario 'GET show should display the portfolio details page' do
+      portfolio = create(:brand_portfolio, name: 'Some Brand Portfolio', description: 'a portfolio description', company: company)
       visit brand_portfolio_path(portfolio)
       expect(page).to have_selector('h2', text: 'Some Brand Portfolio')
       expect(page).to have_selector('div.description-data', text: 'a portfolio description')
     end
 
     scenario 'diplays a table of brands within the brand portfolio' do
-      portfolio = FactoryGirl.create(:brand_portfolio, name: 'Some Brand Portfolio', description: 'a portfolio description', company: @company)
-      brands = [FactoryGirl.create(:brand, name: 'Brand 1'), FactoryGirl.create(:brand, name: 'Brand 2')]
-      brands.map {|b| portfolio.brands << b }
+      portfolio = create(:brand_portfolio, name: 'Some Brand Portfolio', description: 'a portfolio description', company: company)
+      brands = [create(:brand, name: 'Brand 1'), create(:brand, name: 'Brand 2')]
+      brands.map { |b| portfolio.brands << b }
       visit brand_portfolio_path(portfolio)
       within('#brands-list') do
         within("div#brand-#{brands[0].id}") do
@@ -111,7 +110,7 @@ feature "BrandPortfolios", js: true, search: true do
     end
 
     scenario 'allows the user to activate/deactivate a portfolio' do
-      portfolio = FactoryGirl.create(:brand_portfolio, name: 'Some Brand Portfolio', description: 'a portfolio description', active: true, company: @company)
+      portfolio = create(:brand_portfolio, name: 'Some Brand Portfolio', description: 'a portfolio description', active: true, company: company)
       visit brand_portfolio_path(portfolio)
       within('.links-data') do
         click_js_link('Deactivate')
@@ -126,10 +125,10 @@ feature "BrandPortfolios", js: true, search: true do
     end
 
     scenario 'allows the user to edit the portfolio' do
-      portfolio = FactoryGirl.create(:brand_portfolio, name: 'Old name', company: @company)
+      portfolio = create(:brand_portfolio, name: 'Old name', company: company)
       visit brand_portfolio_path(portfolio)
       expect(page).to have_content('Old name')
-      click_js_link('Edit')
+      within('.links-data') { click_js_button 'Edit Brand Portfolio' }
 
       within("form#edit_brand_portfolio_#{portfolio.id}") do
         fill_in 'Name', with: 'edited portfolio name'
@@ -144,21 +143,22 @@ feature "BrandPortfolios", js: true, search: true do
     end
 
     scenario 'allows the user to add brands to the portfolio' do
-      portfolio = FactoryGirl.create(:brand_portfolio, company: @company)
-      brand = FactoryGirl.create(:brand, name: 'Guaro Cacique', company: @company) # Create the brand to be added
-      FactoryGirl.create(:brand, name: 'BrandOtherCompany', company: FactoryGirl.create(:company)) # Create the brand to be added
+      portfolio = create(:brand_portfolio, company: company)
+      brand = create(:brand, name: 'Guaro Cacique', company: company) # Create the brand to be added
+      create(:brand, name: 'BrandOtherCompany', company: create(:company)) # Create the brand to be added
       visit brand_portfolio_path(portfolio)
 
-      click_js_link 'Add Brand'
+      click_js_button 'Add Brand'
 
       within visible_modal do
-        expect(page).to have_content('Guaro Cacique')
-        click_js_link 'Add'
+        within resource_item brand do
+          click_js_link 'Add'
+        end
       end
 
       # Make sure the new brand was added to the portfolio
-      within "#brands-list" do
-        within("div.brand") do
+      within '#brands-list' do
+        within 'div.brand' do
           expect(page).not_to have_content('BrandOtherCompany')
           expect(page).to have_content('Guaro Cacique')
           expect(page).to have_selector('a.remove-brand-btn', visible: :false)
@@ -175,11 +175,10 @@ feature "BrandPortfolios", js: true, search: true do
       end
 
       # Make sure the new brand was added to the portfolio
-      within("#brands-list div.brand:nth-child(2)") do
+      within('#brands-list div.brand:nth-child(2)') do
         expect(page).to have_content('Ron Centenario')
         expect(page).to have_selector('a.remove-brand-btn', visible: :false)
       end
     end
   end
-
 end

@@ -9,7 +9,7 @@ class ProgramEventsMigrationWorker
     User.current = company.company_users.order('id asc').first.user
     program = Legacy::Program.find(program_id)
     Legacy::Event.where(program_id: program_id).order('id asc').limit(limit).offset(offset).each do |legacy_event|
-      migration = legacy_event.synchronize(company, {campaign_id: campaign_id})
+      migration = legacy_event.synchronize(company, campaign_id: campaign_id)
     end
   end
 end

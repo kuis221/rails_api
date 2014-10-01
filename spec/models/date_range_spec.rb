@@ -15,15 +15,15 @@
 
 require 'rails_helper'
 
-describe DateRange, :type => :model do
+describe DateRange, type: :model do
   it { is_expected.to belong_to(:company) }
   it { is_expected.to have_many(:date_items) }
 
   it { is_expected.to validate_presence_of(:name) }
 
   describe '#deactivate!' do
-    it "should deactivate the date range" do
-      date_range = FactoryGirl.create(:date_range, active: true)
+    it 'should deactivate the date range' do
+      date_range = create(:date_range, active: true)
       expect(date_range.active).to be_truthy
       date_range.deactivate!
       expect(date_range.reload.active).to be_falsey
@@ -31,8 +31,8 @@ describe DateRange, :type => :model do
   end
 
   describe '#activate!' do
-    it "should activate the date range" do
-      date_range = FactoryGirl.create(:date_range, active: true)
+    it 'should activate the date range' do
+      date_range = create(:date_range, active: true)
       expect(date_range.active).to be_truthy
       date_range.deactivate!
       expect(date_range.reload.active).to be_falsey

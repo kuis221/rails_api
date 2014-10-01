@@ -1,5 +1,4 @@
 class Api::V1::SurveysController < Api::V1::ApiController
-
   before_action :check_surveys_enabled_for_event
 
   inherit_resources
@@ -8,11 +7,11 @@ class Api::V1::SurveysController < Api::V1::ApiController
 
   resource_description do
     short 'Surveys'
-    formats ['json', 'xml']
-    error 404, "Missing"
-    error 401, "Unauthorized access"
-    error 403, "Event does allows surveys as per campaign settings"
-    error 500, "Server crashed for some reason"
+    formats %w(json xml)
+    error 404, 'Missing'
+    error 401, 'Unauthorized access'
+    error 403, 'Event does allows surveys as per campaign settings'
+    error 500, 'Server crashed for some reason'
     param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
     param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
     description <<-EOS
@@ -20,8 +19,8 @@ class Api::V1::SurveysController < Api::V1::ApiController
     EOS
   end
 
-  api :GET, '/api/v1/events/:event_id/surveys', "Get a list of surveys for an Event"
-  param :event_id, :number, required: true, desc: "Event ID"
+  api :GET, '/api/v1/events/:event_id/surveys', 'Get a list of surveys for an Event'
+  param :event_id, :number, required: true, desc: 'Event ID'
   description <<-EOS
     Returns a list of surveys associated to the event.
 
@@ -161,9 +160,8 @@ class Api::V1::SurveysController < Api::V1::ApiController
     @surveys = parent.surveys
   end
 
-
   api :GET, '/api/v1/events/:event_id/surveys/:id', "Get the details for an Event's survey"
-  param :event_id, :number, required: true, desc: "Event ID"
+  param :event_id, :number, required: true, desc: 'Event ID'
   description <<-EOS
     Return the attributes and results for a survey
 
@@ -303,8 +301,8 @@ class Api::V1::SurveysController < Api::V1::ApiController
   end
 
   api :POST, '/api/v1/events/:event_id/surveys', 'Create a new survey for a event'
-  see "surveys#brands"
-  param :survey, Hash, required: true, :action_aware => true do
+  see 'surveys#brands'
+  param :survey, Hash, required: true, action_aware: true do
     param :surveys_answers_attributes, :survey_result, required: true, desc: <<-EOS
       This should receive a list of result, each one with the following structure:
 
@@ -470,7 +468,7 @@ class Api::V1::SurveysController < Api::V1::ApiController
   end
 
   api :PUT, '/api/v1/events/:event_id/surveys', 'Update a survey for a event'
-  param :survey, Hash, required: true, :action_aware => true do
+  param :survey, Hash, required: true, action_aware: true do
     param :surveys_answers_attributes, :survey_result, required: true do
       param :id, :number, desc: 'The ID of the answer to update'
       param :answer, String, desc: <<-EOS
@@ -656,30 +654,30 @@ class Api::V1::SurveysController < Api::V1::ApiController
 
   protected
 
-    def build_resource_params
-      [permitted_params || {}]
-    end
+  def build_resource_params
+    [permitted_params || {}]
+  end
 
-    def permitted_params
-      params.permit(survey: {surveys_answers_attributes: [:id, :brand_id, :question_id, :answer, :kpi_id]})[:survey]
-    end
+  def permitted_params
+    params.permit(survey: { surveys_answers_attributes: [:id, :brand_id, :question_id, :answer, :kpi_id] })[:survey]
+  end
 
-    def check_surveys_enabled_for_event
-      unless parent.campaign.enabled_modules.include?('surveys')
-        respond_to do |format|
-          format.json {
-            render :status => 403,
-                   :json => { :success => false,
-                              :info => "Invalid request",
-                              :data => {} }
-          }
-          format.xml {
-            render :status => 403,
-                   :xml => { :success => false,
-                             :info => "Invalid request",
-                             :data => {} }.to_xml(root: 'response')
-          }
+  def check_surveys_enabled_for_event
+    unless parent.campaign.enabled_modules.include?('surveys')
+      respond_to do |format|
+        format.json do
+          render status: 403,
+                 json: { success: false,
+                         info: 'Invalid request',
+                         data: {} }
+        end
+        format.xml do
+          render status: 403,
+                 xml: { success: false,
+                        info: 'Invalid request',
+                        data: {} }.to_xml(root: 'response')
         end
       end
     end
+  end
 end

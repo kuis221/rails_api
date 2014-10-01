@@ -1,7 +1,7 @@
 ActiveAdmin.register User do
   config.clear_action_items!
 
-  actions :all, :except => [:new, :create]
+  actions :all, except: [:new, :create]
 
   index do
     column :first_name
@@ -11,7 +11,7 @@ ActiveAdmin.register User do
     column :last_sign_in_at
     column :last_activity_mobile_at do |user|
       last_activity = user.company_users.first.last_activity_mobile_at
-      last_activity.strftime("%B %e, %Y %H:%M") if last_activity.present?
+      last_activity.strftime('%B %e, %Y %H:%M') if last_activity.present?
     end
     column :sign_in_count
     actions
@@ -20,17 +20,17 @@ ActiveAdmin.register User do
   filter :email
   filter :first_name
   filter :last_name
-  filter :company_users_company_id, :as => :select, :collection => proc { Company.all }
+  filter :company_users_company_id, as: :select, collection: proc { Company.all }
   filter :company_users_active, as: :boolean, default: true, label: 'Active'
   filter :active, as: :boolean, default: true, label: 'Invitation Accepted'
-  #filter :active, as: :boolean, default: true, label: 'Invitation Accepted'
+  # filter :active, as: :boolean, default: true, label: 'Invitation Accepted'
 
   form do |f|
-    f.inputs "User Details" do
+    f.inputs 'User Details' do
       f.input :first_name
       f.input :last_name
     end
-    f.inputs "User Address" do
+    f.inputs 'User Address' do
       f.input :country
       f.input :state
       f.input :city
@@ -40,7 +40,7 @@ ActiveAdmin.register User do
       f.input :unit_number
       f.input :zip_code
     end
-    f.inputs "Authentication Info" do
+    f.inputs 'Authentication Info' do
       f.input :email
       f.input :password, required: false
       f.input :password_confirmation, required: false
@@ -64,10 +64,10 @@ ActiveAdmin.register User do
     end
   end
 
- csv do
+  csv do
     column :first_name
     column :last_name
-    column("Role") { |user| user.company_users.joins(:role).pluck('roles.name').join(', ') }
+    column('Role') { |user| user.company_users.joins(:role).pluck('roles.name').join(', ') }
     column :email
     column :country
     column :state
@@ -87,7 +87,7 @@ ActiveAdmin.register User do
 
   controller do
     def permitted_params
-      params.permit(:user => [
+      params.permit(user: [
         :email, :first_name, :last_name,
         :country, :state, :city, :time_zone, :phone_number, :street_address,
         :unit_number, :zip_code, :password, :password_confirmation])

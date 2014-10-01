@@ -17,12 +17,12 @@
 
 class FormField::Attachment < FormField
   def field_options(result)
-    { as: :attached_asset, label: self.name, field_id: self.id, options: self.settings,
-      file_types: '', required: self.required,
+    { as: :attached_asset, label: name, field_id: id, options: settings,
+      file_types: '', required: required,
       input_html: {
-          value: result.value,
-          class: field_classes,
-            required: (self.required? ? 'required' : nil) } }
+        value: result.value,
+        class: field_classes,
+        required: (self.required? ? 'required' : nil) } }
   end
 
   def field_classes
@@ -40,7 +40,7 @@ class FormField::Attachment < FormField
       elsif result.attached_asset.processed?
         "<a href=\"#{result.attached_asset.download_url}\" title=\"Download\">#{result.attached_asset.file_file_name}</a>".html_safe
       else
-        "The photo is being processed. It will be available soon.."
+        'The photo is being processed. It will be available soon..'
       end
     end
   end
@@ -48,7 +48,7 @@ class FormField::Attachment < FormField
   def validate_result(result)
     super
     if result.attached_asset.present? && !result.attached_asset.valid?
-      result.errors.add :value, "is not valid"
+      result.errors.add :value, 'is not valid'
     end
   end
 end

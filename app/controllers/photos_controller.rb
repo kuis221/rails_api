@@ -11,7 +11,7 @@ class PhotosController < InheritedResources::Base
 
   custom_actions collection: [:processing_status]
 
-  defaults :resource_class => AttachedAsset
+  defaults resource_class: AttachedAsset
 
   load_and_authorize_resource class: AttachedAsset, through: :parent, except: [:processing_status]
 
@@ -22,15 +22,16 @@ class PhotosController < InheritedResources::Base
   end
 
   protected
-    def build_resource_params
-      [permitted_params || {}]
-    end
 
-    def permitted_params
-      params.permit(attached_asset: [:direct_upload_url])[:attached_asset]
-    end
+  def build_resource_params
+    [permitted_params || {}]
+  end
 
-    def authorize_create
-      authorize! :create_photo, parent
-    end
+  def permitted_params
+    params.permit(attached_asset: [:direct_upload_url])[:attached_asset]
+  end
+
+  def authorize_create
+    authorize! :create_photo, parent
+  end
 end

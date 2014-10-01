@@ -2,16 +2,16 @@
 require 'rails_helper'
 
 describe CompanyUser, type: :model, search: true do
-  it "should search for tasks" do
+  it 'should search for tasks' do
 
     # First populate the Database with some data
-    campaign = FactoryGirl.create(:campaign, company_id: 1)
-    campaign2 = FactoryGirl.create(:campaign, company_id: 1)
-    team = FactoryGirl.create(:team)
-    team2 = FactoryGirl.create(:team)
-    user = FactoryGirl.create(:company_user, company_id: 1, active: false, team_ids: [team.id], role: FactoryGirl.create(:role, company_id: 1))
-    user2 = FactoryGirl.create(:company_user, company_id: 1, active: false, team_ids: [team.id, team2.id], role: FactoryGirl.create(:role, company_id: 1))
-    user2_in_company2 = FactoryGirl.create(:company_user, company_id: 2, user: user2.user, role: FactoryGirl.create(:role, company_id: 2))
+    campaign = create(:campaign, company_id: 1)
+    campaign2 = create(:campaign, company_id: 1)
+    team = create(:team)
+    team2 = create(:team)
+    user = create(:company_user, company_id: 1, active: false, team_ids: [team.id], role: create(:role, company_id: 1))
+    user2 = create(:company_user, company_id: 1, active: false, team_ids: [team.id, team2.id], role: create(:role, company_id: 1))
+    user2_in_company2 = create(:company_user, company_id: 2, user: user2.user, role: create(:role, company_id: 2))
     user.campaigns << campaign
     user2.campaigns << campaign2
     user.solr_index
@@ -24,7 +24,7 @@ describe CompanyUser, type: :model, search: true do
     expect(CompanyUser.do_search(company_id: 1).results).to match_array([user, user2])
     expect(CompanyUser.do_search(company_id: 2).results).to match_array([user2_in_company2])
 
-    expect(CompanyUser.do_search({company_id: 1, q: "team,#{team.id}"}, true).results).to match_array([user, user2])
+    expect(CompanyUser.do_search({ company_id: 1, q: "team,#{team.id}" }, true).results).to match_array([user, user2])
     expect(CompanyUser.do_search(company_id: 1, q: "team,#{team2.id}").results).to match_array([user2])
 
     # Search for a specific users

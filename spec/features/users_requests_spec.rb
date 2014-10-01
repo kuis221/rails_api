@@ -1,29 +1,29 @@
 require 'rails_helper'
 
-feature "Users", :js => true do
+feature 'Users', js: true do
 
   before do
     Warden.test_mode!
-    @company = FactoryGirl.create(:company, name: 'ABC inc.')
-    @user = FactoryGirl.create(:user, company_id: @company.id, role_id: FactoryGirl.create(:role, company: @company).id)
+    @company = create(:company, name: 'ABC inc.')
+    @user = create(:user, company_id: @company.id, role_id: create(:role, company: @company).id)
     @company_user = @user.company_users.first
     sign_in @user
   end
 
-  feature "user with multiple companies", :js => true do
-    scenario "can switch between companies" do
+  feature 'user with multiple companies', js: true do
+    scenario 'can switch between companies' do
       Kpi.create_global_kpis
 
-      another_company = FactoryGirl.create(:company, name: 'Tres Patitos S.A.')
+      another_company = create(:company, name: 'Tres Patitos S.A.')
 
       # Add another company to the user
-      a = FactoryGirl.create(:company_user, company: another_company, user: @user, role: FactoryGirl.create(:role, company: another_company))
+      a = create(:company_user, company: another_company, user: @user, role: create(:role, company: another_company))
       visit root_path
 
       # Click on the dropdown and select the other company
       within('#company-name') do
         click_link('ABC inc.')
-        find(".dropdown").click_link 'Tres Patitos S.A.'
+        find('.dropdown').click_link 'Tres Patitos S.A.'
       end
       expect(current_path).to eq(root_path)
 
@@ -33,7 +33,7 @@ feature "Users", :js => true do
 
       # Click on the dropdown and select the other company
       find('#company-name a.current-company-title').click
-      within "ul#user-company-dropdown" do
+      within 'ul#user-company-dropdown' do
         click_link @company.name.to_s
       end
 
@@ -45,14 +45,14 @@ feature "Users", :js => true do
     end
   end
 
-  feature "/users", :js => true, :search => true do
-    scenario "allows the user to activate/deactivate users" do
-      role = FactoryGirl.create(:role, name: 'TestRole', company_id: @company.id)
-      user = FactoryGirl.create(:user, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: @company.id)
+  feature '/users', js: true, search: true do
+    scenario 'allows the user to activate/deactivate users' do
+      role = create(:role, name: 'TestRole', company_id: @company.id)
+      user = create(:user, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: @company.id)
       Sunspot.commit
       visit company_users_path
-      within("ul#users-list") do
-        hover_and_click "li#company_user_#{user.company_users.first.id}", 'Deactivate'
+      within resource_item list: '#users-list' do
+        click_js_link 'Deactivate'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this user?'
@@ -60,18 +60,19 @@ feature "Users", :js => true do
       # Make it show only the inactive elements
       filter_section('ACTIVE STATE').unicheck('Inactive')
       filter_section('ACTIVE STATE').unicheck('Active')
-      within("ul#users-list") do
+      within resource_item list: '#users-list' do
         expect(page).to have_content('Pedro Navaja')
-        hover_and_click "li:nth-child(1)", 'Activate'
-        expect(page).to have_no_content('Pedro Navaja')
+        click_js_link 'Activate'
       end
+
+      expect(page).to have_no_content('Pedro Navaja')
     end
   end
 
-  feature "/users/:user_id", :js => true do
-    scenario "GET show should display the user details page" do
-      role = FactoryGirl.create(:role, name: 'TestRole', company_id: @company.id)
-      user = FactoryGirl.create(:user, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: @company.id)
+  feature '/users/:user_id', js: true do
+    scenario 'GET show should display the user details page' do
+      role = create(:role, name: 'TestRole', company_id: @company.id)
+      user = create(:user, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: @company.id)
       company_user = user.company_users.first
       visit company_user_path(company_user)
       expect(page).to have_selector('h2', text: 'Pedro Navaja')
@@ -79,13 +80,13 @@ feature "Users", :js => true do
     end
 
     scenario 'allows the user to activate/deactivate a user' do
-      role = FactoryGirl.create(:role, name: 'TestRole')
-      user = FactoryGirl.create(:user, role_id: role.id, company_id: @company.id)
+      role = create(:role, name: 'TestRole')
+      user = create(:user, role_id: role.id, company_id: @company.id)
       company_user = user.company_users.first
       visit company_user_path(company_user)
 
       within('.profile-data') do
-       click_js_link('Deactivate')
+        click_js_link('Deactivate')
       end
 
       confirm_prompt 'Are you sure you want to deactivate this user?'
@@ -97,9 +98,9 @@ feature "Users", :js => true do
     end
 
     scenario 'allows the user to edit another user' do
-      role = FactoryGirl.create(:role, name: 'TestRole', company_id: @company.id)
-      other_role = FactoryGirl.create(:role, name: 'Another Role', company_id: @company.id)
-      user = FactoryGirl.create(:user, first_name: 'Juanito', last_name: 'Mora', role_id: role.id, company_id: @company.id)
+      role = create(:role, name: 'TestRole', company_id: @company.id)
+      other_role = create(:role, name: 'Another Role', company_id: @company.id)
+      user = create(:user, first_name: 'Juanito', last_name: 'Mora', role_id: role.id, company_id: @company.id)
       company_user = user.company_users.first
       visit company_user_path(company_user)
 
@@ -123,21 +124,23 @@ feature "Users", :js => true do
       expect(page).to have_selector('div.user-role', text: 'Another Role')
     end
 
-    scenario "should be able to assign areas to the user" do
-      company_user = FactoryGirl.create(:company_user, company_id: @company.id)
-      area = FactoryGirl.create(:area, name: 'San Francisco Area', company: @company)
-      area2 = FactoryGirl.create(:area, name: 'Los Angeles Area', company: @company)
+    scenario 'should be able to assign areas to the user' do
+      company_user = create(:company_user, company_id: @company.id)
+      area = create(:area, name: 'San Francisco Area', company: @company)
+      area2 = create(:area, name: 'Los Angeles Area', company: @company)
       visit company_user_path(company_user)
 
       click_js_link 'Add Area'
 
       within visible_modal do
         fill_in 'place-search-box', with: 'San'
-        expect(page).to have_selector("li#area-#{area.id}")
-        expect(page).to have_no_selector("li#area-#{area2.id}")
+        expect(page).to have_selector("#area-#{area.id}")
+        expect(page).to have_no_selector("#area-#{area2.id}")
         expect(page).to have_content('San Francisco Area')
         expect(page).to have_no_content('Los Angeles Area')
-        find("#area-#{area.id}").click_js_link('Add Area')
+        within resource_item area do
+          click_js_link('Add Area')
+        end
         expect(page).to have_no_selector("#area-#{area.id}") # The area was removed from the available areas list
       end
       close_modal
@@ -160,10 +163,10 @@ feature "Users", :js => true do
       end
     end
 
-    scenario "should be able to assign brand portfolios to the user" do
-      company_user = FactoryGirl.create(:company_user, company_id: @company.id)
-      brand_portfolio = FactoryGirl.create(:brand_portfolio, name: 'Guisqui', company: @company)
-      brand_portfolio2 = FactoryGirl.create(:brand_portfolio, name: 'Guaro', company: @company)
+    scenario 'should be able to assign brand portfolios to the user' do
+      company_user = create(:company_user, company_id: @company.id)
+      brand_portfolio = create(:brand_portfolio, name: 'Guisqui', company: @company)
+      brand_portfolio2 = create(:brand_portfolio, name: 'Guaro', company: @company)
       visit company_user_path(company_user)
 
       within "#campaigns-toggle-BrandPortfolio-#{brand_portfolio.id}" do
@@ -176,7 +179,6 @@ feature "Users", :js => true do
 
       visit company_user_path(company_user)
 
-
       within "#campaigns-toggle-BrandPortfolio-#{brand_portfolio.id}" do
         click_js_link 'Toggle OFF'
         expect(page).not_to have_link('Toggle OFF')
@@ -186,10 +188,10 @@ feature "Users", :js => true do
       expect(company_user.reload.brand_portfolios.to_a).to be_empty
     end
 
-    scenario "should be able to assign brands to the user" do
-      company_user = FactoryGirl.create(:company_user, company_id: @company.id)
-      brand = FactoryGirl.create(:brand, name: 'Guisqui Rojo', company: @company)
-      brand2 = FactoryGirl.create(:brand, name: 'Cacique', company: @company)
+    scenario 'should be able to assign brands to the user' do
+      company_user = create(:company_user, company_id: @company.id)
+      brand = create(:brand, name: 'Guisqui Rojo', company: @company)
+      brand2 = create(:brand, name: 'Cacique', company: @company)
       visit company_user_path(company_user)
 
       within "#campaigns-toggle-Brand-#{brand.id}" do
@@ -202,7 +204,6 @@ feature "Users", :js => true do
 
       visit company_user_path(company_user)
 
-
       within "#campaigns-toggle-Brand-#{brand.id}" do
         click_js_link 'Toggle OFF'
         expect(page).not_to have_link('Toggle OFF')
@@ -213,7 +214,7 @@ feature "Users", :js => true do
     end
   end
 
-  feature "edit profile link" do
+  feature 'edit profile link' do
     scenario 'allows the user to edit his profile' do
       visit company_user_path(@company_user)
 
@@ -228,8 +229,8 @@ feature "Users", :js => true do
         fill_in 'First name', with: 'Pedro'
         fill_in 'Last name', with: 'Navaja'
         fill_in 'Email', with: 'pedro@navaja.com'
-        select_from_chosen  'Costa Rica', from: 'Country'
-        select_from_chosen  'Cartago', from: 'State'
+        select_from_chosen 'Costa Rica', from: 'Country'
+        select_from_chosen 'Cartago', from: 'State'
         fill_in 'City', with: 'Tres Rios'
         fill_in 'Password', with: 'Pedrito123'
         fill_in 'Password confirmation', with: 'Pedrito123'
@@ -267,8 +268,8 @@ feature "Users", :js => true do
       wait_for_ajax
 
       @company_user.reload
-      expect(@company_user.notifications_settings).to include("event_recap_due_sms", "event_recap_due_email")
-      expect(@company_user.notifications_settings).to_not include("event_recap_due_app")
+      expect(@company_user.notifications_settings).to include('event_recap_due_sms', 'event_recap_due_email')
+      expect(@company_user.notifications_settings).to_not include('event_recap_due_app')
     end
   end
 end

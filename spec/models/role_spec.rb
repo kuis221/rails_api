@@ -14,27 +14,27 @@
 
 require 'rails_helper'
 
-describe Role, :type => :model do
+describe Role, type: :model do
   it { is_expected.to belong_to(:company) }
 
   it { is_expected.to validate_presence_of(:name) }
 
   it { is_expected.to have_many(:company_users) }
 
-  describe "#activate" do
-    let(:role) { FactoryGirl.build(:role, active: false) }
+  describe '#activate' do
+    let(:role) { build(:role, active: false) }
 
-    it "should return the active value as true" do
+    it 'should return the active value as true' do
       role.activate!
       role.reload
       expect(role.active).to be_truthy
     end
   end
 
-  describe "#deactivate" do
-    let(:role) { FactoryGirl.build(:role, active: false) }
+  describe '#deactivate' do
+    let(:role) { build(:role, active: false) }
 
-    it "should return the active value as false" do
+    it 'should return the active value as false' do
       role.deactivate!
       role.reload
       expect(role.active).to be_falsey

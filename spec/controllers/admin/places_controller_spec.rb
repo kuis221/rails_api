@@ -1,22 +1,22 @@
 require 'rails_helper'
 
-describe Admin::PlacesController, :type => :controller do
+describe Admin::PlacesController, type: :controller do
   before do
-    @user = FactoryGirl.create(:admin_user)
+    @user = create(:admin_user)
     sign_in @user
   end
 
-  let(:place) { FactoryGirl.create(:place) }
+  let(:place) { create(:place) }
 
   describe "GET 'index'" do
-    it "returns http success" do
+    it 'returns http success' do
       get :index
       expect(response).to be_success
     end
   end
 
   describe "GET 'edit'" do
-    it "returns http success" do
+    it 'returns http success' do
       get 'edit', id: place.to_param
       expect(response).to be_success
       expect(assigns(:place)).to eq(place)
@@ -24,8 +24,8 @@ describe Admin::PlacesController, :type => :controller do
   end
 
   describe "PUT 'update'" do
-    it "returns http success" do
-      put 'update', id: place.to_param, place: {name: 'New Name', city: 'Curri', state: 'SJ', country: 'CR', zipcode: '12345', street_number: '562', route: 'calle123'}
+    it 'returns http success' do
+      put 'update', id: place.to_param, place: { name: 'New Name', city: 'Curri', state: 'SJ', country: 'CR', zipcode: '12345', street_number: '562', route: 'calle123' }
       expect(response).to redirect_to(admin_place_path(place))
       expect(assigns(:place)).to eq(place)
       place.reload
@@ -40,8 +40,8 @@ describe Admin::PlacesController, :type => :controller do
   end
 
   describe "GET 'show'" do
-    it "returns http success" do
-      #p place.inspect
+    it 'returns http success' do
+      # p place.inspect
       get 'show', id: place.to_param
       expect(response).to be_success
       expect(assigns(:place)).to eq(place)

@@ -51,3 +51,4 @@
 //= require superfish
 //= require moment.min.js
 //= require fullcalendar
+//= require jquery.colorPicker

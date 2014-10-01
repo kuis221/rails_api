@@ -1,3 +1,7 @@
+# Areas-Campaigns Controller class
+#
+# This class handle the requests for managing the association
+# between areas and campaigns
 class AreasCampaignsController < FilteredController
   respond_to :js, only: [:edit, :update]
 
@@ -16,7 +20,10 @@ class AreasCampaignsController < FilteredController
   end
 
   protected
-    def modal_dialog_title
-      I18n.translate("modals.title.#{resource.new_record? ? 'new' : 'edit'}.areas_campaign", name: resource.area.try(:name))
-    end
+
+  def modal_dialog_title
+    I18n.translate(
+      "modals.title.#{resource.new_record? ? 'new' : 'edit'}.areas_campaign",
+      name: resource.area.try(:name))
+  end
 end

@@ -37,12 +37,10 @@
           - if can?(:view_map, Event)
             a.btn.map href="#map-view" data-toggle="tab" title="Map View"
               i.icon-venue
-
   .tab-content
     - if can?(:view_list, Event)
       #list-view.tab-pane.active
-        .link-list
-          ul#events-list
+        div#events-list.resource-list
 
     - if can?(:view_calendar, Event)
       #calendar-view.tab-pane

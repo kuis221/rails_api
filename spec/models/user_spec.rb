@@ -51,26 +51,26 @@
 
 require 'rails_helper'
 
-describe User, :type => :model do
+describe User, type: :model do
   it { is_expected.to have_many(:company_users) }
 
   it { is_expected.to allow_value('guilleva@gmail.com').for(:email) }
 
-  it { is_expected.to allow_value("Avalidpassword1").for(:password) }
-  it { is_expected.to allow_value("validPassw0rd").for(:password) }
+  it { is_expected.to allow_value('Avalidpassword1').for(:password) }
+  it { is_expected.to allow_value('validPassw0rd').for(:password) }
   it { is_expected.not_to allow_value('Invalidpassword').for(:password).with_message(/should have at least one digit/) }
   it { is_expected.not_to allow_value('invalidpassword1').for(:password).with_message(/should have at least one upper case letter/) }
   it { is_expected.to validate_confirmation_of(:password) }
   it { is_expected.not_to validate_presence_of(:detected_time_zone) }
 
-  describe "email uniqness" do
+  describe 'email uniqness' do
     before do
-      @user = FactoryGirl.create(:user)
+      @user = create(:user)
     end
     it { is_expected.to validate_uniqueness_of(:email) }
   end
 
-  describe "validations when inviting user" do
+  describe 'validations when inviting user' do
     context do
       before { subject.inviting_user = true }
       it { is_expected.not_to validate_presence_of(:country) }
@@ -81,7 +81,7 @@ describe User, :type => :model do
     end
   end
 
-  describe "validations when editing another user" do
+  describe 'validations when editing another user' do
     context do
       before { subject.updating_user = true }
       it { is_expected.not_to validate_presence_of(:phone_number) }
@@ -95,7 +95,7 @@ describe User, :type => :model do
     end
   end
 
-  describe "validations when accepting an invitation" do
+  describe 'validations when accepting an invitation' do
     context do
       before do
         subject.invitation_accepted_at = nil
@@ -109,7 +109,7 @@ describe User, :type => :model do
     end
   end
 
-  describe "validations when editing a user" do
+  describe 'validations when editing a user' do
     context do
       before do
         subject.invitation_accepted_at = Time.now
@@ -122,10 +122,10 @@ describe User, :type => :model do
     end
   end
 
-  describe "#full_name" do
-    let(:user) { FactoryGirl.build(:user, :first_name => 'Juanito', :last_name => 'Perez') }
+  describe '#full_name' do
+    let(:user) { build(:user, first_name: 'Juanito', last_name: 'Perez') }
 
-    it "should return the first_name and last_name concatenated" do
+    it 'should return the first_name and last_name concatenated' do
       expect(user.full_name).to eq('Juanito Perez')
     end
 
@@ -140,50 +140,50 @@ describe User, :type => :model do
     end
   end
 
-  describe "#country_name" do
-    it "should return the correct country name" do
-      user = FactoryGirl.build(:user, country: 'US')
+  describe '#country_name' do
+    it 'should return the correct country name' do
+      user = build(:user, country: 'US')
       expect(user.country_name).to eq('United States')
     end
 
     it "should return nil if the user doesn't have a country" do
-      user = FactoryGirl.build(:user, country: nil)
+      user = build(:user, country: nil)
       expect(user.country_name).to be_nil
     end
 
-    it "should return nil if the user has an invalid country" do
-      user = FactoryGirl.build(:user, country: 'XYZ')
+    it 'should return nil if the user has an invalid country' do
+      user = build(:user, country: 'XYZ')
       expect(user.country_name).to be_nil
     end
   end
 
-  describe "#state_name" do
-    it "should return the correct state name" do
-      user = FactoryGirl.build(:user, country: 'US', state: 'FL')
+  describe '#state_name' do
+    it 'should return the correct state name' do
+      user = build(:user, country: 'US', state: 'FL')
       expect(user.state_name).to eq('Florida')
     end
 
     it "should return nil if the user doesn't have a state" do
-      user = FactoryGirl.build(:user, country: 'US', state: nil)
+      user = build(:user, country: 'US', state: nil)
       expect(user.state_name).to be_nil
     end
 
-    it "should return nil if the user has an invalid state" do
-      user = FactoryGirl.build(:user, country: 'US', state: 'XYZ')
+    it 'should return nil if the user has an invalid state' do
+      user = build(:user, country: 'US', state: 'XYZ')
       expect(user.state_name).to be_nil
     end
   end
 
-  describe "#companies_active_role" do
+  describe '#companies_active_role' do
     it "should return the user's companies sorted by name for company users and roles that are active" do
-      user = FactoryGirl.create(:user, :first_name => 'Juanito', :last_name => 'Perez')
-      companyB = FactoryGirl.create(:company, name: 'B Company')
-      companyC = FactoryGirl.create(:company, name: 'C Company')
-      companyA = FactoryGirl.create(:company, name: 'A Company')
+      user = create(:user, first_name: 'Juanito', last_name: 'Perez')
+      companyB = create(:company, name: 'B Company')
+      companyC = create(:company, name: 'C Company')
+      companyA = create(:company, name: 'A Company')
       company_users = [
-        FactoryGirl.create(:company_user, company: companyA),
-        FactoryGirl.create(:company_user, company: companyB, active: false),
-        FactoryGirl.create(:company_user, company: companyC)
+        create(:company_user, company: companyA),
+        create(:company_user, company: companyB, active: false),
+        create(:company_user, company: companyC)
       ]
       company_users.each do |company_user|
         user.company_users << company_user
@@ -195,24 +195,24 @@ describe User, :type => :model do
     end
   end
 
-  describe "is_super_admin?" do
-    it "should return true if the current role is admin" do
-      company = FactoryGirl.create(:company)
-      user    = FactoryGirl.create(:user, current_company_id: company.id,
-        company_users: [
-          FactoryGirl.create(:company_user,
-            company: company,
-            role: FactoryGirl.create(:role, is_admin: true))])
+  describe 'is_super_admin?' do
+    it 'should return true if the current role is admin' do
+      company = create(:company)
+      user    = create(:user, current_company_id: company.id,
+                                          company_users: [
+                                            create(:company_user,
+                                                               company: company,
+                                                               role: create(:role, is_admin: true))])
       expect(user.is_super_admin?).to be_truthy
     end
 
-    it "should return false if the current role is admin" do
-      company = FactoryGirl.create(:company)
-      user    = FactoryGirl.create(:user, current_company_id: company.id,
-        company_users: [
-          FactoryGirl.create(:company_user,
-            company: company,
-            role: FactoryGirl.create(:role, is_admin: false))])
+    it 'should return false if the current role is admin' do
+      company = create(:company)
+      user    = create(:user, current_company_id: company.id,
+                                          company_users: [
+                                            create(:company_user,
+                                                               company: company,
+                                                               role: create(:role, is_admin: false))])
       expect(user.is_super_admin?).to be_falsey
     end
   end

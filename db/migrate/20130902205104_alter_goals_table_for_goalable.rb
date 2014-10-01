@@ -11,7 +11,7 @@ class AlterGoalsTableForGoalable < ActiveRecord::Migration
 
   def down
     add_column :goals, :campaign_id, :integer
-    execute "UPDATE goals set campaign_id=goalable_id"
+    execute 'UPDATE goals set campaign_id=goalable_id'
     remove_column :goals, :goalable_id
     remove_column :goals, :goalable_type
     remove_column :goals, :parent_id

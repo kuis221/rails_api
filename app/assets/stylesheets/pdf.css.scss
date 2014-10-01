@@ -9,10 +9,12 @@
 }
 body.app-layout {
 	background: #fff !important;
+	padding-top: 0;
 }
 .pdf-keeptogether {
-	page-break-inside: avoid;
+	page-break-inside: avoid !important;
 }
+.last-in-page { page-break-after: always; }
 #main-container{
 	padding: 0;
 }

@@ -4,31 +4,31 @@ ActiveAdmin.register Company do
   filter :name
 
   form do |f|
-    f.inputs "Details" do
+    f.inputs 'Details' do
       f.input :name
       f.input :admin_email if f.object.new_record?
     end
-    f.inputs "Date/Time Settings" do
+    f.inputs 'Date/Time Settings' do
       f.input :timezone_support,
-        hint: 'Turn this ON to display all events with the same timezone as they were scheduled. Ignoring the current user\'s timezone setting.'
+              hint: 'Turn this ON to display all events with the same timezone as they were scheduled. Ignoring the current user\'s timezone setting.'
     end
-    f.inputs name: "Notifications Settings" do
+    f.inputs name: 'Notifications Settings' do
       f.input :event_alerts_policy,
-        as: :radio,
-        hint: 'If "All users" selected, all users with permissions to see the event/task will receive the notification, otherwise, only users in the event\'s team will be notified',
-        collection: [
-          ['Event Team', Notification::EVENT_ALERT_POLICY_TEAM],
-          ['All users', Notification::EVENT_ALERT_POLICY_ALL]
-        ]
+              as: :radio,
+              hint: 'If "All users" selected, all users with permissions to see the event/task will receive the notification, otherwise, only users in the event\'s team will be notified',
+              collection: [
+                ['Event Team', Notification::EVENT_ALERT_POLICY_TEAM],
+                ['All users', Notification::EVENT_ALERT_POLICY_ALL]
+              ]
     end
-    f.inputs name: "Brand Ambassadors" do
+    f.inputs name: 'Brand Ambassadors' do
       f.input :brand_ambassadors_role_ids,
-        label: 'Brand Ambassadors Roles',
-        as: :check_boxes,
-        multiple: true,
-        required: false,
-        hint: 'Select a role to build the list of "Employees" in the different places inside the Brand Ambassadors section',
-        collection: f.object.roles.pluck(:name, :id)
+              label: 'Brand Ambassadors Roles',
+              as: :check_boxes,
+              multiple: true,
+              required: false,
+              hint: 'Select a role to build the list of "Employees" in the different places inside the Brand Ambassadors section',
+              collection: f.object.roles.pluck(:name, :id)
     end
     f.actions
   end
@@ -65,7 +65,7 @@ ActiveAdmin.register Company do
 
   controller do
     def permitted_params
-      params.permit(:company => [:name, :admin_email, :timezone_support, :event_alerts_policy, brand_ambassadors_role_ids: []])
+      params.permit(company: [:name, :admin_email, :timezone_support, :event_alerts_policy, brand_ambassadors_role_ids: []])
     end
   end
 end

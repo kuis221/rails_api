@@ -5,7 +5,7 @@ class RolesController < FilteredController
   include DeactivableHelper
 
   def update
-    update! do |success, failure|
+    update! do |success, _failure|
       success.js do
         if params[:partial].present?
           render 'update_partial'
@@ -15,21 +15,20 @@ class RolesController < FilteredController
   end
 
   def autocomplete
-    buckets = autocomplete_buckets({
-      roles: [Role]
-    })
-    render :json => buckets.flatten
+    buckets = autocomplete_buckets(roles: [Role])
+    render json: buckets.flatten
   end
 
   protected
-    def permitted_params
-      params.permit(role: [:name, :description, {permissions_attributes: [:id, :enabled, :action, :subject_class, :subject_id]}])[:role]
-    end
 
-    def facets
-      @facets ||= Array.new.tap do |f|
-        # select what params should we use for the facets search
-        f.push(label: "Active State", items: ['Active', 'Inactive'].map{|x| build_facet_item({label: x, id: x, name: :status, count: 1}) })
-      end
+  def permitted_params
+    params.permit(role: [:name, :description, { permissions_attributes: [:id, :enabled, :action, :subject_class, :subject_id] }])[:role]
+  end
+
+  def facets
+    @facets ||= Array.new.tap do |f|
+      # select what params should we use for the facets search
+      f.push(label: 'Active State', items: %w(Active Inactive).map { |x| build_facet_item(label: x, id: x, name: :status, count: 1) })
     end
+  end
 end

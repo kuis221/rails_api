@@ -11,8 +11,7 @@
 #
 
 class Legacy::FormTemplate < Legacy::Record
-  belongs_to    :program
+  belongs_to :program
 
-  has_many      :form_fields
-
+  has_many :form_fields
 end

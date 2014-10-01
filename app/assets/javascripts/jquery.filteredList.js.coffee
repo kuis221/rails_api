@@ -46,7 +46,7 @@ $.widget 'nmk.filteredList', {
 			@storageScope = window.location.pathname.replace('/','_')
 
 
-		@element.parent().append $('<a class="btn list-filter-btn" href="#" data-toggle="filterbar" title="Filter">').append('<i class="icon-filter">')
+		@element.parent().append $('<a class="list-filter-btn" href="#" data-toggle="filterbar" title="Filter">').append('<i class="icon-gear">')
 
 		@formFilters = $('<div class="form-facet-filters">').appendTo(@form)
 		if @options.filters
@@ -239,8 +239,10 @@ $.widget 'nmk.filteredList', {
 			rangeSelect: true,
 			monthsToShow: 1,
 			changeMonth: false,
-			prevText: '<',
-			nextText: '>',
+			prevText: '',
+			nextText: '',
+			prevJumpText: '',
+			nextJumpText: '',
 			onDate: true,
 			showOtherMonths: true,
 			selectOtherMonths: true,
@@ -568,8 +570,10 @@ $.widget 'nmk.filteredList', {
 			changeMonth: false,
 			defaultDate: (if @options.selectDefaultDate then @options.selectedDate else null),
 			selectDefaultDate: @options.selectDefaultDate,
-			prevText: '<',
-			nextText: '>',
+			prevText: '',
+			nextText: '',
+			prevJumpText: '',
+			nextJumpText: '',
 			onDate: true,
 			showOtherMonths: true,
 			selectOtherMonths: true,
@@ -833,7 +837,9 @@ $.widget 'nmk.filteredList', {
 		p = custom_filter[0].value.split('&id')[0] if custom_filter.length > 0
 
 	_serializeFilters: () ->
-		jQuery.param( @getFilters() )
+		data = @_deparam(@_getCustomFilters())
+		data = @getFilters() if !data.length
+		jQuery.param( data )
 
 	buildParams: (params=[]) ->
 		data = @_deparam(@_getCustomFilters())
@@ -880,7 +886,7 @@ $.widget 'nmk.filteredList', {
 		if @options.placeholderElement?
 			@options.placeholderElement(message)
 		else
-			$('<li class="placeholder-empty-state">'+message+'</li>').appendTo @listContainer
+			$('<div class="placeholder-empty-state">').html(message).appendTo @listContainer
 
 	reloadData: () ->
 		@_loadPage 1

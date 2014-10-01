@@ -1,26 +1,25 @@
 namespace :db do
   namespace :populate do
-    task :all => ['db:populate:companies', 'db:populate:places', 'db:populate:roles', 'db:populate:teams', 'db:populate:users','db:populate:brands','db:populate:campaigns','db:populate:events']
-
+    task all: ['db:populate:companies', 'db:populate:places', 'db:populate:roles', 'db:populate:teams', 'db:populate:users', 'db:populate:brands', 'db:populate:campaigns', 'db:populate:events']
 
     desc 'Add sample places to DB'
-    task :places => :environment do
-      YAML.load_file(File.join(Rails.root,'lib','assets','places.yml')).each do |record|
-          params = record[1].reject{|k, v| k == 'id'}.merge({do_not_connect_to_api: true})
-          params['types'] = YAML.load(params['types']) rescue []
-          Place.create(params, without_protection: true)
+    task places: :environment do
+      YAML.load_file(File.join(Rails.root, 'lib', 'assets', 'places.yml')).each do |record|
+        params = record[1].reject { |k, _v| k == 'id' }.merge(do_not_connect_to_api: true)
+        params['types'] = YAML.load(params['types']) rescue []
+        Place.create(params, without_protection: true)
       end
     end
 
     desc 'Add 2 companies'
-    task :companies => :environment do
+    task companies: :environment do
       Company.populate(2) do |company|
         company.name = Faker::Company.name
       end
     end
 
     desc 'Add roles to each company'
-    task :roles => :environment do
+    task roles: :environment do
       Company.all.each do |company|
         ['Admin', 'Field Director', 'Field Manager', 'Field Staff', 'Client', 'Brand Ambassadors'].each do |name|
           Role.create_with(active: true).find_or_create_by(company_id: company.id, name: name)
@@ -29,7 +28,7 @@ namespace :db do
     end
 
     desc 'Add users'
-    task :users => :environment do
+    task users: :environment do
 
       emails = User.select('email').map(&:email)
       Company.all.each do |company|
@@ -37,7 +36,7 @@ namespace :db do
         User.populate(40) do |user|
           email = nil
           begin
-             email =  Faker::Internet.email([user.first_name, user.last_name].join(' '))
+            email =  Faker::Internet.email([user.first_name, user.last_name].join(' '))
           end while emails.include?(email)
           emails.push email
 
@@ -68,8 +67,8 @@ namespace :db do
     end
 
     desc 'Add teams'
-    task :teams => :environment do
-      team_names = YAML.load_file(File.join(Rails.root,'lib','assets','teams.yml'))
+    task teams: :environment do
+      team_names = YAML.load_file(File.join(Rails.root, 'lib', 'assets', 'teams.yml'))
       Company.all.each do |company|
         names = team_names.shuffle
         Team.populate(6) do |team|
@@ -82,8 +81,8 @@ namespace :db do
     end
 
     desc 'Load the brands.yml file into the database'
-    task :brands => :environment do
-      brands = YAML.load_file(File.join(Rails.root,'lib','assets','brands.yml'))
+    task brands: :environment do
+      brands = YAML.load_file(File.join(Rails.root, 'lib', 'assets', 'brands.yml'))
       Company.all.each do |company|
         brands.each do |portfolio_name, brands|
           portfolio = company.brand_portfolios.find_or_create_by(name: portfolio_name)
@@ -96,9 +95,9 @@ namespace :db do
     end
 
     desc 'Create test campaigns'
-    task :campaigns => :environment do
+    task campaigns: :environment do
       def build_campaign_name(brand)
-        @suffixes = ['January '+['12','13','14'].sample,'February '+['12','13','14'].sample,'March '+['12','13','14'].sample,'April '+['12','13','14'].sample,'May '+['12','13','14'].sample,'June '+['12','13','14'].sample,'July '+['12','13','14'].sample,'August '+['12','13','14'].sample,'September '+['12','13','14'].sample,'Octuber '+['12','13','14'].sample,'November '+['12','13','14'].sample,'December '+['12','13','14'].sample,'FY13','FY12', 'FY14','FY13','FY12', 'FY14','FY13','FY12', 'FY14']
+        @suffixes = ['January ' + %w(12 13 14).sample, 'February ' + %w(12 13 14).sample, 'March ' + %w(12 13 14).sample, 'April ' + %w(12 13 14).sample, 'May ' + %w(12 13 14).sample, 'June ' + %w(12 13 14).sample, 'July ' + %w(12 13 14).sample, 'August ' + %w(12 13 14).sample, 'September ' + %w(12 13 14).sample, 'Octuber ' + %w(12 13 14).sample, 'November ' + %w(12 13 14).sample, 'December ' + %w(12 13 14).sample, 'FY13', 'FY12', 'FY14', 'FY13', 'FY12', 'FY14', 'FY13', 'FY12', 'FY14']
         "#{brand.name} #{@suffixes.sample}"
       end
 
@@ -110,7 +109,7 @@ namespace :db do
           brand = @brands.sample
           campaign.name = build_campaign_name(brand)
           campaign.description = Faker::Lorem.paragraphs
-          campaign.aasm_state = ['active', 'closed','active','active','inactive','active','active']
+          campaign.aasm_state = %w(active closed active active inactive active active)
           campaign.company_id = company.id
 
           tmp_list = user_ids.shuffle
@@ -139,14 +138,14 @@ namespace :db do
     end
 
     desc 'Create test events on each campaign'
-    task :events => :environment do
+    task events: :environment do
       places = Place.all.map(&:id)
       Company.all.each do |company|
         user_ids = company.company_users.active.map(&:id)
         team_ids = company.teams.active.map(&:id)
         Campaign.where(company_id: company.id).all.each do |campaign|
           Event.populate(rand(10..20)) do |event|
-            event.start_at = rand(0..10).send([:weeks,:days,:months].sample).send([:ago, :from_now].sample) + rand(1..24).hours + rand(0..60).minutes
+            event.start_at = rand(0..10).send([:weeks, :days, :months].sample).send([:ago, :from_now].sample) + rand(1..24).hours + rand(0..60).minutes
             event.end_at = event.start_at + rand(1..2).send([:days, :hours].sample)
             event.active = [true, true, true, false, true, true, true, true]
             event.campaign_id = campaign.id
@@ -159,13 +158,13 @@ namespace :db do
               users = user_ids.sample(Random.rand(5))
               event.user_ids = users
               event.team_ids = team_ids.sample(Random.rand(2))
-              users += company.company_users.joins(:teams).where(teams: {id: event.team_ids} ).map(&:id)
+              users += company.company_users.joins(:teams).where(teams: { id: event.team_ids }).map(&:id)
 
               Task.populate(Random.rand(5)) do |task|
                 task.event_id = event.id
-                task.company_user_id = (users+[nil, nil]).sample
+                task.company_user_id = (users + [nil, nil]).sample
                 task.completed = [true, false]
-                task.due_at = Date.today + (Random.rand(7)*[1, -1].sample).days
+                task.due_at = Date.today + (Random.rand(7) * [1, -1].sample).days
                 task.title = Faker::Lorem.sentence(4 + Random.rand(6))
                 task.active = [true, true, false, true, true]
                 task.id = event.id
@@ -175,7 +174,6 @@ namespace :db do
         end
       end
     end
-
 
   end
 end

@@ -11,7 +11,7 @@
 
 require 'rails_helper'
 
-describe ActivityTypeCampaign, :type => :model do
+describe ActivityTypeCampaign, type: :model do
   it { is_expected.to belong_to(:activity_type) }
   it { is_expected.to belong_to(:campaign) }
 end

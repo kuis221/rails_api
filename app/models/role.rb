@@ -23,7 +23,7 @@ class Role < ActiveRecord::Base
 
   accepts_nested_attributes_for :permissions, reject_if: proc { |attributes| !attributes['enabled'] }
 
-  scope :active, ->{ where(:active => true) }
+  scope :active, -> { where(active: true) }
 
   searchable do
     integer :id
@@ -51,11 +51,11 @@ class Role < ActiveRecord::Base
   end
 
   def permission_for(action, subject_class, subject = nil)
-    cached_permissions.detect{|p| p.action.to_s == action.to_s && p.subject_class.to_s == subject_class.to_s && p.subject_id == subject } || permissions.build(action: action, subject_class: subject_class.to_s, subject_id: subject)
+    cached_permissions.find { |p| p.action.to_s == action.to_s && p.subject_class.to_s == subject_class.to_s && p.subject_id == subject } || permissions.build(action: action, subject_class: subject_class.to_s, subject_id: subject)
   end
 
   def has_permission?(action, subject_class)
-    is_admin? || cached_permissions.any?{|p| p.action.to_s == action.to_s && p.subject_class.to_s == subject_class.to_s }
+    is_admin? || cached_permissions.any? { |p| p.action.to_s == action.to_s && p.subject_class.to_s == subject_class.to_s }
   end
 
   def cached_permissions
@@ -64,18 +64,18 @@ class Role < ActiveRecord::Base
     end
   end
 
-  def clear_cached_permissions(permission)
+  def clear_cached_permissions(_permission)
     @cached_permissions = nil
     Rails.cache.delete("role_permissions_#{id}")
   end
 
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
-    def do_search(params, include_facets=false)
+    def do_search(params, include_facets = false)
       solr_search do
         with(:company_id, params[:company_id])
-        with(:status, params[:status]) if params.has_key?(:status) and params[:status].present?
-        if params.has_key?(:q) and params[:q].present?
+        with(:status, params[:status]) if params.key?(:status) && params[:status].present?
+        if params.key?(:q) && params[:q].present?
           (attribute, value) = params[:q].split(',')
           case attribute
           when 'role'
@@ -88,7 +88,7 @@ class Role < ActiveRecord::Base
         end
 
         order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
-        paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+        paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
       end
     end
 
@@ -98,5 +98,4 @@ class Role < ActiveRecord::Base
       }
     end
   end
-
 end

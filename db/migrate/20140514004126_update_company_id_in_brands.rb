@@ -8,7 +8,7 @@ class UpdateCompanyIdInBrands < ActiveRecord::Migration
         elsif brand.company_id != campaign.company_id
           new_brand = Brand.find_or_create_by(name: brand.name, company_id: campaign.company_id)
           puts "\n\n\n Creating brand #{brand.name} in company #{campaign.company_id} for campaign: #{campaign.name} "
-          raise 'Could not create brand: ' +new_brand.errors.full_messages.join(", ")  unless new_brand.persisted?
+          fail 'Could not create brand: ' + new_brand.errors.full_messages.join(', ')  unless new_brand.persisted?
           campaign.brands.delete brand
           campaign.brands << new_brand
         end

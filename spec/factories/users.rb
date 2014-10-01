@@ -55,7 +55,7 @@ FactoryGirl.define do
   factory :user do
     first_name 'Test'
     last_name 'User'
-    sequence(:email) {|n| "testuser#{n}@brandscopic.com" }
+    sequence(:email) { |n| "testuser#{n}@brandscopic.com" }
     phone_number '+1000000000'
     phone_number_verified true
     password 'Changeme123'
@@ -83,14 +83,14 @@ FactoryGirl.define do
       company_id = evaluator.company_id
       company_id = evaluator.company.id unless evaluator.company.nil?
       role_id = evaluator.role_id
-      role_id ||= FactoryGirl.create(:role, company_id: company_id).id unless company_id.nil? || role_id.present?
-      if company_id and role_id
+      role_id ||= create(:role, company_id: company_id).id unless company_id.nil? || role_id.present?
+      if company_id && role_id
         user.company_users.build(role_id: role_id, company_id: company_id, active: evaluator.active)
       end
     end
 
     factory :invited_user do
-      sequence(:invitation_token) {|n| "#{n}EmMBowassEf#{n}GSHyBhEnX#{n}" }
+      sequence(:invitation_token) { |n| "#{n}EmMBowassEf#{n}GSHyBhEnX#{n}" }
       association :invited_by, factory: :user
       first_name 'Test Invited'
       password nil

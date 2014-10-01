@@ -9,7 +9,6 @@
 # require 'legacy/metric'
 # require 'legacy/metric_result'
 
-
 module Legacy
   S3_CONFIGS = {
     'access_key_id' => 'AKIAIIGAIZKQFFQDIXZA',
@@ -17,18 +16,17 @@ module Legacy
     'bucket_name' => 'legacy-v3',
     'options' => {
       'use_ssl' => true
-    },
+    }
   }
 
   PAPERCLIP_SETTINGS = {
-    :s3_credentials => {
-      :access_key_id =>  Legacy::S3_CONFIGS['access_key_id'],
-      :secret_access_key => Legacy::S3_CONFIGS['secret_access_key'],
-      :bucket => Legacy::S3_CONFIGS['bucket_name'],
+    s3_credentials: {
+      access_key_id: Legacy::S3_CONFIGS['access_key_id'],
+      secret_access_key: Legacy::S3_CONFIGS['secret_access_key'],
+      bucket: Legacy::S3_CONFIGS['bucket_name']
     },
-    :storage => :s3
+    storage: :s3
   }
-
 
   class Migration
     def self.company
@@ -45,27 +43,23 @@ module Legacy
       end
     end
 
-
     def self.api_client
       @client ||= GooglePlaces::Client.new(GOOGLE_API_KEY)
     end
   end
-
 end
 
-Paperclip.interpolates :dashed_style do |attachment, style|
+Paperclip.interpolates :dashed_style do |_attachment, style|
   if style.to_sym == :original
-    ""
+    ''
   else
     "_#{style}"
   end
 end
 
-
-
 # require 'legacy/metric/whole'
 require 'legacy/record'
 require 'legacy/metric'
-Dir[Rails.root.to_s + "/lib/legacy/**/*.rb"].each do |file|
+Dir[Rails.root.to_s + '/lib/legacy/**/*.rb'].each do |file|
   require file
 end

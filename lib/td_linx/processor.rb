@@ -10,10 +10,10 @@ module TdLinxSynch
     def self.download_and_process_file(file)
       path = file || 'tmp/td_linx_code.csv'
       unless file
-        self.download_file(path)
+        download_file(path)
       end
-      self.process(path)
-    rescue Exception => e
+      process(path)
+    rescue => e
       TdlinxMailer.td_linx_process_failed(e).deliver
       raise e # Raise the error so we see it on errbit
     end
@@ -24,17 +24,17 @@ module TdLinxSynch
         brandscopic_only: 'tmp/brandscopic_only.csv',
         found: 'tmp/found_and_updated.csv',
         found_not_updated: 'tmp/found_not_updated.csv',
-        missing: 'tmp/missing.csv',
+        missing: 'tmp/missing.csv'
       }
 
       # Create and open all CSV files
-      files = Hash[paths.map{|k, p| [k, CSV.open(p, 'w')]}]
+      files = Hash[paths.map { |k, p| [k, CSV.open(p, 'w')] }]
 
       # Here it comes... read each line in the downloaded CSV file
       # and look for a match in the database
       CSV.foreach(path) do |row|
-        row[2].gsub!(/,\s*#{row[3]}\s*,\s*#{row[4]}\s*,\s*#{row[5]}\s*/,'')
-        row[2].gsub!(/\A\s*#{row[1]}\s*,?\s*/,'')
+        row[2].gsub!(/,\s*#{row[3]}\s*,\s*#{row[4]}\s*,\s*#{row[5]}\s*/, '')
+        row[2].gsub!(/\A\s*#{row[1]}\s*,?\s*/, '')
         if place_id = find_place_for_row(row)
           place = Place.find(place_id)
           if place.td_linx_code != row[0]
@@ -59,11 +59,11 @@ module TdLinxSynch
            .find_each do |place|
         files[:missing] << [place.name, place.street, place.city, place.state, place.zipcode, place.visits_count]
       end
-      files.each{|k, file| file.close() }
+      files.each { |_k, file| file.close }
 
       zip_path = Dir::Tmpname.make_tmpname('tmp/tdlinx_', nil)
       Zip::File.open(zip_path, Zip::File::CREATE) do |zip|
-        paths.each{|k, path|  zip.add(File.basename(path), path) }
+        paths.each { |_k, path|  zip.add(File.basename(path), path) }
       end
 
       TdlinxMailer.td_linx_process_completed(zip_path).deliver
@@ -72,7 +72,7 @@ module TdLinxSynch
       File.delete zip_path
       paths
     ensure
-      files.each{|k, file| file.close rescue true }
+      files.each { |_k, file| file.close rescue true }
     end
 
     def self.find_place_for_row(row)
@@ -85,19 +85,20 @@ module TdLinxSynch
     end
 
     protected
-      def self.country
-        @country ||= Country.new('US')
-      end
 
-      def self.download_file(path)
-        ftp = Net::FTP.new(ENV['TDLINX_FTP_SERVER'])
-        ftp.passive = true
-        ftp.login(ENV['TDLINX_FTP_USERNAME'], ENV['TDLINX_FTP_PASSWORD'])
-        file = ftp.list('Legacy_TDLINX_Store_Master*').map{|l| l.split(/\s+/, 4) }.sort{ |a, b| b[0] <=> a[0]}.first
-        if file.present?
-          ftp.gettextfile file[3], path
-        end
-        ftp.close
+    def self.country
+      @country ||= Country.new('US')
+    end
+
+    def self.download_file(path)
+      ftp = Net::FTP.new(ENV['TDLINX_FTP_SERVER'])
+      ftp.passive = true
+      ftp.login(ENV['TDLINX_FTP_USERNAME'], ENV['TDLINX_FTP_PASSWORD'])
+      file = ftp.list('Legacy_TDLINX_Store_Master*').map { |l| l.split(/\s+/, 4) }.sort { |a, b| b[0] <=> a[0] }.first
+      if file.present?
+        ftp.gettextfile file[3], path
       end
+      ftp.close
+    end
   end
 end

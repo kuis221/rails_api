@@ -1,5 +1,5 @@
-require "timeout"
-require "rexml/document"
+require 'timeout'
+require 'rexml/document'
 require 'open-uri'
 
 module CapybaraBrandscopicHelpers
@@ -14,7 +14,7 @@ module CapybaraBrandscopicHelpers
     end
   end
 
-  def hover_and_click(parent, locator, options={})
+  def hover_and_click(parent, locator, options = {})
     parent_element = find(parent)
     parent_element.hover
     parent_element.find(:link, locator, options).trigger('click')
@@ -48,21 +48,21 @@ module CapybaraBrandscopicHelpers
       expect(page).to have_content(message)
       # For some reason, the click_link function doesn't always works, so we are using JS
       # for this instead
-      #click_link("OK")
+      # click_link("OK")
       page.execute_script("$('.bootbox.modal.confirm-dialog.in a.btn-primary').click()")
     end
     expect(page).to have_no_selector('.modal.confirm-dialog.in', visible: true)
   end
 
-  def click_js_link(locator, options={})
+  def click_js_link(locator, options = {})
     find(:link, locator, options).trigger('click') # Use this if using capybara-webkit instead of selenium
-    #find(:link, locator, options).click   # For Selenium
+    # find(:link, locator, options).click   # For Selenium
     self
   end
 
-  def click_js_button(locator, options={})
+  def click_js_button(locator, options = {})
     find(:button, locator, options).trigger('click') # Use this if using capybara-webkit instead of selenium
-    #find(:button, locator, options).click
+    # find(:button, locator, options).click
     self
   end
 
@@ -75,59 +75,52 @@ module CapybaraBrandscopicHelpers
 
   def select_from_autocomplete(selector, text)
     field = find_field(selector)
-    page.execute_script %Q{$('##{field['id']}').val('#{text}').keydown()}
+    page.execute_script %{$('##{field['id']}').val('#{text}').keydown()}
     expect(page).to have_selector('ul.ui-autocomplete li.ui-menu-item a')
     find('ul.ui-autocomplete li.ui-menu-item a', match: :first).click
   end
 
-
   def select2(item_text, options)
     select_name = options[:from]
-    select2_container = first("label", text: select_name).find(:xpath, '..').find(".select2-container")
+    select2_container = first('label', text: select_name).find(:xpath, '..').find('.select2-container')
     if select2_container['class'].include?('select2-container-multi')
-      select2_container.find(".select2-choices").click
+      select2_container.find('.select2-choices').click
     else
-      select2_container.find(".select2-choice").click
+      select2_container.find('.select2-choice').click
     end
 
     [item_text].flatten.each do |value|
       select2_container.find(:xpath, "a[contains(concat(' ',normalize-space(@class),' '),' select2-choice ')] | ul[contains(concat(' ',normalize-space(@class),' '),' select2-choices ')]").trigger('click')
-      find(:xpath, "//body").find(".select2-drop li", text: value).click
+      find(:xpath, '//body').find('.select2-drop li', text: value).click
     end
     wait_for_ajax
   end
 
   def select2_add_tag(field_name, tag)
-    find('.select2-container').find(".select2-search-field").click
+    find('.select2-container').find('.select2-search-field').click
     fill_in field_name, with: tag
     page.execute_script(%|$("input.select2-input:visible").keyup();|)
     [tag].flatten.each do |t|
-      find(:xpath, "//body").find(".select2-results li", text: t).click
+      find(:xpath, '//body').find('.select2-results li', text: t).click
     end
   end
 
   def select2_remove_tag(tag)
-    page.execute_script %Q{
+    page.execute_script %{
       $('.select2-choices div:contains("#{tag}")').closest('li').find('a').click();
     }
   end
 
-  def select_filter_calendar_day(day1, day2=nil)
+  def select_filter_calendar_day(day1, day2 = nil)
     day2 ||= day1
     find('div.dates-range-filter div.datepick-month').click_js_link(day1).click_js_link(day2)
   end
 
-  def select_and_fill_from_datepicker(name, date, format = '%m/%d/%y')
-    if date.class.in?([Time, DateTime, Date])
-      date = date.strftime(format)
-    end
-    #Click on random date to trigger onSelect event
-    page.execute_script %Q{ $("a.ui-state-default:contains('15')").trigger("click") }
-    #Fill corresponding field
-    wrapped_name = "#{name}"
-    id = find(:xpath, "//input[contains(@name, '#{wrapped_name}')]")[:id]
-    page.execute_script("$('##{id}').removeAttr('readonly')")
-    fill_in name, :with => date
+  def select_and_fill_from_datepicker(_name, date)
+    date = date.to_s(:slashes) if date.class.in?([Time, DateTime, Date])
+    (month, day, year) = date.split('/')
+    day = day.to_i.to_s
+    find(:xpath, "//td[@data-year='#{year}' and @data-month='#{month.to_i - 1}']", text: day).click_js_link(day)
   end
 
   def unicheck(option)
@@ -138,7 +131,7 @@ module CapybaraBrandscopicHelpers
         found = cb
       end
     end
-    raise Capybara::ElementNotFound.new("Unable to find option #{option}") unless found
+    fail Capybara::ElementNotFound.new("Unable to find option #{option}") unless found
     found
   end
 
@@ -152,7 +145,6 @@ module CapybaraBrandscopicHelpers
     end
   end
 end
-
 
 module RequestsHelper
   extend RSpec::Matchers::DSL
@@ -172,7 +164,7 @@ module RequestsHelper
     section = nil
     find('.form-facet-filters h3', text: title)
     page.all('.form-facet-filters .filter-wrapper').each do |wrapper|
-      if wrapper.all('h3', :text => title).count > 0
+      if wrapper.all('h3', text: title).count > 0
         section = wrapper
         break
       end
@@ -190,7 +182,7 @@ module RequestsHelper
 
   def open_tab(tab_name)
     link = find('.nav-tabs a', text: tab_name)
-    link.click
+    link.trigger('click')
     find(link['href'].gsub(/^.*#/, '#'))
   end
 
@@ -219,9 +211,26 @@ module RequestsHelper
     visit(path) unless current_path == path
   end
 
+  def resource_item(resource=1, list: nil)
+    root = page
+    root = find(list) unless list.nil?
+    item =
+      if resource.is_a?(Integer)
+        root.find(".resource-item:nth-child(#{resource})")
+      elsif resource.is_a?(String)
+        root.find(".resource-item#{resource}")
+      else
+        root.find(".resource-item##{resource.class.name.underscore}_#{resource.id}, .resource-item##{resource.class.name.underscore}-#{resource.id}")
+      end
+    item.hover
+    item
+  end
+
   # Helpers for events section
   def event_team_member(member)
-    find('#event-team-members #event-member-'+member.id.to_s)
+    div = find('#event-team-members #event-member-' + member.id.to_s)
+    div.hover
+    div
   end
 
   def add_permissions(permissions)

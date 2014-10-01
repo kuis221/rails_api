@@ -11,35 +11,35 @@ module Analysis
     #  for the campaigns and staff sections
     #
     def load_events_and_promo_hours_data
-      events_goal      = @goals.detect{|g| g.kpi_id == Kpi.events.id      }.try(:value) || 0
-      promo_hours_goal = @goals.detect{|g| g.kpi_id == Kpi.promo_hours.id }.try(:value) || 0
+      events_goal      = @goals.find { |g| g.kpi_id == Kpi.events.id      }.try(:value) || 0
+      promo_hours_goal = @goals.find { |g| g.kpi_id == Kpi.promo_hours.id }.try(:value) || 0
 
       data = {
-          'scheduled_events' => 0,
-          'remaining_events' => 0,
-          'approved_events' => 0,
-          'expected_events' => 0,
-          'expected_events_today' => 0,
-          'events_percentage' => 0,
-          'events_percentage_today' => 0,
-          'events_goal' => events_goal,
+        'scheduled_events' => 0,
+        'remaining_events' => 0,
+        'approved_events' => 0,
+        'expected_events' => 0,
+        'expected_events_today' => 0,
+        'events_percentage' => 0,
+        'events_percentage_today' => 0,
+        'events_goal' => events_goal,
 
-          'scheduled_promo_hours' => 0,
-          'approved_promo_hours' => 0,
-          'remaining_promo_hours' => 0,
-          'expected_promo_hours' => 0,
-          'expected_promo_hours_today' => 0,
-          'promo_hours_percentage' => 0,
-          'promo_hours_percentage_today' => 0,
-          'promo_hours_goal' => promo_hours_goal,
+        'scheduled_promo_hours' => 0,
+        'approved_promo_hours' => 0,
+        'remaining_promo_hours' => 0,
+        'expected_promo_hours' => 0,
+        'expected_promo_hours_today' => 0,
+        'promo_hours_percentage' => 0,
+        'promo_hours_percentage_today' => 0,
+        'promo_hours_goal' => promo_hours_goal,
 
-          'approved_events_week_avg' => 0,
-          'approved_promo_hours_week_avg' => 0,
-          'approved_events_this_week' => nil,
-          'approved_promo_hours_this_week' => nil,
+        'approved_events_week_avg' => 0,
+        'approved_promo_hours_week_avg' => 0,
+        'approved_events_this_week' => nil,
+        'approved_promo_hours_this_week' => nil,
 
-          'days' => {},
-          'weeks' => {}
+        'days' => {},
+        'weeks' => {}
       }
       tz = ActiveSupport::TimeZone.zones_map[Time.zone.name].tzinfo.identifier
 
@@ -69,7 +69,7 @@ module Analysis
 
       # Initialize the days arrray
       data['days'] = {}
-      (first_event_at.to_date..last_event_at.to_date).each{|d| data['days'][d.to_s(:numeric)] ||= {'scheduled_events' => 0, 'approved_events' => 0, 'approved_promo_hours' => 0, 'scheduled_promo_hours' => 0}}
+      (first_event_at.to_date..last_event_at.to_date).each { |d| data['days'][d.to_s(:numeric)] ||= { 'scheduled_events' => 0, 'approved_events' => 0, 'approved_promo_hours' => 0, 'scheduled_promo_hours' => 0 } }
 
       # Get the events/promo hours data
       date_convert = "to_char(TIMEZONE('UTC', start_at) AT TIME ZONE '#{tz}', 'YYYY/MM/DD')"
@@ -97,14 +97,14 @@ module Analysis
         data['approved_promo_hours']  += event_day.promo_hours.to_i if event_day.group_recap_status == 'approved'
         data['scheduled_promo_hours'] += event_day.promo_hours.to_i
 
-        if week != previous_week and event_day.group_recap_status == 'approved'
+        if week != previous_week && event_day.group_recap_status == 'approved'
           weeks_with_approved_events += 1
           previous_week = week
         end
       end
 
       scheduled_events = scheduled_promo_hours = approved_events = approved_promo_hours = 0
-      data['weeks'].each do |week, values|
+      data['weeks'].each do |_week, values|
         approved_promo_hours += values['approved_promo_hours']
         scheduled_promo_hours += values['scheduled_promo_hours']
         approved_events += values['approved_events']
@@ -117,18 +117,18 @@ module Analysis
       end
 
       # Avg of approved events/promo hours per week
-      data['approved_events_week_avg'] = data['weeks'].values.sum{|v| v['approved_events']}
-      data['approved_promo_hours_week_avg']  = data['weeks'].values.sum{|v| v['approved_promo_hours']}
+      data['approved_events_week_avg'] = data['weeks'].values.sum { |v| v['approved_events'] }
+      data['approved_promo_hours_week_avg']  = data['weeks'].values.sum { |v| v['approved_promo_hours'] }
 
       this_week = Time.zone.now.beginning_of_week.to_s(:numeric)
-      if data['weeks'].has_key?(this_week)
+      if data['weeks'].key?(this_week)
         data['approved_events_this_week'] = data['weeks'][this_week]['approved_events']
         data['approved_promo_hours_this_week'] = data['weeks'][this_week]['approved_promo_hours']
       end
 
       # Compute current and expectation percentages
-      total_days = ((last_event_at  - first_event_at).to_i / 86400).round
-      today_days = ((Time.zone.now  - first_event_at).to_i / 86400).round
+      total_days = ((last_event_at  - first_event_at).to_i / 86_400).round
+      today_days = ((Time.zone.now  - first_event_at).to_i / 86_400).round
 
       total_days = 1 if total_days == 0
 
@@ -156,36 +156,44 @@ module Analysis
 
     def each_events_goal
       fields_select_kpis = '(each(CASE
-            WHEN kpis.kpi_type=\'percentage\'
-                THEN hash_value
-            WHEN kpis.kpi_type=\'count\'
-                THEN hstore(value::VARCHAR, \'1\')
+            WHEN kpis.kpi_type=\'percentage\' OR
+                 (kpis.kpi_type=\'count\' AND kpis.capture_mechanism=\'checkbox\') THEN
+              hash_value
+            WHEN kpis.kpi_type=\'count\' THEN
+              hstore(value::VARCHAR, \'1\')
             ELSE
-                hstore(\'\', scalar_value::VARCHAR)
+              hstore(\'\', scalar_value::VARCHAR)
             END
           )).*, form_fields.kpi_id, form_field_results.id'
-      scope =  @events_scope.joins(results: {form_field: :kpi}).
-                      select(fields_select_kpis).
-                      where(form_fields:{ kpi_id: @goals.map(&:kpi_id).uniq})
+      scope =  @events_scope.joins(results: { form_field: :kpi })
+                      .select(fields_select_kpis)
+                      .where(form_fields: { kpi_id: @goals.map(&:kpi_id).uniq })
       approved_totals_kpis = get_kpis_totals_for_scope(scope.where(aasm_state: 'approved'))
       submitted_totals_kpis = get_kpis_totals_for_scope(scope.where(aasm_state: ['submitted']))
       rejected_totals_kpis = get_kpis_totals_for_scope(scope.where(aasm_state: ['rejected']))
 
       fields_select_activities = 'count(activities.id) as total_count, activities.activity_type_id'
-      approved_totals_activities = @events_scope.joins(:activities).where(activities:{ activity_type_id: @goals.map(&:activity_type), active: true}).where(aasm_state: 'approved')
+      approved_totals_activities = @events_scope.joins(:activities)
+                          .where(activities: { activity_type_id: @goals.map(&:activity_type), active: true })
+                          .where(aasm_state: 'approved')
                           .select(fields_select_activities)
                           .group('2')
 
-      submitted_totals_activities = @events_scope.joins(:activities).where(activities:{ activity_type_id: @goals.map(&:activity_type), active: true}).where(aasm_state: ['submitted'])
+      submitted_totals_activities = @events_scope.joins(:activities)
+                          .where(activities: { activity_type_id: @goals.map(&:activity_type), active: true })
+                          .where(aasm_state: ['submitted'])
                           .select(fields_select_activities)
                           .group('2')
 
-      rejected_totals_activities = @events_scope.joins(:activities).where(activities:{ activity_type_id: @goals.map(&:activity_type), active: true}).where(aasm_state: ['rejected'])
+      rejected_totals_activities = @events_scope.joins(:activities)
+                          .where(activities: { activity_type_id: @goals.map(&:activity_type), active: true })
+                          .where(aasm_state: ['rejected'])
                           .select(fields_select_activities)
                           .group('2')
 
       if @campaign.present?
-        venues_totals_activities = Venue.where(place_id: @campaign.place_ids).joins(:activities).where(activities:{ activity_type_id: @goals.map(&:activity_type), active: true})
+        venues_totals_activities = Venue.where(place_id: @campaign.place_ids).joins(:activities)
+                          .where(activities: { activity_type_id: @goals.map(&:activity_type), active: true })
                           .select(fields_select_activities)
                           .group('2')
       end
@@ -205,11 +213,11 @@ module Analysis
           submitted = get_total_by_status(goal_scope, goal, submitted_totals_kpis, ['submitted']) || 0
           rejected = get_total_by_status(goal_scope, goal, rejected_totals_kpis, ['rejected']) || 0
         else
-          venues_activities = @campaign.present? ? venues_totals_activities.detect{|row| row.activity_type_id.to_i == goal.activity_type_id.to_i}.try(:total_count).try(:to_i) || 0 : 0
-          completed = approved_totals_activities.detect{|row| row.activity_type_id.to_i == goal.activity_type_id.to_i}.try(:total_count).try(:to_i) || 0
+          venues_activities = @campaign.present? ? venues_totals_activities.find { |row| row.activity_type_id.to_i == goal.activity_type_id.to_i }.try(:total_count).try(:to_i) || 0 : 0
+          completed = approved_totals_activities.find { |row| row.activity_type_id.to_i == goal.activity_type_id.to_i }.try(:total_count).try(:to_i) || 0
           completed = venues_activities > 0 || completed > 0 ? venues_activities + completed : 0
-          submitted = submitted_totals_activities.detect{|row| row.activity_type_id.to_i == goal.activity_type_id.to_i}.try(:total_count).try(:to_i) || 0
-          rejected = rejected_totals_activities.detect{|row| row.activity_type_id.to_i == goal.activity_type_id.to_i}.try(:total_count).try(:to_i) || 0
+          submitted = submitted_totals_activities.find { |row| row.activity_type_id.to_i == goal.activity_type_id.to_i }.try(:total_count).try(:to_i) || 0
+          rejected = rejected_totals_activities.find { |row| row.activity_type_id.to_i == goal.activity_type_id.to_i }.try(:total_count).try(:to_i) || 0
         end
 
         goal_value = goal.value || 0
@@ -225,46 +233,39 @@ module Analysis
 
         today_percentage = today = nil
         if @campaign.present? && @campaign.start_date && @campaign.end_date && goal_value
-          days = (@campaign.end_date-@campaign.start_date).to_i
-          if Date.today > @campaign.start_date && Date.today < @campaign.end_date && days > 0
-            today = ((Date.today-@campaign.start_date).to_i+1) * goal_value / days
-          elsif Date.today > @campaign.end_date
-            today = goal_value
-          else
-            today = 0
-          end
-          today_percentage = [(today*100/goal_value).to_i, 100].min
+          days = (@campaign.end_date - @campaign.start_date).to_i
+          today =
+            if Date.today > @campaign.start_date && Date.today < @campaign.end_date && days > 0
+              ((Date.today - @campaign.start_date).to_i + 1) * goal_value / days
+            elsif Date.today > @campaign.end_date
+              goal_value
+            else
+              today = 0
+            end
+          today_percentage = [(today * 100 / goal_value).to_i, 100].min
         end
 
-        if completed.nil?
-          goals_result[goal.id] = {
-            goal: goal,
-            completed_percentage: 0,
-            remaining_percentage: 100,
-            remaining_count: goal_value,
-            total_count: 0,
-            submitted: submitted,
-            submitted_percentage: submitted_percentage,
-            rejected: rejected,
-            rejected_percentage: rejected_percentage,
-            today: today,
-            today_percentage: today_percentage
-          }
-        else
-          goals_result[goal.id] = {
-            goal: goal,
-            completed_percentage: completed_percentage,
-            remaining_percentage: 100 - completed_percentage,
-            remaining_count: remaining_count,
-            total_count: total_count,
-            submitted: submitted,
-            submitted_percentage: submitted_percentage,
-            rejected: rejected,
-            rejected_percentage: rejected_percentage,
-            today: today,
-            today_percentage: today_percentage
-          }
-        end
+        goals_result[goal.id] = {
+          goal: goal,
+          completed_percentage: 0,
+          remaining_percentage: 100,
+          remaining_count: goal_value,
+          total_count: 0,
+          submitted: submitted,
+          submitted_percentage: submitted_percentage,
+          rejected: rejected,
+          rejected_percentage: rejected_percentage,
+          today: today,
+          today_percentage: today_percentage
+        }
+        next if completed.nil?
+
+        goals_result[goal.id].merge!(
+          completed_percentage: completed_percentage,
+          remaining_percentage: 100 - completed_percentage,
+          remaining_count: remaining_count,
+          total_count: total_count
+        )
       end
       goals_result
     end
@@ -281,40 +282,43 @@ module Analysis
       case goal.kpi.kpi_type
       when 'expenses'
         goal_scope.where(aasm_state: status).joins(:event_data).sum('event_data.spent').to_i
-      when 'promo_hours'
-        goal_scope.where(aasm_state: status).sum('promo_hours')
-      when 'events_count'
-        goal_scope.where(aasm_state: status).count
-      when 'photos'
-        AttachedAsset.photos.for_events(goal_scope).count
-      else
-        if goal.start_date.present? || goal.due_date.present?
-          result = goal_scope.joins(results: :form_field).where(aasm_state: status)
-                      .select('sum(scalar_value) as total_value')
-                      .where(form_fields: {kpi_id: goal.kpi_id})
-                      .group('form_fields.kpi_id').first
-          data = {'total_value' => result.total_value, 'total_count' => result.total_count}
-        else
-          data = totals.detect{|row| row['kpi_id'].to_i == goal.kpi_id.to_i && row['kpis_segment_id'].to_i == goal.kpis_segment_id.to_i }
-        end
+      when 'promo_hours' then goal_scope.where(aasm_state: status).sum('promo_hours')
+      when 'events_count' then goal_scope.where(aasm_state: status).count
+      when 'photos' then AttachedAsset.photos.for_events(goal_scope).count
+      else get_kpi_total_by_status goal_scope, goal, totals, status
+      end
+    end
 
-        unless data.nil?
-          if goal.kpis_segment_id.nil?
-            case goal.kpi.capture_mechanism
-            when 'integer'
-              data['total_value'].to_i
-            when 'decimal'
-              data['total_value'].to_f
-            end
-          else
-            data['total_count'].to_i
-          end
+    def get_kpi_total_by_status(goal_scope, goal, totals, status)
+      if goal.start_date.present? || goal.due_date.present?
+        result = goal_scope.joins(results: :form_field).where(aasm_state: status)
+                    .select('sum(scalar_value) as total_value')
+                    .where(form_fields: { kpi_id: goal.kpi_id })
+                    .group('form_fields.kpi_id').first
+        data = { 'total_value' => result.total_value, 'total_count' => result.total_count }
+      else
+        data = totals.find do |row|
+          row['kpi_id'].to_i == goal.kpi_id.to_i &&
+          row['kpis_segment_id'].to_i == goal.kpis_segment_id.to_i
         end
+      end
+
+      return if data.nil?
+
+      if goal.kpis_segment_id.nil?
+        case goal.kpi.capture_mechanism
+        when 'integer'
+          data['total_value'].to_i
+        when 'decimal'
+          data['total_value'].to_f
+        end
+      else
+        data['total_count'].to_i
       end
     end
 
     def total_accounts_for_events
-      @events_scope.count('place_id', :distinct => true)
+      @events_scope.count('place_id', distinct: true)
     end
   end
 end

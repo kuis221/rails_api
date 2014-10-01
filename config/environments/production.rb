@@ -16,7 +16,7 @@ Brandscopic::Application.configure do
 
   # Disable Rails's static asset server (Apache or nginx will already do this)
   config.serve_static_assets = true
-  config.static_cache_control = "public, max-age=2592000"
+  config.static_cache_control = 'public, max-age=2592000'
 
   # Compress JavaScripts and CSS.
   config.assets.js_compressor = :uglifier
@@ -83,8 +83,8 @@ Brandscopic::Application.configure do
   # Use default logging formatter so that PID and timestamp are not suppressed.
   config.log_formatter = ::Logger::Formatter.new
 
-  config.action_controller.default_url_options = {:host => ENV['HOST_DOMAIN']}
-  config.action_mailer.default_url_options = {:host => ENV['HOST_DOMAIN']}
+  config.action_controller.default_url_options = { host: ENV['HOST_DOMAIN'] }
+  config.action_mailer.default_url_options = { host: ENV['HOST_DOMAIN'] }
   Rails.application.routes.default_url_options[:host] = ENV['HOST_DOMAIN']
 
   # Log the query plan for queries taking more than this (works
@@ -100,14 +100,12 @@ Brandscopic::Application.configure do
   # config.static_cache_control = "public, max-age=2592000"
 end
 
-
 ActionMailer::Base.smtp_settings = {
-  :address        => 'smtp.sendgrid.net',
-  :port           => '587',
-  :authentication => :plain,
-  :user_name      => ENV['SENDGRID_USERNAME'],
-  :password       => ENV['SENDGRID_PASSWORD'],
-  :domain         => 'heroku.com',
-  :enable_starttls_auto => true
+  address: 'smtp.sendgrid.net',
+  port: '587',
+  authentication: :plain,
+  user_name: ENV['SENDGRID_USERNAME'],
+  password: ENV['SENDGRID_PASSWORD'],
+  domain: 'heroku.com',
+  enable_starttls_auto: true
 }
-

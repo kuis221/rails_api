@@ -10,61 +10,61 @@
 
 require 'rails_helper'
 
-describe Teaming, :type => :model do
+describe Teaming, type: :model do
   it { is_expected.to belong_to(:team) }
   it { is_expected.to belong_to(:teamable) }
   it { is_expected.to validate_presence_of(:teamable) }
 
-  describe "new event notification" do
-    let(:event) { FactoryGirl.create(:event) }
-    let(:user) { FactoryGirl.create(:company_user, company: event.company) }
+  describe 'new event notification' do
+    let(:event) { create(:event) }
+    let(:user) { create(:company_user, company: event.company) }
 
-    it "should generate a new notification" do
-      expect {
+    it 'should generate a new notification' do
+      expect do
         event.users << user
-      }.to change(Notification, :count).by(1)
+      end.to change(Notification, :count).by(1)
     end
 
-    it "should remove a notification" do
+    it 'should remove a notification' do
       event.users << user
-      expect {
+      expect do
         event.users.destroy(user)
-      }.to change(Notification, :count).by(-1)
+      end.to change(Notification, :count).by(-1)
     end
   end
 
-  describe "new team event notification" do
-    let(:event) { FactoryGirl.create(:event) }
-    let(:user) { FactoryGirl.create(:company_user) }
-    let(:team) { FactoryGirl.create(:team) }
+  describe 'new team event notification' do
+    let(:event) { create(:event) }
+    let(:user) { create(:company_user) }
+    let(:team) { create(:team) }
 
-    it "should generate a new notification" do
+    it 'should generate a new notification' do
       team.users << user
-      expect {
+      expect do
         event.teams << team
-      }.to change(Notification, :count).by(1)
+      end.to change(Notification, :count).by(1)
     end
 
-    it "should remove a notification" do
+    it 'should remove a notification' do
       team.users << user
       event.teams << team
-      expect {
+      expect do
         event.teams.destroy(team)
-      }.to change(Notification, :count).by(-1)
+      end.to change(Notification, :count).by(-1)
     end
   end
 
-  describe "#delete_goals after_destroy callback" do
-    let(:campaign) { FactoryGirl.create(:campaign) }
-    let(:team) { FactoryGirl.create(:team) }
-    it "should remove the goals for the user" do
+  describe '#delete_goals after_destroy callback' do
+    let(:campaign) { create(:campaign) }
+    let(:team) { create(:team) }
+    it 'should remove the goals for the user' do
       campaign.teams << team
-      goal = FactoryGirl.create(:goal, parent: campaign, goalable: team, value: 100, kpi: FactoryGirl.create(:kpi))
-      expect {
-        expect {
+      goal = create(:goal, parent: campaign, goalable: team, value: 100, kpi: create(:kpi))
+      expect do
+        expect do
           campaign.teams.destroy(team)
-        }.to change(Teaming, :count).by(-1)
-      }.to change(Goal, :count).by(-1)
+        end.to change(Teaming, :count).by(-1)
+      end.to change(Goal, :count).by(-1)
     end
   end
 end

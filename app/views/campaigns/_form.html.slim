@@ -11,6 +11,8 @@
           = f.input :start_date, :as => :date_picker
         .span4
           = f.input :end_date, :as => :date_picker
+        .span4
+          = f.input :color, :as => :color, class: 'color-picker'
 
     .row-fluid
       = f.input :brands_list
@@ -27,3 +29,9 @@
 
 javascript:
   $('#campaign_brands_list').select2({tags: #{raw(current_company.brands.active.order(:name).pluck(:name).to_json).html_safe}});
+
+  $('.color-picker').colorPicker({
+    showHexField: false,
+    pickerDefault: '',
+    colors: #{Campaign::AVAILABLE_COLORS.map{ |c| c.gsub('#', '') }.to_json.html_safe}
+    });

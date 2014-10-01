@@ -1,11 +1,11 @@
 require 'rails_helper'
 
-feature "User Profile", js: true do
-  let(:company) { FactoryGirl.create(:company) }
-  let(:campaign) { FactoryGirl.create(:campaign, company: company) }
-  let(:user) { FactoryGirl.create(:user, company: company, role_id: role.id) }
+feature 'User Profile', js: true do
+  let(:company) { create(:company) }
+  let(:campaign) { create(:campaign, company: company) }
+  let(:user) { create(:user, company: company, role_id: role.id) }
   let(:company_user) { user.company_users.first }
-  let(:place) { FactoryGirl.create(:place, name: 'A Nice Place', country:'CR', city: 'Curridabat', state: 'San Jose') }
+  let(:place) { create(:place, name: 'A Nice Place', country: 'CR', city: 'Curridabat', state: 'San Jose') }
   let(:permissions) { [] }
 
   before do
@@ -20,7 +20,7 @@ feature "User Profile", js: true do
   end
 
   shared_examples_for 'a user that can view his profile' do
-    scenario "should be able to confirm his number" do
+    scenario 'should be able to confirm his number' do
       visit root_path
       click_link user.full_name
       click_link 'View Profile'
@@ -42,19 +42,18 @@ feature "User Profile", js: true do
 
       expect(user.reload.phone_number_verified).to be_truthy
 
-      expect(page).to have_content "Verified"
+      expect(page).to have_content 'Verified'
     end
   end
 
-
-  feature "Admin User" do
-    let(:role) { FactoryGirl.create(:role, company: company) }
+  feature 'Admin User' do
+    let(:role) { create(:role, company: company) }
 
     it_behaves_like 'a user that can view his profile'
   end
 
-  feature "Non-Admin User" do
-    let(:role) { FactoryGirl.create(:non_admin_role, company: company) }
+  feature 'Non-Admin User' do
+    let(:role) { create(:non_admin_role, company: company) }
 
     it_behaves_like 'a user that can view his profile'
   end

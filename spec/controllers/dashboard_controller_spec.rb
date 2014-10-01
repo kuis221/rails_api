@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe DashboardController, :type => :controller do
+describe DashboardController, type: :controller do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.companies.first
@@ -8,7 +8,7 @@ describe DashboardController, :type => :controller do
     Kpi.create_global_kpis
   end
 
-  it "should render all modules" do
+  it 'should render all modules' do
     get 'index'
     expect(response).to be_success
     expect(response).to render_template('_incomplete_tasks')

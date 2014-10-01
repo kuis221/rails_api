@@ -1,4 +1,4 @@
-require "sunspot/queue/helpers"
+require 'sunspot/queue/helpers'
 
 class IndexWorker
   extend ::Sunspot::Queue::Helpers
@@ -11,9 +11,9 @@ class IndexWorker
     end
 
   rescue Resque::TermException
-      # if the worker gets killed, (when deploying for example)
-      # re-enqueue the job so it will be processed when worker is restarted
-      Resque.enqueue(IndexWorker, klass, id)
+    # if the worker gets killed, (when deploying for example)
+    # re-enqueue the job so it will be processed when worker is restarted
+    Resque.enqueue(IndexWorker, klass, id)
 
   # Try it again a few times in case of a connection issue before raising the error
   rescue Errno::ECONNRESET, Net::ReadTimeout, Net::ReadTimeout, Net::OpenTimeout => e

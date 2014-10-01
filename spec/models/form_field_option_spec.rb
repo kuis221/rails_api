@@ -13,7 +13,7 @@
 
 require 'rails_helper'
 
-describe FormFieldOption, :type => :model do
+describe FormFieldOption, type: :model do
   it { is_expected.to belong_to(:form_field) }
 
   it { is_expected.to validate_presence_of(:name) }

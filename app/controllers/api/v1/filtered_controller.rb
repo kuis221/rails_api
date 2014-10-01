@@ -12,24 +12,20 @@ class Api::V1::FilteredController < Api::V1::ApiController
     set_collection_ivar(@solr_search.results)
   end
 
-  def collection_count
-    @collection_count
-  end
+  attr_reader :collection_count
 
-  def total_pages
-    @total_pages
-  end
+  attr_reader :total_pages
 
   protected
 
-    def search_params
-      @search_params ||= permitted_search_params.tap do |p|  # Duplicate the params array to make some modifications
-        p[:company_id] = current_company.id
-        p[:current_company_user] = current_company_user
-      end
+  def search_params
+    @search_params ||= permitted_search_params.tap do |p|  # Duplicate the params array to make some modifications
+      p[:company_id] = current_company.id
+      p[:current_company_user] = current_company_user
     end
+  end
 
-    def build_resource_params
-      [permitted_params || {}]
-    end
+  def build_resource_params
+    [permitted_params || {}]
+  end
 end

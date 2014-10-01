@@ -20,7 +20,5 @@ class Tag < ActiveRecord::Base
   belongs_to :company
   has_and_belongs_to_many :attached_assets
 
-
-  #scope :accessible_by_user, lambda{|user| scoped }
-
+  # scope :accessible_by_user, lambda{|user| scoped }
 end

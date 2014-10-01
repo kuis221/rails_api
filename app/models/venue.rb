@@ -31,11 +31,11 @@ class Venue < ActiveRecord::Base
   has_many :events, through: :place
   has_many :activities, -> { order('activity_date ASC') }, as: :activitable do
     def include_from_events
-      events_activities = Activity.
-        where(
+      events_activities = Activity
+        .where(
           activitable_type: 'Event',
-          events: {place_id: proxy_association.owner.place_id, company_id: proxy_association.owner.company_id}).
-        joins('INNER JOIN events ON events.id=activities.activitable_id').active
+          events: { place_id: proxy_association.owner.place_id, company_id: proxy_association.owner.company_id })
+        .joins('INNER JOIN events ON events.id=activities.activitable_id').active
       (all + events_activities).sort_by(&:activity_date)
     end
   end
@@ -75,21 +75,20 @@ class Venue < ActiveRecord::Base
       'Active'
     end
 
-    integer :events_count, :stored => true
-    double :promo_hours, :stored => true
-    integer :impressions, :stored => true
-    integer :interactions, :stored => true
-    integer :sampled, :stored => true
-    double :spent, :stored => true
-    double :avg_impressions, :stored => true
-    double :avg_impressions_hour, :stored => true
-    double :avg_impressions_cost, :stored => true
+    integer :events_count, stored: true
+    double :promo_hours, stored: true
+    integer :impressions, stored: true
+    integer :interactions, stored: true
+    integer :sampled, stored: true
+    double :spent, stored: true
+    double :avg_impressions, stored: true
+    double :avg_impressions_hour, stored: true
+    double :avg_impressions_cost, stored: true
 
-    integer :venue_score, :stored => true do
+    integer :venue_score, stored: true do
       score
     end
   end
-
 
   def compute_stats
     self.events_count = Event.where(company_id: company_id, place_id: place_id).active.count
@@ -104,9 +103,9 @@ class Venue < ActiveRecord::Base
     self.avg_impressions = 0
     self.avg_impressions_hour = 0
     self.avg_impressions_cost = 0
-    self.avg_impressions = self.impressions/self.events_count if self.events_count > 0
-    self.avg_impressions_hour = self.impressions/self.promo_hours if self.promo_hours > 0
-    self.avg_impressions_cost = self.spent/self.impressions if self.impressions > 0
+    self.avg_impressions = impressions / events_count if events_count > 0
+    self.avg_impressions_hour = impressions / promo_hours if promo_hours > 0
+    self.avg_impressions_cost = spent / impressions if impressions > 0
 
     compute_scoring
 
@@ -114,33 +113,32 @@ class Venue < ActiveRecord::Base
 
     save
 
-    if reindex_neighbors_venues and neighbors_establishments_search
+    if reindex_neighbors_venues && neighbors_establishments_search
       neighbors_establishments_search.results.each do |venue|
-        venue.compute_scoring.save if venue.id != self.id
+        venue.compute_scoring.save if venue.id != id
       end
     end
 
     true
-
   end
 
   def compute_scoring
     # Calculates the scoring for the venue
     self.score = nil
     if neighbors_establishments_search && neighbors_establishments_search.respond_to?(:stat_response)
-      unless neighbors_establishments_search.stat_response['stats_fields']["avg_impressions_hour_es"].nil?
-        mean = neighbors_establishments_search.stat_response['stats_fields']["avg_impressions_hour_es"]['mean']
-        stddev = neighbors_establishments_search.stat_response['stats_fields']["avg_impressions_hour_es"]['stddev']
+      unless neighbors_establishments_search.stat_response['stats_fields']['avg_impressions_hour_es'].nil?
+        mean = neighbors_establishments_search.stat_response['stats_fields']['avg_impressions_hour_es']['mean']
+        stddev = neighbors_establishments_search.stat_response['stats_fields']['avg_impressions_hour_es']['stddev']
 
-        self.score_impressions = (normdist((avg_impressions_hour-mean)/stddev) * 100).round if stddev != 0.0
+        self.score_impressions = (normdist((avg_impressions_hour - mean) / stddev) * 100).round if stddev != 0.0
 
-        mean = neighbors_establishments_search.stat_response['stats_fields']["avg_impressions_cost_es"]['mean']
-        stddev = neighbors_establishments_search.stat_response['stats_fields']["avg_impressions_cost_es"]['stddev']
+        mean = neighbors_establishments_search.stat_response['stats_fields']['avg_impressions_cost_es']['mean']
+        stddev = neighbors_establishments_search.stat_response['stats_fields']['avg_impressions_cost_es']['stddev']
 
-        self.score_cost = 100 - (normdist((avg_impressions_cost-mean)/stddev) * 100).round if stddev != 0.0
+        self.score_cost = 100 - (normdist((avg_impressions_cost - mean) / stddev) * 100).round if stddev != 0.0
 
-        if self.score_impressions && self.score_cost
-          self.score = (self.score_impressions + self.score_cost) / 2
+        if score_impressions && score_cost
+          self.score = (score_impressions + score_cost) / 2
         end
       end
     end
@@ -156,11 +154,11 @@ class Venue < ActiveRecord::Base
         with(:types, types) if types.any?
         with(:avg_impressions_hour).greater_than(0)
 
-        stat(:avg_impressions_hour, :type => "stddev")
-        stat(:avg_impressions_hour, :type => "mean")
+        stat(:avg_impressions_hour, type: 'stddev')
+        stat(:avg_impressions_hour, type: 'mean')
 
-        stat(:avg_impressions_cost, :type => "stddev")
-        stat(:avg_impressions_cost, :type => "mean")
+        stat(:avg_impressions_cost, type: 'stddev')
+        stat(:avg_impressions_cost, type: 'mean')
       end
     end
   end
@@ -174,7 +172,7 @@ class Venue < ActiveRecord::Base
   end
 
   def types_without_establishment
-    if place.present? and place.types.is_a?(Array)
+    if place.present? && place.types.is_a?(Array)
       place.types - ['establishment']
     else
       []
@@ -184,7 +182,7 @@ class Venue < ActiveRecord::Base
   def overall_graphs_data
     return @overall_graphs_data if @overall_graphs_data
 
-    results_scope = FormFieldResult.for_place_in_company(place_id, company_id).where(events: {active: true})
+    results_scope = FormFieldResult.for_place_in_company(place_id, company_id).where(events: { active: true })
     @overall_graphs_data = {}
     [:age, :gender, :ethnicity].each do |kpi|
       if Kpi.send(kpi).present?
@@ -201,13 +199,13 @@ class Venue < ActiveRecord::Base
          .group("EXTRACT(DOW FROM TIMEZONE('UTC', events.start_at) AT TIME ZONE '#{tz}')")
          .where(place_id: place_id, company_id: company_id)
          .where(["date_trunc('day', TIMEZONE('UTC', start_at) AT TIME ZONE ?) = date_trunc('day', TIMEZONE('UTC', end_at) AT TIME ZONE ?)", tz, tz])
-    @overall_graphs_data[:impressions_promo] = Hash[(0..6).map{|i|[i, 0]}]
-    @overall_graphs_data[:cost_impression] = Hash[(0..6).map{|i|[i, 0]}]
-    event_counts = Hash[(0..6).map{|i|[i, 0]}]
+    @overall_graphs_data[:impressions_promo] = Hash[(0..6).map { |i|[i, 0] }]
+    @overall_graphs_data[:cost_impression] = Hash[(0..6).map { |i|[i, 0] }]
+    event_counts = Hash[(0..6).map { |i|[i, 0] }]
     stats_by_day.each do |s|
-      @overall_graphs_data[:impressions_promo][(s.weekday == '0' ? 6 : s.weekday.to_i-1)] = s.impressions_sum.to_f / s.promo_hours_sum.to_f if s.promo_hours_sum.to_f > 0
-      @overall_graphs_data[:cost_impression][(s.weekday == '0' ? 6 : s.weekday.to_i-1)] = s.cost.to_f / s.impressions_sum.to_f if s.impressions_sum.to_f > 0
-      event_counts[(s.weekday.to_i == 0 ? 6 : s.weekday.to_i-1)] = s.counting.to_i
+      @overall_graphs_data[:impressions_promo][(s.weekday == '0' ? 6 : s.weekday.to_i - 1)] = s.impressions_sum.to_f / s.promo_hours_sum.to_f if s.promo_hours_sum.to_f > 0
+      @overall_graphs_data[:cost_impression][(s.weekday == '0' ? 6 : s.weekday.to_i - 1)] = s.cost.to_f / s.impressions_sum.to_f if s.impressions_sum.to_f > 0
+      event_counts[(s.weekday.to_i == 0 ? 6 : s.weekday.to_i - 1)] = s.counting.to_i
     end
 
     # Then we handle the case when the events ends on a different day manually because coudn't think on a better way to do it
@@ -216,14 +214,14 @@ class Venue < ActiveRecord::Base
          .where(["date_trunc('day', TIMEZONE('UTC', start_at) AT TIME ZONE ?) <> date_trunc('day', TIMEZONE('UTC', end_at) AT TIME ZONE ?)", tz, tz])
     events.each do |e|
       (e.start_at.to_date..e.end_at.to_date).each do |day|
-        wday = (day.wday.to_i == 0 ? 6 : day.wday-1)
+        wday = (day.wday.to_i == 0 ? 6 : day.wday - 1)
         if e.promo_hours.to_i > 0
           hours = ([e.end_at, day.end_of_day].min - [e.start_at, day.beginning_of_day].max) / 3600
-          @overall_graphs_data[:impressions_promo][wday] += (e.impressions.to_i/e.promo_hours * hours)
+          @overall_graphs_data[:impressions_promo][wday] += (e.impressions.to_i / e.promo_hours * hours)
         end
 
         if e.impressions.to_i > 0
-          @overall_graphs_data[:cost_impression][(day.wday == 0 ? 6 : day.wday-1)] += (e.spent.to_f/e.impressions.to_i)
+          @overall_graphs_data[:cost_impression][(day.wday == 0 ? 6 : day.wday - 1)] += (e.spent.to_f / e.impressions.to_i)
         end
 
         event_counts[wday] += 1
@@ -240,16 +238,16 @@ class Venue < ActiveRecord::Base
     @overall_graphs_data
   end
 
-  def self.do_search(params, include_facets=false)
+  def self.do_search(params, include_facets = false)
     ss = solr_search(include: [:place]) do
 
-      with(:company_id, params[:company_id]) if params.has_key?(:company_id) and params[:company_id].present?
+      with(:company_id, params[:company_id]) if params.key?(:company_id) && params[:company_id].present?
 
       # Filter by user permissions
       company_user = params[:current_company_user]
       if company_user.present?
         unless company_user.role.is_admin?
-          #with(:campaign_ids, company_user.accessible_campaign_ids + [0])
+          # with(:campaign_ids, company_user.accessible_campaign_ids + [0])
           any_of do
             locations = company_user.accessible_locations
             places_ids = company_user.accessible_places
@@ -261,20 +259,20 @@ class Venue < ActiveRecord::Base
       end
 
       if params[:location].present?
-        radius = params.has_key?(:radius) ? params[:radius] : 50
+        radius = params.key?(:radius) ? params[:radius] : 50
         (lat, lng) = params[:location].split(',')
         with(:location).in_radius(lat, lng, radius)
       end
 
       if params[:q].present?
         fulltext params[:q] do
-          fields(:types, :name => 5.0)
-          phrase_fields :name => 5.0
-          fields(:address => 2.0) if params[:search_address]
+          fields(:types, name: 5.0)
+          phrase_fields name: 5.0
+          fields(address: 2.0) if params[:search_address]
         end
       end
 
-      if params.has_key?(:campaign) and params[:campaign].present?
+      if params.key?(:campaign) && params[:campaign].present?
         locations = places = []
         Campaign.where(company_id: params[:company_id], id: params[:campaign]).each do |c|
           locations += c.accessible_locations
@@ -287,13 +285,13 @@ class Venue < ActiveRecord::Base
         end
       end
 
-      if params.has_key?(:brand) and params[:brand].present?
-        with :campaign_ids, Campaign.select('DISTINCT(campaigns.id)').joins(:brands).where(brands: {id: params[:brand]}).map(&:id)
+      if params.key?(:brand) && params[:brand].present?
+        with :campaign_ids, Campaign.select('DISTINCT(campaigns.id)').joins(:brands).where(brands: { id: params[:brand] }).map(&:id)
       end
 
-      with(:locations, params[:locations]) if params.has_key?(:locations) and params[:locations].present?
+      with(:locations, params[:locations]) if params.key?(:locations) && params[:locations].present?
 
-      with(:locations, Area.where(id: params[:area]).map{|a| a.locations.map(&:id) }.flatten + [0]  ) if params[:area].present?
+      with(:locations, Area.where(id: params[:area]).map { |a| a.locations.map(&:id) }.flatten + [0]) if params[:area].present?
 
       [:events_count, :promo_hours, :impressions, :interactions, :sampled, :spent, :venue_score].each do |param|
         if params[param].present? && params[param][:min].present? && params[param][:max].present?
@@ -303,13 +301,13 @@ class Venue < ActiveRecord::Base
         end
       end
 
-      stat(:events_count, :type => "max")
-      stat(:promo_hours, :type => "max")
-      stat(:impressions, :type => "max")
-      stat(:interactions, :type => "max")
-      stat(:sampled, :type => "max")
-      stat(:spent, :type => "max")
-      stat(:venue_score, :type => "max")
+      stat(:events_count, type: 'max')
+      stat(:promo_hours, type: 'max')
+      stat(:impressions, type: 'max')
+      stat(:interactions, type: 'max')
+      stat(:sampled, type: 'max')
+      stat(:spent, type: 'max')
+      stat(:venue_score, type: 'max')
 
       if include_facets
         facet :place_id
@@ -317,14 +315,14 @@ class Venue < ActiveRecord::Base
       end
 
       order_by(params[:sorting] || :venue_score, params[:sorting_dir] || :desc)
-      paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+      paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
 
     end
   end
 
   def campaign_ids
     @campaign_ids ||= Campaign.joins(:events)
-        .where(events: {place_id: place_id}, company_id: company_id)
+        .where(events: { place_id: place_id }, company_id: company_id)
         .pluck('DISTINCT(events.campaign_id)')
   end
 end

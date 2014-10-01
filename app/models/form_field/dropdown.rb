@@ -19,10 +19,10 @@ class FormField::Dropdown < FormField
   def field_options(result)
     { as: :select,
       collection: options_for_input,
-      label: self.name,
-      field_id: self.id,
-      options: self.settings,
-      required: self.required,
+      label: name,
+      field_id: id,
+      options: settings,
+      required: required,
       input_html: {
         value: result.value,
         class: field_classes.push('chosen-enabled'),
@@ -38,7 +38,7 @@ class FormField::Dropdown < FormField
   end
 
   def multiple?
-    self.settings.present? && self.settings.has_key?('multiple') && self.settings['multiple']
+    settings.present? && settings.key?('multiple') && settings['multiple']
   end
 
   def is_optionable?
@@ -47,13 +47,13 @@ class FormField::Dropdown < FormField
 
   def format_html(result)
     unless result.value.nil? || result.value.empty?
-      options_for_input.detect(->{ [] }){|option| option[1] == result.value.to_i }[0]
+      options_for_input.find(-> { [] }) { |option| option[1] == result.value.to_i }[0]
     end
   end
 
   def format_csv(result)
     unless result.value.nil? || result.value.empty?
-      options_for_input.detect(->{ [] }){|option| option[1] == result.value.to_i }[0]
+      options_for_input.find(-> { [] }) { |option| option[1] == result.value.to_i }[0]
     end
   end
 end

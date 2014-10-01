@@ -17,6 +17,8 @@ en:
         start_date_time: "Start time"
         end_date_date: "End date"
         end_date_time: "End time"
+      kpis_segment:
+        text: 'Name'
   time:
     formats:
       default: '%m/%d/%Y %H:%M:%S'
@@ -49,6 +51,7 @@ en:
 
   buttons:
     new:
+      event: "New Event"
       team: "New Team"
       campaign: "New Campaign"
       brand: "New Brand"
@@ -58,14 +61,19 @@ en:
       date_range: "New Date Range"
       day_part: "New Day Part"
       activity_type: "New Activity Type"
+      brand_ambassadors/visit: "New Visit"
     edit:
+      event: "Edit Event"
       team: "Edit Team"
       campaign: "Edit Campaign"
       role: "Edit Role"
       area: "Edit Area"
+      brand: "Edit Brand"
       brand_portfolio: "Edit Brand Portfolio"
       date_range: "Edit Date Range"
       day_part: "Edit Day Part"
+      activity_type: "Edit Activity Type"
+      brand_ambassadors/visit: "Edit Visit"
 
   inputs:
     attached_asset:

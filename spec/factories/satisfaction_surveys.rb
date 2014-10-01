@@ -16,8 +16,8 @@
 FactoryGirl.define do
   factory :satisfaction_survey do
     company_user nil
-    session_id "43e4be6b8745c80f693b2936924a865a"
-    rating "positive"
-    feedback "My feedback"
+    session_id '43e4be6b8745c80f693b2936924a865a'
+    rating 'positive'
+    feedback 'My feedback'
   end
 end

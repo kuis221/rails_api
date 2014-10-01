@@ -23,32 +23,32 @@
 
 require 'rails_helper'
 
-describe AttachedAsset, :type => :model do
+describe AttachedAsset, type: :model do
   it { is_expected.to belong_to(:attachable) }
   it { is_expected.to belong_to(:folder) }
 
   it { is_expected.to validate_presence_of(:attachable) }
 
-  describe "direct_upload_url validations" do
+  describe 'direct_upload_url validations' do
     before { subject.file_file_name = nil }
 
     it { is_expected.to validate_presence_of(:direct_upload_url) }
   end
 
-  describe "#activate" do
-    let(:attached_asset) { FactoryGirl.build(:attached_asset, active: false) }
+  describe '#activate' do
+    let(:attached_asset) { build(:attached_asset, active: false) }
 
-    it "should return the active value as true" do
+    it 'should return the active value as true' do
       attached_asset.activate!
       attached_asset.reload
       expect(attached_asset.active).to be_truthy
     end
   end
 
-  describe "#deactivate" do
-    let(:attached_asset) { FactoryGirl.build(:attached_asset, active: false) }
+  describe '#deactivate' do
+    let(:attached_asset) { build(:attached_asset, active: false) }
 
-    it "should return the active value as false" do
+    it 'should return the active value as false' do
       attached_asset.deactivate!
       attached_asset.reload
       expect(attached_asset.active).to be_falsey

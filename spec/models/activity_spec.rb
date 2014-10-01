@@ -16,7 +16,7 @@
 
 require 'rails_helper'
 
-describe Activity, :type => :model do
+describe Activity, type: :model do
   it { is_expected.to belong_to(:activity_type) }
   it { is_expected.to belong_to(:activitable) }
   it { is_expected.to belong_to(:company_user) }
@@ -27,20 +27,20 @@ describe Activity, :type => :model do
   it { is_expected.to validate_numericality_of(:activity_type_id) }
   it { is_expected.to validate_numericality_of(:company_user_id) }
 
-  describe "#activate" do
-    let(:activity) { FactoryGirl.build(:activity, active: false) }
+  describe '#activate' do
+    let(:activity) { build(:activity, active: false) }
 
-    it "should return the active value as true" do
+    it 'should return the active value as true' do
       activity.activate!
       activity.reload
       expect(activity.active).to be_truthy
     end
   end
 
-  describe "#deactivate" do
-    let(:activity) { FactoryGirl.build(:activity, active: false) }
+  describe '#deactivate' do
+    let(:activity) { build(:activity, active: false) }
 
-    it "should return the active value as false" do
+    it 'should return the active value as false' do
       activity.deactivate!
       activity.reload
       expect(activity.active).to be_falsey

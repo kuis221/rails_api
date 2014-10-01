@@ -18,15 +18,15 @@
 
 require 'rails_helper'
 
-describe AssetDownload, :type => :model do
+describe AssetDownload, type: :model do
   it { is_expected.to belong_to(:user) }
 
   it { is_expected.to validate_presence_of(:uid) }
 
-  describe "states" do
-    let(:asset) { FactoryGirl.create(:asset_download) }
+  describe 'states' do
+    let(:asset) { create(:asset_download) }
 
-    describe ":new" do
+    describe ':new' do
       it 'should be an initial state' do
         expect(asset).to be_new
       end

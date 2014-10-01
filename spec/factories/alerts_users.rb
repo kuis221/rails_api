@@ -15,7 +15,7 @@
 FactoryGirl.define do
   factory :alerts_user do
     company_user nil
-    name "feature_name"
+    name 'feature_name'
     version 1
   end
 end

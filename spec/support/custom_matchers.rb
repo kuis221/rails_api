@@ -1,5 +1,5 @@
 require 'rspec/expectations'
-require "rexml/document"
+require 'rexml/document'
 
 # Use: it { should accept_nested_attributes_for(:association_name).and_accept({valid_values => true}).but_reject({ :reject_if_nil => nil })}
 RSpec::Matchers.define :accept_nested_attributes_for do |association|
@@ -7,14 +7,14 @@ RSpec::Matchers.define :accept_nested_attributes_for do |association|
     @model = model
     @nested_att_present = model.respond_to?("#{association}_attributes=".to_sym)
     if @nested_att_present && @reject
-      model.send("#{association}_attributes=".to_sym,[@reject])
+      model.send("#{association}_attributes=".to_sym, [@reject])
       @reject_success = model.send("#{association}").empty?
     end
     if @nested_att_present && @accept
-      model.send("#{association}_attributes=".to_sym,[@accept])
+      model.send("#{association}_attributes=".to_sym, [@accept])
       @accept_success = ! (model.send("#{association}").empty?)
     end
-    @nested_att_present && ( @reject.nil? || @reject_success ) && ( @accept.nil? || @accept_success )
+    @nested_att_present && (@reject.nil? || @reject_success) && (@accept.nil? || @accept_success)
   end
 
   failure_message do
@@ -22,7 +22,7 @@ RSpec::Matchers.define :accept_nested_attributes_for do |association|
     messages << "expected #{@model.class} to accept nested attributes for #{association}" unless @nested_att_present
     messages << "expected #{@model.class} to reject values #{@reject.inspect} for association #{association}" unless @reject_success
     messages << "expected #{@model.class} to accept values #{@accept.inspect} for association #{association}" unless @accept_success
-    messages.join(", ")
+    messages.join(', ')
   end
 
   description do
@@ -46,16 +46,16 @@ RSpec::Matchers.define :have_rows do |rows|
     @rows = rows
     doc = REXML::Document.new(open(export.file.url).read)
     @doc_rows = doc.elements.to_a('//Row').map do |r|
-      r.elements.to_a('Cell/Data').map{|d| d.text }
+      r.elements.to_a('Cell/Data').map(&:text)
     end
     @rows == @doc_rows
   end
 
-  failure_message do |export|
+  failure_message do |_export|
     "Expected export to have rows:\n#{@rows}\nbut instead it had:\n#{@doc_rows}"
   end
 
-  failure_message_when_negated do |export|
+  failure_message_when_negated do |_export|
     "Expected export to NOT have rows:\n#{@rows}\nbut it did"
   end
 
