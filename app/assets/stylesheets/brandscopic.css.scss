@@ -694,13 +694,6 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		&.datepick-event:before{
 			opacity:0;
 		}
-		&.datepick-weekend{
-			border-top-right-radius:14px;
-			border-bottom-right-radius:14px;
-			&:after{
-				display:none;
-			}
-		}
 		&:after{
 			content: "";
 			width:3px;
@@ -709,6 +702,14 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			position:absolute;
 			right:-3px;
 		}
+		&.datepick-weekend{
+			border-top-right-radius:14px;
+			border-bottom-right-radius:14px;
+			&:after{
+				display:none;
+			}
+		}
+
 		&:hover{
 			background-color: #3e9ccf;
 		}
