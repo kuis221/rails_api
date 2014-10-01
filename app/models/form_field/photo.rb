@@ -18,11 +18,11 @@
 class FormField::Photo < FormField
   def field_options(result)
     { as: :attached_asset,
-      label: self.name,
-      field_id: self.id, options: self.settings,
+      label: name,
+      field_id: id, options: settings,
       file_types: '(\.|\/)(gif|jpe?g|png)$',
       browse_legend: 'inputs.attached_asset.select_file.photo',
-      required: self.required, input_html: {
+      required: required, input_html: {
         value: result.value, class: field_classes,
         required: (self.required? ? 'required' : nil) } }
   end
@@ -39,14 +39,14 @@ class FormField::Photo < FormField
     if result.attached_asset.present? && result.attached_asset.processed?
       "<a href=\"#{result.attached_asset.download_url}\" title=\"Download\"><img src=\"#{result.attached_asset.file.url(:thumbnail)}\" alt=\"\" /></a>".html_safe
     elsif result.attached_asset.present?
-      "The photo is being processed. It will be available soon.."
+      'The photo is being processed. It will be available soon..'
     end
   end
 
   def validate_result(result)
     super
     if result.attached_asset.present? && !result.attached_asset.valid?
-      result.errors.add :value, "is not valid"
+      result.errors.add :value, 'is not valid'
     end
   end
 end

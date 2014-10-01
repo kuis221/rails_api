@@ -26,7 +26,7 @@
 #  is_location            :boolean
 #
 
-require "base64"
+require 'base64'
 
 class Place < ActiveRecord::Base
   include GoalableModel
@@ -35,7 +35,7 @@ class Place < ActiveRecord::Base
   validates :reference, presence: true, uniqueness: true, unless: :is_custom_place, on: :create
 
   validates :country, allow_nil: true, allow_blank: true,
-                      inclusion: { in: proc { Country.all.map{|c| c[1]} }, message: 'is not valid' }
+                      inclusion: { in: proc { Country.all.map { |c| c[1] } }, message: 'is not valid' }
 
   # Areas-Places relationship
   has_many :events
@@ -63,12 +63,12 @@ class Place < ActiveRecord::Base
 
   serialize :types
 
-  scope :in_company, ->(company) { joins(:venues).where(venues: { company_id: company} ) }
+  scope :in_company, ->(company) { joins(:venues).where(venues: { company_id: company }) }
 
   scope :linked_to_campaign, ->(campaign) {
     select('DISTINCT places.*')
-    joins(:placeables).
-    where('(placeables.placeable_type=\'Campaign\' AND placeables.placeable_id=:campaign_id) OR
+    joins(:placeables)
+    .where('(placeables.placeable_type=\'Campaign\' AND placeables.placeable_id=:campaign_id) OR
       (placeables.placeable_type=\'Area\' AND placeables.placeable_id  in (
         select area_id FROM areas_campaigns where campaign_id=:campaign_id
       ))', campaign_id: campaign)
@@ -83,7 +83,7 @@ class Place < ActiveRecord::Base
   end
 
   def state_name
-    state || load_country.states[administrative_level_1]['name'] rescue nil if load_country and state
+    state || load_country.states[administrative_level_1]['name'] rescue nil if load_country && state
   end
 
   def continent_name
@@ -94,8 +94,8 @@ class Place < ActiveRecord::Base
     @the_country ||= Country.new(country) if country
   end
 
-  def name_with_location(sep=', ')
-    [self.name, [self.route, self.city, self.state_name, self.country_name].compact.uniq.join(', ')].join(sep)
+  def name_with_location(sep = ', ')
+    [name, [route, city, state_name, country_name].compact.uniq.join(', ')].join(sep)
   end
 
   def update_info_from_api
@@ -135,7 +135,7 @@ class Place < ActiveRecord::Base
   def photos(company_id)
     list_photos = []
     if persisted?
-      search = AttachedAsset.do_search(place_id: self.id, company_id: company_id, asset_type: 'photo', status: 'Active', sorting: :created_at, sorting_dir: :desc, per_page: 10)
+      search = AttachedAsset.do_search(place_id: id, company_id: company_id, asset_type: 'photo', status: 'Active', sorting: :created_at, sorting_dir: :desc, per_page: 10)
       list_photos = search.results
     end
     list_photos += spot.photos if spot && list_photos.length < 10
@@ -144,17 +144,17 @@ class Place < ActiveRecord::Base
 
   def update_locations
     ary = Place.political_division(self)
-    paths = ary.count.times.map { |i| ary.slice(0, i+1).compact.join('/').downcase }
-    self.locations = paths.map{|path| Location.find_or_create_by(path: path) }
+    paths = ary.count.times.map { |i| ary.slice(0, i + 1).compact.join('/').downcase }
+    self.locations = paths.map { |path| Location.find_or_create_by(path: path) }
     self.location = Location.find_or_create_by(path: paths.last)
-    self.is_location = (self.types.present? && (self.types & ['sublocality', 'political', 'locality', 'administrative_area_level_1', 'administrative_area_level_2', 'administrative_area_level_3', 'country', 'natural_feature']).count > 0)
+    self.is_location = (types.present? && (types & %w(sublocality political locality administrative_area_level_1 administrative_area_level_2 administrative_area_level_3 country natural_feature)).count > 0)
     true
   end
 
   def location_ids
     @location_ids ||= if new_record?
-      update_locations unless locations.any?
-      locations.map(&:id)
+                        update_locations unless locations.any?
+                        locations.map(&:id)
     else
       locations.pluck('locations.id')
     end
@@ -203,20 +203,20 @@ class Place < ActiveRecord::Base
           valid: true
         }
       end
-      local_references = local_results.map{|p| [p.reference, p.place.place_id]}.flatten.compact
+      local_references = local_results.map { |p| [p.reference, p.place.place_id] }.flatten.compact
 
-      valid_flag = ->(result){
+      valid_flag = ->(result)do
         params[:current_company_user].nil? ||
         params[:current_company_user].is_admin? ||
         params[:current_company_user].allowed_to_access_place?(build_from_autocoplete_result(result))
-      }
+      end
 
-      google_results = JSON.parse(open("https://maps.googleapis.com/maps/api/place/textsearch/json?key=#{GOOGLE_API_KEY}&sensor=false&query=#{CGI::escape(params[:q])}").read)
+      google_results = JSON.parse(open("https://maps.googleapis.com/maps/api/place/textsearch/json?key=#{GOOGLE_API_KEY}&sensor=false&query=#{CGI.escape(params[:q])}").read)
       if google_results && google_results['results'].present?
-        sort_index = {true => 0, false => 1} # elements with :valid=true should go first
-        results.concat(google_results['results'].
-          reject{|p| local_references.include?(p['reference']) || local_references.include?(p['id']) }.
-          map do |p|
+        sort_index = { true => 0, false => 1 } # elements with :valid=true should go first
+        results.concat(google_results['results']
+          .reject { |p| local_references.include?(p['reference']) || local_references.include?(p['id']) }
+          .map do |p|
             name = p['formatted_address'].match(/\A#{Regexp.escape(p['name'])}/i) ? nil : p['name']
             label = [name, p['formatted_address'].to_s].compact.join(', ')
             {
@@ -225,21 +225,21 @@ class Place < ActiveRecord::Base
               id: "#{p['reference']}||#{p['id']}",
               valid: valid_flag.call(p)
             }
-          end.sort!{|x,y| sort_index[x[:valid]] <=> sort_index[y[:valid]] }.slice!(0, 10-results.count))
+          end.sort! { |x, y| sort_index[x[:valid]] <=> sort_index[y[:valid]] }.slice!(0, 10 - results.count))
       end
       results
     end
 
     def combined_search_params(params)
       params.merge per_page: 5,
-          search_address: true,
-          sorting: 'score',
-          sorting_dir: 'desc'
+                   search_address: true,
+                   sorting: 'score',
+                   sorting_dir: 'desc'
     end
 
     def find_tdlinx_place(binds)
       connection.select_value(
-        sanitize_sql_array(["select find_tdlinx_place(:name, :street, :city, :state, :zipcode)", binds])
+        sanitize_sql_array(['select find_tdlinx_place(:name, :street, :city, :state, :zipcode)', binds])
       ).try(:to_i)
     end
 
@@ -247,13 +247,13 @@ class Place < ActiveRecord::Base
       if result['formatted_address'] &&
          (m = result['formatted_address'].match(/\A.*?,?\s*([^,]+)\s*,\s*([^,]+)\s*,\s*([^,]+)\s*\z/))
         country = m[3]
-        country = Country.all.detect(->{[country, country]}){|c| b = Country.new(c[1]); b.alpha3 == country}[1] if country.match(/\A[A-Z]{3}\z/)
-        country = Country.all.detect(->{[country, country]}){|c| c[0].downcase == country.downcase}[1] unless country.match(/\A[A-Z]{2}\z/)
+        country = Country.all.find(-> { [country, country] }) { |c| b = Country.new(c[1]); b.alpha3 == country }[1] if country.match(/\A[A-Z]{3}\z/)
+        country = Country.all.find(-> { [country, country] }) { |c| c[0].downcase == country.downcase }[1] unless country.match(/\A[A-Z]{2}\z/)
         if (country_obj = Country.new(country)) && country_obj.data
           state = m[2]
           state.gsub!(/\s+[0-9\-]+\s*\z/, '') # Strip Zip code from stage if present
           city = m[1]
-          state = country_obj.states[state]['name'] if country_obj.states.has_key?(state)
+          state = country_obj.states[state]['name'] if country_obj.states.key?(state)
           Place.new(name: result['name'], city: city, state: state, country: country, types: result['types'])
         end
       end
@@ -262,114 +262,112 @@ class Place < ActiveRecord::Base
 
   private
 
-    def fetch_place_data
-      if reference && !do_not_connect_to_api
-        self.name = spot.name
-        self.latitude = spot.lat
-        self.longitude = spot.lng
-        self.formatted_address = spot.formatted_address
-        self.types = spot.types
-        self.types ||= []
-        sublocality = nil
+  def fetch_place_data
+    if reference && !do_not_connect_to_api
+      self.name = spot.name
+      self.latitude = spot.lat
+      self.longitude = spot.lng
+      self.formatted_address = spot.formatted_address
+      self.types = spot.types
+      self.types ||= []
+      sublocality = nil
 
-        # Parse the address components
-        if spot.address_components.present?
-          spot.address_components.each do |component|
-            if component['types'].include?('country')
-              self.country = component['short_name']
-            elsif component['types'].include?('administrative_area_level_1')
-              self.administrative_level_1 = component['short_name']
-              self.state = component['long_name']
-            elsif component['types'].include?('administrative_area_level_2')
-              self.administrative_level_2 = component['short_name']
-            elsif component['types'].include?('locality')
-              self.city = component['long_name']
-            elsif component['types'].include?('postal_code')
-              self.zipcode = component['long_name']
-            elsif component['types'].include?('street_number')
-              self.street_number = component['long_name']
-            elsif component['types'].include?('route')
-              self.route = component['long_name']
-            elsif component['types'].include?('sublocality') || component['types'].include?('neighborhood')
-              self.neighborhood = component['long_name']
+      # Parse the address components
+      if spot.address_components.present?
+        spot.address_components.each do |component|
+          if component['types'].include?('country')
+            self.country = component['short_name']
+          elsif component['types'].include?('administrative_area_level_1')
+            self.administrative_level_1 = component['short_name']
+            self.state = component['long_name']
+          elsif component['types'].include?('administrative_area_level_2')
+            self.administrative_level_2 = component['short_name']
+          elsif component['types'].include?('locality')
+            self.city = component['long_name']
+          elsif component['types'].include?('postal_code')
+            self.zipcode = component['long_name']
+          elsif component['types'].include?('street_number')
+            self.street_number = component['long_name']
+          elsif component['types'].include?('route')
+            self.route = component['long_name']
+          elsif component['types'].include?('sublocality') || component['types'].include?('neighborhood')
+            self.neighborhood = component['long_name']
+          end
+        end
+      end
+
+      # Sometimes the API doesn't provide the state's long_name
+      if country == 'US' && state =~ /^[A-Z]{1,2}$/
+        self.state = load_country.states[administrative_level_1]['name'] rescue state if load_country
+      end
+
+      # Make sure the city returned by Google is the correct one
+      if city.present?
+        results = client.spots(latitude, longitude, types: 'political', name: city, radius: 50_000)
+        if results.any?
+          results.each do |result|
+            city_spot = client.spot(result.reference)
+            if city_spot.city == city_spot.name || city_spot.name == city
+              self.city = city_spot.city if city_spot.present? && city_spot.city.present?
+              break
+            end
+          end
+        end
+      end
+
+      sublocality = neighborhood
+      sublocality ||= route if self.types && self.types.include?('establishment')
+      sublocality ||= zipcode if self.types && self.types.include?('establishment')
+
+      # There are cases where the API doesn't give a city but a neighborhood (sublocality)
+      if !city && !self.types.include?('administrative_area_level_2') && sublocality
+        spots = client.spots(latitude, longitude, keywords: sublocality)
+        spots.each do |aspot|
+          s = client.spot(aspot.reference)
+          if s.address_components.present?
+            city = s.address_components.find { |c| c['types'].include?('locality') }.try(:[], 'long_name')
+            if city.present?
+              self.city = city
+              break
             end
           end
         end
 
-        # Sometimes the API doesn't provide the state's long_name
-        if self.country == 'US' && self.state =~ /^[A-Z]{1,2}$/
-          self.state = load_country.states[administrative_level_1]['name'] rescue self.state if load_country
+        # If still there is no city... :s then assign it's own name as the city
+        # Example of places with this issue:
+        # West Lake, TX: client.spot('CnRoAAAATClnCR7qKsJeD5nYegW8j9BLrDI2OsM-89wiA-NO-acvlYhSYXcef09z4Dns2p92zVfCCYJPET33QkrkzKeBt9y_fVOF-UfckvjwADE-rGsj4FIBJ4-s7O88LC0Y4yOz5e8vwYy5RjmMjx-dhG0IQxIQ3RfSNWKpoqim4qMLhdGhUhoUkH8hTzQ8E7Wgv6afi0RQmYzBP2Y')
+        unless self.city
+          self.city = name
         end
-
-        # Make sure the city returned by Google is the correct one
-        if self.city.present?
-          results = client.spots(self.latitude, self.longitude, types: 'political', name: self.city, radius: 50000)
-          if results.any?
-            results.each do |result|
-              city_spot = client.spot(result.reference)
-              if city_spot.city == city_spot.name || city_spot.name == self.city
-                self.city = city_spot.city if city_spot.present? && city_spot.city.present?
-                break
-              end
-            end
-          end
-        end
-
-        sublocality = self.neighborhood
-        sublocality ||= self.route if self.types && self.types.include?('establishment')
-        sublocality ||= self.zipcode if self.types && self.types.include?('establishment')
-
-        # There are cases where the API doesn't give a city but a neighborhood (sublocality)
-        if !self.city && !self.types.include?('administrative_area_level_2') && sublocality
-          spots = client.spots(self.latitude, self.longitude, keywords: sublocality)
-          spots.each do |aspot|
-            s = client.spot(aspot.reference)
-            if s.address_components.present?
-              city = s.address_components.detect{|c| c['types'].include?('locality') }.try(:[], 'long_name')
-              if city.present?
-                self.city = city
-                break
-              end
-            end
-          end
-
-          # If still there is no city... :s then assign it's own name as the city
-          # Example of places with this issue:
-          # West Lake, TX: client.spot('CnRoAAAATClnCR7qKsJeD5nYegW8j9BLrDI2OsM-89wiA-NO-acvlYhSYXcef09z4Dns2p92zVfCCYJPET33QkrkzKeBt9y_fVOF-UfckvjwADE-rGsj4FIBJ4-s7O88LC0Y4yOz5e8vwYy5RjmMjx-dhG0IQxIQ3RfSNWKpoqim4qMLhdGhUhoUkH8hTzQ8E7Wgv6afi0RQmYzBP2Y')
-          if !self.city
-            self.city = self.name
-          end
-        end
-
-        self.city.strip! unless self.city.nil?
-        self.state.strip! unless self.state.nil?
-        self.country.strip! unless self.country.nil?
-
-        update_locations
-        self
       end
-    end
 
-    def spot
-      @spot ||= client.spot(reference) if reference.present?
-    rescue GooglePlaces::NotFoundError
-      @spot = false
-    end
+      self.city.strip! unless self.city.nil?
+      state.strip! unless state.nil?
+      country.strip! unless country.nil?
 
-    def client
-      @client ||= GooglePlaces::Client.new(GOOGLE_API_KEY)
+      update_locations
+      self
     end
+  end
 
-    def clear_cache
-      Placeable.where(place_id: id).each do |placeable|
-        placeable.update_associated_resources
-      end
-    end
+  def spot
+    @spot ||= client.spot(reference) if reference.present?
+  rescue GooglePlaces::NotFoundError
+    @spot = false
+  end
 
-    def reindex_associated
-      Sunspot.index Venue.where(place_id: id)
-      self.areas.each do |area|
-        Area.update_common_denominators(area)
-      end
+  def client
+    @client ||= GooglePlaces::Client.new(GOOGLE_API_KEY)
+  end
+
+  def clear_cache
+    Placeable.where(place_id: id).each(&:update_associated_resources)
+  end
+
+  def reindex_associated
+    Sunspot.index Venue.where(place_id: id)
+    areas.each do |area|
+      Area.update_common_denominators(area)
     end
+  end
 end

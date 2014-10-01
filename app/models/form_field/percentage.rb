@@ -20,10 +20,10 @@ class FormField::Percentage < FormField
     {
       as: :percentage,
       collection: options_for_input,
-      label: self.name,
-      field_id: self.id,
-      options: self.settings,
-      required: self.required,
+      label: name,
+      field_id: id,
+      options: settings,
+      required: required,
       label_html: { class: 'control-group-label' },
       input_html: {
         value: result.value,
@@ -59,7 +59,7 @@ class FormField::Percentage < FormField
     super
     unless result.errors.get(:value) || !result.value.is_a?(Hash)
       total = result.value.values.map(&:to_f).reduce(:+).to_i
-      if (self.required && total != 100) || (!self.required && total != 100 && total != 0)
+      if (required && total != 100) || (!required && total != 100 && total != 0)
         result.errors.add :value, :invalid
       end
     end

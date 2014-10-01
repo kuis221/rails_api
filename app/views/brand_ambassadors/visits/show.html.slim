@@ -35,7 +35,7 @@
           = resource.description
 
     .links-data
-      = link_to '', edit_brand_ambassadors_visit_path(resource), remote: true, title: 'Edit', class: 'icon-edit' if can?(:edit, resource)
+      = button_to_edit resource if can?(:edit, resource)
       = active_inactive_buttons(resource) if can?(:deactivate, resource)
 
   #visit-events.details_box
@@ -51,7 +51,4 @@
   #visit-documents.details_box
     = render partial: 'brand_ambassadors/document_folders/index', locals: {children: (resource.document_folders.root_children.active + resource.brand_ambassadors_documents.root_children.active).sort_by(&:name), parent: resource }
 
-javascript:
-  $(document).on('brand_ambassadors_visits:change', function(){
-    window.location.reload(true);
-  })
+- reload_page_on_edit_resource

@@ -5,19 +5,19 @@ ActiveAdmin.register Place do
   filter :name
   filter :city
   filter :state
-  filter :country, :as => :select, :collection => proc { Country.all }
+  filter :country, as: :select, collection: proc { Country.all }
   filter :zipcode
   filter :td_linx_code
 
   form do |f|
-    f.inputs "Details" do
+    f.inputs 'Details' do
       f.input :name
     end
 
-    f.inputs "Address" do
+    f.inputs 'Address' do
       f.input :formatted_address
-      f.input :street_number, label: "Address 1"
-      f.input :route,  label: "Address 2"
+      f.input :street_number, label: 'Address 1'
+      f.input :route,  label: 'Address 2'
       f.input :zipcode
       f.input :city
       f.input :state
@@ -37,7 +37,7 @@ ActiveAdmin.register Place do
 
   end
 
-  collection_action :migrated_venues, :method => :get do
+  collection_action :migrated_venues, method: :get do
     @migrations = Legacy::DataMigration.joins('INNER JOIN places pl ON pl.id=local_id AND local_type=\'Place\'').where(local_type: 'Place').search(params[:q]).order('pl.name').page(params[:page])
   end
 
@@ -76,10 +76,9 @@ ActiveAdmin.register Place do
     end
   end
 
-
   controller do
     def permitted_params
-      params.permit(:place => [:name, :formatted_address, :street_number, :route, :zipcode, :city, :state, :country, :td_linx_code])
+      params.permit(place: [:name, :formatted_address, :street_number, :route, :zipcode, :city, :state, :country, :td_linx_code])
     end
   end
 end

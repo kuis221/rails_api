@@ -1,112 +1,72 @@
 @import "variables";
-.documents-list{
-	margin:20px 0 0 0;
-	.document{
-		display: block;
-		margin: 0;
-		padding: 0 20px;
-		width: auto;
-		a{
-			color: $text;
-			font-weight: normal;
-			position: relative;
-			width: 85%;
-		}
-		.folder-item{
-			font-size: 14px;
-			i{
-				color: $grey_four;
-				font-size: 25px;
-				margin-right: 15px;
-				position: relative;
-				top: 3px;
-			}
-		}
-		.document-item{
-			display: table;
-			width: 100%;
-			.document-name{
-				font-size: 14px;
-				padding-right: 50px;
-				width: 50%;
-			}
-			.document-type, .document-date{
-				width:20%;
-			}
-		}
-		.pull-right{
-			top: 0;
-			a{
-				width: auto;
-			}
-		}
-		img{
-			height: 40px;
-			margin-right: 15px;
-			width: 32px;
+.documents-list {
+	margin-bottom: 10px;
+	.resource-item-link{
+		margin-top: 10px;
+		.document-type, .document-date {
+			margin-top: 10px;
 		}
 	}
-	li{
-		width: auto;
-		&.collapse{
-			&+ li{
-				border-top: 0;
-			}
-			&.in{
-				border-bottom: 1px solid $grey_four;
-			}
-		}
-	}
-	#new-folder-form { /*Create a new folder grey zone*/
-
-		background-color: $grey_one;
-		max-height: 70px;
-
-		.new_document_folder{
-			padding: 16px 20px;
-		}
-		.icon-folder{
-			color: $user_menu;
-			display: inline-block;
+	.folder-item .resource-item-link{
+		font-size: 14px;
+		i{
+			color: $grey_four;
 			font-size: 25px;
 			margin-right: 15px;
-			&+.control-group{
-				display: inline-block;
-				margin-bottom:0;
-				.controls input{
-					margin-bottom:0;
-				}
-			}
-		}
-		.icon-close {
-			width: 21px;
-			position: absolute;
-			right: 16px;
-			top: 25px;
-		}
-		input[type=text] {
-			border: 1px solid $user_menu;
-			height: 36px;
-			width: 255px;
-			&::-webkit-input-placeholder {
-				color: $grey_four;
-			}
-
-			&:-moz-placeholder { /* Firefox 18- */
-				color: $grey_four;
-			}
-
-			&::-moz-placeholder {  /* Firefox 19+ */
-				color: $grey_four;
-			}
-
-			&:-ms-input-placeholder {
-				color: $grey_four;
-			}
+			position: relative;
+			top: 3px;
 		}
 	}
 }
 
+#new-folder-form { /*Create a new folder grey zone*/
+
+	background-color: $grey_one;
+	max-height: 70px;
+
+	.new_document_folder{
+		padding: 16px 20px;
+	}
+	.icon-folder{
+		color: $user_menu;
+		display: inline-block;
+		font-size: 25px;
+		margin-right: 15px;
+		&+.control-group{
+			display: inline-block;
+			margin-bottom:0;
+			.controls input{
+				margin-bottom:0;
+			}
+		}
+	}
+	.icon-close {
+		width: 21px;
+		position: absolute;
+		right: 16px;
+		top: 25px;
+	}
+	input[type=text] {
+		border: 1px solid $user_menu;
+		height: 36px;
+		width: 255px;
+		&::-webkit-input-placeholder {
+			color: $grey_four;
+		}
+
+		&:-moz-placeholder { /* Firefox 18- */
+			color: $grey_four;
+		}
+
+		&::-moz-placeholder {  /* Firefox 19+ */
+			color: $grey_four;
+		}
+
+		&:-ms-input-placeholder {
+			color: $grey_four;
+		}
+	}
+}
 #documents-container{
 	#asset_upload_dialog{
 		margin-top: 20px;

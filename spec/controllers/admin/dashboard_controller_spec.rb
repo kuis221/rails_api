@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-describe Admin::DashboardController, :type => :controller do
+describe Admin::DashboardController, type: :controller do
   before do
-    @user = FactoryGirl.create(:admin_user)
+    @user = create(:admin_user)
     sign_in @user
   end
 

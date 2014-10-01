@@ -1,5 +1,4 @@
 class Api::V1::EventExpensesController < Api::V1::ApiController
-
   inherit_resources
 
   belongs_to :event
@@ -8,10 +7,10 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
 
   resource_description do
     short 'Expenses'
-    formats ['json', 'xml']
-    error 404, "Missing"
-    error 401, "Unauthorized access"
-    error 500, "Server crashed for some reason"
+    formats %w(json xml)
+    error 404, 'Missing'
+    error 401, 'Unauthorized access'
+    error 500, 'Server crashed for some reason'
     param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
     param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
     description <<-EOS
@@ -20,17 +19,17 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
   end
 
   def_param_group :event_expense do
-    param :event_expense, Hash, required: true, :action_aware => true do
-      param :name, String, required: true, desc: "Event expense name/label"
-      param :amount, String, required: true, desc: "Event expense amount"
+    param :event_expense, Hash, required: true, action_aware: true do
+      param :name, String, required: true, desc: 'Event expense name/label'
+      param :amount, String, required: true, desc: 'Event expense amount'
       param :receipt_attributes, Hash do
         param :direct_upload_url, String, desc: "The receipt URL. This should be a valid Amazon S3's URL."
       end
     end
   end
 
-  api :GET, '/api/v1/events/:event_id/event_expenses', "Get a list of expenses for an Event"
-  param :event_id, :number, required: true, desc: "Event ID"
+  api :GET, '/api/v1/events/:event_id/event_expenses', 'Get a list of expenses for an Event'
+  param :event_id, :number, required: true, desc: 'Event ID'
   description <<-EOS
     Returns a list of expenses associated to the event.
 
@@ -92,11 +91,11 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
   EOS
   def index
     authorize!(:expenses, parent)
-    @expenses = parent.event_expenses.sort_by {|e| e.id}
+    @expenses = parent.event_expenses.sort_by(&:id)
   end
 
   api :POST, '/api/v1/events/:event_id/event_expenses', 'Create a new event expense'
-  param :event_id, :number, required: true, desc: "Event ID"
+  param :event_id, :number, required: true, desc: 'Event ID'
   param_group :event_expense
   description <<-EOS
   Allows to attach an expense file to the event. The expense file should first be uploaded to Amazon S3 using the
@@ -147,7 +146,7 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
     end
   end
 
-  api :GET, '/api/v1/events/:event_id/event_expenses/form', "Returns a list of requred fields for uploading a file to S3"
+  api :GET, '/api/v1/events/:event_id/event_expenses/form', 'Returns a list of requred fields for uploading a file to S3'
   description <<-EOS
   This method returns all the info required to make a POST to Amazon S3 to upload a new file. The key sent to S3 should start with
   /uploads and has to be created into a new folder with a unique generated name. Ideally using a GUID. Eg:
@@ -172,9 +171,9 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
     authorize!(:create_expense, parent)
     if parent.campaign.enabled_modules.include?('expenses') && can?(:expenses, parent) && can?(:create_expense, parent)
       bucket = AWS::S3.new.buckets[ENV['S3_BUCKET_NAME']]
-      form = bucket.presigned_post(acl: 'public-read', success_action_status: 201).
-                  where(:key).starts_with("uploads/").
-                  where(:content_type).starts_with('')
+      form = bucket.presigned_post(acl: 'public-read', success_action_status: 201)
+                  .where(:key).starts_with('uploads/')
+                  .where(:content_type).starts_with('')
       data = { fields: form.fields, url: "https://#{ENV['S3_BUCKET_NAME']}.s3.amazonaws.com/"  }
       respond_to do |format|
         format.json { render json: data }
@@ -182,23 +181,23 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
       end
     else
       respond_to do |format|
-        format.json {  render :status => 401, json: {} }
-        format.xml { render :status => 401, xml: {} }
+        format.json {  render status: 401, json: {} }
+        format.xml { render status: 401, xml: {} }
       end
     end
   end
 
   protected
 
-    def build_resource_params
-      [permitted_params || {}]
-    end
+  def build_resource_params
+    [permitted_params || {}]
+  end
 
-    def permitted_params
-      params.permit(event_expense: [:amount, {receipt_attributes:[:direct_upload_url]}, :name])[:event_expense]
-    end
+  def permitted_params
+    params.permit(event_expense: [:amount, { receipt_attributes: [:direct_upload_url] }, :name])[:event_expense]
+  end
 
-    def skip_default_validation
-      true
-    end
+  def skip_default_validation
+    true
+  end
 end

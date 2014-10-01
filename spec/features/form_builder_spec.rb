@@ -1,10 +1,9 @@
 require 'rails_helper'
 
-
-RSpec.shared_examples "a fieldable element" do
+RSpec.shared_examples 'a fieldable element' do
   let(:fieldable_path) { url_for(fieldable, only_path: true) }
 
-  scenario "user can add a field to the form by clicking on it" do
+  scenario 'user can add a field to the form by clicking on it' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     text_field.click
@@ -13,15 +12,15 @@ RSpec.shared_examples "a fieldable element" do
     expect(form_builder).to have_form_field('Single line text')
 
     # Save the form
-    expect {
+    expect do
       click_js_button 'Save'
       wait_for_ajax
-    }.to change(FormField, :count).by(1)
+    end.to change(FormField, :count).by(1)
     field = FormField.last
     expect(field.type).to eql 'FormField::Text'
   end
 
-  scenario "user can add paragraph fields to form" do
+  scenario 'user can add paragraph fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     text_area_field.drag_to form_builder
@@ -46,10 +45,10 @@ RSpec.shared_examples "a fieldable element" do
     expect(page).to have_no_selector('.field-attributes-panel')
 
     # Save the form
-    expect {
+    expect do
       click_js_button 'Save'
       wait_for_ajax
-    }.to change(FormField, :count).by(1)
+    end.to change(FormField, :count).by(1)
     field = FormField.last
     expect(field.name).to eql 'My Text Field'
     expect(field.type).to eql 'FormField::TextArea'
@@ -64,7 +63,7 @@ RSpec.shared_examples "a fieldable element" do
     end
   end
 
-  scenario "user can add single line text fields to form" do
+  scenario 'user can add single line text fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     text_field.drag_to form_builder
@@ -89,10 +88,10 @@ RSpec.shared_examples "a fieldable element" do
     expect(page).to have_no_selector('.field-attributes-panel')
 
     # Save the form
-    expect {
+    expect do
       click_js_button 'Save'
       wait_for_ajax
-    }.to change(FormField, :count).by(1)
+    end.to change(FormField, :count).by(1)
     field = FormField.last
     expect(field.name).to eql 'My Text Field'
     expect(field.required).to be_truthy
@@ -108,7 +107,7 @@ RSpec.shared_examples "a fieldable element" do
     end
   end
 
-  scenario "user can add numeric fields to form" do
+  scenario 'user can add numeric fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     number_field.drag_to form_builder
@@ -133,10 +132,10 @@ RSpec.shared_examples "a fieldable element" do
     expect(page).to have_no_selector('.field-attributes-panel')
 
     # Save the form
-    expect {
+    expect do
       click_js_button 'Save'
       wait_for_ajax
-    }.to change(FormField, :count).by(1)
+    end.to change(FormField, :count).by(1)
     field = FormField.last
     expect(field.name).to eql 'My Numeric Field'
     expect(field.type).to eql 'FormField::Number'
@@ -151,8 +150,7 @@ RSpec.shared_examples "a fieldable element" do
     end
   end
 
-
-  scenario "user can add currency fields to form" do
+  scenario 'user can add currency fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     price_field.drag_to form_builder
@@ -177,10 +175,10 @@ RSpec.shared_examples "a fieldable element" do
     expect(page).to have_no_selector('.field-attributes-panel')
 
     # Save the form
-    expect {
+    expect do
       click_js_button 'Save'
       wait_for_ajax
-    }.to change(FormField, :count).by(1)
+    end.to change(FormField, :count).by(1)
     field = FormField.last
     expect(field.name).to eql 'My Price Field'
     expect(field.type).to eql 'FormField::Currency'
@@ -196,13 +194,13 @@ RSpec.shared_examples "a fieldable element" do
     end
   end
 
-  scenario "user can add/delete radio fields to form" do
+  scenario 'user can add/delete radio fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     radio_field.drag_to form_builder
 
     expect(form_builder).to have_form_field('Multiple Choice',
-        with_options: ['Option 1']
+                                            with_options: ['Option 1']
       )
 
     within form_field_settings_for 'Multiple Choice' do
@@ -213,7 +211,7 @@ RSpec.shared_examples "a fieldable element" do
     end
 
     expect(form_builder).to have_form_field('My Radio Field',
-        with_options: ['First Option', 'Second Option']
+                                            with_options: ['First Option', 'Second Option']
       )
 
     # Close the field settings form
@@ -221,12 +219,12 @@ RSpec.shared_examples "a fieldable element" do
     expect(page).to have_no_selector('.field-attributes-panel')
 
     # Save the form
-    expect {
-      expect {
+    expect do
+      expect do
         click_js_button 'Save'
         wait_for_ajax
-      }.to change(FormField, :count).by(1)
-    }.to change(FormFieldOption, :count).by(2)
+      end.to change(FormField, :count).by(1)
+    end.to change(FormFieldOption, :count).by(2)
     field = FormField.last
     expect(field.name).to eql 'My Radio Field'
     expect(field.type).to eql 'FormField::Radio'
@@ -235,16 +233,16 @@ RSpec.shared_examples "a fieldable element" do
 
     # Remove fields
     expect(form_builder).to have_form_field('My Radio Field',
-        with_options: ['First Option', 'Second Option']
+                                            with_options: ['First Option', 'Second Option']
       )
 
     within form_field_settings_for 'My Radio Field' do
       # Remove the second option (the first one doesn't have the link)
-      within('.field-option:nth-child(2)'){ click_js_link 'Add option after this' }
-      within('.field-option:nth-child(2)'){ click_js_link 'Remove this option' }
+      within('.field-option:nth-child(2)') { click_js_link 'Add option after this' }
+      within('.field-option:nth-child(2)') { click_js_link 'Remove this option' }
     end
 
-    confirm_prompt "Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone"
+    confirm_prompt 'Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone'
 
     within form_field_settings_for 'My Radio Field' do
       expect(page).to have_no_content('Second Option')
@@ -252,31 +250,31 @@ RSpec.shared_examples "a fieldable element" do
 
     within form_field_settings_for 'My Radio Field' do
       # Remove the second option (the first one doesn't have the link)
-      within('.field-option:nth-child(3)'){ click_js_link 'Remove this option' }
+      within('.field-option:nth-child(3)') { click_js_link 'Remove this option' }
     end
 
-    confirm_prompt "Are you sure you want to remove this option?"
+    confirm_prompt 'Are you sure you want to remove this option?'
 
     within form_field_settings_for 'My Radio Field' do
       expect(page).to have_no_content('Option 3')
     end
 
     # Save the form
-    expect {
-      expect {
+    expect do
+      expect do
         click_js_button 'Save'
         wait_for_ajax
-      }.to_not change(FormField, :count)
-    }.to change(FormFieldOption, :count).by(-1)
+      end.to_not change(FormField, :count)
+    end.to change(FormFieldOption, :count).by(-1)
   end
 
-  scenario "user can add/delete checkbox fields to form" do
+  scenario 'user can add/delete checkbox fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     checkbox_field.drag_to form_builder
 
     expect(form_builder).to have_form_field('Checkboxes',
-        with_options: ['Option 1']
+                                            with_options: ['Option 1']
       )
 
     within form_field_settings_for 'Checkboxes' do
@@ -287,7 +285,7 @@ RSpec.shared_examples "a fieldable element" do
     end
 
     expect(form_builder).to have_form_field('My Checkbox Field',
-        with_options: ['First Option', 'Second Option']
+                                            with_options: ['First Option', 'Second Option']
       )
 
     # Close the field settings form
@@ -295,12 +293,12 @@ RSpec.shared_examples "a fieldable element" do
     expect(page).to have_no_selector('.field-attributes-panel')
 
     # Save the form
-    expect {
-      expect {
+    expect do
+      expect do
         click_js_button 'Save'
         wait_for_ajax
-      }.to change(FormField, :count).by(1)
-    }.to change(FormFieldOption, :count).by(2)
+      end.to change(FormField, :count).by(1)
+    end.to change(FormFieldOption, :count).by(2)
     field = FormField.last
     expect(field.name).to eql 'My Checkbox Field'
     expect(field.type).to eql 'FormField::Checkbox'
@@ -309,45 +307,45 @@ RSpec.shared_examples "a fieldable element" do
 
     # Remove fields
     expect(form_builder).to have_form_field('My Checkbox Field',
-        with_options: ['First Option', 'Second Option']
+                                            with_options: ['First Option', 'Second Option']
       )
 
     within form_field_settings_for 'My Checkbox Field' do
       # Remove the second option (the first one doesn't have the link)
-      within('.field-option:nth-child(2)'){ click_js_link 'Add option after this' }
-      within('.field-option:nth-child(2)'){ click_js_link 'Remove this option' }
+      within('.field-option:nth-child(2)') { click_js_link 'Add option after this' }
+      within('.field-option:nth-child(2)') { click_js_link 'Remove this option' }
     end
-    confirm_prompt "Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone"
+    confirm_prompt 'Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone'
     within form_field_settings_for 'My Checkbox Field' do
       expect(page).to have_no_content('Second Option')
     end
 
     within form_field_settings_for 'My Checkbox Field' do
-      within('.field-option:nth-child(3)'){ click_js_link 'Remove this option' }
+      within('.field-option:nth-child(3)') { click_js_link 'Remove this option' }
     end
 
-    confirm_prompt "Are you sure you want to remove this option?"
+    confirm_prompt 'Are you sure you want to remove this option?'
 
     within form_field_settings_for 'My Checkbox Field' do
       expect(page).to have_no_content('Option 3')
     end
 
     # Save the form
-    expect {
-      expect {
+    expect do
+      expect do
         click_js_button 'Save'
         wait_for_ajax
-      }.to_not change(FormField, :count)
-    }.to change(FormFieldOption, :count).by(-1)
+      end.to_not change(FormField, :count)
+    end.to change(FormFieldOption, :count).by(-1)
   end
 
-  scenario "user can add/delete dropdown fields to form" do
+  scenario 'user can add/delete dropdown fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     dropdown_field.drag_to form_builder
 
     expect(form_builder).to have_form_field('Dropdown',
-        with_options: ['Option 1']
+                                            with_options: ['Option 1']
       )
 
     within form_field_settings_for 'Dropdown' do
@@ -358,7 +356,7 @@ RSpec.shared_examples "a fieldable element" do
     end
 
     expect(form_builder).to have_form_field('My Dropdown Field',
-        with_options: ['First Option', 'Second Option']
+                                            with_options: ['First Option', 'Second Option']
       )
 
     # Close the field settings form
@@ -366,12 +364,12 @@ RSpec.shared_examples "a fieldable element" do
     expect(page).to have_no_selector('.field-attributes-panel')
 
     # Save the form
-    expect {
-      expect {
+    expect do
+      expect do
         click_js_button 'Save'
         wait_for_ajax
-      }.to change(FormField, :count).by(1)
-    }.to change(FormFieldOption, :count).by(2)
+      end.to change(FormField, :count).by(1)
+    end.to change(FormFieldOption, :count).by(2)
     field = FormField.last
     expect(field.name).to eql 'My Dropdown Field'
     expect(field.type).to eql 'FormField::Dropdown'
@@ -380,40 +378,40 @@ RSpec.shared_examples "a fieldable element" do
 
     # Remove fields
     expect(form_builder).to have_form_field('My Dropdown Field',
-        with_options: ['First Option', 'Second Option']
+                                            with_options: ['First Option', 'Second Option']
       )
 
     within form_field_settings_for 'My Dropdown Field' do
       # Remove the second option (the first one doesn't have the link)
-      within('.field-option:nth-child(2)'){ click_js_link 'Add option after this' }
-      within('.field-option:nth-child(2)'){ click_js_link 'Remove this option' }
+      within('.field-option:nth-child(2)') { click_js_link 'Add option after this' }
+      within('.field-option:nth-child(2)') { click_js_link 'Remove this option' }
     end
 
-    confirm_prompt "Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone"
+    confirm_prompt 'Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone'
 
     within form_field_settings_for 'My Dropdown Field' do
       expect(page).to have_no_content('Second Option')
     end
 
     within form_field_settings_for 'My Dropdown Field' do
-      within('.field-option:nth-child(3)'){ click_js_link 'Remove this option' }
+      within('.field-option:nth-child(3)') { click_js_link 'Remove this option' }
     end
 
-    confirm_prompt "Are you sure you want to remove this option?"
+    confirm_prompt 'Are you sure you want to remove this option?'
 
     within form_field_settings_for 'My Dropdown Field' do
       expect(page).to have_no_content('Option 3')
     end
     # Save the form
-    expect {
-      expect {
+    expect do
+      expect do
         click_js_button 'Save'
         wait_for_ajax
-      }.to_not change(FormField, :count)
-    }.to change(FormFieldOption, :count).by(-1)
+      end.to_not change(FormField, :count)
+    end.to change(FormFieldOption, :count).by(-1)
   end
 
-  scenario "user can add date fields to form" do
+  scenario 'user can add date fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     date_field.drag_to form_builder
@@ -432,10 +430,10 @@ RSpec.shared_examples "a fieldable element" do
     expect(page).to have_no_selector('.field-attributes-panel')
 
     # Save the form
-    expect {
+    expect do
       click_js_button 'Save'
       wait_for_ajax
-    }.to change(FormField, :count).by(1)
+    end.to change(FormField, :count).by(1)
     field = FormField.last
     expect(field.name).to eql 'My Date Field'
     expect(field.type).to eql 'FormField::Date'
@@ -446,7 +444,7 @@ RSpec.shared_examples "a fieldable element" do
     end
   end
 
-  scenario "user can add time fields to form" do
+  scenario 'user can add time fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     time_field.drag_to form_builder
@@ -465,10 +463,10 @@ RSpec.shared_examples "a fieldable element" do
     expect(page).to have_no_selector('.field-attributes-panel')
 
     # Save the form
-    expect {
+    expect do
       click_js_button 'Save'
       wait_for_ajax
-    }.to change(FormField, :count).by(1)
+    end.to change(FormField, :count).by(1)
     field = FormField.last
     expect(field.name).to eql 'My Time Field'
     expect(field.type).to eql 'FormField::Time'
@@ -479,7 +477,7 @@ RSpec.shared_examples "a fieldable element" do
     end
   end
 
-  scenario "user can add brand fields to form" do
+  scenario 'user can add brand fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     brand_field.drag_to form_builder
@@ -497,10 +495,10 @@ RSpec.shared_examples "a fieldable element" do
     expect(page).to have_no_selector('.field-attributes-panel')
 
     # Save the form
-    expect {
+    expect do
       click_js_button 'Save'
       wait_for_ajax
-    }.to change(FormField, :count).by(1)
+    end.to change(FormField, :count).by(1)
     field = FormField.last
     expect(field.name).to eql 'Brand'
     expect(field.type).to eql 'FormField::Brand'
@@ -510,7 +508,7 @@ RSpec.shared_examples "a fieldable element" do
     end
   end
 
-  scenario "user can add section fields to form" do
+  scenario 'user can add section fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     section_field.drag_to form_builder
@@ -526,10 +524,10 @@ RSpec.shared_examples "a fieldable element" do
     expect(page).to have_no_selector('.field-attributes-panel')
 
     # Save the form
-    expect {
+    expect do
       click_js_button 'Save'
       wait_for_ajax
-    }.to change(FormField, :count).by(1)
+    end.to change(FormField, :count).by(1)
     field = FormField.last
     expect(field.name).to eql 'Section'
     expect(field.settings['description']).to eql 'This is the section description'
@@ -540,7 +538,7 @@ RSpec.shared_examples "a fieldable element" do
     end
   end
 
-  scenario "user can add marque fields to form" do
+  scenario 'user can add marque fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     marque_field.drag_to form_builder
@@ -558,10 +556,10 @@ RSpec.shared_examples "a fieldable element" do
     expect(page).to have_no_selector('.field-attributes-panel')
 
     # Save the form
-    expect {
+    expect do
       click_js_button 'Save'
       wait_for_ajax
-    }.to change(FormField, :count).by(1)
+    end.to change(FormField, :count).by(1)
     field = FormField.last
     expect(field.name).to eql 'Marque'
     expect(field.type).to eql 'FormField::Marque'
@@ -571,7 +569,7 @@ RSpec.shared_examples "a fieldable element" do
     end
   end
 
-  scenario "user can add photo fields to form" do
+  scenario 'user can add photo fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     photo_field.drag_to form_builder
@@ -590,17 +588,17 @@ RSpec.shared_examples "a fieldable element" do
     expect(page).to have_no_selector('.field-attributes-panel')
 
     # Save the form
-    expect {
+    expect do
       click_js_button 'Save'
       wait_for_ajax
-    }.to change(FormField, :count).by(1)
+    end.to change(FormField, :count).by(1)
     field = FormField.last
     expect(field.name).to eql 'My Photo Field'
     expect(field.required).to be_truthy
     expect(field.type).to eql 'FormField::Photo'
   end
 
-  scenario "user can add attachement fields to form" do
+  scenario 'user can add attachement fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     attachment_field.drag_to form_builder
@@ -619,34 +617,34 @@ RSpec.shared_examples "a fieldable element" do
     expect(page).to have_no_selector('.field-attributes-panel')
 
     # Save the form
-    expect {
+    expect do
       click_js_button 'Save'
       wait_for_ajax
-    }.to change(FormField, :count).by(1)
+    end.to change(FormField, :count).by(1)
     field = FormField.last
     expect(field.name).to eql 'My Attachment Field'
     expect(field.required).to be_truthy
     expect(field.type).to eql 'FormField::Attachment'
   end
 
-  scenario "user can add/delete percentage fields to form" do
+  scenario 'user can add/delete percentage fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     percentage_field.drag_to form_builder
 
     expect(form_builder).to have_form_field('Percent',
-        with_options: ['Option 1', 'Option 2', 'Option 3']
+                                            with_options: ['Option 1', 'Option 2', 'Option 3']
       )
 
     within form_field_settings_for 'Percent' do
       fill_in 'Field label', with: 'My Percent Field'
       fill_in 'option[0][name]', with: 'First Option'
-      within('.field-option:nth-child(2)'){ click_js_link 'Add option after this' } # Create another option
+      within('.field-option:nth-child(2)') { click_js_link 'Add option after this' } # Create another option
       fill_in 'option[1][name]', with: 'Second Option'
     end
 
     expect(form_builder).to have_form_field('My Percent Field',
-        with_options: ['First Option', 'Second Option']
+                                            with_options: ['First Option', 'Second Option']
       )
 
     # Close the field settings form
@@ -654,69 +652,69 @@ RSpec.shared_examples "a fieldable element" do
     expect(page).to have_no_selector('.field-attributes-panel')
 
     # Save the form
-    expect {
-      expect {
+    expect do
+      expect do
         click_js_button 'Save'
         wait_for_ajax
-      }.to change(FormField, :count).by(1)
-    }.to change(FormFieldOption, :count).by(4)
+      end.to change(FormField, :count).by(1)
+    end.to change(FormFieldOption, :count).by(4)
     field = FormField.last
     expect(field.name).to eql 'My Percent Field'
     expect(field.type).to eql 'FormField::Percentage'
-    expect(field.options.map(&:name)).to eql ['First Option', 'Second Option','Option 2', 'Option 3']
-    expect(field.options.map(&:ordering)).to eql [0, 1,2,3]
+    expect(field.options.map(&:name)).to eql ['First Option', 'Second Option', 'Option 2', 'Option 3']
+    expect(field.options.map(&:ordering)).to eql [0, 1, 2, 3]
 
     # Remove fields
     expect(form_builder).to have_form_field('My Percent Field',
-      with_options: ['First Option', 'Second Option']
+                                            with_options: ['First Option', 'Second Option']
     )
 
     within form_field_settings_for 'My Percent Field' do
       # Remove the second option (the first one doesn't have the link)
-      within('.field-option:nth-child(2)'){ click_js_link 'Add option after this' }
-      within('.field-option:nth-child(2)'){ click_js_link 'Remove this option' }
+      within('.field-option:nth-child(2)') { click_js_link 'Add option after this' }
+      within('.field-option:nth-child(2)') { click_js_link 'Remove this option' }
     end
-    confirm_prompt "Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone"
+    confirm_prompt 'Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone'
 
     within form_field_settings_for 'My Percent Field' do
       expect(page).to have_no_content('Second Option')
-      within('.field-option:nth-child(3)'){ click_js_link 'Remove this option' }
+      within('.field-option:nth-child(3)') { click_js_link 'Remove this option' }
 
     end
 
-    confirm_prompt "Are you sure you want to remove this option?"
+    confirm_prompt 'Are you sure you want to remove this option?'
 
     within form_field_settings_for 'My Percent Field' do
       expect(page).to have_no_content('Option 3')
     end
 
     # Save the form
-    expect {
-      expect {
+    expect do
+      expect do
         click_js_button 'Save'
         wait_for_ajax
-      }.to_not change(FormField, :count)
-    }.to change(FormFieldOption, :count).by(-1)
+      end.to_not change(FormField, :count)
+    end.to change(FormFieldOption, :count).by(-1)
   end
 
-  scenario "user can add/delete summation fields to form" do
+  scenario 'user can add/delete summation fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     summation_field.drag_to form_builder
 
     expect(form_builder).to have_form_field('Summation',
-        with_options: ['Option 1', 'Option 2']
+                                            with_options: ['Option 1', 'Option 2']
       )
 
     within form_field_settings_for 'Summation' do
       fill_in 'Field label', with: 'My Summation Field'
       fill_in 'option[0][name]', with: 'First Option'
-      within('.field-option:nth-child(2)'){ click_js_link 'Add option after this' } # Create another option
+      within('.field-option:nth-child(2)') { click_js_link 'Add option after this' } # Create another option
       fill_in 'option[1][name]', with: 'Second Option'
     end
 
     expect(form_builder).to have_form_field('My Summation Field',
-        with_options: ['First Option', 'Second Option']
+                                            with_options: ['First Option', 'Second Option']
       )
 
     # Close the field settings form
@@ -724,60 +722,60 @@ RSpec.shared_examples "a fieldable element" do
     expect(page).to have_no_selector('.field-attributes-panel')
 
     # Save the form
-    expect {
-      expect {
+    expect do
+      expect do
         click_js_button 'Save'
         wait_for_ajax
-      }.to change(FormField, :count).by(1)
-    }.to change(FormFieldOption, :count).by(3)
+      end.to change(FormField, :count).by(1)
+    end.to change(FormFieldOption, :count).by(3)
     field = FormField.last
     expect(field.name).to eql 'My Summation Field'
     expect(field.type).to eql 'FormField::Summation'
-    expect(field.options.map(&:name)).to eql ["First Option", "Second Option", "Option 2"]
+    expect(field.options.map(&:name)).to eql ['First Option', 'Second Option', 'Option 2']
     expect(field.options.map(&:ordering)).to eql [0, 1, 2]
 
     # Remove fields
     expect(form_builder).to have_form_field('My Summation Field',
-      with_options: ['First Option', 'Second Option']
+                                            with_options: ['First Option', 'Second Option']
     )
 
     within form_field_settings_for 'My Summation Field' do
       # Remove the second option (the first one doesn't have the link)
-      within('.field-option:nth-child(2)'){ click_js_link 'Add option after this' }
-      within('.field-option:nth-child(2)'){ click_js_link 'Remove this option' }
+      within('.field-option:nth-child(2)') { click_js_link 'Add option after this' }
+      within('.field-option:nth-child(2)') { click_js_link 'Remove this option' }
     end
 
-    confirm_prompt "Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone"
+    confirm_prompt 'Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone'
 
     within form_field_settings_for 'My Summation Field' do
       expect(page).to have_no_content('Second Option')
     end
 
     within form_field_settings_for 'My Summation Field' do
-      within('.field-option:nth-child(3)'){ click_js_link 'Remove this option' }
+      within('.field-option:nth-child(3)') { click_js_link 'Remove this option' }
     end
 
-    confirm_prompt "Are you sure you want to remove this option?"
+    confirm_prompt 'Are you sure you want to remove this option?'
     within form_field_settings_for 'My Summation Field' do
       expect(page).to have_no_content('Option 3')
     end
 
     # Save the form
-    expect {
-      expect {
+    expect do
+      expect do
         click_js_button 'Save'
         wait_for_ajax
-      }.to_not change(FormField, :count)
-    }.to change(FormFieldOption, :count).by(-1)
+      end.to_not change(FormField, :count)
+    end.to change(FormFieldOption, :count).by(-1)
   end
 
-  scenario "user can add/delete likert scale fields to form" do
+  scenario 'user can add/delete likert scale fields to form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     likert_scale_field.drag_to form_builder
 
     expect(form_builder).to have_form_field('Likert scale',
-        with_options: ['Strongly Disagree', 'Disagree', 'Agree', 'Strongly Agree']
+                                            with_options: ['Strongly Disagree', 'Disagree', 'Agree', 'Strongly Agree']
       )
 
     within form_field_settings_for 'Likert scale' do
@@ -785,19 +783,19 @@ RSpec.shared_examples "a fieldable element" do
 
       within '.field-options[data-type="statement"]' do
         fill_in 'statement[0][name]', with: 'First Statement'
-        within('.field-option', match: :first){ click_js_link 'Add option after this' } # Create another option
+        within('.field-option', match: :first) { click_js_link 'Add option after this' } # Create another option
         fill_in 'statement[1][name]', with: 'Second Statement'
       end
 
       within '.field-options[data-type="option"]' do
         fill_in 'option[0][name]', with: 'First Option'
-        within('.field-option', match: :first){ click_js_link 'Add option after this' } # Create another option
+        within('.field-option', match: :first) { click_js_link 'Add option after this' } # Create another option
         fill_in 'option[1][name]', with: 'Second Option'
       end
     end
 
     expect(form_builder).to have_form_field('My Likert scale Field',
-        with_options: ['First Option', 'Second Option']
+                                            with_options: ['First Option', 'Second Option']
       )
 
     # Close the field settings form
@@ -805,12 +803,12 @@ RSpec.shared_examples "a fieldable element" do
     expect(page).to have_no_selector('.field-attributes-panel')
 
     # Save the form
-    expect {
-      expect {
+    expect do
+      expect do
         click_js_button 'Save'
         wait_for_ajax
-      }.to change(FormField, :count).by(1)
-    }.to change(FormFieldOption, :count).by(9)
+      end.to change(FormField, :count).by(1)
+    end.to change(FormFieldOption, :count).by(9)
     field = FormField.last
     expect(field.name).to eql 'My Likert scale Field'
     expect(field.type).to eql 'FormField::LikertScale'
@@ -821,25 +819,25 @@ RSpec.shared_examples "a fieldable element" do
 
     # Remove fields
     expect(form_builder).to have_form_field('My Likert scale Field',
-      with_options: ['First Option', 'Second Option', 'Disagree', 'Agree', 'Strongly Agree']
+                                            with_options: ['First Option', 'Second Option', 'Disagree', 'Agree', 'Strongly Agree']
     )
 
     within form_field_settings_for 'My Likert scale Field' do
       # Remove the second option (the first one doesn't have the link)
-      within('.field-options[data-type="option"] .field-option:nth-child(2)'){ click_js_link 'Add option after this' }
+      within('.field-options[data-type="option"] .field-option:nth-child(2)') { click_js_link 'Add option after this' }
       within('.field-options[data-type="option"] .field-option:nth-child(4)') { click_js_link 'Remove this option' }
     end
 
-    confirm_prompt "Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone"
+    confirm_prompt 'Removing this option will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone'
 
     within form_field_settings_for 'My Likert scale Field' do
-      within('.field-options[data-type="option"]') {expect(page).to have_no_content('Second Option')}
+      within('.field-options[data-type="option"]') { expect(page).to have_no_content('Second Option') }
     end
     within form_field_settings_for 'My Likert scale Field' do
-      within('.field-options[data-type="option"] .field-option:nth-child(3)'){ click_js_link 'Remove this option' }
+      within('.field-options[data-type="option"] .field-option:nth-child(3)') { click_js_link 'Remove this option' }
     end
 
-    confirm_prompt "Are you sure you want to remove this option?"
+    confirm_prompt 'Are you sure you want to remove this option?'
 
     within form_field_settings_for 'My Likert scale Field' do
       expect(page).to have_no_content('Option 3')
@@ -847,31 +845,31 @@ RSpec.shared_examples "a fieldable element" do
 
     within form_field_settings_for 'My Likert scale Field' do
       # Remove the second statement (the first one doesn't have the link)
-      within('.field-options[data-type="statement"] .field-option:nth-child(2)'){ click_js_link 'Add option after this' }
+      within('.field-options[data-type="statement"] .field-option:nth-child(2)') { click_js_link 'Add option after this' }
       within('.field-options[data-type="statement"] .field-option:nth-child(4)') { click_js_link 'Remove this option' }
     end
-    confirm_prompt "Removing this statement will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone"
+    confirm_prompt 'Removing this statement will remove all the entered data/answers associated with it. Are you sure you want to do this? This cannot be undone'
     within form_field_settings_for 'My Likert scale Field' do
-      within('.field-options[data-type="statement"]') {expect(page).to have_no_content('Second Option')}
+      within('.field-options[data-type="statement"]') { expect(page).to have_no_content('Second Option') }
     end
     within form_field_settings_for 'My Likert scale Field' do
-      within('.field-options[data-type="statement"] .field-option:nth-child(3)'){ click_js_link 'Remove this option' }
+      within('.field-options[data-type="statement"] .field-option:nth-child(3)') { click_js_link 'Remove this option' }
     end
-    confirm_prompt "Are you sure you want to remove this statement?"
+    confirm_prompt 'Are you sure you want to remove this statement?'
     within form_field_settings_for 'My Likert scale Field' do
       expect(page).to have_no_content('Statement 3')
     end
 
     # Save the form
-    expect {
-      expect {
+    expect do
+      expect do
         click_js_button 'Save'
         wait_for_ajax
-      }.to_not change(FormField, :count)
-    }.to change(FormFieldOption, :count).by(-2)
+      end.to_not change(FormField, :count)
+    end.to change(FormFieldOption, :count).by(-2)
   end
 
-  scenario "user can remove a field from the form that was just added" do
+  scenario 'user can remove a field from the form that was just added' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     text_field.drag_to form_builder
@@ -883,28 +881,28 @@ RSpec.shared_examples "a fieldable element" do
       click_js_link 'Remove'
     end
 
-    confirm_prompt "Are you sure you want to remove this field?"
+    confirm_prompt 'Are you sure you want to remove this field?'
 
     expect(form_builder).to_not have_form_field('Single line text')
 
     # Save the form, should not create any field
-    expect {
+    expect do
       click_js_button 'Save'
       wait_for_ajax
-    }.to_not change(FormField, :count)
+    end.to_not change(FormField, :count)
   end
 
-  scenario "user can remove an existing field from the form" do
+  scenario 'user can remove an existing field from the form' do
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
     text_field.drag_to form_builder
 
     expect(form_builder).to have_form_field('Single line text')
     # Save the form
-    expect {
+    expect do
       click_js_button 'Save'
       wait_for_ajax
-    }.to change(FormField, :count).by(1)
+    end.to change(FormField, :count).by(1)
 
     visit fieldable_path
 
@@ -915,26 +913,28 @@ RSpec.shared_examples "a fieldable element" do
       click_js_link 'Remove'
     end
 
-    confirm_prompt "Removing this field will remove all the entered data/answers associated with it. Are you sure you want to do this?"
+    confirm_prompt 'Removing this field will remove all the entered data/answers associated with it. Are you sure you want to do this?'
 
     expect(form_builder).to_not have_form_field('Single line text')
 
     # Save the form, should not create any field
-    expect {
+    expect do
       click_js_button 'Save'
       wait_for_ajax
-    }.to change(FormField, :count).by(-1)
+    end.to change(FormField, :count).by(-1)
   end
 end
 
-RSpec.shared_examples "a fieldable element that accept kpis" do
+RSpec.shared_examples 'a fieldable element that accept kpis' do
   let(:fieldable_path) { url_for(fieldable, only_path: true) }
 
-  let(:kpi) { FactoryGirl.create(:kpi, name: 'My Custom KPI',
+  let(:kpi) do
+    create(:kpi, name: 'My Custom KPI',
     description: 'my custom kpi description',
-    kpi_type: 'number', capture_mechanism: 'integer', company: fieldable.company) }
+    kpi_type: 'number', capture_mechanism: 'integer', company: fieldable.company)
+  end
 
-  scenario "add a global KPIs to the form" do
+  scenario 'add a global KPIs to the form' do
     Kpi.create_global_kpis
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
@@ -984,10 +984,10 @@ RSpec.shared_examples "a fieldable element that accept kpis" do
     expect(page).to have_no_selector('.field-attributes-panel')
 
     # Save the form
-    expect {
+    expect do
       click_js_button 'Save'
       wait_for_ajax
-    }.to change(FormField, :count).by(6)
+    end.to change(FormField, :count).by(6)
     field = fieldable.form_fields.where(kpi_id: Kpi.impressions).first
     expect(field.name).to eql 'Impressions Custom Name'
     expect(field.type).to eql 'FormField::Number'
@@ -1004,7 +1004,7 @@ RSpec.shared_examples "a fieldable element that accept kpis" do
       click_js_link 'Remove'
     end
 
-    confirm_prompt "Removing this field will remove all the entered data/answers associated with it. Are you sure you want to do this?"
+    confirm_prompt 'Removing this field will remove all the entered data/answers associated with it. Are you sure you want to do this?'
 
     # Make sure the KPI is again available in the KPIs list
     within('.fields-wrapper') do
@@ -1012,7 +1012,7 @@ RSpec.shared_examples "a fieldable element that accept kpis" do
     end
   end
 
-  scenario "add a kpi to the form" do
+  scenario 'add a kpi to the form' do
     kpi.save
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
@@ -1043,10 +1043,10 @@ RSpec.shared_examples "a fieldable element that accept kpis" do
     expect(page).to have_no_selector('.field-attributes-panel')
 
     # Save the form
-    expect {
+    expect do
       click_js_button 'Save'
       wait_for_ajax
-    }.to change(FormField, :count).by(1)
+    end.to change(FormField, :count).by(1)
     field = FormField.last
     expect(field.name).to eql 'My Custom KPI custom name'
     expect(field.type).to eql 'FormField::Number'
@@ -1063,7 +1063,7 @@ RSpec.shared_examples "a fieldable element that accept kpis" do
       click_js_link 'Remove'
     end
 
-    confirm_prompt "Removing this field will remove all the entered data/answers associated with it. Are you sure you want to do this?"
+    confirm_prompt 'Removing this field will remove all the entered data/answers associated with it. Are you sure you want to do this?'
 
     # Make sure the KPI is again available in the KPIs list
     within('.fields-wrapper') do
@@ -1072,12 +1072,12 @@ RSpec.shared_examples "a fieldable element that accept kpis" do
   end
 
   scenario "disable KPI's segments in form builder" do
-    kpi =  FactoryGirl.create(:kpi, name: 'My Custom KPI',
+    kpi =  create(:kpi, name: 'My Custom KPI',
         description: 'my custom kpi description',
         kpi_type: 'count', capture_mechanism: 'dropdown', company: fieldable.company,
         kpis_segments: [
-          segment1 = FactoryGirl.create(:kpis_segment, text: 'Option1'),
-          segment2 = FactoryGirl.create(:kpis_segment, text: 'Option2')] )
+          segment1 = create(:kpis_segment, text: 'Option1'),
+          segment2 = create(:kpis_segment, text: 'Option2')])
 
     visit fieldable_path
 
@@ -1092,7 +1092,7 @@ RSpec.shared_examples "a fieldable element that accept kpis" do
 
     kpi_field(kpi).drag_to form_builder
 
-    expect(form_builder).to have_form_field('My Custom KPI', options: ['Option1', 'Option2'])
+    expect(form_builder).to have_form_field('My Custom KPI', options: %w(Option1 Option2))
 
     within form_field_settings_for 'My Custom KPI' do
       within find('.field-option', match: :first) do
@@ -1110,10 +1110,10 @@ RSpec.shared_examples "a fieldable element that accept kpis" do
     expect(page).to have_no_selector('.field-attributes-panel')
 
     # Save the form
-    expect {
+    expect do
       click_js_button 'Save'
       wait_for_ajax
-    }.to change(FormField, :count).by(1)
+    end.to change(FormField, :count).by(1)
     field = FormField.last
     expect(field.name).to eql 'My Custom KPI'
     expect(field.type).to eql 'FormField::Dropdown'
@@ -1130,11 +1130,10 @@ RSpec.shared_examples "a fieldable element that accept kpis" do
   end
 end
 
-
-RSpec.shared_examples "a fieldable element that accept modules" do
+RSpec.shared_examples 'a fieldable element that accept modules' do
   let(:fieldable_path) { url_for(fieldable, only_path: true) }
 
-  scenario "add/remove a module to the form" do
+  scenario 'add/remove a module to the form' do
 
     visit fieldable_path
     expect(page).to have_selector('h2', text: fieldable.name)
@@ -1176,7 +1175,7 @@ RSpec.shared_examples "a fieldable element that accept modules" do
       click_js_link 'Remove'
     end
 
-    confirm_prompt "Removing this module will remove all the entered data associated with it. Are you sure you want to do this?"
+    confirm_prompt 'Removing this module will remove all the entered data associated with it. Are you sure you want to do this?'
 
     expect(find('.form-wrapper')).to have_no_selector('.form-section.module[data-type=Photos]')
     click_js_button 'Save'
@@ -1203,33 +1202,33 @@ RSpec.shared_examples "a fieldable element that accept modules" do
   end
 end
 
-feature "Campaign Form Builder", js: true do
-  let(:user){ FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id) }
+feature 'Campaign Form Builder', js: true do
+  let(:user) { create(:user, company_id: create(:company).id, role_id: create(:role).id) }
 
-  let(:company){  user.companies.first }
+  let(:company) {  user.companies.first }
 
-  before{ sign_in user }
+  before { sign_in user }
 
-  it_behaves_like "a fieldable element" do
-    let(:fieldable) { FactoryGirl.create(:campaign, company: company) }
+  it_behaves_like 'a fieldable element' do
+    let(:fieldable) { create(:campaign, company: company) }
     let(:fieldable_path) { campaign_path(fieldable) }
   end
 
-  it_behaves_like "a fieldable element that accept kpis" do
-    let(:fieldable) { FactoryGirl.create(:campaign, company: company) }
+  it_behaves_like 'a fieldable element that accept kpis' do
+    let(:fieldable) { create(:campaign, company: company) }
     let(:fieldable_path) { campaign_path(fieldable) }
   end
 
-  it_behaves_like "a fieldable element that accept modules" do
-    let(:fieldable) { FactoryGirl.create(:campaign, company: company) }
+  it_behaves_like 'a fieldable element that accept modules' do
+    let(:fieldable) { create(:campaign, company: company) }
     let(:fieldable_path) { campaign_path(fieldable) }
   end
 
-  context "form builder and KPI list integration" do
-    let(:campaign) { FactoryGirl.create(:campaign, company: company) }
+  context 'form builder and KPI list integration' do
+    let(:campaign) { create(:campaign, company: company) }
 
-    scenario "adding a KPI from the list" do
-      kpi = FactoryGirl.create(:kpi, name: 'My Custom KPI', company_id: company.id)
+    scenario 'adding a KPI from the list' do
+      kpi = create(:kpi, name: 'My Custom KPI', company_id: company.id)
       visit campaign_path(campaign)
 
       # The kpi is in the list of KPIs in the sidebar
@@ -1246,7 +1245,8 @@ feature "Campaign Form Builder", js: true do
       within visible_modal do
         fill_in 'Search', with: 'custom'
         expect(page).to have_content 'My Custom KPI'
-        click_js_link 'Add KPI'
+
+        within(resource_item kpi) { click_js_link 'Add KPI' }
         expect(page).to have_no_content 'My Custom KPI'
       end
       close_modal
@@ -1274,7 +1274,7 @@ feature "Campaign Form Builder", js: true do
       # Now test the removal of the KPI from the list
       open_tab 'KPIs'
 
-      within '.kpis-list' do
+      within resource_item 1, list: '.kpis-list' do
         expect(page).to have_content 'My Custom KPI'
         click_js_link 'Remove'
       end
@@ -1297,15 +1297,15 @@ feature "Campaign Form Builder", js: true do
   end
 end
 
-feature "Activity Types", js: true do
-  let(:user){ FactoryGirl.create(:user, company_id: FactoryGirl.create(:company).id, role_id: FactoryGirl.create(:role).id) }
+feature 'Activity Types', js: true do
+  let(:user) { create(:user, company_id: create(:company).id, role_id: create(:role).id) }
 
-  let(:company){ user.companies.first }
+  let(:company) { user.companies.first }
 
-  before{ sign_in user }
+  before { sign_in user }
 
-  it_behaves_like "a fieldable element" do
-    let (:fieldable) { FactoryGirl.create(:activity_type, name: 'Drink Menu', company: company) }
+  it_behaves_like 'a fieldable element' do
+    let (:fieldable) { create(:activity_type, name: 'Drink Menu', company: company) }
     let(:fieldable_path) { activity_type_path(fieldable) }
   end
 end
@@ -1404,17 +1404,17 @@ end
 def form_field(field_name)
   field = nil
   form_builder.all('.field').each do |wrapper|
-    field = wrapper if wrapper.all('label.control-label', :text => field_name).count > 0
+    field = wrapper if wrapper.all('label.control-label', text: field_name).count > 0
   end
-  raise "Field #{field_name} not found" if field.nil?
+  fail "Field #{field_name} not found" if field.nil?
   field
 end
 
 def form_section(section_name)
   field = nil
   form_builder.all('.field').each do |wrapper|
-    field = wrapper if wrapper.all('h3', :text => section_name).count > 0
+    field = wrapper if wrapper.all('h3', text: section_name).count > 0
   end
-  raise "Section #{section_name} not found" if field.nil?
+  fail "Section #{section_name} not found" if field.nil?
   field
 end

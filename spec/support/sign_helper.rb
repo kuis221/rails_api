@@ -7,7 +7,7 @@ module SignHelper
     else
       user.invitation_accepted_at = Time.now
       user.save
-      login_as user, scope: :user, :run_callbacks => false
+      login_as user, scope: :user, run_callbacks: false
       user.current_company = user.companies.first
       User.current = user
     end

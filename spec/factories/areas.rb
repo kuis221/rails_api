@@ -19,8 +19,8 @@
 
 FactoryGirl.define do
   factory :area do
-    sequence(:name) {|n| "Area #{n}" }
-    description "Area description"
+    sequence(:name) { |n| "Area #{n}" }
+    description 'Area description'
     active true
     created_by_id 1
     updated_by_id 1

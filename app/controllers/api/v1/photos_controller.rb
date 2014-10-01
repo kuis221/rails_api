@@ -1,17 +1,16 @@
 class Api::V1::PhotosController < Api::V1::FilteredController
-
   belongs_to :event, optional: true
 
-  defaults :resource_class => AttachedAsset
+  defaults resource_class: AttachedAsset
 
   authorize_resource class: AttachedAsset, only: [:show, :update, :destroy]
 
   resource_description do
     short 'Photos'
-    formats ['json', 'xml']
-    error 404, "Missing"
-    error 401, "Unauthorized access"
-    error 500, "Server crashed for some reason"
+    formats %w(json xml)
+    error 404, 'Missing'
+    error 401, 'Unauthorized access'
+    error 500, 'Server crashed for some reason'
     param :auth_token, String, required: true
     param :company_id, :number, required: true
     description <<-EOS
@@ -19,12 +18,12 @@ class Api::V1::PhotosController < Api::V1::FilteredController
     EOS
   end
 
-  api :GET, '/api/v1/events/:event_id/photos', "Get a list of photos for an Event"
-  param :event_id, :number, required: true, desc: "Event ID"
-  param :brand, Array, :desc => "A list of brand ids to filter the results"
-  param :place, Array, :desc => "A list of places to filter the results"
-  param :status, Array, :desc => "A list of photo status to filter the results. Options: Active, Inactive"
-  param :page, :number, :desc => "The number of the page, Default: 1"
+  api :GET, '/api/v1/events/:event_id/photos', 'Get a list of photos for an Event'
+  param :event_id, :number, required: true, desc: 'Event ID'
+  param :brand, Array, desc: 'A list of brand ids to filter the results'
+  param :place, Array, desc: 'A list of places to filter the results'
+  param :status, Array, desc: 'A list of photo status to filter the results. Options: Active, Inactive'
+  param :page, :number, desc: 'The number of the page, Default: 1'
   example <<-EOS
   GET /api/v1/events/1223/photos
   {
@@ -64,8 +63,8 @@ class Api::V1::PhotosController < Api::V1::FilteredController
     collection
   end
 
-  api :POST, '/api/v1/events/:event_id/photos', "Adds a new photo to a event"
-  param :event_id, :number, required: true, desc: "Event ID"
+  api :POST, '/api/v1/events/:event_id/photos', 'Adds a new photo to a event'
+  param :event_id, :number, required: true, desc: 'Event ID'
   param :attached_asset, Hash, required: true do
     param :direct_upload_url, String, desc: "The photo URL. This should be a valid Amazon S3's URL."
   end
@@ -109,7 +108,7 @@ class Api::V1::PhotosController < Api::V1::FilteredController
     end
   end
 
-  api :GET, '/api/v1/events/:event_id/photos/form', "Returns a list of requred fields for making a POST to S3"
+  api :GET, '/api/v1/events/:event_id/photos/form', 'Returns a list of requred fields for making a POST to S3'
   description <<-EOS
   This method returns all the info required to make a POST to Amazon S3 to upload a new file. The key sent to S3 should start with
   /uploads and has to be created into a new folder with a unique generated name. Ideally using a GUID. Eg:
@@ -134,9 +133,9 @@ class Api::V1::PhotosController < Api::V1::FilteredController
     authorize!(:create_photo, parent)
     if parent.campaign.enabled_modules.include?('photos') && can?(:photos, parent) && can?(:create_photo, parent)
       bucket = AWS::S3.new.buckets[ENV['S3_BUCKET_NAME']]
-      form = bucket.presigned_post(acl: 'public-read', success_action_status: 201).
-                  where(:key).starts_with("uploads/")
-                  #.where(:content_type).starts_with('image/')
+      form = bucket.presigned_post(acl: 'public-read', success_action_status: 201)
+                  .where(:key).starts_with('uploads/')
+      # .where(:content_type).starts_with('image/')
       data = { fields: form.fields, url: "https://s3.amazonaws.com/#{ENV['S3_BUCKET_NAME']}/" }
       respond_to do |format|
         format.json { render json: data }
@@ -144,34 +143,34 @@ class Api::V1::PhotosController < Api::V1::FilteredController
       end
     else
       respond_to do |format|
-        format.json {  render :status => 401, json: {} }
-        format.xml { render :status => 401, xml: {} }
+        format.json {  render status: 401, json: {} }
+        format.xml { render status: 401, xml: {} }
       end
     end
   end
 
   protected
 
-    def build_resource_params
-      [permitted_params || {}]
-    end
+  def build_resource_params
+    [permitted_params || {}]
+  end
 
-    def permitted_params
-      params.permit(attached_asset: [:direct_upload_url])[:attached_asset]
-    end
+  def permitted_params
+    params.permit(attached_asset: [:direct_upload_url])[:attached_asset]
+  end
 
-    def search_params
-      @search_params ||= begin
-        super
-        @search_params.merge({event_id: parent.id, asset_type: 'photo'})
-      end
+  def search_params
+    @search_params ||= begin
+      super
+      @search_params.merge(event_id: parent.id, asset_type: 'photo')
     end
+  end
 
-    def permitted_search_params
-      params.permit({brand: [], place: [], status: []})
-    end
+  def permitted_search_params
+    params.permit(brand: [], place: [], status: [])
+  end
 
-    def skip_default_validation
-      true
-    end
+  def skip_default_validation
+    true
+  end
 end

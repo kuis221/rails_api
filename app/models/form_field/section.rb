@@ -16,7 +16,7 @@
 #
 
 class FormField::Section < FormField
-  def field_options(result)
-    {as: :section, label: false, wrapper: false, name: self.name, description: self.settings.try(:[], 'description')}
+  def field_options(_result)
+    { as: :section, label: false, wrapper: false, name: name, description: settings.try(:[], 'description') }
   end
 end

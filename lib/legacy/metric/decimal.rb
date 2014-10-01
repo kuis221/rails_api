@@ -21,15 +21,19 @@ class Metric::Decimal < Metric
   def format_result(result)
     number_with_delimiter(result.value)
   end
+
   def format_total(total)
     number_with_delimiter(total)
   end
+
   def field_type_symbol
     '0.0'
   end
+
   def validate_result(result)
     result.errors.add(:value, 'must be a number') unless value_is_float?(result.value)
   end
+
   def cast_value(value)
     value.to_f
   end

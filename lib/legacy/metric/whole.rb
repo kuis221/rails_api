@@ -18,21 +18,26 @@
 
 class Metric::Whole < Metric
   def form_options
-    super.merge({:hint => 'Whole numbers, no decimals'})
+    super.merge(hint: 'Whole numbers, no decimals')
   end
+
   def format_result(result)
     number_with_delimiter(result.value)
   end
+
   def format_total(total)
     number_with_delimiter(total)
   end
+
   def field_type_symbol
     '123'
   end
+
   def validate_result(result)
     result.errors.add(:value, 'must be a number') unless value_is_float?(result.value)
     result.errors.add(:value, 'No decimal place allowed') unless result.value.to_i.to_f == result.value.to_f
   end
+
   def cast_value(value)
     value.to_i
   end

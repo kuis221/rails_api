@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'open-uri'
 
-describe Results::GvaController, :type => :controller do
+describe Results::GvaController, type: :controller do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.companies.first
@@ -9,40 +9,40 @@ describe Results::GvaController, :type => :controller do
   end
 
   describe "GET 'index'" do
-    it "should return http success" do
+    it 'should return http success' do
       get 'index'
       expect(response).to be_success
     end
 
-    describe "XLS export" do
+    describe 'XLS export' do
       before { ResqueSpec.reset! }
-      it "queue the job for export the list" do
-        expect{
+      it 'queue the job for export the list' do
+        expect do
           xhr :get, :index, format: :xls
-        }.to change(ListExport, :count).by(1)
+        end.to change(ListExport, :count).by(1)
         export = ListExport.last
         expect(ListExportWorker).to have_queued(export.id)
       end
     end
 
-    describe "PDF export" do
-      let(:campaign) { FactoryGirl.create(:campaign, name: 'My Super campaign', company: @company) }
-      let(:kpi) { FactoryGirl.create(:kpi, name: 'My Custom KPI', company: @company ) }
+    describe 'PDF export' do
+      let(:campaign) { create(:campaign, name: 'My Super campaign', company: @company) }
+      let(:kpi) { create(:kpi, name: 'My Custom KPI', company: @company) }
       before { ResqueSpec.reset! }
       before { campaign.add_kpi kpi }
 
-      it "queue the job for export the list" do
-        expect{
+      it 'queue the job for export the list' do
+        expect do
           xhr :get, :index, report: { campaign_id: campaign.id, group_by: 'campaign', view_mode: 'graph' }, format: :pdf
-        }.to change(ListExport, :count).by(1)
+        end.to change(ListExport, :count).by(1)
         export = ListExport.last
         expect(ListExportWorker).to have_queued(export.id)
       end
 
-      it "should render the PDF even if no data" do
-        expect{
+      it 'should render the PDF even if no data' do
+        expect do
           xhr :get, :index, report: { campaign_id: campaign.id, group_by: 'campaign', view_mode: 'graph' }, format: :pdf
-        }.to change(ListExport, :count).by(1)
+        end.to change(ListExport, :count).by(1)
         export = ListExport.last
         expect(ListExportWorker).to have_queued(export.id)
         ResqueSpec.perform_all(:export)
@@ -53,20 +53,20 @@ describe Results::GvaController, :type => :controller do
         end
       end
 
-      it "should render the report for the campaign" do
-        event = FactoryGirl.create(:approved_event, company: @company, campaign: campaign)
+      it 'should render the report for the campaign' do
+        event = create(:approved_event, company: @company, campaign: campaign)
         event.result_for_kpi(kpi).value = '25'
         event.save
 
-        event = FactoryGirl.create(:submitted_event, company: @company, campaign: campaign)
+        event = create(:submitted_event, company: @company, campaign: campaign)
         event.result_for_kpi(kpi).value = '20'
         event.save
 
-        FactoryGirl.create(:goal, goalable: campaign, kpi: kpi, value: '100')
+        create(:goal, goalable: campaign, kpi: kpi, value: '100')
 
-        expect{
+        expect do
           xhr :get, :index, report: { campaign_id: campaign.id, group_by: 'campaign', view_mode: 'graph' }, format: :pdf
-        }.to change(ListExport, :count).by(1)
+        end.to change(ListExport, :count).by(1)
         export = ListExport.last
         expect(ListExportWorker).to have_queued(export.id)
         ResqueSpec.perform_all(:export)
@@ -85,20 +85,20 @@ describe Results::GvaController, :type => :controller do
         end
       end
 
-      it "should render the report for the campaign" do
-        event = FactoryGirl.create(:approved_event, company: @company, campaign: campaign)
+      it 'should render the report for the campaign' do
+        event = create(:approved_event, company: @company, campaign: campaign)
         event.result_for_kpi(kpi).value = '25'
         event.save
 
-        event = FactoryGirl.create(:submitted_event, company: @company, campaign: campaign)
+        event = create(:submitted_event, company: @company, campaign: campaign)
         event.result_for_kpi(kpi).value = '20'
         event.save
 
-        FactoryGirl.create(:goal, goalable: campaign, kpi: kpi, value: '100')
+        create(:goal, goalable: campaign, kpi: kpi, value: '100')
 
-        expect{
+        expect do
           xhr :get, :index, report: { campaign_id: campaign.id, group_by: 'campaign', view_mode: 'graph' }, format: :pdf
-        }.to change(ListExport, :count).by(1)
+        end.to change(ListExport, :count).by(1)
         export = ListExport.last
         expect(ListExportWorker).to have_queued(export.id)
         ResqueSpec.perform_all(:export)
@@ -117,25 +117,25 @@ describe Results::GvaController, :type => :controller do
         end
       end
 
-      it "should render the report for the campaign" do
+      it 'should render the report for the campaign' do
         campaign.add_kpi kpi
         @company_user.campaigns << campaign
 
-        FactoryGirl.create(:goal, parent: campaign, goalable: @company_user, kpi: kpi, value: 50)
+        create(:goal, parent: campaign, goalable: @company_user, kpi: kpi, value: 50)
 
-        event = FactoryGirl.create(:approved_event, company: @company, campaign: campaign, user_ids: [@company_user.id])
+        event = create(:approved_event, company: @company, campaign: campaign, user_ids: [@company_user.id])
         event.result_for_kpi(kpi).value = '25'
         event.save
 
-        event = FactoryGirl.create(:submitted_event, company: @company, campaign: campaign, user_ids: [@company_user.id])
+        event = create(:submitted_event, company: @company, campaign: campaign, user_ids: [@company_user.id])
         event.result_for_kpi(kpi).value = '20'
         event.save
 
-        FactoryGirl.create(:goal, goalable: campaign, kpi: kpi, value: '100')
+        create(:goal, goalable: campaign, kpi: kpi, value: '100')
 
-        expect{
+        expect do
           xhr :get, :index, report: { campaign_id: campaign.id, group_by: 'staff', view_mode: 'graph' }, format: :pdf
-        }.to change(ListExport, :count).by(1)
+        end.to change(ListExport, :count).by(1)
         export = ListExport.last
         expect(ListExportWorker).to have_queued(export.id)
         ResqueSpec.perform_all(:export)
@@ -157,37 +157,37 @@ describe Results::GvaController, :type => :controller do
   end
 
   describe "POST 'report'" do
-    let(:campaign){ FactoryGirl.create(:campaign, company: @company) }
-    it "should return http success" do
-      xhr :post, 'report', report: {campaign_id: campaign.id}, format: :js
+    let(:campaign) { create(:campaign, company: @company) }
+    it 'should return http success' do
+      xhr :post, 'report', report: { campaign_id: campaign.id }, format: :js
       expect(response).to be_success
       expect(response).to render_template('results/gva/report')
       expect(response).to render_template('results/gva/_report')
     end
 
-    it "should include any goals for the campaign" do
-      kpi = FactoryGirl.create(:kpi, company: campaign.company)
-      events = FactoryGirl.create_list(:event, 3, campaign: campaign)
-      FactoryGirl.create_list(:event, 2, campaign: FactoryGirl.create(:campaign, company: campaign.company))
+    it 'should include any goals for the campaign' do
+      kpi = create(:kpi, company: campaign.company)
+      events = create_list(:event, 3, campaign: campaign)
+      create_list(:event, 2, campaign: create(:campaign, company: campaign.company))
 
       campaign.add_kpi kpi
       goal = campaign.goals.for_kpi(kpi)
       goal.value = 100
       goal.save
-      xhr :post, 'report', report: {campaign_id: campaign.id}, format: :js
+      xhr :post, 'report', report: { campaign_id: campaign.id }, format: :js
 
       expect(assigns(:events_scope)).to match_array events
       expect(assigns(:goals)).to match_array [goal]
     end
 
-    it "should include only goals for the given user" do
-      kpi = FactoryGirl.create(:kpi, company: campaign.company)
-      events = FactoryGirl.create_list(:event, 3, campaign: campaign)
-      FactoryGirl.create_list(:event, 2, campaign: FactoryGirl.create(:campaign, company: campaign.company))
+    it 'should include only goals for the given user' do
+      kpi = create(:kpi, company: campaign.company)
+      events = create_list(:event, 3, campaign: campaign)
+      create_list(:event, 2, campaign: create(:campaign, company: campaign.company))
 
-      user = FactoryGirl.create(:company_user, company: campaign.company)
+      user = create(:company_user, company: campaign.company)
 
-      events.each{|e| e.users << user }
+      events.each { |e| e.users << user }
 
       campaign.add_kpi kpi
       goal = campaign.goals.for_kpi(kpi)
@@ -199,20 +199,20 @@ describe Results::GvaController, :type => :controller do
       user_goal.value = 100
       user_goal.save
 
-      xhr :post, 'report', report: {campaign_id: campaign.id}, item_type: 'CompanyUser', item_id: user.id, format: :js
+      xhr :post, 'report', report: { campaign_id: campaign.id }, item_type: 'CompanyUser', item_id: user.id, format: :js
 
       expect(assigns(:events_scope)).to match_array events
       expect(assigns(:goals)).to match_array [user_goal]
     end
 
-    it "should include only goals for the given team" do
-      kpi = FactoryGirl.create(:kpi, company: campaign.company)
-      events = FactoryGirl.create_list(:event, 3, campaign: campaign)
-      FactoryGirl.create_list(:event, 2, campaign: FactoryGirl.create(:campaign, company: campaign.company))
+    it 'should include only goals for the given team' do
+      kpi = create(:kpi, company: campaign.company)
+      events = create_list(:event, 3, campaign: campaign)
+      create_list(:event, 2, campaign: create(:campaign, company: campaign.company))
 
-      team = FactoryGirl.create(:team, company: campaign.company)
+      team = create(:team, company: campaign.company)
 
-      events.each{|e| e.teams << team }
+      events.each { |e| e.teams << team }
 
       campaign.add_kpi kpi
       goal = campaign.goals.for_kpi(kpi)
@@ -224,20 +224,19 @@ describe Results::GvaController, :type => :controller do
       team_goal.value = 100
       team_goal.save
 
-      xhr :post, 'report', report: {campaign_id: campaign.id}, item_type: 'Team', item_id: team.id, format: :js
+      xhr :post, 'report', report: { campaign_id: campaign.id }, item_type: 'Team', item_id: team.id, format: :js
 
       expect(assigns(:events_scope)).to match_array events
       expect(assigns(:goals)).to match_array [team_goal]
     end
 
+    it 'should include only goals for the given area' do
+      kpi = create(:kpi, company: campaign.company)
+      place = create(:place)
+      events = create_list(:event, 3, campaign: campaign, place: place)
+      create_list(:event, 2, campaign: create(:campaign, company: campaign.company))
 
-    it "should include only goals for the given area" do
-      kpi = FactoryGirl.create(:kpi, company: campaign.company)
-      place = FactoryGirl.create(:place)
-      events = FactoryGirl.create_list(:event, 3, campaign: campaign, place: place)
-      FactoryGirl.create_list(:event, 2, campaign: FactoryGirl.create(:campaign, company: campaign.company))
-
-      area = FactoryGirl.create(:area, company: campaign.company)
+      area = create(:area, company: campaign.company)
       area.places << place
       campaign.areas << area
 
@@ -251,17 +250,17 @@ describe Results::GvaController, :type => :controller do
       area_goal.value = 100
       area_goal.save
 
-      xhr :post, 'report', report: {campaign_id: campaign.id}, item_type: 'Area', item_id: area.id, format: :js
+      xhr :post, 'report', report: { campaign_id: campaign.id }, item_type: 'Area', item_id: area.id, format: :js
 
       expect(assigns(:events_scope)).to match_array events
       expect(assigns(:goals)).to match_array [area_goal]
     end
 
-    it "should include only goals for the given place" do
-      kpi = FactoryGirl.create(:kpi, company: campaign.company)
-      place = FactoryGirl.create(:place)
-      events = FactoryGirl.create_list(:event, 3, campaign: campaign, place: place)
-      FactoryGirl.create_list(:event, 2, campaign: FactoryGirl.create(:campaign, company: campaign.company))
+    it 'should include only goals for the given place' do
+      kpi = create(:kpi, company: campaign.company)
+      place = create(:place)
+      events = create_list(:event, 3, campaign: campaign, place: place)
+      create_list(:event, 2, campaign: create(:campaign, company: campaign.company))
 
       campaign.add_kpi kpi
       goal = campaign.goals.for_kpi(kpi)
@@ -273,7 +272,7 @@ describe Results::GvaController, :type => :controller do
       place_goal.value = 100
       place_goal.save
 
-      xhr :post, 'report', report: {campaign_id: campaign.id}, item_type: 'Place', item_id: place.id, format: :js
+      xhr :post, 'report', report: { campaign_id: campaign.id }, item_type: 'Place', item_id: place.id, format: :js
 
       expect(assigns(:events_scope)).to match_array events
       expect(assigns(:goals)).to match_array [place_goal]

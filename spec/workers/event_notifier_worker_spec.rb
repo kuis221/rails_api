@@ -1,34 +1,34 @@
 require 'rails_helper'
 
 describe EventNotifierWorker do
-  describe "#perform" do
-    let(:company) { FactoryGirl.create(:company) }
-    let(:place) { FactoryGirl.create(:place) }
-    let(:campaign) { FactoryGirl.create(:campaign, company: company) }
-    let(:event){ FactoryGirl.create(:event, campaign: campaign, place: place) }
-    let(:non_admin_role) { FactoryGirl.create(:non_admin_role, company: company) }
+  describe '#perform' do
+    let(:company) { create(:company) }
+    let(:place) { create(:place) }
+    let(:campaign) { create(:campaign, company: company) }
+    let(:event) { create(:event, campaign: campaign, place: place) }
+    let(:non_admin_role) { create(:non_admin_role, company: company) }
 
     it "should create notifications for each user in the event's campaign" do
-      team = FactoryGirl.create(:team, company: company)
-      user1 = FactoryGirl.create(:company_user, role: non_admin_role, company: company)
+      team = create(:team, company: company)
+      user1 = create(:company_user, role: non_admin_role, company: company)
       user1.places << place
       campaign.users << user1
 
-      user2 = FactoryGirl.create(:company_user, role: non_admin_role, company: company)
+      user2 = create(:company_user, role: non_admin_role, company: company)
       user2.places << place
       team.users << user2
 
       campaign.teams << team
 
       # Admin user
-      admin_user = FactoryGirl.create(:company_user, company: company)
+      admin_user = create(:company_user, company: company)
 
       # Non Admin user without access to the campaign
-      FactoryGirl.create(:company_user, role: non_admin_role, company: company)
+      create(:company_user, role: non_admin_role, company: company)
 
-      expect{
+      expect do
         EventNotifierWorker.perform(event.id)
-      }.to change(Notification, :count).by(3)
+      end.to change(Notification, :count).by(3)
 
       expect(Notification.where(message: :new_event).map(&:company_user_id)).to match_array [
         admin_user.id, user1.id, user2.id
@@ -36,14 +36,14 @@ describe EventNotifierWorker do
     end
 
     it "should not create notifications event doesn't have a place" do
-      user = FactoryGirl.create(:company_user, role: non_admin_role, company: company)
+      user = create(:company_user, role: non_admin_role, company: company)
       user.places << place
       campaign.users << user
-      event = FactoryGirl.create(:event, campaign: campaign)
+      event = create(:event, campaign: campaign)
 
-      expect{
+      expect do
         EventNotifierWorker.perform(event.id)
-      }.not_to change(Notification, :count)
+      end.not_to change(Notification, :count)
     end
 
   end

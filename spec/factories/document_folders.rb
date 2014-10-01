@@ -18,7 +18,7 @@
 
 FactoryGirl.define do
   factory :document_folder do
-    sequence(:name) {|n| "Folder #{n}" }
+    sequence(:name) { |n| "Folder #{n}" }
     parent nil
     active true
     documents_count 1

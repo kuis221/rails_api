@@ -2,21 +2,18 @@
   p Add an existing contact from the list below
 
   input#contact-search-box.search-box type="text" name="q"
-  #select-contacts-table-wrapper
-    .select-list-table-wrapper
-      .link-list.selectable-list
-        ul#contacts-list
-          li.placeholder
-            span Use the box above to look for contacts
+  #contacts-list.resource-list.select-list
+    .resource-item.empty-list-message
+      p Use the box above to look for contacts
 
-    .row-fluid
-      .span12
-        .divider
-          | OR
+  .row-fluid
+    .span12
+      .divider
+        | OR
 
-    p
-      = link_to 'Create New Contact', new_event_contact_event_path(parent), remote: true, class: 'btn btn-primary'
-      = link_to 'Cancel', '', class: 'btn btn-cancel'
+  p
+    = link_to 'Create New Contact', new_event_contact_event_path(parent), remote: true, class: 'btn btn-primary'
+    = link_to 'Cancel', '', class: 'btn btn-cancel'
 
 javascript:
   var contactRequest = false;
@@ -28,7 +25,7 @@ javascript:
     contactRequest = $.ajax({
         url: '#{list_event_contact_events_path}?term='+escape(value),
         success: function(data){
-          $('ul#contacts-list').html(data);
+          $('#contacts-list').html(data);
         }
     });
   });

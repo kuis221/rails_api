@@ -3,7 +3,6 @@
 # This class handle the requests for managing the Custom Filters
 #
 class CustomFiltersController < InheritedResources::Base
-
   respond_to :js, only: [:index, :new, :create, :destroy]
 
   actions :index, :new, :create, :destroy

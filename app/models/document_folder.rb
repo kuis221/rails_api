@@ -23,18 +23,17 @@ class DocumentFolder < ActiveRecord::Base
 
   scope :accessible_by_user, ->(company_user) { where(company_id: company_user.company_id) }
 
-  has_many :documents, ->{ order('attached_assets.file_file_name ASC') },
-      class_name: 'AttachedAsset', inverse_of: :folder, foreign_key: :folder_id
+  has_many :documents, -> { order('attached_assets.file_file_name ASC') },
+           class_name: 'AttachedAsset', inverse_of: :folder, foreign_key: :folder_id
 
-  has_many :brand_ambassadors_documents, ->{ order('attached_assets.file_file_name ASC') },
-      class_name: 'BrandAmbassadors::Document', inverse_of: :folder, dependent: :destroy, foreign_key: :folder_id
+  has_many :brand_ambassadors_documents, -> { order('attached_assets.file_file_name ASC') },
+           class_name: 'BrandAmbassadors::Document', inverse_of: :folder, dependent: :destroy, foreign_key: :folder_id
 
-  has_many :document_folders, ->{ order('document_folders.name ASC') }, foreign_key: :parent_id
+  has_many :document_folders, -> { order('document_folders.name ASC') }, foreign_key: :parent_id
 
-  scope :active, ->{ where(active: true) }
+  scope :active, -> { where(active: true) }
 
-  validates :name, presence: true,
-        uniqueness: { scope: [:folderable_type, :folderable_id, :parent_id] }
+  validates :name, presence: true
 
   before_validation on: :create do
     self.folderable ||= Company.current

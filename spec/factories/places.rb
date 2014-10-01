@@ -30,27 +30,27 @@
 
 FactoryGirl.define do
   factory :place do
-    sequence(:name) {|n| "Place #{n}" }
+    sequence(:name) { |n| "Place #{n}" }
     sequence(:place_id)
-    sequence(:reference) {|n| "$aojnoiweksadk-o19290f0i2ief0-#{n}"}
-    formatted_address "123 My Street"
+    sequence(:reference) { |n| "$aojnoiweksadk-o19290f0i2ief0-#{n}" }
+    formatted_address '123 My Street'
     latitude 1.5
     longitude 1.5
-    zipcode "12345"
-    city "New York City"
-    state "NY"
-    country "US"
+    zipcode '12345'
+    city 'New York City'
+    state 'NY'
+    country 'US'
     do_not_connect_to_api true
 
-    after(:build) {|u| u.types ||= ['establishment'] }
+    after(:build) { |u| u.types ||= ['establishment'] }
 
     factory :city do
-      types ['political', 'locality']
-      after(:build) {|p| p.city = p.name }
+      types %w(political locality)
+      after(:build) { |p| p.city = p.name }
     end
 
     factory :state do
-      types ['political', 'administrative_area_level_1']
+      types %w(political administrative_area_level_1)
       after(:build) do |p|
         p.state = p.name
         p.city = nil
@@ -58,11 +58,11 @@ FactoryGirl.define do
     end
 
     factory :country do
-      types ['political', 'country']
+      types %w(political country)
       after(:build) do |p|
         p.state = nil
         p.city = nil
-        p.country = Country.all.detect{|c| c[0] == 'United States'}[1]
+        p.country = Country.all.find { |c| c[0] == 'United States' }[1]
       end
     end
   end

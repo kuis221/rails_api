@@ -19,15 +19,15 @@ class BrandPortfolio < ActiveRecord::Base
 
   scoped_to_company
 
-  validates :name, presence: true, uniqueness: {scope: :company_id}
+  validates :name, presence: true, uniqueness: { scope: :company_id }
   validates :company_id, presence: true
 
   # Campaigns-Brands Portfolios relationship
-  has_and_belongs_to_many :campaigns, :order => 'name ASC', conditions: {aasm_state: 'active'}
+  has_and_belongs_to_many :campaigns, order: 'name ASC', conditions: { aasm_state: 'active' }
 
-  has_and_belongs_to_many :brands, :order => 'name ASC', conditions: {brands: {active: true} }
+  has_and_belongs_to_many :brands, order: 'name ASC', conditions: { brands: { active: true } }
 
-  scope :active, -> { where(:active => true) }
+  scope :active, -> { where(active: true) }
 
   searchable do
     integer :id
@@ -45,7 +45,7 @@ class BrandPortfolio < ActiveRecord::Base
       brands.map(&:id)
     end
     string :brands, multiple: true, references: Brand do
-      brands.map{|t| t.id.to_s + '||' + t.name}
+      brands.map { |t| t.id.to_s + '||' + t.name }
     end
   end
 
@@ -63,13 +63,13 @@ class BrandPortfolio < ActiveRecord::Base
 
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
-    def do_search(params, include_facets=false)
+    def do_search(params, include_facets = false)
       solr_search do
 
         with(:company_id, params[:company_id])
-        with(:brand_ids, params[:brand]) if params.has_key?(:brand) and params[:brand].present?
-        with(:status, params[:status]) if params.has_key?(:status) and params[:status].present?
-        if params.has_key?(:q) and params[:q].present?
+        with(:brand_ids, params[:brand]) if params.key?(:brand) && params[:brand].present?
+        with(:status, params[:status]) if params.key?(:status) && params[:status].present?
+        if params.key?(:q) && params[:q].present?
           (attribute, value) = params[:q].split(',')
           case attribute
           when 'brand_portfolio'
@@ -85,7 +85,7 @@ class BrandPortfolio < ActiveRecord::Base
         end
 
         order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
-        paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+        paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
       end
     end
 

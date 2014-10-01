@@ -12,7 +12,7 @@ RSpec.configure do |config|
         s3 = AWS::S3.new
         bucket = s3.buckets[ENV['S3_BUCKET_NAME']]
         obj = bucket.objects[File.basename(saver.screenshot_path)].write(File.open(saver.screenshot_path))
-        example.metadata[:full_description] += "\n     Screenshot: #{obj.url_for(:read, :expires => 24*3600*100)}"
+        example.metadata[:full_description] += "\n     Screenshot: #{obj.url_for(:read, expires: 24 * 3600 * 100)}"
       end
     end
   else # For some reason the description is not being added after upgrading to RSpec3 in dev machines

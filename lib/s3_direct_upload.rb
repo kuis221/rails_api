@@ -1,4 +1,4 @@
-require "singleton"
+require 'singleton'
 require 's3_direct_upload/form_helper'
 
 module S3DirectUpload

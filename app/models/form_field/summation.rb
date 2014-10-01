@@ -20,11 +20,11 @@ class FormField::Summation < FormField
   def field_options(result)
     {
       as: :summation,
-      collection: self.options.order(:ordering),
-      label: self.name, field_id: self.id,
+      collection: options.order(:ordering),
+      label: name, field_id: id,
       label_html: { class: 'control-group-label' },
-      options: self.settings,
-      required: self.required,
+      options: settings,
+      required: required,
       input_html: {
         value: result.value,
         class: field_classes,

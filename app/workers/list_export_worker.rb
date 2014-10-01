@@ -14,7 +14,7 @@ class ListExportWorker
     # re-enqueue the job so it will be processed when worker is restarted
     Resque.enqueue(ListExportWorker, download_id)
 
-  rescue  Exception => e
+  rescue => e
     Rails.logger.debug e.message
     Rails.logger.debug e.backtrace.join("\n")
     export.fail! if export

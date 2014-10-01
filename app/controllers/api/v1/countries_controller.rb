@@ -4,13 +4,13 @@ class Api::V1::CountriesController < Api::V1::ApiController
 
   resource_description do
     short 'Countries'
-    formats ['json', 'xml']
-    error 404, "Missing"
-    error 500, "Server crashed for some reason"
+    formats %w(json xml)
+    error 404, 'Missing'
+    error 500, 'Server crashed for some reason'
     param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
   end
 
-  api :GET, '/api/v1/countries', "Get a list of countries"
+  api :GET, '/api/v1/countries', 'Get a list of countries'
   description <<-EOS
     Returns a list of the valid countries in the app. Useful to generate dropdowns.
 
@@ -41,20 +41,20 @@ class Api::V1::CountriesController < Api::V1::ApiController
     ]
   EOS
   def index
-    countries = Country.all.map{|c| {id: c[1], name: c[0]}}
+    countries = Country.all.map { |c| { id: c[1], name: c[0] } }
     respond_to do |format|
-      format.json {
-        render :status => 200,
-               :json => countries
-      }
-      format.xml {
-        render :status => 200,
-               :xml => countries.to_xml(root: 'countries')
-      }
+      format.json do
+        render status: 200,
+               json: countries
+      end
+      format.xml do
+        render status: 200,
+               xml: countries.to_xml(root: 'countries')
+      end
     end
   end
 
-  api :GET, '/api/v1/countries/:id/states', "Get a list of stages for a country"
+  api :GET, '/api/v1/countries/:id/states', 'Get a list of stages for a country'
   param :id, String, required: true, desc: "The country's code."
   see 'countries#index'
   description <<-EOS
@@ -89,16 +89,16 @@ class Api::V1::CountriesController < Api::V1::ApiController
   def states
     country = Country.new(params[:id])
     states = []
-    states = country.states.map{|k,v| {id: k, name: v['name']} } if country
+    states = country.states.map { |k, v| { id: k, name: v['name'] } } if country
     respond_to do |format|
-      format.json {
-        render :status => 200,
-               :json => states
-      }
-      format.xml {
-        render :status => 200,
-               :xml => states.to_xml(root: 'states')
-      }
+      format.json do
+        render status: 200,
+               json: states
+      end
+      format.xml do
+        render status: 200,
+               xml: states.to_xml(root: 'states')
+      end
     end
   end
 end

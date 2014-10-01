@@ -29,7 +29,8 @@ class PlacesController < FilteredController
   end
 
   protected
-    def place_params
-      params.permit(place: [:name, :types, :street_number, :route, :city, :state, :zipcode, :country, :reference])[:place]
-    end
+
+  def place_params
+    params.permit(place: [:name, :types, :street_number, :route, :city, :state, :zipcode, :country, :reference])[:place]
+  end
 end

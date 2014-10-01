@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe BrandAmbassadors::Document, :type => :model do
+RSpec.describe BrandAmbassadors::Document, type: :model do
   it { is_expected.to belong_to(:attachable) }
   it { is_expected.to belong_to(:folder) }
 

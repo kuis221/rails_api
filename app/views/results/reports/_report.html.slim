@@ -1,10 +1,10 @@
-li id="report_#{report.id}"
-  = link_to_if_permitted :show, Report, results_report_path(report), title: report.name do
+div.resource-item id="report_#{report.id}"
+  = link_to_if_permitted :show, Report, results_report_path(report), title: report.name, class: 'resource-item-link' do
   	.span10.report-item
-      b= report.name
+      .text-large= report.name
       p= report.description
 
-  span.pull-right
+  div.resource-item-actions
     - if can?(:edit, report)
       = link_to('', share_results_report_path(report, format: :js), class: 'icon-share', title: 'Share', remote: true, method: :get)  if can?(:share, report)
       = link_to '', edit_results_report_path(report), remote: true, class: 'icon-edit', title: 'Edit'

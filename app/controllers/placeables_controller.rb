@@ -14,7 +14,7 @@ class PlaceablesController < FilteredController
   def add_area
     authorize!(:add_place, parent)
     @area = current_company.areas.find(params[:area])
-    if !parent.area_ids.include?(@area.id)
+    unless parent.area_ids.include?(@area.id)
       parent.areas << @area
     end
   end
@@ -29,7 +29,7 @@ class PlaceablesController < FilteredController
 
   private
 
-    def authorize_parent
-      can?(:show, parent)
-    end
+  def authorize_parent
+    can?(:show, parent)
+  end
 end

@@ -1,50 +1,48 @@
 require 'rails_helper'
 
-feature "Roles", js: true do
-  let(:company) { FactoryGirl.create(:company) }
-  let(:user) { FactoryGirl.create(:user, company_id: company.id, role_id: FactoryGirl.create(:role, company: company).id) }
+feature 'Roles', js: true do
+  let(:company) { create(:company) }
+  let(:user) { create(:user, company_id: company.id, role_id: create(:role, company: company).id) }
 
   before { sign_in user }
   after { Warden.test_reset! }
 
-  feature "/roles", search: true  do
-    scenario "GET index should display a list with the roles" do
-      FactoryGirl.create(:role, name: 'Costa Rica Role',
+  feature '/roles', search: true  do
+    scenario 'GET index should display a list with the roles' do
+      create(:role, name: 'Costa Rica Role',
         description: 'el grupo de ticos', active: true, company_id: company.id)
-      FactoryGirl.create(:role, name: 'Buenos Aires Role',
+      create(:role, name: 'Buenos Aires Role',
         description: 'the guys from BAs', active: true, company_id: company.id)
       Sunspot.commit
 
       visit roles_path
 
-      within("ul#roles-list") do
-        # First Row
-        within("li:nth-child(1)") do
-          expect(page).to have_content('Buenos Aires Role')
-          expect(page).to have_content('the guys from BAs')
-        end
-        # Second Row
-        within("li:nth-child(2)") do
-          expect(page).to have_content('Costa Rica Role')
-          expect(page).to have_content('el grupo de ticos')
-        end
+      # First Row
+      within resource_item 1 do
+        expect(page).to have_content('Buenos Aires Role')
+        expect(page).to have_content('the guys from BAs')
+      end
+      # Second Row
+      within resource_item 2 do
+        expect(page).to have_content('Costa Rica Role')
+        expect(page).to have_content('el grupo de ticos')
       end
     end
 
-    scenario "allows the user to activate/deactivate roles" do
-      FactoryGirl.create(:role, name: 'Costa Rica Role', description: 'el grupo de ticos', active: true, company: company)
+    scenario 'allows the user to activate/deactivate roles' do
+      create(:role, name: 'Costa Rica Role', description: 'el grupo de ticos', active: true, company: company)
       Sunspot.commit
 
       visit roles_path
 
-      within("ul#roles-list li:nth-child(1)") do
+      within resource_item 1 do
         expect(page).to have_content('Costa Rica Role')
         click_js_link 'Deactivate'
       end
 
-      confirm_prompt "Are you sure you want to deactivate this role?"
+      confirm_prompt 'Are you sure you want to deactivate this role?'
 
-      within("ul#roles-list") do
+      within('#roles-list') do
         expect(page).to have_no_content('Costa Rica Role')
       end
 
@@ -52,7 +50,7 @@ feature "Roles", js: true do
       filter_section('ACTIVE STATE').unicheck('Inactive')
       filter_section('ACTIVE STATE').unicheck('Active')
 
-      within("ul#roles-list li:nth-child(1)") do
+      within resource_item 1 do
         expect(page).to have_content('Costa Rica Role')
         click_js_link 'Activate'
       end
@@ -77,31 +75,31 @@ feature "Roles", js: true do
     end
   end
 
-  feature "/roles/:role_id", :js => true do
-    scenario "GET show should display the role details page" do
-      role = FactoryGirl.create(:role, name: 'Some Role Name', description: 'a role description', company_id: company.id)
+  feature '/roles/:role_id', js: true do
+    scenario 'GET show should display the role details page' do
+      role = create(:role, name: 'Some Role Name', description: 'a role description', company_id: company.id)
       visit role_path(role)
       expect(page).to have_selector('h2', text: 'Some Role Name')
       expect(page).to have_selector('div.description-data', text: 'a role description')
     end
 
     scenario 'allows the user to activate/deactivate a role' do
-      role = FactoryGirl.create(:role, active: true, company_id: company.id)
+      role = create(:role, active: true, company_id: company.id)
       visit role_path(role)
       within('.links-data') do
-         click_js_link('Deactivate')
-       end
+        click_js_link('Deactivate')
+      end
 
-       confirm_prompt "Are you sure you want to deactivate this role?"
+      confirm_prompt 'Are you sure you want to deactivate this role?'
 
-       within('.links-data') do
-         click_js_link 'Activate'
-         expect(page).to have_link('Deactivate') # test the link have changed
-       end
+      within('.links-data') do
+        click_js_link 'Activate'
+        expect(page).to have_link('Deactivate') # test the link have changed
+      end
     end
 
     scenario 'allows the user to edit the role' do
-      role = FactoryGirl.create(:role, company_id: company.id)
+      role = create(:role, company_id: company.id)
       Sunspot.commit
       visit role_path(role)
 

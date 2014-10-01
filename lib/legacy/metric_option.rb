@@ -13,9 +13,9 @@
 class MetricOption < Legacy::Record
   belongs_to :metric
 
-  scope :not_deleted, lambda{ where({:removed => false}) }
+  scope :not_deleted, lambda { where(removed: false) }
 
-  delegate :name, :to => :metric, :prefix => true
+  delegate :name, to: :metric, prefix: true
   def qualified_name
     [metric_name, name].join('.')
   end

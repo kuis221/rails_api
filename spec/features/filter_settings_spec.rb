@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-feature "Filter Settings", search: true, js: true do
-  let(:company) { FactoryGirl.create(:company) }
-  let(:campaign) { FactoryGirl.create(:campaign, company: company) }
-  let(:user) { FactoryGirl.create(:user, company: company, role_id: FactoryGirl.create(:role).id) }
+feature 'Filter Settings', search: true, js: true do
+  let(:company) { create(:company) }
+  let(:campaign) { create(:campaign, company: company) }
+  let(:user) { create(:user, company: company, role_id: create(:role).id) }
   let(:company_user) { user.company_users.first }
 
   before do
@@ -15,18 +15,18 @@ feature "Filter Settings", search: true, js: true do
     Warden.test_reset!
   end
 
-  feature "filter settings" do
-    let(:campaign1) { FactoryGirl.create(:campaign, name: 'Campaign 1', company: company) }
-    let(:campaign2) { FactoryGirl.create(:campaign, name: 'Campaign 2', company: company) }
-    let(:brand1) { FactoryGirl.create(:brand, name: 'Brand 1', company: company) }
-    let(:brand2) { FactoryGirl.create(:brand, name: 'Brand 2', company: company, active: false) }
-    let(:event1) { FactoryGirl.create(:submitted_event, campaign: campaign1) }
-    let(:event2) { FactoryGirl.create(:late_event, campaign: campaign2) }
-    let(:user1) { FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Roberto', last_name: 'Gomez'), company: company) }
-    let(:user2) { FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Mario', last_name: 'Moreno'), company: company) }
-    let(:user3) { FactoryGirl.create(:company_user, user: FactoryGirl.create(:user, first_name: 'Eugenio', last_name: 'Derbez'), company: company, active: false) }
+  feature 'filter settings' do
+    let(:campaign1) { create(:campaign, name: 'Campaign 1', company: company) }
+    let(:campaign2) { create(:campaign, name: 'Campaign 2', company: company) }
+    let(:brand1) { create(:brand, name: 'Brand 1', company: company) }
+    let(:brand2) { create(:brand, name: 'Brand 2', company: company, active: false) }
+    let(:event1) { create(:submitted_event, campaign: campaign1) }
+    let(:event2) { create(:late_event, campaign: campaign2) }
+    let(:user1) { create(:company_user, user: create(:user, first_name: 'Roberto', last_name: 'Gomez'), company: company) }
+    let(:user2) { create(:company_user, user: create(:user, first_name: 'Mario', last_name: 'Moreno'), company: company) }
+    let(:user3) { create(:company_user, user: create(:user, first_name: 'Eugenio', last_name: 'Derbez'), company: company, active: false) }
 
-    scenario "allows to configure filter settings" do
+    scenario 'allows to configure filter settings' do
       event1.users << user1
       event1.users << user2
       event1.users << user3

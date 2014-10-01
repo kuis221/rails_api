@@ -346,12 +346,6 @@ body.events.show{
 .tab-content{
 	overflow-x:hidden;
 	width: 100%;
-	.link-list{
-		&+h4{
-			font-size: 16px;
-	 		margin: 45px 0 25px 25px;
-		}
-	}
 }
 
 input{
@@ -1716,6 +1710,7 @@ label{
 	}
 }
 .placeholder-empty-state {
+	border: 1px solid $borders;
 	padding: 60px 10px !important;;
 	text-align: center;
 	color: silver !important;
@@ -2258,822 +2253,6 @@ li#notifications{
 	}
 }
 
-// LISTS OF ELEMENTS - EVENTS
-// --------------------------------------------------
-
-.link-list{
-	border:1px solid $borders;
-	color: $brand;
-	font-size: 12px;
-	margin: 25px 0 0 0;
-	overflow: hidden;
-	padding: 0;
-	position: relative;
-	address{
-		line-height: 21px;
-		margin-bottom: 0;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-		width: 500px;
-		br{
-			display: none;
-		}
-	}
-	a:hover{
-		color: $text;
-		text-decoration: none;
-	}
-	b{
-		font-size: 16px;
-		font-weight: normal;
-		position: relative;
-	}
-	.clean-date {
-		b{
-			font-size: 12px;
-			top: 0px;
-		}
-	}
-
-	/* Fix for global styles -- lists of admin dropdown header menu */
-	ul{
-		padding: 0;
-		margin:0;
-		li{
-			color: $text;
-			display: table;
-			min-height: 85px;
-			height: 85px;
-			position: relative;
-			width: 100%;
-			a{
-				display: table-cell;
-				vertical-align: middle;
-				float: none;
-				padding-top: 0;
-				padding-bottom: 0;
-				height: 85px;
-				span{
-					display: inline-block;
-					vertical-align: middle;
-				}
-			}
-			&:hover{
-				.pull-right{
-					opacity: 1;
-					a{
-						box-sizing: border-box;
-						color: $brand;
-						padding-left: 10px;
-						display: table-cell;
-						vertical-align: middle;
-					}
-				}
-			}
-			span{
-				display: inline-block;
-				vertical-align: middle;
-				&.address{
-					line-height: 19px;
-					width: 45%;
-					overflow: hidden;
-					text-overflow:ellipsis;
-					white-space: nowrap;
-					address{
-						overflow: hidden;
-						text-overflow:ellipsis;
-						width: 95%;
-					}
-				}
-				&.date{
-					line-height: 20px;
-					width: 40%;
-				}
-				&.pull-right{
-					opacity: 0;
-					position: absolute;
-					right: 15px;
-					font-size: 18px;
-				}
-			}
-			/* End global change */
-
-			&.complete > span.task-list {
-				border-left: 5px solid $complete !important;
-			}
-			&.late > span.task-list {
-				border-left: 5px solid $buttons;
-			}
-			&.due > span.task-list {
-				border-left: 5px solid $due_today;
-			}
-			&.inactive{
-				a{
-				color:$user_menu;
-				}
-			}
-
-			&.hide {
-				display: none;
-			}
-			&.collapse{
-				height:0;
-				min-height: 0;
-				display: block;
-			}
-		}
-	}
-	.empty-list-message {
-		display: none;
-	}
-	.empty-list-message:first-child:last-child {
-		display: block;
-		p{
-			vertical-align: middle;
-			display: table-cell;
-			padding-left: 20px;
-		}
-	}
-	ul.select-items-list{
-		li{
-			display: table;
-			height: 86px;
-			min-height: 86px;
-			width: 100%;
-			a, span{
-				display: table-cell !important;
-				vertical-align: middle;
-			}
-			span{
-				&:first-child{
-					font-size: 11px;
-					margin: 8px 0 0 0;
-					width: 400px;
-					.area_name, .kpi_name{
-						font-size: 16px;
-					}
-					.area_description, .kpi_description{
-						overflow: hidden;
-						text-overflow: ellipsis;
-						white-space: nowrap;
-					}
-				}
-				&:last-child{
-					.icon-rounded-add{
-						color: $brand;
-						font-size: 21px;
-						position: relative;
-						top: 2px;
-					}
-				}
-			}
-			&.inactive {
-				color:$user_menu;
-			}
-			&:hover {
-				.activate-btn {
-					display: none !important;
-				}
-				&.inactive {
-					.deactivate-btn {
-						display: none !important;
-					}
-					.activate-btn {
-						display: table-cell !important;
-					}
-				}
-			}
-		}
-	}
-	ul#activity_types-list{
-		li{
-			box-sizing: border-box !important;
-			-moz-box-sizing: border-box;
-			display: table !important;
-			min-height: 86px;
-			height: 86px;
-			width: 100%;
-			a, span{
-				display: table-cell !important;
-				vertical-align: middle;
-			}
-			&.inactive{
-				span{
-					color:$user_menu;
-				}
-				&:hover{
-					span{
-						color: $text;
-					}
-				}
-			}
-		}
-	}
-	ul#select-campaigns-list{
-		li{
-			span{
-				&:first-child{
-					font-size: 11px;
-					margin: 8px 0 0 0;
-					width: 400px;
-					.campaign_name{
-						font-size: 16px;
-					}
-					.campaign_description{
-						overflow: hidden;
-						text-overflow: ellipsis;
-						white-space: nowrap;
-					}
-				}
-				&:last-child{
-					.add:before{
-						color: $brand;
-						content: "\e021";
-						display: inline-block;
-						font-family: 'icons';
-						font-size: 21px;
-						right:5px;
-						position: relative;
-						speak: none;
-						text-align: center;
-						top: 5px;
-						vertical-align: middle;
-						-webkit-font-smoothing: antialiased;
-					}
-				}
-			}
-		}
-	}
-	ul#date-ranges-list{
-		.date-range-data{
-			padding: 12px;
-		}
-		.date-range-name{
-			font-size: 16px;
-		}
-		.date-range-description{
-			display: block;
-			overflow: hidden;
-			text-overflow:ellipsis;
-			white-space: nowrap;
-			width: 320px;
-		}
-	}
-	ul#day-parts-list{
-		.day-part-data{
-			padding: 12px;
-		}
-		.day-part-name{
-			font-size: 16px;
-		}
-		.day-part-description{
-			display: block;
-			overflow: hidden;
-			text-overflow:ellipsis;
-			white-space: nowrap;
-			width: 320px;
-		}
-	}
-	ul#events-list{
-		li{
-			.address{
-				br{
-					display:block;
-				}
-			}
-			&.late {
-				border-left: 5px solid $late;
-			}
-			&.submitted {
-				border-left: 5px solid $submitted;
-			}
-			&.approved {
-				border-left: 5px solid $approved;
-			}
-			&.rejected {
-				border-left: 5px solid $rejected;
-			}
-		}
-		span{
-			&.event-item {
-				display: table-cell;
-				float: none;
-				padding: 0 15px;
-				vertical-align: middle;
-				a{
-					display: inline-block;
-					vertical-align: middle;
-					height: auto;
-					width: 100%;
-				}
-			}
-			&.pull-right{
-				right: 20px;
-				top: 20px;
-				a{
-					width: auto;
-					height: 45px;
-					display: table-cell;
-					vertical-align: middle;
-				}
-			}
-		}
-	}
-	ul#visits-list{
-		li{
-			.item-info {
-				font-weight: normal;
-				&>span {
-					display:  block;
-				}
-			}
-			.date { width: 30%; }
-			.name { width: 35%; }
-			.brand-type { width: 35%; }
-		}
-		span{
-			&.visit-item {
-				display: table-cell;
-				float: none;
-				padding: 0 15px;
-				vertical-align: middle;
-				a{
-					display: inline-block;
-					vertical-align: middle;
-					height: auto;
-					width: 100%;
-				}
-			}
-			&.pull-right{
-				right: 20px;
-				top: 20px;
-				a{
-					width: auto;
-					height: 45px;
-					display: table-cell;
-					vertical-align: middle;
-				}
-			}
-		}
-	}
-	ul#my-tasks-list, ul#team-tasks-list{
-		li{
-			.task-list{
-				display: table-cell;
-				min-height: 85px;
-				padding: 0;
-				vertical-align: middle;
-				width: 100%;
-				span{
-					&.tasks{
-						width:100%;
-					}
-					&.title{
-						margin-left: 18px;
-						width: 60%;
-					}
-					&.last, &.last span{
-						vertical-align:middle;
-						a{
-							display: inline-block;
-						}
-					}
-					&.task-completed{
-						vertical-align: bottom;
-					}
-				}
-			}
-		}
-	}
-	ul#tasks-list{
-		li{
-			&.complete > span.task-list {
-				border-left: 5px solid $complete !important;
-			}
-			&.late > span.task-list {
-				border-left: 5px solid $buttons;
-			}
-			&.due > span.task-list {
-				border-left: 5px solid $due_today;
-			}
-			span{
-				vertical-align: middle;
-				&.task-list{
-					display: table;
-					min-height: 85px;
-					width: 100%;
-					span.tasks{
-						display: table-cell;
-						vertical-align: middle !important;
-						height: 85px;
-						.task-completed{
-							height: 20px;
-							margin-right: 15px;
-						}
-						.tasks-date{
-							margin: 0 20px 0 0;
-							width: 45%;
-						}
-						.last{
-							width: 35%;
-						}
-						.links{
-							top: 32px;
-						}
-						.title{
-							display: inline-block;
-							position: relative;
-							overflow: hidden;
-							text-overflow:ellipsis;
-							white-space: nowrap;
-							width: 53%;
-						}
-					}
-					a{
-						height: auto;
-					}
-				}
-			}
-		}
-	}
-	ul#event-data-list, ul#comment-list, ul#expenses-list, ul#surveys-list{
-		.event-info{
-			padding:16px 30px 0 0;
-		}
-		li{
-			address{
-				width:400px !important;
-			}
-			&.placeholder{
-				height: 100%;
-				text-align: center;
-				p{
-					padding-top: 33px;
-				}
-			}
-		}
-	}
-	ul#comment-list{
-		.event-info{
-			width: 90%;
-		}
-		li{
-			address{
-				width: auto !important;
-			}
-			span.comment-text{
-				font-size: 13px;
-				margin: 15px 0 0 0;
-				width: 45%;
-				.comment-date{
-					font-size: 12px;
-					b{
-						top: 0;
-					}
-				}
-				p{
-					padding-top: 5px;
-				}
-			}
-		}
-	}
-	ul#expenses-list{
-		li{
-			margin-bottom: 0;
-			overflow: visible;
-			vertical-align: middle;
-			width: 100%;
-			address{
-				width: auto !important;
-			}
-			&:hover{
-				.links{
-					display: block;
-					float: right;
-					margin: 0 15px 0 0;
-					a{
-						color: $brand;
-						font-size: 16px;
-						margin-right: 10px;
-						vertical-align: top;
-						&.icon-receipt{
-							font-size: 24px;
-							margin-right: 5px;
-							position: relative;
-							top: 4px;
-						}
-						&:last-child{
-							margin-right: 0;
-						}
-					}
-				}
-			}
-			&.total-expenses{
-				span{
-				font-size: 16px;
-					&:first-child{
-						margin: 0 0 0 54px;
-						text-align: right;
-						width: 30%;
-					}
-					&:last-child{
-						text-align: right;
-						width: 115px;
-						b{
-							font-weight: bold !important;
-						}
-					}
-				}
-			}
-			span{
-				a{
-					display: inline-block;
-					height: auto;
-				}
-				&.expenses{
-					display: table-cell;
-					vertical-align: middle;
-					.total{
-						font-size: 16px;
-						width: 20%;
-					}
-					.data{
-						font-size: 16px;
-						overflow: hidden;
-						padding-left: 20px;
-						text-overflow: ellipsis;
-						white-space: nowrap;
-						width: 70%;
-					}
-				}
-				&.links{
-					display:none;
-				}
-				&.currency{
-					font-size: 16px;
-					margin: 0 0;
-				}
-			}
-		}
-	}
-	ul#activities-list{
-		li{
-			span{
-				&.data{
-					margin: 0 35px;
-					overflow: hidden;
-					text-overflow: ellipsis;
-					white-space: nowrap;
-					width: 400px;
-				}
-				&.name{
-					font-size: 16px;
-					margin-left: 15px;
-					width: 45%;
-				}
-				&.event-item {
-					display: table;
-					vertical-align: middle;
-					width: 100%;
-					a{
-						display: table-cell;
-					}
-				}
-				&.links{
-					top: 32px;
-					a{
-						display: inline-block;
-					}
-				}
-			}
-		}
-	}
-	ul#users-list{
-		span{
-			line-height: 20px;
-			&.user_name, &.user_city{
-				margin: 0 20px 0 0;
-				width: 20%;
-			}
-			&.user_name{
-				b{
-					font-size: 16px;
-					top:0;
-				}
-			}
-			&.user_mail{
-				margin: 0 30px 0 0;
-				width: 24%;
-			}
-			&.user_date{
-				margin: 0;
-				width: 18%;
-			}
-		}
-	}
-	ul#surveys-list{
-		span{
-			&:first-child{
-				float: left;
-				margin: 0 0 0 15px;
-				width: 330px;
-				.survey-age{
-					font-size: 16px;
-					margin-bottom: 4px;
-				}
-			}
-			&.date{
-				display: inline-block;
-				line-height: 16px;
-				margin: 0 50px 0 0;
-				width: 180px;
-			}
-		}
-	}
-	ul#teams-list{
-		span{
-			line-height: 20px;
-			b{
-				font-size: 16px;
-				top:0;
-			}
-			&:first-child{
-				margin: 0 100px 0 0;
-				width:50%;
-			}
-			&.members{
-				margin: 0;
-				width: 15%;
-				b {
-					font-size: 16px;
-				}
-			}
-		}
-	}
-	ul#roles-list{
-		span{
-			line-height: 20px;
-			b{
-				top:0;
-			}
-			&:first-child{
-				width: 50%;
-			}
-		}
-	}
-	ul#campaigns-list{
-		span{
-			line-height: 20px;
-			b{
-				top:0;
-			}
-			&:first-child{
-				margin: 0 80px 0 0;
-				width: 45%;
-			}
-			&.first{
-				margin-right: 55px;
-				width: 15%;
-			}
-			&.first, &.last{
-				margin-top: 0;
-			}
-		}
-	}
-	ul#brands-list, ul#brand_portfolios-list, ul#date_ranges-list,
-	ul#day_parts-list{
-		li{
-			display: table;
-			width: 100%;
-		}
-	}
-	ul#brand_portfolios-list{
-		span{
-			width: 80%;
-			&.pull-right{
-				width: auto;
-			}
-		}
-	}
-	ul#venues-list{
-		li{
-			a{
-				padding-left: 15px;
-				&:first-child{
-					line-height: 20px;
-				}
-				.events, .hours, .spent{
-					display: inline-block;
-					margin: 10px 0 0 0;
-					width: 136px;
-					.n_events, .n_hours, .n_spent{
-						font-size: 16px;
-					}
-				}
-				.score{
-						color: $venues_blue;
-					margin-right: 15px;
-					width: 45px;
-					text-align: center;
-						.big-number{
-							font-size: 30px;
-							font-weight: 300;
-							line-height: 28px;
-						}
-				}
-				span{
-					&:first-child{
-						float: left;
-						width: 54%;
-					}
-					&.n_events{
-						font-size: 16px;
-						margin-top: 15px;
-						width: 120px;
-					}
-				}
-			}
-			.venue_adress{
-				display: block;
-				overflow: hidden;
-				text-overflow:ellipsis;
-				white-space: nowrap;
-			}
-		}
-	}
-	li{
-		border-top:1px solid $borders;
-		color:$brand;
-		min-height: 83px;
-		list-style:none;
-		margin: 0;
-		position: relative;
-		&:first-child{
-			border-top:0;
-		}
-		.description{
-			display: block;
-			@extend .crop-text;
-		}
-		&>a{
-			display: block;
-			padding: 0 15px;
-			@include box-sizing(border-box);
-			width: 100%;
-			min-height: 100%;
-		}
-		&:hover{
-			background-color: $grey_one;
-			.checker{
-				background-color: $user_menu;
-			}
-			span.checked{
-				background-color: $brand
-			}
-		}
-	}
-	&#resource-goals-list{
-		li{
-			span{
-				display: table-cell;
-				min-height: 84px;
-				vertical-align:middle;
-				&.goals-list{
-					display: table;
-					width: 100%;
-				}
-				&.title{
-					font-size: 11px;
-					padding-left: 20px;
-					width: 30%;
-					.goal-title{
-						font-size: 16px;
-					}
-				}
-				&.goal-value, .start-date, &.due-date{
-					width: 20%;
-				}
-				&.edit-goal{
-					opacity: 0;
-					padding-right: 20px;
-					text-align: right;
-					width: 10%;
-				}
-			}
-			&:hover{
-				.edit-goal{
-					opacity: 1;
-				}
-			}
-		}
-	}
-	&.rows-no-link{
-		li{
-			padding: 13px 15px 11px 35px;
-		}
-	}
-}
 div.loading-spinner, li.loading-spinner {
 	display:block;
 	background: #fff image-url('loading.gif') center center no-repeat;
@@ -3513,7 +2692,7 @@ ul.ui-widget-content{
 	.control-group{
 		margin-bottom: 0;
 		.controls{
-			width: 220px;
+			max-width: 220px;
 		}
 		&.event_summary{
 			margin-bottom: 20px;
@@ -4125,6 +3304,19 @@ body.show {
 			margin-top: 8px;
 		}
 	}
+	.team-member {
+		a {
+			display: none;
+			&:first-child {
+				margin-right: 5px;
+			}
+		}
+		&:hover {
+			a  {
+				display: inline-block;
+			}
+		}
+	}
 	.team-member, .team, .brand, .area-place {
 		font-size: 11px;
 		//padding: 0 0 0 32px;
@@ -4137,7 +3329,7 @@ body.show {
 		}
 		&:hover{
 			a.remove-member-btn, a.remove-area-btn, a.remove-brand-btn,
-			a.remove-contact-btn, .event-contacts-list a.edit {
+			.event-contacts-list a.edit {
 				color: $brand;
 				display:inline-block;
 				font-size: 16px;
@@ -4145,7 +3337,7 @@ body.show {
 			}
 		}
 		a.remove-member-btn, a.remove-area-btn, a.remove-brand-btn,
-		a.remove-contact-btn, .event-contacts-list a.edit {
+		.event-contacts-list a.edit {
 			display:none;
 		}
 		.icon-wired-star{
@@ -4284,177 +3476,6 @@ body.show {
 
 	.modal-body {
 		max-height: none !important;
-	}
-}
-
-#asset_upload_dialog {
-	color: $user_menu;
-	p{
-	margin-bottom: 0;
-		&.small{
-			font-size: 11px;
-		}
-	}
-	.modal-header {
-		border-bottom: none;
-	}
-	.divider{
-		margin: 40px 0;
-		text-align: center;
-	}
-	.uploading-panel {
-		display: none;
-	}
-	&.upload-started {
-		.selecting-panel {
-			display: none;
-		}
-		.uploading-panel {
-			display: block;
-		}
-	}
-	#drop-zone {
-		border: 2px dashed $user_menu;
-		color: $user_menu;
-		font-size: 16px;
-		text-align: center;
-		padding: 30px 20px 20px 20px;
-		min-height: 50px;
-		a{
-			color: $brand;
-			font-size: 14px;
-			font-weight: normal;
-			text-decoration: underline;
-		}
-		h3{
-			margin-bottom: 0;
-		}
-		p{
-			color: $user_menu;
-			font-size: 14px;
-			font-weight:normal;
-		}
-		span{
-			display: inline-block;
-			margin-left: 10px;
-			text-align: left;
-		}
-		i{
-			font-size: 30px;
-			position: relative;
-			top: -2px;
-		}
-		&.dragging {
-			border-color: $buttons;
-		}
-	}
-	.selecting-panel{
-		margin-top: 10px;
-	}
-	#uploads_container {
-		width: 100%;
-		height: 250px;
-		max-height: 250px;
-		overflow: auto;
-		border: 1px solid $grey_one;
-		color: $grey_three;
-
-		.progress {
-			height: 50px;
-			width: 100% !important;
-			position: relative;
-			background-color: #fff !important;
-			border-bottom: 1px solid $grey_one;
-			margin-bottom: 0;
-			.bar {
-				background-image: none !important;
-				background-color: $grey_two;
-				box-shadow: none;
-				-webkit-box-shadow: none;
-				-moz-box-shadow: none;
-			}
-			.upload-file-info {
-				position: absolute;
-				left: 0;
-				margin:3px 0 0 3px;
-				right: 0px;
-				bottom: 0;
-				top: 0;
-				.upload-file-icon {
-					position: absolute;
-					width: 30px;
-					top: 10px;
-					left: 10px;
-					img{
-						height: 18px;
-						width:16px;
-					}
-				}
-				.upload-file-name {
-					position: absolute;
-					left: 40px;
-					@extend .crop-text;
-					top: 12px;
-					width: 70%;
-				}
-				.upload-file-error {
-					position: absolute;
-					left: 40px;
-					top: 30px;
-					font-size: 11px;
-					display: none;
-				}
-				.upload-file-status {
-					position: absolute;
-					right: 15px;
-					top: 12px;
-					width: 100px;
-					text-align: right;
-				}
-			}
-		}
-
-		.complete {
-			.bar {
-				display: none;
-			}
-			.icon-ok-sign {
-				color: #8EBA47;
-				font-size: 20px;
-			}
-			.icon-minus-sign {
-				font-size: 20px;
-				display: none;
-			}
-
-			&.failed{
-				color: #de4d43 !important;
-				.icon-ok-sign {
-					display: none;
-				}
-				.icon-minus-sign {
-					display: inline;
-				}
-				.upload-file-error {
-					display: inline;
-				}
-			}
-		}
-	}
-
-	.action-buttons {
-		margin-top: 30px;
-		.btn {
-			color: #fff;
-			line-height: 25px;
-			width: 104px;
-		}
-		.fileinput-button {
-			width: 120px;
-		}
-		#btn-upload-ok {
-			margin-right: 10px;
-		}
 	}
 }
 
@@ -4826,6 +3847,36 @@ body.roles{
 // --------------------------------------------------
 
 .venues {
+	#venues-list {
+		.venue-stats > div {
+			display: inline-block;
+			margin: 10px 0 0 0;
+			width: 136px;
+			& > div {
+				font-size: 16px;
+			}
+		}
+		.score{
+			color: $venues_blue;
+			margin-right: 15px;
+			width: 45px;
+			height: 50px;
+			text-align: center;
+			display: inline-block;
+			.big-number{
+				font-size: 30px;
+				font-weight: 300;
+				line-height: 28px;
+			}
+		}
+
+		.venue_adress{
+			display: block;
+			overflow: hidden;
+			text-overflow:ellipsis;
+			white-space: nowrap;
+		}
+	}
 	&.index {
 		#venues-search-form-box {
 			border-radius: 6px;
@@ -4972,6 +4023,7 @@ body.roles{
 		.area {
 			width: 300px;
 			padding: 5px 0;
+			line-height: 23px;
 			.pull-left {
 				margin-right: 10px;
 			}
@@ -5018,12 +4070,6 @@ body.roles{
 		#venue-events, #venue-activities {
 			&.details_box {
 				padding-bottom: 50px;
-			}
-
-			#venue-events-container {
-				.link-list {
-					margin: 80px 0px 20px;
-				}
 			}
 		}
 
@@ -5090,75 +4136,95 @@ body.roles{
 				display: none;
 			}
 		}
+	}
+}
+.expenses.index {
+		#expenses-totals {
+		padding: 15px 0px;
+		border:1px solid $borders;
+		border-bottom:0;
+		height: 50px;
+		.pull-right{
+			margin-top: 15px;
+		}
+		span{
+			font-size: 16px;
+			margin-right: 15px;
+			&:first-child{
+				margin-right: 54px;
+			}
+			&:last-child{
+				font-weight: bold;
+			}
+		}
+	}
+}
+.event_data.index {
+	.collection-list-horizontal-scroll {
+		height: 60px;
+		margin-bottom: 8px;
+		position: relative;
+	}
+	#columns-scoller-arrows {
+		width: 100%;
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		top: 0;
+		font-size: 40px;
+		.left-arrow {
+			margin-left: 50%;
+			float: left;
+		}
+		.right-arrow {
+			float: right;
+			width: 15px;
+		}
 
-		.link-list {
-			overflow: hidden;
-		}
-		.collection-list-horizontal-scroll {
-			height: 60px;
-			margin-bottom: 8px;
-			position: relative;
-		}
-		#columns-scoller-arrows {
-			width: 100%;
-			position: absolute;
-			left: 0;
-			right: 0;
-			bottom: 0;
-			top: 0;
-			font-size: 40px;
-			.left-arrow {
-				margin-left: 50%;
-				float: left;
+		a{
+			font-size: 26px;
+			line-height: 50px;
+			&:hover {
+				text-decoration: none;
+				cursor: pointer;
 			}
-			.right-arrow {
-				float: right;
-				width: 15px;
-			}
+		}
+	}
 
-			a{
-				font-size: 26px;
-				line-height: 50px;
-				&:hover {
-					text-decoration: none;
-					cursor: pointer;
-				}
+	#event-data-totals {
+		font-size: 11px;
+		height: 60px;
+		width: 96%;
+		overflow: hidden;
+		.big-number{
+			font-size: 22px;
+			font-weight: 300;
+			line-height: 28px;
+		}
+		.data-label{
+			line-height: 14px;
+			margin-top: 3px;
+		}
+		.events-box {
+			@include box-sizing(border-box);
+			float: left;
+			padding-left: 10px;
+			text-align: center;
+			width: 660px;
+		}
+	}
+	.event-data-row {
+		overflow: hidden;
+		width: 96%;
+		.results-box-container{
+			.event-data-column{
+				font-size: 16px;
+				margin-top: 35px;
+				width: 142px;
 			}
 		}
-
-		#event-data-totals {
-			font-size: 11px;
-			height: 60px;
-			width: 96%;
-			overflow: hidden;
-			.big-number{
-				font-size: 22px;
-				font-weight: 300;
-				line-height: 28px;
-			}
-			.data-label{
-				line-height: 14px;
-				margin-top: 3px;
-			}
-			.events-box {
-				@include box-sizing(border-box);
-				float: left;
-				padding-left: 10px;
-				text-align: center;
-				width: 55%;
-			}
-		}
-		.event-data-row {
-			overflow: hidden;
-			width: 96%;
-			.results-box-container{
-				.event-data-column{
-					font-size: 16px;
-					margin-top: 35px;
-					width: 142px;
-				}
-			}
-		}
+	}
 
 	.results-box-container .event-data-column {
 		transition: width 0.5s;
@@ -5180,67 +4246,30 @@ body.roles{
 	.scroll-10 { .results-box-container .event-data-column:nth-child(10) { width: 0; visibility: hidden;} }
 	.scroll-11 { .results-box-container .event-data-column:nth-child(11) { width: 0; visibility: hidden;} }
 
-		.results-box-container {
-			width: 3000px;
+	.results-box-container {
+		width: 3000px;
 
-			.event-data-column {
-				display: inline-block;
-				vertical-align: top;
-				height: 60px;
-				float: left;
-				margin-left: 5px;
-				width: 142px;
-				&.center-aligned {
-					text-align: center;
-				}
-				&.spent-box{
-					width: 152px;
-				}
+		.event-data-column {
+			display: inline-block;
+			vertical-align: top;
+			height: 60px;
+			float: left;
+			margin-left: 5px;
+			width: 142px;
+			&.center-aligned {
+				text-align: center;
+			}
+			&.spent-box{
+				width: 152px;
 			}
 		}
+	}
 
-		.event-data-row {
-			.event-info {
-				@include box-sizing(border-box);
-				float: left;
-				width: 23%;
-			}
-		}
-
-		.expense-column {
-			margin-right: 3px;
-			&:first-child{
-				width: 65%;
-			}
-			&.currency {
-				width: 25%;
-				text-align: right;
-				float: right;
-			}
-		}
-
-		&.index .link-list{
-			margin-top: 0;
-		}
-
-		#expenses-totals {
-			padding: 15px 0px;
-			border:1px solid $borders;
-			border-bottom:0;
-			height: 50px;
-			.pull-right{
-				margin-top: 15px;
-			}
-			span{
-				font-size: 16px;
-				margin-right: 15px;
-				&:first-child{
-					margin-right: 54px;
-				}
-				&:last-child{
-					font-weight: bold;
-				}
-			}
+	.event-data-row {
+		.event-info {
+			@include box-sizing(border-box);
+			float: left;
+			width: 640px;
 		}
 	}
 }
@@ -5834,11 +4863,6 @@ body.campaigns{
 			text-decoration: underline;
 		}
 	}
-	.link-list{
-		a{
-			color:$text;
-		}
-	}
 	.links-data{
 		a{
 			&.edit:after{
@@ -5897,29 +4921,6 @@ body.campaigns{
 			width: 410px;
 		}
 	}
-	ul#event-surveys-list{
-		li{
-			color:$text;
-			span{
-				&:first-child{
-					float: left;
-					margin: 0 0 0 20px;
-					width: 440px;
-					.survey-age{
-						font-size: 16px;
-						margin-bottom: 4px;
-					}
-				}
-				&.date{
-					display: inline-block;
-					width: 300px;
-				}
-				&.pull-right{
-					margin-top: 4px;
-				}
-			}
-		}
-	}
 	a{
 		color: $venues_blue;
 		text-decoration: none;
@@ -5933,9 +4934,6 @@ body.campaigns{
 	&#event-tasks{
 		#event-tasks-container{
 			clear: both;
-		}
-		.link-list ul#tasks-list li span.task-list span.tasks-date {
-			width: 50%;
 		}
 		.task-comments{
 			#comment-form-container{
@@ -6124,7 +5122,10 @@ div.chardinjs-tooltip
 	}
 }
 
-
+h4.custom-reports {
+font-size: 16px;
+margin: 45px 0 25px 25px;
+}
 
 // REPORTS
 
@@ -6353,7 +5354,6 @@ body.gva {
 			}
 			#gva-results{
 				a{
-					font-family: 'Lato', sans-serif !important;
 					text-decoration: none;
 				}
 				.details_box{
@@ -6501,92 +5501,6 @@ body.campaigns_report, body.staff_report {
 	#age-graph {
 		width: 400px;
 		height: 270px;
-	}
-}
-
-
-
-// Selectable object list widget
-.select-list-table-wrapper {
-	max-height: 257px;
-	border: 1px solid $borders;
-	margin: 20px 0 10px 0;
-	overflow: auto;
-	.row-fluid:after{
-		clear: none;
-	}
-	#new_place{
-		float: left;
-		margin-bottom: 40px;
-		width: 100%;
-	}
-	.link-list{
-		border: 0;
-		width: 100%;
-		margin-top: 0;
-		ul {
-			li{
-				display: table;
-				min-height: 85px !important;
-				height: 85px;
-				width: 100%;
-				span, p{
-					&:first-child{
-						display: table-cell !important;
-						vertical-align: middle;
-						padding-left: 20px;
-						span{
-							padding: 0;
-						}
-					}
-					&.add-button{
-						display: table-cell;
-						font-size: 18px;
-						vertical-align: middle;
-						width: 7%;
-						.icon-plus-sign{
-							font-size: 18px;
-						}
-					}
-				}
-				.brand-data, .kpi-data {
-					padding: 12px;
-				}
-				.member-data, .brand-data, .kpi-data {
-					.member-name, .brand-name, .kpi-name {
-						font-size: 16px;
-					}
-					.member-description {
-						display: block;
-						line-height: 16px;
-					}
-				}
-				a {
-					color: $brand;
-				}
-				&.empty-list-message {
-					display: none;
-				}
-				&.empty-list-message:first-child:last-child {
-					display: table;
-				}
-				.special-icon {
-					margin-right: 10px;
-				}
-			}
-		}
-	}
-	&.compact {
-		.link-list ul li {
-			height: 65px;
-			min-height: 65px !important;
-			span:first-child{
-				padding-left: 10px;
-			}
-			a {
-				height: 65px;
-			}
-		}
 	}
 }
 
@@ -7517,4 +6431,6 @@ body.dashboard.index {
 }
 
 
-@import 'widgets/documents_list'
+@import 'widgets/asset_upload_dialog';
+@import 'widgets/documents_list';
+@import 'widgets/resource_list';

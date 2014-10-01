@@ -8,48 +8,26 @@
 	}
 	.kpis-list {
 		list-style: none;
-		span{
-			&.kpis-container{
-				display: table-cell;
-				height: 85px;
-				vertical-align: middle;
-			}
-			&.kpi-goal, &.kpi-info {
-				font-size: 16px;
-				width: 30%;
-			}
-			&.kpi-info{
-				font-size: 11px;
-				margin-left: 15px;
-				.kpi-name{
-					font-size: 14px;
-				}
-			}
-			&.pull-right{
-				top: 0;
-			}
-			&.on-off-switch {
-				width: 100px;
-				height: 60px;
-				float: left;
-				padding-top: 10px;
-			}
-		}
 
 		.kpi-goals-list {
+			list-style: none;
+			margin: 0;
 			li {
 				border: none;
 				font-size: 11px;
 				min-height: 0;
-				.segment_name{
-					text-transform: uppercase;
-				}
-				.value{
-					font-size: 16px;
-					line-height: 16px;
-					padding-right: 5px;
-				}
 			}
+		}
+		.segment-name{
+			text-transform: uppercase;
+		}
+		.goal-value{
+			font-size: 16px;
+			line-height: 16px;
+			padding-right: 5px;
+			min-width: 50px;
+			display: inline-block;
+			text-align: right;
 		}
 	}
 
@@ -62,6 +40,12 @@
 
 			.control-group {
 				width: 100%;
+				&.kpi-segment {
+					margin-bottom: 0;
+					input { 
+						margin-bottom: 0 !important;
+					}
+				}
 				label{
 					display: inline-block;
 				}

@@ -2,10 +2,10 @@ class Api::V1::ContactsController < Api::V1::ApiController
   inherit_resources
 
   skip_before_action :verify_authenticity_token,
-                     :if => Proc.new { |c| c.request.format == 'application/json' }
+                     if: proc { |c| c.request.format == 'application/json' }
 
   def_param_group :contact do
-    param :contact, Hash, required: true, :action_aware => true do
+    param :contact, Hash, required: true, action_aware: true do
       param :first_name, String, required: true, desc: "Contact's first name"
       param :last_name, String, required: true, desc: "Contact's last name"
       param :title, String, required: false, desc: "Contact's title"
@@ -22,10 +22,10 @@ class Api::V1::ContactsController < Api::V1::ApiController
 
   resource_description do
     short 'Contacts'
-    formats ['json', 'xml']
-    error 406, "The server cannot return data in the requested format"
-    error 404, "The requested resource was not found"
-    error 500, "Server crashed for some reason. Possible because of missing required params or wrong parameters"
+    formats %w(json xml)
+    error 406, 'The server cannot return data in the requested format'
+    error 404, 'The requested resource was not found'
+    error 500, 'Server crashed for some reason. Possible because of missing required params or wrong parameters'
     param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
     param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
     description <<-EOS
@@ -33,7 +33,7 @@ class Api::V1::ContactsController < Api::V1::ApiController
     EOS
   end
 
-  api :GET, '/api/v1/contacts', "Get a list of contacts for a specific company"
+  api :GET, '/api/v1/contacts', 'Get a list of contacts for a specific company'
   description <<-EOS
     Returns a full list of the existing users in the company
     Each user have the following attributes:
@@ -78,9 +78,8 @@ class Api::V1::ContactsController < Api::V1::ApiController
     @contacts = current_company.contacts.order('contacts.first_name, contacts.last_name')
   end
 
-
   api :GET, '/api/v1/contacts/:id', 'Return a contact\'s details'
-  param :id, :number, required: true, desc: "Contact ID"
+  param :id, :number, required: true, desc: 'Contact ID'
 
   example <<-EOS
   {
@@ -108,7 +107,7 @@ class Api::V1::ContactsController < Api::V1::ApiController
   end
 
   api :POST, '/api/v1/contacts', 'Create a new contact'
-  error 422, "There is one or more invalid attributes for the contact"
+  error 422, 'There is one or more invalid attributes for the contact'
   param_group :contact
   description <<-EOS
   Creates a new contact and returns all the contact's info, including the assigned unique ID.
@@ -161,7 +160,7 @@ class Api::V1::ContactsController < Api::V1::ApiController
   end
 
   api :PUT, '/api/v1/contacts/:id', 'Update a contact\'s details'
-  param :id, :number, required: true, desc: "Contact ID"
+  param :id, :number, required: true, desc: 'Contact ID'
   param_group :contact
   description <<-EOS
   Updates a contact's information and returns all the contact's updated info.
@@ -215,7 +214,8 @@ class Api::V1::ContactsController < Api::V1::ApiController
   end
 
   protected
-    def build_resource_params
-      [params.require(:contact).permit(:first_name, :last_name, :title, :email, :phone_number, :street1, :street2, :city, :state, :country, :zip_code)]
-    end
+
+  def build_resource_params
+    [params.require(:contact).permit(:first_name, :last_name, :title, :email, :phone_number, :street1, :street2, :city, :state, :country, :zip_code)]
+  end
 end

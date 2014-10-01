@@ -1,35 +1,37 @@
 require 'csv'
 
 namespace :remote do
-  task :fix => :environment do
+  task fix: :environment do
     def remote_field_for(kpi, campaign_id)
       @fields ||= {}
       @fields[kpi.id] ||= {}
       @fields[kpi.id][campaign_id] ||= Remote::CampaignFormField.where(campaign_id: campaign_id, kpi_id: kpi.id).first
       @fields[kpi.id][campaign_id]
     end
+
     def campaigns_for_kpi(kpi)
       @campaigns ||= {}
       @campaigns[kpi.id] ||= Campaign.find(CampaignFormField.where(kpi_id: kpi).select('DISTINCT(campaign_id) as campaign_id').map(&:campaign_id))
       @campaigns[kpi.id]
     end
+
     def copy_results(kpi_from, kpi_to, remote_kpi, csv)
       campaigns = campaigns_for_kpi(kpi_from)
-      remote_results = Hash[Remote::EventResult.where(kpi_id: kpi_to.id).map{|r| [r.event_id, r]}]
+      remote_results = Hash[Remote::EventResult.where(kpi_id: kpi_to.id).map { |r| [r.event_id, r] }]
       puts "   Recovering results from #{kpi_from.name} into #{kpi_to.name} in campaigns: #{campaigns.map(&:name)}"
-      EventResult.joins(:event).select('event_results.*, events.campaign_id').where(events: {campaign_id: campaigns}, kpi_id: kpi_from.id).where('event_results.value is not null and event_results.value != \'\'').find_each do |result|
+      EventResult.joins(:event).select('event_results.*, events.campaign_id').where(events: { campaign_id: campaigns }, kpi_id: kpi_from.id).where('event_results.value is not null and event_results.value != \'\'').find_each do |result|
         remote_result = remote_results.try(:[], result.event_id)
         puts "  [#{result.event_id}]:: remote[#{remote_result.try(:id)}]: '#{remote_result.try(:value)}' <<==>> '#{result.value}'"
         if remote_result.nil? || (remote_result.value_is_empty? && remote_result.value.to_s != result.value.to_s)
           value = text = result.value
           if kpi_from.kpi_type == 'count'
             if value.is_a?(Array)
-              text = kpi_from.kpis_segments.select{|s| value.include?(s.id) }.map(&:text)
-              value = kpi_to.kpis_segments.select{|s| text.include?(s.text) }.map(&:id).join(',')
+              text = kpi_from.kpis_segments.select { |s| value.include?(s.id) }.map(&:text)
+              value = kpi_to.kpis_segments.select { |s| text.include?(s.text) }.map(&:id).join(',')
               text = text.to_sentence
             else
-              text = kpi_from.kpis_segments.detect{|s| s.id == result.value.to_i }.try(:text)
-              value = kpi_to.kpis_segments.detect{|s| s.text == text }.try(:id)
+              text = kpi_from.kpis_segments.find { |s| s.id == result.value.to_i }.try(:text)
+              value = kpi_to.kpis_segments.find { |s| s.text == text }.try(:id)
             end
           end
           if remote_result.nil?
@@ -39,15 +41,15 @@ namespace :remote do
           remote_result.scalar_value = value.try(:to_f) unless kpi_from.kpi_type == 'count'
           remote_result.value = value
           remote_result.save
-          #puts "  Found missing result for event #{result.event_id}: #{value}"
+          # puts "  Found missing result for event #{result.event_id}: #{value}"
           csv << [kpi_from.name, remote_kpi.name, "http://stage.brandscopic.com/events/#{result.event_id}", remote_result.try(:value), text, value]
         end
       end
     end
     require 'remote'
-    CSV.open("tmp/restored_results.csv", "wb") do |csv|
+    CSV.open('tmp/restored_results.csv', 'wb') do |csv|
       csv << ['Source KPI', 'Target KPI', 'Event', 'Value Before', 'Value After']
-      CSV.foreach("tmp/kpi_recover2.csv", headers: true) do |row|
+      CSV.foreach('tmp/kpi_recover2.csv', headers: true) do |row|
         puts "Processing: '#{row['kpi1']}' :: '#{row['kpi2']}'"
         local_kpi1 = Kpi.where(name: row['kpi1']).first
         local_kpi2 = Kpi.where(name: row['kpi2']).first

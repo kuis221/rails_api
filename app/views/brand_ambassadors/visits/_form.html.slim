@@ -16,7 +16,7 @@
 
     = f.association :area, collection: current_company.areas.active.accessible_by_user(current_company_user).order(:name), input_html: {class: 'chosen-enabled'}
 
-    = f.input :city, collection: (resource.area.present? ? resource.area.cities : []), input_html: {class: 'chosen-enabled'}
+    = f.input :city, collection: (resource.area.present? ? resource.area.cities.map{|r| [r['name'], r['name']]} : []), input_html: {class: 'chosen-enabled'}
 
     = f.input :visit_type, collection: BrandAmbassadors::Visit::VISIT_TYPE_OPTIONS, include_blank: '', required: true, input_html: {class: 'chosen-enabled', data: {placeholder: "Select the type"}}
 

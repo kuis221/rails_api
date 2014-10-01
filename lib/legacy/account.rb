@@ -19,13 +19,12 @@ require 'open-uri'
 require 'json'
 
 class Legacy::Account < Legacy::Record
-  self.table_name = "legacy_accounts"
-  has_many      :events
+  self.table_name = 'legacy_accounts'
+  has_many :events
 
   has_many :data_migrations, as: :remote
 
-
-  def synchronize(company, attributes={})
+  def synchronize(company, attributes = {})
     migration = data_migrations.find_or_initialize_by_company_id(company.id)
     unless migration.local.present?
       migration.local = find_place_on_api
@@ -44,15 +43,15 @@ class Legacy::Account < Legacy::Record
     place = find_options_in_api(1).first
   end
 
-  def find_options_in_api(max=5)
+  def find_options_in_api(max = 5)
     options = []
     if address.present?
-      address_txt = URI::encode("#{address.street_address}, #{address.city}, #{address.state} #{address.postal_code}").strip
+      address_txt = URI.encode("#{address.street_address}, #{address.city}, #{address.state} #{address.postal_code}").strip
       result = JSON.parse(open("http://maps.googleapis.com/maps/api/geocode/json?address=#{address_txt}&sensor=true").read)
       if result['results'].count > 0
         location = result['results'].first['geometry']['location']
-        spots = Legacy::Migration.api_client.spots(location['lat'], location['lng'], name: name, :radius => 3000)
-        spots += Legacy::Migration.api_client.spots(location['lat'], location['lng'], keyword: name, :radius => 1000) if spots.empty?
+        spots = Legacy::Migration.api_client.spots(location['lat'], location['lng'], name: name, radius: 3000)
+        spots += Legacy::Migration.api_client.spots(location['lat'], location['lng'], keyword: name, radius: 1000) if spots.empty?
 
         if spots.any?
           options = spots.first(max).map { |spot| ::Place.load_by_place_id(spot.id, spot.reference) }
@@ -66,11 +65,11 @@ class Legacy::Account < Legacy::Record
     Country.new('US').states[address.state]['name'] rescue address.state
   end
 
-  def migration_attributes(attributes={})
-    location = {'lat' => nil, "lng" => nil}
+  def migration_attributes(_attributes = {})
+    location = { 'lat' => nil, 'lng' => nil }
     address_txt = "#{address.city}, #{address.state}"
     address_txt = "#{address_txt}, #{address.postal_code}" if address.postal_code.present?
-    result = JSON.parse(open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI::encode(address_txt)}&sensor=true").read)
+    result = JSON.parse(open("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI.encode(address_txt)}&sensor=true").read)
     location = result['results'].first['geometry']['location'] if result['results'].count > 0
     {
       name: name,
@@ -87,6 +86,6 @@ class Legacy::Account < Legacy::Record
   end
 
   def address
-    @address ||= Legacy::Address.find_by(addressable_type: 'Account', addressable_id: self.id)
+    @address ||= Legacy::Address.find_by(addressable_type: 'Account', addressable_id: id)
   end
 end

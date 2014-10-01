@@ -14,11 +14,12 @@ class Analysis::CampaignsReportController < ApplicationController
   end
 
   private
-    def campaign
-      @campaign ||= current_company.campaigns.find(params[:report][:campaign_id])
-    end
 
-    def authorize_actions
-      authorize! :show_analysis, Campaign
-    end
+  def campaign
+    @campaign ||= current_company.campaigns.find(params[:report][:campaign_id])
+  end
+
+  def authorize_actions
+    authorize! :show_analysis, Campaign
+  end
 end

@@ -2,24 +2,22 @@
 .staff-table
   .row-fluid.scroll-table-header
     input#staff-search-item.search-box type="text" name="q"
-  .select-list-table-wrapper
-    .link-list
-      ul#staff-list
-        - @staff.each do |member|
-          li id="staff-member-#{member['type']}-#{member['id']}"
-            span.member-data
-              span.member-name= member['name']
-              span.member-description= member['decription']
-            span.add-button.pull-right
-              - if member['type'] == 'user'
-                  = link_to '', url_for(action: :add_members, member_id: member['id']), id: "add-member-btn-#{member['id']}", data:{'user-id' => member['id']}, title: 'Add', class: 'icon-plus-sign', remote: true, method: :post
-              - else
-                  = link_to '', url_for(action: :add_members, team_id: member['id']), id: "add-member-btn-#{member['id']}", data:{'team-id' => member['id']}, title: 'Add', class: 'icon-plus-sign', remote: true, method: :post
+  #staff-list.resource-list.select-list
+    - @staff.each do |member|
+      .resource-item id="staff-member-#{member['type']}-#{member['id']}"
+        .resource-item-link
+          .text-large= member['name']
+          = member['description']
+        .resource-item-actions
+          - if member['type'] == 'user'
+              = link_to '', url_for(action: :add_members, member_id: member['id']), id: "add-member-btn-#{member['id']}", data:{'user-id' => member['id']}, title: 'Add', class: 'icon-plus-sign', remote: true, method: :post
+          - else
+              = link_to '', url_for(action: :add_members, team_id: member['id']), id: "add-member-btn-#{member['id']}", data:{'team-id' => member['id']}, title: 'Add', class: 'icon-plus-sign', remote: true, method: :post
 
 javascript:
   $('#staff-search-item').on('keyup', function () {
     var value = $(this).val().toLowerCase();
-    $("#staff-list > li").each(function() {
+    $("#staff-list .resource-item").each(function() {
       if ($(this).text().toLowerCase().search(value) > -1) {
         $(this).show();
       }

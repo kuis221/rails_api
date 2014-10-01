@@ -12,24 +12,24 @@
 #  updated_at      :datetime
 #  description     :text
 #  visit_type      :string(255)
-#  brand_id        :integer
 #  area_id         :integer
 #  city            :string(255)
+#  campaign_id     :integer
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
 FactoryGirl.define do
-  factory :brand_ambassadors_visit, :class => 'BrandAmbassadors::Visit' do
-    description "Visit description"
+  factory :brand_ambassadors_visit, class: 'BrandAmbassadors::Visit' do
+    description 'Visit description'
     company nil
     association :company_user
-    start_date "08/26/2014"
-    end_date "08/27/2014"
+    start_date { Date.today.to_s(:slashes) }
+    end_date { Date.today.to_s(:slashes) }
     active true
-    visit_type "brand_program"
-    campaign { FactoryGirl.create(:campaign, company: company) }
+    visit_type 'brand_program'
+    campaign { create(:campaign, company: company) }
     area_id 1
-    city "Test City"
+    city 'Test City'
   end
 end

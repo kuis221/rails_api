@@ -38,7 +38,7 @@ module Brandscopic
     # config.i18n.default_locale = :de
 
     # Configure the default encoding used in templates for Ruby 1.9.
-    config.encoding = "utf-8"
+    config.encoding = 'utf-8'
 
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
@@ -64,20 +64,20 @@ module Brandscopic
       env_file = File.join(Rails.root, 'config', 'local_env.yml')
       YAML.load(File.open(env_file)).each do |key, value|
         ENV[key.to_s] = value
-      end if File.exists?(env_file)
+      end if File.exist?(env_file)
     end
 
     config.assets.initialize_on_precompile = false
 
-    config.assets.precompile += %w[
+    config.assets.precompile += %w(
       pdf.css plugins.css
       admin/active_admin.css admin/active_admin.js
       jquery.placesAutocomplete.js
       reports.css jquery.reportBuilder.js jquery.reportTableScroller.js
       form_builder.css jquery.formBuilder.js
-      ]
+    )
 
-    config.assets.paths << Rails.root.join("app", "assets", "stylesheets", "font")
+    config.assets.paths << Rails.root.join('app', 'assets', 'stylesheets', 'font')
 
     config.cache_store = :dalli_store
 
@@ -85,10 +85,9 @@ module Brandscopic
 
     # We dont need controllers to be in eager_loaded in workers
     unless ENV['WEB']
-      config.eager_load_paths.reject!{|a| a.include?('app/admin') || a.include?('app/inputs')}
-      #require Rails.root.join 'app/controllers/application_controller' #need for devise initializator
+      config.eager_load_paths.reject! { |a| a.include?('app/admin') || a.include?('app/inputs') }
+      # require Rails.root.join 'app/controllers/application_controller' #need for devise initializator
     end
-
 
     GC::Profiler.enable
   end

@@ -1,5 +1,5 @@
 class Results::KpiReportsController < ApplicationController
-  #before_action :authorize_actions
+  # before_action :authorize_actions
 
   def index
     campaigns
@@ -7,7 +7,7 @@ class Results::KpiReportsController < ApplicationController
   end
 
   def report
-    KpiReport.create(company_user: current_company_user, params: params.require(:report).permit({campaign_id: []}, :year, :month))
+    KpiReport.create(company_user: current_company_user, params: params.require(:report).permit({ campaign_id: [] }, :year, :month))
     @report = KpiReport.last
     @report.queue!
   end
@@ -17,11 +17,12 @@ class Results::KpiReportsController < ApplicationController
   end
 
   private
-    def campaigns
-      @campaigns ||= current_company.campaigns.accessible_by_user(current_company_user).order('name ASC')
-    end
 
-    # def authorize_actions
-    #   authorize! :kpi_report, Campaign
-    # end
+  def campaigns
+    @campaigns ||= current_company.campaigns.accessible_by_user(current_company_user).order('name ASC')
+  end
+
+  # def authorize_actions
+  #   authorize! :kpi_report, Campaign
+  # end
 end

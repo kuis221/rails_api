@@ -1,27 +1,27 @@
 require 'rails_helper'
 
 describe EventsController, type: :controller, search: true do
-  describe "As Super User" do
+  describe 'As Super User' do
     before(:each) do
       @user = sign_in_as_user
       @company = @user.companies.first
       @company_user = @user.current_company_user
     end
 
-    let(:campaign){ FactoryGirl.create(:campaign, company: @company) }
+    let(:campaign) { create(:campaign, company: @company) }
 
     describe "GET 'autocomplete'" do
-      it "should return the correct buckets in the right order" do
+      it 'should return the correct buckets in the right order' do
         Sunspot.commit
         get 'autocomplete'
         expect(response).to be_success
 
         buckets = JSON.parse(response.body)
-        expect(buckets.map{|b| b['label']}).to eq(['Campaigns', 'Brands', 'Places', 'People'])
+        expect(buckets.map { |b| b['label'] }).to eq(%w(Campaigns Brands Places People))
       end
 
-      it "should return the users in the People Bucket" do
-        user = FactoryGirl.create(:user, first_name: 'Guillermo', last_name: 'Vargas', company_id: @company.id)
+      it 'should return the users in the People Bucket' do
+        user = create(:user, first_name: 'Guillermo', last_name: 'Vargas', company_id: @company.id)
         company_user = user.company_users.first
         Sunspot.commit
 
@@ -29,25 +29,25 @@ describe EventsController, type: :controller, search: true do
         expect(response).to be_success
 
         buckets = JSON.parse(response.body)
-        people_bucket = buckets.select{|b| b['label'] == 'People'}.first
-        expect(people_bucket['value']).to eq([{"label"=>"<i>Gu</i>illermo Vargas", "value"=>company_user.id.to_s, "type"=>"company_user"}])
+        people_bucket = buckets.select { |b| b['label'] == 'People' }.first
+        expect(people_bucket['value']).to eq([{ 'label' => '<i>Gu</i>illermo Vargas', 'value' => company_user.id.to_s, 'type' => 'company_user' }])
       end
 
-      it "should return the teams in the People Bucket" do
-        team = FactoryGirl.create(:team, name: 'Spurs', company_id: @company.id)
+      it 'should return the teams in the People Bucket' do
+        team = create(:team, name: 'Spurs', company_id: @company.id)
         Sunspot.commit
 
         get 'autocomplete', q: 'sp'
         expect(response).to be_success
 
         buckets = JSON.parse(response.body)
-        people_bucket = buckets.select{|b| b['label'] == 'People'}.first
-        expect(people_bucket['value']).to eq([{"label"=>"<i>Sp</i>urs", "value" => team.id.to_s, "type"=>"team"}])
+        people_bucket = buckets.select { |b| b['label'] == 'People' }.first
+        expect(people_bucket['value']).to eq([{ 'label' => '<i>Sp</i>urs', 'value' => team.id.to_s, 'type' => 'team' }])
       end
 
-      it "should return the teams and users in the People Bucket" do
-        team = FactoryGirl.create(:team, name: 'Valladolid', company_id: @company.id)
-        user = FactoryGirl.create(:user, first_name: 'Guillermo', last_name: 'Vargas', company_id: @company.id)
+      it 'should return the teams and users in the People Bucket' do
+        team = create(:team, name: 'Valladolid', company_id: @company.id)
+        user = create(:user, first_name: 'Guillermo', last_name: 'Vargas', company_id: @company.id)
         company_user = user.company_users.first
         Sunspot.commit
 
@@ -55,77 +55,77 @@ describe EventsController, type: :controller, search: true do
         expect(response).to be_success
 
         buckets = JSON.parse(response.body)
-        people_bucket = buckets.select{|b| b['label'] == 'People'}.first
-        expect(people_bucket['value']).to eq([{"label"=>"<i>Va</i>lladolid", "value"=>team.id.to_s, "type"=>"team"}, {"label"=>"Guillermo <i>Va</i>rgas", "value"=>company_user.id.to_s, "type"=>"company_user"}])
+        people_bucket = buckets.select { |b| b['label'] == 'People' }.first
+        expect(people_bucket['value']).to eq([{ 'label' => '<i>Va</i>lladolid', 'value' => team.id.to_s, 'type' => 'team' }, { 'label' => 'Guillermo <i>Va</i>rgas', 'value' => company_user.id.to_s, 'type' => 'company_user' }])
       end
 
-      it "should return the campaigns in the Campaigns Bucket" do
-        campaign = FactoryGirl.create(:campaign, name: 'Cacique para todos', company_id: @company.id)
+      it 'should return the campaigns in the Campaigns Bucket' do
+        campaign = create(:campaign, name: 'Cacique para todos', company_id: @company.id)
         Sunspot.commit
 
         get 'autocomplete', q: 'cac'
         expect(response).to be_success
 
         buckets = JSON.parse(response.body)
-        campaigns_bucket = buckets.select{|b| b['label'] == 'Campaigns'}.first
-        expect(campaigns_bucket['value']).to eq([{"label"=>"<i>Cac</i>ique para todos", "value"=>campaign.id.to_s, "type"=>"campaign"}])
+        campaigns_bucket = buckets.select { |b| b['label'] == 'Campaigns' }.first
+        expect(campaigns_bucket['value']).to eq([{ 'label' => '<i>Cac</i>ique para todos', 'value' => campaign.id.to_s, 'type' => 'campaign' }])
       end
 
-      it "should return the brands in the Brands Bucket" do
-        brand = FactoryGirl.create(:brand, name: 'Cacique', company_id: @company.id)
+      it 'should return the brands in the Brands Bucket' do
+        brand = create(:brand, name: 'Cacique', company_id: @company.id)
         Sunspot.commit
 
         get 'autocomplete', q: 'cac'
         expect(response).to be_success
 
         buckets = JSON.parse(response.body)
-        brands_bucket = buckets.select{|b| b['label'] == 'Brands'}.first
-        expect(brands_bucket['value']).to eq([{"label"=>"<i>Cac</i>ique", "value"=>brand.id.to_s, "type"=>"brand"}])
+        brands_bucket = buckets.select { |b| b['label'] == 'Brands' }.first
+        expect(brands_bucket['value']).to eq([{ 'label' => '<i>Cac</i>ique', 'value' => brand.id.to_s, 'type' => 'brand' }])
       end
 
-      it "should return the venues in the Places Bucket" do
+      it 'should return the venues in the Places Bucket' do
         expect_any_instance_of(Place).to receive(:fetch_place_data).and_return(true)
-        venue = FactoryGirl.create(:venue, company_id: @company.id, place: FactoryGirl.create(:place, name: 'Motel Paraiso'))
+        venue = create(:venue, company_id: @company.id, place: create(:place, name: 'Motel Paraiso'))
         Sunspot.commit
 
         get 'autocomplete', q: 'mot'
         expect(response).to be_success
 
         buckets = JSON.parse(response.body)
-        places_bucket = buckets.select{|b| b['label'] == 'Places'}.first
-        expect(places_bucket['value']).to eq([{"label"=>"<i>Mot</i>el Paraiso", "value"=>venue.id.to_s, "type"=>"venue"}])
+        places_bucket = buckets.select { |b| b['label'] == 'Places' }.first
+        expect(places_bucket['value']).to eq([{ 'label' => '<i>Mot</i>el Paraiso', 'value' => venue.id.to_s, 'type' => 'venue' }])
       end
     end
 
     describe "GET 'filters'" do
-      it "should return the correct buckets in the right order" do
+      it 'should return the correct buckets in the right order' do
         Sunspot.commit
-        FactoryGirl.create(:custom_filter, owner: @company_user, group: 'SAVED FILTERS', apply_to: 'events')
+        create(:custom_filter, owner: @company_user, group: 'SAVED FILTERS', apply_to: 'events')
 
         get 'filters', format: :json
         expect(response).to be_success
 
         filters = JSON.parse(response.body)
-        expect(filters['filters'].map{|b| b['label']}).to eq(["Campaigns", "Brands", "Areas", "People", "Event Status", "Active State", 'SAVED FILTERS'])
+        expect(filters['filters'].map { |b| b['label'] }).to eq(['Campaigns', 'Brands', 'Areas', 'People', 'Event Status', 'Active State', 'SAVED FILTERS'])
       end
 
-      it "should return the correct buckets in the right order" do
+      it 'should return the correct buckets in the right order' do
         Kpi.create_global_kpis
         campaign.assign_all_global_kpis
-        event = FactoryGirl.create(:event, campaign: campaign, company: @company)
+        event = create(:event, campaign: campaign, company: @company)
         set_event_results(event,
-          impressions: 100,
-          interactions: 101,
-          samples: 102,
-          gender_male: 35,
-          gender_female: 65,
-          ethnicity_asian: 15,
-          ethnicity_native_american: 23,
-          ethnicity_black: 24,
-          ethnicity_hispanic: 26,
-          ethnicity_white: 12
+                          impressions: 100,
+                          interactions: 101,
+                          samples: 102,
+                          gender_male: 35,
+                          gender_female: 65,
+                          ethnicity_asian: 15,
+                          ethnicity_native_american: 23,
+                          ethnicity_black: 24,
+                          ethnicity_hispanic: 26,
+                          ethnicity_white: 12
         )
-        FactoryGirl.create(:custom_filter, owner: @company_user, group: 'SAVED FILTERS', apply_to: 'events')
+        create(:custom_filter, owner: @company_user, group: 'SAVED FILTERS', apply_to: 'events')
         Sunspot.commit
 
         get 'filters', with_event_data_only: true, format: :json
@@ -133,16 +133,16 @@ describe EventsController, type: :controller, search: true do
         expect(response).to be_success
         filters = JSON.parse(response.body)
 
-        expect(filters['filters'].map{|b| b['label']}).to eq(["Campaigns", "Brands", "Areas", "People", "Event Status", "Active State", "SAVED FILTERS"])
+        expect(filters['filters'].map { |b| b['label'] }).to eq(['Campaigns', 'Brands', 'Areas', 'People', 'Event Status', 'Active State', 'SAVED FILTERS'])
         expect(filters['filters'][0]['items'].count).to eq(1)
         expect(filters['filters'][0]['items'].first['label']).to eq(campaign.name)
       end
     end
 
-    describe "GET calendar" do
-      it "should return the correct list of brands the count of events" do
-        campaign.brands << FactoryGirl.create(:brand, name: 'Jose Cuervo')
-        event = FactoryGirl.create(:event, start_date: '01/13/2013', end_date: '01/13/2013', campaign: campaign, company: @company)
+    describe 'GET calendar' do
+      it 'should return the correct list of brands the count of events' do
+        campaign.brands << create(:brand, name: 'Jose Cuervo')
+        event = create(:event, start_date: '01/13/2013', end_date: '01/13/2013', campaign: campaign, company: @company)
         Sunspot.commit
         get 'calendar', start: DateTime.new(2013, 01, 01, 0, 0, 0).to_i.to_s, end: DateTime.new(2013, 01, 31, 23, 59, 59).to_i.to_s, format: :json
         expect(response).to be_success
@@ -157,44 +157,44 @@ describe EventsController, type: :controller, search: true do
     end
   end
 
-  describe "As NOT Super User" do
+  describe 'As NOT Super User' do
     before(:each) do
-      @company = FactoryGirl.create(:company)
-      @company_user = FactoryGirl.create(:company_user,
-              company: @company,
-              role: FactoryGirl.create(:role, is_admin: false, company: @company))
+      @company = create(:company)
+      @company_user = create(:company_user,
+                                         company: @company,
+                                         role: create(:role, is_admin: false, company: @company))
       @user = @company_user.user
       sign_in @user
     end
 
     describe "GET 'filters'" do
-      it "should return the correct items for the Area bucket" do
+      it 'should return the correct items for the Area bucket' do
         @company_user.role.permission_for(:view_list, Event).save
 
-        #Assigned area with a common place, it should be in the filters
-        area = FactoryGirl.create(:area, name: 'Austin', company: @company)
-        area.places << FactoryGirl.create(:place, name: 'Bee Cave', city: 'Bee Cave', state: 'Texas', country: 'US', types: ['locality', 'political'])
+        # Assigned area with a common place, it should be in the filters
+        area = create(:area, name: 'Austin', company: @company)
+        area.places << create(:place, name: 'Bee Cave', city: 'Bee Cave', state: 'Texas', country: 'US', types: %w(locality political))
         @company_user.areas << area
 
-        #Unassigned area with a common place, it should be in the filters
-        area_unassigned = FactoryGirl.create(:area, name: 'San Antonio', company: @company)
-        area_unassigned.places << FactoryGirl.create(:place, name: "Schertz", types: ["locality", "political"], city: "Schertz", state: "Texas", country: "US")
+        # Unassigned area with a common place, it should be in the filters
+        area_unassigned = create(:area, name: 'San Antonio', company: @company)
+        area_unassigned.places << create(:place, name: 'Schertz', types: %w(locality political), city: 'Schertz', state: 'Texas', country: 'US')
 
-        #Unassigned area with not common place, it should not be in the filters
-        area_not_in_filter = FactoryGirl.create(:area, name: 'Miami', company: @company)
-        area_not_in_filter.places << FactoryGirl.create(:place, name: "Doral", types: ["locality", "political"], city: "Doral", state: "Florida", country: "US")
+        # Unassigned area with not common place, it should not be in the filters
+        area_not_in_filter = create(:area, name: 'Miami', company: @company)
+        area_not_in_filter.places << create(:place, name: 'Doral', types: %w(locality political), city: 'Doral', state: 'Florida', country: 'US')
 
-        #Assigned area with not common place, it should be in the filters
-        @company_user.areas << FactoryGirl.create(:area, name: 'San Francisco', company: @company)
+        # Assigned area with not common place, it should be in the filters
+        @company_user.areas << create(:area, name: 'San Francisco', company: @company)
 
-        #Assigned place, itis the responsible for the common areas in the filters
-        @company_user.places << FactoryGirl.create(:place, name: "Texas", types: ["administrative_area_level_1", "political"], city: nil, state: "Texas", country: "US")
+        # Assigned place, itis the responsible for the common areas in the filters
+        @company_user.places << create(:place, name: 'Texas', types: %w(administrative_area_level_1 political), city: nil, state: 'Texas', country: 'US')
 
         get 'filters', format: :json
         expect(response).to be_success
 
         filters = JSON.parse(response.body)
-        areas_filters = filters['filters'].detect{|f| f['label'] == 'Areas'}
+        areas_filters = filters['filters'].find { |f| f['label'] == 'Areas' }
         expect(areas_filters['items'].count).to eql 3
 
         expect(areas_filters['items'].first['label']).to eql 'Austin'
@@ -202,31 +202,30 @@ describe EventsController, type: :controller, search: true do
         expect(areas_filters['items'].third['label']).to eql 'San Francisco'
       end
 
-      describe "when a user only a place assiged to it" do
-        it "returns all the areas that have at least one place inside" do
+      describe 'when a user only a place assiged to it' do
+        it 'returns all the areas that have at least one place inside' do
           @company_user.role.permission_for(:view_list, Event).save
 
-          #This is one area that have one place inside US
-          area = FactoryGirl.create(:area, name: 'Austin', company: @company)
-          area.places << FactoryGirl.create(:place, name: 'Bee Cave',
+          # This is one area that have one place inside US
+          area = create(:area, name: 'Austin', company: @company)
+          area.places << create(:place, name: 'Bee Cave',
                 city: 'Bee Cave', state: 'Texas',
-                country: 'US', types: ['locality', 'political'] )
+                country: 'US', types: %w(locality political))
 
-          #This is another area that have one place inside US
-          area = FactoryGirl.create(:area, name: 'San Antonio', company: @company)
-          area.places << FactoryGirl.create(:place, name: "Schertz",
-                types: ["locality", "political"], city: "Schertz", state: "Texas", country: "US")
+          # This is another area that have one place inside US
+          area = create(:area, name: 'San Antonio', company: @company)
+          area.places << create(:place, name: 'Schertz',
+                types: %w(locality political), city: 'Schertz', state: 'Texas', country: 'US')
 
-          #This area doesn't  have one place in US
-          area = FactoryGirl.create(:area, name: 'Centro America', company: @company)
-          area.places << FactoryGirl.create(:place, name: "Costa Rica",
-                types: ["country", "political"], city: "Schertz", state: nil, country: "CR")
+          # This area doesn't  have one place in US
+          area = create(:area, name: 'Centro America', company: @company)
+          area.places << create(:place, name: 'Costa Rica',
+                types: %w(country political), city: 'Schertz', state: nil, country: 'CR')
 
-
-          #The user have US as the allowed places
-          @company_user.places << FactoryGirl.create(:place,
-                name: "United States", types: ["country", "political"],
-                city: nil, state: nil, country: "US")
+          # The user have US as the allowed places
+          @company_user.places << create(:place,
+                                                     name: 'United States', types: %w(country political),
+                                                     city: nil, state: nil, country: 'US')
 
           get 'filters', format: :json
           expect(response).to be_success
@@ -234,7 +233,7 @@ describe EventsController, type: :controller, search: true do
           filters = JSON.parse(response.body)
 
           # It should return the first two areas
-          areas_filters = filters['filters'].detect{|f| f['label'] == 'Areas'}
+          areas_filters = filters['filters'].find { |f| f['label'] == 'Areas' }
           expect(areas_filters['items'].count).to eql 2
           expect(areas_filters['items'].first['label']).to eql 'Austin'
           expect(areas_filters['items'].second['label']).to eql 'San Antonio'

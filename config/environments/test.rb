@@ -14,7 +14,7 @@ Brandscopic::Application.configure do
 
   # Configure static asset server for tests with Cache-Control for performance.
   config.serve_static_assets  = true
-  config.static_cache_control = "public, max-age=3600"
+  config.static_cache_control = 'public, max-age=3600'
 
   # Show full error reports and disable caching.
   config.consider_all_requests_local       = true
@@ -34,12 +34,12 @@ Brandscopic::Application.configure do
   # Print deprecation notices to the stderr.
   config.active_support.deprecation = :stderr
 
-  Rails.application.routes.default_url_options[:host] = "localhost"
+  Rails.application.routes.default_url_options[:host] = 'localhost'
   Rails.application.routes.default_url_options[:port] = 5100
 
-  config.action_mailer.default_url_options = {:host => "example.com"}
+  config.action_mailer.default_url_options = { host: 'example.com' }
 
-  ENV["REDISTOGO_URL"] = 'redis://localhost:9999'
+  ENV['REDISTOGO_URL'] = 'redis://localhost:9999'
 
   config.cache_store = :null_store
 

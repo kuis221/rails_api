@@ -1,15 +1,15 @@
 - contact_event = ContactEvent.new
 - form_path = url_for([parent, ContactEvent.new])
 - @contacts.each do |contact|
-  li id="contact-#{contact.class.name.underscore}-#{contact.id}"
-    span.member-data
-      .member-name= contact.full_name
-      .member-description= contact.is_a?(Contact) ? contact.title : contact.role_name
-    span.add-button
+  .resource-item id="contact-#{contact.class.name.underscore}-#{contact.id}"
+    .resource-item-link
+      .text-large= contact.full_name
+      = contact.is_a?(Contact) ? contact.title : contact.role_name
+    .resource-item-actions
       = simple_form_for contact_event, url: form_path, remote: true,  html: { class: "button_to" } do |f|
         = f.hidden_field :contactable_id, :value => contact.id
         = f.hidden_field :contactable_type, :value => contact.class.name
-        a.icon-plus-sign id="add-contact-btn-#{contact.class.name.underscore}-#{contact.id}" href="#" data-submit-link="true" disable_with=''
+        a.icon-plus-sign id="add-contact-btn-#{contact.class.name.underscore}-#{contact.id}" href="#" data-submit-link="true" title="Add" disable_with=''
 
-li.empty-list-message
+.resource-item.empty-list-message
   p There are not assignable contacts matching the search criteria

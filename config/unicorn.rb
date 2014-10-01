@@ -1,13 +1,13 @@
-if ENV["RAILS_ENV"] == "development"
+if ENV['RAILS_ENV'] == 'development'
   worker_processes 1
 else
-  worker_processes Integer(ENV["WEB_CONCURRENCY"] || 3)
+  worker_processes Integer(ENV['WEB_CONCURRENCY'] || 3)
 end
 
 timeout 25
 preload_app true
 
-before_fork do |server, worker|
+before_fork do |_server, _worker|
   Signal.trap 'TERM' do
     puts 'Unicorn master intercepting TERM and sending myself QUIT instead'
     Process.kill 'QUIT', Process.pid
@@ -15,23 +15,23 @@ before_fork do |server, worker|
 
   if defined?(Resque)
     Resque.redis.quit
-    Rails.logger.info("Disconnected from Redis")
+    Rails.logger.info('Disconnected from Redis')
   end
 
-  defined?(ActiveRecord::Base) and
+  defined?(ActiveRecord::Base) &&
     ActiveRecord::Base.connection.disconnect!
 end
 
-after_fork do |server, worker|
+after_fork do |_server, _worker|
   Signal.trap 'TERM' do
     puts 'Unicorn worker intercepting TERM and doing nothing. Wait for master to send QUIT'
   end
 
   if defined?(Resque)
     Resque.redis = REDIS
-    Rails.logger.info("Connected to Redis")
+    Rails.logger.info('Connected to Redis')
   end
 
-  defined?(ActiveRecord::Base) and
+  defined?(ActiveRecord::Base) &&
     ActiveRecord::Base.establish_connection
 end

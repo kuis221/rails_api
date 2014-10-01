@@ -20,7 +20,7 @@
 
 require 'rails_helper'
 
-describe Goal, :type => :model do
+describe Goal, type: :model do
 
   it { is_expected.to validate_presence_of(:goalable_id) }
   it { is_expected.to validate_presence_of(:goalable_type) }
@@ -59,20 +59,19 @@ describe Goal, :type => :model do
     it { is_expected.to validate_numericality_of(:activity_type_id) }
   end
 
-  describe "due_date validation" do
+  describe 'due_date validation' do
     subject { Goal.new(start_date: '01/20/2016') }
 
-    it { is_expected.not_to allow_value('01/19/2016').for(:due_date).with_message("must be a date on or after 01/20/2016") }
+    it { is_expected.not_to allow_value('01/19/2016').for(:due_date).with_message('must be a date on or after 01/20/2016') }
     it { is_expected.to allow_value('01/20/2016').for(:due_date) }
     it { is_expected.to allow_value('01/21/2016').for(:due_date) }
     it { is_expected.to allow_value(nil).for(:due_date) }
     it { is_expected.to allow_value('').for(:due_date) }
   end
 
-
-  describe "set_kpi_id" do
-    it "should set the kpi_id if nill and the kpis_segment_id is set" do
-      segment = FactoryGirl.create(:kpis_segment, kpi: FactoryGirl.create(:kpi))
+  describe 'set_kpi_id' do
+    it 'should set the kpi_id if nill and the kpis_segment_id is set' do
+      segment = create(:kpis_segment, kpi: create(:kpi))
       goal = Goal.new(kpis_segment_id: segment.id)
       goal.valid?
       expect(goal.kpi_id).to eql segment.kpi_id

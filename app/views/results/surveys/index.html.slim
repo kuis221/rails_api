@@ -19,11 +19,9 @@
       #list-tools.row-fluid
         .pull-right
           button.btn.download.xlsx-download-link data-url="#{results_surveys_path(format: "xls")}" title="Download" data-disable-with="..."
+            span.icon-download
       #surveys-totals
-      .link-list
-        ul#surveys-list
-          li.placeholder
-            p Select any filter to see results
+      #surveys-list.resource-list
 
 = render partial: 'help_tutorial'
 
@@ -50,11 +48,10 @@ javascript:
       }
     },
     'onItemsChange': function(response, page){
-      if ($('#surveys-list li').length > 0) {
+      if ($('#surveys-list .resource-item').length > 0) {
         $('#list-tools').show()
       } else {
         $('#list-tools').hide()
-        $('#surveys-list').append("<li class='placeholder'><p>No results. Select other filters to see results</p></li>");
       }
     }
   });

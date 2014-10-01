@@ -20,12 +20,12 @@ class DateRange < ActiveRecord::Base
 
   scoped_to_company
 
-  validates :name, presence: true, uniqueness: {scope: :company_id}
+  validates :name, presence: true, uniqueness: { scope: :company_id }
   validates :company_id, presence: true
 
   has_many :date_items
 
-  scope :active, -> { where(:active => true) }
+  scope :active, -> { where(active: true) }
 
   searchable do
     integer :id
@@ -72,13 +72,12 @@ class DateRange < ActiveRecord::Base
 
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
-    def do_search(params, include_facets=false)
-
+    def do_search(params, include_facets = false)
       ss = solr_search do
         with(:status,     params[:status]) unless params[:status].nil? || params[:status].empty?
         with(:company_id, params[:company_id])
 
-        if params.has_key?(:q) and params[:q].present?
+        if params.key?(:q) && params[:q].present?
           (attribute, value) = params[:q].split(',')
           if attribute == 'date_range'
             with :id, value
@@ -89,8 +88,8 @@ class DateRange < ActiveRecord::Base
           facet :status
         end
 
-        order_by(params[:sorting] || :name , params[:sorting_dir] || :desc)
-        paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+        order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
+        paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
       end
     end
 

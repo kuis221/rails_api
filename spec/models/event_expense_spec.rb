@@ -14,7 +14,7 @@
 
 require 'rails_helper'
 
-describe EventExpense, :type => :model do
+describe EventExpense, type: :model do
   it { is_expected.to belong_to(:event) }
 
   it { is_expected.to validate_presence_of(:name) }

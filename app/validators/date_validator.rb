@@ -1,11 +1,21 @@
 class DateValidator < ActiveModel::EachValidator
-
   attr_accessor :computed_options
 
-  def before(a, b);       a < b;  end
-  def after(a, b);        a > b;  end
-  def on_or_before(a, b); a <= b; end
-  def on_or_after(a, b);  a >= b; end
+  def before(a, b)
+    a < b
+  end
+
+  def after(a, b)
+    a > b
+  end
+
+  def on_or_before(a, b)
+    a <= b
+  end
+
+  def on_or_after(a, b)
+    a >= b
+  end
 
   def checks
     %w(before after on_or_before on_or_after)
@@ -29,7 +39,7 @@ class DateValidator < ActiveModel::EachValidator
     result = {}
     options.each do |key, val|
       next unless checks.include?(key.to_s)
-      if val.respond_to?(:lambda?) and val.lambda?
+      if val.respond_to?(:lambda?) && val.lambda?
         val = val.call
       elsif val.is_a? Symbol
         if record.respond_to?(val)
@@ -48,9 +58,9 @@ class DateValidator < ActiveModel::EachValidator
 
     return unless options
     compute_options(record) # do not cache this
-                            # otherwise all the 'compute' thing is useless... #
+    # otherwise all the 'compute' thing is useless... #
     computed_options.each do |key, val|
-      unless val && value && self.send(key, value, val)
+      unless val && value && send(key, value, val)
         record.errors[attribute] << (options[:message] || message_limits)
         return
       end

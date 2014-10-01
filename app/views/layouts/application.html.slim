@@ -60,7 +60,7 @@ body class="app-layout #{controller_name} #{action_name} #{custom_body_class} #{
       .nav-collapse.collapse.main-nav-collapse
         = render_navigation renderer: :bootstrap, nav_class: 'nav-pills'
 
-  .nav-collapse.collapse
+  #main-left-nav.nav-collapse.collapse
     .menu
       = render_navigation renderer: :bootstrap, nav_class: 'nav-stacked'
   = yield :alerts

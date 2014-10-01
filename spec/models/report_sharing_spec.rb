@@ -10,7 +10,7 @@
 
 require 'rails_helper'
 
-describe ReportSharing, :type => :model do
+describe ReportSharing, type: :model do
   it { is_expected.to belong_to(:report) }
   it { is_expected.to belong_to(:shared_with) }
 end

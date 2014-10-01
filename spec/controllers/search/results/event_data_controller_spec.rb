@@ -7,29 +7,29 @@ describe Results::EventDataController, type: :controller, search: true do
     @company_user = @user.current_company_user
   end
 
-  let(:campaign){ FactoryGirl.create(:campaign, company: @company) }
+  let(:campaign) { create(:campaign, company: @company) }
 
   describe "GET 'items'" do
-    it "should return http success" do
+    it 'should return http success' do
       Kpi.create_global_kpis
       campaign.assign_all_global_kpis
-      event = FactoryGirl.create(:event, campaign: campaign, company: @company, start_date: "01/23/2019", end_date: "01/23/2019", start_time: '8:00pm', end_time: '11:00pm')
+      event = create(:event, campaign: campaign, company: @company, start_date: '01/23/2019', end_date: '01/23/2019', start_time: '8:00pm', end_time: '11:00pm')
       set_event_results(event,
-        impressions: 100,
-        interactions: 101,
-        samples: 102,
-        gender_male: 35,
-        gender_female: 65,
-        ethnicity_asian: 15,
-        ethnicity_native_american: 23,
-        ethnicity_black: 24,
-        ethnicity_hispanic: 26,
-        ethnicity_white: 12
+                        impressions: 100,
+                        interactions: 101,
+                        samples: 102,
+                        gender_male: 35,
+                        gender_female: 65,
+                        ethnicity_asian: 15,
+                        ethnicity_native_american: 23,
+                        ethnicity_black: 24,
+                        ethnicity_hispanic: 26,
+                        ethnicity_white: 12
       )
 
       Sunspot.commit
 
-      without_current_user { FactoryGirl.create(:event, company_id: @company.id + 1) } # An event in other company
+      without_current_user { create(:event, company_id: @company.id + 1) } # An event in other company
 
       get 'items'
       expect(response).to be_success

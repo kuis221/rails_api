@@ -14,11 +14,12 @@ class Analysis::StaffReportController < ApplicationController
   end
 
   private
-    def company_user
-      @company_user ||= current_company.company_users.find(params[:report][:user_id])
-    end
 
-    def authorize_actions
-      authorize! :show_analysis, CompanyUser
-    end
+  def company_user
+    @company_user ||= current_company.company_users.find(params[:report][:user_id])
+  end
+
+  def authorize_actions
+    authorize! :show_analysis, CompanyUser
+  end
 end

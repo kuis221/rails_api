@@ -4,18 +4,18 @@ require 'tempfile'
 
 namespace :tdlinx do
   namespace :ftp do
-    desc "Download and process file from FTP"
-    task :process => :environment do |t, args|
+    desc 'Download and process file from FTP'
+    task process: :environment do |_t, args|
       file = args.file
       TdLinxSynch::Processor.download_and_process_file(file)
     end
   end
   namespace :http do
-    desc "Download and process file from an URL"
+    desc 'Download and process file from an URL'
     task :process,  [:file] => :environment do |t, args|
       file = args.file
       if file.match(/\Ahttp(s)?:\/\//)
-        t = Tempfile.new("tdlinx_remote", nil, encoding:  'ascii-8bit')
+        t = Tempfile.new('tdlinx_remote', nil, encoding:  'ascii-8bit')
         t.write(open(file, 'rb').read)
         file = t.path
         t.close
@@ -25,9 +25,9 @@ namespace :tdlinx do
   end
 
   namespace :stdin do
-    desc "Download and process file from an STDIN"
-    task :process => :environment do |t, args|
-      t = Tempfile.new("tdlinx_stdin")
+    desc 'Download and process file from an STDIN'
+    task process: :environment do |t, _args|
+      t = Tempfile.new('tdlinx_stdin')
       $stdin.each_line do |line|
         t.write(line)
       end

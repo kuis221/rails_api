@@ -17,7 +17,7 @@
 FactoryGirl.define do
   factory :comment do
     commentable nil
-    content "MyText"
+    content 'MyText'
     created_by_id 1
     updated_by_id 1
   end

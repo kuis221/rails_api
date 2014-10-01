@@ -29,34 +29,33 @@ SimpleNavigation::Configuration.run do |navigation|
   # This turns it off globally (for the whole plugin)
   # navigation.auto_highlight = false
   navigation.items do |primary|
-    primary.item :help_menu, '', '#help-modal', link: {'class' => 'single-link', icon_class: 'icon-help', 'data-toggle' => "modal", 'role' => "button"}
+    primary.item :help_menu, '', '#help-modal', link: { 'class' => 'single-link', icon_class: 'icon-help', 'data-toggle' => 'modal', 'role' => 'button' }
 
     options = []
-    options.push([:users, 'Users', company_users_path, highlights_on: %r(^/users.*)]) if can?(:index, CompanyUser)
-    options.push([:teams, 'Teams', teams_path, highlights_on: %r(^/teams.*)]) if can?(:index, Team)
-    options.push([:roles, 'Roles', roles_path, highlights_on: %r(^/roles.*)]) if can?(:index, Role)
-    options.push([:campaigns, 'Campaigns', campaigns_path, highlights_on: %r(^/campaigns.*)]) if can?(:index, Campaign)
-    options.push([:day_parts, 'Brands', brands_path, highlights_on: %r(^/brands.*)]) if can?(:index, Brand)
-    options.push([:activity_types, 'Activity Types', activity_types_path, highlights_on: %r(^/activity_types.*)]) if can?(:index, ActivityType)
-    options.push([:areas, 'Areas', areas_path, highlights_on: %r(^/areas.*)]) if can?(:index, Area)
-    options.push([:brand_portfolios, 'Brand Portfolios', brand_portfolios_path, highlights_on: %r(^/brand_portfolios.*)]) if can?(:index, BrandPortfolio)
-    options.push([:date_ranges, 'Date Ranges', date_ranges_path, highlights_on: %r(^/date_ranges.*)]) if can?(:index, DateRange)
-    options.push([:day_parts, 'Day Parts', day_parts_path, highlights_on: %r(^/day_parts.*)]) if can?(:index, DayPart)
-
+    options.push([:users, 'Users', company_users_path, highlights_on: %r{^/users.*}]) if can?(:index, CompanyUser)
+    options.push([:teams, 'Teams', teams_path, highlights_on: %r{^/teams.*}]) if can?(:index, Team)
+    options.push([:roles, 'Roles', roles_path, highlights_on: %r{^/roles.*}]) if can?(:index, Role)
+    options.push([:campaigns, 'Campaigns', campaigns_path, highlights_on: %r{^/campaigns.*}]) if can?(:index, Campaign)
+    options.push([:day_parts, 'Brands', brands_path, highlights_on: %r{^/brands.*}]) if can?(:index, Brand)
+    options.push([:activity_types, 'Activity Types', activity_types_path, highlights_on: %r{^/activity_types.*}]) if can?(:index, ActivityType)
+    options.push([:areas, 'Areas', areas_path, highlights_on: %r{^/areas.*}]) if can?(:index, Area)
+    options.push([:brand_portfolios, 'Brand Portfolios', brand_portfolios_path, highlights_on: %r{^/brand_portfolios.*}]) if can?(:index, BrandPortfolio)
+    options.push([:date_ranges, 'Date Ranges', date_ranges_path, highlights_on: %r{^/date_ranges.*}]) if can?(:index, DateRange)
+    options.push([:day_parts, 'Day Parts', day_parts_path, highlights_on: %r{^/day_parts.*}]) if can?(:index, DayPart)
 
     unless options.empty?
-      primary.item :admin, '', options.first[2], link: {class: "dropdown-toggle", 'data-toggle' => "dropdown", icon_class: 'icon-gear'} do |secondary|
-        options.each {|option| secondary.item(*option) }
+      primary.item :admin, '', options.first[2], link: { class: 'dropdown-toggle', 'data-toggle' => 'dropdown', icon_class: 'icon-gear' } do |secondary|
+        options.each { |option| secondary.item(*option) }
       end
     end
 
-    primary.item :notifications, '', '#', link: {'class' => "dropdown-toggle", 'data-toggle' => "dropdown"} do |secondary|
+    primary.item :notifications, '', '#', link: { 'class' => 'dropdown-toggle', 'data-toggle' => 'dropdown' } do |secondary|
       secondary.item :loading, 'Wait...'
     end
 
-    primary.item :user_menu,  current_user.full_name, '#', link: {'class' => "dropdown-toggle", 'data-toggle' => "dropdown", icon_class: 'icon-arrow-down pull-right'}, if: lambda{ user_signed_in? } do |secondary|
-      secondary.item :users, 'View Profile',  profile_company_users_path, link: {icon_class: 'icon-user pull-left'}
-      secondary.item :users, 'Logout', destroy_user_session_path, link: {method: :delete, icon_class: 'icon-on pull-left'}
+    primary.item :user_menu,  current_user.full_name, '#', link: { 'class' => 'dropdown-toggle', 'data-toggle' => 'dropdown', icon_class: 'icon-arrow-down pull-right' }, if: lambda { user_signed_in? } do |secondary|
+      secondary.item :users, 'View Profile',  profile_company_users_path, link: { icon_class: 'icon-user pull-left' }
+      secondary.item :users, 'Logout', destroy_user_session_path, link: { method: :delete, icon_class: 'icon-on pull-left' }
     end
   end
 end

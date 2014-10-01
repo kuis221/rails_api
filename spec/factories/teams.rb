@@ -17,8 +17,8 @@
 
 FactoryGirl.define do
   factory :team do
-    sequence(:name) {|n| "Team #{n}" }
-    description "Team description"
+    sequence(:name) { |n| "Team #{n}" }
+    description 'Team description'
     created_by_id 1
     updated_by_id 1
     active true

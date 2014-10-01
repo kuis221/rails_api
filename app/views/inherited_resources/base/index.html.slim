@@ -3,11 +3,8 @@
 .sidebar#resource-filter-column
   #collection-list-filters
 .main
-  .pull-left
-    = button_to t("buttons.new.#{resource_class.name.underscore.downcase}"), url_for(controller: controller_name, action: :new), {method: :get, remote: true, class: 'btn btn-primary'} if can?(:create, resource_class)
-  .tab-content
-    .link-list
-      ul id="#{controller_name}-list"
+  = button_to t("buttons.new.#{resource_class.name.underscore.downcase}"), url_for(controller: controller_name, action: :new), {method: :get, remote: true, class: 'btn btn-primary'} if can?(:create, resource_class)
+  div.resource-list id="#{controller_name}-list"
 
 = render partial: 'help_tutorial'
 

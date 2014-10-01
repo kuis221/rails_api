@@ -1,10 +1,8 @@
-.select-list-table-wrapper
-  .link-list
-    ul.select-items-list
-      - @areas.each do |area|
-        li id="area-#{area.id}"
-          span
-            .area_name= area.name
-            .area_description= area.description
-          span.pull-right
-            = link_to '', add_area_venue_path(resource, area_id: area.id), remote: true, method: :post, data: {disable_with: '...'}, class: 'icon-rounded-add' if area.active?
+.resource-list.select-list
+  - @areas.each do |area|
+    .resource-item id="area-#{area.id}"
+      .resource-item-link
+        .text-large= area.name
+        = area.description
+      .resource-item-actions
+        = link_to '', add_area_venue_path(resource, area_id: area.id), remote: true, method: :post, data: {disable_with: '...'}, class: 'icon-rounded-add' if area.active?

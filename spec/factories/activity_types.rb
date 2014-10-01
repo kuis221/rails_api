@@ -15,8 +15,8 @@
 
 FactoryGirl.define do
   factory :activity_type do
-    sequence(:name) {|n| "Activity Type #{n}" }
-    description "Activity Type description"
+    sequence(:name) { |n| "Activity Type #{n}" }
+    description 'Activity Type description'
     active true
     company_id 1
   end

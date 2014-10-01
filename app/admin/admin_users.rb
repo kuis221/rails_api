@@ -10,7 +10,7 @@ ActiveAdmin.register AdminUser do
   filter :email
 
   form do |f|
-    f.inputs "Admin Details" do
+    f.inputs 'Admin Details' do
       f.input :email
       f.input :password
       f.input :password_confirmation
@@ -20,7 +20,7 @@ ActiveAdmin.register AdminUser do
 
   controller do
     def permitted_params
-      params.permit(:admin_user => [:email, :password, :password_confirmation, :remember_me])
+      params.permit(admin_user: [:email, :password, :password_confirmation, :remember_me])
     end
   end
 end

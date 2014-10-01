@@ -8,7 +8,8 @@ class SatisfactionSurveysController < ApplicationController
   end
 
   private
-    def permitted_params
-      params.permit(satisfaction_survey: [:rating, :feedback])[:satisfaction_survey]
-    end
+
+  def permitted_params
+    params.permit(satisfaction_survey: [:rating, :feedback])[:satisfaction_survey]
+  end
 end

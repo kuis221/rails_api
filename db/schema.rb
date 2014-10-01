@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140923182037) do
+ActiveRecord::Schema.define(version: 20140926011109) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -244,8 +244,8 @@ ActiveRecord::Schema.define(version: 20140923182037) do
     t.string   "aasm_state"
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
+    t.datetime "created_at",                               null: false
+    t.datetime "updated_at",                               null: false
     t.integer  "company_id"
     t.integer  "first_event_id"
     t.integer  "last_event_id"
@@ -253,8 +253,9 @@ ActiveRecord::Schema.define(version: 20140923182037) do
     t.datetime "last_event_at"
     t.date     "start_date"
     t.date     "end_date"
-    t.integer  "survey_brand_ids", default: [],              array: true
+    t.integer  "survey_brand_ids",            default: [],              array: true
     t.text     "modules"
+    t.string   "color",            limit: 10
   end
 
   add_index "campaigns", ["company_id"], name: "index_campaigns_on_company_id", using: :btree
