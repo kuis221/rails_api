@@ -177,9 +177,6 @@ $margin-right: 240px;
 						width: 200px;
 					}
 				}
-				label{
-					margin-bottom: 15px;
-				}
 				label.summation{
 					height: 40px;
 					line-height: 38px;
@@ -190,7 +187,6 @@ $margin-right: 240px;
 					padding-top: 15px;
 					margin-top: 10px;
 					.summation{
-						margin-left: 15px;
 						&:first-of-type{
 							margin-top: 0;
 						}
