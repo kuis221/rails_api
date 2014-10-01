@@ -169,7 +169,7 @@ feature 'Events section' do
 
         scenario 'should display a list of events' do
           Timecop.travel(Time.zone.local(2013, 07, 21, 12, 01)) do
-            events  # make sure users are created before
+            events  # make sure events are created before
             Sunspot.commit
             visit events_path
 
@@ -246,6 +246,82 @@ feature 'Events section' do
             within events_list do
               expect(page).to have_content('Another Campaign April 03')
               expect(page).to have_content('Campaign FY2012')
+            end
+          end
+        end
+
+        feature 'export' do
+          let(:month_number) { Time.now.strftime('%m') }
+          let(:month_name) { Time.now.strftime('%b') }
+          let(:year_number) { Time.now.strftime('%Y') }
+          let(:today) { Time.zone.local(year_number, month_number, 18, 12, 00) }
+          let(:event1) { create(:event, start_date: today.to_s(:slashes), end_date: today.to_s(:slashes),
+                                start_time: '10:00am', end_time: '11:00am',
+                                campaign: campaign, active: true,
+                                place: create(:place, name: 'Place 1'), company: company) }
+          let(:event2) { create(:event, start_date: (today + 1.day).to_s(:slashes), end_date: (today + 1.days).to_s(:slashes),
+                                start_time: '08:00am', end_time: '09:00am',
+                                campaign: create(:campaign, name: 'Another Campaign April 03', company: company),
+                                place: create(:place, name: 'Place 2', city: 'Los Angeles', state: 'CA', zipcode: '67890'), company: company) }
+
+          before do
+            # make sure events are created before
+            event1
+            event2
+            Sunspot.commit
+          end
+
+          scenario 'should be able to export as xls' do
+            visit events_path
+
+            click_js_link 'Download'
+            click_js_link 'Download as XLS'
+
+            within visible_modal do
+              expect(page).to have_content('We are processing your request, the download will start soon...')
+              expect(ListExportWorker).to have_queued(ListExport.last.id)
+              ResqueSpec.perform_all(:export)
+            end
+            ensure_modal_was_closed
+
+            expect(ListExport.last).to have_rows([
+              ["CAMPAIGN NAME", "AREA", "START", "END", "VENUE NAME", "ADDRESS", "CITY", "STATE", "ZIP", "ACTIVE STATE", "EVENT STATUS", "TEAM MEMBERS", "URL"],
+              ["Campaign FY2012", nil, "#{year_number}-#{month_number}-18T10:00", "#{year_number}-#{month_number}-18T11:00", "Place 1", "Place 1, New York City, NY, 12345", "New York City", "NY", "12345", "Active", "Unsent", nil, "http://localhost:5100/events/#{event1.id}"],
+              ["Another Campaign April 03", nil, "#{year_number}-#{month_number}-19T08:00", "#{year_number}-#{month_number}-19T09:00", "Place 2", "Place 2, Los Angeles, CA, 67890", "Los Angeles", "CA", "67890", "Active", "Unsent", nil, "http://localhost:5100/events/#{event2.id}"]
+            ])
+          end
+
+          scenario 'should be able to export as PDF' do
+            visit events_path
+
+            click_js_link 'Download'
+            click_js_link 'Download as PDF'
+
+            within visible_modal do
+              expect(page).to have_content('We are processing your request, the download will start soon...')
+              export = ListExport.last
+              expect(ListExportWorker).to have_queued(export.id)
+              ResqueSpec.perform_all(:export)
+            end
+            ensure_modal_was_closed
+
+            export = ListExport.last
+            # Test the generated PDF...
+            reader = PDF::Reader.new(open(export.file.url))
+            reader.pages.each do |page|
+              # PDF to text seems to not always return the same results
+              # with white spaces, so, remove them and look for strings
+              # without whitespaces
+              text = page.text.gsub(/[\s\n]/, '')
+              expect(text).to include '2Activeeventstakingplacetodayandinthefuture'
+              expect(text).to include 'CampaignFY2012'
+              expect(text).to include 'AnotherCampaignApril03'
+              expect(text).to include 'Place1NewYorkCity,NY,12345'
+              expect(text).to include 'Place2LosAngeles,CA,67890'
+              expect(text).to include '10:00AM-11:00AM'
+              expect(text).to include '8:00AM-9:00AM'
+              expect(text).to match(/#{month_name}18/)
+              expect(text).to match(/#{month_name}19/)
             end
           end
         end

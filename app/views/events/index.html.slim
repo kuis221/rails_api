@@ -23,8 +23,17 @@
       = button_to 'Create', new_event_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn'} if can? :create, Event
 
     .text-right
-      button.btn.download.xlsx-download-link data-url="#{events_path(format:"xls")}" title="Download"
-        i.icon-download
+      .dropdown.btn-download
+        a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+          i.icon-download
+          i.icon-arrow-down
+        ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+          li
+            a.xlsx-download-link href="#" role="menuitem" data-url="#{events_path(format: :xls)}"
+              | Download as XLS
+          li
+            a#pdf-export.xlsx-download-link href="#" role="menuitem" data-url="#{events_path(format: :pdf)}"
+              | Download as PDF
 
       - if can?(:view_map, Event) || can?(:view_list, Event) || can?(:view_calendar, Event)
         #toggle-events-view.btn-group

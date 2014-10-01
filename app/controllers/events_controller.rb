@@ -20,8 +20,7 @@ class EventsController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update, :edit_results,
                          :edit_data, :edit_surveys, :submit]
   respond_to :json, only: [:index, :calendar_highlights]
-  respond_to :xls, only: :index
-  respond_to :xls, only: :index
+  respond_to :xls, :pdf, only: :index
 
   custom_actions member: [:tasks, :edit_results, :edit_data, :edit_surveys]
   layout false, only: :tasks

@@ -40,6 +40,7 @@ jQuery ->
 		$('#toggle-events-view a').removeClass 'active'
 		$(this).addClass('active').tab 'show'
 		if $(this).attr('href') is '#map-view'
+			$('#pdf-export').data('url', '/events.pdf');
 			mapIsVisible = true
 			calendarIsVisible = false
 			$('.help-title').hide()
@@ -49,6 +50,7 @@ jQuery ->
 			$('.dates-pref').slideDown()
 			initializeMap()
 		else if $(this).attr('href') is '#calendar-view'
+			$('#pdf-export').data('url', '/events.pdf?mode=calendar');
 			$('.dates-range-filter').slideUp()
 			$('.dates-pref').slideUp()
 			calendarIsVisible = true
@@ -80,6 +82,7 @@ jQuery ->
 			else
 				$('#calendar-canvas').eventsCalendar 'loadEvents'
 		else
+			$('#pdf-export').data('url', '/events.pdf');
 			$('.dates-range-filter').slideDown()
 			$('.dates-pref').slideDown()
 			mapIsVisible = false
