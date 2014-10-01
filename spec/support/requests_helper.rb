@@ -120,7 +120,7 @@ module CapybaraBrandscopicHelpers
     date = date.to_s(:slashes) if date.class.in?([Time, DateTime, Date])
     (month, day, year) = date.split('/')
     day = day.to_i.to_s
-    find(:xpath, "//td[@data-year='#{year}' and @data-month='#{month.to_i - 1}']", text: day).click_js_link(day)
+    find(:xpath, "//td[@data-year='#{year}' and @data-month='#{month.to_i - 1}']", text: day, match: :prefer_exact).click_js_link(day)
   end
 
   def unicheck(option)
