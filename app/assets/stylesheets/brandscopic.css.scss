@@ -2694,6 +2694,7 @@ ul.ui-widget-content{
 		.controls{
 			max-width: 220px;
 		}
+
 		&.event_summary{
 			margin-bottom: 20px;
 		}
@@ -2767,27 +2768,42 @@ ul.ui-widget-content{
 		}
 		.controls{
 			width:auto;
+			max-width: none;
 		}
 	}
 	.form_field_summation {
 		display: inline-block;
-		.field-option {
-			text-align: right;
-			width: auto;
-			label {
-				text-align: left;
-				color: text;
+		.controls {
+			margin-top: 10px;
+			.field-option {
+				text-align: right;
+				width: auto;
+				label {
+					text-align: left;
+					color: text;
+					margin-right: 20px;
+				}
+				input {
+					text-align: left;
+				}
+				&.error input {
+					border-color: #B94A49;
+				}
+				.control-label{
+					float:left;
+				}
+				input {
+					width: 220px;
+				}
+				margin-bottom: 10px;
+				&.summation-total-field {
+					border-top: 2px solid $grey_four;
+					padding-top: 10px;
+					label {
+						text-align: right;
+					}
+				}
 			}
-			input {
-				text-align: left;
-			}
-			&.error input {
-				border-color: #B94A49;
-			}
-		}
-		.summation-total-field {
-			border-top: 2px solid $grey_four;
-			padding-top: 10px;
 		}
 	}
 	.form_field_summation .field-option label {
