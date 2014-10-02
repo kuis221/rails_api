@@ -48,6 +48,7 @@ en:
       title:
         visits: 'Brand Ambassadors Visits'
         gva: 'Goals vs. Actual'
+        tasks: 'Tasks'
 
   buttons:
     new:
