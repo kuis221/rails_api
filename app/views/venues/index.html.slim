@@ -27,8 +27,18 @@
   #collection-list-filters
 .main
   #list-tools.text-right
-    button.btn.download.xlsx-download-link data-url="#{venues_path(format:"xls")}" title="Download" class="hidden" id="venue-download-button"
-      span.icon-download
+    .dropdown.btn-download
+      a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+        i.icon-download
+        i.icon-arrow-down
+      ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+        li
+          a.xlsx-download-link href="#" role="menuitem" data-url="#{venues_path(format: :xls)}"
+            | Download as XLS
+        li
+          a#pdf-export.xlsx-download-link href="#" role="menuitem" data-url="#{venues_path(format: :pdf)}"
+            | Download as PDF
+
   .tab-content
     #list-view.tab-pane.active
       #venues-totals
