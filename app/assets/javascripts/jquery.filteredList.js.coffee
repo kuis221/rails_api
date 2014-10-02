@@ -302,7 +302,7 @@ $.widget 'nmk.filteredList', {
 				maxHeight = @element.outerHeight() + @element.offset().top - container.offset().top;
 				container.find('>ul').css({'max-height': Math.min(400, maxHeight)})
 
-			$trigger = $('<a>',{href: '#', class:'more-options-link'}).text('More')
+			$trigger = $('<a>',{href: '#', class:'more-options-link'}).text('Show More')
 				.on 'click', (e) =>
 					container = $trigger.next()
 					if container.css('display') == "none"
@@ -653,26 +653,26 @@ $.widget 'nmk.filteredList', {
 				$('<label>').text('Date ranges'),
 				$('<a class="dropdown-toggle off" data-toggle="dropdown" href="#" title="Date ranges">').text('Choose a date range').append($('<i class="icon-arrow-down pull-right"></i>')),
 				$('<ul aria-labelledby="dLabel" class="dropdown-menu" role="menu">').append(
-					$('<li class="options">').append(
+					$('<li class="default-ranges">').append(
 						$('<div class="row-fluid">').append(
-							$('<div class="span4">').append(
+							$('<div class="range-date">').append(
 								$('<a href="#">').data('selection', 'cw').text('Current week')
 							),
-							$('<div class="span4">').append(
+							$('<div class="range-date">').append(
 								$('<a href="#">').data('selection', 'cm').text('Current month')
 							),
-							$('<div class="span4">').append(
+							$('<div class="range-date">').append(
 								$('<a href="#">').data('selection', 'today').text('Today')
 							)
 						),
 						$('<div class="row-fluid">').append(
-							$('<div class="span4">').append(
+							$('<div class="range-date">').append(
 								$('<a href="#">').data('selection', 'pw').text('Previous week')
 							),
-							$('<div class="span4">').append(
+							$('<div class="range-date">').append(
 								$('<a href="#">').data('selection', 'pm').text('Previous month')
 							),
-							$('<div class="span4">').append(
+							$('<div class="range-date">').append(
 								$('<a href="#">').data('selection', 'ytd').text('YTD')
 							)
 						)
@@ -683,7 +683,7 @@ $.widget 'nmk.filteredList', {
 						@setCalendarRange $(e.target).data('selection')
 						$('.select-ranges.open .dropdown-toggle').dropdown('toggle')
 						false
-					$('<li class="ranges">').append(
+					$('<li class="ranges custom-ranges">').append(
 						@customDatesFilter.show()
 					)
 					$('<li>').append(
