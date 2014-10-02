@@ -771,18 +771,17 @@ $.widget 'nmk.filteredList', {
 
 	getWeekRange: (weeks=1) ->
 		today = new Date();
-		today.setHours(0, 0, 0, 0)
-		date = today.getDate() - today.getDay();
+		today.setHours(0, 0, 0, 0);
 
 		# Grabbing Start/End Dates
 		if (weeks >= 0)
-			StartDate = new Date(today.setDate(date));
-			EndDate = new Date(today.setDate(date + (weeks*6)));
+			startDate = new Date(today.setDate(today.getDate() - today.getDay()));
+			endDate = new Date(today.setDate(today.getDate() - today.getDay() + (weeks*6)));
 		else
-			EndDate = new Date(today.setDate(date));
-			StartDate = new Date(today.setDate(date + (weeks*6) - 1));
+			endDate = new Date(today.setDate(today.getDate() - today.getDay() - 1));
+			startDate = new Date(today.setDate((today.getDate() - today.getDay()) + ((weeks+1)*6) + (weeks+1)));
 
-		[StartDate, EndDate]
+		[startDate, endDate]
 
 	getMonthRange: (months=1) ->
 		date = new Date()
