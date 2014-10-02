@@ -1582,7 +1582,7 @@ li.dropdown a{
 				height: 97px;
 				top: -5px;
 				right: 0;
-				background-image: image-url('active-rounded.png');
+				background-image: image-url('active-rounded.svg');
 				background-position: right -5px, right 93px;
 				background-repeat: no-repeat,no-repeat;
 				z-index: 100;
@@ -1594,9 +1594,9 @@ li.dropdown a{
 				position: absolute;
 				width: 5px;
 				height: 97px;
-				top: -5px;
+				top: -13px;
 				right: 0;
-				background-image: image-url('active-rounded.png');
+				background-image: image-url('active-rounded.svg');
 				background-position: right 93px, right 20px;
 				background-repeat: no-repeat,no-repeat;
 				z-index: 100;
@@ -1610,14 +1610,14 @@ li.dropdown a{
 		}
 		a{
 			color:$grey_three;
+			box-sizing:border-box;
 			font-weight: bold;
-			padding: 28px 0 20px 0;
-			height:40px;
+			padding: 20px 0 20px 0;
+			height:80px;
 			&:hover{
 				background-color: $text;
 				color: $user_menu;
-				height: 40px !important;
-				padding: 28px 0 20px 0 !important;
+				padding: 20px 0 20px 0 !important;
 			}
 		}
 		&#brand_ambassadors{
