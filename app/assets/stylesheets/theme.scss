@@ -70,7 +70,7 @@ input[type="color"],
 input[disabled], select[disabled], textarea[disabled],
 input[readonly], select[readonly], textarea[readonly]{
 	background-color: white;
-	border: 1px solid rgba(192, 192, 192, 0.6);
+	//border: 1px solid rgba(192, 192, 192, 0.6);
 	&:focus{
 		border: 1px solid rgba(192, 192, 192, 0.6)
 	}
@@ -113,15 +113,99 @@ input[readonly], select[readonly], textarea[readonly]{
 	background-image: none;
 	border: 0;
 	box-shadow:none;
+	color: white;
 	font-family: $baseFontFamily;
 	padding: 8px 17px;
 	text-shadow:none;
 	-webkit-box-shadow: none;
-	&[disabled]{
-		background-color: $grey_one;
-		opacity: 1;
+	&.btn-default{
+		background-color:$user_menu;
+		background-image:none;
+		&:hover, &:active{
+			background-color:$brand;
+		}
+		&[disabled]{
+			background-color:$grey_one;
+			color:$app_bg;
+			&:hover{
+				@extend .btn.btn-primary[disabled];
+			}
+		}
+	}
+	&.btn-primary{
+		background-color: $buttons;
+		background-image:none !important;
+		border: 0;
+		box-shadow: none;
+		font-size: 14px;
+		padding: 7px 25px;
+		text-decoration: none !important;
+		text-shadow:none;
 		&:hover{
-			background-color: $grey_one;
+			background-color: $buttons-hover !important;
+		}
+		&:active{
+			background-color: $buttons-hover;
+			box-shadow: none;
+		}
+		&.fileinput-button{
+			padding: 7px 23px;
+		}
+		&[disabled]{
+			background-color:#f28179;
+			color: #f5b8b8;
+			&:hover{
+				@extend .btn.btn-primary[disabled];
+			}
+		}
+		&.active{
+			background-color: $brand;
+			border: 0;
+			box-shadow: none;
+			&.list, &.map, &.calendar, &.table, &.graph{
+				&:after{
+					color: $user_menu;
+				}
+			}
+		}
+		&:focus{
+			outline:0;
+		}
+		&:hover{
+			background-color: $btnHover;
+			border: 0;
+			box-shadow: none;
+			color: #fff;
+		}
+		&.list:after, &.table:after{
+			font-size: 14px;
+			top:1px;
+		}
+		&.map:after{
+			font-size: 15px;
+			left: 2px;
+			top:1px;
+		}
+		&.calendar:after{
+			font-size: 15px;
+			top: 2px;
+		}
+		&.graph:after{
+			font-size: 14px;
+			top: 1px;
+		}
+		.icon-calendar:before{
+			font-size: 19px;
+			left: 2px;
+			top:1px;
+		}
+		&.btn-primary, &.btn-cancel{
+			box-sizing: border-box;
+			padding: 8px 25px;
+			//height: 35px;
+			&.fileinput-button{
+				width: 140px;
+			}
 		}
 	}
 	&[title="Download"], &[title="Fullscreen"]{ /* This should be the style for every downlaod and fullscreen button */
@@ -129,6 +213,74 @@ input[readonly], select[readonly], textarea[readonly]{
 		height: 34px;
 	}
 }
+
+.btn-small {
+	padding: 2px 10px;
+}
+
+// BTN GROUP
+// According to the Style Guide there is no hover effect for this element
+// ----------------------------------------------------------------------
+
+.btn-group{
+	margin-left: 25px;
+	&>.btn+.btn{
+		margin-left: 0;
+	}
+	.btn{
+		border: 0;
+		box-shadow: none;
+		color: white;
+		&.active{
+			background-color: $brand;
+			color: $user_menu;
+			&:hover{
+				background-color: $brand;
+				color: $user_menu;
+			}
+		}
+		&:hover{
+			background-color: $user_menu;
+			color: white;
+		}
+		&.calendar{
+			border-left: 1px solid $buttons-border;
+			border-right: 1px solid $buttons-border;
+			&:last-child{
+				border-right: none;
+			}
+		}
+	}
+}
+
+.btn-cancel{
+	background-color: $user_menu;
+	&:hover{
+		color: white;
+		background-color: $brand;
+	}
+}
+
+.btn-info{
+	background-color: $user_menu !important;
+	font-size: 13px;
+	padding-bottom:9px;
+	padding-top: 9px;
+	i{
+		line-height: 5px;
+		font-size: 19px;
+		position: relative;
+		top: 6px;
+		right: -12px;
+	}
+	&:hover{
+		background-color: $brand !important;
+	}
+}
+
+// End buttons styles
+
+
 
 
 //
