@@ -48,7 +48,24 @@ $.widget 'nmk.filteredList', {
 
 		@element.parent().append $('<a class="list-filter-btn" href="#" data-toggle="filterbar" title="Filter">').append('<i class="icon-gear">')
 
-		@formFilters = $('<div class="form-facet-filters">').appendTo(@form)
+		@formFilters = $('<div class="form-facet-filters accordion">')
+							.on("show", (e) ->
+								$(e.target).closest(".accordion-group").find(".icon-arrow-right").removeClass("icon-arrow-right").addClass("icon-arrow-down").prop "title", "Collapse"
+								# For some reason $("#" + e.target.id + "-more").show() is not working
+								next = $(e.target).parent().next()
+								if next.attr('id') == 'more-options-container'
+									next.show()
+								return
+							).on "hide", (e) ->
+								$(e.target).closest(".accordion-group").find(".icon-arrow-down").removeClass("icon-arrow-down").addClass("icon-arrow-right").prop "title", "Expand"
+								# For some reason $("#" + e.target.id + "-more").hide() is not working
+								next = $(e.target).parent().next()
+								if next.attr('id') == 'more-options-container'
+									next.hide()
+								return
+
+		@formFilters.appendTo(@form)
+
 		if @options.filters
 			@setFilters @options.filters
 
@@ -274,7 +291,18 @@ $.widget 'nmk.filteredList', {
 		items = filter.items
 		top5 = filter.top_items
 		$list = $('<ul>')
-		$filter = $('<div class="filter-wrapper">').data('name', filter.name).append($('<h3>').text(filter.label), $list)
+		$filter = $('<div class="accordion-group">').append(
+			$('<div class="filter-wrapper accordion-heading">').data('name', filter.name).append(
+				$('<a>',{href: "#toogle-"+filter.label.replace(/\s+/g, '-').toLowerCase(), class:'accordion-toggle filter-title', 'data-toggle': 'collapse'}).text(filter.label).append(
+					$('<span class="icon icon-arrow-down pull-left" title="Collapse">')
+				)
+			),
+			$('<div id="toogle-'+filter.label.replace(/\s+/g, '-').toLowerCase()+'" class="accordion-body collapse in">').append(
+				$('<div class="accordion-inner">').append(
+					$list
+				)
+			)
+		)
 		i = 0
 		if not top5
 			optionsCount = items.length
@@ -293,7 +321,7 @@ $.widget 'nmk.filteredList', {
 		@formFilters.append $filter
 		if optionsCount > 5
 			$li = $('<li>')
-			$div = $('<div>')
+			$div = $('<div id="more-options-container">')
 			$ul = $('<ul class="sf-menu sf-vertical-menu">')
 
 			filterListResizer = =>
