@@ -162,9 +162,9 @@ module RequestsHelper
 
   def filter_section(title)
     section = nil
-    find('.form-facet-filters h3', text: title)
-    page.all('.form-facet-filters .filter-wrapper').each do |wrapper|
-      if wrapper.all('h3', text: title).count > 0
+    find('.form-facet-filters .accordion-group .filter-wrapper a', text: title)
+    page.all('.form-facet-filters .accordion-group').each do |wrapper|
+      if wrapper.all('.filter-wrapper a', text: title).count > 0
         section = wrapper
         break
       end
