@@ -294,7 +294,8 @@ $.widget 'nmk.filteredList', {
 		$filter = $('<div class="accordion-group">').append(
 			$('<div class="filter-wrapper accordion-heading">').data('name', filter.name).append(
 				$('<a>',{href: "#toogle-"+filter.label.replace(/\s+/g, '-').toLowerCase(), class:'accordion-toggle filter-title', 'data-toggle': 'collapse'}).text(filter.label).append(
-					$('<span class="icon icon-arrow-down pull-left" title="Collapse">')
+					$('<span class="icon icon-arrow-down pull-left" title="Collapse">'),
+					$('<span class="total-items-category" title="Total items">').text('('+items.length+')')
 				)
 			),
 			$('<div id="toogle-'+filter.label.replace(/\s+/g, '-').toLowerCase()+'" class="accordion-body collapse in">').append(

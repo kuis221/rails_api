@@ -2522,6 +2522,10 @@ ul.ui-widget-content{
 							font-size: 10px;
 							vertical-align: middle;
 						}
+						&.total-items-category {
+							color: $grey_four;
+							margin-left: 5px;
+						}
 					}
 				}
 			}
