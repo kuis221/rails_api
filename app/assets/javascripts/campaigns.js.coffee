@@ -1,5 +1,4 @@
 jQuery ->
-
 	$(document).delegate '.goalable-list a.arrow', 'click', (e) ->
 		e.stopPropagation();
 		e.preventDefault();
@@ -15,10 +14,10 @@ jQuery ->
 
 		move = ''
 		if $(this).is('.arrow-left')
-			toReduce = Math.abs(parseInt($scroller.css('left'))) - (displayArea )
-			move = if parseInt($scroller.css('left')) < 0 then "+=#{Math.max(toReduce, 1)}" else false
+			scrollerLeft = parseInt($scroller.css('left'))
+			toReduce = if Math.abs(scrollerLeft) < displayArea then Math.abs(scrollerLeft) else displayArea
+			move = if scrollerLeft < 0 then "+=#{Math.max(toReduce, 1)}" else false
 		else
-			arrowRightLeft = $(this).offset().left
 			distanceToMax = $scroller.outerWidth() + scrollerPosition.left - $(this).offset().left + parseInt($(this).css('margin-left'))
 
 			if ($scroller.outerWidth() + scrollerPosition.left) > $(this).offset().left
@@ -29,13 +28,13 @@ jQuery ->
 					for e in $scroller.children()
 						for i in $(e).children()
 							#finds what element is not fully shown
-							if ($(i).offset().left + $(i).width() > arrowRightLeft)
+							if ($(i).offset().left + $(i).width() > $(this).offset().left)
 								error_gap = $(i).width()
 								break
 						if error_gap != ''
 							break
 
-					move = "-=#{Math.abs(parseInt($scroller.css('left'))) + (parseInt(displayArea - error_gap))}"
+					move = "-=#{parseInt(displayArea - error_gap)}"
 			else
 				move = false
 		if move
