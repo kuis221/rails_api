@@ -49,6 +49,7 @@ en:
         events: 'Events'
         visits: 'Brand Ambassadors Visits'
         gva: 'Goals vs. Actual'
+        tasks: 'Tasks'
 
   buttons:
     new:
