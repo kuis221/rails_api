@@ -3,8 +3,8 @@ RSpec::Matchers.define :have_filter_section do |filter|
     @errors = []
 
     found = false
-    page.all('.form-facet-filters .filter-wrapper').each do |wrapper|
-      title = wrapper.all('h3', text: filter[:title])
+    page.all('.form-facet-filters .accordion-group').each do |wrapper|
+      title = wrapper.all('.filter-wrapper a', text: filter[:title])
       unless title.nil? || title.count == 0
         found = true
         if filter[:options].present?
