@@ -35,6 +35,24 @@ jQuery ->
 	calendarCreated = false
 	# EVENTS INDEX
 
+	window.createCalendar = (month = null, year = null) -> 
+		$('#calendar-canvas').eventsCalendar
+			month: month
+			year: year
+			eventsUrl: () ->
+				url = $('#calendar-canvas').data('events-url')
+				url += (if url.indexOf('?') >= 0 then '&' else '?') + $('#collection-list-filters').filteredList('paramsQueryString')
+				url
+			renderMonthDay: (day) ->
+				date = "#{day.getMonth()+1}/#{day.getDate()}/#{day.getFullYear()}"
+				"<a class=\"cal-day-link\" data-date=\"#{date}\" href=\"#{document.location.protocol}//#{document.location.host}/events?start_date=#{date}&end_date=\">#{day.getDate()}</a>"
+			onEventsLoad: () ->
+				setTimeout () -> 
+					window.status='completed';
+				, 100
+			onMonthChange: (month, year) ->
+				$('#pdf-export').data('url', "/events.pdf?mode=calendar&month=#{month}&year=#{year}")
+
 
 	$('#toggle-events-view a').on 'click', ->
 		$('#toggle-events-view a').removeClass 'active'
@@ -50,7 +68,7 @@ jQuery ->
 			$('.dates-pref').slideDown()
 			initializeMap()
 		else if $(this).attr('href') is '#calendar-view'
-			$('#pdf-export').data('url', '/events.pdf?mode=calendar');
+			$('#pdf-export').data('url', '/events.pdf?mode=calendar')
 			$('.dates-range-filter').slideUp()
 			$('.dates-pref').slideUp()
 			calendarIsVisible = true
@@ -60,14 +78,7 @@ jQuery ->
 			$('body.events.index #collection-list-filters').filteredList 'disableScrolling'
 			if not calendarCreated
 				calendarCreated = true
-				$('#calendar-canvas').eventsCalendar({
-					eventsUrl: () =>
-						"/events/calendar.json?#{$('#collection-list-filters').filteredList('paramsQueryString')}"
-					renderMonthDay: (day) =>
-						date = "#{day.getMonth()+1}/#{day.getDate()}/#{day.getFullYear()}"
-						"<a class=\"cal-day-link\" data-date=\"#{date}\" href=\"/events?start_date=#{date}&end_date=\">#{day.getDate()}</a>"
-				})
-
+				window.createCalendar();
 				# When the user clicks on the calendar day
 				$('#calendar-canvas').off('click.eventsCalendar').on 'click.eventsCalendar', '.cal-day-link', (e) ->
 					date = $(this).data('date')

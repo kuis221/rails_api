@@ -15,10 +15,15 @@ css:
     padding: 10px 0;
   }
 
-.filter-description
-  = describe_filters
-
 - if params[:mode] == 'calendar' && can?(:view_calendar, Event)
-  #calendar-canvas
+  #calendar-canvas data-events-url="#{calendar_events_url(format: :json)}"
+  javascript:
+    window.status='loading';
+    jQuery(function(){
+      window.createCalendar(#{params[:month] || 'null'}, #{params[:year] || 'null'});
+    });
 - else
+  .filter-description
+    = describe_filters
+
   = render template: 'inherited_resources/base/index'
