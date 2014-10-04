@@ -39,19 +39,19 @@ feature 'Filter Settings', search: true, js: true do
       visit events_path
 
       within '#collection-list-filters' do
-        expect(page).to have_content('CAMPAIGNS')
+        expect(page).to have_content('CAMPAIGNS(2)')
         expect(page).to have_content('Campaign 1')
         expect(page).to have_content('Campaign 2')
-        expect(page).to have_content('BRANDS')
+        expect(page).to have_content('BRANDS(1)')
         expect(page).to have_content('Brand 1')
         expect(page).to_not have_content('Brand 2')
-        expect(page).to have_content('PEOPLE')
+        expect(page).to have_content('PEOPLE(3)')
         expect(page).to_not have_content('Eugenio Derbez')
         expect(page).to have_content('Mario Moreno')
         expect(page).to have_content('Roberto Gomez')
         expect(page).to have_content('Test User')
-        expect(page).to have_content('EVENT STATUS')
-        expect(page).to have_content('ACTIVE STATE')
+        expect(page).to have_content('EVENT STATUS(5)')
+        expect(page).to have_content('ACTIVE STATE(2)')
         click_js_link 'Filter Settings'
       end
 
@@ -83,16 +83,16 @@ feature 'Filter Settings', search: true, js: true do
 
       within '#collection-list-filters' do
         expect(page).to_not have_content('CAMPAIGNS')
-        expect(page).to have_content('BRANDS')
+        expect(page).to have_content('BRANDS(1)')
         expect(page).to_not have_content('Brand 1')
         expect(page).to have_content('Brand 2')
-        expect(page).to have_content('PEOPLE')
+        expect(page).to have_content('PEOPLE(1)')
         expect(page).to have_content('Eugenio Derbez')
         expect(page).to_not have_content('Mario Moreno')
         expect(page).to_not have_content('Roberto Gomez')
         expect(page).to_not have_content('Test User')
-        expect(page).to have_content('EVENT STATUS')
-        expect(page).to have_content('ACTIVE STATE')
+        expect(page).to have_content('EVENT STATUS(5)')
+        expect(page).to have_content('ACTIVE STATE(2)')
       end
     end
   end
