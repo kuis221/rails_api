@@ -48,7 +48,6 @@
 //= require jquery.jscrollpane
 //= require markerclusterer
 //= require select2
-//= require superfish
 //= require moment.min.js
 //= require fullcalendar
 //= require jquery.colorPicker
