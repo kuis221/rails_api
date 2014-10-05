@@ -22,7 +22,7 @@ form{
 	margin: 0;
 }
 
-control-group {
+.control-group {
 	label.control-label{
 		color:$text;
 	}
@@ -33,6 +33,13 @@ control-group {
 				-webkit-box-shadow: none;
 			}
 		}
+	}
+}
+
+.select2-container-multi {
+	.select2-choices {
+		background: none;
+		background-image: none;
 	}
 }
 

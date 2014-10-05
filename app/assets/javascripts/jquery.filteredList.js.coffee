@@ -48,7 +48,19 @@ $.widget 'nmk.filteredList', {
 
 		@element.parent().append $('<a class="list-filter-btn" href="#" data-toggle="filterbar" title="Filter">').append('<i class="icon-gear">')
 
-		@formFilters = $('<div class="form-facet-filters">').appendTo(@form)
+		@formFilters = $('<div class="form-facet-filters accordion">')
+							.on "show", (e) ->
+								$(e.target).closest(".accordion-group").find(".icon-arrow-right").removeClass("icon-arrow-right").addClass("icon-arrow-down").prop "title", "Collapse"
+								return
+							.on "shown", (e) ->
+								$(e.target).closest(".accordion-group").find('.accordion-body').removeClass('collapse')
+								return
+							.on "hide", (e) ->
+								$(e.target).closest(".accordion-group").find(".icon-arrow-down").removeClass("icon-arrow-down").addClass("icon-arrow-right").prop "title", "Expand"
+								return
+
+		@formFilters.appendTo(@form)
+
 		if @options.filters
 			@setFilters @options.filters
 
@@ -102,6 +114,23 @@ $.widget 'nmk.filteredList', {
 		@initialized = true
 		@dateRange = false
 		@_serializeFilters()
+
+		$(document).on 'click', (e) ->
+			$('.more-options-container').hide()
+		.on 'change', '.more-options-container input[type=checkbox]', (e) =>
+			$checkbox = $(e.target)
+			listItem = $($(e.target).parents('li')[0])
+			listItem.find('ul').remove()
+			listItem.find('.checker').show()
+			$checkbox.change (e) => @_filtersChanged()
+			@_filtersChanged()
+			$checkbox.attr('checked', true)
+			parentList = $(listItem.parents('ul')[0])
+			listItem.closest('.accordion-inner').find('>ul').append listItem
+			if parentList.find('li').length == 0
+				parentList.remove()
+			true
+
 
 	destroy: ->
 		@_closeFilterOptions()
@@ -274,7 +303,19 @@ $.widget 'nmk.filteredList', {
 		items = filter.items
 		top5 = filter.top_items
 		$list = $('<ul>')
-		$filter = $('<div class="filter-wrapper">').data('name', filter.name).append($('<h3>').text(filter.label), $list)
+		$filter = $('<div class="accordion-group">').append(
+			$('<div class="filter-wrapper accordion-heading">').data('name', filter.name).append(
+				$('<a>',{href: "#toogle-"+filter.label.replace(/\s+/g, '-').toLowerCase(), class:'accordion-toggle filter-title', 'data-toggle': 'collapse'}).text(filter.label).append(
+					$('<span class="icon icon-arrow-down pull-left" title="Collapse">'),
+					$('<span class="total-items-category" title="Total items">').text('('+items.length+')')
+				)
+			),
+			$('<div id="toogle-'+filter.label.replace(/\s+/g, '-').toLowerCase()+'" class="accordion-body in">').append(
+				$('<div class="accordion-inner">').append(
+					$list
+				)
+			)
+		)
 		i = 0
 		if not top5
 			optionsCount = items.length
@@ -292,22 +333,15 @@ $.widget 'nmk.filteredList', {
 
 		@formFilters.append $filter
 		if optionsCount > 5
-			$li = $('<li>')
-			$div = $('<div>')
-			$ul = $('<ul class="sf-menu sf-vertical-menu">')
-
 			filterListResizer = =>
 				container = $trigger.next()
 				container.show()
 				maxHeight = @element.outerHeight() + @element.offset().top - container.offset().top;
-				container.find('>ul').css({'max-height': Math.min(400, maxHeight)})
 
 			$trigger = $('<a>',{href: '#', class:'more-options-link'}).text('More')
 				.on 'click', (e) =>
 					container = $trigger.next()
 					if container.css('display') == "none"
-						$('.child_div').hide()
-						$('.child_div').parent().css('height','8%')
 						$('.more-options-link').next().hide()
 						filterListResizer()
 					else
@@ -315,21 +349,15 @@ $.widget 'nmk.filteredList', {
 					false
 				.on 'click.firstime', (e)=>
 					$(e.target).off('click.firstime')
-					if not $ul.hasClass('sf-js-enabled')
-						list = @_buildFilterOptionsList(filter, $filter,false)
-						$ul.find('li').append(list)
-						$trigger.superfish({cssArrows: false, disableHI: true})
-						$trigger.superfish('show')
-						filterListResizer()
-					false
-				.on 'click', (e) =>
-					if $trigger.next().css('display') == "inline-block"
-						$(document).on 'click.more-options-link', (e) ->
-							$('.more-options-link').next().hide()
-							$(document).off 'click.more-options-link'
+					list = @_buildFilterOptionsList(filter, $filter)
+					list.insertAfter($trigger)
+					filterListResizer()
+					setTimeout () ->
+						list.find("input:checkbox").uniform()
+					, 100
 					false
 
-			$div.append($ul.append($li.append($trigger))).insertAfter($filter)
+			$trigger.insertAfter($list)
 
 			$filter
 		items = @_sortOptionsAlpha(items)
@@ -360,7 +388,7 @@ $.widget 'nmk.filteredList', {
 			@_closeFilterOptions()
 
 		filter = filterWrapper.data('filter')
-		items = @_buildFilterOptionsList(filter, filterWrapper,false)
+		items = @_buildFilterOptionsList(filter, filterWrapper)
 
 		if items? and items.find('li').length > 0
 			@filtersPopup = $('<div class="filter-box more-options-popup">').append(items).insertBefore filterWrapper
@@ -390,7 +418,7 @@ $.widget 'nmk.filteredList', {
 			@filtersPopup.remove()
 		$(document).off 'click.filteredList'
 
-	_buildFilterOptionsList: (list, filterWrapper,showChild) ->
+	_buildFilterOptionsList: (list, filterWrapper) ->
 		$list = null
 		if list? and list.items? and list.items.length
 			items = {}
@@ -400,70 +428,24 @@ $.widget 'nmk.filteredList', {
 					group = if option.group then option.group else '__default__'
 					items[group] ||= []
 					items[group].push $option
-					$option.bind 'click.filter', (e) =>
-						e.stopPropagation()
-						true
-					.find('input[type=checkbox]').bind 'change.filter', (e) =>
-						$checkbox = $(e.target)
-						listItem = $($(e.target).parents('li')[0])
-						listItem.find('ul').remove()
-						$checkbox.unbind 'change.filter'
-						listItem.unbind 'click.filter'
-						$checkbox.change (e) => @_filtersChanged()
-						listItem.find('.checker').show()
-						@_filtersChanged()
-						$checkbox.attr('checked', true)
-						parentList = $(listItem.parents('ul')[0])
-						filterWrapper.find('ul').append listItem
-						if parentList.find('li').length == 0
-							parentList.remove()
 
-						# if @filtersPopup.find('li').length == 0
-						# 	@_closeFilterOptions()
-						# 	filterWrapper.find('.more-options-link').remove()
-					if child = @_buildFilterOptionsList(option, filterWrapper,true)
-						$option.append child
-
-			if showChild == false
-				$list = $('<ul class="sf-vertical-menu filter_vertical_box">')
-			else
-				$list = $('<ul class="child_submenu">')
+			$list = $('<ul class="filter_vertical_box">')
 			for group, children of items
 				if children.length > 0
 					if group isnt '__default__'
 						$list_group = $('<li class="options-list-group">')
 							.on 'click', (e) =>
 								$current_div = $list_group.parent().parent()
-								if $current_div.hasClass('parent_div')
-									$('.child_div').hide()
-									$('.child_div').parent().css('height','8%')
-									$list_group.siblings().css('height','8%')
-								if $current_div.hasClass('child_div') and $current_div.find('ul').length > 0
-									$list_group.siblings().find("div").hide()
 
 						$list.append $list_group.text(group)
 					$list.append children
 
-				if showChild == false
-					$div = $('<div class="parent_div">')
-				else
-					$div = $('<div class="child_div">')
-				$div.append $list
+				$div = $('<div class="more-options-container">').append($list).on 'click', (e) ->
+					e.stopPropagation()
 		$div
 
 	_buildFilterOption: (option) ->
 		$('<li>')
-			.on 'mouseover', (e) =>
-				li = $(e.target)
-				$div_tmp = li.find('.child_div')
-				if $div_tmp.hasClass('child_div') and $div_tmp.css('display') == 'none' and !$div_tmp.hasClass('checker')
-					$(".child_div").parent().css('height','8%')
-					$div_tmp.css('display','inline-block')
-					$div_tmp.find(".child_div").hide() # remove extra titles
-					li.css('height','25%')
-					li.siblings().find('.child_div').hide()
-				li = null
-				true
 			.append $('<label>').append(
 				$('<input>',{type:'checkbox', value: option.id, name: "#{option.name}[]", checked: (option.selected is true or option.selected is 'true')}), option.label
 			).on 'change', () =>
@@ -771,18 +753,17 @@ $.widget 'nmk.filteredList', {
 
 	getWeekRange: (weeks=1) ->
 		today = new Date();
-		today.setHours(0, 0, 0, 0)
-		date = today.getDate() - today.getDay();
+		today.setHours(0, 0, 0, 0);
 
 		# Grabbing Start/End Dates
 		if (weeks >= 0)
-			StartDate = new Date(today.setDate(date));
-			EndDate = new Date(today.setDate(date + (weeks*6)));
+			startDate = new Date(today.setDate(today.getDate() - today.getDay()));
+			endDate = new Date(today.setDate(today.getDate() - today.getDay() + (weeks*6)));
 		else
-			EndDate = new Date(today.setDate(date));
-			StartDate = new Date(today.setDate(date + (weeks*6) - 1));
+			endDate = new Date(today.setDate(today.getDate() - today.getDay() - 1));
+			startDate = new Date(today.setDate((today.getDate() - today.getDay()) + ((weeks+1)*6) + (weeks+1)));
 
-		[StartDate, EndDate]
+		[startDate, endDate]
 
 	getMonthRange: (months=1) ->
 		date = new Date()

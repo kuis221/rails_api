@@ -1,6 +1,6 @@
 - if venue.is_a?(Venue)
   div.resource-item id="venue_#{venue.id}"
-    = link_to_if_permitted(:show, Venue, venue_path(venue.id), class: 'resource-item-link') do
+    = link_to_if_permitted(:show, Venue, venue_url(venue.id), class: 'resource-item-link') do
       .score.pull-left
         - if venue.score.present?
           .big-number= "#{venue.score}"

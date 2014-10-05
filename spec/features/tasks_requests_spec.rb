@@ -150,4 +150,71 @@ feature 'Tasks', js: true, search: true do
       end
     end
   end
+
+  feature 'export' do
+    let(:task1) { create(:task, title: 'Pick up kidz at school',
+                          company_user: company_user, due_at: '2013-09-01', active: true,
+                          event: create(:event, campaign: create(:campaign, name: 'Cacique FY14', company: company))) }
+    let(:task2) { create(:completed_task, title: 'Bring beers to the party',
+                          company_user: company_user, due_at: '2013-09-02', active: true,
+                          event: create(:event, campaign: create(:campaign, name: 'Centenario FY14', company: company))) }
+
+    before do
+      # make sure tasks are created before
+      task1
+      task2
+      Sunspot.commit
+    end
+
+    scenario 'should be able to export as xls' do
+      visit mine_tasks_path
+
+      click_js_link 'Download'
+      click_js_link 'Download as XLS'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        expect(ListExportWorker).to have_queued(ListExport.last.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      expect(ListExport.last).to have_rows([
+        ["TITLE", "DATE", "CAMPAIGN", "STATUSES", "EMPLOYEE"],
+        ["Pick up kidz at school", "2013-09-01T00:00", "Cacique FY14", "Active Assigned Incomplete Late", "Test User"],
+        ["Bring beers to the party", "2013-09-02T00:00", "Centenario FY14", "Active Assigned Complete", "Test User"]
+      ])
+    end
+
+    scenario 'should be able to export as PDF' do
+      visit mine_tasks_path
+
+      click_js_link 'Download'
+      click_js_link 'Download as PDF'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      export = ListExport.last
+      # Test the generated PDF...
+      reader = PDF::Reader.new(open(export.file.url))
+      reader.pages.each do |page|
+        # PDF to text seems to not always return the same results
+        # with white spaces, so, remove them and look for strings
+        # without whitespaces
+        text = page.text.gsub(/[\s\n]/, '')
+        expect(text).to include 'Pickupkidzatschool'
+        expect(text).to include 'Bringbeerstotheparty'
+        expect(text).to include 'CaciqueFY14'
+        expect(text).to include 'CentenarioFY14'
+        expect(text).to include 'SUNSep1,2013'
+        expect(text).to include 'MONSep2,2013'
+      end
+    end
+  end
 end
