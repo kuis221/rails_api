@@ -34,7 +34,12 @@ jQuery ->
 						if error_gap != ''
 							break
 
-					move = "-=#{parseInt(displayArea - error_gap)}"
+					moveInt = parseInt(displayArea - error_gap)
+					#calculate move for lower resolutions
+					if moveInt <= 100
+						moveInt = displayArea - parseInt($('.arrow-right', $li).css('margin-left')) - parseInt($('.arrow-left', $li).css('margin-left'))
+
+					move = "-=#{moveInt}"
 			else
 				move = false
 		if move
