@@ -2689,10 +2689,17 @@ ul.ui-widget-content{
 			}
 		}
 	}
+	.number, .dropdown, .form_field_text, .form_field_number, .form_field_dropdown, .form_field_radio{
+		.control-group{
+			.controls{
+				width:220px;
+			}
+		}
+	}
 	.control-group{
 		margin-bottom: 0;
 		.controls{
-			width: 220px;
+			width:auto;
 		}
 
 		&.event_summary{

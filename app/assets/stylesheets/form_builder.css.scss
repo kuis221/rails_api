@@ -115,7 +115,8 @@ $margin-right: 240px;
 		.btn[disabled=disabled] {
 			opacity: 0.5;
 		}
-		.field {
+		.field { // Fields added to the form
+
 			float: left;
 			clear: both;
 			padding: 8px 10px 10px 10px;
@@ -124,7 +125,7 @@ $margin-right: 240px;
 			border-radius: 5px;
 			display: inline-block;
 			height: auto;
-			width: auto;
+			width:auto;
 			label.radio .radio{
 				margin-right: 10px;
 			}
@@ -259,7 +260,8 @@ $margin-right: 240px;
 		    display: block;
 		}
 	}
-	.fields-wrapper {
+	.fields-wrapper { // Options to add to the form
+
 		background-color: #fff;
 		border-radius: 5px;
 		font-weight: 400;
@@ -399,8 +401,8 @@ $margin-right: 240px;
 				padding: 10px;
 				background-color: #fff;
 				text-align: left;
-				height: auto !important;
-				width: auto !important;
+				height: auto;
+				width: 230px !important;
 				a.close {
 					display:none;
 				}
