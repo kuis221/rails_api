@@ -3246,7 +3246,13 @@ body.events.index {
 	}
 	.form-result {
 		overflow: hidden;
-		margin-bottom: 10px;
+		margin-bottom: 30px;
+		&.result_number{
+			margin-bottom:10px;
+			&+ .result_text, &+ .result_checkbox, &+ .result_dropdown{
+				margin-top:30px;
+			}
+		}
 
 		span.form-result-label {
 			font-weight: bold;
@@ -3266,9 +3272,9 @@ body.events.index {
 			margin-top: 20px;
 			margin-bottom: 20px;
 		}
-		&.result_text_area {
+		&.result_text_area, &.result_text {
 			.form-result-value {
-				width: 325px;
+				width: 450px;
 				display: block;
 			}
 		}
@@ -3276,14 +3282,18 @@ body.events.index {
 			.form-result-label {
 				text-transform: uppercase;
 				font-weight: normal;
-				color: $user_menu;
+				color: $brand;
 				font-size: 11px;
 			}
+		}
+		&.result_checkbox, &.result_dropdown{
+			font-size:13px;
 		}
 		&.result_number, &.result_currency {
 			.form-result-value {
 				color: $blue;
 				font-size: 22px;
+				font-weight:bold;
 			}
 		}
 		&.result_brand, &.result_date, &.result_time {
@@ -3322,6 +3332,7 @@ body.events.index {
 					display: inline-block;
 					font-family: 'icons';
 					content: "\e624";
+					position:relative;
 					margin-right: 10px;
 					top: 3px;
 				}
