@@ -20,8 +20,7 @@ class EventsController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update, :edit_results,
                          :edit_data, :edit_surveys, :submit]
   respond_to :json, only: [:index, :calendar_highlights]
-  respond_to :xls, only: :index
-  respond_to :xls, only: :index
+  respond_to :xls, :pdf, only: :index
 
   custom_actions member: [:tasks, :edit_results, :edit_data, :edit_surveys]
   layout false, only: :tasks
@@ -208,7 +207,7 @@ class EventsController < FilteredController
     search = Event.do_search(custom_params.merge(
         start_date: start_date.to_s(:slashes),
         end_date: end_date.to_s(:slashes),
-        per_page: 1000
+        per_page: 3000
     ))
     search.hits.each do |hit|
       sd = hit.stored(:start_at).in_time_zone.to_date
@@ -225,7 +224,7 @@ class EventsController < FilteredController
             start: day,
             end: day,
             color: colors[all_brands.index(brand.id) % colors.count],
-            url: events_path('brand[]' => brand.id, 'start_date' => day.to_s(:slashes)) }
+            url: events_url('brand[]' => brand.id, 'start_date' => day.to_s(:slashes)) }
           days[day][brand.id][:count] += 1
           days[day][brand.id][:description] = "<b>#{brand.name}</b><br />#{days[day][brand.id][:count]} Events"
         end
