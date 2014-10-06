@@ -27,6 +27,47 @@ describe Activity, type: :model do
   it { is_expected.to validate_numericality_of(:activity_type_id) }
   it { is_expected.to validate_numericality_of(:company_user_id) }
 
+  describe 'inclusion of activity_type_id' do
+    describe 'when assigned to a campaign' do
+      before { subject.campaign = campaign }
+      let(:company) { create(:company) }
+      let(:campaign) { create(:campaign, company: company, activity_type_ids: activity_types.map(&:id)) }
+      let(:activity_types) { create_list(:activity_type, 2, company: company) }
+      let(:other_type) { create(:activity_type, company: company) }
+
+      it { is_expected.to allow_value(activity_types.first.id).for(:activity_type_id) }
+      it { is_expected.to allow_value(activity_types.second.id).for(:activity_type_id) }
+      it { is_expected.not_to allow_value(other_type.id).for(:activity_type_id) }
+    end
+
+    describe 'when assigned to a venue' do
+      before { subject.campaign = nil }
+      before { subject.activitable = venue }
+      let(:company) { create(:company) }
+      let(:venue) { create(:venue, company: company) }
+      let(:activity_types) { create_list(:activity_type, 2, company: company) }
+      let(:other_type) { create(:activity_type, company: create(:company)) }
+
+      it { is_expected.to allow_value(activity_types.first.id).for(:activity_type_id) }
+      it { is_expected.to allow_value(activity_types.second.id).for(:activity_type_id) }
+      it { is_expected.not_to allow_value(other_type.id).for(:activity_type_id) }
+    end
+
+    describe 'when assigned to a venue' do
+      before { subject.campaign = nil }
+      before { subject.activitable = event }
+      let(:company) { create(:company) }
+      let(:campaign) { create(:campaign, company: company, activity_type_ids: activity_types.map(&:id)) }
+      let(:event) { create(:event, campaign: campaign) }
+      let(:activity_types) { create_list(:activity_type, 2, company: company) }
+      let(:other_type) { create(:activity_type, company: company) }
+
+      it { is_expected.to allow_value(activity_types.first.id).for(:activity_type_id) }
+      it { is_expected.to allow_value(activity_types.second.id).for(:activity_type_id) }
+      it { is_expected.not_to allow_value(other_type.id).for(:activity_type_id) }
+    end
+  end
+
   describe '#activate' do
     let(:activity) { build(:activity, active: false) }
 
