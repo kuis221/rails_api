@@ -14,6 +14,9 @@ css:
   .filter-description {
     padding: 10px 0;
   }
+  .resource-list .resource-item {
+    min-height: 80px;
+  }
 
 - if params[:mode] == 'calendar' && can?(:view_calendar, Event)
   #calendar-canvas data-events-url="#{calendar_events_url(format: :json)}"
