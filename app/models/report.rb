@@ -20,6 +20,8 @@ class Report < ActiveRecord::Base
   # Created_by_id and updated_by_id fields
   track_who_does_it
 
+  VALUES = 'values'.freeze
+
   scoped_to_company
 
   validates :name, presence: true
@@ -59,19 +61,19 @@ class Report < ActiveRecord::Base
 
   # Override setter methods to format/clean the values
   def rows=(value)
-    write_attribute :rows, format_field(value)
+    self[:rows] = format_field(value)
   end
 
   def columns=(value)
-    write_attribute :columns, format_field(value)
+    self[:columns] = format_field(value)
   end
 
   def values=(value)
-    write_attribute :values, format_field(value)
+    self[:values] = format_field(value)
   end
 
   def filters=(value)
-    write_attribute :filters, format_field(value)
+    self[:filters] = format_field(value)
   end
 
   def rows
@@ -128,14 +130,14 @@ class Report < ActiveRecord::Base
       results = fetch_page
       total = results.count
       fetch_page.each_with_index do |row, i|
-        csv << row_fields.map { |n| row[n] } + format_values(row['values'])
+        csv << row_fields.map { |n| row[n] } + format_values(row[VALUES])
         yield total, i if block_given? && i % 50 == 0
       end
     end
   end
 
   def format_values(result_values, options = {})
-    values_position = columns.map(&:field).index('values')
+    values_position = columns.map(&:field).index(VALUES)
     values_map = report_columns.map { |c| c.split('||')[values_position] }
     values_label_map = {}
     values.each do |v|
@@ -167,67 +169,67 @@ class Report < ActiveRecord::Base
 
     rows_columns = { '1' => 'col_name' } if rows_columns.empty?
 
-    if can_be_generated?
-      select_cols = (fields.reject { |f| f['field'] == 'values' }).each_with_index.map { |f, i| "row_labels[#{i + 1}] as #{f.to_sql_name}" }
-      value_fields = {}
-      values_columns = values.map do |f|
-        if f.kpi.present? && (f.kpi.is_segmented? || f.kpi.kpi_type == 'count')
-          f.kpi.kpis_segments.map do |s|
-            name = "kpi_#{s.kpi_id}_#{s.id}"
-            select_cols.push name
-            value_fields[name] = "#{f.label}: #{s.text}"
-            "#{name} numeric"
-          end
-        elsif f.form_field.present? && f.form_field.is_optionable?
-          f.form_field.options.map do |o|
-            name = "form_field_#{o.form_field_id}_#{o.id}"
-            select_cols.push name
-            value_fields[name] = "#{f.label}: #{o.name}"
-            "#{name} numeric"
-          end
-        else
-          name = f.to_sql_name
+    return unless can_be_generated?
+
+    select_cols = (fields.reject { |f| f['field'] == VALUES }).each_with_index.map { |f, i| "row_labels[#{i + 1}] as #{f.to_sql_name}" }
+    value_fields = {}
+    values_columns = values.map do |f|
+      if f.kpi.present? && (f.kpi.is_segmented? || f.kpi.kpi_type == 'count')
+        f.kpi.kpis_segments.map do |s|
+          name = "kpi_#{s.kpi_id}_#{s.id}"
           select_cols.push name
-          value_fields[name] = "#{f.label}"
+          value_fields[name] = "#{f.label}: #{s.text}"
           "#{name} numeric"
         end
-      end.flatten
-
-      results = ActiveRecord::Base.connection.select_all("
-        SELECT #{select_cols.join(', ')}
-        FROM crosstab('\n\t#{values_sql(rows_columns).compact.join("\nUNION ALL\n\t").gsub(/'/, "''")}\n\tORDER BY 1',
-          'select m from generate_series(1,#{values_columns.count}) m')
-        AS ct(row_labels varchar[], #{values_columns.join(', ')}) ORDER BY 1 ASC
-      ")
-
-      empty_values = Hash[report_columns.map { |k| [k, nil] }]
-
-      key_fields = rows.compact.map(&:to_sql_name) - ['values']
-      column_fields = columns.map(&:to_sql_name)
-      rows = []
-      row = values = previous_key = nil
-      results.each do |result|
-        key = key_fields.map { |f| result[f] }
-        if key != previous_key
-          unless row.nil?
-            row['values'] = values.values
-            rows.push row
-          end
-          row = result.select { |k, _v| key_fields.include?(k) }
-          values = empty_values.dup
+      elsif f.form_field.present? && f.form_field.is_optionable?
+        f.form_field.options.map do |o|
+          name = "form_field_#{o.form_field_id}_#{o.id}"
+          select_cols.push name
+          value_fields[name] = "#{f.label}: #{o.name}"
+          "#{name} numeric"
         end
-        value_fields.each do |name, label|
-          k = column_fields.map { |c| if c == 'values' then label else result[c] end }.join('||')
-          values[k] = result[name].to_f if values.key?(k)
+      else
+        name = f.to_sql_name
+        select_cols.push name
+        value_fields[name] = "#{f.label}"
+        "#{name} numeric"
+      end
+    end.flatten
+
+    results = ActiveRecord::Base.connection.select_all("
+      SELECT #{select_cols.join(', ')}
+      FROM crosstab('\n\t#{values_sql(rows_columns).compact.join("\nUNION ALL\n\t").gsub(/'/, "''")}\n\tORDER BY 1',
+        'select m from generate_series(1,#{values_columns.count}) m')
+      AS ct(row_labels varchar[], #{values_columns.join(', ')}) ORDER BY 1 ASC
+    ")
+
+    empty_values = Hash[report_columns.map { |k| [k, nil] }]
+
+    key_fields = rows.compact.map(&:to_sql_name) - [VALUES]
+    column_fields = columns.map(&:to_sql_name)
+    rows = []
+    row = values = previous_key = nil
+    results.each do |result|
+      key = key_fields.map { |f| result[f] }
+      if key != previous_key
+        unless row.nil?
+          row[VALUES] = values.values
+          rows.push row
         end
-        previous_key = key
+        row = result.select { |k, _v| key_fields.include?(k) }
+        values = empty_values.dup
       end
-      unless row.nil?
-        row['values'] = values.values
-        rows.push row
+      value_fields.each do |name, label|
+        k = column_fields.map { |c| if c == VALUES then label else result[c] end }.join('||')
+        values[k] = result[name].to_f if values.key?(k)
       end
-      rows
+      previous_key = key
     end
+    unless row.nil?
+      row[VALUES] = values.values
+      rows.push row
+    end
+    rows
   end
 
   def report_columns
@@ -250,7 +252,7 @@ class Report < ActiveRecord::Base
     @columns_totals ||= begin
       results = fetch_results_for(columns)
       if results.any?
-        results.first['values']
+        results.first[VALUES]
       else
         []
       end
@@ -374,7 +376,7 @@ class Report < ActiveRecord::Base
     if filter_params.present? && filter_params.any?
       filters.each do |filter|
         unless %w(brand_portfolio brand).include?(filter.model_name)  # BrandPortfolios/Brands filters are handled directly in #add_joins_scopes
-          if is_filtered_by?(filter.field)
+          if filtered_by?(filter.field)
             condition = filter_info = nil
             filter_info = filter.column_info[:filter].call(filter) if filter.column_info.present? && filter.column_info.key?(:filter)
             if filter_params[filter.field].is_a?(Hash)
@@ -425,7 +427,7 @@ class Report < ActiveRecord::Base
     fields = [field_list, rows, columns, filters].flatten.compact
     fields_without_filters = [field_list, rows, columns].flatten.compact
     if fields_without_filters.any? { |v| v.kpi.present? && is_a_result_kpi?(v.kpi) } ||
-       filters.any? { |filter| filter.kpi.present? && is_filtered_by?(filter.field) && is_a_result_kpi?(filter.kpi) }
+       filters.any? { |filter| filter.kpi.present? && filtered_by?(filter.field) && is_a_result_kpi?(filter.kpi) }
       # Include the form_fields table in the join making sure that only active kpis are counted
       s = s.joins(campaign: :form_fields)
             .joins('INNER JOIN form_field_results event_results ON form_fields.id=event_results.form_field_id AND event_results.resultable_id = events.id AND event_results.resultable_type = \'Event\'')
@@ -434,7 +436,7 @@ class Report < ActiveRecord::Base
 
     joined_with_activities = false
     if fields_without_filters.any? { |v| v.form_field.present? } ||
-       filters.any? { |filter| filter.form_field.present? && is_filtered_by?(filter.field) }
+       filters.any? { |filter| filter.form_field.present? && filtered_by?(filter.field) }
       # Include the form_fields table in the join making sure that only active form fields results are counted
       s = s.joins(:activities, campaign: { activity_types: :form_fields })
           .joins('INNER JOIN form_field_results activity_results ON activity_results.resultable_id = activities.id AND activity_results.resultable_type = \'Activity\'')
@@ -454,11 +456,11 @@ class Report < ActiveRecord::Base
       s = s.joins('LEFT JOIN event_expenses ON event_expenses.event_id = events.id')
     end
 
-    s = s.joins(:place) if fields_without_filters.any? { |v| v.model_name == 'place' } || filters.any? { |v| v.model_name == 'place' && is_filtered_by?(v.field) }
-    s = s.joins(:campaign) if fields_without_filters.any? { |v| v.model_name == 'campaign' } || filters.any? { |v| v.model_name == 'campaign' && is_filtered_by?(v.field) }
+    s = s.joins(:place) if fields_without_filters.any? { |v| v.model_name == 'place' } || filters.any? { |v| v.model_name == 'place' && filtered_by?(v.field) }
+    s = s.joins(:campaign) if fields_without_filters.any? { |v| v.model_name == 'campaign' } || filters.any? { |v| v.model_name == 'campaign' && filtered_by?(v.field) }
 
     activity_type_fields = fields_without_filters.select { |v| v.model_name == 'activity_type' } +
-                           filters.select { |v| v.model_name == 'activity_type' && is_filtered_by?(v.field) }
+                           filters.select { |v| v.model_name == 'activity_type' && filtered_by?(v.field) }
     if activity_type_fields.any?
       if activity_type_fields.any? { |f| ['activity_type:name', 'activity_type:description'].include? f.field }
         s = s.joins(activities: :activity_type)
@@ -470,17 +472,17 @@ class Report < ActiveRecord::Base
     end
 
     # Join with users/teams table
-    include_roles = fields_without_filters.any? { |v| v.model_name == 'role' } || filters.any? { |v| v.model_name == 'role' && is_filtered_by?(v.field) }
-    if fields.any? { |v| v.model_name == 'user' } || filters.any? { |v| v.model_name == 'user' && is_filtered_by?(v.field) }  || include_roles
+    include_roles = fields_without_filters.any? { |v| v.model_name == 'role' } || filters.any? { |v| v.model_name == 'role' && filtered_by?(v.field) }
+    if fields.any? { |v| v.model_name == 'user' } || filters.any? { |v| v.model_name == 'user' && filtered_by?(v.field) }  || include_roles
       s = s.joins_for_user_teams
       s = s.joins('INNER JOIN roles ON roles.id=company_users.role_id') if include_roles
-    elsif fields.any? { |v| v.model_name == 'team' } || filters.any? { |v| v.model_name == 'team' && is_filtered_by?(v.field) }
+    elsif fields.any? { |v| v.model_name == 'team' } || filters.any? { |v| v.model_name == 'team' && filtered_by?(v.field) }
       s = s.joins(:teams)
     end
     # s = s.joins(:campaign) if fields.any?{|v| Campaign.report_fields.keys.include?(v['field']) }
 
     # Join with areas table
-    if fields.any? { |v| v.model_name == 'area' } || filters.any? { |v| v.model_name == 'area' && is_filtered_by?(v.field) }
+    if fields.any? { |v| v.model_name == 'area' } || filters.any? { |v| v.model_name == 'area' && filtered_by?(v.field) }
       s = s.joins('LEFT JOIN "places" ON "places"."id" = "events"."place_id"
           LEFT JOIN (
               SELECT place_id, placeable_id area_id FROM "placeables"
@@ -498,7 +500,7 @@ class Report < ActiveRecord::Base
     end
 
     # Join with brand_portfolios table
-    portfolio_filters = filters.select { |filter| filter.model_name == 'brand_portfolio' && is_filtered_by?(filter.field) }
+    portfolio_filters = filters.select { |filter| filter.model_name == 'brand_portfolio' && filtered_by?(filter.field) }
     if [field_list, rows, columns].flatten.compact.any? { |v| v.model_name == 'brand_portfolio' }
       # This case is for when we are NOT filtering the list by brand portfolio but we DO have to fetch a portfolio field from the
       # database (eg Portofio Name as a row/column)
@@ -532,7 +534,7 @@ class Report < ActiveRecord::Base
     end
 
     # Join with brands table
-    brand_filters = filters.select { |filter| filter.model_name == 'brand' && is_filtered_by?(filter.field) }
+    brand_filters = filters.select { |filter| filter.model_name == 'brand' && filtered_by?(filter.field) }
     if [field_list, rows, columns].flatten.compact.any? { |v| v.model_name == 'brand' }
       # This case is for when we are NOT filtering the list by brands but we DO have to fetch a brand field from the
       # database (eg Brand Name as a row/column)
@@ -599,7 +601,7 @@ class Report < ActiveRecord::Base
 
     # For each filter, we need to create a special join with the event results table
     filters.each do |filter|
-      if filter.kpi.present? && is_filtered_by?(filter.field)
+      if filter.kpi.present? && filtered_by?(filter.field)
         if is_a_result_kpi?(filter.kpi)
           s = s.joins("INNER JOIN form_field_results er_kpi_#{filter.kpi.id} ON er_kpi_#{filter.kpi.id}.resultable_type='Event' AND er_kpi_#{filter.kpi.id}.resultable_id = events.id
                        INNER JOIN form_fields eff_kpi_#{filter.kpi.id} ON eff_kpi_#{filter.kpi.id}.id=er_kpi_#{filter.kpi.id}.form_field_id AND eff_kpi_#{filter.kpi.id}.kpi_id=#{filter.kpi.id}")
@@ -635,7 +637,7 @@ class Report < ActiveRecord::Base
   def scoped_columns(s, c, prefix = '', index = 0)
     begin
       if c.any? && column = c.first
-        if column['field'] == 'values'
+        if column['field'] == VALUES
           values.map do |v|
             if v.kpi.present? && (v.kpi.is_segmented? || v.kpi.kpi_type == 'count')
               v.kpi.kpis_segments.map { |segment| scoped_columns(s, c.slice(1, c.count), "#{prefix}#{v['label']}: #{segment.text}||") }
@@ -658,7 +660,7 @@ class Report < ActiveRecord::Base
   end
 
   def load_fields(name)
-    fields = read_attribute(name)
+    fields = self[name]
     if fields.nil?
       []
     else
@@ -666,13 +668,22 @@ class Report < ActiveRecord::Base
     end
   end
 
-  def is_filtered_by?(field_name)
+  def filtered_by?(field_name)
     filter_params.present? && filter_params.key?(field_name) && filter_params[field_name].any?
   end
 end
 
 class Report::Field
   attr_accessor :type, :data, :report
+
+  DISPLAY = 'display'.freeze
+  FIELD = 'field'.freeze
+  LABEL = 'label'.freeze
+  AGGREGATE = 'aggregate'.freeze
+  PRECISION = 'precision'.freeze
+  PERC_OF_COLUMN = 'perc_of_column'.freeze
+  PERC_OF_ROW = 'perc_of_row'.freeze
+  PERC_OF_TOTAL = 'perc_of_total'.freeze
 
   include ActionView::Helpers::NumberHelper
 
@@ -688,11 +699,11 @@ class Report::Field
 
   def apply_display_method(row_values, column_index)
     total = case display
-    when 'perc_of_column'
+    when PERC_OF_COLUMN
       @report.columns_totals[column_index]
-    when 'perc_of_row'
+    when PERC_OF_ROW
       _sum_total_for_value row_values, column_index
-    when 'perc_of_total'
+    when PERC_OF_TOTAL
       _sum_total_for_value @report.columns_totals, column_index
     else
       -1
@@ -734,51 +745,52 @@ class Report::Field
   end
 
   def filter_column
-    @table_column ||= if kpi.present?
-                        if kpi.id == Kpi.events.id
-                          'COUNT(events.id)'
-                        elsif kpi.id == Kpi.promo_hours.id
-                          'SUM(events.promo_hours)'
-                        elsif kpi.id == Kpi.comments.id
-                          'filter_comments_join.quantity'
-                        elsif kpi.id == Kpi.photos.id
-                          'filter_photos_join.quantity'
-                        elsif kpi.id == Kpi.expenses.id
-                          'filter_expenses_join.amount'
-                        elsif kpi.kpi_type == 'number'
-                          "er_kpi_#{kpi.id}.scalar_value"
-                        else
-                          "er_kpi_#{kpi.id}.value"
-                        end
-    elsif m = /\A(.*):([a-z_]+)\z/.match(field)
-                        definition = field_class.report_fields[m[2].to_sym]
-                        column = definition[:filter_column] || definition[:column]
-                        column.nil? ? "#{field_class.table_name}.#{m[2]}" : (column.respond_to?(:call) ? column.call :  column)
-    end
+    @table_column ||=
+      if kpi.present?
+        if kpi.id == Kpi.events.id
+          'COUNT(events.id)'
+        elsif kpi.id == Kpi.promo_hours.id
+          'SUM(events.promo_hours)'
+        elsif kpi.id == Kpi.comments.id
+          'filter_comments_join.quantity'
+        elsif kpi.id == Kpi.photos.id
+          'filter_photos_join.quantity'
+        elsif kpi.id == Kpi.expenses.id
+          'filter_expenses_join.amount'
+        elsif kpi.kpi_type == 'number'
+          "er_kpi_#{kpi.id}.scalar_value"
+        else
+          "er_kpi_#{kpi.id}.value"
+        end
+      elsif m = /\A(.*):([a-z_]+)\z/.match(field)
+        definition = field_class.report_fields[m[2].to_sym]
+        column = definition[:filter_column] || definition[:column]
+        column.nil? ? "#{field_class.table_name}.#{m[2]}" : (column.respond_to?(:call) ? column.call : column)
+      end
   end
 
   def to_sql_name
-    field.gsub(/:/, '_')
+    field.tr(':', '_')
   end
 
   def display
-    @data['display']
+    @data[DISPLAY]
   end
 
   def field
-    @data['field']
+    @data[FIELD]
   end
 
   def label
-    @data['label']
+    @data[LABEL]
   end
 
   def aggregate
-    @data['aggregate']
+    @data[AGGREGATE]
   end
 
   def precision
-    @data.key?('precision') && @data['precision'] != '' ? @data['precision'].to_i :  2
+    @data.key?(PRECISION) && @data[PRECISION] != '' ? @data[PRECISION].to_i :  2
   end
 
   def to_hash
@@ -786,30 +798,34 @@ class Report::Field
   end
 
   def kpi
-    @kpi ||= if m = /\Akpi:([0-9]+)\z/.match(field)
-               Kpi.where('company_id is null OR company_id = ?', @report.company_id).find(m[1])
-    end
+    @kpi ||=
+      if m = /\Akpi:([0-9]+)\z/.match(field)
+        Kpi.where('company_id is null OR company_id = ?', @report.company_id).find(m[1])
+      end
   end
 
   def form_field
-    @form_field ||= if m = /\Aform_field:([0-9]+)\z/.match(field)
-                      FormField.find(m[1])
-    end
+    @form_field ||=
+      if m = /\Aform_field:([0-9]+)\z/.match(field)
+        FormField.find(m[1])
+      end
   end
 
   def activity_type
-    @activity_type ||= if m = /\Aactivity_type_([0-9]+):(.*)\z/.match(field)
-                         @activity_field = m[2]
-                         ActivityType.find(m[1])
-    end
+    @activity_type ||=
+      if m = /\Aactivity_type_([0-9]+):(.*)\z/.match(field)
+        @activity_field = m[2]
+        ActivityType.find(m[1])
+      end
   end
 
   attr_reader :activity_field
 
   def model_name
-    @model_name ||= if m = /\A([a-z_]+):.*\z/.match(field)
-                      m[1]
-    end
+    @model_name ||=
+      if m = /\A([a-z_]+):.*\z/.match(field)
+        m[1]
+      end
   end
 
   # Returns the expect param format (for strong_parameters) for the filters
@@ -834,19 +850,20 @@ class Report::Field
         end
         { label: label, items: options }
       else
-        if kpi.id == Kpi.photos.id
-          result = @report.base_events_scope.joins("LEFT JOIN (SELECT count(attached_assets.id) quantity, attachable_id FROM attached_assets WHERE attachable_type='Event' AND asset_type='photo' GROUP BY attachable_id) photos ON photos.attachable_id = events.id").select('MAX(photos.quantity) as max_value, 0 as min_value').first
-        elsif kpi.id == Kpi.comments.id
-          result = @report.base_events_scope.joins("LEFT JOIN (SELECT count(comments.id) quantity, commentable_id FROM comments WHERE commentable_type='Event' GROUP BY commentable_id) comments ON comments.commentable_id = events.id").select('MAX(comments.quantity) as max_value, 0 as min_value').first
-        elsif kpi.id == Kpi.expenses.id
-          result = @report.base_events_scope.joins('LEFT JOIN (SELECT sum(event_expenses.amount) quantity, event_id FROM event_expenses GROUP BY event_id) expenses ON expenses.event_id = events.id').select('MAX(expenses.quantity) as max_value, 0 as min_value').first
-        elsif kpi.id == Kpi.events.id
-          result = @report.base_events_scope.select('count(events.id) as max_value, 0 as min_value').first
-        elsif kpi.id == Kpi.promo_hours.id
-          result = @report.base_events_scope.select('MAX(events.promo_hours) as max_value, 0 as min_value').first
-        else
-          result = @report.base_events_scope.joins(:results).where(form_field_results: { kpi_id: kpi.id }).select('MAX(form_field_results.scalar_value) as max_value, MIN(form_field_results.scalar_value) as min_value').first
-        end
+        result =
+          if kpi.id == Kpi.photos.id
+            @report.base_events_scope.joins("LEFT JOIN (SELECT count(attached_assets.id) quantity, attachable_id FROM attached_assets WHERE attachable_type='Event' AND asset_type='photo' GROUP BY attachable_id) photos ON photos.attachable_id = events.id").select('MAX(photos.quantity) as max_value, 0 as min_value').first
+          elsif kpi.id == Kpi.comments.id
+            @report.base_events_scope.joins("LEFT JOIN (SELECT count(comments.id) quantity, commentable_id FROM comments WHERE commentable_type='Event' GROUP BY commentable_id) comments ON comments.commentable_id = events.id").select('MAX(comments.quantity) as max_value, 0 as min_value').first
+          elsif kpi.id == Kpi.expenses.id
+            @report.base_events_scope.joins('LEFT JOIN (SELECT sum(event_expenses.amount) quantity, event_id FROM event_expenses GROUP BY event_id) expenses ON expenses.event_id = events.id').select('MAX(expenses.quantity) as max_value, 0 as min_value').first
+          elsif kpi.id == Kpi.events.id
+            @report.base_events_scope.select('count(events.id) as max_value, 0 as min_value').first
+          elsif kpi.id == Kpi.promo_hours.id
+            @report.base_events_scope.select('MAX(events.promo_hours) as max_value, 0 as min_value').first
+          else
+            @report.base_events_scope.joins(:results).where(form_field_results: { kpi_id: kpi.id }).select('MAX(form_field_results.scalar_value) as max_value, MIN(form_field_results.scalar_value) as min_value').first
+          end
         min = result.min_value.to_f.truncate
         max = result.max_value.to_f.ceil
         { label: label, name: field, min: min, max: max, selected_min: min, selected_max: max }
@@ -864,21 +881,24 @@ class Report::Field
   end
 
   def column_info
-    @column_info ||= if field_class.present?
-                       field_class.report_fields[field_attribute.to_sym]
-    end
+    @column_info ||=
+      if field_class.present?
+        field_class.report_fields[field_attribute.to_sym]
+      end
   end
 
   def field_class
-    @klass ||= if m = /\A(.*):([a-z_]+)\z/.match(field)
-                 m[1].classify.constantize
-    end
+    @klass ||=
+      if m = /\A(.*):([a-z_]+)\z/.match(field)
+        m[1].classify.constantize
+      end
   end
 
   def field_attribute
-    @field_attribute ||= if m = /\A.*:([a-z_]+)\z/.match(field)
-                           m[1]
-    end
+    @field_attribute ||=
+      if m = /\A.*:([a-z_]+)\z/.match(field)
+        m[1]
+      end
   end
 
   def _sum_total_for_value(row_values, _column_index)
@@ -887,7 +907,7 @@ class Report::Field
 
   def _field_positions_in_value
     @field_positions_in_value ||= begin
-      values_position = @report.columns.map(&:field).index('values')
+      values_position = @report.columns.map(&:field).index(Report::VALUES)
       values_map = @report.report_columns.map { |c| c.split('||')[values_position] }
       values_map.each_with_index.map { |l, index| index if l == label }.compact
     end
