@@ -41,12 +41,36 @@ class FormField < ActiveRecord::Base
   validates :kpi_id,
             uniqueness: { scope: [:fieldable_id, :fieldable_type], allow_blank: true, allow_nil: true }
 
-  scope :for_events_in_company, ->(companies) {
+  def self.for_events_in_company(companies)
     joins(
       'INNER JOIN campaigns ON campaigns.id=form_fields.fieldable_id AND
       form_fields.fieldable_type=\'Campaign\''
     ).where(campaigns: { company_id: companies })
-  }
+  end
+
+  def self.for_activities
+    joins(
+      'INNER JOIN activity_types ON activity_types.id=form_fields.fieldable_id AND
+      form_fields.fieldable_type=\'ActivityType\''
+    )
+  end
+
+  def self.for_activity_types_in_company(companies)
+    for_activities.where(activity_types: { company_id: companies })
+  end
+
+  def self.for_activity_types_in_campaigns(campaigns)
+    for_activities.joins(
+      'INNER JOIN activity_type_campaigns
+             ON activity_type_campaigns.activity_type_id=activity_types.id'
+    ).where(activity_type_campaigns: { campaign_id: campaigns })
+  end
+
+  def self.selectable_as_report_field
+    where.not(type: [
+      'FormField::UserDate', 'FormField::Section', 'FormField::Summation', 'FormField::LikertScale'
+    ])
+  end
 
   def field_options(_result)
     { as: :string }
@@ -94,7 +118,7 @@ class FormField < ActiveRecord::Base
   end
 
   def type_name
-    self.class.name
+    self.class.name.split('::').last
   end
 
   def validate_result(result)

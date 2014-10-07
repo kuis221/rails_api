@@ -27,6 +27,13 @@
                 .text-large Event Data
                 p View data collected at events
 
+        - if can?(:index_results, Activity)
+          .resource-item id="report_activity_data"
+            = link_to results_activities_path, title: 'Activity Data' do
+              .span10.report-item
+                .text-large Activity Data
+                p View data collected at activities
+
         - if can?(:index_results, Comment)
           .resource-item id="report_comments"
             = link_to results_comments_path, title: 'Comments' do

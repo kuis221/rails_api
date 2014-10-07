@@ -1948,13 +1948,14 @@ li#notifications{
 }
 .sidebar{
 	background:white;
-	float:right;
+	float: right;
 	min-height: 300px;
 	padding:14px 11px 18px 11px;
 	-webkit-border-radius: 6px;
 	-moz-border-radius: 6px;
 	border-radius: 6px;
-	width:210px;
+	width: 210px;
+	z-index: 1;
 	.btn{
 		margin-right: 8px;
 		width: 85px;
@@ -2467,7 +2468,7 @@ ul.ui-widget-content{
 #resource-index-container {
 	padding-right: 250px;
 	#resource-filter-column {
-		float:left;
+		float: left;
 		width: 250px;
 		margin-right: -260px;
 		input[type="text"] {
@@ -4235,10 +4236,8 @@ body.roles{
 // EVENT DATA
 // --------------------------------------------------
 
-.event_data, .comments, .expenses, .surveys, .photos {
-	.main.with-details-close-bar {
-		padding-top: 60px;
-	}
+.main.with-details-close-bar {
+	padding-top: 60px;
 }
 .event_data, .comments, .expenses {
 	&.index {

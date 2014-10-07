@@ -51,7 +51,7 @@ FactoryGirl.define do
     ordering 1
   end
 
-  factory :form_field_brand, class: FormField::Brand do |_f|
+  factory :form_field_brand, class: FormField::Brand do
     sequence(:name) { |n| "Form Field Brand #{n}" }
     type 'FormField::Brand'
     ordering 1

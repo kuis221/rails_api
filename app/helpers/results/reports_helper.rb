@@ -6,7 +6,7 @@ module Results
       fields.merge! Hash[current_company.activity_types.includes(form_fields: [:options, :statements]).map do |activity_type|
         [
           activity_type.name,
-          activity_type.form_fields.map { |ff| ff.type != 'FormField::UserDate' ? ["form_field:#{ff.id}", ff.name, form_field_tooltip(ff)] : nil }.compact
+          activity_type.form_fields.map { |ff| ["form_field:#{ff.id}", ff.name, form_field_tooltip(ff)] }.compact
         ]
       end]
 
@@ -71,18 +71,20 @@ module Results
     end
 
     def sum_row_values(group, row)
-      resource.format_values case row['aggregate']
-      when 'avg'
-        group.map { |r| r['values'] }.transpose.map { |a| x = a.compact; x.any? ? x.reduce(:+).to_f / x.size : 0 }
-      when 'min'
-        group.map { |r| r['values'] }.transpose.map { |a| a.compact.min }
-      when 'max'
-        group.map { |r| r['values'] }.transpose.map { |a| a.compact.max }
-      when 'count'
-        group.map { |r| r['values'] }.transpose.map { |a| a.compact.size }
-      else
-        group.map { |r| r['values'] }.transpose.map { |a| a.compact.reduce(:+) }
-      end
+      resource.format_values(
+        case row['aggregate']
+        when 'avg'
+          group.map { |r| r['values'] }.transpose.map { |a| x = a.compact; x.any? ? x.reduce(:+).to_f / x.size : 0 }
+        when 'min'
+          group.map { |r| r['values'] }.transpose.map { |a| a.compact.min }
+        when 'max'
+          group.map { |r| r['values'] }.transpose.map { |a| a.compact.max }
+        when 'count'
+          group.map { |r| r['values'] }.transpose.map { |a| a.compact.size }
+        else
+          group.map { |r| r['values'] }.transpose.map { |a| a.compact.reduce(:+) }
+        end
+      )
     end
 
     def kpi_tooltip(kpi)
