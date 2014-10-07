@@ -15,6 +15,14 @@ $margin-right: 240px;
 	.field-tooltip-trigger {
 		height: 30px;
 	}
+
+	&.activities-wrapper{
+		.form-wrapper{
+			.form-builder-actions.affix{
+				top:80px;
+			}
+		}
+	}
 	.form-wrapper {
 		position: relative;
 
