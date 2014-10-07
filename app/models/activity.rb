@@ -23,9 +23,10 @@ class Activity < ActiveRecord::Base
   has_many :results, class_name: 'FormFieldResult', inverse_of: :resultable, as: :resultable
 
   validates :activity_type_id, numericality: true, presence: true,
-    inclusion: { in: proc { |activity| activity.campaign.present? ? activity.campaign.activity_type_ids : (activity.company.present? ? activity.company.activity_type_ids : []) } }
+    inclusion: { in: :valid_activity_type_ids }
 
-  validates :campaign_id, presence: true, numericality: true, if: -> (_activitable) { activitable_type == 'Event' }
+  validates :campaign_id, presence: true, numericality: true,
+                          if: -> (_activitable) { activitable_type == 'Event' }
   validates :activitable_id, presence: true, numericality: true
   validates :activitable_type, presence: true
   validates :company_user_id, presence: true, numericality: true
@@ -65,21 +66,29 @@ class Activity < ActiveRecord::Base
     end
   end
 
+  def valid_activity_type_ids
+    if campaign.present?
+      campaign.activity_type_ids
+    elsif company.present?
+      company.activity_type_ids
+    else
+      []
+    end
+  end
+
   private
 
   # Sets the default date (today) and user for new records
   def set_default_values
-    if new_record?
-      self.activity_date ||= Date.today
-      self.company_user_id ||= User.current.current_company_user.id if User.current.present?
-      self.campaign = activitable.campaign if activitable.is_a?(Event)
-    end
+    return unless new_record?
+    self.activity_date ||= Date.today
+    self.company_user_id ||= User.current.current_company_user.id if User.current.present?
+    self.campaign = activitable.campaign if activitable.is_a?(Event)
   end
 
   def delegate_campaign_id_from_event
-    if activitable.is_a?(Event)
-      self.campaign = activitable.campaign
-      self.campaign_id = activitable.campaign_id
-    end
+    return unless activitable.is_a?(Event)
+    self.campaign = activitable.campaign
+    self.campaign_id = activitable.campaign_id
   end
 end
