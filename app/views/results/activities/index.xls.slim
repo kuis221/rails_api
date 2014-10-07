@@ -17,7 +17,8 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
     Style ss:ID="s6" ss:Name="ZipCode"
       NumberFormat ss:Format="00000\-0000"
       Alignment ss:Horizontal="Left"
-
+    Style ss:ID="s7"
+      NumberFormat ss:Format="mm/dd/yyyy"
 
   Worksheet ss:Name="Event Data"
     Table
@@ -34,6 +35,12 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
       Row ss:StyleID="s1"
         Cell
           Data ss:Type="String" CAMPAIGN NAME
+        Cell
+          Data ss:Type="String" USER
+        Cell
+          Data ss:Type="String" DATE
+        Cell
+          Data ss:Type="String" ACTIVITY TYPE
         Cell
           Data ss:Type="String" AREAS
         Cell
@@ -57,6 +64,12 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
         Row
           Cell
             Data ss:Type="String"= activity.campaign_name
+          Cell
+            Data ss:Type="String"= activity.company_user_full_name
+          Cell ss:StyleID="s7"
+            Data ss:Type="DateTime"= Timeliness.parse(activity.activity_date.strftime('%Y-%m-%d 00:00:00'), zone: 'UTC').strftime('%FT00:00')
+          Cell
+            Data ss:Type="String"= activity.activity_type_name
           Cell
             Data ss:Type="String"= area_for_activity(activity)
           Cell

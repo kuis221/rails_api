@@ -43,6 +43,8 @@ class Activity < ActiveRecord::Base
            to: :place, allow_nil: true, prefix: true
 
   delegate :name, to: :campaign, allow_nil: true, prefix: true
+  delegate :full_name, to: :company_user, allow_nil: true, prefix: true
+  delegate :name, to: :activity_type, allow_nil: true, prefix: true
 
   accepts_nested_attributes_for :results, allow_destroy: true
 
@@ -95,7 +97,7 @@ class Activity < ActiveRecord::Base
 
   class << self
     def do_search(params)
-      solr_search do
+      solr_search(include: [:activity_type, company_user: :user]) do
         with :company_id, params[:company_id]
         with :campaign_id, params[:campaign] if params.key?(:campaign) && params[:campaign].present?
         with :activity_type_id, params[:activity_type] if params.key?(:activity_type) && params[:activity_type].present?
@@ -109,7 +111,7 @@ class Activity < ActiveRecord::Base
           with :activity_date, d
         end
 
-        order_by(params[:sorting] || :activity_date, params[:sorting_dir] || :desc)
+        order_by(params[:sorting] || :activity_date, params[:sorting_dir] || :asc)
         paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
       end
     end

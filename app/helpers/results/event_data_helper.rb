@@ -1,5 +1,9 @@
 module Results
   module EventDataHelper
+    SEGMENTED_FIELD_TYPES = ['FormField::Percentage', 'FormField::Summation']
+    PERCENTAGE_TYPE = 'FormField::Percentage'.freeze
+    NUMBER = 'Number'.freeze
+    STRING = 'String'.freeze
     def custom_fields_to_export_headers
       @_headers ||= custom_columns.values.map(&:upcase)
     end
@@ -19,19 +23,27 @@ module Results
           @result.value = row['value']
         end
         id = @result.form_field.kpi_id.nil? ? "field_#{@result.form_field_id}" : "kpi_#{@result.form_field.kpi_id}"
-        if @result.form_field.type == 'FormField::Percentage'
+        if SEGMENTED_FIELD_TYPES.include?(@result.form_field.type)
           # values = ActiveRecord::Coders::Hstore.load(row['hash_value'])
           # TODO: we have to correctly map values for hash_value here
-          @result.form_field.options_for_input.each do |option|
-            value = @result.value[option[1].to_s]
-            resource_values["#{id}-#{option[1]}"] = ['Number', 'percentage', (value.present? && value != '' ? value.to_f : 0.0) / 100]
+          type = PERCENTAGE_TYPE == @result.form_field.type ? 'percentage' : 'normal'
+          if @result.form_field.type == PERCENTAGE_TYPE
+            @result.form_field.options_for_input.each do |option|
+              value = @result.value[option[1].to_s]
+              resource_values["#{id}-#{option[1]}"] = [NUMBER, 'percentage', (value.present? && value != '' ? value.to_f : 0.0) / 100]
+            end
+          else
+            @result.form_field.options_for_input.each do |option|
+              value = @result.value[option[1].to_s]
+              resource_values["#{id}-#{option[1]}"] = [NUMBER, 'normal', value]
+            end
           end
         else
           resource_values[id] =
             if @result.form_field.is_numeric?
-              ['Number', 'normal', (Float(@result.to_csv) rescue nil)]
+              [NUMBER, 'normal', (Float(@result.to_csv) rescue nil)]
             else
-              ['String', 'normal', @result.to_csv]
+              [STRING, 'normal', @result.to_csv]
             end
         end
       end
@@ -156,7 +168,7 @@ module Results
 
     def custom_columns
       @custom_columns ||= Hash[*custom_fields_to_export.map do |id, field|
-        if field.type == 'FormField::Percentage'
+        if SEGMENTED_FIELD_TYPES.include?(field.type)
           if field.kpi_id.nil?
             field.options_for_input.map { |s| ["field_#{field.id}-#{s[1]}", "#{field.name}: #{s[0]}"] }
           else

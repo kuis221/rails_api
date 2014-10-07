@@ -41,7 +41,10 @@ describe Results::ActivitiesController, type: :controller do
     end
     let(:event) { create(:event, campaign: campaign, place: place) }
     let(:activity_type) { create(:activity_type, campaign_ids: [campaign.id], company: company) }
-    let(:event_activity) { create(:activity, activitable: event, activity_type: activity_type, company_user: company_user) }
+    let(:event_activity) do
+      create(:activity, activitable: event, activity_date: '01/01/2014',
+        activity_type: activity_type, company_user: company_user)
+    end
 
     it 'return an empty book with the correct headers' do
       expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
@@ -50,7 +53,8 @@ describe Results::ActivitiesController, type: :controller do
       ResqueSpec.perform_all(:export)
 
       expect(export.reload).to have_rows([
-        ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP']
+        ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE', 'VENUE NAME',
+         'ADDRESS', 'CITY', 'STATE', 'ZIP']
       ])
     end
 
@@ -74,9 +78,11 @@ describe Results::ActivitiesController, type: :controller do
       ResqueSpec.perform_all(:export)
 
       expect(export.reload).to have_rows([
-        ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP', 'MY NUMERIC FIELD'],
-        ['Test Campaign FY01', 'My area', '443321', 'Bar Prueba', 'Bar Prueba, Los Angeles, California, 12345',
-         'Los Angeles', 'California', '12345', '123.0']
+        ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE', 'VENUE NAME',
+         'ADDRESS', 'CITY', 'STATE', 'ZIP', 'MY NUMERIC FIELD'],
+        ['Test Campaign FY01', user.full_name, "2014-01-01T00:00", 'Activity Type 1', 'My area',
+         '443321', 'Bar Prueba', 'Bar Prueba, Los Angeles, California, 12345', 'Los Angeles',
+         'California', '12345', '123.0']
       ])
     end
 
@@ -101,8 +107,8 @@ describe Results::ActivitiesController, type: :controller do
         ResqueSpec.perform_all(:export)
 
         expect(export.reload).to have_rows([
-          ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
-           'MY CHK FIELD']
+          ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE', 'VENUE NAME',
+            'ADDRESS', 'CITY', 'STATE', 'ZIP', 'MY CHK FIELD']
         ])
       end
 
@@ -113,8 +119,8 @@ describe Results::ActivitiesController, type: :controller do
         ResqueSpec.perform_all(:export)
 
         expect(export.reload).to have_rows([
-          ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
-           'MY CHK FIELD', 'MY RADIO FIELD']
+          ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE', 'VENUE NAME',
+           'ADDRESS', 'CITY', 'STATE', 'ZIP', 'MY CHK FIELD', 'MY RADIO FIELD']
         ])
       end
     end
