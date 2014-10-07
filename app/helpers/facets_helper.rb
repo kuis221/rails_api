@@ -88,6 +88,14 @@ module FacetsHelper
     { label: 'Roles', items: items }
   end
 
+  def build_activity_type_bucket
+    status = current_company_user.filter_settings_for('activity_types', filter_settings_scope)
+    items = current_company.activity_types.where('active in (?)', status).order(:name).pluck(:name, :id).map do |r|
+      build_facet_item(label: r[0], id: r[1], name: :activity_type, count: 1)
+    end
+    { label: 'Activity Types', items: items }
+  end
+
   def build_team_bucket
     status = current_company_user.filter_settings_for('teams', filter_settings_scope)
     items = current_company.teams.where('active in (?)', status).order(:name).pluck(:name, :id).map do |r|

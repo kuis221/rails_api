@@ -35,10 +35,13 @@ class FormField::Brand < FormField
     }
   end
 
+  def format_csv(result)
+    format_html(result)
+  end
+
   def format_html(result)
-    unless result.value.nil? || (result.value.is_a?(Array) && result.value.empty?) || result.value == ''
-      ::Brand.where(id: result.value).pluck(:name).join(', ')
-    end
+    return if result.value.nil? || result.value == ''
+    ::Brand.where(id: result.value).pluck(:name).join(', ')
   end
 
   def store_value(value)

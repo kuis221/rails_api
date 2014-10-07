@@ -212,6 +212,7 @@ class Event < ActiveRecord::Base
 
   before_save :set_promo_hours, :check_results_changed
   after_save :generate_event_data_record
+  after_update :update_activities
   after_commit :reindex_associated
   after_commit :index_venue
   after_commit :create_notifications
@@ -875,6 +876,10 @@ class Event < ActiveRecord::Base
       self.local_start_at = Timeliness.parse(read_attribute(:start_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC') if read_attribute(:start_at)
       self.local_end_at = Timeliness.parse(read_attribute(:end_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC') unless read_attribute(:end_at).nil?
     end
+  end
+
+  def update_activities
+    activities.update_all(campaign_id: campaign_id) if campaign_id_changed?
   end
 
   def localize_date(attribute)

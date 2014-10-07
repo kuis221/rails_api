@@ -4,12 +4,12 @@ module Results
       @_headers ||= custom_columns.values.map(&:upcase)
     end
 
-    def custom_fields_to_export_values(event)
+    def custom_fields_to_export_values(resource)
       # We are reusing the same object for each result to reduce memory usage
       @result ||= FormFieldResult.new
-      event_values = empty_values_hash
+      resource_values = empty_values_hash
       ActiveRecord::Base.connection.select_all(ActiveRecord::Base.connection.unprepared_statement do
-        event.results.where(form_field_id: active_fields_for_campaign(event.campaign_id))
+        resource.results.where(form_field_id: active_fields_for_resource(resource))
                   .select('form_field_results.form_field_id, form_field_results.value, form_field_results.hash_value').to_sql
       end).each do |row|
         @result.form_field = custom_fields_to_export[row['form_field_id'].to_i]
@@ -24,23 +24,31 @@ module Results
           # TODO: we have to correctly map values for hash_value here
           @result.form_field.options_for_input.each do |option|
             value = @result.value[option[1].to_s]
-            event_values["#{id}-#{option[1]}"] = ['Number', 'percentage', (value.present? && value != '' ? value.to_f : 0.0) / 100]
+            resource_values["#{id}-#{option[1]}"] = ['Number', 'percentage', (value.present? && value != '' ? value.to_f : 0.0) / 100]
           end
         else
-          event_values[id] = if @result.form_field.is_numeric?
-                               ['Number', 'normal', (Float(@result.to_csv) rescue nil)]
-          else
-            ['String', 'normal', @result.to_csv]
-          end
+          resource_values[id] =
+            if @result.form_field.is_numeric?
+              ['Number', 'normal', (Float(@result.to_csv) rescue nil)]
+            else
+              ['String', 'normal', @result.to_csv]
+            end
         end
       end
-      event_values.values
+      resource_values.values
     end
 
     def area_for_event(event)
       campaign_from_cache(event.campaign_id).areas_campaigns.select do|ac|
         ac.place_in_scope?(event.place)
       end.map { |ac| ac.area.name }.join(', ') unless event.place.nil?
+    end
+
+    def area_for_activity(activity)
+      return unless activity.campaign_id.present?
+      campaign_from_cache(activity.campaign_id).areas_campaigns.select do|ac|
+        ac.place_in_scope?(activity.place)
+      end.map { |ac| ac.area.name }.join(', ') unless activity.place.nil?
     end
 
     def team_member_for_event(event)
@@ -69,16 +77,25 @@ module Results
     end
 
     # Returns and array of Form Field IDs that are assigned to a campaign
-    def active_fields_for_campaign(campaign_id)
-      @campaign_fields ||= {}
-      @campaign_fields[campaign_id] ||= campaign_from_cache(campaign_id).form_fields.where(id: custom_fields_to_export.keys).pluck(:id)
-      @campaign_fields[campaign_id]
+    def active_fields_for_resource(resource)
+      if resource.is_a?(Event)
+        @campaign_fields ||= {}
+        @campaign_fields[resource.campaign_id] ||= campaign_from_cache(resource.campaign_id).form_fields.where(
+          id: custom_fields_to_export.keys
+        ).pluck(:id)
+        @campaign_fields[resource.campaign_id]
+      else
+        @activity_type_fields ||= {}
+        @activity_type_fields[resource.activity_type_id] ||= FormField.for_activities.where(
+          fieldable_id: resource.activity_type_id,
+          id: custom_fields_to_export.keys
+        ).pluck(:id)
+        @activity_type_fields[resource.activity_type_id]
+      end
     end
 
     def custom_fields_to_export
-      @kpis_to_export ||= begin
-        exclude_kpis = [Kpi.impressions.id, Kpi.interactions.id, Kpi.samples.id, Kpi.gender.id, Kpi.ethnicity.id]
-        exclude_field_types = ['FormField::Attachment', 'FormField::Photo', 'FormField::Section']
+      @custom_fields_to_export ||= begin
         campaign_ids = []
         campaign_ids = params[:campaign] if params[:campaign] && params[:campaign].any?
         if params[:q].present? && match = /\Acampaign,([0-9]+)/.match(params[:q])
@@ -92,18 +109,48 @@ module Results
             campaign_ids = current_company_user.accessible_campaign_ids
           end
         end
-        if campaign_ids.any?
-          fields_scope = FormField.for_events_in_company(current_company_user.company_id)
-                          .where('form_fields.kpi_id not in (?) OR kpi_id is NULL', exclude_kpis)
-                          .where.not(type: exclude_field_types)
-                          .order('form_fields.name ASC')
-          fields_scope = fields_scope.where(campaigns: { id: campaign_ids }) unless current_company_user.is_admin? && campaign_ids.empty?
-          Hash[fields_scope.map { |field| [field.id, field] }]
-        else
-          {}
-        end
+        Hash[form_fields_for_resource(campaign_ids)]
       end
-      @kpis_to_export
+      @custom_fields_to_export
+    end
+
+    def form_fields_for_resource(campaign_ids)
+      if resource_class == Event
+        form_fields_for_events(campaign_ids)
+      else
+        form_fields_for_activities(campaign_ids)
+      end
+    end
+
+    def form_fields_for_events(campaign_ids)
+      if campaign_ids.any?
+        fields_scope = FormField.for_events_in_company(current_company_user.company)
+                        .where('form_fields.kpi_id not in (?) OR kpi_id is NULL', exclude_kpis)
+                        .where.not(type: exclude_field_types)
+                        .order('form_fields.name ASC')
+        fields_scope = fields_scope.where(campaigns: { id: campaign_ids }) unless current_company_user.is_admin? && campaign_ids.empty?
+        fields_scope.map { |field| [field.id, field] }
+      else
+        []
+      end
+    end
+
+    def form_fields_for_activities(campaign_ids)
+      if campaign_ids.empty? && current_company_user.is_admin?
+        FormField.for_activity_types_in_company(current_company_user.company)
+      else
+        FormField.for_activity_types_in_campaigns(campaign_ids)
+      end.where.not(type: exclude_field_types).order('form_fields.name ASC').map do |field|
+        [field.id, field]
+      end
+    end
+
+    def exclude_field_types
+      ['FormField::Attachment', 'FormField::Photo', 'FormField::Section', 'FormField::UserDate']
+    end
+
+    def exclude_kpis
+      [Kpi.impressions.id, Kpi.interactions.id, Kpi.samples.id, Kpi.gender.id, Kpi.ethnicity.id]
     end
 
     def custom_columns

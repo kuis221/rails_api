@@ -136,6 +136,10 @@ Brandscopic::Application.routes.draw do
       get 'downloads/:download_id', to: 'photos#download', on: :collection, as: :download, format: :js
       get 'downloads/:download_id/status', to: 'photos#download_status', on: :collection, as: :download_status, format: :json
     end
+    resources :activities do
+      get :items, on: :collection
+      get :filters, on: :collection
+    end
     resources :expenses, only: [:index] do
       get :items, on: :collection
     end
