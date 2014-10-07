@@ -45,6 +45,18 @@ FactoryGirl.define do
     ordering 1
   end
 
+  factory :form_field_percentage, class: FormField::Percentage do |_f|
+    sequence(:name) { |n| "Form Field Percentage #{n}" }
+    type 'FormField::Percentage'
+    ordering 1
+  end
+
+  factory :form_field_summation, class: FormField::Summation do |_f|
+    sequence(:name) { |n| "Form Field Summation #{n}" }
+    type 'FormField::Summation'
+    ordering 1
+  end
+
   factory :form_field_dropdown, class: FormField::Dropdown do |_f|
     sequence(:name) { |n| "Form Field Dropdown #{n}" }
     type 'FormField::Dropdown'

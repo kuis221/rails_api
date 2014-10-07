@@ -7,7 +7,8 @@ describe Results::EventDataHelper, type: :helper do
   let(:activity_type) { create(:activity_type, name: 'Test activity type', campaign_ids: [campaign.id], company: company) }
   let(:activity) { create(:activity, activity_type: activity_type, activitable: event, company_user: company_user) }
   let(:company_user) { create(:company_user, company: campaign.company) }
-  let(:params) { {campaign: [campaign.id]} }
+  let(:params) { { campaign: [campaign.id] } }
+
   before do
     # Ugly hack as a workoround for https://github.com/rspec/rspec-rails/issues/1076
     helper.class.class_attribute :resource_class
@@ -71,6 +72,34 @@ describe Results::EventDataHelper, type: :helper do
 
         expect(helper.custom_fields_to_export_headers).to eq(['MY DDOWN FIELD'])
         expect(helper.custom_fields_to_export_values(event)).to eq([['String', 'normal', 'Ddwon Opt1']])
+      end
+
+      it 'include PERCENTAGE fields that are not linked to a KPI' do
+        field = create(:form_field_percentage, name: 'My Perc Field',
+          fieldable: campaign, options: [
+            option1 = create(:form_field_option, name: 'Perc Opt1'),
+            option2 = create(:form_field_option, name: 'Perc Opt2')])
+
+        event.results_for([field]).first.value = { option1.id.to_s => 30, option2.id.to_s => 70 }
+        event.save
+        expect(event.save).to be_truthy
+
+        expect(helper.custom_fields_to_export_headers).to eq(['MY PERC FIELD: PERC OPT1', 'MY PERC FIELD: PERC OPT2'])
+        expect(helper.custom_fields_to_export_values(event)).to eq([['Number', 'percentage', 0.3], ['Number', 'percentage', 0.7]])
+      end
+
+      it 'include SUMMATION fields that are not linked to a KPI' do
+        field = create(:form_field_summation, name: 'My Summation Field',
+          fieldable: campaign, options: [
+            option1 = create(:form_field_option, name: 'Sum Opt1'),
+            option2 = create(:form_field_option, name: 'Sum Opt2')])
+
+        event.results_for([field]).first.value = { option1.id.to_s => 20, option2.id.to_s => 50 }
+        event.save
+        expect(event.save).to be_truthy
+
+        expect(helper.custom_fields_to_export_headers).to eq(['MY SUMMATION FIELD: SUM OPT1', 'MY SUMMATION FIELD: SUM OPT2'])
+        expect(helper.custom_fields_to_export_values(event)).to eq([['Number', 'normal', '20'], ['Number', 'normal', '50']])
       end
 
       it 'include TIME fields that are not linked to a KPI' do
@@ -263,6 +292,34 @@ describe Results::EventDataHelper, type: :helper do
         expect(helper.custom_fields_to_export_values(activity)).to eq([['String', 'normal', 'Ddwon Opt1']])
       end
 
+      it 'include PERCENTAGE fields that are not linked to a KPI' do
+        field = create(:form_field_percentage, name: 'My Perc Field',
+          fieldable: activity_type, options: [
+            option1 = create(:form_field_option, name: 'Perc Opt1'),
+            option2 = create(:form_field_option, name: 'Perc Opt2')])
+
+        activity.results_for([field]).first.value = { option1.id.to_s => 30, option2.id.to_s => 70 }
+        activity.save
+        expect(activity.save).to be_truthy
+
+        expect(helper.custom_fields_to_export_headers).to eq(['MY PERC FIELD: PERC OPT1', 'MY PERC FIELD: PERC OPT2'])
+        expect(helper.custom_fields_to_export_values(activity)).to eq([['Number', 'percentage', 0.3], ['Number', 'percentage', 0.7]])
+      end
+
+      it 'include SUMMATION fields that are not linked to a KPI' do
+        field = create(:form_field_summation, name: 'My Summation Field',
+          fieldable: activity_type, options: [
+            option1 = create(:form_field_option, name: 'Sum Opt1'),
+            option2 = create(:form_field_option, name: 'Sum Opt2')])
+
+        activity.results_for([field]).first.value = { option1.id.to_s => 20, option2.id.to_s => 50 }
+        activity.save
+        expect(activity.save).to be_truthy
+
+        expect(helper.custom_fields_to_export_headers).to eq(['MY SUMMATION FIELD: SUM OPT1', 'MY SUMMATION FIELD: SUM OPT2'])
+        expect(helper.custom_fields_to_export_values(activity)).to eq([['Number', 'normal', '20'], ['Number', 'normal', '50']])
+      end
+
       it 'include BRAND fields' do
         field = create(:form_field_brand, name: 'My Brand Field',
           fieldable: activity_type)
@@ -299,7 +356,7 @@ describe Results::EventDataHelper, type: :helper do
       end
 
       describe 'when filtered by activity_type' do
-        let(:params){ { activity_type: [activity_type.id] } }
+        let(:params) { { activity_type: [activity_type.id] } }
 
         it 'include only fields that are assigned to the selected activity types' do
           activity_type2 = create(:activity_type, campaign_ids: [campaign.id])
@@ -319,7 +376,7 @@ describe Results::EventDataHelper, type: :helper do
       end
 
       describe 'when filtered by activity_type and campaign ' do
-        let(:params){ { activity_type: [activity_type.id], campaign: [campaign.id] } }
+        let(:params) { { activity_type: [activity_type.id], campaign: [campaign.id] } }
 
         it 'include only fields that are assigned to the selected activity types' do
           activity_type2 = create(:activity_type, campaign_ids: [campaign.id], company: company)
