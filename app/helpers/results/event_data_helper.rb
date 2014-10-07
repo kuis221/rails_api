@@ -136,13 +136,14 @@ module Results
     end
 
     def form_fields_for_activities(campaign_ids)
-      if campaign_ids.empty? && current_company_user.is_admin?
-        FormField.for_activity_types_in_company(current_company_user.company)
-      else
-        FormField.for_activity_types_in_campaigns(campaign_ids)
-      end.where.not(type: exclude_field_types).order('form_fields.name ASC').map do |field|
-        [field.id, field]
-      end
+      s =
+        if campaign_ids.empty? && current_company_user.is_admin?
+          FormField.for_activity_types_in_company(current_company_user.company)
+        else
+          FormField.for_activity_types_in_campaigns(campaign_ids)
+        end.where.not(type: exclude_field_types).order('form_fields.name ASC')
+      s = s.where(fieldable_id: params[:activity_type]) if params[:activity_type] && params[:activity_type].any?
+      s.map { |field| [field.id, field] }
     end
 
     def exclude_field_types

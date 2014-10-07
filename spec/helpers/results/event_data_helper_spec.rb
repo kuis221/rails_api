@@ -4,14 +4,15 @@ describe Results::EventDataHelper, type: :helper do
   let(:company) { campaign.company }
   let(:campaign) { create(:campaign, name: 'Test Campaign FY01') }
   let(:event) { create(:approved_event, campaign: campaign) }
-  let(:activity_type) { create(:activity_type, name: 'Test activity type', campaign_ids: [campaign.id]) }
+  let(:activity_type) { create(:activity_type, name: 'Test activity type', campaign_ids: [campaign.id], company: company) }
   let(:activity) { create(:activity, activity_type: activity_type, activitable: event, company_user: company_user) }
   let(:company_user) { create(:company_user, company: campaign.company) }
+  let(:params) { {campaign: [campaign.id]} }
   before do
     # Ugly hack as a workoround for https://github.com/rspec/rspec-rails/issues/1076
     helper.class.class_attribute :resource_class
     allow(helper).to receive(:current_company_user).and_return(company_user)
-    allow(helper).to receive(:params).and_return(campaign: [campaign.id])
+    allow(helper).to receive(:params).and_return(params)
     Kpi.create_global_kpis
   end
 
@@ -295,6 +296,46 @@ describe Results::EventDataHelper, type: :helper do
 
         expect(helper.custom_fields_to_export_headers).to eq(['MY DATE FIELD'])
         expect(helper.custom_fields_to_export_values(activity)).to eq([['String', 'normal', '01/31/2014']])
+      end
+
+      describe 'when filtered by activity_type' do
+        let(:params){ { activity_type: [activity_type.id] } }
+
+        it 'include only fields that are assigned to the selected activity types' do
+          activity_type2 = create(:activity_type, campaign_ids: [campaign.id])
+          field1 = create(:form_field_number, name: 'My Numeric Field 1', fieldable: activity_type)
+          field2 = create(:form_field_number, name: 'My Numeric Field 2', fieldable: activity_type2)
+
+          activity.results_for([field1]).first.value = 123
+          expect(activity.save).to be_truthy
+
+          activity2 = create(:activity, activity_type: activity_type2, activitable: event, company_user: company_user)
+          activity2.results_for([field2]).first.value = 666
+          expect(activity2.save).to be_truthy
+
+          expect(helper.custom_fields_to_export_headers).to eq(['MY NUMERIC FIELD 1'])
+          expect(helper.custom_fields_to_export_values(activity)).to eq([['Number', 'normal', 123]])
+        end
+      end
+
+      describe 'when filtered by activity_type and campaign ' do
+        let(:params){ { activity_type: [activity_type.id], campaign: [campaign.id] } }
+
+        it 'include only fields that are assigned to the selected activity types' do
+          activity_type2 = create(:activity_type, campaign_ids: [campaign.id], company: company)
+          field1 = create(:form_field_number, name: 'My Numeric Field 1', fieldable: activity_type)
+          field2 = create(:form_field_number, name: 'My Numeric Field 2', fieldable: activity_type2)
+
+          activity.results_for([field1]).first.value = 123
+          expect(activity.save).to be_truthy
+
+          activity2 = create(:activity, activity_type: activity_type2, activitable: event, company_user: company_user)
+          activity2.results_for([field2]).first.value = 666
+          expect(activity2.save).to be_truthy
+
+          expect(helper.custom_fields_to_export_headers).to eq(['MY NUMERIC FIELD 1'])
+          expect(helper.custom_fields_to_export_values(activity)).to eq([['Number', 'normal', 123]])
+        end
       end
     end
   end
