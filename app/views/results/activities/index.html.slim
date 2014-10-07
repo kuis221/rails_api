@@ -1,8 +1,3 @@
-- content_for :alerts
-  div class="alert collection-list-description"
-    a.close data-dismiss="alert"
-    .filter-label
-
 .sidebar#resource-filter-column
   #collection-list-filters
 #main.main.with-details-close-bar
@@ -34,11 +29,6 @@ javascript:
     'includeCalendars': true,
     'includeSearchBox': false,
     'includeAutoComplete': false,
-    'onItemsLoad': function(response, page){
-      if (response.find('div[data-content="filters-description"]').length > 0){
-        $('.collection-list-description .filter-label').html(response.find('div[data-content="filters-description"]'))
-      }
-    },
     'defaultParams': [{name: 'status[]', value: 'Active'}],
     'clearFilterParams': [{name: 'status[]', value: 'Active'}]
   });
