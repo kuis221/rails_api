@@ -14,4 +14,8 @@ class Results::ActivitiesController < FilteredController
       f.push build_campaign_bucket
     end
   end
+
+  def return_path
+    results_reports_path
+  end
 end
