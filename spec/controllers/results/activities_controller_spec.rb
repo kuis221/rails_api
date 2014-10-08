@@ -80,7 +80,7 @@ describe Results::ActivitiesController, type: :controller do
       expect(export.reload).to have_rows([
         ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE', 'VENUE NAME',
          'ADDRESS', 'CITY', 'STATE', 'ZIP', 'MY NUMERIC FIELD'],
-        ['Test Campaign FY01', user.full_name, "2014-01-01T00:00", 'Activity Type 1', 'My area',
+        ['Test Campaign FY01', user.full_name, "2014-01-01T00:00", "Activity Type #{activity_type.id}", 'My area',
          '443321', 'Bar Prueba', 'Bar Prueba, Los Angeles, California, 12345', 'Los Angeles',
          'California', '12345', '123.0']
       ])
