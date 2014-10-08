@@ -2809,16 +2809,16 @@ ul.ui-widget-content{
 	.number, .dropdown, .form_field_text, .form_field_number, .form_field_dropdown, .form_field_radio{
 		.control-group{
 			.controls{
-				width:220px;
+				//width:220px;
 			}
 		}
 	}
 	.control-group{
 		margin-bottom: 0;
-		.controls{
-			width:auto;
-		}
 
+		.input-xlarge{
+			width:220px;
+		}
 		&.event_summary{
 			margin-bottom: 20px;
 		}
@@ -2837,9 +2837,15 @@ ul.ui-widget-content{
 			}
 		}
 		label{
-			font-weight: bold;
+			display:inline-block;
+			margin-right:30px;
 			margin-bottom: 6px;
+			font-weight:bold;
+			&.segment-label{
+				font-weight:normal;
+			}
 			&.checkbox{
+				font-weight:normal;
 				display: block;
 				width: initial;
 				margin-bottom: 10px;
@@ -2853,7 +2859,6 @@ ul.ui-widget-content{
 				}
 			}
 			&.control-group-label{
-				font-weight: bold;
 				&.control-label{
 					color: $text;
 				}
@@ -2906,6 +2911,10 @@ ul.ui-widget-content{
 					text-align: left;
 					color: text;
 					margin-right: 20px;
+					width: 100px;
+					display: inline-block;
+					overflow: hidden;
+					height: 20px;
 				}
 				input {
 					text-align: left;
@@ -2929,12 +2938,6 @@ ul.ui-widget-content{
 				}
 			}
 		}
-	}
-	.form_field_summation .field-option label {
-		width: 100px;
-		display: inline-block;
-		overflow: hidden;
-		height: 20px;
 	}
 	.form_field_section {
 		margin-top: 40px;
@@ -2975,15 +2978,12 @@ ul.ui-widget-content{
 			height: 19px;
 			text-shadow: none;
 			width: 34px;
-		}/*
-		input:focus{
-			&+ .add-on{
-				background-color: $brand;
-				border: 1px solid $brand;
-			}
-		}*/
+		}
 		input{
 			width: 176px;
+		}
+		.input-xlarge{
+			width:176px;
 		}
 	}
 	.checkbox{
