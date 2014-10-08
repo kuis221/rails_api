@@ -6,8 +6,7 @@
           .big-number= "#{venue.score}"
           | SCORE
       .pull-left
-        b= venue.name
-        br>/
+        .text-large= venue.name
         .type= venue.types_without_establishment.map{|type| t("venue_types.#{type}") }.join(', ')
         .venue_adress
           = venue.formatted_address

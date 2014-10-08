@@ -20,11 +20,13 @@ css:
 
 - if params[:mode] == 'calendar' && can?(:view_calendar, Event)
   #calendar-canvas data-events-url="#{calendar_events_url(format: :json)}"
-  javascript:
-    window.status='loading';
-    jQuery(function(){
-      window.createCalendar(#{params[:month] || 'null'}, #{params[:year] || 'null'});
-    });
+  = content_for :pdf_scripts
+    = wicked_pdf_javascript_include_tag "application"
+    javascript:
+      window.status='loading';
+      jQuery(function(){
+        window.createCalendar(#{params[:month] || 'null'}, #{params[:year] || 'null'});
+      });
 - else
   .filter-description
     = describe_filters
