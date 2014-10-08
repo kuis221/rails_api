@@ -154,7 +154,7 @@ class ListExport < ActiveRecord::Base
     WickedPdf.new.pdf_from_string(
       html,
       javascript_delay: 1000,
-      header: { content: load_controller.render_to_string(template: 'shared/pdf_header.pdf.slim') },
+#      header: { content: load_controller.render_to_string(template: 'shared/pdf_header.pdf.slim') },
       extra: '--window-status completed --debug-javascript')
   end
 

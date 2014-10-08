@@ -1,0 +1,34 @@
+.sidebar#resource-filter-column
+  #collection-list-filters
+#main.main.with-details-close-bar
+  = resource_details_bar("You are viewing the Activity Data report. Click to close.")
+  #list-tools.text-right
+    .dropdown.btn-download
+      a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+        i.icon-download
+        i.icon-arrow-down
+      ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+        li
+          a.xlsx-download-link href="#" role="menuitem" data-url="#{results_activities_path(format: :xls)}"
+            | Download as XLS
+        li
+          a#pdf-export.xlsx-download-link href="#" role="menuitem" data-url="#{results_activities_path(format: :pdf)}"
+            | Download as PDF
+  div.resource-list id="#{controller_name}-list"
+
+= render partial: 'help_tutorial'
+
+javascript:
+  $('#collection-list-filters').filteredList({
+    'source': '#{url_for(controller: controller_name, action: :items)}',
+    'filtersUrl': '#{url_for(controller: controller_name, action: :filters)}',
+    'listContainer' : '##{controller_name}-list',
+    'sorting': 'activity_date',
+    'sorting_dir': 'asc',
+    'applyTo': '#{controller_name}',
+    'includeCalendars': true,
+    'includeSearchBox': false,
+    'includeAutoComplete': false,
+    'defaultParams': [{name: 'status[]', value: 'Active'}],
+    'clearFilterParams': [{name: 'status[]', value: 'Active'}]
+  });

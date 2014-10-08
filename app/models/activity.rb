@@ -34,13 +34,32 @@ class Activity < ActiveRecord::Base
 
   scope :active, -> { where(active: true) }
 
+  scope :accessible_by_user, -> { self }
+
   after_initialize :set_default_values
 
-  delegate :company_id, :company, to: :activitable, allow_nil: true
+  delegate :company_id, :company, :place, to: :activitable, allow_nil: true
+  delegate :td_linx_code, :name, :city, :state, :zipcode, :street_number, :route,
+           to: :place, allow_nil: true, prefix: true
+
+  delegate :name, to: :campaign, allow_nil: true, prefix: true
+  delegate :full_name, to: :company_user, allow_nil: true, prefix: true
+  delegate :name, to: :activity_type, allow_nil: true, prefix: true
 
   accepts_nested_attributes_for :results, allow_destroy: true
 
   before_validation :delegate_campaign_id_from_event
+
+  searchable do
+    integer :company_id
+    integer :campaign_id
+    integer :activity_type_id
+    integer :company_user_id
+    string :activitable do
+      "#{activitable_type}#{activitable_id}"
+    end
+    date :activity_date
+  end
 
   def activate!
     update_attribute :active, true
@@ -73,6 +92,28 @@ class Activity < ActiveRecord::Base
       company.activity_type_ids
     else
       []
+    end
+  end
+
+  class << self
+    def do_search(params)
+      solr_search(include: [:activity_type, company_user: :user]) do
+        with :company_id, params[:company_id]
+        with :campaign_id, params[:campaign] if params.key?(:campaign) && params[:campaign].present?
+        with :activity_type_id, params[:activity_type] if params.key?(:activity_type) && params[:activity_type].present?
+
+        if params[:start_date].present? && params[:end_date].present?
+          d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day
+          d2 = Timeliness.parse(params[:end_date], zone: :current).end_of_day
+          with :activity_date, d1..d2
+        elsif params[:start_date].present?
+          d = Timeliness.parse(params[:start_date], zone: :current)
+          with :activity_date, d
+        end
+
+        order_by(params[:sorting] || :activity_date, params[:sorting_dir] || :asc)
+        paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
+      end
     end
   end
 
