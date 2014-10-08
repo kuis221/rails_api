@@ -22,7 +22,6 @@ module Results
         else
           @result.value = row['value']
         end
-        id = @result.form_field.kpi_id.nil? ? "field_#{@result.form_field_id}" : "kpi_#{@result.form_field.kpi_id}"
         if SEGMENTED_FIELD_TYPES.include?(@result.form_field.type)
           # values = ActiveRecord::Coders::Hstore.load(row['hash_value'])
           # TODO: we have to correctly map values for hash_value here
@@ -30,16 +29,18 @@ module Results
           if @result.form_field.type == PERCENTAGE_TYPE
             @result.form_field.options_for_input.each do |option|
               value = @result.value[option[1].to_s]
-              resource_values["#{id}-#{option[1]}"] = [NUMBER, 'percentage', (value.present? && value != '' ? value.to_f : 0.0) / 100]
+              key = @fields_mapping["#{@result.form_field.id}_#{option[1]}"]
+              resource_values[key] = [NUMBER, 'percentage', (value.present? && value != '' ? value.to_f : 0.0) / 100]
             end
           else
             @result.form_field.options_for_input.each do |option|
               value = @result.value[option[1].to_s]
-              resource_values["#{id}-#{option[1]}"] = [NUMBER, 'normal', value]
+              key = @fields_mapping["#{@result.form_field.id}_#{option[1]}"]
+              resource_values[key] = [NUMBER, 'normal', value]
             end
           end
         else
-          resource_values[id] =
+          resource_values[@fields_mapping[@result.form_field.id]] =
             if @result.form_field.is_numeric?
               [NUMBER, 'normal', (Float(@result.to_csv) rescue nil)]
             else
@@ -139,7 +140,7 @@ module Results
         fields_scope = FormField.for_events_in_company(current_company_user.company)
                         .where('form_fields.kpi_id not in (?) OR kpi_id is NULL', exclude_kpis)
                         .where.not(type: exclude_field_types)
-                        .order('form_fields.name ASC')
+                        .order('lower(form_fields.name) ASC, form_fields.type ASC')
         fields_scope = fields_scope.where(campaigns: { id: campaign_ids }) unless current_company_user.is_admin? && campaign_ids.empty?
         fields_scope.map { |field| [field.id, field] }
       else
@@ -153,7 +154,7 @@ module Results
           FormField.for_activity_types_in_company(current_company_user.company)
         else
           FormField.for_activity_types_in_campaigns(campaign_ids)
-        end.where.not(type: exclude_field_types).order('form_fields.name ASC')
+        end.where.not(type: exclude_field_types).order('lower(form_fields.name) ASC, form_fields.type ASC')
       s = s.where(fieldable_id: params[:activity_type]) if params[:activity_type] && params[:activity_type].any?
       s.map { |field| [field.id, field] }
     end
@@ -167,18 +168,36 @@ module Results
     end
 
     def custom_columns
-      @custom_columns ||= Hash[*custom_fields_to_export.map do |id, field|
-        if SEGMENTED_FIELD_TYPES.include?(field.type)
-          if field.kpi_id.nil?
-            field.options_for_input.map { |s| ["field_#{field.id}-#{s[1]}", "#{field.name}: #{s[0]}"] }
+      return @custom_columns unless @custom_columns.nil?
+      @fields_mapping = {}
+      @custom_columns = {}
+      custom_fields_to_export.each do |_, field|
+        segments =
+          if SEGMENTED_FIELD_TYPES.include?(field.type)
+            field.options_for_input.map{ |option| ["#{field.id}_#{option[1]}", "#{field.name}: #{option[0]}"] }
           else
-            field.options_for_input.map { |s| ["kpi_#{field.kpi_id}-#{s[1]}", "#{field.kpi.name}: #{s[0]}"] }
+            [[field.id, field.name]]
           end
-        else
-          field.kpi_id.nil? ? ["field_#{id}", field.name] : ["kpi_#{field.kpi_id}", field.kpi.name]
+        segments.each do |s|
+          id = unique_field_id(field, s[1])
+          @fields_mapping[s[0]] = id
+          @custom_columns[id] = s[1]
         end
-      end.flatten]
+      end
       @custom_columns
+    end
+
+    def unique_field_id(field, name)
+      @fieldable_fields_mapping ||= {}
+      @fieldable_fields_mapping[field.fieldable_id] ||= []
+      i = 0
+      id = nil
+      loop do
+        id = [field.type, name.gsub(/[^\w:]/, '_').downcase, i += 1].join('/')
+        break unless @fieldable_fields_mapping[field.fieldable_id].include?(id)
+      end
+      @fieldable_fields_mapping[field.fieldable_id].push id
+      id
     end
 
     def campaign_from_cache(id)
