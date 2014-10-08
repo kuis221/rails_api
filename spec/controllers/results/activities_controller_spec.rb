@@ -40,7 +40,7 @@ describe Results::ActivitiesController, type: :controller do
                      state: 'California', country: 'US', td_linx_code: '443321')
     end
     let(:event) { create(:event, campaign: campaign, place: place) }
-    let(:activity_type) { create(:activity_type, campaign_ids: [campaign.id], company: company) }
+    let(:activity_type) { create(:activity_type, name: 'My Activity Type', campaign_ids: [campaign.id], company: company) }
     let(:event_activity) do
       create(:activity, activitable: event, activity_date: '01/01/2014',
         activity_type: activity_type, company_user: company_user)
@@ -80,7 +80,7 @@ describe Results::ActivitiesController, type: :controller do
       expect(export.reload).to have_rows([
         ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE', 'VENUE NAME',
          'ADDRESS', 'CITY', 'STATE', 'ZIP', 'MY NUMERIC FIELD'],
-        ['Test Campaign FY01', user.full_name, "2014-01-01T00:00", "Activity Type #{activity_type.id}", 'My area',
+        ['Test Campaign FY01', user.full_name, "2014-01-01T00:00", "My Activity Type", 'My area',
          '443321', 'Bar Prueba', 'Bar Prueba, Los Angeles, California, 12345', 'Los Angeles',
          'California', '12345', '123.0']
       ])
