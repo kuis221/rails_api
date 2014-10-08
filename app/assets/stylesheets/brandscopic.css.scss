@@ -3984,6 +3984,10 @@ body.roles{
 			& > div {
 				font-size: 16px;
 			}
+			.pdf-label {
+				display: none;
+				font-size: 12px;
+			}
 		}
 		.score{
 			color: $venues_blue;
@@ -3999,7 +4003,7 @@ body.roles{
 			}
 		}
 
-		.venue_adress{
+		.venue_address{
 			display: block;
 			overflow: hidden;
 			text-overflow:ellipsis;
