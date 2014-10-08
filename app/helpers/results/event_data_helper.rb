@@ -2,6 +2,7 @@ module Results
   module EventDataHelper
     SEGMENTED_FIELD_TYPES = ['FormField::Percentage', 'FormField::Summation']
     PERCENTAGE_TYPE = 'FormField::Percentage'.freeze
+    SUMMATION_TYPE = 'FormField::Summation'.freeze
     NUMBER = 'Number'.freeze
     STRING = 'String'.freeze
     def custom_fields_to_export_headers
@@ -33,10 +34,15 @@ module Results
               resource_values[key] = [NUMBER, 'percentage', (value.present? && value != '' ? value.to_f : 0.0) / 100]
             end
           else
+            sum = 0
             @result.form_field.options_for_input.each do |option|
               value = @result.value[option[1].to_s]
+              sum += value.to_f if value
               key = @fields_mapping["#{@result.form_field.id}_#{option[1]}"]
               resource_values[key] = [NUMBER, 'normal', value]
+            end
+            if @result.form_field.type == SUMMATION_TYPE
+              resource_values[@fields_mapping["#{@result.form_field.id}__TOTAL"]] = [NUMBER, 'normal', sum]
             end
           end
         else
@@ -174,7 +180,9 @@ module Results
       custom_fields_to_export.each do |_, field|
         segments =
           if SEGMENTED_FIELD_TYPES.include?(field.type)
-            field.options_for_input.map{ |option| ["#{field.id}_#{option[1]}", "#{field.name}: #{option[0]}"] }
+            s = field.options_for_input.map{ |option| ["#{field.id}_#{option[1]}", "#{field.name}: #{option[0]}"] }
+            s.push(["#{field.id}__TOTAL", "#{field.name}: TOTAL"]) if field.type == SUMMATION_TYPE
+            s
           else
             [[field.id, field.name]]
           end

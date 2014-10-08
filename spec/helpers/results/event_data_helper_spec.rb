@@ -98,8 +98,12 @@ describe Results::EventDataHelper, type: :helper do
         event.save
         expect(event.save).to be_truthy
 
-        expect(helper.custom_fields_to_export_headers).to eq(['MY SUMMATION FIELD: SUM OPT1', 'MY SUMMATION FIELD: SUM OPT2'])
-        expect(helper.custom_fields_to_export_values(event)).to eq([['Number', 'normal', '20'], ['Number', 'normal', '50']])
+        expect(helper.custom_fields_to_export_headers).to eq([
+          'MY SUMMATION FIELD: SUM OPT1', 'MY SUMMATION FIELD: SUM OPT2', 'MY SUMMATION FIELD: TOTAL'
+        ])
+        expect(helper.custom_fields_to_export_values(event)).to eq([
+          ['Number', 'normal', '20'], ['Number', 'normal', '50'], ['Number', 'normal', 70.0]
+        ])
       end
 
       it 'include TIME fields that are not linked to a KPI' do
@@ -418,8 +422,12 @@ describe Results::EventDataHelper, type: :helper do
         activity.save
         expect(activity.save).to be_truthy
 
-        expect(helper.custom_fields_to_export_headers).to eq(['MY SUMMATION FIELD: SUM OPT1', 'MY SUMMATION FIELD: SUM OPT2'])
-        expect(helper.custom_fields_to_export_values(activity)).to eq([['Number', 'normal', '20'], ['Number', 'normal', '50']])
+        expect(helper.custom_fields_to_export_headers).to eq([
+          'MY SUMMATION FIELD: SUM OPT1', 'MY SUMMATION FIELD: SUM OPT2', 'MY SUMMATION FIELD: TOTAL'
+        ])
+        expect(helper.custom_fields_to_export_values(activity)).to eq([
+          ['Number', 'normal', '20'], ['Number', 'normal', '50'], ['Number', 'normal', 70.0]
+        ])
       end
 
       it 'include BRAND fields' do
