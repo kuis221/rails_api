@@ -48,8 +48,9 @@ describe Results::GvaController, type: :controller do
         ResqueSpec.perform_all(:export)
 
         reader = PDF::Reader.new(open(export.reload.file.url))
+        expect(reader.page_count).to eql 1
         reader.pages.each do |page|
-          expect(page.text).to include 'Goals vs. Actual'
+          expect(page.text).to be_empty
         end
       end
 
@@ -78,7 +79,6 @@ describe Results::GvaController, type: :controller do
           # without whitespaces
           text = page.text.gsub(/[\s\n]/, '')
           expect(text).to include 'MySupercampaign'
-          expect(text).to include 'Goalsvs.Actual'
           expect(text).to include 'MyCustomKPI'
           expect(text).to include '45%'
           expect(text).to include '45OF100GOAL'
@@ -110,7 +110,6 @@ describe Results::GvaController, type: :controller do
           # without whitespaces
           text = page.text.gsub(/[\s\n]/, '')
           expect(text).to include 'MySupercampaign'
-          expect(text).to include 'Goalsvs.Actual'
           expect(text).to include 'MyCustomKPI'
           expect(text).to include '45%'
           expect(text).to include '45OF100GOAL'
@@ -147,7 +146,6 @@ describe Results::GvaController, type: :controller do
           # without whitespaces
           text = page.text.gsub(/[\s\n]/, '')
           expect(text).to include 'MySupercampaign'
-          expect(text).to include 'Goalsvs.Actual'
           expect(text).to include 'MyCustomKPI'
           expect(text).to include '90%'
           expect(text).to include '45OF50GOAL'
