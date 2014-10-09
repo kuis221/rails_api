@@ -18,7 +18,6 @@ feature 'Brand Ambassadors Visits' do
     add_permissions permissions
     sign_in user
     Company.current = company
-    ResqueSpec.reset!
   end
 
   after do

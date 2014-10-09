@@ -11,7 +11,6 @@ describe PhotosController, type: :controller do
 
   describe "POST 'create'", strategy: :deletion do
     it 'queue a job for processing the photos' do
-      ResqueSpec.reset!
       s3object = double
       allow(s3object).to receive(:copy_from).and_return(true)
       expect_any_instance_of(AWS::S3).to receive(:buckets).at_least(:once).and_return(

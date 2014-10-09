@@ -59,6 +59,7 @@ RSpec.configure do |config|
 
   config.before(:each) do |example|
     allow(Resque::Worker).to receive_messages(working: [])
+    ResqueSpec.reset!
 
     Rails.logger.debug "\n\n\n\n\n\n\n\n\n\n"
     Rails.logger.debug '**************************************************************************************'

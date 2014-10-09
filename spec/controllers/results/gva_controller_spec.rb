@@ -15,7 +15,6 @@ describe Results::GvaController, type: :controller do
     end
 
     describe 'XLS export' do
-      before { ResqueSpec.reset! }
       it 'queue the job for export the list' do
         expect do
           xhr :get, :index, format: :xls
