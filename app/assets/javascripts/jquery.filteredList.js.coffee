@@ -18,7 +18,9 @@ $.widget 'nmk.filteredList', {
 		selectedDate: new Date(),
 		selectDefaultDateRange: false,
 		calendarHighlights: null,
-		scope: null
+		scope: null,
+		applyTo: null,
+		fixListHeight: true
 	},
 
 	_create: () ->
@@ -44,25 +46,49 @@ $.widget 'nmk.filteredList', {
 			@storageScope = window.location.pathname.replace('/','_')
 
 
-		@element.parent().append $('<a class="btn list-filter-btn" href="#" data-toggle="filterbar" title="Filter">').append('<i class="icon-filter">')
+		@element.parent().append $('<a class="list-filter-btn" href="#" data-toggle="filterbar" title="Filter">').append('<i class="icon-gear">')
 
-		$('<div class="clear-filters">')
-			.append($('<a>',{href: '#', class:''}).text('Clear filters')
-				.on 'click', (e) =>
-					@_cleanFilters()
-			).appendTo(@form)
+		@formFilters = $('<div class="form-facet-filters accordion">')
+							.on "show", (e) ->
+								$(e.target).closest(".accordion-group").find(".icon-arrow-right").removeClass("icon-arrow-right").addClass("icon-arrow-down").prop "title", "Collapse"
+								return
+							.on "shown", (e) ->
+								$(e.target).closest(".accordion-group").find('.accordion-body').removeClass('collapse')
+								return
+							.on "hide", (e) ->
+								$(e.target).closest(".accordion-group").find(".icon-arrow-down").removeClass("icon-arrow-down").addClass("icon-arrow-right").prop "title", "Expand"
+								return
 
+		@formFilters.appendTo(@form)
 
-		@formFilters = $('<div class="form-facet-filters">').appendTo(@form)
 		if @options.filters
-			@setFilters(@options.filters)
+			@setFilters @options.filters
+
+		@form.append(
+			$('<input class="btn btn-primary" id="save-filters-btn" type="submit" value="Save">').on 'click', (e) =>
+				@_saveFilters()
+
+			$('<input class="btn btn-cancel" id="cancel-save-filters" type="reset" value="Reset">').on 'click', (e) =>
+				@_cleanFilters()
+
+			$('<a class="settings-for-filters" title="Filter Settings" href="#"><span class="icon-gear"></span></a>')
+				.on 'click', (e) =>
+					e.preventDefault()
+					e.stopPropagation()
+					$.get '/filter_settings/new.js', {apply_to: @options.applyTo, filters_labels: @filtersLabels}
+		)
+
+		$(document).on 'filter-box:change', (e) =>
+			@reloadFilters()
+
+		@filtersLabels = []
 
 		@filtersPopup = false
 
 		@listContainer = $(@options.listContainer)
 
 		@defaultParams = @options.defaultParams
-		@_parseQueryString()
+		@_parseQueryString(window.location.search)
 		@loadFacets = true
 		firstTime = true
 		$(window).on 'popstate', =>
@@ -70,7 +96,7 @@ $.widget 'nmk.filteredList', {
 				firstTime = false
 			else
 				#@reloadFilters()
-				@_parseQueryString()
+				@_parseQueryString(window.location.search)
 				@_filtersChanged(false)
 
 		$(window).on 'resize scroll', () =>
@@ -86,7 +112,25 @@ $.widget 'nmk.filteredList', {
 
 		@defaultParams = []
 		@initialized = true
+		@dateRange = false
 		@_serializeFilters()
+
+		$(document).on 'click', (e) ->
+			$('.more-options-container').hide()
+		.on 'change', '.more-options-container input[type=checkbox]', (e) =>
+			$checkbox = $(e.target)
+			listItem = $($(e.target).parents('li')[0])
+			listItem.find('ul').remove()
+			listItem.find('.checker').show()
+			$checkbox.change (e) => @_filtersChanged()
+			@_filtersChanged()
+			$checkbox.attr('checked', true)
+			parentList = $(listItem.parents('ul')[0])
+			listItem.closest('.accordion-inner').find('>ul').append listItem
+			if parentList.find('li').length == 0
+				parentList.remove()
+			true
+
 
 	destroy: ->
 		@_closeFilterOptions()
@@ -111,14 +155,16 @@ $.widget 'nmk.filteredList', {
 			@setFilters json.filters
 
 	_deselectDates: ->
-		@form.find('.dates-range-filter').datepick('clear')
-		@form.find('.dates-range-filter').datepick('update')
+		if @calendar
+			@calendar.datepick('clear')
+			@calendar.datepick('update')
 
 	getFilters: () ->
 		data = @form.serializeArray()
 		p = []
 		for param in data
-			p.push param if param.value != ''
+			if param.name isnt 'custom_start_date' and param.name isnt 'custom_end_date'
+				p.push param if param.value != '' && param.name != 'custom_filter[]'
 
 		for param in @defaultParams
 			p.push param
@@ -134,7 +180,14 @@ $.widget 'nmk.filteredList', {
 	setFilters: (filters) ->
 		$.loadingContent += 1
 		@formFilters.html('')
+		@filtersLabels = []
 		for filter in filters
+			if filter.label is 'People'
+				@filtersLabels.push 'Users'
+				@filtersLabels.push 'Teams'
+			else
+				@filtersLabels.push filter.label
+
 			if filter.items? and (filter.items.length > 0 or (filter.top_items? and filter.top_items.length))
 				@addFilterSection filter
 			else if filter.max? and filter.min?
@@ -215,8 +268,10 @@ $.widget 'nmk.filteredList', {
 			rangeSelect: true,
 			monthsToShow: 1,
 			changeMonth: false,
-			prevText: '<',
-			nextText: '>',
+			prevText: '',
+			nextText: '',
+			prevJumpText: '',
+			nextJumpText: '',
 			onDate: true,
 			showOtherMonths: true,
 			selectOtherMonths: true,
@@ -248,7 +303,18 @@ $.widget 'nmk.filteredList', {
 		items = filter.items
 		top5 = filter.top_items
 		$list = $('<ul>')
-		$filter = $('<div class="filter-wrapper">').data('name', filter.name).append($('<h3>').text(filter.label), $list)
+		$filter = $('<div class="accordion-group">').append(
+			$('<div class="filter-wrapper accordion-heading">').data('name', filter.name).append(
+				$('<a>',{href: "#toogle-"+filter.label.replace(/\s+/g, '-').toLowerCase(), class:'accordion-toggle filter-title', 'data-toggle': 'collapse'}).text(filter.label).append(
+					$('<span class="icon icon-arrow-down pull-left" title="Collapse">')
+				)
+			),
+			$('<div id="toogle-'+filter.label.replace(/\s+/g, '-').toLowerCase()+'" class="accordion-body in">').append(
+				$('<div class="accordion-inner">').append(
+					$list
+				)
+			)
+		)
 		i = 0
 		if not top5
 			optionsCount = items.length
@@ -262,26 +328,19 @@ $.widget 'nmk.filteredList', {
 			optionsCount = top5.length + items.length
 
 		for option in @_sortOptionsAlpha(top5)
-			$list.append @_buildFilterOption(option).change( (e) => @_filtersChanged() )
+			$list.append @_buildFilterOption(option)
 
 		@formFilters.append $filter
 		if optionsCount > 5
-			$li = $('<li>')
-			$div = $('<div>')
-			$ul = $('<ul class="sf-menu sf-vertical-menu">')
-
 			filterListResizer = =>
 				container = $trigger.next()
 				container.show()
 				maxHeight = @element.outerHeight() + @element.offset().top - container.offset().top;
-				container.find('>ul').css({'max-height': Math.min(400, maxHeight)})
 
-			$trigger = $('<a>',{href: '#', class:'more-options-link'}).text('More')
+			$trigger = $('<a>',{href: '#', class:'more-options-link'}).text('Show More')
 				.on 'click', (e) =>
 					container = $trigger.next()
 					if container.css('display') == "none"
-						$('.child_div').hide()
-						$('.child_div').parent().css('height','8%')
 						$('.more-options-link').next().hide()
 						filterListResizer()
 					else
@@ -289,21 +348,15 @@ $.widget 'nmk.filteredList', {
 					false
 				.on 'click.firstime', (e)=>
 					$(e.target).off('click.firstime')
-					if not $ul.hasClass('sf-js-enabled')
-						list = @_buildFilterOptionsList(filter, $filter,false)
-						$ul.find('li').append(list)
-						$trigger.superfish({cssArrows: false, disableHI: true})
-						$trigger.superfish('show')
-						filterListResizer()
-					false
-				.on 'click', (e) =>
-					if $trigger.next().css('display') == "inline-block"
-						$(document).on 'click.more-options-link', (e) ->
-							$('.more-options-link').next().hide()
-							$(document).off 'click.more-options-link'
+					list = @_buildFilterOptionsList(filter, $filter)
+					list.insertAfter($trigger)
+					filterListResizer()
+					setTimeout () ->
+						list.find("input:checkbox").uniform()
+					, 100
 					false
 
-			$div.append($ul.append($li.append($trigger))).insertAfter($filter)
+			$trigger.insertAfter($list)
 
 			$filter
 		items = @_sortOptionsAlpha(items)
@@ -334,7 +387,7 @@ $.widget 'nmk.filteredList', {
 			@_closeFilterOptions()
 
 		filter = filterWrapper.data('filter')
-		items = @_buildFilterOptionsList(filter, filterWrapper,false)
+		items = @_buildFilterOptionsList(filter, filterWrapper)
 
 		if items? and items.find('li').length > 0
 			@filtersPopup = $('<div class="filter-box more-options-popup">').append(items).insertBefore filterWrapper
@@ -364,7 +417,7 @@ $.widget 'nmk.filteredList', {
 			@filtersPopup.remove()
 		$(document).off 'click.filteredList'
 
-	_buildFilterOptionsList: (list, filterWrapper,showChild) ->
+	_buildFilterOptionsList: (list, filterWrapper) ->
 		$list = null
 		if list? and list.items? and list.items.length
 			items = {}
@@ -374,71 +427,29 @@ $.widget 'nmk.filteredList', {
 					group = if option.group then option.group else '__default__'
 					items[group] ||= []
 					items[group].push $option
-					$option.bind 'click.filter', (e) =>
-						e.stopPropagation()
-						true
-					.find('input[type=checkbox]').bind 'change.filter', (e) =>
-						$checkbox = $(e.target)
-						listItem = $($(e.target).parents('li')[0])
-						listItem.find('ul').remove()
-						$checkbox.unbind 'change.filter'
-						listItem.unbind 'click.filter'
-						$checkbox.change (e) => @_filtersChanged()
-						listItem.find('.checker').show()
-						@_filtersChanged()
-						$checkbox.attr('checked', true)
-						parentList = $(listItem.parents('ul')[0])
-						filterWrapper.find('ul').append listItem
-						if parentList.find('li').length == 0
-							parentList.remove()
 
-						# if @filtersPopup.find('li').length == 0
-						# 	@_closeFilterOptions()
-						# 	filterWrapper.find('.more-options-link').remove()
-					if child = @_buildFilterOptionsList(option, filterWrapper,true)
-						$option.append child
-
-			if showChild == false
-				$list = $('<ul class="sf-vertical-menu filter_vertical_box">')
-			else
-				$list = $('<ul class="child_submenu">')
+			$list = $('<ul class="filter_vertical_box">')
 			for group, children of items
 				if children.length > 0
 					if group isnt '__default__'
 						$list_group = $('<li class="options-list-group">')
 							.on 'click', (e) =>
 								$current_div = $list_group.parent().parent()
-								if $current_div.hasClass('parent_div')
-									$('.child_div').hide()
-									$('.child_div').parent().css('height','8%')
-									$list_group.siblings().css('height','8%')
-								if $current_div.hasClass('child_div') and $current_div.find('ul').length > 0
-									$list_group.siblings().find("div").hide()
 
 						$list.append $list_group.text(group)
 					$list.append children
 
-				if showChild == false
-					$div = $('<div class="parent_div">')
-				else
-					$div = $('<div class="child_div">')
-				$div.append $list
+				$div = $('<div class="more-options-container">').append($list).on 'click', (e) ->
+					e.stopPropagation()
 		$div
 
 	_buildFilterOption: (option) ->
 		$('<li>')
-			.on 'mouseover', (e) =>
-				li = $(e.target)
-				$div_tmp = li.find('.child_div')
-				if $div_tmp.hasClass('child_div') and $div_tmp.css('display') == 'none' and !$div_tmp.hasClass('checker')
-					$(".child_div").parent().css('height','8%')
-					$div_tmp.css('display','inline-block')
-					$div_tmp.find(".child_div").hide() # remove extra titles
-					li.css('height','25%')
-					li.siblings().find('.child_div').hide()
-				li = null
-				true
-			.append $('<label>').append($('<input>',{type:'checkbox', value: option.id, name: "#{option.name}[]", checked: (option.selected is true or option.selected is 'true')}), option.label)
+			.append $('<label>').append(
+				$('<input>',{type:'checkbox', value: option.id, name: "#{option.name}[]", checked: (option.selected is true or option.selected is 'true')}), option.label
+			).on 'change', () =>
+				@_updateCustomFiltersCheckboxes(option)
+				@_filtersChanged()
 
 	_addAutocompleteBox: () ->
 		previousValue = '';
@@ -512,6 +523,12 @@ $.widget 'nmk.filteredList', {
 
 		false
 
+	_saveFilters: () ->
+		data = @_serializeFilters()
+		if data
+			$.get '/custom_filters/new.js', {apply_to: @options.applyTo, filters: data}
+		false
+
 	setCalendarHighlights: (highlights) ->
 		@form.find('.dates-range-filter').datepick('setOption', 'daysHighlighted', highlights)
 		@form.find('.dates-range-filter').datepick('update')
@@ -528,19 +545,22 @@ $.widget 'nmk.filteredList', {
 				if param.name is 'end_date'
 					@endDateInput.val param.value
 
-		$('<div class="dates-range-filter">').appendTo(@form).datepick {
+		@calendar = $('<div class="dates-range-filter">').appendTo(@form).datepick {
 			rangeSelect: true,
 			monthsToShow: 1,
 			changeMonth: false,
 			defaultDate: (if @options.selectDefaultDate then @options.selectedDate else null),
 			selectDefaultDate: @options.selectDefaultDate,
-			prevText: '<',
-			nextText: '>',
+			prevText: '',
+			nextText: '',
+			prevJumpText: '',
+			nextJumpText: '',
 			onDate: true,
 			showOtherMonths: true,
 			selectOtherMonths: true,
 			highlightClass: 'datepick-event',
 			daysHighlighted: @options.calendarHighlights,
+			dayNamesMin: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
 			renderer: $.extend(
 						{}, $.datepick.defaultRenderer,
 						{picker: '<div class="datepick">' +
@@ -549,11 +569,114 @@ $.widget 'nmk.filteredList', {
 								'<div class="datepick-clear-fix"></div></div>'}),
 			onSelect: (dates) =>
 				if @initialized == true
+					if @dateRange == false
+						@customDatesPanel.find('ul .active').removeClass('active')
+						@_updateDateRangeInput()
+					@dateRange = false
+
 					if @_previousDates != @_datesToString(dates)
+						@calendar.find('.datepick-month a').removeClass('first-selected last-selected')
+						@calendar.find('.datepick-selected:first').addClass('first-selected')
+						@calendar.find('.datepick-selected:last').addClass('last-selected')
 						@_previousDates = @_datesToString(dates)
+						@customDatesFilter.find('input[name=custom_start_date]').datepicker('setDate', dates[0])
+						@customDatesFilter.find('input[name=custom_end_date]').datepicker('setDate', dates[1])
 						@_filtersChanged()
-						#@reloadFilters()
+				else
+					@calendar.find('.datepick-selected:first').addClass('first-selected')
+					@calendar.find('.datepick-selected:last').addClass('last-selected')
 		}
+
+		@customDatesFilter = $('<div class="custom-dates-inputs">').appendTo(@form).append(
+			$('<div class="start-date">').append(
+				$('<label for="custom_start_date">').text('Start date'),
+				$('<input type="text" class="input-calendar date_picker disabled" id="custom_start_date" name="custom_start_date" readonly="readonly">').val('mm/dd/yyyy').datepicker
+					showOtherMonths: true
+					selectOtherMonths: true
+					dateFormat: "mm/dd/yy"
+					onSelect: () =>
+						startDateInput = @customDatesFilter.find("[name=custom_start_date]")
+						endDateInput = @customDatesFilter.find("[name=custom_end_date]")
+						applyButton = @customDatesPanel.find("#apply-ranges-btn")
+						if startDateInput.val() != 'mm/dd/yyyy' && endDateInput.val() != 'mm/dd/yyyy' && startDateInput.val() != '' && endDateInput.val() != ''
+							applyButton.attr('disabled', false)
+						else
+							applyButton.attr('disabled', true)
+
+						startDateInput.removeClass('disabled')
+					onClose: ( selectedDate ) =>
+						@customDatesFilter.find("[name=custom_end_date]").datepicker "option", "minDate", selectedDate
+			),
+			$('<div class="separate">').text('-'),
+			$('<div class="end-date">').append(
+				$('<label for="custom_end_date">').text('End date'),
+				$('<input type="text" class="input-calendar date_picker disabled" id="custom_end_date" name="custom_end_date" readonly="readonly">').val('mm/dd/yyyy').datepicker
+					showOtherMonths: true
+					selectOtherMonths: true
+					dateFormat: "mm/dd/yy"
+					onSelect: () =>
+						startDateInput = @customDatesFilter.find("[name=custom_start_date]")
+						endDateInput = @customDatesFilter.find("[name=custom_end_date]")
+						applyButton = @customDatesPanel.find("#apply-ranges-btn")
+						if startDateInput.val() != 'mm/dd/yyyy' && endDateInput.val() != 'mm/dd/yyyy' && startDateInput.val() != '' && endDateInput.val() != ''
+							applyButton.attr('disabled', false)
+						else
+							applyButton.attr('disabled', true)
+
+						endDateInput.removeClass('disabled')
+					onClose: ( selectedDate ) =>
+						@customDatesFilter.find("[name=custom_start_date]").datepicker "option", "maxDate", selectedDate
+			)
+		)
+
+		@customDatesPanel = $('<div class="dates-pref">').appendTo(@form).append(
+			$('<div class="dropdown select-ranges">').append(
+				$('<label>').text('Date ranges'),
+				$('<a class="dropdown-toggle off" data-toggle="dropdown" href="#" title="Date ranges">').text('Choose a date range').append($('<i class="icon-arrow-down pull-right"></i>')),
+				$('<ul aria-labelledby="dLabel" class="dropdown-menu" role="menu">').append(
+					$('<li class="options">').append(
+						$('<div class="row-fluid">').append(
+							$('<div class="span4">').append(
+								$('<a href="#">').data('selection', 'cw').text('Current week')
+							),
+							$('<div class="span4">').append(
+								$('<a href="#">').data('selection', 'cm').text('Current month')
+							),
+							$('<div class="span4">').append(
+								$('<a href="#">').data('selection', 'today').text('Today')
+							)
+						),
+						$('<div class="row-fluid">').append(
+							$('<div class="span4">').append(
+								$('<a href="#">').data('selection', 'pw').text('Previous week')
+							),
+							$('<div class="span4">').append(
+								$('<a href="#">').data('selection', 'pm').text('Previous month')
+							),
+							$('<div class="span4">').append(
+								$('<a href="#">').data('selection', 'ytd').text('YTD')
+							)
+						)
+					).on 'click', (e) =>
+						$(e.target).closest('ul').find('.active').removeClass('active')
+						$(e.target).addClass('active')
+						@dateRange = true
+						@setCalendarRange $(e.target).data('selection')
+						$('.select-ranges.open .dropdown-toggle').dropdown('toggle')
+						false
+					$('<li class="ranges">').append(
+						@customDatesFilter.show()
+					)
+					$('<li>').append(
+						$('<input class="btn btn-primary" id="apply-ranges-btn" type="submit" value="Apply">').attr('disabled', true).on 'click', (e) =>
+							@dateRange = false
+							@customDateSelected()
+							$('.select-ranges.open .dropdown-toggle').dropdown('toggle')
+					)
+				).on 'click', (e) =>
+					false
+			)
+		)
 
 		if @options.selectDefaultDateRange
 			start_date = @_findDefaultParam('start_date')
@@ -561,20 +684,53 @@ $.widget 'nmk.filteredList', {
 			if start_date.length > 0 && end_date.length > 0
 				@selectCalendarDates start_date[0].value, end_date[0].value
 
-	selectCalendarDates: (start_date, end_date) ->
-		@element.find('.dates-range-filter').datepick('setDate', [start_date, end_date])
+	customDateSelected: () ->
+		date1 = @customDatesFilter.find("[name=custom_start_date]").datepicker('getDate')
+		date2 = @customDatesFilter.find("[name=custom_end_date]").datepicker('getDate')
+		if date1 and date2
+			@selectCalendarDates date1, date2
+			@_updateDateRangeInput date1, date2
+			#@calendar.datepick('setDate', [date1, date2])
+
+	setCalendarRange: (range) ->
+		dates = switch range
+			when "today" then [new Date(), new Date()]
+			when "cw" then @getWeekRange(1)
+			when "cm" then @getMonthRange(1)
+			when "pw" then @getWeekRange(-1)
+			when "pm" then @getMonthRange(-1)
+			when "ytd" then @getYearTodayRange()
+			else []
+
+		if dates.length > 0
+			@selectCalendarDates dates[0], dates[1]
+			@_updateDateRangeInput dates[0], dates[1]
+
+	_updateDateRangeInput: (startDate, endDate) ->
+		dropdown = @customDatesPanel.find('a.dropdown-toggle')
+		if startDate and endDate
+			dates = @_formatDate(startDate) + ' - ' + @_formatDate(endDate)
+			dropdown.removeClass('off')
+		else
+			dates = 'Choose a date range'
+			dropdown.addClass('off')
+		dropdown.text(dates)
+
+	selectCalendarDates: (startDate, endDate) ->
+		@calendar.datepick('setDate', [startDate, endDate])
 		@_setCalendarDatesFromCalendar()
+		@
 
 	_setCalendarDatesFromCalendar: () ->
-		dates = @element.find('.dates-range-filter').datepick('getDate')
+		dates = @calendar.datepick('getDate')
 		if dates.length > 0
-			start_date = @_formatDate(dates[0])
-			@startDateInput.val start_date
+			startDate = @_formatDate(dates[0])
+			@startDateInput.val startDate
 
 			@endDateInput.val ''
 			if dates[0].toLocaleString() != dates[1].toLocaleString()
-				end_date = @_formatDate(dates[1])
-				@endDateInput.val end_date
+				endDate = @_formatDate(dates[1])
+				@endDateInput.val endDate
 		else
 			@startDateInput.val ''
 			@endDateInput.val ''
@@ -594,13 +750,41 @@ $.widget 'nmk.filteredList', {
 		parts = date.split('/')
 		new Date(parts[2], parseInt(parts[0])-1, parts[1],0,0,0)
 
+	getWeekRange: (weeks=1) ->
+		today = new Date();
+		today.setHours(0, 0, 0, 0);
+
+		# Grabbing Start/End Dates
+		if (weeks >= 0)
+			startDate = new Date(today.setDate(today.getDate() - today.getDay()));
+			endDate = new Date(today.setDate(today.getDate() - today.getDay() + (weeks*6)));
+		else
+			endDate = new Date(today.setDate(today.getDate() - today.getDay() - 1));
+			startDate = new Date(today.setDate((today.getDate() - today.getDay()) + ((weeks+1)*6) + (weeks+1)));
+
+		[startDate, endDate]
+
+	getMonthRange: (months=1) ->
+		date = new Date()
+		y = date.getFullYear()
+		m = date.getMonth()
+		if (months >= 0)
+			[new Date(y, m, 1), new Date(y, m + months, 0)]
+		else
+			[new Date(y, m + months, 1), new Date(y, m, 0)]
+
+	getYearTodayRange: () ->
+		[new Date(new Date().getFullYear(), 0, 1), new Date()]
+
 	_filtersChanged: (updateState=true) ->
 		if @options.includeCalendars
 			@_setCalendarDatesFromCalendar()
 
 		if @options.source
 			@reloadData
-		data = @_serializeFilters()
+
+		data = @_getCustomFilters()
+		data = @_serializeFilters() if !data
 		if @form.data('serializedData') != data
 			@form.data('serializedData', data)
 			@_storeFilters data
@@ -624,17 +808,51 @@ $.widget 'nmk.filteredList', {
 		if typeof(Storage) isnt "undefined"
 			sessionStorage["filters#{@storageScope}"]
 
+	_getCustomFilters: () ->
+		data = @form.serializeArray()
+		p = ''
+		custom_filter = $.grep(data, (p) ->
+		  p.name is "custom_filter[]"
+		)
+		p = custom_filter[0].value.split('&id')[0] if custom_filter.length > 0
+
 	_serializeFilters: () ->
-		jQuery.param( @getFilters() )
+		data = @_deparam(@_getCustomFilters())
+		data = @getFilters() if !data.length
+		jQuery.param( data )
 
 	buildParams: (params=[]) ->
-		data = @getFilters()
+		data = @_deparam(@_getCustomFilters())
+		data = @getFilters() if !data.length
 		for param in data
 			params.push(param)
 		params
 
+	_deparam: (queryString) ->
+		params = []
+		if queryString
+			queryString = queryString.substring(queryString.indexOf("?") + 1).split("&")
+			pair = null
+			decode = decodeURIComponent
+			i = queryString.length
+			while i > 0
+				pair = queryString[--i].split("=")
+				params.push {'name': decode(pair[0]), 'value': decode(pair[1])}
+		params
+
 	paramsQueryString: () ->
 		@_serializeFilters()
+
+	_updateCustomFiltersCheckboxes: (option=null) ->
+		e = @element.find('input[name="custom_filter\\[\\]"][value="'+option.id+'"]')
+		@element.find('input[name="custom_filter\\[\\]"]:checked').not(e).prop 'checked', false
+		if e.length
+			if e.prop('checked') == true
+				@element.find('input[type="checkbox"]:checked').not(e).prop 'checked', false
+				@_parseQueryString(option.id.split('&id')[0])
+			else
+				@_cleanFilters()
+		false
 
 	_loadingSpinner: () ->
 		if @options.spinnerElement?
@@ -648,7 +866,7 @@ $.widget 'nmk.filteredList', {
 		if @options.placeholderElement?
 			@options.placeholderElement(message)
 		else
-			$('<li class="placeholder-empty-state">'+message+'</li>').appendTo @listContainer
+			$('<div class="placeholder-empty-state">').html(message).appendTo @listContainer
 
 	reloadData: () ->
 		@_loadPage 1
@@ -674,8 +892,9 @@ $.widget 'nmk.filteredList', {
 			if @infiniteScroller
 				@listContainer.infiniteScrollHelper 'resetPageCount'
 
-			$('.main').css {'min-height': $('#resource-filter-column').outerHeight(), '-moz-box-sizing': 'border-box'}
-			@listContainer.css {height: @listContainer.outerHeight()}
+			if @options.fixListHeight
+				$('.main').css {'min-height': $('#resource-filter-column').outerHeight(), '-moz-box-sizing': 'border-box'}
+				@listContainer.css {height: @listContainer.outerHeight()}
 			@listContainer.html ''
 
 		@emptyState.remove() if @emptyState
@@ -752,10 +971,10 @@ $.widget 'nmk.filteredList', {
 			@listContainer.infiniteScrollHelper 'destroy'
 			@infiniteScroller = false
 
-	_parseQueryString: () ->
+	_parseQueryString: (query) ->
 		@initialized = false
 		@_cleanSearchFilter()
-		query = window.location.search.replace(/^\?/,"")
+		query = query.replace(/^\?/,"")
 		if query != ''
 			if query.match(/_stored=true/)
 				query = @_loadStoredFilters()
@@ -780,7 +999,9 @@ $.widget 'nmk.filteredList', {
 					field = @form.find("[name=\"#{name}\"]")
 					if field.length
 						if field.attr('type') == 'checkbox'
-							console.log('checking checkboxes not implemented yet!!')
+							for element in field
+								if element.value == value
+									element.checked = true
 						else
 							field.val(value)
 					else

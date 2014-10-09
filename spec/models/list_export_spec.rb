@@ -15,45 +15,64 @@
 #  updated_at        :datetime         not null
 #  controller        :string(255)
 #  progress          :integer          default(0)
+#  url_options       :text
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
-describe ListExport do
-  let(:company_user) { FactoryGirl.create(:company_user) }
+describe ListExport, type: :model do
+  let(:company_user) { create(:company_user) }
 
+  describe 'Results::EventDataController#export_list' do
+    let(:exporter) do
+      described_class.new(
+        controller: 'Results::EventDataController',
+        company_user: company_user,
+        export_format: 'xls',
+        url_options: {}, params: {}
+      )
+    end
+    before do
+      expect_any_instance_of(Results::EventDataController)
+        .to receive(:export_list).with(exporter).and_return('')
+    end
 
-  describe "Results::EventDataController#export_list" do
-    it "should call the export_list on the controller and set the required variables" do
-      exporter = ListExport.new(controller: 'Results::EventDataController', company_user: company_user, export_format: 'xls', params: {})
-      Results::EventDataController.any_instance.should_receive(:export_list).with(exporter)
-
+    it 'calls the export_list on the controller and set the required variables' do
       # Prevent export to save and upload attachment to S3
-      exporter.should_receive(:save).any_number_of_times.and_return(true)
+      expect(exporter).to receive(:save).at_least(:once).and_return(true)
 
-      exporter.file_file_name.should be_nil
+      expect(exporter.file_file_name).to be_nil
       exporter.export_list
 
-      exporter.file_file_name.should_not be_nil
-      User.current.should == company_user.user
-      exporter.completed?.should be_true
+      expect(exporter.file_file_name).not_to be_nil
+      expect(User.current).to be_nil
+      expect(exporter.completed?).to be_truthy
+    end
+
+    it 'retry to save three times in case of a network error' do
+      expect_any_instance_of(Paperclip::Attachment).to receive(:save).exactly(4).times.and_raise(Net::OpenTimeout)
+      expect(exporter).not_to receive(:queue!)
+      expect(exporter).to receive(:process!).once
+      expect(exporter).to receive(:sleep).exactly(3).times # So it doesn't really sleep
+      expect(exporter).not_to receive(:complete!)
+      expect { exporter.export_list }.to raise_error(Net::OpenTimeout)
     end
   end
 
-  describe "EventsController#export_list" do
-    it "should call the export_list on the controller and set the required variables" do
-      exporter = ListExport.new(controller: 'EventsController', company_user: company_user, export_format: 'xls', params: {})
-      EventsController.any_instance.should_receive(:export_list).with(exporter)
+  describe 'EventsController#export_list' do
+    it 'should call the export_list on the controller and set the required variables' do
+      exporter = described_class.new(controller: 'EventsController', company_user: company_user, url_options: {}, export_format: 'xls', params: {})
+      expect_any_instance_of(EventsController).to receive(:export_list).with(exporter).and_return('')
 
       # Prevent export to save and upload attachment to S3
-      exporter.should_receive(:save).any_number_of_times.and_return(true)
+      expect(exporter).to receive(:save).at_least(:once).and_return(true)
 
-      exporter.file_file_name.should be_nil
+      expect(exporter.file_file_name).to be_nil
       exporter.export_list
 
-      exporter.file_file_name.should_not be_nil
-      User.current.should == company_user.user
-      exporter.completed?.should be_true
+      expect(exporter.file_file_name).not_to be_nil
+      expect(User.current).to be_nil
+      expect(exporter.completed?).to be_truthy
     end
   end
 end

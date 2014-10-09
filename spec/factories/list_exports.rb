@@ -15,16 +15,17 @@
 #  updated_at        :datetime         not null
 #  controller        :string(255)
 #  progress          :integer          default(0)
+#  url_options       :text
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
 FactoryGirl.define do
   factory :list_export do
-    list_class "MyString"
-    params "MyString"
-    export_format "MyString"
-    aasm_state "MyString"
+    list_class 'MyString'
+    params 'MyString'
+    export_format 'MyString'
+    aasm_state 'MyString'
     user nil
   end
 end

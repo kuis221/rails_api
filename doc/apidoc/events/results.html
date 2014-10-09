@@ -29,11 +29,14 @@
     <span class='divider'>/</span>
   </li>
   <li class='active'>results</li>
+  
+
 </ul>
 
   <div class='page-header'>
     <h1>
-      GET /api/v1/events/:id/results<br>
+      GET /api/v1/events/:id/results
+      <br>
       <small>Get the list of results for the events</small>
     </h1>
   </div>
@@ -41,14 +44,30 @@
 <div>
 
   
-<p>Returns a list of form fields based on the event&#39;s campaign. Each
-campaign can have a different set of fields that have to be capture for its
-events. a field returned by the API consists on the following attributes:</p>
+<p>Returns a list of form fields based on the event&#39;s campaign. The fields
+are grouped by category/module. Each category have the followign
+attributes:</p>
+<ul><li>
+<p><strong>module</strong>: the module&#39;s id</p>
+</li><li>
+<p><strong>label</strong>: the module&#39;s label</p>
+</li><li>
+<p><strong>fields</strong>: a list of fields for the module, the definition of
+this list is described below.</p>
+</li></ul>
+
+<p>Each campaign can have a different set of fields that have to be capture
+for its events. a field returned by the API consists on the
+[&#39;submit&#39;, &#39;approve&#39;, &#39;<a
+href=":status">submit’].include?(params</a>)</p>
 <ul><li>
 <p><strong>id:</strong> the id of the field that have to be used later save
 the results. Please see the documentation for saving a devent. This is not
 included for “percentage” fields as such fields have to be sent to the API
 as separate fields. See the examples for more detail.</p>
+</li><li>
+<p><strong>value:</strong> the event&#39;s current value for that field. This
+should be used to pre-populate the field or</p>
 </li><li>
 <p><strong>value:</strong> the event&#39;s current value for that field. This
 should be used to pre-populate the field or to select the correspondent
@@ -67,6 +86,10 @@ options are: “number”, “count”, “percentage”, “text”, “textare
 </li><li>
 <p><strong>description:</strong> the field&#39;s description</p>
 </li><li>
+<p><strong>goal:</strong> the goal for this field on the event&#39;s campaign
+(only present if <code>fied_type</code> is NOT “count” or “percentage”, for
+such fields the goal is specified on the segment level)</p>
+</li><li>
 <p><strong>segments:</strong> when the <code>fied_type</code> is either
 “count” or “percentage”, this will enumerate the possible options for the
 “count” fields or the different subfields for the “percentage” fields.</p>
@@ -80,6 +103,9 @@ sub-field (for percentage fields)</p>
 </li><li>
 <p><strong>value:</strong> (for percentage fields only) the current value for
 this segment, the sum for all fields&#39; segments should be 100</p>
+</li><li>
+<p><strong>goal:</strong> the goal for this segment on the event&#39;s
+campaign</p>
 </li></ul>
 </li><li>
 <p><strong>options:</strong> specific options for this field, depending of the
@@ -110,109 +136,408 @@ the event</p>
 </li></ul>
 
 
-    <h2>Examples</h2>
-      <pre class="prettyprint">A response with all the different kind of fields
+  <h2>Supported Formats</h2>
+  json, xml
+
+  <h2>Errors</h2>
+    401
+    Unauthorized access
+    <br>
+    404
+    The requested resource was not found
+    <br>
+    406
+    The server cannot return data in the requested format
+    <br>
+    422
+    Unprocessable Entity: The change could not be processed because of errors on the data
+    <br>
+    500
+    Server crashed for some reason. Possible because of missing required params or wrong parameters
+    <br>
+
+
+  <h2>Examples</h2>
+    <pre class="prettyprint">A response with all the different kind of fields
+GET /api/v1/events/123/results.json?auth_token=AYUjmsdi-jau123&amp;company_id=1
 [
     {
-        &quot;id&quot;: 80,
-        &quot;value&quot;: &quot;5&quot;,
-        &quot;name&quot;: &quot;Impressions&quot;,
-        &quot;ordering&quot;: 1,
-        &quot;field_type&quot;: &quot;number&quot;,
-        &quot;options&quot;: {
-            &quot;capture_mechanism&quot;: &quot;integer&quot;,
-            &quot;predefined_value&quot;: &quot;&quot;,
-            &quot;required&quot;: &quot;true&quot;
-        }
-    },
-    {
-        &quot;id&quot;:81,
-        &quot;value&quot;:null,
-        &quot;name&quot;:&quot;Banner Displayed&quot;,
-        &quot;segments&quot;:[
+        &quot;module&quot;: &quot;demographics&quot;,
+        &quot;fields&quot;: [
             {
-              &quot;id&quot;:93,
-              &quot;text&quot;:&quot;Yes&quot;
+                &quot;name&quot;: &quot;Gender&quot;,
+                &quot;ordering&quot;: 0,
+                &quot;field_type&quot;: &quot;percentage&quot;,
+                &quot;options&quot;: {
+                    &quot;capture_mechanism&quot;: &quot;integer&quot;,
+                    &quot;predefined_value&quot;: &quot;&quot;
+                },
+                &quot;description&quot;: &quot;Number of consumers who try a product sample&quot;,
+                &quot;module&quot;: &quot;demographics&quot;,
+                &quot;segments&quot;: [
+                    {
+                        &quot;id&quot;: 160068,
+                        &quot;text&quot;: &quot;Female&quot;,
+                        &quot;value&quot;: 60
+                    },
+                    {
+                        &quot;id&quot;: 160069,
+                        &quot;text&quot;: &quot;Male&quot;,
+                        &quot;value&quot;: 40
+                    }
+                ]
             },
             {
-              &quot;id&quot;:94,
-              &quot;text&quot;:&quot;No&quot;
-            }
-        ],
-        &quot;ordering&quot;:2,
-        &quot;field_type&quot;:&quot;count&quot;,
-        &quot;options&quot;:{
-           &quot;capture_mechanism&quot;:&quot;radio&quot;
-        }
-    },
-    {
-        &quot;value&quot;: &quot;30&quot;,
-        &quot;name&quot;: &quot;Gender&quot;,
-        &quot;ordering&quot;: 3,
-        &quot;field_type&quot;: &quot;percentage&quot;,
-        &quot;segments&quot;:[
-            {
-              &quot;id&quot;:84,
-              &quot;text&quot;:&quot;Female&quot;,
-              &quot;value&quot;: 55
+                &quot;name&quot;: &quot;Age&quot;,
+                &quot;ordering&quot;: 26,
+                &quot;field_type&quot;: &quot;percentage&quot;,
+                &quot;options&quot;: {
+                    &quot;capture_mechanism&quot;: &quot;integer&quot;
+                },
+                &quot;description&quot;: &quot;Percentage of attendees who are within a certain age range&quot;,
+                &quot;module&quot;: &quot;demographics&quot;,
+                &quot;segments&quot;: [
+                    {
+                        &quot;id&quot;: 160070,
+                        &quot;text&quot;: &quot;&lt; 12&quot;,
+                        &quot;value&quot;: null
+                    },
+                    {
+                        &quot;id&quot;: 160071,
+                        &quot;text&quot;: &quot;12 – 17&quot;,
+                        &quot;value&quot;: null
+                    },
+                    {
+                        &quot;id&quot;: 331155,
+                        &quot;text&quot;: &quot;18 – 20&quot;,
+                        &quot;value&quot;: null
+                    },
+                    {
+                        &quot;id&quot;: 160072,
+                        &quot;text&quot;: &quot;21 – 24&quot;,
+                        &quot;value&quot;: 0
+                    },
+                    {
+                        &quot;id&quot;: 160073,
+                        &quot;text&quot;: &quot;25 – 34&quot;,
+                        &quot;value&quot;: 0
+                    },
+                    {
+                        &quot;id&quot;: 160074,
+                        &quot;text&quot;: &quot;35 – 44&quot;,
+                        &quot;value&quot;: 0
+                    },
+                    {
+                        &quot;id&quot;: 160075,
+                        &quot;text&quot;: &quot;45 – 54&quot;,
+                        &quot;value&quot;: 0
+                    },
+                    {
+                        &quot;id&quot;: 160076,
+                        &quot;text&quot;: &quot;55 – 64&quot;,
+                        &quot;value&quot;: 0
+                    },
+                    {
+                        &quot;id&quot;: 160077,
+                        &quot;text&quot;: &quot;65+&quot;,
+                        &quot;value&quot;: null
+                    }
+                ]
             },
             {
-              &quot;id&quot;:85,
-              &quot;text&quot;:&quot;Male&quot;,
-              &quot;value&quot;: 45
+                &quot;name&quot;: &quot;Ethnicity/Race&quot;,
+                &quot;ordering&quot;: 27,
+                &quot;field_type&quot;: &quot;percentage&quot;,
+                &quot;options&quot;: {
+                    &quot;capture_mechanism&quot;: &quot;integer&quot;
+                },
+                &quot;description&quot;: &quot;Percentage of attendees who are of a certain ethnicity or race&quot;,
+                &quot;module&quot;: &quot;demographics&quot;,
+                &quot;segments&quot;: [
+                    {
+                        &quot;id&quot;: 160078,
+                        &quot;text&quot;: &quot;Asian&quot;,
+                        &quot;value&quot;: 0
+                    },
+                    {
+                        &quot;id&quot;: 160079,
+                        &quot;text&quot;: &quot;Black / African American&quot;,
+                        &quot;value&quot;: 0
+                    },
+                    {
+                        &quot;id&quot;: 160080,
+                        &quot;text&quot;: &quot;Hispanic / Latino&quot;,
+                        &quot;value&quot;: 0
+                    },
+                    {
+                        &quot;id&quot;: 160081,
+                        &quot;text&quot;: &quot;Native American&quot;,
+                        &quot;value&quot;: null
+                    },
+                    {
+                        &quot;id&quot;: 160082,
+                        &quot;text&quot;: &quot;White&quot;,
+                        &quot;value&quot;: 0
+                    }
+                ]
             }
         ],
-        &quot;options&quot;: {
-            &quot;capture_mechanism&quot;: &quot;integer&quot;
-        }
+        &quot;label&quot;: &quot;Demographics&quot;
     },
     {
-        &quot;id&quot;: 80,
-        &quot;value&quot;: &quot;5&quot;,
-        &quot;name&quot;: &quot;Manager Name&quot;,
-        &quot;ordering&quot;: 4,
-        &quot;field_type&quot;: &quot;text&quot;,
-        &quot;options&quot;: {
-            &quot;capture_mechanism&quot;: null
-        }
+        &quot;module&quot;: &quot;consumer_reach&quot;,
+        &quot;fields&quot;: [
+            {
+                &quot;name&quot;: &quot;Impressions&quot;,
+                &quot;ordering&quot;: 7,
+                &quot;field_type&quot;: &quot;number&quot;,
+                &quot;options&quot;: {
+                    &quot;capture_mechanism&quot;: &quot;&quot;,
+                    &quot;predefined_value&quot;: &quot;&quot;
+                },
+                &quot;description&quot;: &quot;Total number of consumers who come in contact with an event&quot;,
+                &quot;module&quot;: &quot;consumer_reach&quot;,
+                &quot;id&quot;: 160065,
+                &quot;value&quot;: 40
+            },
+            {
+                &quot;name&quot;: &quot;Interactions&quot;,
+                &quot;ordering&quot;: 8,
+                &quot;field_type&quot;: &quot;number&quot;,
+                &quot;options&quot;: {
+                    &quot;capture_mechanism&quot;: &quot;&quot;,
+                    &quot;predefined_value&quot;: &quot;&quot;
+                },
+                &quot;description&quot;: &quot;Total number of consumers who directly interact with an event&quot;,
+                &quot;module&quot;: &quot;consumer_reach&quot;,
+                &quot;id&quot;: 160067,
+                &quot;value&quot;: 35
+            },
+            {
+                &quot;name&quot;: &quot;Samples&quot;,
+                &quot;ordering&quot;: 9,
+                &quot;field_type&quot;: &quot;number&quot;,
+                &quot;options&quot;: {
+                    &quot;capture_mechanism&quot;: &quot;&quot;,
+                    &quot;predefined_value&quot;: &quot;&quot;
+                },
+                &quot;description&quot;: &quot;Number of consumers who try a product sample&quot;,
+                &quot;module&quot;: &quot;consumer_reach&quot;,
+                &quot;id&quot;: 160066,
+                &quot;value&quot;: 35
+            }
+        ],
+        &quot;label&quot;: &quot;Consumer Reach&quot;
     },
     {
-        &quot;id&quot;: 80,
-        &quot;value&quot;: &quot;5&quot;,
-        &quot;name&quot;: &quot;Manager Comments&quot;,
-        &quot;ordering&quot;: 4,
-        &quot;field_type&quot;: &quot;textarea&quot;,
-        &quot;options&quot;: {
-            &quot;capture_mechanism&quot;: null
-        }
+        &quot;module&quot;: &quot;custom&quot;,
+        &quot;fields&quot;: [
+            {
+                &quot;name&quot;: &quot;$ Discretionary Funds (New Jersey Only)&quot;,
+                &quot;ordering&quot;: 11,
+                &quot;field_type&quot;: &quot;number&quot;,
+                &quot;options&quot;: {
+                    &quot;capture_mechanism&quot;: &quot;integer&quot;
+                },
+                &quot;description&quot;: null,
+                &quot;module&quot;: &quot;custom&quot;,
+                &quot;id&quot;: 160083,
+                &quot;value&quot;: 0
+            },
+            {
+                &quot;name&quot;: &quot;# Drink Coupons Distributed&quot;,
+                &quot;ordering&quot;: 14,
+                &quot;field_type&quot;: &quot;number&quot;,
+                &quot;options&quot;: {
+                    &quot;capture_mechanism&quot;: &quot;integer&quot;
+                },
+                &quot;description&quot;: null,
+                &quot;module&quot;: &quot;custom&quot;,
+                &quot;id&quot;: 160086,
+                &quot;value&quot;: 0
+            },
+            {
+                &quot;name&quot;: &quot;# T-Shirts Distributed&quot;,
+                &quot;ordering&quot;: 15,
+                &quot;field_type&quot;: &quot;number&quot;,
+                &quot;options&quot;: {
+                    &quot;capture_mechanism&quot;: &quot;integer&quot;
+                },
+                &quot;description&quot;: &quot;&quot;,
+                &quot;module&quot;: &quot;custom&quot;,
+                &quot;id&quot;: 160087,
+                &quot;value&quot;: 5
+            },
+            {
+                &quot;name&quot;: &quot;Name Of Bloody recipe submitted&quot;,
+                &quot;ordering&quot;: 15,
+                &quot;field_type&quot;: &quot;text&quot;,
+                &quot;options&quot;: {
+                    &quot;capture_mechanism&quot;: null
+                },
+                &quot;description&quot;: null,
+                &quot;module&quot;: &quot;custom&quot;,
+                &quot;id&quot;: 160088,
+                &quot;value&quot;: &quot;Surf n&#39; Turf&quot;
+            },
+            {
+                &quot;name&quot;: &quot;Point of Sale Presence (describe, do not list)&quot;,
+                &quot;ordering&quot;: 15,
+                &quot;field_type&quot;: &quot;textarea&quot;,
+                &quot;options&quot;: {
+                    &quot;capture_mechanism&quot;: null
+                },
+                &quot;description&quot;: null,
+                &quot;module&quot;: &quot;custom&quot;,
+                &quot;id&quot;: 160089,
+                &quot;value&quot;: &quot;Banner was placed at the entrance of venue. FA&#39; wore uniforms while sampling along with Absolut table. Table tents with Bloody recipe placed throughout the venue. Patrons were handed bloody samples in Absolut branded sample cups &quot;
+            },
+            {
+                &quot;name&quot;: &quot;ABSOLUT Bloody on Drink Menu&quot;,
+                &quot;ordering&quot;: 16,
+                &quot;field_type&quot;: &quot;count&quot;,
+                &quot;options&quot;: {
+                    &quot;capture_mechanism&quot;: &quot;radio&quot;
+                },
+                &quot;description&quot;: null,
+                &quot;module&quot;: &quot;custom&quot;,
+                &quot;segments&quot;: [
+                    {
+                        &quot;id&quot;: 302,
+                        &quot;text&quot;: &quot;Yes&quot;
+                    },
+                    {
+                        &quot;id&quot;: 303,
+                        &quot;text&quot;: &quot;No&quot;
+                    }
+                ],
+                &quot;id&quot;: 160090,
+                &quot;value&quot;: 302
+            },
+            {
+                &quot;name&quot;: &quot;ABSOLUT Bloody Regular Price&quot;,
+                &quot;ordering&quot;: 17,
+                &quot;field_type&quot;: &quot;number&quot;,
+                &quot;options&quot;: {
+                    &quot;capture_mechanism&quot;: &quot;currency&quot;
+                },
+                &quot;description&quot;: null,
+                &quot;module&quot;: &quot;custom&quot;,
+                &quot;id&quot;: 160091,
+                &quot;value&quot;: &quot;0.0&quot;
+            },
+            {
+                &quot;name&quot;: &quot;ABSOLUT Bloody Featured&quot;,
+                &quot;ordering&quot;: 18,
+                &quot;field_type&quot;: &quot;number&quot;,
+                &quot;options&quot;: {
+                    &quot;capture_mechanism&quot;: &quot;currency&quot;
+                },
+                &quot;description&quot;: null,
+                &quot;module&quot;: &quot;custom&quot;,
+                &quot;id&quot;: 160092,
+                &quot;value&quot;: null
+            },
+            {
+                &quot;name&quot;: &quot;% Consumers Age 21-29&quot;,
+                &quot;ordering&quot;: 19,
+                &quot;field_type&quot;: &quot;number&quot;,
+                &quot;options&quot;: {
+                    &quot;capture_mechanism&quot;: &quot;integer&quot;
+                },
+                &quot;description&quot;: null,
+                &quot;module&quot;: &quot;custom&quot;,
+                &quot;id&quot;: 160093,
+                &quot;value&quot;: 75
+            },
+            {
+                &quot;name&quot;: &quot;% General Market&quot;,
+                &quot;ordering&quot;: 20,
+                &quot;field_type&quot;: &quot;number&quot;,
+                &quot;options&quot;: {
+                    &quot;capture_mechanism&quot;: &quot;integer&quot;
+                },
+                &quot;description&quot;: null,
+                &quot;module&quot;: &quot;custom&quot;,
+                &quot;id&quot;: 160094,
+                &quot;value&quot;: 100
+            },
+            {
+                &quot;name&quot;: &quot;# Trade Interactions&quot;,
+                &quot;ordering&quot;: 21,
+                &quot;field_type&quot;: &quot;number&quot;,
+                &quot;options&quot;: {
+                    &quot;capture_mechanism&quot;: &quot;integer&quot;
+                },
+                &quot;description&quot;: &quot;Number of members of the trade with whom you interacted during execution.&quot;,
+                &quot;module&quot;: &quot;custom&quot;,
+                &quot;id&quot;: 160095,
+                &quot;value&quot;: 10
+            },
+            {
+                &quot;name&quot;: &quot;# Bottles Depleted&quot;,
+                &quot;ordering&quot;: 22,
+                &quot;field_type&quot;: &quot;number&quot;,
+                &quot;options&quot;: {
+                    &quot;capture_mechanism&quot;: &quot;decimal&quot;
+                },
+                &quot;description&quot;: &quot;The number of bottles depleted during execution. This includes bottles we use for sampling in addition to any bottles the bar pours through while we are there.&quot;,
+                &quot;module&quot;: &quot;custom&quot;,
+                &quot;id&quot;: 160096,
+                &quot;value&quot;: &quot;1.5&quot;
+            },
+            {
+                &quot;name&quot;: &quot;# FA Hours&quot;,
+                &quot;ordering&quot;: 23,
+                &quot;field_type&quot;: &quot;number&quot;,
+                &quot;options&quot;: {
+                    &quot;capture_mechanism&quot;: &quot;decimal&quot;
+                },
+                &quot;description&quot;: &quot;Total number of FA hours for which we will be invoiced. Time should include travel and set-up time for all FAs working the event.&quot;,
+                &quot;module&quot;: &quot;custom&quot;,
+                &quot;id&quot;: 160098,
+                &quot;value&quot;: &quot;1.5&quot;
+            },
+            {
+                &quot;name&quot;: &quot; # Table Tents Dist.&quot;,
+                &quot;ordering&quot;: 24,
+                &quot;field_type&quot;: &quot;number&quot;,
+                &quot;options&quot;: {
+                    &quot;capture_mechanism&quot;: &quot;integer&quot;
+                },
+                &quot;description&quot;: &quot;&quot;,
+                &quot;module&quot;: &quot;custom&quot;,
+                &quot;id&quot;: 251164,
+                &quot;value&quot;: 10
+            },
+            {
+                &quot;name&quot;: &quot;# Posters&quot;,
+                &quot;ordering&quot;: 25,
+                &quot;field_type&quot;: &quot;number&quot;,
+                &quot;options&quot;: {
+                    &quot;capture_mechanism&quot;: &quot;integer&quot;
+                },
+                &quot;description&quot;: &quot;Number of posters displayed during execution.&quot;,
+                &quot;module&quot;: &quot;custom&quot;,
+                &quot;id&quot;: 251841,
+                &quot;value&quot;: 1
+            }
+        ],
+        &quot;label&quot;: &quot;Custom&quot;
     }
 ]
 </pre>
 
-    <h2>Supported Formats</h2>
-    json, xml
-
-    <h2>Errors</h2>
-      404
-      Missing
-      <br>
-      401
-      Unauthorized access
-      <br>
-      500
-      Server crashed for some reason
-      <br>
-
-    <h2>Params</h2>
-    <table class='table'>
-      <thead>
-        <tr>
-          <th>Param name</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr style='background-color:rgb(255,255,255);'>
+  <h2>Params</h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
     <td>
       <strong>auth_token </strong><br>
       <small>
@@ -222,9 +547,14 @@ the event</p>
     </td>
     <td>
       
+<p>User&#39;s authorization token returned by login method</p>
+
         <br>
         Value: Must be String
+
+
     </td>
+
   </tr>
 
   
@@ -238,11 +568,14 @@ the event</p>
     </td>
     <td>
       
-<p>One of the allowed company ids returned by the</p>
+<p>One of the allowed company ids returned by the “User companies” API method</p>
 
         <br>
         Value: Must be a number.
+
+
     </td>
+
   </tr>
 
   
@@ -260,13 +593,17 @@ the event</p>
 
         <br>
         Value: Must be a number.
+
+
     </td>
+
   </tr>
 
   
 
-      </tbody>
-    </table>
+    </tbody>
+  </table>
+
 </div>
 
 
@@ -274,8 +611,7 @@ the event</p>
       </div>
     </div>
     <hr>
-    <footer>  
-</footer>
+    <footer></footer>
   </div>
   <script type='text/javascript' src='../../apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
 <script type='text/javascript' src='../../apidoc/javascripts/bundled/bootstrap-collapse.js'></script>

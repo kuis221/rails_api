@@ -19,15 +19,17 @@
 # for storing an inventory item and quantity
 # TODO handle missing item.
 class Metric::Swag < Metric
-  belongs_to :item, :foreign_key => :optional_id
-  delegate :name, :to => :item, :prefix => true, :allow_nil => true
+  belongs_to :item, foreign_key: :optional_id
+  delegate :name, to: :item, prefix: true, allow_nil: true
 
   def form_options
-    super.merge({:hint => (item_name), :item_inventories => item ? item.inventories : nil})
+    super.merge(hint: (item_name), item_inventories: item ? item.inventories : nil)
   end
+
   def field_type_symbol
     'what?'
   end
+
   def validate_result(result)
     result.errors.add(:value, 'must be a number') unless value_is_float?(result.value)
     result.errors.add(:value, 'No decimal place allowed') unless result.value.to_i.to_f == result.value.to_f
@@ -40,15 +42,17 @@ class Metric::Swag < Metric
       result.errors.add(:value, "Insufficient stock in #{market.name}") if cast_value(result.value) > quantity
     end
   end
+
   def approve_result(result)
     event     = result.event_recap.event
     inventory = item.inventories.find_by_market_id(event.market_id)
     if inventory.nil?
-      raise Legacy::OutOfStock, "No inventory in #{market.name}" if result.value > 0
+      fail Legacy::OutOfStock, "No inventory in #{market.name}" if result.value > 0
     else
       inventory.reduce_quantity(result.value, InventoryChangeReason.distributed, result.event_recap)
     end
   end
+
   def cast_value(value)
     value.to_i
   end

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>API documentation</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/bootstrap.min.css'/>
+<link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/prettify.css'/>
+<link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/bootstrap-responsive.min.css'/>
+  <link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/application.css'/>
+  <!-- IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div id='container'>
+        <ul class='breadcrumb'>
+  <li>
+    <a href='../../apidoc.html'>Brandscopic 1.0</a>
+    <span class='divider'>/</span>
+  </li>
+  <li>
+    <a href='../../apidoc/contacts.html'>
+      Contacts
+      
+    </a>
+    <span class='divider'>/</span>
+  </li>
+  <li class='active'>show</li>
+  
+
+</ul>
+
+  <div class='page-header'>
+    <h1>
+      GET /api/v1/contacts/:id
+      <br>
+      <small>Return a contact's details</small>
+    </h1>
+  </div>
+
+<div>
+
+  
+
+  <h2>Supported Formats</h2>
+  json, xml
+
+  <h2>Errors</h2>
+    406
+    The server cannot return data in the requested format
+    <br>
+    404
+    The requested resource was not found
+    <br>
+    500
+    Server crashed for some reason. Possible because of missing required params or wrong parameters
+    <br>
+
+
+  <h2>Examples</h2>
+    <pre class="prettyprint">{
+    &quot;id&quot;: 268,
+    &quot;first_name&quot;: &quot;Trinity&quot;,
+    &quot;last_name&quot;: &quot;Blue&quot;,
+    &quot;full_name&quot;: &quot;Trinity Blue&quot;,
+    &quot;title&quot;: &quot;MBN Supervisor&quot;,
+    &quot;email&quot;: &quot;trinity@matrix.com&quot;,
+    &quot;phone_number&quot;: &quot;+1 233 245 4332&quot;,
+    &quot;stree1&quot;: &quot;1st Young st.,&quot;,
+    &quot;stree2&quot;: &quot;2nd floor, #34&quot;,
+    &quot;street_address&quot;: &quot;1st Young st., 2nd floor, #34&quot;&quot;,
+    &quot;city&quot;: &quot;Toronto&quot;,
+    &quot;state&quot;: &quot;ON&quot;,
+    &quot;country&quot;: &quot;CA&quot;,
+    &quot;country_name&quot;: &quot;Canada&quot;,
+    &quot;zip_code&quot;: &quot;12345&quot;
+}
+</pre>
+
+  <h2>Params</h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>User&#39;s authorization token returned by login method</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>One of the allowed company ids returned by the “User companies” API method</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Contact ID</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+</div>
+
+
+        
+      </div>
+    </div>
+    <hr>
+    <footer></footer>
+  </div>
+  <script type='text/javascript' src='../../apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/bundled/bootstrap-collapse.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/bundled/prettify.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/apipie.js'></script>
+</body>
+</html>

@@ -11,7 +11,7 @@
 
       .span12
         .span2.title Users
-        .span2 
+        .span2
         .span2 = permission_checkbox(f, :create, CompanyUser)
         .span2 = permission_checkbox(f, :update, CompanyUser)
         .span2 = permission_checkbox(f, :deactivate, CompanyUser)
@@ -26,7 +26,7 @@
 
       .span12.separate
         .span2.title Teams
-        .span2 
+        .span2
         .span2 = permission_checkbox(f, :create, Team)
         .span2 = permission_checkbox(f, :update, Team)
         .span2 = permission_checkbox(f, :deactivate, Team)
@@ -41,7 +41,7 @@
 
       .span12.separate
         .span2.title Roles
-        .span2 
+        .span2
         .span2 = permission_checkbox(f, :create, Role)
         .span2 = permission_checkbox(f, :update, Role)
         .span2 = permission_checkbox(f, :deactivate, Role)
@@ -56,7 +56,7 @@
 
       .span12.separate
         .span2.title Brand
-        .span2 
+        .span2
         .span2 = permission_checkbox(f, :create, Brand)
         .span2 = permission_checkbox(f, :update, Brand)
         .span2 = permission_checkbox(f, :deactivate, Brand)
@@ -71,7 +71,7 @@
 
       .span12.separate
         .span2.title Brand Portfolios
-        .span2 
+        .span2
         .span2 = permission_checkbox(f, :create, BrandPortfolio)
         .span2 = permission_checkbox(f, :update, BrandPortfolio)
         .span2 = permission_checkbox(f, :deactivate, BrandPortfolio)
@@ -86,7 +86,7 @@
 
       .span12.separate
         .span2.title Areas
-        .span2 
+        .span2
         .span2 = permission_checkbox(f, :create, Area)
         .span2 = permission_checkbox(f, :update, Area)
         .span2 = permission_checkbox(f, :deactivate, Area)
@@ -101,7 +101,7 @@
 
       .span12.separate
         .span2.title Date Ranges
-        .span2 
+        .span2
         .span2 = permission_checkbox(f, :create, DateRange)
         .span2 = permission_checkbox(f, :update, DateRange)
         .span2 = permission_checkbox(f, :deactivate, DateRange)
@@ -116,7 +116,7 @@
 
       .span12.separate
         .span2.title Activity Types
-        .span2 
+        .span2
         .span2 = permission_checkbox(f, :create, ActivityType)
         .span2 = permission_checkbox(f, :update, ActivityType)
         .span2 = permission_checkbox(f, :deactivate, ActivityType)
@@ -130,4 +130,4 @@
         .span2 =  permission_checkbox(f, :show, ActivityType)
 
   = hidden_field_tag :partial, :admin_permissions
-  = f.button :submit, 'Save', class: 'btn btn-primary', disable_with: 'Please wait...'
+  = f.button :submit, 'Save', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}

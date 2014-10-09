@@ -20,36 +20,54 @@ class Activity < ActiveRecord::Base
   belongs_to :company_user
   belongs_to :campaign
 
-  has_many :results, class_name: 'ActivityResult', inverse_of: :activity
+  has_many :results, class_name: 'FormFieldResult', inverse_of: :resultable, as: :resultable
 
   validates :activity_type_id, numericality: true, presence: true,
-    :inclusion => { :in => proc { |activity| activity.campaign.present? ? activity.campaign.activity_type_ids : (activity.company.present? ? activity.company.activity_type_ids : []) } }
+    inclusion: { in: :valid_activity_type_ids }
 
   validates :campaign_id, presence: true, numericality: true,
-    if: -> (activitable) { activitable_type == 'Event' }
+                          if: -> (_activitable) { activitable_type == 'Event' }
   validates :activitable_id, presence: true, numericality: true
   validates :activitable_type, presence: true
   validates :company_user_id, presence: true, numericality: true
   validates :activity_date, presence: true
-  validates_datetime :activity_date, allow_nil: false, allow_blank: false
 
   scope :active, -> { where(active: true) }
 
   scope :with_results_for, ->(fields) {
     select('DISTINCT activities.*').
     joins(:results).
-    where(activity_results: {form_field_id: fields}).
-    where('activity_results.value is not NULL AND activity_results.value !=\'\'') }
+    where(form_field_results: {form_field_id: fields}).
+    where('form_field_results.value is not NULL AND form_field_results.value !=\'\'') }
+
+  scope :accessible_by_user, -> { self }
 
   after_initialize :set_default_values
 
-  delegate :company_id, :company, to: :activitable, allow_nil: true
+  delegate :company_id, :company, :place, to: :activitable, allow_nil: true
+  delegate :td_linx_code, :name, :city, :state, :zipcode, :street_number, :route,
+           to: :place, allow_nil: true, prefix: true
+
+  delegate :name, to: :campaign, allow_nil: true, prefix: true
+  delegate :full_name, to: :company_user, allow_nil: true, prefix: true
+  delegate :name, to: :activity_type, allow_nil: true, prefix: true
 
   accepts_nested_attributes_for :results, allow_destroy: true
 
   before_validation :delegate_campaign_id_from_event
 
   after_commit :reindex_trending
+
+  searchable do
+    integer :company_id
+    integer :campaign_id
+    integer :activity_type_id
+    integer :company_user_id
+    string :activitable do
+      "#{activitable_type}#{activitable_id}"
+    end
+    date :activity_date
+  end
 
   def activate!
     update_attribute :active, true
@@ -62,15 +80,14 @@ class Activity < ActiveRecord::Base
   def all_values_for_trending(term=nil)
     scope = results.joins(:form_field).
       where(form_fields: {type: ActivityType::TRENDING_FIELDS_TYPES}).
-      where('activity_results.value is not NULL AND activity_results.value !=\'\'')
+      where('form_field_results.value is not NULL AND form_field_results.value !=\'\'')
     scope = scope.where('lower(value) like ?', "%#{term}%") if term.present?
-    scope.pluck('activity_results.value')
+    scope.pluck('form_field_results.value')
   end
 
   def results_for_type
     activity_type.form_fields.map do |field|
-      result = results.detect{|r| r.form_field_id == field.id} ||
-               results.build({form_field_id: field.id}, without_protection: true)
+      result = results.find { |r| r.form_field_id == field.id } || results.build(form_field_id: field.id)
       result.form_field = field
       result
     end
@@ -78,8 +95,7 @@ class Activity < ActiveRecord::Base
 
   def results_for(fields)
     fields.map do |field|
-      result = results.select{|r| r.form_field_id == field.id}.first ||
-               results.build({form_field_id: field.id}, without_protection: true)
+      result = results.select { |r| r.form_field_id == field.id }.first || results.build(form_field_id: field.id)
       result.form_field = field
       result
     end
@@ -92,28 +108,59 @@ class Activity < ActiveRecord::Base
       preload(:attached_asset).map(&:attached_asset)
   end
 
+  def valid_activity_type_ids
+    if campaign.present?
+      campaign.activity_type_ids
+    elsif company.present?
+      company.activity_type_ids
+    else
+      []
+    end
+  end
+
+  class << self
+    def do_search(params)
+      solr_search(include: [:activity_type, company_user: :user]) do
+        with :company_id, params[:company_id]
+        with :campaign_id, params[:campaign] if params.key?(:campaign) && params[:campaign].present?
+        with :activity_type_id, params[:activity_type] if params.key?(:activity_type) && params[:activity_type].present?
+
+        if params[:start_date].present? && params[:end_date].present?
+          d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day
+          d2 = Timeliness.parse(params[:end_date], zone: :current).end_of_day
+          with :activity_date, d1..d2
+        elsif params[:start_date].present?
+          d = Timeliness.parse(params[:start_date], zone: :current)
+          with :activity_date, d
+        end
+
+        order_by(params[:sorting] || :activity_date, params[:sorting_dir] || :asc)
+        paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
+      end
+    end
+  end
+
   private
-    # Sets the default date (today) and user for new records
-    def set_default_values
-      if new_record?
-        self.activity_date ||= Date.today
-        self.company_user_id ||= User.current.current_company_user.id if User.current.present?
-        self.campaign = activitable.campaign if activitable.is_a?(Event)
-      end
-    end
 
-    def delegate_campaign_id_from_event
-      if activitable.is_a?(Event)
-        self.campaign = activitable.campaign
-        self.campaign_id = activitable.campaign_id
-      end
-    end
+  # Sets the default date (today) and user for new records
+  def set_default_values
+    return unless new_record?
+    self.activity_date ||= Date.today
+    self.company_user_id ||= User.current.current_company_user.id if User.current.present?
+    self.campaign = activitable.campaign if activitable.is_a?(Event)
+  end
 
-    def reindex_trending
-      if all_values_for_trending.count > 0
-        Sunspot.index TrendObject.new(self)
-      else
-        Sunspot.remove TrendObject.new(self)
-      end
+  def delegate_campaign_id_from_event
+    return unless activitable.is_a?(Event)
+    self.campaign = activitable.campaign
+    self.campaign_id = activitable.campaign_id
+  end
+
+  def reindex_trending
+    if all_values_for_trending.count > 0
+      Sunspot.index TrendObject.new(self)
+    else
+      Sunspot.remove TrendObject.new(self)
     end
+  end
 end

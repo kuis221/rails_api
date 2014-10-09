@@ -1,5 +1,7 @@
 - content_for :footer
-  = javascript_include_tag "jquery.campaignFormBuilder"
+  = javascript_include_tag "jquery.formBuilder"
+- content_for :head
+  = stylesheet_link_tag "form_builder"
 
 .row-fluid.with-details-close-bar
   = resource_details_bar("You are viewing campaign details. Click to close.")
@@ -13,30 +15,37 @@
       - if resource.has_date_range? || resource.first_event_at || resource.last_event_at
         .calendar-data
           - if resource.has_date_range?
+            i.icon-calendar
             = format_date_range(resource.start_date, resource.end_date, date_separator: ' - ')
           - else
+            i.icon-calendar
             = format_date_range(resource.first_event_at, resource.last_event_at, date_separator: ' - ')
 
       - if resource.description
         .description-data
-          = resource.description
+          i.icon-wired-description
+          span
+            = resource.description
 
     .links-data
-      = link_to '', edit_campaign_path(resource), remote: true, class: 'edit', title: 'Edit' if can?(:edit, resource)
+      = button_to_edit resource if can?(:edit, resource)
       = active_inactive_buttons(resource) if can?(:deactivate, resource)
 
     // This info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
       h3= resource.name
-      = link_to '', edit_campaign_path(resource), title: 'Edit', remote: true, class: 'edit' if can?(:edit, resource)
+      = button_to_edit resource if can?(:edit, resource)
       = active_inactive_buttons(resource) if can?(:deactivate, resource)
       br>/
       = format_date_range(resource.first_event_at, resource.last_event_at, date_separator: ' - ')
 
   ul#campaign-tabs.nav.nav-tabs
+    - if can?(:view_event_form, resource)
+      li
+        a href="#post_event_tab" Post Event form
     - if can?(:view_kpis, resource)
       li
-        a href="#kpis_tab" KPIs
+        a href="#kpis_tab" data-content="#{tab_campaign_path(resource, :kpis)}" KPIs
     - if can?(:view_places, resource)
       li
         a href="#campaign-places-list" data-content="#{tab_campaign_path(resource, :places)}" Places
@@ -53,33 +62,28 @@
       li
         a href="#documents_tab" data-content="#{tab_campaign_path(resource, :documents)}" Documents
 
-  .campaigns_box
-    .tab-content
-      - if can?(:view_kpis, resource)
-        #kpis_tab.tab-pane.active
-          = render 'kpis'
-
-      - if can?(:view_places, resource)
-        #campaign-places-list.tab-pane
-
-      - if can?(:view_staff, resource)
-        #staff_tab.tab-pane
-
-      - if can?(:view_date_ranges, resource)
-        #date_ranges_tab.tab-pane
-
-      - if can?(:view_day_parts, resource)
-        #day_parts_tab.tab-pane
-
-      - if can?(:view_documents, resource)
-        #documents_tab.tab-pane
-
-  - if can?(:view_event_form, resource)
-    .details_box.post-event-form
-      h3 POST EVENT FORM
-
-      #post-event-form-content
+  .tab-content
+    - if can?(:view_event_form, resource)
+      #post_event_tab.tab-pane.active
         = render 'post_event_form'
+
+    - if can?(:view_kpis, resource)
+      #kpis_tab.tab-pane.campaigns_box
+
+    - if can?(:view_places, resource)
+      #campaign-places-list.tab-pane.campaigns_box
+
+    - if can?(:view_staff, resource)
+      #staff_tab.tab-pane.campaigns_box
+
+    - if can?(:view_date_ranges, resource)
+      #date_ranges_tab.tab-pane.campaigns_box
+
+    - if can?(:view_day_parts, resource)
+      #day_parts_tab.tab-pane.campaigns_box
+
+    - if can?(:view_documents, resource)
+      #documents_tab.tab-pane.campaigns_box
 
 = render partial: 'help_tutorial'
 
@@ -92,7 +96,7 @@ javascript:
   $('#campaign-tabs a[data-content]').on('show', function(e){
     $target = $(e.target);
     $content = $('.tab-content ' + $target.attr('href'))
-    $content.html('<img src="/assets/loading.gif" />')
+    $content.html('<img src="#{asset_path('loading.gif')}" />')
     $content.load($target.data('content'))
   });
 
@@ -104,11 +108,11 @@ javascript:
   });
 
   $(document).on('kpis:change', function(){
-    window.location.reload(true);
+    $('.tab-content #kpis_tab').load('#{tab_campaign_path(resource, :kpis)}')
   });
 
   $(document).on('activity_types:change', function(){
-    window.location.reload(true);
+    $('.tab-content #kpis_tab').load('#{tab_campaign_path(resource, :kpis)}')
   });
 
   $(document).on('members:change teams:change', function(){

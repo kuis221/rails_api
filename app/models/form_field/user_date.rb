@@ -12,11 +12,12 @@
 #  required       :boolean
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
+#  kpi_id         :integer
 #
 
 class FormField::UserDate < FormField
-  def field_options(result)
-    {as: :text}
+  def field_options(_result)
+    { as: :text }
   end
 
   def format_html(result)

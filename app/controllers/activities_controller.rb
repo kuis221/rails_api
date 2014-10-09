@@ -1,3 +1,6 @@
+# Activities Controller class
+#
+# This class handle the requests for managing the Activities
 class ActivitiesController < FilteredController
   belongs_to :venue, :event, polymorphic: true, optional: true
   respond_to :js, only: [:new, :create, :edit, :update]
@@ -14,35 +17,39 @@ class ActivitiesController < FilteredController
   end
 
   protected
-    def assignable_users
-      current_company.company_users.active.for_dropdown
-    end
 
-    def activity_types
-      if parent.is_a?(Event)
-        parent.campaign.activity_types.order('activity_types.name ASC')
-      else
-        current_company.activity_types.active.order(:name)
-      end
-    end
+  def assignable_users
+    current_company.company_users.active.for_dropdown
+  end
 
-    # Because there is no collection path, try to return a path
-    # based on the current activity or the events_path
-    def collection_path
-      if params[:id].present?
-        url_for(resource.activitable)
-      else
-        events_path
-      end
+  def activity_types
+    if parent.is_a?(Event)
+      parent.campaign.activity_types.order('activity_types.name ASC')
+    else
+      current_company.activity_types.active.order(:name)
     end
+  end
 
-    def permitted_params
-      params.permit(activity: [:activity_type_id, {results_attributes: [:id, :form_field_id, :value, {value: []}, :_destroy]}, :campaign_id, :company_user_id, :activity_date])[:activity].tap do |whielisted|
-        unless whielisted.nil? || whielisted[:results_attributes].nil?
-          whielisted[:results_attributes].each do |k, value|
-            value[:value] = params[:activity][:results_attributes][k][:value]
-          end
+  # Because there is no collection path, try to return a path
+  # based on the current activity or the events_path
+  def collection_path
+    if params[:id].present?
+      url_for(resource.activitable)
+    else
+      events_path
+    end
+  end
+
+  def permitted_params
+    params.permit(activity: [
+      :activity_type_id, {
+        results_attributes: [:id, :form_field_id, :value, { value: [] }, :_destroy] },
+      :campaign_id, :company_user_id, :activity_date])[:activity].tap do |whielisted|
+      unless whielisted.nil? || whielisted[:results_attributes].nil?
+        whielisted[:results_attributes].each do |k, value|
+          value[:value] = params[:activity][:results_attributes][k][:value]
         end
       end
     end
+  end
 end

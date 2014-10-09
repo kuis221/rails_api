@@ -16,6 +16,5 @@
 
 # MetricTargets are to be referred to as "Goals" externally.
 class MetricTarget < Legacy::Record
-  belongs_to    :metric
-
+  belongs_to :metric
 end

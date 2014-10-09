@@ -20,9 +20,9 @@
 FactoryGirl.define do
   factory :notification do
     company_user nil
-    message "MyString"
-    level "MyString"
-    path "MyText"
-    icon "MyString"
+    message 'MyString'
+    level 'MyString'
+    path 'MyText'
+    icon 'MyString'
   end
 end

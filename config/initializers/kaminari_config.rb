@@ -1,5 +1,5 @@
 if ENV['WEB']
-  Kaminari.configure do |config|
+  Kaminari.configure do |_config|
     # config.default_per_page = 25
     # config.max_per_page = nil
     # config.window = 4

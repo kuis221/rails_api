@@ -16,8 +16,6 @@ class SurveysAnswer < ActiveRecord::Base
   belongs_to :survey
   belongs_to :kpi
 
-  attr_accessible :answer, :brand_id, :question_id, :kpi_id
-
   validate :valid_answer?
 
   validates :answer, presence: true, unless: :question2?
@@ -27,12 +25,14 @@ class SurveysAnswer < ActiveRecord::Base
   end
 
   protected
-    def question2?
-      question_id.present? && question_id.to_i == 2
+
+  def question2?
+    question_id.present? && question_id.to_i == 2
+  end
+
+  def valid_answer?
+    if brand_id.present?
+      errors.add(:brand_id, 'is not valid') unless survey.brands.map(&:id).include?(brand_id)
     end
-    def valid_answer?
-      if brand_id.present?
-        errors.add(:brand_id, 'is not valid') unless survey.brands.map(&:id).include?(brand_id)
-      end
-    end
+  end
 end

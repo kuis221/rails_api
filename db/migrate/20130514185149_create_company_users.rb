@@ -8,7 +8,7 @@ class CreateCompanyUsers < ActiveRecord::Migration
       t.timestamps
     end
     User.all.each do |u|
-      u.company_users << CompanyUser.new({company_id: u.attributes['company_id'], role_id: u.attributes['role_id']}, without_protection: true)
+      u.company_users << CompanyUser.new(company_id: u.attributes['company_id'], role_id: u.attributes['role_id'])
     end
 
     add_index :company_users, :company_id

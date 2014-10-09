@@ -15,6 +15,7 @@
 #  updated_at        :datetime         not null
 #  controller        :string(255)
 #  progress          :integer          default(0)
+#  url_options       :text
 #
 
 class ListExport < ActiveRecord::Base
@@ -22,87 +23,159 @@ class ListExport < ActiveRecord::Base
 
   has_attached_file :file, PAPERCLIP_SETTINGS
 
+  do_not_validate_attachment_file_type :file
+
   serialize :params
+  serialize :url_options
 
   include AASM
 
+  View = Struct.new(:layout, :action, :locals, :format, :path)
+
   aasm do
-    state :new, :initial => true
+    state :new, initial: true
     state :queued, after_enter: :queue_process
     state :processing
     state :completed
     state :failed
 
     event :queue do
-      transitions :from => [:new, :complete, :failed], :to => :queued
+      transitions from: [:new, :complete, :failed], to: :queued
     end
 
     event :process do
-      transitions :from => [:queued, :new, :failed], :to => :processing
+      transitions from: [:queued, :new, :failed], to: :processing
     end
 
     event :complete do
-      transitions :from => :processing, :to => :completed
+      transitions from: :processing, to: :completed
     end
 
     event :fail do
-      transitions :from => :processing, :to => :failed
+      transitions from: :processing, to: :failed
     end
   end
 
   def queue_process
-    Resque.enqueue(ListExportWorker, self.id)
+    Resque.enqueue(ListExportWorker, id)
   end
 
-  def download_url(style_name=:original)
-    file.s3_bucket.objects[file.s3_object(style_name).key].url_for(:read,
-      :secure => true,
-      :expires => 300, # 5 minutes
-      :response_content_disposition => "attachment; filename=#{file_file_name}").to_s unless file_file_name.nil? || file.nil? || file.s3_object(style_name).nil?
+  def download_url(style_name = :original)
+    return if file_file_name.nil? || file.nil? || file.s3_object(style_name).nil?
+
+    file.s3_bucket.objects[file.s3_object(style_name).key].url_for(
+      :read,
+      secure: true,
+      expires: 300, # 5 minutes
+      response_content_disposition: "attachment; filename=#{file_file_name}").to_s
   end
 
   def export_list
-    self.process!
-    controller = self.controller.constantize.new
+    self.queue! if self.failed?
+    self.process! if self.queued? || self.new?
+    build_file
 
-    User.current = company_user.user
-    Company.current = company_user.user.current_company = company_user.company
+    # Save file or raise error if failed
+    Kernel.fail(errors.full_messages.join(", ")) unless save_with_retry
+    self.complete! unless self.completed?
+  end
 
-    controller.instance_variable_set(:@_params, params)
-    controller.instance_variable_set(:@_current_user, company_user.user)
-    controller.instance_variable_set(:@current_user, company_user.user)
-    controller.instance_variable_set(:@current_company, company_user.company)
-    controller.instance_variable_set(:@current_company_user, company_user)
+  private
 
-    if company_user.user.time_zone.present?
-      Time.zone = company_user.user.time_zone
+  def build_file
+    ctrl = load_controller
+    zone = company_user.user.time_zone.presence || Rails.application.config.time_zone
+    html = Time.use_zone(zone) { ctrl.send(:export_list, self) }
+
+    build_file_from_html html, "#{ctrl.send(:export_file_name)}-#{id}.#{export_format}"
+  ensure
+    unload_controller
+  end
+
+  def export
+    Time.use_zone(zone)
+  end
+
+  def save_html_export(html)
+    File.open("tmp/export-#{controller.underscore.gsub('/', '-')}.html", 'w+') do | tempfile |
+      tempfile.write html
     end
+  end
 
-    name = controller.send(:export_file_name)
-    buffer = controller.send(:export_list, self)
-    tmp_filename = "#{Rails.root}/tmp/#{name}-#{self.id}.#{export_format}"
-    File.open(tmp_filename, 'w'){|f| f.write(buffer) }
-    buffer = nil
-    self.file = File.open(tmp_filename)
-
-    # Save export with retry to handle errors on S3 comunications
-    tries = 3
-    begin
-      self.save
-    rescue Exception => e
-      tries -= 1
-      if tries > 0
-        sleep(3)
-        retry
-      else
-        false
-      end
+  def build_file_from_html(html, name)
+    if export_format == 'pdf'
+      build_pdf_file(html)
+    else
+      build_xlsx_file(html)
     end
+    self.file_file_name = name
+  end
 
-    # Delete tempfile
-    File.delete(tmp_filename)
+  def build_xlsx_file(html)
+    self.file = StringIO.new(html)
+    self.file_content_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+  end
 
-    # Mark export as completed
-    self.complete!
+  # Builds a PDF file from an
+  def build_pdf_file(html)
+    controller_name = controller.underscore.gsub('/', '-')
+    tempfile = Tempfile.new(["export-#{controller_name}", '.pdf'], Rails.root.join('tmp'))
+    tempfile.binmode
+    tempfile.write pdf_from_html(html)
+    tempfile.close
+
+    save_html_export html if Rails.env.development?
+    self.file = File.open(tempfile.path)
+    self.file_content_type = 'application/pdf'
+  end
+
+  def load_controller
+    @controller ||= controller.constantize.new.tap do |ctrl|
+      User.current = company_user.user
+      Company.current = company_user.user.current_company = company_user.company
+      ensure_user_has_authentication_token
+
+      ctrl.instance_variable_set(:@_params, params)
+      ctrl.instance_variable_set(:@_current_user, company_user.user)
+      ctrl.instance_variable_set(:@current_user, company_user.user)
+      ctrl.instance_variable_set(:@current_company, company_user.company)
+      ctrl.instance_variable_set(:@current_company_user, company_user)
+      ctrl.instance_variable_set(:@_url_options, url_options.merge(only_path: false, auth_token: User.current.authentication_token))
+    end
+  end
+
+  def unload_controller
+    @controller = nil
+    User.current = nil
+    Company.current = nil
+  end
+
+  def pdf_from_html(html)
+    WickedPdf.new.pdf_from_string(
+      html,
+      javascript_delay: 1000,
+#      header: { content: load_controller.render_to_string(template: 'shared/pdf_header.pdf.slim') },
+      extra: '--window-status completed --debug-javascript')
+  end
+
+  # Checks that the user have an authentication_token
+  # so ajax requests work as expected
+  def ensure_user_has_authentication_token
+    return unless User.current.authentication_token.nil?
+
+    User.current.ensure_authentication_token
+    User.current.save
+  end
+
+  # Retry save if it fails for network issues
+  def save_with_retry
+    tries ||= 3
+    save
+
+  rescue Errno::ECONNRESET, Net::ReadTimeout, Net::OpenTimeout => e
+    raise e if tries == 0
+    tries -= 1
+    sleep(3)
+    retry
   end
 end

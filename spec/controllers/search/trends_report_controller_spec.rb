@@ -1,4 +1,4 @@
-require 'spec_helper'
+require 'rails_helper'
 
 describe Analysis::TrendsReportController, search: true do
   let(:user) { sign_in_as_user }
@@ -306,8 +306,7 @@ describe Analysis::TrendsReportController, search: true do
 
       items = JSON.parse(response.body)
 
-      expect(items.count).to eql 4
-      expect(items.map{|i| i[1]}).to eql [1, 0, 0, 2]
+      expect(items.map { |i| i[1] }).to eql [1, 0, 0, 2]
     end
   end
 

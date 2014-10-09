@@ -22,30 +22,29 @@
 #
 
 class Legacy::Event < Legacy::Record
-  self.table_name = "legacy_events"
-  belongs_to    :program
-  belongs_to    :account
-  has_one       :event_recap
-  has_many      :receipts
-  has_many      :photos, :as => :photographable
+  self.table_name = 'legacy_events'
+  belongs_to :program
+  belongs_to :account
+  has_one :event_recap
+  has_many :receipts
+  has_many :photos, as: :photographable
 
   has_many :data_migrations, as: :remote
 
   delegate :name, :id, to: :account, prefix: true
 
-  def synchronize(company, attributes={})
-    attributes.merge!({company_id: company.id})
+  def synchronize(company, attributes = {})
+    attributes.merge!(company_id: company.id)
     migration = data_migrations.find_or_initialize_by_company_id(company.id, local: ::Event.new)
 
     # Migrate the account to a Place
     account_migration = account.synchronize(company)
     migration.local.place = account_migration.local
-    migration.local.place.is_custom_place = true if account_migration.local.present? and account_migration.local.place_id.nil?
+    migration.local.place.is_custom_place = true if account_migration.local.present? && account_migration.local.place_id.nil?
 
     # Set Event attributes, the start/end dates depends on the places, so this have to be done after
     # the account migration
     migration.local.assign_attributes migration_attributes(migration.local.place).merge(attributes), without_protection: true
-
 
     if migration.save(validate: false)
       event_recap_attributes(migration.local)
@@ -56,21 +55,21 @@ class Legacy::Event < Legacy::Record
         sleep(3)
         retry unless (tries -= 1).zero?
       end
-      Resque.enqueue(PhotoMigrationWorker, self.id, migration.local.id) if self.photos.count > 0
+      Resque.enqueue(PhotoMigrationWorker, id, migration.local.id) if photos.count > 0
     end
 
     migration
   end
 
   def migration_attributes(place)
-    localized_start_at = self.start_at
-    localized_end_at = self.end_at
+    localized_start_at = start_at
+    localized_end_at = end_at
     if place.latitude
       begin
         tz = NearestTimeZone.to(place.latitude, place.longitude)
-        localized_start_at = Timeliness.parse(self.start_at.utc.strftime('%Y-%m-%d %H:%M:%S'), zone: tz)
-        localized_end_at = Timeliness.parse(self.end_at.utc.strftime('%Y-%m-%d %H:%M:%S'), zone: tz)
-      rescue Exception => e
+        localized_start_at = Timeliness.parse(start_at.utc.strftime('%Y-%m-%d %H:%M:%S'), zone: tz)
+        localized_end_at = Timeliness.parse(end_at.utc.strftime('%Y-%m-%d %H:%M:%S'), zone: tz)
+      rescue => e
 
       end
     end
@@ -85,7 +84,7 @@ class Legacy::Event < Legacy::Record
   end
 
   def photos
-    Legacy::Photo.where(photographable_type: 'Event', photographable_id: self.id)
+    Legacy::Photo.where(photographable_type: 'Event', photographable_id: id)
   end
 
   def event_recap_attributes(event)
@@ -118,16 +117,15 @@ class Legacy::Event < Legacy::Record
         result = event_recap.result_for_metric(Metric.for_program(program).find_by_name(metric_name)) if result.nil? || result.new_record?
         if result.present?
           unless result.value.nil? || result.value.strip == ''
-            (first_name,last_name) = result.value.split(' ', 2)
+            (first_name, last_name) = result.value.split(' ', 2)
             contact = Contact.find_or_initialize_by_company_id_and_first_name_and_last_name(event.company_id, first_name, last_name)
-            contact.title = metric_name.gsub(/\s*[0-9]+$/,'')
+            contact.title = metric_name.gsub(/\s*[0-9]+$/, '')
             contact.save(validate: false) if contact.new_record?
             event.contact_events.build(contactable: contact)
           end
         end
       end
     end
-
 
     # Event Team
     if event.users.empty?
@@ -137,7 +135,7 @@ class Legacy::Event < Legacy::Record
         result = event_recap.result_for_metric(Metric.for_program(program).find_by_name(metric_name)) if result.nil? || result.new_record?
         if result.present?
           unless result.value.nil? || result.value.strip == ''
-            (first_name,last_name) = result.value.split(' ', 2)
+            (first_name, last_name) = result.value.split(' ', 2)
             if first_name && last_name
               user = CompanyUser.scoped_by_company_id(event.company_id).joins(:user).where('lower(users.first_name)=? and lower(users.last_name)=?', first_name.downcase.strip, last_name.downcase.strip).first
               event.memberships.build(company_user: user) if user.present?
@@ -173,8 +171,8 @@ class Legacy::Event < Legacy::Record
     if active_kpis.include?(Kpi.gender)
       kpi_results = event.result_for_kpi(Kpi.gender)
       values = event_recap.result_for_metric(Metric.system.find_by_name('Gender')).try(:value)
-      kpi_results.detect{|r| r.kpis_segment.text == 'Male' }.try('value=', values[1].to_i.to_s)
-      kpi_results.detect{|r| r.kpis_segment.text == 'Female' }.try('value=', values[2].to_i.to_s)
+      kpi_results.find { |r| r.kpis_segment.text == 'Male' }.try('value=', values[1].to_i.to_s)
+      kpi_results.find { |r| r.kpis_segment.text == 'Female' }.try('value=', values[2].to_i.to_s)
     end
 
     # Age
@@ -182,11 +180,11 @@ class Legacy::Event < Legacy::Record
     if active_kpis.include?(Kpi.age)
       kpi_results = event.result_for_kpi(Kpi.age)
       values = event_recap.result_for_metric(Metric.system.find_by_name('Age')).try(:value)
-      kpi_results.detect{|r| r.kpis_segment.text == '18 – 24' }.try('value=', values[3].to_i.to_s)
-      kpi_results.detect{|r| r.kpis_segment.text == '25 – 34' }.try('value=', values[4].to_i.to_s)
-      kpi_results.detect{|r| r.kpis_segment.text == '35 – 44' }.try('value=', values[5].to_i.to_s)
-      kpi_results.detect{|r| r.kpis_segment.text == '45 – 54' }.try('value=', values[6].to_i.to_s)
-      kpi_results.detect{|r| r.kpis_segment.text == '55 – 64' }.try('value=', values[7].to_i.to_s)
+      kpi_results.find { |r| r.kpis_segment.text == '18 – 24' }.try('value=', values[3].to_i.to_s)
+      kpi_results.find { |r| r.kpis_segment.text == '25 – 34' }.try('value=', values[4].to_i.to_s)
+      kpi_results.find { |r| r.kpis_segment.text == '35 – 44' }.try('value=', values[5].to_i.to_s)
+      kpi_results.find { |r| r.kpis_segment.text == '45 – 54' }.try('value=', values[6].to_i.to_s)
+      kpi_results.find { |r| r.kpis_segment.text == '55 – 64' }.try('value=', values[7].to_i.to_s)
     end
 
     # Ethnicity
@@ -194,35 +192,35 @@ class Legacy::Event < Legacy::Record
     if active_kpis.include?(Kpi.ethnicity)
       kpi_results = event.result_for_kpi(Kpi.ethnicity)
       values = event_recap.result_for_metric(Metric.system.find_by_name('Demographic')).try(:value)
-      kpi_results.detect{|r| r.kpis_segment.text == 'Asian'                    }.try('value=', values[10].to_i.to_s)
-      kpi_results.detect{|r| r.kpis_segment.text == 'Black / African American' }.try('value=', values[9].to_i.to_s)
-      kpi_results.detect{|r| r.kpis_segment.text == 'Hispanic / Latino'        }.try('value=', values[11].to_i.to_s)
-      kpi_results.detect{|r| r.kpis_segment.text == 'White'                    }.try('value=', values[8].to_i.to_s)
+      kpi_results.find { |r| r.kpis_segment.text == 'Asian'                    }.try('value=', values[10].to_i.to_s)
+      kpi_results.find { |r| r.kpis_segment.text == 'Black / African American' }.try('value=', values[9].to_i.to_s)
+      kpi_results.find { |r| r.kpis_segment.text == 'Hispanic / Latino'        }.try('value=', values[11].to_i.to_s)
+      kpi_results.find { |r| r.kpis_segment.text == 'White'                    }.try('value=', values[8].to_i.to_s)
     end
 
     # Custom KPIs
     program.form_template.form_fields.custom.each do |field|
       migration = Legacy::DataMigration.for_metric(field.metric).first
-      if migration.present? and migration.local.present?
+      if migration.present? && migration.local.present?
         result = event.result_for_kpi(migration.local) if migration.local.is_a?(Kpi)
         result = event.results_for([migration.local]).first if migration.local.is_a?(CampaignFormField)
         if migration.local.is_segmented?
           values = event_recap.result_for_metric(field.metric).try(:value)
           values.each do |option_id, value|
-            value = value.to_i if !value.nil? and migration.local.capture_mechanism == 'integer'
+            value = value.to_i if !value.nil? && migration.local.capture_mechanism == 'integer'
             metric_option = field.metric.metric_options.find(option_id)
-            result.detect{|r| r.kpis_segment.text == metric_option.name }.try('value=',  value.to_s) if metric_option.present?
+            result.find { |r| r.kpis_segment.text == metric_option.name }.try('value=',  value.to_s) if metric_option.present?
           end
         else
           metric_result = event_recap.result_for_metric(field.metric).try(:value)
           unless metric_result.nil?
             if field.metric.type == 'Metric::Boolean'
-              result.value = migration.local.kpis_segments.detect{|s| s.text == ['No', 'Yes'][metric_result]}.try(:id)
+              result.value = migration.local.kpis_segments.find { |s| s.text == %w(No Yes)[metric_result] }.try(:id)
             elsif field.metric.type == 'Metric::Select'
               if metric_result > 0
                 begin
                   selected_option = field.metric.metric_options.find(metric_result).try(:name)
-                  result.value = migration.local.kpis_segments.detect{|s| s.text == selected_option}.try(:id)
+                  result.value = migration.local.kpis_segments.find { |s| s.text == selected_option }.try(:id)
                 rescue ActiveRecord::RecordNotFound => e
                   result.value = nil
                 end
@@ -230,7 +228,7 @@ class Legacy::Event < Legacy::Record
             elsif field.metric.type == 'Metric::Multi'
               begin
                 selected_options = field.metric.metric_options.find(metric_result).map(&:name)
-                result.value = migration.local.kpis_segments.select{|s| selected_options.include?(s.text) }.map(&:id)
+                result.value = migration.local.kpis_segments.select { |s| selected_options.include?(s.text) }.map(&:id)
               rescue ActiveRecord::RecordNotFound => e
                 result.value = nil
               end
@@ -252,16 +250,15 @@ class Legacy::Event < Legacy::Record
       end
     end
 
-
     # Expenses
     tries = 5
     begin
       spend_metric = Metric.scoped_by_program_id(program).scoped_by_type('Metric::BarSpend').first
       value = event_recap.result_for_metric(spend_metric).try(:value)
 
-      bar_spend = event.event_expenses.where(name: 'bar spend').first || event.event_expenses.build({name: 'bar spend'})
+      bar_spend = event.event_expenses.where(name: 'bar spend').first || event.event_expenses.build(name: 'bar spend')
       bar_spend.amount = value[Metric::Tab::TAB]
-      tip = event.event_expenses.where(name: 'tip').first || event.event_expenses.build({name: 'tip'})
+      tip = event.event_expenses.where(name: 'tip').first || event.event_expenses.build(name: 'tip')
       tip.amount = value[Metric::Tab::TIP]
 
       # if receipt = receipts.first
@@ -276,7 +273,6 @@ class Legacy::Event < Legacy::Record
         raise
       end
     end
-
   end
 
   def synch_photos(event)
@@ -322,6 +318,5 @@ class Legacy::Event < Legacy::Record
         raise
       end
     end
-
   end
 end

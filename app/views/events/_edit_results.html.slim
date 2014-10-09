@@ -1,10 +1,10 @@
-- active_kpis = resource.campaign.active_kpis
+- enabled_modules = resource.campaign.enabled_modules
 
 - if can?(:edit_data, resource)
   = render partial: 'edit_event_data'
 
 / Expenses module
-- if active_kpis.include?(Kpi.expenses) && can?(:expenses, resource)
+- if enabled_modules.include?('expenses') && can?(:expenses, resource)
   #event-expenses.details_box.box_expenses
     = render partial: 'expenses'
 
@@ -14,16 +14,16 @@
     = render 'activities'
 
 / Photos module
-- if active_kpis.include?(Kpi.photos) && can?(:photos, resource)
+- if enabled_modules.include?('photos') && can?(:photos, resource)
   #event-photos.details_box.box_photos
     = render partial: 'photos', locals: {allow_upload: true, show_date_details: false}
 
 / Surveys module
-- if active_kpis.include?(Kpi.surveys) && can?(:surveys, resource)
+- if enabled_modules.include?('surveys') && can?(:surveys, resource)
   #event-surveys.details_box.box_expenses
     = render partial: 'surveys'
 
 / Comments module
-- if active_kpis.include?(Kpi.comments) && can?(:comments, resource)
+- if enabled_modules.include?('comments') && can?(:comments, resource)
   #event-comments.details_box
     = render partial: 'comments'

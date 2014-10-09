@@ -5,7 +5,7 @@ class PlaceablesController < FilteredController
 
   skip_authorize_resource
 
-  before_filter :authorize_parent
+  before_action :authorize_parent
 
   def new
     @areas = current_company.areas.active.where('areas.id not in (?)', parent.area_ids + [0]).order('name ASC')
@@ -14,7 +14,7 @@ class PlaceablesController < FilteredController
   def add_area
     authorize!(:add_place, parent)
     @area = current_company.areas.find(params[:area])
-    if !parent.area_ids.include?(@area.id)
+    unless parent.area_ids.include?(@area.id)
       parent.areas << @area
     end
   end
@@ -23,13 +23,13 @@ class PlaceablesController < FilteredController
     authorize!(:remove_place, parent)
     @area = current_company.areas.find(params[:area])
     if parent.area_ids.include?(@area.id)
-      parent.areas.delete @area
+      parent.areas.destroy @area
     end
   end
 
   private
 
-    def authorize_parent
-      can?(:show, parent)
-    end
+  def authorize_parent
+    can?(:show, parent)
+  end
 end

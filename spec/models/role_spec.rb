@@ -12,32 +12,32 @@
 #  is_admin    :boolean          default(FALSE)
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
-describe Role do
-  it { should belong_to(:company) }
+describe Role, type: :model do
+  it { is_expected.to belong_to(:company) }
 
-  it { should validate_presence_of(:name) }
+  it { is_expected.to validate_presence_of(:name) }
 
-  it { should have_many(:company_users) }
+  it { is_expected.to have_many(:company_users) }
 
-  describe "#activate" do
-    let(:role) { FactoryGirl.build(:role, active: false) }
+  describe '#activate' do
+    let(:role) { build(:role, active: false) }
 
-    it "should return the active value as true" do
+    it 'should return the active value as true' do
       role.activate!
       role.reload
-      role.active.should be_true
+      expect(role.active).to be_truthy
     end
   end
 
-  describe "#deactivate" do
-    let(:role) { FactoryGirl.build(:role, active: false) }
+  describe '#deactivate' do
+    let(:role) { build(:role, active: false) }
 
-    it "should return the active value as false" do
+    it 'should return the active value as false' do
       role.deactivate!
       role.reload
-      role.active.should be_false
+      expect(role.active).to be_falsey
     end
   end
 end

@@ -1,2 +1,2 @@
 |
-  bootbox.alert('You are not authorized to perform this action');
+  bootbox.alert('You are not authorized to perform this action. <p>#{Rails.env.development? ? "#{@exception.action} on #{@exception.subject}" : ''}</p>');

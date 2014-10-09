@@ -4,4 +4,9 @@
 
 require File.expand_path('../config/application', __FILE__)
 
+unless ENV['RAILS_ENV'] == 'production'
+  require 'rubocop/rake_task'
+  RuboCop::RakeTask.new
+end
+
 Brandscopic::Application.load_tasks

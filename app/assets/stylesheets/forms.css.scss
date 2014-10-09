@@ -1,0 +1,317 @@
+@import "variables";
+
+form.button_to {
+	display: inline-block;
+	margin-right: 10px;
+	.button-with-icon {
+		border: 0;
+		padding: 0;
+		background: none;
+		outline:none;
+	}
+}
+
+.form-actions{
+	background-color: white;
+	border:0;
+	margin: 0;
+	padding: 0;
+}
+
+form{
+	margin: 0;
+}
+
+.control-group {
+	label.control-label{
+		color:$text;
+	}
+	&.error {
+		input, textarea {
+			&:focus {
+				box-shadow: none;
+				-webkit-box-shadow: none;
+			}
+		}
+	}
+}
+
+.select2-container-multi {
+	.select2-choices {
+		background: none;
+		background-image: none;
+	}
+}
+
+.chzn-default span {
+	color: $user_menu;
+}
+
+// Input styles
+
+input:-moz-placeholder,
+textarea:-moz-placeholder {
+	color: white;
+}
+
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+	color: white;
+}
+
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+	color: white;
+}
+
+/* Checkboxes */
+.checker {
+	background-color: $grey_one;
+	display: inline-block;
+	float:left;
+	height: 20px;
+	margin: 0px 10px 0 0px;
+	padding: 0;
+	width:20px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	border-radius: 5px;
+	input[type="checkbox"] {
+		margin: 0;
+		width: 12px;
+		margin: 0;
+		padding: 0;
+		line-height: 12px;
+	}
+	span.checked{
+		background-color: $brand;
+		display: block;
+		height: 20px;
+		margin: 0 15px 0 0;
+		padding:0;
+		width: 20px;
+		-webkit-border-radius: 5px;
+		-moz-border-radius: 5px;
+		border-radius: 5px;
+		line-height: 11px;
+	}
+	span.checked:after{
+		line-height: 11px;
+		padding:0;
+		margin:0;
+		color: white;
+		content: "\e624";
+		font-family: 'icons';
+		font-size: 11px;
+		left:5px;
+		position: relative;
+		speak:none;
+		text-align: center;
+		text-shadow:none;
+		-webkit-font-smoothing: antialiased;
+		font-weight: bold;
+		top:-7px;
+	}
+	input[type=checkbox]{
+		visibility: hidden;
+	}
+}
+
+/*-- RADIO BUTTONS STYLES --*/
+
+label.radio div.radio {
+	display: inline-block;
+	margin: 0 15px 5px 0;
+	padding: 0;
+	width: 20px;
+	span{
+		background: image-url('radio-unchecked.svg') no-repeat center center;
+		display: block;
+		height: 25px;
+		width: 25px;
+		&.help-inline{
+			border: 0;
+			width: 120px;
+			margin-left: -3px;
+			margin-top: 21px;
+			display: block;
+		}
+	}
+	span.checked{
+		background: image-url('radio-checked.svg') no-repeat center center;
+		display: block;
+		margin: 0;
+		padding:0;
+	}
+	input[type="radio"] {
+		float: right;
+		margin-left: 0;
+		opacity:0;
+		height: 25px;
+		width: 25px;
+	}
+}
+.radio-group{
+	display:inline-block;
+	margin-bottom: 10px;
+}
+
+// Radio button groups
+.btn-group .btn {
+	.radio {
+		display: none;
+	}
+}
+
+
+
+// BUTTON STYLES
+// --------------------------------------------------
+
+.btn{
+	color: #fff !important;
+	&[disabled]{
+		background-color: $grey_one;
+		color: #f2f2f2;
+		&:hover{
+			background-color: $grey_one;
+			color:#f2f2f2;
+		}
+	}
+	&.active{
+		background-color: $brand;
+		border: 0;
+		box-shadow: none;
+		&.list, &.map, &.calendar, &.table, &.graph{
+			&:after{
+				color: $user_menu;
+			}
+		}
+	}
+	&:focus{
+		outline:0;
+	}
+	&:hover{
+		background-color: $btnHover;
+		border: 0;
+		box-shadow: none;
+		color: #fff;
+	}
+	&.list:after, &.table:after{
+		font-size: 14px;
+		top:1px;
+	}
+	&.map:after{
+		font-size: 15px;
+		left: 2px;
+		top:1px;
+	}
+	&.calendar:after{
+		font-size: 15px;
+		top: 2px;
+	}
+	&.graph:after{
+		font-size: 14px;
+		top: 1px;
+	}
+	.icon-calendar:before{
+		font-size: 19px;
+		left: 2px;
+		top:1px;
+	}
+	&.btn-primary, &.btn-cancel{
+		box-sizing: border-box;
+		padding: 8px 25px;
+		//height: 35px;
+		&.fileinput-button{
+			width: 140px;
+		}
+	}
+}
+
+.btn-small {
+	padding: 2px 10px;
+}
+
+// BTN GROUP
+// According to the Style Guide there is no hover effect for this element
+// ----------------------------------------------------------------------
+
+.btn-group{
+	margin-left: 25px;
+	&>.btn+.btn{
+		margin-left: 0;
+	}
+	.btn{
+		border: 0;
+		box-shadow: none;
+		color: white;
+		&.active{
+			background-color: $brand;
+			color: $user_menu;
+			&:hover{
+				background-color: $brand;
+				color: $user_menu;
+			}
+		}
+		&:hover{
+			background-color: $user_menu;
+			color: white;
+		}
+		&.calendar{
+			border-left: 1px solid $buttons-border;
+			border-right: 1px solid $buttons-border;
+			&:last-child{
+				border-right: none;
+			}
+		}
+	}
+}
+
+.btn-primary{
+	background-color: $buttons !important;
+	background-image:none !important;
+	border: 0;
+	box-shadow: none;
+	font-size: 14px;
+	padding: 7px 25px;
+	text-decoration: none !important;
+	text-shadow:none;
+	&:hover{
+		background-color: $buttons-hover !important;
+	}
+	&:active{
+		background-color: $buttons-hover;
+		box-shadow: none;
+	}
+	&.fileinput-button{
+		padding: 7px 23px;
+	}
+}
+
+.btn-cancel{
+	background-color: $user_menu;
+	&:hover{
+		color: white;
+		background-color: $brand;
+	}
+}
+
+.btn-info{
+	background-color: $user_menu !important;
+	font-size: 13px;
+	padding-bottom:9px;
+	padding-top: 9px;
+	i{
+		line-height: 5px;
+		font-size: 19px;
+		position: relative;
+		top: 6px;
+		right: -12px;
+	}
+	&:hover{
+		background-color: $brand !important;
+	}
+}
+
+// End buttons styles

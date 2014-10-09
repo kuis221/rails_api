@@ -1,0 +1,37 @@
+/*
+ *= require 'application'
+ */
+@font-face {
+	font-family: 'icons';
+	src:font-url('icons.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+body.app-layout {
+	background: #fff !important;
+	padding-top: 0;
+}
+.pdf-keeptogether {
+	page-break-inside: avoid !important;
+}
+.last-in-page { page-break-after: always; }
+#main-container{
+	padding: 0;
+}
+.resource-list {
+	margin-top: 0; 
+	.resource-item {
+
+		.resource-item-link {
+			width: 100%;
+		}
+		.resource-item-actions {
+			display: none;
+		}
+		&:hover {
+			.resource-item-actions {
+				display: none;
+			}
+		}
+	}
+}

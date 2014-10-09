@@ -1,40 +1,53 @@
 module BrandscopiSpecHelpers
-  def sign_in_as_user
-    company = FactoryGirl.create(:company_with_user)
-    #role = FactoryGirl.create(:role, company: company, active: true, name: "Current User Role")
-    role = company.roles.first
-    User.current = user = company.company_users.first.user
+  def sign_in_as_user(company_user = nil)
+    if company_user.present?
+      company = company_user.company
+      user = company_user.user
+    else
+      company = create(:company_with_user)
+      user = company.company_users.first.user
+    end
+    User.current = user
     user.current_company = company
     user.ensure_authentication_token
-    user.update_attributes(FactoryGirl.attributes_for(:user).reject{|k,v| ['password','password_confirmation','email'].include?(k.to_s)}, without_protection: true)
+    user.update_attributes(attributes_for(:user).reject { |k, _v| %w(password password_confirmation email).include?(k.to_s) })
     sign_in user
     user
   end
 
   def set_event_results(event, results, autosave = true)
-    event.result_for_kpi(Kpi.impressions).value = results[:impressions] if results.has_key?(:impressions)
-    event.result_for_kpi(Kpi.interactions).value = results[:interactions] if results.has_key?(:interactions)
-    event.result_for_kpi(Kpi.samples).value = results[:samples] if results.has_key?(:samples)
-    values = event.result_for_kpi(Kpi.gender)
-    values.detect{|r| r.kpis_segment.text == 'Male'}.value = results[:gender_male] if results.has_key?(:gender_male)
-    values.detect{|r| r.kpis_segment.text == 'Female'}.value = results[:gender_female] if results.has_key?(:gender_female)
+    event.result_for_kpi(Kpi.impressions).value = results[:impressions] if results.key?(:impressions)
+    event.result_for_kpi(Kpi.interactions).value = results[:interactions] if results.key?(:interactions)
+    event.result_for_kpi(Kpi.samples).value = results[:samples] if results.key?(:samples)
+    result = event.result_for_kpi(Kpi.gender)
+    segments = Kpi.gender.kpis_segments
+    value = {}
+    value[segments.find { |s| s.text == 'Male' }.id]  = results[:gender_male] if results.key?(:gender_male)
+    value[segments.find { |s| s.text == 'Female' }.id] = results[:gender_female] if results.key?(:gender_female)
+    result.value = value
 
-    values = event.result_for_kpi(Kpi.ethnicity)
-    values.detect{|r| r.kpis_segment.text == 'Asian'}.value = results[:ethnicity_asian] if results.has_key?(:ethnicity_asian)
-    values.detect{|r| r.kpis_segment.text == 'Native American'}.value = results[:ethnicity_native_american] if results.has_key?(:ethnicity_native_american)
-    values.detect{|r| r.kpis_segment.text == 'Black / African American'}.value = results[:ethnicity_black] if results.has_key?(:ethnicity_black)
-    values.detect{|r| r.kpis_segment.text == 'Hispanic / Latino'}.value = results[:ethnicity_hispanic] if results.has_key?(:ethnicity_hispanic)
-    values.detect{|r| r.kpis_segment.text == 'White'}.value = results[:ethnicity_white] if results.has_key?(:ethnicity_white)
+    result = event.result_for_kpi(Kpi.ethnicity)
+    segments = Kpi.ethnicity.kpis_segments
+    value = {}
+    value[segments.find { |s| s.text == 'Asian' }.id] = results[:ethnicity_asian] if results.key?(:ethnicity_asian)
+    value[segments.find { |s| s.text == 'Native American' }.id] = results[:ethnicity_native_american] if results.key?(:ethnicity_native_american)
+    value[segments.find { |s| s.text == 'Black / African American' }.id] = results[:ethnicity_black] if results.key?(:ethnicity_black)
+    value[segments.find { |s| s.text == 'Hispanic / Latino' }.id] = results[:ethnicity_hispanic] if results.key?(:ethnicity_hispanic)
+    value[segments.find { |s| s.text == 'White' }.id] = results[:ethnicity_white] if results.key?(:ethnicity_white)
+    result.value = value
 
-    values = event.result_for_kpi(Kpi.age)
-    values.detect{|r| r.kpis_segment.text == '< 12'}.value = results[:age_12] if results.has_key?(:age_12)
-    values.detect{|r| r.kpis_segment.text == '12 – 17'}.value = results[:age_12_17] if results.has_key?(:age_12_17)
-    values.detect{|r| r.kpis_segment.text == '18 – 24'}.value = results[:age_18_24] if results.has_key?(:age_18_24)
-    values.detect{|r| r.kpis_segment.text == '25 – 34'}.value = results[:age_25_34] if results.has_key?(:age_25_34)
-    values.detect{|r| r.kpis_segment.text == '35 – 44'}.value = results[:age_35_44] if results.has_key?(:age_35_44)
-    values.detect{|r| r.kpis_segment.text == '45 – 54'}.value = results[:age_45_54] if results.has_key?(:age_45_54)
-    values.detect{|r| r.kpis_segment.text == '55 – 64'}.value = results[:age_55_64] if results.has_key?(:age_55_64)
-    values.detect{|r| r.kpis_segment.text == '65+'}.value = results[:age_65] if results.has_key?(:age_65)
+    result = event.result_for_kpi(Kpi.age)
+    segments = Kpi.age.kpis_segments
+    value = {}
+    value[segments.find { |s| s.text == '< 12' }.id] = results[:age_12] if results.key?(:age_12)
+    value[segments.find { |s| s.text == '12 – 17' }.id] = results[:age_12_17] if results.key?(:age_12_17)
+    value[segments.find { |s| s.text == '18 – 24' }.id] = results[:age_18_24] if results.key?(:age_18_24)
+    value[segments.find { |s| s.text == '25 – 34' }.id] = results[:age_25_34] if results.key?(:age_25_34)
+    value[segments.find { |s| s.text == '35 – 44' }.id] = results[:age_35_44] if results.key?(:age_35_44)
+    value[segments.find { |s| s.text == '45 – 54' }.id] = results[:age_45_54] if results.key?(:age_45_54)
+    value[segments.find { |s| s.text == '55 – 64' }.id] = results[:age_55_64] if results.key?(:age_55_64)
+    value[segments.find { |s| s.text == '65+' }.id] = results[:age_65] if results.key?(:age_65)
+    result.value = value
 
     event.save if autosave
   end
@@ -48,24 +61,14 @@ module BrandscopiSpecHelpers
   end
 
   def spreadsheet_from_last_export
-    require "rexml/document"
+    require 'rexml/document'
     export = ListExport.last
-    export.should_receive(:save).any_number_of_times.and_return(true)
-    File.should_receive(:delete) do |path|
-      file = File.new( path )
-      yield REXML::Document.new(file)
-    end
+    expect(export).to receive(:save).at_least(:once).and_return(true)
     export.export_list
+    yield REXML::Document.new(export.file.instance_variable_get(:@file).read)
   end
+end
 
-  def csv_from_last_export
-    require "rexml/document"
-    export = ListExport.last
-    export.should_receive(:save).any_number_of_times.and_return(true)
-    File.should_receive(:delete) do |path|
-      file = File.new( path )
-      yield REXML::Document.new(file)
-    end
-    export.export_list
-  end
+RSpec.configure do |config|
+  config.include BrandscopiSpecHelpers
 end

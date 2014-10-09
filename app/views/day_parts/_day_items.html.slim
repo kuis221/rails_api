@@ -2,4 +2,4 @@
   - resource.day_items.each do |day_item|
     .span3.date-item.clearfix id="day_item-#{day_item.id}"
       .pull-left= day_item.label
-      .pull-right= link_to content_tag(:i,'', class: 'icon-remove-circle'), day_part_day_item_path(resource, day_item), method: :delete, title: 'Remove', remote: true
+      .pull-right= link_to content_tag(:i,'', class: 'icon-rounded-disable'), day_part_day_item_path(resource, day_item), method: :delete, title: 'Remove', remote: true

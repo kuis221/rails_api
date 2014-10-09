@@ -1,0 +1,135 @@
+@import "variables";
+.documents-list {
+	margin-bottom: 10px;
+	.resource-item-link{
+		margin-top: 10px;
+		.document-type, .document-date {
+			margin-top: 10px;
+		}
+	}
+	.folder-item .resource-item-link{
+		font-size: 14px;
+		i{
+			color: $grey_four;
+			font-size: 25px;
+			margin-right: 15px;
+			position: relative;
+			top: 3px;
+		}
+	}
+}
+
+#new-folder-form { /*Create a new folder grey zone*/
+
+	background-color: $grey_one;
+	max-height: 70px;
+
+	.new_document_folder{
+		padding: 16px 20px;
+	}
+	.icon-folder{
+		color: $user_menu;
+		display: inline-block;
+		font-size: 25px;
+		margin-right: 15px;
+		&+.control-group{
+			display: inline-block;
+			margin-bottom:0;
+			.controls input{
+				margin-bottom:0;
+			}
+		}
+	}
+	.icon-close {
+		width: 21px;
+		position: absolute;
+		right: 16px;
+		top: 25px;
+	}
+	input[type=text] {
+		border: 1px solid $user_menu;
+		height: 36px;
+		width: 255px;
+		&::-webkit-input-placeholder {
+			color: $grey_four;
+		}
+
+		&:-moz-placeholder { /* Firefox 18- */
+			color: $grey_four;
+		}
+
+		&::-moz-placeholder {  /* Firefox 19+ */
+			color: $grey_four;
+		}
+
+		&:-ms-input-placeholder {
+			color: $grey_four;
+		}
+	}
+}
+#documents-container{
+	#asset_upload_dialog{
+		margin-top: 20px;
+	}
+	h3{
+		color: $user_menu;
+		p{
+			color: $brand;
+			display:inline-block;
+			white-space: nowrap;
+		}
+	}
+	i.icon-angle-right{
+		color: $grey_one;
+		margin-left: 8px;
+		position: relative;
+		top: 3px;
+	}
+}
+
+
+#folders-tree {
+	max-height: 290px;
+	overflow: auto;
+	border: 1px solid $borders;
+	position: relative;
+	font-size: 15px;
+	div.folder-item-bg {
+		position: absolute;
+		display: none;
+		background-color: $gray-lighter;
+		width: 100%;
+		left: 0;
+		z-index: -1;
+	}
+	ul {
+		list-style: none;
+		margin-left: 0;
+		&.collapse {
+			position: initial;
+		}
+		li {
+			padding-left: 25px;
+			.folder-arrow-indicator{
+				float: left;
+				margin-left: -20px;
+				cursor: pointer;
+			}
+			.icon-folder {
+				margin-right: 5px;
+			}
+			.icon-arrow-right:before {
+				font-size: 12px;
+			}
+			.icon-arrow-down:before {
+				top: 4px;
+			}
+		} 
+	}
+	label.radio {
+		padding: 0;
+		div.radio {
+			display: none;
+		}
+	}
+}

@@ -1,27 +1,26 @@
-- active_kpis = resource.campaign.active_kpis
-- custom_kpis = resource.campaign.custom_kpis
+- enabled_modules = resource.campaign.enabled_modules
 
 - if can?(:view_data, resource)
   #event-results-form
     #event-results-container.details_box.box_event_data
-      = render partial: 'results_event_data', locals: {active_kpis: active_kpis, custom_kpis: custom_kpis}
+      = render 'results_event_data'
 
 - if can?(:show, Activity) && resource.campaign.activity_types.any?
   #event-activities.details_box
     = render 'activities'
 
-- if can?(:photos, resource) && active_kpis.include?(Kpi.photos)
+- if can?(:photos, resource) && enabled_modules.include?('photos')
   #event-photos.details_box.box_photos
     = render partial: 'photos', locals: {allow_upload: true}
 
-- if can?(:expenses, resource) && active_kpis.include?(Kpi.expenses)
+- if can?(:expenses, resource) && enabled_modules.include?('expenses')
   #event-expenses.details_box
     = render 'expenses'
 
-- if can?(:surveys, resource) && active_kpis.include?(Kpi.surveys)
+- if can?(:surveys, resource) && enabled_modules.include?('surveys')
   #event-surveys.details_box
     = render 'results_surveys'
 
-- if can?(:comments, resource) && resource.campaign.active_field_types.include?('comments')
+- if can?(:comments, resource) && enabled_modules.include?('comments')
   #event-comments.details_box
     = render 'comments'

@@ -1,28 +1,27 @@
 photoGalleryCounter = 0
 $.widget 'nmk.photoGallery', {
 	options: {
-		month: null,
-		year: null,
-		eventsUrl: null,
-		renderMonthDay: null
+		showSidebar: true
 	},
 
 	_create: () ->
 		@element.addClass('photoGallery')
 		@_createGalleryModal()
 
-		$(document).on 'attached_asset:activated', (e, id) =>
-			@image.data('status', true)
-			@gallery.find('a.photo-deactivate-link').replaceWith($('<a class="icon-remove-circle photo-deactivate-link" title="Deactivate" data-remote="true" data-confirm="Are you sure you want to deactivate this photo?"></a>').attr('href', @image.data('urls').deactivate))
-			true
+		$(document).on 'attached-asset:activated', (e, id) =>
+			if @image && @image.data('id') is id
+				@image.data('status', true)
+				@gallery.find('a.icon-rounded-ok').replaceWith($('<a class="icon-remove-circle" title="Deactivate" data-remote="true" data-confirm="Are you sure you want to deactivate this photo?"></a>').attr('href', @image.data('urls').deactivate))
+				true
 
-		$(document).on 'attached_asset:deactivated', (e, id) =>
-			@photoToolbar.html ''
-			$('.carousel', @gallery).carousel('next')
-			@gallery.find('[data-photo-id='+id+']').remove()
-			true
+		$(document).on 'attached-asset:deactivated', (e, id) =>
+			if @image && @image.data('id') is id
+				@photoToolbar.html ''
+				$('.carousel', @gallery).carousel('next')
+				@gallery.find('[data-photo-id='+id+']').remove()
+				true
 
-		$(document).on 'click', '.photoGallery a[data-toggle="gallery"]', (e) =>
+		@element.on 'click', 'a[data-toggle="gallery"]', (e) =>
 			image = if e.target.tagName is 'A' then $(e.target).find('img')[0] else e.target
 			e.stopPropagation()
 			e.preventDefault()
@@ -33,13 +32,13 @@ $.widget 'nmk.photoGallery', {
 		@
 
 	fillPhotoData: (currentImage) ->
-		$image = $(currentImage)
-		@image = $image
-		@setTitle $image.data('title'), @image.data('urls').event
-		@setDate $image.data('date')
-		@setAddress $image.data('address')
-		@setRating $image.data('rating'), $image.data('id')
-		@setTagList $image.data('tags')
+		@image = $(currentImage)
+		if @options.showSidebar
+			@setTitle @image.data('title'), @image.data('urls').event
+			@setDate @image.data('date')
+			@setAddress @image.data('address')
+			@setRating @image.data('rating'), @image.data('id')
+			@setTagList @image.data('tags')
 
 	setTagList: (tags) ->
 		if 'view_tag' in @image.data('permissions')
@@ -103,12 +102,12 @@ $.widget 'nmk.photoGallery', {
 
 	setDate: (date) ->
 		if date
-			@date.html(date).show()
+			@date.show().find('span').html(date)
 		else
-			@date.html('').hide()
+			@date.hide().find('span').html('')
 
 	setAddress: (address) ->
-		@address.html address
+		@address.find('span').html address
 
 	setTag: (tag) ->
 		if tag.added
@@ -133,8 +132,9 @@ $.widget 'nmk.photoGallery', {
 
 	setTagCloseButton: (tag) ->
 		if 'deactivate_tag' in @image.data('permissions')
-			button = $('<button class="close">').on 'click', (e) =>
+			button = $('<a href="#" class="icon-close remove-tag" title="Remove Tag">').on 'click', (e) =>
 				@removeTag(tag)
+				false
 
 	removeTag: (tag) ->
 		$.ajax "/attached_assets/"+@image.data('id')+'/tags/'+tag['id']+'/remove', {
@@ -150,14 +150,17 @@ $.widget 'nmk.photoGallery', {
 		active = false
 		row = null
 
-		miniCarousel = @miniCarousel.find('.carousel-inner')
+		if @options.showSidebar
+			miniCarousel = @miniCarousel.find('.carousel-inner')
+			miniCarousel.html('')
+
 		carousel = @carousel.find('.carousel-inner')
-		miniCarousel.html('')
 		carousel.html('')
+
 		for link in @element.find('a[data-toggle=gallery]')
 			image = $(link).find('img')[0]
 			if i % 3 is 0
-				if row?
+				if row? && @options.showSidebar
 					miniCarousel.append($('<div class="item">').append(row).addClass(if active then 'active' else null))
 				row = $('<div class="row">')
 				active = false
@@ -175,16 +178,16 @@ $.widget 'nmk.photoGallery', {
 			i+=1
 			index+=1
 
-		miniCarousel.append($('<div class="item">').append(row).addClass(if active then 'active' else null))
+		if @options.showSidebar
+			miniCarousel.append($('<div class="item">').append(row).addClass(if active then 'active' else null))
 
+			@miniCarousel.off('click.thumb').on 'click.thumb', 'img', (e) =>
+				index = $(e.target).data('index')
+				@carousel.carousel index
 
-		@miniCarousel.off('click.thumb').on 'click.thumb', 'img', (e) =>
-			index = $(e.target).data('index')
-			@carousel.carousel index
+			@miniCarousel.appendTo @gallery.find('.mini-slider')
 
-		@miniCarousel.appendTo @gallery.find('.mini-slider')
-
-		@miniCarousel.carousel 'pause'
+			@miniCarousel.carousel 'pause'
 
 	_createStar: ($i,$is_full, $asset_id, can_rate) ->
 		$klass = ""
@@ -209,8 +212,8 @@ $.widget 'nmk.photoGallery', {
 
 	_createGalleryModal: () ->
 		@title = $('<h3>')
-		@address = $('<div class="place-data">')
-		@date = $('<div class="calendar-data">')
+		@address = $('<div class="place-data"><i class="icon-wired-venue"></i><span></span></div>')
+		@date = $('<div class="calendar-data"><i class="icon-calendar"></i><span></span></div>')
 		@rating = $('<div class="rating">')
 			.mouseleave (e) =>
 				@rating.find('span').removeClass('full').addClass('empty')
@@ -227,19 +230,32 @@ $.widget 'nmk.photoGallery', {
 		if @carousel
 			@carousel.off('slid').remove()
 
-		@gallery = $('<div class="gallery-modal modal hide fade">').append(
-			$('<div class="gallery-modal-inner">').append(
-				$('<div class="panel">').
-					append('<button class="close" data-dismiss="modal" aria-hidden="true" title="Close"></button>').
-					append(
-						$('<div class="description">').append( @title ).append( @date ).append( @address ),
-						$('<div class="mini-slider">').append( @miniCarousel = @_createCarousel('small') ),
-						@rating,
-							$('<div class="tags">').append( @tags = $('<div id="list" class="list">') , @tags_list)
-					),
-				$('<div class="slider">').append( $('<div class="slider-inner">').append( @carousel = @_createCarousel() ) ).append( @photoToolbar = $('<div class="photo-toolbar">') )
-			).append($('<div class="clearfix">'))
-		)
+		if @options.showSidebar
+			@gallery = $('<div class="gallery-modal modal hide fade">').append(
+				$('<div class="gallery-modal-inner">').append(
+					$('<div class="panel">').
+						append('<a href="#" class="icon-close close-gallery" data-dismiss="modal" aria-hidden="true" title="Close"></a>').
+						append(
+							$('<div class="description">').append( @title ).append( @date ).append( @address ),
+							$('<div class="mini-slider">').append( @miniCarousel = @_createCarousel('small') ),
+							@rating,
+								$('<div class="tags">').append( @tags = $('<div id="list" class="list">') , @tags_list)
+						),
+					$('<div class="slider">').append( $('<div class="slider-inner">').append( @carousel = @_createCarousel() ) ).append( @photoToolbar = $('<div class="photo-toolbar">') )
+				).append($('<div class="clearfix">'))
+			)
+		else
+			@gallery = $('<div class="gallery-modal modal hide fade">').append(
+				$('<div class="gallery-modal-inner">').append(
+					$('<div class="slider">').
+						append($('<div class="photo-toolbar-header">').
+							append('<a class="icon-close" data-dismiss="modal" aria-hidden="true" title="Close"></a>')).
+						append( $('<div class="slider-inner unique">').
+							append( @carousel = @_createCarousel() ) ).
+						append( @photoToolbar = $('<div class="photo-toolbar">') )
+				).append($('<div class="clearfix">'))
+			)
+
 		@tags_list.initialized = null
 
 
@@ -272,14 +288,15 @@ $.widget 'nmk.photoGallery', {
 		@sliderInner = @gallery.find('.slider-inner')
 		@panel = @gallery.find('.panel')
 
-
-		@miniCarousel.carousel({interval: false})
+		if @options.showSidebar
+			@miniCarousel.carousel({interval: false})
 		@carousel.carousel({interval: false})
 
 		@carousel.on 'slid', (e) =>
 			item = $('.item.active', e.target)
 			image = item.data('image')
-			@fillPhotoData image
+			if @options.showSidebar
+				@fillPhotoData image
 			@_showImage()
 			@miniCarousel.carousel parseInt(item.data('index')/3)
 
@@ -297,6 +314,8 @@ $.widget 'nmk.photoGallery', {
 
 		@_createPhotoToolbar()
 
+		@carousel.find('.carousel-control img').attr('src', image.data('src'))
+
 		# Preload the next image
 		nextItem = item.next('.item')
 		if nextItem.length
@@ -308,16 +327,16 @@ $.widget 'nmk.photoGallery', {
 		@photoToolbar.html ''
 		@photoToolbar.append(
 			urls = @image.data('urls')
-			(if 'deactivate_photo' in @image.data('permissions')
+			(if 'deactivate_photo' in @image.data('permissions') && @options.showSidebar
 				if @image.data('status') == true
 					$('<a class="icon-remove-circle photo-deactivate-link" title="Deactivate" data-remote="true" data-confirm="Are you sure you want to deactivate this photo?"></a>').attr('href', urls.deactivate)
 				else
-					$('<a class="icon-ok-circle photo-deactivate-link" title="Activate" data-remote="true"></a>').attr('href', urls.activate)
+					$('<a class="icon-rounded-ok photo-deactivate-link" title="Activate" data-remote="true"></a>').attr('href', urls.activate)
 			else
 				null
 			),
 			(if 'index_photo_results' in @image.data('permissions')
-				$('<a class="icon-plus photo-download-link" title="Select Photo"></a>').attr('href', urls.download)
+				$('<a class="icon-download" title="Download"></a>').attr('href', urls.download)
 			else
 				null
 			)
@@ -325,11 +344,19 @@ $.widget 'nmk.photoGallery', {
 
 	_createCarousel: (carouselClass='') ->
 		id = "gallery-#{@_generateUid()}"
-		$('<div id="'+id+'" class="gallery-carousel carousel">').addClass(carouselClass).append(
-			$('<div class="carousel-inner">'),
-			$('<a class="carousel-control left" data-slide="prev" href="#'+id+'"><span></span></a>'),
-			$('<a class="carousel-control right" data-slide="next" href="#'+id+'"><span></span></a>')
-		)
+		$carousel = $('<div id="'+id+'" class="gallery-carousel carousel">').addClass(carouselClass).append($('<div class="carousel-inner">'))
+		if @options.showSidebar
+			$carousel.append(
+				$('<a class="carousel-control left" data-slide="prev" href="#'+id+'"><img /><span><i class="icon-slimmed-arrow-left-rounded"></i></span></a>'),
+				$('<a class="carousel-control right" data-slide="next" href="#'+id+'"><img /><span><i class="icon-slimmed-arrow-right-rounded"></i></span></a>')
+			)
+
+		$carousel
+
+	_findBaseName: (url) ->
+		fileName = url.substring(url.lastIndexOf('/') + 1)
+		questionMark = fileName.lastIndexOf('?')
+		if questionMark == -1 then fileName else fileName.substring(0, questionMark)
 
 	_updateSizes: () ->
 		# If the current image's height is greater than the carousel's height then
@@ -369,14 +396,20 @@ $.widget 'nmk.photoGallery', {
 			proportion = imageHeight/imageNatural.height
 			imageWidth = parseInt(imageNatural.width*proportion)
 
-		sliderWidth = Math.max(minSliderWidth, Math.min(maxSliderWidth, Math.max(sliderWidth, imageWidth)))
 		sliderHeight = Math.max(minSliderHeight, Math.min(maxSliderHeight, Math.max(sliderHeight, imageHeight)))
 
+		if @options.showSidebar
+			sliderWidth = Math.max(minSliderWidth, Math.min(maxSliderWidth, Math.max(sliderWidth, imageWidth)))
+			modalWidth = Math.min(@panel.outerWidth()+sliderWidth, windowWidth-10)
+		else
+			sliderWidth = Math.max(minSliderWidth, Math.min(maxSliderWidth, imageWidth))
+			modalWidth = Math.min(sliderWidth, windowWidth-10)
 
-		modalWidth = Math.min(@panel.outerWidth()+sliderWidth, windowWidth-10)
+		modalMinWidth = Math.min(parseInt(@gallery.css('min-width')), modalWidth)
 
 		@gallery.css({
 			top: Math.max(10, parseInt(($(window).height()-Math.max(@panel.outerHeight(), sliderHeight))/2) )+'px',
+			'min-width': modalMinWidth,
 			width: modalWidth+'px',
 			'margin-left': -parseInt(modalWidth/2)+'px'
 		})

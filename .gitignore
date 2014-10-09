@@ -16,10 +16,12 @@
 /log/*.lck
 /tmp
 .env
+.envrc
 .rvmrc
 .vagrant
 Vagrantfile
 config/database.yml
+config/local_env.yml
 config/initializers/config_local.rb
 myrspec
 solr/data/
@@ -27,3 +29,4 @@ solr/pids/
 .DS_Store
 dump.rdb
 coverage
+.sass-cache

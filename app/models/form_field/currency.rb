@@ -12,10 +12,50 @@
 #  required       :boolean
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
+#  kpi_id         :integer
 #
+include ActionView::Helpers::NumberHelper
 
 class FormField::Currency < FormField
   def field_options(result)
-    {as: :currency, label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: field_classes, step: 'any', required: (self.required? ? 'required' : nil)}}
+    {
+      as: :currency,
+      label: name,
+      field_id: id,
+      options: settings,
+      required: required,
+      input_html: {
+        value: result.value,
+        class: field_classes.push('elements-range'),
+        data: field_data,
+        step: 'any',
+        required: (self.required? ? 'required' : nil)
+      }
+    }
+  end
+
+  def field_data
+    data = {}
+    if settings.present?
+      data['range-format'] = settings['range_format'] if settings['range_format'].present?
+      data['range-min'] = settings['range_min'] if settings['range_min'].present?
+      data['range-max'] = settings['range_max'] if settings['range_max'].present?
+    end
+    data
+  end
+
+  def validate_result(result)
+    super
+    if result.value.present?
+      result.errors.add :value, I18n.translate('errors.messages.not_a_number') unless value_is_numeric?(result.value)
+    end
+  end
+
+  def format_html(result)
+    number_to_currency(result.value || 0, precision: 2)
+  end
+
+  def is_numeric?
+    true
   end
 end

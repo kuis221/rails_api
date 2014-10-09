@@ -1,7 +1,3 @@
 - if resource.results_for_type.map(&:value).reject{|v| v.nil? || v.empty? }.any?
   h3 = 'DETAILS'
-  dl.activity-results
-    - resource.results_for_type.each do |result|
-      - unless result.value.nil? || result.value.empty?
-        dt class="#{result.form_field.css_class}"= result.form_field.name + ':'
-        dd class="#{result.form_field.css_class}"= result.to_html
+  = render partial: 'shared/form_field_results', locals: { form_fields: resource.activity_type.form_fields }

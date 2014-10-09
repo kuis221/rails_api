@@ -1,0 +1,4 @@
+|
+  $('.modal .resource-list #kpi-#{@kpi.id}').slideUp();
+  $(document).trigger('kpis:change');
+  $('.form-builder-wrapper').formBuilder('addKpi', #{@kpi.form_field_options.merge({id: @field.id}).to_json.html_safe});

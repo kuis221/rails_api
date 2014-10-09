@@ -29,11 +29,14 @@
     <span class='divider'>/</span>
   </li>
   <li class='active'>index</li>
+  
+
 </ul>
 
   <div class='page-header'>
     <h1>
-      GET /api/v1/events<br>
+      GET /api/v1/events
+      <br>
       <small>Search for a list of events</small>
     </h1>
   </div>
@@ -51,7 +54,7 @@ the &lt;page&gt; param.</p>
 <p><strong>Facets</strong></p>
 
 <p>Faceting is a feature of Solr that determines the number of documents that
-match a given search and an additional criterion</p>
+match a given search and an additional criteria</p>
 
 <p>When &lt;page&gt; is “1”, the result will include a list of facets scoped
 on the following search params</p>
@@ -85,8 +88,29 @@ on the following search params</p>
 ]</pre>
 
 
-    <h2>Examples</h2>
-      <pre class="prettyprint">{
+  <h2>Supported Formats</h2>
+  json, xml
+
+  <h2>Errors</h2>
+    401
+    Unauthorized access
+    <br>
+    404
+    The requested resource was not found
+    <br>
+    406
+    The server cannot return data in the requested format
+    <br>
+    422
+    Unprocessable Entity: The change could not be processed because of errors on the data
+    <br>
+    500
+    Server crashed for some reason. Possible because of missing required params or wrong parameters
+    <br>
+
+
+  <h2>Examples</h2>
+    <pre class="prettyprint">{
     &quot;page&quot;: 1,
     &quot;total&quot;: 7238,
     &quot;facets&quot;: [
@@ -103,7 +127,7 @@ on the following search params</p>
             &quot;event_status&quot;: &quot;Unsent&quot;,
             &quot;place&quot;: {
                 &quot;id&quot;: 2624,
-                &quot;name&quot;: &quot;Kelly&#x27;s Pub Too&quot;,
+                &quot;name&quot;: &quot;Kelly&#39;s Pub Too&quot;,
                 &quot;latitude&quot;: 39.7924104,
                 &quot;longitude&quot;: -86.2514126,
                 &quot;formatted_address&quot;: &quot;5341 W. 10th Street, Indianapolis, IN 46224&quot;,
@@ -152,30 +176,16 @@ on the following search params</p>
 }
 </pre>
 
-    <h2>Supported Formats</h2>
-    json, xml
-
-    <h2>Errors</h2>
-      404
-      Missing
-      <br>
-      401
-      Unauthorized access
-      <br>
-      500
-      Server crashed for some reason
-      <br>
-
-    <h2>Params</h2>
-    <table class='table'>
-      <thead>
-        <tr>
-          <th>Param name</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr style='background-color:rgb(255,255,255);'>
+  <h2>Params</h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
     <td>
       <strong>auth_token </strong><br>
       <small>
@@ -185,9 +195,14 @@ on the following search params</p>
     </td>
     <td>
       
+<p>User&#39;s authorization token returned by login method</p>
+
         <br>
         Value: Must be String
+
+
     </td>
+
   </tr>
 
   
@@ -201,11 +216,61 @@ on the following search params</p>
     </td>
     <td>
       
-<p>One of the allowed company ids returned by the</p>
+<p>One of the allowed company ids returned by the “User companies” API method</p>
 
         <br>
         Value: Must be a number.
+
+
     </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>start_date </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A date to filter the event list. When provided a start_date without an
+<code>end_date</code>, the result will only include events that happen on
+this day. The date should be in the format MM/DD/YYYY.</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>end_date </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A date to filter the event list. This should be provided together with the
+<code>start_date</code> param and when provided will filter the list with
+those events that are between that range. The date should be in the format
+MM/DD/YYYY.</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
   </tr>
 
   
@@ -222,8 +287,11 @@ on the following search params</p>
 <p>A list of campaign ids to filter the results</p>
 
         <br>
-        Value: Must be Array
+        Value: Must be an array of any type
+
+
     </td>
+
   </tr>
 
   
@@ -240,8 +308,11 @@ on the following search params</p>
 <p>A list of places to filter the results</p>
 
         <br>
-        Value: Must be Array
+        Value: Must be an array of any type
+
+
     </td>
+
   </tr>
 
   
@@ -258,8 +329,11 @@ on the following search params</p>
 <p>A list of areas to filter the results</p>
 
         <br>
-        Value: Must be Array
+        Value: Must be an array of any type
+
+
     </td>
+
   </tr>
 
   
@@ -276,8 +350,11 @@ on the following search params</p>
 <p>A list of users to filter the results</p>
 
         <br>
-        Value: Must be Array
+        Value: Must be an array of any type
+
+
     </td>
+
   </tr>
 
   
@@ -294,8 +371,53 @@ on the following search params</p>
 <p>A list of teams to filter the results</p>
 
         <br>
-        Value: Must be Array
+        Value: Must be an array of any type
+
+
     </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>brand </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of brands to filter the results</p>
+
+        <br>
+        Value: Must be an array of any type
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>brand_porfolio </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of brand portfolios to filter the results</p>
+
+        <br>
+        Value: Must be an array of any type
+
+
+    </td>
+
   </tr>
 
   
@@ -309,11 +431,15 @@ on the following search params</p>
     </td>
     <td>
       
-<p>A list of event status to filter the results</p>
+<p>A list of event status to filter the results. The possible options are:
+&#39;Active&#39;, &#39;Inactive&#39;</p>
 
         <br>
-        Value: Must be one of: Active, Inactive.
+        Value: Must be an array of any type
+
+
     </td>
+
   </tr>
 
   
@@ -327,11 +453,16 @@ on the following search params</p>
     </td>
     <td>
       
-<p>A list of event recap status to filter the results</p>
+<p>A list of event recap status to filter the results. The possible options
+are: &#39;Scheduled&#39;, &#39;Executed&#39;, &#39;Submitted&#39;,
+&#39;Approved&#39;, &#39;Rejected&#39;, &#39;Late&#39;, &#39;Due&#39;</p>
 
         <br>
-        Value: Must be one of: Scheduled, Executed, Submitted, Approved, Rejected, Late, Due.
+        Value: Must be an array of any type
+
+
     </td>
+
   </tr>
 
   
@@ -349,13 +480,17 @@ on the following search params</p>
 
         <br>
         Value: Must be a number.
+
+
     </td>
+
   </tr>
 
   
 
-      </tbody>
-    </table>
+    </tbody>
+  </table>
+
 </div>
 
 
@@ -363,8 +498,7 @@ on the following search params</p>
       </div>
     </div>
     <hr>
-    <footer>  
-</footer>
+    <footer></footer>
   </div>
   <script type='text/javascript' src='../../apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
 <script type='text/javascript' src='../../apidoc/javascripts/bundled/bootstrap-collapse.js'></script>

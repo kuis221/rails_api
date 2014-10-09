@@ -1,6 +1,6 @@
 - render 'settings'
 - if resource.errors.any?
-  | $('#kpi_errors').html('#{j resource.errors.full_messages.join("<br />").html_safe}').removeClass('hidden');
+  = render 'form_dialog'
 - else
   |
     $('.bootbox.modal').modal('hide');

@@ -1,5 +1,9 @@
+# Dashboard Controller class
+#
+# This class handle the requests for the dashboard
+#
 class DashboardController < ApplicationController
-  before_filter :set_variables
+  before_action :set_variables
 
   def index
   end
@@ -9,7 +13,8 @@ class DashboardController < ApplicationController
   end
 
   private
-    def set_variables
-      @campaign_overview_months = 6
-    end
+
+  def set_variables
+    @campaign_overview_months = 6
+  end
 end

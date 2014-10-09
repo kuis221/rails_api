@@ -25,6 +25,7 @@
     Sessions
     
   </li>
+  
 </ul>
 
 <div class='page-header'>
@@ -36,8 +37,9 @@
 </div>
 
   <div>
-<h2 id="label-Token+Authentication">Token Authentication</h2>
+<h2 id="label-Token+Authentication">Token Authentication<span><a href="#label-Token+Authentication">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
 </div>
+
 
   <h2>Supported Formats</h2>
   json, xml
@@ -55,7 +57,8 @@
            data-toggle='collapse'
            data-parent='#accordion'>
             POST /api/v1/sessions
-          </a><br>
+          </a>
+          <br>
           <small>Authenticate a user and return the authentication token</small>
         </h2>
     </div>
@@ -63,32 +66,47 @@
 
     <div id='description-create' class='collapse accordion-body'>
       
-
-        <h3>Supported Formats</h3>
-        json, xml
-
-        <h3>Errors</h3>
-          404
-          Missing
-          <br>
-          401
-          Invalid credentials
-          <br>
-          500
-          Server crashed for some reason
-          <br>
+<p>Validates the user credentials and returns the authentication token if
+valid.</p>
 
 
-        <h3>Params</h3>
-        <table class='table'>
-          <thead>
-            <tr>
-              <th>Param name</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-              <tr style='background-color:rgb(255,255,255);'>
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    404
+    Missing
+    <br>
+    401
+    Invalid credentials
+    <br>
+    500
+    Server crashed for some reason
+    <br>
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">POST /api/v1/sessions.json?email=fulano@detal.com&amp;password=MySuperSecretPassword
+{
+  sucess: true,
+  info: &#39;Logged in&#39;,
+  data: {
+    auth_token: &#39;XXXYYYYZZZ&#39;,
+    current_company_id: 1
+  }
+}
+</pre>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
     <td>
       <strong>email </strong><br>
       <small>
@@ -102,7 +120,10 @@
 
         <br>
         Value: Must be String
+
+
     </td>
+
   </tr>
 
   
@@ -120,13 +141,17 @@
 
         <br>
         Value: Must be String
+
+
     </td>
+
   </tr>
 
   
 
-          </tbody>
-        </table>
+    </tbody>
+  </table>
+
     </div>
     <hr>
     <div class='pull-right small'>
@@ -139,7 +164,8 @@
            data-toggle='collapse'
            data-parent='#accordion'>
             DELETE /api/v1/sessions
-          </a><br>
+          </a>
+          <br>
           <small>Destroy authentication token for a user</small>
         </h2>
     </div>
@@ -148,31 +174,32 @@
     <div id='description-destroy' class='collapse accordion-body'>
       
 
-        <h3>Supported Formats</h3>
-        json, xml
+  <h3>Supported Formats</h3>
+  json, xml
 
-        <h3>Errors</h3>
-          404
-          Missing
-          <br>
-          401
-          Invalid credentials
-          <br>
-          500
-          Server crashed for some reason
-          <br>
+  <h3>Errors</h3>
+    404
+    Missing
+    <br>
+    401
+    Invalid credentials
+    <br>
+    500
+    Server crashed for some reason
+    <br>
 
 
-        <h3>Params</h3>
-        <table class='table'>
-          <thead>
-            <tr>
-              <th>Param name</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-              <tr style='background-color:rgb(255,255,255);'>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
     <td>
       <strong>id </strong><br>
       <small>
@@ -186,13 +213,17 @@
 
         <br>
         Value: Must be String
+
+
     </td>
+
   </tr>
 
   
 
-          </tbody>
-        </table>
+    </tbody>
+  </table>
+
     </div>
 </div>
 
@@ -201,8 +232,7 @@
       </div>
     </div>
     <hr>
-    <footer>  
-</footer>
+    <footer></footer>
   </div>
   <script type='text/javascript' src='../apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
 <script type='text/javascript' src='../apidoc/javascripts/bundled/bootstrap-collapse.js'></script>

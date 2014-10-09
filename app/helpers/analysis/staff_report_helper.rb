@@ -13,11 +13,11 @@ module Analysis
         data['promo_hours_this_week'] = 0
         data['promo_hours_next_week'] = 0
 
-        #raise data['days'].inspect
+        # raise data['days'].inspect
 
         (1.month.ago.beginning_of_month.to_date..1.month.ago.end_of_month.to_date).each do |day|
           d = day.to_s(:numeric)
-          if data['days'].has_key?(d)
+          if data['days'].key?(d)
             data['events_last_month'] += data['days'][d]['approved_events']
             data['promo_hours_last_month'] += data['days'][d]['approved_promo_hours']
           end
@@ -25,15 +25,15 @@ module Analysis
 
         (Time.zone.now.beginning_of_month.to_date..Time.zone.now.end_of_month.to_date).each do |day|
           d = day.to_s(:numeric)
-          if data['days'].has_key?(d)
+          if data['days'].key?(d)
             data['events_this_month'] += data['days'][d]['approved_events']
-            data['promo_hours_this_month'] += data['days'][d]['approved_promo_hours'] if data['days'].has_key?(d)
+            data['promo_hours_this_month'] += data['days'][d]['approved_promo_hours'] if data['days'].key?(d)
           end
         end
 
         (Time.zone.now.beginning_of_week.to_date..Time.zone.now.end_of_week.to_date).each do |day|
           d = day.to_s(:numeric)
-          if data['days'].has_key?(d)
+          if data['days'].key?(d)
             data['events_this_week'] += data['days'][d]['approved_events']
             data['promo_hours_this_week'] += data['days'][d]['approved_promo_hours']
           end
@@ -41,7 +41,7 @@ module Analysis
 
         (1.week.from_now.beginning_of_week.to_date..1.week.from_now.end_of_week.to_date).each do |day|
           d = day.to_s(:numeric)
-          if data['days'].has_key?(d)
+          if data['days'].key?(d)
             data['events_next_week'] += data['days'][d]['approved_events']
             data['promo_hours_next_week'] += data['days'][d]['approved_promo_hours']
           end

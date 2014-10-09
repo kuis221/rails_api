@@ -6,16 +6,18 @@
 
     - if resource.description.present?
       .description-data
-        = resource.description
+        i.icon-wired-description
+        span
+          = resource.description
 
     .links-data
-      = link_to '', edit_role_path(resource), remote: true, class: 'edit' if can?(:edit, resource)
+      = button_to_edit resource if can?(:edit, resource)
       = active_inactive_buttons(resource, resource.name + " users can no longer login if you deactivate that role. Would you like to continue?") if can?(:deactivate, resource)
 
     // The is info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
       h3= resource.name
-      = link_to '', edit_role_path(resource), remote: true, class: 'edit' if can?(:edit, resource)
+      = button_to_edit resource if can?(:edit, resource)
       = active_inactive_buttons(resource, resource.name + " users can no longer login if you deactivate that role. Would you like to continue?") if can?(:deactivate, resource)
 
   - if can?(:edit, resource)
@@ -40,6 +42,8 @@
             a href="#activities_permissions" Activities
           li
             a href="#admin_permissions" Admin
+          li
+            a href="#brand_ambassadors_permissions" Brand Ambassadors
 
         .campaigns_box
           .tab-content
@@ -71,6 +75,10 @@
               = render 'admin_permissions'
 
             #admin_permissions.tab-pane
+              = render 'admin_permissions'
+
+            #brand_ambassadors_permissions.tab-pane
+              = render 'brand_ambassadors_permissions'
 
 = render partial: 'help_tutorial'
 

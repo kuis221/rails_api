@@ -4,16 +4,23 @@ Brandscopic::Application.configure do
   # Code is not reloaded between requests
   config.cache_classes = true
 
+  # Eager load code on boot. This eager loads most of Rails and
+  # your application in memory, allowing both thread web servers
+  # and those relying on copy on write to perform better.
+  # Rake tasks automatically ignore this option for performance.
+  config.eager_load = true
+
   # Full error reports are disabled and caching is turned on
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true
 
   # Disable Rails's static asset server (Apache or nginx will already do this)
   config.serve_static_assets = true
-  config.static_cache_control = "public, max-age=2592000"
+  config.static_cache_control = 'public, max-age=2592000'
 
-  # Compress JavaScripts and CSS
-  config.assets.compress = true
+  # Compress JavaScripts and CSS.
+  config.assets.js_compressor = :uglifier
+  # config.assets.css_compressor = :sass
 
   # Don't fallback to assets pipeline if a precompiled asset is missed
   config.assets.compile = false
@@ -21,6 +28,8 @@ Brandscopic::Application.configure do
   # Generate digests for assets URLs
   config.assets.digest = true
 
+  # Version of your assets, change this if you want to expire all your assets.
+  config.assets.version = '1.0'
 
   # Defaults to nil and saved in location specified by config.assets.prefix
   # config.assets.manifest = YOUR_PATH
@@ -32,8 +41,8 @@ Brandscopic::Application.configure do
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   # config.force_ssl = true
 
-  # See everything in the log (default is :info)
-  # config.log_level = :debug
+  # Set to :debug to see everything in the log.
+  config.log_level = :info
 
   config.action_dispatch.ip_spoofing_check = false
 
@@ -49,6 +58,8 @@ Brandscopic::Application.configure do
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server
   # config.action_controller.asset_host = "http://assets.example.com"
+  config.action_controller.asset_host = ENV['ASSETS_HOST'] if ENV['ASSETS_HOST']
+  config.font_assets.origin = "http://#{ENV['HOST_DOMAIN']}" if ENV['WEB']
 
   # Precompile additional assets (application.js, application.css, and all non-JS/CSS are already added)
   # config.assets.precompile += %w( search.js )
@@ -66,9 +77,14 @@ Brandscopic::Application.configure do
   # Send deprecation notices to registered listeners
   config.active_support.deprecation = :notify
 
+  # Disable automatic flushing of the log to improve performance.
+  # config.autoflush_log = false
 
-  config.action_controller.default_url_options = {:host => ENV['HOST_DOMAIN']}
-  config.action_mailer.default_url_options = {:host => ENV['HOST_DOMAIN']}
+  # Use default logging formatter so that PID and timestamp are not suppressed.
+  config.log_formatter = ::Logger::Formatter.new
+
+  config.action_controller.default_url_options = { host: ENV['HOST_DOMAIN'] }
+  config.action_mailer.default_url_options = { host: ENV['HOST_DOMAIN'] }
   Rails.application.routes.default_url_options[:host] = ENV['HOST_DOMAIN']
 
   # Log the query plan for queries taking more than this (works
@@ -84,14 +100,12 @@ Brandscopic::Application.configure do
   # config.static_cache_control = "public, max-age=2592000"
 end
 
-
 ActionMailer::Base.smtp_settings = {
-  :address        => 'smtp.sendgrid.net',
-  :port           => '587',
-  :authentication => :plain,
-  :user_name      => ENV['SENDGRID_USERNAME'],
-  :password       => ENV['SENDGRID_PASSWORD'],
-  :domain         => 'heroku.com',
-  :enable_starttls_auto => true
+  address: 'smtp.sendgrid.net',
+  port: '587',
+  authentication: :plain,
+  user_name: ENV['SENDGRID_USERNAME'],
+  password: ENV['SENDGRID_PASSWORD'],
+  domain: 'heroku.com',
+  enable_starttls_auto: true
 }
-

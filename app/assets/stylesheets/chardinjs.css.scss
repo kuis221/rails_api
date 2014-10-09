@@ -1,0 +1,128 @@
+.chardinjs-wrapper {
+	position: relative;
+}
+
+.chardinjs-overlay {
+	position: absolute;
+	z-index: 999999;
+	background-color: #000;
+	opacity: 0;
+	-webkit-transition: all 0.3s ease-out;
+	-moz-transition: all 0.3s ease-out;
+	-ms-transition: all 0.3s ease-out;
+	-o-transition: all 0.3s ease-out;
+	transition: all 0.3s ease-out;
+}
+
+.chardinjs-helper-layer {
+	position: absolute;
+	z-index: 9999998;
+	color: white;
+	-webkit-transition: all 0.3s ease-out;
+	-moz-transition: all 0.3s ease-out;
+	-ms-transition: all 0.3s ease-out;
+	-o-transition: all 0.3s ease-out;
+	transition: all 0.3s ease-out;
+	&.chardinjs-left {
+		margin-left: -2px;
+	}
+	&.chardinjs-right {
+		padding-right: 10px;
+	}
+	&.chardinjs-bottom {
+		padding-bottom: 10px;
+	}
+	&.chardinjs-top {
+		padding-top: 10px;
+	}
+}
+
+.chardinjs-tooltip {
+	position: absolute;
+	-webkit-transition: opacity 0.1s ease-out;
+	-moz-transition: opacity 0.1s ease-out;
+	-ms-transition: opacity 0.1s ease-out;
+	-o-transition: opacity 0.1s ease-out;
+	transition: opacity 0.1s ease-out;
+	max-width: 200px;
+	&.chardinjs-left {
+		margin-left: -135px;
+	}
+	&.chardinjs-right {
+		margin-right: -140px;
+		padding-left: 21px;
+	}
+	&.chardinjs-inner-top, &.chardinjs-bottom {
+		margin-bottom: -50px;
+		padding-top: 10px;
+	}
+	&.chardinjs-top {
+		margin-top: -50px;
+		padding-bottom: 5px;
+	}
+	&.chardinjs-right:before {
+		content: "\e028" !important;
+		font-family: 'icons';
+		font-size: 60px;
+		display: inline-block;
+		margin-left: 15px;
+		position: absolute;
+	}
+	&.chardinjs-left:after {
+		content: "\e027" !important;
+		font-family: 'icons';
+		font-size: 60px;
+		display: inline-block;
+		position: absolute;
+	}
+	&.chardinjs-inner-top:before, &.chardinjs-bottom:before {
+		content: "\e026" !important;
+		font-family: 'icons';
+		font-size: 60px;
+		display: inline-block;
+		position: absolute;
+	}
+	&.chardinjs-top:after {
+		content: "\e029" !important;
+		font-family: 'icons';
+		font-size: 60px;
+		display: inline-block;
+		position: absolute;
+	}
+	&.chardinjs-right:before, &.chardinjs-left:after {
+		width: 50px;
+		top: 82%;
+	}
+	&.chardinjs-bottom:before, &.chardinjs-top:after, &.chardinjs-inner-bottom:before, &.chardinjs-inner-top:after {
+		width: 1px;
+		height: 50px;
+		left: 50%;
+	}
+	&.chardinjs-bottom:before, &.chardinjs-inner-top:before {
+		top: -50px;
+	}
+	&.chardinjs-top:after {
+		bottom: -75px;
+	}
+	&.chardinjs-right:before {
+		left: -50px;
+	}
+	&.chardinjs-left:after {
+		right: -50px;
+	}
+}
+
+.chardinjs-show-element {
+	z-index: 9999999;
+	opacity: 0.8;
+	pointer-events: none;
+	cursor: default;
+}
+
+.chardinjs-relative-position {
+	position: relative;
+}
+
+.chardinjs-dashed {
+	border: 2px dashed #fff;
+}

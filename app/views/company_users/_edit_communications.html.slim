@@ -1,0 +1,27 @@
+- remote ||= false
+= simple_form_for(resource, remote: remote) do |f|
+  = f.error_notification
+
+  .form-inputs
+    p Please select your preferences
+    .notification-types
+      .row-fluid
+        .span12.category
+          .span5
+          .span2 IN-APP
+          .span2 SMS
+          .span2 EMAIL
+      = hidden_field_tag("company_user[notifications_settings][]", nil)
+      - CompanyUser::NOTIFICATION_SETTINGS_TYPES.each do |type|
+        -if resource.notification_setting_permission?(type)
+          .row-fluid
+            .span12
+              .span5.title= t("notification_types.#{type}")
+              .span2= notification_setting_checkbox(type, 'app')
+              .span2= notification_setting_checkbox(type, 'sms')
+              .span2= notification_setting_checkbox(type, 'email')
+
+  .form-actions
+    = f.button :submit, 'Save', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
+    = "&nbsp;".html_safe
+    = f.button :button, 'Cancel', class: 'btn btn-cancel'

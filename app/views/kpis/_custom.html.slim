@@ -6,7 +6,7 @@
     span id="duplicated-name"
 
 .row-fluid
-  = f.input :description, :input_html => {:rows => 1}, disabled: disabled
+  = f.input :description, :input_html => {class: 'input-xlarge', :rows => 1}, disabled: disabled
 
 .row-fluid
   = f.input :kpi_type, input_html: {class: 'input-medium chosen-enabled'}, collection: Kpi::CUSTOM_TYPE_OPTIONS.keys.map{|o| [o.capitalize, o]}, disabled: disabled
@@ -14,18 +14,21 @@
 #kpisegment-fields.row-fluid style="display: none"
   - goals = @campaign.goals.for_kpis_segments(resource)
   = f.fields_for :kpis_segments do |kf|
-    .control-group
-      .controls
-        = kf.text_field :text, placeholder: 'Segment name', class: 'input-medium', disabled: disabled
-        - unless resource.new_record?
-          = kf.fields_for :goals, goals.select{|g| g.kpis_segment_id == kf.object.id }, wrapper: false do |gf|
-            label
-              = gf.hidden_field :goalable_id, value: @campaign.id
-              = gf.hidden_field :goalable_type, value: 'Campaign'
-              = gf.hidden_field :kpis_segment_id
-              = gf.hidden_field :kpi_id, value: resource.id
-              = gf.text_field :value, placeholder: 'Goal', class: 'input-mini'
-        = kf.link_to_remove "Remove"
+    .control-group.kpi-segment
+      .controls.row-fluid
+        .span7
+          = kf.text_field :text, placeholder: 'Segment name', class: 'input-medium required', disabled: disabled
+        .span3
+          - unless resource.new_record?
+            = kf.fields_for :goals, goals.select{|g| g.kpis_segment_id == kf.object.id }, wrapper: false do |gf|
+              label
+                = gf.hidden_field :goalable_id, value: @campaign.id
+                = gf.hidden_field :goalable_type, value: 'Campaign'
+                = gf.hidden_field :kpis_segment_id
+                = gf.hidden_field :kpi_id, value: resource.id
+                = gf.text_field :value, placeholder: 'Goal', class: 'input-mini'
+        .span2
+          = kf.link_to_remove "Remove"
 
   p= f.link_to_add "Add a segment", :kpis_segments unless disabled
 

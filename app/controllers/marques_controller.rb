@@ -4,11 +4,12 @@ class MarquesController < FilteredController
   respond_to :json, only: [:index]
 
   protected
-    def permitted_params
-      params.permit(marque: [:name])[:marque]
-    end
 
-    def authorize_actions
-      authorize! :index, resource_class
-    end
+  def permitted_params
+    params.permit(marque: [:name])[:marque]
+  end
+
+  def authorize_actions
+    authorize! :index, resource_class
+  end
 end

@@ -12,11 +12,11 @@
 #  updated_at    :datetime         not null
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
-describe EventExpense do
-  it { should belong_to(:event) }
+describe EventExpense, type: :model do
+  it { is_expected.to belong_to(:event) }
 
-  it { should validate_presence_of(:name) }
-  it { should validate_presence_of(:amount) }
+  it { is_expected.to validate_presence_of(:name) }
+  it { is_expected.to validate_presence_of(:amount) }
 end

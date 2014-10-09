@@ -2,4 +2,4 @@
   .pull-left
     = campaign.name
   .pull-right
-    = link_to '', remove_campaign_company_user_path(resource, {campaign_id: campaign.id}.merge( parent.nil?  ? {}  : {parent_type: parent.class.name, parent_id: parent.id})), method: :delete, remote: true, class: 'icon-remove-sign', title: 'Remove Campaign'
+    = link_to '', remove_campaign_company_user_path(resource, {campaign_id: campaign.id}.merge( parent.nil?  ? {}  : {parent_type: parent.class.name, parent_id: parent.id})), method: :delete, remote: true, class: 'icon-remove-circle', title: 'Remove Campaign'

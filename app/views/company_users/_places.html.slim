@@ -1,1 +1,47 @@
 = render partial: 'company_users/place', collection: resource.places, locals: {resource: resource}
+
+/ Markup for new design
+- if false
+  .details_box.user-view
+
+    .user-data
+
+      h3 PLACES
+      .items-container
+        .box.special-icon.area-icon
+          b Madison Area
+
+        .box.special-icon.area-icon
+          b Boston Area
+
+        .box.special-icon.area-icon
+          b Houston Area
+
+        .box.special-icon.area-icon
+          b Denver Area
+
+        .box.special-icon.area-icon
+          b example one - area icon
+
+        .box.special-icon.area-icon
+          b Metro New York Area
+
+
+      .items-container
+        .box.special-icon.venue-icon
+          a href="#" example one - venue icon
+          p 6251 East Pacific Coast Highway, Long Beach
+
+        .box.special-icon.venue-icon
+          a href="#" Bar & Dinner "PPTH"
+          p 6251 East Pacific Coast Highway, Long Beach
+
+        .box.special-icon.venue-icon
+          a href="#" example one - venue icon
+          p 6251 East Pacific Coast Highway, Long Beach
+
+        .box.special-icon.venue-icon
+          a href="#" Bar & Dinner "PPTH"
+          p 6251 East Pacific Coast Highway, Long Beach
+
+      = link_to "Add places"

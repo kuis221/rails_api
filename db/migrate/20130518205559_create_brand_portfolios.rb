@@ -18,6 +18,5 @@ class CreateBrandPortfolios < ActiveRecord::Migration
     add_index :brand_portfolios_brands, :brand_id
     add_index :brand_portfolios_brands, :brand_portfolio_id
     add_index :brand_portfolios_brands, [:brand_id, :brand_portfolio_id], name: :brand_portfolio_unique_idx, unique: true
-
   end
 end

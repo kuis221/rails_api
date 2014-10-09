@@ -1,13 +1,12 @@
-require 'spec_helper'
+require 'rails_helper'
 
 feature 'Events section' do
-  let(:company) { FactoryGirl.create(:company) }
-  let(:campaign) { FactoryGirl.create(:campaign, company: company) }
-  let(:user) { FactoryGirl.create(:user, company: company, role_id: role.id) }
+  let(:company) { create(:company) }
+  let(:campaign) { create(:campaign, company: company) }
+  let(:user) { create(:user, company: company, role_id: role.id) }
   let(:company_user) { user.company_users.first }
-  let(:place) { FactoryGirl.create(:place, name: 'A Nice Place', country:'CR', city: 'Curridabat', state: 'San Jose') }
+  let(:place) { create(:place, name: 'A Nice Place', country: 'CR', city: 'Curridabat', state: 'San Jose') }
   let(:permissions) { [] }
-  let(:event) { FactoryGirl.create(:event, campaign: campaign, company: company) }
 
   before do
     Warden.test_mode!
@@ -17,27 +16,24 @@ feature 'Events section' do
   after { Warden.test_reset! }
 
   shared_examples_for 'a user that can attach expenses to events' do
-    let(:event) { FactoryGirl.create(:event,
-          start_date: "08/21/2013", end_date: "08/21/2013",
-          start_time: '10:00am', end_time: '11:00am',
-          campaign: campaign, active: true, place: place) }
+    let(:event) { create(:due_event, campaign: campaign, place: place) }
 
     before do
       Kpi.create_global_kpis
-      event.campaign.add_kpi Kpi.expenses
+      event.campaign.update_attribute(:modules, 'expenses' => {})
     end
-    scenario "can attach a expense to event" do
+    scenario 'can attach a expense to event' do
       with_resque do # So the document is processed
         visit event_path(event)
 
         click_js_link 'Add Expense'
 
         within visible_modal do
-          attach_file "file", 'spec/fixtures/file.pdf'
+          attach_file 'file', 'spec/fixtures/file.pdf'
 
           # Test validations
           click_js_button 'Save'
-          find_field('Name').should have_error('This field is required.')
+          expect(find_field('Name')).to have_error('This field is required.')
 
           fill_in 'Name', with: 'test expense'
           expect(page).to have_content('File attached: file.pdf')
@@ -53,14 +49,26 @@ feature 'Events section' do
         end
         asset = AttachedAsset.last
         expect(asset.file_file_name).to eql 'file.pdf'
+
+        # Test user can preview and download the receipt
+        hover_and_click '#expenses-list [id^="event_expense"]', 'View Receipt'
+
+        within visible_modal do
+          src = asset.file.url(:thumbnail, timestamp: false)
+          expect(page).to have_xpath("//img[starts-with(@src, \"#{src}\")]", wait: 10)
+          find('.slider').hover
+
+          src = asset.file.url(:original, timestamp: false).gsub('http:', 'https:')
+          expect(page).to have_link('Download')
+          expect(page).to have_xpath("//a[starts-with(@href, \"#{src}\")]")
+        end
       end
     end
   end
 
+  feature 'admin user', js: true, search: true do
+    let(:role) { create(:role, company: company) }
 
-  feature "admin user", js: true, search: true do
-    let(:role) { FactoryGirl.create(:role, company: company) }
-
-    it_behaves_like "a user that can attach expenses to events"
+    it_behaves_like 'a user that can attach expenses to events'
   end
 end

@@ -9,16 +9,17 @@
 - if resource.is_segmented?
   #kpisegment-fields.row-fluid.form-horizontal
     = f.fields_for :goals, @campaign.goals.for_kpis_segments(resource) do |kf|
-      .control-group
-        .controls
+      .control-group.kpi-segment
+        .controls.row-fluid
           = kf.hidden_field :goalable_id
           = kf.hidden_field :goalable_type
           = kf.hidden_field :kpis_segment_id
           = kf.hidden_field :kpi_id, value: resource.id
-          label
-            = kf.object.kpis_segment.text
-            = kf.text_field :value, placeholder: 'Goal', class: 'input-xlarge'
-      
+          .span7
+              = kf.object.kpis_segment.text
+          .span4
+              = kf.text_field :value, placeholder: 'Goal', class: 'input-xlarge'
+
 - else
   #kpigoal-fields.row-fluid.form-horizontal
     div.control-group

@@ -1,15 +1,15 @@
 .login_box.resend
   h2 Resend invitation instructions
   p
-	  | Enter your email and we'll 
+	  | Enter your email and we'll
 	  br/
 	  | resend you the invitation instructions.
 
-  = simple_form_for(resource, :as => resource_name, :url => users_invitation_resend_path, :html => { :method => :post }) do |f|
+  = simple_form_for(User.new, :as => resource_name, :url => users_invitation_resend_path, :html => { :method => :post }) do |f|
     = f.error_notification
     = f.full_error :invitation_token
     div.form
       = f.input :email, :required => true, :autofocus => true, :placeholder => 'Email'
-      
+
       = f.button :submit, "Resend", class: 'btn btn-primary'
   = render "devise/shared/links"

@@ -10,7 +10,6 @@ class CreateSurveys < ActiveRecord::Migration
     end
     add_index :surveys, :event_id
 
-
     create_table :surveys_answers do |t|
       t.references :survey
       t.references :kpi

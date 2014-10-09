@@ -15,8 +15,8 @@
 #  updated_at        :datetime         not null
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
-describe KpiReport do
-  it { should belong_to(:company_user) }
+describe KpiReport, type: :model do
+  it { is_expected.to belong_to(:company_user) }
 end

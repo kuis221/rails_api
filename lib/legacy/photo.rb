@@ -22,16 +22,14 @@
 #
 
 class Legacy::Photo < Legacy::Record
-
   include Paperclip::Glue
 
   has_many :data_migrations, as: :remote
 
   # Associations
-  belongs_to    :photographable, :polymorphic => true
+  belongs_to :photographable, polymorphic: true
 
   has_attached_file :file, {
-            :url => "/photos/:id/:basename:dashed_style.:extension", :path =>  "photos/:id/:basename:dashed_style.:extension"
-        }.merge(Legacy::PAPERCLIP_SETTINGS)
-
+    url: '/photos/:id/:basename:dashed_style.:extension', path: 'photos/:id/:basename:dashed_style.:extension'
+  }.merge(Legacy::PAPERCLIP_SETTINGS)
 end

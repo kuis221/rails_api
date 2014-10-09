@@ -25,11 +25,12 @@ class TagsController < InheritedResources::Base
   end
 
   protected
-    def permitted_params
-      params.permit(tag: [:name, :id])[:tag]
-    end
 
-    def company_tags
-      current_company.tags.order('name ASC').map{|t| {'id' => t.id, 'text' => t.name}}
-    end
+  def permitted_params
+    params.permit(tag: [:name, :id])[:tag]
+  end
+
+  def company_tags
+    current_company.tags.order('name ASC').map { |t| { 'id' => t.id, 'text' => t.name } }
+  end
 end

@@ -1,9 +1,9 @@
 class UnreadMigration < ActiveRecord::Migration
   def self.up
-    create_table :read_marks, :force => true do |t|
-      t.integer  :readable_id
-      t.integer  :user_id,       :null => false
-      t.string   :readable_type, :null => false, :limit => 20
+    create_table :read_marks, force: true do |t|
+      t.integer :readable_id
+      t.integer :user_id,       null: false
+      t.string :readable_type, null: false, limit: 20
       t.datetime :timestamp
     end
 

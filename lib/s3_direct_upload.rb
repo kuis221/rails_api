@@ -1,4 +1,4 @@
-require "singleton"
+require 'singleton'
 require 's3_direct_upload/form_helper'
 
 module S3DirectUpload
@@ -7,7 +7,7 @@ module S3DirectUpload
 
     ATTRIBUTES = [:access_key_id, :secret_access_key, :bucket, :prefix_to_clean, :region, :url]
 
-    attr_accessor *ATTRIBUTES
+    attr_accessor(*ATTRIBUTES)
   end
 
   def self.config

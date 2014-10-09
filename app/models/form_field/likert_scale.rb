@@ -12,11 +12,26 @@
 #  required       :boolean
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
+#  kpi_id         :integer
 #
 
 class FormField::LikertScale < FormField
   def field_options(result)
-    {as: :likert_scale, collection: self.options.order(:ordering), statements: self.statements.order(:ordering), label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: field_classes, min: 0, step: 'any', required: (self.required? ? 'required' : nil)}}
+    {
+      as: :likert_scale,
+      label_html: { class: 'control-group-label' },
+      collection: options.order(:ordering),
+      statements: statements.order(:ordering),
+      label: name,
+      field_id: id,
+      options: settings,
+      required: required,
+      input_html: {
+        value: result.value,
+        class: field_classes,
+        min: 0,
+        step: 'any',
+        required: (self.required? ? 'required' : nil) } }
   end
 
   def field_classes
@@ -34,8 +49,19 @@ class FormField::LikertScale < FormField
   def format_html(result)
     if result.value
       statements.map do |statement|
-        "#{statement.name}: #{options.detect{|option| option.id.to_s == result.value[statement.id.to_s] }.try(:name)}"
+        "<span>#{options.find { |option| option.id.to_s == result.value[statement.id.to_s] }.try(:name)}</span> #{statement.name}"
       end.join('<br /> ').html_safe
     end
+  end
+
+  protected
+
+  def valid_hash_keys
+    statements.pluck('id')
+  end
+
+  def is_valid_value_for_key?(_key, value)
+    @_option_ids = options.pluck('id')
+    value_is_numeric?(value) && @_option_ids.include?(value.to_i)
   end
 end

@@ -1,0 +1,1870 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>API documentation</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/bundled/bootstrap.min.css'/>
+<link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/bundled/prettify.css'/>
+<link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/bundled/bootstrap-responsive.min.css'/>
+  <link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/application.css'/>
+  <!-- IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div id='container'>
+        <ul class='breadcrumb'>
+  <li>
+    <a href='../apidoc.html'>Brandscopic 1.0</a>
+    <span class='divider'>/</span>
+  </li>
+  <li class='active'>
+    Venues
+    
+  </li>
+  
+</ul>
+
+<div class='page-header'>
+  <h1>
+    Venues
+    <br>
+    <small>Venues</small>
+  </h1>
+</div>
+
+
+
+  <h2>Supported Formats</h2>
+  json, xml
+
+<div class='accordion' id='accordion'>
+
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/venues/show.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-show'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/venues/:id
+          </a>
+          <br>
+          <small>Return a venue's details</small>
+        </h2>
+    </div>
+
+
+    <div id='description-show' class='collapse accordion-body'>
+      
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    404
+    Missing
+    <br>
+    401
+    Unauthorized access
+    <br>
+    500
+    Server crashed for some reason
+    <br>
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">{
+    &quot;id&quot;: 2,
+    &quot;name&quot;: &quot;Island Creek Oyster Bar&quot;,
+    &quot;formatted_address&quot;: &quot;500 Commonwealth Avenue, Boston, MA, United States&quot;,
+    &quot;latitude&quot;: 42.348774,
+    &quot;longitude&quot;: -71.094994,
+    &quot;zipcode&quot;: &quot;02215&quot;,
+    &quot;city&quot;: &quot;Boston&quot;,
+    &quot;state&quot;: &quot;Massachusetts&quot;,
+    &quot;country&quot;: &quot;US&quot;,
+    &quot;events_count&quot;: 11,
+    &quot;promo_hours&quot;: &quot;204.0&quot;,
+    &quot;impressions&quot;: 814,
+    &quot;interactions&quot;: 1554,
+    &quot;sampled&quot;: 683,
+    &quot;spent&quot;: &quot;1600.0&quot;,
+    &quot;score&quot;: 42,
+    &quot;avg_impressions&quot;: &quot;74.0&quot;,
+    &quot;avg_impressions_hour&quot;: &quot;3.99&quot;,
+    &quot;avg_impressions_cost&quot;: &quot;1.97&quot;,
+    &quot;opening_hours&quot;: [
+        &quot;Tuesday 4:00 PM - 1:00 AM&quot;,
+        &quot;Wednesday 4:00 PM - 1:00 AM&quot;,
+        &quot;Thursday 4:00 PM - 1:00 AM&quot;,
+        &quot;Friday 4:00 PM - 1:00 AM&quot;,
+        &quot;Saturday 4:00 PM - 1:00 AM&quot;,
+        &quot;Sunday 4:00 PM - 1:00 AM&quot;,
+        &quot;Monday 10:30 AM - 1:00 AM&quot;
+    ],
+    &quot;td_linx_code&quot;: &#39;2238273&#39;
+}
+</pre>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>One of the allowed company ids returned by the</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Venue ID</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/venues/analysis.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-analysis'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/venues/:id/analysis
+          </a>
+          <br>
+          <small>Return a venue's analysis information</small>
+        </h2>
+    </div>
+
+
+    <div id='description-analysis' class='collapse accordion-body'>
+      
+<p>This method returns the analysis informaction for a given venue. The result
+have the following attributes:</p>
+<ul><li>
+<p><strong>overview</strong>: have the statistics for different KPIs (events,
+promo hours, impressions, interactions, sampled)</p>
+</li><li>
+<p><strong>age</strong>: the different results for each segment of the Age KPI</p>
+</li><li>
+<p><strong>gender</strong>: the different results for each segment of the
+Gender KPI</p>
+</li><li>
+<p><strong>ethnicity</strong>: the different results for each segment of the
+Ethnicity KPI</p>
+</li><li>
+<p><strong>trends_by_week</strong>: returns information about the performance
+of the venue on each different day of the week.</p>
+<ul><li>
+<p><strong>impressions_promo</strong>: the average number of impressions per
+day of the week, where Monday is 0 and Sunday is 6</p>
+</li><li>
+<p><strong>cost_impression</strong>: the average cost per impression per day
+of the week, where Monday is 0 and Sunday is 6</p>
+</li><li>
+<p><strong>narrative</strong>: a brief narrative describing the performance of
+the venue based on these numbers.</p>
+</li></ul>
+</li></ul>
+
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    404
+    Missing
+    <br>
+    401
+    Unauthorized access
+    <br>
+    500
+    Server crashed for some reason
+    <br>
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">GET /api/v1/venues/3598/analysis.json?auth_token=XXXXXXXX&amp;company_id=2
+{
+    overview: {
+        events: 17,
+        promo_hours: &quot;16.5&quot;,
+        impressions: 1389,
+        interactions: 980,
+        sampled: 810,
+        narrative: &quot;The Fox Sports Bar &amp; Grill is about average compared to similar venues in the area both in terms of popularity and cost per impression. Most venues will fallinto this category.&quot;
+    },
+    age: {
+        &lt; 12: 0,
+        12 – 17: 0,
+        18 – 20: 0,
+        21 – 24: 48.125,
+        25 – 34: 34.6875,
+        35 – 44: 16.5625,
+        45 – 54: 0.625,
+        55 – 64: 0,
+        65+: 0
+    },
+    gender: {
+        Female: 49.375,
+        Male: 50.625
+    },
+    ethnicity: {
+        Asian: 3.4375,
+        Black / African American: 3.4375,
+        Hispanic / Latino: 84.6875,
+        Native American: 0,
+        White: 8.125
+    },
+    trends_by_week: {
+        narrative: &quot;The Fox Sports Bar &amp; Grill has had events on Thursday, Friday, and Saturday and has performed best on Saturday. Specifically, The Fox Sports Bar &amp; Grill yields more impressions per hour on Saturday than on any other day of the week.&quot;,
+        impressions_promo: {
+            0: 0,
+            1: 0,
+            2: 0,
+            3: 11.84615384615384,
+            4: 13.61111111111111,
+            5: 22.5,
+            6: 0
+        },
+        cost_impression: {
+            0: 0,
+            1: 0,
+            2: 0,
+            3: 0.4082136231115823,
+            4: 0.4251700680272109,
+            5: 0.4166666666666667,
+            6: 0
+        }
+    }
+}
+</pre>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>One of the allowed company ids returned by the</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Venue ID</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/venues/index.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-index'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/venues
+          </a>
+          <br>
+          <small>Search for a list of venues</small>
+        </h2>
+    </div>
+
+
+    <div id='description-index' class='collapse accordion-body'>
+      
+<p>Returns a list of venues filtered by the given params. The results are
+returned on groups of 30 per request. To obtain the next 30 results provide
+the &lt;page&gt; param.</p>
+
+<p>All the times and dates are returned on the user&#39;s timezone.</p>
+
+<p><strong>Facets</strong></p>
+
+<p>Faceting is a feature of Solr that determines the number of documents that
+match a given search and an additional criteria</p>
+
+<p>When &lt;page&gt; is “1”, the result will include a list of facets.</p>
+
+<p>*Facets Results*</p>
+
+<p>The API returns the facets on the following format:</p>
+
+<pre>[
+  {
+    label: String,          # Any of: Events, Impressions, Interactions, Promo Hours, Samples, Venue Score, $ Spent, Campaigns, Areas, Brands
+    items: [                # List of items for the facet sorted by relevance. (Not included for range filters)
+      {
+        &quot;label&quot;: String,      # The name of the item
+        &quot;id&quot;: String,         # The id of the item, this should be used to filter the list by this items
+        &quot;name&quot;: String,       # The param name to be use for filtering the list (campaign, user, team, place, area, status, event_status, etc)
+        &quot;count&quot;: Number,      # The number of results for this item
+        &quot;selected&quot;: Boolean   # True if the list is being filtered by this item
+      },
+      ....
+    ],
+    min: Number,            # The minimun value for the filter. (Only included for range filters)
+    max: Number,            # The maximum value for the filter. (Only included for range filters)
+    selected_min: Number,   # The selected minimun value for the filter, this should be used as the default value for the range selectors. (Only included for range filters)
+    selected_max: Number    # The selected maximum value for the filter, this should be used as the default value for the range selectors. (Only included for range filters)
+  }
+]</pre>
+
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    404
+    Missing
+    <br>
+    401
+    Unauthorized access
+    <br>
+    500
+    Server crashed for some reason
+    <br>
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">{
+    &quot;page&quot;: 1,
+    &quot;total&quot;: 3233,
+    &quot;facets&quot;: [
+        {
+            &quot;label&quot;: &quot;Events&quot;,
+            &quot;name&quot;: &quot;events_count&quot;,
+            &quot;min&quot;: 0,
+            &quot;max&quot;: 127,
+            &quot;selected_min&quot;: null,
+            &quot;selected_max&quot;: null
+        },
+        {
+            &quot;label&quot;: &quot;Impressions&quot;,
+            &quot;name&quot;: &quot;impressions&quot;,
+            &quot;min&quot;: 0,
+            &quot;max&quot;: 29330,
+            &quot;selected_min&quot;: null,
+            &quot;selected_max&quot;: null
+        },
+        {
+            &quot;label&quot;: &quot;Interactions&quot;,
+            &quot;name&quot;: &quot;interactions&quot;,
+            &quot;min&quot;: 0,
+            &quot;max&quot;: 14463,
+            &quot;selected_min&quot;: null,
+            &quot;selected_max&quot;: null
+        },
+        {
+            &quot;label&quot;: &quot;Promo Hours&quot;,
+            &quot;name&quot;: &quot;promo_hours&quot;,
+            &quot;min&quot;: 0,
+            &quot;max&quot;: 3447,
+            &quot;selected_min&quot;: null,
+            &quot;selected_max&quot;: null
+        },
+        {
+            &quot;label&quot;: &quot;Samples&quot;,
+            &quot;name&quot;: &quot;sampled&quot;,
+            &quot;min&quot;: 0,
+            &quot;max&quot;: 1040,
+            &quot;selected_min&quot;: null,
+            &quot;selected_max&quot;: null
+        },
+        {
+            &quot;label&quot;: &quot;Venue Score&quot;,
+            &quot;name&quot;: &quot;venue_score&quot;,
+            &quot;min&quot;: 0,
+            &quot;max&quot;: 100,
+            &quot;selected_min&quot;: null,
+            &quot;selected_max&quot;: null
+        },
+        {
+            &quot;label&quot;: &quot;$ Spent&quot;,
+            &quot;name&quot;: &quot;spent&quot;,
+            &quot;min&quot;: 0,
+            &quot;max&quot;: 7758,
+            &quot;selected_min&quot;: null,
+            &quot;selected_max&quot;: null
+        },
+        {
+            &quot;label&quot;: &quot;Price&quot;,
+            &quot;items&quot;: [
+                {
+                    &quot;label&quot;: &quot;$&quot;,
+                    &quot;id&quot;: &quot;1&quot;,
+                    &quot;name&quot;: &quot;price&quot;,
+                    &quot;count&quot;: 1,
+                    &quot;ordering&quot;: 1,
+                    &quot;selected&quot;: false
+                },
+                {
+                    &quot;label&quot;: &quot;$$&quot;,
+                    &quot;id&quot;: &quot;2&quot;,
+                    &quot;name&quot;: &quot;price&quot;,
+                    &quot;count&quot;: 1,
+                    &quot;ordering&quot;: 2,
+                    &quot;selected&quot;: false
+                },
+                {
+                    &quot;label&quot;: &quot;$$$&quot;,
+                    &quot;id&quot;: &quot;3&quot;,
+                    &quot;name&quot;: &quot;price&quot;,
+                    &quot;count&quot;: 1,
+                    &quot;ordering&quot;: 3,
+                    &quot;selected&quot;: false
+                },
+                {
+                    &quot;label&quot;: &quot;$$$$&quot;,
+                    &quot;id&quot;: &quot;4&quot;,
+                    &quot;name&quot;: &quot;price&quot;,
+                    &quot;count&quot;: 1,
+                    &quot;ordering&quot;: 3,
+                    &quot;selected&quot;: false
+                }
+            ]
+        },
+        {
+            &quot;label&quot;: &quot;Areas&quot;,
+            &quot;items&quot;: [
+                {
+                    &quot;label&quot;: &quot;Ann Arbor&quot;,
+                    &quot;id&quot;: 19,
+                    &quot;count&quot;: 0,
+                    &quot;name&quot;: &quot;area&quot;,
+                    &quot;selected&quot;: false
+                },
+                {
+                    &quot;label&quot;: &quot;Asbury Park&quot;,
+                    &quot;id&quot;: 20,
+                    &quot;count&quot;: 0,
+                    &quot;name&quot;: &quot;area&quot;,
+                    &quot;selected&quot;: false
+                }
+            ]
+        },
+        {
+            &quot;label&quot;: &quot;Campaigns&quot;,
+            &quot;items&quot;: [
+                {
+                    &quot;label&quot;: &quot;ABSOLUT BA FY14&quot;,
+                    &quot;id&quot;: 14,
+                    &quot;name&quot;: &quot;campaign&quot;,
+                    &quot;selected&quot;: false
+                },
+                {
+                    &quot;label&quot;: &quot;ABSOLUT Bloody FY14&quot;,
+                    &quot;id&quot;: 57,
+                    &quot;name&quot;: &quot;campaign&quot;,
+                    &quot;selected&quot;: false
+                }
+            ]
+        },
+        {
+            &quot;label&quot;: &quot;Brands&quot;,
+            &quot;items&quot;: [
+                {
+                    &quot;label&quot;: &quot;ABSOLUT Vodka&quot;,
+                    &quot;id&quot;: 25,
+                    &quot;name&quot;: &quot;brand&quot;,
+                    &quot;count&quot;: 1,
+                    &quot;selected&quot;: false
+                },
+                {
+                    &quot;label&quot;: &quot;Aberlour&quot;,
+                    &quot;id&quot;: 6,
+                    &quot;name&quot;: &quot;brand&quot;,
+                    &quot;count&quot;: 1,
+                    &quot;selected&quot;: false
+                }
+            ]
+        }
+    ],
+    &quot;results&quot;: [
+        {
+            &quot;id&quot;: 1523,
+            &quot;name&quot;: &quot;Bayou Beer Garden New Orleans&quot;,
+            &quot;formatted_address&quot;: &quot;326 North Jefferson Davis Parkway, New Orleans, LA, United States&quot;,
+            &quot;latitude&quot;: 29.97205,
+            &quot;longitude&quot;: -90.091787,
+            &quot;zipcode&quot;: &quot;70119&quot;,
+            &quot;city&quot;: &quot;New Orleans&quot;,
+            &quot;state&quot;: &quot;Louisiana&quot;,
+            &quot;country&quot;: &quot;US&quot;,
+            &quot;events_count&quot;: 5,
+            &quot;promo_hours&quot;: &quot;5.0&quot;,
+            &quot;impressions&quot;: 1100,
+            &quot;interactions&quot;: 750,
+            &quot;sampled&quot;: 575,
+            &quot;spent&quot;: &quot;732.0&quot;,
+            &quot;score&quot;: 93,
+            &quot;avg_impressions&quot;: &quot;220.0&quot;,
+            &quot;avg_impressions_hour&quot;: &quot;220.0&quot;,
+            &quot;avg_impressions_cost&quot;: &quot;0.67&quot;,
+            &quot;td_linx_code&quot;: &quot;12312312&quot;
+        },
+        {
+            &quot;id&quot;: 1835,
+            &quot;name&quot;: &quot;Just John Club&quot;,
+            &quot;formatted_address&quot;: &quot;4112 Manchester Avenue, St. Louis, MO, United States&quot;,
+            &quot;latitude&quot;: 38.627711,
+            &quot;longitude&quot;: -90.250814,
+            &quot;zipcode&quot;: &quot;63110&quot;,
+            &quot;city&quot;: &quot;St Louis&quot;,
+            &quot;state&quot;: &quot;Missouri&quot;,
+            &quot;country&quot;: &quot;US&quot;,
+            &quot;events_count&quot;: 4,
+            &quot;promo_hours&quot;: &quot;4.0&quot;,
+            &quot;impressions&quot;: 495,
+            &quot;interactions&quot;: 300,
+            &quot;sampled&quot;: 200,
+            &quot;spent&quot;: &quot;905.0&quot;,
+            &quot;score&quot;: 93,
+            &quot;avg_impressions&quot;: &quot;123.0&quot;,
+            &quot;avg_impressions_hour&quot;: &quot;123.75&quot;,
+            &quot;avg_impressions_cost&quot;: &quot;1.83&quot;,
+            &quot;td_linx_code&quot;: &quot;12312312&quot;
+        },
+        {
+            &quot;id&quot;: 1401,
+            &quot;name&quot;: &quot;The Tap&quot;,
+            &quot;formatted_address&quot;: &quot;815 Harvey Road, College Station, TX, United States&quot;,
+            &quot;latitude&quot;: 30.622055,
+            &quot;longitude&quot;: -96.312067,
+            &quot;zipcode&quot;: &quot;77840&quot;,
+            &quot;city&quot;: &quot;College Station&quot;,
+            &quot;state&quot;: &quot;Texas&quot;,
+            &quot;country&quot;: &quot;US&quot;,
+            &quot;events_count&quot;: 1,
+            &quot;promo_hours&quot;: &quot;1.0&quot;,
+            &quot;impressions&quot;: 250,
+            &quot;interactions&quot;: 90,
+            &quot;sampled&quot;: 69,
+            &quot;spent&quot;: &quot;216.0&quot;,
+            &quot;score&quot;: 93,
+            &quot;avg_impressions&quot;: &quot;250.0&quot;,
+            &quot;avg_impressions_hour&quot;: &quot;250.0&quot;,
+            &quot;avg_impressions_cost&quot;: &quot;0.86&quot;,
+            &quot;td_linx_code&quot;: &quot;12312312&quot;
+        },
+        ....
+    ]
+}
+</pre>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>One of the allowed company ids returned by the</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>location </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A pair of latitude and longitude seperated by a comma. This will make the
+list to include only those that are in a radius of <code>radius</code>
+kilometers.</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>campaign </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of campaign ids to filter the results</p>
+
+        <br>
+        Value: Must be an array of any type
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>page </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>The number of the page, Default: 1</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/venues/create.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-create'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            POST /api/v1/venues
+          </a>
+          <br>
+          <small>Creates a new venue</small>
+        </h2>
+    </div>
+
+      Also see <a href="../apidoc/venues/types.html">venues#types</a>.
+
+    <div id='description-create' class='collapse accordion-body'>
+      
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    404
+    Missing
+    <br>
+    401
+    Unauthorized access
+    <br>
+    500
+    Server crashed for some reason
+    <br>
+
+
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>One of the allowed company ids returned by the</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>venue </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be a Hash
+
+
+    </td>
+
+  </tr>
+
+    <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>venue[name] </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>The Venue name</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>venue[types] </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A comma separated string with one or more of the possible types venue
+types. See venues#types for more info</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>venue[street_number] </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>The Venue street_number (address 1)</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>venue[route] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>The Venue&#39;s route (address 2)</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>venue[country] </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>The Venue country code. Eg. US</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>venue[city] </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>The Venue city</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>venue[state] </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>The Venue state, use the full name and not the code. Eg “California” or
+“Florida”</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>venue[zipcode] </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>The Venue&#39;s zipcode</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+
+
+    </tbody>
+  </table>
+
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/venues/types.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-types'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/venues/types
+          </a>
+          <br>
+          <small>Get a list of possible venue types</small>
+        </h2>
+    </div>
+
+
+    <div id='description-types' class='collapse accordion-body'>
+      
+<p>Returns a list of valid venue types that can be used to generate a dropdown
+when creating a new venue</p>
+
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    404
+    Missing
+    <br>
+    401
+    Unauthorized access
+    <br>
+    500
+    Server crashed for some reason
+    <br>
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">GET /api/v1/venues/types.json?auth_token=sdFKl0DF9-39tGzWpZ&amp;company_id=1
+[
+    {
+        &quot;name&quot;: &quot;Accounts&quot;,
+        &quot;value&quot;: &quot;accounts&quot;
+    },
+    {
+        &quot;name&quot;: &quot;Airport&quot;,
+        &quot;value&quot;: &quot;airport&quot;
+    },
+    {
+        &quot;name&quot;: &quot;Amusement Park&quot;,
+        &quot;value&quot;: &quot;amusement_park&quot;
+    },
+    {
+        &quot;name&quot;: &quot;Aquarium&quot;,
+        &quot;value&quot;: &quot;aquarium&quot;
+    },
+    {
+        &quot;name&quot;: &quot;Art Gallery&quot;,
+        &quot;value&quot;: &quot;art_gallery&quot;
+    },
+    ...
+]
+</pre>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>One of the allowed company ids returned by the</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/venues/photos.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-photos'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/venues/:id/photos
+          </a>
+          <br>
+          <small>Get a list of photos for a Venue</small>
+        </h2>
+    </div>
+
+
+    <div id='description-photos' class='collapse accordion-body'>
+      
+<p>Returns a mixed list of photos uploaded from the app + photos obtained from
+Google that are associated to the venue</p>
+
+<p>Each photo has the following attributes:</p>
+<ul><li>
+<p>For photos uploaded from the app:</p>
+<ul><li>
+<p><strong>id</strong>: the photo id</p>
+</li><li>
+<p><strong>file_file_name</strong>: the photo&#39;s file name</p>
+</li><li>
+<p><strong>file_content_type</strong>: the photo&#39;s file type</p>
+</li><li>
+<p><strong>file_file_size</strong>: the photos&#39;s file size</p>
+</li><li>
+<p><strong>created_at</strong>: the photo&#39;s uploading date</p>
+</li><li>
+<p><strong>active</strong>: the photo&#39;s status</p>
+</li><li>
+<p><strong>file_small</strong>: the small photos&#39;s url</p>
+</li><li>
+<p><strong>file_medium</strong>: the medium photos&#39;s url</p>
+</li><li>
+<p><strong>file_original</strong>: the original photos&#39;s url</p>
+</li><li>
+<p><strong>type</strong>: the photo&#39;s type. In this case it should be
+&#39;brandscopic&#39;</p>
+</li></ul>
+</li><li>
+<p>For photos from Google:</p>
+<ul><li>
+<p><strong>photo_reference</strong>: the photo reference id</p>
+</li><li>
+<p><strong>width</strong>: the photo&#39;s width</p>
+</li><li>
+<p><strong>height</strong>: the photo&#39;s height</p>
+</li><li>
+<p><strong>html_attributions</strong>: the photo&#39;s attributions</p>
+</li><li>
+<p><strong>file_small</strong>: the small photos&#39;s url</p>
+</li><li>
+<p><strong>file_original</strong>: the original photos&#39;s url</p>
+</li><li>
+<p><strong>type</strong>: the photo&#39;s type. In this case it should be
+&#39;google&#39;</p>
+</li></ul>
+</li></ul>
+
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    404
+    Missing
+    <br>
+    401
+    Unauthorized access
+    <br>
+    500
+    Server crashed for some reason
+    <br>
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">GET /api/v1/venues/286/photos
+[
+    {
+        &quot;id&quot;: 14,
+        &quot;file_file_name&quot;: &quot;Folder.jpg&quot;,
+        &quot;file_content_type&quot;: &quot;image/jpeg&quot;,
+        &quot;file_file_size&quot;: 9694,
+        &quot;created_at&quot;: &quot;2013-09-11T16:03:38-07:00&quot;,
+        &quot;active&quot;: true,
+        &quot;file_small&quot;: &quot;http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/014/small/Folder.jpg?1378940624&quot;,
+        &quot;file_medium&quot;: &quot;http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/014/medium/Folder.jpg?1378940624&quot;,
+        &quot;file_original&quot;: &quot;http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/014/original/Folder.jpg?1378940624&quot;,
+        &quot;type&quot;: &quot;brandscopic&quot;
+    },
+    {
+        &quot;photo_reference&quot;: &quot;CnRlAAAAtYfTfTKALFlQUPb8D2MJgiLtxYc38yw5PCFKwKHTGjCnxDgo5A7LeqdK239Y1NYSashP0H8SV1tTM8DaiHu9kVUFEC-EynD0W-dvfLzdWwO_XwUDFtkjAT0JN2TPkOvr8UODKy2hmaIFBd_5nFJMRhIQR6vpp9FbSeolF9BNQnWIORoUQXWl4cLMEZ21-IZYZiBgQ3q9Yak&quot;,
+        &quot;width&quot;: 486,
+        &quot;height&quot;: 648,
+        &quot;html_attributions&quot;: [
+            &quot;From a Google User&quot;
+        ],
+        &quot;file_small&quot;: &quot;https://maps.googleapis.com/maps/api/place/photo?maxwidth=180&amp;photoreference=CnRlAAAAtYfTfTKALFlQUPb8D2MJgiLtxYc38yw5PCFKwKHTGjCnxDgo5A7LeqdK239Y1NYSashP0H8SV1tTM8DaiHu9kVUFEC-EynD0W-dvfLzdWwO_XwUDFtkjAT0JN2TPkOvr8UODKy2hmaIFBd_5nFJMRhIQR6vpp9FbSeolF9BNQnWIORoUQXWl4cLMEZ21-IZYZiBgQ3q9Yak&amp;sensor=true&amp;key=AIzaSyAdudSZ-xD-ZwC-2eYxos3-7U69l_Seg44&quot;,
+        &quot;file_original&quot;: &quot;https://maps.googleapis.com/maps/api/place/photo?maxheight=700&amp;maxwidth=700&amp;photoreference=CnRlAAAAtYfTfTKALFlQUPb8D2MJgiLtxYc38yw5PCFKwKHTGjCnxDgo5A7LeqdK239Y1NYSashP0H8SV1tTM8DaiHu9kVUFEC-EynD0W-dvfLzdWwO_XwUDFtkjAT0JN2TPkOvr8UODKy2hmaIFBd_5nFJMRhIQR6vpp9FbSeolF9BNQnWIORoUQXWl4cLMEZ21-IZYZiBgQ3q9Yak&amp;sensor=true&amp;key=AIzaSyAdudSZ-xD-ZwC-2eYxos3-7U69l_Seg44&quot;,
+        &quot;type&quot;: &quot;google&quot;
+    }
+]
+</pre>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>One of the allowed company ids returned by the</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Venue ID</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/venues/comments.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-comments'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/venues/:id/comments
+          </a>
+          <br>
+          <small>Get a list of comments for a Venue</small>
+        </h2>
+    </div>
+
+
+    <div id='description-comments' class='collapse accordion-body'>
+      
+<p>Returns a list of comments associated to a given venue.</p>
+
+<p>Each item have the following attributes:</p>
+<ul><li>
+<p>For comments uploaded from the app:</p>
+<ul><li>
+<p><strong>id</strong>: the comment id</p>
+</li><li>
+<p><strong>content</strong>: the comment text</p>
+</li><li>
+<p><strong>created_at</strong>: the date and time of creation for the comment</p>
+</li><li>
+<p><strong>type:</strong> the comment&#39;s type. In this case it should be
+&#39;brandscopic&#39;</p>
+</li></ul>
+</li><li>
+<p>For comments from Google:</p>
+<ul><li>
+<p><strong>rating</strong>: the rating from the user for the venue</p>
+</li><li>
+<p><strong>text</strong>: the comment text</p>
+</li><li>
+<p><strong>author_name</strong>: the name of the creator of the comment</p>
+</li><li>
+<p><strong>time</strong>: the date and time of creation for the comment</p>
+</li><li>
+<p><strong>type</strong>: the comments&#39;s type. In this case it should be
+&#39;google&#39;</p>
+</li></ul>
+</li></ul>
+
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    404
+    Missing
+    <br>
+    401
+    Unauthorized access
+    <br>
+    500
+    Server crashed for some reason
+    <br>
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">An example with comments for an venue in the response
+GET: /api/v1/venues/92/comments.json?auth_token=swyonWjtcZsbt7N8LArj&amp;company_id=1
+[
+  {
+    &quot;id&quot;: 1,
+    &quot;content&quot;: &quot;User Comment #1&quot;,
+    &quot;created_at&quot;: &quot;2013-09-10T08:04:57-07:00&quot;,
+    &quot;type&quot;: &quot;brandscopic&quot;
+  },
+  {
+    &quot;rating&quot;: 2,
+    &quot;text&quot;: &quot;Tater tots and Korean tacos at a bar with candle light after dark... Good west side sports bar.&quot;,
+    &quot;author_name&quot;: &quot;Howard Tung&quot;,
+    &quot;time&quot;: &quot;2013-08-31T03:43:55+00:00&quot;,
+    &quot;type&quot;: &quot;google&quot;
+  }
+]
+</pre>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>One of the allowed company ids returned by the</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Venue ID</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/venues/search.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-search'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/venues/search
+          </a>
+          <br>
+          <small>Search for a list of venues matching a term</small>
+        </h2>
+    </div>
+
+
+    <div id='description-search' class='collapse accordion-body'>
+      
+<p>Returns a list of venues matching the search <code>term</code> ordered by
+relevance limited to 10 results.</p>
+
+<p>The response consist on a list or the following attributes:</p>
+<ul><li>
+<p><strong>id</strong>: the place id or reference that have to be sent when
+creating/updating events, this can be either an number or a large string.</p>
+</li><li>
+<p><strong>value</strong>: the description of the venue, including the name
+and address</p>
+</li><li>
+<p><strong>label</strong>: this exactly the same as <code>value</code></p>
+</li></ul>
+
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    404
+    Missing
+    <br>
+    401
+    Unauthorized access
+    <br>
+    500
+    Server crashed for some reason
+    <br>
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">[{
+    &quot;value&quot;:&quot;Bar None, 1980 Union Street, San Francisco, CA, United States&quot;,
+    &quot;label&quot;:&quot;Bar None, 1980 Union Street, San Francisco, CA, United States&quot;,
+    &quot;id&quot;:90
+  },
+ {
+    &quot;value&quot;:&quot;Bar None, 98 3rd Avenue, New York, NY, United States&quot;,
+    &quot;label&quot;:&quot;Bar None, 98 3rd Avenue, New York, NY, United States&quot;,
+    &quot;id&quot;:&quot;CnRpAAAAT5JxPtj5WPge6_MkN0q55Ati4lj_HSCXLwx9ZS-zh6B-YF9fLsizZtjXAiPA-loJKiNNh0JxNUIdMGJUwk5lqR1jxhzGmPWBp01bCOGfRdFS3KKybejTmvlFI7EeTjV_g_9b_aAAYtl9OOYS4ght5BIQ0Z0OUWz2Zgnyx2ln6BVEvhoUaZ9DhhS2g56S4ZYfogaJjs0rb4o||07f11bfbcd5a70e34d2dceef794e6d07aa34b7ee&quot;
+  }]
+</pre>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>One of the allowed company ids returned by the</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>term </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>The search term</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/venues/autocomplete.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-autocomplete'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/venues/autocomplete
+          </a>
+          <br>
+          <small>Return a list of results grouped by categories</small>
+        </h2>
+    </div>
+
+
+    <div id='description-autocomplete' class='collapse accordion-body'>
+      
+<p>Returns a list of results matching the searched term grouped in the
+following categories</p>
+<ul><li>
+<p><strong>Campaigns</strong>: Includes categories</p>
+</li><li>
+<p><strong>Brands</strong>: Includes brands and brand portfolios</p>
+</li><li>
+<p><strong>Areas</strong>: Includes areas</p>
+</li><li>
+<p><strong>People</strong>: Includes users and teams</p>
+</li></ul>
+
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    404
+    Missing
+    <br>
+    401
+    Unauthorized access
+    <br>
+    500
+    Server crashed for some reason
+    <br>
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">GET: /api/v1/venues/autocomplete.json?auth_token=XXssU!suwq92-1&amp;company_id=2&amp;q=jam
+[
+    {
+        &quot;label&quot;: &quot;Campaigns&quot;,
+        &quot;value&quot;: []
+    },
+    {
+        &quot;label&quot;: &quot;Brands&quot;,
+        &quot;value&quot;: [
+            {
+                &quot;label&quot;: &quot;&lt;i&gt;Jam&lt;/i&gt;eson LOCALS&quot;,
+                &quot;value&quot;: &quot;13&quot;,
+                &quot;type&quot;: &quot;brand&quot;
+            },
+            {
+                &quot;label&quot;: &quot;&lt;i&gt;Jam&lt;/i&gt;eson Whiskey&quot;,
+                &quot;value&quot;: &quot;8&quot;,
+                &quot;type&quot;: &quot;brand&quot;
+            }
+        ]
+    },
+    {
+        &quot;label&quot;: &quot;Places&quot;,
+        &quot;value&quot;: [
+            {
+                &quot;label&quot;: &quot;&lt;i&gt;Jam&lt;/i&gt;aica&quot;,
+                &quot;value&quot;: &quot;2386&quot;,
+                &quot;type&quot;: &quot;area&quot;
+            }
+        ]
+    },
+    {
+        &quot;label&quot;: &quot;People&quot;,
+        &quot;value&quot;: []
+    }
+]
+</pre>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>One of the allowed company ids returned by the</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>q </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>The search term</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+    </div>
+</div>
+
+
+        
+      </div>
+    </div>
+    <hr>
+    <footer></footer>
+  </div>
+  <script type='text/javascript' src='../apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
+<script type='text/javascript' src='../apidoc/javascripts/bundled/bootstrap-collapse.js'></script>
+<script type='text/javascript' src='../apidoc/javascripts/bundled/prettify.js'></script>
+<script type='text/javascript' src='../apidoc/javascripts/apipie.js'></script>
+</body>
+</html>

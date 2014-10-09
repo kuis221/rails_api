@@ -8,7 +8,7 @@
           = team_member.role_name
       - if can_delete
         .pull-right
-          = link_to(content_tag(:i,'', class: 'icon-remove-circle'),  delete_member_event_path(resource, member_id: team_member.to_param), confirm: "Any tasks that are assigned to #{team_member.full_name} must be reassigned.  Would you like to remove #{team_member.full_name} from the event team?", title: 'Remove Member', class: 'remove-member-btn', remote: true, method: :delete)
+          = link_to(content_tag(:i,'', class: 'icon-remove-circle'),  delete_member_event_path(resource, member_id: team_member.to_param), data: { confirm: "Any tasks that are assigned to #{team_member.full_name} must be reassigned.  Would you like to remove #{team_member.full_name} from the event team?"}, title: 'Remove Member', class: 'remove-member-btn', remote: true, method: :delete)
 
   - resource.teams.each do |team|
     .span3.team.clearfix id = "event-team-#{team.id}"

@@ -4,13 +4,13 @@ class CreateVenues < ActiveRecord::Migration
       t.references :company
       t.references :place
       t.integer :events
-      t.decimal :promo_hours, :precision => 8, :scale => 2, :default => 0
+      t.decimal :promo_hours, precision: 8, scale: 2, default: 0
       t.integer :impressions
       t.integer :interactions
       t.integer :sampled
-      t.decimal :spent, :precision => 10, :scale => 2, :default => 0
+      t.decimal :spent, precision: 10, scale: 2, default: 0
       t.integer :score
-      t.decimal :avg_impressions, :precision => 8, :scale => 2, :default => 0
+      t.decimal :avg_impressions, precision: 8, scale: 2, default: 0
 
       t.timestamps
     end

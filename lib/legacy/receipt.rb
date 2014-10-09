@@ -25,7 +25,7 @@ class Legacy::Receipt < Legacy::Record
   include Paperclip::Glue
 
   has_attached_file :file, {
-    :styles => { :small => '100x100>' },
-    :url => "/receipts/:id/:basename:dashed_style.:extension", :path =>  "receipts/:id/:basename:dashed_style.:extension"
+    styles: { small: '100x100>' },
+    url: '/receipts/:id/:basename:dashed_style.:extension', path: 'receipts/:id/:basename:dashed_style.:extension'
   }.merge(Legacy::PAPERCLIP_SETTINGS)
 end

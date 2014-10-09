@@ -19,8 +19,8 @@
 # INTERNAL USE - stores data in EventRecap
 require 'legacy/metric/tab'
 class Metric::BarSpend < Metric::Tab
-  validates_presence_of :program_id, :message => "must be a program metric"
-  validates_uniqueness_of :type, :scope => :program_id
+  validates_presence_of :program_id, message: 'must be a program metric'
+  validates_uniqueness_of :type, scope: :program_id
 
   def field_type_symbol
     '!BT'
@@ -28,9 +28,10 @@ class Metric::BarSpend < Metric::Tab
 
   def store_result(value, result)
     v = super # call super to ALSO store the data in the result - TODO does this make sense?
-    result.event_recap.update_attributes(:bar_tab => v[TAB], :bar_tip => v[TIP])  if result.event_recap
+    result.event_recap.update_attributes(bar_tab: v[TAB], bar_tip: v[TIP])  if result.event_recap
     v
   end
+
   def fetch_result(result)
     v = {}
     if result.event_recap
@@ -40,11 +41,13 @@ class Metric::BarSpend < Metric::Tab
     end
     v
   end
+
   def report_columns
     ["#{name} Tab", "#{name} Tip", "#{name} Total"]
   end
+
   def result_hash(result)
     v = cast_value(result.value)
-    {"#{name} Tab" => v[TAB], "#{name} Tip" => v[TIP], "#{name} Total" => v[TOTAL] }
+    { "#{name} Tab" => v[TAB], "#{name} Tip" => v[TIP], "#{name} Total" => v[TOTAL] }
   end
 end

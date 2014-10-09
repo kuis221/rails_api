@@ -16,6 +16,5 @@
 #  updated_at  :datetime
 #
 
-
 class Metric::Demographic < Metric
 end

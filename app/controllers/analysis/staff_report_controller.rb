@@ -1,7 +1,7 @@
 class Analysis::StaffReportController < ApplicationController
-  before_filter :company_user, except: :index
+  before_action :company_user, except: :index
 
-  before_filter :authorize_actions
+  before_action :authorize_actions
 
   def index
     @users = current_company.company_users.joins(:user).order('users.first_name ASC')
@@ -14,11 +14,12 @@ class Analysis::StaffReportController < ApplicationController
   end
 
   private
-    def company_user
-      @company_user ||= current_company.company_users.find(params[:report][:user_id])
-    end
 
-    def authorize_actions
-      authorize! :show_analysis, CompanyUser
-    end
+  def company_user
+    @company_user ||= current_company.company_users.find(params[:report][:user_id])
+  end
+
+  def authorize_actions
+    authorize! :show_analysis, CompanyUser
+  end
 end

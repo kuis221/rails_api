@@ -4,6 +4,10 @@ node :page do
   params[:page] || 1
 end
 
+node :total_pages do
+  total_pages
+end
+
 node :total do
   collection_count
 end

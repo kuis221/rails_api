@@ -4,5 +4,5 @@
 - else
   |
     $('.bootbox.modal').modal('hide');
-    $('##{resource.class.name.underscore}_#{resource.id}').replaceWith('#{escape_javascript(render(resource))}');
-    $(document).trigger('#{resource.class.name.pluralize.underscore}:change');
+    $('##{resource.class.name.underscore.gsub('/','_')}_#{resource.id}').replaceWith('#{escape_javascript(render(resource))}');
+    $(document).trigger('#{resource.class.name.pluralize.underscore.gsub('/','_')}:change');

@@ -21,16 +21,19 @@
 # include ActionView::Helpers::TextHelper
 class Metric::Paragraph < Metric
   def form_options
-    super.merge({:as => :text})
+    super.merge(as: :text)
   end
+
   def format_result(result)
     simple_format(result.value)
   end
+
   def format_pdf(pdf, result)
     pdf.text result.value.to_s if result && result.print_values?
   end
+
   def result_hash(result)
-    {name => format_result(result)}
+    { name => format_result(result) }
   end
   def self.targetable?
     false
@@ -38,15 +41,19 @@ class Metric::Paragraph < Metric
   def field_type_symbol
     '&para;'
   end
+
   def default_columns
     3
   end
+
   def default_rows
     2
   end
+
   def store_result(value, result)
     result.vector_value = cast_value(value)
   end
+
   def fetch_result(result)
     cast_value result.vector_value
   end

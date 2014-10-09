@@ -13,30 +13,30 @@
 #  updated_at    :datetime         not null
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
-describe DayPart do
-  it { should belong_to(:company) }
+describe DayPart, type: :model do
+  it { is_expected.to belong_to(:company) }
 
-  it { should validate_presence_of(:name) }
+  it { is_expected.to validate_presence_of(:name) }
 
-  describe "#activate" do
-    let(:day_part) { FactoryGirl.build(:day_part, active: false) }
+  describe '#activate' do
+    let(:day_part) { build(:day_part, active: false) }
 
-    it "should return the active value as true" do
+    it 'should return the active value as true' do
       day_part.activate!
       day_part.reload
-      day_part.active.should be_true
+      expect(day_part.active).to be_truthy
     end
   end
 
-  describe "#deactivate" do
-    let(:day_part) { FactoryGirl.build(:day_part, active: false) }
+  describe '#deactivate' do
+    let(:day_part) { build(:day_part, active: false) }
 
-    it "should return the active value as false" do
+    it 'should return the active value as false' do
       day_part.deactivate!
       day_part.reload
-      day_part.active.should be_false
+      expect(day_part.active).to be_falsey
     end
   end
 end

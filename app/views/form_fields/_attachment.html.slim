@@ -1,0 +1,12 @@
+span.form-result-label= form_field.name
+
+- if result.attached_asset.present?
+  - if result.attached_asset.processed? && result.attached_asset.is_thumbnable?
+    a href="#{result.attached_asset.download_url}" title="Download"
+      img src="#{result.attached_asset.file.url(:thumbnail)}" alt=""
+  - else
+    a href="#{result.attached_asset.download_url}" title="Download"
+      - file_icon = "file-types/32px/#{result.attached_asset.file_extension}.png"
+      - if Rails.application.assets.find_asset file_icon
+        img src="#{asset_path(file_icon)}" alt=" "
+      = result.attached_asset.file_file_name

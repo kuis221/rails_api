@@ -2,8 +2,8 @@
 
 h3 GALLERY
 - if allow_upload && can?(:create_photo, resource)
-  = link_to content_tag(:i,'', class: 'icon-plus-sign dialogue-photos'), new_event_photo_path(resource), remote: true, title: 'Add Photos'
+  = button_to_add 'Add Photos', new_event_photo_path(resource), class: 'dialogue-photos' if allow_upload && can?(:create_photo, resource)
 
-.gallery 
+.gallery
   ul#photos-thumbs
     = render partial: 'results/photos/photo', collection: resource.photos.includes(:tags).map{|a| a.attachable = resource; a }

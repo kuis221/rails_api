@@ -17,8 +17,8 @@
 #  updated_at             :datetime         not null
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
-describe AdminUser do
-  it { should validate_presence_of(:email) }
+describe AdminUser, type: :model do
+  it { is_expected.to validate_presence_of(:email) }
 end

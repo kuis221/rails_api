@@ -12,12 +12,25 @@
 #  required       :boolean
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
+#  kpi_id         :integer
 #
 
 class FormField::Summation < FormField
   MIN_OPTIONS_ALLOWED = 2
   def field_options(result)
-    {as: :summation, collection: self.options.order(:ordering), label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: field_classes, min: 0, step: 'any', required: (self.required? ? 'required' : nil)}}
+    {
+      as: :summation,
+      collection: options.order(:ordering),
+      label: name, field_id: id,
+      label_html: { class: 'control-group-label' },
+      options: settings,
+      required: required,
+      input_html: {
+        value: result.value,
+        class: field_classes,
+        min: 0,
+        step: 'any',
+        required: (self.required? ? 'required' : nil) } }
   end
 
   def field_classes
@@ -36,10 +49,10 @@ class FormField::Summation < FormField
     if result.value
       total = 0
       (options.map do |option|
-        total += (result.value[option.id].to_i || 0)
-        "#{option.name}: #{result.value[option.id.to_s] || 0}"
+        total += (result.value[option.id.to_s].to_i || 0)
+        "<span>#{result.value[option.id.to_s] || 0}</span> #{option.name}"
       end.join('<br /> ') +
-      "<br/>TOTAL: #{total}"
+      "<br/><span>#{total}</span> TOTAL"
       ).html_safe
     end
   end

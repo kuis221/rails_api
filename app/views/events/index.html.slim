@@ -5,9 +5,9 @@
 
 = user_new_feature('events_list') do
   h5 Getting Started: Events
-  a.close.btn-dismiss-alert href="#" title="Dismiss"
+  a.close.btn-dismiss-alert.icon.icon-close href="#" title="Dismiss"
   a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/gwF6WU0EvWs?rel=0" data-width="640" data-height="360"
-    img src="/assets/video_arrow.png" /
+    img src="#{image_path('video_arrow.png')}" width="70" height="70" /
   .feature-description
     p
       'The Events module is your one-stop-shop for viewing and managing events - start to finish . Create events, track event status, fill out post event forms, as well as submit, reject, and approve your reports. Click on the video to the left for a quick overview or visit our
@@ -16,32 +16,44 @@
 
 .sidebar.collapsed#resource-filter-column
   #collection-list-filters
-  #save-filters-btn.a.btn.btn-primary Save
+
 .main
+  #list-tools
+    .pull-left
+      = button_to 'Create', new_event_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn'} if can? :create, Event
 
-  .pull-left
-    = button_to 'Create', new_event_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn'} if can? :create, Event
+    .text-right
+      .dropdown.btn-download
+        a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+          i.icon-download
+          i.icon-arrow-down
+        ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+          li
+            a.xlsx-download-link href="#" role="menuitem" data-url="#{events_path(format: :xls)}"
+              | Download as XLS
+          li
+            a#pdf-export.xlsx-download-link href="#" role="menuitem" data-url="#{events_path(format: :pdf)}"
+              | Download as PDF
 
-  .text-right
-    button.btn.download.xlsx-download-link data-url="#{events_path(format:"xls")}" title="Download"
-    - if can?(:view_map, Event) || can?(:view_list, Event) || can?(:view_calendar, Event)
-      #toggle-events-view.btn-group
-        - if can?(:view_list, Event)
-          a.btn.active.list href="#list-view" data-toggle="tab" title="List View"
-        - if can?(:view_calendar, Event)
-          a.btn.calendar href="#calendar-view" data-toggle="tab" title="Calendar View"
-        - if can?(:view_map, Event)
-          a.btn.map href="#map-view" data-toggle="tab" title="Map View"
-
+      - if can?(:view_map, Event) || can?(:view_list, Event) || can?(:view_calendar, Event)
+        #toggle-events-view.btn-group
+          - if can?(:view_list, Event)
+            a.btn.active.list href="#list-view" data-toggle="tab" title="List View"
+              i.icon-list
+          - if can?(:view_calendar, Event)
+            a.btn.calendar href="#calendar-view" data-toggle="tab" title="Calendar View"
+              i.icon-grid
+          - if can?(:view_map, Event)
+            a.btn.map href="#map-view" data-toggle="tab" title="Map View"
+              i.icon-venue
   .tab-content
     - if can?(:view_list, Event)
       #list-view.tab-pane.active
-        .link-list
-          ul#events-list
+        div#events-list.resource-list
 
     - if can?(:view_calendar, Event)
       #calendar-view.tab-pane
-        #calendar-canvas
+        #calendar-canvas data-events-url="#{calendar_events_path(format: :json)}"
 
     - if can?(:view_map, Event)
       #map-view class="tab-pane #{can?(:view_list, Event) ? '' : 'active'}"
@@ -52,8 +64,8 @@
 - if can?(:view_list, Event)
   javascript:
     $('#collection-list-filters').filteredList({
-      'source': '#{items_path(controller: :events)}',
-      'filtersUrl': '#{filters_path(controller: :events)}',
+      'source': '#{url_for(controller: :events, action: :items)}',
+      'filtersUrl': '#{url_for(controller: :events, action: :filters)}',
       'listContainer' : '#events-list',
       'sorting': 'start_at',
       'sorting_dir': 'asc',
@@ -64,6 +76,7 @@
       'includeAutoComplete': true,
       'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
       'defaultParams': [{name: 'status[]', value: 'Active'}, {name: 'start_date', value:'#{Time.zone.now.strftime("%m/%d/%Y")}'}, {name: 'end_date', value:'#{(Time.zone.now + 10.years).strftime("%m/%d/%Y")}'}],
+      'applyTo': '#{controller_name}',
       'clearFilterParams': [{name: 'status[]', value: 'Active'}],
       'onChange': function(filterBox){
         $(document).trigger('events-filter:changed')

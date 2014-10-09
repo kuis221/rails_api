@@ -11,19 +11,19 @@ module S3DirectUpload
 
     class S3Uploader
       def initialize(options)
-        @key_starts_with = options[:key_starts_with] || "uploads/"
+        @key_starts_with = options[:key_starts_with] || 'uploads/'
         @options = options.reverse_merge(
           aws_access_key_id: S3DirectUpload.config.access_key_id,
           aws_secret_access_key: S3DirectUpload.config.secret_access_key,
           bucket: S3DirectUpload.config.bucket,
-          region: S3DirectUpload.config.region || "s3",
+          region: S3DirectUpload.config.region || 's3',
           url: S3DirectUpload.config.url,
           ssl: true,
-          acl: "public-read",
+          acl: 'public-read',
           expiration: 10.hours.from_now.utc.iso8601,
           max_file_size: 500.megabytes,
-          callback_method: "POST",
-          callback_param: "file",
+          callback_method: 'POST',
+          callback_param: 'file',
           key_starts_with: @key_starts_with,
           key: key
         )
@@ -33,7 +33,7 @@ module S3DirectUpload
         {
           id: @options[:id],
           class: @options[:class],
-          method: "post",
+          method: 'post',
           authenticity_token: false,
           multipart: true,
           data: {
@@ -48,10 +48,10 @@ module S3DirectUpload
         {
           :key => @options[:key] || key,
           :acl => @options[:acl],
-          "AWSAccessKeyId" => @options[:aws_access_key_id],
+          'AWSAccessKeyId' => @options[:aws_access_key_id],
           :policy => policy,
           :signature => signature,
-          :success_action_status => "201",
+          :success_action_status => '201',
           'X-Requested-With' => 'xhr'
         }
       end
@@ -65,21 +65,21 @@ module S3DirectUpload
       end
 
       def policy
-        Base64.encode64(policy_data.to_json).gsub("\n", "")
+        Base64.encode64(policy_data.to_json).gsub("\n", '')
       end
 
       def policy_data
         {
           expiration: @options[:expiration],
           conditions: [
-            ["starts-with", "$utf8", ""],
-            ["starts-with", "$key", @options[:key_starts_with]],
-            ["starts-with", "$x-requested-with", ""],
-            ["content-length-range", 0, @options[:max_file_size]],
-            ["starts-with","$content-type", @options[:content_type_starts_with] ||""],
-            {bucket: @options[:bucket]},
-            {acl: @options[:acl]},
-            {success_action_status: "201"}
+            ['starts-with', '$utf8', ''],
+            ['starts-with', '$key', @options[:key_starts_with]],
+            ['starts-with', '$x-requested-with', ''],
+            ['content-length-range', 0, @options[:max_file_size]],
+            ['starts-with', '$content-type', @options[:content_type_starts_with] || ''],
+            { bucket: @options[:bucket] },
+            { acl: @options[:acl] },
+            { success_action_status: '201' }
           ] + (@options[:conditions] || [])
         }
       end
@@ -90,7 +90,7 @@ module S3DirectUpload
             OpenSSL::Digest.new('sha1'),
             @options[:aws_secret_access_key], policy
           )
-        ).gsub("\n", "")
+        ).gsub("\n", '')
       end
     end
   end

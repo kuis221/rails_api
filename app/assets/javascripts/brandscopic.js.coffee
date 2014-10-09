@@ -42,12 +42,34 @@ jQuery ->
 		}
 	)
 
+	$(document).off('click.closeMenu').on 'click.closeMenu', '.dropdown-menu li a', (e) ->
+		menu = $(this).closest(".dropdown-menu")
+		if menu.parent().hasClass('open')
+			menu.prev().dropdown("toggle")
+		true
+
 	$(document).on 'click', (e) ->
 		$('.has-popover').each () ->
 			if !$(this).is(e.target) && $(this).has(e.target).length is 0 && $('.popover').has(e.target).length is 0
 				$(this).popover('hide')
 
 	bootbox.setBtnClasses {CANCEL: 'btn-cancel', OK: 'btn-primary', CONFIRM: 'btn-primary'}
+
+	$(document).on 'click touchend', ".btn-group .btn input:radio", (e) ->
+		$(@).closest('.btn').parent().find('.btn.active').removeClass('active')
+		$(@).closest('.btn').addClass('active')
+		true
+
+	$(document).on 'click', '.toggle-input .btn', () ->
+		$this = $(this);
+		$this.parent().find('.btn').removeClass('btn-success btn-danger active')
+		if $this.hasClass('set-on-btn')
+			$this.addClass('btn-success active')
+		else
+			$this.addClass('btn-danger active')
+
+		$this.parent().find('.toggle-input-hidden').val($this.data('value')).trigger 'click'
+		false
 
 	$('header .nav #notifications').notifications();
 
@@ -66,23 +88,17 @@ jQuery ->
 			smoothScrollTo $(".nav-tabs a[href=#{window.location.hash}]").tab('show')
 
 	attachPluginsToElements = () ->
-		$('input.datepicker').datepicker({showOtherMonths:true,selectOtherMonths:true,dateFormat:"mm/dd/yy" })
+		$('input.datepicker').datepicker
+			showOtherMonths:true
+			selectOtherMonths:true
+			dateFormat:"mm/dd/yy"
+			onClose: (selectedDate) ->
+				$(@).valid();
 		$('input.timepicker').timepicker()
-		$('.chosen-enabled').chosen()
+		$('select.chosen-enabled').chosen()
 		$('.has-tooltip').tooltip({html: true, delay: 0, animation: false})
 		$('.has-popover').popover({html: true})
 		$("input:checkbox, input:radio").not('[data-no-uniform="true"],#uniform-is-ajax').uniform()
-
-		$('.toggle-input .btn').click ->
-			$this = $(this);
-			$this.parent().find('.btn').removeClass('btn-success btn-danger active')
-			if $this.hasClass('set-on-btn')
-				$this.addClass('btn-success active')
-			else
-				$this.addClass('btn-danger active')
-
-			$this.parent().find('.toggle-input-hidden').val($this.data('value')).trigger 'click'
-			false
 
 		$(".fancybox").fancybox {
 			padding : 0,
@@ -90,6 +106,9 @@ jQuery ->
 			beforeLoad: () ->
 				this.title = $(this.element).attr('caption')
 		}
+
+		$(".btn-group .btn .checked input:radio").each (i, btn) ->
+			$(btn).closest('.btn').addClass('active')
 
 		$("a.smooth-scroll[href^='#']").off('click.branscopic').on 'click.branscopic', (e) ->
 			e.preventDefault()
@@ -113,19 +132,17 @@ jQuery ->
 				if !this.checkable(element)
 					this.element(element)
 			highlight: (element) ->
-				$(element).removeClass('valid').closest('.control-group').removeClass('success').addClass('error')
+				if $(element).closest('.field-option').length > 0
+					$(element).removeClass('valid').closest('.field-option').removeClass('success').addClass('error')
+				else
+					$(element).removeClass('valid').closest('.control-group').removeClass('success').addClass('error')
 
 			errorPlacement: (error, element) ->
 				label = element.closest(".control-group").find("label.control-label[for=\"#{element.attr('id')}\"]")
 				label = element.closest(".control-group").find("label.control-label") if label.length is 0
 				label.addClass('with_message')
 				if label.length > 0
-					if typeof element.data('segmentFieldId') isnt "undefined"
-						error.addClass('segment-title-label').insertBefore label
-					else
-						error.insertAfter label
-				else
-					error.addClass('segment-title-label').insertAfter element
+					error.insertAfter label
 
 			focusInvalid: false,
 			invalidHandler: (form, validator) ->
@@ -140,6 +157,7 @@ jQuery ->
 			success: (element) ->
 				element.addClass('valid').append('<span class="ok-message"><span>OK!</span></span>')
 					.closest('.control-group').removeClass('error')
+				element.closest('.field-option').removeClass('error')
 		}
 
 	# Check what graph labels are colliding with others and adjust the position
@@ -238,7 +256,7 @@ jQuery ->
 
 
 	$(document).on 'click', '.xlsx-download-link', () ->
-		url = $(this).data('url') + '?'+ $('#collection-list-filters').filteredList('paramsQueryString')
+		url = $(this).data('url') + (if $(this).data('url').indexOf('?') >= 0 then '&' else '?') + $('#collection-list-filters').filteredList('paramsQueryString')
 		$.ajax url, {
 			method: "GET"
 			dataType: "script"
@@ -552,6 +570,39 @@ jQuery ->
 		return this.optional(element) || /^[0-1]?[0-9]\/[0-3]?[0-9]\/[0-2]0[0-9][0-9]$/.test(value);
 	, "MM/DD/YYYY");
 
+	$.validator.addMethod("elements-range", (value, element) ->
+		$element = $(element)
+		if value.length > 0
+			val = $.trim(value)
+			if $element.data('range-format') is "characters" || $element.data('range-format') is "digits"
+				items = val.length
+			else if $element.data('range-format') is "words"
+				items = val.replace(/\s+/g, " ").split(" ").length
+			else if $element.data('range-format') is "value"
+				items = parseFloat(value, 10)
+			else if $element.data('range-format') is "digits"
+				items = val.replace(/[\s,\,\,]+/g, "").length
+
+		minResult = if $element.data('range-min') && items then items >= $element.data('range-min') else true
+		maxResult = if $element.data('range-max') && items then items <= $element.data('range-max') else true
+
+		return minResult && maxResult
+	, (params, element) ->
+		$element = $(element)
+		if $element.data('range-format') is 'value'
+			if $element.data('range-min') && $element.data('range-max')
+				"should be between #{$element.data('range-min')} and #{$element.data('range-max')}"
+			else if $element.data('range-min')
+				"should be greater than #{$element.data('range-min')}"
+			else if $element.data('range-max')
+				"should be smaller than #{$element.data('range-max')}"
+		else
+			message = if $element.data('range-min') then "at least #{$element.data('range-min')}" else ''
+			message += if message.length > 0 && $element.data('range-max') then ' but ' else ''
+			message += if $element.data('range-max') then "no more than #{$element.data('range-max')}" else ''
+
+			"should have #{message} #{$element.data('range-format')}"
+	);
 
 	$('.google-map[data-latitude]').each (index, container) ->
 		$container = $(container)

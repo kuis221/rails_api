@@ -1,8 +1,8 @@
 = user_new_feature('results_comments') do
   h5 Getting Started: Comments Report
-  a.close.btn-dismiss-alert href="#" title="Dismiss"
+  a.close.btn-dismiss-alert.icon.icon-close href="#" title="Dismiss"
   a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/U8-H27dxhTE?rel=0" data-width="640" data-height="360"
-    img src="/assets/video_arrow.png" /
+    img src="#{image_path('video_arrow.png')}" width="70" height="70" /
   .feature-description
     p
       'Get to know your consumers - track what was said at your events by using the right sidebar filter to target specific events and campaigns. Click on the video to the left for a quick overview or check out our
@@ -11,7 +11,6 @@
 
 .sidebar#resource-filter-column
   #collection-list-filters
-  a.btn.btn-primary Save
 
 #main.main.with-details-close-bar
   = resource_details_bar("You are viewing Comments report. Click to close.")
@@ -20,17 +19,17 @@
       #list-tools.row-fluid
         .pull-right
           button.btn.download.xlsx-download-link data-url="#{results_comments_path(format: "xls")}" title="Download" data-disable-with="..."
-      .link-list
-        ul#comment-list
-          li.placeholder
-            p Select any filter to see results
+            span.icon-download
+      #comment-list.resource-list.without-actions
+        div.placeholder
+          p Select any filter to see results
 
 = render partial: 'help_tutorial'
 
 javascript:
   $('#collection-list-filters').filteredList({
-    'source': '#{items_path(controller: 'results/comments')}',
-    'filtersUrl': '#{filters_path(controller: :events, with_event_data_only: true)}',
+    'source': '#{url_for(controller: 'results/comments', action: :items)}',
+    'filtersUrl': '#{filters_events_path(with_event_data_only: true, apply_to: :results_comments)}',
     'listContainer': '#comment-list',
     'sorting': 'start_at',
     'sorting_dir': 'asc',
@@ -38,17 +37,18 @@ javascript:
     'includeCalendars': true,
     'selectDefaultDate': false,
     'includeAutoComplete': true,
+    'applyTo': 'results_comments',
     'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
     'defaultParams': [{name: 'status[]', value: 'Active'}],
+    'clearFilterParams': [{name: 'status[]', value: 'Active'}],
     'onChange': function(filterBox){
       $(document).trigger('comments-filter:changed')
     },
     'onItemsChange': function(response, page){
-      if ($('#comment-list li').length > 0) {
+      if ($('#comment-list .resource-item').length > 0) {
         $('#list-tools').show()
       } else {
         $('#list-tools').hide()
-        $('#comment-list').append("<li class='placeholder'><p>No results. Select other filters to see results</p></li>");
       }
     }
   });

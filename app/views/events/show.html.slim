@@ -4,9 +4,9 @@
 - if resource.approved?
   = user_new_feature('event_details_approved') do
     h5 Getting Started: Event Details
-    a.close.btn-dismiss-alert href="#" title="Dismiss"
+    a.close.btn-dismiss-alert.icon.icon-close href="#" title="Dismiss"
     a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/plxyWGK0LCU?rel=0" data-width="640" data-height="360"
-      img src="/assets/video_arrow.png" /
+      img src="#{image_path('video_arrow.png')}" width="70" height="70" /
     .feature-description
       p
         'You are viewing the Event Details page for an executed event. Scroll down the page to view post event data, check out pictures and review comments. Click on the video to the left for a quick overview or visit our
@@ -15,9 +15,9 @@
 - else
   = user_new_feature('event_details_scheduled') do
     h5 Getting Started: Event Details
-    a.close.btn-dismiss-alert href="#" title="Dismiss"
+    a.close.btn-dismiss-alert.icon.icon-close href="#" title="Dismiss"
     a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/IFqNZ4r14Uo?rel=0" data-width="640" data-height="360"
-      img src="/assets/video_arrow.png" /
+      img src="#{image_path('video_arrow.png')}" width="70" height="70" /
     .feature-description
       p
         'Welcome to the Event Details page. On this page you can edit event information, fill out Post Event data, as well as submit, approve, or reject reports. Click on the video to the left for a quick overview or visit our
@@ -41,18 +41,27 @@
     h2.special = resource.campaign_name
 
     .calendar-data
-      = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at))
+      i.icon-calendar
+      span
+        = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at))
     - unless resource.place.nil?
       .place-data
-        = place_address(resource.place, true) if resource.place
+        i.icon-wired-venue
+        span
+          = place_address(resource.place, true) if resource.place
+
+    - unless resource.description.nil? || resource.description.empty?
+      .description-data
+        i.icon-wired-description
+        span= simple_format resource.description
     .links-data
-      = link_to '', edit_event_path(resource), remote: true, class: 'edit' if can_edit
+      = button_to_edit resource if can_edit
       = active_inactive_buttons(resource) if can? :deactivate, resource
 
     // The is info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
       h3= resource.campaign_name
-      = link_to '', edit_event_path(resource), remote: true, class: 'edit' if can_edit
+      = button_to_edit resource if can_edit
       = active_inactive_buttons(resource) if can? :deactivate, resource
       br>/
       = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at), date_separator: ' ')
@@ -60,10 +69,10 @@
 
   - if can?(:view_members, resource)
     #event-members.details_box
-      h3 EVENT TEAM
+      h3 EVENT STAFF
       #event-team-members
         = render partial: 'team_member_list', locals: {can_delete: can?(:delete_member, resource)}
-      = link_to "", new_member_event_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Team Member' if can?(:add_members, resource)
+      = button_to_add 'Add Team Member', new_member_event_path(resource) if can?(:add_members, resource)
 
 
   - if can?(:view_contacts, resource)
@@ -71,7 +80,7 @@
       h3 CONTACTS
       #event-contacts-list
         = render 'contacts'
-      = link_to "", add_event_contact_events_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Contact' if can?(:create_contacts, resource)
+      = button_to_add 'Add Contact', add_event_contact_events_path(resource) if can?(:create_contacts, resource)
 
   - resource.results.each{|r| r.errors.clear}
   - if resource.has_event_data? && !resource.rejected?
@@ -92,33 +101,31 @@
 
   - if can? :documents, resource
     #event-documents.details_box
-      h3 DOCUMENTS
 
-      #event-documents-list
-        = render :partial => "documents/document", :collection => resource.documents.active + resource.campaign.documents, :locals => { parent: resource }
-      .row-fluid
-        .pull-left
-          = link_to content_tag(:i,'', class: 'icon-plus-sign'), new_event_document_path(resource), remote: true if can? :create_document, resource
+      h3 DOCUMENTS
+      .documents-list
+        #documents-list.resource-list
+          = render :partial => "documents/document", :collection => resource.documents.active + resource.campaign.documents, :locals => { parent: resource }
+      = button_to_add 'Add Document', new_event_document_path(resource) if can?(:create_document, resource)
 
 = render partial: 'help_tutorial'
+- content_for :footer do
+  - unless resource.place.nil?
+    javascript:
+      $(document).ready(function() {
+        $(this).scrollTop(400);
+      });
 
-- unless resource.place.nil?
-  javascript:
-    $(document).ready(function() {
-      $(this).scrollTop(400);
-    });
+  - if can_tasks
+    javascript:
+      if (#{can_tasks}){
+        $(document).on('tasks:change', function(){
+          $.get('#{tasks_event_path(resource)}', function(response){
+            $response = $('<div>').append(response);
+            $('#event-tasks-container').html($response.find('[data-content="tasks"]').html());
+            $('#event-tasks-counters').html($response.find('[data-content="counters"]').html());
+          })
+        });
+      }
 
-javascript:
-  $(document).on('events:change', function(){
-    window.location.reload(true);
-  });
-
-  if (#{can_tasks}){
-    $(document).on('tasks:change', function(){
-      $.get('#{tasks_event_path(resource)}', function(response){
-        $response = $('<div>').append(response);
-        $('#event-tasks-container').html($response.find('[data-content="tasks"]').html());
-        $('#event-tasks-counters').html($response.find('[data-content="counters"]').html());
-      })
-    });
-  }
+  - reload_page_on_edit_resource

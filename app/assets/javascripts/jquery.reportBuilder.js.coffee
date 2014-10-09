@@ -11,7 +11,7 @@ $.widget 'nmk.reportBuilder',
 		@saved = true
 		@id = @options.id
 		# Fields search input
-		@element.find('#field-search-input').on 'keyup', (e) =>
+		@element.find('.field-search-input').on 'keyup', (e) =>
 			@searchFieldList $(e.target).val().toLowerCase()
 
 		@preview = @element.find('#report-container')
@@ -517,7 +517,7 @@ $.widget 'nmk.reportBuilder',
 			if values.length is 0
 				field = {label: 'Values'}
 				li = $('<li class="report-field" data-field-id="values">').append(
-					$('<a href="#" class="field-remove-btn icon-remove" title="Remove">'),
+					$('<a href="#" class="field-remove-btn icon icon-close" title="Remove">'),
 					$('<div class="field-label">').text('Values'),
 					$('<div class="clearfix">')
 				).data('field', field)

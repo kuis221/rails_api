@@ -13,7 +13,6 @@
 class KpisSegment < ActiveRecord::Base
   belongs_to :kpi
   has_many :goals, dependent: :destroy
-  has_many :event_results, dependent: :destroy
 
   accepts_nested_attributes_for :goals
 
@@ -21,18 +20,17 @@ class KpisSegment < ActiveRecord::Base
 
   validates_associated :goals
 
-  validates :text, presence: true, uniqueness: {scope: :kpi_id}
+  validates :text, presence: true, uniqueness: { scope: :kpi_id }
 
   def has_results?
-    EventResult.where(kpi_id: kpi_id ).where('event_results.value=? or event_results.kpis_segment_id=?', self.id.to_s, self.id).count > 0
+    FormFieldResult.for_kpi(kpi_id).where("form_field_results.value='#{id}' or (form_field_results.hash_value ? '#{id}' AND form_field_results.hash_value->'#{id}' <> '')").count > 0
   end
-
 
   protected
 
-    def check_results_for_segment
-      errors.add :base, "cannot delete with results" if has_results?
+  def check_results_for_segment
+    errors.add :base, 'cannot delete with results' if has_results?
 
-      errors.blank?
-    end
+    errors.blank?
+  end
 end

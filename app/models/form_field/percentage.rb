@@ -12,15 +12,31 @@
 #  required       :boolean
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
+#  kpi_id         :integer
 #
 
 class FormField::Percentage < FormField
   def field_options(result)
-    {as: :percentage, collection: self.options.order(:ordering), label: self.name, field_id: self.id, options: self.settings, required: self.required, input_html: {value: result.value, class: field_classes, min: 0, step: 'any', required: (self.required? ? 'required' : nil)}}
+    {
+      as: :percentage,
+      collection: options_for_input,
+      label: name,
+      field_id: id,
+      options: settings,
+      required: required,
+      label_html: { class: 'control-group-label' },
+      input_html: {
+        value: result.value,
+        class: field_classes,
+        min: 0,
+        step: 'any',
+        required: (self.required? ? 'required' : nil)
+      }
+    }
   end
 
   def field_classes
-    [:number]
+    [:number, 'segment-field']
   end
 
   def is_hashed_value?
@@ -36,6 +52,16 @@ class FormField::Percentage < FormField
       options.map do |option|
         "#{option.name}: #{result.value[option.id.to_s] || 0}%"
       end.join('<br />').html_safe
+    end
+  end
+
+  def validate_result(result)
+    super
+    unless result.errors.get(:value) || !result.value.is_a?(Hash)
+      total = result.value.values.map(&:to_f).reduce(:+).to_i
+      if (required && total != 100) || (!required && total != 100 && total != 0)
+        result.errors.add :value, :invalid
+      end
     end
   end
 end

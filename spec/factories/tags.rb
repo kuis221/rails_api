@@ -15,7 +15,7 @@
 
 FactoryGirl.define do
   factory :tag do
-    sequence(:name) {|n| "Test Tag #{n}" }
+    sequence(:name) { |n| "Test Tag #{n}" }
     created_by_id 1
     updated_by_id 1
   end

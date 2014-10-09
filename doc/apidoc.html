@@ -18,12 +18,217 @@
       <div id='container'>
         <ul class='breadcrumb'>
   <li class='active'><a href='./apidoc.html'>Brandscopic 1.0</a></li>
+  
 </ul>
 
 <div>Another API description</div>
 
 <h1 class='page-header'>Resources</h1>
 
+  <h2>
+    <a href='./apidoc/brands.html'>
+      Brands
+    </a><br>
+    <small>Brands</small>
+  </h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Resource</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>
+              <a href='./apidoc/brands/index.html'>GET /api/v1/brands</a>
+            </td>
+            <td width='60%'>Get a list of brands</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/brands/marques.html'>GET /api/v1/brands/:id/marques</a>
+            </td>
+            <td width='60%'>Get a list of marques for a brand</td>
+          </tr>
+    </tbody>
+  </table>
+  <h2>
+    <a href='./apidoc/campaigns.html'>
+      Campaigns
+    </a><br>
+    <small>Campaigns</small>
+  </h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Resource</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>
+              <a href='./apidoc/campaigns/all.html'>GET /api/v1/campaigns/all</a>
+            </td>
+            <td width='60%'>Returns a list of active campaigns. Useful for generating dropdown elements</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/campaigns/overall_stats.html'>GET /api/v1/campaigns/overall_stats</a>
+            </td>
+            <td width='60%'>Returns a list of categories with the results for the events and promo hours goals.</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/campaigns/stats.html'>GET /api/v1/campaigns/:id/stats</a>
+            </td>
+            <td width='60%'>Returns the stats of events and promo hours goals grouped by area for a given campaign.</td>
+          </tr>
+    </tbody>
+  </table>
+  <h2>
+    <a href='./apidoc/comments.html'>
+      Comments
+    </a><br>
+    <small>Comments</small>
+  </h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Resource</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>
+              <a href='./apidoc/comments/index.html'>GET /api/v1/events/:event_id/comments</a>
+            </td>
+            <td width='60%'>Get a list of comments for an Event</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/comments/create.html'>POST /api/v1/events/:event_id/comments</a>
+            </td>
+            <td width='60%'>Create a new comment for an event</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/comments/update.html'>PUT /api/v1/events/:event_id/comments/:id</a>
+            </td>
+            <td width='60%'>Update a comment</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/comments/destroy.html'>DELETE /api/v1/events/:event_id/comments/:id</a>
+            </td>
+            <td width='60%'>Deletes a comment</td>
+          </tr>
+    </tbody>
+  </table>
+  <h2>
+    <a href='./apidoc/contacts.html'>
+      Contacts
+    </a><br>
+    <small>Contacts</small>
+  </h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Resource</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>
+              <a href='./apidoc/contacts/index.html'>GET /api/v1/contacts</a>
+            </td>
+            <td width='60%'>Get a list of contacts for a specific company</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/contacts/show.html'>GET /api/v1/contacts/:id</a>
+            </td>
+            <td width='60%'>Return a contact&#39;s details</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/contacts/create.html'>POST /api/v1/contacts</a>
+            </td>
+            <td width='60%'>Create a new contact</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/contacts/update.html'>PUT /api/v1/contacts/:id</a>
+            </td>
+            <td width='60%'>Update a contact&#39;s details</td>
+          </tr>
+    </tbody>
+  </table>
+  <h2>
+    <a href='./apidoc/countries.html'>
+      Countries
+    </a><br>
+    <small>Countries</small>
+  </h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Resource</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>
+              <a href='./apidoc/countries/index.html'>GET /api/v1/countries</a>
+            </td>
+            <td width='60%'>Get a list of countries</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/countries/states.html'>GET /api/v1/countries/:id/states</a>
+            </td>
+            <td width='60%'>Get a list of stages for a country</td>
+          </tr>
+    </tbody>
+  </table>
+  <h2>
+    <a href='./apidoc/event_expenses.html'>
+      Event expenses
+    </a><br>
+    <small>Expenses</small>
+  </h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Resource</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>
+              <a href='./apidoc/event_expenses/index.html'>GET /api/v1/events/:event_id/event_expenses</a>
+            </td>
+            <td width='60%'>Get a list of expenses for an Event</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/event_expenses/create.html'>POST /api/v1/events/:event_id/event_expenses</a>
+            </td>
+            <td width='60%'>Create a new event expense</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/event_expenses/form.html'>GET /api/v1/events/:event_id/event_expenses/form</a>
+            </td>
+            <td width='60%'>Returns a list of requred fields for uploading a file to S3</td>
+          </tr>
+    </tbody>
+  </table>
   <h2>
     <a href='./apidoc/events.html'>
       Events
@@ -39,24 +244,106 @@
     </thead>
     <tbody>
           <tr>
-            <td><a href='./apidoc/events/index.html'>GET /api/v1/events</a></td>
+            <td>
+              <a href='./apidoc/events/index.html'>GET /api/v1/events</a>
+            </td>
             <td width='60%'>Search for a list of events</td>
           </tr>
           <tr>
-            <td><a href='./apidoc/events/show.html'>GET /api/v1/events/:id</a></td>
-            <td width='60%'>Return a event&#x27;s details</td>
+            <td>
+              <a href='./apidoc/events/autocomplete.html'>GET /api/v1/events/autocomplete</a>
+            </td>
+            <td width='60%'>Return a list of results grouped by categories</td>
           </tr>
           <tr>
-            <td><a href='./apidoc/events/create.html'>POST /api/v1/events</a></td>
-            <td width='60%'>Cratea a new event</td>
+            <td>
+              <a href='./apidoc/events/show.html'>GET /api/v1/events/:id</a>
+            </td>
+            <td width='60%'>Return a event&#39;s details</td>
           </tr>
           <tr>
-            <td><a href='./apidoc/events/update.html'>PUT /api/v1/events/:id</a></td>
-            <td width='60%'>Update a event&#x27;s details</td>
+            <td>
+              <a href='./apidoc/events/create.html'>POST /api/v1/events</a>
+            </td>
+            <td width='60%'>Create a new event</td>
           </tr>
           <tr>
-            <td><a href='./apidoc/events/results.html'>GET /api/v1/events/:id/results</a></td>
+            <td>
+              <a href='./apidoc/events/update.html'>PUT /api/v1/events/:id</a>
+            </td>
+            <td width='60%'>Update a event&#39;s details</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/events/submit.html'>PUT /api/v1/events/:id/submit</a>
+            </td>
+            <td width='60%'>Submits a event for approval</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/events/approve.html'>PUT /api/v1/events/:id/approve</a>
+            </td>
+            <td width='60%'>Mark a event as approved</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/events/reject.html'>PUT /api/v1/events/:id/reject</a>
+            </td>
+            <td width='60%'>Mark a event as rejected</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/events/results.html'>GET /api/v1/events/:id/results</a>
+            </td>
             <td width='60%'>Get the list of results for the events</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/events/members.html'>GET /api/v1/events/:id/members</a>
+            </td>
+            <td width='60%'>Get a list of users and teams associated to the event</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/events/assignable_members.html'>GET /api/v1/events/:id/assignable_members</a>
+            </td>
+            <td width='60%'>Get a list of users+teams that can be associated to the event&#39;s team</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/events/add_member.html'>POST /api/v1/events/:id/members</a>
+            </td>
+            <td width='60%'>Associate an user or team to the event&#39;s team</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/events/delete_member.html'>DELETE /api/v1/events/:id/members</a>
+            </td>
+            <td width='60%'>Delete an user or team from the event&#39;s team</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/events/contacts.html'>GET /api/v1/events/:id/contacts</a>
+            </td>
+            <td width='60%'>Get a list of users+contacts associated to the event</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/events/assignable_contacts.html'>GET /api/v1/events/:id/assignable_contacts</a>
+            </td>
+            <td width='60%'>Get a list of contacts+users that can be associated to the event as a contact</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/events/add_contact.html'>POST /api/v1/events/:id/contacts</a>
+            </td>
+            <td width='60%'>Associate a contact to the event</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/events/delete_contact.html'>DELETE /api/v1/events/:id/contacts</a>
+            </td>
+            <td width='60%'>Delete a contact from the event</td>
           </tr>
     </tbody>
   </table>
@@ -75,8 +362,22 @@
     </thead>
     <tbody>
           <tr>
-            <td><a href='./apidoc/photos/index.html'>GET /api/v1/events/:event_id/photos</a></td>
+            <td>
+              <a href='./apidoc/photos/index.html'>GET /api/v1/events/:event_id/photos</a>
+            </td>
             <td width='60%'>Get a list of photos for an Event</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/photos/create.html'>POST /api/v1/events/:event_id/photos</a>
+            </td>
+            <td width='60%'>Adds a new photo to a event</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/photos/form.html'>GET /api/v1/events/:event_id/photos/form</a>
+            </td>
+            <td width='60%'>Returns a list of requred fields for making a POST to S3</td>
           </tr>
     </tbody>
   </table>
@@ -95,12 +396,102 @@
     </thead>
     <tbody>
           <tr>
-            <td><a href='./apidoc/sessions/create.html'>POST /api/v1/sessions</a></td>
+            <td>
+              <a href='./apidoc/sessions/create.html'>POST /api/v1/sessions</a>
+            </td>
             <td width='60%'>Authenticate a user and return the authentication token</td>
           </tr>
           <tr>
-            <td><a href='./apidoc/sessions/destroy.html'>DELETE /api/v1/sessions</a></td>
+            <td>
+              <a href='./apidoc/sessions/destroy.html'>DELETE /api/v1/sessions</a>
+            </td>
             <td width='60%'>Destroy authentication token for a user</td>
+          </tr>
+    </tbody>
+  </table>
+  <h2>
+    <a href='./apidoc/surveys.html'>
+      Surveys
+    </a><br>
+    <small>Surveys</small>
+  </h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Resource</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>
+              <a href='./apidoc/surveys/index.html'>GET /api/v1/events/:event_id/surveys</a>
+            </td>
+            <td width='60%'>Get a list of surveys for an Event</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/surveys/show.html'>GET /api/v1/events/:event_id/surveys/:id</a>
+            </td>
+            <td width='60%'>Get the details for an Event&#39;s survey</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/surveys/create.html'>POST /api/v1/events/:event_id/surveys</a>
+            </td>
+            <td width='60%'>Create a new survey for a event</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/surveys/update.html'>PUT /api/v1/events/:event_id/surveys</a>
+            </td>
+            <td width='60%'>Update a survey for a event</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/surveys/brands.html'>GET /api/v1/events/:event_id/surveys/brands</a>
+            </td>
+            <td width='60%'>Get the list of brands for the surveys</td>
+          </tr>
+    </tbody>
+  </table>
+  <h2>
+    <a href='./apidoc/tasks.html'>
+      Tasks
+    </a><br>
+    <small>Tasks</small>
+  </h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Resource</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>
+              <a href='./apidoc/tasks/index.html'>GET /api/v1/events/:event_id/tasks</a>
+            </td>
+            <td width='60%'>Get a list of taks for an Event</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/tasks/index.html'>GET /api/v1/tasks/teams</a>
+            </td>
+            <td width='60%'>Get a list of taks for the user&#39;s teams</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/tasks/index.html'>GET /api/v1/tasks/mine</a>
+            </td>
+            <td width='60%'>Get a list of taks for the user</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/tasks/comments.html'>GET /api/v1/tasks/:id/comments</a>
+            </td>
+            <td width='60%'>Get a list of comments for a Task</td>
           </tr>
     </tbody>
   </table>
@@ -119,12 +510,116 @@
     </thead>
     <tbody>
           <tr>
-            <td><a href='./apidoc/users/new_password.html'>POST /api/v1/users/password/new_password</a></td>
+            <td>
+              <a href='./apidoc/users/new_password.html'>POST /api/v1/users/password/new_password</a>
+            </td>
             <td width='60%'>Request a new password for a user</td>
           </tr>
           <tr>
-            <td><a href='./apidoc/users/companies.html'>GET /api/v1/companies</a></td>
+            <td>
+              <a href='./apidoc/users/index.html'>GET /api/v1/users</a>
+            </td>
+            <td width='60%'>Get a list of users for a specific company</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/users/show.html'>GET /api/v1/users/:id</a>
+            </td>
+            <td width='60%'>Return a user&#39;s details</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/users/update.html'>PUT /api/v1/users/:id</a>
+            </td>
+            <td width='60%'>Update a user&#39;s details</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/users/companies.html'>GET /api/v1/companies</a>
+            </td>
             <td width='60%'>Get a list of companies the user has access to</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/users/notifications.html'>GET /api/v1/users/notifications</a>
+            </td>
+            <td width='60%'>Get a list of user&#39;s notifications</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/users/permissions.html'>GET /api/v1/users/permissions</a>
+            </td>
+            <td width='60%'>Get a list of the user&#39;s permissions</td>
+          </tr>
+    </tbody>
+  </table>
+  <h2>
+    <a href='./apidoc/venues.html'>
+      Venues
+    </a><br>
+    <small>Venues</small>
+  </h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Resource</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>
+              <a href='./apidoc/venues/show.html'>GET /api/v1/venues/:id</a>
+            </td>
+            <td width='60%'>Return a venue&#39;s details</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/venues/analysis.html'>GET /api/v1/venues/:id/analysis</a>
+            </td>
+            <td width='60%'>Return a venue&#39;s analysis information</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/venues/index.html'>GET /api/v1/venues</a>
+            </td>
+            <td width='60%'>Search for a list of venues</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/venues/create.html'>POST /api/v1/venues</a>
+            </td>
+            <td width='60%'>Creates a new venue</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/venues/types.html'>GET /api/v1/venues/types</a>
+            </td>
+            <td width='60%'>Get a list of possible venue types</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/venues/photos.html'>GET /api/v1/venues/:id/photos</a>
+            </td>
+            <td width='60%'>Get a list of photos for a Venue</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/venues/comments.html'>GET /api/v1/venues/:id/comments</a>
+            </td>
+            <td width='60%'>Get a list of comments for a Venue</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/venues/search.html'>GET /api/v1/venues/search</a>
+            </td>
+            <td width='60%'>Search for a list of venues matching a term</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/venues/autocomplete.html'>GET /api/v1/venues/autocomplete</a>
+            </td>
+            <td width='60%'>Return a list of results grouped by categories</td>
           </tr>
     </tbody>
   </table>
@@ -134,8 +629,7 @@
       </div>
     </div>
     <hr>
-    <footer>  
-</footer>
+    <footer></footer>
   </div>
   <script type='text/javascript' src='./apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
 <script type='text/javascript' src='./apidoc/javascripts/bundled/bootstrap-collapse.js'></script>

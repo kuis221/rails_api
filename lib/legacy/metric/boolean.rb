@@ -19,16 +19,18 @@
 # For storing boolean flags.
 class Metric::Boolean < Metric
   def form_options
-    super.merge({:as => :radio, :collection => {:yes => 1, :no => 0}})
+    super.merge(as: :radio, collection: { yes: 1, no: 0 })
   end
+
   def format_result(result)
-    cast_value(result.scalar_value)==1 ? 'Yes' : 'No'
+    cast_value(result.scalar_value) == 1 ? 'Yes' : 'No'
   end
+
   def format_pdf(pdf, result)
     if result && result.print_values?
       super
     else
-      pdf.font_size(10) { pdf.text "YES / NO", :align => :left, :valign => :center }
+      pdf.font_size(10) { pdf.text 'YES / NO', align: :left, valign: :center }
     end
   end
   def self.targetable?
@@ -37,6 +39,7 @@ class Metric::Boolean < Metric
   def field_type_symbol
     'T/F'
   end
+
   def cast_value(value)
     value.to_i
   end

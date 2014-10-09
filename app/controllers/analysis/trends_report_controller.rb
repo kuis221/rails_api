@@ -148,7 +148,7 @@ class Analysis::TrendsReportController < FilteredController
           end
         end
 
-        facet_params[:start_date] = ((time_period*2).ago-1.day).to_s(:slashes)
+        facet_params[:start_date] = ((time_period*2).seconds.ago-1.day).to_s(:slashes)
         facet_params[:end_date] = (time_period.ago-1.day).to_s(:slashes)
         resource_class.do_search(facet_params).facet(:description).rows.each do|r|
           if workds_hash.has_key?(r.value)

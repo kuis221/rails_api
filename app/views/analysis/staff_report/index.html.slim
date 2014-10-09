@@ -2,9 +2,10 @@
 .tab-content
   #list-view.tab-pane.active
     .details_box.first
+      .controls
 
-      = simple_form_for :report, url: analysis_staff_report_path, remote: true do |f|
-        = f.input_field :user_id, collection: @users, wrapper: false, class: 'chosen-enabled no-validate'
+        = simple_form_for :report, url: analysis_staff_report_path, remote: true do |f|
+          = f.input_field :user_id, collection: @users, wrapper: false, class: 'chosen-enabled no-validate'
 
   #report-container
 

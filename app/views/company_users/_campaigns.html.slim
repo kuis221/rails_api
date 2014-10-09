@@ -22,3 +22,50 @@
       $.post('#{disable_campaigns_company_user_path(resource)}', {parent_id: $(this).data('parent-id'), parent_type: $(this).data('parent-type')});
       return false;
     });
+
+
+/ Markup for new design
+- if false
+  .details_box.user-view
+    .user-data
+      h3 CAMPAIGNS
+
+      .items-container
+        .box.special-icon.brand-icon
+          b example one - brand icon
+
+        .box.special-icon.brand-icon
+          b Absolut Bloody Incremental FY14
+
+        .box.special-icon.brand-icon
+          b Absolut Texas Incremental Mini
+
+        .box.special-icon.brand-icon
+          b Jameson Black Barrel Summer MBN FY14
+
+        .box.special-icon.brand-icon
+          b Jameson FY14
+
+        .box.special-icon.brand-icon
+          b example one - brand icon
+
+      .items-container
+        .box.special-icon.campaign-icon
+          b example one - campaign icon
+
+        .box.special-icon.campaign-icon
+          b example one - campaign icon
+
+        .box.special-icon.campaign-icon
+          b Jameson MBN FY14
+
+        .box.special-icon.campaign-icon
+          b example one - campaign icon
+
+        .box.special-icon.campaign-icon
+          b Kahla BA Incremental
+
+        .box.special-icon.campaign-icon
+          b example one - campaign icon
+
+      = link_to "Add campaigns"

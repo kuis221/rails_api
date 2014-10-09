@@ -14,7 +14,7 @@
 class ActivityType < ActiveRecord::Base
   belongs_to :company
   scoped_to_company
-  has_many :form_fields, :as => :fieldable, order: 'form_fields.ordering ASC'
+  has_many :form_fields, -> { order 'form_fields.ordering ASC' }, as: :fieldable
   has_many :companies, through: :activity_type_campaigns
 
   validates :name, presence: true
@@ -33,9 +33,9 @@ class ActivityType < ActiveRecord::Base
   TRENDING_FIELDS_TYPES = ['FormField::TextArea']
   PHOTO_FIELDS_TYPES = ['FormField::Photo']
 
-  scope :active, -> { where(active: true) }
-
   scope :with_trending_fields, -> { joins(:form_fields).where(form_fields: { type: TRENDING_FIELDS_TYPES } ).group('activity_types.id') }
+
+  scope :active, -> { where(active: true) }
 
   attr_accessor :partial_path
 
@@ -67,37 +67,29 @@ class ActivityType < ActiveRecord::Base
   end
 
   def autocomplete
-    buckets = autocomplete_buckets({
-        activity_types: [ActivityType]
-      })
-    render :json => buckets.flatten
+    buckets = autocomplete_buckets(activity_types: [ActivityType])
+    render json: buckets.flatten
   end
 
   def trending_fields
     form_fields.where(type: TRENDING_FIELDS_TYPES)
   end
 
-
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
-    def do_search(params, include_facets=false)
-      ss = solr_search do
-        with(:company_id, params[:company_id])
-        with(:status, params[:status]) if params.has_key?(:status) and params[:status].present?
-        if params.has_key?(:q) and params[:q].present?
+    def do_search(params, include_facets = false)
+      solr_search do
+        with :company_id, params[:company_id]
+        with :status, params[:status] if params.key?(:status) && params[:status].present?
+        if params.key?(:q) && params[:q].present?
           (attribute, value) = params[:q].split(',')
-          case attribute
-          when 'activity_type'
-            with :id, value
-          end
+          with :id, value if attribute == 'activity_type'
         end
 
-        if include_facets
-          facet :status
-        end
+        facet :status if include_facets
 
-        order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
-        paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+        order_by params[:sorting] || :name, params[:sorting_dir] || :desc
+        paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
       end
     end
 
@@ -105,17 +97,18 @@ class ActivityType < ActiveRecord::Base
       {
         name:        { title: 'Activity Type Name' },
         description: { title: 'Activity Type Description' },
-        user:        { title: 'Activity User', column: -> { "activity_user.first_name || ' ' || activity_user.last_name" } },
-        date:        { title: 'Activity Date', column: -> { "to_char(activities.activity_date, 'YYYY/MM/DD')" } }
+        user:        { title: 'Activity User',
+                       column: -> { "activity_user.first_name || ' ' || activity_user.last_name" } },
+        date:        { title: 'Activity Date',
+                       column: -> { "to_char(activities.activity_date, 'YYYY/MM/DD')" } }
       }
     end
   end
 
   private
 
-    def ensure_user_date_field
-      if form_fields.empty? || !form_fields.map(&:type).include?('FormField::UserDate')
-        form_fields << FormField::UserDate.new(name: 'User/Date', ordering: (form_fields.map(&:ordering).max || 0)+1)
-      end
-    end
+  def ensure_user_date_field
+    return unless form_fields.empty? || !form_fields.map(&:type).include?('FormField::UserDate')
+    form_fields << FormField::UserDate.new(name: 'User/Date', ordering: (form_fields.map(&:ordering).max || 0) + 1)
+  end
 end

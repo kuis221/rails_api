@@ -12,7 +12,6 @@
 #  updated_at :datetime
 #
 
-
 class Legacy::Brand  < Legacy::Record
-  has_many    :programs
+  has_many :programs
 end

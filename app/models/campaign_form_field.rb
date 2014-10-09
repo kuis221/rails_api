@@ -29,24 +29,50 @@ class CampaignFormField < ActiveRecord::Base
 
   delegate :name, :module, to: :kpi, allow_nil: true, prefix: true
 
-  scope :for_event_data, lambda{ joins('LEFT JOIN kpis ON campaign_form_fields.kpi_id=kpis.id').where("campaign_form_fields.kpi_id is null or kpis.module in (?)", ['custom', 'consumer_reach', 'demographics']) }
+  scope :for_event_data, -> { joins('LEFT JOIN kpis ON campaign_form_fields.kpi_id=kpis.id').where("campaign_form_fields.kpi_id is null or kpis.module in (?)", ['custom', 'consumer_reach', 'demographics']) }
 
   scope :for_trends, -> { where(field_type: TRENDING_FIELDS_TYPES ) }
 
   # For field - sections relationship
-  has_many :fields, class_name: 'CampaignFormField', foreign_key: :section_id, order: 'ordering ASC', dependent: :destroy
+  has_many :fields, -> { order 'ordering ASC' }, class_name: 'CampaignFormField', foreign_key: :section_id, dependent: :destroy
   accepts_nested_attributes_for :fields
 
   def field_options(result)
-    options = {as: simple_form_field_type, capture_mechanism: self.capture_mechanism, label: self.name, field_id: self.id, options: self.options, required: is_required?, input_html: {value: result.value, class: field_validation_classes(result), required: (is_required? ? 'required' : nil )}}
+    options = { as: simple_form_field_type, capture_mechanism: capture_mechanism, label: name, field_id: id, options: self.options, required: is_required?, input_html: { value: result.value, class: field_validation_classes(result), required: (is_required? ? 'required' : nil) } }
     unless result.kpis_segment_id.nil?
       options.merge!(label: result.kpis_segment.text)
-      options[:input_html].merge!('data-segment-field-id' => self.id)
+      options[:input_html].merge!('data-segment-field-id' => id)
     end
     if field_type == 'count'
-      options.merge!(collection: kpi.kpis_segments.map{|s| [s.text, s.id]})
+      options.merge!(collection: kpi.kpis_segments.map { |s| [s.text, s.id] })
     end
     options
+  end
+
+  # returns the equivalent FormField type to be used in the migration
+  def migration_type
+    case field_type
+    when 'text'
+      'FormField::Text'
+    when 'textarea'
+      'FormField::Text'
+    when 'number'
+      if capture_mechanism == 'currency'
+        'FormField::Currency'
+      else
+        'FormField::Number'
+      end
+    when 'count'
+      case capture_mechanism
+      when 'radio' then 'FormField::Radio'
+      when 'checkbox' then 'FormField::Checkbox'
+      else 'FormField::Dropdown'
+      end
+    when 'percentage'
+      'FormField::Percentage'
+    when 'section'
+      'FormField::Section'
+    end
   end
 
   def capture_mechanism
@@ -66,7 +92,7 @@ class CampaignFormField < ActiveRecord::Base
     when 'textarea'
       :text
     when 'count'
-      case self.capture_mechanism
+      case capture_mechanism
       when 'radio' then :radio_buttons
       when 'checkbox' then :check_boxes
       else :select
@@ -91,11 +117,11 @@ class CampaignFormField < ActiveRecord::Base
   end
 
   def is_numeric?
-    ['number', 'percentage', 'count'].include?(field_type)
+    %w(number percentage count).include?(field_type)
   end
 
   def is_decimal?
-    (['number', 'percentage'].include?(field_type) && ['decimal', 'currency'].include?(capture_mechanism))
+    (%w(number percentage).include?(field_type) && %w(decimal currency).include?(capture_mechanism))
   end
 
   def field_validation_classes(result)

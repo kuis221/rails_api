@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>API documentation</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/bootstrap.min.css'/>
+<link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/prettify.css'/>
+<link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/bootstrap-responsive.min.css'/>
+  <link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/application.css'/>
+  <!-- IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div id='container'>
+        <ul class='breadcrumb'>
+  <li>
+    <a href='../../apidoc.html'>Brandscopic 1.0</a>
+    <span class='divider'>/</span>
+  </li>
+  <li>
+    <a href='../../apidoc/users.html'>
+      Users
+      
+    </a>
+    <span class='divider'>/</span>
+  </li>
+  <li class='active'>show</li>
+  
+
+</ul>
+
+  <div class='page-header'>
+    <h1>
+      GET /api/v1/users/:id
+      <br>
+      <small>Return a user's details</small>
+    </h1>
+  </div>
+
+<div>
+
+  
+<p>Returns the details of a give user</p>
+
+<pre>* *id*: the user id
+* *first_name*: the user&#39;s first name
+* *last_name*: the user&#39;s last name
+* *full_name*: the user&#39;s full name
+* *email*: the user&#39;s email address
+* *street_address*: the user&#39;s street name and number
+* *city*: the user&#39;s city name
+* *state*: the user&#39;s state code
+* *country*: the user&#39;s country
+* *zip_code*: the user&#39;s ZIP code
+* *role*:
+  * *id*: the role id
+  * *name*: the role name
+* *teams*: A list of the teams that the user belongs to
+  * *id*: the team&#39;s id
+  * *name*: the team&#39;s name</pre>
+
+
+  <h2>Supported Formats</h2>
+  json, xml
+
+  <h2>Errors</h2>
+    404
+    Missing
+    <br>
+    401
+    Unauthorized access
+    <br>
+    500
+    Server crashed for some reason
+    <br>
+
+
+  <h2>Examples</h2>
+    <pre class="prettyprint">{
+    &quot;id&quot;: 1,
+    &quot;first_name&quot;: &quot;Admin&quot;,
+    &quot;last_name&quot;: &quot;User&quot;,
+    &quot;full_name&quot;: &quot;Admin User&quot;,
+    &quot;email&quot;: &quot;admin@brandscopic.com&quot;,
+    &quot;phone_number&quot;: null,
+    &quot;street_address&quot;: null,
+    &quot;unit_number&quot;: null,
+    &quot;city&quot;: &quot;San Francisco&quot;,
+    &quot;state&quot;: &quot;CA&quot;,
+    &quot;zip_code&quot;: null,
+    &quot;time_zone&quot;: &quot;Buenos Aires&quot;,
+    &quot;country&quot;: &quot;United States&quot;,
+    &quot;role&quot;: {
+        &quot;id&quot;: 1,
+        &quot;name&quot;: &quot;Super Admin&quot;
+    },
+    &quot;teams&quot;: []
+}
+</pre>
+
+  <h2>Params</h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>User ID</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+</div>
+
+
+        
+      </div>
+    </div>
+    <hr>
+    <footer></footer>
+  </div>
+  <script type='text/javascript' src='../../apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/bundled/bootstrap-collapse.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/bundled/prettify.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/apipie.js'></script>
+</body>
+</html>

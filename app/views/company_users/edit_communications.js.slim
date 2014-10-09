@@ -1,0 +1,3 @@
+|
+  bootbox.classes('modal-large');
+  var editCommunicationsDialog = bootbox.dialog($('#{escape_javascript(render(partial: "edit_communications", locals: {remote: true}))}'), [],{header: 'Communication preferences', 'onEscape': true, animate: (!$.fx.off)});

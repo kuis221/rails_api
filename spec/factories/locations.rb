@@ -10,7 +10,7 @@
 
 FactoryGirl.define do
   factory :location do
-    name "MyString"
-    path "MyString"
+    name 'MyString'
+    path 'MyString'
   end
 end

@@ -1,7 +1,7 @@
 Resque.redis = REDIS
 
 if ENV['WEB'] && !Rails.env.test?
-  require "resque/server"
+  require 'resque/server'
   Resque::Server.class_eval do
 
     use Rack::Auth::Basic do |email, password|

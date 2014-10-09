@@ -1,11 +1,9 @@
-li id="comment_#{comment.id}"
-  = link_to_if_permitted(:show, Event, event_path(comment.commentable.id), id: "event-link-#{comment.commentable.id}") do
-    span.event-info
-      b= comment.commentable.campaign_name
-      br>/
-      .clean-date
-        = format_date_range(event_date(comment.commentable, :start_at), event_date(comment.commentable, :end_at), date_separator: ' ')
-      = place_address(comment.commentable.place, false, ', ', ', ')
+div.resource-item id="comment_#{comment.id}"
+  = link_to_if_permitted(:show, Event, event_path(comment.commentable.id), id: "event-link-#{comment.commentable.id}", class: 'resource-item-link') do
+    .text-large= comment.commentable.campaign_name
+    .clean-date
+      = format_date_range(event_date(comment.commentable, :start_at), event_date(comment.commentable, :end_at), date_separator: ' ')
+    = place_address(comment.commentable.place, false, ', ', ', ')
     span.comment-text
   	  .comment-date.clean-date= time_ago_in_words(comment.created_at)
   	  p

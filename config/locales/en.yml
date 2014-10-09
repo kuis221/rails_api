@@ -2,15 +2,23 @@
 # See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
 
 en:
+  other_areas:
+    one: 'and one more areas'
+    one: 'and %{count} other areas'
   activerecord:
     models:
       company_user: "User"
+      document_folder: "Folder"
+      kpi: "KPI"
+      activity_type: "Activity Type"
     attributes:
       activity:
         start_date_date: "Start date"
         start_date_time: "Start time"
         end_date_date: "End date"
         end_date_time: "End time"
+      kpis_segment:
+        text: 'Name'
   time:
     formats:
       default: '%m/%d/%Y %H:%M:%S'
@@ -35,8 +43,18 @@ en:
       one: 'year'
       other: '%{count} years'
 
+  exports:
+    pdf:
+      title:
+        events: 'Events'
+        visits: 'Brand Ambassadors Visits'
+        gva: 'Goals vs. Actual'
+        venues: 'Venues'
+        tasks: 'Tasks'
+
   buttons:
     new:
+      event: "New Event"
       team: "New Team"
       campaign: "New Campaign"
       brand: "New Brand"
@@ -46,20 +64,25 @@ en:
       date_range: "New Date Range"
       day_part: "New Day Part"
       activity_type: "New Activity Type"
+      brand_ambassadors/visit: "New Visit"
     edit:
+      event: "Edit Event"
       team: "Edit Team"
       campaign: "Edit Campaign"
       role: "Edit Role"
       area: "Edit Area"
+      brand: "Edit Brand"
       brand_portfolio: "Edit Brand Portfolio"
       date_range: "Edit Date Range"
       day_part: "Edit Day Part"
+      activity_type: "Edit Activity Type"
+      brand_ambassadors/visit: "Edit Visit"
 
   inputs:
     attached_asset:
       select_file:
-        photo: '%{browse} for an image located on your computer'
-        attachment: '%{browse} for a file located on your computer'
+        photo: 'your image or %{browse}'
+        attachment: 'your file or %{browse}'
 
   notifications:
     task_late_user:
@@ -101,6 +124,56 @@ en:
     new_task: "You have been assigned a task: %{task}"
     new_team_task: "A new task was created for your event: %{task}"
 
+  notifications_sms:
+    event_recap_late:
+      one: 'You have one late event recap'
+      other: 'You have %{count} late event recaps'
+    event_recap_due:
+      one: 'You have one due event recap'
+      other: 'You have %{count} due event recaps'
+    event_recap_late_and_due: 'You have %{due_count} due and %{late_count} late event recaps'
+    event_recap_pending_approval: 'You have an event recap that is pending approval %{url}'
+    event_recap_rejected: 'You have a rejected event recap %{url}'
+    new_event: 'You have a new event %{url}'
+    new_event_team: 'Your team has a new event'
+    late_task: 'You have a late task'
+    late_team_task: 'You have a late team task'
+    new_comment: 'You have a new comment %{url}'
+    new_team_comment: 'You have a new team comment %{url}'
+    new_unassigned_team_task: 'Your team has a new unassigned task %{url}'
+    new_task_assignment: 'You have a new task %{url}'
+    new_campaign: 'You have a new campaign %{url}'
+
+  notifications_email:
+    event_recap_due: 'You have a due event recap'
+    event_recap_late: 'You have a late event recap'
+    event_recap_pending_approval: 'You have an event recap that is pending approval %{url}'
+    event_recap_rejected: 'You have a rejected event recap %{url}'
+    new_event: 'You have a new event %{url}'
+    new_event_team: 'Your team has a new event'
+    late_task: 'You have a late task'
+    late_team_task: 'You have a late team task'
+    new_comment: 'You have a new comment %{url}'
+    new_team_comment: 'You have a new team comment %{url}'
+    new_unassigned_team_task: 'Your team has a new unassigned task %{url}'
+    new_task_assignment: 'You have a new task %{url}'
+    new_campaign: 'You have a new campaign %{url}'
+
+  notification_types:
+    event_recap_due: 'Event Recaps Due'
+    event_recap_late: 'Late Event Recaps'
+    event_recap_pending_approval: 'Event Recaps Pending Approval'
+    event_recap_rejected: 'Rejected Event Recaps'
+    new_event: 'Added to Event'
+    new_event_team: 'Added to Event Team'
+    late_task: 'Late Tasks'
+    late_team_task: 'Late Team Tasks'
+    new_comment: 'New Comment'
+    new_team_comment: 'New Team Comment'
+    new_unassigned_team_task: 'New Unassigned Team Task'
+    new_task_assignment: 'New Task Assignment'
+    new_campaign: 'New Campaign'
+
   modals:
     title:
       new:
@@ -129,6 +202,11 @@ en:
         report: "New Report"
         activity: "New Activity"
         activity_type: "New Activity Type"
+        custom_filter: "Save filter"
+        brand_ambassadors/visit: "New Visit"
+        brand_ambassadors/document: "New Document"
+        document_folder: "New Folder"
+        filter_setting: "Filtering options"
       edit:
         company_user: "Edit User"
         event: "Edit Event"
@@ -155,6 +233,10 @@ en:
         report: "Edit Report"
         activity: "Edit Activity"
         activity_type: "Edit Activity Type"
+        areas_campaign: "Customize %{name} Area"
+        brand_ambassadors/visit: "Edit Visit"
+        brand_ambassadors/document: "Edit Document"
+        document_folder: "Edit Folder"
 
   form_builder:
     modules:
@@ -167,6 +249,14 @@ en:
       photos: "Photos"
       videos: "Videos"
       comments: "Comments"
+    field_types:
+      text: 'Text'
+      number: 'Number'
+      percentage: 'Percentage'
+      currency: 'Currency'
+      checkbox: 'Checkbox'
+      dropdown: 'Dropdown'
+      radio: 'Radio'
 
   errors:
     result:

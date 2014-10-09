@@ -17,8 +17,8 @@
 
 FactoryGirl.define do
   factory :day_part do
-    sequence(:name) {|n| "Day Part #{n}"}
-    description "Some Day Part description"
+    sequence(:name) { |n| "Day Part #{n}" }
+    description 'Some Day Part description'
     active true
     company_id 1
     created_by_id 1

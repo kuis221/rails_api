@@ -15,6 +15,8 @@ $.widget 'nmk.eventsCalendar', {
 		renderMonthDay: null,
 		showMonthControls: true,
 		mode: 'month',
+		onEventsLoad: false,
+		onMonthChange: false,
 		weeks: 2
 	},
 
@@ -45,8 +47,8 @@ $.widget 'nmk.eventsCalendar', {
 		@element.append "<div class=\"calendar-controls\">
 			<div class=\"calendar-month-name\"></div>
 			<div class=\"calendar-months-arrows\">
-				<a class=\"prev-month-btn icon-angle-left\" href=\"#\"></a>
-				<a class=\"next-month-btn icon-angle-right\" href=\"#\"></a>
+				<a class=\"icon-angle-left prev-month-btn\" href=\"#\"></a>
+				<a class=\"icon-angle-right next-month-btn\" href=\"#\"></a>
 			</div>
 		</div>"
 
@@ -105,12 +107,12 @@ $.widget 'nmk.eventsCalendar', {
 					html += currentDay.getDate()
 				html += "</div>"
 				currentDay = new Date(currentDay.getFullYear(), currentDay.getMonth(), currentDay.getDate()+1)
+				@lastDay = currentDay
 				html += '</div></td>'
 
 			if currentDay.getMonth() != @month
 				break
 			else
-				@lastDay = currentDay
 				html += '</tr><tr>'
 
 		html += '</tr></tbody></table>'
@@ -186,7 +188,8 @@ $.widget 'nmk.eventsCalendar', {
 		$.get url, {start: @firstDay.getTime()/1000, end: @lastDay.getTime()/1000}, (response) =>
 			@calendar.find('.calendar-event').remove()
 			for eventElement in response
-				d = new Date(Date.parse(eventElement.start))
+				parts = eventElement.start.split('-')
+				d = new Date(parts[0], parseInt(parts[1])-1, parts[2])
 				cell = @calendar.find("##{d.getUTCFullYear()}_#{d.getUTCMonth()+1}_#{d.getUTCDate()}")
 				if cell.length > 0
 					cell.find('.calendar-day-events-container').append @_renderEvent(eventElement)
@@ -196,6 +199,8 @@ $.widget 'nmk.eventsCalendar', {
 				diff = elements.length - 6
 				if diff > 0
 					$('.calendar-view-more', cell).html "<a href=\"#\">+#{diff} More</a>"
+
+			@options.onEventsLoad() if @options.onEventsLoad
 
 			true
 		@
@@ -213,5 +218,6 @@ $.widget 'nmk.eventsCalendar', {
 		d = new Date(@year, @month+step, 1)
 		@month = d.getMonth()
 		@_drawCalendar()
+		@options.onMonthChange(@month, @year) if @options.onMonthChange
 		@
 }

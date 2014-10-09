@@ -7,7 +7,7 @@ RSpec.configure do |c|
     SunspotTest.stub
   end
 
-  c.before(:each, :search => true) do
+  c.before(:each, search: true) do
     SunspotTest.setup_solr
     Sunspot.remove_all!
     Sunspot.commit

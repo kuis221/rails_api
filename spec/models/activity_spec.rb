@@ -14,36 +14,77 @@
 #  updated_at       :datetime         not null
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
-describe Activity do
-  it { should belong_to(:activity_type) }
-  it { should belong_to(:activitable) }
-  it { should belong_to(:company_user) }
+describe Activity, type: :model do
+  it { is_expected.to belong_to(:activity_type) }
+  it { is_expected.to belong_to(:activitable) }
+  it { is_expected.to belong_to(:company_user) }
 
-  it { should validate_presence_of(:activity_type_id) }
-  it { should validate_presence_of(:company_user_id) }
-  it { should validate_presence_of(:activity_date) }
-  it { should validate_numericality_of(:activity_type_id) }
-  it { should validate_numericality_of(:company_user_id) }
+  it { is_expected.to validate_presence_of(:activity_type_id) }
+  it { is_expected.to validate_presence_of(:company_user_id) }
+  it { is_expected.to validate_presence_of(:activity_date) }
+  it { is_expected.to validate_numericality_of(:activity_type_id) }
+  it { is_expected.to validate_numericality_of(:company_user_id) }
 
-  describe "#activate" do
-    let(:activity) { FactoryGirl.build(:activity, active: false) }
+  describe 'inclusion of activity_type_id' do
+    describe 'when assigned to a campaign' do
+      before { subject.campaign = campaign }
+      let(:company) { create(:company) }
+      let(:campaign) { create(:campaign, company: company, activity_type_ids: activity_types.map(&:id)) }
+      let(:activity_types) { create_list(:activity_type, 2, company: company) }
+      let(:other_type) { create(:activity_type, company: company) }
 
-    it "should return the active value as true" do
-      activity.activate!
-      activity.reload
-      activity.active.should be_true
+      it { is_expected.to allow_value(activity_types.first.id).for(:activity_type_id) }
+      it { is_expected.to allow_value(activity_types.second.id).for(:activity_type_id) }
+      it { is_expected.not_to allow_value(other_type.id).for(:activity_type_id) }
+    end
+
+    describe 'when assigned to a venue' do
+      before { subject.campaign = nil }
+      before { subject.activitable = venue }
+      let(:company) { create(:company) }
+      let(:venue) { create(:venue, company: company) }
+      let(:activity_types) { create_list(:activity_type, 2, company: company) }
+      let(:other_type) { create(:activity_type, company: create(:company)) }
+
+      it { is_expected.to allow_value(activity_types.first.id).for(:activity_type_id) }
+      it { is_expected.to allow_value(activity_types.second.id).for(:activity_type_id) }
+      it { is_expected.not_to allow_value(other_type.id).for(:activity_type_id) }
+    end
+
+    describe 'when assigned to a venue' do
+      before { subject.campaign = nil }
+      before { subject.activitable = event }
+      let(:company) { create(:company) }
+      let(:campaign) { create(:campaign, company: company, activity_type_ids: activity_types.map(&:id)) }
+      let(:event) { create(:event, campaign: campaign) }
+      let(:activity_types) { create_list(:activity_type, 2, company: company) }
+      let(:other_type) { create(:activity_type, company: company) }
+
+      it { is_expected.to allow_value(activity_types.first.id).for(:activity_type_id) }
+      it { is_expected.to allow_value(activity_types.second.id).for(:activity_type_id) }
+      it { is_expected.not_to allow_value(other_type.id).for(:activity_type_id) }
     end
   end
 
-  describe "#deactivate" do
-    let(:activity) { FactoryGirl.build(:activity, active: false) }
+  describe '#activate' do
+    let(:activity) { build(:activity, active: false) }
 
-    it "should return the active value as false" do
+    it 'should return the active value as true' do
+      activity.activate!
+      activity.reload
+      expect(activity.active).to be_truthy
+    end
+  end
+
+  describe '#deactivate' do
+    let(:activity) { build(:activity, active: false) }
+
+    it 'should return the active value as false' do
       activity.deactivate!
       activity.reload
-      activity.active.should be_false
+      expect(activity.active).to be_falsey
     end
   end
 
@@ -78,7 +119,7 @@ describe Activity do
       activity.results_for([field, field2]).each{|r| r.value = 'this have a value' }
       expect {
         activity.save
-      }.to change(ActivityResult, :count).by(2)
+      }.to change(FormFieldResult, :count).by(2)
 
       expect(Activity.with_results_for([field, field2])).to match_array [activity]
     end

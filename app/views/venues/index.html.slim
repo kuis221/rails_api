@@ -1,8 +1,8 @@
 = user_new_feature('venues_list') do
   h5 Getting Started: Venues
-  a.close.btn-dismiss-alert href="#" title="Dismiss"
+  a.close.btn-dismiss-alert.icon.icon-close href="#" title="Dismiss"
   a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/DaWPtXrek-A?rel=0" data-width="640" data-height="360"
-    img src="/assets/video_arrow.png" /
+    img src="#{image_path('video_arrow.png')}" width="70" height="70" /
   .feature-description
     p
       'Welcome to the Venues module! This section holds all of the historical data for specific venues - here you can view venue data, keep track of your accounts, and create new venues. Use the right sidebar to filter for specific venues or create your own using the red  "Create" button. Click on the video to the left for a quick overview or visit our
@@ -25,15 +25,24 @@
 
 .sidebar.collapsed#resource-filter-column
   #collection-list-filters
-  #save-filters-btn.a.btn.btn-primary Save
 .main
   #list-tools.text-right
-    button.btn.download.xlsx-download-link data-url="#{venues_path(format:"xls")}" title="Download" class="hidden" id="venue-download-button"
+    .dropdown.btn-download
+      a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+        i.icon-download
+        i.icon-arrow-down
+      ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+        li
+          a.xlsx-download-link href="#" role="menuitem" data-url="#{venues_path(format: :xls)}"
+            | Download as XLS
+        li
+          a#pdf-export.xlsx-download-link href="#" role="menuitem" data-url="#{venues_path(format: :pdf)}"
+            | Download as PDF
+
   .tab-content
     #list-view.tab-pane.active
       #venues-totals
-      .link-list
-        ul#venues-list
+      #venues-list.resource-list.without-actions
 
 = render partial: 'help_tutorial'
 
@@ -98,8 +107,8 @@ javascript:
   })
 
   $('#collection-list-filters').filteredList({
-    'source': '#{items_path(controller: :venues)}',
-    'filtersUrl': '#{filters_path(controller: :venues)}',
+    'source': '#{url_for(controller: :venues, action: :items)}',
+    'filtersUrl': '#{url_for(controller: :venues, action: :filters)}',
     'listContainer' : '#venues-list',
     'sorting': 'name',
     'sorting_dir': 'asc',

@@ -11,32 +11,31 @@
 #  updated_at    :datetime         not null
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
-describe Survey do
-  it { should belong_to(:event) }
-  it { should have_many(:surveys_answers) }
+describe Survey, type: :model do
+  it { is_expected.to belong_to(:event) }
+  it { is_expected.to have_many(:surveys_answers) }
 
+  it { is_expected.to accept_nested_attributes_for(:surveys_answers) }
 
-  it { should accept_nested_attributes_for(:surveys_answers) }
+  describe '#activate' do
+    let(:survey) { build(:survey, active: false) }
 
-  describe "#activate" do
-    let(:survey) { FactoryGirl.build(:survey, active: false) }
-
-    it "should return the active value as true" do
+    it 'should return the active value as true' do
       survey.activate!
       survey.reload
-      survey.active.should be_true
+      expect(survey.active).to be_truthy
     end
   end
 
-  describe "#deactivate" do
-    let(:survey) { FactoryGirl.build(:survey, active: false) }
+  describe '#deactivate' do
+    let(:survey) { build(:survey, active: false) }
 
-    it "should return the active value as false" do
+    it 'should return the active value as false' do
       survey.deactivate!
       survey.reload
-      survey.active.should be_false
+      expect(survey.active).to be_falsey
     end
   end
 end

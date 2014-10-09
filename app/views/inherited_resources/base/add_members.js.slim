@@ -1,14 +1,10 @@
 - if @member_id
   |
     $(document).trigger('members:change');
-    if ($('ul#staff-list > li#staff-member-user-#{@member_id}').length){
-      $('ul#staff-list > li#staff-member-user-#{@member_id}').remove();
-    };
+    $('#staff-list > #staff-member-user-#{@member_id}').slideUp();
 - if @team_id
   |
     $(document).trigger('teams:change');
-    if ($('ul#staff-list > li#staff-member-team-#{@team_id}').length){
-      $('ul#staff-list > li#staff-member-team-#{@team_id}').remove();
-    };
+    $('#staff-list > #staff-member-team-#{@team_id}').slideUp();
 
 = render 'add_member'

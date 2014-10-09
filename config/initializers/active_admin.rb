@@ -6,12 +6,12 @@ if ENV['WEB']
     # Set the title that is displayed on the main layout
     # for each of the active admin pages.
     #
-    config.site_title = "Brandscopic"
+    config.site_title = 'Brandscopic'
 
     # Set the link url for the title. For example, to take
     # users to your main site. Defaults to no link.
     #
-    config.site_title_link = "/"
+    config.site_title_link = '/'
 
     # Set an optional image to be displayed for the header
     # instead of a string (overrides :site_title)
@@ -58,7 +58,6 @@ if ENV['WEB']
     # within the controller.
     config.authentication_method = :authenticate_admin_user!
 
-
     # == Current User
     #
     # Active Admin will associate actions with the current
@@ -67,7 +66,6 @@ if ENV['WEB']
     # This setting changes the method which Active Admin calls
     # to return the currently logged in user.
     config.current_user_method = :current_admin_user
-
 
     # == Logging Out
     #
@@ -112,13 +110,11 @@ if ENV['WEB']
     #   end
     config.allow_comments = false
 
-
     # == Batch Actions
     #
     # Enable and disable Batch Actions
     #
     config.batch_actions = true
-
 
     # == Controller Filters
     #
@@ -126,7 +122,6 @@ if ENV['WEB']
     # Active Admin resources and pages from here.
     #
     # config.before_filter :do_something_awesome
-
 
     # == Register Stylesheets & Javascripts
     #
@@ -149,7 +144,6 @@ if ENV['WEB']
     config.register_javascript 'admin/active_admin.js'
     config.register_javascript 'jquery.placesAutocomplete.js'
 
-
     # == CSV options
     #
     # Set the CSV builder separator (default is ",")
@@ -157,7 +151,6 @@ if ENV['WEB']
     #
     # Set the CSV builder options (default is {})
     # config.csv_options = {}
-
 
     # == Menu System
     #
@@ -197,14 +190,12 @@ if ENV['WEB']
     #
     #   end
 
-
     # == Pagination
     #
     # Pagination is enabled by default for all resources.
     # You can control the default per page count for all resources here.
     #
     # config.default_per_page = 30
-
 
     # == Filters
     #
@@ -214,13 +205,11 @@ if ENV['WEB']
     #
     # config.filters = true
 
-
     config.authorization_adapter = ActiveAdmin::CanCanAdapter
 
-    config.cancan_ability_class = "Ability"
+    config.cancan_ability_class = 'Ability'
 
     config.skip_before_filter :authenticate_user!
-
 
   end
 end

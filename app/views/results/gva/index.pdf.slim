@@ -1,0 +1,24 @@
+- template = report_view_mode == 'table' ? 'report_goals_actual_item_table' : 'report_goals_actual_item'
+.tab-content
+  #report-container
+    #kpis-trends-bars
+      .details_box.content
+        - unless report_group_by == 'campaign'
+          h2= @campaign.name
+
+        - if @goalables_data.count > 0
+          - @goalables_data.each do |goalable|
+            .details_box.pdf-keeptogether
+              .accordion-group
+                .accordion-heading
+                  div class="accordion-toggle"
+                    = render partial: 'report_goals_actual_item_summary', locals: {item: goalable[:item] }
+                .accordion-body.collapse.in
+                  .accordion-inner.goals-actual
+                    = render partial: template, locals: { data: goalable[:event_goal] }
+
+css:
+  .details_box {
+    padding-left: 0;
+    padding-right: 0;
+  }

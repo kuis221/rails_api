@@ -1,15 +1,16 @@
 class Api::V1::CommentsController < Api::V1::ApiController
-
   inherit_resources
 
   belongs_to :event
 
+  authorize_resource only: [:show, :create, :update]
+
   resource_description do
     short 'Comments'
-    formats ['json', 'xml']
-    error 404, "Record not found"
-    error 401, "Unauthorized access"
-    error 500, "Server crashed for some reason"
+    formats %w(json xml)
+    error 404, 'Record not found'
+    error 401, 'Unauthorized access'
+    error 500, 'Server crashed for some reason'
     param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
     param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
     description <<-EOS
@@ -17,8 +18,8 @@ class Api::V1::CommentsController < Api::V1::ApiController
     EOS
   end
 
-  api :GET, '/api/v1/events/:event_id/comments', "Get a list of comments for an Event"
-  param :event_id, :number, required: true, desc: "Event ID"
+  api :GET, '/api/v1/events/:event_id/comments', 'Get a list of comments for an Event'
+  param :event_id, :number, required: true, desc: 'Event ID'
   description <<-EOS
     Returns a list of comments associated to the event.
 
@@ -46,13 +47,14 @@ class Api::V1::CommentsController < Api::V1::ApiController
     ]
   EOS
   def index
+    authorize!(:comments, parent)
     @comments = parent.comments.order(:id)
   end
 
   api :POST, '/api/v1/events/:event_id/comments', 'Create a new comment for an event'
-  param :event_id, :number, required: true, desc: "Event ID"
-  param :comment, Hash, required: true, :action_aware => true do
-    param :content, String, required: true, desc: "Comment text"
+  param :event_id, :number, required: true, desc: 'Event ID'
+  param :comment, Hash, required: true, action_aware: true do
+    param :content, String, required: true, desc: 'Comment text'
   end
   description <<-EOS
   Allows to create a comment for an existing event.
@@ -85,10 +87,10 @@ class Api::V1::CommentsController < Api::V1::ApiController
   end
 
   api :PUT, '/api/v1/events/:event_id/comments/:id', 'Update a comment'
-  param :event_id, :number, required: true, desc: "Event ID"
-  param :id, :number, required: true, desc: "Comment ID"
-  param :comment, Hash, required: true, :action_aware => true do
-    param :content, String, required: true, desc: "Comment text"
+  param :event_id, :number, required: true, desc: 'Event ID'
+  param :id, :number, required: true, desc: 'Comment ID'
+  param :comment, Hash, required: true, action_aware: true do
+    param :content, String, required: true, desc: 'Comment text'
   end
   example <<-EOS
   POST /api/v1/events/192/comments/12.json?auth_token=AJHshslaA.sdd&company_id=1
@@ -118,8 +120,8 @@ class Api::V1::CommentsController < Api::V1::ApiController
   end
 
   api :DELETE, '/api/v1/events/:event_id/comments/:id', 'Deletes a comment'
-  param :event_id, :number, required: true, desc: "Event ID"
-  param :id, :number, required: true, desc: "Comment ID"
+  param :event_id, :number, required: true, desc: 'Event ID'
+  param :id, :number, required: true, desc: 'Comment ID'
   example <<-EOS
   DELETE /api/v1/events/192/comments/12.json?auth_token=AJHshslaA.sdd&company_id=1
   RESPONSE:
@@ -130,9 +132,10 @@ class Api::V1::CommentsController < Api::V1::ApiController
   }
   EOS
   def destroy
+    authorize!(:deactivate_comment, parent)
     destroy! do |success, failure|
-      success.json { render json: {success: true, info: 'The comment was successfully deleted', data: {} } }
-      success.xml  { render xml: {success: true, info: 'The comment was successfully deleted', data: {} } }
+      success.json { render json: { success: true, info: 'The comment was successfully deleted', data: {} } }
+      success.xml  { render xml: { success: true, info: 'The comment was successfully deleted', data: {} } }
       failure.json { render json: resource.errors, status: :unprocessable_entity }
       failure.xml  { render xml: resource.errors, status: :unprocessable_entity }
     end
@@ -140,11 +143,15 @@ class Api::V1::CommentsController < Api::V1::ApiController
 
   protected
 
-    def build_resource_params
-      [permitted_params || {}]
-    end
+  def build_resource_params
+    [permitted_params || {}]
+  end
 
-    def permitted_params
-      params.permit(comment: [:content])[:comment]
-    end
+  def permitted_params
+    params.permit(comment: [:content])[:comment]
+  end
+
+  def skip_default_validation
+    true
+  end
 end

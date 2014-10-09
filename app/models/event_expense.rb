@@ -15,7 +15,7 @@
 class EventExpense < ActiveRecord::Base
   belongs_to :event
 
-  #validates :event_id, presence: true, numericality: true
+  # validates :event_id, presence: true, numericality: true
   validates :name, presence: true
   validates :amount, presence: true, numericality: true
 
@@ -25,19 +25,20 @@ class EventExpense < ActiveRecord::Base
 
   delegate :company_id, to: :event
 
-  has_one :receipt, class_name: 'AttachedAsset', as: :attachable
+  has_one :receipt, class_name: 'AttachedAsset', as: :attachable, inverse_of: :attachable
 
   delegate :download_url, to: :receipt
 
   accepts_nested_attributes_for :receipt,
-    allow_destroy: true,
-    reject_if: proc { |attributes| attributes['direct_upload_url'].blank? && attributes['_destroy'].blank? }
+                                allow_destroy: true,
+                                reject_if: proc { |attributes| attributes['direct_upload_url'].blank? && attributes['_destroy'].blank? }
 
   private
-    def update_event_data
-      if event.present?
-        Resque.enqueue(EventDataIndexer, event.event_data.id) if event.event_data.present?
-        Resque.enqueue(VenueIndexer, event.venue.id) if event.venue.present?
-      end
+
+  def update_event_data
+    if event.present?
+      Resque.enqueue(EventDataIndexer, event.event_data.id) if event.event_data.present?
+      Resque.enqueue(VenueIndexer, event.venue.id) if event.venue.present?
     end
+  end
 end

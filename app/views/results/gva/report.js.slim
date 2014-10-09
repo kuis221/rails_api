@@ -1,5 +1,5 @@
 - if params[:item_id].present?
-  - template = params[:view_style].present? && params[:view_style] == 'table' ? 'report_goals_actual_item_table' : 'report_goals_actual_item'
+  - template = report_view_mode == 'table' ? 'report_goals_actual_item_table' : 'report_goals_actual_item'
   | $('#toggle-item-#{params[:item_type]}#{params[:item_id]} .accordion-inner').html('#{j render(template)}');
 - else
   | $('#report-container').html('#{j render('report')}');

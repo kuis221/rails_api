@@ -16,7 +16,7 @@
 //= require jquery-migrate-1.2.1
 //= require jquery-ui-1.10.4.custom
 //= require s3_direct_upload
-//= require twitter/bootstrap
+//= require bootstrap
 //= require jquery_nested_form
 //= require bootbox
 //= require bootstrap-toggle
@@ -25,8 +25,8 @@
 //= require chardinjs
 //= require chosen.jquery
 //= require desk.widget
-//= require events.js
-//= require highstock.src.js
+//= require events
+//= require highcharts.src.js
 //= require d3
 //= require bubble_clouds
 //= require detect_timezone
@@ -50,4 +50,6 @@
 //= require jquery.jscrollpane
 //= require markerclusterer
 //= require select2
-//= require superfish
+//= require moment.min.js
+//= require fullcalendar
+//= require jquery.colorPicker

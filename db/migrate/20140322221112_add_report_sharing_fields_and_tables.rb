@@ -1,6 +1,6 @@
 class AddReportSharingFieldsAndTables < ActiveRecord::Migration
   def change
-  	unless ActiveRecord::Base.connection.table_exists? 'report_sharings'
+    unless ActiveRecord::Base.connection.table_exists? 'report_sharings'
       create_table :report_sharings do |t|
         t.references :report
         t.integer :shared_with_id

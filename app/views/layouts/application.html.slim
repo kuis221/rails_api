@@ -1,18 +1,20 @@
 doctype html
 /[if lt IE 7]
-  | <html class="ie6">
+  | <html class="msie ie6">
 /[if IE 7]
-  | <html class="ie7">
+  | <html class="msie ie7">
 /[if IE 8]
-  | <html class="ie8">
+  | <html class="msie ie8">
 /[if IE 9]
-  | <html class="ie9">
+  | <html class="msie ie9">
 | <!--[if (gte IE 9)|!(IE)]<!--> <html> <!--<![endif]-->
 head
   meta name="viewport" content="width=device-width, initial-scale=1.0"
-  meta name="robots"
+  meta charset="utf-8"
   title= content_for?(:title) ? yield(:title) : "Brandscopic"
   meta content=(content_for?(:description) ? yield(:description) :"Brandscopic") name="description"
+    = stylesheet_link_tag "http://fonts.googleapis.com/css?family=Lato:100,300,400,700"
+    = stylesheet_link_tag "plugins", :media => "all"
     = stylesheet_link_tag "application", :media => "all"
     = stylesheet_link_tag "https://d218iqt4mo6adh.cloudfront.net/assets/widget_embed_191.css"
     = javascript_include_tag "application"
@@ -58,7 +60,7 @@ body class="app-layout #{controller_name} #{action_name} #{custom_body_class} #{
       .nav-collapse.collapse.main-nav-collapse
         = render_navigation renderer: :bootstrap, nav_class: 'nav-pills'
 
-  .nav-collapse.collapse
+  #main-left-nav.nav-collapse.collapse
     .menu
       = render_navigation renderer: :bootstrap, nav_class: 'nav-stacked'
   = yield :alerts
@@ -72,30 +74,7 @@ body class="app-layout #{controller_name} #{action_name} #{custom_body_class} #{
   span class="totop pull-right"
     a href="#" Top
   footer
-    - if Rails.env.development? # Commented
-      .survey
-        p
-          | Overall how do you feel about the app?
-
-        .survey-box
-          a class="close" href="#" title="Close"
-          p
-            | Would you like to give us
-            br>/
-            | some feedback?
-          .control-group
-            .control
-              textarea
-          input type="submit" class="btn btn-primary" value="Send" /
-          input type="submit" class="btn btn-cancel" value="No, thanks" /
-
-        .emotions_select
-          .positive
-            input name="emotion" type="radio" value="positive" class="positive"
-          .neutral
-            input name="emotion" type="radio" value="neutral"
-          .negative
-            input name="emotion" type="radio" value="negative"
+    = render 'shared/satisfaction_survey'
     a target="_blank" class="pull-right" href="http://www.brandscopic.com" Powered by Brandscopic
   = render 'application/help'
 

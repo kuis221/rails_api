@@ -15,55 +15,55 @@
 #  company_user_id :integer
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
-describe Task do
-  it { should belong_to(:event) }
-  it { should belong_to(:company_user) }
+describe Task, type: :model do
+  it { is_expected.to belong_to(:event) }
+  it { is_expected.to belong_to(:company_user) }
 
-  it { should validate_presence_of(:title) }
-  it { should validate_numericality_of(:event_id) }
-  it { should validate_numericality_of(:company_user_id) }
+  it { is_expected.to validate_presence_of(:title) }
+  it { is_expected.to validate_numericality_of(:event_id) }
+  it { is_expected.to validate_numericality_of(:company_user_id) }
 
-  let(:event) { FactoryGirl.create(:event) }
+  let(:event) { create(:event) }
 
   context do
     before { subject.company_user_id = 1 }
-    it { should_not validate_presence_of(:event_id) }
+    it { is_expected.not_to validate_presence_of(:event_id) }
   end
 
   context do
     before { subject.company_user_id = nil }
-    it { should validate_presence_of(:event_id) }
+    it { is_expected.to validate_presence_of(:event_id) }
   end
 
   context do
     before { subject.event_id = 1 }
-    it { should_not validate_presence_of(:company_user_id) }
+    it { is_expected.not_to validate_presence_of(:company_user_id) }
   end
 
   context do
     before { subject.event_id = nil }
-    it { should validate_presence_of(:company_user_id) }
+    it { is_expected.to validate_presence_of(:company_user_id) }
   end
 
-  describe "#activate" do
-    let(:task) { FactoryGirl.build(:task, event_id: event.id, active: false) }
+  describe '#activate' do
+    let(:task) { build(:task, event_id: event.id, active: false) }
 
-    it "should return the active value as true" do
+    it 'should return the active value as true' do
       task.activate!
       task.reload
-      task.active.should be_true
+      expect(task.active).to be_truthy
     end
   end
 
-  describe "#deactivate" do
-    let(:task) { FactoryGirl.build(:task, event_id: event.id, active: false) }
+  describe '#deactivate' do
+    let(:task) { build(:task, event_id: event.id, active: false) }
 
-    it "should return the active value as false" do
+    it 'should return the active value as false' do
       task.deactivate!
       task.reload
-      task.active.should be_false
+      expect(task.active).to be_falsey
     end
   end
 end

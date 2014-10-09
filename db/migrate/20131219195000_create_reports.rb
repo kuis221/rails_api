@@ -3,7 +3,7 @@ class CreateReports < ActiveRecord::Migration
     create_table :reports do |t|
       t.string :type
       t.integer :company_user_id
-      t.text   :params
+      t.text :params
       t.string :aasm_state
       t.integer :progress
       t.attachment :file

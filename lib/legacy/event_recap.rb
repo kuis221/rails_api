@@ -16,12 +16,12 @@
 #
 
 class Legacy::EventRecap  < Legacy::Record
-  belongs_to    :event
-  has_one       :program, :through => :event
-  has_one       :account, :through => :event
-  has_many      :metric_results
+  belongs_to :event
+  has_one :program, through: :event
+  has_one :account, through: :event
+  has_many :metric_results
 
   def result_for_metric(metric)
-    metric_results.select {|r| r.metric_id == metric.id }.first || metric.metric_results.find_or_initialize_by_event_recap_id(self.id) if metric
+    metric_results.select { |r| r.metric_id == metric.id }.first || metric.metric_results.find_or_initialize_by_event_recap_id(id) if metric
   end
 end

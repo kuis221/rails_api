@@ -10,13 +10,11 @@
 #  ordering   :integer
 #
 
-require 'spec_helper'
+require 'rails_helper'
 
-describe KpisSegment do
-  it { should belong_to(:kpi) }
-  it { should have_many(:goals) }
-  it { should have_many(:event_results) }
+describe KpisSegment, type: :model do
+  it { is_expected.to belong_to(:kpi) }
+  it { is_expected.to have_many(:goals) }
 
-
-  it { should accept_nested_attributes_for(:goals) }
+  it { is_expected.to accept_nested_attributes_for(:goals) }
 end

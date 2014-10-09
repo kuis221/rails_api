@@ -22,6 +22,7 @@ FactoryGirl.define do
     activitable nil
     active true
     company_user nil
-    activity_date "2014-02-04 16:09:32"
+    campaign_id nil
+    activity_date '2014-02-04 16:09:32'
   end
 end

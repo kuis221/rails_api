@@ -1,0 +1,106 @@
+/*-- COLOR PALETTE --*/
+$brand: #989898;
+
+.fc{
+	.fc-toolbar{
+		height: 30px;
+		margin-bottom: 0;
+		.fc-left{
+			h2{
+				color: $brand;
+				font-weight: bold;
+				font-size: 18px;
+				margin: 0;
+			}
+		}
+		.fc-right{
+			button[type="button"]{
+				background: none;
+				border: none;
+				color: silver;
+				display: inline-block;
+				font-family: 'icons';
+				font-style: normal;
+				font-weight: normal;
+				font-variant: normal;
+				height: 25px;
+				margin: 0;
+				padding: 0;
+				outline: none;
+				outline-offset: 0;
+  				text-transform: none;
+			}
+		}
+	}
+
+	.fc-view-container{
+		thead{
+			div.fc-widget-header{
+				&.affix {
+					left: 102px;
+					position: fixed;
+					right: 262px;
+					top: 45px;
+					width: auto;
+					z-index: 10;
+					-webkit-border-radius: 0px;
+					border-radius: 0px;
+				}
+				.fc-day-header{
+					background-color: $brand;
+					border-color: $brand;
+					color: #fff;
+					text-transform: uppercase;
+					text-align: left;
+					padding: 5px 0 5px 10px;
+				}
+			}
+		}
+
+		tbody{
+			.fc-day{
+				border-color: #ccc;
+				&.fc-today{
+					background-color: #fff;
+				}
+			}
+
+			.fc-content-skeleton{
+				.fc-day-number{
+					color: $brand !important;
+					margin: 0 5px 5px;
+					&.fc-other-month{
+						opacity: 1;
+						filter: alpha(opacity=100);
+					}
+				}
+			}
+
+			.fc-day-grid-event{
+				margin: 1.5px 4px;
+				padding: 0 14px;
+			}
+
+			.fc-event{
+				border-radius: 20px;
+				font-size: 14px;
+				.user-name, .city-name{
+					font-size: 12px;
+					font-weight: normal;
+				}
+			}
+		}
+	}
+
+	.fc-state-default.fc-corner-left { /* non-theme */
+		border-top-left-radius: 0;
+		border-bottom-left-radius: 0;
+		box-shadow: none;
+	}
+
+	.fc-state-default.fc-corner-right { /* non-theme */
+		border-top-right-radius: 0;
+		border-bottom-right-radius: 0;
+		box-shadow: none;
+	}
+}

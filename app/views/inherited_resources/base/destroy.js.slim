@@ -1,12 +1,13 @@
+- resource_class = resource.class.name.underscore.gsub('/','_')
 |
-  $('##{resource.class.name.underscore}-#{resource.id}').remove();
-  $('##{resource.class.name.underscore}_#{resource.id}').remove();
+  $('##{resource_class}-#{resource.id}').remove();
+  $('##{resource_class}_#{resource.id}').remove();
   $('#goal-#{resource.class.name.underscore}-#{resource.id}').remove();
 
 - if respond_to?(:parent?) && parent?
   |
-    $('##{parent.class.name.underscore}_#{resource.class.name.underscore}_#{resource.id}').remove();
-    $('##{parent.class.name.underscore}-#{resource.class.name.underscore}-#{resource.id}').remove();
+    $('##{parent.class.name.underscore}_#{resource_class}_#{resource.id}').remove();
+    $('##{parent.class.name.underscore}-#{resource_class}-#{resource.id}').remove();
 
 |
-  $(document).trigger('#{resource.class.name.pluralize.underscore}:deleted');
+  $(document).trigger('#{resource.class.name.pluralize.underscore.gsub('/','_')}:deleted');

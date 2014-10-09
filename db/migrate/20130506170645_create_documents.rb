@@ -3,7 +3,7 @@ class CreateDocuments < ActiveRecord::Migration
     create_table :documents do |t|
       t.string :name
       t.attachment :file
-      t.references :documentable, :polymorphic => true
+      t.references :documentable, polymorphic: true
       t.integer :created_by_id
       t.integer :updated_by_id
 

@@ -1,49 +1,46 @@
 .campaigns-modals
   p Add areas from the list below
 
-  input type="text" name="q" id="place-search-box"
-  #select-areas-table-wrapper
-    .link-list
-      ul#areas-list
-        - if @areas.present?
-          - @areas.each do |area|
-            li id="area-#{area.id}"
-              span
-                .area_name= area.name
-                .area_description= area.description
-              span.pull-right
-                = link_to '', url_for({controller: :placeables, action: :add_area, "#{parent.class.name.underscore.downcase}_id" => parent.id, area: area.id}), remote: true, method: :post, enable_with: '...', class: 'add', title: 'Add Area' if area.active?
-        - else
-          li.empty-list-message
-            p There are not assignable areas
+  input#place-search-box.search-box type="text" name="q"
+  #areas-places-list.resource-list.select-list.compact
+    - if @areas.present?
+      - @areas.each do |area|
+        .resource-item id="area-#{area.id}"
+          .resource-item-link
+            .text-large= area.name
+            = area.description
+          .resource-item-actions
+            = link_to '', url_for({controller: :placeables, action: :add_area, "#{parent.class.name.underscore.downcase}_id" => parent.id, area: area.id}), remote: true, method: :post, enable_with: '...', class: 'icon-plus-sign', title: 'Add Area' if area.active?
+    - else
+      .empty-list-message
+        p There are not assignable areas
 
-    .row-fluid
-      .span12
-        .divider
-          | OR
+  .row-fluid
+    .span12
+      .divider
+        | OR
 
-    p Search for places that you want to add
+  p Search for places that you want to add
 
-    = simple_form_for([parent, parent.places.new], remote: true) do |f|
-      = f.error_notification
+  = simple_form_for([parent, parent.places.new], remote: true) do |f|
+    = f.error_notification
 
-      .form-inputs
-        .row-fluid
-          .pull-left
-            = f.input :reference, :as => :location, wrapper_html: {class: 'form-horizontal'}
-          .pull-right
-            = f.button :submit, 'Add Place', class: 'btn-primary add-place-btn', disable_with: 'Please wait...'
+    .form-inputs
+      .row-fluid
+        .pull-left
+          = f.input :reference, :as => :location, input_html: {class: 'search-box'}, wrapper_html: {class: 'form-horizontal'}
+        .pull-right
+          = f.button :submit, 'Add Place', class: 'btn-primary add-place-btn', data: {disable_with: 'Please wait...'}
 
 javascript:
   $('.modal .places-autocomplete').placesAutocomplete();
 
   $('#place-search-box').on('keyup', function () {
     var value = $(this).val().toLowerCase();
-    $("#areas-list > li:not(.empty-list-message)").each(function() {
+    $("#areas-places-list .resource-item").each(function() {
       if ($(this).text().toLowerCase().search(value) > -1) {
         $(this).show();
-      }
-      else {
+      } else {
         $(this).hide();
       }
     });

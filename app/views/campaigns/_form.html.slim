@@ -7,10 +7,12 @@
 
     .row-fluid
       .span12
-        .span6
+        .span4
           = f.input :start_date, :as => :date_picker
-        .span6
+        .span4
           = f.input :end_date, :as => :date_picker
+        .span4
+          = f.input :color, :as => :color, class: 'color-picker'
 
     .row-fluid
       = f.input :brands_list
@@ -21,9 +23,15 @@
       = f.input :description, :input_html => {:rows => 6}, input_html: {class: 'input-xlarge'}
 
   .form-actions
-    = f.button :submit, class: 'btn btn-primary', disable_with: 'Please wait...'
+    = f.button :submit, class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
     = "&nbsp;".html_safe
     = f.button :button, 'Cancel', class: 'btn-cancel'
 
 javascript:
-  $('#campaign_brands_list').select2({tags: #{raw(Brand.scoped_by_company_id(@campaign.company_id).order(:name).map(&:name).to_json).html_safe}});
+  $('#campaign_brands_list').select2({tags: #{raw(current_company.brands.active.order(:name).pluck(:name).to_json).html_safe}});
+
+  $('.color-picker').colorPicker({
+    showHexField: false,
+    pickerDefault: '',
+    colors: #{Campaign::AVAILABLE_COLORS.map{ |c| c.gsub('#', '') }.to_json.html_safe}
+    });

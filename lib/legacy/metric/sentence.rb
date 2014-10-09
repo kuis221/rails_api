@@ -19,7 +19,7 @@
 # for storing one line of text
 class Metric::Sentence < Metric
   def form_options
-    super.merge({:as => :string})
+    super.merge(as: :string)
   end
   def self.targetable?
     false
@@ -27,9 +27,11 @@ class Metric::Sentence < Metric
   def field_type_symbol
     '...'
   end
+
   def store_result(value, result)
     result.vector_value = cast_value(value)
   end
+
   def fetch_result(result)
     cast_value result.vector_value
   end
