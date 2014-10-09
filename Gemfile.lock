@@ -17,7 +17,7 @@ GIT
 
 GIT
   remote: git://github.com/guilleva/heroku-resque-workers-scaler.git
-  revision: 1201fc17c2fedc4a1dcab9264f4a70291c888492
+  revision: 15001ebe1d0095350b36f4efc3f3e2d2f27f4d79
   specs:
     heroku-resque-workers-scaler (0.1.6)
       platform-api
@@ -155,7 +155,7 @@ GEM
       mail (~> 2.2)
     erubis (2.7.0)
     eventmachine (1.0.3)
-    excon (0.39.5)
+    excon (0.40.0)
     execjs (2.2.1)
     factory_girl (4.4.0)
       activesupport (>= 3.0.0)
