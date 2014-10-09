@@ -59,7 +59,17 @@ RSpec.configure do |config|
 
   config.before(:each) do |example|
     allow(Resque::Worker).to receive_messages(working: [])
+
+    # make sure we star each test in a clean state
     ResqueSpec.reset!
+    User.current = nil
+    Company.current = nil
+    Time.zone = Rails.application.config.time_zone
+    # Reset all KPIs values to nil
+    %w(events promo_hours impressions interactions impressions interactions samples expenses
+       gender age ethnicity photos videos surveys comments).each do |kpi|
+      Kpi.instance_variable_set("@#{kpi}".to_sym, nil)
+    end
 
     Rails.logger.debug "\n\n\n\n\n\n\n\n\n\n"
     Rails.logger.debug '**************************************************************************************'
@@ -68,18 +78,7 @@ RSpec.configure do |config|
   end
 
   config.after(:each) do |example|
-    if example.metadata[:js]
-      wait_for_ajax
-    end
-    User.current = nil
-    Company.current = nil
-    Time.zone = Rails.application.config.time_zone
-    Date.beginning_of_week=:monday
-
-    # Reset all KPIs values to nil
-    %w(events promo_hours impressions interactions impressions interactions samples expenses gender age ethnicity photos videos surveys comments).each do |kpi|
-      Kpi.instance_variable_set("@#{kpi}".to_sym, nil)
-    end
+    wait_for_ajax if example.metadata[:js]
   end
 
   config.include(SmsSpec::Helpers)
