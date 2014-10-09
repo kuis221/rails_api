@@ -25,6 +25,7 @@
     Photos
     
   </li>
+  
 </ul>
 
 <div class='page-header'>
@@ -34,6 +35,7 @@
     <small>Photos</small>
   </h1>
 </div>
+
 
 
   <h2>Supported Formats</h2>
@@ -52,7 +54,8 @@
            data-toggle='collapse'
            data-parent='#accordion'>
             GET /api/v1/events/:event_id/photos
-          </a><br>
+          </a>
+          <br>
           <small>Get a list of photos for an Event</small>
         </h2>
     </div>
@@ -61,31 +64,66 @@
     <div id='description-index' class='collapse accordion-body'>
       
 
-        <h3>Supported Formats</h3>
-        json, xml
+  <h3>Supported Formats</h3>
+  json, xml
 
-        <h3>Errors</h3>
-          404
-          Missing
-          <br>
-          401
-          Unauthorized access
-          <br>
-          500
-          Server crashed for some reason
-          <br>
+  <h3>Errors</h3>
+    404
+    Missing
+    <br>
+    401
+    Unauthorized access
+    <br>
+    500
+    Server crashed for some reason
+    <br>
 
 
-        <h3>Params</h3>
-        <table class='table'>
-          <thead>
-            <tr>
-              <th>Param name</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-              <tr style='background-color:rgb(255,255,255);'>
+  <h3>Examples</h3>
+    <pre class="prettyprint">GET /api/v1/events/1223/photos
+{
+    &quot;page&quot;: 1,
+    &quot;total&quot;: 5,
+    &quot;results&quot;: [
+        {
+            &quot;id&quot;: 45554,
+            &quot;file_file_name&quot;: &quot;SV-T101-P005-111413.JPG&quot;,
+            &quot;file_content_type&quot;: &quot;image/jpeg&quot;,
+            &quot;file_file_size&quot;: 611320,
+            &quot;created_at&quot;: &quot;2013-11-19T00:49:24-08:00&quot;,
+            &quot;active&quot;: true,
+            &quot;file_small&quot;: &quot;http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/554/small/SV-T101-P005-111413.JPG?1384851148&quot;,
+            &quot;file_thumbnail&quot;: &quot;http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/554/thumbnail/SV-T101-P005-111413.JPG?1384851148&quot;,
+            &quot;file_medium&quot;: &quot;http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/554/medium/SV-T101-P005-111413.JPG?1384851148&quot;,
+            &quot;file_original&quot;: &quot;http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/554/original/SV-T101-P005-111413.JPG?1384851148&quot;
+        },
+        {
+            &quot;id&quot;: 45553,
+            &quot;file_file_name&quot;: &quot;SV-T101-P001-111413.JPG&quot;,
+            &quot;file_content_type&quot;: &quot;image/jpeg&quot;,
+            &quot;file_file_size&quot;: 651591,
+            &quot;created_at&quot;: &quot;2013-11-19T00:49:16-08:00&quot;,
+            &quot;active&quot;: true,
+            &quot;file_small&quot;: &quot;http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/553/small/SV-T101-P001-111413.JPG?1384851145&quot;,
+            &quot;file_thumbnail&quot;: &quot;http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/553/thumbnail/SV-T101-P001-111413.JPG?1384851145&quot;,
+            &quot;file_medium&quot;: &quot;http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/553/medium/SV-T101-P001-111413.JPG?1384851145&quot;,
+            &quot;file_original&quot;: &quot;http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/553/original/SV-T101-P001-111413.JPG?1384851145&quot;
+        }
+        ...
+    ]
+}
+</pre>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
     <td>
       <strong>auth_token </strong><br>
       <small>
@@ -97,7 +135,10 @@
       
         <br>
         Value: Must be String
+
+
     </td>
+
   </tr>
 
   
@@ -113,7 +154,10 @@
       
         <br>
         Value: Must be a number.
+
+
     </td>
+
   </tr>
 
   
@@ -131,7 +175,10 @@
 
         <br>
         Value: Must be a number.
+
+
     </td>
+
   </tr>
 
   
@@ -148,8 +195,11 @@
 <p>A list of brand ids to filter the results</p>
 
         <br>
-        Value: Must be Array
+        Value: Must be an array of any type
+
+
     </td>
+
   </tr>
 
   
@@ -166,8 +216,11 @@
 <p>A list of places to filter the results</p>
 
         <br>
-        Value: Must be Array
+        Value: Must be an array of any type
+
+
     </td>
+
   </tr>
 
   
@@ -184,8 +237,11 @@
 <p>A list of photo status to filter the results. Options: Active, Inactive</p>
 
         <br>
-        Value: Must be Array
+        Value: Must be an array of any type
+
+
     </td>
+
   </tr>
 
   
@@ -203,13 +259,312 @@
 
         <br>
         Value: Must be a number.
+
+
     </td>
+
   </tr>
 
   
 
-          </tbody>
-        </table>
+    </tbody>
+  </table>
+
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/photos/create.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-create'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            POST /api/v1/events/:event_id/photos
+          </a>
+          <br>
+          <small>Adds a new photo to a event</small>
+        </h2>
+    </div>
+
+
+    <div id='description-create' class='collapse accordion-body'>
+      
+<p>Allows to attach a new photo to the event. The photo should first be
+uploaded to Amazon S3 using the method described in this <a
+href="http://aws.amazon.com/articles/1434">article</a>. Once uploaded to
+S3, the resulting URL should be submitted to this method and the photo will
+be attached to the event. Because the photo is generated asynchronously,
+the thumbnails are not inmediately available.</p>
+
+<p>The format of the URL should be in the form:
+<strong>https</strong>://s3.amazonaws.com/&lt;bucket_name&gt;/uploads/&lt;folder&gt;/filename
+where:</p>
+<ul><li>
+<p><strong>bucket_name</strong>: brandscopic-stage</p>
+</li><li>
+<p><strong>folder</strong>: the folder name where the photo was uploaded to</p>
+</li></ul>
+
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    404
+    Missing
+    <br>
+    401
+    Unauthorized access
+    <br>
+    500
+    Server crashed for some reason
+    <br>
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">POST /api/v1/events/192/photos.json?auth_token=AJHshslaA.sdd&amp;company_id=1
+DATA:
+{
+  attached_asset: {
+    direct_upload_url: &#39;https://s3.amazonaws.com/brandscopic-dev/uploads/12390bs-25632sj-2-83KjsH984sd/SV-T101-P005-111413.jpg&#39;
+  }
+}
+
+RESPONSE:
+{
+    &quot;id&quot;: 45554,
+    &quot;file_file_name&quot;: &quot;SV-T101-P005-111413.JPG&quot;,
+    &quot;file_content_type&quot;: &quot;image/jpeg&quot;,
+    &quot;file_file_size&quot;: 611320,
+    &quot;created_at&quot;: &quot;2013-11-19T00:49:24-08:00&quot;,
+    &quot;active&quot;: true
+}
+</pre>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>event_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Event ID</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>attached_asset </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be a Hash
+
+
+    </td>
+
+  </tr>
+
+    <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>attached_asset[direct_upload_url] </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>The photo URL. This should be a valid Amazon S3&#39;s URL.</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+
+
+    </tbody>
+  </table>
+
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/photos/form.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-form'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/events/:event_id/photos/form
+          </a>
+          <br>
+          <small>Returns a list of requred fields for making a POST to S3</small>
+        </h2>
+    </div>
+
+
+    <div id='description-form' class='collapse accordion-body'>
+      
+<p>This method returns all the info required to make a POST to Amazon S3 to
+upload a new file. The key sent to S3 should start with /uploads and has to
+be created into a new folder with a unique generated name. Ideally using a
+GUID. Eg: /uploads/9afa6775-2c8e-44f8-9cda-280e80446ced/My file.jpg</p>
+
+<p>The signature will expire 1 hour after it&#39;s generated, therefore,
+it&#39;s recommended to not cache these fields for long time.</p>
+
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    404
+    Missing
+    <br>
+    401
+    Unauthorized access
+    <br>
+    500
+    Server crashed for some reason
+    <br>
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">GET /api/v1/events/123/photos/form.json?company_id=1&amp;auth_token=XXsikw982okds93
+{
+    &quot;fields&quot;: {
+        &quot;AWSAccessKeyId&quot;: &quot;AKIAIJSENKEXXZNMLW3VQ&quot;,
+        &quot;key&quot;: null,
+        &quot;policy&quot;: &quot;ioJleHBpcmF0S0zMVQyMTo0NToyNFoiLCJjb25kaXRpb25zIjsoOHYLSSdHMtd2l0aCIsIiRrZXkiLCJ1cGxvYWRzLyJdLHsiYnVja2V0IjoiYnJhbmRzY29waWMtZGV2In0sWyJzdGFydHMtd2l0aCIsIiRrZXkiLCIiXSx7IlNlY3VyZSI6InRydWTYosS&quot;,
+        &quot;signature&quot;: &quot;Q8TG16PD850JapPweQGAaK/o4NE=&quot;,
+        &quot;Secure&quot;: &quot;true&quot;
+    },
+    &quot;url&quot;: &quot;https://bucket-name.s3.amazonaws.com/&quot;
+}
+</pre>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
     </div>
 </div>
 
@@ -218,8 +573,7 @@
       </div>
     </div>
     <hr>
-    <footer>  
-</footer>
+    <footer></footer>
   </div>
   <script type='text/javascript' src='../apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
 <script type='text/javascript' src='../apidoc/javascripts/bundled/bootstrap-collapse.js'></script>
