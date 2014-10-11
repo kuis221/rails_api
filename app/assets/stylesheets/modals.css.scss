@@ -276,6 +276,20 @@ ul.select2-results{
 					margin-right: 0;
 				}
 			}
+			#add-new-place-campaign {
+				margin-bottom: 25px;
+			}
+			.normal-text {
+				color: $user_menu;
+				display: inline-block;
+				font-size: 12px;
+			}
+			.link-text {
+				color: $brand;
+				display: inline-block;
+				font-size: 12px;
+				font-weight: bold;
+			}
 	    }
 		&.select-kpis-modal{
 			top: 2%;

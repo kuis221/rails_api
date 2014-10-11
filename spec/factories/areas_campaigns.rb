@@ -6,6 +6,7 @@
 #  area_id     :integer
 #  campaign_id :integer
 #  exclusions  :integer          default([]), is an Array
+#  inclusions  :integer          default([]), is an Array
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

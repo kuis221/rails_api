@@ -5732,16 +5732,42 @@ table td.sub-level-1 {
 }
 
 .event_place_reference .ui-autocomplete,
-.place_reference .ui-autocomplete {
+.place_reference .ui-autocomplete,
+.areas_campaign_reference .ui-autocomplete {
 	background-color: #fff !important;
 	border: 1px solid #ccc;
 
 	.ui-menu-item {
-		border-bottom: 1px solid #ccc;
 		font-size: 13px;
+		line-height: 40px;
+		a {
+			color: $text;
+			display: inline-block;
+			strong {
+				font-size: 14px;
+			}
+		}
 
-		.ui-state-focus {
+		i{
+			color: $grey_one;
+			font-size: 20px;
+			margin-left: 10px;
+			vertical-align: middle;
+		}
+
+		&:hover, .ui-state-focus {
+			color: #fff;
 			background-color: #989898 !important;
+		}
+
+		&:last-child {
+			background-image: image-url('powered-by-google-on-white.png');
+			background-position: center right;
+			background-repeat: no-repeat;
+			line-height: 30px;
+			&:hover {
+				background-color: #fff !important;
+			}
 		}
 
 		&.invalid-place a {
@@ -6506,6 +6532,13 @@ body.dashboard.index {
 	min-height: 85px;
 }
 
+.clearable{
+	color: $brand;
+	font-size: 16px;
+	position: absolute;
+	right: 50px;
+	top: 36px;
+}
 
 @import 'widgets/asset_upload_dialog';
 @import 'widgets/documents_list';

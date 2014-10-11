@@ -202,6 +202,42 @@ feature 'Campaigns', js: true do
       expect(campaign.areas_campaigns.find_by(area_id: area.id).exclusions).to eql [place1.id]
     end
 
+    scenario 'should be able to include places to areas assigned to the campaign' do
+      Kpi.create_global_kpis
+      campaign = create(:campaign, company: company)
+      area = create(:area, name: 'San Francisco', company: company)
+
+      campaign.areas << [area]
+      visit campaign_path(campaign)
+
+      tab = open_tab('Places')
+
+      within tab do
+        expect(page).to have_content('San Francisco')
+        find('a[data-original-title="Customize area"]').click # tooltip changes the title
+      end
+
+      within visible_modal do
+        expect(page).to have_content('Customize San Francisco Area')
+        click_js_link('Add new place')
+      end
+
+      within visible_modal do
+        expect(page).to have_content('New Place')
+        select_from_autocomplete 'Search for a place', 'Walt Disney World Dolphin, 1500 Epcot Resorts Blvd'
+        click_js_button 'Add'
+      end
+
+      within visible_modal do
+        expect(page).to have_content('Customize San Francisco Area')
+        expect(page).to have_content 'Walt Disney World Dolphin'
+        click_js_button('Done')
+      end
+      ensure_modal_was_closed
+
+      expect(campaign.areas_campaigns.find_by(area_id: area.id).inclusions).to eql [Place.last.id]
+    end
+
     feature 'Add KPIs', search: false do
 
       feature 'with a non admin user', search: false do

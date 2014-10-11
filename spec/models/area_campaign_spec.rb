@@ -1,18 +1,12 @@
 # == Schema Information
 #
-# Table name: areas
+# Table name: areas_campaigns
 #
-#  id                            :integer          not null, primary key
-#  name                          :string(255)
-#  description                   :text
-#  active                        :boolean          default(TRUE)
-#  company_id                    :integer
-#  created_by_id                 :integer
-#  updated_by_id                 :integer
-#  created_at                    :datetime         not null
-#  updated_at                    :datetime         not null
-#  common_denominators           :text
-#  common_denominators_locations :integer          default([]), is an Array
+#  id          :integer          not null, primary key
+#  area_id     :integer
+#  campaign_id :integer
+#  exclusions  :integer          default([]), is an Array
+#  inclusions  :integer          default([]), is an Array
 #
 
 require 'rails_helper'
@@ -82,6 +76,14 @@ describe AreasCampaign, type: :model do
       areas_campaign.exclusions = [city.id]
 
       expect(areas_campaign.place_in_scope?(bar)).to be_falsey
+    end
+
+    it 'should return true if the place is in the inclusions list' do
+      bar = create(:place, types: ['establishment'], route: '1st st', street_number: '12 sdfsd', city: 'Los Angeles', state: 'California', country: 'US')
+
+      areas_campaign.inclusions = [bar.id]
+
+      expect(areas_campaign.place_in_scope?(bar)).to be_truthy
     end
   end
 end

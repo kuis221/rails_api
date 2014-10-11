@@ -18,6 +18,16 @@ describe AreasCampaignsController, type: :controller do
     end
   end
 
+  describe "POST 'add_place'" do
+    before { campaign.areas << area }
+    it 'add the place to the inclusions list' do
+      xhr :post, 'add_place', campaign_id: campaign.id, id: area.to_param, areas_campaign: { reference: 99 }, format: :js
+      expect(response).to be_success
+      expect(response).to render_template 'add_place'
+      expect(campaign.areas_campaigns.first.inclusions).to eql [99]
+    end
+  end
+
   describe "POST 'exclude_place'" do
     before { campaign.areas << area }
     it 'add the place to the exclusions list' do

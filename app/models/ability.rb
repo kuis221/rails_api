@@ -43,7 +43,7 @@ class Ability
         can?(:edit, cu)
       end
 
-      can [:update, :exclude_place, :include_place], AreasCampaign do |areas_campaign|
+      can [:update, :exclude_place, :include_place, :new_place, :add_place], AreasCampaign do |areas_campaign|
         can? :add_place, areas_campaign.campaign
       end
 

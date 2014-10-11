@@ -261,6 +261,8 @@ Brandscopic::Application.routes.draw do
     resources :areas_campaigns, only: [:edit, :update] do
       post :exclude_place, on: :member
       post :include_place, on: :member
+      get :new_place, on: :member
+      post :add_place, on: :member
     end
 
     resources :brands, only: [:index]

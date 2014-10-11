@@ -1,0 +1,4 @@
+|
+  customizePlaceDialog.off('hidden');
+  customizePlaceDialog.modal('hide');
+  var newPlaceDialog = bootbox.dialog($('#{escape_javascript(render "new_place")}'), [],{'onEscape': true, animate: (!$.fx.off), header: 'New Place'});

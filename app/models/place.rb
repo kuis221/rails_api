@@ -225,7 +225,7 @@ class Place < ActiveRecord::Base
               id: "#{p['reference']}||#{p['id']}",
               valid: valid_flag.call(p)
             }
-          end.sort! { |x, y| sort_index[x[:valid]] <=> sort_index[y[:valid]] }.slice!(0, 10 - results.count))
+          end.sort! { |x, y| sort_index[x[:valid]] <=> sort_index[y[:valid]] }.slice!(0, 5 - results.count))
       end
       results
     end
