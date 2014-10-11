@@ -52,7 +52,7 @@ class Event < ActiveRecord::Base
 
   has_many :comments, -> { order 'comments.created_at ASC' }, dependent: :destroy, as: :commentable
 
-  has_many :surveys, dependent: :destroy,  inverse_of: :event
+  has_many :surveys, -> { order 'surveys.created_at ASC' }, dependent: :destroy,  inverse_of: :event
 
   # Events-Users relationship
   has_many :memberships, dependent: :destroy, as: :memberable, inverse_of: :memberable

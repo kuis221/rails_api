@@ -98,8 +98,12 @@ describe Results::EventDataHelper, type: :helper do
         event.save
         expect(event.save).to be_truthy
 
-        expect(helper.custom_fields_to_export_headers).to eq(['MY SUMMATION FIELD: SUM OPT1', 'MY SUMMATION FIELD: SUM OPT2'])
-        expect(helper.custom_fields_to_export_values(event)).to eq([['Number', 'normal', '20'], ['Number', 'normal', '50']])
+        expect(helper.custom_fields_to_export_headers).to eq([
+          'MY SUMMATION FIELD: SUM OPT1', 'MY SUMMATION FIELD: SUM OPT2', 'MY SUMMATION FIELD: TOTAL'
+        ])
+        expect(helper.custom_fields_to_export_values(event)).to eq([
+          ['Number', 'normal', '20'], ['Number', 'normal', '50'], ['Number', 'normal', 70.0]
+        ])
       end
 
       it 'include TIME fields that are not linked to a KPI' do
@@ -124,6 +128,108 @@ describe Results::EventDataHelper, type: :helper do
 
         expect(helper.custom_fields_to_export_headers).to eq(['MY DATE FIELD'])
         expect(helper.custom_fields_to_export_values(event)).to eq([['String', 'normal', '01/31/2014']])
+      end
+
+      describe "form fields merging" do
+        let(:campaign2) { create(:campaign, company: company) }
+        let(:params) { { campaign: [campaign.id, campaign2.id] } }
+
+        it 'merge custom fields of different campaigns with the same name and type into the same column' do
+          field1 = create(:form_field_number, name: 'My Numeric Field', fieldable: campaign)
+          field2 = create(:form_field_number, name: 'My Numeric Field', fieldable: campaign2)
+
+          event.results_for([field1]).first.value = 123
+          event.save
+          expect(event.save).to be_truthy
+
+          event2 = create(:approved_event, campaign: campaign2)
+          event2.results_for([field2]).first.value = 456
+          event2.save
+          expect(event2.save).to be_truthy
+
+          expect(helper.custom_fields_to_export_headers).to eq(['MY NUMERIC FIELD'])
+          expect(helper.custom_fields_to_export_values(event)).to eq([['Number', 'normal', 123.0]])
+          expect(helper.custom_fields_to_export_values(event2)).to eq([['Number', 'normal', 456.0]])
+        end
+
+        it 'merge custom segmented fields of different campaigns with the same name and type into the same columns' do
+          field1 = create(:form_field_percentage, name: 'My Perc Field',
+            fieldable: campaign, options: [
+              option11 = create(:form_field_option, name: 'Perc Opt1'),
+              option12 = create(:form_field_option, name: 'Perc Opt2')])
+
+          field2 = create(:form_field_percentage, name: 'My Perc Field',
+            fieldable: campaign2, options: [
+              option21 = create(:form_field_option, name: 'Perc Opt1'),
+              option22 = create(:form_field_option, name: 'Perc Opt2')])
+
+          event.results_for([field1]).first.value = { option11.id.to_s => 30, option12.id.to_s => 70 }
+          event.save
+          expect(event.save).to be_truthy
+
+          event2 = create(:approved_event, campaign: campaign2)
+          event2.results_for([field2]).first.value = { option21.id.to_s => 10, option22.id.to_s => 90 }
+          event2.save
+          expect(event2.save).to be_truthy
+
+          expect(helper.custom_fields_to_export_headers).to eq(['MY PERC FIELD: PERC OPT1', 'MY PERC FIELD: PERC OPT2'])
+          expect(helper.custom_fields_to_export_values(event)).to eq([['Number', 'percentage', 0.3], ['Number', 'percentage', 0.7]])
+          expect(helper.custom_fields_to_export_values(event2)).to eq([['Number', 'percentage', 0.1], ['Number', 'percentage', 0.9]])
+        end
+
+      it 'merge custom segmented fields of different campaigns with the same name and type into the same column even with different options' do
+          field1 = create(:form_field_percentage, name: 'My Perc Field',
+            fieldable: campaign, options: [
+              option11 = create(:form_field_option, name: 'Perc Opt1'),
+              option12 = create(:form_field_option, name: 'Perc Opt2')])
+
+          field2 = create(:form_field_percentage, name: 'My Perc Field',
+            fieldable: campaign2, options: [
+              option21 = create(:form_field_option, name: 'Perc Opt1'),
+              option22 = create(:form_field_option, name: 'Perc Opt2'),
+              option23 = create(:form_field_option, name: 'Perc Opt3')])
+
+          # A numeric field with same name
+          create(:form_field_number, name: 'My Perc Field', fieldable: campaign)
+
+          event.results_for([field1]).first.value = { option11.id.to_s => 30, option12.id.to_s => 70 }
+          event.save
+          expect(event.save).to be_truthy
+
+          event2 = create(:approved_event, campaign: campaign2)
+          event2.results_for([field2]).first.value = {
+            option21.id.to_s => 10,
+            option22.id.to_s => 20,
+            option23.id.to_s => 70 }
+          event2.save
+          expect(event2.save).to be_truthy
+
+          expect(helper.custom_fields_to_export_headers).to eq(['MY PERC FIELD', 'MY PERC FIELD: PERC OPT1', 'MY PERC FIELD: PERC OPT2', 'MY PERC FIELD: PERC OPT3'])
+          expect(helper.custom_fields_to_export_values(event)).to eq([nil, ['Number', 'percentage', 0.3], ['Number', 'percentage', 0.7], nil])
+          expect(helper.custom_fields_to_export_values(event2)).to eq([nil, ['Number', 'percentage', 0.1], ['Number', 'percentage', 0.2], ['Number', 'percentage', 0.7]])
+        end
+
+        it 'does not merge custom fields of the same campaigns with the same name and type into the same column' do
+          field1 = create(:form_field_number, name: 'My Numeric Field', fieldable: campaign)
+          field2 = create(:form_field_number, name: 'My Numeric Field', fieldable: campaign)
+
+          event.results_for([field1]).first.value = 123
+          event.results_for([field2]).first.value = 456
+          event.save
+          expect(event.save).to be_truthy
+
+          expect(helper.custom_fields_to_export_headers).to eq(['MY NUMERIC FIELD', 'MY NUMERIC FIELD'])
+          expect(helper.custom_fields_to_export_values(event)).to match_array([
+            ['Number', 'normal', 123.0], ['Number', 'normal', 456.0]
+          ])
+        end
+
+        it 'does not merge custom fields of different campaigns with the SAME name but DIFFERENT type into the same column' do
+          create(:form_field_number, name: 'My Numeric Field', fieldable: campaign)
+          create(:form_field_text, name: 'My Numeric Field', fieldable: campaign2)
+
+          expect(helper.custom_fields_to_export_headers).to eq(['MY NUMERIC FIELD', 'MY NUMERIC FIELD'])
+        end
       end
 
       it 'returns all the segments results in order' do
@@ -316,8 +422,12 @@ describe Results::EventDataHelper, type: :helper do
         activity.save
         expect(activity.save).to be_truthy
 
-        expect(helper.custom_fields_to_export_headers).to eq(['MY SUMMATION FIELD: SUM OPT1', 'MY SUMMATION FIELD: SUM OPT2'])
-        expect(helper.custom_fields_to_export_values(activity)).to eq([['Number', 'normal', '20'], ['Number', 'normal', '50']])
+        expect(helper.custom_fields_to_export_headers).to eq([
+          'MY SUMMATION FIELD: SUM OPT1', 'MY SUMMATION FIELD: SUM OPT2', 'MY SUMMATION FIELD: TOTAL'
+        ])
+        expect(helper.custom_fields_to_export_values(activity)).to eq([
+          ['Number', 'normal', '20'], ['Number', 'normal', '50'], ['Number', 'normal', 70.0]
+        ])
       end
 
       it 'include BRAND fields' do

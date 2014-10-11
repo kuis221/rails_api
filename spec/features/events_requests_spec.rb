@@ -285,9 +285,9 @@ feature 'Events section' do
             ensure_modal_was_closed
 
             expect(ListExport.last).to have_rows([
-              ["CAMPAIGN NAME", "AREA", "START", "END", "VENUE NAME", "ADDRESS", "CITY", "STATE", "ZIP", "ACTIVE STATE", "EVENT STATUS", "TEAM MEMBERS", "URL"],
-              ["Campaign FY2012", nil, "#{year_number}-#{month_number}-18T10:00", "#{year_number}-#{month_number}-18T11:00", "Place 1", "Place 1, New York City, NY, 12345", "New York City", "NY", "12345", "Active", "Unsent", nil, "http://localhost:5100/events/#{event1.id}"],
-              ["Another Campaign April 03", nil, "#{year_number}-#{month_number}-19T08:00", "#{year_number}-#{month_number}-19T09:00", "Place 2", "Place 2, Los Angeles, CA, 67890", "Los Angeles", "CA", "67890", "Active", "Unsent", nil, "http://localhost:5100/events/#{event2.id}"]
+              ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL'],
+              ['Campaign FY2012', nil, "#{year_number}-#{month_number}-18T10:00", "#{year_number}-#{month_number}-18T11:00", 'Place 1', 'Place 1, New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active', 'Unsent', nil, "http://localhost:5100/events/#{event1.id}"],
+              ['Another Campaign April 03', nil, "#{year_number}-#{month_number}-19T08:00", "#{year_number}-#{month_number}-19T09:00", 'Place 2', 'Place 2, Los Angeles, CA, 67890', 'Los Angeles', 'CA', '67890', 'Active', 'Unsent', nil, "http://localhost:5100/events/#{event2.id}"]
             ])
           end
 

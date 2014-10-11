@@ -51,7 +51,7 @@ class Company < ActiveRecord::Base
   validates :name, presence: true, uniqueness: true
   validates :admin_email, presence: true, on: :create, unless: :no_create_admin
 
-  validates_format_of :admin_email, with: /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/, allow_blank: true
+  validates :admin_email, format: { with: /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/ }, allow_blank: true
 
   after_create :create_admin_role_and_user
 

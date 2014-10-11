@@ -687,9 +687,6 @@ describe Event, type: :model do
   end
 
   describe 'venue reindexing', strategy: :deletion do
-    before do
-      ResqueSpec.reset!
-    end
     let(:campaign) { create(:campaign) }
     let(:event)    { create(:event, campaign: campaign, company: campaign.company) }
 

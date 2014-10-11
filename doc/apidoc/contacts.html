@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>API documentation</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/bundled/bootstrap.min.css'/>
+<link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/bundled/prettify.css'/>
+<link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/bundled/bootstrap-responsive.min.css'/>
+  <link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/application.css'/>
+  <!-- IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div id='container'>
+        <ul class='breadcrumb'>
+  <li>
+    <a href='../apidoc.html'>Brandscopic 1.0</a>
+    <span class='divider'>/</span>
+  </li>
+  <li class='active'>
+    Contacts
+    
+  </li>
+  
+</ul>
+
+<div class='page-header'>
+  <h1>
+    Contacts
+    <br>
+    <small>Contacts</small>
+  </h1>
+</div>
+
+
+
+  <h2>Supported Formats</h2>
+  json, xml
+
+<div class='accordion' id='accordion'>
+
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/contacts/index.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-index'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/contacts
+          </a>
+          <br>
+          <small>Get a list of contacts for a specific company</small>
+        </h2>
+    </div>
+
+
+    <div id='description-index' class='collapse accordion-body'>
+      
+<p>Returns a full list of the existing users in the company Each user have the
+following attributes:</p>
+<ul><li>
+<p><strong>id</strong>: the user id</p>
+</li><li>
+<p><strong>first_name</strong>: the user&#39;s first name</p>
+</li><li>
+<p><strong>last_name</strong>: the user&#39;s last name</p>
+</li><li>
+<p><strong>full_name</strong>: the user&#39;s full name</p>
+</li><li>
+<p><strong>email</strong>: the user&#39;s email address</p>
+</li><li>
+<p><strong>street1</strong>: the user&#39;s street address (Line 1)</p>
+</li><li>
+<p><strong>street2</strong>: the user&#39;s street address (Line 2)</p>
+</li><li>
+<p><strong>street_address</strong>: the user&#39;s street name and number,
+this is the concatanation of stree1+street2</p>
+</li><li>
+<p><strong>city</strong>: the user&#39;s city name</p>
+</li><li>
+<p><strong>state</strong>: the user&#39;s state code</p>
+</li><li>
+<p><strong>country</strong>: the user&#39;s country</p>
+</li><li>
+<p><strong>zip_code</strong>: the user&#39;s ZIP code</p>
+</li><li>
+<p><strong>title</strong>: the user&#39;s role name</p>
+</li></ul>
+
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    406
+    The server cannot return data in the requested format
+    <br>
+    404
+    The requested resource was not found
+    <br>
+    500
+    Server crashed for some reason. Possible because of missing required params or wrong parameters
+    <br>
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">A list of contacts for company id 1:
+GET /api/v1/contacts?auth_token=XXXXXYYYYYZZZZZ&amp;company_id=1
+[
+    {
+        &quot;id&quot;: 268,
+        &quot;first_name&quot;: &quot;Trinity&quot;,
+        &quot;last_name&quot;: &quot;Ruiz&quot;,
+        &quot;full_name&quot;: &quot;Trinity Ruiz&quot;,
+        &quot;title&quot;: &quot;MBN Supervisor&quot;,
+        &quot;email&quot;: &quot;trinity.ruiz@gmail.com&quot;,
+        &quot;phone_number&quot;: &quot;+1 233 245 4332&quot;,
+        &quot;street1&quot;: &quot;1st Young st.,&quot;,
+        &quot;street2&quot;: &quot;4th floor, Aptm, #3,&quot;,
+        &quot;street_address&quot;: &quot;1st Young st., 4th floor, Aptm, #3&quot;,
+        &quot;city&quot;: &quot;Toronto&quot;,
+        &quot;state&quot;: &quot;ON&quot;,
+        &quot;country&quot;: &quot;CA&quot;,
+        &quot;country_name&quot;: &quot;Canada&quot;,
+        &quot;zip_code&quot;: &quot;12345&quot;
+    }
+]
+</pre>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>User&#39;s authorization token returned by login method</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>One of the allowed company ids returned by the “User companies” API method</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/contacts/show.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-show'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/contacts/:id
+          </a>
+          <br>
+          <small>Return a contact's details</small>
+        </h2>
+    </div>
+
+
+    <div id='description-show' class='collapse accordion-body'>
+      
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    406
+    The server cannot return data in the requested format
+    <br>
+    404
+    The requested resource was not found
+    <br>
+    500
+    Server crashed for some reason. Possible because of missing required params or wrong parameters
+    <br>
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">{
+    &quot;id&quot;: 268,
+    &quot;first_name&quot;: &quot;Trinity&quot;,
+    &quot;last_name&quot;: &quot;Blue&quot;,
+    &quot;full_name&quot;: &quot;Trinity Blue&quot;,
+    &quot;title&quot;: &quot;MBN Supervisor&quot;,
+    &quot;email&quot;: &quot;trinity@matrix.com&quot;,
+    &quot;phone_number&quot;: &quot;+1 233 245 4332&quot;,
+    &quot;stree1&quot;: &quot;1st Young st.,&quot;,
+    &quot;stree2&quot;: &quot;2nd floor, #34&quot;,
+    &quot;street_address&quot;: &quot;1st Young st., 2nd floor, #34&quot;&quot;,
+    &quot;city&quot;: &quot;Toronto&quot;,
+    &quot;state&quot;: &quot;ON&quot;,
+    &quot;country&quot;: &quot;CA&quot;,
+    &quot;country_name&quot;: &quot;Canada&quot;,
+    &quot;zip_code&quot;: &quot;12345&quot;
+}
+</pre>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>User&#39;s authorization token returned by login method</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>One of the allowed company ids returned by the “User companies” API method</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Contact ID</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/contacts/create.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-create'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            POST /api/v1/contacts
+          </a>
+          <br>
+          <small>Create a new contact</small>
+        </h2>
+    </div>
+
+
+    <div id='description-create' class='collapse accordion-body'>
+      
+<p>Creates a new contact and returns all the contact&#39;s info, including the
+assigned unique ID.</p>
+
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    406
+    The server cannot return data in the requested format
+    <br>
+    404
+    The requested resource was not found
+    <br>
+    500
+    Server crashed for some reason. Possible because of missing required params or wrong parameters
+    <br>
+    422
+    There is one or more invalid attributes for the contact
+    <br>
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">POST /api/v1/contacts?auth_token=XXXXXYYYYYZZZZZ&amp;company_id=1
+DATA:
+{
+    contact: {
+        &quot;first_name&quot;: &quot;Trinity&quot;,
+        &quot;last_name&quot;: &quot;Blue&quot;,
+        &quot;full_name&quot;: &quot;Trinity Blue&quot;,
+        &quot;title&quot;: &quot;MBN Supervisor&quot;,
+        &quot;email&quot;: &quot;trinity@matrix.com&quot;,
+        &quot;phone_number&quot;: &quot;+1 233 245 4332&quot;,
+        &quot;stree1&quot;: &quot;1st Young st.,&quot;,
+        &quot;stree2&quot;: &quot;2nd floor, #34&quot;,
+        &quot;city&quot;: &quot;Toronto&quot;,
+        &quot;state&quot;: &quot;ON&quot;,
+        &quot;country&quot;: &quot;CA&quot;,
+        &quot;zip_code&quot;: &quot;12345&quot;
+    }
+}
+
+RESPONSE:
+{
+    &quot;id&quot;: 268,
+    &quot;first_name&quot;: &quot;Trinity&quot;,
+    &quot;last_name&quot;: &quot;Blue&quot;,
+    &quot;full_name&quot;: &quot;Trinity Blue&quot;,
+    &quot;title&quot;: &quot;MBN Supervisor&quot;,
+    &quot;email&quot;: &quot;trinity@matrix.com&quot;,
+    &quot;phone_number&quot;: &quot;+1 233 245 4332&quot;,
+    &quot;stree1&quot;: &quot;1st Young st.,&quot;,
+    &quot;stree2&quot;: &quot;2nd floor, #34&quot;,
+    &quot;street_address&quot;: &quot;1st Young st., 2nd floor, #34&quot;&quot;,
+    &quot;city&quot;: &quot;Toronto&quot;,
+    &quot;state&quot;: &quot;ON&quot;,
+    &quot;country&quot;: &quot;Canada&quot;,
+    &quot;zip_code&quot;: &quot;12345&quot;
+}
+</pre>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>User&#39;s authorization token returned by login method</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>One of the allowed company ids returned by the “User companies” API method</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>contact </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be a Hash
+
+
+    </td>
+
+  </tr>
+
+    <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>contact[first_name] </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Contact&#39;s first name</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>contact[last_name] </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Contact&#39;s last name</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>contact[title] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Contact&#39;s title</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>contact[email] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Contact&#39;s email address</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>contact[phone_number] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Contact&#39;s phone number&#39;</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>contact[street1] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Contact&#39;s street address 1</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>contact[street2] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Contact&#39;s street address 2</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>contact[country] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Contact&#39;s country code, eg: US, UK, AR</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>contact[state] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Contact&#39;s state code, eg: CA, TX</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>contact[city] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Contact&#39;s city</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>contact[zip_code] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Contact&#39;s ZIP code</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+
+
+    </tbody>
+  </table>
+
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/contacts/update.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-update'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            PUT /api/v1/contacts/:id
+          </a>
+          <br>
+          <small>Update a contact's details</small>
+        </h2>
+    </div>
+
+
+    <div id='description-update' class='collapse accordion-body'>
+      
+<p>Updates a contact&#39;s information and returns all the contact&#39;s
+updated info.</p>
+
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    406
+    The server cannot return data in the requested format
+    <br>
+    404
+    The requested resource was not found
+    <br>
+    500
+    Server crashed for some reason. Possible because of missing required params or wrong parameters
+    <br>
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">PUT /api/v1/contacts/268?auth_token=XXXXXYYYYYZZZZZ&amp;company_id=1
+DATA:
+{
+    contact: {
+        &quot;first_name&quot;: &quot;Trinity&quot;,
+        &quot;last_name&quot;: &quot;Blue&quot;,
+        &quot;full_name&quot;: &quot;Trinity Blue&quot;,
+        &quot;title&quot;: &quot;MBN Supervisor&quot;,
+        &quot;email&quot;: &quot;trinity@matrix.com&quot;,
+        &quot;phone_number&quot;: &quot;+1 233 245 4332&quot;,
+        &quot;stree1&quot;: &quot;1st Young st.,&quot;,
+        &quot;stree2&quot;: &quot;2nd floor, #34&quot;,
+        &quot;city&quot;: &quot;Toronto&quot;,
+        &quot;state&quot;: &quot;ON&quot;,
+        &quot;country&quot;: &quot;CA&quot;,
+        &quot;zip_code&quot;: &quot;12345&quot;
+    }
+}
+
+RESPONSE:
+{
+    &quot;id&quot;: 268,
+    &quot;first_name&quot;: &quot;Trinity&quot;,
+    &quot;last_name&quot;: &quot;Blue&quot;,
+    &quot;full_name&quot;: &quot;Trinity Blue&quot;,
+    &quot;title&quot;: &quot;MBN Supervisor&quot;,
+    &quot;email&quot;: &quot;trinity@matrix.com&quot;,
+    &quot;phone_number&quot;: &quot;+1 233 245 4332&quot;,
+    &quot;stree1&quot;: &quot;1st Young st.,&quot;,
+    &quot;stree2&quot;: &quot;2nd floor, #34&quot;,
+    &quot;street_address&quot;: &quot;1st Young st., 2nd floor, #34&quot;&quot;,
+    &quot;city&quot;: &quot;Toronto&quot;,
+    &quot;state&quot;: &quot;ON&quot;,
+    &quot;country&quot;: &quot;CA&quot;,
+    &quot;country_name&quot;: &quot;Canada&quot;,
+    &quot;zip_code&quot;: &quot;12345&quot;
+}
+</pre>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>User&#39;s authorization token returned by login method</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>One of the allowed company ids returned by the “User companies” API method</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Contact ID</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>contact </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be a Hash
+
+
+    </td>
+
+  </tr>
+
+    <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>contact[first_name] </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Contact&#39;s first name</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>contact[last_name] </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Contact&#39;s last name</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>contact[title] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Contact&#39;s title</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>contact[email] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Contact&#39;s email address</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>contact[phone_number] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Contact&#39;s phone number&#39;</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>contact[street1] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Contact&#39;s street address 1</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>contact[street2] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Contact&#39;s street address 2</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>contact[country] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Contact&#39;s country code, eg: US, UK, AR</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>contact[state] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Contact&#39;s state code, eg: CA, TX</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>contact[city] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Contact&#39;s city</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>contact[zip_code] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Contact&#39;s ZIP code</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+
+
+    </tbody>
+  </table>
+
+    </div>
+</div>
+
+
+        
+      </div>
+    </div>
+    <hr>
+    <footer></footer>
+  </div>
+  <script type='text/javascript' src='../apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
+<script type='text/javascript' src='../apidoc/javascripts/bundled/bootstrap-collapse.js'></script>
+<script type='text/javascript' src='../apidoc/javascripts/bundled/prettify.js'></script>
+<script type='text/javascript' src='../apidoc/javascripts/apipie.js'></script>
+</body>
+</html>

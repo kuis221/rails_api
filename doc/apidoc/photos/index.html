@@ -29,11 +29,14 @@
     <span class='divider'>/</span>
   </li>
   <li class='active'>index</li>
+  
+
 </ul>
 
   <div class='page-header'>
     <h1>
-      GET /api/v1/events/:event_id/photos<br>
+      GET /api/v1/events/:event_id/photos
+      <br>
       <small>Get a list of photos for an Event</small>
     </h1>
   </div>
@@ -42,31 +45,66 @@
 
   
 
+  <h2>Supported Formats</h2>
+  json, xml
 
-    <h2>Supported Formats</h2>
-    json, xml
+  <h2>Errors</h2>
+    404
+    Missing
+    <br>
+    401
+    Unauthorized access
+    <br>
+    500
+    Server crashed for some reason
+    <br>
 
-    <h2>Errors</h2>
-      404
-      Missing
-      <br>
-      401
-      Unauthorized access
-      <br>
-      500
-      Server crashed for some reason
-      <br>
 
-    <h2>Params</h2>
-    <table class='table'>
-      <thead>
-        <tr>
-          <th>Param name</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr style='background-color:rgb(255,255,255);'>
+  <h2>Examples</h2>
+    <pre class="prettyprint">GET /api/v1/events/1223/photos
+{
+    &quot;page&quot;: 1,
+    &quot;total&quot;: 5,
+    &quot;results&quot;: [
+        {
+            &quot;id&quot;: 45554,
+            &quot;file_file_name&quot;: &quot;SV-T101-P005-111413.JPG&quot;,
+            &quot;file_content_type&quot;: &quot;image/jpeg&quot;,
+            &quot;file_file_size&quot;: 611320,
+            &quot;created_at&quot;: &quot;2013-11-19T00:49:24-08:00&quot;,
+            &quot;active&quot;: true,
+            &quot;file_small&quot;: &quot;http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/554/small/SV-T101-P005-111413.JPG?1384851148&quot;,
+            &quot;file_thumbnail&quot;: &quot;http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/554/thumbnail/SV-T101-P005-111413.JPG?1384851148&quot;,
+            &quot;file_medium&quot;: &quot;http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/554/medium/SV-T101-P005-111413.JPG?1384851148&quot;,
+            &quot;file_original&quot;: &quot;http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/554/original/SV-T101-P005-111413.JPG?1384851148&quot;
+        },
+        {
+            &quot;id&quot;: 45553,
+            &quot;file_file_name&quot;: &quot;SV-T101-P001-111413.JPG&quot;,
+            &quot;file_content_type&quot;: &quot;image/jpeg&quot;,
+            &quot;file_file_size&quot;: 651591,
+            &quot;created_at&quot;: &quot;2013-11-19T00:49:16-08:00&quot;,
+            &quot;active&quot;: true,
+            &quot;file_small&quot;: &quot;http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/553/small/SV-T101-P001-111413.JPG?1384851145&quot;,
+            &quot;file_thumbnail&quot;: &quot;http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/553/thumbnail/SV-T101-P001-111413.JPG?1384851145&quot;,
+            &quot;file_medium&quot;: &quot;http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/553/medium/SV-T101-P001-111413.JPG?1384851145&quot;,
+            &quot;file_original&quot;: &quot;http://s3.amazonaws.com/brandscopic-stage/attached_assets/files/000/045/553/original/SV-T101-P001-111413.JPG?1384851145&quot;
+        }
+        ...
+    ]
+}
+</pre>
+
+  <h2>Params</h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
     <td>
       <strong>auth_token </strong><br>
       <small>
@@ -78,7 +116,10 @@
       
         <br>
         Value: Must be String
+
+
     </td>
+
   </tr>
 
   
@@ -94,7 +135,10 @@
       
         <br>
         Value: Must be a number.
+
+
     </td>
+
   </tr>
 
   
@@ -112,7 +156,10 @@
 
         <br>
         Value: Must be a number.
+
+
     </td>
+
   </tr>
 
   
@@ -129,8 +176,11 @@
 <p>A list of brand ids to filter the results</p>
 
         <br>
-        Value: Must be Array
+        Value: Must be an array of any type
+
+
     </td>
+
   </tr>
 
   
@@ -147,8 +197,11 @@
 <p>A list of places to filter the results</p>
 
         <br>
-        Value: Must be Array
+        Value: Must be an array of any type
+
+
     </td>
+
   </tr>
 
   
@@ -165,8 +218,11 @@
 <p>A list of photo status to filter the results. Options: Active, Inactive</p>
 
         <br>
-        Value: Must be Array
+        Value: Must be an array of any type
+
+
     </td>
+
   </tr>
 
   
@@ -184,13 +240,17 @@
 
         <br>
         Value: Must be a number.
+
+
     </td>
+
   </tr>
 
   
 
-      </tbody>
-    </table>
+    </tbody>
+  </table>
+
 </div>
 
 
@@ -198,8 +258,7 @@
       </div>
     </div>
     <hr>
-    <footer>  
-</footer>
+    <footer></footer>
   </div>
   <script type='text/javascript' src='../../apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
 <script type='text/javascript' src='../../apidoc/javascripts/bundled/bootstrap-collapse.js'></script>

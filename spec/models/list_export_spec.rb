@@ -55,14 +55,13 @@ describe ListExport, type: :model do
       expect(exporter).to receive(:process!).once
       expect(exporter).to receive(:sleep).exactly(3).times # So it doesn't really sleep
       expect(exporter).not_to receive(:complete!)
-      expect{ exporter.export_list }.to raise_error(Net::OpenTimeout)
-
+      expect { exporter.export_list }.to raise_error(Net::OpenTimeout)
     end
   end
 
   describe 'EventsController#export_list' do
     it 'should call the export_list on the controller and set the required variables' do
-      exporter = ListExport.new(controller: 'EventsController', company_user: company_user, url_options: {}, export_format: 'xls', params: {})
+      exporter = described_class.new(controller: 'EventsController', company_user: company_user, url_options: {}, export_format: 'xls', params: {})
       expect_any_instance_of(EventsController).to receive(:export_list).with(exporter).and_return('')
 
       # Prevent export to save and upload attachment to S3

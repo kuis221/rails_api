@@ -2485,7 +2485,7 @@ ul.ui-widget-content{
 		margin: 0;
 	}
 	ul {
-		margin: 0 0 10px 0;
+		margin: 0 0 5px 0;
 		li {
 			list-style: none;
 		}
@@ -2498,7 +2498,7 @@ ul.ui-widget-content{
 	.form-facet-filters {
 		.accordion-group {
 			border: none;
-			margin-bottom: 0;
+			margin-bottom: 20px;
 			.filter-wrapper {
 				li ul {
 					display: none;
@@ -2522,10 +2522,6 @@ ul.ui-widget-content{
 						&.icon-arrow-right:before {
 							font-size: 10px;
 							vertical-align: middle;
-						}
-						&.total-items-category {
-							color: $grey_four;
-							margin-left: 5px;
 						}
 					}
 				}
@@ -4003,6 +3999,10 @@ body.roles{
 			& > div {
 				font-size: 16px;
 			}
+			.pdf-label {
+				display: none;
+				font-size: 12px;
+			}
 		}
 		.score{
 			color: $venues_blue;
@@ -4018,7 +4018,7 @@ body.roles{
 			}
 		}
 
-		.venue_adress{
+		.venue_address{
 			display: block;
 			overflow: hidden;
 			text-overflow:ellipsis;

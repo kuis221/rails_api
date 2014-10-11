@@ -28,7 +28,6 @@ RSpec.describe BrandAmbassadors::DocumentsController, type: :controller do
   describe "POST 'create'" do
     describe 'with valid data' do
       before do
-        ResqueSpec.reset!
         s3object = double
         allow(s3object).to receive(:copy_from).and_return(true)
         expect_any_instance_of(AWS::S3).to receive(:buckets).at_least(:once).and_return(

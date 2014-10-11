@@ -29,11 +29,14 @@
     <span class='divider'>/</span>
   </li>
   <li class='active'>create</li>
+  
+
 </ul>
 
   <div class='page-header'>
     <h1>
-      POST /api/v1/sessions<br>
+      POST /api/v1/sessions
+      <br>
       <small>Authenticate a user and return the authentication token</small>
     </h1>
   </div>
@@ -41,32 +44,47 @@
 <div>
 
   
+<p>Validates the user credentials and returns the authentication token if
+valid.</p>
 
 
-    <h2>Supported Formats</h2>
-    json, xml
+  <h2>Supported Formats</h2>
+  json, xml
 
-    <h2>Errors</h2>
-      404
-      Missing
-      <br>
-      401
-      Invalid credentials
-      <br>
-      500
-      Server crashed for some reason
-      <br>
+  <h2>Errors</h2>
+    404
+    Missing
+    <br>
+    401
+    Invalid credentials
+    <br>
+    500
+    Server crashed for some reason
+    <br>
 
-    <h2>Params</h2>
-    <table class='table'>
-      <thead>
-        <tr>
-          <th>Param name</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr style='background-color:rgb(255,255,255);'>
+
+  <h2>Examples</h2>
+    <pre class="prettyprint">POST /api/v1/sessions.json?email=fulano@detal.com&amp;password=MySuperSecretPassword
+{
+  sucess: true,
+  info: &#39;Logged in&#39;,
+  data: {
+    auth_token: &#39;XXXYYYYZZZ&#39;,
+    current_company_id: 1
+  }
+}
+</pre>
+
+  <h2>Params</h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
     <td>
       <strong>email </strong><br>
       <small>
@@ -80,7 +98,10 @@
 
         <br>
         Value: Must be String
+
+
     </td>
+
   </tr>
 
   
@@ -98,13 +119,17 @@
 
         <br>
         Value: Must be String
+
+
     </td>
+
   </tr>
 
   
 
-      </tbody>
-    </table>
+    </tbody>
+  </table>
+
 </div>
 
 
@@ -112,8 +137,7 @@
       </div>
     </div>
     <hr>
-    <footer>  
-</footer>
+    <footer></footer>
   </div>
   <script type='text/javascript' src='../../apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
 <script type='text/javascript' src='../../apidoc/javascripts/bundled/bootstrap-collapse.js'></script>

@@ -306,8 +306,7 @@ $.widget 'nmk.filteredList', {
 		$filter = $('<div class="accordion-group">').append(
 			$('<div class="filter-wrapper accordion-heading">').data('name', filter.name).append(
 				$('<a>',{href: "#toogle-"+filter.label.replace(/\s+/g, '-').toLowerCase(), class:'accordion-toggle filter-title', 'data-toggle': 'collapse'}).text(filter.label).append(
-					$('<span class="icon icon-arrow-down pull-left" title="Collapse">'),
-					$('<span class="total-items-category" title="Total items">').text('('+items.length+')')
+					$('<span class="icon icon-arrow-down pull-left" title="Collapse">')
 				)
 			),
 			$('<div id="toogle-'+filter.label.replace(/\s+/g, '-').toLowerCase()+'" class="accordion-body in">').append(
@@ -338,7 +337,7 @@ $.widget 'nmk.filteredList', {
 				container.show()
 				maxHeight = @element.outerHeight() + @element.offset().top - container.offset().top;
 
-			$trigger = $('<a>',{href: '#', class:'more-options-link'}).text('More')
+			$trigger = $('<a>',{href: '#', class:'more-options-link'}).text('Show More')
 				.on 'click', (e) =>
 					container = $trigger.next()
 					if container.css('display') == "none"

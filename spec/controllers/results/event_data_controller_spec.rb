@@ -5,7 +5,6 @@ describe Results::EventDataController, type: :controller do
     @user = sign_in_as_user
     @company = @user.companies.first
     @company_user = @user.current_company_user
-    ResqueSpec.reset!
   end
 
   describe "GET 'index'" do
