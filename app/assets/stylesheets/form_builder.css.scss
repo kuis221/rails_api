@@ -249,6 +249,9 @@ $margin-right: 240px;
 			}
 			&[data-type="LikertScale"]{
 				table{
+					label{
+						font-weight:normal;
+					}
 					thead{
 						tr{
 							th:nth-child(2){
