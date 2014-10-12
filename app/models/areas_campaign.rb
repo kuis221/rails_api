@@ -42,20 +42,23 @@ class AreasCampaign < ActiveRecord::Base
   end
 
   def places
-    (area.places + Place.where(id: inclusions)).sort_by{|p| p.name}
+    Place.connection.unprepared_statement do
+      Place.find_by_sql("
+        #{area.places.to_sql} UNION #{Place.where(id: inclusions).to_sql}
+        ORDER BY name
+      ")
+    end
   end
 
   def place_reference(value)
-    place = if value && value.present?
-              if value =~ /^[0-9]+$/
-                Place.find(value)
-              else
-                reference, place_id = value.split('||')
-                Place.find_or_create_by(place_id: place_id) do |p|
-                  p.reference = reference
-                end
-              end
-            end
-    place
+    return unless value && value.present?
+    if value =~ /^[0-9]+$/
+      Place.find(value)
+    else
+      reference, place_id = value.split('||')
+      Place.find_or_create_by(place_id: place_id) do |p|
+        p.reference = reference
+      end
+    end
   end
 end
