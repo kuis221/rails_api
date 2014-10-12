@@ -1,4 +1,5 @@
 @import "variables";
+
 /*-- TRENDS ANALYSIS STYLES --*/
 .highlight{
 	background-color: $light_blue;
@@ -27,7 +28,7 @@
 	content: '\e613';
 }
 
-.trends_report{
+.trends{
 	.details_box{
 		h2{
 			&.mb10{
@@ -35,6 +36,16 @@
 			}
 		}
 	}
+
+	#wizard {
+		select {
+			width: 400px;
+		}
+		.trends_report_sources {
+			margin-top: 50px;
+		}
+	}
+
 	.total_mentions{
 		margin-top: 10px;
 		span{

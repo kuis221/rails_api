@@ -119,6 +119,31 @@ describe FormField, type: :model do
     end
   end
 
+  describe '#for_trends' do
+    let(:campaign) { create(:campaign) }
+    let(:activity_type) { create(:activity_type) }
+
+    it 'returns empty if not campaigns nor activity_types are given' do
+      create(:form_field_text, fieldable: campaign)
+      create(:form_field_text, fieldable: activity_type)
+      expect(described_class.for_trends.to_a).to be_empty
+    end
+
+    it 'returns all text/textares for the given campaigns' do
+      field = create(:form_field_text, fieldable: campaign)
+      create(:form_field_text, fieldable: create(:campaign, company: campaign.company))
+      create(:form_field_text, fieldable: activity_type)
+      expect(described_class.for_trends(campaigns: [campaign]).to_a).to eql [field]
+    end
+
+    it 'returns all text/textares for the given form activity types' do
+      field = create(:form_field_text, fieldable: activity_type)
+      create(:form_field_text, fieldable: campaign)
+      create(:form_field_text, fieldable: create(:activity_type))
+      expect(described_class.for_trends(activity_types: [activity_type]).to_a).to eql [field]
+    end
+  end
+
   describe '#format_html' do
     it 'should return the values as is' do
       expect(field.format_html(build(:form_field_result, value: nil, form_field: field))).to eql nil

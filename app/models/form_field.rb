@@ -74,6 +74,15 @@ class FormField < ActiveRecord::Base
     ])
   end
 
+  def self.for_trends(campaigns: nil, activity_types: nil)
+    where(type: TRENDING_FIELDS_TYPES).where(
+      '(form_fields.fieldable_type=? AND form_fields.fieldable_id in (?)) OR
+       (form_fields.fieldable_type=? AND form_fields.fieldable_id in (?))',
+      'Campaign', (campaigns || []) + [0],
+      'ActivityType', (activity_types || []) + [0]
+    ).order('form_fields.name ASC')
+  end
+
   def field_options(_result)
     { as: :string }
   end

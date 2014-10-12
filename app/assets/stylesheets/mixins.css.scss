@@ -1,3 +1,4 @@
+@import "variables";
 //
 // Mixins
 // --------------------------------------------------
@@ -19,6 +20,12 @@
 	box-sizing: $value;
 	-moz-box-sizing: $value;
 	-webkit-box-sizing: $value;
+}
+
+// Limits the list of resources to a max height
+@mixin max-resource-items-height($itemHeight, $value){
+	max-height:  $value * ($itemHeight + ($resource-item-padding * 2));
+	overflow-y: auto;
 }
 
 // Special mixin kpi-desc-tooltip

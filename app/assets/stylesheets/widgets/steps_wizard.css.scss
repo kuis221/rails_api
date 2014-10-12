@@ -1,0 +1,106 @@
+$steps-wizard-active-circle-size: 25px;
+$steps-wizard-inactive-circle-size: 20px;
+$steps-wizard-line-size: 5px;
+$steps-wizard-margin: 50px;
+
+.steps-wizard {
+    position: relative;
+    z-index: 1;
+    padding-bottom: $steps-wizard-active-circle-size+20;
+    .step {
+        text-align:center;
+        color: $borders;
+        .step-box {
+            display: inline-block;
+            .step-name {
+                display: inline-block;
+                text-align: center;
+            }
+            .circle-step {
+                display:inline-block;
+                width: $steps-wizard-inactive-circle-size/2;
+                height: $steps-wizard-inactive-circle-size/2;
+                padding: $steps-wizard-inactive-circle-size/4;
+                line-height: $steps-wizard-inactive-circle-size/2;
+                font-size: $steps-wizard-inactive-circle-size/2;
+                text-align: center;
+                background-color: $borders;
+                color: #fff;
+                border-radius: 500px 500px 500px 500px;
+                min-height:$steps-wizard-inactive-circle-size/2;
+                z-index: 1;
+                position: absolute;
+                margin-left: -($steps-wizard-inactive-circle-size/2);
+                bottom: ($steps-wizard-inactive-circle-size - $steps-wizard-active-circle-size)/2 + $steps-wizard-inactive-circle-size;
+            }
+        }
+        &.completed {
+            .step-box .circle-step {
+                background-color: $green;
+            }
+        }
+        &.active {
+            .step-box .circle-step {
+                margin-left: -($steps-wizard-active-circle-size/2);
+                bottom: $steps-wizard-active-circle-size/2 + ($steps-wizard-line-size/2);
+            }
+        }
+        &:first-child {
+            text-align:left;
+            padding-left: $steps-wizard-margin;
+            .step-name {
+                margin-left: -50%;
+            }
+            .circle-step {
+                margin-left: -($steps-wizard-inactive-circle-size/2);
+            }
+            &.active {
+                .circle-step {
+                    margin-left: -($steps-wizard-active-circle-size/2);
+                    bottom: $steps-wizard-active-circle-size/2 + ($steps-wizard-line-size/2);
+                }
+            }
+        }
+        &:last-child {
+            padding-right: $steps-wizard-margin;
+            text-align: right;
+            .step-name {
+                margin-right: -50%;
+            }
+            .circle-step {
+                margin-right: -($steps-wizard-inactive-circle-size/2);
+            }
+            &.active {
+                .circle-step {
+                    margin-right: -($steps-wizard-active-circle-size/2);
+                }
+            }
+        }
+        &.active {
+            .circle-step {
+                background-color: $green;
+                width: $steps-wizard-active-circle-size/2;
+                height: $steps-wizard-active-circle-size/2;
+                padding: $steps-wizard-active-circle-size/4;
+                line-height: $steps-wizard-active-circle-size/2;
+                font-size: $steps-wizard-active-circle-size/2;
+            }
+            color: $text;
+        }
+    }
+    .step-line {
+        position: absolute;
+        bottom: $steps-wizard-active-circle-size;
+        left: $steps-wizard-margin - ($steps-wizard-inactive-circle-size/2);
+        right: $steps-wizard-margin;
+        background-color: $borders;
+        height: $steps-wizard-line-size;
+        border-bottom: 0;
+        display: inline-block;
+        z-index: 0;
+        .step-progress {
+            height: 100%;
+            background-color: $green;
+        }
+    }
+}

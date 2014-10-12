@@ -53,3 +53,4 @@
 //= require moment.min.js
 //= require fullcalendar
 //= require jquery.colorPicker
+//= require bootstrap-multiselect

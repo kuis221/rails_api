@@ -252,4 +252,26 @@ module ApplicationHelper
     path = request.protocol + request.host_with_port + path unless ActionController::Base.asset_host
     path
   end
+
+  def step_navigation_bar(steps, active)
+    content_tag :div, class: 'steps-wizard' do
+      content_tag(:div, class: 'row-fluid') do
+        steps.each_with_index.map do |step, i|
+          content_tag :div, class: 'step span4 ' + (active == i + 1 ? 'active' : (active > i ? 'completed' : '')) do
+            content_tag :div, class: 'step-box' do
+              content_tag(:div, step, class: 'step-name') +
+              content_tag(:div, nil, class: 'clearfix') +
+              content_tag(:div, i + 1, class: 'circle-step')
+            end
+          end
+        end.join.html_safe
+      end +
+      content_tag(:div,
+                  content_tag(:div,
+                              nil,
+                              class: 'step-progress',
+                              style: "width: #{100 / (steps.count - 1) * (active - 1)}%"),
+                  class: 'step-line')
+    end
+  end
 end
