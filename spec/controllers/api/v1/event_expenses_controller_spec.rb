@@ -55,7 +55,6 @@ describe Api::V1::EventExpensesController, type: :controller do
   describe "POST 'create'", strategy: :deletion do
     let(:event) { create(:approved_event, company: company, campaign: campaign, place: place) }
     it 'create an expense and queue a job for processing the attached expense file' do
-      ResqueSpec.reset!
       s3object = double
       allow(s3object).to receive(:copy_from).and_return(true)
       expect_any_instance_of(AWS::S3).to receive(:buckets).at_least(:once).and_return(

@@ -5,8 +5,6 @@ describe Results::ActivitiesController, type: :controller do
   let(:company) { user.companies.first }
   let(:company_user) { user.current_company_user }
 
-  before { ResqueSpec.reset! }
-
   before { user }  # login user
 
   describe "GET 'index'" do

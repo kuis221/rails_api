@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>API documentation</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/bootstrap.min.css'/>
+<link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/prettify.css'/>
+<link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/bootstrap-responsive.min.css'/>
+  <link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/application.css'/>
+  <!-- IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div id='container'>
+        <ul class='breadcrumb'>
+  <li>
+    <a href='../../apidoc.html'>Brandscopic 1.0</a>
+    <span class='divider'>/</span>
+  </li>
+  <li>
+    <a href='../../apidoc/venues.html'>
+      Venues
+      
+    </a>
+    <span class='divider'>/</span>
+  </li>
+  <li class='active'>analysis</li>
+  
+
+</ul>
+
+  <div class='page-header'>
+    <h1>
+      GET /api/v1/venues/:id/analysis
+      <br>
+      <small>Return a venue's analysis information</small>
+    </h1>
+  </div>
+
+<div>
+
+  
+<p>This method returns the analysis informaction for a given venue. The result
+have the following attributes:</p>
+<ul><li>
+<p><strong>overview</strong>: have the statistics for different KPIs (events,
+promo hours, impressions, interactions, sampled)</p>
+</li><li>
+<p><strong>age</strong>: the different results for each segment of the Age KPI</p>
+</li><li>
+<p><strong>gender</strong>: the different results for each segment of the
+Gender KPI</p>
+</li><li>
+<p><strong>ethnicity</strong>: the different results for each segment of the
+Ethnicity KPI</p>
+</li><li>
+<p><strong>trends_by_week</strong>: returns information about the performance
+of the venue on each different day of the week.</p>
+<ul><li>
+<p><strong>impressions_promo</strong>: the average number of impressions per
+day of the week, where Monday is 0 and Sunday is 6</p>
+</li><li>
+<p><strong>cost_impression</strong>: the average cost per impression per day
+of the week, where Monday is 0 and Sunday is 6</p>
+</li><li>
+<p><strong>narrative</strong>: a brief narrative describing the performance of
+the venue based on these numbers.</p>
+</li></ul>
+</li></ul>
+
+
+  <h2>Supported Formats</h2>
+  json, xml
+
+  <h2>Errors</h2>
+    404
+    Missing
+    <br>
+    401
+    Unauthorized access
+    <br>
+    500
+    Server crashed for some reason
+    <br>
+
+
+  <h2>Examples</h2>
+    <pre class="prettyprint">GET /api/v1/venues/3598/analysis.json?auth_token=XXXXXXXX&amp;company_id=2
+{
+    overview: {
+        events: 17,
+        promo_hours: &quot;16.5&quot;,
+        impressions: 1389,
+        interactions: 980,
+        sampled: 810,
+        narrative: &quot;The Fox Sports Bar &amp; Grill is about average compared to similar venues in the area both in terms of popularity and cost per impression. Most venues will fallinto this category.&quot;
+    },
+    age: {
+        &lt; 12: 0,
+        12 – 17: 0,
+        18 – 20: 0,
+        21 – 24: 48.125,
+        25 – 34: 34.6875,
+        35 – 44: 16.5625,
+        45 – 54: 0.625,
+        55 – 64: 0,
+        65+: 0
+    },
+    gender: {
+        Female: 49.375,
+        Male: 50.625
+    },
+    ethnicity: {
+        Asian: 3.4375,
+        Black / African American: 3.4375,
+        Hispanic / Latino: 84.6875,
+        Native American: 0,
+        White: 8.125
+    },
+    trends_by_week: {
+        narrative: &quot;The Fox Sports Bar &amp; Grill has had events on Thursday, Friday, and Saturday and has performed best on Saturday. Specifically, The Fox Sports Bar &amp; Grill yields more impressions per hour on Saturday than on any other day of the week.&quot;,
+        impressions_promo: {
+            0: 0,
+            1: 0,
+            2: 0,
+            3: 11.84615384615384,
+            4: 13.61111111111111,
+            5: 22.5,
+            6: 0
+        },
+        cost_impression: {
+            0: 0,
+            1: 0,
+            2: 0,
+            3: 0.4082136231115823,
+            4: 0.4251700680272109,
+            5: 0.4166666666666667,
+            6: 0
+        }
+    }
+}
+</pre>
+
+  <h2>Params</h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>One of the allowed company ids returned by the</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Venue ID</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+</div>
+
+
+        
+      </div>
+    </div>
+    <hr>
+    <footer></footer>
+  </div>
+  <script type='text/javascript' src='../../apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/bundled/bootstrap-collapse.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/bundled/prettify.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/apipie.js'></script>
+</body>
+</html>

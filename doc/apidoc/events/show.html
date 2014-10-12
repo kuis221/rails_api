@@ -29,11 +29,14 @@
     <span class='divider'>/</span>
   </li>
   <li class='active'>show</li>
+  
+
 </ul>
 
   <div class='page-header'>
     <h1>
-      GET /api/v1/events/:id<br>
+      GET /api/v1/events/:id
+      <br>
       <small>Return a event's details</small>
     </h1>
   </div>
@@ -41,9 +44,114 @@
 <div>
 
   
+<p>Returns the event&#39;s details, including the actions that a user can
+perform on this event according to the user&#39;s permissions and the KPIs
+that are enabled for the event&#39;s campaign.</p>
 
-    <h2>Examples</h2>
-      <pre class="prettyprint">{
+<p>The possible attributes returned are:</p>
+<ul><li>
+<p><strong>id</strong>: the event&#39;s ID</p>
+</li><li>
+<p><strong>start_date</strong>: the event&#39;s start date in the format
+mm/dd/yyyy</p>
+</li><li>
+<p><strong>start_time</strong>: the event&#39;s start time in 12 hours format</p>
+</li><li>
+<p><strong>end_date</strong>: the event&#39;s end date in the format
+mm/dd/yyyy</p>
+</li><li>
+<p><strong>end_time</strong>: the event&#39;s end time in 12 hours format</p>
+</li><li>
+<p><strong>description</strong>: the event&#39;s description</p>
+</li><li>
+<p><strong>summary</strong>: the event&#39;s summary</p>
+</li><li>
+<p><strong>status</strong>: the event&#39;s active state, can be Active or
+Inactive</p>
+</li><li>
+<p><strong>event_status</strong>: the event&#39;s status, can be any of
+[&#39;Late&#39;, &#39;Due&#39;, &#39;Submitted&#39;, &#39;Unsent&#39;,
+&#39;Approved&#39;, &#39;Rejected&#39;]</p>
+</li><li>
+<p><strong>have_data</strong>: returns true if data have been entered for the
+event, otherwise, returns false</p>
+</li><li>
+<p><strong>data</strong>: Calculated data based on event results, returned
+only when have_data is true</p>
+<ul><li>
+<p><strong>spent_by_impression</strong>: The cost for each impression. The
+result of total of expenses / number of impressions</p>
+</li><li>
+<p><strong>spent_by_interaction</strong>: The cost for each interaction. The
+result of total of expenses / number of interactions</p>
+</li><li>
+<p><strong>spent_by_sample</strong>: The cost for each sample. The result of
+total of expenses / number of samples</p>
+</li></ul>
+</li><li>
+<p><strong>actions</strong>: A list of actions that the user can perform on
+this event with zero or more of: [“enter post event data”, “upload photos”,
+“conduct surveys”, “enter expenses”, “gather comments”]</p>
+</li><li>
+<p><strong>place</strong>: On object with the event&#39;s venue information
+with the following attributes</p>
+<ul><li>
+<p><strong>id</strong>: the venue&#39;s id</p>
+</li><li>
+<p><strong>name</strong>: the venue&#39;s name</p>
+</li><li>
+<p><strong>latitude</strong>: the venue&#39;s latitude</p>
+</li><li>
+<p><strong>longitude</strong>: the venue&#39;s longitude</p>
+</li><li>
+<p><strong>formatted_address</strong>: the venue&#39;s formatted address</p>
+</li><li>
+<p><strong>country</strong>: the venue&#39;s country</p>
+</li><li>
+<p><strong>state</strong>: the venue&#39;s state</p>
+</li><li>
+<p><strong>city</strong>: the venue&#39;s city</p>
+</li><li>
+<p><strong>route</strong>: the venue&#39;s route</p>
+</li><li>
+<p><strong>street_number</strong>: the venue&#39;s street_number</p>
+</li><li>
+<p><strong>zipcode</strong>: the venue&#39;s zipcode</p>
+</li></ul>
+</li><li>
+<p><strong>campaign</strong>: On object with the event&#39;s campaign
+information with the following attributes</p>
+<ul><li>
+<p><strong>id</strong>: the campaign&#39;s id</p>
+</li><li>
+<p><strong>name</strong>: the campaign&#39;s name</p>
+</li></ul>
+</li></ul>
+
+
+  <h2>Supported Formats</h2>
+  json, xml
+
+  <h2>Errors</h2>
+    401
+    Unauthorized access
+    <br>
+    404
+    The requested resource was not found
+    <br>
+    406
+    The server cannot return data in the requested format
+    <br>
+    422
+    Unprocessable Entity: The change could not be processed because of errors on the data
+    <br>
+    500
+    Server crashed for some reason. Possible because of missing required params or wrong parameters
+    <br>
+
+
+  <h2>Examples</h2>
+    <pre class="prettyprint">{
     &quot;id&quot;: 5486,
     &quot;start_date&quot;: &quot;05/24/2014&quot;,
     &quot;start_time&quot;: &quot; 9:00 PM&quot;,
@@ -51,9 +159,24 @@
     &quot;end_time&quot;: &quot;10:00 PM&quot;,
     &quot;status&quot;: &quot;Active&quot;,
     &quot;event_status&quot;: &quot;Unsent&quot;,
+    &quot;description&quot;: &quot;This is the events description&quot;,
+    &quot;summary&quot;: &quot;This is a test summary&quot;,
+    &quot;have_data&quot;: true,
+    &quot;data&quot;: {
+      spent_by_impression: &quot;6.0&quot;
+      spent_by_interaction: &quot;6.857142857&quot;
+      spent_by_sample: &quot;6.857142857&quot;
+    },
+    &quot;actions&quot;: [
+        &quot;enter post event data&quot;,
+        &quot;upload photos&quot;,
+        &quot;conduct surveys&quot;,
+        &quot;enter expenses&quot;,
+        &quot;gather comments&quot;
+    ],
     &quot;place&quot;: {
         &quot;id&quot;: 2624,
-        &quot;name&quot;: &quot;Kelly&#x27;s Pub Too&quot;,
+        &quot;name&quot;: &quot;Kelly&#39;s Pub Too&quot;,
         &quot;latitude&quot;: 39.7924104,
         &quot;longitude&quot;: -86.2514126,
         &quot;formatted_address&quot;: &quot;5341 W. 10th Street, Indianapolis, IN 46224&quot;,
@@ -72,30 +195,16 @@
 }
 </pre>
 
-    <h2>Supported Formats</h2>
-    json, xml
-
-    <h2>Errors</h2>
-      404
-      Missing
-      <br>
-      401
-      Unauthorized access
-      <br>
-      500
-      Server crashed for some reason
-      <br>
-
-    <h2>Params</h2>
-    <table class='table'>
-      <thead>
-        <tr>
-          <th>Param name</th>
-          <th>Description</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr style='background-color:rgb(255,255,255);'>
+  <h2>Params</h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
     <td>
       <strong>auth_token </strong><br>
       <small>
@@ -105,9 +214,14 @@
     </td>
     <td>
       
+<p>User&#39;s authorization token returned by login method</p>
+
         <br>
         Value: Must be String
+
+
     </td>
+
   </tr>
 
   
@@ -121,11 +235,14 @@
     </td>
     <td>
       
-<p>One of the allowed company ids returned by the</p>
+<p>One of the allowed company ids returned by the “User companies” API method</p>
 
         <br>
         Value: Must be a number.
+
+
     </td>
+
   </tr>
 
   
@@ -143,13 +260,17 @@
 
         <br>
         Value: Must be a number.
+
+
     </td>
+
   </tr>
 
   
 
-      </tbody>
-    </table>
+    </tbody>
+  </table>
+
 </div>
 
 
@@ -157,8 +278,7 @@
       </div>
     </div>
     <hr>
-    <footer>  
-</footer>
+    <footer></footer>
   </div>
   <script type='text/javascript' src='../../apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
 <script type='text/javascript' src='../../apidoc/javascripts/bundled/bootstrap-collapse.js'></script>
