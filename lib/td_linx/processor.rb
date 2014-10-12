@@ -9,9 +9,7 @@ module TdLinxSynch
 
     def self.download_and_process_file(file)
       path = file || 'tmp/td_linx_code.csv'
-      unless file
-        download_file(path)
-      end
+      download_file(path) unless file
       process(path)
     rescue => e
       TdlinxMailer.td_linx_process_failed(e).deliver
@@ -59,11 +57,11 @@ module TdLinxSynch
            .find_each do |place|
         files[:missing] << [place.name, place.street, place.city, place.state, place.zipcode, place.visits_count]
       end
-      files.each { |_k, file| file.close }
+      files.values.each(&:close)
 
       zip_path = Dir::Tmpname.make_tmpname('tmp/tdlinx_', nil)
       Zip::File.open(zip_path, Zip::File::CREATE) do |zip|
-        paths.each { |_k, path|  zip.add(File.basename(path), path) }
+        paths.values.each { |p|  zip.add(File.basename(p), p) }
       end
 
       TdlinxMailer.td_linx_process_completed(zip_path).deliver
@@ -72,7 +70,7 @@ module TdLinxSynch
       File.delete zip_path
       paths
     ensure
-      files.each { |_k, file| file.close rescue true }
+      files.values.each { |f| f.close rescue true }
     end
 
     def self.find_place_for_row(row)
@@ -84,8 +82,6 @@ module TdLinxSynch
       state_code.match(/\A[A-Z]{2}\z/i) ? country.states[state_code]['name'] : state_code
     end
 
-    protected
-
     def self.country
       @country ||= Country.new('US')
     end
@@ -95,9 +91,8 @@ module TdLinxSynch
       ftp.passive = true
       ftp.login(ENV['TDLINX_FTP_USERNAME'], ENV['TDLINX_FTP_PASSWORD'])
       file = ftp.list('Legacy_TDLINX_Store_Master*').map { |l| l.split(/\s+/, 4) }.sort { |a, b| b[0] <=> a[0] }.first
-      if file.present?
-        ftp.gettextfile file[3], path
-      end
+      p "downloading #{file[3]}" if file.present?
+      ftp.gettextfile file[3], path if file.present?
       ftp.close
     end
   end
