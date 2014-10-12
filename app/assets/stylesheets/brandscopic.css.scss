@@ -3045,11 +3045,12 @@ ul.ui-widget-content{
 		display:inline-block;
 		font-size: 28px;
 		float: left;
-		line-height: 65px;
+		line-height: 62px;
 		margin-right: 10px;
 	}
 	a {
-		color: $text;
+		color: $brand;
+		text-decoration:underline;
 	}
 	.drag-box{
 		float: left;
