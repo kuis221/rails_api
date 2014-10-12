@@ -3031,12 +3031,15 @@ ul.ui-widget-content{
 	border: 2px dashed $grey_one;
 	color: $user_menu;
 	line-height: 17px;
-	margin-top: 15px;
 	padding: 40px 20px 20px;
 	text-align: center;
 	height: 150px;
 	width: 237px;
 
+	&.small{
+		padding: 20px 20px 20px;
+		height: 100px;
+	}
 	&.big{
 		width: 100%;
 	}

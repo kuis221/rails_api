@@ -182,6 +182,11 @@ $margin-right: 240px;
 					font-weight: bolder;
 				}
 			}
+			&[data-type="Number"] {
+				input[type="text"]{
+					width:200px;
+				}
+			}
 			&[data-type="Date"], &[data-type="Time"] {
 				min-width:100px;
 			}
