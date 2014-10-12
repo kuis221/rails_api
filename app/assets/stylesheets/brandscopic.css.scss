@@ -3030,7 +3030,6 @@ ul.ui-widget-content{
 	@include box-sizing(border-box);
 	border: 2px dashed $grey_one;
 	color: $user_menu;
-	font-size: 12px;
 	line-height: 17px;
 	margin-top: 15px;
 	padding: 40px 20px 20px;
@@ -3041,15 +3040,28 @@ ul.ui-widget-content{
 	&.big{
 		width: 100%;
 	}
+
+	.icon-upload{
+		display:inline-block;
+		font-size: 28px;
+		float: left;
+		line-height: 65px;
+		margin-right: 10px;
+	}
 	a {
 		color: $text;
 	}
 	.drag-box{
+		float: left;
 		h4, p{
 			color: $user_menu;
 			font-family: $baseFontFamily;
 			font-weight: normal;
 			text-align: left;
+			margin-bottom:0;
+		}
+		h4{
+			margin-top:10px;
 		}
 		p{
 			span.file-browse {
@@ -3070,12 +3082,6 @@ ul.ui-widget-content{
 					cursor: pointer;
 				}
 			}
-		}
-		i{
-			font-size: 28px;
-			float: left;
-			line-height: 30px;
-			margin-right: 10px;
 		}
 	}
 

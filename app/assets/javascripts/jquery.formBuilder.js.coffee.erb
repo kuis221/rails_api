@@ -1038,8 +1038,8 @@ PhotoField = FormField.extend {
 			$('<label class="control-label">').text(@attributes.name),
 			$('<div class="controls">').append(
 				$('<div class="attachment-panel">').append(
+					$('<i class="icon-upload">'),
 					$('<div class="drag-box">').append(
-						$('<i class="icon-drag">'),
 						$('<h4>').text('DRAG & DROP'),
 						$('<p>').append('your image or ', $('<a href="#" class="file-browse">browse</a>'))
 					)
@@ -1078,8 +1078,8 @@ AttachmentField = FormField.extend {
 			$('<label class="control-label">').text(@attributes.name),
 			$('<div class="controls">').append(
 				$('<div class="attachment-panel">').append(
+					$('<i class="icon-upload">'),
 					$('<div class="drag-box">').append(
-						$('<i class="icon-drag">'),
 						$('<h4>').text('DRAG & DROP'),
 						$('<p>').append('your file or ', $('<a href="#" class="file-browse">browse</a>'))
 					)

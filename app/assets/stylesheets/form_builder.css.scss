@@ -138,6 +138,7 @@ $margin-right: 240px;
 			display: inline-block;
 			height: auto;
 			width:auto;
+			min-width:200px; // test SILVANA
 			label.radio .radio{
 				margin-right: 10px;
 			}
