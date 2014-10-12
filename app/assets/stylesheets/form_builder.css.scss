@@ -182,7 +182,9 @@ $margin-right: 240px;
 					font-weight: bolder;
 				}
 			}
-
+			&[data-type="Date"], &[data-type="Time"] {
+				min-width:100px;
+			}
 			&[data-type="Section"] {
 				max-width: 400px;
 			}
