@@ -3053,7 +3053,7 @@ ul.ui-widget-content{
 		display:inline-block;
 		font-size: 28px;
 		float: left;
-		line-height: 62px;
+		line-height: 40px;
 		margin-right: 10px;
 	}
 	a {
@@ -3061,7 +3061,6 @@ ul.ui-widget-content{
 		text-decoration:underline;
 	}
 	.drag-box{
-		float: left;
 		h4, p{
 			color: $user_menu;
 			font-family: $baseFontFamily;
@@ -3077,7 +3076,7 @@ ul.ui-widget-content{
 			span.file-browse {
 				text-decoration: underline;
 				position: relative;
-				color: $text;
+				color: $brand;
 				overflow: hidden;
 				input[type=file] {
 					position: absolute;
