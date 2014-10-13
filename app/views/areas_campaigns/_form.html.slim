@@ -1,13 +1,15 @@
 p Deactivate or re-activate cities and places from the area
 .row-fluid.scroll-table-header
-  input#areas-places-search.search-box type="text" name="q"
+  input#areas-places-search.search-box type="text" name="q" placeholder="Search for places and cities in #{resource.area.name} Area"
   #areas-places-list.resource-list.select-list.compact
     = render 'places'
 #add-new-place-campaign.text-right
   .normal-text Not listed above? &nbsp;
-  = link_to "Add new place", new_place_campaign_areas_campaign_path(resource.campaign_id, resource.area_id), remote: true, class: 'link-text', title: 'Add new place'
+  = link_to 'Add new place', new_place_campaign_areas_campaign_path(resource.campaign_id, resource.area_id), remote: true, class: 'link-text', title: 'Add new place'
 
-button class="btn btn-primary" data-dismiss="modal" Done
+.form-actions
+  button class="btn btn-primary" data-dismiss="modal" Done
+  button class="btn btn-cancel" data-dismiss="modal" Cancel
 
 javascript:
   $('#areas-places-search').on('keyup', function () {

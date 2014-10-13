@@ -5,8 +5,8 @@
         i.icon-wired-map.special-icon.pull-left
       - else
         i.icon-wired-venue.special-icon.pull-left
-      .area_name= place.name
-      .area_description= place.formatted_address
+      .text-large= place.name
+      = place.formatted_address
     .resource-item-actions
-      = link_to '', exclude_place_campaign_areas_campaign_path(resource.campaign_id, resource.area_id, place_id: place.id), remote: true, method: :post, data: {disable_with: ''}, title: 'Deactivate', class: 'icon-rounded-disable deactivate-btn'
-      = link_to '', include_place_campaign_areas_campaign_path(resource.campaign_id, resource.area_id, place_id: place.id), remote: true, method: :post, data: {disable_with: ''}, title: 'Activate', class: 'icon-rounded-ok activate-btn'
+      = link_to '', exclude_place_campaign_areas_campaign_path(resource.campaign_id, resource.area_id, place_id: place.id), remote: true, method: :post, data: {disable_with: ''}, title: 'Deactivate', class: 'icon icon-rounded-disable icon-large deactivate-btn '
+      = link_to '', include_place_campaign_areas_campaign_path(resource.campaign_id, resource.area_id, place_id: place.id), remote: true, method: :post, data: {disable_with: ''}, title: 'Activate', class: 'icon icon-rounded-ok  icon-large activate-btn'
