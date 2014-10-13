@@ -25,6 +25,7 @@
     Users
     
   </li>
+  
 </ul>
 
 <div class='page-header'>
@@ -34,6 +35,7 @@
     <small>Users</small>
   </h1>
 </div>
+
 
 
   <h2>Supported Formats</h2>
@@ -52,7 +54,8 @@
            data-toggle='collapse'
            data-parent='#accordion'>
             POST /api/v1/users/password/new_password
-          </a><br>
+          </a>
+          <br>
           <small>Request a new password for a user</small>
         </h2>
     </div>
@@ -61,28 +64,32 @@
     <div id='description-new_password' class='collapse accordion-body'>
       
 
-        <h3>Supported Formats</h3>
-        json, xml
+  <h3>Supported Formats</h3>
+  json, xml
 
-        <h3>Errors</h3>
-          404
-          Missing
-          <br>
-          500
-          Server crashed for some reason
-          <br>
+  <h3>Errors</h3>
+    404
+    Missing
+    <br>
+    401
+    Unauthorized access
+    <br>
+    500
+    Server crashed for some reason
+    <br>
 
 
-        <h3>Params</h3>
-        <table class='table'>
-          <thead>
-            <tr>
-              <th>Param name</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-              <tr style='background-color:rgb(255,255,255);'>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
     <td>
       <strong>email </strong><br>
       <small>
@@ -96,13 +103,901 @@
 
         <br>
         Value: Must be String
+
+
     </td>
+
   </tr>
 
   
 
-          </tbody>
-        </table>
+    </tbody>
+  </table>
+
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/users/index.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-index'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/users
+          </a>
+          <br>
+          <small>Get a list of users for a specific company</small>
+        </h2>
+    </div>
+
+
+    <div id='description-index' class='collapse accordion-body'>
+      
+<p>Returns a full list of the existing users in the company. Only active users
+are returned. Each user have the following attributes:</p>
+<ul><li>
+<p><strong>id</strong>: the user id</p>
+</li><li>
+<p><strong>first_name</strong>: the user&#39;s first name</p>
+</li><li>
+<p><strong>last_name</strong>: the user&#39;s last name</p>
+</li><li>
+<p><strong>full_name</strong>: the user&#39;s full name</p>
+</li><li>
+<p><strong>role_name</strong>: the user&#39;s role name</p>
+</li><li>
+<p><strong>email</strong>: the user&#39;s email address</p>
+</li><li>
+<p><strong>street_address</strong>: the user&#39;s street name and number</p>
+</li><li>
+<p><strong>city</strong>: the user&#39;s city name</p>
+</li><li>
+<p><strong>state</strong>: the user&#39;s state code</p>
+</li><li>
+<p><strong>zip_code</strong>: the user&#39;s ZIP code</p>
+</li><li>
+<p><strong>time_zone</strong>: the user&#39;s time zone</p>
+</li><li>
+<p><strong>country</strong>: the user&#39;s country</p>
+</li></ul>
+
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    404
+    Missing
+    <br>
+    401
+    Unauthorized access
+    <br>
+    500
+    Server crashed for some reason
+    <br>
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">A list of users for company id 1:
+GET /api/v1/users?auth_token=XXXXXYYYYYZZZZZ&amp;company_id=1
+[
+    {
+        &quot;id&quot;: 268,
+        &quot;first_name&quot;: &quot;Trinity&quot;,
+        &quot;last_name&quot;: &quot;Ruiz&quot;,
+        &quot;full_name&quot;: &quot;Trinity Ruiz&quot;,
+        &quot;role_name&quot;: &quot;MBN Supervisor&quot;,
+        &quot;email&quot;: &quot;trinity.ruiz@gmail.com&quot;,
+        &quot;phone_number&quot;: &quot;+1 233 245 4332&quot;,
+        &quot;street_address&quot;: &quot;1st Young st.,&quot;,
+        &quot;city&quot;: &quot;Toronto&quot;,
+        &quot;state&quot;: &quot;ON&quot;,
+        &quot;zip_code&quot;: &quot;54783&quot;,
+        &quot;time_zone&quot;=&gt;&quot;Pacific Time (US &amp; Canada)&quot;,
+        &quot;country&quot;: &quot;Canada&quot;
+    }
+]
+</pre>
+    <pre class="prettyprint">A list of ACTIVE users for company id 1 filtered by roles 1 and 2:
+GET /api/v1/users?auth_token=XXXXXYYYYYZZZZZ&amp;company_id=1&amp;role[]=1&amp;role[]=2
+[
+    {
+        &quot;id&quot;: 268,
+        &quot;first_name&quot;: &quot;Trinity&quot;,
+        &quot;last_name&quot;: &quot;Ruiz&quot;,
+        &quot;full_name&quot;: &quot;Trinity Ruiz&quot;,
+        &quot;role_name&quot;: &quot;MBN Supervisor&quot;,
+        &quot;email&quot;: &quot;trinity.ruiz@gmail.com&quot;,
+        &quot;phone_number&quot;: &quot;+1 233 245 4332&quot;,
+        &quot;street_address&quot;: &quot;1st Young st.,&quot;,
+        &quot;city&quot;: &quot;Toronto&quot;,
+        &quot;state&quot;: &quot;ON&quot;,
+        &quot;zip_code&quot;: &quot;54783&quot;,
+        &quot;time_zone&quot;=&gt;&quot;Pacific Time (US &amp; Canada)&quot;,
+        &quot;country&quot;: &quot;Canada&quot;
+    }
+]
+</pre>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>campaign </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of campaign ids. If given, the list will include only users that are
+assigned to these campaigns</p>
+
+        <br>
+        Value: Must be an array of any type
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>team </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of team ids. If given, the list will include only users that are
+members of these teams</p>
+
+        <br>
+        Value: Must be an array of any type
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>role </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of role ids. If given, the list will include only users with there
+roles</p>
+
+        <br>
+        Value: Must be an array of any type
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/users/show.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-show'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/users/:id
+          </a>
+          <br>
+          <small>Return a user's details</small>
+        </h2>
+    </div>
+
+
+    <div id='description-show' class='collapse accordion-body'>
+      
+<p>Returns the details of a give user</p>
+
+<pre>* *id*: the user id
+* *first_name*: the user&#39;s first name
+* *last_name*: the user&#39;s last name
+* *full_name*: the user&#39;s full name
+* *email*: the user&#39;s email address
+* *street_address*: the user&#39;s street name and number
+* *city*: the user&#39;s city name
+* *state*: the user&#39;s state code
+* *country*: the user&#39;s country
+* *zip_code*: the user&#39;s ZIP code
+* *role*:
+  * *id*: the role id
+  * *name*: the role name
+* *teams*: A list of the teams that the user belongs to
+  * *id*: the team&#39;s id
+  * *name*: the team&#39;s name</pre>
+
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    404
+    Missing
+    <br>
+    401
+    Unauthorized access
+    <br>
+    500
+    Server crashed for some reason
+    <br>
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">{
+    &quot;id&quot;: 1,
+    &quot;first_name&quot;: &quot;Admin&quot;,
+    &quot;last_name&quot;: &quot;User&quot;,
+    &quot;full_name&quot;: &quot;Admin User&quot;,
+    &quot;email&quot;: &quot;admin@brandscopic.com&quot;,
+    &quot;phone_number&quot;: null,
+    &quot;street_address&quot;: null,
+    &quot;unit_number&quot;: null,
+    &quot;city&quot;: &quot;San Francisco&quot;,
+    &quot;state&quot;: &quot;CA&quot;,
+    &quot;zip_code&quot;: null,
+    &quot;time_zone&quot;: &quot;Buenos Aires&quot;,
+    &quot;country&quot;: &quot;United States&quot;,
+    &quot;role&quot;: {
+        &quot;id&quot;: 1,
+        &quot;name&quot;: &quot;Super Admin&quot;
+    },
+    &quot;teams&quot;: []
+}
+</pre>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>User ID</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/users/update.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-update'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            PUT /api/v1/users/:id
+          </a>
+          <br>
+          <small>Update a user's details</small>
+        </h2>
+    </div>
+
+
+    <div id='description-update' class='collapse accordion-body'>
+      
+<p>Updates the user&#39;s data and returns all the user&#39;s updated info.</p>
+
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    404
+    Missing
+    <br>
+    401
+    Unauthorized access
+    <br>
+    500
+    Server crashed for some reason
+    <br>
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">PUT /api/v1/users/140?auth_token=XXXXXYYYYYZZZZZ&amp;company_id=1
+DATA:
+{
+    company_user: {
+        user_attributes: {
+            &quot;first_name&quot;=&gt;&quot;Trinity&quot;,
+            &quot;last_name&quot;=&gt;&quot;Blue&quot;,
+            &quot;email&quot;=&gt;&quot;trinity@matrix.com&quot;,
+            &quot;phone_number&quot;=&gt;&quot;+1 233 245 4332&quot;,
+            &quot;password&quot;=&gt;&quot;Pass12345&quot;,
+            &quot;password_confirmation&quot;=&gt;&quot;Pass12345&quot;,
+            &quot;street_address&quot;=&gt;&quot;1120 N Street&quot;,
+            &quot;unit_number&quot;=&gt;&quot;Room #101&quot;,
+            &quot;country&quot;=&gt;&quot;US&quot;,
+            &quot;city&quot;=&gt;&quot;Beberly Hills&quot;,
+            &quot;state&quot;=&gt;&quot;CA&quot;,
+            &quot;zip_code&quot;=&gt;&quot;90210&quot;,
+            &quot;time_zone&quot;=&gt;&quot;Pacific Time (US &amp; Canada)&quot;,
+            &quot;id&quot;=&gt;&quot;136&quot;
+        },
+        &quot;team_ids&quot;=&gt;[&quot;19&quot;, &quot;20&quot;],
+        &quot;role_id&quot;=&gt;&quot;21&quot;
+    }
+}
+
+RESPONSE:
+{
+    &quot;id&quot;: 140,
+    &quot;first_name&quot;: &quot;Trinity&quot;,
+    &quot;last_name&quot;: &quot;Blue&quot;,
+    &quot;full_name&quot;: &quot;Trinity Blue&quot;,
+    &quot;email&quot;: &quot;trinity@matrix.com&quot;,
+    &quot;phone_number&quot;: &quot;+1 233 245 4332&quot;,
+    &quot;street_address&quot;: &quot;1120 N Street&quot;,
+    &quot;unit_number&quot;: &quot;Room #101&quot;,
+    &quot;city&quot;: &quot;Beberly Hills&quot;,
+    &quot;state&quot;: &quot;CA&quot;,
+    &quot;zip_code&quot;: &quot;90210&quot;,
+    &quot;time_zone&quot;=&gt;&quot;Pacific Time (US &amp; Canada)&quot;,
+    &quot;country&quot;: &quot;United States&quot;,
+    &quot;role&quot;: {
+        &quot;id&quot;: 21,
+        &quot;name&quot;: &quot;My Custom Role&quot;
+    },
+    &quot;teams&quot;: [
+        {
+            &quot;id&quot;: 19,
+            &quot;name&quot;: &quot;Team #1&quot;
+        },
+        {
+            &quot;id&quot;: 20,
+            &quot;name&quot;: &quot;Team #2&quot;
+        }
+    ]
+}
+</pre>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>User&#39;s authorization token returned by login method</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>One of the allowed company ids returned by the “User companies” API method</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Company User ID</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_user </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be a Hash
+
+
+    </td>
+
+  </tr>
+
+    <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>company_user[user_attributes] </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be a Hash
+
+
+    </td>
+
+  </tr>
+
+    <tr style='background-color:rgb(245,245,245);'>
+    <td>
+      <strong>company_user[user_attributes][first_name] </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>User&#39;s first name</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(245,245,245);'>
+    <td>
+      <strong>company_user[user_attributes][last_name] </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>User&#39;s last name</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(245,245,245);'>
+    <td>
+      <strong>company_user[user_attributes][email] </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>User&#39;s email address</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(245,245,245);'>
+    <td>
+      <strong>company_user[user_attributes][phone_number] </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>User&#39;s phone number</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(245,245,245);'>
+    <td>
+      <strong>company_user[user_attributes][password] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>User&#39;s password</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(245,245,245);'>
+    <td>
+      <strong>company_user[user_attributes][password_confirmation] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>User&#39;s password confirmation</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(245,245,245);'>
+    <td>
+      <strong>company_user[user_attributes][street_address] </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>User&#39;s street address 1</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(245,245,245);'>
+    <td>
+      <strong>company_user[user_attributes][unit_number] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>User&#39;s street address 2</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(245,245,245);'>
+    <td>
+      <strong>company_user[user_attributes][country] </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>User&#39;s country code, eg: US, UK, AR</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(245,245,245);'>
+    <td>
+      <strong>company_user[user_attributes][state] </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>User&#39;s state code, eg: CA, TX</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(245,245,245);'>
+    <td>
+      <strong>company_user[user_attributes][city] </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>User&#39;s city</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(245,245,245);'>
+    <td>
+      <strong>company_user[user_attributes][zip_code] </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>User&#39;s ZIP code</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(245,245,245);'>
+    <td>
+      <strong>company_user[user_attributes][time_zone] </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>User&#39;s time zone</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(245,245,245);'>
+    <td>
+      <strong>company_user[user_attributes][id] </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>User ID</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+
+
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>team_ids </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Teams that the user belongs</p>
+
+        <br>
+        Value: Must be an array of any type
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>role_id </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>User&#39;s role ID</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
     </div>
     <hr>
     <div class='pull-right small'>
@@ -115,7 +1010,8 @@
            data-toggle='collapse'
            data-parent='#accordion'>
             GET /api/v1/companies
-          </a><br>
+          </a>
+          <br>
           <small>Get a list of companies the user has access to</small>
         </h2>
     </div>
@@ -124,19 +1020,23 @@
     <div id='description-companies' class='collapse accordion-body'>
       
 
-        <h3>Supported Formats</h3>
-        json, xml
+  <h3>Supported Formats</h3>
+  json, xml
 
-        <h3>Errors</h3>
-          404
-          Missing
-          <br>
-          500
-          Server crashed for some reason
-          <br>
+  <h3>Errors</h3>
+    404
+    Missing
+    <br>
+    401
+    Unauthorized access
+    <br>
+    500
+    Server crashed for some reason
+    <br>
 
-        <h3>Examples</h3>
-          <pre class="prettyprint">GET /api/v1/companies?auth_token=XXXXXYYYYYZZZZZ
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">GET /api/v1/companies?auth_token=XXXXXYYYYYZZZZZ
 
 [
     {
@@ -150,16 +1050,16 @@
 ]
 </pre>
 
-        <h3>Params</h3>
-        <table class='table'>
-          <thead>
-            <tr>
-              <th>Param name</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-              <tr style='background-color:rgb(255,255,255);'>
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
     <td>
       <strong>auth_token </strong><br>
       <small>
@@ -171,13 +1071,441 @@
       
         <br>
         Value: Must be String
+
+
     </td>
+
   </tr>
 
   
 
-          </tbody>
-        </table>
+    </tbody>
+  </table>
+
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/users/notifications.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-notifications'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/users/notifications
+          </a>
+          <br>
+          <small>Get a list of user's notifications</small>
+        </h2>
+    </div>
+
+
+    <div id='description-notifications' class='collapse accordion-body'>
+      
+<p>Returns a list of notifications for the current user with the following
+atttibutes:</p>
+<ul><li>
+<p><strong>message</strong>: A human readable description of the notification.</p>
+</li><li>
+<p><strong>level</strong>: Indicates the level of the notification. Possible
+options are: “red”, “grey” and “blue”</p>
+</li><li>
+<p><strong>icon</strong>: An string that could be used to identify what icon
+to use for the notification</p>
+</li><li>
+<p><strong>type</strong>: The type of notification, the possible options are:</p>
+<ul><li>
+<p><strong>event_recaps_due</strong>: At least one event is due</p>
+</li><li>
+<p><strong>event_recaps_late</strong>: At least one event is late</p>
+</li><li>
+<p><strong>event_recaps_pending</strong>: There is at least one event that is
+waiting for approval</p>
+</li><li>
+<p><strong>event_recaps_rejected</strong>: There is at least one event that
+was rejected</p>
+</li><li>
+<p><strong>team_tasks_late</strong>: The user&#39;s team have late tasks</p>
+</li><li>
+<p><strong>user_tasks_late</strong>: The user have late tasks</p>
+</li><li>
+<p><strong>user_task_comments</strong>: One or more user&#39;s team tasks have
+a commment</p>
+</li><li>
+<p><strong>team_task_comments</strong>: One or more user tasks have a commment</p>
+</li><li>
+<p><strong>new_event</strong>: The user have been assigned to a event</p>
+</li><li>
+<p><strong>new_campaign</strong>: The user have been assigned to a campaign</p>
+</li><li>
+<p><strong>new_team_task</strong>: The user&#39;s team have been assigned to a
+task</p>
+</li><li>
+<p><strong>new_task</strong>: The user have been assigned to a task</p>
+</li></ul>
+</li><li>
+<p><strong>event_id</strong>: when the notification is about a single event,
+this indicates the event&#39;s ID</p>
+</li><li>
+<p><strong>campaign_id</strong>: when the notification is about a single
+campaign, this indicates the campaign&#39;s ID</p>
+</li><li>
+<p><strong>task_id</strong>: when the notification is about a single task,
+this indicates the task&#39;s ID</p>
+</li></ul>
+
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    404
+    Missing
+    <br>
+    401
+    Unauthorized access
+    <br>
+    500
+    Server crashed for some reason
+    <br>
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">GET /api/v1/users/notifications.json?auth_token=XXXXXYYYYYZZZZZ&amp;company_id=1
+[
+    {
+        &quot;message&quot;: &quot;There is one late event recap&quot;,
+        &quot;level&quot;: &quot;red&quot;,
+        &quot;icon&quot;: &quot;icon-notification-event&quot;,
+        &quot;type&quot;: &quot;event_recaps_late&quot;
+    },
+    {
+        &quot;message&quot;: &quot;You have one late task&quot;,
+        &quot;level&quot;: &quot;red&quot;,
+        &quot;icon&quot;: &quot;icon-notification-task&quot;,
+        &quot;type&quot;: &quot;user_tasks_late&quot;
+    },
+    {
+        &quot;message&quot;: &quot;You have a new event&quot;,
+        &quot;level&quot;: &quot;grey&quot;,
+        &quot;icon&quot;: &quot;icon-notification-event&quot;,
+        &quot;type&quot;: &quot;new_event&quot;,
+        &quot;event_id&quot;: 5262
+    },
+    {
+        &quot;message&quot;: &quot;You have a new campaign&quot;,
+        &quot;level&quot;: &quot;grey&quot;,
+        &quot;icon&quot;: &quot;icon-notification-campaign&quot;,
+        &quot;type&quot;: &quot;new_campaign&quot;,
+        &quot;campaign_id&quot;: 31
+    },
+    {
+        &quot;message&quot;: &quot;You have been assigned a task: Pick up t-shirts&quot;,
+        &quot;level&quot;: &quot;grey&quot;,
+        &quot;icon&quot;: &quot;icon-notification-task&quot;,
+        &quot;type&quot;: &quot;new_task&quot;,
+        &quot;task_id&quot;: 187
+    }
+]
+</pre>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>User&#39;s authorization token returned by login method</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>One of the allowed company ids returned by the “User companies” API method</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/users/permissions.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-permissions'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/users/permissions
+          </a>
+          <br>
+          <small>Get a list of the user's permissions</small>
+        </h2>
+    </div>
+
+
+    <div id='description-permissions' class='collapse accordion-body'>
+      
+<p>Returns a list of the user&#39;s permissions on a given company. A user can
+have different permissions each company.</p>
+
+<p>This is the list of the available permissions:</p>
+<ul><li>
+<p><em>events</em>: Can access the events list page</p>
+</li><li>
+<p><em>events_create</em>: Can create events</p>
+</li><li>
+<p><em>events_show</em>: Can access the event details page</p>
+</li><li>
+<p><em>events_edit</em>: Can edit a event</p>
+</li><li>
+<p><em>events_deactivate</em>: Can deactivate a event</p>
+</li><li>
+<p><em>events_view_unsubmitted_data</em>: Can view the data for unsubmitted
+events</p>
+</li><li>
+<p><em>events_view_submitted_data</em>: Can view the data for submitted events</p>
+</li><li>
+<p><em>events_view_approved_data</em>: Can view the data for approved events</p>
+</li><li>
+<p><em>events_view_rejected_data</em>: Can view the data for rejected events</p>
+</li><li>
+<p><em>events_edit_unsubmitted_data</em>: Can edit the data for unsubmitted
+events</p>
+</li><li>
+<p><em>events_edit_submitted_data</em>: Can edit the data for submitted events</p>
+</li><li>
+<p><em>events_edit_approved_data</em>: Can edit the data for approved events</p>
+</li><li>
+<p><em>events_edit_rejected_data</em>: Can edit the data for rejected events</p>
+</li><li>
+<p><em>events_submit</em>: Can submit a event for approval</p>
+</li><li>
+<p><em>events_approve</em>: Can approve a submitted event</p>
+</li><li>
+<p><em>events_reject</em>: Can reject a submitted event</p>
+</li><li>
+<p><em>events_team_members</em>: Can see event&#39;s the team members</p>
+</li><li>
+<p><em>events_add_team_members</em>: Can add existing users to a event as part
+of the event team</p>
+</li><li>
+<p><em>events_delete_team_members</em>: Can delete members from the
+event&#39;s team</p>
+</li><li>
+<p><em>events_contacts</em>: Can see the list of contacts for the event</p>
+</li><li>
+<p><em>events_delete_contacts</em>: Can delete contacts</p>
+</li><li>
+<p><em>events_edit_contacts</em>: Can edit contacts</p>
+</li><li>
+<p><em>events_add_contacts</em>: Can add existing contacts to a event</p>
+</li><li>
+<p><em>events_documents</em>: Can see the list of documents associated to a
+event</p>
+</li><li>
+<p><em>events_create_documents</em>: Can create documents.</p>
+</li><li>
+<p><em>events_deactivate_documents</em>: Can deactivate documents</p>
+</li><li>
+<p><em>events_expenses</em>: Can see the list of event&#39;s expenses</p>
+</li><li>
+<p><em>events_deactivate_expenses</em>: Can deactivate expenses</p>
+</li><li>
+<p><em>events_edit_expenses</em>: Can edit expenses</p>
+</li><li>
+<p><em>events_create_expenses</em>: Can create expenses</p>
+</li><li>
+<p><em>events_photos</em>: Can see the photos associated to a event</p>
+</li><li>
+<p><em>events_create_photos</em>: Can add photos to a event</p>
+</li><li>
+<p><em>events_deactivate_photos</em>: Can deactivate photos</p>
+</li><li>
+<p><em>events_surveys</em>: Can see the list of surveys of a event</p>
+</li><li>
+<p><em>events_create_surveys</em>: Can create surveys</p>
+</li><li>
+<p><em>events_edit_surveys</em>: Can edit surveys</p>
+</li><li>
+<p><em>events_deactivate_surveys</em>: Can deactivate surveys</p>
+</li><li>
+<p><em>events_create_tasks</em>: Can create tasks for a event</p>
+</li><li>
+<p><em>events_edit_tasks</em>: Can edit the tasks of a event</p>
+</li><li>
+<p><em>events_tasks</em>: Can see a list of tasks for a event</p>
+</li><li>
+<p><em>events_comments</em>: Can see the list of comments of a event</p>
+</li><li>
+<p><em>events_create_comments</em>: Can create comments</p>
+</li><li>
+<p><em>events_edit_comments</em>: Can edit comments</p>
+</li><li>
+<p><em>events_deactivate_surveys</em>: Can deactivate comments</p>
+</li><li>
+<p><em>tasks_own</em>: Can see his own tasks</p>
+</li><li>
+<p><em>tasks_team</em>: Can see his team&#39;s taks</p>
+</li><li>
+<p><em>tasks_comments_own</em>: Can see the comments on tasks assigned to him</p>
+</li><li>
+<p><em>tasks_create_comments_own</em>: Can create comments on tasks assigned
+to him</p>
+</li><li>
+<p><em>tasks_comments_team</em>: Can see the comments on his team&#39;s tasks</p>
+</li><li>
+<p><em>tasks_create_comments_team</em>: Can create comments on the user
+team&#39;s tasks</p>
+</li><li>
+<p><em>tasks_deactivate_own</em>: Can deactivate his own tasks</p>
+</li><li>
+<p><em>tasks_deactivate_team</em>: Can deactivate his team&#39;s tasks</p>
+</li><li>
+<p><em>tasks_edit_own</em>: Can edit his own tasks</p>
+</li><li>
+<p><em>tasks_edit_team</em>: Can edit his team&#39;s tasks</p>
+</li><li>
+<p><em>venues</em>: Can see the list of venues</p>
+</li><li>
+<p><em>venues_analysis</em>: Can see the analysis section of a venue</p>
+</li><li>
+<p><em>venues_create</em>: Can create venues</p>
+</li><li>
+<p><em>venues_show</em>: Can access a venue&#39;s details view</p>
+</li><li>
+<p><em>venues_analysis</em>: Can see a venue&#39;s analysis data</p>
+</li><li>
+<p><em>venues_kpis</em>: Can see a venue&#39;s KPI data within the analysis
+data</p>
+</li><li>
+<p><em>venues_score</em>: Can see a venue&#39;s score within the analysis data</p>
+</li><li>
+<p><em>venues_trends</em>: Can see a venue&#39;s trends graph within the 
+analysis data</p>
+</li><li>
+<p><em>venues_photos</em>: Can see a venue&#39;s photos</p>
+</li><li>
+<p><em>venues_comment</em>: Can see a venue&#39;s photos</p>
+</li></ul>
+
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    404
+    Missing
+    <br>
+    401
+    Unauthorized access
+    <br>
+    500
+    Server crashed for some reason
+    <br>
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">GET /api/v1/users/permissions.json?auth_token=XXXXXYYYYYZZZZZ&amp;company_id=1
+
+[&#39;events&#39;, &#39;events_create&#39;, &#39;venues&#39;, &#39;tasks&#39;]
+</pre>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>User&#39;s authorization token returned by login method</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>One of the allowed company ids returned by the “User companies” API method</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
     </div>
 </div>
 
@@ -186,8 +1514,7 @@
       </div>
     </div>
     <hr>
-    <footer>  
-</footer>
+    <footer></footer>
   </div>
   <script type='text/javascript' src='../apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
 <script type='text/javascript' src='../apidoc/javascripts/bundled/bootstrap-collapse.js'></script>

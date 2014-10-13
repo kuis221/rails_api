@@ -23,7 +23,6 @@ require 'rails_helper'
 
 describe EventData, type: :model do
   before do
-    ResqueSpec.reset!
     Kpi.delete_all
   end
 

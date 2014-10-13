@@ -1,0 +1,34 @@
+css:
+  .fc-toolbar .fc-right {
+    display: none;
+  }
+  .fc-toolbar .fc-center {
+    display: none;
+  }
+  .fc-toolbar .fc-left {
+    width: 100%;
+  }
+  .fc-toolbar .fc-left h2 {
+    white-space: nowrap;
+  }
+  .filter-description {
+    padding: 10px 0;
+  }
+  .resource-list .resource-item {
+    min-height: 80px;
+  }
+
+- if params[:mode] == 'calendar' && can?(:view_calendar, Event)
+  #calendar-canvas data-events-url="#{calendar_events_url(format: :json)}"
+  = content_for :pdf_scripts
+    = wicked_pdf_javascript_include_tag "application"
+    javascript:
+      window.status='loading';
+      jQuery(function(){
+        window.createCalendar(#{params[:month] || 'null'}, #{params[:year] || 'null'});
+      });
+- else
+  .filter-description
+    = describe_filters
+
+  = render template: 'inherited_resources/base/index'

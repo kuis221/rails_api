@@ -1,26 +1,28 @@
 - if venue.is_a?(Venue)
   div.resource-item id="venue_#{venue.id}"
-    = link_to_if_permitted(:show, Venue, venue_path(venue.id), class: 'resource-item-link') do
+    = link_to_if_permitted(:show, Venue, venue_url(venue.id), class: 'resource-item-link') do
       .score.pull-left
         - if venue.score.present?
           .big-number= "#{venue.score}"
           | SCORE
       .pull-left
-        b= venue.name
-        br>/
+        .text-large= venue.name
         .type= venue.types_without_establishment.map{|type| t("venue_types.#{type}") }.join(', ')
-        .venue_adress
+        .venue_address.crop-text
           = venue.formatted_address
       .venue-stats.pull-right
         .events
           .n_events
             = "#{venue.events_count}"
+            .pdf-label= 'Events'
         .hours
           .n_hours
             = "#{venue.promo_hours}"
+            .pdf-label= 'Hours'
         .spent
           .n_spent
             = "#{number_to_currency(venue.spent)}"
+            .pdf-label= 'Spent'
 - else
   div.resource-item id="venue_#{venue.id}"
     = link_to_if_permitted(:show, Venue, venue_path(venue.id, ref: venue.reference), class: 'resource-item-link') do

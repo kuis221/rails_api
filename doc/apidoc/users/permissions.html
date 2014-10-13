@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>API documentation</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/bootstrap.min.css'/>
+<link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/prettify.css'/>
+<link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/bootstrap-responsive.min.css'/>
+  <link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/application.css'/>
+  <!-- IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div id='container'>
+        <ul class='breadcrumb'>
+  <li>
+    <a href='../../apidoc.html'>Brandscopic 1.0</a>
+    <span class='divider'>/</span>
+  </li>
+  <li>
+    <a href='../../apidoc/users.html'>
+      Users
+      
+    </a>
+    <span class='divider'>/</span>
+  </li>
+  <li class='active'>permissions</li>
+  
+
+</ul>
+
+  <div class='page-header'>
+    <h1>
+      GET /api/v1/users/permissions
+      <br>
+      <small>Get a list of the user's permissions</small>
+    </h1>
+  </div>
+
+<div>
+
+  
+<p>Returns a list of the user&#39;s permissions on a given company. A user can
+have different permissions each company.</p>
+
+<p>This is the list of the available permissions:</p>
+<ul><li>
+<p><em>events</em>: Can access the events list page</p>
+</li><li>
+<p><em>events_create</em>: Can create events</p>
+</li><li>
+<p><em>events_show</em>: Can access the event details page</p>
+</li><li>
+<p><em>events_edit</em>: Can edit a event</p>
+</li><li>
+<p><em>events_deactivate</em>: Can deactivate a event</p>
+</li><li>
+<p><em>events_view_unsubmitted_data</em>: Can view the data for unsubmitted
+events</p>
+</li><li>
+<p><em>events_view_submitted_data</em>: Can view the data for submitted events</p>
+</li><li>
+<p><em>events_view_approved_data</em>: Can view the data for approved events</p>
+</li><li>
+<p><em>events_view_rejected_data</em>: Can view the data for rejected events</p>
+</li><li>
+<p><em>events_edit_unsubmitted_data</em>: Can edit the data for unsubmitted
+events</p>
+</li><li>
+<p><em>events_edit_submitted_data</em>: Can edit the data for submitted events</p>
+</li><li>
+<p><em>events_edit_approved_data</em>: Can edit the data for approved events</p>
+</li><li>
+<p><em>events_edit_rejected_data</em>: Can edit the data for rejected events</p>
+</li><li>
+<p><em>events_submit</em>: Can submit a event for approval</p>
+</li><li>
+<p><em>events_approve</em>: Can approve a submitted event</p>
+</li><li>
+<p><em>events_reject</em>: Can reject a submitted event</p>
+</li><li>
+<p><em>events_team_members</em>: Can see event&#39;s the team members</p>
+</li><li>
+<p><em>events_add_team_members</em>: Can add existing users to a event as part
+of the event team</p>
+</li><li>
+<p><em>events_delete_team_members</em>: Can delete members from the
+event&#39;s team</p>
+</li><li>
+<p><em>events_contacts</em>: Can see the list of contacts for the event</p>
+</li><li>
+<p><em>events_delete_contacts</em>: Can delete contacts</p>
+</li><li>
+<p><em>events_edit_contacts</em>: Can edit contacts</p>
+</li><li>
+<p><em>events_add_contacts</em>: Can add existing contacts to a event</p>
+</li><li>
+<p><em>events_documents</em>: Can see the list of documents associated to a
+event</p>
+</li><li>
+<p><em>events_create_documents</em>: Can create documents.</p>
+</li><li>
+<p><em>events_deactivate_documents</em>: Can deactivate documents</p>
+</li><li>
+<p><em>events_expenses</em>: Can see the list of event&#39;s expenses</p>
+</li><li>
+<p><em>events_deactivate_expenses</em>: Can deactivate expenses</p>
+</li><li>
+<p><em>events_edit_expenses</em>: Can edit expenses</p>
+</li><li>
+<p><em>events_create_expenses</em>: Can create expenses</p>
+</li><li>
+<p><em>events_photos</em>: Can see the photos associated to a event</p>
+</li><li>
+<p><em>events_create_photos</em>: Can add photos to a event</p>
+</li><li>
+<p><em>events_deactivate_photos</em>: Can deactivate photos</p>
+</li><li>
+<p><em>events_surveys</em>: Can see the list of surveys of a event</p>
+</li><li>
+<p><em>events_create_surveys</em>: Can create surveys</p>
+</li><li>
+<p><em>events_edit_surveys</em>: Can edit surveys</p>
+</li><li>
+<p><em>events_deactivate_surveys</em>: Can deactivate surveys</p>
+</li><li>
+<p><em>events_create_tasks</em>: Can create tasks for a event</p>
+</li><li>
+<p><em>events_edit_tasks</em>: Can edit the tasks of a event</p>
+</li><li>
+<p><em>events_tasks</em>: Can see a list of tasks for a event</p>
+</li><li>
+<p><em>events_comments</em>: Can see the list of comments of a event</p>
+</li><li>
+<p><em>events_create_comments</em>: Can create comments</p>
+</li><li>
+<p><em>events_edit_comments</em>: Can edit comments</p>
+</li><li>
+<p><em>events_deactivate_surveys</em>: Can deactivate comments</p>
+</li><li>
+<p><em>tasks_own</em>: Can see his own tasks</p>
+</li><li>
+<p><em>tasks_team</em>: Can see his team&#39;s taks</p>
+</li><li>
+<p><em>tasks_comments_own</em>: Can see the comments on tasks assigned to him</p>
+</li><li>
+<p><em>tasks_create_comments_own</em>: Can create comments on tasks assigned
+to him</p>
+</li><li>
+<p><em>tasks_comments_team</em>: Can see the comments on his team&#39;s tasks</p>
+</li><li>
+<p><em>tasks_create_comments_team</em>: Can create comments on the user
+team&#39;s tasks</p>
+</li><li>
+<p><em>tasks_deactivate_own</em>: Can deactivate his own tasks</p>
+</li><li>
+<p><em>tasks_deactivate_team</em>: Can deactivate his team&#39;s tasks</p>
+</li><li>
+<p><em>tasks_edit_own</em>: Can edit his own tasks</p>
+</li><li>
+<p><em>tasks_edit_team</em>: Can edit his team&#39;s tasks</p>
+</li><li>
+<p><em>venues</em>: Can see the list of venues</p>
+</li><li>
+<p><em>venues_analysis</em>: Can see the analysis section of a venue</p>
+</li><li>
+<p><em>venues_create</em>: Can create venues</p>
+</li><li>
+<p><em>venues_show</em>: Can access a venue&#39;s details view</p>
+</li><li>
+<p><em>venues_analysis</em>: Can see a venue&#39;s analysis data</p>
+</li><li>
+<p><em>venues_kpis</em>: Can see a venue&#39;s KPI data within the analysis
+data</p>
+</li><li>
+<p><em>venues_score</em>: Can see a venue&#39;s score within the analysis data</p>
+</li><li>
+<p><em>venues_trends</em>: Can see a venue&#39;s trends graph within the 
+analysis data</p>
+</li><li>
+<p><em>venues_photos</em>: Can see a venue&#39;s photos</p>
+</li><li>
+<p><em>venues_comment</em>: Can see a venue&#39;s photos</p>
+</li></ul>
+
+
+  <h2>Supported Formats</h2>
+  json, xml
+
+  <h2>Errors</h2>
+    404
+    Missing
+    <br>
+    401
+    Unauthorized access
+    <br>
+    500
+    Server crashed for some reason
+    <br>
+
+
+  <h2>Examples</h2>
+    <pre class="prettyprint">GET /api/v1/users/permissions.json?auth_token=XXXXXYYYYYZZZZZ&amp;company_id=1
+
+[&#39;events&#39;, &#39;events_create&#39;, &#39;venues&#39;, &#39;tasks&#39;]
+</pre>
+
+  <h2>Params</h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>User&#39;s authorization token returned by login method</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>One of the allowed company ids returned by the “User companies” API method</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+</div>
+
+
+        
+      </div>
+    </div>
+    <hr>
+    <footer></footer>
+  </div>
+  <script type='text/javascript' src='../../apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/bundled/bootstrap-collapse.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/bundled/prettify.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/apipie.js'></script>
+</body>
+</html>

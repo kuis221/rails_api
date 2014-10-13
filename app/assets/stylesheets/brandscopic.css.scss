@@ -359,8 +359,14 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 }
 
 .input-append .add-on, .input-prepend .add-on {
-	height: 21px;
-	padding: 9px 5px;
+	background-color: silver;
+	border: 1px solid silver;
+	color: white;
+	height: 20px;
+	text-shadow: none;
+	width: 34px;
+	height: 23px;
+	padding: 7px 5px;
 }
 
 // Progress Bar Styles (Event Data)
@@ -385,7 +391,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	background-image: none !important;
 	border-radius: 0!important;
 	box-shadow: none !important;
-	height: 17px;
+	height: 10px;
 	width: 220px !important;
 	.bar{
 		background-color: $due_today!important;
@@ -1674,7 +1680,7 @@ li.dropdown a{
 				height: 97px;
 				top: -5px;
 				right: 0;
-				background-image: image-url('active-rounded.png');
+				background-image: image-url('active-rounded.svg');
 				background-position: right -5px, right 93px;
 				background-repeat: no-repeat,no-repeat;
 				z-index: 100;
@@ -1686,9 +1692,9 @@ li.dropdown a{
 				position: absolute;
 				width: 5px;
 				height: 97px;
-				top: -5px;
+				top: -13px;
 				right: 0;
-				background-image: image-url('active-rounded.png');
+				background-image: image-url('active-rounded.svg');
 				background-position: right 93px, right 20px;
 				background-repeat: no-repeat,no-repeat;
 				z-index: 100;
@@ -1702,14 +1708,14 @@ li.dropdown a{
 		}
 		a{
 			color:$grey_three;
+			box-sizing:border-box;
 			font-weight: bold;
-			padding: 28px 0 20px 0;
-			height:40px;
+			padding: 20px 0 20px 0;
+			height:80px;
 			&:hover{
 				background-color: $text;
 				color: $user_menu;
-				height: 40px !important;
-				padding: 28px 0 20px 0 !important;
+				padding: 20px 0 20px 0 !important;
 			}
 		}
 		&#brand_ambassadors{
@@ -2041,13 +2047,14 @@ li#notifications{
 }
 .sidebar{
 	background:white;
-	float:right;
+	float: right;
 	min-height: 300px;
 	padding:14px 11px 18px 11px;
 	-webkit-border-radius: 6px;
 	-moz-border-radius: 6px;
 	border-radius: 6px;
-	width:210px;
+	width: 210px;
+	z-index: 1;
 	.btn{
 		margin-right: 8px;
 		width: 85px;
@@ -2560,7 +2567,7 @@ ul.ui-widget-content{
 #resource-index-container {
 	padding-right: 250px;
 	#resource-filter-column {
-		float:left;
+		float: left;
 		width: 250px;
 		margin-right: -260px;
 		input[type="text"] {
@@ -2577,7 +2584,7 @@ ul.ui-widget-content{
 		margin: 0;
 	}
 	ul {
-		margin: 0 0 10px 0;
+		margin: 0 0 5px 0;
 		li {
 			list-style: none;
 		}
@@ -2587,20 +2594,132 @@ ul.ui-widget-content{
 		width: 100%;
 	}
 
-	.filter-wrapper {
-		li ul {
-			display: none;
+	.form-facet-filters {
+		.accordion-group {
+			border: none;
+			margin-bottom: 20px;
+			.filter-wrapper {
+				li ul {
+					display: none;
+				}
+				.filter-title {
+					font-size: 13px;
+					font-weight: bold;
+					margin-bottom: 10px;
+					padding: 0;
+					text-transform: uppercase;
+					&:hover {
+						color: $text;
+						text-decoration: none;
+					}
+					span {
+						margin-right: 5px;
+						&.icon-arrow-down:before {
+							padding-top: 5px;
+							vertical-align: middle;
+						}
+						&.icon-arrow-right:before {
+							font-size: 10px;
+							vertical-align: middle;
+						}
+					}
+				}
+			}
+			.accordion-body {
+				.accordion-inner {
+					border-top: 0;
+					padding: 0;
+				}
+			}
+			label{
+				color: $text;
+				font-weight: 400;
+				letter-spacing: -0.5px;
+				line-height: 22px;
+				margin-bottom: 3px;
+				padding-left: 28px;
+				position: relative;
+				.checker{
+					left: 0px;
+					top: 2px;
+					position: absolute;
+				}
+			}
 		}
 	}
-	.sf-menu {
+
+	/*-- MORE MENU STYLES --*/
+
+	.accordion-group {
+		position: relative;
+	}
+
+	.more-options-container {
+		width: 211px;
+		position: absolute;
+		left: -220px;
+		bottom: -28px;
 		z-index: 1000;
-		input[type=checkbox] {
-			display: none;
+		background: white;
+		-webkit-border-radius: 6px;
+		-moz-border-radius: 6px;
+		border-radius: 6px;
+		border: 1px solid $borders;
+
+		input[type=checkbox], .checker {
+			display: none !important;
 		}
 		.options-list-group{
 			font-weight: bold;
 		}
+
+		ul.filter_vertical_box{
+			box-sizing:border-box;
+			overflow-x: hidden;
+			margin-top: 5px;
+			padding: 5px 0;
+			max-height: 194px !important;
+			li{
+				label {
+					padding-left: 8px;
+					line-height: 24px;
+				}
+				label:hover{
+					background-color: $brand;
+					color: white;
+				}
+				white-space: normal;
+			}
+		}
+
+		&:after {
+			content: '';
+			position: absolute;
+			border-style: solid;
+			border-width: 10px 0px 10px 10px;
+			border-color: transparent #FFFFFF;
+			display: block;
+			width: 0;
+			z-index: 109;
+			top: 163px;
+			right: -10px;
+		}
+
+		&:before {
+			content: '';
+			position: absolute;
+			border-style: solid;
+			border-width: 10px 0px 10px 10px;
+			border-color: transparent $borders;
+			display: block;
+			width: 0;
+			z-index: 22;
+			top: 163px;
+			right: -11px;
+		}
 	}
+
+
 }
 
 /* Info bar for details pages (Below the header) */
@@ -2614,7 +2733,6 @@ ul.ui-widget-content{
 	min-height: 40px;
 	z-index: 200;
 	-webkit-border-radius: 7px 7px 0px 0px;
-
 	width: 100%;
 	&.affix {
 		position: fixed;
@@ -2667,11 +2785,18 @@ ul.ui-widget-content{
 		margin-right: 0;
 	}
 	.icon-edit, .icon-rounded-disable{
-		margin: 0 0 0 15px;
 		color: $brand;
 		&:hover{
 			color:$app_bg;
 		}
+	}
+	.icon-edit{
+		margin: 0 0 0 15px;
+	}
+	.icon-rounded-disable{
+		margin: 0 0 0 10px;
+		position:relative;
+		top:1px;
 	}
 }
 
@@ -2782,10 +2907,18 @@ ul.ui-widget-content{
 			}
 		}
 	}
+	.number, .dropdown, .form_field_text, .form_field_number, .form_field_dropdown, .form_field_radio{
+		.control-group{
+			.controls{
+				//width:220px;
+			}
+		}
+	}
 	.control-group{
 		margin-bottom: 0;
-		.controls{
-			max-width: 220px;
+
+		.input-xlarge{
+			width:220px;
 		}
 		&.event_summary{
 			margin-bottom: 20px;
@@ -2805,9 +2938,16 @@ ul.ui-widget-content{
 			}
 		}
 		label{
-			font-weight: bold;
+			display:inline-block;
+			margin-right:30px;
 			margin-bottom: 6px;
+			font-weight:bold;
+			&.segment-label{
+				font-weight:normal;
+				font-size:13px;
+			}
 			&.checkbox{
+				font-weight:normal;
 				display: block;
 				width: initial;
 				margin-bottom: 10px;
@@ -2821,7 +2961,6 @@ ul.ui-widget-content{
 				}
 			}
 			&.control-group-label{
-				font-weight: bold;
 				&.control-label{
 					color: $text;
 				}
@@ -2860,34 +2999,47 @@ ul.ui-widget-content{
 		}
 		.controls{
 			width:auto;
+			max-width: none;
 		}
 	}
 	.form_field_summation {
 		display: inline-block;
-		.field-option {
-			text-align: right;
-			width: auto;
-			label {
-				text-align: left;
-				color: text;
-			}
-			input {
-				text-align: left;
-			}
-			&.error input {
-				border-color: #B94A49;
+		.controls {
+			margin-top: 10px;
+			.field-option {
+				text-align: right;
+				width: auto;
+				label {
+					text-align: left;
+					color: text;
+					margin-right: 20px;
+					width: 100px;
+					display: inline-block;
+					overflow: hidden;
+					height: 20px;
+				}
+				input {
+					text-align: left;
+				}
+				&.error input {
+					border-color: #B94A49;
+				}
+				.control-label{
+					float:left;
+				}
+				input {
+					width: 220px;
+				}
+				margin-bottom: 10px;
+				&.summation-total-field {
+					border-top: 2px solid $grey_four;
+					padding-top: 10px;
+					label {
+						text-align: right;
+					}
+				}
 			}
 		}
-		.summation-total-field {
-			border-top: 2px solid $grey_four;
-			padding-top: 10px;
-		}
-	}
-	.form_field_summation .field-option label {
-		width: 100px;
-		display: inline-block;
-		overflow: hidden;
-		height: 20px;
 	}
 	.form_field_section {
 		margin-top: 40px;
@@ -2921,22 +3073,11 @@ ul.ui-widget-content{
 	.input-append, .input-prepend{
 		margin-right: 15px;
 		margin-bottom: 0;
-		.add-on{
-			background-color: silver;
-			border: 1px solid silver;
-			color: white;
-			height: 19px;
-			text-shadow: none;
-			width: 34px;
-		}/*
-		input:focus{
-			&+ .add-on{
-				background-color: $brand;
-				border: 1px solid $brand;
-			}
-		}*/
 		input{
 			width: 176px;
+		}
+		.input-xlarge{
+			width:176px;
 		}
 	}
 	.checkbox{
@@ -2944,9 +3085,6 @@ ul.ui-widget-content{
 		.checker{
 			margin-right: 15px;
 		}
-	}
-	select {
-		width: 190px;
 	}
 	table{
 		margin-bottom: 0;
@@ -2990,19 +3128,30 @@ ul.ui-widget-content{
 	@include box-sizing(border-box);
 	border: 2px dashed $grey_one;
 	color: $user_menu;
-	font-size: 12px;
 	line-height: 17px;
-	margin-top: 15px;
 	padding: 40px 20px 20px;
 	text-align: center;
 	height: 150px;
 	width: 237px;
 
+	&.small{
+		padding: 20px 20px 20px;
+		height: 100px;
+	}
 	&.big{
 		width: 100%;
 	}
+
+	.icon-upload{
+		display:inline-block;
+		font-size: 28px;
+		float: left;
+		line-height: 40px;
+		margin-right: 10px;
+	}
 	a {
-		color: $text;
+		color: $brand;
+		text-decoration:underline;
 	}
 	.drag-box{
 		h4, p{
@@ -3010,12 +3159,17 @@ ul.ui-widget-content{
 			font-family: $baseFontFamily;
 			font-weight: normal;
 			text-align: left;
+			margin-bottom:0;
+		}
+		h4{
+			margin-top:10px;
 		}
 		p{
+			font-size:14px;
 			span.file-browse {
 				text-decoration: underline;
 				position: relative;
-				color: $text;
+				color: $brand;
 				overflow: hidden;
 				input[type=file] {
 					position: absolute;
@@ -3030,12 +3184,6 @@ ul.ui-widget-content{
 					cursor: pointer;
 				}
 			}
-		}
-		i{
-			font-size: 28px;
-			float: left;
-			line-height: 30px;
-			margin-right: 10px;
 		}
 	}
 
@@ -3200,7 +3348,13 @@ body.events.index {
 	}
 	.form-result {
 		overflow: hidden;
-		margin-bottom: 10px;
+		margin-bottom: 30px;
+		&.result_number{
+			margin-bottom:10px;
+			&+ .result_text, &+ .result_checkbox, &+ .result_dropdown{
+				margin-top:30px;
+			}
+		}
 
 		span.form-result-label {
 			font-weight: bold;
@@ -3220,9 +3374,9 @@ body.events.index {
 			margin-top: 20px;
 			margin-bottom: 20px;
 		}
-		&.result_text_area {
+		&.result_text_area, &.result_text {
 			.form-result-value {
-				width: 325px;
+				width: 450px;
 				display: block;
 			}
 		}
@@ -3230,14 +3384,18 @@ body.events.index {
 			.form-result-label {
 				text-transform: uppercase;
 				font-weight: normal;
-				color: $user_menu;
+				color: $brand;
 				font-size: 11px;
 			}
+		}
+		&.result_checkbox, &.result_dropdown{
+			font-size:13px;
 		}
 		&.result_number, &.result_currency {
 			.form-result-value {
 				color: $blue;
 				font-size: 22px;
+				font-weight:bold;
 			}
 		}
 		&.result_brand, &.result_date, &.result_time {
@@ -3276,6 +3434,7 @@ body.events.index {
 					display: inline-block;
 					font-family: 'icons';
 					content: "\e624";
+					position:relative;
 					margin-right: 10px;
 					top: 3px;
 				}
@@ -3524,10 +3683,11 @@ body.show {
 		width: 220px;
 		position: relative;
 		.counter {
+			font-size:11px;
 			position: absolute;
-			right: -40px;
+			right: -36px;
 			text-align: left;
-			top: 0px;
+			top: -5px;
 			width: 20px;
 		}
 	}
@@ -3948,6 +4108,10 @@ body.roles{
 			& > div {
 				font-size: 16px;
 			}
+			.pdf-label {
+				display: none;
+				font-size: 12px;
+			}
 		}
 		.score{
 			color: $venues_blue;
@@ -3963,11 +4127,8 @@ body.roles{
 			}
 		}
 
-		.venue_adress{
-			display: block;
-			overflow: hidden;
-			text-overflow:ellipsis;
-			white-space: nowrap;
+		.venue_address{
+			width:260px;
 		}
 	}
 	&.index {
@@ -4196,10 +4357,8 @@ body.roles{
 // EVENT DATA
 // --------------------------------------------------
 
-.event_data, .comments, .expenses, .surveys, .photos {
-	.main.with-details-close-bar {
-		padding-top: 60px;
-	}
+.main.with-details-close-bar {
+	padding-top: 60px;
 }
 .event_data, .comments, .expenses {
 	&.index {
@@ -4583,13 +4742,14 @@ table.table td.comments-container {
 }
 
 .task-counter-bar{
-	margin: 0 0 12px 10px;
+	margin: 0 0 0 25px;
 }
 
 .task-counter-item {
 	font-size: 30px;
 	font-weight: 300;
 	line-height: 40px;
+	text-align: left;
 	width: auto;
 	margin-right: 35px;
 	float: left;
@@ -4600,12 +4760,18 @@ table.table td.comments-container {
 }
 
 .tasks-progress-bar{
-	padding-bottom: 50px;
+	position: relative;
+	display: inline-block;
+	vertical-align: top;
+	white-space: nowrap;
 	.btn.btn-primary{
 		margin-top: 35px;
 	}
 }
 
+.task-download{
+	margin-top: 15px;
+}
 
 svg{
 	text-decoration: uppercase;
@@ -4662,13 +4828,6 @@ svg{
 	-webkit-column-gap: 20px;
 	column-count: 4;
 	column-gap: 20px;
-}
-
-.sf-vertical-menu{
-	background: white !important;
-	box-shadow: none !important;
-	left:0 !important;
-	top:20px !important;
 }
 
 /*-- MEDIA QUERIES --*/
@@ -5717,58 +5876,6 @@ table td.sub-level-1 {
 
 .date-range-filter{
 	display: inline-block;
-}
-
-/*-- MORE MENU STYLES --*/
-
-.sf-menu li li {
-	white-space: normal;
-}
-
-.parent_div{
-	width: 211px;
-	ul.filter_vertical_box{
-		box-sizing:border-box;
-		overflow-x: hidden;
-		-webkit-border-radius: 6px;
-		-moz-border-radius: 6px;
-		border-radius: 6px;
-		margin-top: 15px;
-		padding: 5px 0;
-		max-height: 120px !important;
-		li{
-			label:hover{
-				background-color: $brand;
-				color: white;
-			}
-		}
-	}
-
-	&:after {
-		content: '';
-		position: absolute;
-		border-style: solid;
-		border-width: 0 8px 10px;
-		border-color: #FFFFFF transparent;
-		display: block;
-		width: 0;
-		z-index: 109;
-		top: 27px;
-		left: 21px;
-	}
-
-	&:before {
-		content: '';
-		position: absolute;
-		border-style: solid;
-		border-width: 0 8px 10px;
-		border-color: #cccccc transparent;
-		display: block;
-		width: 0;
-		z-index: 22;
-		top: 25px;
-		left: 21px;
-	}
 }
 
 #contacts-list {

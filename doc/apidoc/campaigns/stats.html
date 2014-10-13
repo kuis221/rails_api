@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>API documentation</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/bootstrap.min.css'/>
+<link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/prettify.css'/>
+<link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/bootstrap-responsive.min.css'/>
+  <link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/application.css'/>
+  <!-- IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div id='container'>
+        <ul class='breadcrumb'>
+  <li>
+    <a href='../../apidoc.html'>Brandscopic 1.0</a>
+    <span class='divider'>/</span>
+  </li>
+  <li>
+    <a href='../../apidoc/campaigns.html'>
+      Campaigns
+      
+    </a>
+    <span class='divider'>/</span>
+  </li>
+  <li class='active'>stats</li>
+  
+
+</ul>
+
+  <div class='page-header'>
+    <h1>
+      GET /api/v1/campaigns/:id/stats
+      <br>
+      <small>Returns the stats of events and promo hours goals grouped by area for a given campaign.</small>
+    </h1>
+  </div>
+
+<div>
+
+  
+<p>Returns a list of areas with the results for the events and promo hours
+goals.</p>
+
+<p>Each list item have the followign attributes:</p>
+<ul><li>
+<p><strong>id</strong>: the areas&#39;s ID</p>
+</li><li>
+<p><strong>name</strong>: the areas&#39;s name</p>
+</li><li>
+<p><strong>goal</strong>: the areas&#39;s goal for that <code>kpi</code></p>
+</li><li>
+<p><strong>kpi</strong>: the kpi name for what the current statistics are for.</p>
+</li><li>
+<p><strong>executed</strong>: indicates how many events or promo hours have
+been executed (approved) so far.</p>
+</li><li>
+<p><strong>scheduled</strong>: indicates how many events or promo hours have
+been scheduled but no yet approved.</p>
+</li><li>
+<p><strong>remaining</strong>: indicates how many events or promo hours are
+left to reach the goal</p>
+</li><li>
+<p><strong>executed_percentage</strong>: indicates the percentage executed
+events/promo hours</p>
+</li><li>
+<p><strong>scheduled_percentage</strong>: indicates the percentage scheduled
+events/promo hours</p>
+</li><li>
+<p><strong>remaining_percentage</strong>: indicates the percentage remaining
+events/promo hours</p>
+</li><li>
+<p><strong>today</strong>: indicates how many events or promo hours should
+have been executed until today</p>
+</li><li>
+<p><strong>today_percentage</strong>: indicates the expected percentage of
+events or promo hours that should have been executed until today.</p>
+</li></ul>
+
+
+  <h2>Supported Formats</h2>
+  json, xml
+
+  <h2>Errors</h2>
+    404
+    Missing
+    <br>
+    401
+    Unauthorized access
+    <br>
+    500
+    Server crashed for some reason
+    <br>
+
+
+  <h2>Examples</h2>
+    <pre class="prettyprint">GET: /api/v1/campaigns/1/stats.json?auth_token=ehWs_NZ2Uq539tGzWpZ&amp;company_id=1
+{
+  id: 14,
+  name: &quot;ABSOLUT BA FY14&quot;,
+  overall: [
+      {
+          &quot;id&quot;: 14,
+          &quot;name&quot;: &quot;ABSOLUT BA FY14&quot;,
+          &quot;start_date&quot;: &quot;2013-08-01&quot;,
+          &quot;end_date&quot;: &quot;2014-06-30&quot;,
+          &quot;goal&quot;: 3368,
+          &quot;kpi&quot;: &quot;EVENTS&quot;,
+          &quot;executed&quot;: 1063,
+          &quot;scheduled&quot;: 26,
+          &quot;remaining&quot;: 2279,
+          &quot;executed_percentage&quot;: 31,
+          &quot;scheduled_percentage&quot;: 0,
+          &quot;remaining_percentage&quot;: 69,
+          &quot;today&quot;: 2123.963963963964,
+          &quot;today_percentage&quot;: 63
+      },
+      {
+          &quot;id&quot;: 14,
+          &quot;name&quot;: &quot;ABSOLUT BA FY14&quot;,
+          &quot;start_date&quot;: null,
+          &quot;end_date&quot;: null,
+          &quot;goal&quot;: 429,
+          &quot;kpi&quot;: &quot;PROMO HOURS&quot;,
+          &quot;executed&quot;: 412,
+          &quot;scheduled&quot;: 17.5,
+          &quot;remaining&quot;: 0,
+          &quot;executed_percentage&quot;: 96,
+          &quot;scheduled_percentage&quot;: 4,
+          &quot;remaining_percentage&quot;: 0
+      }
+],
+areas: [
+    {
+        &quot;id&quot;: 14,
+        &quot;name&quot;: &quot;Los Angeles&quot;,
+        &quot;goal&quot;: 3368,
+        &quot;kpi&quot;: &quot;EVENTS&quot;,
+        &quot;executed&quot;: 1063,
+        &quot;scheduled&quot;: 26,
+        &quot;remaining&quot;: 2279,
+        &quot;executed_percentage&quot;: 31,
+        &quot;scheduled_percentage&quot;: 0,
+        &quot;remaining_percentage&quot;: 69,
+        &quot;today&quot;: 2123.963963963964,
+        &quot;today_percentage&quot;: 63
+    },
+    {
+        &quot;id&quot;: 57,
+        &quot;name&quot;: &quot;Chicago&quot;,
+        &quot;goal&quot;: 429,
+        &quot;kpi&quot;: &quot;EVENTS&quot;,
+        &quot;executed&quot;: 412,
+        &quot;scheduled&quot;: 17.5,
+        &quot;remaining&quot;: 0,
+        &quot;executed_percentage&quot;: 96,
+        &quot;scheduled_percentage&quot;: 4,
+        &quot;remaining_percentage&quot;: 0
+    },
+    {
+        &quot;id&quot;: 22,
+        &quot;name&quot;: &quot;Chicago&quot;,
+        &quot;goal&quot;: 97,
+        &quot;kpi&quot;: &quot;PROMO HOURS&quot;,
+        &quot;executed&quot;: 90.5,
+        &quot;scheduled&quot;: 3,
+        &quot;remaining&quot;: 3.5,
+        &quot;executed_percentage&quot;: 93,
+        &quot;scheduled_percentage&quot;: 3,
+        &quot;remaining_percentage&quot;: 4
+    },
+    {
+        &quot;id&quot;: 21,
+        &quot;name&quot;: &quot;New York&quot;,
+        &quot;goal&quot;: 395,
+        &quot;kpi&quot;: &quot;PROMO HOURS&quot;,
+        &quot;executed&quot;: 364.5,
+        &quot;scheduled&quot;: 34.5,
+        &quot;remaining&quot;: 0,
+        &quot;executed_percentage&quot;: 92,
+        &quot;scheduled_percentage&quot;: 8,
+        &quot;remaining_percentage&quot;: 0
+    },
+    ...
+  ]
+}
+</pre>
+
+  <h2>Params</h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>User&#39;s authorization token returned by login method</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>One of the allowed company ids returned by the “User companies” API method</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+</div>
+
+
+        
+      </div>
+    </div>
+    <hr>
+    <footer></footer>
+  </div>
+  <script type='text/javascript' src='../../apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/bundled/bootstrap-collapse.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/bundled/prettify.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/apipie.js'></script>
+</body>
+</html>

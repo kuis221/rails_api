@@ -9,8 +9,8 @@ class Api::V1::ApiController < ActionController::Base
 
   before_action :ensure_valid_request
   before_action :cors_preflight_check
-  after_filter :set_access_control_headers
-  after_filter :update_user_last_activity_mobile
+  after_action :set_access_control_headers
+  after_action :update_user_last_activity_mobile
 
   before_action :set_user
 
@@ -36,9 +36,8 @@ class Api::V1::ApiController < ActionController::Base
   end
 
   def current_user
-    unless params[:auth_token].nil? || params[:auth_token].strip == ''
-      @current_user ||= User.find_by_authentication_token(params[:auth_token]) or fail Api::V1::InvalidAuthToken.new(params[:auth_token]), 'invalid token'
-    end
+    return if params[:auth_token].nil? || params[:auth_token].strip == ''
+    @current_user ||= User.find_by_authentication_token(params[:auth_token]) or fail Api::V1::InvalidAuthToken.new(params[:auth_token]), 'invalid token'
   end
 
   def invalid_token
@@ -98,10 +97,10 @@ class Api::V1::ApiController < ActionController::Base
   end
 
   def set_access_control_headers
-    unless ENV['HEROKU_APP_NAME'] == 'brandscopic'
-      headers['Access-Control-Allow-Origin'] = '*'
-    else
+    if ENV['HEROKU_APP_NAME'] == 'brandscopic'
       headers['Access-Control-Allow-Origin'] = 'http://m.brandscopic.com'
+    else
+      headers['Access-Control-Allow-Origin'] = '*'
     end
     headers['Access-Control-Request-Method'] = '*'
     headers['Access-Control-Expose-Headers'] = 'ETag'
@@ -115,17 +114,16 @@ class Api::V1::ApiController < ActionController::Base
   end
 
   def cors_preflight_check
-    if request.method == 'OPTIONS'
-      unless ENV['HEROKU_APP_NAME'] == 'brandscopic'
-        headers['Access-Control-Allow-Origin'] = '*'
-      else
-        headers['Access-Control-Allow-Origin'] = 'http://m.brandscopic.com'
-      end
-      headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS, HEAD'
-      headers['Access-Control-Allow-Headers'] = '*,x-requested-with,Content-Type,If-Modified-Since,If-None-Match'
-      headers['Access-Control-Max-Age'] = '86400'
-      render text: '', content_type: 'text/plain'
+    return unless request.method == 'OPTIONS'
+    if ENV['HEROKU_APP_NAME'] == 'brandscopic'
+      headers['Access-Control-Allow-Origin'] = 'http://m.brandscopic.com'
+    else
+      headers['Access-Control-Allow-Origin'] = '*'
     end
+    headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD'
+    headers['Access-Control-Allow-Headers'] = '*,x-requested-with,Content-Type,If-Modified-Since,If-None-Match'
+    headers['Access-Control-Max-Age'] = '86400'
+    render text: '', content_type: 'text/plain'
   end
 
   def ensure_valid_request

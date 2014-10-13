@@ -7,7 +7,6 @@ RSpec.describe BrandAmbassadors::VisitsController, type: :controller do
   let(:user) { create(:company_user, company: company) }
 
   before { sign_in_as_user user }
-  before { ResqueSpec.reset! }
 
   describe "GET 'index'" do
     it 'returns http success', search: true do

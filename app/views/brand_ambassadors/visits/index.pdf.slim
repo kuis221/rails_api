@@ -19,6 +19,8 @@ css:
   = describe_filters
 
 - if params[:mode] == 'calendar' && can?(:calendar, BrandAmbassadors::Visit)
+  = content_for :pdf_scripts
+    = wicked_pdf_javascript_include_tag "application"
   = render 'calendar'
 - else
   = render template: 'inherited_resources/base/index'

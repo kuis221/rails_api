@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>API documentation</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/bootstrap.min.css'/>
+<link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/prettify.css'/>
+<link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/bootstrap-responsive.min.css'/>
+  <link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/application.css'/>
+  <!-- IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div id='container'>
+        <ul class='breadcrumb'>
+  <li>
+    <a href='../../apidoc.html'>Brandscopic 1.0</a>
+    <span class='divider'>/</span>
+  </li>
+  <li>
+    <a href='../../apidoc/venues.html'>
+      Venues
+      
+    </a>
+    <span class='divider'>/</span>
+  </li>
+  <li class='active'>autocomplete</li>
+  
+
+</ul>
+
+  <div class='page-header'>
+    <h1>
+      GET /api/v1/venues/autocomplete
+      <br>
+      <small>Return a list of results grouped by categories</small>
+    </h1>
+  </div>
+
+<div>
+
+  
+<p>Returns a list of results matching the searched term grouped in the
+following categories</p>
+<ul><li>
+<p><strong>Campaigns</strong>: Includes categories</p>
+</li><li>
+<p><strong>Brands</strong>: Includes brands and brand portfolios</p>
+</li><li>
+<p><strong>Areas</strong>: Includes areas</p>
+</li><li>
+<p><strong>People</strong>: Includes users and teams</p>
+</li></ul>
+
+
+  <h2>Supported Formats</h2>
+  json, xml
+
+  <h2>Errors</h2>
+    404
+    Missing
+    <br>
+    401
+    Unauthorized access
+    <br>
+    500
+    Server crashed for some reason
+    <br>
+
+
+  <h2>Examples</h2>
+    <pre class="prettyprint">GET: /api/v1/venues/autocomplete.json?auth_token=XXssU!suwq92-1&amp;company_id=2&amp;q=jam
+[
+    {
+        &quot;label&quot;: &quot;Campaigns&quot;,
+        &quot;value&quot;: []
+    },
+    {
+        &quot;label&quot;: &quot;Brands&quot;,
+        &quot;value&quot;: [
+            {
+                &quot;label&quot;: &quot;&lt;i&gt;Jam&lt;/i&gt;eson LOCALS&quot;,
+                &quot;value&quot;: &quot;13&quot;,
+                &quot;type&quot;: &quot;brand&quot;
+            },
+            {
+                &quot;label&quot;: &quot;&lt;i&gt;Jam&lt;/i&gt;eson Whiskey&quot;,
+                &quot;value&quot;: &quot;8&quot;,
+                &quot;type&quot;: &quot;brand&quot;
+            }
+        ]
+    },
+    {
+        &quot;label&quot;: &quot;Places&quot;,
+        &quot;value&quot;: [
+            {
+                &quot;label&quot;: &quot;&lt;i&gt;Jam&lt;/i&gt;aica&quot;,
+                &quot;value&quot;: &quot;2386&quot;,
+                &quot;type&quot;: &quot;area&quot;
+            }
+        ]
+    },
+    {
+        &quot;label&quot;: &quot;People&quot;,
+        &quot;value&quot;: []
+    }
+]
+</pre>
+
+  <h2>Params</h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>auth_token </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>company_id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>One of the allowed company ids returned by the</p>
+
+        <br>
+        Value: Must be a number.
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>q </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>The search term</p>
+
+        <br>
+        Value: Must be String
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+</div>
+
+
+        
+      </div>
+    </div>
+    <hr>
+    <footer></footer>
+  </div>
+  <script type='text/javascript' src='../../apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/bundled/bootstrap-collapse.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/bundled/prettify.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/apipie.js'></script>
+</body>
+</html>

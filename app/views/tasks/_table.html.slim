@@ -2,7 +2,19 @@
 #list-tools
   .pull-left
     = button_to 'Create', new_task_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-task-btn'} if (params[:scope] == 'user' && can?(:create_my, Task)) || (params[:scope] == 'teams' && can?(:create_team, Task))
-  .tasks-progress-bar
+  .text-right
+    .dropdown.btn-download.task-download
+      a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+        i.icon-download
+        i.icon-arrow-down
+      ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+        li
+          a#xls-export.xlsx-download-link href="#" role="menuitem" data-url="#{url_for(action: :index, scope: params[:scope], format: :xls)}"
+            | Download as XLS
+        li
+          a#pdf-export.xlsx-download-link href="#" role="menuitem" data-url="#{url_for(action: :index, scope: params[:scope], format: :pdf)}"
+            | Download as PDF
+    .tasks-progress-bar
 
 div#tasks-list.resource-list
 
@@ -30,6 +42,15 @@ javascript:
       var taskId = document.location.hash.replace(/^#comments\-([0-9]+)/, '$1');
       if (taskId){
         $('li#task_'+taskId+' .load-comments-link').click();
+      }
+    },
+    'onPageLoaded' : function() {
+      if ($("ul.task-navigation li.active").attr('id') === 'mine_tasks') {
+        $('#xls-export').data('url', '/tasks/mine.xls');
+        $('#pdf-export').data('url', '/tasks/mine.pdf');
+      } else {
+        $('#xls-export').data('url', '/tasks/my_teams.xls');
+        $('#pdf-export').data('url', '/tasks/my_teams.pdf?scope=teams');
       }
     }
   });

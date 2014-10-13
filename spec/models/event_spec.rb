@@ -687,9 +687,6 @@ describe Event, type: :model do
   end
 
   describe 'venue reindexing', strategy: :deletion do
-    before do
-      ResqueSpec.reset!
-    end
     let(:campaign) { create(:campaign) }
     let(:event)    { create(:event, campaign: campaign, company: campaign.company) }
 
@@ -1248,6 +1245,23 @@ describe Event, type: :model do
       expect(event.user_ids).to match_array [user1.id, user2.id]
       expect(event.team_ids).to match_array [team1.id]
       expect(event.new_record?).to be_truthy
+    end
+  end
+
+  describe 'update_activities callback' do
+    it 'updates the campaign_id on its activities if the campaign_id change' do
+      event = create(:event, campaign: create(:campaign))
+      event.campaign.activity_types << create(:activity_type, company: event.company)
+      new_campaign = create(:campaign, company: event.company)
+      activity = create(:activity,
+                        activitable: event,
+                        activity_type: event.campaign.activity_types.first,
+                        company_user: create(:company_user, company: event.company))
+      expect(activity.campaign_id).to eql(event.campaign_id)
+      event.campaign = new_campaign
+      event.save
+      activity.reload
+      expect(activity.campaign_id).to eql(new_campaign.id)
     end
   end
 end

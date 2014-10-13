@@ -76,7 +76,7 @@ class ListExport < ActiveRecord::Base
     build_file
 
     # Save file or raise error if failed
-    fail(errors.full_messages) unless save_with_retry
+    Kernel.fail(errors.full_messages.join(", ")) unless save_with_retry
     self.complete! unless self.completed?
   end
 
@@ -154,7 +154,7 @@ class ListExport < ActiveRecord::Base
     WickedPdf.new.pdf_from_string(
       html,
       javascript_delay: 1000,
-      header: { content: load_controller.render_to_string(template: 'shared/pdf_header.pdf.slim') },
+#      header: { content: load_controller.render_to_string(template: 'shared/pdf_header.pdf.slim') },
       extra: '--window-status completed --debug-javascript')
   end
 

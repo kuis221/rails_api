@@ -18,3 +18,20 @@ body.app-layout {
 #main-container{
 	padding: 0;
 }
+.resource-list {
+	margin-top: 0; 
+	.resource-item {
+
+		.resource-item-link {
+			width: 100%;
+		}
+		.resource-item-actions {
+			display: none;
+		}
+		&:hover {
+			.resource-item-actions {
+				display: none;
+			}
+		}
+	}
+}
