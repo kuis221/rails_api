@@ -445,13 +445,13 @@ $margin-right: 240px;
 				}
 				input{
 					&.date_picker, &.time_picker {
+						color:$user_menu;
 						text-align: right;
 						width: 120px;
 					}
 					&.date_picker{
 						background: image-url('calendar.svg') no-repeat 3px 8px;
 						height: 43px;
-						padding: 2px 0 2px 10px;
 						width: 140px;
 					}
 					&.time_picker{
