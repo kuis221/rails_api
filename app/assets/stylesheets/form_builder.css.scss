@@ -138,7 +138,7 @@ $margin-right: 240px;
 			display: inline-block;
 			height: auto;
 			width:auto;
-			min-width:200px;
+			min-width:220px;
 			label.radio .radio{
 				margin-right: 10px;
 			}
@@ -237,6 +237,11 @@ $margin-right: 240px;
 					.checker{
 						background-color: $user_menu;
 					}
+				}
+			}
+			&.text_area{
+				textarea{
+					width:220px;
 				}
 			}
 			&[data-type="Radio"] {
@@ -564,9 +569,14 @@ $margin-right: 240px;
 		height: 80px;
 	}
 
-	.control-group label{
-		color: $brand;
-		font-size: 11px;
+	.control-group{
+		label{
+			color: $brand;
+			font-size: 11px;
+		}
+		select{
+			width:100%;
+		}
 	}
 	.field-options {
 		input[type=text] {
