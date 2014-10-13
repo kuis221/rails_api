@@ -6630,6 +6630,24 @@ body.dashboard.index {
 	min-height: 85px;
 }
 
+.filtersetting_modal{
+	.modal-body{
+		.filter-item{
+			margin:0;
+			ul{
+				list-style:none;
+				margin:0;
+				li{
+					margin-bottom:10px;
+					label{
+						color: $text;
+						font-size: 14px;
+					}
+				}
+			}
+		}
+	}
+}
 
 @import 'widgets/asset_upload_dialog';
 @import 'widgets/documents_list';
