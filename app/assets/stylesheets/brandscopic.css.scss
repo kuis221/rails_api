@@ -390,7 +390,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	background-image: none !important;
 	border-radius: 0!important;
 	box-shadow: none !important;
-	height: 17px;
+	height: 10px;
 	width: 220px !important;
 	.bar{
 		background-color: $due_today!important;
@@ -2851,6 +2851,7 @@ ul.ui-widget-content{
 			font-weight:bold;
 			&.segment-label{
 				font-weight:normal;
+				font-size:13px;
 			}
 			&.checkbox{
 				font-weight:normal;
@@ -3590,10 +3591,11 @@ body.show {
 		width: 220px;
 		position: relative;
 		.counter {
+			font-size:11px;
 			position: absolute;
-			right: -40px;
+			right: -36px;
 			text-align: left;
-			top: 0px;
+			top: -5px;
 			width: 20px;
 		}
 	}
