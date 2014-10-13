@@ -27,6 +27,21 @@ describe AreasCampaignsController, type: :controller do
       expect(response).to render_template 'add_place'
       expect(campaign.areas_campaigns.first.inclusions).to eql [place.id]
     end
+
+    it 'try add a repeated place to the inclusions list' do
+      campaign.areas_campaigns.first.update_column :inclusions, [place.id.to_s]
+      xhr :post, 'add_place', campaign_id: campaign.id, id: area.to_param, areas_campaign: { reference: place.id.to_s }, format: :js
+      expect(response).to be_success
+      expect(response).to render_template 'add_place'
+      expect(campaign.areas_campaigns.first.inclusions).to eql [place.id]
+    end
+
+    it 'try to add the place to the inclusions list sending an empty place reference' do
+      xhr :post, 'add_place', campaign_id: campaign.id, id: area.to_param, areas_campaign: { reference: '' }, format: :js
+      expect(response).to be_success
+      expect(response).to render_template 'add_place'
+      expect(campaign.areas_campaigns.first.inclusions).to eql []
+    end
   end
 
   describe "POST 'exclude_place'" do

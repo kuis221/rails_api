@@ -9,15 +9,11 @@ class AreasCampaignsController < FilteredController
 
   belongs_to :campaign
 
-  def new_place
-  end
-
   def add_place
-    if params[:areas_campaign][:reference].present?
-      place_reference = resource.place_reference(params[:areas_campaign][:reference])
-      resource.inclusions = (resource.inclusions + [place_reference.id]).uniq
-      resource.save
-    end
+    return unless params[:areas_campaign][:reference].present?
+    place_reference = resource.place_reference(params[:areas_campaign][:reference])
+    resource.inclusions = (resource.inclusions + [place_reference.id]).uniq
+    resource.save
   end
 
   def exclude_place

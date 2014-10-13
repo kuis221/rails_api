@@ -228,14 +228,28 @@ feature 'Campaigns', js: true do
         click_js_button 'Add'
       end
 
+      wait_for_ajax
+      new_place_id = Place.last.id
+      expect(campaign.areas_campaigns.find_by(area_id: area.id).inclusions).to eql [new_place_id]
+
       within visible_modal do
         expect(page).to have_content('Customize San Francisco Area')
-        expect(page).to have_content 'Walt Disney World Dolphin'
+        expect(page).to have_content('Walt Disney World Dolphin')
+        within(resource_item("#area-campaign-place-#{new_place_id}")) { click_js_link 'Deactivate' }
+        expect(page).to have_selector("#area-campaign-place-#{new_place_id}.inactive")
         click_js_button('Done')
       end
       ensure_modal_was_closed
 
-      expect(campaign.areas_campaigns.find_by(area_id: area.id).inclusions).to eql [Place.last.id]
+      within tab do
+        find('a[data-original-title="Customize area"]').click # tooltip changes the title
+      end
+
+      within visible_modal do
+        expect(page).to have_content('Customize San Francisco Area')
+        expect(page).to have_content('Walt Disney World Dolphin')
+        expect(page).to have_selector("#area-campaign-place-#{new_place_id}.inactive")
+      end
     end
 
     feature 'Add KPIs', search: false do
