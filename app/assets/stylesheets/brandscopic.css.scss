@@ -4033,10 +4033,7 @@ body.roles{
 		}
 
 		.venue_address{
-			display: block;
-			overflow: hidden;
-			text-overflow:ellipsis;
-			white-space: nowrap;
+			width:260px;
 		}
 	}
 	&.index {
