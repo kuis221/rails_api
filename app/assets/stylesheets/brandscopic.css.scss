@@ -358,8 +358,14 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 }
 
 .input-append .add-on, .input-prepend .add-on {
-	height: 21px;
-	padding: 9px 5px;
+	background-color: silver;
+	border: 1px solid silver;
+	color: white;
+	height: 20px;
+	text-shadow: none;
+	width: 34px;
+	height: 23px;
+	padding: 7px 5px;
 }
 
 // Progress Bar Styles (Event Data)
@@ -2634,7 +2640,6 @@ ul.ui-widget-content{
 	min-height: 40px;
 	z-index: 200;
 	-webkit-border-radius: 7px 7px 0px 0px;
-
 	width: 100%;
 	&.affix {
 		position: fixed;
@@ -2687,11 +2692,18 @@ ul.ui-widget-content{
 		margin-right: 0;
 	}
 	.icon-edit, .icon-rounded-disable{
-		margin: 0 0 0 15px;
 		color: $brand;
 		&:hover{
 			color:$app_bg;
 		}
+	}
+	.icon-edit{
+		margin: 0 0 0 15px;
+	}
+	.icon-rounded-disable{
+		margin: 0 0 0 10px;
+		position:relative;
+		top:1px;
 	}
 }
 
@@ -2967,14 +2979,6 @@ ul.ui-widget-content{
 	.input-append, .input-prepend{
 		margin-right: 15px;
 		margin-bottom: 0;
-		.add-on{
-			background-color: silver;
-			border: 1px solid silver;
-			color: white;
-			height: 19px;
-			text-shadow: none;
-			width: 34px;
-		}
 		input{
 			width: 176px;
 		}
