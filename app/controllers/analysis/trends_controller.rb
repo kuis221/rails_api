@@ -100,6 +100,15 @@ class Analysis::TrendsController < FilteredController
     { label: 'Source', items: items }
   end
 
+  def build_campaign_bucket
+    status = current_company_user.filter_settings_for('campaigns', filter_settings_scope, true)
+    items = Campaign.accessible_by_user(current_company_user).where(id: selected_campaign_ids).where('aasm_state in (?)', status).order(:name).pluck(:name, :id).map do |r|
+      build_facet_item(label: r[0], id: r[1], name: :campaign, count: 1)
+    end
+    Campaign.accessible_by_user(current_company_user).where('aasm_state in (?)', status).order(:name).inspect
+    { label: 'Campaigns', items: items }
+  end
+
   def build_question_bucket
     items = []
     if params.key?(:question) && params[:question].any?
