@@ -15,6 +15,14 @@ $margin-right: 240px;
 	.field-tooltip-trigger {
 		height: 30px;
 	}
+
+	&.activities-wrapper{
+		.form-wrapper{
+			.form-builder-actions.affix{
+				top:80px;
+			}
+		}
+	}
 	.form-wrapper {
 		position: relative;
 
@@ -70,6 +78,9 @@ $margin-right: 240px;
 				.attachment-panel {
 					background-color: white;
 				}
+				input{
+					background-color:white;
+				}
 			}
 		}
 		.form-section {
@@ -86,8 +97,11 @@ $margin-right: 240px;
 				position: relative;
 			}
 			&.module{
-				h3{
+				h4{
+					font-size:18px;
+					font-weight: 400;
 					color: $user_menu;
+					margin-top:0;
 				}
 				&.selected {
 					border: 0px;
@@ -112,22 +126,31 @@ $margin-right: 240px;
 		.btn[disabled=disabled] {
 			opacity: 0.5;
 		}
-		.field {
+		.field { // Fields added to the form
+
 			float: left;
 			clear: both;
 			padding: 8px 10px 10px 10px;
+			margin-bottom:8px;
 			border: 1px dashed #fff;
 			position: relative;
 			border-radius: 5px;
 			display: inline-block;
 			height: auto;
-			width: auto;
+			width:auto;
+			min-width:220px;
 			label.radio .radio{
 				margin-right: 10px;
 			}
 
 			&:hover {
 				border: 1px dashed silver;
+			}
+
+			&.time, &.date{
+				label{
+					font-weight:bold;
+				}
 			}
 
 			&.ui-sortable-placeholder {
@@ -159,19 +182,25 @@ $margin-right: 240px;
 					font-weight: bolder;
 				}
 			}
-
+			&[data-type="Number"] {
+				input[type="text"]{
+					width:200px;
+				}
+			}
+			&[data-type="Date"], &[data-type="Time"] {
+				min-width:100px;
+			}
 			&[data-type="Section"] {
 				max-width: 400px;
 			}
 			&[data-type="Summation"]{
+				margin-bottom:5px;
 				.controls{
 					clear: both;
 					margin-top: 15px;
 				}
 				.field-option{
 					height: 50px;
-					width: 300px;
-					margin-bottom: 15px;
 					input{
 						float: right;
 						width: 200px;
@@ -180,7 +209,9 @@ $margin-right: 240px;
 				label.summation{
 					height: 40px;
 					line-height: 38px;
+					margin-right:30px;
 					float: left;
+					font-weight:normal;
 				}
 				.summation-total-field{
 					border-top: 2px solid $user_menu;
@@ -208,6 +239,11 @@ $margin-right: 240px;
 					}
 				}
 			}
+			&.text_area{
+				textarea{
+					width:220px;
+				}
+			}
 			&[data-type="Radio"] {
 				label.radio{
 					display:block;
@@ -217,12 +253,15 @@ $margin-right: 240px;
 				}
 			}
 			&[data-type="Percentage"]{
-				label.percentage{
-					margin-bottom: 10px;
+				.control-group{
+					margin-bottom:10px;
 				}
 			}
 			&[data-type="LikertScale"]{
 				table{
+					label{
+						font-weight:normal;
+					}
 					thead{
 						tr{
 							th:nth-child(2){
@@ -243,9 +282,6 @@ $margin-right: 240px;
 				}
 			}
 		}
-		.form_field_userdate {
-			width: 390px;
-		}
 		div.empty-form-legend {
 			display: none;
 			padding: 50px 30px;
@@ -256,7 +292,8 @@ $margin-right: 240px;
 		    display: block;
 		}
 	}
-	.fields-wrapper {
+	.fields-wrapper { // Options to add to the form
+
 		background-color: #fff;
 		border-radius: 5px;
 		font-weight: 400;
@@ -396,8 +433,8 @@ $margin-right: 240px;
 				padding: 10px;
 				background-color: #fff;
 				text-align: left;
-				height: auto !important;
-				width: auto !important;
+				height: auto;
+				min-width: 230px;
 				a.close {
 					display:none;
 				}
@@ -405,18 +442,38 @@ $margin-right: 240px;
 					content: '';
 					display: none;
 				}
-				input.date_picker, input.time_picker {
-					text-align: right;
-					width: 120px;
+				.checkbox{
+					padding-left:0;
 				}
-				input.date_picker {
-					background: image-url('calendar.svg') no-repeat 3px 8px;
-					height: 43px;
-					padding: 2px 0 2px 10px;
-					width: 140px;
+				input{
+					&.date_picker, &.time_picker {
+						color:$user_menu;
+						text-align: right;
+						width: 120px;
+					}
+					&.date_picker{
+						background: image-url('calendar.svg') no-repeat 3px 8px;
+						height: 43px;
+						width: 140px;
+					}
+					&.time_picker{
+						background: image-url('time.svg') no-repeat 3px 8px;
+					}
 				}
-				input.time_picker {
-					background: image-url('time.svg') no-repeat 3px 8px;
+				label{
+					font-weight:bold;
+					margin-bottom:4px;
+				}
+				span{
+					font-weight:normal;
+				}
+				textarea{
+					min-height:60px;
+				}
+				&[data-type="Photo"], &[data-type="Attachment"]{
+					label{
+						margin-bottom:10px;
+					}
 				}
 			}
 		}
@@ -509,9 +566,14 @@ $margin-right: 240px;
 		height: 80px;
 	}
 
-	.control-group label{
-		color: $brand;
-		font-size: 11px;
+	.control-group{
+		label{
+			color: $brand;
+			font-size: 11px;
+		}
+		select{
+			width:100%;
+		}
 	}
 	.field-options {
 		input[type=text] {
@@ -524,6 +586,8 @@ $margin-right: 240px;
 
 	.option-actions {
 		display: inline-block;
+		position: relative;
+		top: -6px;
 		a {
 			margin-left: 5px;
 			&:hover {
