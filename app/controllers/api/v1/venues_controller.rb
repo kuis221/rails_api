@@ -148,7 +148,14 @@ class Api::V1::VenuesController < Api::V1::FilteredController
 
   api :GET, '/api/v1/venues', 'Search for a list of venues'
   param :location, String, desc: 'A pair of latitude and longitude seperated by a comma. This will make the list to include only those that are in a radius of +radius+ kilometers.'
+  param :radius, :number, desc: 'The radius in miles'
   param :campaign, Array, desc: 'A list of campaign ids to filter the results'
+  param :venue, Array, desc: 'A list of venue ids to filter the results'
+  param :area, Array, desc: 'A list of area ids to filter the results'
+  param :user, Array, desc: 'A list of user ids to filter the results'
+  param :team, Array, desc: 'A list of team ids to filter the results'
+  param :brand, Array, desc: 'A list of brand ids to filter the results'
+  param :brand_porfolio, Array, desc: 'A list of brand porfolio ids to filter the results'
   param :page, :number, desc: 'The number of the page, Default: 1'
 
   description <<-EOS
@@ -657,9 +664,9 @@ class Api::V1::VenuesController < Api::V1::FilteredController
   EOS
   def autocomplete
     authorize! :index, Venue
-    buckets = autocomplete_buckets(campaigns: [Campaign],
+    buckets = autocomplete_buckets(places: [Venue, Area],
+                                   campaigns: [Campaign],
                                    brands: [Brand, BrandPortfolio],
-                                   areas: [Area],
                                    people: [CompanyUser, Team])
     render json: buckets.flatten
   end
@@ -671,6 +678,9 @@ class Api::V1::VenuesController < Api::V1::FilteredController
   end
 
   def permitted_search_params
-    params.permit(:page, { campaign: [] }, { place: [] }, { area: [] }, { user: [] }, { team: [] }, { brand: [] }, { brand_porfolio: [] }, :location, :radius)
+    params.permit(:page,
+                  { campaign: [] }, { place: [] }, { area: [] }, { venue: [] },
+                  { user: [] }, { team: [] }, { brand: [] }, { brand_porfolio: [] },
+                  :location, :radius)
   end
 end
