@@ -170,7 +170,7 @@ class TrendObject
 
       with :form_field_id, params[:question] unless params[:question].nil?
 
-      with :campaign_id, params[:campaign] if params.has_key?(:campaign) and params[:campaign].present?
+      with :campaign_id, params[:campaign] if params.has_key?(:campaign) && params[:campaign].present?
 
       if params[:area].present?
         any_of do
@@ -179,12 +179,12 @@ class TrendObject
         end
       end
 
-      if params.has_key?(:brand) and params[:brand].present?
+      if params.has_key?(:brand) && params[:brand].present?
         campaign_ids = Campaign.joins(:brands).where(brands: {id: params[:brand]}, company_id: params[:company_id]).pluck('DISTINCT(campaigns.id)')
         with "campaign_id", campaign_ids + [0]
       end
 
-      if params[:start_date].present? and params[:end_date].present?
+      if params[:start_date].present? && params[:end_date].present?
         d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day
         d2 = Timeliness.parse(params[:end_date], zone: :current).end_of_day
         any_of do
@@ -202,8 +202,9 @@ class TrendObject
       if include_facets
         if term = params[:term]
           with(:description, term)
-          facet :start_at, :time_range => (Time.parse('2009-06-01 00:00:00 -0400')..
-                       Date.today.end_of_day), :time_interval => 86400
+          facet :start_at,
+                time_range: (Time.parse('2009-06-01 00:00:00 -0400')..Date.today.end_of_day),
+                time_interval: 86400
         elsif words = params[:words]
           facet :description, sort: :count, limit: (params[:limit] || 50), only: words
         else
@@ -212,39 +213,39 @@ class TrendObject
       end
 
       order_by(params[:sorting] || :start_at, params[:sorting_dir] || :desc)
-      paginate :page => (params[:page] || 1), :per_page => (params[:per_page] || 30)
+      paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
     end
   end
 
   def self.solr_index(opts={})
     options = {
-      :batch_size => Sunspot.config.indexing.default_batch_size,
-      :batch_commit => true,
-      :start => opts.delete(:first_id)
+      batch_size: Sunspot.config.indexing.default_batch_size,
+      batch_commit: true,
+      start: opts.delete(:first_id)
     }.merge(opts)
 
     if options[:batch_size].to_i > 0
 
       # Index events comments
-      batch_counter = 0
-      Comment.for_trends.preload(commentable: :place).find_in_batches(options.slice(:batch_size, :start)) do |records|
-        solr_benchmark(options[:batch_size], batch_counter += 1) do
-          Sunspot.index(records.map{|comment| TrendObject.new(comment) }.select { |model| model.indexable? })
-          Sunspot.commit if options[:batch_commit]
-        end
-        options[:progress_bar].increment!(records.length) if options[:progress_bar]
-      end
+      # batch_counter = 0
+      # Comment.for_trends.preload(commentable: :place).find_in_batches(options.slice(:batch_size, :start)) do |records|
+      #   solr_benchmark(options[:batch_size], batch_counter += 1) do
+      #     Sunspot.index(records.map { |comment| TrendObject.new(comment) }.select(&:indexable?))
+      #     Sunspot.commit if options[:batch_commit]
+      #   end
+      #   options[:progress_bar].increment!(records.length) if options[:progress_bar]
+      # end
 
       # Index form field results
       batch_counter = 0
       FormField.where(type: FormField::TRENDING_FIELDS_TYPES).each do |form_field|
         form_field.form_field_results
-          .order('resultable_type, resultable_id')
+          .reorder('resultable_type, resultable_id')
           .preload(:resultable)
           .find_in_batches(options.slice(:batch_size, :start)) do |records|
 
           solr_benchmark(options[:batch_size], batch_counter += 1) do
-            Sunspot.index(records.map{|result| TrendObject.new(result.resultable, result) }.select { |model| model.indexable? })
+            Sunspot.index(records.map { |result| TrendObject.new(result.resultable, result) }.select(&:indexable?))
             Sunspot.commit if options[:batch_commit]
           end
           options[:progress_bar].increment!(records.length) if options[:progress_bar]
@@ -260,11 +261,6 @@ class TrendObject
 
   def self.count
     Comment.for_trends.count +
-    Activity.active.with_results_for(
-      FormField.where(type: ActivityType::TRENDING_FIELDS_TYPES)
-        .joins('INNER JOIN activity_types ON activity_types.id=fieldable_id and fieldable_type=\'ActivityType\'')
-        .group('form_fields.id')
-        .pluck('form_fields.id')
-    ).count
+    FormFieldResult.joins(:form_field).where(form_fields: { type:  FormField::TRENDING_FIELDS_TYPES }).count
   end
 end

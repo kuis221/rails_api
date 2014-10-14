@@ -40,6 +40,9 @@ class Analysis::TrendsController < FilteredController
 
   def search_params
     @search_params || super.tap do |p|
+      p[:source] = selected_sources
+      p[:campaign] = selected_campaign_ids
+      p[:question] = selected_questions
       p[:source].push 'Event' if p.key?(:source) && !p[:source].include?('Event')
     end
   end
@@ -49,11 +52,11 @@ class Analysis::TrendsController < FilteredController
   end
 
   def selected_campaign_ids
-    (params[:campaign] || []).delete_if(&:blank?)
+    (params[:campaign] || [0]).delete_if(&:blank?)
   end
 
   def selected_sources
-    (params[:source] || []).delete_if(&:blank?)
+    (params[:source] || [0]).delete_if(&:blank?)
   end
 
   def selected_activity_type_ids
@@ -61,7 +64,7 @@ class Analysis::TrendsController < FilteredController
   end
 
   def selected_questions
-    (params[:question] || []).delete_if(&:blank?)
+    (params[:question] || [0]).delete_if(&:blank?)
   end
 
   def available_questions
