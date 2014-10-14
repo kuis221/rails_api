@@ -48,7 +48,7 @@ $.widget "custom.places_autocomplete", $.ui.autocomplete, {
 		$("<li></li>")
 			.addClass('ui-menu-item ' + (if item.valid then 'valid-place' else 'invalid-place'))
 			.data("item.autocomplete", item)
-			.append("<i class='icon-wired-venue'></i>")
+			.append("<i class='icon-venue'></i>")
 			.append("<a>" + newText + "</a>")
 			.appendTo(ul)
 }

@@ -247,8 +247,7 @@ feature 'Campaigns', js: true do
 
       within visible_modal do
         expect(page).to have_content('Customize San Francisco Area')
-        expect(page).to have_content('Walt Disney World Dolphin')
-        expect(page).to have_selector("#area-campaign-place-#{new_place_id}.inactive")
+        expect(page).to have_no_content('Walt Disney World Dolphin')
       end
     end
 
