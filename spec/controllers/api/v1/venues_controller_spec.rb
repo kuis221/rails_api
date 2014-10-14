@@ -200,7 +200,7 @@ describe Api::V1::VenuesController, type: :controller do
       expect(response).to be_success
 
       buckets = JSON.parse(response.body)
-      expect(buckets.map { |b| b['label'] }).to eq(%w(Campaigns Brands Areas People))
+      expect(buckets.map { |b| b['label'] }).to eq(%w(Places Campaigns Brands People))
     end
 
     it 'should return the users in the People Bucket' do
@@ -266,7 +266,7 @@ describe Api::V1::VenuesController, type: :controller do
       expect(brands_bucket['value']).to eq([{ 'label' => '<i>Cac</i>ique', 'value' => brand.id.to_s, 'type' => 'brand' }])
     end
 
-    it 'should return the venues in the Places Bucket' do
+    it 'should return the areas in the Places Bucket' do
       area = create(:area, company_id: company.id, name: 'Guanacaste')
       Sunspot.commit
 
@@ -274,8 +274,21 @@ describe Api::V1::VenuesController, type: :controller do
       expect(response).to be_success
 
       buckets = JSON.parse(response.body)
-      places_bucket = buckets.select { |b| b['label'] == 'Areas' }.first
+      places_bucket = buckets.select { |b| b['label'] == 'Places' }.first
       expect(places_bucket['value']).to eq([{ 'label' => '<i>Gua</i>nacaste', 'value' => area.id.to_s, 'type' => 'area' }])
+    end
+
+    it 'should return the venues in the Places Bucket' do
+      venue = create(:venue, company_id: company.id,
+                     place: create(:place, name: 'Guanacaste'))
+      Sunspot.commit
+
+      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'gua', format: :json
+      expect(response).to be_success
+
+      buckets = JSON.parse(response.body)
+      places_bucket = buckets.select { |b| b['label'] == 'Places' }.first
+      expect(places_bucket['value']).to eq([{ 'label' => '<i>Gua</i>nacaste', 'value' => venue.id.to_s, 'type' => 'venue' }])
     end
   end
 end
