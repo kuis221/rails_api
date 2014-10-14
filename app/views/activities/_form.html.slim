@@ -6,23 +6,25 @@
         = resource.errors.full_messages.join("<br />").html_safe
 
         .form-inputs
-          .large-inputs
+          .large-inputs class="form_field_dropdown"
             = f.input :activity_type_id, collection: activity_types, input_html: {class: 'chosen-enabled'}, disabled: (resource.new_record? ? false : true)
 
         - if resource.activity_type.present?
-          .large-inputs
+          .large-inputs class="form_field_dropdown"
             - if resource.activitable_type == 'Venue'
               = f.input :campaign_id, collection: resource.activity_type.campaigns.active.accessible_by_user(current_company_user).order(:name).for_dropdown, input_html: {class: 'chosen-enabled'}
           - resource.results_for_type.each do |result|
             = f.simple_fields_for :results, result do |rf|
               - if result.form_field.is_a?(FormField::UserDate)
-                .row-fluid
-                  .span8
-                    = f.input :company_user_id, label: 'User', collection: assignable_users, input_html: {class: 'chosen-enabled'}
-                  .span4
-                    = f.input :activity_date, input_html: {class: 'field-type-date', value: resource.activity_date.try(:to_s, :slashes)}, as: :date_picker, label: 'Date'
+                .form_field_userdate
+                  .control-group
+                    .row-fluid
+                      .span8
+                        = f.input :company_user_id, label: 'User', collection: assignable_users, input_html: {class: 'chosen-enabled'}
+                      .span4
+                        = f.input :activity_date, input_html: {class: 'field-type-date', value: resource.activity_date.try(:to_s, :slashes)}, as: :date_picker, label: 'Date'
               - else
-                .large-inputs
+                .large-inputs class="#{result.form_field.css_class}"
                   = rf.input :value, result.form_field.field_options(result)
                   = rf.input :form_field_id, as: :hidden, wrapper: false
 
