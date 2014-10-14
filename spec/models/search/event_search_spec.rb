@@ -119,7 +119,7 @@ describe Event, type: :model, search: true do
   end
 
   describe "TrendObject indexing" do
-    let(:field) { create(:campaign_form_field, field_type: 'textarea', campaign: campaign ) }
+    let(:field) { create(:form_field_text_area, fieldable: campaign ) }
     let(:campaign) { create(:campaign) }
     let(:event) { create(:event, campaign: campaign) }
 

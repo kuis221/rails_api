@@ -71,7 +71,7 @@ describe Activity, type: :model do
   describe '#activate' do
     let(:activity) { build(:activity, active: false) }
 
-    it 'should return the active value as true' do
+    it 'returns the active value as true' do
       activity.activate!
       activity.reload
       expect(activity.active).to be_truthy
@@ -81,83 +81,47 @@ describe Activity, type: :model do
   describe '#deactivate' do
     let(:activity) { build(:activity, active: false) }
 
-    it 'should return the active value as false' do
+    it 'returns the active value as false' do
       activity.deactivate!
       activity.reload
       expect(activity.active).to be_falsey
     end
   end
 
-  describe "with_results_for" do
-    let(:activity_type) { FactoryGirl.create(:activity_type, company: campaign.company) }
-    let(:field) { FactoryGirl.create(:form_field, type: 'FormField::TextArea', fieldable: activity_type ) }
-    let(:venue) { FactoryGirl.create(:venue, company: campaign.company) }
-    let(:campaign) { FactoryGirl.create(:campaign) }
+  describe 'with_results_for' do
+    let(:activity_type) { create(:activity_type, company: campaign.company) }
+    let(:field) { create(:form_field_text_area, fieldable: activity_type) }
+    let(:venue) { create(:venue, company: campaign.company) }
+    let(:campaign) { create(:campaign) }
 
     before { campaign.activity_types << activity_type }
 
-    it "results empty if no activities have the given fields" do
-      FactoryGirl.create(:activity, activity_type: activity_type,
-        activitable: venue, campaign: campaign, company_user_id: 1)
-      expect(Activity.with_results_for(field)).to be_empty
+    it 'returns empty if no activities have the given fields' do
+      create(:activity, activity_type: activity_type,
+             activitable: venue, campaign: campaign, company_user_id: 1)
+      expect(described_class.with_results_for(field)).to be_empty
     end
 
-    it "results the activity if have result for the field" do
-      activity = FactoryGirl.create(:activity, activity_type: activity_type,
+    it 'returns results the activity if have result for the field' do
+      activity = create(:activity, activity_type: activity_type,
         activitable: venue, campaign: campaign, company_user_id: 1)
       activity.results_for([field]).first.value = 'this have a value'
       activity.save
 
-      expect(Activity.with_results_for(field)).to match_array [activity]
+      expect(described_class.with_results_for(field)).to match_array [activity]
     end
 
-    it "should return each activity only once" do
-      activity = FactoryGirl.create(:activity, activity_type: activity_type,
+    it 'returns each activity only once' do
+      activity = create(:activity, activity_type: activity_type,
         activitable: venue, campaign: campaign, company_user_id: 1)
 
-      field2 = FactoryGirl.create(:form_field, type: 'FormField::TextArea', fieldable: activity_type )
-      activity.results_for([field, field2]).each{|r| r.value = 'this have a value' }
-      expect {
+      field2 = create(:form_field_text_area, fieldable: activity_type)
+      activity.results_for([field, field2]).each { |r| r.value = 'this have a value' }
+      expect do
         activity.save
-      }.to change(FormFieldResult, :count).by(2)
+      end.to change(FormFieldResult, :count).by(2)
 
-      expect(Activity.with_results_for([field, field2])).to match_array [activity]
-    end
-  end
-
-  describe "all_values_for_trending" do
-    let(:activity_type) { FactoryGirl.create(:activity_type, company: campaign.company) }
-    let(:field) { FactoryGirl.create(:form_field, type: 'FormField::TextArea', fieldable: activity_type ) }
-    let(:venue) { FactoryGirl.create(:venue, company: campaign.company) }
-    let(:campaign) { FactoryGirl.create(:campaign) }
-    let(:activity) { FactoryGirl.create(:activity, activity_type: activity_type,
-            activitable: venue, campaign: campaign, company_user_id: 1) }
-
-    before { campaign.activity_types << activity_type }
-
-    it "results empty if no activities have the given fields" do
-      expect(activity.all_values_for_trending).to be_empty
-    end
-
-    it "returns all the values for all trending fields" do
-      field2 = FactoryGirl.create(:form_field, type: 'FormField::TextArea', fieldable: activity_type )
-
-      activity.results_for([field]).first.value = 'this have a value'
-      activity.results_for([field2]).first.value = 'another value'
-      activity.save
-
-      expect(activity.all_values_for_trending).to match_array ['this have a value', 'another value']
-    end
-
-    it "returns all the values for all trending fields that match the given term" do
-      field2 = FactoryGirl.create(:form_field, type: 'FormField::TextArea', fieldable: activity_type )
-
-      activity.results_for([field]).first.value = 'this have a value'
-      activity.results_for([field2]).first.value = 'another value'
-      activity.save
-
-      expect(activity.all_values_for_trending('another')).to match_array ['another value']
-      expect(activity.all_values_for_trending('value')).to match_array ['this have a value', 'another value']
+      expect(described_class.with_results_for([field, field2])).to match_array [activity]
     end
   end
 end

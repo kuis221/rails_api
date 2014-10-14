@@ -10,7 +10,7 @@ feature 'Trending report' do
       state: 'San Jose', is_custom_place: true, reference: nil)
   end
   let(:permissions) { [] }
-  let(:event) { create(:event, campaign: campaign, company: company, place: place) }
+  let(:event) { create(:approved_event, campaign: campaign, company: company, place: place) }
 
   before do
     Warden.test_mode!
@@ -24,9 +24,14 @@ feature 'Trending report' do
 
   shared_examples_for 'a user that can view the trending report' do
     scenario 'can see the bubbles with the most popular words in comments' do
-      create(:comment, commentable: event, content: 'hola mundo')
-      create(:comment, commentable: event, content: 'Costa Rica es el pais mas feliz del mundo')
-      create(:comment, commentable: event, content: 'Copa del mundo Brasil 2014')
+      campaign.modules = { 'comments' => {} }
+      expect(campaign.save).to be_truthy
+      visit event_path(event)
+
+      add_comment 'hola mundo'
+      add_comment 'Costa Rica es el pais mas feliz del mundo'
+      add_comment 'Copa del mundo Brasil 2014'
+
       Sunspot.commit
 
       visit sources_analysis_trends_path
@@ -54,20 +59,26 @@ feature 'Trending report' do
       # Deletes a word from the cloud
       delete_bubble 'costa 1'
 
-      find('a.bubble-label', text: 'mundo 3').click
-
-      expect(current_path).to eql '/analysis/trends/t/mundo'
+      find('a.bubble-label', text: 'mundo 3').trigger('click')
 
       expect(page).to have_selector('h2', text: 'Mundo')
+      expect(current_path).to eql '/analysis/trends/t/mundo'
     end
 
     scenario 'can see the bubbles with the most popular words in event data fields' do
-      text_field = create(:form_field_text, fieldable: campaign, name: 'My Text Field')
-      paragraph_field = create(:form_field_text_area, fieldable: campaign, name: 'My Paragraph Field')
-      event.results_for([text_field]).first.value = 'Texto con hola en medio!'
-      event.results_for([paragraph_field]).first.value = 'hola mundo'
-      event.save
-      Sunspot.commit
+      event = create(:late_event, campaign: campaign, place: place)
+      create(:form_field_text,
+             fieldable: campaign, name: 'My Text Field')
+      create(:form_field_text_area,
+             fieldable: campaign, name: 'My Paragraph Field')
+
+      visit event_path(event)
+
+      fill_in 'My Text Field', with: 'Texto con hola en medio!'
+      fill_in 'My Paragraph Field', with: 'hola mundo'
+      click_button 'Save'
+
+      expect(page).to have_selector('.form-result-value', text: 'hola mundo')
 
       visit sources_analysis_trends_path
 
@@ -116,7 +127,11 @@ feature 'Trending report' do
     it_should_behave_like 'a user that can view the trending report' do
       before { company_user.campaigns << campaign }
       before { company_user.places << place }
-      let(:permissions) { [[:access, 'Symbol', 'trends_report']] }
+      let(:permissions) do
+        [[:access, 'Symbol', 'trends_report'], [:show, 'Event'],
+         [:index_comments, 'Event'], [:create_comment, 'Event'],
+         [:edit_unsubmitted_data, 'Event'], [:view_submitted_data, 'Event']]
+      end
     end
   end
 
@@ -130,5 +145,17 @@ feature 'Trending report' do
     find('a.bubble-label', text: text).hover
     click_js_link('Remove this word')
     expect(page).to have_no_selector('a.bubble-label', text: text)
+  end
+
+  def add_comment(text)
+    click_js_button 'Add Comment'
+    within visible_modal do
+      fill_in 'comment[content]', with: text
+      click_js_button 'Create'
+    end
+    ensure_modal_was_closed
+    within '.event-comments-list' do
+      expect(page).to have_content(text)
+    end
   end
 end

@@ -78,6 +78,6 @@ class FormFieldResult < ActiveRecord::Base
 
   def reindex_trending
     return unless form_field.trendeable?
-    Sunspot.index TrendObject.new(resultable, self)
+    Sunspot.index(TrendObject.new(resultable, self))
   end
 end

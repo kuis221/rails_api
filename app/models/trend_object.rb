@@ -153,7 +153,12 @@ class TrendObject
   def self.find(id)
     if id
       clazz_name, object_id = id.split(':')
-      TrendObject.new(clazz_name.camelize.constantize.find(object_id))
+      obj = clazz_name.camelize.constantize.find(object_id)
+      if obj.is_a?(Comment)
+        TrendObject.new(obj)
+      else
+        TrendObject.new(obj.resultable, obj)
+      end
     end
   end
 

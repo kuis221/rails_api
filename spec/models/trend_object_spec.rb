@@ -10,27 +10,42 @@ describe 'TrendObject' do
   let(:event) { create(:event, campaign: campaign, company: campaign.company) }
   let(:campaign) { create(:campaign) }
 
-  it "should return the correct id" do
+  it 'should return the correct id' do
     trend = TrendObject.new(comment)
     expect(trend.id).to eql "comment:#{comment.id}"
     expect(trend.resource).to eql comment
   end
 
-  describe "load_objects" do
-    it "loads the correct comment based on given id" do
+  describe 'load_objects' do
+    it 'loads the correct comment based on given id' do
       expect(TrendObject.load_objects(["comment:#{comment.id}"]).map(&:resource)).to match_array [comment]
     end
 
-    it "loads the correct form results based on given id" do
+    it 'loads the correct form results based on given id' do
       result = create(:form_field_result, form_field: field, resultable: event)
-      expect(TrendObject.load_objects(["form_field_result:#{result.id}"]).map(&:result)).to match_array [result]
+      objects = TrendObject.load_objects(["form_field_result:#{result.id}"])
+      expect(objects.map(&:result)).to match_array [result]
+      expect(objects.map(&:resource)).to match_array [event]
     end
   end
 
-  describe "do_search", search: true do
+  describe 'find' do
+    it 'loads the correct comment based on given id' do
+      expect(TrendObject.find("comment:#{comment.id}").resource).to eql comment
+    end
+
+    it 'loads the correct form results based on given id' do
+      result = create(:form_field_result, form_field: field, resultable: event)
+      object = TrendObject.find("form_field_result:#{result.id}")
+      expect(object.result).to eql result
+      expect(object.resource).to eql event
+    end
+  end
+
+  describe 'do_search', search: true do
     before { campaign.activity_types << activity_type }
 
-    it "loads the correct objects" do
+    it 'loads the correct objects' do
       comment.id
 
       activity.results_for([field]).first.value = 'this have a value'
