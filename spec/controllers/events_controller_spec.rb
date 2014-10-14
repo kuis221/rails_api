@@ -97,6 +97,15 @@ describe EventsController, type: :controller do
           expect(response).to be_success
           expect(assigns(:calendar_highlights)).to eq(2013 => { 1 => { 23 => 1, 24 => 1 }, 2 => { 15 => 1 } })
         end
+
+        ActiveSupport::TimeZone.all.each do |zone|
+          it "works when time zone is set to '#{zone.name}'" do
+            @user.update_attribute :time_zone, zone.name
+            get 'index'
+            expect(response).to be_success
+            expect(assigns(:calendar_highlights)).to eq({})
+          end
+        end
       end
 
       it 'queue the job for export the list' do
