@@ -1,11 +1,9 @@
 class Analysis::TrendsController < FilteredController
-  before_filter :authorize_actions
+  before_action :authorize_actions
 
   defaults resource_class: TrendObject
 
   skip_load_and_authorize_resource
-
-  custom_actions collection: [:sources, :questions, :results]
 
   helper_method :selected_campaign_ids, :selected_sources, :available_questions, :selected_questions
 
