@@ -74,19 +74,20 @@ class Results::ReportsController < InheritedResources::Base
   end
 
   def permitted_params
-    allowed = if params[:id].present?
-                if can?(:edit, resource)
-                  [:name, :description,
-                   { rows: [:field, :label, :aggregate] },
-                   { columns: [:field, :label] },
-                   { values: [:field, :label, :aggregate, :precision, :display] },
-                   { filters: [:field, :label] }]
-                else
-                  []
-                end
-    else
-      [:name, :description]
-    end
+    allowed =
+      if params[:id].present?
+        if can?(:edit, resource)
+          [:name, :description,
+           { rows: [:field, :label, :aggregate] },
+           { columns: [:field, :label] },
+           { values: [:field, :label, :aggregate, :precision, :display] },
+           { filters: [:field, :label] }]
+        else
+          []
+        end
+      else
+        [:name, :description]
+      end
     allowed += [:sharing, { sharing_selections: [] }] if params[:id].present? && can?(:share, resource)
     params.permit(report: allowed)[:report] || {}
   end

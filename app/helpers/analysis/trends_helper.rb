@@ -15,7 +15,7 @@ module Analysis::TrendsHelper
   end
 
   def available_data_sources
-    [['Comments', :comments]] +
+    [['Comments', 'Comment']] +
     current_company.activity_types.active.with_trending_fields.pluck(:name, :id)
   end
 end

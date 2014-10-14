@@ -26,7 +26,7 @@
 //= require chosen.jquery
 //= require desk.widget
 //= require events
-//= require highcharts.src.js
+//= require highstock.src.js
 //= require d3
 //= require bubble_clouds
 //= require detect_timezone
@@ -53,4 +53,3 @@
 //= require moment.min.js
 //= require fullcalendar
 //= require jquery.colorPicker
-//= require bootstrap-multiselect

@@ -25,6 +25,7 @@ class FormField < ActiveRecord::Base
 
   has_many :options, -> { order('form_field_options.ordering ASC').where(option_type: 'option') }, class_name: 'FormFieldOption', dependent: :destroy, inverse_of: :form_field, foreign_key: :form_field_id
   has_many :statements, -> { order('form_field_options.ordering ASC').where(option_type: 'statement') }, class_name: 'FormFieldOption', dependent: :destroy, inverse_of: :form_field, foreign_key: :form_field_id
+  has_many :form_field_results, dependent: :destroy, inverse_of: :form_field, foreign_key: :form_field_id
   belongs_to :kpi
   accepts_nested_attributes_for :options, allow_destroy: true
   accepts_nested_attributes_for :statements, allow_destroy: true
@@ -126,6 +127,10 @@ class FormField < ActiveRecord::Base
   # Returns true if the field can have options associated
   def is_optionable?
     false
+  end
+
+  def trendeable?
+    TRENDING_FIELDS_TYPES.include?(self.type)
   end
 
   def type_name

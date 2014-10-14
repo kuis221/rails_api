@@ -171,7 +171,7 @@ Brandscopic::Application.routes.draw do
   end
 
   namespace :analysis do
-    resources :trends, only: [:show] do
+    resources :trends, only: [] do
       collection do
         get :sources
         get :questions
@@ -180,11 +180,8 @@ Brandscopic::Application.routes.draw do
         get :filters
         get :search
       end
-      member do
-        get :mentions_over_time
-        get :mentions_across_locations
-        get :mentions
-      end
+      get 't/:term', on: :collection, to: :show
+      get 't/:term/:action', on: :collection
     end
 
     get :campaigns_report, to: 'campaigns_report#index'

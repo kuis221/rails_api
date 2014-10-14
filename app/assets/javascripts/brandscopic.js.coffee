@@ -96,10 +96,6 @@ jQuery ->
 				$(@).valid();
 		$('input.timepicker').timepicker()
 		$('select.chosen-enabled').chosen()
-		$('select[multiple]:not(.chosen-enabled)').multiselect
-			buttonContainer: '<div class="btn-group bootstrap-multiselect">'
-			buttonClass: 'btn btn-multiselect'
-			numberDisplayed: 1
 		$('.has-tooltip').tooltip({html: true, delay: 0, animation: false})
 		$('.has-popover').popover({html: true})
 		$("input:checkbox, input:radio").not('[data-no-uniform="true"],#uniform-is-ajax').uniform()

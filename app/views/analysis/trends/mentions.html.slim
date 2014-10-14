@@ -13,7 +13,7 @@ div data-content="items" data-total="#{collection_count}" data-pages="#{total_pa
             ' on
             span=> resource.commentable.start_at.to_s(:simple)
       - else
-        p.mention= highlight_trend_words(resource.all_values_for_trending(@term).join("\n\n"), @term)
+        p.mention= highlight_trend_words(trend_object.description, @term)
         - photos = resource.photos.to_a
         - if photos.any?
           .photo-container id="carousel-#{resource.id}" class="#{(photos.count > 3 ? 'carousel slide' : '') + ' photos-count-'+photos.count.to_s}" data-interval="false"
@@ -32,10 +32,15 @@ div data-content="items" data-total="#{collection_count}" data-pages="#{total_pa
                   ==< " of "
                   span==< " #{photos.count} "
         p.consumer
-          span=> resource.activity_type.name
-          - unless resource.campaign.nil?
-            ' for
+          - if resource.is_a?(ActivityType)
+            span=> resource.activity_type.name
+            - unless resource.campaign.nil?
+              ' for
+              span=> resource.campaign.name
+            - unless resource.activity_date.nil?
+              ' on
+              span=> resource.activity_date.to_s(:simple)
+          - elsif resource.is_a?(Event)
             span=> resource.campaign.name
-          - unless resource.activity_date.nil?
-            ' on
-            span=> resource.activity_date.to_s(:simple)
+              ' on
+              span=> resource.start_date.to_s(:simple)

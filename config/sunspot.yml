@@ -22,7 +22,7 @@ test:
   solr:
     hostname: localhost
     port: 8981
-    log_level: WARNING
+    log_level: DEBUG
     path: /solr/test
   auto_commit_after_request: true
   auto_commit_after_delete_request: true

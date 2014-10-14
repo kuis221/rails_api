@@ -40,7 +40,7 @@ SimpleNavigation::Configuration.run do |navigation|
     end
 
     primary.item :brand_ambassadors, 'Brand Ambassadors', brand_ambassadors_root_path, highlights_on: %r{/brand_ambassadors}, link: { icon_class: 'icon-campaign menubar-icon' } if can?(:access, :brand_ambassadors)
-    primary.item :results, 'Results', results_reports_path, highlights_on: %r{/results}, link: { icon_class: 'icon-results menubar-icon' } if can?(:access, :results)
+    primary.item :results, 'Results', results_reports_path, highlights_on: %r{^/results}, link: { icon_class: 'icon-results menubar-icon' } if can?(:access, :results)
 
     options = []
     options.push([:trends, 'Trends Report', sources_analysis_trends_path, highlights_on: %r(/analysis/trends)]) if can?(:access, :trends_report )

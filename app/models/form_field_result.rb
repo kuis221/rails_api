@@ -26,6 +26,7 @@ class FormFieldResult < ActiveRecord::Base
   has_one :attached_asset, as: :attachable, dependent: :destroy, inverse_of: :attachable
 
   before_validation :prepare_for_store
+  after_commit :reindex_trending
 
   scope :for_kpi, -> (kpi) { joins(:form_field).where(form_fields: { kpi_id: kpi }) }
 
@@ -73,5 +74,10 @@ class FormFieldResult < ActiveRecord::Base
     end
     self.scalar_value = value.to_f rescue 0 if value.present? && value.to_s =~ /\A[0-9\.\,]+\z/
     true
+  end
+
+  def reindex_trending
+    return unless form_field.trendeable?
+    Sunspot.index TrendObject.new(resultable, self)
   end
 end

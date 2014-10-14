@@ -10,7 +10,7 @@
 
 javascript:
   $('#all-mentions-list-filter').filteredList({
-    'source': '#{analysis_mentions_path}',
+    'source': '#{url_for(action: :mentions)}',
     'filtersUrl': false,
     'listContainer' : '#all-mentions-list',
     'sorting': 'start_at',

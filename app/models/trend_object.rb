@@ -1,11 +1,14 @@
 require 'sunspot/trend_object_adapter'
 
 class TrendObject
-
   include ActiveModel::Validations
   include ActiveModel::Conversion
   include Sunspot::TrendObjectAdapter
   extend ActiveModel::Naming
+
+  attr_reader :id, :resource, :result
+
+  delegate :form_field_id, to: :result, allow_nil: true
 
   searchable do
     string :id
@@ -14,6 +17,7 @@ class TrendObject
     integer :campaign_id
 
     integer :place_id
+    integer :form_field_id
 
     integer :location, multiple: true do
       locations_for_index
@@ -33,24 +37,17 @@ class TrendObject
     string :source
   end
 
-  def initialize(resource)
-    @id = TrendObject.object_to_id(resource)
+  def initialize(resource, result=nil)
+    @id = TrendObject.object_to_id(result || resource)
     @resource = resource
-  end
-
-  def id
-    @id
-  end
-
-  def resource
-    @resource
+    @result = result
   end
 
   def description
-    if @resource.is_a?(Comment)
-      @resource.content
+    if resource.is_a?(Comment)
+      resource.content
     else
-      @resource.all_values_for_trending.join(" ")
+      result.value
     end
   end
 
@@ -134,7 +131,6 @@ class TrendObject
 
   def self.load_objects(ids)
     ids_by_class = {}
-    clasess = {}
     ids.each do|id|
       clazz_name, object_id = id.split(':')
       ids_by_class[clazz_name] ||= []
@@ -143,13 +139,11 @@ class TrendObject
 
     ids_by_class.map do |clazz_name, ids|
       if clazz_name == 'comment'
-        clazz_name.camelize.constantize.preload(commentable: :campaign).where(id: ids)
-      elsif clazz_name == 'activity'
-        clazz_name.camelize.constantize.includes(:campaign).where(id: ids)
-      else
-        clazz_name.camelize.constantize.where(id: ids)
+        Comment.preload(commentable: :campaign).where(id: ids).map{ |o| TrendObject.new(o) }
+      elsif clazz_name == 'form_field_result'
+        FormFieldResult.includes(:resultable).where(id: ids).map{ |o| TrendObject.new(o.resultable, o) }
       end
-    end.flatten.map{|o| TrendObject.new(o) }
+    end.flatten
   end
 
   def self.object_to_id(resource)
@@ -168,6 +162,8 @@ class TrendObject
       with :company_id, params[:company_id]
 
       with :source, params[:source] unless params[:source].nil?
+
+      with :form_field_id, params[:question] unless params[:question].nil?
 
       with :campaign_id, params[:campaign] if params.has_key?(:campaign) and params[:campaign].present?
 
@@ -234,24 +230,16 @@ class TrendObject
         options[:progress_bar].increment!(records.length) if options[:progress_bar]
       end
 
-      # Index events PostEvent-Forms
+      # Index form field results
       batch_counter = 0
-      Campaign.where(id: CampaignFormField.for_trends.pluck('DISTINCT campaign_id')).find_each do |campaign|
-        campaign.events.with_trending_results.find_in_batches(options.slice(:batch_size, :start)) do |records|
-          solr_benchmark(options[:batch_size], batch_counter += 1) do
-            Sunspot.index(records.map{|event| TrendObject.new(event) }.select { |model| model.indexable? })
-            Sunspot.commit if options[:batch_commit]
-          end
-          options[:progress_bar].increment!(records.length) if options[:progress_bar]
-        end
-      end
+      FormField.where(type: FormField::TRENDING_FIELDS_TYPES).each do |form_field|
+        form_field.form_field_results
+          .order('resultable_type, resultable_id')
+          .preload(:resultable)
+          .find_in_batches(options.slice(:batch_size, :start)) do |records|
 
-      # Index activities with text answers
-      batch_counter = 0
-      activity_types = ActivityType.active.with_trending_fields.each do |activity_type|
-        Activity.active.preload(activitable: :place).where(activity_type_id: activity_type.id).with_results_for(activity_type.trending_fields).find_in_batches(options.slice(:batch_size, :start)) do |records|
           solr_benchmark(options[:batch_size], batch_counter += 1) do
-            Sunspot.index(records.map{|activity| TrendObject.new(activity) }.select { |model| model.indexable? })
+            Sunspot.index(records.map{|result| TrendObject.new(result.resultable, result) }.select { |model| model.indexable? })
             Sunspot.commit if options[:batch_commit]
           end
           options[:progress_bar].increment!(records.length) if options[:progress_bar]
@@ -267,6 +255,11 @@ class TrendObject
 
   def self.count
     Comment.for_trends.count +
-    Activity.active.with_results_for(FormField.where(type: ActivityType::TRENDING_FIELDS_TYPES).joins('INNER JOIN activity_types ON activity_types.id=fieldable_id and fieldable_type=\'ActivityType\'').group('form_fields.id').pluck('form_fields.id')).count
+    Activity.active.with_results_for(
+      FormField.where(type: ActivityType::TRENDING_FIELDS_TYPES)
+        .joins('INNER JOIN activity_types ON activity_types.id=fieldable_id and fieldable_type=\'ActivityType\'')
+        .group('form_fields.id')
+        .pluck('form_fields.id')
+    ).count
   end
 end

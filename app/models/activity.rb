@@ -56,8 +56,6 @@ class Activity < ActiveRecord::Base
 
   before_validation :delegate_campaign_id_from_event
 
-  after_commit :reindex_trending
-
   searchable do
     integer :company_id
     integer :campaign_id
@@ -77,14 +75,6 @@ class Activity < ActiveRecord::Base
     update_attribute :active, false
   end
 
-  def all_values_for_trending(term=nil)
-    scope = results.joins(:form_field).
-      where(form_fields: {type: ActivityType::TRENDING_FIELDS_TYPES}).
-      where('form_field_results.value is not NULL AND form_field_results.value !=\'\'')
-    scope = scope.where('lower(value) like ?', "%#{term}%") if term.present?
-    scope.pluck('form_field_results.value')
-  end
-
   def results_for_type
     activity_type.form_fields.map do |field|
       result = results.find { |r| r.form_field_id == field.id } || results.build(form_field_id: field.id)
@@ -102,10 +92,10 @@ class Activity < ActiveRecord::Base
   end
 
   def photos
-    scope = results.joins(:form_field).
-      where(form_fields: {type: ActivityType::PHOTO_FIELDS_TYPES}).
-      where('activity_results.value is not NULL AND activity_results.value !=\'\'').
-      preload(:attached_asset).map(&:attached_asset)
+    scope = results.joins(:form_field)
+      .where(form_fields: {type: ActivityType::PHOTO_FIELDS_TYPES})
+      .where.not(form_field_results: { value: nil }).where.not(form_field_results: { value: '' })
+      .preload(:attached_asset).map(&:attached_asset)
   end
 
   def valid_activity_type_ids
@@ -154,13 +144,5 @@ class Activity < ActiveRecord::Base
     return unless activitable.is_a?(Event)
     self.campaign = activitable.campaign
     self.campaign_id = activitable.campaign_id
-  end
-
-  def reindex_trending
-    if all_values_for_trending.count > 0
-      Sunspot.index TrendObject.new(self)
-    else
-      Sunspot.remove TrendObject.new(self)
-    end
   end
 end

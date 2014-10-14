@@ -20,7 +20,7 @@
         if (typeof cache[region] != 'undefined') {
           drawCitiesMap(region, cache[region]);
         } else {
-          $.get('#{analysis_mentions_across_locations_path(format: :json)}?country='+parts[0]+'&state='+parts[1], function(response){
+          $.get('#{url_for(action: :mentions_across_locations, format: :json)}?country='+parts[0]+'&state='+parts[1], function(response){
             cache[region] = response;
             drawCitiesMap(region, response);
           });
@@ -47,7 +47,7 @@
         if (typeof cache[country] != 'undefined') {
           drawStatesMap(country, cache[country]);
         } else {
-          $.get('#{analysis_mentions_across_locations_path(format: :json)}?country='+country, function(response){
+          $.get('#{url_for(action: :mentions_across_locations, format: :json)}?country='+country, function(response){
             cache[country] = response;
             drawStatesMap(country, response);
           });
@@ -81,7 +81,7 @@
         if (typeof cache['world'] != 'undefined') {
           drawWorldMap(cache['world']);
         } else {
-          $.get('#{analysis_mentions_across_locations_path(format: :json)}', function(response){
+          $.get('#{url_for(action: :mentions_across_locations, format: :json)}', function(response){
             cache['world'] = response;
             if (response.length == 2) {
               drawStatesMap(response[1][0]);
