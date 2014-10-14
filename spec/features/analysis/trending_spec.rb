@@ -52,15 +52,55 @@ feature 'Trending report' do
       expect(page).to have_selector('a.bubble-label', text: 'hola 1')
 
       # Deletes a word from the cloud
-      find('a.bubble-label', text: 'costa 1').hover
-      click_js_link('Remove this word')
-      expect(page).to have_no_selector('a.bubble-label', text: 'costa 1')
+      delete_bubble 'costa 1'
 
       find('a.bubble-label', text: 'mundo 3').click
 
       expect(current_path).to eql '/analysis/trends/t/mundo'
 
       expect(page).to have_selector('h2', text: 'Mundo')
+    end
+
+    scenario 'can see the bubbles with the most popular words in event data fields' do
+      text_field = create(:form_field_text, fieldable: campaign, name: 'My Text Field')
+      paragraph_field = create(:form_field_text_area, fieldable: campaign, name: 'My Paragraph Field')
+      event.results_for([text_field]).first.value = 'Texto con hola en medio!'
+      event.results_for([paragraph_field]).first.value = 'hola mundo'
+      event.save
+      Sunspot.commit
+
+      visit sources_analysis_trends_path
+
+      select_from_chosen(campaign.name, from: '1. Choose one or more campaigns')
+      select_from_chosen('Comments', from: '2. Choose one or more data sources within those campaigns')
+      click_button 'Done'
+
+      expect(page).to have_text 'QUESTIONS'
+      unicheck 'My Text Field'
+      unicheck 'My Paragraph Field'
+      expect(current_path).to eql(questions_analysis_trends_path)
+
+      click_button 'Done'
+
+      expect(page).to have_filter_section(
+        title: 'QUESTIONS',
+        options: ['My Paragraph Field', 'My Text Field'])
+      expect(find_field('My Text Field', visible: false)).to be_checked
+      expect(find_field('My Paragraph Field', visible: false)).to be_checked
+
+      expect(page).to have_selector('a.bubble-label', text: 'hola 2')
+      expect(page).to have_selector('a.bubble-label', text: 'texto 1')
+      expect(page).to have_selector('a.bubble-label', text: 'medio 1')
+      expect(page).to have_selector('a.bubble-label', text: 'mundo 1')
+
+      # Deletes a word from the cloud
+      delete_bubble 'medio 1'
+
+      find('a.bubble-label', text: 'hola 2').click
+
+      expect(current_path).to eql '/analysis/trends/t/hola'
+
+      expect(page).to have_selector('h2', text: 'Hola')
     end
   end
 
@@ -84,5 +124,11 @@ feature 'Trending report' do
     permissions.each do |p|
       company_user.role.permissions.create(action: p[0], subject_class: p[1])
     end
+  end
+
+  def delete_bubble(text)
+    find('a.bubble-label', text: text).hover
+    click_js_link('Remove this word')
+    expect(page).to have_no_selector('a.bubble-label', text: text)
   end
 end

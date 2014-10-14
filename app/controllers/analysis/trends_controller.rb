@@ -40,6 +40,12 @@ class Analysis::TrendsController < FilteredController
 
   private
 
+  def search_params
+    @search_params || super.tap do |p|
+      p[:source].push 'Event' if p.key?(:source) && !p[:source].include?('Event')
+    end
+  end
+
   def return_path
     params[:return] || request.env['HTTP_REFERER'] || results_analysis_trends_url
   end
@@ -97,8 +103,8 @@ class Analysis::TrendsController < FilteredController
   def build_question_bucket
     items = []
     if params.key?(:question) && params[:question].any?
-      items.concat(FormField.where(id: params[:question]).map do |at|
-        build_facet_item(label: at.name, id: "ActivityType:#{at.id}", name: :source, count: 1)
+      items.concat(FormField.where(id: params[:question]).map do |question|
+        build_facet_item(label: question.name, id: question.id, name: :question, count: 1)
       end)
     end
     { label: 'Questions', items: items }
