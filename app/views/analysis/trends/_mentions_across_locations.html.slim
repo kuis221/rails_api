@@ -1,0 +1,114 @@
+- content_for :head
+  = javascript_include_tag "https://www.google.com/jsapi"
+
+.details_box
+  h3 MENTIONS ACROSS LOCATIONS
+  #mentions-breadcrumbs
+
+  #mentions-across-locations-graph
+
+- content_for :footer do
+  javascript:
+    var cache = {}
+    google.load('visualization', '1', { 'packages': ['geomap'] });
+    google.setOnLoadCallback(initializeMap);
+    function drawCitiesMap(region, cities) {
+      parts = region.split('-');
+      $('#mentions-breadcrumbs').html('');
+      $('#mentions-breadcrumbs').append('Location: <a href="javascript:drawWorldMap();">ALL</a> :: <a href="javascript:drawStatesMap(\''+parts[0]+'\');">'+parts[0]+'</a> :: '+parts[1]);
+      if (typeof cities == 'undefined'){
+        if (typeof cache[region] != 'undefined') {
+          drawCitiesMap(region, cache[region]);
+        } else {
+          $.get('#{j url_for(params.merge(action: :mentions_across_locations, format: :json)).html_safe}&country='+parts[0]+'&state='+parts[1], function(response){
+            cache[region] = response;
+            drawCitiesMap(region, response);
+          });
+        }
+      } else {
+        var data = google.visualization.arrayToDataTable(cities);
+
+        var options = {
+          region: region,
+          colorAxis: {colors: ['#CFE1E5', '#3881A2']},
+          displayMode: 'markers',
+          resolution: 'provinces',
+          height: 490,
+          backgroundColor: '#ffffff'
+        };
+
+        geochart.draw(data, options);
+      }
+    };
+
+    function drawStatesMap(country, states) {
+      $('#mentions-breadcrumbs').html('Location: <a href="javascript:drawWorldMap();">ALL</a> :: '+country);
+      if (typeof states == 'undefined'){
+        if (typeof cache[country] != 'undefined') {
+          drawStatesMap(country, cache[country]);
+        } else {
+          $.get('#{j url_for(params.merge(action: :mentions_across_locations, format: :json)).html_safe}&country='+country, function(response){
+            cache[country] = response;
+            drawStatesMap(country, response);
+          });
+        }
+      } else {
+        var data = google.visualization.arrayToDataTable(states);
+
+        var options = {
+          region: 'US',
+          colorAxis: {colors: ['#CFE1E5', '#3881A2']},
+          displayMode: 'regions',
+          height: 490,
+          resolution: 'provinces',
+          backgroundColor: '#ffffff'
+        };
+
+        geochart.draw(data, options);
+        google.visualization.events.removeAllListeners(geochart, 'regionClick');
+        google.visualization.events.addListener(geochart, 'regionClick', function(selection) {
+          drawCitiesMap(selection.region)
+        });
+      }
+    };
+
+    function drawWorldMap(countries) {
+      $('#mentions-breadcrumbs').html('');
+      if (typeof countries == 'undefined'){
+        geochart = new google.visualization.GeoChart(
+          document.getElementById('mentions-across-locations-graph'));
+
+        if (typeof cache['world'] != 'undefined') {
+          drawWorldMap(cache['world']);
+        } else {
+          $.get('#{j url_for(params.merge(action: :mentions_across_locations, format: :json)).html_safe}', function(response){
+            cache['world'] = response;
+            if (response.length == 2) {
+              drawStatesMap(response[1][0]);
+            } else {
+              drawWorldMap(response);
+            }
+          });
+        }
+      } else {
+        var data = google.visualization.arrayToDataTable(countries);
+
+        var options = {
+          region: 'world',
+          colorAxis: {colors: ['#CFE1E5', '#3881A2']},
+          displayMode: 'regions',
+          height: 490,
+          backgroundColor: '#ffffff'
+        };
+
+        geochart.draw(data, options);
+
+        google.visualization.events.addListener(geochart, 'regionClick', function(selection) {
+          drawStatesMap(selection.region)
+        });
+      }
+    };
+
+    function initializeMap() {
+      drawWorldMap();
+    }

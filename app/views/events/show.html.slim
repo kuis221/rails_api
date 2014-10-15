@@ -82,7 +82,7 @@
         = render 'contacts'
       = button_to_add 'Add Contact', add_event_contact_events_path(resource) if can?(:create_contacts, resource)
 
-  - resource.results.each{|r| r.errors.clear}
+  - resource.results.each { |r| r.errors.clear }
   - if resource.has_event_data? && !resource.rejected?
     = render 'show_results'
   - elsif resource.happens_today? || resource.in_past?

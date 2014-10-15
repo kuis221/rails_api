@@ -70,6 +70,8 @@ FactoryGirl.define do
     # end
 
     factory :approved_event do
+      start_date Date.yesterday.to_s(:slashes)
+      end_date Date.yesterday.to_s(:slashes)
       aasm_state 'approved'
     end
 

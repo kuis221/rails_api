@@ -1,0 +1,20 @@
+#all-mentions-box.details_box
+  h3
+  	==> 'ALL MENTIONS OF'
+  	span.blue.ml4= @term.upcase
+
+  #all-mentions-list-filter
+    // This div is only to be used for the filtered list, should not be removed
+
+  #all-mentions-list.row-fluid.mentions
+
+javascript:
+  $('#all-mentions-list-filter').filteredList({
+    'source': '#{url_for(action: :mentions)}',
+    'filtersUrl': false,
+    'listContainer' : '#all-mentions-list',
+    'sorting': 'start_at',
+    'sorting_dir': 'desc',
+    'defaultParams': [],
+    'clearFilterParams': []
+  });

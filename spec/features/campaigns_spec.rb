@@ -7,7 +7,6 @@ feature 'Campaigns', js: true do
 
   before do
     Warden.test_mode!
-    company = user.companies.first
     sign_in user
   end
 
@@ -52,7 +51,8 @@ feature 'Campaigns', js: true do
     end
 
     scenario 'should allow user to activate campaigns' do
-      campaign = create(:inactive_campaign, name: 'Cacique FY13', description: 'test campaign for guaro cacique', company: company)
+      create(:inactive_campaign, name: 'Cacique FY13',
+        description: 'test campaign for guaro cacique', company: company)
       Sunspot.commit
       visit campaigns_path
 
@@ -68,7 +68,7 @@ feature 'Campaigns', js: true do
     end
 
     scenario 'allows the user to create a new campaign' do
-      porfolio = create(:brand_portfolio, name: 'Test portfolio', company: company)
+      create(:brand_portfolio, name: 'Test portfolio', company: company)
       visit campaigns_path
 
       click_js_button 'New Campaign'
@@ -310,7 +310,7 @@ feature 'Campaigns', js: true do
 
         visit campaign_path(campaign)
 
-        tab = open_tab('KPIs')
+        open_tab('KPIs')
 
         click_js_link 'Add KPI'
 
@@ -378,7 +378,8 @@ feature 'Campaigns', js: true do
       scenario 'Remove existing KPI from campaign' do
         Kpi.create_global_kpis
         campaign = create(:campaign, company: company)
-        kpi = create(:kpi, name: 'My Custom KPI', description: 'My custom kpi description', kpi_type: 'number', capture_mechanism: 'currency', company: company)
+        kpi = create(:kpi, name: 'My Custom KPI', description: 'My custom kpi description',
+          kpi_type: 'number', capture_mechanism: 'currency', company: company)
         campaign.add_kpi kpi
 
         visit campaign_path(campaign)
@@ -414,7 +415,10 @@ feature 'Campaigns', js: true do
         let(:user) { create(:user, company: company, role_id: create(:non_admin_role, company: company).id) }
         let(:company_user) { user.company_users.first }
         let(:campaign) { create(:campaign, company: company) }
-        let(:kpi) { create(:kpi, name: 'My Custom KPI', description: 'my custom kpi description', kpi_type: 'number', capture_mechanism: 'currency', company: company) }
+        let(:kpi) do
+          create(:kpi, name: 'My Custom KPI', description: 'my custom kpi description',
+            kpi_type: 'number', capture_mechanism: 'currency', company: company)
+        end
 
         scenario 'User without permissions cannot edit Custom KPIs' do
           Kpi.create_global_kpis
@@ -472,7 +476,8 @@ feature 'Campaigns', js: true do
       scenario 'Edit Custom KPI' do
         Kpi.create_global_kpis
         campaign = create(:campaign, company: company)
-        kpi = create(:kpi, name: 'My Custom KPI', description: 'my custom kpi description', kpi_type: 'number', capture_mechanism: 'currency', company: company)
+        kpi = create(:kpi, name: 'My Custom KPI', description: 'my custom kpi description',
+          kpi_type: 'number', capture_mechanism: 'currency', company: company)
         campaign.add_kpi(kpi)
         create(:goal, goalable: campaign, kpi: kpi, value: 100)
 

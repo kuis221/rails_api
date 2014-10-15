@@ -16,6 +16,29 @@ form.button_to {
 	border:0;
 	margin: 0;
 	padding: 0;
+	margin-top: 25px;
+	.btn-primary{
+		margin-right: 8px;
+	}
+	&.inside-form{
+		margin: 25px 0px 33px;
+	}
+}
+.form-horizontal{
+	.controls{
+		margin: 0;
+	}
+	.control-label{
+		text-align: left;
+		width: 70px;
+		&.location{
+			display:none;
+		}
+	}
+	.form-actions{
+		margin-top: 10px;
+		padding:0;
+	}
 }
 
 form{

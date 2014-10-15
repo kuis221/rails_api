@@ -27,6 +27,8 @@
 class Event < ActiveRecord::Base
   include AASM
 
+  track_who_does_it
+
   belongs_to :campaign
   belongs_to :visit, class_name: 'BrandAmbassadors::Visit'
   belongs_to :place, autosave: true
@@ -112,8 +114,8 @@ class Event < ActiveRecord::Base
       joins(:place)
         .where('events.place_id in (?) OR events.place_id in (
                 select place_id FROM locations_places where location_id in (?))',
-                company_user.accessible_places + [0],
-                company_user.accessible_locations + [0]
+               company_user.accessible_places + [0],
+               company_user.accessible_locations + [0]
         )
     end
   end
@@ -185,8 +187,6 @@ class Event < ActiveRecord::Base
       places.map(&:id).uniq + [0],
       places.select(&:is_location?).map(&:location_id).compact.uniq + [0])
   end
-
-  track_who_does_it
 
   # validates_attachment_content_type :file, content_type: ['image/jpeg', 'image/png']
   validates :campaign_id, presence: true, numericality: true

@@ -16,7 +16,7 @@ class FilteredController < InheritedResources::Base
 
   before_action :authorize_actions, only: CUSTOM_VALIDATION_ACTIONS
 
-  after_filter :remove_resource_new_notifications, only: :show
+  after_action :remove_resource_new_notifications, only: :show
 
   custom_actions collection: [:filters, :items]
 

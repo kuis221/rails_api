@@ -40,11 +40,12 @@ SimpleNavigation::Configuration.run do |navigation|
     end
 
     primary.item :brand_ambassadors, 'Brand Ambassadors', brand_ambassadors_root_path, highlights_on: %r{/brand_ambassadors}, link: { icon_class: 'icon-campaign menubar-icon' } if can?(:access, :brand_ambassadors)
-    primary.item :results, 'Results', results_reports_path, highlights_on: %r{/results}, link: { icon_class: 'icon-results menubar-icon' } if can?(:access, :results)
+    primary.item :results, 'Results', results_reports_path, highlights_on: %r{^/results}, link: { icon_class: 'icon-results menubar-icon' } if can?(:access, :results)
 
     options = []
-    options.push([:campaigns_report, 'Campaigns Report', analysis_campaigns_report_path, highlights_on: %r{/analysis/campaigns_report}]) if can?(:show_analysis, Campaign)
-    options.push([:staff_performance, 'Staff Performance', analysis_staff_report_path, highlights_on: %r{/analysis/staff_report}]) if can?(:show_analysis, CompanyUser)
+    options.push([:trends, 'Trends Report', sources_analysis_trends_path, highlights_on: %r(/analysis/trends)]) if can?(:access, :trends_report )
+    #options.push([:campaigns_report, 'Campaigns Report', analysis_campaigns_report_path, highlights_on: %r{/analysis/campaigns_report}]) if can?(:show_analysis, Campaign)
+    #options.push([:staff_performance, 'Staff Performance', analysis_staff_report_path, highlights_on: %r{/analysis/staff_report}]) if can?(:show_analysis, CompanyUser)
 
     unless options.empty?
       primary.item :analysis, 'Analysis', options.first[2], highlights_on: %r{/analysis}, link: { icon_class: 'icon-analysis menubar-icon' } do |secondary|

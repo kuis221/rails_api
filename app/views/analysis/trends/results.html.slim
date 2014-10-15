@@ -1,0 +1,69 @@
+.sidebar.collapsed#resource-filter-column
+  #collection-list-filters
+
+.main
+  h4 TERMS
+  #terms-container
+    form.form-inline
+      input#add-trend-term.form-control placeholder=("Add term or phrase") type="text" /
+      button#add-trend-term-button.btn.btn-default type="submit" +
+    legend
+      .key LOSING
+      .key STABLE
+      .key GAINING
+  #bubble-container
+
+javascript:
+  var plot = Bubbles();
+
+  $('#collection-list-filters').filteredList({
+    'source': '#{items_analysis_trends_path}',
+    'filtersUrl': '#{filters_analysis_trends_path}',
+    'listContainer' : '#events-list',
+    'sorting': 'start_at',
+    'sorting_dir': 'asc',
+    'includeCalendars': true,
+    'selectDefaultDate': false,
+    'selectDefaultDateRange': false,
+    'defaultParams': [],
+    'includeAutoComplete': true,
+    'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
+    'onChange': function(filterBox){
+      $(document).trigger('events-filter:changed')
+    },
+    'onItemsLoad': function(response, page){
+      $("#bubble-container").html('')
+      plotData("#bubble-container", response, plot)
+    }
+  });
+
+  $('#add-trend-term-button').click(function (e) { return false; })
+
+  $.extend($('#add-trend-term').autocomplete({
+      source: function(request, callback) {
+        url = '/analysis/trends/search.json?term='+ request.term + '&' + $('#collection-list-filters').filteredList('paramsQueryString');
+        $.ajax(url, {
+          success: function(response) {
+            callback(response);
+          }
+        })
+      },
+      select: function ( event, ui ) {
+        $('#add-trend-term').val('');
+        plot.addNode(ui.item);
+        return false;
+      }
+    }).data('ui-autocomplete'), {
+      _renderItem: function ( ul, item ) {
+        newText = String(item.name).replace(
+          new RegExp(this.term, "gi"),
+          "<strong>$&</strong>");
+
+        return $("<li></li>")
+          .addClass('ui-menu-item')
+          .data("item.autocomplete", item)
+          .append("<a>" + newText + "</a>")
+          .appendTo(ul);
+      }
+    }
+  );

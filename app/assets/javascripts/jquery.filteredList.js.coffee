@@ -29,13 +29,13 @@ $.widget 'nmk.filteredList', {
 			@options.defaultParams = @options.clearFilterParams
 		@element.addClass('filter-box')
 		@form = $('<form action="#" method="get">')
-			.appendTo(@element).submit (e)->
+			.appendTo(@element).submit (e) ->
 				e.preventDefault()
 				e.stopPropagation()
 				false
 		@form.data('serializedData', null)
 
-		if @options.includeAutoComplete
+		if @options.includeAutoComplete and @options.filtersUrl
 			@_addAutocompleteBox()
 
 		if @options.includeCalendars
@@ -108,7 +108,7 @@ $.widget 'nmk.filteredList', {
 		if @options.autoLoad
 			@_loadPage(1)
 
-		@_loadFilters()
+		@_loadFilters() if @options.filtersUrl
 
 		@defaultParams = []
 		@initialized = true
@@ -504,8 +504,8 @@ $.widget 'nmk.filteredList', {
 		@defaultParams = []
 		@_cleanSearchFilter()
 		@_deselectDates()
-		defaultParams = if @options.clearFilterParams then @options.clearFilterParams else @options.defaultParams
-
+		defaultParams = if typeof @options.clearFilterParams != 'undefined' then @options.clearFilterParams else @options.defaultParams
+		defaultParams ||= []
 		@element.find('input[type=checkbox]').attr('checked', false)
 		for param in defaultParams
 			@element.find('input[name="'+param.name+'"][value="'+param.value+'"]').attr('checked', true)
@@ -903,26 +903,35 @@ $.widget 'nmk.filteredList', {
 
 		@spinner = @_loadingSpinner()
 
-		@jqxhr = $.get @options.source, params, (response) =>
+		@jqxhr = $.get @options.source, params, (response, textStatus, jqXHR) =>
 			$.loadingContent += 1
 			@spinner.remove();
-			$response = $('<div>').append(response)
-			$items = $response.find('[data-content="items"]')
-			if @options.onItemsLoad
-				@options.onItemsLoad $response, page
+			resultsCount = 0
+			if typeof response is 'object'
+				if @options.onItemsLoad
+					@options.onItemsLoad response, page
 
-			@listContainer.append $items.html()
-			@_pageLoaded page, $items
-			@listContainer.css height: ''
+				@listContainer.css height: ''
 
-			resultsCount = $items.find('>*').length
+				resultsCount = response.length
+			else
+				$response = $('<div>').append(response)
+				$items = $response.find('[data-content="items"]')
+				if @options.onItemsLoad
+					@options.onItemsLoad $response, page
 
-			if page is 1 and resultsCount is 0
-				@emptyState = @_placeholderEmptyState()
+				@listContainer.append $items.html()
+				@_pageLoaded page, $items
+				@listContainer.css height: ''
 
-			$response.remove()
-			$items.remove()
-			$items = $response = null
+				resultsCount = $items.find('>*').length
+
+				if page is 1 and resultsCount is 0
+					@emptyState = @_placeholderEmptyState()
+
+				$response.remove()
+				$items.remove()
+				$items = $response = null
 
 
 			if @options.onPageLoaded
