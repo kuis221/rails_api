@@ -131,7 +131,7 @@ class Analysis::TrendsController < FilteredController
 
   def word_trending_over_time_data
     # Search for the # occurrences of the work on each day
-    search = resource_class.do_search(company_id: current_company.id, term: params[:term])
+    search = resource_class.do_search(search_params.merge(term: params[:term]))
     data = Hash[search.facet(:start_at).rows.map do |r|
       [r.value.first.to_s(:numeric).to_i, [r.value.first.to_datetime.strftime('%Q').to_i, r.count]]
     end]
