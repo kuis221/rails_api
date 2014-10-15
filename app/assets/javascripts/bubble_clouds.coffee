@@ -192,7 +192,7 @@ window.Bubbles = () ->
 		nodeEnter.append("a")
 			.attr("class", (d) -> "bubble-node trending-#{d.trending}")
 			.attr("data-bubble-name", (d) -> encodeURIComponent(idValue(d)))
-			.attr("xlink:href", (d) -> "/analysis/trends/t/#{encodeURIComponent(idValue(d))}")
+			.attr("xlink:href", (d) -> "/analysis/trends/t/#{encodeURIComponent(idValue(d))}" + window.location.search)
 			.call(force.drag)
 			.call(connectEvents)
 			.append("circle")
