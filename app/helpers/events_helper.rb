@@ -207,7 +207,7 @@ module EventsHelper
     end
 
     if encoded_locations.size > 0
-      names.append(encoded_locations.map do |l|
+      names.concat(encoded_locations.map do |l|
         (_, name) =  Base64.decode64(l).split('||')
         name
       end)
@@ -254,7 +254,7 @@ module EventsHelper
     names = company_users.where(id: users).map(&:full_name) if users.size > 0
 
     teams = team_params
-    names.append company_teams.where(id: teams).map(&:name) if teams.size > 0
+    names.concat company_teams.where(id: teams).map(&:name) if teams.size > 0
 
     return unless names.size > 0
 

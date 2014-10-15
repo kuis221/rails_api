@@ -37,11 +37,8 @@ SimpleNavigation::Configuration.run do |navigation|
     end
     primary.item :venues, 'Venues', venues_path, highlights_on: %r{/research/venues}, link: { icon_class: 'icon-venue menubar-icon' }, if: proc { can?(:index, Venue) }
 
-    primary.item :brand_ambassadors, 'Brand Ambassadors', brand_ambassadors_root_path, highlights_on: %r{/brand_ambassadors}, link: { icon_class: 'icon-campaign menubar-icon' } if can?(:access, :brand_ambassadors)
-    primary.item :results, 'Results', results_reports_path, highlights_on: %r{^/results}, link: { icon_class: 'icon-results menubar-icon' } if can?(:access, :results)
-
-    if can?(:access, :trends_report )
-      primary.item :analysis, 'Analysis', sources_analysis_trends_path, highlights_on: %r{/analysis/trends}, link: { icon_class: 'icon-analysis menubar-icon' }
-    end
+    primary.item :brand_ambassadors, 'Brand Ambassadors', brand_ambassadors_root_path, highlights_on: %r{/brand_ambassadors}, link: { icon_class: 'icon-campaign menubar-icon' }, if: proc { can?(:access, :brand_ambassadors) }
+    primary.item :results, 'Results', results_reports_path, highlights_on: %r{^/results}, link: { icon_class: 'icon-results menubar-icon' }, if: proc { can?(:access, :results) }
+    primary.item :analysis, 'Analysis', sources_analysis_trends_path, highlights_on: %r{/analysis/trends}, link: { icon_class: 'icon-analysis menubar-icon' }, if: proc { can?(:access, :trends_report ) }
   end
 end

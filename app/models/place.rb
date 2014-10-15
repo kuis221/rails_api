@@ -144,7 +144,7 @@ class Place < ActiveRecord::Base
         sorting: :created_at, sorting_dir: :desc, per_page: 10)
       list_photos = search.results
     end
-    list_photos.append(spot.photos) if spot && list_photos.length < 10
+    list_photos.concat(spot.photos) if spot && list_photos.length < 10
     list_photos.slice(0, 10)
   end
 
