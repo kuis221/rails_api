@@ -44,6 +44,8 @@ div data-content="items" data-total="#{collection_count}" data-pages="#{total_pa
               ' on
               span=> resource.activity_date.to_s(:simple)
           - elsif resource.is_a?(Event)
+            span=> trend_object.result.form_field.name
+            ' for
             span=> resource.campaign.name
-              ' on
-              span=> resource.start_date.to_s(:simple)
+            ' on
+            span=> resource.start_at.to_s(:simple)
