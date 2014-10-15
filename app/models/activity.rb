@@ -92,10 +92,13 @@ class Activity < ActiveRecord::Base
   end
 
   def photos
-    scope = results.joins(:form_field)
-      .where(form_fields: {type: ActivityType::PHOTO_FIELDS_TYPES})
-      .where.not(form_field_results: { value: nil }).where.not(form_field_results: { value: '' })
-      .preload(:attached_asset).map(&:attached_asset)
+    AttachedAsset.where(
+      id: results.joins(:form_field, :attached_asset)
+            .select('attached_assets.id')
+            .where(form_fields: { type: ActivityType::PHOTO_FIELDS_TYPES })
+            .where.not(form_field_results: { value: nil })
+            .where.not(form_field_results: { value: '' })
+    )
   end
 
   def valid_activity_type_ids

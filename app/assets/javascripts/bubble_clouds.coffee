@@ -215,7 +215,7 @@ window.Bubbles = () ->
 		labelEnter = labels.enter().append("a")
 			.attr("class", "bubble-label")
 			.attr("data-bubble-name", (d) -> encodeURIComponent(idValue(d)))
-			.attr("href", (d) -> "/analysis/trends/t/#{encodeURIComponent(idValue(d))}")
+			.attr("href", (d) -> "/analysis/trends/t/#{encodeURIComponent(idValue(d))}" + window.location.search)
 			.call(force.drag)
 			.call(connectEvents)
 

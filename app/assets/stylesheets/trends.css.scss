@@ -87,6 +87,7 @@
 				&.photos-count-1 {
 					.image-wrapper {
 						display: block;
+						max-height: 241px;
 					}
 					img {
 						width: calc(100% - 20px);

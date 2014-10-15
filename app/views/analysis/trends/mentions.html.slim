@@ -14,16 +14,19 @@ div data-content="items" data-total="#{collection_count}" data-pages="#{total_pa
             span=> resource.commentable.start_at.to_s(:simple)
       - else
         p.mention= highlight_trend_words(trend_object.description, @term)
-        - photos = resource.photos.to_a
+        - photos = resource.photos
         - if photos.any?
           .photo-container id="carousel-#{resource.id}" class="#{(photos.count > 3 ? 'carousel slide' : '') + ' photos-count-'+photos.count.to_s}" data-interval="false"
             div.carousel-inner
               - photos.in_groups_of(3).each_with_index do |group, index|
                 .item class="#{index == 0 ? 'active' : ''}"
+                  - photos_in_group = group.count(&:present?)
                   - group.each do |photo|
                     span.image-wrapper
-                      = image_tag photo.file.url(:thumbnail) unless photo.nil?
-            - if photos.count > 3
+                      - if photos_in_group == 3
+                        = image_tag photo.file.url(:thumbnail) unless photo.nil?
+                      - else
+                        = image_tag photo.file.url(:medium) unless photo.nil?
               .carousel-controls
                 a href="#carousel-#{resource.id}" data-slide="prev" class="icon-angle-left"
                 a href="#carousel-#{resource.id}" data-slide="next" class="icon-angle-right"
