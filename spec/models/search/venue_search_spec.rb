@@ -29,6 +29,11 @@ describe Venue, type: :model, search: true do
     expect(Venue.do_search(company_id: company.id).results).to match_array([venue, venue2])
     expect(Venue.do_search(company_id: company2.id).results).to match_array([company2_venue])
 
+    # Search for all Venues with a given id
+    expect(Venue.do_search(company_id: company.id, venue: [venue.id]).results).to match_array([venue])
+    expect(Venue.do_search(company_id: company.id, venue: [venue2.id]).results).to match_array([venue2])
+    expect(Venue.do_search(company_id: company.id, venue: [venue.id, venue2.id]).results).to match_array([venue, venue2])
+
     # Search for a specific Venue's place
     expect(Venue.do_search(company_id: company.id, locations: [place.location_id]).results).to match_array([venue])
     expect(Venue.do_search(company_id: company.id, locations: [place2.location_id]).results).to match_array([venue2])
