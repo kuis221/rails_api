@@ -168,7 +168,12 @@ class TrendObject
 
       with :source, params[:source] unless params[:source].nil?
 
-      with :form_field_id, params[:question] unless params[:question].nil?
+      if params[:question].present? && params[:question].any?
+        any_of do
+          with :form_field_id, params[:question]
+          with :source, 'Comment' if params[:source] && params[:source].include?('Comment')
+        end
+      end
 
       with :campaign_id, params[:campaign] if params.has_key?(:campaign) && params[:campaign].present?
 
