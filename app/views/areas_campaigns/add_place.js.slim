@@ -1,0 +1,8 @@
+- @form_modal_class = 'modal-large'
+- if resource.errors.any?
+  = render 'form_dialog'
+- else
+  |
+    $('#areas-places-list').html('#{escape_javascript(render('places'))}');
+    newPlaceDialog.modal('hide');
+    customizePlaceDialog.modal('show');
