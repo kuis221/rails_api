@@ -68,7 +68,7 @@ class Analysis::TrendsController < FilteredController
   end
 
   def available_questions
-    FormField.for_trends(
+    FormField.in_company(current_company).for_trends(
       campaigns: selected_campaign_ids,
       activity_types: selected_activity_type_ids)
   end

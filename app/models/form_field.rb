@@ -58,6 +58,15 @@ class FormField < ActiveRecord::Base
     )
   end
 
+  def self.in_company(company)
+    joins(
+      'LEFT JOIN campaigns cj ON cj.id=form_fields.fieldable_id AND
+       form_fields.fieldable_type=\'Campaign\'
+       LEFT JOIN activity_types atj ON atj.id=form_fields.fieldable_id AND
+       form_fields.fieldable_type=\'ActivityType\''
+    ).where('cj.company_id in (:company_ids) OR atj.company_id in (:company_ids)', company_ids: company)
+  end
+
   def self.for_activity_types_in_company(companies)
     for_activities.where(activity_types: { company_id: companies })
   end
