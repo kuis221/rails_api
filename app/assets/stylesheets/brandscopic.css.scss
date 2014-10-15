@@ -795,6 +795,19 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 				.icon-arrow-down {
 					margin-top: 7px;
 				}
+				.icon-arrow-up {
+					display: none;
+				}
+			}
+		}
+		&.open {
+			a {
+				.icon-arrow-down {
+					display: none;
+				}
+				.icon-arrow-up {
+					display: inline;
+				}
 			}
 		}
 		.btn{
