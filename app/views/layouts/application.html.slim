@@ -62,7 +62,7 @@ body class="app-layout #{controller_name} #{action_name} #{custom_body_class} #{
 
   #main-left-nav.nav-collapse.collapse
     .menu
-      = render_navigation renderer: :bootstrap, nav_class: 'nav-stacked'
+      = render_navigation renderer: :bootstrap, level: 1, nav_class: 'nav-stacked'
   = yield :alerts
   = render 'layouts/messages'
   #main-container.container

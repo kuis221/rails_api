@@ -253,16 +253,20 @@ feature 'Events section' do
         feature 'export' do
           let(:month_number) { Time.now.strftime('%m') }
           let(:month_name) { Time.now.strftime('%b') }
-          let(:year_number) { Time.now.strftime('%Y') }
-          let(:today) { Time.zone.local(year_number, month_number, 18, 12, 00) }
-          let(:event1) { create(:event, start_date: today.to_s(:slashes), end_date: today.to_s(:slashes),
-                                start_time: '10:00am', end_time: '11:00am',
-                                campaign: campaign, active: true,
-                                place: create(:place, name: 'Place 1'), company: company) }
-          let(:event2) { create(:event, start_date: (today + 1.day).to_s(:slashes), end_date: (today + 1.days).to_s(:slashes),
-                                start_time: '08:00am', end_time: '09:00am',
-                                campaign: create(:campaign, name: 'Another Campaign April 03', company: company),
-                                place: create(:place, name: 'Place 2', city: 'Los Angeles', state: 'CA', zipcode: '67890'), company: company) }
+          let(:year_number) { Time.now.strftime('%Y').to_i }
+          let(:today) { Time.use_zone(user.time_zone) { Time.zone.local(year_number, month_number, 18, 12, 00) } }
+          let(:event1) do
+            create(:event, start_date: today.to_s(:slashes), end_date: today.to_s(:slashes),
+              start_time: '10:00am', end_time: '11:00am',
+              campaign: campaign, active: true,
+              place: create(:place, name: 'Place 1'), company: company)
+          end
+          let(:event2) do
+            create(:event, start_date: (today + 1.day).to_s(:slashes), end_date: (today + 1.days).to_s(:slashes),
+              start_time: '08:00am', end_time: '09:00am',
+              campaign: create(:campaign, name: 'Another Campaign April 03', company: company),
+              place: create(:place, name: 'Place 2', city: 'Los Angeles', state: 'CA', zipcode: '67890'), company: company)
+          end
 
           before do
             # make sure events are created before
@@ -285,9 +289,16 @@ feature 'Events section' do
             ensure_modal_was_closed
 
             expect(ListExport.last).to have_rows([
-              ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL'],
-              ['Campaign FY2012', nil, "#{year_number}-#{month_number}-18T10:00", "#{year_number}-#{month_number}-18T11:00", 'Place 1', 'Place 1, New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active', 'Unsent', nil, "http://localhost:5100/events/#{event1.id}"],
-              ['Another Campaign April 03', nil, "#{year_number}-#{month_number}-19T08:00", "#{year_number}-#{month_number}-19T09:00", 'Place 2', 'Place 2, Los Angeles, CA, 67890', 'Los Angeles', 'CA', '67890', 'Active', 'Unsent', nil, "http://localhost:5100/events/#{event2.id}"]
+              ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE',
+               'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL'],
+              ['Campaign FY2012', nil, "#{year_number}-#{month_number}-18T10:00",
+               "#{year_number}-#{month_number}-18T11:00", 'Place 1',
+               'Place 1, New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active',
+               'Unsent', nil, "http://localhost:5100/events/#{event1.id}"],
+              ['Another Campaign April 03', nil, "#{year_number}-#{month_number}-19T08:00",
+               "#{year_number}-#{month_number}-19T09:00", 'Place 2',
+               'Place 2, Los Angeles, CA, 67890', 'Los Angeles', 'CA', '67890', 'Active', 'Unsent',
+               nil, "http://localhost:5100/events/#{event2.id}"]
             ])
           end
 
@@ -328,8 +339,8 @@ feature 'Events section' do
 
         feature 'date ranges box' do
           let(:today) { Time.zone.local(Time.now.year, Time.now.month, Time.now.day, 12, 00) }
-          let(:month_number) { Time.now.strftime('%m')}
-          let(:year) { Time.now.strftime('%Y') }
+          let(:month_number) { Time.now.strftime('%m').to_i }
+          let(:year) { Time.now.strftime('%Y').to_i }
           let(:campaign1) { create(:campaign, name: 'Campaign FY2012', company: company) }
           let(:campaign2) { create(:campaign, name: 'Another Campaign April 03', company: company) }
           let(:campaign3) { create(:campaign, name: 'New Brand Campaign', company: company) }
@@ -373,9 +384,12 @@ feature 'Events section' do
           end
 
           scenario "can filter the events by predefined 'Current month' date range option" do
-            create(:event, start_date: "#{month_number}/15/#{year}", end_date: "#{month_number}/15/#{year}", campaign: campaign3)
-            create(:event, start_date: "#{month_number}/16/#{year}", end_date: "#{month_number}/16/#{year}", campaign: campaign2)
-            create(:event, start_date: "#{month_number.to_i+1}/15/#{year}", end_date: "#{month_number.to_i+1}/15/#{year}", campaign: campaign1)
+            create(:event, campaign: campaign3,
+              start_date: "#{month_number}/15/#{year}", end_date: "#{month_number}/15/#{year}")
+            create(:event, campaign: campaign2,
+              start_date: "#{month_number}/16/#{year}", end_date: "#{month_number}/16/#{year}")
+            create(:event, campaign: campaign1,
+              start_date: "#{month_number + 1}/15/#{year}", end_date: "#{month_number + 1}/15/#{year}")
             Sunspot.commit
 
             visit events_path
@@ -414,11 +428,11 @@ feature 'Events section' do
             create(:event, campaign: campaign2,
                    start_date: "#{month_number}/15/#{year}", end_date: "#{month_number}/15/#{year}")
             create(:event, campaign: campaign1,
-                   start_date: "#{month_number.to_i-1}/15/#{year}", end_date: "#{month_number.to_i-1}/15/#{year}")
+                   start_date: "#{month_number - 1}/15/#{year}", end_date: "#{month_number - 1}/15/#{year}")
             create(:event, campaign: campaign1,
-                   start_date: "#{month_number.to_i-1}/16/#{year}", end_date: "#{month_number.to_i-1}/16/#{year}")
+                   start_date: "#{month_number - 1}/16/#{year}", end_date: "#{month_number - 1}/16/#{year}")
             create(:event, campaign: campaign3,
-                   start_date: "#{month_number.to_i-1}/17/#{year}", end_date: "#{month_number.to_i-1}/17/#{year}")
+                   start_date: "#{month_number - 1}/17/#{year}", end_date: "#{month_number - 1}/17/#{year}")
             Sunspot.commit
 
             visit events_path
@@ -435,10 +449,14 @@ feature 'Events section' do
           end
 
           scenario "can filter the events by predefined 'YTD' date range option" do
-            create(:event, start_date: "01/01/#{year}", end_date: "01/01/#{year}", campaign: campaign1)
-            create(:event, start_date: "01/01/#{year}", end_date: "01/01/#{year}", campaign: campaign1)
-            create(:event, start_date: "01/01/#{year}", end_date: "01/01/#{year}", campaign: campaign2)
-            create(:event, start_date: "07/17/#{year.to_i-1}", end_date: "07/17/#{year.to_i-1}", campaign: campaign3)
+            create(:event, campaign: campaign1,
+              start_date: "01/01/#{year}", end_date: "01/01/#{year}")
+            create(:event, campaign: campaign1,
+              start_date: "01/01/#{year}", end_date: "01/01/#{year}")
+            create(:event, campaign: campaign2,
+              start_date: "01/01/#{year}", end_date: "01/01/#{year}")
+            create(:event, campaign: campaign3,
+              start_date: "07/17/#{year - 1}", end_date: "07/17/#{year - 1}")
             Sunspot.commit
 
             visit events_path
@@ -455,11 +473,22 @@ feature 'Events section' do
           end
 
           scenario 'can filter the events by custom date range selecting start and end dates' do
-            create(:event, start_date: (today - 2.weeks).to_s(:slashes), end_date: (today - 2.weeks).to_s(:slashes), campaign: campaign1)
-            create(:event, start_date: today.to_s(:slashes), end_date: today.to_s(:slashes), campaign: campaign2)
-            create(:event, start_date: Date.today.beginning_of_week.to_s(:slashes), end_date: Date.today.beginning_of_week.to_s(:slashes), campaign: campaign2)
-            create(:event, start_date: today.to_s(:slashes), end_date: today.to_s(:slashes), campaign: campaign3)
-            create(:event, start_date: (Date.today.beginning_of_week + 5.days).to_s(:slashes), end_date: (Date.today.beginning_of_week + 5.days).to_s(:slashes), campaign: campaign3)
+            create(:event,
+                   campaign: campaign1,
+                   start_date: (today - 2.weeks).to_s(:slashes),
+                   end_date: (today - 2.weeks).to_s(:slashes))
+            create(:event, campaign: campaign2,
+                   start_date: today.to_s(:slashes), end_date: today.to_s(:slashes))
+            create(:event,
+                   campaign: campaign2,
+                   start_date: Date.today.beginning_of_week.to_s(:slashes),
+                   end_date: Date.today.beginning_of_week.to_s(:slashes))
+            create(:event, campaign: campaign3,
+                   start_date: today.to_s(:slashes), end_date: today.to_s(:slashes))
+            create(:event,
+                   campaign: campaign3,
+                   start_date: (Date.today.beginning_of_week + 5.days).to_s(:slashes),
+                   end_date: (Date.today.beginning_of_week + 5.days).to_s(:slashes))
             Sunspot.commit
 
             visit events_path
@@ -488,19 +517,22 @@ feature 'Events section' do
 
         scenario 'can filter by users' do
           ev1 = create(:event,
-                                   campaign: create(:campaign, name: 'Campaña1', company: company))
+                       campaign: create(:campaign, name: 'Campaña1', company: company))
           ev2 = create(:event,
-                                   campaign: create(:campaign, name: 'Campaña2', company: company))
+                       campaign: create(:campaign, name: 'Campaña2', company: company))
           ev1.users << create(:company_user,
-                                          user: create(:user, first_name: 'Roberto', last_name: 'Gomez'), company: company)
+                              user: create(:user, first_name: 'Roberto', last_name: 'Gomez'),
+                              company: company)
           ev2.users << create(:company_user,
-                                          user: create(:user, first_name: 'Mario', last_name: 'Cantinflas'), company: company)
+                              user: create(:user, first_name: 'Mario', last_name: 'Cantinflas'),
+                              company: company)
           Sunspot.commit
 
           visit events_path
 
-          expect(page).to have_filter_section(title: 'PEOPLE',
-                                              options: ['Mario Cantinflas', 'Roberto Gomez'])
+          expect(page).to have_filter_section(
+            title: 'PEOPLE',
+            options: ['Mario Cantinflas', 'Roberto Gomez'])
 
           within events_list do
             expect(page).to have_content('Campaña1')
@@ -610,7 +642,9 @@ feature 'Events section' do
             Timecop.travel(Time.zone.local(2013, 07, 21, 12, 01)) do
               # Create a event with the time zone "Central America"
               Time.use_zone('Central America') do
-                create(:event, start_date: '08/21/2013', end_date: '08/21/2013', start_time: '10:00am', end_time: '11:00am', company: company)
+                create(:event, company: company,
+                  start_date: '08/21/2013', end_date: '08/21/2013',
+                  start_time: '10:00am', end_time: '11:00am')
               end
 
               # Just to make sure the current user is not in the same timezone
@@ -729,7 +763,10 @@ feature 'Events section' do
           expect(custom_filter.owner).to eq(company_user)
           expect(custom_filter.name).to eq('My Custom Filter')
           expect(custom_filter.apply_to).to eq('events')
-          expect(custom_filter.filters).to eq('campaign%5B%5D=' + campaign1.to_param + '&user%5B%5D=' + user1.to_param + '&event_status%5B%5D=Submitted&status%5B%5D=Active')
+          expect(custom_filter.filters).to eq(
+            "campaign%5B%5D=#{campaign1.to_param}&user%5B%5D=#{user1.to_param}" \
+            '&event_status%5B%5D=Submitted&status%5B%5D=Active'
+          )
         end
         ensure_modal_was_closed
 
@@ -743,8 +780,12 @@ feature 'Events section' do
         event2.users << user2
         Sunspot.commit
 
-        create(:custom_filter, owner: company_user, name: 'Custom Filter 1', apply_to: 'events', filters: 'campaign%5B%5D=' + campaign1.to_param + '&user%5B%5D=' + user1.to_param + '&event_status%5B%5D=Submitted&status%5B%5D=Active')
-        create(:custom_filter, owner: company_user, name: 'Custom Filter 2', apply_to: 'events', filters: 'campaign%5B%5D=' + campaign2.to_param + '&user%5B%5D=' + user2.to_param + '&event_status%5B%5D=Late&status%5B%5D=Active')
+        create(:custom_filter, owner: company_user, name: 'Custom Filter 1', apply_to: 'events',
+          filters: 'campaign%5B%5D=' + campaign1.to_param + '&user%5B%5D=' + user1.to_param +
+                   '&event_status%5B%5D=Submitted&status%5B%5D=Active')
+        create(:custom_filter, owner: company_user, name: 'Custom Filter 2', apply_to: 'events',
+          filters: 'campaign%5B%5D=' + campaign2.to_param + '&user%5B%5D=' + user2.to_param +
+                   '&event_status%5B%5D=Late&status%5B%5D=Active')
 
         visit events_path
 
@@ -847,8 +888,9 @@ feature 'Events section' do
 
     feature 'create a event' do
       scenario 'allows to create a new event' do
-        create(:company_user, company: company,
-                                          user: create(:user, first_name: 'Other', last_name: 'User'))
+        create(:company_user,
+               company: company,
+               user: create(:user, first_name: 'Other', last_name: 'User'))
         create(:campaign, company: company, name: 'ABSOLUT Vodka')
         visit events_path
 
@@ -1101,18 +1143,18 @@ feature 'Events section' do
           expect(page).to have_text 'Pablo Baltodano'
           expect(page).to have_no_text 'Anonymous User'
           within resource_item("#staff-member-user-#{pablo.id}") do
-            click_js_link "Add"
+            click_js_link 'Add'
           end
 
-          expect(page).to have_no_text("Pablo Baltodano")
+          expect(page).to have_no_text('Pablo Baltodano')
         end
         close_modal
 
         # Re-open the modal to make sure it's not added again to the list
         click_js_button 'Add Team Member'
         within visible_modal do
-          expect(page).to have_no_text("Pablo Baltodano")
-          expect(page).to have_text("Anonymous User")
+          expect(page).to have_no_text('Pablo Baltodano')
+          expect(page).to have_text('Anonymous User')
         end
         close_modal
 
@@ -1122,8 +1164,8 @@ feature 'Events section' do
           click_js_link 'Remove Member'
         end
 
-        confirm_prompt 'Any tasks that are assigned to Pablo Baltodano must be reassigned. ' +
-                       'Would you like to remove Pablo Baltodano from the event team?'
+        confirm_prompt('Any tasks that are assigned to Pablo Baltodano must be reassigned. '\
+                       'Would you like to remove Pablo Baltodano from the event team?')
         expect(page).not_to have_content('Pablo Baltodano')
 
         # Refresh the page and make sure the user is not there
@@ -1144,7 +1186,7 @@ feature 'Events section' do
           fill_in 'contact-search-box', with: 'Pab'
           expect(page).to have_content('Pablo Baltodano')
           within resource_item do
-            click_js_link "Add"
+            click_js_link('Add')
           end
 
           expect(page).to have_no_content('Pablo Baltodano')
@@ -1164,7 +1206,7 @@ feature 'Events section' do
       end
 
       scenario 'allows to add a contact as contact to the event', js: true do
-        event = create(:event, campaign: create(:campaign, name: 'Campaign FY2012', company: company), company: company)
+        event = create(:event, campaign: campaign)
         create(:contact,
                first_name: 'Guillermo', last_name: 'Vargas',
                email: 'guilleva@gmail.com', company_id: company.id)
@@ -1177,7 +1219,7 @@ feature 'Events section' do
           fill_in 'contact-search-box', with: 'Gui'
           expect(page).to have_content('Guillermo Vargas')
           within resource_item do
-            click_js_link "Add"
+            click_js_link 'Add'
           end
 
           expect(page).to have_no_content 'Guillermo Vargas'
@@ -1312,13 +1354,10 @@ feature 'Events section' do
         # Delete Juanito Bazooka from the team and make sure that the tasks list
         # is refreshed and the task unassigned
         hover_and_click("#event-member-#{juanito_user.id}", 'Remove Member')
-        confirm_prompt 'Any tasks that are assigned to Juanito Bazooka must be reassigned. Would you like to remove Juanito Bazooka from the event team?'
+        confirm_prompt 'Any tasks that are assigned to Juanito Bazooka must be reassigned. ' \
+                       'Would you like to remove Juanito Bazooka from the event team?'
         expect(page).to_not have_content('Juanito Bazooka')
 
-        # refresh the page to make that the tasks were unassigned
-        # TODO: the refresh should not be necessary but it looks like that it's not
-        # removing the element from the table automatically in the test
-        visit event_path(event)
         within('#event-tasks-container') do
           expect(page).to_not have_content('Juanito Bazooka')
         end
@@ -1375,6 +1414,6 @@ feature 'Events section' do
   end
 
   def events_list
-    "#events-list"
+    '#events-list'
   end
 end

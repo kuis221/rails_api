@@ -7,6 +7,8 @@ describe TasksController, type: :controller do
 
   let(:event) { create(:event, company_id: company.id) }
 
+  before { user }
+
   describe "GET 'new'" do
     it 'returns http success' do
       xhr :get, 'new', event_id: event.to_param, format: :js

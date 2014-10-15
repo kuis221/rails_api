@@ -139,19 +139,25 @@ class Place < ActiveRecord::Base
   def photos(company_id)
     list_photos = []
     if persisted?
-      search = AttachedAsset.do_search(place_id: id, company_id: company_id, asset_type: 'photo', status: 'Active', sorting: :created_at, sorting_dir: :desc, per_page: 10)
+      search = AttachedAsset.do_search(
+        place_id: id, company_id: company_id, asset_type: 'photo', status: 'Active',
+        sorting: :created_at, sorting_dir: :desc, per_page: 10)
       list_photos = search.results
     end
-    list_photos += spot.photos if spot && list_photos.length < 10
+    list_photos.append(spot.photos) if spot && list_photos.length < 10
     list_photos.slice(0, 10)
   end
 
   def update_locations
     ary = Place.political_division(self)
-    paths = ary.count.times.map { |i| ary.slice(0, i + 1).compact.join('/').downcase }
-    self.locations = paths.map { |path| Location.find_or_create_by(path: path) }
-    self.location = Location.find_or_create_by(path: paths.last)
-    self.is_location = (types.present? && (types & %w(sublocality political locality administrative_area_level_1 administrative_area_level_2 administrative_area_level_3 country natural_feature)).count > 0)
+    paths = ary.count.times.map { |i| ary.slice(0, i + 1).compact.join('/').downcase }.uniq
+    self.locations = Location.load_by_paths(paths)
+    self.location = locations.last
+    self.is_location = (
+      types.present? &&
+      (types & %w(
+        sublocality political locality administrative_area_level_1 administrative_area_level_2
+        administrative_area_level_3 country natural_feature)).count > 0)
     true
   end
 
