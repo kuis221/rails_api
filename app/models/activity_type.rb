@@ -30,10 +30,9 @@ class ActivityType < ActiveRecord::Base
   accepts_nested_attributes_for :goals
   accepts_nested_attributes_for :form_fields, allow_destroy: true
 
-  TRENDING_FIELDS_TYPES = ['FormField::TextArea']
   PHOTO_FIELDS_TYPES = ['FormField::Photo']
 
-  scope :with_trending_fields, -> { joins(:form_fields).where(form_fields: { type: TRENDING_FIELDS_TYPES } ).group('activity_types.id') }
+  scope :with_trending_fields, -> { joins(:form_fields).where(form_fields: { type: FormField::TRENDING_FIELDS_TYPES } ).group('activity_types.id') }
 
   scope :active, -> { where(active: true) }
 
@@ -72,7 +71,7 @@ class ActivityType < ActiveRecord::Base
   end
 
   def trending_fields
-    form_fields.where(type: TRENDING_FIELDS_TYPES)
+    form_fields.where(type: FormField::TRENDING_FIELDS_TYPES)
   end
 
   class << self
