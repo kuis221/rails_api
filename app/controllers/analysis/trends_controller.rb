@@ -60,7 +60,9 @@ class Analysis::TrendsController < FilteredController
   end
 
   def selected_activity_type_ids
-    selected_sources.select { |s| s =~ /\A[0-9]+\z/ }
+    selected_sources
+      .select { |s| s =~ /\AActivityType:[0-9]+\z/ }
+      .map{ |s| s.tr('ActivityType:', '') }
   end
 
   def selected_questions

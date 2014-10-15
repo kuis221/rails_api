@@ -2,6 +2,7 @@ require 'rails_helper'
 
 feature 'Trending report' do
   let(:company) { create(:company) }
+  let(:activity_type) { create(:activity_type, company: company, name: 'Whiskey Survey') }
   let(:campaign) { create(:campaign, company: company) }
   let(:user) { create(:user, company: company, role_id: role.id) }
   let(:company_user) { user.company_users.first }
@@ -109,9 +110,68 @@ feature 'Trending report' do
 
       find('a.bubble-label', text: 'hola 2').click
 
+      expect(page).to have_selector('h2', text: 'Hola')
       expect(current_path).to eql '/analysis/trends/t/hola'
+    end
+
+    scenario 'can see the bubbles with the most popular words in activity types fields' do
+      event = create(:late_event, campaign: campaign, place: place)
+      create(:form_field_text,
+             fieldable: activity_type, name: 'My Text Field')
+      create(:form_field_text_area,
+             fieldable: activity_type, name: 'My Paragraph Field')
+      campaign.activity_types << activity_type
+
+      visit event_path(event)
+
+      click_js_link('New Activity')
+
+      within visible_modal do
+        select_from_chosen('Whiskey Survey', from: 'Activity type')
+        fill_in 'My Text Field', with: 'Texto con hola en medio!'
+        fill_in 'My Paragraph Field', with: 'hola mundo'
+        select_from_chosen(user.full_name, from: 'User')
+        fill_in 'Date', with: '05/16/2013'
+        click_js_button 'Create'
+      end
+      ensure_modal_was_closed
+
+      expect(page).to have_text 'Whiskey Survey'
+
+      visit sources_analysis_trends_path
+
+      select_from_chosen(campaign.name, from: '1. Choose one or more campaigns')
+      select_from_chosen('Whiskey Survey', from: '2. Choose one or more data sources within those campaigns')
+      click_button 'Done'
+
+      expect(page).to have_text 'QUESTIONS'
+      unicheck 'My Text Field'
+      unicheck 'My Paragraph Field'
+      expect(current_path).to eql(questions_analysis_trends_path)
+
+      click_button 'Done'
+
+      expect(page).to have_filter_section(
+        title: 'SOURCE',
+        options: ['Whiskey Survey'])
+      expect(page).to have_filter_section(
+        title: 'QUESTIONS',
+        options: ['My Paragraph Field', 'My Text Field'])
+      expect(find_field('My Text Field', visible: false)).to be_checked
+      expect(find_field('My Paragraph Field', visible: false)).to be_checked
+
+      expect(page).to have_selector('a.bubble-label', text: 'hola 2')
+      expect(page).to have_selector('a.bubble-label', text: 'texto 1')
+      expect(page).to have_selector('a.bubble-label', text: 'medio 1')
+      expect(page).to have_selector('a.bubble-label', text: 'mundo 1')
+
+      # Deletes a word from the cloud
+      delete_bubble 'medio 1'
+
+      find('a.bubble-label', text: 'hola 2').click
 
       expect(page).to have_selector('h2', text: 'Hola')
+      expect(current_path).to eql '/analysis/trends/t/hola'
     end
   end
 
@@ -130,6 +190,7 @@ feature 'Trending report' do
       let(:permissions) do
         [[:access, 'Symbol', 'trends_report'], [:show, 'Event'],
          [:index_comments, 'Event'], [:create_comment, 'Event'],
+         [:show, 'Activity'], [:create, 'Activity'],
          [:edit_unsubmitted_data, 'Event'], [:view_submitted_data, 'Event']]
       end
     end
