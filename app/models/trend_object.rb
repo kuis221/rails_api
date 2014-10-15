@@ -227,20 +227,19 @@ class TrendObject
     if options[:batch_size].to_i > 0
 
       # Index events comments
-      # batch_counter = 0
-      # Comment.for_trends.preload(commentable: :place).find_in_batches(options.slice(:batch_size, :start)) do |records|
-      #   solr_benchmark(options[:batch_size], batch_counter += 1) do
-      #     Sunspot.index(records.map { |comment| TrendObject.new(comment) }.select(&:indexable?))
-      #     Sunspot.commit if options[:batch_commit]
-      #   end
-      #   options[:progress_bar].increment!(records.length) if options[:progress_bar]
-      # end
+      batch_counter = 0
+      Comment.for_trends.preload(commentable: :place).find_in_batches(options.slice(:batch_size, :start)) do |records|
+        solr_benchmark(options[:batch_size], batch_counter += 1) do
+          Sunspot.index(records.map { |comment| TrendObject.new(comment) }.select(&:indexable?))
+          Sunspot.commit if options[:batch_commit]
+        end
+        options[:progress_bar].increment!(records.length) if options[:progress_bar]
+      end
 
       # Index form field results
       batch_counter = 0
       FormField.where(type: FormField::TRENDING_FIELDS_TYPES).each do |form_field|
         form_field.form_field_results
-          .reorder('resultable_type, resultable_id')
           .preload(:resultable)
           .find_in_batches(options.slice(:batch_size, :start)) do |records|
 
