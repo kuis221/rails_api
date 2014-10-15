@@ -67,6 +67,10 @@ a{
 	}
 }
 
+.module-title{
+	color: $user_menu;
+}
+
 abbr[title]{
 	border:0;
 }
@@ -3066,7 +3070,8 @@ ul.ui-widget-content{
 		margin-top: 40px;
 	}
 	h3.section-title {
-		margin-bottom: 20px;
+		display: inline-block;
+		margin-bottom: 15px;
 		color: $brand;
 		font-size: 20px;
 		font-weight: normal;

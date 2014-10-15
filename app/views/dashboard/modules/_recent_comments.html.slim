@@ -2,7 +2,7 @@
     = render partial: 'dashboard/modules/partials/comment', collection: recent_comments_list
 - else
   #recent-comments-module.details_box
-    h3 RECENT COMMENTS
+    h3.module-title RECENT COMMENTS
     #recent-comments-list
       .comments-area
         ul#comments-list-container.lazyloaded data-content-url="#{url_for(controller: :dashboard, action: :module, module: :recent_comments, only_path: true)}"
