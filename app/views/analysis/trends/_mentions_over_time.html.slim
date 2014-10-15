@@ -3,7 +3,7 @@
   #mentions-over-time-graph
 
 javascript:
-  $.getJSON('#{url_for(action: :mentions_over_time)}', function(data) {
+  $.getJSON('#{j url_for(params.merge(action: :mentions_over_time)).html_safe}', function(data) {
     $('#mentions-over-time-graph').highcharts('StockChart', {
       chart: {
         style: {

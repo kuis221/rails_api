@@ -162,7 +162,7 @@ class TrendObject
     end
   end
 
-  def self.do_search(params, include_facets=true)
+  def self.do_search(params, include_facets=true, &block)
     ss = solr_search do
       with :company_id, params[:company_id]
 
@@ -216,6 +216,8 @@ class TrendObject
           facet :description, sort: :count, limit: (params[:limit] || 50), prefix: params[:prefix]
         end
       end
+
+      yield self if block_given?
 
       order_by(params[:sorting] || :start_at, params[:sorting_dir] || :desc)
       paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)

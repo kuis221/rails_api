@@ -148,18 +148,18 @@ class Analysis::TrendsController < FilteredController
   end
 
   def word_trending_across_locations
-    search = TrendObject.solr_search do
-      with :company_id, current_company.id
-      with :description, params[:term]
+    search = TrendObject.do_search search_params, false do |s|
+      s.with :company_id, current_company.id
+      s.with :description, params[:term]
       if params[:country].present? && params[:country] && params[:state].present? && params[:state]
-        with :state, params[:state]
-        with :country, params[:country]
-        facet :city
+        s.with :state, params[:state]
+        s.with :country, params[:country]
+        s.facet :city
       elsif params[:country].present? && params[:country]
-        with :country, params[:country]
-        facet :state
+        s.with :country, params[:country]
+        s.facet :state
       else
-        facet :country
+        s.facet :country
       end
     end
 
