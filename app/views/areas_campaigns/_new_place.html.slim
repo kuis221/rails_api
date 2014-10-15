@@ -1,0 +1,27 @@
+.places-modals
+  - remote ||= false
+  = simple_form_for(resource, :url => add_place_campaign_areas_campaign_path(resource.campaign_id, resource.area_id), :method => :post, remote: true || false) do |f|
+    = f.error_notification
+
+    .form-inputs
+      = f.input :reference, :as => :location, label: 'Place', input_html: {class: 'search-place-box'}, wrapper_html: {class: 'form-horizontal'}
+      span.icon-rounded-disable.clearable
+    .form-actions
+      = f.button :submit, 'Add', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
+      = "&nbsp;".html_safe
+      = f.button :button, 'Cancel', id: 'btn-cancel-place', class: 'btn btn-cancel'
+
+javascript:
+  $('.modal .places-autocomplete').placesAutocomplete();
+
+  $('#btn-cancel-place').click(function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    newPlaceDialog.modal('hide');
+    customizePlaceDialog.modal('show');
+  });
+
+  $('.clearable').click(function(e){
+    $('.search-place-box').val('');
+    $('ul.ui-autocomplete').hide();
+  });

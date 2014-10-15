@@ -202,6 +202,55 @@ feature 'Campaigns', js: true do
       expect(campaign.areas_campaigns.find_by(area_id: area.id).exclusions).to eql [place1.id]
     end
 
+    scenario 'should be able to include places to areas assigned to the campaign' do
+      Kpi.create_global_kpis
+      campaign = create(:campaign, company: company)
+      area = create(:area, name: 'San Francisco', company: company)
+
+      campaign.areas << [area]
+      visit campaign_path(campaign)
+
+      tab = open_tab('Places')
+
+      within tab do
+        expect(page).to have_content('San Francisco')
+        find('a[data-original-title="Customize area"]').click # tooltip changes the title
+      end
+
+      within visible_modal do
+        expect(page).to have_content('Customize San Francisco Area')
+        click_js_link('Add new place')
+      end
+
+      within visible_modal do
+        expect(page).to have_content('New Place')
+        select_from_autocomplete 'Search for a place', 'Walt Disney World Dolphin, 1500 Epcot Resorts Blvd'
+        click_js_button 'Add'
+      end
+
+      wait_for_ajax
+      new_place_id = Place.last.id
+      expect(campaign.areas_campaigns.find_by(area_id: area.id).inclusions).to eql [new_place_id]
+
+      within visible_modal do
+        expect(page).to have_content('Customize San Francisco Area')
+        expect(page).to have_content('Walt Disney World Dolphin')
+        within(resource_item("#area-campaign-place-#{new_place_id}")) { click_js_link 'Deactivate' }
+        expect(page).to have_selector("#area-campaign-place-#{new_place_id}.inactive")
+        click_js_button('Done')
+      end
+      ensure_modal_was_closed
+
+      within tab do
+        find('a[data-original-title="Customize area"]').click # tooltip changes the title
+      end
+
+      within visible_modal do
+        expect(page).to have_content('Customize San Francisco Area')
+        expect(page).to have_no_content('Walt Disney World Dolphin')
+      end
+    end
+
     feature 'Add KPIs', search: false do
 
       feature 'with a non admin user', search: false do

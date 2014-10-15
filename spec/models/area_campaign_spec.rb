@@ -1,18 +1,12 @@
 # == Schema Information
 #
-# Table name: areas
+# Table name: areas_campaigns
 #
-#  id                            :integer          not null, primary key
-#  name                          :string(255)
-#  description                   :text
-#  active                        :boolean          default(TRUE)
-#  company_id                    :integer
-#  created_by_id                 :integer
-#  updated_by_id                 :integer
-#  created_at                    :datetime         not null
-#  updated_at                    :datetime         not null
-#  common_denominators           :text
-#  common_denominators_locations :integer          default([]), is an Array
+#  id          :integer          not null, primary key
+#  area_id     :integer
+#  campaign_id :integer
+#  exclusions  :integer          default([]), is an Array
+#  inclusions  :integer          default([]), is an Array
 #
 
 require 'rails_helper'
@@ -59,29 +53,37 @@ describe AreasCampaign, type: :model do
     end
 
     it 'should return true if the place is directly assigned to the area' do
-      bar = create(:place, types: ['establishment'], route: '1st st', street_number: '12 sdfsd', city: 'Los Angeles', state: 'California', country: 'US')
-      area.places << bar
+      place = create(:place)
+      area.places << place
 
-      expect(areas_campaign.place_in_scope?(bar)).to be_truthy
+      expect(areas_campaign.place_in_scope?(place)).to be_truthy
     end
 
     it 'should return false if the place is in the exclusions list' do
-      bar = create(:place, types: ['establishment'], route: '1st st', street_number: '12 sdfsd', city: 'Los Angeles', state: 'California', country: 'US')
-      area.places << bar
+      place = create(:place)
+      area.places << place
 
-      areas_campaign.exclusions = [bar.id]
+      areas_campaign.exclusions = [place.id]
 
-      expect(areas_campaign.place_in_scope?(bar)).to be_falsey
+      expect(areas_campaign.place_in_scope?(place)).to be_falsey
     end
 
     it 'should return false if the place belongs to a exluded city' do
-      bar = create(:place, types: ['establishment'], route: '1st st', street_number: '12 sdfsd', city: 'Los Angeles', state: 'California', country: 'US')
-      city = create(:city, name: 'Los Angeles', state: 'California', country: 'US')
+      place = create(:place)
+      city = create(:city)
       area.places << city
 
       areas_campaign.exclusions = [city.id]
 
-      expect(areas_campaign.place_in_scope?(bar)).to be_falsey
+      expect(areas_campaign.place_in_scope?(place)).to be_falsey
+    end
+
+    it 'should return true if the place is in the inclusions list' do
+      place = create(:place)
+
+      areas_campaign.inclusions = [place.id]
+
+      expect(areas_campaign.place_in_scope?(place)).to be_truthy
     end
   end
 end

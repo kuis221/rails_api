@@ -361,14 +361,20 @@
 .special-icon {
   background-color: $grey_four;
   display: inline-block;
-  height: 32px;
-  @include border-radius(18px);
+  height: 46px;
+  @include border-radius(23px);
   text-align: center;
-  width: 32px;
+  width: 46px;
   &:before { /*probably will need adjustments for another icons inside*/
     color: #fff;
     font-size: 22px;
-    top: 7px;
-    left: 2px;
+    top: 12px;
+    left: 1px;
+  }
+  &.icon-wired-venue {
+    &:before {
+      left: 2px;
+      top: 13px;
+    }
   }
 }
