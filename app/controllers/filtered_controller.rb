@@ -38,7 +38,7 @@ class FilteredController < InheritedResources::Base
 
   def index
     if request.format.xls? || request.format.pdf?
-      enqueue_export
+      enqueue_export if params['mode'] == 'calendar' || list_exportable?
       render action: :new_export, formats: [:js]
     else
       super
@@ -181,6 +181,13 @@ class FilteredController < InheritedResources::Base
     true
   rescue URI::InvalidURIError
     false
+  end
+
+  def list_exportable?
+    number_of_pages = resource_class.do_search(search_params).total / 11.0 #total-items / items-per-page
+    @export_errors = []
+    @export_errors = ['PDF exports are limited to 200 pages. Please narrow your results and try exporting again.'] if number_of_pages > 200
+    @export_errors.empty?
   end
 
   private
