@@ -3,7 +3,7 @@
 /*-- TRENDS ANALYSIS STYLES --*/
 .highlight{
 	background-color: $light_blue;
-	color: #0a4466;
+	color: #fff;
 	padding: 2px 4px;
 	-webkit-border-radius: 6px;
 	border-radius: 6px;
@@ -26,6 +26,10 @@
 
 .indicator-down:before{
 	content: '\e613';
+}
+
+#all-mentions-box h3 .blue {
+	color: $blue;
 }
 
 .trends{
@@ -240,6 +244,7 @@
 			-o-transition:fill 1s;
 			transition:fill 1s;
 			fill: #3E9CCF;
+			color: #fff;
 		}
 	}
 
