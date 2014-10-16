@@ -1,0 +1,60 @@
+css:
+  .details_box {
+    margin-left: 5px;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .details_box .map_header {
+    margin-right: 250px;
+  }
+
+  #kpis-trends-bars .chart-bar {
+    margin-right: 250px;
+  }
+
+  #kpis-trends-bars .name {
+    max-width: 300px;
+  }
+
+  #kpis-trends-bars .chart-bar .remaining-label {
+    right: -185px !important;
+    width: 250px !important;
+  }
+
+  #kpis-trends-bars .chart-bar .remaining-label span {
+    float: left !important;
+  }
+
+  #kpis-trends-bars .chart-bar .remaining-label b {
+    line-height: 20px !important;
+  }
+
+  #kpis-trends-bars .chart-bar .remaining-label .kpi-name {
+    min-width: 70px !important;
+  }
+
+  #kpis-trends-bars .chart-bar .today-line-indicator {
+    top: -8px;
+  }
+
+  #kpis-trends-bars .chart-bar .progress .bar .scheduled-label {
+    padding-top: 30px !important;
+  }
+
+= content_for :pdf_scripts
+  = wicked_pdf_javascript_include_tag "application"
+  javascript:
+    window.status='loading';
+    jQuery(function(){
+      adjustChartsPositions();
+      window.status='completed';
+    });
+
+.tab-content
+  #report-container
+    .details_box.content
+      - unless report_group_by == 'campaign'
+        h3= @campaign.name
+      - if @data.count > 0
+        = render partial: 'report_event_status.html.slim'
