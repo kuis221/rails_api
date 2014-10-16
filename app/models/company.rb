@@ -20,6 +20,7 @@ class Company < ActiveRecord::Base
   has_many :teams, dependent: :destroy
   has_many :campaigns, dependent: :destroy
   has_many :roles, dependent: :destroy
+  has_many :venues, dependent: :destroy
   has_many :brand_portfolios, dependent: :destroy
   has_many :events, dependent: :destroy
   has_many :areas, dependent: :destroy

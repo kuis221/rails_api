@@ -111,6 +111,16 @@ module CapybaraBrandscopicHelpers
     }
   end
 
+  # Selects an option from google places autocomplete
+  def select_places_autocomplete(place, from: nil)
+    fill_in from, with: place
+    field = find_field(from)
+    page.execute_script(%|$('##{field['id']}').focus();|)
+    page.execute_script(%|google.maps.event.trigger($('##{field['id']}')[0], 'focus', {});|)
+    find('.pac-container .pac-item', match: :first).click
+    sleep 1 # to give time to the event listeners to be executed
+  end
+
   def select_filter_calendar_day(day1, day2 = nil)
     day2 ||= day1
     find('div.dates-range-filter div.datepick-month').click_js_link(day1).click_js_link(day2)

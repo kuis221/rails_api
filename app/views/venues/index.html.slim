@@ -87,9 +87,9 @@ javascript:
     query = window.location.search.replace(/^\?/,"")
     if (query != '') {
       if (query.match(/location=([^&]+)/)){
-        var loc = decodeURIComponent(query.replace(/.*location=([^&]+).*/,'$1'))
-        var locname = decodeURIComponent(query.replace(/.*loc_name=([^&]+).*/,'$1'))
-        var term = decodeURIComponent(query.replace(/.*&q=([^&]*).*/,'$1'))
+        var loc = decodeURIComponent(query.replace(/.*location=([^&]+).*/,'$1'));
+        var locname = decodeURIComponent(query.replace(/.*loc_name=([^&]+).*/,'$1')).replace(/\+/g, ' ');
+        var term = decodeURIComponent(query.replace(/.*&q=([^&]*).*/,'$1')).replace(/\+/g, ' ');
         if ( loc ) {
           $('#venue-search-location').val(locname);
           $('#venue-search-location').data('location',loc);
