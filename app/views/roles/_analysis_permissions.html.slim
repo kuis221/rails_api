@@ -14,8 +14,8 @@
       .span7
         .span5 Trends
         .span2
-          = permission_checkbox(f, :access, :trends_report)
+          = permission_checkbox(f, :access, Symbol, 'trends_report')
 
 
   = hidden_field_tag :partial, :analysis_permissions
-  = f.button :submit, 'Save', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
+  = f.button :submit, 'Save', class: 'btn btn-primary', data: { disable_with: 'Please wait...'}

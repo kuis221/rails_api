@@ -69,7 +69,7 @@ describe 'TrendObject' do
 
       response = TrendObject.do_search(
         company_id: comment.company_id,
-        question:  field.id)
+        question: [field.id])
       expect(response.results.count).to eql 1
       expect(response.results.map(&:resource)).to match_array [activity]
     end

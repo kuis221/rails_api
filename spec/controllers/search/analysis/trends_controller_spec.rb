@@ -7,8 +7,8 @@ describe Analysis::TrendsController, search: true do
   let(:campaign) { create(:campaign, company: company) }
   let(:event) do
     create(:event, campaign: campaign,
-                   start_date: Date.today.to_s(:slashes),
-                   end_date: Date.today.to_s(:slashes))
+                   start_date: Time.current.to_s(:slashes),
+                   end_date: Time.current.to_s(:slashes))
   end
 
   before { user } # Create and Login user
@@ -25,7 +25,7 @@ describe Analysis::TrendsController, search: true do
       create(:comment, commentable: event, content: 'hola')
       Sunspot.commit
 
-      get 'items', format: :json
+      get 'items', campaign: [campaign.id], source: ['Comment'], format: :json
 
       items = JSON.parse(response.body)
 
@@ -42,7 +42,7 @@ describe Analysis::TrendsController, search: true do
       create(:comment, commentable: event, content: 'hola')
       Sunspot.commit
 
-      get 'items', format: :json
+      get 'items', campaign: [campaign.id], source: ['Comment'], format: :json
 
       items = JSON.parse(response.body)
 
@@ -61,7 +61,7 @@ describe Analysis::TrendsController, search: true do
       create(:comment, commentable: event2, content: 'hola')
       Sunspot.commit
 
-      get 'items', format: :json
+      get 'items', campaign: [campaign.id], source: ['Comment'], format: :json
 
       items = JSON.parse(response.body)
 
@@ -80,7 +80,7 @@ describe Analysis::TrendsController, search: true do
       create_list(:comment, 9, commentable: event2, content: 'hola')
       Sunspot.commit
 
-      get 'items', format: :json
+      get 'items', campaign: [campaign.id], source: ['Comment'], format: :json
 
       items = JSON.parse(response.body)
 
@@ -99,7 +99,7 @@ describe Analysis::TrendsController, search: true do
       create_list(:comment, 11, commentable: event2, content: 'hola')
       Sunspot.commit
 
-      get 'items', format: :json
+      get 'items', campaign: [campaign.id], source: ['Comment'], format: :json
 
       items = JSON.parse(response.body)
 
@@ -118,7 +118,7 @@ describe Analysis::TrendsController, search: true do
       create_list(:comment, 12, commentable: event2, content: 'hola')
       Sunspot.commit
 
-      get 'items', format: :json
+      get 'items', campaign: [campaign.id], source: ['Comment'], format: :json
 
       items = JSON.parse(response.body)
 
@@ -137,7 +137,7 @@ describe Analysis::TrendsController, search: true do
       create_list(:comment, 8, commentable: event2, content: 'hola')
       Sunspot.commit
 
-      get 'items', format: :json
+      get 'items', campaign: [campaign.id], source: ['Comment'], format: :json
 
       items = JSON.parse(response.body)
 
@@ -157,7 +157,7 @@ describe Analysis::TrendsController, search: true do
       create(:comment, commentable: event2, content: 'hola')
       Sunspot.commit
 
-      get 'items', format: :json
+      get 'items', campaign: [campaign.id], source: ['Comment'], format: :json
 
       items = JSON.parse(response.body)
 
@@ -174,7 +174,7 @@ describe Analysis::TrendsController, search: true do
       create(:comment, commentable: event, content: 'hola')
       Sunspot.commit
 
-      get 'items', format: :json
+      get 'items', campaign: [campaign.id], source: ['Comment'], format: :json
 
       items = JSON.parse(response.body)
 
@@ -189,7 +189,7 @@ describe Analysis::TrendsController, search: true do
         create(:comment, commentable: event, content: 'hola')
         Sunspot.commit
 
-        get 'items', source: ['Comment'], format: :json
+        get 'items', campaign: [campaign.id], source: ['Comment'], format: :json
 
         items = JSON.parse(response.body)
 
@@ -200,7 +200,7 @@ describe Analysis::TrendsController, search: true do
         create(:comment, commentable: event, content: 'hola')
         Sunspot.commit
 
-        get 'items', source: ['ActivityType:1'], format: :json
+        get 'items', campaign: [campaign.id], source: ['ActivityType:1'], format: :json
         items = JSON.parse(response.body)
 
         expect(items).to be_empty
@@ -218,7 +218,8 @@ describe Analysis::TrendsController, search: true do
 
         Sunspot.commit
 
-        get 'items', format: :json,
+        get 'items', campaign: [campaign.id], source: ['Comment'],
+                     format: :json,
                      start_date: 2.days.ago.to_s(:slashes),
                      end_date: Date.tomorrow.to_s(:slashes)
 
@@ -242,7 +243,8 @@ describe Analysis::TrendsController, search: true do
 
         Sunspot.commit
 
-        get 'items', format: :json,
+        get 'items', campaign: [campaign.id], source: ['Comment'],
+                     format: :json,
                      start_date: 5.days.ago.to_s(:slashes),
                      end_date: 2.days.ago.to_s(:slashes)
 
@@ -259,7 +261,8 @@ describe Analysis::TrendsController, search: true do
       create(:comment, commentable: event, content: 'hola')
 
       Sunspot.commit
-      get 'mentions_over_time', term: 'adios', format: :json
+      get 'mentions_over_time', campaign: [campaign.id], source: ['Comment'],
+                                term: 'adios', format: :json
 
       items = JSON.parse(response.body)
 
@@ -267,40 +270,46 @@ describe Analysis::TrendsController, search: true do
     end
 
     it 'returns the count for each day the word appears' do
-      activity_type = create(:activity_type, company: company)
-      form_field = FormField.find(
-        create(:form_field_text_area, fieldable: activity_type).id
-      )
-      campaign.activity_types << activity_type
+      Time.use_zone(user.time_zone) do
+        activity_type = create(:activity_type, company: company)
+        form_field = FormField.find(
+          create(:form_field_text_area, fieldable: activity_type).id
+        )
+        campaign.activity_types << activity_type
 
-      create(:comment, commentable: event, content: 'hola')
-      create(:comment, commentable: event, content: 'hola')
-      create(:comment, commentable: event, content: 'holas') # this should not be counted
+        create(:comment, commentable: event, content: 'hola')
+        create(:comment, commentable: event, content: 'hola')
+        create(:comment, commentable: event, content: 'holas') # this should not be counted
 
-      event2 = create(:event, campaign: campaign,
-                              start_date: Date.yesterday.to_s(:slashes),
-                              end_date: Date.yesterday.to_s(:slashes))
-      create(:comment, commentable: event2, content: 'otra')
-      create(:comment, commentable: event2, content: 'hola')
+        yesterday = (Time.current - 1.day).to_s(:slashes)
+        event2 = create(:event, campaign: campaign,
+                                start_date: yesterday,
+                                end_date: yesterday)
+        create(:comment, commentable: event2, content: 'otra')
+        create(:comment, commentable: event2, content: 'hola')
 
-      activity = create(:activity, activity_type: activity_type,
-        activitable: event2, activity_date: Date.yesterday.to_s(:slashes),
-        company_user: company_user)
+        activity = create(:activity, activity_type: activity_type,
+          activitable: event2, activity_date: yesterday,
+          company_user: company_user)
 
-      activity.results_for([form_field]).first.value = 'Texto con hola en medio!'
-      activity.save
+        activity.results_for([form_field]).first.value = 'Texto con hola en medio!'
+        activity.save
 
-      Sunspot.commit
+        Sunspot.commit
 
-      get 'mentions_over_time', term: 'hola', format: :json
+        get 'mentions_over_time', campaign: [campaign.id],
+                                  source: ['Comment', "ActivityType:#{activity_type.id}"],
+                                  question: [form_field.id],
+                                  term: 'hola', format: :json
 
-      items = JSON.parse(response.body)
+        items = JSON.parse(response.body)
 
-      expect(items.count).to eql 3
-      expect(DateTime.strptime(items.first[0].to_s, '%Q').to_date).to eql Date.yesterday
-      expect(items.first[1]).to eql 2
-      expect(DateTime.strptime(items.last[0].to_s, '%Q').to_date).to eql Date.today
-      expect(items.last[1]).to eql 2
+        expect(items.count).to eql 2
+        expect(DateTime.strptime(items.first[0].to_s, '%Q').to_date).to eql (Time.current - 1.day).to_date
+        expect(items.first[1]).to eql 2
+        expect(DateTime.strptime(items.last[0].to_s, '%Q').to_date).to eql Date.today
+        expect(items.last[1]).to eql 2
+      end
     end
 
     it 'should fill in missing days with zeros' do
@@ -314,7 +323,8 @@ describe Analysis::TrendsController, search: true do
 
       Sunspot.commit
 
-      get 'mentions_over_time', term: 'hola', format: :json
+      get 'mentions_over_time', campaign: [campaign.id], source: ['Comment'],
+                                term: 'hola', format: :json
 
       items = JSON.parse(response.body)
 
@@ -335,7 +345,8 @@ describe Analysis::TrendsController, search: true do
       create(:comment, commentable: event, content: 'other')
       Sunspot.commit
 
-      get 'search', term: 'abs', format: :json
+      get 'search', campaign: [campaign.id], source: ['Comment'],
+                    term: 'abs', format: :json
 
       items = JSON.parse(response.body)
 

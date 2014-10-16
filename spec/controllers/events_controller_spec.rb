@@ -2,15 +2,12 @@ require 'rails_helper'
 
 describe EventsController, type: :controller do
   describe 'as registered user' do
-    before(:each) do
-      @user = sign_in_as_user
-      @company = @user.companies.first
-      @company_user = @user.current_company_user
-    end
+    let(:user){ sign_in_as_user }
+    let(:company){ user.companies.first }
+    let(:company_user){ user.current_company_user }
 
-    after do
-      Timecop.return
-    end
+    before { user }
+    after { Timecop.return }
 
     describe "GET 'new'" do
       it 'returns http success' do
@@ -22,7 +19,7 @@ describe EventsController, type: :controller do
     end
 
     describe "GET 'edit'" do
-      let(:event) { create(:event, company: @company, campaign: create(:campaign, company: @company)) }
+      let(:event) { create(:event, company: company, campaign: create(:campaign, company: company)) }
       it 'returns http success' do
         xhr :get, 'edit', id: event.to_param, format: :js
         expect(response).to be_success
@@ -30,7 +27,7 @@ describe EventsController, type: :controller do
     end
 
     describe "GET 'edit_data'" do
-      let(:event) { create(:event, company: @company, campaign: create(:campaign, company: @company)) }
+      let(:event) { create(:event, company: company, campaign: create(:campaign, company: company)) }
       it 'returns http success' do
         event.build_event_data.save
         xhr :get, 'edit_data', id: event.to_param, format: :js
@@ -40,7 +37,7 @@ describe EventsController, type: :controller do
     end
 
     describe "GET 'edit_surveys'" do
-      let(:event) { create(:event, company: @company) }
+      let(:event) { create(:event, company: company) }
       it 'returns http success' do
         xhr :get, 'edit_surveys', id: event.to_param, format: :js
         expect(response).to be_success
@@ -51,7 +48,7 @@ describe EventsController, type: :controller do
 
     describe "GET 'show'" do
       describe 'for an event in the future' do
-        let(:event) { create(:event, company: @company, campaign: create(:campaign, company: @company), start_date: 1.week.from_now.to_s(:slashes), end_date: 1.week.from_now.to_s(:slashes)) }
+        let(:event) { create(:event, company: company, campaign: create(:campaign, company: company), start_date: 1.week.from_now.to_s(:slashes), end_date: 1.week.from_now.to_s(:slashes)) }
 
         it 'renders the correct templates' do
           get 'show', id: event.to_param
@@ -63,7 +60,7 @@ describe EventsController, type: :controller do
       end
 
       describe 'for an event in the past' do
-        let(:event) { create(:event, company: @company, campaign: create(:campaign, company: @company), start_date: 1.day.ago.to_s(:slashes), end_date: 1.day.ago.to_s(:slashes)) }
+        let(:event) { create(:event, company: company, campaign: create(:campaign, company: company), start_date: 1.day.ago.to_s(:slashes), end_date: 1.day.ago.to_s(:slashes)) }
 
         describe 'when no data have been entered' do
           it 'renders the correct templates' do
@@ -91,8 +88,8 @@ describe EventsController, type: :controller do
 
       describe 'calendar_highlights' do
         it 'loads the highligths for the calendar' do
-          create(:event, company: @company, start_date: '01/23/2013', end_date: '01/24/2013')
-          create(:event, company: @company, start_date: '02/15/2013', end_date: '02/15/2013')
+          create(:event, company: company, start_date: '01/23/2013', end_date: '01/24/2013')
+          create(:event, company: company, start_date: '02/15/2013', end_date: '02/15/2013')
           get 'index'
           expect(response).to be_success
           expect(assigns(:calendar_highlights)).to eq(2013 => { 1 => { 23 => 1, 24 => 1 }, 2 => { 15 => 1 } })
@@ -100,7 +97,7 @@ describe EventsController, type: :controller do
 
         ActiveSupport::TimeZone.all.each do |zone|
           it "works when time zone is set to '#{zone.name}'" do
-            @user.update_attribute :time_zone, zone.name
+            user.update_attribute :time_zone, zone.name
             get 'index'
             expect(response).to be_success
             expect(assigns(:calendar_highlights)).to eq({})
@@ -118,7 +115,7 @@ describe EventsController, type: :controller do
     end
 
     describe "GET 'list_export'", search: true do
-      let(:campaign) { create(:campaign, company: @company, name: 'Test Campaign FY01') }
+      let(:campaign) { create(:campaign, company: company, name: 'Test Campaign FY01') }
       it 'should return an empty book with the correct headers' do
         expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
         spreadsheet_from_last_export do |doc|
@@ -132,10 +129,13 @@ describe EventsController, type: :controller do
 
       it 'should include the event results' do
         place = create(:place, name: 'Bar Prueba', city: 'Los Angeles', state: 'California', country: 'US')
-        event = create(:approved_event, company: @company, campaign: campaign, place: place)
-        team = create(:team, company: @company, name: 'zteam')
+        event = create(:approved_event, company: company, campaign: campaign,
+          start_date: '01/23/2019', end_date: '01/23/2019',
+          start_time: '10:00 am', end_time: '12:00 pm',
+          place: place)
+        team = create(:team, company: company, name: 'zteam')
         event.teams << team
-        event.users << @company_user
+        event.users << company_user
         Sunspot.commit
 
         expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
@@ -193,7 +193,7 @@ describe EventsController, type: :controller do
     end
 
     describe "GET 'tasks'" do
-      let(:event) { create(:event, company: @company) }
+      let(:event) { create(:event, company: company) }
       it 'returns http success' do
         get 'tasks', id: event.to_param
         expect(response).to be_success
@@ -203,7 +203,7 @@ describe EventsController, type: :controller do
     end
 
     describe "POST 'create'" do
-      let(:campaign) { create(:campaign, company: @company) }
+      let(:campaign) { create(:campaign, company: company) }
       it 'should not render form_dialog if no errors' do
         expect do
           xhr :post, 'create', event: { campaign_id: campaign.id, start_date: '05/23/2020', start_time: '12:00pm', end_date: '05/22/2021', end_time: '01:00pm' }, format: :js
@@ -226,25 +226,25 @@ describe EventsController, type: :controller do
         expect do
           xhr :post, 'create', event: { campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm' }, format: :js
         end.to change(Event, :count).by(1)
-        expect(assigns(:event).company_id).to eq(@company.id)
+        expect(assigns(:event).company_id).to eq(company.id)
       end
 
       it 'should assign users to the new event' do
         with_resque do
-          @company_user.update_attributes(
+          company_user.update_attributes(
             notifications_settings: %w(new_event_team_sms new_event_team_email),
             user_attributes: { phone_number_verified: true })
-          expect(UserMailer).to receive(:notification).with(@company_user.id, 'Added to Event', /You have a new event http:\/\/localhost:5100\/events\/[0-9]+/).and_return(double(deliver: true))
+          expect(UserMailer).to receive(:notification).with(company_user.id, 'Added to Event', /You have a new event http:\/\/localhost:5100\/events\/[0-9]+/).and_return(double(deliver: true))
           expect do
             expect do
               post 'create', event: {
-                campaign_id: campaign.id, team_members: ["company_user:#{@company_user.id}"],
+                campaign_id: campaign.id, team_members: ["company_user:#{company_user.id}"],
                 start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020',
                 end_time: '01:00pm' }, format: :js
             end.to change(Event, :count).by(1)
           end.to change(Membership, :count).by(1)
-          expect(assigns(:event).users.last.user.id).to eq(@user.id)
-          open_last_text_message_for @user.phone_number
+          expect(assigns(:event).users.last.user.id).to eq(user.id)
+          open_last_text_message_for user.phone_number
           expect(current_text_message).to have_body "You have a new event http://localhost:5100/events/#{Event.last.id}"
         end
       end
@@ -260,8 +260,8 @@ describe EventsController, type: :controller do
       end
 
       it 'should create the event with the given event team' do
-        user = create(:company_user, company: @company)
-        team = create(:team, company: @company)
+        user = create(:company_user, company: company)
+        team = create(:team, company: company)
         expect do
           post 'create', event: {
             campaign_id: campaign.id, team_members: ["company_user:#{user.id}", "team:#{team.id}"],
@@ -279,10 +279,10 @@ describe EventsController, type: :controller do
     end
 
     describe "PUT 'update'" do
-      let(:campaign) { create(:campaign, company: @company) }
-      let(:event) { create(:event, company: @company, campaign: campaign) }
+      let(:campaign) { create(:campaign, company: company) }
+      let(:event) { create(:event, company: company, campaign: campaign) }
       it 'must update the event attributes' do
-        new_campaign = create(:campaign, company: @company)
+        new_campaign = create(:campaign, company: company)
         xhr :put, 'update', id: event.to_param, event: { campaign_id: new_campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm' }, format: :js
         expect(assigns(:event)).to eq(event)
         expect(response).to be_success
@@ -293,7 +293,7 @@ describe EventsController, type: :controller do
       end
 
       it 'must update the event attributes' do
-        xhr :put, 'update', id: event.to_param, partial: 'event_data', event: { campaign_id: create(:campaign, company: @company).to_param, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm' }, format: :js
+        xhr :put, 'update', id: event.to_param, partial: 'event_data', event: { campaign_id: create(:campaign, company: company).to_param, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm' }, format: :js
         expect(assigns(:event)).to eq(event)
         expect(response).to be_success
         expect(response).to render_template('_results_event_data')
@@ -348,11 +348,11 @@ describe EventsController, type: :controller do
     end
 
     describe "DELETE 'delete_member' with a user" do
-      let(:event) { create(:event, company: @company) }
+      let(:event) { create(:event, company: company) }
       it 'should remove the team member from the event' do
-        event.users << @company_user
+        event.users << company_user
         expect do
-          delete 'delete_member', id: event.id, member_id: @company_user.id, format: :js
+          delete 'delete_member', id: event.id, member_id: company_user.id, format: :js
           expect(response).to be_success
           expect(assigns(:event)).to eq(event)
           event.reload
@@ -360,18 +360,18 @@ describe EventsController, type: :controller do
       end
 
       it 'should unassign any tasks assigned the user' do
-        event.users << @company_user
+        event.users << company_user
         other_user = create(:company_user, company_id: 1)
-        user_tasks = create_list(:task, 3, event: event, company_user: @company_user)
+        user_tasks = create_list(:task, 3, event: event, company_user: company_user)
         other_tasks = create_list(:task, 2, event: event, company_user: other_user)
-        delete 'delete_member', id: event.id, member_id: @company_user.id, format: :js
+        delete 'delete_member', id: event.id, member_id: company_user.id, format: :js
 
         user_tasks.each { |t| expect(t.reload.company_user_id).to be_nil }
         other_tasks.each { |t| expect(t.reload.company_user_id).not_to be_nil }
       end
 
       it "should not raise error if the user doesn't belongs to the event" do
-        delete 'delete_member', id: event.id, member_id: @company_user.id, format: :js
+        delete 'delete_member', id: event.id, member_id: company_user.id, format: :js
         event.reload
         expect(response).to be_success
         expect(assigns(:event)).to eq(event)
@@ -379,8 +379,8 @@ describe EventsController, type: :controller do
     end
 
     describe "DELETE 'delete_member' with a team" do
-      let(:event) { create(:event, company: @company) }
-      let(:team) { create(:team, company: @company) }
+      let(:event) { create(:event, company: company) }
+      let(:team) { create(:team, company: company) }
       it 'should remove the team from the event' do
         event.teams << team
         expect do
@@ -392,7 +392,7 @@ describe EventsController, type: :controller do
       end
 
       it 'should unassign any tasks assigned the team users' do
-        another_user = create(:company_user, company: @company)
+        another_user = create(:company_user, company: company)
         team.users << another_user
         event.teams << team
         other_user = create(:company_user, company_id: 1)
@@ -406,15 +406,15 @@ describe EventsController, type: :controller do
       end
 
       it 'should not unassign any tasks assigned the team users if the user is directly assigned to the event' do
-        team.users << @company_user
+        team.users << company_user
         event.teams << team
-        event.users << @company_user
-        other_user = create(:company_user, company: @company)
-        user_tasks = create_list(:task, 3, event: event, company_user: @company_user)
+        event.users << company_user
+        other_user = create(:company_user, company: company)
+        user_tasks = create_list(:task, 3, event: event, company_user: company_user)
         other_tasks = create_list(:task, 2, event: event, company_user: other_user)
         delete 'delete_member', id: event.id, team_id: team.id, format: :js
 
-        user_tasks.each { |t| expect(t.reload.company_user_id).to eq(@company_user.id) }
+        user_tasks.each { |t| expect(t.reload.company_user_id).to eq(company_user.id) }
         other_tasks.each { |t| expect(t.reload.company_user_id).not_to be_nil }
       end
 
@@ -427,23 +427,23 @@ describe EventsController, type: :controller do
     end
 
     describe "GET 'new_member" do
-      let(:event) { create(:event, company: @company) }
-      it 'should load all the company\'s users into @users' do
-        create(:user, company_id: @company.id + 1)
-        another_user = create(:company_user, company_id: @company.id, role_id: @company_user.role_id)
+      let(:event) { create(:event, company: company) }
+      it 'should load all the company\'s users into users' do
+        create(:user, company_id: company.id + 1)
+        another_user = create(:company_user, company_id: company.id, role_id: company_user.role_id)
         xhr :get, 'new_member', id: event.id, format: :js
         event.reload
         expect(response).to be_success
         expect(assigns(:event)).to eq(event)
         expect(assigns(:staff)).to match_array [
-          { 'id' => @company_user.id.to_s, 'name' => @company_user.full_name, 'description' => 'Super Admin', 'type' => 'user' },
+          { 'id' => company_user.id.to_s, 'name' => company_user.full_name, 'description' => 'Super Admin', 'type' => 'user' },
           { 'id' => another_user.id.to_s, 'name' => 'Test User', 'description' => 'Super Admin', 'type' => 'user' }
         ]
       end
 
       it 'should not load the users that are already assigned to the event' do
-        another_user = create(:company_user, company_id: @company.id, role_id: @company_user.role_id)
-        event.users << @company_user
+        another_user = create(:company_user, company_id: company.id, role_id: company_user.role_id)
+        event.users << company_user
         xhr :get, 'new_member', id: event.id, format: :js
         expect(response).to be_success
         expect(assigns(:event)).to eq(event)
@@ -451,10 +451,10 @@ describe EventsController, type: :controller do
       end
 
       it 'should load teams with active users' do
-        event.users << @company_user
-        @company_user.user.update_attributes(first_name: 'CDE', last_name: 'FGH')
-        team = create(:team, name: 'ABC', description: 'A sample team', company_id: @company.id)
-        other_user = create(:company_user, company_id: @company.id, role_id: @company_user.role_id)
+        event.users << company_user
+        company_user.user.update_attributes(first_name: 'CDE', last_name: 'FGH')
+        team = create(:team, name: 'ABC', description: 'A sample team', company_id: company.id)
+        other_user = create(:company_user, company_id: company.id, role_id: company_user.role_id)
         team.users << other_user
         xhr :get, 'new_member', id: event.id, format: :js
         expect(assigns(:assignable_teams)).to eq([team])
@@ -467,10 +467,10 @@ describe EventsController, type: :controller do
 
     describe "POST 'add_members" do
       let(:place) { create(:place) }
-      let(:event) { create(:event, company: @company, place: place) }
+      let(:event) { create(:event, company: company, place: place) }
 
       it 'should assign the user to the event and create a notification for the new member' do
-        other_user = create(:company_user, company_id: @company.id)
+        other_user = create(:company_user, company_id: company.id)
         other_user.places << place
         expect do
           expect do
@@ -489,8 +489,8 @@ describe EventsController, type: :controller do
       end
 
       it 'should assign all the team to the event and create a notification for team members' do
-        team = create(:team, company_id: @company.id)
-        other_user = create(:company_user, company_id: @company.id)
+        team = create(:team, company_id: company.id)
+        other_user = create(:company_user, company_id: company.id)
         other_user.places << place
         team.users << other_user
         expect do
@@ -510,9 +510,9 @@ describe EventsController, type: :controller do
       end
 
       it 'should not assign users to the event if they are already part of the event' do
-        event.users << @company_user
+        event.users << company_user
         expect do
-          xhr :post, 'add_members', id: event.id, member_id: @company_user.to_param, format: :js
+          xhr :post, 'add_members', id: event.id, member_id: company_user.to_param, format: :js
           expect(response).to be_success
           expect(assigns(:event)).to eq(event)
           event.reload
@@ -520,7 +520,7 @@ describe EventsController, type: :controller do
       end
 
       it 'should not assign teams to the event if they are already part of the event' do
-        team = create(:team, company_id: @company.id)
+        team = create(:team, company_id: company.id)
         event.teams << team
         expect do
           xhr :post, 'add_members', id: event.id, team_id: team.to_param, format: :js
@@ -533,7 +533,7 @@ describe EventsController, type: :controller do
 
     describe "GET 'activate'" do
       it 'should activate an inactive event' do
-        event = create(:event, active: false, company: @company)
+        event = create(:event, active: false, company: company)
         expect do
           xhr :get, 'activate', id: event.to_param, format: :js
           expect(response).to be_success
@@ -544,7 +544,7 @@ describe EventsController, type: :controller do
 
     describe "GET 'deactivate'" do
       it 'should deactivate an active event' do
-        event = create(:event, active: true, company: @company)
+        event = create(:event, active: true, company: company)
         expect do
           xhr :get, 'deactivate', id: event.to_param, format: :js
           expect(response).to be_success
@@ -556,27 +556,27 @@ describe EventsController, type: :controller do
     describe "PUT 'submit'" do
       it 'should submit event' do
         with_resque do
-          event = create(:event, active: true, company: @company)
-          @company_user.update_attributes(
+          event = create(:event, active: true, company: company)
+          company_user.update_attributes(
             notifications_settings: %w(event_recap_pending_approval_sms event_recap_pending_approval_email),
             user_attributes: { phone_number_verified: true })
-          event.users << @company_user
+          event.users << company_user
           message = "You have an event recap that is pending approval http://localhost:5100/events/#{event.id}"
-          expect(UserMailer).to receive(:notification).with(@company_user.id, 'Event Recaps Pending Approval', message).and_return(double(deliver: true))
+          expect(UserMailer).to receive(:notification).with(company_user.id, 'Event Recaps Pending Approval', message).and_return(double(deliver: true))
           expect do
             xhr :put, 'submit', id: event.to_param, format: :js
             expect(response).to be_success
             event.reload
           end.to change(event, :submitted?).to(true)
-          open_last_text_message_for @user.phone_number
+          open_last_text_message_for user.phone_number
           expect(current_text_message).to have_body message
         end
       end
 
       it 'should not allow to submit the event if the event data is not valid' do
-        campaign = create(:campaign, company_id: @company)
+        campaign = create(:campaign, company_id: company)
         field = create(:form_field_number, fieldable: campaign, kpi: create(:kpi, company_id: 1), required: true)
-        event = create(:event, active: true, company: @company, campaign: campaign)
+        event = create(:event, active: true, company: company, campaign: campaign)
         expect do
           xhr :put, 'submit', id: event.to_param, format: :js
           expect(response).to be_success
@@ -587,7 +587,7 @@ describe EventsController, type: :controller do
 
     describe "PUT 'approve'" do
       it 'should approve event' do
-        event = create(:submitted_event, active: true, company: @company)
+        event = create(:submitted_event, active: true, company: company)
         expect do
           put 'approve', id: event.to_param
           expect(response).to redirect_to(event_path(event, status: 'approved'))
@@ -600,20 +600,20 @@ describe EventsController, type: :controller do
       it 'should reject event' do
         Timecop.freeze do
           with_resque do
-            event = create(:submitted_event, active: true, company: @company)
-            @company_user.update_attributes(
+            event = create(:submitted_event, active: true, company: company)
+            company_user.update_attributes(
               notifications_settings: %w(event_recap_rejected_sms event_recap_rejected_email),
               user_attributes: { phone_number_verified: true })
-            event.users << @company_user
+            event.users << company_user
             message = "You have a rejected event recap http://localhost:5100/events/#{event.id}"
-            expect(UserMailer).to receive(:notification).with(@company_user.id, 'Rejected Event Recaps', message).and_return(double(deliver: true))
+            expect(UserMailer).to receive(:notification).with(company_user.id, 'Rejected Event Recaps', message).and_return(double(deliver: true))
             expect do
               xhr :put, 'reject', id: event.to_param, reason: 'blah blah blah', format: :js
               expect(response).to be_success
               event.reload
             end.to change(event, :rejected?).to(true)
             expect(event.reject_reason).to eq('blah blah blah')
-            open_last_text_message_for @user.phone_number
+            open_last_text_message_for user.phone_number
             expect(current_text_message).to have_body message
           end
         end
@@ -622,14 +622,12 @@ describe EventsController, type: :controller do
   end
 
   describe 'user with permissions to edit event data only' do
-    before(:each) do
-      @company_user = create(:company_user, company_id: create(:company).id, permissions: [[:show, 'Event'], [:edit_unsubmitted_data, 'Event']])
-      @company = @company_user.company
-      @user = @company_user.user
-      sign_in @user
-    end
+    let(:company_user) { create(:company_user, company_id: create(:company).id, permissions: [[:show, 'Event'], [:edit_unsubmitted_data, 'Event']]) }
+    let(:user) { company_user.user }
+    let(:company) { company_user.company }
+    let(:event) { create(:event, company: company) }
 
-    let(:event) { create(:event, company: @company) }
+    before { sign_in user }
 
     it 'should be able to edit event_data' do
       xhr :put, 'update', id: event.to_param, event: { results_attributes: {} }, format: :js

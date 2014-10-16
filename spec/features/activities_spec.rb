@@ -181,9 +181,9 @@ feature 'Activities management' do
 
       visit venue_path(venue)
 
-      expect(page).to_not have_content('Activity Type #1')
+      expect(page).to_not have_content 'Activity Type #1'
 
-      click_js_link('New Activity')
+      click_js_button 'New Activity'
 
       within visible_modal do
         select_from_chosen('Activity Type #1', from: 'Activity type')

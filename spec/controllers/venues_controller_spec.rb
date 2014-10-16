@@ -2,39 +2,43 @@ require 'rails_helper'
 require 'sunspot_test/rspec'
 
 describe VenuesController, type: :controller do
-  before(:each) do
-    @user = sign_in_as_user
-    @company = @user.current_company
-    @company_user = @user.current_company_user
-  end
+  let(:user){ sign_in_as_user }
+  let(:company){ user.companies.first }
+  let(:company_user){ user.current_company_user }
+
+  before { user }
 
   describe "GET 'show'" do
     before do
       Kpi.create_global_kpis
     end
 
-    let(:venue) { create(:venue, company: @company, place: create(:place, is_custom_place: true, reference: nil)) }
+    let(:venue) { create(:venue, company: company, place: create(:place, is_custom_place: true, reference: nil)) }
 
     it 'returns http success' do
       get 'show', id: venue.to_param
       expect(response).to be_success
     end
 
-    it 'should allow display info for places from Google Places' do
-      get 'show', id: '24d9cbaf29793a503e9298ba48a343a9546549c2', ref: 'CnRvAAAAjP74ZS9G_HaiDn3kQcryi2SgpsXnCVpQuj5l9GYfadTCLTbvaYPKgFXwlQxgr_EKIQXSCRuErewJDLHRu8vWiDsrl4BAfBhT-xlfdDRb-46Vp3kxdmfv95DksRNvVPFta6MQ05afANalVoMguLrcsxIQGKjnFkjuN6-xGxl3gcVS6hoUIkM79cK4aOPYfPeweDuLkZUo4OE'
-      expect(response).to be_success
-      expect(assigns(:venue).new_record?).to be_truthy
+    it 'should redirect to the newly created venue if id and reference from Google Places is given' do
+      place = create(:place, place_id: '24d9cbaf29793a503e9', reference: 'CnRvAAAAjP74ZS9G')
+      expect do
+        get 'show', id: '24d9cbaf29793a503e9', ref: 'CnRvAAAAjP74ZS9G'
+      end.to change(Venue, :count).by(1)
+      venue = Venue.last
+      expect(venue.place).to eql place
+      expect(response).to redirect_to(venue_path(venue))
     end
   end
 
   describe "GET 'select_areas'" do
-    let(:venue) { create(:venue, company: @company, place: create(:place, is_custom_place: true, reference: nil)) }
+    let(:venue) { create(:venue, company: company, place: create(:place, is_custom_place: true, reference: nil)) }
 
     it 'returns http success' do
-      area = create(:area, company: @company)
+      area = create(:area, company: company)
 
       # Another area already in venue
-      assigned_area = create(:area, company: @company)
+      assigned_area = create(:area, company: company)
 
       venue.place.areas << assigned_area
       xhr :get, 'select_areas', id: venue.to_param, format: :js
@@ -46,10 +50,10 @@ describe VenuesController, type: :controller do
   end
 
   describe 'POST #add_areas' do
-    let(:venue) { create(:venue, company: @company, place: create(:place, is_custom_place: true, reference: nil)) }
+    let(:venue) { create(:venue, company: company, place: create(:place, is_custom_place: true, reference: nil)) }
 
     it 'adds the area to the place' do
-      area = create(:area, company: @company)
+      area = create(:area, company: company)
       expect do
         xhr :post, 'add_areas', id: venue.to_param, area_id: area.to_param, format: :js
       end.to change(venue.place.areas, :count).by(1)
@@ -57,10 +61,10 @@ describe VenuesController, type: :controller do
   end
 
   describe 'DELETE #delete_area' do
-    let(:venue) { create(:venue, company: @company, place: create(:place, is_custom_place: true, reference: nil)) }
+    let(:venue) { create(:venue, company: company, place: create(:place, is_custom_place: true, reference: nil)) }
 
     it 'adds the area to the place' do
-      area = create(:area, company: @company)
+      area = create(:area, company: company)
       venue.place.areas << area
       expect do
         delete 'delete_area', id: venue.to_param, area_id: area.to_param, format: :js

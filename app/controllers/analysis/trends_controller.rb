@@ -138,7 +138,7 @@ class Analysis::TrendsController < FilteredController
 
     # fill in each missing day between the first and last days with zeros
     if data.count > 1
-      (Date.strptime(data[data.keys.first][0].to_s,'%Q').to_date..Date.strptime(data[data.keys.last][0].to_s,'%Q').to_date).each do |day|
+      (DateTime.strptime(data[data.keys.first][0].to_s,'%Q').to_date..DateTime.strptime(data[data.keys.last][0].to_s,'%Q').to_date).each do |day|
         data[day.to_s(:numeric).to_i] ||= [day.strftime('%Q').to_i, 0]
       end
     end

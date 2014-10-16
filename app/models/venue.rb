@@ -263,7 +263,7 @@ class Venue < ActiveRecord::Base
       if params[:location].present?
         radius = params.key?(:radius) ? params[:radius] : 50
         (lat, lng) = params[:location].split(',')
-        with(:location).in_radius(lat, lng, radius)
+        with(:location).in_radius(lat, lng, radius, bbox: true)
       end
 
       if params[:q].present?

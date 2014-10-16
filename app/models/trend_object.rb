@@ -10,7 +10,7 @@ class TrendObject
 
   delegate :form_field_id, to: :result, allow_nil: true
 
-  searchable do
+  searchable if: :description do
     string :id
 
     integer :company_id

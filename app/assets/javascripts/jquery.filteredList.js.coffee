@@ -990,7 +990,7 @@ $.widget 'nmk.filteredList', {
 			for qvar in vars
 				pair = qvar.split('=')
 				name = decodeURIComponent(pair[0])
-				value = decodeURIComponent((if pair.length>=2 then pair[1] else '').replace(/\+/g, '%20'))
+				value = decodeURIComponent((if pair.length>=2 then pair[1] else '').replace(/\+/g, '%20')).replace(/\+/g, ' ')
 				if @options.includeCalendars and value and name in ['start_date', 'end_date']
 					if name is 'start_date' and value
 						dates[0] = @_parseDate(value)

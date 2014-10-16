@@ -67,6 +67,10 @@ a{
 	}
 }
 
+.module-title{
+	color: $user_menu;
+}
+
 abbr[title]{
 	border:0;
 }
@@ -1756,6 +1760,9 @@ label{
 	font-size: 13px;
 	display: block;
 	margin: 0 0 10px 0;
+	&+.accordion-group {
+		margin-top: 30px;
+	}
 	&:last-of-type{
 		margin-top: 40px;
 		margin-bottom: 35px;
@@ -3066,7 +3073,8 @@ ul.ui-widget-content{
 		margin-top: 40px;
 	}
 	h3.section-title {
-		margin-bottom: 20px;
+		display: inline-block;
+		margin-bottom: 15px;
 		color: $brand;
 		font-size: 20px;
 		font-weight: normal;
@@ -4902,7 +4910,7 @@ svg{
 
 .campaigns_report, .snapshot_report, .staff_report {
 	.loading-spinner{
-		background: #fff image-url('loading-circle.gif') center center no-repeat;
+		background: white image-url('loading-circle.gif') center center no-repeat;
 		display: block;
 		height: 50px;
 	}
@@ -4911,6 +4919,18 @@ svg{
 .campaigns_report, .snapshot_report, .staff_report {
 	.nav-tabs li a{
 		width: 130px;
+	}
+}
+
+.loading-circle-spinner{
+	height:120px;
+	position:absolute !important;
+	right:50%;
+	top:-20px;
+	z-index:9;
+	img{
+		display: block;
+		margin:0 auto;
 	}
 }
 
