@@ -5200,6 +5200,9 @@ body.campaigns{
 	a{
 		color: $venues_blue;
 		text-decoration: none;
+		&.btn{ 
+			color: #fff;
+		}
 		&.underline{
 			color:$text;
 			&:hover{
