@@ -15,9 +15,10 @@ ActiveRecord::Schema.define(version: 20141008230422) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "pg_stat_statements"
-  enable_extension "tablefunc"
   enable_extension "hstore"
+  enable_extension "pg_stat_statements"
+  enable_extension "postgres_fdw"
+  enable_extension "tablefunc"
 
   create_table "active_admin_comments", force: true do |t|
     t.string   "resource_id",   null: false
@@ -228,6 +229,8 @@ ActiveRecord::Schema.define(version: 20141008230422) do
     t.integer  "company_id"
     t.boolean  "active",        default: true
   end
+
+  add_index "brands", ["company_id"], name: "index_brands_on_company_id", using: :btree
 
   create_table "brands_campaigns", force: true do |t|
     t.integer "brand_id"
