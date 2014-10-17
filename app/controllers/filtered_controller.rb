@@ -38,7 +38,7 @@ class FilteredController < InheritedResources::Base
 
   def index
     if request.format.xls? || request.format.pdf?
-      enqueue_export if params['mode'] == 'calendar' || list_exportable?
+      enqueue_export if list_exportable?
       render action: :new_export, formats: [:js]
     else
       super
