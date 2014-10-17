@@ -1,0 +1,34 @@
+div data-content="items" data-total="#{collection_count}" data-pages="#{total_pages}" data-page="#{params[:page] || 1}"
+  - collection.each do |trend_object|
+    - resource = trend_object.resource
+    .span10
+      - if resource.is_a?(Comment)
+        p.mention= highlight_trend_words(resource.content, @term)
+        = render partial: 'photos', locals: { photos: resource.commentable.photos.to_a } if resource.commentable.photos.any?
+        p.consumer
+          span' Consumer comment
+          - unless resource.commentable.campaign.nil?
+            ' for
+            span=> resource.commentable.campaign_name
+          - unless resource.commentable.start_at.nil?
+            ' on
+            span=> resource.commentable.start_at.to_s(:simple)
+      - else
+        p.mention= highlight_trend_words(trend_object.description, @term)
+        = render partial: 'photos', locals: { photos: resource.photos.to_a } if resource.photos.any?
+
+        p.consumer
+          - if resource.is_a?(ActivityType)
+            span=> resource.activity_type.name
+            - unless resource.campaign.nil?
+              ' for
+              span=> resource.campaign.name
+            - unless resource.activity_date.nil?
+              ' on
+              span=> resource.activity_date.to_s(:simple)
+          - elsif resource.is_a?(Event)
+            span=> trend_object.result.form_field.name
+            ' for
+            span=> resource.campaign.name
+            ' on
+            span=> resource.start_at.to_s(:simple)

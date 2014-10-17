@@ -8,6 +8,7 @@ describe AreasCampaignsController, type: :controller do
   let(:company) { @user.companies.first }
   let(:area) { create(:area, company: company) }
   let(:campaign) { create(:campaign, company: company) }
+  let(:place) { create(:place, name: 'Place 1') }
 
   describe "GET 'edit'" do
     before { campaign.areas << area }
@@ -18,6 +19,34 @@ describe AreasCampaignsController, type: :controller do
     end
   end
 
+  describe "POST 'add_place'" do
+    before { campaign.areas << area }
+    it 'add the place to the inclusions list' do
+      xhr :post, 'add_place', campaign_id: campaign.id, id: area.to_param, areas_campaign: { reference: place.id.to_s }, format: :js
+      expect(response).to be_success
+      expect(response).to render_template 'add_place'
+      expect(campaign.areas_campaigns.first.inclusions).to eql [place.id]
+      expect(campaign.areas_campaigns.first.exclusions).not_to include [place.id]
+    end
+
+    it 'try add a repeated place to the inclusions list' do
+      campaign.areas_campaigns.first.update_column :inclusions, [place.id.to_s]
+      xhr :post, 'add_place', campaign_id: campaign.id, id: area.to_param, areas_campaign: { reference: place.id.to_s }, format: :js
+      expect(response).to be_success
+      expect(response).to render_template 'add_place'
+      expect(campaign.areas_campaigns.first.inclusions).to eql [place.id]
+      expect(campaign.areas_campaigns.first.exclusions).not_to include [place.id]
+    end
+
+    it 'try to add the place to the inclusions list sending an empty place reference' do
+      xhr :post, 'add_place', campaign_id: campaign.id, id: area.to_param, areas_campaign: { reference: '' }, format: :js
+      expect(response).to be_success
+      expect(response).to render_template 'add_place'
+      expect(campaign.areas_campaigns.first.inclusions).to eql []
+      expect(campaign.areas_campaigns.first.exclusions).not_to include [place.id]
+    end
+  end
+
   describe "POST 'exclude_place'" do
     before { campaign.areas << area }
     it 'add the place to the exclusions list' do
@@ -25,6 +54,7 @@ describe AreasCampaignsController, type: :controller do
       expect(response).to be_success
       expect(response).to render_template 'exclude_place'
       expect(campaign.areas_campaigns.first.exclusions).to eql [99]
+      expect(campaign.areas_campaigns.first.inclusions).not_to include [99]
     end
   end
 
@@ -36,6 +66,7 @@ describe AreasCampaignsController, type: :controller do
       expect(response).to be_success
       expect(response).to render_template 'include_place'
       expect(campaign.areas_campaigns.first.reload.exclusions).to eql [100]
+      expect(campaign.areas_campaigns.first.inclusions).not_to include [99]
     end
   end
 

@@ -198,7 +198,6 @@ module FacetsHelper
       f.push(label: 'Price', items: prices)
 
       f.push build_areas_bucket
-      # f.push(label: "Campaigns", items: facet_search.facet(:campaigns).rows.map{|x| id, name = x.value.split('||'); build_facet_item({label: name, id: id, name: :campaign, count: x.count}) })
       f.push build_campaign_bucket
       f.push build_brands_bucket
     end

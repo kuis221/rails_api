@@ -12,7 +12,7 @@ $.widget 'nmk.placesAutocomplete', {
 					if ui.item.valid is false
 						event.preventDefault()
 						return false
-					
+
 					$(@element.data('hidden')).val ui.item.id
 					@value = ui.item.label
 					if typeof @options.select is 'function'
@@ -32,6 +32,14 @@ $.widget 'nmk.placesAutocomplete', {
 }
 
 $.widget "custom.places_autocomplete", $.ui.autocomplete, {
+	_renderMenu: ( ul, items ) ->
+		that = this
+		$.each items, (index, item) ->
+			that._renderItemData ul, item
+		$( "<li>" )
+			.addClass('ui-menu-item')
+			.appendTo(ul);
+
 	_renderItem: ( ul, item ) ->
 		newText = String(item.value).replace(
 			new RegExp(this.term, "gi"),
@@ -40,6 +48,7 @@ $.widget "custom.places_autocomplete", $.ui.autocomplete, {
 		$("<li></li>")
 			.addClass('ui-menu-item ' + (if item.valid then 'valid-place' else 'invalid-place'))
 			.data("item.autocomplete", item)
+			.append("<i class='icon-venue'></i>")
 			.append("<a>" + newText + "</a>")
 			.appendTo(ul)
 }

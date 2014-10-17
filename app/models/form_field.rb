@@ -21,8 +21,11 @@ class FormField < ActiveRecord::Base
   VALID_RANGE_FORMATS = %w(digits characters words value)
   belongs_to :fieldable, polymorphic: true
 
+  TRENDING_FIELDS_TYPES = %w(FormField::Text FormField::TextArea)
+
   has_many :options, -> { order('form_field_options.ordering ASC').where(option_type: 'option') }, class_name: 'FormFieldOption', dependent: :destroy, inverse_of: :form_field, foreign_key: :form_field_id
   has_many :statements, -> { order('form_field_options.ordering ASC').where(option_type: 'statement') }, class_name: 'FormFieldOption', dependent: :destroy, inverse_of: :form_field, foreign_key: :form_field_id
+  has_many :form_field_results, dependent: :destroy, inverse_of: :form_field, foreign_key: :form_field_id
   belongs_to :kpi
   accepts_nested_attributes_for :options, allow_destroy: true
   accepts_nested_attributes_for :statements, allow_destroy: true
@@ -55,6 +58,15 @@ class FormField < ActiveRecord::Base
     )
   end
 
+  def self.in_company(company)
+    joins(
+      'LEFT JOIN campaigns cj ON cj.id=form_fields.fieldable_id AND
+       form_fields.fieldable_type=\'Campaign\'
+       LEFT JOIN activity_types atj ON atj.id=form_fields.fieldable_id AND
+       form_fields.fieldable_type=\'ActivityType\''
+    ).where('cj.company_id in (:company_ids) OR atj.company_id in (:company_ids)', company_ids: company)
+  end
+
   def self.for_activity_types_in_company(companies)
     for_activities.where(activity_types: { company_id: companies })
   end
@@ -70,6 +82,15 @@ class FormField < ActiveRecord::Base
     where.not(type: [
       'FormField::UserDate', 'FormField::Section', 'FormField::Summation', 'FormField::LikertScale'
     ])
+  end
+
+  def self.for_trends(campaigns: nil, activity_types: nil)
+    where(type: TRENDING_FIELDS_TYPES).where(
+      '(form_fields.fieldable_type=? AND form_fields.fieldable_id in (?)) OR
+       (form_fields.fieldable_type=? AND form_fields.fieldable_id in (?))',
+      'Campaign', (campaigns || []) + [0],
+      'ActivityType', (activity_types || []) + [0]
+    ).order('form_fields.name ASC')
   end
 
   def field_options(_result)
@@ -115,6 +136,10 @@ class FormField < ActiveRecord::Base
   # Returns true if the field can have options associated
   def is_optionable?
     false
+  end
+
+  def trendeable?
+    TRENDING_FIELDS_TYPES.include?(self.type)
   end
 
   def type_name

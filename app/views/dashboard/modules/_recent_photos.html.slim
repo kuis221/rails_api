@@ -3,11 +3,11 @@
 - else
     #recent-photos-module.details_box
 
-      h3 RECENT PHOTOS
+      h3.module-title RECENT PHOTOS
       .gallery
         ul#photos-thumbs.lazyloaded data-content-url="#{url_for(controller: :dashboard, action: :module, module: :recent_photos, only_path: true)}"
             // The content is loaded by ajax when the user scrolls down to the photos section
-            li= image_tag 'loading-circle.gif'
+            .loading-circle-spinner= image_tag 'loading-circle.gif'
       .pull-right
         = link_to events_path, class: 'btn btn-info' do
           = "View All"

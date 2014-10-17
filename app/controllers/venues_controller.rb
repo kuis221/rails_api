@@ -3,22 +3,17 @@ class VenuesController < FilteredController
 
   helper_method :data_totals
 
+  prepend_before_action :create_venue_from_google_api, only: :show
+
   respond_to :xls, :pdf, only: :index
 
   custom_actions member: [:select_areas, :add_areas]
 
   def collection
-    @extended_places = nil
-    super
-    if places = get_collection_ivar
-      @extended_places ||= begin
-        google_results = load_google_places
-        ids = places.map { |p| p.place.place_id }
-        places += google_results.reject { |gp| ids.include?(gp.id) }
-        places
-      end
+    @extended_places ||= (super || []).tap do |places|
+      ids = places.map { |p| p.place.place_id }
+      places.concat load_google_places.reject { |gp| ids.include?(gp.id) }
     end
-    @extended_places
   end
 
   def select_areas
@@ -27,9 +22,7 @@ class VenuesController < FilteredController
 
   def add_areas
     @area = current_company.areas.find(params[:area_id])
-    unless resource.place.area_ids.include?(@area.id)
-      resource.place.areas << @area
-    end
+    resource.place.areas << @area unless resource.place.area_ids.include?(@area.id)
   end
 
   def delete_area
@@ -44,25 +37,20 @@ class VenuesController < FilteredController
   end
 
   def load_google_places
-    places = []
-    if params[:location].present?
-      (lat, lng) = params[:location].split(',')
-      places = google_places_client.spots(lat, lng, keyword: params[:q], radius: 50_000)
-    end
-    places
+    return [] unless params[:location].present? && params[:q].present?
+    (lat, lng) = params[:location].split(',')
+    google_places_client.spots(lat, lng, keyword: params[:q], radius: 50_000)
+  rescue
+    []
   end
 
-  def resource
-    if params[:id] =~ /^[0-9]+$/
-      @place ||= Venue.find(params[:id])
-    else
-      @place ||= begin
-        venue = Venue.new(place_id: nil, company_id: current_company.id)
-        venue.place = Place.load_by_place_id(params[:id], params[:ref])
-        venue
-      end
-    end
-    @place
+  def create_venue_from_google_api
+    return if params[:id] =~ /\A[0-9]+\z/
+    place = Place.load_by_place_id(params[:id], params[:ref])
+    fail ActiveRecord::RecordNotFound unless place
+    place.save unless place.persisted?
+    venue = current_company.venues.find_or_create_by(place_id: place.id)
+    redirect_to venue_path(id: venue.id, return: return_path)
   end
 
   def google_places_client
@@ -70,18 +58,18 @@ class VenuesController < FilteredController
   end
 
   def search_params
-    @search_params ||= begin
-      super
-      unless @search_params.key?(:types) && !@search_params[:types].empty?
-        @search_params[:types] = %w(establishment)
-      end
+    @search_params || super.tap do |p|
+      p[:types] = %w(establishment) unless p.key?(:types) && !p[:types].empty?
+      # Do not filter by user settigns because we are not filtering google results
+      # anyway...
+      p[:current_company_user] = nil
+      p[:search_address] = true
 
       [:events_count, :promo_hours, :impressions, :interactions, :sampled, :spent, :venue_score].each do |param|
-        @search_params[param] ||= {}
-        @search_params[param][:min] = nil unless @search_params[:location].present? || @search_params[param][:min].present?
-        @search_params[param][:max] = nil if @search_params[param][:max].nil? || @search_params[param][:max].empty?
+        p[param] ||= {}
+        p[param][:min] = nil unless p[:location].present? || p[param][:min].present?
+        p[param][:max] = nil if p[param][:max].nil? || p[param][:max].empty?
       end
-      @search_params
     end
   end
 
@@ -91,6 +79,5 @@ class VenuesController < FilteredController
       totals['promo_hours'] = @solr_search.stat_response['stats_fields']['promo_hours_es']['sum'] rescue 0
       totals['spent'] = @solr_search.stat_response['stats_fields']['spent_es']['sum'] rescue 0
     end
-    @data_totals
   end
 end

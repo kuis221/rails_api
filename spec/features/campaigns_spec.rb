@@ -7,7 +7,6 @@ feature 'Campaigns', js: true do
 
   before do
     Warden.test_mode!
-    company = user.companies.first
     sign_in user
   end
 
@@ -52,7 +51,8 @@ feature 'Campaigns', js: true do
     end
 
     scenario 'should allow user to activate campaigns' do
-      campaign = create(:inactive_campaign, name: 'Cacique FY13', description: 'test campaign for guaro cacique', company: company)
+      create(:inactive_campaign, name: 'Cacique FY13',
+        description: 'test campaign for guaro cacique', company: company)
       Sunspot.commit
       visit campaigns_path
 
@@ -68,7 +68,7 @@ feature 'Campaigns', js: true do
     end
 
     scenario 'allows the user to create a new campaign' do
-      porfolio = create(:brand_portfolio, name: 'Test portfolio', company: company)
+      create(:brand_portfolio, name: 'Test portfolio', company: company)
       visit campaigns_path
 
       click_js_button 'New Campaign'
@@ -202,6 +202,55 @@ feature 'Campaigns', js: true do
       expect(campaign.areas_campaigns.find_by(area_id: area.id).exclusions).to eql [place1.id]
     end
 
+    scenario 'should be able to include places to areas assigned to the campaign' do
+      Kpi.create_global_kpis
+      campaign = create(:campaign, company: company)
+      area = create(:area, name: 'San Francisco', company: company)
+
+      campaign.areas << [area]
+      visit campaign_path(campaign)
+
+      tab = open_tab('Places')
+
+      within tab do
+        expect(page).to have_content('San Francisco')
+        find('a[data-original-title="Customize area"]').click # tooltip changes the title
+      end
+
+      within visible_modal do
+        expect(page).to have_content('Customize San Francisco Area')
+        click_js_link('Add new place')
+      end
+
+      within visible_modal do
+        expect(page).to have_content('New Place')
+        select_from_autocomplete 'Search for a place', 'Walt Disney World Dolphin, 1500 Epcot Resorts Blvd'
+        click_js_button 'Add'
+      end
+
+      wait_for_ajax
+      new_place_id = Place.last.id
+      expect(campaign.areas_campaigns.find_by(area_id: area.id).inclusions).to eql [new_place_id]
+
+      within visible_modal do
+        expect(page).to have_content('Customize San Francisco Area')
+        expect(page).to have_content('Walt Disney World Dolphin')
+        within(resource_item("#area-campaign-place-#{new_place_id}")) { click_js_link 'Deactivate' }
+        expect(page).to have_selector("#area-campaign-place-#{new_place_id}.inactive")
+        click_js_button('Done')
+      end
+      ensure_modal_was_closed
+
+      within tab do
+        find('a[data-original-title="Customize area"]').click # tooltip changes the title
+      end
+
+      within visible_modal do
+        expect(page).to have_content('Customize San Francisco Area')
+        expect(page).to have_no_content('Walt Disney World Dolphin')
+      end
+    end
+
     feature 'Add KPIs', search: false do
 
       feature 'with a non admin user', search: false do
@@ -261,7 +310,7 @@ feature 'Campaigns', js: true do
 
         visit campaign_path(campaign)
 
-        tab = open_tab('KPIs')
+        open_tab('KPIs')
 
         click_js_link 'Add KPI'
 
@@ -329,7 +378,8 @@ feature 'Campaigns', js: true do
       scenario 'Remove existing KPI from campaign' do
         Kpi.create_global_kpis
         campaign = create(:campaign, company: company)
-        kpi = create(:kpi, name: 'My Custom KPI', description: 'My custom kpi description', kpi_type: 'number', capture_mechanism: 'currency', company: company)
+        kpi = create(:kpi, name: 'My Custom KPI', description: 'My custom kpi description',
+          kpi_type: 'number', capture_mechanism: 'currency', company: company)
         campaign.add_kpi kpi
 
         visit campaign_path(campaign)
@@ -365,7 +415,10 @@ feature 'Campaigns', js: true do
         let(:user) { create(:user, company: company, role_id: create(:non_admin_role, company: company).id) }
         let(:company_user) { user.company_users.first }
         let(:campaign) { create(:campaign, company: company) }
-        let(:kpi) { create(:kpi, name: 'My Custom KPI', description: 'my custom kpi description', kpi_type: 'number', capture_mechanism: 'currency', company: company) }
+        let(:kpi) do
+          create(:kpi, name: 'My Custom KPI', description: 'my custom kpi description',
+            kpi_type: 'number', capture_mechanism: 'currency', company: company)
+        end
 
         scenario 'User without permissions cannot edit Custom KPIs' do
           Kpi.create_global_kpis
@@ -423,7 +476,8 @@ feature 'Campaigns', js: true do
       scenario 'Edit Custom KPI' do
         Kpi.create_global_kpis
         campaign = create(:campaign, company: company)
-        kpi = create(:kpi, name: 'My Custom KPI', description: 'my custom kpi description', kpi_type: 'number', capture_mechanism: 'currency', company: company)
+        kpi = create(:kpi, name: 'My Custom KPI', description: 'my custom kpi description',
+          kpi_type: 'number', capture_mechanism: 'currency', company: company)
         campaign.add_kpi(kpi)
         create(:goal, goalable: campaign, kpi: kpi, value: 100)
 

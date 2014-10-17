@@ -45,6 +45,7 @@ class Venue < ActiveRecord::Base
   delegate :name, :types, :formatted_address, :formatted_phone_number, :website, :price_level, :city, :street, :state, :state_name, :country, :country_name, :zipcode, :reference, :latitude, :longitude, :opening_hours, :td_linx_code, to: :place
 
   searchable do
+    integer :id
     integer :place_id
     integer :company_id
 
@@ -241,7 +242,8 @@ class Venue < ActiveRecord::Base
   def self.do_search(params, include_facets = false)
     ss = solr_search(include: [:place]) do
 
-      with(:company_id, params[:company_id]) if params.key?(:company_id) && params[:company_id].present?
+      with :company_id, params[:company_id] if params.key?(:company_id) && params[:company_id].present?
+      with :id, params[:venue] if params.key?(:venue) && params[:venue].present?
 
       # Filter by user permissions
       company_user = params[:current_company_user]
@@ -261,7 +263,7 @@ class Venue < ActiveRecord::Base
       if params[:location].present?
         radius = params.key?(:radius) ? params[:radius] : 50
         (lat, lng) = params[:location].split(',')
-        with(:location).in_radius(lat, lng, radius)
+        with(:location).in_radius(lat, lng, radius, bbox: true)
       end
 
       if params[:q].present?

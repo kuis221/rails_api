@@ -26,6 +26,7 @@
 - else
   div.resource-item id="venue_#{venue.id}"
     = link_to_if_permitted(:show, Venue, venue_path(venue.id, ref: venue.reference), class: 'resource-item-link') do
+      .score.pull-left
       span
         b= venue.name
         br>/

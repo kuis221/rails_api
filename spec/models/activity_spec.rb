@@ -71,7 +71,7 @@ describe Activity, type: :model do
   describe '#activate' do
     let(:activity) { build(:activity, active: false) }
 
-    it 'should return the active value as true' do
+    it 'returns the active value as true' do
       activity.activate!
       activity.reload
       expect(activity.active).to be_truthy
@@ -81,10 +81,47 @@ describe Activity, type: :model do
   describe '#deactivate' do
     let(:activity) { build(:activity, active: false) }
 
-    it 'should return the active value as false' do
+    it 'returns the active value as false' do
       activity.deactivate!
       activity.reload
       expect(activity.active).to be_falsey
+    end
+  end
+
+  describe 'with_results_for' do
+    let(:activity_type) { create(:activity_type, company: campaign.company) }
+    let(:field) { create(:form_field_text_area, fieldable: activity_type) }
+    let(:venue) { create(:venue, company: campaign.company) }
+    let(:campaign) { create(:campaign) }
+
+    before { campaign.activity_types << activity_type }
+
+    it 'returns empty if no activities have the given fields' do
+      create(:activity, activity_type: activity_type,
+             activitable: venue, campaign: campaign, company_user_id: 1)
+      expect(described_class.with_results_for(field)).to be_empty
+    end
+
+    it 'returns results the activity if have result for the field' do
+      activity = create(:activity, activity_type: activity_type,
+        activitable: venue, campaign: campaign, company_user_id: 1)
+      activity.results_for([field]).first.value = 'this have a value'
+      activity.save
+
+      expect(described_class.with_results_for(field)).to match_array [activity]
+    end
+
+    it 'returns each activity only once' do
+      activity = create(:activity, activity_type: activity_type,
+        activitable: venue, campaign: campaign, company_user_id: 1)
+
+      field2 = create(:form_field_text_area, fieldable: activity_type)
+      activity.results_for([field, field2]).each { |r| r.value = 'this have a value' }
+      expect do
+        activity.save
+      end.to change(FormFieldResult, :count).by(2)
+
+      expect(described_class.with_results_for([field, field2])).to match_array [activity]
     end
   end
 end

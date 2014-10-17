@@ -29,7 +29,13 @@ class ActivityType < ActiveRecord::Base
 
   accepts_nested_attributes_for :goals
   accepts_nested_attributes_for :form_fields, allow_destroy: true
+
+  PHOTO_FIELDS_TYPES = ['FormField::Photo']
+
+  scope :with_trending_fields, -> { joins(:form_fields).where(form_fields: { type: FormField::TRENDING_FIELDS_TYPES } ).group('activity_types.id') }
+
   scope :active, -> { where(active: true) }
+
   attr_accessor :partial_path
 
   before_save :ensure_user_date_field
@@ -62,6 +68,10 @@ class ActivityType < ActiveRecord::Base
   def autocomplete
     buckets = autocomplete_buckets(activity_types: [ActivityType])
     render json: buckets.flatten
+  end
+
+  def trending_fields
+    form_fields.where(type: FormField::TRENDING_FIELDS_TYPES)
   end
 
   class << self

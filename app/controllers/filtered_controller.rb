@@ -16,7 +16,7 @@ class FilteredController < InheritedResources::Base
 
   before_action :authorize_actions, only: CUSTOM_VALIDATION_ACTIONS
 
-  after_filter :remove_resource_new_notifications, only: :show
+  after_action :remove_resource_new_notifications, only: :show
 
   custom_actions collection: [:filters, :items]
 
@@ -107,20 +107,19 @@ class FilteredController < InheritedResources::Base
 
   def collection
     get_collection_ivar || begin
-      if action_name != 'index' || request.format.json?
-        if resource_class.respond_to?(:do_search) # User Sunspot Solr for searching the collection
-          @solr_search = resource_class.do_search(search_params)
-          @collection_count = @solr_search.total
-          @total_pages = @solr_search.results.total_pages
-          set_collection_ivar(@solr_search.results)
-        else
-          current_page = params[:page] || nil
-          c = end_of_association_chain.accessible_by_user(current_user)
-          c = controller_filters(c)
-          @collection_count_scope = c
-          c = c.page(current_page).per(items_per_page) unless current_page.nil?
-          set_collection_ivar(c)
-        end
+      return unless action_name != 'index' || request.format.json?
+      if resource_class.respond_to?(:do_search) # User Sunspot Solr for searching the collection
+        @solr_search = resource_class.do_search(search_params)
+        @collection_count = @solr_search.total
+        @total_pages = @solr_search.results.total_pages
+        set_collection_ivar(@solr_search.results)
+      else
+        current_page = params[:page] || nil
+        c = end_of_association_chain.accessible_by_user(current_user)
+        c = controller_filters(c)
+        @collection_count_scope = c
+        c = c.page(current_page).per(items_per_page) unless current_page.nil?
+        set_collection_ivar(c)
       end
     end
   end

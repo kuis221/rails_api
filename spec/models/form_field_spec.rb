@@ -119,6 +119,67 @@ describe FormField, type: :model do
     end
   end
 
+  describe '#for_trends' do
+    let(:campaign) { create(:campaign) }
+    let(:activity_type) { create(:activity_type) }
+
+    it 'returns empty if not campaigns nor activity_types are given' do
+      create(:form_field_text, fieldable: campaign)
+      create(:form_field_text, fieldable: activity_type)
+      expect(described_class.for_trends.to_a).to be_empty
+    end
+
+    it 'returns all text/textares for the given campaigns' do
+      field = create(:form_field_text, fieldable: campaign)
+      create(:form_field_text, fieldable: create(:campaign, company: campaign.company))
+      create(:form_field_text, fieldable: activity_type)
+      expect(described_class.for_trends(campaigns: [campaign]).to_a).to eql [field]
+    end
+
+    it 'returns all text/textares for the given form activity types' do
+      field = create(:form_field_text, fieldable: activity_type)
+      create(:form_field_text, fieldable: campaign)
+      create(:form_field_text, fieldable: create(:activity_type))
+      expect(described_class.for_trends(activity_types: [activity_type]).to_a).to eql [field]
+    end
+  end
+
+  describe '#in_company' do
+    let(:company) { create(:company) }
+    let(:company2) { create(:company) }
+    let(:campaign) { create(:campaign, company: company) }
+    let(:activity_type) { create(:activity_type, company: company) }
+    it 'returns empty in there are not fields in the give company' do
+      expect(described_class.in_company(company)).to be_empty
+    end
+
+    it 'returns activity type fields that are part of the company' do
+      field = create(:form_field_text, fieldable: activity_type)
+      create(:form_field_text, fieldable: create(:activity_type, company: company2))
+      expect(described_class.in_company(company).to_a).to include field
+      expect(described_class.in_company(company).to_a)
+        .to match_array activity_type.reload.form_fields.to_a
+    end
+
+    it 'returns campaign fields that are part of the company' do
+      field = create(:form_field_text, fieldable: campaign)
+      create(:form_field_text, fieldable: create(:campaign, company: company2))
+      expect(described_class.in_company(company).to_a).to include field
+      expect(described_class.in_company(company).to_a)
+        .to match_array campaign.reload.form_fields.to_a
+    end
+
+    it 'returns campaign fields that are part of the company' do
+      campaign_field = create(:form_field_text, fieldable: campaign)
+      activity_field = create(:form_field_text, fieldable: activity_type)
+      other_company_field = create(:form_field_text, fieldable: create(:campaign, company: company2))
+      result = described_class.in_company(company).to_a
+      expect(result).to include activity_field
+      expect(result).to include campaign_field
+      expect(result).not_to include other_company_field
+    end
+  end
+
   describe '#format_html' do
     it 'should return the values as is' do
       expect(field.format_html(build(:form_field_result, value: nil, form_field: field))).to eql nil

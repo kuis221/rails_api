@@ -2,16 +2,15 @@
 #
 # Table name: form_field_results
 #
-#  id                   :integer          not null, primary key
-#  form_field_id        :integer
-#  value                :text
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
-#  form_field_option_id :integer
-#  hash_value           :hstore
-#  scalar_value         :decimal(10, 2)   default(0.0)
-#  resultable_id        :integer
-#  resultable_type      :string(255)
+#  id              :integer          not null, primary key
+#  form_field_id   :integer
+#  value           :text
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  hash_value      :hstore
+#  scalar_value    :decimal(10, 2)   default(0.0)
+#  resultable_id   :integer
+#  resultable_type :string(255)
 #
 
 class FormFieldResult < ActiveRecord::Base
@@ -26,6 +25,7 @@ class FormFieldResult < ActiveRecord::Base
   has_one :attached_asset, as: :attachable, dependent: :destroy, inverse_of: :attachable
 
   before_validation :prepare_for_store
+  after_commit :reindex_trending
 
   scope :for_kpi, -> (kpi) { joins(:form_field).where(form_fields: { kpi_id: kpi }) }
 
@@ -73,5 +73,10 @@ class FormFieldResult < ActiveRecord::Base
     end
     self.scalar_value = value.to_f rescue 0 if value.present? && value.to_s =~ /\A[0-9\.\,]+\z/
     true
+  end
+
+  def reindex_trending
+    return unless form_field.trendeable?
+    Sunspot.index(TrendObject.new(resultable, self))
   end
 end

@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 describe Results::EventDataController, type: :controller do
-  before do
-    @user = sign_in_as_user
-    @company = @user.companies.first
-    @company_user = @user.current_company_user
-  end
+  let(:user) { sign_in_as_user }
+  let(:company) { user.companies.first }
+  let(:company_user) { user.current_company_user }
+
+  before { user }
 
   describe "GET 'index'" do
     it 'should return http success' do
@@ -36,7 +36,7 @@ describe Results::EventDataController, type: :controller do
     before do
       Kpi.create_global_kpis
     end
-    let(:campaign) { create(:campaign, company: @company, name: 'Test Campaign FY01') }
+    let(:campaign) { create(:campaign, company: company, name: 'Test Campaign FY01') }
     it 'should return an empty book with the correct headers' do
       expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
       export = ListExport.last
@@ -54,15 +54,17 @@ describe Results::EventDataController, type: :controller do
     it 'should include the event data results' do
       Kpi.create_global_kpis
       campaign.assign_all_global_kpis
-      area = create(:area, name: 'My area', company: @company)
+      area = create(:area, name: 'My area', company: company)
       place = create(:place, name: 'Bar Prueba',
         city: 'Los Angeles', state: 'California', country: 'US', td_linx_code: '443321')
       area.places << create(:place, name: 'Los Angeles', types: ['political'],
         city: 'Los Angeles', state: 'California', country: 'US')
       campaign.areas << area
-      event = create(:approved_event, company: @company, campaign: campaign, place: place)
-      event.users << @company_user
-      team = create(:team, company: @company, name: 'zteam')
+      event = create(:approved_event, company: company, campaign: campaign, place: place,
+        start_date: '01/23/2019', end_date: '01/23/2019',
+        start_time: '10:00 am', end_time: '12:00 pm')
+      event.users << company_user
+      team = create(:team, company: company, name: 'zteam')
       event.teams << team
       event.event_expenses.build(amount: 99.99, name: 'sample expense')
       set_event_results(event,
@@ -89,10 +91,10 @@ describe Results::EventDataController, type: :controller do
     end
 
     it 'should include any custom kpis in the export' do
-      kpi = create(:kpi, company: @company, name: 'A Custom KPI')
+      kpi = create(:kpi, company: company, name: 'A Custom KPI')
       campaign.add_kpi kpi
       place = create(:place, name: 'Bar Prueba', city: 'Los Angeles', state: 'California', country: 'US')
-      event = build(:approved_event, company: @company, campaign: campaign, place: place)
+      event = build(:approved_event, company: company, campaign: campaign, place: place)
       event.result_for_kpi(kpi).value = '9876'
       event.save
       Sunspot.commit
@@ -107,13 +109,13 @@ describe Results::EventDataController, type: :controller do
 
     it 'should include the event data results only for the given campaign' do
       Kpi.create_global_kpis
-      custom_kpi = create(:kpi, name: 'Test KPI', company: @company)
-      checkbox_kpi = create(:kpi, name: 'Event Type', kpi_type: 'count', capture_mechanism: 'checkbox', company: @company,
+      custom_kpi = create(:kpi, name: 'Test KPI', company: company)
+      checkbox_kpi = create(:kpi, name: 'Event Type', kpi_type: 'count', capture_mechanism: 'checkbox', company: company,
         kpis_segments: [
           create(:kpis_segment, text: 'Event Type Opt 1'),
           create(:kpis_segment, text: 'Event Type Opt 2'),
           create(:kpis_segment, text: 'Event Type Opt 3')])
-      radio_kpi = create(:kpi, name: 'Radio Field Type', kpi_type: 'count', capture_mechanism: 'radio', company: @company,
+      radio_kpi = create(:kpi, name: 'Radio Field Type', kpi_type: 'count', capture_mechanism: 'radio', company: company,
         kpis_segments: [
           create(:kpis_segment, text: 'Radio Field Opt 1'),
           create(:kpis_segment, text: 'Radio Field Opt 2'),
@@ -123,13 +125,15 @@ describe Results::EventDataController, type: :controller do
       campaign.add_kpi checkbox_kpi
       campaign.add_kpi radio_kpi
 
-      area = create(:area, name: 'Angeles Area', company: @company)
+      area = create(:area, name: 'Angeles Area', company: company)
       area.places << create(:place, name: 'Los Angeles', city: 'Los Angeles', state: 'California', country: 'US', types: ['locality'])
       campaign.areas << area
       place = create(:place, name: 'Bar Prueba',
         city: 'Los Angeles', state: 'California', country: 'US', td_linx_code: '344221')
-      event = create(:approved_event, company: @company, campaign: campaign, place: place)
-      event.users << @company_user
+      event = create(:approved_event, company: company, campaign: campaign, place: place,
+        start_date: '01/23/2019', end_date: '01/23/2019',
+        start_time: '10:00 am', end_time: '12:00 pm')
+      event.users << company_user
       event.event_expenses.build(amount: 99.99, name: 'sample expense')
       event.result_for_kpi(custom_kpi).value = 8899
       event.result_for_kpi(checkbox_kpi).value = [checkbox_kpi.kpis_segments.first.id]
@@ -139,9 +143,9 @@ describe Results::EventDataController, type: :controller do
                         impressions: 10, interactions: 11, samples: 12, gender_male: 40, gender_female: 60,
                         ethnicity_asian: 18, ethnicity_native_american: 19, ethnicity_black: 20, ethnicity_hispanic: 21, ethnicity_white: 22)
 
-      other_campaign = create(:campaign, company: @company, name: 'Other Campaign FY01')
+      other_campaign = create(:campaign, company: company, name: 'Other Campaign FY01')
       other_campaign.assign_all_global_kpis
-      event2 = create(:approved_event, company: @company, campaign: other_campaign, place: place)
+      event2 = create(:approved_event, company: company, campaign: other_campaign, place: place)
       set_event_results(event2,
                         impressions: 33, interactions: 44, samples: 55, gender_male: 66, gender_female: 34,
                         ethnicity_asian: 18, ethnicity_native_american: 19, ethnicity_black: 20, ethnicity_hispanic: 21, ethnicity_white: 22)
@@ -169,17 +173,17 @@ describe Results::EventDataController, type: :controller do
     end
 
     it 'should include any custom kpis from all the campaigns' do
-      kpi = create(:kpi, company: @company, name: 'A Custom KPI')
-      kpi2 = create(:kpi, company: @company, name: 'Another KPI')
-      campaign2 = create(:campaign, company: @company)
+      kpi = create(:kpi, company: company, name: 'A Custom KPI')
+      kpi2 = create(:kpi, company: company, name: 'Another KPI')
+      campaign2 = create(:campaign, company: company)
       campaign.add_kpi kpi
       campaign2.add_kpi kpi2
 
-      event = build(:approved_event, company: @company, campaign: campaign)
+      event = build(:approved_event, company: company, campaign: campaign)
       event.result_for_kpi(kpi).value = '9876'
       event.save
 
-      event = build(:approved_event, company: @company, campaign: campaign2)
+      event = build(:approved_event, company: company, campaign: campaign2)
       event.result_for_kpi(kpi2).value = '7654'
       event.save
 
@@ -197,12 +201,12 @@ describe Results::EventDataController, type: :controller do
     it 'should filter the results by campaign' do
       Kpi.create_global_kpis
       campaign.assign_all_global_kpis
-      campaign2 = create(:campaign, company: @company, name: 'Campaign not included')
+      campaign2 = create(:campaign, company: company, name: 'Campaign not included')
       campaign2.assign_all_global_kpis
 
-      event = create(:approved_event, company: @company, campaign: campaign)
+      event = create(:approved_event, company: company, campaign: campaign)
       set_event_results(event, impressions: 111)
-      event = create(:approved_event, company: @company, campaign: campaign2)
+      event = create(:approved_event, company: company, campaign: campaign2)
       set_event_results(event, impressions: 222)
 
       Sunspot.commit
@@ -217,21 +221,21 @@ describe Results::EventDataController, type: :controller do
     end
 
     it 'should correctly include the segments for the percentage kpis' do
-      kpi = build(:kpi, company: @company, kpi_type: 'percentage', name: 'My KPI')
+      kpi = build(:kpi, company: company, kpi_type: 'percentage', name: 'My KPI')
       seg1 = kpi.kpis_segments.build(text: 'Uno')
       seg2 = kpi.kpis_segments.build(text: 'Dos')
       kpi.save
 
-      another_kpi = build(:kpi, company: @company, kpi_type: 'number', name: 'My Other KPI')
+      another_kpi = build(:kpi, company: company, kpi_type: 'number', name: 'My Other KPI')
       campaign.add_kpi kpi
       campaign.add_kpi another_kpi
 
       expect do
-        event = build(:approved_event, company: @company, campaign: campaign)
+        event = build(:approved_event, company: company, campaign: campaign)
         event.result_for_kpi(kpi).value = { seg1.id => '63', seg2.id => '37' }
         expect(event.save).to be_truthy
 
-        event = build(:approved_event, company: @company, campaign: campaign)
+        event = build(:approved_event, company: company, campaign: campaign)
         event.result_for_kpi(kpi).value = nil
         event.result_for_kpi(another_kpi).value = 134
         expect(event.save).to be_truthy

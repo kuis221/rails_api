@@ -48,11 +48,12 @@ a{
 		font-weight: normal;
 	}
 	&.more-options-link{
-		font-size: 13px;
+		color:$brand;
+		font-size: 12px;
 		margin-left:30px;
 		margin-bottom:35px;
 		&:hover{
-			color: $text;
+			text-decoration:underline;
 		}
 	}
 }
@@ -64,6 +65,10 @@ a{
 			text-decoration:underline;
 		}
 	}
+}
+
+.module-title{
+	color: $user_menu;
 }
 
 abbr[title]{
@@ -385,6 +390,14 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		color: $buttons !important;
 	}
 }
+.btn-success {
+	background-color: $green;
+	background-image: none;
+	&:hover {
+		background-color: $green;
+		background-image: none;		
+	}
+}
 .progress{
 	background-color: $grey_one !important;
 	background-image: none !important;
@@ -540,10 +553,9 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	.datepick-nav .datepick-cmd{
 		width: 15px;
 	}
-
 	a.datepick-cmd{
 		display: inline-block;
-		margin-top: 9px;
+		margin-top: 13px;
 		overflow: hidden;
 		position:relative;
 		text-indent: 13%;
@@ -554,7 +566,10 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 
 	.datepick-cmd-next, .datepick-cmd-prev{
 		font-size: 11px;
-		color: white !important;
+		color: transparent !important;
+		&:before{
+			color: white;
+		}
 	}
 
 	.datepick-cmd-prev{
@@ -613,37 +628,60 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			padding-top: 5px;
 		}
 		td{
-			padding: 2px;
+			padding: 0;
+		}
+		tr{
+			td:first-child{
+				.datepick-selected.datepick-weekend{
+					border-top-left-radius:14px;
+					border-top-right-radius:0;
+					border-bottom-left-radius:14px;
+					border-bottom-right-radius:0;
+					&:after{
+						display:inline-block;
+					}
+					&:before{
+						display:none;
+					}
+				}
+			}
 		}
 		a{
 			box-sizing: border-box;
 			color: $text;
 			font-size: 0.86em;
-			padding: 2px 3px;
-			-webkit-border-radius: 12px;
-			border-radius: 12px;
-			line-height:17px;
-			width: 24px;
-			height: 24px;
+			margin: 1px 0.047em;
+			padding: 0;
+			-webkit-border-radius: 14px;
+			border-radius: 14px;
+			line-height:25px;
+			width: 26px;
+			height: 26px;
+			position: relative;
+			&.datepick-highlight{
+				background-color: white;
+			}
 			&.datepick-today{
-				background-color: #3381a8 !important;
+				background-color: $brand;
 				color: white;
 				font-size: 0.86em;
 				font-weight: 300;
 				opacity:1;
-				-webkit-border-radius: 12px;
-				border-radius: 12px;
+				&:hover{
+					background-color: $brand;
+					color: white;
+				}
 			}
 			&.datepick-event{
 				font-weight: 600;
 				position: relative;
-				&:after{
+				&:before{
 					color: $user_menu;
 					content:"\2022";
 					font-size: 7px;
 					position: absolute;
-					bottom: -4px;
-					right: 10px;
+					bottom: -9px;
+					right: 11px;
 				}
 			}
 			&:focus{
@@ -651,23 +689,77 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			}
 			&:hover{
 				display: block;
-				width: 100%;
-				background-color: $grey_one !important;
+				background-color: $grey_one;
 				color: $text;
 				text-decoration: none;
+				&:before{
+					content:"";
+				}
 			}
 		}
 	}
 	.datepick-month td .datepick-selected {
-		background-color: $brand !important;
-		color: white !important;
+		background-color: #3e9ccf;
+		border-radius: 0;
+		color: white;
 		font-weight: 400;
+		&.datepick-today{
+			background-color: #3381a8;
+			background-image: image-url('rounded-circle.svg');
+			&:hover{
+				background-color: #3381a8;
+			}
+		}
+		&.datepick-event:before{
+			opacity:0;
+		}
 		&:after{
-			color: white;
+			content: "";
+			width:3px;
+			background-color: #3e9ccf;
+			height:100%;
+			position:absolute;
+			right:-3px;
+		}
+		&.datepick-weekend{
+			border-top-right-radius:14px;
+			border-bottom-right-radius:14px;
+			&:after{
+				display:none;
+			}
+		}
+
+		&:hover{
+			background-color: #3e9ccf;
+		}
+		&.first-selected.last-selected{
+			background-color: $brand;
+		}
+		&.first-selected{
+			-webkit-border-top-left-radius: 14px;
+			-webkit-border-bottom-left-radius: 14px;
+			-moz-border-radius-topleft: 14px;
+			-moz-border-radius-bottomleft: 14px;
+			border-top-left-radius: 14px;
+			border-bottom-left-radius: 14px;
+			&:before{
+				display:none;
+			}
+		}
+		&.last-selected{
+			-webkit-border-top-right-radius: 14px;
+			-webkit-border-bottom-right-radius:14px;
+			-moz-border-radius-topright: 14px;
+			-moz-border-radius-bottomright: 14px;
+			border-top-right-radius: 14px;
+			border-bottom-right-radius: 14px;
+			&:after{
+				display:none;
+			}
 		}
 	}
 	.datepick-month td, .datepick-month a, .datepick-weekend {
-		background-color: white !important;
+		background-color: white; /*changed*/
 	}
 	.datepick-month-header{
 		background-color:$brand;
@@ -688,6 +780,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 
 
 // Date Preferences Panel (sidebar)
+
 .dates-pref{
 	margin-bottom: 20px;
 	.select-ranges{
@@ -712,21 +805,32 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 					text-decoration: none;
 				}
 				.icon-arrow-down {
-					margin-top: 5px;
+					margin-top: 7px;
+				}
+				.icon-arrow-up {
+					display: none;
+				}
+			}
+		}
+		&.open {
+			a {
+				.icon-arrow-down {
+					display: none;
+				}
+				.icon-arrow-up {
+					display: inline;
 				}
 			}
 		}
 		.btn{
 			width: 100%;
-			&:disabled{
-				opacity: 0.7;
-			}
 		}
 		label{
 			color: $user_menu;
-			font-size: 11px;
+			font-size: 12px;
 		}
 		input{
+			font-size:14px;
 			&.input-calendar{
 				&[readonly]{
 					color: $text;
@@ -742,7 +846,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			left: auto;
 			right: 0;
 			margin: 10px 0 0;
-			min-width: 305px;
+			width: 290px;
 			-webkit-box-shadow: none;
 			&:before{
 				content: '';
@@ -760,26 +864,39 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			}
 			.row-fluid{
 				[class^='span']{
-					font-size: 11px;
+					font-size: 12px;
 					font-weight: bold;
 					margin: 0 2px;
 					min-height: 25px;
 				}
 			}
 			li{
-				padding: 10px;
-				padding-bottom: 5px;
-				&.options{
+				padding: 6px 18px;
+				&.default-ranges{
 					border-bottom: 1px solid $grey_four;
-					[class^='span']{
+					padding-bottom:10px;
+					.range-date{
+						display:inline-block;
+						font-size:12px;
 						text-align: center;
+						width:102px;
+						&:first-child{
+							margin-left: -10px;
+						}
+						&:last-child{
+							margin-right:-10px;
+							width:56px;
+						}
 					}
 				}
 				&.ranges{
+					&.custom-ranges{
+						padding:10px 18px;
+					}
 					.separate{
 						display: inline-block;
 						float: left;
-						margin:30px 0;
+						margin:26px 0;
 						text-align: center;
 						width: 5%;
 					}
@@ -1643,8 +1760,12 @@ label{
 	font-size: 13px;
 	display: block;
 	margin: 0 0 10px 0;
+	&+.accordion-group {
+		margin-top: 30px;
+	}
 	&:last-of-type{
-		margin-bottom: 15px;
+		margin-top: 40px;
+		margin-bottom: 35px;
 	}
 	h3{
 		font-size: 13px;
@@ -1950,6 +2071,9 @@ li#notifications{
 	border-radius: 7px;
 	&.no-margin {
 		margin-right: 0px;
+	}
+	&>h4{
+		margin-left: 15px;
 	}
 }
 .sidebar{
@@ -2949,7 +3073,8 @@ ul.ui-widget-content{
 		margin-top: 40px;
 	}
 	h3.section-title {
-		margin-bottom: 20px;
+		display: inline-block;
+		margin-bottom: 15px;
 		color: $brand;
 		font-size: 20px;
 		font-weight: normal;
@@ -4785,7 +4910,7 @@ svg{
 
 .campaigns_report, .snapshot_report, .staff_report {
 	.loading-spinner{
-		background: #fff image-url('loading-circle.gif') center center no-repeat;
+		background: white image-url('loading-circle.gif') center center no-repeat;
 		display: block;
 		height: 50px;
 	}
@@ -4794,6 +4919,18 @@ svg{
 .campaigns_report, .snapshot_report, .staff_report {
 	.nav-tabs li a{
 		width: 130px;
+	}
+}
+
+.loading-circle-spinner{
+	height:120px;
+	position:absolute !important;
+	right:50%;
+	top:-20px;
+	z-index:9;
+	img{
+		display: block;
+		margin:0 auto;
 	}
 }
 
@@ -5760,16 +5897,41 @@ table td.sub-level-1 {
 }
 
 .event_place_reference .ui-autocomplete,
-.place_reference .ui-autocomplete {
+.place_reference .ui-autocomplete,
+.areas_campaign_reference .ui-autocomplete {
 	background-color: #fff !important;
 	border: 1px solid #ccc;
 
 	.ui-menu-item {
-		border-bottom: 1px solid #ccc;
 		font-size: 13px;
+		line-height: 40px;
+		a {
+			color: $text;
+			display: inline-block;
+			strong {
+				font-size: 14px;
+			}
+		}
 
-		.ui-state-focus {
+		i{
+			color: $grey_one;
+			font-size: 16px;
+			margin-left: 10px;
+		}
+
+		&:hover, .ui-state-focus {
+			color: #fff;
 			background-color: #989898 !important;
+		}
+
+		&:last-child {
+			background-image: image-url('powered-by-google-on-white.png');
+			background-position: center right;
+			background-repeat: no-repeat;
+			line-height: 30px;
+			&:hover {
+				background-color: #fff !important;
+			}
 		}
 
 		&.invalid-place a {
@@ -6432,7 +6594,7 @@ table.table.likert-scale-table {
 		background-image: none !important;
 		border:1px solid $user_menu !important;
 		box-shadow: 0 0 5px rgba(0, 0, 0, 0);
-		height: 40px !important;
+		min-height: 40px !important;
 		padding-top: 6px !important;
 		width: 100%;
 		-webkit-border-radius: 4px !important;
@@ -6456,7 +6618,6 @@ table.table.likert-scale-table {
 	}
 	.chzn-drop{
 		box-shadow: none !important;
-		top:42px !important;
 		-webkit-border-radius: 4px !important;
 		-moz-border-radius: 4px !important;
 		border-radius: 4px !important;
@@ -6534,7 +6695,33 @@ body.dashboard.index {
 	min-height: 85px;
 }
 
+.clearable{
+	color: $brand;
+	font-size: 16px;
+	position: absolute;
+	right: 40px;
+	top: 36px;
+}
+.filtersetting_modal{
+	.modal-body{
+		.filter-item{
+			margin:0;
+			ul{
+				list-style:none;
+				margin:0;
+				li{
+					margin-bottom:10px;
+					label{
+						color: $text;
+						font-size: 14px;
+					}
+				}
+			}
+		}
+	}
+}
 
 @import 'widgets/asset_upload_dialog';
 @import 'widgets/documents_list';
 @import 'widgets/resource_list';
+@import 'widgets/steps_wizard';

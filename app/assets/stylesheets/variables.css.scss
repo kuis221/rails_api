@@ -43,6 +43,7 @@ $menu: #4f4f4f;
 $stars: #cfc53e;
 
 $blue: #3e9ccf;
+$light_blue: #90d5ef;
 $dark_blue: #347B9B;
 $blue_hover:#327da6;
 
@@ -50,12 +51,12 @@ $due_today:#3e9ccf;
 
 $user_menu:#c0c0c0;
 $venues_blue:#3e9ccf;
-$late:#de4d43;
+$late: $buttons;
 $submitted:#3e9ccf;
-$approved:$green;
-$rejected:#de4d43;
+$approved: $green;
+$rejected: $buttons;
 
-$alert_red: #de4d43;
+$alert_red: $buttons;
 $alert_blue: #3e9ccf;
 $alert_grey: #7a7a7a;
 
@@ -81,3 +82,9 @@ $link-color:            $light-blue;
 // -------------------------
 
 $glyphs-color: #fcfcfc;
+
+
+// Resource item list
+$resource-item-padding: 15px;
+$resource-item-height: 55px;
+$resource-item-height-single-line: 33px;

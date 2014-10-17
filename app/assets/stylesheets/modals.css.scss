@@ -276,6 +276,20 @@ ul.select2-results{
 					margin-right: 0;
 				}
 			}
+			#add-new-place-campaign {
+				margin-bottom: 25px;
+			}
+			.normal-text {
+				color: $user_menu;
+				display: inline-block;
+				font-size: 12px;
+			}
+			.link-text {
+				color: $brand;
+				display: inline-block;
+				font-size: 12px;
+				font-weight: bold;
+			}
 	    }
 		&.select-kpis-modal{
 			top: 2%;
@@ -658,6 +672,9 @@ ul.select2-results{
 						padding-left:10px;
 						text-align: center;
 					}
+					&.search-place-box {
+						padding-right: 30px;
+					}
 				}
 			}
 		}
@@ -675,32 +692,6 @@ ul.select2-results{
 						border: 0 !important;
 					}
 				}
-			}
-		}
-		// FORM ACTIONS
-		.form-actions{
-			margin-top: 25px;
-			.btn-primary{
-				margin-right: 8px;
-			}
-			&.inside-form{
-				margin: 25px 0px 33px;
-			}
-		}
-		.form-horizontal{
-			.controls{
-				margin: 0;
-			}
-			.control-label{
-				text-align: left;
-				width: 70px;
-				&.location{
-					display:none;
-				}
-			}
-			.form-actions{
-				margin-top: 10px;
-				padding:0;
 			}
 		}
 		label{
@@ -792,7 +783,7 @@ ul.select2-results{
 	border:1px solid $user_menu;
 	a{
 		color: red;
-	}
+	}/*
 	&:before{
 		position: absolute;
 		top: -10px;
@@ -802,7 +793,7 @@ ul.select2-results{
 		border-bottom: 10px solid $brand;
 		border-left: 10px solid transparent;
 		content: '';
-	}
+	}*/
 	table{
 		font-size: 10px;
 		margin: 0 0 4px 4px;
@@ -888,7 +879,7 @@ ul.select2-results{
 }
 
 #ui-datepicker-div{
-	margin-top: 15px !important;
+	margin-top: 6px !important;
 	padding: 0 !important;
 }
 
@@ -954,8 +945,8 @@ ul.select2-results{
 	text-align: center;
 	&:hover{
 		background:$grey_one !important;
-		-webkit-border-radius: 3px;
-    	border-radius: 3px;
+		-webkit-border-radius: 14px;
+    	border-radius: 14px;
 	}
 }
 .ui-state-disabled, .ui-widget-content .ui-state-disabled{

@@ -162,6 +162,7 @@ Brandscopic::Application.routes.draw do
 
     # For The KPI report
     get :kpi_report, to: 'kpi_reports#index'
+
     post :kpi_report, to: 'kpi_reports#report'
     get :kpi_report_status, to: 'kpi_reports#status'
 
@@ -170,6 +171,19 @@ Brandscopic::Application.routes.draw do
   end
 
   namespace :analysis do
+    resources :trends, only: [] do
+      collection do
+        get :sources
+        get :questions
+        get :results
+        get :items
+        get :filters
+        get :search
+      end
+      get 't/:term', on: :collection, to: :show
+      get 't/:term/:action', on: :collection
+    end
+
     get :campaigns_report, to: 'campaigns_report#index'
     post :campaigns_report, to: 'campaigns_report#report'
 
@@ -261,6 +275,8 @@ Brandscopic::Application.routes.draw do
     resources :areas_campaigns, only: [:edit, :update] do
       post :exclude_place, on: :member
       post :include_place, on: :member
+      get :new_place, on: :member
+      post :add_place, on: :member
     end
 
     resources :brands, only: [:index]

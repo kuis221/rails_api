@@ -310,10 +310,10 @@ select.chosen-enabled{
 				color: #666;
 			}
 			&.search-choice-focus {
-				background: #d4d4d4;
-				.search-choice-close {
-					background-position: -42px -10px;
-				}
+				background: $borders !important;
+				// .search-choice-close {
+				// 	background-position: -42px -10px;
+				// }
 			}
 		}
 	}
@@ -322,9 +322,7 @@ select.chosen-enabled{
 		padding: 0;
 	}
 	.chzn-drop .result-selected {
-		display: list-item;
-		color: #ccc;
-		cursor: default;
+		display: none;
 	}
 }
 
@@ -360,7 +358,8 @@ select.chosen-enabled{
 		}
 	}
 	.chzn-choices {
-		border: 1px solid #5897fb;
+		border:1px solid $user_menu;
+		box-shadow: 0 0 5px rgba(0, 0, 0, 0);
 		li.search-field input {
 			color: #111 !important;
 		}
@@ -457,32 +456,33 @@ select.chosen-enabled{
 /* @group Retina compatibility */
 @media only screen and (-webkit-min-device-pixel-ratio: 2), only screen and (min-resolution: 144dpi) {
 	.chzn-rtl .chzn-search input {
-		//background-image: url('chosen-sprite@2x.png') !important;
+		//background-image: image-url('chosen-sprite@2x.png') !important;
 		background-size: 52px 37px !important;
 		background-repeat: no-repeat !important;
 	}
 	.chzn-container-single {
 		.chzn-single {
 			abbr, div b {
-				//background-image: url('chosen-sprite@2x.png') !important;
+				//background-image: image-url('chosen-sprite@2x.png') !important;
 				background-repeat: no-repeat !important;
 			}
 		}
 		.chzn-search input {
-			//background-image: url('chosen-sprite@2x.png') !important;
-			background-size: 52px 37px !important;
+			background-image: image-url('chosen-sprite@2x.png') !important;
+			background-size: 58px 38px !important;
 			background-repeat: no-repeat !important;
 		}
 	}
 	.chzn-container-multi .chzn-choices .search-choice .search-choice-close {
-		//background-image: url('chosen-sprite@2x.png') !important;
-		background-size: 52px 37px !important;
+		background-image: image-url('chosen-sprite@2x.png') !important;
+		background-size: 58px 38px !important;
 		background-repeat: no-repeat !important;
 	}
+
 	.chzn-container {
 		.chzn-results-scroll-down span, .chzn-results-scroll-up span {
-			//background-image: url('chosen-sprite@2x.png') !important;
-			background-size: 52px 37px !important;
+			background-image: image-url('chosen-sprite@2x.png') !important;
+			background-size: 58px 38px !important;
 			background-repeat: no-repeat !important;
 		}
 	}

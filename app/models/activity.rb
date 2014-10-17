@@ -34,6 +34,12 @@ class Activity < ActiveRecord::Base
 
   scope :active, -> { where(active: true) }
 
+  scope :with_results_for, ->(fields) {
+    select('DISTINCT activities.*').
+    joins(:results).
+    where(form_field_results: {form_field_id: fields}).
+    where('form_field_results.value is not NULL AND form_field_results.value !=\'\'') }
+
   scope :accessible_by_user, -> { self }
 
   after_initialize :set_default_values
@@ -83,6 +89,16 @@ class Activity < ActiveRecord::Base
       result.form_field = field
       result
     end
+  end
+
+  def photos
+    AttachedAsset.where(
+      id: results.joins(:form_field, :attached_asset)
+            .select('attached_assets.id')
+            .where(form_fields: { type: ActivityType::PHOTO_FIELDS_TYPES })
+            .where.not(form_field_results: { value: nil })
+            .where.not(form_field_results: { value: '' })
+    )
   end
 
   def valid_activity_type_ids

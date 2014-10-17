@@ -29,13 +29,13 @@ $.widget 'nmk.filteredList', {
 			@options.defaultParams = @options.clearFilterParams
 		@element.addClass('filter-box')
 		@form = $('<form action="#" method="get">')
-			.appendTo(@element).submit (e)->
+			.appendTo(@element).submit (e) ->
 				e.preventDefault()
 				e.stopPropagation()
 				false
 		@form.data('serializedData', null)
 
-		if @options.includeAutoComplete
+		if @options.includeAutoComplete and @options.filtersUrl
 			@_addAutocompleteBox()
 
 		if @options.includeCalendars
@@ -108,7 +108,7 @@ $.widget 'nmk.filteredList', {
 		if @options.autoLoad
 			@_loadPage(1)
 
-		@_loadFilters()
+		@_loadFilters() if @options.filtersUrl
 
 		@defaultParams = []
 		@initialized = true
@@ -504,8 +504,8 @@ $.widget 'nmk.filteredList', {
 		@defaultParams = []
 		@_cleanSearchFilter()
 		@_deselectDates()
-		defaultParams = if @options.clearFilterParams then @options.clearFilterParams else @options.defaultParams
-
+		defaultParams = if typeof @options.clearFilterParams != 'undefined' then @options.clearFilterParams else @options.defaultParams
+		defaultParams ||= []
 		@element.find('input[type=checkbox]').attr('checked', false)
 		for param in defaultParams
 			@element.find('input[name="'+param.name+'"][value="'+param.value+'"]').attr('checked', true)
@@ -632,28 +632,32 @@ $.widget 'nmk.filteredList', {
 		@customDatesPanel = $('<div class="dates-pref">').appendTo(@form).append(
 			$('<div class="dropdown select-ranges">').append(
 				$('<label>').text('Date ranges'),
-				$('<a class="dropdown-toggle off" data-toggle="dropdown" href="#" title="Date ranges">').text('Choose a date range').append($('<i class="icon-arrow-down pull-right"></i>')),
+				$('<a class="dropdown-toggle off" data-toggle="dropdown" href="#" title="Date ranges">')
+					.append(
+						$('<span class="date-range-label">').html('Choose a date range'),
+						$('<i class="icon-arrow-down pull-right"></i><i class="icon-arrow-up pull-right"></i>')
+					),
 				$('<ul aria-labelledby="dLabel" class="dropdown-menu" role="menu">').append(
-					$('<li class="options">').append(
+					$('<li class="default-ranges">').append(
 						$('<div class="row-fluid">').append(
-							$('<div class="span4">').append(
+							$('<div class="range-date">').append(
 								$('<a href="#">').data('selection', 'cw').text('Current week')
 							),
-							$('<div class="span4">').append(
+							$('<div class="range-date">').append(
 								$('<a href="#">').data('selection', 'cm').text('Current month')
 							),
-							$('<div class="span4">').append(
+							$('<div class="range-date">').append(
 								$('<a href="#">').data('selection', 'today').text('Today')
 							)
 						),
 						$('<div class="row-fluid">').append(
-							$('<div class="span4">').append(
+							$('<div class="range-date">').append(
 								$('<a href="#">').data('selection', 'pw').text('Previous week')
 							),
-							$('<div class="span4">').append(
+							$('<div class="range-date">').append(
 								$('<a href="#">').data('selection', 'pm').text('Previous month')
 							),
-							$('<div class="span4">').append(
+							$('<div class="range-date">').append(
 								$('<a href="#">').data('selection', 'ytd').text('YTD')
 							)
 						)
@@ -664,7 +668,7 @@ $.widget 'nmk.filteredList', {
 						@setCalendarRange $(e.target).data('selection')
 						$('.select-ranges.open .dropdown-toggle').dropdown('toggle')
 						false
-					$('<li class="ranges">').append(
+					$('<li class="ranges custom-ranges">').append(
 						@customDatesFilter.show()
 					)
 					$('<li>').append(
@@ -709,12 +713,9 @@ $.widget 'nmk.filteredList', {
 	_updateDateRangeInput: (startDate, endDate) ->
 		dropdown = @customDatesPanel.find('a.dropdown-toggle')
 		if startDate and endDate
-			dates = @_formatDate(startDate) + ' - ' + @_formatDate(endDate)
-			dropdown.removeClass('off')
+			dropdown.removeClass('off').find('.date-range-label').text @_formatDate(startDate) + ' - ' + @_formatDate(endDate)
 		else
-			dates = 'Choose a date range'
-			dropdown.addClass('off')
-		dropdown.text(dates)
+			dropdown.addClass('off').find('.date-range-label').text 'Choose a date range'
 
 	selectCalendarDates: (startDate, endDate) ->
 		@calendar.datepick('setDate', [startDate, endDate])
@@ -902,26 +903,35 @@ $.widget 'nmk.filteredList', {
 
 		@spinner = @_loadingSpinner()
 
-		@jqxhr = $.get @options.source, params, (response) =>
+		@jqxhr = $.get @options.source, params, (response, textStatus, jqXHR) =>
 			$.loadingContent += 1
 			@spinner.remove();
-			$response = $('<div>').append(response)
-			$items = $response.find('[data-content="items"]')
-			if @options.onItemsLoad
-				@options.onItemsLoad $response, page
+			resultsCount = 0
+			if typeof response is 'object'
+				if @options.onItemsLoad
+					@options.onItemsLoad response, page
 
-			@listContainer.append $items.html()
-			@_pageLoaded page, $items
-			@listContainer.css height: ''
+				@listContainer.css height: ''
 
-			resultsCount = $items.find('>*').length
+				resultsCount = response.length
+			else
+				$response = $('<div>').append(response)
+				$items = $response.find('[data-content="items"]')
+				if @options.onItemsLoad
+					@options.onItemsLoad $response, page
 
-			if page is 1 and resultsCount is 0
-				@emptyState = @_placeholderEmptyState()
+				@listContainer.append $items.html()
+				@_pageLoaded page, $items
+				@listContainer.css height: ''
 
-			$response.remove()
-			$items.remove()
-			$items = $response = null
+				resultsCount = $items.find('>*').length
+
+				if page is 1 and resultsCount is 0
+					@emptyState = @_placeholderEmptyState()
+
+				$response.remove()
+				$items.remove()
+				$items = $response = null
 
 
 			if @options.onPageLoaded
@@ -980,7 +990,7 @@ $.widget 'nmk.filteredList', {
 			for qvar in vars
 				pair = qvar.split('=')
 				name = decodeURIComponent(pair[0])
-				value = decodeURIComponent((if pair.length>=2 then pair[1] else '').replace(/\+/g, '%20'))
+				value = decodeURIComponent((if pair.length>=2 then pair[1] else '').replace(/\+/g, '%20')).replace(/\+/g, ' ')
 				if @options.includeCalendars and value and name in ['start_date', 'end_date']
 					if name is 'start_date' and value
 						dates[0] = @_parseDate(value)

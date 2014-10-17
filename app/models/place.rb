@@ -86,6 +86,10 @@ class Place < ActiveRecord::Base
     state || load_country.states[administrative_level_1]['name'] rescue nil if load_country && state
   end
 
+  def state_code
+    load_country.states.detect{|code, info| info['name'] == state}[0] rescue nil if state and load_country
+  end
+
   def continent_name
     load_country.continent if load_country
   end
@@ -135,19 +139,25 @@ class Place < ActiveRecord::Base
   def photos(company_id)
     list_photos = []
     if persisted?
-      search = AttachedAsset.do_search(place_id: id, company_id: company_id, asset_type: 'photo', status: 'Active', sorting: :created_at, sorting_dir: :desc, per_page: 10)
+      search = AttachedAsset.do_search(
+        place_id: id, company_id: company_id, asset_type: 'photo', status: 'Active',
+        sorting: :created_at, sorting_dir: :desc, per_page: 10)
       list_photos = search.results
     end
-    list_photos += spot.photos if spot && list_photos.length < 10
+    list_photos.concat(spot.photos) if spot && list_photos.length < 10
     list_photos.slice(0, 10)
   end
 
   def update_locations
     ary = Place.political_division(self)
-    paths = ary.count.times.map { |i| ary.slice(0, i + 1).compact.join('/').downcase }
-    self.locations = paths.map { |path| Location.find_or_create_by(path: path) }
-    self.location = Location.find_or_create_by(path: paths.last)
-    self.is_location = (types.present? && (types & %w(sublocality political locality administrative_area_level_1 administrative_area_level_2 administrative_area_level_3 country natural_feature)).count > 0)
+    paths = ary.count.times.map { |i| ary.slice(0, i + 1).compact.join('/').downcase }.uniq
+    self.locations = Location.load_by_paths(paths)
+    self.location = locations.last
+    self.is_location = (
+      types.present? &&
+      (types & %w(
+        sublocality political locality administrative_area_level_1 administrative_area_level_2
+        administrative_area_level_3 country natural_feature)).count > 0)
     true
   end
 
@@ -205,7 +215,7 @@ class Place < ActiveRecord::Base
       end
       local_references = local_results.map { |p| [p.reference, p.place.place_id] }.flatten.compact
 
-      valid_flag = ->(result)do
+      valid_flag = ->(result) do
         params[:current_company_user].nil? ||
         params[:current_company_user].is_admin? ||
         params[:current_company_user].allowed_to_access_place?(build_from_autocoplete_result(result))
@@ -225,9 +235,25 @@ class Place < ActiveRecord::Base
               id: "#{p['reference']}||#{p['id']}",
               valid: valid_flag.call(p)
             }
-          end.sort! { |x, y| sort_index[x[:valid]] <=> sort_index[y[:valid]] }.slice!(0, 10 - results.count))
+          end.sort! { |x, y| sort_index[x[:valid]] <=> sort_index[y[:valid]] }.slice!(0, 5 - results.count))
       end
       results
+    end
+
+    def latlon_for_city(name, state, country)
+      points = Rails.cache.fetch("latlon_#{name.parameterize('_')}_#{state.parameterize('_')}_#{country.parameterize('_')}") do
+        data = JSON.parse(open(URI.encode("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI::encode(name)}&components=country:#{URI::encode(country)}|administrative_area:#{URI::encode(state)}&sensor=false")).read)
+        if data['results'].count > 0
+          result = data['results'].detect{|r| r['geometry'].present? && r['geometry']['location'].present?}
+          [result['geometry']['location']['lat'],  result['geometry']['location']['lng']] if result
+        else
+          nil
+        end
+      end
+    end
+
+    def google_client
+      @client ||= GooglePlaces::Client.new(GOOGLE_API_KEY)
     end
 
     def combined_search_params(params)
@@ -357,7 +383,7 @@ class Place < ActiveRecord::Base
   end
 
   def client
-    @client ||= GooglePlaces::Client.new(GOOGLE_API_KEY)
+    Place.google_client
   end
 
   def clear_cache
