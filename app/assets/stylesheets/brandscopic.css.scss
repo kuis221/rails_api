@@ -395,7 +395,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	background-image: none;
 	&:hover {
 		background-color: $green;
-		background-image: none;		
+		background-image: none;
 	}
 }
 .progress{
@@ -2294,7 +2294,7 @@ li#notifications{
 			width: 0;
 			background-color: $grey_three;
 			height: 0;
-			top: -10px;
+			top: -5px;
 			cursor: default;
 			&.green{
 				background-color: $dark_green;
@@ -5217,7 +5217,7 @@ body.campaigns{
 	a{
 		color: $venues_blue;
 		text-decoration: none;
-		&.btn{ 
+		&.btn{
 			color: #fff;
 		}
 		&.underline{
