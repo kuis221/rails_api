@@ -28,93 +28,99 @@
 
   .form-builder-wrapper.activities-wrapper
     .form-wrapper.data-form-wrapper
-      .form-fields.clearfix.form-section
+      .fields-wrapper.pull-right
+        p.drag-field-title Drag fields to add
+        .custom
+          .field data-type="Dropdown"
+            span.icon-dropdown
+            br
+            | Dropdown
 
-    .fields-wrapper
-      p.drag-field-title Drag fields to add
-      .custom
-        .field data-type="Dropdown"
-          span.icon-dropdown
-          br
-          | Dropdown
+          .field data-type="Section"
+            span.icon-dropdown
+            br
+            | Section
 
-        .field data-type="Section"
-          span.icon-dropdown
-          br
-          | Section
+          .field data-type="Checkbox"
+            span.icon-checkbox
+            br
+            | Checkboxes
 
-        .field data-type="Checkbox"
-          span.icon-checkbox
-          br
-          | Checkboxes
+          .field data-type="Photo"
+            span.icon-photo
+            br
+            | Photo
 
-        .field data-type="Photo"
-          span.icon-photo
-          br
-          | Photo
+          .field data-type="Radio"
+            span.icon-radio
+            br
+            | Multiple Choice
 
-        .field data-type="Radio"
-          span.icon-radio
-          br
-          | Multiple Choice
+          .field data-type="Attachment"
+            span.icon-attach
+            br
+            | Attachment
 
-        .field data-type="Attachment"
-          span.icon-attach
-          br
-          | Attachment
+          .field data-type="Percentage"
+            span.icon-percent
+            br
+            | Percent
 
-        .field data-type="Percentage"
-          span.icon-percent
-          br
-          | Percent
+          .field data-type="Summation"
+            span.icon-summation
+            br
+            | Summation
 
-        .field data-type="Summation"
-          span.icon-summation
-          br
-          | Summation
+          .field data-type="Number"
+            span.icon-number
+            br
+            | Number
 
-        .field data-type="Number"
-          span.icon-number
-          br
-          | Number
+          .field data-type="Date"
+            span.icon-calendar
+            br
+            | Date
 
-        .field data-type="Date"
-          span.icon-calendar
-          br
-          | Date
+          .field data-type="Currency"
+            span.icon-price
+            br
+            | Price
 
-        .field data-type="Currency"
-          span.icon-price
-          br
-          | Price
+          .field data-type="Time"
+            span.icon-time
+            br
+            | Time
 
-        .field data-type="Time"
-          span.icon-time
-          br
-          | Time
+          .field data-type="Text"
+            span.icon-text
+            br
+            | Single line text
 
-        .field data-type="Text"
-          span.icon-text
-          br
-          | Single line text
+          .field data-type="LikertScale"
+            p Likert scale
 
-        .field data-type="LikertScale"
-          p Likert scale
+          .field data-type="TextArea"
+            span.icon-paragraph
+            br
+            | Paragraph
 
-        .field data-type="TextArea"
-          span.icon-paragraph
-          br
-          | Paragraph
+          .field data-type="Brand"
+            span.icon-wired-star
+            br
+            | Brand
 
-        .field data-type="Brand"
-          span.icon-wired-star
-          br
-          | Brand
+          .field data-type="Marque"
+            span.icon-marque
+            br
+            | Marque
 
-        .field data-type="Marque"
-          span.icon-marque
-          br
-          | Marque
+      .form-fields-sections
+        .form-fields.clearfix.form-section.pull-left
+          div.empty-form-legend
+            b No Fields! You should add a field.
+            p This is a live preview of your form. Currently, you don't have any fields. Enable any KPI to add fields to your form.
+        .clearfix
+
 
 = render partial: 'help_tutorial'
 

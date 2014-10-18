@@ -297,6 +297,10 @@ class Ability
         can?(:create_custom_kpis, campaign) || can?(:activate_kpis, campaign)
       end
 
+      can :index, Kpi do
+        can?(:view_event_form, Campaign)
+      end
+
       # Allow users to update kpis if have permissions to edit custom kpis or edit goals for the kpis,
       # the controller will decide what permissions can be modified based on those permissions
       can [:edit, :update], Kpi do |_kpi|
