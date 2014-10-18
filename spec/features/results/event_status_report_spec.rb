@@ -11,6 +11,9 @@ feature 'Results Event Status Page', js: true, search: true  do
     let(:company) { create(:company) }
     let(:user) { create(:user, first_name: 'Juanito', last_name: 'Bazooka', company: company, role_id: create(:non_admin_role, company: company).id) }
     let(:company_user) { user.company_users.first }
+    let(:campaign) { create(:campaign, name: 'Test Campaign FY01', start_date: '07/21/2013', end_date: '03/30/2014', company: company) }
+    let(:area) { create(:area, name: 'Area 1', company: company) }
+    let(:place) { create(:place, name: 'Place 1') }
 
     before { Kpi.create_global_kpis }
     before { company_user.role.permissions.create(action: :event_status, subject_class: 'Campaign') }
@@ -39,13 +42,7 @@ feature 'Results Event Status Page', js: true, search: true  do
     end
 
     scenario 'should display the event status report for selected campaign and grouping' do
-      campaign = create(:campaign, name: 'Test Campaign FY01', company: company)
-      kpi = Kpi.events
-
-      area = create(:area, name: 'Area 1', company: company)
-      place = create(:place, name: 'Place 1')
       area.places << place
-
       campaign.areas << area
       company_user.campaigns << campaign
       company_user.areas << area
@@ -124,6 +121,233 @@ feature 'Results Event Status Page', js: true, search: true  do
         end
       end
     end
+
+    scenario 'should export the overall campaign Event Status to Excel' do
+      campaign.places << place
+      company_user.campaigns << campaign
+      company_user.places << place
+
+      create(:goal, goalable: campaign, kpi: Kpi.promo_hours, value: 100)
+      create(:goal, goalable: campaign, kpi: Kpi.events, value: 2)
+
+      create(:approved_event, company: company, campaign: campaign, place: place)
+      create(:submitted_event, company: company, campaign: campaign, place: place)
+
+      visit results_event_status_path
+
+      choose_campaign('Test Campaign FY01')
+
+      # Export
+      export_report
+
+      spreadsheet_from_last_export do |doc|
+        rows = doc.elements.to_a('//Row')
+        expect(rows.count).to eql 3
+        expect(rows[0].elements.to_a('Cell/Data').map(&:text)).to eql ['METRIC', 'GOAL', 'EXECUTED', 'EXECUTED %', 'SCHEDULED', 'SCHEDULED %', 'REMAINING', 'REMAINING %']
+        expect(rows[1].elements.to_a('Cell/Data').map(&:text)).to eql ['PROMO HOURS', '100', '2', '0.02', '2', '0.02', '96', '0.96']
+        expect(rows[2].elements.to_a('Cell/Data').map(&:text)).to eql ['EVENTS', '2', '1', '0.5', '1', '0.5', '0', '0']
+      end
+    end
+
+    scenario 'should export the Event Status grouped by Place to Excel' do
+      area.places << place
+      campaign.areas << area
+      company_user.campaigns << campaign
+      company_user.areas << area
+
+      create(:goal, parent: campaign, goalable: area, kpi: Kpi.promo_hours, value: 10)
+      create(:goal, parent: campaign, goalable: area, kpi: Kpi.events, value: 2)
+
+      create(:approved_event, company: company, campaign: campaign, place: place)
+      create(:submitted_event, company: company, campaign: campaign, place: place)
+
+      visit results_event_status_path
+
+      choose_campaign('Test Campaign FY01')
+
+      report_form.find('label', text: 'Place').click
+
+      # Export
+      export_report
+
+      spreadsheet_from_last_export do |doc|
+        rows = doc.elements.to_a('//Row')
+        expect(rows.count).to eql 3
+        expect(rows[0].elements.to_a('Cell/Data').map(&:text)).to eql ['PLACE/AREA', 'METRIC', 'GOAL', 'EXECUTED', 'EXECUTED %', 'SCHEDULED', 'SCHEDULED %', 'REMAINING', 'REMAINING %']
+        expect(rows[1].elements.to_a('Cell/Data').map(&:text)).to eql ['Area 1', 'EVENTS', '2', '1', '0.5', '1', '0.5', '0', '0']
+        expect(rows[2].elements.to_a('Cell/Data').map(&:text)).to eql ['Area 1', 'PROMO HOURS', '10', '2', '0.2', '2', '0.2', '6', '0.6']
+      end
+    end
+
+    scenario 'should export the Event Status grouped by Staff to Excel' do
+      area.places << place
+      campaign.areas << area
+      company_user.campaigns << campaign
+      company_user.areas << area
+
+      create(:goal, parent: campaign, goalable: company_user, kpi: Kpi.promo_hours, value: 10)
+      create(:goal, parent: campaign, goalable: company_user, kpi: Kpi.events, value: 2)
+
+      create(:approved_event, company: company, campaign: campaign, place: place, user_ids: [company_user.id])
+      create(:submitted_event, company: company, campaign: campaign, place: place, user_ids: [company_user.id])
+
+      visit results_event_status_path
+
+      choose_campaign('Test Campaign FY01')
+
+      report_form.find('label', text: 'Staff').click
+
+      # Export
+      export_report
+
+      spreadsheet_from_last_export do |doc|
+        rows = doc.elements.to_a('//Row')
+        expect(rows.count).to eql 3
+        expect(rows[0].elements.to_a('Cell/Data').map(&:text)).to eql ['USER/TEAM', 'METRIC', 'GOAL', 'EXECUTED', 'EXECUTED %', 'SCHEDULED', 'SCHEDULED %', 'REMAINING', 'REMAINING %']
+        expect(rows[1].elements.to_a('Cell/Data').map(&:text)).to eql ['Juanito Bazooka', 'EVENTS', '2', '1', '0.5', '1', '0.5', '0', '0']
+        expect(rows[2].elements.to_a('Cell/Data').map(&:text)).to eql ['Juanito Bazooka', 'PROMO HOURS', '10', '2', '0.2', '2', '0.2', '6', '0.6']
+      end
+    end
+
+    scenario 'should be able to export the overall campaign Event Status as PDF' do
+      campaign.places << place
+      company_user.campaigns << campaign
+      company_user.places << place
+
+      create(:goal, goalable: campaign, kpi: Kpi.promo_hours, value: 100)
+      create(:goal, goalable: campaign, kpi: Kpi.events, value: 2)
+
+      create(:approved_event, company: company, campaign: campaign, place: place)
+      create(:submitted_event, company: company, campaign: campaign, place: place)
+
+      visit results_event_status_path
+
+      choose_campaign('Test Campaign FY01')
+
+      click_js_link 'Download'
+      click_js_link 'Download as PDF'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      export = ListExport.last
+      # Test the generated PDF...
+      reader = PDF::Reader.new(open(export.file.url))
+      reader.pages.each do |page|
+        # PDF to text seems to not always return the same results
+        # with white spaces, so, remove them and look for strings
+        # without whitespaces
+        text = page.text.gsub(/[\s\n]/, '')
+        expect(text).to include 'TestCampaignFY01'
+        expect(text).to include '100GOAL'
+        expect(text).to include 'PROMOHOURS'
+        expect(text).to include '96REMAINING22'
+        expect(text).to include '2GOAL'
+        expect(text).to include '0EVENTS'
+        expect(text).to include 'REMAINING11'
+      end
+    end
+
+    scenario 'should be able to export the campaign Event Status grouped by Place as PDF' do
+      area.places << place
+      campaign.areas << area
+      company_user.campaigns << campaign
+      company_user.areas << area
+
+      create(:goal, parent: campaign, goalable: area, kpi: Kpi.promo_hours, value: 10)
+      create(:goal, parent: campaign, goalable: area, kpi: Kpi.events, value: 2)
+
+      create(:approved_event, company: company, campaign: campaign, place: place)
+      create(:submitted_event, company: company, campaign: campaign, place: place)
+
+      visit results_event_status_path
+
+      choose_campaign('Test Campaign FY01')
+
+      report_form.find('label', text: 'Place').click
+
+      click_js_link 'Download'
+      click_js_link 'Download as PDF'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      export = ListExport.last
+      # Test the generated PDF...
+      reader = PDF::Reader.new(open(export.file.url))
+      reader.pages.each do |page|
+        # PDF to text seems to not always return the same results
+        # with white spaces, so, remove them and look for strings
+        # without whitespaces
+        text = page.text.gsub(/[\s\n]/, '')
+        expect(text).to include 'TestCampaignFY01'
+        expect(text).to include 'Area1'
+        expect(text).to include '2GOAL'
+        expect(text).to include 'EVENTS'
+        expect(text).to include '0REMAINING11'
+        expect(text).to include '10GOAL'
+        expect(text).to include 'PROMOHOURS'
+        expect(text).to include '6REMAINING22'
+      end
+    end
+
+    scenario 'should be able to export the campaign Event Status grouped by Staff as PDF' do
+      area.places << place
+      campaign.areas << area
+      company_user.campaigns << campaign
+      company_user.areas << area
+
+      create(:goal, parent: campaign, goalable: company_user, kpi: Kpi.promo_hours, value: 10)
+      create(:goal, parent: campaign, goalable: company_user, kpi: Kpi.events, value: 2)
+
+      create(:approved_event, company: company, campaign: campaign, place: place, user_ids: [company_user.id])
+      create(:submitted_event, company: company, campaign: campaign, place: place, user_ids: [company_user.id])
+
+      visit results_event_status_path
+
+      choose_campaign('Test Campaign FY01')
+
+      report_form.find('label', text: 'Staff').click
+
+      click_js_link 'Download'
+      click_js_link 'Download as PDF'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      export = ListExport.last
+      # Test the generated PDF...
+      reader = PDF::Reader.new(open(export.file.url))
+      reader.pages.each do |page|
+        # PDF to text seems to not always return the same results
+        # with white spaces, so, remove them and look for strings
+        # without whitespaces
+        text = page.text.gsub(/[\s\n]/, '')
+        expect(text).to include 'TestCampaignFY01'
+        expect(text).to include 'JuanitoBazooka'
+        expect(text).to include '2GOAL'
+        expect(text).to include 'EVENTS'
+        expect(text).to include '0REMAINING11'
+        expect(text).to include '10GOAL'
+        expect(text).to include 'PROMOHOURS'
+        expect(text).to include '6REMAINING22'
+      end
+    end
   end
 
   def report_form
@@ -132,5 +356,20 @@ feature 'Results Event Status Page', js: true, search: true  do
 
   def choose_campaign(name)
     select_from_chosen(name, from: 'report[campaign_id]')
+  end
+
+  def export_report(format = 'XLS')
+    with_resque do
+      expect do
+        click_js_link('Download')
+        click_js_link("Download as #{format}")
+        wait_for_ajax(10)
+        within visible_modal do
+          expect(page).to have_content('We are processing your request, the download will start soon...')
+        end
+        wait_for_ajax(30)
+        ensure_modal_was_closed
+      end.to change(ListExport, :count).by(1)
+    end
   end
 end
