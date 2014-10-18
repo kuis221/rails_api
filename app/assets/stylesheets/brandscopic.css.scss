@@ -395,7 +395,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	background-image: none;
 	&:hover {
 		background-color: $green;
-		background-image: none;		
+		background-image: none;
 	}
 }
 .progress{
@@ -5083,6 +5083,13 @@ body.campaigns{
 			}
 		}
 	}
+  &#event-expenses{
+    .resource-item.total-expenses{
+      .span10,.span2{
+        margin-top: 18px;
+      }
+    }
+  }
 	.box_photos{
 		margin-bottom: 40px;
 		position: relative;
@@ -5217,7 +5224,7 @@ body.campaigns{
 	a{
 		color: $venues_blue;
 		text-decoration: none;
-		&.btn{ 
+		&.btn{
 			color: #fff;
 		}
 		&.underline{
