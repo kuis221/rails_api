@@ -1020,6 +1020,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			right: 0;
 			left: initial;
 			text-align: left;
+      box-shadow:none;
 			&:before {
 				border: none;
 			}

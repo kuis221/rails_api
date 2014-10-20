@@ -118,6 +118,16 @@ input[readonly], select[readonly], textarea[readonly]{
 	padding: 8px 17px;
 	text-shadow:none;
 	-webkit-box-shadow: none;
+  &:active{
+    box-shadow:none;
+  }
+  &:hover{
+    background-color: $user_menu;
+  }
+  &:focus{
+    @extend .btn:hover;
+    outline:none;
+  }
 	&.btn-default{
 		background-color:$user_menu;
 		background-image:none;
