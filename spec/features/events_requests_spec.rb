@@ -448,7 +448,7 @@ feature 'Events section' do
             end
           end
 
-          scenario "can filter the events by predefined 'YTD' date range option" do
+          scenario "can filter the events by predefined 'YTD' date range option for default YTD configuration" do
             create(:event, campaign: campaign1,
               start_date: "01/01/#{year}", end_date: "01/01/#{year}")
             create(:event, campaign: campaign1,
@@ -469,6 +469,31 @@ feature 'Events section' do
               expect(page).to have_content('Campaign FY2012')
               expect(page).to have_content('Another Campaign April 03')
               expect(page).to have_no_content('New Brand Campaign')
+            end
+          end
+
+          scenario "can filter the events by predefined 'YTD' date range option where YTD goes from July 1 to June 30" do
+            company.update_attribute(:ytd_dates_range, Company::YTD_JULY1_JUNE30)
+            user.current_company = company
+
+            create(:event, campaign: campaign1,
+              start_date: "#{month_number}/01/#{year}", end_date: "#{month_number}/01/#{year}")
+            create(:event, campaign: campaign1,
+              start_date: "#{month_number}/01/#{year}", end_date: "#{month_number}/01/#{year}")
+            create(:event, campaign: campaign3,
+              start_date: "#{month_number}/01/#{year}", end_date: "#{month_number}/01/#{year}")
+            Sunspot.commit
+
+            visit events_path
+
+            choose_predefined_date_range 'YTD'
+            wait_for_ajax
+
+            expect(page).to have_selector('#events-list .resource-item', count: 3)
+            within events_list do
+              expect(page).to have_content('Campaign FY2012')
+              expect(page).to have_no_content('Another Campaign April 03')
+              expect(page).to have_content('New Brand Campaign')
             end
           end
 
