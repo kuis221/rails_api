@@ -2,16 +2,12 @@ require 'rails_helper'
 require 'open-uri'
 
 feature 'Reports', js: true do
-  before do
-    @user = create(:user, company_id: create(:company).id, role_id: create(:role).id)
-    sign_in @user
-    @company = @user.companies.first
-    page.driver.resize(1024, 1000)
-  end
+  let(:user) { sign_in_as_user }
+  let(:company) { user.companies.first }
+  let(:company_user) { user.current_company_user }
 
-  after do
-    Warden.test_reset!
-  end
+  before { user }
+  after { Warden.test_reset! }
 
   feature 'Create a report' do
     scenario 'user is redirected to the report build page after creation' do
@@ -36,7 +32,7 @@ feature 'Reports', js: true do
   scenario 'allows the user to activate/deactivate reports' do
     report = create(:report, name: 'Events by Venue',
       description: 'a resume of events by venue',
-      active: true, company: @company)
+      active: true, company: company)
 
     visit results_reports_path
 
@@ -55,7 +51,7 @@ feature 'Reports', js: true do
   scenario 'allows the user to edit reports name and description' do
     report = create(:report, name: 'My Report',
       description: 'Description of my report',
-      active: true, company: @company)
+      active: true, company: company)
 
     visit results_reports_path
 
@@ -105,7 +101,7 @@ feature 'Reports', js: true do
     let(:report) do
       create(:report, name: 'My Report',
         description: 'Description of my report',
-        active: true, company: @company)
+        active: true, company: company)
     end
 
     scenario 'a user can play and dismiss the video tutorial' do
@@ -132,7 +128,7 @@ feature 'Reports', js: true do
     end
 
     scenario 'allows the user to modify an existing custom report' do
-      create(:kpi, name: 'Kpi #1', company: @company)
+      create(:kpi, name: 'Kpi #1', company: company)
 
       visit results_report_path(report)
 
@@ -151,7 +147,7 @@ feature 'Reports', js: true do
     end
 
     scenario 'allows the user to cancel changes an existing custom report' do
-      create(:kpi, name: 'Kpi #1', company: @company)
+      create(:kpi, name: 'Kpi #1', company: company)
 
       visit results_report_path(report)
 
@@ -173,7 +169,7 @@ feature 'Reports', js: true do
     it 'should display a message if the report returns not results' do
       Kpi.create_global_kpis
       report = create(:report,
-                                  company: @company,
+                                  company: company,
                                   columns: [{ 'field' => 'values', 'label' => 'Values' }],
                                   rows:    [{ 'field' => 'place:name', 'label' => 'Venue Name' }],
                                   values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
@@ -193,7 +189,7 @@ feature 'Reports', js: true do
     end
 
     scenario 'should render the report' do
-      campaign = create(:campaign, company: @company)
+      campaign = create(:campaign, company: company)
       create(:event, campaign: campaign, place: create(:place, name: 'Bar 1'),
         results: { impressions: 123, interactions: 50 })
 
@@ -201,7 +197,7 @@ feature 'Reports', js: true do
         results: { impressions: 321, interactions: 25 })
 
       report = create(:report,
-                                  company: @company,
+                                  company: company,
                                   columns: [{ 'field' => 'values', 'label' => 'Values' }],
                                   rows:    [{ 'field' => 'place:name', 'label' => 'Venue Name' }],
                                   values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
@@ -225,7 +221,7 @@ feature 'Reports', js: true do
     end
 
     scenario 'a report with two rows with expand/collapse functionality' do
-      campaign = create(:campaign, company: @company)
+      campaign = create(:campaign, company: company)
       create(:event, campaign: campaign,
         start_date: '01/21/2013', end_date: '01/21/2013', place: create(:place, name: 'Bar 1'),
         results: { impressions: 123, interactions: 50 })
@@ -235,7 +231,7 @@ feature 'Reports', js: true do
         results: { impressions: 321, interactions: 25 })
 
       report = create(:report,
-                                  company: @company,
+                                  company: company,
                                   columns: [{ 'field' => 'values', 'label' => 'Values' }],
                                   rows:    [{ 'field' => 'place:name', 'label' => 'Venue Name' },
                                             { 'field' => 'event:start_date', 'label' => 'Start Date' }],
@@ -273,8 +269,8 @@ feature 'Reports', js: true do
     end
 
     scenario 'a report with values displayed as percentage of row total/grand total/column total' do
-      campaign1 = create(:campaign, company: @company, name: 'Campaign 1')
-      campaign2 = create(:campaign, company: @company, name: 'Campaign 2')
+      campaign1 = create(:campaign, company: company, name: 'Campaign 1')
+      campaign2 = create(:campaign, company: company, name: 'Campaign 2')
       create(:event, campaign: campaign1,
                                  place: create(:place, name: 'Bar 1', state: 'State 1'),
                                  results: { impressions: 300, interactions: 20 })
@@ -292,7 +288,7 @@ feature 'Reports', js: true do
                                  results: { impressions: 100, interactions: 60 })
 
       report = create(:report,
-                                  company: @company,
+                                  company: company,
                                   columns: [{ 'field' => 'values', 'label' => 'Values' }, { 'field' => 'place:state', 'label' => 'State' }],
                                   rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign Name' }],
                                   values:  [
@@ -331,7 +327,7 @@ feature 'Reports', js: true do
     let(:report) do
       create(:report, name: 'Events by Venue',
         description: 'a resume of events by venue',
-        active: true, company: @company)
+        active: true, company: company)
     end
 
     scenario 'a user can play and dismiss the video tutorial' do
@@ -360,9 +356,9 @@ feature 'Reports', js: true do
     scenario 'share a report' do
       user = create(:company_user,
                                 user: create(:user, first_name: 'Guillermo', last_name: 'Vargas'),
-                                company: @company)
-      team = create(:team, name: 'Los Fantasticos', company: @company)
-      role = create(:role, name: 'Super Hero', company: @company)
+                                company: company)
+      team = create(:team, name: 'Los Fantasticos', company: company)
+      role = create(:role, name: 'Super Hero', company: company)
 
       visit build_results_report_path(report)
       click_js_button 'Share'
@@ -395,8 +391,8 @@ feature 'Reports', js: true do
     end
 
     scenario 'search for fields in the fields list' do
-      create(:kpi, name: 'ABC KPI', company: @company)
-      type = create(:activity_type, name: 'XYZ Activiy Type', company: @company)
+      create(:kpi, name: 'ABC KPI', company: company)
+      type = create(:activity_type, name: 'XYZ Activiy Type', company: company)
       create(:form_field_number, fieldable: type, name: 'FormField 1')
       create(:form_field_number, fieldable: type, name: 'FormField 2')
 
@@ -441,16 +437,16 @@ feature 'Reports', js: true do
     end
 
     scenario 'drag fields to the different field lists' do
-      create(:kpi, name: 'Kpi #1', company: @company, description: 'This is the description for kpi#1', kpi_type: 'number')
-      create(:kpi, name: 'Kpi #2', company: @company, description: 'This is the description for kpi#2',
+      create(:kpi, name: 'Kpi #1', company: company, description: 'This is the description for kpi#1', kpi_type: 'number')
+      create(:kpi, name: 'Kpi #2', company: company, description: 'This is the description for kpi#2',
         kpi_type: 'count', kpis_segments: [
           create(:kpis_segment, text: 'First option'),
           create(:kpis_segment, text: 'Second option')
         ]
       )
-      create(:kpi, name: 'Kpi #3', company: @company)
-      create(:kpi, name: 'Kpi #4', company: @company)
-      create(:kpi, name: 'Kpi #5', company: @company)
+      create(:kpi, name: 'Kpi #3', company: company)
+      create(:kpi, name: 'Kpi #4', company: company)
+      create(:kpi, name: 'Kpi #5', company: company)
 
       visit build_results_report_path(report)
 
@@ -515,11 +511,11 @@ feature 'Reports', js: true do
     end
 
     scenario 'user can add fields to the different field lists using the context menu' do
-      create(:kpi, name: 'Kpi #1', company: @company)
-      create(:kpi, name: 'Kpi #2', company: @company)
-      create(:kpi, name: 'Kpi #3', company: @company)
-      create(:kpi, name: 'Kpi #4', company: @company)
-      create(:kpi, name: 'Kpi #5', company: @company)
+      create(:kpi, name: 'Kpi #1', company: company)
+      create(:kpi, name: 'Kpi #2', company: company)
+      create(:kpi, name: 'Kpi #3', company: company)
+      create(:kpi, name: 'Kpi #4', company: company)
+      create(:kpi, name: 'Kpi #5', company: company)
 
       visit build_results_report_path(report)
 
@@ -583,7 +579,7 @@ feature 'Reports', js: true do
     end
 
     scenario "'Values' must be added automatically to the columns when adding a value" do
-      create(:kpi, name: 'Kpi #1', company: @company)
+      create(:kpi, name: 'Kpi #1', company: company)
 
       visit build_results_report_path(report)
 
@@ -610,7 +606,7 @@ feature 'Reports', js: true do
     end
 
     scenario 'user can change the aggregation method for rows' do
-      campaign = create(:campaign, company: @company, name: 'My Super Campaign')
+      campaign = create(:campaign, company: company, name: 'My Super Campaign')
       create(:event, campaign: campaign, start_date: '01/01/2014', end_date: '01/01/2014',
         results: { impressions: 100, interactions: 1000 })
       create(:event, campaign: campaign, start_date: '02/02/2014', end_date: '02/02/2014',
@@ -680,7 +676,7 @@ feature 'Reports', js: true do
     end
 
     scenario 'user can change the calculation method for values' do
-      campaign = create(:campaign, company: @company, name: 'My Super Campaign')
+      campaign = create(:campaign, company: company, name: 'My Super Campaign')
       create(:event, campaign: campaign, start_date: '01/01/2014', end_date: '01/01/2014',
         results: { impressions: 100, interactions: 1000 })
       create(:event, campaign: campaign, start_date: '02/02/2014', end_date: '02/02/2014',
@@ -707,7 +703,7 @@ feature 'Reports', js: true do
     end
 
     scenario 'drag fields outside the list to remove it' do
-      create(:kpi, name: 'Kpi #1', company: @company)
+      create(:kpi, name: 'Kpi #1', company: company)
 
       visit build_results_report_path(report)
 
@@ -725,7 +721,7 @@ feature 'Reports', js: true do
     end
 
     scenario 'user can remove a field by clicking on the X' do
-      create(:kpi, name: 'Kpi #1', company: @company)
+      create(:kpi, name: 'Kpi #1', company: company)
 
       visit build_results_report_path(report)
 
@@ -743,7 +739,7 @@ feature 'Reports', js: true do
     end
 
     scenario "adding a value should automatically add the 'Values' column and removing it should remove the values" do
-      create(:kpi, name: 'Kpi #1', company: @company)
+      create(:kpi, name: 'Kpi #1', company: company)
 
       visit build_results_report_path(report)
 
@@ -762,7 +758,7 @@ feature 'Reports', js: true do
 
     feature 'preview' do
       it 'should display a preview as the user make changes on the report' do
-        create(:event, place: create(:place, name: 'Los Pollitos Bar'), company: @company, results: { impressions: 100 })
+        create(:event, place: create(:place, name: 'Los Pollitos Bar'), company: company, results: { impressions: 100 })
         visit build_results_report_path(report)
 
         expect(find(report_preview)).to have_content('Drag and drop filters, columns, rows and values to create your report.')

@@ -531,21 +531,12 @@ $report_border_color: #ccc;
 			background-color: transparent;
 		}
 
-		.icon-collapse, .icon-expand{
-			display:inline-block;
-			height:20px;
-			margin-right:5px;
-			width:10px;
-			color: $grey_three !important;
-			text-decoration: none !important;
-		}
-		.icon-expand:before {
-			content: "\e002";
-			font-size: 9px;
-		}
-		.icon-collapse:before {
+		.icon-arrow-down:before {
 			top: 3px;
-			content: "\e004";
+		}
+		.icon-arrow-up:before {
+			top: -3px;
+			left: -2px;
 		}
 
 		thead {

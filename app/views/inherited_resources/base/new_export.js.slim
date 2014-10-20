@@ -1,10 +1,10 @@
 - if @export_errors.present? && @export_errors.any?
   |
-    bootbox.alert('#{j @export_errors.first}')
+    bootbox.alert('#{j @export_errors.first}');
 - else
   |
     var downloaded#{@export.id} = false;
-    var downloadDialog = bootbox.dialog('#{j render('export')}', [{
+    var downloadDialog = bootbox.dialog('#{j render('inherited_resources/base/export')}', [{
       "label" : "Cancel",
       "class" : "btn btn-primary",
       "callback": function() {
