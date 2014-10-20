@@ -21,7 +21,7 @@
             i.icon-calendar
             = format_date_range(resource.first_event_at, resource.last_event_at, date_separator: ' - ')
 
-      - if resource.description
+      - if resource.description.present?
         .description-data
           i.icon-wired-description
           span
@@ -37,7 +37,10 @@
       = button_to_edit resource if can?(:edit, resource)
       = active_inactive_buttons(resource) if can?(:deactivate, resource)
       br>/
-      = format_date_range(resource.first_event_at, resource.last_event_at, date_separator: ' - ')
+      - if resource.has_date_range?
+        = format_date_range(resource.start_date, resource.end_date, date_separator: ' - ')
+      - else
+        = format_date_range(resource.first_event_at, resource.last_event_at, date_separator: ' - ')
 
   ul#campaign-tabs.nav.nav-tabs
     - if can?(:view_event_form, resource)
@@ -87,58 +90,57 @@
 
 = render partial: 'help_tutorial'
 
-javascript:
-  $('#campaign-tabs a').click(function (e) {
-    e.preventDefault();
-    $(this).tab('show');
-  });
+- content_for :footer do
+  javascript:
+    $('#campaign-tabs a').click(function (e) {
+      e.preventDefault();
+      $(this).tab('show');
+    });
 
-  $('#campaign-tabs a[data-content]').on('show', function(e){
-    $target = $(e.target);
-    $content = $('.tab-content ' + $target.attr('href'))
-    $content.html('<img src="#{asset_path('loading.gif')}" />')
-    $content.load($target.data('content'))
-  });
+    $('#campaign-tabs a[data-content]').on('show', function(e){
+      $target = $(e.target);
+      $content = $('.tab-content ' + $target.attr('href'))
+      $content.html('<img src="#{asset_path('loading.gif')}" />')
+      $content.load($target.data('content'))
+    });
 
-  $('ul#campaign-tabs li:first a').tab('show');
+    $('ul#campaign-tabs li:first a').tab('show');
 
 
-  $(document).on('campaigns:change', function(){
-    window.location.reload(true);
-  });
+    $(document).on('kpis:change', function(){
+      $('.tab-content #kpis_tab').load('#{tab_campaign_path(resource, :kpis)}')
+    });
 
-  $(document).on('kpis:change', function(){
-    $('.tab-content #kpis_tab').load('#{tab_campaign_path(resource, :kpis)}')
-  });
+    $(document).on('activity_types:change', function(){
+      $('.tab-content #kpis_tab').load('#{tab_campaign_path(resource, :kpis)}')
+    });
 
-  $(document).on('activity_types:change', function(){
-    $('.tab-content #kpis_tab').load('#{tab_campaign_path(resource, :kpis)}')
-  });
+    $(document).on('members:change teams:change', function(){
+      $('.tab-content #staff_tab').load('#{tab_campaign_path(resource, :staff)}')
+    });
 
-  $(document).on('members:change teams:change', function(){
-    $('.tab-content #staff_tab').load('#{tab_campaign_path(resource, :staff)}')
-  });
+    $(document).on('member:delete', function(e, member_id){
+      $('#goal-company_user-'+member_id).remove()
+    });
 
-  $(document).on('member:delete', function(e, member_id){
-    $('#goal-company_user-'+member_id).remove()
-  });
+    $(document).on('team:delete', function(e, team_id){
+      $('#goal-team-'+team_id).remove()
+    });
 
-  $(document).on('team:delete', function(e, team_id){
-    $('#goal-team-'+team_id).remove()
-  });
+    $(document).on('areas:change', function(){
+      $('.tab-content #campaign-places-list').load('#{tab_campaign_path(resource, :places)}')
+    });
 
-  $(document).on('areas:change', function(){
-    $('.tab-content #campaign-places-list').load('#{tab_campaign_path(resource, :places)}')
-  });
+    $(document).on('date_ranges:change', function(){
+      $('.tab-content #date_ranges_tab').load('#{tab_campaign_path(resource, :date_ranges)}')
+    });
 
-  $(document).on('date_ranges:change', function(){
-    $('.tab-content #date_ranges_tab').load('#{tab_campaign_path(resource, :date_ranges)}')
-  });
+    $(document).on('day_parts:change', function(){
+      $('.tab-content #day_parts_tab').load('#{tab_campaign_path(resource, :day_parts)}')
+    });
 
-  $(document).on('day_parts:change', function(){
-    $('.tab-content #day_parts_tab').load('#{tab_campaign_path(resource, :day_parts)}')
-  });
+    $(document).on('documents:change', function(){
+      $('.tab-content #documents_tab').load('#{tab_campaign_path(resource, :documents)}')
+    });
 
-  $(document).on('documents:change', function(){
-    $('.tab-content #documents_tab').load('#{tab_campaign_path(resource, :documents)}')
-  });
+  - reload_page_on_edit_resource
