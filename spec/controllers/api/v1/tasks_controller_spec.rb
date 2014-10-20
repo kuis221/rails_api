@@ -6,13 +6,15 @@ describe Api::V1::TasksController, type: :controller do
   let(:company) { company_user.company }
   let(:event)  { create(:event, company: company) }
 
+  before { set_api_authentication_headers user, company }
+
   describe "GET 'index'", search: true do
     it 'return a list of tasks for a event' do
-      tasks = create_list(:task, 2, event: event)
+      create_list(:task, 2, event: event)
       create_list(:task, 2, event: create(:event, company: company))
       Sunspot.commit
 
-      get :index, auth_token: user.authentication_token, company_id: company.to_param, event_id: event.id, format: :json
+      get :index, event_id: event.id, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
 
@@ -24,11 +26,11 @@ describe Api::V1::TasksController, type: :controller do
 
     it 'should filter by state' do
       active_task = create(:task, active: true, event: event)
-      inactive_task = create(:task, active: false, event: event)
+      create(:task, active: false, event: event)
       create_list(:task, 2, event: create(:event, company: company))
       Sunspot.commit
 
-      get :index, auth_token: user.authentication_token, company_id: company.to_param, event_id: event.id, status: ['Active'], format: :json
+      get :index, event_id: event.id, status: ['Active'], format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
 
@@ -44,7 +46,7 @@ describe Api::V1::TasksController, type: :controller do
       create_list(:task, 2, event: create(:event, company: company))
       Sunspot.commit
 
-      get :index, auth_token: user.authentication_token, company_id: company.to_param, scope: 'user', format: :json
+      get :index, scope: 'user', format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
 
@@ -64,7 +66,7 @@ describe Api::V1::TasksController, type: :controller do
       create_list(:task, 2, event: another_event)
       Sunspot.commit
 
-      get :index, auth_token: user.authentication_token, company_id: company.to_param, scope: 'teams', format: :json
+      get :index, scope: 'teams', format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
 
@@ -85,7 +87,7 @@ describe Api::V1::TasksController, type: :controller do
       event.save
       Sunspot.commit
 
-      get 'comments', auth_token: user.authentication_token, company_id: company.to_param, id: task.to_param, format: :json
+      get 'comments', id: task.to_param, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
       expect(result.count).to eq(2)

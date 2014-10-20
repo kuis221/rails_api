@@ -2,8 +2,14 @@ require 'rails_helper'
 
 describe Api::V1::SessionsController, type: :controller do
   describe 'POST create' do
-    let(:user) { create(:company_user, user: create(:user, password: 'PassDePrueba45', password_confirmation: 'PassDePrueba45'), company: create(:company)).user }
+    let(:user) do
+      create(:company_user,
+             user: create(:user,
+                          password: 'PassDePrueba45', password_confirmation: 'PassDePrueba45'),
+             company: create(:company)).user
+    end
     let(:company) { user.companies.first }
+
     it 'should return the authentication token if success' do
       expect(user.reload.current_company_id).to be_nil
       post :create, email: user.email, password: 'PassDePrueba45', format: :json
@@ -52,7 +58,13 @@ describe Api::V1::SessionsController, type: :controller do
   end
 
   describe "DELETE 'destroy'" do
-    let(:user) { create(:company_user, user: create(:user, password: 'PassDePrueba45', password_confirmation: 'PassDePrueba45', authentication_token: 'XYZ')).user }
+    let(:user) do
+      create(:company_user,
+             user: create(:user,
+                          password: 'PassDePrueba45', password_confirmation: 'PassDePrueba45',
+                          authentication_token: 'XYZ')
+      ).user
+    end
 
     it 'should reset the authentication token' do
       delete :destroy, id: user.authentication_token, format: :json

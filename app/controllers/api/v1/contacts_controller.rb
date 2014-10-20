@@ -26,8 +26,6 @@ class Api::V1::ContactsController < Api::V1::ApiController
     error 406, 'The server cannot return data in the requested format'
     error 404, 'The requested resource was not found'
     error 500, 'Server crashed for some reason. Possible because of missing required params or wrong parameters'
-    param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
-    param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
     description <<-EOS
 
     EOS
@@ -53,7 +51,7 @@ class Api::V1::ContactsController < Api::V1::ApiController
   EOS
   example <<-EOS
     A list of contacts for company id 1:
-    GET /api/v1/contacts?auth_token=XXXXXYYYYYZZZZZ&company_id=1
+    GET /api/v1/contacts
     [
         {
             "id": 268,
@@ -113,7 +111,7 @@ class Api::V1::ContactsController < Api::V1::ApiController
   Creates a new contact and returns all the contact's info, including the assigned unique ID.
   EOS
   example <<-EOS
-    POST /api/v1/contacts?auth_token=XXXXXYYYYYZZZZZ&company_id=1
+    POST /api/v1/contacts
     DATA:
     {
         contact: {
@@ -166,7 +164,7 @@ class Api::V1::ContactsController < Api::V1::ApiController
   Updates a contact's information and returns all the contact's updated info.
   EOS
   example <<-EOS
-    PUT /api/v1/contacts/268?auth_token=XXXXXYYYYYZZZZZ&company_id=1
+    PUT /api/v1/contacts/268
     DATA:
     {
         contact: {
