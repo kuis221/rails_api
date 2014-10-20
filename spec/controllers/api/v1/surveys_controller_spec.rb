@@ -7,54 +7,37 @@ describe Api::V1::SurveysController, type: :controller do
   let(:place) { create(:place) }
   let(:event) { create(:approved_event, company: company, campaign: campaign, place: place) }
 
-  before do
-    Kpi.create_global_kpis
-  end
+  before { Kpi.create_global_kpis }
+
+  before { set_api_authentication_headers user, company }
 
   describe "GET 'index'" do
-    it 'should return failure for invalid authorization token' do
-      campaign.update_attribute(:modules, 'surveys' => {})
-      get :index, company_id: company.to_param, auth_token: 'XXXXXXXXXXXXXXXX', event_id: 100, format: :json
-      expect(response.response_code).to eql 401
-      result = JSON.parse(response.body)
-      expect(result['success']).to eq(false)
-      expect(result['info']).to eq('Invalid auth token')
-      expect(result['data']).to be_empty
-    end
-
     it 'returns the list of surveys for the event' do
       campaign.update_attribute(:modules, 'surveys' => {})
       survey1 = create(:survey, event: event)
       survey2 = create(:survey, event: event)
 
-      get :index, company_id: company.to_param, auth_token: user.authentication_token, event_id: event.to_param, format: :json
+      get :index, event_id: event.to_param, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
       expect(result.count).to eq(2)
       expect(result.first).to include('id' => survey1.id)
       expect(result.last).to include('id' => survey2.id)
     end
+
     it 'should return error if the campaign doest have the surveys module enabled' do
-      get :index, company_id: company.to_param, auth_token: user.authentication_token, event_id: event.to_param, format: :json
+      get :index, event_id: event.to_param, format: :json
       expect(response.response_code).to eql 403
     end
   end
 
   describe "GET 'show'" do
     before { campaign.update_attribute(:modules, 'surveys' => {}) }
-    it 'should return failure for invalid authorization token' do
-      get :show, company_id: company.to_param, auth_token: 'XXXXXXXXXXXXXXXX', event_id: 100, id: 1, format: :json
-      expect(response.response_code).to eql 401
-      result = JSON.parse(response.body)
-      expect(result['success']).to eq(false)
-      expect(result['info']).to eq('Invalid auth token')
-      expect(result['data']).to be_empty
-    end
 
     it 'returns the list of surveys for the event' do
       survey = create(:survey, event: event)
 
-      get :show, company_id: company.to_param, auth_token: user.authentication_token, event_id: event.to_param, id: survey.id, format: :json
+      get :show, event_id: event.to_param, id: survey.id, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
       expect(result).to include('id' => survey.id)
@@ -74,7 +57,7 @@ describe Api::V1::SurveysController, type: :controller do
       gender_answer = Kpi.gender.kpis_segments.sample
       ethnicity_answer = Kpi.ethnicity.kpis_segments.sample
       expect do
-        post 'create', company_id: company.to_param, auth_token: user.authentication_token, event_id: event.to_param, survey: {
+        post 'create', event_id: event.to_param, survey: {
           'surveys_answers_attributes' => {
             '0' => { 'kpi_id' => Kpi.gender.id, 'answer' => gender_answer.id },
             '1' => { 'kpi_id' => Kpi.age.id, 'answer' => age_answer.id },
@@ -97,8 +80,6 @@ describe Api::V1::SurveysController, type: :controller do
       expect(survey.ethnicity).to eq(ethnicity_answer.text)
       expect(response).to be_success
 
-      result = JSON.parse(response.body)
-
       survey = Survey.last
       expect(survey.event_id).to eq(event.id)
     end
@@ -111,7 +92,7 @@ describe Api::V1::SurveysController, type: :controller do
       gender_answer = Kpi.gender.kpis_segments.sample
       ethnicity_answer = Kpi.ethnicity.kpis_segments.sample
       expect do
-        post 'create', company_id: company.to_param, auth_token: user.authentication_token, event_id: event.to_param, survey: {
+        post 'create', event_id: event.to_param, survey: {
           'surveys_answers_attributes' => {
             '0' => { 'kpi_id' => Kpi.gender.id, 'answer' => gender_answer.id },
             '1' => { 'kpi_id' => Kpi.age.id, 'answer' => age_answer.id },

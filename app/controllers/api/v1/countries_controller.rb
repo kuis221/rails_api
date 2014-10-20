@@ -7,7 +7,6 @@ class Api::V1::CountriesController < Api::V1::ApiController
     formats %w(json xml)
     error 404, 'Missing'
     error 500, 'Server crashed for some reason'
-    param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
   end
 
   api :GET, '/api/v1/countries', 'Get a list of countries'
@@ -19,7 +18,7 @@ class Api::V1::CountriesController < Api::V1::ApiController
     * *name*: the coutry's name
   EOS
   example <<-EOS
-    GET /api/v1/countries.json?auth_token=XXXXXYYYYYZZZZZ
+    GET /api/v1/countries.json
     [
       {
           "id": "AD",
@@ -65,7 +64,7 @@ class Api::V1::CountriesController < Api::V1::ApiController
     * *name*: the state's name
   EOS
   example <<-EOS
-    GET /api/v1/countries/US/states.json?auth_token=XXXXXYYYYYZZZZZ
+    GET /api/v1/countries/US/states.json
     [
       {
           "id": "AK",

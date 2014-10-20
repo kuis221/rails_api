@@ -15,6 +15,12 @@ module BrandscopiSpecHelpers
     user
   end
 
+  def set_api_authentication_headers(user, company)
+    request.headers['X-Auth-Token'] = user.authentication_token
+    request.headers['X-User-Email'] = user.email
+    request.headers['X-Company-Id'] = company.id
+  end
+
   def set_event_results(event, results, autosave = true)
     event.result_for_kpi(Kpi.impressions).value = results[:impressions] if results.key?(:impressions)
     event.result_for_kpi(Kpi.interactions).value = results[:interactions] if results.key?(:interactions)
