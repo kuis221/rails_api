@@ -251,10 +251,11 @@ feature 'Events section' do
         end
 
         feature 'export' do
+          let(:day_number) { Time.now.strftime('%d') }
           let(:month_number) { Time.now.strftime('%m') }
           let(:month_name) { Time.now.strftime('%b') }
           let(:year_number) { Time.now.strftime('%Y').to_i }
-          let(:today) { Time.use_zone(user.time_zone) { Time.zone.local(year_number, month_number, 18, 12, 00) } }
+          let(:today) { Time.use_zone(user.time_zone) { Time.zone.local(year_number, month_number, day_number, 12, 00) } }
           let(:event1) do
             create(:event, start_date: today.to_s(:slashes), end_date: today.to_s(:slashes),
               start_time: '10:00am', end_time: '11:00am',
@@ -291,12 +292,12 @@ feature 'Events section' do
             expect(ListExport.last).to have_rows([
               ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE',
                'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL'],
-              ['Campaign FY2012', nil, "#{year_number}-#{month_number}-18T10:00",
-               "#{year_number}-#{month_number}-18T11:00", 'Place 1',
+              ['Campaign FY2012', nil, "#{year_number}-#{month_number}-#{day_number}T10:00",
+               "#{year_number}-#{month_number}-#{day_number}T11:00", 'Place 1',
                'Place 1, New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active',
                'Unsent', nil, "http://localhost:5100/events/#{event1.id}"],
-              ['Another Campaign April 03', nil, "#{year_number}-#{month_number}-19T08:00",
-               "#{year_number}-#{month_number}-19T09:00", 'Place 2',
+              ['Another Campaign April 03', nil, "#{year_number}-#{month_number}-#{day_number.to_i+1}T08:00",
+               "#{year_number}-#{month_number}-#{day_number.to_i+1}T09:00", 'Place 2',
                'Place 2, Los Angeles, CA, 67890', 'Los Angeles', 'CA', '67890', 'Active', 'Unsent',
                nil, "http://localhost:5100/events/#{event2.id}"]
             ])
@@ -327,12 +328,12 @@ feature 'Events section' do
               expect(text).to include '2Activeeventstakingplacetodayandinthefuture'
               expect(text).to include 'CampaignFY2012'
               expect(text).to include 'AnotherCampaignApril03'
-              expect(text).to include 'Place1NewYorkCity,NY,12345'
-              expect(text).to include 'Place2LosAngeles,CA,67890'
+              expect(text).to include 'NewYorkCity,NY,12345'
+              expect(text).to include 'LosAngeles,CA,67890'
               expect(text).to include '10:00AM-11:00AM'
               expect(text).to include '8:00AM-9:00AM'
-              expect(text).to match(/#{month_name}18/)
-              expect(text).to match(/#{month_name}19/)
+              expect(text).to match(/#{month_name}#{day_number}/)
+              expect(text).to match(/#{month_name}#{day_number.to_i+1}/)
             end
           end
 
