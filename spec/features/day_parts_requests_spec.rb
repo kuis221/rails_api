@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-feature 'DayParts', js: true do
+feature 'DayParts', js: true, search: true do
   let(:user) { create(:user, company: company, role_id: create(:role).id) }
   let(:company) { create(:company) }
   let(:company_user) { user.company_users.first }
@@ -152,6 +152,70 @@ feature 'DayParts', js: true do
         click_js_link('Remove')
       end
       expect(page).to have_no_content(day_item_text)
+    end
+  end
+
+  feature 'export' do
+    let(:day_part1) { create(:day_part, company: company,
+                              name: 'Morningns', description: 'From 8 to 11am', active: true) }
+    let(:day_part2) { create(:day_part, company: company,
+                              name: 'Afternoons', description: 'From 1 to 6pm', active: true) }
+
+    before do
+      # make sure tasks are created before
+      day_part1
+      day_part2
+      Sunspot.commit
+    end
+
+    scenario 'should be able to export as XLS' do
+      visit day_parts_path
+
+      click_js_link 'Download'
+      click_js_link 'Download as XLS'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        expect(ListExportWorker).to have_queued(ListExport.last.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      expect(ListExport.last).to have_rows([
+        ["NAME", "DESCRIPTION"],
+        ["Afternoons", "From 1 to 6pm"],
+        ["Morningns", "From 8 to 11am"]
+      ])
+    end
+
+    scenario 'should be able to export as PDF' do
+      visit day_parts_path
+
+      click_js_link 'Download'
+      click_js_link 'Download as PDF'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      export = ListExport.last
+      # Test the generated PDF...
+      reader = PDF::Reader.new(open(export.file.url))
+      reader.pages.each do |page|
+        # PDF to text seems to not always return the same results
+        # with white spaces, so, remove them and look for strings
+        # without whitespaces
+        text = page.text.gsub(/[\s\n]/, '')
+        expect(text).to include 'DayParts'
+        expect(text).to include 'Afternoons'
+        expect(text).to include 'From1to6pm'
+        expect(text).to include 'Morningns'
+        expect(text).to include 'From8to11am'
+      end
     end
   end
 end

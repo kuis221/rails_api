@@ -51,6 +51,8 @@ en:
         gva: 'Goals vs. Actual'
         venues: 'Venues'
         tasks: 'Tasks'
+        day_parts: 'Day Parts'
+        date_ranges: 'Date Ranges'
 
   buttons:
     new:

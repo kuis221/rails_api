@@ -68,14 +68,14 @@ class DayPart < ActiveRecord::Base
           facet :status
         end
 
-        order_by(params[:sorting] || :name, params[:sorting_dir] || :desc)
+        order_by(params[:sorting] || :name, params[:sorting_dir] || :asc)
         paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
       end
     end
 
     def report_fields
       {
-        name:       { title: 'Name' }
+        name: { title: 'Name' }
       }
     end
   end
