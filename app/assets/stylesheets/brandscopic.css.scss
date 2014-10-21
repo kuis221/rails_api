@@ -1525,6 +1525,9 @@ footer{
 
 header{
 	&.navbar-inverse {
+    .nav > li > a{
+      text-shadow: none;
+    }
 		.navbar-inner {
 			background-color: $header;
 			padding: 0;
