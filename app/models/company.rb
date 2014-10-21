@@ -14,7 +14,7 @@ class Company < ActiveRecord::Base
   attr_accessor :admin_email
   attr_accessor :no_create_admin
 
-  store_accessor :settings, :event_alerts_policy, :brand_ambassadors_role_ids
+  store_accessor :settings, :event_alerts_policy, :brand_ambassadors_role_ids, :ytd_dates_range
 
   has_many :company_users, dependent: :destroy
   has_many :teams, dependent: :destroy
@@ -56,6 +56,9 @@ class Company < ActiveRecord::Base
 
   after_create :create_admin_role_and_user
 
+  YTD_DEFAULT = 1
+  YTD_JULY1_JUNE30 = 2 # Alternative YTD from July 1 to June 30
+
   def self.current=(company)
     Thread.current[:company] = company
   end
@@ -76,6 +79,10 @@ class Company < ActiveRecord::Base
 
   def brand_ambassadors_role_ids=(roles)
     super roles.reject { |r| r.nil? || r == '' }.join(',')
+  end
+
+  def ytd_dates_range
+    (super || YTD_DEFAULT).to_i
   end
 
   def company_id

@@ -25,7 +25,14 @@ class Api::V1::SessionsController < Api::V1::ApiController
   Validates the user credentials and returns the authentication token if valid.
   EOS
   example <<-EOS
-  POST /api/v1/sessions.json?email=fulano@detal.com&password=MySuperSecretPassword
+  POST /api/v1/sessions.json
+
+  POST DATA: {
+    email: 'fulano@detal.com',
+    password: 'MySuperSecretPassword'
+  }
+
+  RESPONSE:
   {
     sucess: true,
     info: 'Logged in',

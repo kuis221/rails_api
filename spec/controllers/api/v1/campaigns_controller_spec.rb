@@ -4,13 +4,15 @@ describe Api::V1::CampaignsController, type: :controller do
   let(:user) { sign_in_as_user }
   let(:company) { user.company_users.first.company }
 
+  before { set_api_authentication_headers user, company }
+
   describe "GET 'all'"do
     it 'return a list of events' do
       campaign = create(:campaign, company: company, name: 'Cerveza Imperial FY14')
       create(:campaign, company: company, name: 'Cerveza Imperial FY14', aasm_state: 'closed')
       create(:campaign, company: company, name: 'Cerveza Imperial FY14', aasm_state: 'inactive')
 
-      get :all, auth_token: user.authentication_token, company_id: company.to_param, format: :json
+      get :all, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
 
@@ -33,7 +35,7 @@ describe Api::V1::CampaignsController, type: :controller do
       goal.value = 100
       goal.save
 
-      get :overall_stats, auth_token: user.authentication_token, company_id: company.to_param, format: :json
+      get :overall_stats, format: :json
       expect(response).to be_success
       results = JSON.parse(response.body)
 
@@ -52,7 +54,7 @@ describe Api::V1::CampaignsController, type: :controller do
       campaign.areas << area
       create(:goal, parent: campaign, goalable: area, kpi: Kpi.promo_hours, value: 10)
 
-      get :stats, auth_token: user.authentication_token, company_id: company.to_param, id: campaign.to_param, format: :json
+      get :stats, id: campaign.to_param, format: :json
       expect(response).to be_success
       stats = JSON.parse(response.body)
 

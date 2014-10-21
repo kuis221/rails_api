@@ -4,12 +4,14 @@ describe Api::V1::BrandsController, type: :controller do
   let(:user) { sign_in_as_user }
   let(:company) { user.company_users.first.company }
 
+  before { set_api_authentication_headers user, company }
+
   describe '#index' do
     it 'returns a list of brands' do
       brand1 = create(:brand, name: 'Cacique', company_id: company.to_param)
       brand2 = create(:brand, name: 'Nikolai', company_id: company.to_param)
 
-      get 'index', auth_token: user.authentication_token, company_id: company.to_param, format: :json
+      get 'index', format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
 
@@ -24,7 +26,7 @@ describe Api::V1::BrandsController, type: :controller do
       marque1 = create(:marque, name: 'Marque #1 for Cacique', brand: brand)
       marque2 = create(:marque, name: 'Marque #2 for Cacique', brand: brand)
 
-      get 'marques', auth_token: user.authentication_token, company_id: company.to_param, id: brand.to_param, format: :json
+      get 'marques', id: brand.to_param, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
 

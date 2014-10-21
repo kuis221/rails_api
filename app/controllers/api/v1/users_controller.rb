@@ -56,8 +56,6 @@ class Api::V1::UsersController < Api::V1::FilteredController
   end
 
   api :GET, '/api/v1/users', 'Get a list of users for a specific company'
-  param :auth_token, String, required: true
-  param :company_id, :number, required: true
   param :campaign, Array, desc: 'A list of campaign ids. If given, the list will include only users that are assigned to these campaigns'
   param :team, Array, desc: 'A list of team ids. If given, the list will include only users that are members of these teams'
   param :role, Array, desc: 'A list of role ids. If given, the list will include only users with there roles'
@@ -79,7 +77,7 @@ class Api::V1::UsersController < Api::V1::FilteredController
   EOS
   example <<-EOS
     A list of users for company id 1:
-    GET /api/v1/users?auth_token=XXXXXYYYYYZZZZZ&company_id=1
+    GET /api/v1/users
     [
         {
             "id": 268,
@@ -101,7 +99,7 @@ class Api::V1::UsersController < Api::V1::FilteredController
 
   example <<-EOS
     A list of ACTIVE users for company id 1 filtered by roles 1 and 2:
-    GET /api/v1/users?auth_token=XXXXXYYYYYZZZZZ&company_id=1&role[]=1&role[]=2
+    GET /api/v1/users?role[]=1&role[]=2
     [
         {
             "id": 268,
@@ -178,8 +176,6 @@ class Api::V1::UsersController < Api::V1::FilteredController
   end
 
   api :PUT, '/api/v1/users/:id', 'Update a user\'s details'
-  param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
-  param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
   param :id, :number, required: true, desc: 'Company User ID'
   param_group :user
   param :team_ids, Array, required: false, desc: 'Teams that the user belongs'
@@ -188,7 +184,7 @@ class Api::V1::UsersController < Api::V1::FilteredController
   Updates the user's data and returns all the user's updated info.
   EOS
   example <<-EOS
-    PUT /api/v1/users/140?auth_token=XXXXXYYYYYZZZZZ&company_id=1
+    PUT /api/v1/users/140
     DATA:
     {
         company_user: {
@@ -252,9 +248,8 @@ class Api::V1::UsersController < Api::V1::FilteredController
   end
 
   api :GET, '/api/v1/companies', 'Get a list of companies the user has access to'
-  param :auth_token, String, required: true
   example <<-EOS
-    GET /api/v1/companies?auth_token=XXXXXYYYYYZZZZZ
+    GET /api/v1/companies.json
 
     [
         {
@@ -286,8 +281,6 @@ class Api::V1::UsersController < Api::V1::FilteredController
   end
 
   api :GET, '/api/v1/users/notifications', "Get a list of user's notifications"
-  param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
-  param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
 
   description <<-EOS
   Returns a list of notifications for the current user with the following atttibutes:
@@ -315,7 +308,7 @@ class Api::V1::UsersController < Api::V1::FilteredController
   EOS
 
   example <<-EOS
-  GET /api/v1/users/notifications.json?auth_token=XXXXXYYYYYZZZZZ&company_id=1
+  GET /api/v1/users/notifications.json
   [
       {
           "message": "There is one late event recap",
@@ -373,10 +366,8 @@ class Api::V1::UsersController < Api::V1::FilteredController
   end
 
   api :GET, '/api/v1/users/permissions', "Get a list of the user's permissions"
-  param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
-  param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
   example <<-EOS
-    GET /api/v1/users/permissions.json?auth_token=XXXXXYYYYYZZZZZ&company_id=1
+    GET /api/v1/users/permissions.json
 
     ['events', 'events_create', 'venues', 'tasks']
   EOS

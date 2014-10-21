@@ -6,16 +6,9 @@ describe Api::V1::CommentsController, type: :controller do
   let(:campaign) { create(:campaign, company: company, name: 'Test Campaign FY01') }
   let(:place) { create(:place) }
 
-  describe "GET 'index'" do
-    it 'should return failure for invalid authorization token' do
-      get :index, company_id: company.to_param, auth_token: 'XXXXXXXXXXXXXXXX', event_id: 100, format: :json
-      expect(response.response_code).to eq(401)
-      result = JSON.parse(response.body)
-      expect(result['success']).to eq(false)
-      expect(result['info']).to eq('Invalid auth token')
-      expect(result['data']).to be_empty
-    end
+  before { set_api_authentication_headers user, company }
 
+  describe "GET 'index'" do
     it 'returns the list of comments for the event' do
       event = create(:approved_event, company: company, campaign: campaign, place: place)
       comment1 = create(:comment, content: 'Comment #1', commentable: event, created_at: Time.zone.local(2013, 8, 22, 11, 59))
@@ -25,7 +18,7 @@ describe Api::V1::CommentsController, type: :controller do
       event.save
       Sunspot.commit
 
-      get :index, company_id: company.to_param, auth_token: user.authentication_token, event_id: event.to_param, format: :json
+      get :index, event_id: event.to_param, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
       expect(result.count).to eq(2)
@@ -46,7 +39,7 @@ describe Api::V1::CommentsController, type: :controller do
     let(:event) { create(:approved_event, company: company, campaign: campaign, place: place) }
     it 'create a new comment for an existing event' do
       expect do
-        post 'create', auth_token: user.authentication_token, company_id: company.to_param, event_id: event.to_param, comment: { content: 'The very new comment' }, format: :json
+        post 'create', event_id: event.to_param, comment: { content: 'The very new comment' }, format: :json
       end.to change(Comment, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template('show')
@@ -62,8 +55,7 @@ describe Api::V1::CommentsController, type: :controller do
     let(:comment) { create(:comment, commentable: event) }
 
     it 'must update the event attributes' do
-      put 'update', auth_token: user.authentication_token, company_id: company.to_param,
-                    id: comment.to_param, event_id: event.to_param,
+      put 'update', id: comment.to_param, event_id: event.to_param,
                     comment: { content: 'New comment content' }, format: :json
       expect(assigns(:comment)).to eq(comment)
       expect(response).to be_success
@@ -80,8 +72,7 @@ describe Api::V1::CommentsController, type: :controller do
     it 'must update the event attributes' do
       comment.save
       expect do
-        delete 'destroy', auth_token: user.authentication_token, company_id: company.to_param,
-                    id: comment.to_param, event_id: event.to_param, format: :json
+        delete 'destroy', id: comment.to_param, event_id: event.to_param, format: :json
       end.to change(Comment, :count).by(-1)
       expect(response).to be_success
     end

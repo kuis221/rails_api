@@ -7,8 +7,6 @@ class Api::V1::CampaignsController < Api::V1::FilteredController
     error 404, 'Missing'
     error 401, 'Unauthorized access'
     error 500, 'Server crashed for some reason'
-    param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
-    param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
   end
 
   api :GET, '/api/v1/campaigns/all', 'Returns a list of active campaigns. Useful for generating dropdown elements'
@@ -22,7 +20,7 @@ class Api::V1::CampaignsController < Api::V1::FilteredController
   EOS
 
   example <<-EOS
-  GET: /api/v1/campaigns/all.json?auth_token=ehWs_NZ2Uq539tGzWpZ&company_id=1
+  GET: /api/v1/campaigns/all.json
   [
       {
           "id": 14,
@@ -66,7 +64,7 @@ class Api::V1::CampaignsController < Api::V1::FilteredController
   EOS
 
   example <<-EOS
-  GET: /api/v1/campaigns/overall_stats.json?auth_token=ehWs_NZ2Uq539tGzWpZ&company_id=1
+  GET: /api/v1/campaigns/overall_stats.json
   [
     {
         "id": 14,
@@ -164,7 +162,7 @@ class Api::V1::CampaignsController < Api::V1::FilteredController
   EOS
 
   example <<-EOS
-  GET: /api/v1/campaigns/1/stats.json?auth_token=ehWs_NZ2Uq539tGzWpZ&company_id=1
+  GET: /api/v1/campaigns/1/stats.json
   {
     id: 14,
     name: "ABSOLUT BA FY14",
