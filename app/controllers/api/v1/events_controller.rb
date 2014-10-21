@@ -9,8 +9,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
     error 406, 'The server cannot return data in the requested format'
     error 422, 'Unprocessable Entity: The change could not be processed because of errors on the data'
     error 500, 'Server crashed for some reason. Possible because of missing required params or wrong parameters'
-    param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
-    param :company_id, :number, required: true, desc: "One of the allowed company ids returned by the \"User companies\" API method"
     description <<-EOS
 
     EOS
@@ -165,7 +163,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   * *Peope*: Includes users and teams
   EOS
   example <<-EOS
-  GET: /api/v1/events/autocomplete.json?auth_token=XXssU!suwq92-1&company_id=2&q=jam
+  GET: /api/v1/events/autocomplete.json?q=jam
   [
       {
           "label": "Campaigns",
@@ -348,7 +346,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   param :id, :number, required: true, desc: 'Event ID'
   example <<-EOS
   Response when the event was successfully submitted
-  PUT /api/v1/events/123/approve.json?auth_token=XXXXX&company_id=1
+  PUT /api/v1/events/123/approve.json
   {
     success: true
     info: "Event successfully approved"
@@ -358,7 +356,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   example <<-EOS
   Response when trying to submit a event that is already submitted
-  PUT /api/v1/events/123/approve.json?auth_token=XXXXX&company_id=1
+  PUT /api/v1/events/123/approve.json
   {
     success: false
     info: "Event cannot transition to submitted from submitted"
@@ -396,7 +394,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   param :id, :number, required: true, desc: 'Event ID'
   example <<-EOS
   Response when the event was successfully approved
-  PUT /api/v1/events/123/approve.json?auth_token=XXXXX&company_id=1
+  PUT /api/v1/events/123/approve.json
   {
     success: true
     info: "Event successfully approved"
@@ -406,7 +404,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   example <<-EOS
   Response when trying to approve a event that is already approved
-  PUT /api/v1/events/123/approve.json?auth_token=XXXXX&company_id=1
+  PUT /api/v1/events/123/approve.json
   {
     success: false
     info: "Event cannot transition to approved from approved"
@@ -445,7 +443,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   param :reason, String, required: true, desc: 'Rejection reason (required when rejecting a event)'
   example <<-EOS
   Response when the event was successfully rejected
-  PUT /api/v1/events/123/reject.json?auth_token=XXXXX&company_id=1
+  PUT /api/v1/events/123/reject.json
   DATA: {
     reason: 'Please attach some photos of the event'
   }
@@ -460,7 +458,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   example <<-EOS
   Response when trying to reject a event that is already rejected
-  PUT /api/v1/events/123/reject.json?auth_token=XXXXX&company_id=1
+  PUT /api/v1/events/123/reject.json
   DATA: {
     reason: 'Add the invoice for the expenses'
   }
@@ -567,7 +565,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   EOS
   example <<-EOS
     A response with all the different kind of fields
-    GET /api/v1/events/123/results.json?auth_token=AYUjmsdi-jau123&company_id=1
+    GET /api/v1/events/123/results.json
     [
         {
             "module": "demographics",
@@ -1040,7 +1038,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   example <<-EOS
     An example with a event with both, users and teams
-    GET: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    GET: /api/v1/events/8383/members.json
     [
         {
             "id": 22,
@@ -1073,7 +1071,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   example <<-EOS
     An example with a event with only users and no teams
-    GET: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    GET: /api/v1/events/8383/members.json
     [
         {
             "id": 268,
@@ -1094,7 +1092,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   example <<-EOS
     An example requesting only the teams and not the users
-    GET: /api/v1/events/8383/members.json?type=team&auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    GET: /api/v1/events/8383/members.json?type=team
     [
         {
             "id": 22,
@@ -1134,7 +1132,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   example <<-EOS
     An example with a user and a contact in the response
-    GET: /api/v1/events/8383/assignable_members.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    GET: /api/v1/events/8383/assignable_members.json
     [
       {
           "id": 268,
@@ -1170,7 +1168,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   example <<-EOS
     Adding an user to the event members
-    POST: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    POST: /api/v1/events/8383/members.json
     DATA:
     {
       'memberable_id': 1,
@@ -1187,7 +1185,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   example <<-EOS
     Adding a team to the event members
-    POST: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    POST: /api/v1/events/8383/members.json
     DATA:
     {
       'memberable_id': 1,
@@ -1232,7 +1230,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   param :memberable_type, %w(user team), required: true, desc: 'The type of element to be deleted as a member'
   example <<-EOS
     Deleting an user from the event members
-    DELETE: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    DELETE: /api/v1/events/8383/members.json
     DATA:
     {
       'memberable_id': 1,
@@ -1249,7 +1247,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   example <<-EOS
     Deleting a team from the event members
-    DELETE: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    DELETE: /api/v1/events/8383/members.json
     DATA:
     {
       'memberable_id': 1,
@@ -1320,7 +1318,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   example <<-EOS
     An example with a event with one contact
-    GET: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    GET: /api/v1/events/8383/contacts.json
     [
       {
           "id": 268,
@@ -1340,7 +1338,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   EOS
   example <<-EOS
     An example with a event with one contact and one user
-    GET: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    GET: /api/v1/events/8383/contacts.json
     [
       {
           "id": 268,
@@ -1396,7 +1394,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   example <<-EOS
     An example with a user and a contact in the response
-    GET: /api/v1/events/8383/assignable_contacts.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    GET: /api/v1/events/8383/assignable_contacts.json
     [
       {
           "id": 268,
@@ -1414,7 +1412,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   example <<-EOS
     An example with a term search
-    GET: /api/v1/events/8383/assignable_contacts.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1&term=ruiz
+    GET: /api/v1/events/8383/assignable_contacts.json?term=ruiz
     [
       {
           "id": 268,
@@ -1441,7 +1439,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   example <<-EOS
     Adding a user to the event contacts
-    POST: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    POST: /api/v1/events/8383/contacts.json
     DATA:
     {
       'contactable_id': 1,
@@ -1458,7 +1456,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   example <<-EOS
     Adding a contact to the event contacts
-    POST: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    POST: /api/v1/events/8383/contacts.json
     DATA:
     {
       'contactable_id': 1,
@@ -1502,7 +1500,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   param :contactable_type, %w(user contact), required: true, desc: 'The type of element to be deleted as a contact'
   example <<-EOS
     Deleting an user from the event contacts
-    DELETE: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    DELETE: /api/v1/events/8383/contacts.json
     DATA:
     {
       'contactable_id': 1,
@@ -1519,7 +1517,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   example <<-EOS
     Deleting a contact from the event contacts
-    DELETE: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    DELETE: /api/v1/events/8383/contacts.json
     DATA:
     {
       'contactable_id': 1,

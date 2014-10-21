@@ -1,30 +1,34 @@
-|
-  var downloaded#{@export.id} = false;
-  var downloadDialog = bootbox.dialog('#{j render('export')}', [{
-    "label" : "Cancel",
-    "class" : "btn btn-primary",
-    "callback": function() {
-        if (downloadInterval){
-          clearInterval(downloadInterval)
-        }
-        downloadDialog.modal('hide');
-    }
-  }], {'onEscape': false, animate: (!$.fx.off)})
-
-  var downloadInterval = setInterval(function(){
-    $.get('#{export_status_path(@export.id, format: :json)}', function(response){
-      if (response.status == 'completed') {
-        clearInterval(downloadInterval);
-        downloadDialog.modal('hide');
-        if (!downloaded#{@export.id}){
-          downloaded#{@export.id} = true;
-          window.location = response.url;
-        }
-      } else if (response.status == 'failed') {
-        clearInterval(downloadInterval);
-        downloadDialog.modal('hide');
-      } else {
-        $('#export-progress-bar .bar').css({width: response.progress + '%'})
+- if @export_errors.present? && @export_errors.any?
+  |
+    bootbox.alert('#{j @export_errors.first}');
+- else
+  |
+    var downloaded#{@export.id} = false;
+    var downloadDialog = bootbox.dialog('#{j render('inherited_resources/base/export')}', [{
+      "label" : "Cancel",
+      "class" : "btn btn-primary",
+      "callback": function() {
+          if (downloadInterval){
+            clearInterval(downloadInterval)
+          }
+          downloadDialog.modal('hide');
       }
-    })
-  }, 1000)
+    }], {'onEscape': false, animate: (!$.fx.off)})
+
+    var downloadInterval = setInterval(function(){
+      $.get('#{export_status_path(@export.id, format: :json)}', function(response){
+        if (response.status == 'completed') {
+          clearInterval(downloadInterval);
+          downloadDialog.modal('hide');
+          if (!downloaded#{@export.id}){
+            downloaded#{@export.id} = true;
+            window.location = response.url;
+          }
+        } else if (response.status == 'failed') {
+          clearInterval(downloadInterval);
+          downloadDialog.modal('hide');
+        } else {
+          $('#export-progress-bar .bar').css({width: response.progress + '%'})
+        }
+      })
+    }, 1000)

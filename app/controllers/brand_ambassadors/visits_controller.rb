@@ -82,4 +82,8 @@ class BrandAmbassadors::VisitsController < FilteredController
       f.push build_city_bucket
     end
   end
+
+  def list_exportable?
+    params['mode'] == 'calendar' || super
+  end
 end

@@ -1525,6 +1525,9 @@ footer{
 
 header{
 	&.navbar-inverse {
+    .nav > li > a{
+      text-shadow: none;
+    }
 		.navbar-inner {
 			background-color: $header;
 			padding: 0;
@@ -2294,7 +2297,7 @@ li#notifications{
 			width: 0;
 			background-color: $grey_three;
 			height: 0;
-			top: -10px;
+			top: -5px;
 			cursor: default;
 			&.green{
 				background-color: $dark_green;

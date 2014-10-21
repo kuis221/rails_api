@@ -52,9 +52,9 @@
           $('#report-table').reportTableScroller('rebuildHeader');
         }
         $('#report-table').reportTableScroller('adjustHeader');
-        if ($('a.expand-all').hasClass('icon-collapse')) {
+        if ($('a.expand-all').hasClass('icon-expanded')) {
           response.find('tbody tr[data-level]').show()
-          response.find('tbody tr[data-level] .icon-expand').removeClass('icon-expand').addClass('icon-collapse')
+          response.find('tbody tr[data-level] .icon-collapsed').removeClass('icon-collapsed').addClass('icon-expanded')
         }
       },
       'onBeforePageLoad': function(page) {

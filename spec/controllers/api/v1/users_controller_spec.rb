@@ -4,18 +4,12 @@ describe Api::V1::UsersController, type: :controller do
   let(:user) { sign_in_as_user }
   let(:company) { user.company_users.first.company }
 
+  before { set_api_authentication_headers user, company }
+
   describe "GET 'index'", search: true do
     before do
       user.reload  # Make sure the user is created
       Sunspot.commit
-    end
-    it 'should return failure for invalid authorization token' do
-      get :index, company_id: company.id, auth_token: 'XXXXXXXXXXXXXXXX', format: :json
-      expect(response.response_code).to eq(401)
-      result = JSON.parse(response.body)
-      expect(result['success']).to eq(false)
-      expect(result['info']).to eq('Invalid auth token')
-      expect(result['data']).to be_empty
     end
 
     it 'returns an empty list of users' do
@@ -72,7 +66,7 @@ describe Api::V1::UsersController, type: :controller do
   describe "GET 'show'" do
     let(:the_user) { create(:company_user, company_id: company.to_param) }
     it "should return the user's info" do
-      get 'show', auth_token: user.authentication_token, company_id: company.to_param, id: the_user.to_param, format: :json
+      get 'show', id: the_user.to_param, format: :json
       expect(assigns(:user)).to eq(the_user)
 
       expect(response).to be_success
@@ -101,7 +95,7 @@ describe Api::V1::UsersController, type: :controller do
   describe "PUT 'update'" do
     let(:the_user) { create(:company_user, company_id: company.to_param) }
     it 'should update the user profile attributes' do
-      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: the_user.to_param, company_user: { user_attributes: { first_name: 'Updated Name', last_name: 'Updated Last Name' } }, format: :json
+      put 'update', id: the_user.to_param, company_user: { user_attributes: { first_name: 'Updated Name', last_name: 'Updated Last Name' } }, format: :json
       expect(assigns(:user)).to eq(the_user)
 
       expect(response).to be_success
@@ -112,7 +106,7 @@ describe Api::V1::UsersController, type: :controller do
 
     it 'must update the user password' do
       old_password = the_user.user.encrypted_password
-      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: the_user.to_param, company_user: { user_attributes: { password: 'Juanito123', password_confirmation: 'Juanito123' } }, format: :json
+      put 'update', id: the_user.to_param, company_user: { user_attributes: { password: 'Juanito123', password_confirmation: 'Juanito123' } }, format: :json
       expect(assigns(:user)).to eq(the_user)
       expect(response).to be_success
       the_user.reload
@@ -120,7 +114,7 @@ describe Api::V1::UsersController, type: :controller do
     end
 
     it 'user have to enter the phone number, country, state, city, street address and zip code information when editing his profile' do
-      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: the_user.to_param, company_user: { user_attributes: { first_name: 'Juanito', last_name: 'Perez', email: 'test@testing.com', phone_number: '', city: '', state: '', country: '', street_address: '', zip_code: '', password: 'Juanito123', password_confirmation: 'Juanito123' } }, format: :json
+      put 'update', id: the_user.to_param, company_user: { user_attributes: { first_name: 'Juanito', last_name: 'Perez', email: 'test@testing.com', phone_number: '', city: '', state: '', country: '', street_address: '', zip_code: '', password: 'Juanito123', password_confirmation: 'Juanito123' } }, format: :json
       result = JSON.parse(response.body)
       expect(result['user.phone_number']).to eq(["can't be blank"])
       expect(result['user.country']).to eq(["can't be blank"])
@@ -180,15 +174,6 @@ describe Api::V1::UsersController, type: :controller do
   end
 
   describe "GET 'companies'" do
-    it 'should return failure for invalid authorization token' do
-      get 'companies', auth_token: 'XXXXXXXXXXXXXXXX', format: :json
-      expect(response.response_code).to eq(401)
-      result = JSON.parse(response.body)
-      expect(result['success']).to eq(false)
-      expect(result['info']).to eq('Invalid auth token')
-      expect(result['data']).to be_empty
-    end
-
     it 'should return list of companies associated to the current logged in user' do
       company = user.company_users.first.company
       company2 = create(:company)
@@ -205,16 +190,9 @@ describe Api::V1::UsersController, type: :controller do
 
   describe "GET 'notifications'" do
     let(:company) { user.company_users.first.company }
-    it 'should return failure for invalid authorization token' do
-      get 'notifications', auth_token: 'XXXXXXXXXXXXXXXX', company_id: company.id, format: :json
-      expect(response.response_code).to eq(401)
-      result = JSON.parse(response.body)
-      expect(result['success']).to eq(false)
-      expect(result['info']).to eq('Invalid auth token')
-      expect(result['data']).to be_empty
-    end
+
     it 'should return empty list if the user has no notifications' do
-      get 'notifications', auth_token: user.authentication_token, company_id: company.id, format: :json
+      get 'notifications', format: :json
 
       expect(response).to be_success
       notifications = JSON.parse(response.body)
@@ -223,56 +201,53 @@ describe Api::V1::UsersController, type: :controller do
   end
 
   describe "GET 'permissions'" do
-    let(:company) { user.company_users.first.company }
-    it 'should return failure for invalid authorization token' do
-      get 'permissions', auth_token: 'XXXXXXXXXXXXXXXX', company_id: company.id, format: :json
-      expect(response.response_code).to eq(401)
-      result = JSON.parse(response.body)
-      expect(result['success']).to eq(false)
-      expect(result['info']).to eq('Invalid auth token')
-      expect(result['data']).to be_empty
-    end
-
-    it 'should require the company_id param' do
-      company = create(:company)
-      create(:company_user, company: company, user: user, role: create(:role, company: company))
-      expect do
-        get 'permissions', auth_token: user.authentication_token, format: :json
-      end.to raise_exception(Apipie::ParamMissing, 'Missing parameter company_id')
-    end
-
     it 'should return list of permissions for the current user' do
       company = create(:company)
       create(:company_user, company: company, user: user, role: create(:role, company: company))
-      get 'permissions', auth_token: user.authentication_token, company_id: company.id, format: :json
+      get 'permissions', format: :json
       expect(response).to be_success
       permissions = JSON.parse(response.body)
-      expect(permissions).to match_array(%w(events events_add_contacts events_add_team_members events_contacts events_create events_create_documents events_approve events_reject events_submit events_view_unsubmitted_data events_view_submitted_data events_view_approved_data events_view_rejected_data events_edit_approved_data events_edit_rejected_data events_edit_submitted_data events_edit_unsubmitted_data events_create_expenses events_create_photos events_create_surveys events_create_tasks events_deactivate_documents events_deactivate_expenses events_deactivate_photos events_deactivate_surveys events_delete_contacts events_delete_team_members events_documents events_edit_contacts events_edit_expenses events_edit_surveys events_edit_tasks events_expenses events_deactivate events_edit events_photos events_show events_surveys events_tasks events_team_members events_comments events_create_comments events_deactivate_comments events_edit_comments tasks_comments_own tasks_comments_team tasks_create_comments_own tasks_create_comments_team tasks_deactivate_own tasks_deactivate_team tasks_edit_own tasks_edit_team tasks_own tasks_team venues venues_create venues_comments venues_kpis venues_photos venues_score venues_show venues_trends))
+      expect(permissions).to match_array(%w(
+        events events_add_contacts events_add_team_members events_contacts events_create
+        events_create_documents events_approve events_reject events_submit
+        events_view_unsubmitted_data events_view_submitted_data events_view_approved_data
+        events_view_rejected_data events_edit_approved_data events_edit_rejected_data
+        events_edit_submitted_data events_edit_unsubmitted_data events_create_expenses
+        events_create_photos events_create_surveys events_create_tasks events_deactivate_documents
+        events_deactivate_expenses events_deactivate_photos events_deactivate_surveys
+        events_delete_contacts events_delete_team_members events_documents events_edit_contacts
+        events_edit_expenses events_edit_surveys events_edit_tasks events_expenses events_deactivate
+        events_edit events_photos events_show events_surveys events_tasks events_team_members
+        events_comments events_create_comments events_deactivate_comments events_edit_comments
+        tasks_comments_own tasks_comments_team tasks_create_comments_own tasks_create_comments_team
+        tasks_deactivate_own tasks_deactivate_team tasks_edit_own tasks_edit_team tasks_own
+        tasks_team venues venues_create venues_comments venues_kpis venues_photos venues_score
+        venues_show venues_trends))
     end
 
-    it 'should return empty list if the user has no permissions' do
-      role = create(:non_admin_role, company: company)
-      non_admin = create(:user, company_users: [create(:company_user, company: company, role: role)])
+    describe 'as a non admin user' do
+      let(:company) { create(:company) }
+      let(:role) { create(:non_admin_role, company: company) }
+      let(:user) { create(:user, company_users: [create(:company_user, company: company, role: role)]) }
 
-      get 'permissions', auth_token: non_admin.authentication_token, company_id: company.id, format: :json
+      it 'should return empty list if the user has no permissions' do
+        get 'permissions', format: :json
 
-      expect(response).to be_success
-      permissions = JSON.parse(response.body)
-      expect(permissions).to match_array([])
-    end
+        expect(response).to be_success
+        permissions = JSON.parse(response.body)
+        expect(permissions).to match_array([])
+      end
 
-    it "should return only the permissions given to the user's role" do
-      role = create(:non_admin_role, company: company)
-      non_admin = create(:user, company_users: [create(:company_user, company: company, role: role)])
+      it "should return only the permissions given to the user's role" do
+        role.permissions.create(action: :create, subject_class: 'Event')
+        role.permissions.create(action: :view_list, subject_class: 'Event')
 
-      role.permissions.create(action: :create, subject_class: 'Event')
-      role.permissions.create(action: :view_list, subject_class: 'Event')
+        get 'permissions', format: :json
 
-      get 'permissions', auth_token: non_admin.authentication_token, company_id: company.id, format: :json
-
-      expect(response).to be_success
-      permissions = JSON.parse(response.body)
-      expect(permissions).to match_array(%w(events events_create))
+        expect(response).to be_success
+        permissions = JSON.parse(response.body)
+        expect(permissions).to match_array(%w(events events_create))
+      end
     end
   end
 end

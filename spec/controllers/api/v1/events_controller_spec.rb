@@ -4,14 +4,16 @@ describe Api::V1::EventsController, type: :controller do
   let(:user) { sign_in_as_user }
   let(:company) { user.company_users.first.company }
 
+  before { set_api_authentication_headers user, company }
+
   describe "GET 'index'", search: true do
     it 'return a list of events' do
       campaign = create(:campaign, company: company)
       place = create(:place)
-      events = create_list(:event, 3, company: company, campaign: campaign, place: place)
+      create_list(:event, 3, company: company, campaign: campaign, place: place)
       Sunspot.commit
 
-      get :index, auth_token: user.authentication_token, company_id: company.to_param, format: :json
+      get :index, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
 
@@ -24,10 +26,10 @@ describe Api::V1::EventsController, type: :controller do
     it 'sencond page returns empty results' do
       campaign = create(:campaign, company: company)
       place = create(:place)
-      events = create_list(:event, 3, company: company, campaign: campaign, place: place)
+      create_list(:event, 3, company: company, campaign: campaign, place: place)
       Sunspot.commit
 
-      get :index, auth_token: user.authentication_token, company_id: company.to_param, page: 2, format: :json
+      get :index, page: 2, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
 
@@ -41,11 +43,11 @@ describe Api::V1::EventsController, type: :controller do
       campaign = create(:campaign, company: company)
       other_campaign = create(:campaign, company: company)
       place = create(:place)
-      events = create_list(:event, 3, company: company, campaign: campaign, place: place)
-      other_events = create_list(:event, 3, company: company, campaign: other_campaign, place: place)
+      create_list(:event, 3, company: company, campaign: campaign, place: place)
+      create_list(:event, 3, company: company, campaign: other_campaign, place: place)
       Sunspot.commit
 
-      get :index, auth_token: user.authentication_token, company_id: company.to_param, campaign: [campaign.id], format: :json
+      get :index, campaign: [campaign.id], format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
 
@@ -65,18 +67,24 @@ describe Api::V1::EventsController, type: :controller do
 
       Sunspot.commit
 
-      get :index, auth_token: user.authentication_token, company_id: company.to_param, format: :json
+      get :index, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
 
       expect(result['results'].count).to eq(4)
       expect(result['facets'].map { |f| f['label'] }).to match_array(['Campaigns', 'Brands', 'Areas', 'People', 'Active State', 'Event Status'])
 
-      expect(result['facets'].find { |f| f['label'] == 'Event Status' }['items'].map { |i| [i['label'], i['count']] }).to match_array([['Late', 1], ['Due', 1], ['Submitted', 1], ['Rejected', 1], ['Approved', 1]])
+      expect do
+        result['facets'].find { |f| f['label'] == 'Event Status' }['items'].map do |i|
+          [i['label'], i['count']]
+        end
+      end.to match_array([
+        ['Late', 1], ['Due', 1], ['Submitted', 1],
+        ['Rejected', 1], ['Approved', 1]])
     end
 
     it 'should not include the facets when the page is greater than 1' do
-      get :index, auth_token: user.authentication_token, company_id: company.to_param, page: 2, format: :json
+      get :index, page: 2, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
       expect(result['results']).to eq([])
@@ -90,7 +98,7 @@ describe Api::V1::EventsController, type: :controller do
     it "should assign current_user's company_id to the new event" do
       place = create(:place)
       expect do
-        post 'create', auth_token: user.authentication_token, company_id: company.to_param, event: { campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm', place_id: place.id }, format: :json
+        post 'create', event: { campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm', place_id: place.id }, format: :json
       end.to change(Event, :count).by(1)
       expect(assigns(:event).company_id).to eq(company.id)
     end
@@ -98,7 +106,7 @@ describe Api::V1::EventsController, type: :controller do
     it 'should create the event with the correct dates' do
       place = create(:place)
       expect do
-        post 'create', auth_token: user.authentication_token, company_id: company.to_param, event: { campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/21/2020', end_time: '01:00pm', place_id: place.id }, format: :json
+        post 'create', event: { campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/21/2020', end_time: '01:00pm', place_id: place.id }, format: :json
       end.to change(Event, :count).by(1)
       event = Event.last
       expect(event.campaign_id).to eq(campaign.id)
@@ -115,7 +123,7 @@ describe Api::V1::EventsController, type: :controller do
     it 'must update the event attributes' do
       new_campaign = create(:campaign, company: company)
       place = create(:place)
-      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, event: {
+      put 'update', id: event.to_param, event: {
         campaign_id: new_campaign.id,
         start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm',
         place_id: place.id, description: 'this is the test description'
@@ -132,7 +140,7 @@ describe Api::V1::EventsController, type: :controller do
     end
 
     it 'must deactivate the event' do
-      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, event: { active: 'false' }, format: :json
+      put 'update', id: event.to_param, event: { active: 'false' }, format: :json
       expect(assigns(:event)).to eq(event)
       expect(response).to be_success
       event.reload
@@ -141,7 +149,7 @@ describe Api::V1::EventsController, type: :controller do
 
     it 'must update the event attributes' do
       place = create(:place)
-      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, partial: 'event_data', event: { campaign_id: create(:campaign, company: company).to_param, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm', place_id: place.id }, format: :json
+      put 'update', id: event.to_param, partial: 'event_data', event: { campaign_id: create(:campaign, company: company).to_param, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm', place_id: place.id }, format: :json
       expect(assigns(:event)).to eq(event)
       expect(response).to be_success
     end
@@ -153,7 +161,7 @@ describe Api::V1::EventsController, type: :controller do
       result.value = 321
       event.save
 
-      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, event: { results_attributes: [{ id: result.id.to_s, value: '987' }] }, format: :json
+      put 'update', id: event.to_param, event: { results_attributes: [{ id: result.id.to_s, value: '987' }] }, format: :json
       result.reload
       expect(result.value).to eq('987')
     end
@@ -163,7 +171,7 @@ describe Api::V1::EventsController, type: :controller do
     it 'should submit event' do
       event = create(:event, active: true, company: company)
       expect do
-        put 'submit', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+        put 'submit', id: event.to_param, format: :json
         expect(response).to be_success
         event.reload
       end.to change(event, :submitted?).to(true)
@@ -174,7 +182,7 @@ describe Api::V1::EventsController, type: :controller do
       field = create(:form_field_number, fieldable: campaign, kpi: create(:kpi, company_id: 1), required: true)
       event = create(:event, active: true, company: company, campaign: campaign)
       expect do
-        put 'submit', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+        put 'submit', id: event.to_param, format: :json
         expect(response.response_code).to eq(422)
         event.reload
       end.to_not change(event, :submitted?)
@@ -185,7 +193,7 @@ describe Api::V1::EventsController, type: :controller do
     it 'should approve event' do
       event = create(:submitted_event, active: true, company: company)
       expect do
-        put 'approve', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+        put 'approve', id: event.to_param, format: :json
         expect(response).to be_success
         event.reload
       end.to change(event, :approved?).to(true)
@@ -196,7 +204,7 @@ describe Api::V1::EventsController, type: :controller do
     it 'should reject event' do
       event = create(:submitted_event, active: true, company: company)
       expect do
-        put 'reject', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, reason: 'blah blah blah', format: :json
+        put 'reject', id: event.to_param, reason: 'blah blah blah', format: :json
         expect(response).to be_success
         event.reload
       end.to change(event, :rejected?).to(true)
@@ -209,7 +217,7 @@ describe Api::V1::EventsController, type: :controller do
     let(:event) { create(:event, company: company, campaign: campaign) }
 
     it "should return an empty array if the campaign doesn't have any fields" do
-      get 'results', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+      get 'results', id: event.to_param, format: :json
       fields = JSON.parse(response.body)
       expect(response).to be_success
       expect(fields).to eq([])
@@ -221,7 +229,7 @@ describe Api::V1::EventsController, type: :controller do
       result = event.result_for_kpi(kpi)
       result.value = 321
       event.save
-      get 'results', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+      get 'results', id: event.to_param, format: :json
 
       groups = JSON.parse(response.body)
       expect(response).to be_success
@@ -246,7 +254,7 @@ describe Api::V1::EventsController, type: :controller do
       result.value = segments.first.id
       event.save
 
-      get 'results', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+      get 'results', id: event.to_param, format: :json
       groups = JSON.parse(response.body)
       expect(groups.first['fields'].first).to include(
           'id' => result.id,
@@ -272,7 +280,7 @@ describe Api::V1::EventsController, type: :controller do
       result = event.result_for_kpi(kpi)
       event.save
 
-      get 'results', auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+      get 'results', id: event.to_param, format: :json
       groups = JSON.parse(response.body)
       expect(groups.first['fields'].first).to include(
           'name' => 'Age',
@@ -297,7 +305,7 @@ describe Api::V1::EventsController, type: :controller do
       ]
       event.users << users
 
-      get :members, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+      get :members, id: event.to_param, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
       log_company_user = user.company_users.first
@@ -316,7 +324,7 @@ describe Api::V1::EventsController, type: :controller do
       company_user = user.company_users.first
       event.teams << teams
       event.users << company_user
-      get :members, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+      get :members, id: event.to_param, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
       company_user = user.company_users.first
@@ -345,7 +353,7 @@ describe Api::V1::EventsController, type: :controller do
       it 'return a mixed list of users and teams' do
         company_user = user.company_users.first
         event.users << company_user
-        get :members, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+        get :members, id: event.to_param, format: :json
         expect(response).to be_success
         result = JSON.parse(response.body)
         expect(result).to match_array([
@@ -360,7 +368,7 @@ describe Api::V1::EventsController, type: :controller do
       it 'returns only the users' do
         company_user = user.company_users.first
         event.users << company_user
-        get :members, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, type: 'user', format: :json
+        get :members, id: event.to_param, type: 'user', format: :json
         expect(response).to be_success
         result = JSON.parse(response.body)
         expect(result).to match_array([
@@ -371,7 +379,7 @@ describe Api::V1::EventsController, type: :controller do
       end
 
       it 'returns only the team' do
-        get :members, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, type: 'team', format: :json
+        get :members, id: event.to_param, type: 'team', format: :json
         expect(response).to be_success
         result = JSON.parse(response.body)
 
@@ -393,7 +401,7 @@ describe Api::V1::EventsController, type: :controller do
       create(:contact_event, event: event, contactable: contacts.first)
       create(:contact_event, event: event, contactable: contacts.last)
 
-      get :contacts, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+      get :contacts, id: event.to_param, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
 
@@ -407,7 +415,7 @@ describe Api::V1::EventsController, type: :controller do
       company_user = user.company_users.first
       create(:contact_event, event: event, contactable: company_user)
 
-      get :contacts, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+      get :contacts, id: event.to_param, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
 
@@ -427,7 +435,7 @@ describe Api::V1::EventsController, type: :controller do
 
       event.users << user.company_users.first
 
-      get :assignable_members, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+      get :assignable_members, id: event.to_param, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
 
@@ -446,7 +454,7 @@ describe Api::V1::EventsController, type: :controller do
       company_user = user.company_users.first
       teams.each { |t| t.users << company_user }
 
-      get :assignable_members, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+      get :assignable_members, id: event.to_param, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
 
@@ -465,7 +473,7 @@ describe Api::V1::EventsController, type: :controller do
     it "should add a team to the event's team" do
       team = create(:team, company: company)
       expect do
-        post :add_member, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, memberable_id: team.id, memberable_type: 'team', format: :json
+        post :add_member, id: event.to_param, memberable_id: team.id, memberable_type: 'team', format: :json
       end.to change(Teaming, :count).by(1)
       expect(event.teams).to eq([team])
 
@@ -477,7 +485,7 @@ describe Api::V1::EventsController, type: :controller do
     it "should add a user to the event's team" do
       company_user = create(:company_user, company_id: company.to_param)
       expect do
-        post :add_member, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, memberable_id: company_user.id, memberable_type: 'user', format: :json
+        post :add_member, id: event.to_param, memberable_id: company_user.id, memberable_type: 'user', format: :json
       end.to change(Membership, :count).by(1)
       expect(event.users).to match_array([company_user])
 
@@ -497,7 +505,7 @@ describe Api::V1::EventsController, type: :controller do
       event.teams << another_member
 
       expect do
-        delete :delete_member, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, memberable_id: member_to_delete.id, memberable_type: 'user', format: :json
+        delete :delete_member, id: event.to_param, memberable_id: member_to_delete.id, memberable_type: 'user', format: :json
       end.to change(Membership, :count).by(-1)
       event.reload
       expect(event.users).to be_empty
@@ -516,7 +524,7 @@ describe Api::V1::EventsController, type: :controller do
       event.teams << member_to_delete
 
       expect do
-        delete :delete_member, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, memberable_id: member_to_delete.id, memberable_type: 'team', format: :json
+        delete :delete_member, id: event.to_param, memberable_id: member_to_delete.id, memberable_type: 'team', format: :json
       end.to change(Teaming, :count).by(-1)
       event.reload
       expect(event.users).to match_array([another_member])
@@ -532,7 +540,7 @@ describe Api::V1::EventsController, type: :controller do
       member = create(:company_user, user: create(:user, first_name: 'Test', last_name: 'User', email: 'pedro@gmail.com', street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12_345), role: create(:role, name: 'Coach', company: company), company: company)
 
       expect do
-        delete :delete_member, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, memberable_id: member.id, memberable_type: 'user', format: :json
+        delete :delete_member, id: event.to_param, memberable_id: member.id, memberable_type: 'user', format: :json
       end.to_not change(Membership, :count)
       event.reload
       expect(event.users).to eq([])
@@ -559,7 +567,7 @@ describe Api::V1::EventsController, type: :controller do
 
       Sunspot.commit
 
-      get :assignable_contacts, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+      get :assignable_contacts, id: event.to_param, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
 
@@ -577,7 +585,7 @@ describe Api::V1::EventsController, type: :controller do
       company_user = user.company_users.first
       Sunspot.commit
 
-      get :assignable_contacts, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, format: :json
+      get :assignable_contacts, id: event.to_param, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
 
@@ -596,7 +604,7 @@ describe Api::V1::EventsController, type: :controller do
       company_user = user.company_users.first
       Sunspot.commit
 
-      get :assignable_contacts, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, term: 'luis', format: :json
+      get :assignable_contacts, id: event.to_param, term: 'luis', format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
 
@@ -612,7 +620,7 @@ describe Api::V1::EventsController, type: :controller do
     it 'should add a contact to the event as a contact' do
       contact = create(:contact, first_name: 'Luis', last_name: 'Perez', email: 'luis@gmail.com', street1: 'ABC', street2: '1', zip_code: 12_345, title: 'Field Ambassador', company: company)
       expect do
-        post :add_contact, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, contactable_id: contact.id, contactable_type: 'contact', format: :json
+        post :add_contact, id: event.to_param, contactable_id: contact.id, contactable_type: 'contact', format: :json
       end.to change(ContactEvent, :count).by(1)
       expect(event.contacts).to eq([contact])
 
@@ -624,7 +632,7 @@ describe Api::V1::EventsController, type: :controller do
     it 'should add a user to the event as a contact' do
       company_user = user.company_users.first
       expect do
-        post :add_contact, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, contactable_id: company_user.id, contactable_type: 'user', format: :json
+        post :add_contact, id: event.to_param, contactable_id: company_user.id, contactable_type: 'user', format: :json
       end.to change(ContactEvent, :count).by(1)
       expect(event.contacts).to eq([company_user])
 
@@ -644,7 +652,7 @@ describe Api::V1::EventsController, type: :controller do
       create(:contact_event, event: event, contactable: another_contact)
 
       expect do
-        delete :delete_contact, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, contactable_id: contact_to_delete.id, contactable_type: 'user', format: :json
+        delete :delete_contact, id: event.to_param, contactable_id: contact_to_delete.id, contactable_type: 'user', format: :json
       end.to change(ContactEvent, :count).by(-1)
       expect(event.contacts).to eq([another_contact])
 
@@ -661,7 +669,7 @@ describe Api::V1::EventsController, type: :controller do
       create(:contact_event, event: event, contactable: another_contact)
 
       expect do
-        delete :delete_contact, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, contactable_id: contact_to_delete.id, contactable_type: 'contact', format: :json
+        delete :delete_contact, id: event.to_param, contactable_id: contact_to_delete.id, contactable_type: 'contact', format: :json
       end.to change(ContactEvent, :count).by(-1)
       expect(event.contacts).to eq([another_contact])
 
@@ -675,7 +683,7 @@ describe Api::V1::EventsController, type: :controller do
       contact = create(:contact, first_name: 'Luis', last_name: 'Perez', email: 'luis@gmail.com', street1: 'ABC', street2: '1', zip_code: 12_345, title: 'Field Ambassador', company: company)
 
       expect do
-        delete :delete_contact, auth_token: user.authentication_token, company_id: company.to_param, id: event.to_param, contactable_id: contact.id, contactable_type: 'contact', format: :json
+        delete :delete_contact, id: event.to_param, contactable_id: contact.id, contactable_type: 'contact', format: :json
       end.to change(ContactEvent, :count).by(0)
 
       expect(event.contacts).to eq([])
@@ -690,7 +698,7 @@ describe Api::V1::EventsController, type: :controller do
   describe "GET 'autocomplete'", search: true do
     it 'should return the correct buckets in the right order' do
       Sunspot.commit
-      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: '', format: :json
+      get 'autocomplete', q: '', format: :json
       expect(response).to be_success
 
       buckets = JSON.parse(response.body)
@@ -702,7 +710,7 @@ describe Api::V1::EventsController, type: :controller do
       company_user = user.company_users.first
       Sunspot.commit
 
-      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'gu', format: :json
+      get 'autocomplete', q: 'gu', format: :json
       expect(response).to be_success
 
       buckets = JSON.parse(response.body)
@@ -714,7 +722,7 @@ describe Api::V1::EventsController, type: :controller do
       team = create(:team, name: 'Spurs', company_id: company.id)
       Sunspot.commit
 
-      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'sp', format: :json
+      get 'autocomplete', q: 'sp', format: :json
       expect(response).to be_success
 
       buckets = JSON.parse(response.body)
@@ -728,7 +736,7 @@ describe Api::V1::EventsController, type: :controller do
       company_user = user.company_users.first
       Sunspot.commit
 
-      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'va', format: :json
+      get 'autocomplete', q: 'va', format: :json
       expect(response).to be_success
 
       buckets = JSON.parse(response.body)
@@ -740,7 +748,7 @@ describe Api::V1::EventsController, type: :controller do
       campaign = create(:campaign, name: 'Cacique para todos', company_id: company.id)
       Sunspot.commit
 
-      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'cac', format: :json
+      get 'autocomplete', q: 'cac', format: :json
       expect(response).to be_success
 
       buckets = JSON.parse(response.body)
@@ -752,7 +760,7 @@ describe Api::V1::EventsController, type: :controller do
       brand = create(:brand, name: 'Cacique', company_id: company.to_param)
       Sunspot.commit
 
-      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'cac', format: :json
+      get 'autocomplete', q: 'cac', format: :json
       expect(response).to be_success
 
       buckets = JSON.parse(response.body)
@@ -765,7 +773,7 @@ describe Api::V1::EventsController, type: :controller do
       venue = create(:venue, company_id: company.id, place: create(:place, name: 'Motel Paraiso'))
       Sunspot.commit
 
-      get 'autocomplete', auth_token: user.authentication_token, company_id: company.to_param, q: 'mot', format: :json
+      get 'autocomplete', q: 'mot', format: :json
       expect(response).to be_success
 
       buckets = JSON.parse(response.body)

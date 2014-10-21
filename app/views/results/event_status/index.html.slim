@@ -19,6 +19,18 @@
           = f.input :campaign_id, collection: campaigns_list_for_dropdown, selected: params[:campaign_id], include_blank: '', required: false, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Select a campaign" } }
           = f.input :group_by, label: 'GROUP BY:', required: false, checked: report_group_by, label_html: {id: '#group-by-title'}, wrapper: :btn_group, as: :radio_buttons, collection: [['Campaign', 'campaign'],['Place', 'place'],['Staff', 'staff']], wrapper_html: { id: 'group-by-criterion' }, item_wrapper_class: 'btn'
 
+        .export-xls.pull-right
+          .dropdown.btn-download
+            a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+              i.icon-download
+              i.icon-arrow-down
+            ul#download-status-btn.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+              li
+                a href="#" role="menuitem" data-url="#{results_event_status_path(format: :xls)}"
+                  | Download as XLS
+              li
+                a href="#" role="menuitem" data-url="#{results_event_status_path(format: :pdf)}"
+                  | Download as PDF
 
   #report-container
     #kpis-trends-module
@@ -43,3 +55,11 @@ javascript:
       $('#report_campaign_id').change()
     })
   })
+
+  $('#download-status-btn a').on('click', function(e){
+    var groupBy = $('input:radio[name="report[group_by]"]:checked').val();
+    if ($('#report_campaign_id').val()) {
+      $.get($(this).data('url') + '?report[campaign_id]='+$('#report_campaign_id').val()+'&report[group_by]='+groupBy);
+    }
+    return false;
+  });

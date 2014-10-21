@@ -135,6 +135,21 @@ feature 'Brand Ambassadors Visits' do
         expect(text).to match(/#{month_name}23/)
       end
     end
+
+    scenario 'should not be able to export as PDF for documents with more than 200 pages' do
+      allow(BrandAmbassadors::Visit).to receive(:do_search).and_return(double(total: 3000))
+
+      visit brand_ambassadors_root_path
+
+      click_js_link 'Download'
+      click_js_link 'Download as PDF'
+
+      within visible_modal do
+        expect(page).to have_content('PDF exports are limited to 200 pages. Please narrow your results and try exporting again.')
+        click_js_link 'OK'
+      end
+      ensure_modal_was_closed
+    end
   end
 
   shared_examples_for 'a user that can filter the list of visits' do

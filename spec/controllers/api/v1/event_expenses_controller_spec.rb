@@ -6,16 +6,9 @@ describe Api::V1::EventExpensesController, type: :controller do
   let(:campaign) { create(:campaign, company: company, name: 'Test Campaign FY01', modules: { 'expenses' => {} }) }
   let(:place) { create(:place) }
 
-  describe "GET 'index'" do
-    it 'should return failure for invalid authorization token' do
-      get :index, company_id: company.to_param, auth_token: 'XXXXXXXXXXXXXXXX', event_id: 100, format: :json
-      expect(response.response_code).to eq(401)
-      result = JSON.parse(response.body)
-      expect(result['success']).to eq(false)
-      expect(result['info']).to eq('Invalid auth token')
-      expect(result['data']).to be_empty
-    end
+  before { set_api_authentication_headers user, company }
 
+  describe "GET 'index'" do
     it 'returns the list of expenses for the event' do
       event = create(:approved_event, company: company, campaign: campaign, place: place)
       receipt1 = build(:attached_asset, created_at: Time.zone.local(2013, 8, 22, 11, 59))
@@ -23,7 +16,7 @@ describe Api::V1::EventExpensesController, type: :controller do
       expense2 = create(:event_expense, amount: 159.15, name: 'Expense #2', event: event)
       Sunspot.commit
 
-      get :index, company_id: company.to_param, auth_token: user.authentication_token, event_id: event.to_param, format: :json
+      get :index, event_id: event.to_param, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
       expect(result.count).to eq(2)
@@ -64,7 +57,7 @@ describe Api::V1::EventExpensesController, type: :controller do
                                     }))
       expect_any_instance_of(Paperclip::Attachment).to receive(:path).at_least(:once).and_return('/attached_assets/original/test.jpg')
       expect do
-        post 'create', auth_token: user.authentication_token, company_id: company.to_param, event_id: event.to_param, event_expense: { name: 'Expense #1', amount: '350', receipt_attributes: { direct_upload_url: 'https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg' } }, format: :json
+        post 'create', event_id: event.to_param, event_expense: { name: 'Expense #1', amount: '350', receipt_attributes: { direct_upload_url: 'https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg' } }, format: :json
       end.to change(AttachedAsset, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template('show')
@@ -83,7 +76,7 @@ describe Api::V1::EventExpensesController, type: :controller do
       event = create(:approved_event, company: company, campaign: campaign, place: place)
       Sunspot.commit
 
-      get :form, company_id: company.to_param, auth_token: user.authentication_token, event_id: event.to_param, format: :json
+      get :form, event_id: event.to_param, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
       expect(result.keys).to match_array(%w(fields url))

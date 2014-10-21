@@ -23,32 +23,34 @@ $.widget 'nmk.reportTableScroller',
 		@scroller.css marginTop: @header.find('thead').outerHeight()
 
 		@element.on 'click', '.report-collapse-button', (e) =>
-			$(e.target).toggleClass('icon-expand').toggleClass('icon-collapse')
-			collapsed = $(e.target).hasClass('icon-expand')
+			$(e.target).toggleClass('icon-arrow-down').toggleClass('icon-arrow-up')
+			collapsed = $(e.target).hasClass('icon-arrow-up')
 			row = $(e.target).closest('tr')
 			level = row.data('level')
 			next = row.next('tr')
 			while next.data('level') > level
 				if collapsed
-					next.hide().find('.icon-collapse').removeClass('icon-collapse').addClass('icon-expand')
+					next.hide().find('.icon-arrow-down').removeClass('icon-arrow-down').addClass('icon-arrow-up')
 				else if next.data('level') == level+1  # Only show/hide the inmediate children elements
 					next.show()
 				next = next.next('tr')
 			@adjustHeader()
+			@resetScroller()
 			false
 
 		@header.find('.expand-all').tooltip('destroy').tooltip container: '#report-container'
 		@header.on 'click', '.expand-all', (e) =>
-			$(e.target).toggleClass('icon-expand').toggleClass('icon-collapse')
-			if $(e.target).hasClass('icon-collapse') # Expand all
+			$(e.target).toggleClass('icon-arrow-down').toggleClass('icon-arrow-up')
+			if $(e.target).hasClass('icon-arrow-down') # Expand all
 				$(e.target).attr('title', 'Collapse All').tooltip('destroy').tooltip container: 'body'
 				@element.find('tbody tr[data-level]').show()
-				@element.find('tbody tr[data-level] .icon-expand').removeClass('icon-expand').addClass('icon-collapse')
+				@element.find('tbody tr[data-level] .icon-arrow-up').removeClass('icon-arrow-up').addClass('icon-arrow-down')
 			else
 				$(e.target).attr('title', 'Expand All').tooltip('destroy').tooltip container: 'body'
 				@element.find('tbody tr[data-level!=0]').hide()
-				@element.find('tbody tr[data-level] .icon-collapse').removeClass('icon-collapse').addClass('icon-expand')
+				@element.find('tbody tr[data-level] .icon-arrow-down').removeClass('icon-arrow-down').addClass('icon-arrow-up')
 			@adjustHeader()
+			@resetScroller()
 			false
 
 

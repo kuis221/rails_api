@@ -39,7 +39,7 @@
       = active_inactive_buttons(resource) if can?(:deactivate, resource)
 
   #visit-events.details_box
-    h3 EVENTS
+    h3.module-title EVENTS
     - if can?(:create, Event)
       = button_to 'Create', new_brand_ambassadors_visit_event_path(resource), remote: true, class: 'btn btn-primary', :id => 'new-event-btn', method: :get
 

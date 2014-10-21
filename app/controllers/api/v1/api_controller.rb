@@ -29,15 +29,21 @@ class Api::V1::ApiController < ActionController::Base
   end
 
   def current_company_user
-    @current_company_user ||= current_user.company_users.where(company_id: params[:company_id]).first if current_user.present?
-    fail Api::V1::InvalidCompany.new(params[:company_id]) if @current_company_user.nil? || !@current_company_user.active?
+    @current_company_user ||= current_user.company_users.where(company_id: current_company_id).first if current_user.present?
+    fail Api::V1::InvalidCompany.new(current_company_id) if @current_company_user.nil? || !@current_company_user.active?
 
     @current_company_user
   end
 
   def current_user
-    return if params[:auth_token].nil? || params[:auth_token].strip == ''
-    @current_user ||= User.find_by_authentication_token(params[:auth_token]) or fail Api::V1::InvalidAuthToken.new(params[:auth_token]), 'invalid token'
+    token = request.headers['X-Auth-Token']
+    email = request.headers['X-User-Email']
+    return if token.nil? || token.strip == ''
+    @current_user ||= User.where(email: email).find_by_authentication_token(token) or fail Api::V1::InvalidAuthToken.new(token), 'invalid token'
+  end
+
+  def current_company_id
+    request.headers['X-Company-Id']
   end
 
   def invalid_token
@@ -93,7 +99,7 @@ class Api::V1::ApiController < ActionController::Base
 
   def set_user
     User.current = current_user
-    User.current.current_company = current_company if params.key?(:company_id)
+    User.current.current_company = current_company if current_company_id
   end
 
   def set_access_control_headers
@@ -121,7 +127,7 @@ class Api::V1::ApiController < ActionController::Base
       headers['Access-Control-Allow-Origin'] = '*'
     end
     headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD'
-    headers['Access-Control-Allow-Headers'] = '*,x-requested-with,Content-Type,If-Modified-Since,If-None-Match'
+    headers['Access-Control-Allow-Headers'] = '*,x-requested-with,Content-Type,If-Modified-Since,If-None-Match,X-Auth-Token,X-User-Email,X-Company-Id'
     headers['Access-Control-Max-Age'] = '86400'
     render text: '', content_type: 'text/plain'
   end

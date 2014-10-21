@@ -4,44 +4,38 @@ describe Api::V1::ContactsController, type: :controller do
   let(:user) { sign_in_as_user }
   let(:company) { user.company_users.first.company }
   let(:contact) { create(:contact, company: company) }
-  describe "GET 'index'" do
-    it 'should return failure for invalid authorization token' do
-      get :index, company_id: company.id, auth_token: 'XXXXXXXXXXXXXXXX', format: :json
-      expect(response.response_code).to eq(401)
-      result = JSON.parse(response.body)
-      expect(result['success']).to eq(false)
-      expect(result['info']).to eq('Invalid auth token')
-      expect(result['data']).to be_empty
-    end
 
+  before { set_api_authentication_headers user, company }
+
+  describe "GET 'index'" do
     it 'returns the current user in the results' do
       contact.reload
-      get :index, company_id: company.id, auth_token: user.authentication_token, format: :json
+      get :index, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
       expect(result).to eq([{
-                             'id' => contact.id,
-                             'first_name' => contact.first_name,
-                             'last_name' => contact.last_name,
-                             'full_name' => contact.full_name,
-                             'title' => contact.title,
-                             'email' => contact.email,
-                             'phone_number' => contact.phone_number,
-                             'street1' => contact.street1,
-                             'street2' => contact.street2,
-                             'phone_number' => contact.phone_number,
-                             'street_address' => contact.street_address,
-                             'city' => contact.city,
-                             'state' => contact.state,
-                             'zip_code' => contact.zip_code,
-                             'country' => contact.country,
-                             'country_name' => contact.country_name }])
+        'id' => contact.id,
+        'first_name' => contact.first_name,
+        'last_name' => contact.last_name,
+        'full_name' => contact.full_name,
+        'title' => contact.title,
+        'email' => contact.email,
+        'phone_number' => contact.phone_number,
+        'street1' => contact.street1,
+        'street2' => contact.street2,
+        'phone_number' => contact.phone_number,
+        'street_address' => contact.street_address,
+        'city' => contact.city,
+        'state' => contact.state,
+        'zip_code' => contact.zip_code,
+        'country' => contact.country,
+        'country_name' => contact.country_name }])
     end
   end
 
   describe "GET 'show'" do
     it 'should return the contact details' do
-      get 'show', id: contact.id, company_id: company.id, auth_token: user.authentication_token, format: :json
+      get 'show', id: contact.id, format: :json
       expect(response).to render_template('show')
       result = JSON.parse(response.body)
       expect(result['id']).to eql contact.id
@@ -49,7 +43,7 @@ describe Api::V1::ContactsController, type: :controller do
     end
 
     it "should return 404 if the contact doesn't exists" do
-      get 'show', id: 999, company_id: company.id, auth_token: user.authentication_token, format: :json
+      get 'show', id: 999, format: :json
       expect(response.code).to eql '404'
       expect(response).to_not render_template('show')
     end
@@ -58,7 +52,7 @@ describe Api::V1::ContactsController, type: :controller do
   describe '#create' do
     it 'should create a new contact' do
       expect do
-        post :create, company_id: company.id, auth_token: user.authentication_token, contact: {
+        post :create, contact: {
           first_name: 'Juanito',
           last_name: 'Bazooka',
           title: 'Prueba',
@@ -91,7 +85,7 @@ describe Api::V1::ContactsController, type: :controller do
 
     it 'should create a new contact with only the resquired fields' do
       expect do
-        post :create, company_id: company.id, auth_token: user.authentication_token, contact: {
+        post :create, contact: {
           first_name: 'Juanito',
           last_name: 'Bazooka',
           city: 'Miami',
@@ -118,7 +112,7 @@ describe Api::V1::ContactsController, type: :controller do
 
     it 'should validate required fields' do
       expect do
-        post :create, company_id: company.id, auth_token: user.authentication_token, contact: {
+        post :create, contact: {
         }, format: :json
         expect(response).to be_success
       end.to raise_error(Apipie::ParamMissing)
@@ -127,7 +121,7 @@ describe Api::V1::ContactsController, type: :controller do
 
     it 'should return code 422 if date/country is not valid' do
       expect do
-        post :create, company_id: company.id, auth_token: user.authentication_token, contact: {
+        post :create, contact: {
           first_name: 'Juanito',
           last_name: 'Bazooka',
           city: 'Miami',
@@ -143,8 +137,10 @@ describe Api::V1::ContactsController, type: :controller do
   describe "PUT 'update'" do
     let(:contact) { create(:contact, company: company) }
     it 'must update the event attributes' do
-      place = create(:place)
-      put 'update', auth_token: user.authentication_token, company_id: company.to_param, id: contact.to_param, contact: { first_name: 'Updated Name', last_name: 'Updated Last Name' }, format: :json
+      put 'update', id: contact.to_param, contact: {
+        first_name: 'Updated Name',
+        last_name: 'Updated Last Name'
+      }, format: :json
       expect(assigns(:contact)).to eq(contact)
       expect(response).to be_success
 
