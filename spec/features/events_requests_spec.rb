@@ -326,13 +326,28 @@ feature 'Events section' do
               expect(text).to include '2Activeeventstakingplacetodayandinthefuture'
               expect(text).to include 'CampaignFY2012'
               expect(text).to include 'AnotherCampaignApril03'
-              expect(text).to include 'Place1NewYorkCity,NY,12345'
-              expect(text).to include 'Place2LosAngeles,CA,67890'
+              expect(text).to include 'NewYorkCity,NY,12345'
+              expect(text).to include 'LosAngeles,CA,67890'
               expect(text).to include '10:00AM-11:00AM'
               expect(text).to include '8:00AM-9:00AM'
               expect(text).to match(/#{month_name}#{today.strftime('%d')}/)
               expect(text).to match(/#{month_name}#{(today + 1.day).strftime('%d')}/)
             end
+          end
+
+          scenario 'should be able to export as PDF' do
+            allow(Event).to receive(:do_search).and_return(double(total: 3000))
+
+            visit events_path
+
+            click_js_link 'Download'
+            click_js_link 'Download as PDF'
+
+            within visible_modal do
+              expect(page).to have_content('PDF exports are limited to 200 pages. Please narrow your results and try exporting again.')
+              click_js_link 'OK'
+            end
+            ensure_modal_was_closed
           end
         end
 
