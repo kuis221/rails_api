@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-feature 'Activity Types', js: true do
+feature 'Activity Types', search: true, js: true do
   before do
     Warden.test_mode!
     @user = create(:user, company_id: create(:company).id, role_id: create(:role).id)
@@ -128,6 +128,70 @@ feature 'Activity Types', js: true do
 
       expect(page).to have_selector('h2', text: 'Drink feature')
       expect(page).to have_selector('div.description-data', text: 'A description for drink feature type')
+    end
+  end
+
+  feature 'export' do
+    let(:activity_type1) { create(:activity_type, company: @company, name: 'Activity Type 1',
+                                  description: 'First description', active: true) }
+    let(:activity_type2) { create(:activity_type, company: @company, name: 'Activity Type 2',
+                                  description: 'Second description', active: true) }
+
+    before do
+      # make sure activity types are created before
+      activity_type1
+      activity_type2
+      Sunspot.commit
+    end
+
+    scenario 'should be able to export as XLS' do
+      visit activity_types_path
+
+      click_js_link 'Download'
+      click_js_link 'Download as XLS'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        expect(ListExportWorker).to have_queued(ListExport.last.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      expect(ListExport.last).to have_rows([
+        ["NAME", "DESCRIPTION"],
+        ["Activity Type 1", "First description"],
+        ["Activity Type 2", "Second description"]
+      ])
+    end
+
+    scenario 'should be able to export as PDF' do
+      visit activity_types_path
+
+      click_js_link 'Download'
+      click_js_link 'Download as PDF'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      export = ListExport.last
+      # Test the generated PDF...
+      reader = PDF::Reader.new(open(export.file.url))
+      reader.pages.each do |page|
+        # PDF to text seems to not always return the same results
+        # with white spaces, so, remove them and look for strings
+        # without whitespaces
+        text = page.text.gsub(/[\s\n]/, '')
+        expect(text).to include 'ActivityTypes'
+        expect(text).to include 'ActivityType1'
+        expect(text).to include 'Firstdescription'
+        expect(text).to include 'ActivityType2'
+        expect(text).to include 'Seconddescription'
+      end
     end
   end
 end

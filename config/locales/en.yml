@@ -55,6 +55,7 @@ en:
         date_ranges: 'Date Ranges'
         brand_portfolios: 'Brand Portfolios'
         areas: 'Areas'
+        activity_types: 'Activity Types'
 
   buttons:
     new:

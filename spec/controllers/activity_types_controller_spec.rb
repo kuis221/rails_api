@@ -30,6 +30,26 @@ describe ActivityTypesController, type: :controller do
       get 'index'
       expect(response).to be_success
     end
+
+    it 'queue the job for export the list to XLS' do
+      expect do
+        xhr :get, :index, format: :xls
+      end.to change(ListExport, :count).by(1)
+      export = ListExport.last
+      expect(ListExportWorker).to have_queued(export.id)
+      expect(export.controller).to eql('ActivityTypesController')
+      expect(export.export_format).to eql('xls')
+    end
+
+    it 'queue the job for export the list to PDF' do
+      expect do
+        xhr :get, :index, format: :pdf
+      end.to change(ListExport, :count).by(1)
+      export = ListExport.last
+      expect(ListExportWorker).to have_queued(export.id)
+      expect(export.controller).to eql('ActivityTypesController')
+      expect(export.export_format).to eql('pdf')
+    end
   end
 
   describe "PUT 'update'" do
@@ -175,6 +195,36 @@ describe ActivityTypesController, type: :controller do
       xhr :get, 'activate', id: activity_type.to_param, format: :js
       expect(response).to be_success
       expect(activity_type.reload.active?).to be_truthy
+    end
+  end
+
+  describe "GET 'list_export'", search: true do
+    it 'should return an empty book with the correct headers' do
+      expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+      spreadsheet_from_last_export do |doc|
+        rows = doc.elements.to_a('//Row')
+        expect(rows.count).to eql 1
+        expect(rows[0].elements.to_a('Cell/Data').map(&:text)).to eql [
+          'NAME', 'DESCRIPTION'
+        ]
+      end
+    end
+
+    it 'should include the results' do
+      create(:activity_type, company: @company,
+              name: 'A test activity type', description: 'Activity Type for Everything', active: true)
+      Sunspot.commit
+
+      expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+      expect(ListExportWorker).to have_queued(ListExport.last.id)
+      ResqueSpec.perform_all(:export)
+      spreadsheet_from_last_export do |doc|
+        rows = doc.elements.to_a('//Row')
+        expect(rows.count).to eql 2
+        expect(rows[1].elements.to_a('Cell/Data').map(&:text)).to eql [
+          'A test activity type', 'Activity Type for Everything'
+        ]
+      end
     end
   end
 end

@@ -5,6 +5,7 @@ class ActivityTypesController < FilteredController
   before_action :load_campaign, only: [:set_goal]
   respond_to :js, only: [:new, :create, :edit, :update, :set_goal]
   respond_to :json, only: [:show, :update]
+  respond_to :xls, :pdf, only: :index
   belongs_to :company, :campaign, optional: true
 
   # This helper provide the methods to activate/deactivate the resource
