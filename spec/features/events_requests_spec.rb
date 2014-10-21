@@ -251,11 +251,10 @@ feature 'Events section' do
         end
 
         feature 'export' do
-          let(:day_number) { Time.now.strftime('%d') }
-          let(:month_number) { Time.now.strftime('%m') }
-          let(:month_name) { Time.now.strftime('%b') }
-          let(:year_number) { Time.now.strftime('%Y').to_i }
-          let(:today) { Time.use_zone(user.time_zone) { Time.zone.local(year_number, month_number, day_number, 12, 00) } }
+          let(:month_number) { today.strftime('%m') }
+          let(:month_name) { today.strftime('%b') }
+          let(:year_number) { today.strftime('%Y').to_i }
+          let(:today) { Time.use_zone(user.time_zone) { Time.current } }
           let(:event1) do
             create(:event, start_date: today.to_s(:slashes), end_date: today.to_s(:slashes),
               start_time: '10:00am', end_time: '11:00am',
@@ -288,16 +287,15 @@ feature 'Events section' do
               ResqueSpec.perform_all(:export)
             end
             ensure_modal_was_closed
-
             expect(ListExport.last).to have_rows([
               ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE',
                'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL'],
-              ['Campaign FY2012', nil, "#{year_number}-#{month_number}-#{day_number}T10:00",
-               "#{year_number}-#{month_number}-#{day_number}T11:00", 'Place 1',
+              ['Campaign FY2012', nil, "#{year_number}-#{month_number}-#{today.strftime('%d')}T10:00",
+               "#{year_number}-#{month_number}-#{today.strftime('%d')}T11:00", 'Place 1',
                'Place 1, New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active',
                'Unsent', nil, "http://localhost:5100/events/#{event1.id}"],
-              ['Another Campaign April 03', nil, "#{year_number}-#{month_number}-#{day_number.to_i+1}T08:00",
-               "#{year_number}-#{month_number}-#{day_number.to_i+1}T09:00", 'Place 2',
+              ['Another Campaign April 03', nil, "#{year_number}-#{month_number}-#{(today + 1.day).strftime('%d')}T08:00",
+               "#{year_number}-#{month_number}-#{(today + 1.day).strftime('%d')}T09:00", 'Place 2',
                'Place 2, Los Angeles, CA, 67890', 'Los Angeles', 'CA', '67890', 'Active', 'Unsent',
                nil, "http://localhost:5100/events/#{event2.id}"]
             ])
@@ -332,8 +330,8 @@ feature 'Events section' do
               expect(text).to include 'LosAngeles,CA,67890'
               expect(text).to include '10:00AM-11:00AM'
               expect(text).to include '8:00AM-9:00AM'
-              expect(text).to match(/#{month_name}#{day_number}/)
-              expect(text).to match(/#{month_name}#{day_number.to_i+1}/)
+              expect(text).to match(/#{month_name}#{today.strftime('%d')}/)
+              expect(text).to match(/#{month_name}#{(today + 1.day).strftime('%d')}/)
             end
           end
 
@@ -464,7 +462,7 @@ feature 'Events section' do
             end
           end
 
-          scenario "can filter the events by predefined 'YTD' date range option" do
+          scenario "can filter the events by predefined 'YTD' date range option for default YTD configuration" do
             create(:event, campaign: campaign1,
               start_date: "01/01/#{year}", end_date: "01/01/#{year}")
             create(:event, campaign: campaign1,
@@ -485,6 +483,31 @@ feature 'Events section' do
               expect(page).to have_content('Campaign FY2012')
               expect(page).to have_content('Another Campaign April 03')
               expect(page).to have_no_content('New Brand Campaign')
+            end
+          end
+
+          scenario "can filter the events by predefined 'YTD' date range option where YTD goes from July 1 to June 30" do
+            company.update_attribute(:ytd_dates_range, Company::YTD_JULY1_JUNE30)
+            user.current_company = company
+
+            create(:event, campaign: campaign1,
+              start_date: "#{month_number}/01/#{year}", end_date: "#{month_number}/01/#{year}")
+            create(:event, campaign: campaign1,
+              start_date: "#{month_number}/01/#{year}", end_date: "#{month_number}/01/#{year}")
+            create(:event, campaign: campaign3,
+              start_date: "#{month_number}/01/#{year}", end_date: "#{month_number}/01/#{year}")
+            Sunspot.commit
+
+            visit events_path
+
+            choose_predefined_date_range 'YTD'
+            wait_for_ajax
+
+            expect(page).to have_selector('#events-list .resource-item', count: 3)
+            within events_list do
+              expect(page).to have_content('Campaign FY2012')
+              expect(page).to have_no_content('Another Campaign April 03')
+              expect(page).to have_content('New Brand Campaign')
             end
           end
 

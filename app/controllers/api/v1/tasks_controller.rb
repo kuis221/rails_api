@@ -9,8 +9,6 @@ class Api::V1::TasksController < Api::V1::FilteredController
     error 404, 'Missing'
     error 401, 'Unauthorized access'
     error 500, 'Server crashed for some reason'
-    param :auth_token, String, required: true
-    param :company_id, :number, required: true
     description <<-EOS
 
     EOS
@@ -25,7 +23,7 @@ class Api::V1::TasksController < Api::V1::FilteredController
   param :page, :number, desc: 'The number of the page, Default: 1'
   example <<-EOS
     Get a list of active tasks
-    GET /api/v1/events/4924/tasks.json?auth_token=ehWs_NZ2Uq5-39tGzWpZ&company_id=2&status[]=Active
+    GET /api/v1/events/4924/tasks.json?status[]=Active
     {
         "page": 1,
         "total": 1,
@@ -145,7 +143,7 @@ class Api::V1::TasksController < Api::V1::FilteredController
   EOS
   example <<-EOS
     An example with comments for an event in the response
-    GET: /api/v1/tasks/353/comments.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    GET: /api/v1/tasks/353/comments.json
     [
       {
         "id": 10,

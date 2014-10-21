@@ -11,8 +11,6 @@ class Api::V1::PhotosController < Api::V1::FilteredController
     error 404, 'Missing'
     error 401, 'Unauthorized access'
     error 500, 'Server crashed for some reason'
-    param :auth_token, String, required: true
-    param :company_id, :number, required: true
     description <<-EOS
 
     EOS
@@ -80,7 +78,7 @@ class Api::V1::PhotosController < Api::V1::FilteredController
   * *folder*: the folder name where the photo was uploaded to
   EOS
   example <<-EOS
-  POST /api/v1/events/192/photos.json?auth_token=AJHshslaA.sdd&company_id=1
+  POST /api/v1/events/192/photos.json
   DATA:
   {
     attached_asset: {
@@ -117,7 +115,7 @@ class Api::V1::PhotosController < Api::V1::FilteredController
   The signature will expire 1 hour after it's generated, therefore, it's recommended to not cache these fields for long time.
   EOS
   example <<-EOS
-  GET /api/v1/events/123/photos/form.json?company_id=1&auth_token=XXsikw982okds93
+  GET /api/v1/events/123/photos/form.json
   {
       "fields": {
           "AWSAccessKeyId": "AKIAIJSENKEXXZNMLW3VQ",
