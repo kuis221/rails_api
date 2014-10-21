@@ -19,12 +19,13 @@ $gray-lighter:           lighten(#000, 93.5%); // #eee
 
 $green: #90bf43;
 
+$brand-red: #de4d43;
 
 $app_bg: #ececec;
 $assigned: #d6d64b;
 $borders: #d3d3d3;
 $brand: #989898;
-$buttons: #de4d43;
+$buttons: $brand-red;
 $buttons-border: #acacac;
 $buttons-hover: #cc4137;
 $btnHover: #d6d6d6;
