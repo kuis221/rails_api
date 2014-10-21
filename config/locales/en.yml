@@ -53,6 +53,7 @@ en:
         tasks: 'Tasks'
         day_parts: 'Day Parts'
         date_ranges: 'Date Ranges'
+        brand_portfolios: 'Brand Portfolios'
 
   buttons:
     new:
