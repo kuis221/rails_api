@@ -17,6 +17,7 @@ $.widget 'nmk.filteredList', {
 		selectDefaultDate: false,
 		selectedDate: new Date(),
 		selectDefaultDateRange: false,
+		ytdDatesRange: '1',
 		calendarHighlights: null,
 		scope: null,
 		applyTo: null,
@@ -775,7 +776,22 @@ $.widget 'nmk.filteredList', {
 			[new Date(y, m + months, 1), new Date(y, m, 0)]
 
 	getYearTodayRange: () ->
-		[new Date(new Date().getFullYear(), 0, 1), new Date()]
+		if @options.ytdDatesRange == '1'
+			# Default YTD
+			[new Date(new Date().getFullYear(), 0, 1), new Date()]
+		else if @options.ytdDatesRange == '2'
+			# Alternative YTD from July 1 to June 30
+			date = new Date()
+			y = date.getFullYear()
+			if date.getMonth() > 5
+				startDate = new Date(y, 6, 1)
+				endDate = new Date(y + 1, 5, 30)
+			else
+				startDate = new Date(y - 1, 6, 1)
+				endDate = new Date(y, 5, 30)
+
+			[startDate, endDate]
+
 
 	_filtersChanged: (updateState=true) ->
 		if @options.includeCalendars
