@@ -8,11 +8,11 @@ body.reports{
 		border-color: rgba(102,102,102,0.6);
 	}
 	.tooltip{
-	    &.top{
-	    	.tooltip-inner{
+			&.top{
+				.tooltip-inner{
 				background-color: $text;
-	    	}
-	    	.tooltip-arrow{
+				}
+				.tooltip-arrow{
 				border-top:5px solid $text;
 			}
 		}
@@ -23,7 +23,7 @@ ul.reports-list {
 		display: table;
 		float: none;
 		width: 100%;
-		a {	
+		a {
 			padding: 0;
 		}
 	}
@@ -140,19 +140,19 @@ ul.reports-list {
 
 	.sidebar{
 		::-webkit-input-placeholder {
-		   color: $user_menu;
+			 color: $user_menu;
 		}
 
 		:-moz-placeholder { /* Firefox 18- */
-		   color: $user_menu;
+			 color: $user_menu;
 		}
 
 		::-moz-placeholder {  /* Firefox 19+ */
-		   color: $user_menu;
+			 color: $user_menu;
 		}
 
 		:-ms-input-placeholder {
-		   color: $user_menu;
+			 color: $user_menu;
 		}
 	}
 	.btn[disabled=disabled] {
@@ -531,21 +531,12 @@ $report_border_color: #ccc;
 			background-color: transparent;
 		}
 
-		.icon-collapse, .icon-expand{
-			display:inline-block;
-			height:20px;
-			margin-right:5px;
-			width:10px;
-			color: $grey_three !important;
-			text-decoration: none !important;
-		}
-		.icon-expand:before {
-			content: "\e002";
-			font-size: 9px;
-		}
-		.icon-collapse:before {
+		.icon-arrow-down:before {
 			top: 3px;
-			content: "\e004";
+		}
+		.icon-arrow-up:before {
+			top: -3px;
+			left: -2px;
 		}
 
 		thead {

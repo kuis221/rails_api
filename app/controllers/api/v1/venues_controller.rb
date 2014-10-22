@@ -9,8 +9,6 @@ class Api::V1::VenuesController < Api::V1::FilteredController
     error 404, 'Missing'
     error 401, 'Unauthorized access'
     error 500, 'Server crashed for some reason'
-    param :auth_token, String, required: true
-    param :company_id, :number, required: true, desc: 'One of the allowed company ids returned by the '
     description <<-EOS
 
     EOS
@@ -84,7 +82,7 @@ class Api::V1::VenuesController < Api::V1::FilteredController
     * *narrative*: a brief narrative describing the performance of the venue based on these numbers.
   EOS
   example <<-EOS
-  GET /api/v1/venues/3598/analysis.json?auth_token=XXXXXXXX&company_id=2
+  GET /api/v1/venues/3598/analysis.json
   {
       overview: {
           events: 17,
@@ -448,7 +446,7 @@ class Api::V1::VenuesController < Api::V1::FilteredController
   creating a new venue
   EOS
   example <<-EOS
-  GET /api/v1/venues/types.json?auth_token=sdFKl0DF9-39tGzWpZ&company_id=1
+  GET /api/v1/venues/types.json
   [
       {
           "name": "Accounts",
@@ -564,7 +562,7 @@ class Api::V1::VenuesController < Api::V1::FilteredController
   EOS
   example <<-EOS
     An example with comments for an venue in the response
-    GET: /api/v1/venues/92/comments.json?auth_token=swyonWjtcZsbt7N8LArj&company_id=1
+    GET: /api/v1/venues/92/comments.json
     [
       {
         "id": 1,
@@ -625,7 +623,7 @@ class Api::V1::VenuesController < Api::V1::FilteredController
   * *People*: Includes users and teams
   EOS
   example <<-EOS
-  GET: /api/v1/venues/autocomplete.json?auth_token=XXssU!suwq92-1&company_id=2&q=jam
+  GET: /api/v1/venues/autocomplete.json?q=jam
   [
       {
           "label": "Campaigns",

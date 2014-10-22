@@ -13,7 +13,7 @@ $footer-height: 35px;
 
 @font-face {
 	font-family: 'icons';
- 	src:font-url('icons.eot');
+	src:font-url('icons.eot');
 	src:url(font-path('icons.eot') + '?#iefix') format('embedded-opentype'),
 		font-url('icons.woff') format('woff'),
 		font-url('icons.ttf') format('truetype'),
@@ -65,6 +65,10 @@ a{
 			text-decoration:underline;
 		}
 	}
+}
+
+.module-title{
+	color: $user_menu;
 }
 
 abbr[title]{
@@ -162,11 +166,11 @@ body{
 .dropdown-menu > li > a:focus,
 .dropdown-submenu:hover > a,
 .dropdown-submenu:focus > a {
-  color: #fff;
-  text-decoration: none;
-  background-color: $brand;
-  background-image: none;
-  filter: none;
+	color: #fff;
+	text-decoration: none;
+	background-color: $brand;
+	background-image: none;
+	filter: none;
 }
 
 // RATING FOR PHOTOS
@@ -391,7 +395,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	background-image: none;
 	&:hover {
 		background-color: $green;
-		background-image: none;		
+		background-image: none;
 	}
 }
 .progress{
@@ -960,8 +964,8 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 				width: 100%;
 				&::-webkit-inner-spin-button,
 				&::-webkit-calendar-picker-indicator {
-				    display: none;
-				    -webkit-appearance: none;
+						display: none;
+						-webkit-appearance: none;
 				}
 			}
 			&+span{
@@ -1016,6 +1020,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			right: 0;
 			left: initial;
 			text-align: left;
+			box-shadow:none;
 			&:before {
 				border: none;
 			}
@@ -1415,7 +1420,7 @@ footer{
 			margin-bottom: 0;
 		}
 		.survey-box, .thanks-box{
-		    background-color: $grey_one;
+				background-color: $grey_one;
 			border: 1px solid $grey_four;
 			color: $brand;
 			line-height: 16px;
@@ -1428,16 +1433,16 @@ footer{
 			height: 150px;
 			width: 190px;
 			&:after{
-			    content: '';
-			    background: $grey_one;
-			    height: 15px; width: 15px;
-			    position: absolute;
-			    bottom: -7px;
+					content: '';
+					background: $grey_one;
+					height: 15px; width: 15px;
+					position: absolute;
+					bottom: -7px;
 					left: 47%;
-			    z-index: 4;
-			    -webkit-transform: rotate(45deg);
-			    transform: rotate(45deg);
-			    box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.15);
+					z-index: 4;
+					-webkit-transform: rotate(45deg);
+					transform: rotate(45deg);
+					box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.15);
 			}
 			.btn{
 				padding: 7px;
@@ -1521,6 +1526,9 @@ footer{
 
 header{
 	&.navbar-inverse {
+		.nav > li > a{
+			text-shadow: none;
+		}
 		.navbar-inner {
 			background-color: $header;
 			padding: 0;
@@ -1756,6 +1764,9 @@ label{
 	font-size: 13px;
 	display: block;
 	margin: 0 0 10px 0;
+	&+.accordion-group {
+		margin-top: 30px;
+	}
 	&:last-of-type{
 		margin-top: 40px;
 		margin-bottom: 35px;
@@ -2287,7 +2298,7 @@ li#notifications{
 			width: 0;
 			background-color: $grey_three;
 			height: 0;
-			top: -10px;
+			top: -5px;
 			cursor: default;
 			&.green{
 				background-color: $dark_green;
@@ -3066,7 +3077,8 @@ ul.ui-widget-content{
 		margin-top: 40px;
 	}
 	h3.section-title {
-		margin-bottom: 20px;
+		display: inline-block;
+		margin-bottom: 15px;
 		color: $brand;
 		font-size: 20px;
 		font-weight: normal;
@@ -4902,7 +4914,7 @@ svg{
 
 .campaigns_report, .snapshot_report, .staff_report {
 	.loading-spinner{
-		background: #fff image-url('loading-circle.gif') center center no-repeat;
+		background: white image-url('loading-circle.gif') center center no-repeat;
 		display: block;
 		height: 50px;
 	}
@@ -4911,6 +4923,18 @@ svg{
 .campaigns_report, .snapshot_report, .staff_report {
 	.nav-tabs li a{
 		width: 130px;
+	}
+}
+
+.loading-circle-spinner{
+	height:120px;
+	position:absolute !important;
+	right:50%;
+	top:-20px;
+	z-index:9;
+	img{
+		display: block;
+		margin:0 auto;
 	}
 }
 
@@ -5063,6 +5087,18 @@ body.campaigns{
 			}
 		}
 	}
+	&#event-expenses{
+		.resource-item-link{
+			.text-large{
+				margin-top: 16px;
+			}
+		}
+		.resource-item.total-expenses{
+			.span2.total-expenses-value{
+				margin-top: 18px;
+			}
+		}
+	}
 	.box_photos{
 		margin-bottom: 40px;
 		position: relative;
@@ -5197,7 +5233,7 @@ body.campaigns{
 	a{
 		color: $venues_blue;
 		text-decoration: none;
-		&.btn{ 
+		&.btn{
 			color: #fff;
 		}
 		&.underline{
@@ -5482,8 +5518,8 @@ margin: 45px 0 25px 25px;
 					border-top-left-radius: 6px;
 				}
 				&:last-child{
-				    border-bottom-right-radius: 6px;
-				    border-top-right-radius: 6px;
+						border-bottom-right-radius: 6px;
+						border-top-right-radius: 6px;
 				}
 				&.active{
 					background-color: $brand;

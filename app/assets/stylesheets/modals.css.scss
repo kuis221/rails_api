@@ -37,66 +37,8 @@ ul.select2-results{
 	}
 	&.modal-med{
 		width: 460px;
-		&.eventexpense_modal{
-			width: 660px;
-			.expense-info-form, .expense-file-form{
-				width: 50%;
-				.control-group{
-					display:block;
-					width: 100%;
-					input[type="text"]{
-						width:90%;
-					}
-					.input-prepend {
-						input {
-							background-color: white !important;
-							box-shadow: none !important;
-							margin-right: 0 !important;
-							width: 222px;
-
-						}
-					}
-					&.event_expense_amount{
-						label{
-							display: none;
-						}
-					}
-				}
-				.input-prepend{
-					margin-bottom: 0px;
-					.add-on{
-						background-color: #c0c0c0;
-						border: 0 !important;
-						border-radius: 4px 0px 0px 4px;
-						color: white;
-						display: inline-block;
-						-webkit-border-radius: 4px 0px 0px 4px;
-						padding: 11px 5px 13px 4px;
-						text-align: center;
-						text-shadow: none !important;
-						width: 40px;
-					}
-				}
-			}
-			.expense-info-form {
-				position: relative;
-			}
-			.expense-file-form {
-				position: absolute;
-				right: -50%;
-				top: 0;
-
-				.attachment-panel {
-					width: 220px;
-				}
-			}
-			.form-actions{
-				clear: both;
-			}
-		}
 		.modal-body{
 			.control-group{
-				width: 100%;
 				&.task_title{
 					label{
 						width: 40px;
@@ -179,9 +121,9 @@ ul.select2-results{
 					margin: 0;
 					width: 268px;
 					.task_company_user_id_chzn{
-					.chzn-container{
-						width: 100% !important;
-					}
+						.chzn-container{
+							width: 100% !important;
+						}
 					}
 					.chzn-drop{
 						box-shadow: none;
@@ -205,7 +147,6 @@ ul.select2-results{
 				}
 			}
 		}
-
 		&.rejection-prompt{
 			input[type="text"]{
 				width: 385px;
@@ -234,7 +175,7 @@ ul.select2-results{
 					}
 				}
 			}
-	    	#select-campaigns-table-wrapper{
+			#select-campaigns-table-wrapper{
 				.link-list{
 					margin-top: 35px;
 					ul#select-campaigns-list{
@@ -290,15 +231,15 @@ ul.select2-results{
 				font-size: 12px;
 				font-weight: bold;
 			}
-	    }
+		}
 		&.select-kpis-modal{
 			top: 2%;
 		}
-    }
-    &.modal-xlarge{
-    	left: 10%;
-    	margin-left: 0;
-    	min-width:80%;
+	}
+	&.modal-xlarge{
+		left: 10%;
+		margin-left: 0;
+		min-width:80%;
 		#survey-form {
 			.control-group {
 				margin-bottom: 50px;
@@ -315,7 +256,7 @@ ul.select2-results{
 					width: 230px;
 					label.radio{
 						overflow: hidden;
-				    	text-overflow: ellipsis;
+						text-overflow: ellipsis;
 						white-space: nowrap;
 						padding-top:10px;
 						width:300px;
@@ -402,7 +343,7 @@ ul.select2-results{
 						font-size: 13px !important;
 						margin-bottom: 0 !important;
 						overflow: hidden;
-				    	text-overflow: ellipsis;
+						text-overflow: ellipsis;
 						white-space: nowrap;
 						width: 220px;
 					}
@@ -410,7 +351,7 @@ ul.select2-results{
 						float: left;
 						margin-right: 43px;
 						overflow: hidden;
-				    	text-overflow: ellipsis;
+						text-overflow: ellipsis;
 						white-space: nowrap;
 						width: 255px;
 					}
@@ -443,7 +384,7 @@ ul.select2-results{
 						display:inline-block;
 						margin-right: 43px;
 						overflow: hidden;
-				    	text-overflow: ellipsis;
+						text-overflow: ellipsis;
 						white-space: nowrap;
 						width: 255px;
 					}
@@ -505,11 +446,11 @@ ul.select2-results{
 		.close, button.close:before, a.close:before{
 			content: "\e019";
 			color: $user_menu;
-		  	display: inline-block;
-		  	font-family: 'icons';
+			display: inline-block;
+			font-family: 'icons';
 			font-size: 14px;
 			opacity: 1 !important;
-		  	position: absolute;
+			position: absolute;
 			speak: none;
 			text-align: center;
 			top: 4px;
@@ -607,9 +548,6 @@ ul.select2-results{
 				font-size: 13px;
 			}
 		}
-		.input-append .add-on, .input-prepend .add-on {
-			height: 15px;
-		}
 		.large-inputs{
 			.control-group{
 				width: 400px;
@@ -625,18 +563,18 @@ ul.select2-results{
 		}
 		input:-moz-placeholder,
 		textarea:-moz-placeholder {
-		  color: $user_menu;
-		  font-weight: normal;
+			color: $user_menu;
+			font-weight: normal;
 		}
 		input:-ms-input-placeholder,
 		textarea:-ms-input-placeholder {
-		  color: $user_menu;
-		  font-weight: normal;
+			color: $user_menu;
+			font-weight: normal;
 		}
 		input::-webkit-input-placeholder,
 		textarea::-webkit-input-placeholder {
-		  color: $user_menu;
-		  font-weight: normal;
+			color: $user_menu;
+			font-weight: normal;
 		}
 		.control-group{
 			display: inline-block;
@@ -783,17 +721,7 @@ ul.select2-results{
 	border:1px solid $user_menu;
 	a{
 		color: red;
-	}/*
-	&:before{
-		position: absolute;
-		top: -10px;
-		left: 10px;
-		display: inline-block;
-		border-right: 10px solid transparent;
-		border-bottom: 10px solid $brand;
-		border-left: 10px solid transparent;
-		content: '';
-	}*/
+	}
 	table{
 		font-size: 10px;
 		margin: 0 0 4px 4px;
@@ -820,21 +748,21 @@ ul.select2-results{
 	}
 	.ui-datepicker-prev{
 		background: none;
-	    left: 140px;
-	    right:-2px !important;
+		left: 140px;
+		right:-2px !important;
 		top:2px;
 		&:after{
 			color: white;
 			content: "\e003";
-		  	display: block;
-		  	font-family: 'icons';
+			display: block;
+			font-family: 'icons';
 			font-size: 9px;
 			left: 5px;
-		  	position: absolute;
-		  	speak:none;
-		  	text-indent: 0;
-		  	top:5px;
-		  	-webkit-font-smoothing: antialiased;
+			position: absolute;
+			speak:none;
+			text-indent: 0;
+			top:5px;
+			-webkit-font-smoothing: antialiased;
 		}
 		&:hover{
 			background: none;
@@ -847,15 +775,15 @@ ul.select2-results{
 		&:after{
 			color: white;
 			content: "\e002";
-		  	display: block;
-		  	font-family: 'icons';
+			display: block;
+			font-family: 'icons';
 			font-size: 9px;
 			left: 5px;
-		  	position: absolute;
-		  	speak:none;
-		  	text-indent: 0;
-		  	top:5px;
-		  	-webkit-font-smoothing: antialiased;
+			position: absolute;
+			speak:none;
+			text-indent: 0;
+			top:5px;
+			-webkit-font-smoothing: antialiased;
 		}
 		&:hover{
 			background: none;
@@ -863,9 +791,6 @@ ul.select2-results{
 		}
 	}
 }
-
-
-
 
 .ui-datepicker-calendar{
 	.ui-datepicker-other-month{
@@ -886,15 +811,15 @@ ul.select2-results{
 .ui-datepicker-prev span:after{
 	color: white;
 	content: "\e003";
-  	display: block;
-  	font-family: 'icons';
+	display: block;
+	font-family: 'icons';
 	font-size: 9px;
 	left: 0;
-  	position: absolute;
-  	speak:none;
-  	text-indent: 0;
-  	top:1px;
-  	-webkit-font-smoothing: antialiased;
+	position: absolute;
+	speak:none;
+	text-indent: 0;
+	top:1px;
+	-webkit-font-smoothing: antialiased;
 }
 
 .ui-timepicker-list{
@@ -946,7 +871,7 @@ ul.select2-results{
 	&:hover{
 		background:$grey_one !important;
 		-webkit-border-radius: 14px;
-    	border-radius: 14px;
+		border-radius: 14px;
 	}
 }
 .ui-state-disabled, .ui-widget-content .ui-state-disabled{
@@ -966,8 +891,8 @@ ul.select2-results{
 		color:$brand;
 		display: inline-block;
 	}
-    .help-inline {
-    	color:$buttons;
+	.help-inline {
+		color:$buttons;
 		font-size: 11px;
 		margin-bottom: 2px;
 	}
@@ -1025,15 +950,15 @@ div#spin{
 
 
 .assistly-widget a {
-   background-position: 2px 0 !important;
-   display: block;
-   height: 45px !important;
-   width: 125px !important;
-   overflow: hidden;
+	background-position: 2px 0 !important;
+	display: block;
+	height: 45px !important;
+	width: 125px !important;
+	overflow: hidden;
 }
 
 .assistly-widget a:hover {
-   background-position: 2px -44px !important;
+	background-position: 2px -44px !important;
 }
 
 /*-- MODAL FOR SHARE -- REPORTT BUILDER --*/
@@ -1099,8 +1024,8 @@ div#spin{
 	border: 1px solid $grey_three !important;
 	box-shadow: none;
 	-webkit-box-shadow: none;
-       -moz-box-shadow: none;
-            box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
 	.select2-results{
 		color: $grey_one;
 		border-radius: 4px;
@@ -1218,6 +1143,47 @@ div#spin{
 		}
 		.saved-filters{
 			margin-top: 20px;
+		}
+	}
+}
+
+// Event Details Expenses Modal
+// --------------------------------------------------
+
+.eventexpense_modal{
+	width: 660px;
+	.expense-info-form{
+		width: 100%;
+		.control-group{
+			display:block;
+			width: 60%;
+			input[type="text"]{
+				width:90%;
+			}
+			&.event_expense_amount{
+				label{
+					display: none;
+				}
+			}
+		}
+	}
+	.expense-info-form {
+		display: inline-block;
+		position: relative;
+	}
+	.expense-file-form {
+		top:0;
+		right:0;
+		position:absolute;
+		width:40%;
+		.control-group{
+			width: 100%;
+		}
+	}
+	.form-actions{
+		display: inline-block;
+		&.inside-form{
+			margin-bottom:10px;
 		}
 	}
 }

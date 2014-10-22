@@ -10,8 +10,6 @@ class Api::V1::BrandsController < Api::V1::ApiController
     error 404, 'Missing'
     error 401, 'Unauthorized access'
     error 500, 'Server crashed for some reason'
-    param :auth_token, String, required: true, desc: "User's authorization token returned by login method"
-    param :company_id, :number, required: true
     description <<-EOS
 
     EOS
@@ -28,7 +26,7 @@ class Api::V1::BrandsController < Api::V1::ApiController
     * *active*: the brand's status
   EOS
   example <<-EOS
-    GET /api/v1/brands.json?auth_token=XXXXXYYYYYZZZZZ&company_id=1
+    GET /api/v1/brands.json
     [
       {
           "id": "1",
@@ -64,7 +62,7 @@ class Api::V1::BrandsController < Api::V1::ApiController
     * *name*: the marque's name
   EOS
   example <<-EOS
-    GET /api/v1/brands/1/marques.json?auth_token=XXXXXYYYYYZZZZZ&company_id=1
+    GET /api/v1/brands/1/marques.json
     [
       {
           "id": "1",

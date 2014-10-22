@@ -1,10 +1,8 @@
 require 'rails_helper'
 
 describe Api::V1::ApiController, type: :controller do
-  before(:each) do
-    @user = sign_in_as_user
-    @company = @user.companies.first
-  end
+  let(:user) { sign_in_as_user }
+  let(:company) { user.companies.first }
 
   controller(Api::V1::ApiController) do
     skip_authorize_resource
@@ -20,7 +18,8 @@ describe Api::V1::ApiController, type: :controller do
 
   describe 'handling InvalidAuthToken exception' do
     it 'renders failure HTTP Unauthorized' do
-      get :index, auth_token: 'XXXXXXXXXXXXXXXX', company_id: @company.to_param, format: :json
+      set_api_authentication_headers build(:user, authentication_token: 'XXXXX'), company
+      get :index, format: :json
       expect(response.response_code).to eq(401)
       result = JSON.parse(response.body)
       expect(result['success']).to eq(false)
@@ -31,7 +30,8 @@ describe Api::V1::ApiController, type: :controller do
 
   describe 'handling InvalidCompany exception' do
     it 'renders failure HTTP Unauthorized' do
-      get :index, auth_token: @user.authentication_token, company_id: @company.id + 1, format: :json
+      set_api_authentication_headers user, create(:company)
+      get :index, format: :json
       expect(response.response_code).to eq(401)
       result = JSON.parse(response.body)
       expect(result['success']).to eq(false)

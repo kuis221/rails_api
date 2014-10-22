@@ -15,7 +15,15 @@ css:
     padding: 10px 0;
   }
   .resource-list .resource-item {
+    font-size: 11px;
     min-height: 80px;
+    padding: 5px;
+  }
+  .date b {
+    font-size: 15px !important;
+  }
+  .text-large {
+    font-size: 15px !important;
   }
 
 - if params[:mode] == 'calendar' && can?(:view_calendar, Event)

@@ -113,7 +113,7 @@ class ListExport < ActiveRecord::Base
 
   def build_xlsx_file(html)
     self.file = StringIO.new(html)
-    self.file_content_type = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    self.file_content_type = 'application/vnd.ms-excel'
   end
 
   # Builds a PDF file from an

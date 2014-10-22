@@ -19,6 +19,7 @@ $.widget 'nmk.formBuilder', {
 				title: () ->
 					$(this).data('title')
 		@formWrapper = @wrapper.find('.form-fields')
+		@formSections = @wrapper.find('.form-fields-sections')
 
 		@wrapper.find('.form-builder-actions').affix
 			offset: {
@@ -30,7 +31,7 @@ $.widget 'nmk.formBuilder', {
 
 		@fieldsWrapper = @element.find('.fields-wrapper')
 
-		@wrapper.droppable
+		@formWrapper.droppable
 			accept: ".field.module"
 			drop: (event, ui) =>
 				options = {type: ui.draggable.data('type')}
@@ -86,7 +87,7 @@ $.widget 'nmk.formBuilder', {
 			@makeFieldsDraggable @fieldsWrapper
 
 			# Display Field Attributes Dialog
-			@wrapper.on 'click', '.field, .module', (e) =>
+			@formSections.on 'click', '.field, .module', (e) =>
 				e.stopPropagation()
 				$field = $(e.target)
 				if not $field.hasClass('field')
@@ -220,7 +221,7 @@ $.widget 'nmk.formBuilder', {
 	_loadForm: () ->
 		@element.find('.empty-form-legend').hide()
 		$.getJSON "#{@options.url}", (response) =>
-			@wrapper.find('.field, .module').remove()
+			@formWrapper.find('.field, .module').remove()
 			@modified = false
 			@_updateSaveButtonState()
 			if response.form_fields.length > 0 || (response.modules && Object.keys(response.modules).length > 0)
@@ -255,7 +256,7 @@ $.widget 'nmk.formBuilder', {
 
 	_addModuleToForm: (field) ->
 		moduleHtml = @buildField(field)
-		@wrapper.append moduleHtml
+		@formSections.append moduleHtml
 		@fieldsWrapper.find('.module[data-type='+field.type+']').hide()
 
 		field
@@ -327,7 +328,7 @@ $.widget 'nmk.formBuilder', {
 			$(element).data('field')
 
 	formModules: () ->
-		$.map @wrapper.find('.module'), (element, index) =>
+		$.map @formSections.find('.module'), (element, index) =>
 			$(element).data('field')
 
 	placeFieldAttributes: (field) ->

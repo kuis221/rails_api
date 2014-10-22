@@ -36,6 +36,27 @@ feature 'Venues Section', js: true, search: true do
       expect(page).to have_no_selector('h5', text: feature_name)
     end
 
+    scenario 'search for places' do
+      visit venues_path
+      select_places_autocomplete 'San Francisco CA', from: 'Enter a location'
+      fill_in 'I am looking for', with: 'Alcatraz'
+      click_js_button 'Search'
+      expect(page).to have_content 'Alcatraz Island'
+      resource_item.click
+
+      expect(page).to have_selector('h2', text: 'Alcatraz Island')
+      expect(current_path).to eql venue_path(Venue.last)
+
+      find('#resource-close-details').click
+
+      # Returns the user to the results page
+      within resource_item do
+        expect(page).to have_content('Alcatraz Island')
+      end
+      expect(find_field('Enter a location').value).to eql 'San Francisco, CA, United States'
+      expect(find_field('I am looking for').value).to eql 'Alcatraz'
+    end
+
     scenario 'GET index should display a list with the venues' do
       with_resque do
         create(:event, campaign: campaign,
@@ -72,14 +93,22 @@ feature 'Venues Section', js: true, search: true do
     let(:month_name) { Time.now.strftime('%b') }
     let(:year_number) { Time.now.strftime('%Y') }
     let(:today) { Time.zone.local(year_number, month_number, 18, 12, 00) }
-    let(:event1) { create(:event, campaign: campaign,
-                          place: create(:place, name: 'Place 1', td_linx_code: '5155520'),
-                          results: { impressions: 35, interactions: 65, samples: 15 },
-                          expenses: [{ name: 'Expense 1', amount: 1000 }] )}
-    let(:event2) { create(:event, campaign: create(:campaign, name: 'Another Campaign April 03', company: company),
-                          place: create(:place, name: 'Place 2', formatted_address: '456 Your Street', city: 'Los Angeles', state: 'CA', zipcode: '67890', td_linx_code: '3929538'),
-                          results: { impressions: 45, interactions: 75, samples: 25 },
-                          expenses: [{ name: 'Expense 1', amount: 2000 }] )}
+    let(:event1) do
+      create(:event, campaign: campaign,
+                     place: create(:place, name: 'Place 1', td_linx_code: '5155520'),
+                     results: { impressions: 35, interactions: 65, samples: 15 },
+                     expenses: [{ name: 'Expense 1', amount: 1000 }])
+    end
+    let(:event2) do
+      create(:event, campaign: create(:campaign, name: 'Another Campaign April 03', company: company),
+                     place: create(:place, name: 'Place 2',
+                        formatted_address: '456 Your Street',
+                        city: 'Los Angeles', state: 'CA',
+                        zipcode: '67890',
+                        td_linx_code: '3929538'),
+                     results: { impressions: 45, interactions: 75, samples: 25 },
+                     expenses: [{ name: 'Expense 1', amount: 2_000 }])
+    end
 
     before do
       # make sure events are created before
@@ -105,9 +134,9 @@ feature 'Venues Section', js: true, search: true do
       ensure_modal_was_closed
 
       expect(ListExport.last).to have_rows([
-        ["VENUE NAME", "TD LINX CODE", "ADDRESS", "CITY", "STATE", "EVENTS COUNT", "PROMO HOURS COUNT", "TOTAL $ SPENT"],
-        ["Place 1", "5155520", "123 My Street", "New York City", "NY", "1", "2.0", "1000.0"],
-        ["Place 2", "3929538", "456 Your Street", "Los Angeles", "CA", "1", "2.0", "2000.0"]
+        ['VENUE NAME', 'TD LINX CODE', 'ADDRESS', 'CITY', 'STATE', 'EVENTS COUNT', 'PROMO HOURS COUNT', 'TOTAL $ SPENT'],
+        ['Place 1', '5155520', '123 My Street', 'New York City', 'NY', '1', '2.0', '1000.0'],
+        ['Place 2', '3929538', '456 Your Street', 'Los Angeles', 'CA', '1', '2.0', '2000.0']
       ])
     end
 
@@ -140,6 +169,21 @@ feature 'Venues Section', js: true, search: true do
         expect(text).to include '$1,000.00'
         expect(text).to include '$2,000.00'
       end
+    end
+
+    scenario 'should not be able to export as PDF for documents with more than 200 pages' do
+      allow(Venue).to receive(:do_search).and_return(double(total: 3000))
+
+      visit venues_path
+
+      click_js_link 'Download'
+      click_js_link 'Download as PDF'
+
+      within visible_modal do
+        expect(page).to have_content('PDF exports are limited to 200 pages. Please narrow your results and try exporting again.')
+        click_js_link 'OK'
+      end
+      ensure_modal_was_closed
     end
   end
 

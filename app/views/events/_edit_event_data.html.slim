@@ -1,7 +1,7 @@
 - allow_cancel ||= false
 #event-results-form.data-form-wrapper
   .details_box.box_event_data
-    h3 EVENT DATA
+    h3.module-title EVENT DATA
 
     - fields = resource.campaign.form_fields.includes(:kpi)
     = simple_form_for(resource, remote: true, html: {class: 'event-data-form', data: {'prompt-message' => 'Your post event form has not been saved', 'watch-changes' => true}}) do |f|

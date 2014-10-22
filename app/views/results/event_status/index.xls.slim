@@ -1,0 +1,66 @@
+doctype xml
+
+Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  Styles
+    Style ss:ID="s1"
+      Font ss:Bold="1"
+    Style ss:ID="s2"
+      NumberFormat ss:Format="Percent"
+  Worksheet ss:Name="Event Status"
+
+    Table
+      - if report_group_by == 'place' || report_group_by == 'staff'
+        Column ss:Width="150"
+      Column ss:Width="150"
+      Column ss:Width="100"
+      Column ss:Width="100"
+      Column ss:Width="100"
+      Column ss:Width="100"
+      Column ss:Width="100"
+      Column ss:Width="100"
+      Column ss:Width="100"
+      Row ss:StyleID="s1"
+        - if report_group_by == 'place'
+          Cell
+            Data ss:Type="String"= "PLACE/AREA"
+        - if report_group_by == 'staff'
+          Cell
+            Data ss:Type="String"= "USER/TEAM"
+        Cell
+          Data ss:Type="String" METRIC
+        Cell
+          Data ss:Type="String" GOAL
+        Cell
+          Data ss:Type="String" EXECUTED
+        Cell
+          Data ss:Type="String" EXECUTED %
+        Cell
+          Data ss:Type="String" SCHEDULED
+        Cell
+          Data ss:Type="String" SCHEDULED %
+        Cell
+          Data ss:Type="String" REMAINING
+        Cell
+          Data ss:Type="String" REMAINING %
+
+      - @data.each do |campaign|
+        Row
+          - if report_group_by == 'place' || report_group_by == 'staff'
+            Cell
+              Data ss:Type="String"= campaign['name']
+          Cell
+            Data ss:Type="String"= campaign['kpi']
+          Cell
+            Data ss:Type="Number"= number_with_precision(campaign['goal'], strip_insignificant_zeros: true)
+          Cell
+            Data ss:Type="Number"= number_with_precision(campaign['executed'], strip_insignificant_zeros: true)
+          Cell ss:StyleID="s2"
+            Data ss:Type="Number"= number_with_precision(campaign['executed_percentage']/100.00, precision: 2, strip_insignificant_zeros: true)
+          Cell
+            Data ss:Type="Number"= number_with_precision(campaign['scheduled'], strip_insignificant_zeros: true)
+          Cell ss:StyleID="s2"
+            Data ss:Type="Number"= number_with_precision(campaign['scheduled_percentage']/100.00, precision: 2, strip_insignificant_zeros: true)
+          Cell
+            Data ss:Type="Number"= number_with_precision(campaign['remaining'], strip_insignificant_zeros: true)
+          Cell ss:StyleID="s2"
+            Data ss:Type="Number"= number_with_precision(campaign['remaining_percentage']/100.00, precision: 2, strip_insignificant_zeros: true)

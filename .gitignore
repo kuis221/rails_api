@@ -30,3 +30,4 @@ solr/pids/
 dump.rdb
 coverage
 .sass-cache
+.rbenv-gemsets

@@ -38,7 +38,7 @@ class FilteredController < InheritedResources::Base
 
   def index
     if request.format.xls? || request.format.pdf?
-      enqueue_export
+      enqueue_export if list_exportable?
       render action: :new_export, formats: [:js]
     else
       super
@@ -107,20 +107,19 @@ class FilteredController < InheritedResources::Base
 
   def collection
     get_collection_ivar || begin
-      if action_name != 'index' || request.format.json?
-        if resource_class.respond_to?(:do_search) # User Sunspot Solr for searching the collection
-          @solr_search = resource_class.do_search(search_params)
-          @collection_count = @solr_search.total
-          @total_pages = @solr_search.results.total_pages
-          set_collection_ivar(@solr_search.results)
-        else
-          current_page = params[:page] || nil
-          c = end_of_association_chain.accessible_by_user(current_user)
-          c = controller_filters(c)
-          @collection_count_scope = c
-          c = c.page(current_page).per(items_per_page) unless current_page.nil?
-          set_collection_ivar(c)
-        end
+      return unless action_name != 'index' || request.format.json?
+      if resource_class.respond_to?(:do_search) # User Sunspot Solr for searching the collection
+        @solr_search = resource_class.do_search(search_params)
+        @collection_count = @solr_search.total
+        @total_pages = @solr_search.results.total_pages
+        set_collection_ivar(@solr_search.results)
+      else
+        current_page = params[:page] || nil
+        c = end_of_association_chain.accessible_by_user(current_user)
+        c = controller_filters(c)
+        @collection_count_scope = c
+        c = c.page(current_page).per(items_per_page) unless current_page.nil?
+        set_collection_ivar(c)
       end
     end
   end
@@ -181,6 +180,13 @@ class FilteredController < InheritedResources::Base
     true
   rescue URI::InvalidURIError
     false
+  end
+
+  def list_exportable?
+    number_of_pages = resource_class.do_search(search_params).total / 11.0 #total-items / items-per-page
+    @export_errors = []
+    @export_errors = ['PDF exports are limited to 200 pages. Please narrow your results and try exporting again.'] if number_of_pages > 200
+    @export_errors.empty?
   end
 
   private

@@ -266,7 +266,11 @@ class Report < ActiveRecord::Base
   end
 
   def base_events_scope
-    company.events
+    if User.current
+      company.events.accessible_by_user(User.current.current_company_user)
+    else
+      company.events
+    end
   end
 
   def reload(options = nil)

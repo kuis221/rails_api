@@ -68,6 +68,9 @@
 			margin-top: 30px;
 			li {
 				border: 0;
+				clear:both;
+				float:left;
+				padding-bottom:10px;
 				a{
 					padding-left: 0;
 					&:hover{
@@ -89,12 +92,12 @@
 				float: left;
 				height: 100%;
 				 span {
-				 	font-size: 35px;
-				 	font-weight: 200;
-				 	display: block;
-				 	clear: both;
-				 	line-height: 35px;
-				 	margin-left: -2px;
+					font-size: 35px;
+					font-weight: 200;
+					display: block;
+					clear: both;
+					line-height: 35px;
+					margin-left: -2px;
 				 }
 			}
 
@@ -277,9 +280,9 @@
 		}
 		.comments-area{
 			margin: 0 -10px;
-  			position: relative;
-  			ul{
-  				margin-bottom:0;
+				position: relative;
+				ul{
+					margin-bottom:0;
 				margin-left:0;
 				width: 100%;
 				&> li{
@@ -300,14 +303,14 @@
 						line-height: 25px;
 						padding: 10px 15px;
 						display: block;
-					  display: -webkit-box;
-					  max-width: 400px;
-					  height: 95px;
-					  margin: 0 auto;
-					  -webkit-line-clamp: 4;
-					  -webkit-box-orient: vertical;
-					  overflow: hidden;
-					  text-overflow: ellipsis;
+						display: -webkit-box;
+						max-width: 400px;
+						height: 95px;
+						margin: 0 auto;
+						-webkit-line-clamp: 4;
+						-webkit-box-orient: vertical;
+						overflow: hidden;
+						text-overflow: ellipsis;
 					}
 					.comment-footer {
 						position: absolute;
@@ -342,7 +345,7 @@
 						}
 					}
 				}
-  		}
+			}
 		}
 	}
 }

@@ -11,7 +11,7 @@ class Location < ActiveRecord::Base
 
   def self.load_by_paths(paths)
     paths.map { |path| Location.find_or_create_by(path: path) }
-  rescue PG::UniqueViolation
+  rescue ActiveRecord::RecordNotUnique
     sleep 1
     retry
   end
