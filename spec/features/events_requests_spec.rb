@@ -326,13 +326,28 @@ feature 'Events section' do
               expect(text).to include '2Activeeventstakingplacetodayandinthefuture'
               expect(text).to include 'CampaignFY2012'
               expect(text).to include 'AnotherCampaignApril03'
-              expect(text).to include 'Place1NewYorkCity,NY,12345'
-              expect(text).to include 'Place2LosAngeles,CA,67890'
+              expect(text).to include 'NewYorkCity,NY,12345'
+              expect(text).to include 'LosAngeles,CA,67890'
               expect(text).to include '10:00AM-11:00AM'
               expect(text).to include '8:00AM-9:00AM'
               expect(text).to match(/#{month_name}#{today.strftime('%d')}/)
               expect(text).to match(/#{month_name}#{(today + 1.day).strftime('%d')}/)
             end
+          end
+
+          scenario 'should be able to export as PDF' do
+            allow(Event).to receive(:do_search).and_return(double(total: 3000))
+
+            visit events_path
+
+            click_js_link 'Download'
+            click_js_link 'Download as PDF'
+
+            within visible_modal do
+              expect(page).to have_content('PDF exports are limited to 200 pages. Please narrow your results and try exporting again.')
+              click_js_link 'OK'
+            end
+            ensure_modal_was_closed
           end
         end
 
@@ -447,7 +462,7 @@ feature 'Events section' do
             end
           end
 
-          scenario "can filter the events by predefined 'YTD' date range option" do
+          scenario "can filter the events by predefined 'YTD' date range option for default YTD configuration" do
             create(:event, campaign: campaign1,
               start_date: "01/01/#{year}", end_date: "01/01/#{year}")
             create(:event, campaign: campaign1,
@@ -468,6 +483,31 @@ feature 'Events section' do
               expect(page).to have_content('Campaign FY2012')
               expect(page).to have_content('Another Campaign April 03')
               expect(page).to have_no_content('New Brand Campaign')
+            end
+          end
+
+          scenario "can filter the events by predefined 'YTD' date range option where YTD goes from July 1 to June 30" do
+            company.update_attribute(:ytd_dates_range, Company::YTD_JULY1_JUNE30)
+            user.current_company = company
+
+            create(:event, campaign: campaign1,
+              start_date: "#{month_number}/01/#{year}", end_date: "#{month_number}/01/#{year}")
+            create(:event, campaign: campaign1,
+              start_date: "#{month_number}/01/#{year}", end_date: "#{month_number}/01/#{year}")
+            create(:event, campaign: campaign3,
+              start_date: "#{month_number}/01/#{year}", end_date: "#{month_number}/01/#{year}")
+            Sunspot.commit
+
+            visit events_path
+
+            choose_predefined_date_range 'YTD'
+            wait_for_ajax
+
+            expect(page).to have_selector('#events-list .resource-item', count: 3)
+            within events_list do
+              expect(page).to have_content('Campaign FY2012')
+              expect(page).to have_no_content('Another Campaign April 03')
+              expect(page).to have_content('New Brand Campaign')
             end
           end
 
