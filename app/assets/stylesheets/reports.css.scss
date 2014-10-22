@@ -8,11 +8,11 @@ body.reports{
 		border-color: rgba(102,102,102,0.6);
 	}
 	.tooltip{
-	    &.top{
-	    	.tooltip-inner{
+			&.top{
+				.tooltip-inner{
 				background-color: $text;
-	    	}
-	    	.tooltip-arrow{
+				}
+				.tooltip-arrow{
 				border-top:5px solid $text;
 			}
 		}
@@ -23,7 +23,7 @@ ul.reports-list {
 		display: table;
 		float: none;
 		width: 100%;
-		a {	
+		a {
 			padding: 0;
 		}
 	}
@@ -140,19 +140,19 @@ ul.reports-list {
 
 	.sidebar{
 		::-webkit-input-placeholder {
-		   color: $user_menu;
+			 color: $user_menu;
 		}
 
 		:-moz-placeholder { /* Firefox 18- */
-		   color: $user_menu;
+			 color: $user_menu;
 		}
 
 		::-moz-placeholder {  /* Firefox 19+ */
-		   color: $user_menu;
+			 color: $user_menu;
 		}
 
 		:-ms-input-placeholder {
-		   color: $user_menu;
+			 color: $user_menu;
 		}
 	}
 	.btn[disabled=disabled] {

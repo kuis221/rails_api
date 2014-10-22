@@ -30,6 +30,16 @@ ActiveAdmin.register Company do
               hint: 'Select a role to build the list of "Employees" in the different places inside the Brand Ambassadors section',
               collection: f.object.roles.pluck(:name, :id)
     end
+    f.inputs name: 'Filter Settings' do
+      f.input :ytd_dates_range,
+              label: 'YTD Dates Range',
+              as: :radio,
+              hint: 'Select the YTD Dates Range for filters',
+              collection: [
+                ['YTD', Company::YTD_DEFAULT],
+                ['July 1 - June 30', Company::YTD_JULY1_JUNE30]
+              ]
+    end
     f.actions
   end
 
@@ -60,12 +70,20 @@ ActiveAdmin.register Company do
       row 'Brand Ambassadors Roles' do
         company.roles.where(id: company.brand_ambassadors_role_ids).pluck(:name).join(', ')
       end
+      row 'YTD Dates Range' do
+        case company.ytd_dates_range
+        when Company::YTD_DEFAULT
+          'YTD'
+        when Company::YTD_JULY1_JUNE30
+          'July 1 - June 30'
+        end
+      end
     end
   end
 
   controller do
     def permitted_params
-      params.permit(company: [:name, :admin_email, :timezone_support, :event_alerts_policy, brand_ambassadors_role_ids: []])
+      params.permit(company: [:name, :admin_email, :timezone_support, :event_alerts_policy, :ytd_dates_range, brand_ambassadors_role_ids: []])
     end
   end
 end
