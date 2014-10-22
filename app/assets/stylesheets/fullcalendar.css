@@ -136,8 +136,8 @@ body .fc { /* extra precedence to overcome jqui */
 }
 
 /*
-  button states
-  borrowed from twitter bootstrap (http://twitter.github.com/bootstrap/)
+	button states
+	borrowed from twitter bootstrap (http://twitter.github.com/bootstrap/)
 */
 
 .fc-state-default {
@@ -168,9 +168,9 @@ body .fc { /* extra precedence to overcome jqui */
 	text-decoration: none;
 	background-position: 0 -15px;
 	-webkit-transition: background-position 0.1s linear;
-	   -moz-transition: background-position 0.1s linear;
-	     -o-transition: background-position 0.1s linear;
-	        transition: background-position 0.1s linear;
+		 -moz-transition: background-position 0.1s linear;
+			 -o-transition: background-position 0.1s linear;
+					transition: background-position 0.1s linear;
 }
 
 .fc-state-down,
@@ -332,7 +332,7 @@ previous button's border...
 
 .fc-row table {
 	/* don't put left/right border on anything within a fake row.
-	   the outer tbody will worry about this */
+		 the outer tbody will worry about this */
 	border-left: 0 hidden transparent;
 	border-right: 0 hidden transparent;
 
@@ -612,8 +612,8 @@ a.fc-more:hover {
 .fc-view-container *:before,
 .fc-view-container *:after {
 	-webkit-box-sizing: content-box;
-	   -moz-box-sizing: content-box;
-	        box-sizing: content-box;
+		 -moz-box-sizing: content-box;
+					box-sizing: content-box;
 }
 
 .fc-view, /* scope positioning and z-index's for everything within the view */
@@ -686,8 +686,8 @@ a.fc-more:hover {
 	opacity: 0.3;
 	filter: alpha(opacity=30); /* for IE */
 	/* opacity with small font can sometimes look too faded
-	   might want to set the 'color' property instead
-	   making day-numbers bold also fixes the problem */
+		 might want to set the 'color' property instead
+		 making day-numbers bold also fixes the problem */
 }
 
 /* AgendaView all-day area

@@ -58,7 +58,7 @@
 		top:0;
 	}
 	#list-tools .btn-primary {
-	    padding: 5px 25px;
+			padding: 5px 25px;
 	}
 	.search-filter-label, input.search-query{
 		margin-bottom: 0;
@@ -67,10 +67,10 @@
 		}
 	}
 	#main:-moz-full-screen {
-	   .btn.fullscreen:after {
-	       content: "\e040";
-		   font-family: 'icons';
-	   }
+		 .btn.fullscreen:after {
+				 content: "\e040";
+			 font-family: 'icons';
+		 }
 	}
 	.activity-form{
 		.field{
