@@ -7,7 +7,5 @@ div.resource-item id="team_#{team.id}" class="#{active_class(team)}"
       .text-large= team.users.active.count
       | Members
   div.resource-item-actions
-    = link_to '', edit_team_path(team), remote: true, title: 'Edit', class: 'icon-edit' if can?(:edit, Team)
-    - if can?(:deactivate, Team)
-      = link_to_deactivate team
-      = link_to '', activate_team_path(team), remote: true, title: I18n.t('confirmation.activate'), class: 'icon-rounded-ok' unless team.active?
+    = button_to_edit team if can?(:edit, Team)
+    = button_to_activate_or_deactivate(team) if can?(:deactivate, Team)

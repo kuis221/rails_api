@@ -42,7 +42,7 @@ feature 'Campaigns', js: true do
 
       expect(page).to have_content('Cacique FY13')
       within resource_item 1 do
-        click_js_link('Deactivate')
+        click_js_button('Deactivate Campaign')
       end
 
       confirm_prompt 'Are you sure you want to deactivate this campaign?'
@@ -62,7 +62,7 @@ feature 'Campaigns', js: true do
       expect(page).to have_content('Cacique FY13')
       within resource_item 1 do
         expect(page).to have_content('Cacique FY13')
-        click_js_link('Activate')
+        click_js_button('Activate Campaign')
       end
       expect(page).to have_no_content('Cacique FY13')
     end
@@ -104,14 +104,14 @@ feature 'Campaigns', js: true do
       campaign = create(:campaign, name: 'Some Campaign', description: 'a campaign description', company: company)
       visit campaign_path(campaign)
       within('.links-data') do
-        click_js_link('Deactivate')
+        click_js_button('Deactivate Campaign')
       end
 
       confirm_prompt 'Are you sure you want to deactivate this campaign?'
 
       within('.links-data') do
-        click_js_link('Activate')
-        expect(page).to have_link('Deactivate') # test the link have changed
+        click_js_button('Activate Campaign')
+        expect(page).to have_button('Deactivate Campaign') # test the link have changed
       end
     end
 

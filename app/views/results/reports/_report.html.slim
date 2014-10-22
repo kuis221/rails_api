@@ -6,7 +6,6 @@ div.resource-item id="report_#{report.id}"
 
   div.resource-item-actions
     - if can?(:edit, report)
-      = link_to('', share_results_report_path(report, format: :js), class: 'icon-share', title: 'Share', remote: true, method: :get)  if can?(:share, report)
-      = link_to '', edit_results_report_path(report), remote: true, class: 'icon-edit', title: 'Edit'
-      = link_to_deactivate report, url: deactivate_results_report_path(report) if can?(:deactivate, report)
-      = link_to '', activate_results_report_path(report), remote: true, class: 'icon-rounded-ok', title: I18n.t('confirmation.activate') unless report.active?
+      = icon_button_to 'icon-share', share_results_report_path(report, format: :js), remote: true, method: :get, title: 'Share', form_class: 'button_to button_to_edit'
+      = button_to_edit report, url: edit_results_report_path(report)
+      = button_to_activate_or_deactivate(report, deactivate_url: deactivate_results_report_path(report), activate_url: activate_results_report_path(report))

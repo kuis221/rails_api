@@ -1,5 +1,5 @@
 .results-surveys
-  h3 SURVEY RESULTS
+  h3.module-title SURVEY RESULTS
   = link_to '', edit_surveys_event_path(resource), remote: true, class: 'icon-edit' if can?(:edit_survey, resource) || can?(:edit_surveys, resource)
 
   - if resource.surveys.count > 0

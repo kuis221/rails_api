@@ -1,13 +1,21 @@
 @import "variables";
+@import "mixins";
 
 form.button_to {
 	display: inline-block;
 	margin-right: 10px;
+	border-width: 0;
+	border-image-width: 0;
+	div {
+		line-height: normal;
+	}
 	.button-with-icon {
-		border: 0;
+		border-width: 0;
+		border-image-width: 0;
 		padding: 0;
 		background: none;
-		outline:none;
+		outline: none;
+		line-height: normal;
 	}
 }
 

@@ -11,7 +11,5 @@ div.resource-item id="campaign_#{campaign.id}" class="#{active_class(campaign)}"
       .date= format_date campaign.last_event_at
       | Last event
   div.resource-item-actions
-    = link_to '', edit_campaign_path(campaign), remote: true, class: 'icon-edit' if can?(:edit, Campaign)
-    - if can?(:deactivate, Campaign)
-      = link_to_deactivate campaign
-      = link_to '', activate_campaign_path(campaign), remote: true, class: 'icon-rounded-ok', title: I18n.t('confirmation.activate') unless campaign.active?
+    = button_to_edit campaign if can?(:edit, Campaign)
+    = button_to_activate_or_deactivate(campaign) if can?(:deactivate, Campaign)

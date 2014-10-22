@@ -40,7 +40,7 @@ feature 'Brands', js: true do
 
       within resource_item do
         expect(page).to have_content('Brand 1')
-        click_js_link 'Deactivate'
+        click_js_button 'Deactivate Brand'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this brand?'
@@ -55,7 +55,7 @@ feature 'Brands', js: true do
 
        within resource_item do
         expect(page).to have_content('Brand 1')
-        click_js_link 'Activate'
+        click_js_button 'Activate Brand'
       end
       expect(page).to have_no_content('Brand 1')
     end
@@ -94,14 +94,14 @@ feature 'Brands', js: true do
       brand = create(:brand, active: true, company_id: user.current_company.id)
       visit brand_path(brand)
       within('.links-data') do
-        click_js_link('Deactivate')
+        click_js_button 'Deactivate Brand'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this brand?'
 
       within('.links-data') do
-        click_js_link 'Activate'
-        expect(page).to have_link('Deactivate') # test the link have changed
+        click_js_button 'Activate Brand'
+        expect(page).to have_button 'Deactivate Brand' # test the link have changed
       end
     end
 

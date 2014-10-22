@@ -38,21 +38,30 @@
 			width:109px;
 			text-align: right;
 			padding-top: $resource-item-padding;
-			a {
+			form.button_to {
+				height: 18px;
+				button {
+					margin-top: -1px;
+				}
+			}
+			a, .button-with-icon {
 				color: $brand;
 				margin-right: 10px;
 				font-size: 18px;
+				height: 18px;
 				&:last-child {
 					margin-right: 0;
 				}
+				&.icon-large {
+					font-size: 24px;
+				}
+			}
+			a {
 				&.icon-receipt {
 					font-size: 26px;
 					position: relative;
 					top: 7px;
 					margin-right: 5px;
-				}
-				&.icon-large {
-					font-size: 24px;
 				}
 			}
 		}

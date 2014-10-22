@@ -42,7 +42,7 @@ feature 'DayParts', js: true do
       visit day_parts_path
 
       within resource_item do
-        click_js_link('Deactivate')
+        click_js_button 'Deactivate Day Part'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this day part?'
@@ -55,7 +55,7 @@ feature 'DayParts', js: true do
 
       within resource_item do
         expect(page).to have_content('Morning')
-        click_js_link('Activate')
+        click_js_button 'Activate Day Part'
       end
       expect(page).to have_no_content('Morning')
     end
@@ -107,11 +107,11 @@ feature 'DayParts', js: true do
     scenario 'allows the user to activate/deactivate a day part' do
       day_part = create(:day_part, company: company, active: true)
       visit day_part_path(day_part)
-      find('.links-data').click_js_link('Deactivate')
+      find('.links-data').click_js_button 'Deactivate Day Part'
 
       confirm_prompt 'Are you sure you want to deactivate this day part?'
 
-      find('.links-data').click_js_link('Activate')
+      find('.links-data').click_js_button 'Activate Day Part'
     end
 
     scenario 'allows the user to edit the day_part' do

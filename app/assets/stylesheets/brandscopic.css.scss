@@ -5103,6 +5103,12 @@ body.campaigns{
 			.links-data{
 				float: right;
 				width: auto;
+				a{
+					margin-right: 6px;
+					&:last-child{
+						margin:0;
+					}
+				}
 			}
 		}
 	}

@@ -15,7 +15,5 @@ div.resource-item id="company_user_#{company_user.id}" class="#{active_class(com
         br>/
         | Last activity
   div.resource-item-actions
-    = link_to '', edit_company_user_path(company_user), remote: true, class: 'icon-edit' if can?(:edit, company_user)
-    - if can?(:deactivate, CompanyUser)
-      = link_to_deactivate company_user
-      = link_to '', activate_company_user_path(company_user),title: I18n.t('confirmation.activate'), remote: true, class: 'icon-rounded-ok' unless company_user.active?
+    = button_to_edit company_user if can?(:edit, CompanyUser)
+    = button_to_activate_or_deactivate(company_user) if can?(:deactivate, CompanyUser)
