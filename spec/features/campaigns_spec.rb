@@ -586,4 +586,74 @@ feature 'Campaigns', js: true do
       end
     end
   end
+
+  feature 'export', search: true do
+    let(:campaign1) { create(:campaign, name: 'Cacique FY13',
+                                description: 'Test campaign for guaro Cacique', company: company) }
+    let(:campaign2) { create(:campaign, name: 'New Brand Campaign',
+                                description: 'Campaign for another brand', company: company) }
+
+    before do
+      create(:event, start_date: '08/21/2013', end_date: '08/21/2013',
+             start_time: '10:00am', end_time: '11:00am', campaign: campaign1)
+      create(:event, start_date: '08/28/2013', end_date: '08/29/2013',
+             start_time: '11:00am', end_time: '12:00pm', campaign: campaign1)
+      create(:event, start_date: '09/18/2013', end_date: '09/18/2013',
+             start_time: '11:00am', end_time: '12:00pm', campaign: campaign2)
+      Sunspot.commit
+    end
+
+    scenario 'should be able to export as XLS' do
+      visit campaigns_path
+
+      click_js_link 'Download'
+      click_js_link 'Download as XLS'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        expect(ListExportWorker).to have_queued(ListExport.last.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      expect(ListExport.last).to have_rows([
+        ['NAME', 'DESCRIPTION', 'FIRST EVENT', 'LAST EVENT'],
+        ["Cacique FY13", "Test campaign for guaro Cacique", "2013-08-21T10:00", "2013-08-28T11:00"],
+        ["New Brand Campaign", "Campaign for another brand", "2013-09-18T11:00", "2013-09-18T11:00"]
+      ])
+    end
+
+    scenario 'should be able to export as PDF' do
+      visit campaigns_path
+
+      click_js_link 'Download'
+      click_js_link 'Download as PDF'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      export = ListExport.last
+      # Test the generated PDF...
+      reader = PDF::Reader.new(open(export.file.url))
+      reader.pages.each do |page|
+        # PDF to text seems to not always return the same results
+        # with white spaces, so, remove them and look for strings
+        # without whitespaces
+        text = page.text.gsub(/[\s\n]/, '')
+        expect(text).to include 'Campaigns'
+        expect(text).to include 'CaciqueFY13'
+        expect(text).to include 'TestcampaignforguaroCacique'
+        expect(text).to include 'WEDAug21,2013'
+        expect(text).to include 'WEDAug28,2013T'
+        expect(text).to include 'NewBrandCampaign'
+        expect(text).to include 'Campaignforanotherbrand'
+        expect(text).to include 'WEDSep18,2013'
+      end
+    end
+  end
 end

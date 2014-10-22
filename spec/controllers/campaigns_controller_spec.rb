@@ -28,6 +28,26 @@ describe CampaignsController, type: :controller do
       get 'index'
       expect(response).to be_success
     end
+
+    it 'queue the job for export the list to XLS' do
+      expect do
+        xhr :get, :index, format: :xls
+      end.to change(ListExport, :count).by(1)
+      export = ListExport.last
+      expect(ListExportWorker).to have_queued(export.id)
+      expect(export.controller).to eql('CampaignsController')
+      expect(export.export_format).to eql('xls')
+    end
+
+    it 'queue the job for export the list to PDF' do
+      expect do
+        xhr :get, :index, format: :pdf
+      end.to change(ListExport, :count).by(1)
+      export = ListExport.last
+      expect(ListExportWorker).to have_queued(export.id)
+      expect(export.controller).to eql('CampaignsController')
+      expect(export.export_format).to eql('pdf')
+    end
   end
 
   describe "GET 'items'" do
@@ -645,4 +665,37 @@ describe CampaignsController, type: :controller do
     end
   end
 
+  describe "GET 'list_export'", search: true do
+    it 'should return an empty book with the correct headers' do
+      expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+      spreadsheet_from_last_export do |doc|
+        rows = doc.elements.to_a('//Row')
+        expect(rows.count).to eql 1
+        expect(rows[0].elements.to_a('Cell/Data').map(&:text)).to eql [
+          'NAME', 'DESCRIPTION', 'FIRST EVENT', 'LAST EVENT'
+        ]
+      end
+    end
+
+    it 'should include the results' do
+      cacique = create(:campaign, name: 'Cacique FY13',
+                        description: 'Test campaign for guaro Cacique', company: @company)
+      create(:event, start_date: '08/21/2013', end_date: '08/21/2013',
+             start_time: '10:00am', end_time: '11:00am', campaign: cacique)
+      create(:event, start_date: '08/28/2013', end_date: '08/29/2013',
+             start_time: '11:00am', end_time: '12:00pm', campaign: cacique)
+      Sunspot.commit
+
+      expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+      expect(ListExportWorker).to have_queued(ListExport.last.id)
+      ResqueSpec.perform_all(:export)
+      spreadsheet_from_last_export do |doc|
+        rows = doc.elements.to_a('//Row')
+        expect(rows.count).to eql 2
+        expect(rows[1].elements.to_a('Cell/Data').map(&:text)).to eql [
+          'Cacique FY13', 'Test campaign for guaro Cacique', '2013-08-21T10:00', '2013-08-28T11:00'
+        ]
+      end
+    end
+  end
 end

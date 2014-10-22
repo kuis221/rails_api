@@ -57,6 +57,7 @@ en:
         areas: 'Areas'
         activity_types: 'Activity Types'
         brands: 'Brands'
+        campaigns: 'Campaigns'
 
   buttons:
     new:

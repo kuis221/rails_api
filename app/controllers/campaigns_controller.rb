@@ -5,6 +5,7 @@
 class CampaignsController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update, :new_date_range]
   respond_to :json, only: [:show, :update]
+  respond_to :xls, :pdf, only: :index
 
   before_action :search_params, only: [:index]
 
