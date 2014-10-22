@@ -37,66 +37,8 @@ ul.select2-results{
 	}
 	&.modal-med{
 		width: 460px;
-		&.eventexpense_modal{
-			width: 660px;
-			.expense-info-form, .expense-file-form{
-				width: 50%;
-				.control-group{
-					display:block;
-					width: 100%;
-					input[type="text"]{
-						width:90%;
-					}
-					.input-prepend {
-						input {
-							background-color: white !important;
-							box-shadow: none !important;
-							margin-right: 0 !important;
-							width: 222px;
-
-						}
-					}
-					&.event_expense_amount{
-						label{
-							display: none;
-						}
-					}
-				}
-				.input-prepend{
-					margin-bottom: 0px;
-					.add-on{
-						background-color: #c0c0c0;
-						border: 0 !important;
-						border-radius: 4px 0px 0px 4px;
-						color: white;
-						display: inline-block;
-						-webkit-border-radius: 4px 0px 0px 4px;
-						padding: 11px 5px 13px 4px;
-						text-align: center;
-						text-shadow: none !important;
-						width: 40px;
-					}
-				}
-			}
-			.expense-info-form {
-				position: relative;
-			}
-			.expense-file-form {
-				position: absolute;
-				right: -50%;
-				top: 0;
-
-				.attachment-panel {
-					width: 220px;
-				}
-			}
-			.form-actions{
-				clear: both;
-			}
-		}
 		.modal-body{
 			.control-group{
-				width: 100%;
 				&.task_title{
 					label{
 						width: 40px;
@@ -179,9 +121,9 @@ ul.select2-results{
 					margin: 0;
 					width: 268px;
 					.task_company_user_id_chzn{
-					.chzn-container{
-						width: 100% !important;
-					}
+						.chzn-container{
+							width: 100% !important;
+						}
 					}
 					.chzn-drop{
 						box-shadow: none;
@@ -205,7 +147,6 @@ ul.select2-results{
 				}
 			}
 		}
-
 		&.rejection-prompt{
 			input[type="text"]{
 				width: 385px;
@@ -234,7 +175,7 @@ ul.select2-results{
 					}
 				}
 			}
-				#select-campaigns-table-wrapper{
+			#select-campaigns-table-wrapper{
 				.link-list{
 					margin-top: 35px;
 					ul#select-campaigns-list{
@@ -290,15 +231,15 @@ ul.select2-results{
 				font-size: 12px;
 				font-weight: bold;
 			}
-			}
+		}
 		&.select-kpis-modal{
 			top: 2%;
 		}
-		}
-		&.modal-xlarge{
-			left: 10%;
-			margin-left: 0;
-			min-width:80%;
+	}
+	&.modal-xlarge{
+		left: 10%;
+		margin-left: 0;
+		min-width:80%;
 		#survey-form {
 			.control-group {
 				margin-bottom: 50px;
@@ -315,7 +256,7 @@ ul.select2-results{
 					width: 230px;
 					label.radio{
 						overflow: hidden;
-							text-overflow: ellipsis;
+						text-overflow: ellipsis;
 						white-space: nowrap;
 						padding-top:10px;
 						width:300px;
@@ -402,7 +343,7 @@ ul.select2-results{
 						font-size: 13px !important;
 						margin-bottom: 0 !important;
 						overflow: hidden;
-							text-overflow: ellipsis;
+						text-overflow: ellipsis;
 						white-space: nowrap;
 						width: 220px;
 					}
@@ -410,7 +351,7 @@ ul.select2-results{
 						float: left;
 						margin-right: 43px;
 						overflow: hidden;
-							text-overflow: ellipsis;
+						text-overflow: ellipsis;
 						white-space: nowrap;
 						width: 255px;
 					}
@@ -443,7 +384,7 @@ ul.select2-results{
 						display:inline-block;
 						margin-right: 43px;
 						overflow: hidden;
-							text-overflow: ellipsis;
+						text-overflow: ellipsis;
 						white-space: nowrap;
 						width: 255px;
 					}
@@ -505,11 +446,11 @@ ul.select2-results{
 		.close, button.close:before, a.close:before{
 			content: "\e019";
 			color: $user_menu;
-				display: inline-block;
-				font-family: 'icons';
+			display: inline-block;
+			font-family: 'icons';
 			font-size: 14px;
 			opacity: 1 !important;
-				position: absolute;
+			position: absolute;
 			speak: none;
 			text-align: center;
 			top: 4px;
@@ -606,9 +547,6 @@ ul.select2-results{
 				color: $text;
 				font-size: 13px;
 			}
-		}
-		.input-append .add-on, .input-prepend .add-on {
-			height: 15px;
 		}
 		.large-inputs{
 			.control-group{
@@ -780,6 +718,7 @@ ul.select2-results{
 }
 
 .ui-datepicker{
+	<<<<<<< HEAD
 	border:1px solid $user_menu;
 	a{
 		color: red;
@@ -793,184 +732,309 @@ ul.select2-results{
 		border-bottom: 10px solid $brand;
 		border-left: 10px solid transparent;
 		content: '';
-	}*/
-	table{
-		font-size: 10px;
-		margin: 0 0 4px 4px;
-		width: 95%;
-	}
-	td{
-		&.ui-datepicker-today{
-			a{
-				color:$grey_three;
-				font-weight: bold !important;
-				opacity: 1;
+		}*/
+		table{
+			font-size: 10px;
+			margin: 0 0 4px 4px;
+			width: 95%;
+		}
+		td{
+			&.ui-datepicker-today{
+				a{
+					color:$grey_three;
+					font-weight: bold !important;
+					opacity: 1;
+				}
 			}
 		}
-	}
-	th{
-		color: $grey_three;
-		padding: 4px 0 0 0;
-	}
-	.ui-datepicker-title{
-		font-size: 13px;
-		font-weight: normal;
-		margin: 0 9px;
-		text-align: left;
-	}
-	.ui-datepicker-prev{
-		background: none;
+		th{
+			color: $grey_three;
+			padding: 4px 0 0 0;
+		}
+		.ui-datepicker-title{
+			font-size: 13px;
+			font-weight: normal;
+			margin: 0 9px;
+			text-align: left;
+		}
+		.ui-datepicker-prev{
+			background: none;
 			left: 140px;
 			right:-2px !important;
-		top:2px;
-		&:after{
-			color: white;
-			content: "\e003";
+			top:2px;
+			&:after{
+				color: white;
+				content: "\e003";
 				display: block;
 				font-family: 'icons';
-			font-size: 9px;
-			left: 5px;
+				font-size: 9px;
+				left: 5px;
 				position: absolute;
 				speak:none;
 				text-indent: 0;
 				top:5px;
 				-webkit-font-smoothing: antialiased;
-		}
-		&:hover{
-			background: none;
-			border:0;
-		}
-	}
-	.ui-datepicker-next{
-		right:1px !important;
-		top:2px;
-		&:after{
-			color: white;
-			content: "\e002";
-				display: block;
-				font-family: 'icons';
-			font-size: 9px;
-			left: 5px;
-				position: absolute;
-				speak:none;
-				text-indent: 0;
-				top:5px;
-				-webkit-font-smoothing: antialiased;
-		}
-		&:hover{
-			background: none;
-			border:0;
-		}
-	}
-}
-
-
-
-
-.ui-datepicker-calendar{
-	.ui-datepicker-other-month{
-		.ui-state-default, .ui-widget-content .ui-state-default{
-			color: $user_menu!important;
+			}
 			&:hover{
-				color: $menu !important;
+				background: none;
+				border:0;
+			}
+		}
+		.ui-datepicker-next{
+			right:1px !important;
+			top:2px;
+			&:after{
+				color: white;
+				content: "\e002";
+				display: block;
+				font-family: 'icons';
+				font-size: 9px;
+				left: 5px;
+				position: absolute;
+				speak:none;
+				text-indent: 0;
+				top:5px;
+				-webkit-font-smoothing: antialiased;
+			}
+			&:hover{
+				background: none;
+				border:0;
+			}
+		}
+		=======
+		border:1px solid $user_menu;
+		a{
+			color: red;
+	}/*
+	&:before{
+		position: absolute;
+		top: -10px;
+		left: 10px;
+		display: inline-block;
+		border-right: 10px solid transparent;
+		border-bottom: 10px solid $brand;
+		border-left: 10px solid transparent;
+		content: '';
+		}*/
+		table{
+			font-size: 10px;
+			margin: 0 0 4px 4px;
+			width: 95%;
+		}
+		td{
+			&.ui-datepicker-today{
+				a{
+					color:$grey_three;
+					font-weight: bold !important;
+					opacity: 1;
+				}
+			}
+		}
+		th{
+			color: $grey_three;
+			padding: 4px 0 0 0;
+		}
+		.ui-datepicker-title{
+			font-size: 13px;
+			font-weight: normal;
+			margin: 0 9px;
+			text-align: left;
+		}
+		.ui-datepicker-prev{
+			background: none;
+			left: 140px;
+			right:-2px !important;
+			top:2px;
+			&:after{
+				color: white;
+				content: "\e003";
+				display: block;
+				font-family: 'icons';
+				font-size: 9px;
+				left: 5px;
+				position: absolute;
+				speak:none;
+				text-indent: 0;
+				top:5px;
+				-webkit-font-smoothing: antialiased;
+			}
+			&:hover{
+				background: none;
+				border:0;
+			}
+		}
+		.ui-datepicker-next{
+			right:1px !important;
+			top:2px;
+			&:after{
+				color: white;
+				content: "\e002";
+				display: block;
+				font-family: 'icons';
+				font-size: 9px;
+				left: 5px;
+				position: absolute;
+				speak:none;
+				text-indent: 0;
+				top:5px;
+				-webkit-font-smoothing: antialiased;
+			}
+			&:hover{
+				background: none;
+				border:0;
+			}
+		}
+		>>>>>>> 5863af85559014587a2138ef324916565df48adb
+	}
+
+
+
+
+	.ui-datepicker-calendar{
+		.ui-datepicker-other-month{
+			.ui-state-default, .ui-widget-content .ui-state-default{
+				color: $user_menu!important;
+				&:hover{
+					color: $menu !important;
+				}
 			}
 		}
 	}
-}
 
-#ui-datepicker-div{
-	margin-top: 6px !important;
-	padding: 0 !important;
-}
+	#ui-datepicker-div{
+		margin-top: 6px !important;
+		padding: 0 !important;
+	}
 
-.ui-datepicker-prev span:after{
-	color: white;
-	content: "\e003";
+	.ui-datepicker-prev span:after{
+		<<<<<<< HEAD
+		color: white;
+		content: "\e003";
 		display: block;
 		font-family: 'icons';
-	font-size: 9px;
-	left: 0;
+		font-size: 9px;
+		left: 0;
 		position: absolute;
 		speak:none;
 		text-indent: 0;
 		top:1px;
 		-webkit-font-smoothing: antialiased;
-}
+		=======
+		color: white;
+		content: "\e003";
+		display: block;
+		font-family: 'icons';
+		font-size: 9px;
+		left: 0;
+		position: absolute;
+		speak:none;
+		text-indent: 0;
+		top:1px;
+		-webkit-font-smoothing: antialiased;
+		>>>>>>> 5863af85559014587a2138ef324916565df48adb
+	}
 
-.ui-timepicker-list{
-	border: 1px solid $brand;
-	-webkit-border-radius: 6px !important;
-	border-radius: 6px !important;
-	box-shadow: none;
-	width:118px;
-	li{
-		color: $text;
-		padding: 3px 0 3px 32px;
+	.ui-timepicker-list{
+		border: 1px solid $brand;
+		-webkit-border-radius: 6px !important;
+		border-radius: 6px !important;
+		box-shadow: none;
+		width:118px;
+		li{
+			color: $text;
+			padding: 3px 0 3px 32px;
+			&:hover{
+				background-color: $brand !important;
+				color: white !important;
+			}
+			&.ui-timepicker-selected{
+				background-color: $brand !important;
+				color: white !important;
+			}
+		}
+
+		&.timepicker-filter{
+			width:98px !important;
+			border-color: $grey_three;
+			li {
+				padding-left: 10px;
+			}
+		}
+	}
+	.ui-icon{
+		visibility: hidden;
+	}
+
+	.event_modal .modal-body {
+		textarea {
+			width: 100%;
+			height: 65px;
+		}
+	}
+
+	.ui-state-default, .ui-widget-content .ui-state-default{
+		<<<<<<< HEAD
+		background: white !important;
+		border:0;
+		color: $menu;
+		font-size: 11px;
+		font-weight: normal;
+		opacity: 0.8;
+		text-align: center;
 		&:hover{
-			background-color: $brand !important;
-			color: white !important;
-		}
-		&.ui-timepicker-selected{
-			background-color: $brand !important;
-			color: white !important;
-		}
-	}
-
-	&.timepicker-filter{
-		width:98px !important;
-		border-color: $grey_three;
-		li {
-			padding-left: 10px;
-		}
-	}
-}
-.ui-icon{
-	visibility: hidden;
-}
-
-.event_modal .modal-body {
-	textarea {
-		width: 100%;
-		height: 65px;
-	}
-}
-
-.ui-state-default, .ui-widget-content .ui-state-default{
-	background: white !important;
-	border:0;
-	color: $menu;
-	font-size: 11px;
-	font-weight: normal;
-	opacity: 0.8;
-	text-align: center;
-	&:hover{
-		background:$grey_one !important;
-		-webkit-border-radius: 14px;
+			background:$grey_one !important;
+			-webkit-border-radius: 14px;
 			border-radius: 14px;
+		}
+		=======
+		background: white !important;
+		border:0;
+		color: $menu;
+		font-size: 11px;
+		font-weight: normal;
+		opacity: 0.8;
+		text-align: center;
+		&:hover{
+			background:$grey_one !important;
+			-webkit-border-radius: 14px;
+			border-radius: 14px;
+		}
+		>>>>>>> 5863af85559014587a2138ef324916565df48adb
 	}
-}
-.ui-state-disabled, .ui-widget-content .ui-state-disabled{
-	color: $user_menu;
-}
+	.ui-state-disabled, .ui-widget-content .ui-state-disabled{
+		color: $user_menu;
+	}
 
-.ui-icon, .ui-widget-content .ui-icon{
-	background-image: none !important;
-}
-.ui-widget-header .ui-icon{
-	background-image: none;
-}
+	.ui-icon, .ui-widget-content .ui-icon{
+		background-image: none !important;
+	}
+	.ui-widget-header .ui-icon{
+		background-image: none;
+	}
 
 // ERROR
 .control-group.error{
+	<<<<<<< HEAD
 	.control-label{
 		color:$brand;
 		display: inline-block;
 	}
-		.help-inline {
-			color:$buttons;
+	.help-inline {
+		color:$buttons;
 		font-size: 11px;
 		margin-bottom: 2px;
 	}
+	=======
+	.control-label{
+		color:$brand;
+		display: inline-block;
+	}
+	.help-inline {
+		color:$buttons;
+		font-size: 11px;
+		margin-bottom: 2px;
+	}
+	>>>>>>> 5863af85559014587a2138ef324916565df48adb
 }
 
 // VALID
@@ -1025,15 +1089,15 @@ div#spin{
 
 
 .assistly-widget a {
-	 background-position: 2px 0 !important;
-	 display: block;
-	 height: 45px !important;
-	 width: 125px !important;
-	 overflow: hidden;
+	background-position: 2px 0 !important;
+	display: block;
+	height: 45px !important;
+	width: 125px !important;
+	overflow: hidden;
 }
 
 .assistly-widget a:hover {
-	 background-position: 2px -44px !important;
+	background-position: 2px -44px !important;
 }
 
 /*-- MODAL FOR SHARE -- REPORTT BUILDER --*/
@@ -1094,13 +1158,14 @@ div#spin{
 }
 
 .select2-drop.select2-dropdown{
+	<<<<<<< HEAD
 	ul{width: 100%;}
 	border-radius: 4px;
 	border: 1px solid $grey_three !important;
 	box-shadow: none;
 	-webkit-box-shadow: none;
-			 -moz-box-shadow: none;
-						box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
 	.select2-results{
 		color: $grey_one;
 		border-radius: 4px;
@@ -1120,6 +1185,34 @@ div#spin{
 			color: $grey_one;
 		}
 	}
+	=======
+	ul{width: 100%;}
+	border-radius: 4px;
+	border: 1px solid $grey_three !important;
+	box-shadow: none;
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
+	.select2-results{
+		color: $grey_one;
+		border-radius: 4px;
+		width: 100% !important;
+		li{
+			width: 100%;
+			border-radius: 4px;
+		}
+		background-color: rgb(54, 54, 54);
+		width: 100%;
+		.select2-results-selectable{
+			width: 90%;
+			border-radius: 4px;
+		}
+		.select2-highlighted {
+			background-color: rgb(0, 0, 0);
+			color: $grey_one;
+		}
+	}
+	>>>>>>> 5863af85559014587a2138ef324916565df48adb
 }
 
 .video-modal{
@@ -1218,6 +1311,47 @@ div#spin{
 		}
 		.saved-filters{
 			margin-top: 20px;
+		}
+	}
+}
+
+// Event Details Expenses Modal
+// --------------------------------------------------
+
+.eventexpense_modal{
+	width: 660px;
+	.expense-info-form{
+		width: 100%;
+		.control-group{
+			display:block;
+			width: 60%;
+			input[type="text"]{
+				width:90%;
+			}
+			&.event_expense_amount{
+				label{
+					display: none;
+				}
+			}
+		}
+	}
+	.expense-info-form {
+		display: inline-block;
+		position: relative;
+	}
+	.expense-file-form {
+		top:0;
+		right:0;
+		position:absolute;
+		width:40%;
+		.control-group{
+			width: 100%;
+		}
+	}
+	.form-actions{
+		display: inline-block;
+		&.inside-form{
+			margin-bottom:10px;
 		}
 	}
 }

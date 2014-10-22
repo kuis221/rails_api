@@ -6,7 +6,7 @@
       = render resource.event_expenses
       div.resource-item.total-expenses.text-large
         .span10
-        .span2
+        .span2.total-expenses-value
           .pull-left.text-large TOTAL:
           .pull-right.text-large
             b= number_to_currency(resource.event_expenses.map(&:amount).compact.sum, precision: 2)
