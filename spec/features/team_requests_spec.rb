@@ -42,7 +42,7 @@ feature 'Teams', js: true do
 
       within resource_item do
         expect(page).to have_content('Costa Rica Team')
-        click_js_link 'Deactivate'
+        click_js_button 'Deactivate Team'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this team?'
@@ -55,7 +55,7 @@ feature 'Teams', js: true do
 
       within resource_item do
         expect(page).to have_content('Costa Rica Team')
-        click_js_link 'Activate'
+        click_js_button 'Activate Team'
       end
       expect(page).to have_no_content('Costa Rica Team')
     end
@@ -117,14 +117,14 @@ feature 'Teams', js: true do
       team = create(:team, active: true, company_id: company.id)
       visit team_path(team)
       within('.links-data') do
-        click_js_link('Deactivate')
+        click_js_button 'Deactivate Team'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this team?'
 
       within('.links-data') do
-        click_js_link 'Activate'
-        expect(page).to have_link('Deactivate') # test the link have changed
+        click_js_button 'Activate Team'
+        expect(page).to have_button('Deactivate Team') # test the link have changed
       end
     end
 

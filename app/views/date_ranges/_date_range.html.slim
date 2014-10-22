@@ -3,7 +3,5 @@ div.resource-item id="date_range_#{date_range.id}" class="#{active_class(date_ra
     .text-large= date_range.name
     .crop-text= date_range.description
   div.resource-item-actions
-    = link_to '', edit_date_range_path(date_range), remote: true, class: 'icon-edit' if can?(:edit, DateRange)
-    - if can?(:deactivate, DateRange)
-      = link_to_deactivate date_range
-      = link_to '', activate_date_range_path(date_range), remote: true,title: I18n.t('confirmation.activate'), class: 'icon-rounded-ok' unless date_range.active?
+    = button_to_edit date_range if can?(:edit, DateRange)
+    = button_to_activate_or_deactivate(date_range) if can?(:deactivate, DateRange)

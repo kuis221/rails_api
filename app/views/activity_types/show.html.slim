@@ -17,14 +17,14 @@
           = resource.description
 
     .links-data
-      = button_to_edit resource  if can?(:edit, resource)
-      = active_inactive_buttons(resource) if can?(:activate, resource)
+      = button_to_edit resource if can?(:edit, resource)
+      = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
 
     // The is info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
       h3= resource.name
       = button_to_edit resource if can?(:edit, resource)
-      = active_inactive_buttons(resource) if can?(:activate, resource)
+      = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
 
   .form-builder-wrapper.activities-wrapper
     .form-wrapper.data-form-wrapper
@@ -126,12 +126,11 @@
 
 javascript:
   jQuery(function(){
-    $(document).on('activity_types:change', function(){
-      window.location = '#{activity_type_path(return: return_path)}'
-    });
     $('.form-builder-wrapper').formBuilder({
       url: '#{activity_type_path(resource, format: :json)}',
       resourceName: 'activity_type',
       canEdit: #{can?(:update, resource) ? 'true' : 'false'}
     });
   });
+
+- reload_page_on_edit_resource

@@ -37,10 +37,10 @@ feature 'Roles', js: true do
 
       within resource_item 1 do
         expect(page).to have_content('Costa Rica Role')
-        click_js_link 'Deactivate'
+        click_js_button 'Deactivate Role'
       end
 
-      confirm_prompt 'Are you sure you want to deactivate this role?'
+      confirm_prompt 'Costa Rica Role users can no longer login if you deactivate that role. Would you like to continue?'
 
       within('#roles-list') do
         expect(page).to have_no_content('Costa Rica Role')
@@ -52,7 +52,7 @@ feature 'Roles', js: true do
 
       within resource_item 1 do
         expect(page).to have_content('Costa Rica Role')
-        click_js_link 'Activate'
+        click_js_button 'Activate Role'
       end
       expect(page).to have_no_content('Costa Rica Role')
     end
@@ -84,17 +84,17 @@ feature 'Roles', js: true do
     end
 
     scenario 'allows the user to activate/deactivate a role' do
-      role = create(:role, active: true, company_id: company.id)
+      role = create(:role, name: 'Admin', active: true, company_id: company.id)
       visit role_path(role)
       within('.links-data') do
-        click_js_link('Deactivate')
+        click_js_button 'Deactivate Role'
       end
 
-      confirm_prompt 'Are you sure you want to deactivate this role?'
+      confirm_prompt 'Admin users can no longer login if you deactivate that role. Would you like to continue?'
 
       within('.links-data') do
-        click_js_link 'Activate'
-        expect(page).to have_link('Deactivate') # test the link have changed
+        click_js_button 'Activate Role'
+        expect(page).to have_button 'Deactivate Role' # test the link have changed
       end
     end
 

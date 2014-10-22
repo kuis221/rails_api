@@ -18,7 +18,5 @@ div.resource-item.pdf-keeptogether id="brand_ambassadors_visit_#{visit.id}" clas
 
 
   div.resource-item-actions
-    = link_to '', edit_brand_ambassadors_visit_path(visit), remote: true, class: 'icon-edit', title: 'Edit' if can? :edit, BrandAmbassadors::Visit
-    - if can? :deactivate, BrandAmbassadors::Visit
-      = link_to_deactivate visit
-      = link_to '', activate_brand_ambassadors_visit_path(visit), remote: true, class: 'icon-rounded-ok', title: I18n.t('confirmation.activate') unless visit.active?
+    = button_to_edit visit if can?(:edit, BrandAmbassadors::Visit)
+    = button_to_activate_or_deactivate(visit) if can?(:deactivate, BrandAmbassadors::Visit)

@@ -433,7 +433,7 @@ feature 'Brand Ambassadors Visits' do
       choose_predefined_date_range 'Current month'
 
       within resource_item do
-        click_js_link('Edit')
+        click_js_button 'Edit Visit'
       end
 
       within visible_modal do
@@ -493,7 +493,7 @@ feature 'Brand Ambassadors Visits' do
       choose_predefined_date_range 'Current month'
 
       within resource_item do
-        click_js_link('Deactivate')
+        click_js_button 'Deactivate Visit'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this visit?'
@@ -593,14 +593,14 @@ feature 'Brand Ambassadors Visits' do
       visit brand_ambassadors_visit_path(ba_visit)
 
       within('.links-data') do
-        click_js_link('Deactivate')
+        click_js_button 'Deactivate Visit'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this visit?'
 
       within('.links-data') do
-        click_js_link('Activate')
-        expect(page).to have_link('Deactivate') # test the link have changed
+        click_js_button 'Activate Visit'
+        expect(page).to have_button 'Deactivate Visit' # test the link have changed
       end
     end
   end

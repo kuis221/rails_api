@@ -36,7 +36,7 @@
 
     .links-data
       = button_to_edit resource if can?(:edit, resource)
-      = active_inactive_buttons(resource) if can?(:deactivate, resource)
+      = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
 
   #visit-events.details_box
     h3.module-title EVENTS
