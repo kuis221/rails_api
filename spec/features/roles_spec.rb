@@ -2,7 +2,7 @@ require 'rails_helper'
 
 feature 'Roles', js: true do
   let(:company) { create(:company) }
-  let(:user) { create(:user, company_id: company.id, role_id: create(:role, company: company).id) }
+  let(:user) { create(:user, company_id: company.id, role_id: create(:role, name: 'Role 1', company: company).id) }
 
   before { sign_in user }
   after { Warden.test_reset! }
@@ -117,4 +117,70 @@ feature 'Roles', js: true do
     end
   end
 
+  feature 'export', search: true do
+    let(:role1) { create(:role, name: 'Costa Rica Role',
+                                description: 'El grupo de ticos', active: true, company: company) }
+    let(:role2) { create(:role, name: 'Buenos Aires Role',
+                                description: 'The guys from BAs', active: true, company: company) }
+
+    before do
+      # make sure roles are created before
+      role1
+      role2
+      Sunspot.commit
+    end
+
+    scenario 'should be able to export as XLS' do
+      visit roles_path
+
+      click_js_link 'Download'
+      click_js_link 'Download as XLS'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        expect(ListExportWorker).to have_queued(ListExport.last.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      expect(ListExport.last).to have_rows([
+        ["NAME", "DESCRIPTION"],
+        ["Buenos Aires Role", "The guys from BAs"],
+        ["Costa Rica Role", "El grupo de ticos"],
+        ["Role 1", "Test Role description"]
+      ])
+    end
+
+    scenario 'should be able to export as PDF' do
+      visit roles_path
+
+      click_js_link 'Download'
+      click_js_link 'Download as PDF'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      export = ListExport.last
+      # Test the generated PDF...
+      reader = PDF::Reader.new(open(export.file.url))
+      reader.pages.each do |page|
+        # PDF to text seems to not always return the same results
+        # with white spaces, so, remove them and look for strings
+        # without whitespaces
+        text = page.text.gsub(/[\s\n]/, '')
+        expect(text).to include 'Roles'
+        expect(text).to include 'BuenosAiresRole'
+        expect(text).to include 'TheguysfromBAs'
+        expect(text).to include 'CostaRicaRole'
+        expect(text).to include 'Elgrupodeticos'
+        expect(text).to include 'Role1'
+        expect(text).to include 'TestRoledescription'
+      end
+    end
+  end
 end

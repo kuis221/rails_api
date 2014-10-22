@@ -58,6 +58,7 @@ en:
         activity_types: 'Activity Types'
         brands: 'Brands'
         campaigns: 'Campaigns'
+        roles: 'Roles'
 
   buttons:
     new:
