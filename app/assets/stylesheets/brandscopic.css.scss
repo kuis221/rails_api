@@ -5106,6 +5106,18 @@ body.campaigns{
 			}
 		}
 	}
+	&#event-expenses{
+		.resource-item-link{
+			.text-large{
+				margin-top: 16px;
+			}
+		}
+		.resource-item.total-expenses{
+			.span2.total-expenses-value{
+				margin-top: 18px;
+			}
+		}
+	}
 	.box_photos{
 		margin-bottom: 40px;
 		position: relative;
