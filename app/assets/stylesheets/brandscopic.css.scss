@@ -501,8 +501,9 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		background-color: $complete;
 	}
 	&.collection-list-description{
-		a.close{
-			right: 30px;
+		a.icon-close{
+			cursor:pointer;
+			margin-top: 4px;
 		}
 	}
 }
@@ -526,7 +527,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	min-height: 37px;
 	line-height: 23px;
 	margin:0 10px 0 90px;
-	padding: 13px 0 0 21px;
+	padding: 13px 20px 0 21px;
 	position: relative;
 	-webkit-border-radius: 0px 0px 8px 8px;
 	border-radius: 0px 0px 8px 8px;
