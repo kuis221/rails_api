@@ -1,0 +1,30 @@
+doctype xml
+
+Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  Styles
+    Style ss:ID="s1"
+      Font ss:Bold="1"
+    Style ss:ID="s2"
+      NumberFormat ss:Format="mm/dd/yyyy"
+  Worksheet ss:Name=I18n.t("exports.pdf.title.#{controller_name.underscore}")
+
+    Table
+      Column ss:Width="200"
+      Column ss:Width="400"
+      Column ss:Width="100"
+      Row ss:StyleID="s1"
+        Cell
+          Data ss:Type="String" NAME
+        Cell
+          Data ss:Type="String" DESCRIPTION
+        Cell
+          Data ss:Type="String" MEMBERS
+
+      - each_collection_item do |team|
+        Row
+          Cell
+            Data ss:Type="String"= team.name
+          Cell
+            Data ss:Type="String"= team.description
+          Cell
+            Data ss:Type="Number"= number_with_delimiter(team.users.active.count, precision: 1)

@@ -173,4 +173,66 @@ feature 'Teams', js: true do
     end
   end
 
+  feature 'export', search: true do
+    let(:team1) { create(:team, name: 'Costa Rica Team', description: 'El grupo de ticos',
+                                active: true, company: company) }
+    let(:team2) { create(:team, name: 'San Francisco Team', description: 'The guys from SF',
+                                active: true, company: company) }
+
+    before do
+      team1.users << create_list(:company_user, 3, company: company)
+      team2.users << create_list(:company_user, 2, company: company)
+      Sunspot.commit
+    end
+
+    scenario 'should be able to export as XLS' do
+      visit teams_path
+
+      click_js_link 'Download'
+      click_js_link 'Download as XLS'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        expect(ListExportWorker).to have_queued(ListExport.last.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      expect(ListExport.last).to have_rows([
+        ["NAME", "DESCRIPTION", "MEMBERS"],
+        ["Costa Rica Team", "El grupo de ticos", "3"],
+        ["San Francisco Team", "The guys from SF", "2"]
+      ])
+    end
+
+    scenario 'should be able to export as PDF' do
+      visit teams_path
+
+      click_js_link 'Download'
+      click_js_link 'Download as PDF'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      export = ListExport.last
+      # Test the generated PDF...
+      reader = PDF::Reader.new(open(export.file.url))
+      reader.pages.each do |page|
+        # PDF to text seems to not always return the same results
+        # with white spaces, so, remove them and look for strings
+        # without whitespaces
+        text = page.text.gsub(/[\s\n]/, '')
+        expect(text).to include 'Teams'
+        expect(text).to include 'CostaRicaTeam'
+        expect(text).to include '3Elgrupodeticos'
+        expect(text).to include 'SanFranciscoTeam'
+        expect(text).to include '2TheguysfromSF'
+      end
+    end
+  end
 end

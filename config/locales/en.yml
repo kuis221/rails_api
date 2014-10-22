@@ -59,6 +59,7 @@ en:
         brands: 'Brands'
         campaigns: 'Campaigns'
         roles: 'Roles'
+        teams: 'Teams'
 
   buttons:
     new:
