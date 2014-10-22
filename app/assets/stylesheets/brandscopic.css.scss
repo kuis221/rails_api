@@ -1527,6 +1527,7 @@ footer{
 header{
 	&.navbar-inverse {
 		.nav > li > a{
+			color:$user_menu;
 			text-shadow: none;
 		}
 		.navbar-inner {
@@ -1539,9 +1540,11 @@ header{
 				margin: 0;
 				>li>a{
 					border-radius: 0px;
-					margin: 0 8px 0 0 ;
-					padding: 13px 12px 12px;
+					box-sizing:border-box;
+					margin: 0;
+					padding: 13px 14px 14px;
 					line-height: 16px;
+					height: 43px;
 					white-space: nowrap;
 					&:hover {
 						background-color: $menu;
@@ -1563,9 +1566,10 @@ header{
 								color: $grey_two;
 								font-size: 15px;
 								margin-right: 10px;
-								&.icon-on{
-									position: relative;
-									top: 1px;
+								position: relative;
+								top: 3px;
+								&.icon-user{
+									font-size: 13px;
 								}
 							}
 							&:hover{
@@ -1863,20 +1867,47 @@ label{
 	}
 }
 
+li#user_menu{
+	margin-right:8px;
+}
 li#notifications{
+	.notification-state{
+		background-color: #626763;
+		border: 1px solid $header;
+		text-align:center;
+		font-size: 10px;
+		line-height: 14px;
+		border-radius:12px;
+		min-height: 15px;
+		min-width:15px;
+		position:absolute;
+		z-index:9;
+		right: 4px;
+		top:6px
+	}
+	.icon-bell{
+		color: $app_bg;
+		position:relative;
+		top:2px;
+	}
+	&:hover, &:active, &.open{
+		.notification-state{
+			border: 1px solid $menu;
+		}
+	}
 
 	&.has-notifications {
 		.dropdown-toggle { color:  #fff; }
 	}
 
 	&.has-grey-notifications {
-		.dropdown-toggle { background-color:  $alert_grey; }
+		.notification-state { background-color:  $alert_grey; }
 	}
 	&.has-blue-notifications {
-		.dropdown-toggle { background-color:  $alert_blue; }
+		.notification-state { background-color:  $alert_blue; }
 	}
 	&.has-red-notifications {
-		.dropdown-toggle { background-color: $alert_red; }
+		.notification-state { background-color: $alert_red; }
 	}
 
 	&.without-notifications ul {
@@ -2019,18 +2050,6 @@ li#notifications{
 				}
 			}
 		}
-	}
-	.dropdown-toggle {
-		background-color: #626763;
-		border-radius: 5px;
-		font-size: 10px;
-		font-weight: bold;
-		line-height: 16px;
-		margin: 10px 8px 0 20px;
-		padding: 2px;
-		min-width: 15px;
-		text-align: center;
-		height: 17px;
 	}
 }
 
