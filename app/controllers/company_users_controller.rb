@@ -8,6 +8,7 @@ class CompanyUsersController < FilteredController
 
   respond_to :js, only: [:new, :create, :edit, :update, :time_zone_change, :time_zone_update]
   respond_to :json, only: [:index, :notifications]
+  respond_to :xls, :pdf, only: :index
 
   helper_method :brands_campaigns_list, :viewing_profile?
 

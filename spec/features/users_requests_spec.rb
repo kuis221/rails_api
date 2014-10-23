@@ -272,4 +272,77 @@ feature 'Users', js: true do
       expect(@company_user.notifications_settings).to_not include('event_recap_due_app')
     end
   end
+
+  feature 'export', search: true do
+    let(:role) { create(:role, name: 'TestRole', company: @company) }
+    let(:user1) { create(:user, first_name: 'Pablo', last_name: 'Baltodano', email: 'email@hotmail.com',
+                                city: 'Los Angeles', state: 'CA', country: 'US', company: @company, role_id: role.id) }
+    let(:user2) { create(:user, first_name: 'Juanito', last_name: 'Bazooka', email: 'bazooka@gmail.com',
+                                city: 'New York', state: 'NY', country: 'US', company: @company, role_id: role.id) }
+
+    before do
+      # make sure users are created before
+      user1
+      user2
+      Sunspot.commit
+    end
+
+    scenario 'should be able to export as XLS' do
+      visit company_users_path
+
+      click_js_link 'Download'
+      click_js_link 'Download as XLS'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        expect(ListExportWorker).to have_queued(ListExport.last.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      expect(ListExport.last).to have_rows([
+        ['FULL NAME', 'ROLE', 'CITY', 'COUNTRY', 'EMAIL', 'LAST ACTIVITY'],
+        ['Juanito Bazooka', 'TestRole', 'New York, NY', 'United States', 'bazooka@gmail.com', nil],
+        ['Pablo Baltodano', 'TestRole', 'Los Angeles, CA', 'United States', 'email@hotmail.com', nil],
+        ['Test User', Role.first.name, 'Curridabat, SJ', 'Costa Rica', @user.email, 'about 0 minutes ago']
+      ])
+    end
+
+    scenario 'should be able to export as PDF' do
+      visit company_users_path
+
+      click_js_link 'Download'
+      click_js_link 'Download as PDF'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      export = ListExport.last
+      # Test the generated PDF...
+      reader = PDF::Reader.new(open(export.file.url))
+      reader.pages.each do |page|
+        # PDF to text seems to not always return the same results
+        # with white spaces, so, remove them and look for strings
+        # without whitespaces
+        text = page.text.gsub(/[\s\n]/, '')
+        expect(text).to include 'Users'
+        expect(text).to include 'JuanitoBazooka'
+        expect(text).to include 'NewYork,NY'
+        expect(text).to include 'bazooka@gmail.com'
+        expect(text).to include 'TestRole'
+        expect(text).to include 'UnitedStates'
+        expect(text).to include 'PabloBaltodano'
+        expect(text).to include 'LosAngeles,CA'
+        expect(text).to include 'email@hotmail.com'
+        expect(text).to include 'TestUser'
+        expect(text).to include 'Curridabat,SJ'
+        expect(text).to include @user.email
+      end
+    end
+  end
 end

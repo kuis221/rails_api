@@ -60,6 +60,7 @@ en:
         campaigns: 'Campaigns'
         roles: 'Roles'
         teams: 'Teams'
+        company_users: 'Users'
 
   buttons:
     new:
