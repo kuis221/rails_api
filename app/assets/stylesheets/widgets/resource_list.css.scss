@@ -38,12 +38,21 @@
 			width:109px;
 			text-align: right;
 			padding-top: $resource-item-padding;
+			form.button_to {
+				height: 18px;
+				margin-right: 0px;
+				margin-left: 10px;
+				&:first-child {
+					margin-left: 0;
+				}
+				button {
+					margin-top: -1px;
+				}
+			}
 			a {
-				color: $brand;
-				margin-right: 10px;
-				font-size: 18px;
-				&:last-child {
-					margin-right: 0;
+				margin-left: 10px;
+				&:first-child {
+					margin-left: 0;
 				}
 				&.icon-receipt {
 					font-size: 26px;
@@ -51,6 +60,11 @@
 					top: 7px;
 					margin-right: 5px;
 				}
+			}
+			a, .button-with-icon {
+				color: $brand;
+				font-size: 18px;
+				height: 18px;
 				&.icon-large {
 					font-size: 24px;
 				}
@@ -150,6 +164,9 @@
 		.resource-item {
 			&.inactive {
 				color:$user_menu;
+				.special-icon {
+					background-color: $gray-lighter;
+				}
 			}
 			&:hover {
 				.activate-btn {

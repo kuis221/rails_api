@@ -38,7 +38,7 @@ feature 'Reports', js: true do
 
     within resource_item report, list: reports_list do
       expect(page).to have_content('Events by Venue')
-      click_link 'Deactivate'
+      click_js_button 'Deactivate Report'
     end
 
     confirm_prompt 'Are you sure you want to deactivate this report?'
@@ -57,7 +57,7 @@ feature 'Reports', js: true do
 
     within resource_item report, list: reports_list do
       expect(page).to have_content('My Report')
-      click_link 'Edit'
+      click_js_button 'Edit Report'
     end
 
     within visible_modal do

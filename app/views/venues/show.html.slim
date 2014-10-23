@@ -27,7 +27,8 @@
         span
           = venue_address
           - if resource.formatted_address.present?
-            br>/
+            - unless venue_address.strip.blank?
+              br>/
           = resource.formatted_phone_number
           - if resource.website
             .link

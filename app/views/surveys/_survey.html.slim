@@ -1,19 +1,18 @@
-li id="survey_#{survey.id}"
-  span
-    .survey-age
-      - if age = survey.age
-        = "#{age} year old"
-    = "#{survey.ethnicity} #{survey.gender}"
-  span.date
-    = format_date(survey.created_at)
-    br>/
-    | Completed
-  span.date
-    = format_date(survey.updated_at)
-    br>/
-    | Modified
-  span.pull-right
-    = link_to '', edit_event_survey_path(survey.event, survey), remote: true, class: 'icon-edit' if can?(:edit, survey)
-    - if can?(:deactivate, survey)
-      = link_to '', deactivate_event_survey_path(survey.event, survey), remote: true, class: 'icon-rounded-disable', data: { confirm: I18n.t('confirmation.deactivate_confirm_message', model: survey.class.name)} if survey.active?
-      = link_to '', activate_event_survey_path(survey.event, survey), remote: true, class: 'icon-rounded-ok',title: I18n.t('confirmation.active') unless survey.active?
+div.resource-item id="survey_#{survey.id}"
+  .resource-item-link
+    .span4
+      .survey-age
+        - if age = survey.age
+          = "#{age} year old"
+      = "#{survey.ethnicity} #{survey.gender}"
+    .span4.date
+      = format_date(survey.created_at)
+      br>/
+      | Completed
+    .span4.date
+      = format_date(survey.updated_at)
+      br>/
+      | Modified
+  div.resource-item-actions
+    = button_to_edit survey, url: edit_event_survey_path(survey.event, survey) if can?(:edit, survey)
+    = button_to_activate_or_deactivate(survey, activate_url: activate_event_survey_path(survey.event, survey), deactivate_url: deactivate_event_survey_path(survey.event, survey)) if can?(:deactivate, survey)

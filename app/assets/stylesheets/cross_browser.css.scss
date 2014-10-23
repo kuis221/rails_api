@@ -51,9 +51,16 @@
 			float: left;
 		}
 	}
-	li#notifications .dropdown-menu ul li a i.icon-angle-right:before{
-		top:8px;
+	li#notifications{
+		.dropdown-menu ul li a i.icon-angle-right:before{
+			top:8px;
+		}
+		.notification-state{
+ 			line-height: 15px;
+ 			padding: 0 1px 0 0;
+		}
 	}
+
 	.link-list b{
 		top:0;
 	}

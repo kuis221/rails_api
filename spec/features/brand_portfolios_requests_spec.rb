@@ -43,7 +43,7 @@ feature 'BrandPortfolios', js: true, search: true do
 
         expect(page).to have_content('A Vinos ticos')
         within resource_item do
-          click_js_link('Deactivate')
+          click_js_button 'Deactivate Brand Portfolio'
         end
         confirm_prompt 'Are you sure you want to deactivate this brand portfolio?'
 
@@ -60,7 +60,7 @@ feature 'BrandPortfolios', js: true, search: true do
 
         expect(page).to have_content('A Vinos ticos')
         within resource_item do
-          click_js_link('Activate')
+          click_js_button 'Activate Brand Portfolio'
         end
         expect(page).to have_no_content('A Vinos ticos')
       end
@@ -113,14 +113,14 @@ feature 'BrandPortfolios', js: true, search: true do
       portfolio = create(:brand_portfolio, name: 'Some Brand Portfolio', description: 'a portfolio description', active: true, company: company)
       visit brand_portfolio_path(portfolio)
       within('.links-data') do
-        click_js_link('Deactivate')
+        click_js_button 'Deactivate Brand Portfolio'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this brand portfolio?'
 
       within('.links-data') do
-        click_js_link('Activate')
-        expect(page).to have_link('Deactivate') # test the link have changed
+        click_js_button 'Activate Brand Portfolio'
+        expect(page).to have_button 'Deactivate Brand Portfolio' # test the link have changed
       end
     end
 

@@ -16,7 +16,7 @@ feature 'Activity Types', search: true, js: true do
   feature 'List view', search: true  do
     scenario 'GET index should display a table with the day_parts' do
       activity_types = [
-        create(:activity_type, company: @company, name: 'Morningns',
+        create(:activity_type, company: @company, name: 'Mornings',
                description: 'From 8 to 11am', active: true),
         create(:activity_type, company: @company, name: 'Afternoons',
                description: 'From 1 to 6pm', active: true)
@@ -31,7 +31,7 @@ feature 'Activity Types', search: true, js: true do
       end
       # Second Row
       within resource_item 2 do
-        expect(page).to have_content('Morningns')
+        expect(page).to have_content('Mornings')
         expect(page).to have_content('From 8 to 11am')
       end
     end
@@ -60,7 +60,7 @@ feature 'Activity Types', search: true, js: true do
 
       expect(page).to have_content('A Vinos ticos')
       within resource_item 1 do
-        click_js_link('Deactivate')
+        click_js_button 'Deactivate Activity Type'
       end
       confirm_prompt 'Are you sure you want to deactivate this activity type?'
 
@@ -78,7 +78,7 @@ feature 'Activity Types', search: true, js: true do
 
       expect(page).to have_content('A Vinos ticos')
       within resource_item 1 do
-        click_js_link('Activate')
+        click_js_button 'Activate Activity Type'
       end
       expect(page).to have_no_content('A Vinos ticos')
     end
@@ -90,7 +90,7 @@ feature 'Activity Types', search: true, js: true do
 
       expect(page).to have_content('A test activity type')
       within resource_item 1 do
-        click_js_link('Edit')
+        click_js_button 'Edit Activity Type'
       end
 
       within visible_modal do

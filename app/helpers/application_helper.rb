@@ -2,42 +2,42 @@ require 'base64'
 
 module ApplicationHelper
   def place_address(place, link_name = false, line_separator = '<br />', name_separator = '<br />')
-    unless place.nil?
-      place_name = place.name
-      place_city = place.city
+    return if place.nil?
+    place_name = place.name
+    place_city = place.city
 
-      if link_name
-        venue = Venue.find_by(company_id: current_company.id, place_id: place.id)
-        if venue.present?
-          if place.name == place.city
-            place_city = link_to place.city, venue_path(venue)
-            place_name = nil
-          else
-            place_name = link_to place.name, venue_path(venue)
-          end
+    if link_name
+      venue = Venue.find_by(company_id: current_company.id, place_id: place.id)
+      if venue.present?
+        if place.name == place.city
+          place_city = link_to place.city, venue_path(venue)
+          place_name = nil
+        else
+          place_name = link_to place.name, venue_path(venue)
         end
       end
-
-      address = []
-      city_parts = []
-      address.push place.street unless place.street.nil? || place.street.strip.empty? || place.name == place.street
-      city_parts.push place_city if place.city.present? && place.name != place.city
-      city_parts.push place.state if place.state.present?
-      city_parts.push place.zipcode if place.zipcode.present?
-
-      address.push city_parts.compact.join(', ') unless city_parts.empty? || !place.city
-      address.push place.formatted_address if place.formatted_address.present? && city_parts.empty? && (place.city || !place.types.include?('political'))
-      address_with_name = nil
-      address_with_name = "<span class=\"address-name\">#{place_name}</span>" if place_name
-      address_with_name = [address_with_name, address.compact.join(line_separator)].compact.join(name_separator) unless address.compact.empty?
-
-      "<address>#{address_with_name}</address>".html_safe
     end
+
+    address = []
+    city_parts = []
+    address.push place.street unless place.street.nil? || place.street.strip.empty? || place.name == place.street
+    city_parts.push place_city if place.city.present? && place.name != place.city
+    city_parts.push place.state if place.state.present?
+    city_parts.push place.zipcode if place.zipcode.present?
+
+    address.push city_parts.compact.join(', ') unless city_parts.empty? || !place.city
+    address.push place.formatted_address if place.formatted_address.present? && city_parts.empty? && (place.city || !place.types.include?('political'))
+    address_with_name = nil
+    address_with_name = "<span class=\"address-name\">#{place_name}</span>" unless place_name.blank?
+    address_with_name = [address_with_name, address.compact.join(line_separator)].compact.join(name_separator) unless address.compact.empty?
+
+    "<address>#{address_with_name}</address>".html_safe
   end
 
   def icon_button_to(icon, options = {}, html_options = {})
     html_options[:class] ||= ''
     html_options[:class] = [html_options[:class], 'button-with-icon'].join(' ')
+
     button_to options, html_options do
       content_tag(:i, nil, class: "icon #{icon}")
     end
@@ -48,18 +48,43 @@ module ApplicationHelper
       remote: true,
       method: :get,
       title: title,
-      form_class: 'button_to button_to_add'
-    )
+      form_class: 'button_to button_to_add')
   end
 
   def button_to_edit(resource, title: nil, url: nil)
-    url = url_for([:edit, resource])
+    url ||= url_for([:edit, resource])
     title = I18n.t("buttons.edit.#{resource.class.name.underscore}")
     icon_button_to 'icon-edit', url,
                    remote: true,
                    method: :get,
                    title: title,
                    form_class: 'button_to button_to_edit'
+  end
+
+  def button_to_activate_or_deactivate(resource, activate_url: nil, deactivate_url: nil)
+    if resource.active?
+      url = deactivate_url || url_for([:deactivate, resource])
+      icon_button_to 'icon-rounded-disable',  url,
+                     remote: true,
+                     form: {
+                      id: 'active-toggle-btn-' + resource.class.name.underscore.gsub('/', '_').downcase + '-' + resource.id.to_s },
+                     method: :get,
+                     title: I18n.t("buttons.deactivate.#{resource.class.name.underscore}"),
+                     form_class: 'button_to button_to_edit',
+                     data: { confirm: I18n.t("confirm.deactivate.#{resource.class.name.underscore}",
+                                             model: resource.class.model_name.human.downcase,
+                                             name: resource.try(:name)),
+                             url: url }
+    else
+      url = activate_url || url_for([:activate, resource])
+      icon_button_to 'icon-rounded-ok',  url,
+                     remote: true,
+                     method: :get,
+                     form: {
+                      id: 'active-toggle-btn-' + resource.class.name.underscore.gsub('/', '_').downcase + '-' + resource.id.to_s },
+                     title: I18n.t("buttons.activate.#{resource.class.name.underscore}"),
+                     form_class: 'button_to button_to_edit'
+    end
   end
 
   def event_place_address(event, _link_name = false, line_separator = '<br />', name_separator = '<br />')
@@ -166,31 +191,28 @@ module ApplicationHelper
   end
 
   def format_date_range(start_at, end_at, options = {})
+    return if start_at.nil?
+    return format_date_with_time(start_at) if end_at.nil?
     options[:date_separator] ||= '<br />'
 
-    unless start_at.nil?
-      return format_date_with_time(start_at) if end_at.nil?
-
-      if start_at.to_date != end_at.to_date
-        format_date_with_time(start_at) +
-        options[:date_separator].html_safe +
-        format_date_with_time(end_at)
+    if start_at.to_date != end_at.to_date
+      format_date_with_time(start_at) +
+      options[:date_separator].html_safe +
+      format_date_with_time(end_at)
+    else
+      if start_at.strftime('%Y') == Time.zone.now.year.to_s
+        the_date = start_at.strftime('%^a <b>%b %e</b>' + options[:date_separator]).html_safe
       else
-        if start_at.strftime('%Y') == Time.zone.now.year.to_s
-          the_date = start_at.strftime('%^a <b>%b %e</b>' + options[:date_separator]).html_safe
-        else
-          the_date = start_at.strftime('%^a <b>%b %e, %Y</b>' + options[:date_separator]).html_safe
-        end
-        the_date + "#{start_at.strftime('%l:%M %p').strip} - #{end_at.strftime('%l:%M %p').strip}".html_safe
+        the_date = start_at.strftime('%^a <b>%b %e, %Y</b>' + options[:date_separator]).html_safe
       end
+      the_date + "#{start_at.strftime('%l:%M %p').strip} - #{end_at.strftime('%l:%M %p').strip}".html_safe
     end
   end
 
   def user_new_feature(name, version = 1, &_block)
-    unless current_company_user.dismissed_alert?(name, version)
-      content_tag(:div, class: 'new-feature', 'data-alert' => name, 'data-version' => version) do
-        yield
-      end
+    return if current_company_user.dismissed_alert?(name, version)
+    content_tag(:div, class: 'new-feature', 'data-alert' => name, 'data-version' => version) do
+      yield
     end
   end
 
@@ -201,8 +223,6 @@ module ApplicationHelper
       link_to companies.first.name, root_path, class: 'current-company-title'
     else
       content_tag(:div, class: 'dropdown') do
-        text = 'Select Company'
-        text = current_company.name if current_company
         link_to((current_company.name + ' ' + content_tag(:b, '', class: 'caret')).html_safe, root_path, class: 'dropdown-toggle current-company-title', 'data-toggle' => 'dropdown') +
         content_tag(:ul, class: 'dropdown-menu', id: 'user-company-dropdown', role: 'menu', 'aria-labelledby' => 'dLabel') do
           companies.map do |company|
@@ -214,15 +234,15 @@ module ApplicationHelper
   end
 
   def gender_graph(data)
-    if data.present? && data.values.max > 0
-      content_tag(:div, class: :male) do
-        content_tag(:div, "#{data.try(:[], 'Male').try(:round) || 0} %", class: 'percent') +
-        content_tag(:div, 'MALE', class: 'gender')
-      end +
-      content_tag(:div, class: :female) do
-        content_tag(:div, "#{data.try(:[], 'Female').try(:round) || 0} %", class: 'percent') +
-        content_tag(:div, 'FEMALE', class: 'gender')
-      end
+    return unless data.present? && data.values.max > 0
+
+    content_tag(:div, class: :male) do
+      content_tag(:div, "#{data.try(:[], 'Male').try(:round) || 0} %", class: 'percent') +
+      content_tag(:div, 'MALE', class: 'gender')
+    end +
+    content_tag(:div, class: :female) do
+      content_tag(:div, "#{data.try(:[], 'Female').try(:round) || 0} %", class: 'percent') +
+      content_tag(:div, 'FEMALE', class: 'gender')
     end
   end
 
@@ -239,8 +259,15 @@ module ApplicationHelper
   end
 
   def link_to_deactivate(model, opts = {})
+    return unless model.active?
     opts[:url] ||= [:deactivate, model]
-    link_to '', opts[:url], remote: true, title: I18n.t('confirmation.deactivate'), class: 'icon-rounded-disable', data: { confirm: I18n.t('confirmation.deactivate_confirm_message', model: model.class.model_name.human.downcase) } if model.active?
+    link_to '', opts[:url],
+            remote: true,
+            title: I18n.t('confirmation.deactivate'),
+            class: 'icon-rounded-disable',
+            data: {
+              confirm: I18n.t('confirmation.deactivate_confirm_message',
+                              model: model.class.model_name.human.downcase) }
   end
 
   def active_class(item)
@@ -257,7 +284,8 @@ module ApplicationHelper
     content_tag :div, class: 'steps-wizard' do
       content_tag(:div, class: 'row-fluid') do
         steps.each_with_index.map do |step, i|
-          content_tag :div, class: 'step span4 ' + (active == i + 1 ? 'active' : (active > i ? 'completed' : '')) do
+          step_class = (active == (i + 1) ? 'active' : (active > i ? 'completed' : ''))
+          content_tag(:div, class: 'step span4 ' + step_class) do
             content_tag :div, class: 'step-box' do
               content_tag(:div, step, class: 'step-name') +
               content_tag(:div, nil, class: 'clearfix') +

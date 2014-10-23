@@ -33,10 +33,10 @@ feature 'Areas', js: true, search: true  do
 
     scenario 'can add an existing place to the area' do
       venue = create(:venue,
-                                 company: company,
-                                 place: create(:place,
-                                                           name: 'Guillermitos Bar', street_number: '98',
-                                                           route: '3rd Ave', city: 'New York'))
+                     company: company,
+                     place: create(:place,
+                                   name: 'Guillermitos Bar', street_number: '98',
+                                   route: '3rd Ave', city: 'New York'))
       Sunspot.commit
       company_user.places << venue.place
       visit area_path(area)
@@ -97,8 +97,10 @@ feature 'Areas', js: true, search: true  do
     feature '/areas' do
       scenario 'GET index should display a table with the areas' do
         areas = [
-          create(:area, name: 'Gran Area Metropolitana', description: 'Ciudades principales de Costa Rica', active: true, company: @company),
-          create(:area, name: 'Zona Norte', description: 'Ciudades del Norte de Costa Rica', active: true, company: @company)
+          create(:area, name: 'Gran Area Metropolitana',
+                 description: 'Ciudades principales de Costa Rica', active: true, company: company),
+          create(:area, name: 'Zona Norte', description: 'Ciudades del Norte de Costa Rica',
+                 active: true, company: company)
         ]
         Sunspot.commit
         visit areas_path
@@ -108,15 +110,15 @@ feature 'Areas', js: true, search: true  do
           within resource_item areas[0] do
             expect(page).to have_text('Gran Area Metropolitana')
             expect(page).to have_text('Ciudades principales de Costa Rica')
-            expect(page).to have_link('Edit')
-            expect(page).to have_link('Deactivate')
+            expect(page).to have_button('Edit Area')
+            expect(page).to have_button('Deactivate Area')
           end
           # Second Row
           within resource_item areas[1] do
             expect(page).to have_text('Zona Norte')
             expect(page).to have_text('Ciudades del Norte de Costa Rica')
-            expect(page).to have_link('Edit')
-            expect(page).to have_link('Deactivate')
+            expect(page).to have_button('Edit Area')
+            expect(page).to have_button('Deactivate Area')
           end
         end
       end
@@ -128,7 +130,7 @@ feature 'Areas', js: true, search: true  do
 
         expect(page).to have_text('Wild Wild West')
         within resource_item 1 do
-          click_js_link('Deactivate')
+          click_js_button 'Deactivate Area'
         end
         confirm_prompt 'Are you sure you want to deactivate this area?'
 
@@ -145,7 +147,7 @@ feature 'Areas', js: true, search: true  do
 
         within resource_item 1 do
           expect(page).to have_text('Wild Wild West')
-          click_js_link('Activate')
+          click_js_button 'Activate Area'
         end
         expect(page).to have_no_content('Wild Wild West')
       end
@@ -180,14 +182,14 @@ feature 'Areas', js: true, search: true  do
         area = create(:area, name: 'Some area', description: 'an area description', active: true, company: company)
         visit area_path(area)
         within('.links-data') do
-          click_js_link('Deactivate')
+          click_js_button 'Deactivate Area'
         end
 
         confirm_prompt 'Are you sure you want to deactivate this area?'
 
         within('.links-data') do
-          click_js_link('Activate')
-          expect(page).to have_link('Deactivate') # test the link have changed
+          click_js_button 'Activate Area'
+          expect(page).to have_button 'Deactivate Area' # test the link have changed
         end
       end
     end

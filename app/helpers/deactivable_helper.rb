@@ -12,15 +12,11 @@ module DeactivableHelper
   module InstanceMethods
     include DeactivableHelper::ViewMethods
     def deactivate
-      if resource.active?
-        resource.deactivate!
-      end
+      resource.deactivate! if resource.active?
     end
 
     def activate
-      unless resource.active?
-        resource.activate!
-      end
+      resource.activate! unless resource.active?
       render 'deactivate'
     end
   end

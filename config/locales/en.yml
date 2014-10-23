@@ -77,6 +77,7 @@ en:
       brand_ambassadors/visit: "New Visit"
     edit:
       event: "Edit Event"
+      company_user: "Edit Profile Data"
       team: "Edit Team"
       campaign: "Edit Campaign"
       role: "Edit Role"
@@ -86,7 +87,36 @@ en:
       date_range: "Edit Date Range"
       day_part: "Edit Day Part"
       activity_type: "Edit Activity Type"
+      report: "Edit Report"
       brand_ambassadors/visit: "Edit Visit"
+    deactivate:
+      event: "Deactivate Event"
+      company_user: "Deactivate User"
+      team: "Deactivate Team"
+      campaign: "Deactivate Campaign"
+      role: "Deactivate Role"
+      area: "Deactivate Area"
+      brand: "Deactivate Brand"
+      brand_portfolio: "Deactivate Brand Portfolio"
+      date_range: "Deactivate Date Range"
+      day_part: "Deactivate Day Part"
+      activity_type: "Deactivate Activity Type"
+      report: "Deactivate Report"
+      brand_ambassadors/visit: "Deactivate Visit"
+    activate:
+      event: "Activate Event"
+      company_user: "Activate User"
+      team: "Activate Team"
+      campaign: "Activate Campaign"
+      role: "Activate Role"
+      area: "Activate Area"
+      brand: "Activate Brand"
+      brand_portfolio: "Activate Brand Portfolio"
+      date_range: "Activate Date Range"
+      day_part: "Activate Day Part"
+      activity_type: "Activate Activity Type"
+      report: "Activate Report"
+      brand_ambassadors/visit: "Activate Visit"
 
   inputs:
     attached_asset:
@@ -402,6 +432,22 @@ en:
 
   dashboard:
     intro_message: "Track progress against event and promo hour goals for your campaigns"
+
+  confirm:
+    deactivate:
+      event: "Are you sure you want to deactivate this event?"
+      company_user: "Are you sure you want to deactivate this user?"
+      team: "Are you sure you want to deactivate this team?"
+      campaign: "Are you sure you want to deactivate this campaign?"
+      role: "%{name} users can no longer login if you deactivate that role. Would you like to continue?"
+      area: "Are you sure you want to deactivate this area?"
+      brand: "Are you sure you want to deactivate this brand?"
+      brand_portfolio: "Are you sure you want to deactivate this brand portfolio?"
+      date_range: "Are you sure you want to deactivate this date range?"
+      day_part: "Are you sure you want to deactivate this day part?"
+      activity_type: "Are you sure you want to deactivate this activity type?"
+      report: "Are you sure you want to deactivate this report?"
+      brand_ambassadors/visit: "Are you sure you want to deactivate this visit?"
 
   confirmation:
     deactivate: "Deactivate"

@@ -33,7 +33,7 @@ feature 'Events section' do
 
         expect(page).to have_selector event_list_item(events.first)
         within resource_item events.first do
-          click_js_link 'Deactivate'
+          click_js_button 'Deactivate Event'
         end
 
         confirm_prompt 'Are you sure you want to deactivate this event?'
@@ -54,7 +54,7 @@ feature 'Events section' do
 
         expect(page).to have_selector event_list_item(events.first)
         within resource_item events.first do
-          click_js_link('Activate')
+          click_js_button 'Activate Event'
         end
         expect(page).to have_no_selector event_list_item(events.first)
       end
@@ -63,14 +63,14 @@ feature 'Events section' do
     scenario 'allows the user to activate/deactivate a event from the event details page' do
       visit event_path(events.first)
       within('.links-data') do
-        click_js_link('Deactivate')
+        click_js_button 'Deactivate Event'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this event?'
 
       within('.links-data') do
-        click_js_link('Activate')
-        expect(page).to have_link('Deactivate') # test the link have changed
+        click_js_button('Activate Event')
+        expect(page).to have_button('Deactivate Event') # test the link have changed
       end
     end
   end
@@ -1005,7 +1005,7 @@ feature 'Events section' do
         visit events_path
 
         within resource_item do
-          click_js_link 'Edit'
+          click_js_button 'Edit Event'
         end
 
         within visible_modal do
@@ -1040,7 +1040,7 @@ feature 'Events section' do
             visit events_path
 
             within resource_item do
-              click_js_link 'Edit'
+              click_js_button 'Edit Event'
             end
 
             within visible_modal do

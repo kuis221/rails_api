@@ -3,7 +3,5 @@ div.resource-item id="area_#{area.id}" class="#{active_class(area)}"
     .text-large= area.name
     .crop-text= area.description
   div.resource-item-actions
-    = link_to '', edit_area_path(area), remote: true, title: 'Edit', class: 'icon-edit' if can?(:edit, Area)
-    - if can?(:deactivate, Area)
-      = link_to_deactivate area
-      = link_to '', activate_area_path(area), remote: true, title: I18n.t('confirmation.activate'), class: 'icon-rounded-ok' unless area.active?
+    = button_to_edit area if can?(:edit, Area)
+    = button_to_activate_or_deactivate(area) if can?(:deactivate, Area)

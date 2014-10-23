@@ -6,7 +6,5 @@
       = event_place_address(event, false, ', ')
 
   .resource-item-actions
-    = link_to '', edit_event_path(event), remote: true, class: 'icon-edit', title: 'Edit' if can? :edit, Event
-    - if can? :deactivate, Event
-      = link_to_deactivate event
-      = link_to '', activate_event_path(event), remote: true, class: 'icon-rounded-ok', title: I18n.t('confirmation.activate') unless event.active?
+    = button_to_edit event if can?(:edit, Event)
+    = button_to_activate_or_deactivate(event) if can?(:deactivate, Event)

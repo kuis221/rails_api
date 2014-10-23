@@ -2,7 +2,7 @@
   = trends_navigation_bar(2)
 
 #wizard.details_box
-  h3 QUESTIONS
+  h3.module-title QUESTIONS
 
   = simple_form_for :trends_report, url: results_analysis_trends_url, method: :get  do |f|
     - selected_campaign_ids.each do |id|

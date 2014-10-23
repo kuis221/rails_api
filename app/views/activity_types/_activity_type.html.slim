@@ -3,7 +3,5 @@ div.resource-item id="activity_type_#{activity_type.id}" class="#{active_class(a
     .text-large= activity_type.name
     .crop-text= activity_type.description
   div.resource-item-actions
-    = link_to '', edit_activity_type_path(activity_type), remote: true, title: 'Edit', class: 'icon-edit' if can?(:edit, ActivityType)
-    - if can?(:deactivate, ActivityType)
-      = link_to_deactivate activity_type
-      = link_to '', activate_activity_type_path(activity_type), remote: true, class: 'icon-rounded-ok',title: I18n.t('confirmation.activate') unless activity_type.active?
+    = button_to_edit activity_type if can?(:edit, ActivityType)
+    = button_to_activate_or_deactivate(activity_type) if can?(:deactivate, ActivityType)
