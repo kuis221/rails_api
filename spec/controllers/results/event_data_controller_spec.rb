@@ -210,7 +210,7 @@ describe Results::EventDataController, type: :controller do
         ['Test Campaign FY01', nil, nil, nil, nil, nil, nil, nil, 'Active', 'Approved', nil,
          "http://localhost:5100/events/#{event1.id}", '2013-01-23T10:00', '2013-01-23T12:00', '2.0', '0', '0', '0',
          '0.0', '0.000', '0.000', '0.000', '0.000', '0.000', '0.000', '0.000', '9876.0', nil],
-        ['Campaign 1', nil, nil, nil, nil, nil, nil, nil, 'Active', 'Approved', nil,
+        [campaign2.name, nil, nil, nil, nil, nil, nil, nil, 'Active', 'Approved', nil,
          "http://localhost:5100/events/#{event2.id}", '2013-01-24T10:00', '2013-01-24T12:00', '2.0', '0', '0',
          '0', '0.0', '0.000', '0.000', '0.000', '0.000', '0.000', '0.000', '0.000', nil, '7654.0']
       ])
