@@ -118,13 +118,11 @@ describe EventsController, type: :controller do
       let(:campaign) { create(:campaign, company: company, name: 'Test Campaign FY01') }
       it 'should return an empty book with the correct headers' do
         expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
-        spreadsheet_from_last_export do |doc|
-          rows = doc.elements.to_a('//Row')
-          expect(rows.count).to eql 1
-          expect(rows[0].elements.to_a('Cell/Data').map(&:text)).to eql [
-            'CAMPAIGN NAME', 'AREA', 'START', 'END', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
+        ResqueSpec.perform_all(:export)
+        expect(ListExport.last).to have_rows([
+          ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
             'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL']
-        end
+        ])
       end
 
       it 'should include the event results' do
@@ -139,14 +137,14 @@ describe EventsController, type: :controller do
         Sunspot.commit
 
         expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
-        spreadsheet_from_last_export do |doc|
-          rows = doc.elements.to_a('//Row')
-          expect(rows.count).to eql 2
-          expect(rows[1].elements.to_a('Cell/Data').map(&:text)).to eql [
-            'Test Campaign FY01', nil, '2019-01-23T10:00', '2019-01-23T12:00',
+        ResqueSpec.perform_all(:export)
+        expect(ListExport.last).to have_rows([
+          ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
+            'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL'],
+          ['Test Campaign FY01', nil, '2019-01-23T10:00', '2019-01-23T12:00',
             'Bar Prueba', 'Bar Prueba, Los Angeles, California, 12345', 'Los Angeles', 'California',
             '12345', 'Active', 'Approved', 'Test User, zteam', "http://localhost:5100/events/#{event.id}"]
-        end
+        ])
       end
     end
 

@@ -141,4 +141,64 @@ feature 'Brands', js: true do
       expect(page).to have_selector('div.marques-data', text: 'Marque(s): Marque 2')
     end
   end
+
+  feature 'export', search: true do
+    let(:brand1) { create(:brand, name: 'Brand 1', active: true, company: company) }
+    let(:brand2) { create(:brand, name: 'Brand 2', active: true, company: company) }
+
+    before do
+      # make sure brands are created before
+      brand1
+      brand2
+      Sunspot.commit
+    end
+
+    scenario 'should be able to export as XLS' do
+      visit brands_path
+
+      click_js_link 'Download'
+      click_js_link 'Download as XLS'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        expect(ListExportWorker).to have_queued(ListExport.last.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      expect(ListExport.last).to have_rows([
+        ['NAME'],
+        ['Brand 1'],
+        ['Brand 2']
+      ])
+    end
+
+    scenario 'should be able to export as PDF' do
+      visit brands_path
+
+      click_js_link 'Download'
+      click_js_link 'Download as PDF'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      export = ListExport.last
+      # Test the generated PDF...
+      reader = PDF::Reader.new(open(export.file.url))
+      reader.pages.each do |page|
+        # PDF to text seems to not always return the same results
+        # with white spaces, so, remove them and look for strings
+        # without whitespaces
+        text = page.text.gsub(/[\s\n]/, '')
+        expect(text).to include 'Brands'
+        expect(text).to include 'Brand1'
+        expect(text).to include 'Brand2'
+      end
+    end
+  end
 end

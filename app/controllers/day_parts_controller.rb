@@ -4,6 +4,7 @@
 #
 class DayPartsController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update]
+  respond_to :xls, :pdf, only: :index
 
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper

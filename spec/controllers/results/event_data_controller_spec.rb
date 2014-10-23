@@ -94,12 +94,23 @@ describe Results::EventDataController, type: :controller do
       kpi = create(:kpi, company: company, name: 'A Custom KPI')
       campaign.add_kpi kpi
       place = create(:place, name: 'Bar Prueba', city: 'Los Angeles', state: 'California', country: 'US')
-      event = build(:approved_event, company: company, campaign: campaign, place: place)
+      event = build(:approved_event, company: company, campaign: campaign, place: place, start_date: '01/23/2013', end_date: '01/23/2013')
       event.result_for_kpi(kpi).value = '9876'
       event.save
       Sunspot.commit
 
       expect { xhr :get, 'index', campaign: [campaign.id], format: :xls }.to change(ListExport, :count).by(1)
+      ResqueSpec.perform_all(:export)
+      expect(ListExport.last).to have_rows([
+        ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
+         'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL', 'START', 'END', 'PROMO HOURS', 'IMPRESSIONS',
+         'INTERACTIONS', 'SAMPLED', 'SPENT', 'FEMALE', 'MALE', 'ASIAN', 'BLACK/AFRICAN AMERICAN',
+         'HISPANIC/LATINO', 'NATIVE AMERICAN', 'WHITE', 'A CUSTOM KPI'],
+        ['Test Campaign FY01', nil, nil, 'Bar Prueba', 'Bar Prueba, Los Angeles, California, 12345',
+         'Los Angeles', 'California', '12345', 'Active', 'Approved', nil, "http://localhost:5100/events/#{event.id}",
+         '2013-01-23T10:00', '2013-01-23T12:00', '2.0', '0', '0', '0', '0.0', '0.000', '0.000', '0.000',
+         '0.000', '0.000', '0.000', '0.000', '9876.0']
+      ])
       spreadsheet_from_last_export do |doc|
         rows = doc.elements.to_a('//Row')
         expect(rows[0].elements.to_a('Cell/Data').map(&:text)).to include('A CUSTOM KPI')
@@ -179,23 +190,30 @@ describe Results::EventDataController, type: :controller do
       campaign.add_kpi kpi
       campaign2.add_kpi kpi2
 
-      event = build(:approved_event, company: company, campaign: campaign)
-      event.result_for_kpi(kpi).value = '9876'
-      event.save
+      event1 = build(:approved_event, company: company, campaign: campaign, start_date: '01/23/2013', end_date: '01/23/2013')
+      event1.result_for_kpi(kpi).value = '9876'
+      event1.save
 
-      event = build(:approved_event, company: company, campaign: campaign2)
-      event.result_for_kpi(kpi2).value = '7654'
-      event.save
+      event2 = build(:approved_event, company: company, campaign: campaign2, start_date: '01/24/2013', end_date: '01/24/2013')
+      event2.result_for_kpi(kpi2).value = '7654'
+      event2.save
 
       Sunspot.commit
 
       expect { xhr :get, 'index', campaign: [campaign.id, campaign2.id], format: :xls }.to change(ListExport, :count).by(1)
-      spreadsheet_from_last_export do |doc|
-        rows = doc.elements.to_a('//Row')
-        expect(rows[0].elements.to_a('Cell/Data').map(&:text)).to include('A CUSTOM KPI', 'ANOTHER KPI')
-        expect(rows[1].elements.to_a('Cell/Data').map(&:text)).to include('9876.0')
-        expect(rows[2].elements.to_a('Cell/Data').map(&:text)).to include('7654.0')
-      end
+      ResqueSpec.perform_all(:export)
+      expect(ListExport.last).to have_rows([
+        ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
+         'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL', 'START', 'END', 'PROMO HOURS', 'IMPRESSIONS',
+         'INTERACTIONS', 'SAMPLED', 'SPENT', 'FEMALE', 'MALE', 'ASIAN', 'BLACK/AFRICAN AMERICAN',
+         'HISPANIC/LATINO', 'NATIVE AMERICAN', 'WHITE', 'A CUSTOM KPI', 'ANOTHER KPI'],
+        ['Test Campaign FY01', nil, nil, nil, nil, nil, nil, nil, 'Active', 'Approved', nil,
+         "http://localhost:5100/events/#{event1.id}", '2013-01-23T10:00', '2013-01-23T12:00', '2.0', '0', '0', '0',
+         '0.0', '0.000', '0.000', '0.000', '0.000', '0.000', '0.000', '0.000', '9876.0', nil],
+        ['Campaign 1', nil, nil, nil, nil, nil, nil, nil, 'Active', 'Approved', nil,
+         "http://localhost:5100/events/#{event2.id}", '2013-01-24T10:00', '2013-01-24T12:00', '2.0', '0', '0',
+         '0', '0.0', '0.000', '0.000', '0.000', '0.000', '0.000', '0.000', '0.000', nil, '7654.0']
+      ])
     end
 
     it 'should filter the results by campaign' do
@@ -204,20 +222,26 @@ describe Results::EventDataController, type: :controller do
       campaign2 = create(:campaign, company: company, name: 'Campaign not included')
       campaign2.assign_all_global_kpis
 
-      event = create(:approved_event, company: company, campaign: campaign)
-      set_event_results(event, impressions: 111)
-      event = create(:approved_event, company: company, campaign: campaign2)
-      set_event_results(event, impressions: 222)
+      event1 = create(:approved_event, company: company, campaign: campaign, start_date: '01/23/2013', end_date: '01/23/2013')
+      set_event_results(event1, impressions: 111)
+      event2 = create(:approved_event, company: company, campaign: campaign2, start_date: '01/24/2013', end_date: '01/24/2013')
+      set_event_results(event2, impressions: 222)
 
       Sunspot.commit
 
       expect { xhr :get, 'index', format: :xls, campaign: [campaign.id] }.to change(ListExport, :count).by(1)
-      spreadsheet_from_last_export do |doc|
-        rows = doc.elements.to_a('//Row')
-        expect(rows.count).to eql 2
-        expect(rows[1].elements.to_a('Cell/Data').map(&:text)).to include('Test Campaign FY01')
-        expect(rows[1].elements.to_a('Cell/Data').map(&:text)).to_not include('Campaign not included')
-      end
+      ResqueSpec.perform_all(:export)
+      expect(ListExport.last).to have_rows([
+        ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
+         'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL', 'START', 'END', 'PROMO HOURS', 'IMPRESSIONS',
+         'INTERACTIONS', 'SAMPLED', 'SPENT', 'FEMALE', 'MALE', 'ASIAN', 'BLACK/AFRICAN AMERICAN',
+         'HISPANIC/LATINO', 'NATIVE AMERICAN', 'WHITE', 'AGE: < 12', 'AGE: 12 – 17', 'AGE: 18 – 24',
+         'AGE: 25 – 34', 'AGE: 35 – 44', 'AGE: 45 – 54', 'AGE: 55 – 64', 'AGE: 65+'],
+        ['Test Campaign FY01', nil, nil, nil, nil, nil, nil, nil, 'Active', 'Approved', nil,
+         "http://localhost:5100/events/#{event1.id}", '2013-01-23T10:00', '2013-01-23T12:00', '2.0', '111', '0', '0',
+         '0.0', '0.000', '0.000', '0.000', '0.000', '0.000', '0.000', '0.000', '0.0', '0.0', '0.0', '0.0',
+         '0.0', '0.0', '0.0', '0.0']
+      ])
     end
 
     it 'should correctly include the segments for the percentage kpis' do
@@ -231,26 +255,32 @@ describe Results::EventDataController, type: :controller do
       campaign.add_kpi another_kpi
 
       expect do
-        event = build(:approved_event, company: company, campaign: campaign)
-        event.result_for_kpi(kpi).value = { seg1.id => '63', seg2.id => '37' }
-        expect(event.save).to be_truthy
+        @event1 = build(:approved_event, company: company, campaign: campaign, start_date: '01/23/2013', end_date: '01/23/2013')
+        @event1.result_for_kpi(kpi).value = { seg1.id => '63', seg2.id => '37' }
+        expect(@event1.save).to be_truthy
 
-        event = build(:approved_event, company: company, campaign: campaign)
-        event.result_for_kpi(kpi).value = nil
-        event.result_for_kpi(another_kpi).value = 134
-        expect(event.save).to be_truthy
+        @event2 = build(:approved_event, company: company, campaign: campaign, start_date: '01/24/2013', end_date: '01/24/2013')
+        @event2.result_for_kpi(kpi).value = nil
+        @event2.result_for_kpi(another_kpi).value = 134
+        expect(@event2.save).to be_truthy
       end.to change(FormFieldResult, :count).by(3)
 
       Sunspot.commit
 
       expect { xhr :get, 'index', campaign: [campaign.id], format: :xls }.to change(ListExport, :count).by(1)
-      spreadsheet_from_last_export do |doc|
-        rows = doc.elements.to_a('//Row')
-        expect(rows.count).to eql 3
-        expect(rows[0].elements.to_a('Cell/Data').map(&:text)).to include('MY KPI: UNO', 'MY KPI: DOS')
-        expect(rows[1].elements.to_a('Cell/Data').map(&:text)).to include('0.63', '0.37')
-        expect(rows[2].elements.to_a('Cell/Data').map(&:text)).to include('134.0')
-      end
+      ResqueSpec.perform_all(:export)
+      expect(ListExport.last).to have_rows([
+        ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
+         'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL', 'START', 'END', 'PROMO HOURS',
+         'IMPRESSIONS', 'INTERACTIONS', 'SAMPLED', 'SPENT', 'FEMALE', 'MALE', 'ASIAN', 'BLACK/AFRICAN AMERICAN',
+         'HISPANIC/LATINO', 'NATIVE AMERICAN', 'WHITE', 'MY KPI: UNO', 'MY KPI: DOS', 'MY OTHER KPI'],
+        ['Test Campaign FY01', nil, nil, nil, nil, nil, nil, nil, 'Active', 'Approved', nil,
+         "http://localhost:5100/events/#{@event1.id}", '2013-01-23T10:00', '2013-01-23T12:00', '2.0', '0', '0', '0',
+         '0.0', '0.000', '0.000', '0.000', '0.000', '0.000', '0.000', '0.000', '0.63', '0.37', nil],
+        ['Test Campaign FY01', nil, nil, nil, nil, nil, nil, nil, 'Active', 'Approved', nil,
+         "http://localhost:5100/events/#{@event2.id}", '2013-01-24T10:00', '2013-01-24T12:00', '2.0', '0', '0', '0',
+         '0.0', '0.000', '0.000', '0.000', '0.000', '0.000', '0.000', '0.000', '0.0', '0.0', '134.0']
+      ])
     end
   end
 end

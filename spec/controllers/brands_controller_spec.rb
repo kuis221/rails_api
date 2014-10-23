@@ -6,6 +6,33 @@ describe BrandsController, type: :controller do
     @company = @user.companies.first
   end
 
+  describe "GET 'index'" do
+    it 'returns http success' do
+      get 'index'
+      expect(response).to be_success
+    end
+
+    it 'queue the job for export the list to XLS' do
+      expect do
+        xhr :get, :index, format: :xls
+      end.to change(ListExport, :count).by(1)
+      export = ListExport.last
+      expect(ListExportWorker).to have_queued(export.id)
+      expect(export.controller).to eql('BrandsController')
+      expect(export.export_format).to eql('xls')
+    end
+
+    it 'queue the job for export the list to PDF' do
+      expect do
+        xhr :get, :index, format: :pdf
+      end.to change(ListExport, :count).by(1)
+      export = ListExport.last
+      expect(ListExportWorker).to have_queued(export.id)
+      expect(export.controller).to eql('BrandsController')
+      expect(export.export_format).to eql('pdf')
+    end
+  end
+
   describe 'campaign scope' do
     let(:campaign) { create(:campaign, company: @company) }
 
@@ -78,7 +105,7 @@ describe BrandsController, type: :controller do
       expect(response).to be_success
       parsed_body = JSON.parse(response.body)
       expect(parsed_body.count).to eq(2)
-      expect(parsed_body.map { |b| b['name'] }).to eq(['Brand 456', 'Brand 123'])
+      expect(parsed_body.map { |b| b['name'] }).to eq(['Brand 123', 'Brand 456'])
     end
 
     it 'returns the brands associated to a brand portfolio' do
@@ -92,7 +119,7 @@ describe BrandsController, type: :controller do
       expect(response).to be_success
       parsed_body = JSON.parse(response.body)
       expect(parsed_body.count).to eq(2)
-      expect(parsed_body.map { |b| b['name'] }).to eq(['Brand 456', 'Brand 123'])
+      expect(parsed_body.map { |b| b['name'] }).to eq(['Brand 123', 'Brand 456'])
     end
   end
 
@@ -151,6 +178,29 @@ describe BrandsController, type: :controller do
       brand.reload
       expect(brand.name).to eq('Test brand')
       expect(brand.marques.all.map(&:name)).to match_array(['Marque 1'])
+    end
+  end
+
+  describe "GET 'list_export'", search: true do
+    it 'should return an empty book with the correct headers' do
+      expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+      ResqueSpec.perform_all(:export)
+      expect(ListExport.last).to have_rows([
+        ['NAME']
+      ])
+    end
+
+    it 'should include the results' do
+      create(:brand, name: 'Brand 123', company: @company)
+      Sunspot.commit
+
+      expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+      expect(ListExportWorker).to have_queued(ListExport.last.id)
+      ResqueSpec.perform_all(:export)
+      expect(ListExport.last).to have_rows([
+        ['NAME'],
+        ['Brand 123']
+      ])
     end
   end
 end

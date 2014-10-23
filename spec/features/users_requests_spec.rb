@@ -50,7 +50,7 @@ feature 'Users', js: true do
   feature '/users', js: true, search: true do
     scenario 'allows the user to activate/deactivate users' do
       role = create(:role, name: 'TestRole', company_id: company.id)
-      user = create(:user, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: company.id)
+      create(:user, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: company.id)
       Sunspot.commit
       visit company_users_path
       within resource_item list: '#users-list' do
@@ -101,7 +101,7 @@ feature 'Users', js: true do
 
     scenario 'allows the user to edit another user' do
       role = create(:role, name: 'TestRole', company_id: company.id)
-      other_role = create(:role, name: 'Another Role', company_id: company.id)
+      create(:role, name: 'Another Role', company_id: company.id)
       user = create(:user, first_name: 'Juanito', last_name: 'Mora', role_id: role.id, company_id: company.id)
       company_user = user.company_users.first
       visit company_user_path(company_user)
@@ -168,7 +168,7 @@ feature 'Users', js: true do
     scenario 'should be able to assign brand portfolios to the user' do
       other_company_user = create(:company_user, company_id: company.id)
       brand_portfolio = create(:brand_portfolio, name: 'Guisqui', company: company)
-      brand_portfolio2 = create(:brand_portfolio, name: 'Guaro', company: company)
+      create(:brand_portfolio, name: 'Guaro', company: company)
       visit company_user_path(other_company_user)
 
       within "#campaigns-toggle-BrandPortfolio-#{brand_portfolio.id}" do
@@ -193,7 +193,7 @@ feature 'Users', js: true do
     scenario 'should be able to assign brands to the user' do
       other_company_user = create(:company_user, company_id: company.id)
       brand = create(:brand, name: 'Guisqui Rojo', company: company)
-      brand2 = create(:brand, name: 'Cacique', company: company)
+      create(:brand, name: 'Cacique', company: company)
       visit company_user_path(other_company_user)
 
       within "#campaigns-toggle-Brand-#{brand.id}" do
@@ -275,6 +275,79 @@ feature 'Users', js: true do
       company_user.reload
       expect(company_user.notifications_settings).to include('event_recap_due_sms', 'event_recap_due_email')
       expect(company_user.notifications_settings).to_not include('event_recap_due_app')
+    end
+  end
+
+  feature 'export', search: true do
+    let(:role) { create(:role, name: 'TestRole', company: company) }
+    let(:user1) { create(:user, first_name: 'Pablo', last_name: 'Baltodano', email: 'email@hotmail.com',
+                          city: 'Los Angeles', state: 'CA', country: 'US', company: company, role_id: role.id) }
+    let(:user2) { create(:user, first_name: 'Juanito', last_name: 'Bazooka', email: 'bazooka@gmail.com',
+                          city: 'New York', state: 'NY', country: 'US', company: company, role_id: role.id) }
+
+    before do
+      # make sure users are created before
+      user1
+      user2
+      Sunspot.commit
+    end
+
+    scenario 'should be able to export as XLS' do
+      visit company_users_path
+
+      click_js_link 'Download'
+      click_js_link 'Download as XLS'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        expect(ListExportWorker).to have_queued(ListExport.last.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      expect(ListExport.last).to have_rows([
+        ['FULL NAME', 'ROLE', 'CITY', 'COUNTRY', 'EMAIL', 'LAST ACTIVITY'],
+        ['Juanito Bazooka', 'TestRole', 'New York, NY', 'United States', 'bazooka@gmail.com', nil],
+        ['Pablo Baltodano', 'TestRole', 'Los Angeles, CA', 'United States', 'email@hotmail.com', nil],
+        ['Test User', Role.first.name, 'Curridabat, SJ', 'Costa Rica', user.email, 'about 0 minutes ago']
+      ])
+    end
+
+    scenario 'should be able to export as PDF' do
+      visit company_users_path
+
+      click_js_link 'Download'
+      click_js_link 'Download as PDF'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      export = ListExport.last
+      # Test the generated PDF...
+      reader = PDF::Reader.new(open(export.file.url))
+      reader.pages.each do |page|
+        # PDF to text seems to not always return the same results
+        # with white spaces, so, remove them and look for strings
+        # without whitespaces
+        text = page.text.gsub(/[\s\n]/, '')
+        expect(text).to include 'Users'
+        expect(text).to include 'JuanitoBazooka'
+        expect(text).to include 'NewYork,NY'
+        expect(text).to include 'bazooka@gmail.com'
+        expect(text).to include 'TestRole'
+        expect(text).to include 'UnitedStates'
+        expect(text).to include 'PabloBaltodano'
+        expect(text).to include 'LosAngeles,CA'
+        expect(text).to include 'email@hotmail.com'
+        expect(text).to include 'TestUser'
+        expect(text).to include 'Curridabat,SJ'
+        expect(text).to include user.email
+      end
     end
   end
 end

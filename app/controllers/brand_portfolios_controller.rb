@@ -4,6 +4,7 @@
 #
 class BrandPortfoliosController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update, :brands, :delete_brand, :select_brands]
+  respond_to :xls, :pdf, only: :index
 
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper

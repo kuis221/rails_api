@@ -19,6 +19,26 @@ describe RolesController, type: :controller do
       get 'index'
       expect(response).to be_success
     end
+
+    it 'queue the job for export the list to XLS' do
+      expect do
+        xhr :get, :index, format: :xls
+      end.to change(ListExport, :count).by(1)
+      export = ListExport.last
+      expect(ListExportWorker).to have_queued(export.id)
+      expect(export.controller).to eql('RolesController')
+      expect(export.export_format).to eql('xls')
+    end
+
+    it 'queue the job for export the list to PDF' do
+      expect do
+        xhr :get, :index, format: :pdf
+      end.to change(ListExport, :count).by(1)
+      export = ListExport.last
+      expect(ListExportWorker).to have_queued(export.id)
+      expect(export.controller).to eql('RolesController')
+      expect(export.export_format).to eql('pdf')
+    end
   end
 
   describe "GET 'new'" do
@@ -124,6 +144,32 @@ describe RolesController, type: :controller do
         xhr :put, 'update', id: role.to_param, role: { permissions_attributes: [{ enabled: '0', id: permission1.id }, { enabled: '0', id: permission2.id }, { enabled: '0', id: permission3.id }] }, partial: 'dashboard_permissions', format: :js
       end.to change(role.permissions, :count).by(-3)
       expect(response).to render_template('update_partial')
+    end
+  end
+
+  describe "GET 'list_export'", search: true do
+    it 'should return a book with the correct headers and the admin user' do
+      expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+      ResqueSpec.perform_all(:export)
+      expect(ListExport.last).to have_rows([
+        ['NAME', 'DESCRIPTION'],
+        ['Super Admin', nil]
+      ])
+    end
+
+    it 'should include the results' do
+      create(:role, name: 'Costa Rica Role',
+              description: 'El grupo de ticos', active: true, company: @company)
+      Sunspot.commit
+
+      expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+      expect(ListExportWorker).to have_queued(ListExport.last.id)
+      ResqueSpec.perform_all(:export)
+      expect(ListExport.last).to have_rows([
+        ['NAME', 'DESCRIPTION'],
+        ['Costa Rica Role', 'El grupo de ticos'],
+        ['Super Admin', nil]
+      ])
     end
   end
 end

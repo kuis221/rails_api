@@ -51,6 +51,16 @@ en:
         gva: 'Goals vs. Actual'
         venues: 'Venues'
         tasks: 'Tasks'
+        day_parts: 'Day Parts'
+        date_ranges: 'Date Ranges'
+        brand_portfolios: 'Brand Portfolios'
+        areas: 'Areas'
+        activity_types: 'Activity Types'
+        brands: 'Brands'
+        campaigns: 'Campaigns'
+        roles: 'Roles'
+        teams: 'Teams'
+        company_users: 'Users'
 
   buttons:
     new:
