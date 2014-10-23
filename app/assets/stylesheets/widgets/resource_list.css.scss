@@ -159,6 +159,9 @@
 		.resource-item {
 			&.inactive {
 				color:$user_menu;
+				.special-icon {
+					background-color: $gray-lighter;
+				}
 			}
 			&:hover {
 				.activate-btn {
