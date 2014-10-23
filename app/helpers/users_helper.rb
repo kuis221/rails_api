@@ -1,6 +1,6 @@
 module UsersHelper
   def notifications_for_company_user(user)
-    Rails.cache.fetch("user_notifications_#{user.id}", expires_in: 15.minutes) do
+    Rails.cache.fetch("user_notifications_#{user.id}", expires_in: 5.minutes) do
       alerts = []
       company = user.company
 
@@ -58,7 +58,9 @@ module UsersHelper
         unless user.company.event_alerts_policy == Notification::EVENT_ALERT_POLICY_ALL
           team_params = [user.id]
         end
-        task_search_params = { company_id: company.id, status: ['Active'], task_status: ['Late'], not_assigned_to: [user.id], team_members: team_params }
+        task_search_params = {
+          company_id: company.id, current_company_user: user, status: ['Active'],
+          task_status: ['Late'], not_assigned_to: [user.id], team_members: team_params }
         count = Task.do_search(task_search_params).total
         if count > 0
           alerts.push(message: I18n.translate('notifications.task_late_team', count: count), level: 'red',

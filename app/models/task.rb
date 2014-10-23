@@ -286,22 +286,16 @@ class Task < ActiveRecord::Base
   private
 
   def create_notifications
-    if (id_changed? || company_user_id_changed?) && company_user_id.present?
-      # Delete notification for previous task owner
-      if !id_changed? && company_user_id_was.present? && company_user_id != company_user_id_was
-        notification = CompanyUser.find(company_user_id_was).notifications.where("params->'task_id' = (?)", id.to_s).first
-        notification.destroy if notification.present?
-      end
-
-      # New task with assigned user or assigning user to existing task
-      unless event.present? && !company_user.allowed_to_access_place?(event.place)
-        Notification.new_task(company_user, self)
-      end
-      # elsif id_changed? && company_user_id.nil?
-      #   #New task without assigned user
-      #   event.all_users.each do |user|
-      #     Notification.new_task(user, self, true)
-      #   end
+    return unless (id_changed? || company_user_id_changed?) && company_user_id.present?
+    # Delete notification for previous task owner
+    if !id_changed? && company_user_id_was.present? && company_user_id != company_user_id_was
+      notification = CompanyUser.find(company_user_id_was).notifications.where("params->'task_id' = (?)", id.to_s).first
+      notification.destroy if notification.present?
     end
+
+    return unless event.present? && company_user.allowed_to_access_place?(event.place)
+    
+    # New task with assigned user or assigning user to existing task
+    Notification.new_task(company_user, self)
   end
 end

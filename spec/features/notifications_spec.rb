@@ -362,9 +362,19 @@ feature 'Notifications', search: true, js: true do
       it 'should receive notifications for new tasks not assigned to him as tasks for the team' do
         company_user.update_attributes(notifications_settings: ['late_team_task_app'])
         event = create(:event, company: company, campaign: campaign, place: place)
-        task = create(:task,
-                      title: 'My Team Task #1', event: event,
+        create(:task, title: 'My Team Task #1', event: event,
                       company_user: nil, due_at: 2.days.ago.to_s(:slashes))
+
+        # if the user is not admin, test that the user doesn't receive a notification
+        # for tasks he is not allowed to see
+        unless company_user.is_admin?
+          without_current_user do
+            other_campaign = create(:campaign, company: company)
+            event_in_other_campaign = create(:event, company: company, campaign: other_campaign, place: place)
+            create(:task, title: 'Inaccessible Task', event: event_in_other_campaign,
+                          company_user: nil, due_at: 2.days.ago.to_s(:slashes))
+          end
+        end
 
         Sunspot.commit
 
@@ -375,6 +385,7 @@ feature 'Notifications', search: true, js: true do
 
         expect(current_path).to eql my_teams_tasks_path
         expect(page).to have_content('My Team Task #1')
+        expect(page).not_to have_content('Inaccessible Task')
 
         # Create two new tasks and make sure the notification is correct and then click
         # on it. The app should only list those two late tasks without showing the old one
