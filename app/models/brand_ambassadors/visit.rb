@@ -69,9 +69,7 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
     integer :id, stored: true
     integer :company_id
     integer :company_user_id
-    integer :location, multiple: true do
-      area && city ? area.cities.find { |c| c.name == city }.try(:location_ids) : 0
-    end
+    integer :location, multiple: true
     date :start_date, stored: true
     date :end_date, stored: true
 
@@ -91,6 +89,17 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
 
   def visit_type_name
     BrandAmbassadors::Visit::VISIT_TYPE_OPTIONS.find { |_k, v| v == visit_type }.try(:[], 0) if visit_type
+  end
+
+  # Returns a list of Location ids based on the assigned area/city
+  def location
+    if area && city
+      area.cities.find { |c| c.name == city }.try(:location_ids)
+    elsif area
+      area.locations.map(&:id)
+    else
+      0
+    end
   end
 
   def self.do_search(params, _include_facets = false)
