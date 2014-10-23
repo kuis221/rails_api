@@ -6,7 +6,9 @@
 
     - if resource.description.present?
       .description-data
-        = resource.description
+        i.icon-wired-description
+        span
+          = resource.description
 
     .links-data
       = button_to_edit resource if can?(:edit, resource)
