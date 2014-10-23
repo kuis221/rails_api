@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-feature 'Brands', search: true, js: true do
+feature 'Brands', js: true do
   let(:user) { create(:user, company: company, role_id: create(:role).id) }
   let(:company) { create(:company) }
   let(:company_user) { user.company_users.first }
@@ -142,7 +142,7 @@ feature 'Brands', search: true, js: true do
     end
   end
 
-  feature 'export' do
+  feature 'export', search: true do
     let(:brand1) { create(:brand, name: 'Brand 1', active: true, company: company) }
     let(:brand2) { create(:brand, name: 'Brand 2', active: true, company: company) }
 
@@ -167,9 +167,9 @@ feature 'Brands', search: true, js: true do
       ensure_modal_was_closed
 
       expect(ListExport.last).to have_rows([
-        ["NAME"],
-        ["Brand 1"],
-        ["Brand 2"]
+        ['NAME'],
+        ['Brand 1'],
+        ['Brand 2']
       ])
     end
 

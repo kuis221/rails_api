@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-feature 'Activity Types', search: true, js: true do
+feature 'Activity Types', js: true do
   before do
     Warden.test_mode!
     @user = create(:user, company_id: create(:company).id, role_id: create(:role).id)
@@ -131,7 +131,7 @@ feature 'Activity Types', search: true, js: true do
     end
   end
 
-  feature 'export' do
+  feature 'export', search: true do
     let(:activity_type1) { create(:activity_type, company: @company, name: 'Activity Type 1',
                                   description: 'First description', active: true) }
     let(:activity_type2) { create(:activity_type, company: @company, name: 'Activity Type 2',
@@ -158,9 +158,9 @@ feature 'Activity Types', search: true, js: true do
       ensure_modal_was_closed
 
       expect(ListExport.last).to have_rows([
-        ["NAME", "DESCRIPTION"],
-        ["Activity Type 1", "First description"],
-        ["Activity Type 2", "Second description"]
+        ['NAME', 'DESCRIPTION'],
+        ['Activity Type 1', 'First description'],
+        ['Activity Type 2', 'Second description']
       ])
     end
 
