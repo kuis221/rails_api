@@ -40,28 +40,33 @@
 			padding-top: $resource-item-padding;
 			form.button_to {
 				height: 18px;
+				margin-right: 0px;
+				margin-left: 10px;
+				&:first-child {
+					margin-left: 0;
+				}
 				button {
 					margin-top: -1px;
 				}
 			}
-			a, .button-with-icon {
-				color: $brand;
-				margin-right: 10px;
-				font-size: 18px;
-				height: 18px;
-				&:last-child {
-					margin-right: 0;
-				}
-				&.icon-large {
-					font-size: 24px;
-				}
-			}
 			a {
+				margin-left: 10px;
+				&:first-child {
+					margin-left: 0;
+				}
 				&.icon-receipt {
 					font-size: 26px;
 					position: relative;
 					top: 7px;
 					margin-right: 5px;
+				}
+			}
+			a, .button-with-icon {
+				color: $brand;
+				font-size: 18px;
+				height: 18px;
+				&.icon-large {
+					font-size: 24px;
 				}
 			}
 		}
