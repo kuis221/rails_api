@@ -1,0 +1,45 @@
+doctype xml
+
+Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+  Styles
+    Style ss:ID="s1"
+      Font ss:Bold="1"
+    Style ss:ID="s2"
+      NumberFormat ss:Format="mm/dd/yyyy"
+  Worksheet ss:Name=I18n.t("exports.pdf.title.#{controller_name.underscore}")
+
+    Table
+      Column ss:Width="200"
+      Column ss:Width="150"
+      Column ss:Width="150"
+      Column ss:Width="150"
+      Column ss:Width="200"
+      Column ss:Width="150"
+      Row ss:StyleID="s1"
+        Cell
+          Data ss:Type="String" FULL NAME
+        Cell
+          Data ss:Type="String" ROLE
+        Cell
+          Data ss:Type="String" CITY
+        Cell
+          Data ss:Type="String" COUNTRY
+        Cell
+          Data ss:Type="String" EMAIL
+        Cell
+          Data ss:Type="String" LAST ACTIVITY
+
+      - each_collection_item do |user|
+        Row
+          Cell
+            Data ss:Type="String"= user.full_name
+          Cell
+            Data ss:Type="String"= user.role_name
+          Cell
+            Data ss:Type="String"= [user.city, user.state].join(', ')
+          Cell
+            Data ss:Type="String"= [user.country_name].join(', ')
+          Cell
+            Data ss:Type="String"= user.email
+          Cell
+            Data ss:Type="String"= time_ago_in_words(user.last_activity_at)

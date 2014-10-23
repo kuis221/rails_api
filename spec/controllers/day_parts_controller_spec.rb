@@ -18,6 +18,26 @@ describe DayPartsController, type: :controller do
         expect(response).to be_success
       end
     end
+
+    it 'queue the job for export the list to XLS' do
+      expect do
+        xhr :get, :index, format: :xls
+      end.to change(ListExport, :count).by(1)
+      export = ListExport.last
+      expect(ListExportWorker).to have_queued(export.id)
+      expect(export.controller).to eql('DayPartsController')
+      expect(export.export_format).to eql('xls')
+    end
+
+    it 'queue the job for export the list to PDF' do
+      expect do
+        xhr :get, :index, format: :pdf
+      end.to change(ListExport, :count).by(1)
+      export = ListExport.last
+      expect(ListExportWorker).to have_queued(export.id)
+      expect(export.controller).to eql('DayPartsController')
+      expect(export.export_format).to eql('pdf')
+    end
   end
 
   describe "GET 'new'" do
@@ -103,6 +123,30 @@ describe DayPartsController, type: :controller do
       day_part.reload
       expect(day_part.name).to eq('Test day part update')
       expect(day_part.description).to eq('Test day part description update')
+    end
+  end
+
+  describe "GET 'list_export'", search: true do
+    it 'should return an empty book with the correct headers' do
+      expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+      ResqueSpec.perform_all(:export)
+      expect(ListExport.last).to have_rows([
+        ['NAME', 'DESCRIPTION']
+      ])
+    end
+
+    it 'should include the results' do
+      create(:day_part, company: @company,
+             name: 'Morningns', description: 'From 8 to 11am', active: true)
+      Sunspot.commit
+
+      expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+      expect(ListExportWorker).to have_queued(ListExport.last.id)
+      ResqueSpec.perform_all(:export)
+      expect(ListExport.last).to have_rows([
+        ['NAME', 'DESCRIPTION'],
+        ['Morningns', 'From 8 to 11am']
+      ])
     end
   end
 end

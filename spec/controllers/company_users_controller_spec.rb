@@ -22,6 +22,26 @@ describe CompanyUsersController, type: :controller do
         get 'index'
         expect(response).to be_success
       end
+
+      it 'queue the job for export the list to XLS' do
+        expect do
+          xhr :get, :index, format: :xls
+        end.to change(ListExport, :count).by(1)
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+        expect(export.controller).to eql('CompanyUsersController')
+        expect(export.export_format).to eql('xls')
+      end
+
+      it 'queue the job for export the list to PDF' do
+        expect do
+          xhr :get, :index, format: :pdf
+        end.to change(ListExport, :count).by(1)
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+        expect(export.controller).to eql('CompanyUsersController')
+        expect(export.export_format).to eql('pdf')
+      end
     end
 
     describe "GET 'items'" do
@@ -342,6 +362,33 @@ describe CompanyUsersController, type: :controller do
         expect(user.memberships.map(&:parent)).to eq([nil])
         expect(user.memberships.map(&:memberable)).to eq([brand_portfolio])
         expect(user.campaigns).to eq([])
+      end
+    end
+
+    describe "GET 'list_export'", search: true do
+      it 'should return a book with the correct headers and the Admin user' do
+        expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+        ResqueSpec.perform_all(:export)
+        expect(ListExport.last).to have_rows([
+          ['FULL NAME', 'ROLE', 'CITY', 'COUNTRY', 'EMAIL', 'LAST ACTIVITY'],
+          ['Test User', 'Super Admin', 'Curridabat, SJ', 'Costa Rica', @user.email, nil]
+        ])
+      end
+
+      it 'should include the results' do
+        role = create(:role, name: 'TestRole', company: @company)
+        create(:user, first_name: 'Pablo', last_name: 'Baltodano', email: 'email@hotmail.com',
+                city: 'Los Angeles', state: 'CA', country: 'US', company: @company, role_id: role.id)
+        Sunspot.commit
+
+        expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+        expect(ListExportWorker).to have_queued(ListExport.last.id)
+        ResqueSpec.perform_all(:export)
+        expect(ListExport.last).to have_rows([
+          ['FULL NAME', 'ROLE', 'CITY', 'COUNTRY', 'EMAIL', 'LAST ACTIVITY'],
+          ['Test User', 'Super Admin', 'Curridabat, SJ', 'Costa Rica', @user.email, nil],
+          ['Pablo Baltodano', 'TestRole', 'Los Angeles, CA', 'United States', 'email@hotmail.com', nil]
+        ])
       end
     end
   end

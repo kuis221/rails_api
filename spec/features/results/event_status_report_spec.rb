@@ -140,13 +140,11 @@ feature 'Results Event Status Page', js: true, search: true  do
       # Export
       export_report
 
-      spreadsheet_from_last_export do |doc|
-        rows = doc.elements.to_a('//Row')
-        expect(rows.count).to eql 3
-        expect(rows[0].elements.to_a('Cell/Data').map(&:text)).to eql ['METRIC', 'GOAL', 'EXECUTED', 'EXECUTED %', 'SCHEDULED', 'SCHEDULED %', 'REMAINING', 'REMAINING %']
-        expect(rows[1].elements.to_a('Cell/Data').map(&:text)).to eql ['PROMO HOURS', '100', '2', '0.02', '2', '0.02', '96', '0.96']
-        expect(rows[2].elements.to_a('Cell/Data').map(&:text)).to eql ['EVENTS', '2', '1', '0.5', '1', '0.5', '0', '0']
-      end
+      expect(ListExport.last).to have_rows([
+        ['METRIC', 'GOAL', 'EXECUTED', 'EXECUTED %', 'SCHEDULED', 'SCHEDULED %', 'REMAINING', 'REMAINING %'],
+        ['PROMO HOURS', '100', '2', '0.02', '2', '0.02', '96', '0.96'],
+        ['EVENTS', '2', '1', '0.5', '1', '0.5', '0', '0']
+      ])
     end
 
     scenario 'should export the Event Status grouped by Place to Excel' do
@@ -170,13 +168,11 @@ feature 'Results Event Status Page', js: true, search: true  do
       # Export
       export_report
 
-      spreadsheet_from_last_export do |doc|
-        rows = doc.elements.to_a('//Row')
-        expect(rows.count).to eql 3
-        expect(rows[0].elements.to_a('Cell/Data').map(&:text)).to eql ['PLACE/AREA', 'METRIC', 'GOAL', 'EXECUTED', 'EXECUTED %', 'SCHEDULED', 'SCHEDULED %', 'REMAINING', 'REMAINING %']
-        expect(rows[1].elements.to_a('Cell/Data').map(&:text)).to eql ['Area 1', 'EVENTS', '2', '1', '0.5', '1', '0.5', '0', '0']
-        expect(rows[2].elements.to_a('Cell/Data').map(&:text)).to eql ['Area 1', 'PROMO HOURS', '10', '2', '0.2', '2', '0.2', '6', '0.6']
-      end
+      expect(ListExport.last).to have_rows([
+        ['PLACE/AREA', 'METRIC', 'GOAL', 'EXECUTED', 'EXECUTED %', 'SCHEDULED', 'SCHEDULED %', 'REMAINING', 'REMAINING %'],
+        ['Area 1', 'EVENTS', '2', '1', '0.5', '1', '0.5', '0', '0'],
+        ['Area 1', 'PROMO HOURS', '10', '2', '0.2', '2', '0.2', '6', '0.6']
+      ])
     end
 
     scenario 'should export the Event Status grouped by Staff to Excel' do
@@ -200,13 +196,11 @@ feature 'Results Event Status Page', js: true, search: true  do
       # Export
       export_report
 
-      spreadsheet_from_last_export do |doc|
-        rows = doc.elements.to_a('//Row')
-        expect(rows.count).to eql 3
-        expect(rows[0].elements.to_a('Cell/Data').map(&:text)).to eql ['USER/TEAM', 'METRIC', 'GOAL', 'EXECUTED', 'EXECUTED %', 'SCHEDULED', 'SCHEDULED %', 'REMAINING', 'REMAINING %']
-        expect(rows[1].elements.to_a('Cell/Data').map(&:text)).to eql ['Juanito Bazooka', 'EVENTS', '2', '1', '0.5', '1', '0.5', '0', '0']
-        expect(rows[2].elements.to_a('Cell/Data').map(&:text)).to eql ['Juanito Bazooka', 'PROMO HOURS', '10', '2', '0.2', '2', '0.2', '6', '0.6']
-      end
+      expect(ListExport.last).to have_rows([
+        ['USER/TEAM', 'METRIC', 'GOAL', 'EXECUTED', 'EXECUTED %', 'SCHEDULED', 'SCHEDULED %', 'REMAINING', 'REMAINING %'],
+        ['Juanito Bazooka', 'EVENTS', '2', '1', '0.5', '1', '0.5', '0', '0'],
+        ['Juanito Bazooka', 'PROMO HOURS', '10', '2', '0.2', '2', '0.2', '6', '0.6']
+      ])
     end
 
     scenario 'should be able to export the overall campaign Event Status as PDF' do

@@ -4,6 +4,7 @@
 class AreasController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update]
   respond_to :json, only: [:cities]
+  respond_to :xls, :pdf, only: :index
 
   belongs_to :place, optional: true
 

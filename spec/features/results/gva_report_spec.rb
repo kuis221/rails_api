@@ -212,13 +212,11 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         # Export
         export_report
 
-        spreadsheet_from_last_export do |doc|
-          rows = doc.elements.to_a('//Row')
-          expect(rows.count).to eql 3
-          expect(rows[0].elements.to_a('Cell/Data').map(&:text)).to eql ['METRIC', 'GOAL', 'ACTUAL', 'ACTUAL %', 'PENDING', 'PENDING %']
-          expect(rows[1].elements.to_a('Cell/Data').map(&:text)).to eql ['Events', '2', '1', '0.5', '2', '1']
-          expect(rows[2].elements.to_a('Cell/Data').map(&:text)).to eql ['Samples', '100', '25', '0.25', '45', '0.45']
-        end
+        expect(ListExport.last).to have_rows([
+          ['METRIC', 'GOAL', 'ACTUAL', 'ACTUAL %', 'PENDING', 'PENDING %'],
+          ['Events', '2', '1', '0.5', '2', '1'],
+          ['Samples', '100', '25', '0.25', '45', '0.45']
+        ])
       end
 
       scenario 'should export the GvA grouped by Place to Excel' do
@@ -256,14 +254,12 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         # Export
         export_report
 
-        spreadsheet_from_last_export do |doc|
-          rows = doc.elements.to_a('//Row')
-          expect(rows.count).to eql 4
-          expect(rows[0].elements.to_a('Cell/Data').map(&:text)).to eql ['PLACE/AREA', 'METRIC', 'GOAL', 'ACTUAL', 'ACTUAL %', 'PENDING', 'PENDING %']
-          expect(rows[1].elements.to_a('Cell/Data').map(&:text)).to eql ['Place 1', 'Events', '2', '1', '0.5', '2', '1']
-          expect(rows[2].elements.to_a('Cell/Data').map(&:text)).to eql ['Place 1', 'Promo Hours', '4', '2', '0.5', '4', '1']
-          expect(rows[3].elements.to_a('Cell/Data').map(&:text)).to eql ['Place 1', 'Samples', '150', '25', '0.17', '45', '0.3']
-        end
+        expect(ListExport.last).to have_rows([
+          ['PLACE/AREA', 'METRIC', 'GOAL', 'ACTUAL', 'ACTUAL %', 'PENDING', 'PENDING %'],
+          ['Place 1', 'Events', '2', '1', '0.5', '2', '1'],
+          ['Place 1', 'Promo Hours', '4', '2', '0.5', '4', '1'],
+          ['Place 1', 'Samples', '150', '25', '0.17', '45', '0.3']
+        ])
       end
 
       scenario 'should export the GvA grouped by Staff to Excel' do
@@ -302,13 +298,11 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         # Export
         export_report
 
-        spreadsheet_from_last_export do |doc|
-          rows = doc.elements.to_a('//Row')
-          expect(rows.count).to eql 3
-          expect(rows[0].elements.to_a('Cell/Data').map(&:text)).to eql ['USER/TEAM', 'METRIC', 'GOAL', 'ACTUAL', 'ACTUAL %', 'PENDING', 'PENDING %']
-          expect(rows[1].elements.to_a('Cell/Data').map(&:text)).to eql ['Juanito Bazooka', 'Events', '1', '1', '1', '2', '2']
-          expect(rows[2].elements.to_a('Cell/Data').map(&:text)).to eql ['Juanito Bazooka', 'Samples', '50', '25', '0.5', '45', '0.9']
-        end
+        expect(ListExport.last).to have_rows([
+          ['USER/TEAM', 'METRIC', 'GOAL', 'ACTUAL', 'ACTUAL %', 'PENDING', 'PENDING %'],
+          ['Juanito Bazooka', 'Events', '1', '1', '1', '2', '2'],
+          ['Juanito Bazooka', 'Samples', '50', '25', '0.5', '45', '0.9']
+        ])
       end
     end
   end

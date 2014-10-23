@@ -43,13 +43,10 @@ RSpec.describe BrandAmbassadors::VisitsController, type: :controller do
   describe "GET 'list_export'", search: true do
     it 'should return an empty book with the correct headers' do
       expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
-      spreadsheet_from_last_export do |doc|
-        rows = doc.elements.to_a('//Row')
-        expect(rows.count).to eql 1
-        expect(rows[0].elements.to_a('Cell/Data').map(&:text)).to eql [
-          'START DATE', 'END DATE', 'EMPLOYEE', 'AREA', 'CITY', 'CAMPAIGN', 'TYPE', 'DESCRIPTION'
-        ]
-      end
+      ResqueSpec.perform_all(:export)
+      expect(ListExport.last).to have_rows([
+        ['START DATE', 'END DATE', 'EMPLOYEE', 'AREA', 'CITY', 'CAMPAIGN', 'TYPE', 'DESCRIPTION']
+      ])
     end
 
     it 'should include the event results' do
@@ -70,14 +67,11 @@ RSpec.describe BrandAmbassadors::VisitsController, type: :controller do
       expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
       expect(ListExportWorker).to have_queued(ListExport.last.id)
       ResqueSpec.perform_all(:export)
-      spreadsheet_from_last_export do |doc|
-        rows = doc.elements.to_a('//Row')
-        expect(rows.count).to eql 2
-        expect(rows[1].elements.to_a('Cell/Data').map(&:text)).to eql [
-          '2014-01-23T00:00', '2014-01-24T00:00', 'Michale Jackson', 'Area 1', 'Test City',
-          'Imperial FY14', 'PTO', 'Test Visit description'
-        ]
-      end
+      expect(ListExport.last).to have_rows([
+        ['START DATE', 'END DATE', 'EMPLOYEE', 'AREA', 'CITY', 'CAMPAIGN', 'TYPE', 'DESCRIPTION'],
+        ['2014-01-23T00:00', '2014-01-24T00:00', 'Michale Jackson', 'Area 1', 'Test City',
+         'Imperial FY14', 'PTO', 'Test Visit description']
+      ])
     end
   end
 

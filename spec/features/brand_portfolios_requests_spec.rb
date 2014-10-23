@@ -181,4 +181,70 @@ feature 'BrandPortfolios', js: true, search: true do
       end
     end
   end
+
+  feature 'export' do
+    let(:brand_portfolio1) { create(:brand_portfolio,
+                                name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica',
+                                active: true, company: company) }
+    let(:brand_portfolio2) { create(:brand_portfolio,
+                                name: 'B Licores Costarricenses', description: 'Licores ticos',
+                                active: true, company: company) }
+
+    before do
+      # make sure tasks are created before
+      brand_portfolio1
+      brand_portfolio2
+      Sunspot.commit
+    end
+
+    scenario 'should be able to export as XLS' do
+      visit brand_portfolios_path
+
+      click_js_link 'Download'
+      click_js_link 'Download as XLS'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        expect(ListExportWorker).to have_queued(ListExport.last.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      expect(ListExport.last).to have_rows([
+        ["NAME", "DESCRIPTION"],
+        ["A Vinos ticos", "Algunos vinos de Costa Rica"],
+        ["B Licores Costarricenses", "Licores ticos"]
+      ])
+    end
+
+    scenario 'should be able to export as PDF' do
+      visit brand_portfolios_path
+
+      click_js_link 'Download'
+      click_js_link 'Download as PDF'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      export = ListExport.last
+      # Test the generated PDF...
+      reader = PDF::Reader.new(open(export.file.url))
+      reader.pages.each do |page|
+        # PDF to text seems to not always return the same results
+        # with white spaces, so, remove them and look for strings
+        # without whitespaces
+        text = page.text.gsub(/[\s\n]/, '')
+        expect(text).to include 'BrandPortfolios'
+        expect(text).to include 'AVinosticos'
+        expect(text).to include 'AlgunosvinosdeCostaRica'
+        expect(text).to include 'BLicoresCostarricenses'
+        expect(text).to include 'Licoresticos'
+      end
+    end
+  end
 end

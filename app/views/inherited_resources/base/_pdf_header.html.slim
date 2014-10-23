@@ -1,0 +1,18 @@
+css:
+  .resource-list .resource-item {
+    min-height: 80px;
+  }
+  .header-container {
+    min-height: 50px
+  }
+  .span6 .text-right {
+    line-height: 40px;
+  }
+
+.header-container
+  .span6
+    .text-left
+      h2= current_company.name
+  .span6
+    .text-right
+      = I18n.t("exports.pdf.title.#{controller_name.underscore}")

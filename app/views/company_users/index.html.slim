@@ -13,7 +13,22 @@
   #collection-list-filters
 
 .main
-  = button_to 'Invite user', new_user_invitation_path, {method: :get, remote: true, class: 'btn btn-primary'} if can?(:create, resource_class)
+  #list-tools
+    .pull-left
+      = button_to 'Invite user', new_user_invitation_path, {method: :get, remote: true, class: 'btn btn-primary'} if can?(:create, resource_class)
+    .text-right
+      .dropdown.btn-download
+        a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+          i.icon-download
+          i.icon-arrow-down
+        ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+          li
+            a.xlsx-download-link href="#" role="menuitem" data-url="#{company_users_path(format: :xls)}"
+              | Download as XLS
+          li
+            a#pdf-export.xlsx-download-link href="#" role="menuitem" data-url="#{company_users_path(format: :pdf)}"
+              | Download as PDF
+
   div#users-list.resource-list
 
 = render partial: 'help_tutorial'
