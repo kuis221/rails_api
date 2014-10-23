@@ -129,13 +129,10 @@ describe DayPartsController, type: :controller do
   describe "GET 'list_export'", search: true do
     it 'should return an empty book with the correct headers' do
       expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
-      spreadsheet_from_last_export do |doc|
-        rows = doc.elements.to_a('//Row')
-        expect(rows.count).to eql 1
-        expect(rows[0].elements.to_a('Cell/Data').map(&:text)).to eql [
-          'NAME', 'DESCRIPTION'
-        ]
-      end
+      ResqueSpec.perform_all(:export)
+      expect(ListExport.last).to have_rows([
+        ['NAME', 'DESCRIPTION']
+      ])
     end
 
     it 'should include the results' do
@@ -146,13 +143,10 @@ describe DayPartsController, type: :controller do
       expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
       expect(ListExportWorker).to have_queued(ListExport.last.id)
       ResqueSpec.perform_all(:export)
-      spreadsheet_from_last_export do |doc|
-        rows = doc.elements.to_a('//Row')
-        expect(rows.count).to eql 2
-        expect(rows[1].elements.to_a('Cell/Data').map(&:text)).to eql [
-          'Morningns', 'From 8 to 11am'
-        ]
-      end
+      expect(ListExport.last).to have_rows([
+        ['NAME', 'DESCRIPTION'],
+        ['Morningns', 'From 8 to 11am']
+      ])
     end
   end
 end

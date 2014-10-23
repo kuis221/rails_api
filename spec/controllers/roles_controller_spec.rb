@@ -150,12 +150,11 @@ describe RolesController, type: :controller do
   describe "GET 'list_export'", search: true do
     it 'should return a book with the correct headers and the admin user' do
       expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
-      spreadsheet_from_last_export do |doc|
-        rows = doc.elements.to_a('//Row')
-        expect(rows.count).to eql 2
-        expect(rows[0].elements.to_a('Cell/Data').map(&:text)).to eql ['NAME', 'DESCRIPTION']
-        expect(rows[1].elements.to_a('Cell/Data').map(&:text)).to eql ['Super Admin', nil]
-      end
+      ResqueSpec.perform_all(:export)
+      expect(ListExport.last).to have_rows([
+        ['NAME', 'DESCRIPTION'],
+        ['Super Admin', nil]
+      ])
     end
 
     it 'should include the results' do
@@ -166,16 +165,11 @@ describe RolesController, type: :controller do
       expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
       expect(ListExportWorker).to have_queued(ListExport.last.id)
       ResqueSpec.perform_all(:export)
-      spreadsheet_from_last_export do |doc|
-        rows = doc.elements.to_a('//Row')
-        expect(rows.count).to eql 3
-        expect(rows[1].elements.to_a('Cell/Data').map(&:text)).to eql [
-          'Costa Rica Role', 'El grupo de ticos'
-        ]
-        expect(rows[2].elements.to_a('Cell/Data').map(&:text)).to eql [
-          'Super Admin', nil
-        ]
-      end
+      expect(ListExport.last).to have_rows([
+        ['NAME', 'DESCRIPTION'],
+        ['Costa Rica Role', 'El grupo de ticos'],
+        ['Super Admin', nil]
+      ])
     end
   end
 end

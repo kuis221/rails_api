@@ -668,13 +668,10 @@ describe CampaignsController, type: :controller do
   describe "GET 'list_export'", search: true do
     it 'should return an empty book with the correct headers' do
       expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
-      spreadsheet_from_last_export do |doc|
-        rows = doc.elements.to_a('//Row')
-        expect(rows.count).to eql 1
-        expect(rows[0].elements.to_a('Cell/Data').map(&:text)).to eql [
-          'NAME', 'DESCRIPTION', 'FIRST EVENT', 'LAST EVENT'
-        ]
-      end
+      ResqueSpec.perform_all(:export)
+      expect(ListExport.last).to have_rows([
+        ['NAME', 'DESCRIPTION', 'FIRST EVENT', 'LAST EVENT']
+      ])
     end
 
     it 'should include the results' do
@@ -689,13 +686,10 @@ describe CampaignsController, type: :controller do
       expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
       expect(ListExportWorker).to have_queued(ListExport.last.id)
       ResqueSpec.perform_all(:export)
-      spreadsheet_from_last_export do |doc|
-        rows = doc.elements.to_a('//Row')
-        expect(rows.count).to eql 2
-        expect(rows[1].elements.to_a('Cell/Data').map(&:text)).to eql [
-          'Cacique FY13', 'Test campaign for guaro Cacique', '2013-08-21T10:00', '2013-08-28T11:00'
-        ]
-      end
+      expect(ListExport.last).to have_rows([
+        ['NAME', 'DESCRIPTION', 'FIRST EVENT', 'LAST EVENT'],
+        ['Cacique FY13', 'Test campaign for guaro Cacique', '2013-08-21T10:00', '2013-08-28T11:00']
+      ])
     end
   end
 end
