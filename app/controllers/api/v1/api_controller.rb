@@ -8,7 +8,6 @@ class Api::V1::ApiController < ActionController::Base
   rescue_from 'ActiveRecord::RecordNotFound', with: :record_not_found
 
   before_action :ensure_valid_request
-  before_action :cors_preflight_check
   after_action :set_access_control_headers
   after_action :update_user_last_activity_mobile
 
@@ -117,20 +116,6 @@ class Api::V1::ApiController < ActionController::Base
 
   def update_user_last_activity_mobile
     @current_company_user.update_column(:last_activity_mobile_at, DateTime.now) if user_signed_in? && @current_company_user.present?
-  end
-
-  def cors_preflight_check
-    return unless request.method == 'OPTIONS'
-    if ENV['HEROKU_APP_NAME'] == 'brandscopic'
-      headers['Access-Control-Allow-Origin'] = 'http://m.brandscopic.com'
-    else
-      headers['Access-Control-Allow-Origin'] = '*'
-    end
-    headers['Access-Control-Request-Method'] = '*'
-    headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD'
-    headers['Access-Control-Allow-Headers'] = '*,Origin,X-Requested-With,Accept,Content-Type,If-Modified-Since,If-None-Match,X-Auth-Token,X-User-Email,X-Company-Id'
-    headers['Access-Control-Max-Age'] = '86400'
-    render text: '', content_type: 'text/plain'
   end
 
   def ensure_valid_request

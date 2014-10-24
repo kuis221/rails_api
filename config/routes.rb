@@ -46,9 +46,6 @@ Brandscopic::Application.routes.draw do
           end
         end
 
-        # To allow CORS for any API action
-        match ':path1(/:path2(/:path3(/:path4)))', via: :options, to: 'api#options'
-
         resources :campaigns, only: [] do
           collection do
             get :all

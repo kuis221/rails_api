@@ -83,6 +83,13 @@ module Brandscopic
 
     I18n.enforce_available_locales = true
 
+    config.middleware.insert_before "ActionDispatch::Static", "Rack::Cors" do
+      allow do
+        origins '*'
+        resource '*', :headers => :any, :methods => [:get, :post, :put, :patch, :head, :delete, :options]
+      end
+    end
+
     # We dont need controllers to be in eager_loaded in workers
     unless ENV['WEB']
       config.eager_load_paths.reject! { |a| a.include?('app/admin') || a.include?('app/inputs') }
