@@ -9,16 +9,18 @@ describe Role, type: :model, search: true do
     # Create a Role on company 2
     company2_role = create(:role, company_id: 2)
 
-    Sunspot.commit
-
     # Search for all Roles on a given Company
-    expect(Role.do_search(company_id: 1).results).to match_array([role, role2])
-    expect(Role.do_search(company_id: 2).results).to match_array([company2_role])
+    expect(search(company_id: 1))
+      .to match_array([role, role2])
+    expect(search(company_id: 2))
+      .to match_array([company2_role])
 
     # Search for a given Role
-    expect(Role.do_search({ company_id: 1, q: "role,#{role.id}" }, true).results).to match_array([role])
+    expect(search({ company_id: 1, q: "role,#{role.id}" }, true))
+      .to match_array([role])
 
     # Search for Roles on a given status
-    expect(Role.do_search(company_id: 1, status: ['Active']).results).to match_array([role, role2])
+    expect(search(company_id: 1, status: ['Active']))
+      .to match_array([role, role2])
   end
 end

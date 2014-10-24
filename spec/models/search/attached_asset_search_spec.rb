@@ -17,45 +17,64 @@ describe AttachedAsset, type: :model, search: true do
     asset = create(:attached_asset, asset_type: 'photo', attachable: event)
     asset2 = create(:attached_asset, asset_type: 'document', attachable: event2)
 
-    Sunspot.commit
-
     # Search for all Attached Assets
-    expect(AttachedAsset.do_search(company_id: company.id).results).to match_array([asset, asset2])
+    expect(search(company_id: company.id)).to match_array([asset, asset2])
 
     # Search for Attached Assets on a given type
-    expect(AttachedAsset.do_search(company_id: company.id, asset_type: 'photo').results).to match_array([asset])
-    expect(AttachedAsset.do_search(company_id: company.id, asset_type: 'document').results).to match_array([asset2])
-    expect(AttachedAsset.do_search(company_id: company.id, asset_type: 'another').results).to match_array([])
+    expect(search(company_id: company.id, asset_type: 'photo'))
+      .to match_array([asset])
+    expect(search(company_id: company.id, asset_type: 'document'))
+      .to match_array([asset2])
+    expect(search(company_id: company.id, asset_type: 'another'))
+      .to match_array([])
 
     # Search for brands associated to the Attached Assets
-    expect(AttachedAsset.do_search(company_id: company.id, q: "brand,#{brand.id}").results).to match_array([asset, asset2])
-    expect(AttachedAsset.do_search(company_id: company.id, q: "brand,#{brand2.id}").results).to match_array([asset2])
-    expect(AttachedAsset.do_search(company_id: company.id, brand: brand.id).results).to match_array([asset, asset2])
-    expect(AttachedAsset.do_search(company_id: company.id, brand: brand2.id).results).to match_array([asset2])
-    expect(AttachedAsset.do_search(company_id: company.id, brand: [brand.id, brand2.id]).results).to match_array([asset, asset2])
+    expect(search(company_id: company.id, q: "brand,#{brand.id}"))
+      .to match_array([asset, asset2])
+    expect(search(company_id: company.id, q: "brand,#{brand2.id}"))
+      .to match_array([asset2])
+    expect(search(company_id: company.id, brand: brand.id))
+      .to match_array([asset, asset2])
+    expect(search(company_id: company.id, brand: brand2.id))
+      .to match_array([asset2])
+    expect(search(company_id: company.id, brand: [brand.id, brand2.id]))
+      .to match_array([asset, asset2])
 
     # Search for campaigns associated to the Attached Assets
-    expect(AttachedAsset.do_search({ company_id: company.id, q: "campaign,#{campaign.id}" }, true).results).to match_array([asset])
-    expect(AttachedAsset.do_search(company_id: company.id, q: "campaign,#{campaign2.id}").results).to match_array([asset2])
-    expect(AttachedAsset.do_search(company_id: company.id, campaign: campaign.id).results).to match_array([asset])
-    expect(AttachedAsset.do_search(company_id: company.id, campaign: campaign2.id).results).to match_array([asset2])
-    expect(AttachedAsset.do_search(company_id: company.id, campaign: [campaign.id, campaign2.id]).results).to match_array([asset, asset2])
+    expect(search({ company_id: company.id, q: "campaign,#{campaign.id}" }, true))
+      .to match_array([asset])
+    expect(search(company_id: company.id, q: "campaign,#{campaign2.id}"))
+      .to match_array([asset2])
+    expect(search(company_id: company.id, campaign: campaign.id))
+      .to match_array([asset])
+    expect(search(company_id: company.id, campaign: campaign2.id))
+      .to match_array([asset2])
+    expect(search(company_id: company.id, campaign: [campaign.id, campaign2.id]))
+      .to match_array([asset, asset2])
 
     # Search for a specific Attached Asset's place
-    expect(AttachedAsset.do_search(company_id: company.id, q: "venue,#{venue.id}").results).to match_array([asset])
-    expect(AttachedAsset.do_search(company_id: company.id, q: "venue,#{venue2.id}").results).to match_array([asset2])
-    expect(AttachedAsset.do_search(company_id: company.id, location: [place.location_id]).results).to match_array([asset])
-    expect(AttachedAsset.do_search(company_id: company.id, location: [place2.location_id]).results).to match_array([asset2])
-    expect(AttachedAsset.do_search(company_id: company.id, location: [place.location_id, place2.location_id]).results).to match_array([asset, asset2])
+    expect(search(company_id: company.id, q: "venue,#{venue.id}"))
+      .to match_array([asset])
+    expect(search(company_id: company.id, q: "venue,#{venue2.id}"))
+      .to match_array([asset2])
+    expect(search(company_id: company.id, location: [place.location_id]))
+      .to match_array([asset])
+    expect(search(company_id: company.id, location: [place2.location_id]))
+      .to match_array([asset2])
+    expect(search(company_id: company.id, location: [place.location_id, place2.location_id]))
+      .to match_array([asset, asset2])
 
     # Search for Attached Assets on a given date range
-    expect(AttachedAsset.do_search(company_id: company.id, start_date: '02/21/2013', end_date: '02/23/2013').results).to match_array([asset])
-    expect(AttachedAsset.do_search(company_id: company.id, start_date: '02/22/2013').results).to match_array([asset])
-    expect(AttachedAsset.do_search(company_id: company.id, start_date: '03/21/2013', end_date: '03/23/2013').results).to match_array([asset2])
-    expect(AttachedAsset.do_search(company_id: company.id, start_date: '03/22/2013').results).to match_array([asset2])
-    expect(AttachedAsset.do_search(company_id: company.id, start_date: '01/21/2013', end_date: '01/23/2013').results).to eq([])
+    expect(search(company_id: company.id, start_date: '02/21/2013', end_date: '02/23/2013'))
+      .to match_array([asset])
+    expect(search(company_id: company.id, start_date: '02/22/2013')).to match_array([asset])
+    expect(search(company_id: company.id, start_date: '03/21/2013', end_date: '03/23/2013'))
+      .to match_array([asset2])
+    expect(search(company_id: company.id, start_date: '03/22/2013')).to match_array([asset2])
+    expect(search(company_id: company.id, start_date: '01/21/2013', end_date: '01/23/2013'))
+      .to be_empty
 
     # Search for Attached Assets on a given status
-    expect(AttachedAsset.do_search(company_id: company.id, status: ['Active']).results).to match_array([asset, asset2])
+    expect(search(company_id: company.id, status: ['Active'])).to match_array([asset, asset2])
   end
 end

@@ -21,9 +21,9 @@ module BrandscopiSpecHelpers
     request.headers['X-Company-Id'] = company.id
   end
 
-  def search(params)
+  def search(*params)
     Sunspot.commit
-    described_class.do_search(params).results
+    described_class.do_search(*params).results
   end
 
   def set_event_results(event, results, autosave = true)
