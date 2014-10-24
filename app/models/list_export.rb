@@ -155,7 +155,7 @@ class ListExport < ActiveRecord::Base
       html,
       javascript_delay: 1000,
       # header: { content: load_controller.render_to_string(template: 'shared/pdf_header.pdf.slim') },
-      extra: '--window-status completed --debug-javascript')
+      extra: '--window-status completed --debug-javascript --custom-header Origin *  --custom-header-propagation')
   end
 
   # Checks that the user have an authentication_token
