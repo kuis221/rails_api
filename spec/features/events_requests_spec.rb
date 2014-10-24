@@ -2,12 +2,13 @@ require 'rails_helper'
 
 feature 'Events section' do
   let(:company) { create(:company) }
-  let(:campaign) { create(:campaign, company: company, name: 'Campaign FY2012') }
+  let(:campaign) { create(:campaign, company: company, name: 'Campaign FY2012', brands: [brand]) }
   let(:user) { create(:user, company: company, role_id: role.id) }
   let(:company_user) { user.company_users.first }
   let(:place) { create(:place, name: 'A Nice Place', country: 'CR', city: 'Curridabat', state: 'San Jose') }
   let(:permissions) { [] }
   let(:event) { create(:event, campaign: campaign, company: company) }
+  let(:brand) { create(:brand, company: company, name: 'My Kool Brand') }
 
   before do
     Warden.test_mode!
@@ -332,6 +333,36 @@ feature 'Events section' do
               expect(text).to include '8:00AM-9:00AM'
               expect(text).to match(/#{month_name}#{today.strftime('%d')}/)
               expect(text).to match(/#{month_name}#{(today + 1.day).strftime('%d')}/)
+            end
+          end
+
+
+          scenario 'should be able to export the calendar view as PDF' do
+            visit events_path
+
+            click_link 'Calendar View'
+
+            click_js_link 'Download'
+            click_js_link 'Download as PDF'
+
+            within visible_modal do
+              expect(page).to have_content('We are processing your request, the download will start soon...')
+              export = ListExport.last
+              expect(ListExportWorker).to have_queued(export.id)
+              ResqueSpec.perform_all(:export)
+            end
+            ensure_modal_was_closed
+
+            export = ListExport.last
+            # Test the generated PDF...
+            reader = PDF::Reader.new(open(export.file.url))
+            reader.pages.each do |page|
+              # PDF to text seems to not always return the same results
+              # with white spaces, so, remove them and look for strings
+              # without whitespaces
+              text = page.text.gsub(/[\s\n]/, '')
+              expect(text).to include 'MyKoolBrand'
+              expect(text).to include "#{today.strftime('%B')}#{year_number}"
             end
           end
 
