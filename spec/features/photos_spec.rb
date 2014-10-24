@@ -58,6 +58,18 @@ feature 'Photos', js: true do
   end
 
   feature 'Photo Gallery' do
+    scenario 'Should display only active photos in Event Gallery' do
+      create(:photo, attachable: event)
+      create(:photo, attachable: event, active: false)
+
+      visit event_path(event)
+
+      # Check that just one image appears on the page
+      within gallery_box do
+        expect(page.all('li.photo-item').count).to eql(1)
+      end
+    end
+
     scenario 'can rate a photo' do
       photo = create(:photo, attachable: event, rating: 2)
       visit event_path(event)
