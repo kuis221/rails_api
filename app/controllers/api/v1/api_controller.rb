@@ -111,7 +111,7 @@ class Api::V1::ApiController < ActionController::Base
     headers['Access-Control-Request-Method'] = '*'
     headers['Access-Control-Expose-Headers'] = 'ETag'
     headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS, HEAD'
-    headers['Access-Control-Allow-Headers'] = '*,x-requested-with,Content-Type,If-Modified-Since,If-None-Match'
+    headers['Access-Control-Allow-Headers'] = '*,x-requested-with,Content-Type,If-Modified-Since,If-None-Match,X-Auth-Token,X-User-Email,X-Company-Id'
     headers['Access-Control-Max-Age'] = '86400'
   end
 
@@ -126,8 +126,9 @@ class Api::V1::ApiController < ActionController::Base
     else
       headers['Access-Control-Allow-Origin'] = '*'
     end
+    headers['Access-Control-Request-Method'] = '*'
     headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, PATCH, DELETE, OPTIONS, HEAD'
-    headers['Access-Control-Allow-Headers'] = '*,x-requested-with,Content-Type,If-Modified-Since,If-None-Match,X-Auth-Token,X-User-Email,X-Company-Id'
+    headers['Access-Control-Allow-Headers'] = '*,Origin,X-Requested-With,Accept,Content-Type,If-Modified-Since,If-None-Match,X-Auth-Token,X-User-Email,X-Company-Id'
     headers['Access-Control-Max-Age'] = '86400'
     render text: '', content_type: 'text/plain'
   end
