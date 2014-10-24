@@ -24,7 +24,7 @@
 
         - if resource.role.present?
           .user-role.label.label-default
-            = resource.role.name
+            = link_to_if can?(:show, resource.role), resource.role.name, role_path(resource.role)
 
     - if resource.teams.any?
       .team-assigned
@@ -56,13 +56,18 @@
             .info
               a.icon-info.has-tooltip href="#" title="Before Brandscopic can send you SMS alerts, we need to verify that you own the phone number you entered.  Brandscopic will only use this number to send you SMS alerts and we will never share your number with other companies or use it for marketing purposes. Standard text messaging rates may apply."
 
-
-
       - if resource.full_address.present?
         .place-data
           i.icon-wired-venue
           span
-            = resource.full_address
+            = resource.full_address separator: ', '
+
+      - if resource.time_zone
+        .calendar-data
+          i.icon-time
+          span
+            - zone = ActiveSupport::TimeZone.new(resource.time_zone)
+            = "(#{zone.formatted_offset}) #{zone.name}"
 
       //.links-data
         //= link_to '', edit_company_user_path(resource), remote: true, title: 'Edit', class: 'icon-edit' if can?(:edit, resource)
