@@ -140,7 +140,7 @@ class ListExport < ActiveRecord::Base
       ctrl.instance_variable_set(:@current_user, company_user.user)
       ctrl.instance_variable_set(:@current_company, company_user.company)
       ctrl.instance_variable_set(:@current_company_user, company_user)
-      ctrl.instance_variable_set(:@_url_options, url_options.merge(only_path: false, auth_token: User.current.authentication_token))
+      ctrl.instance_variable_set(:@_url_options, url_options.merge(only_path: false))
     end
   end
 
@@ -155,7 +155,12 @@ class ListExport < ActiveRecord::Base
       html,
       javascript_delay: 1000,
       # header: { content: load_controller.render_to_string(template: 'shared/pdf_header.pdf.slim') },
-      extra: '--window-status completed --debug-javascript --custom-header Origin *  --custom-header-propagation')
+      extra: '--window-status completed '\
+             '--debug-javascript '\
+             '--custom-header Origin * '\
+             "--custom-header X-User-Email #{User.current.email} "\
+             "--custom-header X-Auth-Token #{User.current.authentication_token} "\
+             '--custom-header-propagation')
   end
 
   # Checks that the user have an authentication_token

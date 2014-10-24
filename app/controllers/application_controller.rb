@@ -86,11 +86,12 @@ class ApplicationController < ActionController::Base
   # Allow GET methods for JS/JSON requests so PDF exports can work in background jobs
   def authenticate_user_by_token
     return unless request.format.js? || request.format.json?
-    return unless params[:auth_token].present? && !params[:auth_token].empty?
+    return if request.headers['X-Auth-Token'].blank? || request.headers['X-User-Email'].blank?
 
-    @_current_user = User.find_by!(authentication_token: params[:auth_token])
+    @_current_user = User.find_by(
+      email: request.headers['X-User-Email'],
+      authentication_token: request.headers['X-Auth-Token'])
     sign_in(:user, @_current_user)
-    headers['Access-Control-Allow-Origin'] = '*'
   end
 
   def access_denied(exception)
