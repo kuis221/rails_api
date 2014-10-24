@@ -21,74 +21,110 @@ describe Task, type: :model, search: true do
     company2 = create(:company)
     company2_task = create(:task, company_user: create(:company_user, company_id: 2), event: create(:event, company: company2))
 
-    Sunspot.commit
-
     # Make some test searches
 
     # Search for tasks by id
-    expect(Task.do_search(company_id: company.id, id: user_tasks.map(&:id)).results).to match_array(user_tasks)
-    expect(Task.do_search(company_id: company.id, id: user2_tasks.map(&:id)).results).to match_array(user2_tasks)
-    expect(Task.do_search(company_id: company.id, id: user_tasks.first.id).results).to match_array([user_tasks.first])
+    expect(search(company_id: company.id, id: user_tasks.map(&:id)))
+      .to match_array(user_tasks)
+    expect(search(company_id: company.id, id: user2_tasks.map(&:id)))
+      .to match_array(user2_tasks)
+    expect(search(company_id: company.id, id: user_tasks.first.id))
+      .to match_array([user_tasks.first])
 
     # Search for all tasks on a given company
-    expect(Task.do_search(company_id: company.id).results).to match_array(user_tasks + user2_tasks)
-    expect(Task.do_search(company_id: company2.id).results).to match_array([company2_task])
+    expect(search(company_id: company.id))
+      .to match_array(user_tasks + user2_tasks)
+    expect(search(company_id: company2.id))
+      .to match_array([company2_task])
 
-    expect(Task.do_search(company_id: company.id, q: "team,#{team.id}").results).to match_array(user_tasks + user2_tasks)
-    expect(Task.do_search(company_id: company.id, q: "team,#{team2.id}").results).to match_array(user2_tasks)
+    expect(search(company_id: company.id, q: "team,#{team.id}"))
+      .to match_array(user_tasks + user2_tasks)
+    expect(search(company_id: company.id, q: "team,#{team2.id}"))
+      .to match_array(user2_tasks)
 
     # Search for a specific user's tasks
-    expect(Task.do_search(company_id: company.id, q: "company_user,#{user.id}").results).to match_array(user_tasks)
-    expect(Task.do_search(company_id: company.id, q: "company_user,#{user2.id}").results).to match_array(user2_tasks)
-    expect(Task.do_search(company_id: company.id, user: user.id).results).to match_array(user_tasks)
-    expect(Task.do_search(company_id: company.id, user: user2.id).results).to match_array(user2_tasks)
-    expect(Task.do_search(company_id: company.id, user: [user.id, user2.id]).results).to match_array(user_tasks + user2_tasks)
+    expect(search(company_id: company.id, q: "company_user,#{user.id}"))
+      .to match_array(user_tasks)
+    expect(search(company_id: company.id, q: "company_user,#{user2.id}"))
+      .to match_array(user2_tasks)
+    expect(search(company_id: company.id, user: user.id))
+      .to match_array(user_tasks)
+    expect(search(company_id: company.id, user: user2.id))
+      .to match_array(user2_tasks)
+    expect(search(company_id: company.id, user: [user.id, user2.id]))
+      .to match_array(user_tasks + user2_tasks)
 
     # Search for a specific event's tasks
-    expect(Task.do_search(company_id: company.id, event_id: event.id).results).to match_array(user_tasks)
-    expect(Task.do_search(company_id: company.id, event_id: event2.id).results).to match_array(user2_tasks)
-    expect(Task.do_search(company_id: company.id, event_id: [event.id, event2.id]).results).to match_array(user_tasks + user2_tasks)
+    expect(search(company_id: company.id, event_id: event.id))
+      .to match_array(user_tasks)
+    expect(search(company_id: company.id, event_id: event2.id))
+      .to match_array(user2_tasks)
+    expect(search(company_id: company.id, event_id: [event.id, event2.id]))
+      .to match_array(user_tasks + user2_tasks)
 
     # Search for a campaign's tasks
-    expect(Task.do_search(company_id: company.id, q: "campaign,#{campaign.id}").results).to match_array(user_tasks)
-    expect(Task.do_search(company_id: company.id, q: "campaign,#{campaign2.id}").results).to match_array(user2_tasks)
-    expect(Task.do_search(company_id: company.id, campaign: campaign.id).results).to match_array(user_tasks)
-    expect(Task.do_search(company_id: company.id, campaign: campaign2.id).results).to match_array(user2_tasks)
-    expect(Task.do_search(company_id: company.id, campaign: [campaign.id, campaign2.id]).results).to match_array(user_tasks + user2_tasks)
+    expect(search(company_id: company.id, q: "campaign,#{campaign.id}"))
+      .to match_array(user_tasks)
+    expect(search(company_id: company.id, q: "campaign,#{campaign2.id}"))
+      .to match_array(user2_tasks)
+    expect(search(company_id: company.id, campaign: campaign.id))
+      .to match_array(user_tasks)
+    expect(search(company_id: company.id, campaign: campaign2.id))
+      .to match_array(user2_tasks)
+    expect(search(company_id: company.id, campaign: [campaign.id, campaign2.id]))
+      .to match_array(user_tasks + user2_tasks)
 
     # Search for a given task
     task = user_tasks.first
-    expect(Task.do_search(company_id: company.id, q: "task,#{task.id}").results).to match_array([task])
+    expect(search(company_id: company.id, q: "task,#{task.id}"))
+      .to match_array([task])
 
     # Search for tasks on a given date range
-    expect(Task.do_search(company_id: company.id, start_date: '02/21/2013', end_date: '02/23/2013').results).to match_array(user_tasks)
-    expect(Task.do_search(company_id: company.id, start_date: '02/22/2013').results).to match_array(user_tasks)
-    expect(Task.do_search(company_id: company.id, start_date: '03/21/2013', end_date: '03/23/2013').results).to match_array(user2_tasks)
-    expect(Task.do_search(company_id: company.id, start_date: '03/22/2013').results).to match_array(user2_tasks)
-    expect(Task.do_search(company_id: company.id, start_date: '01/21/2013', end_date: '01/23/2013').results).to eq([])
+    expect(search(company_id: company.id, start_date: '02/21/2013', end_date: '02/23/2013'))
+      .to match_array(user_tasks)
+    expect(search(company_id: company.id, start_date: '02/22/2013'))
+      .to match_array(user_tasks)
+    expect(search(company_id: company.id, start_date: '03/21/2013', end_date: '03/23/2013'))
+      .to match_array(user2_tasks)
+    expect(search(company_id: company.id, start_date: '03/22/2013'))
+      .to match_array(user2_tasks)
+    expect(search(company_id: company.id, start_date: '01/21/2013', end_date: '01/23/2013')).to eq([])
 
     # Search for Events on a given Event
-    expect(Task.do_search(company_id: company.id, status: ['Active']).results).to match_array(user_tasks + user2_tasks)
+    expect(search(company_id: company.id, status: ['Active']))
+      .to match_array(user_tasks + user2_tasks)
   end
 
   it 'should search for the :task_status params' do
     company = create(:company)
     user = create(:company_user, company: company)
     event     = create(:event, company: company)
-    late_task = create(:late_task, title: 'Late Task', event: event)
-    future_task = create(:future_task, title: 'Task in future', event: event)
-    assigned_and_late_task = create(:assigned_task, company_user: user, title: 'Assigned and late task', event: event, due_at: 3.weeks.ago)
-    assigned_and_in_future_task = create(:assigned_task, company_user: user, title: 'Assigned and in future task', event: event, due_at: 3.weeks.from_now)
-    unassigned_task = create(:unassigned_task, title: 'Unassigned task', event: event, due_at: 3.weeks.from_now)
-    completed_task = create(:completed_task, company_user: user, title: 'Completed task', event: event)
+    late_task = create(:late_task, event: event)
+    future_task = create(:future_task, event: event)
+    assigned_and_late_task = create(:assigned_task, company_user: user, event: event,
+                                    due_at: 3.weeks.ago)
+    assigned_and_in_future_task = create(:assigned_task,
+                                         company_user: user,
+                                         event: event, due_at: 3.weeks.from_now)
+    unassigned_task = create(:unassigned_task, event: event, due_at: 3.weeks.from_now)
+    completed_task = create(:completed_task, company_user: user,  event: event)
 
-    Sunspot.commit
+    expect(search(company_id: company.id, task_status: ['Late']))
+        .to match_array([late_task, assigned_and_late_task])
 
-    expect(Task.do_search(company_id: company.id, task_status: ['Late']).results).to match_array([late_task, assigned_and_late_task])
-    expect(Task.do_search(company_id: company.id, task_status: %w(Late Complete)).results).to match_array([late_task, assigned_and_late_task, completed_task])
-    expect(Task.do_search(company_id: company.id, task_status: ['Complete']).results).to match_array([completed_task])
-    expect(Task.do_search(company_id: company.id, task_status: ['Incomplete']).results).to match_array([late_task, future_task, assigned_and_late_task, assigned_and_in_future_task, unassigned_task])
-    expect(Task.do_search(company_id: company.id, task_status: ['Assigned']).results).to match_array([assigned_and_late_task, assigned_and_in_future_task, completed_task])
-    expect(Task.do_search(company_id: company.id, task_status: ['Unassigned']).results).to match_array([late_task, future_task, unassigned_task])
+    expect(search(company_id: company.id, task_status: %w(Late Complete)))
+        .to match_array([late_task, assigned_and_late_task, completed_task])
+
+    expect(search(company_id: company.id, task_status: ['Complete']))
+        .to match_array([completed_task])
+
+    expect(search(company_id: company.id, task_status: ['Incomplete']))
+        .to match_array([late_task, future_task, assigned_and_late_task, assigned_and_in_future_task, unassigned_task])
+
+    expect(search(company_id: company.id, task_status: ['Assigned']))
+        .to match_array([assigned_and_late_task, assigned_and_in_future_task, completed_task])
+
+    expect(search(company_id: company.id, task_status: ['Unassigned']))
+        .to match_array([late_task, future_task, unassigned_task])
   end
 end

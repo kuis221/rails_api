@@ -9,16 +9,14 @@ describe Area, type: :model, search: true do
     # Create an Area on company 2
     company2_area = create(:area, company_id: 2)
 
-    Sunspot.commit
-
     # Search for all Roles on a given Company
-    expect(Area.do_search(company_id: 1).results).to match_array([area, area2])
-    expect(Area.do_search(company_id: 2).results).to match_array([company2_area])
+    expect(search(company_id: 1)).to match_array([area, area2])
+    expect(search(company_id: 2)).to match_array([company2_area])
 
     # Search for a given Area
-    expect(Area.do_search({ company_id: 1, q: "area,#{area.id}" }, true).results).to match_array([area])
+    expect(search(company_id: 1, q: "area,#{area.id}")).to match_array([area])
 
     # Search for Areas on a given status
-    expect(Area.do_search(company_id: 1, status: ['Active']).results).to match_array([area, area2])
+    expect(search(company_id: 1, status: ['Active'])).to match_array([area, area2])
   end
 end

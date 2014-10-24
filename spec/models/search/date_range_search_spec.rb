@@ -9,16 +9,18 @@ describe DateRange, type: :model, search: true do
     # Create a Date Range on company 2
     company2_date_range = create(:date_range, company_id: 2)
 
-    Sunspot.commit
-
     # Search for all Date Ranges on a given Company
-    expect(DateRange.do_search(company_id: 1).results).to match_array([date_range, date_range2])
-    expect(DateRange.do_search(company_id: 2).results).to match_array([company2_date_range])
+    expect(search(company_id: 1))
+      .to match_array([date_range, date_range2])
+    expect(search(company_id: 2))
+      .to match_array([company2_date_range])
 
     # Search for a given Date Range
-    expect(DateRange.do_search({ company_id: 1, q: "date_range,#{date_range.id}" }, true).results).to match_array([date_range])
+    expect(search({ company_id: 1, q: "date_range,#{date_range.id}" }, true))
+      .to match_array([date_range])
 
     # Search for Date Ranges on a given status
-    expect(DateRange.do_search(company_id: 1, status: ['Active']).results).to match_array([date_range, date_range2])
+    expect(search(company_id: 1, status: ['Active']))
+      .to match_array([date_range, date_range2])
   end
 end
