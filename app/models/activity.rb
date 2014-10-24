@@ -47,10 +47,10 @@ class Activity < ActiveRecord::Base
   delegate :company_id, :company, :place, to: :activitable, allow_nil: true
   delegate :td_linx_code, :name, :city, :state, :zipcode, :street_number, :route,
            to: :place, allow_nil: true, prefix: true
-
   delegate :name, to: :campaign, allow_nil: true, prefix: true
   delegate :full_name, to: :company_user, allow_nil: true, prefix: true
   delegate :name, to: :activity_type, allow_nil: true, prefix: true
+  delegate :place, :place_id, to: :activitable, allow_nil: true
 
   accepts_nested_attributes_for :results, allow_destroy: true
 
@@ -114,14 +114,6 @@ class Activity < ActiveRecord::Base
     else
       []
     end
-  end
-
-  def place_id
-    place.try(:id)
-  end
-
-  def place
-    activitable.place if activitable.present?
   end
 
   def locations_for_index
