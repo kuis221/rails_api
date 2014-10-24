@@ -253,7 +253,7 @@ body{
 		display: inline-block;
 		width: auto;
 		&+div{
-			margin-left: 10px;
+			margin-left: 15px;
 			&.info{
 				margin-left: 5px;
 				a.icon-info{
@@ -265,6 +265,7 @@ body{
 			}
 			&.verify{
 				font-size:12px;
+				font-weight: bold;
 			}
 			&.verified{
 				color: $approved;
@@ -283,7 +284,7 @@ body{
 		}
 	}
 	i{
-		top:-2px;
+		top:-4px;
 		position: relative;
 	}
 }
@@ -291,6 +292,7 @@ body{
 .time-data, .description-data {
 	i{
 		font-size:20px;
+		left:2px;
 		&+span{
 			width: 90%;
 		}
@@ -303,9 +305,10 @@ body{
 		margin-bottom: 0px;
 	}
 	i{
-		font-size: 22px;
+		font-size: 20px;
 		left: 2px;
 		position: relative;
+		margin-top: 0;
 	}
 }
 

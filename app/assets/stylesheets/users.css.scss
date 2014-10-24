@@ -171,8 +171,13 @@ a.resend-verification {
 		}
 	}
 	.aditional-info{
-		margin: 20px 0 30px 0;
+		font-size: 12px;
+		margin: 20px 0;
 		width: 100%;
+		i{
+			text-align:center;
+			width:20px;
+		}
 	}
 	.user-data{
 		a{
@@ -236,36 +241,6 @@ a.resend-verification {
 		color: $blue;
 	}
 }
-
-/*
-.control-group{
-	&.event_results_value{
-		width: 390px;
-	}
-	&.percentage{
-		width:390px;
-		input[type="text"]{
-			-webkit-border-radius: 4px 0px 0px 4px;
-			border-radius: 4px 0px 0px 4px;
-			width: 176px;
-		}
-		label.control-label{
-			display: inline-block;
-			font-size: 13px;
-			margin-top: 12px;
-			margin-right: 5px;
-		}
-	}
-	&.error{
-		input, textarea{
-			&:focus{
-				box-shadow: none;
-				-webkit-box-shadow: none;
-			}
-		}
-	}
-}
-*/
 
 .control-group.percentage,
 .control-group.summation {
