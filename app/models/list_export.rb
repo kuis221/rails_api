@@ -76,7 +76,10 @@ class ListExport < ActiveRecord::Base
     build_file
 
     # Save file or raise error if failed
-    Kernel.fail(errors.full_messages.join(", ")) unless save_with_retry
+    unless save_with_retry
+      p self.inspect
+      Kernel.fail(errors.full_messages.join(', '))
+    end
     self.complete! unless self.completed?
   end
 

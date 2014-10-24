@@ -25,7 +25,7 @@ describe ListExport, type: :model do
 
   describe 'Results::EventDataController#export_list' do
     let(:exporter) do
-      described_class.new(
+      described_class.create(
         controller: 'Results::EventDataController',
         company_user: company_user,
         export_format: 'xls',
@@ -50,6 +50,7 @@ describe ListExport, type: :model do
     end
 
     it 'retry to save three times in case of a network error' do
+      allow_any_instance_of(Paperclip::MediaTypeSpoofDetector).to receive(:spoofed?).and_return(false)
       expect_any_instance_of(Paperclip::Attachment).to receive(:save).exactly(4).times.and_raise(Net::OpenTimeout)
       expect(exporter).not_to receive(:queue!)
       expect(exporter).to receive(:process!).once
