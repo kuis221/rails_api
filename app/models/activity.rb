@@ -47,10 +47,10 @@ class Activity < ActiveRecord::Base
   delegate :company_id, :company, :place, to: :activitable, allow_nil: true
   delegate :td_linx_code, :name, :city, :state, :zipcode, :street_number, :route,
            to: :place, allow_nil: true, prefix: true
-
   delegate :name, to: :campaign, allow_nil: true, prefix: true
   delegate :full_name, to: :company_user, allow_nil: true, prefix: true
   delegate :name, to: :activity_type, allow_nil: true, prefix: true
+  delegate :place, :place_id, to: :activitable, allow_nil: true
 
   accepts_nested_attributes_for :results, allow_destroy: true
 
@@ -61,10 +61,15 @@ class Activity < ActiveRecord::Base
     integer :campaign_id
     integer :activity_type_id
     integer :company_user_id
+    integer :place_id
+    integer :location, multiple: true do
+      locations_for_index
+    end
     string :activitable do
       "#{activitable_type}#{activitable_id}"
     end
     date :activity_date
+    string :status
   end
 
   def activate!
@@ -111,12 +116,36 @@ class Activity < ActiveRecord::Base
     end
   end
 
+  def locations_for_index
+    place.locations.pluck('locations.id') if place.present?
+  end
+
+  def status
+    self.active? ? 'Active' : 'Inactive'
+  end
+
   class << self
     def do_search(params)
       solr_search(include: [:activity_type, company_user: :user]) do
         with :company_id, params[:company_id]
         with :campaign_id, params[:campaign] if params.key?(:campaign) && params[:campaign].present?
         with :activity_type_id, params[:activity_type] if params.key?(:activity_type) && params[:activity_type].present?
+        with :company_user_id, params[:user] if params.key?(:user) && params[:user].present?
+        with(:status, params[:status]) if params.key?(:status) && params[:status].present?
+
+        if params.key?(:brand) && params[:brand].present?
+          campaign_ids = Campaign.joins(:brands)
+                                 .where(brands: { id: params[:brand] }, company_id: params[:company_id])
+                                 .pluck('DISTINCT(campaigns.id)')
+          with 'campaign_id', campaign_ids + [0]
+        end
+
+        if params[:area].present?
+          any_of do
+            with :place_id, Area.where(id: params[:area]).joins(:places).where(places: { is_location: false }).pluck('places.id').uniq + [0]
+            with :location, Area.where(id: params[:area]).map { |a| a.locations.map(&:id) }.flatten + [0]
+          end
+        end
 
         if params[:start_date].present? && params[:end_date].present?
           d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day

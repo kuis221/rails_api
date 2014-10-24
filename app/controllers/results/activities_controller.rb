@@ -11,7 +11,11 @@ class Results::ActivitiesController < FilteredController
     @facets ||= Array.new.tap do |f|
       # select what params should we use for the facets search
       f.push build_activity_type_bucket
+      f.push build_brands_bucket
       f.push build_campaign_bucket
+      f.push build_areas_bucket
+      f.push build_users_bucket
+      f.push build_state_bucket
     end
   end
 
