@@ -28,12 +28,34 @@
 	display: inline-block;
 	margin-right: 15px;
 	text-transform: uppercase;
-	font-size: 10px;
+	font-size: 8px;
+	font-weight:600;
+	&.ai, &.mp4, &.wmv, &.avi{
+		color: $adobe-ai-file;
+	}
 	&.docx{
 		color: $light-blue;
 	}
 	&.xls, &.xlsx {
 		color: #7ca63a;
+	}
+	&.pdf{
+		color: $adobe-pdf-file;
+	}
+	&.pptx{
+		color: $ppt-file;
+	}
+	&.txt, &.rtf{
+		color: $text;
+	}
+	&.indd{
+		color: $adobe-indd-file;
+	}
+	&.mp3, &.wav, &.aif{
+		color: $purple;
+	}
+	&.zip, &.rar{
+		color: $brand;
 	}
 }
 
