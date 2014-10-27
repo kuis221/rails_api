@@ -1623,9 +1623,6 @@ header{
 				}
 
 				li#notifications {
-					a {
-						color: white;
-					}
 					ul li a {
 						padding-left: 0;
 						padding-right: 0;
@@ -1874,6 +1871,7 @@ li#user_menu{
 li#notifications{
 	.notification-state{
 		background-color: #626763;
+		color: white;
 		border: 1px solid $header;
 		text-align:center;
 		font-size: 9px;
@@ -1887,7 +1885,6 @@ li#notifications{
 		top:6px
 	}
 	.icon-bell{
-		color: $app_bg;
 		position:relative;
 		top:2px;
 	}
@@ -1898,7 +1895,7 @@ li#notifications{
 	}
 
 	&.has-notifications {
-		.dropdown-toggle { color:  #fff; }
+		.dropdown-toggle:hover { color:  #fff; }
 	}
 
 	&.has-grey-notifications {
