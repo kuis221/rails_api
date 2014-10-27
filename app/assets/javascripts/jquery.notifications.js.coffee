@@ -22,7 +22,9 @@ $.widget 'nmk.notifications', {
 				@_updateNotifications response
 
 	_updateNotifications: (alerts) ->
-		@counter.html("<span class=\"notification-state\">#{alerts.length}</span><span class=\"icon-bell\"></span>")
+		counter = ''
+		counter = "<span class=\"notification-state\">#{alerts.length}</span>" if alerts.length > 0
+		@counter.html("#{counter}<span class=\"icon-bell\"></span>")
 		@list.html('')
 		if alerts.length > 0
 			@element.addClass('has-notifications')
