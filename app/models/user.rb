@@ -151,7 +151,9 @@ class User < ActiveRecord::Base
    end
   end
 
-  def full_address
+  # Returns the formatted user's adddress. 
+  # TODO: move this to a decorator/presenter
+  def full_address(separator: '<br />')
     address = []
     city_parts = []
     city_parts.push city if city.present?
@@ -161,7 +163,7 @@ class User < ActiveRecord::Base
     address.push city_parts.compact.join(', ') unless city_parts.empty?
     address.push zip_code if zip_code.present?
     address.push country_name if country_name.present?
-    address.compact.compact.join('<br />').html_safe
+    address.compact.compact.join(separator).html_safe
   end
 
   def country_name

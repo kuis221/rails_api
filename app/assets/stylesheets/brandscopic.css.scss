@@ -252,45 +252,44 @@ body{
 	div{
 		display: inline-block;
 		width: auto;
-		&+div{
-			margin-left: 10px;
-			&.info{
-				margin-left: 5px;
-				a.icon-info{
-					color: $user_menu;
-					font-size: 18px;
-					position: absolute;
-					top: 0;
-				}
-			}
-			&.verify{
-				font-size:12px;
-			}
-			&.verified{
-				color: $approved;
-				font-size:12px;
-				margin-left: 30px;
-				i, p{
-					color: $approved;
-					display: inline-block;
-				}
-				i{
-					font-size: 14px;
-					margin-right: 5px;
-					top: -3px;
-				}
-			}
+	}
+	.info{
+		margin-left: 5px;
+		a.icon-info{
+			color: $user_menu;
+			font-size: 18px;
+			position:relative;
+			top: 3px;
 		}
 	}
 	i{
-		top:-2px;
+		top:-4px;
 		position: relative;
+	}
+}
+
+.verify, .verified{
+	margin-left:15px;
+}
+.verify{
+	font-weight: bold;
+}
+.verified{
+	i, p{
+		color: $approved;
+		display: inline-block;
+	}
+	i{
+		font-size: 14px;
+		margin-right: 2px;
+		top:0;
 	}
 }
 
 .time-data, .description-data {
 	i{
 		font-size:20px;
+		left:2px;
 		&+span{
 			width: 90%;
 		}
@@ -303,9 +302,10 @@ body{
 		margin-bottom: 0px;
 	}
 	i{
-		font-size: 22px;
+		font-size: 20px;
 		left: 2px;
 		position: relative;
+		margin-top: 0;
 	}
 }
 
