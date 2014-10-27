@@ -302,10 +302,13 @@ input[readonly], select[readonly], textarea[readonly]{
 	font-size: 12px;
 	font-weight: 400;
 	@include border-radius(4px);
-	padding: 4px 8px;
+	padding: 5px 8px;
 	text-shadow: none;
 	&.label-default{
 		background-color: $light-blue;
+		a{
+			color:white;
+		}
 	}
 	&.label-team{
 		background-color: $grey_four;
