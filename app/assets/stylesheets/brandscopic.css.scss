@@ -731,10 +731,10 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		}
 
 		&:hover{
-			background-color: #3e9ccf;
+			background-color: $blue;
 		}
 		&.first-selected.last-selected{
-			background-color: $brand;
+			background-color: $blue;
 		}
 		&.first-selected{
 			-webkit-border-top-left-radius: 14px;
