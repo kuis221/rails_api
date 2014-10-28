@@ -203,7 +203,7 @@ describe ActivityTypesController, type: :controller do
       expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
-        ['NAME', 'DESCRIPTION']
+        ['NAME', 'DESCRIPTION', 'ACTIVE STATE']
       ])
     end
 
@@ -216,8 +216,8 @@ describe ActivityTypesController, type: :controller do
       expect(ListExportWorker).to have_queued(ListExport.last.id)
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
-        ['NAME', 'DESCRIPTION'],
-        ['A test activity type', 'Activity Type for Everything']
+        ['NAME', 'DESCRIPTION', 'ACTIVE STATE'],
+        ['A test activity type', 'Activity Type for Everything', 'Active']
       ])
     end
   end

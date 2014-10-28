@@ -152,8 +152,8 @@ describe RolesController, type: :controller do
       expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
-        ['NAME', 'DESCRIPTION'],
-        ['Super Admin', nil]
+        ['NAME', 'DESCRIPTION', 'ACTIVE STATE'],
+        ['Super Admin', nil, 'Active']
       ])
     end
 
@@ -166,9 +166,9 @@ describe RolesController, type: :controller do
       expect(ListExportWorker).to have_queued(ListExport.last.id)
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
-        ['NAME', 'DESCRIPTION'],
-        ['Costa Rica Role', 'El grupo de ticos'],
-        ['Super Admin', nil]
+        ['NAME', 'DESCRIPTION', 'ACTIVE STATE'],
+        ['Costa Rica Role', 'El grupo de ticos', 'Active'],
+        ['Super Admin', nil, 'Active']
       ])
     end
   end

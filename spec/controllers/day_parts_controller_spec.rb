@@ -131,7 +131,7 @@ describe DayPartsController, type: :controller do
       expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
-        ['NAME', 'DESCRIPTION']
+        ['NAME', 'DESCRIPTION', 'ACTIVE STATE']
       ])
     end
 
@@ -144,8 +144,8 @@ describe DayPartsController, type: :controller do
       expect(ListExportWorker).to have_queued(ListExport.last.id)
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
-        ['NAME', 'DESCRIPTION'],
-        ['Morningns', 'From 8 to 11am']
+        ['NAME', 'DESCRIPTION', 'ACTIVE STATE'],
+        ['Morningns', 'From 8 to 11am', 'Active']
       ])
     end
   end

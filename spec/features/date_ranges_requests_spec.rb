@@ -181,9 +181,9 @@ feature 'DateRanges', search: true, js: true do
       ensure_modal_was_closed
 
       expect(ListExport.last).to have_rows([
-        ["NAME", "DESCRIPTION"],
-        ["Weekdays", "From monday to friday"],
-        ["Weekends", "Saturday and Sunday"]
+        ['NAME', 'DESCRIPTION', 'ACTIVE STATE'],
+        ['Weekdays', 'From monday to friday', 'Active'],
+        ['Weekends', 'Saturday and Sunday', 'Active']
       ])
     end
 

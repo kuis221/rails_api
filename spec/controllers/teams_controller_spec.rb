@@ -206,7 +206,7 @@ describe TeamsController, type: :controller do
       expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
-        ['NAME', 'DESCRIPTION', 'MEMBERS']
+        ['NAME', 'DESCRIPTION', 'MEMBERS', 'ACTIVE STATE']
       ])
     end
 
@@ -219,8 +219,8 @@ describe TeamsController, type: :controller do
       expect(ListExportWorker).to have_queued(ListExport.last.id)
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
-        ['NAME', 'DESCRIPTION', 'MEMBERS'],
-        ['Costa Rica Team', 'El grupo de ticos', '0']
+        ['NAME', 'DESCRIPTION', 'MEMBERS', 'ACTIVE STATE'],
+        ['Costa Rica Team', 'El grupo de ticos', '0', 'Active']
       ])
     end
   end

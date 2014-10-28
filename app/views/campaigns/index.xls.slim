@@ -13,6 +13,7 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
       Column ss:Width="400"
       Column ss:Width="100"
       Column ss:Width="100"
+      Column ss:Width="100"
       Row ss:StyleID="s1"
         Cell
           Data ss:Type="String" NAME
@@ -22,6 +23,8 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
           Data ss:Type="String" FIRST EVENT
         Cell
           Data ss:Type="String" LAST EVENT
+        Cell
+          Data ss:Type="String" ACTIVE STATE
 
       - each_collection_item do |campaign|
         Row
@@ -32,6 +35,14 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
           - if campaign.first_event_at.present?
             Cell ss:StyleID="s2"
               Data ss:Type="DateTime"= Timeliness.parse(campaign.first_event_at.strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%FT%R')
+          - else
+            Cell
+              Data ss:Type="String"
           - if campaign.last_event_at.present?
             Cell ss:StyleID="s2"
               Data ss:Type="DateTime"= Timeliness.parse(campaign.last_event_at.strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%FT%R')
+          - else
+            Cell
+              Data ss:Type="String"
+          Cell
+            Data ss:Type="String"= campaign.status
