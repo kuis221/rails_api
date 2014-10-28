@@ -183,6 +183,7 @@ class FilteredController < InheritedResources::Base
   end
 
   def list_exportable?
+    return true if request.format.xls?
     number_of_pages = resource_class.do_search(search_params).total / 11.0 #total-items / items-per-page
     @export_errors = []
     @export_errors = ['PDF exports are limited to 200 pages. Please narrow your results and try exporting again.'] if number_of_pages > 200
