@@ -21,6 +21,7 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
       Column ss:Width="75"
       Column ss:Width="150"
       Column ss:Width="150"
+      Column ss:Width="125"
       Column ss:Width="100"
       Row ss:StyleID="s1"
         Cell
@@ -47,6 +48,8 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
           Data ss:Type="String" COUNTRY
         Cell
           Data ss:Type="String" TIME ZONE
+        Cell
+          Data ss:Type="String" LAST LOGIN
         Cell
           Data ss:Type="String" ACTIVE STATE
 
@@ -76,5 +79,7 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
             Data ss:Type="String"= [user.country_name].join(', ')
           Cell
             Data ss:Type="String"= user.time_zone
+          Cell
+            Data ss:Type="String"= time_ago_in_words(user.last_activity_at)
           Cell
             Data ss:Type="String"= user.active_status

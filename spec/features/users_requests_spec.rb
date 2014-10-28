@@ -307,13 +307,13 @@ feature 'Users', js: true do
 
       expect(ListExport.last).to have_rows([
         ['FIRST NAME', 'LAST NAME', 'EMAIL', 'PHONE NUMBER', 'ROLE', 'ADDRESS 1', 'ADDRESS 2',
-         'CITY', 'STATE', 'ZIP CODE', 'COUNTRY', 'TIME ZONE', 'ACTIVE STATE'],
+         'CITY', 'STATE', 'ZIP CODE', 'COUNTRY', 'TIME ZONE', 'LAST LOGIN', 'ACTIVE STATE'],
         ['Juanito', 'Bazooka', 'bazooka@gmail.com', '+1000000000', 'TestRole', 'Street Address 123',
-         'Unit Number 456', 'New York', 'NY', '90210', 'United States', 'Pacific Time (US & Canada)', 'Active'],
+         'Unit Number 456', 'New York', 'NY', '90210', 'United States', 'Pacific Time (US & Canada)', nil, 'Active'],
         ['Pablo', 'Baltodano', 'email@hotmail.com', '+1000000000', 'TestRole', 'Street Address 123',
-         'Unit Number 456', 'Los Angeles', 'CA', '90210', 'United States', 'Pacific Time (US & Canada)', 'Active'],
+         'Unit Number 456', 'Los Angeles', 'CA', '90210', 'United States', 'Pacific Time (US & Canada)', nil, 'Active'],
         ['Test', 'User', user.email, '+1000000000', Role.first.name, 'Street Address 123',
-         'Unit Number 456', 'Curridabat', 'SJ', '90210', 'Costa Rica', 'Pacific Time (US & Canada)', 'Active']
+         'Unit Number 456', 'Curridabat', 'SJ', '90210', 'Costa Rica', 'Pacific Time (US & Canada)', 'about 0 minutes ago', 'Active']
       ])
     end
 
