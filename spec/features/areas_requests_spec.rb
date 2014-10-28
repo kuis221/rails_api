@@ -65,7 +65,7 @@ feature 'Areas', js: true, search: true  do
 
       expect do
         within visible_modal do
-          select_from_autocomplete 'Search for a place', 'Walt Disney World Dolphin, 1500 Epcot Resorts Blvd'
+          select_from_autocomplete 'Search for a place', 'Walt Disney World Dolphin'
           click_js_button 'Add Place'
         end
         ensure_modal_was_closed

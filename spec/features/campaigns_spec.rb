@@ -224,7 +224,7 @@ feature 'Campaigns', js: true do
 
       within visible_modal do
         expect(page).to have_content('New Place')
-        select_from_autocomplete 'Search for a place', 'Walt Disney World Dolphin, 1500 Epcot Resorts Blvd'
+        select_from_autocomplete 'Search for a place', 'Walt Disney World Dolphin'
         click_js_button 'Add'
       end
 
