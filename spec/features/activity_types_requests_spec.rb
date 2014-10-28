@@ -158,9 +158,9 @@ feature 'Activity Types', js: true do
       ensure_modal_was_closed
 
       expect(ListExport.last).to have_rows([
-        ['NAME', 'DESCRIPTION'],
-        ['Activity Type 1', 'First description'],
-        ['Activity Type 2', 'Second description']
+        ['NAME', 'DESCRIPTION', 'ACTIVE STATE'],
+        ['Activity Type 1', 'First description', 'Active'],
+        ['Activity Type 2', 'Second description', 'Active']
       ])
     end
 

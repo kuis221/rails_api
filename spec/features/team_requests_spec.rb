@@ -199,9 +199,9 @@ feature 'Teams', js: true do
       ensure_modal_was_closed
 
       expect(ListExport.last).to have_rows([
-        ["NAME", "DESCRIPTION", "MEMBERS"],
-        ["Costa Rica Team", "El grupo de ticos", "3"],
-        ["San Francisco Team", "The guys from SF", "2"]
+        ['NAME', 'DESCRIPTION', 'MEMBERS', 'ACTIVE STATE'],
+        ['Costa Rica Team', 'El grupo de ticos', '3', 'Active'],
+        ['San Francisco Team', 'The guys from SF', '2', 'Active']
       ])
     end
 

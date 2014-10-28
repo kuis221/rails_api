@@ -130,7 +130,7 @@ describe DateRangesController, type: :controller do
       expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
-        ['NAME', 'DESCRIPTION']
+        ['NAME', 'DESCRIPTION', 'ACTIVE STATE']
       ])
     end
 
@@ -143,8 +143,8 @@ describe DateRangesController, type: :controller do
       expect(ListExportWorker).to have_queued(ListExport.last.id)
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
-        ['NAME', 'DESCRIPTION'],
-        ['Weekdays', 'From monday to friday']
+        ['NAME', 'DESCRIPTION', 'ACTIVE STATE'],
+        ['Weekdays', 'From monday to friday', 'Active']
       ])
     end
   end

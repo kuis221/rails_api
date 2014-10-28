@@ -306,10 +306,14 @@ feature 'Users', js: true do
       ensure_modal_was_closed
 
       expect(ListExport.last).to have_rows([
-        ['FULL NAME', 'ROLE', 'CITY', 'COUNTRY', 'EMAIL', 'LAST ACTIVITY'],
-        ['Juanito Bazooka', 'TestRole', 'New York, NY', 'United States', 'bazooka@gmail.com', nil],
-        ['Pablo Baltodano', 'TestRole', 'Los Angeles, CA', 'United States', 'email@hotmail.com', nil],
-        ['Test User', Role.first.name, 'Curridabat, SJ', 'Costa Rica', user.email, 'about 0 minutes ago']
+        ['FIRST NAME', 'LAST NAME', 'EMAIL', 'PHONE NUMBER', 'ROLE', 'ADDRESS 1', 'ADDRESS 2',
+         'CITY', 'STATE', 'ZIP CODE', 'COUNTRY', 'TIME ZONE', 'ACTIVE STATE'],
+        ['Juanito', 'Bazooka', 'bazooka@gmail.com', '+1000000000', 'TestRole', 'Street Address 123',
+         'Unit Number 456', 'New York', 'NY', '90210', 'United States', 'Pacific Time (US & Canada)', 'Active'],
+        ['Pablo', 'Baltodano', 'email@hotmail.com', '+1000000000', 'TestRole', 'Street Address 123',
+         'Unit Number 456', 'Los Angeles', 'CA', '90210', 'United States', 'Pacific Time (US & Canada)', 'Active'],
+        ['Test', 'User', user.email, '+1000000000', Role.first.name, 'Street Address 123',
+         'Unit Number 456', 'Curridabat', 'SJ', '90210', 'Costa Rica', 'Pacific Time (US & Canada)', 'Active']
       ])
     end
 

@@ -167,9 +167,9 @@ feature 'Brands', js: true do
       ensure_modal_was_closed
 
       expect(ListExport.last).to have_rows([
-        ['NAME'],
-        ['Brand 1'],
-        ['Brand 2']
+        ['NAME', 'ACTIVE STATE'],
+        ['Brand 1', 'Active'],
+        ['Brand 2', 'Active']
       ])
     end
 

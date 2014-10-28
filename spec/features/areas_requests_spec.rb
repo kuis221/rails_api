@@ -223,9 +223,9 @@ feature 'Areas', js: true, search: true  do
         ensure_modal_was_closed
 
         expect(ListExport.last).to have_rows([
-          ["NAME", "DESCRIPTION"],
-          ["Gran Area Metropolitana", "Ciudades principales de Costa Rica"],
-          ["Zona Norte", "Ciudades del Norte de Costa Rica"]
+          ['NAME', 'DESCRIPTION', 'ACTIVE STATE'],
+          ['Gran Area Metropolitana', 'Ciudades principales de Costa Rica', 'Active'],
+          ['Zona Norte', 'Ciudades del Norte de Costa Rica', 'Active']
         ])
       end
 

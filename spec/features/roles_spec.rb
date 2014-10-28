@@ -144,10 +144,10 @@ feature 'Roles', js: true do
       ensure_modal_was_closed
 
       expect(ListExport.last).to have_rows([
-        ["NAME", "DESCRIPTION"],
-        ["Buenos Aires Role", "The guys from BAs"],
-        ["Costa Rica Role", "El grupo de ticos"],
-        ["Role 1", "Test Role description"]
+        ['NAME', 'DESCRIPTION', 'ACTIVE STATE'],
+        ['Buenos Aires Role', 'The guys from BAs', 'Active'],
+        ['Costa Rica Role', 'El grupo de ticos', 'Active'],
+        ['Role 1', 'Test Role description', 'Active']
       ])
     end
 

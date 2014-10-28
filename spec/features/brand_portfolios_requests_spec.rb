@@ -211,9 +211,9 @@ feature 'BrandPortfolios', js: true, search: true do
       ensure_modal_was_closed
 
       expect(ListExport.last).to have_rows([
-        ["NAME", "DESCRIPTION"],
-        ["A Vinos ticos", "Algunos vinos de Costa Rica"],
-        ["B Licores Costarricenses", "Licores ticos"]
+        ['NAME', 'DESCRIPTION', 'ACTIVE STATE'],
+        ['A Vinos ticos', 'Algunos vinos de Costa Rica', 'Active'],
+        ['B Licores Costarricenses', 'Licores ticos', 'Active']
       ])
     end
 
