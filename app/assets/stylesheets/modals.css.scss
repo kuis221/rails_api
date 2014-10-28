@@ -473,13 +473,6 @@ ul.select2-results{
 		max-height: 800px;
 		overflow: visible;
 		padding: 25px 30px 22px 30px;
-		.attachment-panel{
-			width:100%;
-			.attachment-select-file-view{
-				margin: 0 auto;
-				width: 55%;
-			}
-		}
 		h3{
 			font-size: 22px;
 			font-weight: bold;
@@ -1199,6 +1192,13 @@ div#spin{
 // --------------------------------------------------
 
 .activity-form{
+	.attachment-panel{
+		width:100%;
+		.attachment-select-file-view{
+			margin: 0 auto;
+			width: 55%;
+		}
+	}
 	.input-prepend{
 		input.elements-range{
 			width:355px;
