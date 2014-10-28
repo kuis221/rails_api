@@ -224,7 +224,7 @@ feature 'Campaigns', js: true do
 
       within visible_modal do
         expect(page).to have_content('New Place')
-        select_from_autocomplete 'Search for a place', 'Walt Disney World Dolphin, 1500 Epcot Resorts Blvd'
+        select_from_autocomplete 'Search for a place', 'Walt Disney World Dolphin'
         click_js_button 'Add'
       end
 
@@ -617,9 +617,9 @@ feature 'Campaigns', js: true do
       ensure_modal_was_closed
 
       expect(ListExport.last).to have_rows([
-        ['NAME', 'DESCRIPTION', 'FIRST EVENT', 'LAST EVENT'],
-        ["Cacique FY13", "Test campaign for guaro Cacique", "2013-08-21T10:00", "2013-08-28T11:00"],
-        ["New Brand Campaign", "Campaign for another brand", "2013-09-18T11:00", "2013-09-18T11:00"]
+        ['NAME', 'DESCRIPTION', 'FIRST EVENT', 'LAST EVENT', 'ACTIVE STATE'],
+        ['Cacique FY13', 'Test campaign for guaro Cacique', '2013-08-21T10:00', '2013-08-28T11:00', 'Active'],
+        ['New Brand Campaign', 'Campaign for another brand', '2013-09-18T11:00', '2013-09-18T11:00', 'Active']
       ])
     end
 

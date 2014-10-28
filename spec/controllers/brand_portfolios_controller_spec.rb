@@ -172,7 +172,7 @@ describe BrandPortfoliosController, type: :controller do
       expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
-        ['NAME', 'DESCRIPTION']
+        ['NAME', 'DESCRIPTION', 'ACTIVE STATE']
       ])
     end
 
@@ -185,8 +185,8 @@ describe BrandPortfoliosController, type: :controller do
       expect(ListExportWorker).to have_queued(ListExport.last.id)
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
-        ['NAME', 'DESCRIPTION'],
-        ['A Vinos ticos', 'Algunos vinos de Costa Rica']
+        ['NAME', 'DESCRIPTION', 'ACTIVE STATE'],
+        ['A Vinos ticos', 'Algunos vinos de Costa Rica', 'Active']
       ])
     end
   end

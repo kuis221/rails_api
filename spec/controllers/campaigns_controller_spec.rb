@@ -670,7 +670,7 @@ describe CampaignsController, type: :controller do
       expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
-        ['NAME', 'DESCRIPTION', 'FIRST EVENT', 'LAST EVENT']
+        ['NAME', 'DESCRIPTION', 'FIRST EVENT', 'LAST EVENT', 'ACTIVE STATE']
       ])
     end
 
@@ -687,8 +687,8 @@ describe CampaignsController, type: :controller do
       expect(ListExportWorker).to have_queued(ListExport.last.id)
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
-        ['NAME', 'DESCRIPTION', 'FIRST EVENT', 'LAST EVENT'],
-        ['Cacique FY13', 'Test campaign for guaro Cacique', '2013-08-21T10:00', '2013-08-28T11:00']
+        ['NAME', 'DESCRIPTION', 'FIRST EVENT', 'LAST EVENT', 'ACTIVE STATE'],
+        ['Cacique FY13', 'Test campaign for guaro Cacique', '2013-08-21T10:00', '2013-08-28T11:00', 'Active']
       ])
     end
   end

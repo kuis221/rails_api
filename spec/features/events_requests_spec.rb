@@ -148,7 +148,7 @@ feature 'Events section' do
         scenario 'a user can play and dismiss the video tutorial' do
           visit events_path
 
-          feature_name = 'Getting Started: Events'
+          feature_name = 'GETTING STARTED: EVENTS'
 
           expect(page).to have_selector('h5', text: feature_name)
           expect(page).to have_content('The Events module is your one-stop-shop')
@@ -681,7 +681,7 @@ feature 'Events section' do
           end
         end
 
-        scenario 'clear filters should also exclude reset the default dates filter' do
+        scenario 'reset filter set the filter options to its initial state' do
           Timecop.travel(Time.zone.local(2013, 07, 21, 12, 01)) do
             create(:event, campaign: campaign,
                    start_date: '07/11/2013', end_date: '07/11/2013')
@@ -693,13 +693,16 @@ feature 'Events section' do
             expect(page).to have_content('1 Active event taking place today and in the future')
             expect(page).to have_selector('#events-list .resource-item', count: 1)
 
+            filter_section('CAMPAIGNS').unicheck('Campaign FY2012')
+            expect(page).to have_content('2 Active events as part of Campaign FY2012')
+
             click_button 'Reset'
-            expect(page).to have_content('2 Active events')  # The list shouldn't be filtered by date
-            expect(page).to have_selector('#events-list .resource-item', count: 2)
+            expect(page).to have_content('1 Active event taking place today and in the future')  # The list shouldn't be filtered by date
+            expect(page).to have_selector('#events-list .resource-item', count: 1)
 
             filter_section('CAMPAIGNS').unicheck('Campaign FY2012')
-            expect(page).to have_content('2 Active events as part of Campaign FY2012')  # The list shouldn't be filtered by date
-            expect(page).to have_selector('#events-list .resource-item', count: 2)
+            expect(page).to have_content('1 Active event taking place today and in the future as part of Campaign FY2012')  # The list shouldn't be filtered by date
+            expect(page).to have_selector('#events-list .resource-item', count: 1)
           end
         end
 
@@ -859,6 +862,11 @@ feature 'Events section' do
 
         visit events_path
 
+        within events_list do
+          expect(page).to have_content('Campaign 1')
+          expect(page).to_not have_content('Campaign 2')
+        end
+
         # Using Custom Filter 1
         filter_section('SAVED FILTERS').unicheck('Custom Filter 1')
 
@@ -904,7 +912,7 @@ feature 'Events section' do
 
         within events_list do
           expect(page).to have_content('Campaign 1')
-          expect(page).to have_content('Campaign 2')
+          expect(page).to_not have_content('Campaign 2')
         end
 
         within '.form-facet-filters' do
@@ -1108,7 +1116,7 @@ feature 'Events section' do
                        campaign: create(:campaign, company: company))
         visit event_path(event)
 
-        feature_name = 'Getting Started: Event Details'
+        feature_name = 'GETTING STARTED: EVENT DETAILS'
 
         expect(page).to have_selector('h5', text: feature_name)
         expect(page).to have_content('Welcome to the Event Details page')
@@ -1135,7 +1143,7 @@ feature 'Events section' do
                        campaign: create(:campaign, company: company))
         visit event_path(event)
 
-        feature_name = 'Getting Started: Event Details'
+        feature_name = 'GETTING STARTED: EVENT DETAILS'
 
         expect(page).to have_selector('h5', text: feature_name)
         expect(page).to have_content('You are viewing the Event Details page for an executed event')

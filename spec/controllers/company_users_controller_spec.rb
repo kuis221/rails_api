@@ -370,8 +370,10 @@ describe CompanyUsersController, type: :controller do
         expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
         ResqueSpec.perform_all(:export)
         expect(ListExport.last).to have_rows([
-          ['FULL NAME', 'ROLE', 'CITY', 'COUNTRY', 'EMAIL', 'LAST ACTIVITY'],
-          ['Test User', 'Super Admin', 'Curridabat, SJ', 'Costa Rica', @user.email, nil]
+          ['FIRST NAME', 'LAST NAME', 'EMAIL', 'PHONE NUMBER', 'ROLE', 'ADDRESS 1', 'ADDRESS 2',
+           'CITY', 'STATE', 'ZIP CODE', 'COUNTRY', 'TIME ZONE', 'LAST LOGIN', 'ACTIVE STATE'],
+          ['Test', 'User', @user.email, '+1000000000', 'Super Admin', 'Street Address 123', 'Unit Number 456',
+           'Curridabat', 'SJ', '90210', 'Costa Rica', 'Pacific Time (US & Canada)', nil, 'Active']
         ])
       end
 
@@ -385,9 +387,12 @@ describe CompanyUsersController, type: :controller do
         expect(ListExportWorker).to have_queued(ListExport.last.id)
         ResqueSpec.perform_all(:export)
         expect(ListExport.last).to have_rows([
-          ['FULL NAME', 'ROLE', 'CITY', 'COUNTRY', 'EMAIL', 'LAST ACTIVITY'],
-          ['Test User', 'Super Admin', 'Curridabat, SJ', 'Costa Rica', @user.email, nil],
-          ['Pablo Baltodano', 'TestRole', 'Los Angeles, CA', 'United States', 'email@hotmail.com', nil]
+          ['FIRST NAME', 'LAST NAME', 'EMAIL', 'PHONE NUMBER', 'ROLE', 'ADDRESS 1', 'ADDRESS 2',
+           'CITY', 'STATE', 'ZIP CODE', 'COUNTRY', 'TIME ZONE', 'LAST LOGIN', 'ACTIVE STATE'],
+          ['Test', 'User', @user.email, '+1000000000', 'Super Admin', 'Street Address 123', 'Unit Number 456',
+           'Curridabat', 'SJ', '90210', 'Costa Rica', 'Pacific Time (US & Canada)', nil, 'Active'],
+          ['Pablo', 'Baltodano', 'email@hotmail.com', '+1000000000', 'TestRole', 'Street Address 123',
+           'Unit Number 456', 'Los Angeles', 'CA', '90210', 'United States', 'Pacific Time (US & Canada)', nil, 'Active']
         ])
       end
     end

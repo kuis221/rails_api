@@ -21,7 +21,7 @@ feature 'Results Event Status Page', js: true, search: true  do
     scenario 'a user can play and dismiss the video tutorial' do
       visit results_event_status_path
 
-      feature_name = 'Getting Started: Event Status Report'
+      feature_name = 'GETTING STARTED: EVENT STATUS REPORT'
 
       expect(page).to have_content(feature_name)
       expect(page).to have_content('This section allows you to quickly track your Event Status.')

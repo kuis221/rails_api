@@ -31,7 +31,7 @@ $chzn-single-height:39px;
 			margin: 0;
 			padding: 0;
 			li{
-				padding: 8px 6px !important;
+				padding: 9px 6px !important;
 				&:after{
 					color: #ccc;
 					content: attr(data-role);
@@ -76,10 +76,13 @@ select.chosen-enabled{
 		line-height: 24px;
 		&.chzn-single-with-drop {
 			border: 1px solid $brand;
+			div b{
+				background: image-url('triangle-up.svg') no-repeat 0px 15px ;
+			}
 		}
 		div{
 			b {
-				background: image-url('triangle-down.svg') no-repeat 0px 17px !important;
+				background: image-url('triangle-down.svg') no-repeat 0px 17px ;
 			}
 		}
 	}

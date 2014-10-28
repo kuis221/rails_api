@@ -182,9 +182,9 @@ feature 'DayParts', js: true, search: true do
       ensure_modal_was_closed
 
       expect(ListExport.last).to have_rows([
-        ["NAME", "DESCRIPTION"],
-        ["Afternoons", "From 1 to 6pm"],
-        ["Morningns", "From 8 to 11am"]
+        ['NAME', 'DESCRIPTION', 'ACTIVE STATE'],
+        ['Afternoons', 'From 1 to 6pm', 'Active'],
+        ['Morningns', 'From 8 to 11am', 'Active']
       ])
     end
 

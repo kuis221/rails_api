@@ -16,11 +16,14 @@ html {
 	height:100%;
 }
 
+select{
+	border:0;
+}
+
 //
 // Form elements
 // --------------------------------------------------
 
-select,
 textarea,
 input[type="text"],
 input[type="password"],
@@ -74,6 +77,18 @@ input[readonly], select[readonly], textarea[readonly]{
 	&:focus{
 		border: 1px solid rgba(192, 192, 192, 0.6)
 	}
+}
+
+input:focus:invalid:focus, textarea:focus:invalid:focus, select:focus:invalid:focus{
+	-webkit-box-shadow: 0;
+	-moz-box-shadow: 0;
+	box-shadow: 0;
+}
+
+.control-group.error .input-prepend .add-on, .control-group.error .input-append .add-on{
+	color: white;
+	background-color: $brand-red;
+	border-color: $brand-red;
 }
 
 // Percentage fields - form wrapper
@@ -161,6 +176,7 @@ input[readonly], select[readonly], textarea[readonly]{
 		}
 		&.fileinput-button{
 			padding: 7px 23px;
+			line-height: 24px;
 		}
 		&[disabled]{
 			background-color:#f28179;

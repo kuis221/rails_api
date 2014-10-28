@@ -27,7 +27,7 @@ $.widget 'nmk.filteredList', {
 	_create: () ->
 		query = window.location.search.replace(/^\?/,"")
 		if query != ''
-			@options.defaultParams = @options.clearFilterParams
+			@options.defaultParams = []
 		@element.addClass('filter-box')
 		@form = $('<form action="#" method="get">')
 			.appendTo(@element).submit (e) ->
@@ -501,18 +501,18 @@ $.widget 'nmk.filteredList', {
 		false
 
 	_cleanFilters: () ->
-		@initialized = false
-		@defaultParams = []
+		@defaultParams = []	
 		@_cleanSearchFilter()
 		@_deselectDates()
+		@element.find('input[type=checkbox]').attr('checked', false)
 		defaultParams = if typeof @options.clearFilterParams != 'undefined' then @options.clearFilterParams else @options.defaultParams
 		defaultParams ||= []
-		@element.find('input[type=checkbox]').attr('checked', false)
-		for param in defaultParams
-			@element.find('input[name="'+param.name+'"][value="'+param.value+'"]').attr('checked', true)
-		@_filtersChanged()
-		@initialized = true
-		defaultParams = null
+		history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' + $.param(defaultParams));
+		@_parseQueryString(window.location.search)
+		@_filtersChanged(false)
+		
+		# for param in defaultParams
+		# 	@element.find('input[name="'+param.name+'"][value="'+param.value+'"]').attr('checked', true)
 		false
 
 	_cleanSearchFilter: () ->

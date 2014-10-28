@@ -76,7 +76,7 @@ feature 'Reports', js: true do
     scenario 'a user can play and dismiss the video tutorial' do
       visit results_reports_path
 
-      feature_name = 'Getting Started: Results Overview'
+      feature_name = 'GETTING STARTED: RESULTS OVERVIEW'
 
       expect(page).to have_content(feature_name)
       expect(page).to have_content('The Results Module holds all of your post-event data results')
@@ -107,7 +107,7 @@ feature 'Reports', js: true do
     scenario 'a user can play and dismiss the video tutorial' do
       visit results_report_path(report)
 
-      feature_name = 'Getting Started: Custom Reports'
+      feature_name = 'GETTING STARTED: CUSTOM REPORTS'
 
       expect(page).to have_content(feature_name)
       expect(page).to have_content('Custom Reports are reports that either you or your teammates created and shared')
@@ -333,7 +333,7 @@ feature 'Reports', js: true do
     scenario 'a user can play and dismiss the video tutorial' do
       visit build_results_report_path(report)
 
-      feature_name = 'Getting Started: Report Builder'
+      feature_name = 'GETTING STARTED: REPORT BUILDER'
 
       expect(page).to have_content(feature_name)
       expect(page).to have_content("Let's build a report!")

@@ -9,37 +9,77 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
   Worksheet ss:Name=I18n.t("exports.pdf.title.#{controller_name.underscore}")
 
     Table
+      Column ss:Width="125"
+      Column ss:Width="125"
       Column ss:Width="200"
+      Column ss:Width="100"
+      Column ss:Width="100"
+      Column ss:Width="175"
+      Column ss:Width="150"
+      Column ss:Width="100"
+      Column ss:Width="100"
+      Column ss:Width="75"
       Column ss:Width="150"
       Column ss:Width="150"
-      Column ss:Width="150"
-      Column ss:Width="200"
-      Column ss:Width="150"
+      Column ss:Width="125"
+      Column ss:Width="100"
       Row ss:StyleID="s1"
         Cell
-          Data ss:Type="String" FULL NAME
+          Data ss:Type="String" FIRST NAME
         Cell
-          Data ss:Type="String" ROLE
-        Cell
-          Data ss:Type="String" CITY
-        Cell
-          Data ss:Type="String" COUNTRY
+          Data ss:Type="String" LAST NAME
         Cell
           Data ss:Type="String" EMAIL
         Cell
-          Data ss:Type="String" LAST ACTIVITY
+          Data ss:Type="String" PHONE NUMBER
+        Cell
+          Data ss:Type="String" ROLE
+        Cell
+          Data ss:Type="String" ADDRESS 1
+        Cell
+          Data ss:Type="String" ADDRESS 2
+        Cell
+          Data ss:Type="String" CITY
+        Cell
+          Data ss:Type="String" STATE
+        Cell
+          Data ss:Type="String" ZIP CODE
+        Cell
+          Data ss:Type="String" COUNTRY
+        Cell
+          Data ss:Type="String" TIME ZONE
+        Cell
+          Data ss:Type="String" LAST LOGIN
+        Cell
+          Data ss:Type="String" ACTIVE STATE
 
       - each_collection_item do |user|
         Row
           Cell
-            Data ss:Type="String"= user.full_name
+            Data ss:Type="String"= user.first_name
           Cell
-            Data ss:Type="String"= user.role_name
-          Cell
-            Data ss:Type="String"= [user.city, user.state].join(', ')
-          Cell
-            Data ss:Type="String"= [user.country_name].join(', ')
+            Data ss:Type="String"= user.last_name
           Cell
             Data ss:Type="String"= user.email
           Cell
+            Data ss:Type="String"= user.phone_number
+          Cell
+            Data ss:Type="String"= user.role_name
+          Cell
+            Data ss:Type="String"= user.street_address
+          Cell
+            Data ss:Type="String"= user.unit_number
+          Cell
+            Data ss:Type="String"= user.city
+          Cell
+            Data ss:Type="String"= user.state
+          Cell
+            Data ss:Type="String"= user.zip_code
+          Cell
+            Data ss:Type="String"= [user.country_name].join(', ')
+          Cell
+            Data ss:Type="String"= user.time_zone
+          Cell
             Data ss:Type="String"= time_ago_in_words(user.last_activity_at)
+          Cell
+            Data ss:Type="String"= user.active_status
