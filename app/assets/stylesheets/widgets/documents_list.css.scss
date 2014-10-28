@@ -60,6 +60,7 @@
 }
 
 .document-image-preview {
+	float:left;
 	margin-right: 15px;
 	width: 30px;
 	height: 30px;
@@ -68,6 +69,10 @@
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-position: center;
+}
+
+.document-name{
+	line-height:34px;
 }
 
 #new-folder-form { /*Create a new folder grey zone*/
