@@ -77,7 +77,7 @@ module CapybaraBrandscopicHelpers
     field = find_field(selector)
     page.execute_script %{$('##{field['id']}').val('#{text}').keydown()}
     expect(page).to have_selector('ul.ui-autocomplete li.ui-menu-item a')
-    find('ul.ui-autocomplete li.ui-menu-item a', match: :first).click
+    find('ul.ui-autocomplete li.ui-menu-item a', text: text, match: :first).click
   end
 
   def select2(item_text, options)
