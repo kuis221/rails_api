@@ -47,7 +47,7 @@ feature 'Users', js: true do
     end
   end
 
-  feature '/users', js: true, search: true do
+  feature 'User managment', js: true, search: true do
     scenario 'allows the user to activate/deactivate users' do
       role = create(:role, name: 'TestRole', company_id: company.id)
       create(:user, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: company.id)
@@ -68,6 +68,31 @@ feature 'Users', js: true do
       end
 
       expect(page).to have_no_content('Pedro Navaja')
+    end
+
+    scenario 'allow a user to invite users' do
+      create(:role, name: 'TestRole', company_id: company.id)
+      visit company_users_path
+
+      click_js_button 'Invite user'
+
+      within visible_modal do
+        fill_in 'First name', with: 'Fulanito'
+        fill_in 'Last name', with: 'de Tal'
+        fill_in 'Email', with: 'fulanito@detal.com'
+        select_from_chosen 'TestRole', from: 'Role'
+        click_js_button 'Send request'
+      end
+      ensure_modal_was_closed
+
+      # Deselect "Active" and select "Invited"
+      filter_section('ACTIVE STATE').unicheck('Active')
+      filter_section('ACTIVE STATE').unicheck('Invited')
+
+      within resource_item do
+        expect(page).to have_content 'Fulanito de Tal'
+        expect(page).to have_content 'TestRole'
+      end
     end
   end
 
