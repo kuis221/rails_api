@@ -22,7 +22,7 @@ feature 'Results Expenses Page', js: true, search: true  do
     scenario 'a user can play and dismiss the video tutorial' do
       visit results_expenses_path
 
-      feature_name = 'Getting Started: Expenses Report'
+      feature_name = 'GETTING STARTED: EXPENSES REPORT'
 
       expect(page).to have_content(feature_name)
       expect(page).to have_content('Keep track of your event and campaign expenses')

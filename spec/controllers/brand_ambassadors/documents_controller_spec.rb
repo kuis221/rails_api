@@ -35,7 +35,7 @@ RSpec.describe BrandAmbassadors::DocumentsController, type: :controller do
                                         'uploads/dummy/test.jpg' => double(head: double(content_length: 100, content_type: 'image/jpeg', last_modified: Time.now)),
                                         'attached_assets/original/test.jpg' => s3object
                                       }))
-        expect_any_instance_of(Paperclip::Attachment).to receive(:path).and_return('/attached_assets/original/test.jpg')
+        expect_any_instance_of(Paperclip::Attachment).to receive(:path).at_least(:once).and_return('/attached_assets/original/test.jpg')
         expect_any_instance_of(AttachedAsset).to receive(:download_url).at_least(:once).and_return('dummy.jpg')
       end
 

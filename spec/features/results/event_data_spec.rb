@@ -21,7 +21,7 @@ feature 'Results Event Data Page', js: true, search: true  do
     scenario 'a user can play and dismiss the video tutorial' do
       visit results_event_data_path
 
-      feature_name = 'Getting Started: Event Data Report'
+      feature_name = 'GETTING STARTED: EVENT DATA REPORT'
 
       expect(page).to have_selector('h5', text: feature_name)
       expect(page).to have_content('The Event Data Report holds all of your post event data')
