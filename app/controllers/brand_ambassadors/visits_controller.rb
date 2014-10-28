@@ -53,7 +53,7 @@ class BrandAmbassadors::VisitsController < FilteredController
   end
 
   def build_brand_ambassadors_bucket
-    status = current_company_user.filter_settings_for('users', filter_settings_scope)
+    status = current_company_user.filter_settings_for('brand_ambassadors', filter_settings_scope)
     users = brand_ambassadors_users.where('company_users.active in (?)', status)
       .joins(:user).order('2 ASC')
       .pluck('company_users.id, users.first_name || \' \' || users.last_name as name').map do |r|
