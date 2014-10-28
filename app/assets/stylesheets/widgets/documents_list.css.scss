@@ -59,6 +59,17 @@
 	}
 }
 
+.document-image-preview {
+	margin-right: 15px;
+	width: 30px;
+	height: 30px;
+	overflow: hidden;
+	display: inline-block;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center;
+}
+
 #new-folder-form { /*Create a new folder grey zone*/
 
 	background-color: $grey_one;
