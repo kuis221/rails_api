@@ -102,8 +102,21 @@ ul.select2-results{
 			.control-group{
 				label{
 					display: inline-block;
+					&.checkbox{
+						margin-bottom: 6px;
+						margin-top: 6px;
+						.checker span.checked:after{
+							top:-6px;
+						}
+					}
+					&.radio{
+						div.radio {
+							margin: 0 15px 0px 0;
+						}
+					}
 					&.radio, &.checkbox {
 						display: block;
+						padding: 0;
 					}
 				}
 				&.campaign_brands_list, &.date_range_name,
@@ -460,6 +473,13 @@ ul.select2-results{
 		max-height: 800px;
 		overflow: visible;
 		padding: 25px 30px 22px 30px;
+		.attachment-panel{
+			width:100%;
+			.attachment-select-file-view{
+				margin: 0 auto;
+				width: 55%;
+			}
+		}
 		h3{
 			font-size: 22px;
 			font-weight: bold;
@@ -550,14 +570,8 @@ ul.select2-results{
 		}
 		.large-inputs{
 			.control-group{
-				width: 400px;
 				textarea{
 					width: 100%;
-				}
-				.chzn-container-single{
-					.chzn-single{
-						width: 390px;
-					}
 				}
 			}
 		}
@@ -579,6 +593,9 @@ ul.select2-results{
 		.control-group{
 			display: inline-block;
 			width: 100%;
+			.control-group{
+				margin-bottom: 0;
+			}
 			&.hidden{
 				display: none;
 			}
@@ -604,6 +621,7 @@ ul.select2-results{
 					&#campaign_start_date, &#campaign_end_date, &#event_start_date, &#event_end_date, &.goal_start_date, &.goal_end_date, &.field-type-date {
 						background: image-url('calendar.svg') no-repeat left !important;
 						text-align: right;
+						height: 40px;
 					}
 					&#event_start_time, &#event_end_time, &.field-type-time {
 						background: image-url('time.svg') no-repeat left !important;
@@ -634,7 +652,7 @@ ul.select2-results{
 		}
 		label{
 			color: $brand;
-			font-size: 11px;
+			font-size: 12px;
 		}
 		.to{
 			color: $brand;
@@ -1123,7 +1141,7 @@ div#spin{
 				margin-bottom: 10px;
 				label{
 					color: $text;
-					font-size: 13px;
+					font-size: 12px;
 					.checker{
 						margin-right: 10px;
 					}
@@ -1186,3 +1204,23 @@ div#spin{
 		}
 	}
 }
+
+// Activities Modal
+// --------------------------------------------------
+
+.activity-form{
+	.input-prepend{
+		input.elements-range{
+			width:355px;
+		}
+	}
+	.activity_results_value{
+		.field-option{
+			margin-bottom: 10px;
+		}
+	}
+	.form_field_section{
+		margin-top: 10px;
+	}
+}
+
