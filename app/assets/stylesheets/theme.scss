@@ -161,6 +161,7 @@ input[readonly], select[readonly], textarea[readonly]{
 		}
 		&.fileinput-button{
 			padding: 7px 23px;
+			line-height: 24px;
 		}
 		&[disabled]{
 			background-color:#f28179;

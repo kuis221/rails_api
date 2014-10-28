@@ -2,8 +2,8 @@
   div.resource-item id="#{document.class.name.underscore.downcase.gsub('/','_')}_#{document.id}"
     .resource-item-link
       a href="#{document.download_url}"
-        .span6.text-medium
-          = document_icon(document.file_extension)
+        .span6.text-medium.document-name
+          = document_icon(document)
           = document.name
         .span3.document-type
           = document_type(document)

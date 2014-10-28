@@ -1,13 +1,24 @@
 module DocumentsHelper
-  def document_icon(file_extension)
-    icon_folder = 'file-types/32px/'
-    file_extension = file_extension.to_s.downcase
+  def document_icon(document)
+    file_extension = document.file_extension.to_s.downcase
     file_extension = 'jpg' if file_extension == 'jpeg'
-    icon_filename = icon_folder + file_extension + '.png'
-    unless File.exist?("#{Rails.root}/app/assets/images/#{icon_filename}")
-      icon_filename = icon_folder + '_blank.png'
+    if %w(jpg png gif).include?(file_extension)
+      image_preview_tag(document)
+    else
+      content_tag(:span, ".#{file_extension}", class: "document-icon #{file_extension}")
     end
-    image_tag(icon_filename, class: 'document-icon')
+  end
+
+  def image_preview_tag(document)
+    image =
+      if document.processed?
+        document.file.url(:small)
+      else
+        document.file.url
+      end
+    content_tag(:div, nil,
+                class: 'document-image-preview',
+                style: "background-image: url(#{image})")
   end
 
   def document_type(document)
