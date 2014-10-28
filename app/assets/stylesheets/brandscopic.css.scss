@@ -6528,12 +6528,14 @@ table.table.likert-scale-table {
 	border-radius: 5px;
 	color: $text;
 	margin-bottom: 10px;
-	padding: 15px 10px;
+	padding: 10px 10px 15px 10px;
 	position: relative;
 	h5{
 		font-size: 16px;
 		font-weight: bold;
 		margin-top: 0;
+		margin-bottom:15px;
+		text-transform: uppercase;
 	}
 	.close{
 		position: absolute;
@@ -6541,9 +6543,9 @@ table.table.likert-scale-table {
 		top: 5px;
 		&:before {
 			color: $brand;
-			left: 0;
+			left: 2px;
 			top: 4px;
-			font-size: 12px;
+			font-size: 14px;
 			position: absolute;
 		}
 	}
@@ -6558,7 +6560,8 @@ table.table.likert-scale-table {
 			margin-left: auto;
 			margin-right: auto;
 			display: block;
-			margin-top: 14px;
+			margin-top: 24px;
+			width:auto;
 		}
 		&:hover{
 			cursor: pointer;
@@ -6566,6 +6569,8 @@ table.table.likert-scale-table {
 	}
 	.feature-description{
 		display: inline-block;
+		font-size: 13px;
+		line-height: 22px;
 		width: 70%;
 		a{
 			color: $brand;
