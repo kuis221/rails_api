@@ -85,13 +85,12 @@ describe Api::V1::BrandAmbassadors::VisitsController, type: :controller do
     end
 
     it 'return a list of visits filtered by city id' do
-      other_area = create(:area, company: company)
-      other_area.places << create(:place, name: 'Bee Cave', city: 'Bee Cave', state: 'Texas', country: 'US', types: %w(locality political))
-      create_list(:brand_ambassadors_visit, 4, company: company, area: area)
-      create_list(:brand_ambassadors_visit, 4, company: company, area: other_area)
+      city = create(:place, name: 'Bee Cave', city: 'Bee Cave', state: 'Texas', country: 'US', types: %w(locality political))
+      create_list(:brand_ambassadors_visit, 4, company: company, city: 'New York')
+      create_list(:brand_ambassadors_visit, 4, company: company, city: city.name)
       Sunspot.commit
 
-      get :index, area: [other_area.places.first.id], format: :json
+      get :index, city: [city.name], format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
 
