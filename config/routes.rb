@@ -84,6 +84,11 @@ Brandscopic::Application.routes.draw do
             get :team, to: :index, defaults: { scope: 'teams' }, constraints: { scope: 'teams' }
           end
         end
+
+        namespace :brand_ambassadors do
+          resources :visits, except: [:destroy]
+        end
+
       end
     end
   end

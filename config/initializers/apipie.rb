@@ -3,7 +3,7 @@ Apipie.configure do |config|
   config.api_base_url            = ''
   config.doc_base_url            = '/apidoc'
   # were is your API defined?
-  config.api_controllers_matcher = "#{Rails.root}/app/controllers/api/v1/*.rb"
+  config.api_controllers_matcher = "#{Rails.root}/app/controllers/api/v1/**/*.rb"
 
   config.authenticate = proc do
     authenticate_or_request_with_http_basic do |username, password|
