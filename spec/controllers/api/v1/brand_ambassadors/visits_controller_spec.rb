@@ -135,4 +135,15 @@ describe Api::V1::BrandAmbassadors::VisitsController, type: :controller do
       expect(result['page']).to eq(2)
     end
   end
+
+  describe "GET 'show'" do
+
+    let(:visit) { create(:brand_ambassadors_visit, company: company) }
+
+    it 'returns http success' do
+      get 'show', id: visit.to_param, format: :json
+      expect(response).to be_success
+      expect(response).to render_template('show')
+    end
+  end
 end
