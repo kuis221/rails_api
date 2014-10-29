@@ -91,6 +91,10 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
     BrandAmbassadors::Visit::VISIT_TYPE_OPTIONS.find { |_k, v| v == visit_type }.try(:[], 0) if visit_type
   end
 
+  def status
+    self.active? ? 'Active' : 'Inactive'
+  end
+
   # Returns a list of Location ids based on the assigned area/city
   def location
     if area && city
