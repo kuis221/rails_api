@@ -48,7 +48,19 @@
 		}
 	}
 
+	#dasboard-tasks-content{
+		display: inline-block;
+		padding-bottom:25px;
+		width: 100% !important;
+		.resource-list{
+			margin-bottom: 25px;
+		}
+	}
+
 	#incomplete-tasks-module {
+		display: inline-block;
+		padding-bottom: 20px;
+		width: 100%;
 
 		.link-list{
 			margin-bottom: 20px;
