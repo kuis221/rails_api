@@ -24,6 +24,19 @@ module Api
           EOS
         end
 
+        def_param_group :visit do
+          param :brand_ambassadors_visit, Hash, required: true, action_aware: true do
+            param :start_date, String, required: true, desc: "Visit's start date"
+            param :end_date, String, required: true, desc: "Visit's end date"
+            param :company_user_id, :number, required: true, desc: 'Company User ID'
+            param :campaign_id, :number, required: true, desc: 'Campaign ID'
+            param :area_id, :number, desc: 'Area ID'
+            param :city, String, desc: 'City name'
+            param :visit_type, String, required: true, desc: 'Visit Type key'
+            param :description, String, desc: "Visit's description"
+          end
+        end
+
         api :GET, '/api/v1/brand_ambassadors/visits', 'Search for a list of visits'
         param :start_date, String, desc: 'A date to filter the visit list. When provided a start_date without an +end_date+, the result will only include visits that happen on this day. The date should be in the format MM/DD/YYYY.'
         param :end_date, String, desc: 'A date to filter the visit list. This should be provided together with the +start_date+ param and when provided will filter the list with those visits that are between that range. The date should be in the format MM/DD/YYYY.'
@@ -177,6 +190,53 @@ module Api
           end
         end
 
+        api :POST, '/api/v1/brand_ambassadors/visits', 'Create a new visit'
+        param_group :visit
+        description <<-EOS
+        Allows to create a new visit.
+        EOS
+        example <<-EOS
+        POST /api/v1/brand_ambassadors/visits.json
+        DATA:
+        {
+          brand_ambassadors_visit: {
+            start_date: "11/09/2014",
+            end_date: "11/10/2014",
+            company_user_id: "345",
+            campaign_id: "115",
+            area_id: "21",
+            city: "Decatur",
+            visit_type: "market_visit",
+            description: "My description"
+          }
+        }
+
+        RESPONSE:
+        {
+          {
+            id: 361,
+            visit_type_name: "Market Visit",
+            start_date: "2014-11-09",
+            end_date: "2014-11-10",
+            campaign_name: "Absolut BA FY15",
+            area_name: "Atlanta",
+            city: "Decatur",
+            description: "My description",
+            status: "Active",
+            user: {
+              id: 345,
+              full_name: "Chris Combs"
+            }
+          }
+        }
+        EOS
+        def create
+          create! do |success, failure|
+            success.json { render :show }
+            failure.json { render json: resource.errors }
+          end
+        end
+
         protected
 
         def facets
@@ -189,6 +249,12 @@ module Api
             f.push build_areas_bucket
             f.push build_city_bucket
           end
+        end
+
+        def permitted_params
+          params.permit(brand_ambassadors_visit: [:start_date, :end_date, :company_user_id,
+                                                  :campaign_id, :area_id, :city, :visit_type,
+                                                  :description])[:brand_ambassadors_visit]
         end
 
         def permitted_search_params

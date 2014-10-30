@@ -137,13 +137,34 @@ describe Api::V1::BrandAmbassadors::VisitsController, type: :controller do
   end
 
   describe "GET 'show'" do
-
     let(:visit) { create(:brand_ambassadors_visit, company: company) }
 
     it 'returns http success' do
       get 'show', id: visit.to_param, format: :json
       expect(response).to be_success
       expect(response).to render_template('show')
+    end
+  end
+
+  describe "POST 'create'" do
+    it 'create a new visit' do
+      expect do
+        post 'create', brand_ambassadors_visit: { start_date: '11/09/2014', end_date: '11/10/2014',
+                                                  company_user_id: company_user.id, campaign_id: campaign.id,
+                                                  area_id: area.id, city: 'Atlanta', visit_type: 'market_visit',
+                                                  description: 'My new visit' }, format: :json
+      end.to change(BrandAmbassadors::Visit, :count).by(1)
+      expect(response).to be_success
+      expect(response).to render_template('show')
+      visit = BrandAmbassadors::Visit.last
+      expect(visit.start_date).to eql Date.new(2014, 11, 9)
+      expect(visit.end_date).to eql Date.new(2014, 11, 10)
+      expect(visit.company_user_id).to eq(company_user.id)
+      expect(visit.campaign_id).to eq(campaign.id)
+      expect(visit.area_id).to eq(area.id)
+      expect(visit.city).to eq('Atlanta')
+      expect(visit.visit_type).to eq('market_visit')
+      expect(visit.description).to eq('My new visit')
     end
   end
 end

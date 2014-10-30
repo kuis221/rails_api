@@ -80,7 +80,7 @@ module Api
         ]
         EOS
         param :parent_id, :number, 'A valid folder id', required: false
-        param :visit_id, :number, 'A valid viist id', required: false
+        param :visit_id, :number, 'A valid visit id', required: false
         def index
           collection
         end
@@ -88,7 +88,7 @@ module Api
         protected
 
         def permitted_search_params
-          params.permit(:page, :start_date, :end_date, {campaign: []})
+          params.permit(:page, :start_date, :end_date, { campaign: [] })
         end
 
         def skip_default_validation
