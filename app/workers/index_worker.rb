@@ -6,6 +6,7 @@ class IndexWorker
   @queue = :indexing
 
   def self.perform(klass, id)
+    tries ||= 3
     without_proxy do
       constantize(klass).find(id).solr_index
     end
@@ -16,7 +17,8 @@ class IndexWorker
     Resque.enqueue(IndexWorker, klass, id)
 
   # Try it again a few times in case of a connection issue before raising the error
-  rescue Errno::ECONNRESET, Net::ReadTimeout, Net::ReadTimeout, Net::OpenTimeout => e
+  rescue Errno::ECONNRESET, Net::ReadTimeout, Net::ReadTimeout,
+         Net::OpenTimeout, ActiveRecord::RecordNotFound => e
     tries -= 1
     if tries > 0
       sleep(3)
