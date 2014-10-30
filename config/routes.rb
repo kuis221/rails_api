@@ -87,6 +87,7 @@ Brandscopic::Application.routes.draw do
 
         namespace :brand_ambassadors do
           resources :visits, except: [:destroy]
+          resources :documents, only: [:create, :update, :destroy, :index]
         end
 
       end
