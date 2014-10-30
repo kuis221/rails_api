@@ -10,6 +10,8 @@ module Api
         authorize_resource only: [:create, :index],
                            class: ::BrandAmbassadors::Visit
 
+        skip_authorization_check only: [:types]
+
         resource_description do
           name 'Brand Ambassadors Visits'
           short 'Visits'
@@ -25,15 +27,16 @@ module Api
         end
 
         def_param_group :visit do
-          param :brand_ambassadors_visit, Hash, required: true, action_aware: true do
-            param :start_date, String, required: true, desc: "Visit's start date"
-            param :end_date, String, required: true, desc: "Visit's end date"
+          param :visit, Hash, required: true, action_aware: true do
+            param :start_date, String, required: true, desc: "Visit's start date. Should be in format MM/DD/YYYY."
+            param :end_date, String, required: true, desc: "Visit's end date. Should be in format MM/DD/YYYY."
             param :company_user_id, :number, required: true, desc: 'Company User ID'
             param :campaign_id, :number, required: true, desc: 'Campaign ID'
             param :area_id, :number, desc: 'Area ID'
             param :city, String, desc: 'City name'
-            param :visit_type, String, required: true, desc: 'Visit Type key'
+            param :visit_type, ::BrandAmbassadors::Visit::VISIT_TYPE_OPTIONS.values, required: true, desc: 'Visit Type key'
             param :description, String, desc: "Visit's description"
+            param :active, ['true', 'false'], required: false, desc: "Visit's active state. Defaults to true for new visits or unchanged for existing records."
           end
         end
 
@@ -199,7 +202,7 @@ module Api
         POST /api/v1/brand_ambassadors/visits.json
         DATA:
         {
-          brand_ambassadors_visit: {
+          visit: {
             start_date: "11/09/2014",
             end_date: "11/10/2014",
             company_user_id: "345",
@@ -237,6 +240,80 @@ module Api
           end
         end
 
+        api :PUT, '/api/v1/brand_ambassadors/visits/:id', 'Update a visit\'s details'
+        param_group :visit
+        description <<-EOS
+        Allows to update an existing visit.
+        EOS
+        example <<-EOS
+        PUT /api/v1/brand_ambassadors/visits/1.json
+        DATA:
+        {
+          visit: {
+            start_date: "11/09/2014",
+            end_date: "11/10/2014",
+            company_user_id: "345",
+            campaign_id: "115",
+            area_id: "21",
+            city: "Decatur",
+            visit_type: "market_visit",
+            description: "My description"
+          }
+        }
+
+        RESPONSE:
+        {
+          {
+            id: 361,
+            visit_type: "market_visit",
+            visit_type_name: "Market Visit",
+            start_date: "2014-11-09",
+            end_date: "2014-11-10",
+            campaign_id: 115,
+            area_id: 21,
+            city: "Decatur",
+            description: "My description",
+            status: "Active",
+            user: {
+              id: 345,
+              full_name: "Chris Combs"
+            }
+            campaign: {
+              id: 115,
+              full_name: "Absolut BA FY15"
+            }
+            area: {
+              id: 21,
+              full_name: "Atlanta"
+            }
+          }
+        }
+        EOS
+        def update
+          update! do |success, failure|
+            success.json { render :show }
+            success.xml  { render :show }
+            failure.json { render json: resource.errors, status: :unprocessable_entity }
+            failure.xml  { render xml: resource.errors, status: :unprocessable_entity }
+          end
+        end
+
+        api :GET, '/api/v1/brand_ambassadors/visits/types', 'Returns a list of valid Visit Types to be used in forms'
+        example <<-EOS
+        GET /api/v1/brand_ambassadors/visits/types.json
+
+        RESPONSE:
+        {
+            "Brand Program": "brand_program",
+            "PTO": "pto",
+            "Market Visit": "market_visit",
+            "Local Market Request": "local_market_request"
+        }
+        EOS
+        def types
+          render json: ::BrandAmbassadors::Visit::VISIT_TYPE_OPTIONS
+        end
+
         protected
 
         def facets
@@ -252,9 +329,9 @@ module Api
         end
 
         def permitted_params
-          params.permit(brand_ambassadors_visit: [:start_date, :end_date, :company_user_id,
-                                                  :campaign_id, :area_id, :city, :visit_type,
-                                                  :description])[:brand_ambassadors_visit]
+          params.permit(visit: [:start_date, :end_date, :company_user_id,
+                                :campaign_id, :area_id, :city, :visit_type,
+                                :description, :active])[:visit]
         end
 
         def permitted_search_params

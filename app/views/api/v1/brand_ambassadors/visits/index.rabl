@@ -13,10 +13,18 @@ node :total do
 end
 
 child @visits => 'results' do
-  attributes :id, :visit_type_name, :start_date, :end_date, :campaign_name,
-             :area_name, :city, :description, :status
+  attributes :id, :visit_type, :visit_type_name, :start_date, :end_date,
+             :area_id, :campaign_id, :city, :description, :status
   child(:company_user => :user) do
     attributes :id, :full_name
+  end
+
+  node :campaign do |visit|
+    {id: visit.campaign_id, name: visit.campaign_name}
+  end
+
+  node :area do |visit|
+    {id: visit.area_id, name: visit.area_name}
   end
 end
 

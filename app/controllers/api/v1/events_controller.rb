@@ -17,10 +17,10 @@ class Api::V1::EventsController < Api::V1::FilteredController
   def_param_group :event do
     param :event, Hash, required: true, action_aware: true do
       param :campaign_id, :number, required: true, desc: 'Campaign ID'
-      param :start_date, String, required: true, desc: "Event's start date"
-      param :end_date, String, required: true, desc: "Event's end date"
-      param :start_time, String, required: true, desc: "Event's start time'"
-      param :end_time, String, required: true, desc: "Event's end time"
+      param :start_date, String, required: true, desc: "Event's start date. Should be in format MM/DD/YYYY."
+      param :end_date, String, required: true, desc: "Event's end date. Should be in format MM/DD/YYYY."
+      param :start_time, String, required: true, desc: "Event's start time'. Should be in format HH:MM AM/PM"
+      param :end_time, String, required: true, desc: "Event's end time. Should be in format HH:MM AM/PM"
       param :place_reference, String, required: false, desc: "Event's Place ID. This can be either an existing place id that is already registered on the application, or the combination of the place reference + place id returned by Google's places API. (See: https://developers.google.com/places/documentation/details). Those two values must be concatenated by '||' in the form of '<reference>||<place_id>'. If using the results from the API's call: Venues&nbsp;Search[link:/apidoc/1.0/venues/search.html], you should use the value for the +id+ attribute"
       param :active, String, desc: "Event's status"
       param :summary, String, desc: "Event's summary"

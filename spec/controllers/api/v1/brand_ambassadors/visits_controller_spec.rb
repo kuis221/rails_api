@@ -23,7 +23,9 @@ describe Api::V1::BrandAmbassadors::VisitsController, type: :controller do
       expect(result['results'].count).to eq(3)
       expect(result['total']).to eq(3)
       expect(result['page']).to eq(1)
-      expect(result['results'].first.keys).to match_array(%w(id visit_type_name start_date end_date campaign_name area_name city description status user))
+      expect(result['results'].first.keys).to match_array(%w(
+        id visit_type visit_type_name start_date end_date campaign_id area_id
+        city description status user campaign area))
     end
 
     it 'sencond page returns empty results' do
@@ -146,13 +148,53 @@ describe Api::V1::BrandAmbassadors::VisitsController, type: :controller do
     end
   end
 
+  describe "PUT 'update'" do
+    let(:campaign) { create(:campaign, company: company) }
+    let(:visit) { create(:brand_ambassadors_visit, company: company) }
+    it 'must update the visit attributes' do
+      new_campaign = create(:campaign, company: company)
+      area = create(:area, company: company)
+      put 'update', id: visit.to_param, visit: {
+        campaign_id: new_campaign.id,
+        start_date: '05/21/2020', end_date: '05/22/2020',
+        area_id: area.id, description: 'this is the test description'
+      }, format: :json
+      expect(assigns(:visit)).to eq(visit)
+      expect(response).to be_success
+      visit.reload
+      expect(visit.campaign_id).to eq(new_campaign.id)
+      expect(visit.start_date).to eq(Time.zone.parse('2020-05-21').to_date)
+      expect(visit.end_date).to eq(Time.zone.parse('2020-05-22').to_date)
+      expect(visit.area_id).to eq(area.id)
+      expect(visit.description).to eq('this is the test description')
+    end
+
+    it 'must deactivate the visit' do
+      put 'update', id: visit.to_param, visit: { active: 'false' }, format: :json
+      expect(assigns(:visit)).to eq(visit)
+      expect(response).to be_success
+      visit.reload
+      expect(visit.active).to eq(false)
+    end
+
+    it 'must update the visit attributes' do
+      place = create(:place)
+      put 'update', id: visit.to_param, partial: 'visit_data',
+                    visit: { campaign_id: create(:campaign, company: company).to_param,
+                             start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020',
+                             end_time: '01:00pm', place_id: place.id }, format: :json
+      expect(assigns(:visit)).to eq(visit)
+      expect(response).to be_success
+    end
+  end
+
   describe "POST 'create'" do
     it 'create a new visit' do
       expect do
-        post 'create', brand_ambassadors_visit: { start_date: '11/09/2014', end_date: '11/10/2014',
-                                                  company_user_id: company_user.id, campaign_id: campaign.id,
-                                                  area_id: area.id, city: 'Atlanta', visit_type: 'market_visit',
-                                                  description: 'My new visit' }, format: :json
+        post 'create', visit: { start_date: '11/09/2014', end_date: '11/10/2014',
+                                company_user_id: company_user.id, campaign_id: campaign.id,
+                                area_id: area.id, city: 'Atlanta', visit_type: 'market_visit',
+                                description: 'My new visit' }, format: :json
       end.to change(BrandAmbassadors::Visit, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template('show')
