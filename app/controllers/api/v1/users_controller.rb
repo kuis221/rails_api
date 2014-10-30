@@ -442,6 +442,12 @@ class Api::V1::UsersController < Api::V1::FilteredController
   * _venues_trends_: Can see a venue's trends graph within the  analysis data
   * _venues_photos_: Can see a venue's photos
   * _venues_comment_: Can see a venue's photos
+  * _ba_visits_: Can see the list of brand ambassadors visits
+  * _ba_visits_create_: Can create a brand ambassadors visit
+  * _ba_visits_edit_: Can edit a brand ambassadors visit
+  * _ba_visits_deactivate_: Can deactivate a brand ambassadors visit
+  * _ba_visits_show_: Can access the details for a brand ambassadors visit
+  * _ba_documents_: Can see a list brand ambassadors documents/folders
   EOS
   def permissions
     if current_user.present?
@@ -555,6 +561,13 @@ class Api::V1::UsersController < Api::V1::FilteredController
     permissions.push 'tasks_deactivate_team' if can?(:edit_team, Task)
     permissions.push 'tasks_comments_team' if can?(:index_team_comments, Task)
     permissions.push 'tasks_create_comments_team' if can?(:create_team_comment, Task)
+
+    permissions.push 'ba_visits' if current_company_user.role.has_permission?(:list, BrandAmbassadors::Visit)
+    permissions.push 'ba_visits_create' if current_company_user.role.has_permission?(:create, BrandAmbassadors::Visit)
+    permissions.push 'ba_visits_edit' if current_company_user.role.has_permission?(:update, BrandAmbassadors::Visit)
+    permissions.push 'ba_visits_deactivate' if current_company_user.role.has_permission?(:deactivate, BrandAmbassadors::Visit)
+    permissions.push 'ba_visits_show' if current_company_user.role.has_permission?(:show, BrandAmbassadors::Visit)
+    permissions.push 'ba_documents' if current_company_user.role.has_permission?(:index, BrandAmbassadors::Document)
 
     permissions
   end

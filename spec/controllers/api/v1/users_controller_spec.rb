@@ -222,7 +222,8 @@ describe Api::V1::UsersController, type: :controller do
         tasks_comments_own tasks_comments_team tasks_create_comments_own tasks_create_comments_team
         tasks_deactivate_own tasks_deactivate_team tasks_edit_own tasks_edit_team tasks_own
         tasks_team venues venues_create venues_comments venues_kpis venues_photos venues_score
-        venues_show venues_trends))
+        venues_show venues_trends ba_visits ba_visits_create ba_visits_edit ba_visits_deactivate
+        ba_visits_show ba_documents))
     end
 
     describe 'as a non admin user' do
