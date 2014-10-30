@@ -132,6 +132,49 @@ module Api
           collection
         end
 
+        api :GET, '/api/v1/brand_ambassadors/visits/:id', 'Return a visit\'s details'
+        param :id, :number, required: true, desc: 'Visit ID'
+        description <<-EOS
+        Returns the event's details, including the actions that a user can perform on this
+        event according to the user's permissions and the KPIs that are enabled for the event's campaign.
+
+        The possible attributes returned are:
+          * *id*: the visits's ID
+          * *visit_type_name*: the visit's type name
+          * *start_date*: the visit's start date
+          * *end_date*: the visit's end date
+          * *campaign_name*: the campaign to which the visit belongs
+          * *area_name*: the area to which the visit belongs
+          * *city*: the city for the visit
+          * *description*: the visit's description
+          * *status*: the visit's status
+          * *user*:
+            * *id*: the user id
+            * *full_name*: the name of the user to which the visit belongs
+        EOS
+
+        example <<-EOS
+        {
+          id: 319,
+          visit_type_name: "Brand Program",
+          start_date: "2014-11-08",
+          end_date: "2014-11-08",
+          campaign_name: "Whisky Show TGL FY15",
+          area_name: "Atlanta",
+          city: "Atlanta",
+          description: "Whiskies of the World show. ",
+          status: "Active",
+          user: {
+            id: 88,
+            full_name: "Craig Vaught"
+          }
+        }
+        EOS
+        def show
+          if resource.present?
+            render
+          end
+        end
 
         protected
 
