@@ -13,7 +13,8 @@ module Api
                            class: ::BrandAmbassadors::Visit
 
         resource_description do
-          short 'Brand Ambassadors Documents'
+          name 'Brand Ambassadors Documents'
+          short 'Documents'
           formats %w(json xml)
           error 401, 'Unauthorized access'
           error 404, 'The requested resource was not found'

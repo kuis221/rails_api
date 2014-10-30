@@ -11,6 +11,7 @@ module Api
                            class: ::BrandAmbassadors::Visit
 
         resource_description do
+          name 'Brand Ambassadors Visits'
           short 'Visits'
           formats %w(json xml)
           error 401, 'Unauthorized access'
