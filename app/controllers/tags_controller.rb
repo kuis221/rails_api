@@ -11,10 +11,8 @@ class TagsController < InheritedResources::Base
   end
 
   def activate
-    @tag = current_company.tags.find_by_id params[:id]
-    if @tag.nil? && can?(:create, Tag)
-      @tag = current_company.tags.create(name: params[:id])
-    end
+    @tag = current_company.tags.find_by_id params[:id] if params[:id] =~ /\A[0-9]+\z/
+    @tag ||= current_company.tags.find_or_create_by(name: params[:id]) if can?(:create, Tag)
     parent.tags << @tag
   end
 
