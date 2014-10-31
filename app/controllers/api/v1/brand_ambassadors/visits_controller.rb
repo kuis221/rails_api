@@ -4,7 +4,7 @@ module Api
       class VisitsController < Api::V1::FilteredController
         defaults resource_class: ::BrandAmbassadors::Visit
 
-        load_and_authorize_resource only: [:show, :edit, :update, :destroy],
+        load_and_authorize_resource only: [:show, :edit, :update, :destroy, :events],
                                     class: ::BrandAmbassadors::Visit
 
         authorize_resource only: [:create, :index],
@@ -312,6 +312,80 @@ module Api
         EOS
         def types
           render json: ::BrandAmbassadors::Visit::VISIT_TYPE_OPTIONS
+        end
+
+        api :GET, '/api/v1/brand_ambassadors/visits/:id/events', 'Get a list of events for a visit'
+        param :id, :number, required: true, desc: "The visit's ID."
+        description <<-EOS
+          Returns a list of the events for a visit.
+
+          Each event item have the following attributes:
+
+          * *id*: the event's ID
+          * *start_date*: the event's start date
+          * *start_time*: the event's start time
+          * *end_date*: the event's end date
+          * *end_time*: the event's end time
+          * *campaign*:
+            * *id*: the campaign id
+            * *name*: the campaign name associated to the event
+          * *place*:
+            * *id*: the place id
+            * *name*: the name of the place associated to the event
+            * *formatted_address*: full address of the place
+            * *country*: country code of the place
+            * *state_name*: state name of the place
+            * *city*: city name of the place
+            * *zipcode*: zip code of the place
+        EOS
+        example <<-EOS
+          GET /api/v1/brand_ambassadors/visits/361/events.json
+          [
+            {
+              id: 42397,
+              start_date: "11/09/2014",
+              start_time: "2:45 PM",
+              end_date: "11/10/2014",
+              end_time: "3:45 PM",
+              campaign: {
+                id: 115,
+                name: "Absolut BA FY15"
+              },
+              place: {
+                id: 6754,
+                name: "Atlanta",
+                formatted_address: "Atlanta, GA, USA",
+                country: "US",
+                state_name: "Georgia",
+                city: "Atlanta",
+                zipcode: null
+              }
+            },
+            {
+              id: 42398,
+              start_date: "11/10/2014",
+              start_time: "11:00 AM",
+              end_date: "11/10/2014",
+              end_time: "12:00 PM",
+              campaign: {
+                id: 14,
+                name: "Absolut BA FY14"
+              },
+              place: {
+                id: 6401,
+                name: "Fado Irish Pub",
+                formatted_address: "Atlanta, GA, United States",
+                country: "US",
+                state_name: "Georgia",
+                city: "Atlanta",
+                zipcode: null
+              }
+            },
+            ...
+          ]
+        EOS
+        def events
+          @events = resource.events.accessible_by_user(current_company_user).order('events.start_at ASC')
         end
 
         protected
