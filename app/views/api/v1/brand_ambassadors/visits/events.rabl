@@ -6,6 +6,6 @@ node :campaign do |e|
   { id: e.campaign_id, name: e.campaign_name }
 end
 
-child(venue: :place) do
+child :place do
   attributes :id, :name, :formatted_address, :country, :state_name, :city, :zipcode
 end
