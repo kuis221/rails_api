@@ -95,18 +95,19 @@ describe Api::V1::EventsController, type: :controller do
 
   describe "POST 'create'" do
     let(:campaign) { create(:campaign, company: company) }
+    let(:place) { create(:place) }
     it "should assign current_user's company_id to the new event" do
-      place = create(:place)
       expect do
-        post 'create', event: { campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm', place_id: place.id }, format: :json
+        post 'create', event: { campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm',
+                                end_date: '05/22/2020', end_time: '01:00pm', place_id: place.id }, format: :json
       end.to change(Event, :count).by(1)
       expect(assigns(:event).company_id).to eq(company.id)
     end
 
     it 'should create the event with the correct dates' do
-      place = create(:place)
       expect do
-        post 'create', event: { campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/21/2020', end_time: '01:00pm', place_id: place.id }, format: :json
+        post 'create', event: { campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm',
+                                end_date: '05/21/2020', end_time: '01:00pm', place_id: place.id }, format: :json
       end.to change(Event, :count).by(1)
       event = Event.last
       expect(event.campaign_id).to eq(campaign.id)
@@ -114,6 +115,34 @@ describe Api::V1::EventsController, type: :controller do
       expect(event.end_at).to eq(Time.zone.parse('2020/05/21 01:00pm'))
       expect(event.place_id).to eq(place.id)
       expect(event.promo_hours).to eq(1)
+    end
+
+    it 'should not create the event when dates are not valid for a visit' do
+      visit = create(:brand_ambassadors_visit, company: company,
+                     start_date: '11/09/2014', end_date: '11/11/2014', campaign: campaign)
+      expect do
+        post 'create', event: { campaign_id: campaign.id, start_date: '11/09/2014', start_time: '12:00pm',
+                                end_date: '11/15/2014', end_time: '01:00pm', place_id: place.id, visit_id: visit.id }, format: :json
+      end.to change(Event, :count).by(0)
+      expect(response.response_code).to eq(422)
+      result = JSON.parse(response.body)
+      expect(result['end_date']).to include('should be before 11/12/2014')
+    end
+
+    it 'should create the event when dates are valid for a visit' do
+      visit = create(:brand_ambassadors_visit, company: company,
+                     start_date: '11/09/2014', end_date: '11/11/2014', campaign: campaign)
+      expect do
+        post 'create', event: { campaign_id: campaign.id, start_date: '11/10/2014', start_time: '12:00pm',
+                                end_date: '11/10/2014', end_time: '01:00pm', place_id: place.id, visit_id: visit.id }, format: :json
+      end.to change(Event, :count).by(1)
+      event = Event.last
+      expect(event.campaign_id).to eq(campaign.id)
+      expect(event.start_at).to eq(Time.zone.parse('2014/11/10 12:00pm'))
+      expect(event.end_at).to eq(Time.zone.parse('2014/11/10 01:00pm'))
+      expect(event.place_id).to eq(place.id)
+      expect(event.promo_hours).to eq(1)
+      expect(event.visit_id).to eq(visit.id)
     end
   end
 

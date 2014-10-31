@@ -88,6 +88,7 @@ Brandscopic::Application.routes.draw do
         namespace :brand_ambassadors do
           resources :visits, only: [:index, :create, :update, :show] do
             get :types, on: :collection
+            get :events, on: :member
           end
           resources :documents, only: [:create, :update, :destroy, :index]
         end

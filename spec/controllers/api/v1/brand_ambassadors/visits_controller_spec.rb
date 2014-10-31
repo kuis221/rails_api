@@ -209,4 +209,39 @@ describe Api::V1::BrandAmbassadors::VisitsController, type: :controller do
       expect(visit.description).to eq('My new visit')
     end
   end
+
+  describe '#events', search: true do
+    it 'returns a list of events' do
+      place1 = create(:place, name: 'Place 1', formatted_address: 'Los Angeles, CA, US', city: 'Los Angeles',
+                      state: 'CA', country: 'US', zipcode: '90210', types: %w(political locality))
+      place2 = create(:place, name: 'Place 2', formatted_address: 'Austin, TX, US', city: 'Austin',
+                      state: 'TX', country: 'US', zipcode: '15879', types: %w(political locality))
+      another_campaign = create(:campaign, name: 'Campaign FY2012', company: company)
+      visit = create(:brand_ambassadors_visit, company: company,
+                     start_date: '11/09/2014', end_date: '11/11/2014',
+                     city: 'New York', area: area, campaign: campaign,
+                     visit_type: 'market_visit', company_user: company_user,
+                     description: 'The first visit description', active: true)
+
+      event1 = create(:event, start_date: '11/09/2014', end_date: '11/09/2014', start_time: '10:00am',
+                      end_time: '11:00am', campaign: campaign, place: place1, company: company, visit_id: visit.id)
+      event2 = create(:event, start_date: '11/10/2014', end_date: '11/11/2014', start_time: '8:00am',
+                      end_time: '9:00am', campaign: another_campaign, place: place2, company: company, visit_id: visit.id)
+
+      get 'events', id: visit.to_param, format: :json
+      expect(response).to be_success
+      result = JSON.parse(response.body)
+
+      expect(result).to match_array([{ 'id' => event1.id, 'start_date' => '11/09/2014', 'start_time' => '10:00 AM',
+                                       'end_date' => '11/09/2014', 'end_time' => '11:00 AM',
+                                       'campaign' => { 'id' => campaign.id, 'name' => 'My Campaign' },
+                                       'place' => { 'id' => place1.id, 'name' => 'Place 1', 'formatted_address' => 'Los Angeles, CA, US',
+                                                    'country' => 'US', 'state_name' => 'CA', 'city' => 'Los Angeles', 'zipcode' => '90210' } },
+                                     { 'id' => event2.id, 'start_date' => '11/10/2014', 'start_time' => '8:00 AM',
+                                       'end_date' => '11/11/2014', 'end_time' => '9:00 AM',
+                                       'campaign' => { 'id' => another_campaign.id, 'name' => 'Campaign FY2012' },
+                                       'place' => { 'id' => place2.id, 'name' => 'Place 2', 'formatted_address' => 'Austin, TX, US',
+                                                    'country' => 'US', 'state_name' => 'TX', 'city' => 'Austin', 'zipcode' => '15879' } }])
+    end
+  end
 end
