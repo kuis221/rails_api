@@ -17,7 +17,7 @@
 
 javascript:
   var reportInterval = window.setInterval(function(){
-    ids = $('ul#reports-list').find('li[data-status="queued"],li[data-status="new"],li[data-status="processing"]').map(function(){
+    ids = $('#reports-list').find('.resource-item[data-status="queued"],.resource-item[data-status="new"],.resource-item[data-status="processing"]').map(function(){
       return $(this).data('id');
     }).get();
     if (ids.length > 0) {
