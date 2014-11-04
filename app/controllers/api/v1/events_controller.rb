@@ -26,6 +26,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
       param :summary, String, desc: "Event's summary"
       param :description, String, desc: "Event's description"
       param :results_attributes, :event_result, required: false, desc: "A list of event results with the id and value. Eg: results_attributes: [{id: 1, value:'Some value'}, {id: 2, value: '123'}]"
+      param :visit_id, :number, desc: 'Visit ID'
     end
   end
 
@@ -1567,7 +1568,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
   def permitted_params
     parameters = {}
     allowed = []
-    allowed += [:end_date, :end_time, :start_date, :start_time, :campaign_id, :place_id, :place_reference, :description] if can?(:update, Event) || can?(:create, Event)
+    allowed += [:end_date, :end_time, :start_date, :start_time, :campaign_id, :place_id,
+                :place_reference, :description, :visit_id] if can?(:update, Event) || can?(:create, Event)
     allowed += [:summary, { results_attributes: [:value, :id, { value: [] }] }] if can?(:edit_data, Event)
     allowed += [:active] if can?(:deactivate, Event)
     parameters = params.require(:event).permit(*allowed)
@@ -1581,7 +1583,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
   end
 
   def permitted_search_params
-    params.permit(:page, :start_date, :end_date, { campaign: [] }, { place: [] }, { area: [] }, { user: [] }, { team: [] }, { brand: [] }, { brand_porfolio: [] }, { status: [] }, event_status: [])
+    params.permit(:page, :start_date, :end_date, { campaign: [] }, { place: [] }, { area: [] },
+                  { user: [] }, { team: [] }, { brand: [] }, { brand_porfolio: [] }, { status: [] }, event_status: [])
   end
 
   def load_contactable_from_request
