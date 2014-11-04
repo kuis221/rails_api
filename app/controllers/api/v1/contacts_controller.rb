@@ -23,6 +23,7 @@ class Api::V1::ContactsController < Api::V1::ApiController
   resource_description do
     short 'Contacts'
     formats %w(json xml)
+    error 400, 'Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.'
     error 406, 'The server cannot return data in the requested format'
     error 404, 'The requested resource was not found'
     error 500, 'Server crashed for some reason. Possible because of missing required params or wrong parameters'

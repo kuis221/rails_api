@@ -4,6 +4,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   resource_description do
     short 'Events'
     formats %w(json xml)
+    error 400, 'Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.'
     error 401, 'Unauthorized access'
     error 404, 'The requested resource was not found'
     error 406, 'The server cannot return data in the requested format'
@@ -17,8 +18,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
   def_param_group :event do
     param :event, Hash, required: true, action_aware: true do
       param :campaign_id, :number, required: true, desc: 'Campaign ID'
-      param :start_date, String, required: true, desc: "Event's start date. Should be in format MM/DD/YYYY."
-      param :end_date, String, required: true, desc: "Event's end date. Should be in format MM/DD/YYYY."
+      param :start_date, %r{\A\d{2}/\d{2}/\d{4}\z}, required: true, desc: "Event's start date. Should be in format MM/DD/YYYY."
+      param :end_date, %r{\A\d{2}/\d{2}/\d{4}\z}, required: true, desc: "Event's end date. Should be in format MM/DD/YYYY."
       param :start_time, String, required: true, desc: "Event's start time'. Should be in format HH:MM AM/PM"
       param :end_time, String, required: true, desc: "Event's end time. Should be in format HH:MM AM/PM"
       param :place_reference, String, required: false, desc: "Event's Place ID. This can be either an existing place id that is already registered on the application, or the combination of the place reference + place id returned by Google's places API. (See: https://developers.google.com/places/documentation/details). Those two values must be concatenated by '||' in the form of '<reference>||<place_id>'. If using the results from the API's call: Venues&nbsp;Search[link:/apidoc/1.0/venues/search.html], you should use the value for the +id+ attribute"
@@ -31,8 +32,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
   end
 
   api :GET, '/api/v1/events', 'Search for a list of events'
-  param :start_date, String, desc: 'A date to filter the event list. When provided a start_date without an +end_date+, the result will only include events that happen on this day. The date should be in the format MM/DD/YYYY.'
-  param :end_date, String, desc: 'A date to filter the event list. This should be provided together with the +start_date+ param and when provided will filter the list with those events that are between that range. The date should be in the format MM/DD/YYYY.'
+  param :start_date, %r{\A\d{2}/\d{2}/\d{4}\z}, desc: 'A date to filter the event list. When provided a start_date without an +end_date+, the result will only include events that happen on this day. The date should be in the format MM/DD/YYYY.'
+  param :end_date, %r{\A\d{2}/\d{2}/\d{4}\z}, desc: 'A date to filter the event list. This should be provided together with the +start_date+ param and when provided will filter the list with those events that are between that range. The date should be in the format MM/DD/YYYY.'
   param :campaign, Array, desc: 'A list of campaign ids to filter the results'
   param :place, Array, desc: 'A list of places to filter the results'
   param :area, Array, desc: 'A list of areas to filter the results'

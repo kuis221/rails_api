@@ -16,6 +16,7 @@ module Api
           name 'Brand Ambassadors Documents'
           short 'Documents'
           formats %w(json xml)
+          error 400, 'Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.'
           error 401, 'Unauthorized access'
           error 404, 'The requested resource was not found'
           error 406, 'The server cannot return data in the requested format'

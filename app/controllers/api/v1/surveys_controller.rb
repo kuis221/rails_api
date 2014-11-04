@@ -8,6 +8,7 @@ class Api::V1::SurveysController < Api::V1::ApiController
   resource_description do
     short 'Surveys'
     formats %w(json xml)
+    error 400, 'Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.'
     error 404, 'Missing'
     error 401, 'Unauthorized access'
     error 403, 'Event does allows surveys as per campaign settings'

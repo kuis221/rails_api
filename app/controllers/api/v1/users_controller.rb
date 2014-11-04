@@ -32,6 +32,7 @@ class Api::V1::UsersController < Api::V1::FilteredController
   resource_description do
     short 'Users'
     formats %w(json xml)
+    error 400, 'Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.'
     error 404, 'Missing'
     error 401, 'Unauthorized access'
     error 500, 'Server crashed for some reason'

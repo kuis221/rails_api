@@ -16,6 +16,7 @@ module Api
           name 'Brand Ambassadors Visits'
           short 'Visits'
           formats %w(json xml)
+          error 400, 'Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.'
           error 401, 'Unauthorized access'
           error 404, 'The requested resource was not found'
           error 406, 'The server cannot return data in the requested format'
@@ -41,8 +42,8 @@ module Api
         end
 
         api :GET, '/api/v1/brand_ambassadors/visits', 'Search for a list of visits'
-        param :start_date, String, desc: 'A date to filter the visit list. When provided a start_date without an +end_date+, the result will only include visits that happen on this day. The date should be in the format MM/DD/YYYY.'
-        param :end_date, String, desc: 'A date to filter the visit list. This should be provided together with the +start_date+ param and when provided will filter the list with those visits that are between that range. The date should be in the format MM/DD/YYYY.'
+        param :start_date, %r{\A\d{2}/\d{2}/\d{4}\z}, desc: 'A date to filter the visit list. When provided a start_date without an +end_date+, the result will only include visits that happen on this day. The date should be in the format MM/DD/YYYY.'
+        param :end_date, %r{\A\d{4}/\d{2}/\d{2}\z}, desc: 'A date to filter the visit list. This should be provided together with the +start_date+ param and when provided will filter the list with those visits that are between that range. The date should be in the format MM/DD/YYYY.'
         param :user, Array, desc: 'A list of Brand Ambassador ids to filter the results'
         param :campaign, Array, desc: 'A list of Campaign ids to filter the results'
         param :area, Array, desc: 'A list of Area ids to filter the results'

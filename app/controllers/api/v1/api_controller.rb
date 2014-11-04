@@ -6,6 +6,7 @@ class Api::V1::ApiController < ActionController::Base
   rescue_from 'Api::V1::InvalidAuthToken', with: :invalid_token
   rescue_from 'Api::V1::InvalidCompany', with: :invalid_company
   rescue_from 'ActiveRecord::RecordNotFound', with: :record_not_found
+  rescue_from 'Apipie::ParamInvalid', with: :invalid_argument
 
   before_action :ensure_valid_request
   after_action :set_access_control_headers
@@ -124,6 +125,21 @@ class Api::V1::ApiController < ActionController::Base
 
   def skip_default_validation
     false
+  end
+
+  def invalid_argument(exception)
+    respond_to do |format|
+      format.json do
+        render status: 400,
+               json: { success: false,
+                       info: exception.message }
+      end
+      format.xml do
+        render status: 400,
+               xml: { success: false,
+                      info: exception.message }.to_xml(root: 'response')
+      end
+    end
   end
 end
 
