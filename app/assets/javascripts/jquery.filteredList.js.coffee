@@ -71,7 +71,7 @@ $.widget 'nmk.filteredList', {
 				@_saveFilters()
 
 			$('<input class="btn btn-cancel" id="cancel-save-filters" type="reset" value="Reset">').on 'click', (e) =>
-				@_cleanFilters()
+				@_resetFilters()
 		)
 
 		if @options.allowCustomizeFilters
@@ -492,14 +492,29 @@ $.widget 'nmk.filteredList', {
 		@_filtersChanged()
 		false
 
+	# Unchecks all checkboxes and any other filter field
 	_cleanFilters: () ->
-		@defaultParams = []	
+		@initialized = false
+		@defaultParams = []
+		@_cleanSearchFilter()
+		@_deselectDates()
+		defaultParams = if typeof @options.clearFilterParams != 'undefined' then @options.clearFilterParams else @options.defaultParams
+		defaultParams ||= []
+		@element.find('input[type=checkbox]').attr('checked', false)
+		for param in defaultParams
+			@element.find('input[name="'+param.name+'"][value="'+param.value+'"]').attr('checked', true)
+		@_filtersChanged()
+		@initialized = true
+		defaultParams = null
+		false
+
+	# Resets the filter to its initial state
+	_resetFilters: () ->
+		@defaultParams = @options.defaultParams
 		@_cleanSearchFilter()
 		@_deselectDates()
 		@element.find('input[type=checkbox]').attr('checked', false)
-		defaultParams = if typeof @options.clearFilterParams != 'undefined' then @options.clearFilterParams else @options.defaultParams
-		defaultParams ||= []
-		history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' + $.param(defaultParams));
+		history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname);
 		@_parseQueryString(window.location.search)
 		@_filtersChanged(false)
 		

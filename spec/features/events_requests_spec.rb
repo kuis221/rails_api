@@ -890,6 +890,7 @@ feature 'Events section' do
         filter_section('SAVED FILTERS').unicheck('Custom Filter 2')
 
         within events_list do
+          expect(page).not_to have_content('Campaign 1')
           expect(page).to have_content('Campaign 2')
         end
 
@@ -911,7 +912,7 @@ feature 'Events section' do
 
         within events_list do
           expect(page).to have_content('Campaign 1')
-          expect(page).to_not have_content('Campaign 2')
+          expect(page).to have_content('Campaign 2')
         end
 
         within '.form-facet-filters' do
