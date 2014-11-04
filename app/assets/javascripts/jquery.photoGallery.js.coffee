@@ -146,9 +146,8 @@ $.widget 'nmk.photoGallery', {
 		}
 
 	buildCarousels: (currentImage) ->
-		i = index = 0
-		active = false
-		row = null
+		i = 0
+		activeClass = false
 
 		if @options.showSidebar
 			miniCarousel = @miniCarousel.find('.carousel-inner')
@@ -159,27 +158,26 @@ $.widget 'nmk.photoGallery', {
 
 		for link in @element.find('a[data-toggle=gallery]')
 			image = $(link).find('img')[0]
-			if i % 3 is 0
-				if row? && @options.showSidebar
-					miniCarousel.append($('<div class="item">').append(row).addClass(if active then 'active' else null))
-				row = $('<div class="row">')
-				active = false
-
 			if currentImage == image
-				active = true
+				activeClass = 'active'
+			else
+				activeClass = ''
 
-			row.append($('<img>').attr('src', image.src).data('image',image).attr('data-photo-id', $(image).data('id')).data('index', index))
+			if miniCarousel
+				miniCarousel.append($('<div class="item">').addClass(activeClass).append($('<img>').attr('src', image.src).data('image',image).attr('data-photo-id', $(image).data('id')).data('index', i)))
+
 			carousel.append $('<div class="item">').
 				attr('data-photo-id', $(image).data('id')).
 				append($('<div class="row">').append($('<img>').attr('src', '').data('src',link.href))).
 				data('image',image).
-				data('index', index).
-				addClass(if currentImage == image then 'active' else '')
+				data('index', i).
+				addClass(activeClass)
 			i+=1
-			index+=1
 
 		if @options.showSidebar
-			miniCarousel.append($('<div class="item">').append(row).addClass(if active then 'active' else null))
+			@miniCarouselItems = i
+
+			@_setMiniCorouselClases(@miniCarousel.find('.item.active')[0])
 
 			@miniCarousel.off('click.thumb').on 'click.thumb', 'img', (e) =>
 				index = $(e.target).data('index')
@@ -289,7 +287,9 @@ $.widget 'nmk.photoGallery', {
 		@panel = @gallery.find('.panel')
 
 		if @options.showSidebar
-			@miniCarousel.carousel({interval: false})
+			@miniCarousel.carousel interval: false
+			@miniCarousel.on 'slide', (e) =>
+				@_setMiniCorouselClases(e.relatedTarget)
 		@carousel.carousel({interval: false})
 
 		@carousel.on 'slid', (e) =>
@@ -298,9 +298,23 @@ $.widget 'nmk.photoGallery', {
 			if @options.showSidebar
 				@fillPhotoData image
 			@_showImage()
-			@miniCarousel.carousel parseInt(item.data('index')/3)
+			@miniCarousel.carousel parseInt(item.data('index'))
 
 		@gallery
+
+	_setMiniCorouselClases: (activeItem) ->
+		prevItem = $(activeItem).prev('.item')
+		nextItem = $(activeItem).next('.item')
+		@miniCarousel.find('.item').removeClass('next-item').removeClass('prev-item')
+		prevItem.addClass('prev-item')
+		nextItem.addClass('next-item')
+		if prevItem.length && @miniCarouselItems > 3 then @miniCarousel.find('.carousel-control.left').show() else @miniCarousel.find('.carousel-control.left').hide()
+		if nextItem.length && @miniCarouselItems > 3 then @miniCarousel.find('.carousel-control.right').show() else @miniCarousel.find('.carousel-control.right').hide()
+		if $(activeItem).is(':first-child') then nextItem.next('.item').addClass('next-item')
+		if $(activeItem).is(':last-child') && (@miniCarouselItems % 3 is 0) then prevItem.prev('.item').addClass('prev-item')
+		$(activeItem).find('img').trigger('click')
+		true
+
 
 	_showImage: () ->
 		item = $('.item.active', @slider)
