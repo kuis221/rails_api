@@ -6,7 +6,7 @@ class Ability
 
     alias_action :activate, to: :deactivate
     alias_action :new_member, to: :add_members
-    alias_action :new_member, to: :add_members
+    alias_action :new_member, to: :add_staff
     alias_action :add_kpi, to: :activate_kpis
     alias_action :remove_kpi, to: :activate_kpis
     alias_action :add_activity_type, to: :activate_kpis
@@ -258,6 +258,11 @@ class Ability
       # Team Members
       can [:add_members, :delete_member], Team do |team|
         can?(:edit, team)
+      end
+
+      # Team Members
+      can [:add_members, :delete_member], Campaign do |campaign|
+        can?(:show, campaign)
       end
 
       cannot [:approve, :reject, :submit,

@@ -17,8 +17,8 @@ ActiveRecord::Schema.define(version: 20141101004857) do
   enable_extension "plpgsql"
   enable_extension "hstore"
   enable_extension "pg_stat_statements"
-  enable_extension "tablefunc"
   enable_extension "pg_trgm"
+  enable_extension "tablefunc"
 
   create_table "active_admin_comments", force: true do |t|
     t.string   "resource_id",   null: false
