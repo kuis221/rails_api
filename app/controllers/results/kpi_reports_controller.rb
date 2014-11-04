@@ -3,7 +3,7 @@ class Results::KpiReportsController < ApplicationController
 
   def index
     campaigns
-    @reports = KpiReport.where(company_user_id: current_company_user)
+    @reports = KpiReport.where(company_user_id: current_company_user).order('created_at DESC')
   end
 
   def report
