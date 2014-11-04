@@ -1,4 +1,4 @@
-= link_to "Add Staff", new_member_campaign_path(resource), remote: true, id: 'add-staff-btn', class: 'btn btn-primary', title: 'Add Staff'
+= button_to "Add Staff", new_member_campaign_path(resource), remote: true, method: :get, id: 'add-staff-btn', class: 'btn btn-primary', title: 'Add Staff'
 = render layout: 'goalable_list', locals: { goalables: resource.staff, kpis: resource.active_kpis, activity_types: resource.activity_types } do |goalable|
   - if resource.users.include?(goalable)
     - if goalable.is_a?(CompanyUser)

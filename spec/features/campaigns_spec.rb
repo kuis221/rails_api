@@ -2,16 +2,45 @@ require 'rails_helper'
 
 feature 'Campaigns', js: true do
 
-  let(:user) { create(:user, company_id: create(:company).id, role_id: create(:role).id) }
-  let(:company) { user.companies.first }
+  let(:role) { create(:role, company: company) }
+  let(:user) { create(:user, company: company, role_id: role.id) }
+  let(:company) { create(:company) }
+  let(:company_user) { user.company_users.first }
+  let(:campaign) { create(:campaign, company: company) }
+  let(:permissions) { [] }
 
   before do
     Warden.test_mode!
+    add_permissions permissions
     sign_in user
   end
 
   after do
     Warden.test_reset!
+  end
+
+  shared_examples_for 'a user that can add staff to campaigns' do
+    scenario 'can successfuly add a user to a campaign' do
+      Kpi.create_global_kpis
+      create(:company_user, company: company, role: company_user.role,
+                            user: create(:user, first_name: 'Alberto',
+                                                last_name: 'Porras'))
+      visit campaign_path(campaign)
+      staff_tab = open_tab('Staff')
+      click_js_button 'Add Staff'
+      within visible_modal do
+        within resource_item do
+          expect(page).to have_content('Alberto Porras')
+          click_js_link 'Add'
+        end
+        expect(page).not_to have_content('Alberto Porras')
+      end
+      close_modal
+
+      within staff_tab do
+        expect(page).to have_content('Alberto Porras')
+      end
+    end
   end
 
   feature 'Index', search: true  do
@@ -116,7 +145,6 @@ feature 'Campaigns', js: true do
     end
 
     scenario 'allows the user to edit the campaign' do
-      campaign = create(:campaign, company: company)
       visit campaign_path(campaign)
 
       within('.links-data') { click_js_button 'Edit Campaign' }
@@ -134,7 +162,6 @@ feature 'Campaigns', js: true do
 
     scenario 'should be able to assign areas to the campaign' do
       Kpi.create_global_kpis
-      campaign = create(:campaign, company: company)
       area = create(:area, name: 'San Francisco Area', company: company)
       area2 = create(:area, name: 'Los Angeles Area', company: company)
       visit campaign_path(campaign)
@@ -173,7 +200,6 @@ feature 'Campaigns', js: true do
 
     scenario 'should be able to deactivate places from areas assigned to the campaign' do
       Kpi.create_global_kpis
-      campaign = create(:campaign, company: company)
       area = create(:area, name: 'San Francisco Area', company: company)
       place1 = create(:place, name: 'One place name')
       place2 = create(:place, name: 'Another place name')
@@ -204,7 +230,6 @@ feature 'Campaigns', js: true do
 
     scenario 'should be able to include places to areas assigned to the campaign' do
       Kpi.create_global_kpis
-      campaign = create(:campaign, company: company)
       area = create(:area, name: 'San Francisco', company: company)
 
       campaign.areas << [area]
@@ -656,4 +681,18 @@ feature 'Campaigns', js: true do
       end
     end
   end
+
+  feature 'admin user', js: true do
+    it_behaves_like 'a user that can add staff to campaigns'
+  end
+
+  feature 'non admin user', js: true do
+    let(:role) { create(:non_admin_role, company: company) }
+
+    it_should_behave_like 'a user that can add staff to campaigns' do
+      before { company_user.campaigns << campaign }
+      let(:permissions) { [[:show, 'Campaign'], [:view_staff, 'Campaign'], [:add_staff, 'Campaign']] }
+    end
+  end
+
 end
