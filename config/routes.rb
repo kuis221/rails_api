@@ -65,6 +65,10 @@ Brandscopic::Application.routes.draw do
           end
         end
 
+        resources :areas, only: [:index] do
+          get :cities, on: :member
+        end
+
         resources :brands, only: [:index] do
           get :marques, on: :member
         end

@@ -51,3 +51,25 @@ class SurveyResultsValidator < Apipie::Validator::BaseValidator
     'Must be a list of answers [id, answer].'
   end
 end
+
+class IntegerValidator < Apipie::Validator::BaseValidator
+  def initialize(param_description, argument)
+    super(param_description)
+    @type = argument
+  end
+
+  def validate(value)
+    return true if value.blank?
+    !!(value.to_s =~ /^[-+]?[0-9]+$/)
+  end
+
+  def self.build(param_description, argument, options, block)
+    if argument == Integer || argument == Fixnum
+      self.new(param_description, argument)
+    end
+  end
+
+  def description
+    "Must be #{@type}."
+  end
+end

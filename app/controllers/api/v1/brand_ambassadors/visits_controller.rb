@@ -31,9 +31,9 @@ module Api
           param :visit, Hash, required: true, action_aware: true do
             param :start_date, String, required: true, desc: "Visit's start date. Should be in format MM/DD/YYYY."
             param :end_date, String, required: true, desc: "Visit's end date. Should be in format MM/DD/YYYY."
-            param :company_user_id, :number, required: true, desc: 'Company User ID'
-            param :campaign_id, :number, required: true, desc: 'Campaign ID'
-            param :area_id, :number, desc: 'Area ID'
+            param :company_user_id, Integer, required: true, desc: 'Company User ID'
+            param :campaign_id, Integer, allow_nil: true, required: true, desc: 'Campaign ID'
+            param :area_id, Integer, desc: 'Area ID'
             param :city, String, desc: 'City name'
             param :visit_type, ::BrandAmbassadors::Visit::VISIT_TYPE_OPTIONS.values, required: true, desc: 'Visit Type key'
             param :description, String, desc: "Visit's description"
@@ -48,7 +48,7 @@ module Api
         param :campaign, Array, desc: 'A list of Campaign ids to filter the results'
         param :area, Array, desc: 'A list of Area ids to filter the results'
         param :city, Array, desc: 'A list of City ids to filter the results'
-        param :page, :number, desc: 'The number of the page, Default: 1'
+        param :page, Integer, desc: 'The number of the page, Default: 1'
         description <<-EOS
           Returns a list of visits filtered by the given params.
 
@@ -151,7 +151,7 @@ module Api
         end
 
         api :GET, '/api/v1/brand_ambassadors/visits/:id', 'Return a visit\'s details'
-        param :id, :number, required: true, desc: 'Visit ID'
+        param :id, Integer, required: true, desc: 'Visit ID'
         description <<-EOS
         Returns the event's details, including the actions that a user can perform on this
         event according to the user's permissions and the KPIs that are enabled for the event's campaign.
@@ -316,7 +316,7 @@ module Api
         end
 
         api :GET, '/api/v1/brand_ambassadors/visits/:id/events', 'Get a list of events for a visit'
-        param :id, :number, required: true, desc: "The visit's ID."
+        param :id, Integer, required: true, desc: "The visit's ID."
         description <<-EOS
           Returns a list of the events for a visit.
 

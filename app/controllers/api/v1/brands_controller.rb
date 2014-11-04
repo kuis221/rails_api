@@ -20,7 +20,7 @@ class Api::V1::BrandsController < Api::V1::ApiController
   description <<-EOS
     Returns a list of brands sorted by name. Only those brands that are accessible for the user will be returned.
 
-    Each brand item have the followign attributes:
+    Each brand item have the following attributes:
 
     * *id*: the brand's ID
     * *name*: the brand's name
@@ -57,7 +57,7 @@ class Api::V1::BrandsController < Api::V1::ApiController
   description <<-EOS
     Returns a list of the valid marques for a brand.
 
-    Each marque item have the followign attributes:
+    Each marque item have the following attributes:
 
     * *id*: the marque's ID
     * *name*: the marque's name

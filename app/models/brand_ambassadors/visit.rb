@@ -65,6 +65,8 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
   validates :visit_type, presence: true
   validates :campaign, presence: true
 
+  validate :valid_campaign?
+
   searchable if: :active do
     integer :id, stored: true
     integer :company_id
@@ -182,5 +184,12 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
       order_by(params[:sorting] || :start_date, params[:sorting_dir] || :asc)
       paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
     end
+  end
+
+  protected
+
+  def valid_campaign?
+    return unless campaign.present? && campaign.company_id != company_id
+    errors.add :campaign_id, :invalid
   end
 end
