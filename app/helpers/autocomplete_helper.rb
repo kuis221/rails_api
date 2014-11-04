@@ -2,7 +2,20 @@ module AutocompleteHelper
   # Autocomplete helper methods
   def autocomplete_buckets(list)
     search_classes = list.values.flatten
-    search = Sunspot.search(search_classes) do
+    search_classes_options = {}
+    filter_settings = current_company_user.filter_settings.find_or_initialize_by(apply_to: autocomplete_filter_settings_scope)
+    search_classes.each do |klass|
+      options = filter_settings.filter_settings_for(klass, format: :string)
+      if options.nil?
+        search_classes_options[klass] = ['Active']
+      elsif options.any?
+        search_classes_options[klass] = options.map(&:capitalize)
+      end
+    end
+
+    return [] unless search_classes_options.any?
+
+    search = Sunspot.search(search_classes_options.keys) do
       keywords(params[:q]) do
         fields(:name)
         highlight :name
@@ -11,12 +24,21 @@ module AutocompleteHelper
         limit 5
       end
       with(:company_id, [-1, current_company.id])
-      with(:status, ['Active'])
+
+      any_of do
+        search_classes_options.each do |klass, options|
+          all_of do
+            with :class, klass
+            with :status, options
+          end
+        end
+      end
     end
 
     @autocomplete_buckets ||= list.map do |bucket_name, klasess|
-      build_bucket(search, bucket_name, klasess)
-    end
+      included_klasses = klasess.select { |k| search_classes_options.key?(k) }
+      build_bucket(search, bucket_name, included_klasses) if included_klasses.any?
+    end.compact
   end
 
   def build_bucket(search, bucket_name, klasess)
@@ -31,6 +53,15 @@ module AutocompleteHelper
   end
 
   def get_bucket_results(results)
-    results.map { |x| { label: (x.highlight(:name).nil? ? x.stored(:name) : x.highlight(:name).format { |word| "<i>#{word}</i>" }), value: x.primary_key, type: x.class_name.underscore.downcase } }
+    results.map do |x|
+      {
+        label: (x.highlight(:name).nil? ? x.stored(:name) : x.highlight(:name).format { |word| "<i>#{word}</i>" }),
+        value: x.primary_key, type: x.class_name.underscore.downcase
+      }
+    end
+  end
+
+  def autocomplete_filter_settings_scope
+    params[:apply_to] || controller_name
   end
 end

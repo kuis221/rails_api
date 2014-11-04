@@ -1,16 +1,16 @@
 require 'rails_helper'
 
 describe AreasController, type: :controller, search: true do
-  before(:each) do
-    @user = sign_in_as_user
-    @company = @user.companies.first
-  end
+  let(:user) { sign_in_as_user }
+  let(:company) { user.companies.first }
 
-  let(:area) { create(:area, company: @company) }
+  before { user }
+
+  let(:area) { create(:area, company: company) }
 
   describe "GET 'autocomplete'" do
     it 'should return the areas in the Area Bucket' do
-      t = create(:area, name: 'Test Area', description: 'Test Area description', company_id: @company.id)
+      t = create(:area, name: 'Test Area', description: 'Test Area description', company_id: company.id)
       Sunspot.commit
 
       get 'autocomplete', q: 'te'

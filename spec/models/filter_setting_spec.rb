@@ -19,12 +19,28 @@ describe FilterSetting, type: :model do
   it { is_expected.to validate_numericality_of(:company_user_id) }
 
   describe '#filter_settings_for' do
-    it 'should return the correct array of results depending on stored settings' do
-      filter_setting = create(:filter_setting, company_user_id: 1, apply_to: 'events', settings: '["campaigns_events_active", "brands_events_active", "brands_events_inactive", "users_events_active"]')
-      expect(filter_setting.filter_settings_for('Campaigns', 'events', true)).to match_array ['active']
-      expect(filter_setting.filter_settings_for('Brands', 'events')).to match_array [true, false]
-      expect(filter_setting.filter_settings_for('Users', 'events')).to match_array [true]
-      expect(filter_setting.filter_settings_for('Brand Portfolios', 'events')).to match_array []
+    let(:filter_setting) do
+        create(:filter_setting, company_user_id: 1, apply_to: 'events',
+               settings: '["campaigns_events_present", "campaigns_events_active", '\
+                          '"brands_events_present", "brands_events_active", "brands_events_inactive", '\
+                          '"company_users_events_present"]')
+    end
+
+    it 'returns the selected items' do
+      expect(filter_setting.filter_settings_for(Campaign)).to match_array [true]
+      expect(filter_setting.filter_settings_for(Brand)).to match_array [true, false]
+
+      # With format as string
+      expect(filter_setting.filter_settings_for(Campaign, format: :string)).to match_array ['active']
+      expect(filter_setting.filter_settings_for(Brand, format: :string)).to match_array ['active', 'inactive']
+    end
+
+    it 'returns nil for models that does not have settings yet' do
+      expect(filter_setting.filter_settings_for(BrandPortfolio)).to be_nil
+    end
+
+    it 'returns empty when user have not selected any option' do
+      expect(filter_setting.filter_settings_for(CompanyUser)).to be_empty
     end
   end
 end

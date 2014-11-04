@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe BrandPortfoliosController, type: :controller, search: true do
+describe BrandsController, type: :controller, search: true do
   let(:user) { sign_in_as_user }
   let(:company) { user.companies.first }
   let(:company_user) { user.current_company_user }
@@ -8,7 +8,7 @@ describe BrandPortfoliosController, type: :controller, search: true do
   before { user }
 
   describe "GET 'autocomplete'" do
-    it 'should return the correct buckets in the right order' do
+    it 'returns the correct buckets in the right order' do
       Sunspot.commit
       get 'autocomplete'
       expect(response).to be_success
@@ -17,16 +17,20 @@ describe BrandPortfoliosController, type: :controller, search: true do
       expect(buckets.map { |b| b['label'] }).to eq(['Brands'])
     end
 
-    it 'should return the brands in the Brands Bucket' do
-      brand = create(:brand, name: 'Cacique', company_id: company)
+    it 'returns the campaigns in the Campaigns Bucket' do
+      brand = create(:brand, name: 'Cacique para todos', company: company)
       Sunspot.commit
 
       get 'autocomplete', q: 'cac'
       expect(response).to be_success
 
       buckets = JSON.parse(response.body)
-      brands_bucket = buckets.select { |b| b['label'] == 'Brands' }.first
-      expect(brands_bucket['value']).to eq([{ 'label' => '<i>Cac</i>ique', 'value' => brand.id.to_s, 'type' => 'brand' }])
+      campaigns_bucket = buckets.select { |b| b['label'] == 'Brands' }.first
+      expect(campaigns_bucket['value']).to eq([
+        {
+          'label' => '<i>Cac</i>ique para todos',
+          'value' => brand.id.to_s, 'type' => 'brand'
+        }])
     end
   end
 
@@ -37,7 +41,7 @@ describe BrandPortfoliosController, type: :controller, search: true do
       expect(response).to be_success
 
       filters = JSON.parse(response.body)
-      expect(filters['filters'].map { |b| b['label'] }).to eq(['Brands', 'Active State'])
+      expect(filters['filters'].map { |b| b['label'] }).to eq(['Active State'])
     end
   end
 end

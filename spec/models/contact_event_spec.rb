@@ -35,14 +35,16 @@ describe ContactEvent, type: :model do
     end
 
     it 'should return the street_address from the user' do
-      contact_event = create(:contact_event, contactable: create(:company_user, user: create(:user, street_address: 'this is the street address')))
+      contact_event = create(:contact_event,
+                             contactable: create(:company_user,
+                                                 user: create(:user, street_address: 'this is the street address')))
       expect(contact_event.street_address).to eq('this is the street address')
     end
   end
 
   describe '#build_contactable' do
     it 'should build a new contact' do
-      contact_event = ContactEvent.new
+      contact_event = described_class.new
       expect(contact_event.contactable).to be_nil
       contact_event.build_contactable
       expect(contact_event.contactable).to be_a(Contact)

@@ -1,17 +1,15 @@
 require 'rails_helper'
 
 describe CampaignsController, type: :controller, search: true do
-  before(:each) do
-    @user = sign_in_as_user
-    @company = @user.current_company
-    @company_user = @user.current_company_user
-    Sunspot.commit
-  end
+  let(:user) { sign_in_as_user }
+  let(:company) { user.companies.first }
+  let(:company_user) { user.current_company_user }
+
+  before { user }
 
   describe "GET 'autocomplete'" do
 
     it 'should return the correct buckets in the right order' do
-      Sunspot.commit
       get 'autocomplete'
       expect(response).to be_success
 
@@ -20,7 +18,7 @@ describe CampaignsController, type: :controller, search: true do
     end
 
     it 'should return the users in the People Bucket' do
-      user = create(:user, first_name: 'Guillermo', last_name: 'Vargas', company_id: @company.id)
+      user = create(:user, first_name: 'Guillermo', last_name: 'Vargas', company_id: company.id)
       company_user = user.company_users.first
       Sunspot.commit
 
@@ -33,7 +31,7 @@ describe CampaignsController, type: :controller, search: true do
     end
 
     it 'should return the teams in the People Bucket' do
-      team = create(:team, name: 'Spurs', company_id: @company.id)
+      team = create(:team, name: 'Spurs', company_id: company.id)
       Sunspot.commit
 
       get 'autocomplete', q: 'sp'
@@ -45,8 +43,8 @@ describe CampaignsController, type: :controller, search: true do
     end
 
     it 'should return the teams and users in the People Bucket' do
-      team = create(:team, name: 'Valladolid', company_id: @company.id)
-      user = create(:user, first_name: 'Guillermo', last_name: 'Vargas', company_id: @company.id)
+      team = create(:team, name: 'Valladolid', company_id: company.id)
+      user = create(:user, first_name: 'Guillermo', last_name: 'Vargas', company_id: company.id)
       company_user = user.company_users.first
       Sunspot.commit
 
@@ -55,11 +53,18 @@ describe CampaignsController, type: :controller, search: true do
 
       buckets = JSON.parse(response.body)
       people_bucket = buckets.select { |b| b['label'] == 'People' }.first
-      expect(people_bucket['value']).to eq([{ 'label' => '<i>Va</i>lladolid', 'value' => team.id.to_s, 'type' => 'team' }, { 'label' => 'Guillermo <i>Va</i>rgas', 'value' => company_user.id.to_s, 'type' => 'company_user' }])
+      expect(people_bucket['value']).to eq([
+        {
+          'label' => '<i>Va</i>lladolid',
+          'value' => team.id.to_s,
+          'type' => 'team' },
+        { 'label' => 'Guillermo <i>Va</i>rgas',
+          'value' => company_user.id.to_s,
+          'type' => 'company_user' }])
     end
 
     it 'should return the campaigns in the Campaigns Bucket' do
-      campaign = create(:campaign, name: 'Cacique para todos', company_id: @company.id)
+      campaign = create(:campaign, name: 'Cacique para todos', company_id: company.id)
       Sunspot.commit
 
       get 'autocomplete', q: 'cac'
@@ -71,7 +76,7 @@ describe CampaignsController, type: :controller, search: true do
     end
 
     it 'should return the brands in the Brands Bucket' do
-      brand = create(:brand, name: 'Cacique', company_id: @company)
+      brand = create(:brand, name: 'Cacique', company_id: company)
       Sunspot.commit
 
       get 'autocomplete', q: 'cac'
@@ -84,7 +89,7 @@ describe CampaignsController, type: :controller, search: true do
 
     it 'should return the venues in the Places Bucket' do
       expect_any_instance_of(Place).to receive(:fetch_place_data).and_return(true)
-      venue = create(:venue, company_id: @company.id, place: create(:place, name: 'Motel Paraiso'))
+      venue = create(:venue, company_id: company.id, place: create(:place, name: 'Motel Paraiso'))
       Sunspot.commit
 
       get 'autocomplete', q: 'mot'
@@ -115,7 +120,7 @@ describe CampaignsController, type: :controller, search: true do
     end
 
     it 'should return the kpi if there is one with the same name' do
-      create(:kpi, name: 'Number Events', company: @company)
+      create(:kpi, name: 'Number Events', company: company)
       Sunspot.commit
       get 'find_similar_kpi', name: 'Number Events'
       results = JSON.parse(response.body)
@@ -125,7 +130,7 @@ describe CampaignsController, type: :controller, search: true do
     end
 
     it 'should return the kpi if there is one with a similar name' do
-      create(:kpi, name: 'Number Events', company: @company)
+      create(:kpi, name: 'Number Events', company: company)
       Sunspot.commit
       get 'find_similar_kpi', name: 'Number of Events'
       results = JSON.parse(response.body)
@@ -135,7 +140,7 @@ describe CampaignsController, type: :controller, search: true do
     end
 
     it 'should return the kpi if there is one with the same word but in singular' do
-      create(:kpi, name: 'Events', company: @company)
+      create(:kpi, name: 'Events', company: company)
       Sunspot.commit
       get 'find_similar_kpi', name: 'Event'
       results = JSON.parse(response.body)

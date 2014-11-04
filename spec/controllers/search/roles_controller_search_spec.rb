@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 describe RolesController, type: :controller, search: true do
-  before(:each) do
-    @user = sign_in_as_user
-    @company = @user.companies.first
-    @company_user = @user.current_company_user
-  end
+  let(:user) { sign_in_as_user }
+  let(:company) { user.companies.first }
+  let(:company_user) { user.current_company_user }
+
+  before { user }
 
   describe "GET 'autocomplete'" do
     it 'should return the correct buckets in the right order' do
@@ -18,7 +18,7 @@ describe RolesController, type: :controller, search: true do
     end
 
     it 'should return the roles in the Roles Bucket' do
-      role = create(:role, name: 'Role 1', company_id: @company.id)
+      role = create(:role, name: 'Role 1', company: company)
       Sunspot.commit
 
       get 'autocomplete', q: 'rol'

@@ -38,22 +38,14 @@ feature 'Filter Settings', search: true, js: true do
 
       visit events_path
 
-      within '#collection-list-filters' do
-        expect(page).to have_content('CAMPAIGNS')
-        expect(page).to have_content('Campaign 1')
-        expect(page).to have_content('Campaign 2')
-        expect(page).to have_content('BRANDS')
-        expect(page).to have_content('Brand 1')
-        expect(page).to_not have_content('Brand 2')
-        expect(page).to have_content('PEOPLE')
-        expect(page).to_not have_content('Eugenio Derbez')
-        expect(page).to have_content('Mario Moreno')
-        expect(page).to have_content('Roberto Gomez')
-        expect(page).to have_content('Test User')
-        expect(page).to have_content('EVENT STATUS')
-        expect(page).to have_content('ACTIVE STATE')
-        click_js_link 'Filter Settings'
-      end
+      expect(page).to have_filter_section('CAMPAIGNS', options: ['Campaign 1', 'Campaign 2'])
+
+      expect(page).to have_filter_section('BRANDS', options: ['Brand 1'])
+
+      expect(page).to have_filter_section('PEOPLE',
+                                          options: ['Mario Moreno', 'Roberto Gomez', 'Test User'])
+
+      click_js_link 'Filter Settings'
 
       within visible_modal do
         expect(page).to have_content('CAMPAIGNS')
@@ -64,16 +56,16 @@ feature 'Filter Settings', search: true, js: true do
         unicheck('Active') # Unchecks all active checkboxes
         click_button 'Done'
       end
+      ensure_modal_was_closed
 
-      within '#collection-list-filters' do
-        # checks that the filter sections were hidden
-        expect(page).to_not have_content('CAMPAIGNS')
-        expect(page).to_not have_content('BRANDS')
-        expect(page).to_not have_content('PEOPLE')
-        expect(page).to have_content('EVENT STATUS')
-        expect(page).to have_content('ACTIVE STATE')
-        click_js_link 'Filter Settings'
-      end
+      # checks that the filter sections were hidden
+      expect(page).not_to have_filter_section('CAMPAIGNS')
+      expect(page).not_to have_filter_section('BRANDS')
+      expect(page).not_to have_filter_section('PEOPLE')
+      expect(page).to have_filter_section('EVENT STATUS')
+      expect(page).to have_filter_section('ACTIVE STATE')
+
+      click_js_link 'Filter Settings'
 
       within visible_modal do
         unicheck('Inactive') # Checks all inactive checkboxes
@@ -81,19 +73,14 @@ feature 'Filter Settings', search: true, js: true do
       end
       ensure_modal_was_closed
 
-      within '#collection-list-filters' do
-        expect(page).to_not have_content('CAMPAIGNS')
-        expect(page).to have_content('BRANDS')
-        expect(page).to_not have_content('Brand 1')
-        expect(page).to have_content('Brand 2')
-        expect(page).to have_content('PEOPLE')
-        expect(page).to have_content('Eugenio Derbez')
-        expect(page).to_not have_content('Mario Moreno')
-        expect(page).to_not have_content('Roberto Gomez')
-        expect(page).to_not have_content('Test User')
-        expect(page).to have_content('EVENT STATUS')
-        expect(page).to have_content('ACTIVE STATE')
-      end
+      expect(page).not_to have_filter_section('CAMPAIGNS')
+      expect(page).to have_filter_section('EVENT STATUS')
+      expect(page).to have_filter_section('ACTIVE STATE')
+
+      expect(page).to have_filter_section('BRANDS', options: ['Brand 2'])
+
+      expect(page).to have_filter_section('PEOPLE', options: ['Eugenio Derbez'])
+
     end
   end
 end

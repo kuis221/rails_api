@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 describe Results::PhotosController, type: :controller, search: true do
-  before(:each) do
-    @user = sign_in_as_user
-    @company = @user.companies.first
-    @company_user = @user.current_company_user
-  end
+  let(:user) { sign_in_as_user }
+  let(:company) { user.companies.first }
+  let(:company_user) { user.current_company_user }
+
+  before { user }
 
   describe "GET 'index'" do
     it 'should return http success' do
@@ -33,7 +33,7 @@ describe Results::PhotosController, type: :controller, search: true do
     end
 
     it 'should return the campaigns in the Campaigns Bucket' do
-      campaign = create(:campaign, name: 'Cacique para todos', company_id: @company.id)
+      campaign = create(:campaign, name: 'Cacique para todos', company_id: company.id)
       Sunspot.commit
 
       get 'autocomplete', q: 'cac'
@@ -45,7 +45,7 @@ describe Results::PhotosController, type: :controller, search: true do
     end
 
     it 'should return the brands in the Brands Bucket' do
-      brand = create(:brand, name: 'Cacique', company_id: @company)
+      brand = create(:brand, name: 'Cacique', company_id: company)
       Sunspot.commit
 
       get 'autocomplete', q: 'cac'
@@ -58,7 +58,7 @@ describe Results::PhotosController, type: :controller, search: true do
 
     it 'should return the venues in the Places Bucket' do
       expect_any_instance_of(Place).to receive(:fetch_place_data).and_return(true)
-      venue = create(:venue, company_id: @company.id, place: create(:place, name: 'Motel Paraiso'))
+      venue = create(:venue, company_id: company.id, place: create(:place, name: 'Motel Paraiso'))
       Sunspot.commit
 
       get 'autocomplete', q: 'mot'
@@ -72,7 +72,7 @@ describe Results::PhotosController, type: :controller, search: true do
 
   describe "GET 'filters'" do
     it 'should return the correct buckets' do
-      create(:custom_filter, owner: @company_user, group: 'SAVED FILTERS', apply_to: 'results_photos')
+      create(:custom_filter, owner: company_user, group: 'SAVED FILTERS', apply_to: 'results_photos')
       Sunspot.commit
       get 'filters', apply_to: :results_photos, format: :json
       expect(response).to be_success
@@ -83,7 +83,7 @@ describe Results::PhotosController, type: :controller, search: true do
   end
 
   describe "GET 'download'" do
-    let(:attached_asset) { create(:attached_asset, attachable: create(:event, company: @company)) }
+    let(:attached_asset) { create(:attached_asset, attachable: create(:event, company: company)) }
     it 'should download a photo' do
       xhr :post, 'new_download', photos: [attached_asset.id], format: :js
       expect(response).to render_template('results/photos/_download')

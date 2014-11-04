@@ -277,6 +277,7 @@ en:
         brand_ambassadors/visit: "Edit Visit"
         brand_ambassadors/document: "Edit Document"
         document_folder: "Edit Folder"
+        filter_setting: "Filtering options"
 
   form_builder:
     modules:

@@ -59,9 +59,9 @@ describe CompanyUser, type: :model do
       other_team = create(:team)
       users.each { |u| team.users << u }
       other_users.each { |u| other_team.users << u }
-      expect(CompanyUser.by_teams(team).all).to match_array(users)
-      expect(CompanyUser.by_teams(other_team).all).to match_array(other_users)
-      expect(CompanyUser.by_teams([team, other_team]).all).to match_array(users + other_users)
+      expect(described_class.by_teams(team).all).to match_array(users)
+      expect(described_class.by_teams(other_team).all).to match_array(other_users)
+      expect(described_class.by_teams([team, other_team]).all).to match_array(users + other_users)
     end
   end
 
@@ -78,9 +78,9 @@ describe CompanyUser, type: :model do
       other_event = create(:event, company: event.company)
       users.each { |u| event.users << u }
       other_users.each { |u| other_event.users << u }
-      expect(CompanyUser.by_events(event).all).to match_array(users)
-      expect(CompanyUser.by_events(other_event).all).to match_array(other_users)
-      expect(CompanyUser.by_events([event, other_event]).all).to match_array(users + other_users)
+      expect(described_class.by_events(event).all).to match_array(users)
+      expect(described_class.by_events(other_event).all).to match_array(other_users)
+      expect(described_class.by_events([event, other_event]).all).to match_array(users + other_users)
     end
   end
 
@@ -202,7 +202,7 @@ describe CompanyUser, type: :model do
   describe '#allow_notification?' do
     let(:user) do
       create(:company_user, company_id: 1,
-                                        role: create(:role, is_admin: false))
+                            role: create(:role, is_admin: false))
     end
 
     it 'should return false if the user is not allowed to receive a notification' do
@@ -241,19 +241,19 @@ describe CompanyUser, type: :model do
   describe '#with_notifications' do
     it 'should return empty if no users have the any of the notifications enabled' do
       create(:company_user)
-      expect(CompanyUser.with_notifications(['some_notification'])).to be_empty
+      expect(described_class.with_notifications(['some_notification'])).to be_empty
     end
 
     it 'should return all users with any of the notifications enabled' do
       user1 = create(:company_user,
-                                 notifications_settings: %w(notification2 notification1))
+                     notifications_settings: %w(notification2 notification1))
 
       user2 = create(:company_user,
-                                 notifications_settings: %w(notification3 notification4 notification1))
+                     notifications_settings: %w(notification3 notification4 notification1))
 
-      expect(CompanyUser.with_notifications(['notification2'])).to match_array [user1]
+      expect(described_class.with_notifications(['notification2'])).to match_array [user1]
 
-      expect(CompanyUser.with_notifications(['notification1'])).to match_array [user1, user2]
+      expect(described_class.with_notifications(['notification1'])).to match_array [user1, user2]
     end
   end
 
@@ -310,11 +310,15 @@ describe CompanyUser, type: :model do
 
     it 'should include only custom filters for events' do
       expect(company_user.filter_settings_for('Brands', 'events')).to match_array [true]
-      filter_setting = create(:filter_setting, company_user_id: company_user.to_param, apply_to: 'events', settings: '["campaigns_events_active", "brands_events_active", "brands_events_inactive", "users_events_active"]')
-      expect(company_user.filter_settings_for('Campaigns', 'events', true)).to match_array ['active']
-      expect(company_user.filter_settings_for('Brands', 'events')).to match_array [true, false]
-      expect(company_user.filter_settings_for('Users', 'events')).to match_array [true]
-      expect(company_user.filter_settings_for('Brand Portfolios', 'events')).to match_array []
+      create(:filter_setting,
+             company_user_id: company_user.to_param, apply_to: 'events',
+             settings: %w(campaigns_events_present campaigns_events_active
+                          brands_events_present brands_events_active brands_events_inactive
+                          users_events_present users_events_active))
+      expect(company_user.filter_settings_for(Campaign, 'events', format: :string)).to match_array ['active']
+      expect(company_user.filter_settings_for(Brand, 'events')).to match_array [true, false]
+      expect(company_user.filter_settings_for(CompanyUser, 'events')).to match_array [true]
+      expect(company_user.filter_settings_for(BrandPortfolio, 'events')).to match_array [true]
     end
   end
 

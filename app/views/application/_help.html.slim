@@ -54,12 +54,12 @@
               subject: ''
             },
             customer: {
-              company: '',
-              desc: '',
-              first_name: '',
-              last_name: '',
+              company: '#{current_company.name }',
+              desc: 'The user clicked the help link from #{request.original_url}',
+              first_name: '#{current_user.first_name }',
+              last_name: '#{current_user.last_name }',
               locale_code: '',
-              title: ''
+              title: '#{current_company_user.role_name }'
             }
           }
         }).render()

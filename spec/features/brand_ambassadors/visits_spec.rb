@@ -305,7 +305,7 @@ feature 'Brand Ambassadors Visits' do
       year = Time.now.strftime('%Y')
       month_name = Time.now.strftime('%B')
       ba_visit1 = create(:brand_ambassadors_visit, company: company,
-                    start_date: "#{month_number}/15/#{year}", end_date: "#{month_number}/16/#{year}",
+                    start_date: "#{month_number}/15/#{year}", end_date: "#{month_number}/15/#{year}",
                     visit_type: 'market_visit', description: 'Visit1 description',
                     city: 'New York', area: area,
                     company_user: company_user, active: true, campaign: campaign)

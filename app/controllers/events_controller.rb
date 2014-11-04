@@ -236,6 +236,7 @@ class EventsController < FilteredController
   def search_params
     @search_params ||= begin
       super
+
       if request.format.xls?
         @search_params[:sorting] = 'start_at'
         @search_params[:sorting_dir] = 'asc'

@@ -21,7 +21,8 @@ $.widget 'nmk.filteredList', {
 		calendarHighlights: null,
 		scope: null,
 		applyTo: null,
-		fixListHeight: true
+		fixListHeight: true,
+		allowCustomizeFilters: true
 	},
 
 	_create: () ->
@@ -71,18 +72,16 @@ $.widget 'nmk.filteredList', {
 
 			$('<input class="btn btn-cancel" id="cancel-save-filters" type="reset" value="Reset">').on 'click', (e) =>
 				@_cleanFilters()
+		)
 
-			$('<a class="settings-for-filters" title="Filter Settings" href="#"><span class="icon-gear"></span></a>')
-				.on 'click', (e) =>
+		if @options.allowCustomizeFilters
+			@form.append $('<a class="settings-for-filters" title="Filter Settings" href="#"><span class="icon-gear"></span></a>').on 'click', (e) =>
 					e.preventDefault()
 					e.stopPropagation()
-					$.get '/filter_settings/new.js', {apply_to: @options.applyTo, filters_labels: @filtersLabels}
-		)
+					$.get '/filter_settings/new.js', {apply_to: @options.applyTo}
 
 		$(document).on 'filter-box:change', (e) =>
 			@reloadFilters()
-
-		@filtersLabels = []
 
 		@filtersPopup = false
 
@@ -181,14 +180,7 @@ $.widget 'nmk.filteredList', {
 	setFilters: (filters) ->
 		$.loadingContent += 1
 		@formFilters.html('')
-		@filtersLabels = []
 		for filter in filters
-			if filter.label is 'People'
-				@filtersLabels.push 'Users'
-				@filtersLabels.push 'Teams'
-			else
-				@filtersLabels.push filter.label
-
 			if filter.items? and (filter.items.length > 0 or (filter.top_items? and filter.top_items.length))
 				@addFilterSection filter
 			else if filter.max? and filter.min?

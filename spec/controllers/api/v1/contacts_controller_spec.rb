@@ -111,11 +111,8 @@ describe Api::V1::ContactsController, type: :controller do
     end
 
     it 'should validate required fields' do
-      expect do
-        post :create, contact: {
-        }, format: :json
-        expect(response).to be_success
-      end.to raise_error(Apipie::ParamMissing)
+      post :create, contact: {}, format: :json
+      expect(response.code).to eql('400')
       expect(response).to_not render_template('show')
     end
 

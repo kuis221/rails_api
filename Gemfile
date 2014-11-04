@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 ruby ENV['CUSTOM_RUBY_VERSION'] || '2.1.3'
 
-gem 'rails', '4.1.5'
+gem 'rails', '4.1.7'
 gem 'rails-observers'
 gem 'activerecord-session_store'
 gem 'rack-timeout'
@@ -63,6 +63,7 @@ group :development do
   gem 'annotate', '>=2.5.0'
   gem 'quiet_assets', '>= 1.0.1'
   gem 'oink'
+  gem 'pry-rails'
 end
 
 # Gems that are only required for the web process, to prevent
@@ -94,6 +95,8 @@ group :test, :development do
   gem 'faker'
   gem 'rubocop', require: false
   gem 'rubocop-rspec', require: false
+  gem 'pry-rescue'
+  gem 'pry-stack_explorer'
 end
 
 group :test do

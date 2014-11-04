@@ -94,18 +94,22 @@ describe Kpi, type: :model do
       kpi2 = create(:kpi, company: company)
       campaigns = create_list(:campaign, 2, company: company)
       expect do
-        campaigns.each { |c| c.add_kpi(kpi1); c.add_kpi(kpi2); }
+        campaigns.each do |c|
+          c.add_kpi(kpi1)
+          c.add_kpi(kpi2)
+        end
       end.to change(FormField, :count).by(4)
 
       expect do
         expect do
-          Kpi.where(id: [kpi1.id, kpi2.id]).merge_fields('name' => 'New Name',
-                                                         'description' => 'a description',
-                                                         'master_kpi' => { campaigns[0].id.to_s => kpi1.id, campaigns[1].id.to_s => kpi1.id                                                })
+          described_class.where(id: [kpi1.id, kpi2.id]).merge_fields(
+            'name' => 'New Name',
+            'description' => 'a description',
+            'master_kpi' => { campaigns[0].id.to_s => kpi1.id, campaigns[1].id.to_s => kpi1.id })
         end.to change(FormField, :count).by(-2)
-      end.to change(Kpi, :count).by(-1)
+      end.to change(described_class, :count).by(-1)
 
-      kpi = Kpi.all.last # Get the resulting KPI
+      kpi = described_class.all.last # Get the resulting KPI
       expect(kpi.name).to eq('New Name')
       expect(kpi.description).to eq('a description')
     end
@@ -132,9 +136,10 @@ describe Kpi, type: :model do
       end.to change(FormFieldResult, :count).by(2)
 
       expect do
-        Kpi.where(id: [kpi1.id, kpi2.id]).merge_fields('name' => 'New Name',
-                                                       'description' => 'a description',
-                                                       'master_kpi' => { campaign.id.to_s => kpi1.id                                                })
+        described_class.where(id: [kpi1.id, kpi2.id]).merge_fields(
+          'name' => 'New Name',
+          'description' => 'a description',
+          'master_kpi' => { campaign.id.to_s => kpi1.id })
       end.to change(FormFieldResult, :count).by(-1)
 
       event.reload
@@ -169,10 +174,11 @@ describe Kpi, type: :model do
 
       expect do
         expect do
-          Kpi.where(id: [kpi1.id, kpi2.id]).merge_fields('name' => 'New Name',
-                                                         'description' => 'a description',
-                                                         'master_kpi' => { campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id                                                })
-        end.to change(Kpi, :count).by(-1)
+          described_class.where(id: [kpi1.id, kpi2.id]).merge_fields(
+            'name' => 'New Name',
+            'description' => 'a description',
+            'master_kpi' => { campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id })
+        end.to change(described_class, :count).by(-1)
       end.to_not change(FormFieldResult, :count)
 
       event1 = Event.find(event1.id) # Load a fresh copy of the event
@@ -189,7 +195,7 @@ describe Kpi, type: :model do
       expect(field2).to eq(result.form_field)
     end
 
-    it 'should merge two kpis that are in different campaigns kpi and one campaign has both of them' do
+    it 'merges two kpis that are in different campaigns kpi and one campaign has both of them' do
       kpi1 = create(:kpi, company: company)
       kpi2 = create(:kpi, company: company)
       campaign1 = create(:campaign, company: company)
@@ -220,10 +226,11 @@ describe Kpi, type: :model do
 
       expect do
         expect do
-          Kpi.where(id: [kpi1.id, kpi2.id]).merge_fields('name' => 'New Name',
-                                                         'description' => 'a description',
-                                                         'master_kpi' => { campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id                                                })
-        end.to change(Kpi, :count).by(-1)
+          described_class.where(id: [kpi1.id, kpi2.id]).merge_fields(
+            'name' => 'New Name',
+            'description' => 'a description',
+            'master_kpi' => { campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id })
+        end.to change(described_class, :count).by(-1)
       end.to change(FormFieldResult, :count).by(-1)
 
       event1 = Event.find(event1.id) # Load a fresh copy of the event
@@ -274,11 +281,12 @@ describe Kpi, type: :model do
       expect do
         expect do
           expect do
-            Kpi.where(id: [kpi1.id, kpi2.id]).merge_fields('name' => 'New Name',
-                                                           'description' => 'a description',
-                                                           'master_kpi' => { campaign.id.to_s => kpi1.id                                                })
-          end.to change(Kpi, :count).by(-1)
-        end.to change(Kpi, :count).by(-1)
+            described_class.where(id: [kpi1.id, kpi2.id]).merge_fields(
+              'name' => 'New Name',
+              'description' => 'a description',
+              'master_kpi' => { campaign.id.to_s => kpi1.id })
+          end.to change(described_class, :count).by(-1)
+        end.to change(described_class, :count).by(-1)
       end.to change(FormFieldResult, :count).by(-1)
 
       event = Event.find(event.id)
@@ -318,10 +326,11 @@ describe Kpi, type: :model do
 
       expect do
         expect do
-          Kpi.where(id: [kpi1.id, kpi2.id]).merge_fields('name' => 'New Name',
-                                                         'description' => 'a description',
-                                                         'master_kpi' => { campaign.id.to_s => kpi2.id                                                })
-        end.to change(Kpi, :count).by(-1)
+          described_class.where(id: [kpi1.id, kpi2.id]).merge_fields(
+            'name' => 'New Name',
+            'description' => 'a description',
+            'master_kpi' => { campaign.id.to_s => kpi2.id })
+        end.to change(described_class, :count).by(-1)
       end.to change(FormFieldResult, :count).by(-1)
 
       event = Event.find(event.id)
@@ -364,10 +373,11 @@ describe Kpi, type: :model do
 
       expect do
         expect do
-          Kpi.where(id: [kpi1.id, kpi2.id]).merge_fields('name' => 'New Name',
-                                                         'description' => 'a description',
-                                                         'master_kpi' => { campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id                                                })
-        end.to change(Kpi, :count).by(-1)
+          described_class.where(id: [kpi1.id, kpi2.id]).merge_fields(
+            'name' => 'New Name',
+            'description' => 'a description',
+            'master_kpi' => { campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id })
+        end.to change(described_class, :count).by(-1)
       end.to_not change(FormFieldResult, :count)
 
       event1 = Event.find(event1.id) # Load a fresh copy of the event
@@ -411,10 +421,11 @@ describe Kpi, type: :model do
 
       expect do
         expect do
-          Kpi.where(id: [kpi1.id, kpi2.id]).merge_fields('name' => 'New Name',
-                                                         'description' => 'a description',
-                                                         'master_kpi' => { campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id                                                })
-        end.to change(Kpi, :count).by(-1)
+          described_class.where(id: [kpi1.id, kpi2.id]).merge_fields(
+            'name' => 'New Name',
+            'description' => 'a description',
+            'master_kpi' => { campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id })
+        end.to change(described_class, :count).by(-1)
       end.to_not change(FormFieldResult, :count)
 
       event1 = Event.find(event1.id) # Load a fresh copy of the event
@@ -427,7 +438,7 @@ describe Kpi, type: :model do
     end
 
     it 'should allow custom kpis with a global kpi' do
-      Kpi.create_global_kpis
+      described_class.create_global_kpis
       kpi1 = create(:kpi)
       kpi2 = create(:kpi)
       campaign1 = create(:campaign, company: company)
@@ -455,19 +466,20 @@ describe Kpi, type: :model do
 
       expect do
         expect do
-          Kpi.where(id: [kpi1.id, kpi2.id, Kpi.impressions.id]).merge_fields('name' => 'New Name',
-                                                                             'description' => 'a description',
-                                                                             'master_kpi' => { campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id                                                                    })
-        end.to change(Kpi, :count).by(-2)
+          described_class.where(id: [kpi1.id, kpi2.id, described_class.impressions.id]).merge_fields(
+            'name' => 'New Name',
+            'description' => 'a description',
+            'master_kpi' => { campaign1.id.to_s => kpi1.id, campaign2.id.to_s => kpi2.id })
+        end.to change(described_class, :count).by(-2)
       end.to_not change(FormFieldResult, :count)
 
       event1 = Event.find(event1.id) # Load a fresh copy of the event
-      result = event1.result_for_kpi(Kpi.impressions)
+      result = event1.result_for_kpi(described_class.impressions)
       result.reload
       expect(result.value).to eq('100')
 
       event2 = Event.find(event2.id) # Load a fresh copy of the event
-      result = event2.result_for_kpi(Kpi.impressions)
+      result = event2.result_for_kpi(described_class.impressions)
       result.reload
       expect(result.value).to eq('200')
     end

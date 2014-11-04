@@ -331,7 +331,7 @@ feature 'Events section' do
               expect(text).to include 'LosAngeles,CA,67890'
               expect(text).to include '10:00AM-11:00AM'
               expect(text).to include '8:00AM-9:00AM'
-              expect(text).to match(/#{month_name}#{today.strftime('%d')}/)
+              expect(text).to match(/#{month_name}#{today.strftime('%-d')}/)
             end
           end
 
@@ -601,7 +601,7 @@ feature 'Events section' do
 
           expect(page).to have_filter_section(
             title: 'PEOPLE',
-            options: ['Mario Cantinflas', 'Roberto Gomez'])
+            options: ['Mario Cantinflas', 'Roberto Gomez', user.full_name])
 
           within events_list do
             expect(page).to have_content('Campaña1')

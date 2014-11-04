@@ -1,38 +1,66 @@
-RSpec::Matchers.define :have_filter_section do |filter|
-  match do |page|
-    @errors = []
+module Capybara
+  module RSpecMatchers
+    class HaveFilterSection < Matcher
+      attr_reader :failure_message, :failure_message_when_negated
 
-    found = false
-    page.all('.form-facet-filters .accordion-group').each do |wrapper|
-      title = wrapper.all('.filter-wrapper a', text: filter[:title])
-      unless title.nil? || title.count == 0
-        found = true
-        if filter[:options].present?
-          filter[:options].each do |option|
-            if wrapper.all('ul>li', text:  option).count == 0
-              @errors.push "Option \"#{option}\" not found in #{filter[:title]} fitler"
+      def initialize(*args)
+        @args = args.count > 1 ? args.last : {}
+        @title = args[0].is_a?(Hash) ? args[0][:title] : args[0]
+      end
+
+      def matches?(actual)
+        evaluate_condition(actual, true)
+      rescue Capybara::ExpectationNotMet => e
+        @failure_message = e.message
+        return false
+      end
+
+      def does_not_match?(actual)
+        evaluate_condition(actual, false)
+      rescue Capybara::ExpectationNotMet => e
+        @failure_message_when_negated = e.message
+        return false
+      end
+
+      def evaluate_condition(page, expected)
+        found = nil
+        page.document.synchronize do
+          errors = []
+          found = false
+
+          page.all('.form-facet-filters .accordion-group').each do |wrapper|
+            title = wrapper.all('.filter-wrapper a', text: @title)
+            unless title.nil? || title.count == 0
+              found = true
+              if @args[:options].present?
+                @args[:options].each do |option|
+                  if wrapper.all('ul>li', text:  option).count == 0
+                    errors.push "Option \"#{option}\" not found in #{@title} fitler: #{wrapper.text}"
+                  end
+                end
+                options_found = wrapper.all('ul>li')
+                if options_found.count != @args[:options].count
+                  errors.push "Expected filter to have #{@args[:options].count} options, but it had #{options_found.count}"
+                end
+              end
             end
           end
+          errors.push "expected #{page.inspect} to have filter section #{@title}" unless found
+
+          if expected && (!found || errors.any?)
+            raise Capybara::ExpectationNotMet, errors.join
+          elsif !expected && found
+            raise Capybara::ExpectationNotMet, "expected #{page.inspect} to not have filter section #{@args[:title]}"
+          end
         end
+        true
       end
     end
-    @errors.push "Filter #{filter[:title]} not found" unless found
-
-    @errors.empty?
   end
+end
 
-  failure_message do |_actual|
-    @errors.join("\n")
-  end
-
-  failure_message_when_negated do |_actual|
-    @errors.join("\n")
-  end
-
-  description do
-    "has filter section for #{filter[:title]}"
-  end
-
+def have_filter_section(*args)
+  Capybara::RSpecMatchers::HaveFilterSection.new(*args)
 end
 
 RSpec::Matchers.define :have_file_in_queue do |file_name|

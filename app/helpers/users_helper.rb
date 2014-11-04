@@ -163,10 +163,12 @@ module UsersHelper
     content_tag(:label, check_box_tag('company_user[notifications_settings][]', field_id, resource.notifications_settings.include?(field_id), id: "notification_settings_#{field_id}"))
   end
 
-  def custom_filter_setting_checkbox(type, subject, label, filter_settings)
-    field_id = "#{type.gsub(/\s+/, '_').downcase}_#{subject}_#{label.downcase}"
+  def custom_filter_setting_checkbox(setting, subject, label, settings)
+    field_id = FilterSetting.setting_key(setting, subject, label)
+    checked = settings.include?(field_id)
     content_tag(:label) do
-      check_box_tag('filter_setting[settings][]', field_id, filter_settings.persisted? && filter_settings.present? ? filter_settings.settings.include?(field_id) : ('Active' == label), id: "settings_#{field_id}") + label
+      check_box_tag('filter_setting[settings][]', field_id,
+                    checked, id: "settings_#{field_id}") + label
     end
   end
 end

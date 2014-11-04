@@ -246,8 +246,11 @@ class CompanyUser < ActiveRecord::Base
     end
   end
 
-  def filter_settings_for(bucket, controller_name, aasm = false)
-    filter_settings.find_by(apply_to: controller_name).try(:filter_settings_for, bucket, controller_name, aasm) || (aasm ? ['active'] : [true])
+  def filter_settings_for(model, controller_name, format: :boolean)
+    @filter_settings ||= {}
+    @filter_settings[controller_name] ||= filter_settings.find_by(apply_to: controller_name)
+    @filter_settings[controller_name].try(:filter_settings_for, model, format: format) ||
+      (format == :string ? ['active'] : [true])
   end
 
   class << self
