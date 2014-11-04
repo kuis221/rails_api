@@ -6137,8 +6137,21 @@ table td.sub-level-1 {
 		}
 		.carousel-inner{
 			margin-left: 32px;
-			width: 261px;
+			width: 268px;
 			text-align: center;
+			height: 59px;
+			overflow: hidden;
+
+			.item {
+				float: left;
+				&.next-item, &.prev-item {
+					display: inline-block;
+				}
+				&.active {
+					outline: 1px solid $user_menu;
+					outline-offset: -1px;
+				}
+			}
 		}
 		img{
 			display: inline-block;
@@ -6148,10 +6161,6 @@ table td.sub-level-1 {
 			}
 			&:last-of-type{
 				margin-left: 2px;
-			}
-			&.active{
-				outline: 1px solid $user_menu;
-				outline-offset: -1px;
 			}
 		}
 	}
