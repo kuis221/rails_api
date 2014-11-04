@@ -6,5 +6,5 @@
       .find('.status').html('#{h report.aasm_state.capitalize}');
   - if report.complete?
     |
-      $parent.find('a.download').attr('href','#{j report.download_url.html_safe}');
+      $parent.find('a.icon-download').attr('href','#{j report.download_url.html_safe}');
       window.setTimeout(function(){ $('#report_#{report.id}').find('.progress').slideUp() }, 1000);
