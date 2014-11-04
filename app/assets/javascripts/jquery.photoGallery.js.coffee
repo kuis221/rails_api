@@ -165,6 +165,7 @@ $.widget 'nmk.photoGallery', {
 
 			if miniCarousel
 				miniCarousel.append($('<div class="item">').addClass(activeClass).append($('<img>').attr('src', image.src).data('image',image).attr('data-photo-id', $(image).data('id')).data('index', i)))
+
 			carousel.append $('<div class="item">').
 				attr('data-photo-id', $(image).data('id')).
 				append($('<div class="row">').append($('<img>').attr('src', '').data('src',link.href))).
@@ -174,7 +175,10 @@ $.widget 'nmk.photoGallery', {
 			i+=1
 
 		if @options.showSidebar
+			@miniCarouselItems = i
+
 			@_setMiniCorouselClases(@miniCarousel.find('.item.active')[0])
+
 			@miniCarousel.off('click.thumb').on 'click.thumb', 'img', (e) =>
 				index = $(e.target).data('index')
 				@carousel.carousel index
@@ -284,7 +288,7 @@ $.widget 'nmk.photoGallery', {
 
 		if @options.showSidebar
 			@miniCarousel.carousel interval: false
-			@miniCarousel.on 'slide', (e) => 
+			@miniCarousel.on 'slide', (e) =>
 				@_setMiniCorouselClases(e.relatedTarget)
 		@carousel.carousel({interval: false})
 
@@ -299,9 +303,15 @@ $.widget 'nmk.photoGallery', {
 		@gallery
 
 	_setMiniCorouselClases: (activeItem) ->
+		prevItem = $(activeItem).prev('.item')
+		nextItem = $(activeItem).next('.item')
 		@miniCarousel.find('.item').removeClass('next-item').removeClass('prev-item')
-		$(activeItem).next('.item').addClass('next-item')
-		$(activeItem).prev('.item').addClass('prev-item')
+		prevItem.addClass('prev-item')
+		nextItem.addClass('next-item')
+		if prevItem.length && @miniCarouselItems > 3 then @miniCarousel.find('.carousel-control.left').show() else @miniCarousel.find('.carousel-control.left').hide()
+		if nextItem.length && @miniCarouselItems > 3 then @miniCarousel.find('.carousel-control.right').show() else @miniCarousel.find('.carousel-control.right').hide()
+		if $(activeItem).is(':first-child') then nextItem.next('.item').addClass('next-item')
+		if $(activeItem).is(':last-child') && (@miniCarouselItems % 3 is 0) then prevItem.prev('.item').addClass('prev-item')
 		$(activeItem).find('img').trigger('click')
 		true
 

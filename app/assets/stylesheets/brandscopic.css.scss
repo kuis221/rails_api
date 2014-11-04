@@ -6148,8 +6148,8 @@ table td.sub-level-1 {
 					display: inline-block;
 				}
 				&.active {
-					outline: 1px solid $user_menu;
-					outline-offset: -1px;
+					outline: 3px solid $grey_three;
+					outline-offset: -3px;
 				}
 			}
 		}
