@@ -41,8 +41,9 @@ FactoryGirl.define do
     state 'NY'
     country 'US'
     do_not_connect_to_api true
+    types %w(establishment)
 
-    after(:build) { |u| u.types ||= ['establishment'] }
+    #after(:build) { |u| u.types ||= ['establishment'] }
 
     factory :city do
       types %w(political locality)
@@ -64,6 +65,18 @@ FactoryGirl.define do
         p.city = nil
         p.country = Country.all.find { |c| c[0] == 'United States' }[1]
       end
+    end
+
+    factory :natural_feature do
+      city nil
+      state nil
+      street_number nil
+      route nil
+      zipcode nil
+      administrative_level_1 nil
+      administrative_level_2 nil
+      neighborhood nil
+      types %w(natural_feature establishment)
     end
   end
 end

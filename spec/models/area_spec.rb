@@ -67,7 +67,10 @@ describe Area, type: :model do
       place2 = create(:place, types: ['locality'], city: 'San Francisco', state: 'California', country: 'US')
       area.places << place
       area.places << place2
-      expect(area.locations.map(&:path)).to match_array ['north america/united states/california/los angeles', 'north america/united states/california/san francisco']
+      expect(area.locations.map(&:path)).to match_array [
+        'north america/united states/california/los angeles',
+        'north america/united states/california/san francisco'
+      ]
     end
 
     it 'should result the neighborhood on the path if the place has the type sublocality' do
@@ -87,10 +90,10 @@ describe Area, type: :model do
     let(:area) { create(:area) }
 
     it 'should include the city if all the places are in the same city' do
-      place  = create(:place, types: ['locality'], city: 'Los Angeles', state: 'California', country: 'US')
-      place2 = create(:place, types: ['locality'], city: 'Los Angeles', state: 'California', country: 'US')
-      area.places << place
-      area.places << place2
+      area.places << [
+        create(:place, types: ['sublocality'], city: 'Los Angeles', state: 'California', country: 'US'),
+        create(:place, types: ['sublocality'], city: 'Los Angeles', state: 'California', country: 'US')
+      ]
       expect(area.common_denominators).to eq(['North America', 'United States', 'California', 'Los Angeles'])
       expect(area.common_denominators_locations.length).to eql 4
       paths = Location.where(id: area.common_denominators_locations).pluck(:path)
@@ -110,32 +113,46 @@ describe Area, type: :model do
       area.places << place2
       expect(area.reload.common_denominators).to eq(['North America', 'United States', 'California'])
     end
+
+    it 'should ignore natural features' do
+      area.places << [
+        create(:city, name: 'Los Angeles', state: 'California', country: 'US'),
+        create(:place, city: 'Los Angeles', state: 'California', country: 'US'),
+        create(:natural_feature, country: 'US')
+      ]
+      expect(area.common_denominators).to eq(['North America', 'United States', 'California', 'Los Angeles'])
+      expect(area.common_denominators_locations.length).to eql 4
+      paths = Location.where(id: area.common_denominators_locations).pluck(:path)
+      expect(paths).to match_array [
+        'north america',
+        'north america/united states',
+        'north america/united states/california',
+        'north america/united states/california/los angeles'
+      ]
+    end
   end
 
   describe '#place_in_scope?' do
+    let(:area) { create(:area) }
     it 'should return false if place is nil' do
-      area = create(:area)
       expect(area.place_in_scope?(nil)).to be_falsey
     end
 
     it 'should return true if the place belongs to the area' do
-      bar = create(:place, types: ['establishment'], route: '1st st', street_number: '12 sdfsd', city: 'Los Angeles', state: 'California', country: 'US')
-      area = create(:area)
-      area.places << create(:place, types: ['locality'], city: 'Los Angeles', state: 'California', country: 'US')
+      bar = create(:place, route: '1st st', street_number: '12 sdfsd', city: 'Los Angeles', state: 'California', country: 'US')
+      area.places << create(:city, name: 'Los Angeles', state: 'California', country: 'US')
 
       expect(area.place_in_scope?(bar)).to be_truthy
     end
 
     it "should return false if the place doesn't belongs to the area" do
-      bar = create(:place, types: ['establishment'], route: '1st st', street_number: '12 sdfsd', city: 'San Francisco', state: 'California', country: 'US')
-      area = create(:area)
-      area.places << create(:place, types: ['locality'], city: 'Los Angeles', state: 'California', country: 'US')
+      bar = create(:place, route: '1st st', street_number: '12 sdfsd', city: 'San Francisco', state: 'California', country: 'US')
+      area.places << create(:city, name: 'Los Angeles', state: 'California', country: 'US')
       expect(area.place_in_scope?(bar)).to be_falsey
     end
 
     it 'should return false if the place is a state and the area has cities of that state' do
-      california = create(:place, types: ['locality'], route: nil, street_number: nil, city: nil, state: 'California', country: 'US')
-      area = create(:area)
+      california = create(:state, name: 'California', country: 'US')
       area.places << create(:city, name: 'Los Angeles', state: 'California', country: 'US')
       area.places << create(:city, name: 'San Francisco', state: 'California', country: 'US')
 
@@ -143,19 +160,33 @@ describe Area, type: :model do
     end
 
     it 'should return true if the place is a neighborhood and the area includes the city' do
-      neighborhood = create(:place, types: ['locality'], route: nil, street_number: nil, neighborhood: 'South Central Houston', city: 'Houston', state: 'Texas', country: 'US')
-      area = create(:area)
+      neighborhood = create(:place, types: ['locality'], route: nil, street_number: nil,
+                                    neighborhood: 'South Central Houston', city: 'Houston',
+                                    state: 'Texas', country: 'US')
       area.places << create(:place, types: ['locality'], city: 'Houston', state: 'Texas', country: 'US')
 
       expect(area.place_in_scope?(neighborhood)).to be_truthy
     end
 
     it 'should return true if the place is directly assigned to the area' do
-      bar = create(:place, types: ['establishment'], route: '1st st', street_number: '12 sdfsd', city: 'Los Angeles', state: 'California', country: 'US')
-      area = create(:area)
+      bar = create(:place, route: '1st st', street_number: '12 sdfsd', city: 'Los Angeles', state: 'California', country: 'US')
       area.places << bar
 
       expect(area.place_in_scope?(bar)).to be_truthy
+    end
+
+    it 'should not account natural features as locations' do
+      area.places << create(:natural_feature, country: 'US')
+      place = create(:place, city: 'Los Angeles', state: 'California', country: 'US')
+      expect(area.place_in_scope?(place)).to be_falsey
+    end
+
+    it 'should exclude locations with incomplete information' do
+      place = create(:place, city: 'Los Angeles', state: 'California', country: 'US')
+      city = create(:city, name: 'Los Angeles')
+      city.update_column(:city, nil)
+      area.places << city
+      expect(area.place_in_scope?(place)).to be_falsey
     end
   end
 
@@ -167,18 +198,18 @@ describe Area, type: :model do
       it 'should return any areas assigned to the user' do
         create(:area, company: company) # another area
         area = create(:area, company: company)
-        expect(Area.accessible_by_user(user).to_a).to be_empty
+        expect(described_class.accessible_by_user(user).to_a).to be_empty
         user.areas << area
-        expect(Area.accessible_by_user(user).to_a).to eql [area]
+        expect(described_class.accessible_by_user(user).to_a).to eql [area]
       end
 
       it "should return any within the scope of user's allowed locations" do
         create(:area, company: company) # another area
         area = create(:area, company: company)
         area.places << create(:city, name: 'Los Angeles', state: 'California', country: 'US')
-        expect(Area.accessible_by_user(user).to_a).to be_empty
+        expect(described_class.accessible_by_user(user).to_a).to be_empty
         user.places << create(:country, name: 'US')
-        expect(Area.accessible_by_user(user).to_a).to eql [area]
+        expect(described_class.accessible_by_user(user).to_a).to eql [area]
       end
 
       it "should NOT return areas that have places outside the scope of user's allowed locations" do
@@ -187,9 +218,9 @@ describe Area, type: :model do
           create(:city, name: 'Los Angeles', state: 'California', country: 'US'),
           create(:city, name: 'Curridabat', state: 'San Jose', country: 'CR')
         ]
-        expect(Area.accessible_by_user(user).to_a).to be_empty
+        expect(described_class.accessible_by_user(user).to_a).to be_empty
         user.places << create(:country, name: 'US')
-        expect(Area.accessible_by_user(user).to_a).to be_empty
+        expect(described_class.accessible_by_user(user).to_a).to be_empty
       end
     end
   end

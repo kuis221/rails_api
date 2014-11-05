@@ -32,7 +32,17 @@ class Area < ActiveRecord::Base
 
   scope :active, -> { where(active: true) }
   scope :not_in_venue, ->(place) { where('areas.id not in (?)', place.area_ids + [0]) }
-  scope :accessible_by_user, ->(company_user) { company_user.is_admin? ? all : where('areas.id in (?) OR common_denominators_locations && \'{?}\'::int[]', company_user.area_ids,  company_user.accessible_locations + [-1]) }
+
+  def self.accessible_by_user(company_user)
+    if company_user.is_admin?
+      self
+    else
+      where('areas.id in (?) OR common_denominators_locations && \'{?}\'::int[]',
+            company_user.area_ids,
+            company_user.accessible_locations + [-1])
+    end
+  end
+
   serialize :common_denominators
 
   before_save :initialize_common_denominators
@@ -55,10 +65,11 @@ class Area < ActiveRecord::Base
 
   # Returns a list of locations ids that are associated to the area
   def locations
-    @locations ||= Rails.cache.fetch("area_locations_#{id}") do
-      Location.joins('INNER JOIN places ON places.location_id=locations.id')
-        .where(places: { id: place_ids, is_location: true }).group('locations.id').to_a
-    end
+    @locations ||=
+      Rails.cache.fetch("area_locations_#{id}") do
+        Location.joins('INNER JOIN places ON places.location_id=locations.id')
+                .where(places: { id: place_ids, is_location: true }).group('locations.id').to_a
+      end
   end
 
   def cities
@@ -67,9 +78,8 @@ class Area < ActiveRecord::Base
 
   def count_events(_place, parents, count)
     self.events_count ||= 0
-    if parents.join('/').include?((common_denominators || []).join('/'))
-      self.events_count += count
-    end
+    return unless parents.join('/').include?((common_denominators || []).join('/'))
+    self.events_count += count
   end
 
   # If place is in /North America/United States/California/Los Angeles and the area
@@ -154,7 +164,7 @@ class Area < ActiveRecord::Base
   # if all the places on the area are within Los Angeles
   def update_common_denominators
     denominators = []
-    list_places = places.all.to_a.select { |p| !p.types.nil? && (p.types & %w(sublocality locality administrative_area_level_1 administrative_area_level_2 administrative_area_level_3 country natural_feature)).count > 0 }
+    list_places = places.all.to_a.select { |p| !p.types.nil? && p.is_location? }
     continents = list_places.map(&:continent_name)
     if continents.compact.size == list_places.size && continents.uniq.size == 1
       denominators.push continents.first

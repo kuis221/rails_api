@@ -44,23 +44,25 @@ describe Place, type: :model do
 
   describe 'fetch_place_data' do
     it 'should correctly assign the attributes returned by the api call' do
-      place = Place.new(reference: 'YXZ', place_id: '123')
+      place = described_class.new(reference: 'YXZ', place_id: '123')
       api_client = double(:google_places_client)
       expect(place).to receive(:client).at_least(:once).and_return(api_client)
-      expect(api_client).to receive(:spot).with('YXZ').and_return(double(:spot, name: 'Rancho Grande',
-                                                                                lat: '12.345678',
-                                                                                lng: '-87.654321',
-                                                                                formatted_address: '123 Mi Casa, Costa Rica',
-                                                                                types: [1, 2, 3],
-                                                                                address_components: [
-                                                                                  { 'types' => ['country'], 'short_name' => 'CR', 'long_name' => 'Costa Rica' },
-                                                                                  { 'types' => ['administrative_area_level_1'], 'short_name' => 'SJO', 'long_name' => 'San Jose' },
-                                                                                  { 'types' => ['administrative_area_level_2'], 'short_name' => 'SJ2', 'long_name' => 'Example' },
-                                                                                  { 'types' => ['locality'], 'short_name' => 'Curridabat', 'long_name' => 'Curridabat' },
-                                                                                  { 'types' => ['postal_code'], 'short_name' => '12345', 'long_name' => '12345' },
-                                                                                  { 'types' => ['street_number'], 'short_name' => '7', 'long_name' => '7' },
-                                                                                  { 'types' => ['route'], 'short_name' => 'Calle Melancolia', 'long_name' => 'Calle Melancolia' }
-                                                                                ]))
+      expect(api_client).to receive(:spot).with('YXZ').and_return(
+        double(:spot,
+               name: 'Rancho Grande',
+               lat: '12.345678',
+               lng: '-87.654321',
+               formatted_address: '123 Mi Casa, Costa Rica',
+               types: [1, 2, 3],
+               address_components: [
+                 { 'types' => ['country'], 'short_name' => 'CR', 'long_name' => 'Costa Rica' },
+                 { 'types' => ['administrative_area_level_1'], 'short_name' => 'SJO', 'long_name' => 'San Jose' },
+                 { 'types' => ['administrative_area_level_2'], 'short_name' => 'SJ2', 'long_name' => 'Example' },
+                 { 'types' => ['locality'], 'short_name' => 'Curridabat', 'long_name' => 'Curridabat' },
+                 { 'types' => ['postal_code'], 'short_name' => '12345', 'long_name' => '12345' },
+                 { 'types' => ['street_number'], 'short_name' => '7', 'long_name' => '7' },
+                 { 'types' => ['route'], 'short_name' => 'Calle Melancolia', 'long_name' => 'Calle Melancolia' }
+               ]))
       expect(api_client).to receive(:spots).and_return([])
 
       place.save
@@ -81,22 +83,24 @@ describe Place, type: :model do
     end
 
     it "should find out the correct state name if the API doesn't provide it" do
-      place = Place.new(reference: 'YXZ', place_id: '123')
+      place = described_class.new(reference: 'YXZ', place_id: '123')
       api_client = double(:google_places_client)
       expect(place).to receive(:client).at_least(:once).and_return(api_client)
-      expect(api_client).to receive(:spot).with('YXZ').and_return(double(:spot, name: 'Shark\'s Cove',
-                                                                                lat: '12.345678',
-                                                                                lng: '-87.654321',
-                                                                                formatted_address: '123 Mi Casa, Costa Rica',
-                                                                                types: [1, 2, 3],
-                                                                                address_components: [
-                                                                                  { 'types' => ['country'], 'short_name' => 'US', 'long_name' => 'United States' },
-                                                                                  { 'types' => ['administrative_area_level_1'], 'short_name' => 'CA', 'long_name' => 'CA' },
-                                                                                  { 'types' => ['locality'], 'short_name' => 'Manhattan Beach', 'long_name' => 'Manhattan Beach' },
-                                                                                  { 'types' => ['postal_code'], 'short_name' => '12345', 'long_name' => '12345' },
-                                                                                  { 'types' => ['street_number'], 'short_name' => '7', 'long_name' => '7' },
-                                                                                  { 'types' => ['route'], 'short_name' => 'Calle Melancolia', 'long_name' => 'Calle Melancolia' }
-                                                                                ]))
+      expect(api_client).to receive(:spot).with('YXZ').and_return(
+        double(:spot,
+               name: 'Shark\'s Cove',
+               lat: '12.345678',
+               lng: '-87.654321',
+               formatted_address: '123 Mi Casa, Costa Rica',
+               types: [1, 2, 3],
+               address_components: [
+                 { 'types' => ['country'], 'short_name' => 'US', 'long_name' => 'United States' },
+                 { 'types' => ['administrative_area_level_1'], 'short_name' => 'CA', 'long_name' => 'CA' },
+                 { 'types' => ['locality'], 'short_name' => 'Manhattan Beach', 'long_name' => 'Manhattan Beach' },
+                 { 'types' => ['postal_code'], 'short_name' => '12345', 'long_name' => '12345' },
+                 { 'types' => ['street_number'], 'short_name' => '7', 'long_name' => '7' },
+                 { 'types' => ['route'], 'short_name' => 'Calle Melancolia', 'long_name' => 'Calle Melancolia' }
+               ]))
       expect(api_client).to receive(:spots).and_return([])
       place.save
       place.reload
@@ -109,28 +113,38 @@ describe Place, type: :model do
 
   describe '#political_division' do
     it "should return the name in the locations if it's a sublocality" do
-      sublocality = create(:place, name: 'Beverly Hills', types: ['sublocality'], route: nil, street_number: nil, city: 'Los Angeles', state: 'California', country: 'US')
-      expect(Place.political_division(sublocality)).to eq(['North America', 'United States', 'California', 'Los Angeles', 'Beverly Hills'])
+      sublocality = create(:place, name: 'Beverly Hills', types: ['sublocality'], route: nil,
+                                   street_number: nil, city: 'Los Angeles', state: 'California',
+                                   country: 'US')
+      expect(described_class.political_division(sublocality)).to eq([
+        'North America', 'United States', 'California', 'Los Angeles', 'Beverly Hills'
+      ])
     end
 
     it 'should return the city in the locations' do
-      bar = create(:place, types: ['establishment'], route: '1st st', street_number: '12 sdfsd', city: 'Los Angeles', state: 'California', country: 'US')
-      expect(Place.political_division(bar)).to eq(['North America', 'United States', 'California', 'Los Angeles'])
+      bar = create(:place, route: '1st st', street_number: '12 sdfsd', city: 'Los Angeles',
+                           state: 'California', country: 'US')
+      expect(described_class.political_division(bar)).to eq([
+        'North America', 'United States', 'California', 'Los Angeles'
+      ])
     end
 
     it 'should return false if the place is a state and the are has cities of that state' do
-      california = create(:place, types: ['locality'], route: nil, street_number: nil, city: nil, state: 'California', country: 'US')
-      expect(Place.political_division(california)).to eq(['North America', 'United States', 'California'])
+      california = create(:place, types: ['locality'], route: nil, street_number: nil,
+                                  city: nil, state: 'California', country: 'US')
+      expect(described_class.political_division(california)).to eq([
+        'North America', 'United States', 'California'
+      ])
     end
 
     it 'returns nil if no place is given' do
-      expect(Place.political_division(nil)).to be_nil
+      expect(described_class.political_division(nil)).to be_nil
     end
   end
 
   describe '#locations' do
     it 'returns only the continent and country' do
-      country = create(:place, name: 'United States', types: ['country'], route: nil, street_number: nil, city: nil, state: nil, country: 'US')
+      country = create(:country, name: 'US')
       expect(country.locations.map(&:path)).to match_array([
         'north america',
         'north america/united states'
@@ -138,17 +152,17 @@ describe Place, type: :model do
     end
 
     it 'returns the state, continent and country' do
-      country = create(:place, name: 'California', types: ['administrative_area_level_1'], route: nil, street_number: nil, city: nil, state: 'California', country: 'US')
-      expect(country.locations.map(&:path)).to match_array([
+      state = create(:state, name: 'California', country: 'US')
+      expect(state.locations.map(&:path)).to match_array([
         'north america',
         'north america/united states',
         'north america/united states/california'
       ])
     end
 
-    it 'returns the citym state, continent and country' do
-      country = create(:place, name: 'Los Angeles', types: ['locality'], route: nil, street_number: nil, city: 'Los Angeles', state: 'California', country: 'US')
-      expect(country.locations.map(&:path)).to match_array([
+    it 'returns the city, state, continent and country' do
+      city = create(:city, name: 'Los Angeles', state: 'California', country: 'US')
+      expect(city.locations.map(&:path)).to match_array([
         'north america',
         'north america/united states',
         'north america/united states/california',
@@ -156,9 +170,11 @@ describe Place, type: :model do
       ])
     end
 
-    it 'returns the citym state, continent and country' do
-      country = create(:place, name: 'Beverly Hills', types: ['sublocality'], route: nil, street_number: nil, city: 'Los Angeles', state: 'California', country: 'US')
-      expect(country.locations.map(&:path)).to match_array([
+    it 'returns the sublocality, city, state, continent and country' do
+      sublocality = create(:place, name: 'Beverly Hills', types: ['sublocality'], route: nil,
+                                   street_number: nil, city: 'Los Angeles', state: 'California',
+                                   country: 'US')
+      expect(sublocality.locations.map(&:path)).to match_array([
         'north america',
         'north america/united states',
         'north america/united states/california',
@@ -171,26 +187,31 @@ describe Place, type: :model do
   describe '#combined_search', search: true do
     let(:google_results) { { results: [] } }
     let(:company_user) { create(:company_user, role: create(:non_admin_role)) }
-    before { expect(Place).to receive(:open).and_return(double(read: JSON.generate(google_results))) }
+
+    before do
+      expect(described_class).to receive(:open).and_return(
+        double(read: JSON.generate(google_results))
+      )
+    end
 
     it 'should return empty if no results' do
-      expect(Place.combined_search(q: 'aa')).to eql []
+      expect(described_class.combined_search(q: 'aa')).to eql []
     end
 
     it 'should only places valid for the current user' do
       venue = create(:venue,
-                                 place: create(:place, name: 'Qwerty', city: 'AB', state: 'California', country: 'CR'),
-                                 company: company_user.company)
+                     place: create(:place, name: 'Qwerty', city: 'AB', state: 'California', country: 'CR'),
+                     company: company_user.company)
       create(:venue,
-                         place: create(:place, name: 'Qwerty', city: 'XY', state: 'California', country: 'CR'),
-                         company: company_user.company)
+             place: create(:place, name: 'Qwerty', city: 'XY', state: 'California', country: 'CR'),
+             company: company_user.company)
 
       Sunspot.commit
 
       company_user.places << create(:city, name: 'AB', state: 'California', country: 'CR')
 
       params = { q: 'qw', current_company_user: company_user }
-      expect(Place.combined_search(params)).to eql [
+      expect(described_class.combined_search(params)).to eql [
         {
           value: 'Qwerty, 123 My Street',
           label: 'Qwerty, 123 My Street',
@@ -226,7 +247,7 @@ describe Place, type: :model do
 
       it "should include all the places returned by google with the 'valid' flag set to false" do
         params = { q: 'qw', current_company_user: company_user }
-        expect(Place.combined_search(params)).to eql [
+        expect(described_class.combined_search(params)).to eql [
           {
             value: 'Los Angeles, CA, USA',
             label: 'Los Angeles, CA, USA',
@@ -251,7 +272,7 @@ describe Place, type: :model do
       it "should set the 'valid' flag to tru for places the user is allowed to access" do
         company_user.places << create(:city, name: 'Los Angeles', state: 'California', country: 'US')
         params = { q: 'qw', current_company_user: company_user }
-        expect(Place.combined_search(params)).to eql [
+        expect(described_class.combined_search(params)).to eql [
           {
             value: 'Los Angeles, CA, USA',
             label: 'Los Angeles, CA, USA',
@@ -275,18 +296,19 @@ describe Place, type: :model do
 
       it "returns mixed places from google and the app listing app's places first " do
         venue = create(:venue,
-                                   place: create(:place, name: 'Qwerty', city: 'Los Angeles', state: 'California', country: 'US'),
-                                   company: company_user.company)
+                       place: create(:place, name: 'Qwerty', city: 'Los Angeles',
+                                             state: 'California', country: 'US'),
+                       company: company_user.company)
         create(:venue,
-                           place: create(:place, name: 'Qwerty', city: 'XY', state: 'California', country: 'CR'),
-                           company: company_user.company)
+               place: create(:place, name: 'Qwerty', city: 'XY', state: 'California', country: 'CR'),
+               company: company_user.company)
 
         Sunspot.commit
 
         company_user.places << create(:city, name: 'Los Angeles', state: 'California', country: 'US')
 
         params = { q: 'Angeles', current_company_user: company_user }
-        expect(Place.combined_search(params)).to eql [
+        expect(described_class.combined_search(params)).to eql [
           {
             value: 'Qwerty, 123 My Street',
             label: 'Qwerty, 123 My Street',

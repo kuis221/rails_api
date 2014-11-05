@@ -107,6 +107,25 @@ class Place < ActiveRecord::Base
     save
   end
 
+  def has_complete_info_for_denominator?
+    return true unless state.blank? || city.blank?
+    return true if state? && state.present?
+    return true if country? && country.present?
+    false
+  end
+
+  def country?
+    types.include?('country')
+  end
+
+  def state?
+    types.include?('administrative_area_level_1')
+  end
+
+  def city?
+    types.include?('locality')
+  end
+
   # First try to find comments in the app from events, then if there no enough comments in the app,
   # search for reviews from Google Places API
   def reviews(company_id)
@@ -157,7 +176,7 @@ class Place < ActiveRecord::Base
       types.present? &&
       (types & %w(
         sublocality political locality administrative_area_level_1 administrative_area_level_2
-        administrative_area_level_3 country natural_feature)).count > 0)
+        administrative_area_level_3 country)).count > 0)
     true
   end
 
