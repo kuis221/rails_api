@@ -500,8 +500,14 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	&.alert-success{
 		background-color: $complete;
 	}
-	&.alert-info{
-		background-color: $blue;
+	&.alert-info {
+		background-color: $alert_blue;
+	}
+	&.alert-notice {
+		background-color: $alert_blue;
+	}
+	&.alert-alert {
+		background-color: $alert_red;
 	}
 	&.collection-list-description{
 		a.icon-close{
