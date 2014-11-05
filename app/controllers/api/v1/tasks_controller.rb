@@ -1,6 +1,4 @@
 class Api::V1::TasksController < Api::V1::FilteredController
-  include TasksFacetsHelper
-
   belongs_to :event, optional: true
 
   resource_description do

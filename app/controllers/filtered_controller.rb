@@ -109,10 +109,9 @@ class FilteredController < InheritedResources::Base
     get_collection_ivar || begin
       return unless action_name != 'index' || request.format.json?
       if resource_class.respond_to?(:do_search) # User Sunspot Solr for searching the collection
-        @solr_search = resource_class.do_search(search_params)
-        @collection_count = @solr_search.total
-        @total_pages = @solr_search.results.total_pages
-        set_collection_ivar(@solr_search.results)
+        @collection_count = collection_search.total
+        @total_pages = collection_search.results.total_pages
+        set_collection_ivar(collection_search.results)
       else
         current_page = params[:page] || nil
         c = end_of_association_chain.accessible_by_user(current_user)
@@ -127,6 +126,10 @@ class FilteredController < InheritedResources::Base
   def collection_count
     collection
     @collection_count ||= @collection_count_scope.count
+  end
+
+  def collection_search
+    @solr_search ||= resource_class.do_search(search_params)
   end
 
   def total_pages

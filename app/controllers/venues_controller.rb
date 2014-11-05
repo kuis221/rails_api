@@ -75,9 +75,9 @@ class VenuesController < FilteredController
 
   def data_totals
     @data_totals ||= Hash.new.tap do |totals|
-      totals['events_count'] = @solr_search.stat_response['stats_fields']['events_count_is']['sum'] rescue 0
-      totals['promo_hours'] = @solr_search.stat_response['stats_fields']['promo_hours_es']['sum'] rescue 0
-      totals['spent'] = @solr_search.stat_response['stats_fields']['spent_es']['sum'] rescue 0
+      totals['events_count'] = collection_search.stat_response['stats_fields']['events_count_is']['sum'] rescue 0
+      totals['promo_hours'] = collection_search.stat_response['stats_fields']['promo_hours_es']['sum'] rescue 0
+      totals['spent'] = collection_search.stat_response['stats_fields']['spent_es']['sum'] rescue 0
     end
   end
 end

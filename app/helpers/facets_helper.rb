@@ -159,6 +159,13 @@ module FacetsHelper
     { label: 'Brand Ambassadors', items: users }
   end
 
+  def build_tasks_status_bucket
+    tasks_status = %w(Complete Incomplete Late) + (params[:scope] == 'user' ? [] : %w(Assigned Unassigned))
+    { label: 'Task Status', items: tasks_status
+        .map { |x| build_facet_item(label: x, id: x, name: :task_status, count: 1) } }
+  end
+
+
   def brand_ambassadors_users
     @brand_ambassadors_users ||= begin
       s = current_company.company_users.active
@@ -186,6 +193,16 @@ module FacetsHelper
       f.push build_status_bucket
       f.push build_state_bucket
       f.concat build_custom_filters_bucket
+    end
+  end
+
+  def tasks_facets
+    @tasks_facets ||= Array.new.tap do |f|
+      # select what params should we use for the facets search
+      f.push build_campaign_bucket
+      f.push build_tasks_status_bucket
+      f.push build_people_bucket.merge(label: 'Staff') if params[:scope] == 'teams'
+      f.push build_state_bucket
     end
   end
 
@@ -228,4 +245,5 @@ module FacetsHelper
       f.push build_brands_bucket
     end
   end
+
 end

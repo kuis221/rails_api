@@ -4,7 +4,6 @@ class TasksController < FilteredController
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
   include ApplicationHelper
-  include TasksFacetsHelper
 
   respond_to :js, only: [:new, :create, :edit, :update, :show]
 
@@ -19,7 +18,7 @@ class TasksController < FilteredController
     buckets = autocomplete_buckets({
       tasks: [Task],
       campaigns: [Campaign]
-    }.merge(is_my_teams_view? ? { people: [CompanyUser, Team] } : {}))
+    }.merge(params[:scope] == 'teams' ? { people: [CompanyUser, Team] } : {}))
 
     render json: buckets.flatten
   end
@@ -52,6 +51,10 @@ class TasksController < FilteredController
     params.permit(task: [:completed, :due_at, :title, :company_user_id, :event_id])[:task]
   end
 
+  def collection_search
+    @solr_search ||= resource_class.do_search(search_params, true)
+  end
+
   def authorize_actions
     if params[:scope] == 'user'
       authorize!(:index_my, Task)
@@ -59,6 +62,15 @@ class TasksController < FilteredController
       authorize!(:index_team, Task)
     else
       authorize!(:index, Task)
+    end
+  end
+
+  def status_counters
+    @status_counters ||= Hash.new.tap do |counters|
+      counters['unassigned'] = 0
+      counters['incomplete'] = 0
+      counters['late'] = 0
+      collection_search.facet(:status).rows.map { |x| counters[x.value.to_s] = x.count }
     end
   end
 
@@ -71,24 +83,21 @@ class TasksController < FilteredController
   end
 
   def search_params
-    @search_params ||= begin
-      super
-      unless @search_params.key?(:user) && !@search_params[:user].empty?
-        @search_params.merge! Task.search_params_for_scope(params[:scope], current_company_user)
+    @search_params ||= super.tap do |p|
+      unless p.key?(:user) && !p[:user].empty?
+        p.merge! Task.search_params_for_scope(params[:scope], current_company_user)
       end
 
       # Get a list of new tasks notifications to obtain the list of ids, then delete them as they are already seen, but
       # store them in the session to allow the user to navigate, paginate, etc
       if params.key?(:new_at) && params[:new_at]
-        @search_params[:id] = session["new_tasks_#{params[:scope]}_at_#{params[:new_at].to_i}"] ||= begin
+        p[:id] = session["new_tasks_#{params[:scope]}_at_#{params[:new_at].to_i}"] ||= begin
           notifications = current_company_user.notifications.new_tasks
           ids = notifications.map { |n| n.params['task_id'] }.compact
           notifications.destroy_all
           ids
         end
       end
-
-      @search_params
     end
   end
 

@@ -151,7 +151,11 @@ class CompanyUser < ActiveRecord::Base
   end
 
   def find_users_in_my_teams
-    @user_in_my_teams ||= CompanyUser.joins(:teams).where(teams: { company_id: company_id, id: teams.select('teams.id').active.map(&:id) }).map(&:id).uniq.reject { |aid| aid == id }
+    @user_in_my_teams ||=
+      CompanyUser.joins(:teams)
+      .where(teams: { company_id: company_id, id: teams.active.pluck(:id) })
+      .where.not(id: id)
+      .pluck('DISTINCT company_users.id')
   end
 
   def accessible_campaign_ids

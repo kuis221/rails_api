@@ -42,11 +42,13 @@ feature 'Tasks', js: true, search: true do
   feature '/tasks/mine' do
     scenario 'GET index should display a table with the events' do
       create(:task, title: 'Pick up kidz at school',
-             company_user: company_user, due_at: '2013-09-01', active: true,
-             event: create(:event, campaign: create(:campaign, name: 'Cacique FY14', company: company)))
+                    company_user: company_user, due_at: '2013-09-01', active: true,
+                    event: create(:event, campaign: create(:campaign, name: 'Cacique FY14',
+                                                                      company: company)))
       create(:task, title: 'Bring beers to the party',
-             company_user: company_user, due_at: '2013-09-02', active: true,
-             event: create(:event, campaign: create(:campaign, name: 'Centenario FY14', company: company)))
+                    company_user: company_user, due_at: '2013-09-02', active: true,
+                    event: create(:event, campaign: create(:campaign, name: 'Centenario FY14',
+                                                                      company: company)))
       Sunspot.commit
       visit mine_tasks_path
 
@@ -92,6 +94,27 @@ feature 'Tasks', js: true, search: true do
       end
       expect(page).to have_no_content('Pick up kidz at school')
     end
+
+    feature 'tasks counters' do
+      scenario 'filtering list will update the counters' do
+        create(:late_task, company_user: company_user)
+        create(:assigned_task, due_at: 1.week.from_now, company_user: company_user)
+        create(:completed_task, company_user: company_user)
+        create(:uncompleted_task, due_at: nil, company_user: company_user)
+
+        Sunspot.commit
+
+        visit mine_tasks_path
+
+        expect(task_counters).to have_content '3 INCOMPLETE'
+        expect(task_counters).to have_content '1 LATE'
+
+        filter_section('TASK STATUS').unicheck('Complete')
+
+        expect(task_counters).to have_content '0 INCOMPLETE'
+        expect(task_counters).to have_content '0 LATE'
+      end
+    end
   end
 
   scenario 'allows to create a new task' do
@@ -132,11 +155,13 @@ feature 'Tasks', js: true, search: true do
         create(:task,
                title: 'Team task 1', due_at: '2013-09-01', active: true,
                event: create(:event, company: company, user_ids: [company_user.id],
-               campaign: create(:campaign, name: 'Centenario FY14', company: company))),
+                                     campaign: create(:campaign, name: 'Centenario FY14',
+                                                                 company: company))),
         create(:task,
                title: 'Team task 2', due_at: nil, active: true,
                event: create(:event, company: company, team_ids: [team1.id],
-               campaign: create(:campaign, name: 'Absolut FY13', company: company)))
+                                     campaign: create(:campaign, name: 'Absolut FY13',
+                                                                 company: company)))
       ]
       Sunspot.commit
       visit my_teams_tasks_path
@@ -149,15 +174,62 @@ feature 'Tasks', js: true, search: true do
         end
       end
     end
+
+    feature 'tasks counters' do
+      scenario 'filtering list will update the counters' do
+        event = create(:event, campaign: create(:campaign, company: company))
+        team_member = create(:company_user, company: company)
+        event.users << [team_member, company_user]
+        create(:late_task, company_user: team_member, event: event)
+        create(:assigned_task, due_at: 1.week.from_now, company_user: team_member, event: event)
+        create(:completed_task, company_user: team_member, event: event)
+        create(:uncompleted_task, due_at: nil, company_user: team_member, event: event)
+        create(:unassigned_task, due_at: nil, event: event)
+
+        Sunspot.commit
+
+        visit my_teams_tasks_path
+
+        expect(task_counters).to have_content '1 UNASSIGNED'
+        expect(task_counters).to have_content '4 INCOMPLETE'
+        expect(task_counters).to have_content '1 LATE'
+
+        filter_section('TASK STATUS').unicheck('Complete')
+
+        expect(task_counters).to have_content '0 UNASSIGNED'
+        expect(task_counters).to have_content '0 INCOMPLETE'
+        expect(task_counters).to have_content '0 LATE'
+
+        filter_section('TASK STATUS').unicheck('Complete')
+        filter_section('TASK STATUS').unicheck('Incomplete')
+
+        expect(task_counters).to have_content '1 UNASSIGNED'
+        expect(task_counters).to have_content '4 INCOMPLETE'
+        expect(task_counters).to have_content '1 LATE'
+
+        filter_section('TASK STATUS').unicheck('Incomplete')
+        filter_section('TASK STATUS').unicheck('Late')
+
+        expect(task_counters).to have_content '0 UNASSIGNED'
+        expect(task_counters).to have_content '1 INCOMPLETE'
+        expect(task_counters).to have_content '1 LATE'
+      end
+    end
   end
 
   feature 'export' do
-    let(:task1) { create(:task, title: 'Pick up kidz at school',
-                          company_user: company_user, due_at: '2013-09-01', active: true,
-                          event: create(:event, campaign: create(:campaign, name: 'Cacique FY14', company: company))) }
-    let(:task2) { create(:completed_task, title: 'Bring beers to the party',
-                          company_user: company_user, due_at: '2013-09-02', active: true,
-                          event: create(:event, campaign: create(:campaign, name: 'Centenario FY14', company: company))) }
+    let(:task1) do
+      create(:task, title: 'Pick up kidz at school',
+                    company_user: company_user, due_at: '2013-09-01', active: true,
+                    event: create(:event, campaign: create(:campaign, name: 'Cacique FY14',
+                                                                      company: company)))
+    end
+    let(:task2) do
+      create(:completed_task, title: 'Bring beers to the party',
+                              company_user: company_user, due_at: '2013-09-02', active: true,
+                              event: create(:event, campaign: create(:campaign, name: 'Centenario FY14',
+                                                                                company: company)))
+    end
 
     before do
       # make sure tasks are created before
@@ -180,9 +252,9 @@ feature 'Tasks', js: true, search: true do
       ensure_modal_was_closed
 
       expect(ListExport.last).to have_rows([
-        ["TITLE", "DATE", "CAMPAIGN", "STATUSES", "EMPLOYEE"],
-        ["Pick up kidz at school", "2013-09-01T00:00", "Cacique FY14", "Active Assigned Incomplete Late", "Test User"],
-        ["Bring beers to the party", "2013-09-02T00:00", "Centenario FY14", "Active Assigned Complete", "Test User"]
+        %w(TITLE DATE CAMPAIGN STATUSES EMPLOYEE),
+        ['Pick up kidz at school', '2013-09-01T00:00', 'Cacique FY14', 'Active Assigned Incomplete Late', 'Test User'],
+        ['Bring beers to the party', '2013-09-02T00:00', 'Centenario FY14', 'Active Assigned Complete', 'Test User']
       ])
     end
 
@@ -231,5 +303,9 @@ feature 'Tasks', js: true, search: true do
       end
       ensure_modal_was_closed
     end
+  end
+
+  def task_counters
+    find('.task-counter-bar')
   end
 end
