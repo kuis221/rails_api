@@ -63,7 +63,7 @@ class CompanyUser < ActiveRecord::Base
 
   delegate :name, :email, :phone_number, :time_zone, :avatar, :invited_to_sign_up?,
            :full_address, :country, :state, :city, :street_address, :unit_number,
-           :zip_code, :country_name, :state_name, :phone_number_verified?,
+           :zip_code, :country_name, :state_name, :phone_number_verified?, :unconfirmed_email,
            to: :user
   delegate :is_admin?, to: :role, prefix: false
 

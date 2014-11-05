@@ -102,6 +102,17 @@ a.resend-verification {
 	margin-bottom: 40px;
 }
 
+.email-confirmation-message {
+	margin-top: 20px;
+	margin-bottom: 10px;
+	color: $brand;
+	a {
+		color: $blue;
+		font-size:12px;
+		margin-right: 10px;
+	}
+}
+
 // View Profile Styles
 // --------------------------------------------------
 

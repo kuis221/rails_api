@@ -236,6 +236,8 @@ Brandscopic::Application.routes.draw do
     get :profile, on: :collection
     get :autocomplete, on: :collection
     get :time_zone_change, on: :collection
+    get :resend_email_confirmation, on: :member
+    get :cancel_email_change, on: :member
     post :time_zone_change, on: :collection
     put :time_zone_update, on: :collection
     get :event, via: :get, on: :collection # List of users by event

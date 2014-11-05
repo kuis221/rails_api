@@ -45,6 +45,7 @@ head
 body class="app-layout #{controller_name} #{action_name} #{custom_body_class} #{user_signed_in? ? 'with-fixed-top' : ''}"
 
   header class="navbar navbar-inverse navbar-fixed-top"
+    = render 'layouts/messages'
     .navbar-inner
       .container
         .pull-left
@@ -64,7 +65,6 @@ body class="app-layout #{controller_name} #{action_name} #{custom_body_class} #{
     .menu
       = render_navigation renderer: :bootstrap, level: 1, nav_class: 'nav-stacked'
   = yield :alerts
-  = render 'layouts/messages'
   #main-container.container
     #application-content class="#{content_for?(:details_bar) ? 'with_details_bar' : ''}"
       .row-fluid

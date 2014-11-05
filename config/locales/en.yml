@@ -29,6 +29,8 @@ en:
       create: "Create"
       update: "Save"
 
+  flash_email_confirmation: 'A confirmation email was sent to %{email}. Your email will not be changed until you complete this step.'
+
   recurrence:
     daily:
       one: 'day'

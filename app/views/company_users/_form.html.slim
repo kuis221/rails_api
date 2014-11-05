@@ -15,6 +15,12 @@
         .row-fluid.users
             = f.association :teams, collection: company_teams.active.all, input_html: {class: 'input-xxlarge chosen-enabled'}
       .row-fluid.users
+        - if resource.unconfirmed_email.present? && resource.unconfirmed_email != resource.email
+          .email-confirmation-message
+            p== "Check your (<b>#{resource.unconfirmed_email}</b>) to confirm your new address. Until you confirm, you will continue to use your current email address."
+            = link_to 'Resend confirmation', resend_email_confirmation_company_user_path(resource), data: { disable_with: 'Sending' }, remote: true
+            = link_to 'Cancel this change', cancel_email_change_company_user_path(resource), data: { disable_with: 'Sending' }, remote: true
+
         = uf.input :email, input_html: {class: 'input-xxlarge'}
       .row-fluid.users
         = uf.input :phone_number, input_html: {class: 'input-xxlarge'}, required: !is_admin

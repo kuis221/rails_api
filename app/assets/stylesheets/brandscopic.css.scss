@@ -475,17 +475,20 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 
 .alert{
 	border: red;
-	border-radius: 0px 0px 8px 8px;
+	border-radius: 0px;
 	color: white;
-	margin: 0px -15px 0 -15px;
+	margin: 0px;
 	text-shadow:none;
-	-webkit-border-radius: 0px 0px 8px 8px;
+	-webkit-border-radius: 0px;
+	@include box-sizing(border-box);
+	width: 100%;
 	a{
 		color: white !important;
 		text-decoration: underline !important;
-		&.close{
+		&.icon-close{
 			top: -3px;
 			right: -10px;
+			font-size: 14px;
 		}
 	}
 	&.alert-info, &.alert-grey{
@@ -494,11 +497,11 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			background-color: $venues_blue;
 		}
 	}
-	&.alert-danger, &.alert-info{
-		margin-bottom: 30px;
-	}
 	&.alert-success{
 		background-color: $complete;
+	}
+	&.alert-info{
+		background-color: $blue;
 	}
 	&.collection-list-description{
 		a.icon-close{
@@ -2779,7 +2782,6 @@ ul.ui-widget-content{
 	background-color: $menu;
 	border-radius: 7px 7px 0px 0px;
 	position: absolute;
-	top: 0;
 	left: 0;
 	min-height: 40px;
 	z-index: 200;
@@ -2787,12 +2789,14 @@ ul.ui-widget-content{
 	width: 100%;
 	&.affix {
 		position: fixed;
-		top: 40px;
 		right: 10px;
 		left: 90px;
 		width: auto;
 		-webkit-border-radius: 0px;
 		border-radius: 0px;
+	}
+	&.affix-top {
+		top: 0 !important;
 	}
 	a.close-details {
 		display: inline-block;

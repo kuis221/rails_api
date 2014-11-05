@@ -28,6 +28,16 @@ jQuery ->
 		}
 	]
 
+	fixMainContainerTop = () ->
+		setTimeout () ->
+			$('body').css(paddingTop: $('header').outerHeight())
+			$('#resource-close-details').css(top: $('header').outerHeight() + 'px')
+		, 1
+
+	fixMainContainerTop()
+
+	$('header').on 'closed', '.alert', fixMainContainerTop
+
 	$("a[rel=popover]").popover()
 	$(".tooltip").tooltip()
 	$("a[rel=tooltip]").tooltip()

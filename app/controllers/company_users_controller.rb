@@ -47,6 +47,9 @@ class CompanyUsersController < FilteredController
         elsif resource.invited_to_sign_up?
           resource.user.accept_invitation!
         end
+        if resource.unconfirmed_email && resource.email
+          flash[:info] = I18n.translate(:flash_email_confirmation, email: resource.unconfirmed_email)
+        end
       end
       failure.js do
         if params[:company_user][:user_attributes][:verification_code]
@@ -54,6 +57,16 @@ class CompanyUsersController < FilteredController
         end
       end
     end
+  end
+
+  def resend_email_confirmation
+    resource.user.send_confirmation_instructions if resource.unconfirmed_email.present?
+    render text: ''
+  end
+
+  def cancel_email_change
+    return unless resource.unconfirmed_email.present?
+    resource.user.update_attributes(unconfirmed_email: nil, confirmation_token: nil)
   end
 
   def verify_phone
