@@ -66,6 +66,7 @@ class CompanyUsersController < FilteredController
 
   def cancel_email_change
     return unless resource.unconfirmed_email.present?
+    @unconfirmed_email = resource.unconfirmed_email
     resource.user.update_attributes(unconfirmed_email: nil, confirmation_token: nil)
   end
 

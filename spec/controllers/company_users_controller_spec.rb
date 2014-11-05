@@ -119,6 +119,9 @@ describe CompanyUsersController, type: :controller do
         expect(@user.state).to eq('FL')
         expect(@user.country).to eq('US')
         expect(@user.encrypted_password).not_to eq(old_password)
+
+        expect(flash[:info]).to eql 'A confirmation email was sent to test@testing.com. '\
+                                    'Your email will not be changed until you complete this step.'
       end
 
       it 'user have to enter the phone number, country/state, city, street address and zip code information when editing his profile' do
@@ -153,6 +156,30 @@ describe CompanyUsersController, type: :controller do
         expect(company_user.reload.role_id).to eq(role.id)
         expect(company_user.teams).to eq([team])
         expect(company_user.notifications_settings).to include('event_recap_late_sms', 'event_recap_pending_approval_email', 'new_event_team_app')
+      end
+    end
+
+    describe "GET 'resend_email_confirmation'" do
+      it 'should be successs' do
+        @company_user.user.update_column('unconfirmed_email', 'email@prueba.com')
+        expect_any_instance_of(User).to receive(:send_confirmation_instructions)
+        xhr :get, 'resend_email_confirmation', id: @company_user.to_param, format: :js
+        expect(assigns(:company_user)).to eql @company_user
+        expect(response).to be_success
+      end
+    end
+
+    describe "GET 'cancel_email_change'" do
+      it 'should be successs' do
+        @company_user.user.update_column('unconfirmed_email', 'email@prueba.com')
+        expect(@company_user.user.unconfirmed_email).not_to be_nil
+        expect(@company_user.user.confirmation_token).not_to be_nil
+
+        xhr :get, 'cancel_email_change', id: @company_user.to_param, format: :js
+        @company_user.reload
+        expect(response).to be_success
+        expect(@company_user.user.unconfirmed_email).to be_nil
+        expect(@company_user.user.confirmation_token).to be_nil
       end
     end
 

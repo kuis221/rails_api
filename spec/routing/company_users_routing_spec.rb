@@ -43,5 +43,13 @@ describe 'routes for users', type: :routing do
       expect(get: '/users/1/send_code').to route_to('company_users#send_code', id: '1')
     end
 
+    it 'routes to #resend_email_confirmation' do
+      expect(get: '/users/1/resend_email_confirmation').to route_to('company_users#resend_email_confirmation', id: '1')
+    end
+
+    it 'routes to #cancel_email_change' do
+      expect(get: '/users/1/cancel_email_change').to route_to('company_users#cancel_email_change', id: '1')
+    end
+
   end
 end

@@ -96,8 +96,8 @@ feature 'Users', js: true do
     end
   end
 
-  feature '/users/:user_id', js: true do
-    scenario 'GET show should display the user details page' do
+  feature 'User details page', js: true do
+    scenario 'user details are displayed' do
       role = create(:role, name: 'TestRole', company_id: company.id)
       user = create(:user, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: company.id)
       company_user = user.company_users.first
@@ -106,7 +106,7 @@ feature 'Users', js: true do
       expect(page).to have_selector('div.user-role', text: 'TestRole')
     end
 
-    scenario 'allows the user to activate/deactivate a user' do
+    scenario 'a user can activate/deactivate a user' do
       role = create(:role, name: 'TestRole')
       user = create(:user, role_id: role.id, company_id: company.id)
       company_user = user.company_users.first
@@ -151,7 +151,7 @@ feature 'Users', js: true do
       expect(page).to have_selector('div.user-role', text: 'Another Role')
     end
 
-    scenario 'should be able to assign areas to the user' do
+    scenario 'allows to assign areas to the user' do
       other_company_user = create(:company_user, company_id: company.id)
       area = create(:area, name: 'San Francisco Area', company: company)
       area2 = create(:area, name: 'Los Angeles Area', company: company)
@@ -276,6 +276,53 @@ feature 'Users', js: true do
       expect(company_user.country).to eq('CR')
       expect(company_user.state).to eq('C')
       expect(company_user.city).to eq('Tres Rios')
+    end
+
+    scenario 'user can modify his email address' do
+      visit company_user_path(company_user)
+
+      within('.profile-data') { click_js_button 'Edit Profile Data' }
+
+      within visible_modal do
+        fill_in 'Email', with: 'pedro@navaja.com'
+        click_js_button 'Save'
+      end
+      expect(page).to have_content(
+        'A confirmation email was sent to pedro@navaja.com. '\
+        'Your email will not be changed until you complete this step.'
+      )
+
+      within('.profile-data') { click_js_button 'Edit Profile Data' }
+      within visible_modal do
+        expect(page).to have_content(
+          'Check your (pedro@navaja.com) to confirm your new address. '\
+          'Until you confirm, you will continue to use your current email address.'
+        )
+      end
+    end
+
+    scenario 'user can cancel his email address change before confirmation' do
+      visit company_user_path(company_user)
+
+      within('.profile-data') { click_js_button 'Edit Profile Data' }
+
+      confirmation_message = 'A confirmation email was sent to pedro@navaja.com. '\
+        'Your email will not be changed until you complete this step.'
+
+      within visible_modal do
+        fill_in 'Email', with: 'pedro@navaja.com'
+        click_js_button 'Save'
+      end
+
+      expect(page).to have_content confirmation_message
+
+      within('.profile-data') { click_js_button 'Edit Profile Data' }
+      within visible_modal do
+        click_js_link 'Cancel this change'
+      end
+      close_modal
+
+      expect(page).not_to have_content confirmation_message
     end
 
     scenario 'allows the user to edit his communication preferences' do
