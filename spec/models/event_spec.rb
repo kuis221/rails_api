@@ -984,7 +984,7 @@ describe Event, type: :model do
 
       # Make sure the result is correctly initialized
       expect(result.form_field_id).not_to be_nil
-      expect(result.form_field.kpi).to be(Kpi.impressions)
+      expect(result.form_field.kpi).to eql(Kpi.impressions)
       expect(result.value).to be_nil
       expect(result.scalar_value).to eq(0)
     end
