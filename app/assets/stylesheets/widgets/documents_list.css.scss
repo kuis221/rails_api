@@ -39,10 +39,10 @@
 		color: $light-blue;
 	}
 	&.xls, &.xlsx {
-		color: #7ca63a;
+		color: $xls-file;
 	}
 	&.psd{
-		color: #3881a8;
+		color: $adobe-psd-file;
 	}
 	&.pdf{
 		color: $adobe-pdf-file;
