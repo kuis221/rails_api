@@ -27,17 +27,17 @@ $.widget 'nmk.photoGallery', {
 			@gallery.modal 'show'
 			@buildCarousels image
 			@image = $(image)
-			if @options.showSidebar
-				@showImageInfo @image
+			@showImageInfo @image
 			false
 		@
 
 	fillPhotoData: (info) ->
-		@setTitle info.title, info.urls.event
-		@setDate info.date
-		@setAddress info.address
-		@setRating info.rating, info.id
-		@setTagList info.tags
+		if @options.showSidebar
+			@setTitle info.title, info.urls.event
+			@setDate info.date
+			@setAddress info.address
+			@setRating info.rating, info.id
+			@setTagList info.tags
 		@_createPhotoToolbar()
 
 	showImageInfo: (image) ->
@@ -305,8 +305,7 @@ $.widget 'nmk.photoGallery', {
 		@carousel.on 'slid', (e) =>
 			item = $('.item.active', e.target)
 			@image = $(item.data('image'))
-			if @options.showSidebar
-				@showImageInfo(@image)
+			@showImageInfo(@image)
 
 			@_showImage()
 			@miniCarousel.carousel parseInt(item.data('index'))
@@ -358,7 +357,7 @@ $.widget 'nmk.photoGallery', {
 			else
 				null
 			),
-			(if 'index_photo_results' in @image.data('info').permissions
+			(if 'download' in @image.data('info').permissions
 				$('<a class="icon-download" title="Download"></a>').attr('href', urls.download)
 			else
 				null
