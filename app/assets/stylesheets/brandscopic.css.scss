@@ -1905,16 +1905,7 @@ li#notifications{
 
 	&.has-notifications {
 		.dropdown-toggle:hover { color:  #fff; }
-	}
-
-	&.has-grey-notifications {
-		.notification-state { background-color:  $alert_grey; }
-	}
-	&.has-blue-notifications {
-		.notification-state { background-color:  $alert_blue; }
-	}
-	&.has-red-notifications {
-		.notification-state { background-color: $alert_red; }
+		.notification-state { background-color:  $brand_red; }
 	}
 
 	&.without-notifications ul {
