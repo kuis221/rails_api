@@ -35,10 +35,11 @@ class Activity < ActiveRecord::Base
   scope :active, -> { where(active: true) }
 
   scope :with_results_for, ->(fields) {
-    select('DISTINCT activities.*').
-    joins(:results).
-    where(form_field_results: {form_field_id: fields}).
-    where('form_field_results.value is not NULL AND form_field_results.value !=\'\'') }
+    select('DISTINCT activities.*')
+    .joins(:results)
+    .where(form_field_results: { form_field_id: fields })
+    .where('form_field_results.value is not NULL AND form_field_results.value !=\'\'')
+  }
 
   scope :accessible_by_user, -> { self }
 

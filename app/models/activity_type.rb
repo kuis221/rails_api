@@ -32,7 +32,7 @@ class ActivityType < ActiveRecord::Base
 
   PHOTO_FIELDS_TYPES = ['FormField::Photo']
 
-  scope :with_trending_fields, -> { joins(:form_fields).where(form_fields: { type: FormField::TRENDING_FIELDS_TYPES } ).group('activity_types.id') }
+  scope :with_trending_fields, -> { joins(:form_fields).where(form_fields: { type: FormField::TRENDING_FIELDS_TYPES }).group('activity_types.id') }
 
   scope :active, -> { where(active: true) }
 
