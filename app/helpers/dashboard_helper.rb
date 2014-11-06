@@ -1,6 +1,6 @@
 module DashboardHelper
   def recent_photos_list
-    AttachedAsset.do_search(company_id: current_company.id, current_company_user: current_company_user, asset_type: 'photo', per_page: 12, sorting: :created_at, sorting_dir: :desc).results
+    AttachedAsset.do_search(company_id: current_company.id, current_company_user: current_company_user, asset_type: 'photo', status: ['Active'], per_page: 12, sorting: :created_at, sorting_dir: :desc).results
   end
 
   def upcoming_events_list

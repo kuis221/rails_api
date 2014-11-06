@@ -12,22 +12,7 @@ li.photo-item id="attached_asset_#{photo.id}" data-photo-id="#{photo.id}" data-p
       = link_to '', photo.download_url, class: 'icon-download', title: "Select Photo", id: 'photo-download-add' if can?(:index_photo_results, AttachedAsset)
     - if photo.processed?
       = link_to photo.file.url(:medium), 'data-toggle' => 'gallery', title: 'View Photo' do
-          = image_tag photo.file.url(:thumbnail), id: 'thumbnail_'+photo.id.to_s, data: {\
-                title: photo.attachable.campaign_name,\
-                urls: {\
-                  event: event_path(photo.attachable),\
-                  deactivate: deactivate_event_photo_path(photo.attachable, photo),\
-                  activate: activate_event_photo_path(photo.attachable, photo),\
-                  download: photo.download_url\
-                },\
-                date: format_date_range(photo.attachable.start_at, photo.attachable.end_at,{date_separator: '<br>'}),\
-                address: photo.attachable.place_name_with_location('<br>'),\
-                status: photo.active?,\
-                rating: photo.rating,\
-                tags: (to_select2_tag_format(photo.tags).to_json),\
-                permissions: photo_permissions(photo),\
-                id: photo.id\
-              }
+          = image_tag photo.file.url(:thumbnail), id: 'thumbnail_'+photo.id.to_s, data: { image_id: photo.id }
     - else
       .image-loading-container
 
