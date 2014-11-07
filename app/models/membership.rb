@@ -60,10 +60,9 @@ class Membership < ActiveRecord::Base
   end
 
   def update_tasks
-    if memberable_type == 'Event'
-      Sunspot.index(memberable.tasks)
-      Sunspot.index(memberable)
-    end
+    return unless memberable_type == 'Event'
+    Sunspot.index(memberable.tasks)
+    Sunspot.index(memberable)
   end
 
   def clear_cache
@@ -79,8 +78,7 @@ class Membership < ActiveRecord::Base
 
   # Validates that the user and the memberable are from the same company
   def same_company
-    if memberable.present? && company_user.company_id != memberable.company_id
-      errors.add(:memberable_id, :invalid)
-    end
+    return unless memberable.present? && company_user.company_id != memberable.company_id
+    errors.add(:memberable_id, :invalid)
   end
 end

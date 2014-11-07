@@ -139,7 +139,11 @@ class CompanyUser < ActiveRecord::Base
   end
 
   def active_status
-    invited_to_sign_up? ? 'Invited' : (active?  ? 'Active' : 'Inactive')
+    if invited_to_sign_up?
+      'Invited'
+    else
+      active? ? 'Active' : 'Inactive'
+    end
   end
 
   def activate!
@@ -165,8 +169,16 @@ class CompanyUser < ActiveRecord::Base
       else
         (
           campaign_ids +
-          Campaign.where(company_id: company_id).joins(:brands).where(brands: { id: brand_ids }).reorder(nil).pluck('campaigns.id') +
-          Campaign.where(company_id: company_id).joins(:brand_portfolios).where(brand_portfolios: { id: brand_portfolio_ids }).reorder(nil).pluck('campaigns.id')
+          Campaign.where(company_id: company_id)
+                  .joins(:brands)
+                  .where(brands: { id: brand_ids })
+                  .reorder(nil)
+                  .pluck('campaigns.id') +
+          Campaign.where(company_id: company_id)
+                  .joins(:brand_portfolios)
+                  .where(brand_portfolios: { id: brand_portfolio_ids })
+                  .reorder(nil)
+                  .pluck('campaigns.id')
         ).uniq
       end
     end
@@ -245,9 +257,8 @@ class CompanyUser < ActiveRecord::Base
 
   def notification_setting_permission?(type)
     permissions = NOTIFICATION_SETTINGS_PERMISSIONS[type]
-    if permissions.present?
-      permissions.all? { |permission| role.has_permission?(permission[:action], permission[:subject_class]) }
-    end
+    return unless permissions.present?
+    permissions.all? { |permission| role.has_permission?(permission[:action], permission[:subject_class]) }
   end
 
   def filter_settings_for(model, controller_name, format: :boolean)

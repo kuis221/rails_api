@@ -20,7 +20,8 @@ class ContactEvent < ActiveRecord::Base
 
   validates :event_id, uniqueness: { scope: [:contactable_type, :contactable_id] }
 
-  delegate :full_name, :country_name, :street_address, :city, :company_id, :country, :email, :first_name, :last_name, :phone_number, :state, :zip_code, to: :contactable
+  delegate :full_name, :country_name, :street_address, :city, :company_id, :country, :email,
+           :first_name, :last_name, :phone_number, :state, :zip_code, to: :contactable
 
   def title
     contactable.respond_to?(:title) ? contactable.title : contactable.role_name
