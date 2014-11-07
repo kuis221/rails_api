@@ -1,22 +1,18 @@
 require 'rails_helper'
 
 feature 'Results Expenses Page', js: true, search: true  do
+  let(:company) { create(:company) }
+  let(:user) { create(:user, company: company, role_id: create(:role).id) }
+  let(:company_user) { user.company_users.first }
+  let(:campaign1) { create(:campaign, name: 'First Campaign', company: company) }
+  let(:campaign2) { create(:campaign, name: 'Second Campaign', company: company) }
 
   before do
     Kpi.destroy_all
     Warden.test_mode!
-    @user = create(:user, company_id: create(:company).id, role_id: create(:role).id)
-    @company_user = @user.company_users.first
-    @company = @user.companies.first
-    sign_in @user
+    sign_in user
   end
-
-  after do
-    Warden.test_reset!
-  end
-
-  let(:campaign1) { create(:campaign, name: 'First Campaign', company: @company) }
-  let(:campaign2) { create(:campaign, name: 'Second Campaign', company: @company) }
+  after { Warden.test_reset! }
 
   feature 'Event Expenses index', js: true, search: true  do
     scenario 'a user can play and dismiss the video tutorial' do
@@ -45,12 +41,12 @@ feature 'Results Expenses Page', js: true, search: true  do
     scenario 'GET index should display a table with the expenses' do
       Kpi.create_global_kpis
       campaign1.add_kpi(Kpi.expenses)
-      event = build(:approved_event, campaign: campaign1, company: @company, start_date: '08/21/2013', end_date: '08/21/2013',
+      event = build(:approved_event, campaign: campaign1, company: company, start_date: '08/21/2013', end_date: '08/21/2013',
                     start_time: '8:00pm', end_time: '11:00pm', place: create(:place, name: 'Place 1'))
       event.event_expenses.build(name: 'Expense #1 Event #1', event_id: event.id, amount: 10)
       event.save
 
-      event2 = build(:approved_event, campaign: campaign1, company: @company, start_date: '08/25/2013', end_date: '08/25/2013',
+      event2 = build(:approved_event, campaign: campaign1, company: company, start_date: '08/25/2013', end_date: '08/25/2013',
                      start_time: '9:00am', end_time: '10:00am', place: create(:place, name: 'Place 2'))
       event2.event_expenses.build(name: 'Expense #1 Event #2', event_id: event.id, amount: 20)
       event2.save
@@ -78,7 +74,8 @@ feature 'Results Expenses Page', js: true, search: true  do
     scenario 'clicking on the expense item should redirect the user to the event' do
       Kpi.create_global_kpis
       campaign1.add_kpi(Kpi.expenses)
-      event = build(:approved_event, campaign: campaign1, company: @company, start_date: '08/21/2013', end_date: '08/21/2013', start_time: '8:00pm', end_time: '11:00pm')
+      event = build(:approved_event, campaign: campaign1, company: company, start_date: '08/21/2013',
+                    end_date: '08/21/2013', start_time: '8:00pm', end_time: '11:00pm')
       event.event_expenses.build(name: 'Expense #1 Event #1', event_id: event.id, amount: 10)
       event.save
 
@@ -92,12 +89,12 @@ feature 'Results Expenses Page', js: true, search: true  do
   end
 
   feature 'custom filters' do
-    let(:event1) { create(:approved_event, campaign: campaign1, company: @company, start_date: '08/21/2013', end_date: '08/21/2013',
+    let(:event1) { create(:approved_event, campaign: campaign1, company: company, start_date: '08/21/2013', end_date: '08/21/2013',
                           start_time: '8:00pm', end_time: '11:00pm', place: create(:place, name: 'Place 1')) }
-    let(:event2) { create(:approved_event, campaign: campaign2, company: @company, start_date: '08/22/2013', end_date: '08/22/2013',
+    let(:event2) { create(:approved_event, campaign: campaign2, company: company, start_date: '08/22/2013', end_date: '08/22/2013',
                           start_time: '8:00pm', end_time: '11:00pm', place: create(:place, name: 'Place 2')) }
-    let(:user1) { create(:company_user, user: create(:user, first_name: 'Roberto', last_name: 'Gomez'), company: @company) }
-    let(:user2) { create(:company_user, user: create(:user, first_name: 'Mario', last_name: 'Moreno'), company: @company) }
+    let(:user1) { create(:company_user, user: create(:user, first_name: 'Roberto', last_name: 'Gomez'), company: company) }
+    let(:user2) { create(:company_user, user: create(:user, first_name: 'Mario', last_name: 'Moreno'), company: company) }
 
     before do
       Kpi.create_global_kpis
@@ -129,7 +126,7 @@ feature 'Results Expenses Page', js: true, search: true  do
         end.to change(CustomFilter, :count).by(1)
 
         custom_filter = CustomFilter.last
-        expect(custom_filter.owner).to eq(@company_user)
+        expect(custom_filter.owner).to eq(company_user)
         expect(custom_filter.name).to eq('My Custom Filter')
         expect(custom_filter.apply_to).to eq('results_expenses')
         expect(custom_filter.filters).to eq('campaign%5B%5D=' + campaign1.to_param + '&user%5B%5D=' + user1.to_param + '&event_status%5B%5D=Approved&status%5B%5D=Active')
@@ -142,9 +139,9 @@ feature 'Results Expenses Page', js: true, search: true  do
     end
 
     scenario 'allows to apply custom filters' do
-      create(:custom_filter, owner: @company_user, name: 'Custom Filter 1', apply_to: 'results_expenses',
+      create(:custom_filter, owner: company_user, name: 'Custom Filter 1', apply_to: 'results_expenses',
              filters: 'campaign%5B%5D=' + campaign1.to_param + '&user%5B%5D=' + user1.to_param + '&event_status%5B%5D=Approved&status%5B%5D=Active')
-      create(:custom_filter, owner: @company_user, name: 'Custom Filter 2', apply_to: 'results_expenses',
+      create(:custom_filter, owner: company_user, name: 'Custom Filter 2', apply_to: 'results_expenses',
              filters: 'campaign%5B%5D=' + campaign2.to_param + '&user%5B%5D=' + user2.to_param + '&event_status%5B%5D=Approved&status%5B%5D=Active')
 
       visit results_expenses_path
@@ -209,9 +206,9 @@ feature 'Results Expenses Page', js: true, search: true  do
     end
 
     scenario 'allows to remove custom filters' do
-      create(:custom_filter, owner: @company_user, name: 'Custom Filter 1', apply_to: 'results_expenses', filters: 'Filters 1')
-      cf2 = create(:custom_filter, owner: @company_user, name: 'Custom Filter 2', apply_to: 'results_expenses', filters: 'Filters 2')
-      create(:custom_filter, owner: @company_user, name: 'Custom Filter 3', apply_to: 'results_expenses', filters: 'Filters 3')
+      create(:custom_filter, owner: company_user, name: 'Custom Filter 1', apply_to: 'results_expenses', filters: 'Filters 1')
+      cf2 = create(:custom_filter, owner: company_user, name: 'Custom Filter 2', apply_to: 'results_expenses', filters: 'Filters 2')
+      create(:custom_filter, owner: company_user, name: 'Custom Filter 3', apply_to: 'results_expenses', filters: 'Filters 3')
 
       visit results_expenses_path
 
@@ -244,17 +241,19 @@ feature 'Results Expenses Page', js: true, search: true  do
   end
 
   feature 'export', search: true do
+    let(:brand) { create(:brand, name: 'Brand 1', company: company) }
+    let(:event1) { build(:approved_event, campaign: campaign1, company: company, start_date: '08/21/2013', end_date: '08/21/2013',
+                         start_time: '8:00pm', end_time: '11:00pm', place: create(:place, name: 'Place 1')) }
+    let(:event2) { build(:approved_event, campaign: campaign1, company: company, start_date: '08/25/2013', end_date: '08/25/2013',
+                         start_time: '9:00am', end_time: '10:00am', place: create(:place, name: 'Place 2')) }
     before do
       Kpi.create_global_kpis
       campaign1.add_kpi(Kpi.expenses)
-      event = build(:approved_event, campaign: campaign1, company: @company, start_date: '08/21/2013', end_date: '08/21/2013',
-                    start_time: '8:00pm', end_time: '11:00pm', place: create(:place, name: 'Place 1'))
-      event.event_expenses.build(name: 'Expense #1 Event #1', event_id: event.id, amount: 10)
-      event.save
 
-      event2 = build(:approved_event, campaign: campaign1, company: @company, start_date: '08/25/2013', end_date: '08/25/2013',
-                     start_time: '9:00am', end_time: '10:00am', place: create(:place, name: 'Place 2'))
-      event2.event_expenses.build(name: 'Expense #1 Event #2', event_id: event.id, amount: 20)
+      event1.event_expenses.build(name: 'Expense #1 Event #1', event_id: event1.id, amount: 10, brand_id: brand.id)
+      event1.save
+
+      event2.event_expenses.build(name: 'Expense #1 Event #2', event_id: event2.id, amount: 20)
       event2.save
 
       Sunspot.commit
@@ -273,9 +272,11 @@ feature 'Results Expenses Page', js: true, search: true  do
       ensure_modal_was_closed
 
       expect(ListExport.last).to have_rows([
-        ['CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS', 'START DATE', 'END DATE', 'EXPENSE'],
-        [campaign1.name, 'Place 1', 'Place 1, New York City, NY, 12345', '2013-08-21T20:00', '2013-08-21T23:00', '10.0'],
-        [campaign1.name, 'Place 2', 'Place 2, New York City, NY, 12345', '2013-08-25T09:00', '2013-08-25T10:00', '20.0']
+        ['CAMPAIGN NAME', 'BRAND', 'VENUE NAME', 'ADDRESS', 'START DATE', 'END DATE', 'EXPENSE', 'DESCRIPTION', 'ACTIVE STATE'],
+        [campaign1.name, 'Brand 1', 'Place 1', 'Place 1, New York City, NY, 12345', '2013-08-21T20:00',
+         '2013-08-21T23:00', '10.0', 'Expense #1 Event #1', 'Active'],
+        [campaign1.name, nil, 'Place 2', 'Place 2, New York City, NY, 12345', '2013-08-25T09:00',
+         '2013-08-25T10:00', '20.0', 'Expense #1 Event #2', 'Active']
       ])
     end
   end
