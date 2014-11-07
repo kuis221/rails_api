@@ -182,6 +182,10 @@ class Ability
         user.current_company_user.role.has_permission?(:calendar, BrandAmbassadors::Visit)
       end
 
+      can :show, AttachedAsset do |asset|
+        asset.attachable.is_a?(Event) && can?(:show, asset.attachable)
+      end
+
       can [:build, :preview, :update], Report do |report|
         user.current_company_user.role.has_permission?(:create, Report) &&
         report.created_by_id == user.id
