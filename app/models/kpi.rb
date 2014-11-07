@@ -143,87 +143,87 @@ class Kpi < ActiveRecord::Base
 
   class << self
     def events
-      @events ||= where(company_id: nil).find_by(name: 'Events', kpi_type: 'events_count')
+      global.find_by(name: 'Events', kpi_type: 'events_count')
     end
 
     def promo_hours
-      @promo_hours ||= where(company_id: nil).find_by(name: 'Promo Hours', kpi_type: 'promo_hours')
+      global.find_by(name: 'Promo Hours', kpi_type: 'promo_hours')
     end
 
     def impressions
-      @impressions ||= where(company_id: nil).find_by(name: 'Impressions', module: 'consumer_reach')
+      global.find_by(name: 'Impressions', module: 'consumer_reach')
     end
 
     def interactions
-      @interactions ||= where(company_id: nil).find_by(name: 'Interactions', module: 'consumer_reach')
+      global.find_by(name: 'Interactions', module: 'consumer_reach')
     end
 
     def samples
-      @samples ||= where(company_id: nil).find_by(name: 'Samples', module: 'consumer_reach')
+      global.find_by(name: 'Samples', module: 'consumer_reach')
     end
 
     def expenses
-      @expenses ||= where(company_id: nil).find_by(name: 'Expenses', module: 'expenses')
+      global.find_by(name: 'Expenses', module: 'expenses')
     end
 
     def gender
-      @gender ||= where(company_id: nil).find_by(name: 'Gender', module: 'demographics')
+      global.find_by(name: 'Gender', module: 'demographics')
     end
 
     def age
-      @age ||= where(company_id: nil).find_by(name: 'Age', module: 'demographics')
+      global.find_by(name: 'Age', module: 'demographics')
     end
 
     def ethnicity
-      @ethnicity ||= where(company_id: nil).find_by(name: 'Ethnicity/Race', module: 'demographics')
+      global.find_by(name: 'Ethnicity/Race', module: 'demographics')
     end
 
     def photos
-      @photos ||= where(company_id: nil).find_by(name: 'Photos', module: 'photos')
+      global.find_by(name: 'Photos', module: 'photos')
     end
 
     def videos
-      @videos ||= where(company_id: nil).find_by(name: 'Videos', module: 'videos')
+      global.find_by(name: 'Videos', module: 'videos')
     end
 
     def surveys
-      @surveys ||= where(company_id: nil).find_by(name: 'Surveys', module: 'surveys')
+      global.find_by(name: 'Surveys', module: 'surveys')
     end
 
     def comments
-      @comments ||= where(company_id: nil).find_by(name: 'Comments', module: 'comments')
+      global.find_by(name: 'Comments', module: 'comments')
     end
 
     # This method is only used during the DB seed and tests
     def create_global_kpis
       Kpi.global.destroy_all
       without_company_scoped do
-        @events = Kpi.create(name: 'Events', kpi_type: 'events_count', description: 'Number of events executed', capture_mechanism: '', company_id: nil, 'module' => '', ordering: 1)
-        @promo_hours = Kpi.create(name: 'Promo Hours', kpi_type: 'promo_hours', description: 'Total duration of events', capture_mechanism: '', company_id: nil, 'module' => '', ordering: 2)
-        @impressions = Kpi.create(name: 'Impressions', kpi_type: 'number', description: 'Total number of consumers who come in contact with an event', capture_mechanism: 'integer', company_id: nil, 'module' => 'consumer_reach', ordering: 3)
-        @interactions = Kpi.create(name: 'Interactions', kpi_type: 'number', description: 'Total number of consumers who directly interact with an event', capture_mechanism: 'integer', company_id: nil, 'module' => 'consumer_reach', ordering: 4)
-        @samples = Kpi.create(name: 'Samples', kpi_type: 'number', description: 'Number of consumers who try a product sample', capture_mechanism: 'integer', company_id: nil, 'module' => 'consumer_reach', ordering: 5)
-        @gender  = Kpi.create(name: 'Gender', kpi_type: 'percentage', description: 'Number of consumers who try a product sample', capture_mechanism: 'integer', company_id: nil, 'module' => 'demographics', ordering: 6)
-        @age     = Kpi.create(name: 'Age', kpi_type: 'percentage', description: 'Percentage of attendees who are within a certain age range', capture_mechanism: 'integer', company_id: nil, 'module' => 'demographics', ordering: 7)
-        @ethnicity = Kpi.create(name: 'Ethnicity/Race', kpi_type: 'percentage', description: 'Percentage of attendees who are of a certain ethnicity or race', capture_mechanism: 'integer', company_id: nil, 'module' => 'demographics', ordering: 8)
-        @photos = Kpi.create(name: 'Photos', kpi_type: 'photos', description: 'Total number of photos uploaded to an event', capture_mechanism: '', company_id: nil, 'module' => 'photos', ordering: 9)
-        @expenses = Kpi.create(name: 'Expenses', kpi_type: 'expenses', description: 'Total expenses of an event', capture_mechanism: 'currency', company_id: nil, 'module' => 'expenses', ordering: 10)
-        @videos = Kpi.create(name: 'Videos', kpi_type: 'videos', description: 'Total number of photos uploaded to an event', capture_mechanism: '', company_id: nil, 'module' => 'videos', ordering: 11)
-        @surveys = Kpi.create(name: 'Surveys', kpi_type: 'surveys', description: 'Total number of surveys completed for a campaign', capture_mechanism: 'integer', company_id: nil, 'module' => 'surveys', ordering: 12)
-        @comments = Kpi.create(name: 'Comments', kpi_type: 'comments', description: 'Total number of comments from event audience', capture_mechanism: 'integer', company_id: nil, 'module' => 'comments', ordering: 13)
+        Kpi.create(name: 'Events', kpi_type: 'events_count', description: 'Number of events executed', capture_mechanism: '', company_id: nil, 'module' => '', ordering: 1)
+        Kpi.create(name: 'Promo Hours', kpi_type: 'promo_hours', description: 'Total duration of events', capture_mechanism: '', company_id: nil, 'module' => '', ordering: 2)
+        Kpi.create(name: 'Impressions', kpi_type: 'number', description: 'Total number of consumers who come in contact with an event', capture_mechanism: 'integer', company_id: nil, 'module' => 'consumer_reach', ordering: 3)
+        Kpi.create(name: 'Interactions', kpi_type: 'number', description: 'Total number of consumers who directly interact with an event', capture_mechanism: 'integer', company_id: nil, 'module' => 'consumer_reach', ordering: 4)
+        Kpi.create(name: 'Samples', kpi_type: 'number', description: 'Number of consumers who try a product sample', capture_mechanism: 'integer', company_id: nil, 'module' => 'consumer_reach', ordering: 5)
+        Kpi.create(name: 'Gender', kpi_type: 'percentage', description: 'Number of consumers who try a product sample', capture_mechanism: 'integer', company_id: nil, 'module' => 'demographics', ordering: 6)
+        Kpi.create(name: 'Age', kpi_type: 'percentage', description: 'Percentage of attendees who are within a certain age range', capture_mechanism: 'integer', company_id: nil, 'module' => 'demographics', ordering: 7)
+        Kpi.create(name: 'Ethnicity/Race', kpi_type: 'percentage', description: 'Percentage of attendees who are of a certain ethnicity or race', capture_mechanism: 'integer', company_id: nil, 'module' => 'demographics', ordering: 8)
+        Kpi.create(name: 'Photos', kpi_type: 'photos', description: 'Total number of photos uploaded to an event', capture_mechanism: '', company_id: nil, 'module' => 'photos', ordering: 9)
+        Kpi.create(name: 'Expenses', kpi_type: 'expenses', description: 'Total expenses of an event', capture_mechanism: 'currency', company_id: nil, 'module' => 'expenses', ordering: 10)
+        Kpi.create(name: 'Videos', kpi_type: 'videos', description: 'Total number of photos uploaded to an event', capture_mechanism: '', company_id: nil, 'module' => 'videos', ordering: 11)
+        Kpi.create(name: 'Surveys', kpi_type: 'surveys', description: 'Total number of surveys completed for a campaign', capture_mechanism: 'integer', company_id: nil, 'module' => 'surveys', ordering: 12)
+        Kpi.create(name: 'Comments', kpi_type: 'comments', description: 'Total number of comments from event audience', capture_mechanism: 'integer', company_id: nil, 'module' => 'comments', ordering: 13)
         Kpi.create(name: 'Competitive Analysis', kpi_type: 'number', description: 'Total number of competitive analyses created for a campaign', capture_mechanism: 'integer', company_id: nil, 'module' => 'competitive_analysis', ordering: 14)
       end
 
       ['< 12', '12 – 17', '18 – 24', '25 – 34', '35 – 44', '45 – 54', '55 – 64', '65+'].each do |segment|
-        @age.kpis_segments.create(text: segment)
+        self.age.kpis_segments.create(text: segment)
       end
 
       %w(Female Male).each do |segment|
-        @gender.kpis_segments.create(text: segment)
+        self.gender.kpis_segments.create(text: segment)
       end
 
       ['Asian', 'Black / African American', 'Hispanic / Latino', 'Native American', 'White'].each do |segment|
-        @ethnicity.kpis_segments.create(text: segment)
+        self.ethnicity.kpis_segments.create(text: segment)
       end
     end
 

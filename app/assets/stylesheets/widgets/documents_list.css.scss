@@ -20,6 +20,7 @@
 }
 
 .document-icon {
+	background-color:white;
 	border: 1px solid $grey_four;
 	color: #bbbbbb;
 	width: 30px;
@@ -38,7 +39,10 @@
 		color: $light-blue;
 	}
 	&.xls, &.xlsx {
-		color: #7ca63a;
+		color: $xls-file;
+	}
+	&.psd{
+		color: $adobe-psd-file;
 	}
 	&.pdf{
 		color: $adobe-pdf-file;
@@ -61,6 +65,7 @@
 }
 
 .document-image-preview {
+	border: 1px solid $grey_four;
 	float:left;
 	margin-right: 15px;
 	width: 30px;

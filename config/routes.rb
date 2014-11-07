@@ -131,6 +131,8 @@ Brandscopic::Application.routes.draw do
 
   resources :goals, only: [:create, :update]
 
+  resources :photos, only: [:show]
+
   namespace :results do
     resources :event_data, only: [:index] do
       get :items, on: :collection

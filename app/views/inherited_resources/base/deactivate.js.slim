@@ -7,6 +7,8 @@
     $('##{resource_class}_#{resource.id}').replaceWith('#{escape_javascript(render(resource))}');
     var element = $('##{resource_class}_#{resource.id}');
 
+  | $(document).trigger('#{resource_class.gsub('_', '-')}:#{resource.active? ? 'activated' : 'deactivated' }', [#{resource.id}]);
+
   - if resource.is_a?(AttachedAsset) && resource.asset_type == 'photo'
     - if resource.attachable_type == 'Event'
       | $('#photos-thumbs ##{resource_class}_#{resource.id}').remove();
@@ -27,4 +29,3 @@
   - unless resource.is_a?(AttachedAsset) || resource.is_a?(Task)
     | $('#active-toggle-btn-#{resource_class}-#{resource.id}').replaceWith('#{j button_to_activate_or_deactivate(resource, activate_url: params.merge(action: :activate), deactivate_url: params.merge(action: :deactivate))}');
 
-  | $(document).trigger('#{resource_class.gsub('_', '-')}:#{resource.active? ? 'activated' : 'deactivated' }', [#{resource.id}]);

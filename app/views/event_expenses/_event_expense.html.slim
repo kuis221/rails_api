@@ -6,12 +6,14 @@ div.resource-item id="event_expense_#{event_expense.id}"
     - if event_expense.receipt.present? && event_expense.receipt.file_file_name.present?
       = link_to event_expense.receipt.preview_url, 'data-toggle' => 'gallery', title: 'View Receipt', class: 'icon-receipt' do
           = image_tag 'blank.gif', id: 'expense_image_'+event_expense.receipt.id.to_s, data: {\
+              info: {\
                 urls: {\
                   download: event_expense.receipt.download_url\
                 },\
-                permissions: ['index_photo_results'],\
-                id: event_expense.receipt.id\
-              }
+                permissions: ['download'],\
+                image_id: event_expense.receipt.id\
+              }\
+            }
     = link_to '', edit_event_event_expense_path(event_expense.event, event_expense), remote: true, class: 'icon-edit' if can?(:edit, event_expense)
     = "&nbsp;".html_safe
     = link_to '', event_event_expense_path(event_expense.event, event_expense), remote: true, method: :delete, class: 'icon-rounded-disable' if can?(:deactivate, event_expense)

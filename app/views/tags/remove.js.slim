@@ -1,3 +1,3 @@
 |  
-  $("#thumbnail_#{parent.id}").data("tags", #{raw(to_select2_tag_format(parent.tags).to_json).html_safe});
+  $("#thumbnail_#{parent.id}").data("info").tags = #{raw(to_select2_tag_format(parent.tags).to_json).html_safe};
   

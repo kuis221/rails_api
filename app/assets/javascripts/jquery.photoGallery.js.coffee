@@ -9,13 +9,12 @@ $.widget 'nmk.photoGallery', {
 		@_createGalleryModal()
 
 		$(document).on 'attached-asset:activated', (e, id) =>
-			if @image && @image.data('id') is id
-				@image.data('status', true)
-				@gallery.find('a.icon-rounded-ok').replaceWith($('<a class="icon-remove-circle" title="Deactivate" data-remote="true" data-confirm="Are you sure you want to deactivate this photo?"></a>').attr('href', @image.data('urls').deactivate))
+			if @image && @image.data('image-id') is id
+				@showImageInfo(@image)
 				true
 
 		$(document).on 'attached-asset:deactivated', (e, id) =>
-			if @image && @image.data('id') is id
+			if @image && @image.data('image-id') is id
 				@photoToolbar.html ''
 				$('.carousel', @gallery).carousel('next')
 				@gallery.find('[data-photo-id='+id+']').remove()
@@ -27,22 +26,33 @@ $.widget 'nmk.photoGallery', {
 			e.preventDefault()
 			@gallery.modal 'show'
 			@buildCarousels image
-			@fillPhotoData image
+			@image = $(image)
+			@showImageInfo @image
 			false
 		@
 
-	fillPhotoData: (currentImage) ->
-		@image = $(currentImage)
+	fillPhotoData: (info) ->
 		if @options.showSidebar
-			@setTitle @image.data('title'), @image.data('urls').event
-			@setDate @image.data('date')
-			@setAddress @image.data('address')
-			@setRating @image.data('rating'), @image.data('id')
-			@setTagList @image.data('tags')
+			@setTitle info.title, info.urls.event
+			@setDate info.date
+			@setAddress info.address
+			@setRating info.rating, info.id
+			@setTagList info.tags
+		@_createPhotoToolbar()
+
+	showImageInfo: (image) ->
+		if image.data('info')
+			@fillPhotoData image.data('info')
+		else
+			$.get "/photos/#{@image.data('image-id')}.json", (info) =>
+				if info.id is _this.image.data('image-id')
+					image.data('info', info)
+					@fillPhotoData(info)
+
 
 	setTagList: (tags) ->
-		if 'view_tag' in @image.data('permissions')
-			if 'add_tag' in @image.data('permissions')
+		if 'view_tag' in @image.data('info').permissions
+			if 'add_tag' in @image.data('info').permissions
 				@createTagsControl tags
 			else
 				@tags_list.hide()
@@ -56,7 +66,7 @@ $.widget 'nmk.photoGallery', {
 		@tags_list.select2 $.extend(@_select2Options(), {tags: tags})
 		@tags_list.select2("container").find(".select2-input").attr("placeholder", "Add tags")
 		if @image
-			@tags_list.select2 'data', @image.data('tags')
+			@tags_list.select2 'data', @image.data('info').tags
 
 	createTagsControl: (tags, force=false) ->
 		if @tags_list.initialized? and !force
@@ -73,7 +83,7 @@ $.widget 'nmk.photoGallery', {
 		placeholder: 'Add tags'
 		dropdownCssClass: 'select2-dropdown'
 		createSearchChoice: (term, data) =>
-			if 'create_tag' in @image.data('permissions')
+			if 'create_tag' in @image.data('info').permissions
 				{id: term, text: term}
 			else
 				return null
@@ -83,8 +93,8 @@ $.widget 'nmk.photoGallery', {
 		@title.html $('<a>').attr('href', url).text(title)
 
 	setRating: (rating, asset_id) ->
-		if 'view_rate' in @image.data('permissions')
-			can_rate = (if 'rate' in @image.data('permissions') then true else false)
+		if 'view_rate' in @image.data('info').permissions
+			can_rate = (if 'rate' in @image.data('info').permissions then true else false)
 			$stars = new Array(5)
 			$i = 0
 			while $i < rating
@@ -114,35 +124,35 @@ $.widget 'nmk.photoGallery', {
 			@addTag(tag.added)
 
 	addTag: (tag) ->
-		id = @image.data('id')
+		id = @image.data('image-id')
 		setTagCloseButton = @setTagCloseButton(tag, id)
-		$.ajax "/attached_assets/"+@image.data('id')+'/tags/'+tag['id']+'/activate', {
+		$.ajax "/attached_assets/"+@image.data('image-id')+'/tags/'+tag['id']+'/activate', {
 			method: 'GET',
 			dataType: 'script',
 			success: (e) =>
 				@setTags()
-				@tags_list.select2('data', @image.data('tags'))
+				@tags_list.select2('data', @image.data('info').tags)
 			}
 
 	setTags: () ->
 		@tags.html ''
 		if @image
-			@tags.append($('<div class="tag" id="tag_'+tag['id']+'">').text(tag['text']).prepend(@setTagCloseButton(tag))) for tag in @image.data('tags')
+			@tags.append($('<div class="tag" id="tag_'+tag['id']+'">').text(tag['text']).prepend(@setTagCloseButton(tag))) for tag in @image.data('info').tags
 		@tags.show()
 
 	setTagCloseButton: (tag) ->
-		if 'deactivate_tag' in @image.data('permissions')
+		if 'deactivate_tag' in @image.data('info').permissions
 			button = $('<a href="#" class="icon-close remove-tag" title="Remove Tag">').on 'click', (e) =>
 				@removeTag(tag)
 				false
 
 	removeTag: (tag) ->
-		$.ajax "/attached_assets/"+@image.data('id')+'/tags/'+tag['id']+'/remove', {
+		$.ajax "/attached_assets/"+@image.data('image-id')+'/tags/'+tag['id']+'/remove', {
 			method: 'GET',
 			dataType: 'script',
 			success: (e) =>
 				$('#tag_'+tag['id']).remove()
-				@tags_list.select2('data', @image.data('tags'))
+				@tags_list.select2('data', @image.data('info').tags)
 		}
 
 	buildCarousels: (currentImage) ->
@@ -196,7 +206,7 @@ $.widget 'nmk.photoGallery', {
 		star = $('<span class="'+$klass+'" value="'+$i+'"/>')
 		if can_rate
 			star.click (e) =>
-				@image.data('rating', $i)
+				@image.data('info').rating = $i
 				$.ajax "/attached_assets/"+$asset_id+'/rate', {
 					method: 'PUT',
 					data: { rating: $i},
@@ -215,7 +225,7 @@ $.widget 'nmk.photoGallery', {
 		@rating = $('<div class="rating">')
 			.mouseleave (e) =>
 				@rating.find('span').removeClass('full').addClass('empty')
-				@rating.find('span').slice(0,@image.data('rating')).addClass('full').removeClass('empty')
+				@rating.find('span').slice(0,@image.data('info').rating).addClass('full').removeClass('empty')
 
 		@tags_list = $('<input id="tag_input" multiple="true" class="select2-field typeahead">')
 			.on "change", (e) =>
@@ -294,9 +304,9 @@ $.widget 'nmk.photoGallery', {
 
 		@carousel.on 'slid', (e) =>
 			item = $('.item.active', e.target)
-			image = item.data('image')
-			if @options.showSidebar
-				@fillPhotoData image
+			@image = $(item.data('image'))
+			@showImageInfo(@image)
+
 			@_showImage()
 			@miniCarousel.carousel parseInt(item.data('index'))
 
@@ -326,8 +336,6 @@ $.widget 'nmk.photoGallery', {
 		else
 			@_updateSizes()
 
-		@_createPhotoToolbar()
-
 		@carousel.find('.carousel-control img').attr('src', image.data('src'))
 
 		# Preload the next image
@@ -340,16 +348,16 @@ $.widget 'nmk.photoGallery', {
 	_createPhotoToolbar: () ->
 		@photoToolbar.html ''
 		@photoToolbar.append(
-			urls = @image.data('urls')
-			(if 'deactivate_photo' in @image.data('permissions') && @options.showSidebar
-				if @image.data('status') == true
+			urls = @image.data('info').urls
+			(if 'deactivate_photo' in @image.data('info').permissions && @options.showSidebar
+				if @image.data('info').status == true
 					$('<a class="icon-remove-circle photo-deactivate-link" title="Deactivate" data-remote="true" data-confirm="Are you sure you want to deactivate this photo?"></a>').attr('href', urls.deactivate)
 				else
 					$('<a class="icon-rounded-ok photo-deactivate-link" title="Activate" data-remote="true"></a>').attr('href', urls.activate)
 			else
 				null
 			),
-			(if 'index_photo_results' in @image.data('permissions')
+			(if 'download' in @image.data('info').permissions
 				$('<a class="icon-download" title="Download"></a>').attr('href', urls.download)
 			else
 				null

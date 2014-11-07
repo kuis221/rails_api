@@ -95,9 +95,7 @@ class Brand < ActiveRecord::Base
           end
         end
 
-        if include_facets
-          facet :status
-        end
+        facet :status if include_facets
 
         order_by(params[:sorting] || :name, params[:sorting_dir] || :asc)
         paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)

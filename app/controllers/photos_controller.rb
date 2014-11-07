@@ -1,5 +1,6 @@
 class PhotosController < InheritedResources::Base
   respond_to :js, only: [:create, :new, :processing_status]
+  respond_to :json, only: [:show]
 
   belongs_to :event, optional: true
 
