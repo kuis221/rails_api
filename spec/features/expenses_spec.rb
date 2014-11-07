@@ -17,9 +17,12 @@ feature 'Events section' do
 
   shared_examples_for 'a user that can attach expenses to events' do
     let(:event) { create(:due_event, campaign: campaign, place: place) }
+    let(:brand1) { create(:brand, name: 'Brand 1', company_id: company.id) }
+    let(:brand2) { create(:brand, name: 'Brand 2', company_id: company.id) }
 
     before do
       Kpi.create_global_kpis
+      campaign.brands << [brand1, brand2]
       event.campaign.update_attribute(:modules, 'expenses' => {})
     end
     scenario 'can attach a expense to event' do
@@ -36,6 +39,7 @@ feature 'Events section' do
           expect(find_field('Name')).to have_error('This field is required.')
 
           fill_in 'Name', with: 'test expense'
+          select_from_chosen 'Brand 2', from: 'Brand'
           expect(page).to have_content('File attached: file.pdf')
 
           wait_for_photo_to_process 15 do

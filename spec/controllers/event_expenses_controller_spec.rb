@@ -28,7 +28,7 @@ describe EventExpensesController, type: :controller do
   describe "POST 'create'" do
     it 'should not render form_dialog if no errors' do
       expect do
-        xhr :post, 'create', event_id: event.to_param, event_expense: { amount: '100', name: 'Test expense' }, format: :js
+        xhr :post, 'create', event_id: event.to_param, event_expense: { amount: '100', name: 'Test expense', brand_id: 12 }, format: :js
       end.to change(EventExpense, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template(:create)
@@ -38,6 +38,7 @@ describe EventExpensesController, type: :controller do
       event_expense = EventExpense.last
       expect(event_expense.amount).to eq(100)
       expect(event_expense.name).to eq('Test expense')
+      expect(event_expense.brand_id).to eq(12)
     end
 
     it 'should not render the template events/expenses if errors' do
