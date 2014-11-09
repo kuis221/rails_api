@@ -1,14 +1,19 @@
+- brands = parent.campaign.brands
 .form-inputs
   .expense-info-form
     - resource.build_receipt unless resource.receipt.present?
     = simple_form_for([parent, resource], id: 'new-expense-form', remote: true) do |f|
-      = f.input :name, size: 50, class: 'string required'
+      .inputs-side
+        = f.input :name, size: 50, class: 'string required'
+        - if brands.count > 1
+          = f.input :brand_id, as: :select, collection: brands, input_html: {class: 'input-large chosen-enabled'}
+        - elsif brands.count == 1
+          = f.input :brand_id, as: :hidden, input_html: { value: brands.first.id }, wrapper: false
+        = f.input :amount, as: :currency, label: false, size: 50, class: 'string required'
 
-      = f.input :amount, as: :currency, label: false, size: 50, class: 'string required'
-
-      .form-actions.inside-form
-        = submit_tag 'Save', id: 'save-expense-btn', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
-        = "&nbsp;".html_safe
+        .form-actions.inside-form
+          = submit_tag 'Save', id: 'save-expense-btn', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
+          = "&nbsp;".html_safe
       .expense-file-form
         = f.fields_for :receipt do |rf|
           = rf.input :id, as: :hidden, wrapper: false

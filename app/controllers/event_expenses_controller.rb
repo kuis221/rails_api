@@ -19,7 +19,7 @@ class EventExpensesController < InheritedResources::Base
   def permitted_params
     params.permit(
       event_expense: [
-        :name, :amount, { receipt_attributes: [:id, :direct_upload_url, :_destroy] }]
+        :name, :amount, :brand_id, { receipt_attributes: [:id, :direct_upload_url, :_destroy] }]
     )[:event_expense]
   end
 end
