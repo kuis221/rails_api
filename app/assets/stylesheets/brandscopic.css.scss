@@ -509,12 +509,6 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	&.alert-alert {
 		background-color: $alert_red;
 	}
-	&.collection-list-description{
-		a.icon-close{
-			cursor:pointer;
-			margin-top: 4px;
-		}
-	}
 }
 
 .alert-grey {
@@ -547,6 +541,10 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			white-space:nowrap;
 			width: 95%;
 		}
+	}
+	.icon-close{
+		color: white;
+		margin-top: 4px;
 	}
 }
 
@@ -1905,16 +1903,7 @@ li#notifications{
 
 	&.has-notifications {
 		.dropdown-toggle:hover { color:  #fff; }
-	}
-
-	&.has-grey-notifications {
-		.notification-state { background-color:  $alert_grey; }
-	}
-	&.has-blue-notifications {
-		.notification-state { background-color:  $alert_blue; }
-	}
-	&.has-red-notifications {
-		.notification-state { background-color: $alert_red; }
+		.notification-state { background-color:  $brand_red; }
 	}
 
 	&.without-notifications ul {

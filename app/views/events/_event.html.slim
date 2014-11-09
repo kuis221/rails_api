@@ -2,7 +2,7 @@
   = link_to_if_permitted :show, Event, event_url(event), title: 'Event Details', class: 'resource-item-link' do
     .span5.date= format_date_range(event_date(event, :start_at), event_date(event, :end_at))
     .span7
-      .text-large= event.campaign_name
+      .text-large.crop-text= event.campaign_name
       = event_place_address(event, false, ', ')
 
   .resource-item-actions
