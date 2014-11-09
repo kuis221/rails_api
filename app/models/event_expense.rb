@@ -10,10 +10,12 @@
 #  updated_by_id :integer
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
+#  brand_id      :integer
 #
 
 class EventExpense < ActiveRecord::Base
   belongs_to :event
+  belongs_to :brand
 
   # validates :event_id, presence: true, numericality: true
   validates :name, presence: true
