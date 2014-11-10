@@ -6147,8 +6147,8 @@ table td.sub-level-1 {
 					display: inline-block;
 				}
 				&.active {
-					outline: 3px solid $grey_three;
-					outline-offset: -3px;
+					outline: 1px solid white;
+					outline-offset: -1px;
 				}
 			}
 		}
