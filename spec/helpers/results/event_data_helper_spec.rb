@@ -510,12 +510,12 @@ describe Results::EventDataHelper, type: :helper do
   describe '#area_for_event' do
     let(:company) { create(:company) }
     let(:campaign) { create(:campaign, company: company) }
+    let(:place_la) { create(:place, country: 'US', state: 'California', city: 'Los Angeles') }
+    let(:city_la) { create(:city, name: 'Los Angeles', country: 'US', state: 'California') }
 
     it 'should return the area name' do
-      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
       event = create(:event, campaign: campaign, place: place_la)
 
-      city_la = create(:city, name: 'Los Angeles', country: 'US', state: 'California')
       area = create(:area, name: 'MyArea', company: company)
 
       area.places << city_la
@@ -525,10 +525,8 @@ describe Results::EventDataHelper, type: :helper do
     end
 
     it 'should return the area names separated by comma if more than one' do
-      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
       event = create(:event, campaign: campaign, place: place_la)
 
-      city_la = create(:city, name: 'Los Angeles', country: 'US', state: 'California')
       area1 = create(:area, name: 'MyArea1', company: company)
       area2 = create(:area, name: 'MyArea2', company: company)
 
@@ -539,11 +537,19 @@ describe Results::EventDataHelper, type: :helper do
       expect(area_for_event(event)).to eql 'MyArea1, MyArea2'
     end
 
-    it 'should NOT include the area if the place was excluded from it' do
-      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+    it 'should include the area if the place is part of a city included for it' do
       event = create(:event, campaign: campaign, place: place_la)
 
-      city_la = create(:city, name: 'Los Angeles', country: 'US', state: 'California')
+      area = create(:area, name: 'MyArea1', company: company)
+
+      create(:areas_campaign, area: area, campaign: campaign, inclusions: [city_la.id])
+
+      expect(area_for_event(event)).to eql 'MyArea1'
+    end
+
+    it 'should NOT include the area if the place was excluded from it' do
+      event = create(:event, campaign: campaign, place: place_la)
+
       area1 = create(:area, name: 'MyArea1', company: company)
       area2 = create(:area, name: 'MyArea2', company: company)
 

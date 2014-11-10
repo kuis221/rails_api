@@ -65,14 +65,14 @@ class Place < ActiveRecord::Base
 
   scope :in_company, ->(company) { joins(:venues).where(venues: { company_id: company }) }
 
-  scope :linked_to_campaign, ->(campaign) {
+  def self.linked_to_campaign(campaign)
     select('DISTINCT places.*')
-    joins(:placeables)
-    .where('(placeables.placeable_type=\'Campaign\' AND placeables.placeable_id=:campaign_id) OR
-      (placeables.placeable_type=\'Area\' AND placeables.placeable_id  in (
-        select area_id FROM areas_campaigns where campaign_id=:campaign_id
-      ))', campaign_id: campaign)
-  }
+      .joins(:placeables)
+      .where('(placeables.placeable_type=\'Campaign\' AND placeables.placeable_id=:campaign_id) OR '\
+             '(placeables.placeable_type=\'Area\' AND placeables.placeable_id  in ('\
+             ' select area_id FROM areas_campaigns where campaign_id=:campaign_id'\
+             '))', campaign_id: campaign)
+  end
 
   def street
     "#{street_number} #{route}".strip
@@ -381,9 +381,7 @@ class Place < ActiveRecord::Base
         # If still there is no city... :s then assign it's own name as the city
         # Example of places with this issue:
         # West Lake, TX: client.spot('CnRoAAAATClnCR7qKsJeD5nYegW8j9BLrDI2OsM-89wiA-NO-acvlYhSYXcef09z4Dns2p92zVfCCYJPET33QkrkzKeBt9y_fVOF-UfckvjwADE-rGsj4FIBJ4-s7O88LC0Y4yOz5e8vwYy5RjmMjx-dhG0IQxIQ3RfSNWKpoqim4qMLhdGhUhoUkH8hTzQ8E7Wgv6afi0RQmYzBP2Y')
-        unless self.city
-          self.city = name
-        end
+        self.city = name unless self.city
       end
 
       self.city.strip! unless self.city.nil?

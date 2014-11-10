@@ -13,6 +13,10 @@ class AreasCampaign < ActiveRecord::Base
   belongs_to :area
   belongs_to :campaign
 
+  after_update do
+    campaign.clear_locations_cache(area)
+  end
+
   attr_accessor :reference
 
   def self.find_by_area_id!(area_id)
@@ -22,23 +26,24 @@ class AreasCampaign < ActiveRecord::Base
   # If place is in /North America/United States/California/Los Angeles and the area
   # includes Los Angeles or any parent (like California)
   def place_in_scope?(place)
-    if place.present?
-      @place_ids ||= area.place_ids
-      return true if place.persisted? && (@place_ids - exclusions + inclusions).include?(place.id)
-      political_location = Place.political_division(place).join('/').downcase
-      locations.any? { |location| political_location.include?(location.path) }
-    else
-      false
-    end
+    return false unless place.present?
+    @place_ids ||= area.place_ids
+    return true if place.persisted? && (@place_ids - exclusions + inclusions).include?(place.id)
+    political_location = Place.political_division(place).join('/').downcase
+    locations.any? { |location| political_location.include?(location.path) }
   end
 
   def locations
     @locations ||= Rails.cache.fetch("area_campaign_locations_#{area_id}_#{campaign.id}") do
       Location.joins('INNER JOIN places ON places.location_id=locations.id')
-        .where(places: { id: area.place_ids + inclusions, is_location: true })
-        .where.not(places: { id: exclusions + [0] })
-        .group('locations.id')
+      .where(places: { id: area.place_ids + inclusions, is_location: true })
+      .where.not(places: { id: exclusions + [0] })
+      .group('locations.id')
     end
+  end
+
+  def location_ids
+    locations.map(&:id)
   end
 
   def places

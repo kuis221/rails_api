@@ -34,9 +34,12 @@ class Event < ActiveRecord::Base
   belongs_to :place, autosave: true
 
   has_many :tasks, -> { order 'due_at ASC' }, dependent: :destroy, inverse_of: :event
-  has_many :photos, -> { order('created_at DESC').where(asset_type: 'photo') }, class_name: 'AttachedAsset', dependent: :destroy, as: :attachable, inverse_of: :attachable
-  has_many :active_photos, -> { order('created_at DESC').where(asset_type: 'photo', active: true) }, class_name: 'AttachedAsset', as: :attachable, inverse_of: :attachable
-  has_many :documents, -> { order('created_at DESC').where(asset_type: 'document') }, class_name: 'AttachedAsset', dependent: :destroy, as: :attachable, inverse_of: :attachable
+  has_many :photos, -> { order('created_at DESC').where(asset_type: 'photo') },
+           class_name: 'AttachedAsset', dependent: :destroy, as: :attachable, inverse_of: :attachable
+  has_many :active_photos, -> { order('created_at DESC').where(asset_type: 'photo', active: true) },
+           class_name: 'AttachedAsset', as: :attachable, inverse_of: :attachable
+  has_many :documents, -> { order('created_at DESC').where(asset_type: 'document') },
+           class_name: 'AttachedAsset', dependent: :destroy, as: :attachable, inverse_of: :attachable
   has_many :teamings, as: :teamable, dependent: :destroy, inverse_of: :teamable
   has_many :teams, through: :teamings, after_remove: :after_remove_member
   has_many :results, as: :resultable, dependent: :destroy, class_name: 'FormFieldResult', inverse_of: :resultable do
@@ -47,7 +50,8 @@ class Event < ActiveRecord::Base
   has_many :event_expenses, dependent: :destroy, inverse_of: :event, autosave: true
   has_many :activities, -> { order('activity_date ASC') }, as: :activitable, dependent: :destroy do
     def active
-      joins(activity_type: :activity_type_campaigns).where(active: true, activity_type_campaigns: { campaign_id: proxy_association.owner.campaign_id })
+      joins(activity_type: :activity_type_campaigns)
+        .where(active: true, activity_type_campaigns: { campaign_id: proxy_association.owner.campaign_id })
     end
   end
   has_one :event_data, autosave: true, dependent: :destroy
@@ -58,7 +62,8 @@ class Event < ActiveRecord::Base
 
   # Events-Users relationship
   has_many :memberships, dependent: :destroy, as: :memberable, inverse_of: :memberable
-  has_many :users, class_name: 'CompanyUser', source: :company_user, through: :memberships, after_remove: :after_remove_member
+  has_many :users, class_name: 'CompanyUser', source: :company_user, through: :memberships,
+                   after_remove: :after_remove_member
 
   has_many :contact_events, dependent: :destroy
 
@@ -71,7 +76,12 @@ class Event < ActiveRecord::Base
 
   scope :upcomming, -> { where('start_at >= ?', Time.zone.now) }
   scope :active, -> { where(active: true) }
-  scope :between_dates, ->(start_date, end_date) {
+
+  scope :by_campaigns, ->(campaigns) { where(campaign_id: campaigns) }
+  scope :in_past, -> { where('events.end_at < ?', Time.now) }
+  scope :with_team, ->(team) { joins(:teamings).where(teamings: { team_id: team }) }
+
+  def self.between_dates(start_date, end_date)
     prefix = ''
     if Company.current.present? && Company.current.timezone_support?
       prefix = 'local_'
@@ -79,16 +89,13 @@ class Event < ActiveRecord::Base
       end_date = end_date.strftime('%Y-%m-%d %H:%M:%S')
     end
     where("#{prefix}end_at > ? AND #{prefix}start_at < ?", start_date, end_date)
-  }
-
-  scope :by_campaigns, ->(campaigns) { where(campaign_id: campaigns) }
-  scope :in_past, -> { where('events.end_at < ?', Time.now) }
-  scope :with_team, ->(team) { joins(:teamings) .where(teamings: { team_id: team } ) }
+  end
 
   def self.with_user_in_team(user)
     joins('LEFT JOIN teamings ON teamings.teamable_id=events.id AND teamable_type=\'Event\'')
-    .joins('LEFT JOIN memberships ON (memberships.memberable_id=events.id AND memberable_type=\'Event\') OR (memberships.memberable_id=teamings.team_id AND memberable_type=\'Team\')')
-    .where('memberships.company_user_id in (?)', user)
+      .joins('LEFT JOIN memberships ON (memberships.memberable_id=events.id AND memberable_type=\'Event\') OR '\
+                                      '(memberships.memberable_id=teamings.team_id AND memberable_type=\'Team\')')
+      .where('memberships.company_user_id in (?)', user)
   end
 
   def self.for_campaigns_accessible_by(company_user)
@@ -136,21 +143,21 @@ class Event < ActiveRecord::Base
     has_exclusions = area_campaign.exclusions.any?
     subquery =
       Place.select('DISTINCT places.location_id, placeables.placeable_id area_id')
-        .joins(:placeables)
-        .where(
-            is_location: true,
-            placeables: { placeable_type: 'Area', placeable_id: area_campaign.area_id })
+      .joins(:placeables)
+      .where(
+          is_location: true,
+          placeables: { placeable_type: 'Area', placeable_id: area_campaign.area_id })
     subquery = subquery.where.not(placeables: { place_id: area_campaign.exclusions })
     place_query =
       "SELECT place_id, locations.area_id FROM locations_places
        INNER JOIN (#{subquery.to_sql}) locations on locations.location_id=locations_places.location_id" +
-       (has_exclusions ? " WHERE place_id not in (#{area_campaign.exclusions.join(',')})" : '')
+      (has_exclusions ? " WHERE place_id not in (#{area_campaign.exclusions.join(',')})" : '')
     area_query =
       Placeable.select('place_id, placeable_id area_id')
-          .where(placeable_type: 'Area', placeable_id: area_campaign.area_id)
+      .where(placeable_type: 'Area', placeable_id: area_campaign.area_id)
     area_query = area_query.where.not(place_id: area_campaign.exclusions) if has_exclusions
     joins(:place)
-    .joins("INNER JOIN (#{area_query.to_sql} UNION #{place_query}) areas_places ON events.place_id=areas_places.place_id")
+      .joins("INNER JOIN (#{area_query.to_sql} UNION #{place_query}) areas_places ON events.place_id=areas_places.place_id")
   end
 
   # Similar to in_campaign_area, except that this accepts severals areas and filter
@@ -158,25 +165,32 @@ class Event < ActiveRecord::Base
   def self.in_campaign_areas(campaign, areas)
     subquery =
       Place.select('DISTINCT places.location_id, placeables.placeable_id area_id')
-          .joins(:placeables)
-          .where(placeables: { placeable_type: 'Area', placeable_id: areas }, is_location: true)
-          .joins('INNER JOIN areas_campaigns
-                    ON areas_campaigns.campaign_id=' + campaign.id.to_s + ' AND
-                    areas_campaigns.area_id=placeables.placeable_id')
-          .where('NOT (places.id = ANY (areas_campaigns.exclusions))')
-    place_query = "select place_id, locations.area_id FROM locations_places INNER JOIN (#{subquery.to_sql}) locations ON locations.location_id=locations_places.location_id"
-    area_query = Placeable.select('place_id, placeable_id area_id').where(placeable_type: 'Area', placeable_id: areas).joins('INNER JOIN areas_campaigns ON areas_campaigns.campaign_id=' + campaign.id.to_s + ' AND areas_campaigns.area_id=placeables.placeable_id').where('NOT (place_id = ANY (areas_campaigns.exclusions))').to_sql
+      .joins(:placeables)
+      .where(placeables: { placeable_type: 'Area', placeable_id: areas }, is_location: true)
+      .joins('INNER JOIN areas_campaigns
+                ON areas_campaigns.campaign_id=' + campaign.id.to_s + ' AND
+                areas_campaigns.area_id=placeables.placeable_id')
+      .where('NOT (places.id = ANY (areas_campaigns.exclusions))')
+    place_query = "select place_id, locations.area_id FROM locations_places INNER JOIN (#{subquery.to_sql})"\
+                  ' locations ON locations.location_id=locations_places.location_id'
+    area_query = Placeable.select('place_id, placeable_id area_id').where(placeable_type: 'Area', placeable_id: areas)
+                 .joins("INNER JOIN areas_campaigns ON areas_campaigns.campaign_id=#{campaign.id} "\
+                        'AND areas_campaigns.area_id=placeables.placeable_id')
+                 .where('NOT (place_id = ANY (areas_campaigns.exclusions))').to_sql
     joins(:place)
-    .joins("INNER JOIN (#{area_query} UNION #{place_query}) areas_places ON events.place_id=areas_places.place_id")
+      .joins("INNER JOIN (#{area_query} UNION #{place_query}) areas_places ON events.place_id=areas_places.place_id")
   end
 
   #
   def self.in_areas(areas)
-    subquery = Place.select('DISTINCT places.location_id, placeables.placeable_id area_id').joins(:placeables).where(placeables: { placeable_type: 'Area', placeable_id: areas }, is_location: true)
-    place_query = "select place_id, locations.area_id FROM locations_places INNER JOIN (#{subquery.to_sql}) locations on locations.location_id=locations_places.location_id"
-    area_query = Placeable.select('place_id, placeable_id area_id').where(placeable_type: 'Area', placeable_id: areas).to_sql
+    subquery = Place.select('DISTINCT places.location_id, placeables.placeable_id area_id')
+               .joins(:placeables).where(placeables: { placeable_type: 'Area', placeable_id: areas }, is_location: true)
+    place_query = "select place_id, locations.area_id FROM locations_places INNER JOIN (#{subquery.to_sql})"\
+                  ' locations on locations.location_id=locations_places.location_id'
+    area_query = Placeable.select('place_id, placeable_id area_id')
+                 .where(placeable_type: 'Area', placeable_id: areas).to_sql
     joins(:place)
-    .joins("INNER JOIN (#{area_query} UNION #{place_query}) areas_places ON events.place_id=areas_places.place_id")
+      .joins("INNER JOIN (#{area_query} UNION #{place_query}) areas_places ON events.place_id=areas_places.place_id")
   end
 
   def self.in_places(places)
@@ -196,7 +210,7 @@ class Event < ActiveRecord::Base
   validates :end_at, presence: true, date: { on_or_after: :start_at, message: 'must be after' }
   validate :between_visit_date_range, before: [:create, :update], if: :visit
 
-  DATE_FORMAT = /\A[0-1]?[0-9]\/[0-3]?[0-9]\/[0-2]0[0-9][0-9]\z/
+  DATE_FORMAT = %r{\A[0-1]?[0-9]/[0-3]?[0-9]/[0-2]0[0-9][0-9]\z}
   validates :start_date, format: { with: DATE_FORMAT, message: 'MM/DD/YYYY' }
   validates :end_date, format: { with: DATE_FORMAT, message: 'MM/DD/YYYY' }
 
@@ -218,8 +232,12 @@ class Event < ActiveRecord::Base
   after_commit :create_notifications
 
   delegate :name, to: :campaign, prefix: true, allow_nil: true
-  delegate :name, :state, :city, :zipcode, :neighborhood, :street_number, :route, :latitude, :state_name, :longitude, :formatted_address, :name_with_location, :td_linx_code, to: :place, prefix: true, allow_nil: true
-  delegate :impressions, :interactions, :samples, :spent, :gender_female, :gender_male, :ethnicity_asian, :ethnicity_black, :ethnicity_hispanic, :ethnicity_native_american, :ethnicity_white, to: :event_data, allow_nil: true
+  delegate :name, :state, :city, :zipcode, :neighborhood, :street_number, :route, :latitude,
+           :state_name, :longitude, :formatted_address, :name_with_location, :td_linx_code,
+           to: :place, prefix: true, allow_nil: true
+  delegate :impressions, :interactions, :samples, :spent, :gender_female, :gender_male,
+           :ethnicity_asian, :ethnicity_black, :ethnicity_hispanic, :ethnicity_native_american,
+           :ethnicity_white, to: :event_data, allow_nil: true
 
   aasm do
     state :unsent, initial: true
@@ -305,13 +323,12 @@ class Event < ActiveRecord::Base
 
   def place_reference=(value)
     @place_reference = value
-    if value && value.present?
-      if value =~ /^[0-9]+$/
-        self.place = Place.find(value)
-      else
-        reference, place_id = value.split('||')
-        self.place = Place.load_by_place_id(place_id,  reference)
-      end
+    return unless value && value.present?
+    if value =~ /^[0-9]+$/
+      self.place = Place.find(value)
+    else
+      reference, place_id = value.split('||')
+      self.place = Place.load_by_place_id(place_id,  reference)
     end
   end
 
@@ -353,19 +370,18 @@ class Event < ActiveRecord::Base
 
   def has_event_data?
     campaign_id.present? &&
-    (
-      results.active.where(
-        '(form_field_results.value is not null AND form_field_results.value <> \'\') OR
-         (form_field_results.hash_value is not null AND btrim(array_to_string(avals(form_field_results.hash_value), \'\'))<>\'\')').count > 0
-    )
+      (
+        results.active.where(
+          '(form_field_results.value is not null AND form_field_results.value <> \'\') OR
+           (form_field_results.hash_value is not null AND btrim(array_to_string(avals(form_field_results.hash_value), \'\'))<>\'\')').count > 0
+      )
   end
 
   def venue
-    unless place_id.nil?
-      @venue ||= Venue.find_or_create_by(company_id: company_id, place_id: place_id)
-      @venue.place = place if association(:place).loaded?
-      @venue
-    end
+    return if place_id.nil?
+    @venue ||= Venue.find_or_create_by(company_id: company_id, place_id: place_id)
+    @venue.place = place if association(:place).loaded?
+    @venue
   end
 
   def contacts
@@ -396,10 +412,9 @@ class Event < ActiveRecord::Base
 
   def result_for_kpi(kpi)
     field = campaign.form_fields.find { |f| f.kpi_id == kpi.id }
-    if field.present?
-      field.kpi = kpi # Assign it so it won't be reloaded if requested.
-      results_for([field]).first
-    end
+    return unless field.present?
+    field.kpi = kpi # Assign it so it won't be reloaded if requested.
+    results_for([field]).first
   end
 
   def results_for_kpis(kpis)
@@ -451,7 +466,8 @@ class Event < ActiveRecord::Base
                 stats[type][brands_map[answer.brand_id]] ||= { count: 0, total: 0, avg: 0 }
                 stats[type][brands_map[answer.brand_id]][:count] += 1
                 stats[type][brands_map[answer.brand_id]][:total] += answer.answer.to_f
-                stats[type][brands_map[answer.brand_id]][:avg] = stats[type][brands_map[answer.brand_id]][:total] / stats[type][brands_map[answer.brand_id]][:count]
+                stats[type][brands_map[answer.brand_id]][:avg] = stats[type][brands_map[answer.brand_id]][:total]  /
+                                                                 stats[type][brands_map[answer.brand_id]][:count]
               end
             else
               stats[type][answer.answer] ||= {}
@@ -728,16 +744,14 @@ class Event < ActiveRecord::Base
   private
 
   def valid_campaign?
-    if campaign_id.present? && (new_record? || campaign_id_changed?)
-      campaigns = if User.current.present? && User.current.current_company_user.present?
-                    Campaign.accessible_by_user(User.current.current_company_user)
+    return unless campaign_id.present? && (new_record? || campaign_id_changed?)
+    campaigns =
+      if User.current.present? && User.current.current_company_user.present?
+        Campaign.accessible_by_user(User.current.current_company_user)
       else
         Campaign.where(company_id: company_id)
       end
-      unless campaigns.where(id: campaign_id).count > 0
-        errors.add :campaign_id, :invalid
-      end
-    end
+    errors.add :campaign_id, :invalid unless campaigns.where(id: campaign_id).count > 0
   end
 
   # Copy some errors to the attributes used on the forms so the user
@@ -824,9 +838,7 @@ class Event < ActiveRecord::Base
       campaign.save if campaign.changed?
     end
 
-    if visit.present?
-      Sunspot.index visit
-    end
+    Sunspot.index visit if visit.present?
 
     if @reindex_place
       Resque.enqueue(EventPhotosIndexer, id)
@@ -840,9 +852,7 @@ class Event < ActiveRecord::Base
   end
 
   def index_venue
-    if place_id.present?
-      Resque.enqueue(VenueIndexer, venue.id)
-    end
+    Resque.enqueue(VenueIndexer, venue.id) if place_id.present?
     true
   end
 
@@ -854,27 +864,30 @@ class Event < ActiveRecord::Base
   # Validates that the user can schedule a event on tha specified place. The validation
   # is only made if the place_id changed or it's being created
   def event_place_valid?
-    if place_id_changed? || self.new_record?
-      unless place.nil? || campaign.nil?
-        unless campaign.place_allowed_for_event?(place)
-          errors.add(:place_reference, 'is not valid for this campaign')
-        end
-        unless User.current.nil? || User.current.current_company_user.nil? || User.current.current_company_user.allowed_to_access_place?(place)
-          errors.add(:place_reference, 'is not part of your authorized locations')
-        end
-      else
-        if place.nil? && User.current.present? && User.current.current_company_user.present? && !User.current.current_company_user.is_admin?
-          errors.add(:place_reference, 'cannot be blank')
-        end
+    return unless place_id_changed? || self.new_record?
+    if place.nil? || campaign.nil?
+      if place.nil? && User.current.present? && User.current.current_company_user.present? &&
+         !User.current.current_company_user.is_admin?
+        errors.add(:place_reference, 'cannot be blank')
+      end
+    else
+      unless campaign.place_allowed_for_event?(place)
+        errors.add(:place_reference, 'is not valid for this campaign')
+      end
+      unless User.current.nil? || User.current.current_company_user.nil? || User.current.current_company_user.allowed_to_access_place?(place)
+        errors.add(:place_reference, 'is not part of your authorized locations')
       end
     end
   end
 
   def set_event_timezone
-    if new_record? || start_at_changed? || end_at_changed?
-      self.timezone = Time.zone.tzinfo.identifier
-      self.local_start_at = Timeliness.parse(read_attribute(:start_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC') if read_attribute(:start_at)
-      self.local_end_at = Timeliness.parse(read_attribute(:end_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC') unless read_attribute(:end_at).nil?
+    return unless new_record? || start_at_changed? || end_at_changed?
+    self.timezone = Time.zone.tzinfo.identifier
+    if read_attribute(:start_at)
+      self.local_start_at = Timeliness.parse(read_attribute(:start_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC')
+    end
+    unless read_attribute(:end_at).nil?
+      self.local_end_at = Timeliness.parse(read_attribute(:end_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC')
     end
   end
 

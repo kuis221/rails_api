@@ -67,7 +67,7 @@ class Campaign < ActiveRecord::Base
   # Campaigns-Areas relationship
   has_many :areas_campaigns, inverse_of: :campaign
   has_many :areas, -> { order('areas.name ASC').where(active: true) }, through: :areas_campaigns,
-        autosave: true, after_remove: :clear_locations_cache, after_add: :clear_locations_cache
+        autosave: true, after_remove: :campaign_area_removed, after_add: :clear_locations_cache
 
   # Campaigns-Areas relationship
   has_and_belongs_to_many :date_ranges, -> { order('date_ranges.name ASC').where(active: true) },
@@ -117,7 +117,7 @@ class Campaign < ActiveRecord::Base
 
   # Campaigns-Places relationship
   has_many :placeables, as: :placeable
-  has_many :places, through: :placeables, after_remove: :clear_locations_cache, after_add: :clear_locations_cache
+  has_many :places, through: :placeables, after_remove: :campaign_area_removed, after_add: :clear_locations_cache
 
   # Attached Documents
   has_many :documents, -> { order('created_at DESC').where(asset_type: :document) }, class_name: 'AttachedAsset', as: :attachable, inverse_of: :attachable
@@ -211,9 +211,10 @@ class Campaign < ActiveRecord::Base
   end
 
   def accessible_locations
-    Rails.cache.fetch("campaign_locations_#{id}") do
+    @accessible_locations ||= Rails.cache.fetch("campaign_locations_#{id}") do
       (
-        areas.reorder(nil).joins(:places).where(places: { is_location: true }).pluck('places.location_id') +
+        # areas.reorder(nil).joins(:places).where(places: { is_location: true }).pluck('places.location_id') +
+        areas_campaigns.map(&:location_ids).flatten +
         places.where(is_location: true).reorder(nil).pluck('places.location_id')
       ).map(&:to_i)
     end
@@ -409,9 +410,14 @@ class Campaign < ActiveRecord::Base
     save if autosave
   end
 
-  def clear_locations_cache(area)
-    remove_child_goals_for(area)
+  def clear_locations_cache(_area)
     Rails.cache.delete("campaign_locations_#{id}")
+    @accessible_locations = nil
+  end
+
+  def campaign_area_removed(area)
+    remove_child_goals_for(area)
+    clear_locations_cache(area)
   end
 
   class << self

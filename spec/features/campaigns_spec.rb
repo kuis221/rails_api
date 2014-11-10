@@ -229,8 +229,17 @@ feature 'Campaigns', js: true do
     end
 
     scenario 'should be able to include places to areas assigned to the campaign' do
+      expect(Place).to receive(:open).and_return(double(read: { results:
+        [
+          { reference: 'xxxxx', id: '1111', name: 'Walt Disney World Dolphin', formatted_address: '123 Blvr' }
+        ]
+      }.to_json))
+      expect_any_instance_of(GooglePlaces::Client).to receive(:spot).with('xxxxx').and_return(double(
+        name: 'Walt Disney World Dolphin', formatted_address: '123 Blvr', address_components: nil,
+        lat: '1.1111', lng: '2.2222', types: []
+      ))
       Kpi.create_global_kpis
-      area = create(:area, name: 'San Francisco', company: company)
+      area = create(:area, name: 'Orlando', company: company)
 
       campaign.areas << [area]
       visit campaign_path(campaign)
@@ -238,12 +247,12 @@ feature 'Campaigns', js: true do
       tab = open_tab('Places')
 
       within tab do
-        expect(page).to have_content('San Francisco')
+        expect(page).to have_content('Orlando')
         find('a[data-original-title="Customize area"]').click # tooltip changes the title
       end
 
       within visible_modal do
-        expect(page).to have_content('Customize San Francisco Area')
+        expect(page).to have_content('Customize Orlando Area')
         click_js_link('Add new place')
       end
 
@@ -258,7 +267,7 @@ feature 'Campaigns', js: true do
       expect(campaign.areas_campaigns.find_by(area_id: area.id).inclusions).to eql [new_place_id]
 
       within visible_modal do
-        expect(page).to have_content('Customize San Francisco Area')
+        expect(page).to have_content('Customize Orlando Area')
         expect(page).to have_content('Walt Disney World Dolphin')
         within(resource_item("#area-campaign-place-#{new_place_id}")) { click_js_link 'Deactivate' }
         expect(page).to have_selector("#area-campaign-place-#{new_place_id}.inactive")
@@ -271,7 +280,7 @@ feature 'Campaigns', js: true do
       end
 
       within visible_modal do
-        expect(page).to have_content('Customize San Francisco Area')
+        expect(page).to have_content('Customize Orlando Area')
         expect(page).to have_no_content('Walt Disney World Dolphin')
       end
     end

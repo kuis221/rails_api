@@ -1057,13 +1057,20 @@ describe Event, type: :model do
   end
 
   describe '#event_place_valid?' do
+    let(:company) { create(:company) }
+    let(:campaign) { create(:campaign, company: company) }
+    let(:place_LA) { create(:city, name: 'Los Angeles', state: 'California', country: 'US') }
+    let(:place_SF) { create(:city, name: 'San Francisco', state: 'California', country: 'US') }
+    let(:bar_in_LA) do
+      create(:place, name: 'Bar Testing', route: 'Amargura St.', city: 'Los Angeles',
+                     state: 'California', country: 'US', types: %w(establishment bar))
+    end
+
     after do
       User.current = nil
     end
-    let(:place_LA) { create(:place, name: 'Los Angeles', city: 'Los Angeles', state: 'California', country: 'US', types: ['locality']) }
-    let(:place_SF) { create(:place, name: 'San Francisco', city: 'San Francisco', state: 'California', country: 'US', types: ['locality']) }
+
     it 'should only allow create events that are valid for the campaign' do
-      campaign = create(:campaign)
       campaign.places << place_LA
 
       event = build(:event, campaign: campaign, company: campaign.company, place: place_SF)
@@ -1075,8 +1082,6 @@ describe Event, type: :model do
     end
 
     it "should not validate place if the event's place haven't changed" do
-      campaign = create(:campaign)
-
       event = create(:event, campaign: campaign, company: campaign.company, place: place_SF)
       expect(event.save).to be_truthy
 
@@ -1086,37 +1091,30 @@ describe Event, type: :model do
     end
 
     it 'should allow the event to have a blank place if the user is admin' do
-      company = create(:company)
       user = create(:company_user, company: company, role: create(:role, is_admin: true)).user
       user.current_company = company
       User.current = user
 
-      campaign = create(:campaign, company: company)
       event = build(:event, campaign: campaign, company: company, place: nil)
       expect(event.valid?).to be_truthy
     end
 
     it 'should NOT allow the event to have a blank place if the user is not admin' do
-      company = create(:company)
       user = create(:company_user, company: company, role: create(:role, is_admin: false)).user
       user.current_company = company
       User.current = user
 
-      campaign = create(:campaign, company: company)
       event = build(:event, campaign: campaign, place: nil)
       expect(event.valid?).to be_falsey
       expect(event.errors[:place_reference]).to include('cannot be blank')
     end
 
     it 'should NOT allow the event to have a place where the user is not authorized' do
-      company = create(:company)
-
       # The user is autorized to L.A. only
       user = create(:company_user, place_ids: [place_LA.id], company: company, role: create(:role, is_admin: false)).user
       user.current_company = company
       User.current = user
 
-      campaign = create(:campaign, company: company)
       user.current_company_user.campaigns << campaign
 
       event = build(:event, campaign: campaign, company: company, place: place_SF)
@@ -1126,16 +1124,12 @@ describe Event, type: :model do
       event.place = place_LA
       expect(event.valid?).to be_truthy
 
-      bar_in_LA = create(:place, name: 'Bar Testing', route: 'Amargura St.', city: 'Los Angeles', state: 'California', country: 'US', types: %w(establishment bar))
-
       event.place = bar_in_LA
       expect(event.valid?).to be_truthy
     end
 
     it 'should NOT give an error if the place is nil and a non admin is editing the event without modifying the place' do
       # An example: an admin created a event without a place, but another user (not admin) is trying to approve the event
-      company = create(:company)
-      campaign = create(:campaign, company: company)
       event = create(:event, campaign: campaign, company: company, place: nil)
 
       # The user is autorized to L.A. only
@@ -1144,6 +1138,26 @@ describe Event, type: :model do
       User.current = user
 
       expect(event.valid?).to be_truthy
+    end
+
+    it 'allows to create a event in a place that is part of a city that was added to an area for the specific campaign' do
+      area = create(:area, company: company)
+      campaign.areas << area
+      campaign.areas_campaigns.first.update_attributes(inclusions: [place_LA.id])
+
+      event = build(:event, campaign: campaign, company: company, place: bar_in_LA)
+      expect(event.valid?).to be_truthy
+    end
+
+    it 'does not allow to create a event in inside a city thats place that excluded for the specific campaign' do
+      area = create(:area, company: company)
+      area.places << place_LA
+      campaign.areas << area
+      campaign.areas_campaigns.first.update_attributes(exclusions: [place_LA.id])
+
+      event = build(:event, campaign: campaign, company: company, place: bar_in_LA)
+      expect(event.valid?).to be_falsey
+      expect(event.errors[:place_reference]).to include('is not valid for this campaign')
     end
   end
 

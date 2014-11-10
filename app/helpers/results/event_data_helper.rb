@@ -26,7 +26,6 @@ module Results
         if SEGMENTED_FIELD_TYPES.include?(@result.form_field.type)
           # values = ActiveRecord::Coders::Hstore.load(row['hash_value'])
           # TODO: we have to correctly map values for hash_value here
-          type = PERCENTAGE_TYPE == @result.form_field.type ? 'percentage' : 'normal'
           if @result.form_field.type == PERCENTAGE_TYPE
             @result.form_field.options_for_input.each do |option|
               value = @result.value[option[1].to_s]
@@ -58,7 +57,7 @@ module Results
     end
 
     def area_for_event(event)
-      campaign_from_cache(event.campaign_id).areas_campaigns.select do|ac|
+      campaign_from_cache(event.campaign_id).areas_campaigns.select do |ac|
         ac.place_in_scope?(event.place)
       end.map { |ac| ac.area.name }.join(', ') unless event.place.nil?
     end
