@@ -18,6 +18,7 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
       Column ss:Width="100"
       Column ss:Width="100"
       Column ss:Width="100"
+      Column ss:Width="80"
       Column ss:Width="150"
       Column ss:Width="120"
       Column ss:Width="120"
@@ -36,6 +37,8 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
           Data ss:Type="String" START
         Cell
           Data ss:Type="String" END
+        Cell
+          Data ss:Type="String" DURATION
         Cell
           Data ss:Type="String" VENUE NAME
         Cell
@@ -64,6 +67,8 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
             Data ss:Type="DateTime"= Timeliness.parse(event_date(event, :start_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%FT%R')
           Cell ss:StyleID="s2"
             Data ss:Type="DateTime"= Timeliness.parse(event_date(event, :end_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%FT%R')
+          Cell
+            Data ss:Type="String"= event.promo_hours
           Cell
             Data ss:Type="String"= event.place_name
           Cell
