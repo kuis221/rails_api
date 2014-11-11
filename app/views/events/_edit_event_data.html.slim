@@ -7,7 +7,6 @@
     = simple_form_for(resource, remote: true, html: {class: 'event-data-form', data: {'prompt-message' => 'Your post event form has not been saved', 'watch-changes' => true}}) do |f|
       = f.error_notification
 
-      = f.input :summary
       = render partial: 'event_data', locals: {fields: fields, f: f}
 
       .form-actions

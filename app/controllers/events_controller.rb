@@ -168,7 +168,7 @@ class EventsController < FilteredController
       end
       if can?(:edit_data, Event)
         allowed.concat([
-          :summary, { results_attributes: [:id, :form_field_id, :value, { value: [] }] }])
+          { results_attributes: [:id, :form_field_id, :value, { value: [] }] }])
       end
       parameters = params.require(:event).permit(*allowed)
     end

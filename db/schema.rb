@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141106212144) do
+ActiveRecord::Schema.define(version: 20141110235004) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -501,7 +501,6 @@ ActiveRecord::Schema.define(version: 20141106212144) do
     t.integer  "place_id"
     t.decimal  "promo_hours",    precision: 6, scale: 2, default: 0.0
     t.text     "reject_reason"
-    t.text     "summary"
     t.string   "timezone"
     t.datetime "local_start_at"
     t.datetime "local_end_at"
