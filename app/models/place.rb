@@ -198,11 +198,10 @@ class Place < ActiveRecord::Base
     end
 
     def political_division(place)
-      unless place.nil?
-        neighborhood = place.neighborhood
-        neighborhood ||= place.name if place.types.is_a?(Array) && place.types.include?('sublocality') && place.name != place.city
-        [place.continent_name, place.country_name, place.state_name, place.city, neighborhood].compact if place.present?
-      end
+      return if place.nil?
+      neighborhood = place.neighborhood
+      neighborhood ||= place.name if place.types.is_a?(Array) && place.types.include?('sublocality') && place.name != place.city
+      [place.continent_name, place.country_name, place.state_name, place.city, neighborhood].compact if place.present?
     end
 
     def report_fields

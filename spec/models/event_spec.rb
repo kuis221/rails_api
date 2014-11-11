@@ -47,6 +47,37 @@ describe Event, type: :model do
     it { is_expected.not_to allow_value('12/31/12').for(:end_date).with_message('MM/DD/YYYY') }
   end
 
+  describe 'searchable model' do
+    it { is_expected.to have_searchable_field(:active) }
+    it { is_expected.to have_searchable_field(:start_at) }
+    it { is_expected.to have_searchable_field(:start_time) }
+    it { is_expected.to have_searchable_field(:end_at) }
+    it { is_expected.to have_searchable_field(:local_start_at) }
+    it { is_expected.to have_searchable_field(:local_end_at) }
+    it { is_expected.to have_searchable_field(:status) }
+    it { is_expected.to have_searchable_field(:company_id) }
+    it { is_expected.to have_searchable_field(:campaign_id) }
+    it { is_expected.to have_searchable_field(:place_id) }
+    it { is_expected.to have_searchable_field(:user_ids) }
+    it { is_expected.to have_searchable_field(:team_ids) }
+    it { is_expected.to have_searchable_field(:team_ids) }
+    it { is_expected.to have_searchable_field(:has_event_data) }
+    it { is_expected.to have_searchable_field(:has_comments) }
+    it { is_expected.to have_searchable_field(:has_surveys) }
+    it { is_expected.to have_searchable_field(:promo_hours) }
+    it { is_expected.to have_searchable_field(:impressions) }
+    it { is_expected.to have_searchable_field(:interactions) }
+    it { is_expected.to have_searchable_field(:samples) }
+    it { is_expected.to have_searchable_field(:spent) }
+    it { is_expected.to have_searchable_field(:gender_female) }
+    it { is_expected.to have_searchable_field(:gender_male) }
+    it { is_expected.to have_searchable_field(:ethnicity_asian) }
+    it { is_expected.to have_searchable_field(:ethnicity_black) }
+    it { is_expected.to have_searchable_field(:ethnicity_hispanic) }
+    it { is_expected.to have_searchable_field(:ethnicity_native_american) }
+    it { is_expected.to have_searchable_field(:ethnicity_white) }
+  end
+
   describe 'event results validations' do
     it 'should not allow submitting the event if the results are not valid' do
       campaign = create(:campaign)
@@ -605,23 +636,23 @@ describe Event, type: :model do
     end
   end
 
-  describe 'is_late?' do
+  describe 'late?' do
     after do
       Timecop.return
     end
     it 'should return true if the event is scheduled to happen in more than to days go' do
       Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 13)) do
         event = create(:event, start_date: '07/23/2013', end_date: '07/23/2013', start_time: '10:00 am', end_time: '2:00 pm')
-        expect(event.is_late?).to be_truthy
+        expect(event.late?).to be_truthy
 
         event = create(:event, start_date: '01/23/2013', end_date: '01/23/2013', start_time: '10:00 am', end_time: '2:00 pm')
-        expect(event.is_late?).to be_truthy
+        expect(event.late?).to be_truthy
       end
     end
     it 'should return false if the event is end_date is less than two days ago' do
       Timecop.freeze(Time.zone.local(2013, 07, 26, 12, 13)) do
         event = create(:event, start_date: '07/23/2013', end_date: '07/25/2013', start_time: '10:00 am', end_time: '2:00 pm')
-        expect(event.is_late?).to be_falsey
+        expect(event.late?).to be_falsey
       end
     end
   end

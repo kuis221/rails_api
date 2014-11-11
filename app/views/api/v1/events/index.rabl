@@ -18,7 +18,7 @@ child @events => 'results' do
 
   node :event_status do |event|
     if event.unsent?
-      if event.is_late?
+      if event.late?
         'Late'
       elsif event.in_past?
         'Due'

@@ -4,7 +4,7 @@ attributes :id, :start_date, :start_time, :end_date, :end_time, :status, :descri
 
 node :event_status do |event|
   if event.unsent?
-    if event.is_late?
+    if event.late?
       'Late'
     elsif event.in_past?
       'Due'
@@ -17,10 +17,10 @@ node :event_status do |event|
 end
 
 node :have_data do |event|
-  event.has_event_data?
+  event.event_data?
 end
 
-if resource.has_event_data? && resource.event_data.present?
+if resource.event_data? && resource.event_data.present?
   active_kpis = resource.campaign.active_kpis
   node :data do
     data = {}

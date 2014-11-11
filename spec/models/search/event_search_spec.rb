@@ -28,6 +28,9 @@ describe Event, type: :model, search: true do
                             team_ids: [team.id, team2.id], user_ids: [user3.id, user4.id],
                             start_date: '03/22/2013', end_date: '03/22/2013')
 
+    venue = event.venue
+    venue2 = event2.venue
+
     area = create(:area, company: company)
     area.places << create(:city, name: 'Los Angeles', state: 'California', country: 'US')
 
@@ -89,6 +92,18 @@ describe Event, type: :model, search: true do
     expect(search(company_id: company.id, location: [place.location_id, place2.location_id]))
       .to match_array([event, event2])
 
+    # Search for a specific Event's venue
+    expect(search(company_id: company.id, q: "venue,#{venue.id}"))
+      .to match_array([event])
+    expect(search(company_id: company.id, q: "venue,#{venue2.id}"))
+      .to match_array([event2])
+    expect(search(company_id: company.id, venue: [venue.id]))
+      .to match_array([event])
+    expect(search(company_id: company.id, venue: [venue2.id]))
+      .to match_array([event2])
+    expect(search(company_id: company.id, venue: [venue.id, venue2.id]))
+      .to match_array([event, event2])
+
     # Search for a events in an area
     expect(search(company_id: company.id, q: "area,#{area.id}"))
       .to match_array([event])
@@ -139,6 +154,11 @@ describe Event, type: :model, search: true do
     expect(search(company_id: company.id, status: ['Active']))
       .to match_array([event, event2])
 
+    # Search for Events with Late status
+    late_event = create(:late_event)
+    Sunspot.commit
+    expect(search(company_id: late_event.company_id, event_status: ['Late'])).to eql [late_event]
+
     # Search for Events on a given event status
     expect(search(company_id: company.id, event_status: ['Unsent']))
       .to match_array([event, event2])
@@ -161,6 +181,47 @@ describe Event, type: :model, search: true do
     # Search for Events with stats
     expect(search(company_id: company.id, event_data_stats: true))
       .to match_array([event, event2])
+  end
+
+  it 'correctly search on the localized date fields', search: false, sunspot_matcher: true do
+    Company.current = company
+    described_class.do_search(company_id: company.id, start_date: '01/01/2014')
+    d = Timeliness.parse('01/01/2014', zone: :current)
+    expect(Sunspot.session).to have_search_params(:with) {
+      all_of do
+        with(:start_at).less_than(d.end_of_day)
+        with(:end_at).greater_than(d.beginning_of_day)
+      end
+    }
+
+    company.update_attribute :timezone_support, true
+    described_class.do_search(company_id: company.id, start_date: '01/01/2014')
+    d = Timeliness.parse('01/01/2014', zone: 'UTC')
+    expect(Sunspot.session).to have_search_params(:with) {
+      all_of do
+        with(:local_start_at).less_than(d.end_of_day)
+        with(:local_end_at).greater_than(d.beginning_of_day)
+      end
+    }
+  end
+
+  it 'returns the facets' do
+    create(:event, campaign: campaign)
+    Sunspot.commit
+    s = described_class.do_search({ company_id: company.id }, true)
+    expect(s.facet(:campaign_id).rows.map(&:value)).to eql [campaign.id]
+    expect(s.facet(:place_id).rows.map(&:value)).to eql []
+    expect(s.facet(:user_ids).rows.map(&:value)).to eql []
+    expect(s.facet(:team_ids).rows.map(&:value)).to eql []
+    expect(s.facet(:status).rows.map(&:value)).to eql [:active, :scheduled]
+  end
+
+  it 'returns only events with comments' do
+    event1 = create(:event, company: company)
+    event2 = create(:event, company: company)
+    create(:comment, commentable: event1)
+    expect(search(company_id: company.id)).to match_array([event1, event2])
+    expect(search(company_id: company.id, with_comments_only: true)).to match_array([event1])
   end
 
   describe 'TrendObject indexing' do
@@ -192,7 +253,6 @@ describe Event, type: :model, search: true do
   it 'should not fail if a brand without campaings is given' do
     create(:event, campaign: campaign)
 
-    Sunspot.commit
     # Invalid brand
     expect(search(company_id: company.id, brand: 1))
       .to be_empty

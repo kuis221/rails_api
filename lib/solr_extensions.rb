@@ -1,26 +1,44 @@
-class SolrSearcher
-  class << self
-    def search(clazz, params, include_facets)
-      clazz.solr_search do
-        with :company_id, params[:company_id]
-        with_campaign params[:campaign] if params[:campaign]
-        with_area params[:area] if params[:area]
-        with_place params[:place] if params[:place]
-        with_location params[:location] if params[:location]
-        with_status params[:status] if params[:status]
-        with_id params[:id] if params[:id]
-        with_event_status params[:with_custom_search] if params[:with_custom_search]
+require 'sunspot'
 
-        with_user_teams params
+module Sunspot
+  module Rails
+    module Searchable
+      module ClassMethods
+        def build_solr_search(params)
+          clazz = self
+          Sunspot.new_search(self) do
+            with :company_id, params[:company_id]
+            with_campaign params[:campaign] if params[:campaign]
+            with_area params[:area] if params[:area]
+            with_place params[:place] if params[:place]
+            with_location params[:location] if params[:location]
+            with_status params[:status] if params[:status]
+            with_id params[:id] if params[:id]
+            with_brand params[:brand] if params[:brand]
+            with_venue params[:venue] if params[:venue]
+            with_event_status params[:event_status] if params[:event_status]
 
-        restrict_search_to_user_permissions params[:current_company_user] if params[:current_company_user]
+            between_date_range clazz, params[:start_date], params[:end_date]
 
-        with_custom_search params[:q] if params[:q]
+            with_user_teams params
 
-        # clazz.search_facets.call if include_facets
-        Util.instance_eval_or_call(self, clazz.search_facets)
+            restrict_search_to_user_permissions params[:current_company_user] if params[:current_company_user]
 
-        yield if block_given?
+            with_custom_search params[:q] if params[:q]
+
+            order_by(params[:sorting], params[:sorting_dir] || :asc) if params[:sorting]
+            paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
+          end
+        end
+
+        def do_search(params, include_facets = false, &block)
+          search = build_solr_search(params)
+          search.build(&block) if block
+          search.build(&search_facets) if include_facets
+          solr_execute_search(include: [:campaign, :place]) do
+            search
+          end
+        end
       end
     end
   end
@@ -28,12 +46,12 @@ end
 
 module Sunspot
   module DSL
-    class Search
+    class Scope
       def with_campaign(campaigns)
         if field?(:campaign_id)
           with :campaign_id, campaigns
         elsif field?(:campaing_ids)
-          with :campaign_id, campaigns
+          with :campaing_ids, campaigns
         end
       end
 
@@ -44,8 +62,8 @@ module Sunspot
           with :area_ids, areas
         elsif field?(:place_id) && field?(:location)
           any_of do
-            with :place_id, Area.where(id: params[:area]).joins(:places).where(places: { is_location: false }).pluck('places.id').uniq + [0]
-            with :location, Area.where(id: params[:area]).map { |a| a.locations.map(&:id) }.flatten + [0]
+            with :place_id, Area.where(id: areas).joins(:places).where(places: { is_location: false }).pluck('places.id').uniq + [0]
+            with :location, Area.where(id: areas).map { |a| a.locations.map(&:id) }.flatten + [0]
           end
         end
       end
@@ -56,9 +74,11 @@ module Sunspot
         elsif field?(:brand_ids)
           with :brand_ids, brands
         elsif field?(:campaign_ids) || field?(:campaign_id)
-          campaigns = Campaign.with_brands(value).pluck('campaigns.id')
+          campaigns = Campaign.with_brands(brands).pluck('campaigns.id')
           campaigns = '-1' if campaigns.empty?
           with_campaign campaigns
+        else
+          fail 'could not find a field for filtering by brand'
         end
       end
 
@@ -76,12 +96,12 @@ module Sunspot
         elsif field?(:venue_ids)
           with :venue_ids, venues
         else
-          with_place Venue.where(id: value).pluck(:place_id)
+          with_place Venue.where(id: venues).pluck(:place_id)
         end
       end
 
       def with_location(locations)
-        with :locations, locations if field?(:locations)
+        with :location, locations if field?(:location)
       end
 
       def with_status(statuses)
@@ -90,6 +110,10 @@ module Sunspot
 
       def with_id(ids)
         with :id, ids if field?(:id)
+      end
+
+      def with_user(ids)
+        with :user_ids, ids if field?(:user_ids)
       end
 
       def with_user_teams(params)
@@ -105,6 +129,40 @@ module Sunspot
         end
       end
 
+      def between_date_range(clazz, start_date, end_date)
+        start_at_field =
+          if clazz.respond_to?(:search_start_date_field)
+            clazz.search_start_date_field
+          elsif field?(:start_at)
+            :start_at
+          else
+            :start_date
+          end
+        end_at_field =
+          if clazz.respond_to?(:search_end_date_field)
+            clazz.search_end_date_field
+          elsif field?(:start_at)
+            :end_at
+          else
+            :end_date
+          end
+
+        if start_date.present? && end_date.present?
+          d1 = Timeliness.parse(start_date, zone: :current).beginning_of_day
+          d2 = Timeliness.parse(end_date, zone: :current).end_of_day
+          any_of do
+            with start_at_field, d1..d2
+            with end_at_field, d1..d2
+          end
+        elsif start_date.present?
+          d = Timeliness.parse(start_date, zone: :current)
+          all_of do
+            with(start_at_field).less_than(d.end_of_day)
+            with(end_at_field).greater_than(d.beginning_of_day)
+          end
+        end
+      end
+
       # Used for searching events by status
       def with_event_status(statuses)
         event_status = statuses.dup
@@ -113,10 +171,8 @@ module Sunspot
         executed = event_status.delete('Executed')
         scheduled = event_status.delete('Scheduled')
 
-        end_at_field = :end_at
-        if Company.current && Company.current.timezone_support?
-          end_at_field = :local_end_at
-        end
+        current_company = Company.current || Company.new
+        end_at_field = current_company.timezone_support? ? :local_end_at : :end_at
 
         any_of do
           with :status, event_status unless event_status.empty?
@@ -169,7 +225,8 @@ module Sunspot
       protected
 
       def field?(name)
-        @field_names = @setup.fields.map(&:name)
+        @field_names ||= @setup.fields.map(&:name)
+        @field_names.include?(name)
       end
     end
   end

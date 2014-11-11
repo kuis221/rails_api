@@ -115,6 +115,8 @@ class Campaign < ActiveRecord::Base
   }
   scope :active, -> { where(aasm_state: 'active') }
 
+  scope :with_brands, ->(brands) { joins(:brands).where(brands: { id: brands }) }
+
   # Campaigns-Places relationship
   has_many :placeables, as: :placeable
   has_many :places, through: :placeables, after_remove: :campaign_area_removed, after_add: :clear_locations_cache
