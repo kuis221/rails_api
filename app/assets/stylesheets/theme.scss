@@ -51,6 +51,7 @@ input[type="color"],
 	height:39px;
 	padding: 10px;
 	width: 100%;
+	transition: none;
 	&:focus{
 		border: 1px solid $brand;
 		box-shadow: none;
@@ -79,17 +80,29 @@ input[readonly], select[readonly], textarea[readonly]{
 	}
 }
 
-input:focus:invalid:focus, textarea:focus:invalid:focus, select:focus:invalid:focus{
-	-webkit-box-shadow: 0;
-	-moz-box-shadow: 0;
-	box-shadow: 0;
+input:focus:invalid:focus,
+textarea:focus:invalid:focus,
+select:focus:invalid:focus {
+	-webkit-box-shadow: none;
+	-moz-box-shadow: none;
+	box-shadow: none;
 }
 
-.control-group.error .input-prepend .add-on, .control-group.error .input-append .add-on{
-	color: white;
-	background-color: $brand-red;
-	border-color: $brand-red;
+.control-group{
+	&.error{
+		input, select, textarea{
+			box-shadow:none;
+			-webkit-box-shadow: none;
+			border-color: $brand-red;
+		}
+		.input-prepend .add-on, .input-append .add-on{
+			color: white;
+			background-color: $brand-red;
+			border-color: $brand-red;
+		}
+	}
 }
+
 
 // Percentage fields - form wrapper
 
