@@ -11,105 +11,70 @@
               = qf.hidden_field :question_id
               = qf.input :answer, collection: kpi.kpis_segments.map{|s| [s.text, s.id]}, as: :radio_buttons, label: kpi.name, required: true
 
-      fieldset
-        legend.competitive Competitive awareness & usage
+      - if resource.brands.any?
+        fieldset
+          legend.competitive Competitive awareness & usage
 
-        p For each of the following brands, please let us know if you have purchased the product in the past 12 months, are aware of the product, or are unaware of the product
-        ul.competitive
-          li
-            .titles
-              span PURCHASED
-              span AWARE
-              span UNAWARE
-          li
-            - resource.brands.each do |brand|
-              = f.simple_fields_for :surveys_answers, resource.answer_for(1, brand.id) do |qf|
-                .row-fluid.control-group id="question-1-brand-#{brand.id}"
-                  label.radio-brand
-                    = brand.name
-                  .radio-group
-                    = qf.hidden_field :brand_id
-                    = qf.hidden_field :question_id
-                    label.radio= qf.radio_button :answer, 'purchased', class: 'required'
-                    label.radio= qf.radio_button :answer, 'aware', class: 'required'
-                    label.radio= qf.radio_button :answer, 'unaware', class: 'required'
-
-
-        p For each brand that you have used, approximately how much do you spend each month?
-
-        ul
-          - resource.brands.each do |brand|
+          p For each of the following brands, please let us know if you have purchased the product in the past 12 months, are aware of the product, or are unaware of the product
+          ul.competitive
             li
-              = f.simple_fields_for :surveys_answers, resource.answer_for(2, brand.id) do |qf|
-                .row-fluid.control-group id="question-2-brand-#{brand.id}" data-observe="#question-1-brand-#{brand.id}" data-observe-value="purchased"
-                  .hidden-label
-                    label.radio= brand.name
-                    = qf.hidden_field :brand_id
-                    = qf.hidden_field :question_id
-
-                  .hidden-field
-                    .add-on $
-                    = qf.text_field :answer, class: 'required'
-
-      fieldset
-        legend.conversion Conversion likehood
-
-        p For each of the following brands, please let us know how likely you are to purchase the brand in the next 12 months? Please answer on a 1 to 5 scale where 1 = not at all likely and 5 = very likely.
-
-        ul.conversion
-          li
-            .titles
-              span
-                | VERY UNLIKELY
-                br
-                | 1
-              span 2
-              span 3
-              span 4
-              span
-                | VERY LIKELY
-                br
-                | 5
-          - resource.brands.each do |brand|
+              .titles
+                span PURCHASED
+                span AWARE
+                span UNAWARE
             li
-              = f.simple_fields_for :surveys_answers, resource.answer_for(3, brand.id) do |qf|
-                .row-fluid.control-group
-                  label.radio-brand= brand.name
-                  .radio-group
-                    = qf.hidden_field :brand_id
-                    = qf.hidden_field :question_id
-                    label.radio= qf.radio_button :answer, '1', class: 'required'
-                    label.radio= qf.radio_button :answer, '2', class: 'required'
-                    label.radio= qf.radio_button :answer, '3', class: 'required'
-                    label.radio= qf.radio_button :answer, '4', class: 'required'
-                    label.radio= qf.radio_button :answer, '5', class: 'required'
+              - resource.brands.each do |brand|
+                = f.simple_fields_for :surveys_answers, resource.answer_for(1, brand.id) do |qf|
+                  .row-fluid.control-group id="question-1-brand-#{brand.id}"
+                    label.radio-brand
+                      = brand.name
+                    .radio-group
+                      = qf.hidden_field :brand_id
+                      = qf.hidden_field :question_id
+                      label.radio= qf.radio_button :answer, 'purchased', class: 'required'
+                      label.radio= qf.radio_button :answer, 'aware', class: 'required'
+                      label.radio= qf.radio_button :answer, 'unaware', class: 'required'
 
 
-        p How likely are you to recommend the brand to a friend?  Please answer on a 0 to 10 scale where 0 is not at all likely and 10 = extremely likely
+          p For each brand that you have used, approximately how much do you spend each month?
 
-        ul.recommend
-          li
-            .titles
-              span
-                | VERY UNLIKELY
-                br
-                | 1
-              span 2
-              span 3
-              span 4
-              span 5
-              span 6
-              span 7
-              span 8
-              span 9
-              span
-                | VERY LIKELY
-                br
-                | 10
-          tbody
+          ul
             - resource.brands.each do |brand|
-              = f.simple_fields_for :surveys_answers, resource.answer_for(4, brand.id) do |qf|
-                .row-fluid.control-group
+              li
+                = f.simple_fields_for :surveys_answers, resource.answer_for(2, brand.id) do |qf|
+                  .row-fluid.control-group id="question-2-brand-#{brand.id}" data-observe="#question-1-brand-#{brand.id}" data-observe-value="purchased"
+                    .hidden-label
+                      label.radio= brand.name
+                      = qf.hidden_field :brand_id
+                      = qf.hidden_field :question_id
+
+                    .hidden-field
+                      .add-on $
+                      = qf.text_field :answer, class: 'required'
+
+        fieldset
+          legend.conversion Conversion likehood
+
+          p For each of the following brands, please let us know how likely you are to purchase the brand in the next 12 months? Please answer on a 1 to 5 scale where 1 = not at all likely and 5 = very likely.
+
+          ul.conversion
+            li
+              .titles
+                span
+                  | VERY UNLIKELY
+                  br
+                  | 1
+                span 2
+                span 3
+                span 4
+                span
+                  | VERY LIKELY
+                  br
+                  | 5
+            - resource.brands.each do |brand|
+              li
+                = f.simple_fields_for :surveys_answers, resource.answer_for(3, brand.id) do |qf|
+                  .row-fluid.control-group
                     label.radio-brand= brand.name
                     .radio-group
                       = qf.hidden_field :brand_id
@@ -119,11 +84,47 @@
                       label.radio= qf.radio_button :answer, '3', class: 'required'
                       label.radio= qf.radio_button :answer, '4', class: 'required'
                       label.radio= qf.radio_button :answer, '5', class: 'required'
-                      label.radio= qf.radio_button :answer, '6', class: 'required'
-                      label.radio= qf.radio_button :answer, '7', class: 'required'
-                      label.radio= qf.radio_button :answer, '8', class: 'required'
-                      label.radio= qf.radio_button :answer, '9', class: 'required'
-                      label.radio= qf.radio_button :answer, '10', class: 'required'
+
+
+          p How likely are you to recommend the brand to a friend?  Please answer on a 0 to 10 scale where 0 is not at all likely and 10 = extremely likely
+
+          ul.recommend
+            li
+              .titles
+                span
+                  | VERY UNLIKELY
+                  br
+                  | 1
+                span 2
+                span 3
+                span 4
+                span 5
+                span 6
+                span 7
+                span 8
+                span 9
+                span
+                  | VERY LIKELY
+                  br
+                  | 10
+            tbody
+              - resource.brands.each do |brand|
+                = f.simple_fields_for :surveys_answers, resource.answer_for(4, brand.id) do |qf|
+                  .row-fluid.control-group
+                      label.radio-brand= brand.name
+                      .radio-group
+                        = qf.hidden_field :brand_id
+                        = qf.hidden_field :question_id
+                        label.radio= qf.radio_button :answer, '1', class: 'required'
+                        label.radio= qf.radio_button :answer, '2', class: 'required'
+                        label.radio= qf.radio_button :answer, '3', class: 'required'
+                        label.radio= qf.radio_button :answer, '4', class: 'required'
+                        label.radio= qf.radio_button :answer, '5', class: 'required'
+                        label.radio= qf.radio_button :answer, '6', class: 'required'
+                        label.radio= qf.radio_button :answer, '7', class: 'required'
+                        label.radio= qf.radio_button :answer, '8', class: 'required'
+                        label.radio= qf.radio_button :answer, '9', class: 'required'
+                        label.radio= qf.radio_button :answer, '10', class: 'required'
 
     .form-actions
       = f.button :submit, 'Save', id: 'submit-expense-btn', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
