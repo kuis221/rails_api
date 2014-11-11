@@ -3127,13 +3127,15 @@ ul.ui-widget-content{
 		margin-bottom:0;
 	}
 	.input-append, .input-prepend{
-		margin-right: 15px;
 		margin-bottom: 0;
 		input{
 			width: 176px;
 		}
 		.input-xlarge{
 			width:176px;
+		}
+		&+label{
+			margin-left: 10px;
 		}
 	}
 	.checkbox{
@@ -6637,6 +6639,21 @@ table.table.likert-scale-table {
 
 .chzn-container{
 	&.chzn-container-single{
+		.chzn-results{
+			li{
+				&.active-result{
+					padding: 9px 6px 9px 26px !important;
+					&.result-selected{
+						&:before{
+							content: "\e624";
+							font-family: 'icons';
+							position: absolute;
+							left:8px;
+						}
+					}
+				}
+			}
+		}
 	}
 	&.chzn-results{
 		padding: 0 !important;
