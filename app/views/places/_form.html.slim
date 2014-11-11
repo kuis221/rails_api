@@ -5,7 +5,7 @@
 
     .form-inputs
       .row-fluid
-        .pull-left
+        .search-place
           = f.input :reference, :as => :location, label: 'Place', input_html: {class: 'seach-box'}, wrapper_html: {class: 'form-horizontal'}
         .pull-right
           = f.button :submit, 'Add Place', class: 'btn-primary', data: {disable_with: 'Please wait...'}
