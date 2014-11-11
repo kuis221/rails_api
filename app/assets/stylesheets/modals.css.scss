@@ -255,9 +255,9 @@ ul.select2-results{
 		min-width:80%;
 		#survey-form {
 			.control-group {
-				margin-bottom: 50px;
 				width: 100%;
 				.radio-group{
+					margin-bottom: 0;
 					label.radio{
 						width: auto;
 					}
@@ -306,7 +306,7 @@ ul.select2-results{
 				margin-left: 10px;
 			}
 			p{
-				width: 400px;
+				width: 550px;
 			}
 			label{
 				color: $text;
@@ -426,7 +426,7 @@ ul.select2-results{
 							margin: 0 45px 0 10px;
 							text-align:center;
 							&:first-child{
-								margin: 0 0 0 18px;
+								margin: 0 0 0 19px;
 							}
 							&:last-child{
 								margin-left: -28px;
@@ -451,10 +451,9 @@ ul.select2-results{
 					}
 				}
 			}
-
 			.radio{
 				display: inline-block;
-				margin: 3px 15px 3px 0;
+				margin: 3px 15px 0 0;
 				padding: 0;
 				width: 20px;
 			}
