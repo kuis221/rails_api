@@ -651,6 +651,13 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 					&:before{
 						display:none;
 					}
+					&.last-selected{
+						border-top-right-radius:14px;
+						border-bottom-right-radius:14px;
+						&:after{
+							display: none;
+						}
+					}
 				}
 			}
 		}
