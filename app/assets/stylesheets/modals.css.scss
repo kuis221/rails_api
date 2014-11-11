@@ -310,7 +310,7 @@ ul.select2-results{
 			}
 			label{
 				color: $text;
-				font-size: 13px;
+				font-size: 14px;
 				float: left;
 				margin-right: 15px;
 				&.control-label{
@@ -347,31 +347,36 @@ ul.select2-results{
 					.titles{
 						color: $brand;
 						margin: 0 0 15px 245px;
-						width:315px;
+						width:390px;
 						span{
-							margin: 0 24px 0 25px;
+							margin: 0 24px 0 22px;
+							width: 80px;
+							text-align: center;
+							display: inline-block;
 						}
 					}
-					label.control-label{
-						font-size: 13px !important;
-						margin-bottom: 0 !important;
-						overflow: hidden;
-						text-overflow: ellipsis;
-						white-space: nowrap;
-						width: 220px;
-					}
-					label.radio-brand{
-						float: left;
-						margin-right: 43px;
-						overflow: hidden;
-						text-overflow: ellipsis;
-						white-space: nowrap;
-						width: 255px;
-					}
-					label.radio{
-						margin-right: 90px;
-						&:last-child{
-							margin: 0;
+					label{
+						&.control-label{
+							font-size: 13px !important;
+							margin-bottom: 0 !important;
+							overflow: hidden;
+							text-overflow: ellipsis;
+							white-space: nowrap;
+							width: 220px;
+						}
+						&.radio-brand{
+							float: left;
+							margin-right: 43px;
+							overflow: hidden;
+							text-overflow: ellipsis;
+							white-space: nowrap;
+							width: 255px;
+						}
+						&.radio{
+							margin-right: 90px;
+							&:last-child{
+								margin: 0;
+							}
 						}
 					}
 				}
@@ -383,58 +388,65 @@ ul.select2-results{
 						width: 67%;
 						span{
 							display: inline-block;
-							margin: 0 62px 0 40px;
+							margin: 0 60px 0 40px;
 							text-align:center;
+							width: 25px;
 							&:first-child{
-								margin: 0 17px 0 20px;
+								margin: 0 20px 0 16px;
+								width: auto;
 							}
 							&:last-child{
-								margin: 0 0 0 5px;
+								margin: 0 0 0 10px;
+								width: auto;
 							}
 						}
 					}
-					label.radio-brand{
-						display:inline-block;
-						margin-right: 43px;
-						overflow: hidden;
-						text-overflow: ellipsis;
-						white-space: nowrap;
-						width: 255px;
-					}
-					label.radio {
-						margin: 0 90px 0px 0;
+					label{
+						&.radio-brand{
+							display:inline-block;
+							margin-right: 43px;
+							overflow: hidden;
+							text-overflow: ellipsis;
+							white-space: nowrap;
+							width: 255px;
+						}
+						&.radio{
+							margin: 0 90px 0px 0;
+						}
 					}
 				}
 				&.recommend{
 					margin: 25px 0 25px 0;
 					.titles{
 						color: $brand;
-						margin:0 0 15px 245px;
+						margin:0 0 15px 235px;
 						width:80%;
 						span{
 							display: inline-block;
-							margin: 0 45px 0 14px;
+							margin: 0 45px 0 10px;
 							text-align:center;
 							&:first-child{
-								margin: 0 0 0 16px;
+								margin: 0 0 0 18px;
 							}
 							&:last-child{
-								margin-left: -23px;
+								margin-left: -28px;
 							}
 						}
 					}
-					label.radio-brand{
-						display: inline-block;
-						margin-right: 43px;
-						overflow: hidden;
-						text-overflow: ellipsis;
-						white-space: nowrap;
-						width:255px;
-					}
-					label.radio{
-						margin: 0 47px 0px 0;
-						&:last-child{
-							margin-right: 0;
+					label{
+						&.radio-brand{
+							display: inline-block;
+							margin-right: 43px;
+							overflow: hidden;
+							text-overflow: ellipsis;
+							white-space: nowrap;
+							width:255px;
+						}
+						&.radio{
+							margin: 0 28px 0px 0;
+							&:last-child{
+								margin-right: 0;
+							}
 						}
 					}
 				}
