@@ -3126,6 +3126,9 @@ ul.ui-widget-content{
 		.input-xlarge{
 			width:176px;
 		}
+		&+label{
+			margin-left: 10px;
+		}
 	}
 	.checkbox{
 		padding-left:0;
@@ -6618,6 +6621,21 @@ table.table.likert-scale-table {
 
 .chzn-container{
 	&.chzn-container-single{
+		.chzn-results{
+			li{
+				&.active-result{
+					padding: 9px 6px 9px 26px !important;
+					&.result-selected{
+						&:before{
+							content: "\e624";
+							font-family: 'icons';
+							position: absolute;
+							left:8px;
+						}
+					}
+				}
+			}
+		}
 	}
 	&.chzn-results{
 		padding: 0 !important;
