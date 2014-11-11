@@ -247,6 +247,7 @@ $.widget 'nmk.photoGallery', {
 							$('<div class="description">').append( @title ).append( @date ).append( @address ),
 							$('<div class="mini-slider">').append( @miniCarousel = @_createCarousel('small') ),
 							@rating,
+								$('<div class="icon-tag">'),
 								$('<div class="tags">').append( @tags = $('<div id="list" class="list">') , @tags_list)
 						),
 					$('<div class="slider">').append( $('<div class="slider-inner">').append( @carousel = @_createCarousel() ) ).append( @photoToolbar = $('<div class="photo-toolbar">') )
