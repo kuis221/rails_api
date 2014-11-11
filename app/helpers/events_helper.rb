@@ -34,13 +34,15 @@ module EventsHelper
   end
 
   def describe_filters
-    first_part  = "#{describe_date_ranges} #{describe_brands} #{describe_campaigns} #{describe_areas}".strip
-
-    view_context.pluralize(number_with_delimiter(collection_count), "#{describe_status} event") +
-    " #{[first_part, describe_people].compact.join(' and ')}"
+    first_part = [describe_date_ranges, describe_brands, describe_campaigns, describe_areas].compact.join(' ').strip
+    first_part = "for: #{first_part}" unless first_part.blank?
+    [
+      pluralize(number_with_delimiter(collection_count),
+                "#{[describe_status, resource_class.model_name.human.downcase].compact.join(' ')}"),
+      'found',
+      [first_part, describe_people].compact.join(' and ')
+    ].compact.join(' ').strip.html_safe
   end
-
-  protected
 
   def describe_before_event_alert(resource)
     description = 'Your event is scheduled.'
@@ -101,7 +103,6 @@ module EventsHelper
   end
 
   def describe_date_ranges
-    description = ''
     start_date = params.key?(:start_date) &&  params[:start_date] != '' ? params[:start_date] : false
     end_date = params.key?(:end_date) &&  params[:end_date] != '' ? params[:end_date] : false
     start_date_d = end_date_d = nil
@@ -118,34 +119,41 @@ module EventsHelper
 
       if start_date && end_date && (start_date != end_date)
         if start_date_label == 'today' && end_date_label == 'the future'
-          description = "#{verb} place today and in the future"
+          "#{verb} place today and in the future"
         else
-          description = "#{verb} place between #{start_date_label} and #{end_date_label}"
+          "#{verb} place between #{start_date_label} and #{end_date_label}"
         end
       elsif start_date
         if start_date_d == today
-          description = "#{verb} place today"
+          "#{verb} place today"
         elsif start_date_d >= today
           start_date_label = "at #{start_date_label}" if Timeliness.parse(start_date).strftime('%B %d') == start_date_label
-          description = "#{verb} place #{start_date_label}"
+          "#{verb} place #{start_date_label}"
         else
           start_date_label = "on #{start_date_label}" if Timeliness.parse(start_date).strftime('%B %d') == start_date_label
-          description = "#{verb} place #{start_date_label}"
+          "#{verb} place #{start_date_label}"
         end
       end
     end
+  end
 
-    description
+  def build_filter_object_list(filter_name, list)
+    list.map do |item|
+      content_tag(:div,  class: 'filter-item') do
+        item[1].html_safe + link_to('', '#', class: 'icon icon-close',
+                                             data: { filter: "#{filter_name}:#{item[0]}" })
+      end
+    end.join.html_safe
   end
 
   def describe_campaigns
     campaigns = campaing_params
-    if campaigns.size > 0
-      names = current_company.campaigns.select('name').where(id: campaigns).map(&:name).sort.to_sentence
-      "as part of #{names}"
-    else
-      ''
-    end
+    return unless campaigns.size > 0
+    build_filter_object_list 'campaign',
+                             current_company.campaigns
+                             .where(id: campaigns)
+                             .order('campaigns.name ASC')
+                             .pluck(:id, :name)
   end
 
   def campaing_params
@@ -159,14 +167,11 @@ module EventsHelper
 
   def describe_areas
     areas = area_params
-    if areas.size > 0
-      names = current_company.areas.select('name')
-        .where(id: areas).map(&:name).sort.to_sentence(
-          last_word_connector: ', or ', two_words_connector: ' or ')
-      "in #{names}"
-    else
-      ''
-    end
+    return unless areas.size > 0
+    names = current_company.areas.select('name')
+      .where(id: areas).map(&:name).sort.to_sentence(
+        last_word_connector: ', or ', two_words_connector: ' or ')
+    "in #{names}"
   end
 
   def area_params
@@ -180,12 +185,9 @@ module EventsHelper
 
   def describe_cities
     cities = city_params
-    if cities.size > 0
-      names = cities.sort.to_sentence(last_word_connector: ', or ', two_words_connector: ' or ')
-      "in #{names}"
-    else
-      ''
-    end
+    return unless cities.size > 0
+    names = cities.sort.to_sentence(last_word_connector: ', or ', two_words_connector: ' or ')
+    "in #{names}"
   end
 
   def city_params
@@ -213,11 +215,7 @@ module EventsHelper
       end)
     end
 
-    if names.size > 0
-      "in #{names.to_sentence}"
-    else
-      ''
-    end
+    "in #{names.to_sentence}" if names.size > 0
   end
 
   def location_params
@@ -231,12 +229,9 @@ module EventsHelper
 
   def describe_brands
     brands = brand_params
-    if brands.size > 0
-      names = Brand.select('name').where(id: brands).pluck(:name)
-      "for #{names.to_sentence}"
-    else
-      ''
-    end
+    return unless brands.size > 0
+    names = Brand.select('name').where(id: brands).pluck(:name)
+    "for #{names.to_sentence}"
   end
 
   def brand_params

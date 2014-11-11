@@ -80,8 +80,22 @@ $.widget 'nmk.filteredList', {
 					e.stopPropagation()
 					$.get '/filter_settings/new.js', {apply_to: @options.applyTo}
 
+		$(document).on 'click', '.collection-list-description .filter-item .icon-close', (e) =>
+			e.stopPropagation();
+			e.preventDefault();
+			return unless @doneLoading
+			$(e.currentTarget).closest('.filter-item').fadeTo(1000, 0.3)
+			filterParts = $(e.currentTarget).data('filter').split(':')
+			filterName = filterParts[0]+ '[]'
+			filterValue = filterParts[1]
+			checkbox = @element.find("input:checkbox[name=\"#{filterName}\"][value=\"#{filterValue}\"]")
+			checkbox.trigger('click');
+			false
+
+
 		$(document).on 'filter-box:change', (e) =>
 			@reloadFilters()
+
 
 		@filtersPopup = false
 
@@ -437,10 +451,16 @@ $.widget 'nmk.filteredList', {
 		$div
 
 	_buildFilterOption: (option) ->
-		$('<li>')
+		checked = (option.selected is true or option.selected is 'true')
+		$('<li>', style: (if checked then 'display: none;' else ''))
 			.append $('<label>').append(
-				$('<input>',{type:'checkbox', value: option.id, name: "#{option.name}[]", checked: (option.selected is true or option.selected is 'true')}), option.label
-			).on 'change', () =>
+				$('<input>', {type:'checkbox', value: option.id, name: "#{option.name}[]", checked: checked}), option.label
+			).on 'change', (e) =>
+				if $(e.target).prop('checked')
+					$(e.target).closest('li').slideUp()
+				else
+					$(e.target).closest('li').show()
+
 				@_updateCustomFiltersCheckboxes(option)
 				@_filtersChanged()
 
@@ -951,6 +971,10 @@ $.widget 'nmk.filteredList', {
 
 				if page is 1 and resultsCount is 0
 					@emptyState = @_placeholderEmptyState()
+
+				if $response.find('div[data-content="filters-description"]').length > 0
+					$('.collection-list-description .filter-label').html(
+						$response.find('div[data-content="filters-description"]'));
 
 				$response.remove()
 				$items.remove()

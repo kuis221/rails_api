@@ -81,11 +81,6 @@
       'applyTo': '#{controller_name}',
       'onChange': function(filterBox){
         $(document).trigger('events-filter:changed')
-      },
-      'onItemsLoad': function(response, page){
-        if (response.find('div[data-content="filters-description"]').length > 0){
-          $('.collection-list-description .filter-label').html(response.find('div[data-content="filters-description"]'))
-        }
       }
     });
 

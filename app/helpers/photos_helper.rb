@@ -16,15 +16,15 @@ module PhotosHelper
     ].compact
   end
 
-  protected
-
-  def describe_filters
-    first_part  = "#{describe_date_ranges}  #{describe_brands} #{describe_campaigns} #{describe_locations}".strip
+  def describe_photos_filters
+    first_part  = "#{describe_photos_date_ranges}  #{describe_photos_brands} #{describe_photos_campaigns} #{describe_photos_locations}".strip
     first_part = nil if first_part.empty?
-    "#{view_context.pluralize(number_with_delimiter(collection_count), "#{describe_status} photo")} #{first_part}"
+    "#{view_context.pluralize(number_with_delimiter(collection_count), "#{describe_photos_status} photo")} #{first_part}"
   end
 
-  def describe_date_ranges
+  protected
+
+  def describe_photos_date_ranges
     description = ''
     start_date = params.key?(:start_date) &&  params[:start_date] != '' ? params[:start_date] : false
     end_date = params.key?(:end_date) &&  params[:end_date] != '' ? params[:end_date] : false
@@ -48,7 +48,7 @@ module PhotosHelper
     description
   end
 
-  def describe_brands
+  def describe_photos_brands
     brands = brand_params
     names = []
     if brands.size > 0
@@ -68,7 +68,7 @@ module PhotosHelper
     brands.compact
   end
 
-  def describe_campaigns
+  def describe_photos_campaigns
     campaigns = campaign_params
     if campaigns.size > 0
       names = current_company.campaigns.select('name').where(id: campaigns).map(&:name).to_sentence(last_word_connector: ' and ')
@@ -87,7 +87,7 @@ module PhotosHelper
     campaigns.compact
   end
 
-  def describe_locations
+  def describe_photos_locations
     places = location_params
     place_ids = places.select { |p| p =~  /^[0-9]+$/ }
     encoded_locations = places - place_ids
@@ -116,7 +116,7 @@ module PhotosHelper
     locations.compact
   end
 
-  def describe_status
+  def describe_photos_status
     status = params[:status]
     status = [status] unless status.is_a?(Array)
     unless status.empty? || status.nil?
