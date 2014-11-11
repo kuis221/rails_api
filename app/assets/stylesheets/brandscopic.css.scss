@@ -6143,6 +6143,8 @@ table td.sub-level-1 {
 
 			.item {
 				float: left;
+				margin-left: 2px;
+				margin-right: 1px;
 				&.next-item, &.prev-item {
 					display: inline-block;
 				}
@@ -6155,12 +6157,6 @@ table td.sub-level-1 {
 		img{
 			display: inline-block;
 			width:85px;
-			&:first-of-type{
-				margin-right: 2px;
-			}
-			&:last-of-type{
-				margin-left: 2px;
-			}
 		}
 	}
 	.carousel-control{
@@ -6270,22 +6266,24 @@ table td.sub-level-1 {
 
 	.gallery-modal-inner{
 		position: relative;
-		a{
-			color: white;
-		}
 		.select2-container .select2-input {
 			border-width: 0px !important;
 		}
-		a.close-gallery {
+		a{
 			color: white;
-			position: absolute;
-			right: 10px;
-			top: 15px;
-		}
-		a.remove-tag {
-			margin-left: 5px;
-			position: relative;
-			top: 1px;
+			&.close-gallery {
+				color: white;
+				position: absolute;
+				right: 10px;
+				top: 15px;
+			}
+			&.remove-tag{
+				margin-left: 6px;
+				position: relative;
+				top: 5px;
+				float: right;
+				color: $user_menus;
+			}
 		}
 		.mini-slider{
 			.carousel-control{
@@ -6356,6 +6354,14 @@ table td.sub-level-1 {
 		display: inline-block;
 		float: right;
 		min-height: 400px;
+
+		.icon-tag{
+			color: $grey_one;
+			float: left;
+			top: 9px;
+			position: relative;
+			font-size: 16px;
+		}
 
 		.select2-search-choice {
 			display: none;
@@ -6463,6 +6469,9 @@ table td.sub-level-1 {
 				padding:3px 3px 0px 3px;
 				width: 235px;
 				border-radius: 6px !important;
+				&.select2-dropdown-open{
+					color: $user_menu;
+				}
 				&:focus{
 					outline:0;
 				}
@@ -6480,7 +6489,8 @@ table td.sub-level-1 {
 				.select2-search-field{
 					height: 20px;
 					.select2-input{
-						color: $grey_two !important;
+						color: $user_menu !important;
+						line-height: 24px;
 					}
 					input{
 						margin-left: 10px;
@@ -6498,7 +6508,7 @@ table td.sub-level-1 {
 					left: 5px;
 					position: relative;
 					top: 7px;
-					color: $grey_two;
+					color: $brand;
 				}
 			}
 		}
