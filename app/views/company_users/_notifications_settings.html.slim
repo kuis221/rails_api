@@ -3,19 +3,19 @@
     = 'COMMUNICATION PREFERENCES'
     = link_to '', edit_communications_company_user_path(resource), remote: true, id: 'edit-communications', title: 'Edit Communication Preferences', class: 'icon-edit'
   .row-fluid.communication-preferences
-    .span9
-      .span3
+    .span11.communication-row
+      .span5
       .span2
-        p IN-APP
+        b IN-APP
       .span2
-        p SMS
+        b SMS
       .span2
-        p EMAIL
+        b EMAIL
 
     - CompanyUser::NOTIFICATION_SETTINGS_TYPES.each do |type|
       - if resource.notification_setting_permission?(type)
-        .span9
-          .span3
+        .span11.communication-row
+          .span5
             b = t("notification_types.#{type}")
           .span2
             - if resource.notifications_settings.include?(type+'_app')
