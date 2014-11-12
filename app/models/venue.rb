@@ -115,9 +115,9 @@ class Venue < ActiveRecord::Base
     save
 
     if reindex_neighbors_venues && neighbors_establishments_search
-      neighbors_establishments_search.results.each do |venue|
-        venue.compute_scoring.save if venue.id != id
-      end
+      Venue.where(
+        id: neighbors_establishments_search.hits.map(&:primary_key)
+      ).update_all(score_dirty: true)
     end
 
     true
@@ -143,6 +143,7 @@ class Venue < ActiveRecord::Base
         end
       end
     end
+    self.score_dirty = false
     self
   end
 
