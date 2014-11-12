@@ -50,12 +50,14 @@ module TdLinxSynch
       # have a code and add it to missing.csv file
       files[:missing] << ['Venue Name', 'Street', 'City', 'State', 'Zip Code', '# Events']
       Place.joins(:venues).joins('LEFT JOIN events ON events.place_id=places.id')
-           .select('places.*, count(events.id) as visits_count')
-           .group('places.id')
-           .where('venues.company_id=2 AND td_linx_code is null')
-           .where('types like \'%establishment%\'')
-           .find_each do |place|
-        files[:missing] << [place.name, place.street, place.city, place.state, place.zipcode, place.visits_count]
+        .select('places.*, count(events.id) as visits_count')
+        .group('places.id')
+        .where('venues.company_id=2 AND td_linx_code is null')
+        .where('types like \'%establishment%\'')
+        .find_each do |place|
+        files[:missing] << [
+          place.name, place.street, place.city, place.state,
+          place.zipcode, place.visits_count]
       end
       files.values.each(&:close)
 
@@ -91,11 +93,20 @@ module TdLinxSynch
       ftp.passive = true
       ftp.login(ENV['TDLINX_FTP_USERNAME'], ENV['TDLINX_FTP_PASSWORD'])
       ftp.chdir(ENV['TDLINX_FTP_FOLDER']) if ENV['TDLINX_FTP_FOLDER']
-      file = ftp.list('Legacy_TDLINX_Store_Master*').map { |l| l.split(/\s+/, 4) }.sort { |a, b| b[0] <=> a[0] }.first
+      file = ftp.list('Legacy_TDLINX_Store_Master*').map { |l| l.split(/\s+/, 4) }.sort_by { |a| a[0] }.first
       fail 'Could not find a proper file for download from FTP' unless file.present?
-      p "downloading #{file[3]}"
-      ftp.gettextfile file[3], path
-      ftp.close
+
+      date = Timeliness.parse('10-28-2014', :date, format: 'mm-dd-yy').to_date
+      fail "The latest file (#{file[3]}) in the FTP have more than 30 days old" if date < 30.days.ago
+
+      Rails.logger.info "TDLINX: Downloading FTP file #{file[3]}"
+      begin
+        ftp.gettextfile file[3], path
+      rescue Exception => e
+        raise "An error has occurred when trying to download the file #{file[3]} from the FTP server: #{e.message}"
+      end
+    ensure
+      ftp.close if ftp && !ftp.closed?
     end
   end
 end
