@@ -1,6 +1,6 @@
 collection @folder_children
 
-attributes :id, :name
+attributes :id, :name, :updated_at
 
 node :type do |doc|
   if doc.is_a?(BrandAmbassadors::Document)
