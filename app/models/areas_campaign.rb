@@ -15,6 +15,7 @@ class AreasCampaign < ActiveRecord::Base
 
   after_update do
     campaign.clear_locations_cache(area)
+    Rails.cache.delete(locations_cache_key)
   end
 
   attr_accessor :reference
@@ -27,19 +28,23 @@ class AreasCampaign < ActiveRecord::Base
   # includes Los Angeles or any parent (like California)
   def place_in_scope?(place)
     return false unless place.present?
-    @place_ids ||= area.place_ids
-    return true if place.persisted? && (@place_ids - exclusions + inclusions).include?(place.id)
+    @place_ids ||= area.place_ids - exclusions + inclusions
+    return true if place.persisted? && @place_ids.include?(place.id)
     political_location = Place.political_division(place).join('/').downcase
     locations.any? { |location| political_location.include?(location.path) }
   end
 
   def locations
-    @locations ||= Rails.cache.fetch("area_campaign_locations_#{area_id}_#{campaign.id}") do
+    @locations ||= Rails.cache.fetch(locations_cache_key) do
       Location.joins('INNER JOIN places ON places.location_id=locations.id')
       .where(places: { id: area.place_ids + inclusions, is_location: true })
       .where.not(places: { id: exclusions + [0] })
       .group('locations.id')
     end
+  end
+
+  def locations_cache_key
+    "area_campaign_locations_#{area_id}_#{campaign.id}"
   end
 
   def location_ids
