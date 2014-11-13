@@ -81,6 +81,29 @@ jQuery ->
 		$this.parent().find('.toggle-input-hidden').val($this.data('value')).trigger 'click'
 		false
 
+	$(document).on 'keyup', '.segment-field', () ->
+		total = 0;
+		segmentFieldId = $(this).data('segment-field-id')
+
+		for element in $('[data-segment-field-id="' + segmentFieldId + '"].segment-field')
+			if $(element).val().match(/^[0-9]+$/)
+			  total += parseInt($(element).val(), 10)
+
+		progressClass = (if total == 100 then 'progress-success' else (total < 100 ? 'progress-info' : 'progress-danger'))
+		textClass = (if total == 100 then 'text-success' else (total < 100 ? 'text-info' : 'text-error'))
+		progressBarItem = $('#progress-bar-field-' + segmentFieldId)
+		progressBarError = $('#progress-error-' + segmentFieldId)
+
+		progressBarItem
+		  .removeClass('text-success text-error text-info').addClass(textClass)
+		  .find('.progress').removeClass('progress-success progress-info progress-danger').addClass(progressClass).end()
+		  .find('.bar').css({width: total+'%'}).end().find('.counter').text(total+'%');
+
+
+		$("#total-field-" + segmentFieldId).val(if total then total else '')
+		$("#total-field-" + segmentFieldId).valid()
+		true
+
 	$('header .nav #notifications').notifications();
 
 	$(window).load () =>
@@ -97,6 +120,23 @@ jQuery ->
 		if window.location.hash
 			smoothScrollTo $(".nav-tabs a[href=#{window.location.hash}]").tab('show')
 
+
+	updateSummationTotals = () ->
+		for wrapper in $('.form_field_summation')
+			$wrapper = $(wrapper)
+			$options = $wrapper.find('.field-option:not(.summation-total-field) input')
+			$total   = $wrapper.find('.summation-total-field input')
+			$options.keyup () =>
+				total = $.map($options, (input) ->
+				  parseFloat($(input).val(), 10) || 0
+				).reduce((a, b) ->
+					a + b
+				, 0)
+				$total.val(total)
+			true
+
+	updateSummationTotals();
+
 	attachPluginsToElements = () ->
 		$('input.datepicker').datepicker
 			showOtherMonths:true
@@ -109,6 +149,8 @@ jQuery ->
 		$('.has-tooltip').tooltip({html: true, delay: 0, animation: false})
 		$('.has-popover').popover({html: true})
 		$("input:checkbox, input:radio").not('[data-no-uniform="true"],#uniform-is-ajax').uniform()
+
+		$('.segment-field').keyup()
 
 		$(".fancybox").fancybox {
 			padding : 0,
@@ -128,6 +170,8 @@ jQuery ->
 		$('form[data-watch-changes]').watchChanges();
 
 		$('.attached_asset_upload_form').attachmentUploadZone();
+
+		updateSummationTotals()
 
 	window.smoothScrollTo = (element) ->
 		$('html, body').animate({ scrollTop: element.offset().top - ($('#resource-close-details').outerHeight() || 0) - ($('header').outerHeight() || 0) - 20 }, 300)

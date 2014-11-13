@@ -614,6 +614,9 @@ ul.select2-results{
 			&.location, &.password {
 				width: 99,8%;
 			}
+			.segment-total {
+				display: none;
+			}
 		}
 		.control-group.event_start_date,
 		.control-group.event_end_date {
