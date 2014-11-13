@@ -18,6 +18,7 @@ ActiveRecord::Schema.define(version: 20141112143051) do
   enable_extension "hstore"
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
+  enable_extension "postgres_fdw"
   enable_extension "tablefunc"
 
   create_table "active_admin_comments", force: true do |t|
@@ -485,7 +486,6 @@ ActiveRecord::Schema.define(version: 20141112143051) do
     t.integer  "place_id"
     t.decimal  "promo_hours",    precision: 6, scale: 2, default: 0.0
     t.text     "reject_reason"
-    t.text     "summary"
     t.string   "timezone"
     t.datetime "local_start_at"
     t.datetime "local_end_at"

@@ -3,9 +3,4 @@
     = "POST EVENT FORM"
     = link_to '', edit_data_event_path(resource), remote: true, id: 'edit-event-data-btn', class: 'icon-edit', title: 'Edit event data' if can?(:edit_data, resource)
 
-  - if resource.summary
-    .form-result class="result_text_area"
-      span.form-result-label Summary
-      span.form-result-value= simple_format(resource.summary)
-
   = render partial: 'shared/form_field_results', locals: { form_fields: resource.campaign.form_fields }

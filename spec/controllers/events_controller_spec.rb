@@ -303,7 +303,6 @@ describe EventsController, type: :controller do
         expect do
           put 'update', id: event.to_param,
                         event: {
-                          summary: 'A summary of the events',
                           results_attributes: {
                             '0' => { form_field_id: campaign.form_field_for_kpi(Kpi.impressions), kpi_id: Kpi.impressions.id, kpis_segment_id: nil, value: '100' },
                             '1' => { form_field_id: campaign.form_field_for_kpi(Kpi.interactions), kpi_id: Kpi.interactions.id, kpis_segment_id: nil, value: '200' }
@@ -311,7 +310,6 @@ describe EventsController, type: :controller do
                         }
         end.to change(FormFieldResult, :count).by(2)
         event.reload
-        expect(event.summary).to eq('A summary of the events')
         expect(event.result_for_kpi(Kpi.impressions).value).to eq('100')
         expect(event.result_for_kpi(Kpi.interactions).value).to eq('200')
       end
@@ -331,7 +329,6 @@ describe EventsController, type: :controller do
         expect do
           put 'update', id: event.to_param,
                         event: {
-                          summary: 'A summary of the events',
                           results_attributes: {
                             '0' => { form_field_id: campaign.form_field_for_kpi(Kpi.impressions), kpi_id: Kpi.impressions.id, kpis_segment_id: nil, value: '1111', id: impressions.id },
                             '1' => { form_field_id: campaign.form_field_for_kpi(Kpi.interactions), kpi_id: Kpi.interactions.id, kpis_segment_id: nil, value: '2222', id: interactions.id }
@@ -339,7 +336,6 @@ describe EventsController, type: :controller do
                         }
         end.to_not change(FormFieldResult, :count)
         event.reload
-        expect(event.summary).to eq('A summary of the events')
         expect(event.result_for_kpi(Kpi.impressions).value).to eq('1111')
         expect(event.result_for_kpi(Kpi.interactions).value).to eq('2222')
       end

@@ -1,6 +1,6 @@
 object @event
 
-attributes :id, :start_date, :start_time, :end_date, :end_time, :status, :description, :summary
+attributes :id, :start_date, :start_time, :end_date, :end_time, :status, :description
 
 node :event_status do |event|
   if event.unsent?

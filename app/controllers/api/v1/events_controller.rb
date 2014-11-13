@@ -24,7 +24,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
       param :end_time, String, required: true, desc: "Event's end time. Should be in format HH:MM AM/PM"
       param :place_reference, String, required: false, desc: "Event's Place ID. This can be either an existing place id that is already registered on the application, or the combination of the place reference + place id returned by Google's places API. (See: https://developers.google.com/places/documentation/details). Those two values must be concatenated by '||' in the form of '<reference>||<place_id>'. If using the results from the API's call: Venues&nbsp;Search[link:/apidoc/1.0/venues/search.html], you should use the value for the +id+ attribute"
       param :active, String, desc: "Event's status"
-      param :summary, String, desc: "Event's summary"
       param :description, String, desc: "Event's description"
       param :results_attributes, :event_result, required: false, desc: "A list of event results with the id and value. Eg: results_attributes: [{id: 1, value:'Some value'}, {id: 2, value: '123'}]"
       param :visit_id, :number, desc: 'Visit ID'
@@ -245,7 +244,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
   * *end_date*: the event's end date in the format mm/dd/yyyy
   * *end_time*: the event's end time in 12 hours format
   * *description*: the event's description
-  * *summary*: the event's summary
   * *status*: the event's active state, can be Active or Inactive
   * *event_status*: the event's status, can be any of ['Late', 'Due', 'Submitted', 'Unsent', 'Approved', 'Rejected']
   * *have_data*: returns true if data have been entered for the event, otherwise, returns false
@@ -281,7 +279,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
       "status": "Active",
       "event_status": "Unsent",
       "description": "This is the events description",
-      "summary": "This is a test summary",
       "have_data": true,
       "data": {
         spent_by_impression: "6.0"
@@ -1571,7 +1568,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     allowed = []
     allowed += [:end_date, :end_time, :start_date, :start_time, :campaign_id, :place_id,
                 :place_reference, :description, :visit_id] if can?(:update, Event) || can?(:create, Event)
-    allowed += [:summary, { results_attributes: [:value, :id, { value: [] }] }] if can?(:edit_data, Event)
+    allowed += [{ results_attributes: [:value, :id, { value: [] }] }] if can?(:edit_data, Event)
     allowed += [:active] if can?(:deactivate, Event)
     parameters = params.require(:event).permit(*allowed)
     parameters.tap do |whielisted|

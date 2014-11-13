@@ -137,8 +137,6 @@ feature 'Post Event Data' do
 
       visit event_path(event)
 
-      fill_in 'Summary', with: 'This is the summary'
-
       fill_in '< 12', with: '10'
       fill_in '12 – 17', with: '11'
       fill_in '18 – 24', with: '12'
@@ -247,7 +245,6 @@ feature 'Post Event Data' do
 
       click_js_link 'Edit event data'
 
-      fill_in 'Summary', with: 'Edited summary content'
       fill_in 'Impressions', with: '3333'
       fill_in 'Interactions', with: '222222'
       fill_in 'Samples', with: '4444444'
@@ -259,8 +256,6 @@ feature 'Post Event Data' do
         expect(page).to have_content('222,222')
         expect(page).to have_content('4,444,444')
       end
-
-      expect(page).to have_content('Edited summary content')
 
       # Submit the event
       visit event_path(event)
