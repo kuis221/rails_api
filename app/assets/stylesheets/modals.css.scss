@@ -119,6 +119,14 @@ ul.select2-results{
 						padding: 0;
 					}
 				}
+				.likert-scale-table {
+					td {
+						padding: 4px;
+					}
+					label.radio div.radio {
+						margin:0;
+					}
+				}
 				&.campaign_brands_list, &.date_range_name,
 				&.date_range_description,
 				&.team_name, &.role_name, &.area_name, &.kpi_name, &.brand_portfolio_name, &.day_part_name,
@@ -629,6 +637,12 @@ ul.select2-results{
 					&.search-place-box {
 						padding-right: 30px;
 					}
+				}
+			}
+			.input-append {
+				margin-right: 10px;
+				input {
+					width: 176px;
 				}
 			}
 		}
