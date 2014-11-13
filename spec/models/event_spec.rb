@@ -16,7 +16,6 @@
 #  place_id       :integer
 #  promo_hours    :decimal(6, 2)    default(0.0)
 #  reject_reason  :text
-#  summary        :text
 #  timezone       :string(255)
 #  local_start_at :datetime
 #  local_end_at   :datetime
@@ -1241,7 +1240,6 @@ describe Event, type: :model do
       # if the dates are not modified
       Time.use_zone('America/Guatemala') do
         event = Event.last
-        event.summary = 'Just modifying any column'
         expect(event.save).to be_truthy
         expect(event.timezone).to eq('America/New_York')
       end

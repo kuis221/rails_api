@@ -2998,9 +2998,6 @@ ul.ui-widget-content{
 		.input-xlarge{
 			width:220px;
 		}
-		&.event_summary{
-			margin-bottom: 20px;
-		}
 		.segment-total{
 			display: none;
 		}
@@ -3056,8 +3053,16 @@ ul.ui-widget-content{
 			}
 		}
 
-		.likert-scale-table label.radio {
-			margin-right: 0;
+		.likert-scale-table {
+			td {
+				padding: 4px;
+			}
+			label {
+				margin-right: 0;
+				div.radio {
+					margin-right: 0;
+				}
+			}
 		}
 	}
 	.form_field_percentage{
@@ -3599,6 +3604,12 @@ body.events.index {
 			}
 			input, label {
 				cursor: default;
+			}
+			label.radio {
+				padding-left: 0;
+				div.radio {
+					margin-right: 0;
+				}
 			}
 		}
 	}
