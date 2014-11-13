@@ -119,6 +119,14 @@ ul.select2-results{
 						padding: 0;
 					}
 				}
+				.likert-scale-table {
+					td {
+						padding: 4px;
+					}
+					label.radio div.radio {
+						margin:0;
+					}
+				}
 				&.campaign_brands_list, &.date_range_name,
 				&.date_range_description,
 				&.team_name, &.role_name, &.area_name, &.kpi_name, &.brand_portfolio_name, &.day_part_name,
@@ -631,6 +639,12 @@ ul.select2-results{
 					}
 				}
 			}
+			.input-append {
+				margin-right: 10px;
+				input {
+					width: 176px;
+				}
+			}
 		}
 		// ERROR STATE FOR INPUTS
 		.error{
@@ -1043,8 +1057,8 @@ div#spin{
 	-moz-box-shadow: none;
 	box-shadow: none;
 	.select2-results{
-		color: $grey_one;
-		border-radius: 4px;
+		color: $user_menu;
+		border-radius: 0;
 		width: 100% !important;
 		li{
 			width: 100%;
@@ -1056,8 +1070,8 @@ div#spin{
 			border-radius: 4px;
 		}
 		.select2-highlighted {
-			background-color: rgb(0, 0, 0);
-			color: $grey_one;
+			background-color: #252525;
+			color: white;
 		}
 	}
 }
@@ -1084,8 +1098,8 @@ div#spin{
 		position:relative;
 		h3 { display: none; }
 		a.close{
-			right: -35px;
-			top: 15px;
+			right: 16px;
+			top: 0;
 			z-index: 99999;
 			&:before{
 				content:"";

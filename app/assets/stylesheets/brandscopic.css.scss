@@ -192,11 +192,19 @@ body{
 }
 
 .communication-preferences{
-	.span9{
+	.communication-row{
 		margin-left: 0;
+		margin-bottom: 5px;
+		.icon-checked{
+			margin-top: 6px;
+		}
 	}
 	.span2{
 		text-align: center;
+		b{
+			font-size: 12px;
+			color: $brand;
+		}
 	}
 }
 
@@ -650,6 +658,13 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 					}
 					&:before{
 						display:none;
+					}
+					&.last-selected{
+						border-top-right-radius:14px;
+						border-bottom-right-radius:14px;
+						&:after{
+							display: none;
+						}
 					}
 				}
 			}
@@ -3010,6 +3025,7 @@ ul.ui-widget-content{
 				}
 			}
 			&.radio{
+				display: block;
 				font-weight: normal;
 				padding:0;
 				div.radio{
@@ -3017,6 +3033,18 @@ ul.ui-widget-content{
 				}
 				&:last-child{
 					margin-bottom: 0;
+				}
+			}
+		}
+
+		.likert-scale-table {
+			td {
+				padding: 4px;
+			}
+			label {
+				margin-right: 0;
+				div.radio {
+					margin-right: 0;
 				}
 			}
 		}
@@ -3116,13 +3144,15 @@ ul.ui-widget-content{
 		margin-bottom:0;
 	}
 	.input-append, .input-prepend{
-		margin-right: 15px;
 		margin-bottom: 0;
 		input{
 			width: 176px;
 		}
 		.input-xlarge{
 			width:176px;
+		}
+		&+label{
+			margin-left: 10px;
 		}
 	}
 	.checkbox{
@@ -3558,6 +3588,12 @@ body.events.index {
 			}
 			input, label {
 				cursor: default;
+			}
+			label.radio {
+				padding-left: 0;
+				div.radio {
+					margin-right: 0;
+				}
 			}
 		}
 	}
@@ -6140,24 +6176,20 @@ table td.sub-level-1 {
 
 			.item {
 				float: left;
+				margin-left: 2px;
+				margin-right: 1px;
 				&.next-item, &.prev-item {
 					display: inline-block;
 				}
 				&.active {
-					outline: 3px solid $grey_three;
-					outline-offset: -3px;
+					outline: 1px solid white;
+					outline-offset: -1px;
 				}
 			}
 		}
 		img{
 			display: inline-block;
 			width:85px;
-			&:first-of-type{
-				margin-right: 2px;
-			}
-			&:last-of-type{
-				margin-left: 2px;
-			}
 		}
 	}
 	.carousel-control{
@@ -6267,22 +6299,24 @@ table td.sub-level-1 {
 
 	.gallery-modal-inner{
 		position: relative;
-		a{
-			color: white;
-		}
 		.select2-container .select2-input {
 			border-width: 0px !important;
 		}
-		a.close-gallery {
+		a{
 			color: white;
-			position: absolute;
-			right: 10px;
-			top: 15px;
-		}
-		a.remove-tag {
-			margin-left: 5px;
-			position: relative;
-			top: 1px;
+			&.close-gallery {
+				color: white;
+				position: absolute;
+				right: 10px;
+				top: 15px;
+			}
+			&.remove-tag{
+				margin-left: 6px;
+				position: relative;
+				top: 5px;
+				float: right;
+				color: $user_menu;
+			}
 		}
 		.mini-slider{
 			.carousel-control{
@@ -6353,6 +6387,14 @@ table td.sub-level-1 {
 		display: inline-block;
 		float: right;
 		min-height: 400px;
+
+		.icon-tag{
+			color: $grey_one;
+			float: left;
+			top: 9px;
+			position: relative;
+			font-size: 16px;
+		}
 
 		.select2-search-choice {
 			display: none;
@@ -6460,6 +6502,9 @@ table td.sub-level-1 {
 				padding:3px 3px 0px 3px;
 				width: 235px;
 				border-radius: 6px !important;
+				&.select2-dropdown-open{
+					color: $user_menu;
+				}
 				&:focus{
 					outline:0;
 				}
@@ -6477,7 +6522,8 @@ table td.sub-level-1 {
 				.select2-search-field{
 					height: 20px;
 					.select2-input{
-						color: $grey_two !important;
+						color: $user_menu !important;
+						line-height: 24px;
 					}
 					input{
 						margin-left: 10px;
@@ -6495,7 +6541,7 @@ table td.sub-level-1 {
 					left: 5px;
 					position: relative;
 					top: 7px;
-					color: $grey_two;
+					color: $brand;
 				}
 			}
 		}
@@ -6616,6 +6662,21 @@ table.table.likert-scale-table {
 
 .chzn-container{
 	&.chzn-container-single{
+		.chzn-results{
+			li{
+				&.active-result{
+					padding: 9px 6px 9px 26px !important;
+					&.result-selected{
+						&:before{
+							content: "\e624";
+							font-family: 'icons';
+							position: absolute;
+							left:8px;
+						}
+					}
+				}
+			}
+		}
 	}
 	&.chzn-results{
 		padding: 0 !important;

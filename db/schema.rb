@@ -11,13 +11,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141110235004) do
+ActiveRecord::Schema.define(version: 20141112143051) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "hstore"
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
+  enable_extension "postgres_fdw"
   enable_extension "tablefunc"
 
   create_table "active_admin_comments", force: true do |t|
@@ -471,22 +472,6 @@ ActiveRecord::Schema.define(version: 20141110235004) do
   add_index "event_expenses", ["brand_id"], name: "index_event_expenses_on_brand_id", using: :btree
   add_index "event_expenses", ["event_id"], name: "index_event_expenses_on_event_id", using: :btree
 
-  create_table "event_results", force: true do |t|
-    t.integer  "form_field_id"
-    t.integer  "event_id"
-    t.integer  "kpis_segment_id"
-    t.text     "value"
-    t.decimal  "scalar_value",    precision: 10, scale: 2, default: 0.0
-    t.datetime "created_at",                                             null: false
-    t.datetime "updated_at",                                             null: false
-    t.integer  "kpi_id"
-  end
-
-  add_index "event_results", ["event_id", "form_field_id"], name: "index_event_results_on_event_id_and_form_field_id", using: :btree
-  add_index "event_results", ["event_id"], name: "index_event_results_on_event_id", using: :btree
-  add_index "event_results", ["form_field_id"], name: "index_event_results_on_form_field_id", using: :btree
-  add_index "event_results", ["kpi_id"], name: "index_event_results_on_kpi_id", using: :btree
-
   create_table "events", force: true do |t|
     t.integer  "campaign_id"
     t.integer  "company_id"
@@ -933,12 +918,13 @@ ActiveRecord::Schema.define(version: 20141110235004) do
     t.decimal  "spent",                precision: 10, scale: 2, default: 0.0
     t.integer  "score"
     t.decimal  "avg_impressions",      precision: 8,  scale: 2, default: 0.0
-    t.datetime "created_at",                                                  null: false
-    t.datetime "updated_at",                                                  null: false
+    t.datetime "created_at",                                                    null: false
+    t.datetime "updated_at",                                                    null: false
     t.decimal  "avg_impressions_hour", precision: 6,  scale: 2, default: 0.0
     t.decimal  "avg_impressions_cost", precision: 8,  scale: 2, default: 0.0
     t.integer  "score_impressions"
     t.integer  "score_cost"
+    t.boolean  "score_dirty",                                   default: false
   end
 
   add_index "venues", ["company_id", "place_id"], name: "index_venues_on_company_id_and_place_id", unique: true, using: :btree

@@ -9,6 +9,20 @@ namespace :tdlinx do
       file = args.file
       TdLinxSynch::Processor.download_and_process_file(file)
     end
+
+    # Because heroku doesn't give us option to run the job montly, we run it
+    # daily checking for the current day. Check the job scheduled at heroku
+    # by runnning:
+    #   heroku addons:open scheduler -a brandscopic
+    desc 'Download and process file from FTP checking the current day'
+    task process_scheduled: :environment do |_t, args|
+      if ENV['TDLINX_DAY_PROCESS'].to_i == Time.current.utc.day
+        file = args.file
+        TdLinxSynch::Processor.download_and_process_file(file)
+      else
+        p 'Not today'
+      end
+    end
   end
   namespace :http do
     desc 'Download and process file from an URL'

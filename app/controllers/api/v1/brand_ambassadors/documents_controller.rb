@@ -37,6 +37,7 @@ module Api
             id: 10,
             name: "ACCOUNT LISTS",
             type: "folder",
+            updated_at: "2014-09-05T15:35:32.236-07:00",
             file_name: null,
             content_type: null,
             url: null,
@@ -45,6 +46,7 @@ module Api
           {
             id: 155,
             name: "BA BIOS",
+            updated_at: "2014-09-05T15:35:32.236-07:00",
             type: "folder",
             file_name: null,
             content_type: null,
@@ -54,6 +56,7 @@ module Api
           {
             id: 156,
             name: "BA EVENT PHOTOS",
+            updated_at: "2014-09-05T15:35:32.236-07:00",
             type: "folder",
             file_name: null,
             content_type: null,
@@ -63,6 +66,7 @@ module Api
           {
             id: 208341,
             name: "IMG_20140330_165611",
+            updated_at: "2014-09-05T15:35:32.236-07:00",
             type: "document",
             file_name: "IMG_20140330_165611.jpg",
             content_type: "image/jpeg",
@@ -72,6 +76,7 @@ module Api
           {
             id: 8,
             name: "ORG CHART",
+            updated_at: "2014-09-05T15:35:32.236-07:00",
             type: "folder",
             file_name: null,
             content_type: null,
