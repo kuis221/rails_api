@@ -209,7 +209,7 @@ feature 'Events section' do
 
             visit events_path
 
-            expect(page).to have_content('2 Active events taking place today and in the future')
+            expect(page).to have_content('2 events found')
 
             within events_list do
               expect(page).to have_content('Campaign FY2012')
@@ -222,7 +222,7 @@ feature 'Events section' do
 
             filter_section('CAMPAIGNS').unicheck('Campaign FY2012')
 
-            expect(page).to have_content('1 Active event as part of Campaign FY2012')
+            expect(page).to have_content('1 event found for: Campaign FY2012')
 
             within events_list do
               expect(page).to have_no_content('Another Campaign April 03')
@@ -235,7 +235,7 @@ feature 'Events section' do
               expect(page).to have_content('Campaign FY2012')
             end
 
-            expect(page).to have_content('2 Active events as part of Another Campaign April 03 and Campaign FY2012')
+            expect(page).to have_content('2 events found for: Another Campaign April 03 Campaign FY2012')
 
             select_filter_calendar_day('18')
             expect(find('#collection-list-filters')).to have_content('Another Campaign April 03')
@@ -244,7 +244,7 @@ feature 'Events section' do
               expect(page).to have_content('Campaign FY2012')
             end
 
-            expect(page).to have_content('1 Active event taking place today as part of Another Campaign April 03 and Campaign FY2012')
+            expect(page).to have_content('1 event found for: Another Campaign April 03 Campaign FY2012')
 
             select_filter_calendar_day('18', '19')
             within events_list do

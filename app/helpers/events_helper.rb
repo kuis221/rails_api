@@ -34,13 +34,17 @@ module EventsHelper
   end
 
   def describe_filters
-    first_part = [describe_date_ranges, describe_brands, describe_campaigns, describe_areas].compact.join(' ').strip
+    first_part = [
+      describe_brands, describe_campaigns, describe_areas, describe_cities,
+      describe_users, describe_teams
+    ].compact.join(' ').strip
     first_part = "for: #{first_part}" unless first_part.blank?
     [
       pluralize(number_with_delimiter(collection_count),
-                "#{[describe_status, resource_class.model_name.human.downcase].compact.join(' ')}"),
+                resource_class.model_name.human.downcase),
+                # "#{[describe_status, resource_class.model_name.human.downcase].compact.join(' ')}"),
       'found',
-      [first_part, describe_people].compact.join(' and ')
+      first_part
     ].compact.join(' ').strip.html_safe
   end
 
@@ -137,124 +141,38 @@ module EventsHelper
     end
   end
 
-  def build_filter_object_list(filter_name, list)
-    list.map do |item|
-      content_tag(:div,  class: 'filter-item') do
-        item[1].html_safe + link_to('', '#', class: 'icon icon-close',
-                                             data: { filter: "#{filter_name}:#{item[0]}" })
-      end
-    end.join.html_safe
-  end
-
   def describe_campaigns
-    campaigns = campaing_params
-    return unless campaigns.size > 0
-    build_filter_object_list 'campaign',
-                             current_company.campaigns
-                             .where(id: campaigns)
-                             .order('campaigns.name ASC')
-                             .pluck(:id, :name)
-  end
-
-  def campaing_params
-    campaigns = params[:campaign]
-    campaigns = [campaigns] unless campaigns.is_a?(Array)
-    if params.key?(:q) && params[:q] =~ /^campaign,/
-      campaigns.push params[:q].gsub('campaign,', '')
-    end
-    campaigns.compact
+    describe_resource_params(:campaign,
+                             current_company.campaigns.order('campaigns.name ASC'))
   end
 
   def describe_areas
-    areas = area_params
-    return unless areas.size > 0
-    names = current_company.areas.select('name')
-      .where(id: areas).map(&:name).sort.to_sentence(
-        last_word_connector: ', or ', two_words_connector: ' or ')
-    "in #{names}"
-  end
-
-  def area_params
-    areas = params[:area]
-    areas = [areas] unless areas.is_a?(Array)
-    if params.key?(:q) && params[:q] =~ /^area,/
-      areas.push params[:q].gsub('area,', '')
-    end
-    areas.compact
-  end
-
-  def describe_cities
-    cities = city_params
-    return unless cities.size > 0
-    names = cities.sort.to_sentence(last_word_connector: ', or ', two_words_connector: ' or ')
-    "in #{names}"
-  end
-
-  def city_params
-    cities = params[:city]
-    cities = [cities] unless cities.is_a?(Array)
-    if params.key?(:q) && params[:q] =~ /^city,/
-      cities.push params[:q].gsub('city,', '')
-    end
-    cities.compact
-  end
-
-  def describe_locations
-    places = location_params
-    place_ids = places.select { |p| p =~  /^[0-9]+$/ }
-    encoded_locations = places - place_ids
-    names = []
-    if place_ids.size > 0
-      names = Place.select('name').where(id: place_ids).map(&:name)
-    end
-
-    if encoded_locations.size > 0
-      names.concat(encoded_locations.map do |l|
-        (_, name) =  Base64.decode64(l).split('||')
-        name
-      end)
-    end
-
-    "in #{names.to_sentence}" if names.size > 0
-  end
-
-  def location_params
-    locations = params[:place]
-    locations = [locations] unless locations.is_a?(Array)
-    if params.key?(:q) && params[:q] =~ /^place,/
-      locations.push params[:q].gsub('place,', '')
-    end
-    locations.compact
+    describe_resource_params(:area,
+                             current_company.areas.order('areas.name ASC'))
   end
 
   def describe_brands
-    brands = brand_params
-    return unless brands.size > 0
-    names = Brand.select('name').where(id: brands).pluck(:name)
-    "for #{names.to_sentence}"
+    describe_resource_params(:brand,
+                             current_company.brands.order('brands.name ASC'))
   end
 
-  def brand_params
-    brands = params[:brand]
-    brands = [brands] unless brands.is_a?(Array)
-    if params.key?(:q) && params[:q] =~ /^brand,/
-      brands.push params[:q].gsub('brand,', '')
-    end
-    brands.compact
+  def describe_cities
+    cities = filter_params(:city)
+    return unless cities.size > 0
+    build_filter_object_list :city,
+                             cities.map{ |city| [city,city] }
   end
 
-  def describe_people
-    users = user_params
-    names = []
-    names = company_users.where(id: users).map(&:full_name) if users.size > 0
+  def describe_users
+    describe_resource_params(:user,
+                             current_company.company_users.joins(:user)
+                             .order('2 ASC'),
+                             'users.first_name || \' \' || users.last_name as name')
+  end
 
-    teams = team_params
-    names.concat company_teams.where(id: teams).map(&:name) if teams.size > 0
-
-    return unless names.size > 0
-
-    names = names.sort { |a, b| a.downcase <=> b.downcase }
-    "assigned to #{names.to_sentence(two_words_connector: ' or ', last_word_connector: ', or ')}"
+  def describe_teams
+    describe_resource_params(:team,
+                             current_company.teams.order('teams.name ASC'))
   end
 
   def user_params
@@ -289,4 +207,30 @@ module EventsHelper
       event_status.uniq.to_sentence(last_word_connector: ', or ', two_words_connector: ' or ')
     ].reject { |s| s.nil? || s.empty? }.to_sentence
   end
+
+  def filter_params(param_name)
+    ids = params[param_name]
+    ids = [ids] unless ids.is_a?(Array)
+    if params.key?(:q) && params[:q] =~ /^#{param_name},/
+      ids.push params[:q].gsub("#{param_name},", '').strip
+    end
+    ids.compact
+  end
+
+  def describe_resource_params(param_name, base_scope, label_attribute = :name )
+    ids = filter_params(param_name)
+    return unless ids.size > 0
+    build_filter_object_list param_name,
+                             base_scope.where(id: ids).pluck(:id, label_attribute)
+  end
+
+  def build_filter_object_list(filter_name, list)
+    list.map do |item|
+      content_tag(:div,  class: 'filter-item') do
+        item[1].html_safe + link_to('', '#', class: 'icon icon-close',
+                                             data: { filter: "#{filter_name}:#{item[0]}" })
+      end
+    end.join(' ').html_safe
+  end
+
 end

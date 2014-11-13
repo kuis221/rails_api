@@ -56,6 +56,47 @@ module Capybara
         true
       end
     end
+
+    class HaveFilterTag < Matcher
+      attr_reader :failure_message, :failure_message_when_negated
+
+      def initialize(*args)
+        @args = args.count > 1 ? args.last : {}
+        @title = args[0]
+      end
+
+      def matches?(actual)
+        evaluate_condition(actual, true)
+      rescue Capybara::ExpectationNotMet => e
+        @failure_message = e.message
+        return false
+      end
+
+      def does_not_match?(actual)
+        evaluate_condition(actual, false)
+      rescue Capybara::ExpectationNotMet => e
+        @failure_message_when_negated = e.message
+        return false
+      end
+
+      def evaluate_condition(page, expected)
+        found = nil
+        page.document.synchronize do
+          errors = []
+          found = wrapper.all('.filter-item', text: @title)
+
+            title = wrapper.all('.filter-item', text: @title)
+          errors.push "expected #{page.inspect} to have filter section #{@title}" unless found
+
+          if expected && (!found || errors.any?)
+            raise Capybara::ExpectationNotMet, errors.join
+          elsif !expected && found
+            raise Capybara::ExpectationNotMet, "expected #{page.inspect} to not have filter section #{@args[:title]}"
+          end
+        end
+        true
+      end
+    end
   end
 end
 
