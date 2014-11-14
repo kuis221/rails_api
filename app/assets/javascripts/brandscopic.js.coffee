@@ -177,42 +177,44 @@ jQuery ->
 		$('html, body').animate({ scrollTop: element.offset().top - ($('#resource-close-details').outerHeight() || 0) - ($('header').outerHeight() || 0) - 20 }, 300)
 
 
+	$.validator.setDefaults {
+		errorClass: 'help-inline',
+		errorElement: 'span',
+		ignore: '.no-validate',
+		onfocusout: ( element, event ) ->
+			if !this.checkable(element)
+				this.element(element)
+		highlight: (element) ->
+			if $(element).closest('.field-option').length > 0
+				$(element).removeClass('valid').closest('.field-option').removeClass('success').addClass('error')
+			else
+				$(element).removeClass('valid').closest('.control-group').removeClass('success').addClass('error')
+
+		errorPlacement: (error, element) ->
+			label = element.closest(".control-group").find("label.control-label[for=\"#{element.attr('id')}\"]")
+			label = element.closest(".control-group").find("label.control-label") if label.length is 0
+			label.addClass('with_message')
+			if label.length > 0
+				error.insertAfter label
+
+		focusInvalid: false,
+		invalidHandler: (form, validator) ->
+			return unless validator.numberOfInvalids()
+			element = $(validator.errorList[0].element)
+			while element.is(":hidden")
+				element = element.parent()
+
+			$("html, body").animate
+				scrollTop: element.offset().top - 200
+			, 1000
+		success: (element) ->
+			element.addClass('valid').append('<span class="ok-message"><span>OK!</span></span>')
+				.closest('.control-group').removeClass('error')
+			element.closest('.field-option').removeClass('error')
+	}
+
 	window.makeFormValidatable = (e) ->
-		e.validate {
-			errorClass: 'help-inline',
-			errorElement: 'span',
-			ignore: '.no-validate',
-			onfocusout: ( element, event ) ->
-				if !this.checkable(element)
-					this.element(element)
-			highlight: (element) ->
-				if $(element).closest('.field-option').length > 0
-					$(element).removeClass('valid').closest('.field-option').removeClass('success').addClass('error')
-				else
-					$(element).removeClass('valid').closest('.control-group').removeClass('success').addClass('error')
-
-			errorPlacement: (error, element) ->
-				label = element.closest(".control-group").find("label.control-label[for=\"#{element.attr('id')}\"]")
-				label = element.closest(".control-group").find("label.control-label") if label.length is 0
-				label.addClass('with_message')
-				if label.length > 0
-					error.insertAfter label
-
-			focusInvalid: false,
-			invalidHandler: (form, validator) ->
-				return unless validator.numberOfInvalids()
-				element = $(validator.errorList[0].element)
-				while element.is(":hidden")
-					element = element.parent()
-
-				$("html, body").animate
-					scrollTop: element.offset().top - 200
-				, 1000
-			success: (element) ->
-				element.addClass('valid').append('<span class="ok-message"><span>OK!</span></span>')
-					.closest('.control-group').removeClass('error')
-				element.closest('.field-option').removeClass('error')
-		}
+		e.validate()
 
 	# Check what graph labels are colliding with others and adjust the position
 	$(window).on 'resize ready', () ->

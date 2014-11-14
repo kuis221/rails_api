@@ -270,14 +270,14 @@ feature 'Post Event Data' do
 
     scenario 'should allow 0 for not required percentage fields' do
       kpi = create(:kpi, kpi_type: 'percentage',
-                                     kpis_segments: [create(:kpis_segment, text: 'Male'),
-                                                     create(:kpis_segment, text: 'Female')])
+                         kpis_segments: [create(:kpis_segment, text: 'Male'),
+                                         create(:kpis_segment, text: 'Female')])
 
       campaign.add_kpi kpi
 
       event = create(:event,
-                                 start_date: Date.yesterday.to_s(:slashes), end_date: Date.yesterday.to_s(:slashes),
-                                 campaign: campaign, place: place)
+                     start_date: Date.yesterday.to_s(:slashes), end_date: Date.yesterday.to_s(:slashes),
+                     campaign: campaign, place: place)
 
       visit event_path(event)
 
@@ -288,16 +288,16 @@ feature 'Post Event Data' do
 
     scenario 'should NOT allow 0 or less for the sum of required percentage fields' do
       kpi = create(:kpi, kpi_type: 'percentage',
-                                     kpis_segments: [create(:kpis_segment, text: 'Male'),
-                                                     create(:kpis_segment, text: 'Female')])
+                         kpis_segments: [create(:kpis_segment, text: 'Male'),
+                                         create(:kpis_segment, text: 'Female')])
 
       field = campaign.add_kpi(kpi)
       field.required = true
       field.save
 
       event = create(:event,
-                                 start_date: Date.yesterday.to_s(:slashes), end_date: Date.yesterday.to_s(:slashes),
-                                 campaign: campaign, place: place)
+                     start_date: Date.yesterday.to_s(:slashes), end_date: Date.yesterday.to_s(:slashes),
+                     campaign: campaign, place: place)
 
       visit event_path(event)
 
@@ -379,8 +379,8 @@ feature 'Post Event Data' do
                          required: false)
 
       event = create(:event,
-                                 start_date: Date.yesterday.to_s(:slashes), end_date: Date.yesterday.to_s(:slashes),
-                                 campaign: campaign, place: place)
+                     start_date: Date.yesterday.to_s(:slashes), end_date: Date.yesterday.to_s(:slashes),
+                     campaign: campaign, place: place)
 
       visit event_path(event)
 
