@@ -2849,17 +2849,22 @@ ul.ui-widget-content{
 	.button_to_edit {
 		margin-right: 0;
 	}
-	.icon-edit, .icon-rounded-disable{
-		color: $brand;
-		&:hover{
-			color:$app_bg;
+	.button_to {
+		margin: 0 0 0 15px;
+		&:first-of-type {
+			margin: 0;
+		}
+		i.icon {
+			color: $brand;
+			&:hover {
+				color: $app_bg;
+			}
 		}
 	}
 	.icon-edit{
 		margin: 0 0 0 15px;
 	}
 	.icon-rounded-disable{
-		margin: 0 0 0 10px;
 		position:relative;
 		top:1px;
 	}

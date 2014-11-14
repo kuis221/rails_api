@@ -27,5 +27,5 @@
     };
 
   - unless resource.is_a?(AttachedAsset) || resource.is_a?(Task)
-    | $('#active-toggle-btn-#{resource_class}-#{resource.id}').replaceWith('#{j button_to_activate_or_deactivate(resource, activate_url: params.merge(action: :activate), deactivate_url: params.merge(action: :deactivate))}');
+    | $('.active-toggle-btn-#{resource_class}-#{resource.id}').replaceWith('#{j button_to_activate_or_deactivate(resource, activate_url: params.merge(action: :activate), deactivate_url: params.merge(action: :deactivate))}');
 
