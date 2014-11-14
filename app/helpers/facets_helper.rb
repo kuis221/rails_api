@@ -44,10 +44,11 @@ module FacetsHelper
     status = current_company_user.filter_settings_for(Area, filter_settings_scope)
 
     places = current_company_user.places
-    areas = current_company.areas.where('active in (?)', status).accessible_by_user(current_company_user).order(:name).all
-
+    areas = current_company.areas.where('active in (?)', status).accessible_by_user(current_company_user).order(:name).to_a
     places.each do |p|
-      areas = (areas + Area.where(company_id: current_company.id).where('active in (?)', status || [true, false]).where('id NOT IN (?)', areas.map(&:id) + [0]).select { |a| a.place_in_locations?(p) })
+      areas += current_company.areas
+               .where('active in (?)', status || [true, false])
+               .where('id NOT IN (?)', areas.map(&:id) + [0]).select { |a| a.place_in_locations?(p) }
     end
 
     areas = areas.sort_by(&:name).map { |a| build_facet_item(label: a.name, id: a.id, count: a.events_count, name: :area) }
