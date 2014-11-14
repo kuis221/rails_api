@@ -324,6 +324,24 @@ describe Event, type: :model do
       area_campaign_la.exclusions = [city_la.id]
       expect(Event.in_campaign_area(area_campaign_la)).to be_empty
     end
+
+    it 'should includes events that are scheduled on places inside an included city' do
+      campaign2 = create(:campaign, company: company)
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      event_la = create(:event, campaign: campaign, place: place_la)
+
+      city_la = create(:city, name: 'Los Angeles', country: 'US', state: 'California')
+      area_la = create(:area, company: company)
+
+      area_campaign_la = create(:areas_campaign, area: area_la, campaign: campaign)
+      area_campaign2_la = create(:areas_campaign, area: area_la, campaign: campaign2)
+      expect(Event.in_campaign_area(area_campaign_la)).to be_empty
+      expect(Event.in_campaign_area(area_campaign2_la)).to be_empty
+
+      area_campaign_la.update_attribute :inclusions, [city_la.id]
+      expect(Event.in_campaign_area(area_campaign_la)).to match_array [event_la]
+      expect(Event.in_campaign_area(area_campaign2_la)).to be_empty
+    end
   end
 
   describe '#in_campaign_areas' do
@@ -411,6 +429,33 @@ describe Event, type: :model do
 
       area_campaign_la.update_attribute :exclusions, [city_la.id]
       expect(Event.in_campaign_areas(campaign, [area_la])).to be_empty
+    end
+
+    it 'should includes events that are scheduled on places inside an included city' do
+      campaign2 = create(:campaign, company: company)
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      place_sf = create(:place, country: 'US', state: 'California', city: 'San Francisco')
+      event_la = create(:event, campaign: campaign, place: place_la)
+      event_sf = create(:event, campaign: campaign, place: place_sf)
+
+      city_la = create(:city, name: 'Los Angeles', country: 'US', state: 'California')
+      city_sf = create(:city, name: 'San Francisco', country: 'US', state: 'California')
+      area_la = create(:area, company: company)
+      area_sf = create(:area, company: company)
+      area_sf.places << city_sf
+
+      area_campaign_la = create(:areas_campaign, area: area_la, campaign: campaign)
+      area_campaign_sf = create(:areas_campaign, area: area_sf, campaign: campaign)
+      create(:areas_campaign, area: area_la, campaign: campaign2)
+      expect(Event.in_campaign_areas(campaign, [area_la])).to be_empty
+      expect(Event.in_campaign_areas(campaign2, [area_la])).to be_empty
+
+      area_campaign_la.update_attribute :inclusions, [city_la.id]
+      expect(Event.in_campaign_areas(campaign, [area_la])).to match_array [event_la]
+      expect(Event.in_campaign_areas(campaign2, [area_la])).to be_empty
+
+      expect(Event.in_campaign_areas(campaign, [area_la, area_sf])).to match_array [event_la, event_sf]
+
     end
   end
 
