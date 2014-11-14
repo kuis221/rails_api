@@ -182,6 +182,98 @@ feature 'BrandPortfolios', js: true, search: true do
     end
   end
 
+  feature 'custom filters', search: true, js: true do
+    let(:brand_portfolio1) { create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: true, company: company) }
+    let(:brand_portfolio2) { create(:brand_portfolio, name: 'B Licores Costarricenses', description: 'Licores ticos', active: true, company: company) }
+    let(:brand1) { create(:brand, name: 'Brand 1', company: company) }
+    let(:brand2) { create(:brand, name: 'Brand 2', company: company) }
+
+    before do
+      # make sure brand portfolios are created before
+      brand_portfolio1
+      brand_portfolio2
+      brand_portfolio1.brands << brand1
+      brand_portfolio2.brands << brand2
+      brand_portfolio1.save
+      brand_portfolio2.save
+      Sunspot.commit
+    end
+
+    scenario 'allows to create a new custom filter' do
+      visit brand_portfolios_path
+
+      filter_section('BRANDS').unicheck('Brand 1')
+      filter_section('ACTIVE STATE').unicheck('Inactive')
+
+      click_button 'Save'
+
+      within visible_modal do
+        fill_in('Filter name', with: 'My Custom Filter')
+        expect do
+          click_button 'Save'
+          wait_for_ajax
+        end.to change(CustomFilter, :count).by(1)
+
+        custom_filter = CustomFilter.last
+        expect(custom_filter.owner).to eq(company_user)
+        expect(custom_filter.name).to eq('My Custom Filter')
+        expect(custom_filter.apply_to).to eq('brand_portfolios')
+        expect(custom_filter.filters).to eq('status%5B%5D=Inactive')
+      end
+      ensure_modal_was_closed
+
+      within '.form-facet-filters' do
+        expect(page).to have_content('My Custom Filter')
+      end
+    end
+
+    scenario 'allows to apply custom filters' do
+      create(:custom_filter,
+             owner: company_user, name: 'Custom Filter 1', apply_to: 'brand_portfolios',
+             filters: 'status%5B%5D=Active')
+      create(:custom_filter,
+             owner: company_user, name: 'Custom Filter 2', apply_to: 'brand_portfolios',
+             filters: 'status%5B%5D=Inactive')
+
+      visit brand_portfolios_path
+
+      within brand_portfolios_list do
+        expect(page).to have_content('Costa Rica Role')
+        expect(page).to_not have_content('Buenos Aires Role')
+      end
+
+      # Using Custom Filter 1
+      filter_section('SAVED FILTERS').unicheck('Custom Filter 1')
+
+      within brand_portfolios_list do
+        expect(page).to have_content('Costa Rica Role')
+        expect(page).to_not have_content('Buenos Aires Role')
+      end
+
+      within '.form-facet-filters' do
+        expect(find_field('Active')['checked']).to be_truthy
+        expect(find_field('Inactive')['checked']).to be_falsey
+        expect(find_field('Custom Filter 1')['checked']).to be_truthy
+        expect(find_field('Custom Filter 2')['checked']).to be_falsey
+      end
+
+      # Using Custom Filter 2 should update results and checked/unchecked checkboxes
+      filter_section('SAVED FILTERS').unicheck('Custom Filter 2')
+
+      within brand_portfolios_list do
+        expect(page).to_not have_content('Costa Rica Role')
+        expect(page).to have_content('Buenos Aires Role')
+      end
+
+      within '.form-facet-filters' do
+        expect(find_field('Active')['checked']).to be_falsey
+        expect(find_field('Inactive')['checked']).to be_truthy
+        expect(find_field('Custom Filter 1')['checked']).to be_falsey
+        expect(find_field('Custom Filter 2')['checked']).to be_truthy
+      end
+    end
+  end
+
   feature 'export' do
     let(:brand_portfolio1) { create(:brand_portfolio,
                                 name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica',
@@ -246,5 +338,9 @@ feature 'BrandPortfolios', js: true, search: true do
         expect(text).to include 'Licoresticos'
       end
     end
+  end
+
+  def brand_portfolios_list
+    '#brand_portfolios-list'
   end
 end

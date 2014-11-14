@@ -172,9 +172,9 @@ class CampaignsController < FilteredController
       # select what params should we use for the facets search
       f.push build_brands_bucket
       f.push build_brand_portfolio_bucket
-
       f.push build_people_bucket
       f.push build_state_bucket
+      f.concat build_custom_filters_bucket
     end
   end
 
