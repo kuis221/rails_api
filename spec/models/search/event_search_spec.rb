@@ -178,6 +178,29 @@ describe Event, type: :model, search: true do
 
       event = create(:event, campaign: campaign, place: place_la)
       expect(search(company_id: company.id, area: [area_la.id])).to match_array [event]
+      expect(search(company_id: company.id, q: "area,#{area_la.id}")).to match_array [event]
+    end
+
+    it 'should NOT return events inside cities excluded from areas in campaigns' do
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      place_sf = create(:place, country: 'US', state: 'California', city: 'San Francisco')
+      area = create(:area, company: company)
+      state = create(:state, name: 'California', country: 'US')
+      city_la = create(:city, name: 'Los Angeles', country: 'US', state: 'California')
+
+      area.places << state
+
+      area_campaign = create(:areas_campaign, area: area, campaign: campaign)
+      event1 = create(:event, campaign: campaign, place: place_la)
+      event2 = create(:event, campaign: campaign, place: place_sf)
+
+      expect(search(company_id: company.id, area: [area.id])).to match_array [event1, event2]
+      expect(search(company_id: company.id, q: "area,#{area.id}")).to match_array [event1, event2]
+
+      area_campaign.update_column(:exclusions, [city_la.id])
+
+      expect(search(company_id: company.id, area: [area.id])).to match_array [event2]
+      expect(search(company_id: company.id, q: "area,#{area.id}")).to match_array [event2]
     end
   end
 

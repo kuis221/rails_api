@@ -625,31 +625,43 @@ class Event < ActiveRecord::Base
                 with :location, venue.place.location_id if venue.place.is_location?
               end
             when 'area'
-              any_of do
-                with :place_id, Area.where(id: value).joins(:places).where(places: { is_location: false }).pluck('places.id').uniq + [0]
-                with :location, Area.find(value).locations.map(&:id) + [0]
-              end
+              params[:area] ||= []
+              params[:area] = [params[:area]] unless params[:area].is_a?(Array)
+              params[:area].push value.to_i
             else
               with "#{attribute}_ids", value
             end
           end
 
           if params[:area].present?
-            any_of do
-              with :place_id, Area.where(id: params[:area]).joins(:places).where(places: { is_location: false }).pluck('places.id').uniq + [0]
-              with :location, Area.where(id: params[:area]).map { |a| a.locations.map(&:id) }.flatten + [0]
-              area_campaigns = AreasCampaign.where(area_id: params[:area]).where('array_length(areas_campaigns.inclusions, 1) >= 1')
-              area_campaigns = area_campaigns.where(campaign_id: params[:campaign]) if params[:campaign].present?
-              area_campaigns.each do |ac|
-                all_of do
-                  with :campaign_id, ac.campaign_id
-                  any_of do
-                    with :place_id, ac.inclusions
-                    with :location, ac.location_ids
+            all_of do
+              any_of do
+                with :place_id, Area.where(id: params[:area]).joins(:places).where(places: { is_location: false }).pluck('places.id').uniq + [0]
+                with :location, Area.where(id: params[:area]).map { |a| a.locations.map(&:id) }.flatten + [0]
+
+                # Customized areas with INCLUDED places
+                area_campaigns = AreasCampaign.where(area_id: params[:area]).where('array_length(areas_campaigns.inclusions, 1) >= 1')
+                area_campaigns = area_campaigns.where(campaign_id: params[:campaign]) if params[:campaign].present?
+                area_campaigns.each do |ac|
+                  all_of do
+                    with :campaign_id, ac.campaign_id
+                    any_of do
+                      with :place_id, ac.inclusions
+                      with :location, ac.location_ids
+                    end
                   end
                 end
               end
 
+              # Customized areas with EXCLUDED places
+              area_campaigns = AreasCampaign.where(area_id: params[:area]).where('array_length(areas_campaigns.exclusions, 1) >= 1')
+              area_campaigns = area_campaigns.where(campaign_id: params[:campaign]) if params[:campaign].present?
+              area_campaigns.each do |ac|
+                any_of do
+                  without :campaign_id, ac.campaign_id
+                  without :location, Place.where(id: ac.exclusions, is_location: true).pluck('DISTINCT places.location_id') + [-1]
+                end
+              end
             end
           end
 
