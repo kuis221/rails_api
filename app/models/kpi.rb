@@ -326,10 +326,12 @@ class Kpi < ActiveRecord::Base
         kpi_keep = remaining_kpis.first
       end
 
-      if kpi_keep && !kpi_keep.out_of_the_box?
-        kpi_keep.name = options['name']
-        kpi_keep.description = options['description']
-        kpi_keep.save
+      if kpi_keep
+        unless kpi_keep.out_of_the_box?
+          kpi_keep.name = options['name']
+          kpi_keep.description = options['description']
+          kpi_keep.save
+        end
         FormField.where(kpi_id: kpi_keep).update_all(name: options['name'])
       end
     end
