@@ -83,7 +83,7 @@ if ENV['WEB']
 
     # You can define the class to use on all collection wrappers. Defaulting to none.
     # config.collection_wrapper_class = nil
-    config.label_text = lambda { |label, _required| "#{label}" }
+    config.label_text = lambda { |label, required| "#{label}" + (required.present? ? '' : ' (optional)') }
 
     # You can wrap each item in a collection of radio/check boxes with a tag,
     # defaulting to :span. Please note that when using :boolean_style = :nested,
