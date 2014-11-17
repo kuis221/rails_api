@@ -394,11 +394,11 @@ module Api
         def facets
           @facets ||= Array.new.tap do |f|
             # select what params should we use for the facets search
+            f.concat build_custom_filters_bucket
             f.push build_brand_ambassadors_bucket
             f.push build_campaign_bucket
             f.push build_areas_bucket
             f.push build_city_bucket
-            f.concat build_custom_filters_bucket
           end
         end
 
