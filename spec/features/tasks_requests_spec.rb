@@ -86,8 +86,12 @@ feature 'Tasks', js: true, search: true do
 
       confirm_prompt 'Are you sure you want to deactivate this task?'
 
-      filter_section('ACTIVE STATE').unicheck('Active')
-      filter_section('ACTIVE STATE').unicheck('Inactive')
+      # Make it show only the inactive elements
+      add_filter 'ACTIVE STATE', 'Inactive'
+      remove_filter 'Active'
+
+      expect(page).to have_content '1 task found for: Inactive'
+
       within resource_item do
         expect(page).to have_content('Pick up kidz at school')
         click_js_link 'Activate'
@@ -194,21 +198,21 @@ feature 'Tasks', js: true, search: true do
         expect(task_counters).to have_content '4 INCOMPLETE'
         expect(task_counters).to have_content '1 LATE'
 
-        filter_section('TASK STATUS').unicheck('Complete')
+        add_filter 'TASK STATUS', 'Complete'
 
         expect(task_counters).to have_content '0 UNASSIGNED'
         expect(task_counters).to have_content '0 INCOMPLETE'
         expect(task_counters).to have_content '0 LATE'
 
-        filter_section('TASK STATUS').unicheck('Complete')
-        filter_section('TASK STATUS').unicheck('Incomplete')
+        remove_filter 'Complete'
+        add_filter 'TASK STATUS', 'Incomplete'
 
         expect(task_counters).to have_content '1 UNASSIGNED'
         expect(task_counters).to have_content '4 INCOMPLETE'
         expect(task_counters).to have_content '1 LATE'
 
-        filter_section('TASK STATUS').unicheck('Incomplete')
-        filter_section('TASK STATUS').unicheck('Late')
+        remove_filter 'Incomplete'
+        add_filter 'TASK STATUS', 'Late'
 
         expect(task_counters).to have_content '0 UNASSIGNED'
         expect(task_counters).to have_content '1 INCOMPLETE'

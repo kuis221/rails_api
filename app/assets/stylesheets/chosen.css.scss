@@ -471,20 +471,20 @@ select.chosen-enabled{
 			}
 		}
 		.chzn-search input {
-			background-image: image-url('chosen-sprite@2x.png') !important;
+			// background-image: image-url('chosen-sprite@2x.png') !important;
 			background-size: 58px 38px !important;
 			background-repeat: no-repeat !important;
 		}
 	}
 	.chzn-container-multi .chzn-choices .search-choice .search-choice-close {
-		background-image: image-url('chosen-sprite@2x.png') !important;
+		//background-image: image-url('chosen-sprite@2x.png') !important;
 		background-size: 58px 38px !important;
 		background-repeat: no-repeat !important;
 	}
 
 	.chzn-container {
 		.chzn-results-scroll-down span, .chzn-results-scroll-up span {
-			background-image: image-url('chosen-sprite@2x.png') !important;
+			//background-image: image-url('chosen-sprite@2x.png') !important;
 			background-size: 58px 38px !important;
 			background-repeat: no-repeat !important;
 		}

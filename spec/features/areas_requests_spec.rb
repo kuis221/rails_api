@@ -157,8 +157,11 @@ feature 'Areas', js: true, search: true  do
         Sunspot.commit
         visit areas_path
 
-        filter_section('ACTIVE STATE').unicheck('Inactive')
-        filter_section('ACTIVE STATE').unicheck('Active')
+        # Make it show only the inactive elements
+        add_filter 'ACTIVE STATE', 'Inactive'
+        remove_filter 'Active'
+
+        expect(page).to have_content '1 area found for: Inactive'
 
         within resource_item 1 do
           expect(page).to have_text('Wild Wild West')

@@ -86,10 +86,13 @@ $.widget 'nmk.filteredList', {
 			return unless @doneLoading
 			$(e.currentTarget).closest('.filter-item').fadeTo(1000, 0.3)
 			filterParts = $(e.currentTarget).data('filter').split(':')
-			filterName = filterParts[0]+ '[]'
-			filterValue = filterParts[1]
-			checkbox = @element.find("input:checkbox[name=\"#{filterName}\"][value=\"#{filterValue}\"]")
-			checkbox.trigger('click');
+			if filterParts[0] == 'date'
+				@_deselectDates()
+			else
+				filterName = filterParts[0]+ '[]'
+				filterValue = filterParts[1]
+				checkbox = @element.find("input:checkbox[name=\"#{filterName}\"][value=\"#{filterValue}\"]")
+				@_clickCheckbox(checkbox)
 			false
 
 
@@ -181,7 +184,7 @@ $.widget 'nmk.filteredList', {
 				p.push param if param.value != '' && param.name != 'custom_filter[]'
 
 		for param in @defaultParams
-			p.push param
+			p.push param unless @element.find('input[type=checkbox][name="'+param.name+'"][value="'+param.value+'"]:checked').length > 0
 
 		for param in @options.customFilters
 			p.push param
@@ -456,13 +459,24 @@ $.widget 'nmk.filteredList', {
 			.append $('<label>').append(
 				$('<input>', {type:'checkbox', value: option.id, name: "#{option.name}[]", checked: checked}), option.label
 			).on 'change', (e) =>
-				if $(e.target).prop('checked')
-					$(e.target).closest('li').slideUp()
-				else
-					$(e.target).closest('li').show()
+				@_updatingCustomCheckboxes ||= false
+				unless $(e.target).attr('name') == 'custom_filter[]'
+					if $(e.target).prop('checked')
+						$(e.target).closest('li').slideUp()
+					else
+						$(e.target).closest('li').show()
+				unless @_updatingCustomCheckboxes
+					@_updatingCustomCheckboxes = true
+					@_updateCustomFiltersCheckboxes(option)
+					@_updatingCustomCheckboxes = false
 
-				@_updateCustomFiltersCheckboxes(option)
+				return true unless @initialized
 				@_filtersChanged()
+				true
+
+	_clickCheckbox: (elm) ->
+		e = $.Event( "click" );
+		elm.trigger(e);
 
 	_addAutocompleteBox: () ->
 		previousValue = '';
@@ -516,13 +530,17 @@ $.widget 'nmk.filteredList', {
 	_cleanFilters: () ->
 		@initialized = false
 		@defaultParams = []
+		defaultElements = []
 		@_cleanSearchFilter()
 		@_deselectDates()
 		defaultParams = if typeof @options.clearFilterParams != 'undefined' then @options.clearFilterParams else @options.defaultParams
 		defaultParams ||= []
-		@element.find('input[type=checkbox]').attr('checked', false)
 		for param in defaultParams
-			@element.find('input[name="'+param.name+'"][value="'+param.value+'"]').attr('checked', true)
+			elm = @element.find('input[name="'+param.name+'"][value="'+param.value+'"]')
+			if elm.length > 0
+				elm.click() unless elm.prop('checked')
+				defaultElements.push elm[0]
+		@element.find('input[type=checkbox]:checked').not(defaultElements).click()
 		@_filtersChanged()
 		@initialized = true
 		defaultParams = null
@@ -530,13 +548,24 @@ $.widget 'nmk.filteredList', {
 
 	# Resets the filter to its initial state
 	_resetFilters: () ->
+		@initialized = false
 		@defaultParams = @options.defaultParams
 		@_cleanSearchFilter()
 		@_deselectDates()
-		@element.find('input[type=checkbox]').attr('checked', false)
+		#@element.find('input[type=checkbox]:checked').change()
+		defaultElements = []
+		for param in @options.defaultParams
+			el = @element.find('input[type=checkbox][name="'+param.name+'"][value="'+param.value+'"]')
+			if el.length > 0
+				el.click() unless el.attr('checked')
+				defaultElements.push el[0]
+
+		for elm in @element.find('input[type=checkbox]:checked').not(defaultElements)
+			$(elm).click() # if defaultElements.indexOf(elm) < 0
 		history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname);
-		@_parseQueryString(window.location.search)
 		@_filtersChanged(false)
+		@initialized = true
+		@defaultParams = []
 		
 		# for param in defaultParams
 		# 	@element.find('input[name="'+param.name+'"][value="'+param.value+'"]').attr('checked', true)
@@ -887,12 +916,11 @@ $.widget 'nmk.filteredList', {
 	paramsQueryString: () ->
 		@_serializeFilters()
 
-	_updateCustomFiltersCheckboxes: (option=null) ->
+	_updateCustomFiltersCheckboxes: (option) ->
 		e = @element.find('input[name="custom_filter\\[\\]"][value="'+option.id+'"]')
 		@element.find('input[name="custom_filter\\[\\]"]:checked').not(e).prop 'checked', false
 		if e.length
 			if e.prop('checked') == true
-				@element.find('input[type="checkbox"]:checked').not(e).prop 'checked', false
 				@_parseQueryString(option.id.split('&id')[0])
 			else
 				@_cleanFilters()
@@ -1022,6 +1050,7 @@ $.widget 'nmk.filteredList', {
 	_parseQueryString: (query) ->
 		@initialized = false
 		@_cleanSearchFilter()
+		selectedOptions = []
 		query = query.replace(/^\?/,"")
 		if query != ''
 			if query.match(/_stored=true/)
@@ -1049,7 +1078,8 @@ $.widget 'nmk.filteredList', {
 						if field.attr('type') == 'checkbox'
 							for element in field
 								if element.value == value
-									element.checked = true
+									$(element).click() unless $(element).prop('checked')
+									selectedOptions.push element
 						else
 							field.val(value)
 					else
@@ -1060,6 +1090,8 @@ $.widget 'nmk.filteredList', {
 			else
 				@_deselectDates()
 			dates = vars = null
+
+		@element.find('input[type="checkbox"]:checked:not([name="^custom_filter"])').not(selectedOptions).click()
 
 		query = null
 		if @searchHidden and @searchHidden.val()

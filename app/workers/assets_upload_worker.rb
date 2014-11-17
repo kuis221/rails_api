@@ -10,7 +10,6 @@ class AssetsUploadWorker
     asset = klass.find(asset_id)
     asset.transfer_and_cleanup
     asset = nil
-    GC.start
 
   rescue Resque::TermException
     # if the worker gets killed, (when deploying for example)

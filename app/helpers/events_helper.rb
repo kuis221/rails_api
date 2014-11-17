@@ -33,16 +33,16 @@ module EventsHelper
     event.send(attribute)
   end
 
-  def describe_filters
+  def describe_filters(resource_name=nil)
+    resource_name ||= resource_class.model_name.human.downcase
     first_part = [
-      describe_brands, describe_campaigns, describe_areas, describe_cities,
-      describe_users, describe_teams
+      describe_status, describe_date_ranges, describe_brands, describe_campaigns,
+      describe_areas, describe_cities, describe_users, describe_teams
     ].compact.join(' ').strip
     first_part = "for: #{first_part}" unless first_part.blank?
     [
       pluralize(number_with_delimiter(collection_count),
-                resource_class.model_name.human.downcase),
-                # "#{[describe_status, resource_class.model_name.human.downcase].compact.join(' ')}"),
+                resource_name),
       'found',
       first_part
     ].compact.join(' ').strip.html_safe
@@ -107,38 +107,28 @@ module EventsHelper
   end
 
   def describe_date_ranges
-    start_date = params.key?(:start_date) &&  params[:start_date] != '' ? params[:start_date] : false
-    end_date = params.key?(:end_date) &&  params[:end_date] != '' ? params[:end_date] : false
-    start_date_d = end_date_d = nil
-    start_date_d = Timeliness.parse(start_date).to_date if start_date
-    end_date_d = Timeliness.parse(end_date).to_date if end_date
-    unless start_date.nil? || end_date.nil?
-      today = Time.current.to_date
-      yesterday = (Time.current - 1.day).to_date
-      tomorrow = (Time.current + 1.day).to_date
-      start_date_label = (start_date_d == today ?  'today' : (start_date_d == yesterday ? 'yesterday' : (start_date_d == tomorrow ? 'tomorrow' : Timeliness.parse(start_date).strftime('%B %d')))) if start_date
-      end_date_label = (end_date_d == today ? 'today' : (end_date == yesterday.to_s(:slashes) ? 'yesterday' : (end_date_d == tomorrow ? 'tomorrow' : (Timeliness.parse(end_date).strftime('%Y').to_i > Time.zone.now.year + 1 ? 'the future' : Timeliness.parse(end_date).strftime('%B %d'))))) if end_date
-
-      verb = (end_date && end_date_d < today) ? 'took' : 'taking'
-
-      if start_date && end_date && (start_date != end_date)
-        if start_date_label == 'today' && end_date_label == 'the future'
-          "#{verb} place today and in the future"
-        else
-          "#{verb} place between #{start_date_label} and #{end_date_label}"
-        end
-      elsif start_date
-        if start_date_d == today
-          "#{verb} place today"
-        elsif start_date_d >= today
-          start_date_label = "at #{start_date_label}" if Timeliness.parse(start_date).strftime('%B %d') == start_date_label
-          "#{verb} place #{start_date_label}"
-        else
-          start_date_label = "on #{start_date_label}" if Timeliness.parse(start_date).strftime('%B %d') == start_date_label
-          "#{verb} place #{start_date_label}"
-        end
+    start_date = params[:start_date].blank? ? nil : params[:start_date]
+    end_date = params[:end_date].blank? ? nil : params[:end_date]
+    return if start_date.nil?
+    dates = [start_date, end_date].compact.map { |d| Timeliness.parse(d).to_date }.map do |d|
+      if d == Time.current.to_date
+        'today'
+      elsif d == (Time.current - 1.day).to_date
+        'yesterday'
+      elsif d == (Time.current + 1.day).to_date
+        'tomorrow'
+      else
+        d
       end
     end
+
+    dates =
+      if dates.count > 1 && dates[1].is_a?(Date) && (dates[1].year > Time.zone.now.year + 2)
+        "#{dates[0].is_a?(Date) ? dates[0].to_s(:simple_short) : dates[0]} to the future"
+      else
+        dates.map{ |d| d.is_a?(Date) ? d.to_s(:simple_short) : d }.join(' - ')
+      end
+    build_filter_object_item dates, "date"
   end
 
   def describe_campaigns
@@ -157,10 +147,7 @@ module EventsHelper
   end
 
   def describe_cities
-    cities = filter_params(:city)
-    return unless cities.size > 0
-    build_filter_object_list :city,
-                             cities.map{ |city| [city,city] }
+    build_filter_object_list :city, filter_params(:city).map{ |city| [city,city] }
   end
 
   def describe_users
@@ -175,37 +162,15 @@ module EventsHelper
                              current_company.teams.order('teams.name ASC'))
   end
 
-  def user_params
-    users = params[:user]
-    users = [users] unless users.is_a?(Array)
-    if params.key?(:q) && params[:q] =~ /^user,/
-      users.push params[:q].gsub('user,', '')
-    end
-    users.compact
-  end
-
-  def team_params
-    teams = params[:team]
-    teams = [teams] unless teams.is_a?(Array)
-    if params.key?(:q) && params[:q] =~ /^team,/
-      teams.push params[:q].gsub('team,', '')
-    end
-    teams.compact
-  end
-
   def describe_status
-    status = params[:status]
-    status = [status] unless status.is_a?(Array)
-
-    event_status = params[:event_status]
-    event_status = [event_status] unless event_status.is_a?(Array)
-
-    statuses = (status + event_status).uniq.compact
-    return if statuses.empty? || statuses.nil?
+    status = filter_params(:status).sort
+    event_status = filter_params(:event_status).sort
+    task_status = filter_params(:task_status).sort
     [
-      status.uniq.to_sentence(last_word_connector: ', or ', two_words_connector: ' or '),
-      event_status.uniq.to_sentence(last_word_connector: ', or ', two_words_connector: ' or ')
-    ].reject { |s| s.nil? || s.empty? }.to_sentence
+      build_filter_object_list(:status, status.map{ |status| [status,status] }),
+      build_filter_object_list(:event_status, event_status.map{ |status| [status,status] }),
+      build_filter_object_list(:task_status, task_status.map{ |status| [status,status] })
+    ].compact.join(' ')
   end
 
   def filter_params(param_name)
@@ -214,7 +179,7 @@ module EventsHelper
     if params.key?(:q) && params[:q] =~ /^#{param_name},/
       ids.push params[:q].gsub("#{param_name},", '').strip
     end
-    ids.compact
+    ids.compact.uniq
   end
 
   def describe_resource_params(param_name, base_scope, label_attribute = :name )
@@ -225,12 +190,18 @@ module EventsHelper
   end
 
   def build_filter_object_list(filter_name, list)
+    return if list.blank?
     list.map do |item|
-      content_tag(:div,  class: 'filter-item') do
-        item[1].html_safe + link_to('', '#', class: 'icon icon-close',
-                                             data: { filter: "#{filter_name}:#{item[0]}" })
-      end
+      build_filter_object_item item[1], "#{filter_name}:#{item[0]}"
     end.join(' ').html_safe
+  end
+
+  def build_filter_object_item(label, filter_name)
+    content_tag(:div,  class: 'filter-item') do
+      label.html_safe + link_to('', '#', class: 'icon icon-close',
+                                         title: 'Remove this filter',
+                                         data: { filter: filter_name })
+    end
   end
 
 end

@@ -19,8 +19,9 @@ describe Event, type: :model, search: true do
                           role: create(:role, company: company))
     user3 = create(:company_user, company: company, role: create(:role, company: company))
     user4 = create(:company_user, company: company, role: create(:role, company: company))
+    los_angeles = create(:city, name: 'Los Angeles', state: 'California', country: 'US')
     place = create(:place, city: 'Los Angeles', state: 'California', country: 'US')
-    place2 = create(:place, city: 'Chicago')
+    place2 = create(:place, city: 'Chicago', state: 'Illinois')
     event = create(:event, campaign: campaign, place: place,
                            team_ids: [team.id], user_ids: [user3.id],
                            start_date: '02/22/2013', end_date: '02/23/2013')
@@ -103,6 +104,10 @@ describe Event, type: :model, search: true do
       .to match_array([event2])
     expect(search(company_id: company.id, venue: [venue.id, venue2.id]))
       .to match_array([event, event2])
+
+    venue = create(:venue, place: los_angeles, company: company)
+    expect(search(company_id: company.id, q: "venue,#{venue.id}"))
+      .to match_array([event])
 
     # Search for a events in an area
     expect(search(company_id: company.id, q: "area,#{area.id}"))
@@ -222,6 +227,42 @@ describe Event, type: :model, search: true do
     create(:comment, commentable: event1)
     expect(search(company_id: company.id)).to match_array([event1, event2])
     expect(search(company_id: company.id, with_comments_only: true)).to match_array([event1])
+  end
+
+  describe "area customizations searches" do
+    it 'should return events inside cities included to areas in campaigns' do
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      area_la = create(:area, company: company)
+      city_la = create(:city, name: 'Los Angeles', country: 'US', state: 'California')
+
+      area_campaign_la = create(:areas_campaign, area: area_la, campaign: campaign, inclusions: [city_la.id])
+
+      event = create(:event, campaign: campaign, place: place_la)
+      expect(search(company_id: company.id, area: [area_la.id])).to match_array [event]
+      expect(search(company_id: company.id, q: "area,#{area_la.id}")).to match_array [event]
+    end
+
+    it 'should NOT return events inside cities excluded from areas in campaigns' do
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      place_sf = create(:place, country: 'US', state: 'California', city: 'San Francisco')
+      area = create(:area, company: company)
+      state = create(:state, name: 'California', country: 'US')
+      city_la = create(:city, name: 'Los Angeles', country: 'US', state: 'California')
+
+      area.places << state
+
+      area_campaign = create(:areas_campaign, area: area, campaign: campaign)
+      event1 = create(:event, campaign: campaign, place: place_la)
+      event2 = create(:event, campaign: campaign, place: place_sf)
+
+      expect(search(company_id: company.id, area: [area.id])).to match_array [event1, event2]
+      expect(search(company_id: company.id, q: "area,#{area.id}")).to match_array [event1, event2]
+
+      area_campaign.update_column(:exclusions, [city_la.id])
+
+      expect(search(company_id: company.id, area: [area.id])).to match_array [event2]
+      expect(search(company_id: company.id, q: "area,#{area.id}")).to match_array [event2]
+    end
   end
 
   describe 'TrendObject indexing' do

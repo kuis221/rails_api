@@ -141,19 +141,27 @@ class Event < ActiveRecord::Base
   # custom exclusions
   def self.in_campaign_area(area_campaign)
     has_exclusions = area_campaign.exclusions.any?
+    has_inclusions = area_campaign.inclusions.any?
     subquery =
-      Place.select('DISTINCT places.location_id, placeables.placeable_id area_id')
+      Place.select('DISTINCT places.location_id')
       .joins(:placeables)
       .where(
           is_location: true,
           placeables: { placeable_type: 'Area', placeable_id: area_campaign.area_id })
-    subquery = subquery.where.not(placeables: { place_id: area_campaign.exclusions })
+    subquery = subquery.where.not(placeables: { place_id: area_campaign.exclusions }) if has_exclusions
+    subquery = subquery.to_sql
+
+    if has_inclusions
+      subquery += " UNION " + Place.select('DISTINCT places.location_id')
+                              .where(is_location: true, id: area_campaign.inclusions).to_sql
+    end
+
     place_query =
-      "SELECT place_id, locations.area_id FROM locations_places
-       INNER JOIN (#{subquery.to_sql}) locations on locations.location_id=locations_places.location_id" +
+      "SELECT place_id FROM locations_places
+       INNER JOIN (#{subquery}) locations on locations.location_id=locations_places.location_id" +
       (has_exclusions ? " WHERE place_id not in (#{area_campaign.exclusions.join(',')})" : '')
     area_query =
-      Placeable.select('place_id, placeable_id area_id')
+      Placeable.select('place_id')
       .where(placeable_type: 'Area', placeable_id: area_campaign.area_id)
     area_query = area_query.where.not(place_id: area_campaign.exclusions) if has_exclusions
     joins(:place)
@@ -164,14 +172,20 @@ class Event < ActiveRecord::Base
   # the events based on given areas scope validating the custom exclusions for that area in that campaign
   def self.in_campaign_areas(campaign, areas)
     subquery =
-      Place.select('DISTINCT places.location_id, placeables.placeable_id area_id')
+      Place.select('DISTINCT places.location_id, areas_campaigns.area_id')
       .joins(:placeables)
       .where(placeables: { placeable_type: 'Area', placeable_id: areas }, is_location: true)
       .joins('INNER JOIN areas_campaigns
                 ON areas_campaigns.campaign_id=' + campaign.id.to_s + ' AND
                 areas_campaigns.area_id=placeables.placeable_id')
-      .where('NOT (places.id = ANY (areas_campaigns.exclusions))')
-    place_query = "select place_id, locations.area_id FROM locations_places INNER JOIN (#{subquery.to_sql})"\
+      .where('NOT (places.id = ANY (areas_campaigns.exclusions))').to_sql
+
+    subquery += ' UNION ' +
+      Place.select('DISTINCT places.location_id, areas_campaigns.area_id')
+      .joins('INNER JOIN areas_campaigns ON places.id = ANY (areas_campaigns.inclusions)')
+      .where(is_location: true, areas_campaigns: { area_id: areas, campaign_id: campaign.id }).to_sql
+
+    place_query = "select place_id, locations.area_id FROM locations_places INNER JOIN (#{subquery})"\
                   ' locations ON locations.location_id=locations_places.location_id'
     area_query = Placeable.select('place_id, placeable_id area_id').where(placeable_type: 'Area', placeable_id: areas)
                  .joins("INNER JOIN areas_campaigns ON areas_campaigns.campaign_id=#{campaign.id} "\

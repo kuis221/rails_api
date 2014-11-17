@@ -47,11 +47,12 @@ feature 'Events section' do
       Timecop.travel(Time.zone.local(2013, 07, 21, 12, 01)) do
         events.each(&:deactivate!) # Deactivate the events
         Sunspot.commit
+
         visit events_path
 
         # Show only inactive items
-        filter_section('ACTIVE STATE').unicheck('Inactive')
-        filter_section('ACTIVE STATE').unicheck('Active')
+        add_filter('ACTIVE STATE', 'Inactive')
+        remove_filter('Active')
 
         expect(page).to have_selector event_list_item(events.first)
         within resource_item events.first do
@@ -117,7 +118,7 @@ feature 'Events section' do
           Sunspot.commit
           visit events_path
           expect(page).to have_selector('#events-list .resource-item', count: 1)
-          filter_section('EVENT STATUS').unicheck('Submitted')
+          add_filter 'EVENT STATUS', 'Submitted'
           expect(page).to have_selector('#events-list .resource-item', count: 3)
           resource_item(2).click
           within('.alert') do
@@ -209,7 +210,7 @@ feature 'Events section' do
 
             visit events_path
 
-            expect(page).to have_content('2 events found')
+            expect(page).to have_content('2 events found for: Active')
 
             within events_list do
               expect(page).to have_content('Campaign FY2012')
@@ -220,31 +221,30 @@ feature 'Events section' do
                                                 options: ['Campaign FY2012', 'Another Campaign April 03'])
             # expect(page).to have_filter_section(title: 'LOCATIONS', options: ['Los Angeles', 'Austin'])
 
-            filter_section('CAMPAIGNS').unicheck('Campaign FY2012')
+            add_filter 'CAMPAIGNS', 'Campaign FY2012'
 
-            expect(page).to have_content('1 event found for: Campaign FY2012')
+            expect(page).to have_content('1 event found for: Active Campaign FY2012')
 
             within events_list do
               expect(page).to have_no_content('Another Campaign April 03')
               expect(page).to have_content('Campaign FY2012')
             end
 
-            filter_section('CAMPAIGNS').unicheck('Another Campaign April 03')
+            add_filter 'CAMPAIGNS', 'Another Campaign April 03'
             within events_list do
               expect(page).to have_content('Another Campaign April 03')
               expect(page).to have_content('Campaign FY2012')
             end
 
-            expect(page).to have_content('2 events found for: Another Campaign April 03 Campaign FY2012')
+            expect(page).to have_content('2 events found for: Active Another Campaign April 03 Campaign FY2012')
 
             select_filter_calendar_day('18')
-            expect(find('#collection-list-filters')).to have_content('Another Campaign April 03')
             within events_list do
               expect(page).to have_no_content('Another Campaign April 03')
               expect(page).to have_content('Campaign FY2012')
             end
 
-            expect(page).to have_content('1 event found for: Another Campaign April 03 Campaign FY2012')
+            expect(page).to have_content('1 event found for: Active today Another Campaign April 03 Campaign FY2012')
 
             select_filter_calendar_day('18', '19')
             within events_list do
@@ -328,7 +328,7 @@ feature 'Events section' do
               # with white spaces, so, remove them and look for strings
               # without whitespaces
               text = page.text.gsub(/[\s\n]/, '')
-              expect(text).to include '2Activeeventstakingplacetodayandinthefuture'
+              expect(text).to include '2eventsfoundfor:Activetodaytothefuture'
               expect(text).to include 'CampaignFY2012'
               expect(text).to include 'AnotherCampaignApril03'
               expect(text).to include 'NewYorkCity,NY,12345'
@@ -623,14 +623,16 @@ feature 'Events section' do
             expect(page).to have_content('Campaña2')
           end
 
-          filter_section('PEOPLE').unicheck('Roberto Gomez') # Select
+          add_filter 'PEOPLE', 'Roberto Gomez'
+
           within events_list do
             expect(page).to have_content('Campaña1')
             expect(page).to have_no_content('Campaña2')
           end
 
-          filter_section('PEOPLE').unicheck('Roberto Gomez') # Deselect
-          filter_section('PEOPLE').unicheck('Mario Cantinflas') # Select
+          remove_filter 'Roberto Gomez'
+          add_filter 'PEOPLE', 'Mario Cantinflas'
+
           within events_list do
             expect(page).to have_content('Campaña2')
             expect(page).to have_no_content('Campaña1')
@@ -656,7 +658,7 @@ feature 'Events section' do
 
             visit events_path
 
-            filter_section('CAMPAIGNS').unicheck('Campaign FY2012')
+            add_filter 'CAMPAIGNS', 'Campaign FY2012'
             select_filter_calendar_day('18')
 
             within events_list do
@@ -668,7 +670,7 @@ feature 'Events section' do
 
             close_resource_details
 
-            expect(page).to have_content('1 Active event taking place today as part of Campaign FY2012')
+            expect(page).to have_content('1 event found for: Active today Campaign FY2012')
             expect(current_path).to eq(events_path)
 
             within events_list do
@@ -687,11 +689,11 @@ feature 'Events section' do
             Sunspot.commit
 
             visit events_path
-            expect(page).to have_content('1 Active event taking place today and in the future')
+            expect(page).to have_content('1 event found for: Active today to the future')
             expect(page).to have_selector('#events-list .resource-item', count: 1)
 
-            filter_section('CAMPAIGNS').unicheck('Campaign FY2012')
-            expect(page).to have_content('2 Active events as part of Campaign FY2012')  # The list shouldn't be filtered by date
+            add_filter 'CAMPAIGNS', 'Campaign FY2012'
+            expect(page).to have_content('2 events found for: Active Campaign FY2012')  # The list shouldn't be filtered by date
             expect(page).to have_selector('#events-list .resource-item', count: 2)
           end
         end
@@ -703,23 +705,21 @@ feature 'Events section' do
             Sunspot.commit
 
             visit events_path
-            expect(page).to have_content('1 Active event taking place today and in the future')
+            expect(page).to have_content('1 event found for: Active  today to the future')
             expect(page).to have_selector('#events-list .resource-item', count: 1)
 
-            filter_section('CAMPAIGNS').unicheck('Campaign FY2012')
-            expect(page).to have_content('2 Active events as part of Campaign FY2012')
+            add_filter 'CAMPAIGNS', 'Campaign FY2012'
+            expect(page).to have_content('2 events found for: Active Campaign FY2012')
 
             click_button 'Reset'
-            expect(page).to have_content('1 Active event taking place today and in the future')
+            expect(page).to have_content('1 event found for: Active today to the future')
+
+            expect(page).to have_selector('#events-list .resource-item', count: 1)
+            add_filter 'CAMPAIGNS', 'Campaign FY2012'
 
             # The list shouldn't be filtered by date
-            expect(page).to have_selector('#events-list .resource-item', count: 1)
-
-            filter_section('CAMPAIGNS').unicheck('Campaign FY2012')
-
-            # The list shouldn't be filtered by date
-            expect(page).to have_content('1 Active event taking place today and in the future as part of Campaign FY2012')
-            expect(page).to have_selector('#events-list .resource-item', count: 1)
+            expect(page).to have_content('2 events found for: Active Campaign FY2012')
+            expect(page).to have_selector('#events-list .resource-item', count: 2)
           end
         end
 
@@ -783,14 +783,14 @@ feature 'Events section' do
                 expect(page).to have_content('Another Campaign April 03')
               end
 
-              filter_section('BRANDS').unicheck('Cacique')
+              add_filter 'BRANDS', 'Cacique'
 
               within events_list do
                 expect(page).to have_content('Campaign FY2012')
                 expect(page).to have_no_content('Another Campaign April 03')
               end
-              filter_section('BRANDS').unicheck('Cacique')   # Deselect Cacique
-              filter_section('BRANDS').unicheck('Smirnoff')
+              remove_filter 'Cacique'
+              add_filter 'BRANDS', 'Smirnoff'
 
               within events_list do
                 expect(page).to have_no_content('Campaign FY2012')
@@ -836,9 +836,9 @@ feature 'Events section' do
 
         visit events_path
 
-        filter_section('CAMPAIGNS').unicheck('Campaign 1')
-        filter_section('PEOPLE').unicheck('Roberto Gomez')
-        filter_section('EVENT STATUS').unicheck('Submitted')
+        add_filter 'CAMPAIGNS', 'Campaign 1'
+        add_filter 'PEOPLE', 'Roberto Gomez'
+        add_filter 'EVENT STATUS', 'Submitted'
 
         click_button 'Save'
 
@@ -887,27 +887,33 @@ feature 'Events section' do
         end
 
         # Using Custom Filter 1
-        filter_section('SAVED FILTERS').unicheck('Custom Filter 1')
+        add_filter 'SAVED FILTERS', 'Custom Filter 1'
 
         within events_list do
           expect(page).to have_content('Campaign 1')
         end
 
         within '.form-facet-filters' do
-          expect(find_field('Campaign 1')['checked']).to be_truthy
           expect(find_field('Campaign 2')['checked']).to be_falsey
-          expect(find_field('Roberto Gomez')['checked']).to be_truthy
           expect(find_field('Mario Moreno')['checked']).to be_falsey
-          expect(find_field('Submitted')['checked']).to be_truthy
           expect(find_field('Late')['checked']).to be_falsey
-          expect(find_field('Active')['checked']).to be_truthy
+
+          expect(collection_description).to have_filter_tag('Active')
+          expect(collection_description).to have_filter_tag('Submitted')
+          expect(collection_description).to have_filter_tag('Campaign 1')
+          expect(collection_description).to have_filter_tag('Roberto Gomez')
+          expect(page).not_to have_field('Active')
+          expect(page).not_to have_field('Roberto Gomez')
+          expect(page).not_to have_field('Submitted')
+          expect(page).not_to have_field('Campaign 1')
+
           expect(find_field('Inactive')['checked']).to be_falsey
           expect(find_field('Custom Filter 1')['checked']).to be_truthy
           expect(find_field('Custom Filter 2')['checked']).to be_falsey
         end
 
         # Using Custom Filter 2 should update results and checked/unchecked checkboxes
-        filter_section('SAVED FILTERS').unicheck('Custom Filter 2')
+        add_filter 'SAVED FILTERS', 'Custom Filter 2'
 
         within events_list do
           expect(page).not_to have_content('Campaign 1')
@@ -915,14 +921,20 @@ feature 'Events section' do
         end
 
         within '.form-facet-filters' do
-          expect(find_field('Campaign 1')['checked']).to be_falsey
-          expect(find_field('Campaign 2')['checked']).to be_truthy
-          expect(find_field('Roberto Gomez')['checked']).to be_falsey
-          expect(find_field('Mario Moreno')['checked']).to be_truthy
-          expect(find_field('Submitted')['checked']).to be_falsey
-          expect(find_field('Late')['checked']).to be_truthy
-          expect(find_field('Active')['checked']).to be_truthy
-          expect(find_field('Inactive')['checked']).to be_falsey
+          expect(page).to have_field('Campaign 1')
+          expect(page).to have_field('Roberto Gomez')
+          expect(page).to have_field('Submitted')
+          expect(page).to have_field('Inactive')
+          expect(page).not_to have_field('Campaign 2')
+          expect(page).not_to have_field('Mario Moreno')
+          expect(page).not_to have_field('Late')
+          expect(page).not_to have_field('Active')
+
+          expect(collection_description).to have_filter_tag('Campaign 2')
+          expect(collection_description).to have_filter_tag('Mario Moreno')
+          expect(collection_description).to have_filter_tag('Late')
+          expect(collection_description).to have_filter_tag('Active')
+
           expect(find_field('Custom Filter 1')['checked']).to be_falsey
           expect(find_field('Custom Filter 2')['checked']).to be_truthy
         end
@@ -936,16 +948,15 @@ feature 'Events section' do
         end
 
         within '.form-facet-filters' do
-          expect(find_field('Campaign 1')['checked']).to be_falsey
-          expect(find_field('Campaign 2')['checked']).to be_falsey
-          expect(find_field('Roberto Gomez')['checked']).to be_falsey
-          expect(find_field('Mario Moreno')['checked']).to be_falsey
-          expect(find_field('Submitted')['checked']).to be_falsey
-          expect(find_field('Late')['checked']).to be_falsey
-          expect(find_field('Active')['checked']).to be_truthy
-          expect(find_field('Inactive')['checked']).to be_falsey
-          expect(find_field('Custom Filter 1')['checked']).to be_falsey
-          expect(find_field('Custom Filter 2')['checked']).to be_falsey
+          expect(page).to have_field('Campaign 1')
+          expect(page).to have_field('Roberto Gomez')
+          expect(page).to have_field('Submitted')
+          expect(page).to have_field('Inactive')
+          expect(page).to have_field('Campaign 2')
+          expect(page).to have_field('Mario Moreno')
+          expect(page).to have_field('Late')
+          expect(page).not_to have_field('Active')
+          expect(collection_description).to have_filter_tag('Active')
         end
       end
 

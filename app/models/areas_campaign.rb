@@ -28,8 +28,8 @@ class AreasCampaign < ActiveRecord::Base
   # includes Los Angeles or any parent (like California)
   def place_in_scope?(place)
     return false unless place.present?
-    @place_ids ||= area.place_ids
-    return true if place.persisted? && (@place_ids - exclusions + inclusions).include?(place.id)
+    @place_ids ||= area.place_ids - exclusions + inclusions
+    return true if place.persisted? && @place_ids.include?(place.id)
     political_location = Place.political_division(place).join('/').downcase
     locations.any? { |location| political_location.include?(location.path) }
   end

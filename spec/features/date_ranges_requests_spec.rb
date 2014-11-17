@@ -47,8 +47,10 @@ feature 'DateRanges', search: true, js: true do
       expect(page).to have_no_text 'Weekdays'
 
       # Make it show only the inactive elements
-      filter_section('ACTIVE STATE').unicheck('Inactive')
-      filter_section('ACTIVE STATE').unicheck('Active')
+      add_filter 'ACTIVE STATE', 'Inactive'
+      remove_filter 'Active'
+
+      expect(page).to have_content '1 date range found for: Inactive'
 
       within resource_item 1 do
         expect(page).to have_content('Weekdays')

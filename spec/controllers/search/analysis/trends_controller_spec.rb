@@ -307,7 +307,7 @@ describe Analysis::TrendsController, search: true do
         expect(items.count).to eql 2
         expect(DateTime.strptime(items.first[0].to_s, '%Q').to_date).to eql (Time.current - 1.day).to_date
         expect(items.first[1]).to eql 2
-        expect(DateTime.strptime(items.last[0].to_s, '%Q').to_date).to eql Date.today
+        expect(DateTime.strptime(items.last[0].to_s, '%Q').to_date).to eql Time.current.to_date
         expect(items.last[1]).to eql 2
       end
     end

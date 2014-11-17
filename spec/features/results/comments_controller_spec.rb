@@ -141,14 +141,19 @@ feature 'Results Comments Page', js: true, search: true  do
       end
 
       within '.form-facet-filters' do
-        expect(find_field('First Campaign')['checked']).to be_truthy
-        expect(find_field('Second Campaign')['checked']).to be_falsey
-        expect(find_field('Roberto Gomez')['checked']).to be_truthy
+        expect(page).not_to have_field('First Campaign')
+        expect(page).not_to have_field('Roberto Gomez')
+        expect(page).not_to have_field('Approved')
+        expect(page).not_to have_field('Active')
+
+        expect(collection_description).to have_filter_tag('First Campaign')
+        expect(collection_description).to have_filter_tag('Roberto Gomez')
+        expect(collection_description).to have_filter_tag('Approved')
+        expect(collection_description).to have_filter_tag('Active')
+
         expect(find_field('Mario Moreno')['checked']).to be_falsey
-        expect(find_field('Approved')['checked']).to be_truthy
-        expect(find_field('Active')['checked']).to be_truthy
+        expect(find_field('Second Campaign')['checked']).to be_falsey
         expect(find_field('Inactive')['checked']).to be_falsey
-        expect(find_field('Custom Filter 1')['checked']).to be_truthy
         expect(find_field('Custom Filter 2')['checked']).to be_falsey
       end
 
@@ -160,15 +165,20 @@ feature 'Results Comments Page', js: true, search: true  do
       end
 
       within '.form-facet-filters' do
+        expect(page).not_to have_field('Second Campaign')
+        expect(page).not_to have_field('Mario Moreno')
+        expect(page).not_to have_field('Approved')
+        expect(page).not_to have_field('Active')
+
+        expect(collection_description).to have_filter_tag('Second Campaign')
+        expect(collection_description).to have_filter_tag('Mario Moreno')
+        expect(collection_description).to have_filter_tag('Approved')
+        expect(collection_description).to have_filter_tag('Active')
+
         expect(find_field('First Campaign')['checked']).to be_falsey
-        expect(find_field('Second Campaign')['checked']).to be_truthy
         expect(find_field('Roberto Gomez')['checked']).to be_falsey
-        expect(find_field('Mario Moreno')['checked']).to be_truthy
-        expect(find_field('Approved')['checked']).to be_truthy
-        expect(find_field('Active')['checked']).to be_truthy
         expect(find_field('Inactive')['checked']).to be_falsey
         expect(find_field('Custom Filter 1')['checked']).to be_falsey
-        expect(find_field('Custom Filter 2')['checked']).to be_truthy
       end
 
       # Using Custom Filter 2 again should reset filters
@@ -185,10 +195,12 @@ feature 'Results Comments Page', js: true, search: true  do
         expect(find_field('Roberto Gomez')['checked']).to be_falsey
         expect(find_field('Mario Moreno')['checked']).to be_falsey
         expect(find_field('Approved')['checked']).to be_falsey
-        expect(find_field('Active')['checked']).to be_truthy
         expect(find_field('Inactive')['checked']).to be_falsey
         expect(find_field('Custom Filter 1')['checked']).to be_falsey
         expect(find_field('Custom Filter 2')['checked']).to be_falsey
+
+        expect(page).not_to have_field('Active')
+        expect(collection_description).to have_filter_tag('Active')
       end
     end
 

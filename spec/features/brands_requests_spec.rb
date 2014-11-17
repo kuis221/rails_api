@@ -50,8 +50,10 @@ feature 'Brands', js: true do
       end
 
       # Make it show only the inactive elements
-      filter_section('ACTIVE STATE').unicheck('Inactive')
-      filter_section('ACTIVE STATE').unicheck('Active')
+      add_filter 'ACTIVE STATE', 'Inactive'
+      remove_filter 'Active'
+
+      expect(page).to have_content '1 brand found for: Inactive'
 
        within resource_item do
         expect(page).to have_content('Brand 1')

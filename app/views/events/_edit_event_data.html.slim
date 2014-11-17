@@ -7,10 +7,10 @@
     = simple_form_for(resource, remote: true, html: {class: 'event-data-form', data: {'prompt-message' => 'Your post event form has not been saved', 'watch-changes' => true}}) do |f|
       = f.error_notification
 
-      = render partial: 'event_data', locals: {fields: fields, f: f}
+      = render partial: 'event_data', locals: { fields: fields, f: f }
 
       .form-actions
-        = f.button :submit, id: 'save-data', class: 'btn-primary', data: {disable_with: 'Please wait...'}
+        = f.button :submit, id: 'save-data', class: 'btn-primary', data: { disable_with: 'Please wait...' }
         - if allow_cancel
           = "&nbsp;".html_safe
           = f.button :button, 'Cancel', id: 'cancel-edit', class: 'btn btn-cancel'

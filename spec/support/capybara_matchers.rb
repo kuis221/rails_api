@@ -81,17 +81,13 @@ module Capybara
 
       def evaluate_condition(page, expected)
         found = nil
-        page.document.synchronize do
-          errors = []
-          found = wrapper.all('.filter-item', text: @title)
+        (page.respond_to?(:document) ? page.document : page).synchronize do
+          found = page.all('.filter-item', text: @title).count > 0
 
-            title = wrapper.all('.filter-item', text: @title)
-          errors.push "expected #{page.inspect} to have filter section #{@title}" unless found
-
-          if expected && (!found || errors.any?)
-            raise Capybara::ExpectationNotMet, errors.join
+          if expected && !found
+            raise Capybara::ExpectationNotMet, "expected #{page.inspect} to have filter tag #{@title}"
           elsif !expected && found
-            raise Capybara::ExpectationNotMet, "expected #{page.inspect} to not have filter section #{@args[:title]}"
+            raise Capybara::ExpectationNotMet, "expected #{page.inspect} to not have filter tag  #{@title}"
           end
         end
         true
@@ -102,6 +98,10 @@ end
 
 def have_filter_section(*args)
   Capybara::RSpecMatchers::HaveFilterSection.new(*args)
+end
+
+def have_filter_tag(*args)
+  Capybara::RSpecMatchers::HaveFilterTag.new(*args)
 end
 
 RSpec::Matchers.define :have_file_in_queue do |file_name|

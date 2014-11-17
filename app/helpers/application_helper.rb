@@ -66,11 +66,9 @@ module ApplicationHelper
       url = deactivate_url || url_for([:deactivate, resource])
       icon_button_to 'icon-rounded-disable',  url,
                      remote: true,
-                     form: {
-                      id: 'active-toggle-btn-' + resource.class.name.underscore.gsub('/', '_').downcase + '-' + resource.id.to_s },
                      method: :get,
                      title: I18n.t("buttons.deactivate.#{resource.class.name.underscore}"),
-                     form_class: 'button_to button_to_edit',
+                     form_class: 'button_to button_to_edit active-toggle-btn-' + resource.class.name.underscore.gsub('/', '_').downcase + '-' + resource.id.to_s,
                      data: { confirm: I18n.t("confirm.deactivate.#{resource.class.name.underscore}",
                                              model: resource.class.model_name.human.downcase,
                                              name: resource.try(:name)),
@@ -80,10 +78,8 @@ module ApplicationHelper
       icon_button_to 'icon-rounded-ok',  url,
                      remote: true,
                      method: :get,
-                     form: {
-                      id: 'active-toggle-btn-' + resource.class.name.underscore.gsub('/', '_').downcase + '-' + resource.id.to_s },
                      title: I18n.t("buttons.activate.#{resource.class.name.underscore}"),
-                     form_class: 'button_to button_to_edit'
+                     form_class: 'button_to button_to_edit active-toggle-btn-' + resource.class.name.underscore.gsub('/', '_').downcase + '-' + resource.id.to_s
     end
   end
 

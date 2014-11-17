@@ -9,7 +9,7 @@ module Sunspot
           Sunspot.new_search(self) do
             with :company_id, params[:company_id]
             with_campaign params[:campaign] if params[:campaign]
-            with_area params[:area] if params[:area]
+            with_area params[:area], params[:campaign] if params[:area]
             with_place params[:place] if params[:place]
             with_location params[:location] if params[:location]
             with_status params[:status] if params[:status]
@@ -55,15 +55,47 @@ module Sunspot
         end
       end
 
-      def with_area(areas)
+      def with_area(areas, campaigns=nil)
         if field?(:area_id)
           with :area_id, areas
         elsif field?(:area_ids)
           with :area_ids, areas
         elsif field?(:place_id) && field?(:location)
-          any_of do
-            with :place_id, Area.where(id: areas).joins(:places).where(places: { is_location: false }).pluck('places.id').uniq + [0]
-            with :location, Area.where(id: areas).map { |a| a.locations.map(&:id) }.flatten + [0]
+          if field?(:campaign_id)
+            all_of do
+              any_of do
+                with :place_id, Area.where(id: areas).joins(:places).where(places: { is_location: false }).pluck('places.id').uniq + [0]
+                with :location, Area.where(id: areas).map { |a| a.locations.map(&:id) }.flatten + [0]
+
+                # Customized areas with INCLUDED places
+                area_campaigns = AreasCampaign.where(area_id: areas).where('array_length(areas_campaigns.inclusions, 1) >= 1')
+                area_campaigns = area_campaigns.where(campaign_id: campaigns) if campaigns
+                area_campaigns.each do |ac|
+                  all_of do
+                    with :campaign_id, ac.campaign_id
+                    any_of do
+                      with :place_id, ac.inclusions
+                      with :location, ac.location_ids
+                    end
+                  end
+                end
+              end
+
+              # Customized areas with EXCLUDED places
+              area_campaigns = AreasCampaign.where(area_id: areas).where('array_length(areas_campaigns.exclusions, 1) >= 1')
+              area_campaigns = area_campaigns.where(campaign_id: campaigns) if campaigns
+              area_campaigns.each do |ac|
+                any_of do
+                  without :campaign_id, ac.campaign_id
+                  without :location, Place.where(id: ac.exclusions, is_location: true).pluck('DISTINCT places.location_id') + [-1]
+                end
+              end
+            end
+          else
+            any_of do
+              with :place_id, Area.where(id: areas).joins(:places).where(places: { is_location: false }).pluck('places.id').uniq + [0]
+              with :location, Area.where(id: areas).map { |a| a.locations.map(&:id) }.flatten + [0]
+            end
           end
         end
       end
@@ -83,10 +115,16 @@ module Sunspot
       end
 
       def with_place(places)
-        if field?(:place_id)
-          with :place_id, places
-        elsif field?(:place_ids)
-          with :place_ids, places
+        any_of do
+          if field?(:place_id)
+            with :place_id, places
+          elsif field?(:place_ids)
+            with :place_ids, places
+          end
+          if field?(:location)
+            locations = Place.where(is_location: true, id: places).pluck('DISTINCT location_id')
+            with :location, locations if locations.any?
+          end
         end
       end
 

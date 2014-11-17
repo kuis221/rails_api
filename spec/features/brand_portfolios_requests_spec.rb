@@ -55,8 +55,12 @@ feature 'BrandPortfolios', js: true, search: true do
         Sunspot.commit
         visit brand_portfolios_path
 
-        filter_section('ACTIVE STATE').unicheck('Inactive')
-        filter_section('ACTIVE STATE').unicheck('Active')
+        expect(page).to have_content '0 brand portfolios found for: Active'
+
+        add_filter 'ACTIVE STATE', 'Inactive'
+        remove_filter 'Active'
+
+        expect(page).to have_content '1 brand portfolio found for: Inactive'
 
         expect(page).to have_content('A Vinos ticos')
         within resource_item do

@@ -60,6 +60,22 @@ module CapybaraBrandscopicHelpers
     self
   end
 
+  def remove_filter(filter_name)
+    wait_for_ajax
+    within '.collection-list-description' do
+      find('.filter-item', text: filter_name).click_js_link 'Remove this filter'
+      expect(page).to have_no_selector('.filter-item', text: filter_name)
+    end
+  end
+
+  def add_filter(filter_category, filter)
+    field = filter_section(filter_category).find_field(filter)
+    filter_section(filter_category).unicheck(filter)
+    within '.collection-list-description' do
+      expect(page).to have_filter_tag(filter) unless field['name'] == 'custom_filter[]'
+    end
+  end
+
   def click_js_button(locator, options = {})
     find(:button, locator, options).trigger('click') # Use this if using capybara-webkit instead of selenium
     # find(:button, locator, options).click
@@ -168,6 +184,10 @@ module RequestsHelper
 
   def visible_modal
     find('.modal.in', visible: true)
+  end
+
+  def collection_description
+    find(:xpath, '//div[@class=\'collection-list-description\']')
   end
 
   def filter_section(title)

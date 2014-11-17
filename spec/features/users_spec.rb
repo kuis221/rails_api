@@ -60,8 +60,11 @@ feature 'Users', js: true do
       confirm_prompt 'Are you sure you want to deactivate this user?'
 
       # Make it show only the inactive elements
-      filter_section('ACTIVE STATE').unicheck('Inactive')
-      filter_section('ACTIVE STATE').unicheck('Active')
+      remove_filter 'Active'
+      add_filter 'ACTIVE STATE', 'Inactive'
+
+      expect(page).to have_content '1 user found for: Inactive'
+
       within resource_item list: '#users-list' do
         expect(page).to have_content('Pedro Navaja')
         click_js_button 'Activate User'
@@ -86,8 +89,10 @@ feature 'Users', js: true do
       ensure_modal_was_closed
 
       # Deselect "Active" and select "Invited"
-      filter_section('ACTIVE STATE').unicheck('Active')
-      filter_section('ACTIVE STATE').unicheck('Invited')
+      remove_filter 'Active'
+      add_filter 'ACTIVE STATE', 'Invited'
+
+      expect(page).to have_content '1 user found for: Invited'
 
       within resource_item do
         expect(page).to have_content 'Fulanito de Tal'
