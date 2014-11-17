@@ -268,6 +268,9 @@ $margin-right: 240px;
 							font-weight:normal;
 						}
 						thead{
+							label{
+								font-size: 12px;
+							}
 							tr{
 								th:nth-child(2){
 									padding-left: 25px;
