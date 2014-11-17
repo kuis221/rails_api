@@ -140,7 +140,7 @@ feature 'Users', js: true do
         fill_in 'Last name', with: 'Navaja'
         fill_in 'Email', with: 'pedro@navaja.com'
         select_from_chosen 'Another Role', from: 'Role'
-        fill_in 'Password', with: 'Pedrito123'
+        fill_in 'Password (optional)', with: 'Pedrito123'
         fill_in 'Password confirmation', with: 'Pedrito123'
         click_js_button 'Save'
       end
