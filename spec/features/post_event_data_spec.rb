@@ -318,7 +318,7 @@ feature 'Post Event Data' do
 
     scenario 'should display correct messages for range validations' do
       create(:form_field,
-                         name: 'Numeric Min Max',
+                         name: 'Numeric with Min Max',
                          type: 'FormField::Number',
                          settings: { 'range_format' => 'value', 'range_min' => '5', 'range_max' => '20' },
                          fieldable: campaign,
@@ -332,7 +332,7 @@ feature 'Post Event Data' do
                          required: false)
 
       create(:form_field,
-                         name: 'Price Min Max',
+                         name: 'Price with Min Max',
                          type: 'FormField::Currency',
                          settings: { 'range_format' => 'digits', 'range_min' => '2', 'range_max' => '4' },
                          fieldable: campaign,
@@ -346,7 +346,7 @@ feature 'Post Event Data' do
                          required: false)
 
       create(:form_field,
-                         name: 'Text Min Max',
+                         name: 'Text with Min Max',
                          type: 'FormField::Text',
                          settings: { 'range_format' => 'characters', 'range_min' => '1', 'range_max' => '10' },
                          fieldable: campaign,
@@ -360,7 +360,7 @@ feature 'Post Event Data' do
                          required: false)
 
       create(:form_field,
-                         name: 'Text Area Min Max',
+                         name: 'Text Area with Min Max',
                          type: 'FormField::TextArea',
                          settings: { 'range_format' => 'words', 'range_min' => '3', 'range_max' => '5' },
                          fieldable: campaign,
@@ -379,33 +379,33 @@ feature 'Post Event Data' do
 
       visit event_path(event)
 
-      fill_in('Numeric Min Max', with: 35)
+      fill_in('Numeric with Min Max', with: 35)
       fill_in('Numeric Max', with: 35)
-      fill_in('Price Min Max', with: 1)
+      fill_in('Price with Min Max', with: 1)
       fill_in('Price Min', with: 1)
-      fill_in('Text Min Max', with: 'This field has more than 10 characters')
+      fill_in('Text with Min Max', with: 'This field has more than 10 characters')
       fill_in('Text Max', with: 'This field has more than 10 characters')
-      fill_in('Text Area Min Max', with: 'Incorrect text')
+      fill_in('Text Area with Min Max', with: 'Incorrect text')
       fill_in('Text Area Min', with: 'Incorrect text')
 
       click_js_button 'Save'
 
-      expect(find_field('Numeric Min Max')).to have_error('should be between 5 and 20')
+      expect(find_field('Numeric with Min Max')).to have_error('should be between 5 and 20')
       expect(find_field('Numeric Max')).to have_error('should be smaller than 20')
-      expect(find_field('Price Min Max')).to have_error('should have at least 2 but no more than 4 digits')
+      expect(find_field('Price with Min Max')).to have_error('should have at least 2 but no more than 4 digits')
       expect(find_field('Price Min')).to have_error('should have at least 2 digits')
-      expect(find_field('Text Min Max')).to have_error('should have at least 1 but no more than 10 characters')
+      expect(find_field('Text with Min Max')).to have_error('should have at least 1 but no more than 10 characters')
       expect(find_field('Text Max')).to have_error('should have no more than 10 characters')
-      expect(find_field('Text Area Min Max')).to have_error('should have at least 3 but no more than 5 words')
+      expect(find_field('Text Area with Min Max')).to have_error('should have at least 3 but no more than 5 words')
       expect(find_field('Text Area Min')).to have_error('should have at least 3 words')
 
-      fill_in('Numeric Min Max', with: 10)
+      fill_in('Numeric with Min Max', with: 10)
       fill_in('Numeric Max', with: 10)
-      fill_in('Price Min Max', with: 1000)
+      fill_in('Price with Min Max', with: 1000)
       fill_in('Price Min', with: 1000)
-      fill_in('Text Min Max', with: 'Correct')
+      fill_in('Text with Min Max', with: 'Correct')
       fill_in('Text Max', with: 'Correct')
-      fill_in('Text Area Min Max', with: 'This is a correct text')
+      fill_in('Text Area with Min Max', with: 'This is a correct text')
       fill_in('Text Area Min', with: 'This is a correct text')
 
       click_js_button 'Save'
