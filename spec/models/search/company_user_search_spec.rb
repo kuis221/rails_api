@@ -25,22 +25,14 @@ describe CompanyUser, type: :model, search: true do
     expect(search(company_id: 2))
       .to match_array([user2_in_company2])
 
-    expect(search({ company_id: 1, q: "team,#{team.id}" }, true))
-      .to match_array([user, user2])
-    expect(search(company_id: 1, q: "team,#{team2.id}"))
-      .to match_array([user2])
 
     # Search for a specific users
-    expect(search(company_id: 1, q: "company_user,#{user.id}"))
+    expect(search(company_id: 1, user: [user.id]))
       .to match_array([user])
-    expect(search(company_id: 1, q: "company_user,#{user2.id}"))
+    expect(search(company_id: 1, user: [user2.id]))
       .to match_array([user2])
 
     # Search for users with a specific role
-    expect(search(company_id: 1, q: "role,#{user.role_id}"))
-      .to match_array([user])
-    expect(search(company_id: 1, q: "role,#{user2.role_id}"))
-      .to match_array([user2])
     expect(search(company_id: 1, role: user.role_id))
       .to match_array([user])
     expect(search(company_id: 1, role: user2.role_id))
@@ -49,10 +41,6 @@ describe CompanyUser, type: :model, search: true do
       .to match_array([user, user2])
 
     # Search for a campaign's tasks
-    expect(search(company_id: 1, q: "campaign,#{campaign.id}"))
-      .to match_array([user])
-    expect(search(company_id: 1, q: "campaign,#{campaign2.id}"))
-      .to match_array([user2])
     expect(search(company_id: 1, campaign: campaign.id))
       .to match_array([user])
     expect(search(company_id: 1, campaign: campaign2.id))
