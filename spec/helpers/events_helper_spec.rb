@@ -233,6 +233,22 @@ describe EventsHelper, type: :helper do
       end
     end
 
+    describe 'with one brand selected and another as a search param' do
+      let(:venue1) { create(:venue, company: company, place: create(:place, name: 'My Venue 1')) }
+      let(:venue2) { create(:venue, company: company, place: create(:place, name: 'My Venue 2')) }
+
+      let(:params) { { q: "venue,#{venue1.id}", venue: [venue2.id] } }
+
+      it do
+        is_expected.to eql(
+            '100 events found for: '\
+            '<div class="filter-item">My Venue 1<a class="icon icon-close" '\
+            'data-filter="venue:' + venue1.id.to_s + '" href="#" title="Remove this filter"></a></div> '\
+            '<div class="filter-item">My Venue 2<a class="icon icon-close" '\
+            'data-filter="venue:' + venue2.id.to_s + '" href="#" title="Remove this filter"></a></div>')
+      end
+    end
+
     describe 'with one user selected and another as a search param' do
       let(:user1) do
         create(:user, company: company, first_name: 'Elvis', last_name: 'Presley')
@@ -270,7 +286,6 @@ describe EventsHelper, type: :helper do
             'data-filter="team:' + team2.id.to_s + '" href="#" title="Remove this filter"></a></div>')
       end
     end
-
 
     describe 'with one team selected and another as a search param' do
       let(:params) { { q: "city,Baltimore", city: ['Austin'] } }

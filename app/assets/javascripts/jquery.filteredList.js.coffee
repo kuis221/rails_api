@@ -89,10 +89,16 @@ $.widget 'nmk.filteredList', {
 			if filterParts[0] == 'date'
 				@_deselectDates()
 			else
-				filterName = filterParts[0]+ '[]'
+				filterName = filterParts[0] + '[]'
 				filterValue = filterParts[1]
-				checkbox = @element.find("input:checkbox[name=\"#{filterName}\"][value=\"#{filterValue}\"]")
-				@_clickCheckbox(checkbox)
+				@initialized = false
+				for field in @form.find("input[name=\"#{filterName}\"][value=\"#{filterValue}\"]")
+					if $(field).attr('type') == 'checkbox'
+						@_clickCheckbox($(field))
+					else
+						$(field).remove()
+				@initialized = true
+				@_filtersChanged()
 			false
 
 
@@ -455,6 +461,7 @@ $.widget 'nmk.filteredList', {
 
 	_buildFilterOption: (option) ->
 		checked = (option.selected is true or option.selected is 'true')
+		@form.find('input:hidden[name="'+option.name+'[]"][value="'+option.id+'"]').remove() if checked
 		$('<li>', style: (if checked then 'display: none;' else ''))
 			.append $('<label>').append(
 				$('<input>', {type:'checkbox', value: option.id, name: "#{option.name}[]", checked: checked}), option.label
@@ -482,10 +489,6 @@ $.widget 'nmk.filteredList', {
 		previousValue = '';
 		@acInput = $('<input type="text" name="ac" class="search-query no-validate" placeholder="Search" id="search-box-filter">')
 			.appendTo(@form)
-			.on 'blur', () =>
-				if @searchHidden.val()
-					@acInput.hide()
-					@searchLabel.show()
 		@acInput.bucket_complete {
 			position: { my: "left top", at: "left bottom+3", collision: "none" }
 			source: @_getAutocompleteResults,
@@ -495,20 +498,6 @@ $.widget 'nmk.filteredList', {
 				@_autoCompleteItemSelected(ui.item)
 			minLength: 2
 		}
-		@searchHiddenLabel = $('<input type="hidden" name="ql">').appendTo(@form).val('')
-		@searchHidden = $('<input type="hidden" name="q">').appendTo(@form).val('')
-		@searchLabel = $('<div class="search-filter-label">')
-			.append($('<span class="term">'))
-			.append($('<span class="close">').append(
-				$('<i class="icon-remove">').click =>
-					@_cleanSearchFilter()
-					@_filtersChanged()
-				))
-			.css('width', @acInput.width()+'px').appendTo(@form).hide()
-			.click =>
-				@searchLabel.hide()
-				@acInput.show()
-				@acInput.focus()
 
 	_getAutocompleteResults: (request, response) ->
 		params = {q: request.term}
@@ -517,12 +506,13 @@ $.widget 'nmk.filteredList', {
 		, "json"
 
 	_autoCompleteItemSelected: (item) ->
-		#@_cleanFilters()
-		@searchHidden.val "#{item.type},#{item.value}"
-		cleanedLabel = item.label.replace(/(<([^>]+)>)/ig, "");
-		@searchHiddenLabel.val cleanedLabel
-		@acInput.hide().val ''
-		@searchLabel.show().find('span.term').html cleanedLabel
+		name = if item.type == 'company_user' then 'user' else item.type
+		checkbox = @element.find("input[name=\"#{name}[]\"][value=\"#{item.value}\"]")
+		if checkbox.length
+			checkbox.click() unless checkbox.prop('checked')
+		else
+			$('<input type="hidden" name="'+ name+'[]">').appendTo(@form).val(item.value)
+		@acInput.val ''
 		@_filtersChanged()
 		false
 
@@ -531,7 +521,6 @@ $.widget 'nmk.filteredList', {
 		@initialized = false
 		@defaultParams = []
 		defaultElements = []
-		@_cleanSearchFilter()
 		@_deselectDates()
 		defaultParams = if typeof @options.clearFilterParams != 'undefined' then @options.clearFilterParams else @options.defaultParams
 		defaultParams ||= []
@@ -550,7 +539,6 @@ $.widget 'nmk.filteredList', {
 	_resetFilters: () ->
 		@initialized = false
 		@defaultParams = @options.defaultParams
-		@_cleanSearchFilter()
 		@_deselectDates()
 		#@element.find('input[type=checkbox]:checked').change()
 		defaultElements = []
@@ -567,17 +555,6 @@ $.widget 'nmk.filteredList', {
 		@initialized = true
 		@defaultParams = []
 		
-		# for param in defaultParams
-		# 	@element.find('input[name="'+param.name+'"][value="'+param.value+'"]').attr('checked', true)
-		false
-
-	_cleanSearchFilter: () ->
-		if @searchHidden
-			@searchHidden.val ""
-			@searchHiddenLabel.val ""
-			@acInput.show().val ""
-			@searchLabel.hide().find('span.term').text ''
-
 		false
 
 	_saveFilters: () ->
@@ -1049,9 +1026,9 @@ $.widget 'nmk.filteredList', {
 
 	_parseQueryString: (query) ->
 		@initialized = false
-		@_cleanSearchFilter()
 		selectedOptions = []
 		query = query.replace(/^\?/,"")
+		@form.find('input:hidden.from-query-string').remove()
 		if query != ''
 			if query.match(/_stored=true/)
 				query = @_loadStoredFilters()
@@ -1073,7 +1050,7 @@ $.widget 'nmk.filteredList', {
 					else
 						dates[1] = @_parseDate(value)
 				else
-					field = @form.find("[name=\"#{name}\"]")
+					field = @form.find("[name=\"#{name}\"]:not(.from-query-string)")
 					if field.length
 						if field.attr('type') == 'checkbox'
 							for element in field
@@ -1083,7 +1060,9 @@ $.widget 'nmk.filteredList', {
 						else
 							field.val(value)
 					else
-						@defaultParams.push {'name': name, 'value': value}
+						# @defaultParams.push {'name': name, 'value': value}
+						$('<input type="hidden" class="from-query-string" name="'+ name+'">').appendTo(@form).val(value)
+
 
 			if dates.length > 0
 				@selectCalendarDates dates[0], dates[1]
@@ -1094,9 +1073,6 @@ $.widget 'nmk.filteredList', {
 		@element.find('input[type="checkbox"]:checked:not([name="^custom_filter"])').not(selectedOptions).click()
 
 		query = null
-		if @searchHidden and @searchHidden.val()
-			@acInput.hide()
-			@searchLabel.show().find('.term').text @searchHiddenLabel.val()
 
 		@initialized = true
 

@@ -37,7 +37,7 @@ module EventsHelper
     resource_name ||= resource_class.model_name.human.downcase
     first_part = [
       describe_status, describe_date_ranges, describe_brands, describe_campaigns,
-      describe_areas, describe_cities, describe_users, describe_teams
+      describe_areas, describe_venues, describe_cities, describe_users, describe_teams
     ].compact.join(' ').strip
     first_part = "for: #{first_part}" unless first_part.blank?
     [
@@ -148,6 +148,11 @@ module EventsHelper
 
   def describe_cities
     build_filter_object_list :city, filter_params(:city).map{ |city| [city,city] }
+  end
+
+  def describe_venues
+    describe_resource_params(:venue,
+                             current_company.venues.joins(:place).order('places.name ASC'))
   end
 
   def describe_users
