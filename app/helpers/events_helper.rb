@@ -37,7 +37,8 @@ module EventsHelper
     resource_name ||= resource_class.model_name.human.downcase
     first_part = [
       describe_status, describe_date_ranges, describe_brands, describe_campaigns,
-      describe_areas, describe_venues, describe_cities, describe_users, describe_teams
+      describe_areas, describe_venues, describe_cities, describe_users,
+      describe_teams, describe_roles
     ].compact.join(' ').strip
     first_part = "for: #{first_part}" unless first_part.blank?
     [
@@ -165,6 +166,11 @@ module EventsHelper
   def describe_teams
     describe_resource_params(:team,
                              current_company.teams.order('teams.name ASC'))
+  end
+
+  def describe_roles
+    describe_resource_params(:role,
+                             current_company.roles.order('roles.name ASC'))
   end
 
   def describe_status

@@ -177,11 +177,6 @@ $.widget 'nmk.filteredList', {
 		$.getJSON @options.filtersUrl, params, (json) =>
 			@setFilters json.filters
 
-	_deselectDates: ->
-		if @calendar
-			@calendar.datepick('clear')
-			@calendar.datepick('update')
-
 	getFilters: () ->
 		data = @form.serializeArray()
 		p = []
@@ -602,6 +597,7 @@ $.widget 'nmk.filteredList', {
 								'{popup:start}<div class="datepick-ctrl">{link:clear}{link:close}</div>{popup:end}' +
 								'<div class="datepick-clear-fix"></div></div>'}),
 			onSelect: (dates) =>
+				dates[0] = if dates[0] then dates[0] else dates[1]
 				if @initialized == true
 					if @dateRange == false
 						@customDatesPanel.find('ul .active').removeClass('active')
@@ -757,9 +753,14 @@ $.widget 'nmk.filteredList', {
 		@_setCalendarDatesFromCalendar()
 		@
 
+	_deselectDates: ->
+		if @calendar
+			@calendar.datepick('clear')
+			@calendar.datepick('update')
+
 	_setCalendarDatesFromCalendar: () ->
 		dates = @calendar.datepick('getDate')
-		if dates.length > 0
+		if dates.length > 0 && dates[0]
 			startDate = @_formatDate(dates[0])
 			@startDateInput.val startDate
 

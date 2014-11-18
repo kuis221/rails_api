@@ -274,23 +274,11 @@ class CompanyUser < ActiveRecord::Base
       options = { include: [:user, :role] }
       solr_search(options) do
         with(:company_id, params[:company_id])
+        with(:id, params[:user]) if params.key?(:user) && params[:user]
         with(:campaign_ids, params[:campaign]) if params.key?(:campaign) && params[:campaign]
         with(:team_ids, params[:team]) if params.key?(:team) && params[:team]
         with(:role_id, params[:role]) if params.key?(:role) && params[:role].present?
         with(:status, params[:status]) if params.key?(:status) && params[:status].present?
-        if params.key?(:q) && params[:q].present?
-          (attribute, value) = params[:q].split(',')
-          case attribute
-          when 'company_user'
-            with :id, value
-          when 'role'
-            with "#{attribute}_id", value
-          when 'venue'
-            with :place_ids, Venue.find(value).place_id
-          else
-            with "#{attribute}_ids", value
-          end
-        end
 
         if include_facets
           facet :role_id

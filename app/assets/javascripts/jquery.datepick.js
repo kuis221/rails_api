@@ -1620,6 +1620,7 @@
       var inst = $.data(target, this.propertyName);
       if (inst) {
         inst.selectedDates = [];
+        inst.pickingRange = false;
         this._hidePlugin(target);
         var defaultDate = inst.get('defaultDate');
         if (inst.options.selectDefaultDate && defaultDate) {

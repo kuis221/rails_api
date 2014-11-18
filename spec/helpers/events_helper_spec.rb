@@ -46,7 +46,6 @@ describe EventsHelper, type: :helper do
       end
     end
 
-
     describe 'with start_date only' do
       let(:params) { { start_date: "11/01/2014", end_date: "" } }
 
@@ -284,6 +283,22 @@ describe EventsHelper, type: :helper do
             'data-filter="team:' + team1.id.to_s + '" href="#" title="Remove this filter"></a></div> '\
             '<div class="filter-item">My Team 2<a class="icon icon-close" '\
             'data-filter="team:' + team2.id.to_s + '" href="#" title="Remove this filter"></a></div>')
+      end
+    end
+
+    describe 'with one role selected and another as a search param' do
+      let(:role1) { create(:role, company: company, name: 'My Role 1') }
+      let(:role2) { create(:role, company: company, name: 'My Role 2') }
+
+      let(:params) { { q: "role,#{role1.id}", role: [role2.id] } }
+
+      it do
+        is_expected.to eql(
+            '100 events found for: '\
+            '<div class="filter-item">My Role 1<a class="icon icon-close" '\
+            'data-filter="role:' + role1.id.to_s + '" href="#" title="Remove this filter"></a></div> '\
+            '<div class="filter-item">My Role 2<a class="icon icon-close" '\
+            'data-filter="role:' + role2.id.to_s + '" href="#" title="Remove this filter"></a></div>')
       end
     end
 
