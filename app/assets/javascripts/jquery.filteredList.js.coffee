@@ -609,6 +609,7 @@ $.widget 'nmk.filteredList', {
 					@dateRange = false
 
 					if @_previousDates != @_datesToString(dates)
+						@form.find('input[name="custom_filter[]"]:checked').prop 'checked', false
 						@calendar.find('.datepick-month a').removeClass('first-selected last-selected')
 						@calendar.find('.datepick-selected:first').addClass('first-selected')
 						@calendar.find('.datepick-selected:last').addClass('last-selected')
@@ -894,8 +895,8 @@ $.widget 'nmk.filteredList', {
 		@_serializeFilters()
 
 	_updateCustomFiltersCheckboxes: (option) ->
-		e = @element.find('input[name="custom_filter\\[\\]"][value="'+option.id+'"]')
-		@element.find('input[name="custom_filter\\[\\]"]:checked').not(e).prop 'checked', false
+		e = @element.find('input[name="custom_filter[]"][value="'+option.id+'"]')
+		@element.find('input[name="custom_filter[]"]:checked').not(e).prop 'checked', false
 		if e.length
 			if e.prop('checked') == true
 				@_parseQueryString(option.id.split('&id')[0])
@@ -1050,18 +1051,19 @@ $.widget 'nmk.filteredList', {
 					else
 						dates[1] = @_parseDate(value)
 				else
-					field = @form.find("[name=\"#{name}\"]:not(.from-query-string)")
-					if field.length
-						if field.attr('type') == 'checkbox'
-							for element in field
-								if element.value == value
-									$(element).click() unless $(element).prop('checked')
-									selectedOptions.push element
-						else
-							field.val(value)
+					checkbox = @form.find("input[name=\"#{name}\"][value=\"#{value}\"]:checkbox:not(.from-query-string)")
+					if checkbox.length
+						checkbox.click() unless checkbox.prop('checked')
+						selectedOptions.push checkbox[0]
+
 					else
-						# @defaultParams.push {'name': name, 'value': value}
-						$('<input type="hidden" class="from-query-string" name="'+ name+'">').appendTo(@form).val(value)
+						field = @form.find("input[name=\"#{name}\"]:not(:checkbox):not(.from-query-string)")
+						if field.length > 0
+							field.val(value)
+						else
+							if @form.find("input[name=\"#{name}\"][value=\"#{value}\"]:not(:checkbox)").length == 0
+								# @defaultParams.push {'name': name, 'value': value}
+								$('<input type="hidden" class="from-query-string" name="'+ name+'">').appendTo(@form).val(value)
 
 
 			if dates.length > 0

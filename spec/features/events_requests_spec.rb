@@ -865,6 +865,39 @@ feature 'Events section' do
         end
       end
 
+      scenario 'a custom filter with more that 5 options for the same category' do
+        d = Date.current
+        Timecop.travel(Time.zone.local(d.year, d.month, 18, 12, 00)) do
+          campaigns = create_list(:campaign, 10, company: company)
+          create(:custom_filter,
+                 owner: company_user, name: 'MyCampaigns', apply_to: 'events',
+                 filters:  'campaign%5B%5D=' + campaigns.map(&:to_param).join('&campaign%5B%5D=') )
+
+          visit events_path
+          add_filter 'SAVED FILTERS', 'MyCampaigns'
+
+          campaigns.each do |campaign|
+            expect(collection_description).to have_filter_tag(campaign.name)
+          end
+
+          within '.form-facet-filters' do
+            expect(find_field('MyCampaigns')['checked']).to be_truthy
+          end
+
+          # When a date is selected, the custom filter checkbox should be
+          select_filter_calendar_day('18', '19')
+
+          expect(collection_description).to have_filter_tag('today - tomorrow')
+          campaigns.each do |campaign|
+            expect(collection_description).to have_filter_tag(campaign.name)
+          end
+
+          within '.form-facet-filters' do
+            expect(find_field('MyCampaigns')['checked']).to be_falsey
+          end
+        end
+      end
+
       scenario 'allows to apply custom filters' do
         event1.users << user1
         event2.users << user2
