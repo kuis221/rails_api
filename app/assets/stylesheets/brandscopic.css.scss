@@ -534,11 +534,11 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	background-color: $brand;
 	box-shadow: none;
 	color: white;
-	font-size: 16px;
+	font-size: 14px;
 	min-height: 37px;
-	line-height: 23px;
-	margin:0 10px 0 90px;
-	padding: 13px 20px 10px 21px;
+	line-height: 30px;
+	margin: 0 10px 0 90px;
+	padding: 8px 20px 5px 21px;
 	position: relative;
 	-webkit-border-radius: 0px 0px 8px 8px;
 	border-radius: 0px 0px 8px 8px;
