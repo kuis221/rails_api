@@ -63,17 +63,18 @@ feature 'Results Surveys Page', js: true, search: true  do
     let(:survey1) { create(:survey) }
     let(:survey2) { create(:survey) }
 
+    let(:age_answer) { Kpi.age.kpis_segments.sample }
+    let(:gender_answer) { Kpi.gender.kpis_segments.sample }
+    let(:ethnicity_answer) { Kpi.ethnicity.kpis_segments.sample }
+
     before do
       Kpi.create_global_kpis
       campaign1.add_kpi(Kpi.surveys)
       campaign2.add_kpi(Kpi.surveys)
-      @age_answer = Kpi.age.kpis_segments.sample
-      @gender_answer = Kpi.gender.kpis_segments.sample
-      @ethnicity_answer = Kpi.ethnicity.kpis_segments.sample
 
-      survey1.surveys_answers.build(kpi_id: Kpi.age.id, question_id: 1, answer: @age_answer.id)
-      survey1.surveys_answers.build(kpi_id: Kpi.gender.id, question_id: 1, answer: @gender_answer.id)
-      survey2.surveys_answers.build(kpi_id: Kpi.ethnicity.id, question_id: 1, answer: @ethnicity_answer.id)
+      survey1.surveys_answers.build(kpi_id: Kpi.age.id, question_id: 1, answer: age_answer.id)
+      survey1.surveys_answers.build(kpi_id: Kpi.gender.id, question_id: 1, answer: gender_answer.id)
+      survey2.surveys_answers.build(kpi_id: Kpi.ethnicity.id, question_id: 1, answer: ethnicity_answer.id)
       event1.users << user1
       event2.users << user2
       event1.surveys << survey1
@@ -119,39 +120,51 @@ feature 'Results Surveys Page', js: true, search: true  do
       visit results_surveys_path
 
       # Using Custom Filter 1
-      filter_section('SAVED FILTERS').unicheck('Custom Filter 1')
+      add_filter 'SAVED FILTERS', 'Custom Filter 1'
 
       within '#surveys-list' do
-        expect(page).to have_content(@age_answer.text)
-        expect(page).to have_content(@gender_answer.text)
+        expect(page).to have_content(age_answer.text)
+        expect(page).to have_content(gender_answer.text)
       end
 
       within '.form-facet-filters' do
-        expect(find_field('First Campaign')['checked']).to be_truthy
+        expect(page).not_to have_field('First Campaign')
+        expect(page).not_to have_field('Approved')
+        expect(page).not_to have_field('Active')
+        expect(page).not_to have_field('Roberto Gomez')
+
+        expect(collection_description).to have_filter_tag('First Campaign')
+        expect(collection_description).to have_filter_tag('Approved')
+        expect(collection_description).to have_filter_tag('Active')
+        expect(collection_description).to have_filter_tag('Roberto Gomez')
+
         expect(find_field('Second Campaign')['checked']).to be_falsey
-        expect(find_field('Roberto Gomez')['checked']).to be_truthy
         expect(find_field('Mario Moreno')['checked']).to be_falsey
-        expect(find_field('Approved')['checked']).to be_truthy
-        expect(find_field('Active')['checked']).to be_truthy
         expect(find_field('Inactive')['checked']).to be_falsey
         expect(find_field('Custom Filter 1')['checked']).to be_truthy
         expect(find_field('Custom Filter 2')['checked']).to be_falsey
       end
 
       # Using Custom Filter 2 should update results and checked/unchecked checkboxes
-      filter_section('SAVED FILTERS').unicheck('Custom Filter 2')
+      add_filter 'SAVED FILTERS', 'Custom Filter 2'
 
       within '#surveys-list' do
-        expect(page).to have_content(@ethnicity_answer.text)
+        expect(page).to have_content(ethnicity_answer.text)
       end
 
       within '.form-facet-filters' do
+        expect(page).not_to have_field('Second Campaign')
+        expect(page).not_to have_field('Mario Moreno')
+        expect(page).not_to have_field('Approved')
+        expect(page).not_to have_field('Active')
+
+        expect(collection_description).not_to have_filter_tag('First Campaign')
+        expect(collection_description).not_to have_filter_tag('Roberto Gomez')
+        expect(collection_description).not_to have_filter_tag('Inactive')
+        expect(collection_description).not_to have_filter_tag('Custom Filter 2')
+
         expect(find_field('First Campaign')['checked']).to be_falsey
-        expect(find_field('Second Campaign')['checked']).to be_truthy
         expect(find_field('Roberto Gomez')['checked']).to be_falsey
-        expect(find_field('Mario Moreno')['checked']).to be_truthy
-        expect(find_field('Approved')['checked']).to be_truthy
-        expect(find_field('Active')['checked']).to be_truthy
         expect(find_field('Inactive')['checked']).to be_falsey
         expect(find_field('Custom Filter 1')['checked']).to be_falsey
         expect(find_field('Custom Filter 2')['checked']).to be_truthy
@@ -161,18 +174,20 @@ feature 'Results Surveys Page', js: true, search: true  do
       filter_section('SAVED FILTERS').unicheck('Custom Filter 2')
 
       within '#surveys-list' do
-        expect(page).to have_content(@age_answer.text)
-        expect(page).to have_content(@gender_answer.text)
-        expect(page).to have_content(@ethnicity_answer.text)
+        expect(page).to have_content(age_answer.text)
+        expect(page).to have_content(gender_answer.text)
+        expect(page).to have_content(ethnicity_answer.text)
       end
 
       within '.form-facet-filters' do
+        expect(page).not_to have_field('Active')
+        expect(collection_description).to have_filter_tag('Active')
+
         expect(find_field('First Campaign')['checked']).to be_falsey
         expect(find_field('Second Campaign')['checked']).to be_falsey
         expect(find_field('Roberto Gomez')['checked']).to be_falsey
         expect(find_field('Mario Moreno')['checked']).to be_falsey
         expect(find_field('Approved')['checked']).to be_falsey
-        expect(find_field('Active')['checked']).to be_truthy
         expect(find_field('Inactive')['checked']).to be_falsey
         expect(find_field('Custom Filter 1')['checked']).to be_falsey
         expect(find_field('Custom Filter 2')['checked']).to be_falsey

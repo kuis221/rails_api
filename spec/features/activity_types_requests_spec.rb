@@ -73,8 +73,11 @@ feature 'Activity Types', js: true do
       Sunspot.commit
       visit activity_types_path
 
-      filter_section('ACTIVE STATE').unicheck('Inactive')
-      filter_section('ACTIVE STATE').unicheck('Active')
+      # Make it show only the inactive elements
+      add_filter 'ACTIVE STATE', 'Inactive'
+      remove_filter 'Active'
+
+      expect(page).to have_content '1 activity type found for: Inactive'
 
       expect(page).to have_content('A Vinos ticos')
       within resource_item 1 do

@@ -33,14 +33,20 @@ module EventsHelper
     event.send(attribute)
   end
 
-  def describe_filters
-    first_part  = "#{describe_date_ranges} #{describe_brands} #{describe_campaigns} #{describe_areas}".strip
-
-    view_context.pluralize(number_with_delimiter(collection_count), "#{describe_status} event") +
-    " #{[first_part, describe_people].compact.join(' and ')}"
+  def describe_filters(resource_name=nil)
+    resource_name ||= resource_class.model_name.human.downcase
+    first_part = [
+      describe_status, describe_date_ranges, describe_brands, describe_campaigns,
+      describe_areas, describe_venues, describe_cities, describe_users, describe_teams
+    ].compact.join(' ').strip
+    first_part = "for: #{first_part}" unless first_part.blank?
+    [
+      pluralize(number_with_delimiter(collection_count),
+                resource_name),
+      'found',
+      first_part
+    ].compact.join(' ').strip.html_safe
   end
-
-  protected
 
   def describe_before_event_alert(resource)
     description = 'Your event is scheduled.'
@@ -101,197 +107,106 @@ module EventsHelper
   end
 
   def describe_date_ranges
-    description = ''
-    start_date = params.key?(:start_date) &&  params[:start_date] != '' ? params[:start_date] : false
-    end_date = params.key?(:end_date) &&  params[:end_date] != '' ? params[:end_date] : false
-    start_date_d = end_date_d = nil
-    start_date_d = Timeliness.parse(start_date).to_date if start_date
-    end_date_d = Timeliness.parse(end_date).to_date if end_date
-    unless start_date.nil? || end_date.nil?
-      today = Time.current.to_date
-      yesterday = (Time.current - 1.day).to_date
-      tomorrow = (Time.current + 1.day).to_date
-      start_date_label = (start_date_d == today ?  'today' : (start_date_d == yesterday ? 'yesterday' : (start_date_d == tomorrow ? 'tomorrow' : Timeliness.parse(start_date).strftime('%B %d')))) if start_date
-      end_date_label = (end_date_d == today ? 'today' : (end_date == yesterday.to_s(:slashes) ? 'yesterday' : (end_date_d == tomorrow ? 'tomorrow' : (Timeliness.parse(end_date).strftime('%Y').to_i > Time.zone.now.year + 1 ? 'the future' : Timeliness.parse(end_date).strftime('%B %d'))))) if end_date
-
-      verb = (end_date && end_date_d < today) ? 'took' : 'taking'
-
-      if start_date && end_date && (start_date != end_date)
-        if start_date_label == 'today' && end_date_label == 'the future'
-          description = "#{verb} place today and in the future"
-        else
-          description = "#{verb} place between #{start_date_label} and #{end_date_label}"
-        end
-      elsif start_date
-        if start_date_d == today
-          description = "#{verb} place today"
-        elsif start_date_d >= today
-          start_date_label = "at #{start_date_label}" if Timeliness.parse(start_date).strftime('%B %d') == start_date_label
-          description = "#{verb} place #{start_date_label}"
-        else
-          start_date_label = "on #{start_date_label}" if Timeliness.parse(start_date).strftime('%B %d') == start_date_label
-          description = "#{verb} place #{start_date_label}"
-        end
+    start_date = params[:start_date].blank? ? nil : params[:start_date]
+    end_date = params[:end_date].blank? ? nil : params[:end_date]
+    return if start_date.nil?
+    dates = [start_date, end_date].compact.map { |d| Timeliness.parse(d).to_date }.map do |d|
+      if d == Time.current.to_date
+        'today'
+      elsif d == (Time.current - 1.day).to_date
+        'yesterday'
+      elsif d == (Time.current + 1.day).to_date
+        'tomorrow'
+      else
+        d
       end
     end
 
-    description
+    dates =
+      if dates.count > 1 && dates[1].is_a?(Date) && (dates[1].year > Time.zone.now.year + 2)
+        "#{dates[0].is_a?(Date) ? dates[0].to_s(:simple_short) : dates[0]} to the future"
+      else
+        dates.map{ |d| d.is_a?(Date) ? d.to_s(:simple_short) : d }.join(' - ')
+      end
+    build_filter_object_item dates, "date"
   end
 
   def describe_campaigns
-    campaigns = campaing_params
-    if campaigns.size > 0
-      names = current_company.campaigns.select('name').where(id: campaigns).map(&:name).sort.to_sentence
-      "as part of #{names}"
-    else
-      ''
-    end
-  end
-
-  def campaing_params
-    campaigns = params[:campaign]
-    campaigns = [campaigns] unless campaigns.is_a?(Array)
-    if params.key?(:q) && params[:q] =~ /^campaign,/
-      campaigns.push params[:q].gsub('campaign,', '')
-    end
-    campaigns.compact
+    describe_resource_params(:campaign,
+                             current_company.campaigns.order('campaigns.name ASC'))
   end
 
   def describe_areas
-    areas = area_params
-    if areas.size > 0
-      names = current_company.areas.select('name')
-        .where(id: areas).map(&:name).sort.to_sentence(
-          last_word_connector: ', or ', two_words_connector: ' or ')
-      "in #{names}"
-    else
-      ''
-    end
-  end
-
-  def area_params
-    areas = params[:area]
-    areas = [areas] unless areas.is_a?(Array)
-    if params.key?(:q) && params[:q] =~ /^area,/
-      areas.push params[:q].gsub('area,', '')
-    end
-    areas.compact
-  end
-
-  def describe_cities
-    cities = city_params
-    if cities.size > 0
-      names = cities.sort.to_sentence(last_word_connector: ', or ', two_words_connector: ' or ')
-      "in #{names}"
-    else
-      ''
-    end
-  end
-
-  def city_params
-    cities = params[:city]
-    cities = [cities] unless cities.is_a?(Array)
-    if params.key?(:q) && params[:q] =~ /^city,/
-      cities.push params[:q].gsub('city,', '')
-    end
-    cities.compact
-  end
-
-  def describe_locations
-    places = location_params
-    place_ids = places.select { |p| p =~  /^[0-9]+$/ }
-    encoded_locations = places - place_ids
-    names = []
-    if place_ids.size > 0
-      names = Place.select('name').where(id: place_ids).map(&:name)
-    end
-
-    if encoded_locations.size > 0
-      names.concat(encoded_locations.map do |l|
-        (_, name) =  Base64.decode64(l).split('||')
-        name
-      end)
-    end
-
-    if names.size > 0
-      "in #{names.to_sentence}"
-    else
-      ''
-    end
-  end
-
-  def location_params
-    locations = params[:place]
-    locations = [locations] unless locations.is_a?(Array)
-    if params.key?(:q) && params[:q] =~ /^place,/
-      locations.push params[:q].gsub('place,', '')
-    end
-    locations.compact
+    describe_resource_params(:area,
+                             current_company.areas.order('areas.name ASC'))
   end
 
   def describe_brands
-    brands = brand_params
-    if brands.size > 0
-      names = Brand.select('name').where(id: brands).pluck(:name)
-      "for #{names.to_sentence}"
-    else
-      ''
-    end
+    describe_resource_params(:brand,
+                             current_company.brands.order('brands.name ASC'))
   end
 
-  def brand_params
-    brands = params[:brand]
-    brands = [brands] unless brands.is_a?(Array)
-    if params.key?(:q) && params[:q] =~ /^brand,/
-      brands.push params[:q].gsub('brand,', '')
-    end
-    brands.compact
+  def describe_cities
+    build_filter_object_list :city, filter_params(:city).map{ |city| [city,city] }
   end
 
-  def describe_people
-    users = user_params
-    names = []
-    names = company_users.where(id: users).map(&:full_name) if users.size > 0
-
-    teams = team_params
-    names.concat company_teams.where(id: teams).map(&:name) if teams.size > 0
-
-    return unless names.size > 0
-
-    names = names.sort { |a, b| a.downcase <=> b.downcase }
-    "assigned to #{names.to_sentence(two_words_connector: ' or ', last_word_connector: ', or ')}"
+  def describe_venues
+    describe_resource_params(:venue,
+                             current_company.venues.joins(:place).order('places.name ASC'))
   end
 
-  def user_params
-    users = params[:user]
-    users = [users] unless users.is_a?(Array)
-    if params.key?(:q) && params[:q] =~ /^user,/
-      users.push params[:q].gsub('user,', '')
-    end
-    users.compact
+  def describe_users
+    describe_resource_params(:user,
+                             current_company.company_users.joins(:user)
+                             .order('2 ASC'),
+                             'users.first_name || \' \' || users.last_name as name')
   end
 
-  def team_params
-    teams = params[:team]
-    teams = [teams] unless teams.is_a?(Array)
-    if params.key?(:q) && params[:q] =~ /^team,/
-      teams.push params[:q].gsub('team,', '')
-    end
-    teams.compact
+  def describe_teams
+    describe_resource_params(:team,
+                             current_company.teams.order('teams.name ASC'))
   end
 
   def describe_status
-    status = params[:status]
-    status = [status] unless status.is_a?(Array)
-
-    event_status = params[:event_status]
-    event_status = [event_status] unless event_status.is_a?(Array)
-
-    statuses = (status + event_status).uniq.compact
-    return if statuses.empty? || statuses.nil?
+    status = filter_params(:status).sort
+    event_status = filter_params(:event_status).sort
+    task_status = filter_params(:task_status).sort
     [
-      status.uniq.to_sentence(last_word_connector: ', or ', two_words_connector: ' or '),
-      event_status.uniq.to_sentence(last_word_connector: ', or ', two_words_connector: ' or ')
-    ].reject { |s| s.nil? || s.empty? }.to_sentence
+      build_filter_object_list(:status, status.map{ |status| [status,status] }),
+      build_filter_object_list(:event_status, event_status.map{ |status| [status,status] }),
+      build_filter_object_list(:task_status, task_status.map{ |status| [status,status] })
+    ].compact.join(' ')
   end
+
+  def filter_params(param_name)
+    ids = params[param_name]
+    ids = [ids] unless ids.is_a?(Array)
+    if params.key?(:q) && params[:q] =~ /^#{param_name},/
+      ids.push params[:q].gsub("#{param_name},", '').strip
+    end
+    ids.compact.uniq
+  end
+
+  def describe_resource_params(param_name, base_scope, label_attribute = :name )
+    ids = filter_params(param_name)
+    return unless ids.size > 0
+    build_filter_object_list param_name,
+                             base_scope.where(id: ids).pluck(:id, label_attribute)
+  end
+
+  def build_filter_object_list(filter_name, list)
+    return if list.blank?
+    list.map do |item|
+      build_filter_object_item item[1], "#{filter_name}:#{item[0]}"
+    end.join(' ').html_safe
+  end
+
+  def build_filter_object_item(label, filter_name)
+    content_tag(:div,  class: 'filter-item') do
+      label.html_safe + link_to('', '#', class: 'icon icon-close',
+                                         title: 'Remove this filter',
+                                         data: { filter: filter_name })
+    end
+  end
+
 end

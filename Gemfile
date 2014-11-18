@@ -108,6 +108,7 @@ group :test do
   # gem 'selenium-webdriver'
   gem 'email_spec', '>= 1.4.0'
   gem 'shoulda-matchers', require: false
+  gem 'sunspot_matchers'
   # gem 'launchy'
   gem 'sunspot_test'
   gem 'resque_spec'

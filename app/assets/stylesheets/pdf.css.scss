@@ -1,6 +1,7 @@
 /*
  *= require 'application'
  */
+@import "variables";
 @font-face {
 	font-family: 'icons';
 	src:font-url('icons.ttf') format('truetype');
@@ -32,6 +33,17 @@ body.app-layout {
 			.resource-item-actions {
 				display: none;
 			}
+		}
+	}
+}
+.filter-description {
+	.filter-item {
+		display: inline-block;
+		border: 1px solid $borders;
+		padding: 0 5px;
+		border-radius: 3px;
+		.icon-close {
+			display: none;
 		}
 	}
 }

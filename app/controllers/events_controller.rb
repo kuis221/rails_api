@@ -15,7 +15,7 @@ class EventsController < FilteredController
   include EventsHelper
   include ApplicationHelper
 
-  helper_method :describe_filters, :calendar_highlights
+  helper_method :calendar_highlights
 
   respond_to :js, only: [:new, :create, :edit, :update, :edit_results,
                          :edit_data, :edit_surveys, :submit]

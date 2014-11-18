@@ -1,5 +1,10 @@
 / = render partial: 'video_tutorial'
 
+- content_for :alerts
+  div.collection-list-description
+    a.icon-close.pull-right data-dismiss="alert"
+    .filter-label
+
 .sidebar#resource-filter-column
   #collection-list-filters
 .main

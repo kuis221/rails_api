@@ -78,7 +78,7 @@ class AssetDownload < ActiveRecord::Base
         a.file.copy_to_local_file(:original, photo_local_name)
 
         # Check if the file was downloaded successfully and add it to the zip
-        zip.add(a.file.original_filename, photo_local_name) if File.exist?(photo_local_name)
+        zip.add("#{a.id}_#{a.file.original_filename}", photo_local_name) if File.exist?(photo_local_name)
       end
     end
     self.file = File.open(tmp_filename)

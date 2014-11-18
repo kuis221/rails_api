@@ -85,8 +85,11 @@ feature 'Campaigns', js: true do
       Sunspot.commit
       visit campaigns_path
 
-      filter_section('ACTIVE STATE').unicheck('Inactive')
-      filter_section('ACTIVE STATE').unicheck('Active')
+      # Make it show only the inactive elements
+      add_filter 'ACTIVE STATE', 'Inactive'
+      remove_filter 'Active'
+
+      expect(page).to have_content '1 campaign found for: Inactive'
 
       expect(page).to have_content('Cacique FY13')
       within resource_item 1 do
