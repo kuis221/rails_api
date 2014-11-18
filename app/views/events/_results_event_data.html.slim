@@ -1,6 +1,11 @@
 .form-results-box
-  h3
-    = "POST EVENT FORM"
-    = link_to '', edit_data_event_path(resource), remote: true, id: 'edit-event-data-btn', class: 'icon-edit', title: 'Edit event data' if can?(:edit_data, resource)
+  #list-tools.row-fluid
+    .pull-left
+      h3
+        = "POST EVENT FORM"
+        = link_to '', edit_data_event_path(resource), remote: true, id: 'edit-event-data-btn', class: 'icon-edit', title: 'Edit event data' if can?(:edit_data, resource)
+    .pull-right
+      .btn.download title="Download"
+        = link_to '', url_for(action: :form, format: :pdf), class: 'icon icon-download'
 
   = render partial: 'shared/form_field_results', locals: { form_fields: resource.campaign.form_fields }

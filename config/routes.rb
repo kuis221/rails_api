@@ -402,6 +402,7 @@ Brandscopic::Application.routes.draw do
       put :submit
       put :approve
       put :reject
+      get :form
       match 'members/:member_id' => 'events#delete_member', via: :delete, as: :delete_member
       match 'teams/:team_id' => 'events#delete_member', via: :delete, as: :delete_team
       match 'members/new' => 'events#new_member', via: :get, as: :new_member

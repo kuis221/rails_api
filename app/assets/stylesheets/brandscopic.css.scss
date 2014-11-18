@@ -3433,6 +3433,7 @@ body.events.index {
 	width: 100%;
 	h3{
 		a#edit-event-data-btn{
+			color: $brand;
 			margin-left: 10px;
 			top: 1px;
 			font-size: 16px;
@@ -3612,6 +3613,16 @@ body.events.index {
 				div.radio {
 					margin-right: 0;
 				}
+			}
+		}
+	}
+	#list-tools {
+		.btn.download {
+			padding: 0px;
+			.icon-download:before {
+				height: 34px;
+				width: 48px;
+				padding-top: 10px;
 			}
 		}
 	}

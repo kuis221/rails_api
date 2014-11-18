@@ -336,6 +336,14 @@ class Event < ActiveRecord::Base
     update_attribute :active, false
   end
 
+  def form_field_results
+    campaign.form_fields.map do |field|
+      result = results.find { |r| r.form_field_id == field.id } || results.build(form_field_id: field.id)
+      result.form_field = field
+      result
+    end
+  end
+
   def place_reference=(value)
     @place_reference = value
     return unless value && value.present?

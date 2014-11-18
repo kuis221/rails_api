@@ -10,6 +10,9 @@ class EventsController < FilteredController
   # This helper provide the methods to add/remove team members to the event
   extend TeamMembersHelper
 
+  # This helper provide the methods to export HTML to PDF
+  extend ExportableFormHelper
+
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
   include EventsHelper
