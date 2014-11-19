@@ -80,10 +80,7 @@ class ActivityType < ActiveRecord::Base
       solr_search do
         with :company_id, params[:company_id]
         with :status, params[:status] if params.key?(:status) && params[:status].present?
-        if params.key?(:q) && params[:q].present?
-          (attribute, value) = params[:q].split(',')
-          with :id, value if attribute == 'activity_type'
-        end
+        with(:id, params[:activity_type]) if params.key?(:activity_type) && params[:activity_type].present?
 
         facet :status if include_facets
 

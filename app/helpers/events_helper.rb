@@ -36,9 +36,10 @@ module EventsHelper
   def describe_filters(resource_name=nil)
     resource_name ||= resource_class.model_name.human.downcase
     first_part = [
-      describe_status, describe_date_ranges, describe_brands, describe_campaigns,
+      describe_status, describe_custom_date_ranges, describe_brands, describe_campaigns,
       describe_areas, describe_venues, describe_cities, describe_users,
-      describe_teams, describe_roles
+      describe_teams, describe_roles, describe_activity_types, describe_date_ranges,
+      describe_day_parts, describe_tasks
     ].compact.join(' ').strip
     first_part = "for: #{first_part}" unless first_part.blank?
     [
@@ -107,7 +108,7 @@ module EventsHelper
     description.html_safe
   end
 
-  def describe_date_ranges
+  def describe_custom_date_ranges
     start_date = params[:start_date].blank? ? nil : params[:start_date]
     end_date = params[:end_date].blank? ? nil : params[:end_date]
     return if start_date.nil?
@@ -140,6 +141,26 @@ module EventsHelper
   def describe_areas
     describe_resource_params(:area,
                              current_company.areas.order('areas.name ASC'))
+  end
+
+  def describe_tasks
+    describe_resource_params(:task,
+                             Task.order('tasks.title ASC'))
+  end
+
+  def describe_activity_types
+    describe_resource_params(:activity_type,
+                             current_company.activity_types.order('activity_types.name ASC'))
+  end
+
+  def describe_date_ranges
+    describe_resource_params(:date_range,
+                             current_company.date_ranges.order('date_ranges.name ASC'))
+  end
+
+  def describe_day_parts
+    describe_resource_params(:day_part,
+                             current_company.day_parts.order('day_parts.name ASC'))
   end
 
   def describe_brands

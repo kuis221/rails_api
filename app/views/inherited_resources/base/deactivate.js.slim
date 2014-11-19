@@ -18,10 +18,9 @@
 
   |
     if (element.length && !element.data('no-remove-on-deactivate')) {
-      active_checked = $('.form-facet-filters').find('input[type="checkbox"][name="status[]"][value="Active"]').prop('checked');
-      inactive_checked = $('.form-facet-filters').find('input[type="checkbox"][name="status[]"][value="Inactive"]').prop('checked');
-      if ($(active_checked != inactive_checked) ||
-          (typeof active_checked === 'undefined' && typeof inactive_checked === 'undefined')) {
+      active_checked = $('.form-facet-filters').find('input:checkbox:checked[name="status[]"][value="Active"]').length > 0;
+      inactive_checked = $('.form-facet-filters').find('input:checkbox:checked[name="status[]"][value="Inactive"]').length > 0;
+      if (active_checked != inactive_checked) {
         element.remove();
       }
     };

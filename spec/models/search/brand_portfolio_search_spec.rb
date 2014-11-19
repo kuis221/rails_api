@@ -18,10 +18,6 @@ describe BrandPortfolio, type: :model, search: true do
     .to match_array([company2_brand_portfolio])
 
     # Search for brands associated to the Brand Portfolios
-    expect(search(company_id: 1, q: "brand,#{brand.id}"))
-    .to match_array([brand_portfolio, brand_portfolio2])
-    expect(search(company_id: 1, q: "brand,#{brand2.id}"))
-    .to match_array([brand_portfolio2])
     expect(search(company_id: 1, brand: brand.id))
     .to match_array([brand_portfolio, brand_portfolio2])
     expect(search(company_id: 1, brand: brand2.id))
@@ -30,7 +26,7 @@ describe BrandPortfolio, type: :model, search: true do
     .to match_array([brand_portfolio, brand_portfolio2])
 
     # Search for a given Brand Portfolio
-    expect(search(company_id: 1, q: "brand_portfolio,#{brand_portfolio.id}"))
+    expect(search(company_id: 1, brand_portfolio: [brand_portfolio.id]))
     .to match_array([brand_portfolio])
 
     # Search for Brand Portfolios on a given status

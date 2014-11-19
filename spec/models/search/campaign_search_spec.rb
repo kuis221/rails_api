@@ -29,10 +29,6 @@ describe Campaign, type: :model, search: true do
       .to match_array([company2_campaign])
 
     # Search for users associated to the Campaigns
-    expect(search(company_id: 1, q: "user,#{user.id}"))
-      .to match_array([campaign, campaign2])
-    expect(search(company_id: 1, q: "user,#{user2.id}"))
-      .to match_array([campaign2])
     expect(search(company_id: 1, user: user.id))
       .to match_array([campaign, campaign2])
     expect(search(company_id: 1, user: user2.id))
@@ -41,10 +37,6 @@ describe Campaign, type: :model, search: true do
       .to match_array([campaign, campaign2])
 
     # Search for teams associated to the Campaigns
-    expect(search(company_id: 1, q: "team,#{team.id}"))
-      .to match_array([campaign, campaign2])
-    expect(search(company_id: 1, q: "team,#{team2.id}"))
-      .to match_array([campaign2])
     expect(search(company_id: 1, team: team.id))
       .to match_array([campaign, campaign2])
     expect(search(company_id: 1, team: team2.id))
@@ -53,10 +45,6 @@ describe Campaign, type: :model, search: true do
       .to match_array([campaign, campaign2])
 
     # Search for brands associated to the Campaigns
-    expect(search(company_id: 1, q: "brand,#{brand.id}"))
-      .to match_array([campaign, campaign2])
-    expect(search(company_id: 1, q: "brand,#{brand2.id}"))
-      .to match_array([campaign2])
     expect(search(company_id: 1, brand: brand.id))
       .to match_array([campaign, campaign2])
     expect(search(company_id: 1, brand: brand2.id))
@@ -65,10 +53,6 @@ describe Campaign, type: :model, search: true do
       .to match_array([campaign, campaign2])
 
     # Search for brand portfolios associated to the Campaigns
-    expect(search(company_id: 1, q: "brand_portfolio,#{brand_portfolio.id}"))
-      .to match_array([campaign, campaign2])
-    expect(search(company_id: 1, q: "brand_portfolio,#{brand_portfolio2.id}"))
-      .to match_array([campaign2])
     expect(search(company_id: 1, brand_portfolio: brand_portfolio.id))
       .to match_array([campaign, campaign2])
     expect(search(company_id: 1, brand_portfolio: brand_portfolio2.id))
@@ -77,7 +61,7 @@ describe Campaign, type: :model, search: true do
       .to match_array([campaign, campaign2])
 
     # Search for a given Campaign
-    expect(search({ company_id: 1, q: "campaign,#{campaign.id}" }, true))
+    expect(search({ company_id: 1, campaign: [campaign.id] }, true))
       .to match_array([campaign])
 
     # Search for Campaigns on a given status

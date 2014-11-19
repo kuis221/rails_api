@@ -124,13 +124,7 @@ class Area < ActiveRecord::Base
       solr_search do
         with(:company_id, params[:company_id])
         with(:status, params[:status]) if params.key?(:status) && params[:status].present?
-        if params.key?(:q) && params[:q].present?
-          (attribute, value) = params[:q].split(',')
-          case attribute
-          when 'area'
-            with :id, value
-          end
-        end
+        with(:id, params[:area]) if params.key?(:area) && params[:area].present?
 
         facet :status if include_facets
 

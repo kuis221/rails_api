@@ -69,15 +69,7 @@ class BrandPortfolio < ActiveRecord::Base
         with(:company_id, params[:company_id])
         with(:brand_ids, params[:brand]) if params.key?(:brand) && params[:brand].present?
         with(:status, params[:status]) if params.key?(:status) && params[:status].present?
-        if params.key?(:q) && params[:q].present?
-          (attribute, value) = params[:q].split(',')
-          case attribute
-          when 'brand_portfolio'
-            with :id, value
-          else
-            with "#{attribute}_ids", value
-          end
-        end
+        with(:id, params[:brand_portfolio]) if params.key?(:brand_portfolio) && params[:brand_portfolio].present?
 
         if include_facets
           facet :brands

@@ -16,7 +16,7 @@ describe DayPart, type: :model, search: true do
       .to match_array([company2_day_part])
 
     # Search for a given Day Part
-    expect(search({ company_id: 1, q: "day_part,#{day_part.id}" }, true))
+    expect(search({ company_id: 1, day_part: [day_part.id] }, true))
       .to match_array([day_part])
 
     # Search for Day Parts on a given status

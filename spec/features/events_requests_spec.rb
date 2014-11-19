@@ -119,6 +119,7 @@ feature 'Events section' do
           visit events_path
           expect(page).to have_selector('#events-list .resource-item', count: 1)
           add_filter 'EVENT STATUS', 'Submitted'
+          remove_filter 'today to the future'
           expect(page).to have_selector('#events-list .resource-item', count: 3)
           resource_item(2).click
           within('.alert') do
@@ -193,6 +194,62 @@ feature 'Events section' do
           end
         end
 
+        scenario 'user can remove the date filter tag' do
+          place = create(:place, name: 'Place 1', city: 'Los Angeles', state: 'CA', country: 'US')
+          create(:late_event, campaign: campaign, place: place)
+          Sunspot.commit
+
+          visit events_path
+
+          expect(page).to have_content('0 events found for: Active today to the future')
+
+          expect(collection_description).to have_filter_tag('today to the future')
+          remove_filter 'today to the future'
+
+          expect(page).to have_content('1 event found for: Active')
+          expect(collection_description).not_to have_filter_tag('today to the future')
+
+          within resource_item do
+            expect(page).to have_content(campaign.name)
+          end
+        end
+
+        scenario 'event should not be removed from the list when deactivated' do
+          place = create(:place, name: 'Place 1', city: 'Los Angeles', state: 'CA', country: 'US')
+          create(:event, campaign: campaign, place: place)
+          Sunspot.commit
+
+          visit events_path
+
+          expect(page).to have_content('1 event found for: Active today to the future')
+          add_filter 'ACTIVE STATE', 'Inactive'
+
+          within resource_item do
+            click_js_button 'Deactivate Event'
+          end
+          confirm_prompt 'Are you sure you want to deactivate this event?'
+
+          expect(page).to have_button 'Activate Event'
+
+          within resource_item do
+            click_js_button 'Activate Event'
+          end
+
+          expect(page).to have_button 'Deactivate Event'
+
+          remove_filter 'Inactive'
+          within(events_list) { expect(page).to have_content(campaign.name) }
+          within resource_item do
+            click_js_button 'Deactivate Event'
+          end
+          confirm_prompt 'Are you sure you want to deactivate this event?'
+
+          within(events_list) { expect(page).not_to have_content(campaign.name) }
+
+          remove_filter 'Active'
+          within(events_list) { expect(page).to have_content(campaign.name) }
+        end
+
         scenario 'should allow allow filter events by date range selected from the calendar' do
           today = Time.zone.local(Time.now.year, Time.now.month, 18, 12, 00)
           tomorrow = today + 1.day
@@ -210,7 +267,7 @@ feature 'Events section' do
 
             visit events_path
 
-            expect(page).to have_content('2 events found for: Active')
+            expect(page).to have_content('2 events found for: Active today to the future')
 
             within events_list do
               expect(page).to have_content('Campaign FY2012')
@@ -223,7 +280,7 @@ feature 'Events section' do
 
             add_filter 'CAMPAIGNS', 'Campaign FY2012'
 
-            expect(page).to have_content('1 event found for: Active Campaign FY2012')
+            expect(page).to have_content('1 event found for: Active today to the future Campaign FY2012')
 
             within events_list do
               expect(page).to have_no_content('Another Campaign April 03')
@@ -236,7 +293,7 @@ feature 'Events section' do
               expect(page).to have_content('Campaign FY2012')
             end
 
-            expect(page).to have_content('2 events found for: Active Another Campaign April 03 Campaign FY2012')
+            expect(page).to have_content('2 events found for: Active today to the future Another Campaign April 03 Campaign FY2012')
 
             select_filter_calendar_day('18')
             within events_list do
@@ -247,6 +304,9 @@ feature 'Events section' do
             expect(page).to have_content('1 event found for: Active today Another Campaign April 03 Campaign FY2012')
 
             select_filter_calendar_day('18', '19')
+            expect(page).to have_content(
+              '2 events found for: Active today - tomorrow Another Campaign April 03 Campaign FY2012'
+            )
             within events_list do
               expect(page).to have_content('Another Campaign April 03')
               expect(page).to have_content('Campaign FY2012')
@@ -680,7 +740,7 @@ feature 'Events section' do
           end
         end
 
-        scenario 'first filter should make the list show events in the past' do
+        scenario 'first filter should keep default filters' do
           Timecop.travel(Time.zone.local(2013, 07, 21, 12, 01)) do
             create(:event, campaign: campaign,
                            start_date: '07/07/2013', end_date: '07/07/2013')
@@ -693,8 +753,8 @@ feature 'Events section' do
             expect(page).to have_selector('#events-list .resource-item', count: 1)
 
             add_filter 'CAMPAIGNS', 'Campaign FY2012'
-            expect(page).to have_content('2 events found for: Active Campaign FY2012')  # The list shouldn't be filtered by date
-            expect(page).to have_selector('#events-list .resource-item', count: 2)
+            expect(page).to have_content('1 event found for: Active today to the future Campaign FY2012')  # The list shouldn't be filtered by date
+            expect(page).to have_selector('#events-list .resource-item', count: 1)
           end
         end
 
@@ -705,10 +765,11 @@ feature 'Events section' do
             Sunspot.commit
 
             visit events_path
-            expect(page).to have_content('1 event found for: Active  today to the future')
+            expect(page).to have_content('1 event found for: Active today to the future')
             expect(page).to have_selector('#events-list .resource-item', count: 1)
 
             add_filter 'CAMPAIGNS', 'Campaign FY2012'
+            remove_filter 'today to the future'
             expect(page).to have_content('2 events found for: Active Campaign FY2012')
 
             click_button 'Reset'
@@ -854,6 +915,8 @@ feature 'Events section' do
           expect(custom_filter.name).to eq('My Custom Filter')
           expect(custom_filter.apply_to).to eq('events')
           expect(custom_filter.filters).to eq(
+            "start_date=#{Date.current.to_s(:slashes).gsub!('/', '%2F')}&"\
+            "end_date=#{(Date.current + 10.years).to_s(:slashes).gsub!('/', '%2F')}&" \
             "campaign%5B%5D=#{campaign1.to_param}&user%5B%5D=#{user1.to_param}" \
             '&event_status%5B%5D=Submitted&status%5B%5D=Active'
           )

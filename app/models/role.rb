@@ -75,13 +75,8 @@ class Role < ActiveRecord::Base
       solr_search do
         with(:company_id, params[:company_id])
         with(:status, params[:status]) if params.key?(:status) && params[:status].present?
-        if params.key?(:q) && params[:q].present?
-          (attribute, value) = params[:q].split(',')
-          case attribute
-          when 'role'
-            with :id, value
-          end
-        end
+        with(:id, params[:role]) if params.key?(:role) && params[:role].present?
+
 
         if include_facets
           facet :status

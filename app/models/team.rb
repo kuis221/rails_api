@@ -84,17 +84,7 @@ class Team < ActiveRecord::Base
         with(:company_id, params[:company_id])
         with(:campaign_ids, params[:campaign]) if params.key?(:campaign) && params[:campaign].present?
         with(:status, params[:status]) if params.key?(:status) && params[:status].present?
-        if params.key?(:q) && params[:q].present?
-          (attribute, value) = params[:q].split(',')
-          case attribute
-          when 'team'
-            with :id, value
-          when 'company_user'
-            with :user_ids, value
-          else
-            with "#{attribute}_ids", value
-          end
-        end
+        with(:id, params[:team]) if params.key?(:team) && params[:team].present?
 
         if include_facets
           facet :campaigns

@@ -110,8 +110,11 @@ $.widget 'nmk.filteredList', {
 
 		@listContainer = $(@options.listContainer)
 
-		@defaultParams = @options.defaultParams
-		@_parseQueryString(window.location.search)
+		if window.location.search
+			@_parseQueryString window.location.search
+		else
+			@_parseQueryString $.param(@options.defaultParams)
+
 		@loadFacets = true
 		firstTime = true
 		$(window).on 'popstate', =>
@@ -456,6 +459,7 @@ $.widget 'nmk.filteredList', {
 
 	_buildFilterOption: (option) ->
 		checked = (option.selected is true or option.selected is 'true')
+		checked = checked || $('.collection-list-description .filter-item a[data-filter="'+option.name+':'+option.id+'"]').length > 0
 		@form.find('input:hidden[name="'+option.name+'[]"][value="'+option.id+'"]').remove() if checked
 		$('<li>', style: (if checked then 'display: none;' else ''))
 			.append $('<label>').append(
@@ -775,7 +779,7 @@ $.widget 'nmk.filteredList', {
 		true
 
 	_datesToString: (dates) ->
-		if dates.length > 0
+		if dates.length > 0 && dates[0]
 			@_formatDate(dates[0]) + @_formatDate(dates[1])
 		else
 			''
