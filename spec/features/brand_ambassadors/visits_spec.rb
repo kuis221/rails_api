@@ -226,7 +226,7 @@ feature 'Brand Ambassadors Visits' do
         remove_filter 'My Campaign'
         add_filter 'BRAND AMBASSADORS', 'Test User'
 
-        expect(page).to have_content('1 visit found for: Test User')
+        expect(page).to have_content('1 visit found for: today to the future Test User')
 
         within '#visits-list' do
           expect(page).to have_content('Brand Program')
@@ -240,7 +240,7 @@ feature 'Brand Ambassadors Visits' do
           expect(page).to have_content('Market Visit')
         end
 
-        expect(page).to have_content('2 visits found for: Roberto Gomez Test User')
+        expect(page).to have_content('2 visits found for: today to the future Roberto Gomez Test User')
 
         add_filter 'AREAS', 'California'
 
@@ -249,7 +249,7 @@ feature 'Brand Ambassadors Visits' do
           expect(page).to have_no_content('Market Visit')
         end
 
-        expect(page).to have_content('1 visit found for: California Roberto Gomez Test User')
+        expect(page).to have_content('1 visit found for: today to the future California Roberto Gomez Test User')
 
         add_filter 'AREAS', 'Texas'
 
@@ -258,7 +258,7 @@ feature 'Brand Ambassadors Visits' do
           expect(page).to have_content('Market Visit')
         end
 
-        expect(page).to have_content('2 visits found for: California Texas Roberto Gomez Test User')
+        expect(page).to have_content('2 visits found for: today to the future California Texas Roberto Gomez Test User')
 
         remove_filter 'California'
         remove_filter 'Texas'
@@ -269,7 +269,7 @@ feature 'Brand Ambassadors Visits' do
           expect(page).to have_no_content('Market Visit')
         end
 
-        expect(page).to have_content('1 visit found for: Los Angeles Roberto Gomez Test User')
+        expect(page).to have_content('1 visit found for: today to the future Los Angeles Roberto Gomez Test User')
 
         filter_section('CITIES').unicheck('Austin')
 
@@ -278,7 +278,7 @@ feature 'Brand Ambassadors Visits' do
           expect(page).to have_content('Market Visit')
         end
 
-        expect(page).to have_content('2 visits found for: Austin Los Angeles Roberto Gomez Test User')
+        expect(page).to have_content('2 visits found for: today to the future Austin Los Angeles Roberto Gomez Test User')
 
         select_filter_calendar_day('18')
         within '#visits-list' do
