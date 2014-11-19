@@ -98,6 +98,7 @@ h1, h2, h3{
 	font-family: $baseFontFamily;
 	font-weight: normal;
 	margin-top: 0;
+	line-height: 30px;
 }
 
 p{
@@ -2850,6 +2851,7 @@ ul.ui-widget-content{
 			font-size: 16px;
 			display: inline-block;
 			margin-bottom: 0;
+			margin-top: 0;
 		}
 		i{
 			position: relative;
