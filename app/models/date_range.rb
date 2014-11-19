@@ -76,11 +76,7 @@ class DateRange < ActiveRecord::Base
       ss = solr_search do
         with(:status,     params[:status]) unless params[:status].nil? || params[:status].empty?
         with(:company_id, params[:company_id])
-
-        if params.key?(:q) && params[:q].present?
-          (attribute, value) = params[:q].split(',')
-          with :id, value if attribute == 'date_range'
-        end
+        with(:id, params[:date_range]) if params.key?(:date_range) && params[:date_range].present?
 
         facet :status if include_facets
 

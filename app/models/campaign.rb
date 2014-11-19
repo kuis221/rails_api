@@ -433,18 +433,7 @@ class Campaign < ActiveRecord::Base
         with(:brand_portfolio_ids, params[:brand_portfolio]) if params.key?(:brand_portfolio) && params[:brand_portfolio].present?
         with(:status, params[:status]) if params.key?(:status) && params[:status].present?
         with(:id, params[:id]) if params.key?(:id) && params[:id].present?
-
-        if params.key?(:q) && params[:q].present?
-          (attribute, value) = params[:q].split(',')
-          case attribute
-          when 'campaign'
-            with :id, value
-          when 'venue'
-            with :place_ids, Venue.find(value).place_id
-          else
-            with "#{attribute}_ids", value
-          end
-        end
+        with(:id, params[:campaign]) if params.key?(:campaign) && params[:campaign].present?
 
         if include_facets
           facet :user_ids

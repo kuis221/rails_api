@@ -14,7 +14,7 @@ describe Area, type: :model, search: true do
     expect(search(company_id: 2)).to match_array([company2_area])
 
     # Search for a given Area
-    expect(search(company_id: 1, q: "area,#{area.id}")).to match_array([area])
+    expect(search(company_id: 1, area: [area.id])).to match_array([area])
 
     # Search for Areas on a given status
     expect(search(company_id: 1, status: ['Active'])).to match_array([area, area2])

@@ -459,6 +459,7 @@ $.widget 'nmk.filteredList', {
 
 	_buildFilterOption: (option) ->
 		checked = (option.selected is true or option.selected is 'true')
+		checked = checked || $('.collection-list-description .filter-item a[data-filter="'+option.name+':'+option.id+'"]').length > 0
 		@form.find('input:hidden[name="'+option.name+'[]"][value="'+option.id+'"]').remove() if checked
 		$('<li>', style: (if checked then 'display: none;' else ''))
 			.append $('<label>').append(

@@ -167,6 +167,7 @@ class Task < ActiveRecord::Base
         end
 
         with :id, params[:id] if params.key?(:id) && params[:id]
+        with :id, params[:task] if params.key?(:task) && params[:task]
         with :company_id, params[:company_id]
         with :campaign_id, params[:campaign]  if params.key?(:campaign) && params[:campaign]
         with :company_user_id, params[:user] if params.key?(:user) && params[:user].present?
@@ -193,21 +194,6 @@ class Task < ActiveRecord::Base
                 with(:completed, false)
               end
             end
-          end
-        end
-
-        # Handles the cases from the autocomplete
-        if params.key?(:q) && params[:q].present?
-          (attribute, value) = params[:q].split(',')
-          case attribute
-          when 'task'
-            with :id, value
-          when 'campaign'
-            with :campaign_id, value
-          when 'company_user'
-            with :company_user_id, value
-          when 'team'
-            with :company_user_id, CompanyUser.select('company_users.id').joins(:teams).where(teams: { id: value }).map(&:id)
           end
         end
 
@@ -294,7 +280,7 @@ class Task < ActiveRecord::Base
     end
 
     return unless event.present? && company_user.allowed_to_access_place?(event.place)
-    
+
     # New task with assigned user or assigning user to existing task
     Notification.new_task(company_user, self)
   end

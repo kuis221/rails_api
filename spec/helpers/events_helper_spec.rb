@@ -200,6 +200,38 @@ describe EventsHelper, type: :helper do
       end
     end
 
+    describe 'with one activity type selected and another as a search param' do
+      let(:activity_type1) { create(:activity_type, company: company, name: 'My Activity Type 1') }
+      let(:activity_type2) { create(:activity_type, company: company, name: 'My Activity Type 2') }
+
+      let(:params) { { q: "activity_type,#{activity_type1.id}", activity_type: [activity_type2.id] } }
+
+      it do
+        is_expected.to eql(
+            '100 events found for: '\
+            '<div class="filter-item">My Activity Type 1<a class="icon icon-close" '\
+            'data-filter="activity_type:' + activity_type1.id.to_s + '" href="#" title="Remove this filter"></a></div> '\
+            '<div class="filter-item">My Activity Type 2<a class="icon icon-close" '\
+            'data-filter="activity_type:' + activity_type2.id.to_s + '" href="#" title="Remove this filter"></a></div>')
+      end
+    end
+
+    describe 'with one date range selected and another as a search param' do
+      let(:date_range1) { create(:date_range, company: company, name: 'My Date Range 1') }
+      let(:date_range2) { create(:date_range, company: company, name: 'My Date Range 2') }
+
+      let(:params) { { q: "date_range,#{date_range1.id}", date_range: [date_range2.id] } }
+
+      it do
+        is_expected.to eql(
+            '100 events found for: '\
+            '<div class="filter-item">My Date Range 1<a class="icon icon-close" '\
+            'data-filter="date_range:' + date_range1.id.to_s + '" href="#" title="Remove this filter"></a></div> '\
+            '<div class="filter-item">My Date Range 2<a class="icon icon-close" '\
+            'data-filter="date_range:' + date_range2.id.to_s + '" href="#" title="Remove this filter"></a></div>')
+      end
+    end
+
     describe 'with one area selected and another as a search param' do
       let(:area1) { create(:area, company: company, name: 'My Area 1') }
       let(:area2) { create(:area, company: company, name: 'My Area 2') }
