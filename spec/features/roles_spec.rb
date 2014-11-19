@@ -3,11 +3,12 @@ require 'rails_helper'
 feature 'Roles', js: true do
   let(:company) { create(:company) }
   let(:user) { create(:user, company_id: company.id, role_id: create(:role, name: 'Role 1', company: company).id) }
+  let(:company_user) { user.company_users.first }
 
   before { sign_in user }
   after { Warden.test_reset! }
 
-  feature '/roles', search: true  do
+  feature '/roles', search: true do
     scenario 'GET index should display a list with the roles' do
       create(:role, name: 'Costa Rica Role',
         description: 'el grupo de ticos', active: true, company_id: company.id)
@@ -119,11 +120,95 @@ feature 'Roles', js: true do
     end
   end
 
+  feature 'custom filters', search: true do
+    let(:role1) { create(:role, name: 'Costa Rica Role', description: 'El grupo de ticos', active: true, company: company) }
+    let(:role2) { create(:role, name: 'Buenos Aires Role', description: 'The guys from BAs', active: false, company: company) }
+
+    before do
+      # make sure roles are created before
+      role1
+      role2
+      Sunspot.commit
+    end
+
+    scenario 'allows to create a new custom filter' do
+      visit roles_path
+
+      filter_section('ACTIVE STATE').unicheck('Active')
+      filter_section('ACTIVE STATE').unicheck('Inactive')
+
+      click_button 'Save'
+
+      within visible_modal do
+        fill_in('Filter name', with: 'My Custom Filter')
+        expect do
+          click_button 'Save'
+          wait_for_ajax
+        end.to change(CustomFilter, :count).by(1)
+
+        custom_filter = CustomFilter.last
+        expect(custom_filter.owner).to eq(company_user)
+        expect(custom_filter.name).to eq('My Custom Filter')
+        expect(custom_filter.apply_to).to eq('roles')
+        expect(custom_filter.filters).to eq('status%5B%5D=Inactive')
+      end
+      ensure_modal_was_closed
+
+      within '.form-facet-filters' do
+        expect(page).to have_content('My Custom Filter')
+      end
+    end
+
+    scenario 'allows to apply custom filters' do
+      create(:custom_filter,
+             owner: company_user, name: 'Custom Filter 1', apply_to: 'roles',
+             filters: 'status%5B%5D=Active')
+      create(:custom_filter,
+             owner: company_user, name: 'Custom Filter 2', apply_to: 'roles',
+             filters: 'status%5B%5D=Inactive')
+
+      visit roles_path
+
+      within roles_list do
+        expect(page).to have_content('Costa Rica Role')
+        expect(page).to_not have_content('Buenos Aires Role')
+      end
+
+      # Using Custom Filter 1
+      filter_section('SAVED FILTERS').unicheck('Custom Filter 1')
+
+      within roles_list do
+        expect(page).to have_content('Costa Rica Role')
+        expect(page).to_not have_content('Buenos Aires Role')
+      end
+
+      within '.form-facet-filters' do
+        expect(find_field('Active')['checked']).to be_truthy
+        expect(find_field('Inactive')['checked']).to be_falsey
+        expect(find_field('Custom Filter 1')['checked']).to be_truthy
+        expect(find_field('Custom Filter 2')['checked']).to be_falsey
+      end
+
+      # Using Custom Filter 2 should update results and checked/unchecked checkboxes
+      filter_section('SAVED FILTERS').unicheck('Custom Filter 2')
+
+      within roles_list do
+        expect(page).to_not have_content('Costa Rica Role')
+        expect(page).to have_content('Buenos Aires Role')
+      end
+
+      within '.form-facet-filters' do
+        expect(find_field('Active')['checked']).to be_falsey
+        expect(find_field('Inactive')['checked']).to be_truthy
+        expect(find_field('Custom Filter 1')['checked']).to be_falsey
+        expect(find_field('Custom Filter 2')['checked']).to be_truthy
+      end
+    end
+  end
+
   feature 'export', search: true do
-    let(:role1) { create(:role, name: 'Costa Rica Role',
-                                description: 'El grupo de ticos', active: true, company: company) }
-    let(:role2) { create(:role, name: 'Buenos Aires Role',
-                                description: 'The guys from BAs', active: true, company: company) }
+    let(:role1) { create(:role, name: 'Costa Rica Role', description: 'El grupo de ticos', active: true, company: company) }
+    let(:role2) { create(:role, name: 'Buenos Aires Role', description: 'The guys from BAs', active: true, company: company) }
 
     before do
       # make sure roles are created before
@@ -184,5 +269,9 @@ feature 'Roles', js: true do
         expect(text).to include 'TestRoledescription'
       end
     end
+  end
+
+  def roles_list
+    '#roles-list'
   end
 end

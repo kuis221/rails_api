@@ -204,6 +204,7 @@ module FacetsHelper
       f.push build_tasks_status_bucket
       f.push build_people_bucket.merge(label: 'Staff') if params[:scope] == 'teams'
       f.push build_state_bucket
+      f.concat build_custom_filters_bucket
     end
   end
 

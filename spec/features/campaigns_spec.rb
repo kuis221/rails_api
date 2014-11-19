@@ -624,6 +624,116 @@ feature 'Campaigns', js: true do
     end
   end
 
+  feature 'custom filters', search: true do
+    let(:campaign1) { create(:campaign, name: 'Cacique FY13', description: 'Test campaign for guaro Cacique', company: company) }
+    let(:campaign2) { create(:campaign, name: 'New Brand Campaign', description: 'Campaign for another brand', company: company) }
+    let(:brand_portfolio1) { create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: true, company: company) }
+    let(:brand_portfolio2) { create(:brand_portfolio, name: 'B Licores Costarricenses', description: 'Licores ticos', active: true, company: company) }
+    let(:brand1) { create(:brand, name: 'Brand 1', company: company) }
+    let(:brand2) { create(:brand, name: 'Brand 2', company: company) }
+    let(:another_user) { create(:company_user, user: create(:user, first_name: 'Roberto', last_name: 'Gomez'), company: company) }
+
+    before do
+      # make sure campaigns are created before
+      campaign1.brands << brand1
+      campaign2.brands << brand2
+      campaign1.brand_portfolios << brand_portfolio1
+      campaign2.brand_portfolios << brand_portfolio2
+      campaign1.users << company_user
+      campaign2.users << another_user
+      campaign1.save
+      campaign2.save
+      Sunspot.commit
+    end
+
+    scenario 'allows to create a new custom filter' do
+      visit campaigns_path
+
+      filter_section('BRANDS').unicheck('Brand 1')
+      filter_section('BRAND PORTFOLIOS').unicheck('A Vinos ticos')
+      filter_section('PEOPLE').unicheck('Test User')
+
+      click_button 'Save'
+
+      within visible_modal do
+        fill_in('Filter name', with: 'My Custom Filter')
+        expect do
+          click_button 'Save'
+          wait_for_ajax
+        end.to change(CustomFilter, :count).by(1)
+
+        custom_filter = CustomFilter.last
+        expect(custom_filter.owner).to eq(company_user)
+        expect(custom_filter.name).to eq('My Custom Filter')
+        expect(custom_filter.apply_to).to eq('campaigns')
+        expect(custom_filter.filters).to eq("brand%5B%5D=#{brand1.id}&brand_portfolio%5B%5D=#{brand_portfolio1.id}&user%5B%5D=#{company_user.id}&status%5B%5D=Active")
+      end
+      ensure_modal_was_closed
+
+      within '.form-facet-filters' do
+        expect(page).to have_content('My Custom Filter')
+      end
+    end
+
+    scenario 'allows to apply custom filters' do
+      create(:custom_filter,
+             owner: company_user, name: 'Custom Filter 1', apply_to: 'campaigns',
+             filters: "brand%5B%5D=#{brand1.id}&brand_portfolio%5B%5D=#{brand_portfolio1.id}&user%5B%5D=#{company_user.id}&status%5B%5D=Active")
+      create(:custom_filter,
+             owner: company_user, name: 'Custom Filter 2', apply_to: 'campaigns',
+             filters: "brand%5B%5D=#{brand2.id}&brand_portfolio%5B%5D=#{brand_portfolio2.id}&user%5B%5D=#{another_user.id}&status%5B%5D=Active")
+
+      visit campaigns_path
+
+      within campaigns_list do
+        expect(page).to have_content('Cacique FY13')
+        expect(page).to have_content('New Brand Campaign')
+      end
+
+      # Using Custom Filter 1
+      filter_section('SAVED FILTERS').unicheck('Custom Filter 1')
+
+      within campaigns_list do
+        expect(page).to have_content('Cacique FY13')
+        expect(page).to_not have_content('New Brand Campaign')
+      end
+
+      within '.form-facet-filters' do
+        expect(find_field('Brand 1')['checked']).to be_truthy
+        expect(find_field('Brand 2')['checked']).to be_falsey
+        expect(find_field('A Vinos ticos')['checked']).to be_truthy
+        expect(find_field('B Licores Costarricenses')['checked']).to be_falsey
+        expect(find_field('Roberto Gomez')['checked']).to be_falsey
+        expect(find_field('Test User')['checked']).to be_truthy
+        expect(find_field('Active')['checked']).to be_truthy
+        expect(find_field('Inactive')['checked']).to be_falsey
+        expect(find_field('Custom Filter 1')['checked']).to be_truthy
+        expect(find_field('Custom Filter 2')['checked']).to be_falsey
+      end
+
+      # Using Custom Filter 2 should update results and checked/unchecked checkboxes
+      filter_section('SAVED FILTERS').unicheck('Custom Filter 2')
+
+      within campaigns_list do
+        expect(page).to_not have_content('Cacique FY13')
+        expect(page).to have_content('New Brand Campaign')
+      end
+
+      within '.form-facet-filters' do
+        expect(find_field('Brand 1')['checked']).to be_falsey
+        expect(find_field('Brand 2')['checked']).to be_truthy
+        expect(find_field('A Vinos ticos')['checked']).to be_falsey
+        expect(find_field('B Licores Costarricenses')['checked']).to be_truthy
+        expect(find_field('Roberto Gomez')['checked']).to be_truthy
+        expect(find_field('Test User')['checked']).to be_falsey
+        expect(find_field('Active')['checked']).to be_truthy
+        expect(find_field('Inactive')['checked']).to be_falsey
+        expect(find_field('Custom Filter 1')['checked']).to be_falsey
+        expect(find_field('Custom Filter 2')['checked']).to be_truthy
+      end
+    end
+  end
+
   feature 'export', search: true do
     let(:campaign1) { create(:campaign, name: 'Cacique FY13',
                                 description: 'Test campaign for guaro Cacique', company: company) }
@@ -705,6 +815,10 @@ feature 'Campaigns', js: true do
       before { company_user.campaigns << campaign }
       let(:permissions) { [[:show, 'Campaign'], [:view_staff, 'Campaign'], [:add_staff, 'Campaign']] }
     end
+  end
+
+  def campaigns_list
+    '#campaigns-list'
   end
 
 end
