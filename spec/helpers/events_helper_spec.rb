@@ -264,6 +264,22 @@ describe EventsHelper, type: :helper do
       end
     end
 
+    describe 'with one brand portfolio selected and another as a search param' do
+      let(:brand_portfolio1) { create(:brand_portfolio, company: company, name: 'My Brand Portfolio 1') }
+      let(:brand_portfolio2) { create(:brand_portfolio, company: company, name: 'My Brand Portfolio 2') }
+
+      let(:params) { { q: "brand_portfolio,#{brand_portfolio1.id}", brand_portfolio: [brand_portfolio2.id] } }
+
+      it do
+        is_expected.to eql(
+            '100 events found for: '\
+            '<div class="filter-item">My Brand Portfolio 1<a class="icon icon-close" '\
+            'data-filter="brand_portfolio:' + brand_portfolio1.id.to_s + '" href="#" title="Remove this filter"></a></div> '\
+            '<div class="filter-item">My Brand Portfolio 2<a class="icon icon-close" '\
+            'data-filter="brand_portfolio:' + brand_portfolio2.id.to_s + '" href="#" title="Remove this filter"></a></div>')
+      end
+    end
+
     describe 'with one brand selected and another as a search param' do
       let(:venue1) { create(:venue, company: company, place: create(:place, name: 'My Venue 1')) }
       let(:venue2) { create(:venue, company: company, place: create(:place, name: 'My Venue 2')) }

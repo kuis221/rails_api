@@ -234,19 +234,15 @@ class EventsController < FilteredController
   end
 
   def search_params
-    @search_params ||= begin
-      super
-
-      if request.format.xls?
-        @search_params[:sorting] = 'start_at'
-        @search_params[:sorting_dir] = 'asc'
-      end
+    @search_params || super.tap do |p|
+      p[:sorting] ||= 'start_at'
+      p[:sorting_dir] ||= 'asc'
 
       # Get a list of new events notifications to obtain the
       # list of ids, then delete them as they are already seen, but
       # store them in the session to allow the user to navigate, paginate, etc
       if params.key?(:new_at) && params[:new_at]
-        @search_params[:id] = session["new_events_at_#{params[:new_at].to_i}"] ||= begin
+        p[:id] = session["new_events_at_#{params[:new_at].to_i}"] ||= begin
           ids = if params.key?(:notification) && params[:notification] == 'new_team_event'
                   current_company_user.notifications.new_team_events.pluck("params->'event_id'")
                 else
@@ -256,8 +252,6 @@ class EventsController < FilteredController
           ids
         end
       end
-
-      @search_params
     end
   end
 

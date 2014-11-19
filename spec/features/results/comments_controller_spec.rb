@@ -118,89 +118,14 @@ feature 'Results Comments Page', js: true, search: true  do
         expect(custom_filter.owner).to eq(@company_user)
         expect(custom_filter.name).to eq('My Custom Filter')
         expect(custom_filter.apply_to).to eq('results_comments')
-        expect(custom_filter.filters).to eq('campaign%5B%5D=' + campaign1.to_param + '&user%5B%5D=' + user1.to_param + '&event_status%5B%5D=Approved&status%5B%5D=Active')
+        expect(custom_filter.filters).to eq(
+          'status%5B%5D=Active&campaign%5B%5D=' + campaign1.to_param +
+          '&user%5B%5D=' + user1.to_param + '&event_status%5B%5D=Approved')
       end
       ensure_modal_was_closed
 
       within '.form-facet-filters' do
         expect(page).to have_content('My Custom Filter')
-      end
-    end
-
-    scenario 'allows to apply custom filters' do
-      create(:custom_filter, owner: @company_user, name: 'Custom Filter 1', apply_to: 'results_comments', filters: 'campaign%5B%5D=' + campaign1.to_param + '&user%5B%5D=' + user1.to_param + '&event_status%5B%5D=Approved&status%5B%5D=Active')
-      create(:custom_filter, owner: @company_user, name: 'Custom Filter 2', apply_to: 'results_comments', filters: 'campaign%5B%5D=' + campaign2.to_param + '&user%5B%5D=' + user2.to_param + '&event_status%5B%5D=Approved&status%5B%5D=Active')
-
-      visit results_comments_path
-
-      # Using Custom Filter 1
-      filter_section('SAVED FILTERS').unicheck('Custom Filter 1')
-
-      within '#comment-list' do
-        expect(page).to have_content('First Campaign')
-      end
-
-      within '.form-facet-filters' do
-        expect(page).not_to have_field('First Campaign')
-        expect(page).not_to have_field('Roberto Gomez')
-        expect(page).not_to have_field('Approved')
-        expect(page).not_to have_field('Active')
-
-        expect(collection_description).to have_filter_tag('First Campaign')
-        expect(collection_description).to have_filter_tag('Roberto Gomez')
-        expect(collection_description).to have_filter_tag('Approved')
-        expect(collection_description).to have_filter_tag('Active')
-
-        expect(find_field('Mario Moreno')['checked']).to be_falsey
-        expect(find_field('Second Campaign')['checked']).to be_falsey
-        expect(find_field('Inactive')['checked']).to be_falsey
-        expect(find_field('Custom Filter 2')['checked']).to be_falsey
-      end
-
-      # Using Custom Filter 2 should update results and checked/unchecked checkboxes
-      filter_section('SAVED FILTERS').unicheck('Custom Filter 2')
-
-      within '#comment-list' do
-        expect(page).to have_content('Second Campaign')
-      end
-
-      within '.form-facet-filters' do
-        expect(page).not_to have_field('Second Campaign')
-        expect(page).not_to have_field('Mario Moreno')
-        expect(page).not_to have_field('Approved')
-        expect(page).not_to have_field('Active')
-
-        expect(collection_description).to have_filter_tag('Second Campaign')
-        expect(collection_description).to have_filter_tag('Mario Moreno')
-        expect(collection_description).to have_filter_tag('Approved')
-        expect(collection_description).to have_filter_tag('Active')
-
-        expect(find_field('First Campaign')['checked']).to be_falsey
-        expect(find_field('Roberto Gomez')['checked']).to be_falsey
-        expect(find_field('Inactive')['checked']).to be_falsey
-        expect(find_field('Custom Filter 1')['checked']).to be_falsey
-      end
-
-      # Using Custom Filter 2 again should reset filters
-      filter_section('SAVED FILTERS').unicheck('Custom Filter 2')
-
-      within '#comment-list' do
-        expect(page).to have_content('First Campaign')
-        expect(page).to have_content('Second Campaign')
-      end
-
-      within '.form-facet-filters' do
-        expect(find_field('First Campaign')['checked']).to be_falsey
-        expect(find_field('Second Campaign')['checked']).to be_falsey
-        expect(find_field('Roberto Gomez')['checked']).to be_falsey
-        expect(find_field('Mario Moreno')['checked']).to be_falsey
-        expect(find_field('Approved')['checked']).to be_falsey
-        expect(find_field('Inactive')['checked']).to be_falsey
-        expect(find_field('Custom Filter 1')['checked']).to be_falsey
-        expect(find_field('Custom Filter 2')['checked']).to be_falsey
-
-        expect(page).not_to have_field('Active')
-        expect(collection_description).to have_filter_tag('Active')
       end
     end
 

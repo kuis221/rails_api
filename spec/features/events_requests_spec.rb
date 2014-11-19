@@ -762,11 +762,18 @@ feature 'Events section' do
           Timecop.travel(Time.zone.local(2013, 07, 21, 12, 01)) do
             create(:event, campaign: campaign, start_date: '07/11/2013', end_date: '07/11/2013')
             create(:event, campaign: campaign, start_date: '07/21/2013', end_date: '07/21/2013')
+
+            create(:custom_filter,
+                   owner: company_user, name: 'My Custom Filter', apply_to: 'events',
+                   filters:  'status%5B%5D=Active')
+
             Sunspot.commit
 
             visit events_path
             expect(page).to have_content('1 event found for: Active today to the future')
             expect(page).to have_selector('#events-list .resource-item', count: 1)
+
+            add_filter 'SAVED FILTERS', 'My Custom Filter'
 
             add_filter 'CAMPAIGNS', 'Campaign FY2012'
             remove_filter 'today to the future'
@@ -775,10 +782,17 @@ feature 'Events section' do
             click_button 'Reset'
             expect(page).to have_content('1 event found for: Active today to the future')
 
+            within '.form-facet-filters' do
+              expect(find_field('My Custom Filter')['checked']).to be_falsey
+            end
+
             expect(page).to have_selector('#events-list .resource-item', count: 1)
             add_filter 'CAMPAIGNS', 'Campaign FY2012'
 
-            # The list shouldn't be filtered by date
+            expect(page).to have_content('1 event found for: Active today to the future Campaign FY2012')
+            expect(page).to have_selector('#events-list .resource-item', count: 1)
+
+            remove_filter 'today to the future'
             expect(page).to have_content('2 events found for: Active Campaign FY2012')
             expect(page).to have_selector('#events-list .resource-item', count: 2)
           end
@@ -915,10 +929,10 @@ feature 'Events section' do
           expect(custom_filter.name).to eq('My Custom Filter')
           expect(custom_filter.apply_to).to eq('events')
           expect(custom_filter.filters).to eq(
-            "start_date=#{Date.current.to_s(:slashes).gsub!('/', '%2F')}&"\
+            "status%5B%5D=Active&start_date=#{Date.current.to_s(:slashes).gsub!('/', '%2F')}&"\
             "end_date=#{(Date.current + 10.years).to_s(:slashes).gsub!('/', '%2F')}&" \
             "campaign%5B%5D=#{campaign1.to_param}&user%5B%5D=#{user1.to_param}" \
-            '&event_status%5B%5D=Submitted&status%5B%5D=Active'
+            '&event_status%5B%5D=Submitted'
           )
         end
         ensure_modal_was_closed
@@ -947,7 +961,7 @@ feature 'Events section' do
             expect(find_field('MyCampaigns')['checked']).to be_truthy
           end
 
-          # When a date is selected, the custom filter checkbox should be
+          # When a date is selected, the custom filter checkbox should be deselected
           select_filter_calendar_day('18', '19')
 
           expect(collection_description).to have_filter_tag('today - tomorrow')
@@ -982,6 +996,8 @@ feature 'Events section' do
           expect(page).to_not have_content('Campaign 2')
         end
 
+        remove_filter 'today to the future'
+
         # Using Custom Filter 1
         add_filter 'SAVED FILTERS', 'Custom Filter 1'
 
@@ -1011,6 +1027,28 @@ feature 'Events section' do
         # Using Custom Filter 2 should update results and checked/unchecked checkboxes
         add_filter 'SAVED FILTERS', 'Custom Filter 2'
 
+        # Should preserve Custom Filter 1's params
+        expect(collection_description).to have_filter_tag('Active')
+        expect(collection_description).to have_filter_tag('Submitted')
+        expect(collection_description).to have_filter_tag('Campaign 1')
+        expect(collection_description).to have_filter_tag('Roberto Gomez')
+
+        filter_section('SAVED FILTERS').unicheck('Custom Filter 1')
+
+        # Should remove Custom Filter 1's params
+        expect(collection_description).not_to have_filter_tag('Active')
+        expect(collection_description).not_to have_filter_tag('Submitted')
+        expect(collection_description).not_to have_filter_tag('Campaign 1')
+        expect(collection_description).not_to have_filter_tag('Roberto Gomez')
+
+        # Should have the Custom Filter 2's
+        expect(collection_description).to have_filter_tag('Campaign 2')
+        expect(collection_description).to have_filter_tag('Mario Moreno')
+        expect(collection_description).to have_filter_tag('Late')
+
+        # was removed with the params for custom filter 1, perhaps we should leave it
+        expect(collection_description).not_to have_filter_tag('Active')
+
         within events_list do
           expect(page).not_to have_content('Campaign 1')
           expect(page).to have_content('Campaign 2')
@@ -1024,12 +1062,7 @@ feature 'Events section' do
           expect(page).not_to have_field('Campaign 2')
           expect(page).not_to have_field('Mario Moreno')
           expect(page).not_to have_field('Late')
-          expect(page).not_to have_field('Active')
-
-          expect(collection_description).to have_filter_tag('Campaign 2')
-          expect(collection_description).to have_filter_tag('Mario Moreno')
-          expect(collection_description).to have_filter_tag('Late')
-          expect(collection_description).to have_filter_tag('Active')
+          expect(page).to have_field('Active')
 
           expect(find_field('Custom Filter 1')['checked']).to be_falsey
           expect(find_field('Custom Filter 2')['checked']).to be_truthy
@@ -1051,8 +1084,7 @@ feature 'Events section' do
           expect(page).to have_field('Campaign 2')
           expect(page).to have_field('Mario Moreno')
           expect(page).to have_field('Late')
-          expect(page).not_to have_field('Active')
-          expect(collection_description).to have_filter_tag('Active')
+          expect(page).to have_field('Active')
         end
       end
 

@@ -36,7 +36,8 @@ module EventsHelper
   def describe_filters(resource_name=nil)
     resource_name ||= resource_class.model_name.human.downcase
     first_part = [
-      describe_status, describe_custom_date_ranges, describe_brands, describe_campaigns,
+      describe_status, describe_custom_date_ranges, describe_brands,
+      describe_brand_portfolios, describe_campaigns,
       describe_areas, describe_venues, describe_cities, describe_users,
       describe_teams, describe_roles, describe_activity_types, describe_date_ranges,
       describe_day_parts, describe_tasks
@@ -166,6 +167,11 @@ module EventsHelper
   def describe_brands
     describe_resource_params(:brand,
                              current_company.brands.order('brands.name ASC'))
+  end
+
+  def describe_brand_portfolios
+    describe_resource_params(:brand_portfolio,
+                             current_company.brand_portfolios.order('brand_portfolios.name ASC'))
   end
 
   def describe_cities
