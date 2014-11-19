@@ -110,8 +110,11 @@ $.widget 'nmk.filteredList', {
 
 		@listContainer = $(@options.listContainer)
 
-		@defaultParams = @options.defaultParams
-		@_parseQueryString(window.location.search)
+		if window.location.search
+			@_parseQueryString window.location.search
+		else
+			@_parseQueryString $.param(@options.defaultParams)
+
 		@loadFacets = true
 		firstTime = true
 		$(window).on 'popstate', =>
@@ -775,7 +778,7 @@ $.widget 'nmk.filteredList', {
 		true
 
 	_datesToString: (dates) ->
-		if dates.length > 0
+		if dates.length > 0 && dates[0]
 			@_formatDate(dates[0]) + @_formatDate(dates[1])
 		else
 			''
