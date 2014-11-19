@@ -1,6 +1,6 @@
 module ExportableFormHelper
   module InstanceMethods
-    def form
+    def export_fieldable
       respond_to do |format|
         format.pdf do
           render pdf: file_name,
