@@ -5588,10 +5588,15 @@ margin: 45px 0 25px 25px;
 				&:first-child{
 					border-bottom-left-radius: 6px;
 					border-top-left-radius: 6px;
+					border-right: 1px solid $brand;
+					&+label{
+						border-left:0;
+					}
 				}
 				&:last-child{
 						border-bottom-right-radius: 6px;
 						border-top-right-radius: 6px;
+						border-left: 1px solid $brand;
 				}
 				&.active{
 					background-color: $brand;
@@ -5758,9 +5763,10 @@ body.gva {
 								&.icon-collapsed, &.icon-expanded{
 									margin-right: 10px;
 									width: 20px;
+									position: relative;
+									top: 5px;
 									&:before{
 										color: $user_menu;
-										margin-top: 9px;
 										font-size: 24px;
 									}
 								}
