@@ -216,6 +216,7 @@ Brandscopic::Application.routes.draw do
       resources :events, only: [:new, :create]
       resources :activities, only: [:new, :create] do
         get :form, on: :collection
+        get :empty_form, to: 'activities#export_empty_fieldable', on: :collection
       end
     end
   end
@@ -394,6 +395,7 @@ Brandscopic::Application.routes.draw do
 
     resources :activities, only: [:new, :create] do
       get :form, on: :collection
+      get :empty_form, to: 'activities#export_empty_fieldable', on: :collection
     end
 
     member do

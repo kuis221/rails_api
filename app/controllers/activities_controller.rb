@@ -20,7 +20,17 @@ class ActivitiesController < FilteredController
     render layout: false
   end
 
+  def export_empty_fieldable
+    build_resource
+    export_fieldable
+  end
+
   protected
+
+  def build_resource(*args)
+    @activity = Activity.find(params[:id]) if params[:id].present?
+    @activity ||= super
+  end
 
   def assignable_users
     current_company.company_users.active.for_dropdown

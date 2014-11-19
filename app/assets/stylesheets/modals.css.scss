@@ -1256,5 +1256,19 @@ div#spin{
 	.form_field_section{
 		margin-top: 10px;
 	}
+	a{
+		&.icon-download{
+			color: $brand;
+			font-family: $baseFontFamily;
+			font-size: 12px;
+			text-decoration: none;
+			&:before {
+				font-family: 'icons';
+				font-size: 14px;
+				margin-right: 8px;
+				margin-bottom: 15px;
+			}
+		}
+	}
 }
 
