@@ -6,6 +6,7 @@
       = activity.company_user.full_name
 
   .resource-item-actions
+    = link_to '', form_activity_path(id: activity.id, format: :pdf), class: 'icon-download'
     = link_to '', [:edit, activity], remote: true, class: 'icon-edit', title: 'Edit' if can?(:edit, Activity)
     = "&nbsp;".html_safe
     - if can?(:deactivate, Activity)
