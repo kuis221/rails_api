@@ -74,7 +74,10 @@ body.app-layout {
 
 	label.radio div.radio {
 		span.checked {
-			background-image: image-url('radio-checked-blue.svg')
+			border: 4px solid $blue;
+			&:after{
+				background-color: $blue;
+			}
 		}
 	}
 }
