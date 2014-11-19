@@ -261,68 +261,13 @@ feature 'Tasks', js: true, search: true do
         expect(custom_filter.owner).to eq(company_user)
         expect(custom_filter.name).to eq('My Custom Filter')
         expect(custom_filter.apply_to).to eq('tasks')
-        expect(custom_filter.filters).to eq("campaign%5B%5D=#{campaign1.id}&task_status%5B%5D=Late&status%5B%5D=Active")
+        expect(custom_filter.filters).to eq(
+          "status%5B%5D=Active&campaign%5B%5D=#{campaign1.id}&task_status%5B%5D=Late")
       end
       ensure_modal_was_closed
 
       within '.form-facet-filters' do
         expect(page).to have_content('My Custom Filter')
-      end
-    end
-
-    scenario 'allows to apply custom filters in My Tasks' do
-      create(:custom_filter,
-             owner: company_user, name: 'Custom Filter 1', apply_to: 'tasks',
-             filters: "campaign%5B%5D=#{campaign1.id}&task_status%5B%5D=Incomplete&status%5B%5D=Active")
-      create(:custom_filter,
-             owner: company_user, name: 'Custom Filter 2', apply_to: 'tasks',
-             filters: "campaign%5B%5D=#{campaign2.id}&task_status%5B%5D=Complete&status%5B%5D=Active")
-
-      visit mine_tasks_path
-
-      within tasks_list do
-        expect(page).to have_content('Pick up kidz at school')
-        expect(page).to have_content('Bring beers to the party')
-      end
-
-      # Using Custom Filter 1
-      filter_section('SAVED FILTERS').unicheck('Custom Filter 1')
-
-      within tasks_list do
-        expect(page).to have_content('Pick up kidz at school')
-        expect(page).to_not have_content('Bring beers to the party')
-      end
-
-      within '.form-facet-filters' do
-        expect(find_field('Cacique FY13')['checked']).to be_truthy
-        expect(find_field('New Brand Campaign')['checked']).to be_falsey
-        expect(find_field('Complete')['checked']).to be_falsey
-        expect(find_field('Incomplete')['checked']).to be_truthy
-        expect(find_field('Late')['checked']).to be_falsey
-        expect(find_field('Active')['checked']).to be_truthy
-        expect(find_field('Inactive')['checked']).to be_falsey
-        expect(find_field('Custom Filter 1')['checked']).to be_truthy
-        expect(find_field('Custom Filter 2')['checked']).to be_falsey
-      end
-
-      # Using Custom Filter 2 should update results and checked/unchecked checkboxes
-      filter_section('SAVED FILTERS').unicheck('Custom Filter 2')
-
-      within tasks_list do
-        expect(page).to_not have_content('Pick up kidz at school')
-        expect(page).to have_content('Bring beers to the party')
-      end
-
-      within '.form-facet-filters' do
-        expect(find_field('Cacique FY13')['checked']).to be_falsey
-        expect(find_field('New Brand Campaign')['checked']).to be_truthy
-        expect(find_field('Complete')['checked']).to be_truthy
-        expect(find_field('Incomplete')['checked']).to be_falsey
-        expect(find_field('Late')['checked']).to be_falsey
-        expect(find_field('Active')['checked']).to be_truthy
-        expect(find_field('Inactive')['checked']).to be_falsey
-        expect(find_field('Custom Filter 1')['checked']).to be_falsey
-        expect(find_field('Custom Filter 2')['checked']).to be_truthy
       end
     end
 
@@ -346,7 +291,9 @@ feature 'Tasks', js: true, search: true do
         expect(custom_filter.owner).to eq(company_user)
         expect(custom_filter.name).to eq('My Custom Filter')
         expect(custom_filter.apply_to).to eq('tasks')
-        expect(custom_filter.filters).to eq("campaign%5B%5D=#{campaign1.id}&task_status%5B%5D=Late&user%5B%5D=#{company_user.id}&status%5B%5D=Active")
+        expect(custom_filter.filters).to eq(
+          "status%5B%5D=Active&campaign%5B%5D=#{campaign1.id}&"\
+          "task_status%5B%5D=Late&user%5B%5D=#{company_user.id}")
       end
       ensure_modal_was_closed
 
@@ -355,77 +302,6 @@ feature 'Tasks', js: true, search: true do
       end
     end
 
-    scenario 'allows to apply custom filters in Team Tasks' do
-      team_member = create(:company_user, user: create(:user, first_name: 'Roberto', last_name: 'Gomez'), company: company)
-      event = create(:event, campaign: campaign2)
-      event.users << [team_member, company_user]
-      create(:completed_task, title: 'Pick up new stuff', company_user: team_member,
-                              due_at: '2013-09-02', active: true, event: event)
-
-      Sunspot.commit
-
-      create(:custom_filter,
-             owner: company_user, name: 'Custom Filter 1', apply_to: 'tasks',
-             filters: "campaign%5B%5D=#{campaign1.id}&task_status%5B%5D=Incomplete&user%5B%5D=#{company_user.id}&status%5B%5D=Active")
-      create(:custom_filter,
-             owner: company_user, name: 'Custom Filter 2', apply_to: 'tasks',
-             filters: "campaign%5B%5D=#{campaign2.id}&task_status%5B%5D=Complete&user%5B%5D=#{team_member.id}&status%5B%5D=Active")
-
-      visit my_teams_tasks_path
-
-      within tasks_list do
-        expect(page).to_not have_content('Pick up kidz at school')
-        expect(page).to have_content('Pick up new stuff')
-      end
-
-      # Using Custom Filter 1
-      filter_section('SAVED FILTERS').unicheck('Custom Filter 1')
-
-      within tasks_list do
-        expect(page).to have_content('Pick up kidz at school')
-        expect(page).to_not have_content('Pick up new stuff')
-      end
-
-      within '.form-facet-filters' do
-        expect(find_field('Cacique FY13')['checked']).to be_truthy
-        expect(find_field('New Brand Campaign')['checked']).to be_falsey
-        expect(find_field('Assigned')['checked']).to be_falsey
-        expect(find_field('Complete')['checked']).to be_falsey
-        expect(find_field('Incomplete')['checked']).to be_truthy
-        expect(find_field('Late')['checked']).to be_falsey
-        expect(find_field('Unassigned')['checked']).to be_falsey
-        expect(find_field('Roberto Gomez')['checked']).to be_falsey
-        expect(find_field('Test User')['checked']).to be_truthy
-        expect(find_field('Active')['checked']).to be_truthy
-        expect(find_field('Inactive')['checked']).to be_falsey
-        expect(find_field('Custom Filter 1')['checked']).to be_truthy
-        expect(find_field('Custom Filter 2')['checked']).to be_falsey
-      end
-
-      # Using Custom Filter 2 should update results and checked/unchecked checkboxes
-      filter_section('SAVED FILTERS').unicheck('Custom Filter 2')
-
-      within tasks_list do
-        expect(page).to_not have_content('Pick up kidz at school')
-        expect(page).to have_content('Pick up new stuff')
-      end
-
-      within '.form-facet-filters' do
-        expect(find_field('Cacique FY13')['checked']).to be_falsey
-        expect(find_field('New Brand Campaign')['checked']).to be_truthy
-        expect(find_field('Assigned')['checked']).to be_falsey
-        expect(find_field('Complete')['checked']).to be_truthy
-        expect(find_field('Incomplete')['checked']).to be_falsey
-        expect(find_field('Late')['checked']).to be_falsey
-        expect(find_field('Unassigned')['checked']).to be_falsey
-        expect(find_field('Roberto Gomez')['checked']).to be_truthy
-        expect(find_field('Test User')['checked']).to be_falsey
-        expect(find_field('Active')['checked']).to be_truthy
-        expect(find_field('Inactive')['checked']).to be_falsey
-        expect(find_field('Custom Filter 1')['checked']).to be_falsey
-        expect(find_field('Custom Filter 2')['checked']).to be_truthy
-      end
-    end
   end
 
   feature 'export' do

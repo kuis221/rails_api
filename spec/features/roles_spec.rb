@@ -134,7 +134,7 @@ feature 'Roles', js: true do
     scenario 'allows to create a new custom filter' do
       visit roles_path
 
-      filter_section('ACTIVE STATE').unicheck('Active')
+      remove_filter 'Active'
       filter_section('ACTIVE STATE').unicheck('Inactive')
 
       click_button 'Save'
@@ -156,52 +156,6 @@ feature 'Roles', js: true do
 
       within '.form-facet-filters' do
         expect(page).to have_content('My Custom Filter')
-      end
-    end
-
-    scenario 'allows to apply custom filters' do
-      create(:custom_filter,
-             owner: company_user, name: 'Custom Filter 1', apply_to: 'roles',
-             filters: 'status%5B%5D=Active')
-      create(:custom_filter,
-             owner: company_user, name: 'Custom Filter 2', apply_to: 'roles',
-             filters: 'status%5B%5D=Inactive')
-
-      visit roles_path
-
-      within roles_list do
-        expect(page).to have_content('Costa Rica Role')
-        expect(page).to_not have_content('Buenos Aires Role')
-      end
-
-      # Using Custom Filter 1
-      filter_section('SAVED FILTERS').unicheck('Custom Filter 1')
-
-      within roles_list do
-        expect(page).to have_content('Costa Rica Role')
-        expect(page).to_not have_content('Buenos Aires Role')
-      end
-
-      within '.form-facet-filters' do
-        expect(find_field('Active')['checked']).to be_truthy
-        expect(find_field('Inactive')['checked']).to be_falsey
-        expect(find_field('Custom Filter 1')['checked']).to be_truthy
-        expect(find_field('Custom Filter 2')['checked']).to be_falsey
-      end
-
-      # Using Custom Filter 2 should update results and checked/unchecked checkboxes
-      filter_section('SAVED FILTERS').unicheck('Custom Filter 2')
-
-      within roles_list do
-        expect(page).to_not have_content('Costa Rica Role')
-        expect(page).to have_content('Buenos Aires Role')
-      end
-
-      within '.form-facet-filters' do
-        expect(find_field('Active')['checked']).to be_falsey
-        expect(find_field('Inactive')['checked']).to be_truthy
-        expect(find_field('Custom Filter 1')['checked']).to be_falsey
-        expect(find_field('Custom Filter 2')['checked']).to be_truthy
       end
     end
   end

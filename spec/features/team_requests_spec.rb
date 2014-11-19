@@ -209,62 +209,13 @@ feature 'Teams', js: true do
         expect(custom_filter.owner).to eq(company_user)
         expect(custom_filter.name).to eq('My Custom Filter')
         expect(custom_filter.apply_to).to eq('teams')
-        expect(custom_filter.filters).to eq("campaign%5B%5D=#{campaign1.id}&status%5B%5D=Active")
+        expect(custom_filter.filters).to eq(
+          "status%5B%5D=Active&campaign%5B%5D=#{campaign1.id}")
       end
       ensure_modal_was_closed
 
       within '.form-facet-filters' do
         expect(page).to have_content('My Custom Filter')
-      end
-    end
-
-    scenario 'allows to apply custom filters' do
-      create(:custom_filter,
-             owner: company_user, name: 'Custom Filter 1', apply_to: 'teams',
-             filters: "campaign%5B%5D=#{campaign1.id}&status%5B%5D=Active")
-      create(:custom_filter,
-             owner: company_user, name: 'Custom Filter 2', apply_to: 'teams',
-             filters: "campaign%5B%5D=#{campaign2.id}&status%5B%5D=Active")
-
-      visit teams_path
-
-      within teams_list do
-        expect(page).to have_content('Costa Rica Team')
-        expect(page).to have_content('San Francisco Team')
-      end
-
-      # Using Custom Filter 1
-      filter_section('SAVED FILTERS').unicheck('Custom Filter 1')
-
-      within teams_list do
-        expect(page).to have_content('Costa Rica Team')
-        expect(page).to_not have_content('San Francisco Team')
-      end
-
-      within '.form-facet-filters' do
-        expect(find_field('Campaign 1')['checked']).to be_truthy
-        expect(find_field('Campaign 2')['checked']).to be_falsey
-        expect(find_field('Active')['checked']).to be_truthy
-        expect(find_field('Inactive')['checked']).to be_falsey
-        expect(find_field('Custom Filter 1')['checked']).to be_truthy
-        expect(find_field('Custom Filter 2')['checked']).to be_falsey
-      end
-
-      # Using Custom Filter 2 should update results and checked/unchecked checkboxes
-      filter_section('SAVED FILTERS').unicheck('Custom Filter 2')
-
-      within teams_list do
-        expect(page).to_not have_content('Costa Rica Team')
-        expect(page).to have_content('San Francisco Team')
-      end
-
-      within '.form-facet-filters' do
-        expect(find_field('Campaign 1')['checked']).to be_falsey
-        expect(find_field('Campaign 2')['checked']).to be_truthy
-        expect(find_field('Active')['checked']).to be_truthy
-        expect(find_field('Inactive')['checked']).to be_falsey
-        expect(find_field('Custom Filter 1')['checked']).to be_falsey
-        expect(find_field('Custom Filter 2')['checked']).to be_truthy
       end
     end
   end

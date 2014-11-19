@@ -666,70 +666,14 @@ feature 'Campaigns', js: true do
         expect(custom_filter.owner).to eq(company_user)
         expect(custom_filter.name).to eq('My Custom Filter')
         expect(custom_filter.apply_to).to eq('campaigns')
-        expect(custom_filter.filters).to eq("brand%5B%5D=#{brand1.id}&brand_portfolio%5B%5D=#{brand_portfolio1.id}&user%5B%5D=#{company_user.id}&status%5B%5D=Active")
+        expect(custom_filter.filters).to eq(
+          "status%5B%5D=Active&brand%5B%5D=#{brand1.id}&"\
+          "brand_portfolio%5B%5D=#{brand_portfolio1.id}&user%5B%5D=#{company_user.id}")
       end
       ensure_modal_was_closed
 
       within '.form-facet-filters' do
         expect(page).to have_content('My Custom Filter')
-      end
-    end
-
-    scenario 'allows to apply custom filters' do
-      create(:custom_filter,
-             owner: company_user, name: 'Custom Filter 1', apply_to: 'campaigns',
-             filters: "brand%5B%5D=#{brand1.id}&brand_portfolio%5B%5D=#{brand_portfolio1.id}&user%5B%5D=#{company_user.id}&status%5B%5D=Active")
-      create(:custom_filter,
-             owner: company_user, name: 'Custom Filter 2', apply_to: 'campaigns',
-             filters: "brand%5B%5D=#{brand2.id}&brand_portfolio%5B%5D=#{brand_portfolio2.id}&user%5B%5D=#{another_user.id}&status%5B%5D=Active")
-
-      visit campaigns_path
-
-      within campaigns_list do
-        expect(page).to have_content('Cacique FY13')
-        expect(page).to have_content('New Brand Campaign')
-      end
-
-      # Using Custom Filter 1
-      filter_section('SAVED FILTERS').unicheck('Custom Filter 1')
-
-      within campaigns_list do
-        expect(page).to have_content('Cacique FY13')
-        expect(page).to_not have_content('New Brand Campaign')
-      end
-
-      within '.form-facet-filters' do
-        expect(find_field('Brand 1')['checked']).to be_truthy
-        expect(find_field('Brand 2')['checked']).to be_falsey
-        expect(find_field('A Vinos ticos')['checked']).to be_truthy
-        expect(find_field('B Licores Costarricenses')['checked']).to be_falsey
-        expect(find_field('Roberto Gomez')['checked']).to be_falsey
-        expect(find_field('Test User')['checked']).to be_truthy
-        expect(find_field('Active')['checked']).to be_truthy
-        expect(find_field('Inactive')['checked']).to be_falsey
-        expect(find_field('Custom Filter 1')['checked']).to be_truthy
-        expect(find_field('Custom Filter 2')['checked']).to be_falsey
-      end
-
-      # Using Custom Filter 2 should update results and checked/unchecked checkboxes
-      filter_section('SAVED FILTERS').unicheck('Custom Filter 2')
-
-      within campaigns_list do
-        expect(page).to_not have_content('Cacique FY13')
-        expect(page).to have_content('New Brand Campaign')
-      end
-
-      within '.form-facet-filters' do
-        expect(find_field('Brand 1')['checked']).to be_falsey
-        expect(find_field('Brand 2')['checked']).to be_truthy
-        expect(find_field('A Vinos ticos')['checked']).to be_falsey
-        expect(find_field('B Licores Costarricenses')['checked']).to be_truthy
-        expect(find_field('Roberto Gomez')['checked']).to be_truthy
-        expect(find_field('Test User')['checked']).to be_falsey
-        expect(find_field('Active')['checked']).to be_truthy
-        expect(find_field('Inactive')['checked']).to be_falsey
-        expect(find_field('Custom Filter 1')['checked']).to be_falsey
-        expect(find_field('Custom Filter 2')['checked']).to be_truthy
       end
     end
   end
