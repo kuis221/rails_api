@@ -187,7 +187,7 @@ $.widget 'nmk.filteredList', {
 			if param.name isnt 'custom_start_date' and param.name isnt 'custom_end_date'
 				p.push param if param.value != '' && param.name != 'custom_filter[]'
 
-		for param in @defaultParams
+		for param in (@defaultParams || [])
 			p.push param unless @element.find('input[type=checkbox][name="'+param.name+'"][value="'+param.value+'"]:checked').length > 0
 
 		for param in @options.customFilters

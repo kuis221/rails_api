@@ -213,7 +213,7 @@ feature 'Brand Ambassadors Visits' do
 
         add_filter 'CAMPAIGNS', 'My Campaign'
 
-        expect(page).to have_content('2 visits found for: My Campaign')
+        expect(page).to have_content('2 visits found for: today to the future My Campaign')
 
         within '#visits-list' do
           expect(page).to have_content('My Campaign')
