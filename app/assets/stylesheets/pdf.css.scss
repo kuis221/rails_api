@@ -80,4 +80,9 @@ body.app-layout {
 			}
 		}
 	}
+
+	textarea {
+		resize: none;
+		min-height: 114px;
+	}
 }

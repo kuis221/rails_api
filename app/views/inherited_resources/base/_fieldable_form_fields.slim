@@ -20,3 +20,21 @@
 
 = content_for :pdf_scripts
   = wicked_pdf_javascript_include_tag "application"
+  javascript:
+    $(window).ready(function(){
+      function autoHeightTextArea(a) {
+          if (!$(a).prop('scrollTop')) {
+              do {
+                  var b = $(a).prop('scrollHeight');
+                  var h = $(a).height();
+                  $(a).height(h - 5);
+              }
+              while (b && (b != $(a).prop('scrollHeight')));
+          };
+          $(a).height($(a).prop('scrollHeight'));
+      }
+
+      $("textarea").each(function (i, a) {
+          autoHeightTextArea(a);
+      });
+    })

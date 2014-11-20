@@ -10,7 +10,6 @@
             = f.input :activity_type_id, collection: activity_types, input_html: {class: 'chosen-enabled'}, disabled: (resource.new_record? ? false : true)
 
         - if resource.activity_type.present?
-          = link_to 'Export form as PDF', polymorphic_url([resource.activitable, :activities], action: :empty_form, activity: { activity_type_id: resource.activity_type.id }, id: resource.id, format: :pdf), class: 'icon-download'
           .large-inputs class="form_field_dropdown"
             - if resource.activitable_type == 'Venue'
               = f.input :campaign_id, collection: resource.activity_type.campaigns.active.accessible_by_user(current_company_user).order(:name).for_dropdown, input_html: {class: 'chosen-enabled'}
