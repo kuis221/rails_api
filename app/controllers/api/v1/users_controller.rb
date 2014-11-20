@@ -487,6 +487,7 @@ class Api::V1::UsersController < Api::V1::FilteredController
   def search_params
     super
     @search_params[:status] = ['Active']
+    @search_params[:per_page] = 1000
     @search_params
   end
 
