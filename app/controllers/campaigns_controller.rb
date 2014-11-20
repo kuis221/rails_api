@@ -131,15 +131,7 @@ class CampaignsController < FilteredController
   # This is used for exporting the form in PDF format. Initializes
   # a new activity for the current campaign
   def fieldable
-    @fieldable ||= resource.events.build(
-      start_date: Date.current.to_s(:slashes),
-      start_time: '08:00 PM',
-      end_date: Date.current.to_s(:slashes),
-      end_time: '11:30 PM',
-      place: Place.new(name: 'Bar None', route: 'Union Street',
-                       street_number: '5555', city: 'San Francisco',
-                       state: 'California', country: 'US', zipcode: '94110')
-    )
+    @fieldable ||= resource.events.build
   end
 
   def pdf_form_file_name
