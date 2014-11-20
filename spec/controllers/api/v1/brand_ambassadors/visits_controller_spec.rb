@@ -232,16 +232,19 @@ describe Api::V1::BrandAmbassadors::VisitsController, type: :controller do
       expect(response).to be_success
       result = JSON.parse(response.body)
 
-      expect(result).to match_array([{ 'id' => event1.id, 'start_date' => '11/09/2014', 'start_time' => '10:00 AM',
-                                       'end_date' => '11/09/2014', 'end_time' => '11:00 AM',
-                                       'campaign' => { 'id' => campaign.id, 'name' => 'My Campaign' },
-                                       'place' => { 'id' => place1.id, 'name' => 'Place 1', 'formatted_address' => 'Los Angeles, CA, US',
-                                                    'country' => 'US', 'state_name' => 'CA', 'city' => 'Los Angeles', 'zipcode' => '90210' } },
-                                     { 'id' => event2.id, 'start_date' => '11/10/2014', 'start_time' => '8:00 AM',
-                                       'end_date' => '11/11/2014', 'end_time' => '9:00 AM',
-                                       'campaign' => { 'id' => another_campaign.id, 'name' => 'Campaign FY2012' },
-                                       'place' => { 'id' => place2.id, 'name' => 'Place 2', 'formatted_address' => 'Austin, TX, US',
-                                                    'country' => 'US', 'state_name' => 'TX', 'city' => 'Austin', 'zipcode' => '15879' } }])
+      expect(result).to match_array([
+        { 'id' => event1.id, 'start_date' => '11/09/2014', 'start_time' => '10:00 AM',
+           'end_date' => '11/09/2014', 'end_time' => '11:00 AM',
+           'status' => 'Active', 'event_status' => 'Late',
+           'campaign' => { 'id' => campaign.id, 'name' => 'My Campaign' },
+           'place' => { 'id' => place1.id, 'name' => 'Place 1', 'formatted_address' => 'Los Angeles, CA, US',
+                        'country' => 'US', 'state_name' => 'CA', 'city' => 'Los Angeles', 'zipcode' => '90210' } },
+        { 'id' => event2.id, 'start_date' => '11/10/2014', 'start_time' => '8:00 AM',
+          'end_date' => '11/11/2014', 'end_time' => '9:00 AM',
+          'status' => 'Active', 'event_status' => 'Late',
+          'campaign' => { 'id' => another_campaign.id, 'name' => 'Campaign FY2012' },
+          'place' => { 'id' => place2.id, 'name' => 'Place 2', 'formatted_address' => 'Austin, TX, US',
+                       'country' => 'US', 'state_name' => 'TX', 'city' => 'Austin', 'zipcode' => '15879' } }])
     end
   end
 end
