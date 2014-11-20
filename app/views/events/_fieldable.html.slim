@@ -1,17 +1,17 @@
-h2.special = resource.campaign_name
+h2.special = fieldable.campaign_name
 
 .calendar-data
   i.icon-calendar
   span
-    = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at), date_separator: ' - ')
-- unless resource.place.nil?
+    = format_date_range(event_date(fieldable, :start_at), event_date(fieldable, :end_at), date_separator: ' - ')
+- unless fieldable.place.nil?
   .place-data
     i.icon-wired-venue
     span
-      = place_address(resource.place, false, ', ') if resource.place
+      = place_address(fieldable.place, false, ', ') if fieldable.place
 
-- unless resource.description.nil? || resource.description.empty?
-    p= simple_format resource.description
+- unless fieldable.description.nil? || fieldable.description.empty?
+    p= simple_format fieldable.description
 
 
 = render 'fieldable_form_fields'

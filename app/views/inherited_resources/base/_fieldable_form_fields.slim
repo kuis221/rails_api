@@ -1,15 +1,16 @@
 .data-form-wrapper
-  = simple_form_for [resource.new_record? ? parent : nil, resource], remote: true do |f|
-    - resource.form_field_results.each do |result|
+  = simple_form_for fieldable, url: '', remote: true do |f|
+    - fieldable.form_field_results.each do |result|
       = f.simple_fields_for :results, result do |rf|
-        - if result.form_field.is_a?(FormField::UserDate) && resource.is_a?(Activity)
+        - if result.form_field.is_a?(FormField::UserDate)
+          - next unless fieldable.is_a?(Activity) # this field should only be displayed for activities
           .form_field_userdate.pdf-keeptogether
             .control-group
               .row-fluid
                 .span8
-                  = f.input :company_user_id, label: 'User', collection: assignable_users, input_html: {class: 'chosen-enabled'}
+                  = f.input :company_user_id, label: 'User', as: :string, input_html: {class: 'chosen-enabled', value: fieldable.new_record? ? '' : fieldable.company_user.try(:full_name)}
                 .span4
-                  = f.input :activity_date, input_html: {class: 'field-type-date', value: resource.activity_date.try(:to_s, :slashes)}, as: :date_picker, label: 'Date'
+                  = f.input :activity_date, input_html: {class: 'field-type-date', value: fieldable.new_record? ? '' : fieldable.activity_date.try(:to_s, :slashes)}, as: :date_picker, label: 'Date'
         - else
           .large-inputs.pdf-keeptogether class="#{result.form_field.css_class}"
             - if result.form_field.type == 'FormField::Dropdown'

@@ -3,7 +3,7 @@ module ExportableFormHelper
     def export_fieldable
       respond_to do |format|
         format.pdf do
-          render pdf: file_name,
+          render pdf: pdf_form_file_name,
                  template: 'shared/fieldable.html.slim',
                  layout: 'application.pdf',
                  disposition: 'attachment',
@@ -12,14 +12,19 @@ module ExportableFormHelper
       end
     end
 
+    def fieldable
+      resource
+    end
+
     private
 
-    def file_name
-      "#{controller_name.underscore}-#{Time.now.strftime('%Y%m%d%H%M%S')}-#{resource.id}"
+    def pdf_form_file_name
+      "#{controller_name.underscore}-#{Time.now.strftime('%Y%m%d%H%M%S')}"
     end
   end
 
   def self.extended(receiver)
     receiver.send(:include, InstanceMethods)
+    receiver.send(:helper_method, :fieldable)
   end
 end
