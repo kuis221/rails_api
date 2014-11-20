@@ -21,7 +21,8 @@ class ActivityType < ActiveRecord::Base
   validates :company_id, presence: true, numericality: true
 
   # Campaign relationships
-  has_many :activity_type_campaigns
+  has_many :activities, inverse_of: :activity_type
+  has_many :activity_type_campaigns, inverse_of: :activity_type
   has_many :campaigns, through: :activity_type_campaigns
 
   # Goals relationships

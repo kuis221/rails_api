@@ -135,6 +135,10 @@ class EventsController < FilteredController
 
   protected
 
+  def pdf_form_file_name
+    "#{resource.campaign_name.parameterize}-#{Time.now.strftime('%Y%m%d%H%M%S')}.pdf"
+  end
+
   def build_resource
     @event || super.tap do |e|
       super
@@ -204,8 +208,13 @@ class EventsController < FilteredController
       campaing_brands_map[campaign.id] = campaign.associated_brand_ids
     end
 
+    brands_scope = current_company.brands
+    brands_scope = brands_scope.where(id: search_params[:brand]) unless search_params[:brand].blank?
+
     all_brands = campaing_brands_map.values.flatten.uniq
-    brands = Hash[Brand.where(id: all_brands).map { |b| [b.id, b] }]
+    Rails.logger.debug "HEREHERHEEHRE"
+    brands = Hash[brands_scope.where(id: all_brands).map { |b| [b.id, b] }]
+    Rails.logger.debug "HEREHERHEEHRE"
 
     search = Event.do_search(custom_params.merge(
         start_date: start_date.to_s(:slashes),
@@ -220,6 +229,7 @@ class EventsController < FilteredController
         next unless campaing_brands_map[hit.stored(:campaign_id).to_i]
 
         campaing_brands_map[hit.stored(:campaign_id).to_i].each do |brand_id|
+          next unless brands.key?(brand_id)
           brand = brands[brand_id]
           days[day][brand.id] ||= {
             count: 0,

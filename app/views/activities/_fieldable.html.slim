@@ -1,13 +1,13 @@
-h2.special = resource.activity_type_name
+h2.special = fieldable.activity_type_name
 
-- unless resource.campaign_name.nil? || resource.campaign_name.empty?
+- unless fieldable.campaign_name.nil? || fieldable.campaign_name.empty?
   .description-data
     i.icon-campaign
     span
-      = resource.campaign_name
+      = fieldable.campaign_name
 
-- unless resource.activity_type_description.nil? || resource.activity_type_description.empty?
-    p= simple_format resource.activity_type_description
+- unless fieldable.activity_type_description.nil? || fieldable.activity_type_description.empty?
+    p= simple_format fieldable.activity_type_description
 
 
 = render 'fieldable_form_fields'

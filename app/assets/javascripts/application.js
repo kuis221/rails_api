@@ -20,12 +20,9 @@
 //= require jquery_nested_form
 //= require bootbox
 //= require bootstrap-toggle
-//= require brandscopic
-//= require campaigns
 //= require chardinjs
 //= require chosen.jquery
 //= require desk.widget
-//= require events
 //= require highstock.src.js
 //= require d3
 //= require bubble_clouds
@@ -53,3 +50,6 @@
 //= require moment.min.js
 //= require fullcalendar
 //= require jquery.colorPicker
+//= require brandscopic
+//= require campaigns
+//= require events

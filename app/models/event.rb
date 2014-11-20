@@ -707,6 +707,7 @@ class Event < ActiveRecord::Base
     if new_record?
       self.start_time ||= '12:00 PM'
       self.end_time ||= '01:00 PM'
+      parse_start_end
     elsif has_attribute?(:start_at) # this if is to allow custom selects on the Event module
       self.start_date = start_at.to_s(:slashes)   unless start_at.blank?
       self.start_time = start_at.to_s(:time_only).strip unless start_at.blank?

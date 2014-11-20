@@ -46,6 +46,9 @@ a{
 	}
 	&.btn{
 		font-weight: normal;
+		&:hover {
+			color: white;
+		}
 	}
 	&.more-options-link{
 		color:$brand;
