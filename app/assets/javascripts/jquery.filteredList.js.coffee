@@ -164,22 +164,7 @@ $.widget 'nmk.filteredList', {
 			@setFilters json.filters
 
 	getFilters: () ->
-		data = @form.serializeArray()
-		p = []
-		for param in data
-			if param.name isnt 'custom_start_date' and param.name isnt 'custom_end_date'
-				p.push param if param.value != '' && param.name != 'custom_filter[]'
-
-		for param in @defaultParams
-			p.push param unless @element.find('input[type=checkbox][name="'+param.name+'"][value="'+param.value+'"]:checked').length > 0
-
-		for param in @options.customFilters
-			p.push param
-
-		if @loadFacets
-			p.push {'name': 'facets', 'value': true}
-			@loadFacets = false
-		p
+		@_deparam @paramsQueryString()
 
 	setFilters: (filters) ->
 		$.loadingContent += 1
