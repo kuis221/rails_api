@@ -142,6 +142,10 @@ class CampaignsController < FilteredController
     )
   end
 
+  def pdf_form_file_name
+    "#{resource.name.parameterize}-#{Time.now.strftime('%Y%m%d%H%M%S')}.pdf"
+  end
+
   def permitted_params
     p = [:name, :start_date, :end_date, :description, :color, :brands_list, { brand_portfolio_ids: [] }]
     if can?(:view_event_form, Campaign)

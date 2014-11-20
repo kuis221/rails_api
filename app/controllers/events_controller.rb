@@ -135,6 +135,10 @@ class EventsController < FilteredController
 
   protected
 
+  def pdf_form_file_name
+    "#{resource.campaign_name.parameterize}-#{Time.now.strftime('%Y%m%d%H%M%S')}.pdf"
+  end
+
   def build_resource
     @event || super.tap do |e|
       super
