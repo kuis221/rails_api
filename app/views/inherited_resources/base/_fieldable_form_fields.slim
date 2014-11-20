@@ -1,0 +1,22 @@
+.data-form-wrapper
+  = simple_form_for [resource.new_record? ? parent : nil, resource], remote: true do |f|
+    - resource.form_field_results.each do |result|
+      = f.simple_fields_for :results, result do |rf|
+        - if result.form_field.is_a?(FormField::UserDate) && resource.is_a?(Activity)
+          .form_field_userdate.pdf-keeptogether
+            .control-group
+              .row-fluid
+                .span8
+                  = f.input :company_user_id, label: 'User', collection: assignable_users, input_html: {class: 'chosen-enabled'}
+                .span4
+                  = f.input :activity_date, input_html: {class: 'field-type-date', value: resource.activity_date.try(:to_s, :slashes)}, as: :date_picker, label: 'Date'
+        - else
+          .large-inputs.pdf-keeptogether class="#{result.form_field.css_class}"
+            - if result.form_field.type == 'FormField::Dropdown'
+              = rf.input :value, result.form_field.field_options(result).merge(as: :radio_buttons)
+            - else
+              = rf.input :value, result.form_field.field_options(result)
+            = rf.input :form_field_id, as: :hidden, wrapper: false
+
+= content_for :pdf_scripts
+  = wicked_pdf_javascript_include_tag "application"

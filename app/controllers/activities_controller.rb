@@ -6,6 +6,10 @@ class ActivitiesController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update]
   custom_actions member: [:form]
 
+  # This helper provide the methods to export HTML to PDF
+  extend ExportableFormHelper
+
+  # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
 
   helper_method :assignable_users, :activity_types
@@ -16,7 +20,17 @@ class ActivitiesController < FilteredController
     render layout: false
   end
 
+  def export_empty_fieldable
+    build_resource
+    export_fieldable
+  end
+
   protected
+
+  def build_resource(*args)
+    @activity = Activity.find(params[:id]) if params[:id].present?
+    @activity ||= super
+  end
 
   def assignable_users
     current_company.company_users.active.for_dropdown

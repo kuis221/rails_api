@@ -97,8 +97,8 @@ abbr[title]{
 h1, h2, h3{
 	font-family: $baseFontFamily;
 	font-weight: normal;
-	line-height: 20px;
 	margin-top: 0;
+	line-height: 30px;
 }
 
 p{
@@ -1404,6 +1404,9 @@ footer{
 					height: 20px;
 					width: 20px;
 				}
+				span {
+					border: 0;
+				}
 			}
 		}
 		.positive{
@@ -2577,7 +2580,9 @@ ul.ui-widget-content{
 #company-name {
 	font-size: 20px;
 	margin-bottom: 0;
-	padding: 10px 0 0 25px;
+	margin-top: 0;
+	padding: 0px 0 0 25px;
+	height: 35px;
 	a {
 		color: $brand;
 		text-decoration: none;
@@ -2849,6 +2854,7 @@ ul.ui-widget-content{
 			font-size: 16px;
 			display: inline-block;
 			margin-bottom: 0;
+			margin-top: 0;
 		}
 		i{
 			position: relative;
@@ -3433,6 +3439,7 @@ body.events.index {
 	width: 100%;
 	h3{
 		a#edit-event-data-btn{
+			color: $brand;
 			margin-left: 10px;
 			top: 1px;
 			font-size: 16px;
@@ -3612,6 +3619,16 @@ body.events.index {
 				div.radio {
 					margin-right: 0;
 				}
+			}
+		}
+	}
+	#list-tools {
+		.btn.download {
+			padding: 0px;
+			.icon-download:before {
+				height: 34px;
+				width: 48px;
+				padding-top: 10px;
 			}
 		}
 	}

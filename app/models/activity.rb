@@ -50,7 +50,7 @@ class Activity < ActiveRecord::Base
            to: :place, allow_nil: true, prefix: true
   delegate :name, to: :campaign, allow_nil: true, prefix: true
   delegate :full_name, to: :company_user, allow_nil: true, prefix: true
-  delegate :name, to: :activity_type, allow_nil: true, prefix: true
+  delegate :name, :description, to: :activity_type, allow_nil: true, prefix: true
   delegate :place, :place_id, to: :activitable, allow_nil: true
 
   accepts_nested_attributes_for :results, allow_destroy: true
@@ -81,7 +81,7 @@ class Activity < ActiveRecord::Base
     update_attribute :active, false
   end
 
-  def results_for_type
+  def form_field_results
     activity_type.form_fields.map do |field|
       result = results.find { |r| r.form_field_id == field.id } || results.build(form_field_id: field.id)
       result.form_field = field
