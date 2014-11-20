@@ -27,8 +27,6 @@ $.widget 'nmk.filteredList', {
 
 	_create: () ->
 		query = window.location.search.replace(/^\?/,"")
-		if query != ''
-			@options.defaultParams = []
 		@element.addClass('filter-box')
 		@form = $('<form action="#" method="get">')
 			.appendTo(@element).submit (e) ->
@@ -89,16 +87,7 @@ $.widget 'nmk.filteredList', {
 			if filterParts[0] == 'date'
 				@_deselectDates()
 			else
-				filterName = filterParts[0] + '[]'
-				filterValue = filterParts[1]
-				@initialized = false
-				for field in @form.find("input[name=\"#{filterName}\"][value=\"#{filterValue}\"]")
-					if $(field).attr('type') == 'checkbox'
-						@_clickCheckbox($(field))
-					else
-						$(field).remove()
-				@initialized = true
-				@_filtersChanged()
+				@_removeParams encodeURIComponent("#{filterParts[0]}[]") + '=' + encodeURIComponent(filterParts[1])
 			false
 
 
@@ -121,13 +110,9 @@ $.widget 'nmk.filteredList', {
 			if firstTime
 				firstTime = false
 			else
-				#@reloadFilters()
-				@_parseQueryString(window.location.search)
+				@_paramsQueryString = document.location.search.replace(/^\?/, '')
 				@_filtersChanged(false)
 
-		$(window).on 'resize scroll', () =>
-			if @filtersPopup
-				@_positionFiltersOptions()
 
 		@infiniteScroller = false
 
@@ -136,10 +121,8 @@ $.widget 'nmk.filteredList', {
 
 		@_loadFilters() if @options.filtersUrl
 
-		@defaultParams = []
 		@initialized = true
 		@dateRange = false
-		@_serializeFilters()
 
 		$(document).on 'click', (e) ->
 			$('.more-options-container').hide()
@@ -394,42 +377,6 @@ $.widget 'nmk.filteredList', {
 
 			return if a.label > b.label then 1 else  -1
 
-	# Display the popout list of options after the user clicks
-	# on the "More" button
-	_showFilterOptions: (filterWrapper) ->
-		if @filtersPopup
-			@_closeFilterOptions()
-
-		filter = filterWrapper.data('filter')
-		items = @_buildFilterOptionsList(filter, filterWrapper)
-
-		if items? and items.find('li').length > 0
-			@filtersPopup = $('<div class="filter-box more-options-popup">').append(items).insertBefore filterWrapper
-			bootbox.modalClasses = 'modal-med'
-			@filtersPopup.data('wrapper', filterWrapper)
-
-			$(document).on 'click.filteredList', ()  => @_closeFilterOptions()
-
-			@_positionFiltersOptions()
-
-	_positionFiltersOptions: () ->
-		reference = @filtersPopup.data('wrapper')
-		maxHeight = $(window).height() - 200
-		@filtersPopup.css({'max-height': $(window).height()-200})
-		if (@filtersPopup.offset().top + @filtersPopup.height() > $(window).scrollTop()+$(window).height())
-			@filtersPopup.css({'position': 'fixed', 'bottom': '0px'})
-		else if $(window).scrollTop()+200 >= @filtersPopup.offset().top
-			@filtersPopup.css({'position': 'fixed', 'top': '200px'})
-
-
-		@filtersPopup.css {
-			'max-height': ($(window).height()-200) + 'px'
-		}
-
-	_closeFilterOptions: () ->
-		if @filtersPopup
-			@filtersPopup.remove()
-		$(document).off 'click.filteredList'
 
 	_buildFilterOptionsList: (list, filterWrapper) ->
 		$list = null
@@ -458,26 +405,26 @@ $.widget 'nmk.filteredList', {
 		$div
 
 	_buildFilterOption: (option) ->
-		checked = (option.selected is true or option.selected is 'true')
-		checked = checked || $('.collection-list-description .filter-item a[data-filter="'+option.name+':'+option.id+'"]').length > 0
+		checked = @paramsQueryString().indexOf(encodeURIComponent("#{option.name}[]") + '=' + encodeURIComponent(option.id)) > -1
 		@form.find('input:hidden[name="'+option.name+'[]"][value="'+option.id+'"]').remove() if checked
 		$('<li>', style: (if checked then 'display: none;' else ''))
 			.append $('<label>').append(
 				$('<input>', {type:'checkbox', value: option.id, name: "#{option.name}[]", checked: checked}), option.label
 			).on 'change', (e) =>
-				@_updatingCustomCheckboxes ||= false
-				unless $(e.target).attr('name') == 'custom_filter[]'
-					if $(e.target).prop('checked')
-						$(e.target).closest('li').slideUp()
+				if $(e.target).attr('name') == 'custom_filter[]'
+					if not $(e.target).prop('checked')
+						@_removeParams(option.id)
 					else
-						$(e.target).closest('li').show()
-				unless @_updatingCustomCheckboxes
-					@_updatingCustomCheckboxes = true
-					@_updateCustomFiltersCheckboxes(option)
-					@_updatingCustomCheckboxes = false
-
+						@_addParams option.id.split('&id')[0]
+				else
+					params = encodeURIComponent("#{option.name}[]") + '=' + encodeURIComponent(option.id)
+					if $(e.target).prop('checked')
+						#$(e.target).closest('li').slideUp()
+						@_addParams params
+					else
+						#$(e.target).closest('li').show()
+						@_removeParams params
 				return true unless @initialized
-				@_filtersChanged()
 				true
 
 	_clickCheckbox: (elm) ->
@@ -510,54 +457,55 @@ $.widget 'nmk.filteredList', {
 		if checkbox.length
 			checkbox.click() unless checkbox.prop('checked')
 		else
-			$('<input type="hidden" name="'+ name+'[]">').appendTo(@form).val(item.value)
+			@_addParams encodeURIComponent("#{name}[]") + '=' + encodeURIComponent(item.value)
 		@acInput.val ''
 		@_filtersChanged()
 		false
 
-	# Unchecks all checkboxes and any other filter field
-	_cleanFilters: () ->
-		@initialized = false
-		@defaultParams = []
-		defaultElements = []
-		@_deselectDates()
-		defaultParams = if typeof @options.clearFilterParams != 'undefined' then @options.clearFilterParams else @options.defaultParams
-		defaultParams ||= []
-		for param in defaultParams
-			elm = @element.find('input[name="'+param.name+'"][value="'+param.value+'"]')
-			if elm.length > 0
-				elm.click() unless elm.prop('checked')
-				defaultElements.push elm[0]
-		@element.find('input[type=checkbox]:checked').not(defaultElements).click()
-		@_filtersChanged()
-		@initialized = true
-		defaultParams = null
-		false
-
 	# Resets the filter to its initial state
 	_resetFilters: () ->
-		@initialized = false
-		@defaultParams = @options.defaultParams
-		@_deselectDates()
-		#@element.find('input[type=checkbox]:checked').change()
-		defaultElements = []
-		for param in @options.defaultParams
-			el = @element.find('input[type=checkbox][name="'+param.name+'"][value="'+param.value+'"]')
-			if el.length > 0
-				el.click() unless el.attr('checked')
-				defaultElements.push el[0]
-
-		for elm in @element.find('input[type=checkbox]:checked').not(defaultElements)
-			$(elm).click() # if defaultElements.indexOf(elm) < 0
-		history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname);
-		@_filtersChanged(false)
-		@initialized = true
-		@defaultParams = []
-		
+		@form.find('input:checkbox[name^="custom_filter"]').prop('checked', false)
+		@_setQueryString $.param(@options.defaultParams)
 		false
 
+	_removeParams: (params) ->
+		searchString = @paramsQueryString()
+		for param in @_deparam(params)
+			searchString = searchString.replace(new RegExp('(&)?'+ encodeURIComponent(param.name)+'='+encodeURIComponent(param.value)+'(&|$)', "g"), '$2')
+		@_setQueryString searchString
+
+	_addParams: (params) ->
+		qs = @paramsQueryString()
+		qs = (if qs then qs + '&' else '')
+		@_setQueryString qs + params
+
+	_setParams: (params) ->
+		qs =  @paramsQueryString()
+		for param in @_deparam(params)
+			paramValue = encodeURIComponent(param.name)+'='+encodeURIComponent(param.value)
+			match = qs.match(new RegExp("(#{encodeURIComponent(param.name)}=[^&]*)"))
+			if match && match.length >= 2
+				qs = qs.replace(match[1], paramValue)
+			else
+				qs += '&' + paramValue
+		@_setQueryString qs
+
+	_setQueryString: (qs) ->
+		@_paramsQueryString = qs
+		history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' + qs)
+		@_filtersChanged(false)
+
+	paramsQueryString: () ->
+		@_paramsQueryString ||= 
+			if document.location.search
+				document.location.search.replace(/^\?/, '')
+			else if not @initialized && @options.defaultParams
+				$.param(@options.defaultParams)
+			else
+				''
+
 	_saveFilters: () ->
-		data = @_serializeFilters()
+		data = @paramsQueryString()
 		if data
 			$.get '/custom_filters/new.js', {apply_to: @options.applyTo, filters: data}
 		false
@@ -567,16 +515,7 @@ $.widget 'nmk.filteredList', {
 		@form.find('.dates-range-filter').datepick('update')
 
 	_addCalendars: () ->
-		@startDateInput = $('<input type="hidden" name="start_date" class="no-validate">').appendTo @form
-		@endDateInput = $('<input type="hidden" name="end_date" class="no-validate">').appendTo @form
 		@_previousDates = []
-
-		if @options.defaultParams
-			for param in @options.defaultParams
-				if param.name is 'start_date'
-					@startDateInput.val param.value
-				if param.name is 'end_date'
-					@endDateInput.val param.value
 
 		@calendar = $('<div class="dates-range-filter">').appendTo(@form).datepick {
 			rangeSelect: true,
@@ -616,10 +555,11 @@ $.widget 'nmk.filteredList', {
 						@_previousDates = @_datesToString(dates)
 						@customDatesFilter.find('input[name=custom_start_date]').datepicker('setDate', dates[0])
 						@customDatesFilter.find('input[name=custom_end_date]').datepicker('setDate', dates[1])
-						@_filtersChanged()
+						@_setCalendarDatesFromCalendar()
 				else
 					@calendar.find('.datepick-selected:first').addClass('first-selected')
 					@calendar.find('.datepick-selected:last').addClass('last-selected')
+				true
 		}
 
 		@customDatesFilter = $('<div class="custom-dates-inputs">').appendTo(@form).append(
@@ -753,30 +693,37 @@ $.widget 'nmk.filteredList', {
 			dropdown.addClass('off').find('.date-range-label').text 'Choose a date range'
 
 	selectCalendarDates: (startDate, endDate) ->
-		@calendar.datepick('setDate', [startDate, endDate])
-		@_setCalendarDatesFromCalendar()
+		currentDates = @calendar.datepick('getDate')
+		if currentDates.length < 2 || 
+		   @_formatDate(currentDates[0]) != @_formatDate(startDate) || 
+		   @_formatDate(endDate || startDate) != @_formatDate(currentDates[1])
+			@calendar.datepick('setDate', [startDate, endDate || startDate])
+		@
+
+	setDates: (dates) ->
+		dates[0] = @_parseDate(dates[0]) if dates.length > 0 && typeof dates[0] == 'string'
+		dates[1] = @_parseDate(dates[1]) if dates.length > 0 && typeof dates[1] == 'string'
+
+		if dates.length > 0 && dates[0]
+			params = "start_date=#{@_formatDate(dates[0])}"
+			if dates[0].toLocaleString() != dates[1].toLocaleString()
+				params += "&end_date=#{@_formatDate(dates[1])}"
+			else
+				params += "&end_date="
+
+		else
+			params = 'start_date=&end_date='
+		@_setParams params
 		@
 
 	_deselectDates: ->
-		if @calendar
-			@calendar.datepick('clear')
-			@calendar.datepick('update')
+		matches = @paramsQueryString().match(/((start_date|end_date)=[^&]*)/g)
+		if matches && matches.length > 0
+			@_removeParams matches.join('&')
 
 	_setCalendarDatesFromCalendar: () ->
-		dates = @calendar.datepick('getDate')
-		if dates.length > 0 && dates[0]
-			startDate = @_formatDate(dates[0])
-			@startDateInput.val startDate
+		@setDates @calendar.datepick('getDate')
 
-			@endDateInput.val ''
-			if dates[0].toLocaleString() != dates[1].toLocaleString()
-				endDate = @_formatDate(dates[1])
-				@endDateInput.val endDate
-		else
-			@startDateInput.val ''
-			@endDateInput.val ''
-		dates = null
-		true
 
 	_datesToString: (dates) ->
 		if dates.length > 0 && dates[0]
@@ -789,7 +736,7 @@ $.widget 'nmk.filteredList', {
 
 	_parseDate: (date) ->
 		parts = date.split('/')
-		new Date(parts[2], parseInt(parts[0])-1, parts[1],0,0,0)
+		new Date(parts[2], parseInt(parts[0])-1, parts[1],12,0,0)
 
 	getWeekRange: (weeks=1) ->
 		today = new Date();
@@ -833,36 +780,25 @@ $.widget 'nmk.filteredList', {
 
 
 	_filtersChanged: (updateState=true) ->
-		if @options.includeCalendars
-			@_setCalendarDatesFromCalendar()
-
-		if @options.source
-			@reloadData
-
-		data = @_getCustomFilters()
-		data = @_serializeFilters() if !data
+		return if @updatingFilters
+		@updatingFilters = true
+		data = @paramsQueryString()
 		if @form.data('serializedData') != data
 			@form.data('serializedData', data)
-			@_storeFilters data
-			@_loadPage(1)
 			if updateState
 				history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' +@form.data('serializedData'));
+
+			@_parseQueryString(data)
+
+			@_loadPage(1)
 
 			@element.trigger('filters:changed')
 			if @options.onChange
 				@options.onChange(@)
 
 		data = null
+		@updatingFilters = false
 		@
-
-	_storeFilters: (data) ->
-		if typeof(Storage) isnt "undefined"
-			sessionStorage["filters#{@storageScope}"] = data
-		@
-
-	_loadStoredFilters: () ->
-		if typeof(Storage) isnt "undefined"
-			sessionStorage["filters#{@storageScope}"]
 
 	_getCustomFilters: () ->
 		data = @form.serializeArray()
@@ -872,14 +808,8 @@ $.widget 'nmk.filteredList', {
 		)
 		p = custom_filter[0].value.split('&id')[0] if custom_filter.length > 0
 
-	_serializeFilters: () ->
-		data = @_deparam(@_getCustomFilters())
-		data = @getFilters() if !data.length
-		jQuery.param( data )
-
 	buildParams: (params=[]) ->
-		data = @_deparam(@_getCustomFilters())
-		data = @getFilters() if !data.length
+		data = @_deparam(@paramsQueryString())
 		for param in data
 			params.push(param)
 		params
@@ -895,19 +825,6 @@ $.widget 'nmk.filteredList', {
 				pair = queryString[--i].split("=")
 				params.push {'name': decode(pair[0]), 'value': decode(pair[1])}
 		params
-
-	paramsQueryString: () ->
-		@_serializeFilters()
-
-	_updateCustomFiltersCheckboxes: (option) ->
-		e = @element.find('input[name="custom_filter[]"][value="'+option.id+'"]')
-		@element.find('input[name="custom_filter[]"]:checked').not(e).prop 'checked', false
-		if e.length
-			if e.prop('checked') == true
-				@_parseQueryString(option.id.split('&id')[0])
-			else
-				@_cleanFilters()
-		false
 
 	_loadingSpinner: () ->
 		if @options.spinnerElement?
@@ -1031,64 +948,42 @@ $.widget 'nmk.filteredList', {
 			@infiniteScroller = false
 
 	_parseQueryString: (query) ->
-		@initialized = false
+		vars = query.split('&')
+		dates = []
 		selectedOptions = []
-		query = query.replace(/^\?/,"")
-		@form.find('input:hidden.from-query-string').remove()
-		if query != ''
-			if query.match(/_stored=true/)
-				query = @_loadStoredFilters()
-				if not query
-					query = ''
+
+		for param in @_deparam(query)
+			name = param.name
+			value = param.value
+			if @options.includeCalendars and value and name in ['start_date', 'end_date']
+				if name is 'start_date' and value
+					dates[0] = @_parseDate(value)
 				else
-					history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' +query);
-
-			@defaultParams = []
-			vars = query.split('&')
-			dates = []
-			for qvar in vars
-				pair = qvar.split('=')
-				name = decodeURIComponent(pair[0])
-				value = decodeURIComponent((if pair.length>=2 then pair[1] else '').replace(/\+/g, '%20')).replace(/\+/g, ' ')
-				if @options.includeCalendars and value and name in ['start_date', 'end_date']
-					if name is 'start_date' and value
-						dates[0] = @_parseDate(value)
-					else
-						dates[1] = @_parseDate(value)
-				else
-					checkbox = @form.find("input[name=\"#{name}\"][value=\"#{value}\"]:checkbox:not(.from-query-string)")
-					if checkbox.length
-						checkbox.click() unless checkbox.prop('checked')
-						selectedOptions.push checkbox[0]
-
-					else
-						field = @form.find("input[name=\"#{name}\"]:not(:checkbox):not(.from-query-string)")
-						if field.length > 0
-							field.val(value)
-						else
-							if @form.find("input[name=\"#{name}\"][value=\"#{value}\"]:not(:checkbox)").length == 0
-								# @defaultParams.push {'name': name, 'value': value}
-								$('<input type="hidden" class="from-query-string" name="'+ name+'">').appendTo(@form).val(value)
-
-
-			if dates.length > 0
-				@selectCalendarDates dates[0], dates[1]
+					dates[1] = @_parseDate(value)
 			else
-				@_deselectDates()
-			dates = vars = null
+				checkbox = @form.find("input[name=\"#{param.name}\"][value=\"#{param.value}\"]:checkbox")
+				if checkbox.length
+					selectedOptions.push checkbox[0]
+					$(checkbox).prop('checked', true).closest('li').slideUp()
+				else
+					field = @form.find("input[name=\"#{name}\"]:not(:checkbox)")
+					if field.length > 0
+						field.val(value)
 
-		@element.find('input[type="checkbox"]:checked:not([name="^custom_filter"])').not(selectedOptions).click()
+		for checkbox in @form.find("input:checkbox:hidden").not(selectedOptions)
+			$(checkbox).prop('checked', false).closest('li').show()
+
+
+		if dates.length > 0
+			@selectCalendarDates dates[0], dates[1]
+		else
+			@_deselectDates()
+		dates = vars = null
 
 		query = null
 
-		@initialized = true
-
 	reloadFilters: () ->
 		@loadFacets = true
-		if @defaultParams.length == 0
-			@defaultParams = $.map(@formFilters.find('input[name="status[]"]:checked'), (checkbox, index) -> {'name': 'status[]', 'value': checkbox.value})
-		#@formFilters.html('')
-		#@form.data('serializedData','')
 		@_loadFilters()
 }
 

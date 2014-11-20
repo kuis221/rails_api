@@ -82,9 +82,10 @@ class Team < ActiveRecord::Base
       ss = solr_search do
 
         with(:company_id, params[:company_id])
-        with(:campaign_ids, params[:campaign]) if params.key?(:campaign) && params[:campaign].present?
-        with(:status, params[:status]) if params.key?(:status) && params[:status].present?
-        with(:id, params[:team]) if params.key?(:team) && params[:team].present?
+        with(:campaign_ids, params[:campaign]) unless params[:campaign].blank?
+        with(:status, params[:status]) unless params[:status].blank?
+        with(:id, params[:team]) unless params[:team].blank?
+        with(:user_ids, params[:user]) unless params[:user].blank?
 
         if include_facets
           facet :campaigns

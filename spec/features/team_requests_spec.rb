@@ -3,6 +3,7 @@ require 'rails_helper'
 feature 'Teams', js: true do
   let(:company) { create(:company) }
   let(:user) { create(:user, company_id: company.id, role_id: create(:role, company: company).id) }
+  let(:company_user) { user.company_users.first }
 
   before { sign_in user }
   after { Warden.test_reset! }
@@ -175,6 +176,50 @@ feature 'Teams', js: true do
     end
   end
 
+  feature 'custom filters', search: true do
+    let(:campaign1) { create(:campaign, name: 'Campaign 1', company: company) }
+    let(:campaign2) { create(:campaign, name: 'Campaign 2', company: company) }
+    let(:team1) { create(:team, name: 'Costa Rica Team', description: 'El grupo de ticos', active: true, company: company) }
+    let(:team2) { create(:team, name: 'San Francisco Team', description: 'The guys from SF', active: true, company: company) }
+
+    before do
+      # make sure teams are created before
+      team1.campaigns << campaign1
+      team2.campaigns << campaign2
+      team1.save
+      team2.save
+      Sunspot.commit
+    end
+
+    scenario 'allows to create a new custom filter' do
+      visit teams_path
+
+      filter_section('CAMPAIGNS').unicheck('Campaign 1')
+
+      click_button 'Save'
+
+      within visible_modal do
+        fill_in('Filter name', with: 'My Custom Filter')
+        expect do
+          click_button 'Save'
+          wait_for_ajax
+        end.to change(CustomFilter, :count).by(1)
+
+        custom_filter = CustomFilter.last
+        expect(custom_filter.owner).to eq(company_user)
+        expect(custom_filter.name).to eq('My Custom Filter')
+        expect(custom_filter.apply_to).to eq('teams')
+        expect(custom_filter.filters).to eq(
+          "status%5B%5D=Active&campaign%5B%5D=#{campaign1.id}")
+      end
+      ensure_modal_was_closed
+
+      within '.form-facet-filters' do
+        expect(page).to have_content('My Custom Filter')
+      end
+    end
+  end
+
   feature 'export', search: true do
     let(:team1) { create(:team, name: 'Costa Rica Team', description: 'El grupo de ticos',
                                 active: true, company: company) }
@@ -236,5 +281,9 @@ feature 'Teams', js: true do
         expect(text).to include '2TheguysfromSF'
       end
     end
+  end
+
+  def teams_list
+    '#teams-list'
   end
 end

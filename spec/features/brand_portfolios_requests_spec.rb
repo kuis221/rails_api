@@ -186,13 +186,70 @@ feature 'BrandPortfolios', js: true, search: true do
     end
   end
 
+  feature 'custom filters', search: true, js: true do
+    let(:brand_portfolio1) do
+      create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica',
+                               active: true, company: company)
+    end
+    let(:brand_portfolio2) do
+      create(:brand_portfolio, name: 'B Licores Costarricenses', description: 'Licores ticos',
+                               active: true, company: company)
+    end
+    let(:brand1) { create(:brand, name: 'Brand 1', company: company) }
+    let(:brand2) { create(:brand, name: 'Brand 2', company: company) }
+
+    before do
+      # make sure brand portfolios are created before
+      brand_portfolio1
+      brand_portfolio2
+      brand_portfolio1.brands << brand1
+      brand_portfolio2.brands << brand2
+      brand_portfolio1.save
+      brand_portfolio2.save
+      Sunspot.commit
+    end
+
+    scenario 'allows to create a new custom filter' do
+      visit brand_portfolios_path
+
+      filter_section('BRANDS').unicheck('Brand 1')
+      filter_section('ACTIVE STATE').unicheck('Inactive')
+
+      click_button 'Save'
+
+      within visible_modal do
+        fill_in('Filter name', with: 'My Custom Filter')
+        expect do
+          click_button 'Save'
+          wait_for_ajax
+        end.to change(CustomFilter, :count).by(1)
+
+        custom_filter = CustomFilter.last
+        expect(custom_filter.owner).to eq(company_user)
+        expect(custom_filter.name).to eq('My Custom Filter')
+        expect(custom_filter.apply_to).to eq('brand_portfolios')
+        expect(custom_filter.filters).to eq(
+          "status%5B%5D=Active&brand%5B%5D=#{brand1.id}&status%5B%5D=Inactive")
+      end
+      ensure_modal_was_closed
+
+      within '.form-facet-filters' do
+        expect(page).to have_content('My Custom Filter')
+      end
+    end
+  end
+
   feature 'export' do
-    let(:brand_portfolio1) { create(:brand_portfolio,
-                                name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica',
-                                active: true, company: company) }
-    let(:brand_portfolio2) { create(:brand_portfolio,
-                                name: 'B Licores Costarricenses', description: 'Licores ticos',
-                                active: true, company: company) }
+    let(:brand_portfolio1) do
+      create(:brand_portfolio,
+             name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica',
+             active: true, company: company)
+    end
+    let(:brand_portfolio2) do
+      create(:brand_portfolio,
+             name: 'B Licores Costarricenses', description: 'Licores ticos',
+             active: true, company: company)
+    end
 
     before do
       # make sure tasks are created before
@@ -250,5 +307,9 @@ feature 'BrandPortfolios', js: true, search: true do
         expect(text).to include 'Licoresticos'
       end
     end
+  end
+
+  def brand_portfolios_list
+    '#brand_portfolios-list'
   end
 end
