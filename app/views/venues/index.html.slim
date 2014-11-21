@@ -67,11 +67,12 @@ javascript:
       alert('Please enter a location');
     } else {
       $('#venue-search-location').closest('.control-group').removeClass('error');
-      $filters.filteredList('cleanCustomFilters');
-      $filters.filteredList('addCustomFilter', 'loc_name', $('#venue-search-location').val(), false);
-      $filters.filteredList('addCustomFilter', 'location', loc, false);
-      $filters.filteredList('addCustomFilter', 'q', term, true);
-      $filters.filteredList('reloadFilters');
+      $filters.filteredList('setParams', 
+        'location='+encodeURIComponent(loc) +
+        '&q='+encodeURIComponent(term) +
+        '&loc_name='+encodeURIComponent($('#venue-search-location').val())
+        );
+      //$filters.filteredList('reloadFilters');
     }
     return false;
   });
