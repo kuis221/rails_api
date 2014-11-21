@@ -547,7 +547,14 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	border-radius: 0px 0px 8px 8px;
 	.filter-label{
 		&>div {
+			display: inline-block;
 			width: 95%;
+		}
+		a {
+			color: white;
+			&#clear-filters {
+				vertical-align: top;
+			}
 		}
 		.filter-item{
 			display: inline-block;
@@ -560,15 +567,12 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 				border-color: white;
 			}
 			a.icon-close {
+				font-size: 11px;
 				margin-left: 10px;
 				margin-right: -5px;
-				font-size: 11px;
+				margin-top: 4px;
 			}
 		}
-	}
-	.icon-close{
-		color: white;
-		margin-top: 4px;
 	}
 }
 

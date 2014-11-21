@@ -795,6 +795,9 @@ feature 'Events section' do
             remove_filter 'today to the future'
             expect(page).to have_content('2 events found for: Active Campaign FY2012')
             expect(page).to have_selector('#events-list .resource-item', count: 2)
+
+            click_link 'Clear all'
+            expect(page).to have_content('1 event found for: Active today to the future')
           end
         end
 
