@@ -477,7 +477,7 @@ $.widget 'nmk.filteredList', {
 		@_filtersChanged(false)
 
 	paramsQueryString: () ->
-		@_paramsQueryString ||= 
+		@_paramsQueryString ||=
 			if document.location.search
 				document.location.search.replace(/^\?/, '')
 			else if not @initialized && @options.defaultParams
@@ -675,8 +675,8 @@ $.widget 'nmk.filteredList', {
 
 	selectCalendarDates: (startDate, endDate) ->
 		currentDates = @calendar.datepick('getDate')
-		if currentDates.length < 2 || 
-		   @_formatDate(currentDates[0]) != @_formatDate(startDate) || 
+		if currentDates.length < 2 ||
+		   @_formatDate(currentDates[0]) != @_formatDate(startDate) ||
 		   @_formatDate(endDate || startDate) != @_formatDate(currentDates[1])
 			@calendar.datepick('setDate', [startDate, endDate || startDate])
 		@
@@ -883,7 +883,11 @@ $.widget 'nmk.filteredList', {
 
 				if $response.find('div[data-content="filters-description"]').length > 0
 					$('.collection-list-description .filter-label').html(
-						$response.find('div[data-content="filters-description"]'));
+						$response.find('div[data-content="filters-description"]')
+					).append(
+						$('<a id="clear-filters" href="#" title="Reset">').text('Reset').on 'click', (e) =>
+							@_resetFilters()
+					);
 
 				$response.remove()
 				$items.remove()
