@@ -64,6 +64,15 @@ en:
         teams: 'Teams'
         company_users: 'Users'
 
+  range_filters:
+    events_count: 'Events'
+    impressions: 'Impressions'
+    interactions: 'Interactions'
+    sampled: 'Sampled'
+    venue_score: 'Venue score'
+    spent: '$ Spent'
+    promo_hours: 'Promo hours'
+
   buttons:
     new:
       event: "New Event"
