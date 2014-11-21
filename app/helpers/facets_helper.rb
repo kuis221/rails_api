@@ -140,13 +140,18 @@ module FacetsHelper
 
   def build_custom_filters_bucket
     groups = {}
-    CustomFilter.for_company_user(current_company_user).order('custom_filters.name ASC').by_type(filter_settings_scope).each do |filter|
+    CustomFilter.for_company_user(current_company_user)
+      .order('custom_filters.name ASC').by_type(filter_settings_scope).each do |filter|
       groups[filter.group.upcase] ||= []
       groups[filter.group.upcase].push filter
     end
 
     groups.map do |group, filters|
-      { label: group, items: filters.map { |cf| build_facet_item(id: cf.filters + '&id=' + cf.id.to_s, label: cf.name, name: :custom_filter, count: 1) } }
+      { label: group,
+        items: filters.map do |cf|
+          build_facet_item(id: cf.filters + '&id=' + cf.id.to_s,
+                           label: cf.name, name: :custom_filter, count: 1)
+        end }
     end
   end
 
@@ -165,7 +170,6 @@ module FacetsHelper
     { label: 'Task Status', items: tasks_status
         .map { |x| build_facet_item(label: x, id: x, name: :task_status, count: 1) } }
   end
-
 
   def brand_ambassadors_users
     @brand_ambassadors_users ||= begin
