@@ -5,3 +5,6 @@ div data-content="items" data-total="#{collection_count}" data-pages="#{total_pa
 - if params[:page].nil? || params[:page] == '1'
   div data-content="totals-results"
     = render 'totals'
+
+  div data-content="filters-description"
+    = describe_filters
