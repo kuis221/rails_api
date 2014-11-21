@@ -885,7 +885,7 @@ $.widget 'nmk.filteredList', {
 					$('.collection-list-description .filter-label').html(
 						$response.find('div[data-content="filters-description"]')
 					).append(
-						$('<a id="clear-filters" href="#" title="Clear all">').text('Clear all').on 'click', (e) =>
+						$('<a id="clear-filters" href="#" title="Reset">').text('Reset').on 'click', (e) =>
 							@_resetFilters()
 					);
 
