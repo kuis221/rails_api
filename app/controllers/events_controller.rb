@@ -212,9 +212,7 @@ class EventsController < FilteredController
     brands_scope = brands_scope.where(id: search_params[:brand]) unless search_params[:brand].blank?
 
     all_brands = campaing_brands_map.values.flatten.uniq
-    Rails.logger.debug "HEREHERHEEHRE"
     brands = Hash[brands_scope.where(id: all_brands).map { |b| [b.id, b] }]
-    Rails.logger.debug "HEREHERHEEHRE"
 
     search = Event.do_search(custom_params.merge(
         start_date: start_date.to_s(:slashes),

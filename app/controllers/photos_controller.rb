@@ -16,8 +16,6 @@ class PhotosController < InheritedResources::Base
 
   load_and_authorize_resource class: AttachedAsset, through: :parent, except: [:processing_status]
 
-  helper_method :describe_filters
-
   def processing_status
     @photos = parent.photos.find(params[:photos])
   end
