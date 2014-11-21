@@ -207,11 +207,9 @@ $.widget 'nmk.filteredList', {
 		}).on "userValuesChanged", (e, data) =>
 			bounds = $(data.label).rangeSlider("bounds")
 			if data.values.min != bounds.min || data.values.max != bounds.max
-				$filter.find('input.min').val Math.round(data.values.min)
-				$filter.find('input.max').val Math.round(data.values.max)
+				@setParams "#{filter.name}[min]=#{Math.round(data.values.min)}&#{filter.name}[max]=#{Math.round(data.values.max)}"
 			else
-				$filter.find('input.min').val ''
-				$filter.find('input.max').val ''
+				@setParams "#{filter.name}[min]=&#{filter.name}[max]="
 			@_filtersChanged()
 
 		if max_value == min_value
@@ -272,9 +270,7 @@ $.widget 'nmk.filteredList', {
 
 
 	addCustomFilter: (name, value, reload=true) ->
-		@options.customFilters.push {'name': name, 'value': value}
-		if reload
-			@_filtersChanged()
+		@addParams(encodeURIComponent(name) + '=' + encodeURIComponent(value))
 		@
 
 	cleanCustomFilters: (name, value) ->
@@ -400,12 +396,12 @@ $.widget 'nmk.filteredList', {
 					if not $(e.target).prop('checked')
 						@_removeParams(option.id)
 					else
-						@_addParams option.id.split('&id')[0]
+						@addParams option.id.split('&id')[0]
 				else
 					params = encodeURIComponent("#{option.name}[]") + '=' + encodeURIComponent(option.id)
 					if $(e.target).prop('checked')
 						#$(e.target).closest('li').slideUp()
-						@_addParams params
+						@addParams params
 					else
 						#$(e.target).closest('li').show()
 						@_removeParams params
@@ -442,7 +438,7 @@ $.widget 'nmk.filteredList', {
 		if checkbox.length
 			checkbox.click() unless checkbox.prop('checked')
 		else
-			@_addParams encodeURIComponent("#{name}[]") + '=' + encodeURIComponent(item.value)
+			@addParams encodeURIComponent("#{name}[]") + '=' + encodeURIComponent(item.value)
 		@acInput.val ''
 		@_filtersChanged()
 		false
@@ -459,12 +455,12 @@ $.widget 'nmk.filteredList', {
 			searchString = searchString.replace(new RegExp('(&)?'+ encodeURIComponent(param.name)+'='+encodeURIComponent(param.value)+'(&|$)', "g"), '$2')
 		@_setQueryString searchString
 
-	_addParams: (params) ->
+	addParams: (params) ->
 		qs = @paramsQueryString()
 		qs = (if qs then qs + '&' else '')
 		@_setQueryString qs + params
 
-	_setParams: (params) ->
+	setParams: (params) ->
 		qs =  @paramsQueryString()
 		for param in @_deparam(params)
 			paramValue = encodeURIComponent(param.name)+'='+encodeURIComponent(param.value)
@@ -698,7 +694,7 @@ $.widget 'nmk.filteredList', {
 
 		else
 			params = 'start_date=&end_date='
-		@_setParams params
+		@setParams params
 		@
 
 	_deselectDates: ->

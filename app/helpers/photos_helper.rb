@@ -16,12 +16,6 @@ module PhotosHelper
     ].compact
   end
 
-  def describe_photos_filters
-    first_part  = "#{describe_photos_date_ranges}  #{describe_photos_brands} #{describe_photos_campaigns} #{describe_photos_locations}".strip
-    first_part = nil if first_part.empty?
-    "#{view_context.pluralize(number_with_delimiter(collection_count), "#{describe_photos_status} photo")} #{first_part}"
-  end
-
   protected
 
   def describe_photos_date_ranges
@@ -46,82 +40,6 @@ module PhotosHelper
     end
 
     description
-  end
-
-  def describe_photos_brands
-    brands = brand_params
-    names = []
-    if brands.size > 0
-      names = Brand.select('name').where(id: brands).map(&:name)
-      "for #{names.to_sentence(last_word_connector: ' and ')}"
-    else
-      ''
-    end
-  end
-
-  def brand_params
-    brands = params[:brand]
-    brands = [brands] unless brands.is_a?(Array)
-    if params.key?(:q) && params[:q] =~ /^brand,/
-      brands.push params[:q].gsub('brand,', '')
-    end
-    brands.compact
-  end
-
-  def describe_photos_campaigns
-    campaigns = campaign_params
-    if campaigns.size > 0
-      names = current_company.campaigns.select('name').where(id: campaigns).map(&:name).to_sentence(last_word_connector: ' and ')
-      "as part of #{names}"
-    else
-      ''
-    end
-  end
-
-  def campaign_params
-    campaigns = params[:campaign]
-    campaigns = [campaigns] unless campaigns.is_a?(Array)
-    if params.key?(:q) && params[:q] =~ /^campaign,/
-      campaigns.push params[:q].gsub('campaign,', '')
-    end
-    campaigns.compact
-  end
-
-  def describe_photos_locations
-    places = location_params
-    place_ids = places.select { |p| p =~  /^[0-9]+$/ }
-    encoded_locations = places - place_ids
-    names = []
-    if place_ids.size > 0
-      names = Place.select('name').where(id: place_ids).map(&:name)
-    end
-
-    if encoded_locations.size > 0
-      names += encoded_locations.map { |l| (id, name) =  Base64.decode64(l).split('||'); name }
-    end
-
-    if names.size > 0
-      "in #{names.to_sentence(last_word_connector: ' or ')}"
-    else
-      ''
-    end
-  end
-
-  def location_params
-    locations = params[:place]
-    locations = [locations] unless locations.is_a?(Array)
-    if params.key?(:q) && params[:q] =~ /^place,/
-      locations.push params[:q].gsub('place,', '')
-    end
-    locations.compact
-  end
-
-  def describe_photos_status
-    status = params[:status]
-    status = [status] unless status.is_a?(Array)
-    unless status.empty? || status.nil?
-      status.to_sentence(last_word_connector: ' and ')
-    end
   end
 
   def company_tags(assigned_tags)

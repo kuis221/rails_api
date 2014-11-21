@@ -6,7 +6,7 @@ class Results::PhotosController < FilteredController
 
   defaults resource_class: AttachedAsset
 
-  helper_method :describe_photos_filters, :return_path
+  helper_method :return_path
 
   skip_load_and_authorize_resource
 
