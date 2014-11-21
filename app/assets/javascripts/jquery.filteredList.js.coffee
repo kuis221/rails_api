@@ -299,7 +299,7 @@ $.widget 'nmk.filteredList', {
 			top5 = []
 			while i < optionsCount
 				option = items[i]
-				if (i < 5 or option.selected)
+				if (i < 15 or option.selected)
 					top5.push option
 				i++
 		else
@@ -309,7 +309,7 @@ $.widget 'nmk.filteredList', {
 			$list.append @_buildFilterOption(option)
 
 		@formFilters.append $filter
-		if optionsCount > 5
+		if optionsCount > 15
 			filterListResizer = =>
 				container = $trigger.next()
 				container.show()
