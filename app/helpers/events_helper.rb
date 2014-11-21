@@ -40,7 +40,7 @@ module EventsHelper
       describe_brand_portfolios, describe_campaigns,
       describe_areas, describe_venues, describe_cities, describe_users,
       describe_teams, describe_roles, describe_activity_types, describe_date_ranges,
-      describe_day_parts, describe_tasks
+      describe_day_parts, describe_tasks, describe_range_filters
     ].compact.join(' ').strip
     first_part = "for: #{first_part}" unless first_part.blank?
     [
@@ -132,6 +132,12 @@ module EventsHelper
         dates.map{ |d| d.is_a?(Date) ? d.to_s(:simple_short) : d }.join(' - ')
       end
     build_filter_object_item dates, "date"
+  end
+
+  def describe_range_filters
+    params.select{ |k, v| v.is_a?(Hash) && v.key?(:max) && v.key?(:min) }.map do |k, v|
+      build_filter_object_item "#{I18n.t('range_filters.' + k.to_s)} between #{v[:min]} and #{v[:max]}", k
+    end
   end
 
   def describe_campaigns

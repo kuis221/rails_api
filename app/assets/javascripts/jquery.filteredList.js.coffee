@@ -26,6 +26,7 @@ $.widget 'nmk.filteredList', {
 	},
 
 	_create: () ->
+		@sliders = {}
 		query = window.location.search.replace(/^\?/,"")
 		@element.addClass('filter-box')
 		@form = $('<form action="#" method="get">')
@@ -86,6 +87,8 @@ $.widget 'nmk.filteredList', {
 			filterParts = $(e.currentTarget).data('filter').split(':')
 			if filterParts[0] == 'date'
 				@_deselectDates()
+			else if @sliders[filterParts[0]]
+				@setParams "#{filterParts[0]}[min]=&#{filterParts[0]}[max]="
 			else
 				@_removeParams encodeURIComponent("#{filterParts[0]}[]") + '=' + encodeURIComponent(filterParts[1])
 			false
@@ -199,7 +202,7 @@ $.widget 'nmk.filteredList', {
 			$('<input type="hidden" class="max" name="'+filter.name+'[max]" value="" />')
 		)
 
-		$slider.rangeSlider({
+		@sliders[filter.name] = $slider.rangeSlider({
 			bounds: {min: filter.min, max: filter.max},
 			defaultValues:{ min: min_value, max: max_value }
 			arrows: false,
@@ -464,12 +467,13 @@ $.widget 'nmk.filteredList', {
 		qs =  @paramsQueryString()
 		for param in @_deparam(params)
 			paramValue = encodeURIComponent(param.name)+'='+encodeURIComponent(param.value)
+			paramValue = '' if param.value is '' or param.value is null
 			match = qs.match(new RegExp("(#{encodeURIComponent(param.name)}=[^&]*)"))
 			if match && match.length >= 2
 				qs = qs.replace(match[1], paramValue)
 			else
-				qs += '&' + paramValue
-		@_setQueryString qs
+				qs += '&' + paramValue if paramValue
+		@_setQueryString qs.replace(/&+/g, '&').replace('&$', '')
 
 	_setQueryString: (qs) ->
 		@_paramsQueryString = qs
@@ -936,11 +940,17 @@ $.widget 'nmk.filteredList', {
 		for param in @_deparam(query)
 			name = param.name
 			value = param.value
+			sliderMatch = name.match /(.+)\[(max|min)\]$/
 			if @options.includeCalendars and value and name in ['start_date', 'end_date']
 				if name is 'start_date' and value
 					dates[0] = @_parseDate(value)
 				else
 					dates[1] = @_parseDate(value)
+			else if sliderMatch && @sliders[sliderMatch[1]]
+				if sliderMatch[2] is 'min'
+					@sliders[sliderMatch[1]].rangeSlider 'values', parseInt(value, 10), @sliders[sliderMatch[1]].rangeSlider('values').max
+				else
+					@sliders[sliderMatch[1]].rangeSlider 'values', @sliders[sliderMatch[1]].rangeSlider('values').min, parseInt(value, 10)
 			else
 				checkbox = @form.find("input[name=\"#{param.name}\"][value=\"#{param.value}\"]:checkbox")
 				if checkbox.length
@@ -950,6 +960,12 @@ $.widget 'nmk.filteredList', {
 					field = @form.find("input[name=\"#{name}\"]:not(:checkbox)")
 					if field.length > 0
 						field.val(value)
+
+		for name, slider of @sliders
+			unless query.indexOf(encodeURIComponent("#{name}[min]")) > -1 || query.indexOf(encodeURIComponent("#{name}[max]")) > -1
+				bounds = slider.rangeSlider("bounds")
+				slider.rangeSlider 'values', bounds.min, bounds.max
+
 
 		for checkbox in @form.find("input:checkbox:hidden").not(selectedOptions)
 			$(checkbox).prop('checked', false).closest('li').show()
