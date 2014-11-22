@@ -1150,7 +1150,9 @@ describe Event, type: :model do
 
       event = build(:event, campaign: campaign, company: campaign.company, place: place_SF)
       expect(event.valid?).to be_falsey
-      expect(event.errors[:place_reference]).to include('is not valid for this campaign')
+      expect(event.errors[:place_reference]).to include(
+        'This place has not been approved for the selected campaign. '\
+        'Please contact your campaign administrator to request that this be updated.')
 
       event.place = place_LA
       expect(event.valid?).to be_truthy
@@ -1194,7 +1196,9 @@ describe Event, type: :model do
 
       event = build(:event, campaign: campaign, company: company, place: place_SF)
       expect(event.valid?).to be_falsey
-      expect(event.errors[:place_reference]).to include('is not part of your authorized locations')
+      expect(event.errors[:place_reference]).to include(
+        'You do not have permissions to this place. '\
+        'Please contact your campaingn administrator to request access.')
 
       event.place = place_LA
       expect(event.valid?).to be_truthy
@@ -1232,7 +1236,9 @@ describe Event, type: :model do
 
       event = build(:event, campaign: campaign, company: company, place: bar_in_LA)
       expect(event.valid?).to be_falsey
-      expect(event.errors[:place_reference]).to include('is not valid for this campaign')
+      expect(event.errors[:place_reference]).to include(
+        'This place has not been approved for the selected campaign. '\
+        'Please contact your campaign administrator to request that this be updated.')
     end
   end
 

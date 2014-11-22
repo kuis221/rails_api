@@ -815,12 +815,17 @@ class Event < ActiveRecord::Base
 
   def validate_place_valid_for_campaign
     return if campaign.place_allowed_for_event?(place)
-    errors.add(:place_reference, 'is not valid for this campaign')
+    errors.add(:place_reference,
+               'This place has not been approved for the selected campaign. '\
+               'Please contact your campaign administrator to request that this be updated.')
   end
 
   def validate_user_allowed_schedule_event_in_place
     return if User.current.nil? || User.current.current_company_user.nil? ||
               User.current.current_company_user.allowed_to_access_place?(place)
+    errors.add(:place_reference,
+               'You do not have permissions to this place. '\
+               'Please contact your campaingn administrator to request access.')
     errors.add(:place_reference, 'is not part of your authorized locations')
   end
 
