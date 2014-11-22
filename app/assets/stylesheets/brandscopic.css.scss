@@ -545,6 +545,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	position: relative;
 	-webkit-border-radius: 0px 0px 8px 8px;
 	border-radius: 0px 0px 8px 8px;
+	box-sizing: border-box;
 	.filter-label{
 		&>div {
 			width: 95%;
