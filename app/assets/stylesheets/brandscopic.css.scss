@@ -563,6 +563,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			margin: 0 5px 3px 0;
 			padding: 0 10px;
 			font-size: 12px;
+			white-space: nowrap;
 			@include border-radius (3px);
 			&:hover {
 				border-color: white;
