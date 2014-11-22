@@ -658,8 +658,9 @@
 		}
 
 		&.modal-large, &.modal-med {
-			min-width: 0 !important;
-			width: auto;
+			min-width: 90%;
+			width: 90%;
+			margin-left: -45%;
 		}
 
 		&.modal-med {
