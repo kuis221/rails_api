@@ -17,7 +17,6 @@ module Results
         f.push build_areas_bucket
         f.push build_users_bucket
         f.push build_state_bucket
-        f.push build_state_bucket
         f.concat build_custom_filters_bucket
       end
     end

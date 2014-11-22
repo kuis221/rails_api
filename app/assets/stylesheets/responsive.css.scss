@@ -28,10 +28,48 @@
 		}
 	}
 
-	.main-nav-collapse {
-		#results, #analysis {
-			display: none;
+	.new-feature {
+		padding-top: 20px;
+		.feature-description{
+			width: 100%;
+			p {
+				max-width: none;
+			}
 		}
+		.video-thumbnail {
+			width: 100%;
+		}
+	}
+
+	header.navbar-inverse .navbar-inner {
+		.main-nav-collapse {
+			height: 70px;
+			width: 100%;
+			overflow: hidden;
+			#results, #analysis {
+				display: none;
+			}
+			.nav {
+				height: 70px;
+				padding-bottom: 20px; /* so scrollbar is hidden */
+				white-space: nowrap;
+				overflow-x: auto;
+				overflow-y: hidden;
+				width: 100%;
+				&> li {
+					display: inline-block;
+					float: none;
+					&> a {
+						height: 70px;
+					}
+				}
+			}
+		}
+	}
+
+	.video-modal {
+		max-width: 80%;
+		width: 700px;		
 	}
 
 	body.app-layout {
@@ -195,6 +233,29 @@
 				right: 10px;
 			}
 		}
+	}
+
+	.video-modal {
+		max-width: 80%;
+		width: 500px;
+		.modal-body { width: 500px; }
+		iframe { max-width: 500px; }
+	}
+
+	.collection-list-description {
+		margin-left: 0;
+		margin-right: 0;
+	}
+
+	.resource-list .resource-item  {
+		.resource-item-link {
+			width: 100%;
+		}
+		.resource-item-actions{
+			display: block;
+			width: 100%;
+		}
+
 	}
 
 	.modal {
@@ -499,12 +560,15 @@
 				margin-right: 200px;
 			}
 			.chart-bar {
-				margin-right: 200px;
+				margin-right: 140px;
 				margin-top: 15px;
 				.remaining-label{
-					right: -270px;
+					right: -160px;
+					width: 150px;
 					b {
+						text-align: left;
 						font-size: 20px;
+						float: none;
 					}
 				}
 			}
@@ -519,6 +583,13 @@
 				margin-right: 0px;
 			}
 		}
+	}
+
+	.video-modal {
+		max-width: 80%;
+		width: 400px;
+		.modal-body { width: 400px; }
+		iframe { max-width: 400px; }
 	}
 }
 @media (max-width: 400px) {
@@ -535,6 +606,13 @@
 		}
 	}
 
+	.video-modal {
+		max-width: 80%;
+		width: 380px;
+		.modal-body { width: 380px; }
+		iframe { max-width: 380px; }
+	}
+
 	.btn {
 		padding: 4px 7px;
 		font-size: 12px;
@@ -546,9 +624,6 @@
 	.collection-list-description {
 		padding: 5px 0 0 5px;
 		font-size: 13px;
-		.filter-label {
-			padding-right: 25px;
-		}
 		.close  {
 			right: 20px;
 		}

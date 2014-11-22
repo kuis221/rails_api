@@ -176,13 +176,15 @@ describe EventsController, type: :controller, search: true do
   end
 
   describe 'As NOT Super User' do
-    let(:company) { company_user.company }
+    let(:company) { create(:company) }
     let(:user) { company_user.user }
     let(:company_user) do
       create(:company_user,
              company: company,
              role: create(:role, is_admin: false, company: company))
     end
+
+    before { sign_in user }
 
     describe "GET 'filters'" do
       it 'should return the correct items for the Area bucket' do
