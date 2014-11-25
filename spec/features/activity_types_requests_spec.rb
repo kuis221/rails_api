@@ -73,6 +73,8 @@ feature 'Activity Types', js: true do
       Sunspot.commit
       visit activity_types_path
 
+      show_all_filters
+
       # Make it show only the inactive elements
       add_filter 'ACTIVE STATE', 'Inactive'
       remove_filter 'Active'
@@ -108,6 +110,12 @@ feature 'Activity Types', js: true do
         expect(page).to have_content('Drink feature')
         expect(page).to have_content('A description for drink feature type')
       end
+    end
+
+    it_behaves_like 'a list that allow saving custom filters' do
+      let(:list_url) { activity_types_path }
+
+      let(:filters) { [{ section: 'ACTIVE STATE', item: 'Inactive' }] }
     end
   end
 

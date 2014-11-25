@@ -49,7 +49,7 @@ $.widget 'nmk.filteredList', {
 
 		@element.parent().append $('<a class="list-filter-btn" href="#" data-toggle="filterbar" title="Filter">').append('<i class="icon-gear">')
 
-		@formFilters = $('<div class="form-facet-filters accordion">')
+		@formFilters = $('<div class="form-facet-filters accordion">').hide()
 							.on "show", (e) ->
 								$(e.target).closest(".accordion-group").find(".icon-arrow-right").removeClass("icon-arrow-right").addClass("icon-arrow-down").prop "title", "Collapse"
 								return
@@ -60,7 +60,17 @@ $.widget 'nmk.filteredList', {
 								$(e.target).closest(".accordion-group").find(".icon-arrow-down").removeClass("icon-arrow-down").addClass("icon-arrow-right").prop "title", "Expand"
 								return
 
+
 		@formFilters.appendTo(@form)
+
+		@toggleFiltersLink = $('<div class="text-right show-hide-filters-link"><a href="#">Show all filters</a></div>').appendTo(@form).find('a').on 'click', () =>
+			if @formFilters.css('display') is 'none'
+				@formFilters.slideDown 400, () =>
+					@toggleFiltersLink.text('Hide all filters')
+			else
+				@formFilters.slideUp 400, () =>
+					@toggleFiltersLink.text('Show all filters')
+			false
 
 		if @options.filters
 			@setFilters @options.filters
@@ -286,11 +296,11 @@ $.widget 'nmk.filteredList', {
 		$list = $('<ul>')
 		$filter = $('<div class="accordion-group">').append(
 			$('<div class="filter-wrapper accordion-heading">').data('name', filter.name).append(
-				$('<a>',{href: "#toogle-"+filter.label.replace(/\s+/g, '-').toLowerCase(), class:'accordion-toggle filter-title', 'data-toggle': 'collapse'}).text(filter.label).append(
-					$('<span class="icon icon-arrow-down pull-left" title="Collapse">')
+				$('<a>',{href: "#toogle-"+filter.label.replace(/\s+/g, '-').toLowerCase(), class:'accordion-toggle filter-title collapsed', 'data-toggle': 'collapse'}).text(filter.label).append(
+					$('<span class="icon icon-arrow-right pull-left" title="Collapse">')
 				)
 			),
-			$('<div id="toogle-'+filter.label.replace(/\s+/g, '-').toLowerCase()+'" class="accordion-body in">').append(
+			$('<div id="toogle-'+filter.label.replace(/\s+/g, '-').toLowerCase()+'" class="accordion-body collapse">').append(
 				$('<div class="accordion-inner">').append(
 					$list
 				)

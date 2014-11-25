@@ -84,6 +84,8 @@ feature 'Tasks', js: true, search: true do
         click_js_link 'Deactivate'
       end
 
+      show_all_filters
+
       confirm_prompt 'Are you sure you want to deactivate this task?'
 
       # Make it show only the inactive elements
@@ -99,6 +101,23 @@ feature 'Tasks', js: true, search: true do
       expect(page).to have_no_content('Pick up kidz at school')
     end
 
+    it_behaves_like 'a list that allow saving custom filters' do
+
+      before do
+        create(:campaign, name: 'Campaign 1', company: company)
+        create(:campaign, name: 'Campaign 2', company: company)
+      end
+
+      let(:list_url) { mine_tasks_path }
+
+      let(:filters) do
+        [{ section: 'CAMPAIGNS', item: 'Campaign 1' },
+         { section: 'CAMPAIGNS', item: 'Campaign 2' },
+         { section: 'TASK STATUS', item: 'Complete' },
+         { section: 'ACTIVE STATE', item: 'Inactive' }]
+      end
+    end
+
     feature 'tasks counters' do
       scenario 'filtering list will update the counters' do
         create(:late_task, company_user: company_user)
@@ -109,6 +128,8 @@ feature 'Tasks', js: true, search: true do
         Sunspot.commit
 
         visit mine_tasks_path
+
+        show_all_filters
 
         expect(task_counters).to have_content '3 INCOMPLETE'
         expect(task_counters).to have_content '1 LATE'
@@ -179,6 +200,24 @@ feature 'Tasks', js: true, search: true do
       end
     end
 
+    it_behaves_like 'a list that allow saving custom filters' do
+
+      before do
+        create(:campaign, name: 'Campaign 1', company: company)
+        create(:campaign, name: 'Campaign 2', company: company)
+      end
+
+      let(:list_url) { my_teams_tasks_path }
+
+      let(:filters) do
+        [{ section: 'CAMPAIGNS', item: 'Campaign 1' },
+         { section: 'CAMPAIGNS', item: 'Campaign 2' },
+         { section: 'STAFF', item: user.full_name },
+         { section: 'TASK STATUS', item: 'Complete' },
+         { section: 'ACTIVE STATE', item: 'Inactive' }]
+      end
+    end
+
     feature 'tasks counters' do
       scenario 'filtering list will update the counters' do
         event = create(:event, campaign: create(:campaign, company: company))
@@ -193,6 +232,8 @@ feature 'Tasks', js: true, search: true do
         Sunspot.commit
 
         visit my_teams_tasks_path
+
+        show_all_filters
 
         expect(task_counters).to have_content '1 UNASSIGNED'
         expect(task_counters).to have_content '4 INCOMPLETE'
@@ -219,89 +260,6 @@ feature 'Tasks', js: true, search: true do
         expect(task_counters).to have_content '1 LATE'
       end
     end
-  end
-
-  feature 'custom filters' do
-    let(:campaign1) { create(:campaign, name: 'Cacique FY13', company: company) }
-    let(:campaign2) { create(:campaign, name: 'New Brand Campaign', company: company) }
-    let(:task1) do
-      create(:task, title: 'Pick up kidz at school',
-                    company_user: company_user, due_at: '2013-09-01', active: true,
-                    event: create(:event, campaign: campaign1))
-    end
-    let(:task2) do
-      create(:completed_task, title: 'Bring beers to the party',
-                              company_user: company_user, due_at: '2013-09-02', active: true,
-                              event: create(:event, campaign: campaign2))
-    end
-
-    before do
-      # make sure tasks are created before
-      task1
-      task2
-      Sunspot.commit
-    end
-
-    scenario 'allows to create a new custom filter in My Tasks' do
-      visit mine_tasks_path
-
-      filter_section('CAMPAIGNS').unicheck('Cacique FY13')
-      filter_section('TASK STATUS').unicheck('Late')
-
-      click_button 'Save'
-
-      within visible_modal do
-        fill_in('Filter name', with: 'My Custom Filter')
-        expect do
-          click_button 'Save'
-          wait_for_ajax
-        end.to change(CustomFilter, :count).by(1)
-
-        custom_filter = CustomFilter.last
-        expect(custom_filter.owner).to eq(company_user)
-        expect(custom_filter.name).to eq('My Custom Filter')
-        expect(custom_filter.apply_to).to eq('tasks')
-        expect(custom_filter.filters).to eq(
-          "status%5B%5D=Active&campaign%5B%5D=#{campaign1.id}&task_status%5B%5D=Late")
-      end
-      ensure_modal_was_closed
-
-      within '.form-facet-filters' do
-        expect(page).to have_content('My Custom Filter')
-      end
-    end
-
-    scenario 'allows to create a new custom filter in Team Tasks' do
-      visit my_teams_tasks_path
-
-      filter_section('CAMPAIGNS').unicheck('Cacique FY13')
-      filter_section('TASK STATUS').unicheck('Late')
-      filter_section('STAFF').unicheck('Test User')
-
-      click_button 'Save'
-
-      within visible_modal do
-        fill_in('Filter name', with: 'My Custom Filter')
-        expect do
-          click_button 'Save'
-          wait_for_ajax
-        end.to change(CustomFilter, :count).by(1)
-
-        custom_filter = CustomFilter.last
-        expect(custom_filter.owner).to eq(company_user)
-        expect(custom_filter.name).to eq('My Custom Filter')
-        expect(custom_filter.apply_to).to eq('tasks')
-        expect(custom_filter.filters).to eq(
-          "status%5B%5D=Active&campaign%5B%5D=#{campaign1.id}&"\
-          "task_status%5B%5D=Late&user%5B%5D=#{company_user.id}")
-      end
-      ensure_modal_was_closed
-
-      within '.form-facet-filters' do
-        expect(page).to have_content('My Custom Filter')
-      end
-    end
-
   end
 
   feature 'export' do

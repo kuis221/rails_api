@@ -72,8 +72,8 @@ RSpec.configure do |config|
     Rails.logger.debug '**************************************************************************************'
   end
 
-  config.after(:each) do |example|
-    wait_for_ajax if example.metadata[:js]
+  config.after(:each, js: true) do
+    wait_for_ajax
   end
 
   config.include(SmsSpec::Helpers)
