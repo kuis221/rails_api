@@ -20,13 +20,13 @@ describe AutocompleteHelper, type: :helper do
 
       it 'returns only active campaigns if no settings have been defined' do
         expect(helper.autocomplete_buckets(campaigns: [Campaign])).to eql([
-          label: 'Campaigns', value: [ { label: '<i>Jam</i>eson FY14', value: active.id.to_s, type: 'campaign' } ]
+          label: 'Campaigns', value: [{ label: '<i>Jam</i>eson FY14', value: active.id.to_s, type: 'campaign' }]
         ])
       end
 
       it 'returns inactive campaigns if user have enabled it' do
         create(:filter_setting, company_user: company_user, apply_to: 'events',
-               settings: %w(campaigns_events_present campaigns_events_active campaigns_events_inactive))
+               settings: %w(campaigns_events_present show_inactive_items))
         expect(helper.autocomplete_buckets(campaigns: [Campaign])).to eql([
           label: 'Campaigns', value: [
             { label: '<i>Jam</i>eson FY14', value: active.id.to_s, type: 'campaign' },
@@ -35,12 +35,12 @@ describe AutocompleteHelper, type: :helper do
         ])
       end
 
-      it 'does not include the campaigns bucket if the user have disabled both options' do
+      it 'include the campaigns bucket if the user have disabled show inactive option' do
         create(:filter_setting, company_user: company_user, apply_to: 'events',
                settings: %w(campaigns_events_present))
-        expect(helper.autocomplete_buckets(campaigns: [Campaign])).to be_empty
-        expect(helper.autocomplete_buckets(campaigns: [Campaign], people: [CompanyUser])).to eql([
-          { label: 'People', value: [] }
+        expect(helper.autocomplete_buckets(campaigns: [Campaign])).not_to be_empty
+        expect(helper.autocomplete_buckets(campaigns: [Campaign])).to eql([
+          label: 'Campaigns', value: [{ label: '<i>Jam</i>eson FY14', value: active.id.to_s, type: 'campaign' }]
         ])
       end
     end

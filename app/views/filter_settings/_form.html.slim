@@ -8,18 +8,13 @@
     = f.error_notification
 
     .form-inputs
-      .row-fluid
-        .span12
-          = f.hidden_field 'settings[]', as: :hidden, value: nil
-          - settings.each do |setting_item|
-            = hidden_field_tag 'filter_setting[settings][]', FilterSetting.setting_key(setting_item, apply_to, 'present')
-            .span4.filter-item.clearfix
-              h6 = setting_item['label'].upcase
-              ul
-                li
-                  = custom_filter_setting_checkbox(setting_item, apply_to, 'Active', resource.settings)
-                li
-                  = custom_filter_setting_checkbox(setting_item, apply_to, 'Inactive', resource.settings)
+      = f.hidden_field 'settings[]', as: :hidden, value: nil
+      - CompanyUser::FILTER_SETTINGS_TYPES.each do |type|
+        .row-fluid
+          .span12
+            = filter_setting_checkbox(type, apply_to, resource.settings)
+      - settings.each do |setting_item|
+        = hidden_field_tag 'filter_setting[settings][]', FilterSetting.setting_key(setting_item, apply_to, 'present')
 
       .row-fluid.saved-filters
         .span12

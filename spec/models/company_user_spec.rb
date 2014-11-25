@@ -304,21 +304,21 @@ describe CompanyUser, type: :model do
     end
   end
 
-  describe '#filter_settings_for' do
+  describe '#filter_setting_present' do
     let(:company) { create(:company) }
     let(:company_user) { create(:company_user, company: company) }
 
     it 'should include only custom filters for events' do
-      expect(company_user.filter_settings_for('Brands', 'events')).to match_array [true]
+      expect(company_user.filter_setting_present('show_inactive_items', 'events')).to be_falsey
       create(:filter_setting,
              company_user_id: company_user.to_param, apply_to: 'events',
-             settings: %w(campaigns_events_present campaigns_events_active
-                          brands_events_present brands_events_active brands_events_inactive
-                          users_events_present users_events_active))
-      expect(company_user.filter_settings_for(Campaign, 'events', format: :string)).to match_array ['active']
-      expect(company_user.filter_settings_for(Brand, 'events')).to match_array [true, false]
-      expect(company_user.filter_settings_for(CompanyUser, 'events')).to match_array [true]
-      expect(company_user.filter_settings_for(BrandPortfolio, 'events')).to match_array [true]
+             settings: %w(show_inactive_items
+                          campaigns_events_present
+                          brands_events_present))
+      expect(company_user.filter_setting_present('show_inactive_items', 'events')).to be_truthy
+      expect(company_user.filter_setting_present('campaigns_events_present', 'events')).to be_truthy
+      expect(company_user.filter_setting_present('brands_events_present', 'events')).to be_truthy
+      expect(company_user.filter_setting_present('users_events_present', 'events')).to be_falsey
     end
   end
 

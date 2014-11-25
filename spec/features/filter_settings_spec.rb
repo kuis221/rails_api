@@ -17,7 +17,7 @@ feature 'Filter Settings', search: true, js: true do
 
   feature 'filter settings' do
     let(:campaign1) { create(:campaign, name: 'Campaign 1', company: company) }
-    let(:campaign2) { create(:campaign, name: 'Campaign 2', company: company) }
+    let(:campaign2) { create(:campaign, name: 'Campaign 2', company: company, aasm_state: 'inactive') }
     let(:brand1) { create(:brand, name: 'Brand 1', company: company) }
     let(:brand2) { create(:brand, name: 'Brand 2', company: company, active: false) }
     let(:event1) { create(:submitted_event, campaign: campaign1) }
@@ -38,49 +38,42 @@ feature 'Filter Settings', search: true, js: true do
 
       visit events_path
 
-      expect(page).to have_filter_section('CAMPAIGNS', options: ['Campaign 1', 'Campaign 2'])
-
+      expect(page).to have_filter_section('CAMPAIGNS', options: ['Campaign 1'])
       expect(page).to have_filter_section('BRANDS', options: ['Brand 1'])
-
       expect(page).to have_filter_section('PEOPLE',
                                           options: ['Mario Moreno', 'Roberto Gomez', 'Test User'])
 
       click_js_link 'Filter Settings'
 
       within visible_modal do
-        expect(page).to have_content('CAMPAIGNS')
-        expect(page).to have_content('BRANDS')
-        expect(page).to have_content('AREAS')
-        expect(page).to have_content('USERS')
-        expect(page).to have_content('TEAMS')
-        unicheck('Active') # Unchecks all active checkboxes
+        unicheck('Show inactive items')
         click_button 'Done'
       end
       ensure_modal_was_closed
 
       # checks that the filter sections were hidden
-      expect(page).not_to have_filter_section('CAMPAIGNS')
-      expect(page).not_to have_filter_section('BRANDS')
-      expect(page).not_to have_filter_section('PEOPLE')
+      expect(page).to have_filter_section('CAMPAIGNS', options: ['Campaign 1', 'Campaign 2'])
+      expect(page).to have_filter_section('BRANDS', options: ['Brand 1', 'Brand 2'])
+      expect(page).to have_filter_section('PEOPLE',
+                                          options: ['Eugenio Derbez', 'Mario Moreno', 'Roberto Gomez', 'Test User'])
       expect(page).to have_filter_section('EVENT STATUS')
       expect(page).to have_filter_section('ACTIVE STATE')
 
       click_js_link 'Filter Settings'
 
       within visible_modal do
-        unicheck('Inactive') # Checks all inactive checkboxes
+        unicheck('Show inactive items')
         click_button 'Done'
       end
       ensure_modal_was_closed
 
-      expect(page).not_to have_filter_section('CAMPAIGNS')
+      expect(page).to have_filter_section('CAMPAIGNS', options: ['Campaign 1'])
+      expect(page).to have_filter_section('BRANDS', options: ['Brand 1'])
+      expect(page).to have_filter_section('PEOPLE',
+                                          options: ['Mario Moreno', 'Roberto Gomez', 'Test User'])
       expect(page).to have_filter_section('EVENT STATUS')
       expect(page).to have_filter_section('ACTIVE STATE')
-
-      expect(page).to have_filter_section('BRANDS', options: ['Brand 2'])
-
-      expect(page).to have_filter_section('PEOPLE', options: ['Eugenio Derbez'])
-
+      screenshot_and_open_image
     end
   end
 end

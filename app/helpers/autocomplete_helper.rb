@@ -2,20 +2,11 @@ module AutocompleteHelper
   # Autocomplete helper methods
   def autocomplete_buckets(list)
     search_classes = list.values.flatten
-    search_classes_options = {}
-    filter_settings = current_company_user.filter_settings.find_or_initialize_by(apply_to: autocomplete_filter_settings_scope)
-    search_classes.each do |klass|
-      options = filter_settings.filter_settings_for(klass, format: :string)
-      if options.nil?
-        search_classes_options[klass] = ['Active']
-      elsif options.any?
-        search_classes_options[klass] = options.map(&:capitalize)
-      end
-    end
+    options = items_to_show(format: :string).map(&:capitalize)
 
-    return [] unless search_classes_options.any?
+    return [] unless options.any?
 
-    search = Sunspot.search(search_classes_options.keys) do
+    search = Sunspot.search(search_classes) do
       keywords(params[:q]) do
         fields(:name)
         highlight :name
@@ -26,7 +17,7 @@ module AutocompleteHelper
       with(:company_id, [-1, current_company.id])
 
       any_of do
-        search_classes_options.each do |klass, options|
+        search_classes.each do |klass|
           all_of do
             with :class, klass
             with :status, options
@@ -36,8 +27,7 @@ module AutocompleteHelper
     end
 
     @autocomplete_buckets ||= list.map do |bucket_name, klasess|
-      included_klasses = klasess.select { |k| search_classes_options.key?(k) }
-      build_bucket(search, bucket_name, included_klasses) if included_klasses.any?
+      build_bucket(search, bucket_name, klasess) if klasess.any?
     end.compact
   end
 

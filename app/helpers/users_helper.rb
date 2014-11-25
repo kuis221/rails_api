@@ -160,15 +160,20 @@ module UsersHelper
 
   def notification_setting_checkbox(type, subject)
     field_id = "#{type}_#{subject}"
-    content_tag(:label, check_box_tag('company_user[notifications_settings][]', field_id, resource.notifications_settings.include?(field_id), id: "notification_settings_#{field_id}"))
+    content_tag(:label,
+                check_box_tag('company_user[notifications_settings][]',
+                              field_id,
+                              resource.notifications_settings.include?(field_id),
+                              id: "notification_settings_#{field_id}"))
   end
 
-  def custom_filter_setting_checkbox(setting, subject, label, settings)
-    field_id = FilterSetting.setting_key(setting, subject, label)
-    checked = settings.include?(field_id)
+  def filter_setting_checkbox(type, subject, settings)
+    field_id = "#{type}_#{subject}"
     content_tag(:label) do
-      check_box_tag('filter_setting[settings][]', field_id,
-                    checked, id: "settings_#{field_id}") + label
+      check_box_tag('filter_setting[settings][]',
+                    type,
+                    settings.include?(type),
+                    id: "settings_#{type}") + t("filter_setting_types.#{type}")
     end
   end
 end

@@ -104,7 +104,7 @@ describe Results::EventStatusController, type: :controller do
           expect(text).to include 'TestCampaignFY01'
           expect(text).to include 'Area1'
           expect(text).to include '10GOAL'
-          expect(text).to include 'EVENTS8REMAINING11'
+          expect(text).to include '8EVENTSREMAINING11'
         end
       end
 
@@ -132,7 +132,7 @@ describe Results::EventStatusController, type: :controller do
           expect(text).to include 'TestCampaignFY01'
           expect(text).to include 'TestUser'
           expect(text).to include '50GOAL'
-          expect(text).to include 'EVENTS48REMAINING11'
+          expect(text).to include '48EVENTSREMAINING11'
         end
       end
     end

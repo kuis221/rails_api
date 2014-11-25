@@ -35,29 +35,6 @@ class FilterSetting < ActiveRecord::Base
   validates :company_user_id, presence: true, numericality: true
   validates :apply_to, presence: true
 
-  # Returns an array of the chosen settings for a given model if any, or nil
-  # if the user haven't entered settings for it. Empty Array means that the user
-  # have disabled both Active and Inactive elements.
-  # Returns examples:
-  #   [true, false]   => when user have selected active and inactive items
-  #   [false]         => when user have selected only inactive items
-  #   [true]          => when user have selected only active items
-  #   []              => when user have deselected both options
-  #   nil             => when there are no settings
-  def filter_settings_for(klass, format: :boolean)
-    return if settings.nil? || !FilterSetting::SETTINGS.key?(apply_to)
-
-    setting = FilterSetting::SETTINGS[apply_to].find { |s| s['class'] == klass }
-
-    return unless setting.present? && settings.include?(setting_key(setting, 'present'))
-
-    status = []
-    status.push(format == :string ? 'active' : true) if settings.include?(setting_key(setting, 'active'))
-    status.push(format == :string ? 'inactive' : false) if settings.include?(setting_key(setting, 'inactive'))
-
-    status
-  end
-
   def self.models_for(scope)
     return unless SETTINGS.key?(scope)
     SETTINGS[scope].map { |m| m['class'] }
