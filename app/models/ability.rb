@@ -133,6 +133,22 @@ class Ability
         can?(:update, company_user)
       end
 
+      can :export_fieldable, Campaign do |campaign|
+        can?(:view_event_form, campaign)
+      end
+
+      can :export_fieldable, ActivityType do |activity_type|
+        can?(:show, activity_type)
+      end
+
+      can :export_fieldable, Event do |event|
+        can?(:view_data, event) || can?(:edit_data, event)
+      end
+
+      can :export_fieldable, Activity do |activity|
+        can?(:show, activity)
+      end
+
       # Custom Reports
       # can :manage, Report do |report|
       #   report.created_by_id == user.id
