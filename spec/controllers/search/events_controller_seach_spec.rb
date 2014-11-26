@@ -40,7 +40,7 @@ describe EventsController, type: :controller, search: true do
         company_user = user.company_users.first
         Sunspot.commit
 
-        get 'autocomplete', q: 'gu', user: [excluded_user.id]
+        get 'autocomplete', q: 'gu', user: [excluded_user.company_users.first.id]
         expect(response).to be_success
 
         buckets = JSON.parse(response.body)
