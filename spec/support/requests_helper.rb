@@ -60,6 +60,11 @@ module CapybaraBrandscopicHelpers
     self
   end
 
+  def show_all_filters()
+    find(:link, 'Show all filters').trigger('click') # Use this if using capybara-webkit instead of selenium
+    expect(page).to have_link('Hide all filters')
+  end
+
   def remove_filter(filter_name)
     wait_for_ajax
     within '.collection-list-description' do
@@ -190,15 +195,21 @@ module RequestsHelper
     find(:xpath, '//div[@class=\'collection-list-description\']')
   end
 
-  def filter_section(title)
+  def filter_section(title, auto_open: true)
     section = nil
     find('.form-facet-filters .accordion-group .filter-wrapper a', text: title)
     page.all('.form-facet-filters .accordion-group').each do |wrapper|
       if wrapper.all('.filter-wrapper a', text: title).count > 0
+        if auto_open
+          link = wrapper.find('.filter-wrapper a', text: title, match: :first)
+          link.trigger('click') if link[:class].include?('collapsed')
+          expect(wrapper).not_to have_selector('a.collapsed', text: title)
+        end
         section = wrapper
         break
       end
     end
+
     section
   end
 

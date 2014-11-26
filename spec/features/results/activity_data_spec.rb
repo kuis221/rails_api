@@ -44,78 +44,21 @@ feature 'Results Activity Data Page', js: true, search: true  do
       end
     end
 
-    scenario 'allows to create apply and remove custom filters' do
-      create(:campaign, name: 'First Campaign', company: company)
-      create(:campaign, name: 'Second Campaign', company: company)
-      create(:company_user, user: create(:user, first_name: 'Roberto', last_name: 'Gomez'),
-                            company: company)
-
-      visit results_activities_path
-
-      add_filter 'CAMPAIGNS', 'First Campaign'
-      add_filter 'CAMPAIGNS', 'Second Campaign'
-      add_filter 'USERS', 'Roberto Gomez'
-
-      click_button 'Save'
-
-      within visible_modal do
-        fill_in('Filter name', with: 'My Custom Filter')
-        expect do
-          click_button 'Save'
-          wait_for_ajax
-        end.to change(CustomFilter, :count).by(1)
+    it_behaves_like 'a list that allow saving custom filters' do
+      before do
+        create(:campaign, name: 'First Campaign', company: company)
+        create(:campaign, name: 'Second Campaign', company: company)
+        create(:company_user, user: create(:user, first_name: 'Roberto', last_name: 'Gomez'),
+                              company: company)
       end
-      ensure_modal_was_closed
 
-      expect(page).to have_filter_section('SAVED FILTERS')
+      let(:list_url) { results_activities_path }
 
-      expect(collection_description).to have_filter_tag('First Campaign')
-      expect(collection_description).to have_filter_tag('Second Campaign')
-      expect(collection_description).to have_filter_tag('Roberto Gomez')
-
-      click_js_button 'Reset'
-
-      expect(collection_description).not_to have_filter_tag('First Campaign')
-      expect(collection_description).not_to have_filter_tag('Second Campaign')
-      expect(collection_description).not_to have_filter_tag('Roberto Gomez')
-
-      add_filter 'SAVED FILTERS', 'My Custom Filter'
-
-      expect(collection_description).to have_filter_tag('First Campaign')
-      expect(collection_description).to have_filter_tag('Second Campaign')
-      expect(collection_description).to have_filter_tag('Roberto Gomez')
-
-      # Deselect filter
-      filter_section('SAVED FILTERS').unicheck('My Custom Filter')
-
-      expect(collection_description).not_to have_filter_tag('First Campaign')
-      expect(collection_description).not_to have_filter_tag('Second Campaign')
-      expect(collection_description).not_to have_filter_tag('Roberto Gomez')
-
-      # Apply the saved filter
-      add_filter 'SAVED FILTERS', 'My Custom Filter'
-
-      expect(collection_description).to have_filter_tag('First Campaign')
-      expect(collection_description).to have_filter_tag('Second Campaign')
-      expect(collection_description).to have_filter_tag('Roberto Gomez')
-
-      # Remove the custom filter
-      click_js_link 'Filter Settings'
-
-      within visible_modal do
-        expect(page).to have_content('My Custom Filter')
-
-        expect do
-          click_js_link 'Remove Custom Filter'
-          wait_for_ajax
-        end.to change(CustomFilter, :count).by(-1)
-        expect(page).to_not have_content('My Custom Filter')
-
-        click_button 'Done'
+      let(:filters) do
+        [{ section: 'CAMPAIGNS', item: 'First Campaign' },
+         { section: 'CAMPAIGNS', item: 'Second Campaign' },
+         { section: 'USERS', item: 'Roberto Gomez' }]
       end
-      ensure_modal_was_closed
-
-      expect(page).not_to have_filter_section('SAVED FILTERS')
     end
   end
 

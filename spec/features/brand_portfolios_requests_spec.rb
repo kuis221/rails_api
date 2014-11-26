@@ -57,6 +57,8 @@ feature 'BrandPortfolios', js: true, search: true do
 
         expect(page).to have_content '0 brand portfolios found for: Active'
 
+        show_all_filters
+
         add_filter 'ACTIVE STATE', 'Inactive'
         remove_filter 'Active'
 
@@ -187,54 +189,20 @@ feature 'BrandPortfolios', js: true, search: true do
   end
 
   feature 'custom filters', search: true, js: true do
-    let(:brand_portfolio1) do
-      create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica',
-                               active: true, company: company)
-    end
-    let(:brand_portfolio2) do
-      create(:brand_portfolio, name: 'B Licores Costarricenses', description: 'Licores ticos',
-                               active: true, company: company)
-    end
-    let(:brand1) { create(:brand, name: 'Brand 1', company: company) }
-    let(:brand2) { create(:brand, name: 'Brand 2', company: company) }
-
-    before do
-      # make sure brand portfolios are created before
-      brand_portfolio1
-      brand_portfolio2
-      brand_portfolio1.brands << brand1
-      brand_portfolio2.brands << brand2
-      brand_portfolio1.save
-      brand_portfolio2.save
-      Sunspot.commit
-    end
-
-    scenario 'allows to create a new custom filter' do
-      visit brand_portfolios_path
-
-      filter_section('BRANDS').unicheck('Brand 1')
-      filter_section('ACTIVE STATE').unicheck('Inactive')
-
-      click_button 'Save'
-
-      within visible_modal do
-        fill_in('Filter name', with: 'My Custom Filter')
-        expect do
-          click_button 'Save'
-          wait_for_ajax
-        end.to change(CustomFilter, :count).by(1)
-
-        custom_filter = CustomFilter.last
-        expect(custom_filter.owner).to eq(company_user)
-        expect(custom_filter.name).to eq('My Custom Filter')
-        expect(custom_filter.apply_to).to eq('brand_portfolios')
-        expect(custom_filter.filters).to eq(
-          "status%5B%5D=Active&brand%5B%5D=#{brand1.id}&status%5B%5D=Inactive")
+    it_behaves_like 'a list that allow saving custom filters' do
+      before do
+        campaign = create(:campaign, company: company)
+        campaign.brands << create(:brand, name: 'Brand 1', company: company)
+        campaign.brands << create(:brand, name: 'Brand 2', company: company)
+        company_user.campaigns << campaign
       end
-      ensure_modal_was_closed
 
-      within '.form-facet-filters' do
-        expect(page).to have_content('My Custom Filter')
+      let(:list_url) { brand_portfolios_path }
+
+      let(:filters) do
+        [{ section: 'BRANDS', item: 'Brand 1' },
+         { section: 'BRANDS', item: 'Brand 2' },
+         { section: 'ACTIVE STATE', item: 'Inactive' }]
       end
     end
   end

@@ -34,14 +34,16 @@ class EventData < ActiveRecord::Base
   scope :for_active_events, lambda { joins(:event).where(events: { active: true }) }
 
   def update_data
-    return if Kpi.impressions.nil?
     e = Event.find(event_id)
+    self.spent = e.event_expenses.sum(:amount)
+
+    return if Kpi.impressions.nil?
+
     results = e.results
     [:impressions, :interactions, :samples].each do |kpi_name|
       result = e.result_for_kpi(Kpi.send(kpi_name))
       send("#{kpi_name}=",  result.value.to_i) unless result.nil?
     end
-    self.spent = e.event_expenses.sum(:amount)
 
     # For gender and ethnicity
     [:gender, :ethnicity].each do |kpi|
@@ -53,7 +55,5 @@ class EventData < ActiveRecord::Base
         end
       end
     end
-
-    self
   end
 end
