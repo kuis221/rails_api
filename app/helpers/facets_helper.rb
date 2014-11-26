@@ -134,7 +134,6 @@ module FacetsHelper
     items = Campaign.accessible_by_user(current_company_user).where('aasm_state in (?)', status).order(:name).pluck(:name, :id).map do |r|
       build_facet_item(label: r[0], id: r[1], name: :campaign, count: 1)
     end
-    Campaign.accessible_by_user(current_company_user).where('aasm_state in (?)', status).order(:name).inspect
     { label: 'Campaigns', items: items }
   end
 
