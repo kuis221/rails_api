@@ -17,3 +17,4 @@ div.resource-item id="company_user_#{company_user.id}" class="#{active_class(com
   div.resource-item-actions
     = button_to_edit company_user if can?(:edit, CompanyUser)
     = button_to_activate_or_deactivate(company_user) if can?(:deactivate, CompanyUser)
+    = button_to_deactivate(company_user) if can?(:deactivate, CompanyUser) && company_user.invited_to_sign_up? && company_user.active == true
