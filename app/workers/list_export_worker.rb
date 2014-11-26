@@ -5,6 +5,8 @@ class ListExportWorker
   extend HerokuResqueAutoScale
 
   def self.perform(download_id)
+    NewRelic::Agent.ignore_apdex
+    NewRelic::Agent.ignore_enduser
     export = ListExport.find(download_id)
     export.export_list
     export = nil
