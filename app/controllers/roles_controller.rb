@@ -26,8 +26,7 @@ class RolesController < FilteredController
 
   def facets
     @facets ||= Array.new.tap do |f|
-      # select what params should we use for the facets search
-      f.push(label: 'Active State', items: %w(Active Inactive).map { |x| build_facet_item(label: x, id: x, name: :status, count: 1) })
+      f.push build_state_bucket
       f.concat build_custom_filters_bucket
     end
   end

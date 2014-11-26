@@ -441,7 +441,10 @@ $.widget 'nmk.filteredList', {
 
 	_getAutocompleteResults: (request, response) ->
 		params = {q: request.term}
-		$.get @options.sourcePath, params, (data) ->
+		path = @options.sourcePath
+		if document.location.search?
+			path = if path.indexOf('?') >= -1 then path + '&' + document.location.search else path + '?' + document.localtion.search
+		$.get path, params, (data) ->
 			response data
 		, "json"
 

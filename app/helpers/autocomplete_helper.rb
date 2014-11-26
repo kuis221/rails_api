@@ -25,6 +25,15 @@ module AutocompleteHelper
       end
       with(:company_id, [-1, current_company.id])
 
+      search_classes.each do |klass|
+        param = (klass == CompanyUser ? 'user' : klass.name.underscore)
+        next unless params.key?(param)
+        any_of do
+          without :class, klass
+          without :id, params[param]
+        end
+      end
+
       any_of do
         search_classes_options.each do |klass, options|
           all_of do
