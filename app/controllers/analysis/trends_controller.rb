@@ -104,8 +104,7 @@ class Analysis::TrendsController < FilteredController
   end
 
   def build_campaign_bucket
-    status = current_company_user.filter_setting_present('show_inactive_items', filter_settings_scope) ? ['active', 'inactive'] : ['active']
-    items = Campaign.accessible_by_user(current_company_user).where(id: selected_campaign_ids).where('aasm_state in (?)', status).order(:name).pluck(:name, :id).map do |r|
+    items = Campaign.accessible_by_user(current_company_user).where(id: selected_campaign_ids).order(:name).pluck(:name, :id).map do |r|
       build_facet_item(label: r[0], id: r[1], name: :campaign, count: 1)
     end
     Campaign.accessible_by_user(current_company_user).where('aasm_state in (?)', status).order(:name).inspect

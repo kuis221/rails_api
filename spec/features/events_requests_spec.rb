@@ -1142,40 +1142,6 @@ feature 'Events section' do
           expect(page).to have_field('Active')
         end
       end
-
-      scenario 'allows to remove custom filters' do
-        create(:custom_filter, owner: company_user, name: 'Custom Filter 1', apply_to: 'events', filters: 'Filters 1')
-        cf2 = create(:custom_filter, owner: company_user, name: 'Custom Filter 2', apply_to: 'events', filters: 'Filters 2')
-        create(:custom_filter, owner: company_user, name: 'Custom Filter 3', apply_to: 'events', filters: 'Filters 3')
-
-        visit events_path
-
-        show_all_filters
-
-        find('.settings-for-filters').trigger('click')
-
-        within visible_modal do
-          expect(page).to have_content('Custom Filter 1')
-          expect(page).to have_content('Custom Filter 2')
-          expect(page).to have_content('Custom Filter 3')
-
-          expect do
-            hover_and_click('#saved-filters-container #custom-filter-' + cf2.id.to_s, 'Remove Custom Filter')
-            wait_for_ajax
-          end.to change(CustomFilter, :count).by(-1)
-
-          expect(page).to have_content('Custom Filter 1')
-          expect(page).to_not have_content('Custom Filter 2')
-          expect(page).to have_content('Custom Filter 3')
-
-          click_button 'Done'
-        end
-        ensure_modal_was_closed
-
-        expect(page).to have_filter_section(
-          title: 'SAVED FILTERS',
-          options: ['Custom Filter 1', 'Custom Filter 3'])
-      end
     end
 
     feature 'create a event' do
