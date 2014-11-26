@@ -38,7 +38,9 @@ feature 'Filter Settings', search: true, js: true do
 
       visit events_path
 
+      show_all_filters
       expect(page).to have_filter_section('CAMPAIGNS', options: ['Campaign 1'])
+
       expect(page).to have_filter_section('BRANDS', options: ['Brand 1'])
       expect(page).to have_filter_section('PEOPLE',
                                           options: ['Mario Moreno', 'Roberto Gomez', 'Test User'])

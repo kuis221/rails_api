@@ -50,6 +50,8 @@ feature 'Events section' do
 
         visit events_path
 
+        show_all_filters
+
         # Show only inactive items
         add_filter('ACTIVE STATE', 'Inactive')
         remove_filter('Active')
@@ -117,6 +119,9 @@ feature 'Events section' do
           events  # make sure users are created before
           Sunspot.commit
           visit events_path
+
+          show_all_filters
+
           expect(page).to have_selector('#events-list .resource-item', count: 1)
           add_filter 'EVENT STATUS', 'Submitted'
           remove_filter 'today to the future'
@@ -221,6 +226,8 @@ feature 'Events section' do
 
           visit events_path
 
+          show_all_filters
+
           expect(page).to have_content('1 event found for: Active today to the future')
           add_filter 'ACTIVE STATE', 'Inactive'
 
@@ -273,6 +280,8 @@ feature 'Events section' do
               expect(page).to have_content('Campaign FY2012')
               expect(page).to have_content('Another Campaign April 03')
             end
+
+            show_all_filters
 
             expect(page).to have_filter_section(title: 'CAMPAIGNS',
                                                 options: ['Campaign FY2012', 'Another Campaign April 03'])
@@ -674,6 +683,8 @@ feature 'Events section' do
 
           visit events_path
 
+          show_all_filters
+
           expect(page).to have_filter_section(
             title: 'PEOPLE',
             options: ['Mario Cantinflas', 'Roberto Gomez', user.full_name])
@@ -718,6 +729,8 @@ feature 'Events section' do
 
             visit events_path
 
+            show_all_filters
+
             add_filter 'CAMPAIGNS', 'Campaign FY2012'
             select_filter_calendar_day('18')
 
@@ -749,6 +762,9 @@ feature 'Events section' do
             Sunspot.commit
 
             visit events_path
+
+            show_all_filters
+
             expect(page).to have_content('1 event found for: Active today to the future')
             expect(page).to have_selector('#events-list .resource-item', count: 1)
 
@@ -772,6 +788,8 @@ feature 'Events section' do
             visit events_path
             expect(page).to have_content('1 event found for: Active today to the future')
             expect(page).to have_selector('#events-list .resource-item', count: 1)
+
+            show_all_filters
 
             add_filter 'SAVED FILTERS', 'My Custom Filter'
 
@@ -830,6 +848,25 @@ feature 'Events section' do
         end
 
         feature 'filters' do
+
+          it_behaves_like 'a list that allow saving custom filters' do
+
+            before do
+              create(:campaign, name: 'Campaign 1', company: company)
+              create(:campaign, name: 'Campaign 2', company: company)
+              create(:area, name: 'Area 1', company: company)
+            end
+
+            let(:list_url) { events_path }
+
+            let(:filters) do
+              [{ section: 'CAMPAIGNS', item: 'Campaign 1' },
+               { section: 'CAMPAIGNS', item: 'Campaign 2' },
+               { section: 'AREAS',     item: 'Area 1' },
+               { section: 'ACTIVE STATE', item: 'Inactive' }]
+            end
+          end
+
           scenario 'Users must be able to filter on all brands they have permissions to access ' do
             today = Time.zone.local(Time.now.year, Time.now.month, 18, 12, 00)
             tomorrow = today + 1.day
@@ -854,6 +891,9 @@ feature 'Events section' do
               company_user.brands << brands
               Sunspot.commit
               visit events_path
+
+              show_all_filters
+
               expect(page).to have_filter_section(title: 'BRANDS', options: %w(Cacique Smirnoff))
 
               within events_list do
@@ -892,6 +932,9 @@ feature 'Events section' do
             Sunspot.commit
 
             visit events_path
+
+            show_all_filters
+
             expect(page).to have_filter_section(title: 'AREAS',
                                                 options: ['Gran Area Metropolitana', 'Zona Norte'])
           end
@@ -913,6 +956,8 @@ feature 'Events section' do
         Sunspot.commit
 
         visit events_path
+
+        show_all_filters
 
         add_filter 'CAMPAIGNS', 'Campaign 1'
         add_filter 'PEOPLE', 'Roberto Gomez'
@@ -940,9 +985,8 @@ feature 'Events section' do
         end
         ensure_modal_was_closed
 
-        within '.form-facet-filters' do
-          expect(page).to have_content('My Custom Filter')
-        end
+        expect(page).to have_filter_section(title: 'SAVED FILTERS',
+                                            options: ['My Custom Filter'])
       end
 
       scenario 'a custom filter with more that 5 options for the same category' do
@@ -954,6 +998,9 @@ feature 'Events section' do
                  filters:  'campaign%5B%5D=' + campaigns.map(&:to_param).join('&campaign%5B%5D=') )
 
           visit events_path
+
+          show_all_filters
+
           add_filter 'SAVED FILTERS', 'MyCampaigns'
 
           campaigns.each do |campaign|
@@ -971,6 +1018,9 @@ feature 'Events section' do
           campaigns.each do |campaign|
             expect(collection_description).to have_filter_tag(campaign.name)
           end
+
+          expect(page).to have_filter_section(title: 'SAVED FILTERS',
+                                              options: ['MyCampaigns'])
 
           within '.form-facet-filters' do
             expect(find_field('MyCampaigns')['checked']).to be_falsey
@@ -993,6 +1043,8 @@ feature 'Events section' do
                         '&event_status%5B%5D=Late&status%5B%5D=Active')
 
         visit events_path
+
+        show_all_filters
 
         within events_list do
           expect(page).to have_content('Campaign 1')
@@ -1098,6 +1150,8 @@ feature 'Events section' do
 
         visit events_path
 
+        show_all_filters
+
         find('.settings-for-filters').trigger('click')
 
         within visible_modal do
@@ -1118,11 +1172,9 @@ feature 'Events section' do
         end
         ensure_modal_was_closed
 
-        within '.form-facet-filters' do
-          expect(page).to have_content('Custom Filter 1')
-          expect(page).to_not have_content('Custom Filter 2')
-          expect(page).to have_content('Custom Filter 3')
-        end
+        expect(page).to have_filter_section(
+          title: 'SAVED FILTERS',
+          options: ['Custom Filter 1', 'Custom Filter 3'])
       end
     end
 

@@ -59,6 +59,8 @@ feature 'Users', js: true do
 
       confirm_prompt 'Are you sure you want to deactivate this user?'
 
+      show_all_filters
+
       # Make it show only the inactive elements
       remove_filter 'Active'
       add_filter 'ACTIVE STATE', 'Inactive'
@@ -88,6 +90,8 @@ feature 'Users', js: true do
       end
       ensure_modal_was_closed
 
+      show_all_filters
+
       # Deselect "Active" and select "Invited"
       remove_filter 'Active'
       add_filter 'ACTIVE STATE', 'Invited'
@@ -97,6 +101,24 @@ feature 'Users', js: true do
       within resource_item do
         expect(page).to have_content 'Fulanito de Tal'
         expect(page).to have_content 'TestRole'
+      end
+    end
+
+    it_behaves_like 'a list that allow saving custom filters' do
+
+      before do
+        create(:campaign, name: 'Campaign 1', company: company)
+        create(:campaign, name: 'Campaign 2', company: company)
+        create(:team, name: 'Team 1', company: company)
+      end
+
+      let(:list_url) { company_users_path }
+
+      let(:filters) do
+        [{ section: 'CAMPAIGNS', item: 'Campaign 1' },
+         { section: 'CAMPAIGNS', item: 'Campaign 2' },
+         { section: 'TEAMS', item: 'Team 1' },
+         { section: 'ACTIVE STATE', item: 'Inactive' }]
       end
     end
   end

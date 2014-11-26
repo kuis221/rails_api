@@ -12,7 +12,7 @@ class AssetsUploadWorker
     asset = nil
     GC.start
 
-  rescue Resque::TermException
+  rescue Resque::TermException, Resque::DirtyExit
     # if the worker gets killed, (when deploying for example)
     # re-enqueue the job so it will be processed when worker is restarted
     Resque.enqueue(AssetsUploadWorker, asset_id, asset_class)

@@ -33,6 +33,7 @@ module Capybara
             unless title.nil? || title.count == 0
               found = true
               if @args[:options].present?
+                title.first.trigger('click') if wrapper.all('.accordion-body.collapse').count > 0
                 @args[:options].each do |option|
                   if wrapper.all('ul>li', text:  option).count == 0
                     errors.push "Option \"#{option}\" not found in #{@title} fitler: #{wrapper.text}"

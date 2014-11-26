@@ -2,9 +2,9 @@ require 'rails_helper'
 
 describe EventsController, type: :controller, search: true do
   describe 'As Super User' do
-    let(:user){ sign_in_as_user}
-    let(:company_user){ user.current_company_user }
-    let(:company){ user.companies.first }
+    let(:user) { sign_in_as_user }
+    let(:company_user) { user.current_company_user }
+    let(:company) { user.companies.first }
     let(:campaign) { create(:campaign, company: company) }
 
     before { user }
@@ -34,11 +34,41 @@ describe EventsController, type: :controller, search: true do
             'type' => 'company_user' }])
       end
 
+      it 'should exclude the users in the :user param' do
+        user = create(:user, first_name: 'Guillermo', last_name: 'Vargas', company_id: company.id)
+        excluded_user = create(:user, first_name: 'Guillermo', last_name: 'Tell', company_id: company.id)
+        company_user = user.company_users.first
+        Sunspot.commit
+
+        get 'autocomplete', q: 'gu', user: [excluded_user.company_users.first.id]
+        expect(response).to be_success
+
+        buckets = JSON.parse(response.body)
+        people_bucket = buckets.select { |b| b['label'] == 'People' }.first
+        expect(people_bucket['value']).to eq([
+          { 'label' => '<i>Gu</i>illermo Vargas', 'value' => company_user.id.to_s,
+            'type' => 'company_user' }])
+      end
+
       it 'should return the teams in the People Bucket' do
         team = create(:team, name: 'Spurs', company_id: company.id)
         Sunspot.commit
 
         get 'autocomplete', q: 'sp'
+        expect(response).to be_success
+
+        buckets = JSON.parse(response.body)
+        people_bucket = buckets.select { |b| b['label'] == 'People' }.first
+        expect(people_bucket['value']).to eq([
+          { 'label' => '<i>Sp</i>urs', 'value' => team.id.to_s, 'type' => 'team' }])
+      end
+
+      it 'should exclude teams in the :team param' do
+        team = create(:team, name: 'Spurs', company_id: company.id)
+        excluded_team = create(:team, name: 'Spurs Jr', company_id: company.id)
+        Sunspot.commit
+
+        get 'autocomplete', q: 'sp', team: [excluded_team.id]
         expect(response).to be_success
 
         buckets = JSON.parse(response.body)
@@ -70,6 +100,22 @@ describe EventsController, type: :controller, search: true do
         Sunspot.commit
 
         get 'autocomplete', q: 'cac'
+        expect(response).to be_success
+
+        buckets = JSON.parse(response.body)
+        campaigns_bucket = buckets.select { |b| b['label'] == 'Campaigns' }.first
+        expect(campaigns_bucket['value']).to eq([
+          { 'label' => '<i>Cac</i>ique para todos', 'value' => campaign.id.to_s,
+            'type' => 'campaign' }
+        ])
+      end
+
+      it 'should exclude the campaigns that are in the campaign param' do
+        campaign = create(:campaign, name: 'Cacique para todos', company: company)
+        excluded_campaign = create(:campaign, name: 'Cacique para nadie', company: company)
+        Sunspot.commit
+
+        get 'autocomplete', q: 'cac', campaign: [excluded_campaign.id]
         expect(response).to be_success
 
         buckets = JSON.parse(response.body)

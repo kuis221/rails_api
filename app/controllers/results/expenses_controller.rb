@@ -7,13 +7,9 @@ class Results::ExpensesController < FilteredController
   private
 
   def search_params
-    @search_params ||= begin
-      super
-      unless @search_params.key?(:user) && !@search_params[:user].empty?
-        @search_params[:with_expenses_only] = true
-      end
-      @search_params[:event_data_stats] = true
-      @search_params
+    @search_params || super.tap do |p|
+      p[:with_expenses_only] = true unless p.key?(:user) && p[:user].present?
+      p[:event_data_stats] = true
     end
   end
 

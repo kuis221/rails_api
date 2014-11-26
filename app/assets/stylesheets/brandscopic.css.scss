@@ -2688,7 +2688,6 @@ ul.ui-widget-content{
 	.form-facet-filters {
 		.accordion-group {
 			border: none;
-			margin-bottom: 20px;
 			.filter-wrapper {
 				li ul {
 					display: none;
@@ -2717,6 +2716,10 @@ ul.ui-widget-content{
 				}
 			}
 			.accordion-body {
+				margin-bottom: 20px;
+				&.collapse {
+					margin-bottom: 0px;
+				}
 				.accordion-inner {
 					border-top: 0;
 					padding: 0;
@@ -2811,6 +2814,10 @@ ul.ui-widget-content{
 	}
 
 
+}
+
+.show-hide-filters-link {
+	margin-bottom: 10px;
 }
 
 /* Info bar for details pages (Below the header) */

@@ -528,7 +528,7 @@ jQuery ->
 		$filterSidebar.positioning = false
 		$window.bind("scroll resize DOMSubtreeModified", () ->
 			now = new Date().getTime() # Add a small delay between each execution because FF seems to
-									   # trigger this too frequently decreasing the performance
+									   # trigger this too frequently drastically affecting the performance
 			if $.loadingContent is 0 && lastTimestamp < (now - 50)
 				lastTimestamp = now
 				if $window.width() >= 979 # For the responsive design
@@ -539,18 +539,27 @@ jQuery ->
 					sidebarBottom = $filterSidebar.outerHeight()+$filterSidebar.originalTop;
 					bottomPosition = $window.scrollTop()+$window.height()
 					footerHeight = $('footer').outerHeight()
+					headerHeight = $('header').outerHeight() + 10
 
 					# We need to get the natural top of the bar when it's not absolute or fixed positioned
 					$filterSidebar.css position: 'static'
 					$filterSidebar.originalTop = $filterSidebar.position().top;
 
 					if sidebarBottom < $window.height()
-						$filterSidebar.css({
-							position: 'fixed',
-							top: "#{$filterSidebar.originalTop}px",
-							right: "10px",
-							bottom: 'auto'
-						})
+						if $filterSidebar.originalTop > ($window.scrollTop() + headerHeight)
+							$filterSidebar.css {
+								position: 'relative',
+								top: '',
+								right: '',
+								bottom: ''
+							}
+						else
+							$filterSidebar.css {
+								position: 'fixed',
+								top: "#{headerHeight}px",
+								right: "10px",
+								bottom: 'auto'
+							}
 					else if (bottomPosition > (sidebarBottom + footerHeight)) and ($(document).height() > (sidebarBottom+$filterSidebar.originalTop + footerHeight + 5))
 						$filterSidebar.css({
 							position: 'fixed',
