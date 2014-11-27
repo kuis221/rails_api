@@ -6594,7 +6594,7 @@ table td.sub-level-1 {
 				.select2-search-field{
 					height: 20px;
 					.select2-input{
-						color: $user_menu !important;
+						color: white;
 						line-height: 24px;
 					}
 					input{
@@ -6603,6 +6603,18 @@ table td.sub-level-1 {
 						color: $grey_two;
 						font-size: 12px;
 						height: 20px;
+						&::-webkit-input-placeholder { /* WebKit browsers */
+						  color: $user_menu;
+						}
+						&:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+							color: $user_menu;
+						}
+						&::-moz-placeholder { /* Mozilla Firefox 19+ */
+						  color: $user_menu;
+						}
+						&:-ms-input-placeholder { /* Internet Explorer 10+ */
+						  color: $user_menu;
+						}
 					}
 				}
 				&:after {

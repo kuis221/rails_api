@@ -23,6 +23,7 @@ ul.select2-results{
 	border: 1px solid $user_menu !important;
 	border-radius: 4px !important;
 	margin-top: 4px !important;
+	overflow:hidden;
 }
 
 .modal {
@@ -1066,7 +1067,6 @@ div#spin{
 		width: 100% !important;
 		li{
 			width: 100%;
-			border-radius: 4px;
 		}
 		background-color: rgb(54, 54, 54);
 		.select2-results-selectable{
