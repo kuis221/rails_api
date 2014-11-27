@@ -3045,12 +3045,12 @@ ul.ui-widget-content{
 		}
 		label{
 			display:inline-block;
-			margin-right:30px;
+			margin-right: 30px;
 			margin-bottom: 6px;
-			font-weight:bold;
+			font-weight: bold;
 			&.segment-label{
-				font-weight:normal;
-				font-size:13px;
+				font-weight: normal;
+				font-size: 14px;
 			}
 			&.checkbox{
 				font-weight:normal;
@@ -3207,7 +3207,7 @@ ul.ui-widget-content{
 			width:176px;
 		}
 		&+label{
-			margin-left: 10px;
+			margin-left: 14px;
 		}
 	}
 	.checkbox{
@@ -3262,7 +3262,7 @@ ul.ui-widget-content{
 	padding: 40px 20px 20px;
 	text-align: center;
 	height: 150px;
-	width: 237px;
+	width: 240px;
 
 	&.small{
 		padding: 20px 20px 20px;
@@ -3830,7 +3830,7 @@ body.show {
 		width: 220px;
 		position: relative;
 		.counter {
-			font-size:11px;
+			font-size: 12px;
 			position: absolute;
 			right: -36px;
 			text-align: left;
