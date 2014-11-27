@@ -2590,7 +2590,7 @@ ul.ui-widget-content{
 	font-size: 20px;
 	margin-bottom: 0;
 	margin-top: 0;
-	padding: 0px 0 0 25px;
+	padding: 5px 0 0 25px;
 	height: 35px;
 	a {
 		color: $brand;
@@ -2642,7 +2642,7 @@ ul.ui-widget-content{
 			-moz-box-shadow: none;
 			box-shadow: none;
 			left: -13px;
-			margin: 20px 0 0;
+			margin: 15px 0 0;
 			&:before{
 				border-bottom: 10px solid $alert_grey;
 				left: 230px;
