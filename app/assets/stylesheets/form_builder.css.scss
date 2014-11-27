@@ -120,6 +120,9 @@ $margin-right: 240px;
 					.attachment-panel {
 						background-color: white;
 					}
+					label.radio div.radio span{
+						border-color: $user_menu;
+					}
 					input{
 						background-color:white;
 					}
@@ -185,11 +188,6 @@ $margin-right: 240px;
 						position: absolute;
 						font-size: 6px;
 						font-weight: bolder;
-					}
-				}
-				&[data-type="Number"] {
-					input[type="text"]{
-						width:200px;
 					}
 				}
 				&[data-type="Date"], &[data-type="Time"] {
@@ -272,8 +270,19 @@ $margin-right: 240px;
 								font-size: 12px;
 							}
 							tr{
-								th:nth-child(2){
-									padding-left: 25px;
+								th{
+									&:nth-child(2){
+										padding-left: 25px;
+									}
+									&:nth-child(3){
+										width: 50px;
+									}
+									&:nth-child(4){
+										width: 120px;
+									}
+									&:nth-child(5){
+										padding-left:0;
+									}
 								}
 							}
 						}
@@ -369,7 +378,7 @@ $margin-right: 240px;
 		}
 
 		.field {
-			border: 1px solid $user_menu;
+			border: 1px solid $grey_four;
 			border-radius: 5px;
 			padding: 10px;
 			margin-bottom: 18px;
@@ -511,6 +520,7 @@ $margin-right: 240px;
 	background-color: $grey_one;
 	border-radius: 5px;
 	border: 1px solid $grey_four;
+	box-sizing: border-box;
 	padding: 15px 15px 5px 15px;
 	width:300px;
 
@@ -635,28 +645,28 @@ $margin-right: 240px;
 	}
 
 	&.on-bottom {
-		margin-top: 10px;
+		margin-top: 5px;
 		.arrow {
 			width: 0;
 			height: 0;
-			border-left: 14px solid transparent;
-			border-right: 14px solid transparent;
+			border-left: 8px solid transparent;
+			border-right: 8px solid transparent;
 
-			border-bottom: 14px solid $grey_four;
+			border-bottom: 8px solid $grey_four;
 			position: absolute;
-			top: -14px;
-			left: 125px;
+			top: -9px;
+			left: 145px;
 			&:before{
 				content: '';
 				width: 0;
 				height: 0;
-				border-left: 14px solid transparent;
-				border-right: 14px solid transparent;
+				border-left: 8px solid transparent;
+				border-right: 8px solid transparent;
 
-				border-bottom: 14px solid $grey_one;
+				border-bottom: 8px solid $grey_one;
 				position: absolute;
 				top: 1px;
-				left: -14px;
+				left: -8px;
 			}
 		}
 	}
@@ -666,21 +676,21 @@ $margin-right: 240px;
 		.arrow {
 			width: 0;
 			height: 0;
-			border-top: 14px solid transparent;
-			border-bottom: 14px solid transparent;
-			border-right:14px solid $grey_four;
+			border-top: 8px solid transparent;
+			border-bottom: 8px solid transparent;
+			border-right: 8px solid $grey_four;
 			position: absolute;
 			top: 40px;
-			left: -15px;
+			left: -9px;
 			&:before{
 				content: '';
 				width: 0;
 				height: 0;
-				border-top: 14px solid transparent;
-				border-bottom: 14px solid transparent;
-				border-right:14px solid $grey_one;
+				border-top: 10px solid transparent;
+				border-bottom: 10px solid transparent;
+				border-right: 10px solid $grey_one;
 				position: absolute;
-				top: -14px;
+				top: -10px;
 				left: 1px;
 			}
 		}
