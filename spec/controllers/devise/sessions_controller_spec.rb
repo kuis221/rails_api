@@ -40,7 +40,7 @@ describe Devise::SessionsController, type: :controller do
           post 'create', user: { email: @user.email, password: @user.password }
           @user.reload
         end.not_to change(@user, :last_sign_in_at)
-        expect(flash[:alert]).to eq('Invalid email or password.')
+        expect(flash[:alert]).to eq('Your user has been deactivated. Please contact support@brandcopic.com if you think this has been in error.')
       end
     end
   end
