@@ -71,6 +71,7 @@ module ApplicationHelper
   end
 
   def button_to_deactivate(resource, title: nil, url: nil)
+    p 'button_to_deactivate'
     url ||= url_for([:deactivate, resource])
     icon_button_to 'icon-rounded-disable', url,
                    remote: true,
@@ -84,7 +85,7 @@ module ApplicationHelper
   end
 
   def button_to_activate_or_deactivate(resource, activate_url: nil, deactivate_url: nil)
-    if resource.active?
+    if resource[:active] || resource.active?
       button_to_deactivate(resource, title: nil, url: deactivate_url)
     else
       button_to_activate(resource, title: nil, url: activate_url)

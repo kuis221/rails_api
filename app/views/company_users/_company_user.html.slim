@@ -1,4 +1,4 @@
-div.resource-item id="company_user_#{company_user.id}" class="#{active_class(company_user)}"
+div.resource-item id="company_user_#{company_user.id}" class="#{company_user.active == true ? 'active' : 'inactive'}"
   = link_to_if_permitted :show, CompanyUser, company_user_path(company_user), class: 'resource-item-link' do
     .span3
       .text-large= company_user.full_name
@@ -16,5 +16,9 @@ div.resource-item id="company_user_#{company_user.id}" class="#{active_class(com
         | Last activity
   div.resource-item-actions
     = button_to_edit company_user if can?(:edit, CompanyUser)
-    = button_to_activate_or_deactivate(company_user) if can?(:deactivate, CompanyUser)
-    = button_to_deactivate(company_user) if can?(:deactivate, CompanyUser) && company_user.invited_to_sign_up? && company_user.active == true
+    - if can?(:deactivate, CompanyUser)
+      - if company_user.active == false
+        = button_to_activate(company_user)
+      - else
+        =  company_user.active
+        = button_to_deactivate(company_user)

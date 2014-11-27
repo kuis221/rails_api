@@ -21,11 +21,11 @@ module DeactivableHelper
   module InstanceMethods
     include DeactivableHelper::ViewMethods
     def deactivate
-      resource.deactivate! if resource.active? || (resource.is_a?(CompanyUser) && resource.invited_to_sign_up?)
+      resource.deactivate! if resource.active == true
     end
 
     def activate
-      resource.activate! unless resource.active?
+      resource.activate! unless resource.active == true
       render 'deactivate'
     end
   end
