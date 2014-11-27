@@ -61,25 +61,33 @@ module ApplicationHelper
                    form_class: 'button_to button_to_edit'
   end
 
+  def button_to_activate(resource, title: nil, url: nil)
+    url ||= url_for([:activate, resource])
+    icon_button_to 'icon-rounded-ok', url,
+                   remote: true,
+                   method: :get,
+                   title: I18n.t("buttons.activate.#{resource.class.name.underscore}"),
+                   form_class: 'button_to button_to_edit active-toggle-btn-' + resource.class.name.underscore.gsub('/', '_').downcase + '-' + resource.id.to_s
+  end
+
+  def button_to_deactivate(resource, title: nil, url: nil)
+    url ||= url_for([:deactivate, resource])
+    icon_button_to 'icon-rounded-disable', url,
+                   remote: true,
+                   method: :get,
+                   title: I18n.t("buttons.deactivate.#{resource.class.name.underscore}"),
+                   form_class: 'button_to button_to_edit active-toggle-btn-' + resource.class.name.underscore.gsub('/', '_').downcase + '-' + resource.id.to_s,
+                   data: { confirm: I18n.t("confirm.deactivate.#{resource.class.name.underscore}",
+                                           model: resource.class.model_name.human.downcase,
+                                           name: resource.try(:name)),
+                           url: url }
+  end
+
   def button_to_activate_or_deactivate(resource, activate_url: nil, deactivate_url: nil)
     if resource.active?
-      url = deactivate_url || url_for([:deactivate, resource])
-      icon_button_to 'icon-rounded-disable',  url,
-                     remote: true,
-                     method: :get,
-                     title: I18n.t("buttons.deactivate.#{resource.class.name.underscore}"),
-                     form_class: 'button_to button_to_edit active-toggle-btn-' + resource.class.name.underscore.gsub('/', '_').downcase + '-' + resource.id.to_s,
-                     data: { confirm: I18n.t("confirm.deactivate.#{resource.class.name.underscore}",
-                                             model: resource.class.model_name.human.downcase,
-                                             name: resource.try(:name)),
-                             url: url }
+      button_to_deactivate(resource, title: nil, url: deactivate_url)
     else
-      url = activate_url || url_for([:activate, resource])
-      icon_button_to 'icon-rounded-ok',  url,
-                     remote: true,
-                     method: :get,
-                     title: I18n.t("buttons.activate.#{resource.class.name.underscore}"),
-                     form_class: 'button_to button_to_edit active-toggle-btn-' + resource.class.name.underscore.gsub('/', '_').downcase + '-' + resource.id.to_s
+      button_to_activate(resource, title: nil, url: activate_url)
     end
   end
 

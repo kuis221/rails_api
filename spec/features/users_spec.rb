@@ -75,6 +75,32 @@ feature 'Users', js: true do
       expect(page).to have_no_content('Pedro Navaja')
     end
 
+    scenario 'allows the user to deactivate invited users' do
+      role = create(:role, name: 'TestRole', company_id: company.id)
+      create(:invited_user, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: company.id)
+      Sunspot.commit
+      visit company_users_path
+
+      show_all_filters
+
+      # Make it show only the invited elements
+      remove_filter 'Active'
+      add_filter 'ACTIVE STATE', 'Invited'
+
+      within resource_item list: '#users-list' do
+        expect(page).to have_button('Deactivate User')
+        click_js_button 'Deactivate User'
+      end
+
+      confirm_prompt 'Are you sure you want to deactivate this user?'
+
+      wait_for_ajax
+
+      within resource_item list: '#users-list' do
+        expect(page).to have_no_button('Deactivate User')
+      end
+    end
+
     scenario 'allow a user to invite users' do
       create(:role, name: 'TestRole', company_id: company.id)
       visit company_users_path
