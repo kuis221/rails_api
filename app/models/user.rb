@@ -151,7 +151,7 @@ class User < ActiveRecord::Base
    end
   end
 
-  # Returns the formatted user's adddress. 
+  # Returns the formatted user's adddress.
   # TODO: move this to a decorator/presenter
   def full_address(separator: '<br />')
     address = []
@@ -254,6 +254,11 @@ class User < ActiveRecord::Base
     after_password_reset
 
     save(validate: false)
+  end
+
+  # Make this public
+  def invitation_period_valid?
+    super
   end
 
   class << self

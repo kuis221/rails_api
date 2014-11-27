@@ -24,6 +24,11 @@ class UserMailer < ActionMailer::Base
     mail(to: @user.email, subject: 'Brandscopic Invitation')
   end
 
+  def request_new_invitation(user_id)
+    @user = User.find(user_id)
+    mail(to: 'support@brandscopic.com', subject: 'New Invitation Request: ' + @user.email)
+  end
+
   def notification(company_user_id, subject, message)
     @user = CompanyUser.find(company_user_id)
     @message = message

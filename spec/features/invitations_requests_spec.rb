@@ -3,21 +3,19 @@
 require 'rails_helper'
 
 feature 'Invitations', js: true do
-  feature 'send invitation' do
-    before do
-      Warden.test_mode!
-      @user = create(:user, company_id: create(:company).id, role_id: create(:role).id)
-      @company = @user.companies.first
-      sign_in @user
-    end
+  let(:company) { create(:company) }
 
-    after do
-      Warden.test_reset!
-    end
+  before { Warden.test_mode! }
+  after { Warden.test_reset! }
+
+  feature 'send invitation' do
+    let(:user) { create(:user, company_id: company.id, role_id: create(:role).id) }
+
+    before { sign_in user }
 
     scenario 'should allow the user fill the invitation form and send the invitation' do
-      role = create(:role, name: 'Test role', company: @company)
-      team = create(:team, name: 'Test team', company: @company)
+      role = create(:role, name: 'Test role', company: company)
+      team = create(:team, name: 'Test team', company: company)
       visit company_users_path
 
       click_button 'Invite user'
@@ -60,29 +58,17 @@ feature 'Invitations', js: true do
   end
 
   feature 'accept invitation' do
-    before do
-      Warden.test_mode!
-      @user = create(:invited_user,
-                                 first_name: 'Pedro',
-                                 last_name: 'Picapiedra',
-                                 email: 'pedro@rocadura.com',
-                                 phone_number: '(506)22728899',
-                                 country: 'CR',
-                                 state: 'SJ',
-                                 city: 'Curridabat',
-                                 street_address: 'This is the street address',
-                                 unit_number: 'This is the unit number',
-                                 zip_code: '90210',
-                                 invitation_token: 'XYZ123',
-                                 role_id: create(:role).id,
-                                 company_id: create(:company).id
+    let(:user) do
+      create(:invited_user,
+             first_name: 'Pedro', last_name: 'Picapiedra', email: 'pedro@rocadura.com',
+             phone_number: '(506)22728899', country: 'CR', state: 'SJ', city: 'Curridabat',
+             street_address: 'This is the street address', unit_number: 'This is the unit number',
+             zip_code: '90210', invitation_token: 'XYZ123', role_id: create(:role).id,
+             company_id: create(:company).id
       )
-      Kpi.destroy_all
-      Kpi.create_global_kpis
     end
-    after do
-      Warden.test_reset!
-    end
+
+    before { user }
 
     scenario 'should allow the user to complete the profile and log him in after that' do
       visit accept_user_invitation_path(invitation_token: 'XYZ123')
@@ -115,12 +101,15 @@ feature 'Invitations', js: true do
       click_button 'Save'
 
       expect(current_path).to eq(root_path)
-      expect(page).to have_content('Your password was set successfully. You are now signed in.')
+      expect(page).to have_content(
+        'Your password was set successfully. You are now signed in.')
     end
 
     scenario 'should display an error if the token is not valid' do
       visit accept_user_invitation_path(invitation_token: 'INVALIDTOKEN')
-      expect(page).to have_content("It looks like you've already completed your profile. Sign in using the form below or click here to reset your password.")
+      expect(page).to have_content(
+        'It looks like you\'ve already completed your profile. '\
+        'Sign in using the form below or click here to reset your password.')
       expect(current_path).to eq(new_user_session_path)
     end
 
@@ -166,6 +155,32 @@ feature 'Invitations', js: true do
       click_button 'Save'
 
       expect(find_field('New Password', with: 'aA1', match: :first)).to have_error('Please enter at least 8 characters.')
+    end
+  end
+
+  feature 'invitation expiration' do
+    let(:user) do
+      create(:invited_user, invitation_token: 'XYZ123', invitation_sent_at: 4.days.ago,
+             role_id: create(:role, company: company).id, company: company)
+    end
+
+    before { user }
+
+    it 'should let the user know that the invitation token have expired' do
+
+      visit accept_user_invitation_path(invitation_token: 'XYZ123')
+
+      expect(page).to have_content(
+        'Your invitation link has expired. '\
+        'Please click here to request a new invitation.')
+
+      click_link 'click here'
+
+      expect(page).to have_content(
+        'Your request have been sent to Brandscopic\'s support team. '\
+        'We will contact you soon.')
+
+      expect(current_path).to eql '/users/sign_in'
     end
   end
 end

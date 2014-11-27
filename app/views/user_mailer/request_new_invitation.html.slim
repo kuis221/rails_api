@@ -1,0 +1,16 @@
+= "Hi Support Team,"
+
+p
+  a href="#{company_users_path(user: [@user.company_users.first.id], active_state: ['Invited'])}"=> @user.full_name
+  | from
+  ==<> @user.companies.first.name 
+  | has requested a new invitation because his/her invitation expired
+  ==<> time_ago_in_words(@user.invitation_sent_at)
+  | ago
+  |
+p
+  | Kind regards,
+  br
+  | The Brandscpoic Team"
+  br
+  = link_to 'www.brandscopic.com', 'http://www.brandscopic.com'
