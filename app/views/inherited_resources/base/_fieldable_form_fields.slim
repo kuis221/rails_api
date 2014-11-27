@@ -1,0 +1,43 @@
+.data-form-wrapper
+  = simple_form_for fieldable, url: '', remote: true do |f|
+    - fieldable.form_field_results.each do |result|
+      = f.simple_fields_for :results, result do |rf|
+        - if result.form_field.is_a?(FormField::UserDate)
+          - next unless fieldable.is_a?(Activity) # this field should only be displayed for activities
+          .form_field_userdate.pdf-keeptogether
+            .control-group
+              .row-fluid
+                .span8
+                  = f.input :company_user_id, label: 'User', as: :string, input_html: {class: 'chosen-enabled', value: fieldable.new_record? ? '' : fieldable.company_user.try(:full_name)}
+                .span4
+                  = f.input :activity_date, input_html: {class: 'field-type-date', value: fieldable.new_record? ? '' : fieldable.activity_date.try(:to_s, :slashes)}, as: :date_picker, label: 'Date'
+        - else
+          .large-inputs.pdf-keeptogether class="#{result.form_field.css_class}"
+            - if result.form_field.type == 'FormField::Dropdown'
+              = rf.input :value, result.form_field.field_options(result).merge(as: :radio_buttons)
+            - if result.form_field.type == 'FormField::Photo' && result.attached_asset.present?
+              = render partial: 'form_fields/'+result.form_field.type_name.underscore, locals: {form_field: result.form_field, result: result, preview_style: :medium}
+            - else
+              = rf.input :value, result.form_field.field_options(result)
+            = rf.input :form_field_id, as: :hidden, wrapper: false
+
+= content_for :pdf_scripts
+  = wicked_pdf_javascript_include_tag "application"
+  javascript:
+    $(window).ready(function(){
+      function autoHeightTextArea(a) {
+          if (!$(a).prop('scrollTop')) {
+              do {
+                  var b = $(a).prop('scrollHeight');
+                  var h = $(a).height();
+                  $(a).height(h - 5);
+              }
+              while (b && (b != $(a).prop('scrollHeight')));
+          };
+          $(a).height($(a).prop('scrollHeight'));
+      }
+
+      $("textarea").each(function (i, a) {
+          autoHeightTextArea(a);
+      });
+    })

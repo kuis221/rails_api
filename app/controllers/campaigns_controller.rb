@@ -14,6 +14,9 @@ class CampaignsController < FilteredController
   # This helper provide the methods to add/remove campaigns members to the event
   extend TeamMembersHelper
 
+  # This helper provide the methods to export HTML to PDF
+  extend ExportableFormHelper
+
   skip_authorize_resource only: :tab
 
   layout false, only: :kpis
@@ -125,6 +128,16 @@ class CampaignsController < FilteredController
 
   protected
 
+  # This is used for exporting the form in PDF format. Initializes
+  # a new activity for the current campaign
+  def fieldable
+    @fieldable ||= resource.events.build
+  end
+
+  def pdf_form_file_name
+    "#{resource.name.parameterize}-#{Time.now.strftime('%Y%m%d%H%M%S')}.pdf"
+  end
+
   def permitted_params
     p = [:name, :start_date, :end_date, :description, :color, :brands_list, { brand_portfolio_ids: [] }]
     if can?(:view_event_form, Campaign)
@@ -172,9 +185,9 @@ class CampaignsController < FilteredController
       # select what params should we use for the facets search
       f.push build_brands_bucket
       f.push build_brand_portfolio_bucket
-
       f.push build_people_bucket
       f.push build_state_bucket
+      f.concat build_custom_filters_bucket
     end
   end
 

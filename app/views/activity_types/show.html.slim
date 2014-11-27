@@ -128,6 +128,7 @@ javascript:
   jQuery(function(){
     $('.form-builder-wrapper').formBuilder({
       url: '#{activity_type_path(resource, format: :json)}',
+      exportUrl: '#{form_activity_type_path(resource, format: :pdf)}',
       resourceName: 'activity_type',
       canEdit: #{can?(:update, resource) ? 'true' : 'false'}
     });

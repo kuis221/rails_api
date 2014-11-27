@@ -1,6 +1,5 @@
 - content_for :alerts
   div.collection-list-description
-    a.icon-close.pull-right data-dismiss="alert"
     .filter-label
 
 .sidebar.collapsed#resource-filter-column
@@ -62,11 +61,6 @@
       'defaultParams': [{name: 'start_date', value:'#{Time.zone.now.strftime("%m/%d/%Y")}'}, {name: 'end_date', value:'#{(Time.zone.now + 10.years).strftime("%m/%d/%Y")}'}],
       'applyTo': 'visits',
       'clearFilterParams': [{name: 'start_date', value:'#{Time.zone.now.strftime("%m/%d/%Y")}'}, {name: 'end_date', value:'#{(Time.zone.now + 10.years).strftime("%m/%d/%Y")}'}],
-      'onItemsLoad': function(response, page){
-        if (response.find('div[data-content="filters-description"]').length > 0){
-          $('.collection-list-description .filter-label').html(response.find('div[data-content="filters-description"]'))
-        }
-      },
       'onChange': function() {
         if (typeof visitsCalendar !== 'undefined') {
          visitsCalendar.fullCalendar('refetchEvents');

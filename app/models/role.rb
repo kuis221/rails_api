@@ -17,8 +17,7 @@ class Role < ActiveRecord::Base
   scoped_to_company
 
   has_many :company_users
-  has_many :permissions, after_add: :clear_cached_permissions, after_remove: :clear_cached_permissions
-
+  has_many :permissions, inverse_of: :role
   validates :name, presence: true
 
   accepts_nested_attributes_for :permissions, reject_if: proc { |attributes| !attributes['enabled'] }
@@ -51,7 +50,11 @@ class Role < ActiveRecord::Base
   end
 
   def permission_for(action, subject_class, subject = nil)
-    cached_permissions.find { |p| p.action.to_s == action.to_s && p.subject_class.to_s == subject_class.to_s && p.subject_id == subject } || permissions.build(action: action, subject_class: subject_class.to_s, subject_id: subject)
+    cached_permissions.find(
+      proc { permissions.build(action: action, subject_class: subject_class.to_s, subject_id: subject) }
+    ) do |p|
+      p.action.to_s == action.to_s && p.subject_class.to_s == subject_class.to_s && p.subject_id == subject
+    end
   end
 
   def has_permission?(action, subject_class)
@@ -64,7 +67,7 @@ class Role < ActiveRecord::Base
     end
   end
 
-  def clear_cached_permissions(_permission)
+  def clear_cached_permissions
     @cached_permissions = nil
     Rails.cache.delete("role_permissions_#{id}")
   end
@@ -75,13 +78,7 @@ class Role < ActiveRecord::Base
       solr_search do
         with(:company_id, params[:company_id])
         with(:status, params[:status]) if params.key?(:status) && params[:status].present?
-        if params.key?(:q) && params[:q].present?
-          (attribute, value) = params[:q].split(',')
-          case attribute
-          when 'role'
-            with :id, value
-          end
-        end
+        with(:id, params[:role]) if params.key?(:role) && params[:role].present?
 
         if include_facets
           facet :status

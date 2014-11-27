@@ -59,15 +59,46 @@ feature 'Users', js: true do
 
       confirm_prompt 'Are you sure you want to deactivate this user?'
 
+      show_all_filters
+
       # Make it show only the inactive elements
-      filter_section('ACTIVE STATE').unicheck('Inactive')
-      filter_section('ACTIVE STATE').unicheck('Active')
+      remove_filter 'Active'
+      add_filter 'ACTIVE STATE', 'Inactive'
+
+      expect(page).to have_content '1 user found for: Inactive'
+
       within resource_item list: '#users-list' do
         expect(page).to have_content('Pedro Navaja')
         click_js_button 'Activate User'
       end
 
       expect(page).to have_no_content('Pedro Navaja')
+    end
+
+    scenario 'allows the user to deactivate invited users' do
+      role = create(:role, name: 'TestRole', company_id: company.id)
+      create(:invited_user, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: company.id)
+      Sunspot.commit
+      visit company_users_path
+
+      show_all_filters
+
+      # Make it show only the invited elements
+      remove_filter 'Active'
+      add_filter 'ACTIVE STATE', 'Invited'
+
+      within resource_item list: '#users-list' do
+        expect(page).to have_button('Deactivate User')
+        click_js_button 'Deactivate User'
+      end
+
+      confirm_prompt 'Are you sure you want to deactivate this user?'
+
+      wait_for_ajax
+
+      within resource_item list: '#users-list' do
+        expect(page).to have_no_button('Deactivate User')
+      end
     end
 
     scenario 'allow a user to invite users' do
@@ -85,13 +116,35 @@ feature 'Users', js: true do
       end
       ensure_modal_was_closed
 
+      show_all_filters
+
       # Deselect "Active" and select "Invited"
-      filter_section('ACTIVE STATE').unicheck('Active')
-      filter_section('ACTIVE STATE').unicheck('Invited')
+      remove_filter 'Active'
+      add_filter 'ACTIVE STATE', 'Invited'
+
+      expect(page).to have_content '1 user found for: Invited'
 
       within resource_item do
         expect(page).to have_content 'Fulanito de Tal'
         expect(page).to have_content 'TestRole'
+      end
+    end
+
+    it_behaves_like 'a list that allow saving custom filters' do
+
+      before do
+        create(:campaign, name: 'Campaign 1', company: company)
+        create(:campaign, name: 'Campaign 2', company: company)
+        create(:team, name: 'Team 1', company: company)
+      end
+
+      let(:list_url) { company_users_path }
+
+      let(:filters) do
+        [{ section: 'CAMPAIGNS', item: 'Campaign 1' },
+         { section: 'CAMPAIGNS', item: 'Campaign 2' },
+         { section: 'TEAMS', item: 'Team 1' },
+         { section: 'ACTIVE STATE', item: 'Inactive' }]
       end
     end
   end
@@ -140,7 +193,7 @@ feature 'Users', js: true do
         fill_in 'Last name', with: 'Navaja'
         fill_in 'Email', with: 'pedro@navaja.com'
         select_from_chosen 'Another Role', from: 'Role'
-        fill_in 'Password', with: 'Pedrito123'
+        fill_in 'Password (optional)', with: 'Pedrito123'
         fill_in 'Password confirmation', with: 'Pedrito123'
         click_js_button 'Save'
       end
@@ -262,7 +315,7 @@ feature 'Users', js: true do
         select_from_chosen 'Costa Rica', from: 'Country'
         select_from_chosen 'Cartago', from: 'State'
         fill_in 'City', with: 'Tres Rios'
-        fill_in 'Password', with: 'Pedrito123'
+        fill_in 'Password (optional)', with: 'Pedrito123'
         fill_in 'Password confirmation', with: 'Pedrito123'
         click_js_button 'Save'
       end

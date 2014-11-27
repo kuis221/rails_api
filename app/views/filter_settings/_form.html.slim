@@ -1,13 +1,15 @@
 - apply_to = params[:apply_to]
 - settings = FilterSetting::SETTINGS[apply_to]
-- if settings.present?
-  = simple_form_for(resource, remote: true) do |f|
+= simple_form_for(resource, remote: true) do |f|
+  - if settings.present?
+
     = f.hidden_field :apply_to, as: :hidden, value: apply_to
     = f.hidden_field :id, as: :hidden
 
     = f.error_notification
 
-    .form-inputs
+  .form-inputs
+    - if settings.present? 
       .row-fluid
         .span12
           = f.hidden_field 'settings[]', as: :hidden, value: nil
@@ -21,12 +23,15 @@
                 li
                   = custom_filter_setting_checkbox(setting_item, apply_to, 'Inactive', resource.settings)
 
-      .row-fluid.saved-filters
-        .span12
-          h6 SAVED FILTERS
-          = render partial: 'custom_filters/custom_filters', locals: {apply_to: apply_to}
+    .row-fluid.saved-filters
+      .span12
+        h6 SAVED FILTERS
+        = render partial: 'custom_filters/custom_filters', locals: { apply_to: apply_to }
 
-    .form-actions
-      = f.button :submit, "Done", class: 'btn-primary', data: {disable_with: 'Please wait...'}
+  .form-actions
+    - if settings.present?
+      = f.button :submit, "Done", class: 'btn-primary', data: { disable_with: 'Please wait...' }
       = "&nbsp;".html_safe
       = f.button :button, 'Cancel', class: 'btn-cancel'
+    - else
+      = f.button :button, 'Done', class: 'btn-primary', data: { dismiss: 'modal' }

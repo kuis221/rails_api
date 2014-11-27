@@ -48,12 +48,13 @@
       .place-data
         i.icon-wired-venue
         span
-          = place_address(resource.place, true) if resource.place
+          = place_address(resource.place, true, ', ') if resource.place
 
     - unless resource.description.nil? || resource.description.empty?
       .description-data
         i.icon-wired-description
         span= simple_format resource.description
+
     .links-data
       = button_to_edit resource if can_edit
       = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
@@ -83,7 +84,7 @@
       = button_to_add 'Add Contact', add_event_contact_events_path(resource) if can?(:create_contacts, resource)
 
   - resource.results.each { |r| r.errors.clear }
-  - if resource.has_event_data? && !resource.rejected?
+  - if resource.event_data? && !resource.rejected?
     = render 'show_results'
   - elsif resource.happens_today? || resource.in_past?
     = render 'edit_results'

@@ -16,7 +16,7 @@ describe Role, type: :model, search: true do
       .to match_array([company2_role])
 
     # Search for a given Role
-    expect(search({ company_id: 1, q: "role,#{role.id}" }, true))
+    expect(search({ company_id: 1, role: [role.id] }, true))
       .to match_array([role])
 
     # Search for Roles on a given status

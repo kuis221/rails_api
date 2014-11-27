@@ -55,8 +55,14 @@ feature 'BrandPortfolios', js: true, search: true do
         Sunspot.commit
         visit brand_portfolios_path
 
-        filter_section('ACTIVE STATE').unicheck('Inactive')
-        filter_section('ACTIVE STATE').unicheck('Active')
+        expect(page).to have_content '0 brand portfolios found for: Active'
+
+        show_all_filters
+
+        add_filter 'ACTIVE STATE', 'Inactive'
+        remove_filter 'Active'
+
+        expect(page).to have_content '1 brand portfolio found for: Inactive'
 
         expect(page).to have_content('A Vinos ticos')
         within resource_item do
@@ -182,13 +188,36 @@ feature 'BrandPortfolios', js: true, search: true do
     end
   end
 
+  feature 'custom filters', search: true, js: true do
+    it_behaves_like 'a list that allow saving custom filters' do
+      before do
+        campaign = create(:campaign, company: company)
+        campaign.brands << create(:brand, name: 'Brand 1', company: company)
+        campaign.brands << create(:brand, name: 'Brand 2', company: company)
+        company_user.campaigns << campaign
+      end
+
+      let(:list_url) { brand_portfolios_path }
+
+      let(:filters) do
+        [{ section: 'BRANDS', item: 'Brand 1' },
+         { section: 'BRANDS', item: 'Brand 2' },
+         { section: 'ACTIVE STATE', item: 'Inactive' }]
+      end
+    end
+  end
+
   feature 'export' do
-    let(:brand_portfolio1) { create(:brand_portfolio,
-                                name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica',
-                                active: true, company: company) }
-    let(:brand_portfolio2) { create(:brand_portfolio,
-                                name: 'B Licores Costarricenses', description: 'Licores ticos',
-                                active: true, company: company) }
+    let(:brand_portfolio1) do
+      create(:brand_portfolio,
+             name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica',
+             active: true, company: company)
+    end
+    let(:brand_portfolio2) do
+      create(:brand_portfolio,
+             name: 'B Licores Costarricenses', description: 'Licores ticos',
+             active: true, company: company)
+    end
 
     before do
       # make sure tasks are created before
@@ -246,5 +275,9 @@ feature 'BrandPortfolios', js: true, search: true do
         expect(text).to include 'Licoresticos'
       end
     end
+  end
+
+  def brand_portfolios_list
+    '#brand_portfolios-list'
   end
 end

@@ -3,6 +3,7 @@ require 'rails_helper'
 feature 'Teams', js: true do
   let(:company) { create(:company) }
   let(:user) { create(:user, company_id: company.id, role_id: create(:role, company: company).id) }
+  let(:company_user) { user.company_users.first }
 
   before { sign_in user }
   after { Warden.test_reset! }
@@ -49,9 +50,13 @@ feature 'Teams', js: true do
 
       expect(page).to have_no_content('Costa Rica Team')
 
+      show_all_filters
+
       # Make it show only the inactive elements
-      filter_section('ACTIVE STATE').unicheck('Inactive')
-      filter_section('ACTIVE STATE').unicheck('Active')
+      add_filter 'ACTIVE STATE', 'Inactive'
+      remove_filter 'Active'
+
+      expect(page).to have_content '1 team found for: Inactive'
 
       within resource_item do
         expect(page).to have_content('Costa Rica Team')
@@ -173,6 +178,23 @@ feature 'Teams', js: true do
     end
   end
 
+  feature 'custom filters', search: true do
+    it_behaves_like 'a list that allow saving custom filters' do
+      before do
+        create(:campaign, name: 'First Campaign', company: company)
+        create(:campaign, name: 'Second Campaign', company: company)
+      end
+
+      let(:list_url) { teams_path }
+
+      let(:filters) do
+        [{ section: 'CAMPAIGNS', item: 'First Campaign' },
+         { section: 'CAMPAIGNS', item: 'Second Campaign' },
+         { section: 'ACTIVE STATE', item: 'Inactive' }]
+      end
+    end
+  end
+
   feature 'export', search: true do
     let(:team1) { create(:team, name: 'Costa Rica Team', description: 'El grupo de ticos',
                                 active: true, company: company) }
@@ -234,5 +256,9 @@ feature 'Teams', js: true do
         expect(text).to include '2TheguysfromSF'
       end
     end
+  end
+
+  def teams_list
+    '#teams-list'
   end
 end

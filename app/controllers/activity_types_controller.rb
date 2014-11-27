@@ -11,6 +11,9 @@ class ActivityTypesController < FilteredController
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
 
+  # This helper provide the methods to export HTML to PDF
+  extend ExportableFormHelper
+
   def load_campaign
     @campaign = current_company.campaigns.find(params[:campaign_id])
   end
@@ -38,6 +41,29 @@ class ActivityTypesController < FilteredController
 
   protected
 
+  # This is used for exporting the form in PDF format. Initializes
+  # a new activity for the current activity type
+  def fieldable
+    @fieldable ||= resource.activities.build(
+      activitable: resource.company.events.build(
+        start_date: Date.current.to_s(:slashes),
+        start_time: '08:00 PM',
+        end_date: Date.current.to_s(:slashes),
+        end_time: '11:30 PM',
+        place: Place.new(name: 'Bar None', route: 'Union Street',
+                         street_number: '5555', city: 'San Francisco',
+                         state: 'California', country: 'US', zipcode: '94110')
+      ),
+      activity_date: '  '
+    )
+    @fieldable.activity_date = nil
+    @fieldable
+  end
+
+  def pdf_form_file_name
+    "#{resource.name.parameterize}-#{Time.now.strftime('%Y%m%d%H%M%S')}.pdf"
+  end
+
   def permitted_params
     params.permit(activity_type: [
       :name, :description,
@@ -53,13 +79,8 @@ class ActivityTypesController < FilteredController
 
   def facets
     @facets ||= Array.new.tap do |f|
-      # select what params should we use for the facets search
-      f.push(
-        label: 'Active State',
-        items: %w(Active Inactive).map do |x|
-          build_facet_item(label: x, id: x, name: :status, count: 1)
-        end
-      )
+      f.push build_state_bucket
+      f.concat build_custom_filters_bucket
     end
   end
 end

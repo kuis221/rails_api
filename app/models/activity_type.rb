@@ -21,7 +21,8 @@ class ActivityType < ActiveRecord::Base
   validates :company_id, presence: true, numericality: true
 
   # Campaign relationships
-  has_many :activity_type_campaigns
+  has_many :activities, inverse_of: :activity_type
+  has_many :activity_type_campaigns, inverse_of: :activity_type
   has_many :campaigns, through: :activity_type_campaigns
 
   # Goals relationships
@@ -80,10 +81,7 @@ class ActivityType < ActiveRecord::Base
       solr_search do
         with :company_id, params[:company_id]
         with :status, params[:status] if params.key?(:status) && params[:status].present?
-        if params.key?(:q) && params[:q].present?
-          (attribute, value) = params[:q].split(',')
-          with :id, value if attribute == 'activity_type'
-        end
+        with(:id, params[:activity_type]) if params.key?(:activity_type) && params[:activity_type].present?
 
         facet :status if include_facets
 

@@ -130,6 +130,7 @@ javascript:
   jQuery(function(){
     $('.form-builder-wrapper').formBuilder({
       url: '#{campaign_path(resource, format: :json)}',
+      exportUrl: '#{form_campaign_path(resource, format: :pdf)}',
       resourceName: 'campaign',
       canEdit: #{can?(:view_event_form, resource) ? 'true' : 'false'},
       canActivateKpis: #{can?(:activate_kpis, resource) ? 'true' : 'false'}

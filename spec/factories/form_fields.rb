@@ -69,6 +69,12 @@ FactoryGirl.define do
     ordering 1
   end
 
+  factory :form_field_likert_scale, class: FormField::LikertScale do
+    sequence(:name) { |n| "Form Field Likert Scale #{n}" }
+    type 'FormField::LikertScale'
+    ordering 1
+  end
+
   factory :form_field_dropdown, class: FormField::Dropdown do
     sequence(:name) { |n| "Form Field Dropdown #{n}" }
     type 'FormField::Dropdown'

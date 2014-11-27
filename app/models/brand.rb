@@ -84,16 +84,8 @@ class Brand < ActiveRecord::Base
         with(:company_id, params[:company_id])
         with(:id, Campaign.where(id: params[:campaign_id]).joins(:brands).pluck('brands_campaigns.brand_id'))
         with(:id, BrandPortfolio.where(id: params[:brand_portfolio_id]).joins(:brands).pluck('brand_portfolios_brands.brand_id'))
+        with(:id, params[:brand]) if params.key?(:brand) && params[:brand].present?
         with(:status, params[:status]) if params.key?(:status) && params[:status].present?
-        if params.key?(:q) && params[:q].present?
-          (attribute, value) = params[:q].split(',')
-          case attribute
-          when 'brand'
-            with :id, value
-          else
-            with "#{attribute}_ids", value
-          end
-        end
 
         facet :status if include_facets
 

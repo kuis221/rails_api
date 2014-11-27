@@ -6,6 +6,10 @@ class ActivitiesController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update]
   custom_actions member: [:form]
 
+  # This helper provide the methods to export HTML to PDF
+  extend ExportableFormHelper
+
+  # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
 
   helper_method :assignable_users, :activity_types
@@ -17,6 +21,11 @@ class ActivitiesController < FilteredController
   end
 
   protected
+
+  def pdf_form_file_name
+    "#{resource.activity_type_name.parameterize}-#{Time.now.strftime('%Y%m%d%H%M%S')}.pdf"
+  end
+
 
   def assignable_users
     current_company.company_users.active.for_dropdown

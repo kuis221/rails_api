@@ -26,9 +26,8 @@ $.widget 'nmk.filteredList', {
 	},
 
 	_create: () ->
+		@sliders = {}
 		query = window.location.search.replace(/^\?/,"")
-		if query != ''
-			@options.defaultParams = []
 		@element.addClass('filter-box')
 		@form = $('<form action="#" method="get">')
 			.appendTo(@element).submit (e) ->
@@ -50,7 +49,7 @@ $.widget 'nmk.filteredList', {
 
 		@element.parent().append $('<a class="list-filter-btn" href="#" data-toggle="filterbar" title="Filter">').append('<i class="icon-gear">')
 
-		@formFilters = $('<div class="form-facet-filters accordion">')
+		@formFilters = $('<div class="form-facet-filters accordion">').hide()
 							.on "show", (e) ->
 								$(e.target).closest(".accordion-group").find(".icon-arrow-right").removeClass("icon-arrow-right").addClass("icon-arrow-down").prop "title", "Collapse"
 								return
@@ -61,7 +60,17 @@ $.widget 'nmk.filteredList', {
 								$(e.target).closest(".accordion-group").find(".icon-arrow-down").removeClass("icon-arrow-down").addClass("icon-arrow-right").prop "title", "Expand"
 								return
 
+
 		@formFilters.appendTo(@form)
+
+		@toggleFiltersLink = $('<div class="text-right show-hide-filters-link"><a href="#">Show filters</a></div>').appendTo(@form).find('a').on 'click', () =>
+			if @formFilters.css('display') is 'none'
+				@formFilters.slideDown 400, () =>
+					@toggleFiltersLink.text('Hide filters')
+			else
+				@formFilters.slideUp 400, () =>
+					@toggleFiltersLink.text('Show filters')
+			false
 
 		if @options.filters
 			@setFilters @options.filters
@@ -80,28 +89,43 @@ $.widget 'nmk.filteredList', {
 					e.stopPropagation()
 					$.get '/filter_settings/new.js', {apply_to: @options.applyTo}
 
+		$(document).on 'click', '.collection-list-description .filter-item .icon-close', (e) =>
+			e.stopPropagation();
+			e.preventDefault();
+			return unless @doneLoading
+			$(e.currentTarget).closest('.filter-item').fadeTo(1000, 0.3)
+			filterParts = $(e.currentTarget).data('filter').split(':')
+			if filterParts[0] == 'date'
+				@_deselectDates()
+			else if @sliders[filterParts[0]]
+				@setParams "#{filterParts[0]}[min]=&#{filterParts[0]}[max]="
+			else
+				@_removeParams encodeURIComponent("#{filterParts[0]}[]") + '=' + encodeURIComponent(filterParts[1])
+			false
+
+
 		$(document).on 'filter-box:change', (e) =>
 			@reloadFilters()
+
 
 		@filtersPopup = false
 
 		@listContainer = $(@options.listContainer)
 
-		@defaultParams = @options.defaultParams
-		@_parseQueryString(window.location.search)
+		if window.location.search
+			@_parseQueryString window.location.search
+		else
+			@_parseQueryString $.param(@options.defaultParams)
+
 		@loadFacets = true
 		firstTime = true
 		$(window).on 'popstate', =>
 			if firstTime
 				firstTime = false
 			else
-				#@reloadFilters()
-				@_parseQueryString(window.location.search)
+				@_paramsQueryString = document.location.search.replace(/^\?/, '')
 				@_filtersChanged(false)
 
-		$(window).on 'resize scroll', () =>
-			if @filtersPopup
-				@_positionFiltersOptions()
 
 		@infiniteScroller = false
 
@@ -110,10 +134,8 @@ $.widget 'nmk.filteredList', {
 
 		@_loadFilters() if @options.filtersUrl
 
-		@defaultParams = []
 		@initialized = true
 		@dateRange = false
-		@_serializeFilters()
 
 		$(document).on 'click', (e) ->
 			$('.more-options-container').hide()
@@ -154,28 +176,8 @@ $.widget 'nmk.filteredList', {
 		$.getJSON @options.filtersUrl, params, (json) =>
 			@setFilters json.filters
 
-	_deselectDates: ->
-		if @calendar
-			@calendar.datepick('clear')
-			@calendar.datepick('update')
-
 	getFilters: () ->
-		data = @form.serializeArray()
-		p = []
-		for param in data
-			if param.name isnt 'custom_start_date' and param.name isnt 'custom_end_date'
-				p.push param if param.value != '' && param.name != 'custom_filter[]'
-
-		for param in @defaultParams
-			p.push param
-
-		for param in @options.customFilters
-			p.push param
-
-		if @loadFacets
-			p.push {'name': 'facets', 'value': true}
-			@loadFacets = false
-		p
+		@_deparam @paramsQueryString()
 
 	setFilters: (filters) ->
 		$.loadingContent += 1
@@ -210,7 +212,7 @@ $.widget 'nmk.filteredList', {
 			$('<input type="hidden" class="max" name="'+filter.name+'[max]" value="" />')
 		)
 
-		$slider.rangeSlider({
+		@sliders[filter.name] = $slider.rangeSlider({
 			bounds: {min: filter.min, max: filter.max},
 			defaultValues:{ min: min_value, max: max_value }
 			arrows: false,
@@ -218,11 +220,9 @@ $.widget 'nmk.filteredList', {
 		}).on "userValuesChanged", (e, data) =>
 			bounds = $(data.label).rangeSlider("bounds")
 			if data.values.min != bounds.min || data.values.max != bounds.max
-				$filter.find('input.min').val Math.round(data.values.min)
-				$filter.find('input.max').val Math.round(data.values.max)
+				@setParams "#{filter.name}[min]=#{Math.round(data.values.min)}&#{filter.name}[max]=#{Math.round(data.values.max)}"
 			else
-				$filter.find('input.min').val ''
-				$filter.find('input.max').val ''
+				@setParams "#{filter.name}[min]=&#{filter.name}[max]="
 			@_filtersChanged()
 
 		if max_value == min_value
@@ -283,9 +283,7 @@ $.widget 'nmk.filteredList', {
 
 
 	addCustomFilter: (name, value, reload=true) ->
-		@options.customFilters.push {'name': name, 'value': value}
-		if reload
-			@_filtersChanged()
+		@addParams(encodeURIComponent(name) + '=' + encodeURIComponent(value))
 		@
 
 	cleanCustomFilters: (name, value) ->
@@ -298,11 +296,11 @@ $.widget 'nmk.filteredList', {
 		$list = $('<ul>')
 		$filter = $('<div class="accordion-group">').append(
 			$('<div class="filter-wrapper accordion-heading">').data('name', filter.name).append(
-				$('<a>',{href: "#toogle-"+filter.label.replace(/\s+/g, '-').toLowerCase(), class:'accordion-toggle filter-title', 'data-toggle': 'collapse'}).text(filter.label).append(
-					$('<span class="icon icon-arrow-down pull-left" title="Collapse">')
+				$('<a>',{href: "#toogle-"+filter.label.replace(/\s+/g, '-').toLowerCase(), class:'accordion-toggle filter-title collapsed', 'data-toggle': 'collapse'}).text(filter.label).append(
+					$('<span class="icon icon-arrow-right pull-left" title="Collapse">')
 				)
 			),
-			$('<div id="toogle-'+filter.label.replace(/\s+/g, '-').toLowerCase()+'" class="accordion-body in">').append(
+			$('<div id="toogle-'+filter.label.replace(/\s+/g, '-').toLowerCase()+'" class="accordion-body collapse">').append(
 				$('<div class="accordion-inner">').append(
 					$list
 				)
@@ -314,7 +312,7 @@ $.widget 'nmk.filteredList', {
 			top5 = []
 			while i < optionsCount
 				option = items[i]
-				if (i < 5 or option.selected)
+				if (i < 15 or option.selected)
 					top5.push option
 				i++
 		else
@@ -324,13 +322,13 @@ $.widget 'nmk.filteredList', {
 			$list.append @_buildFilterOption(option)
 
 		@formFilters.append $filter
-		if optionsCount > 5
+		if optionsCount > 15
 			filterListResizer = =>
 				container = $trigger.next()
 				container.show()
 				maxHeight = @element.outerHeight() + @element.offset().top - container.offset().top;
 
-			$trigger = $('<a>',{href: '#', class:'more-options-link'}).text('Show More')
+			$trigger = $('<a>', {href: '#', class:'more-options-link'}).text('More')
 				.on 'click', (e) =>
 					container = $trigger.next()
 					if container.css('display') == "none"
@@ -373,42 +371,6 @@ $.widget 'nmk.filteredList', {
 
 			return if a.label > b.label then 1 else  -1
 
-	# Display the popout list of options after the user clicks
-	# on the "More" button
-	_showFilterOptions: (filterWrapper) ->
-		if @filtersPopup
-			@_closeFilterOptions()
-
-		filter = filterWrapper.data('filter')
-		items = @_buildFilterOptionsList(filter, filterWrapper)
-
-		if items? and items.find('li').length > 0
-			@filtersPopup = $('<div class="filter-box more-options-popup">').append(items).insertBefore filterWrapper
-			bootbox.modalClasses = 'modal-med'
-			@filtersPopup.data('wrapper', filterWrapper)
-
-			$(document).on 'click.filteredList', ()  => @_closeFilterOptions()
-
-			@_positionFiltersOptions()
-
-	_positionFiltersOptions: () ->
-		reference = @filtersPopup.data('wrapper')
-		maxHeight = $(window).height() - 200
-		@filtersPopup.css({'max-height': $(window).height()-200})
-		if (@filtersPopup.offset().top + @filtersPopup.height() > $(window).scrollTop()+$(window).height())
-			@filtersPopup.css({'position': 'fixed', 'bottom': '0px'})
-		else if $(window).scrollTop()+200 >= @filtersPopup.offset().top
-			@filtersPopup.css({'position': 'fixed', 'top': '200px'})
-
-
-		@filtersPopup.css {
-			'max-height': ($(window).height()-200) + 'px'
-		}
-
-	_closeFilterOptions: () ->
-		if @filtersPopup
-			@filtersPopup.remove()
-		$(document).off 'click.filteredList'
 
 	_buildFilterOptionsList: (list, filterWrapper) ->
 		$list = null
@@ -437,21 +399,36 @@ $.widget 'nmk.filteredList', {
 		$div
 
 	_buildFilterOption: (option) ->
-		$('<li>')
+		checked = @paramsQueryString().indexOf(encodeURIComponent("#{option.name}[]") + '=' + encodeURIComponent(option.id)) > -1
+		@form.find('input:hidden[name="'+option.name+'[]"][value="'+option.id+'"]').remove() if checked
+		$('<li>', style: (if checked then 'display: none;' else ''))
 			.append $('<label>').append(
-				$('<input>',{type:'checkbox', value: option.id, name: "#{option.name}[]", checked: (option.selected is true or option.selected is 'true')}), option.label
-			).on 'change', () =>
-				@_updateCustomFiltersCheckboxes(option)
-				@_filtersChanged()
+				$('<input>', {type:'checkbox', value: option.id, name: "#{option.name}[]", checked: checked}), option.label
+			).on 'change', (e) =>
+				if $(e.target).attr('name') == 'custom_filter[]'
+					if not $(e.target).prop('checked')
+						@_removeParams(option.id)
+					else
+						@addParams option.id.split('&id')[0]
+				else
+					params = encodeURIComponent("#{option.name}[]") + '=' + encodeURIComponent(option.id)
+					if $(e.target).prop('checked')
+						#$(e.target).closest('li').slideUp()
+						@addParams params
+					else
+						#$(e.target).closest('li').show()
+						@_removeParams params
+				return true unless @initialized
+				true
+
+	_clickCheckbox: (elm) ->
+		e = $.Event( "click" );
+		elm.trigger(e);
 
 	_addAutocompleteBox: () ->
 		previousValue = '';
 		@acInput = $('<input type="text" name="ac" class="search-query no-validate" placeholder="Search" id="search-box-filter">')
 			.appendTo(@form)
-			.on 'blur', () =>
-				if @searchHidden.val()
-					@acInput.hide()
-					@searchLabel.show()
 		@acInput.bucket_complete {
 			position: { my: "left top", at: "left bottom+3", collision: "none" }
 			source: @_getAutocompleteResults,
@@ -461,78 +438,72 @@ $.widget 'nmk.filteredList', {
 				@_autoCompleteItemSelected(ui.item)
 			minLength: 2
 		}
-		@searchHiddenLabel = $('<input type="hidden" name="ql">').appendTo(@form).val('')
-		@searchHidden = $('<input type="hidden" name="q">').appendTo(@form).val('')
-		@searchLabel = $('<div class="search-filter-label">')
-			.append($('<span class="term">'))
-			.append($('<span class="close">').append(
-				$('<i class="icon-remove">').click =>
-					@_cleanSearchFilter()
-					@_filtersChanged()
-				))
-			.css('width', @acInput.width()+'px').appendTo(@form).hide()
-			.click =>
-				@searchLabel.hide()
-				@acInput.show()
-				@acInput.focus()
 
 	_getAutocompleteResults: (request, response) ->
 		params = {q: request.term}
-		$.get @options.sourcePath, params, (data) ->
+		path = @options.sourcePath
+		if document.location.search?
+			path = if path.indexOf('?') >= -1 then path + '&' + document.location.search else path + '?' + document.localtion.search
+		$.get path, params, (data) ->
 			response data
 		, "json"
 
 	_autoCompleteItemSelected: (item) ->
-		#@_cleanFilters()
-		@searchHidden.val "#{item.type},#{item.value}"
-		cleanedLabel = item.label.replace(/(<([^>]+)>)/ig, "");
-		@searchHiddenLabel.val cleanedLabel
-		@acInput.hide().val ''
-		@searchLabel.show().find('span.term').html cleanedLabel
+		name = if item.type == 'company_user' then 'user' else item.type
+		checkbox = @element.find("input[name=\"#{name}[]\"][value=\"#{item.value}\"]")
+		if checkbox.length
+			checkbox.click() unless checkbox.prop('checked')
+		else
+			@addParams encodeURIComponent("#{name}[]") + '=' + encodeURIComponent(item.value)
+		@acInput.val ''
 		@_filtersChanged()
-		false
-
-	# Unchecks all checkboxes and any other filter field
-	_cleanFilters: () ->
-		@initialized = false
-		@defaultParams = []
-		@_cleanSearchFilter()
-		@_deselectDates()
-		defaultParams = if typeof @options.clearFilterParams != 'undefined' then @options.clearFilterParams else @options.defaultParams
-		defaultParams ||= []
-		@element.find('input[type=checkbox]').attr('checked', false)
-		for param in defaultParams
-			@element.find('input[name="'+param.name+'"][value="'+param.value+'"]').attr('checked', true)
-		@_filtersChanged()
-		@initialized = true
-		defaultParams = null
 		false
 
 	# Resets the filter to its initial state
 	_resetFilters: () ->
-		@defaultParams = @options.defaultParams
-		@_cleanSearchFilter()
-		@_deselectDates()
-		@element.find('input[type=checkbox]').attr('checked', false)
-		history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname);
-		@_parseQueryString(window.location.search)
+		@form.find('input:checkbox[name^="custom_filter"]').prop('checked', false)
+		@_setQueryString $.param(@options.defaultParams)
+		false
+
+	_removeParams: (params) ->
+		searchString = @paramsQueryString()
+		for param in @_deparam(params)
+			searchString = searchString.replace(new RegExp('(&)?'+ encodeURIComponent(param.name)+'='+encodeURIComponent(param.value)+'(&|$)', "g"), '$2')
+		@_setQueryString searchString
+
+	addParams: (params) ->
+		qs = @paramsQueryString()
+		qs = (if qs then qs + '&' else '')
+		@_setQueryString qs + params
+
+	setParams: (params) ->
+		qs =  @paramsQueryString()
+		for param in @_deparam(params)
+			paramValue = encodeURIComponent(param.name)+'='+encodeURIComponent(param.value)
+			paramValue = '' if param.value is '' or param.value is null
+			match = qs.match(new RegExp("(#{encodeURIComponent(param.name)}=[^&]*)"))
+			if match && match.length >= 2
+				qs = qs.replace(match[1], paramValue)
+			else
+				qs += '&' + paramValue if paramValue
+		@_setQueryString qs.replace(/&+/g, '&').replace('&$', '')
+
+	_setQueryString: (qs) ->
+		@_paramsQueryString = qs
+		history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' + qs)
 		@_filtersChanged(false)
-		
-		# for param in defaultParams
-		# 	@element.find('input[name="'+param.name+'"][value="'+param.value+'"]').attr('checked', true)
-		false
 
-	_cleanSearchFilter: () ->
-		if @searchHidden
-			@searchHidden.val ""
-			@searchHiddenLabel.val ""
-			@acInput.show().val ""
-			@searchLabel.hide().find('span.term').text ''
-
-		false
+	paramsQueryString: () ->
+		@_paramsQueryString ||=
+			if document.location.search
+				document.location.search.replace(/^\?/, '')
+			else if not @initialized && @options.defaultParams
+				$.param(@options.defaultParams)
+			else
+				''
 
 	_saveFilters: () ->
-		data = @_serializeFilters()
+		data = @paramsQueryString()
 		if data
 			$.get '/custom_filters/new.js', {apply_to: @options.applyTo, filters: data}
 		false
@@ -542,16 +513,7 @@ $.widget 'nmk.filteredList', {
 		@form.find('.dates-range-filter').datepick('update')
 
 	_addCalendars: () ->
-		@startDateInput = $('<input type="hidden" name="start_date" class="no-validate">').appendTo @form
-		@endDateInput = $('<input type="hidden" name="end_date" class="no-validate">').appendTo @form
 		@_previousDates = []
-
-		if @options.defaultParams
-			for param in @options.defaultParams
-				if param.name is 'start_date'
-					@startDateInput.val param.value
-				if param.name is 'end_date'
-					@endDateInput.val param.value
 
 		@calendar = $('<div class="dates-range-filter">').appendTo(@form).datepick {
 			rangeSelect: true,
@@ -576,6 +538,7 @@ $.widget 'nmk.filteredList', {
 								'{popup:start}<div class="datepick-ctrl">{link:clear}{link:close}</div>{popup:end}' +
 								'<div class="datepick-clear-fix"></div></div>'}),
 			onSelect: (dates) =>
+				dates[0] = if dates[0] then dates[0] else dates[1]
 				if @initialized == true
 					if @dateRange == false
 						@customDatesPanel.find('ul .active').removeClass('active')
@@ -583,16 +546,18 @@ $.widget 'nmk.filteredList', {
 					@dateRange = false
 
 					if @_previousDates != @_datesToString(dates)
+						@form.find('input[name="custom_filter[]"]:checked').prop 'checked', false
 						@calendar.find('.datepick-month a').removeClass('first-selected last-selected')
 						@calendar.find('.datepick-selected:first').addClass('first-selected')
 						@calendar.find('.datepick-selected:last').addClass('last-selected')
 						@_previousDates = @_datesToString(dates)
 						@customDatesFilter.find('input[name=custom_start_date]').datepicker('setDate', dates[0])
 						@customDatesFilter.find('input[name=custom_end_date]').datepicker('setDate', dates[1])
-						@_filtersChanged()
+						@_setCalendarDatesFromCalendar()
 				else
 					@calendar.find('.datepick-selected:first').addClass('first-selected')
 					@calendar.find('.datepick-selected:last').addClass('last-selected')
+				true
 		}
 
 		@customDatesFilter = $('<div class="custom-dates-inputs">').appendTo(@form).append(
@@ -639,7 +604,6 @@ $.widget 'nmk.filteredList', {
 
 		@customDatesPanel = $('<div class="dates-pref">').appendTo(@form).append(
 			$('<div class="dropdown select-ranges">').append(
-				$('<label>').text('Date ranges'),
 				$('<a class="dropdown-toggle off" data-toggle="dropdown" href="#" title="Date ranges">')
 					.append(
 						$('<span class="date-range-label">').html('Choose a date range'),
@@ -726,28 +690,40 @@ $.widget 'nmk.filteredList', {
 			dropdown.addClass('off').find('.date-range-label').text 'Choose a date range'
 
 	selectCalendarDates: (startDate, endDate) ->
-		@calendar.datepick('setDate', [startDate, endDate])
-		@_setCalendarDatesFromCalendar()
+		currentDates = @calendar.datepick('getDate')
+		if currentDates.length < 2 ||
+		   @_formatDate(currentDates[0]) != @_formatDate(startDate) ||
+		   @_formatDate(endDate || startDate) != @_formatDate(currentDates[1])
+			@calendar.datepick('setDate', [startDate, endDate || startDate])
 		@
 
-	_setCalendarDatesFromCalendar: () ->
-		dates = @calendar.datepick('getDate')
-		if dates.length > 0
-			startDate = @_formatDate(dates[0])
-			@startDateInput.val startDate
+	setDates: (dates) ->
+		dates[0] = @_parseDate(dates[0]) if dates.length > 0 && typeof dates[0] == 'string'
+		dates[1] = @_parseDate(dates[1]) if dates.length > 0 && typeof dates[1] == 'string'
 
-			@endDateInput.val ''
+		if dates.length > 0 && dates[0]
+			params = "start_date=#{@_formatDate(dates[0])}"
 			if dates[0].toLocaleString() != dates[1].toLocaleString()
-				endDate = @_formatDate(dates[1])
-				@endDateInput.val endDate
+				params += "&end_date=#{@_formatDate(dates[1])}"
+			else
+				params += "&end_date="
+
 		else
-			@startDateInput.val ''
-			@endDateInput.val ''
-		dates = null
-		true
+			params = 'start_date=&end_date='
+		@setParams params
+		@
+
+	_deselectDates: ->
+		matches = @paramsQueryString().match(/((start_date|end_date)=[^&]*)/g)
+		if matches && matches.length > 0
+			@_removeParams matches.join('&')
+
+	_setCalendarDatesFromCalendar: () ->
+		@setDates @calendar.datepick('getDate')
+
 
 	_datesToString: (dates) ->
-		if dates.length > 0
+		if dates.length > 0 && dates[0]
 			@_formatDate(dates[0]) + @_formatDate(dates[1])
 		else
 			''
@@ -757,7 +733,7 @@ $.widget 'nmk.filteredList', {
 
 	_parseDate: (date) ->
 		parts = date.split('/')
-		new Date(parts[2], parseInt(parts[0])-1, parts[1],0,0,0)
+		new Date(parts[2], parseInt(parts[0])-1, parts[1],12,0,0)
 
 	getWeekRange: (weeks=1) ->
 		today = new Date();
@@ -801,36 +777,25 @@ $.widget 'nmk.filteredList', {
 
 
 	_filtersChanged: (updateState=true) ->
-		if @options.includeCalendars
-			@_setCalendarDatesFromCalendar()
-
-		if @options.source
-			@reloadData
-
-		data = @_getCustomFilters()
-		data = @_serializeFilters() if !data
+		return if @updatingFilters
+		@updatingFilters = true
+		data = @paramsQueryString()
 		if @form.data('serializedData') != data
 			@form.data('serializedData', data)
-			@_storeFilters data
-			@_loadPage(1)
 			if updateState
 				history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' +@form.data('serializedData'));
+
+			@_parseQueryString(data)
+
+			@_loadPage(1)
 
 			@element.trigger('filters:changed')
 			if @options.onChange
 				@options.onChange(@)
 
 		data = null
+		@updatingFilters = false
 		@
-
-	_storeFilters: (data) ->
-		if typeof(Storage) isnt "undefined"
-			sessionStorage["filters#{@storageScope}"] = data
-		@
-
-	_loadStoredFilters: () ->
-		if typeof(Storage) isnt "undefined"
-			sessionStorage["filters#{@storageScope}"]
 
 	_getCustomFilters: () ->
 		data = @form.serializeArray()
@@ -840,14 +805,8 @@ $.widget 'nmk.filteredList', {
 		)
 		p = custom_filter[0].value.split('&id')[0] if custom_filter.length > 0
 
-	_serializeFilters: () ->
-		data = @_deparam(@_getCustomFilters())
-		data = @getFilters() if !data.length
-		jQuery.param( data )
-
 	buildParams: (params=[]) ->
-		data = @_deparam(@_getCustomFilters())
-		data = @getFilters() if !data.length
+		data = @_deparam(@paramsQueryString())
 		for param in data
 			params.push(param)
 		params
@@ -863,20 +822,6 @@ $.widget 'nmk.filteredList', {
 				pair = queryString[--i].split("=")
 				params.push {'name': decode(pair[0]), 'value': decode(pair[1])}
 		params
-
-	paramsQueryString: () ->
-		@_serializeFilters()
-
-	_updateCustomFiltersCheckboxes: (option=null) ->
-		e = @element.find('input[name="custom_filter\\[\\]"][value="'+option.id+'"]')
-		@element.find('input[name="custom_filter\\[\\]"]:checked').not(e).prop 'checked', false
-		if e.length
-			if e.prop('checked') == true
-				@element.find('input[type="checkbox"]:checked').not(e).prop 'checked', false
-				@_parseQueryString(option.id.split('&id')[0])
-			else
-				@_cleanFilters()
-		false
 
 	_loadingSpinner: () ->
 		if @options.spinnerElement?
@@ -952,6 +897,14 @@ $.widget 'nmk.filteredList', {
 				if page is 1 and resultsCount is 0
 					@emptyState = @_placeholderEmptyState()
 
+				if $response.find('div[data-content="filters-description"]').length > 0
+					$('.collection-list-description .filter-label').html(
+						$response.find('div[data-content="filters-description"]')
+					).append(
+						$('<a id="clear-filters" href="#" title="Reset">').text('Reset').on 'click', (e) =>
+							@_resetFilters()
+					);
+
 				$response.remove()
 				$items.remove()
 				$items = $response = null
@@ -996,60 +949,54 @@ $.widget 'nmk.filteredList', {
 			@infiniteScroller = false
 
 	_parseQueryString: (query) ->
-		@initialized = false
-		@_cleanSearchFilter()
-		query = query.replace(/^\?/,"")
-		if query != ''
-			if query.match(/_stored=true/)
-				query = @_loadStoredFilters()
-				if not query
-					query = ''
-				else
-					history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' +query);
+		vars = query.split('&')
+		dates = []
+		selectedOptions = []
 
-			@defaultParams = []
-			vars = query.split('&')
-			dates = []
-			for qvar in vars
-				pair = qvar.split('=')
-				name = decodeURIComponent(pair[0])
-				value = decodeURIComponent((if pair.length>=2 then pair[1] else '').replace(/\+/g, '%20')).replace(/\+/g, ' ')
-				if @options.includeCalendars and value and name in ['start_date', 'end_date']
-					if name is 'start_date' and value
-						dates[0] = @_parseDate(value)
-					else
-						dates[1] = @_parseDate(value)
+		for param in @_deparam(query)
+			name = param.name
+			value = param.value
+			sliderMatch = name.match /(.+)\[(max|min)\]$/
+			if @options.includeCalendars and value and name in ['start_date', 'end_date']
+				if name is 'start_date' and value
+					dates[0] = @_parseDate(value)
 				else
-					field = @form.find("[name=\"#{name}\"]")
-					if field.length
-						if field.attr('type') == 'checkbox'
-							for element in field
-								if element.value == value
-									element.checked = true
-						else
-							field.val(value)
-					else
-						@defaultParams.push {'name': name, 'value': value}
-
-			if dates.length > 0
-				@selectCalendarDates dates[0], dates[1]
+					dates[1] = @_parseDate(value)
+			else if sliderMatch && @sliders[sliderMatch[1]]
+				if sliderMatch[2] is 'min'
+					@sliders[sliderMatch[1]].rangeSlider 'values', parseInt(value, 10), @sliders[sliderMatch[1]].rangeSlider('values').max
+				else
+					@sliders[sliderMatch[1]].rangeSlider 'values', @sliders[sliderMatch[1]].rangeSlider('values').min, parseInt(value, 10)
 			else
-				@_deselectDates()
-			dates = vars = null
+				checkbox = @form.find("input[name=\"#{param.name}\"][value=\"#{param.value}\"]:checkbox")
+				if checkbox.length
+					selectedOptions.push checkbox[0]
+					$(checkbox).prop('checked', true).closest('li').slideUp()
+				else
+					field = @form.find("input[name=\"#{name}\"]:not(:checkbox)")
+					if field.length > 0
+						field.val(value)
+
+		for name, slider of @sliders
+			unless query.indexOf(encodeURIComponent("#{name}[min]")) > -1 || query.indexOf(encodeURIComponent("#{name}[max]")) > -1
+				bounds = slider.rangeSlider("bounds")
+				slider.rangeSlider 'values', bounds.min, bounds.max
+
+
+		for checkbox in @form.find("input:checkbox:hidden").not(selectedOptions)
+			$(checkbox).prop('checked', false).closest('li').show()
+
+
+		if dates.length > 0
+			@selectCalendarDates dates[0], dates[1]
+		else
+			@_deselectDates()
+		dates = vars = null
 
 		query = null
-		if @searchHidden and @searchHidden.val()
-			@acInput.hide()
-			@searchLabel.show().find('.term').text @searchHiddenLabel.val()
-
-		@initialized = true
 
 	reloadFilters: () ->
 		@loadFacets = true
-		if @defaultParams.length == 0
-			@defaultParams = $.map(@formFilters.find('input[name="status[]"]:checked'), (checkbox, index) -> {'name': 'status[]', 'value': checkbox.value})
-		#@formFilters.html('')
-		#@form.data('serializedData','')
 		@_loadFilters()
 }
 

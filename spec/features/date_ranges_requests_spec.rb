@@ -46,9 +46,13 @@ feature 'DateRanges', search: true, js: true do
 
       expect(page).to have_no_text 'Weekdays'
 
+      show_all_filters
+
       # Make it show only the inactive elements
-      filter_section('ACTIVE STATE').unicheck('Inactive')
-      filter_section('ACTIVE STATE').unicheck('Active')
+      add_filter 'ACTIVE STATE', 'Inactive'
+      remove_filter 'Active'
+
+      expect(page).to have_content '1 date range found for: Inactive'
 
       within resource_item 1 do
         expect(page).to have_content('Weekdays')
@@ -72,6 +76,13 @@ feature 'DateRanges', search: true, js: true do
       find('h2', text: 'new date range name') # Wait for the page to load
       expect(page).to have_selector('h2', text: 'new date range name')
       expect(page).to have_selector('div.description-data', text: 'new date range description')
+    end
+
+    it_behaves_like 'a list that allow saving custom filters' do
+
+      let(:list_url) { date_ranges_path }
+
+      let(:filters) { [{ section: 'ACTIVE STATE', item: 'Inactive' }] }
     end
   end
 

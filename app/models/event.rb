@@ -41,7 +41,8 @@ class Event < ActiveRecord::Base
            class_name: 'AttachedAsset', dependent: :destroy, as: :attachable, inverse_of: :attachable
   has_many :teamings, as: :teamable, dependent: :destroy, inverse_of: :teamable
   has_many :teams, through: :teamings, after_remove: :after_remove_member
-  has_many :results, as: :resultable, dependent: :destroy, class_name: 'FormFieldResult', inverse_of: :resultable do
+  has_many :results, as: :resultable, dependent: :destroy,
+                     class_name: 'FormFieldResult', inverse_of: :resultable do
     def active
       where(form_field_id: proxy_association.owner.campaign.form_field_ids)
     end
@@ -248,6 +249,7 @@ class Event < ActiveRecord::Base
   delegate :name, :state, :city, :zipcode, :neighborhood, :street_number, :route, :latitude,
            :state_name, :longitude, :formatted_address, :name_with_location, :td_linx_code,
            to: :place, prefix: true, allow_nil: true
+
   delegate :impressions, :interactions, :samples, :spent, :gender_female, :gender_male,
            :ethnicity_asian, :ethnicity_black, :ethnicity_hispanic, :ethnicity_native_american,
            :ethnicity_white, to: :event_data, allow_nil: true
@@ -301,7 +303,7 @@ class Event < ActiveRecord::Base
     end
 
     boolean :has_event_data do
-      has_event_data?
+      event_data?
     end
 
     boolean :has_comments do
@@ -332,6 +334,14 @@ class Event < ActiveRecord::Base
 
   def deactivate!
     update_attribute :active, false
+  end
+
+  def form_field_results
+    campaign.form_fields.map do |field|
+      result = results.find { |r| r.form_field_id == field.id } || results.build(form_field_id: field.id)
+      result.form_field = field
+      result
+    end
   end
 
   def place_reference=(value)
@@ -369,7 +379,7 @@ class Event < ActiveRecord::Base
     start_at > Time.now
   end
 
-  def is_late?
+  def late?
     end_at.to_date <= (2.days.ago).to_date
   end
 
@@ -381,7 +391,7 @@ class Event < ActiveRecord::Base
     end_at.to_date == (Time.zone.now.to_date - 1)
   end
 
-  def has_event_data?
+  def event_data?
     campaign_id.present? &&
       (
         results.active.where(
@@ -471,21 +481,21 @@ class Event < ActiveRecord::Base
       surveys.each do|survey|
         stats[:total] += 1
         survey.surveys_answers.each do |answer|
+          m = brands_map[answer.brand_id]
           if  answer.brand_id.present? && brands_map.key?(answer.brand_id)
             type = "question_#{answer.question_id}"
             stats[type] ||= {}
             if answer.question_id == 2
               if answer.answer.present? && answer.answer =~ /^[0-9]+(\.[0-9])?$/
-                stats[type][brands_map[answer.brand_id]] ||= { count: 0, total: 0, avg: 0 }
-                stats[type][brands_map[answer.brand_id]][:count] += 1
-                stats[type][brands_map[answer.brand_id]][:total] += answer.answer.to_f
-                stats[type][brands_map[answer.brand_id]][:avg] = stats[type][brands_map[answer.brand_id]][:total]  /
-                                                                 stats[type][brands_map[answer.brand_id]][:count]
+                stats[type][m] ||= { count: 0, total: 0, avg: 0 }
+                stats[type][m][:count] += 1
+                stats[type][m][:total] += answer.answer.to_f
+                stats[type][m][:avg] = stats[type][m][:total] / stats[type][m][:count]
               end
             else
               stats[type][answer.answer] ||= {}
-              stats[type][answer.answer][brands_map[answer.brand_id]] ||= { count: 0, avg: 0.0 }
-              stats[type][answer.answer][brands_map[answer.brand_id]][:count] += 1
+              stats[type][answer.answer][m] ||= { count: 0, avg: 0.0 }
+              stats[type][answer.answer][m][:count] += 1
               stats[type].each { |_a, brands| brands.each { |_b, s| s[:avg] = s[:count] * 100.0 / stats[:total] } }
             end
           elsif answer.kpi_id.present?
@@ -508,164 +518,15 @@ class Event < ActiveRecord::Base
 
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
-    def do_search(params, include_facets = false, &_block)
-      current_company = Company.current || Company.new
-      solr_search(include: [:campaign, :place]) do
-        (start_at_field, end_at_field, timezone) = [:start_at, :end_at, Time.zone.name]
-        if Company.current && Company.current.timezone_support?
-          (start_at_field, end_at_field, timezone) = [:local_start_at, :local_end_at, 'UTC']
-        end
-
-        Time.use_zone(timezone) do
-          company_user = params[:current_company_user]
-          if company_user.present?
-            current_company = company_user.company
-            unless company_user.role.is_admin?
-              with(:campaign_id, company_user.accessible_campaign_ids + [0])
-              any_of do
-                locations = company_user.accessible_locations
-                places_ids = company_user.accessible_places
-                with(:place_id, places_ids + [0])
-                with(:location, locations + [0])
-              end
-            end
-          end
-
-          if (params.key?(:user) && params[:user].present?) || (params.key?(:team) && params[:team].present?)
-            team_ids = []
-            team_ids += params[:team] if params.key?(:team) && params[:team].any?
-            team_ids += Team.with_user(params[:user]).map(&:id) if params.key?(:user) && params[:user].any?
-
-            any_of do
-              with(:user_ids, params[:user]) if params.key?(:user) && params[:user].present?
-              with(:team_ids, team_ids) if team_ids.any?
-            end
-          end
-
-          with :id, params[:id] if params.key?(:id) && params[:id].present?
-
-          with :location,    params[:location] if params.key?(:location) && params[:location].present?
-          with :campaign_id, params[:campaign] if params.key?(:campaign) && params[:campaign].present?
-
-          # We are using two options to allow searching by active/inactive in combination with approved/late/rejected/submitted
-          with :status,      params[:status] if params.key?(:status) && params[:status].present? # For the active state
-
-          if params.key?(:event_status) && params[:event_status].present? # For the event status
-            event_status = params[:event_status].dup
-            late = event_status.delete('Late')
-            due = event_status.delete('Due')
-            executed = event_status.delete('Executed')
-            scheduled = event_status.delete('Scheduled')
-
-            any_of do
-              with(:status, event_status) unless event_status.empty?
-              unless late.nil?
-                all_of do
-                  with(:status, 'Unsent')
-                  with(end_at_field).less_than(current_company.late_event_end_date)
-                end
-              end
-
-              unless due.nil?
-                all_of do
-                  with(:status, 'Unsent')
-                  with(end_at_field, current_company.due_event_start_date..current_company.due_event_end_date)
-                end
-              end
-
-              unless executed.nil?
-                with(end_at_field).less_than(Time.zone.now)
-              end
-
-              unless scheduled.nil?
-                with(end_at_field).greater_than(Time.zone.now.beginning_of_day)
-              end
-            end
-          end
-          with(:company_id, params[:company_id])
+    def do_search(params, include_facets = false)
+      timezone = Time.zone.name
+      timezone = 'UTC' if Company.current && Company.current.timezone_support?
+      Time.use_zone(timezone) do
+        super do
           with(:has_event_data, true) if params[:with_event_data_only].present?
           with(:spent).greater_than(0) if params[:with_expenses_only].present?
           with(:has_surveys, true) if params[:with_surveys_only].present?
           with(:has_comments, true) if params[:with_comments_only].present?
-          if params.key?(:brand) && params[:brand].present?
-            campaing_ids = Campaign.joins(:brands).where(brands: { id: params[:brand] }, company_id: params[:company_id]).pluck('DISTINCT(campaigns.id)')
-            with 'campaign_id', campaing_ids + [0]
-          end
-
-          if params[:start_date].present? && params[:end_date].present?
-            d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day
-            d2 = Timeliness.parse(params[:end_date], zone: :current).end_of_day
-            any_of do
-              with start_at_field, d1..d2
-              with end_at_field, d1..d2
-            end
-          elsif params[:start_date].present?
-            d = Timeliness.parse(params[:start_date], zone: :current)
-            all_of do
-              with(start_at_field).less_than(d.end_of_day)
-              with(end_at_field).greater_than(d.beginning_of_day)
-            end
-          end
-
-          if params.key?(:q) && params[:q].present?
-            (attribute, value) = params[:q].split(',')
-            case attribute
-            when 'brand'
-              campaigns = Campaign.select('campaigns.id').joins(:brands).where(brands: { id: value }).pluck('campaigns.id')
-              campaigns = '-1' if campaigns.empty?
-              with 'campaign_id', campaigns
-            when 'campaign', 'place'
-              with "#{attribute}_id", value
-            when 'company_user'
-              with :user_ids, value
-            when 'venue'
-              venue = Venue.find(value)
-              any_of do
-                with :place_id, venue.place_id
-                with :location, venue.place.location_id if venue.place.is_location?
-              end
-            when 'area'
-              params[:area] ||= []
-              params[:area] = [params[:area]] unless params[:area].is_a?(Array)
-              params[:area].push value.to_i
-            else
-              with "#{attribute}_ids", value
-            end
-          end
-
-          if params[:area].present?
-            all_of do
-              any_of do
-                with :place_id, Area.where(id: params[:area]).joins(:places).where(places: { is_location: false }).pluck('places.id').uniq + [0]
-                with :location, Area.where(id: params[:area]).map { |a| a.locations.map(&:id) }.flatten + [0]
-
-                # Customized areas with INCLUDED places
-                area_campaigns = AreasCampaign.where(area_id: params[:area]).where('array_length(areas_campaigns.inclusions, 1) >= 1')
-                area_campaigns = area_campaigns.where(campaign_id: params[:campaign]) if params[:campaign].present?
-                area_campaigns.each do |ac|
-                  all_of do
-                    with :campaign_id, ac.campaign_id
-                    any_of do
-                      with :place_id, ac.inclusions
-                      with :location, ac.location_ids
-                    end
-                  end
-                end
-              end
-
-              # Customized areas with EXCLUDED places
-              area_campaigns = AreasCampaign.where(area_id: params[:area]).where('array_length(areas_campaigns.exclusions, 1) >= 1')
-              area_campaigns = area_campaigns.where(campaign_id: params[:campaign]) if params[:campaign].present?
-              area_campaigns.each do |ac|
-                any_of do
-                  without :campaign_id, ac.campaign_id
-                  without :location, Place.where(id: ac.exclusions, is_location: true).pluck('DISTINCT places.location_id') + [-1]
-                end
-              end
-            end
-          end
-
-          with :place_id, params[:place] if params[:place].present?
 
           if params.key?(:event_data_stats) && params[:event_data_stats]
             stat(:promo_hours, type: 'sum')
@@ -682,59 +543,73 @@ class Event < ActiveRecord::Base
             stat(:ethnicity_native_american, type: 'mean')
             stat(:ethnicity_white, type: 'mean')
           end
-
-          if include_facets
-            facet :campaign_id
-            facet :place_id
-            facet :user_ids
-            facet :team_ids
-            facet :status do
-              row(:late) do
-                with(:status, 'Unsent')
-                with(end_at_field).less_than(current_company.late_event_end_date)
-              end
-              row(:due) do
-                with(:status, 'Unsent')
-                with(end_at_field, current_company.due_event_start_date..current_company.due_event_end_date)
-              end
-              row(:rejected) do
-                with(:status, 'Rejected')
-              end
-              row(:submitted) do
-                with(:status, 'Submitted')
-              end
-              row(:approved) do
-                with(:status, 'Approved')
-              end
-              row(:active) do
-                with(:status, 'Active')
-              end
-              row(:inactive) do
-                with(:status, 'Inactive')
-              end
-              row(:executed) do
-                with(:status, 'Active')
-                with(end_at_field).less_than(Time.zone.now.beginning_of_day)
-              end
-              row(:scheduled) do
-                with(:status, 'Active')
-                with(end_at_field).greater_than(Time.zone.now.beginning_of_day)
-              end
-            end
-
-            facet :start_at do
-              row(:today) do
-                with(start_at_field).less_than(Time.zone.now.end_of_day)
-                with(end_at_field).greater_than(Time.zone.now.beginning_of_day)
-              end
-            end
-          end
-
-          order_by(params[:sorting] || start_at_field, params[:sorting_dir] || :asc)
-          paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
-
-          yield self if block_given?
         end
+      end
+    end
+
+    def search_facets
+      current_company = Company.current || Company.new
+      proc do
+        facet :campaign_id
+        facet :place_id
+        facet :user_ids
+        facet :team_ids
+        facet :status do
+          row(:late) do
+            with(:status, 'Unsent')
+            with(search_end_date_field).less_than(current_company.late_event_end_date)
+          end
+          row(:due) do
+            with(:status, 'Unsent')
+            with(search_end_date_field, current_company.due_event_start_date..current_company.due_event_end_date)
+          end
+          row(:rejected) do
+            with(:status, 'Rejected')
+          end
+          row(:submitted) do
+            with(:status, 'Submitted')
+          end
+          row(:approved) do
+            with(:status, 'Approved')
+          end
+          row(:active) do
+            with(:status, 'Active')
+          end
+          row(:inactive) do
+            with(:status, 'Inactive')
+          end
+          row(:executed) do
+            with(:status, 'Active')
+            with(search_end_date_field).less_than(Time.zone.now.beginning_of_day)
+          end
+          row(:scheduled) do
+            with(:status, 'Active')
+            with(search_end_date_field).greater_than(Time.zone.now.beginning_of_day)
+          end
+        end
+
+        facet :start_at do
+          row(:today) do
+            with(search_start_date_field).less_than(Time.zone.now.end_of_day)
+            with(search_end_date_field).greater_than(Time.zone.now.beginning_of_day)
+          end
+        end
+      end
+    end
+
+    def search_start_date_field
+      if Company.current && Company.current.timezone_support?
+        :local_start_at
+      else
+        :start_at
+      end
+    end
+
+    def search_end_date_field
+      if Company.current && Company.current.timezone_support?
+        :local_end_at
+      else
+        :end_at
       end
     end
 
@@ -753,13 +628,26 @@ class Event < ActiveRecord::Base
         start_time_filter = "(TIMEZONE('UTC', start_at) AT TIME ZONE '#{timezone}')::time"
         end_time_filter   = "(TIMEZONE('UTC', end_at) AT TIME ZONE '#{timezone}')::time"
       end
-      timezone = Company.current.present? && Company.current.timezone_support? ? 'UTC' : "'#{ActiveSupport::TimeZone.zones_map[Time.zone.name].tzinfo.identifier}'"
       {
-        start_date:   { title: 'Start date', column: -> { "to_char(#{prefix}start_at, 'YYYY/MM/DD')" }, filter_column: -> { "#{prefix}start_at" }, filter: ->(_field) { { name: 'event:start_date', type: 'calendar' } } },
-        start_time:   { title: 'Start time', column: -> { "to_char(#{prefix}start_at, 'HH12:MI AM')" }, filter_column: -> { start_time_filter }, filter: ->(field) { { name: 'event:start_time', type: 'time', label: field.label  } } },
-        end_date:     { title: 'End date', column: -> { "to_char(#{prefix}end_at, 'YYYY/MM/DD')" }, filter_column: -> { "#{prefix}end_at" }, filter: ->(_field) { { name: 'event:end_date', type: 'calendar' } } },
-        end_time:     { title: 'End time', column: -> { "to_char(#{prefix}end_at, 'HH12:MI AM')" }, filter_column: -> { end_time_filter }, filter: ->(field) { { name: 'event:end_time', type: 'time', label: field.label } } },
-        event_active: { title: 'Active State', filter_column: -> { 'events.active' }, filter: ->(field) { { name: 'event:event_active', label: field.label, items: [{ id: 'true', label: 'Active', count: 1, name: 'event:event_active' }, { id: 'false', label: 'Inactive', count: 1, name: 'event:event_active' }] } } },
+        start_date:   { title: 'Start date', column: -> { "to_char(#{prefix}start_at, 'YYYY/MM/DD')" },
+                        filter_column: -> { "#{prefix}start_at" },
+                        filter: ->(_field) { { name: 'event:start_date', type: 'calendar' } } },
+        start_time:   { title: 'Start time', column: -> { "to_char(#{prefix}start_at, 'HH12:MI AM')" },
+                        filter_column: -> { start_time_filter },
+                        filter: ->(field) { { name: 'event:start_time', type: 'time', label: field.label  } } },
+        end_date:     { title: 'End date', column: -> { "to_char(#{prefix}end_at, 'YYYY/MM/DD')" },
+                        filter_column: -> { "#{prefix}end_at" },
+                        filter: ->(_field) { { name: 'event:end_date', type: 'calendar' } } },
+        end_time:     { title: 'End time', column: -> { "to_char(#{prefix}end_at, 'HH12:MI AM')" },
+                        filter_column: -> { end_time_filter },
+                        filter: ->(field) { { name: 'event:end_time', type: 'time', label: field.label } } },
+        event_active: { title: 'Active State', filter_column: -> { 'events.active' },
+                        filter: lambda do |field|
+                          { name: 'event:event_active',
+                            label: field.label, items: [
+                              { id: 'true', label: 'Active', count: 1, name: 'event:event_active' },
+                              { id: 'false', label: 'Inactive', count: 1, name: 'event:event_active' }] }
+                        end },
         event_status: { title: 'Event Status' }
       }
     end
@@ -786,13 +674,16 @@ class Event < ActiveRecord::Base
 
   def valid_campaign?
     return unless campaign_id.present? && (new_record? || campaign_id_changed?)
-    campaigns =
-      if User.current.present? && User.current.current_company_user.present?
-        Campaign.accessible_by_user(User.current.current_company_user)
-      else
-        Campaign.where(company_id: company_id)
-      end
-    errors.add :campaign_id, :invalid unless campaigns.where(id: campaign_id).count > 0
+
+    errors.add :campaign_id, :invalid if valid_campaign_for_current_user.where(id: campaign_id).empty?
+  end
+
+  def valid_campaign_for_current_user
+    if User.current.present? && User.current.current_company_user.present?
+      Campaign.accessible_by_user(User.current.current_company_user)
+    else
+      Campaign.where(company_id: company_id)
+    end
   end
 
   # Copy some errors to the attributes used on the forms so the user
@@ -807,9 +698,8 @@ class Event < ActiveRecord::Base
     unless start_date.nil? || start_date.empty?
       self.start_at = Timeliness.parse([start_date, start_time.to_s.strip].compact.join(' ').strip, zone: :current)
     end
-    unless end_date.nil? || end_date.empty?
-      self.end_at = Timeliness.parse([end_date, end_time.to_s.strip].compact.join(' ').strip, zone: :current)
-    end
+    return if end_date.nil? || end_date.empty?
+    self.end_at = Timeliness.parse([end_date, end_time.to_s.strip].compact.join(' ').strip, zone: :current)
   end
 
   # Sets the values for start_date, start_time, end_date and end_time when from start_at and end_at
@@ -817,13 +707,12 @@ class Event < ActiveRecord::Base
     if new_record?
       self.start_time ||= '12:00 PM'
       self.end_time ||= '01:00 PM'
-    else
-      if has_attribute?(:start_at) # this if is to allow custom selects on the Event module
-        self.start_date = start_at.to_s(:slashes)   unless start_at.blank?
-        self.start_time = start_at.to_s(:time_only).strip unless start_at.blank?
-        self.end_date   = end_at.to_s(:slashes)     unless end_at.blank?
-        self.end_time   = end_at.to_s(:time_only).strip   unless end_at.blank?
-      end
+      parse_start_end
+    elsif has_attribute?(:start_at) # this if is to allow custom selects on the Event module
+      self.start_date = start_at.to_s(:slashes)   unless start_at.blank?
+      self.start_time = start_at.to_s(:time_only).strip unless start_at.blank?
+      self.end_date   = end_at.to_s(:slashes)     unless end_at.blank?
+      self.end_time   = end_at.to_s(:time_only).strip   unless end_at.blank?
     end
   end
 
@@ -834,9 +723,9 @@ class Event < ActiveRecord::Base
     if start_at.to_date < visit_start_date
       errors.add(:start_date, "should be after #{visit_start_date - 1}")
     end
-    if end_at.to_date > visit_end_date
-      errors.add(:end_date, "should be before #{visit_end_date + 1}")
-    end
+
+    return unless end_at.to_date > visit_end_date
+    errors.add(:end_date, "should be before #{visit_end_date + 1}")
   end
 
   def after_remove_member(member)
@@ -873,11 +762,7 @@ class Event < ActiveRecord::Base
   end
 
   def reindex_associated
-    if campaign.present?
-      campaign.first_event = self if campaign.first_event_at.nil? || campaign.first_event_at > start_at
-      campaign.last_event  = self if campaign.last_event_at.nil?  || campaign.last_event_at  < start_at
-      campaign.save if campaign.changed?
-    end
+    reindex_campaign
 
     Sunspot.index visit if visit.present?
 
@@ -890,6 +775,13 @@ class Event < ActiveRecord::Base
     end
 
     Sunspot.index tasks if @reindex_tasks
+  end
+
+  def reindex_campaign
+    return unless campaign.present?
+    campaign.first_event = self if campaign.first_event_at.nil? || campaign.first_event_at > start_at
+    campaign.last_event  = self if campaign.last_event_at.nil?  || campaign.last_event_at  < start_at
+    campaign.save if campaign.changed?
   end
 
   def index_venue
@@ -907,29 +799,47 @@ class Event < ActiveRecord::Base
   def event_place_valid?
     return unless place_id_changed? || self.new_record?
     if place.nil? || campaign.nil?
-      if place.nil? && User.current.present? && User.current.current_company_user.present? &&
-         !User.current.current_company_user.is_admin?
-        errors.add(:place_reference, 'cannot be blank')
-      end
+      validate_place_presence
     else
-      unless campaign.place_allowed_for_event?(place)
-        errors.add(:place_reference, 'is not valid for this campaign')
-      end
-      unless User.current.nil? || User.current.current_company_user.nil? || User.current.current_company_user.allowed_to_access_place?(place)
-        errors.add(:place_reference, 'is not part of your authorized locations')
-      end
+      validate_place_valid_for_campaign
+      validate_user_allowed_schedule_event_in_place
     end
+  end
+
+  def validate_place_presence
+    return unless place.nil? && User.current.present? &&
+                  User.current.current_company_user.present? &&
+                  !User.current.current_company_user.is_admin?
+    errors.add(:place_reference, 'cannot be blank')
+  end
+
+  def validate_place_valid_for_campaign
+    return if campaign.place_allowed_for_event?(place)
+    errors.add(:place_reference,
+               'This place has not been approved for the selected campaign. '\
+               'Please contact your campaign administrator to request that this be updated.')
+  end
+
+  def validate_user_allowed_schedule_event_in_place
+    return if User.current.nil? || User.current.current_company_user.nil? ||
+              User.current.current_company_user.allowed_to_access_place?(place)
+    errors.add(:place_reference,
+               'You do not have permissions to this place. '\
+               'Please contact your campaingn administrator to request access.')
+    errors.add(:place_reference, 'is not part of your authorized locations')
   end
 
   def set_event_timezone
     return unless new_record? || start_at_changed? || end_at_changed?
     self.timezone = Time.zone.tzinfo.identifier
-    if read_attribute(:start_at)
-      self.local_start_at = Timeliness.parse(read_attribute(:start_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC')
-    end
-    unless read_attribute(:end_at).nil?
-      self.local_end_at = Timeliness.parse(read_attribute(:end_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC')
-    end
+    assign_local_time_attribute(:start_at)
+    assign_local_time_attribute(:end_at)
+  end
+
+  def assign_local_time_attribute(attribute)
+    return if self[attribute].nil?
+    self["local_#{attribute}".to_sym] = Timeliness.parse(self[attribute].strftime('%Y-%m-%d %H:%M:%S'),
+                                                         zone: 'UTC')
   end
 
   def update_activities
@@ -937,7 +847,7 @@ class Event < ActiveRecord::Base
   end
 
   def localize_date(attribute)
-    date = read_attribute(attribute)
+    date = self[attribute]
     if date && timezone && Company.current && Company.current.timezone_support? && Company.current.id == company_id
       date = Timeliness.parse(date.in_time_zone(timezone).strftime('%Y-%m-%d %H:%M:%S'), zone: timezone)
     end

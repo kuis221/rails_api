@@ -3,22 +3,40 @@
 require 'rails_helper'
 require 'cancan/matchers'
 
-describe 'User', type: :model do
+describe Ability, type: :model do
   describe 'abilities' do
-    subject(:ability) { Ability.new(user) }
+    subject(:ability) { described_class.new(user) }
     let(:user) { nil }
     let(:company) { create(:company) }
     let(:other_company) { create(:company) }
     let(:event) { create(:event, campaign: campaign, company: company, place_id: place.id) }
+    let(:event_in_other_company) do
+      without_current_user{ create(:event, campaign: create(:campaign), place: create(:place)) }
+    end
     let(:place) { create(:place) }
     let(:campaign) { create(:campaign, company: company) }
+    let(:venue) { create(:venue, place: place, company: company) }
+    let(:venue_in_other_company) { create(:venue, place: place, company: other_company) }
+    let(:activity) do
+      create(:activity, activity_type: create(:activity_type, company: company),
+                        activitable: venue,
+                        company_user: create(:company_user,  company: company))
+    end
+    let(:activity_in_other_company) do
+      create(:activity, activity_type: create(:activity_type, company: other_company),
+                        activitable: venue_in_other_company,
+                        company_user: create(:company_user,  company_id: other_company.id))
+    end
 
     before do
       User.current = user
     end
 
     context 'when it is a super user' do
-      let(:user) { create(:company_user,  company: company, role: create(:role, is_admin: true), user: create(:user,  current_company: company)).user }
+      let(:user) do
+        create(:company_user, company: company, role: create(:role, is_admin: true),
+                              user: create(:user,  current_company: company)).user
+      end
 
       it { is_expected.not_to be_able_to(:manage, Company) }
       it { is_expected.not_to be_able_to(:create, Company) }
@@ -35,27 +53,31 @@ describe 'User', type: :model do
 
       it { is_expected.to be_able_to(:create, Team) }
       it { is_expected.to be_able_to(:manage, create(:team, company_id: company.id)) }
-      it { is_expected.not_to be_able_to(:manage, create(:team, company_id: company.id + 1)) }
+      it { is_expected.not_to be_able_to(:manage, create(:team, company: other_company)) }
 
       it { is_expected.to be_able_to(:create, Task) }
-      it { is_expected.to be_able_to(:manage, create(:task, event: create(:event, campaign: campaign, company: company))) }
-      it { is_expected.not_to be_able_to(:manage, without_current_user {  create(:task, event: create(:event)) }) }
+      it { is_expected.to be_able_to(:manage, create(:task, event: event)) }
+      it { is_expected.not_to be_able_to(:manage, without_current_user {  create(:task, event: event_in_other_company) }) }
 
       it { is_expected.to be_able_to(:create, Area) }
       it { is_expected.to be_able_to(:manage, create(:area, company_id: company.id)) }
-      it { is_expected.not_to be_able_to(:manage, create(:area, company_id: company.id + 1)) }
+      it { is_expected.not_to be_able_to(:manage, create(:area, company: other_company)) }
+
+      it { is_expected.to be_able_to(:create, ActivityType) }
+      it { is_expected.to be_able_to(:manage, create(:activity_type, company: company)) }
+      it { is_expected.not_to be_able_to(:manage, create(:activity_type, company: other_company)) }
 
       it { is_expected.to be_able_to(:create, BrandPortfolio) }
       it { is_expected.to be_able_to(:manage, create(:brand_portfolio, company_id: company.id)) }
-      it { is_expected.not_to be_able_to(:manage, create(:brand_portfolio, company_id: company.id + 1)) }
+      it { is_expected.not_to be_able_to(:manage, create(:brand_portfolio, company: other_company)) }
 
       it { is_expected.to be_able_to(:create, Campaign) }
       it { is_expected.to be_able_to(:manage, create(:campaign, company_id: company.id)) }
-      it { is_expected.not_to be_able_to(:manage, create(:campaign, company_id: company.id + 1)) }
+      it { is_expected.not_to be_able_to(:manage, create(:campaign, company: other_company)) }
 
       it { is_expected.to be_able_to(:create, DateRange) }
       it { is_expected.to be_able_to(:manage, create(:date_range, company_id: company.id)) }
-      it { is_expected.not_to be_able_to(:manage, create(:date_range, company_id: company.id + 1)) }
+      it { is_expected.not_to be_able_to(:manage, create(:date_range, company: other_company)) }
 
       it { is_expected.to be_able_to(:create, DateItem) }
       it { is_expected.to be_able_to(:manage, create(:date_item, date_range:  create(:date_range, company_id: company.id))) }
@@ -63,7 +85,7 @@ describe 'User', type: :model do
 
       it { is_expected.to be_able_to(:create, DayPart) }
       it { is_expected.to be_able_to(:manage, create(:day_part, company_id: company.id)) }
-      it { is_expected.not_to be_able_to(:manage, create(:day_part, company_id: company.id + 1)) }
+      it { is_expected.not_to be_able_to(:manage, create(:day_part, company: other_company)) }
 
       it { is_expected.to be_able_to(:create, DayItem) }
       it { is_expected.to be_able_to(:manage, create(:day_item, day_part:  create(:day_part, company_id: company.id))) }
@@ -77,24 +99,35 @@ describe 'User', type: :model do
 
       it { is_expected.to be_able_to(:create, EventExpense) }
       it { is_expected.to be_able_to(:manage, create(:event_expense, event: create(:event, campaign: campaign, company: company))) }
-      it { is_expected.not_to be_able_to(:manage, without_current_user {  create(:event_expense, event: create(:event, company_id: company.id + 1)) }) }
+      it { is_expected.not_to be_able_to(:manage, without_current_user {  create(:event_expense, event: create(:event, company: other_company)) }) }
 
       it { is_expected.to be_able_to(:create, Comment) }
-      it { is_expected.to be_able_to(:manage, create(:comment, commentable: create(:event, campaign: campaign, company: company))) }
-      it { is_expected.not_to be_able_to(:manage, without_current_user {  create(:comment, commentable: create(:event, company_id: company.id + 1)) }) }
-      it { is_expected.to be_able_to(:manage, create(:comment, commentable: create(:task, event: create(:event, campaign: campaign, company: company)))) }
-      it { is_expected.not_to be_able_to(:manage, without_current_user { create(:comment, commentable: create(:task, event: create(:event, company_id: company.id + 1))) }) }
+      it { is_expected.to be_able_to(:manage, create(:comment, commentable: event)) }
+      it { is_expected.not_to be_able_to(:manage, without_current_user {  create(:comment, commentable: create(:event, company: other_company)) }) }
+      it { is_expected.to be_able_to(:manage, create(:comment, commentable: create(:task, event: event))) }
+      it { is_expected.not_to be_able_to(:manage, without_current_user { create(:comment, commentable: create(:task, event: event_in_other_company)) }) }
 
       it { is_expected.to be_able_to(:create, AttachedAsset) }
       it { is_expected.to be_able_to(:manage, create(:attached_asset, attachable: create(:event, campaign: campaign, company: company))) }
       it { is_expected.to be_able_to(:rate, AttachedAsset) }
       it { is_expected.to be_able_to(:view_rate, AttachedAsset) }
-      it { is_expected.not_to be_able_to(:manage, without_current_user { create(:attached_asset, attachable: create(:event, company_id: company.id + 1)) }) }
+      it { is_expected.not_to be_able_to(:manage, without_current_user { create(:attached_asset, attachable: event_in_other_company) }) }
 
       it { is_expected.to be_able_to(:create, Activity) }
-      it { is_expected.to be_able_to(:manage, create(:activity, activity_type: create(:activity_type, company_id: company.id), activitable: create(:venue, place: place, company: company), company_user: create(:company_user,  company: company))) }
-      it { is_expected.not_to be_able_to(:manage, create(:activity, activity_type: create(:activity_type, company_id: other_company.id), activitable: create(:venue, place: place, company_id: other_company.id), company_user: create(:company_user,  company_id: other_company.id))) }
+      it { is_expected.to be_able_to(:manage, activity) }
+      it { is_expected.not_to be_able_to(:manage, activity_in_other_company) }
 
+      it { is_expected.to be_able_to(:export_fieldable, activity) }
+      it { is_expected.not_to be_able_to(:export_fieldable, activity_in_other_company) }
+
+      it { is_expected.to be_able_to(:export_fieldable, event) }
+      it { is_expected.not_to be_able_to(:export_fieldable, without_current_user {  create(:event, company_id: other_company.id) }) }
+
+      it { is_expected.to be_able_to(:export_fieldable, campaign) }
+      it { is_expected.not_to be_able_to(:export_fieldable, create(:campaign, company: other_company)) }
+
+      it { is_expected.to be_able_to(:export_fieldable, create(:activity_type, company: company)) }
+      it { is_expected.not_to be_able_to(:export_fieldable, create(:activity_type, company: other_company)) }
     end
 
     context 'when it is NOT a super user' do
@@ -108,13 +141,6 @@ describe 'User', type: :model do
         let(:event) do
           without_current_user do
             create(:event, campaign: campaign,
-                                       place: create(:place))
-          end
-        end
-
-        let(:event_in_other_company) do
-          without_current_user do
-            create(:event, campaign: create(:campaign),
                                        place: create(:place))
           end
         end
@@ -694,6 +720,7 @@ describe 'User', type: :model do
           user.role.permission_for(:create_contacts, Event).save
 
           expect(ability).to be_able_to(:create, contact)
+          expect(ability).not_to be_able_to(:create, build(:contact_event, event: event_in_other_company))
         end
 
         it 'should be able to list comments in a event if has the permission :view_contacts on Event' do
@@ -703,6 +730,7 @@ describe 'User', type: :model do
           user.role.permission_for(:view_contacts, Event).save
 
           expect(ability).to be_able_to(:view_contacts, event)
+          expect(ability).not_to be_able_to(:view_contacts, event_in_other_company)
         end
       end
 
@@ -1087,6 +1115,117 @@ describe 'User', type: :model do
 
           expect(ability).to be_able_to(:deactivate, document)
           expect(ability).to be_able_to(:activate, document)
+        end
+      end
+      #   _____   ___   ____   ___ ___        ___  __ __  ____   ___   ____  ______  _____
+      #  |     | /   \ |    \ |   |   |      /  _]|  |  ||    \ /   \ |    \|      |/ ___/
+      #  |   __||     ||  D  )| _   _ |     /  [_ |  |  ||  o  )     ||  D  )      (   \_
+      #  |  |_  |  O  ||    / |  \_/  |    |    _]|_   _||   _/|  O  ||    /|_|  |_|\__  |
+      #  |   _] |     ||    \ |   |   |    |   [_ |     ||  |  |     ||    \  |  |  /  \ |
+      #  |  |   |     ||  .  \|   |   |    |     ||  |  ||  |  |     ||  .  \ |  |  \    |
+      #  |__|    \___/ |__|\_||___|___|    |_____||__|__||__|   \___/ |__|\_| |__|   \___|
+      #
+      describe 'PDF form exports' do
+        it 'can export campaign forms if has the permission :view_event_form on Campaign' do
+          expect(ability).not_to be_able_to(:export_fieldable, campaign)
+
+          user.role.permission_for(:view_event_form, Campaign).save
+
+          expect(ability).to be_able_to(:export_fieldable, campaign)
+        end
+
+        it 'can export activity types forms if has the permission :show on ActivityType' do
+          activity_type = company.activity_types.create(name: 'Prueba')
+          expect(ability).not_to be_able_to(:export_fieldable, activity_type)
+
+          user.role.permission_for(:show, ActivityType).save
+
+          expect(ability).to be_able_to(:export_fieldable, activity_type)
+        end
+
+        it 'can export activities forms if has the permission :show on Activity' do
+          campaign.activity_types << create(:activity_type, company: company)
+          event = create(:event, campaign: campaign, place: place)
+          activity = create(:activity,
+                            activitable: event, company_user: user.company_users.first,
+                            activity_type: campaign.activity_types.first)
+          expect(ability).not_to be_able_to(:export_fieldable, activity)
+
+          user.role.permission_for(:show, Activity).save
+
+          expect(ability).to be_able_to(:export_fieldable, activity)
+        end
+
+        it 'can export post event data forms if can the permission :edit_unsubmitted_data on Event' do
+          event = create(:event, campaign: campaign, place: place)
+          expect(ability).not_to be_able_to(:export_fieldable, event)
+
+          user.role.permission_for(:edit_unsubmitted_data, Event).save
+
+          expect(ability).to be_able_to(:export_fieldable, event)
+        end
+
+        it 'can export post event data forms if can the permission :edit_submitted_data on Event' do
+          event = create(:submitted_event, campaign: campaign, place: place)
+          expect(ability).not_to be_able_to(:export_fieldable, event)
+
+          user.role.permission_for(:edit_submitted_data, Event).save
+
+          expect(ability).to be_able_to(:export_fieldable, event)
+        end
+
+        it 'can export post event data forms if can the permission :edit_approved_data on Event' do
+          event = create(:approved_event, campaign: campaign, place: place)
+          expect(ability).not_to be_able_to(:export_fieldable, event)
+
+          user.role.permission_for(:edit_approved_data, Event).save
+
+          expect(ability).to be_able_to(:export_fieldable, event)
+        end
+
+        it 'can export post event data forms if can the permission :edit_rejected_data on Event' do
+          event = create(:rejected_event, campaign: campaign, place: place)
+          expect(ability).not_to be_able_to(:export_fieldable, event)
+
+          user.role.permission_for(:edit_rejected_data, Event).save
+
+          expect(ability).to be_able_to(:export_fieldable, event)
+        end
+
+        it 'can export post event data forms if can the permission :view_unsubmitted_data on Event' do
+          event = create(:event, campaign: campaign, place: place)
+          expect(ability).not_to be_able_to(:export_fieldable, event)
+
+          user.role.permission_for(:view_unsubmitted_data, Event).save
+
+          expect(ability).to be_able_to(:export_fieldable, event)
+        end
+
+        it 'can export post event data forms if can the permission :view_submitted_data on Event' do
+          event = create(:submitted_event, campaign: campaign, place: place)
+          expect(ability).not_to be_able_to(:export_fieldable, event)
+
+          user.role.permission_for(:view_submitted_data, Event).save
+
+          expect(ability).to be_able_to(:export_fieldable, event)
+        end
+
+        it 'can export post event data forms if can the permission :view_approved_data on Event' do
+          event = create(:approved_event, campaign: campaign, place: place)
+          expect(ability).not_to be_able_to(:export_fieldable, event)
+
+          user.role.permission_for(:view_approved_data, Event).save
+
+          expect(ability).to be_able_to(:export_fieldable, event)
+        end
+
+        it 'can export post event data forms if can the permission :view_rejected_data on Event' do
+          event = create(:rejected_event, campaign: campaign, place: place)
+          expect(ability).not_to be_able_to(:export_fieldable, event)
+
+          user.role.permission_for(:view_rejected_data, Event).save
+
+          expect(ability).to be_able_to(:export_fieldable, event)
         end
       end
     end

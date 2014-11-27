@@ -49,9 +49,13 @@ feature 'DayParts', js: true, search: true do
 
       expect(page).to have_no_content('Morning')
 
+      show_all_filters
+
       # Make it show only the inactive elements
-      filter_section('ACTIVE STATE').unicheck('Inactive')
-      filter_section('ACTIVE STATE').unicheck('Active')
+      add_filter 'ACTIVE STATE', 'Inactive'
+      remove_filter 'Active'
+
+      expect(page).to have_content '1 day part found for: Inactive'
 
       within resource_item do
         expect(page).to have_content('Morning')
@@ -75,6 +79,13 @@ feature 'DayParts', js: true, search: true do
       find('h2', text: 'new day part name') # Wait for the page to load
       expect(page).to have_selector('h2', text: 'new day part name')
       expect(page).to have_selector('div.description-data', text: 'new day part description')
+    end
+
+    it_behaves_like 'a list that allow saving custom filters' do
+
+      let(:list_url) { day_parts_path }
+
+      let(:filters) { [{ section: 'ACTIVE STATE', item: 'Inactive' }] }
     end
   end
 

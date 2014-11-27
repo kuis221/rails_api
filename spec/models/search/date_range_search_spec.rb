@@ -16,7 +16,7 @@ describe DateRange, type: :model, search: true do
       .to match_array([company2_date_range])
 
     # Search for a given Date Range
-    expect(search({ company_id: 1, q: "date_range,#{date_range.id}" }, true))
+    expect(search({ company_id: 1, date_range: [date_range.id] }, true))
       .to match_array([date_range])
 
     # Search for Date Ranges on a given status

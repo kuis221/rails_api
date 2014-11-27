@@ -3,11 +3,12 @@ require 'rails_helper'
 feature 'Roles', js: true do
   let(:company) { create(:company) }
   let(:user) { create(:user, company_id: company.id, role_id: create(:role, name: 'Role 1', company: company).id) }
+  let(:company_user) { user.company_users.first }
 
   before { sign_in user }
   after { Warden.test_reset! }
 
-  feature '/roles', search: true  do
+  feature '/roles', search: true do
     scenario 'GET index should display a list with the roles' do
       create(:role, name: 'Costa Rica Role',
         description: 'el grupo de ticos', active: true, company_id: company.id)
@@ -46,9 +47,13 @@ feature 'Roles', js: true do
         expect(page).to have_no_content('Costa Rica Role')
       end
 
+      show_all_filters
+
       # Make it show only the inactive elements
-      filter_section('ACTIVE STATE').unicheck('Inactive')
-      filter_section('ACTIVE STATE').unicheck('Active')
+      add_filter 'ACTIVE STATE', 'Inactive'
+      remove_filter 'Active'
+
+      expect(page).to have_content '1 role found for: Inactive'
 
       within resource_item 1 do
         expect(page).to have_content('Costa Rica Role')
@@ -117,11 +122,18 @@ feature 'Roles', js: true do
     end
   end
 
+  it_behaves_like 'a list that allow saving custom filters' do
+
+    let(:list_url) { roles_path }
+
+    let(:filters) do
+      [{ section: 'ACTIVE STATE', item: 'Inactive' }]
+    end
+  end
+
   feature 'export', search: true do
-    let(:role1) { create(:role, name: 'Costa Rica Role',
-                                description: 'El grupo de ticos', active: true, company: company) }
-    let(:role2) { create(:role, name: 'Buenos Aires Role',
-                                description: 'The guys from BAs', active: true, company: company) }
+    let(:role1) { create(:role, name: 'Costa Rica Role', description: 'El grupo de ticos', active: true, company: company) }
+    let(:role2) { create(:role, name: 'Buenos Aires Role', description: 'The guys from BAs', active: true, company: company) }
 
     before do
       # make sure roles are created before
@@ -182,5 +194,9 @@ feature 'Roles', js: true do
         expect(text).to include 'TestRoledescription'
       end
     end
+  end
+
+  def roles_list
+    '#roles-list'
   end
 end

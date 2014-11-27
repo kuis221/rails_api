@@ -37,16 +37,12 @@ describe Task, type: :model, search: true do
     expect(search(company_id: company2.id))
       .to match_array([company2_task])
 
-    expect(search(company_id: company.id, q: "team,#{team.id}"))
+    expect(search(company_id: company.id, team: [team.id]))
       .to match_array(user_tasks + user2_tasks)
-    expect(search(company_id: company.id, q: "team,#{team2.id}"))
+    expect(search(company_id: company.id, team: [team2.id]))
       .to match_array(user2_tasks)
 
     # Search for a specific user's tasks
-    expect(search(company_id: company.id, q: "company_user,#{user.id}"))
-      .to match_array(user_tasks)
-    expect(search(company_id: company.id, q: "company_user,#{user2.id}"))
-      .to match_array(user2_tasks)
     expect(search(company_id: company.id, user: user.id))
       .to match_array(user_tasks)
     expect(search(company_id: company.id, user: user2.id))
@@ -63,10 +59,6 @@ describe Task, type: :model, search: true do
       .to match_array(user_tasks + user2_tasks)
 
     # Search for a campaign's tasks
-    expect(search(company_id: company.id, q: "campaign,#{campaign.id}"))
-      .to match_array(user_tasks)
-    expect(search(company_id: company.id, q: "campaign,#{campaign2.id}"))
-      .to match_array(user2_tasks)
     expect(search(company_id: company.id, campaign: campaign.id))
       .to match_array(user_tasks)
     expect(search(company_id: company.id, campaign: campaign2.id))
@@ -76,7 +68,7 @@ describe Task, type: :model, search: true do
 
     # Search for a given task
     task = user_tasks.first
-    expect(search(company_id: company.id, q: "task,#{task.id}"))
+    expect(search(company_id: company.id, task: task.id))
       .to match_array([task])
 
     # Search for tasks on a given date range

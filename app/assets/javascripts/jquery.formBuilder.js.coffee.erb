@@ -1,6 +1,10 @@
 $.widget 'nmk.formBuilder', {
 	options: {
-		resourceName: null
+		resourceName: null,
+		url: null,
+		exportUrl: null,
+		canEdit: false,
+		canActivateKpis: false
 	},
 	_create: () ->
 		@modified = false
@@ -10,6 +14,7 @@ $.widget 'nmk.formBuilder', {
 		if @options.canEdit
 			@wrapper.append $('<div class="form-builder-actions" data-spy="affix" data-offset-top="340"></div>').append(
 				$('<button id="save-report" class="btn btn-primary">Save</button>'),
+				$('<a href="'+@options.exportUrl+'" class="btn download pull-right"><i class="icon icon-download"></a>'),
 				$('<div data-placement="left" class="invisible pull-right field-tooltip-trigger"></div>')
 			)
 
@@ -305,6 +310,7 @@ $.widget 'nmk.formBuilder', {
 			complete: ( jqXHR, textStatus) =>
 				$('#save-report').text($('#save-report').data('text'))
 		}
+
 
 	removeKpi: (kpi_id) ->
 		$.each @formFields(), (index, field) =>

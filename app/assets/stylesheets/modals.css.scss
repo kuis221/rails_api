@@ -176,6 +176,7 @@ ul.select2-results{
 	}
 	&.modal-large{
 		min-width: 620px;
+		margin-left: -310px;
 		.modal-body{
 			.contacts-modals{
 				a{
@@ -1255,6 +1256,20 @@ div#spin{
 	}
 	.form_field_section{
 		margin-top: 10px;
+	}
+	a{
+		&.icon-download{
+			color: $brand;
+			font-family: $baseFontFamily;
+			font-size: 12px;
+			text-decoration: none;
+			&:before {
+				font-family: 'icons';
+				font-size: 14px;
+				margin-right: 8px;
+				margin-bottom: 15px;
+			}
+		}
 	}
 }
 

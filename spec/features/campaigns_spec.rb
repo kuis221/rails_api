@@ -85,8 +85,13 @@ feature 'Campaigns', js: true do
       Sunspot.commit
       visit campaigns_path
 
-      filter_section('ACTIVE STATE').unicheck('Inactive')
-      filter_section('ACTIVE STATE').unicheck('Active')
+      show_all_filters
+
+      # Make it show only the inactive elements
+      add_filter 'ACTIVE STATE', 'Inactive'
+      remove_filter 'Active'
+
+      expect(page).to have_content '1 campaign found for: Inactive'
 
       expect(page).to have_content('Cacique FY13')
       within resource_item 1 do
@@ -621,6 +626,30 @@ feature 'Campaigns', js: true do
     end
   end
 
+  feature 'custom filters', search: true, js: true do
+    it_behaves_like 'a list that allow saving custom filters' do
+      before do
+        campaign = create(:campaign, company: company)
+        campaign.brands << create(:brand, name: 'Brand 1', company: company)
+        campaign.brands << create(:brand, name: 'Brand 2', company: company)
+        company_user.campaigns << campaign
+
+        create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', company: company)
+        create(:brand_portfolio, name: 'B Licores Costarricenses', description: 'Licores ticos', company: company)
+      end
+
+      let(:list_url) { campaigns_path }
+
+      let(:filters) do
+        [{ section: 'BRANDS', item: 'Brand 1' },
+         { section: 'BRANDS', item: 'Brand 2' },
+         { section: 'PEOPLE', item: user.full_name },
+         { section: 'BRAND PORTFOLIOS', item: 'A Vinos ticos' },
+         { section: 'ACTIVE STATE', item: 'Inactive' }]
+      end
+    end
+  end
+
   feature 'export', search: true do
     let(:campaign1) { create(:campaign, name: 'Cacique FY13',
                                 description: 'Test campaign for guaro Cacique', company: company) }
@@ -702,6 +731,10 @@ feature 'Campaigns', js: true do
       before { company_user.campaigns << campaign }
       let(:permissions) { [[:show, 'Campaign'], [:view_staff, 'Campaign'], [:add_staff, 'Campaign']] }
     end
+  end
+
+  def campaigns_list
+    '#campaigns-list'
   end
 
 end

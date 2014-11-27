@@ -327,6 +327,8 @@ module Api
           * *start_time*: the event's start time
           * *end_date*: the event's end date
           * *end_time*: the event's end time
+          * *status*: the event's active state
+          * *event_status*: the event's PER status
           * *campaign*:
             * *id*: the campaign id
             * *name*: the campaign name associated to the event
@@ -395,7 +397,6 @@ module Api
           @facets ||= Array.new.tap do |f|
             # select what params should we use for the facets search
             f.concat build_custom_filters_bucket
-
             f.push build_brand_ambassadors_bucket
             f.push build_campaign_bucket
             f.push build_areas_bucket

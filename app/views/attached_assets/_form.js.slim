@@ -1,13 +1,16 @@
 - resource_param_name = resource.class.name.underscore.gsub('/','_')
+- max_file_size ||= 60.megabytes
 #asset_upload_dialog
-  = s3_uploader_form callback_url: url_for(action: :create, "#{parent.class.name.underscore}_id" => parent.to_param, folder_id: params[:folder_id], format: :js), id: "s3_uploader", callback_param: "#{resource_param_name}[direct_upload_url]", expiration: 24.hours.from_now.utc.iso8601, max_file_size: 60.megabytes do
+  = s3_uploader_form callback_url: url_for(action: :create, "#{parent.class.name.underscore}_id" => parent.to_param, folder_id: params[:folder_id], format: :js), id: "s3_uploader", callback_param: "#{resource_param_name}[direct_upload_url]", expiration: 24.hours.from_now.utc.iso8601, max_file_size: max_file_size do
     - if resource.errors.any?
       = resource.errors.full_messages
     .selecting-panel
       .row-fluid
         .span8
           p Select file(s) from your computer to upload.
-          p.small Maximum upload size 60MB
+          p.small 
+            | Maximum upload size
+            =< max_file_size.to_s(:human_size) 
         .span4
           span.btn.btn-primary.fileinput-button.pull-right
             span Browse Files
@@ -58,9 +61,15 @@ javascript:
           var file, image_types;
           image_types = /(\.|\/)(gif|jpe?g|png)$/i;
 
+          if (file.size > #{max_file_size}){
+            alert('File is larger than maximum file size supported (#{max_file_size.to_s(:human_size)})');
+            return false;
+          }
+
           if ('#{resource.asset_type}' != 'photo' || image_types.test(file.type) || image_types.test(file.name)) {
             return true;
           } else {
+            alert('File is not in a supported image format. ('+file.name+')');
             return false;
           }
         }

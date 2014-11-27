@@ -10,24 +10,21 @@ feature 'Results Activity Data Page', js: true, search: true  do
 
   before { sign_in user }
 
-  feature '/results/activities', js: true, search: true do
-    let(:another_user) { create(:user, company: company, first_name: 'Juanito', last_name: 'Bazooka') }
-    let(:another_at) { create(:activity_type, name: 'Second Activity Type', company: company) }
-    let(:activity1) { create(:activity, activity_type: activity_type, activitable: venue, campaign: campaign,
-                              company_user: company_user, activity_date: '2013-02-04') }
-    let(:activity2) { create(:activity, activity_type: another_at, activitable: venue, campaign: campaign,
-                              company_user: another_user.company_users.first, activity_date: '2013-03-16') }
+  feature 'Activity Results', js: true, search: true do
+    scenario 'GET index should display a table with the activities' do
+      another_user = create(:user, company: company, first_name: 'Juanito', last_name: 'Bazooka')
+      another_at = create(:activity_type, name: 'Second Activity Type', company: company)
+      campaign.activity_types << [activity_type, another_at]
 
-    before do
+      create(:activity, activity_type: activity_type, activitable: venue, campaign: campaign,
+                        company_user: company_user, activity_date: '2013-02-04')
+      create(:activity, activity_type: another_at, activitable: venue, campaign: campaign,
+                        company_user: another_user.company_users.first, activity_date: '2013-03-16')
+
       campaign.activity_types << activity_type
       campaign.activity_types << another_at
-      # make sure activities are created before
-      activity1
-      activity2
       Sunspot.commit
-    end
 
-    scenario 'GET index should display a table with the activities' do
       visit results_activities_path
 
       within('#activities-list') do
@@ -46,22 +43,38 @@ feature 'Results Activity Data Page', js: true, search: true  do
         end
       end
     end
+
+    it_behaves_like 'a list that allow saving custom filters' do
+      before do
+        create(:campaign, name: 'First Campaign', company: company)
+        create(:campaign, name: 'Second Campaign', company: company)
+        create(:company_user, user: create(:user, first_name: 'Roberto', last_name: 'Gomez'),
+                              company: company)
+      end
+
+      let(:list_url) { results_activities_path }
+
+      let(:filters) do
+        [{ section: 'CAMPAIGNS', item: 'First Campaign' },
+         { section: 'CAMPAIGNS', item: 'Second Campaign' },
+         { section: 'USERS', item: 'Roberto Gomez' }]
+      end
+    end
   end
 
   feature 'export', search: true do
-    let(:another_user) { create(:user, company: company, first_name: 'Juanito', last_name: 'Bazooka') }
-    let(:another_at) { create(:activity_type, name: 'Second Activity Type', company: company) }
-    let(:activity1) { create(:activity, activity_type: activity_type, activitable: venue, campaign: campaign,
-                              company_user: company_user, activity_date: '2013-02-04') }
-    let(:activity2) { create(:activity, activity_type: another_at, activitable: venue, campaign: campaign,
-                              company_user: another_user.company_users.first, activity_date: '2013-03-16') }
-
     before do
+      another_user = create(:user, company: company, first_name: 'Juanito', last_name: 'Bazooka')
+      activity_type2 = create(:activity_type, name: 'Second Activity Type', company: company)
+
       campaign.activity_types << activity_type
-      campaign.activity_types << another_at
+      campaign.activity_types << activity_type2
       # make sure activities are created before
-      activity1
-      activity2
+      create(:activity, activity_type: activity_type, activitable: venue, campaign: campaign,
+                        company_user: company_user, activity_date: '2013-02-04')
+      create(:activity, activity_type: activity_type2, activitable: venue, campaign: campaign,
+                        company_user: another_user.company_users.first, activity_date: '2013-03-16')
+
       Sunspot.commit
     end
 

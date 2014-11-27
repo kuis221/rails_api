@@ -1,5 +1,9 @@
 / = render partial: 'video_tutorial'
 
+- content_for :alerts
+  div.collection-list-description
+    .filter-label
+
 .sidebar#resource-filter-column
   #collection-list-filters
 .main
@@ -38,5 +42,5 @@ javascript:
     'autoCompletePath': '#{url_for(controller: controller_name, action: :autocomplete, format: :json)}',
     'defaultParams': [{name: 'status[]', value: 'Active'}],
     'clearFilterParams': [{name: 'status[]', value: 'Active'}],
-    'allowCustomizeFilters': #{FilterSetting.labels_for(controller_name).present?}
+    'allowCustomizeFilters': true
   });

@@ -102,6 +102,14 @@ feature 'Areas', js: true, search: true  do
       let(:permissions) { [[:update, 'Area'], [:show, 'Area']] }
       before { company_user.places << create(:city, name: 'Lake Buena Vista', state: 'Florida', country: 'US') }
     end
+
+    it_behaves_like 'a list that allow saving custom filters' do
+      let(:permissions) { [[:index, 'Area'], [:show, 'Area']] }
+
+      let(:list_url) { areas_path }
+
+      let(:filters) { [{ section: 'ACTIVE STATE', item: 'Inactive' }] }
+    end
   end
 
   feature 'admin user' do
@@ -157,8 +165,13 @@ feature 'Areas', js: true, search: true  do
         Sunspot.commit
         visit areas_path
 
-        filter_section('ACTIVE STATE').unicheck('Inactive')
-        filter_section('ACTIVE STATE').unicheck('Active')
+        show_all_filters
+
+        # Make it show only the inactive elements
+        add_filter 'ACTIVE STATE', 'Inactive'
+        remove_filter 'Active'
+
+        expect(page).to have_content '1 area found for: Inactive'
 
         within resource_item 1 do
           expect(page).to have_text('Wild Wild West')

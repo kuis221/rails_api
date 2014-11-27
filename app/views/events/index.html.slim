@@ -1,6 +1,5 @@
 - content_for :alerts
   div.collection-list-description
-    a.icon-close.pull-right data-dismiss="alert"
     .filter-label
 
 = user_new_feature('events_list') do
@@ -81,11 +80,6 @@
       'applyTo': '#{controller_name}',
       'onChange': function(filterBox){
         $(document).trigger('events-filter:changed')
-      },
-      'onItemsLoad': function(response, page){
-        if (response.find('div[data-content="filters-description"]').length > 0){
-          $('.collection-list-description .filter-label').html(response.find('div[data-content="filters-description"]'))
-        }
       }
     });
 

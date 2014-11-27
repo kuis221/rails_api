@@ -25,6 +25,9 @@ Brandscopic::Application.configure do
 
   # Expands the lines which load the assets
   config.assets.debug = false
+  config.action_controller.asset_host = 'http://localhost:5111'
+  config.font_assets.origin = 'http://localhost:5111' if ENV['WEB']
+
 
   Rails.application.routes.default_url_options[:host] = 'localhost'
   Rails.application.routes.default_url_options[:port] = 5100

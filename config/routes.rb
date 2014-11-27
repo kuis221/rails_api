@@ -113,6 +113,7 @@ Brandscopic::Application.routes.draw do
   devise_scope :user do
     put '/users/confirmation', to: 'confirmations#update'
     get '/users/invitation/resend', to: 'invitations#resend'
+    get '/users/invitation/renew', to: 'invitations#renew'
     post '/users/invitation/resend', to: 'invitations#send_invite'
     get '/users/password/thanks', to: 'passwords#thanks', as: :passwords_thanks
   end
@@ -216,6 +217,7 @@ Brandscopic::Application.routes.draw do
       resources :events, only: [:new, :create]
       resources :activities, only: [:new, :create] do
         get :form, on: :collection
+        get :empty_form, to: 'activities#export_empty_fieldable', on: :collection
       end
     end
   end
@@ -313,6 +315,7 @@ Brandscopic::Application.routes.draw do
       get :deactivate
       get :activate
       get :places
+      get :form, to: 'campaigns#export_fieldable'
       match 'members/:member_id' => 'campaigns#delete_member', via: :delete, as: :delete_member
       match 'teams/:team_id' => 'campaigns#delete_member', via: :delete, as: :delete_team
       match 'members/new' => 'campaigns#new_member', via: :get, as: :new_member
@@ -402,6 +405,7 @@ Brandscopic::Application.routes.draw do
       put :submit
       put :approve
       put :reject
+      get :form, to: 'events#export_fieldable'
       match 'members/:member_id' => 'events#delete_member', via: :delete, as: :delete_member
       match 'teams/:team_id' => 'events#delete_member', via: :delete, as: :delete_team
       match 'members/new' => 'events#new_member', via: :get, as: :new_member
@@ -507,6 +511,7 @@ Brandscopic::Application.routes.draw do
     member do
       get :deactivate
       get :activate
+      get :form, to: 'activities#export_fieldable'
     end
   end
 
@@ -517,6 +522,7 @@ Brandscopic::Application.routes.draw do
     member do
       get :deactivate
       get :activate
+      get :form, to: 'activity_types#export_fieldable'
     end
   end
 

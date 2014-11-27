@@ -115,6 +115,8 @@ class Campaign < ActiveRecord::Base
   }
   scope :active, -> { where(aasm_state: 'active') }
 
+  scope :with_brands, ->(brands) { joins(:brands).where(brands: { id: brands }) }
+
   # Campaigns-Places relationship
   has_many :placeables, as: :placeable
   has_many :places, through: :placeables, after_remove: :campaign_area_removed, after_add: :clear_locations_cache
@@ -174,6 +176,10 @@ class Campaign < ActiveRecord::Base
 
   def staff
     (staff_users + teams).sort_by(&:name)
+  end
+
+  def active
+    active?
   end
 
   def staff_users
@@ -431,18 +437,7 @@ class Campaign < ActiveRecord::Base
         with(:brand_portfolio_ids, params[:brand_portfolio]) if params.key?(:brand_portfolio) && params[:brand_portfolio].present?
         with(:status, params[:status]) if params.key?(:status) && params[:status].present?
         with(:id, params[:id]) if params.key?(:id) && params[:id].present?
-
-        if params.key?(:q) && params[:q].present?
-          (attribute, value) = params[:q].split(',')
-          case attribute
-          when 'campaign'
-            with :id, value
-          when 'venue'
-            with :place_ids, Venue.find(value).place_id
-          else
-            with "#{attribute}_ids", value
-          end
-        end
+        with(:id, params[:campaign]) if params.key?(:campaign) && params[:campaign].present?
 
         if include_facets
           facet :user_ids

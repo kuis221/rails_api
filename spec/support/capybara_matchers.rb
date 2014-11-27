@@ -33,6 +33,7 @@ module Capybara
             unless title.nil? || title.count == 0
               found = true
               if @args[:options].present?
+                title.first.trigger('click') if wrapper.all('.accordion-body.collapse').count > 0
                 @args[:options].each do |option|
                   if wrapper.all('ul>li', text:  option).count == 0
                     errors.push "Option \"#{option}\" not found in #{@title} fitler: #{wrapper.text}"
@@ -56,11 +57,52 @@ module Capybara
         true
       end
     end
+
+    class HaveFilterTag < Matcher
+      attr_reader :failure_message, :failure_message_when_negated
+
+      def initialize(*args)
+        @args = args.count > 1 ? args.last : {}
+        @title = args[0]
+      end
+
+      def matches?(actual)
+        evaluate_condition(actual, true)
+      rescue Capybara::ExpectationNotMet => e
+        @failure_message = e.message
+        return false
+      end
+
+      def does_not_match?(actual)
+        evaluate_condition(actual, false)
+      rescue Capybara::ExpectationNotMet => e
+        @failure_message_when_negated = e.message
+        return false
+      end
+
+      def evaluate_condition(page, expected)
+        found = nil
+        (page.respond_to?(:document) ? page.document : page).synchronize do
+          found = page.all('.filter-item', text: @title).count > 0
+
+          if expected && !found
+            raise Capybara::ExpectationNotMet, "expected #{page.inspect} to have filter tag #{@title}"
+          elsif !expected && found
+            raise Capybara::ExpectationNotMet, "expected #{page.inspect} to not have filter tag  #{@title}"
+          end
+        end
+        true
+      end
+    end
   end
 end
 
 def have_filter_section(*args)
   Capybara::RSpecMatchers::HaveFilterSection.new(*args)
+end
+
+def have_filter_tag(*args)
+  Capybara::RSpecMatchers::HaveFilterTag.new(*args)
 end
 
 RSpec::Matchers.define :have_file_in_queue do |file_name|

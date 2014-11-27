@@ -152,11 +152,12 @@ class AttachedAsset < ActiveRecord::Base
   end
 
   def download_url(style_name = :original)
-    file.s3_bucket.objects[file.s3_object(style_name).key].url_for(:read,
-                                                                   secure: true,
-                                                                   force_path_style: true,
-                                                                   expires: 24 * 3600, # 24 hours
-                                                                   response_content_disposition: "attachment; filename=#{file_file_name}").to_s
+    file.s3_bucket.objects[file.s3_object(style_name).key]
+      .url_for(
+        :read, secure: true,
+               force_path_style: true,
+               expires: 24 * 3600, # 24 hours
+               response_content_disposition: "attachment; filename=#{file_file_name}").to_s
   end
 
   def preview_url(style_name = :medium)

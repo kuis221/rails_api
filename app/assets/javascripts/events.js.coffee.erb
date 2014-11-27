@@ -66,11 +66,13 @@ jQuery ->
 			$('body.events.index #collection-list-filters').filteredList 'disableScrolling'
 			$('.dates-range-filter').slideDown()
 			$('.dates-pref').slideDown()
+			$('.collection-list-description').find('[data-filter="date"]').closest('.filter-item').show()
 			initializeMap()
 		else if $(this).attr('href') is '#calendar-view'
 			$('#pdf-export').data('url', '/events.pdf?mode=calendar')
 			$('.dates-range-filter').slideUp()
 			$('.dates-pref').slideUp()
+			$('.collection-list-description').find('[data-filter="date"]').closest('.filter-item').hide()
 			calendarIsVisible = true
 			mapIsVisible = false
 			$('.help-title').show()
@@ -82,7 +84,7 @@ jQuery ->
 				# When the user clicks on the calendar day
 				$('#calendar-canvas').off('click.eventsCalendar').on 'click.eventsCalendar', '.cal-day-link', (e) ->
 					date = $(this).data('date')
-					$('#collection-list-filters').filteredList('selectCalendarDates', date, date)
+					$('#collection-list-filters').filteredList('setDates', [date, date])
 					$('#toggle-events-view a[href="#list-view"]').click()
 					false
 
@@ -96,6 +98,7 @@ jQuery ->
 			$('#pdf-export').data('url', '/events.pdf');
 			$('.dates-range-filter').slideDown()
 			$('.dates-pref').slideDown()
+			$('.collection-list-description').find('[data-filter="date"]').closest('.filter-item').show()
 			mapIsVisible = false
 			calendarIsVisible = false
 			$('.help-title').show()

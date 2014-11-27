@@ -9,6 +9,10 @@
       a> href="http://support.brandscopic.com" target="_blank" support site
       | for more information about this section.
 
+- content_for :alerts
+  div.collection-list-description
+    .filter-label
+
 #venues-search-form-box.form-horizontal
   .row-fluid
     .span6
@@ -67,11 +71,12 @@ javascript:
       alert('Please enter a location');
     } else {
       $('#venue-search-location').closest('.control-group').removeClass('error');
-      $filters.filteredList('cleanCustomFilters');
-      $filters.filteredList('addCustomFilter', 'loc_name', $('#venue-search-location').val(), false);
-      $filters.filteredList('addCustomFilter', 'location', loc, false);
-      $filters.filteredList('addCustomFilter', 'q', term, true);
-      $filters.filteredList('reloadFilters');
+      $filters.filteredList('setParams', 
+        'location='+encodeURIComponent(loc) +
+        '&q='+encodeURIComponent(term) +
+        '&loc_name='+encodeURIComponent($('#venue-search-location').val())
+        );
+      //$filters.filteredList('reloadFilters');
     }
     return false;
   });

@@ -227,6 +227,7 @@ class CompanyUsersController < FilteredController
       f.push build_campaign_bucket
       f.push build_team_bucket
       f.push build_state_bucket
+      f.concat build_custom_filters_bucket
     end
   end
 

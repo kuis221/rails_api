@@ -7,7 +7,7 @@ class BrandAmbassadors::VisitsController < FilteredController
 
   include EventsHelper
 
-  helper_method :describe_filters, :brand_ambassadors_users, :return_path
+  helper_method :brand_ambassadors_users, :return_path
 
   def autocomplete
     buckets = autocomplete_buckets(campaigns: [Campaign],
@@ -17,14 +17,6 @@ class BrandAmbassadors::VisitsController < FilteredController
   end
 
   protected
-
-  def describe_filters
-    first_part  = "#{describe_date_ranges} #{describe_campaigns} #{describe_areas} #{describe_cities}".strip
-    first_part = nil if first_part.empty?
-    second_part = "#{describe_people}".strip
-    second_part = nil if second_part.empty?
-    "#{view_context.pluralize(number_with_delimiter(collection_count), 'visit')} #{[first_part, second_part].compact.join(' and ')}"
-  end
 
   def permitted_params
     params.permit(brand_ambassadors_visit: [:visit_type, :campaign_id, :area_id, :city, :description, :start_date, :end_date, :company_user_id])[:brand_ambassadors_visit]

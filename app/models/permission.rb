@@ -14,6 +14,9 @@ class Permission < ActiveRecord::Base
 
   validate :action, uniqueness: { scope: [:role_id, :subject_class] }
 
+  after_create {role.clear_cached_permissions }
+  after_destroy {role.clear_cached_permissions }
+
   attr_accessor :enabled
 
   def enabled=(value)

@@ -39,7 +39,7 @@ r
       == " Once complete, please #{submit_link} your post event form."
 
 //Event is due
-- elsif !resource.is_late? and resource.unsent?
+- elsif !resource.late? and resource.unsent?
   .alert.alert-grey
     = describe_due_event_alert(resource)
     - if submit_link

@@ -3,6 +3,8 @@ en:
     invitations:
       send_instructions: 'An invitation email has been sent to %{email}.'
       invitation_token_invalid: "It looks like you've already completed your profile. Sign in using the form below or <a href=\"%{reset_pass_url}\">click here</a> to reset your password."
+      invitation_token_expired: "Your invitation link has expired. Please <a href=\"%{request_invitation_url}\">click here</a> to request a new invitation."
+      invitation_resend_requested: "Your request have been sent to Brandscopic's support team. We will contact you soon."
       updated: 'Your password was set successfully. You are now signed in.'
       no_invitations_remaining: "No invitations remaining"
       invitation_removed: 'Your invitation was removed.'
