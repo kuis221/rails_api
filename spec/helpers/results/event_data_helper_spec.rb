@@ -107,7 +107,7 @@ describe Results::EventDataHelper, type: :helper do
       end
 
       it 'include LIKERT SCALE fields that are not linked to a KPI' do
-        field = create(:form_field_likert_scale, name: 'Custom LikertScale',
+        field = create(:form_field_likert_scale, name: 'My LikertScale Field',
           fieldable: campaign,
           options: [
             option1 = create(:form_field_option, name: 'LikertScale Opt1'),
@@ -116,10 +116,24 @@ describe Results::EventDataHelper, type: :helper do
             statement1 = create(:form_field_statement, name: 'LikertScale Stat1'),
             statement2 = create(:form_field_statement, name: 'LikertScale Stat2')])
 
-        event.results_for([field]).first.value = { option1.id.to_s => statement1.id.to_s,
-                                                   option2.id.to_s => statement2.id.to_s }
-        event.save
+        event.results_for([field]).first.value = { statement1.id.to_s => option1.id.to_s,
+                                                   statement2.id.to_s => option2.id.to_s }
         expect(event.save).to be_truthy
+
+        event2 = create(:approved_event, campaign: campaign)
+        event.results_for([field]).first.value = nil
+        expect(event.save).to be_truthy
+
+        expect(helper.custom_fields_to_export_headers).to eq([
+          'MY LIKERTSCALE FIELD: LIKERTSCALE OPT1', 'MY LIKERTSCALE FIELD: LIKERTSCALE OPT2'
+        ])
+        expect(helper.custom_fields_to_export_values(event)).to eq([
+          ['String', 'normal', 'LikertScale Stat1'], ['String', 'normal', 'LikertScale Stat2']
+        ])
+
+        expect(helper.custom_fields_to_export_values(event2)).to eq([
+          nil, nil
+        ])
       end
 
       it 'include TIME fields that are not linked to a KPI' do

@@ -3,6 +3,7 @@ module Results
     SEGMENTED_FIELD_TYPES = ['FormField::Percentage', 'FormField::Summation', 'FormField::LikertScale']
     PERCENTAGE_TYPE = 'FormField::Percentage'.freeze
     SUMMATION_TYPE = 'FormField::Summation'.freeze
+    LIKERT_SCALE_TYPE = 'FormField::LikertScale'.freeze
     NUMBER = 'Number'.freeze
     STRING = 'String'.freeze
     def custom_fields_to_export_headers
@@ -11,6 +12,7 @@ module Results
 
     def custom_fields_to_export_values(resource)
       # We are reusing the same object for each result to reduce memory usage
+      @likert_statements_mapping ||= Hash.new()
       @result ||= FormFieldResult.new
       resource_values = empty_values_hash
       ActiveRecord::Base.connection.select_all(ActiveRecord::Base.connection.unprepared_statement do
@@ -31,6 +33,13 @@ module Results
               value = @result.value[option[1].to_s]
               key = @fields_mapping["#{@result.form_field.id}_#{option[1]}"]
               resource_values[key] = [NUMBER, 'percentage', (value.present? && value != '' ? value.to_f : 0.0) / 100]
+            end
+          elsif @result.form_field.type == LIKERT_SCALE_TYPE
+            @likert_statements_mapping[@result.form_field.id] ||= Hash[@result.form_field.statements.map{ |s| [s.id.to_s, s.name] }]
+            @result.value.each do |statement_id, option_id|
+              value = @likert_statements_mapping[@result.form_field.id][statement_id]
+              key = @fields_mapping["#{@result.form_field.id}_#{option_id}"]
+              resource_values[key] = [STRING, 'normal', value]
             end
           else
             sum = 0
