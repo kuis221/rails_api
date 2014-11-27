@@ -102,7 +102,9 @@ class InvitationsController < Devise::InvitationsController
     return unless params[:invitation_token]
     self.resource = resource_class.find_by_invitation_token(params[:invitation_token], false)
     return self.resource unless self.resource.errors.any?
-    if self.resource.new_record? || self.resource.invitation_period_valid?
+    if self.resource.persisted? && self.resource.company_users.all?{ |cu| cu.active == false }
+      flash[:alert] = I18n.translate('devise.failure.inactive')
+    elsif self.resource.new_record? || self.resource.invitation_period_valid?
       set_flash_message(:alert, :invitation_token_invalid, reset_pass_url: new_password_path(resource_name))
     else
       set_flash_message(:alert, :invitation_token_expired, request_invitation_url: users_invitation_renew_path(invitation_token: params[:invitation_token]))

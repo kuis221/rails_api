@@ -313,6 +313,7 @@ class User < ActiveRecord::Base
         invitable = find_or_initialize_with_error_by(:invitation_token, original_token)
       end
       invitable.errors.add(:invitation_token, :invalid) if invitable.invitation_token && invitable.persisted? && !invitable.valid_invitation?
+      invitable.errors.add(:invitation_token, :invalid) if invitable.persisted? && invitable.company_users.all?{ |cu| cu.active == false }
       invitable.invitation_token = original_token
       invitable unless only_valid && invitable.errors.present?
     end

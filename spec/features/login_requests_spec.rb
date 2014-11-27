@@ -28,14 +28,14 @@ feature 'Login', js: true do
     expect(page).to have_text(user.full_name)
   end
 
-  scenario 'A valid user can login' do
-    user = create(:user,
-                  company_id: company.id,
-                  email: 'pedrito-picaso@gmail.com',
-                  password: 'SomeValidPassword01',
-                  password_confirmation: 'SomeValidPassword01',
-                  role_id: create(:role, company: company).id)
-    user.company_users.first.deactivate!
+  scenario 'A deactivatd user cannot login' do
+    create(:user,
+           company_id: company.id,
+           email: 'pedrito-picaso@gmail.com',
+           password: 'SomeValidPassword01',
+           password_confirmation: 'SomeValidPassword01',
+           active: false,
+           role_id: create(:role, company: company).id)
 
     visit new_user_session_path
     fill_in('user[email]', with: 'pedrito-picaso@gmail.com')
