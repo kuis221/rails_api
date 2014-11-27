@@ -178,6 +178,10 @@ class Campaign < ActiveRecord::Base
     (staff_users + teams).sort_by(&:name)
   end
 
+  def active
+    active?
+  end
+
   def staff_users
     @staff_users ||= Campaign.connection.unprepared_statement do
       CompanyUser.find_by_sql("

@@ -11,7 +11,7 @@ en:
       invalid_email: "Invalid email or invitation already accepted"
     failure:
       already_authenticated: "You are already signed in."
-      inactive: "Your user has been deactivated. Please contact support@brandcopic.com if you think this has been in error."
+      inactive: "Your user has been deactivated. Please contact <a href=\"mailto:support@brandcopic.com\">support@brandcopic.com</a> if you think this has been in error."
       invalid: "Invalid email or password."
       invalid_token: "Invalid authentication token."
       locked: "Your account is locked."
