@@ -1,6 +1,6 @@
 module Results
   module EventDataHelper
-    SEGMENTED_FIELD_TYPES = ['FormField::Percentage', 'FormField::Summation']
+    SEGMENTED_FIELD_TYPES = ['FormField::Percentage', 'FormField::Summation', 'FormField::LikertScale']
     PERCENTAGE_TYPE = 'FormField::Percentage'.freeze
     SUMMATION_TYPE = 'FormField::Summation'.freeze
     NUMBER = 'Number'.freeze

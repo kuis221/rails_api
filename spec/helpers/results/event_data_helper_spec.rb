@@ -106,6 +106,22 @@ describe Results::EventDataHelper, type: :helper do
         ])
       end
 
+      it 'include LIKERT SCALE fields that are not linked to a KPI' do
+        field = create(:form_field_likert_scale, name: 'Custom LikertScale',
+          fieldable: campaign,
+          options: [
+            option1 = create(:form_field_option, name: 'LikertScale Opt1'),
+            option2 = create(:form_field_option, name: 'LikertScale Opt2')],
+          statements: [
+            statement1 = create(:form_field_statement, name: 'LikertScale Stat1'),
+            statement2 = create(:form_field_statement, name: 'LikertScale Stat2')])
+
+        event.results_for([field]).first.value = { option1.id.to_s => statement1.id.to_s,
+                                                   option2.id.to_s => statement2.id.to_s }
+        event.save
+        expect(event.save).to be_truthy
+      end
+
       it 'include TIME fields that are not linked to a KPI' do
         field = create(:form_field, type: 'FormField::Time', name: 'My Time Field',
           fieldable: campaign)
