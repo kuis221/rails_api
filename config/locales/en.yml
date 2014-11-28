@@ -463,7 +463,7 @@ en:
       report: "Are you sure you want to deactivate this report?"
       brand_ambassadors/visit: "Are you sure you want to deactivate this visit?"
     invitations:
-      resend: "Are you sure you want to resend this invitation?"
+      resend: "Are you sure you want to resend the invitation to this user?"
 
   confirmation:
     deactivate: "Deactivate"

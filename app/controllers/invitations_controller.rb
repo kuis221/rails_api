@@ -42,14 +42,6 @@ class InvitationsController < Devise::InvitationsController
     end
   end
 
-  def resend_invite
-    self.resource = User.find(params[:user_id])
-    if resource.present? && resource.invited_to_sign_up?
-      resource.resend_invitation
-    end
-    render nothing: true
-  end
-
   def renew
     redirect_to new_password_path(resource_name) unless params[:invitation_token]
     resource = resource_class.find_by(invitation_token: params[:invitation_token])

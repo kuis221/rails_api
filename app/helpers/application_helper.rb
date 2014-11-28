@@ -84,13 +84,13 @@ module ApplicationHelper
   end
 
   def button_to_resend_invitation(resource, title: nil)
-    icon_button_to 'icon-resend', users_invitation_resend_invite_path(user_id: resource.user.id),
+    icon_button_to 'icon-resend', resend_invite_company_user_path(resource),
                    method: :get,
                    title: I18n.t('buttons.invitations.resend'),
                    form_class: 'button_to button_to_resend_invitation',
                    data: { confirm: I18n.t('confirm.invitations.resend',
                                            model: resource.class.model_name.human.downcase),
-                           url: users_invitation_resend_invite_path(user_id: resource.user.id) }
+                           url: resend_invite_company_user_path(resource) }
   end
 
   def button_to_activate_or_deactivate(resource, activate_url: nil, deactivate_url: nil)
