@@ -42,6 +42,15 @@ class InvitationsController < Devise::InvitationsController
     end
   end
 
+  def renew
+    redirect_to new_password_path(resource_name) unless params[:invitation_token]
+    resource = resource_class.find_by(invitation_token: params[:invitation_token])
+    return new_password_path(resource_name) unless resource.present? && resource.invited_to_sign_up?
+    UserMailer.request_new_invitation(resource.id).deliver
+    set_flash_message(:info, :invitation_resend_requested)
+    redirect_to after_sign_out_path_for(resource_name)
+  end
+
   def create
     if params[:user] && params[:user][:email] && invited_user = User.where(["lower(users.email) = '%s'", params[:user][:email].downcase]).first
       if invited_user.company_users.select { |cu| cu.company_id == current_company.id }.size > 0
@@ -90,10 +99,17 @@ class InvitationsController < Devise::InvitationsController
   end
 
   def resource_from_invitation_token
-    unless params[:invitation_token] && self.resource = resource_class.find_by_invitation_token(params[:invitation_token], true)
+    return unless params[:invitation_token]
+    self.resource = resource_class.find_by_invitation_token(params[:invitation_token], false)
+    return self.resource unless self.resource.errors.any?
+    if self.resource.persisted? && self.resource.company_users.all?{ |cu| cu.active == false }
+      flash[:alert] = I18n.translate('devise.failure.inactive')
+    elsif self.resource.new_record? || self.resource.invitation_period_valid?
       set_flash_message(:alert, :invitation_token_invalid, reset_pass_url: new_password_path(resource_name))
-      flash[:alert] = flash[:alert].html_safe
-      redirect_to after_sign_out_path_for(resource_name)
+    else
+      set_flash_message(:alert, :invitation_token_expired, request_invitation_url: users_invitation_renew_path(invitation_token: params[:invitation_token]))
     end
+    flash[:alert] = flash[:alert].html_safe
+    redirect_to after_sign_out_path_for(resource_name)
   end
 end

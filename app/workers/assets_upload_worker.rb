@@ -5,6 +5,8 @@ class AssetsUploadWorker
   extend HerokuResqueAutoScale
 
   def self.perform(asset_id, asset_class = 'AttachedAsset')
+    NewRelic::Agent.ignore_apdex
+    NewRelic::Agent.ignore_enduser
     klass ||= asset_class.constantize
     tries ||= 3
     asset = klass.find(asset_id)

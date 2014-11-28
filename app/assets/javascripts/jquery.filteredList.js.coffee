@@ -63,13 +63,13 @@ $.widget 'nmk.filteredList', {
 
 		@formFilters.appendTo(@form)
 
-		@toggleFiltersLink = $('<div class="text-right show-hide-filters-link"><a href="#">Show all filters</a></div>').appendTo(@form).find('a').on 'click', () =>
+		@toggleFiltersLink = $('<div class="text-right show-hide-filters-link"><a href="#">Show filters</a></div>').appendTo(@form).find('a').on 'click', () =>
 			if @formFilters.css('display') is 'none'
 				@formFilters.slideDown 400, () =>
-					@toggleFiltersLink.text('Hide all filters')
+					@toggleFiltersLink.text('Hide filters')
 			else
 				@formFilters.slideUp 400, () =>
-					@toggleFiltersLink.text('Show all filters')
+					@toggleFiltersLink.text('Show filters')
 			false
 
 		if @options.filters
@@ -328,7 +328,7 @@ $.widget 'nmk.filteredList', {
 				container.show()
 				maxHeight = @element.outerHeight() + @element.offset().top - container.offset().top;
 
-			$trigger = $('<a>',{href: '#', class:'more-options-link'}).text('Show More')
+			$trigger = $('<a>', {href: '#', class:'more-options-link'}).text('More')
 				.on 'click', (e) =>
 					container = $trigger.next()
 					if container.css('display') == "none"
@@ -604,7 +604,6 @@ $.widget 'nmk.filteredList', {
 
 		@customDatesPanel = $('<div class="dates-pref">').appendTo(@form).append(
 			$('<div class="dropdown select-ranges">').append(
-				$('<label>').text('Date ranges'),
 				$('<a class="dropdown-toggle off" data-toggle="dropdown" href="#" title="Date ranges">')
 					.append(
 						$('<span class="date-range-label">').html('Choose a date range'),

@@ -4,7 +4,7 @@ class Api::V1::UsersController < Api::V1::FilteredController
   skip_before_action :verify_authenticity_token,
                      if: proc { |c| c.request.format == 'application/json' }
 
-  skip_authorization_check only: [:new_password, :companies, :permissions, :notifications]
+  skip_authorization_check only: [:new_password, :index, :companies, :permissions, :notifications]
 
   defaults resource_class: CompanyUser
 

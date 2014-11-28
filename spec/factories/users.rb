@@ -95,7 +95,7 @@ FactoryGirl.define do
       first_name 'Test Invited'
       password nil
       password_confirmation nil
-      invitation_sent_at DateTime.now
+      invitation_sent_at 1.day.ago
       invitation_accepted_at nil
       phone_number nil
       city nil

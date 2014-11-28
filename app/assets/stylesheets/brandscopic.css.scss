@@ -2818,6 +2818,13 @@ ul.ui-widget-content{
 
 .show-hide-filters-link {
 	margin-bottom: 10px;
+	a {
+		color: $brand;
+		font-size: 12px;
+		&:visited, &:active {
+			color: $brand;
+		}
+	}
 }
 
 /* Info bar for details pages (Below the header) */

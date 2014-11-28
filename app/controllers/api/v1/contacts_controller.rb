@@ -4,6 +4,8 @@ class Api::V1::ContactsController < Api::V1::ApiController
   skip_before_action :verify_authenticity_token,
                      if: proc { |c| c.request.format == 'application/json' }
 
+  skip_authorization_check only: [:index]
+
   def_param_group :contact do
     param :contact, Hash, required: true, action_aware: true do
       param :first_name, String, required: true, desc: "Contact's first name"

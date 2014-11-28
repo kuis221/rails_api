@@ -61,8 +61,8 @@ module CapybaraBrandscopicHelpers
   end
 
   def show_all_filters()
-    find(:link, 'Show all filters').trigger('click') # Use this if using capybara-webkit instead of selenium
-    expect(page).to have_link('Hide all filters')
+    find(:link, 'Show filters').trigger('click') # Use this if using capybara-webkit instead of selenium
+    expect(page).to have_link('Hide filters')
   end
 
   def remove_filter(filter_name)
