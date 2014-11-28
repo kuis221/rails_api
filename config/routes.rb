@@ -115,6 +115,7 @@ Brandscopic::Application.routes.draw do
     get '/users/invitation/resend', to: 'invitations#resend'
     get '/users/invitation/renew', to: 'invitations#renew'
     post '/users/invitation/resend', to: 'invitations#send_invite'
+    get '/users/invitation/resend_invite', to: 'invitations#resend_invite'
     get '/users/password/thanks', to: 'passwords#thanks', as: :passwords_thanks
   end
 

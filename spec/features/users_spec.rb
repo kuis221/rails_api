@@ -48,8 +48,8 @@ feature 'Users', js: true do
   end
 
   feature 'User managment', js: true, search: true do
+    let(:role) { create(:role, name: 'TestRole', company_id: company.id) }
     scenario 'allows the user to activate/deactivate users' do
-      role = create(:role, name: 'TestRole', company_id: company.id)
       create(:user, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: company.id)
       Sunspot.commit
       visit company_users_path
@@ -76,7 +76,6 @@ feature 'Users', js: true do
     end
 
     scenario 'allows the user to deactivate invited users' do
-      role = create(:role, name: 'TestRole', company_id: company.id)
       create(:invited_user, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: company.id)
       Sunspot.commit
       visit company_users_path
@@ -128,6 +127,34 @@ feature 'Users', js: true do
         expect(page).to have_content 'Fulanito de Tal'
         expect(page).to have_content 'TestRole'
       end
+    end
+
+    scenario 'allows the user to resend invitations to invited users' do
+      invited_user = create(:invited_user, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: company.id)
+      Sunspot.commit
+      visit company_users_path
+
+      show_all_filters
+
+      # Make it show only the invited elements
+      remove_filter 'Active'
+      add_filter 'ACTIVE STATE', 'Invited'
+
+      within resource_item list: '#users-list' do
+        expect(page).to have_button('Resend Invitation')
+        click_js_button 'Resend Invitation'
+      end
+
+      confirm_prompt 'Are you sure you want to resend this invitation?'
+
+      the_user = User.last
+
+      expect(the_user.first_name).to eq(invited_user.first_name)
+      expect(the_user.last_name).to eq(invited_user.last_name)
+      # Invitation token should not change
+      expect(the_user.invitation_token).to eq(invited_user.invitation_token)
+      # Invitation sent date should change
+      expect(the_user.invitation_sent_at).to_not eq(invited_user.invitation_sent_at)
     end
 
     it_behaves_like 'a list that allow saving custom filters' do
