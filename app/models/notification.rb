@@ -72,13 +72,13 @@ class Notification < ActiveRecord::Base
   def self.new_task(user, task, team = false)
     if team
       message = 'new_team_task'
-      path = Rails.application.routes.url_helpers.my_teams_tasks_path(q: "task,#{task.id}")
+      path = Rails.application.routes.url_helpers.my_teams_tasks_path(task: [task.id])
       sms_message = I18n.translate('notifications_sms.new_unassigned_team_task', url: Rails.application.routes.url_helpers.my_teams_tasks_url(new_at: Time.now.to_i))
       email_subject = I18n.translate('notification_types.new_unassigned_team_task')
       email_message = I18n.translate('notifications_email.new_unassigned_team_task', url: Rails.application.routes.url_helpers.my_teams_tasks_url(new_at: Time.now.to_i))
     else
       message = 'new_task'
-      path = Rails.application.routes.url_helpers.mine_tasks_path(q: "task,#{task.id}")
+      path = Rails.application.routes.url_helpers.mine_tasks_path(task: [task.id])
       sms_message = I18n.translate('notifications_sms.new_task_assignment', url: Rails.application.routes.url_helpers.mine_tasks_url(new_at: Time.now.to_i))
       email_subject = I18n.translate('notification_types.new_task_assignment')
       email_message = I18n.translate('notifications_email.new_task_assignment', url: Rails.application.routes.url_helpers.mine_tasks_url(new_at: Time.now.to_i))

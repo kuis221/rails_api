@@ -58,16 +58,12 @@ describe Event, type: :model, search: true do
     expect(search(company_id: company2_campaign.company_id))
       .to match_array([company2_event])
 
-    expect(search({ company_id: company.id, q: "team,#{team.id}" }, true))
+    expect(search({ company_id: company.id, team: [team.id] }, true))
       .to match_array([event, event2])
-    expect(search(company_id: company.id, q: "team,#{team2.id}"))
+    expect(search(company_id: company.id, team: [team2.id]))
       .to match_array([event2])
 
     # Search for a specific user's Events
-    expect(search(company_id: company.id, q: "company_user,#{user3.id}"))
-      .to match_array([event, event2])
-    expect(search(company_id: company.id, q: "company_user,#{user4.id}"))
-      .to match_array([event2])
     expect(search(company_id: company.id, user: [user3.id]))
       .to match_array([event, event2])
     expect(search(company_id: company.id, user: [user4.id]))
@@ -76,10 +72,6 @@ describe Event, type: :model, search: true do
       .to match_array([event, event2])
 
     # Search for a specific Event's place
-    expect(search(company_id: company.id, q: "place,#{place.id}"))
-      .to match_array([event])
-    expect(search(company_id: company.id, q: "place,#{place2.id}"))
-      .to match_array([event2])
     expect(search(company_id: company.id, place: [place.id]))
       .to match_array([event])
     expect(search(company_id: company.id, place: [place2.id]))
@@ -94,10 +86,6 @@ describe Event, type: :model, search: true do
       .to match_array([event, event2])
 
     # Search for a specific Event's venue
-    expect(search(company_id: company.id, q: "venue,#{venue.id}"))
-      .to match_array([event])
-    expect(search(company_id: company.id, q: "venue,#{venue2.id}"))
-      .to match_array([event2])
     expect(search(company_id: company.id, venue: [venue.id]))
       .to match_array([event])
     expect(search(company_id: company.id, venue: [venue2.id]))
@@ -105,25 +93,13 @@ describe Event, type: :model, search: true do
     expect(search(company_id: company.id, venue: [venue.id, venue2.id]))
       .to match_array([event, event2])
 
-    venue = create(:venue, place: los_angeles, company: company)
-    expect(search(company_id: company.id, q: "venue,#{venue.id}"))
-      .to match_array([event])
-
     # Search for a events in an area
-    expect(search(company_id: company.id, q: "area,#{area.id}"))
-      .to match_array([event])
     expect(search(company_id: company.id, area: [area.id]))
-      .to match_array([event])
-    expect(search(company_id: company.id, q: "area,#{area2.id}"))
       .to match_array([event])
     expect(search(company_id: company.id, area: [area2.id]))
       .to match_array([event])
 
     # Search for brands associated to the Events
-    expect(search(company_id: company.id, q: "brand,#{brand.id}"))
-      .to match_array([event, event2])
-    expect(search(company_id: company.id, q: "brand,#{brand2.id}"))
-      .to match_array([event2])
     expect(search(company_id: company.id, brand: brand.id))
       .to match_array([event, event2])
     expect(search(company_id: company.id, brand: brand2.id))
@@ -132,10 +108,6 @@ describe Event, type: :model, search: true do
       .to match_array([event, event2])
 
     # Search for campaigns associated to the Events
-    expect(search(company_id: company.id, q: "campaign,#{campaign.id}"))
-      .to match_array([event])
-    expect(search(company_id: company.id, q: "campaign,#{campaign2.id}"))
-      .to match_array([event2])
     expect(search(company_id: company.id, campaign: campaign.id))
       .to match_array([event])
     expect(search(company_id: company.id, campaign: campaign2.id))
@@ -256,12 +228,10 @@ describe Event, type: :model, search: true do
       event2 = create(:event, campaign: campaign, place: place_sf)
 
       expect(search(company_id: company.id, area: [area.id])).to match_array [event1, event2]
-      expect(search(company_id: company.id, q: "area,#{area.id}")).to match_array [event1, event2]
 
       area_campaign.update_column(:exclusions, [city_la.id])
 
       expect(search(company_id: company.id, area: [area.id])).to match_array [event2]
-      expect(search(company_id: company.id, q: "area,#{area.id}")).to match_array [event2]
     end
   end
 

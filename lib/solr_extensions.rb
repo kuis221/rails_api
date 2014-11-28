@@ -24,8 +24,6 @@ module Sunspot
 
             restrict_search_to_user_permissions params[:current_company_user] if params[:current_company_user]
 
-            with_custom_search params[:q] if params[:q]
-
             order_by(params[:sorting], params[:sorting_dir] || :asc) if params[:sorting]
             paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
           end
@@ -231,19 +229,6 @@ module Sunspot
           with(end_at_field).less_than(Time.zone.now) unless executed.nil?
 
           with(end_at_field).greater_than(Time.zone.now.beginning_of_day) unless scheduled.nil?
-        end
-      end
-
-      def with_custom_search(search)
-        (attribute, value) = search.split(',')
-        case attribute
-        when 'brand'    then with_brand value
-        when 'campaign' then with_campaign value
-        when 'place'    then with_place value
-        when 'company_user' then with_user value
-        when 'venue'    then with_venue value
-        when 'area'     then with_area value
-        when 'team'     then with_user_teams(team: [value])
         end
       end
 

@@ -85,7 +85,7 @@ module UsersHelper
         user_tasks = [0]
         tasks.find_each do |task|
           alerts.push(message: I18n.translate('notifications.unread_tasks_comments_user', task: task.title), level: 'grey',
-            url: mine_tasks_path(q: "task,#{task.id}", anchor: "comments-#{task.id}"),
+            url: mine_tasks_path(task: [task.id], anchor: "comments-#{task.id}"),
             unread: true, icon: 'icon-comments', type: 'user_task_comments', task_id: task.id)
           user_tasks.push task.id
         end
@@ -97,7 +97,7 @@ module UsersHelper
         tasks = Task.select('id, title').where('id not in (?)', user_tasks).where("id in (#{Comment.select('commentable_id').not_from(user.user).for_tasks_where_user_in_team(user).unread_by(user.user).to_sql})")
         tasks.find_each do |task|
           alerts.push(message: I18n.translate('notifications.unread_tasks_comments_team', task: task.title), level: 'grey',
-            url: my_teams_tasks_path(q: "task,#{task.id}", anchor: "comments-#{task.id}"),
+            url: my_teams_tasks_path(task: [task.id], anchor: "comments-#{task.id}"),
             unread: true, icon: 'icon-comments', type: 'team_task_comments', task_id: task.id)
         end
       end
