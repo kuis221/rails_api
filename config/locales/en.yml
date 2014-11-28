@@ -225,9 +225,6 @@ en:
     new_task_assignment: 'New Task Assignment'
     new_campaign: 'New Campaign'
 
-  filter_setting_types:
-    show_inactive_items: 'Show inactive items'
-
   modals:
     title:
       new:

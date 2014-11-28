@@ -166,14 +166,4 @@ module UsersHelper
                               resource.notifications_settings.include?(field_id),
                               id: "notification_settings_#{field_id}"))
   end
-
-  def filter_setting_checkbox(type, subject, settings)
-    field_id = "#{type}_#{subject}"
-    content_tag(:label) do
-      check_box_tag('filter_setting[settings][]',
-                    type,
-                    settings.include?(type),
-                    id: "settings_#{type}") + t("filter_setting_types.#{type}")
-    end
-  end
 end

@@ -19,7 +19,7 @@ describe FilterSettingsController, type: :controller do
       expect do
         xhr :post, 'create', filter_setting: {
           company_user_id: company_user.to_param, apply_to: 'events',
-          settings: %w(campaigns_events_present campaigns_events_active brands_events_present brands_events_active) }, format: :js
+          settings: %w(show_inactive_items) }, format: :js
       end.to change(FilterSetting, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template('create')
@@ -27,12 +27,7 @@ describe FilterSettingsController, type: :controller do
       filter_setting = FilterSetting.last
       expect(filter_setting.company_user_id).to eq(company_user.id)
       expect(filter_setting.apply_to).to eq('events')
-      expect(filter_setting.settings).to match_array %w(
-        campaigns_events_present campaigns_events_active
-        brands_events_present brands_events_active
-        areas_events_present areas_events_active
-        company_users_events_present company_users_events_active
-        teams_events_present teams_events_active)
+      expect(filter_setting.settings).to match_array %w(show_inactive_items)
     end
 
     it 'should render the form_dialog template if errors' do
@@ -49,25 +44,19 @@ describe FilterSettingsController, type: :controller do
   describe "PATCH 'update'" do
     let(:filter_setting) do
       create(:filter_setting, company_user_id: company_user.to_param, apply_to: 'events',
-                              settings: %w(campaigns_events_present campaigns_events_active
-                                           brands_events_present brands_events_active))
+                              settings: [])
     end
 
     it 'should be able to update the existing filters settings' do
       xhr :put, 'update', id: filter_setting.to_param, filter_setting: {
         company_user_id: company_user.to_param, apply_to: 'events',
-        settings: %w(campaigns_events_present campaigns_events_inactive) }, format: :js
+        settings: %w(show_inactive_items) }, format: :js
       expect(assigns(:filter_setting)).to eq(filter_setting)
       expect(response).to be_success
       filter_setting.reload
       expect(filter_setting.company_user_id).to eq(company_user.id)
       expect(filter_setting.apply_to).to eq('events')
-      expect(filter_setting.settings).to match_array %w(
-        campaigns_events_present campaigns_events_inactive
-        brands_events_present brands_events_active
-        areas_events_present areas_events_active
-        company_users_events_present company_users_events_active
-        teams_events_present teams_events_active)
+      expect(filter_setting.settings).to match_array %w(show_inactive_items)
     end
   end
 end

@@ -1,9 +1,10 @@
 class UpdateInactiveFilterSettings < ActiveRecord::Migration
   def change
     FilterSetting.all.each do |fs|
-      fs.settings.reject! { |c| c.include?('_active') }
-      if fs.settings.reject! { |c| c.include?('_inactive') }
-        fs.settings << 'show_inactive_items'
+      if fs.settings.any? { |c| c.include?('_active') }
+        fs.settings = ['show_inactive_items']
+      else
+        fs.settings = []
       end
       fs.save
     end

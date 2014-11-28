@@ -69,8 +69,6 @@ class CompanyUser < ActiveRecord::Base
 
   NOTIFICATION_SETTINGS_TYPES = %w(event_recap_due event_recap_late event_recap_pending_approval event_recap_rejected new_event_team late_task late_team_task new_comment new_team_comment new_unassigned_team_task new_task_assignment new_campaign)
 
-  FILTER_SETTINGS_TYPES = %w(show_inactive_items)
-
   NOTIFICATION_SETTINGS_PERMISSIONS = {
     'event_recap_due' => [{ action: :view_list, subject_class: Event }],
     'event_recap_late' => [{ action: :view_list, subject_class: Event }],
