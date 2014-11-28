@@ -136,7 +136,7 @@ class EventsController < FilteredController
   protected
 
   def pdf_form_file_name
-    "#{resource.campaign_name.parameterize}-#{Time.now.strftime('%Y%m%d%H%M%S')}.pdf"
+    "#{resource.campaign_name.parameterize}-#{Time.now.strftime('%Y%m%d%H%M%S')}"
   end
 
   def build_resource

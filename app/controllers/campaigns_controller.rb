@@ -135,7 +135,7 @@ class CampaignsController < FilteredController
   end
 
   def pdf_form_file_name
-    "#{resource.name.parameterize}-#{Time.now.strftime('%Y%m%d%H%M%S')}.pdf"
+    "#{resource.name.parameterize}-#{Time.now.strftime('%Y%m%d%H%M%S')}"
   end
 
   def permitted_params
