@@ -150,6 +150,14 @@ textarea::-webkit-input-placeholder {
 
 /*-- RADIO BUTTONS STYLES --*/
 
+.radio-style{
+	border: 4px solid $grey_one;
+	display: block;
+	height: 14px;
+	width: 14px;
+	border-radius: 50%;
+}
+
 label.radio div.radio {
 	display: inline-block;
 	margin: 0 15px 5px 0;
@@ -157,11 +165,7 @@ label.radio div.radio {
 	width: 20px;
 	span{
 		background: none;
-		border: 4px solid $grey_one;
-		display: block;
-		height: 14px;
-		width: 14px;
-		border-radius: 50%;
+		@extend .radio-style;
 		&.help-inline{
 			border: 0;
 			width: 120px;
@@ -171,16 +175,17 @@ label.radio div.radio {
 		}
 	}
 	span.checked{
+		border-color: $brand;
 		position: relative;
 		&:after{
 			display: inline-block;
 			content: '';
-			width: 10px;
-			height: 10px;
+			width: 8px;
+			height: 8px;
 			background-color: $brand;
 			border-radius: 50%;
-			top: 2px;
-			left: 2px;
+			top: 3px;
+			left: 3px;
 			position: absolute;
 		}
 	}
@@ -195,6 +200,30 @@ label.radio div.radio {
 .radio-group{
 	display:inline-block;
 	margin-bottom: 10px;
+}
+
+.radio span{
+	background-image: none !important;
+	@extend .radio-style;
+	position: absolute;
+	&.checked{
+		border-color: $brand;
+		&:after{
+			display: inline-block;
+			content: '';
+			width: 8px;
+			height: 8px;
+			background-color: $brand;
+			border-radius: 50%;
+			top: 3px;
+			left: 3px;
+			position: absolute;
+		}
+	}
+	input[type="radio"]{
+		margin-left: 0;
+		opacity: 0;
+	}
 }
 
 // Radio button groups
