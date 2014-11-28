@@ -96,9 +96,8 @@ module TdLinxSynch
       file = ftp.list('Legacy_TDLINX_Store_Master*').map { |l| l.split(/\s+/, 4) }.sort_by { |a| a[0] }.first
       fail 'Could not find a proper file for download from FTP' unless file.present?
 
-      date = Timeliness.parse('10-28-2014', :date, format: 'mm-dd-yy').to_date
+      date = Timeliness.parse(file[0], :date, format: 'mm-dd-yy').to_date
       fail "The latest file (#{file[3]}) in the FTP have more than 30 days old" if date < 30.days.ago
-
       Rails.logger.info "TDLINX: Downloading FTP file #{file[3]}"
       begin
         ftp.gettextfile file[3], path
