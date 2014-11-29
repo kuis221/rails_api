@@ -36,6 +36,7 @@ javascript:
     'sorting': 'name',
     'sorting_dir': 'asc',
     'applyTo': '#{controller_name}',
+    'userFilters': #{user_saved_filters(controller_name).to_json.html_safe},
     'includeCalendars': false,
     'includeSearchBox': false,
     'includeAutoComplete': true,

@@ -120,6 +120,8 @@ javascript:
     'includeCalendars': false,
     'includeAutoComplete': false,
     'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
+    'applyTo': '#{controller_name}',
+    'userFilters': #{user_saved_filters(controller_name).to_json.html_safe},
     'defaultParams': [{name: 'status[]', value: 'Active'}],
     'onChange': function(filterBox){
        $('#venue-download-button').removeClass('hidden');

@@ -46,6 +46,7 @@ javascript:
     'sorting_dir': 'asc',
     'includeCalendars': false,
     'applyTo': '#{controller_name}',
+    'userFilters': #{user_saved_filters(controller_name).to_json.html_safe},
     'includeSearchBox': false,
     'includeAutoComplete': true,
     'autoCompletePath': '#{autocomplete_company_users_path(format: :json)}',

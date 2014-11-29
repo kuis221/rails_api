@@ -43,6 +43,7 @@ javascript:
     'includeSearchBox': false,
     'includeAutoComplete': true,
     'applyTo': 'results_photos',
+    'userFilters': #{user_saved_filters('results_photos').to_json.html_safe},
     'autoCompletePath': '#{url_for(controller: 'results/photos', action: :autocomplete, format: :json)}',
     'defaultParams': [{name: 'status[]', value: 'Active'}],
     'clearFilterParams': [{name: 'status[]', value: 'Active'}],

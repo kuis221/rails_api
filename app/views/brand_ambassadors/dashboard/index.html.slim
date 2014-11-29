@@ -56,6 +56,7 @@
       'selectDefaultDateRange': false,
       'ytdDatesRange': '#{current_company.ytd_dates_range}',
       'includeAutoComplete': true,
+      'userFilters': #{user_saved_filters('visits').to_json.html_safe},
       'autoCompletePath': '#{autocomplete_brand_ambassadors_visits_path(format: :json)}',
       'fixListHeight': false,
       'defaultParams': [{name: 'start_date', value:'#{Time.zone.now.strftime("%m/%d/%Y")}'}, {name: 'end_date', value:'#{(Time.zone.now + 10.years).strftime("%m/%d/%Y")}'}],

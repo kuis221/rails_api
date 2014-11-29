@@ -20,6 +20,8 @@ javascript:
     'source': '#{items_analysis_trends_path}',
     'filtersUrl': '#{filters_analysis_trends_path}',
     'listContainer' : '#events-list',
+    'applyTo': '#{controller_name}',
+    'userFilters': #{user_saved_filters.to_json.html_safe},
     'sorting': 'start_at',
     'sorting_dir': 'asc',
     'includeCalendars': true,

@@ -54,6 +54,7 @@ javascript:
     'includeAutoComplete': true,
     'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
     'applyTo': '#{controller_name}',
+    'userFilters': #{user_saved_filters(controller_name).to_json.html_safe},
     'defaultParams': [{name: 'status[]', value: 'Active'}],
     'clearFilterParams': [{name: 'status[]', value: 'Active'}],
     'onChange': function(filterBox){
