@@ -841,7 +841,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 				@include border-radius (6px);
 				color: $text;
 				display: block;
-				padding: 6px 10px;
+				padding: 9px 10px;
 				width: 100%;
 				&.off{
 					color: $user_menu;
@@ -2687,44 +2687,12 @@ ul.ui-widget-content{
 
 	.user-saved-filters {
 		margin-bottom: 10px;
-		label {
-			text-transform: uppercase;
-			* {
-				text-transform: none; 
-			}
-		}
 	}
 
 	.form-facet-filters {
 		.accordion-group {
 			border: none;
-			.filter-wrapper {
-				li ul {
-					display: none;
-				}
-				.filter-title {
-					font-size: 13px;
-					font-weight: bold;
-					margin-bottom: 10px;
-					padding: 0;
-					text-transform: uppercase;
-					&:hover {
-						color: $text;
-						text-decoration: none;
-					}
-					span {
-						margin-right: 5px;
-						&.icon-arrow-down:before {
-							padding-top: 5px;
-							vertical-align: middle;
-						}
-						&.icon-arrow-right:before {
-							font-size: 10px;
-							vertical-align: middle;
-						}
-					}
-				}
-			}
+			margin-bottom: 0;
 			.accordion-body {
 				margin-bottom: 20px;
 				&.collapse {
@@ -2747,6 +2715,34 @@ ul.ui-widget-content{
 					left: 0px;
 					top: 2px;
 					position: absolute;
+				}
+			}
+		}
+	}
+
+	.filter-wrapper {
+		li ul {
+			display: none;
+		}
+		.filter-title {
+			font-size: 13px;
+			font-weight: bold;
+			margin-bottom: 10px;
+			padding: 0;
+			text-transform: uppercase;
+			&:hover {
+				color: $text;
+				text-decoration: none;
+			}
+			span {
+				margin-right: 5px;
+				&.icon-arrow-down:before {
+					padding-top: 5px;
+					vertical-align: middle;
+				}
+				&.icon-arrow-right:before {
+					font-size: 10px;
+					vertical-align: middle;
 				}
 			}
 		}

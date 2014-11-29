@@ -76,5 +76,25 @@ RSpec.shared_examples 'a list that allow saving custom filters' do
     within '#collection-list-filters' do
       expect(page).not_to have_content('SAVED FILTERS')
     end
+
+    click_button 'Save'
+
+    within visible_modal do
+      fill_in('Filter name', with: 'My Other Filter')
+      expect do
+        click_button 'Save'
+        wait_for_ajax
+      end.to change(CustomFilter, :count).by(1)
+    end
+    ensure_modal_was_closed
+
+    within '#collection-list-filters' do
+      expect(page).to have_content('SAVED FILTERS')
+      expect(page).to have_content('My Other Filter')
+    end
+
+    visit list_url
+
+    select_saved_filter 'My Other Filter'
   end
 end

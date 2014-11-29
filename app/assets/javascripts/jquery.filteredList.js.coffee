@@ -284,9 +284,11 @@ $.widget 'nmk.filteredList', {
 				@_filtersChanged()
 
 	_addSavedFilters: () ->
-		@savedFilters = $('<div class="user-saved-filters">').appendTo(@form)
+		@savedFilters = $('<div class="user-saved-filters filter-wrapper">').appendTo(@form)
 						.append(
-							$('<label for="user-saved-filter">').append(@options.userFilters.label))
+							$('<label for="user-saved-filter" class="filter-title">').append(@options.userFilters.label),
+							@savedFiltersDropdown = $('<select id="user-saved-filter" name="user-saved-filter" class="chosen-enabled"></select>'))
+						.find('select').chosen().end()
 						.on 'change', () =>
 							option = @savedFiltersDropdown.find('option:selected')[0]
 							@_setQueryString option.value.split('&id')[0]
@@ -295,15 +297,12 @@ $.widget 'nmk.filteredList', {
 	setSavedFilters: (userFilters, selected=null) ->
 		if not userFilters.items or userFilters.items.length is 0
 			@savedFilters.hide()
-			@savedFiltersDropdown.remove() if @savedFiltersDropdown
 		else
 			@savedFilters.show()
-			unless @savedFiltersDropdown
-				@savedFiltersDropdown = $('<select id="user-saved-filter" name="user-saved-filter" class="chosen-enabled"></select>').appendTo(@savedFilters)
 			@savedFiltersDropdown.html('').append('<option value=""></option>')
 			for item in userFilters.items
 				@savedFiltersDropdown.append($('<option value="'+item.id+'">'+item.label+'</option>').attr('selected', (item.id.match(new RegExp("id=#{selected}$")) isnt null)))
-			@savedFiltersDropdown.trigger("chosen:updated").trigger('liszt:updated')
+			@savedFiltersDropdown.trigger('liszt:updated')
 
 
 	addCustomFilter: (name, value, reload=true) ->
