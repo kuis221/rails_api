@@ -40,10 +40,10 @@ $.widget 'nmk.filteredList', {
 		if @options.includeAutoComplete and @options.filtersUrl
 			@_addAutocompleteBox()
 
+		@_addSavedFilters()
+
 		if @options.includeCalendars
 			@_addCalendars()
-
-		@_addSavedFilters()
 
 		@storageScope = @options.scope
 		if not @storageScope
@@ -297,14 +297,14 @@ $.widget 'nmk.filteredList', {
 							@_setQueryString option.value.split('&id')[0]
 		@setSavedFilters(@options.userFilters)
 
-	setSavedFilters: (userFilters, selected=null) ->
+	setSavedFilters: (userFilters, selected=@savedFiltersDropdown.val()) ->
 		if not userFilters.items or userFilters.items.length is 0
 			@savedFilters.hide()
 		else
 			@savedFilters.show()
 			@savedFiltersDropdown.html('').append('<option value=""></option>')
 			for item in userFilters.items
-				@savedFiltersDropdown.append($('<option value="'+item.id+'">'+item.label+'</option>').attr('selected', (item.id.match(new RegExp("id=#{selected}$")) isnt null)))
+				@savedFiltersDropdown.append($('<option value="'+item.id+'">'+item.label+'</option>').attr('selected', (item.id == selected || item.id.match(new RegExp("id=#{@_escapeRegExp(selected)}$")) isnt null)))
 			@savedFiltersDropdown.trigger('liszt:updated')
 
 
@@ -396,6 +396,9 @@ $.widget 'nmk.filteredList', {
 				return 0
 
 			return if a.label > b.label then 1 else  -1
+
+	_escapeRegExp: (s) ->
+		if s then s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') else s
 
 
 	_buildFilterOptionsList: (list, filterWrapper) ->
@@ -493,17 +496,21 @@ $.widget 'nmk.filteredList', {
 		false
 
 	_removeParams: (params) ->
+		@savedFiltersDropdown.val('').chosen('liszt:updated')
 		searchString = @paramsQueryString()
 		for param in @_deparam(params)
-			searchString = searchString.replace(new RegExp('(&)?'+ encodeURIComponent(param.name)+'='+encodeURIComponent(param.value)+'(&|$)', "g"), '$2')
+			searchString = searchString.replace(new RegExp('(&)?'+ encodeURIComponent(param.name)+'='+@_escapeRegExp(encodeURIComponent(param.value))+'(&|$)', "g"), '$2')
 		@_setQueryString searchString
 
 	addParams: (params) ->
+		@savedFiltersDropdown.val('').trigger('liszt:updated')
 		qs = @paramsQueryString()
 		qs = (if qs then qs + '&' else '')
 		@_setQueryString qs + params
 
 	setParams: (params) ->
+		return if @_settingQueryString
+		@savedFiltersDropdown.val('').trigger('liszt:updated')
 		qs =  @paramsQueryString()
 		for param in @_deparam(params)
 			paramValue = encodeURIComponent(param.name)+'='+encodeURIComponent(param.value)
@@ -516,9 +523,11 @@ $.widget 'nmk.filteredList', {
 		@_setQueryString qs.replace(/&+/g, '&').replace('&$', '')
 
 	_setQueryString: (qs) ->
+		@_settingQueryString = true
 		@_paramsQueryString = qs
 		history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' + qs)
 		@_filtersChanged(false)
+		@_settingQueryString = false
 
 	paramsQueryString: () ->
 		@_paramsQueryString ||=

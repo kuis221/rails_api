@@ -191,7 +191,7 @@ module EventsHelper
       '3' => '$$$',
       '4' => '$$$$',
     }
-    build_filter_object_list :city, filter_params(:price).map{ |price| [price, prices[price]] }
+    build_filter_object_list :price, filter_params(:price).map{ |price| [price, prices[price]] }
   end
 
 

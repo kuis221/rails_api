@@ -12,20 +12,7 @@ RSpec.shared_examples 'a list that allow saving custom filters' do
       add_filter filter[:section], filter[:item]
     end
 
-    click_button 'Save'
-
-    within visible_modal do
-      fill_in('Filter name', with: 'My Custom Filter')
-      expect do
-        click_button 'Save'
-        wait_for_ajax
-      end.to change(CustomFilter, :count).by(1)
-    end
-    ensure_modal_was_closed
-
-    within '#collection-list-filters' do
-      expect(page).to have_content('SAVED FILTERS')
-    end
+    save_filters_as 'My Custom Filter'
 
     filters.each do |filter|
       expect(collection_description).to have_filter_tag(filter[:item])
@@ -58,29 +45,50 @@ RSpec.shared_examples 'a list that allow saving custom filters' do
     end
 
     # Remove the custom filter
-    click_js_link 'Filter Settings'
-
-    within visible_modal do
-      expect(page).to have_content('My Custom Filter')
-
-      expect do
-        click_js_link 'Remove Custom Filter'
-        wait_for_ajax
-      end.to change(CustomFilter, :count).by(-1)
-      expect(page).to_not have_content('My Custom Filter')
-
-      click_button 'Done'
-    end
-    ensure_modal_was_closed
+    remove_saved_filter 'My Custom Filter'
 
     within '#collection-list-filters' do
       expect(page).not_to have_content('SAVED FILTERS')
     end
 
+    save_filters_as 'One saved Filter'
+
+    save_filters_as 'My Other Filter'
+
+    visit list_url
+
+    select_saved_filter 'My Other Filter'
+
+    remove_saved_filter 'One saved Filter'
+
+    within '#collection-list-filters' do
+      expect(page).to have_content('SAVED FILTERS')
+      expect(page).to have_content('My Other Filter') # should remain selected
+    end
+  end
+
+  def remove_saved_filter(name)
+    click_js_link 'Filter Settings'
+
+    within visible_modal do
+      expect(page).to have_content(name)
+
+      expect do
+        click_js_link 'Remove Custom Filter "' + name + '"'
+        wait_for_ajax
+      end.to change(CustomFilter, :count).by(-1)
+      expect(page).to_not have_content(name)
+
+      click_button 'Done'
+    end
+    ensure_modal_was_closed
+  end
+
+  def save_filters_as(name)
     click_button 'Save'
 
     within visible_modal do
-      fill_in('Filter name', with: 'My Other Filter')
+      fill_in('Filter name', with: name)
       expect do
         click_button 'Save'
         wait_for_ajax
@@ -90,11 +98,7 @@ RSpec.shared_examples 'a list that allow saving custom filters' do
 
     within '#collection-list-filters' do
       expect(page).to have_content('SAVED FILTERS')
-      expect(page).to have_content('My Other Filter')
+      expect(page).to have_content(name)  # The saved filter should be selected
     end
-
-    visit list_url
-
-    select_saved_filter 'My Other Filter'
   end
 end
