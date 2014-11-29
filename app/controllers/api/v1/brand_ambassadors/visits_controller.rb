@@ -37,13 +37,22 @@ module Api
             param :city, String, desc: 'City name'
             param :visit_type, ::BrandAmbassadors::Visit::VISIT_TYPE_OPTIONS.values, required: true, desc: 'Visit Type key'
             param :description, String, desc: "Visit's description"
-            param :active, ['true', 'false'], required: false, desc: "Visit's active state. Defaults to true for new visits or unchanged for existing records."
+            param :active, %w(true false),
+                  required: false, desc: 'Visit\'s active state. Defaults to true for new visits '\
+                                         'or unchanged for existing records.'
           end
         end
 
         api :GET, '/api/v1/brand_ambassadors/visits', 'Search for a list of visits'
-        param :start_date, %r{\A\d{2}/\d{2}/\d{4}\z}, desc: 'A date to filter the visit list. When provided a start_date without an +end_date+, the result will only include visits that happen on this day. The date should be in the format MM/DD/YYYY.'
-        param :end_date, %r{\A\d{2}/\d{2}/\d{4}\z}, desc: 'A date to filter the visit list. This should be provided together with the +start_date+ param and when provided will filter the list with those visits that are between that range. The date should be in the format MM/DD/YYYY.'
+        param :start_date, %r{\A\d{2}/\d{2}/\d{4}\z},
+              desc: 'A date to filter the visit list. When provided a start_date without an '\
+                    '+end_date+, the result will only include visits that happen on this day. '\
+                    'The date should be in the format MM/DD/YYYY.'
+        param :end_date, %r{\A\d{2}/\d{2}/\d{4}\z},
+              desc: 'A date to filter the visit list. '\
+                    'This should be provided together with the +start_date+ param and when '\
+                    'provided will filter the list with those visits that are between that range. '\
+                    'The date should be in the format MM/DD/YYYY.'
         param :user, Array, desc: 'A list of Brand Ambassador ids to filter the results'
         param :campaign, Array, desc: 'A list of Campaign ids to filter the results'
         param :area, Array, desc: 'A list of Area ids to filter the results'
@@ -189,9 +198,7 @@ module Api
         }
         EOS
         def show
-          if resource.present?
-            render
-          end
+          render if resource.present?
         end
 
         api :POST, '/api/v1/brand_ambassadors/visits', 'Create a new visit'
@@ -411,13 +418,14 @@ module Api
         end
 
         def permitted_search_params
-          params.permit(:page, :start_date, :end_date, { user: [] }, { campaign: [] }, { area: [] }, { city: [] })
+          params.permit(
+            :page, :start_date, :end_date,
+            user: [], campaign: [], area: [], city: [])
         end
 
         def skip_default_validation
           true
         end
-
       end
     end
   end
