@@ -87,6 +87,12 @@ module CapybaraBrandscopicHelpers
     self
   end
 
+  def select_saved_filter(name)
+    within '.user-saved-filters' do
+      select_from_chosen(name, from: 'user-saved-filter')
+    end
+  end
+
   def select_from_chosen(item_text, options)
     field = find_field(options[:from], visible: false)
     field.find('option', text: item_text, visible: false, match: :first).select_option

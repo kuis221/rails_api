@@ -791,17 +791,20 @@ feature 'Events section' do
 
             show_all_filters
 
-            add_filter 'SAVED FILTERS', 'My Custom Filter'
+            expect(page).to have_content('1 event found for: Active today to the future')
+
+            select_saved_filter 'My Custom Filter'
+
+            expect(page).to have_content('2 events found for: Active')
 
             add_filter 'CAMPAIGNS', 'Campaign FY2012'
-            remove_filter 'today to the future'
             expect(page).to have_content('2 events found for: Active Campaign FY2012')
 
             click_button 'Reset'
             expect(page).to have_content('1 event found for: Active today to the future')
 
-            within '.form-facet-filters' do
-              expect(find_field('My Custom Filter')['checked']).to be_falsey
+            within '#collection-list-filters' do
+              expect(find_field('user-saved-filter', visible: false).value).to eq('')
             end
 
             expect(page).to have_selector('#events-list .resource-item', count: 1)
@@ -950,83 +953,6 @@ feature 'Events section' do
       let(:user1) { create(:company_user, user: create(:user, first_name: 'Roberto', last_name: 'Gomez'), company: company) }
       let(:user2) { create(:company_user, user: create(:user, first_name: 'Mario', last_name: 'Moreno'), company: company) }
 
-      scenario 'allows to create a new custom filter' do
-        event1.users << user1
-        event2.users << user2
-        Sunspot.commit
-
-        visit events_path
-
-        show_all_filters
-
-        add_filter 'CAMPAIGNS', 'Campaign 1'
-        add_filter 'PEOPLE', 'Roberto Gomez'
-        add_filter 'EVENT STATUS', 'Submitted'
-
-        click_button 'Save'
-
-        within visible_modal do
-          fill_in('Filter name', with: 'My Custom Filter')
-          expect do
-            click_button 'Save'
-            wait_for_ajax
-          end.to change(CustomFilter, :count).by(1)
-
-          custom_filter = CustomFilter.last
-          expect(custom_filter.owner).to eq(company_user)
-          expect(custom_filter.name).to eq('My Custom Filter')
-          expect(custom_filter.apply_to).to eq('events')
-          expect(custom_filter.filters).to eq(
-            "status%5B%5D=Active&start_date=#{Date.current.to_s(:slashes).gsub!('/', '%2F')}&"\
-            "end_date=#{(Date.current + 10.years).to_s(:slashes).gsub!('/', '%2F')}&" \
-            "campaign%5B%5D=#{campaign1.to_param}&user%5B%5D=#{user1.to_param}" \
-            '&event_status%5B%5D=Submitted'
-          )
-        end
-        ensure_modal_was_closed
-
-        expect(page).to have_filter_section(title: 'SAVED FILTERS',
-                                            options: ['My Custom Filter'])
-      end
-
-      scenario 'a custom filter with more that 5 options for the same category' do
-        d = Date.current
-        Timecop.travel(Time.zone.local(d.year, d.month, 18, 12, 00)) do
-          campaigns = create_list(:campaign, 10, company: company)
-          create(:custom_filter,
-                 owner: company_user, name: 'MyCampaigns', apply_to: 'events',
-                 filters:  'campaign%5B%5D=' + campaigns.map(&:to_param).join('&campaign%5B%5D=') )
-
-          visit events_path
-
-          show_all_filters
-
-          add_filter 'SAVED FILTERS', 'MyCampaigns'
-
-          campaigns.each do |campaign|
-            expect(collection_description).to have_filter_tag(campaign.name)
-          end
-
-          within '.form-facet-filters' do
-            expect(find_field('MyCampaigns')['checked']).to be_truthy
-          end
-
-          # When a date is selected, the custom filter checkbox should be deselected
-          select_filter_calendar_day('18', '19')
-
-          expect(collection_description).to have_filter_tag('today - tomorrow')
-          campaigns.each do |campaign|
-            expect(collection_description).to have_filter_tag(campaign.name)
-          end
-
-          expect(page).to have_filter_section(title: 'SAVED FILTERS',
-                                              options: ['MyCampaigns'])
-
-          within '.form-facet-filters' do
-            expect(find_field('MyCampaigns')['checked']).to be_falsey
-          end
-        end
-      end
 
       scenario 'allows to apply custom filters' do
         event1.users << user1
@@ -1051,10 +977,8 @@ feature 'Events section' do
           expect(page).to_not have_content('Campaign 2')
         end
 
-        remove_filter 'today to the future'
-
         # Using Custom Filter 1
-        add_filter 'SAVED FILTERS', 'Custom Filter 1'
+        select_saved_filter 'Custom Filter 1'
 
         within events_list do
           expect(page).to have_content('Campaign 1')
@@ -1075,34 +999,21 @@ feature 'Events section' do
           expect(page).not_to have_field('Campaign 1')
 
           expect(find_field('Inactive')['checked']).to be_falsey
-          expect(find_field('Custom Filter 1')['checked']).to be_truthy
-          expect(find_field('Custom Filter 2')['checked']).to be_falsey
         end
 
         # Using Custom Filter 2 should update results and checked/unchecked checkboxes
-        add_filter 'SAVED FILTERS', 'Custom Filter 2'
+        select_saved_filter 'Custom Filter 2'
 
-        # Should preserve Custom Filter 1's params
-        expect(collection_description).to have_filter_tag('Active')
-        expect(collection_description).to have_filter_tag('Submitted')
-        expect(collection_description).to have_filter_tag('Campaign 1')
-        expect(collection_description).to have_filter_tag('Roberto Gomez')
-
-        filter_section('SAVED FILTERS').unicheck('Custom Filter 1')
-
-        # Should remove Custom Filter 1's params
-        expect(collection_description).not_to have_filter_tag('Active')
+        # Should uncheck Custom Filter 1's params
         expect(collection_description).not_to have_filter_tag('Submitted')
         expect(collection_description).not_to have_filter_tag('Campaign 1')
         expect(collection_description).not_to have_filter_tag('Roberto Gomez')
 
         # Should have the Custom Filter 2's
+        expect(collection_description).to have_filter_tag('Active')
         expect(collection_description).to have_filter_tag('Campaign 2')
         expect(collection_description).to have_filter_tag('Mario Moreno')
         expect(collection_description).to have_filter_tag('Late')
-
-        # was removed with the params for custom filter 1, perhaps we should leave it
-        expect(collection_description).not_to have_filter_tag('Active')
 
         within events_list do
           expect(page).not_to have_content('Campaign 1')
@@ -1117,29 +1028,7 @@ feature 'Events section' do
           expect(page).not_to have_field('Campaign 2')
           expect(page).not_to have_field('Mario Moreno')
           expect(page).not_to have_field('Late')
-          expect(page).to have_field('Active')
-
-          expect(find_field('Custom Filter 1')['checked']).to be_falsey
-          expect(find_field('Custom Filter 2')['checked']).to be_truthy
-        end
-
-        # Using Custom Filter 2 again should reset filters
-        filter_section('SAVED FILTERS').unicheck('Custom Filter 2')
-
-        within events_list do
-          expect(page).to have_content('Campaign 1')
-          expect(page).to have_content('Campaign 2')
-        end
-
-        within '.form-facet-filters' do
-          expect(page).to have_field('Campaign 1')
-          expect(page).to have_field('Roberto Gomez')
-          expect(page).to have_field('Submitted')
-          expect(page).to have_field('Inactive')
-          expect(page).to have_field('Campaign 2')
-          expect(page).to have_field('Mario Moreno')
-          expect(page).to have_field('Late')
-          expect(page).to have_field('Active')
+          expect(page).not_to have_field('Active')
         end
       end
     end

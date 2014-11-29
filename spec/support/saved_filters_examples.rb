@@ -4,6 +4,10 @@ RSpec.shared_examples 'a list that allow saving custom filters' do
 
     show_all_filters
 
+    within '#collection-list-filters' do
+      expect(page).not_to have_content('SAVED FILTERS')
+    end
+
     filters.each do |filter|
       add_filter filter[:section], filter[:item]
     end
@@ -19,7 +23,9 @@ RSpec.shared_examples 'a list that allow saving custom filters' do
     end
     ensure_modal_was_closed
 
-    expect(page).to have_filter_section('SAVED FILTERS')
+    within '#collection-list-filters' do
+      expect(page).to have_content('SAVED FILTERS')
+    end
 
     filters.each do |filter|
       expect(collection_description).to have_filter_tag(filter[:item])
@@ -31,21 +37,21 @@ RSpec.shared_examples 'a list that allow saving custom filters' do
       expect(collection_description).not_to have_filter_tag(filter[:item])
     end
 
-    add_filter 'SAVED FILTERS', 'My Custom Filter'
+    select_saved_filter 'My Custom Filter'
 
     filters.each do |filter|
       expect(collection_description).to have_filter_tag(filter[:item])
     end
 
     # Deselect filter
-    filter_section('SAVED FILTERS').unicheck('My Custom Filter')
+    click_button 'Reset'
 
     filters.each do |filter|
       expect(collection_description).not_to have_filter_tag(filter[:item])
     end
 
     # Apply the saved filter
-    add_filter 'SAVED FILTERS', 'My Custom Filter'
+    select_saved_filter 'My Custom Filter'
 
     filters.each do |filter|
       expect(collection_description).to have_filter_tag(filter[:item])
@@ -67,6 +73,8 @@ RSpec.shared_examples 'a list that allow saving custom filters' do
     end
     ensure_modal_was_closed
 
-    expect(page).not_to have_filter_section('SAVED FILTERS')
+    within '#collection-list-filters' do
+      expect(page).not_to have_content('SAVED FILTERS')
+    end
   end
 end

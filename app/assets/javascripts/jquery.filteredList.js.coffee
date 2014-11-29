@@ -14,6 +14,7 @@ $.widget 'nmk.filteredList', {
 		autoCompletePath: '',
 		defaultParams: [],
 		customFilters: [],
+		userFilters: {},
 		selectDefaultDate: false,
 		selectedDate: new Date(),
 		selectDefaultDateRange: false,
@@ -41,6 +42,8 @@ $.widget 'nmk.filteredList', {
 
 		if @options.includeCalendars
 			@_addCalendars()
+
+		@_addSavedFilters()
 
 		@storageScope = @options.scope
 		if not @storageScope
@@ -106,7 +109,6 @@ $.widget 'nmk.filteredList', {
 
 		$(document).on 'filter-box:change', (e) =>
 			@reloadFilters()
-
 
 		@filtersPopup = false
 
@@ -281,6 +283,26 @@ $.widget 'nmk.filteredList', {
 				@formFilters.find('input[name="'+filter.name+'[end]"]').val @_formatDate(dates[1])
 				@_filtersChanged()
 
+	_addSavedFilters: () ->
+		@savedFilters = $('<div class="user-saved-filters">').appendTo(@form)
+						.append(
+							$('<label for="user-saved-filter">').append(@options.userFilters.label),
+							@savedFiltersDropdown = $('<select id="user-saved-filter" name="user-saved-filter" class="chosen-enabled"></select>'))
+						.on 'change', () =>
+							option = @savedFiltersDropdown.find('option:selected')[0]
+							@_setQueryString option.value.split('&id')[0]
+		@setSavedFilters(@options.userFilters)
+
+	setSavedFilters: (userFilters, selected=null) ->
+		if not userFilters.items or userFilters.items.length is 0
+			@savedFilters.hide()
+		else
+			@savedFilters.show()
+			@savedFiltersDropdown.html('').append('<option value=""></option>')
+			for item in userFilters.items
+				@savedFiltersDropdown.append($('<option value="'+item.id+'">'+item.label+'</option>').attr('selected', (item.id.match(new RegExp("id=#{selected}$")) isnt null)))
+			@savedFiltersDropdown.trigger('liszt:updated')
+
 
 	addCustomFilter: (name, value, reload=true) ->
 		@addParams(encodeURIComponent(name) + '=' + encodeURIComponent(value))
@@ -409,7 +431,7 @@ $.widget 'nmk.filteredList', {
 					if not $(e.target).prop('checked')
 						@_removeParams(option.id)
 					else
-						@addParams option.id.split('&id')[0]
+						@_setQueryString option.id.split('&id')[0]
 				else
 					params = encodeURIComponent("#{option.name}[]") + '=' + encodeURIComponent(option.id)
 					if $(e.target).prop('checked')
@@ -462,6 +484,7 @@ $.widget 'nmk.filteredList', {
 	# Resets the filter to its initial state
 	_resetFilters: () ->
 		@form.find('input:checkbox[name^="custom_filter"]').prop('checked', false)
+		@savedFiltersDropdown.val('').trigger('liszt:updated')
 		@_setQueryString $.param(@options.defaultParams)
 		false
 

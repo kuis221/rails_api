@@ -139,7 +139,7 @@ module FacetsHelper
 
   def build_custom_filters_bucket
     groups = {}
-    CustomFilter.for_company_user(current_company_user)
+    CustomFilter.for_company_user(current_company_user).not_user_saved_filters
       .order('custom_filters.name ASC').by_type(filter_settings_scope).each do |filter|
       groups[filter.group.upcase] ||= []
       groups[filter.group.upcase].push filter
@@ -152,6 +152,18 @@ module FacetsHelper
                            label: cf.name, name: :custom_filter, count: 1)
         end }
     end
+  end
+
+  def user_saved_filters(scope=nil)
+    scope ||= filter_settings_scope
+    items = CustomFilter.for_company_user(current_company_user).user_saved_filters
+            .order('custom_filters.name ASC').by_type(scope)
+
+    { label: CustomFilter::SAVED_FILTERS_NAME,
+      items: items.map do |cf|
+        build_facet_item(id: cf.filters + '&id=' + cf.id.to_s,
+                         label: cf.name, name: :custom_filter, count: 1)
+      end }
   end
 
   def build_brand_ambassadors_bucket

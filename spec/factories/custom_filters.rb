@@ -21,6 +21,6 @@ FactoryGirl.define do
     sequence(:name) { |n| "Area #{n}" }
     apply_to 'events'
     filters 'param=true'
-    group 'Saved Filters'
+    group CustomFilter::SAVED_FILTERS_NAME
   end
 end

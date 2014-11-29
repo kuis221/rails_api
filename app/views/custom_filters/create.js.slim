@@ -4,4 +4,4 @@
 - else
   |
     $('.bootbox.modal').modal('hide');
-    $(document).trigger('filter-box:change');
+    $('#collection-list-filters').filteredList('setSavedFilters', #{user_saved_filters(resource.apply_to).to_json.html_safe}, '#{ resource.id }');

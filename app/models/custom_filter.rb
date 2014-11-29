@@ -16,6 +16,8 @@
 class CustomFilter < ActiveRecord::Base
   belongs_to :owner, polymorphic: true
 
+  SAVED_FILTERS_NAME = 'Saved Filters'
+
   # Required fields
   validates :owner, presence: true
   validates :name, presence: true
@@ -24,6 +26,8 @@ class CustomFilter < ActiveRecord::Base
   validates :filters, presence: true
 
   scope :by_type, ->(type) { order('id ASC').where(apply_to: type) }
+  scope :user_saved_filters, -> { where(group: SAVED_FILTERS_NAME) }
+  scope :not_user_saved_filters, -> { where.not(group: SAVED_FILTERS_NAME) }
 
   scope :for_company_user, ->(company_user) {
     where(

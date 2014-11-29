@@ -2685,6 +2685,16 @@ ul.ui-widget-content{
 		width: 100%;
 	}
 
+	.user-saved-filters {
+		margin-bottom: 10px;
+		label {
+			text-transform: uppercase;
+			* {
+				text-transform: none; 
+			}
+		}
+	}
+
 	.form-facet-filters {
 		.accordion-group {
 			border: none;
