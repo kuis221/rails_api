@@ -7,10 +7,10 @@ class Results::ExpensesController < FilteredController
   private
 
   def search_params
-    @search_params || super.tap do |p|
+    @search_params || (super.tap do |p|
       p[:with_expenses_only] = true unless p.key?(:user) && p[:user].present?
       p[:event_data_stats] = true
-    end
+    end)
   end
 
   def expenses_total
@@ -23,5 +23,9 @@ class Results::ExpensesController < FilteredController
 
   def return_path
     results_reports_path
+  end
+
+  def permitted_search_params
+    permitted_events_search_params
   end
 end

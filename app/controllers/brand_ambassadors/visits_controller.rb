@@ -29,7 +29,7 @@ class BrandAmbassadors::VisitsController < FilteredController
   end
 
   def search_params
-    if params[:start_date] && params[:end_date] && request.format.json?
+    if params[:start_date] && params[:end_date] && request.present? && request.format.json?
       super.merge!(per_page: 1000)
     else
       super
@@ -51,5 +51,10 @@ class BrandAmbassadors::VisitsController < FilteredController
 
   def list_exportable?
     params['mode'] == 'calendar' || super
+  end
+
+  def permitted_search_params
+    [:start_date, :end_date, :page, :sorting, :sorting_dir, :per_page,
+     campaign: [], area: [], user: [], city: []]
   end
 end

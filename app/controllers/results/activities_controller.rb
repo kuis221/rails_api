@@ -24,5 +24,9 @@ module Results
     def return_path
       results_reports_path
     end
+
+    def permitted_search_params
+      permitted_events_search_params
+    end
   end
 end

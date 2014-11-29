@@ -21,11 +21,10 @@ $.widget 'nmk.photoGallery', {
 				true
 
 		@element.on 'click', 'a[data-toggle="gallery"]', (e) =>
-			image = if e.target.tagName is 'A' then $(e.target).find('img')[0] else e.target
-			e.stopPropagation()
 			e.preventDefault()
-			@gallery.modal 'show'
+			image = $(e.currentTarget).find('img')[0]
 			@buildCarousels image
+			@gallery.modal 'show'
 			@image = $(image)
 			@showImageInfo @image
 			false

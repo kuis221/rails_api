@@ -6,14 +6,10 @@ class Results::EventDataController < FilteredController
   private
 
   def search_params
-    @search_params ||= begin
-      super
-      unless @search_params.key?(:user) && !@search_params[:user].empty?
-        @search_params[:with_event_data_only] = true
-      end
-      @search_params[:event_data_stats] = true
-      @search_params
-    end
+    @search_params || (super.tap do |p|
+      p[:with_event_data_only] = true unless p.key?(:user) && !p[:user].empty?
+      p[:event_data_stats] = true
+    end)
   end
 
   def data_totals
@@ -40,5 +36,9 @@ class Results::EventDataController < FilteredController
 
   def return_path
     results_reports_path
+  end
+
+  def permitted_search_params
+    permitted_events_search_params
   end
 end

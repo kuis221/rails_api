@@ -134,7 +134,6 @@ class ListExport < ActiveRecord::Base
       User.current = company_user.user
       Company.current = company_user.user.current_company = company_user.company
       ensure_user_has_authentication_token
-
       ctrl.instance_variable_set(:@_params, params)
       ctrl.instance_variable_set(:@_current_user, company_user.user)
       ctrl.instance_variable_set(:@current_user, company_user.user)

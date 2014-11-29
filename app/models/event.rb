@@ -56,7 +56,7 @@ class Event < ActiveRecord::Base
   end
   has_one :event_data, autosave: true, dependent: :destroy
 
-  has_many :comments, -> { order 'comments.created_at ASC' }, dependent: :destroy, as: :commentable
+  has_many :comments, -> { order 'comments.created_at ASC' }, dependent: :destroy, as: :commentable,  inverse_of: :commentable
 
   has_many :surveys, -> { order 'surveys.created_at ASC' }, dependent: :destroy,  inverse_of: :event
 

@@ -36,8 +36,8 @@ module EventsHelper
   def describe_filters(resource_name=nil)
     resource_name ||= resource_class.model_name.human.downcase
     first_part = [
-      describe_status, describe_custom_date_ranges, describe_brands,
-      describe_brand_portfolios, describe_campaigns,
+      describe_status, describe_prices, describe_custom_date_ranges,
+      describe_brands, describe_brand_portfolios, describe_campaigns,
       describe_areas, describe_venues, describe_cities, describe_users,
       describe_teams, describe_roles, describe_activity_types, describe_date_ranges,
       describe_day_parts, describe_tasks, describe_range_filters
@@ -183,6 +183,17 @@ module EventsHelper
   def describe_cities
     build_filter_object_list :city, filter_params(:city).map{ |city| [city,city] }
   end
+
+  def describe_prices
+    prices = {
+      '1' => '$',
+      '2' => '$$',
+      '3' => '$$$',
+      '4' => '$$$$',
+    }
+    build_filter_object_list :city, filter_params(:price).map{ |price| [price, prices[price]] }
+  end
+
 
   def describe_venues
     describe_resource_params(:venue,

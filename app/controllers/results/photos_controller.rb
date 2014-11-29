@@ -51,11 +51,9 @@ class Results::PhotosController < FilteredController
   end
 
   def search_params
-    @search_params ||= begin
-      super
-      @search_params[:asset_type] = 'photo'
-      @search_params
-    end
+    @search_params || (super.tap do |p|
+      p[:asset_type] = 'photo'
+    end)
   end
 
   def authorize_actions
@@ -64,5 +62,9 @@ class Results::PhotosController < FilteredController
 
   def return_path
     results_reports_path
+  end
+
+  def permitted_search_params
+    permitted_events_search_params
   end
 end

@@ -159,6 +159,7 @@ feature 'Campaigns', js: true do
         fill_in 'Description', with: 'edited campaign description'
         click_js_button 'Save'
       end
+      ensure_modal_was_closed
 
       # find('h2', text: 'edited campaign name') # Wait for the page to reload
       expect(page).to have_selector('h2', text: 'edited campaign name')

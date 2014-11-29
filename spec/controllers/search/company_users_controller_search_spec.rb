@@ -399,7 +399,7 @@ describe CompanyUsersController, type: :controller, search: true do
         expect(notifications).to include(
           'message' => 'Your task <span>The task title</span> has a new comment',
           'level' => 'grey',
-          'url' => "/tasks/mine?q=task%2C#{task.id}#comments-#{task.id}",
+          'url' => "/tasks/mine?task%5B%5D=#{task.id}#comments-#{task.id}",
           'unread' => true,
           'icon' => 'icon-comments',
           'type' => 'user_task_comments',
@@ -419,7 +419,7 @@ describe CompanyUsersController, type: :controller, search: true do
         expect(notifications).to include(
           'message' => "Your team's task <span>The task title</span> has a new comment",
           'level' => 'grey',
-          'url' => "/tasks/my_teams?q=task%2C#{task.id}#comments-#{task.id}",
+          'url' => "/tasks/my_teams?task%5B%5D=#{task.id}#comments-#{task.id}",
           'unread' => true,
           'icon' => 'icon-comments',
           'type' => 'team_task_comments',

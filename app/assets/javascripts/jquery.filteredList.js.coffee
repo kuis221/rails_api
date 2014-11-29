@@ -70,6 +70,8 @@ $.widget 'nmk.filteredList', {
 			if @formFilters.css('display') is 'none'
 				@formFilters.slideDown 400, () =>
 					@toggleFiltersLink.text('Hide filters')
+					for name, slider of @sliders
+						$(slider).rangeSlider('resize');
 			else
 				@formFilters.slideUp 400, () =>
 					@toggleFiltersLink.text('Show filters')
@@ -131,6 +133,7 @@ $.widget 'nmk.filteredList', {
 
 		@infiniteScroller = false
 
+		@doneLoading = true
 		if @options.autoLoad
 			@_loadPage(1)
 
@@ -563,8 +566,8 @@ $.widget 'nmk.filteredList', {
 								'<div class="datepick-clear-fix"></div></div>'}),
 			onSelect: (dates) =>
 				dates[0] = if dates[0] then dates[0] else dates[1]
-				if @initialized == true
-					if @dateRange == false
+				if @initialized is true
+					if @dateRange is false
 						@customDatesPanel.find('ul .active').removeClass('active')
 						@_updateDateRangeInput()
 					@dateRange = false
@@ -866,6 +869,7 @@ $.widget 'nmk.filteredList', {
 		@
 
 	_loadPage: (page) ->
+		return unless @doneLoading
 		params = [
 			{'name': 'page', 'value': page},
 			{'name':'sorting','value': @options.sorting},
@@ -895,57 +899,64 @@ $.widget 'nmk.filteredList', {
 
 		@spinner = @_loadingSpinner()
 
-		@jqxhr = $.get @options.source, params, (response, textStatus, jqXHR) =>
-			$.loadingContent += 1
-			@spinner.remove();
-			resultsCount = 0
-			if typeof response is 'object'
-				if @options.onItemsLoad
-					@options.onItemsLoad response, page
+		@jqxhr = $.ajax
+			url: @options.source
+			data: params,
+			type: 'GET'
+			success: (response, textStatus, jqXHR) =>
+				$.loadingContent += 1
+				@spinner.remove();
+				resultsCount = 0
+				if typeof response is 'object'
+					if @options.onItemsLoad
+						@options.onItemsLoad response, page
 
-				@listContainer.css height: ''
+					@listContainer.css height: ''
 
-				resultsCount = response.length
-			else
-				$response = $('<div>').append(response)
-				$items = $response.find('[data-content="items"]')
-				if @options.onItemsLoad
-					@options.onItemsLoad $response, page
+					resultsCount = response.length
+				else
+					$response = $('<div>').append(response)
+					$items = $response.find('[data-content="items"]')
+					if @options.onItemsLoad
+						@options.onItemsLoad $response, page
 
-				@listContainer.append $items.html()
-				@_pageLoaded page, $items
-				@listContainer.css height: ''
+					@listContainer.append $items.html()
+					@_pageLoaded page, $items
+					@listContainer.css height: ''
 
-				resultsCount = $items.find('>*').length
+					resultsCount = $items.find('>*').length
 
-				if page is 1 and resultsCount is 0
-					@emptyState = @_placeholderEmptyState()
+					if page is 1 and resultsCount is 0
+						@emptyState = @_placeholderEmptyState()
 
-				if $response.find('div[data-content="filters-description"]').length > 0
-					$('.collection-list-description .filter-label').html(
-						$response.find('div[data-content="filters-description"]')
-					).append(
-						$('<a id="clear-filters" href="#" title="Reset">').text('Reset').on 'click', (e) =>
-							@_resetFilters()
-					);
+					if $response.find('div[data-content="filters-description"]').length > 0
+						$('.collection-list-description .filter-label').html(
+							$response.find('div[data-content="filters-description"]')
+						).append(
+							$('<a id="clear-filters" href="#" title="Reset">').text('Reset').on 'click', (e) =>
+								@_resetFilters()
+						);
 
-				$response.remove()
-				$items.remove()
-				$items = $response = null
+					$response.remove()
+					$items.remove()
+					$items = $response = null
 
 
-			if @options.onPageLoaded
-				@options.onPageLoaded page, resultsCount
+				if @options.onPageLoaded
+					@options.onPageLoaded page, resultsCount
 
-			$.loadingContent -= 1
-			true
+				$.loadingContent -= 1
+				true
+			complete: () =>
+				@spinner.remove()
+				@spinner = null
+				@doneLoading = true
 
 		params = null
 
 		true
 
 	_pageLoaded: (page, response) ->
-		@doneLoading = true
 		if @options.onItemsChange
 			@options.onItemsChange(response)
 

@@ -26,7 +26,6 @@ class ActivitiesController < FilteredController
     "#{resource.activity_type_name.parameterize}-#{Time.now.strftime('%Y%m%d%H%M%S')}.pdf"
   end
 
-
   def assignable_users
     current_company.company_users.active.for_dropdown
   end

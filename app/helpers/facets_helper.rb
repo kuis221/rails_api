@@ -1,10 +1,4 @@
 module FacetsHelper
-  def search_params
-    @search_params ||= params.dup.tap do |p|  # Duplicate the params array to make some modifications
-      p[:company_id] = current_company.id
-      p[:current_company_user] = current_company_user
-    end
-  end
 
   def filter_settings_scope
     params[:apply_to] || controller_name
@@ -262,4 +256,9 @@ module FacetsHelper
     end
   end
 
+  def permitted_events_search_params
+    [:start_date, :end_date, :page, :sorting, :sorting_dir, :per_page,
+     campaign: [], area: [], user: [], team: [], event_status: [], brand: [], status: [],
+     venue: [], role: [], brand_portfolio: [], id: [], event: []]
+  end
 end

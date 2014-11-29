@@ -319,6 +319,7 @@ feature 'Users', js: true do
         fill_in 'Password confirmation', with: 'Pedrito123'
         click_js_button 'Save'
       end
+      ensure_modal_was_closed
 
       visit company_user_path(company_user)
 

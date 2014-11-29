@@ -53,4 +53,9 @@ class BrandsController < FilteredController
       end)
     end
   end
+
+  def permitted_search_params
+    [:page, :sorting, :sorting_dir, :per_page,
+     brand: [], status: [], brand_portfolio: [], campaign: []]
+  end
 end

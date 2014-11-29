@@ -39,6 +39,8 @@ feature 'Notifications', search: true, js: true do
 
       click_notification 'You have 2 new events'
 
+      expect(page).not_to have_notification 'You have 2 new events'
+
       expect(current_path).to eql events_path
       expect(page).to have_selector('#events-list .resource-item', count: 2)
 

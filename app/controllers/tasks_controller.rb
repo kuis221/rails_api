@@ -83,7 +83,7 @@ class TasksController < FilteredController
   end
 
   def search_params
-    @search_params ||= super.tap do |p|
+    @search_params || (super.tap do |p|
       unless p.key?(:user) && !p[:user].empty?
         p.merge! Task.search_params_for_scope(params[:scope], current_company_user)
       end
@@ -98,7 +98,7 @@ class TasksController < FilteredController
           ids
         end
       end
-    end
+    end)
   end
 
   # TODO: this doesn't work for teams, but tomorrow is the demo
@@ -116,5 +116,11 @@ class TasksController < FilteredController
 
   def set_body_class
     @custom_body_class = params[:scope]
+  end
+
+  def permitted_search_params
+    [:start_date, :end_date, :page, :sorting, :sorting_dir, :per_page,
+     campaign: [], user: [], team: [], task_status: [], status: [],
+     task: []]
   end
 end

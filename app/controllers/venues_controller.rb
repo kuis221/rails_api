@@ -60,7 +60,7 @@ class VenuesController < FilteredController
   end
 
   def search_params
-    @search_params || super.tap do |p|
+    @search_params || (super.tap do |p|
       p[:types] = %w(establishment) unless p.key?(:types) && !p[:types].empty?
       # Do not filter by user settigns because we are not filtering google results
       # anyway...
@@ -72,7 +72,7 @@ class VenuesController < FilteredController
         p[param][:min] = nil unless p[:location].present? || p[param][:min].present?
         p[param][:max] = nil if p[param][:max].nil? || p[param][:max].empty?
       end
-    end
+    end)
   end
 
   def data_totals
@@ -81,5 +81,12 @@ class VenuesController < FilteredController
       totals['promo_hours'] = collection_search.stat_response['stats_fields']['promo_hours_es']['sum'] rescue 0
       totals['spent'] = collection_search.stat_response['stats_fields']['spent_es']['sum'] rescue 0
     end
+  end
+
+  def permitted_search_params
+    [:location, :q, :page, :sorting, :sorting_dir, :per_page,
+     events_count: [:min, :max], promo_hours: [:min, :max], impressions: [:min, :max],
+     interactions: [:min, :max], sampled: [:min, :max], spent: [:min, :max],
+     venue_score: [:min, :max], price: [], area: [], campaign: [], brand: [] ]
   end
 end

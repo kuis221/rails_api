@@ -109,7 +109,7 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
   end
 
   def self.do_search(params, _include_facets = false)
-    solr_search do
+    solr_search(include: [:campaign, :area, company_user: :user]) do
       with :company_id, params[:company_id]
 
       company_user = params[:current_company_user]

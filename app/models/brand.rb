@@ -82,8 +82,8 @@ class Brand < ActiveRecord::Base
     def do_search(params, include_facets = false)
       solr_search do
         with(:company_id, params[:company_id])
-        with(:id, Campaign.where(id: params[:campaign_id]).joins(:brands).pluck('brands_campaigns.brand_id'))
-        with(:id, BrandPortfolio.where(id: params[:brand_portfolio_id]).joins(:brands).pluck('brand_portfolios_brands.brand_id'))
+        with(:id, Campaign.where(id: params[:campaign]).joins(:brands).pluck('brands_campaigns.brand_id')) if params.key?(:campaign) && params[:campaign]
+        with(:id, BrandPortfolio.where(id: params[:brand_portfolio]).joins(:brands).pluck('brand_portfolios_brands.brand_id')) if params.key?(:brand_portfolio) && params[:brand_portfolio]
         with(:id, params[:brand]) if params.key?(:brand) && params[:brand].present?
         with(:status, params[:status]) if params.key?(:status) && params[:status].present?
 

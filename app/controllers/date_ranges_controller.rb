@@ -28,4 +28,9 @@ class DateRangesController < FilteredController
       f.concat build_custom_filters_bucket
     end
   end
+
+  def permitted_search_params
+    [:page, :sorting, :sorting_dir, :per_page,
+     date_range: [], status: []]
+  end
 end

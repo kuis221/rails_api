@@ -73,11 +73,9 @@ class FilteredController < InheritedResources::Base
 
   def export_list(export)
     @_export = export
-    @search_params = export.params.merge(per_page: 100)
-    @solr_search = resource_class.do_search(@search_params)
+    @solr_search = resource_class.do_search(search_params.merge!(per_page: 100))
     @collection_count = @solr_search.total
     @total_pages = @solr_search.results.total_pages
-    @collection_results = @solr_search.results
     set_collection_ivar(@solr_search.results)
 
     Slim::Engine.with_options(pretty: true, sort_attrs: false, streaming: false) do
@@ -89,13 +87,9 @@ class FilteredController < InheritedResources::Base
   end
 
   def each_collection_item
-    p = @search_params.dup
     (1..@total_pages).each do |page|
-      p[:page] = page
-      search = resource_class.do_search(p)
-      search.results.each do |result|
-        yield result
-      end
+      search = resource_class.do_search(@search_params.merge!(page: page))
+      search.results.each { |result| yield result }
       @_export.update_column(
         :progress, (page * 100 / @total_pages).round) unless @_export.nil?
     end
@@ -121,6 +115,17 @@ class FilteredController < InheritedResources::Base
         set_collection_ivar(c)
       end
     end
+  end
+
+  def search_params
+    @search_params ||= params.permit(permitted_search_params).tap do |p|
+      p[:company_id] = current_company.id
+      p[:current_company_user] = current_company_user
+    end
+  end
+
+  def permitted_search_params
+    [:page, :sorting, :sorting_dir]
   end
 
   def collection_count
@@ -199,7 +204,7 @@ class FilteredController < InheritedResources::Base
   def enqueue_export
     @export = ListExport.create(
       controller: self.class.name,
-      params: search_params,
+      params: params,
       url_options: url_options,
       export_format: params[:format],
       company_user: current_company_user

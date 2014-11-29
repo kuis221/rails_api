@@ -33,7 +33,7 @@ class AttachedAsset < ActiveRecord::Base
   has_attached_file :file,
       PAPERCLIP_SETTINGS.merge(
         styles: ->(a) {
-          if a.instance.is_pdf?
+          if a.instance.pdf?
             a.options[:convert_options] = {
               thumbnail: '-quality 85 -strip -gravity north -thumbnail 300x400^ -extent 300x400'
             }
@@ -42,7 +42,7 @@ class AttachedAsset < ActiveRecord::Base
             { small: '', thumbnail: '', medium: '800x800>' }
           end
         },
-        processors: ->(instance) { instance.is_pdf? ? [:ghostscript, :thumbnail] : [:thumbnail] },
+        processors: ->(instance) { instance.pdf? ? [:ghostscript, :thumbnail] : [:thumbnail] },
         convert_options: {
           small: '-quality 85 -strip -gravity north -thumbnail 180x180^ -extent 180x120',
           thumbnail: '-quality 85 -strip -gravity north -thumbnail 400x400^ -extent 400x267',
@@ -160,11 +160,11 @@ class AttachedAsset < ActiveRecord::Base
                response_content_disposition: "attachment; filename=#{file_file_name}").to_s
   end
 
-  def preview_url(style_name = :medium)
-    if is_pdf?
-      file.url(:thumbnail)
+  def preview_url(style_name = :medium, opts={})
+    if pdf?
+      file.url(:thumbnail, opts)
     else
-      file.url(style_name)
+      file.url(style_name, opts)
     end
   end
 
@@ -172,7 +172,7 @@ class AttachedAsset < ActiveRecord::Base
     %r{^(image|(x-)?application)/(bmp|gif|jpeg|jpg|pjpeg|png|x-png|pdf)$}.match(file_content_type).present?
   end
 
-  def is_pdf?
+  def pdf?
     %r{^(x-)?application/pdf$}.match(file_content_type).present?
   end
 

@@ -100,7 +100,7 @@ describe BrandsController, type: :controller do
       brand_portfolio.brands << create(:brand, name: 'Brand 871', company: @company)
       create(:brand, name: 'Brand 789', company: @company)
       Sunspot.commit
-      get 'index', campaign_id: campaign.id, format: :json
+      get 'index', campaign: [campaign.id], format: :json
 
       expect(response).to be_success
       parsed_body = JSON.parse(response.body)
@@ -114,7 +114,7 @@ describe BrandsController, type: :controller do
       campaign.brands << create(:brand, name: 'Brand 871', company: @company)
       create(:brand, name: 'Brand 789', company: @company)
       Sunspot.commit
-      get 'index', brand_portfolio_id: brand_portfolio.id, format: :json
+      get 'index', brand_portfolio: [brand_portfolio.id], format: :json
 
       expect(response).to be_success
       parsed_body = JSON.parse(response.body)

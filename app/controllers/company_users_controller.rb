@@ -281,4 +281,9 @@ class CompanyUsersController < FilteredController
   def viewing_profile?
     action_name == 'profile'
   end
+
+  def permitted_search_params
+    [:page, :sorting, :sorting_dir, :per_page,
+     campaign: [], role: [], user: [], team: [], status: [], venue: []]
+  end
 end

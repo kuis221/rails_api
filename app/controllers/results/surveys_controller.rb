@@ -7,13 +7,9 @@ class Results::SurveysController < FilteredController
   private
 
   def search_params
-    @search_params ||= begin
-      super
-      unless @search_params.key?(:user) && !@search_params[:user].empty?
-        @search_params[:with_surveys_only] = true
-      end
-      @search_params
-    end
+    @search_params || (super.tap do |p|
+      p[:with_surveys_only] = true unless p.key?(:user) && !p[:user].empty?
+    end)
   end
 
   def authorize_actions
@@ -22,5 +18,9 @@ class Results::SurveysController < FilteredController
 
   def return_path
     results_reports_path
+  end
+
+  def permitted_search_params
+    permitted_events_search_params
   end
 end

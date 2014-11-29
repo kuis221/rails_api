@@ -191,8 +191,7 @@ class EventsController < FilteredController
   def authorize_update
     return unless cannot?(:update, resource) && cannot?(:edit_data, resource)
 
-    message = unauthorized_message(:update, resource)
-    fail CanCan::AccessDenied, message
+    fail CanCan::AccessDenied, unauthorized_message(:update, resource)
   end
 
   def calendar_brands_events
@@ -245,7 +244,7 @@ class EventsController < FilteredController
   end
 
   def search_params
-    @search_params || super.tap do |p|
+    @search_params || (super.tap do |p|
       p[:sorting] ||= 'start_at'
       p[:sorting_dir] ||= 'asc'
 
@@ -263,7 +262,11 @@ class EventsController < FilteredController
           ids
         end
       end
-    end
+    end)
+  end
+
+  def permitted_search_params
+    permitted_events_search_params
   end
 
   def list_exportable?

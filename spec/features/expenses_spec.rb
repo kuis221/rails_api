@@ -58,7 +58,7 @@ feature 'Events section' do
         hover_and_click '#expenses-list [id^="event_expense"]', 'View Receipt'
 
         within visible_modal do
-          src = asset.file.url(:thumbnail, timestamp: false)
+          src = asset.preview_url(:medium, timestamp: false)
           expect(page).to have_xpath("//img[starts-with(@src, \"#{src}\")]", wait: 10)
           find('.slider').hover
 
