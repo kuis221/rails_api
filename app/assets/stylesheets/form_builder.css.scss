@@ -177,7 +177,7 @@ $margin-right: 240px;
 						top: -9px;
 						left: -1px;
 						position: absolute;
-						font-size: 6px;
+						font-size: 9px;
 						font-weight: bolder;
 					}
 					&:after {
@@ -186,7 +186,7 @@ $margin-right: 240px;
 						top: -9px;
 						right: 1px;
 						position: absolute;
-						font-size: 6px;
+						font-size: 9px;
 						font-weight: bolder;
 					}
 				}
@@ -322,10 +322,12 @@ $margin-right: 240px;
 			font-weight: bold;
 			.accordion-toggle {
 				padding: 8px 0;
+				color: $brand;
 				&:before {
 					font-family: 'icons';
 					content: '\e004';
-					top: 3px;
+					position: relative;
+					top: 4px;
 				}
 				&.collapsed:before {
 					top: 0;
