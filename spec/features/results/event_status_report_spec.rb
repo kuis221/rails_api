@@ -239,9 +239,8 @@ feature 'Results Event Status Page', js: true, search: true  do
         text = page.text.gsub(/[\s\n]/, '')
         expect(text).to include 'TestCampaignFY01'
         expect(text).to include '100GOAL'
-        expect(text).to include '96PROMOHOURSREMAINING22'
         expect(text).to include '2GOAL'
-        expect(text).to include '0REMAINING'
+        expect(text).to include 'REMAINING'
       end
     end
 

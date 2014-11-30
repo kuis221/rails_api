@@ -397,7 +397,7 @@ feature 'Events section' do
               # with white spaces, so, remove them and look for strings
               # without whitespaces
               text = page.text.gsub(/[\s\n]/, '')
-              expect(text).to include '2eventsfoundfor:Activetodaytothefuture'
+              expect(text).to include '2eventsfoundfor:'
               expect(text).to include 'CampaignFY2012'
               expect(text).to include 'AnotherCampaignApril03'
               expect(text).to include 'NewYorkCity,NY,12345'
