@@ -145,7 +145,7 @@ feature 'Users', js: true do
         click_js_button 'Resend Invitation'
       end
 
-      confirm_prompt 'Are you sure you want to resend this invitation?'
+      confirm_prompt 'Are you sure you want to resend the invitation to this user?'
 
       the_user = User.last
 
