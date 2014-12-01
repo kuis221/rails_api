@@ -38,6 +38,32 @@
 	.datepick{
 		margin-bottom: 10px;
 	}
+	.form-fields-sections{
+		.field{
+			&.ui-sortable-placeholder {
+				position: relative;
+				&:before {
+					content: "|||" !important;
+					letter-spacing: 0;
+					top: -45px;
+					left: -1px !important;
+					position: absolute;
+					font-size: 12px;
+					font-weight: bolder;
+				}
+				&:after {
+					content: "|||";
+					letter-spacing: 0;
+					top: -15px;
+					right: 1px;
+					position: absolute;
+					font-size: 12px;
+					font-weight: bolder;
+				}
+			}
+		}
+	}
+
 	.checker span.checked:after{
 		top: -8px;
 	}
