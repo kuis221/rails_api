@@ -74,6 +74,7 @@ RSpec.configure do |config|
 
   config.after(:each, js: true) do
     wait_for_ajax
+    page.execute_script("window.localStorage.clear()")
   end
 
   config.include(SmsSpec::Helpers)

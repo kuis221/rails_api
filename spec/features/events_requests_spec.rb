@@ -507,8 +507,8 @@ feature 'Events section' do
                            start_date: "#{month_number}/16/#{year}",
                            end_date: "#{month_number}/16/#{year}")
             create(:event, campaign: campaign1,
-                           start_date: "#{month_number + 1}/15/#{year}",
-                           end_date: "#{month_number + 1}/15/#{year}")
+                           start_date: "#{(today + 1.month).month}/15/#{(today + 1.month).year}",
+                           end_date: "#{(today + 1.month).month}/15/#{(today + 1.month).year}")
             Sunspot.commit
 
             visit events_path

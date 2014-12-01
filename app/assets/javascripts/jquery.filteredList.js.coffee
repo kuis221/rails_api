@@ -52,7 +52,8 @@ $.widget 'nmk.filteredList', {
 
 		@element.parent().append $('<a class="list-filter-btn" href="#" data-toggle="filterbar" title="Filter">').append('<i class="icon-gear">')
 
-		@formFilters = $('<div class="form-facet-filters accordion">').hide()
+		expanded = @_getFilterSectionState('_filters')
+		@formFilters = $('<div class="form-facet-filters accordion">')
 							.on "show", (e) ->
 								$(e.target).closest(".accordion-group").find(".icon-arrow-right").removeClass("icon-arrow-right").addClass("icon-arrow-down").prop "title", "Collapse"
 								return
@@ -62,20 +63,25 @@ $.widget 'nmk.filteredList', {
 							.on "hide", (e) ->
 								$(e.target).closest(".accordion-group").find(".icon-arrow-down").removeClass("icon-arrow-down").addClass("icon-arrow-right").prop "title", "Expand"
 								return
+		@formFilters.hide() unless expanded
 
 
 		@formFilters.appendTo(@form)
 
-		@toggleFiltersLink = $('<div class="text-right show-hide-filters-link"><a href="#">Show filters</a></div>').appendTo(@form).find('a').on 'click', () =>
-			if @formFilters.css('display') is 'none'
-				@formFilters.slideDown 400, () =>
-					@toggleFiltersLink.text('Hide filters')
-					for name, slider of @sliders
-						$(slider).rangeSlider('resize');
-			else
-				@formFilters.slideUp 400, () =>
-					@toggleFiltersLink.text('Show filters')
-			false
+		@toggleFiltersLink = $('<div class="text-right show-hide-filters-link"><a href="#"></a></div>').appendTo(@form).find('a')
+			.text(if expanded then 'Hide filters' else 'Show filters')
+			.on 'click', () =>
+				if @formFilters.css('display') is 'none'
+					@_setFilterSectionState('_filters', true)
+					@formFilters.slideDown 400, () =>
+						@toggleFiltersLink.text('Hide filters')
+						for name, slider of @sliders
+							$(slider).rangeSlider('resize');
+				else
+					@_setFilterSectionState('_filters', false)
+					@formFilters.slideUp 400, () =>
+						@toggleFiltersLink.text('Show filters')
+				false
 
 		if @options.filters
 			@setFilters @options.filters
@@ -316,21 +322,43 @@ $.widget 'nmk.filteredList', {
 		@options.customFilters = []
 		@
 
+	_supportsHtml5Storage: () ->
+		try
+			window.hasOwnProperty('localStorage') && window['localStorage'] isnt null
+		catch e
+			false
+
+	_getFilterSectionState: (name) ->
+		if @_supportsHtml5Storage()
+			localStorage["filter_#{@options.applyTo}_#{name}"] or false
+		else
+			false
+
+	_setFilterSectionState: (name, value) ->
+		if @_supportsHtml5Storage()
+			localStorage["filter_#{@options.applyTo}_#{name}"] = value
+
+
 	addFilterSection: (filter) ->
 		items = filter.items
 		top5 = filter.top_items
+		expanded = @_getFilterSectionState(filter.label.replace(/\s+/g, '-'))
 		$list = $('<ul>')
 		$filter = $('<div class="accordion-group">').append(
 			$('<div class="filter-wrapper accordion-heading">').data('name', filter.name).append(
-				$('<a>',{href: "#toogle-"+filter.label.replace(/\s+/g, '-').toLowerCase(), class:'accordion-toggle filter-title collapsed', 'data-toggle': 'collapse'}).text(filter.label).append(
-					$('<span class="icon icon-arrow-right pull-left" title="Collapse">')
-				)
+				$('<a>',{href: "#toogle-"+filter.label.replace(/\s+/g, '-').toLowerCase(), class:'accordion-toggle filter-title', 'data-toggle': 'collapse'})
+					.text(filter.label).addClass(if expanded then '' else 'collapsed').append(
+						$('<span class="icon pull-left" title="Expand">').addClass(if expanded then 'icon-arrow-down' else 'icon-arrow-right')
+					)
 			),
-			$('<div id="toogle-'+filter.label.replace(/\s+/g, '-').toLowerCase()+'" class="accordion-body collapse">').append(
-				$('<div class="accordion-inner">').append(
-					$list
-				)
-			)
+			$('<div id="toogle-'+filter.label.replace(/\s+/g, '-').toLowerCase()+'" class="accordion-body">').addClass(if expanded then 'in' else ' collapse').append(
+				$('<div class="accordion-inner">').append($list)
+			).on 'show', () =>
+				@_setFilterSectionState(filter.label.replace(/\s+/g, '-'), true)
+				true
+			.on 'hide',  () =>
+				@_setFilterSectionState(filter.label.replace(/\s+/g, '-'), false)
+				true
 		)
 		i = 0
 		if not top5
