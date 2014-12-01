@@ -200,6 +200,13 @@ class CompanyUsersController < FilteredController
     render text: ''
   end
 
+  def resend_invite
+    if resource.present? && resource.invited_to_sign_up?
+      resource.user.resend_invitation
+    end
+    render nothing: true
+  end
+
   protected
 
   def permitted_params

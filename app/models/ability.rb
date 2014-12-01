@@ -133,6 +133,10 @@ class Ability
         can?(:update, company_user)
       end
 
+      can :resend_invite, CompanyUser do |company_user|
+        can?(:index, company_user)
+      end
+
       can :export_fieldable, Campaign do |campaign|
         can?(:view_event_form, campaign)
       end

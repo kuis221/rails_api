@@ -262,6 +262,7 @@ Brandscopic::Application.routes.draw do
       get :send_code
       get :deactivate
       get :activate
+      get :resend_invite
       post :enable_campaigns
       post :disable_campaigns
       get :select_campaigns

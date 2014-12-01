@@ -128,6 +128,8 @@ en:
       activity_type: "Activate Activity Type"
       report: "Activate Report"
       brand_ambassadors/visit: "Activate Visit"
+    invitations:
+      resend: "Resend Invitation"
 
   inputs:
     attached_asset:
@@ -460,6 +462,8 @@ en:
       activity_type: "Are you sure you want to deactivate this activity type?"
       report: "Are you sure you want to deactivate this report?"
       brand_ambassadors/visit: "Are you sure you want to deactivate this visit?"
+    invitations:
+      resend: "Are you sure you want to resend the invitation to this user?"
 
   confirmation:
     deactivate: "Deactivate"
