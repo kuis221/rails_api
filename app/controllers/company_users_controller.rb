@@ -27,7 +27,8 @@ class CompanyUsersController < FilteredController
       teams: [Team],
       roles: [Role],
       campaigns: [Campaign],
-      places: [Venue]
+      places: [Venue],
+      user_active_state: []
     )
 
     render json: buckets.flatten

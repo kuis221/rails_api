@@ -8,13 +8,14 @@ describe BrandPortfoliosController, type: :controller, search: true do
   before { user }
 
   describe "GET 'autocomplete'" do
-    it 'should return the correct buckets in the right order' do
+    it 'returns the correct buckets in the right order' do
       Sunspot.commit
       get 'autocomplete'
       expect(response).to be_success
 
       buckets = JSON.parse(response.body)
-      expect(buckets.map { |b| b['label'] }).to eq(['Brands'])
+      expect(buckets.map { |b| b['label'] }).to eq([
+        'Brands', 'Active State'])
     end
 
     it 'should return the brands in the Brands Bucket' do

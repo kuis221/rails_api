@@ -12,14 +12,18 @@ class TasksController < FilteredController
   helper_method :assignable_users, :status_counters, :calendar_highlights
 
   before_action :set_body_class, only: :index
-  after_filter :force_resource_reindex, only: [:create, :update]
+  after_action :force_resource_reindex, only: [:create, :update]
 
   def autocomplete
     buckets = autocomplete_buckets({
       tasks: [Task],
       campaigns: [Campaign]
-    }.merge(params[:scope] == 'teams' ? { people: [CompanyUser, Team] } : {}))
-
+    }.merge!(
+      params[:scope] == 'teams' ? { people: [CompanyUser, Team] } : {}
+    ).merge!(
+      task_status: [],
+      active_state: []
+    ))
     render json: buckets.flatten
   end
 

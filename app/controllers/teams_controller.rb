@@ -9,9 +9,11 @@ class TeamsController < FilteredController
   include DeactivableHelper
 
   def autocomplete
-    buckets = autocomplete_buckets(teams: [Team],
-                                   users: [CompanyUser],
-                                   campaigns: [Campaign])
+    buckets = autocomplete_buckets(
+      teams: [Team],
+      users: [CompanyUser],
+      campaigns: [Campaign],
+      active_state: [])
 
     render json: buckets.flatten
   end

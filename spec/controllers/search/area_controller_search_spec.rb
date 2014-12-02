@@ -9,6 +9,15 @@ describe AreasController, type: :controller, search: true do
   let(:area) { create(:area, company: company) }
 
   describe "GET 'autocomplete'" do
+    it "should return the correct buckets in the right order when the user is in the 'teams' scope" do
+      get 'autocomplete', scope: :teams
+      expect(response).to be_success
+
+      buckets = JSON.parse(response.body)
+      expect(buckets.map { |b| b['label'] }).to eq([
+        'Areas', 'Active State'])
+    end
+
     it 'should return the areas in the Area Bucket' do
       t = create(:area, name: 'Test Area', description: 'Test Area description', company_id: company.id)
       Sunspot.commit

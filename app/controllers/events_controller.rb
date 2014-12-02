@@ -36,7 +36,9 @@ class EventsController < FilteredController
       campaigns: [Campaign],
       brands: [Brand, BrandPortfolio],
       places: [Venue, Area],
-      people: [CompanyUser, Team]
+      people: [CompanyUser, Team],
+      active_state: [],
+      event_status: []
     )
     render json: buckets.flatten
   end

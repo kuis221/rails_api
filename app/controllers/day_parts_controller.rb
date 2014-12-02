@@ -11,7 +11,8 @@ class DayPartsController < FilteredController
 
   def autocomplete
     buckets = autocomplete_buckets(
-      day_parts: [DayPart]
+      day_parts: [DayPart],
+      active_state: []
     )
     render json: buckets.flatten
   end

@@ -35,9 +35,34 @@ module AutocompleteHelper
       end
     end
 
-    @autocomplete_buckets ||= list.map do |bucket_name, klasess|
-      build_bucket(search, bucket_name, klasess) if klasess.any?
+    special_buckets = [:active_state, :event_status, :task_status, :user_active_state]
+    list.map do |bucket_name, klasess|
+      if special_buckets.include?(bucket_name)
+        build_special_bucket(bucket_name, params[:q] || '')
+      else
+        build_bucket(search, bucket_name, klasess) if klasess.any?
+      end
     end.compact
+  end
+
+  def build_special_bucket(bucket_name, q)
+    type = [:active_state, :user_active_state].include?(bucket_name) ? :status : bucket_name
+    results = special_buckets_options(bucket_name).select do |a|
+      (params[type].blank? || !params[type].include?(a)) &&
+      a.downcase.include?(q)
+    end.first(5)
+    { label: I18n.translate("filters.#{bucket_name}"),
+      value: results.map { |x| { label: x.gsub(/(#{q})/i, '<i>\1</i>'), value: x, type: type } } }
+  end
+
+  def special_buckets_options(bucket_name)
+    @_special_buckets_options ||= {
+      active_state: %w(Active Inactive),
+      user_active_state: %w(Active Inactive Invited),
+      event_status: %w(Submitted Rejected Approved Late Due),
+      task_status: %w(Complete Incomplete Late)
+    }
+    @_special_buckets_options[bucket_name] || []
   end
 
   def build_bucket(search, bucket_name, klasess)
@@ -48,7 +73,7 @@ module AutocompleteHelper
 
     # Sort by scoring if we are grouping multiple clasess into one bucket
     results = results.sort { |a, b| b.score <=> a.score }.first(5) if klasess.size > 1
-    { label: bucket_name.to_s.gsub(/[_]+/, ' ').capitalize, value: get_bucket_results(results) }
+    { label: I18n.translate("filters.#{bucket_name}"), value: get_bucket_results(results) }
   end
 
   def get_bucket_results(results)

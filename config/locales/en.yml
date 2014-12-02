@@ -45,6 +45,25 @@ en:
       one: 'year'
       other: '%{count} years'
 
+  filters:
+    areas: 'Areas'
+    active_state: 'Active State'
+    activity_types: 'Activity Types'
+    brands: 'Brands'
+    brand_portfolios: 'Brand Portfolios'
+    campaigns: 'Campaigns'
+    company_users: 'Users'
+    date_ranges: 'Date Ranges'
+    day_parts: 'Day Parts'
+    event_status: 'Event Status'
+    people: 'People'
+    places: 'Places'
+    roles: 'Roles'
+    teams: 'Teams'
+    task_status: 'Task Status'
+    user_active_state: 'Active State'
+    users: 'Users'
+
   exports:
     pdf:
       title:

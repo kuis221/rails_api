@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 describe TeamsController, type: :controller, search: true do
-  before(:each) do
-    @user = sign_in_as_user
-    @company = @user.companies.first
-    @company_user = @user.current_company_user
-  end
+  let(:user) { sign_in_as_user }
+  let(:company) { user.companies.first }
+  let(:company_user) { user.current_company_user }
+
+  before { user }
 
   describe "GET 'autocomplete'" do
     it 'should return the correct buckets in the right order' do
@@ -14,11 +14,12 @@ describe TeamsController, type: :controller, search: true do
       expect(response).to be_success
 
       buckets = JSON.parse(response.body)
-      expect(buckets.map { |b| b['label'] }).to eq(%w(Teams Users Campaigns))
+      expect(buckets.map { |b| b['label'] }).to eq([
+        'Teams', 'Users', 'Campaigns', 'Active State'])
     end
 
     it 'should return the teams in the Teams Bucket' do
-      team = create(:team, name: 'Team 1', company_id: @company.id)
+      team = create(:team, name: 'Team 1', company_id: company.id)
       Sunspot.commit
 
       get 'autocomplete', q: 'tea'
@@ -31,7 +32,7 @@ describe TeamsController, type: :controller, search: true do
     end
 
     it 'should return the users in the Users Bucket' do
-      user = create(:user, first_name: 'Juanito', last_name: 'Bazooka', company_id: @company.id)
+      user = create(:user, first_name: 'Juanito', last_name: 'Bazooka', company_id: company.id)
       company_user = user.company_users.first
       Sunspot.commit
 
@@ -44,7 +45,7 @@ describe TeamsController, type: :controller, search: true do
     end
 
     it 'should return the campaigns in the Campaigns Bucket' do
-      campaign = create(:campaign, name: 'Campaign 1', company_id: @company.id)
+      campaign = create(:campaign, name: 'Campaign 1', company_id: company.id)
       Sunspot.commit
 
       get 'autocomplete', q: 'cam'

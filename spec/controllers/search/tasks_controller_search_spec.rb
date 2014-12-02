@@ -22,7 +22,8 @@ describe TasksController, type: :controller, search: true do
       expect(response).to be_success
 
       buckets = JSON.parse(response.body)
-      expect(buckets.map { |b| b['label'] }).to eq(%w(Tasks Campaigns People))
+      expect(buckets.map { |b| b['label'] }).to eq([
+        'Tasks', 'Campaigns', 'People', 'Task Status', 'Active State'])
     end
 
     it 'should return the users in the People Bucket' do

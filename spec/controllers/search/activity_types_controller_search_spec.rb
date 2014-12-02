@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe RolesController, type: :controller, search: true do
+describe ActivityTypesController, type: :controller, search: true do
   let(:user) { sign_in_as_user }
   let(:company) { user.companies.first }
   let(:company_user) { user.current_company_user }
@@ -8,25 +8,27 @@ describe RolesController, type: :controller, search: true do
   before { user }
 
   describe "GET 'autocomplete'" do
-    it 'should return the correct buckets in the right order' do
+    it 'returns the correct buckets in the right order' do
       Sunspot.commit
       get 'autocomplete'
       expect(response).to be_success
 
       buckets = JSON.parse(response.body)
-      expect(buckets.map { |b| b['label'] }).to eq(['Roles', 'Active State'])
+      expect(buckets.map { |b| b['label'] }).to eq(['Activity Types', 'Active State'])
     end
 
-    it 'should return the roles in the Roles Bucket' do
-      role = create(:role, name: 'Role 1', company: company)
+    it 'should return the brands in the Day parts Bucket' do
+      activity_type = create(:activity_type, name: 'Activity Type 1', company_id: company.id)
       Sunspot.commit
 
-      get 'autocomplete', q: 'rol'
+      get 'autocomplete', q: 'act'
       expect(response).to be_success
 
       buckets = JSON.parse(response.body)
-      roles_bucket = buckets.select { |b| b['label'] == 'Roles' }.first
-      expect(roles_bucket['value']).to eq([{ 'label' => '<i>Rol</i>e 1', 'value' => role.id.to_s, 'type' => 'role' }])
+      activity_type_bucket = buckets.select { |b| b['label'] == 'Activity Types' }.first
+      expect(activity_type_bucket['value']).to eq([
+        { 'label' => '<i>Act</i>ivity Type 1', 'value' => activity_type.id.to_s, 'type' => 'activity_type' }
+      ])
     end
   end
 

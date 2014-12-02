@@ -16,7 +16,8 @@ describe CompanyUsersController, type: :controller, search: true do
         expect(response).to be_success
 
         buckets = JSON.parse(response.body)
-        expect(buckets.map { |b| b['label'] }).to eq(%w(Users Teams Roles Campaigns Places))
+        expect(buckets.map { |b| b['label'] }).to eq([
+          'Users', 'Teams', 'Roles', 'Campaigns', 'Places', 'Active State'])
       end
 
       it 'should return the users in the User Bucket' do

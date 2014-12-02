@@ -16,7 +16,8 @@ describe EventsController, type: :controller, search: true do
         expect(response).to be_success
 
         buckets = JSON.parse(response.body)
-        expect(buckets.map { |b| b['label'] }).to eq(%w(Campaigns Brands Places People))
+        expect(buckets.map { |b| b['label'] }).to eq([
+          'Campaigns', 'Brands', 'Places', 'People', 'Active State', 'Event Status'])
       end
 
       it 'should return the users in the People Bucket' do
@@ -28,7 +29,7 @@ describe EventsController, type: :controller, search: true do
         expect(response).to be_success
 
         buckets = JSON.parse(response.body)
-        people_bucket = buckets.select { |b| b['label'] == 'People' }.first
+        people_bucket = buckets.find { |b| b['label'] == 'People' }
         expect(people_bucket['value']).to eq([
           { 'label' => '<i>Gu</i>illermo Vargas', 'value' => company_user.id.to_s,
             'type' => 'company_user' }])
@@ -44,7 +45,7 @@ describe EventsController, type: :controller, search: true do
         expect(response).to be_success
 
         buckets = JSON.parse(response.body)
-        people_bucket = buckets.select { |b| b['label'] == 'People' }.first
+        people_bucket = buckets.find { |b| b['label'] == 'People' }
         expect(people_bucket['value']).to eq([
           { 'label' => '<i>Gu</i>illermo Vargas', 'value' => company_user.id.to_s,
             'type' => 'company_user' }])
@@ -58,7 +59,7 @@ describe EventsController, type: :controller, search: true do
         expect(response).to be_success
 
         buckets = JSON.parse(response.body)
-        people_bucket = buckets.select { |b| b['label'] == 'People' }.first
+        people_bucket = buckets.find { |b| b['label'] == 'People' }
         expect(people_bucket['value']).to eq([
           { 'label' => '<i>Sp</i>urs', 'value' => team.id.to_s, 'type' => 'team' }])
       end
@@ -72,7 +73,7 @@ describe EventsController, type: :controller, search: true do
         expect(response).to be_success
 
         buckets = JSON.parse(response.body)
-        people_bucket = buckets.select { |b| b['label'] == 'People' }.first
+        people_bucket = buckets.find { |b| b['label'] == 'People' }
         expect(people_bucket['value']).to eq([
           { 'label' => '<i>Sp</i>urs', 'value' => team.id.to_s, 'type' => 'team' }])
       end
@@ -87,7 +88,7 @@ describe EventsController, type: :controller, search: true do
         expect(response).to be_success
 
         buckets = JSON.parse(response.body)
-        people_bucket = buckets.select { |b| b['label'] == 'People' }.first
+        people_bucket = buckets.find { |b| b['label'] == 'People' }
         expect(people_bucket['value']).to eq([
           { 'label' => '<i>Va</i>lladolid', 'value' => team.id.to_s, 'type' => 'team' },
           { 'label' => 'Guillermo <i>Va</i>rgas', 'value' => company_user.id.to_s,
@@ -103,7 +104,7 @@ describe EventsController, type: :controller, search: true do
         expect(response).to be_success
 
         buckets = JSON.parse(response.body)
-        campaigns_bucket = buckets.select { |b| b['label'] == 'Campaigns' }.first
+        campaigns_bucket = buckets.find { |b| b['label'] == 'Campaigns' }
         expect(campaigns_bucket['value']).to eq([
           { 'label' => '<i>Cac</i>ique para todos', 'value' => campaign.id.to_s,
             'type' => 'campaign' }
@@ -119,7 +120,7 @@ describe EventsController, type: :controller, search: true do
         expect(response).to be_success
 
         buckets = JSON.parse(response.body)
-        campaigns_bucket = buckets.select { |b| b['label'] == 'Campaigns' }.first
+        campaigns_bucket = buckets.find { |b| b['label'] == 'Campaigns' }
         expect(campaigns_bucket['value']).to eq([
           { 'label' => '<i>Cac</i>ique para todos', 'value' => campaign.id.to_s,
             'type' => 'campaign' }
@@ -134,7 +135,7 @@ describe EventsController, type: :controller, search: true do
         expect(response).to be_success
 
         buckets = JSON.parse(response.body)
-        brands_bucket = buckets.select { |b| b['label'] == 'Brands' }.first
+        brands_bucket = buckets.find { |b| b['label'] == 'Brands' }
         expect(brands_bucket['value']).to eq([
           { 'label' => '<i>Cac</i>ique', 'value' => brand.id.to_s, 'type' => 'brand' }])
       end
@@ -148,9 +149,20 @@ describe EventsController, type: :controller, search: true do
         expect(response).to be_success
 
         buckets = JSON.parse(response.body)
-        places_bucket = buckets.select { |b| b['label'] == 'Places' }.first
+        places_bucket = buckets.find { |b| b['label'] == 'Places' }
         expect(places_bucket['value']).to eq([
           { 'label' => '<i>Mot</i>el Paraiso', 'value' => venue.id.to_s, 'type' => 'venue' }
+        ])
+      end
+
+      it 'should return inactive in the Active State Bucket' do
+        get 'autocomplete', q: 'inact'
+        expect(response).to be_success
+
+        buckets = JSON.parse(response.body)
+        places_bucket = buckets.find { |b| b['label'] == 'Active State' }
+        expect(places_bucket['value']).to eq([
+          { 'label' => '<i>Inact</i>ive', 'value' => 'Inactive', 'type' => 'status' }
         ])
       end
     end
