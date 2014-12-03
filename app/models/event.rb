@@ -234,6 +234,7 @@ class Event < ActiveRecord::Base
 
   after_initialize :set_start_end_dates
   before_validation :parse_start_end
+  before_validation :look_for_visit
   after_validation :delegate_errors
 
   after_validation :set_event_timezone
@@ -700,6 +701,16 @@ class Event < ActiveRecord::Base
     end
     return if end_date.nil? || end_date.empty?
     self.end_at = Timeliness.parse([end_date, end_time.to_s.strip].compact.join(' ').strip, zone: :current)
+  end
+
+  def look_for_visit
+    c = company || campaign.company
+    return if visit_id || !c
+    self.visit = c.brand_ambassadors_visits
+            .where(company_user_id: user_ids, campaign: campaign)
+            .where('start_date <= ? AND end_date >= ?', start_at.to_date.to_s(:db), end_at.to_date.to_s(:db))
+            .first
+    true
   end
 
   # Sets the values for start_date, start_time, end_date and end_time when from start_at and end_at
