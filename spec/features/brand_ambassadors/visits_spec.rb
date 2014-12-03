@@ -11,7 +11,7 @@ feature 'Brand Ambassadors Visits' do
   let(:place) { create(:place, name: 'A Nice Place in the APP', country: 'CR', city: 'Curridabat', state: 'San Jose') }
   let(:permissions) { [] }
   let(:area) { create(:area, name: 'My Area', company: company) }
-  before { area.places << create(:city, name: 'New York') }
+  before { area.places << create(:city, name: 'New York', state: 'New York') }
 
   before do
     Warden.test_mode!
@@ -161,35 +161,36 @@ feature 'Brand Ambassadors Visits' do
     let(:place2) { create(:place, name: 'Place 2', city: 'Austin', state: 'TX', country: 'US', types: %w(political locality)) }
     let(:campaign1) { create(:campaign, name: 'Campaign FY2012', company: company) }
     let(:campaign2) { create(:campaign, name: 'Another Campaign April 03', company: company) }
-    let(:ba_visit1)do
+    let(:ba_visit1) do
       create(:brand_ambassadors_visit, company: company,
                       start_date: today, end_date: (today + 1.day).to_s(:slashes),
                       city: 'Los Angeles', area: area1, campaign: campaign,
                       visit_type: 'brand_program', description: 'Visit1 description',
                       company_user: company_user, active: true)
     end
-    let(:ba_visit2)do
+    let(:ba_visit2) do
       create(:brand_ambassadors_visit, company: company,
                       start_date: (today + 1.day).to_s(:slashes), end_date: (today + 4.day).to_s(:slashes),
                       city: 'Austin', area: area2, campaign: campaign,
                       visit_type: 'market_visit', description: 'Visit2 description',
                       company_user: another_user, active: true)
     end
-    let(:event1)do
+    let(:event1) do
       create(:event, start_date: today.to_s(:slashes), company: company, active: true,
                       end_date: today.to_s(:slashes), start_time: '10:00am', end_time: '11:00am',
                       campaign: campaign1, place: place1)
     end
-    let(:event2)do
+    let(:event2) do
       create(:event, start_date: (today + 1.day).to_s(:slashes), company: company, active: true,
                       end_date: (today + 2.day).to_s(:slashes), start_time: '11:00am',  end_time: '12:00pm',
                       campaign: campaign2, place: place2)
     end
 
+
     scenario 'should allow filter visits and see the correct message' do
       Timecop.travel(today) do
-        la = create(:city, name: 'Los Angeles', state: 'CA', country: 'US')
-        au = create(:city, name: 'Austin', state: 'TX', country: 'US')
+        la = create(:city, name: 'Los Angeles', state: 'California', country: 'US')
+        au = create(:city, name: 'Austin', state: 'Texas', country: 'US')
         area1.places << [la, au]
         area2.places << [la, au]
         company_user.areas << [area1, area2]
@@ -198,8 +199,9 @@ feature 'Brand Ambassadors Visits' do
         company_user.campaigns << campaign1
         company_user.campaigns << campaign2
         event1.users << another_user
-        ba_visit1.events << event1
-        ba_visit2.events << event2
+        ba_visit1
+        ba_visit2
+
         Sunspot.commit
 
         visit brand_ambassadors_root_path
@@ -590,7 +592,7 @@ feature 'Brand Ambassadors Visits' do
   shared_examples_for 'a user that can view visits details and deactivate visits' do
     scenario 'can activate/deactivate a visit from the details view' do
       ba_visit = create(:brand_ambassadors_visit,
-                                    company: company, campaign: campaign, company_user: company_user)
+                        company: company, campaign: campaign, company_user: company_user)
 
       visit brand_ambassadors_visit_path(ba_visit)
 

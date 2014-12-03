@@ -896,6 +896,8 @@ $.widget 'nmk.filteredList', {
 
 	_placeholderEmptyState: () ->
 		message = '<p>There are no results matching the filtering criteria you selected.<br />Please select different filtering criteria.</p>'
+		if @options.placeholderMessage?
+			message = @options.placeholderMessage()
 		if @options.placeholderElement?
 			@options.placeholderElement(message)
 		else

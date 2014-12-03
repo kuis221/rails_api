@@ -25,8 +25,6 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
   belongs_to :campaign
   belongs_to :area
 
-  has_many :events, inverse_of: :visit
-
   delegate :name, to: :area, allow_nil: true, prefix: true
   delegate :name, :color, to: :campaign, allow_nil: true, prefix: true
 

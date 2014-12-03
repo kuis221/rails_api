@@ -20,7 +20,6 @@
 #  local_start_at :datetime
 #  local_end_at   :datetime
 #  description    :text
-#  visit_id       :integer
 #
 
 require 'rails_helper'
@@ -1356,31 +1355,6 @@ describe Event, type: :model do
       event.save
       activity.reload
       expect(activity.campaign_id).to eql(new_campaign.id)
-    end
-  end
-
-  describe 'look_for_visit' do
-    let(:company) { create(:company) }
-    let(:company_user) { create(:company_user, company: company) }
-    let(:campaign) { create(:campaign, company: company) }
-
-    it 'assigns the visit id if a match is found' do
-      visit = create(:brand_ambassadors_visit,
-                     company_user: company_user, campaign: campaign, company: company,
-                     start_date: '01/01/2014', end_date: '01/15/2014')
-      event = create(:event, user_ids: [company_user.id], campaign: campaign,
-                             start_date: '01/07/2014', end_date: '01/07/2014')
-      expect(event.visit).to eql visit
-    end
-
-
-    it 'does not assigns the visit id if a the date range is not valid' do
-      visit = create(:brand_ambassadors_visit,
-                     company_user: company_user, campaign: campaign, company: company,
-                     start_date: '01/01/2014', end_date: '01/15/2014')
-      event = create(:event, user_ids: [company_user.id], campaign: campaign,
-                             start_date: '01/10/2014', end_date: '01/16/2014')
-      expect(event.visit).to be_nil
     end
   end
 end
