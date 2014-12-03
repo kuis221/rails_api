@@ -43,7 +43,10 @@ class Venue < ActiveRecord::Base
 
   include Normdist
 
-  delegate :name, :types, :formatted_address, :formatted_phone_number, :website, :price_level, :city, :street, :state, :state_name, :country, :country_name, :zipcode, :reference, :latitude, :longitude, :opening_hours, :td_linx_code, to: :place
+  delegate :name, :types, :formatted_address, :formatted_phone_number, :website, :price_level,
+           :city, :street, :state, :state_name, :country, :country_name, :zipcode, :reference,
+           :latitude, :longitude, :opening_hours, :td_linx_code,
+           to: :place
 
   searchable do
     integer :id

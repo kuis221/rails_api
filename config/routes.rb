@@ -18,6 +18,7 @@ Brandscopic::Application.routes.draw do
         end
 
         resources :events, only: [:index, :show, :create, :update] do
+          get :status_facets, on: :collection
           resources :photos, only: [:index, :create, :update] do
             get :form, on: :collection
           end

@@ -30,19 +30,24 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
   end
 
+  def_param_group :search_params do
+    param :start_date, %r{\A\d{1,2}/\d{1,2}/\d{4}\z}, desc: 'A date to filter the event list. When provided a start_date without an +end_date+, the result will only include events that happen on this day. The date should be in the format MM/DD/YYYY.'
+    param :end_date, %r{\A\d{1,2}/\d{1,2}/\d{4}\z}, desc: 'A date to filter the event list. This should be provided together with the +start_date+ param and when provided will filter the list with those events that are between that range. The date should be in the format MM/DD/YYYY.'
+    param :campaign, Array, desc: 'A list of campaign ids to filter the results'
+    param :place, Array, desc: 'A list of places to filter the results'
+    param :venue, Array, desc: 'A list of venues to filter the results'
+    param :area, Array, desc: 'A list of areas to filter the results'
+    param :user, Array, desc: 'A list of users to filter the results'
+    param :team, Array, desc: 'A list of teams to filter the results'
+    param :brand, Array, desc: 'A list of brands to filter the results'
+    param :brand_porfolio, Array, desc: 'A list of brand portfolios to filter the results'
+    param :status, Array, desc: "A list of event status to filter the results. The possible options are: 'Active', 'Inactive'"
+    param :event_status, Array, desc: "A list of event recap status to filter the results. The possible options are: 'Scheduled', 'Executed', 'Submitted', 'Approved', 'Rejected', 'Late', 'Due'"
+    param :page, :number, desc: 'The number of the page, Default: 1'
+  end
+
   api :GET, '/api/v1/events', 'Search for a list of events'
-  param :start_date, %r{\A\d{1,2}/\d{1,2}/\d{4}\z}, desc: 'A date to filter the event list. When provided a start_date without an +end_date+, the result will only include events that happen on this day. The date should be in the format MM/DD/YYYY.'
-  param :end_date, %r{\A\d{1,2}/\d{1,2}/\d{4}\z}, desc: 'A date to filter the event list. This should be provided together with the +start_date+ param and when provided will filter the list with those events that are between that range. The date should be in the format MM/DD/YYYY.'
-  param :campaign, Array, desc: 'A list of campaign ids to filter the results'
-  param :place, Array, desc: 'A list of places to filter the results'
-  param :area, Array, desc: 'A list of areas to filter the results'
-  param :user, Array, desc: 'A list of users to filter the results'
-  param :team, Array, desc: 'A list of teams to filter the results'
-  param :brand, Array, desc: 'A list of brands to filter the results'
-  param :brand_porfolio, Array, desc: 'A list of brand portfolios to filter the results'
-  param :status, Array, desc: "A list of event status to filter the results. The possible options are: 'Active', 'Inactive'"
-  param :event_status, Array, desc: "A list of event recap status to filter the results. The possible options are: 'Scheduled', 'Executed', 'Submitted', 'Approved', 'Rejected', 'Late', 'Due'"
-  param :page, :number, desc: 'The number of the page, Default: 1'
+  param_group :search_params
   see 'users#companies', 'User companies'
 
   description <<-EOS
@@ -50,40 +55,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
     All the times and dates are returned on the user's timezone.
 
-    *Facets*
-
-    Faceting is a feature of Solr that determines the number of documents that match a given search and an additional criteria
-
-    When <page> is "1", the result will include a list of facets scoped on the following search params
-
-    - start_date
-    - end_date
-
-    *Facets Results*
-
-    The API returns the facets on the following format:
-
-      [
-        {
-          label: String,            # Any of: Campaigns, Brands, Location, People, Active State, Event Status
-          items: [                  # List of items for the facet sorted by relevance
-            {
-              "label": String,      # The name of the item
-              "id": String,         # The id of the item, this should be used to filter the list by this items
-              "name": String,       # The param name to be use for filtering the list (campaign, user, team, place, area, status, event_status)
-              "count": Number,      # The number of results for this item
-              "selected": Boolean   # True if the list is being filtered by this item
-            },
-            ....
-          ],
-          top_items: [              # Some facets will return this as a list of items that have the greater number of results
-            <other list of items>
-          ]
-        }
-      ]
-
   EOS
-
   example <<-EOS
   {
       "page": 1,
@@ -152,6 +124,45 @@ class Api::V1::EventsController < Api::V1::FilteredController
   EOS
   def index
     collection
+  end
+
+  api :GET, '/api/v1/events/status_facets', 'Returns the facets for the event status'
+  param_group :search_params
+  description <<-EOS
+    The API returns the facets on the following format:
+
+      [
+        {
+          label: String,            # Any of: Campaigns, Brands, Location, People, Active State, Event Status
+          items: [                  # List of items for the facet sorted by relevance
+            {
+              "label": String,      # The name of the item
+              "id": String,         # The id of the item, this should be used to filter the list by this items
+              "name": String,       # The param name to be use for filtering the list (campaign, user, team, place, area, status, event_status)
+              "count": Number,      # The number of results for this item
+              "selected": Boolean   # True if the list is being filtered by this item
+            },
+            ....
+          ],
+          top_items: [              # Some facets will return this as a list of items that have the greater number of results
+            <other list of items>
+          ]
+        }
+      ]
+  EOS
+  def status_facets
+    authorize! :index, Event
+
+    search = resource_class.do_search(search_params, true)
+
+    items = [:late, :due, :submitted, :rejected, :approved]
+
+    @facets = search.facet(:status).rows.select { |f| items.include?(f.value) }.map do |f|
+      items.delete(f.value)
+      { id: f.value.to_s.titleize, name: :event_status, count: f.count, label: f.value.to_s.titleize }
+    end
+
+    @facets.concat(items.map { |i| { id: i, name: :event_status, count: 0, label: i.to_s.titleize } })
   end
 
   api :GET, '/api/v1/events/autocomplete', 'Return a list of results grouped by categories'
@@ -1581,7 +1592,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   end
 
   def permitted_search_params
-    params.permit(:page, :start_date, :end_date, { campaign: [] }, { place: [] }, { area: [] },
+    params.permit(:page, :start_date, :end_date, { campaign: [] }, { place: [] }, { area: [] }, { venue: [] },
                   { user: [] }, { team: [] }, { brand: [] }, { brand_porfolio: [] }, { status: [] }, event_status: [])
   end
 

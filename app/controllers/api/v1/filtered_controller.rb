@@ -6,10 +6,13 @@ class Api::V1::FilteredController < Api::V1::ApiController
   helper_method :facets, :collection_count, :total_pages
 
   def collection
-    @solr_search = resource_class.do_search(search_params)
-    @collection_count = @solr_search.total
-    @total_pages = @solr_search.results.total_pages
-    set_collection_ivar(@solr_search.results)
+    @collection_count = solr_search.total
+    @total_pages = solr_search.results.total_pages
+    set_collection_ivar(solr_search.results)
+  end
+
+  def solr_search
+    @solr_search ||= resource_class.do_search(search_params)
   end
 
   attr_reader :collection_count

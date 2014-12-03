@@ -53,7 +53,9 @@ describe Api::V1::EventsController, type: :controller do
 
       expect(result['results'].count).to eq(3)
     end
+  end
 
+  describe "GET 'status_facets'", search: true do
     it 'return the facets for the search' do
       campaign = create(:campaign, company: company)
       place = create(:place)
@@ -61,35 +63,25 @@ describe Api::V1::EventsController, type: :controller do
       create(:rejected_event, company: company, campaign: campaign, place: place)
       create(:submitted_event, company: company, campaign: campaign, place: place)
       create(:late_event, company: company, campaign: campaign, place: place)
+      create(:due_event, company: company, campaign: campaign, place: place)
 
       # Make sure custom filters are not returned
       create(:custom_filter, owner: company, group: 'SAVED FILTERS', apply_to: 'events')
 
       Sunspot.commit
 
-      get :index, format: :json
+      get :status_facets, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
 
-      expect(result['results'].count).to eq(4)
-      expect(result['facets'].map { |f| f['label'] }).to match_array(['Campaigns', 'Brands', 'Areas', 'People', 'Active State', 'Event Status'])
+      expect(result['facets'].map { |f| f['label'] }).to match_array(
+        %w(Approved Due Late Rejected Submitted))
 
       expect(
-        result['facets'].find { |f| f['label'] == 'Event Status' }['items'].map do |i|
-          [i['label'], i['count']]
-        end
+        result['facets'].map { |i| [i['label'], i['count']] }
       ).to match_array([
         ['Late', 1], ['Due', 1], ['Submitted', 1],
         ['Rejected', 1], ['Approved', 1]])
-    end
-
-    it 'should not include the facets when the page is greater than 1' do
-      get :index, page: 2, format: :json
-      expect(response).to be_success
-      result = JSON.parse(response.body)
-      expect(result['results']).to eq([])
-      expect(result['facets']).to be_nil
-      expect(result['page']).to eq(2)
     end
   end
 
@@ -142,7 +134,6 @@ describe Api::V1::EventsController, type: :controller do
       expect(event.end_at).to eq(Time.zone.parse('2014/11/10 01:00pm'))
       expect(event.place_id).to eq(place.id)
       expect(event.promo_hours).to eq(1)
-      expect(event.visit_id).to eq(visit.id)
     end
   end
 
