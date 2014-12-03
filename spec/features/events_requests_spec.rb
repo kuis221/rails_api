@@ -50,8 +50,6 @@ feature 'Events section' do
 
         visit events_path
 
-        show_all_filters
-
         # Show only inactive items
         add_filter('ACTIVE STATE', 'Inactive')
         remove_filter('Active')
@@ -119,8 +117,6 @@ feature 'Events section' do
           events  # make sure users are created before
           Sunspot.commit
           visit events_path
-
-          show_all_filters
 
           expect(page).to have_selector('#events-list .resource-item', count: 1)
           add_filter 'EVENT STATUS', 'Submitted'
@@ -226,8 +222,6 @@ feature 'Events section' do
 
           visit events_path
 
-          show_all_filters
-
           expect(page).to have_content('1 event found for: Active today to the future')
           add_filter 'ACTIVE STATE', 'Inactive'
 
@@ -281,7 +275,6 @@ feature 'Events section' do
               expect(page).to have_content('Another Campaign April 03')
             end
 
-            show_all_filters
 
             expect(page).to have_filter_section(title: 'CAMPAIGNS',
                                                 options: ['Campaign FY2012', 'Another Campaign April 03'])
@@ -683,8 +676,6 @@ feature 'Events section' do
 
           visit events_path
 
-          show_all_filters
-
           expect(page).to have_filter_section(
             title: 'PEOPLE',
             options: ['Mario Cantinflas', 'Roberto Gomez', user.full_name])
@@ -729,8 +720,6 @@ feature 'Events section' do
 
             visit events_path
 
-            show_all_filters
-
             add_filter 'CAMPAIGNS', 'Campaign FY2012'
             select_filter_calendar_day('18')
 
@@ -763,8 +752,6 @@ feature 'Events section' do
 
             visit events_path
 
-            show_all_filters
-
             expect(page).to have_content('1 event found for: Active today to the future')
             expect(page).to have_selector('#events-list .resource-item', count: 1)
 
@@ -788,8 +775,6 @@ feature 'Events section' do
             visit events_path
             expect(page).to have_content('1 event found for: Active today to the future')
             expect(page).to have_selector('#events-list .resource-item', count: 1)
-
-            show_all_filters
 
             expect(page).to have_content('1 event found for: Active today to the future')
 
@@ -895,8 +880,6 @@ feature 'Events section' do
               Sunspot.commit
               visit events_path
 
-              show_all_filters
-
               expect(page).to have_filter_section(title: 'BRANDS', options: %w(Cacique Smirnoff))
 
               within events_list do
@@ -936,8 +919,6 @@ feature 'Events section' do
 
             visit events_path
 
-            show_all_filters
-
             expect(page).to have_filter_section(title: 'AREAS',
                                                 options: ['Gran Area Metropolitana', 'Zona Norte'])
           end
@@ -969,8 +950,6 @@ feature 'Events section' do
                         '&event_status%5B%5D=Late&status%5B%5D=Active')
 
         visit events_path
-
-        show_all_filters
 
         within events_list do
           expect(page).to have_content('Campaign 1')

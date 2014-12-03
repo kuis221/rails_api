@@ -52,7 +52,7 @@ $.widget 'nmk.filteredList', {
 
 		@element.parent().append $('<a class="list-filter-btn" href="#" data-toggle="filterbar" title="Filter">').append('<i class="icon-gear">')
 
-		expanded = @_getFilterSectionState('_filters')
+		expanded = @_getFilterSectionState('_filters', 'true') == 'true'
 		@formFilters = $('<div class="form-facet-filters accordion">')
 							.on "show", (e) ->
 								$(e.target).closest(".accordion-group").find(".icon-arrow-right").removeClass("icon-arrow-right").addClass("icon-arrow-down").prop "title", "Collapse"
@@ -328,9 +328,9 @@ $.widget 'nmk.filteredList', {
 		catch e
 			false
 
-	_getFilterSectionState: (name) ->
+	_getFilterSectionState: (name, defaultValue='false') ->
 		if @_supportsHtml5Storage()
-			localStorage["filter_#{@options.applyTo}_#{name}"] or false
+			localStorage["filter_#{@options.applyTo}_#{name}"] or defaultValue
 		else
 			false
 
@@ -342,7 +342,7 @@ $.widget 'nmk.filteredList', {
 	addFilterSection: (filter) ->
 		items = filter.items
 		top5 = filter.top_items
-		expanded = @_getFilterSectionState(filter.label.replace(/\s+/g, '-'))
+		expanded = @_getFilterSectionState(filter.label.replace(/\s+/g, '-')) == 'true'
 		$list = $('<ul>')
 		$filter = $('<div class="accordion-group">').append(
 			$('<div class="filter-wrapper accordion-heading">').data('name', filter.name).append(
