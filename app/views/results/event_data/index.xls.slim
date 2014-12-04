@@ -24,18 +24,17 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
       Column ss:Width="160"
       Column ss:Width="100"
       Column ss:Width="70"
-      Column ss:Width="100"
+      Column ss:Width="140"
       Column ss:Width="150"
       Column ss:Width="100"
       Column ss:Width="100"
-      Column ss:Width="120"
-      Column ss:Width="120"
+      Column ss:Width="100"
+      Column ss:Width="100"
       Column ss:Width="80"
       Column ss:Width="80"
       Column ss:Width="80"
       Column ss:Width="80"
       Column ss:Width="80"
-      Column ss:Width="180"
       - custom_fields_to_export_headers.each do |h|
         Column ss:Width="100"
       Row ss:StyleID="s1"
@@ -67,30 +66,6 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
           Data ss:Type="String" START
         Cell
           Data ss:Type="String" END
-        Cell
-          Data ss:Type="String" PROMO HOURS
-        Cell
-          Data ss:Type="String" IMPRESSIONS
-        Cell
-          Data ss:Type="String" INTERACTIONS
-        Cell
-          Data ss:Type="String" SAMPLED
-        Cell
-          Data ss:Type="String" SPENT
-        Cell
-          Data ss:Type="String" FEMALE
-        Cell
-          Data ss:Type="String" MALE
-        Cell
-          Data ss:Type="String" ASIAN
-        Cell
-          Data ss:Type="String" BLACK/AFRICAN AMERICAN
-        Cell
-          Data ss:Type="String" HISPANIC/LATINO
-        Cell
-          Data ss:Type="String" NATIVE AMERICAN
-        Cell
-          Data ss:Type="String" WHITE
         - custom_fields_to_export_headers.each do |h|
           Cell
             Data ss:Type="String"= h
@@ -126,30 +101,6 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
             Data ss:Type="DateTime"= Timeliness.parse(event_date(event, :start_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%FT%R')
           Cell ss:StyleID="s2"
             Data ss:Type="DateTime"= Timeliness.parse(event_date(event, :end_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%FT%R')
-          Cell
-            Data ss:Type="Number"= number_with_precision(event.promo_hours, precision: 1)
-          Cell
-            Data ss:Type="Number"= number_with_delimiter(event.impressions, precision: 1)
-          Cell
-            Data ss:Type="Number"= number_with_delimiter(event.interactions, precision: 1)
-          Cell
-            Data ss:Type="Number"= number_with_delimiter(event.samples, precision: 1)
-          Cell ss:StyleID="s4"
-            Data ss:Type="Number"= event.spent
-          Cell ss:StyleID="percentage"
-            Data ss:Type="Number"= number_with_precision(event.gender_female/100) unless event.gender_female.nil?
-          Cell ss:StyleID="percentage"
-            Data ss:Type="Number"= number_with_precision(event.gender_male/100) unless event.gender_male.nil?
-          Cell ss:StyleID="percentage"
-            Data ss:Type="Number"= number_with_precision(event.ethnicity_asian/100) unless event.ethnicity_asian.nil?
-          Cell ss:StyleID="percentage"
-            Data ss:Type="Number"= number_with_precision(event.ethnicity_black/100) unless event.ethnicity_black.nil?
-          Cell ss:StyleID="percentage"
-            Data ss:Type="Number"= number_with_precision(event.ethnicity_hispanic/100) unless event.ethnicity_hispanic.nil?
-          Cell ss:StyleID="percentage"
-            Data ss:Type="Number"= number_with_precision(event.ethnicity_native_american/100) unless event.ethnicity_native_american.nil?
-          Cell ss:StyleID="percentage"
-            Data ss:Type="Number"= number_with_precision(event.ethnicity_white/100) unless event.ethnicity_white.nil?
           - custom_fields_to_export_values(event).each do |v|
             Cell ss:StyleID=(v ? v[1] : 'normal')
               Data ss:Type=(v ? v[0] : 'String')
