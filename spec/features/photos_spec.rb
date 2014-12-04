@@ -134,8 +134,6 @@ feature 'Photos', js: true do
 
       visit results_photos_path
 
-      show_all_filters
-
       filter_section('STATUS').unicheck('Inactive')
 
       # Check that the image appears on the page

@@ -80,7 +80,7 @@ module AutocompleteHelper
     results.map do |x|
       {
         label: (x.highlight(:name).nil? ? x.stored(:name) : x.highlight(:name).format { |word| "<i>#{word}</i>" }),
-        value: x.primary_key, type: x.class_name.underscore.downcase
+        value: x.primary_key, type: (x.class_name == 'CompanyUser' ? 'user' : x.class_name.underscore)
       }
     end
   end

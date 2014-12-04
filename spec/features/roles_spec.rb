@@ -47,8 +47,6 @@ feature 'Roles', js: true do
         expect(page).to have_no_content('Costa Rica Role')
       end
 
-      show_all_filters
-
       # Make it show only the inactive elements
       add_filter 'ACTIVE STATE', 'Inactive'
       remove_filter 'Active'

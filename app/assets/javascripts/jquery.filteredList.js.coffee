@@ -506,12 +506,11 @@ $.widget 'nmk.filteredList', {
 		, "json"
 
 	_autoCompleteItemSelected: (item) ->
-		name = if item.type == 'company_user' then 'user' else item.type
-		checkbox = @element.find("input[name=\"#{name}[]\"][value=\"#{item.value}\"]")
+		checkbox = @element.find("input[name=\"#{item.type}[]\"][value=\"#{item.value}\"]")
 		if checkbox.length
 			checkbox.click() unless checkbox.prop('checked')
 		else
-			@addParams encodeURIComponent("#{name}[]") + '=' + encodeURIComponent(item.value)
+			@addParams encodeURIComponent("#{item.type}[]") + '=' + encodeURIComponent(item.value)
 		@acInput.val ''
 		@_filtersChanged()
 		false

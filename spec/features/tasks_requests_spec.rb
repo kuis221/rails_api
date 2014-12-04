@@ -84,8 +84,6 @@ feature 'Tasks', js: true, search: true do
         click_js_link 'Deactivate'
       end
 
-      show_all_filters
-
       confirm_prompt 'Are you sure you want to deactivate this task?'
 
       # Make it show only the inactive elements
@@ -128,8 +126,6 @@ feature 'Tasks', js: true, search: true do
         Sunspot.commit
 
         visit mine_tasks_path
-
-        show_all_filters
 
         expect(task_counters).to have_content '3 INCOMPLETE'
         expect(task_counters).to have_content '1 LATE'
@@ -232,8 +228,6 @@ feature 'Tasks', js: true, search: true do
         Sunspot.commit
 
         visit my_teams_tasks_path
-
-        show_all_filters
 
         expect(task_counters).to have_content '1 UNASSIGNED'
         expect(task_counters).to have_content '4 INCOMPLETE'

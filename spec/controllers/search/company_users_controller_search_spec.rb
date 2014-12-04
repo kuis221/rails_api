@@ -32,7 +32,7 @@ describe CompanyUsersController, type: :controller, search: true do
         people_bucket = buckets.select { |b| b['label'] == 'Users' }.first
         expect(people_bucket['value']).to eq([
           { 'label' => '<i>Gu</i>illermo Vargas',
-            'value' => company_user.id.to_s, 'type' => 'company_user' }])
+            'value' => company_user.id.to_s, 'type' => 'user' }])
       end
 
       it 'should return the teams in the Teams Bucket' do

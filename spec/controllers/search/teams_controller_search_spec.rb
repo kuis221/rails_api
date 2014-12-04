@@ -41,7 +41,7 @@ describe TeamsController, type: :controller, search: true do
 
       buckets = JSON.parse(response.body)
       users_bucket = buckets.select { |b| b['label'] == 'Users' }.first
-      expect(users_bucket['value']).to eq([{ 'label' => '<i>Ju</i>anito Bazooka', 'value' => company_user.id.to_s, 'type' => 'company_user' }])
+      expect(users_bucket['value']).to eq([{ 'label' => '<i>Ju</i>anito Bazooka', 'value' => company_user.id.to_s, 'type' => 'user' }])
     end
 
     it 'should return the campaigns in the Campaigns Bucket' do

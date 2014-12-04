@@ -49,8 +49,6 @@ feature 'DayParts', js: true, search: true do
 
       expect(page).to have_no_content('Morning')
 
-      show_all_filters
-
       # Make it show only the inactive elements
       add_filter 'ACTIVE STATE', 'Inactive'
       remove_filter 'Active'
