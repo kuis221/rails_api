@@ -38,8 +38,6 @@ feature 'Brands', js: true do
 
       visit brands_path
 
-      show_all_filters
-
       within resource_item do
         expect(page).to have_content('Brand 1')
         click_js_button 'Deactivate Brand'

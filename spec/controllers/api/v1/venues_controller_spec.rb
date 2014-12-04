@@ -234,7 +234,7 @@ describe Api::V1::VenuesController, type: :controller do
       expect(people_bucket['value']).to eq([{
         'label' => '<i>Gu</i>illermo Vargas',
         'value' => company_user.id.to_s,
-        'type' => 'company_user' }])
+        'type' => 'user' }])
     end
 
     it 'should return the teams in the People Bucket' do
@@ -266,7 +266,7 @@ describe Api::V1::VenuesController, type: :controller do
           'type' => 'team' },
         { 'label' => 'Guillermo <i>Va</i>rgas',
           'value' => company_user.id.to_s,
-          'type' => 'company_user' }])
+          'type' => 'user' }])
     end
 
     it 'should return the campaigns in the Campaigns Bucket' do

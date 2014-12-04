@@ -32,7 +32,7 @@ describe EventsController, type: :controller, search: true do
         people_bucket = buckets.find { |b| b['label'] == 'People' }
         expect(people_bucket['value']).to eq([
           { 'label' => '<i>Gu</i>illermo Vargas', 'value' => company_user.id.to_s,
-            'type' => 'company_user' }])
+            'type' => 'user' }])
       end
 
       it 'should exclude the users in the :user param' do
@@ -48,7 +48,7 @@ describe EventsController, type: :controller, search: true do
         people_bucket = buckets.find { |b| b['label'] == 'People' }
         expect(people_bucket['value']).to eq([
           { 'label' => '<i>Gu</i>illermo Vargas', 'value' => company_user.id.to_s,
-            'type' => 'company_user' }])
+            'type' => 'user' }])
       end
 
       it 'should return the teams in the People Bucket' do
@@ -92,7 +92,7 @@ describe EventsController, type: :controller, search: true do
         expect(people_bucket['value']).to eq([
           { 'label' => '<i>Va</i>lladolid', 'value' => team.id.to_s, 'type' => 'team' },
           { 'label' => 'Guillermo <i>Va</i>rgas', 'value' => company_user.id.to_s,
-            'type' => 'company_user' }
+            'type' => 'user' }
         ])
       end
 

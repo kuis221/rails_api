@@ -564,12 +564,12 @@ class Api::V1::UsersController < Api::V1::FilteredController
     permissions.push 'tasks_comments_team' if can?(:index_team_comments, Task)
     permissions.push 'tasks_create_comments_team' if can?(:create_team_comment, Task)
 
-    permissions.push 'ba_visits' if current_company_user.role.has_permission?(:list, BrandAmbassadors::Visit)
-    permissions.push 'ba_visits_create' if current_company_user.role.has_permission?(:create, BrandAmbassadors::Visit)
-    permissions.push 'ba_visits_edit' if current_company_user.role.has_permission?(:update, BrandAmbassadors::Visit)
-    permissions.push 'ba_visits_deactivate' if current_company_user.role.has_permission?(:deactivate, BrandAmbassadors::Visit)
-    permissions.push 'ba_visits_show' if current_company_user.role.has_permission?(:show, BrandAmbassadors::Visit)
-    permissions.push 'ba_documents' if current_company_user.role.has_permission?(:index, BrandAmbassadors::Document)
+    permissions.push 'ba_visits' if current_company_user.role.has_permission?(:list, ::BrandAmbassadors::Visit)
+    permissions.push 'ba_visits_create' if current_company_user.role.has_permission?(:create, ::BrandAmbassadors::Visit)
+    permissions.push 'ba_visits_edit' if current_company_user.role.has_permission?(:update, ::BrandAmbassadors::Visit)
+    permissions.push 'ba_visits_deactivate' if current_company_user.role.has_permission?(:deactivate, ::BrandAmbassadors::Visit)
+    permissions.push 'ba_visits_show' if current_company_user.role.has_permission?(:show, ::BrandAmbassadors::Visit)
+    permissions.push 'ba_documents' if current_company_user.role.has_permission?(:index, ::BrandAmbassadors::Document)
 
     permissions
   end

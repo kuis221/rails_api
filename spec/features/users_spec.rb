@@ -59,8 +59,6 @@ feature 'Users', js: true do
 
       confirm_prompt 'Are you sure you want to deactivate this user?'
 
-      show_all_filters
-
       # Make it show only the inactive elements
       remove_filter 'Active'
       add_filter 'ACTIVE STATE', 'Inactive'
@@ -79,8 +77,6 @@ feature 'Users', js: true do
       create(:invited_user, first_name: 'Pedro', last_name: 'Navaja', role_id: role.id, company_id: company.id)
       Sunspot.commit
       visit company_users_path
-
-      show_all_filters
 
       # Make it show only the invited elements
       remove_filter 'Active'
@@ -115,8 +111,6 @@ feature 'Users', js: true do
       end
       ensure_modal_was_closed
 
-      show_all_filters
-
       # Deselect "Active" and select "Invited"
       remove_filter 'Active'
       add_filter 'ACTIVE STATE', 'Invited'
@@ -134,8 +128,6 @@ feature 'Users', js: true do
       Sunspot.commit
       visit company_users_path
 
-      show_all_filters
-
       # Make it show only the invited elements
       remove_filter 'Active'
       add_filter 'ACTIVE STATE', 'Invited'
@@ -146,6 +138,7 @@ feature 'Users', js: true do
       end
 
       confirm_prompt 'Are you sure you want to resend the invitation to this user?'
+      wait_for_ajax
 
       the_user = User.last
 

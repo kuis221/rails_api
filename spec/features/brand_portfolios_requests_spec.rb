@@ -57,8 +57,6 @@ feature 'BrandPortfolios', js: true, search: true do
 
         expect(page).to have_content '0 brand portfolios found for: Active'
 
-        show_all_filters
-
         add_filter 'ACTIVE STATE', 'Inactive'
         remove_filter 'Active'
 

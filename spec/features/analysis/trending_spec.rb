@@ -46,8 +46,6 @@ feature 'Trending report' do
 
       click_button 'Done'
 
-      show_all_filters
-
       expect(page).to have_filter_section(
         title: 'SOURCE',
         options: ['Comments'])
@@ -95,8 +93,6 @@ feature 'Trending report' do
       expect(current_path).to eql(questions_analysis_trends_path)
 
       click_button 'Done'
-
-      show_all_filters
 
       expect(page).to have_filter_section(
         title: 'QUESTIONS',
@@ -154,8 +150,6 @@ feature 'Trending report' do
       expect(current_path).to eql(questions_analysis_trends_path)
 
       click_button 'Done'
-
-      show_all_filters
 
       expect(page).to have_filter_section(
         title: 'SOURCE',
