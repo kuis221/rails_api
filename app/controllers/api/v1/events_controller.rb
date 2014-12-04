@@ -1,6 +1,10 @@
 class Api::V1::EventsController < Api::V1::FilteredController
   extend TeamMembersHelper
 
+  skip_load_and_authorize_resource only: :update
+  skip_authorization_check only: :update
+  before_action :authorize_update, only: :update
+
   resource_description do
     short 'Events'
     formats %w(json xml)
@@ -1623,5 +1627,11 @@ class Api::V1::EventsController < Api::V1::FilteredController
     else
       resource.memberships.where(company_user_id: params[:memberable_id], memberable_id: params[:id]).first
     end
+  end
+
+  def authorize_update
+    return unless cannot?(:update, resource) && cannot?(:edit_data, resource)
+
+    fail CanCan::AccessDenied, unauthorized_message(:update, resource)
   end
 end
