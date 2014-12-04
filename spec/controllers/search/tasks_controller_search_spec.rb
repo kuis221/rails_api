@@ -14,7 +14,7 @@ describe TasksController, type: :controller, search: true do
       expect(response).to be_success
 
       buckets = JSON.parse(response.body)
-      expect(buckets.map { |b| b['label'] }).to eq(%w(Tasks Campaigns))
+      expect(buckets.map { |b| b['label'] }).to eq(['Tasks', 'Campaigns', 'Task Status', 'Active State'])
     end
 
     it "should return the correct buckets in the right order when the user is in the 'teams' scope" do

@@ -1161,7 +1161,7 @@ feature 'Events section' do
         event = create(:event,
                        start_date: '08/28/2013', end_date: '08/28/2013',
                        start_time: '8:00 PM', end_time: '11:00 PM',
-                       campaign: create(:campaign, company: company))
+                       campaign: campaign)
         visit event_path(event)
 
         feature_name = 'GETTING STARTED: EVENT DETAILS'
@@ -1188,7 +1188,7 @@ feature 'Events section' do
         event = create(:approved_event,
                        start_date: '08/28/2013', end_date: '08/28/2013',
                        start_time: '8:00 PM', end_time: '11:00 PM',
-                       campaign: create(:campaign, company: company))
+                       campaign: campaign)
         visit event_path(event)
 
         feature_name = 'GETTING STARTED: EVENT DETAILS'
@@ -1214,8 +1214,7 @@ feature 'Events section' do
       scenario 'GET show should display the event details page' do
         event = create(:event, campaign: campaign,
                                start_date: '08/28/2013', end_date: '08/28/2013',
-                               start_time: '8:00 PM', end_time: '11:00 PM',
-                               campaign: create(:campaign, name: 'Campaign FY2012', company: company))
+                               start_time: '8:00 PM', end_time: '11:00 PM')
         visit event_path(event)
         expect(page).to have_selector('h2', text: 'Campaign FY2012')
         within('.calendar-data') do
@@ -1231,18 +1230,16 @@ feature 'Events section' do
         end
 
         scenario "should display the dates relative to event's timezone" do
-          event = nil
           # Create a event with the time zone "Central America"
-          Time.use_zone('Central America') do
-            event = create(:event, campaign: campaign,
-                                   start_date: '08/21/2013', end_date: '08/21/2013',
-                                   start_time: '10:00am', end_time: '11:00am')
+          event = Time.use_zone('Central America') do
+            create(:event, campaign: campaign,
+                           start_date: '08/21/2013', end_date: '08/21/2013',
+                           start_time: '10:00am', end_time: '11:00am')
           end
 
           # Just to make sure the current user is not in the same timezone
           expect(user.time_zone).to eq('Pacific Time (US & Canada)')
 
-          Sunspot.commit
           visit event_path(event)
 
           within('.calendar-data') do
@@ -1259,7 +1256,6 @@ feature 'Events section' do
         create(:user,
                first_name: 'Anonymous', last_name: 'User', email: 'anonymous@gmail.com',
                company_id: company.id, role_id: company_user.role_id)
-        Sunspot.commit
 
         visit event_path(event)
 
@@ -1332,7 +1328,6 @@ feature 'Events section' do
       end
 
       scenario 'allows to add a contact as contact to the event', js: true do
-        event = create(:event, campaign: campaign)
         create(:contact,
                first_name: 'Guillermo', last_name: 'Vargas',
                email: 'guilleva@gmail.com', company_id: company.id)
@@ -1365,9 +1360,6 @@ feature 'Events section' do
       end
 
       scenario 'allows to create a contact', js: true do
-        event = create(:event, campaign: create(:campaign, name: 'Campaign FY2012', company: company), company: company)
-        Sunspot.commit
-
         visit event_path(event)
 
         click_js_button 'Add Contact'
@@ -1388,23 +1380,23 @@ feature 'Events section' do
 
         ensure_modal_was_closed
 
-        # Test the user was added to the list of event members and it can be removed
+        # Test the contact was added to the list of event members and it can be removed
         within '#event-contacts-list' do
           expect(page).to have_content('Pedro Picapiedra')
         end
 
-        # Test removal of the user
+        # Test removal of the contact
         hover_and_click('#event-contacts-list .event-contact', 'Remove Contact')
+        expect(page).to_not have_content('Pedro Picapiedra')
 
-        # Refresh the page and make sure the user is not there
+        # Refresh the page and make sure the contact is not there
         visit event_path(event)
 
         expect(page).to_not have_content('Pedro Picapiedra')
       end
 
       scenario 'allows to edit a contact', js: true do
-        event = create(:event, campaign: create(:campaign, name: 'Campaign FY2012', company: company), company: company)
-        contact = create(:contact, first_name: 'Guillermo', last_name: 'Vargas', email: 'guilleva@gmail.com', company_id: company.id)
+        contact = create(:contact, first_name: 'Guillermo', last_name: 'Vargas', email: 'guilleva@gmail.com', company: company)
         create(:contact_event, event: event, contactable: contact)
         Sunspot.commit
 
@@ -1490,8 +1482,6 @@ feature 'Events section' do
       end
 
       scenario 'the entered data should be saved automatically when submitting the event recap' do
-        Kpi.create_global_kpis
-        campaign = create(:campaign, company: company)
         kpi = create(:kpi, name: 'Test Field', kpi_type: 'number', capture_mechanism: 'integer')
 
         campaign.add_kpi kpi
@@ -1512,7 +1502,6 @@ feature 'Events section' do
       end
 
       scenario 'should not submit the event data if there are validation errors' do
-        campaign = create(:campaign, company: company)
         kpi = create(:kpi, name: 'Test Field', kpi_type: 'number', capture_mechanism: 'integer')
 
         field = campaign.add_kpi(kpi)

@@ -59,6 +59,7 @@ en:
     people: 'People'
     places: 'Places'
     roles: 'Roles'
+    tasks: 'Tasks'
     teams: 'Teams'
     task_status: 'Task Status'
     user_active_state: 'Active State'
