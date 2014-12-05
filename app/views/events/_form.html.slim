@@ -47,8 +47,8 @@
 
 javascript:
   val = $('#calendar_start_date').text();
-  visitStartDate = "#{resource.visit_id ? current_company.brand_ambassadors_visits.find(resource.visit_id).start_date : ''}";
-  visitEndDate = "#{resource.visit_id ? current_company.brand_ambassadors_visits.find(resource.visit_id).end_date : ''}";
+  visitStartDate = "#{resource.visit_id.present? ? current_company.brand_ambassadors_visits.find(resource.visit_id).start_date : ''}";
+  visitEndDate = "#{resource.visit_id.present? ? current_company.brand_ambassadors_visits.find(resource.visit_id).end_date : ''}";
   $('#event_start_date').datepicker({
     showOtherMonths: true,
     selectOtherMonths: true,
