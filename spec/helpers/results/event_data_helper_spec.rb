@@ -292,13 +292,18 @@ describe Results::EventDataHelper, type: :helper do
         event.result_for_kpi(kpi).value = { seg1.id.to_s => '66', seg2.id.to_s => '34' }
         event.save
 
-        expect(helper.custom_fields_to_export_values(event)).to eq([nil, ['Number', 'percentage', 0.66], ['Number', 'percentage', 0.34]])
+        expect(helper.custom_fields_to_export_values(event)).to eq([
+          ["Number", "percentage", 0.66], ["Number", "percentage", 0.34], nil
+        ])
 
         event.result_for_kpi(kpi2).value = '666666'
         event.save
 
-        expect(helper.custom_fields_to_export_headers).to eq(['A CUSTOM KPI', 'MY KPI: UNO', 'MY KPI: DOS'])
-        expect(helper.custom_fields_to_export_values(event)).to eq([['Number', 'normal', 666_666], ['Number', 'percentage', 0.66], ['Number', 'percentage', 0.34]])
+        expect(helper.custom_fields_to_export_headers).to eq(
+          ['MY KPI: UNO', 'MY KPI: DOS', 'A CUSTOM KPI'])
+        expect(helper.custom_fields_to_export_values(event)).to eq([
+          ['Number', 'percentage', 0.66], ['Number', 'percentage', 0.34], ['Number', 'normal', 666_666]
+        ])
       end
 
       it "returns nil for the fields that doesn't apply to the event's campaign" do
