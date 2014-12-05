@@ -151,9 +151,15 @@ module Results
 
     def form_fields_for_events(campaign_ids)
       if campaign_ids.any?
+        ordering =
+          if campaign_ids.count == 1
+            'form_fields.ordering ASC'
+          else
+            'lower(form_fields.name) ASC, form_fields.type ASC'
+          end
         fields_scope = FormField.for_events_in_company(current_company_user.company)
                         .where.not(type: exclude_field_types)
-                        .order('lower(form_fields.name) ASC, form_fields.type ASC')
+                        .order(ordering)
         fields_scope = fields_scope.where(campaigns: { id: campaign_ids }) unless current_company_user.is_admin? && campaign_ids.empty?
         fields_scope.map { |field| [field.id, field] }
       else

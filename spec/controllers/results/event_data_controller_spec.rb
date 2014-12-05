@@ -162,18 +162,17 @@ describe Results::EventDataController, type: :controller do
 
       expect(export.reload).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
-         'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL', 'START', 'END', 'AGE: < 12',
-         'AGE: 12 – 17', 'AGE: 18 – 24', 'AGE: 25 – 34', 'AGE: 35 – 44', 'AGE: 45 – 54',
-         'AGE: 55 – 64', 'AGE: 65+', 'ETHNICITY/RACE: ASIAN', 'ETHNICITY/RACE: BLACK / AFRICAN AMERICAN',
-         'ETHNICITY/RACE: HISPANIC / LATINO', 'ETHNICITY/RACE: NATIVE AMERICAN', 'ETHNICITY/RACE: WHITE',
-         'EVENT TYPE', 'GENDER: FEMALE', 'GENDER: MALE', 'IMPRESSIONS', 'INTERACTIONS', 'RADIO FIELD TYPE',
-         'SAMPLES', 'TEST KPI'],
-        ['Test Campaign FY01', 'Angeles Area', '344221', 'Bar Prueba',
-         'Bar Prueba, Los Angeles, California, 12345', 'Los Angeles', 'California', '12345',
-         'Active', 'Approved', 'Test User', "http://localhost:5100/events/#{event.id}",
-         '2019-01-23T10:00', '2019-01-23T12:00', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0',
-         '0.0', '0.0', '0.18', '0.2', '0.21', '0.19', '0.22', 'Event Type Opt 1', '0.6', '0.4',
-         '10.0', '11.0', 'Radio Field Opt 1', '12.0', '8899.0']
+         'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL', 'START', 'END', 'GENDER: FEMALE',
+         'GENDER: MALE', 'AGE: < 12', 'AGE: 12 – 17', 'AGE: 18 – 24', 'AGE: 25 – 34', 'AGE: 35 – 44',
+         'AGE: 45 – 54', 'AGE: 55 – 64', 'AGE: 65+', 'ETHNICITY/RACE: ASIAN',
+         'ETHNICITY/RACE: BLACK / AFRICAN AMERICAN', 'ETHNICITY/RACE: HISPANIC / LATINO',
+         'ETHNICITY/RACE: NATIVE AMERICAN', 'ETHNICITY/RACE: WHITE', 'IMPRESSIONS', 'INTERACTIONS',
+         'SAMPLES', 'TEST KPI', 'EVENT TYPE', 'RADIO FIELD TYPE'],
+        ['Test Campaign FY01', 'Angeles Area', '344221', 'Bar Prueba', 'Bar Prueba, Los Angeles, California, 12345',
+         'Los Angeles', 'California', '12345', 'Active', 'Approved', 'Test User',
+         "http://localhost:5100/events/#{event.id}", '2019-01-23T10:00', '2019-01-23T12:00', '0.6',
+         '0.4', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.18', '0.2', '0.21',
+         '0.19', '0.22', '10.0', '11.0', '12.0', '8899.0', 'Event Type Opt 1', 'Radio Field Opt 1']
       ])
     end
 
@@ -226,16 +225,16 @@ describe Results::EventDataController, type: :controller do
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
-          'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL', 'START', 'END', 'AGE: < 12',
-          'AGE: 12 – 17', 'AGE: 18 – 24', 'AGE: 25 – 34', 'AGE: 35 – 44', 'AGE: 45 – 54',
-          'AGE: 55 – 64', 'AGE: 65+', 'ETHNICITY/RACE: ASIAN',
-          'ETHNICITY/RACE: BLACK / AFRICAN AMERICAN', 'ETHNICITY/RACE: HISPANIC / LATINO',
-          'ETHNICITY/RACE: NATIVE AMERICAN', 'ETHNICITY/RACE: WHITE', 'GENDER: FEMALE',
-          'GENDER: MALE', 'IMPRESSIONS', 'INTERACTIONS', 'SAMPLES'],
+         'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL', 'START', 'END', 'GENDER: FEMALE',
+         'GENDER: MALE', 'AGE: < 12', 'AGE: 12 – 17', 'AGE: 18 – 24', 'AGE: 25 – 34',
+         'AGE: 35 – 44', 'AGE: 45 – 54', 'AGE: 55 – 64', 'AGE: 65+', 'ETHNICITY/RACE: ASIAN',
+         'ETHNICITY/RACE: BLACK / AFRICAN AMERICAN', 'ETHNICITY/RACE: HISPANIC / LATINO',
+         'ETHNICITY/RACE: NATIVE AMERICAN', 'ETHNICITY/RACE: WHITE', 'IMPRESSIONS',
+         'INTERACTIONS', 'SAMPLES'],
         ['Test Campaign FY01', nil, nil, nil, nil, nil, nil, nil, 'Active', 'Approved', nil,
-          "http://localhost:5100/events/#{event1.id}", '2013-01-23T10:00', '2013-01-23T12:00',
-          '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0',
-          '0.0', '0.0', '0.0', '0.0', '0.0', '111.0', nil, nil]
+         "http://localhost:5100/events/#{event1.id}", '2013-01-23T10:00', '2013-01-23T12:00', '0.0', '0.0',
+         '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0',
+         '0.0', '111.0', nil, nil]
       ])
     end
 
