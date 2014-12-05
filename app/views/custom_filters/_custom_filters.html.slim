@@ -1,3 +1,2 @@
-#saved-filters-container
-  ul
-    = render partial: 'custom_filters/custom_filter', collection: current_company_user.custom_filters.by_type(apply_to)
+#saved-filters-container.resource-list.select-list
+  = render partial: 'custom_filters/custom_filter', collection: current_company_user.custom_filters.by_type(apply_to)

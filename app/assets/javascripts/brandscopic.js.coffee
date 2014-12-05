@@ -148,7 +148,7 @@ jQuery ->
 		$('select.chosen-enabled').chosen()
 		$('.has-tooltip').tooltip({html: true, delay: 0, animation: false})
 		$('.has-popover').popover({html: true})
-		$("input:checkbox, input:radio").not('[data-no-uniform="true"],#uniform-is-ajax').uniform()
+		$("input:checkbox, input:radio").not('[data-no-uniform="true"], #uniform-is-ajax, .bs-checkbox').uniform()
 
 		$('.segment-field').keyup()
 
@@ -170,6 +170,8 @@ jQuery ->
 		$('form[data-watch-changes]').watchChanges();
 
 		$('.attached_asset_upload_form').attachmentUploadZone();
+
+		$('.bs-checkbox:checkbox').bootstrapSwitch();
 
 		updateSummationTotals()
 

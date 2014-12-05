@@ -1,4 +1,5 @@
 - apply_to = params[:apply_to]
+- collection = current_company_user.custom_filters.by_type(apply_to)
 = simple_form_for(resource, remote: true) do |f|
   = f.hidden_field :apply_to, as: :hidden, value: apply_to
   = f.hidden_field :id, as: :hidden
@@ -7,17 +8,18 @@
 
   .form-inputs
     .row-fluid
-      .span12
-        label
-          = check_box_tag 'filter_setting[settings][]', 'show_inactive_items', resource.settings.include?('show_inactive_items')
-          = 'Show inactive items'
+      .pull-left
+        label Show inactive items
+      .pull-left
+          = check_box_tag 'filter_setting[settings][]', 'show_inactive_items', resource.settings.include?('show_inactive_items'), class: 'bs-checkbox'
 
+  - if collection.present?
     .row-fluid.saved-filters
       .span12
-        h6 SAVED FILTERS
+        h5 SAVED FILTERS
         = render partial: 'custom_filters/custom_filters', locals: { apply_to: apply_to }
 
   .form-actions
-    = f.button :submit, "Done", class: 'btn-primary', data: {disable_with: 'Please wait...'}
+    = f.button :submit, "Done", class: 'btn-primary', data: { disable_with: 'Please wait...' }
     = "&nbsp;".html_safe
     = f.button :button, 'Cancel', class: 'btn-cancel'

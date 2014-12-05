@@ -20,6 +20,7 @@
 //= require jquery_nested_form
 //= require bootbox
 //= require bootstrap-toggle
+//= require bootstrap-switch
 //= require chardinjs
 //= require chosen.jquery
 //= require desk.widget

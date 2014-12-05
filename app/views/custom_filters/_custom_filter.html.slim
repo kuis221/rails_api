@@ -1,3 +1,5 @@
-li id='custom-filter-#{custom_filter.id}'
-  = custom_filter.name
-  span = link_to '', custom_filter_path(custom_filter, apply_to: custom_filter.apply_to), remote: true, method: :delete, title: 'Remove Custom Filter "' + custom_filter.name + '"', class: 'icon-trash pull-right'
+div.resource-item id='custom-filter-#{custom_filter.id}'
+  .resource-item-link
+    = custom_filter.name
+  .resource-item-actions
+    = link_to '', custom_filter_path(custom_filter, apply_to: custom_filter.apply_to), remote: true, method: :delete, title: 'Remove Custom Filter "' + custom_filter.name + '"', class: 'icon-trash pull-right'
