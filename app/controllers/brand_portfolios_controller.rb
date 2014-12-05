@@ -13,7 +13,8 @@ class BrandPortfoliosController < FilteredController
 
   def autocomplete
     buckets = autocomplete_buckets(
-      brands: [Brand, BrandPortfolio]
+      brands: [Brand, BrandPortfolio],
+      active_state: []
     )
     render json: buckets.flatten
   end

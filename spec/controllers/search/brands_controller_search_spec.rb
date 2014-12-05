@@ -14,7 +14,8 @@ describe BrandsController, type: :controller, search: true do
       expect(response).to be_success
 
       buckets = JSON.parse(response.body)
-      expect(buckets.map { |b| b['label'] }).to eq(['Brands'])
+      expect(buckets.map { |b| b['label'] }).to eq([
+        'Brands', 'Active State'])
     end
 
     it 'returns the campaigns in the Campaigns Bucket' do

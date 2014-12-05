@@ -20,7 +20,6 @@
 #  local_start_at :datetime
 #  local_end_at   :datetime
 #  description    :text
-#  visit_id       :integer
 #
 
 class Event < ActiveRecord::Base
@@ -28,8 +27,9 @@ class Event < ActiveRecord::Base
 
   track_who_does_it
 
+  attr_accessor :visit_id
+
   belongs_to :campaign
-  belongs_to :visit, class_name: 'BrandAmbassadors::Visit'
   belongs_to :place, autosave: true
 
   has_many :tasks, -> { order 'due_at ASC' }, dependent: :destroy, inverse_of: :event
@@ -222,7 +222,7 @@ class Event < ActiveRecord::Base
   validates :company_id, presence: true, numericality: true
   validates :start_at, presence: true
   validates :end_at, presence: true, date: { on_or_after: :start_at, message: 'must be after' }
-  validate :between_visit_date_range, before: [:create, :update], if: :visit
+  validate :between_visit_date_range, before: [:create, :update], if: :visit_id
 
   DATE_FORMAT = %r{\A[0-1]?[0-9]/[0-3]?[0-9]/[0-2]0[0-9][0-9]\z}
   validates :start_date, format: { with: DATE_FORMAT, message: 'MM/DD/YYYY' }
@@ -717,7 +717,8 @@ class Event < ActiveRecord::Base
   end
 
   def between_visit_date_range
-    return unless start_at && end_at
+    return unless start_at && end_at && !visit_id.blank?
+    visit = BrandAmbassadors::Visit.find(visit_id)
     visit_start_date = visit.start_date.to_date
     visit_end_date = visit.end_date.to_date
     if start_at.to_date < visit_start_date
@@ -763,8 +764,6 @@ class Event < ActiveRecord::Base
 
   def reindex_associated
     reindex_campaign
-
-    Sunspot.index visit if visit.present?
 
     if @reindex_place
       Resque.enqueue(EventPhotosIndexer, id)

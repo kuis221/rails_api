@@ -85,8 +85,6 @@ feature 'Campaigns', js: true do
       Sunspot.commit
       visit campaigns_path
 
-      show_all_filters
-
       # Make it show only the inactive elements
       add_filter 'ACTIVE STATE', 'Inactive'
       remove_filter 'Active'

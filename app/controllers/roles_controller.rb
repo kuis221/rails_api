@@ -14,7 +14,10 @@ class RolesController < FilteredController
   end
 
   def autocomplete
-    buckets = autocomplete_buckets(roles: [Role])
+    buckets = autocomplete_buckets(
+      roles: [Role],
+      active_state: []
+    )
     render json: buckets.flatten
   end
 

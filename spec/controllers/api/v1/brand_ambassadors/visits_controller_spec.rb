@@ -216,17 +216,18 @@ describe Api::V1::BrandAmbassadors::VisitsController, type: :controller do
                       state: 'CA', country: 'US', zipcode: '90210', types: %w(political locality))
       place2 = create(:place, name: 'Place 2', formatted_address: 'Austin, TX, US', city: 'Austin',
                       state: 'TX', country: 'US', zipcode: '15879', types: %w(political locality))
-      another_campaign = create(:campaign, name: 'Campaign FY2012', company: company)
       visit = create(:brand_ambassadors_visit, company: company,
                      start_date: '11/09/2014', end_date: '11/11/2014',
                      city: 'New York', area: area, campaign: campaign,
                      visit_type: 'market_visit', company_user: company_user,
                      description: 'The first visit description', active: true)
 
-      event1 = create(:event, start_date: '11/09/2014', end_date: '11/09/2014', start_time: '10:00am',
+      event1 = create(:event, start_date: '11/09/2014', end_date: '11/09/2014', start_time: '10:00am', user_ids: [company_user.id],
                       end_time: '11:00am', campaign: campaign, place: place1, company: company, visit_id: visit.id)
-      event2 = create(:event, start_date: '11/10/2014', end_date: '11/11/2014', start_time: '8:00am',
-                      end_time: '9:00am', campaign: another_campaign, place: place2, company: company, visit_id: visit.id)
+      event2 = create(:event, start_date: '11/10/2014', end_date: '11/11/2014', start_time: '8:00am', user_ids: [company_user.id],
+                      end_time: '9:00am', campaign: campaign, place: place2, company: company, visit_id: visit.id)
+
+      Sunspot.commit
 
       get 'events', id: visit.to_param, format: :json
       expect(response).to be_success
@@ -242,7 +243,7 @@ describe Api::V1::BrandAmbassadors::VisitsController, type: :controller do
         { 'id' => event2.id, 'start_date' => '11/10/2014', 'start_time' => '8:00 AM',
           'end_date' => '11/11/2014', 'end_time' => '9:00 AM',
           'status' => 'Active', 'event_status' => 'Late',
-          'campaign' => { 'id' => another_campaign.id, 'name' => 'Campaign FY2012' },
+          'campaign' => { 'id' => campaign.id, 'name' => 'My Campaign' },
           'place' => { 'id' => place2.id, 'name' => 'Place 2', 'formatted_address' => 'Austin, TX, US',
                        'country' => 'US', 'state_name' => 'TX', 'city' => 'Austin', 'zipcode' => '15879' } }])
     end

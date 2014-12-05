@@ -20,7 +20,8 @@ class ActivityTypesController < FilteredController
 
   def autocomplete
     buckets = autocomplete_buckets(
-      activity_types: [ActivityType]
+      activity_types: [ActivityType],
+      active_state: []
     )
     render json: buckets.flatten
   end

@@ -151,10 +151,15 @@ module Results
 
     def form_fields_for_events(campaign_ids)
       if campaign_ids.any?
+        ordering =
+          if campaign_ids.count == 1
+            'form_fields.ordering ASC'
+          else
+            'lower(form_fields.name) ASC, form_fields.type ASC'
+          end
         fields_scope = FormField.for_events_in_company(current_company_user.company)
-                        .where('form_fields.kpi_id not in (?) OR kpi_id is NULL', exclude_kpis)
                         .where.not(type: exclude_field_types)
-                        .order('lower(form_fields.name) ASC, form_fields.type ASC')
+                        .order(ordering)
         fields_scope = fields_scope.where(campaigns: { id: campaign_ids }) unless current_company_user.is_admin? && campaign_ids.empty?
         fields_scope.map { |field| [field.id, field] }
       else
@@ -175,10 +180,6 @@ module Results
 
     def exclude_field_types
       ['FormField::Attachment', 'FormField::Photo', 'FormField::Section', 'FormField::UserDate']
-    end
-
-    def exclude_kpis
-      [Kpi.impressions.id, Kpi.interactions.id, Kpi.samples.id, Kpi.gender.id, Kpi.ethnicity.id]
     end
 
     def custom_columns

@@ -38,10 +38,3 @@ child @events => 'results' do
     {id: e.campaign_id, name: e.campaign_name}
   end
 end
-
-
-if params[:page].nil? || params[:page].to_i == 1
-  node :facets do
-    facets
-  end
-end

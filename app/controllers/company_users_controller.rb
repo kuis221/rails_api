@@ -27,7 +27,8 @@ class CompanyUsersController < FilteredController
       teams: [Team],
       roles: [Role],
       campaigns: [Campaign],
-      places: [Venue]
+      places: [Venue],
+      user_active_state: []
     )
 
     render json: buckets.flatten
@@ -198,6 +199,13 @@ class CompanyUsersController < FilteredController
   def dismiss_alert
     current_company_user.dismiss_alert params[:name], params[:version]
     render text: ''
+  end
+
+  def resend_invite
+    if resource.present? && resource.invited_to_sign_up?
+      resource.user.resend_invitation
+    end
+    render nothing: true
   end
 
   protected

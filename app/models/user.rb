@@ -319,6 +319,12 @@ class User < ActiveRecord::Base
     end
   end
 
+  # Resend the invitation email and reset the invitation_sent_at
+  def resend_invitation
+    self.update_attribute :invitation_sent_at, Time.now.utc
+    send_devise_notification(:invitation_instructions, @raw_invitation_token)
+  end
+
   def ensure_authentication_token
     if authentication_token.blank?
       self.authentication_token = generate_authentication_token

@@ -14,7 +14,9 @@ class BrandsController < FilteredController
   include DeactivableHelper
 
   def autocomplete
-    buckets = autocomplete_buckets(brands: [Brand])
+    buckets = autocomplete_buckets(
+      brands: [Brand],
+      active_state: [])
     render json: buckets.flatten
   end
 

@@ -18,6 +18,7 @@ Brandscopic::Application.routes.draw do
         end
 
         resources :events, only: [:index, :show, :create, :update] do
+          get :status_facets, on: :collection
           resources :photos, only: [:index, :create, :update] do
             get :form, on: :collection
           end
@@ -262,6 +263,7 @@ Brandscopic::Application.routes.draw do
       get :send_code
       get :deactivate
       get :activate
+      get :resend_invite
       post :enable_campaigns
       post :disable_campaigns
       get :select_campaigns
@@ -547,7 +549,6 @@ Brandscopic::Application.routes.draw do
         get :deactivate
         get :activate
       end
-      resources :events, only: [:new, :create], controller: '/events'
       resources :document_folders, path: 'folders', only: [:new, :create]
       resources :documents, only: [:new, :create]
     end

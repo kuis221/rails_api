@@ -41,13 +41,33 @@
   #visit-events.details_box
     h3.module-title EVENTS
     - if can?(:create, Event)
-      = button_to 'Create', new_brand_ambassadors_visit_event_path(resource), remote: true, class: 'btn btn-primary', :id => 'new-event-btn', method: :get
+      = button_to 'Create', new_event_path(resource, event: {visit_id: resource.id, campaign_id: resource.campaign_id}, format: :js), remote: true, class: 'btn btn-primary', :id => 'new-event-btn', method: :get
 
+    #events-list-filters.hide
     div#events-list.resource-list
-      = render partial: 'events/event', collection: resource.events.accessible_by_user(current_company_user).order('events.start_at ASC')
 
 
   #visit-documents.details_box
     = render partial: 'brand_ambassadors/document_folders/index', locals: {children: (resource.document_folders.root_children.active + resource.brand_ambassadors_documents.root_children.active).sort_by(&:name), parent: resource }
+
+javascript:
+  $('#events-list-filters').filteredList({
+    'source': '#{url_for(controller: '/events', action: :items)}',
+    'filtersUrl': null,
+    'listContainer' : '#events-list',
+    'sorting': 'start_at',
+    'sorting_dir': 'asc',
+    'includeCalendars': true,
+    'selectDefaultDate': false,
+    'selectDefaultDateRange': false,
+    'ytdDatesRange': '#{current_company.ytd_dates_range}',
+    'includeAutoComplete': false,
+    'fixListHeight': false,
+    'defaultParams': [{name: 'start_date', value:'#{resource.start_date.strftime("%m/%d/%Y")}'}, {name: 'end_date', value:'#{resource.end_date.strftime("%m/%d/%Y")}'}, {name: 'campaign[]', value:'#{resource.campaign_id}'}, {name: 'user[]', value: '#{resource.company_user_id}'}],
+    'placeholderMessage': function(){
+      return '<p>No events found for this Visit</p>';
+    },
+    'applyTo': 'visits'
+  });
 
 - reload_page_on_edit_resource

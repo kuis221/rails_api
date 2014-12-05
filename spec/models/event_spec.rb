@@ -20,7 +20,6 @@
 #  local_start_at :datetime
 #  local_end_at   :datetime
 #  description    :text
-#  visit_id       :integer
 #
 
 require 'rails_helper'

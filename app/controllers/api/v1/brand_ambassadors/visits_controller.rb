@@ -395,7 +395,15 @@ module Api
           ]
         EOS
         def events
-          @events = resource.events.accessible_by_user(current_company_user).order('events.start_at ASC')
+          @events = Event.do_search(
+            company_id: current_company.id,
+            current_company_user: current_company_user,
+            start_date: resource.start_date.to_s(:slashes),
+            end_date: resource.end_date.to_s(:slashes),
+            campaign: [resource.campaign_id],
+            user: [resource.company_user_id],
+            status: ['Active']
+          ).results
         end
 
         protected

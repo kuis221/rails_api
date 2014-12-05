@@ -36,7 +36,9 @@ class EventsController < FilteredController
       campaigns: [Campaign],
       brands: [Brand, BrandPortfolio],
       places: [Venue, Area],
-      people: [CompanyUser, Team]
+      people: [CompanyUser, Team],
+      active_state: [],
+      event_status: []
     )
     render json: buckets.flatten
   end
@@ -160,6 +162,7 @@ class EventsController < FilteredController
       t = [t, t + 15.minutes, t + 30.minutes, t + 45.minutes, t + 1.hour].find do |a|
         Time.zone.now < a
       end
+      parameters = params.require(:event).permit(:visit_id, :campaign_id) if params[:event]
       parameters[:start_date] = t.to_s(:slashes)
       parameters[:start_time] = t.to_s(:time_only)
 
@@ -170,7 +173,7 @@ class EventsController < FilteredController
       allowed = []
       if can?(:update, Event) || can?(:create, Event)
         allowed.concat([
-          :end_date, :end_time, :start_date, :start_time, :campaign_id,
+          :end_date, :end_time, :start_date, :start_time, :campaign_id, :visit_id,
           :place_id, :place_reference, :description, :visit_id, { team_members: [] }])
       end
       if can?(:edit_data, Event)

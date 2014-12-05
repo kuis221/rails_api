@@ -17,7 +17,8 @@ class AreasController < FilteredController
 
   def autocomplete
     buckets = autocomplete_buckets(
-      areas: [Area]
+      areas: [Area],
+      active_state: []
     )
     render json: buckets.flatten
   end

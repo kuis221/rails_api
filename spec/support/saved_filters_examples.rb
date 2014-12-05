@@ -2,8 +2,6 @@ RSpec.shared_examples 'a list that allow saving custom filters' do
   scenario 'allows to create apply and remove custom filters' do
     visit list_url
 
-    show_all_filters
-
     within '#collection-list-filters' do
       expect(page).not_to have_content('SAVED FILTERS')
     end

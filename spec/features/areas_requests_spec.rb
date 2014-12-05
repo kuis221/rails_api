@@ -165,8 +165,6 @@ feature 'Areas', js: true, search: true  do
         Sunspot.commit
         visit areas_path
 
-        show_all_filters
-
         # Make it show only the inactive elements
         add_filter 'ACTIVE STATE', 'Inactive'
         remove_filter 'Active'

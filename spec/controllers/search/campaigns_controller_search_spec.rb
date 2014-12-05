@@ -8,13 +8,13 @@ describe CampaignsController, type: :controller, search: true do
   before { user }
 
   describe "GET 'autocomplete'" do
-
     it 'should return the correct buckets in the right order' do
       get 'autocomplete'
       expect(response).to be_success
 
       buckets = JSON.parse(response.body)
-      expect(buckets.map { |b| b['label'] }).to eq(%w(Campaigns Brands Places People))
+      expect(buckets.map { |b| b['label'] }).to eq([
+        'Campaigns', 'Brands', 'Places', 'People'])
     end
 
     it 'should return the users in the People Bucket' do
@@ -27,7 +27,7 @@ describe CampaignsController, type: :controller, search: true do
 
       buckets = JSON.parse(response.body)
       people_bucket = buckets.select { |b| b['label'] == 'People' }.first
-      expect(people_bucket['value']).to eq([{ 'label' => '<i>Gu</i>illermo Vargas', 'value' => company_user.id.to_s, 'type' => 'company_user' }])
+      expect(people_bucket['value']).to eq([{ 'label' => '<i>Gu</i>illermo Vargas', 'value' => company_user.id.to_s, 'type' => 'user' }])
     end
 
     it 'should return the teams in the People Bucket' do
@@ -60,7 +60,7 @@ describe CampaignsController, type: :controller, search: true do
           'type' => 'team' },
         { 'label' => 'Guillermo <i>Va</i>rgas',
           'value' => company_user.id.to_s,
-          'type' => 'company_user' }])
+          'type' => 'user' }])
     end
 
     it 'should return the campaigns in the Campaigns Bucket' do

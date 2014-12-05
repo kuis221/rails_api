@@ -14,7 +14,7 @@ describe TasksController, type: :controller, search: true do
       expect(response).to be_success
 
       buckets = JSON.parse(response.body)
-      expect(buckets.map { |b| b['label'] }).to eq(%w(Tasks Campaigns))
+      expect(buckets.map { |b| b['label'] }).to eq(['Tasks', 'Campaigns', 'Task Status', 'Active State'])
     end
 
     it "should return the correct buckets in the right order when the user is in the 'teams' scope" do
@@ -22,7 +22,8 @@ describe TasksController, type: :controller, search: true do
       expect(response).to be_success
 
       buckets = JSON.parse(response.body)
-      expect(buckets.map { |b| b['label'] }).to eq(%w(Tasks Campaigns People))
+      expect(buckets.map { |b| b['label'] }).to eq([
+        'Tasks', 'Campaigns', 'People', 'Task Status', 'Active State'])
     end
 
     it 'should return the users in the People Bucket' do
@@ -35,7 +36,7 @@ describe TasksController, type: :controller, search: true do
 
       buckets = JSON.parse(response.body)
       people_bucket = buckets.select { |b| b['label'] == 'People' }.first
-      expect(people_bucket['value']).to eq([{ 'label' => '<i>Gu</i>illermo Vargas', 'value' => company_user.id.to_s, 'type' => 'company_user' }])
+      expect(people_bucket['value']).to eq([{ 'label' => '<i>Gu</i>illermo Vargas', 'value' => company_user.id.to_s, 'type' => 'user' }])
     end
 
     it 'should return the teams in the People Bucket' do
@@ -61,7 +62,7 @@ describe TasksController, type: :controller, search: true do
 
       buckets = JSON.parse(response.body)
       people_bucket = buckets.select { |b| b['label'] == 'People' }.first
-      expect(people_bucket['value']).to eq([{ 'label' => '<i>Va</i>lladolid', 'value' => team.id.to_s, 'type' => 'team' }, { 'label' => 'Guillermo <i>Va</i>rgas', 'value' => company_user.id.to_s, 'type' => 'company_user' }])
+      expect(people_bucket['value']).to eq([{ 'label' => '<i>Va</i>lladolid', 'value' => team.id.to_s, 'type' => 'team' }, { 'label' => 'Guillermo <i>Va</i>rgas', 'value' => company_user.id.to_s, 'type' => 'user' }])
     end
 
     it 'should return the campaigns in the Campaigns Bucket' do

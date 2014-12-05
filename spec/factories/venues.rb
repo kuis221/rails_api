@@ -19,6 +19,7 @@
 #  avg_impressions_cost :decimal(8, 2)    default(0.0)
 #  score_impressions    :integer
 #  score_cost           :integer
+#  score_dirty          :boolean          default(FALSE)
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl
