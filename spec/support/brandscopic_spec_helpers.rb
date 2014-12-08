@@ -15,6 +15,10 @@ module BrandscopiSpecHelpers
     user
   end
 
+  def json
+    @json ||= JSON.parse(response.body)
+  end
+
   def set_api_authentication_headers(user, company)
     request.headers['X-Auth-Token'] = user.authentication_token
     request.headers['X-User-Email'] = user.email

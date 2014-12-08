@@ -38,6 +38,8 @@ class Team < ActiveRecord::Base
   scope :with_user, lambda { |company_user| joins(:users).where(company_users: { id: company_user }).group('teams.id')  }
   scope :with_active_users, lambda { |companies| joins(:users).where(company_users: { active: true, company_id: companies }).group('teams.id') }
 
+  scope :accessible_by_user, ->(user) { where(company_id: user.company_id) }
+
   searchable do
     integer :id
 
@@ -95,6 +97,10 @@ class Team < ActiveRecord::Base
         order_by(params[:sorting] || :name, params[:sorting_dir] || :asc)
         paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
       end
+    end
+
+    def searchable_params
+      [campaign: [], user: [], team: [], status: []]
     end
 
     def report_fields

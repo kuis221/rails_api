@@ -1,0 +1,21 @@
+filters:
+  events:
+    campaigns: [Campaign]
+    brands: [Brand]
+    areas: [Area]
+    people: [CompanyUser, Team]
+    event_status:
+      items: [Submitted, Late, Due, Approved, Rejected]
+      name: 'event_status'
+    active_state:
+      items: [Active, Inactive]
+      name: 'status'
+  venues:
+    sliders: 
+      method: venues_sliders
+    price:
+      items: [[1, '$'], [2, '$$'], [3, '$$$'], [4, '$$$$']]
+      name: 'event_status'
+    areas: [Area]
+    campaigns: [Campaign]
+    brands: [Brand]

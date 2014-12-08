@@ -206,10 +206,4 @@ class CampaignsController < FilteredController
       end
     end)
   end
-
-  def permitted_search_params
-    [:page, :sorting, :sorting_dir, :per_page,
-     campaign: [], user: [], team: [], brand: [], status: [],
-     venue: [], role: [], brand_portfolio: []]
-  end
 end

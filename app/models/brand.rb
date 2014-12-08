@@ -94,6 +94,10 @@ class Brand < ActiveRecord::Base
       end
     end
 
+    def searchable_params
+      [brand: [], status: [], brand_portfolio: [], campaign: []]
+    end
+
     # Returns an Array of campaigns ready to be used for a dropdown. Use this
     # to reduce the amount of memory by avoiding the load bunch of activerecord objects.
     # TODO: use pluck(:name, :id) when upgraded to Rails 4

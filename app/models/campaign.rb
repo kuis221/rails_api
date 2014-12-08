@@ -452,6 +452,11 @@ class Campaign < ActiveRecord::Base
       end
     end
 
+    def searchable_params
+      [campaign: [], user: [], team: [], brand: [], status: [], venue: [],
+       role: [], brand_portfolio: []]
+    end
+
     def report_fields
       {
         name:   { title: 'Name' }

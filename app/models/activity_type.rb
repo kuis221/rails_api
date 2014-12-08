@@ -100,6 +100,10 @@ class ActivityType < ActiveRecord::Base
                        column: -> { "to_char(activities.activity_date, 'YYYY/MM/DD')" } }
       }
     end
+
+    def searchable_params
+      [status: [], activity_type: []]
+    end
   end
 
   private

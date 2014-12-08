@@ -597,6 +597,12 @@ class Event < ActiveRecord::Base
       end
     end
 
+    def searchable_params
+      [:start_date, :end_date, :page, :sorting, :sorting_dir, :per_page,
+       campaign: [], area: [], user: [], team: [], event_status: [], brand: [], status: [],
+       venue: [], role: [], brand_portfolio: [], id: [], event: []]
+    end
+
     def search_start_date_field
       if Company.current && Company.current.timezone_support?
         :local_start_at

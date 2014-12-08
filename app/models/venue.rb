@@ -327,6 +327,13 @@ class Venue < ActiveRecord::Base
     end
   end
 
+  def self.searchable_params
+    [:location, :q, events_count: [:min, :max],
+     promo_hours: [:min, :max], impressions: [:min, :max],
+     interactions: [:min, :max], sampled: [:min, :max], spent: [:min, :max],
+     venue_score: [:min, :max], price: [], area: [], campaign: [], brand: []]
+  end
+
   def campaign_ids
     @campaign_ids ||= Campaign.joins(:events)
         .where(events: { place_id: place_id }, company_id: company_id)

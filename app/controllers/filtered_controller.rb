@@ -3,7 +3,6 @@
 # This class in intented to be used as a base for all those
 # controllers that have filtering capabilities
 class FilteredController < InheritedResources::Base
-  include FacetsHelper
   include AutocompleteHelper
 
   helper_method :collection_count, :facets, :page,
@@ -125,7 +124,7 @@ class FilteredController < InheritedResources::Base
   end
 
   def permitted_search_params
-    [:page, :sorting, :sorting_dir]
+    [:page, :sorting, :per_page, :sorting_dir].concat resource_class.searchable_params
   end
 
   def collection_count

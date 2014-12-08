@@ -133,6 +133,10 @@ class Area < ActiveRecord::Base
       end
     end
 
+    def searchable_params
+      [area: [], status: []]
+    end
+
     def update_common_denominators(area)
       area.send(:update_common_denominators)
       Rails.cache.delete("area_locations_#{area.id}")

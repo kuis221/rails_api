@@ -121,10 +121,4 @@ class TasksController < FilteredController
   def set_body_class
     @custom_body_class = params[:scope]
   end
-
-  def permitted_search_params
-    [:start_date, :end_date, :page, :sorting, :sorting_dir, :per_page,
-     campaign: [], user: [], team: [], task_status: [], status: [],
-     task: []]
-  end
 end

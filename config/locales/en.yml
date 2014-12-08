@@ -64,6 +64,7 @@ en:
     task_status: 'Task Status'
     user_active_state: 'Active State'
     users: 'Users'
+    price: 'Price'
 
   exports:
     pdf:

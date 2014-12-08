@@ -81,6 +81,10 @@ class BrandPortfolio < ActiveRecord::Base
       end
     end
 
+    def searchable_params
+      [brand: [], brand_portfolio: [], status: []]
+    end
+
     def report_fields
       {
         name: { title: 'Name' }

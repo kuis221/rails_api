@@ -167,52 +167,6 @@ describe EventsController, type: :controller, search: true do
       end
     end
 
-    describe "GET 'filters'" do
-      it 'should return the correct buckets in the right order' do
-        Sunspot.commit
-        create(:custom_filter, owner: company_user, group: 'SAVED FILTERS', apply_to: 'events')
-
-        get 'filters', format: :json
-        expect(response).to be_success
-
-        filters = JSON.parse(response.body)
-        expect(filters['filters'].map { |b| b['label'] }).to eq([
-          'Campaigns', 'Brands', 'Areas', 'People', 'Event Status',
-          'Active State', 'SAVED FILTERS'])
-      end
-
-      it 'should return the correct buckets in the right order' do
-        Kpi.create_global_kpis
-        campaign.assign_all_global_kpis
-        event = create(:event, campaign: campaign, company: company)
-        set_event_results(event,
-                          impressions: 100,
-                          interactions: 101,
-                          samples: 102,
-                          gender_male: 35,
-                          gender_female: 65,
-                          ethnicity_asian: 15,
-                          ethnicity_native_american: 23,
-                          ethnicity_black: 24,
-                          ethnicity_hispanic: 26,
-                          ethnicity_white: 12
-        )
-        create(:custom_filter, owner: company_user, group: 'SAVED FILTERS', apply_to: 'events')
-        Sunspot.commit
-
-        get 'filters', with_event_data_only: true, format: :json
-
-        expect(response).to be_success
-        filters = JSON.parse(response.body)
-
-        expect(filters['filters'].map { |b| b['label'] }).to eq([
-          'Campaigns', 'Brands', 'Areas', 'People', 'Event Status',
-          'Active State', 'SAVED FILTERS'])
-        expect(filters['filters'][0]['items'].count).to eq(1)
-        expect(filters['filters'][0]['items'].first['label']).to eq(campaign.name)
-      end
-    end
-
     describe 'GET calendar' do
       it 'should return the correct list of brands the count of events' do
         campaign.brands << create(:brand, company: company, name: 'Jose Cuervo')

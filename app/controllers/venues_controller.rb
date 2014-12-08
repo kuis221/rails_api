@@ -82,11 +82,4 @@ class VenuesController < FilteredController
       totals['spent'] = collection_search.stat_response['stats_fields']['spent_es']['sum'] rescue 0
     end
   end
-
-  def permitted_search_params
-    [:location, :q, :page, :sorting, :sorting_dir, :per_page,
-     events_count: [:min, :max], promo_hours: [:min, :max], impressions: [:min, :max],
-     interactions: [:min, :max], sampled: [:min, :max], spent: [:min, :max],
-     venue_score: [:min, :max], price: [], area: [], campaign: [], brand: [] ]
-  end
 end

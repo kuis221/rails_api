@@ -1,5 +1,4 @@
-module FacetsHelper
-
+module FiltersHelper
   def filter_settings_scope
     params[:apply_to] || controller_name
   end

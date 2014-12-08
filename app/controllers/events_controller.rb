@@ -268,10 +268,6 @@ class EventsController < FilteredController
     end)
   end
 
-  def permitted_search_params
-    permitted_events_search_params
-  end
-
   def list_exportable?
     params['mode'] == 'calendar' || super
   end

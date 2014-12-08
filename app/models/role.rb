@@ -89,6 +89,10 @@ class Role < ActiveRecord::Base
       end
     end
 
+    def searchable_params
+      [role: [], status: []]
+    end
+
     def report_fields
       {
         name:       { title: 'Name' }
