@@ -1,11 +1,13 @@
 require 'rails_helper'
 
 describe Results::ActivitiesController, type: :controller do
-  let(:user) { sign_in_as_user }
-  let(:company) { user.companies.first }
-  let(:company_user) { user.current_company_user }
+  let(:user) { company_user.user }
+  let(:company) { create(:company) }
+  let(:role) { create(:non_admin_role, company: company) }
+  let(:permissions) { [[:index_results, 'Activity']] }
+  let(:company_user) { create(:company_user, company: company, role: role, permissions: permissions) }
 
-  before { user }  # login user
+  before { sign_in_as_user company_user }
 
   describe "GET 'index'" do
     it 'should return http success' do
@@ -40,9 +42,14 @@ describe Results::ActivitiesController, type: :controller do
     let(:event) { create(:event, campaign: campaign, place: place) }
     let(:activity_type) { create(:activity_type, name: 'My Activity Type', campaign_ids: [campaign.id], company: company) }
     let(:event_activity) do
-      create(:activity, activitable: event, activity_date: '01/01/2014',
-        activity_type: activity_type, company_user: company_user)
+      without_current_user do
+        create(:activity, activitable: event, activity_date: '01/01/2014',
+          campaign: campaign,
+          activity_type: activity_type, company_user: company_user)
+      end
     end
+
+    before { company_user.campaigns << campaign }
 
     it 'return an empty book with the correct headers' do
       expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
@@ -57,10 +64,9 @@ describe Results::ActivitiesController, type: :controller do
     end
 
     it 'should include the event data results' do
-      Kpi.create_global_kpis
-      campaign.assign_all_global_kpis
       area = create(:area, name: 'My area', company: company)
       area.places << create(:city, name: 'Los Angeles', state: 'California', country: 'US')
+      company_user.areas << area
       campaign.areas << area
 
       field = create(:form_field_number, name: 'My Numeric Field', fieldable: activity_type)
@@ -78,13 +84,13 @@ describe Results::ActivitiesController, type: :controller do
       expect(export.reload).to have_rows([
         ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE', 'VENUE NAME',
          'ADDRESS', 'CITY', 'STATE', 'ZIP', 'MY NUMERIC FIELD'],
-        ['Test Campaign FY01', user.full_name, "2014-01-01T00:00", "My Activity Type", 'My area',
+        ['Test Campaign FY01', user.full_name, '2014-01-01T00:00', 'My Activity Type', 'My area',
          '443321', 'Bar Prueba', 'Bar Prueba, Los Angeles, California, 12345', 'Los Angeles',
          'California', '12345', '123.0']
       ])
     end
 
-    describe "custom fields" do
+    describe 'custom fields' do
       before do
         create(:form_field_checkbox,
                name: 'My Chk Field', fieldable: activity_type, options: [
@@ -97,7 +103,9 @@ describe Results::ActivitiesController, type: :controller do
                name: 'My Radio Field', fieldable: other_activity_type, options: [
                  create(:form_field_option, name: 'Radio Opt1'),
                  create(:form_field_option, name: 'Radio Opt2')])
+        company_user.campaigns << other_campaign
       end
+
       it 'should include the activity data results only for the given campaign' do
         expect { xhr :get, 'index', campaign: [campaign.id], format: :xls }.to change(ListExport, :count).by(1)
         export = ListExport.last
@@ -106,7 +114,7 @@ describe Results::ActivitiesController, type: :controller do
 
         expect(export.reload).to have_rows([
           ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE', 'VENUE NAME',
-            'ADDRESS', 'CITY', 'STATE', 'ZIP', 'MY CHK FIELD']
+           'ADDRESS', 'CITY', 'STATE', 'ZIP', 'MY CHK FIELD']
         ])
       end
 

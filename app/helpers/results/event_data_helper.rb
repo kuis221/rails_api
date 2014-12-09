@@ -124,11 +124,7 @@ module Results
     def custom_fields_to_export
       @custom_fields_to_export ||= begin
         campaign_ids = []
-        campaign_ids = params[:campaign] if params[:campaign] && params[:campaign].any?
-        if params[:q].present? && match = /\Acampaign,([0-9]+)/.match(params[:q])
-          campaign_ids += [match[1]]
-        end
-        campaign_ids = campaign_ids.uniq.compact
+        campaign_ids = params[:campaign].uniq.compact if params[:campaign] && params[:campaign].any?
         unless current_company_user.is_admin?
           if campaign_ids.any?
             campaign_ids = campaign_ids.map(&:to_i) & current_company_user.accessible_campaign_ids
@@ -138,7 +134,6 @@ module Results
         end
         Hash[form_fields_for_resource(campaign_ids)]
       end
-      @custom_fields_to_export
     end
 
     def form_fields_for_resource(campaign_ids)
@@ -150,21 +145,18 @@ module Results
     end
 
     def form_fields_for_events(campaign_ids)
-      if campaign_ids.any?
-        ordering =
-          if campaign_ids.count == 1
-            'form_fields.ordering ASC'
-          else
-            'lower(form_fields.name) ASC, form_fields.type ASC'
-          end
-        fields_scope = FormField.for_events_in_company(current_company_user.company)
-                        .where.not(type: exclude_field_types)
-                        .order(ordering)
-        fields_scope = fields_scope.where(campaigns: { id: campaign_ids }) unless current_company_user.is_admin? && campaign_ids.empty?
-        fields_scope.map { |field| [field.id, field] }
-      else
-        []
-      end
+      return [] unless campaign_ids.any?
+      ordering =
+        if campaign_ids.count == 1
+          'form_fields.ordering ASC'
+        else
+          'lower(form_fields.name) ASC, form_fields.type ASC'
+        end
+      fields_scope = FormField.for_events_in_company(current_company_user.company)
+                      .where.not(type: exclude_field_types)
+                      .order(ordering)
+      fields_scope = fields_scope.where(campaigns: { id: campaign_ids }) unless current_company_user.is_admin? && campaign_ids.empty?
+      fields_scope.map { |field| [field.id, field] }
     end
 
     def form_fields_for_activities(campaign_ids)
