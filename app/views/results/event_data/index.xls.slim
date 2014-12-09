@@ -35,6 +35,8 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
       Column ss:Width="80"
       Column ss:Width="80"
       Column ss:Width="80"
+      Column ss:Width="80"
+      Column ss:Width="80"
       - custom_fields_to_export_headers.each do |h|
         Column ss:Width="100"
       Row ss:StyleID="s1"
@@ -66,6 +68,10 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
           Data ss:Type="String" START
         Cell
           Data ss:Type="String" END
+        Cell
+          Data ss:Type="String" PROMO HOURS
+        Cell
+          Data ss:Type="String" SPENT
         - custom_fields_to_export_headers.each do |h|
           Cell
             Data ss:Type="String"= h
@@ -101,6 +107,10 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
             Data ss:Type="DateTime"= Timeliness.parse(event_date(event, :start_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%FT%R')
           Cell ss:StyleID="s2"
             Data ss:Type="DateTime"= Timeliness.parse(event_date(event, :end_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%FT%R')
+          Cell
+            Data ss:Type="Number"= number_with_precision(event.promo_hours, precision: 1)
+          Cell ss:StyleID="s4"
+            Data ss:Type="Number"= event.spent
           - custom_fields_to_export_values(event).each do |v|
             Cell ss:StyleID=(v ? v[1] : 'normal')
               Data ss:Type=(v ? v[0] : 'String')
