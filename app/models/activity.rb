@@ -152,6 +152,8 @@ class Activity < ActiveRecord::Base
           end
         end
 
+        with :place_id, Venue.where(id: params[:venue]).pluck(:place_id) if params.key?(:status) && params[:status].present?
+
         if params[:area].present?
           any_of do
             with :place_id, Area.where(id: params[:area]).joins(:places).where(places: { is_location: false }).pluck('places.id').uniq + [0]
