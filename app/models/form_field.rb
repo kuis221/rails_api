@@ -188,15 +188,16 @@ class FormField < ActiveRecord::Base
   end
 
   def options_for_input(include_excluded = false)
-    if kpi_id.present?
-      if include_excluded
-        kpi.kpis_segments
+    @options_for_input ||=
+      if kpi_id.present?
+        if include_excluded
+          kpi.kpis_segments
+        else
+          kpi.kpis_segments.where.not(id: (settings.try(:[], 'disabled_segments') || [0]).map(&:to_i))
+        end.pluck(:text, :id)
       else
-        kpi.kpis_segments.where.not(id: (settings.try(:[], 'disabled_segments') || [0]).map(&:to_i))
-      end.pluck(:text, :id)
-    else
-      options.order(:ordering).map { |o| [o.name, o.id] }
-    end
+        options.order(:ordering).map { |o| [o.name, o.id] }
+      end
   end
 
   # Allow to create new form fields from the report builder. Rails doesn't like mass-assignment of
