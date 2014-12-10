@@ -568,7 +568,7 @@ $.widget 'nmk.filteredList', {
 	_saveFilters: () ->
 		data = @paramsQueryString()
 		if data
-			$.get '/custom_filters/new.js', {apply_to: @options.applyTo, filters: data}
+			$.get '/custom_filters/new.js', { custom_filter: { apply_to: @options.applyTo, filters: data } }
 		false
 
 	setCalendarHighlights: (highlights) ->

@@ -5,7 +5,16 @@
 class CustomFiltersController < InheritedResources::Base
   respond_to :js, only: [:index, :new, :create, :destroy]
 
-  actions :index, :new, :create, :destroy
+  actions :index, :new, :create, :destroy, :update
+
+  def create
+    if permitted_params[:id]
+      params[:id] = permitted_params[:id]
+      update!
+    else
+      create!
+    end
+  end
 
   private
 
@@ -18,6 +27,7 @@ class CustomFiltersController < InheritedResources::Base
   end
 
   def permitted_params
-    params.permit(custom_filter: [:id, :name, :group, :apply_to, :filters])[:custom_filter]
+    params.permit(custom_filter: [
+      :id, :name, :group, :apply_to, :filters])[:custom_filter]
   end
 end
