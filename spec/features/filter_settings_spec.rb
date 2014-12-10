@@ -74,7 +74,6 @@ feature 'Filter Settings', search: true, js: true do
                                           options: ['Mario Moreno', 'Roberto Gomez', 'Test User'])
       expect(page).to have_filter_section('EVENT STATUS')
       expect(page).to have_filter_section('ACTIVE STATE')
-      screenshot_and_open_image
     end
   end
 end
