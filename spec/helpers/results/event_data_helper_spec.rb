@@ -160,6 +160,27 @@ describe Results::EventDataHelper, type: :helper do
         expect(helper.custom_fields_to_export_values(event)).to eq([['String', 'normal', '01/31/2014']])
       end
 
+      it 'include MARQUE fields' do
+        brand = create(:brand, name: 'My Brand', company: company)
+        marque = create(:marque, name: 'My Brand Marque', brand: brand)
+        campaign.brands << brand
+        brand_field = create(:form_field, type: 'FormField::Brand', name: 'My Brand Field',
+          fieldable: campaign, ordering: 0)
+
+        marque_field = create(:form_field, type: 'FormField::Marque', name: 'My Marque Field',
+          fieldable: campaign, ordering: 1)
+
+        event.results_for([brand_field]).first.value = brand.id
+        event.results_for([marque_field]).first.value = marque.id
+        event.save
+        expect(event.save).to be_truthy
+
+        expect(helper.custom_fields_to_export_headers).to eq(['MY BRAND FIELD', 'MY MARQUE FIELD'])
+        expect(helper.custom_fields_to_export_values(event)).to eq([
+          ['String', 'normal', 'My Brand'],
+          ['String', 'normal', 'My Brand Marque']])
+      end
+
       describe "form fields merging" do
         let(:campaign2) { create(:campaign, company: company) }
         let(:params) { { campaign: [campaign.id, campaign2.id] } }
