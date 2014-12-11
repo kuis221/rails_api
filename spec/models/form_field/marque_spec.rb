@@ -72,7 +72,10 @@ describe FormField::Marque, type: :model do
       ff_marque = FormField.find(ff_marque.id)
 
       options = ff_marque.field_options(activity_result)
-      expect(options[:collection]).to match_array([marque1, marque2])
+      expect(options[:collection]).to match_array([
+        [marque1.name, marque1.id],
+        [marque2.name, marque2.id]
+      ])
     end
 
     it 'should return marques associated to the only campaign brand' do
@@ -91,7 +94,10 @@ describe FormField::Marque, type: :model do
       ff_marque = FormField.find(ff_marque.id)
 
       options = ff_marque.field_options(activity_result)
-      expect(options[:collection]).to match_array([marque1, marque2])
+      expect(options[:collection]).to match_array([
+        [marque1.name, marque1.id],
+        [marque2.name, marque2.id]
+      ])
     end
   end
 end

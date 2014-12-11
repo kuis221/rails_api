@@ -26,7 +26,7 @@ class Activity < ActiveRecord::Base
     inclusion: { in: :valid_activity_type_ids }
 
   validates :campaign_id, presence: true, numericality: true,
-                          if: -> (_activitable) { activitable_type == 'Event' }
+                          if: -> (_activitable) { activitable_type == 'Acivity' }
   validates :activitable_id, presence: true, numericality: true
   validates :activitable_type, presence: true
   validates :company_user_id, presence: true, numericality: true
@@ -135,9 +135,7 @@ class Activity < ActiveRecord::Base
         with(:status, params[:status]) if params.key?(:status) && params[:status].present?
 
         if params.key?(:brand) && params[:brand].present?
-          campaign_ids = Campaign.joins(:brands)
-                                 .where(brands: { id: params[:brand] }, company_id: params[:company_id])
-                                 .pluck('DISTINCT(campaigns.id)')
+          campaign_ids = Campaign.with_brands(params[:brand]).pluck('campaigns.id')
           with 'campaign_id', campaign_ids + [0]
         end
 
@@ -152,7 +150,7 @@ class Activity < ActiveRecord::Base
           end
         end
 
-        with :place_id, Venue.where(id: params[:venue]).pluck(:place_id) if params.key?(:status) && params[:status].present?
+        with :place_id, Venue.where(id: params[:venue]).pluck(:place_id) if params.key?(:venue) && params[:venue].present?
 
         if params[:area].present?
           any_of do
@@ -183,11 +181,11 @@ class Activity < ActiveRecord::Base
     return unless new_record?
     self.activity_date ||= Date.today
     self.company_user_id ||= User.current.current_company_user.id if User.current.present?
-    self.campaign = activitable.campaign if activitable.is_a?(Event)
+    self.campaign = activitable.campaign if activitable.is_a?(Activity)
   end
 
   def delegate_campaign_id_from_event
-    return unless activitable.is_a?(Event)
+    return unless activitable.is_a?(Activity)
     self.campaign = activitable.campaign
     self.campaign_id = activitable.campaign_id
   end

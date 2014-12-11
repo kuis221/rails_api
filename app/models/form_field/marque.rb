@@ -39,27 +39,28 @@ class FormField::Marque < FormField::Dropdown
   end
 
   def format_html(result)
-    unless result.value.nil? || result.value.empty?
-      ::Marque.where(id: result.value).pluck(:name).join(', ')
-    end
+    return if result.value.blank?
+    ::Marque.where(id: result.value).pluck(:name).join(', ')
+  end
+
+  def format_csv(result)
+    format_html result
   end
 
   def options_for_field(result)
-    marques = []
-    ff_brand  = FormField.where(fieldable_id: fieldable_id, fieldable_type: fieldable_type, type: 'FormField::Brand').first
-    if ff_brand.present?
-      if result.id
-        results = result.resultable.results_for([ff_brand])
-        brand_id = results.first.value if results.present? && results.any?
-      elsif result.resultable.respond_to?(:campaign) && result.resultable.campaign
-        ids = result.resultable.campaign.brand_ids
-        brand_id = ids.first if ids.count == 1
-      end
+    @marques ||= [].tap do |b|
+      ff_brand  = FormField.where(fieldable_id: fieldable_id, fieldable_type: fieldable_type, type: 'FormField::Brand').first
+      if ff_brand.present?
+        if result.id
+          results = result.resultable.results_for([ff_brand])
+          brand_id = results.first.value if results.present? && results.any?
+        elsif result.resultable.respond_to?(:campaign) && result.resultable.campaign
+          ids = result.resultable.campaign.brand_ids
+          brand_id = ids.first if ids.count == 1
+        end
 
-      if brand_id.present?
-        marques = ::Marque.where(brand_id: brand_id)
+        b.concat ::Marque.where(brand_id: brand_id).pluck(:name, :id) if brand_id.present?
       end
     end
-    marques
   end
 end
