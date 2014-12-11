@@ -135,7 +135,7 @@ class Activity < ActiveRecord::Base
         with(:status, params[:status]) if params.key?(:status) && params[:status].present?
 
         if params.key?(:brand) && params[:brand].present?
-          campaign_ids = Campaign.with_brands(brands).pluck('campaigns.id')
+          campaign_ids = Campaign.with_brands(params[:brand]).pluck('campaigns.id')
           with 'campaign_id', campaign_ids + [0]
         end
 
