@@ -114,7 +114,7 @@ describe Results::ActivitiesController, type: :controller do
 
         expect(export.reload).to have_rows([
           ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE', 'VENUE NAME',
-           'ADDRESS', 'CITY', 'STATE', 'ZIP', 'MY CHK FIELD']
+           'ADDRESS', 'CITY', 'STATE', 'ZIP', 'MY CHK FIELD: CHK OPT1', 'MY CHK FIELD: CHK OPT2']
         ])
       end
 
@@ -126,7 +126,7 @@ describe Results::ActivitiesController, type: :controller do
 
         expect(export.reload).to have_rows([
           ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE', 'VENUE NAME',
-           'ADDRESS', 'CITY', 'STATE', 'ZIP', 'MY CHK FIELD', 'MY RADIO FIELD']
+           'ADDRESS', 'CITY', 'STATE', 'ZIP', 'MY CHK FIELD: CHK OPT1', 'MY CHK FIELD: CHK OPT2', 'MY RADIO FIELD']
         ])
       end
     end

@@ -67,8 +67,8 @@ feature 'Activities management' do
 
     scenario 'allows the user to add an activity to an Event, see it displayed in the Activities list and then deactivate it' do
       create(:user, company: company, first_name: 'Juanito', last_name: 'Bazooka')
-      brand1 = create(:brand, name: 'Brand #1')
-      brand2 = create(:brand, name: 'Brand #2')
+      brand1 = create(:brand, name: 'Brand #1', company: company)
+      brand2 = create(:brand, name: 'Brand #2', company: company)
       create(:marque, name: 'Marque #1 for Brand #2', brand: brand2)
       create(:marque, name: 'Marque #2 for Brand #2', brand: brand2)
       create(:marque, name: 'Marque alone', brand: brand1)
