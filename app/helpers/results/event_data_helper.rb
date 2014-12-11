@@ -132,7 +132,17 @@ module Results
             campaign_ids = current_company_user.accessible_campaign_ids
           end
         end
+        campaign_ids = filter_campaigns_by_brands(campaign_ids)
         Hash[form_fields_for_resource(campaign_ids)]
+      end
+    end
+
+    def filter_campaigns_by_brands(campaign_ids)
+      return campaign_ids unless params[:brand] && params[:brand].any?
+      if campaign_ids.any?
+        Campaign.with_brands(params[:brand]).where(id: campaign_ids).pluck(:id)
+      else
+        Campaign.with_brands(params[:brand]).pluck(:id)
       end
     end
 
