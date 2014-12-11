@@ -56,8 +56,25 @@ describe Results::EventDataHelper, type: :helper do
         event.save
         expect(event.save).to be_truthy
 
-        expect(helper.custom_fields_to_export_headers).to eq(['MY CHK FIELD'])
-        expect(helper.custom_fields_to_export_values(event)).to eq([['String', 'normal', 'Chk Opt1,Chk Opt2']])
+        expect(helper.custom_fields_to_export_headers).to eq(['MY CHK FIELD: CHK OPT1', 'MY CHK FIELD: CHK OPT2'])
+        expect(helper.custom_fields_to_export_values(event)).to eq([
+          ['String', 'normal', 'Yes'],
+          ['String', 'normal', 'Yes']
+        ])
+      end
+
+      it 'return empty if no options were selected in checkbox fields' do
+        field = create(:form_field_checkbox, name: 'My Chk Field',
+          fieldable: campaign, options: [
+            option1 = create(:form_field_option, name: 'Chk Opt1'),
+            option2 = create(:form_field_option, name: 'Chk Opt2')])
+
+        event.results_for([field]).first.value = { }
+        event.save
+        expect(event.save).to be_truthy
+
+        expect(helper.custom_fields_to_export_headers).to eq(['MY CHK FIELD: CHK OPT1', 'MY CHK FIELD: CHK OPT2'])
+        expect(helper.custom_fields_to_export_values(event)).to eq([nil, nil])
       end
 
       it 'include DROPDOWN fields that are not linked to a KPI' do
@@ -437,8 +454,11 @@ describe Results::EventDataHelper, type: :helper do
         activity.save
         expect(activity.save).to be_truthy
 
-        expect(helper.custom_fields_to_export_headers).to eq(['MY CHK FIELD'])
-        expect(helper.custom_fields_to_export_values(activity)).to eq([['String', 'normal', 'Chk Opt1,Chk Opt2']])
+        expect(helper.custom_fields_to_export_headers).to eq(['MY CHK FIELD: CHK OPT1', 'MY CHK FIELD: CHK OPT2'])
+        expect(helper.custom_fields_to_export_values(activity)).to eq([
+          ['String', 'normal', 'Yes'],
+          ['String', 'normal', 'Yes']
+        ])
       end
 
       it 'include DROPDOWN fields' do
@@ -525,7 +545,8 @@ describe Results::EventDataHelper, type: :helper do
         let(:params) { { activity_type: [activity_type.id] } }
 
         it 'include only fields that are assigned to the selected activity types' do
-          activity_type2 = create(:activity_type, campaign_ids: [campaign.id])
+          activity_type2 = create(:activity_type, company: company)
+          campaign.activity_types << activity_type2
           field1 = create(:form_field_number, name: 'My Numeric Field 1', fieldable: activity_type)
           field2 = create(:form_field_number, name: 'My Numeric Field 2', fieldable: activity_type2)
 

@@ -1,9 +1,11 @@
 module Results
   module EventDataHelper
-    SEGMENTED_FIELD_TYPES = ['FormField::Percentage', 'FormField::Summation', 'FormField::LikertScale']
+    SEGMENTED_FIELD_TYPES = ['FormField::Percentage', 'FormField::Checkbox',
+                             'FormField::Summation', 'FormField::LikertScale']
     PERCENTAGE_TYPE = 'FormField::Percentage'.freeze
     SUMMATION_TYPE = 'FormField::Summation'.freeze
     LIKERT_SCALE_TYPE = 'FormField::LikertScale'.freeze
+    CHECKBOX_TYPE = 'FormField::Checkbox'.freeze
     NUMBER = 'Number'.freeze
     STRING = 'String'.freeze
     def custom_fields_to_export_headers
@@ -33,6 +35,11 @@ module Results
               value = @result.value[option[1].to_s]
               key = @fields_mapping["#{@result.form_field.id}_#{option[1]}"]
               resource_values[key] = [NUMBER, 'percentage', (value.present? && value != '' ? value.to_f : 0.0) / 100]
+            end
+          elsif @result.form_field.type == CHECKBOX_TYPE
+            @result.value.each do |v|
+              key = @fields_mapping["#{@result.form_field.id}_#{v}"]
+              resource_values[key] = [STRING, 'normal', 'Yes']
             end
           elsif @result.form_field.type == LIKERT_SCALE_TYPE
             @likert_statements_mapping[@result.form_field.id] ||= Hash[@result.form_field.statements.map{ |s| [s.id.to_s, s.name] }]

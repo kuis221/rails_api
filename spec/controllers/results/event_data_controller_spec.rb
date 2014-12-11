@@ -168,13 +168,14 @@ describe Results::EventDataController, type: :controller do
          'AGE: 45 – 54', 'AGE: 55 – 64', 'AGE: 65+', 'ETHNICITY/RACE: ASIAN',
          'ETHNICITY/RACE: BLACK / AFRICAN AMERICAN', 'ETHNICITY/RACE: HISPANIC / LATINO',
          'ETHNICITY/RACE: NATIVE AMERICAN', 'ETHNICITY/RACE: WHITE', 'IMPRESSIONS', 'INTERACTIONS',
-         'SAMPLES', 'TEST KPI', 'EVENT TYPE', 'RADIO FIELD TYPE'],
+         'SAMPLES', 'TEST KPI', 'EVENT TYPE: EVENT TYPE OPT 1', 'EVENT TYPE: EVENT TYPE OPT 2',
+         'EVENT TYPE: EVENT TYPE OPT 3', 'RADIO FIELD TYPE'],
         ['Test Campaign FY01', 'Angeles Area', '344221', 'Bar Prueba', 'Bar Prueba, Los Angeles, California, 12345',
          'Los Angeles', 'California', '12345', 'Active', 'Approved', 'Test User',
          "http://localhost:5100/events/#{event.id}", '2019-01-23T10:00', '2019-01-23T12:00',
          '2.0', '99.99', '0.6',
          '0.4', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.18', '0.2', '0.21',
-         '0.19', '0.22', '10.0', '11.0', '12.0', '8899.0', 'Event Type Opt 1', 'Radio Field Opt 1']
+         '0.19', '0.22', '10.0', '11.0', '12.0', '8899.0', 'Yes', nil, nil, 'Radio Field Opt 1']
       ])
     end
 
