@@ -152,6 +152,7 @@ class Venue < ActiveRecord::Base
   end
 
   def neighbors_establishments_search
+    return unless latitude && longitude
     @neighbors_establishments_search ||= begin
       types = types_without_establishment
       Venue.solr_search do

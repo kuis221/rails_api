@@ -45,7 +45,7 @@ describe Results::EventDataController, type: :controller do
 
       expect(export.reload).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP', 'ACTIVE STATE',
-         'EVENT STATUS', 'TEAM MEMBERS', 'URL', 'START', 'END']
+         'EVENT STATUS', 'TEAM MEMBERS', 'URL', 'START', 'END', 'PROMO HOURS', 'SPENT']
       ])
     end
 
@@ -77,11 +77,11 @@ describe Results::EventDataController, type: :controller do
 
       expect(export.reload).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
-         'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL', 'START', 'END'],
+         'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL', 'START', 'END', 'PROMO HOURS', 'SPENT'],
         ['Test Campaign FY01', 'My area', '443321', 'Bar Prueba',
          'Bar Prueba, Los Angeles, California, 12345', 'Los Angeles', 'California', '12345',
          'Active', 'Approved', 'Test User, zteam', "http://localhost:5100/events/#{event.id}",
-         '2019-01-23T10:00', '2019-01-23T12:00']
+         '2019-01-23T10:00', '2019-01-23T12:00', '2.0', '99.99']
       ])
     end
 
@@ -98,10 +98,10 @@ describe Results::EventDataController, type: :controller do
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
-         'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL', 'START', 'END', 'A CUSTOM KPI'],
+         'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL', 'START', 'END', 'PROMO HOURS', 'SPENT', 'A CUSTOM KPI'],
         ['Test Campaign FY01', nil, nil, 'Bar Prueba', 'Bar Prueba, Los Angeles, California, 12345',
          'Los Angeles', 'California', '12345', 'Active', 'Approved', nil,
-         "http://localhost:5100/events/#{event.id}", '2013-01-23T10:00', '2013-01-23T12:00', '9876.0']
+         "http://localhost:5100/events/#{event.id}", '2013-01-23T10:00', '2013-01-23T12:00', '2.0', '0.0', '9876.0']
       ])
       spreadsheet_from_last_export do |doc|
         rows = doc.elements.to_a('//Row')
@@ -162,17 +162,67 @@ describe Results::EventDataController, type: :controller do
 
       expect(export.reload).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
-         'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL', 'START', 'END', 'GENDER: FEMALE',
+         'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL', 'START', 'END',
+         'PROMO HOURS', 'SPENT', 'GENDER: FEMALE',
          'GENDER: MALE', 'AGE: < 12', 'AGE: 12 – 17', 'AGE: 18 – 24', 'AGE: 25 – 34', 'AGE: 35 – 44',
          'AGE: 45 – 54', 'AGE: 55 – 64', 'AGE: 65+', 'ETHNICITY/RACE: ASIAN',
          'ETHNICITY/RACE: BLACK / AFRICAN AMERICAN', 'ETHNICITY/RACE: HISPANIC / LATINO',
          'ETHNICITY/RACE: NATIVE AMERICAN', 'ETHNICITY/RACE: WHITE', 'IMPRESSIONS', 'INTERACTIONS',
-         'SAMPLES', 'TEST KPI', 'EVENT TYPE', 'RADIO FIELD TYPE'],
+         'SAMPLES', 'TEST KPI', 'EVENT TYPE: EVENT TYPE OPT 1', 'EVENT TYPE: EVENT TYPE OPT 2',
+         'EVENT TYPE: EVENT TYPE OPT 3', 'RADIO FIELD TYPE'],
         ['Test Campaign FY01', 'Angeles Area', '344221', 'Bar Prueba', 'Bar Prueba, Los Angeles, California, 12345',
          'Los Angeles', 'California', '12345', 'Active', 'Approved', 'Test User',
-         "http://localhost:5100/events/#{event.id}", '2019-01-23T10:00', '2019-01-23T12:00', '0.6',
+         "http://localhost:5100/events/#{event.id}", '2019-01-23T10:00', '2019-01-23T12:00',
+         '2.0', '99.99', '0.6',
          '0.4', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.18', '0.2', '0.21',
-         '0.19', '0.22', '10.0', '11.0', '12.0', '8899.0', 'Event Type Opt 1', 'Radio Field Opt 1']
+         '0.19', '0.22', '10.0', '11.0', '12.0', '8899.0', 'Yes', nil, nil, 'Radio Field Opt 1']
+      ])
+    end
+
+
+    it 'should include the event data results only for the campaigns associatted to a given brand' do
+      custom_kpi = create(:kpi, name: 'Test KPI 1', company: company)
+      custom_kpi2 = create(:kpi, name: 'Test KPI 2', company: company)
+      brand = create(:brand, company: company)
+
+      campaign.brands << brand
+      campaign.add_kpi custom_kpi
+
+      campaign2 = create(:campaign, company: company)
+      campaign2.add_kpi custom_kpi2
+
+      area = create(:area, name: 'Angeles Area', company: company)
+      area.places << create(:place, name: 'Los Angeles', city: 'Los Angeles', state: 'California', country: 'US', types: ['locality'])
+      campaign.areas << area
+      place = create(:place, name: 'Bar Prueba',
+        city: 'Los Angeles', state: 'California', country: 'US', td_linx_code: '344221')
+      event = create(:approved_event, company: company, campaign: campaign, place: place,
+        start_date: '01/23/2019', end_date: '01/23/2019',
+        start_time: '10:00 am', end_time: '12:00 pm')
+      event.result_for_kpi(custom_kpi).value = 8899
+      event.save
+
+      event2 = create(:approved_event, company: company, campaign: campaign2, place: place,
+        start_date: '01/23/2019', end_date: '01/23/2019',
+        start_time: '10:00 am', end_time: '12:00 pm')
+      event2.result_for_kpi(custom_kpi2).value = 1234
+      event2.save
+
+      Sunspot.commit
+
+      expect { xhr :get, 'index', brand: [brand.id], format: :xls }.to change(ListExport, :count).by(1)
+      export = ListExport.last
+      expect(ListExportWorker).to have_queued(export.id)
+      ResqueSpec.perform_all(:export)
+
+      expect(export.reload).to have_rows([
+        ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
+         'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL', 'START', 'END',
+         'PROMO HOURS', 'SPENT', 'TEST KPI 1'],
+        ['Test Campaign FY01', 'Angeles Area', '344221', 'Bar Prueba', 'Bar Prueba, Los Angeles, California, 12345',
+         'Los Angeles', 'California', '12345', 'Active', 'Approved', nil,
+         "http://localhost:5100/events/#{event.id}", '2019-01-23T10:00', '2019-01-23T12:00',
+         '2.0', '0.0', '8899.0']
       ])
     end
 
@@ -198,13 +248,13 @@ describe Results::EventDataController, type: :controller do
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY',
          'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL',
-         'START', 'END', 'A CUSTOM KPI', 'ANOTHER KPI'],
+         'START', 'END', 'PROMO HOURS', 'SPENT', 'A CUSTOM KPI', 'ANOTHER KPI'],
         ['Test Campaign FY01', nil, nil, nil, nil, nil, nil, nil, 'Active', 'Approved', nil,
-         "http://localhost:5100/events/#{event1.id}", '2013-01-23T10:00',
-         '2013-01-23T12:00', '9876.0', nil],
+         "http://localhost:5100/events/#{event1.id}", '2013-01-23T10:00', '2013-01-23T12:00',
+         '2.0', '0.0', '9876.0', nil],
         [campaign2.name, nil, nil, nil, nil, nil, nil, nil, 'Active', 'Approved', nil,
          "http://localhost:5100/events/#{event2.id}", '2013-01-24T10:00', '2013-01-24T12:00',
-         nil, '7654.0']
+         '2.0', '0.0', nil, '7654.0']
       ])
     end
 
@@ -225,14 +275,15 @@ describe Results::EventDataController, type: :controller do
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
-         'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL', 'START', 'END', 'GENDER: FEMALE',
+         'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL', 'START', 'END', 'PROMO HOURS', 'SPENT', 'GENDER: FEMALE',
          'GENDER: MALE', 'AGE: < 12', 'AGE: 12 – 17', 'AGE: 18 – 24', 'AGE: 25 – 34',
          'AGE: 35 – 44', 'AGE: 45 – 54', 'AGE: 55 – 64', 'AGE: 65+', 'ETHNICITY/RACE: ASIAN',
          'ETHNICITY/RACE: BLACK / AFRICAN AMERICAN', 'ETHNICITY/RACE: HISPANIC / LATINO',
          'ETHNICITY/RACE: NATIVE AMERICAN', 'ETHNICITY/RACE: WHITE', 'IMPRESSIONS',
          'INTERACTIONS', 'SAMPLES'],
         ['Test Campaign FY01', nil, nil, nil, nil, nil, nil, nil, 'Active', 'Approved', nil,
-         "http://localhost:5100/events/#{event1.id}", '2013-01-23T10:00', '2013-01-23T12:00', '0.0', '0.0',
+         "http://localhost:5100/events/#{event1.id}", '2013-01-23T10:00', '2013-01-23T12:00',
+         '2.0', '0.0', '0.0', '0.0',
          '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0',
          '0.0', '111.0', nil, nil]
       ])
@@ -265,14 +316,14 @@ describe Results::EventDataController, type: :controller do
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
-         'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL', 'START', 'END', 'MY KPI: UNO',
-         'MY KPI: DOS', 'MY OTHER KPI'],
+         'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL', 'START', 'END', 'PROMO HOURS', 'SPENT',
+         'MY KPI: UNO', 'MY KPI: DOS', 'MY OTHER KPI'],
         ['Test Campaign FY01', nil, nil, nil, nil, nil, nil, nil, 'Active', 'Approved', nil,
          "http://localhost:5100/events/#{event1.id}", '2013-01-23T10:00', '2013-01-23T12:00',
-         '0.63', '0.37', nil],
+         '2.0', '0.0', '0.63', '0.37', nil],
         ['Test Campaign FY01', nil, nil, nil, nil, nil, nil, nil, 'Active', 'Approved', nil,
          "http://localhost:5100/events/#{event2.id}", '2013-01-24T10:00', '2013-01-24T12:00',
-         '0.0', '0.0', '134.0']
+         '2.0', '0.0', '0.0', '0.0', '134.0']
       ])
     end
   end

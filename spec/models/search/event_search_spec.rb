@@ -7,8 +7,8 @@ describe Event, type: :model, search: true do
 
   it 'should search for events' do
     # First populate the Database with some data
-    brand = create(:brand)
-    brand2 = create(:brand)
+    brand = create(:brand, company: company)
+    brand2 = create(:brand, company: company)
     campaign = create(:campaign, company: company, brand_ids: [brand.id])
     campaign2 = create(:campaign, company: company, brand_ids: [brand.id, brand2.id])
     team = create(:team, company: company)
@@ -19,7 +19,6 @@ describe Event, type: :model, search: true do
                           role: create(:role, company: company))
     user3 = create(:company_user, company: company, role: create(:role, company: company))
     user4 = create(:company_user, company: company, role: create(:role, company: company))
-    los_angeles = create(:city, name: 'Los Angeles', state: 'California', country: 'US')
     place = create(:place, city: 'Los Angeles', state: 'California', country: 'US')
     place2 = create(:place, city: 'Chicago', state: 'Illinois')
     event = create(:event, campaign: campaign, place: place,

@@ -1290,3 +1290,27 @@ div#spin{
 		}
 	}
 }
+// Custom Filter Modal
+// --------------------------------------------------
+
+.customfilter_modal {
+	.custom-filter-option {
+		margin-bottom: 15px;
+		label {
+			&.radio {
+				display: inline-block;
+				margin-top: 7px;
+				vertical-align: top;
+			}
+		}
+		.form-inputs {
+			display: inline-block;
+			width: 85%;
+			label.filter_option {
+				font-size: 14px;
+				font-weight: bold;
+				margin: 0;
+			}
+		}
+	}
+}
