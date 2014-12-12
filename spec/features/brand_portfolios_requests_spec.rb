@@ -18,8 +18,12 @@ feature 'BrandPortfolios', js: true, search: true do
     feature 'GET index' do
       scenario 'should display a table with the portfolios' do
         portfolios = [
-          create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: true, company: company),
-          create(:brand_portfolio, name: 'B Licores Costarricenses', description: 'Licores ticos', active: true, company: company)
+          create(:brand_portfolio, name: 'A Vinos ticos',
+                                   description: 'Algunos vinos de Costa Rica',
+                                   active: true, company: company),
+          create(:brand_portfolio, name: 'B Licores Costarricenses',
+                                   description: 'Licores ticos',
+                                   active: true, company: company)
         ]
         Sunspot.commit
         visit brand_portfolios_path
@@ -37,7 +41,8 @@ feature 'BrandPortfolios', js: true, search: true do
       end
 
       scenario 'should allow user to deactivate brand portfolios' do
-        create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: true, company: company)
+        create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica',
+                                 active: true, company: company)
         Sunspot.commit
         visit brand_portfolios_path
 
@@ -51,7 +56,8 @@ feature 'BrandPortfolios', js: true, search: true do
       end
 
       scenario 'should allow user to activate brand portfolios' do
-        create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', active: false, company: company)
+        create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica',
+                                 active: false, company: company)
         Sunspot.commit
         visit brand_portfolios_path
 
@@ -90,14 +96,18 @@ feature 'BrandPortfolios', js: true, search: true do
 
   feature '/brand_portfolios/:brand_portfolio_id', js: true do
     scenario 'GET show should display the portfolio details page' do
-      portfolio = create(:brand_portfolio, name: 'Some Brand Portfolio', description: 'a portfolio description', company: company)
+      portfolio = create(:brand_portfolio,
+                         name: 'Some Brand Portfolio', description: 'a portfolio description',
+                         company: company)
       visit brand_portfolio_path(portfolio)
       expect(page).to have_selector('h2', text: 'Some Brand Portfolio')
       expect(page).to have_selector('div.description-data', text: 'a portfolio description')
     end
 
     scenario 'diplays a table of brands within the brand portfolio' do
-      portfolio = create(:brand_portfolio, name: 'Some Brand Portfolio', description: 'a portfolio description', company: company)
+      portfolio = create(:brand_portfolio, name: 'Some Brand Portfolio',
+                                           description: 'a portfolio description',
+                                           company: company)
       brands = [create(:brand, name: 'Brand 1'), create(:brand, name: 'Brand 2')]
       brands.map { |b| portfolio.brands << b }
       visit brand_portfolio_path(portfolio)
@@ -114,7 +124,9 @@ feature 'BrandPortfolios', js: true, search: true do
     end
 
     scenario 'allows the user to activate/deactivate a portfolio' do
-      portfolio = create(:brand_portfolio, name: 'Some Brand Portfolio', description: 'a portfolio description', active: true, company: company)
+      portfolio = create(:brand_portfolio, name: 'Some Brand Portfolio',
+                                           description: 'a portfolio description',
+                                           active: true, company: company)
       visit brand_portfolio_path(portfolio)
       within('.links-data') do
         click_js_button 'Deactivate Brand Portfolio'
