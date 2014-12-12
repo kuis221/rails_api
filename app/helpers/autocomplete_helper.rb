@@ -25,14 +25,14 @@ module AutocompleteHelper
         end
       end
 
-      any_of do
-        search_classes.each do |klass|
-          all_of do
-            with :class, klass
-            with :status, options
-          end
+      if search_classes.include?(Campaign)
+        any_of do
+          without :class, Campaign
+          with :id, current_company_user.accessible_campaign_ids
         end
       end
+
+      with :status, options
     end
 
     special_buckets = [:active_state, :event_status, :task_status, :user_active_state]

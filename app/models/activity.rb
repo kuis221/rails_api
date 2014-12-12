@@ -26,7 +26,7 @@ class Activity < ActiveRecord::Base
     inclusion: { in: :valid_activity_type_ids }
 
   validates :campaign_id, presence: true, numericality: true,
-                          if: -> (_activitable) { activitable_type == 'Event' }
+                          if: -> (_activitable) { activitable_type == 'Acivity' }
   validates :activitable_id, presence: true, numericality: true
   validates :activitable_type, presence: true
   validates :company_user_id, presence: true, numericality: true
@@ -127,7 +127,7 @@ class Activity < ActiveRecord::Base
 
   class << self
     def do_search(params)
-      solr_search(include: [:activity_type, company_user: :user]) do
+      solr_search(include: [:campaign, :activity_type, company_user: :user]) do
         with :company_id, params[:company_id]
         with :campaign_id, params[:campaign] if params.key?(:campaign) && params[:campaign].present?
         with :activity_type_id, params[:activity_type] if params.key?(:activity_type) && params[:activity_type].present?
@@ -135,11 +135,22 @@ class Activity < ActiveRecord::Base
         with(:status, params[:status]) if params.key?(:status) && params[:status].present?
 
         if params.key?(:brand) && params[:brand].present?
-          campaign_ids = Campaign.joins(:brands)
-                                 .where(brands: { id: params[:brand] }, company_id: params[:company_id])
-                                 .pluck('DISTINCT(campaigns.id)')
+          campaign_ids = Campaign.with_brands(params[:brand]).pluck('campaigns.id')
           with 'campaign_id', campaign_ids + [0]
         end
+
+        company_user = params[:current_company_user]
+        if company_user.present? && !company_user.role.is_admin?
+          with(:campaign_id, company_user.accessible_campaign_ids + [0])
+          any_of do
+            locations = company_user.accessible_locations
+            places_ids = company_user.accessible_places
+            with(:place_id, places_ids + [0])
+            with(:location, locations + [0])
+          end
+        end
+
+        with :place_id, Venue.where(id: params[:venue]).pluck(:place_id) if params.key?(:venue) && params[:venue].present?
 
         if params[:area].present?
           any_of do

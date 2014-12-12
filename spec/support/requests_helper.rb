@@ -161,15 +161,20 @@ module CapybaraBrandscopicHelpers
   end
 
   def unicheck(option)
-    found = false
+    cb = nil
     all('label', text: option).each do |label|
-      label.all('div.checker').each do |cb|
-        cb.trigger('click')
-        found = cb
+      if label['for']
+        cb = find('input#' + label['for'], visible: false, match: :first)
+      else
+        cb = label.find('div.checker', match: :first)
       end
     end
-    fail Capybara::ElementNotFound.new("Unable to find option #{option}") unless found
-    found
+    if cb
+      cb.trigger('click')
+    else
+      fail Capybara::ElementNotFound.new("Unable to find option #{option}")
+    end
+    cb
   end
 
   def object_row(object)

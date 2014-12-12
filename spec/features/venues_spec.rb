@@ -41,7 +41,7 @@ feature 'Venues Section', js: true, search: true do
       select_places_autocomplete 'San Francisco CA', from: 'Enter a location'
       fill_in 'I am looking for', with: 'Alcatraz'
       click_js_button 'Search'
-      expect(page).to have_content 'Alcatraz Island'
+      expect(find('#venues-list')).to have_content 'Alcatraz Island'
       resource_item.click
 
       expect(page).to have_selector('h2', text: 'Alcatraz Island')
@@ -97,7 +97,7 @@ feature 'Venues Section', js: true, search: true do
       create(:event, campaign: campaign,
                      place: create(:place, name: 'Place 1', td_linx_code: '5155520'),
                      results: { impressions: 35, interactions: 65, samples: 15 },
-                     expenses: [{ name: 'Expense 1', amount: 1000 }])
+                     expenses: [{ name: 'Expense 1', amount: 1_000 }])
     end
     let(:event2) do
       create(:event, campaign: create(:campaign, name: 'Another Campaign April 03', company: company),

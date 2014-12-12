@@ -47,26 +47,26 @@ describe Report, type: :model do
     before { User.current = user.user }
     it 'should return all the reports created by the current user' do
       report = create(:report, company: company)
-      expect(Report.accessible_by_user(user)).to match_array [report]
+      expect(described_class.accessible_by_user(user)).to match_array [report]
     end
 
     it 'should return all the reports shared with everyone by the current user' do
       report = create(:report, company: company, sharing: 'everyone')
       other_user = create(:company_user, company: company)
-      expect(Report.accessible_by_user(user)).to match_array [report]
-      expect(Report.accessible_by_user(other_user)).to match_array [report]
+      expect(described_class.accessible_by_user(user)).to match_array [report]
+      expect(described_class.accessible_by_user(other_user)).to match_array [report]
 
       # Should not return reports from other company
       other_company_user = create(:company_user, company: create(:company))
-      expect(Report.accessible_by_user(other_company_user)).to match_array []
+      expect(described_class.accessible_by_user(other_company_user)).to match_array []
     end
 
     it "should return reports shared with the user's role" do
       report = create(:report, company: company,
         sharing: 'custom', sharing_selections: ["role:#{user.role_id}"])
       other_user = create(:company_user, company: company, role: user.role)
-      expect(Report.accessible_by_user(user)).to match_array [report]
-      expect(Report.accessible_by_user(other_user)).to match_array [report]
+      expect(described_class.accessible_by_user(user)).to match_array [report]
+      expect(described_class.accessible_by_user(other_user)).to match_array [report]
     end
 
     it "should return reports shared with the user's role" do
@@ -77,9 +77,9 @@ describe Report, type: :model do
       report = create(:report, company: company,
         sharing: 'custom', sharing_selections: ["team:#{team.id}", 'company_user:9999999', 'role:9999999'])
       report2 = create(:report, company: company)
-      other_team_user = create(:company_user, company: create(:company))
-      expect(Report.accessible_by_user(user)).to match_array [report, report2]
-      expect(Report.accessible_by_user(other_user)).to match_array [report]
+      create(:company_user, company: create(:company))
+      expect(described_class.accessible_by_user(user)).to match_array [report, report2]
+      expect(described_class.accessible_by_user(other_user)).to match_array [report]
     end
 
     it 'should return reports shared with the user' do
@@ -91,41 +91,46 @@ describe Report, type: :model do
       team.users << other_user
       report = create(:report, company: company,
         sharing: 'custom', sharing_selections: ["company_user:#{other_user.id}"])
-      expect(Report.accessible_by_user(user)).to match_array [report]
-      expect(Report.accessible_by_user(other_user)).to match_array [report]
+      expect(described_class.accessible_by_user(user)).to match_array [report]
+      expect(described_class.accessible_by_user(other_user)).to match_array [report]
     end
   end
 
   describe '#format_values' do
     let(:company) { create(:company) }
+
     it "should correcly apply the 'display' formula to values" do
       campaign1 = create(:campaign, company: company, name: 'Campaign 1')
       campaign2 = create(:campaign, company: company, name: 'Campaign 2')
       create(:event, campaign: campaign1,
-                                 place: create(:place, name: 'Bar 1', state: 'State 1'),
-                                 results: { impressions: 300, interactions: 20, samples: 10 })
+                     place: create(:place, name: 'Bar 1', state: 'State 1'),
+                     results: { impressions: 300, interactions: 20, samples: 10 })
 
       create(:event, campaign: campaign1,
-                                 place: create(:place, name: 'Bar 2', state: 'State 2'),
-                                 results: { impressions: 700, interactions: 40, samples: 10 })
+                     place: create(:place, name: 'Bar 2', state: 'State 2'),
+                     results: { impressions: 700, interactions: 40, samples: 10 })
 
       create(:event, campaign: campaign2,
-                                 place: create(:place, name: 'Bar 3', state: 'State 1'),
-                                 results: { impressions: 200, interactions: 80, samples: 40 })
+                     place: create(:place, name: 'Bar 3', state: 'State 1'),
+                     results: { impressions: 200, interactions: 80, samples: 40 })
 
       create(:event, campaign: campaign2,
-                                 place: create(:place, name: 'Bar 4', state: 'State 2'),
-                                 results: { impressions: 100, interactions: 60, samples: 60 })
+                     place: create(:place, name: 'Bar 4', state: 'State 2'),
+                     results: { impressions: 100, interactions: 60, samples: 60 })
 
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }, { 'field' => 'place:state', 'label' => 'State' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign Name' }],
-                                  values:  [
-                                    { 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum', 'display' => 'perc_of_row' },
-                                    { 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions', 'aggregate' => 'sum', 'display' => 'perc_of_total', 'precision' => '1' },
-                                    { 'field' => "kpi:#{Kpi.samples.id}", 'label' => 'Samples', 'aggregate' => 'sum', 'display' => 'perc_of_column', 'precision' => '0' }
-                                  ]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' },
+                                { 'field' => 'place:state', 'label' => 'State' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign Name' }],
+                      values:  [
+                        { 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                          'aggregate' => 'sum', 'display' => 'perc_of_row' },
+                        { 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions',
+                          'aggregate' => 'sum', 'display' => 'perc_of_total', 'precision' => '1' },
+                        { 'field' => "kpi:#{Kpi.samples.id}", 'label' => 'Samples',
+                          'aggregate' => 'sum', 'display' => 'perc_of_column', 'precision' => '0' }
+                      ]
       )
 
       results = report.fetch_page
@@ -142,66 +147,75 @@ describe Report, type: :model do
       campaign1 = create(:campaign, company: company, name: 'Campaign 1')
       campaign2 = create(:campaign, company: company, name: 'Campaign 2')
       create(:event, campaign: campaign1,
-                                 place: create(:place, name: 'Bar 1', state: 'State 1'),
-                                 results: { impressions: 300, interactions: 20, samples: 10 })
+                     place: create(:place, name: 'Bar 1', state: 'State 1'),
+                     results: { impressions: 300, interactions: 20, samples: 10 })
 
       create(:event, campaign: campaign1,
-                                 place: create(:place, name: 'Bar 2', state: 'State 2'),
-                                 results: { impressions: 700, interactions: 40, samples: 10 })
+                     place: create(:place, name: 'Bar 2', state: 'State 2'),
+                     results: { impressions: 700, interactions: 40, samples: 10 })
 
       create(:event, campaign: campaign2,
-                                 place: create(:place, name: 'Bar 3', state: 'State 1'),
-                                 results: { impressions: 200, interactions: 80, samples: 40 })
+                     place: create(:place, name: 'Bar 3', state: 'State 1'),
+                     results: { impressions: 200, interactions: 80, samples: 40 })
 
       create(:event, campaign: campaign2,
-                                 place: create(:place, name: 'Bar 4', state: 'State 2'),
-                                 results: { impressions: 100, interactions: 60, samples: 60 })
+                     place: create(:place, name: 'Bar 4', state: 'State 2'),
+                     results: { impressions: 100, interactions: 60, samples: 60 })
 
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }, { 'field' => 'place:state', 'label' => 'State' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign Name' }],
-                                  values:  [
-                                    { 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum', 'display' => 'perc_of_row' },
-                                    { 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions', 'aggregate' => 'sum', 'display' => '' },
-                                    { 'field' => "kpi:#{Kpi.samples.id}", 'label' => 'Samples', 'aggregate' => 'sum', 'display' => nil }
-                                  ]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' },
+                                { 'field' => 'place:state', 'label' => 'State' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign Name' }],
+                      values:  [
+                        { 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                          'aggregate' => 'sum', 'display' => 'perc_of_row' },
+                        { 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions',
+                          'aggregate' => 'sum', 'display' => '' },
+                        { 'field' => "kpi:#{Kpi.samples.id}", 'label' => 'Samples',
+                          'aggregate' => 'sum', 'display' => nil }
+                      ]
       )
 
       results = report.fetch_page
       expect(results[0]['campaign_name']).to eql 'Campaign 1'
       expect(results[0]['values']).to eql [300.0, 700.0, 20.0, 40.0, 10.0, 10.0]
-      expect(report.format_values(results[0]['values'])).to eql ['30.00%', '70.00%', '20.00', '40.00', '10.00', '10.00']
+      expect(report.format_values(results[0]['values'])).to eql [
+        '30.00%', '70.00%', '20.00', '40.00', '10.00', '10.00']
 
       expect(results[1]['campaign_name']).to eql 'Campaign 2'
       expect(results[1]['values']).to eql [200.0, 100.0, 80.0, 60.0, 40.0, 60.0]
-      expect(report.format_values(results[1]['values'])).to eql ['66.67%', '33.33%', '80.00', '60.00', '40.00', '60.00']
+      expect(report.format_values(results[1]['values'])).to eql [
+        '66.67%', '33.33%', '80.00', '60.00', '40.00', '60.00']
     end
 
     it "should olny apply the 'display' formula to values that have any selected - without columns" do
       campaign1 = create(:campaign, company: company, name: 'Campaign 1')
       campaign2 = create(:campaign, company: company, name: 'Campaign 2')
       create(:event, campaign: campaign1,
-                                 results: { impressions: 300, interactions: 20, samples: 10 })
+                     results: { impressions: 300, interactions: 20, samples: 10 })
 
       create(:event, campaign: campaign1,
-                                 results: { impressions: 700, interactions: 40, samples: 10 })
+                     results: { impressions: 700, interactions: 40, samples: 10 })
 
       create(:event, campaign: campaign2,
-                                 results: { impressions: 200, interactions: 80, samples: 40 })
+                     results: { impressions: 200, interactions: 80, samples: 40 })
 
       create(:event, campaign: campaign2,
-                                 results: { impressions: 100, interactions: 60, samples: 60 })
+                     results: { impressions: 100, interactions: 60, samples: 60 })
 
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign Name' }],
-                                  values:  [
-                                    { 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum', 'display' => 'perc_of_row' },
-                                    { 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions', 'aggregate' => 'sum', 'display' => '' },
-                                    { 'field' => "kpi:#{Kpi.samples.id}", 'label' => 'Samples', 'aggregate' => 'sum', 'display' => nil }
-                                  ]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign Name' }],
+                      values:  [
+                        { 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                          'aggregate' => 'sum', 'display' => 'perc_of_row' },
+                        { 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions',
+                          'aggregate' => 'sum', 'display' => '' },
+                        { 'field' => "kpi:#{Kpi.samples.id}", 'label' => 'Samples',
+                          'aggregate' => 'sum', 'display' => nil }
+                      ]
       )
 
       # The first value is displayed as % of row
@@ -216,14 +230,17 @@ describe Report, type: :model do
 
       # The first value is displayed as % of column
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign Name' }],
-                                  values:  [
-                                    { 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum', 'display' => 'perc_of_column' },
-                                    { 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions', 'aggregate' => 'sum', 'display' => '' },
-                                    { 'field' => "kpi:#{Kpi.samples.id}", 'label' => 'Samples', 'aggregate' => 'sum', 'display' => nil }
-                                  ]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign Name' }],
+                      values:  [
+                        { 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                          'aggregate' => 'sum', 'display' => 'perc_of_column' },
+                        { 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions',
+                          'aggregate' => 'sum', 'display' => '' },
+                        { 'field' => "kpi:#{Kpi.samples.id}", 'label' => 'Samples',
+                          'aggregate' => 'sum', 'display' => nil }
+                      ]
       )
 
       results = report.fetch_page
@@ -237,14 +254,17 @@ describe Report, type: :model do
 
       # The first value is displayed as % of total
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign Name' }],
-                                  values:  [
-                                    { 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum', 'display' => 'perc_of_total' },
-                                    { 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions', 'aggregate' => 'sum', 'display' => '' },
-                                    { 'field' => "kpi:#{Kpi.samples.id}", 'label' => 'Samples', 'aggregate' => 'sum', 'display' => nil }
-                                  ]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign Name' }],
+                      values:  [
+                        { 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                          'aggregate' => 'sum', 'display' => 'perc_of_total' },
+                        { 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions',
+                          'aggregate' => 'sum', 'display' => '' },
+                        { 'field' => "kpi:#{Kpi.samples.id}", 'label' => 'Samples',
+                          'aggregate' => 'sum', 'display' => nil }
+                      ]
       )
 
       results = report.fetch_page
@@ -261,30 +281,34 @@ describe Report, type: :model do
       campaign1 = create(:campaign, company: company, name: 'Campaign 1')
       campaign2 = create(:campaign, company: company, name: 'Campaign 2')
       create(:event, campaign: campaign1,
-                                 place: create(:place, name: 'Bar 1'),
-                                 results: { impressions: 300, interactions: 20, samples: 10 })
+                     place: create(:place, name: 'Bar 1'),
+                     results: { impressions: 300, interactions: 20, samples: 10 })
 
       create(:event, campaign: campaign1,
-                                 place: create(:place, name: 'Bar 2'),
-                                 results: { impressions: 700, interactions: 40, samples: 10 })
+                     place: create(:place, name: 'Bar 2'),
+                     results: { impressions: 700, interactions: 40, samples: 10 })
 
       create(:event, campaign: campaign2,
-                                 place: create(:place, name: 'Bar 3'),
-                                 results: { impressions: 200, interactions: 80, samples: 40 })
+                     place: create(:place, name: 'Bar 3'),
+                     results: { impressions: 200, interactions: 80, samples: 40 })
 
       create(:event, campaign: campaign2,
-                                 place: create(:place, name: 'Bar 4'),
-                                 results: { impressions: 100, interactions: 60, samples: 60 })
+                     place: create(:place, name: 'Bar 4'),
+                     results: { impressions: 100, interactions: 60, samples: 60 })
 
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'place:name', 'label' => 'Venue Name' }, { 'field' => 'campaign:name', 'label' => 'Campaign Name' }],
-                                  values:  [
-                                    { 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum', 'display' => 'perc_of_row' },
-                                    { 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions', 'aggregate' => 'sum', 'display' => '' },
-                                    { 'field' => "kpi:#{Kpi.samples.id}", 'label' => 'Samples', 'aggregate' => 'sum', 'display' => nil }
-                                  ]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'place:name', 'label' => 'Venue Name' },
+                                { 'field' => 'campaign:name', 'label' => 'Campaign Name' }],
+                      values:  [
+                        { 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                          'aggregate' => 'sum', 'display' => 'perc_of_row' },
+                        { 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions',
+                          'aggregate' => 'sum', 'display' => '' },
+                        { 'field' => "kpi:#{Kpi.samples.id}", 'label' => 'Samples',
+                          'aggregate' => 'sum', 'display' => nil }
+                      ]
       )
 
       # The first value is displayed as % of row
@@ -312,14 +336,18 @@ describe Report, type: :model do
       # The first value is displayed as % of column and % of total
       %w(perc_of_column perc_of_total).each do |display|
         report = create(:report,
-                                    company: company,
-                                    columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                    rows:    [{ 'field' => 'place:name', 'label' => 'Venue Name' }, { 'field' => 'campaign:name', 'label' => 'Campaign Name' }],
-                                    values:  [
-                                      { 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum', 'display' => display },
-                                      { 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions', 'aggregate' => 'sum', 'display' => '' },
-                                      { 'field' => "kpi:#{Kpi.samples.id}", 'label' => 'Samples', 'aggregate' => 'sum', 'display' => nil }
-                                    ]
+                        company: company,
+                        columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                        rows:    [{ 'field' => 'place:name', 'label' => 'Venue Name' },
+                                  { 'field' => 'campaign:name', 'label' => 'Campaign Name' }],
+                        values:  [
+                          { 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                            'aggregate' => 'sum', 'display' => display },
+                          { 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions',
+                            'aggregate' => 'sum', 'display' => '' },
+                          { 'field' => "kpi:#{Kpi.samples.id}", 'label' => 'Samples',
+                            'aggregate' => 'sum', 'display' => nil }
+                        ]
         )
 
         # The first value is displayed as % of row
@@ -362,10 +390,11 @@ describe Report, type: :model do
       create(:event, campaign: campaign2, results: { impressions: 100 })
 
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign Name' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => '% of column Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign Name' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => '% of column Impressions',
+                                  'aggregate' => 'sum' }]
       )
 
       expect(report.report_columns).to match_array ['% of column Impressions']
@@ -383,13 +412,17 @@ describe Report, type: :model do
       create(:event, campaign: campaign,  results: { impressions: 50 }, place: place_in_az)
 
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'place:state', 'label' => 'State' }, { 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign Name' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => '% of column Impressions', 'aggregate' => 'sum', 'display' => '' }]
+                      company: company,
+                      columns: [{ 'field' => 'place:state', 'label' => 'State' },
+                                { 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign Name' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => '% of column Impressions',
+                                  'aggregate' => 'sum', 'display' => '' }]
       )
 
-      expect(report.report_columns).to match_array ['Arizona||% of column Impressions', 'California||% of column Impressions', 'Texas||% of column Impressions']
+      expect(report.report_columns).to match_array [
+        'Arizona||% of column Impressions', 'California||% of column Impressions',
+        'Texas||% of column Impressions']
       expect(report.columns_totals).to eql [50.0, 600.0, 200.0]
     end
 
@@ -404,16 +437,21 @@ describe Report, type: :model do
       create(:event, campaign: campaign,  results: { impressions: 50, interactions: 5 }, place: place_in_az)
 
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'place:state', 'label' => 'State' }, { 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign Name' }],
-                                  values:  [
-                                    { 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' },
-                                    { 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions', 'aggregate' => 'sum' }
-                                  ]
+                      company: company,
+                      columns: [{ 'field' => 'place:state', 'label' => 'State' },
+                                { 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign Name' }],
+                      values:  [
+                        { 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' },
+                        { 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions',
+                                  'aggregate' => 'sum' }
+                      ]
       )
 
-      expect(report.report_columns).to match_array ['Arizona||Impressions', 'Arizona||Interactions', 'California||Impressions', 'California||Interactions', 'Texas||Impressions', 'Texas||Interactions']
+      expect(report.report_columns).to match_array [
+        'Arizona||Impressions', 'Arizona||Interactions', 'California||Impressions',
+        'California||Interactions', 'Texas||Impressions', 'Texas||Interactions']
       expect(report.columns_totals).to eql [50.0, 5.0, 600.0, 60.0, 200.0, 20.0]
     end
   end
@@ -422,26 +460,20 @@ describe Report, type: :model do
     let(:company) { create(:company) }
     let(:campaign) { create(:campaign, name: 'Guaro Cacique 2013', company: company) }
     let(:user) { create(:company_user, company: company) }
-    before do
-      Kpi.create_global_kpis
-    end
+
+    before { Kpi.create_global_kpis }
+
     it 'returns nil if report has no rows, values and columns' do
-      event = create(:event, campaign: campaign, results: { impressions: 100, interactions: 50 })
-      report = create(:report,
-                                  company: company,
-                                  rows:    [],
-                                  values:  [],
-                                  columns: []
-      )
-      page = report.fetch_page
-      expect(page).to be_nil
+      create(:event, campaign: campaign, results: { impressions: 100, interactions: 50 })
+      report = create(:report, company: company, rows: [], values: [], columns: [])
+      expect(report.fetch_page).to be_nil
     end
 
     it 'returns nil if report has rows but not values and columns' do
-      event = create(:event, campaign: campaign, results: { impressions: 100, interactions: 50 })
+      create(:event, campaign: campaign, results: { impressions: 100, interactions: 50 })
       report = create(:report,
-                                  company: company,
-                                  rows:    [{ 'field' => 'event:start_date', 'label' => 'Start date' }]
+                      company: company,
+                      rows:    [{ 'field' => 'event:start_date', 'label' => 'Start date' }]
       )
       page = report.fetch_page
       expect(report.rows).to_not be_empty
@@ -454,10 +486,11 @@ describe Report, type: :model do
       create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
         results: { impressions: 200, interactions: 150 })
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'event:start_date', 'label' => 'Start date' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'event:start_date', 'label' => 'Start date' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -472,10 +505,11 @@ describe Report, type: :model do
       event = create(:event, campaign: campaign, results: { impressions: 100, interactions: 50 })
       event.users << [user1, user2]
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'user:first_name', 'label' => 'First Name' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'user:first_name', 'label' => 'First Name' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -490,10 +524,11 @@ describe Report, type: :model do
       event = create(:event, campaign: campaign, results: { impressions: 100, interactions: 50 })
       event.users << [user1, user2]
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'user:full_name', 'label' => 'Full Name' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'user:full_name', 'label' => 'Full Name' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -511,10 +546,11 @@ describe Report, type: :model do
       team.users << [user1, user2]
       event.teams << team
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'user:first_name', 'label' => 'First Name' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'user:first_name', 'label' => 'First Name' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -530,10 +566,11 @@ describe Report, type: :model do
       create(:event, campaign: campaign, results: { impressions: 300, interactions: 300 }) # Another event
       event.teams << team
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'team:name', 'label' => 'Team' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'team:name', 'label' => 'Team' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -546,14 +583,15 @@ describe Report, type: :model do
       activity_type = create(:activity_type, name: 'SomeActivityName1', company: company)
       campaign.activity_types << activity_type
 
-      activity = create(:activity, activitable: event,
+      create(:activity, activitable: event,
         activity_type: activity_type, company_user: user)
 
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'activity_type:name', 'label' => 'Activity Type' }],
-                                  values:  [{ 'field' => 'activity_type:user', 'label' => 'Impressions', 'aggregate' => 'count' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'activity_type:name', 'label' => 'Activity Type' }],
+                      values:  [{ 'field' => 'activity_type:user', 'label' => 'Impressions',
+                                  'aggregate' => 'count' }]
       )
       page = report.fetch_page
 
@@ -563,14 +601,15 @@ describe Report, type: :model do
     end
 
     it 'returns the correct number of events' do
-      event = create(:event, campaign: campaign, results: { impressions: 100, interactions: 50 })
+      create(:event, campaign: campaign, results: { impressions: 100, interactions: 50 })
       create(:event, campaign: campaign, results: { impressions: 300, interactions: 300 }) # Another event
       report = create(:report,
-                                  company: company,
-                                  filters: [{ 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions' }],
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.events.id}", 'label' => 'Events', 'aggregate' => 'sum' }]
+                      company: company,
+                      filters: [{ 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions' }],
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.events.id}", 'label' => 'Events',
+                                  'aggregate' => 'sum' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -582,11 +621,12 @@ describe Report, type: :model do
       create(:event, campaign: campaign, results: { impressions: 100, interactions: 50 })
       create(:event, campaign: campaign, results: { impressions: 300, interactions: 300 })
       report = create(:report,
-                                  company: company,
-                                  filters: [{ 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions' }],
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.promo_hours.id}", 'label' => 'Promo Hours', 'aggregate' => 'sum' }]
+                      company: company,
+                      filters: [{ 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions' }],
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.promo_hours.id}", 'label' => 'Promo Hours',
+                                  'aggregate' => 'sum' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -604,11 +644,12 @@ describe Report, type: :model do
       create(:event, campaign: campaign2, results: { impressions: 300, interactions: 300 })
 
       report = create(:report,
-                                  company: company,
-                                  filters: [{ 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions' }],
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.photos.id}", 'label' => 'Photos', 'aggregate' => 'count' }]
+                      company: company,
+                      filters: [{ 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions' }],
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.photos.id}", 'label' => 'Photos',
+                                  'aggregate' => 'count' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -627,11 +668,12 @@ describe Report, type: :model do
       create(:event, campaign: campaign2, results: { impressions: 300, interactions: 300 })
 
       report = create(:report,
-                                  company: company,
-                                  filters: [{ 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions' }],
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.comments.id}", 'label' => 'Photos', 'aggregate' => 'count' }]
+                      company: company,
+                      filters: [{ 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions' }],
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.comments.id}", 'label' => 'Photos',
+                                  'aggregate' => 'count' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -650,11 +692,12 @@ describe Report, type: :model do
       create(:event, campaign: campaign2, results: { impressions: 300, interactions: 300 })
 
       report = create(:report,
-                                  company: company,
-                                  filters: [{ 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions' }],
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.expenses.id}", 'label' => 'Expenses', 'aggregate' => 'sum' }]
+                      company: company,
+                      filters: [{ 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions' }],
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.expenses.id}", 'label' => 'Expenses',
+                                  'aggregate' => 'sum' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -664,11 +707,12 @@ describe Report, type: :model do
 
       # With COUNT aggregation method
       report = create(:report,
-                                  company: company,
-                                  filters: [{ 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions' }],
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.expenses.id}", 'label' => 'Expenses', 'aggregate' => 'count' }]
+                      company: company,
+                      filters: [{ 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions' }],
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.expenses.id}", 'label' => 'Expenses',
+                                  'aggregate' => 'count' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -678,11 +722,12 @@ describe Report, type: :model do
 
       # With MIN aggregation method
       report = create(:report,
-                                  company: company,
-                                  filters: [{ 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions' }],
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.expenses.id}", 'label' => 'Expenses', 'aggregate' => 'min' }]
+                      company: company,
+                      filters: [{ 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions' }],
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.expenses.id}", 'label' => 'Expenses',
+                                  'aggregate' => 'min' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -692,11 +737,12 @@ describe Report, type: :model do
 
       # With MAX aggregation method
       report = create(:report,
-                                  company: company,
-                                  filters: [{ 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions' }],
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.expenses.id}", 'label' => 'Expenses', 'aggregate' => 'max' }]
+                      company: company,
+                      filters: [{ 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions' }],
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.expenses.id}", 'label' => 'Expenses',
+                                  'aggregate' => 'max' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -736,10 +782,11 @@ describe Report, type: :model do
       campaign2.brand_portfolios << brand_portfolio2
 
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'brand_portfolio:name', 'label' => 'Portfolio' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'brand_portfolio:name', 'label' => 'Portfolio' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -750,11 +797,12 @@ describe Report, type: :model do
 
       # Filter by a brand portfolio
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'brand_portfolio:name', 'label' => 'Portfolio' }],
-                                  filters: [{ 'field' => 'brand_portfolio:name', 'label' => 'Portfolio' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'brand_portfolio:name', 'label' => 'Portfolio' }],
+                      filters: [{ 'field' => 'brand_portfolio:name', 'label' => 'Portfolio' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       report.filter_params = { 'brand_portfolio:name' => ['BP1'] }
       page = report.fetch_page
@@ -795,10 +843,11 @@ describe Report, type: :model do
       campaign3.brands << brand2
 
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'brand:name', 'label' => 'Portfolio' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'brand:name', 'label' => 'Portfolio' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -809,11 +858,12 @@ describe Report, type: :model do
 
       # Filter by a brand portfolio
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'brand_portfolio:name', 'label' => 'Portfolio' }],
-                                  filters: [{ 'field' => 'brand_portfolio:name', 'label' => 'Portfolio' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'brand_portfolio:name', 'label' => 'Portfolio' }],
+                      filters: [{ 'field' => 'brand_portfolio:name', 'label' => 'Portfolio' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       report.filter_params = { 'brand_portfolio:name' => ['BP1'] }
       page = report.fetch_page
@@ -826,11 +876,11 @@ describe Report, type: :model do
       campaign.assign_all_global_kpis
       area1 = create(:area, name: 'Area1')
       area2 = create(:area, name: 'Area2')
-      chicago = create(:place, city: 'Chicago', state: 'Illinois', country: 'US', types: ['political'])
-      los_angeles = create(:place, city: 'Los Angeles', state: 'California', country: 'US', types: ['political'])
-      venue_in_chicago = create(:place, city: 'Chicago', state: 'Illinois', country: 'US', types: ['establishment'])
-      venue_in_la = create(:place, name: 'Bar L.A.', city: 'Los Angeles', state: 'California', country: 'US', types: ['establishment'])
-      venue_in_ny = create(:place, city: 'New York', state: 'New York', country: 'US', types: ['establishment'])
+      chicago = create(:city, name: 'Chicago', state: 'Illinois', country: 'US')
+      los_angeles = create(:city, name: 'Los Angeles', state: 'California', country: 'US')
+      venue_in_chicago = create(:place, city: 'Chicago', state: 'Illinois', country: 'US')
+      venue_in_la = create(:place, name: 'Bar L.A.', city: 'Los Angeles', state: 'California', country: 'US')
+      venue_in_ny = create(:place, city: 'New York', state: 'New York', country: 'US')
       area1.places << chicago
       area2.places << los_angeles
       area2.places << venue_in_la
@@ -849,10 +899,11 @@ describe Report, type: :model do
         results: { impressions: 350, interactions: 250 }, place: venue_in_ny)
 
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'area:name', 'label' => 'Area' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'area:name', 'label' => 'Area' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -863,11 +914,12 @@ describe Report, type: :model do
 
       # Filter by a place
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'area:name', 'label' => 'Area' }],
-                                  filters: [{ 'field' => 'place:name', 'label' => 'Venue' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'area:name', 'label' => 'Area' }],
+                      filters: [{ 'field' => 'place:name', 'label' => 'Venue' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       report.filter_params = { 'place:name' => [venue_in_la.name] }
       page = report.fetch_page
@@ -897,10 +949,12 @@ describe Report, type: :model do
       # A event without teams or members
       create(:event, campaign: campaign, results: { impressions: 300, interactions: 150 })
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'team:name', 'label' => 'Team' }, { 'field' => 'user:first_name', 'label' => 'Team' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'team:name', 'label' => 'Team' },
+                                { 'field' => 'user:first_name', 'label' => 'Team' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -917,10 +971,12 @@ describe Report, type: :model do
       event = create(:event, campaign: campaign, results: { impressions: 100, interactions: 50 })
       event.users << [user1, user2]
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'user:last_name', 'label' => 'Last Name' }, { 'field' => 'user:first_name', 'label' => 'First Name' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'user:last_name', 'label' => 'Last Name' },
+                                { 'field' => 'user:first_name', 'label' => 'First Name' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -935,10 +991,12 @@ describe Report, type: :model do
       event = create(:event, campaign: campaign, results: { impressions: 100, interactions: 50 })
       event.users << [user1, user2]
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'event:start_date', 'label' => 'Start date' }, { 'field' => 'user:first_name', 'label' => 'First Name' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'event:start_date', 'label' => 'Start date' },
+                                { 'field' => 'user:first_name', 'label' => 'First Name' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -953,10 +1011,11 @@ describe Report, type: :model do
       create(:event, campaign: campaign, results: { impressions: 300, interactions: 300 }) # Another event
       event.users << user
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'role:name', 'label' => 'Role' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'role:name', 'label' => 'Role' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -970,13 +1029,15 @@ describe Report, type: :model do
       create(:event, campaign: campaign, place: create(:place, state: 'California', city: 'Los Angeles'),
         results: { impressions: 200, interactions: 75 })
       create(:event, place: create(:place, state: 'California', city: 'San Francisco'),
-                                 campaign: create(:campaign, name: 'Ron Centenario FY12', company: company),
-                                 results: { impressions: 300, interactions: 150 })
+                     campaign: create(:campaign, name: 'Ron Centenario FY12', company: company),
+                     results: { impressions: 300, interactions: 150 })
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'place:state', 'label' => 'State' }, { 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'place:state', 'label' => 'State' },
+                                { 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       page = report.fetch_page
       expect(report.report_columns).to match_array ['California||Impressions', 'Texas||Impressions']
@@ -995,10 +1056,12 @@ describe Report, type: :model do
       create(:event, campaign: campaign2, results: { impressions: 100 })
 
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign Name' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => '% of column Impressions', 'aggregate' => 'sum', 'display' => 'perc_of_column' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign Name' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}",
+                                  'label' => '% of column Impressions', 'aggregate' => 'sum',
+                                  'display' => 'perc_of_column' }]
       )
 
       page = report.fetch_page
@@ -1015,10 +1078,11 @@ describe Report, type: :model do
       create(:event, campaign: campaign, place: create(:place, state: 'Texas', city: 'Houston'),
         results: { impressions: 100, interactions: 50 })
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => 'place:name', 'label' => 'Venue Name', 'aggregate' => 'count' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => 'place:name', 'label' => 'Venue Name',
+                                  'aggregate' => 'count' }]
       )
 
       page = report.fetch_page
@@ -1031,10 +1095,11 @@ describe Report, type: :model do
       create(:event, campaign: campaign, place: create(:place, state: 'Texas', city: 'Houston'),
         results: { impressions: 100, interactions: 50 })
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => 'place:name', 'label' => 'Venue Name', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => 'place:name', 'label' => 'Venue Name',
+                                  'aggregate' => 'sum' }]
       )
 
       page = report.fetch_page
@@ -1056,10 +1121,11 @@ describe Report, type: :model do
       event.save # Save the event results
 
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => "kpi:#{kpi.id}", 'label' => 'Segmented Field', 'aggregate' => 'avg' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => "kpi:#{kpi.id}", 'label' => 'Segmented Field',
+                                  'aggregate' => 'avg' }]
       )
 
       page = report.fetch_page
@@ -1091,10 +1157,11 @@ describe Report, type: :model do
       event.save # Save the event results
 
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => "kpi:#{kpi.id}", 'label' => 'Count Field', 'aggregate' => 'count' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => "kpi:#{kpi.id}", 'label' => 'Count Field',
+                                  'aggregate' => 'count' }]
       )
 
       page = report.fetch_page
@@ -1105,17 +1172,16 @@ describe Report, type: :model do
     end
 
     it 'should accept kpis as rows' do
-      create(:event, campaign: campaign,
-                                 results: { impressions: 123, interactions: 50 })
+      create(:event, campaign: campaign, results: { impressions: 123, interactions: 50 })
 
-      create(:event, campaign: campaign,
-                                 results: { impressions: 321, interactions: 25 })
+      create(:event, campaign: campaign, results: { impressions: 321, interactions: 25 })
 
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -1132,10 +1198,12 @@ describe Report, type: :model do
         results: { impressions: 321, interactions: 25 })
 
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }, { 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions' }],
-                                  rows:    [{ 'field' => 'place:name', 'label' => 'Interactions' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' },
+                                { 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions' }],
+                      rows:    [{ 'field' => 'place:name', 'label' => 'Interactions' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -1153,14 +1221,19 @@ describe Report, type: :model do
         create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
           place: place_in_tx, results: { impressions: 200, interactions: 150 })
         report = create(:report,
-                                    company: company,
-                                    columns: [{ 'field' => 'place:state', 'label' => 'State' }, { 'field' => 'values', 'label' => 'Values' }],
-                                    rows:    [{ 'field' => 'event:start_date', 'label' => 'Start date' }],
-                                    values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum', 'precision' => '1' },
-                                              { 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions', 'aggregate' => 'avg', 'precision' => '3' }]
+                         company: company,
+                         columns: [{ 'field' => 'place:state', 'label' => 'State' },
+                                   { 'field' => 'values', 'label' => 'Values' }],
+                         rows:    [{ 'field' => 'event:start_date', 'label' => 'Start date' }],
+                         values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                     'aggregate' => 'sum', 'precision' => '1' },
+                                   { 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions',
+                                     'aggregate' => 'avg', 'precision' => '3' }]
         )
         page = report.fetch_page
-        expect(report.report_columns).to match_array ['California||Impressions', 'California||Interactions', 'Texas||Impressions', 'Texas||Interactions']
+        expect(report.report_columns).to match_array [
+          'California||Impressions', 'California||Interactions',
+          'Texas||Impressions', 'Texas||Interactions']
         expect(page).to eql [
           { 'event_start_date' => '2014/01/01', 'values' => [100.00, 50.0, nil, nil] },
           { 'event_start_date' => '2014/01/12', 'values' => [nil, nil, 200.00, 150.0] }
@@ -1168,7 +1241,8 @@ describe Report, type: :model do
 
         # Test to_csv
         csv = CSV.parse(report.to_csv)
-        expect(csv[0]).to eql ['Start date', 'California/Impressions', 'California/Interactions', 'Texas/Impressions', 'Texas/Interactions']
+        expect(csv[0]).to eql ['Start date', 'California/Impressions', 'California/Interactions',
+                               'Texas/Impressions', 'Texas/Interactions']
         expect(csv[1]).to eql ['2014/01/01', '100.0', '50.000', nil, nil]
         expect(csv[2]).to eql ['2014/01/12', nil, nil, '200.0', '150.000']
       end
@@ -1179,10 +1253,10 @@ describe Report, type: :model do
           results: { impressions: 100, interactions: 50 })
         event.teams << team
         report = create(:report,
-                                    company: company,
-                                    columns: [{ 'field' => 'team:name', 'label' => 'Team' }, { 'field' => 'values', 'label' => 'Values' }],
-                                    rows:    [{ 'field' => 'event:start_date', 'label' => 'Start date' }],
-                                    values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                        company: company,
+                        columns: [{ 'field' => 'team:name', 'label' => 'Team' }, { 'field' => 'values', 'label' => 'Values' }],
+                        rows:    [{ 'field' => 'event:start_date', 'label' => 'Start date' }],
+                        values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
         )
         page = report.fetch_page
         expect(page).to eql [
@@ -1217,10 +1291,10 @@ describe Report, type: :model do
           results: { impressions: 350, interactions: 250 }, place: venue_in_ny)
 
         report = create(:report,
-                                    company: company,
-                                    columns: [{ 'field' => 'area:name', 'label' => 'Area' }, { 'field' => 'values', 'label' => 'Values' }],
-                                    rows:    [{ 'field' => 'place:name', 'label' => 'Venue' }],
-                                    values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                        company: company,
+                        columns: [{ 'field' => 'area:name', 'label' => 'Area' }, { 'field' => 'values', 'label' => 'Values' }],
+                        rows:    [{ 'field' => 'place:name', 'label' => 'Venue' }],
+                        values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
         )
         page = report.fetch_page
         expect(report.report_columns).to match_array ['Area1||Impressions', 'Area2||Impressions', '||Impressions']
@@ -1234,7 +1308,8 @@ describe Report, type: :model do
 
     describe 'activity types' do
       it 'returns a line for each different value for a form field' do
-        form_field = create(:form_field, type: 'FormField::Text', fieldable: create(:activity_type))
+        form_field = create(:form_field, type: 'FormField::Text',
+                                         fieldable: create(:activity_type, company: company))
         form_field2 = create(:form_field, type: 'FormField::Number', fieldable: form_field.fieldable)
         campaign.activity_types << form_field.fieldable
 
@@ -1260,10 +1335,10 @@ describe Report, type: :model do
         activity.save
 
         report = create(:report,
-                                    company: company,
-                                    columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                    rows:    [{ 'field' => "form_field:#{form_field.id}", 'label' => 'Form Field' }],
-                                    values:  [{ 'field' => "form_field:#{form_field2.id}", 'label' => 'Numeric Field', 'aggregate' => 'sum' }]
+                        company: company,
+                        columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                        rows:    [{ 'field' => "form_field:#{form_field.id}", 'label' => 'Form Field' }],
+                        values:  [{ 'field' => "form_field:#{form_field2.id}", 'label' => 'Numeric Field', 'aggregate' => 'sum' }]
         )
         page = report.fetch_page
         expect(page).to eql [
@@ -1273,13 +1348,14 @@ describe Report, type: :model do
       end
 
       it 'returns a line for each different date for an activity' do
-        form_field = create(:form_field, type: 'FormField::Number', fieldable: create(:activity_type))
+        form_field = create(:form_field, type: 'FormField::Number',
+                                         fieldable: create(:activity_type, company: company))
         campaign.activity_types << form_field.fieldable
 
         event = create(:event, campaign: campaign,
-                                           results: { impressions: 100, interactions: 50 })
+                               results: { impressions: 100, interactions: 50 })
         event2 = create(:event, campaign: campaign,
-                                            results: { impressions: 200, interactions: 150 })
+                                results: { impressions: 200, interactions: 150 })
 
         activity = create(:activity, activitable: event,
           activity_type: form_field.fieldable, company_user: user, activity_date: Date.today)
@@ -1302,10 +1378,10 @@ describe Report, type: :model do
         activity.save
 
         report = create(:report,
-                                    company: company,
-                                    columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                    rows:    [{ 'field' => 'activity_type:date', 'label' => 'Date' }],
-                                    values:  [{ 'field' => "form_field:#{form_field.id}", 'label' => 'Field1', 'aggregate' => 'sum' }]
+                        company: company,
+                        columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                        rows:    [{ 'field' => 'activity_type:date', 'label' => 'Date' }],
+                        values:  [{ 'field' => "form_field:#{form_field.id}", 'label' => 'Field1', 'aggregate' => 'sum' }]
         )
         page = report.fetch_page
         expect(page).to eql [
@@ -1316,15 +1392,15 @@ describe Report, type: :model do
 
       it 'returns a line for each different user for an activity' do
         user2 = create(:company_user,
-                                   company: company,
-                                   user: create(:user, first_name: 'Luis', last_name: 'Perez'))
-        form_field = create(:form_field, type: 'FormField::Number', fieldable: create(:activity_type))
+                       company: company,
+                       user: create(:user, first_name: 'Luis', last_name: 'Perez'))
+        form_field = create(:form_field, type: 'FormField::Number', fieldable: create(:activity_type, company: company))
         campaign.activity_types << form_field.fieldable
 
         event = create(:event, campaign: campaign,
-                                           results: { impressions: 100, interactions: 50 })
+                               results: { impressions: 100, interactions: 50 })
         event2 = create(:event, campaign: campaign,
-                                            results: { impressions: 200, interactions: 150 })
+                                results: { impressions: 200, interactions: 150 })
 
         activity = create(:activity, activitable: event,
           activity_type: form_field.fieldable, company_user: user)
@@ -1347,10 +1423,10 @@ describe Report, type: :model do
         activity.save
 
         report = create(:report,
-                                    company: company,
-                                    columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                    rows:    [{ 'field' => 'activity_type:user', 'label' => 'User' }],
-                                    values:  [{ 'field' => "form_field:#{form_field.id}", 'label' => 'Field1', 'aggregate' => 'sum' }]
+                        company: company,
+                        columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                        rows:    [{ 'field' => 'activity_type:user', 'label' => 'User' }],
+                        values:  [{ 'field' => "form_field:#{form_field.id}", 'label' => 'Field1', 'aggregate' => 'sum' }]
         )
         page = report.fetch_page
         expect(page).to eql [
@@ -1360,7 +1436,8 @@ describe Report, type: :model do
       end
 
       it 'returns the values for the numeric fields' do
-        form_field = create(:form_field, type: 'FormField::Number', fieldable: create(:activity_type))
+        form_field = create(:form_field, type: 'FormField::Number',
+                                         fieldable: create(:activity_type, company: company))
         campaign.activity_types << form_field.fieldable
 
         event = create(:event, start_date: '01/01/2014', end_date: '01/01/2014', campaign: campaign,
@@ -1379,13 +1456,13 @@ describe Report, type: :model do
         activity.save
 
         report = create(:report,
-                                    company: company,
-                                    columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                    rows:    [{ 'field' => 'campaign:name', 'label' => 'Form Field' }],
-                                    values:  [
-                                      { 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' },
-                                      { 'field' => "form_field:#{form_field.id}", 'label' => 'Numeric Field', 'aggregate' => 'sum' }
-                                    ]
+                        company: company,
+                        columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                        rows:    [{ 'field' => 'campaign:name', 'label' => 'Form Field' }],
+                        values:  [
+                          { 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' },
+                          { 'field' => "form_field:#{form_field.id}", 'label' => 'Numeric Field', 'aggregate' => 'sum' }
+                        ]
         )
         page = report.fetch_page
         expect(page).to eql [
@@ -1395,10 +1472,10 @@ describe Report, type: :model do
 
       it 'should work when adding radio form fields as a value' do
         radio_field = create(:form_field, type: 'FormField::Radio',
-                                                      fieldable: create(:activity_type),
-                                                      options: [
-                                                        option1 = create(:form_field_option, name: 'Opt1', ordering: 1),
-                                                        option2 = create(:form_field_option, name: 'Opt2', ordering: 2)]
+                                          fieldable: create(:activity_type, company: company),
+                                          options: [
+                                            option1 = create(:form_field_option, name: 'Opt1', ordering: 1),
+                                            option2 = create(:form_field_option, name: 'Opt2', ordering: 2)]
         )
         campaign.activity_types << radio_field.fieldable
 
@@ -1423,10 +1500,10 @@ describe Report, type: :model do
         activity.save
 
         report = create(:report,
-                                    company: company,
-                                    columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                    rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                    values:  [{ 'field' => "form_field:#{radio_field.id}", 'label' => 'Radio Field', 'aggregate' => 'count' }]
+                        company: company,
+                        columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                        rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                        values:  [{ 'field' => "form_field:#{radio_field.id}", 'label' => 'Radio Field', 'aggregate' => 'count' }]
         )
 
         page = report.fetch_page
@@ -1438,10 +1515,10 @@ describe Report, type: :model do
 
       it 'should work when adding checkboxes form fields as a value' do
         checkbox_field = create(:form_field, type: 'FormField::Checkbox',
-                                                         fieldable: create(:activity_type),
-                                                         options: [
-                                                           option1 = create(:form_field_option, name: 'Opt1', ordering: 1),
-                                                           option2 = create(:form_field_option, name: 'Opt2', ordering: 2)]
+                                             fieldable: create(:activity_type, company: company),
+                                             options: [
+                                               option1 = create(:form_field_option, name: 'Opt1', ordering: 1),
+                                               option2 = create(:form_field_option, name: 'Opt2', ordering: 2)]
         )
         checkbox_field = FormField.find(checkbox_field)
         campaign.activity_types << checkbox_field.fieldable
@@ -1472,10 +1549,10 @@ describe Report, type: :model do
         activity.save
 
         report = create(:report,
-                                    company: company,
-                                    columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                    rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                    values:  [{ 'field' => "form_field:#{checkbox_field.id}", 'label' => 'Checkbox Field', 'aggregate' => 'count' }]
+                        company: company,
+                        columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                        rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                        values:  [{ 'field' => "form_field:#{checkbox_field.id}", 'label' => 'Checkbox Field', 'aggregate' => 'count' }]
         )
 
         page = report.fetch_page
@@ -1486,12 +1563,13 @@ describe Report, type: :model do
       end
 
       it 'should work when adding percentage form fields as a value' do
-        percentage_field = create(:form_field, type: 'FormField::Percentage',
-                                                           fieldable: create(:activity_type),
-                                                           options: [
-                                                             option1 = create(:form_field_option, name: 'Opt1', ordering: 1),
-                                                             option2 = create(:form_field_option, name: 'Opt2', ordering: 2),
-                                                             option3 = create(:form_field_option, name: 'Opt3', ordering: 3)]
+        percentage_field = create(:form_field,
+                                  type: 'FormField::Percentage',
+                                  fieldable: create(:activity_type, company: company),
+                                  options: [
+                                    option1 = create(:form_field_option, name: 'Opt1', ordering: 1),
+                                    option2 = create(:form_field_option, name: 'Opt2', ordering: 2),
+                                    option3 = create(:form_field_option, name: 'Opt3', ordering: 3)]
         )
         percentage_field = FormField.find(percentage_field.id)
         campaign.activity_types << percentage_field.fieldable
@@ -1517,10 +1595,11 @@ describe Report, type: :model do
         activity.save
 
         report = create(:report,
-                                    company: company,
-                                    columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                    rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                    values:  [{ 'field' => "form_field:#{percentage_field.id}", 'label' => 'Percentage Field', 'aggregate' => 'avg' }]
+                        company: company,
+                        columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                        rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                        values:  [{ 'field' => "form_field:#{percentage_field.id}",
+                                    'label' => 'Percentage Field', 'aggregate' => 'avg' }]
         )
 
         page = report.fetch_page
@@ -1531,11 +1610,12 @@ describe Report, type: :model do
       end
 
       it 'works when adding radio fields as rows' do
-        radio_field = create(:form_field, type: 'FormField::Radio',
-                                                      fieldable: create(:activity_type),
-                                                      options: [
-                                                        option1 = create(:form_field_option, name: 'Opt1'),
-                                                        option2 = create(:form_field_option, name: 'Opt2')]
+        radio_field = create(:form_field,
+                             type: 'FormField::Radio',
+                             fieldable: create(:activity_type, company: company),
+                             options: [
+                               option1 = create(:form_field_option, name: 'Opt1'),
+                               option2 = create(:form_field_option, name: 'Opt2')]
         )
         numeric_field = create(:form_field, type: 'FormField::Number', fieldable: radio_field.fieldable)
         campaign.activity_types << radio_field.fieldable
@@ -1558,10 +1638,12 @@ describe Report, type: :model do
         activity.save
 
         report = create(:report,
-                                    company: company,
-                                    columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                    rows:     [{ 'field' => "form_field:#{radio_field.id}", 'label' => 'Radio Field', 'aggregate' => 'sum' }],
-                                    values:  [{ 'field' => "form_field:#{numeric_field.id}", 'label' => 'Numeric Field', 'aggregate' => 'sum' }]
+                        company: company,
+                        columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                        rows:     [{ 'field' => "form_field:#{radio_field.id}",
+                                     'label' => 'Radio Field', 'aggregate' => 'sum' }],
+                        values:  [{ 'field' => "form_field:#{numeric_field.id}",
+                                    'label' => 'Numeric Field', 'aggregate' => 'sum' }]
         )
         page = report.fetch_page
         expect(page).to eql [
@@ -1571,11 +1653,12 @@ describe Report, type: :model do
       end
 
       it 'works when adding checkboxes fields as rows' do
-        checkbox_field = create(:form_field, type: 'FormField::Checkbox',
-                                                         fieldable: create(:activity_type),
-                                                         options: [
-                                                           option1 = create(:form_field_option, name: 'Opt1'),
-                                                           option2 = create(:form_field_option, name: 'Opt2')]
+        checkbox_field = create(:form_field,
+                                type: 'FormField::Checkbox',
+                                fieldable: create(:activity_type, company: company),
+                                options: [
+                                  option1 = create(:form_field_option, name: 'Opt1'),
+                                  option2 = create(:form_field_option, name: 'Opt2')]
         )
         checkbox_field = FormField.find(checkbox_field.id)
         numeric_field = create(:form_field, type: 'FormField::Number', fieldable: checkbox_field.fieldable)
@@ -1605,10 +1688,12 @@ describe Report, type: :model do
         activity.save
 
         report = create(:report,
-                                    company: company,
-                                    columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                    rows:     [{ 'field' => "form_field:#{checkbox_field.id}", 'label' => 'Radio Field', 'aggregate' => 'sum' }],
-                                    values:  [{ 'field' => "form_field:#{numeric_field.id}", 'label' => 'Numeric Field', 'aggregate' => 'sum' }]
+                        company: company,
+                        columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                        rows:     [{ 'field' => "form_field:#{checkbox_field.id}",
+                                     'label' => 'Radio Field', 'aggregate' => 'sum' }],
+                        values:  [{ 'field' => "form_field:#{numeric_field.id}",
+                                    'label' => 'Numeric Field', 'aggregate' => 'sum' }]
         )
         page = report.fetch_page
         expect(page).to eql [
@@ -1618,11 +1703,12 @@ describe Report, type: :model do
       end
 
       it 'works when adding percentage fields as rows' do
-        percentage_field = create(:form_field, type: 'FormField::Percentage',
-                                                           fieldable: create(:activity_type),
-                                                           options: [
-                                                             option1 = create(:form_field_option, name: 'Opt1'),
-                                                             option2 = create(:form_field_option, name: 'Opt2')]
+        percentage_field = create(:form_field,
+                                  type: 'FormField::Percentage',
+                                  fieldable: create(:activity_type, company: company),
+                                  options: [
+                                    option1 = create(:form_field_option, name: 'Opt1'),
+                                    option2 = create(:form_field_option, name: 'Opt2')]
         )
         percentage_field = FormField.find(percentage_field.id)
         numeric_field = create(:form_field, type: 'FormField::Number', fieldable: percentage_field.fieldable)
@@ -1646,10 +1732,12 @@ describe Report, type: :model do
         activity.save
 
         report = create(:report,
-                                    company: company,
-                                    columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                    rows:    [{ 'field' => "form_field:#{percentage_field.id}", 'label' => 'Radio Field', 'aggregate' => 'sum' }],
-                                    values:  [{ 'field' => "form_field:#{numeric_field.id}", 'label' => 'Numeric Field', 'aggregate' => 'sum' }]
+                        company: company,
+                        columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                        rows:    [{ 'field' => "form_field:#{percentage_field.id}",
+                                    'label' => 'Radio Field', 'aggregate' => 'sum' }],
+                        values:  [{ 'field' => "form_field:#{numeric_field.id}",
+                                    'label' => 'Numeric Field', 'aggregate' => 'sum' }]
         )
         page = report.fetch_page
         expect(page).to eql [
@@ -1674,18 +1762,18 @@ describe Report, type: :model do
       event1.result_for_kpi(kpi).value = 200
       event1.save
 
-      event2 = create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
+      create(:event, start_date: '01/12/2014', end_date: '01/12/2014', campaign: campaign,
         results: { impressions: 200, interactions: 150 })
 
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'event:start_date', 'label' => 'Start date' }],
-                                  filters: [{ 'field' => "kpi:#{kpi.id}", 'label' => 'A Numeric Filter' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'event:start_date', 'label' => 'Start date' }],
+                      filters: [{ 'field' => "kpi:#{kpi.id}", 'label' => 'A Numeric Filter' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       # With no filtering
-      page = report.fetch_page
       expect(report.fetch_page).to eql [
         { 'event_start_date' => '2014/01/01', 'values' => [100.00] },
         { 'event_start_date' => '2014/01/12', 'values' => [200.00] }
@@ -1727,11 +1815,12 @@ describe Report, type: :model do
         results: { impressions: 350, interactions: 250 }, place: venue_in_ny)
 
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'place:name', 'label' => 'Venue' }],
-                                  filters: [{ 'field' => 'area:name', 'label' => 'Area' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'place:name', 'label' => 'Venue' }],
+                      filters: [{ 'field' => 'area:name', 'label' => 'Area' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}",
+                                  'label' => 'Impressions', 'aggregate' => 'sum' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -1766,19 +1855,19 @@ describe Report, type: :model do
       event1.result_for_kpi(kpi).value = 200
       event1.save
 
-      event2 = create(:event, start_date: '01/12/2014', start_time: '01:00 AM',
-        end_date: '01/12/2014', end_time: '03:00 AM', campaign: campaign,
-        results: { impressions: 200, interactions: 150 })
+      create(:event, start_date: '01/12/2014', start_time: '01:00 AM',
+                     end_date: '01/12/2014', end_time: '03:00 AM', campaign: campaign,
+                     results: { impressions: 200, interactions: 150 })
 
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'event:start_date', 'label' => 'Start date' }],
-                                  filters: [{ 'field' => 'event:start_time', 'label' => 'Start Time' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'event:start_date', 'label' => 'Start date' }],
+                      filters: [{ 'field' => 'event:start_time', 'label' => 'Start Time' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       # With no filtering
-      page = report.fetch_page
       expect(report.fetch_page).to eql [
         { 'event_start_date' => '2014/01/01', 'values' => [100.00] },
         { 'event_start_date' => '2014/01/12', 'values' => [200.00] }
@@ -1834,19 +1923,19 @@ describe Report, type: :model do
       event1.result_for_kpi(kpi).value = 200
       event1.save
 
-      event2 = create(:event, start_date: '01/12/2014', start_time: '01:00 AM',
+      create(:event, start_date: '01/12/2014', start_time: '01:00 AM',
         end_date: '01/12/2014', end_time: '03:00 AM', campaign: campaign,
         results: { impressions: 200, interactions: 150 })
 
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'event:start_date', 'label' => 'Start date' }],
-                                  filters: [{ 'field' => 'event:start_time', 'label' => 'Start Time' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'event:start_date', 'label' => 'Start date' }],
+                      filters: [{ 'field' => 'event:start_time', 'label' => 'Start Time' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       # With no filtering
-      page = report.fetch_page
       expect(report.fetch_page).to eql [
         { 'event_start_date' => '2014/01/01', 'values' => [100.00] },
         { 'event_start_date' => '2014/01/12', 'values' => [200.00] }
@@ -1906,14 +1995,14 @@ describe Report, type: :model do
       event2.save
 
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'event:start_date', 'label' => 'Start date' }],
-                                  filters: [{ 'field' => "kpi:#{kpi.id}", 'label' => 'A Numeric Filter' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'event:start_date', 'label' => 'Start date' }],
+                      filters: [{ 'field' => "kpi:#{kpi.id}", 'label' => 'A Numeric Filter' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       # With no filtering
-      page = report.fetch_page
       expect(report.fetch_page).to eql [
         { 'event_start_date' => '2014/01/01', 'values' => [100.00] },
         { 'event_start_date' => '2014/01/12', 'values' => [200.00] }
@@ -1944,11 +2033,12 @@ describe Report, type: :model do
       create(:event, campaign: campaign2, results: { impressions: 300, interactions: 300 })
 
       report = create(:report,
-                                  company: company,
-                                  filters: [{ 'field' => 'event:event_active', 'label' => 'Active State' }],
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      filters: [{ 'field' => 'event:event_active', 'label' => 'Active State' }],
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -1958,11 +2048,12 @@ describe Report, type: :model do
 
       # with filter
       report = create(:report,
-                                  company: company,
-                                  filters: [{ 'field' => 'event:event_active', 'label' => 'Active State' }],
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      filters: [{ 'field' => 'event:event_active', 'label' => 'Active State' }],
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       report.filter_params = { 'event:event_active' => ['true'] }
 
@@ -1985,11 +2076,12 @@ describe Report, type: :model do
       create(:event, campaign: campaign2, results: { impressions: 300, interactions: 300 })
 
       report = create(:report,
-                                  company: company,
-                                  filters: [{ 'field' => "kpi:#{Kpi.events.id}", 'label' => 'Events' }],
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      filters: [{ 'field' => "kpi:#{Kpi.events.id}", 'label' => 'Events' }],
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -1999,11 +2091,12 @@ describe Report, type: :model do
 
       # with filter
       report = create(:report,
-                                  company: company,
-                                  filters: [{ 'field' => "kpi:#{Kpi.events.id}", 'label' => 'Events' }],
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      filters: [{ 'field' => "kpi:#{Kpi.events.id}", 'label' => 'Events' }],
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       report.filter_params = { "kpi:#{Kpi.events.id}" => { 'min' => '1', 'max' => '2' } }
 
@@ -2026,11 +2119,12 @@ describe Report, type: :model do
       create(:event, campaign: campaign2, results: { impressions: 300, interactions: 300 })
 
       report = create(:report,
-                                  company: company,
-                                  filters: [{ 'field' => "kpi:#{Kpi.promo_hours.id}", 'label' => 'Promo Hours' }],
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      filters: [{ 'field' => "kpi:#{Kpi.promo_hours.id}", 'label' => 'Promo Hours' }],
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -2040,11 +2134,12 @@ describe Report, type: :model do
 
       # with filter
       report = create(:report,
-                                  company: company,
-                                  filters: [{ 'field' => "kpi:#{Kpi.promo_hours.id}", 'label' => 'Promo Hours' }],
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      filters: [{ 'field' => "kpi:#{Kpi.promo_hours.id}", 'label' => 'Promo Hours' }],
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       report.filter_params = { "kpi:#{Kpi.promo_hours.id}" => { 'min' => '1', 'max' => '4' } }
 
@@ -2067,11 +2162,12 @@ describe Report, type: :model do
       create(:event, campaign: campaign2, results: { impressions: 300, interactions: 300 })
 
       report = create(:report,
-                                  company: company,
-                                  filters: [{ 'field' => "kpi:#{Kpi.promo_hours.id}", 'label' => 'Promo Hours' }],
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      filters: [{ 'field' => "kpi:#{Kpi.promo_hours.id}", 'label' => 'Promo Hours' }],
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -2081,11 +2177,12 @@ describe Report, type: :model do
 
       # with filter
       report = create(:report,
-                                  company: company,
-                                  filters: [{ 'field' => "kpi:#{Kpi.promo_hours.id}", 'label' => 'Promo Hours' }],
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      filters: [{ 'field' => "kpi:#{Kpi.promo_hours.id}", 'label' => 'Promo Hours' }],
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       report.filter_params = { "kpi:#{Kpi.promo_hours.id}" => { 'min' => '1', 'max' => '4' } }
 
@@ -2110,11 +2207,12 @@ describe Report, type: :model do
       create(:event, campaign: campaign2, results: { impressions: 300, interactions: 300 })
 
       report = create(:report,
-                                  company: company,
-                                  filters: [{ 'field' => "kpi:#{Kpi.comments.id}", 'label' => 'Comments' }],
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      filters: [{ 'field' => "kpi:#{Kpi.comments.id}", 'label' => 'Comments' }],
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -2124,11 +2222,12 @@ describe Report, type: :model do
 
       # with filter
       report = create(:report,
-                                  company: company,
-                                  filters: [{ 'field' => "kpi:#{Kpi.comments.id}", 'label' => 'Comments' }],
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      filters: [{ 'field' => "kpi:#{Kpi.comments.id}", 'label' => 'Comments' }],
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       report.filter_params = { "kpi:#{Kpi.comments.id}" => { 'min' => '1', 'max' => '4' } }
 
@@ -2153,11 +2252,12 @@ describe Report, type: :model do
       create(:event, campaign: campaign2, results: { impressions: 300, interactions: 300 })
 
       report = create(:report,
-                                  company: company,
-                                  filters: [{ 'field' => "kpi:#{Kpi.photos.id}", 'label' => 'Photos' }],
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      filters: [{ 'field' => "kpi:#{Kpi.photos.id}", 'label' => 'Photos' }],
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -2167,11 +2267,12 @@ describe Report, type: :model do
 
       # with filter
       report = create(:report,
-                                  company: company,
-                                  filters: [{ 'field' => "kpi:#{Kpi.photos.id}", 'label' => 'Photos' }],
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      filters: [{ 'field' => "kpi:#{Kpi.photos.id}", 'label' => 'Photos' }],
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       report.filter_params = { "kpi:#{Kpi.photos.id}" => { 'min' => '1', 'max' => '4' } }
 
@@ -2197,11 +2298,12 @@ describe Report, type: :model do
       create(:event, campaign: campaign2, results: { impressions: 300, interactions: 300 })
 
       report = create(:report,
-                                  company: company,
-                                  filters: [{ 'field' => "kpi:#{Kpi.expenses.id}", 'label' => 'Comments' }],
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      filters: [{ 'field' => "kpi:#{Kpi.expenses.id}", 'label' => 'Comments' }],
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       page = report.fetch_page
       expect(page).to eql [
@@ -2211,11 +2313,12 @@ describe Report, type: :model do
 
       # with filter
       report = create(:report,
-                                  company: company,
-                                  filters: [{ 'field' => "kpi:#{Kpi.expenses.id}", 'label' => 'Comments' }],
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      filters: [{ 'field' => "kpi:#{Kpi.expenses.id}", 'label' => 'Comments' }],
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       report.filter_params = { "kpi:#{Kpi.expenses.id}" => { 'min' => '1', 'max' => '300' } }
 
@@ -2262,14 +2365,14 @@ describe Report, type: :model do
       campaign2.brands << brand2
 
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'event:start_date', 'label' => 'Start date' }],
-                                  filters: [{ 'field' => 'brand:name', 'label' => 'Brand' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'event:start_date', 'label' => 'Start date' }],
+                      filters: [{ 'field' => 'brand:name', 'label' => 'Brand' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       # With no filtering
-      page = report.fetch_page
       expect(report.fetch_page).to eql [
         { 'event_start_date' => '2014/01/01', 'values' => [100.00] },
         { 'event_start_date' => '2014/01/12', 'values' => [200.00] },
@@ -2328,14 +2431,14 @@ describe Report, type: :model do
       campaign2.brand_portfolios << brand_portfolio2
 
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'event:start_date', 'label' => 'Start date' }],
-                                  filters: [{ 'field' => 'brand_portfolio:name', 'label' => 'Brand Portfolio' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'event:start_date', 'label' => 'Start date' }],
+                      filters: [{ 'field' => 'brand_portfolio:name', 'label' => 'Brand Portfolio' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}",
+                                  'label' => 'Impressions', 'aggregate' => 'sum' }]
       )
       # With no filtering
-      page = report.fetch_page
       expect(report.fetch_page).to eql [
         { 'event_start_date' => '2014/01/01', 'values' => [100.00] },
         { 'event_start_date' => '2014/01/12', 'values' => [200.00] },
@@ -2374,14 +2477,14 @@ describe Report, type: :model do
       event2.save
 
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'event:start_date', 'label' => 'Start date' }],
-                                  filters: [{ 'field' => 'event:start_date', 'label' => 'Start Date' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'event:start_date', 'label' => 'Start date' }],
+                      filters: [{ 'field' => 'event:start_date', 'label' => 'Start Date' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                  'aggregate' => 'sum' }]
       )
       # With no filtering
-      page = report.fetch_page
       expect(report.fetch_page).to eql [
         { 'event_start_date' => '2014/01/01', 'values' => [100.00] },
         { 'event_start_date' => '2014/01/12', 'values' => [200.00] }
@@ -2412,13 +2515,13 @@ describe Report, type: :model do
       create(:event, campaign: campaign, place: create(:place, state: 'California', city: 'Los Angeles'),
         results: { impressions: 200 })
       create(:event, place: create(:place, state: 'California', city: 'San Francisco'),
-                                 campaign: create(:campaign, name: 'Ron Centenario FY12', company: company),
-                                 results: { impressions: 300 })
+                     campaign: create(:campaign, name: 'Ron Centenario FY12', company: company),
+                     results: { impressions: 300 })
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'place:state', 'label' => 'State' }, { 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'place:state', 'label' => 'State' }, { 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
       )
       values = report.first_row_values_for_page
       expect(values).to match_array ['Guaro Cacique 2013', 'Ron Centenario FY12']
@@ -2432,19 +2535,19 @@ describe Report, type: :model do
 
     it 'returns all the campaign names' do
       create(:event, campaign: campaign,
-                                 place: create(:place, name: 'Bar Texano', state: 'Texas', city: 'Houston'),
-                                 results: { impressions: 100 })
+                     place: create(:place, name: 'Bar Texano', state: 'Texas', city: 'Houston'),
+                     results: { impressions: 100 })
       create(:event, campaign: campaign,
-                                 place: create(:place, name: 'Texas Restaurant', state: 'California', city: 'Los Angeles'),
-                                 results: { impressions: 200 })
+                     place: create(:place, name: 'Texas Restaurant', state: 'California', city: 'Los Angeles'),
+                     results: { impressions: 200 })
       create(:event, campaign: campaign,
-                                 place: create(:place, name: 'Texas Bar & Grill', state: 'California', city: 'San Francisco'),
-                                 results: { impressions: 300 })
+                     place: create(:place, name: 'Texas Bar & Grill', state: 'California', city: 'San Francisco'),
+                     results: { impressions: 300 })
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'campaign:name', 'label' => 'State' }, { 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'place:name', 'label' => 'Venue' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'campaign:name', 'label' => 'State' }, { 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'place:name', 'label' => 'Venue' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
       )
       values = report.first_row_values_for_page
       expect(values).to match_array ['Bar Texano', 'Texas Bar & Grill', 'Texas Restaurant']

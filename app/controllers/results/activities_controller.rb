@@ -26,7 +26,7 @@ module Results
     end
 
     def permitted_search_params
-      permitted_events_search_params
+      permitted_events_search_params + [activity_type: []]
     end
   end
 end

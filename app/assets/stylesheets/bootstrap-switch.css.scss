@@ -1,0 +1,183 @@
+@import "variables";
+@import "bootstrap/variables";
+@import "bootstrap/mixins";
+
+.has-switch {
+  display: inline-block;
+  cursor: pointer;
+  @include border-radius(15px);
+  position: relative;
+  text-align: left;
+  overflow: hidden;
+  line-height: 8px;
+  @include user-select(none);
+  vertical-align: middle;
+  width: 70px;
+  height: 28px;
+  @include transition(#{"border-color ease-in-out .15s, box-shadow ease-in-out .15s"});
+
+  &:focus {
+    outline: none;
+  }
+
+  &.switch-mini {
+    min-width: 72px;
+
+    span,
+    label {
+      padding-top: 4px;
+      font-size: 10px;
+      line-height: 9px;
+    }
+
+    i.switch-mini-icons {
+      height: 1.20em;
+      line-height: 9px;
+      vertical-align: text-top;
+      text-align: center;
+      transform: scale(0.6);
+      margin-top: -1px;
+      margin-bottom: -1px;
+    }
+  }
+
+  &.switch-small {
+    min-width: 80px;
+
+    span,
+    label {
+      padding-top: 3px;
+      font-size: 12px;
+      line-height: 18px;
+    }
+  }
+
+  &.switch-large {
+    min-width: 120px;
+
+    span,
+    label {
+      padding-top: 9px;
+      font-size: 16px;
+      line-height: normal;
+    }
+  }
+
+  &.switch-animate {
+
+    > div {
+      @include transition(left 0.5s);
+    }
+  }
+
+  &.switch-off {
+    background-color: $gray-lighter;
+    > div {
+      left: -50px;
+    }
+    label {
+      margin-left: 10px;
+    }
+
+  }
+
+  &.switch-on {
+    background-color: $green;
+    > div {
+      left: 0%;
+    }
+    label {
+      margin-right: 10px;
+    }
+  }
+
+  &.disabled {
+    @include opacity(50);
+    cursor: default !important;
+
+    span,
+    label {
+      cursor: default !important;
+    }
+  }
+
+  > div {
+    display: inline-block;
+    width: 150px;
+    position: relative;
+    top: 0;
+  }
+
+  input[type=radio],
+  input[type=checkbox] {
+    display: none;
+  }
+
+  span,
+  label {
+    @include box-sizing(border-box);
+    cursor: pointer;
+    position: relative;
+    display: inline-block !important;
+    height: 100%;
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  label {
+    text-align: center;
+    margin-top: 4px;
+    z-index: 100;
+    width: 20px;
+    height: 20px;
+    @include buttonBackground(white, white, $grayDark);
+    @include border-radius(10px);
+
+
+    i {
+      color: #000;
+      line-height: 18px;
+      pointer-events: none;
+    }
+  }
+
+  span {
+    text-align: center;
+    z-index: 1;
+    width: 40px;
+
+    &.switch-left {
+      margin-left: 5px;
+      @include border-left-radius(10px);
+    }
+
+    &.switch-right {
+      @include buttonBackground($gray-lighter, $gray-lighter, white, none);
+    }
+
+    &.switch-primary,
+    &.switch-left {
+      @include buttonBackground($green, $green, #fff, none);
+    }
+
+    &.switch-info {
+      @include buttonBackground($btnInfoBackgroundHighlight, $btnInfoBackground);
+    }
+
+    &.switch-success {
+      @include buttonBackground($btnSuccessBackgroundHighlight, $btnSuccessBackground);
+    }
+
+    &.switch-warning {
+      @include buttonBackground($btnWarningBackgroundHighlight, $btnWarningBackground);
+    }
+
+    &.switch-danger {
+      @include buttonBackground($btnDangerBackgroundHighlight, $btnDangerBackground);
+    }
+
+    &.switch-default {
+      @include buttonBackground($btnBackgroundHighlight, $btnBackground, $grayDark, 0 1px 1px rgba(255,255,255,.75));
+    }
+  }
+}

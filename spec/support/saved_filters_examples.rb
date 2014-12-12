@@ -65,6 +65,23 @@ RSpec.shared_examples 'a list that allow saving custom filters' do
     end
   end
 
+  it 'can override existing filters' do
+
+    visit list_url
+
+    save_filters_as 'My Custom Filter'
+
+    filter = CustomFilter.last
+
+    filters.each do |f|
+      add_filter f[:section], f[:item]
+    end
+
+    override_filter 'My Custom Filter'
+
+    expect(filter.filters).not_to eql CustomFilter.find(filter.id).filters
+  end
+
   def remove_saved_filter(name)
     click_js_link 'Filter Settings'
 
@@ -72,6 +89,7 @@ RSpec.shared_examples 'a list that allow saving custom filters' do
       expect(page).to have_content(name)
 
       expect do
+        find('.resource-item', text: name).hover
         click_js_link 'Remove Custom Filter "' + name + '"'
         wait_for_ajax
       end.to change(CustomFilter, :count).by(-1)
@@ -91,6 +109,25 @@ RSpec.shared_examples 'a list that allow saving custom filters' do
         click_button 'Save'
         wait_for_ajax
       end.to change(CustomFilter, :count).by(1)
+    end
+    ensure_modal_was_closed
+
+    within '#collection-list-filters' do
+      expect(page).to have_content('SAVED FILTERS')
+      expect(page).to have_content(name)  # The saved filter should be selected
+    end
+  end
+
+  def override_filter(name)
+    click_button 'Save'
+
+    within visible_modal do
+      choose 'Overwrite an existing filter'
+      select_from_chosen name, from: 'custom_filter[id]'
+      expect do
+        click_button 'Save'
+        wait_for_ajax
+      end.not_to change(CustomFilter, :count)
     end
     ensure_modal_was_closed
 

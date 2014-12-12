@@ -8,10 +8,10 @@ feature 'Brand Ambassadors Visits' do
   let(:campaign) { create(:campaign, name: 'My Campaign', company: company) }
   let(:user) { create(:user, company: company, role_id: role.id) }
   let(:company_user) { user.company_users.first }
-  let(:place) { create(:place, name: 'A Nice Place in the APP', country: 'CR', city: 'Curridabat', state: 'San Jose') }
+  let(:place) { create(:place, name: 'A Nice Place in the APP', city: 'New York', state: 'NY') }
   let(:permissions) { [] }
   let(:area) { create(:area, name: 'My Area', company: company) }
-  before { area.places << create(:city, name: 'New York', state: 'New York') }
+  before { area.places << create(:city, name: 'New York', state: 'NY') }
 
   before do
     Warden.test_mode!
@@ -185,7 +185,6 @@ feature 'Brand Ambassadors Visits' do
                       end_date: (today + 2.day).to_s(:slashes), start_time: '11:00am',  end_time: '12:00pm',
                       campaign: campaign2, place: place2)
     end
-
 
     scenario 'should allow filter visits and see the correct message' do
       Timecop.travel(today) do
@@ -540,19 +539,100 @@ feature 'Brand Ambassadors Visits' do
       expect(page).to have_content 'new visit description'
     end
 
+    scenario 'can view a list of events in the same area and campaign, with the user in team and inside the date range' do
+      cities = [
+        create(:city, name: 'San Francisco', state: 'CA'),
+        create(:city, name: 'New York', state: 'NY')
+      ]
+      company_user.places << cities
+      campaign.places << cities
+
+      without_current_user do
+        create(:event,
+               start_date: '02/01/2014', end_date: '02/01/2014',
+               campaign: campaign,
+               users: [company_user],
+               place: create(:place, name: 'My Place 1', city: 'New York', state: 'NY'))
+
+        create(:event,
+               start_date: '02/01/2014', end_date: '02/01/2014',
+               campaign: campaign,
+               users: [company_user],
+               place: create(:place, name: 'My Place 2', city: 'San Francisco', state: 'CA'))
+
+        create(:event,
+               start_date: '02/01/2014', end_date: '02/01/2014',
+               campaign: campaign,
+               place: create(:place, name: 'My Place 3', city: 'New York', state: 'NY'))
+      end
+      Sunspot.commit
+
+      visit brand_ambassadors_visit_path(ba_visit)
+
+      within '#events-list' do
+        expect(page).to have_content('My Place 1')
+        expect(page).not_to have_content('My Place 2')
+        expect(page).not_to have_content('My Place 3')
+      end
+    end
+
+    scenario 'if the visit doesn\'t have an area, display all events matching the other criteria'  do
+      cities = [
+        create(:city, name: 'San Francisco', state: 'CA'),
+        create(:city, name: 'New York', state: 'NY'),
+      ]
+      company_user.places << cities
+      campaign.places << cities
+
+      without_current_user do
+        create(:event,
+               start_date: '02/01/2014', end_date: '02/01/2014',
+               campaign: campaign,
+               users: [company_user],
+               place: create(:place, name: 'My Place 1', city: 'New York', state: 'NY'))
+
+        create(:event,
+               start_date: '02/01/2014', end_date: '02/01/2014',
+               campaign: campaign,
+               users: [company_user],
+               place: create(:place, name: 'My Place 2', city: 'San Francisco', state: 'CA'))
+
+        create(:event,
+               start_date: '02/01/2014', end_date: '02/01/2014',
+               campaign: campaign,
+               place: create(:place, name: 'My Place 3', city: 'New York', state: 'NY'))
+      end
+
+      ba_visit = create(:brand_ambassadors_visit,
+                        company: company,
+                        start_date: '02/01/2014', end_date: '02/02/2014',
+                        visit_type: 'market_visit', description: 'Visit1 description',
+                        campaign: campaign, area: nil,
+                        company_user: company_user, active: true)
+
+      Sunspot.commit
+      visit brand_ambassadors_visit_path(ba_visit)
+
+      within '#events-list' do
+        expect(page).to have_content('My Place 1')
+        expect(page).to have_content('My Place 2')
+        expect(page).not_to have_content('My Place 3')
+      end
+    end
+
     scenario 'allows to create a new event' do
       today = Time.zone.local(Time.now.strftime('%Y'), Time.now.strftime('%m'), 18, 12, 00)
       expect(Place).to receive(:open).and_return(double(read: '{}')) # So we don't search in google places
 
       Venue.create(place_id: place.id, company: company)
       create(:company_user, company: company,
-                                        user: create(:user, first_name: 'Other', last_name: 'User'))
+                            user: create(:user, first_name: 'Other', last_name: 'User'))
       campaign.save
 
       ba_visit = create(:brand_ambassadors_visit,
-                                    campaign: campaign, area: area,
-                                    start_date: today, end_date: (today + 1.day).to_s(:slashes),
-                                    company: company, company_user: company_user)
+                        campaign: campaign, area: area,
+                        start_date: today, end_date: (today + 1.day).to_s(:slashes),
+                        company: company, company_user: company_user)
       Sunspot.commit
 
       visit brand_ambassadors_visit_path(ba_visit)

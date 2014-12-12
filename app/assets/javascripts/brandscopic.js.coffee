@@ -148,7 +148,7 @@ jQuery ->
 		$('select.chosen-enabled').chosen()
 		$('.has-tooltip').tooltip({html: true, delay: 0, animation: false})
 		$('.has-popover').popover({html: true})
-		$("input:checkbox, input:radio").not('[data-no-uniform="true"],#uniform-is-ajax').uniform()
+		$("input:checkbox, input:radio").not('[data-no-uniform="true"], #uniform-is-ajax, .bs-checkbox').uniform()
 
 		$('.segment-field').keyup()
 
@@ -170,6 +170,9 @@ jQuery ->
 		$('form[data-watch-changes]').watchChanges();
 
 		$('.attached_asset_upload_form').attachmentUploadZone();
+
+		$('.bs-checkbox:checkbox').bootstrapSwitch
+			animated: false
 
 		updateSummationTotals()
 
@@ -669,41 +672,44 @@ jQuery ->
 			"should have #{message} #{$element.data('range-format')}"
 	);
 
-	$('.google-map[data-latitude]').each (index, container) ->
-		$container = $(container)
-		content = $container.html()
-		placeLocation = new google.maps.LatLng($container.data('latitude'), $container.data('longitude'));
+	$(window).load () ->
+		setTimeout () ->
+			$('.google-map[data-latitude]').each (index, container) ->
+				$container = $(container)
+				content = $container.html()
+				placeLocation = new google.maps.LatLng($container.data('latitude'), $container.data('longitude'));
 
-		mapOptions = {
-			zoom: 13,
-			center: placeLocation,
-			scrollwheel: false,
-			mapTypeId: google.maps.MapTypeId.ROADMAP
-		};
+				mapOptions = {
+					zoom: 13,
+					center: placeLocation,
+					scrollwheel: false,
+					mapTypeId: google.maps.MapTypeId.ROADMAP
+				};
 
-		map = new google.maps.Map(container, mapOptions)
+				map = new google.maps.Map(container, mapOptions)
 
-		map.setOptions {styles: window.MAP_STYLES}
+				map.setOptions {styles: window.MAP_STYLES}
 
-		pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|de4d43",
-			new google.maps.Size(21, 34),
-			new google.maps.Point(0,0),
-			new google.maps.Point(10, 34));
+				pinImage = new google.maps.MarkerImage("http://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2|de4d43",
+					new google.maps.Size(21, 34),
+					new google.maps.Point(0,0),
+					new google.maps.Point(10, 34));
 
-		marker = new google.maps.Marker({
-			map:map,
-			draggable:false,
-			icon: pinImage,
-			animation: google.maps.Animation.DROP,
-			position: placeLocation
-		})
+				marker = new google.maps.Marker({
+					map:map,
+					draggable:false,
+					icon: pinImage,
+					animation: google.maps.Animation.DROP,
+					position: placeLocation
+				})
 
-		theInfowindow = new google.maps.InfoWindow({
-			content: content
-		});
+				theInfowindow = new google.maps.InfoWindow({
+					content: content
+				});
 
-		google.maps.event.addListener marker, 'click',  ->
-			theInfowindow.open(map, this)
+				google.maps.event.addListener marker, 'click',  ->
+					theInfowindow.open(map, this)
+		, 100
 
 	pfx = ["webkit", "moz", "ms", "o", ""]
 
