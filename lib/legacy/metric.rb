@@ -28,7 +28,7 @@ class Metric < Legacy::Record
   has_many :data_migrations, as: :remote, class_name: 'Legacy::DataMigration'
 
   def synchronize(company, campaign, attributes = {})
-    if is_kpi?
+    if kpi?
       migration = data_migrations.find_or_initialize_by_company_id(company.id)
       if migration.local.nil?
         kpi = ::Kpi.where(company_id: company.id).where("trim(both ' ' from lower(regexp_replace(name, '[:#\\.,;]', '','g')))=?", name.gsub(/[:#\.,;]/, '').strip.downcase).first
@@ -95,7 +95,7 @@ class Metric < Legacy::Record
     attributes
   end
 
-  def is_kpi?
+  def kpi?
     !['Metric::Paragraph', 'Metric::Sentence'].include?(type)
   end
 
