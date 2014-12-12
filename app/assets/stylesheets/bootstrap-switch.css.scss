@@ -16,6 +16,10 @@
   height: 28px;
   @include transition(#{"border-color ease-in-out .15s, box-shadow ease-in-out .15s"});
 
+  &:focus {
+    outline: none;
+  }
+
   &.switch-mini {
     min-width: 72px;
 
