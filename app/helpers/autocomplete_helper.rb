@@ -32,14 +32,7 @@ module AutocompleteHelper
         end
       end
 
-      any_of do
-        search_classes.each do |klass|
-          all_of do
-            with :class, klass
-            with :status, options
-          end
-        end
-      end
+      with :status, options
     end
 
     special_buckets = [:active_state, :event_status, :task_status, :user_active_state]

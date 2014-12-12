@@ -171,7 +171,8 @@ jQuery ->
 
 		$('.attached_asset_upload_form').attachmentUploadZone();
 
-		$('.bs-checkbox:checkbox').bootstrapSwitch();
+		$('.bs-checkbox:checkbox').bootstrapSwitch
+			animated: false
 
 		updateSummationTotals()
 

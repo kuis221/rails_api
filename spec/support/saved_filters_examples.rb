@@ -89,6 +89,7 @@ RSpec.shared_examples 'a list that allow saving custom filters' do
       expect(page).to have_content(name)
 
       expect do
+        find('.resource-item', text: name).hover
         click_js_link 'Remove Custom Filter "' + name + '"'
         wait_for_ajax
       end.to change(CustomFilter, :count).by(-1)

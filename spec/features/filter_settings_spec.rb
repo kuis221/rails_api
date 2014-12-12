@@ -47,7 +47,7 @@ feature 'Filter Settings', search: true, js: true do
       click_js_link 'Filter Settings'
 
       within visible_modal do
-        unicheck('Show inactive items')
+        unicheck 'Allow filtering on inactive items'
         click_button 'Done'
       end
       ensure_modal_was_closed
@@ -63,7 +63,7 @@ feature 'Filter Settings', search: true, js: true do
       click_js_link 'Filter Settings'
 
       within visible_modal do
-        unicheck('Show inactive items')
+        unicheck 'Allow filtering on inactive items'
         click_button 'Done'
       end
       ensure_modal_was_closed

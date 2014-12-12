@@ -1273,23 +1273,6 @@ div#spin{
 	}
 }
 
-// Saved Filters Modal
-// --------------------------------------------------
-
-#saved-filters-container {
-	margin-top: 10px;
-	max-height: 215px;
-	.resource-item {
-		font-size: 14px;
-		min-height: 23px;
-		.resource-item-actions {
-			padding-top: 0px;
-			a {
-				color: $brand;
-			}
-		}
-	}
-}
 // Custom Filter Modal
 // --------------------------------------------------
 

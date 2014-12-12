@@ -934,7 +934,6 @@ feature 'Events section' do
       let(:user1) { create(:company_user, user: create(:user, first_name: 'Roberto', last_name: 'Gomez'), company: company) }
       let(:user2) { create(:company_user, user: create(:user, first_name: 'Mario', last_name: 'Moreno'), company: company) }
 
-
       scenario 'allows to apply custom filters' do
         event1.users << user1
         event2.users << user2

@@ -9,9 +9,9 @@
   .form-inputs
     .row-fluid
       .pull-left
-        label Show inactive items
-      .pull-left
-          = check_box_tag 'filter_setting[settings][]', 'show_inactive_items', resource.settings.include?('show_inactive_items'), class: 'bs-checkbox'
+        label for="filter_setting_settings_inactive" Allow filtering on inactive items
+      .pull-right
+          = check_box_tag 'filter_setting[settings][]', 'show_inactive_items', resource.settings.include?('show_inactive_items'), id: 'filter_setting_settings_inactive', class: 'bs-checkbox', data: { animated: false }
 
   - if collection.present?
     .row-fluid.saved-filters
