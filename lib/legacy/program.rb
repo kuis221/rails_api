@@ -58,8 +58,7 @@ class Legacy::Program  < Legacy::Record
   def synchronize_custom_kpis(company, campaign)
     form_template.form_fields.custom.each do |field|
       migration = field.metric.synchronize(company, campaign)
-      p migration.local.errors.inspect if migration.local.errors.any?
-      campaign.add_kpi(migration.local) if migration.local.persisted? && field.metric.is_kpi?
+      campaign.add_kpi(migration.local) if migration.local.persisted? && field.metric.kpi?
     end
   end
 
