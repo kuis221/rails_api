@@ -176,16 +176,16 @@ class Activity < ActiveRecord::Base
 
   private
 
-  # Sets the default date (today) and user for new records
+  # Sets the default date (today), user and campaign for new records
   def set_default_values
     return unless new_record?
     self.activity_date ||= Date.today
     self.company_user_id ||= User.current.current_company_user.id if User.current.present?
-    self.campaign = activitable.campaign if activitable.is_a?(Activity)
+    self.campaign = activitable.campaign if activitable.is_a?(Event)
   end
 
   def delegate_campaign_id_from_event
-    return unless activitable.is_a?(Activity)
+    return unless activitable.is_a?(Event)
     self.campaign = activitable.campaign
     self.campaign_id = activitable.campaign_id
   end

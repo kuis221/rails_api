@@ -65,6 +65,12 @@ describe Activity, type: :model do
       it { is_expected.to allow_value(activity_types.first.id).for(:activity_type_id) }
       it { is_expected.to allow_value(activity_types.second.id).for(:activity_type_id) }
       it { is_expected.not_to allow_value(other_type.id).for(:activity_type_id) }
+
+      it 'should set campaign_id from event' do
+        subject.valid?
+        expect(subject.campaign_id).to eql campaign.id
+        expect(subject.campaign).to eql campaign
+      end
     end
   end
 
