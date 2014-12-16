@@ -2,7 +2,10 @@ ActiveAdmin.register Kpi do
   config.clear_action_items!
   actions :index, :show
 
+  filter :id
   filter :name
+  filter :company
+  filter :campaign, as: :select, collection: proc { Campaign.order(:name).pluck(:name, :id) }
   filter :description
   filter :kpi_type, as: :select, collection: proc { Kpi::CUSTOM_TYPE_OPTIONS.keys }
 
@@ -56,7 +59,7 @@ ActiveAdmin.register Kpi do
     end
   end
 
-  index do
+  index paginate: false do
     selectable_column
     column :name
     column :description

@@ -146,8 +146,6 @@ feature 'Users', js: true do
       expect(the_user.last_name).to eq(invited_user.last_name)
       # Invitation token should not change
       expect(the_user.invitation_token).to eq(invited_user.invitation_token)
-      # Invitation sent date should change
-      expect(the_user.invitation_sent_at).to_not eq(invited_user.invitation_sent_at)
     end
 
     it_behaves_like 'a list that allow saving custom filters' do
