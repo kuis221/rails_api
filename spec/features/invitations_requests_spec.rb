@@ -177,30 +177,4 @@ feature 'Invitations', js: true do
       expect(current_path).to eql '/users/sign_in'
     end
   end
-
-  feature 'invitation expiration' do
-    let(:user) do
-      create(:invited_user, invitation_token: 'XYZ123', invitation_sent_at: 4.days.ago,
-             role_id: create(:role, company: company).id, company: company)
-    end
-
-    before { user }
-
-    it 'should let the user know that the invitation token have expired' do
-
-      visit accept_user_invitation_path(invitation_token: 'XYZ123')
-
-      expect(page).to have_content(
-        'Your invitation link has expired. '\
-        'Please click here to request a new invitation.')
-
-      click_link 'click here'
-
-      expect(page).to have_content(
-        'Your request have been sent to Brandscopic\'s support team. '\
-        'We will contact you soon.')
-
-      expect(current_path).to eql '/users/sign_in'
-    end
-  end
 end

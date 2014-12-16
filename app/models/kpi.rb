@@ -49,6 +49,8 @@ class Kpi < ActiveRecord::Base
   # KPIs-Segments relationship
   has_many :kpis_segments, -> { order 'ordering ASC, id ASC' }, inverse_of: :kpi, dependent: :destroy
 
+  has_many :form_fields
+
   # KPIs-Goals relationship
   has_many :goals, inverse_of: :kpi, dependent: :destroy
 
@@ -72,6 +74,17 @@ class Kpi < ActiveRecord::Base
   }
 
   after_save :sync_segments_and_goals
+
+  def self.campaign_eq(campaigns)
+    joins(:form_fields)
+      .where( form_fields: { 
+        fieldable_type: 'Campaign', 
+        fieldable_id: campaigns })
+  end
+
+  def self.ransackable_scopes(auth_object = nil)
+    [:campaign_eq]
+  end
 
   searchable do
     text :name, stored: true

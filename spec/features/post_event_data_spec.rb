@@ -20,11 +20,11 @@ feature 'Post Event Data' do
     scenario 'should allow the user to fill the event data' do
       Kpi.create_global_kpis
       event = create(:event,
-                                 start_date: Date.yesterday.to_s(:slashes),
-                                 end_date: Date.yesterday.to_s(:slashes),
-                                 campaign: campaign,
-                                 place: place,
-                                 company: company)
+                     start_date: Date.yesterday.to_s(:slashes),
+                     end_date: Date.yesterday.to_s(:slashes),
+                     campaign: campaign,
+                     place: place,
+                     company: company)
       campaign.assign_all_global_kpis
 
       campaign.add_kpi create(:kpi, name: 'Integer field', kpi_type: 'number', capture_mechanism: 'integer')
@@ -48,92 +48,104 @@ feature 'Post Event Data' do
 
       # Create some custom fields of different types
       create(:form_field,
-                         name: 'Custom Single Text',
-                         type: 'FormField::Text',
-                         settings: { 'range_format' => 'characters', 'range_min' => '5', 'range_max' => '20' },
-                         fieldable: campaign,
-                         required: false)
+             name: 'Custom Single Text',
+             type: 'FormField::Text',
+             settings: { 'range_format' => 'characters', 'range_min' => '5', 'range_max' => '20' },
+             fieldable: campaign,
+             required: false)
 
       create(:form_field,
-                         name: 'Custom TextArea',
-                         type: 'FormField::TextArea',
-                         settings: { 'range_format' => 'words', 'range_min' => '2', 'range_max' => '4' },
-                         fieldable: campaign,
-                         required: false)
+             name: 'Custom TextArea',
+             type: 'FormField::TextArea',
+             settings: { 'range_format' => 'words', 'range_min' => '2', 'range_max' => '4' },
+             fieldable: campaign,
+             required: false)
 
       create(:form_field,
-                         name: 'Custom Numeric',
-                         type: 'FormField::Number',
-                         settings: { 'range_format' => 'value', 'range_min' => '5', 'range_max' => '20' },
-                         fieldable: campaign,
-                         required: false)
+             name: 'Custom Numeric',
+             type: 'FormField::Number',
+             settings: { 'range_format' => 'value', 'range_min' => '5', 'range_max' => '20' },
+             fieldable: campaign,
+             required: false)
 
       create(:form_field,
-                         name: 'Custom Date',
-                         type: 'FormField::Date',
-                         fieldable: campaign,
-                         required: false)
+             name: 'Custom Date',
+             type: 'FormField::Date',
+             fieldable: campaign,
+             required: false)
 
       create(:form_field,
-                         name: 'Custom Time',
-                         type: 'FormField::Time',
-                         fieldable: campaign,
-                         required: false)
+             name: 'Custom Time',
+             type: 'FormField::Time',
+             fieldable: campaign,
+             required: false)
 
       create(:form_field,
-                         name: 'Custom Currency',
-                         type: 'FormField::Currency',
-                         settings: { 'range_format' => 'digits', 'range_min' => '2', 'range_max' => '4' },
-                         fieldable: campaign,
-                         required: false)
+             name: 'Custom Currency',
+             type: 'FormField::Currency',
+             settings: { 'range_format' => 'digits', 'range_min' => '2', 'range_max' => '4' },
+             fieldable: campaign,
+             required: false)
 
       create(:form_field,
-                         name: 'Custom Summation',
-                         type: 'FormField::Summation',
-                         options: [create(:form_field_option, name: 'Summation Opt1'), create(:form_field_option, name: 'Summation Opt2')],
-                         fieldable: campaign,
-                         required: false)
+             name: 'Custom Summation',
+             type: 'FormField::Summation',
+             options: [
+               create(:form_field_option, name: 'Summation Opt1'),
+               create(:form_field_option, name: 'Summation Opt2')],
+             fieldable: campaign,
+             required: false)
 
       create(:form_field,
-                         name: 'Custom Percentage',
-                         type: 'FormField::Percentage',
-                         options: [create(:form_field_option, name: 'Percentage Opt1', ordering: 1), create(:form_field_option, name: 'Percentage Opt2', ordering: 2)],
-                         fieldable: campaign,
-                         required: false)
+             name: 'Custom Percentage',
+             type: 'FormField::Percentage',
+             options: [
+               create(:form_field_option, name: 'Percentage Opt1', ordering: 1),
+               create(:form_field_option, name: 'Percentage Opt2', ordering: 2)],
+             fieldable: campaign,
+             required: false)
 
       create(:form_field,
-                         name: 'Custom LikertScale',
-                         type: 'FormField::LikertScale',
-                         options: [create(:form_field_option, name: 'LikertScale Opt1'), create(:form_field_option, name: 'LikertScale Opt2')],
-                         statements: [create(:form_field_statement, name: 'LikertScale Stat1'), create(:form_field_statement, name: 'LikertScale Stat2')],
-                         fieldable: campaign,
-                         required: false)
+             name: 'Custom LikertScale',
+             type: 'FormField::LikertScale',
+             options: [
+               create(:form_field_option, name: 'LikertScale Opt1'),
+               create(:form_field_option, name: 'LikertScale Opt2')],
+             statements: [
+               create(:form_field_statement, name: 'LikertScale Stat1'),
+               create(:form_field_statement, name: 'LikertScale Stat2')],
+             fieldable: campaign,
+             required: false)
 
       create(:form_field,
-                         name: 'Custom Checkbox',
-                         type: 'FormField::Checkbox',
-                         options: [create(:form_field_option, name: 'Checkbox Opt1', ordering: 1), create(:form_field_option, name: 'Checkbox Opt2', ordering: 2)],
-                         fieldable: campaign,
-                         required: false)
+             name: 'Custom Checkbox',
+             type: 'FormField::Checkbox',
+             options: [
+               create(:form_field_option, name: 'Checkbox Opt1', ordering: 1),
+               create(:form_field_option, name: 'Checkbox Opt2', ordering: 2)],
+             fieldable: campaign,
+             required: false)
 
       create(:form_field,
-                         name: 'Custom Radio',
-                         type: 'FormField::Radio',
-                         options: [create(:form_field_option, name: 'Radio Opt1', ordering: 1), create(:form_field_option, name: 'Checkbox Opt2', ordering: 2)],
-                         fieldable: campaign,
-                         required: false)
+             name: 'Custom Radio',
+             type: 'FormField::Radio',
+             options: [
+               create(:form_field_option, name: 'Radio Opt1', ordering: 1),
+               create(:form_field_option, name: 'Radio Opt2', ordering: 2)],
+             fieldable: campaign,
+             required: false)
 
       create(:form_field,
-                         name: 'Brand',
-                         type: 'FormField::Brand',
-                         fieldable: campaign,
-                         required: false)
+             name: 'Brand',
+             type: 'FormField::Brand',
+             fieldable: campaign,
+             required: false)
 
       create(:form_field,
-                         name: 'Marque',
-                         type: 'FormField::Marque',
-                         fieldable: campaign,
-                         required: false)
+             name: 'Marque',
+             type: 'FormField::Marque',
+             fieldable: campaign,
+             required: false)
 
       visit event_path(event)
 
@@ -318,60 +330,60 @@ feature 'Post Event Data' do
 
     scenario 'should display correct messages for range validations' do
       create(:form_field,
-                         name: 'Numeric with Min Max',
-                         type: 'FormField::Number',
-                         settings: { 'range_format' => 'value', 'range_min' => '5', 'range_max' => '20' },
-                         fieldable: campaign,
-                         required: false)
+             name: 'Numeric with Min Max',
+             type: 'FormField::Number',
+             settings: { 'range_format' => 'value', 'range_min' => '5', 'range_max' => '20' },
+             fieldable: campaign,
+             required: false)
 
       create(:form_field,
-                         name: 'Numeric Max',
-                         type: 'FormField::Number',
-                         settings: { 'range_format' => 'value', 'range_min' => '', 'range_max' => '20' },
-                         fieldable: campaign,
-                         required: false)
+             name: 'Numeric Max',
+             type: 'FormField::Number',
+             settings: { 'range_format' => 'value', 'range_min' => '', 'range_max' => '20' },
+             fieldable: campaign,
+             required: false)
 
       create(:form_field,
-                         name: 'Price with Min Max',
-                         type: 'FormField::Currency',
-                         settings: { 'range_format' => 'digits', 'range_min' => '2', 'range_max' => '4' },
-                         fieldable: campaign,
-                         required: false)
+             name: 'Price with Min Max',
+             type: 'FormField::Currency',
+             settings: { 'range_format' => 'digits', 'range_min' => '2', 'range_max' => '4' },
+             fieldable: campaign,
+             required: false)
 
       create(:form_field,
-                         name: 'Price Min',
-                         type: 'FormField::Currency',
-                         settings: { 'range_format' => 'digits', 'range_min' => '2', 'range_max' => '' },
-                         fieldable: campaign,
-                         required: false)
+             name: 'Price Min',
+             type: 'FormField::Currency',
+             settings: { 'range_format' => 'digits', 'range_min' => '2', 'range_max' => '' },
+             fieldable: campaign,
+             required: false)
 
       create(:form_field,
-                         name: 'Text with Min Max',
-                         type: 'FormField::Text',
-                         settings: { 'range_format' => 'characters', 'range_min' => '1', 'range_max' => '10' },
-                         fieldable: campaign,
-                         required: false)
+             name: 'Text with Min Max',
+             type: 'FormField::Text',
+             settings: { 'range_format' => 'characters', 'range_min' => '1', 'range_max' => '10' },
+             fieldable: campaign,
+             required: false)
 
       create(:form_field,
-                         name: 'Text Max',
-                         type: 'FormField::Text',
-                         settings: { 'range_format' => 'characters', 'range_min' => '', 'range_max' => '10' },
-                         fieldable: campaign,
-                         required: false)
+             name: 'Text Max',
+             type: 'FormField::Text',
+             settings: { 'range_format' => 'characters', 'range_min' => '', 'range_max' => '10' },
+             fieldable: campaign,
+             required: false)
 
       create(:form_field,
-                         name: 'Text Area with Min Max',
-                         type: 'FormField::TextArea',
-                         settings: { 'range_format' => 'words', 'range_min' => '3', 'range_max' => '5' },
-                         fieldable: campaign,
-                         required: false)
+             name: 'Text Area with Min Max',
+             type: 'FormField::TextArea',
+             settings: { 'range_format' => 'words', 'range_min' => '3', 'range_max' => '5' },
+             fieldable: campaign,
+             required: false)
 
       create(:form_field,
-                         name: 'Text Area Min',
-                         type: 'FormField::TextArea',
-                         settings: { 'range_format' => 'words', 'range_min' => '3', 'range_max' => '' },
-                         fieldable: campaign,
-                         required: false)
+             name: 'Text Area Min',
+             type: 'FormField::TextArea',
+             settings: { 'range_format' => 'words', 'range_min' => '3', 'range_max' => '' },
+             fieldable: campaign,
+             required: false)
 
       event = create(:event,
                      start_date: Date.yesterday.to_s(:slashes), end_date: Date.yesterday.to_s(:slashes),
