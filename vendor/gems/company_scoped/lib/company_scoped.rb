@@ -7,7 +7,6 @@ module CompanyScoped
   def scoped_to_company(options = {})
     before_validation CompanyScoped::Callback.new
 
-
     belongs_to :company
 
     scope :in_company, ->(company) { where(company_id: company) }
@@ -18,10 +17,11 @@ module CompanyScoped
     end
 
     private
-      def without_company_scoped
-        @_ignore_nil = true
-        yield
-        @_ignore_nil = false
-      end
+
+    def without_company_scoped
+      @_ignore_nil = true
+      yield
+      @_ignore_nil = false
+    end
   end
 end

@@ -35,10 +35,10 @@ class Team < ActiveRecord::Base
   scope :active, -> { where(active: true) }
 
   scope :with_users, joins(:users).group('teams.id')
-  scope :with_user, lambda { |company_user| joins(:users).where(company_users: { id: company_user }).group('teams.id')  }
-  scope :with_active_users, lambda { |companies| joins(:users).where(company_users: { active: true, company_id: companies }).group('teams.id') }
+  scope :with_user, ->(company_user) { joins(:users).where(company_users: { id: company_user }).group('teams.id')  }
+  scope :with_active_users, ->(companies) { joins(:users).where(company_users: { active: true, company_id: companies }).group('teams.id') }
 
-  scope :accessible_by_user, ->(user) { where(company_id: user.company_id) }
+  scope :accessible_by_user, ->(user) { in_company(user.company_id) }
 
   searchable do
     integer :id

@@ -35,11 +35,12 @@ class Area < ActiveRecord::Base
 
   def self.accessible_by_user(company_user)
     if company_user.is_admin?
-      all
+      in_company(company_user.company_id)
     else
-      where('areas.id in (?) OR common_denominators_locations && \'{?}\'::int[]',
-            company_user.area_ids,
-            company_user.accessible_locations + [-1])
+      in_company(company_user.company_id).where(
+        'areas.id in (?) OR common_denominators_locations && \'{?}\'::int[]',
+        company_user.area_ids,
+        company_user.accessible_locations + [-1])
     end
   end
 

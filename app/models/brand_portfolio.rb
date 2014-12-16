@@ -29,6 +29,8 @@ class BrandPortfolio < ActiveRecord::Base
 
   scope :active, -> { where(active: true) }
 
+  scope :accessible_by_user, ->(user) { in_company(user.company_id) }
+
   searchable do
     integer :id
 

@@ -26,11 +26,4 @@ class RolesController < FilteredController
   def permitted_params
     params.permit(role: [:name, :description, { permissions_attributes: [:id, :enabled, :action, :subject_class, :subject_id] }])[:role]
   end
-
-  def facets
-    @facets ||= Array.new.tap do |f|
-      f.push build_state_bucket
-      f.concat build_custom_filters_bucket
-    end
-  end
 end

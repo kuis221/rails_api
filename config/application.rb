@@ -90,6 +90,7 @@ module Brandscopic
       end
     end
 
+    config.eager_load_paths += ["#{Rails.root}/lib"] if ENV['WEB']
     # We dont need controllers to be in eager_loaded in workers
     unless ENV['WEB']
       config.eager_load_paths.reject! { |a| a.include?('app/admin') || a.include?('app/inputs') }

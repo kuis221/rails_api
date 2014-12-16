@@ -47,12 +47,4 @@ class BrandsController < FilteredController
   def authorize_actions
     authorize! :index, resource_class
   end
-
-  def facets
-    @facets ||= Array.new.tap do |f|
-      f.push(label: 'Active State', items: %w(Active Inactive).map do |x|
-        build_facet_item(label: x, id: x, name: :status, count: 1)
-      end)
-    end
-  end
 end

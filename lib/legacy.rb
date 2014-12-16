@@ -58,8 +58,8 @@ Paperclip.interpolates :dashed_style do |_attachment, style|
 end
 
 # require 'legacy/metric/whole'
-require 'legacy/record'
-require 'legacy/metric'
-Dir[Rails.root.to_s + '/lib/legacy/**/*.rb'].each do |file|
-  require file
-end
+# require 'legacy/record'
+# require 'legacy/metric'
+# Dir[Rails.root.to_s + '/lib/legacy/**/*.rb'].each do |file|
+#   require file
+# end

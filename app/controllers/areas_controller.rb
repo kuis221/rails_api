@@ -41,11 +41,4 @@ class AreasController < FilteredController
   def permitted_params
     params.permit(area: [:name, :description])[:area]
   end
-
-  def facets
-    @facets ||= Array.new.tap do |f|
-      f.push build_state_bucket
-      f.concat build_custom_filters_bucket
-    end
-  end
 end

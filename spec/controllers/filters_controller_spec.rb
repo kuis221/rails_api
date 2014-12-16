@@ -4,15 +4,30 @@ RSpec.describe FiltersController, type: :controller do
 
   let(:company) { create(:company) }
   let(:user) { company_user.user }
+  let(:role) { create(:role, is_admin: false, company: company) }
   let(:company_user) do
     create(:company_user,
            company: company,
-           role: create(:role, is_admin: false, company: company))
+           role: role)
   end
 
   before { sign_in user }
 
   describe 'GET show' do
+    describe 'as admin user' do
+      let(:role) { create(:role, company: company) }
+
+      it 'not return objects for other companies' do
+        create(:campaign, name: 'CFY12', company: company)
+        create(:campaign, name: 'IN OTHER COMPANY', company: create(:company))
+        get 'show', id: :events, format: :json
+
+        filters = json['filters'].find { |f| f['label'] == 'Campaigns' }
+
+        expect(filters['items'].map { |i| i['label'] }).to eql ['CFY12']
+      end
+    end
+
     it 'returns all the keys for the events scope' do
       get :show, id: 'events'
       expect(response).to be_success
@@ -38,10 +53,10 @@ RSpec.describe FiltersController, type: :controller do
 
       get 'show', id: :events, format: :json
       expect(response).to be_success
-      areas_filters = json['filters'].find { |f| f['label'] == 'Campaigns' }
-      expect(areas_filters['items'].count).to eql 1
+      filters = json['filters'].find { |f| f['label'] == 'Campaigns' }
+      expect(filters['items'].count).to eql 1
 
-      expect(areas_filters['items'].first).to eql(
+      expect(filters['items'].first).to eql(
         'id' => campaign.id, 'label' => 'CFY12', 'value' => campaign.id,
         'name' => 'campaign', 'selected' => false
       )
@@ -73,7 +88,7 @@ RSpec.describe FiltersController, type: :controller do
       )
     end
 
-    it 'should return the correct items for the Campaign bucket' do
+    it 'should return the correct items for the Area bucket' do
       # Assigned area with a common place, it should be in the filters
       area = create(:area, name: 'Austin', company: company)
       area.places << create(:city, name: 'Bee Cave', state: 'Texas', country: 'US')
@@ -105,9 +120,8 @@ RSpec.describe FiltersController, type: :controller do
         'name' => 'area', 'selected' => false
       )
 
-      expect(areas_filters['items'].first['label']).to eql 'Austin'
-      expect(areas_filters['items'].second['label']).to eql 'San Antonio'
-      expect(areas_filters['items'].third['label']).to eql 'San Francisco'
+      expect(areas_filters['items'].map { |i| i['label'] }).to eql [
+        'Austin', 'San Antonio', 'San Francisco']
     end
   end
 

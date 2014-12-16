@@ -23,6 +23,7 @@ class Role < ActiveRecord::Base
   accepts_nested_attributes_for :permissions, reject_if: proc { |attributes| !attributes['enabled'] }
 
   scope :active, -> { where(active: true) }
+  scope :accessible_by_user, ->(user) { in_company(user.company_id) }
 
   searchable do
     integer :id

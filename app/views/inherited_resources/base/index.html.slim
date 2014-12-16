@@ -31,7 +31,7 @@
 javascript:
   $('#collection-list-filters').filteredList({
     'source': '#{url_for(controller: controller_name, action: :items)}',
-    'filtersUrl': '#{url_for(controller: controller_name, action: :filters)}',
+    'filtersUrl': '#{filter_url(controller_name)}',
     'listContainer' : '##{controller_name}-list',
     'sorting': 'name',
     'sorting_dir': 'asc',
@@ -40,7 +40,7 @@ javascript:
     'includeCalendars': false,
     'includeSearchBox': false,
     'includeAutoComplete': true,
-    'autoCompletePath': '#{url_for(controller: controller_name, action: :autocomplete, format: :json)}',
+    'autoCompletePath': '#{autocomplete_path(controller_name, format: :json)}',
     'defaultParams': [{name: 'status[]', value: 'Active'}],
     'clearFilterParams': [{name: 'status[]', value: 'Active'}],
     'allowCustomizeFilters': true

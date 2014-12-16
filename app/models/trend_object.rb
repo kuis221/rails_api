@@ -251,8 +251,11 @@ class TrendObject
           .find_in_batches(options.slice(:batch_size, :start)) do |records|
 
           solr_benchmark(options[:batch_size], batch_counter += 1) do
-            Sunspot.index(records.map { |result| TrendObject.new(result.resultable, result) }.select(&:indexable?))
-            Sunspot.commit if options[:batch_commit]
+            begin
+              Sunspot.index(records.map { |result| TrendObject.new(result.resultable, result) }.select(&:indexable?))
+              Sunspot.commit if options[:batch_commit]
+            rescue RSolr::Error::Http::RSolr::Error::Http
+            end
           end
           options[:progress_bar].increment!(records.length) if options[:progress_bar]
         end

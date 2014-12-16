@@ -39,6 +39,6 @@ class Results::EventDataController < FilteredController
   end
 
   def permitted_search_params
-    permitted_events_search_params
+    Event.searchable_params
   end
 end

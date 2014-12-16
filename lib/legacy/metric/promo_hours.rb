@@ -19,7 +19,6 @@
 # INTERNAL USE - stores data in EventRecap
 # positive decimal number representing promo hours.
 # autopopulates with 1
-require 'legacy/metric/decimal'
 
 class Metric::PromoHours < Metric::Decimal
   validates_presence_of :program_id, message: 'must be a program metric'

@@ -25,7 +25,7 @@
 javascript:
   $('#collection-list-filters').filteredList({
     'source': '#{url_for(controller: controller_name, action: :items)}',
-    'filtersUrl': '#{url_for(controller: controller_name, action: :filters)}',
+    'filtersUrl': '#{filter_url(controller_name, action: :filters)}',
     'listContainer' : '##{controller_name}-list',
     'sorting': 'activity_date',
     'sorting_dir': 'asc',
@@ -33,7 +33,7 @@ javascript:
     'userFilters': #{user_saved_filters(controller_name).to_json.html_safe},
     'includeCalendars': true,
     'includeAutoComplete': true,
-    'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
+    'autoCompletePath': '#{autocomplete_path(:events, format: :json)}',
     'ytdDatesRange': '#{current_company.ytd_dates_range}',
     'defaultParams': [{name: 'status[]', value: 'Active'}],
     'clearFilterParams': [{name: 'status[]', value: 'Active'}]

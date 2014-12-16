@@ -77,11 +77,4 @@ class ActivityTypesController < FilteredController
         :id, :goalable_id, :goalable_type, :activity_type_id, :value, value: []] }
     ])[:activity_type]
   end
-
-  def facets
-    @facets ||= Array.new.tap do |f|
-      f.push build_state_bucket
-      f.concat build_custom_filters_bucket
-    end
-  end
 end

@@ -74,7 +74,7 @@
       'selectDefaultDateRange': false,
       'ytdDatesRange': '#{current_company.ytd_dates_range}',
       'includeAutoComplete': true,
-      'autoCompletePath': '#{autocomplete_filter_path(:events, format: :json)}',
+      'autoCompletePath': '#{autocomplete_path(:events, format: :json)}',
       'userFilters': #{user_saved_filters(controller_name).to_json.html_safe},
       'defaultParams': [{name: 'status[]', value: 'Active'}, {name: 'start_date', value:'#{Time.zone.now.strftime("%m/%d/%Y")}'}, {name: 'end_date', value:'#{(Time.zone.now + 10.years).strftime("%m/%d/%Y")}'}],
       'clearFilterParams': [{name: 'status[]', value: 'Active'}, {name: 'start_date', value:'#{Time.zone.now.strftime("%m/%d/%Y")}'}, {name: 'end_date', value:'#{(Time.zone.now + 10.years).strftime("%m/%d/%Y")}'}],

@@ -1,7 +1,7 @@
 filters:
   events:
     campaigns: [Campaign]
-    brands: [Brand]
+    brands: [Brand, BrandPortfolio]
     areas: [Area]
     people: [CompanyUser, Team]
     event_status:
@@ -19,3 +19,58 @@ filters:
     areas: [Area]
     campaigns: [Campaign]
     brands: [Brand]
+  campaigns:
+    brands: [Brand]
+    brand_portfolios: [BrandPortfolio]
+    people: [CompanyUser, Team]
+    active_state:
+      items: [Active, Inactive]
+      name: 'status'
+  brands:
+    active_state:
+      items: [Active, Inactive]
+      name: 'status'
+  company_users:
+    roles: [Role]
+    campaigns: [Campaign]
+    teams: [Team]
+    active_state:
+      items: [Active, Inactive]
+      name: 'status'
+  teams:
+    campaigns: [Campaign]
+    active_state:
+      items: [Active, Inactive]
+      name: 'status'
+  roles:
+    active_state:
+      items: [Active, Inactive]
+      name: 'status'
+  activity_types:
+    active_state:
+      items: [Active, Inactive]
+      name: 'status'
+  areas:
+    active_state:
+      items: [Active, Inactive]
+      name: 'status'
+  brand_portfolios:
+    brands: [Brand]
+    active_state:
+      items: [Active, Inactive]
+      name: 'status'
+  date_ranges:
+    active_state:
+      items: [Active, Inactive]
+      name: 'status'
+  day_parts:
+    active_state:
+      items: [Active, Inactive]
+      name: 'status'
+  brand_ambassadors/visits:
+    brand_ambassadors:
+      method: brand_ambassadors_bucket
+    campaigns: [Campaign]
+    areas: [Area]
+    cities: 
+      method: cities_bucket
