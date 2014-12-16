@@ -37,6 +37,8 @@ class ActivityType < ActiveRecord::Base
 
   scope :active, -> { where(active: true) }
 
+  scope :accessible_by_user, ->(user) { in_company(user.company_id) }
+
   attr_accessor :partial_path
 
   before_save :ensure_user_date_field

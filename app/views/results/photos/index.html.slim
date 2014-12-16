@@ -32,7 +32,7 @@
 javascript:
   $('#collection-list-filters').filteredList({
     'source': '#{url_for(controller: 'results/photos', action: :items)}',
-    'filtersUrl': '#{url_for(controller: 'results/photos', action: :filters, apply_to: :results_photos)}',
+    'filtersUrl': '#{filter_url('results_photos', apply_to: :results_photos)}',
     'listContainer': '##{controller_name}-list',
     'sorting': 'created_at',
     'sorting_dir': 'desc',
@@ -44,7 +44,7 @@ javascript:
     'includeAutoComplete': true,
     'applyTo': 'results_photos',
     'userFilters': #{user_saved_filters('results_photos').to_json.html_safe},
-    'autoCompletePath': '#{url_for(controller: 'results/photos', action: :autocomplete, format: :json)}',
+    'autoCompletePath': '#{autocomplete_url('results_photos', format: :json)}',
     'defaultParams': [{name: 'status[]', value: 'Active'}],
     'clearFilterParams': [{name: 'status[]', value: 'Active'}],
     'onItemsLoad': function(response, page){

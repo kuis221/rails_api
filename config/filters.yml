@@ -74,3 +74,19 @@ filters:
     areas: [Area]
     cities: 
       method: cities_bucket
+  activities:
+    activity_types: [ActivityType]
+    brands: [Brand]
+    campaigns: [Campaign]
+    areas: [Area]
+    users: [CompanyUser]
+    active_state:
+      items: [Active, Inactive]
+      name: 'status'
+  results_photos:
+    campaigns: [Campaign]
+    brands: [Brand]
+    areas: [Area]
+    active_state:
+      items: [Active, Inactive]
+      name: 'status'
