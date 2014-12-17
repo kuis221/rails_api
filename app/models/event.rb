@@ -56,7 +56,8 @@ class Event < ActiveRecord::Base
   end
   has_one :event_data, autosave: true, dependent: :destroy
 
-  has_many :comments, -> { order 'comments.created_at ASC' }, dependent: :destroy, as: :commentable,  inverse_of: :commentable
+  has_many :comments, -> { order 'comments.created_at ASC' }, dependent: :destroy, as: :commentable,
+                                                              inverse_of: :commentable
 
   has_many :surveys, -> { order 'surveys.created_at ASC' }, dependent: :destroy,  inverse_of: :event
 
@@ -110,7 +111,9 @@ class Event < ActiveRecord::Base
     if company_user.is_admin?
       where(company_id: company_user.company_id)
     else
-      where(company_id: company_user.company_id).for_campaigns_accessible_by(company_user).in_user_accessible_locations(company_user)
+      where(company_id: company_user.company_id)
+      .for_campaigns_accessible_by(company_user)
+      .in_user_accessible_locations(company_user)
     end
   end
 
@@ -396,7 +399,9 @@ class Event < ActiveRecord::Base
       (
         results.active.where(
           '(form_field_results.value is not null AND form_field_results.value <> \'\') OR
-           (form_field_results.hash_value is not null AND btrim(array_to_string(avals(form_field_results.hash_value), \'\'))<>\'\')').count > 0
+           (form_field_results.hash_value is not null AND
+            btrim(array_to_string(avals(form_field_results.hash_value), \'\'))<>\'\')'
+        ).count > 0
       )
   end
 
@@ -425,7 +430,8 @@ class Event < ActiveRecord::Base
   end
 
   def results_for(fields)
-    # The results are mapped by field or kpi_id to make it find them in case the form field was deleted and readded to the form
+    # The results are mapped by field or kpi_id to make it find them in case
+    # the form field was deleted and readded to the form
     fields.map do |field|
       result = results.find { |r| r.form_field_id == field.id } || results.build(form_field_id: field.id)
       result.form_field = field # Assign it so it won't be reloaded if requested.
@@ -469,7 +475,11 @@ class Event < ActiveRecord::Base
       [:age, :gender, :ethnicity].each do |kpi_name|
         kpi =  Kpi.send(kpi_name)
         result = result_for_kpi(kpi)
-        data[kpi_name] = Hash[kpi.kpis_segments.map { |s| [s.text, result.value[s.id.to_s].try(:to_f) || 0] }] if result.present?
+        if result.present?
+          data[kpi_name] = Hash[kpi.kpis_segments.map do |s|
+            [s.text, result.value[s.id.to_s].try(:to_f) || 0]
+          end]
+        end
       end
     end
   end

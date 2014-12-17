@@ -176,7 +176,7 @@ class Activity < ActiveRecord::Base
 
   private
 
-  # Sets the default date (today) and user for new records
+  # Sets the default date (today), user and campaign for new records
   def set_default_values
     return unless new_record?
     self.activity_date ||= Date.today

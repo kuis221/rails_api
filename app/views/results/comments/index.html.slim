@@ -33,7 +33,7 @@
 javascript:
   $('#collection-list-filters').filteredList({
     'source': '#{url_for(controller: 'results/comments', action: :items)}',
-    'filtersUrl': '#{filters_events_path(with_event_data_only: true, apply_to: :results_comments)}',
+    'filtersUrl': '#{filter_url(:events, apply_to: :results_comments)}',
     'listContainer': '#comment-list',
     'sorting': 'start_at',
     'sorting_dir': 'asc',
@@ -44,7 +44,7 @@ javascript:
     'includeAutoComplete': true,
     'applyTo': 'results_comments',
     'userFilters': #{user_saved_filters('results_comments').to_json.html_safe},
-    'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
+    'autoCompletePath': '#{autocomplete_path(:events, format: :json)}',
     'defaultParams': [{name: 'status[]', value: 'Active'}],
     'clearFilterParams': [{name: 'status[]', value: 'Active'}],
     'onChange': function(filterBox){

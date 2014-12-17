@@ -3,5 +3,5 @@ div data-content="items" data-total="#{collection_count}" data-pages="#{total_pa
   - collection.each do |event|
     = render partial: 'comment', collection: event.comments, as: :comment
 
-  div data-content="filters-description"
-    = describe_filters('comment')
+div data-content="filters-description"
+	= describe_filters('comment')

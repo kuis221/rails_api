@@ -32,7 +32,7 @@
 javascript:
   $('#collection-list-filters').filteredList({
     'source': '#{url_for(controller: 'results/surveys', action: :items)}',
-    'filtersUrl': '#{filters_events_path(with_surveys_only: true, apply_to: controller_name)}',
+    'filtersUrl': '#{filter_url(:events, apply_to: controller_name)}',
     'listContainer': '#surveys-list',
     'sorting': 'start_at',
     'sorting_dir': 'asc',
@@ -43,7 +43,7 @@ javascript:
     'includeAutoComplete': true,
     'applyTo': '#{controller_name}',
     'userFilters': #{user_saved_filters(controller_name).to_json.html_safe},
-    'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
+    'autoCompletePath': '#{autocomplete_path(:events, format: :json)}',
     'defaultParams': [{name: 'status[]', value: 'Active'}],
     'onChange': function(filterBox){
       $(document).trigger('surveys-filter:changed')
