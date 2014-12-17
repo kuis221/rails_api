@@ -31,28 +31,4 @@ describe AreasController, type: :controller, search: true do
     end
   end
 
-  describe "GET 'filters'" do
-    it 'should return the correct buckets' do
-      Sunspot.commit
-      get 'filters', format: :json
-      expect(response).to be_success
-
-      filters = JSON.parse(response.body)
-      expect(filters['filters'].map { |b| b['label'] }).to eq(['Active State'])
-    end
-
-    it 'should return the correct buckets in the right order' do
-      Sunspot.commit
-      get 'filters', format: :json
-
-      expect(response).to be_success
-      filters = JSON.parse(response.body)
-
-      expect(filters['filters'].map { |b| b['label'] }).to eq(['Active State'])
-      expect(filters['filters'][0]['items'].count).to eq(2)
-      expect(filters['filters'][0]['items'].first['label']).to eq('Active')
-      expect(filters['filters'][0]['items'][1]['label']).to eq('Inactive')
-    end
-  end
-
 end

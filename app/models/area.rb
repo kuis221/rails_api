@@ -44,6 +44,18 @@ class Area < ActiveRecord::Base
     end
   end
 
+  def self.filters_scope(filters)
+    areas = filters.user.company.areas.where('active in (?)', filters.items_to_show)
+            .accessible_by_user(filters.user).order(:name).to_a
+    filters.user.places.each do |p|
+      areas.concat filters.user.company.areas
+                   .where('active in (?)', filters.items_to_show || [true, false])
+                   .where('id NOT IN (?)', areas.map(&:id) + [0]).select { |a| a.place_in_locations?(p) }
+    end
+
+    areas = areas.sort_by(&:name).map { |a| [a.id, a.name] }
+  end
+
   serialize :common_denominators
 
   before_save :initialize_common_denominators

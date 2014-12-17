@@ -24,12 +24,21 @@ class CollectionFilter
   end
 
   def filters
-    return [] if SETTINGS['filters'][scope].nil?
-    company_custom_filters.concat(
+    result = company_custom_filters
+    return result if SETTINGS['filters'][scope].nil?
+    result.concat(
       SETTINGS['filters'][scope].map do |_bucket_name, bucket_config|
         build_filter_bucket bucket_config
       end.flatten.append(user_saved_filters)
     )
+  end
+
+  def items_to_show(format: :boolean)
+    if format == :string
+      user.filter_setting_present('show_inactive_items', scope) ? ['active', 'inactive'] : ['active']
+    else
+      user.filter_setting_present('show_inactive_items', scope) ? [true, false] : [true]
+    end
   end
 
   private
@@ -135,7 +144,7 @@ class CollectionFilter
   def company_custom_filters
     groups = {}
     CustomFilter.for_company_user(user).not_user_saved_filters
-      .order('custom_filters.name ASC').by_type(filter_settings_scope).each do |filter|
+      .order('custom_filters.name ASC').by_type(scope).each do |filter|
       groups[filter.group.upcase] ||= []
       groups[filter.group.upcase].push filter
     end
@@ -151,7 +160,7 @@ class CollectionFilter
 
   def klass_filter_scope(klass)
     if klass.respond_to?(:filters_scope)
-      klass.accessible_by_user(user).filters_scope(scope)
+      klass.accessible_by_user(user).filters_scope(self)
     else
       klass.accessible_by_user(user).order(:name).pluck(:id, :name)
     end
@@ -166,17 +175,5 @@ class CollectionFilter
         (params[options[:name]] == options[:id]) || (params[options[:name]] == options[:id].to_s)
       )
     options
-  end
-
-  def items_to_show(format: :boolean)
-    if format == :string
-      user.filter_setting_present('show_inactive_items', filter_settings_scope) ? ['active', 'inactive'] : ['active']
-    else
-      user.filter_setting_present('show_inactive_items', filter_settings_scope) ? [true, false] : [true]
-    end
-  end
-
-  def filter_settings_scope
-    params[:apply_to] || params[:id]
   end
 end
