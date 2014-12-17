@@ -100,6 +100,18 @@ $.widget 'nmk.filteredList', {
 					e.stopPropagation()
 					$.get '/filter_settings/new.js', {apply_to: @options.applyTo}
 
+		$(document).on 'click', '.collection-list-description .filter-item .icon-plus', (e) =>
+			e.stopPropagation();
+			e.preventDefault();
+			return unless @doneLoading
+			$(e.currentTarget).closest('.filter-item').fadeTo(1000, 0.3)
+			filterParts = $(e.currentTarget).data('filter').split(':')
+			params = {filter_type: filterParts[0], filter_id: filterParts[1] }
+			$.get '/filters/expand', params, (data) =>
+				@replaceParams data, filterParts
+			, "json"
+			false
+
 		$(document).on 'click', '.collection-list-description .filter-item .icon-close', (e) =>
 			e.stopPropagation();
 			e.preventDefault();
@@ -528,6 +540,20 @@ $.widget 'nmk.filteredList', {
 		for param in @_deparam(params)
 			searchString = searchString.replace(new RegExp('(&)?'+ encodeURIComponent(param.name)+'='+@_escapeRegExp(encodeURIComponent(param.value))+'(&|$)', "g"), '$2')
 		@_setQueryString searchString
+
+	replaceParams: (params, filter) ->
+		tqs = ""
+		qs =  @paramsQueryString()
+		for param in params
+			paramValue = encodeURIComponent("#{param.type}[]")+'='+encodeURIComponent(param.id)
+			paramValue = '' if param.id is '' or param.id is null
+			if qs.indexOf(paramValue) <= 0
+				tqs += (if tqs then '&' else '') + paramValue if paramValue
+		if tqs
+			qs = qs.replace(new RegExp(encodeURIComponent("#{filter[0]}[]")+'='+@_escapeRegExp(encodeURIComponent(filter[1])), "g"), tqs)
+		else
+			qs = qs.replace(new RegExp('(&)?'+ encodeURIComponent("#{filter[0]}[]")+'='+@_escapeRegExp(encodeURIComponent(filter[1]))+'(&|$)', "g"), '$2')
+		@_setQueryString qs
 
 	addParams: (params) ->
 		@savedFiltersDropdown.val('').trigger('liszt:updated')

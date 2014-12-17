@@ -32,6 +32,16 @@ class CollectionFilter
     )
   end
 
+  def expand(type, id)
+    type.classify.constantize.find(id).filter_subitems.map do |item|
+      {
+        id: item[0],
+        name: item[1],
+        type: item[2]
+      }
+    end
+  end
+
   private
 
   def build_filter_bucket(config)

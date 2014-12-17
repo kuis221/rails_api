@@ -136,7 +136,9 @@ Brandscopic::Application.routes.draw do
   resources :photos, only: [:show]
 
   # /filters/events /filters/campaigns etc
-  resources :filters, only: [:show]
+  resources :filters, only: [:show] do
+    get :expand, on: :collection
+  end
 
   # /autocomplete/events /autocomplete/campaigns etc
   resources :autocomplete, only: [:show]

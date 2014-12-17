@@ -38,7 +38,7 @@ module EventsHelper
     first_part = [
       describe_status, describe_prices, describe_custom_date_ranges,
       describe_brands, describe_brand_portfolios, describe_campaigns,
-      describe_areas, describe_venues, describe_cities, describe_users,
+      describe_areas, describe_places, describe_venues, describe_cities, describe_users,
       describe_teams, describe_roles, describe_activity_types, describe_date_ranges,
       describe_day_parts, describe_tasks, describe_range_filters
     ].compact.join(' ').strip
@@ -147,7 +147,8 @@ module EventsHelper
 
   def describe_areas
     describe_resource_params(:area,
-                             current_company.areas.order('areas.name ASC'))
+                             current_company.areas.order('areas.name ASC'), 
+                             expandible: true)
   end
 
   def describe_tasks
@@ -175,9 +176,15 @@ module EventsHelper
                              current_company.brands.order('brands.name ASC'))
   end
 
+  def describe_places
+    describe_resource_params(:place,
+                             Place.order('places.name ASC'))
+  end
+
   def describe_brand_portfolios
     describe_resource_params(:brand_portfolio,
-                             current_company.brand_portfolios.order('brand_portfolios.name ASC'))
+                             current_company.brand_portfolios.order('brand_portfolios.name ASC'),
+                             expandible: true)
   end
 
   def describe_cities
@@ -201,15 +208,16 @@ module EventsHelper
   end
 
   def describe_users
-    describe_resource_params(:user,
-                             current_company.company_users.joins(:user)
-                             .order('2 ASC'),
-                             'users.first_name || \' \' || users.last_name as name')
+    describe_resource_params(
+      :user,
+      current_company.company_users.joins(:user).order('2 ASC'),
+      label_attribute: 'users.first_name || \' \' || users.last_name as name')
   end
 
   def describe_teams
     describe_resource_params(:team,
-                             current_company.teams.order('teams.name ASC'))
+                             current_company.teams.order('teams.name ASC'), 
+                             expandible: true)
   end
 
   def describe_roles
@@ -237,22 +245,26 @@ module EventsHelper
     ids.compact.uniq
   end
 
-  def describe_resource_params(param_name, base_scope, label_attribute = :name )
+  def describe_resource_params(param_name, base_scope, label_attribute: :name, expandible: false)
     ids = filter_params(param_name)
     return unless ids.size > 0
     build_filter_object_list param_name,
-                             base_scope.where(id: ids).pluck(:id, label_attribute)
+                             base_scope.where(id: ids).pluck(:id, label_attribute),
+                             expandible: expandible
   end
 
-  def build_filter_object_list(filter_name, list)
+  def build_filter_object_list(filter_name, list, expandible: false)
     return if list.blank?
     list.map do |item|
-      build_filter_object_item item[1], "#{filter_name}:#{item[0]}"
+      build_filter_object_item item[1], "#{filter_name}:#{item[0]}", expandible: expandible
     end.join(' ').html_safe
   end
 
-  def build_filter_object_item(label, filter_name)
+  def build_filter_object_item(label, filter_name, expandible: false)
     content_tag(:div,  class: 'filter-item') do
+      (expandible ? link_to('', '#', class: 'icon icon-plus',
+                                     title: 'Expand this filter',
+                                     data: { filter: filter_name }) : ''.html_safe) + 
       label.html_safe + link_to('', '#', class: 'icon icon-close',
                                          title: 'Remove this filter',
                                          data: { filter: filter_name })
