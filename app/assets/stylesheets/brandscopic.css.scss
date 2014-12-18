@@ -2577,7 +2577,7 @@ ul.ui-widget-content{
 		background-image: none !important;
 		border:0 !important;
 		border-radius: 0px !important;
-		color: white !important;
+		color: white;
 		font-weight: normal !important;
 		padding: 8px 10px !important;
 		i{
@@ -4952,6 +4952,10 @@ svg{
 
 #new_place {
 
+	.add-place-btn{
+		margin-top: 25px;
+	}
+
 	margin: 0px;
 
 	label.location {
@@ -6060,8 +6064,13 @@ table td.sub-level-1 {
 		a {
 			color: $text;
 			display: inline-block;
+			width: 80%;
 			strong {
 				font-size: 14px;
+			}
+			&.ui-state-focus{
+				background-color: transparent !important;
+				color: $text;
 			}
 		}
 
@@ -6069,11 +6078,16 @@ table td.sub-level-1 {
 			color: $grey_one;
 			font-size: 16px;
 			margin-left: 10px;
+			margin-top: 12px;
+			display: inline-block;
+			vertical-align: top;
 		}
 
-		&:hover, .ui-state-focus {
-			color: #fff;
+		&:hover {
 			background-color: #989898 !important;
+			a.ui-state-focus{
+				color: white;
+			}
 		}
 
 		&:last-child {
