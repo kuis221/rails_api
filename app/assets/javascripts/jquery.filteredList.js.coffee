@@ -194,7 +194,9 @@ $.widget 'nmk.filteredList', {
 		$.loadingContent += 1
 		@formFilters.html('')
 		for filter in filters
-			if filter.items? and (filter.items.length > 0 or (filter.top_items? and filter.top_items.length))
+			if filter.type is 'rating'
+				@addStarRating filter
+			else if filter.items? and (filter.items.length > 0 or (filter.top_items? and filter.top_items.length))
 				@addFilterSection filter
 			else if filter.max? and filter.min?
 				@addSlider filter
@@ -209,6 +211,43 @@ $.widget 'nmk.filteredList', {
 		$.loadingContent -= 1
 		@
 
+	addStarRating: (filter) ->
+		items = filter.items
+		expanded = @_getFilterSectionState(filter.label.replace(/\s+/g, '-')) == 'true'
+		$list = $('<ul>')
+		$filter = $('<div class="accordion-group">').append(
+			$('<div class="filter-wrapper accordion-heading">').data('name', filter.name).append(
+				$('<a>',{href: "#toogle-"+filter.label.replace(/\s+/g, '-').toLowerCase(), class:'accordion-toggle filter-title', 'data-toggle': 'collapse'})
+					.text(filter.label).addClass(if expanded then '' else 'collapsed').append(
+						$('<span class="icon pull-left" title="Expand">').addClass(if expanded then 'icon-arrow-down' else 'icon-arrow-right')
+					)
+			),
+			$('<div id="toogle-'+filter.label.replace(/\s+/g, '-').toLowerCase()+'" class="accordion-body">').addClass(if expanded then 'in' else ' collapse').append(
+				$('<div class="accordion-inner">').append($list)
+			).on 'show', () =>
+				@_setFilterSectionState(filter.label.replace(/\s+/g, '-'), true)
+				true
+			.on 'hide',  () =>
+				@_setFilterSectionState(filter.label.replace(/\s+/g, '-'), false)
+				true
+		)
+		for item in filter.items
+			item.label = @_buildFilterStarRating item
+			$list.append @_buildFilterOption(item)
+
+		@formFilters.append $filter
+		$filter.data('filter', filter)
+
+	_buildFilterStarRating: (option) ->
+		i = 0
+		html = ""
+		while i < 5
+			if option.label > i
+				html += "<i class='icon-star full'></i>"
+			else
+				html += "<i class='icon-star empty'></i>"
+			i++
+		html
 
 	addSlider: (filter) ->
 		min_value = if filter.selected_min? then filter.selected_min else filter.min

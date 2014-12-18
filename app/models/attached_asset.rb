@@ -23,7 +23,10 @@
 
 class AttachedAsset < ActiveRecord::Base
   track_who_does_it
-  has_and_belongs_to_many :tags, order: 'name ASC', autosave: true
+  has_and_belongs_to_many :tags, -> { order 'name ASC' },
+                          autosave: true,
+                          after_add: ->(asset, _) { asset.index },
+                          after_remove:  ->(asset, _) { asset.index }
   DIRECT_UPLOAD_URL_FORMAT = %r{\Ahttps:\/\/s3\.amazonaws\.com\/#{ENV['S3_BUCKET_NAME']}\/(?<path>uploads\/.+\/(?<filename>.+))\z}.freeze
   belongs_to :attachable, polymorphic: true
   belongs_to :folder, class_name: 'DocumentFolder'
@@ -88,6 +91,10 @@ class AttachedAsset < ActiveRecord::Base
 
     boolean :active
 
+    string :tag, multiple: true do
+      tags.pluck(:id)
+    end
+    integer :rating
     time :created_at
     time :start_at, trie: true do
       attachable.start_at if attachable_type == 'Event'
@@ -209,6 +216,8 @@ class AttachedAsset < ActiveRecord::Base
           with(:attachable_id, params[:event_id])
           with(:attachable_type, 'Event')
         end
+        with(:tag, params[:tag]) if params.key?(:tag) && params[:tag].present?
+        with(:rating, params[:rating]) if params.key?(:rating) && params[:rating].present?
         with(:campaign_id, params[:campaign]) if params.key?(:campaign) && params[:campaign].present?
         with(:place_id, params[:place_id]) if params.key?(:place_id) && params[:place_id].present?
         with(:asset_type, params[:asset_type]) if params.key?(:asset_type) && params[:asset_type].present?
@@ -220,22 +229,6 @@ class AttachedAsset < ActiveRecord::Base
         with(:location, params[:location]) if params.key?(:location) && params[:location].present?
 
         with(:location, Area.where(id: params[:area]).map { |a| a.locations.map(&:id) }.flatten + [0]) if params[:area].present?
-
-        if params.key?(:q) && params[:q].present?
-          (attribute, value) = params[:q].split(',')
-          case attribute
-          when 'brand'
-            campaigns = Campaign.joins(:brands).where(brands: { id: value }).pluck('campaigns.id')
-            campaigns = '-1' if campaigns.empty?
-            with 'campaign_id', campaigns
-          when 'campaign'
-            with "#{attribute}_id", value
-          when 'venue'
-            with :place_id, Venue.find(value).place_id
-          else
-            with "#{attribute}_ids", value
-          end
-        end
 
         if include_facets
           facet :campaign

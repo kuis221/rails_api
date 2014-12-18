@@ -40,7 +40,8 @@ module EventsHelper
       describe_brands, describe_brand_portfolios, describe_campaigns,
       describe_areas, describe_venues, describe_cities, describe_users,
       describe_teams, describe_roles, describe_activity_types, describe_date_ranges,
-      describe_day_parts, describe_tasks, describe_range_filters
+      describe_day_parts, describe_tasks, describe_range_filters, describe_tags,
+      describe_rating
     ].compact.join(' ').strip
     first_part = "for: #{first_part}" unless first_part.blank?
     [
@@ -226,6 +227,23 @@ module EventsHelper
       build_filter_object_list(:event_status, event_status.map{ |status| [status,status] }),
       build_filter_object_list(:task_status, task_status.map{ |status| [status,status] })
     ].compact.join(' ')
+  end
+
+  def describe_tags
+    describe_resource_params(:tag,
+                             current_company.tags.order('tags.name ASC'))
+  end
+
+  def describe_rating
+    ratings = {
+      '0' => '0 stars',
+      '1' => '1 star',
+      '2' => '2 stars',
+      '3' => '3 stars',
+      '4' => '4 stars',
+      '5' => '5 stars'
+    }
+    build_filter_object_list :rating, filter_params(:rating).map{ |rating| [rating, ratings[rating]] }
   end
 
   def filter_params(param_name)

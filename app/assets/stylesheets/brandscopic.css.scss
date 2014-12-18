@@ -574,6 +574,14 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 				margin-right: -5px;
 				margin-top: 4px;
 			}
+
+			.full {
+				color: #CBBB26;
+			}
+
+			.empty {
+	    	color: $grey_one;
+		  }
 		}
 	}
 }
@@ -2716,6 +2724,16 @@ ul.ui-widget-content{
 					top: 2px;
 					position: absolute;
 				}
+				.full {
+		      color: #CBBB26;
+		    }
+		    .empty {
+		    	color: $grey_one;
+		    }
+
+		    .icon-star {
+		    	margin-right: 5px;
+		    }
 			}
 		}
 	}
