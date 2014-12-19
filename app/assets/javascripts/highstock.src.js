@@ -1470,13 +1470,13 @@ defaultOptions = {
 			padding: '5px'
 		},*/
 		itemStyle: {			
-			color: '#333333',
+			color: '#989898',
 			fontSize: '12px',
 			fontWeight: 'bold'
 		},
 		itemHoverStyle: {
 			//cursor: 'pointer', removed as of #601
-			color: '#000'
+			color: '#989898'
 		},
 		itemHiddenStyle: {
 			color: '#CCC'
@@ -2875,8 +2875,8 @@ SVGRenderer.prototype = {
 
 	getStyle: function (style) {
 		return (this.style = extend({
-			fontFamily: '"Lucida Grande", "Lucida Sans Unicode", Arial, Helvetica, sans-serif', // default font
-			fontSize: '12px'
+			fontFamily: '"Lato", sans-serif', // default font
+			fontSize: '12px',
 		}, style));
 	},
 
@@ -20716,7 +20716,7 @@ extend(defaultOptions, {
 		// inputEnabled: true,
 		// inputStyle: {},
 		labelStyle: {
-			color: '#666'
+			color: 'red'
 		}
 		// selected: undefined
 	}
