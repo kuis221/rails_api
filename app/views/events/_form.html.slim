@@ -80,9 +80,26 @@ javascript:
   });
 
   $('#event_start_time').on('change hideTimepicker', function(){
-    var time = $('#event_start_time').timepicker('getTime')
+    var time = $('#event_start_time').timepicker('getTime');
+    var startDate = $('#event_start_date').datepicker( "getDate" );
+    var endDate = $('#event_end_date').datepicker( "getDate" );
+    if ((time.getHours() >= 23) && (startDate.getTime() == endDate.getTime())){
+      endDate.setDate(endDate.getDate() +1);
+      $('#event_end_date').datepicker('setDate', endDate);
+    }
     time.setHours(time.getHours()+1);
     $('#event_end_time').timepicker('setTime', time);
+  });
+
+  $('#event_end_time').on('change hideTimepicker', function(){
+    var startTime = $('#event_start_time').timepicker('getTime');
+    var endTime = $('#event_end_time').timepicker('getTime');
+    var startDate = $('#event_start_date').datepicker( "getDate" );
+    var endDate = $('#event_end_date').datepicker( "getDate" );
+    if ((startDate.getTime() == endDate.getTime()) && (endTime.getTime() < startTime.getTime())){
+      endDate.setDate(endDate.getDate() +1);
+      $('#event_end_date').datepicker('setDate', endDate);
+    }
   });
 
   $('.modal .places-autocomplete').placesAutocomplete();
