@@ -141,10 +141,6 @@ Version: 3.3.2 Timestamp: Mon Mar 25 12:14:18 PDT 2013
 		-webkit-border-radius: 0 0 4px 4px;
 			 -moz-border-radius: 0 0 4px 4px;
 						border-radius: 0 0 4px 4px;
-
-		-webkit-box-shadow: 0 4px 5px rgba(0, 0, 0, .15);
-			 -moz-box-shadow: 0 4px 5px rgba(0, 0, 0, .15);
-						box-shadow: 0 4px 5px rgba(0, 0, 0, .15);
 }
 
 .select2-drop.select2-drop-above {
