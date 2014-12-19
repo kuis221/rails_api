@@ -46,12 +46,7 @@ javascript:
     'userFilters': #{user_saved_filters('results_photos').to_json.html_safe},
     'autoCompletePath': '#{url_for(controller: 'results/photos', action: :autocomplete, format: :json)}',
     'defaultParams': [{name: 'status[]', value: 'Active'}],
-    'clearFilterParams': [{name: 'status[]', value: 'Active'}],
-    'onItemsLoad': function(response, page){
-      if (response.find('div[data-content="filters-description"]').length > 0){
-        $('.collection-list-description .filter-label').html(response.find('div[data-content="filters-description"]'))
-      }
-    }
+    'clearFilterParams': [{name: 'status[]', value: 'Active'}]
   });
 
   $(document).delegate('#photo-download-add', 'click', function(e) {
