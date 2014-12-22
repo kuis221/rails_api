@@ -350,6 +350,7 @@ body.events.show{
 }
 
 .navbar-fixed-top {
+	z-index: 120000;
 	.container {
 		width: 100%;
 	}
@@ -2530,6 +2531,7 @@ input.search-query:focus{
 	color: $text;
 	position: relative;
 	padding: 5px 0;
+
 	&.ui-corner-all{
 		-webkit-border-radius: 6px !important;
 		border-radius: 6px !important;
@@ -2539,6 +2541,9 @@ ul.ui-widget-content{
 	background: $grey_one !important;
 	border: 1px solid $grey_four !important;
 	margin-top: 10px;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	max-height: 250px;
 }
 .ui-menu{
 	li{
