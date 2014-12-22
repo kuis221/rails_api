@@ -15,19 +15,25 @@
   .details_box
     .row-fluid
       .span6
-        h2 The Fox Sports Bar & Grill
+        h2= resource.name
         p Restaurant Food
         ul
           li
-            i.icon-phone
-            span 353 11th St, San Francisco, CA94103
+            i.icon-wired-venue
+            - venue_address = resource.formatted_address.present? ? resource.formatted_address : place_address(resource.place, false, ', ', ', ')
+              = venue_address
+                - if resource.formatted_address.present?
+                  - unless venue_address.strip.blank?
+                    br>/
+
             a href="#" Get Directions
           li
-            i.icon-phone
+            i.icon-wired-phone
             span (415) 863-5964
           li
             i.icon-phone
-            a href="#" www.thefoxsportsbar.com
+            - if resource.website
+              = place_website(resource.website)
 
         ul
           li
