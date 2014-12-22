@@ -1076,8 +1076,37 @@ feature 'Events section' do
           end
         end
       end
-    end
 
+      scenario 'end date are updated next day' do
+        Timecop.travel(Time.zone.local(2013, 07, 30, 12, 00)) do
+          create(:campaign, company: company)
+          visit events_path
+
+          click_button 'Create'
+
+          within visible_modal do
+            # Test both dates are the same
+            expect(find_field('event_start_date').value).to eql '07/30/2013'
+            expect(find_field('event_end_date').value).to eql '07/30/2013'
+
+            # Change the start time and make sure the end date is changed automatically
+            # to one day later
+            find_field('event_start_time').click
+            find_field('event_start_time').set '11:00pm'
+            find_field('event_end_time').click
+            expect(find_field('event_end_date').value).to eql '07/31/2013'
+
+            find_field('event_start_date').click
+            find_field('event_start_date').set '07/31/2013'
+            find_field('event_end_time').click
+            find_field('event_end_time').set '2:00pm'
+            find_field('event_end_time').click
+            expect(find_field('event_end_date').value).to eql '08/01/2013'
+          end
+        end
+      end
+    end
+    
     feature 'edit a event' do
       scenario 'allows to edit a event' do
         create(:campaign, company: company, name: 'ABSOLUT Vodka FY2013')
