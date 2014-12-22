@@ -13,52 +13,39 @@
   = resource_details_bar("You are viewing venue details. Click to close.")
 
   .details_box
-    - unless resource.latitude.nil? || resource.longitude.nil? 
-      #venue-map-canvas.google-map data-latitude="#{resource.latitude}" data-longitude="#{resource.longitude}"
-            b= resource.name
-            br>/
-            = place_address(resource.is_a?(Venue) ? resource.place : resource)
-
-    - venue_address = resource.formatted_address.present? ? resource.formatted_address : place_address(resource.place, false, ', ', ', ')
-    h2= resource.name
     .row-fluid
-      .place-data
-        i.icon-wired-venue
-        span
-          = venue_address
-          - if resource.formatted_address.present?
-            - unless venue_address.strip.blank?
-              br>/
-          = resource.formatted_phone_number
-          - if resource.website
-            .link
-              = place_website(resource.website)
-          = resource.price_level.times.map{ '$' }.join
-          = " "
-          = resource.types_without_establishment.map{|type| t("venue_types.#{type}") }.join(', ')
+      .span6
+        h2 The Fox Sports Bar & Grill
+        p Restaurant Food
+        ul
+          li
+            i.icon-phone
+            span 353 11th St, San Francisco, CA94103
+            a href="#" Get Directions
+          li
+            i.icon-phone
+            span (415) 863-5964
+          li
+            i.icon-phone
+            a href="#" www.thefoxsportsbar.com
 
-          - if resource.place.td_linx_code
-            br>/
-            = 'TD Linx Code ' + resource.place.td_linx_code
-      - if resource.opening_hours
-        .time-data
-          i.icon-time
-          span
-            = place_opening_hours_formatted(resource.opening_hours)
-      / .description-data
-      /   p Cocktails “made with mixers like Hawaiian Punch and Tang”, beer “served in a brown paper bag” and “junk food” like “deep-fried Twinkies and chili cheese tater tots” conjure up “college days” at this “kitschy” SoMa bar with a “trailer park theme”; it may be “gimmicky” and the “dive bar decor” is a little “rough around the edges”, but most are buttered up by the “super-fun” vibe.º
+        ul
+          li
+            span Hours
+            - if resource.opening_hours
+              span
+                = place_opening_hours_formatted(resource.opening_hours)
+          li Jameson Local Account: Yes
+          li Top 100 Account: No
 
-      // The is info will be displayed on the fixed bar when the window is scolled down to this position
-      .details-bar-info
-        h3= resource.name
-        br>/
-        = venue_address
+        p.small Quis nostrud exerci tation, ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat duis autem. Consuetudium lectorum mirum est notare quam littera gothica quam nunc putamus parum! Vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat vel illum dolore. Volutpat ut wisi enim ad minim veniam eu feugiat nulla. Imperdiet doming id quod mazim placerat facer possim assum typi non habent claritatem? Nunc nobis videntur parum clari fiant sollemnes in?
+      .span6
+        - unless resource.latitude.nil? || resource.longitude.nil?
+          #venue-map-canvas.google-map data-latitude="#{resource.latitude}" data-longitude="#{resource.longitude}"
+                b= resource.name
+                br>/
+                = place_address(resource.is_a?(Venue) ? resource.place : resource)
 
-      - if resource.persisted?
-        .tools-icons
-          = link_to '', select_areas_venue_path(resource), remote: true, class: 'icon-plus-sign'
-        #venue-areas.row-fluid
-          = render partial: 'areas', locals: {areas: resource.place.areas}
 
 - if resource.events_count.present? && resource.events_count > 0
   - if can?(:view_score, resource) || can?(:view_kpis, resource)

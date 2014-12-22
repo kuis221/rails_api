@@ -498,9 +498,8 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		color: white !important;
 		text-decoration: underline !important;
 		&.icon-close{
-			top: -3px;
-			right: -10px;
 			font-size: 14px;
+			line-height: 24px;
 		}
 	}
 	&.alert-info, &.alert-grey{
@@ -4750,7 +4749,6 @@ body.roles{
 #venue-map-canvas{
 	border:1px solid $user_menu;
 	display:block;
-	margin: 20px -15px 4px -15px;
 	height: 500px;
 }
 
