@@ -963,42 +963,6 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		}
 	}
 }
-/*
-	.dates-pref{
-		list-style: none;
-		margin-left: 0px;
-		li{
-			display: inline-block;
-			font-size: 12px;
-			font-weight: bold;
-			padding: 1px 7px;
-			margin-right: 0.15em;
-			margin-left: 2px;
-			&.active{
-				background-color: $brand;
-				font-weight: 300;
-				-webkit-border-radius: 6px;
-				border-radius: 6px;
-				a{
-					color: white;
-					&:hover{
-						border-bottom: 0;
-						color: $grey_two;
-					}
-				}
-			}
-			a{
-				color: $user_menu;
-				cursor: pointer;
-				font-weight: 400;
-				&:hover{
-					border-bottom: 1px solid $brand;
-					color: $brand;
-					text-decoration: none;
-				}
-			}
-		}
-	}*/
 
 	.custom-data-panel{
 		.form-group{
