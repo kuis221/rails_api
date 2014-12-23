@@ -28,19 +28,21 @@
 
             a href="#" Get Directions
           li
-            i.icon-wired-phone
+            i.icon-mobile
             span (415) 863-5964
           li
-            i.icon-phone
+            i.icon-mobile
             - if resource.website
               = place_website(resource.website)
 
         ul
           li
             span Hours
-            - if resource.opening_hours
-              span
-                = place_opening_hours_formatted(resource.opening_hours)
+            div data-toggle="collapse" data-target="#demo" aria-expanded="true" aria-controls="demo"
+              span.venues-opening-hours = place_opening_hours_formatted(resource.opening_hours)
+            div#demo class="collapse"
+              span = place_opening_hours_formatted(resource.opening_hours)
+
           li Jameson Local Account: Yes
           li Top 100 Account: No
 

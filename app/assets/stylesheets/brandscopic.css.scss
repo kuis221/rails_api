@@ -4530,6 +4530,20 @@ body.roles{
 	}
 }
 
+.venues-opening-hours{
+	display: block;
+	max-height: 18px;
+	overflow: hidden;
+	position: relative;
+	&:after{
+		content: "(Show more)";
+		font-size: 12px;
+		margin-left: 10px;
+		position: absolute;
+		top: 0;
+	}
+}
+
 // EVENT DATA
 // --------------------------------------------------
 
