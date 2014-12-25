@@ -53,6 +53,9 @@ class Place < ActiveRecord::Base
 
   attr_accessor :do_not_connect_to_api
   attr_accessor :is_custom_place
+
+  before_create :set_lat_lng
+
   before_create :fetch_place_data
 
   after_save :clear_cache
@@ -124,6 +127,21 @@ class Place < ActiveRecord::Base
 
   def city?
     types.include?('locality')
+  end
+
+  # Try to find the latitude and logitude based on a physicical address and returns
+  # true if found or false if not
+  def set_lat_lng
+    return if latitude.present? && longitude.present?
+    address_txt = URI.encode([street_number, route, city,
+                              state.to_s + ' ' + zipcode.to_s, country].compact.join(', '))
+
+    data = JSON.parse(open("http://maps.googleapis.com/maps/api/geocode/json?address=#{address_txt}&sensor=true").read)
+    return unless data['results'].count > 0
+    result = data['results'].find { |r| r['geometry'].present? && r['geometry']['location'].present? }
+    return unless result
+    self.latitude = result['geometry']['location']['lat']
+    self.longitude = result['geometry']['location']['lng']
   end
 
   # First try to find comments in the app from events, then if there no enough comments in the app,
@@ -216,9 +234,12 @@ class Place < ActiveRecord::Base
         td_linx_code:  { title: 'TD Linx Code' }
       }
     end
-  end
 
-  class << self
+    def state_name(country, state)
+      return unless country && state
+      Country.new(country).states[state.upcase]['name'] rescue nil
+    end
+
     # Combine search results from Google API and Existing places
     def combined_search(params)
       local_results = Venue.do_search(combined_search_params(params)).results

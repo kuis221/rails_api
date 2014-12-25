@@ -1,1 +1,2 @@
-require 'td_linx/processor'
+module TdLinxSynch
+end

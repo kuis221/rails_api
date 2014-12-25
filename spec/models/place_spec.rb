@@ -184,6 +184,88 @@ describe Place, type: :model do
     end
   end
 
+  describe '#find_tdlinx_place' do
+    let(:place) do
+      create(:place, name: 'Benitos Bar', city: 'Los Angeles', state: 'California',
+                     street_number: '123 st', route: 'Maria nw', zipcode: '11223')
+    end
+
+    before { place }
+
+    it 'returns the place that exactly match the search params' do
+      expect(
+        Place.find_tdlinx_place(
+          name: 'Benitos Bar', city: 'Los Angeles', state: 'California',
+          street: '123 st Maria nw', zipcode: '11223'
+        )
+      ).to match(place.id)
+    end
+
+    it 'returns the place that exactly match the search params without a zipcode' do
+      expect(
+        Place.find_tdlinx_place(
+          name: 'Benitos Bar', city: 'Los Angeles', state: 'California',
+          street: '123 st Maria nw', zipcode: nil
+        )
+      ).to match(place.id)
+    end
+
+    it 'returns the place that have a similar name with the same address' do
+      expect(
+        Place.find_tdlinx_place(
+          name: 'Benito Bar', city: 'Los Angeles', state: 'California',
+          street: '123 st Maria nw', zipcode: nil
+        )
+      ).to match(place.id)
+
+      expect(
+        Place.find_tdlinx_place(
+          name: 'BENITOSS Bar', city: 'Los Angeles', state: 'California',
+          street: '123 st Maria nw', zipcode: nil
+        )
+      ).to match(place.id)
+    end
+
+    it 'returns the place that have a similar name with the same address written in different ways' do
+      expect(
+        Place.find_tdlinx_place(
+          name: 'Benito Bar', city: 'Los Angeles', state: 'California',
+          street: '123 street Maria nw', zipcode: nil
+        )
+      ).to match(place.id)
+
+      expect(
+        Place.find_tdlinx_place(
+          name: 'BENITOSS Bar', city: 'Los Angeles', state: 'California',
+          street: '123 st Maria Northweast', zipcode: nil
+        )
+      ).to match(place.id)
+
+      expect(
+        Place.find_tdlinx_place(
+          name: 'BENITOSS Bar', city: 'Los Angeles', state: 'California',
+          street: '123 street Maria Northweast', zipcode: nil
+        )
+      ).to match(place.id)
+
+      expect(
+        Place.find_tdlinx_place(
+          name: 'BENITOSS Bar', city: 'Los Angeles', state: 'California',
+          street: '1234 street Maria Northweast', zipcode: nil
+        )
+      ).to be_nil
+    end
+
+    it 'does not returns the place that have a different name with the same address' do
+      expect(
+        Place.find_tdlinx_place(
+          name: 'Mercedes Bar', city: 'Los Angeles', state: 'California',
+          street: '123 st Maria nw', zipcode: nil
+        )
+      ).to be_nil
+    end
+  end
+
   describe '#combined_search', search: true do
     let(:google_results) { { results: [] } }
     let(:company_user) { create(:company_user, role: create(:non_admin_role)) }

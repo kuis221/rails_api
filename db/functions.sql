@@ -9,10 +9,11 @@ DECLARE
     place RECORD;
     normalized_address VARCHAR;
     normalized_address2 VARCHAR;
+    conditions VARCHAR;
 BEGIN
     normalized_address := lower(normalize_addresss(pstreet));
 
-    FOR place IN SELECT * FROM places WHERE similarity(pname, name) > 0.5 AND lower(city)=lower(pcity) AND lower(state)=lower(pstate) AND lower(zipcode)=lower(pzipcode) AND lower(normalize_addresss(coalesce(places.street_number, '') || ' ' || coalesce(places.route, ''))) = normalized_address  LOOP
+    FOR place IN SELECT * FROM places WHERE similarity(pname, name) > 0.5 AND lower(city)=lower(pcity) AND lower(state)=lower(pstate) AND (pzipcode is NULL OR lower(zipcode)=lower(pzipcode)) AND lower(normalize_addresss(coalesce(places.street_number, '') || ' ' || coalesce(places.route, ''))) = normalized_address  LOOP
         return place.id;
     END LOOP;
 

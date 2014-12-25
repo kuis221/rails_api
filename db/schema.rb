@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141203165819) do
+ActiveRecord::Schema.define(version: 20141219231528) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -922,6 +922,8 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.integer  "score_impressions"
     t.integer  "score_cost"
     t.boolean  "score_dirty",                                   default: false
+    t.boolean  "jameson_locals",                                default: false
+    t.boolean  "top_venue",                                     default: false
   end
 
   add_index "venues", ["company_id", "place_id"], name: "index_venues_on_company_id_and_place_id", unique: true, using: :btree

@@ -53,6 +53,7 @@ gem 'twilio-ruby'
 gem 'nested_form'
 gem 'wicked_pdf'
 gem 'rack-cors', :require => 'rack/cors'
+gem 'roo'
 
 # For memory debugging
 # gem "allocation_stats"

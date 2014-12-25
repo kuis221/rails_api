@@ -29,6 +29,8 @@ class Venue < ActiveRecord::Base
 
   belongs_to :place
 
+  validates :place, presence: true, uniqueness: { scope: :company_id }
+
   has_many :events, through: :place
   has_many :activities, -> { order('activity_date ASC') }, as: :activitable do
     def include_from_events
