@@ -1,17 +1,17 @@
 module JbbFile
-  class JamesonLocalsAccount < JbbFile::Base
+  class TopAccounts < JbbFile::Base
+
+    VALID_COLUMNS = ["TDLinx Store Code", "Retailer", "City", "Address"]
+
     attr_accessor :created, :existed
-
-    VALID_COLUMNS = ['TDLinx Code', 'Name', 'Address', 'City', 'State']
-
     def initialize
       self.ftp_server   = ENV['TDLINX_FTP_SERVER']
       self.ftp_username = ENV['TDLINX_FTP_USERNAME']
       self.ftp_password = ENV['TDLINX_FTP_PASSWORD']
-      self.ftp_folder   = ENV['JAMESON_LOCALS_FTP_FOLDER']
+      self.ftp_folder   = ENV['TOP_ACCOUNTS_FTP_FOLDER']
       self.invalid_files = []
 
-      self.mailer = JbbJamesonLocalsAccountMailer
+      self.mailer = TopAccountsMailer
     end
 
     def process
@@ -23,42 +23,44 @@ module JbbFile
           return invalid_format if invalid_files.any?
           return unless files.any?
 
-          flagged_before = Venue.jameson_locals.in_company(COMPANY_ID).count
+          flagged_before = Venue.top_venue.in_company(COMPANY_ID).count
+          total_rows = 0
 
-          reset_jameson_venue_flag
+          reset_top_accounts_flag
           files.each do |file_name, file|
+            p "\n\nProcessing file #{file_name}"
             venue_ids = []
             each_sheet(file) do |sheet|
-              sheet.each(td_linx_code: 'TDLinx Code', name: 'Name', route: 'Address', city: 'City', state: 'State')  do |row|
-                next if row[:name] == 'Name'
+              sheet.each(td_linx_code: 'TDLinx Store Code', name: 'Retailer', route: 'Address', city: 'City')  do |row|
+                next if row[:name] == 'Retailer'
                 row[:td_linx_code] = row[:td_linx_code].to_s.gsub(/\.0\z/, '')
                 row[:state] = Place.state_name('US', row[:state]) if row[:state] =~ /[A-Z][A-Z]/i
                 venue_ids.push find_or_create_venue(row)
+                total_rows += 1
               end
             end
-            Venue.where(id: venue_ids.compact).update_all(jameson_locals: true)
+            Venue.where(id: venue_ids.compact).update_all(top_venue: true)
           end
 
           files.each do |file_name, file|
             archive_file file_name
           end
 
-          total_flagged = Venue.jameson_locals.in_company(COMPANY_ID).count
-          success total_flagged, self.existed, self.created, flagged_before
-
+          total_flagged = self.existed + self.created
+          success total_rows, total_flagged, self.existed, self.created, flagged_before
         end
       end
     ensure
       close_connection
     end
 
-    def success(total, existed, created, flagged_before)
-      mailer.success(total, existed, created, flagged_before).deliver
+    def success(total, flagged, existed, created, flagged_before)
+      mailer.success(total, flagged, existed, created, flagged_before).deliver
       false
     end
 
-    def reset_jameson_venue_flag
-      Venue.where(company_id: COMPANY_ID, jameson_locals: true).update_all(jameson_locals: false)
+    def reset_top_accounts_flag
+      Venue.top_venue.in_company(COMPANY_ID).update_all(top_venue: false)
     end
 
     def find_or_create_venue(attrs)
@@ -66,17 +68,19 @@ module JbbFile
            .select('places.*, venues.id as venue_id')
            .where(td_linx_code: attrs[:td_linx_code])
            .first
-      if place
+      if attrs[:td_linx_code] && place
         self.existed += 1
         place.venue_id || Venue.create(place_id: place.id, company_id: COMPANY_ID).try(:id)
       else
-        id = find_place_by_address(attrs)
-        if id
-          self.existed += 1
-          Venue.find_or_create_by(place_id: id, company_id: COMPANY_ID).try(:id)
-        else
-          create_place_and_venue(attrs).try(:id)
-        end
+        p "Venue not found: #{attrs.inspect}"
+        nil
+        # id = find_place_by_address(attrs)
+        # if id
+        #   self.existed += 1
+        #   Venue.find_or_create_by(place_id: id, company_id: COMPANY_ID).try(:id)
+        # else
+        #   create_place_and_venue(attrs).try(:id)
+        # end
       end
     end
 

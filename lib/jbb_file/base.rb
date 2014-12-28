@@ -1,21 +1,29 @@
 module JbbFile
   class Base
     attr_accessor :ftp_username, :ftp_password, :ftp_server, :ftp_folder,
-                  :mailer
+                  :mailer, :invalid_files
 
-    def valid_format?(files)
-      true
+    def valid_format?(file)
+      valid = false
+      each_sheet(file) do |sheet|
+        unless (self.class::VALID_COLUMNS - sheet.row(1)).empty?
+          return false
+        end
+        valid = true
+      end
+      valid
     end
 
     def download_files(dir)
       files = find_files
       return file_not_fould unless files.any?
       Hash[files.map do |file_name|
+        p "Downloading #{file_name}"
         file = get_file(dir, file_name)
         if valid_format?(file)
           [file_name, file]
         else
-          invalid_format(file_name)
+          @invalid_files.push temp_file_path(dir, file_name)
           nil
         end
       end.compact]
@@ -26,9 +34,21 @@ module JbbFile
     end
 
     def get_file(dir, file)
-      path = "#{dir}/#{file}"
+      path = temp_file_path(dir, file)
       ftp_connecion.getbinaryfile file, path
       Roo::Excelx.new(path)
+    end
+
+    def temp_file_path(dir, name)
+      "#{dir}/#{name}"
+    end
+
+    def each_sheet(file, &block)
+      file.instance_variable_get(:@workbook_doc).xpath("//xmlns:sheet").each do |s|
+        next if s.attributes['state'].to_s == 'hidden' # Ignore hidden sheets
+        file.default_sheet = s['name']
+        yield file
+      end
     end
 
     def file_not_fould
@@ -42,8 +62,8 @@ module JbbFile
       @ftp_connecion = nil
     end
 
-    def invalid_format(file_name)
-      mailer.invalid_format(file_name).deliver
+    def invalid_format
+      mailer.invalid_format(self.invalid_files).deliver
       false
     end
 

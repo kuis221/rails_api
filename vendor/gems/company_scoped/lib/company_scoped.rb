@@ -7,7 +7,6 @@ module CompanyScoped
   def scoped_to_company(options = {})
     before_validation CompanyScoped::Callback.new
 
-
     belongs_to :company
 
     scope :in_company, ->(company) { where(company_id: company) }

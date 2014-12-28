@@ -50,6 +50,9 @@ class Venue < ActiveRecord::Base
            :latitude, :longitude, :opening_hours, :td_linx_code,
            to: :place
 
+  scope :top_venue, ->{ where(top_venue: true) }
+  scope :jameson_locals, ->{ where(top_venue: true) }
+
   searchable do
     integer :id
     integer :place_id

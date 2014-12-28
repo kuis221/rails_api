@@ -1,4 +1,4 @@
-class JbbJamesonLocalsAccountMailer < ActionMailer::Base
+class TopAccountsMailer < ActionMailer::Base
   default from: 'support@brandscopic.com'
 
   def file_missing
@@ -13,17 +13,18 @@ class JbbJamesonLocalsAccountMailer < ActionMailer::Base
   def invalid_format(files)
     recipients = %w(
       cjaskot@brandscopic.com kkubik@brandscopic.com Elliott.Higdon@legacymp.com
-      Joshua.Silverstein@legacymp.com Dan.Berliner@legacymp.com
-      Alexis.Bannos@legacymp.com Christy.Sabol@legacymp.com Jordan.Lipshutz@legacymp.com
+      Joshua.Silverstein@legacymp.com Dan.Berliner@legacymp.com  Alexis.Bannos@legacymp.com
+      Christy.Sabol@legacymp.com
     )
     files.each do |path|
       attachments[File.basename(path)] = File.read(path)
     end
-    mail to: recipients, subject: 'Jameson Locals Accounts List Synch – Improper Format'
+    mail to: recipients, subject: 'Top 100 Accounts List Synch – Improper Format'
   end
 
-  def success(total, existed, created, flagged_before)
+  def success(total, flagged, existed, created, flagged_before)
     @total = total
+    @flagged = flagged
     @existed = existed
     @created = created
     @flagged_before = flagged_before

@@ -1547,6 +1547,29 @@ ExpensesField = Module.extend {
 		]
 }
 
+RSVPField = Module.extend {
+	type: 'RSVP',
+
+	init: (form, attributes) ->
+		@form = form
+		@attributes = $.extend({
+			name: 'RSVP'
+		}, attributes)
+
+		@attributes.settings ||= {}
+
+		@
+
+	_renderField: () ->
+		[
+			$('<h4>RSVP MODULE</h4>'),
+			$('<div class="module-wrapper">').append(
+				@_removeButton(),
+				$('<img src="<%= asset_path('expenses.svg') %>" width="235" height="337" />')
+			)
+		]
+}
+
 applyFormUiFormatsTo = (element) ->
 	element.find('select').chosen()
 	element.find("input:checkbox, input:radio, input:file").uniform()
