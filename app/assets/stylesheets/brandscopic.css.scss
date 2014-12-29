@@ -91,11 +91,12 @@ abbr[title]{
 	padding: 0;
 }
 
-.crop-text{
-	overflow:hidden;
-	text-overflow: ellipsis;
-	white-space:nowrap;
+table{
+	border: 0;
 }
+
+// Typography Styles
+// --------------------------------
 
 h1, h2, h3{
 	font-family: $baseFontFamily;
@@ -104,20 +105,49 @@ h1, h2, h3{
 	line-height: 30px;
 }
 
-p{
-	&.big{
-		font-size: 16px;
-	}
+.big{
+	font-size: 16px;
 }
 
-table{
-	border: 0;
+.small{
+	font-size:12px;
+}
+
+.crop-text{
+	overflow:hidden;
+	text-overflow: ellipsis;
+	white-space:nowrap;
 }
 
 .uppercase{
 	text-transform: uppercase;
 }
 
+// Lists
+// --------------------------------
+
+.stripped-list{
+	list-style: none;
+	margin-left: 0;
+}
+
+.data-list{
+	li{
+		margin: 5px 0;
+	}
+	i{
+		color: silver;
+		font-size: 17px;
+		display: inline-block;
+		margin-right: 10px;
+		text-align: center;
+		vertical-align: middle;
+		width: 20px;
+		&:before{
+			text-align: center;
+		}
+	}
+}
 
 .menubar-icon {
 	display: block;
