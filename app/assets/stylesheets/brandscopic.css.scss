@@ -6196,6 +6196,7 @@ table td.sub-level-1 {
 					position: absolute;
 					list-style-type: none;
 					overflow:hidden;
+					z-index: 1;
 					a{
 						color: white;
 						font-size: 16px;
