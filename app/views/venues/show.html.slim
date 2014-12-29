@@ -115,13 +115,13 @@
 
   - if can?(:view_trends_day_week, resource)
     #venue-trends-week.details_box
-      h3 TRENDS BY DAY OF WEEK
+      h5.module-title TRENDS BY DAY OF WEEK
       #venue-trends-by-day-narrative= venue_trend_week_day_narrative(resource)
       #trends-day-week-graph
 
 - if can?(:view_events, resource)
   #venue-events.details_box
-    h3 EVENTS
+    h5.module-title EVENTS
     - if can?(:show, Venue) && can?(:create, Event)
       - if resource.persisted?
         = button_to 'Create', new_venue_event_path(resource), method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn' if can? :create, Event
@@ -137,7 +137,7 @@
 
 - if can?(:view_photos, resource) && resource.photos.count > 0
   #venue-photos.details_box.box_photos
-    h3 GALLERY
+    h5.module-title GALLERY
     .gallery
       ul#photos-thumbs
         - resource.photos.each do |photo|
@@ -160,7 +160,7 @@
 
 - if can?(:view_comments, resource) && resource.reviews.count > 0
   #venue-comments.details_box
-    h3 COMMENTS
+    h5.module-title COMMENTS
     - resource.reviews.each do |review|
       .venue-review
         - unless review.is_a?(Comment)

@@ -1,7 +1,7 @@
 .form-results-box
   #list-tools.row-fluid
     .pull-left
-      h3.module-title
+      h5.module-title
         = "POST EVENT FORM"
         = link_to '', edit_data_event_path(resource), remote: true, id: 'edit-event-data-btn', class: 'icon-edit', title: 'Edit event data' if can?(:edit_data, resource)
     .pull-right

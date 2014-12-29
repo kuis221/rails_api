@@ -1,5 +1,5 @@
 #activities-container
-  h3 ACTIVITIES
+  h5.module-title ACTIVITIES
   - if can?(:create, Activity)
     = button_to 'Create', new_venue_activity_path(resource), method: :get, remote: true, class: 'btn btn-primary', title: 'New Activity'
 

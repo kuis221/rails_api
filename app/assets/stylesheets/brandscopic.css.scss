@@ -33,6 +33,75 @@ $footer-height: 35px;
 	font-style: normal;
 }
 
+// TYPOGRAPHY
+// --------------------------------------------------
+
+$baseFontFamily: 					 'Lato', sans-serif;
+$baseFontSize:             14px;
+$baseLineHeight:           22px;
+
+p{
+	font-size: $baseFontSize;
+	line-height: $baseLineHeight;
+}
+
+h1{
+	font-size: 42px;
+}
+
+h2{
+	font-size: 28px;
+}
+
+h3{
+	font-size: 22px;
+}
+
+h4{
+	font-size: 18px;
+}
+
+h5{
+	font-size: 16px;
+}
+
+h6{
+	font-size: $baseFontSize;
+}
+
+h1, h2, h3{
+	font-family: $baseFontFamily;
+	font-weight: normal;
+	margin-top: 0;
+	line-height: 30px;
+}
+
+.big{
+	font-size: 16px;
+}
+
+// For details text
+.small{
+	font-size:12px;
+}
+
+// Ellipsis for texts style
+.crop-text{
+	overflow:hidden;
+	text-overflow: ellipsis;
+	white-space:nowrap;
+}
+
+// Titles for all the modules
+.module-title{
+	color: $user_menu;
+}
+
+.uppercase{
+	text-transform: uppercase;
+}
+
+
 
 // GENERAL STYLES
 // --------------------------------------------------
@@ -70,10 +139,6 @@ a{
 	}
 }
 
-.module-title{
-	color: $user_menu;
-}
-
 abbr[title]{
 	border:0;
 }
@@ -93,34 +158,6 @@ abbr[title]{
 
 table{
 	border: 0;
-}
-
-// Typography Styles
-// --------------------------------
-
-h1, h2, h3{
-	font-family: $baseFontFamily;
-	font-weight: normal;
-	margin-top: 0;
-	line-height: 30px;
-}
-
-.big{
-	font-size: 16px;
-}
-
-.small{
-	font-size:12px;
-}
-
-.crop-text{
-	overflow:hidden;
-	text-overflow: ellipsis;
-	white-space:nowrap;
-}
-
-.uppercase{
-	text-transform: uppercase;
 }
 
 // Lists
@@ -167,7 +204,6 @@ h1, h2, h3{
 body{
 	color:$text;
 	font-family: $baseFontFamily;
-	//font-size: 13px;
 	font-weight: 400;
 	min-height: 100%;
 	position: relative;
@@ -5422,16 +5458,13 @@ body.campaigns{
 		}
 	}
 	h2{
-		font-size: 28px;
 		margin-top: 10px;
-		margin-bottom: 30px;
+		//margin-bottom: 30px;
 		&.special{
 			margin-top: 45px;
 		}
 	}
-	h3{
-		font-size: 16px;
-		font-weight: bold;
+	h5{
 		margin: 0 0 30px;
 	}
 	.links-data{
