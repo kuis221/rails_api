@@ -1066,9 +1066,16 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	}
 	.btn-download {
 		display: inline-block;
-		.icon-arrow-down:before {
-			top: 3px;
-			right: -12px;
+		.btn{
+			padding: 8px 10px;
+		}
+		.icon-download{
+			margin-left: 5px;
+		}
+		.icon-arrow-down-small{
+			font-size: 11px;
+			float: right;
+			margin: 4px 0 0 12px;
 		}
 		.download-options-menu {
 			right: 0;
