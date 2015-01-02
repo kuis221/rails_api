@@ -1,0 +1,23 @@
+div.resource-item.invite id="invite_#{invite.id}"
+  .resource-item-link
+    .span5
+      .text-large= invite.event_date
+      .crop-text= invite.place_name
+
+    .span2
+      .text-large= invite.venue.jameson_locals? ? 'Yes' : 'No'
+      | Jameson Locals
+    .span2
+      .text-large= invite.venue.top_venue? ? 'Yes' : 'No'
+      | Top 100
+    .span1
+      .text-large= invite.invitees
+      | Invites
+    .span1
+      .text-large 11
+      | RSVPs
+    .span1
+      .text-large 12 
+      | Attendees
+
+  div.resource-item-actions

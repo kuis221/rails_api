@@ -1547,7 +1547,7 @@ ExpensesField = Module.extend {
 		]
 }
 
-RSVPField = Module.extend {
+RsvpField = Module.extend {
 	type: 'RSVP',
 
 	init: (form, attributes) ->
@@ -1568,6 +1568,8 @@ RSVPField = Module.extend {
 				$('<img src="<%= asset_path('expenses.svg') %>" width="235" height="337" />')
 			)
 		]
+	attributesForm: () ->
+		false
 }
 
 applyFormUiFormatsTo = (element) ->

@@ -355,54 +355,26 @@ class Place < ActiveRecord::Base
             self.street_number = component['long_name']
           elsif component['types'].include?('route')
             self.route = component['long_name']
-          elsif component['types'].include?('sublocality') || component['types'].include?('neighborhood')
+          elsif component['types'].include?('sublocality')
+            self.neighborhood ||= component['long_name']
+          elsif component['types'].include?('neighborhood')
             self.neighborhood = component['long_name']
           end
         end
       end
+
+      return if types.include?('country')
 
       # Sometimes the API doesn't provide the state's long_name
       if country == 'US' && state =~ /^[A-Z]{1,2}$/
         self.state = load_country.states[administrative_level_1]['name'] rescue state if load_country
       end
 
-      # Make sure the city returned by Google is the correct one
-      if city.present?
-        results = client.spots(latitude, longitude, types: 'political', name: city, radius: 50_000)
-        if results.any?
-          results.each do |result|
-            city_spot = client.spot(result.reference)
-            if city_spot.city == city_spot.name || city_spot.name == city
-              self.city = city_spot.city if city_spot.present? && city_spot.city.present?
-              break
-            end
-          end
-        end
-      end
+      return if types.include?('administrative_area_level_1')
 
-      sublocality = neighborhood
-      sublocality ||= route if self.types && self.types.include?('establishment')
-      sublocality ||= zipcode if self.types && self.types.include?('establishment')
+      find_city
 
-      # There are cases where the API doesn't give a city but a neighborhood (sublocality)
-      if !city && !self.types.include?('administrative_area_level_2') && sublocality
-        spots = client.spots(latitude, longitude, keywords: sublocality)
-        spots.each do |aspot|
-          s = client.spot(aspot.reference)
-          if s.address_components.present?
-            city = s.address_components.find { |c| c['types'].include?('locality') }.try(:[], 'long_name')
-            if city.present?
-              self.city = city
-              break
-            end
-          end
-        end
-
-        # If still there is no city... :s then assign it's own name as the city
-        # Example of places with this issue:
-        # West Lake, TX: client.spot('CnRoAAAATClnCR7qKsJeD5nYegW8j9BLrDI2OsM-89wiA-NO-acvlYhSYXcef09z4Dns2p92zVfCCYJPET33QkrkzKeBt9y_fVOF-UfckvjwADE-rGsj4FIBJ4-s7O88LC0Y4yOz5e8vwYy5RjmMjx-dhG0IQxIQ3RfSNWKpoqim4qMLhdGhUhoUkH8hTzQ8E7Wgv6afi0RQmYzBP2Y')
-        self.city = name unless self.city
-      end
+      find_neighborhood
 
       self.city.strip! unless self.city.nil?
       state.strip! unless state.nil?
@@ -410,6 +382,57 @@ class Place < ActiveRecord::Base
 
       update_locations
       self
+    end
+  end
+
+  def find_city
+    # Make sure the city returned by Google is the correct one
+    validate_city_from_api
+
+    sublocality = neighborhood
+    sublocality ||= route if self.types && self.types.include?('establishment')
+    sublocality ||= zipcode if self.types && self.types.include?('establishment')
+
+    # There are cases where the API doesn't give a city but a neighborhood (sublocality)
+    if !city && !self.types.include?('administrative_area_level_2') && sublocality
+      spots = client.spots(latitude, longitude, keywords: sublocality)
+      spots.each do |aspot|
+        s = client.spot(aspot.reference)
+        if s.address_components.present?
+          city = s.address_components.find { |c| c['types'].include?('locality') }.try(:[], 'long_name')
+          if city.present?
+            self.city = city
+            break
+          end
+        end
+      end
+
+      # If still there is no city... :s then assign it's own name as the city
+      # Example of places with this issue:
+      # West Lake, TX: client.spot('CnRoAAAATClnCR7qKsJeD5nYegW8j9BLrDI2OsM-89wiA-NO-acvlYhSYXcef09z4Dns2p92zVfCCYJPET33QkrkzKeBt9y_fVOF-UfckvjwADE-rGsj4FIBJ4-s7O88LC0Y4yOz5e8vwYy5RjmMjx-dhG0IQxIQ3RfSNWKpoqim4qMLhdGhUhoUkH8hTzQ8E7Wgv6afi0RQmYzBP2Y')
+      self.city ||= name if (['political', 'natural_feature'] & types).any?
+    end
+  end
+
+  def find_neighborhood
+    return unless neighborhood.blank?
+    client.spots(latitude, longitude, types: 'neighborhood', radius: 3_000).first.tap do |s|
+      p s.inspect
+      self.neighborhood = s.name unless s.nil?
+    end
+  end
+
+  def validate_city_from_api
+    return unless city.present?
+    results = client.spots(latitude, longitude, types: 'political', name: city, radius: 50_000)
+    return if results.empty?
+
+    results.each do |result|
+      city_spot = client.spot(result.reference)
+      if city_spot.city == city_spot.name || city_spot.name == city
+        self.city = city_spot.city if city_spot.present? && city_spot.city.present?
+        break
+      end
     end
   end
 

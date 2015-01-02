@@ -67,6 +67,8 @@ class Event < ActiveRecord::Base
 
   has_many :contact_events, dependent: :destroy
 
+  has_many :invites, as: :invitable, dependent: :destroy, inverse_of: :invitable
+
   accepts_nested_attributes_for :surveys
   accepts_nested_attributes_for :results
   accepts_nested_attributes_for :photos

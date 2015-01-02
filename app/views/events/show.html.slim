@@ -89,6 +89,12 @@
   - elsif resource.happens_today? || resource.in_past?
     = render 'edit_results'
 
+  - if can?(:index_invites, Event)
+    #event-invites-list.details_box
+      = button_to 'Add Invite', new_event_invite_path(resource), method: :get, remote: true, class: 'btn btn-primary' if can? :create_invite, resource
+      #invites-list.resource-list
+        = render resource.invites
+
   - if can_tasks
     #event-tasks.details_box
 

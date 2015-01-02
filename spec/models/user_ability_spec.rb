@@ -1228,6 +1228,37 @@ describe Ability, type: :model do
           expect(ability).to be_able_to(:export_fieldable, event)
         end
       end
+
+
+      #   ____  ____   __ __  ____  ______    ___  _____
+      #  |    ||    \ |  |  ||    ||      |  /  _]/ ___/
+      #   |  | |  _  ||  |  | |  | |      | /  [_(   \_
+      #   |  | |  |  ||  |  | |  | |_|  |_||    _]\__  |
+      #   |  | |  |  ||  :  | |  |   |  |  |   [_ /  \ |
+      #   |  | |  |  | \   /  |  |   |  |  |     |\    |
+      #  |____||__|__|  \_/  |____|  |__|  |_____| \___|
+      #
+      describe 'invites' do
+        it 'can create invites on events' do
+          event = create(:event, campaign: campaign, place: place)
+          expect(ability).not_to be_able_to(:index_invites, event)
+
+          user.role.permission_for(:index_invites, Event).save
+
+          expect(ability).to be_able_to(:index_invites, event)
+        end
+
+        it 'can create invites on events' do
+          event = create(:event, campaign: campaign, place: place)
+          invite = build(:invite, invitable: event)
+          expect(ability).not_to be_able_to(:create, invite)
+
+          user.role.permission_for(:create_invite, Event).save
+
+          expect(ability).to be_able_to(:create, invite)
+        end
+
+      end
     end
   end
 end

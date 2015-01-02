@@ -19,6 +19,8 @@ en:
         end_date_time: "End time"
       kpis_segment:
         text: 'Name'
+      invite:
+        invitees: '# Invitees'
   time:
     formats:
       default: '%m/%d/%Y %H:%M:%S'
@@ -106,6 +108,7 @@ en:
       day_part: "New Day Part"
       activity_type: "New Activity Type"
       brand_ambassadors/visit: "New Visit"
+      invite: "Add Invite"
     edit:
       event: "Edit Event"
       company_user: "Edit Profile Data"
@@ -120,6 +123,7 @@ en:
       activity_type: "Edit Activity Type"
       report: "Edit Report"
       brand_ambassadors/visit: "Edit Visit"
+      invite: "Edit Invite"
     deactivate:
       event: "Deactivate Event"
       company_user: "Deactivate User"
@@ -280,6 +284,7 @@ en:
         brand_ambassadors/document: "New Document"
         document_folder: "New Folder"
         filter_setting: "Filtering options"
+        invite: "New Invite"
       edit:
         company_user: "Edit User"
         event: "Edit Event"
@@ -311,6 +316,7 @@ en:
         brand_ambassadors/document: "Edit Document"
         document_folder: "Edit Folder"
         filter_setting: "Filtering options"
+        invite: "Invite"
 
   form_builder:
     modules:

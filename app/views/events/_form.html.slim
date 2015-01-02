@@ -16,7 +16,6 @@
             .pull-left
               .event_start_time
                 = f.input_field :start_time, required: true, :as => :time_picker, label: false
-          end
         .to.pull-left to
         .pull-left
           = f.input :end_date, label: 'End', required: true, wrapper_html: { class: 'visit_event_end_date' } do
@@ -26,7 +25,6 @@
             .pull-left
               .event_end_time
                 = f.input_field :end_time, required: true, as: :time_picker, label: false
-          end
 
     - if parent.is_a?(Venue)
         = f.hidden_field :place_reference, as: :hidden, value: parent.place_id

@@ -63,7 +63,7 @@ describe Place, type: :model do
                  { 'types' => ['street_number'], 'short_name' => '7', 'long_name' => '7' },
                  { 'types' => ['route'], 'short_name' => 'Calle Melancolia', 'long_name' => 'Calle Melancolia' }
                ]))
-      expect(api_client).to receive(:spots).and_return([])
+      expect(api_client).to receive(:spots).at_least(:once).and_return([])
 
       place.save
       place.reload
@@ -101,7 +101,7 @@ describe Place, type: :model do
                  { 'types' => ['street_number'], 'short_name' => '7', 'long_name' => '7' },
                  { 'types' => ['route'], 'short_name' => 'Calle Melancolia', 'long_name' => 'Calle Melancolia' }
                ]))
-      expect(api_client).to receive(:spots).and_return([])
+      expect(api_client).to receive(:spots).at_least(:once).and_return([])
       place.save
       place.reload
       expect(place.name).to eq('Shark\'s Cove')

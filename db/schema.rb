@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141219231528) do
+ActiveRecord::Schema.define(version: 20141230213142) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -568,6 +568,34 @@ ActiveRecord::Schema.define(version: 20141219231528) do
   add_index "goals", ["goalable_id", "goalable_type"], name: "index_goals_on_goalable_id_and_goalable_type", using: :btree
   add_index "goals", ["kpi_id"], name: "index_goals_on_kpi_id", using: :btree
   add_index "goals", ["kpis_segment_id"], name: "index_goals_on_kpis_segment_id", using: :btree
+
+  create_table "invites", force: true do |t|
+    t.integer  "invitable_id"
+    t.string   "invitable_type"
+    t.integer  "venue_id"
+    t.integer  "invitees"
+    t.integer  "rsvps"
+    t.integer  "attendees"
+    t.date     "final_date"
+    t.date     "event_date"
+    t.integer  "registrant_id"
+    t.date     "date_added"
+    t.string   "email"
+    t.string   "mobile_phone"
+    t.boolean  "mobile_signup"
+    t.string   "first_name"
+    t.string   "last_name"
+    t.boolean  "attended_previous_bartender_ball"
+    t.boolean  "opt_in_to_future_communication"
+    t.integer  "primary_registrant_id"
+    t.string   "bartender_how_long"
+    t.string   "bartender_role"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "invites", ["invitable_id", "invitable_type"], name: "index_invites_on_invitable_id_and_invitable_type", using: :btree
+  add_index "invites", ["venue_id"], name: "index_invites_on_venue_id", using: :btree
 
   create_table "kpi_reports", force: true do |t|
     t.integer  "company_user_id"

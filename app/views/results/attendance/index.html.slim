@@ -1,0 +1,63 @@
+
+#attendance-report.row-fluid.with-details-close-bar
+  = resource_details_bar("You are viewing the Attendance by Neighbourhood report. Click to close.")
+  
+  .details_box.padding-top-close-bar
+    #attendance-left-column.pull-left
+      h3 ATTENDANCE BY NEIGHBOURHOOD
+
+      = simple_form_for :report, url: results_attendance_path, remote: true do |f|
+
+        = f.input :campaign_id, label: '1. Choose a campaign', collection: campaigns_list_for_dropdown, selected: params[:report].try(:[], :campaign_id), include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Choose a campaign" } }
+
+        = f.input :state, label: '2. Choose a state', collection: @states, selected: params[:report].try(:[], :state), include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Choose a state" } }
+
+        = f.input :city, label: '2. Choose a city', collection: [], selected: params[:report].try(:[], :city), include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Choose a city" } }
+
+        #attendees-range-slider 
+        = f.input 'attendees[min]', as: :hidden
+        = f.input 'attendees[max]', as: :hidden
+
+    #attendance-right-column
+      #attendance-map-canvas
+
+    .clearfix
+
+javascript:
+  $('#attendees-range-slider').rangeSlider({
+    bounds: {min: 20, max: 210},
+    defaultValues: { min: 20, max: 210 },
+    arrows: false
+  }).on("userValuesChanged", function(e, data) {
+      alert('changed');
+  });
+
+  var states = $('#report_state'),
+      cities = $('#report_city');
+  
+  states.change(function(){
+    cities.html('<option></option>');
+    if ($(this).val()) {
+      $.get('/countries/US/cities.json', {state: $(this).val()}, function(response) {
+        var val = cities.val();
+        for (i=0; i< response.length; i++){
+          city = response[i];
+          option = $('<option>').val(city).html(city);
+          if (val == city) {
+            option.attr('selected', 'selected')
+          }
+          cities.append(option);
+        }
+        cities.trigger('liszt:updated');
+      });
+    }
+  });
+
+  cities.change(function(){
+    if (cities.val()){
+      $.get('#{results_attendance_map_path(format: :js)}', {state: states.val(), city: cities.val()});
+    }
+  });
+
+  $('#report_state').change();
+

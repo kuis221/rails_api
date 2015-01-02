@@ -125,7 +125,10 @@ Brandscopic::Application.routes.draw do
 
   get 'select-company/:company_id', to: 'company_users#select_company', as: :select_company, constraints: { company_id: /[0-9]+/ }
 
-  get 'countries/states'
+  resources :countries, only: [] do
+    get :states, on: :collection
+    get :cities, on: :member
+  end
 
   get '/notifications.json', to: 'company_users#notifications', format: :json
 
@@ -163,6 +166,11 @@ Brandscopic::Application.routes.draw do
     get :gva, to: 'gva#index'
     post :gva, to: 'gva#report'
     get :report_groups, to: 'gva#report_groups'
+
+    get 'attendance/map', to: 'attendance#map', as: :attendance_map
+    get 'attendance', to: 'attendance#index', as: :attendance
+    # resources :attendance, only: [:index] do
+    # end
 
     resources :reports, only: [:index, :new, :create, :edit, :update, :show] do
       get :build, on: :member
@@ -366,6 +374,8 @@ Brandscopic::Application.routes.draw do
         get :activate
       end
     end
+
+    resources :invites, only: [:create, :new]
 
     resources :surveys, only: [:create, :new, :edit, :update] do
       member do

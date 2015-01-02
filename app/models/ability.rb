@@ -87,6 +87,7 @@ class Ability
 
     # A logged in user
     elsif user.id
+      role = user.current_company_user.role
       can do |action, subject_class, subject|
         Rails.logger.debug "Checking #{action} on #{subject_class} :: #{subject}"
         user.role.cached_permissions.select { |p| aliases_for_action(action).map(&:to_s).include?(p.action.to_s) }.any? do |permission|
@@ -123,6 +124,11 @@ class Ability
 
       can [:add_place, :remove_place], [Area, CompanyUser] do |object|
         can?(:edit, object)
+      end
+
+      can :create, Invite do |invite|
+        (invite.invitable.is_a?(Event) && role.has_permission?(:create_invite, Event)) ||
+        (invite.invitable.is_a?(Venue) && role.has_permission?(:create_invite, Venue))
       end
 
       can [:profile, :edit_communications, :filter_settings], CompanyUser do |company_user|

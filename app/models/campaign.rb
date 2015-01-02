@@ -509,7 +509,7 @@ class Campaign < ActiveRecord::Base
   end
 
   def valid_modules?
-    modules = %w(surveys photos expenses comments videos)
+    modules = %w(surveys photos expenses comments videos rsvp)
     if (enabled_modules - modules).any?
       errors.add :modules, :invalid
     end

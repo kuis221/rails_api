@@ -16,6 +16,8 @@
 #  updated_at  :datetime
 #
 
+require 'legacy/record'
+
 class Metric < Legacy::Record
   belongs_to :program
 
