@@ -56,8 +56,12 @@
 	content:"\e004";
 }
 
+.icon-arrow-down-small:before{
+	content: "\e62b";
+}
+
 .icon-bell:before{
-  content:"\e600";
+  content:"\e603";
 }
 
 .icon-edit:before{
@@ -179,7 +183,7 @@
 }
 
 .icon-user:before{
-	content: "\e61e";
+	content: "\e621";
 }
 
 .icon-help:before{
@@ -211,7 +215,7 @@
 }
 
 .icon-wired-venue:before{
-	content: "\e02c";
+	content: "\e600";
 }
 
 .icon-wired-phone:before{
@@ -319,7 +323,7 @@
 }
 
 .icon-list:before{
-	content:"\e616";
+	content:"\e619";
 }
 
 .icon-minus:before{
@@ -339,7 +343,7 @@
 }
 
 .icon-mobile:before{
-	content: "\e620";
+	content: "\e602";
 }
 
 .icon-info:before{
@@ -355,14 +359,19 @@
 }
 
 .icon-campaign:before{
-	content: "\e623";
+	content: "\e625";
 }
 
 .icon-wired-campaign:before{
 	content: "\e61f";
 }
+
 .icon-resend:before{
 	content: "\e628";
+}
+
+.icon-web:before{
+	content: "\e601";
 }
 
 /* To create icons with grey circle background */
