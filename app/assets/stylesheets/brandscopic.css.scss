@@ -1720,36 +1720,42 @@ li.dropdown a{
 	margin-bottom: 0;
 }
 
+/*
 .nav>li>a:focus{
 	background-color: $menu;
 	color:$grey_three;
 }
+*/
 
 .nav-tabs{
 	border-bottom: 0;
-}
-.nav-tabs li a{
-	background-color: $grey_one;
-	border: 0;
-	color: $brand;
-	text-align: center;
-	min-width: 92px;
-}
-.nav-tabs li a:hover{
-	background-color: $user_menu;
-	border-bottom: 0;
-	color: $grey_three;
-}
-.nav-tabs>.active>a{
-	color: $brand;
-	border-left: 0;
-	border-right: 0;
-	border-top: 0;
-	&:hover{
+	li a{
+		background-color: $grey_one;
+		border: 0;
 		color: $brand;
-		border-left:0;
+		text-align: center;
+		min-width: 92px;
+		&:hover{
+			background-color: $user_menu;
+			border-bottom: 0;
+			color: $brand;
+		}
+	}
+	&>.active>a{
+		color: $brand;
+		border-left: 0;
 		border-right: 0;
 		border-top: 0;
+		&:hover{
+			color: $brand;
+			border-left:0;
+			border-right: 0;
+			border-top: 0;
+		}
+		&:focus{
+			border:0;
+			color: $brand;
+		}
 	}
 }
 
