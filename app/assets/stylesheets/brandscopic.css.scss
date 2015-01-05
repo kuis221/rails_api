@@ -561,9 +561,10 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		.filter-item{
 			display: inline-block;
 			border: 1px solid $borders;
-			margin-right: 5px;
+			margin-left: 4px;
 			padding: 0 10px;
 			font-size: 12px;
+			text-transform: capitalize;
 			white-space: nowrap;
 			@include border-radius (3px);
 			&:hover {
