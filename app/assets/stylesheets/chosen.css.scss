@@ -273,29 +273,26 @@ select.chosen-enabled{
 			}
 			&.search-choice {
 				position: relative;
-				margin: 3px 0 3px 5px;
-				padding: 3px 20px 3px 5px;
+				margin: 1px 0 3px 5px;
+				padding: 4px 20px 4px 10px;
 				border: 1px solid #aaa;
-				border-radius: 3px;
-				background-color: #e4e4e4;
-				background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(20%, #f4f4f4), color-stop(50%, #f0f0f0), color-stop(52%, #e8e8e8), color-stop(100%, #eeeeee));
-				background-image: -webkit-linear-gradient(#f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
-				background-image: -moz-linear-gradient(#f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
-				background-image: -o-linear-gradient(#f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
-				background-image: linear-gradient(#f4f4f4 20%, #f0f0f0 50%, #e8e8e8 52%, #eeeeee 100%);
+				border-radius: 12px;
+				background-color: $brand;
 				background-clip: padding-box;
-				color: #333;
+				color: white;
 				line-height: 13px;
 				cursor: default;
 				.search-choice-close {
-					position: absolute;
-					top: 4px;
-					right: 3px;
+					color: $grey_four;
 					display: block;
-					width: 12px;
-					height: 12px;
-					background: image-url('chosen-sprite.png') -48px 1px no-repeat;
-					font-size: 1px;
+					font-size: 10px;
+					position: absolute;
+					top: 5px;
+					right: 5px;
+					&:after{
+						content: "\e019";
+						font-family: 'icons';
+					}
 					&:hover {
 						background-position: -48px -10px;
 					}
