@@ -314,7 +314,6 @@ body{
 	}
 	i{
 		font-size: 20px;
-		left: 2px;
 		position: relative;
 		margin-top: 0;
 	}
@@ -1059,6 +1058,9 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	.btn.download {
 		margin: 0px 3px;
 		text-decoration: none;
+		.icon-plus{
+			line-height: 19px;
+		}
 	}
 	.fullscreen-link{
 		margin: 0px 0 0 15px;
@@ -1069,13 +1071,16 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		.btn{
 			padding: 8px 10px;
 		}
+		i{
+			line-height: 19px;
+		}
 		.icon-download{
 			margin-left: 5px;
 		}
 		.icon-arrow-down-small{
 			font-size: 11px;
 			float: right;
-			margin: 4px 0 0 12px;
+			margin: 0 0 0 12px;
 		}
 		.download-options-menu {
 			right: 0;
@@ -2942,10 +2947,6 @@ ul.ui-widget-content{
 	}
 	.icon-edit{
 		margin: 0 0 0 15px;
-	}
-	.icon-rounded-disable{
-		position:relative;
-		top:1px;
 	}
 }
 
