@@ -6153,6 +6153,12 @@ table td.sub-level-1 {
 .gallery {
 	margin: 0 -10px;
 	position: relative;
+	&.photo-results{
+		margin:0;
+		ul{
+			display: block;
+		}
+	}
 	&> ul {
 		display: flex;
 		flex-wrap: wrap;
