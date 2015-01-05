@@ -542,7 +542,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	min-height: 37px;
 	line-height: 30px;
 	margin: 0 10px 0 90px;
-	padding: 8px 20px 5px 21px;
+	padding: 7px 20px 6px 21px;
 	position: relative;
 	-webkit-border-radius: 0px 0px 8px 8px;
 	border-radius: 0px 0px 8px 8px;
@@ -561,7 +561,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		.filter-item{
 			display: inline-block;
 			border: 1px solid $borders;
-			margin: 0 5px 3px 0;
+			margin-right: 5px;
 			padding: 0 10px;
 			font-size: 12px;
 			white-space: nowrap;
@@ -573,7 +573,9 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 				font-size: 11px;
 				margin-left: 10px;
 				margin-right: -5px;
-				margin-top: 4px;
+				margin-top: 10px;
+				float: right;
+				position: relative;
 			}
 
 			.full {
