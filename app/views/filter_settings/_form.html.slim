@@ -17,9 +17,20 @@
     .row-fluid.saved-filters
       .span12
         h5 SAVED FILTERS
+        .pull-right.default-filters-text
+          span DEFAULT? 
         = render partial: 'custom_filters/custom_filters', locals: { apply_to: apply_to }
 
   .form-actions
     = f.button :submit, "Done", class: 'btn-primary', data: { disable_with: 'Please wait...' }
     = "&nbsp;".html_safe
     = f.button :button, 'Cancel', class: 'btn-cancel'
+
+javascript:
+  $('.radio-filter').on('click', function(e){
+    e.stopPropagation();
+    $.ajax({
+      type: "PUT",
+      url: '/custom_filters/' + $(this).val() + '/default_view'
+    });
+  });
