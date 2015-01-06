@@ -97,7 +97,7 @@
 			padding: 0;
 
 			div.score {
-				color: $venues_blue;
+				color: $primary-blue;
 				font-size: 11px;
 				width: 70px;
 				display: inline-block;
@@ -146,7 +146,7 @@
 
 	#campaign-overview-module {
 		#campaign-overview-table {
-			border: 1px solid $grey_two;
+			border: 1px solid $app_bg;
 			td {
 				padding: 0;
 				border: 0;
@@ -189,7 +189,7 @@
 				}
 			}
 			.header-row {
-				border-bottom: 1px solid $grey_two;
+				border-bottom: 1px solid $app_bg;
 			}
 			.month-name {
 				background-color: $brand;
@@ -208,7 +208,7 @@
 				}
 			}
 			.campaigns-header {
-				border-right: 1px solid $grey_two;
+				border-right: 1px solid $app_bg;
 				padding-left:16px;
 				span {
 					margin-top: 13px;
@@ -232,7 +232,7 @@
 				padding: 5px 0px;
 				position: relative;
 				&.week-0 {
-					border-left: 1px solid $grey_two;
+					border-left: 1px solid $app_bg;
 				}
 				span.week-marker {
 					height: 10px;
@@ -242,13 +242,13 @@
 					margin: 5px auto 0 auto;
 				}
 				&.in-range span.week-marker {
-					background-color: $grey_one;
+					background-color: $gray-lighter;
 				}
 				&.in-range:hover span.week-marker {
-					background-color: $grey_three;
+					background-color: $gray;
 				}
 				&.with-events span.week-marker {
-					background-color: $blue;
+					background-color: $primary-blue;
 					width: 100%;
 					border-radius: 0px;
 					margin: 5px -1 0 -1;
@@ -300,7 +300,7 @@
 				&> li{
 					display: inline-block;
 					.comment-inner {
-						border: 1px solid $grey_one;
+						border: 1px solid $gray-lighter;
 						box-sizing: border-box;
 						height: 180px;
 						position:relative;
@@ -338,14 +338,14 @@
 						position: absolute;
 						bottom: 0px;
 						display: none;
-						background-color: $grey_three;
+						background-color: $gray;
 						width: 100%;
 						padding: 9px 0;
 						text-align: right;
 						color: #fff;
 						opacity: 0.85;
 						a, a i {
-							color: $grey_one;
+							color: $gray-lighter;
 							font-size: 16px;
 							margin-right: 5px;
 							margin-left: 2px;

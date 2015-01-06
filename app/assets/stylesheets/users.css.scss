@@ -54,7 +54,7 @@
 }
 
 .profile-pic{
-	background-color: $grey_four;
+	background-color: $gray-light;
 	display: inline-block;
 	float: left;
 	overflow: hidden;
@@ -107,7 +107,7 @@ a.resend-verification {
 	margin-bottom: 10px;
 	color: $brand;
 	a {
-		color: $blue;
+		color: $primary-blue;
 		font-size:12px;
 		margin-right: 10px;
 	}
@@ -252,7 +252,7 @@ a.resend-verification {
 		margin-left: 10px;
 	}
 	.icon-checked {
-		color: $blue;
+		color: $primary-blue;
 	}
 }
 

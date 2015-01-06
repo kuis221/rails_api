@@ -24,6 +24,7 @@ describe Activity, type: :model do
   it { is_expected.to validate_presence_of(:activity_type_id) }
   it { is_expected.to validate_presence_of(:company_user_id) }
   it { is_expected.to validate_presence_of(:activity_date) }
+  it { is_expected.to validate_presence_of(:campaign_id) }
   it { is_expected.to validate_numericality_of(:activity_type_id) }
   it { is_expected.to validate_numericality_of(:company_user_id) }
 

@@ -1,11 +1,6 @@
 @import "variables";
 @import "mixins";
 
-/*-- COLOR PALETTE --*/
-$completed: #90bf43;
-$unassigned: #3e9ccf;
-$valid: #90bf43;
-
 //MODALS
 
 ul.select2-results{
@@ -762,14 +757,14 @@ ul.select2-results{
 		td{
 			&.ui-datepicker-today{
 				a{
-					color:$grey_three;
+					color:$gray;
 					font-weight: bold !important;
 					opacity: 1;
 				}
 			}
 		}
 		th{
-			color: $grey_three;
+			color: $gray;
 			padding: 4px 0 0 0;
 		}
 		.ui-datepicker-title{
@@ -875,7 +870,7 @@ ul.select2-results{
 
 		&.timepicker-filter{
 			width:98px !important;
-			border-color: $grey_three;
+			border-color: $gray;
 			li {
 				padding-left: 10px;
 			}
@@ -901,7 +896,7 @@ ul.select2-results{
 		opacity: 0.8;
 		text-align: center;
 		&:hover{
-			background:$grey_one !important;
+			background:$gray-lighter !important;
 			-webkit-border-radius: 14px;
 			border-radius: 14px;
 		}
@@ -933,7 +928,7 @@ ul.select2-results{
 // VALID
 
 .valid{
-	color: $valid;
+	color: $primary-green;
 	font-size: 11px;
 	margin-bottom: 2px;
 }
@@ -1053,7 +1048,7 @@ div#spin{
 .select2-drop.select2-dropdown{
 	ul{width: 100%;}
 	border-radius: 4px;
-	border: 1px solid $grey_three !important;
+	border: 1px solid $gray !important;
 	box-shadow: none;
 	-webkit-box-shadow: none;
 	-moz-box-shadow: none;
@@ -1169,7 +1164,7 @@ div#spin{
 					font-size: 14px;
 					color: $brand;
 					&:hover{
-						color: $grey_three;
+						color: $gray;
 					}
 				}
 			}

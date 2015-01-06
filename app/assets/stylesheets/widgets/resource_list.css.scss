@@ -71,7 +71,7 @@
 			}
 		}
 		&:hover {
-			background-color: $grey_one;
+			background-color: $gray-lighter;
 			.resource-item-actions {
 				display: inline-block;
 			}
@@ -79,7 +79,7 @@
 				background-color: $user_menu;
 			}
 			&.complete {
-				border-color: $grey_one;
+				border-color: $gray-lighter;
 			}
 		}
 		&.inactive {

@@ -370,7 +370,7 @@
 
 /* To create icons with grey circle background */
 .special-icon {
-	background-color: $grey_four;
+	background-color: $gray-light;
 	display: inline-block;
 	height: 46px;
 	@include border-radius(23px);
