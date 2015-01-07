@@ -1132,6 +1132,9 @@ $.widget "custom.bucket_complete", $.ui.autocomplete, {
 
 marginFilterResize = () ->
 	marginTopFilter = $('.collection-list-description').outerHeight()
+	extra = 0
 	if $(".main-nav-collapse").is(":visible")
 		marginTopFilter += $('.main-nav-collapse').outerHeight() + 8
+		extra = 8
 	$('#application-content').css('margin-top', marginTopFilter + 'px')
+	$('#resource-close-details').css('top', marginTopFilter + 43 - extra) 

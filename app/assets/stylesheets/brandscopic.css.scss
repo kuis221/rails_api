@@ -544,7 +544,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	border-radius: 0px 0px 8px 8px;
 	box-sizing: border-box;
 	width: calc(100% - 100px);
-	z-index: 20;
+	z-index: 300;
 	.filter-label{
 		&>div {
 			display: inline-block;
