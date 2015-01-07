@@ -59,9 +59,8 @@
       'userFilters': #{user_saved_filters('visits').to_json.html_safe},
       'autoCompletePath': '#{autocomplete_brand_ambassadors_visits_path(format: :json)}',
       'fixListHeight': false,
-      'defaultParams': [{name: 'start_date', value:'#{Time.zone.now.strftime("%m/%d/%Y")}'}, {name: 'end_date', value:'#{(Time.zone.now + 10.years).strftime("%m/%d/%Y")}'}],
+      'defaultParams': '#{j default_params_charge('start_date=' + Time.zone.now.strftime("%m/%d/%Y") + '&end_date=' + (Time.zone.now + 10.years).strftime("%m/%d/%Y"))}',
       'applyTo': 'visits',
-      'clearFilterParams': [{name: 'start_date', value:'#{Time.zone.now.strftime("%m/%d/%Y")}'}, {name: 'end_date', value:'#{(Time.zone.now + 10.years).strftime("%m/%d/%Y")}'}],
       'onChange': function() {
         if (typeof visitsCalendar !== 'undefined') {
          visitsCalendar.fullCalendar('refetchEvents');

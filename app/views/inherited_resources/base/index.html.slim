@@ -41,7 +41,6 @@ javascript:
     'includeSearchBox': false,
     'includeAutoComplete': true,
     'autoCompletePath': '#{url_for(controller: controller_name, action: :autocomplete, format: :json)}',
-    'defaultParams': [{name: 'status[]', value: 'Active'}],
-    'clearFilterParams': [{name: 'status[]', value: 'Active'}],
+    'defaultParams': '#{j default_params_charge('status[]=Active')}',
     'allowCustomizeFilters': true
   });
