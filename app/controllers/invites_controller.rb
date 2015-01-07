@@ -1,5 +1,5 @@
 class InvitesController < InheritedResources::Base
-  belongs_to :event, :venue, polymorphic: true
+  belongs_to :event, :venue
 
   respond_to :js, only: [:new, :create, :edit, :update]
 

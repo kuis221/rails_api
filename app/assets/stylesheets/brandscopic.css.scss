@@ -6977,6 +6977,12 @@ body.dashboard.index {
 	}
 	 #attendance-right-column{
 	 	display: inline-block;
+	 	width: calc(100% - 290px);
+	 	padding: 10px;
+	 	@include box-sizing(border-box);
+	 	#attendance-map-canvas {
+	 		height: 600px;
+	 	}
 	 }
 }
 

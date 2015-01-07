@@ -1,2 +1,47 @@
 |
-  $('#attendance-map-canvas')
+  var showTootltip = function showTootltip(event, infoWindow) {
+        infoWindow.setPosition(event.latLng);
+        infoWindow.open(map);
+      },
+      initializeNeighborhoodMap = function initializeMap() {
+        var mapOptions = {
+              zoom: 5,
+              center: new google.maps.LatLng(24.886436490787712, -70.2685546875),
+              mapTypeId: google.maps.MapTypeId.TERRAIN
+            },
+            bounds = new google.maps.LatLngBounds(),
+            neighborhoodsCoordinates, 
+            i,
+            neighborhoodPolygon,
+            infoWindows = {};
+
+          map = new google.maps.Map(document.getElementById('attendance-map-canvas'), mapOptions);
+          map.setOptions({styles: window.MAP_STYLES});
+
+
+- @neighborhoods.each do |neighborhood|
+  |
+        infoWindows["#{j neighborhood.name}"] = new google.maps.InfoWindow();
+        infoWindows["#{j neighborhood.name}"].setContent('<b>#{j neighborhood.name}</b>');
+        neighborhoodsCoordinates = [#{neighborhood_coordinates(neighborhood)}];
+        neighborhoodPolygon = new google.maps.Polygon({
+          paths: neighborhoodsCoordinates,
+          strokeColor: '#FF0000',
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+          fillColor: '#FF0000',
+          fillOpacity: 0.35
+        });
+        neighborhoodPolygon.setMap(map);
+
+        google.maps.event.addListener(neighborhoodPolygon, 'click', function(event) { showTootltip(event, infoWindows["#{j neighborhood.name}"]) });
+        
+        for (i = 0; i < neighborhoodsCoordinates.length; i++) {
+          bounds.extend(neighborhoodsCoordinates[i]);
+        };
+|
+      map.fitBounds(bounds);
+      },
+      map;
+
+      initializeNeighborhoodMap();

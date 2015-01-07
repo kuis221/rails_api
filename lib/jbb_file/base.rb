@@ -16,9 +16,11 @@ module JbbFile
 
     def download_files(dir)
       files = find_files
-      return file_not_fould unless files.any?
+      unless files.any?
+        file_not_fould
+        return files
+      end
       Hash[files.map do |file_name|
-        p "Downloading #{file_name}"
         file = get_file(dir, file_name)
         if valid_format?(file)
           [file_name, file]
@@ -30,6 +32,11 @@ module JbbFile
     end
 
     def archive_file(file)
+      begin
+        ftp_connecion.mkdir('OLD') unless ftp_connecion.list("*").any? { |dir| dir.match(/\sOLD$/) }
+      rescue Net::FTPPermError
+        p "Archive directory already exists"
+      end
       ftp_connecion.rename(file, "OLD/#{file}")
     end
 

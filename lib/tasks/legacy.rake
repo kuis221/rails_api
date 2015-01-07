@@ -1,4 +1,3 @@
-require 'legacy'
 require 'csv'
 
 namespace :legacy do

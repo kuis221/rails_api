@@ -21,9 +21,10 @@
 #  administrative_level_1 :string(255)
 #  administrative_level_2 :string(255)
 #  td_linx_code           :string(255)
-#  neighborhood           :string(255)
 #  location_id            :integer
 #  is_location            :boolean
+#  neighborhoods          :string(255)      is an Array
+#  yelp_business_id       :string(255)
 #
 
 require 'rails_helper'
@@ -142,6 +143,37 @@ describe Place, type: :model do
     end
   end
 
+  describe '#in_areas' do
+    let(:company) { create(:company) }
+    let(:campaign) { create(:campaign, company: company) }
+
+    it 'should include events that are scheduled on the given places' do
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      place_sf = create(:place, country: 'US', state: 'California', city: 'San Francisco')
+      area_la = create(:area, company: company, place_ids: [place_la.id])
+      area_sf = create(:area, company: company, place_ids: [place_sf.id])
+
+      expect(described_class.in_areas([area_la])).to match_array [place_la]
+      expect(described_class.in_areas([area_sf])).to match_array [place_sf]
+      expect(described_class.in_areas([area_la, area_sf])).to match_array [place_la, place_sf]
+    end
+
+    it 'should include events that are scheduled within the given scope if the place is a locality' do
+      los_angeles = create(:city, name: 'Los Angeles', country: 'US', state: 'California')
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+
+      san_francisco = create(:city, name: 'San Francisco', country: 'US', state: 'California')
+      place_sf = create(:place, country: 'US', state: 'California', city: 'San Francisco')
+
+      area_la = create(:area, company: company, place_ids: [los_angeles.id])
+      area_sf = create(:area, company: company, place_ids: [san_francisco.id])
+
+      expect(described_class.in_areas([area_la])).to match_array [place_la]
+      expect(described_class.in_areas([area_sf])).to match_array [place_sf]
+      expect(described_class.in_areas([area_la, area_sf])).to match_array [place_la, place_sf]
+    end
+  end
+
   describe '#locations' do
     it 'returns only the continent and country' do
       country = create(:country, name: 'US')
@@ -194,7 +226,7 @@ describe Place, type: :model do
 
     it 'returns the place that exactly match the search params' do
       expect(
-        Place.find_tdlinx_place(
+        described_class.find_tdlinx_place(
           name: 'Benitos Bar', city: 'Los Angeles', state: 'California',
           street: '123 st Maria nw', zipcode: '11223'
         )
@@ -203,7 +235,7 @@ describe Place, type: :model do
 
     it 'returns the place that exactly match the search params without a zipcode' do
       expect(
-        Place.find_tdlinx_place(
+        described_class.find_tdlinx_place(
           name: 'Benitos Bar', city: 'Los Angeles', state: 'California',
           street: '123 st Maria nw', zipcode: nil
         )
@@ -212,14 +244,14 @@ describe Place, type: :model do
 
     it 'returns the place that have a similar name with the same address' do
       expect(
-        Place.find_tdlinx_place(
+        described_class.find_tdlinx_place(
           name: 'Benito Bar', city: 'Los Angeles', state: 'California',
           street: '123 st Maria nw', zipcode: nil
         )
       ).to match(place.id)
 
       expect(
-        Place.find_tdlinx_place(
+        described_class.find_tdlinx_place(
           name: 'BENITOSS Bar', city: 'Los Angeles', state: 'California',
           street: '123 st Maria nw', zipcode: nil
         )
@@ -228,28 +260,28 @@ describe Place, type: :model do
 
     it 'returns the place that have a similar name with the same address written in different ways' do
       expect(
-        Place.find_tdlinx_place(
+        described_class.find_tdlinx_place(
           name: 'Benito Bar', city: 'Los Angeles', state: 'California',
           street: '123 street Maria nw', zipcode: nil
         )
       ).to match(place.id)
 
       expect(
-        Place.find_tdlinx_place(
+        described_class.find_tdlinx_place(
           name: 'BENITOSS Bar', city: 'Los Angeles', state: 'California',
           street: '123 st Maria Northweast', zipcode: nil
         )
       ).to match(place.id)
 
       expect(
-        Place.find_tdlinx_place(
+        described_class.find_tdlinx_place(
           name: 'BENITOSS Bar', city: 'Los Angeles', state: 'California',
           street: '123 street Maria Northweast', zipcode: nil
         )
       ).to match(place.id)
 
       expect(
-        Place.find_tdlinx_place(
+        described_class.find_tdlinx_place(
           name: 'BENITOSS Bar', city: 'Los Angeles', state: 'California',
           street: '1234 street Maria Northweast', zipcode: nil
         )
@@ -258,7 +290,7 @@ describe Place, type: :model do
 
     it 'does not returns the place that have a different name with the same address' do
       expect(
-        Place.find_tdlinx_place(
+        described_class.find_tdlinx_place(
           name: 'Mercedes Bar', city: 'Los Angeles', state: 'California',
           street: '123 st Maria nw', zipcode: nil
         )

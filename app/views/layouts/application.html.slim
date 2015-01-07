@@ -29,7 +29,7 @@ head
             $.support.transition=false;
           })
         }(window.jQuery);
-    = javascript_include_tag "http://maps.googleapis.com/maps/api/js?key=#{GOOGLE_API_KEY}&libraries=places&sensor=false"
+    = javascript_include_tag "http://maps.googleapis.com/maps/api/js?key=#{GOOGLE_API_KEY}&libraries=places,geometry&sensor=false"
     = csrf_meta_tags
     = yield(:head)
     javascript:

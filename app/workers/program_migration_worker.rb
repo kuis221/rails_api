@@ -2,8 +2,6 @@ class ProgramMigrationWorker
   @queue = :migration
 
   def self.perform(company_id, program_id)
-    require 'legacy'
-
     company = Company.find(company_id)
     User.current = company.company_users.order('id asc').first.user
     User.current.current_company_id = company.id

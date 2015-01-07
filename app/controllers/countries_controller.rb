@@ -13,10 +13,9 @@ class CountriesController < ApplicationController
     country = params[:id]
     state = params[:state]
     if country && state
-      render json: Place.where(country: country, state: state)
-                        .where.not(city: nil).where.not(city: '')
+      render json: Neighborhood.where(country: country, state: state)
                         .order('1')
-                        .pluck('DISTINCT(places.city)')
+                        .pluck('DISTINCT(neighborhoods.city)')
     end
   end
 end

@@ -21,12 +21,14 @@
 #  administrative_level_1 :string(255)
 #  administrative_level_2 :string(255)
 #  td_linx_code           :string(255)
-#  neighborhood           :string(255)
 #  location_id            :integer
 #  is_location            :boolean
+#  neighborhoods          :string(255)      is an Array
+#  yelp_business_id       :string(255)
 #
 
 require 'base64'
+require 'yelp'
 
 class Place < ActiveRecord::Base
   include GoalableModel
@@ -64,6 +66,8 @@ class Place < ActiveRecord::Base
 
   after_commit :reindex_associated
 
+  after_commit :enqueue_yelp_business
+
   serialize :types
 
   scope :in_company, ->(company) { joins(:venues).where(venues: { company_id: company }) }
@@ -75,6 +79,16 @@ class Place < ActiveRecord::Base
              '(placeables.placeable_type=\'Area\' AND placeables.placeable_id  in ('\
              ' select area_id FROM areas_campaigns where campaign_id=:campaign_id'\
              '))', campaign_id: campaign)
+  end
+
+  def self.in_areas(areas)
+    subquery = Place.select('DISTINCT places.location_id')
+               .joins(:placeables).where(placeables: { placeable_type: 'Area', placeable_id: areas }, is_location: true)
+    place_query = "select place_id FROM locations_places INNER JOIN (#{subquery.to_sql})"\
+                  ' locations on locations.location_id=locations_places.location_id'
+    area_query = Placeable.select('place_id')
+                 .where(placeable_type: 'Area', placeable_id: areas).to_sql
+    joins("INNER JOIN (#{area_query} UNION #{place_query}) areas_places ON places.id=areas_places.place_id")
   end
 
   def street
@@ -217,7 +231,7 @@ class Place < ActiveRecord::Base
 
     def political_division(place)
       return if place.nil?
-      neighborhood = place.neighborhood
+      neighborhood = place.neighborhoods.first if place.neighborhoods.present?
       neighborhood ||= place.name if place.types.is_a?(Array) && place.types.include?('sublocality') && place.name != place.city
       [place.continent_name, place.country_name, place.state_name, place.city, neighborhood].compact if place.present?
     end
@@ -295,6 +309,10 @@ class Place < ActiveRecord::Base
       @client ||= GooglePlaces::Client.new(GOOGLE_API_KEY)
     end
 
+    def yelp_client
+      @yelp_client ||= Yelp.client
+    end
+
     def combined_search_params(params)
       params.merge per_page: 5,
                    search_address: true,
@@ -323,6 +341,18 @@ class Place < ActiveRecord::Base
         end
       end
     end
+  end
+
+  def find_yelp_business
+    response = yelp_client.search_by_coordinates(
+      {latitude: latitude, longitude: longitude},
+      {term: name, radius_filter: 1_000})
+    business = response.businesses.find { |b| b.name.similar(name) >= 70 }
+    return unless business
+    self.yelp_business_id = business.id
+    self.neighborhoods = [] if self.neighborhoods.nil?
+    self.neighborhoods = business.location.neighborhoods if business.location.respond_to?(:neighborhoods)
+    self
   end
 
   private
@@ -355,10 +385,8 @@ class Place < ActiveRecord::Base
             self.street_number = component['long_name']
           elsif component['types'].include?('route')
             self.route = component['long_name']
-          elsif component['types'].include?('sublocality')
-            self.neighborhood ||= component['long_name']
           elsif component['types'].include?('neighborhood')
-            self.neighborhood = component['long_name']
+            self.neighborhoods = [component['long_name']]
           end
         end
       end
@@ -374,8 +402,6 @@ class Place < ActiveRecord::Base
 
       find_city
 
-      find_neighborhood
-
       self.city.strip! unless self.city.nil?
       state.strip! unless state.nil?
       country.strip! unless country.nil?
@@ -389,37 +415,28 @@ class Place < ActiveRecord::Base
     # Make sure the city returned by Google is the correct one
     validate_city_from_api
 
-    sublocality = neighborhood
+    sublocality = neighborhoods.join(' ') if neighborhoods.present?
     sublocality ||= route if self.types && self.types.include?('establishment')
     sublocality ||= zipcode if self.types && self.types.include?('establishment')
 
     # There are cases where the API doesn't give a city but a neighborhood (sublocality)
-    if !city && !self.types.include?('administrative_area_level_2') && sublocality
-      spots = client.spots(latitude, longitude, keywords: sublocality)
-      spots.each do |aspot|
-        s = client.spot(aspot.reference)
-        if s.address_components.present?
-          city = s.address_components.find { |c| c['types'].include?('locality') }.try(:[], 'long_name')
-          if city.present?
-            self.city = city
-            break
-          end
-        end
+    return if city || self.types.include?('administrative_area_level_2') || sublocality.blank?
+
+    spots = client.spots(latitude, longitude, keywords: sublocality)
+    spots.each do |aspot|
+      s = client.spot(aspot.reference)
+      next unless s.address_components.present?
+      city = s.address_components.find { |c| c['types'].include?('locality') }.try(:[], 'long_name')
+      if city.present?
+        self.city = city
+        break
       end
-
-      # If still there is no city... :s then assign it's own name as the city
-      # Example of places with this issue:
-      # West Lake, TX: client.spot('CnRoAAAATClnCR7qKsJeD5nYegW8j9BLrDI2OsM-89wiA-NO-acvlYhSYXcef09z4Dns2p92zVfCCYJPET33QkrkzKeBt9y_fVOF-UfckvjwADE-rGsj4FIBJ4-s7O88LC0Y4yOz5e8vwYy5RjmMjx-dhG0IQxIQ3RfSNWKpoqim4qMLhdGhUhoUkH8hTzQ8E7Wgv6afi0RQmYzBP2Y')
-      self.city ||= name if (['political', 'natural_feature'] & types).any?
     end
-  end
 
-  def find_neighborhood
-    return unless neighborhood.blank?
-    client.spots(latitude, longitude, types: 'neighborhood', radius: 3_000).first.tap do |s|
-      p s.inspect
-      self.neighborhood = s.name unless s.nil?
-    end
+    # If still there is no city... :s then assign it's own name as the city
+    # Example of places with this issue:
+    # West Lake, TX: client.spot('CnRoAAAATClnCR7qKsJeD5nYegW8j9BLrDI2OsM-89wiA-NO-acvlYhSYXcef09z4Dns2p92zVfCCYJPET33QkrkzKeBt9y_fVOF-UfckvjwADE-rGsj4FIBJ4-s7O88LC0Y4yOz5e8vwYy5RjmMjx-dhG0IQxIQ3RfSNWKpoqim4qMLhdGhUhoUkH8hTzQ8E7Wgv6afi0RQmYzBP2Y')
+    self.city ||= name if (%w(political natural_feature) & types).any?
   end
 
   def validate_city_from_api
@@ -446,6 +463,10 @@ class Place < ActiveRecord::Base
     Place.google_client
   end
 
+  def yelp_client
+    Place.yelp_client
+  end
+
   def clear_cache
     Placeable.where(place_id: id).each(&:update_associated_resources)
   end
@@ -455,5 +476,11 @@ class Place < ActiveRecord::Base
     areas.each do |area|
       Area.update_common_denominators(area)
     end
+  end
+
+  def enqueue_yelp_business
+    return if types.nil? || neighborhoods.present?
+    return unless types.include?('establishment') && yelp_business_id.nil?
+    Resque.enqueue PlaceYelpUpdaterWorker, id if types.include?('establishment')
   end
 end

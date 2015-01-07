@@ -19,7 +19,9 @@
 # INTERNAL USE - stores data in EventRecap
 # positive whole number representing event count.
 # autopopulates with 1
+
 require 'legacy/metric/whole'
+
 class Metric::NumberOfEvents < Metric::Whole
   validates_presence_of :program_id, message: 'must be a program metric'
   validates_uniqueness_of :type, scope: :program_id

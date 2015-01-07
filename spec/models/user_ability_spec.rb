@@ -1250,7 +1250,7 @@ describe Ability, type: :model do
 
         it 'can create invites on events' do
           event = create(:event, campaign: campaign, place: place)
-          invite = build(:invite, invitable: event)
+          invite = build(:invite, event: event)
           expect(ability).not_to be_able_to(:create, invite)
 
           user.role.permission_for(:create_invite, Event).save

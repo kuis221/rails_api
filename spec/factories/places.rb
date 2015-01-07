@@ -21,9 +21,10 @@
 #  administrative_level_1 :string(255)
 #  administrative_level_2 :string(255)
 #  td_linx_code           :string(255)
-#  neighborhood           :string(255)
 #  location_id            :integer
 #  is_location            :boolean
+#  neighborhoods          :string(255)      is an Array
+#  yelp_business_id       :string(255)
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

@@ -488,6 +488,55 @@ describe Event, type: :model do
     end
   end
 
+  describe '#in_areas' do
+    let(:company) { create(:company) }
+    let(:campaign) { create(:campaign, company: company) }
+
+    it 'should include only events within the given areas' do
+      event_la = create(:event, campaign: campaign,
+                                place: create(:place, country: 'US',
+                                                      state: 'California', city: 'Los Angeles'))
+
+      event_sf = create(:event, campaign: campaign,
+                                place: create(:place, country: 'US',
+                                                      state: 'California', city: 'San Francisco'))
+
+      area_la = create(:area, company: company)
+      area_sf = create(:area, company: company)
+
+      campaign.areas << [area_la, area_sf]
+
+      area_la.places << create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
+      area_sf.places << create(:place, country: 'US', state: 'California', city: 'San Francisco', types: ['locality'])
+
+      expect(Event.in_areas([area_la])).to match_array [event_la]
+      expect(Event.in_areas([area_sf])).to match_array [event_sf]
+      expect(Event.in_areas([area_la, area_sf])).to match_array [event_la, event_sf]
+    end
+
+    it 'should include events that are scheduled on places that are part of the areas' do
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      event_la = create(:event, campaign: campaign, place: place_la)
+
+      place_sf = create(:place, country: 'US', state: 'California', city: 'San Francisco')
+      event_sf = create(:event, campaign: campaign, place: place_sf)
+
+      area_la = create(:area, company: company)
+      area_sf = create(:area, company: company)
+
+      area_la.places << place_la
+      area_sf.places << place_sf
+
+      # Create another campaign just to test
+      campaign2 = create(:campaign, company: company)
+
+      expect(Event.in_areas([area_la])).to match_array [event_la]
+      expect(Event.in_areas([area_sf])).to match_array [event_sf]
+      expect(Event.in_areas([area_la, area_sf])).to match_array [event_la, event_sf]
+    end
+
+  end
+
   describe '#in_places' do
     let(:company) { create(:company) }
     let(:campaign) { create(:campaign, company: company) }

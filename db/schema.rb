@@ -11,13 +11,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141230213142) do
+ActiveRecord::Schema.define(version: 20150106231728) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "hstore"
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
+  enable_extension "postgres_fdw"
   enable_extension "tablefunc"
 
   create_table "active_admin_comments", force: true do |t|
@@ -569,15 +570,8 @@ ActiveRecord::Schema.define(version: 20141230213142) do
   add_index "goals", ["kpi_id"], name: "index_goals_on_kpi_id", using: :btree
   add_index "goals", ["kpis_segment_id"], name: "index_goals_on_kpis_segment_id", using: :btree
 
-  create_table "invites", force: true do |t|
-    t.integer  "invitable_id"
-    t.string   "invitable_type"
-    t.integer  "venue_id"
-    t.integer  "invitees"
-    t.integer  "rsvps"
-    t.integer  "attendees"
-    t.date     "final_date"
-    t.date     "event_date"
+  create_table "invite_rsvps", force: true do |t|
+    t.integer  "invite_id"
     t.integer  "registrant_id"
     t.date     "date_added"
     t.string   "email"
@@ -585,7 +579,7 @@ ActiveRecord::Schema.define(version: 20141230213142) do
     t.boolean  "mobile_signup"
     t.string   "first_name"
     t.string   "last_name"
-    t.boolean  "attended_previous_bartender_ball"
+    t.string   "attended_previous_bartender_ball"
     t.boolean  "opt_in_to_future_communication"
     t.integer  "primary_registrant_id"
     t.string   "bartender_how_long"
@@ -594,7 +588,22 @@ ActiveRecord::Schema.define(version: 20141230213142) do
     t.datetime "updated_at"
   end
 
-  add_index "invites", ["invitable_id", "invitable_type"], name: "index_invites_on_invitable_id_and_invitable_type", using: :btree
+  add_index "invite_rsvps", ["invite_id"], name: "index_invite_rsvps_on_invite_id", using: :btree
+
+  create_table "invites", force: true do |t|
+    t.integer  "event_id"
+    t.integer  "venue_id"
+    t.string   "market"
+    t.integer  "invitees",    default: 0
+    t.integer  "rsvps_count", default: 0
+    t.integer  "attendees",   default: 0
+    t.date     "final_date"
+    t.date     "event_date"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "invites", ["event_id"], name: "index_invites_on_event_id", using: :btree
   add_index "invites", ["venue_id"], name: "index_invites_on_venue_id", using: :btree
 
   create_table "kpi_reports", force: true do |t|
@@ -686,6 +695,17 @@ ActiveRecord::Schema.define(version: 20141230213142) do
   add_index "memberships", ["memberable_id", "memberable_type"], name: "index_memberships_on_memberable_id_and_memberable_type", using: :btree
   add_index "memberships", ["parent_id", "parent_type"], name: "index_memberships_on_parent_id_and_parent_type", using: :btree
 
+  create_table "neighborhoods", force: true do |t|
+    t.string   "name"
+    t.string   "city"
+    t.string   "state"
+    t.string   "county"
+    t.string   "country"
+    t.text     "geometry"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "notifications", force: true do |t|
     t.integer  "company_user_id"
     t.string   "message"
@@ -738,9 +758,10 @@ ActiveRecord::Schema.define(version: 20141230213142) do
     t.string   "administrative_level_1"
     t.string   "administrative_level_2"
     t.string   "td_linx_code"
-    t.string   "neighborhood"
     t.integer  "location_id"
     t.boolean  "is_location"
+    t.string   "neighborhoods",                                   array: true
+    t.string   "yelp_business_id"
   end
 
   add_index "places", ["city"], name: "index_places_on_city", using: :btree

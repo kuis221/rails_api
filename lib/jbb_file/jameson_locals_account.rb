@@ -89,7 +89,9 @@ module JbbFile
     def create_place_and_venue(attrs)
       attrs[:city] = attrs[:city].titleize if attrs[:city].present?
       attrs[:state] = attrs[:city].titleize if attrs[:city].present?
-      place = Place.create(attrs.merge(is_custom_place: true, country: 'US'))
+      place = Place.create(attrs.merge(
+        is_custom_place: true,
+        types: ['establishment'], country: 'US'))
       self.created += 1
       Venue.create(place_id: place.id, company_id: COMPANY_ID)
     end

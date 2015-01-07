@@ -127,8 +127,8 @@ class Ability
       end
 
       can :create, Invite do |invite|
-        (invite.invitable.is_a?(Event) && role.has_permission?(:create_invite, Event)) ||
-        (invite.invitable.is_a?(Venue) && role.has_permission?(:create_invite, Venue))
+        role.has_permission?(:create_invite, Event) ||
+        role.has_permission?(:create_invite, Venue)
       end
 
       can [:profile, :edit_communications, :filter_settings], CompanyUser do |company_user|
