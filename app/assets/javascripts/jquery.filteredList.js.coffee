@@ -1135,4 +1135,3 @@ marginFilterResize = () ->
 	if $(".main-nav-collapse").is(":visible")
 		marginTopFilter += $('.main-nav-collapse').outerHeight() + 8
 	$('#application-content').css('margin-top', marginTopFilter + 'px')
-	console.log marginTopFilter
