@@ -41,13 +41,14 @@ module JbbFile
     def process
       created = 0
       failed = 0
+      i = 1
       invalid_rows = []
       Dir.mktmpdir do |dir|
-        ActiveRecord::Base.transaction do
-          files = download_files(dir)
-          return invalid_format if invalid_files.any?
-          return unless files.any?
+        files = download_files(dir)
+        return invalid_format if invalid_files.any?
+        return unless files.any?
 
+        ActiveRecord::Base.transaction do
           files.each do |_file_name, file|
             each_sheet(file) do |sheet|
               sheet.each(COLUMNS) do |row|
@@ -64,16 +65,20 @@ module JbbFile
                   p "INVALID EVENT OR VENUE #{venue.inspect} #{event.inspect}"
                   invalid_rows.push row
                 end
+                break if i == 20
+                i += 1
               end
             end
           end
 
-          files.each do |file_name, _file|
-            archive_file file_name
-          end
-
-          success created, invalid_rows.count, invalid_rows
+          p "ENDED!"
         end
+
+        files.each do |file_name, _file|
+          archive_file file_name
+        end
+
+        success created, invalid_rows.count, invalid_rows
       end
     ensure
       close_connection
@@ -92,8 +97,14 @@ module JbbFile
       @events[date]
     end
 
-    def success(created, failed)
-      mailer.success(created, failed).deliver
+    def success(created, failed, invalid_rows)
+      path = "#{Rails.root}/tmp/invalid_rows.csv"
+      p invalid_rows.inspect
+      CSV.open(path, 'wb') do |csv|
+        csv << COLUMNS.values
+        invalid_rows.each { |row| p row.inspect;  csv << row.values; }
+      end if invalid_rows.any?
+      mailer.success(created, failed, (invalid_rows.any? ? [path] : nil)).deliver
       false
     end
 
@@ -121,6 +132,8 @@ module JbbFile
       place = Place.load_by_place_id(spot.place_id, spot.reference)
       place.save unless place.persisted?
       place
+    rescue e
+      p "Error in request: #{e.message}"
     end
 
     def campaign

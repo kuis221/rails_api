@@ -75,6 +75,7 @@ module JbbFile
     end
 
     def ftp_connecion
+      @ftp_connecion = nil if @ftp_connecion && @ftp_connecion.closed?
       @ftp_connecion ||= Net::FTP.new(ftp_server).tap do |ftp|
         ftp.passive = true
         ftp.login(ftp_username, ftp_password)
