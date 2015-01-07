@@ -29,7 +29,7 @@
 }
 
 #all-mentions-box h3 .blue {
-	color: $blue;
+	color: $primary-blue;
 }
 
 .trends{
@@ -285,12 +285,12 @@
 		width: 14px;
 		z-index: 9999;
 		text-decoration: none;
-		color: $grey_three;
+		color: $gray;
 		cursor: pointer;
 		line-height: 14px;
 		&:hover {
 			text-decoration: none;
-			color: $grey_three;
+			color: $gray;
 		}
 		&:after {
 			content: "\e011";

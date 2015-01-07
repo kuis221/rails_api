@@ -1,7 +1,4 @@
-/*-- COLOR PALETTE --*/
-$brand:#989898;
-$grey_three:#7a7a7a;
-$user_menu:#c0c0c0;
+@import "variables";
 
 .eventsCalendar {
 	margin-top: 15px;
@@ -15,7 +12,7 @@ $user_menu:#c0c0c0;
 		}
 		th {
 			background-color: #989898;
-			color: #fff;
+			color: $white;
 			text-transform:uppercase;
 			text-align: left;
 			padding: 5px 0 5px 10px;
@@ -66,7 +63,7 @@ $user_menu:#c0c0c0;
 				position: absolute;
 				bottom: 0;
 				a, a:hover{
-					color: $user_menu;
+					color: $silver;
 					font-size: 11px;
 					margin: 0px 0px 5px 5px;
 					text-decoration: none;
@@ -150,7 +147,7 @@ $user_menu:#c0c0c0;
 	}
 
 	.fc-day-header {
-		background-color: $grey_three !important;
+		background-color: $gray !important;
 		color: #fff;
 	}
 
