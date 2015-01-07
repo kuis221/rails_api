@@ -93,6 +93,8 @@
 	.collection-list-description {
 		margin-left: 10px;
 		margin-bottom: 10px;
+		top: 113px;
+		width: calc(100% - 20px);
 	}
 
 	#gender-graph {
@@ -247,6 +249,7 @@
 	.collection-list-description {
 		margin-left: 0;
 		margin-right: 0;
+		width: calc(100% - 10px);
 	}
 
 	.resource-list .resource-item  {

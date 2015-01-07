@@ -539,10 +539,12 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	line-height: 30px;
 	margin: 0 10px 0 90px;
 	padding: 7px 20px 6px 21px;
-	position: relative;
+	position: fixed;
 	-webkit-border-radius: 0px 0px 8px 8px;
 	border-radius: 0px 0px 8px 8px;
 	box-sizing: border-box;
+	width: calc(100% - 100px);
+	z-index: 20;
 	.filter-label{
 		&>div {
 			display: inline-block;
