@@ -34,7 +34,7 @@
     .dropdown.btn-download
       a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
         i.icon-download
-        i.icon-arrow-down
+        i.icon-arrow-down-small
       ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
         li
           a.xlsx-download-link href="#" role="menuitem" data-url="#{venues_path(format: :xls)}"
@@ -71,7 +71,7 @@ javascript:
       alert('Please enter a location');
     } else {
       $('#venue-search-location').closest('.control-group').removeClass('error');
-      $filters.filteredList('setParams', 
+      $filters.filteredList('setParams',
         'location='+encodeURIComponent(loc) +
         '&q='+encodeURIComponent(term) +
         '&loc_name='+encodeURIComponent($('#venue-search-location').val())

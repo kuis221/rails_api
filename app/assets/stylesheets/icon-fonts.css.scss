@@ -56,8 +56,12 @@
 	content:"\e004";
 }
 
+.icon-arrow-down-small:before{
+	content: "\e62b";
+}
+
 .icon-bell:before{
-  content:"\e600";
+  content:"\e603";
 }
 
 .icon-edit:before{
@@ -171,7 +175,7 @@
 }
 
 .icon-marque:before{
-	content: "\e60f";
+	content: "\e613";
 }
 
 .icon-team:before{
@@ -179,7 +183,7 @@
 }
 
 .icon-user:before{
-	content: "\e61e";
+	content: "\e621";
 }
 
 .icon-help:before{
@@ -211,7 +215,7 @@
 }
 
 .icon-wired-venue:before{
-	content: "\e02c";
+	content: "\e600";
 }
 
 .icon-wired-phone:before{
@@ -259,35 +263,35 @@
 }
 
 .icon-summation:before{
-	content: "\e606";
-}
-
-.icon-text:before{
-	content: "\e607";
-}
-
-.icon-price:before{
-	content: "\e608";
-}
-
-.icon-photo:before{
 	content: "\e609";
 }
 
-.icon-percent:before{
+.icon-text:before{
 	content: "\e60a";
 }
 
-.icon-number:before{
+.icon-price:before{
 	content: "\e60b";
 }
 
-.icon-radio:before{
+.icon-photo:before{
 	content: "\e60c";
 }
 
+.icon-percent:before{
+	content: "\e60d";
+}
+
+.icon-number:before{
+	content: "\e60e";
+}
+
+.icon-radio:before{
+	content: "\e60f";
+}
+
 .icon-dropdown:before{
-	content: "\e60d"
+	content: "\e610"
 }
 
 .icon-checkbox:before{
@@ -295,15 +299,15 @@
 }
 
 .icon-attach:before{
-	content: "\e60f";
+	content: "\e612";
 }
 
 .icon-paragraph:before{
-	content: "\e611";
+	content: "\e614";
 }
 
 .icon-plus:before{
-	content: "\e612";
+	content: "\e615";
 }
 
 .icon-up:before{
@@ -315,11 +319,11 @@
 }
 
 .icon-star:before{
-	content:"\e615";
+	content:"\e618";
 }
 
 .icon-list:before{
-	content:"\e616";
+	content:"\e619";
 }
 
 .icon-minus:before{
@@ -327,7 +331,7 @@
 }
 
 .icon-section:before{
-	content:"\e61a";
+	content:"\e61d";
 }
 
 .icon-upload:before{
@@ -339,7 +343,7 @@
 }
 
 .icon-mobile:before{
-	content: "\e620";
+	content: "\e602";
 }
 
 .icon-info:before{
@@ -355,14 +359,19 @@
 }
 
 .icon-campaign:before{
-	content: "\e623";
+	content: "\e625";
 }
 
 .icon-wired-campaign:before{
 	content: "\e61f";
 }
+
 .icon-resend:before{
 	content: "\e628";
+}
+
+.icon-web:before{
+	content: "\e601";
 }
 
 /* To create icons with grey circle background */

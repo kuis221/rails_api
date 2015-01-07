@@ -311,7 +311,6 @@ body{
 	}
 	i{
 		font-size: 20px;
-		left: 2px;
 		position: relative;
 		margin-top: 0;
 	}
@@ -539,7 +538,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	min-height: 37px;
 	line-height: 30px;
 	margin: 0 10px 0 90px;
-	padding: 8px 20px 5px 21px;
+	padding: 7px 20px 6px 21px;
 	position: fixed;
 	-webkit-border-radius: 0px 0px 8px 8px;
 	border-radius: 0px 0px 8px 8px;
@@ -560,9 +559,10 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		.filter-item{
 			display: inline-block;
 			border: 1px solid $borders;
-			margin: 0 5px 3px 0;
+			margin-left: 4px;
 			padding: 0 10px;
 			font-size: 12px;
+			text-transform: capitalize;
 			white-space: nowrap;
 			@include border-radius (3px);
 			&:hover {
@@ -572,7 +572,9 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 				font-size: 11px;
 				margin-left: 10px;
 				margin-right: -5px;
-				margin-top: 4px;
+				margin-top: 10px;
+				float: right;
+				position: relative;
 			}
 
 			.full {
@@ -1058,6 +1060,9 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	.btn.download {
 		margin: 0px 3px;
 		text-decoration: none;
+		.icon-plus{
+			line-height: 19px;
+		}
 	}
 	.fullscreen-link{
 		margin: 0px 0 0 15px;
@@ -1065,9 +1070,19 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	}
 	.btn-download {
 		display: inline-block;
-		.icon-arrow-down:before {
-			top: 3px;
-			right: -12px;
+		.btn{
+			padding: 8px 10px;
+		}
+		i{
+			line-height: 19px;
+		}
+		.icon-download{
+			margin-left: 5px;
+		}
+		.icon-arrow-down-small{
+			font-size: 11px;
+			float: right;
+			margin: 0 0 0 12px;
 		}
 		.download-options-menu {
 			right: 0;
@@ -1580,6 +1595,10 @@ footer{
 // HEADER STYLES
 // --------------------------------------------------
 
+.navbar .nav > .active > a, .navbar .nav > .active > a:hover, .navbar .nav > .active > a:focus{
+	box-shadow: none;
+}
+
 header{
 	&.navbar-inverse {
 		.nav > li > a{
@@ -1639,11 +1658,20 @@ header{
 					}
 				}
 				li.dropdown.open,
-				li.dropdown.active,
 				li.dropdown.open.active {
 					&>.dropdown-toggle {
-						color: silver;
+						color: $silver;
 						background-color: $menu;
+					}
+				}
+				li.dropdown.active{
+					&> .dropdown-toggle{
+						color: $silver;
+						background-color: $header;
+						&:hover{
+							color: $white;
+							background-color: $gray-darker;
+						}
 					}
 				}
 				.dropdown-menu>li>a:hover,
@@ -1719,36 +1747,38 @@ li.dropdown a{
 	margin-bottom: 0;
 }
 
-.nav>li>a:focus{
-	background-color: $menu;
-	color:$gray;
-}
-
 .nav-tabs{
 	border-bottom: 0;
-}
-.nav-tabs li a{
-	background-color: $gray-lighter;
-	border: 0;
-	color: $brand;
-	text-align: center;
-	min-width: 92px;
-}
-.nav-tabs li a:hover{
-	background-color: $user_menu;
-	border-bottom: 0;
-	color: $gray;
-}
-.nav-tabs>.active>a{
-	color: $brand;
-	border-left: 0;
-	border-right: 0;
-	border-top: 0;
-	&:hover{
+	li a{
+		background-color: $gray-lighter;
+		border: 0;
 		color: $brand;
-		border-left:0;
+		text-align: center;
+		min-width: 92px;
+		&:hover{
+			background-color: $user_menu;
+			border-bottom: 0;
+			color: $brand;
+		}
+	}
+	&#permissions-tabs{
+		min-width: 80px;
+	}
+	&>.active>a{
+		color: $brand;
+		border-left: 0;
 		border-right: 0;
 		border-top: 0;
+		&:hover{
+			color: $brand;
+			border-left:0;
+			border-right: 0;
+			border-top: 0;
+		}
+		&:focus{
+			border:0;
+			color: $brand;
+		}
 	}
 }
 
@@ -2934,10 +2964,6 @@ ul.ui-widget-content{
 	}
 	.icon-edit{
 		margin: 0 0 0 15px;
-	}
-	.icon-rounded-disable{
-		position:relative;
-		top:1px;
 	}
 }
 
@@ -6141,6 +6167,12 @@ table td.sub-level-1 {
 .gallery {
 	margin: 0 -10px;
 	position: relative;
+	&.photo-results{
+		margin:0;
+		ul{
+			display: block;
+		}
+	}
 	&> ul {
 		display: flex;
 		flex-wrap: wrap;
