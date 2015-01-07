@@ -8,7 +8,6 @@
 # require 'legacy/program'
 # require 'legacy/metric'
 # require 'legacy/metric_result'
-
 module Legacy
   S3_CONFIGS = {
     'access_key_id' => 'AKIAIIGAIZKQFFQDIXZA',
@@ -49,12 +48,11 @@ module Legacy
   end
 end
 
-Paperclip.interpolates :dashed_style do |_attachment, style|
-  if style.to_sym == :original
-    ''
-  else
-    "_#{style}"
-  end
+
+p "REQUIRING LEGACY"
+if defined?(Rails::Railtie)
+  p "Rails::Railtie"
+  require 'legacy/railtie'
 end
 
 # require 'legacy/metric/whole'

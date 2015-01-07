@@ -38,6 +38,14 @@ PATH
     font_assets (0.1.11)
       rack
 
+PATH
+  remote: vendor/gems/legacy
+  specs:
+    legacy (0.0.1)
+      activerecord (~> 4)
+      paperclip (~> 4.1)
+      railties (~> 4)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -557,6 +565,7 @@ DEPENDENCIES
   heroku-resque-workers-scaler!
   inherited_resources
   jquery-rails
+  legacy!
   memcachier
   nearest_time_zone
   nested_form

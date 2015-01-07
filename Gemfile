@@ -24,6 +24,7 @@ gem 'simple-navigation'
 gem 'aasm'
 gem 'countries'
 gem 'company_scoped', path: 'vendor/gems/company_scoped'
+gem 'legacy', path: 'vendor/gems/legacy', require: false
 gem 'newrelic_rpm'
 gem 'paperclip', '~> 4.1'
 gem 'aws-sdk'
