@@ -1061,7 +1061,6 @@ $.widget 'nmk.filteredList', {
 			@infiniteScroller = false
 
 	_parseQueryString: (query) ->
-		console.log query
 		vars = query.split('&')
 		dates = []
 		selectedOptions = []
