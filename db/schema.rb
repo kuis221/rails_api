@@ -11,14 +11,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150106231728) do
+ActiveRecord::Schema.define(version: 20150108195421) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "hstore"
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
-  enable_extension "postgres_fdw"
   enable_extension "tablefunc"
 
   create_table "active_admin_comments", force: true do |t|
@@ -598,7 +597,6 @@ ActiveRecord::Schema.define(version: 20150106231728) do
     t.integer  "rsvps_count", default: 0
     t.integer  "attendees",   default: 0
     t.date     "final_date"
-    t.date     "event_date"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

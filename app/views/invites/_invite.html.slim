@@ -1,26 +1,46 @@
 div.resource-item.invite id="invite_#{invite.id}"
   .resource-item-link
-    .span3
-      .text-large= invite.event_date
-      .crop-text= invite.place_name
+    - if resource.is_a?(Venue)
+      .span6
+        .text-large= format_date_range(invite.event.start_at, invite.event.end_at, date_only: true)
+        .crop-text
+          = invite.campaign_name
 
-    .span2
-      .text-large= invite.venue.jameson_locals? ? 'Yes' : 'No'
-      | Jameson Locals
-    .span2
-      .text-large= invite.venue.top_venue? ? 'Yes' : 'No'
-      | Top 100
-    .span1
-      .text-large= invite.invitees
-      | Invites
-    .span1
-      .text-large 11
-      | RSVPs
-    .span1
-      .text-large 12 
-      | Attendees
-    .span2
-      .text-large 12 
-      | Accounts Attended
+      .span2
+        .text-large= invite.invitees
+        | Invites
+      .span2
+        .text-large 12 
+        | Attendees
+      .span2
+        .text-large 12
+        | Accounts Attended
 
-  div.resource-item-actions
+    - else
+      .span3
+        .text-large= invite.place_name
+        .crop-text= format_date_range(invite.event.start_at, invite.event.end_at, date_only: true)
+
+      .span2
+        .text-large= invite.venue.jameson_locals? ? 'Yes' : 'No'
+        | Jameson Locals
+
+      .span2
+        .text-large= invite.venue.top_venue? ? 'Yes' : 'No'
+        | Top 100
+
+      .span1
+        .text-large= invite.invitees
+        | Invites
+      .span1
+        .text-large= invite.rsvps_count
+        | RSVPs
+      .span1
+        .text-large 12 
+        | Attendees
+      .span2
+        .text-large 12
+        | Accounts Attended
+
+    div.resource-item-actions
+
