@@ -7,6 +7,7 @@ $.widget 'nmk.activityForm', {
 			if $(e.target).val()
 				$.get "#{@options.formUrl}?activity[activity_type_id]=#{$(e.target).val()}", (result) =>
 					@element.html('').append $(result).find('.activity-form')
+					$('.activity-form .places-autocomplete').placesAutocomplete();
 					return
 
 			return

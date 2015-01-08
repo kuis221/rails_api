@@ -1,13 +1,13 @@
 #form-container
   .activity-form
     = simple_form_for [resource.new_record? ? parent : nil, resource], remote: true do |f|
-      - if activity_types.any?
+      - if activity_types.any? 
         = f.error_notification
         = resource.errors.full_messages.join("<br />").html_safe
 
         .form-inputs
           .large-inputs class="form_field_dropdown"
-            = f.input :activity_type_id, collection: activity_types, input_html: {class: 'chosen-enabled'}, disabled: (resource.new_record? ? false : true)
+            = f.input :activity_type_id, collection: activity_types, input_html: { class: 'chosen-enabled' }, disabled: (resource.new_record? ? false : true)
 
         - if resource.activity_type.present?
           .large-inputs class="form_field_dropdown"
@@ -36,7 +36,7 @@
           .form-actions
             = f.button :button, 'Cancel', class: 'btn btn-cancel'
       - else
-        p There are not activity types available.
+        p There are no activity types available.
 
         .form-actions
           = f.button :button, 'Cancel', class: 'btn btn-cancel'

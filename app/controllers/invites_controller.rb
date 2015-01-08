@@ -1,5 +1,5 @@
 class InvitesController < InheritedResources::Base
-  belongs_to :event, :venue
+  belongs_to :event, :venue, optional: true
 
   respond_to :js, only: [:new, :create, :edit, :update]
 

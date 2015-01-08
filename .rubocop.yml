@@ -1,9 +1,7 @@
 require: rubocop-rspec
 Metrics/LineLength:
   Max: 150
-Metrics/AbcSize:
-  Max: 30
-Cop/Style/CyclomaticComplexity:
+Metrics/CyclomaticComplexity:
   Max: 10
 AllCops:
   RunRailsCops: true

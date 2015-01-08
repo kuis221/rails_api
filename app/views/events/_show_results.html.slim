@@ -5,7 +5,7 @@
     #event-results-container.details_box.box_event_data
       = render 'results_event_data'
 
-- if can?(:show, Activity) && resource.campaign.activity_types.any?
+- if can?(:show, Activity) && (resource.campaign.activity_types.any? || enabled_modules.include?('rsvp'))
   #event-activities.details_box
     = render 'activities'
 

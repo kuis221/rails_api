@@ -1,0 +1,21 @@
+#form-container
+  .activity-form
+    = simple_form_for [parent, @invite], remote: true do |f|
+      .form-inputs
+        .large-inputs class="form_field_dropdown"
+          = select_tag 'activity_type_id', options_for_select(activity_types), class: 'chosen-enabled', disabled: (f.object.new_record? ? false : true)
+
+      .form-inputs.edit-invite
+        .row-fluid.google-places
+          = f.error :place
+          = f.input :place_reference, :as => :location, required: true, label: 'Place', input_html: { display_value: params[:place_reference_display_name] || f.object.place_name_with_location, placeholder: 'Search for places' }
+
+        = f.input :invitees, input_html: { placeholder: 'Number of invitees' }
+
+      .form-actions
+        = f.button :submit, class: 'btn btn-primary', data: { disable_with: 'Please wait...' }
+        = "&nbsp;".html_safe
+        = f.button :button, 'Cancel', class: 'btn btn-cancel'
+
+javascript:
+  $('.modal .places-autocomplete').placesAutocomplete();
