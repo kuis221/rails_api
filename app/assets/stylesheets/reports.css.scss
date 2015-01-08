@@ -236,7 +236,7 @@ ul.reports-list {
 				&.ui-sortable-placeholder {
 					height: 2px;
 					opacity: 1;
-					background-color: $grey_three;
+					background-color: $gray;
 					border-radius: 0;
 					visibility: visible !important;
 					padding: 0;
@@ -378,14 +378,14 @@ ul.reports-list {
 		}
 	}
 	.report-field:hover,  .report-field.settings-open, .ui-draggable-dragging, .ui-sortable-helper {
-		background-color: $grey_one;
+		background-color: $gray-lighter;
 	}
 
 	.report-field-settings {
 		width: 190px;
 		.report-field-settings-inner {
 			padding: 0 0 5px 0;
-			background-color: $grey_one;
+			background-color: $gray-lighter;
 			border-radius: 5px;
 		}
 		input, select {
@@ -404,7 +404,7 @@ ul.reports-list {
 			margin-left: 150px;
 			border-left: 10px solid transparent;
 			border-right: 10px solid transparent;
-			border-bottom: 10px solid $grey_one;
+			border-bottom: 10px solid $gray-lighter;
 		}
 		.arrow-down {
 			width: 0;
@@ -412,7 +412,7 @@ ul.reports-list {
 			margin-left: 150px;
 			border-left: 10px solid transparent;
 			border-right: 10px solid transparent;
-			border-top: 10px solid $grey_one;
+			border-top: 10px solid $gray-lighter;
 		}
 		&.on-top {
 			.arrow-up {display: none; }
@@ -426,7 +426,7 @@ ul.reports-list {
 			padding: 6px 10px;
 			&:hover {
 				text-decoration: none;
-				background-color: $grey_three;
+				background-color: $gray;
 				color: #fff;
 			}
 			&:first-child {

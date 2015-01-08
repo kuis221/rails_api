@@ -2,8 +2,6 @@
 
 @import "variables";
 
-$chzn-single-height:39px;
-
 .chzn-container {
 	position: relative;
 	display: inline-block;
@@ -283,7 +281,7 @@ select.chosen-enabled{
 				line-height: 13px;
 				cursor: default;
 				.search-choice-close {
-					color: $grey_four;
+					color: $gray-light;
 					display: block;
 					font-size: 10px;
 					position: absolute;
@@ -331,7 +329,7 @@ select.chosen-enabled{
 
 .chzn-container-active {
 	.chzn-single {
-		border: 1px solid $grey_four;
+		border: 1px solid $gray-light;
 		box-shadow: 0 0 5px rgba(0, 0, 0, 0);
 		background: white;
 		color: $text;

@@ -62,7 +62,7 @@ body.app-layout {
 			height: 20px;
 			width: 20px;
 			border: 0;
-			background-color: $blue;
+			background-color: $primary-blue;
 			&:after {
 				color: white;
 			}
@@ -74,9 +74,9 @@ body.app-layout {
 
 	label.radio div.radio {
 		span.checked {
-			border: 4px solid $blue;
+			border: 4px solid $primary-blue;
 			&:after{
-				background-color: $blue;
+				background-color: $primary-blue;
 			}
 		}
 	}

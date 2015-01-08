@@ -10,7 +10,7 @@
 	.folder-item .resource-item-link{
 		font-size: 14px;
 		i{
-			color: $grey_four;
+			color: $gray-light;
 			font-size: 25px;
 			margin-right: 15px;
 			position: relative;
@@ -21,7 +21,7 @@
 
 .document-icon {
 	background-color:white;
-	border: 1px solid $grey_four;
+	border: 1px solid $gray-light;
 	color: #bbbbbb;
 	width: 30px;
 	height: 30px;
@@ -36,7 +36,7 @@
 		color: $adobe-ai-file;
 	}
 	&.docx{
-		color: $light-blue;
+		color: $primary-blue;
 	}
 	&.xls, &.xlsx {
 		color: $xls-file;
@@ -57,7 +57,7 @@
 		color: $adobe-indd-file;
 	}
 	&.mp3, &.wav, &.aif{
-		color: $purple;
+		color: $light-purple;
 	}
 	&.zip, &.rar{
 		color: $brand;
@@ -65,7 +65,7 @@
 }
 
 .document-image-preview {
-	border: 1px solid $grey_four;
+	border: 1px solid $gray-light;
 	float:left;
 	margin-right: 15px;
 	width: 30px;
@@ -83,7 +83,7 @@
 
 #new-folder-form { /*Create a new folder grey zone*/
 
-	background-color: $grey_one;
+	background-color: $gray-lighter;
 	max-height: 70px;
 
 	.new_document_folder{
@@ -113,19 +113,19 @@
 		height: 36px;
 		width: 255px;
 		&::-webkit-input-placeholder {
-			color: $grey_four;
+			color: $gray-light;
 		}
 
 		&:-moz-placeholder { /* Firefox 18- */
-			color: $grey_four;
+			color: $gray-light;
 		}
 
 		&::-moz-placeholder {  /* Firefox 19+ */
-			color: $grey_four;
+			color: $gray-light;
 		}
 
 		&:-ms-input-placeholder {
-			color: $grey_four;
+			color: $gray-light;
 		}
 	}
 }
@@ -142,7 +142,7 @@
 		}
 	}
 	i.icon-angle-right{
-		color: $grey_one;
+		color: $gray-lighter;
 		margin-left: 8px;
 		position: relative;
 		top: 3px;

@@ -1,4 +1,6 @@
 @import "variables";
+
+
 @media (min-width: 979px) {
 	.main-nav-collapse {
 		display: none;
@@ -69,7 +71,7 @@
 
 	.video-modal {
 		max-width: 80%;
-		width: 700px;		
+		width: 700px;
 	}
 
 	body.app-layout {
@@ -91,6 +93,8 @@
 	.collection-list-description {
 		margin-left: 10px;
 		margin-bottom: 10px;
+		top: 113px;
+		width: calc(100% - 20px);
 	}
 
 	#gender-graph {
@@ -245,6 +249,7 @@
 	.collection-list-description {
 		margin-left: 0;
 		margin-right: 0;
+		width: calc(100% - 10px);
 	}
 
 	.resource-list .resource-item  {
