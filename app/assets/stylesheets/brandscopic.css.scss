@@ -1,8 +1,6 @@
 @import "variables";
 @import "mixins";
 
-$footer-height: 35px;
-
 //
 // Brandscopic Specific Styles
 // --------------------------------------------------
@@ -47,7 +45,7 @@ a{
 	&.btn{
 		font-weight: normal;
 		&:hover {
-			color: white;
+			color: $white;
 		}
 	}
 	&.more-options-link{
@@ -64,7 +62,6 @@ a{
 .link{
 	&.link-blue{
 		&:hover{
-			color: $blue;
 			text-decoration:underline;
 		}
 	}
@@ -154,7 +151,7 @@ body{
 			color:$brand;
 		}
 		h2{
-			color:white;
+			color:$white;
 		}
 	}
 	&.sessions, &.passwords{
@@ -314,7 +311,6 @@ body{
 	}
 	i{
 		font-size: 20px;
-		left: 2px;
 		position: relative;
 		margin-top: 0;
 	}
@@ -350,6 +346,7 @@ body.events.show{
 }
 
 .navbar-fixed-top {
+	z-index: 120000;
 	.container {
 		width: 100%;
 	}
@@ -376,7 +373,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 .input-append .add-on, .input-prepend .add-on {
 	background-color: silver;
 	border: 1px solid silver;
-	color: white;
+	color: $white;
 	height: 20px;
 	text-shadow: none;
 	width: 34px;
@@ -410,7 +407,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	}
 }
 .progress{
-	background-color: $grey_one !important;
+	background-color: $gray-lighter !important;
 	background-image: none !important;
 	border-radius: 0!important;
 	box-shadow: none !important;
@@ -487,14 +484,14 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 .alert{
 	border: red;
 	border-radius: 0px;
-	color: white;
+	color: $white;
 	margin: 0px;
 	text-shadow:none;
 	-webkit-border-radius: 0px;
 	@include box-sizing(border-box);
 	width: 100%;
 	a{
-		color: white !important;
+		color: $white !important;
 		text-decoration: underline !important;
 		&.icon-close{
 			top: -3px;
@@ -505,20 +502,20 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	&.alert-info, &.alert-grey{
 		background-color: $brand;
 		&.submitted{
-			background-color: $venues_blue;
+			background-color: $primary-blue;
 		}
 	}
 	&.alert-success{
 		background-color: $complete;
 	}
 	&.alert-info {
-		background-color: $alert_blue;
+		background-color: $primary-blue;
 	}
 	&.alert-notice {
-		background-color: $alert_blue;
+		background-color: $primary-blue;
 	}
 	&.alert-alert {
-		background-color: $alert_red;
+		background-color: $primary-red;
 	}
 }
 
@@ -530,29 +527,31 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 
 .alert-danger, .alert-error {
 	background-color: $buttons;
-	color: white;
+	color: $white;
 }
 
 .collection-list-description {
 	background-color: $brand;
 	box-shadow: none;
-	color: white;
+	color: $white;
 	font-size: 14px;
 	min-height: 37px;
 	line-height: 30px;
 	margin: 0 10px 0 90px;
-	padding: 8px 20px 5px 21px;
-	position: relative;
+	padding: 7px 20px 6px 21px;
+	position: fixed;
 	-webkit-border-radius: 0px 0px 8px 8px;
 	border-radius: 0px 0px 8px 8px;
 	box-sizing: border-box;
+	width: calc(100% - 100px);
+	z-index: 300;
 	.filter-label{
 		&>div {
 			display: inline-block;
 			width: 95%;
 		}
 		a {
-			color: white;
+			color: $white;
 			&#clear-filters {
 				vertical-align: top;
 			}
@@ -560,19 +559,22 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		.filter-item{
 			display: inline-block;
 			border: 1px solid $borders;
-			margin: 0 5px 3px 0;
+			margin-left: 4px;
 			padding: 0 10px;
 			font-size: 12px;
+			text-transform: capitalize;
 			white-space: nowrap;
 			@include border-radius (3px);
 			&:hover {
-				border-color: white;
+				border-color: $white;
 			}
 			a.icon-close {
 				font-size: 11px;
 				margin-left: 10px;
 				margin-right: -5px;
-				margin-top: 4px;
+				margin-top: 10px;
+				float: right;
+				position: relative;
 			}
 
 			.full {
@@ -580,7 +582,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			}
 
 			.empty {
-	    	color: $grey_one;
+	    	color: $gray-lighter;
 		  }
 		}
 	}
@@ -614,7 +616,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		font-size: 11px;
 		color: transparent !important;
 		&:before{
-			color: white;
+			color: $white;
 		}
 	}
 
@@ -641,12 +643,12 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		}
 	}
 	.datepick{
-		background-color: white;
+		background-color: $white;
 		border: 0;
 		margin-bottom: 10px;
 	}
 	.datepick-month td .datepick-other-month {
-		color: $grey_one;
+		color: $gray-lighter;
 	}
 	.datepick-month{
 		border: 0;
@@ -666,9 +668,9 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			}
 		}
 		th{
-			background-color: white;
+			background-color: $white;
 			border: 0;
-			color:$grey_three;
+			color:$gray;
 			font-size: 11px;
 			font-weight: bold;
 			padding-top: 5px;
@@ -712,17 +714,17 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			height: 26px;
 			position: relative;
 			&.datepick-highlight{
-				background-color: white;
+				background-color: $white;
 			}
 			&.datepick-today{
 				background-color: $brand;
-				color: white;
+				color: $white;
 				font-size: 0.86em;
 				font-weight: 300;
 				opacity:1;
 				&:hover{
 					background-color: $brand;
-					color: white;
+					color: $white;
 				}
 			}
 			&.datepick-event{
@@ -742,7 +744,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			}
 			&:hover{
 				display: block;
-				background-color: $grey_one;
+				background-color: $gray-lighter;
 				color: $text;
 				text-decoration: none;
 				&:before{
@@ -754,7 +756,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	.datepick-month td .datepick-selected {
 		background-color: #3e9ccf;
 		border-radius: 0;
-		color: white;
+		color: $white;
 		font-weight: 400;
 		&.datepick-today{
 			background-color: #3381a8;
@@ -783,10 +785,10 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		}
 
 		&:hover{
-			background-color: $blue;
+			background-color: $primary-blue;
 		}
 		&.first-selected.last-selected{
-			background-color: $blue;
+			background-color: $primary-blue;
 		}
 		&.first-selected{
 			-webkit-border-top-left-radius: 14px;
@@ -812,11 +814,11 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		}
 	}
 	.datepick-month td, .datepick-month a, .datepick-weekend {
-		background-color: white; /*changed*/
+		background-color: $white; /*changed*/
 	}
 	.datepick-month-header{
 		background-color:$brand;
-		color: white;
+		color: $white;
 		font-weight: normal;
 		height:25px;
 		line-height: 16px;
@@ -840,11 +842,11 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		a{
 			color: $brand;
 			&:hover, &.active{
-				color: $blue;
+				color: $primary-blue;
 				text-decoration: underline;
 			}
 			&.dropdown-toggle{
-				border: 1px solid $grey_four;
+				border: 1px solid $gray-light;
 				box-sizing: border-box;
 				@include border-radius (6px);
 				color: $text;
@@ -903,7 +905,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			-webkit-box-shadow: none;
 			&:before{
 				content: '';
-				background: white;
+				background: $white;
 				height: 12px;
 				width: 12px;
 				position: absolute;
@@ -926,7 +928,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			li{
 				padding: 6px 18px;
 				&.default-ranges{
-					border-bottom: 1px solid $grey_four;
+					border-bottom: 1px solid $gray-light;
 					padding-bottom:10px;
 					.range-date{
 						display:inline-block;
@@ -980,10 +982,10 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 				-webkit-border-radius: 6px;
 				border-radius: 6px;
 				a{
-					color: white;
+					color: $white;
 					&:hover{
 						border-bottom: 0;
-						color: $grey_two;
+						color: $app_bg;
 					}
 				}
 			}
@@ -1035,7 +1037,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	margin: 1px 0 25px 0;
 	position: relative;
 	a, button{
-		color:white;
+		color:$white;
 	}
 	.download-photos-counter {
 		left: auto;
@@ -1058,6 +1060,9 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	.btn.download {
 		margin: 0px 3px;
 		text-decoration: none;
+		.icon-plus{
+			line-height: 19px;
+		}
 	}
 	.fullscreen-link{
 		margin: 0px 0 0 15px;
@@ -1065,9 +1070,19 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	}
 	.btn-download {
 		display: inline-block;
-		.icon-arrow-down:before {
-			top: 3px;
-			right: -12px;
+		.btn{
+			padding: 8px 10px;
+		}
+		i{
+			line-height: 19px;
+		}
+		.icon-download{
+			margin-left: 5px;
+		}
+		.icon-arrow-down-small{
+			font-size: 11px;
+			float: right;
+			margin: 0 0 0 12px;
 		}
 		.download-options-menu {
 			right: 0;
@@ -1128,8 +1143,8 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		input[type="password"],
 		input[type="email"],
 		.uneditable-input {
-			background-color: $grey_one !important;
-			border: $grey_one;
+			background-color: $gray-lighter !important;
+			border: $gray-lighter;
 			font-size: 13px;
 			height: 42px;
 			margin-bottom: 12px;
@@ -1289,13 +1304,13 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			}
 		}
 		input[type="text"]{
-			background-color: white !important;
+			background-color: $white !important;
 			box-shadow: none !important;
 			width: 250px;
 		}
 		input[type="email"],input[type="tel"],input#user_street_address[type="text"]
 		,input#user_unit_number[type="text"],input[type="password"]{
-			background-color: white !important;
+			background-color: $white !important;
 			width:556px !important;
 		}
 		input[type="password"]{
@@ -1320,15 +1335,15 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	}
 	input:-moz-placeholder,
 	textarea:-moz-placeholder {
-		color: $grey_three;
+		color: $gray;
 	}
 	input:-ms-input-placeholder,
 	textarea:-ms-input-placeholder {
-		color: $grey_three;
+		color: $gray;
 	}
 	input::-webkit-input-placeholder,
 	textarea::-webkit-input-placeholder {
-		color: $grey_three;
+		color: $gray;
 	}
 	.brand{
 		background-image: image-url('brand.svg');
@@ -1476,8 +1491,8 @@ footer{
 			margin-bottom: 0;
 		}
 		.survey-box, .thanks-box{
-				background-color: $grey_one;
-			border: 1px solid $grey_four;
+				background-color: $gray-lighter;
+			border: 1px solid $gray-light;
 			color: $brand;
 			line-height: 16px;
 			-webkit-border-radius: 6px;
@@ -1490,7 +1505,7 @@ footer{
 			width: 190px;
 			&:after{
 					content: '';
-					background: $grey_one;
+					background: $gray-lighter;
 					height: 15px; width: 15px;
 					position: absolute;
 					bottom: -7px;
@@ -1512,7 +1527,7 @@ footer{
 				margin-bottom: 9px;
 			}
 			textarea{
-				background-color: white !important;
+				background-color: $white !important;
 				-webkit-border-radius: 6px;
 				-moz-border-radius: 6px;
 				border-radius: 6px;
@@ -1580,6 +1595,10 @@ footer{
 // HEADER STYLES
 // --------------------------------------------------
 
+.navbar .nav > .active > a, .navbar .nav > .active > a:hover, .navbar .nav > .active > a:focus{
+	box-shadow: none;
+}
+
 header{
 	&.navbar-inverse {
 		.nav > li > a{
@@ -1608,18 +1627,18 @@ header{
 				}
 
 				ul.dropdown-menu{
-					background-color: $alert_grey;
+					background-color: $gray;
 					box-shadow: none;
 					margin-top: 12px;
 					border:1px solid #707070;
 					li{
 						a {
-							color: $grey_two;
+							color: $app_bg;
 							font-size: 13px;
 							font-weight: bold;
 							padding: 6px 15px;
 							span{
-								color: $grey_two;
+								color: $app_bg;
 								font-size: 15px;
 								margin-right: 10px;
 								position: relative;
@@ -1629,21 +1648,30 @@ header{
 								}
 							}
 							&:hover{
-								color: white;
+								color: $white;
 								background-color: $menu;
 								span{
-									color: white;
+									color: $white;
 								}
 							}
 						}
 					}
 				}
 				li.dropdown.open,
-				li.dropdown.active,
 				li.dropdown.open.active {
 					&>.dropdown-toggle {
-						color: silver;
+						color: $silver;
 						background-color: $menu;
+					}
+				}
+				li.dropdown.active{
+					&> .dropdown-toggle{
+						color: $silver;
+						background-color: $header;
+						&:hover{
+							color: $white;
+							background-color: $gray-darker;
+						}
 					}
 				}
 				.dropdown-menu>li>a:hover,
@@ -1671,7 +1699,7 @@ header{
 						right: 8px !important;
 						left: auto !important;
 						&:before{
-							border-bottom: 10px solid $alert_grey;
+							border-bottom: 10px solid $gray;
 							left:155px;
 						}
 					}
@@ -1695,7 +1723,7 @@ header{
 						min-width: 200px;
 						left: -161px;
 						&:before{
-							border-bottom: 10px solid $alert_grey;
+							border-bottom: 10px solid $gray;
 							left: 170px;
 						}
 					}
@@ -1719,36 +1747,38 @@ li.dropdown a{
 	margin-bottom: 0;
 }
 
-.nav>li>a:focus{
-	background-color: $menu;
-	color:$grey_three;
-}
-
 .nav-tabs{
 	border-bottom: 0;
-}
-.nav-tabs li a{
-	background-color: $grey_one;
-	border: 0;
-	color: $brand;
-	text-align: center;
-	min-width: 92px;
-}
-.nav-tabs li a:hover{
-	background-color: $user_menu;
-	border-bottom: 0;
-	color: $grey_three;
-}
-.nav-tabs>.active>a{
-	color: $brand;
-	border-left: 0;
-	border-right: 0;
-	border-top: 0;
-	&:hover{
+	li a{
+		background-color: $gray-lighter;
+		border: 0;
 		color: $brand;
-		border-left:0;
+		text-align: center;
+		min-width: 92px;
+		&:hover{
+			background-color: $user_menu;
+			border-bottom: 0;
+			color: $brand;
+		}
+	}
+	&#permissions-tabs{
+		min-width: 80px;
+	}
+	&>.active>a{
+		color: $brand;
+		border-left: 0;
 		border-right: 0;
 		border-top: 0;
+		&:hover{
+			color: $brand;
+			border-left:0;
+			border-right: 0;
+			border-top: 0;
+		}
+		&:focus{
+			border:0;
+			color: $brand;
+		}
 	}
 }
 
@@ -1788,12 +1818,12 @@ li.dropdown a{
 			&:hover{
 				a{
 					background-color: $app_bg;
-					color: $grey_three;
+					color: $gray;
 				}
 			}
 		}
 		a{
-			color:$grey_three;
+			color:$gray;
 			box-sizing:border-box;
 			font-weight: bold;
 			padding: 20px 0 20px 0;
@@ -1926,7 +1956,7 @@ li#user_menu{
 li#notifications{
 	.notification-state{
 		background-color: #626763;
-		color: white;
+		color: $white;
 		border: 1px solid $header;
 		text-align:center;
 		font-size: 9px;
@@ -1951,7 +1981,7 @@ li#notifications{
 
 	&.has-notifications {
 		.dropdown-toggle:hover { color:  #fff; }
-		.notification-state { background-color:  $brand_red; }
+		.notification-state { background-color:  $primary_red; }
 	}
 
 	&.without-notifications ul {
@@ -2000,7 +2030,7 @@ li#notifications{
 	}
 
 	.dropdown-menu{
-		background-color: $grey_one;
+		background-color: $gray-lighter;
 		border: 1px solid #d5d5d5;
 		box-shadow: none;
 		margin-top: 22px;
@@ -2015,7 +2045,7 @@ li#notifications{
 		}
 		&:before {
 			left: 199px;
-			border-bottom: 10px solid $grey_one;
+			border-bottom: 10px solid $gray-lighter;
 		}
 		ul {
 			border-collapse: collapse;
@@ -2036,13 +2066,13 @@ li#notifications{
 					border-top: 0;
 				}
 				&.red {
-					background-color: $alert_red;
+					background-color: $primary-red;
 					&:hover{
 						background-color: #cc4137;
 					}
 				}
 				&.blue {
-					background-color: $alert_blue;
+					background-color: $primary-blue;
 					&:hover{
 						background-color: #3990bf;
 					}
@@ -2061,7 +2091,7 @@ li#notifications{
 					width: 220px;  /* leave room for the scrollbar */
 					line-height: 16px;
 					span{
-						color: $grey_one;
+						color: $gray-lighter;
 					}
 				}
 
@@ -2071,13 +2101,13 @@ li#notifications{
 					.icon-notification-comment:before, .icon-notification-campaign:before,
 					.icon-notification-action:before, .icon-notification-group:before,
 					.icon-notification-venue:before, .icon-angle-right:before{
-						color:white;
+						color:$white;
 					}
 				}
 
 				// Icons
 				a{
-					color: white;
+					color: $white;
 					font-size: 11px;
 					display: table-cell;
 					vertical-align: middle;
@@ -2129,7 +2159,7 @@ li#notifications{
 }
 
 .main{
-	background-color: white;
+	background-color: $white;
 	box-sizing: border-box;
 	margin-right: 240px;
 	padding: 13px 10px 10px 10px;
@@ -2144,7 +2174,7 @@ li#notifications{
 	}
 }
 .sidebar{
-	background:white;
+	background:$white;
 	float: right;
 	min-height: 300px;
 	padding:14px 11px 18px 11px;
@@ -2206,7 +2236,7 @@ li#notifications{
 
 #kpis-trends-bars {
 	a{
-		color:$grey_three;
+		color:$gray;
 		font-size: 12px;
 		&:hover{
 			text-decoration: underline;
@@ -2297,14 +2327,14 @@ li#notifications{
 				margin-right: 5px;
 				&.today-label {
 					width: auto;
-					color: $grey_one;
+					color: $gray-lighter;
 				}
 			}
 			.executed-label{
 				padding-right: 10px;
 			}
 			.executed-label span {color: $green; font-weight: bold;}
-			.submitted-label span {color: $venues_blue; font-weight: bold;}
+			.submitted-label span {color: $primary-blue; font-weight: bold;}
 			.rejected-label span {color: $rejected; font-weight: bold;}
 		}
 		.progress {
@@ -2348,8 +2378,8 @@ li#notifications{
 				color: $rejected !important;
 			}
 			.bar-scheduled {
-				background-color: $venues_blue !important;
-				color: $venues_blue !important;
+				background-color: $primary-blue !important;
+				color: $primary-blue !important;
 			}
 			&.gva{
 				margin-bottom: -5px !important;
@@ -2359,7 +2389,7 @@ li#notifications{
 		.today-line-indicator {
 			position: absolute;
 			width: 0;
-			background-color: $grey_three;
+			background-color: $gray;
 			height: 0;
 			top: -5px;
 			cursor: default;
@@ -2397,7 +2427,7 @@ li#notifications{
 				font-weight: 400;
 			}
 			.progress-numbers {
-				color: $grey_three;
+				color: $gray;
 				font-size: 12px;
 				b {
 					color: $brand;
@@ -2445,7 +2475,7 @@ li#notifications{
 				line-height: 9px;
 			}
 			&.over-goal b {
-				color: $alert_red;
+				color: $primary-red;
 			}
 		}
 	}
@@ -2462,11 +2492,11 @@ div.loading-spinner, li.loading-spinner {
 }
 .search-filter-label,
 input.search-query {
-	background-color: $grey_one !important;
+	background-color: $gray-lighter !important;
 	background-image: image-url('search-grey.svg');
 	background-position: center right;
 	background-repeat: no-repeat;
-	border: 1px solid $grey_one;
+	border: 1px solid $gray-lighter;
 	box-shadow: none;
 	color: $text;
 	font-family: $baseFontFamily;
@@ -2482,7 +2512,7 @@ input.search-query {
 	border-radius: 6px;
 	width:207px;
 	&:focus{
-		border: 1px solid $grey_four !important;
+		border: 1px solid $gray-light !important;
 	}
 }
 
@@ -2530,15 +2560,19 @@ input.search-query:focus{
 	color: $text;
 	position: relative;
 	padding: 5px 0;
+
 	&.ui-corner-all{
 		-webkit-border-radius: 6px !important;
 		border-radius: 6px !important;
 	}
 }
 ul.ui-widget-content{
-	background: $grey_one !important;
-	border: 1px solid $grey_four !important;
+	background: $gray-lighter !important;
+	border: 1px solid $gray-light !important;
 	margin-top: 10px;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	max-height: 250px;
 }
 .ui-menu{
 	li{
@@ -2552,14 +2586,14 @@ ul.ui-widget-content{
 					background-color: $tooltip !important;
 					background-image: none !important;
 					border:0;
-					color:white;
+					color:$white;
 					font-weight: normal;
 					padding: 5px 10px;
 					&.ui-corner-all{
 						border-radius: 0px !important;
 					}
 					i{
-						color: white;
+						color: $white;
 						font-weight: normal !important;
 					}
 				}
@@ -2585,11 +2619,11 @@ ul.ui-widget-content{
 		background-image: none !important;
 		border:0 !important;
 		border-radius: 0px !important;
-		color: white;
+		color: $white;
 		font-weight: normal !important;
 		padding: 8px 10px !important;
 		i{
-			color: white !important;
+			color: $white !important;
 		}
 	}
 }
@@ -2640,11 +2674,11 @@ ul.ui-widget-content{
 			font-size: 13px;
 			padding: 6px 15px;
 			&:hover{
-				color: white;
+				color: $white;
 			}
 		}
 		&>.dropdown-menu{
-			background-color: $alert_grey;
+			background-color: $gray;
 			border: 1px solid #707070;
 			-webkit-box-shadow: none;
 			-moz-box-shadow: none;
@@ -2652,7 +2686,7 @@ ul.ui-widget-content{
 			left: -13px;
 			margin: 15px 0 0;
 			&:before{
-				border-bottom: 10px solid $alert_grey;
+				border-bottom: 10px solid $gray;
 				left: 230px;
 			}
 		}
@@ -2728,7 +2762,7 @@ ul.ui-widget-content{
 		      color: #CBBB26;
 		    }
 		    .empty {
-		    	color: $grey_one;
+		    	color: $gray-lighter;
 		    }
 
 		    .icon-star {
@@ -2779,7 +2813,7 @@ ul.ui-widget-content{
 		left: -220px;
 		bottom: -28px;
 		z-index: 1000;
-		background: white;
+		background: $white;
 		-webkit-border-radius: 6px;
 		-moz-border-radius: 6px;
 		border-radius: 6px;
@@ -2805,7 +2839,7 @@ ul.ui-widget-content{
 				}
 				label:hover{
 					background-color: $brand;
-					color: white;
+					color: $white;
 				}
 				white-space: normal;
 			}
@@ -2879,7 +2913,7 @@ ul.ui-widget-content{
 		width: 99%;
 		padding: 10px 0 5px 16px;
 		text-decoration: none;
-		color: $grey_one;
+		color: $gray-lighter;
 	}
 	.icon-close {
 		position: absolute;
@@ -2898,7 +2932,7 @@ ul.ui-widget-content{
 		font-size: 14px;
 		text-decoration: none;
 		h3 {
-			color: $grey_one;
+			color: $gray-lighter;
 			font-size: 16px;
 			display: inline-block;
 			margin-bottom: 0;
@@ -2930,10 +2964,6 @@ ul.ui-widget-content{
 	}
 	.icon-edit{
 		margin: 0 0 0 15px;
-	}
-	.icon-rounded-disable{
-		position:relative;
-		top:1px;
 	}
 }
 
@@ -3060,10 +3090,10 @@ ul.ui-widget-content{
 		&.error {
 			.input-append, .input-prepend {
 				input[type="text"]{
-					border-color: $alert_red !important;
+					border-color: $primary-red !important;
 				}
 				span.add-on{
-					background-color: $alert_red;
+					background-color: $primary-red;
 					color: #fff;
 				}
 			}
@@ -3131,7 +3161,7 @@ ul.ui-widget-content{
 		.help-inline {
 			float: left;
 			padding-left: 0;
-			color: $alert_red;
+			color: $primary-red;
 			font-size: 11px;
 		}
 		.help-inline.valid {
@@ -3176,7 +3206,7 @@ ul.ui-widget-content{
 				}
 				margin-bottom: 10px;
 				&.summation-total-field {
-					border-top: 2px solid $grey_four;
+					border-top: 2px solid $gray-light;
 					padding-top: 10px;
 					label {
 						text-align: right;
@@ -3281,7 +3311,7 @@ ul.ui-widget-content{
 
 .attachment-panel{
 	@include box-sizing(border-box);
-	border: 2px dashed $grey_one;
+	border: 2px dashed $gray-lighter;
 	color: $user_menu;
 	line-height: 17px;
 	padding: 40px 20px 20px;
@@ -3396,7 +3426,7 @@ body.company_users{
 	.user-role{
 		margin-bottom: 25px;
 		&:hover{
-			color:$grey_one;
+			color:$gray-lighter;
 		}
 	}
 
@@ -3414,9 +3444,9 @@ body.company_users{
 	}
 
 	.campaigns-group {
-		border: 1px solid $grey_one;
+		border: 1px solid $gray-lighter;
 		.campaigns-group-header {
-			border-bottom: 1px solid $grey_one;
+			border-bottom: 1px solid $gray-lighter;
 			padding: 5px;
 			width: auto;
 			.switch-toggle{
@@ -3549,7 +3579,7 @@ body.events.index {
 		}
 		&.result_number, &.result_currency {
 			.form-result-value {
-				color: $blue;
+				color: $primary-blue;
 				font-size: 22px;
 				font-weight:bold;
 			}
@@ -3586,7 +3616,7 @@ body.events.index {
 				display: block;
 				margin-top: 5px;
 				&:before {
-					color: $blue;
+					color: $primary-blue;
 					display: inline-block;
 					font-family: 'icons';
 					content: "\e624";
@@ -3631,14 +3661,14 @@ body.events.index {
 				min-height: 30px;
 				width: 300px;
 				.segment-value {
-					color: $blue;
+					color: $primary-blue;
 					text-align: right;
 					font-weight: bold;
 					font-size: 16px;
 				}
 			}
 			.summation-total {
-				border-top: 2px solid $grey_one;
+				border-top: 2px solid $gray-lighter;
 				margin-top: 5px;
 				padding-top: 10px;
 				text-align: right;
@@ -3710,7 +3740,7 @@ body.show {
 			width: 90%;
 			i{
 				background-color: #cccccc;
-				color: white;
+				color: $white;
 				display: inline-block;
 				height: 32px;
 				margin-right: 10px;
@@ -3951,7 +3981,7 @@ ul.thumbnails{
 				overflow:hidden;
 				width: 180px;
 				li a{
-					color: white;
+					color: $white;
 					float: right;
 					margin: 10px;
 					opacity: 1 !important;
@@ -3968,7 +3998,7 @@ ul.thumbnails{
 						position: relative;
 					}
 					&.icon-ok-circle:before{
-						color: $grey_one;
+						color: $gray-lighter;
 						font-size: 15px;
 					}
 				}
@@ -4039,7 +4069,7 @@ ul{
 .fancybox-wrap {
 	left:107px;
 	.fancybox-skin{
-		background-color: white;
+		background-color: $white;
 		padding: 60px;
 		width: auto;
 		height: auto;
@@ -4083,7 +4113,7 @@ ul{
 			a{
 				opacity:1;
 				&.icon-download:before{
-				color: $grey_one;
+				color: $gray-lighter;
 				content: "\e00b" !important;
 				display: inline-block;
 				font-family: 'icons';
@@ -4095,7 +4125,7 @@ ul{
 				-webkit-font-smoothing: antialiased;
 				}
 			&.icon-remove-circle:before{
-				color: $grey_one;
+				color: $gray-lighter;
 				content: "\e011" !important;
 				display: inline-block;
 				font-family: 'icons';
@@ -4107,7 +4137,7 @@ ul{
 				-webkit-font-smoothing: antialiased;
 				}
 			&.icon-ok-circle:before{
-				color: $grey_one;
+				color: $gray-lighter;
 				content: "\e00d" !important;
 				display: inline-block;
 				font-family: 'icons';
@@ -4183,7 +4213,7 @@ ul{
 
 body.roles{
 	table.table tbody tr:hover td{
-		background-color: white !important;
+		background-color: $white !important;
 	}
 
 }
@@ -4253,7 +4283,7 @@ body.roles{
 #areas-places {
 	.accordion-toggle {
 		&.icon-chevron-down, &.icon-chevron-right {
-			color: $grey_three;
+			color: $gray;
 		}
 		b {
 			color: $text;
@@ -4286,7 +4316,7 @@ body.roles{
 			}
 		}
 		.score{
-			color: $venues_blue;
+			color: $primary-blue;
 			margin-right: 15px;
 			width: 45px;
 			height: 50px;
@@ -4375,7 +4405,7 @@ body.roles{
 
 
 	#venue-score{
-		color: $venues_blue;
+		color: $primary-blue;
 		width: 100px;
 	}
 
@@ -4416,7 +4446,7 @@ body.roles{
 		}
 	}
 	input[type="text"]#venue-search-term, #venue-search-location{
-		background-color: white !important;
+		background-color: $white !important;
 		background-image: image-url('search2.svg');
 		background-position: center right;
 		background-repeat: no-repeat;
@@ -4700,7 +4730,7 @@ body.roles{
 
 #gender-graph{
 	.female, .male{
-		color: $venues_blue;
+		color: $primary-blue;
 		display: inline-block;
 		position: relative;
 		&:before{
@@ -4762,11 +4792,11 @@ table.table td.comments-container {
 	background-color: #ffffff !important;
 }
 .task-comments{
-	background-color: white;
+	background-color: $white;
 	border-top: 1px solid $borders;
 	vertical-align: top;
 	&:hover{
-		background-color: white;
+		background-color: $white;
 	}
 	p{
 		color:$menu;
@@ -4794,7 +4824,7 @@ table.table td.comments-container {
 		width:65%;
 	}
 	textarea{
-		background-color: white !important;
+		background-color: $white !important;
 		border:1px solid $user_menu;
 		color: $user_menu;
 		display: inline-block;
@@ -4825,7 +4855,7 @@ table.table td.comments-container {
 		color: $user_menu;
 	}
 	input[type="submit"].btn {
-		color: white;
+		color: $white;
 	}
 }
 
@@ -5051,13 +5081,13 @@ svg{
 
 .gva{
 	.loading-spinner {
-		background: white image-url('loading-circle.gif') center center no-repeat;
+		background: $white image-url('loading-circle.gif') center center no-repeat;
 	}
 }
 
 .campaigns_report, .snapshot_report, .staff_report {
 	.loading-spinner{
-		background: white image-url('loading-circle.gif') center center no-repeat;
+		background: $white image-url('loading-circle.gif') center center no-repeat;
 		display: block;
 		height: 50px;
 	}
@@ -5084,7 +5114,7 @@ svg{
 // CAMPAIGNS - TABS
 
 .campaigns_box{
-	background-color: white;
+	background-color: $white;
 	box-sizing: border-box;
 	margin-bottom: 10px;
 	padding: 30px 10px;
@@ -5109,7 +5139,7 @@ body.campaigns{
 // DETAILS PAGES
 
 .details_box {
-	background-color: white;
+	background-color: $white;
 	box-sizing: border-box;
 	margin-bottom: 10px;
 	padding: 23px 27px 30px 27px;
@@ -5205,7 +5235,7 @@ body.campaigns{
 			margin-top: 22px;
 		}
 		.worked_events{
-			color: $venues_blue;
+			color: $primary-blue;
 			font-size: 11px;
 			.number{
 				font-size: 16px;
@@ -5316,11 +5346,6 @@ body.campaigns{
 	label{
 		margin-bottom: 4px;
 	}
-	.link{
-		a{
-			text-decoration: underline;
-		}
-	}
 	.links-data{
 		a{
 			&.edit:after{
@@ -5380,7 +5405,7 @@ body.campaigns{
 		}
 	}
 	a{
-		color: $venues_blue;
+		color: $primary-blue;
 		text-decoration: none;
 		&.btn{
 			color: #fff;
@@ -5591,7 +5616,7 @@ margin: 45px 0 25px 25px;
 // REPORTS
 
 .report-kpi-chart-name {
-	color: $venues_blue;
+	color: $primary-blue;
 	float: left;
 	margin-top: 22px;
 	width:85px;
@@ -5615,7 +5640,7 @@ margin: 45px 0 25px 25px;
 		}
 
 		.bar-remaining {
-			color: $venues_blue;
+			color: $primary-blue;
 		}
 	}
 	span.legend {
@@ -5631,7 +5656,7 @@ margin: 45px 0 25px 25px;
 		width: 100px;
 		right: -110px;
 		top: 2px;
-		color: $venues_blue;
+		color: $primary-blue;
 	}
 }
 
@@ -5677,7 +5702,7 @@ margin: 45px 0 25px 25px;
 				}
 				&.active{
 					background-color: $brand;
-					color: $grey_one;
+					color: $gray-lighter;
 				}
 				&.campaign{
 					border-right: 1px solid $buttons-border;
@@ -6096,7 +6121,7 @@ table td.sub-level-1 {
 		}
 
 		i{
-			color: $grey_one;
+			color: $gray-lighter;
 			font-size: 16px;
 			margin-left: 10px;
 			margin-top: 12px;
@@ -6107,7 +6132,7 @@ table td.sub-level-1 {
 		&:hover {
 			background-color: #989898 !important;
 			a.ui-state-focus{
-				color: white;
+				color: $white;
 			}
 		}
 
@@ -6122,7 +6147,7 @@ table td.sub-level-1 {
 		}
 
 		&.invalid-place a {
-			color: $grey_one;
+			color: $gray-lighter;
 		}
 	}
 }
@@ -6142,6 +6167,12 @@ table td.sub-level-1 {
 .gallery {
 	margin: 0 -10px;
 	position: relative;
+	&.photo-results{
+		margin:0;
+		ul{
+			display: block;
+		}
+	}
 	&> ul {
 		display: flex;
 		flex-wrap: wrap;
@@ -6196,7 +6227,7 @@ table td.sub-level-1 {
 					list-style-type: none;
 					overflow:hidden;
 					a{
-						color: white;
+						color: $white;
 						font-size: 16px;
 						float: right;
 						margin: 0 10px 0 0;
@@ -6235,7 +6266,7 @@ table td.sub-level-1 {
 			background-color: #050505;
 			opacity: 0.75;
 			&.right:before, &.left:before{
-				color: white;
+				color: $white;
 				display: block;
 				font-size: 40px;
 				line-height: 63px;
@@ -6278,7 +6309,7 @@ table td.sub-level-1 {
 			}
 			&.right, &.left{
 				&:before{
-					color: white;
+					color: $white;
 					display: block;
 					font-family: 'icons';
 					font-size: 25px;
@@ -6308,7 +6339,7 @@ table td.sub-level-1 {
 					display: inline-block;
 				}
 				&.active {
-					outline: 1px solid white;
+					outline: 1px solid $white;
 					outline-offset: -1px;
 				}
 			}
@@ -6429,9 +6460,9 @@ table td.sub-level-1 {
 			border-width: 0px !important;
 		}
 		a{
-			color: white;
+			color: $white;
 			&.close-gallery {
-				color: white;
+				color: $white;
 				position: absolute;
 				right: 10px;
 				top: 15px;
@@ -6485,7 +6516,7 @@ table td.sub-level-1 {
 				position: absolute;
 				right: 0;
 				a{
-					color: $grey_two;
+					color: $app_bg;
 					font-size: 20px;
 					float: right;
 					margin: 10px;
@@ -6509,13 +6540,13 @@ table td.sub-level-1 {
 		width: 320px;
 		padding: 35px 20px;
 		background-color: $header;
-		color: white;
+		color: $white;
 		display: inline-block;
 		float: right;
 		min-height: 400px;
 
 		.icon-tag{
-			color: $grey_one;
+			color: $gray-lighter;
 			float: left;
 			top: 9px;
 			position: relative;
@@ -6526,7 +6557,7 @@ table td.sub-level-1 {
 			display: none;
 		}
 		.close{
-			color: white;
+			color: $white;
 			top: 7px;
 			opacity: 1;
 			right: 2px;
@@ -6578,7 +6609,7 @@ table td.sub-level-1 {
 			margin-left: 30px;
 			position: relative;
 			.typeahead {
-				border: 1px solid $grey_three !important;
+				border: 1px solid $gray !important;
 			}
 
 			.list{
@@ -6587,8 +6618,8 @@ table td.sub-level-1 {
 				.tag{
 					font-size: 11px;
 					font-weight: 900;
-					border: 1px solid $grey_one;
-					color: white;
+					border: 1px solid $gray-lighter;
+					color: $white;
 					display: inline-block;
 					margin: 6px 7px 0 0;
 					padding: 0px 5px 4px 5px;
@@ -6601,7 +6632,7 @@ table td.sub-level-1 {
 						border-left-width-ltr-source: physical;
 						border-left-width-rtl-source: physical;
 						border-left-width-value: 4px;
-						color: $grey_one;
+						color: $gray-lighter;
 						left: 1px;
 						right: 0;
 						top: 0;
@@ -6620,9 +6651,9 @@ table td.sub-level-1 {
 			}
 			.typeahead{
 				background-color: rgb(54,54,54);
-				border: 1px solid $grey_two;
+				border: 1px solid $app_bg;
 				box-sizing: border-box;
-				color: $grey_two;
+				color: $app_bg;
 				display: block;
 				height: 33px;
 				padding:3px 3px 0px 3px;
@@ -6648,13 +6679,13 @@ table td.sub-level-1 {
 				.select2-search-field{
 					height: 20px;
 					.select2-input{
-						color: white;
+						color: $white;
 						line-height: 24px;
 					}
 					input{
 						margin-left: 10px;
 						width: 193px !important;
-						color: $grey_two;
+						color: $app_bg;
 						font-size: 12px;
 						height: 20px;
 						&::-webkit-input-placeholder { /* WebKit browsers */
@@ -6712,7 +6743,7 @@ table.table.likert-scale-table {
 // ----------------------------------------------------------------------
 
 .new-feature{
-	background-color: $grey_one;
+	background-color: $gray-lighter;
 	border-radius: 5px;
 	color: $text;
 	margin-bottom: 10px;
@@ -6829,7 +6860,7 @@ table.table.likert-scale-table {
 		}
 	}
 	&.chzn-choices{
-		background: white !important;
+		background: $white !important;
 		border: 1px solid $user_menu;
 	}
 }
@@ -6887,7 +6918,7 @@ table.table.likert-scale-table {
 
 .searchable-field-list {
 	.field-search-input {
-		background-color: white !important;
+		background-color: $white !important;
 		border: 1px solid $user_menu;
 		height: 37px;
 		width: 100%;
@@ -6924,7 +6955,7 @@ table.table.likert-scale-table {
 	b {
 		margin-top: 10px;
 		display: block;
-		color: $grey_one;
+		color: $gray-lighter;
 		font-weight: normal;
 		&:first-child {
 			margin-top: 0px;

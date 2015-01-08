@@ -67,19 +67,19 @@
 		height: 250px;
 		max-height: 250px;
 		overflow: auto;
-		border: 1px solid $grey_one;
-		color: $grey_three;
+		border: 1px solid $gray-lighter;
+		color: $gray;
 
 		.progress {
 			height: 50px;
 			width: 100% !important;
 			position: relative;
 			background-color: #fff !important;
-			border-bottom: 1px solid $grey_one;
+			border-bottom: 1px solid $gray-lighter;
 			margin-bottom: 0;
 			.bar {
 				background-image: none !important;
-				background-color: $grey_two;
+				background-color: $app_bg;
 				box-shadow: none;
 				-webkit-box-shadow: none;
 				-moz-box-shadow: none;

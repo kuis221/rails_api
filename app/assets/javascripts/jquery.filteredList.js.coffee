@@ -148,6 +148,9 @@ $.widget 'nmk.filteredList', {
 		@initialized = true
 		@dateRange = false
 
+		$(window).on 'resize ready', () ->
+			marginFilterResize()
+
 		$(document).on 'click', (e) ->
 			$('.more-options-container').hide()
 		.on 'change', '.more-options-container input[type=checkbox]', (e) =>
@@ -1013,6 +1016,7 @@ $.widget 'nmk.filteredList', {
 							$('<a id="clear-filters" href="#" title="Reset">').text('Reset').on 'click', (e) =>
 								@_resetFilters()
 						);
+					marginFilterResize()
 
 					$response.remove()
 					$items.remove()
@@ -1030,7 +1034,6 @@ $.widget 'nmk.filteredList', {
 				@doneLoading = true
 
 		params = null
-
 		true
 
 	_pageLoaded: (page, response) ->
@@ -1126,3 +1129,12 @@ $.widget "custom.bucket_complete", $.ui.autocomplete, {
 			.append( $( "<a>" ).html( item.label ) )
 			.appendTo( ul )
 }
+
+marginFilterResize = () ->
+	marginTopFilter = $('.collection-list-description').outerHeight()
+	extra = 0
+	if $(".main-nav-collapse").is(":visible")
+		marginTopFilter += $('.main-nav-collapse').outerHeight() + 8
+		extra = 8
+	$('#application-content').css('margin-top', marginTopFilter + 'px')
+	$('#resource-close-details').css('top', marginTopFilter + 43 - extra) 

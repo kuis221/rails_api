@@ -30,7 +30,7 @@ $margin-right: 240px;
 		.form-builder-actions {
 			position: absolute;
 			top: 0;
-			border-bottom: 1px solid $grey_four;
+			border-bottom: 1px solid $gray-light;
 			border-top-right-radius: 5px;
 			padding: 18px 30px;
 			left: 0px;
@@ -164,7 +164,7 @@ $margin-right: 240px;
 				&.ui-sortable-placeholder {
 					height: 2px !important;
 					opacity: 1;
-					background-color: $grey_three;
+					background-color: $gray;
 					border-radius: 0;
 					visibility: visible !important;
 					padding: 0;
@@ -340,7 +340,7 @@ $margin-right: 240px;
 			border: none;
 
 			#kpis-fields.in {
-				border: 1px solid $grey_one;
+				border: 1px solid $gray-lighter;
 				padding: 3px;
 			}
 		}
@@ -380,7 +380,7 @@ $margin-right: 240px;
 		}
 
 		.field {
-			border: 1px solid $grey_four;
+			border: 1px solid $gray-light;
 			border-radius: 5px;
 			padding: 10px;
 			margin-bottom: 18px;
@@ -519,9 +519,9 @@ $margin-right: 240px;
 }
 
 .field-attributes-panel {
-	background-color: $grey_one;
+	background-color: $gray-lighter;
 	border-radius: 5px;
-	border: 1px solid $grey_four;
+	border: 1px solid $gray-light;
 	box-sizing: border-box;
 	padding: 15px 15px 5px 15px;
 	width:300px;
@@ -530,7 +530,7 @@ $margin-right: 240px;
 		background-color: #c2c2c2;
 		margin: 0 10px 0 0;
 		span.checked{
-			background-color:$alert_grey !important;
+			background-color:$gray !important;
 		}
 	}
 
@@ -654,7 +654,7 @@ $margin-right: 240px;
 			border-left: 8px solid transparent;
 			border-right: 8px solid transparent;
 
-			border-bottom: 8px solid $grey_four;
+			border-bottom: 8px solid $gray-light;
 			position: absolute;
 			top: -9px;
 			left: 145px;
@@ -665,7 +665,7 @@ $margin-right: 240px;
 				border-left: 8px solid transparent;
 				border-right: 8px solid transparent;
 
-				border-bottom: 8px solid $grey_one;
+				border-bottom: 8px solid $gray-lighter;
 				position: absolute;
 				top: 1px;
 				left: -8px;
@@ -680,7 +680,7 @@ $margin-right: 240px;
 			height: 0;
 			border-top: 8px solid transparent;
 			border-bottom: 8px solid transparent;
-			border-right: 8px solid $grey_four;
+			border-right: 8px solid $gray-light;
 			position: absolute;
 			top: 40px;
 			left: -9px;
@@ -690,7 +690,7 @@ $margin-right: 240px;
 				height: 0;
 				border-top: 10px solid transparent;
 				border-bottom: 10px solid transparent;
-				border-right: 10px solid $grey_one;
+				border-right: 10px solid $gray-lighter;
 				position: absolute;
 				top: -10px;
 				left: 1px;
