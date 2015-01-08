@@ -223,7 +223,7 @@ body{
 		font-size: 17px;
 		display: inline-block;
 		margin-right: 10px;
-		margin-top: 4px;
+		margin-top: 2px;
 		vertical-align: top;
 	}
 	span{
@@ -310,7 +310,6 @@ body{
 		margin-bottom: 0px;
 	}
 	i{
-		font-size: 20px;
 		position: relative;
 		margin-top: 0;
 	}
@@ -2893,7 +2892,7 @@ ul.ui-widget-content{
 	border-radius: 7px 7px 0px 0px;
 	position: absolute;
 	left: 0;
-	min-height: 40px;
+	min-height: 43px;
 	z-index: 200;
 	-webkit-border-radius: 7px 7px 0px 0px;
 	width: 100%;
@@ -5212,7 +5211,7 @@ body.campaigns{
 			span.indicator{
 				margin: 0 4px 0 auto;
 				&.today:before {
-					content: "\e004";
+					content: "\e607";
 					font-family: "icons";
 					font-size: 14px;
 					position: relative;
@@ -6834,15 +6833,7 @@ table.table.likert-scale-table {
 		.chzn-results{
 			li{
 				&.active-result{
-					padding: 9px 6px 9px 26px !important;
-					&.result-selected{
-						&:before{
-							content: "\e624";
-							font-family: 'icons';
-							position: absolute;
-							left:8px;
-						}
-					}
+					padding: 9px 6px 9px 9px !important;
 				}
 			}
 		}
