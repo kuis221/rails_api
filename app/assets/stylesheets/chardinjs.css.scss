@@ -61,7 +61,7 @@
 		padding-bottom: 5px;
 	}
 	&.chardinjs-right:before {
-		content: "\e028" !important;
+		content: "\e622" !important;
 		font-family: 'icons';
 		font-size: 60px;
 		display: inline-block;
@@ -69,21 +69,21 @@
 		position: absolute;
 	}
 	&.chardinjs-left:after {
-		content: "\e027" !important;
+		content: "\e621" !important;
 		font-family: 'icons';
 		font-size: 60px;
 		display: inline-block;
 		position: absolute;
 	}
 	&.chardinjs-inner-top:before, &.chardinjs-bottom:before {
-		content: "\e026" !important;
+		content: "\e620" !important;
 		font-family: 'icons';
 		font-size: 60px;
 		display: inline-block;
 		position: absolute;
 	}
 	&.chardinjs-top:after {
-		content: "\e029" !important;
+		content: "\e620" !important;
 		font-family: 'icons';
 		font-size: 60px;
 		display: inline-block;

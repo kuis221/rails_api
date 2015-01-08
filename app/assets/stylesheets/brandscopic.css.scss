@@ -2638,7 +2638,7 @@ ul.ui-widget-content{
 		text-decoration: none;
 		&.dropdown-toggle{
 			&:after{
-				content: "\e004";
+				content: "\e607";
 				color: $brand;
 				display: inline-block;
 				font-family: 'icons';
@@ -5467,7 +5467,7 @@ body.campaigns{
 .chardinjs-helper-layer[data-id="application-content"] {
 	.chardinjs-tooltip.chardinjs-top {
 		&:before {
-			content: "\e011";
+			content: "\e60f";
 			display: block;
 			left: -30px;
 			font-family: 'icons';
