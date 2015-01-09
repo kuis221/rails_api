@@ -137,7 +137,7 @@ select:focus:invalid:focus {
 // --------------------------------------------------
 
 .btn{
-	background-color: $user_menu;
+	background-color: $silver;
 	background-image: none;
 	border: 0;
 	box-shadow:none;
@@ -150,7 +150,8 @@ select:focus:invalid:focus {
 		box-shadow:none;
 	}
 	&:hover{
-		background-color: $user_menu;
+		background-color: $brand;
+		color: $white;
 	}
 	&:focus{
 		@extend .btn:hover;
