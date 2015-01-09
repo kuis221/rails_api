@@ -22,8 +22,8 @@ feature 'Activities management' do
   shared_examples_for 'a user that view the activiy details' do
     let(:activity) do
       create(:activity,
-                         company_user: company_user, activitable: event,
-                         activity_type: create(:activity_type, name: 'Test ActivityType', company: company, campaign_ids: [campaign.id]))
+             company_user: company_user, activitable: event,
+             activity_type: create(:activity_type, name: 'Test ActivityType', company: company, campaign_ids: [campaign.id]))
     end
 
     scenario 'can see all the activity info', js: true do
@@ -41,9 +41,9 @@ feature 'Activities management' do
     scenario "can see all the info of a venue's activity", js: true do
       venue = create(:venue, place: place)
       venue_activity = create(:activity,
-                                          company_user: company_user, activitable: venue,
-                                          campaign: campaign,
-                                          activity_type: create(:activity_type, name: 'Test ActivityType', company: company, campaign_ids: [campaign.id]))
+                              company_user: company_user, activitable: venue,
+                              campaign: campaign,
+                              activity_type: create(:activity_type, name: 'Test ActivityType', company: company, campaign_ids: [campaign.id]))
       visit activity_path(activity)
       expect(page).to have_selector('h2.special', text: 'Test ActivityType')
       expect(current_path).to eql activity_path(activity)
@@ -130,11 +130,11 @@ feature 'Activities management' do
       campaign.activity_types << activity_type
 
       activity = create(:activity,
-                                    activity_type: activity_type,
-                                    activitable: event,
-                                    campaign: campaign,
-                                    company_user: company_user,
-                                    activity_date: '08/21/2014'
+                        activity_type: activity_type,
+                        activitable: event,
+                        campaign: campaign,
+                        company_user: company_user,
+                        activity_date: '08/21/2014'
       )
 
       visit event_path(event)
@@ -416,13 +416,8 @@ feature 'Activities management' do
       activity_type = create(:activity_type, name: 'Activity Type #1', company: company)
       campaign.activity_types << activity_type
 
-      activity = create(:activity,
-                                    activity_type: activity_type,
-                                    activitable: venue,
-                                    campaign: campaign,
-                                    company_user: company_user,
-                                    activity_date: '08/21/2014'
-      )
+      create(:activity, activity_type: activity_type, activitable: venue, campaign: campaign,
+                        company_user: company_user, activity_date: '08/21/2014')
 
       visit venue_path(venue)
 

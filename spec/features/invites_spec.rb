@@ -2,7 +2,7 @@ require 'rails_helper'
 
 feature 'Invites', search: true, js: true do
   let(:company) { create(:company) }
-  let(:campaign) { create(:campaign, company: company, modules: { 'rsvp' => {} }) }
+  let(:campaign) { create(:campaign, company: company, modules: { 'attendance' => {} }) }
   let(:user) { create(:user, company: company, role_id: role.id) }
   let(:company_user) { user.company_users.first }
   let(:place) { create(:place, name: 'Guillermitos Bar', country: 'CR', city: 'Curridabat', state: 'San Jose', is_custom_place: true, reference: nil) }

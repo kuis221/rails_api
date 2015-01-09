@@ -13,7 +13,8 @@
   = resource_details_bar("You are viewing venue details. Click to close.")
 
   .details_box
-    - unless resource.latitude.nil? || resource.longitude.nil? 
+    - unless resource.latitude.nil? || resource.longitude.nil? || resource.longitude == 1.0
+      - p "Showing map"
       #venue-map-canvas.google-map data-latitude="#{resource.latitude}" data-longitude="#{resource.longitude}"
             b= resource.name
             br>/

@@ -35,8 +35,8 @@ FactoryGirl.define do
     sequence(:place_id)
     sequence(:reference) { |n| "$aojnoiweksadk-o19290f0i2ief0-#{n}" }
     formatted_address '123 My Street'
-    latitude nil
-    longitude nil
+    latitude 1
+    longitude 1
     zipcode '12345'
     city 'New York City'
     state 'NY'
