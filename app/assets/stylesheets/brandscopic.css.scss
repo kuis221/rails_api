@@ -566,6 +566,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			@include border-radius (15px);
 			&:hover {
 				border-color: $white;
+				cursor: pointer;
 			}
 			a.icon-close {
 				font-size: 10px;
@@ -6624,7 +6625,7 @@ table td.sub-level-1 {
 					color: $white;
 					display: inline-block;
 					margin: 6px 7px 0 0;
-					padding: 2px 6px 2px 10px;
+					padding: 1px 6px 1px 10px;
 					border-radius: 12px;
 					.close{
 						position: relative !important;
