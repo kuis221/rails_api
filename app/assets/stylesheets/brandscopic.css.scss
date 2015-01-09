@@ -484,6 +484,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	border: red;
 	border-radius: 0px;
 	color: $white;
+	line-height: 20px;
 	margin: 0px;
 	text-shadow:none;
 	-webkit-border-radius: 0px;
@@ -493,8 +494,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		color: $white !important;
 		text-decoration: underline !important;
 		&.icon-close{
-			top: -3px;
-			right: -10px;
+			right: 0;
 			font-size: 14px;
 		}
 	}
@@ -543,7 +543,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	border-radius: 0px 0px 8px 8px;
 	box-sizing: border-box;
 	width: calc(100% - 100px);
-	z-index: 300;
+	z-index: 120000;
 	.filter-label{
 		&>div {
 			display: inline-block;
@@ -566,6 +566,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			@include border-radius (15px);
 			&:hover {
 				border-color: $white;
+				cursor: pointer;
 			}
 			a.icon-close {
 				font-size: 10px;
@@ -6624,7 +6625,7 @@ table td.sub-level-1 {
 					color: $white;
 					display: inline-block;
 					margin: 6px 7px 0 0;
-					padding: 2px 6px 2px 10px;
+					padding: 1px 6px 1px 10px;
 					border-radius: 12px;
 					.close{
 						position: relative !important;
