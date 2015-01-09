@@ -130,6 +130,13 @@
       #venue-events-container
         = render partial: 'upcoming_events'
 
+
+- if can?(:index_invites, Venue)
+  #event-invites-list.details_box
+    h3.module-title ATTENDANCE
+    #invites-list.resource-list
+      = render resource.invites
+
 - if resource.persisted? && can?(:show, Activity)
   #venue-activities.details_box
     = render 'activities'

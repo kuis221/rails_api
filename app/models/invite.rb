@@ -10,7 +10,6 @@
 #  rsvps_count :integer          default(0)
 #  attendees   :integer          default(0)
 #  final_date  :date
-#  event_date  :date
 #  created_at  :datetime
 #  updated_at  :datetime
 #
@@ -22,6 +21,7 @@ class Invite < ActiveRecord::Base
   has_many :rsvps, class_name: 'InviteRsvp'
 
   delegate :name_with_location, :id, :name, to: :place, prefix: true, allow_nil: true
+  delegate :campaign_name, to: :event, prefix: false
 
   validates :venue, presence: true
   validates :event, presence: true

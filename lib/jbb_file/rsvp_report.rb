@@ -21,7 +21,7 @@ module JbbFile
 
     INVITE_COLUMNS = [:market, :final_date, :event_date]
 
-    RSVP_COLUMNS = COLUMNS.keys - INVITE_COLUMNS - [:account_name]
+    RSVP_COLUMNS = COLUMNS.keys - INVITE_COLUMNS - [:account_name, :event_date]
 
     VALID_COLUMNS = COLUMNS.values
 

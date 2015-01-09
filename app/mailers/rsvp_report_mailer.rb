@@ -2,20 +2,12 @@ class RsvpReportMailer < ActionMailer::Base
   default from: 'support@brandscopic.com'
 
   def file_missing
-    recipients = %w(
-      cjaskot@brandscopic.com kkubik@brandscopic.com Elliott.Higdon@legacymp.com
-      Joshua.Silverstein@legacymp.com Dan.Berliner@legacymp.com Alexis.Bannos@legacymp.com
-      Christy.Sabol@legacymp.com
-    )
+    recipients = ENV['RSVP_FILE_MISSING_EMAILS'].split(',')
     mail to: recipients, subject: 'RSVP Report Synch – File Not Found'
   end
 
   def invalid_format(files)
-    recipients = %w(
-      cjaskot@brandscopic.com kkubik@brandscopic.com Elliott.Higdon@legacymp.com
-      Joshua.Silverstein@legacymp.com Dan.Berliner@legacymp.com Alexis.Bannos@legacymp.com
-      Christy.Sabol@legacymp.com
-    )
+    recipients = ENV['RSVP_INVALID_FORMAT_EMAILS'].split(',')
     files.each do |path|
       attachments[File.basename(path)] = File.read(path)
     end
@@ -25,11 +17,7 @@ class RsvpReportMailer < ActionMailer::Base
   def success(created, failed, files = [])
     @created = created
     @failed = failed
-    recipients = %w(
-      cjaskot@brandscopic.com kkubik@brandscopic.com Elliott.Higdon@legacymp.com
-      Joshua.Silverstein@legacymp.com Dan.Berliner@legacymp.com Alexis.Bannos@legacymp.com
-      Christy.Sabol@legacymp.com  Jordan.Lipshutz@legacymp.com
-    )
+    recipients = ENV['RSVP_SUCCESS_EMAILS'].split(',')
 
     files.each do |path|
       attachments[File.basename(path)] = File.read(path)

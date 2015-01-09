@@ -45,6 +45,8 @@ class Venue < ActiveRecord::Base
     end
   end
 
+  has_many :invites, dependent: :destroy, inverse_of: :venue
+
   include Normdist
 
   delegate :name, :types, :formatted_address, :formatted_phone_number, :website, :price_level,

@@ -208,18 +208,26 @@ module ApplicationHelper
     return if start_at.nil?
     return format_date_with_time(start_at) if end_at.nil?
     options[:date_separator] ||= '<br />'
+    options[:date_only] ||= false
 
     if start_at.to_date != end_at.to_date
-      format_date_with_time(start_at) +
-      options[:date_separator].html_safe +
-      format_date_with_time(end_at)
+      if options[:date_only]
+        format_date(start_at) +
+        options[:date_separator].html_safe +
+        format_date(end_at)
+      else
+        format_date_with_time(start_at) +
+        options[:date_separator].html_safe +
+        format_date_with_time(end_at)
+      end
     else
       if start_at.strftime('%Y') == Time.zone.now.year.to_s
         the_date = start_at.strftime('%^a <b>%b %e</b>' + options[:date_separator]).html_safe
       else
         the_date = start_at.strftime('%^a <b>%b %e, %Y</b>' + options[:date_separator]).html_safe
       end
-      the_date + "#{start_at.strftime('%l:%M %p').strip} - #{end_at.strftime('%l:%M %p').strip}".html_safe
+      the_date += "#{start_at.strftime('%l:%M %p').strip} - #{end_at.strftime('%l:%M %p').strip}".html_safe unless options[:date_only]
+      the_date
     end
   end
 
