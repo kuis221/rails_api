@@ -22,6 +22,7 @@ ul.select2-results{
 	overflow: visible !important;
 	-webkit-box-shadow: none;
 	box-shadow: none;
+	z-index: 9999999;
 	.btn-primary, .btn-cancel{
 		padding: 11px 10px;
 		line-height: 16px;
@@ -62,12 +63,13 @@ ul.select2-results{
 			padding-top: 5px !important;
 			width: 398px !important;
 			.select2-search-choice{
-				background-color: $user_menu !important;
+				background-color: $brand !important;
 				background-image: none !important;
-				border: 1px solid $user_menu !important;
+				border-radius: 12px;
+				border: 0;
 				box-shadow: none;
 				color: white;
-				padding: 5px 5px 5px 18px;
+				padding: 5px 20px 6px 10px;
 			}
 			.select2-search-field{
 				input[type="text"]{
@@ -474,7 +476,7 @@ ul.select2-results{
 			line-height: 23px;
 		}
 		.close, button.close:before, a.close:before{
-			content: "\e019";
+			content: "\e616";
 			color: $user_menu;
 			display: inline-block;
 			font-family: 'icons';
@@ -1134,6 +1136,7 @@ div#spin{
 .modal-backdrop, .modal-backdrop.fade.in{
 	background-color: #252525;
 	opacity: 0.9;
+	z-index: 999999;
 }
 
 
@@ -1174,6 +1177,9 @@ div#spin{
 		}
 		.saved-filters{
 			margin-top: 20px;
+			.default-filters-text {
+				width: 150px;
+			}
 		}
 	}
 }

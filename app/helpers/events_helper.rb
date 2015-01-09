@@ -153,7 +153,7 @@ module EventsHelper
 
   def describe_tasks
     describe_resource_params(:task,
-                             Task.order('tasks.title ASC'))
+                             Task.by_companies(current_company).order('tasks.title ASC'), :title)
   end
 
   def describe_activity_types

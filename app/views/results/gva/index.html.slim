@@ -22,13 +22,10 @@
           = f.input :view_mode, label: false, checked: report_view_mode, required: false, label_html: {id: '#group-by-title'}, wrapper: :btn_group, as: :radio_buttons, collection: [[content_tag(:i, '', class: 'icon-analysis'), 'graph'],[content_tag(:i, '', class: 'icon-list'), 'table']], wrapper_html: { id: 'group-by-criterion' }, item_wrapper_class: 'btn'
 
         .export-xls.pull-right
-          / a#download-gva-btn.btn href="#" title="Download"
-          /   i.icon-download
-
           .dropdown.btn-download
             a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
               i.icon-download
-              i.icon-arrow-down
+              i.icon-arrow-down-small
             ul#download-gva-btn.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
               li
                 a href="#" role="menuitem" data-url="#{results_gva_path(format: :xls)}"

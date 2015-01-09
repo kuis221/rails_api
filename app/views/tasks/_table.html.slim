@@ -6,7 +6,7 @@
     .dropdown.btn-download.task-download
       a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
         i.icon-download
-        i.icon-arrow-down
+        i.icon-arrow-down-small
       ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
         li
           a#xls-export.xlsx-download-link href="#" role="menuitem" data-url="#{url_for(action: :index, scope: params[:scope], format: :xls)}"
@@ -32,7 +32,7 @@ javascript:
     'includeSearchBox': false,
     'includeAutoComplete': true,
     'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
-    'defaultParams': [{name: 'status[]', value: 'Active'}],
+    'defaultParams': '#{j default_params_charge('status[]=Active')}',
     'applyTo': '#{controller_name}',
     'userFilters': #{user_saved_filters(controller_name).to_json.html_safe},
     'onItemsLoad': function(response, page){

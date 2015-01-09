@@ -65,7 +65,7 @@ RSpec.shared_examples 'a list that allow saving custom filters' do
     end
   end
 
-  it 'can override existing filters' do
+  scenario 'can override existing filters' do
 
     visit list_url
 
@@ -80,6 +80,42 @@ RSpec.shared_examples 'a list that allow saving custom filters' do
     override_filter 'My Custom Filter'
 
     expect(filter.filters).not_to eql CustomFilter.find(filter.id).filters
+  end
+
+  scenario 'can customize what I see by default in any list view' do
+    visit list_url
+
+    add_filter filters.first[:section], filters.first[:item]
+
+    save_filters_as 'My Custom Filter'
+    define_custom_filter 'My Custom Filter'
+
+    visit list_url
+
+    expect(collection_description).to have_filter_tag(filters.first[:item])
+
+  end
+
+  def define_custom_filter(name)
+    click_js_link 'Filter Settings'
+
+    within visible_modal do
+      expect(page).to have_content(name)
+      find('.resource-item', text: name)
+      choose('default')
+      expect(find_field('default')).to be_checked
+      wait_for_ajax
+      click_button 'Done'
+    end
+    ensure_modal_was_closed
+
+    click_js_link 'Filter Settings'
+    within visible_modal do
+      expect(page).to have_content(name)
+      expect(find_field('default')).to be_checked
+      click_button 'Done'
+    end
+    ensure_modal_was_closed
   end
 
   def remove_saved_filter(name)

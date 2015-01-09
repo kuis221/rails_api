@@ -10,7 +10,7 @@
     .dropdown.btn-download
       a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
         i.icon-download
-        i.icon-arrow-down
+        i.icon-arrow-down-small
       ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
         li
           a.xlsx-download-link href="#" role="menuitem" data-url="#{results_activities_path(format: :xls)}"
@@ -35,6 +35,5 @@ javascript:
     'includeAutoComplete': true,
     'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
     'ytdDatesRange': '#{current_company.ytd_dates_range}',
-    'defaultParams': [{name: 'status[]', value: 'Active'}],
-    'clearFilterParams': [{name: 'status[]', value: 'Active'}]
+    'defaultParams': '#{j default_params_charge('status[]=Active')}'
   });

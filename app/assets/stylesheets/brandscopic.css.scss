@@ -246,8 +246,8 @@ body{
 	margin-left: 8%;
 	margin-bottom: 25px;
 	span{
-		font-size: 20px;
-		margin-right: 2%;
+		font-size: 18px;
+		margin-right: 10px;
 	}
 	.full {
 		color: #CBBB26;
@@ -289,7 +289,7 @@ body{
 		font-size: 17px;
 		display: inline-block;
 		margin-right: 10px;
-		margin-top: 4px;
+		margin-top: 2px;
 		vertical-align: top;
 	}
 	span{
@@ -376,8 +376,6 @@ body{
 		margin-bottom: 0px;
 	}
 	i{
-		font-size: 20px;
-		left: 2px;
 		position: relative;
 		margin-top: 0;
 	}
@@ -602,13 +600,15 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	color: $white;
 	font-size: 14px;
 	min-height: 37px;
-	line-height: 30px;
+	line-height: 22px;
 	margin: 0 10px 0 90px;
-	padding: 8px 20px 5px 21px;
-	position: relative;
+	padding: 7px 20px 6px 21px;
+	position: fixed;
 	-webkit-border-radius: 0px 0px 8px 8px;
 	border-radius: 0px 0px 8px 8px;
 	box-sizing: border-box;
+	width: calc(100% - 100px);
+	z-index: 300;
 	.filter-label{
 		&>div {
 			display: inline-block;
@@ -623,19 +623,22 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		.filter-item{
 			display: inline-block;
 			border: 1px solid $borders;
-			margin: 0 5px 3px 0;
+			margin-left: 4px;
 			padding: 0 10px;
 			font-size: 12px;
+			text-transform: capitalize;
 			white-space: nowrap;
-			@include border-radius (3px);
+			@include border-radius (15px);
 			&:hover {
 				border-color: $white;
 			}
 			a.icon-close {
-				font-size: 11px;
-				margin-left: 10px;
-				margin-right: -5px;
-				margin-top: 4px;
+				font-size: 10px;
+				margin-right: -4px;
+				margin-left: 4px;
+				margin-top: 7px;
+				float: right;
+				position: relative;
 			}
 
 			.full {
@@ -1085,6 +1088,9 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	.btn.download {
 		margin: 0px 3px;
 		text-decoration: none;
+		.icon-plus{
+			line-height: 19px;
+		}
 	}
 	.fullscreen-link{
 		margin: 0px 0 0 15px;
@@ -1092,9 +1098,19 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	}
 	.btn-download {
 		display: inline-block;
-		.icon-arrow-down:before {
-			top: 3px;
-			right: -12px;
+		.btn{
+			padding: 8px 10px;
+		}
+		i{
+			line-height: 19px;
+		}
+		.icon-download{
+			margin-left: 5px;
+		}
+		.icon-arrow-down-small{
+			font-size: 11px;
+			float: right;
+			margin: 0 0 0 12px;
 		}
 		.download-options-menu {
 			right: 0;
@@ -1607,6 +1623,10 @@ footer{
 // HEADER STYLES
 // --------------------------------------------------
 
+.navbar .nav > .active > a, .navbar .nav > .active > a:hover, .navbar .nav > .active > a:focus{
+	box-shadow: none;
+}
+
 header{
 	&.navbar-inverse {
 		.nav > li > a{
@@ -1666,11 +1686,20 @@ header{
 					}
 				}
 				li.dropdown.open,
-				li.dropdown.active,
 				li.dropdown.open.active {
 					&>.dropdown-toggle {
-						color: silver;
+						color: $silver;
 						background-color: $menu;
+					}
+				}
+				li.dropdown.active{
+					&> .dropdown-toggle{
+						color: $silver;
+						background-color: $header;
+						&:hover{
+							color: $white;
+							background-color: $gray-darker;
+						}
 					}
 				}
 				.dropdown-menu>li>a:hover,
@@ -1746,36 +1775,38 @@ li.dropdown a{
 	margin-bottom: 0;
 }
 
-.nav>li>a:focus{
-	background-color: $menu;
-	color:$gray;
-}
-
 .nav-tabs{
 	border-bottom: 0;
-}
-.nav-tabs li a{
-	background-color: $gray-lighter;
-	border: 0;
-	color: $brand;
-	text-align: center;
-	min-width: 92px;
-}
-.nav-tabs li a:hover{
-	background-color: $user_menu;
-	border-bottom: 0;
-	color: $gray;
-}
-.nav-tabs>.active>a{
-	color: $brand;
-	border-left: 0;
-	border-right: 0;
-	border-top: 0;
-	&:hover{
+	li a{
+		background-color: $gray-lighter;
+		border: 0;
 		color: $brand;
-		border-left:0;
+		text-align: center;
+		min-width: 92px;
+		&:hover{
+			background-color: $user_menu;
+			border-bottom: 0;
+			color: $brand;
+		}
+	}
+	&#permissions-tabs{
+		min-width: 80px;
+	}
+	&>.active>a{
+		color: $brand;
+		border-left: 0;
 		border-right: 0;
 		border-top: 0;
+		&:hover{
+			color: $brand;
+			border-left:0;
+			border-right: 0;
+			border-top: 0;
+		}
+		&:focus{
+			border:0;
+			color: $brand;
+		}
 	}
 }
 
@@ -2636,7 +2667,7 @@ ul.ui-widget-content{
 		text-decoration: none;
 		&.dropdown-toggle{
 			&:after{
-				content: "\e004";
+				content: "\e607";
 				color: $brand;
 				display: inline-block;
 				font-family: 'icons';
@@ -2890,7 +2921,7 @@ ul.ui-widget-content{
 	border-radius: 7px 7px 0px 0px;
 	position: absolute;
 	left: 0;
-	min-height: 40px;
+	min-height: 43px;
 	z-index: 200;
 	-webkit-border-radius: 7px 7px 0px 0px;
 	width: 100%;
@@ -2961,10 +2992,6 @@ ul.ui-widget-content{
 	}
 	.icon-edit{
 		margin: 0 0 0 15px;
-	}
-	.icon-rounded-disable{
-		position:relative;
-		top:1px;
 	}
 }
 
@@ -3981,6 +4008,7 @@ ul.thumbnails{
 				margin:85px 0;
 				overflow:hidden;
 				width: 180px;
+				z-index: 1;
 				li a{
 					color: $white;
 					float: right;
@@ -5226,7 +5254,7 @@ body.campaigns{
 			span.indicator{
 				margin: 0 4px 0 auto;
 				&.today:before {
-					content: "\e004";
+					content: "\e607";
 					font-family: "icons";
 					font-size: 14px;
 					position: relative;
@@ -5479,7 +5507,7 @@ body.campaigns{
 .chardinjs-helper-layer[data-id="application-content"] {
 	.chardinjs-tooltip.chardinjs-top {
 		&:before {
-			content: "\e011";
+			content: "\e60f";
 			display: block;
 			left: -30px;
 			font-family: 'icons';
@@ -6178,6 +6206,12 @@ table td.sub-level-1 {
 .gallery {
 	margin: 0 -10px;
 	position: relative;
+	&.photo-results{
+		margin:0;
+		ul{
+			display: block;
+		}
+	}
 	&> ul {
 		display: flex;
 		flex-wrap: wrap;
@@ -6231,6 +6265,7 @@ table td.sub-level-1 {
 					position: absolute;
 					list-style-type: none;
 					overflow:hidden;
+					z-index: 1;
 					a{
 						color: $white;
 						font-size: 16px;
@@ -6477,7 +6512,7 @@ table td.sub-level-1 {
 				position: relative;
 				top: 5px;
 				float: right;
-				color: $user_menu;
+				color: $brand;
 			}
 		}
 		.mini-slider{
@@ -6621,17 +6656,15 @@ table td.sub-level-1 {
 				margin-bottom: 15px;
 
 				.tag{
+					background-color: $text;
 					font-size: 11px;
 					font-weight: 900;
 					border: 1px solid $gray-lighter;
 					color: $white;
 					display: inline-block;
 					margin: 6px 7px 0 0;
-					padding: 0px 5px 4px 5px;
-					-webkit-border-radius: 3px;
-					-moz-border-radius: 3px;
-					border-radius: 3px;
-					height: 16px;
+					padding: 2px 6px 2px 10px;
+					border-radius: 12px;
 					.close{
 						position: relative !important;
 						border-left-width-ltr-source: physical;
@@ -6839,15 +6872,7 @@ table.table.likert-scale-table {
 		.chzn-results{
 			li{
 				&.active-result{
-					padding: 9px 6px 9px 26px !important;
-					&.result-selected{
-						&:before{
-							content: "\e624";
-							font-family: 'icons';
-							position: absolute;
-							left:8px;
-						}
-					}
+					padding: 9px 6px 9px 9px !important;
 				}
 			}
 		}
@@ -6888,8 +6913,6 @@ table.table.likert-scale-table {
 		border-radius: 4px !important;
 		li{
 			&.search-choice{
-				color:$text !important;
-				background:none !important;
 				border:0 !important;
 				box-shadow: none !important;
 				line-height: 16px !important;
