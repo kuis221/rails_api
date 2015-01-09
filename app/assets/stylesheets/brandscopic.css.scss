@@ -4815,8 +4815,21 @@ body.roles{
 }
 
 // Maps on venue and event details
+
+.venue_details_container{
+	overflow: hidden;
+	padding: 10px;
+	position: relative;
+	.map_container{
+		border:1px solid $user_menu;
+		float: right;
+		right: 0;
+		position: absolute;
+		height: 100%;
+	}
+}
+
 #venue-map-canvas{
-	border:1px solid $user_menu;
 	display:block;
 	height: 500px;
 }

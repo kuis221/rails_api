@@ -13,10 +13,10 @@
   = resource_details_bar("You are viewing venue details. Click to close.")
 
   .details_box.padding-top-close-bar
-    .row-fluid
+    .row-fluid.venue_details_container
       .span6
         h2= resource.name
-        p Restaurant Food
+        p Restaurant, Food
         span>$$$
         |$$
         ul.stripped-list.small.data-list
@@ -53,7 +53,7 @@
             | No
 
         p.small Quis nostrud exerci tation, ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat duis autem. Consuetudium lectorum mirum est notare quam littera gothica quam nunc putamus parum! Vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat vel illum dolore. Volutpat ut wisi enim ad minim veniam eu feugiat nulla. Imperdiet doming id quod mazim placerat facer possim assum typi non habent claritatem? Nunc nobis videntur parum clari fiant sollemnes in?
-      .span6
+      .span6.map_container
         - unless resource.latitude.nil? || resource.longitude.nil?
           #venue-map-canvas.google-map data-latitude="#{resource.latitude}" data-longitude="#{resource.longitude}"
                 b= resource.name
