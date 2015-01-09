@@ -1,5 +1,6 @@
-div.resource-item id='custom-filter-#{custom_filter.id}'
+div.resource-item-filter.resource-item id='custom-filter-#{custom_filter.id}'
   .resource-item-link
     .text-medium= custom_filter.name
   .resource-item-actions
     = link_to '', custom_filter_path(custom_filter, apply_to: custom_filter.apply_to), remote: true, method: :delete, title: 'Remove Custom Filter "' + custom_filter.name + '"', class: 'icon-trash pull-right'
+    = radio_button_tag :default, custom_filter.id, custom_filter.default_view, class: 'radio-filter'

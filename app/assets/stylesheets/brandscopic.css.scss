@@ -180,8 +180,8 @@ body{
 	margin-left: 8%;
 	margin-bottom: 25px;
 	span{
-		font-size: 20px;
-		margin-right: 2%;
+		font-size: 18px;
+		margin-right: 10px;
 	}
 	.full {
 		color: #CBBB26;
@@ -223,7 +223,7 @@ body{
 		font-size: 17px;
 		display: inline-block;
 		margin-right: 10px;
-		margin-top: 4px;
+		margin-top: 2px;
 		vertical-align: top;
 	}
 	span{
@@ -310,7 +310,6 @@ body{
 		margin-bottom: 0px;
 	}
 	i{
-		font-size: 20px;
 		position: relative;
 		margin-top: 0;
 	}
@@ -536,13 +535,15 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	color: $white;
 	font-size: 14px;
 	min-height: 37px;
-	line-height: 30px;
+	line-height: 22px;
 	margin: 0 10px 0 90px;
 	padding: 7px 20px 6px 21px;
-	position: relative;
+	position: fixed;
 	-webkit-border-radius: 0px 0px 8px 8px;
 	border-radius: 0px 0px 8px 8px;
 	box-sizing: border-box;
+	width: calc(100% - 100px);
+	z-index: 300;
 	.filter-label{
 		&>div {
 			display: inline-block;
@@ -562,15 +563,15 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			font-size: 12px;
 			text-transform: capitalize;
 			white-space: nowrap;
-			@include border-radius (3px);
+			@include border-radius (15px);
 			&:hover {
 				border-color: $white;
 			}
 			a.icon-close {
-				font-size: 11px;
-				margin-left: 10px;
-				margin-right: -5px;
-				margin-top: 10px;
+				font-size: 10px;
+				margin-right: -4px;
+				margin-left: 4px;
+				margin-top: 7px;
 				float: right;
 				position: relative;
 			}
@@ -2637,7 +2638,7 @@ ul.ui-widget-content{
 		text-decoration: none;
 		&.dropdown-toggle{
 			&:after{
-				content: "\e004";
+				content: "\e607";
 				color: $brand;
 				display: inline-block;
 				font-family: 'icons';
@@ -2891,7 +2892,7 @@ ul.ui-widget-content{
 	border-radius: 7px 7px 0px 0px;
 	position: absolute;
 	left: 0;
-	min-height: 40px;
+	min-height: 43px;
 	z-index: 200;
 	-webkit-border-radius: 7px 7px 0px 0px;
 	width: 100%;
@@ -5210,7 +5211,7 @@ body.campaigns{
 			span.indicator{
 				margin: 0 4px 0 auto;
 				&.today:before {
-					content: "\e004";
+					content: "\e607";
 					font-family: "icons";
 					font-size: 14px;
 					position: relative;
@@ -5466,7 +5467,7 @@ body.campaigns{
 .chardinjs-helper-layer[data-id="application-content"] {
 	.chardinjs-tooltip.chardinjs-top {
 		&:before {
-			content: "\e011";
+			content: "\e60f";
 			display: block;
 			left: -30px;
 			font-family: 'icons';
@@ -6470,7 +6471,7 @@ table td.sub-level-1 {
 				position: relative;
 				top: 5px;
 				float: right;
-				color: $user_menu;
+				color: $brand;
 			}
 		}
 		.mini-slider{
@@ -6614,17 +6615,15 @@ table td.sub-level-1 {
 				margin-bottom: 15px;
 
 				.tag{
+					background-color: $text;
 					font-size: 11px;
 					font-weight: 900;
 					border: 1px solid $gray-lighter;
 					color: $white;
 					display: inline-block;
 					margin: 6px 7px 0 0;
-					padding: 0px 5px 4px 5px;
-					-webkit-border-radius: 3px;
-					-moz-border-radius: 3px;
-					border-radius: 3px;
-					height: 16px;
+					padding: 2px 6px 2px 10px;
+					border-radius: 12px;
 					.close{
 						position: relative !important;
 						border-left-width-ltr-source: physical;
@@ -6832,15 +6831,7 @@ table.table.likert-scale-table {
 		.chzn-results{
 			li{
 				&.active-result{
-					padding: 9px 6px 9px 26px !important;
-					&.result-selected{
-						&:before{
-							content: "\e624";
-							font-family: 'icons';
-							position: absolute;
-							left:8px;
-						}
-					}
+					padding: 9px 6px 9px 9px !important;
 				}
 			}
 		}
@@ -6881,8 +6872,6 @@ table.table.likert-scale-table {
 		border-radius: 4px !important;
 		li{
 			&.search-choice{
-				color:$text !important;
-				background:none !important;
 				border:0 !important;
 				box-shadow: none !important;
 				line-height: 16px !important;

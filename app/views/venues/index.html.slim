@@ -122,7 +122,7 @@ javascript:
     'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
     'applyTo': '#{controller_name}',
     'userFilters': #{user_saved_filters(controller_name).to_json.html_safe},
-    'defaultParams': [],
+    'defaultParams': '#{j default_params_charge('')}',
     'onChange': function(filterBox){
        $('#venue-download-button').removeClass('hidden');
       $(document).trigger('events-filter:changed')

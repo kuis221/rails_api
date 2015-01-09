@@ -546,7 +546,9 @@ Brandscopic::Application.routes.draw do
 
   resources :tags, only: [:index]
 
-  resources :custom_filters, only: [:index, :new, :create, :destroy]
+  resources :custom_filters, only: [:index, :new, :create, :destroy] do
+    put :default_view, on: :member, format: :json
+  end
 
   resources :filter_settings, only: [:index, :new, :create, :update]
 
