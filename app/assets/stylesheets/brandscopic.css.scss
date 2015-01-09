@@ -485,6 +485,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	border: red;
 	border-radius: 0px;
 	color: $white;
+	line-height: 20px;
 	margin: 0px;
 	text-shadow:none;
 	-webkit-border-radius: 0px;
@@ -494,8 +495,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		color: $white !important;
 		text-decoration: underline !important;
 		&.icon-close{
-			top: -3px;
-			right: -10px;
+			right: 0;
 			font-size: 14px;
 		}
 	}
