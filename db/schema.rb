@@ -354,6 +354,7 @@ ActiveRecord::Schema.define(version: 20150106231728) do
     t.integer  "owner_id"
     t.string   "owner_type"
     t.string   "group"
+    t.boolean  "default_view", default: false
   end
 
   create_table "data_migrations", force: true do |t|

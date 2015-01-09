@@ -13,8 +13,16 @@
         = f.input :state, label: '2. Choose a state', collection: @states, selected: params[:report].try(:[], :state), include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Choose a state" } }
 
         = f.input :city, label: '2. Choose a city', collection: [], selected: params[:report].try(:[], :city), include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Choose a city" } }
-
+        .attendees-range-labels
+          span LOW
+          span MIDIUM
+          span HIGH
+          .separator.left-separator
+          .separator.right-separator
         #attendees-range-slider 
+          .attendees-range-bar
+            .point-range.left-point
+            .point-range.right-point
         = f.input 'attendees[min]', as: :hidden
         = f.input 'attendees[max]', as: :hidden
 
