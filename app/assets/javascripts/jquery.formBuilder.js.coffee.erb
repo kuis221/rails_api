@@ -1547,13 +1547,13 @@ ExpensesField = Module.extend {
 		]
 }
 
-RsvpField = Module.extend {
-	type: 'Rsvp',
+AttendanceField = Module.extend {
+	type: 'Attendance',
 
 	init: (form, attributes) ->
 		@form = form
 		@attributes = $.extend({
-			name: 'RSVP'
+			name: 'Attendance'
 		}, attributes)
 
 		@attributes.settings ||= {}
@@ -1562,10 +1562,10 @@ RsvpField = Module.extend {
 
 	_renderField: () ->
 		[
-			$('<h4>RSVP MODULE</h4>'),
+			$('<h4>ATTENDANCE MODULE</h4>'),
 			$('<div class="module-wrapper">').append(
 				@_removeButton(),
-				$('<img src="<%= asset_path('expenses.svg') %>" width="235" height="337" />')
+				$('<img src="<%= asset_path('attendance.svg') %>" width="235" height="337" />')
 			)
 		]
 	attributesForm: () ->

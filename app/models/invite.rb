@@ -37,6 +37,7 @@ class Invite < ActiveRecord::Base
         reference, place_id = value.split('||')
         Place.load_by_place_id(place_id, reference)
       end
+    place.save unless place.persisted?
     return unless place.present?
     if place.persisted?
       self.venue = Venue.find_or_initialize_by(place_id: place.id, company_id: Company.current.id)

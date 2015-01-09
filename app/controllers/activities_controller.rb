@@ -15,7 +15,7 @@ class ActivitiesController < FilteredController
   helper_method :assignable_users, :activity_types
 
   def form
-    if params[:activity] && params[:activity][:activity_type_id] == 'rsvp'
+    if params[:activity] && params[:activity][:activity_type_id] == 'attendance'
       @invite = parent.invites.build
       render 'invitation_form', layout: false
     else
@@ -43,10 +43,10 @@ class ActivitiesController < FilteredController
         current_company.activity_types.active.order(:name)
       end.pluck(:name, :id)
 
-    return types unless can?(:create_invite, resource) &&
-                        parent.is_a?(Event) && parent.campaign.enabled_modules.include?('rsvp')
+    return types unless can?(:create_invite, parent) &&
+                        parent.is_a?(Event) && parent.campaign.enabled_modules.include?('attendance')
 
-    types.push %w(Invitation rsvp)
+    types.push %w(Invitation attendance)
   end
 
   # Because there is no collection path, try to return a path

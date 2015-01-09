@@ -10,7 +10,6 @@
 #  rsvps_count :integer          default(0)
 #  attendees   :integer          default(0)
 #  final_date  :date
-#  event_date  :date
 #  created_at  :datetime
 #  updated_at  :datetime
 #
@@ -18,5 +17,13 @@
 require 'rails_helper'
 
 RSpec.describe Invite, :type => :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+  it { is_expected.to belong_to(:event) }
+  it { is_expected.to belong_to(:venue) }
+  it { is_expected.to have_one(:place).through(:venue) }
+  it { is_expected.to have_many(:rsvps) }
+
+  it { is_expected.to validate_presence_of(:event) }
+  it { is_expected.to validate_presence_of(:venue) }
+  it { is_expected.to validate_presence_of(:invitees) }
+  it { is_expected.to validate_numericality_of(:invitees) }
 end
