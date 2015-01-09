@@ -4,6 +4,7 @@
 #
 class CustomFiltersController < InheritedResources::Base
   respond_to :js, only: [:index, :new, :create, :destroy]
+  respond_to :json, only: [:default_view]
 
   actions :index, :new, :create, :destroy, :update
 
@@ -14,6 +15,12 @@ class CustomFiltersController < InheritedResources::Base
     else
       create!
     end
+  end
+
+  def default_view
+    begin_of_association_chain.custom_filters.where(apply_to: resource.apply_to).update_all("default_view = false")
+    resource.update_attribute(:default_view, true)
+    render json: { result: 'OK' }
   end
 
   private
@@ -28,6 +35,6 @@ class CustomFiltersController < InheritedResources::Base
 
   def permitted_params
     params.permit(custom_filter: [
-      :id, :name, :group, :apply_to, :filters])[:custom_filter]
+      :id, :name, :group, :apply_to, :filters, :default_view])[:custom_filter]
   end
 end

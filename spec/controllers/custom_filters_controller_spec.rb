@@ -43,12 +43,25 @@ describe CustomFiltersController, type: :controller do
   describe "DELETE 'destroy'" do
     let(:custom_filter) { create(:custom_filter, owner: @company_user, name: 'My Custom Filter', apply_to: 'events', filters: 'Filters') }
     it 'should delete the custom filter' do
-      custom_filter.save # Make sure record is created before the expect block
+      custom_filter # Make sure record is created before the expect block
       expect do
         delete 'destroy', id: custom_filter.to_param, format: :js
         expect(response).to be_success
         expect(response).to render_template(:destroy)
       end.to change(CustomFilter, :count).by(-1)
+    end
+  end
+
+  describe "PUT 'default_view'" do
+    let(:custom_filter) { create(:custom_filter, default_view: false, owner: @company_user, apply_to: 'events') }
+    it 'returns http success' do
+      custom_filter2 = create(:custom_filter, default_view: true, owner: @company_user, apply_to: 'events')
+      xhr :put, 'default_view', id: custom_filter.to_param, format: :json
+      expect(response).to be_success
+      custom_filter.reload
+      custom_filter2.reload
+      expect(custom_filter.default_view).to be_truthy
+      expect(custom_filter2.default_view).to be_falsey
     end
   end
 end

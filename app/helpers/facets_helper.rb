@@ -261,4 +261,14 @@ module FacetsHelper
      campaign: [], area: [], user: [], team: [], event_status: [], brand: [], status: [],
      venue: [], role: [], brand_portfolio: [], id: [], event: []]
   end
+
+  def default_params_charge(default = '')
+    filter_string = CustomFilter.for_company_user(current_company_user).user_saved_filters
+            .order('custom_filters.name ASC').by_type(filter_settings_scope).where(default_view: true).limit(1).pluck(:filters).first
+    (filter_string || escape_query_params(default)).html_safe
+  end
+
+  def escape_query_params(query)
+    query.split('&').map{ |p| CGI::escape(p).gsub('%3D', '=') }.join('&')
+  end
 end

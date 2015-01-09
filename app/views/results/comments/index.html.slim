@@ -45,8 +45,7 @@ javascript:
     'applyTo': 'results_comments',
     'userFilters': #{user_saved_filters('results_comments').to_json.html_safe},
     'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
-    'defaultParams': [{name: 'status[]', value: 'Active'}],
-    'clearFilterParams': [{name: 'status[]', value: 'Active'}],
+    'defaultParams': '#{j default_params_charge('status[]=Active')}',
     'onChange': function(filterBox){
       $(document).trigger('comments-filter:changed')
     },
