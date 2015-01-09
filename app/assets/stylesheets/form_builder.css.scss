@@ -325,13 +325,13 @@ $margin-right: 240px;
 				color: $brand;
 				&:before {
 					font-family: 'icons';
-					content: '\e004';
+					content: '\e607';
 					position: relative;
 					top: 4px;
 				}
 				&.collapsed:before {
 					top: 0;
-					content: '\e002';
+					content: '\e605';
 					font-size: 10px;
 				}
 			}
