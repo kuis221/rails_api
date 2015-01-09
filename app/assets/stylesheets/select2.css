@@ -546,19 +546,20 @@ disabled look for disabled choices in the results dropdown
 
 .select2-search-choice-close {
 		display: block;
-		width: 12px;
-		height: 13px;
 		position: absolute;
-		right: 3px;
-		top: 4px;
-
-		font-size: 1px;
+		right: 6px;
+		top: 7px;
+		font-size: 10px;
 		outline: none;
-		background: url('/assets/select2.png') right top no-repeat;
 }
 
-.select2-container-multi .select2-search-choice-close {
-		left: 3px;
+.select2-search-choice-close a{
+	color: $grey_four;
+}
+
+.select2-search-choice-close:after {
+	content: "\e019";
+	font-family: 'icons';
 }
 
 .select2-container-multi .select2-choices .select2-search-choice .select2-search-choice-close:hover {
