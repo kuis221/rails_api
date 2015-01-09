@@ -93,7 +93,7 @@
     #event-invites-list.details_box
       h3.module-title ATTENDANCE
       #invites-list.resource-list
-        = render resource.invites
+        = render partial: 'invites/invite', collection: resource.invites.active.joins(:place).order('lower(places.name)'), locals: { parent: resource }
 
   - if can_tasks
     #event-tasks.details_box

@@ -5,6 +5,9 @@ class InvitesController < InheritedResources::Base
 
   actions :new, :create, :edit, :update
 
+  # This helper provide the methods to activate/deactivate the resource
+  include DeactivableHelper
+
   protected
 
   def invite_params

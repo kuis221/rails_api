@@ -27,6 +27,8 @@ class Invite < ActiveRecord::Base
   validates :event, presence: true
   validates :invitees, presence: true, numericality: true
 
+  scope :active, -> { where active: true }
+
   def place_reference=(value)
     @place_reference = value
     return unless value && value.present?
@@ -52,5 +54,13 @@ class Invite < ActiveRecord::Base
     else
       "#{place.reference}||#{place.place_id}" if place.present?
     end
+  end
+
+  def activate!
+    update_attribute :active, true
+  end
+
+  def deactivate!
+    update_attribute :active, false
   end
 end

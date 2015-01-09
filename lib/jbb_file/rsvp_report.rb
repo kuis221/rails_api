@@ -25,7 +25,7 @@ module JbbFile
 
     VALID_COLUMNS = COLUMNS.values
 
-    CAMPAIGN_ID = 210
+    CAMPAIGN_ID = 30
 
     attr_accessor :created, :existed
     def initialize

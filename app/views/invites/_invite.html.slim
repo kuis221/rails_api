@@ -1,6 +1,6 @@
 div.resource-item.invite id="invite_#{invite.id}"
   .resource-item-link
-    - if resource.is_a?(Venue)
+    - if parent.is_a?(Venue)
       .span6
         .text-large= format_date_range(invite.event.start_at, invite.event.end_at, date_only: true)
         .crop-text
@@ -42,5 +42,6 @@ div.resource-item.invite id="invite_#{invite.id}"
         .text-large 12
         | Accounts Attended
 
-    div.resource-item-actions
-
+  .resource-item-actions
+    = button_to_edit invite, url: url_for([:edit, parent, invite]) if can?(:edit_invite, Event)
+    = button_to_activate_or_deactivate(invite, activate_url: url_for([:activate, parent, invite]), deactivate_url: url_for([:deactivate, parent, invite])) if can?(:deactivate_invite, Event)

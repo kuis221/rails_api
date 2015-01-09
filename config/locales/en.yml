@@ -138,6 +138,7 @@ en:
       activity_type: "Deactivate Activity Type"
       report: "Deactivate Report"
       brand_ambassadors/visit: "Deactivate Visit"
+      invite: "Deactivate Invitation"
     activate:
       event: "Activate Event"
       company_user: "Activate User"
@@ -152,6 +153,7 @@ en:
       activity_type: "Activate Activity Type"
       report: "Activate Report"
       brand_ambassadors/visit: "Activate Visit"
+      invite: "Activate Invitation"
     invitations:
       resend: "Resend Invitation"
 
@@ -488,6 +490,7 @@ en:
       activity_type: "Are you sure you want to deactivate this activity type?"
       report: "Are you sure you want to deactivate this report?"
       brand_ambassadors/visit: "Are you sure you want to deactivate this visit?"
+      invite: "Are you sure you want to deactivate this invitation?"
     invitations:
       resend: "Are you sure you want to resend the invitation to this user?"
 

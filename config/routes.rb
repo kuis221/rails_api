@@ -224,6 +224,10 @@ Brandscopic::Application.routes.draw do
       get :filters, on: :collection
       get :items, on: :collection
       resources :events, only: [:new, :create]
+      resources :invites, only: [:create, :edit, :update] do
+        get :deactivate, on: :member
+        get :activate, on: :member
+      end
       resources :activities, only: [:new, :create] do
         get :form, on: :collection
         get :empty_form, to: 'activities#export_empty_fieldable', on: :collection
@@ -375,7 +379,10 @@ Brandscopic::Application.routes.draw do
       end
     end
 
-    resources :invites, only: [:create, :new]
+    resources :invites, only: [:create, :edit, :update] do
+      get :deactivate, on: :member
+      get :activate, on: :member
+    end
 
     resources :surveys, only: [:create, :new, :edit, :update] do
       member do

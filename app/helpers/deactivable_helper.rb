@@ -21,6 +21,7 @@ module DeactivableHelper
   module InstanceMethods
     include DeactivableHelper::ViewMethods
     def deactivate
+      p "SIIIIII"
       resource.deactivate! if resource.active == true
     end
 

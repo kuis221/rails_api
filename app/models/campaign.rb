@@ -327,7 +327,7 @@ class Campaign < ActiveRecord::Base
   end
 
   def enabled_modules_kpis
-    enabled_modules.map { |m| Kpi.send(m) }
+    (enabled_modules - ['attendance']).map { |m| Kpi.send(m) }
   end
 
   def active_global_kpis
