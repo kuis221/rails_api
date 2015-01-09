@@ -19,9 +19,9 @@ module JbbFile
       bartender_role: 'BartenderRole'
     }
 
-    INVITE_COLUMNS = [:market, :final_date, :event_date]
+    INVITE_COLUMNS = [:market, :final_date]
 
-    RSVP_COLUMNS = COLUMNS.keys - INVITE_COLUMNS - [:account_name, :event_date]
+    RSVP_COLUMNS = COLUMNS.keys - INVITE_COLUMNS - [:account_name]
 
     VALID_COLUMNS = COLUMNS.values
 
