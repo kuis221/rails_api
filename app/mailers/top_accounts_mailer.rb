@@ -2,20 +2,12 @@ class TopAccountsMailer < ActionMailer::Base
   default from: 'support@brandscopic.com'
 
   def file_missing
-    recipients = %w(
-      cjaskot@brandscopic.com kkubik@brandscopic.com Elliott.Higdon@legacymp.com
-      Joshua.Silverstein@legacymp.com Dan.Berliner@legacymp.com
-      Alexis.Bannos@legacymp.com Christy.Sabol@legacymp.com Jordan.Lipshutz@legacymp.com
-    )
+    recipients = ENV['TOP_ACCOUNTS_FILE_MISSING_EMAILS'].split(',')
     mail to: recipients, subject: 'Jameson Locals Accounts List Synch – File Not Found'
   end
 
   def invalid_format(files)
-    recipients = %w(
-      cjaskot@brandscopic.com kkubik@brandscopic.com Elliott.Higdon@legacymp.com
-      Joshua.Silverstein@legacymp.com Dan.Berliner@legacymp.com  Alexis.Bannos@legacymp.com
-      Christy.Sabol@legacymp.com
-    )
+    recipients = ENV['TOP_ACCOUNTS_INVALID_FORMAT_EMAILS'].split(',')
     files.each do |path|
       attachments[File.basename(path)] = File.read(path)
     end
@@ -28,11 +20,7 @@ class TopAccountsMailer < ActionMailer::Base
     @existed = existed
     @created = created
     @flagged_before = flagged_before
-    recipients = %w(
-      cjaskot@brandscopic.com kkubik@brandscopic.com Elliott.Higdon@legacymp.com
-      Joshua.Silverstein@legacymp.com Dan.Berliner@legacymp.com Alexis.Bannos@legacymp.com
-      Christy.Sabol@legacymp.com  Jordan.Lipshutz@legacymp.com
-    )
+    recipients = ENV['TOP_ACCOUNTS_SUCCESS_EMAILS'].split(',')
     mail to: recipients, subject: 'Jameson Locals Accounts List Synch – Successfully Completed'
   end
 end
