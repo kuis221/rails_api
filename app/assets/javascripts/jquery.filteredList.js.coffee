@@ -125,7 +125,7 @@ $.widget 'nmk.filteredList', {
 		if window.location.search
 			@_parseQueryString window.location.search
 		else
-			@_parseQueryString $.param(@options.defaultParams)
+			@_parseQueryString @options.defaultParams
 
 		@loadFacets = true
 		firstTime = true
@@ -561,7 +561,7 @@ $.widget 'nmk.filteredList', {
 	_resetFilters: () ->
 		@form.find('input:checkbox[name^="custom_filter"]').prop('checked', false)
 		@savedFiltersDropdown.val('').trigger('liszt:updated')
-		@_setQueryString $.param(@options.defaultParams)
+		@_setQueryString @options.defaultParams
 		false
 
 	_removeParams: (params) ->
@@ -603,7 +603,7 @@ $.widget 'nmk.filteredList', {
 			if document.location.search
 				document.location.search.replace(/^\?/, '')
 			else if not @initialized && @options.defaultParams
-				$.param(@options.defaultParams)
+				@options.defaultParams
 			else
 				''
 
