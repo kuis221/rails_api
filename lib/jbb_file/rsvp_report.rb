@@ -41,7 +41,6 @@ module JbbFile
     def process
       created = 0
       failed = 0
-      i = 1
       invalid_rows = []
       Dir.mktmpdir do |dir|
         files = download_files(dir)
@@ -65,8 +64,6 @@ module JbbFile
                   p "INVALID EVENT OR VENUE #{venue.inspect} #{event.inspect}"
                   invalid_rows.push row
                 end
-                break if i == 20
-                i += 1
               end
             end
           end
