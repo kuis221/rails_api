@@ -20,7 +20,7 @@ module JbbFile
         file_not_fould
         return files
       end
-      Hash[files.map do |file_name|
+      list = Hash[files.map do |file_name|
         file = get_file(dir, file_name)
         if valid_format?(file)
           [file_name, file]
@@ -29,6 +29,8 @@ module JbbFile
           nil
         end
       end.compact]
+      close_connection
+      list
     end
 
     def archive_file(file)

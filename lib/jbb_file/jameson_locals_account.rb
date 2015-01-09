@@ -18,13 +18,12 @@ module JbbFile
       self.created = 0
       self.existed = 0
       Dir.mktmpdir do |dir|
+        files = download_files(dir)
+        return invalid_format if invalid_files.any?
+        return unless files.any?
+
+        flagged_before = Venue.jameson_locals.in_company(COMPANY_ID).count
         ActiveRecord::Base.transaction do
-          files = download_files(dir)
-          return invalid_format if invalid_files.any?
-          return unless files.any?
-
-          flagged_before = Venue.jameson_locals.in_company(COMPANY_ID).count
-
           reset_jameson_venue_flag
           files.each do |file_name, file|
             venue_ids = []
@@ -38,15 +37,15 @@ module JbbFile
             end
             Venue.where(id: venue_ids.compact).update_all(jameson_locals: true)
           end
-
-          files.each do |file_name, file|
-            archive_file file_name
-          end
-
-          total_flagged = Venue.jameson_locals.in_company(COMPANY_ID).count
-          success total_flagged, self.existed, self.created, flagged_before
-
         end
+
+        total_flagged = Venue.jameson_locals.in_company(COMPANY_ID).count
+        success total_flagged, self.existed, self.created, flagged_before
+
+        files.each do |file_name, file|
+          archive_file file_name
+        end
+        self
       end
     ensure
       close_connection
