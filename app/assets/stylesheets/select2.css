@@ -554,7 +554,7 @@ disabled look for disabled choices in the results dropdown
 }
 
 .select2-search-choice-close a{
-	color: $grey_four;
+	color: $gray-light;
 }
 
 .select2-search-choice-close:after {
