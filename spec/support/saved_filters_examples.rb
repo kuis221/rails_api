@@ -1,5 +1,5 @@
 RSpec.shared_examples 'a list that allow saving custom filters' do
-  scenario 'allows to create apply and remove custom filters' do
+  it 'allows to create apply and remove custom filters' do
     visit list_url
 
     within '#collection-list-filters' do
@@ -65,7 +65,7 @@ RSpec.shared_examples 'a list that allow saving custom filters' do
     end
   end
 
-  scenario 'can override existing filters' do
+  it 'can override existing filters' do
 
     visit list_url
 
@@ -82,7 +82,7 @@ RSpec.shared_examples 'a list that allow saving custom filters' do
     expect(filter.filters).not_to eql CustomFilter.find(filter.id).filters
   end
 
-  scenario 'can customize what I see by default in any list view' do
+  it 'can customize what I see by default in any list view' do
     visit list_url
 
     add_filter filters.first[:section], filters.first[:item]

@@ -12,7 +12,7 @@ $.widget 'nmk.filteredList', {
 		includeCalendars: false,
 		includeAutoComplete: false,
 		autoCompletePath: '',
-		defaultParams: [],
+		defaultParams: '',
 		customFilters: [],
 		userFilters: {},
 		selectDefaultDate: false,
@@ -920,7 +920,7 @@ $.widget 'nmk.filteredList', {
 
 	_deparam: (queryString) ->
 		params = []
-		if queryString
+		if typeof queryString != 'undefined' and queryString
 			queryString = queryString.substring(queryString.indexOf("?") + 1).split("&")
 			pair = null
 			decode = decodeURIComponent
@@ -1066,7 +1066,6 @@ $.widget 'nmk.filteredList', {
 			@infiniteScroller = false
 
 	_parseQueryString: (query) ->
-		vars = query.split('&')
 		dates = []
 		selectedOptions = []
 
@@ -1108,7 +1107,7 @@ $.widget 'nmk.filteredList', {
 			@selectCalendarDates dates[0], dates[1]
 		else
 			@_deselectDates()
-		dates = vars = null
+		dates = null
 
 		query = null
 

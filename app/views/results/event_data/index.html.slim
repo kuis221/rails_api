@@ -55,7 +55,7 @@ javascript:
     'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
     'applyTo': '#{controller_name}',
     'userFilters': #{user_saved_filters(controller_name).to_json.html_safe},
-    'defaultParams': '#{j default_params_charge('status[]=Active')}',
+    'defaultParams': '#{j default_params_for_view('status[]=Active')}',
     'onChange': function(filterBox){
       $(document).trigger('event-data-filter:changed')
     },

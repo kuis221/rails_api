@@ -45,7 +45,7 @@ javascript:
     'applyTo': 'results_photos',
     'userFilters': #{user_saved_filters('results_photos').to_json.html_safe},
     'autoCompletePath': '#{url_for(controller: 'results/photos', action: :autocomplete, format: :json)}',
-    'defaultParams': '#{j default_params_charge('status[]=Active')}'
+    'defaultParams': '#{j default_params_for_view('status[]=Active')}'
   });
 
   $(document).delegate('#photo-download-add', 'click', function(e) {

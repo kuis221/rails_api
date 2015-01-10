@@ -1145,7 +1145,7 @@ RSpec.shared_examples 'a fieldable element that accept modules' do
       expect(page).to have_no_content('Dropdown')
     end
 
-    module_field('Photos').drag_to form_builder
+    module_field('Gallery').drag_to form_builder
 
     # Make sure the KPI is not longer available in the KPIs list
     within('.fields-wrapper') do
