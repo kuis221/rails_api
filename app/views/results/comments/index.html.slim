@@ -45,7 +45,7 @@ javascript:
     'applyTo': 'results_comments',
     'userFilters': #{user_saved_filters('results_comments').to_json.html_safe},
     'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
-    'defaultParams': '#{j default_params_charge('status[]=Active')}',
+    'defaultParams': '#{j default_params_for_view('status[]=Active', scope: 'results_comments')}',
     'onChange': function(filterBox){
       $(document).trigger('comments-filter:changed')
     },

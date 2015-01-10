@@ -64,7 +64,7 @@ javascript:
     'includeAutoComplete': false,
     'fixListHeight': false,
     
-    'defaultParams': '#{j default_params_charge('start_date=' + resource.start_date.strftime("%m/%d/%Y") + '&end_date=' + resource.end_date.strftime("%m/%d/%Y") + '&campaign[]=' + resource.campaign_id.to_s + (resource.area_id ? '&area[]=' + resource.area_id.to_s : '') + '&user[]=' +resource.company_user_id.to_s)}',
+    'defaultParams': '#{j default_params_for_view('start_date=' + resource.start_date.strftime("%m/%d/%Y") + '&end_date=' + resource.end_date.strftime("%m/%d/%Y") + '&campaign[]=' + resource.campaign_id.to_s + (resource.area_id ? '&area[]=' + resource.area_id.to_s : '') + '&user[]=' +resource.company_user_id.to_s)}',
     'placeholderMessage': function(){
       return '<p>No events found for this Visit</p>';
     },

@@ -32,7 +32,7 @@ javascript:
     'includeSearchBox': false,
     'includeAutoComplete': true,
     'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
-    'defaultParams': '#{j default_params_charge('status[]=Active')}',
+    'defaultParams': '#{j default_params_for_view('status[]=Active')}',
     'applyTo': '#{controller_name}',
     'userFilters': #{user_saved_filters(controller_name).to_json.html_safe},
     'onItemsLoad': function(response, page){
