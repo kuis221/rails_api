@@ -33,7 +33,7 @@
 javascript:
   $('#collection-list-filters').filteredList({
     'source': '#{url_for(controller: 'results/comments', action: :items)}',
-    'filtersUrl': '#{filters_events_path(with_event_data_only: true, apply_to: :results_comments)}',
+    'filtersUrl': '#{j filters_events_path(with_event_data_only: true, apply_to: :results_comments).html_safe}',
     'listContainer': '#comment-list',
     'sorting': 'start_at',
     'sorting_dir': 'asc',

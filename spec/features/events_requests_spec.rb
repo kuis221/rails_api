@@ -120,7 +120,7 @@ feature 'Events section' do
 
           expect(page).to have_selector('#events-list .resource-item', count: 1)
           add_filter 'EVENT STATUS', 'Submitted'
-          remove_filter 'today to the future'
+          remove_filter 'Today To The Future'
           expect(page).to have_selector('#events-list .resource-item', count: 3)
           resource_item(2).click
           within('.alert') do
@@ -202,13 +202,13 @@ feature 'Events section' do
 
           visit events_path
 
-          expect(page).to have_content('0 events found for: Active today to the future')
+          expect(page).to have_content('0 events found for: Active Today To The Future')
 
-          expect(collection_description).to have_filter_tag('today to the future')
-          remove_filter 'today to the future'
+          expect(collection_description).to have_filter_tag('Today To The Future')
+          remove_filter 'Today To The Future'
 
           expect(page).to have_content('1 event found for: Active')
-          expect(collection_description).not_to have_filter_tag('today to the future')
+          expect(collection_description).not_to have_filter_tag('Today To The Future')
 
           within resource_item do
             expect(page).to have_content(campaign.name)
@@ -222,7 +222,7 @@ feature 'Events section' do
 
           visit events_path
 
-          expect(page).to have_content('1 event found for: Active today to the future')
+          expect(page).to have_content('1 event found for: Active Today To The Future')
           add_filter 'ACTIVE STATE', 'Inactive'
 
           within resource_item do
@@ -268,7 +268,7 @@ feature 'Events section' do
 
             visit events_path
 
-            expect(page).to have_content('2 events found for: Active today to the future')
+            expect(page).to have_content('2 events found for: Active Today To The Future')
 
             within events_list do
               expect(page).to have_content('Campaign FY2012')
@@ -282,7 +282,7 @@ feature 'Events section' do
 
             add_filter 'CAMPAIGNS', 'Campaign FY2012'
 
-            expect(page).to have_content('1 event found for: Active today to the future Campaign FY2012')
+            expect(page).to have_content('1 event found for: Active Today To The Future Campaign FY2012')
 
             within events_list do
               expect(page).to have_no_content('Another Campaign April 03')
@@ -295,7 +295,7 @@ feature 'Events section' do
               expect(page).to have_content('Campaign FY2012')
             end
 
-            expect(page).to have_content('2 events found for: Active today to the future Another Campaign April 03 Campaign FY2012')
+            expect(page).to have_content('2 events found for: Active Today To The Future Another Campaign April 03 Campaign FY2012')
 
             select_filter_calendar_day('18')
             within events_list do
@@ -303,11 +303,11 @@ feature 'Events section' do
               expect(page).to have_content('Campaign FY2012')
             end
 
-            expect(page).to have_content('1 event found for: Active today Another Campaign April 03 Campaign FY2012')
+            expect(page).to have_content('1 event found for: Active Today Another Campaign April 03 Campaign FY2012')
 
             select_filter_calendar_day('18', '19')
             expect(page).to have_content(
-              '2 events found for: Active today - tomorrow Another Campaign April 03 Campaign FY2012'
+              '2 events found for: Active Today - Tomorrow Another Campaign April 03 Campaign FY2012'
             )
             within events_list do
               expect(page).to have_content('Another Campaign April 03')
@@ -541,14 +541,14 @@ feature 'Events section' do
                            start_date: "#{month_number}/15/#{year}",
                            end_date: "#{month_number}/15/#{year}")
             create(:event, campaign: campaign1,
-                           start_date: "#{month_number - 1}/15/#{year}",
-                           end_date: "#{month_number - 1}/15/#{year}")
+                           start_date: "#{(today - 1.month).month}/15/#{(today - 1.month).year}",
+                           end_date: "#{(today - 1.month).month}/15/#{(today - 1.month).year}")
             create(:event, campaign: campaign1,
-                           start_date: "#{month_number - 1}/16/#{year}",
-                           end_date: "#{month_number - 1}/16/#{year}")
+                           start_date: "#{(today - 1.month).month}/16/#{(today - 1.month).year}",
+                           end_date: "#{(today - 1.month).month}/16/#{(today - 1.month).year}")
             create(:event, campaign: campaign3,
-                           start_date: "#{month_number - 1}/17/#{year}",
-                           end_date: "#{month_number - 1}/17/#{year}")
+                           start_date: "#{(today - 1.month).month}/17/#{(today - 1.month).year}",
+                           end_date: "#{(today - 1.month).month}/17/#{(today - 1.month).year}")
             Sunspot.commit
 
             visit events_path
@@ -732,7 +732,7 @@ feature 'Events section' do
 
             close_resource_details
 
-            expect(page).to have_content('1 event found for: Active today Campaign FY2012')
+            expect(page).to have_content('1 event found for: Active Today Campaign FY2012')
             expect(current_path).to eq(events_path)
 
             within events_list do
@@ -752,11 +752,11 @@ feature 'Events section' do
 
             visit events_path
 
-            expect(page).to have_content('1 event found for: Active today to the future')
+            expect(page).to have_content('1 event found for: Active Today To The Future')
             expect(page).to have_selector('#events-list .resource-item', count: 1)
 
             add_filter 'CAMPAIGNS', 'Campaign FY2012'
-            expect(page).to have_content('1 event found for: Active today to the future Campaign FY2012')  # The list shouldn't be filtered by date
+            expect(page).to have_content('1 event found for: Active Today To The Future Campaign FY2012')  # The list shouldn't be filtered by date
             expect(page).to have_selector('#events-list .resource-item', count: 1)
           end
         end
@@ -773,10 +773,10 @@ feature 'Events section' do
             Sunspot.commit
 
             visit events_path
-            expect(page).to have_content('1 event found for: Active today to the future')
+            expect(page).to have_content('1 event found for: Active Today To The Future')
             expect(page).to have_selector('#events-list .resource-item', count: 1)
 
-            expect(page).to have_content('1 event found for: Active today to the future')
+            expect(page).to have_content('1 event found for: Active Today To The Future')
 
             select_saved_filter 'My Custom Filter'
 
@@ -786,7 +786,7 @@ feature 'Events section' do
             expect(page).to have_content('2 events found for: Active Campaign FY2012')
 
             click_button 'Reset'
-            expect(page).to have_content('1 event found for: Active today to the future')
+            expect(page).to have_content('1 event found for: Active Today To The Future')
 
             within '#collection-list-filters' do
               expect(find_field('user-saved-filter', visible: false).value).to eq('')
@@ -795,15 +795,15 @@ feature 'Events section' do
             expect(page).to have_selector('#events-list .resource-item', count: 1)
             add_filter 'CAMPAIGNS', 'Campaign FY2012'
 
-            expect(page).to have_content('1 event found for: Active today to the future Campaign FY2012')
+            expect(page).to have_content('1 event found for: Active Today To The Future Campaign FY2012')
             expect(page).to have_selector('#events-list .resource-item', count: 1)
 
-            remove_filter 'today to the future'
+            remove_filter 'Today To The Future'
             expect(page).to have_content('2 events found for: Active Campaign FY2012')
             expect(page).to have_selector('#events-list .resource-item', count: 2)
 
             click_link 'Reset'
-            expect(page).to have_content('1 event found for: Active today to the future')
+            expect(page).to have_content('1 event found for: Active Today To The Future')
           end
         end
 
