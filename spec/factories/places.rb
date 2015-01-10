@@ -76,7 +76,7 @@ FactoryGirl.define do
       zipcode nil
       administrative_level_1 nil
       administrative_level_2 nil
-      neighborhood nil
+      neighborhoods nil
       types %w(natural_feature establishment)
     end
   end
