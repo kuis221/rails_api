@@ -38,6 +38,10 @@
 
 /* Icon Breakdown */
 
+.icon-analysis:before{
+	content: "\e60d";
+}
+
 .icon-arrow-right:before,
 .datepick-cmd-next:before{
 	content:"\e605";
@@ -45,7 +49,7 @@
 
 .icon-arrow-left:before,
 .datepick-cmd-prev:before{
-	content:"\e003";
+	content:"\e606";
 }
 
 .icon-arrow-down:before{
@@ -56,40 +60,80 @@
 	content: "\e600";
 }
 
+.icon-arrow-up:before{
+	content:"\e610";
+}
+
+.icon-attendance:before{
+	content: "\e655";
+}
+
 .icon-bell:before{
   content:"\e62b";
 }
 
-.icon-edit:before{
-	content:"\e608";
+.icon-chat:before{
+	content: "\e60e";
 }
 
-.icon-gear:before{
-	content:"\e609";
+.icon-cloud:before{
+	content: "\e615";
 }
 
-.icon-events:before{
-	content:"\e60a";
+.icon-close:before{
+	content: "\e616";
 }
 
-.icon-folder:before{
-	content:"\e643";
-}
-
-.icon-download:before{
-	content:"\e60b";
+.icon-collapsed:before, .icon-angle-down:before{
+	content: "\e617";
 }
 
 .icon-dashboard:before{
 	content:"\e60c";
 }
 
-.icon-analysis:before{
-	content: "\e60d";
+.icon-download:before{
+	content:"\e60b";
 }
 
-.icon-chat:before{
-	content: "\e60e";
+.icon-edit:before{
+	content:"\e608";
+}
+
+.icon-events:before{
+	content:"\e60a";
+}
+
+.icon-expanded:before, .icon-angle-up:before{
+	content: "\e61b";
+}
+
+.icon-female:before{
+	content:"\e618";
+}
+
+.icon-folder:before{
+	content:"\e643";
+}
+
+.icon-gear:before{
+	content:"\e609";
+}
+
+.icon-male:before{
+	content: "\e617";
+}
+
+.icon-on:before{
+	content:"\e611";
+}
+
+.icon-receipt:before{
+	content:"\e614";
+}
+
+.icon-results:before{
+	content:"\e612";
 }
 
 .icon-rounded-disable:before,
@@ -101,42 +145,6 @@
 	content: "\e64f";
 }
 
-.icon-arrow-up:before{
-	content:"\e012";
-}
-
-.icon-on:before{
-	content:"\e611";
-}
-
-.icon-results:before{
-	content:"\e612";
-}
-
-.icon-tasks:before{
-	content:"\e613";
-}
-
-.icon-receipt:before{
-	content:"\e614";
-}
-
-.icon-cloud:before{
-	content: "\e615";
-}
-
-.icon-close:before{
-	content: "\e616";
-}
-
-.icon-male:before{
-	content: "\e617";
-}
-
-.icon-female:before{
-	content:"\e618";
-}
-
 .icon-slimmed-arrow-left:before, .icon-angle-left:before{
 	content: "\e619";
 }
@@ -145,13 +153,16 @@
 	content: "\e61a";
 }
 
-.icon-collapsed:before, .icon-angle-down:before{
-	content: "\e617";
+.icon-tasks:before{
+	content:"\e613";
 }
 
-.icon-expanded:before, .icon-angle-up:before{
-	content: "\e61b";
-}
+
+
+
+
+
+
 
 .icon-time:before{
 	content: "\e61b";
@@ -286,6 +297,10 @@
 	content: "\e637";
 }
 
+.icon-survey:before{
+	content: "\e654";
+}
+
 .icon-dropdown:before{
 	content: "\e638";
 }
@@ -372,6 +387,10 @@
 
 .icon-web:before{
 	content: "\e602";
+}
+
+.icon-handrawn-close:before{
+	content: "\e653";
 }
 
 
