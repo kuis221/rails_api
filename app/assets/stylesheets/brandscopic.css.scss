@@ -543,7 +543,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	border-radius: 0px 0px 8px 8px;
 	box-sizing: border-box;
 	width: calc(100% - 100px);
-	z-index: 120000;
+	z-index: 110000;
 	.filter-label{
 		&>div {
 			display: inline-block;
@@ -1579,7 +1579,7 @@ footer{
 
 	a:before{
 		color: $user_menu;
-		content: "\e012";
+		content: "\e610";
 		display: block;
 		font-family: 'icons';
 		font-size: 14px;
@@ -5469,7 +5469,7 @@ body.campaigns{
 .chardinjs-helper-layer[data-id="application-content"] {
 	.chardinjs-tooltip.chardinjs-top {
 		&:before {
-			content: "\e60f";
+			content: "\e653";
 			display: block;
 			left: -30px;
 			font-family: 'icons';
