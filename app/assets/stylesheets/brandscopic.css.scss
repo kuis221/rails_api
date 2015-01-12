@@ -7064,6 +7064,18 @@ body.dashboard.index {
 			@include gradient-horizontal($light_blue, $dark_blue);
 			@include opacity(70);
 		}
+
+		.color-box {
+			float:left;
+			width:30px;
+			height:30px;
+			margin-top:30px;
+			border: 1px solid white;
+		}
+		.colpick_dark .colpick_field input, .colpick_dark .colpick_hex_field input {
+			height: auto;
+			padding-top: 0;
+		}
 	}
 	 #attendance-right-column {
 	 	display: inline-block;

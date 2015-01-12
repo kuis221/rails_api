@@ -23,6 +23,7 @@
           .attendees-range-bar
             .point-range.left-point
             .point-range.right-point
+        .color-box
         = f.input 'attendees[min]', as: :hidden
         = f.input 'attendees[max]', as: :hidden
 
@@ -69,3 +70,40 @@ javascript:
 
   $('#report_state').change();
 
+  $('.color-box').colpick({
+    colorScheme:'dark',
+    layout:'rgbhex',
+    color:'ff8800',
+    onSubmit:function(hsb,hex,rgb,el) {
+      $(el).css('background-color', '#'+hex);
+      $(el).colpickHide();
+      changeColorAllPolygon(hex,hsb);
+    }
+  }).css('background-color', '#ff8800');
+
+  function changeColorAllPolygon(color,hsb) {
+    var arrayColor = generateColorList(color,hsb);
+    console.log(arrayPolygon);
+    $.each(arrayPolygon, function(index, value) {
+      value.polygon.setOptions({fillColor: '#' + arrayColor[selectColorIndex(value.quantity)], fillOpacity: 0.5});
+    });
+  }
+
+  function generateColorList(color,hsb) {
+    var arrayColor = [];
+    hsb.s = 100;
+    for (var i = 0; i < 10; i++){
+      arrayColor.push($.colpick.hsbToHex(hsb));
+      hsb.s = hsb.s - 10;
+    }
+    return arrayColor;
+  }
+
+  function selectColorIndex(value) {
+    var t = (valueMax - valueMin) / 10
+    var colorIndex = Math.floor(value / t);
+    if (value == valueMax)
+      return 9;
+    else
+      return Math.floor(value / t);
+  }
