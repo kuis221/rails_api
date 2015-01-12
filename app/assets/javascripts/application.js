@@ -54,3 +54,4 @@
 //= require brandscopic
 //= require campaigns
 //= require events
+//= require colpick.js

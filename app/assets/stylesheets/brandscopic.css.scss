@@ -7065,6 +7065,14 @@ body.dashboard.index {
 			@include gradient-horizontal($light_blue, $dark_blue);
 			@include opacity(70);
 		}
+
+		.color-box {
+			float:left;
+			width:30px;
+			height:30px;
+			margin-top:30px;
+			border: 1px solid white;
+		}
 	}
 	 #attendance-right-column {
 	 	display: inline-block;
@@ -7075,6 +7083,25 @@ body.dashboard.index {
 	 		height: 600px;
 	 	}
 	 }
+}
+
+.colpick_field_letter {
+	position: relative !important;
+}
+.colpick_field {
+	input[type="text"] {
+		top: -10px;
+		background-color: transparent;
+		border: none;
+	}
+}
+.colpick_hex_field {
+	input[type="text"] {
+		top: -10px;
+		background-color: transparent;
+		border: none;
+		padding-left: 25px;
+	}
 }
 
 @import 'widgets/asset_upload_dialog';

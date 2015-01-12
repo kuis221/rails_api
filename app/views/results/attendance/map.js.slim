@@ -1,4 +1,8 @@
 |
+  var arrayPolygon = [];
+  var valueMin = 50;
+  var valueMax = 220;
+
   var showTootltip = function showTootltip(event, infoWindow) {
         infoWindow.setPosition(event.latLng);
         infoWindow.open(map);
@@ -26,12 +30,16 @@
         neighborhoodsCoordinates = [#{neighborhood_coordinates(neighborhood)}];
         neighborhoodPolygon = new google.maps.Polygon({
           paths: neighborhoodsCoordinates,
-          strokeColor: '#FF0000',
+          strokeColor: '#347B9B',
           strokeOpacity: 0.8,
           strokeWeight: 2,
-          fillColor: '#FF0000',
-          fillOpacity: 0.35
         });
+
+        arrayPolygon.push({
+          polygon: neighborhoodPolygon,
+          quantity: "#{Random.rand(220)}"
+        });
+
         neighborhoodPolygon.setMap(map);
 
         google.maps.event.addListener(neighborhoodPolygon, 'click', function(event) { showTootltip(event, infoWindows["#{j neighborhood.name}"]) });
@@ -45,3 +53,4 @@
       map;
 
       initializeNeighborhoodMap();
+      changeColorAllPolygon('#347B9B', $.colpick.hexToHsb('#347B9B'));
