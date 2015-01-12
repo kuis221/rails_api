@@ -23,12 +23,12 @@
           .attendees-range-bar
             .point-range.left-point
             .point-range.right-point
-        .color-box
+        //.color-box
         = f.input 'attendees[min]', as: :hidden
         = f.input 'attendees[max]', as: :hidden
 
     #attendance-right-column
-      #attendance-map-canvas
+      #attendance-map-canvas.google-map
 
     .clearfix
 
@@ -73,17 +73,16 @@ javascript:
   $('.color-box').colpick({
     colorScheme:'dark',
     layout:'rgbhex',
-    color:'ff8800',
+    color:'347B9B',
     onSubmit:function(hsb,hex,rgb,el) {
-      $(el).css('background-color', '#'+hex);
+      $(el).css('background-color', '#'+ hex);
       $(el).colpickHide();
       changeColorAllPolygon(hex,hsb);
     }
-  }).css('background-color', '#ff8800');
+  }).css('background-color', '#347B9B');
 
   function changeColorAllPolygon(color,hsb) {
     var arrayColor = generateColorList(color,hsb);
-    console.log(arrayPolygon);
     $.each(arrayPolygon, function(index, value) {
       value.polygon.setOptions({fillColor: '#' + arrayColor[selectColorIndex(value.quantity)], fillOpacity: 0.5});
     });
@@ -106,4 +105,16 @@ javascript:
       return 9;
     else
       return Math.floor(value / t);
+  }
+
+  function hexc(colorval) {
+    var parts = colorval.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+    delete(parts[0]);
+    for (var i = 1; i <= 3; ++i) {
+        parts[i] = parseInt(parts[i]).toString(16);
+        if (parts[i].length == 1) parts[i] = '0' + parts[i];
+    }
+    color = '#' + parts.join('');
+    console.log(color);
+    return color;
   }
