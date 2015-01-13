@@ -13,19 +13,21 @@
         = f.input :state, label: '2. Choose a state', collection: @states, selected: params[:report].try(:[], :state), include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Choose a state" } }
 
         = f.input :city, label: '2. Choose a city', collection: [], selected: params[:report].try(:[], :city), include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Choose a city" } }
-        .attendees-range-labels
-          span LOW
-          span MEDIUM
-          span HIGH
-          .separator.left-separator
-          .separator.right-separator
-        #attendees-range-slider 
-          .attendees-range-bar
-            .point-range.left-point
-            .point-range.right-point
-        //.color-box
-        = f.input 'attendees[min]', as: :hidden
-        = f.input 'attendees[max]', as: :hidden
+
+        .attendance-slider.hide
+          .attendees-range-labels
+            span LOW
+            span MEDIUM
+            span HIGH
+            .separator.left-separator
+            .separator.right-separator
+          #attendees-range-slider
+            .attendees-range-bar
+              .point-range.left-point
+              .point-range.right-point
+          //.color-box
+          = f.input 'attendees[min]', as: :hidden
+          = f.input 'attendees[max]', as: :hidden
 
     #attendance-right-column
       #attendance-map-canvas.google-map
@@ -33,12 +35,21 @@
     .clearfix
 
 javascript:
+
   $('#attendees-range-slider').rangeSlider({
     bounds: {min: 20, max: 210},
     defaultValues: { min: 20, max: 210 },
-    arrows: false
+    arrows: false,
+    step: 1,
+    range: 1
   }).on("userValuesChanged", function(e, data) {
-      alert('changed');
+    $.each(arrayPolygon, function(index, item) {
+      if (item.quantity >= data.values.min && item.quantity <= data.values.max ) {
+        item.polygon.setMap(window.attendanceMap);      
+      } else {
+        item.polygon.setMap(null);
+      }
+    });
   });
 
   var states = $('#report_state'),

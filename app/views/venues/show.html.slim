@@ -45,6 +45,14 @@
           i.icon-time
           span
             = place_opening_hours_formatted(resource.opening_hours)
+      - if jbb_feature_enabled?
+        .place-jameson-account
+          | Jameson Local Account:
+          b<= resource.jameson_locals ? 'Yes' : 'No'
+
+        .place-top-account
+          | Top 100 Account:
+          b<= resource.jameson_locals ? 'Yes' : 'No'
       / .description-data
       /   p Cocktails “made with mixers like Hawaiian Punch and Tang”, beer “served in a brown paper bag” and “junk food” like “deep-fried Twinkies and chili cheese tater tots” conjure up “college days” at this “kitschy” SoMa bar with a “trailer park theme”; it may be “gimmicky” and the “dive bar decor” is a little “rough around the edges”, but most are buttered up by the “super-fun” vibe.º
 

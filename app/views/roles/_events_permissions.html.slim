@@ -57,12 +57,13 @@
         .span2 = permission_checkbox(f, :edit_contacts, Event)
         .span2 = permission_checkbox(f, :delete_contact, Event)
 
-      .span12
-        .span3 Invites
-        .span2 = permission_checkbox(f, :index_invites, Event)
-        .span2 = permission_checkbox(f, :create_invite, Event)
-        .span2 = permission_checkbox(f, :edit_invite, Event)
-        .span2 = permission_checkbox(f, :deactivate_invite, Event)
+      - if jbb_feature_enabled?
+        .span12
+          .span3 Invites
+          .span2 = permission_checkbox(f, :index_invites, Event)
+          .span2 = permission_checkbox(f, :create_invite, Event)
+          .span2 = permission_checkbox(f, :edit_invite, Event)
+          .span2 = permission_checkbox(f, :deactivate_invite, Event)
 
       .span12
         .span3 Tasks

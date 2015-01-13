@@ -302,6 +302,10 @@ module ApplicationHelper
     path
   end
 
+  def jbb_feature_enabled?
+    current_company.id == 2
+  end
+
   def step_navigation_bar(steps, active)
     content_tag :div, class: 'steps-wizard' do
       content_tag(:div, class: 'row-fluid') do

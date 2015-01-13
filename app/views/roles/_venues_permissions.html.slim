@@ -36,6 +36,14 @@
         .span2
           = permission_checkbox(f, :view_events, Venue)
 
+      - if jbb_feature_enabled?
+        .span12
+          .span3 Invites
+          .span2 = permission_checkbox(f, :index_invites, Venue)
+          .span2 = permission_checkbox(f, :create_invite, Venue)
+          .span2 = permission_checkbox(f, :edit_invite, Venue)
+          .span2 = permission_checkbox(f, :deactivate_invite, Venue)
+
       .span7
         .span5 Photos
         .span2

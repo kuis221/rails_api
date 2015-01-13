@@ -1,11 +1,12 @@
+- values = @neighborhoods.map(&:invitations)
 |
   var arrayPolygon = [];
-  var valueMin = 50;
-  var valueMax = 220;
+  var valueMin = #{values.min || 0};
+  var valueMax = #{values.max || 0};
 
   var showTootltip = function showTootltip(event, infoWindow) {
         infoWindow.setPosition(event.latLng);
-        infoWindow.open(map);
+        infoWindow.open(window.attendanceMap);
       },
       initializeNeighborhoodMap = function initializeMap() {
         var mapOptions = {
@@ -19,14 +20,14 @@
             neighborhoodPolygon,
             infoWindows = {};
 
-          map = new google.maps.Map(document.getElementById('attendance-map-canvas'), mapOptions);
-          map.setOptions({styles: window.MAP_STYLES});
+          window.attendanceMap = new google.maps.Map(document.getElementById('attendance-map-canvas'), mapOptions);
+          window.attendanceMap.setOptions({styles: window.MAP_STYLES});
 
 
 - @neighborhoods.each do |neighborhood|
   |
         infoWindows["#{j neighborhood.name}"] = new google.maps.InfoWindow();
-        infoWindows["#{j neighborhood.name}"].setContent('<b>#{j neighborhood.name}</b>');
+        infoWindows["#{j neighborhood.name}"].setContent('<b>#{j neighborhood.name}</b>#{neighborhood.invitations}');
         neighborhoodsCoordinates = [#{neighborhood_coordinates(neighborhood)}];
         neighborhoodPolygon = new google.maps.Polygon({
           paths: neighborhoodsCoordinates,
@@ -37,10 +38,10 @@
 
         arrayPolygon.push({
           polygon: neighborhoodPolygon,
-          quantity: "#{Random.rand(220)}"
+          quantity: #{neighborhood.invitations}
         });
 
-        neighborhoodPolygon.setMap(map);
+        neighborhoodPolygon.setMap(window.attendanceMap);
 
         google.maps.event.addListener(neighborhoodPolygon, 'click', function(event) { showTootltip(event, infoWindows["#{j neighborhood.name}"]) });
         
@@ -48,9 +49,14 @@
           bounds.extend(neighborhoodsCoordinates[i]);
         };
 |
-      map.fitBounds(bounds);
-      },
-      map;
+      window.attendanceMap.fitBounds(bounds);
+      };
 
       initializeNeighborhoodMap();
       changeColorAllPolygon('#347B9B', $.colpick.hexToHsb('#347B9B'));
+      $('.attendance-slider').removeClass('hide');
+      $('#attendees-range-slider').rangeSlider('bounds', valueMin, valueMax);
+      $('#attendees-range-slider').rangeSlider('values', valueMin, valueMax);
+      $('#attendees-range-slider').rangeSlider('min', valueMin);
+      $('#attendees-range-slider').rangeSlider('max', valueMax);
+      $('#attendees-range-slider').rangeSlider('resize');
