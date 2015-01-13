@@ -1,5 +1,7 @@
 module JbbFile
   class Base
+    COMPANY_ID = 2
+
     attr_accessor :ftp_username, :ftp_password, :ftp_server, :ftp_folder,
                   :mailer, :invalid_files
 
