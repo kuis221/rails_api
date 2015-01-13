@@ -535,7 +535,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 }
 
 .collection-list-description {
-	background-color: $brand;
+	background-color: $silver;
 	box-shadow: none;
 	color: $white;
 	font-size: 14px;
@@ -558,16 +558,20 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			color: $white;
 			&#clear-filters {
 				vertical-align: top;
+				text-decoration: underline;
+			}
+			&.icon-close{
+				color: $silver;
 			}
 		}
 		.filter-item{
 			display: inline-block;
-			border: 1px solid $borders;
+			border: 1px solid $brand;
 			margin-left: 4px;
 			padding: 0 10px;
 			font-size: 12px;
 			text-transform: capitalize;
-			white-space: nowrap;
+			background-color: $brand;
 			@include border-radius (15px);
 			&:hover {
 				border-color: $white;
