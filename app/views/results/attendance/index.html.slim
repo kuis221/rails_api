@@ -110,12 +110,16 @@ javascript:
   }
 
   function selectColorIndex(value) {
-    var t = (valueMax - valueMin) / 10
-    var colorIndex = Math.floor(value / t);
-    if (value == valueMax)
-      return 9;
+    var t = (valueMax - valueMin) / 10;
+    if (value != 0 && t != 0) {
+      var colorIndex = Math.floor(value / t);
+      if (value == valueMax)
+        return 9;
+      else
+        return Math.floor(value / t);
+    }
     else
-      return Math.floor(value / t);
+      return 0;
   }
 
   function hexc(colorval) {
