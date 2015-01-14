@@ -10,15 +10,21 @@
       | for more information about this section.
 
 .row-fluid.with-details-close-bar
-  = resource_details_bar("You are viewing venue details. Click to close.")
+
+  /! This must be dynamic with the name of the venue
+  = resource_details_bar("Viewing The Fox Sports Bar & Grill venue details page.")
 
   .details_box.padding-top-close-bar
     .row-fluid.venue_details_container
       .span6
         h2= resource.name
-        p Restaurant, Food
-        span>$$$
-        |$$
+        span.category
+          | Restaurant, Food
+        span.price
+          span.price-level $$$
+          |$$
+
+
         ul.stripped-list.small.data-list
           li
             i.icon-wired-venue
@@ -39,20 +45,35 @@
 
         ul.stripped-list.small
           li
-            b Hours
-            div data-toggle="collapse" data-target="#demo" aria-expanded="true" aria-controls="demo"
-              span.venues-opening-hours = place_opening_hours_formatted(resource.opening_hours)
-            div#demo class="collapse"
+            b.highlight-text Hours:
+            div.venues-opening-hours.display data-toggle="collapse" data-target="#collapse-venue-hour" aria-expanded="true" aria-controls="demo"
+              span = place_opening_hours_formatted(resource.opening_hours)
+            /! Show more - show less should be dynamic. Now is a class, maybe can change with the attr value?
+
+            div#collapse-venue-hour.venues-opening-hours.collapsible class="collapse"
               span = place_opening_hours_formatted(resource.opening_hours)
 
           li
-            b> Jameson Local Account:
+            b.highlight-text> Jameson Local Account:
             | Yes
           li
-            b> Top 100 Account:
+            b.highlight-text> Top 100 Account:
             | No
 
         p.small Quis nostrud exerci tation, ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat duis autem. Consuetudium lectorum mirum est notare quam littera gothica quam nunc putamus parum! Vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat vel illum dolore. Volutpat ut wisi enim ad minim veniam eu feugiat nulla. Imperdiet doming id quod mazim placerat facer possim assum typi non habent claritatem? Nunc nobis videntur parum clari fiant sollemnes in?
+
+        .areas
+          i.icon-wired-map
+          .filter-item
+            | Sample Area 1
+            a.icon.icon-close
+          .filter-item
+            | Sample Area 2
+            a.icon.icon-close
+          a.filter-item.add-filter
+            i.icon-rounded-add
+            | Add to area
+
       .span6.map_container
         - unless resource.latitude.nil? || resource.longitude.nil?
           #venue-map-canvas.google-map data-latitude="#{resource.latitude}" data-longitude="#{resource.longitude}"
@@ -124,7 +145,7 @@
     h5.module-title EVENTS
     - if can?(:show, Venue) && can?(:create, Event)
       - if resource.persisted?
-        = button_to 'Create', new_venue_event_path(resource), method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn' if can? :create, Event
+        = button_to 'Create Event', new_venue_event_path(resource), method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn' if can? :create, Event
       - else
         = button_to 'Create', new_event_path(event: {place_reference: "#{resource.place.reference}||#{resource.place.place_id}"}, place_reference_display_name: "#{resource.place.name}, #{resource.place.city}, #{resource.place.state}"), method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn'
     - if resource.persisted?
