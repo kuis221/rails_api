@@ -29,10 +29,6 @@ describe AttachedAsset, type: :model, search: true do
       .to match_array([])
 
     # Search for brands associated to the Attached Assets
-    expect(search(company_id: company.id, q: "brand,#{brand.id}"))
-      .to match_array([asset, asset2])
-    expect(search(company_id: company.id, q: "brand,#{brand2.id}"))
-      .to match_array([asset2])
     expect(search(company_id: company.id, brand: brand.id))
       .to match_array([asset, asset2])
     expect(search(company_id: company.id, brand: brand2.id))
@@ -41,10 +37,6 @@ describe AttachedAsset, type: :model, search: true do
       .to match_array([asset, asset2])
 
     # Search for campaigns associated to the Attached Assets
-    expect(search({ company_id: company.id, q: "campaign,#{campaign.id}" }, true))
-      .to match_array([asset])
-    expect(search(company_id: company.id, q: "campaign,#{campaign2.id}"))
-      .to match_array([asset2])
     expect(search(company_id: company.id, campaign: campaign.id))
       .to match_array([asset])
     expect(search(company_id: company.id, campaign: campaign2.id))
@@ -53,10 +45,6 @@ describe AttachedAsset, type: :model, search: true do
       .to match_array([asset, asset2])
 
     # Search for a specific Attached Asset's place
-    expect(search(company_id: company.id, q: "venue,#{venue.id}"))
-      .to match_array([asset])
-    expect(search(company_id: company.id, q: "venue,#{venue2.id}"))
-      .to match_array([asset2])
     expect(search(company_id: company.id, location: [place.location_id]))
       .to match_array([asset])
     expect(search(company_id: company.id, location: [place2.location_id]))

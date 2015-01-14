@@ -18,13 +18,16 @@ describe Ability, type: :model do
     let(:venue) { create(:venue, place: place, company: company) }
     let(:venue_in_other_company) { create(:venue, place: place, company: other_company) }
     let(:activity) do
-      create(:activity, activity_type: create(:activity_type, company: company),
+      create(:activity, activity_type: create(:activity_type, company: company, campaigns: [campaign]),
                         activitable: venue,
+                        campaign: campaign,
                         company_user: create(:company_user,  company: company))
     end
     let(:activity_in_other_company) do
-      create(:activity, activity_type: create(:activity_type, company: other_company),
+      at = create(:activity_type, company: other_company)
+      create(:activity, activity_type: at,
                         activitable: venue_in_other_company,
+                        campaign: create(:campaign, company: other_company, activity_types: [at]),
                         company_user: create(:company_user,  company_id: other_company.id))
     end
 

@@ -633,7 +633,7 @@ feature 'Campaigns', js: true do
         campaign.brands << create(:brand, name: 'Brand 2', company: company)
         company_user.campaigns << campaign
 
-        create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', company: company)
+        create(:brand_portfolio, name: 'A Vinos Ticos', description: 'Algunos vinos de Costa Rica', company: company)
         create(:brand_portfolio, name: 'B Licores Costarricenses', description: 'Licores ticos', company: company)
       end
 
@@ -643,7 +643,7 @@ feature 'Campaigns', js: true do
         [{ section: 'BRANDS', item: 'Brand 1' },
          { section: 'BRANDS', item: 'Brand 2' },
          { section: 'PEOPLE', item: user.full_name },
-         { section: 'BRAND PORTFOLIOS', item: 'A Vinos ticos' },
+         { section: 'BRAND PORTFOLIOS', item: 'A Vinos Ticos' },
          { section: 'ACTIVE STATE', item: 'Inactive' }]
       end
     end

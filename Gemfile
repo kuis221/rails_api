@@ -64,6 +64,8 @@ group :development do
   gem 'quiet_assets', '>= 1.0.1'
   gem 'oink'
   gem 'pry-rails'
+  gem 'haml'
+  gem 'nkss-rails', github: 'nadarei/nkss-rails'
 end
 
 # Gems that are only required for the web process, to prevent

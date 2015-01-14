@@ -262,9 +262,9 @@ module FacetsHelper
      venue: [], role: [], brand_portfolio: [], id: [], event: []]
   end
 
-  def default_params_charge(default = '')
+  def default_params_for_view(default = '', scope: filter_settings_scope)
     filter_string = CustomFilter.for_company_user(current_company_user).user_saved_filters
-            .order('custom_filters.name ASC').by_type(filter_settings_scope).where(default_view: true).limit(1).pluck(:filters).first
+            .order('custom_filters.name ASC').by_type(scope).where(default_view: true).limit(1).pluck(:filters).first
     (filter_string || escape_query_params(default)).html_safe
   end
 

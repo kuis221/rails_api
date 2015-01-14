@@ -1597,7 +1597,10 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   def permitted_search_params
     params.permit(:page, :start_date, :end_date, { campaign: [] }, { place: [] }, { area: [] }, { venue: [] },
-                  { user: [] }, { team: [] }, { brand: [] }, { brand_porfolio: [] }, { status: [] }, event_status: [])
+                  { user: [] }, { team: [] }, { brand: [] }, { brand_porfolio: [] }, { status: [] }, event_status: []).tap do |p|
+      p[:sorting] ||= 'start_at'
+      p[:sorting_dir] ||= 'asc'
+    end
   end
 
   def load_contactable_from_request

@@ -104,6 +104,11 @@ h1, h2, h3{
 // GENERAL STYLES
 // --------------------------------------------------
 
+/* ----------------------------------------------------------------------------
+ * Links:
+ *
+ * Styleguide 1.1.
+ */
 a{
 	color:$text;
 	outline: 0;
@@ -614,7 +619,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	border-radius: 0px 0px 8px 8px;
 	box-sizing: border-box;
 	width: calc(100% - 100px);
-	z-index: 120000;
+	z-index: 110000;
 	.filter-label{
 		&>div {
 			display: inline-block;
@@ -625,17 +630,21 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			&#clear-filters {
 				float: right;
 				vertical-align: top;
+				text-decoration: underline;
+			}
+			&.icon-close{
+				color: $silver;
 			}
 		}
 		/*
 		.filter-item{
 			display: inline-block;
-			border: 1px solid $borders;
+			border: 1px solid $brand;
 			margin-left: 4px;
 			padding: 0 10px;
 			font-size: 12px;
 			text-transform: capitalize;
-			white-space: nowrap;
+			background-color: $brand;
 			@include border-radius (15px);
 			&:hover {
 				border-color: $white;
@@ -1617,7 +1626,7 @@ footer{
 
 	a:before{
 		color: $user_menu;
-		content: "\e012";
+		content: "\e610";
 		display: block;
 		font-family: 'icons';
 		font-size: 14px;
@@ -5573,7 +5582,7 @@ body.campaigns{
 .chardinjs-helper-layer[data-id="application-content"] {
 	.chardinjs-tooltip.chardinjs-top {
 		&:before {
-			content: "\e60f";
+			content: "\e653";
 			display: block;
 			left: -30px;
 			font-family: 'icons';
