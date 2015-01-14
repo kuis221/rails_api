@@ -572,6 +572,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			font-size: 12px;
 			text-transform: capitalize;
 			background-color: $brand;
+			margin-bottom: 3px;
 			@include border-radius (15px);
 			&:hover {
 				border-color: $white;
