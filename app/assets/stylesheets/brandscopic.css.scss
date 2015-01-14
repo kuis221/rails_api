@@ -162,13 +162,13 @@ table{
 
 .stripped-list{
 	list-style: none;
-	margin-left: 0;
+	margin-left:0;
+	li{
+		margin: 8px 0;
+	}
 }
 
 .data-list{
-	li{
-		margin: 5px 0;
-	}
 	i{
 		color: silver;
 		font-size: 17px;
@@ -181,6 +181,10 @@ table{
 			text-align: center;
 		}
 	}
+}
+
+.highlight-text{
+	color: $brand;
 }
 
 .menubar-icon {
@@ -597,14 +601,14 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 }
 
 .collection-list-description {
-	background-color: $brand;
+	background-color: $silver;
 	box-shadow: none;
 	color: $white;
-	font-size: 14px;
+	font-size: 12px;
 	min-height: 37px;
 	line-height: 22px;
 	margin: 0 10px 0 90px;
-	padding: 7px 20px 6px 21px;
+	padding: 10px 20px 10px 21px;
 	position: fixed;
 	-webkit-border-radius: 0px 0px 8px 8px;
 	border-radius: 0px 0px 8px 8px;
@@ -619,9 +623,11 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		a {
 			color: $white;
 			&#clear-filters {
+				float: right;
 				vertical-align: top;
 			}
 		}
+		/*
 		.filter-item{
 			display: inline-block;
 			border: 1px solid $borders;
@@ -652,6 +658,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	    	color: $gray-lighter;
 		  }
 		}
+		*/
 	}
 }
 
@@ -2924,7 +2931,7 @@ ul.ui-widget-content{
 	border-radius: 7px 7px 0px 0px;
 	position: absolute;
 	left: 0;
-	min-height: 43px;
+	min-height: 40px;
 	z-index: 200;
 	-webkit-border-radius: 7px 7px 0px 0px;
 	width: 100%;
@@ -2944,7 +2951,7 @@ ul.ui-widget-content{
 		width: 99%;
 		padding: 10px 0 5px 16px;
 		text-decoration: none;
-		color: $gray-lighter;
+		color: $brand;
 	}
 	.icon-close {
 		position: absolute;
@@ -3755,7 +3762,8 @@ body.events.index {
 body.show {
 	.details_box{
 		.btn-primary, .btn-cancel{
-			min-width: 130px;
+			max-width: 130px;
+			width: 130px;
 		}
 	}
 	#company_user-areas-list, #company_user-places-list,
@@ -4590,15 +4598,27 @@ body.roles{
 
 .venues-opening-hours{
 	display: block;
-	max-height: 18px;
-	overflow: hidden;
 	position: relative;
-	&:after{
-		content: "(Show more)";
-		font-size: 12px;
-		margin-left: 10px;
-		position: absolute;
-		top: 0;
+	padding-left: 45px;
+	&.display{
+		margin-top: -20px;
+		max-height: 18px;
+		overflow: hidden;
+		&:after{
+			content: "(Show more)";
+			color: $brand;
+			font-size: 12px;
+			margin-left: 10px;
+			position: absolute;
+			top: 0;
+		}
+	}
+	&.collapsible{
+		span{
+			line-height: 20px;
+			position: relative;
+			top: -18px;
+		}
 	}
 }
 
@@ -4819,22 +4839,52 @@ body.roles{
 
 // Maps on venue and event details
 
+.areas{
+ 	margin-top: 20px;
+ 	.icon-wired-map{
+ 		color: $silver;
+ 		font-size: 16px;
+ 		margin-right: 5px;
+ 		position: relative;
+ 		top: 3px;
+ 	}
+ 	a{
+
+ 	}
+}
+
 .venue_details_container{
 	overflow: hidden;
-	padding: 10px;
 	position: relative;
+	.data-list{
+		margin-top: 20px;
+	}
 	.map_container{
 		border:1px solid $user_menu;
 		float: right;
-		right: 0;
-		position: absolute;
 		height: 100%;
+		overflow: hidden;
+		position: absolute;
+		right: 0;
+	}
+}
+
+.category{
+	color: $brand;
+}
+
+.price{
+	color: $silver;
+	margin-left: 10px;
+	.price-level{
+		color: #cfc53e;
 	}
 }
 
 #venue-map-canvas{
 	display:block;
-	height: 500px;
+	height: 100%;
+	min-height: 504px;
 }
 
 // Forms inside Data Tables
@@ -5494,7 +5544,7 @@ body.campaigns{
 		}
 	}
 	h2{
-		margin-top: 10px;
+		//margin-top: 10px;
 		//margin-bottom: 30px;
 		&.special{
 			margin-top: 45px;
@@ -7044,6 +7094,60 @@ body.dashboard.index {
 			font-size: 14px !important;
 		}
 	}
+}
+
+.icon-star{
+	color: #cfc53e;
+}
+.icon-star-empty{
+	color: $silver;
+}
+
+.filter-item{
+	display: inline-block;
+	background-color: $brand;
+	border: 0;
+	color: $white;
+	line-height: 23px;
+	margin-left: 4px;
+	min-height: 24px;
+	padding: 0 10px;
+	font-size: 12px;
+	text-transform: capitalize;
+	white-space: nowrap;
+	@include border-radius (15px);
+	&:hover {
+		border-color: $white;
+		cursor: pointer;
+	}
+	a.icon-close {
+		color: $gray-light;
+		float: right;
+		font-size: 10px;
+		margin-right: -4px;
+		margin-left: 4px;
+		margin-top: 8px;
+		position: relative;
+		text-decoration: underline;
+	}
+	.full {
+		color: #CBBB26;
+	}
+	.empty {
+  	color: $gray-lighter;
+  }
+  &.add-filter{
+		background-color: $white;
+		color: $brand;
+		font-weight: 600;
+		text-decoration: underline;
+		.icon-rounded-add{
+			font-size: 18px;
+			position: relative;
+			top: 5px;
+			left: -2px;
+		}
+  }
 }
 
 @import 'widgets/asset_upload_dialog';
