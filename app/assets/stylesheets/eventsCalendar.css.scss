@@ -11,7 +11,7 @@
 			width: 14.28571428571429%;
 		}
 		th {
-			background-color: #989898;
+			background-color: $brand;
 			color: $white;
 			text-transform:uppercase;
 			text-align: left;
@@ -45,6 +45,9 @@
 					display: block;
 					margin-left: 15px;
 					margin-top: -19px;
+					overflow: hidden;
+					white-space: nowrap;
+					text-overflow: ellipsis;
 					a, a:hover{
 						color: $brand;
 					}
@@ -126,13 +129,76 @@
 	.calendar-controls {
 		height: 30px;
 		.calendar-month-name{
-			float: left;
+			display: inline-block;
 			font-weight: bold;
 			font-size: 18px;
 		}
 
 		.calendar-months-arrows {
+			display: inline-block;
+			margin-left: 10px;
+			.icon-angle-left:before, .icon-angle-right:before {
+				font-size: 23px;
+				top: 7px;
+				color: silver;
+			}
+			a:hover{
+				text-decoration: none;
+				color: $gray;
+				&:before {
+					color: $gray;
+				}
+			}
+		}
+
+		.calendar-grouping {
+			display: inline-block;
 			float: right;
+			font-size: 12px;
+			.dropdown-toggle {
+				i {
+					margin-right: 24px;
+					margin-left: 5px;
+					color: $silver;
+					&:before {
+						top: 4px;
+					}
+				}
+				span {
+					font-weight: bold;
+				}
+			}
+			.dropdown-menu {
+				font-size: 14px;
+				i.icon-checked {
+					display: none;
+					margin-top: 4px;
+				}
+				li {
+					a {
+						padding-left: 10px;
+						padding-right: 10px;
+					}
+					&.active a {
+						background-color: transparent;
+						background-image: none;
+						color: inherit;
+						&:hover {
+							background-color: $brand;
+							color: $white;
+						}
+						i.icon-checked {
+							display: inline-block;
+						}
+					}
+					a i {
+						color: $silver;
+						&.item-icon {
+							margin-right: 5px;
+						}
+					}
+				}
+			}
 		}
 	}
 

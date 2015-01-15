@@ -634,15 +634,6 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 
 // Events calendar datepicker
 
-	.calendar-months-arrows{
-		a:hover{
-			text-decoration: none;
-		}
-		.icon-angle-left:before, .icon-angle-right:before {
-			font-size: 26px;
-			color: silver;
-		}
-	}
 	.datepick{
 		background-color: $white;
 		border: 0;
@@ -2130,11 +2121,21 @@ li#notifications{
 
 .dropdown-menu:before{
 	position: absolute;
-	top: -8px;
+	top: -10px;
 	left: 114px;
 	display: inline-block;
 	border-right: 10px solid transparent;
-	border-bottom: 10px solid $menu;
+	border-bottom: 10px solid $dropdownBorder;
+	border-left: 10px solid transparent;
+	content: '';
+}
+.dropdown-menu:after{
+	position: absolute;
+	top: -9px;
+	left: 114px;
+	display: inline-block;
+	border-right: 10px solid transparent;
+	border-bottom: 10px solid $white;
 	border-left: 10px solid transparent;
 	content: '';
 }

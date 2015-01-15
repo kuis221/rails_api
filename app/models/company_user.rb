@@ -90,6 +90,18 @@ class CompanyUser < ActiveRecord::Base
   scope :by_campaigns, ->(campaigns) { joins(:memberships).where(memberships: { memberable_id: campaigns, memberable_type: 'Campaign' }) }
   scope :by_events, ->(events) { joins(:memberships).where(memberships: { memberable_id: events, memberable_type: 'Event' }) }
 
+  def  self.in_event_team(event)
+    where('company_users.id in ('\
+          '    SELECT distinct company_user_id FROM memberships WHERE memberable_id = :event_id AND memberable_type = \'Event\' '\
+          ' UNION '\
+          '    SELECT distinct company_user_id'\
+          '    FROM memberships'\
+          '    INNER JOIN teamings ON teamings.teamable_id=:event_id AND teamable_type=\'Event\''\
+          '    WHERE memberable_id = teamings.team_id AND memberable_type = \'Team\''\
+          ')', event_id: event
+    )
+  end
+
   # Returns all users that have at least one of the given notifications
   scope :with_notifications, ->(notifications) { where(notifications.map { |_n| '? = ANY(notifications_settings)' }.join(' OR '), *notifications) }
 
