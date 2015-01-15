@@ -1,6 +1,6 @@
 - allow_upload ||= false
 
-h3.module-title GALLERY
+h5.module-title GALLERY
 - if allow_upload && can?(:create_photo, resource)
   = button_to_add 'Add Photos', new_event_photo_path(resource), class: 'dialogue-photos' if allow_upload && can?(:create_photo, resource)
 

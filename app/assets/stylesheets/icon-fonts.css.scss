@@ -157,13 +157,6 @@
 	content:"\e613";
 }
 
-
-
-
-
-
-
-
 .icon-time:before{
 	content: "\e61b";
 }
@@ -329,7 +322,8 @@
 	content:"\e614";
 }
 
-.icon-star:before{
+.icon-star:before,
+.icon-star-empty:before {
 	content:"\e640";
 }
 
@@ -379,6 +373,9 @@
 
 .icon-resend:before{
 	content: "\e628";
+}
+.icon-web:before{
+	content: "\e629";
 }
 
 .icon-venue:before{

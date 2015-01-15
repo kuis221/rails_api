@@ -70,7 +70,7 @@
 
   - if can?(:view_members, resource)
     #event-members.details_box
-      h3.module-title EVENT STAFF
+      h5.module-title EVENT STAFF
       #event-team-members
         = render partial: 'team_member_list', locals: {can_delete: can?(:delete_member, resource)}
       = button_to_add 'Add Team Member', new_member_event_path(resource) if can?(:add_members, resource)
@@ -78,7 +78,7 @@
 
   - if can?(:view_contacts, resource)
     #event-contacts.details_box
-      h3.module-title CONTACTS
+      h5.module-title CONTACTS
       #event-contacts-list
         = render 'contacts'
       = button_to_add 'Add Contact', add_event_contact_events_path(resource) if can?(:create_contacts, resource)
