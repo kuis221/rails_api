@@ -178,9 +178,10 @@ select:focus:invalid:focus {
 		box-shadow: none;
 		color:white;
 		font-size: 14px;
-		padding: 7px 25px;
+		padding: 7px 15px;
 		text-decoration: none !important;
 		text-shadow:none;
+		text-align: center;
 		&:hover{
 			background-color: $buttons-hover !important;
 		}
@@ -242,7 +243,7 @@ select:focus:invalid:focus {
 		}
 		&.btn-primary, &.btn-cancel{
 			box-sizing: border-box;
-			padding: 8px 25px;
+			padding: 8px 15px;
 			//height: 35px;
 			&.fileinput-button{
 				width: 140px;

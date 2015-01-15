@@ -31,6 +31,71 @@
 	font-style: normal;
 }
 
+// TYPOGRAPHY
+// --------------------------------------------------
+
+p{
+	font-size: $baseFontSize;
+	line-height: $baseLineHeight;
+}
+
+h1{
+	font-size: 42px;
+}
+
+h2{
+	font-size: 28px;
+}
+
+h3{
+	font-size: 22px;
+}
+
+h4{
+	font-size: 18px;
+}
+
+h5{
+	font-size: 16px;
+}
+
+h6{
+	font-size: $baseFontSize;
+}
+
+h1, h2, h3{
+	font-family: $baseFontFamily;
+	font-weight: normal;
+	margin-top: 0;
+	line-height: 30px;
+}
+
+.big{
+	font-size: 16px;
+}
+
+// For details text
+.small{
+	font-size:12px;
+}
+
+// Ellipsis for texts style
+.crop-text{
+	overflow:hidden;
+	text-overflow: ellipsis;
+	white-space:nowrap;
+}
+
+// Titles for all the modules
+.module-title{
+	color: $user_menu;
+}
+
+.uppercase{
+	text-transform: uppercase;
+}
+
+
 
 // GENERAL STYLES
 // --------------------------------------------------
@@ -72,10 +137,6 @@ a{
 	}
 }
 
-.module-title{
-	color: $user_menu;
-}
-
 abbr[title]{
 	border:0;
 }
@@ -93,33 +154,39 @@ abbr[title]{
 	padding: 0;
 }
 
-.crop-text{
-	overflow:hidden;
-	text-overflow: ellipsis;
-	white-space:nowrap;
-}
-
-h1, h2, h3{
-	font-family: $baseFontFamily;
-	font-weight: normal;
-	margin-top: 0;
-	line-height: 30px;
-}
-
-p{
-	&.big{
-		font-size: 16px;
-	}
-}
-
 table{
 	border: 0;
 }
 
-.uppercase{
-	text-transform: uppercase;
+// Lists
+// --------------------------------
+
+.stripped-list{
+	list-style: none;
+	margin-left:0;
+	li{
+		margin: 8px 0;
+	}
 }
 
+.data-list{
+	i{
+		color: silver;
+		font-size: 17px;
+		display: inline-block;
+		margin-right: 10px;
+		text-align: center;
+		vertical-align: middle;
+		width: 20px;
+		&:before{
+			text-align: center;
+		}
+	}
+}
+
+.highlight-text{
+	color: $brand;
+}
 
 .menubar-icon {
 	display: block;
@@ -139,7 +206,6 @@ table{
 body{
 	color:$text;
 	font-family: $baseFontFamily;
-	//font-size: 13px;
 	font-weight: 400;
 	min-height: 100%;
 	position: relative;
@@ -501,6 +567,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		&.icon-close{
 			right: 0;
 			font-size: 14px;
+			line-height: 24px;
 		}
 	}
 	&.alert-info, &.alert-grey{
@@ -538,11 +605,11 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	background-color: $silver;
 	box-shadow: none;
 	color: $white;
-	font-size: 14px;
+	font-size: 12px;
 	min-height: 37px;
 	line-height: 22px;
 	margin: 0 10px 0 90px;
-	padding: 7px 20px 6px 21px;
+	padding: 10px 20px 10px 21px;
 	position: fixed;
 	-webkit-border-radius: 0px 0px 8px 8px;
 	border-radius: 0px 0px 8px 8px;
@@ -557,6 +624,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		a {
 			color: $white;
 			&#clear-filters {
+				float: right;
 				vertical-align: top;
 				text-decoration: underline;
 			}
@@ -564,6 +632,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 				color: $silver;
 			}
 		}
+		/*
 		.filter-item{
 			display: inline-block;
 			border: 1px solid $brand;
@@ -595,6 +664,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	    	color: $gray-lighter;
 		  }
 		}
+		*/
 	}
 }
 
@@ -975,42 +1045,6 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		}
 	}
 }
-/*
-	.dates-pref{
-		list-style: none;
-		margin-left: 0px;
-		li{
-			display: inline-block;
-			font-size: 12px;
-			font-weight: bold;
-			padding: 1px 7px;
-			margin-right: 0.15em;
-			margin-left: 2px;
-			&.active{
-				background-color: $brand;
-				font-weight: 300;
-				-webkit-border-radius: 6px;
-				border-radius: 6px;
-				a{
-					color: $white;
-					&:hover{
-						border-bottom: 0;
-						color: $app_bg;
-					}
-				}
-			}
-			a{
-				color: $user_menu;
-				cursor: pointer;
-				font-weight: 400;
-				&:hover{
-					border-bottom: 1px solid $brand;
-					color: $brand;
-					text-decoration: none;
-				}
-			}
-		}
-	}*/
 
 	.custom-data-panel{
 		.form-group{
@@ -2903,7 +2937,7 @@ ul.ui-widget-content{
 	border-radius: 7px 7px 0px 0px;
 	position: absolute;
 	left: 0;
-	min-height: 43px;
+	min-height: 40px;
 	z-index: 200;
 	-webkit-border-radius: 7px 7px 0px 0px;
 	width: 100%;
@@ -2923,7 +2957,7 @@ ul.ui-widget-content{
 		width: 99%;
 		padding: 10px 0 5px 16px;
 		text-decoration: none;
-		color: $gray-lighter;
+		color: $brand;
 	}
 	.icon-close {
 		position: absolute;
@@ -3734,7 +3768,8 @@ body.events.index {
 body.show {
 	.details_box{
 		.btn-primary, .btn-cancel{
-			min-width: 130px;
+			max-width: 130px;
+			width: 130px;
 		}
 	}
 	#company_user-areas-list, #company_user-places-list,
@@ -4567,6 +4602,32 @@ body.roles{
 	}
 }
 
+.venues-opening-hours{
+	display: block;
+	position: relative;
+	padding-left: 45px;
+	&.display{
+		margin-top: -20px;
+		max-height: 18px;
+		overflow: hidden;
+		&:after{
+			content: "(Show more)";
+			color: $brand;
+			font-size: 12px;
+			margin-left: 10px;
+			position: absolute;
+			top: 0;
+		}
+	}
+	&.collapsible{
+		span{
+			line-height: 20px;
+			position: relative;
+			top: -18px;
+		}
+	}
+}
+
 // EVENT DATA
 // --------------------------------------------------
 
@@ -4783,11 +4844,53 @@ body.roles{
 }
 
 // Maps on venue and event details
+
+.areas{
+ 	margin-top: 20px;
+ 	.icon-wired-map{
+ 		color: $silver;
+ 		font-size: 16px;
+ 		margin-right: 5px;
+ 		position: relative;
+ 		top: 3px;
+ 	}
+ 	a{
+
+ 	}
+}
+
+.venue_details_container{
+	overflow: hidden;
+	position: relative;
+	.data-list{
+		margin-top: 20px;
+	}
+	.map_container{
+		border:1px solid $user_menu;
+		float: right;
+		height: 100%;
+		overflow: hidden;
+		position: absolute;
+		right: 0;
+	}
+}
+
+.category{
+	color: $brand;
+}
+
+.price{
+	color: $silver;
+	margin-left: 10px;
+	.price-level{
+		color: #cfc53e;
+	}
+}
+
 #venue-map-canvas{
-	border:1px solid $user_menu;
 	display:block;
-	margin: 20px -15px 4px -15px;
-	height: 500px;
+	height: 100%;
+	min-height: 504px;
 }
 
 // Forms inside Data Tables
@@ -5447,16 +5550,13 @@ body.campaigns{
 		}
 	}
 	h2{
-		font-size: 28px;
-		margin-top: 10px;
-		margin-bottom: 30px;
+		//margin-top: 10px;
+		//margin-bottom: 30px;
 		&.special{
 			margin-top: 45px;
 		}
 	}
-	h3{
-		font-size: 16px;
-		font-weight: bold;
+	h5{
 		margin: 0 0 30px;
 	}
 	.links-data{
@@ -7000,6 +7100,60 @@ body.dashboard.index {
 			font-size: 14px !important;
 		}
 	}
+}
+
+.icon-star{
+	color: #cfc53e;
+}
+.icon-star-empty{
+	color: $silver;
+}
+
+.filter-item{
+	display: inline-block;
+	background-color: $brand;
+	border: 0;
+	color: $white;
+	line-height: 23px;
+	margin-left: 4px;
+	min-height: 24px;
+	padding: 0 10px;
+	font-size: 12px;
+	text-transform: capitalize;
+	white-space: nowrap;
+	@include border-radius (15px);
+	&:hover {
+		border-color: $white;
+		cursor: pointer;
+	}
+	a.icon-close {
+		color: $gray-light;
+		float: right;
+		font-size: 10px;
+		margin-right: -4px;
+		margin-left: 4px;
+		margin-top: 8px;
+		position: relative;
+		text-decoration: underline;
+	}
+	.full {
+		color: #CBBB26;
+	}
+	.empty {
+  	color: $gray-lighter;
+  }
+  &.add-filter{
+		background-color: $white;
+		color: $brand;
+		font-weight: 600;
+		text-decoration: underline;
+		.icon-rounded-add{
+			font-size: 18px;
+			position: relative;
+			top: 5px;
+			left: -2px;
+		}
+  }
 }
 
 @import 'widgets/asset_upload_dialog';
