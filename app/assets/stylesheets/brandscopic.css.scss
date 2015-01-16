@@ -7222,6 +7222,7 @@ body.dashboard.index {
 		border: none;
 		padding-left: 25px;
 	}
+}
 
 .icon-star{
 	color: #cfc53e;
@@ -7261,9 +7262,9 @@ body.dashboard.index {
 		color: #CBBB26;
 	}
 	.empty {
-  	color: $gray-lighter;
-  }
-  &.add-filter{
+		color: $gray-lighter;
+	}
+	&.add-filter{
 		background-color: $white;
 		color: $brand;
 		font-weight: 600;
@@ -7274,7 +7275,7 @@ body.dashboard.index {
 			top: 5px;
 			left: -2px;
 		}
-  }
+	}
 }
 
 @import 'widgets/asset_upload_dialog';
