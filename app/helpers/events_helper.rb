@@ -45,8 +45,8 @@ module EventsHelper
     ].compact.join(' ').strip
     first_part = "for: #{first_part}" unless first_part.blank?
     [
-      pluralize(number_with_delimiter(collection_count),
-                resource_name),
+      '<span class="results-count">' + number_with_delimiter(collection_count) + '</span> ' +
+      resource_name.pluralize(collection_count),
       'found',
       first_part
     ].compact.join(' ').strip.html_safe

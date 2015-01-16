@@ -1,6 +1,7 @@
 Brandscopic::Application.routes.draw do
 
-  apipie if ENV['WEB']
+  mount Nkss::Engine => '/styleguides' if Rails.env.development?
+  apipie if ENV['WEB'] && !Rails.env.production?
 
   namespace :api do
     namespace :v1 do

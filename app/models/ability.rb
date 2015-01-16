@@ -272,6 +272,11 @@ class Ability
         user.current_company_user.accessible_campaign_ids.include?(campaign.id)
       end
 
+      can [:select_areas, :add_areas, :delete_area], Venue do |venue|
+        can?(:show, venue) &&
+        user.current_company_user.role.has_permission?(:update, Area)
+      end
+
       can :event_status_report_campaign, Campaign do |campaign|
         can?(:event_status, Campaign) &&
         user.current_company_user.accessible_campaign_ids.include?(campaign.id)

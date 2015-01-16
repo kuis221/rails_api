@@ -1,6 +1,9 @@
+i.icon-wired-map
 - areas.each do |area|
-  div.area.clearfix id= "area-#{area.id}"
-    .pull-left
-      = area.name
-    .pull-right
-      = link_to(content_tag(:i,'', class: 'icon-remove-circle'), delete_area_venue_path(resource, area_id: area.id), class: 'remove-area-btn', remote: true, method: :delete)
+  .filter-item id="area-#{area.id}"
+    = area.name
+    = link_to('', delete_area_venue_path(resource, area_id: area.id), class: 'remove-area-btn icon icon-close', remote: true, method: :delete) if can?(:delete_area, resource)
+- if can?(:delete_area, resource)
+  = link_to select_areas_venue_path(resource), remote: true, class: 'filter-item add-filter' do
+    i.icon-rounded-add
+    | Add to area

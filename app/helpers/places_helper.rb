@@ -181,12 +181,18 @@ module PlacesHelper
   end
 
   def place_opening_hours(opening_hours)
-    days = %w(Monday Tuesday Wednesday Thursday Friday Saturday Sunday)
-    if opening_hours && opening_hours.key?('periods')
-      (0..6).map do |i|
-        day = (i == 6 ? 0 : i + 1)
-        period = opening_hours['periods'].find { |p| p['open']['day'].to_i == day }
-        day_name = days[day]
+    return [] unless opening_hours && opening_hours.key?('periods')
+    place_days_opening_hours.values
+  end
+
+  def place_days_opening_hours(opening_hours)
+    days = %w(Mon Tue Wed Thu Fri Sat Sun)
+    return [] unless opening_hours && opening_hours.key?('periods')
+    Hash[(0..6).map do |i|
+      day = (i == 6 ? 0 : i + 1)
+      period = opening_hours['periods'].find { |p| p['open']['day'].to_i == day }
+      day_name = days[day]
+      desc =
         if period
           if period.key?('open') && period.key?('close')
             "#{day_name} #{Time.parse(period['open']['time'].gsub(/(^[0-9]{2})/, '\1:')).to_s(:time_only)} - #{Time.parse(period['close']['time'].gsub(/(^[0-9]{2})/, '\1:')).to_s(:time_only)}"
@@ -196,12 +202,26 @@ module PlacesHelper
         else
           "#{day_name} Closed"
         end
-      end
-    end
+      [day_name, desc]
+    end]
   end
 
   def place_opening_hours_formatted(opening_hours)
-    place_opening_hours(opening_hours).join('<br />').html_safe
+    full_days = place_days_opening_hours(opening_hours)
+    today = full_days[Time.now.strftime('%a')].sub(Time.now.strftime('%a'), 'Today')
+    full_days[Time.now.strftime('%a')] = '<b>' + full_days[Time.now.strftime('%a')] + '</b>'
+    content_tag(:div, class: 'venues-opening-hours display') do
+      content_tag(:span, today) +
+      link_to('(Show more)', '#', class: 'show-more-link', data: { toggle: 'collapse', target: '#collapse-venue-hour' })
+    end +
+    content_tag(:div, id: 'collapse-venue-hour', class: 'venues-opening-hours collapsible collapse') do
+      content_tag(:span, full_days.values.join('<br />').html_safe)
+    end
+  end
+
+  def place_price(price)
+    content_tag(:span, price.times.map {|_| '$' }.join, class: 'price-level' ) +
+    (5 - price).times.map {|_| '$' }.join.html_safe
   end
 
   private
