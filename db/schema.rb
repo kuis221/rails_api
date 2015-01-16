@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150105215550) do
+ActiveRecord::Schema.define(version: 20150115215305) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -714,6 +714,8 @@ ActiveRecord::Schema.define(version: 20150105215550) do
     t.string   "neighborhood"
     t.integer  "location_id"
     t.boolean  "is_location"
+    t.integer  "price_level"
+    t.string   "phone_number"
   end
 
   add_index "places", ["city"], name: "index_places_on_city", using: :btree

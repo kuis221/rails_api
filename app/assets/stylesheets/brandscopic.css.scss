@@ -616,6 +616,9 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	box-sizing: border-box;
 	width: calc(100% - 100px);
 	z-index: 110000;
+	.results-count {
+		font-weight: bold;
+	}
 	.filter-label{
 		&>div {
 			display: inline-block;
@@ -4610,8 +4613,7 @@ body.roles{
 		margin-top: -20px;
 		max-height: 18px;
 		overflow: hidden;
-		&:after{
-			content: "(Show more)";
+		.show-more-link{
 			color: $brand;
 			font-size: 12px;
 			margin-left: 10px;

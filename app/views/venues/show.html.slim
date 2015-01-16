@@ -21,38 +21,32 @@
         h2= resource.name
         span.category
           | Restaurant, Food
-        span.price
-          span.price-level $$$
-          |$$
+        - if resource.price_level >= 0
+          span.price
+            = place_price(resource.price_level)
 
 
         ul.stripped-list.small.data-list
           li
             i.icon-wired-venue
             - venue_address = resource.formatted_address.present? ? resource.formatted_address : place_address(resource.place, false, ', ', ', ')
-              = venue_address
-                - if resource.formatted_address.present?
-                  - unless venue_address.strip.blank?
-                    br>/
-
+            => venue_address
             a href="#" Get Directions
-          li
-            i.icon-mobile
-            span (415) 863-5964
-          li
-            i.icon-web
-            - if resource.website
-              = place_website(resource.website)
+          - if false # the places doesn't have a phone number yet
+            li
+              i.icon-mobile
+              span (415) 863-5964
+          - if resource.website
+            li
+              i.icon-web
+              - if resource.website
+                = place_website(resource.website)
 
         ul.stripped-list.small
-          li
-            b.highlight-text Hours:
-            div.venues-opening-hours.display data-toggle="collapse" data-target="#collapse-venue-hour" aria-expanded="true" aria-controls="demo"
-              span = place_opening_hours_formatted(resource.opening_hours)
-            /! Show more - show less should be dynamic. Now is a class, maybe can change with the attr value?
-
-            div#collapse-venue-hour.venues-opening-hours.collapsible class="collapse"
-              span = place_opening_hours_formatted(resource.opening_hours)
+          - if resource.opening_hours && resource.opening_hours.key?('periods')
+            li
+              b.highlight-text Hours:
+              = place_opening_hours_formatted(resource.opening_hours)
 
           li
             b.highlight-text> Jameson Local Account:
@@ -63,17 +57,8 @@
 
         p.small Quis nostrud exerci tation, ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat duis autem. Consuetudium lectorum mirum est notare quam littera gothica quam nunc putamus parum! Vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat vel illum dolore. Volutpat ut wisi enim ad minim veniam eu feugiat nulla. Imperdiet doming id quod mazim placerat facer possim assum typi non habent claritatem? Nunc nobis videntur parum clari fiant sollemnes in?
 
-        .areas
-          i.icon-wired-map
-          .filter-item
-            | Sample Area 1
-            a.icon.icon-close
-          .filter-item
-            | Sample Area 2
-            a.icon.icon-close
-          a.filter-item.add-filter
-            i.icon-rounded-add
-            | Add to area
+        #venue-areas.areas
+          = render partial: 'areas', locals: {areas: resource.place.areas}
 
       .span6.map_container
         - unless resource.latitude.nil? || resource.longitude.nil?
@@ -333,3 +318,10 @@ javascript:
     $(document).on('areas:change', function(){
       $.get('#{areas_venue_path(resource, format: :js)}');
     });
+    $('#collapse-venue-hour').on('show', function(){
+      $('[data-target="#collapse-venue-hour"]').text('(Show less)');
+    });
+    $('#collapse-venue-hour').on('hide', function(){
+      $('[data-target="#collapse-venue-hour"]').text('(Show more)');
+    });
+    $('.show-more-link').click(function(e){ e.preventDefault(); return true; })
