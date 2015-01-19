@@ -18,8 +18,8 @@ div.resource-item.invite id="invite_#{invite.id}"
 
     - else
       .span3
-        .text-large= invite.place_name
-        .crop-text= format_date_range(invite.event.start_at, invite.event.end_at, date_only: true)
+        .text-large= format_date_range(parent.start_at, parent.end_at, date_only: true)
+        .crop-text= invite.place_name
 
       .span2
         .text-large= invite.venue.jameson_locals? ? 'Yes' : 'No'

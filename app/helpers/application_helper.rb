@@ -22,7 +22,7 @@ module ApplicationHelper
     city_parts = []
     address.push place.street unless place.street.nil? || place.street.strip.empty? || place.name == place.street
     city_parts.push place_city if place.city.present? && place.name != place.city
-    city_parts.push place.state if place.state.present?
+    city_parts.push place.state_code if place.state.present?
     city_parts.push place.zipcode if place.zipcode.present?
 
     address.push city_parts.compact.join(', ') unless city_parts.empty? || !place.city

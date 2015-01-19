@@ -38,7 +38,7 @@ $.widget "custom.places_autocomplete", $.ui.autocomplete, {
 			that._renderItemData ul, item
 		$( "<li>" )
 			.addClass('ui-menu-item')
-			.appendTo(ul);
+			.appendTo(ul.addClass('places_autocomplete'));
 
 	_renderItem: ( ul, item ) ->
 		newText = String(item.value).replace(

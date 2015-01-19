@@ -89,12 +89,6 @@
   - elsif resource.happens_today? || resource.in_past?
     = render 'edit_results'
 
-  - if can?(:index_invites, Event) && resource.campaign.enabled_modules.include?('attendance')
-    #event-invites-list.details_box
-      h3.module-title ATTENDANCE
-      #invites-list.resource-list
-        = render partial: 'invites/invite', collection: resource.invites.active.joins(:place).order('lower(places.name)'), locals: { parent: resource }
-
   - if can_tasks
     #event-tasks.details_box
 

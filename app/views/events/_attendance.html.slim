@@ -1,0 +1,4 @@
+#event-invites-list.details_box.box_expenses
+  h5.module-title ATTENDANCE
+  #invites-list.resource-list
+    = render partial: 'invites/invite', collection: resource.invites.active.joins(:place).order('lower(places.name)'), locals: { parent: resource }
