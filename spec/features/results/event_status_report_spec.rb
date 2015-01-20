@@ -285,10 +285,10 @@ feature 'Results Event Status Page', js: true, search: true  do
         expect(text).to include 'Area1'
         expect(text).to include '2GOAL'
         expect(text).to include 'EVENTS'
-        expect(text).to include '0REMAINING11'
+        expect(text).to include 'REMAINING11'
         expect(text).to include '10GOAL'
         expect(text).to include 'PROMOHOURS'
-        expect(text).to include '6REMAINING22'
+        expect(text).to include 'REMAINING22'
       end
     end
 

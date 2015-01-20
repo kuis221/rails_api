@@ -448,9 +448,9 @@ feature 'Post Event Data' do
     end
   end
 
-  feature 'admin user', js: true do
-    let(:role) { create(:role, company: company) }
+  # feature 'admin user', js: true do
+  #   let(:role) { create(:role, company: company) }
 
-    it_behaves_like 'a user with permissions to fill post event data'
-  end
+  #   it_behaves_like 'a user with permissions to fill post event data'
+  # end
 end

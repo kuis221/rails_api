@@ -151,7 +151,7 @@ class CompanyUser < ActiveRecord::Base
   end
 
   def active_status
-    if invited_to_sign_up?
+    if invited_to_sign_up? && self[:active]
       'Invited'
     else
       active? ? 'Active' : 'Inactive'
