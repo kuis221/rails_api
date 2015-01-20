@@ -3662,14 +3662,12 @@ body.events.index {
 			.form-result-value span {
 				display: block;
 				margin-top: 5px;
-				&:before {
+				i.icon {
 					color: $primary-blue;
-					display: inline-block;
-					font-family: 'icons';
-					content: "\e624";
-					position:relative;
-					margin-right: 10px;
-					top: 3px;
+					margin-right: 5px;
+					&:before {
+						top: 2px;
+					}
 				}
 			}
 		}
