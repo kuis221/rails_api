@@ -4631,7 +4631,7 @@ body.roles{
 // EVENT DATA
 // --------------------------------------------------
 
-.main.with-details-close-bar {
+#resource-close-details + .details_box{
 	padding-top: 60px;
 }
 .event_data, .comments, .expenses {
