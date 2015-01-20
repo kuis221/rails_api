@@ -359,7 +359,7 @@ feature 'Brand Ambassadors Documents', js: true do
     within documents_section do
       click_js_link name
     end
-    expect(documents_section.find('h3')).to have_content(name)
+    expect(documents_section.find('h5.module-title')).to have_content(name)
   end
 
   def expect_to_have_document_in_list(document)

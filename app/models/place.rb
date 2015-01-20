@@ -170,7 +170,19 @@ class Place < ActiveRecord::Base
   end
 
   def price_level
-    spot.price_level.to_i rescue 0
+    fetch_price_level if self[:price_level].nil?
+    self[:price_level]
+  end
+
+  def fetch_price_level
+    self[:price_level] =
+      if spot.present? && spot.price_level.present?
+        p "spot.price_level ==> #{spot.price_level}"
+        spot.price_level.to_i
+      else
+        -1
+      end
+    save
   end
 
   def formatted_phone_number

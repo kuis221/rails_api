@@ -1,7 +1,5 @@
 module JbbFile
   class JamesonLocalsAccount < JbbFile::Base
-    attr_accessor :created, :existed
-
     VALID_COLUMNS = ['TDLinx Code', 'Name', 'Address', 'City', 'State']
 
     def initialize
@@ -15,8 +13,8 @@ module JbbFile
     end
 
     def process
-      self.created = 0
-      self.existed = 0
+      @created = @existed = 0
+      processed_files = {}
       Dir.mktmpdir do |dir|
         files = download_files(dir)
         return invalid_format if invalid_files.any?
@@ -27,6 +25,11 @@ module JbbFile
           reset_jameson_venue_flag
           files.each do |file_name, file|
             venue_ids = []
+            Tempfile.open('jbb', Rails.root.join('tmp') ) do |f|
+              f.write File.read(file.instance_variable_get(:@filename))
+              f.flush
+              processed_files[file_name] = f.path
+            end
             each_sheet(file) do |sheet|
               sheet.each(td_linx_code: 'TDLinx Code', name: 'Name', route: 'Address', city: 'City', state: 'State')  do |row|
                 next if row[:name] == 'Name'
@@ -40,7 +43,7 @@ module JbbFile
         end
 
         total_flagged = Venue.jameson_locals.in_company(COMPANY_ID).count
-        success total_flagged, self.existed, self.created, flagged_before
+        success total_flagged, @existed, @created, flagged_before, processed_files
 
         files.each do |file_name, file|
           archive_file file_name
@@ -51,8 +54,8 @@ module JbbFile
       close_connection
     end
 
-    def success(total, existed, created, flagged_before)
-      mailer.success(total, existed, created, flagged_before).deliver
+    def success(total, existed, created, flagged_before, files)
+      mailer.success(total, existed, created, flagged_before, files).deliver
       false
     end
 
@@ -66,14 +69,15 @@ module JbbFile
            .where(td_linx_code: attrs[:td_linx_code])
            .first
       if place
-        self.existed += 1
+        @existed += 1
         place.venue_id || Venue.create(place_id: place.id, company_id: COMPANY_ID).try(:id)
       else
         id = find_place_by_address(attrs)
         if id
-          self.existed += 1
+          @existed += 1
           Venue.find_or_create_by(place_id: id, company_id: COMPANY_ID).try(:id)
         else
+          self.created += 1
           create_place_and_venue(attrs).try(:id)
         end
       end
@@ -91,7 +95,6 @@ module JbbFile
       place = Place.create(attrs.merge(
         is_custom_place: true,
         types: ['establishment'], country: 'US'))
-      self.created += 1
       Venue.create(place_id: place.id, company_id: COMPANY_ID)
     end
   end

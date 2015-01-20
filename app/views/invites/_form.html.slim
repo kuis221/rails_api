@@ -2,7 +2,7 @@
   .form-inputs.edit-invite
     .row-fluid.google-places
       = f.error :place
-      = f.input :place_reference, :as => :location, required: true, label: 'Place', input_html: { display_value: params[:place_reference_display_name] || resource.place_name_with_location, placeholder: 'Search for places' }
+      = f.input :place_reference, :as => :location, required: true, label: 'Venue', input_html: { display_value: params[:place_reference_display_name] || resource.place_name_with_location, placeholder: 'Search for venues' }
 
     = f.input :invitees, input_html: { placeholder: 'Number of invitees' }
 

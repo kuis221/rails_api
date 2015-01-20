@@ -1,7 +1,7 @@
 class VenuesController < FilteredController
   actions :index, :show
 
-  helper_method :data_totals
+  helper_method :data_totals, :venue_activities
 
   prepend_before_action :create_venue_from_google_api, only: :show
 
@@ -88,5 +88,9 @@ class VenuesController < FilteredController
      events_count: [:min, :max], promo_hours: [:min, :max], impressions: [:min, :max],
      interactions: [:min, :max], sampled: [:min, :max], spent: [:min, :max],
      venue_score: [:min, :max], price: [], area: [], campaign: [], brand: [] ]
+  end
+
+  def venue_activities
+    resource.activities.active.include_from_events + resource.invites.active
   end
 end

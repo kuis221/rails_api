@@ -19,11 +19,11 @@ describe EventsHelper, type: :helper do
     subject { helper.describe_filters }
 
     describe 'without params' do
-      it { is_expected.to eql '100 events found' }
+      it { is_expected.to eql '<span class="results-count">100</span> events found' }
 
       describe 'with just one result' do
         before { allow(helper).to receive(:collection_count).and_return(1) }
-        it { is_expected.to eql '1 event found' }
+        it { is_expected.to eql '<span class="results-count">1</span> event found' }
       end
     end
 
@@ -38,7 +38,7 @@ describe EventsHelper, type: :helper do
 
       it do
         is_expected.to eql(
-            '100 events found for: '\
+            '<span class="results-count">100</span> events found for: '\
             '<div class="filter-item">My Campaign 1<a class="icon icon-close" '\
             'data-filter="campaign:' + campaigns[0].id.to_s + '" href="#" title="Remove this filter"></a></div> '\
             '<div class="filter-item">My Campaign 2<a class="icon icon-close" '\
@@ -51,7 +51,7 @@ describe EventsHelper, type: :helper do
 
       it do
         is_expected.to eql(
-            '100 events found for: '\
+            '<span class="results-count">100</span> events found for: '\
             '<div class="filter-item">Nov 01, 2014<a class="icon icon-close" '\
             'data-filter="date" href="#" title="Remove this filter"></a></div>')
       end
@@ -62,7 +62,7 @@ describe EventsHelper, type: :helper do
 
       it do
         is_expected.to eql(
-            '100 events found for: '\
+            '<span class="results-count">100</span> events found for: '\
             '<div class="filter-item">Nov 01, 2014 - Nov 05, 2014<a class="icon icon-close" '\
             'data-filter="date" href="#" title="Remove this filter"></a></div>')
       end
@@ -73,7 +73,7 @@ describe EventsHelper, type: :helper do
 
       it do
         is_expected.to eql(
-            '100 events found for: '\
+            '<span class="results-count">100</span> events found for: '\
             '<div class="filter-item">Nov 01, 2014 to the future<a class="icon icon-close" '\
             'data-filter="date" href="#" title="Remove this filter"></a></div>')
       end
@@ -84,7 +84,7 @@ describe EventsHelper, type: :helper do
 
       it do
         is_expected.to eql(
-            '100 events found for: '\
+            '<span class="results-count">100</span> events found for: '\
             '<div class="filter-item">today to the future<a class="icon icon-close" '\
             'data-filter="date" href="#" title="Remove this filter"></a></div>')
       end
@@ -95,7 +95,7 @@ describe EventsHelper, type: :helper do
 
       it do
         is_expected.to eql(
-            '100 events found for: '\
+            '<span class="results-count">100</span> events found for: '\
             '<div class="filter-item">yesterday to the future<a class="icon icon-close" '\
             'data-filter="date" href="#" title="Remove this filter"></a></div>')
       end
@@ -106,7 +106,7 @@ describe EventsHelper, type: :helper do
 
       it do
         is_expected.to eql(
-            '100 events found for: '\
+            '<span class="results-count">100</span> events found for: '\
             '<div class="filter-item">tomorrow to the future<a class="icon icon-close" '\
             'data-filter="date" href="#" title="Remove this filter"></a></div>')
       end
@@ -117,7 +117,7 @@ describe EventsHelper, type: :helper do
 
       it do
         is_expected.to eql(
-            '100 events found for: '\
+            '<span class="results-count">100</span> events found for: '\
             '<div class="filter-item">Nov 01, 2014 - today<a class="icon icon-close" '\
             'data-filter="date" href="#" title="Remove this filter"></a></div>')
       end
@@ -128,7 +128,7 @@ describe EventsHelper, type: :helper do
 
       it do
         is_expected.to eql(
-            '100 events found for: '\
+            '<span class="results-count">100</span> events found for: '\
             '<div class="filter-item">Nov 01, 2014 - yesterday<a class="icon icon-close" '\
             'data-filter="date" href="#" title="Remove this filter"></a></div>')
       end
@@ -139,7 +139,7 @@ describe EventsHelper, type: :helper do
 
       it do
         is_expected.to eql(
-            '100 events found for: '\
+            '<span class="results-count">100</span> events found for: '\
             '<div class="filter-item">Nov 01, 2014 - tomorrow<a class="icon icon-close" '\
             'data-filter="date" href="#" title="Remove this filter"></a></div>')
       end
@@ -150,7 +150,7 @@ describe EventsHelper, type: :helper do
 
       it do
         is_expected.to eql(
-            '100 events found for: '\
+            '<span class="results-count">100</span> events found for: '\
             '<div class="filter-item">Active<a class="icon icon-close" '\
             'data-filter="status:Active" href="#" title="Remove this filter"></a></div>')
       end
@@ -161,7 +161,7 @@ describe EventsHelper, type: :helper do
 
       it do
         is_expected.to eql(
-            '100 events found for: '\
+            '<span class="results-count">100</span> events found for: '\
             '<div class="filter-item">Approved<a class="icon icon-close" '\
             'data-filter="event_status:Approved" href="#" title="Remove this filter"></a></div> '\
             '<div class="filter-item">Late<a class="icon icon-close" '\
@@ -174,7 +174,7 @@ describe EventsHelper, type: :helper do
 
       it do
         is_expected.to eql(
-            '100 events found for: '\
+            '<span class="results-count">100</span> events found for: '\
             '<div class="filter-item">Active<a class="icon icon-close" '\
             'data-filter="status:Active" href="#" title="Remove this filter"></a></div> '\
             '<div class="filter-item">Approved<a class="icon icon-close" '\
@@ -192,7 +192,7 @@ describe EventsHelper, type: :helper do
 
       it do
         is_expected.to eql(
-            '100 events found for: '\
+            '<span class="results-count">100</span> events found for: '\
             '<div class="filter-item">My Campaign 1<a class="icon icon-close" '\
             'data-filter="campaign:' + campaign1.id.to_s + '" href="#" title="Remove this filter"></a></div> '\
             '<div class="filter-item">My Campaign 2<a class="icon icon-close" '\
@@ -208,7 +208,7 @@ describe EventsHelper, type: :helper do
 
       it do
         is_expected.to eql(
-            '100 events found for: '\
+            '<span class="results-count">100</span> events found for: '\
             '<div class="filter-item">My Activity Type 1<a class="icon icon-close" '\
             'data-filter="activity_type:' + activity_type1.id.to_s + '" href="#" title="Remove this filter"></a></div> '\
             '<div class="filter-item">My Activity Type 2<a class="icon icon-close" '\
@@ -224,7 +224,7 @@ describe EventsHelper, type: :helper do
 
       it do
         is_expected.to eql(
-            '100 events found for: '\
+            '<span class="results-count">100</span> events found for: '\
             '<div class="filter-item">My Date Range 1<a class="icon icon-close" '\
             'data-filter="date_range:' + date_range1.id.to_s + '" href="#" title="Remove this filter"></a></div> '\
             '<div class="filter-item">My Date Range 2<a class="icon icon-close" '\
@@ -240,7 +240,7 @@ describe EventsHelper, type: :helper do
 
       it do
         is_expected.to eql(
-            '100 events found for: '\
+            '<span class="results-count">100</span> events found for: '\
             '<div class="filter-item">My Area 1<a class="icon icon-close" '\
             'data-filter="area:' + area1.id.to_s + '" href="#" title="Remove this filter"></a></div> '\
             '<div class="filter-item">My Area 2<a class="icon icon-close" '\
@@ -256,7 +256,7 @@ describe EventsHelper, type: :helper do
 
       it do
         is_expected.to eql(
-            '100 events found for: '\
+            '<span class="results-count">100</span> events found for: '\
             '<div class="filter-item">My Brand 1<a class="icon icon-close" '\
             'data-filter="brand:' + brand1.id.to_s + '" href="#" title="Remove this filter"></a></div> '\
             '<div class="filter-item">My Brand 2<a class="icon icon-close" '\
@@ -272,7 +272,7 @@ describe EventsHelper, type: :helper do
 
       it do
         is_expected.to eql(
-            '100 events found for: '\
+            '<span class="results-count">100</span> events found for: '\
             '<div class="filter-item">My Brand Portfolio 1<a class="icon icon-close" '\
             'data-filter="brand_portfolio:' + brand_portfolio1.id.to_s + '" href="#" title="Remove this filter"></a></div> '\
             '<div class="filter-item">My Brand Portfolio 2<a class="icon icon-close" '\
@@ -288,7 +288,7 @@ describe EventsHelper, type: :helper do
 
       it do
         is_expected.to eql(
-            '100 events found for: '\
+            '<span class="results-count">100</span> events found for: '\
             '<div class="filter-item">My Venue 1<a class="icon icon-close" '\
             'data-filter="venue:' + venue1.id.to_s + '" href="#" title="Remove this filter"></a></div> '\
             '<div class="filter-item">My Venue 2<a class="icon icon-close" '\
@@ -310,7 +310,7 @@ describe EventsHelper, type: :helper do
 
       it do
         is_expected.to eql(
-            '100 events found for: '\
+            '<span class="results-count">100</span> events found for: '\
             '<div class="filter-item">Elvis Presley<a class="icon icon-close" '\
             'data-filter="user:' + user1.id.to_s + '" href="#" title="Remove this filter"></a></div> '\
             '<div class="filter-item">Michael Jackson<a class="icon icon-close" '\
@@ -326,7 +326,7 @@ describe EventsHelper, type: :helper do
 
       it do
         is_expected.to eql(
-            '100 events found for: '\
+            '<span class="results-count">100</span> events found for: '\
             '<div class="filter-item">My Team 1<a class="icon icon-close" '\
             'data-filter="team:' + team1.id.to_s + '" href="#" title="Remove this filter"></a></div> '\
             '<div class="filter-item">My Team 2<a class="icon icon-close" '\
@@ -342,7 +342,7 @@ describe EventsHelper, type: :helper do
 
       it do
         is_expected.to eql(
-            '100 events found for: '\
+            '<span class="results-count">100</span> events found for: '\
             '<div class="filter-item">My Role 1<a class="icon icon-close" '\
             'data-filter="role:' + role1.id.to_s + '" href="#" title="Remove this filter"></a></div> '\
             '<div class="filter-item">My Role 2<a class="icon icon-close" '\
@@ -355,7 +355,7 @@ describe EventsHelper, type: :helper do
 
       it do
         is_expected.to eql(
-            '100 events found for: '\
+            '<span class="results-count">100</span> events found for: '\
             '<div class="filter-item">Austin<a class="icon icon-close" '\
             'data-filter="city:Austin" href="#" title="Remove this filter"></a></div> '\
             '<div class="filter-item">Baltimore<a class="icon icon-close" '\
@@ -367,7 +367,7 @@ describe EventsHelper, type: :helper do
       before { allow(helper).to receive(:resource_class).and_return(BrandAmbassadors::Visit) }
 
       describe 'without params' do
-        it { is_expected.to eql '100 visits found' }
+        it { is_expected.to eql '<span class="results-count">100</span> visits found' }
       end
     end
 

@@ -55,7 +55,7 @@ class Venue < ActiveRecord::Base
            to: :place
 
   scope :top_venue, ->{ where(top_venue: true) }
-  scope :jameson_locals, ->{ where(top_venue: true) }
+  scope :jameson_locals, ->{ where(jameson_locals: true) }
 
   searchable do
     integer :id

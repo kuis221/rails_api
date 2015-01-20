@@ -110,8 +110,10 @@ class Ability
 
       can :index, Marque
 
-      can :form, Activity do
-        can?(:create, Activity)
+      can [:new, :form], Activity do
+        can?(:create, Activity) ||
+        role.has_permission?(:create_invite, Event) ||
+        role.has_permission?(:create_invite, Venue)
       end
 
       can :places, Campaign do |campaign|
@@ -275,6 +277,11 @@ class Ability
       can :gva_report_campaign, Campaign do |campaign|
         can?(:gva_report, Campaign) &&
         user.current_company_user.accessible_campaign_ids.include?(campaign.id)
+      end
+
+      can [:select_areas, :add_areas, :delete_area], Venue do |venue|
+        can?(:show, venue) &&
+        user.current_company_user.role.has_permission?(:update, Area)
       end
 
       can :event_status_report_campaign, Campaign do |campaign|

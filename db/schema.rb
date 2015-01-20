@@ -11,14 +11,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150109220816) do
+ActiveRecord::Schema.define(version: 20150115215305) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "hstore"
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
-  enable_extension "postgres_fdw"
   enable_extension "tablefunc"
 
   create_table "active_admin_comments", force: true do |t|
@@ -763,6 +762,8 @@ ActiveRecord::Schema.define(version: 20150109220816) do
     t.boolean  "is_location"
     t.string   "neighborhoods",                                   array: true
     t.string   "yelp_business_id"
+    t.integer  "price_level"
+    t.string   "phone_number"
   end
 
   add_index "places", ["city"], name: "index_places_on_city", using: :btree

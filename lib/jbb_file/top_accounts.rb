@@ -1,7 +1,7 @@
 module JbbFile
   class TopAccounts < JbbFile::Base
 
-    VALID_COLUMNS = ["TDLinx Store Code", "Retailer", "City", "Address"]
+    VALID_COLUMNS = ['TDLinx Store Code', 'Retailer', 'City', 'Address', 'State']
 
     attr_accessor :created, :existed
     def initialize
@@ -31,7 +31,8 @@ module JbbFile
             p "\n\nProcessing file #{file_name}"
             venue_ids = []
             each_sheet(file) do |sheet|
-              sheet.each(td_linx_code: 'TDLinx Store Code', name: 'Retailer', route: 'Address', city: 'City')  do |row|
+              sheet.each(td_linx_code: 'TDLinx Store Code', name: 'Retailer',
+                         route: 'Address', city: 'City', state: 'State')  do |row|
                 next if row[:name] == 'Retailer'
                 row[:td_linx_code] = row[:td_linx_code].to_s.gsub(/\.0\z/, '')
                 row[:state] = Place.state_name('US', row[:state]) if row[:state] =~ /[A-Z][A-Z]/i

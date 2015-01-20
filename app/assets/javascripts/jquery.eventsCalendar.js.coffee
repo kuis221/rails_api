@@ -23,6 +23,11 @@ $.widget 'nmk.eventsCalendar', {
 	_create: () ->
 		@element.addClass('eventsCalendar')
 
+		@groupBy = 'brand'
+		if typeof(Storage) isnt "undefined" && localStorage.getItem("events_calendar_grouping")
+			@groupBy = localStorage.getItem("events_calendar_grouping");
+
+
 		cal_current_date = new Date()
 		@day   = if (isNaN(@options.day) || @options.day == null) then cal_current_date.getDate() else @options.day
 		@month = if (isNaN(@options.month) || @options.month == null) then cal_current_date.getMonth() else @options.month
@@ -44,15 +49,38 @@ $.widget 'nmk.eventsCalendar', {
 			cell.removeClass 'expanded'
 
 	_addControls: () ->
+		title = 'Brand'
+		title = 'Campaign' if @groupBy == 'campaign'
+		title = 'User' if @groupBy == 'user'
+		title = 'Event' if @groupBy == 'event'
 		@element.append "<div class=\"calendar-controls\">
 			<div class=\"calendar-month-name\"></div>
 			<div class=\"calendar-months-arrows\">
-				<a class=\"icon-angle-left prev-month-btn\" href=\"#\"></a>
-				<a class=\"icon-angle-right next-month-btn\" href=\"#\"></a>
+				<a class=\"icon-angle-left prev-month-btn\" href=\"#\"></a>" +
+				"<a class=\"icon-angle-right next-month-btn\" href=\"#\"></a>
+			</div>
+			<div class=\"calendar-grouping dropdown\">
+				Group by: <a class=\"dropdown-toggle\" data-toggle=\"dropdown\" href=\"#\"><span>#{title}</span> <i class=\"icon-arrow-down\"></i></a>
+				<ul class=\"dropdown-menu pull-right\">
+					<li#{if @groupBy == 'brand' then ' class=\"active\"' else ''}><a href=\"#\" data-value=\"brand\"><i class=\"icon item-icon icon-star\"></i> Brand <i class=\"icon icon-checked pull-right\"></i></a></li>
+					<li#{if @groupBy == 'campaign' then ' class=\"active\"' else ''}><a href=\"#\" data-value=\"campaign\"><i class=\"icon item-icon icon-campaign\"></i> Campaign <i class=\"icon icon-checked pull-right\"></i></a></li>
+					<li#{if @groupBy == 'user' then ' class=\"active\"' else ''}><a href=\"#\" data-value=\"user\"><i class=\"icon item-icon icon-user\"></i> User <i class=\"icon icon-checked pull-right\"></i></a></li>
+					<li#{if @groupBy == 'event' then ' class=\"active\"' else ''}><a href=\"#\" data-value=\"event\"><i class=\"icon item-icon icon-tasks\"></i> Event <i class=\"icon icon-checked pull-right\"></i></a></li>
+				</ul>
 			</div>
 		</div>"
 
-		@element.find('.prev-month-btn').on 'click', (e) =>
+		@element.on 'click',  '.calendar-grouping .dropdown-menu a', (e) =>
+			e.preventDefault()
+			$a = $(e.currentTarget)
+			@groupBy = $a.data('value')
+			localStorage.setItem('events_calendar_grouping', @groupBy) if typeof(Storage) isnt "undefined"
+			@element.find('.calendar-grouping .dropdown-toggle span').text($a.text())
+			@element.find('.calendar-grouping .dropdown-menu li').removeClass('active')
+			$a.parent().addClass('active')
+			@_drawCalendar()
+
+		@element.on 'click', '.prev-month-btn', (e) =>
 			e.preventDefault()
 			@_moveMonth(-1)
 
@@ -72,7 +100,7 @@ $.widget 'nmk.eventsCalendar', {
 		startingDay = @firstDay.getDay()
 		if startingDay != 0
 			diff = if startingDay == 0 then 0 else startingDay * -1 + 1
-			currentDay = new Date(@firstDay.setDate(diff))  
+			currentDay = new Date(@firstDay.setDate(diff))
 
 		@_updateMonthName()
 
@@ -185,14 +213,15 @@ $.widget 'nmk.eventsCalendar', {
 			url = @options.eventsUrl()
 		else
 			url = @options.eventsUrl
-		$.get url, {start: @firstDay.getTime()/1000, end: @lastDay.getTime()/1000}, (response) =>
+		$.get url, {start: @firstDay.getTime()/1000, end: @lastDay.getTime()/1000, group: @groupBy}, (response) =>
 			@calendar.find('.calendar-event').remove()
-			for eventElement in response
-				parts = eventElement.start.split('-')
-				d = new Date(parts[0], parseInt(parts[1])-1, parts[2])
-				cell = @calendar.find("##{d.getUTCFullYear()}_#{d.getUTCMonth()+1}_#{d.getUTCDate()}")
-				if cell.length > 0
-					cell.find('.calendar-day-events-container').append @_renderEvent(eventElement)
+			if response && response.length > 0
+				for eventElement in response
+					parts = eventElement.start.split('-')
+					d = new Date(parts[0], parseInt(parts[1])-1, parts[2])
+					cell = @calendar.find("##{d.getUTCFullYear()}_#{d.getUTCMonth()+1}_#{d.getUTCDate()}")
+					if cell.length > 0
+						cell.find('.calendar-day-events-container').append @_renderEvent(eventElement)
 
 			for cell in @calendar.find('td.calendar-day')
 				elements = $('.calendar-event', cell)

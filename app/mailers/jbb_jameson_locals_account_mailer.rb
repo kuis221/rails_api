@@ -14,12 +14,16 @@ class JbbJamesonLocalsAccountMailer < ActionMailer::Base
     mail to: recipients, subject: 'Jameson Locals Accounts List Synch – Improper Format'
   end
 
-  def success(total, existed, created, flagged_before)
+  def success(total, existed, created, flagged_before, files)
     @total = total
     @existed = existed
     @created = created
     @flagged_before = flagged_before
     recipients = ENV['JAMESON_LOCALS_SUCCESS_EMAILS'].split(',')
+
+    files.each do |name, path|
+      attachments[name] = File.read(path)
+    end
     mail to: recipients, subject: 'Jameson Locals Accounts List Synch – Successfully Completed'
   end
 end

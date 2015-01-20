@@ -24,6 +24,17 @@ GIT
       platform-api
       resque
 
+GIT
+  remote: git://github.com/nadarei/nkss-rails.git
+  revision: 8f5e27e98115daad591ac871a50a7c5ffa966d3e
+  specs:
+    nkss-rails (0.0.2)
+      bluecloth
+      ffaker
+      haml
+      kss
+      rails (>= 3.2.0)
+
 PATH
   remote: vendor/gems/company_scoped
   specs:
@@ -105,6 +116,7 @@ GEM
     bcrypt (3.1.7)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
+    bluecloth (2.2.0)
     bootstrap-sass (2.3.2.2)
       sass (~> 3.2)
     bourbon (3.2.3)
@@ -182,6 +194,7 @@ GEM
       multipart-post (>= 1.2, < 3)
     faraday_middleware (0.9.1)
       faraday (>= 0.7.4, < 0.10)
+    ffaker (1.31.0)
     ffi (1.9.3)
     formatador (0.2.5)
     formtastic (3.1.2)
@@ -204,6 +217,8 @@ GEM
       em-websocket (~> 0.5)
       guard (~> 2.0)
       multi_json (~> 1.8)
+    haml (4.0.6)
+      tilt
     has_scope (0.6.0.rc)
       actionpack (>= 3.2, < 5)
       activesupport (>= 3.2, < 5)
@@ -240,6 +255,7 @@ GEM
       activesupport (>= 3.0.0)
     kdtree (0.3)
     kgio (2.9.2)
+    kss (0.5.0)
     launchy (2.4.2)
       addressable (~> 2.3)
     listen (2.7.9)
@@ -561,6 +577,7 @@ DEPENDENCIES
   geocoder
   google_places
   guard-livereload
+  haml
   has_scope
   heroku-resque-workers-scaler!
   inherited_resources
@@ -570,6 +587,7 @@ DEPENDENCIES
   nearest_time_zone
   nested_form
   newrelic_rpm
+  nkss-rails!
   oink
   oj
   paperclip (~> 4.1)
