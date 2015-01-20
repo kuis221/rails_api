@@ -77,7 +77,7 @@ module JbbFile
           @existed += 1
           Venue.find_or_create_by(place_id: id, company_id: COMPANY_ID).try(:id)
         else
-          self.created += 1
+          @created += 1
           create_place_and_venue(attrs).try(:id)
         end
       end
