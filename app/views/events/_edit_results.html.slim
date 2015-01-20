@@ -9,7 +9,8 @@
     = render partial: 'expenses'
 
 / Activities module
-- if can?(:show, Activity) && (resource.campaign.activity_types.any? || enabled_modules.include?('attendance'))
+- if (can?(:show, Activity) && resource.campaign.activity_types.any?) || \
+     (can?(:index_invites, resource) && resource.campaign.activity_types.any? || enabled_modules.include?('attendance'))
   #event-activities.details_box
     = render 'activities'
 

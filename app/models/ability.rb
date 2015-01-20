@@ -110,8 +110,10 @@ class Ability
 
       can :index, Marque
 
-      can :form, Activity do
-        can?(:create, Activity)
+      can [:new, :form], Activity do
+        can?(:create, Activity) ||
+        role.has_permission?(:create_invite, Event) ||
+        role.has_permission?(:create_invite, Venue)
       end
 
       can :places, Campaign do |campaign|

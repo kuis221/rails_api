@@ -18,7 +18,7 @@ class EventsController < FilteredController
   include EventsHelper
   include ApplicationHelper
 
-  helper_method :calendar_highlights
+  helper_method :calendar_highlights, :event_activities
 
   respond_to :js, only: [:new, :create, :edit, :update, :edit_results,
                          :edit_data, :edit_surveys, :submit]
@@ -233,5 +233,11 @@ class EventsController < FilteredController
 
   def list_exportable?
     params['mode'] == 'calendar' || super
+  end
+
+  def event_activities
+    activites = resource.activities.active
+    activites += resource.invites.active if resource.campaign.enabled_modules.include?('attendance')
+    activites
   end
 end

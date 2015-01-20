@@ -1,16 +1,19 @@
-.resource-item id="activity_#{activity.id}"
-  = link_to_if_permitted(:show, Activity, activity_path(activity), title: 'Activity Details', class: 'resource-item-link')
-    .span7.text-large= activity.activity_type.name
-    .span5
-      .date= format_date(activity.activity_date)
-      = activity.company_user.full_name
+- if activity.is_a?(Invite)
+  = render partial: 'invites/activity_invite', locals: { invite: activity, parent: parent }
+- else
+  .resource-item id="activity_#{activity.id}"
+    = link_to_if_permitted(:show, Activity, activity_path(activity), title: 'Activity Details', class: 'resource-item-link')
+      .span7.text-large= activity.activity_type.name
+      .span5
+        .date= format_date(activity.activity_date)
+        = activity.company_user.full_name
 
-  .resource-item-actions
-    = link_to '', form_activity_path(id: activity.id, format: :pdf), class: 'icon-download'
-    = link_to '', [:edit, activity], remote: true, class: 'icon-edit', title: 'Edit' if can?(:edit, Activity)
-    = "&nbsp;".html_safe
-    - if can?(:deactivate, Activity)
-      - if activity.active?
-        = link_to '', {controller: :activities, action: :deactivate, id: activity.id}, remote: true, class: 'icon-rounded-disable', title: 'Deactivate', data: {confirm: I18n.t('confirmation.deactivate_confirm_message', model: 'activity')}
-      - else
-        = link_to '', {controller: :activities, action: :activate, id: activity.id}, remote: true, class: 'icon-rounded-ok', title: 'Activate'
+    .resource-item-actions
+      = link_to '', form_activity_path(id: activity.id, format: :pdf), class: 'icon-download'
+      = link_to '', [:edit, activity], remote: true, class: 'icon-edit', title: 'Edit' if can?(:edit, Activity)
+      = "&nbsp;".html_safe
+      - if can?(:deactivate, Activity)
+        - if activity.active?
+          = link_to '', {controller: :activities, action: :deactivate, id: activity.id}, remote: true, class: 'icon-rounded-disable', title: 'Deactivate', data: { confirm: I18n.t('confirmation.deactivate_confirm_message', model: 'activity') }
+        - else
+          = link_to '', {controller: :activities, action: :activate, id: activity.id}, remote: true, class: 'icon-rounded-ok', title: 'Activate'

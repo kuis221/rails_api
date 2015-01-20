@@ -1,0 +1,8 @@
+div.resource-item.activity_invite id="activity_invite_#{invite.id}"
+  .resource-item-link
+    .span7.text-large Invitation
+
+
+  .resource-item-actions
+    = button_to_edit invite, url: url_for([:edit, parent, invite]) if can?(:edit_invite, Event)
+    = button_to_activate_or_deactivate(invite, activate_url: url_for([:activate, parent, invite]), deactivate_url: url_for([:deactivate, parent, invite])) if can?(:deactivate_invite, Event)
