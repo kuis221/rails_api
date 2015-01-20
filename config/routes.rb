@@ -30,6 +30,7 @@ Brandscopic::Application.routes.draw do
           resources :surveys,  only: [:index, :create, :update, :show] do
             get :brands, on: :collection
           end
+          resources :invites, only: [:index, :show, :create, :update]
           get :autocomplete,   on: :collection
           member do
             put :submit
@@ -59,6 +60,7 @@ Brandscopic::Application.routes.draw do
           get :search, on: :collection
           get :types, on: :collection
           get :autocomplete, on: :collection
+          resources :invites, only: [:index, :show, :create, :update]
           member do
             get :analysis
             get :photos

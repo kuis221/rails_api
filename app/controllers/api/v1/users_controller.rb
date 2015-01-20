@@ -541,6 +541,12 @@ class Api::V1::UsersController < Api::V1::FilteredController
     permissions.push 'events_create_comments' if can?(:create_comment, Event)
     permissions.push 'events_edit_comments' if can?(:edit_comment, Event)
     permissions.push 'events_deactivate_comments' if can?(:deactivate_comment, Event)
+    if jbb_feature_enabled?
+      permissions.push 'events_invites' if can?(:index_invites, Event)
+      permissions.push 'events_create_invites' if can?(:create_invite, Event)
+      permissions.push 'events_edit_invites' if can?(:edit_invite, Event)
+      permissions.push 'events_deactivate_invites' if can?(:deactivate_invite, Event)
+    end
 
     permissions.push 'venues' if can?(:index, Venue)
     permissions.push 'venues_create' if can?(:create, Venue)
@@ -551,6 +557,12 @@ class Api::V1::UsersController < Api::V1::FilteredController
     permissions.push 'venues_trends' if can?(:view_trends_day_week, Venue)
     permissions.push 'venues_photos' if can?(:view_photos, Venue)
     permissions.push 'venues_comments' if can?(:view_comments, Venue)
+    if jbb_feature_enabled?
+      permissions.push 'venues_invites' if can?(:index_invites, Venue)
+      permissions.push 'venues_create_invites' if can?(:create_invite, Venue)
+      permissions.push 'venues_edit_invites' if can?(:edit_invite, Venue)
+      permissions.push 'venues_deactivate_invites' if can?(:deactivate_invite, Venue)
+    end
 
     permissions.push 'tasks_own' if can?(:index_my, Task)
     permissions.push 'tasks_edit_own' if can?(:edit_my, Task)

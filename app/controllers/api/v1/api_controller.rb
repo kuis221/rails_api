@@ -142,6 +142,10 @@ class Api::V1::ApiController < ActionController::Base
       end
     end
   end
+
+  def jbb_feature_enabled?
+    current_company.id == 2
+  end
 end
 
 class Api::V1::InvalidAuthToken < StandardError
