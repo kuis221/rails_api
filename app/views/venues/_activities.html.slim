@@ -4,4 +4,4 @@
     = button_to 'Create Activity', new_venue_activity_path(resource), method: :get, remote: true, class: 'btn btn-primary', title: 'New Activity'
 
   #activities-list.resource-list
-    = render partial: 'activities/activity', collection: resource.activities.active.include_from_events, locals: {parent: resource}
+    = render partial: 'activities/activity', collection: venue_activities, locals: { parent: resource }

@@ -237,7 +237,9 @@ class EventsController < FilteredController
 
   def event_activities
     activites = resource.activities.active
-    activites += resource.invites.active if resource.campaign.enabled_modules.include?('attendance')
+    if resource.campaign.enabled_modules.include?('attendance')
+      activites += resource.invites.active.active.joins(:place).order('lower(places.name)')
+    end
     activites
   end
 end

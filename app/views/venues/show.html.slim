@@ -138,9 +138,15 @@
       #venue-events-container
         = render partial: 'upcoming_events'
 
-- if resource.persisted? && can?(:show, Activity)
+- if resource.persisted? && (can?(:show, Activity) || can?(:index_invites, Venue))
   #venue-activities.details_box
     = render 'activities'
+
+  - if can?(:index_invites, Venue)
+    #event-invites-list.details_box
+      h5.module-title ATTENDANCE
+      #invites-list.resource-list
+        = render partial: 'invites/invite', collection: resource.invites.active.joins(:place).order('lower(places.name)'), locals: { parent: resource }
 
 - if can?(:view_photos, resource) && resource.photos.count > 0
   #venue-photos.details_box.box_photos
