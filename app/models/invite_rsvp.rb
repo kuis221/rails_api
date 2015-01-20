@@ -21,5 +21,5 @@
 #
 
 class InviteRsvp < ActiveRecord::Base
-  belongs_to :invite, counter_cache: :rsvps_count
+  belongs_to :invite
 end

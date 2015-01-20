@@ -21,18 +21,19 @@ module JbbFile
 
     INVITE_COLUMNS = [:market, :final_date]
 
-    RSVP_COLUMNS = COLUMNS.keys - INVITE_COLUMNS - [:account_name]
+    RSVP_COLUMNS = COLUMNS.keys - INVITE_COLUMNS - [:account_name, :event_date]
 
     VALID_COLUMNS = COLUMNS.values
 
     CAMPAIGN_ID = 30
 
     attr_accessor :created, :existed
+
     def initialize
-      self.ftp_server   = ENV['TDLINX_FTP_SERVER']
-      self.ftp_username = ENV['TDLINX_FTP_USERNAME']
-      self.ftp_password = ENV['TDLINX_FTP_PASSWORD']
-      self.ftp_folder   = ENV['RSVP_REPORT_FTP_FOLDER']
+      self.ftp_server    = ENV['TDLINX_FTP_SERVER']
+      self.ftp_username  = ENV['TDLINX_FTP_USERNAME']
+      self.ftp_password  = ENV['TDLINX_FTP_PASSWORD']
+      self.ftp_folder    = ENV['RSVP_REPORT_FTP_FOLDER']
       self.invalid_files = []
 
       self.mailer = RsvpReportMailer
@@ -58,7 +59,9 @@ module JbbFile
                   invite = event.invites.create_with(
                     row.select { |k, _| INVITE_COLUMNS.include?(k) }.merge(venue_id: venue.id)
                   ).find_or_create_by(venue_id: venue.id)
-                  invite.rsvps.create(row.select { |k, _| RSVP_COLUMNS.include?(k) })
+                  if invite.rsvps.create(row.select { |k, _| RSVP_COLUMNS.include?(k) })
+                    invite.increment!(:rsvps_count)
+                  end
                   created += 1
                 else
                   p "INVALID EVENT OR VENUE #{venue.inspect} #{event.inspect}"
