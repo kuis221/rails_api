@@ -6,6 +6,9 @@ describe Api::V1::InvitesController, type: :controller do
 
   before { set_api_authentication_headers user, company }
 
+  #describe "POST 'create'" do
+
+ # end
 
   describe "PUT 'update'" do
     let(:campaign) { create(:campaign, company: company) }

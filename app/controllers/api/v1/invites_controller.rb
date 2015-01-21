@@ -26,7 +26,8 @@ class Api::V1::InvitesController < Api::V1::ApiController
   end
 
   api :GET, '/api/v1/events/:event_id/invites', 'Get a list of invites for an Event'
-  param :event_id, :number, required: true, desc: 'Event ID'
+  param :event_id, :number, required: false, desc: 'Event ID'
+  param :venue_id, :number, required: false, desc: 'Venue ID'
   example <<-EOS
   GET /api/v1/events/1223/invites
        [
@@ -91,7 +92,7 @@ class Api::V1::InvitesController < Api::V1::ApiController
   def invite_params
     parameters = {}
     allowed = []
-    allowed += [:event_id, :venue_id, :attendees, :invitees, :place_reference] if can?(:edit_invite, Event) || can?(:create_invite, Event) || can?(:edit_invite, Venue) || can?(:create_invite, Venue)
+    allowed += [:event_id, :venue_id, :attendees, :invitees, :rsvps_count, :place_reference] if can?(:edit_invite, Event) || can?(:create_invite, Event) || can?(:edit_invite, Venue) || can?(:create_invite, Venue)
     allowed += [:active] if can?(:deactivate_invite, Event) || can?(:deactivate_invite, Venue)
     params.require(:invite).permit(*allowed)
   end

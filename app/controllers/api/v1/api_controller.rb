@@ -13,7 +13,7 @@ class Api::V1::ApiController < ActionController::Base
   after_action :set_access_control_headers
   after_action :update_user_last_activity_mobile
 
-  before_action :set_user
+  around_filter :scope_current_user
 
   load_and_authorize_resource only: [:show, :edit, :update, :destroy], unless: :skip_default_validation
   authorize_resource only: [:create, :index], unless: :skip_default_validation
@@ -98,11 +98,6 @@ class Api::V1::ApiController < ActionController::Base
     end
   end
 
-  def set_user
-    User.current = current_user
-    User.current.current_company = current_company if current_company_id
-  end
-
   def set_access_control_headers
     if ENV['HEROKU_APP_NAME'] == 'brandscopic'
       headers['Access-Control-Allow-Origin'] = 'http://m.brandscopic.com'
@@ -145,6 +140,20 @@ class Api::V1::ApiController < ActionController::Base
 
   def jbb_feature_enabled?
     current_company.id == 2
+  end
+
+  def scope_current_user
+    User.current = current_user
+    if user_signed_in?
+      User.current.current_company = current_company if current_company_id
+      Time.zone = current_user.time_zone
+      Company.current = current_company
+    end
+    yield
+  ensure
+    User.current = nil
+    Company.current = nil
+    Time.zone = Rails.application.config.time_zone
   end
 end
 
