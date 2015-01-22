@@ -323,7 +323,14 @@ class Api::V1::EventsController < Api::V1::FilteredController
       },
       "campaign": {
           "id": 33,
-          "name": "Kahlua Midnight FY14"
+          "name": "Kahlua Midnight FY14",
+          "enabled_modules": [
+             "expenses",
+             "photos",
+             "videos",
+             "comments",
+             "attendance"
+          ]
       }
   }
   EOS
