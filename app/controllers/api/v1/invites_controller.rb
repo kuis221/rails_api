@@ -32,19 +32,48 @@ class Api::V1::InvitesController < Api::V1::ApiController
   GET /api/v1/events/1223/invites
        [
           {
-              "id": 45554,
-              "invitees": 23,
-              "rsvps_count": 12,
-              "attendees": 78,
-              "end_at": "2013-11-19T00:49:24-08:00",
-              "active": true
+            "id":133,
+            "invitees":5,
+            "rsvps_count":7,
+            "attendees":10,
+            "active":true,
+            "event":{
+              "id":38292,
+              "start_date":"06/28/2014",
+              "end_date":"06/28/2014",
+              "campaign":{
+                "id":115,
+                "name":"Absolut BA FY15"
+              }
+            },
+            "venue":{
+              "id":337,
+              "name":"High Dive",
+              "top_venue":false,
+              "jameson_locals":false
+            }
           },
           {
-              "invitees": 27,
-              "rsvps_count": 15,
-              "attendees": 34,
-              "end_at": "2013-11-19T00:49:16-08:00",
-              "active": true
+            "id":134,
+            "invitees":5,
+            "rsvps_count":7,
+            "attendees":10,
+            "active":true,
+            "event":{
+              "id":38292,
+              "start_date":"06/28/2014",
+              "end_date":"06/28/2014",
+              "campaign":{
+                "id":115,
+                "name":"Absolut BA FY15"
+              }
+            },
+            "venue":{
+              "id":337,
+              "name":"High Dive",
+              "top_venue":false,
+              "jameson_locals":false
+            }
           }
           ...
       ]
@@ -63,6 +92,43 @@ class Api::V1::InvitesController < Api::V1::ApiController
 
   api :POST, '/api/v1/events', 'Create a new invite'
   param_group :invite
+  example <<-EOS
+  POST /api/v1/events/192/attendance.json
+  DATA:
+  {
+    invite: {
+      place_reference: 19,
+      venue_id: 19,
+      invitees: 10,
+      attendees: 23,
+      rsvps_count: 12
+    }
+  }
+
+  RESPONSE:
+  {
+    "id":7,
+    "invitees":10,
+    "rsvps_count":12,
+    "attendees":23,
+    "active":true,
+    "event":{
+      "id":38292,
+      "start_date":"06/28/2014",
+      "end_date":"06/28/2014",
+      "campaign":{
+        "id":115,
+        "name":"Absolut BA FY15"
+      }
+    },
+    "venue":{
+      "id":4,
+      "name":"Big's 108",
+      "top_venue":false,
+      "jameson_locals":false
+    }
+  }
+  EOS
   def create
     create! do |success, failure|
       success.json { render :show }
