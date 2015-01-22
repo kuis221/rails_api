@@ -185,6 +185,55 @@ describe Api::V1::EventsController, type: :controller do
       result.reload
       expect(result.value).to eq('987')
     end
+
+    it 'accepts composed results for event results' do
+      Kpi.create_global_kpis
+      campaign.assign_all_global_kpis
+      gender_result = event.result_for_kpi(Kpi.gender)
+      gender_result.value = {
+        Kpi.gender.kpis_segments.first.id => 10,
+        Kpi.gender.kpis_segments.last.id => 90
+      }
+      event.save
+
+      put 'update', id: event.to_param, event: {
+        results_attributes: [{
+          id: gender_result.id.to_s,
+          value: {
+            Kpi.gender.kpis_segments.first.id.to_s => 50,
+            Kpi.gender.kpis_segments.last.id.to_s => 50
+          } }]
+      }, format: :json
+      expect(response.code).to eql '200'
+      expect(gender_result.reload.value).to eq(
+        Kpi.gender.kpis_segments.first.id.to_s => '50',
+        Kpi.gender.kpis_segments.last.id.to_s => '50')
+    end
+
+    it 'returns an error if the value is invalid' do
+      Kpi.create_global_kpis
+      campaign.assign_all_global_kpis
+      gender_result = event.result_for_kpi(Kpi.gender)
+      gender_result.value = {
+        Kpi.gender.kpis_segments.first.id => 10,
+        Kpi.gender.kpis_segments.last.id => 90,
+      }
+      event.save
+
+      age_result = event.result_for_kpi(Kpi.age)
+
+      put 'update', id: event.to_param, event: {
+        results_attributes: [{
+          id: gender_result.id.to_s,
+          value: {
+            Kpi.gender.kpis_segments.first.id.to_s => 5,
+            Kpi.gender.kpis_segments.last.id.to_s => 5
+          }}]
+      }, format: :json
+      expect(response.code).to eql '422'
+      errors = JSON.parse(response.body)
+      expect(errors).to eql("results.value" => ["is invalid"])
+    end
   end
 
   describe "PUT 'submit'" do

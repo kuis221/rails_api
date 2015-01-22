@@ -146,10 +146,6 @@ class CompanyUser < ActiveRecord::Base
 
   accepts_nested_attributes_for :user, allow_destroy: false, update_only: true
 
-  def active?
-    !invited_to_sign_up? && super
-  end
-
   def active_status
     if invited_to_sign_up? && self[:active]
       'Invited'
