@@ -1,7 +1,7 @@
 class Api::V1::ActivityTypesController < Api::V1::ApiController
   inherit_resources
 
-  belongs_to :campaign
+  belongs_to :campaign, optional: true
 
   skip_authorization_check only: [:index]
   skip_authorize_resource only: [:index]
@@ -29,7 +29,15 @@ class Api::V1::ActivityTypesController < Api::V1::ApiController
   def index
     authorize! :show, parent
     activity_types = collection.pluck(:id, :name)  # Sets @activity_types
-    activity_types.push [:attendance, 'Invitations'] if parent.enabled_modules.include?('attendance')
+    if jbb_feature_enabled? && (parent.nil? || parent.enabled_modules.include?('attendance'))
+      activity_types.push [:attendance, 'Invitations']
+    end
     render json: activity_types.map{ |at| { id: at[0], name: at[1] } }
+  end
+
+  protected
+
+  def begin_of_association_chain
+    current_company
   end
 end

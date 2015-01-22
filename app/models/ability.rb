@@ -133,6 +133,11 @@ class Ability
         role.has_permission?(:create_invite, Venue)
       end
 
+      can :update, Invite do |invite|
+        role.has_permission?(:edit_invite, Event) ||
+        role.has_permission?(:edit_invite, Venue)
+      end
+
       can [:profile, :edit_communications, :filter_settings], CompanyUser do |company_user|
         user.current_company_user.id == company_user.id
       end
