@@ -189,7 +189,7 @@ class User < ActiveRecord::Base
 
   # Method for Devise to make that only active users can login into the app
   def active_for_authentication?
-    super && company_users.any? { |cu| cu.active? && cu.role.active? }
+    super && !invited_to_sign_up? && company_users.any? { |cu| cu.active? && cu.role.active? }
   end
 
   def inactive_message

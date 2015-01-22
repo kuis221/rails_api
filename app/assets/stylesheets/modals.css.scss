@@ -857,6 +857,7 @@ ul.select2-results{
 		border-radius: 6px !important;
 		box-shadow: none;
 		width:118px;
+		z-index: 9999999;
 		li{
 			color: $text;
 			padding: 3px 0 3px 32px;

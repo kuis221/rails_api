@@ -691,8 +691,8 @@ class Event < ActiveRecord::Base
   # Copy some errors to the attributes used on the forms so the user
   # can see them
   def delegate_errors
-    errors[:start_at].each { |e| errors.add(:start_date, e) }
-    errors[:end_at].each { |e| errors.add(:end_date, e) }
+    errors[:start_at].each { |e| errors.add(:start_date, e) } if errors.include?(:start_at)
+    errors[:end_at].each { |e| errors.add(:end_date, e) } if errors.include?(:end_at)
     place.errors.full_messages.each { |e| errors.add(:place_reference, e) } if place
   end
 

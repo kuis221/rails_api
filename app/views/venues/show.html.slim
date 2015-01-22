@@ -48,12 +48,13 @@
               b.highlight-text Hours:
               = place_opening_hours_formatted(resource.opening_hours)
 
-          li
-            b.highlight-text> Jameson Local Account:
-            b<= resource.jameson_locals ? 'Yes' : 'No'
-          li
-            b.highlight-text> Top 100 Account:
-            b<= resource.top_venue ? 'Yes' : 'No'
+          - if jbb_feature_enabled?
+            li
+              b.highlight-text> Jameson Local Account:
+              b<= resource.jameson_locals ? 'Yes' : 'No'
+            li
+              b.highlight-text> Top 100 Account:
+              b<= resource.top_venue ? 'Yes' : 'No'
 
         p.small Quis nostrud exerci tation, ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat duis autem. Consuetudium lectorum mirum est notare quam littera gothica quam nunc putamus parum! Vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat vel illum dolore. Volutpat ut wisi enim ad minim veniam eu feugiat nulla. Imperdiet doming id quod mazim placerat facer possim assum typi non habent claritatem? Nunc nobis videntur parum clari fiant sollemnes in?
 
