@@ -6,8 +6,12 @@
 
     = f.input :invitees, input_html: { placeholder: 'Number of invitees' }
     - if resource.persisted?
-      = f.input :rsvps_count, label: 'RSVPs', input_html: { placeholder: 'Number of RSVPs' }
-      = f.input :attendees, input_html: { placeholder: 'Number of attendees' }
+      = f.input :rsvps_count, required: true,\
+                input_html: { placeholder: 'Number of RSVPs' },\
+                hint: '<b>Warning</b>: Editing this value will override the existing data.<br>This canot be undone'.html_safe
+      = f.input :attendees, required: true,\
+                input_html: { placeholder: 'Number of attendees' },\
+                hint: '<b>Warning</b>: Editing this value will override the existing data.<br>This canot be undone'.html_safe
 
   .form-actions
     = f.button :submit, class: 'btn btn-primary', data: { disable_with: 'Please wait...' }

@@ -11,6 +11,7 @@ en:
       document_folder: "Folder"
       kpi: "KPI"
       activity_type: "Activity Type"
+      invite: "Attendance"
     attributes:
       activity:
         start_date_date: "Start date"
@@ -21,6 +22,8 @@ en:
         text: 'Name'
       invite:
         invitees: '# Invitees'
+        rsvps_count: '# RSVPs'
+        attendees: '# Attendes'
   time:
     formats:
       default: '%m/%d/%Y %H:%M:%S'
@@ -286,7 +289,7 @@ en:
         brand_ambassadors/document: "New Document"
         document_folder: "New Folder"
         filter_setting: "Filtering options"
-        invite: "New Invite"
+        invite: "New Attendance"
       edit:
         company_user: "Edit User"
         event: "Edit Event"
@@ -318,7 +321,7 @@ en:
         brand_ambassadors/document: "Edit Document"
         document_folder: "Edit Folder"
         filter_setting: "Filtering options"
-        invite: "Invite"
+        invite: "Edit Attendance"
 
   form_builder:
     modules:
