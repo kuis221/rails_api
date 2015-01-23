@@ -31,15 +31,23 @@ RSpec.describe Api::V1::ActivitiesController, :type => :controller do
     end
   end
 
-  describe "GET 'edit'", search: true do
+  describe "GET 'show'", search: true do
     let(:activity) { create(:activity, activity_type: activity_type, company_user: company_user, activitable: event) }
     before { event.campaign.activity_types << activity_type }
 
-    it 'returns only the user/date if no fields have been aded to the activity type' do
-      get :edit, id: activity.id, format: :json
+    it 'retruns the activity info' do
+      get :show, id: activity.id, format: :json
       results = JSON.parse(response.body)
-      expect(results.count).to eql 1
-      expect(results.first).to include({
+      expect(results['id']).to eql activity.id
+      expect(results['company_user']['id']).to eql activity.company_user_id
+      expect(results['company_user']['name']).to eql activity.company_user.full_name
+    end
+
+    it 'returns only the user/date if no fields have been aded to the activity type' do
+      get :show, id: activity.id, format: :json
+      results = JSON.parse(response.body)
+      expect(results['data'].count).to eql 1
+      expect(results['data'].first).to include({
         'name' => 'User/Date', 'value' => nil,
         'type' => 'FormField::UserDate', 'settings' => nil,
         'ordering' => 1, 'required' => nil, 'kpi_id' => nil })
@@ -48,10 +56,10 @@ RSpec.describe Api::V1::ActivitiesController, :type => :controller do
     it 'returns the fields have been aded to the activity type' do
       create(:form_field_text, fieldable: activity_type, ordering: 2)
       create(:form_field_number, fieldable: activity_type, ordering: 3)
-      get :edit, id: activity.id, format: :json
+      get :show, id: activity.id, format: :json
       results = JSON.parse(response.body)
-      expect(results.count).to eql 3
-      expect(results.map { |at|  at['type'] }).to eql [
+      expect(results['data'].count).to eql 3
+      expect(results['data'].map { |at|  at['type'] }).to eql [
         'FormField::UserDate', 'FormField::Text', 'FormField::Number']
     end
   end

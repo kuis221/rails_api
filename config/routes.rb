@@ -18,7 +18,7 @@ Brandscopic::Application.routes.draw do
           end
         end
 
-        resources :activities, only: [:new, :edit, :update]
+        resources :activities, only: [:new, :show, :update]
 
         resources :events, only: [:index, :show, :create, :update] do
           get :status_facets, on: :collection

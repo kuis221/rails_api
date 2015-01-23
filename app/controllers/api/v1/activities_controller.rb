@@ -14,235 +14,255 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
     Returns a full list of the associated activity types for a campaign
   EOS
   example <<-EOS
-  [
-    {
-      "field_id":17,
-      "name":"User/Date",
-      "value":null,
-      "type":"FormField::UserDate",
-      "settings":null,
-      "ordering":0,
-      "required":null,
-      "kpi_id":null,
-      "id":822768
+  {
+    "id":2021,
+    "activity_date":"2014-06-25T01:00:00.000-06:00",
+    "campaign":{
+      "id":5,
+      "name":"Jameson Locals FY14"
     },
-    {
-      "field_id":3461,
-      "name":"POS Drop Date",
-      "value":"01/21/2015",
-      "type":"FormField::Date",
-      "settings":null,
-      "ordering":1,
-      "required":true,
-      "kpi_id":null,
-      "id":822764
+    "company_user":{
+      "id":990,
+      "name":"Adam Kost"
     },
-    {
-      "field_id":3462,
-      "name":"POS Removal Date",
-      "value":"01/14/2015",
-      "type":"FormField::Date",
-      "settings":null,
-      "ordering":2,
-      "required":false,
-      "kpi_id":null,
-      "id":822765
+    "activity_type":{
+      "id":1,
+      "name":"POS Drop"
     },
-    {
-      "field_id":1,
-      "name":"Brand",
-      "value":"8",
-      "type":"FormField::Brand",
-      "settings":null,
-      "ordering":4,
-      "required":true,
-      "kpi_id":null,
-      "segments":[
-        {
-          "id":8,
-          "text":"Jameson Irish Whiskey"
-        }
-      ],
-      "id":10923
+    "activitable":{
+      "id":28205,
+      "type":"Event"
     },
-    {
-      "field_id":2,
-      "name":"Marque",
-      "value":"2",
-      "type":"FormField::Marque",
-      "settings":{
-
+    "data":[
+      {
+        "field_id":17,
+        "name":"User/Date",
+        "value":null,
+        "type":"FormField::UserDate",
+        "settings":null,
+        "ordering":0,
+        "required":null,
+        "kpi_id":null,
+        "id":822768
       },
-      "ordering":5,
-      "required":false,
-      "kpi_id":null,
-      "segments":[
-        {
-          "id":2,
-          "text":"Black Barrel"
+      {
+        "field_id":3461,
+        "name":"POS Drop Date",
+        "value":"01/21/2015",
+        "type":"FormField::Date",
+        "settings":null,
+        "ordering":1,
+        "required":true,
+        "kpi_id":null,
+        "id":822764
+      },
+      {
+        "field_id":3462,
+        "name":"POS Removal Date",
+        "value":"01/14/2015",
+        "type":"FormField::Date",
+        "settings":null,
+        "ordering":2,
+        "required":false,
+        "kpi_id":null,
+        "id":822765
+      },
+      {
+        "field_id":1,
+        "name":"Brand",
+        "value":"8",
+        "type":"FormField::Brand",
+        "settings":null,
+        "ordering":4,
+        "required":true,
+        "kpi_id":null,
+        "segments":[
+          {
+            "id":8,
+            "text":"Jameson Irish Whiskey"
+          }
+        ],
+        "id":10923
+      },
+      {
+        "field_id":2,
+        "name":"Marque",
+        "value":"2",
+        "type":"FormField::Marque",
+        "settings":{
+
         },
-        {
-          "id":13,
-          "text":"Standard"
-        },
-        {
-          "id":14,
-          "text":"Gold"
-        },
-        {
-          "id":15,
-          "text":"18 Year Old"
-        },
-        {
-          "id":16,
-          "text":"Rarest Vintage Reserve"
-        },
-        {
-          "id":17,
-          "text":"12 Year Old"
-        }
-      ],
-      "id":10924
-    },
-    {
-      "field_id":3465,
-      "name":"Seasonal Sales Program",
-      "value":"1126",
-      "type":"FormField::Dropdown",
-      "settings":null,
-      "ordering":7,
-      "required":true,
-      "kpi_id":null,
-      "id":822766
-    },
-    {
-      "field_id":3466,
-      "name":"Movember Item(s) Dropped",
-      "value":[
-        703,
-        705
-      ],
-      "type":"FormField::Checkbox",
-      "settings":null,
-      "ordering":8,
-      "required":false,
-      "kpi_id":null,
-      "segments":[
-        {
-          "id":701,
-          "text":"Posters",
-          "value":false
-        },
-        {
-          "id":702,
-          "text":"Chalkboard",
-          "value":false
-        },
-        {
-          "id":703,
-          "text":"Window Clings",
-          "value":true
-        },
-        {
-          "id":704,
-          "text":"Coasters",
-          "value":false
-        },
-        {
-          "id":705,
-          "text":"Table Tents",
-          "value":true
-        },
-        {
-          "id":706,
-          "text":"Buttons",
-          "value":false
-        },
-        {
-          "id":707,
-          "text":"Menu Stickers",
-          "value":false
-        }
-      ],
-      "id":822767
-    },
-    {
-      "field_id":3,
-      "name":"Miscellaneous Item(s) Dropped",
-      "value":[
-        2
-      ],
-      "type":"FormField::Checkbox",
-      "settings":null,
-      "ordering":9,
-      "required":false,
-      "kpi_id":null,
-      "segments":[
-        {
-          "id":1,
-          "text":"Chalk board",
-          "value":false
-        },
-        {
-          "id":2,
-          "text":"Mirror",
-          "value":true
-        },
-        {
-          "id":3,
-          "text":"Rail mat",
-          "value":false
-        },
-        {
-          "id":4,
-          "text":"Wearable",
-          "value":false
-        },
-        {
-          "id":5,
-          "text":"Church key",
-          "value":false
-        },
-        {
-          "id":6,
-          "text":"Napkin caddie",
-          "value":false
-        },
-        {
-          "id":7,
-          "text":"Poster",
-          "value":false
-        },
-        {
-          "id":21,
-          "text":"Table Tent",
-          "value":false
-        },
-        {
-          "id":22,
-          "text":"Glassware",
-          "value":false
-        },
-        {
-          "id":23,
-          "text":"Other",
-          "value":false
-        }
-      ],
-      "id":10925
-    },
-    {
-      "field_id":6,
-      "name":"Description",
-      "value":"",
-      "type":"FormField::TextArea",
-      "settings":null,
-      "ordering":11,
-      "required":false,
-      "kpi_id":null,
-      "id":10928
-    }
-  ]
+        "ordering":5,
+        "required":false,
+        "kpi_id":null,
+        "segments":[
+          {
+            "id":2,
+            "text":"Black Barrel"
+          },
+          {
+            "id":13,
+            "text":"Standard"
+          },
+          {
+            "id":14,
+            "text":"Gold"
+          },
+          {
+            "id":15,
+            "text":"18 Year Old"
+          },
+          {
+            "id":16,
+            "text":"Rarest Vintage Reserve"
+          },
+          {
+            "id":17,
+            "text":"12 Year Old"
+          }
+        ],
+        "id":10924
+      },
+      {
+        "field_id":3465,
+        "name":"Seasonal Sales Program",
+        "value":"1126",
+        "type":"FormField::Dropdown",
+        "settings":null,
+        "ordering":7,
+        "required":true,
+        "kpi_id":null,
+        "id":822766
+      },
+      {
+        "field_id":3466,
+        "name":"Movember Item(s) Dropped",
+        "value":[
+          703,
+          705
+        ],
+        "type":"FormField::Checkbox",
+        "settings":null,
+        "ordering":8,
+        "required":false,
+        "kpi_id":null,
+        "segments":[
+          {
+            "id":701,
+            "text":"Posters",
+            "value":false
+          },
+          {
+            "id":702,
+            "text":"Chalkboard",
+            "value":false
+          },
+          {
+            "id":703,
+            "text":"Window Clings",
+            "value":true
+          },
+          {
+            "id":704,
+            "text":"Coasters",
+            "value":false
+          },
+          {
+            "id":705,
+            "text":"Table Tents",
+            "value":true
+          },
+          {
+            "id":706,
+            "text":"Buttons",
+            "value":false
+          },
+          {
+            "id":707,
+            "text":"Menu Stickers",
+            "value":false
+          }
+        ],
+        "id":822767
+      },
+      {
+        "field_id":3,
+        "name":"Miscellaneous Item(s) Dropped",
+        "value":[
+          2
+        ],
+        "type":"FormField::Checkbox",
+        "settings":null,
+        "ordering":9,
+        "required":false,
+        "kpi_id":null,
+        "segments":[
+          {
+            "id":1,
+            "text":"Chalk board",
+            "value":false
+          },
+          {
+            "id":2,
+            "text":"Mirror",
+            "value":true
+          },
+          {
+            "id":3,
+            "text":"Rail mat",
+            "value":false
+          },
+          {
+            "id":4,
+            "text":"Wearable",
+            "value":false
+          },
+          {
+            "id":5,
+            "text":"Church key",
+            "value":false
+          },
+          {
+            "id":6,
+            "text":"Napkin caddie",
+            "value":false
+          },
+          {
+            "id":7,
+            "text":"Poster",
+            "value":false
+          },
+          {
+            "id":21,
+            "text":"Table Tent",
+            "value":false
+          },
+          {
+            "id":22,
+            "text":"Glassware",
+            "value":false
+          },
+          {
+            "id":23,
+            "text":"Other",
+            "value":false
+          }
+        ],
+        "id":10925
+      },
+      {
+        "field_id":6,
+        "name":"Description",
+        "value":"",
+        "type":"FormField::TextArea",
+        "settings":null,
+        "ordering":11,
+        "required":false,
+        "kpi_id":null,
+        "id":10928
+      }
+    ]
+  }
   EOS
   def new
     respond_to do |format|
@@ -257,242 +277,281 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
     Returns a full list of the associated activity types for a campaign
   EOS
   example <<-EOS
-  [
-    {
-      "field_id":17,
-      "name":"User/Date",
-      "value":null,
-      "type":"FormField::UserDate",
-      "settings":null,
-      "ordering":0,
-      "required":null,
-      "kpi_id":null,
-      "id":822768
+  {
+    "id":2021,
+    "campaign":{
+      "id":5,
+      "name":"Jameson Locals FY14"
     },
-    {
-      "field_id":3461,
-      "name":"POS Drop Date",
-      "value":"01/21/2015",
-      "type":"FormField::Date",
-      "settings":null,
-      "ordering":1,
-      "required":true,
-      "kpi_id":null,
-      "id":822764
+    "company_user":{
+      "id":990,
+      "name":"Adam Kost"
     },
-    {
-      "field_id":3462,
-      "name":"POS Removal Date",
-      "value":"01/14/2015",
-      "type":"FormField::Date",
-      "settings":null,
-      "ordering":2,
-      "required":false,
-      "kpi_id":null,
-      "id":822765
+    "activity_type":{
+      "id":1,
+      "name":"POS Drop"
     },
-    {
-      "field_id":1,
-      "name":"Brand",
-      "value":"8",
-      "type":"FormField::Brand",
-      "settings":null,
-      "ordering":4,
-      "required":true,
-      "kpi_id":null,
-      "segments":[
-        {
-          "id":8,
-          "text":"Jameson Irish Whiskey"
-        }
-      ],
-      "id":10923
+    "activitable":{
+      "id":28205,
+      "type":"Event"
     },
-    {
-      "field_id":2,
-      "name":"Marque",
-      "value":"2",
-      "type":"FormField::Marque",
-      "settings":{
-
+    "data":[
+      {
+        "field_id":17,
+        "name":"User/Date",
+        "value":null,
+        "type":"FormField::UserDate",
+        "settings":null,
+        "ordering":0,
+        "required":null,
+        "kpi_id":null,
+        "id":822768
       },
-      "ordering":5,
-      "required":false,
-      "kpi_id":null,
-      "segments":[
-        {
-          "id":2,
-          "text":"Black Barrel"
+      {
+        "field_id":3461,
+        "name":"POS Drop Date",
+        "value":"01/21/2015",
+        "type":"FormField::Date",
+        "settings":null,
+        "ordering":1,
+        "required":true,
+        "kpi_id":null,
+        "id":822764
+      },
+      {
+        "field_id":3462,
+        "name":"POS Removal Date",
+        "value":"01/14/2015",
+        "type":"FormField::Date",
+        "settings":null,
+        "ordering":2,
+        "required":false,
+        "kpi_id":null,
+        "id":822765
+      },
+      {
+        "field_id":1,
+        "name":"Brand",
+        "value":"8",
+        "type":"FormField::Brand",
+        "settings":null,
+        "ordering":4,
+        "required":true,
+        "kpi_id":null,
+        "segments":[
+          {
+            "id":8,
+            "text":"Jameson Irish Whiskey"
+          }
+        ],
+        "id":10923
+      },
+      {
+        "field_id":2,
+        "name":"Marque",
+        "value":"2",
+        "type":"FormField::Marque",
+        "settings":{
+
         },
-        {
-          "id":13,
-          "text":"Standard"
-        },
-        {
-          "id":14,
-          "text":"Gold"
-        },
-        {
-          "id":15,
-          "text":"18 Year Old"
-        },
-        {
-          "id":16,
-          "text":"Rarest Vintage Reserve"
-        },
-        {
-          "id":17,
-          "text":"12 Year Old"
-        }
-      ],
-      "id":10924
-    },
-    {
-      "field_id":3465,
-      "name":"Seasonal Sales Program",
-      "value":"1126",
-      "type":"FormField::Dropdown",
-      "settings":null,
-      "ordering":7,
-      "required":true,
-      "kpi_id":null,
-      "id":822766
-    },
-    {
-      "field_id":3466,
-      "name":"Movember Item(s) Dropped",
-      "value":[
-        703,
-        705
-      ],
-      "type":"FormField::Checkbox",
-      "settings":null,
-      "ordering":8,
-      "required":false,
-      "kpi_id":null,
-      "segments":[
-        {
-          "id":701,
-          "text":"Posters",
-          "value":false
-        },
-        {
-          "id":702,
-          "text":"Chalkboard",
-          "value":false
-        },
-        {
-          "id":703,
-          "text":"Window Clings",
-          "value":true
-        },
-        {
-          "id":704,
-          "text":"Coasters",
-          "value":false
-        },
-        {
-          "id":705,
-          "text":"Table Tents",
-          "value":true
-        },
-        {
-          "id":706,
-          "text":"Buttons",
-          "value":false
-        },
-        {
-          "id":707,
-          "text":"Menu Stickers",
-          "value":false
-        }
-      ],
-      "id":822767
-    },
-    {
-      "field_id":3,
-      "name":"Miscellaneous Item(s) Dropped",
-      "value":[
-        2
-      ],
-      "type":"FormField::Checkbox",
-      "settings":null,
-      "ordering":9,
-      "required":false,
-      "kpi_id":null,
-      "segments":[
-        {
-          "id":1,
-          "text":"Chalk board",
-          "value":false
-        },
-        {
-          "id":2,
-          "text":"Mirror",
-          "value":true
-        },
-        {
-          "id":3,
-          "text":"Rail mat",
-          "value":false
-        },
-        {
-          "id":4,
-          "text":"Wearable",
-          "value":false
-        },
-        {
-          "id":5,
-          "text":"Church key",
-          "value":false
-        },
-        {
-          "id":6,
-          "text":"Napkin caddie",
-          "value":false
-        },
-        {
-          "id":7,
-          "text":"Poster",
-          "value":false
-        },
-        {
-          "id":21,
-          "text":"Table Tent",
-          "value":false
-        },
-        {
-          "id":22,
-          "text":"Glassware",
-          "value":false
-        },
-        {
-          "id":23,
-          "text":"Other",
-          "value":false
-        }
-      ],
-      "id":10925
-    },
-    {
-      "field_id":6,
-      "name":"Description",
-      "value":"",
-      "type":"FormField::TextArea",
-      "settings":null,
-      "ordering":11,
-      "required":false,
-      "kpi_id":null,
-      "id":10928
-    }
-  ]
+        "ordering":5,
+        "required":false,
+        "kpi_id":null,
+        "segments":[
+          {
+            "id":2,
+            "text":"Black Barrel"
+          },
+          {
+            "id":13,
+            "text":"Standard"
+          },
+          {
+            "id":14,
+            "text":"Gold"
+          },
+          {
+            "id":15,
+            "text":"18 Year Old"
+          },
+          {
+            "id":16,
+            "text":"Rarest Vintage Reserve"
+          },
+          {
+            "id":17,
+            "text":"12 Year Old"
+          }
+        ],
+        "id":10924
+      },
+      {
+        "field_id":3465,
+        "name":"Seasonal Sales Program",
+        "value":"1126",
+        "type":"FormField::Dropdown",
+        "settings":null,
+        "ordering":7,
+        "required":true,
+        "kpi_id":null,
+        "id":822766
+      },
+      {
+        "field_id":3466,
+        "name":"Movember Item(s) Dropped",
+        "value":[
+          703,
+          705
+        ],
+        "type":"FormField::Checkbox",
+        "settings":null,
+        "ordering":8,
+        "required":false,
+        "kpi_id":null,
+        "segments":[
+          {
+            "id":701,
+            "text":"Posters",
+            "value":false
+          },
+          {
+            "id":702,
+            "text":"Chalkboard",
+            "value":false
+          },
+          {
+            "id":703,
+            "text":"Window Clings",
+            "value":true
+          },
+          {
+            "id":704,
+            "text":"Coasters",
+            "value":false
+          },
+          {
+            "id":705,
+            "text":"Table Tents",
+            "value":true
+          },
+          {
+            "id":706,
+            "text":"Buttons",
+            "value":false
+          },
+          {
+            "id":707,
+            "text":"Menu Stickers",
+            "value":false
+          }
+        ],
+        "id":822767
+      },
+      {
+        "field_id":3,
+        "name":"Miscellaneous Item(s) Dropped",
+        "value":[
+          2
+        ],
+        "type":"FormField::Checkbox",
+        "settings":null,
+        "ordering":9,
+        "required":false,
+        "kpi_id":null,
+        "segments":[
+          {
+            "id":1,
+            "text":"Chalk board",
+            "value":false
+          },
+          {
+            "id":2,
+            "text":"Mirror",
+            "value":true
+          },
+          {
+            "id":3,
+            "text":"Rail mat",
+            "value":false
+          },
+          {
+            "id":4,
+            "text":"Wearable",
+            "value":false
+          },
+          {
+            "id":5,
+            "text":"Church key",
+            "value":false
+          },
+          {
+            "id":6,
+            "text":"Napkin caddie",
+            "value":false
+          },
+          {
+            "id":7,
+            "text":"Poster",
+            "value":false
+          },
+          {
+            "id":21,
+            "text":"Table Tent",
+            "value":false
+          },
+          {
+            "id":22,
+            "text":"Glassware",
+            "value":false
+          },
+          {
+            "id":23,
+            "text":"Other",
+            "value":false
+          }
+        ],
+        "id":10925
+      },
+      {
+        "field_id":6,
+        "name":"Description",
+        "value":"",
+        "type":"FormField::TextArea",
+        "settings":null,
+        "ordering":11,
+        "required":false,
+        "kpi_id":null,
+        "id":10928
+      }
+    ]
+  }
   EOS
-  def edit
+  def show
     results = resource.form_field_results
     results.each { |r| r.save(validate: false) if r.new_record? }
     respond_to do |format|
       format.json do
-        render json: serialize_fields_for_edit(resource.form_field_results)
+        render json: {
+          id: resource.id,
+          activity_date: resource.activity_date,
+          campaign: {
+            id: resource.campaign_id,
+            name: resource.campaign_name,
+          },
+          company_user: {
+            id: resource.company_user.id,
+            name: resource.company_user.full_name
+          },
+          activity_type: {
+            id: resource.activity_type.id,
+            name: resource.activity_type.name
+          },
+          activitable: {
+            id: resource.activitable_id,
+            type: resource.activitable_type
+          },
+          data: serialize_fields_for_edit(resource.form_field_results)
+        }
       end
     end
   end
