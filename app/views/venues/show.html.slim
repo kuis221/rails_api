@@ -42,7 +42,13 @@
               - if resource.website
                 = place_website(resource.website)
 
+
         ul.stripped-list.small
+          - if resource.td_linx_code
+            li
+              b.highlight-text TD Linx Code: 
+              = resource.td_linx_code
+
           - if resource.opening_hours && resource.opening_hours.key?('periods')
             li
               b.highlight-text Hours:
@@ -190,10 +196,6 @@
 = render partial: 'help_tutorial'
 
 javascript:
-  $(document).ready(function() {
-    $(this).scrollTop(400);
-  });
-
 - if resource.persisted?
   - if can?(:view_kpis, resource)
     javascript:

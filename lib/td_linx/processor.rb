@@ -12,6 +12,7 @@ module TdLinxSynch
       download_file(path) unless file
       process(path)
     rescue => e
+      logger.error "Something wrong happened in the process: #{e.message}"
       TdlinxMailer.td_linx_process_failed(e).deliver
       raise e # Raise the error so we see it on errbit
     end
@@ -30,6 +31,8 @@ module TdLinxSynch
 
       # Here it comes... read each line in the downloaded CSV file
       # and look for a match in the database
+      logger.info "Start processing #{path}"
+      i = 0
       CSV.foreach(path) do |row|
         row[2].gsub!(/,\s*#{row[3]}\s*,\s*#{row[4]}\s*,\s*#{row[5]}\s*/, '')
         row[2].gsub!(/\A\s*#{row[1]}\s*,?\s*/, '')
@@ -44,10 +47,13 @@ module TdLinxSynch
         else
           files[:master_only] << row
         end
+        i+=1
+        logger.info "#{i} rows processed" if (i % 500) == 0
       end
 
       # Search for establishments related to venues in LegacyCompany that doesn't
       # have a code and add it to missing.csv file
+      logger.info "Looking for venues without TD Linx Code"
       files[:missing] << ['Venue Name', 'Street', 'City', 'State', 'Zip Code', '# Events']
       Place.joins(:venues).joins('LEFT JOIN events ON events.place_id=places.id')
         .select('places.*, count(events.id) as visits_count')
@@ -61,15 +67,18 @@ module TdLinxSynch
       end
       files.values.each(&:close)
 
+      logger.info "Creating ZIP file with results"
       zip_path = Dir::Tmpname.make_tmpname('tmp/tdlinx_', nil)
       Zip::File.open(zip_path, Zip::File::CREATE) do |zip|
         paths.values.each { |p|  zip.add(File.basename(p), p) }
       end
 
+      logger.info "Delivering email with results"
       TdlinxMailer.td_linx_process_completed(zip_path).deliver
 
       files = {}
       File.delete zip_path
+      logger.info "Process completed!!"
       paths
     ensure
       files.values.each { |f| f.close rescue true }
@@ -78,6 +87,10 @@ module TdLinxSynch
     def self.find_place_for_row(row)
       Place.find_tdlinx_place(name: row[1].try(:strip), street: row[2].try(:strip), city: row[3].try(:strip),
         state: state_name(row[4].try(:strip)), zipcode: row[5].try(:strip))
+    end
+
+    def self.logger
+      Rails.logger
     end
 
     def self.state_name(state_code)
