@@ -280,9 +280,9 @@ class Api::V1::CampaignsController < Api::V1::FilteredController
     end
   end
 
-  api :GET, '/api/v1/campaigns/:id/events', 'Returns the events for a given campaign.'
+  api :GET, '/api/v1/campaigns/:id/events', 'Returns a list of events for a given campaign.'
   example <<-EOS
-  GET: /api/v1/campaigns/1/stats.json
+  GET: /api/v1/campaigns/1/events.json
   {
     [
       [38292,"2014-06-28T13:00:00.000-07:00"],
