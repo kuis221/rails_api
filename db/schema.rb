@@ -18,7 +18,6 @@ ActiveRecord::Schema.define(version: 20150115215305) do
   enable_extension "hstore"
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
-  enable_extension "postgres_fdw"
   enable_extension "tablefunc"
 
   create_table "active_admin_comments", force: true do |t|
@@ -761,10 +760,10 @@ ActiveRecord::Schema.define(version: 20150115215305) do
     t.string   "td_linx_code"
     t.integer  "location_id"
     t.boolean  "is_location"
-    t.string   "neighborhoods",                                   array: true
-    t.string   "yelp_business_id"
     t.integer  "price_level"
     t.string   "phone_number"
+    t.string   "neighborhoods",                                   array: true
+    t.string   "yelp_business_id"
   end
 
   add_index "places", ["city"], name: "index_places_on_city", using: :btree

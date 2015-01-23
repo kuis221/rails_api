@@ -27,15 +27,15 @@ module JbbFile
           total_rows = 0
 
           reset_top_accounts_flag
-          files.each do |file_name, file|
-            p "\n\nProcessing file #{file_name}"
+          files.each do |file|
+            p "\n\nProcessing file #{file[:file_name]}"
             venue_ids = []
-            each_sheet(file) do |sheet|
+            each_sheet(file[:excel]) do |sheet|
               sheet.each(td_linx_code: 'TDLinx Store Code', name: 'Retailer',
                          route: 'Address', city: 'City', state: 'State')  do |row|
-                next if row[:name] == 'Retailer'
+                next if row[:name] == 'Retailer' # Skip the header
                 row[:td_linx_code] = row[:td_linx_code].to_s.gsub(/\.0\z/, '')
-                row[:state] = Place.state_name('US', row[:state]) if row[:state] =~ /[A-Z][A-Z]/i
+                row[:state] = Place.state_name('US', row[:state]) if row[:state] =~ /\A[A-Z][A-Z]\z/i
                 venue_ids.push find_or_create_venue(row)
                 total_rows += 1
               end
@@ -43,20 +43,19 @@ module JbbFile
             Venue.where(id: venue_ids.compact).update_all(top_venue: true)
           end
 
-          files.each do |file_name, file|
-            archive_file file_name
-          end
+          files.each { |file| archive_file file[:file_name] }
 
-          total_flagged = self.existed + self.created
-          success total_rows, total_flagged, self.existed, self.created, flagged_before
+          total_flagged = existed + created
+          success total_rows, total_flagged, existed, created, flagged_before,
+                  Hash[files.map { |f| [f[:file_name], f[:path]] }]
         end
       end
     ensure
       close_connection
     end
 
-    def success(total, flagged, existed, created, flagged_before)
-      mailer.success(total, flagged, existed, created, flagged_before).deliver
+    def success(total, flagged, existed, created, flagged_before, files)
+      mailer.success(total, flagged, existed, created, flagged_before, files).deliver
       false
     end
 
@@ -74,14 +73,13 @@ module JbbFile
         place.venue_id || Venue.create(place_id: place.id, company_id: COMPANY_ID).try(:id)
       else
         p "Venue not found: #{attrs.inspect}"
-        nil
-        # id = find_place_by_address(attrs)
-        # if id
-        #   self.existed += 1
-        #   Venue.find_or_create_by(place_id: id, company_id: COMPANY_ID).try(:id)
-        # else
-        #   create_place_and_venue(attrs).try(:id)
-        # end
+        id = find_place_by_address(attrs)
+        if id
+          self.existed += 1
+          Venue.find_or_create_by(place_id: id, company_id: COMPANY_ID).try(:id)
+        else
+          create_place_and_venue(attrs).try(:id)
+        end
       end
     end
 

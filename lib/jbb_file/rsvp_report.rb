@@ -49,8 +49,8 @@ module JbbFile
         return unless files.any?
 
         ActiveRecord::Base.transaction do
-          files.each do |_file_name, file|
-            each_sheet(file) do |sheet|
+          files.each do |file|
+            each_sheet(file[:excel]) do |sheet|
               sheet.each(COLUMNS) do |row|
                 next if row[:final_date] == 'FinalDate'
                 event = find_event_for_row(row)
@@ -74,9 +74,7 @@ module JbbFile
           p "ENDED!"
         end
 
-        files.each do |file_name, _file|
-          archive_file file_name
-        end
+        files.each { |file| archive_file file[:file_name] }
 
         success created, invalid_rows.count, invalid_rows
       end

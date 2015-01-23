@@ -22,17 +22,18 @@ module JbbFile
         file_not_fould
         return files
       end
-      list = Hash[files.map do |file_name|
+      files.map do |file_name|
         file = get_file(dir, file_name)
-        if valid_format?(file)
-          [file_name, file]
+        if valid_format?(file[:excel])
+          file
         else
           @invalid_files.push temp_file_path(dir, file_name)
           nil
         end
-      end.compact]
+      end.compact
+    ensure
+      p "closing connection"
       close_connection
-      list
     end
 
     def archive_file(file)
@@ -47,7 +48,7 @@ module JbbFile
     def get_file(dir, file)
       path = temp_file_path(dir, file)
       ftp_connecion.getbinaryfile file, path
-      Roo::Excelx.new(path)
+      { path: path, file_name: file, excel: Roo::Excelx.new(path) }
     end
 
     def temp_file_path(dir, name)

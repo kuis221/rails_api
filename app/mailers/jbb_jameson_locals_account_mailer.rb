@@ -21,9 +21,7 @@ class JbbJamesonLocalsAccountMailer < ActionMailer::Base
     @flagged_before = flagged_before
     recipients = ENV['JAMESON_LOCALS_SUCCESS_EMAILS'].split(',')
 
-    files.each do |name, path|
-      attachments[name] = File.read(path)
-    end
+    files.each { |name, path| attachments[name] = File.read(path) }
     mail to: recipients, subject: 'Jameson Locals Accounts List Synch – Successfully Completed'
   end
 end

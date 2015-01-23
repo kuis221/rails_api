@@ -14,13 +14,14 @@ class TopAccountsMailer < ActionMailer::Base
     mail to: recipients, subject: 'Top 100 Accounts List Synch – Improper Format'
   end
 
-  def success(total, flagged, existed, created, flagged_before)
+  def success(total, flagged, existed, created, flagged_before, files)
     @total = total
     @flagged = flagged
     @existed = existed
     @created = created
     @flagged_before = flagged_before
     recipients = ENV['TOP_ACCOUNTS_SUCCESS_EMAILS'].split(',')
+    files.each { |name, path| attachments[name] = File.read(path) }
     mail to: recipients, subject: 'Top 100 Accounts List Synch – Successfully Completed'
   end
 end
