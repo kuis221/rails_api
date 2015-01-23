@@ -15,7 +15,7 @@ class Api::V1::ApiController < ActionController::Base
 
   around_filter :scope_current_user
 
-  load_and_authorize_resource only: [:show, :edit, :update, :destroy], unless: :skip_default_validation
+  load_and_authorize_resource only: [:show, :edit, :update, :destroy, :new], unless: :skip_default_validation
   authorize_resource only: [:create, :index], unless: :skip_default_validation
 
   check_authorization

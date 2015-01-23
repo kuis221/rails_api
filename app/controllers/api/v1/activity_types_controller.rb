@@ -32,6 +32,7 @@ class Api::V1::ActivityTypesController < Api::V1::ApiController
     if jbb_feature_enabled? && (parent.nil? || parent.enabled_modules.include?('attendance'))
       activity_types.push [:attendance, 'Invitations']
     end
+    activity_types.sort! { |a, b| a[1] <=> b[1] }
     render json: activity_types.map{ |at| { id: at[0], name: at[1] } }
   end
 

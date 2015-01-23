@@ -41,6 +41,14 @@ $.widget 'nmk.activityForm', {
 
 			return
 
+		@element.off('change.inviteCampaign').on 'change.inviteCampaign', '#venue_invite_campaign', (e) ->
+			$.getJSON '/campaigns/'+$(@).val()+'/event_dates.json', (results) ->
+				events = $('#invite_event_id');
+				events.html('<option></option>')
+				for result in results
+					$('#invite_event_id').append('<option value="' + result[0] + '">' + result[1] + '</option>')
+				events.trigger('liszt:updated')
+
 		@element.off('change.activityBrand').on "change.activityBrand", ".form-field-brand", ->
 			marques = $("select.form-field-marque")
 			if selectedOption = @value

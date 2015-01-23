@@ -18,6 +18,8 @@ Brandscopic::Application.routes.draw do
           end
         end
 
+        resources :activities, only: [:new, :edit, :update]
+
         resources :events, only: [:index, :show, :create, :update] do
           get :status_facets, on: :collection
           resources :photos, only: [:index, :create, :update] do
@@ -336,6 +338,7 @@ Brandscopic::Application.routes.draw do
       get :deactivate
       get :activate
       get :places
+      get :event_dates
       get :form, to: 'campaigns#export_fieldable'
       match 'members/:member_id' => 'campaigns#delete_member', via: :delete, as: :delete_member
       match 'teams/:team_id' => 'campaigns#delete_member', via: :delete, as: :delete_team

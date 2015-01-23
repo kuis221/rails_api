@@ -57,6 +57,11 @@ class CampaignsController < FilteredController
     @field.destroy
   end
 
+  def event_dates
+    date_field = current_company.timezone_support? ? :local_start_at : :end_at
+    render json: resource.events.active.pluck(:id, "to_char(#{date_field}, 'Mon DD, YYYY')")
+  end
+
   def add_kpi
     if resource.form_fields.where(kpi_id: params[:kpi_id]).count == 0
       @kpi = Kpi.global_and_custom(current_company).find(params[:kpi_id])

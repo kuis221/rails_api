@@ -44,9 +44,12 @@ class ActivitiesController < FilteredController
       end.pluck(:name, :id)
 
     return types unless can?(:create_invite, parent) &&
-                        parent.is_a?(Event) && parent.campaign.enabled_modules.include?('attendance')
+                        ((parent.is_a?(Event) && parent.campaign.enabled_modules.include?('attendance')) ||
+                         parent.is_a?(Venue))
 
     types.push %w(Invitation attendance)
+
+    types.sort { |a, b| a[0] <=> b[0] }
   end
 
   # Because there is no collection path, try to return a path
