@@ -182,10 +182,6 @@
 = render partial: 'help_tutorial'
 
 javascript:
-  $(document).ready(function() {
-    $(this).scrollTop(400);
-  });
-
 - if resource.persisted?
   - if can?(:view_kpis, resource)
     javascript:
