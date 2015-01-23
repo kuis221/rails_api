@@ -163,7 +163,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
     @facets = search.facet(:status).rows.select { |f| items.include?(f.value) }.map do |f|
       items.delete(f.value)
-      { id: f.value.to_s.titleize, name: :event_status, count: f.count, label: f.value.to_s.titleize }
+      { id: f.value.to_s, name: :event_status, count: f.count, label: f.value.to_s.titleize }
     end
 
     @facets.concat(items.map { |i| { id: i, name: :event_status, count: 0, label: i.to_s.titleize } })
