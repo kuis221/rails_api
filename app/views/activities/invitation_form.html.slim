@@ -12,7 +12,7 @@
             = f.error :place
             = f.input :place_reference, :as => :location, required: true, label: 'Place', input_html: { display_value: params[:place_reference_display_name] || f.object.place_name_with_location, placeholder: 'Search for places' }
         - elsif parent.is_a?(Venue)
-          = f.input :place_reference, as: :hidden, value: parent.place_id
+          = f.input :venue_id, as: :hidden, value: parent.id
           .row-fluid = label_tag :venue_invite_campaign, 'Event', class: 'control-label required'
           .row-fluid
             .span7= select_tag 'venue_invite_campaign', options_for_select([[nil, '']] + allowed_campaigns(parent), @invite.campaign_id), class: 'required chosen-enabled', 'data-placeholder' => 'Select a Campaign'

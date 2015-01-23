@@ -58,8 +58,7 @@ class CampaignsController < FilteredController
   end
 
   def event_dates
-    date_field = current_company.timezone_support? ? :local_start_at : :end_at
-    render json: resource.events.active.pluck(:id, "to_char(#{date_field}, 'Mon DD, YYYY')")
+    render json: resource.event_dates
   end
 
   def add_kpi

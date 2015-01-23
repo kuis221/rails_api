@@ -182,6 +182,11 @@ class Campaign < ActiveRecord::Base
     active?
   end
 
+  def event_dates
+    date_field = company.timezone_support? ? :local_start_at : :end_at
+    events.active.pluck("to_char(#{date_field}, 'Mon DD, YYYY')", :id)
+  end
+
   def staff_users
     @staff_users ||= Campaign.connection.unprepared_statement do
       CompanyUser.find_by_sql("

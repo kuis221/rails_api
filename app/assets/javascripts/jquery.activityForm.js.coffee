@@ -46,7 +46,7 @@ $.widget 'nmk.activityForm', {
 				events = $('#invite_event_id');
 				events.html('<option></option>')
 				for result in results
-					$('#invite_event_id').append('<option value="' + result[0] + '">' + result[1] + '</option>')
+					$('#invite_event_id').append('<option value="' + result[1] + '">' + result[0] + '</option>')
 				events.trigger('liszt:updated')
 
 		@element.off('change.activityBrand').on "change.activityBrand", ".form-field-brand", ->

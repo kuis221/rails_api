@@ -13,7 +13,7 @@ class InvitesController < InheritedResources::Base
   protected
 
   def invite_params
-    params.require(:invite).permit(:place_reference, :invitees, :attendees, :rsvps_count)
+    params.require(:invite).permit(:place_reference, :venue_id, :event_id, :invitees, :attendees, :rsvps_count)
   end
 
   def parent_activities

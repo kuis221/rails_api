@@ -30,6 +30,7 @@ class Ability
 
       can :time_zone_change, CompanyUser
       can :time_zone_update, CompanyUser
+      can :event_dates, Campaign
       can [:notifications, :select_company, :dismiss_alert], CompanyUser
 
       # All users can update their own information
