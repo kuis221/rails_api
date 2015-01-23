@@ -5,6 +5,9 @@
       = f.input :place_reference, :as => :location, required: true, label: 'Venue', input_html: { display_value: params[:place_reference_display_name] || resource.place_name_with_location, placeholder: 'Search for venues' }
 
     = f.input :invitees, input_html: { placeholder: 'Number of invitees' }
+    - if resource.persisted?
+      = f.input :rsvps_count, label: 'RSVPs', input_html: { placeholder: 'Number of RSVPs' }
+      = f.input :attendees, input_html: { placeholder: 'Number of attendees' }
 
   .form-actions
     = f.button :submit, class: 'btn btn-primary', data: { disable_with: 'Please wait...' }
