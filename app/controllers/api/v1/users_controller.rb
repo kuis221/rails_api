@@ -255,17 +255,22 @@ class Api::V1::UsersController < Api::V1::FilteredController
     [
         {
             "name": "Brandscopic",
+            "company_user_id": 1,
             "id": 1
         },
         {
-            "name": "Legacy Marketing Partners",
+            "name": "ABC Marketing Inc.",
+            "company_user_id": 2,
             "id": 2
         }
     ]
   EOS
   def companies
     if current_user.present?
-      companies = current_user.companies_active_role.map { |c| { name: c.name, id: c.id } }
+      companies = current_user.companies_active_role.map do |c|
+        { name: c.name, id: c.id,
+          company_user_id: current_user.company_users.find { |cu| cu.company_id == c.id }.id }
+      end
       respond_to do |format|
         format.json do
           render status: 200,
