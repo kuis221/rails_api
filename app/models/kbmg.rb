@@ -17,9 +17,9 @@ class KBMG
     response['Data']['Registrations'] if response && response['Success'] == true
   end
 
-  def event_people(event_id)
-    response = self.class.get("/Registrations/EventRegistrationsGetAll", query_options('EventId' => event_id))
-    response['Data']['Registrations'] if response && response['Success'] == true
+  def user_events(email)
+    response = self.class.get("/Registrations/EventRegistrationsGet", query_options('email' => email))
+    response['Data']['Events'] if response && response['Success'] == true
   end
 
   private
