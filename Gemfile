@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 
-ruby ENV['CUSTOM_RUBY_VERSION'] || '2.1.5'
+ruby ENV['CUSTOM_RUBY_VERSION'] || '2.2.0'
 
-gem 'rails', '4.1.7'
+gem 'rails', '4.1.9'
 gem 'rails-observers'
 gem 'activerecord-session_store'
 gem 'rack-timeout'
