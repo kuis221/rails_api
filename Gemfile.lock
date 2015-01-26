@@ -291,7 +291,7 @@ GEM
       hashery (~> 2.0)
       ruby-rc4
       ttfunk
-    pg (0.17.1)
+    pg (0.18.1)
     platform-api (0.2.0)
       heroics (~> 0.0.10)
     poltergeist (1.5.1)
