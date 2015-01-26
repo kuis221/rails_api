@@ -90,7 +90,7 @@ module JbbFile
 
     def find_event_for_row(row)
       @events ||= {}
-      date = Timeliness.parse(row[:event_date].split[0], format: 'd/m/yyyy', zone: :current).to_date.to_s(:db)
+      date = Timeliness.parse(row[:event_date].split[0], format: 'm/d/yyyy', zone: :current).to_date.to_s(:db)
       @events[date] ||= campaign.events.where('events.local_start_at::date=?', date).first
       @events[date]
     end
