@@ -130,8 +130,9 @@ module JbbFile
       place = Place.load_by_place_id(spot.place_id, spot.reference)
       place.save unless place.persisted?
       place
-    rescue e
+    rescue => e
       p "Error in request: #{e.message}"
+      nil
     end
 
     def campaign
