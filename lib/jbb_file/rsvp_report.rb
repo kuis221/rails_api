@@ -27,7 +27,7 @@ module JbbFile
 
     CAMPAIGN_ID = 210
 
-    attr_accessor :created, :existed
+    attr_accessor :created, :failed, :multiple_events
 
     def initialize
       self.ftp_server    = ENV['TDLINX_FTP_SERVER']
@@ -40,8 +40,7 @@ module JbbFile
     end
 
     def process
-      created = 0
-      failed = 0
+      self.created = self.failed = self.multiple_events = 0
       invalid_rows = []
       Dir.mktmpdir do |dir|
         files = download_files(dir)
@@ -62,7 +61,7 @@ module JbbFile
                   if invite.rsvps.create(row.select { |k, _| RSVP_COLUMNS.include?(k) })
                     invite.increment!(:rsvps_count)
                   end
-                  created += 1
+                  self.created += 1
                 else
                   p "INVALID EVENT OR VENUE #{venue.inspect} #{event.inspect}"
                   invalid_rows.push row
@@ -71,12 +70,12 @@ module JbbFile
             end
           end
 
-          p "ENDED!"
+          p 'ENDED!'
         end
 
         files.each { |file| archive_file file[:file_name] }
 
-        success created, invalid_rows.count, invalid_rows
+        success created, invalid_rows.count, multiple_events, invalid_rows
       end
     ensure
       close_connection
@@ -90,18 +89,45 @@ module JbbFile
 
     def find_event_for_row(row)
       @events ||= {}
-      date = Timeliness.parse(row[:event_date].split[0], format: 'm/d/yyyy', zone: :current).to_date.to_s(:db)
-      @events[date] ||= campaign.events.where('events.local_start_at::date=?', date).first
-      @events[date]
+      date = Timeliness.parse(row[:event_date].split[0], format: 'm/d/yyyy', zone: :current)
+      date_str = date.to_date.to_s(:db)
+      scope = campaign.events.where('events.local_start_at::date=?', date_str).active
+      return @events[date_str] unless @events[date_str].nil?
+      if scope.count > 1
+        self.multiple_events += 1
+        return
+      end
+      @events[date_str] ||= scope.first
+      @events[date_str] ||= create_event(date, row[:market])
+      @events[date_str]
     end
 
-    def success(created, failed, invalid_rows)
+    def create_event(date, city)
+      place = find_city(city)
+      return unless place.present?
+      p (date + 1.day).to_s(:slashes)
+      event = campaign.events.create(
+        company: campaign.company,
+        start_date: date.to_s(:slashes),
+        end_date: (date + 1.day).to_s(:slashes),
+        start_time: '9:00pm',
+        end_time: '12:00am',
+        place_reference: place.reference + '||' + place.place_id)
+      return unless event.persisted?
+      event
+    end
+
+    def find_city(city)
+      Place.google_client.spots_by_query(city, types: [:political, :natural_feature]).first
+    end
+
+    def success(created, failed, multiple_events, invalid_rows)
       path = "#{Rails.root}/tmp/invalid_rows.csv"
       CSV.open(path, 'wb') do |csv|
         csv << COLUMNS.values
         invalid_rows.each { |row| p row.inspect;  csv << row.values; }
       end if invalid_rows.any?
-      mailer.success(created, failed, (invalid_rows.any? ? [path] : nil)).deliver
+      mailer.success(created, failed, multiple_events, (invalid_rows.any? ? [path] : nil)).deliver
       false
     end
 
