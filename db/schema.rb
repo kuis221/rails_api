@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150127021717) do
+ActiveRecord::Schema.define(version: 20150127133851) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -258,7 +258,7 @@ ActiveRecord::Schema.define(version: 20150127021717) do
     t.date     "end_date"
     t.integer  "survey_brand_ids",            default: [],              array: true
     t.text     "modules"
-    t.string   "color",            limit: 10
+    t.string   "color",            limit: 30
   end
 
   add_index "campaigns", ["company_id"], :name => "index_campaigns_on_company_id"
