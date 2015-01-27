@@ -21,7 +21,7 @@ en:
       kpis_segment:
         text: 'Name'
       invite:
-        invitees: '# Invitees'
+        invitees: '# Invites'
         rsvps_count: '# RSVPs'
         attendees: '# Attendes'
   time:

@@ -8,7 +8,6 @@ class CreateInvites < ActiveRecord::Migration
       t.integer :rsvps_count, default: 0
       t.integer :attendees, default: 0
       t.date :final_date
-      t.date :event_date
 
       t.timestamps
     end

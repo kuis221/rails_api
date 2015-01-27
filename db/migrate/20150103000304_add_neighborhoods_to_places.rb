@@ -2,8 +2,8 @@ class AddNeighborhoodsToPlaces < ActiveRecord::Migration
   def up
     add_column :places, :neighborhoods, :string, array: true
     add_column :places, :yelp_business_id, :string
-    execute 'UPDATE places set neighborhood=NULL'
-    remove_column :places, :neighborhood
+    execute 'UPDATE places set neighborhoods=NULL'
+    execute 'ALTER TABLE places DROP COLUMN neighborhood'
   end
 
   def down

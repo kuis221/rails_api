@@ -10,7 +10,7 @@
         - if parent.is_a?(Event)
           .row-fluid.google-places
             = f.error :place
-            = f.input :place_reference, :as => :location, required: true, label: 'Place', input_html: { display_value: params[:place_reference_display_name] || f.object.place_name_with_location, placeholder: 'Search for places' }
+            = f.input :place_reference, :as => :location, required: true, label: 'Venue', input_html: { display_value: params[:place_reference_display_name] || f.object.place_name_with_location, placeholder: 'Choose a venue' }
         - elsif parent.is_a?(Venue)
           = f.input :venue_id, as: :hidden, value: parent.id
           .row-fluid = label_tag :venue_invite_campaign, 'Event', class: 'control-label required'
@@ -18,7 +18,7 @@
             .span7= select_tag 'venue_invite_campaign', options_for_select([[nil, '']] + allowed_campaigns(parent), @invite.campaign_id), class: 'required chosen-enabled', 'data-placeholder' => 'Select a Campaign'
             .span5= f.input :event_id, as: :select, collection: [], input_html: { class: 'required chosen-enabled', 'data-placeholder' => 'Event Date' }, label: false
 
-      = f.input :invitees, input_html: { placeholder: 'Number of invitees' }
+      = f.input :invitees, input_html: { placeholder: 'Number of invitees', value: nil }
 
       .form-actions
         = f.button :submit, class: 'btn btn-primary', data: { disable_with: 'Please wait...' }
