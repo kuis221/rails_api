@@ -50,8 +50,7 @@
 //= require select2
 //= require moment.min.js
 //= require fullcalendar
-//= require jquery.colorPicker
 //= require brandscopic
 //= require campaigns
 //= require events
-//= require colpick.js
+//= require spectrum.js

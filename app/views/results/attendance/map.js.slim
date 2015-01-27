@@ -1,62 +1,67 @@
-- values = @neighborhoods.map(&:invitations)
-|
-  var arrayPolygon = [];
-  var valueMin = #{values.min || 0};
-  var valueMax = #{values.max || 0};
-
-  var showTootltip = function showTootltip(event, infoWindow) {
-        infoWindow.setPosition(event.latLng);
-        infoWindow.open(window.attendanceMap);
-      },
-      initializeNeighborhoodMap = function initializeMap() {
-        var mapOptions = {
-              zoom: 5,
-              center: new google.maps.LatLng(24.886436490787712, -70.2685546875),
-              mapTypeId: google.maps.MapTypeId.TERRAIN
-            },
-            bounds = new google.maps.LatLngBounds(),
-            neighborhoodsCoordinates, 
-            i,
-            neighborhoodPolygon,
-            infoWindows = {};
-
-          window.attendanceMap = new google.maps.Map(document.getElementById('attendance-map-canvas'), mapOptions);
-          window.attendanceMap.setOptions({styles: window.MAP_STYLES});
-
-
-- @neighborhoods.each do |neighborhood|
+- values = @neighborhoods.map(&:attendees)
+- if @neighborhoods.count == 0
+  | $('#attendance-map-canvas').hide();
+- else 
   |
-        infoWindows["#{j neighborhood.name}"] = new google.maps.InfoWindow();
-        infoWindows["#{j neighborhood.name}"].setContent('<b>#{j neighborhood.name}</b>#{neighborhood.invitations}');
-        neighborhoodsCoordinates = [#{neighborhood_coordinates(neighborhood)}];
-        neighborhoodPolygon = new google.maps.Polygon({
-          paths: neighborhoodsCoordinates,
-          strokeColor: '#347B9B',
-          strokeOpacity: 0.8,
-          strokeWeight: 2,
-        });
+    $('#attendance-map-canvas').show();
+    var arrayPolygon = [];
+    var color = '#{default_color}';
+    var valueMin = #{values.min || 0};
+    var valueMax = #{values.max || 0};
 
-        arrayPolygon.push({
-          polygon: neighborhoodPolygon,
-          quantity: #{neighborhood.invitations}
-        });
+    var showTootltip = function showTootltip(event, infoWindow) {
+          infoWindow.setPosition(event.latLng);
+          infoWindow.open(window.attendanceMap);
+        },
+        initializeNeighborhoodMap = function initializeMap() {
+          var mapOptions = {
+                zoom: 5,
+                center: new google.maps.LatLng(24.886436490787712, -70.2685546875),
+                mapTypeId: google.maps.MapTypeId.TERRAIN
+              },
+              bounds = new google.maps.LatLngBounds(),
+              neighborhoodsCoordinates, 
+              i,
+              neighborhoodPolygon,
+              infoWindows = {};
 
-        neighborhoodPolygon.setMap(window.attendanceMap);
+            window.attendanceMap = new google.maps.Map(document.getElementById('attendance-map-canvas'), mapOptions);
+            window.attendanceMap.setOptions({styles: window.MAP_STYLES});
 
-        google.maps.event.addListener(neighborhoodPolygon, 'click', function(event) { showTootltip(event, infoWindows["#{j neighborhood.name}"]) });
-        
-        for (i = 0; i < neighborhoodsCoordinates.length; i++) {
-          bounds.extend(neighborhoodsCoordinates[i]);
+
+  - @neighborhoods.each do |neighborhood|
+    |
+          infoWindows["#{j neighborhood.name}"] = new google.maps.InfoWindow();
+          infoWindows["#{j neighborhood.name}"].setContent('<div style="white-space: nowrap;"><b>#{j neighborhood.name}</b><br> <span style="font-size:15px; font-weight: bold;">#{neighborhood.attendees}</span> <span style="font-size:13px">ATTENDEES</span><br><span style="font-size:12px">#{neighborhood.attended} ACCOUNTS ATTENDED</span><br><span style="font-size:12px;">#{neighborhood.invitations} INVITATIONS</span></div>');
+          neighborhoodsCoordinates = [#{neighborhood_coordinates(neighborhood)}];
+          neighborhoodPolygon = new google.maps.Polygon({
+            paths: neighborhoodsCoordinates,
+            strokeColor: '#347B9B',
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+          });
+
+          arrayPolygon.push({
+            polygon: neighborhoodPolygon,
+            quantity: #{neighborhood.attendees}
+          });
+
+          neighborhoodPolygon.setMap(window.attendanceMap);
+
+          google.maps.event.addListener(neighborhoodPolygon, 'click', function(event) { showTootltip(event, infoWindows["#{j neighborhood.name}"]) });
+          
+          for (i = 0; i < neighborhoodsCoordinates.length; i++) {
+            bounds.extend(neighborhoodsCoordinates[i]);
+          };
+  |
+        window.attendanceMap.fitBounds(bounds);
         };
-|
-      window.attendanceMap.fitBounds(bounds);
-      };
 
-      initializeNeighborhoodMap();
-      changeColorAllPolygon('#347B9B', $.colpick.hexToHsb('#347B9B'));
-      $('.attendance-slider').removeClass('hide');
-      $('#attendees-range-slider').rangeSlider('bounds', valueMin, valueMax);
-      $('#attendees-range-slider').rangeSlider('values', valueMin, valueMax);
-      $('#attendees-range-slider').rangeSlider('min', valueMin);
-      $('#attendees-range-slider').rangeSlider('max', valueMax);
-      $('#attendees-range-slider').rangeSlider('resize');
+        initializeNeighborhoodMap();
+        changeColorAllPolygon(color, tinycolor(color).toHsv());
+        $('#customize-fields').removeClass('hide');
+        $('#attendees-range-slider').rangeSlider('bounds', valueMin, valueMax);
+        $('#attendees-range-slider').rangeSlider('values', valueMin, valueMax);
+        $('#attendees-range-slider').rangeSlider('min', valueMin);
+        $('#attendees-range-slider').rangeSlider('max', valueMax);
+        $('#attendees-range-slider').rangeSlider('resize');

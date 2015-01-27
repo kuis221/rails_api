@@ -1,10 +1,10 @@
 class Results::AttendanceController < ApplicationController
-  helper_method :return_path, :neighborhood_coordinates
+  helper_method :return_path, :neighborhood_coordinates, :default_color
 
   before_action :load_neighborhoods, only: [:map]
 
   def index
-    @states = Country.new('US').states.map { |code, data| ["#{code} (#{data['name']})", data['name']] }
+    @states = Country.new('US').states.map { |code, data| ["#{code} (#{data['name']})", code] }
   end
 
   def map
@@ -16,23 +16,28 @@ class Results::AttendanceController < ApplicationController
     results_reports_path
   end
 
+  def default_color
+    color = current_company.campaigns.find(params[:campaign]).color unless params[:campaign].blank?
+    color ||= params[:color] unless params[:color].blank?
+    color ||= '#347B9B'
+  end
+
   def load_neighborhoods
     @neighborhoods =
-      Neighborhood.where(country: 'US', state: params[:state], city: params[:city])
-      .joins('LEFT JOIN (select id, state, city, country, unnest(neighborhoods) neighborhood
-                         FROM places WHERE neighborhoods is not null) places ON places.city=neighborhoods.city AND
-                        places.state=neighborhoods.state AND
-                        places.country=neighborhoods.country AND
-                        similarity(lower(neighborhoods.name), lower(places.neighborhood)) >= 0.8')
+      Neighborhood.where(state: params[:state], city: params[:city])
+      .joins('LEFT JOIN places ON ST_Intersects(places.lonlat, neighborhoods.geog)')
       .joins('LEFT JOIN venues ON venues.place_id=places.id')
-      .joins('LEFT JOIN invites ON invites.venue_id=venues.id')
-      .group('neighborhoods.id')
-      .select('neighborhoods.*, count(invites) invitations')
+      .joins('LEFT JOIN (SELECT * FROM invites INNER JOIN events ON invites.event_id=events.id AND events.campaign_id=' + params[:campaign].to_i.to_s + ') invites ON invites.venue_id=venues.id')
+      .joins('LEFT JOIN events ON invites.event_id=events.id AND events.campaign_id=' + params[:campaign].to_i.to_s)
+      .group('neighborhoods.gid')
+      .select('neighborhoods.*, count(invites) invitations, COALESCE(sum(attendees), 0) attendees,'\
+              '0 attended, sum(rsvps_count) rsvps').to_a
   end
 
   def neighborhood_coordinates(neighborhood)
-    JSON.parse(neighborhood.geometry)['coordinates'].first.map do |coordinate|
-      "new google.maps.LatLng(#{coordinate[1]}, #{coordinate[0]})"
+    return '' if neighborhood.nil? || neighborhood.geog.nil?
+    neighborhood.geog[0].exterior_ring.points.map do |point|
+      "new google.maps.LatLng(#{point.lat}, #{point.lon})"
     end.join(',')
   end
 end

@@ -56,7 +56,7 @@ gem 'wicked_pdf'
 gem 'rack-cors', :require => 'rack/cors'
 gem 'roo'
 gem 'similar_text'
-gem 'yelp', require: 'yelp'
+gem 'activerecord-postgis-adapter'
 
 # For memory debugging
 # gem "allocation_stats"

@@ -8,8 +8,6 @@
 #  place_id               :string(100)
 #  types                  :string(255)
 #  formatted_address      :string(255)
-#  latitude               :float
-#  longitude              :float
 #  street_number          :string(255)
 #  route                  :string(255)
 #  zipcode                :string(255)
@@ -23,8 +21,11 @@
 #  td_linx_code           :string(255)
 #  location_id            :integer
 #  is_location            :boolean
+#  price_level            :integer
+#  phone_number           :string(255)
 #  neighborhoods          :string(255)      is an Array
 #  yelp_business_id       :string(255)
+#  lonlat                 :spatial          point, 4326
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

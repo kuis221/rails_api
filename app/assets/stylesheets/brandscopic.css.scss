@@ -7116,6 +7116,12 @@ body.dashboard.index {
 #attendance-report {
 	#attendance-left-column {
 		width: 290px;
+		.control-label {
+			font-weight: bold;
+		}
+		.attendance-slider {
+			margin-bottom: 25px;
+		}
 		.attendees-range-labels {
 			margin-left: 6px;
 			position:relative;
@@ -7173,7 +7179,7 @@ body.dashboard.index {
 		.ui-rangeSlider .ui-rangeSlider-handle {
 			-webkit-border-radius: 0 !important;
 			border-radius: 0 !important;
-			background-color: $dark_blue !important;
+			background-color: $dark_blue;
 			border: solid 1px $light_blue;
 			z-index: 30;
 		}

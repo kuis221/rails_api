@@ -8,8 +8,6 @@
 #  place_id               :string(100)
 #  types                  :string(255)
 #  formatted_address      :string(255)
-#  latitude               :float
-#  longitude              :float
 #  street_number          :string(255)
 #  route                  :string(255)
 #  zipcode                :string(255)
@@ -23,12 +21,14 @@
 #  td_linx_code           :string(255)
 #  location_id            :integer
 #  is_location            :boolean
+#  price_level            :integer
+#  phone_number           :string(255)
 #  neighborhoods          :string(255)      is an Array
 #  yelp_business_id       :string(255)
+#  lonlat                 :spatial          point, 4326
 #
 
 require 'base64'
-require 'yelp'
 
 class Place < ActiveRecord::Base
   include GoalableModel
@@ -45,6 +45,12 @@ class Place < ActiveRecord::Base
   has_many :venues, dependent: :destroy
   has_and_belongs_to_many :locations, autosave: true
   belongs_to :location, autosave: true
+
+  # By default, use the GEOS implementation for spatial columns.
+  self.rgeo_factory_generator = RGeo::Geos.factory_generator
+
+  # But use a geographic implementation for the :lonlat column.
+  set_rgeo_factory_for_column(:lonlat, RGeo::Geographic.spherical_factory(:srid => 4326))
 
   with_options through: :placeables, source: :placeable do |place|
     place.has_many :areas, source_type: 'Area'
@@ -65,8 +71,6 @@ class Place < ActiveRecord::Base
   before_save :update_locations
 
   after_commit :reindex_associated
-
-  after_commit :enqueue_yelp_business
 
   serialize :types
 
@@ -143,6 +147,14 @@ class Place < ActiveRecord::Base
     types.include?('locality')
   end
 
+  def latitude
+    lonlat.lat if lonlat.present?
+  end
+
+  def longitude
+    lonlat.lon if lonlat.present?
+  end
+
   # Try to find the latitude and logitude based on a physicical address and returns
   # true if found or false if not
   def set_lat_lng
@@ -154,8 +166,7 @@ class Place < ActiveRecord::Base
     return unless data['results'].count > 0
     result = data['results'].find { |r| r['geometry'].present? && r['geometry']['location'].present? }
     return unless result
-    self.latitude = result['geometry']['location']['lat']
-    self.longitude = result['geometry']['location']['lng']
+    self.lonlat = "POINT(#{result['geometry']['location']['lng']} #{result['geometry']['location']['lat']})"
   end
 
   # First try to find comments in the app from events, then if there no enough comments in the app,
@@ -321,10 +332,6 @@ class Place < ActiveRecord::Base
       @client ||= GooglePlaces::Client.new(GOOGLE_API_KEY)
     end
 
-    def yelp_client
-      @yelp_client ||= Yelp.client
-    end
-
     def combined_search_params(params)
       params.merge per_page: 5,
                    search_address: true,
@@ -355,25 +362,12 @@ class Place < ActiveRecord::Base
     end
   end
 
-  def find_yelp_business
-    response = yelp_client.search_by_coordinates(
-      {latitude: latitude, longitude: longitude},
-      {term: name, radius_filter: 1_000})
-    business = response.businesses.find { |b| b.name.similar(name) >= 70 }
-    return unless business
-    self.yelp_business_id = business.id
-    self.neighborhoods = [] if self.neighborhoods.nil?
-    self.neighborhoods = business.location.neighborhoods if business.location.respond_to?(:neighborhoods)
-    self
-  end
-
   private
 
   def fetch_place_data
     if reference && !do_not_connect_to_api
       self.name = spot.name
-      self.latitude = spot.lat
-      self.longitude = spot.lng
+      self.lonlat = "POINT(#{spot.lon} #{spot.lat})"
       self.formatted_address = spot.formatted_address
       self.types = spot.types
       self.types ||= []
@@ -475,10 +469,6 @@ class Place < ActiveRecord::Base
     Place.google_client
   end
 
-  def yelp_client
-    Place.yelp_client
-  end
-
   def clear_cache
     Placeable.where(place_id: id).each(&:update_associated_resources)
   end
@@ -488,11 +478,5 @@ class Place < ActiveRecord::Base
     areas.each do |area|
       Area.update_common_denominators(area)
     end
-  end
-
-  def enqueue_yelp_business
-    return if types.nil? || neighborhoods.present?
-    return unless types.include?('establishment') && yelp_business_id.nil?
-    Resque.enqueue PlaceYelpUpdaterWorker, id if types.include?('establishment')
   end
 end

@@ -12,6 +12,7 @@
 #  final_date  :date
 #  created_at  :datetime
 #  updated_at  :datetime
+#  active      :boolean          default(TRUE)
 #
 
 require 'rails_helper'

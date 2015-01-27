@@ -13,7 +13,7 @@ class CountriesController < ApplicationController
     country = params[:id]
     state = params[:state]
     if country && state
-      render json: Neighborhood.where(country: country, state: state)
+      render json: Neighborhood.where(state: state)
                         .order('1')
                         .pluck('DISTINCT(neighborhoods.city)')
     end

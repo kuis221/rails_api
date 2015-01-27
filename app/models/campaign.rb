@@ -49,7 +49,6 @@ class Campaign < ActiveRecord::Base
   validates :end_date, format: { with: DATE_FORMAT, message: 'MM/DD/YYYY' }, allow_nil: true
   validates :end_date, presence: true, date: { on_or_after: :start_date, message: 'must be after' }, if: :start_date
   validates :start_date, presence: true, if: :end_date
-  validates :color, inclusion: {in: AVAILABLE_COLORS }, allow_nil: true, allow_blank: true
 
   validate :valid_modules?
 

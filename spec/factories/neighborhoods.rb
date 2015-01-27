@@ -2,15 +2,13 @@
 #
 # Table name: neighborhoods
 #
-#  id         :integer          not null, primary key
-#  name       :string(255)
-#  city       :string(255)
-#  state      :string(255)
-#  county     :string(255)
-#  country    :string(255)
-#  geometry   :text
-#  created_at :datetime
-#  updated_at :datetime
+#  gid      :integer          not null, primary key
+#  state    :string(2)
+#  county   :string(43)
+#  city     :string(64)
+#  name     :string(64)
+#  regionid :decimal(, )
+#  geog     :spatial          multipolygon, 4326
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

@@ -82,6 +82,9 @@ GEM
       activemodel (= 4.1.9)
       activesupport (= 4.1.9)
       arel (~> 5.0.0)
+    activerecord-postgis-adapter (2.2.1)
+      activerecord (>= 4.0.0, < 4.2.0)
+      rgeo-activerecord (~> 1.2)
     activerecord-session_store (0.1.0)
       actionpack (>= 4.0.0, < 5)
       activerecord (>= 4.0.0, < 5)
@@ -190,10 +193,6 @@ GEM
       railties (>= 3.0.0)
     faker (1.4.3)
       i18n (~> 0.5)
-    faraday (0.9.0)
-      multipart-post (>= 1.2, < 3)
-    faraday_middleware (0.9.1)
-      faraday (>= 0.7.4, < 0.10)
     ffaker (1.31.0)
     ffi (1.9.3)
     formatador (0.2.5)
@@ -274,7 +273,6 @@ GEM
     mono_logger (1.1.0)
     multi_json (1.10.1)
     multi_xml (0.5.5)
-    multipart-post (2.0.0)
     nearest_time_zone (0.0.2)
       andand
       kdtree
@@ -402,6 +400,10 @@ GEM
       rspec-core (>= 3.0.0)
       rspec-expectations (>= 3.0.0)
       rspec-mocks (>= 3.0.0)
+    rgeo (0.3.20)
+    rgeo-activerecord (1.2.0)
+      activerecord (~> 4.0)
+      rgeo (~> 0.3)
     roo (1.13.2)
       nokogiri
       rubyzip
@@ -455,7 +457,6 @@ GEM
     simple_form (3.0.2)
       actionpack (~> 4.0)
       activemodel (~> 4.0)
-    simple_oauth (0.2.0)
     simplecov (0.9.0)
       docile (~> 1.1.0)
       multi_json
@@ -538,10 +539,6 @@ GEM
       rails
     xpath (2.0.0)
       nokogiri (~> 1.3)
-    yelp (2.0.4)
-      faraday (~> 0.8, >= 0.8.0)
-      faraday_middleware (~> 0.8, >= 0.8.0)
-      simple_oauth (~> 0.2, >= 0.2.0, < 0.3.0)
 
 PLATFORMS
   ruby
@@ -549,6 +546,7 @@ PLATFORMS
 DEPENDENCIES
   aasm
   activeadmin!
+  activerecord-postgis-adapter
   activerecord-session_store
   airbrake
   american_date
@@ -643,4 +641,3 @@ DEPENDENCIES
   unicorn-worker-killer
   unread
   wicked_pdf
-  yelp

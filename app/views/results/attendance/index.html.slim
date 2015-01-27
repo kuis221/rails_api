@@ -14,18 +14,21 @@
 
         = f.input :city, label: '2. Choose a city', collection: [], selected: params[:report].try(:[], :city), include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Choose a city" } }
 
-        .attendance-slider.hide
-          .attendees-range-labels
-            span LOW
-            span MEDIUM
-            span HIGH
-            .separator.left-separator
-            .separator.right-separator
-          #attendees-range-slider
-            .attendees-range-bar
-              .point-range.left-point
-              .point-range.right-point
-          //.color-box
+        #customize-fields.hide
+          .attendance-slider
+            label.control-label # Attendees
+            .attendees-range-labels
+              span LOW
+              span MEDIUM
+              span HIGH
+              .separator.left-separator
+              .separator.right-separator
+            #attendees-range-slider
+              .attendees-range-bar
+                .point-range.left-point
+                .point-range.right-point
+          label.control-label Color Overlay
+          input#report_color.color-box type="color"
           = f.input 'attendees[min]', as: :hidden
           = f.input 'attendees[max]', as: :hidden
 
@@ -53,7 +56,9 @@ javascript:
   });
 
   var states = $('#report_state'),
-      cities = $('#report_city');
+      cities = $('#report_city'),
+      colorp = $('#report_color'),
+      campaigns = $('#report_campaign_id');
   
   states.change(function(){
     cities.html('<option></option>');
@@ -73,38 +78,62 @@ javascript:
     }
   });
 
-  cities.change(function(){
-    if (cities.val()){
-      $.get('#{results_attendance_map_path(format: :js)}', {state: states.val(), city: cities.val()});
+  loadReport = function(){
+    if (cities.val() && states.val() && campaigns.val()){
+      $.get('#{results_attendance_map_path(format: :js)}', {
+        campaign: campaigns.val(), 
+        color: ($('#customize-fields').hasClass('hide') ? null : colorp.val()), 
+        state: states.val(), 
+        city: cities.val()});
     }
-  });
+  }
+
+  cities.change(loadReport);
+  campaigns.change(loadReport);
 
   $('#report_state').change();
 
-  $('.color-box').colpick({
-    colorScheme:'dark',
-    layout:'rgbhex',
-    color:'347B9B',
-    onSubmit:function(hsb,hex,rgb,el) {
-      $(el).css('background-color', '#'+ hex);
-      $(el).colpickHide();
-      changeColorAllPolygon(hex,hsb);
-    }
-  }).css('background-color', '#347B9B');
 
-  function changeColorAllPolygon(color,hsb) {
+  $('.color-box').spectrum({
+      showInput: true,
+      preferredFormat: "hex",
+      showPalette: true,
+      showSelectionPalette: true,
+      change: function(color){
+        changeColorAllPolygon(color.toHexString(), color.toHsv());
+      }
+  });
+  //$('.color-box').colpick({
+  //  colorScheme:'dark',
+  //  layout:'rgbhex',
+  //  color:'347B9B',
+  //  onSubmit:function(hsb,hex,rgb,el) {
+  //    $(el).css('background-color', '#'+ hex);
+  //    $(el).colpickHide();
+  //    changeColorAllPolygon(hex,hsb);
+  //  }
+  //}).css('background-color', '#347B9B');
+
+  function changeColorAllPolygon(color, hsb) {
+    $('.color-box').spectrum("set", color);
     var arrayColor = generateColorList(color,hsb);
+    //$('.ui-rangeSlider-handle').css({
+    //  backgroundColor: '#' + arrayColor[9],
+    //  borderColor: '#' + arrayColor[6]});
+
     $.each(arrayPolygon, function(index, value) {
       value.polygon.setOptions({fillColor: '#' + arrayColor[selectColorIndex(value.quantity)], fillOpacity: 0.5});
     });
   }
 
-  function generateColorList(color,hsb) {
+  function generateColorList(color, hsb) {
     var arrayColor = [];
-    hsb.s = 100;
+    if (hsb.s < 100) {
+      hsb.s = 100;
+    }
     for (var i = 0; i < 10; i++){
-      arrayColor.push($.colpick.hsbToHex(hsb));
-      hsb.s = hsb.s - 10;
+      arrayColor.push(tinycolor(hsb).toHex(hsb));
+      hsb.s = hsb.s - 5;
     }
     return arrayColor;
   }
@@ -114,15 +143,16 @@ javascript:
     if (value != 0 && t != 0) {
       var colorIndex = Math.floor(value / t);
       if (value == valueMax)
-        return 9;
+        return 0;
       else
-        return Math.floor(value / t);
+        return 10 - Math.floor(value / t);
     }
     else
-      return 0;
+      return 9;
   }
 
   function hexc(colorval) {
+    var color;
     var parts = colorval.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
     delete(parts[0]);
     for (var i = 1; i <= 3; ++i) {
