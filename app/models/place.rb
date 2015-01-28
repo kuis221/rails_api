@@ -309,7 +309,7 @@ class Place < ActiveRecord::Base
             {
               value: label,
               label: label,
-              id: "#{p['reference']}||#{p['id']}",
+              id: "#{p['reference']}||#{p['place_id']}",
               valid: valid_flag.call(p)
             }
           end.sort! { |x, y| sort_index[x[:valid]] <=> sort_index[y[:valid]] }.slice!(0, 5 - results.count))

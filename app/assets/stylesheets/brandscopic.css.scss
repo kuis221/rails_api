@@ -90,6 +90,9 @@ h1, h2, h3{
 // Titles for all the modules
 .module-title{
 	color: $user_menu;
+	a.icon-edit {
+		margin-left: 10px;
+	}
 }
 
 .uppercase{
@@ -5282,7 +5285,7 @@ body.campaigns{
 		}
 	}
 
-	a, i{
+	#list-tools a, a, i{
 		&.btn{
 			font-weight:normal;
 		}
