@@ -79,8 +79,7 @@ module PlacesHelper
       if data['results'].count > 0
         result = data['results'].find { |r| r['geometry'].present? && r['geometry']['location'].present? }
         if result
-          place.latitude = result['geometry']['location']['lat']
-          place.longitude = result['geometry']['location']['lng']
+          place.lonlat = "POINT(#{result['geometry']['location']['lng']} #{result['geometry']['location']['lat']})"
           true
         else
           false

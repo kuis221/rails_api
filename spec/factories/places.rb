@@ -37,8 +37,7 @@ FactoryGirl.define do
     reference nil
     is_custom_place true
     formatted_address '123 My Street'
-    latitude 1
-    longitude 1
+    lonlat nil
     zipcode '12345'
     city 'New York City'
     state 'NY'

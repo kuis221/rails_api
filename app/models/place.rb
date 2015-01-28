@@ -158,6 +158,7 @@ class Place < ActiveRecord::Base
   # Try to find the latitude and logitude based on a physicical address and returns
   # true if found or false if not
   def set_lat_lng
+    return if do_not_connect_to_api
     return if latitude.present? && longitude.present?
     address_txt = URI.encode([street_number, route, city,
                               state.to_s + ' ' + zipcode.to_s, country].compact.join(', '))

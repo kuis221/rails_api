@@ -114,7 +114,7 @@ describe PlacesController, type: :controller do
         create(:place,
                            name: 'Current place name',
                            formatted_address: 'api fmt address', zipcode: 44_332, route: '444 cc', street_number: 'Calle 2',
-                           city: 'Paraiso', state: 'Cartago', country: 'CR', latitude: 1.234, longitude: -1.234,
+                           city: 'Paraiso', state: 'Cartago', country: 'CR', lonlat: 'POINT(-1.234 1.234)',
                            place_id: '123', reference: 'XYZ'
         )
         expect_any_instance_of(GooglePlaces::Client).to receive(:spots).and_return([double(id: '123', reference: 'XYZ')])

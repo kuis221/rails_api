@@ -21,7 +21,7 @@
       = f.association :brand_portfolios, collection: current_company.brand_portfolios.active, input_html: {class: 'input-xlarge chosen-enabled', multiple: true}
 
     .row-fluid
-      = f.input :description, :input_html => {:rows => 6}, input_html: {class: 'input-xlarge'}
+      = f.input :description, :input_html => { rows: 6, class: 'input-xlarge' }
 
   .form-actions
     = f.button :submit, class: 'btn btn-primary', data: {disable_with: 'Please wait...'}

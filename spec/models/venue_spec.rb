@@ -56,13 +56,13 @@ describe Venue, type: :model do
 
   describe 'compute_scoring', search: true do
     it 'should correctly compute the scoring based on the venues in a radius of 5KM' do
-      place1 = create(:venue, place: create(:place, latitude: 9.930713, longitude: -84.050045),
+      place1 = create(:venue, place: create(:place, lonlat: 'POINT(-84.050045 9.930713)' ),
         avg_impressions_hour: 142, avg_impressions_cost: 167)
-      place2 = create(:venue, place: create(:place, latitude: 9.929967, longitude: -84.047492),
+      place2 = create(:venue, place: create(:place, lonlat: 'POINT(-84.050045 9.929967)'),
         avg_impressions_hour: 183, avg_impressions_cost: 217)
-      place3 = create(:venue, place: create(:place, latitude: 9.931795, longitude: -84.044348),
+      place3 = create(:venue, place: create(:place, lonlat: 'POINT(-84.044348 9.931795)'),
         avg_impressions_hour: 217, avg_impressions_cost: 183)
-      place4 = create(:venue, place: create(:place, latitude: 9.931795, longitude: -84.044348),
+      place4 = create(:venue, place: create(:place, lonlat: 'POINT(-84.044348 9.931795)'),
         avg_impressions_hour: 167, avg_impressions_cost: 142)
 
       Venue.reindex
