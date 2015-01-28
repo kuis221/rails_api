@@ -30,7 +30,7 @@ class Results::AttendanceController < ApplicationController
       .joins('LEFT JOIN (SELECT * FROM invites INNER JOIN events ON invites.event_id=events.id AND events.campaign_id=' + params[:campaign].to_i.to_s + ') invites ON invites.venue_id=venues.id')
       .joins('LEFT JOIN events ON invites.event_id=events.id AND events.campaign_id=' + params[:campaign].to_i.to_s)
       .group('neighborhoods.gid')
-      .select('neighborhoods.*, count(invites) invitations, COALESCE(sum(attendees), 0) attendees,'\
+      .select('neighborhoods.*, COALESCE(sum(invitees), 0) invitations, COALESCE(sum(attendees), 0) attendees,'\
               '0 attended, sum(rsvps_count) rsvps').to_a
   end
 
