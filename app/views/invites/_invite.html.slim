@@ -6,15 +6,15 @@ div.resource-item.invite id="invite_#{invite.id}"
         .crop-text
           = invite.campaign_name
 
+      .span1
+        .text-large= invite.invitees
+        | Invites
       .span2
         .text-large= invite.rsvps_count
         | RSVPs
       .span2
         .text-large= invite.attendees
         | Attendees
-      .span2
-        .text-large 12
-        | Accounts Attended
 
     - else
       .span3
@@ -37,9 +37,6 @@ div.resource-item.invite id="invite_#{invite.id}"
       .span1
         .text-large= invite.attendees
         | Attendees
-      .span2
-        .text-large 12
-        | Accounts Attended
 
   .resource-item-actions
     = button_to_edit invite, url: url_for([:edit, parent, invite]) if can?(:edit_invite, Event)
