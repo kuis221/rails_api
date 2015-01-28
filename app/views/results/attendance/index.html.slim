@@ -1,10 +1,10 @@
 
 #attendance-report.row-fluid.with-details-close-bar
-  = resource_details_bar("You are viewing the Attendance by Neighbourhood report. Click to close.")
+  = resource_details_bar("You are viewing the Attendance by Neighborhood report. Click to close.")
   
   .details_box.padding-top-close-bar
     #attendance-left-column.pull-left
-      h3 ATTENDANCE BY NEIGHBOURHOOD
+      h3 ATTENDANCE BY NEIGHBORHOOD
 
       = simple_form_for :report, url: results_attendance_path, remote: true do |f|
 
