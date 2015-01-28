@@ -83,22 +83,24 @@ class EventsCalendar
     campaign_names = Hash[Campaign.where(id: search_events_for_month.hits.map { |h| h.stored(:campaign_id) }).pluck(:id, :name)]
     campaign_ids = campaign_names.keys
     search_events_for_month.hits.each do |hit|
-      day = hit.stored(:start_at).in_time_zone.to_date
+      start_at = company.timezone_support? ? hit.stored(:local_start_at) : hit.stored(:start_at).in_time_zone
+      day = start_at.to_date
       campaign_id = hit.stored(:campaign_id)
       key = hit.stored(:id)
-      title = "#{day.strftime('%l%P').gsub(/([ap])m/, '\1')} #{campaign_names[campaign_id]}"
+      title = "#{start_at.strftime('%l%P').gsub(/([ap])m/, '\1')} #{campaign_names[campaign_id]}"
       days[day] ||= {}
       days[day][key] ||= {
         count: 0,
         title: title,
         start: day,
+        start_at: start_at,
         end: day,
         count: 1,
         description: "<b>#{campaign_names[campaign_id]}</b><br />1 Event",
         color: COLORS[campaign_ids.index(campaign_id) % COLORS.count],
         url: Rails.application.routes.url_helpers.events_url('id[]' => key) }
     end
-    days.map { |_, bs| bs.values.sort { |a, b| a[:title] <=> b[:title] } }.flatten
+    days.map { |_, bs| bs.values.sort { |a, b| a[:start_at] <=> b[:start_at] } }.flatten
   end
 
   def grouped_by_user
