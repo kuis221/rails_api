@@ -111,10 +111,11 @@ describe Api::V1::BrandAmbassadors::VisitsController, type: :controller do
              visit_type: 'brand_program', company_user: company_user, active: true)
 
       # Make sure custom filters are not returned
-      create(:custom_filter, owner: company, group: 'SAVED FILTERS', apply_to: 'visits')
+      create(:custom_filter, owner: company, apply_to: 'visits')
 
       # Create the Divisions filter
-      create(:custom_filter, owner: company_user, group: 'DIVISIONS', apply_to: 'visits')
+      custom_filters_category = create(:custom_filters_category, name: 'DIVISIONS', company: company)
+      create(:custom_filter, owner: company_user, category: custom_filters_category, apply_to: 'visits')
 
       Sunspot.commit
 

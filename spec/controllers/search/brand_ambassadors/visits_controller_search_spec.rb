@@ -80,7 +80,8 @@ describe BrandAmbassadors::VisitsController, type: :controller, search: true do
 
     describe "GET 'filters'" do
       it 'should return the correct buckets in the right order' do
-        create(:custom_filter, owner: @company_user, group: 'DIVISIONS', apply_to: 'visits')
+        custom_filters_category = create(:custom_filters_category, name: 'DIVISIONS', company: company)
+        create(:custom_filter, owner: @company_user, category: custom_filters_category, apply_to: 'visits')
         Sunspot.commit
         get 'filters', format: :json
         expect(response).to be_success

@@ -1,0 +1,13 @@
+.details_box.thinner
+  h3 = 'Events'
+  p = 'Modify global filtering settings for our organization below. These settings dictate how' 
+  p = 'filters are configured for all system users by default.'
+.sidebar
+.main.details_box.thinner
+  .pull-left
+      = button_to 'Create Custom Filter', new_custom_filters_setting_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-custom-filter-btn'} if can? :create, CustomFilter
+  .text-right
+    p = 'Adding a new item at the bottom...'
+  .details_box
+    p = 'sd'
+  

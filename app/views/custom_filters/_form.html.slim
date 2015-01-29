@@ -1,7 +1,6 @@
 - remote ||= false
 = simple_form_for(resource, remote: remote, html: { id: 'new_custom_filter' }) do |f|
   = f.hidden_field :apply_to, as: :hidden
-  = f.hidden_field :group, as: :hidden, value: CustomFilter::SAVED_FILTERS_NAME
   = f.hidden_field :filters, as: :hidden
   .custom-filter-option
     label.radio

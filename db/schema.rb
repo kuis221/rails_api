@@ -11,13 +11,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150115215305) do
+ActiveRecord::Schema.define(version: 20150127225850) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "hstore"
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
+  enable_extension "postgres_fdw"
   enable_extension "tablefunc"
 
   create_table "active_admin_comments", force: true do |t|
@@ -352,9 +353,18 @@ ActiveRecord::Schema.define(version: 20150115215305) do
     t.datetime "updated_at"
     t.integer  "owner_id"
     t.string   "owner_type"
-    t.string   "group"
     t.boolean  "default_view", default: false
+    t.integer  "category_id"
   end
+
+  create_table "custom_filters_categories", force: true do |t|
+    t.string   "name"
+    t.integer  "company_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "custom_filters_categories", ["company_id"], name: "index_custom_filters_categories_on_company_id", using: :btree
 
   create_table "data_migrations", force: true do |t|
     t.integer  "remote_id"

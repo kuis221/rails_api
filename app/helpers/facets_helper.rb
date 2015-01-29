@@ -133,7 +133,8 @@ module FacetsHelper
 
   def build_custom_filters_bucket
     groups = {}
-    CustomFilter.for_company_user(current_company_user).not_user_saved_filters
+    CustomFilter.for_company_user(current_company_user).joins(:category)
+      .select('custom_filters.*, custom_filters_categories.name as group').not_user_saved_filters
       .order('custom_filters.name ASC').by_type(filter_settings_scope).each do |filter|
       groups[filter.group.upcase] ||= []
       groups[filter.group.upcase].push filter
@@ -150,10 +151,11 @@ module FacetsHelper
 
   def user_saved_filters(scope=nil)
     scope ||= filter_settings_scope
-    items = CustomFilter.for_company_user(current_company_user).user_saved_filters
+    items = CustomFilter.for_company_user(current_company_user)
+            .user_saved_filters
             .order('custom_filters.name ASC').by_type(scope)
 
-    { label: CustomFilter::SAVED_FILTERS_NAME,
+    { label: 'Saved Filters',
       items: items.map do |cf|
         build_facet_item(id: cf.filters + '&id=' + cf.id.to_s,
                          label: cf.name, name: :custom_filter, count: 1)

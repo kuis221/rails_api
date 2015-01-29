@@ -543,6 +543,8 @@ Brandscopic::Application.routes.draw do
 
   resources :filter_settings, only: [:index, :new, :create, :update]
 
+  resources :custom_filters_settings, only: [:index, :new, :create]
+
   namespace :brand_ambassadors do
     resources :visits, except: [:destroy] do
       get :autocomplete, on: :collection

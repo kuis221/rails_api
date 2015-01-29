@@ -35,6 +35,6 @@ class CustomFiltersController < InheritedResources::Base
 
   def permitted_params
     params.permit(custom_filter: [
-      :id, :name, :group, :apply_to, :filters, :default_view])[:custom_filter]
+      :id, :name, :apply_to, :filters, :default_view])[:custom_filter]
   end
 end
