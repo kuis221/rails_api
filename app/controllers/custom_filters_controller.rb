@@ -30,7 +30,7 @@ class CustomFiltersController < InheritedResources::Base
   end
 
   def begin_of_association_chain
-    current_company_user
+    (params[:company_id] ? current_company : current_company_user)
   end
 
   def permitted_params
