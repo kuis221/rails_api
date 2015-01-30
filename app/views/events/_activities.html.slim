@@ -3,4 +3,4 @@
     = button_to 'New Activity', new_event_activity_path(resource), method: :get, remote: true, class: 'btn btn-primary', title: 'New Activity'
 
   #activities-list.resource-list
-    = render partial: 'activities/activity', collection: event_activities, locals: { parent: resource }
+    = render partial: 'activities/activity', collection: resource.activities.active, locals: { parent: resource }

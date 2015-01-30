@@ -87,10 +87,6 @@ class VenuesController < FilteredController
     [:location, :q, :page, :sorting, :sorting_dir, :per_page,
      events_count: [:min, :max], promo_hours: [:min, :max], impressions: [:min, :max],
      interactions: [:min, :max], sampled: [:min, :max], spent: [:min, :max],
-     venue_score: [:min, :max], price: [], area: [], campaign: [], brand: [] ]
-  end
-
-  def venue_activities
-    resource.activities.active.include_from_events + resource.invites.active
+     venue_score: [:min, :max], price: [], area: [], campaign: [], brand: []]
   end
 end

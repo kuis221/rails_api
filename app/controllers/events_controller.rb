@@ -234,12 +234,4 @@ class EventsController < FilteredController
   def list_exportable?
     params['mode'] == 'calendar' || super
   end
-
-  def event_activities
-    activites = resource.activities.active
-    if resource.campaign.enabled_modules.include?('attendance')
-      activites += resource.invites.active.active.joins(:place).order('lower(places.name)')
-    end
-    activites
-  end
 end
