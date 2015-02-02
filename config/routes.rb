@@ -543,7 +543,14 @@ Brandscopic::Application.routes.draw do
 
   resources :filter_settings, only: [:index, :new, :create, :update]
 
-  resources :custom_filters_settings, only: [:index, :new, :create]
+  resources :custom_filters_settings, only: [:index]
+  resources :custom_filters_categories, only: [:index, :new, :create] do
+    get :list_filters, on: :collection, format: :json
+  end
+
+  resources :company, only: [] do
+    resources :custom_filters, only: [:create,:new]
+  end
 
   namespace :brand_ambassadors do
     resources :visits, except: [:destroy] do

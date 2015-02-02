@@ -13,6 +13,9 @@ class CustomFiltersController < InheritedResources::Base
       params[:id] = permitted_params[:id]
       update!
     else
+      if params[:custom_filter][:start_date].present? || params[:custom_filter][:end_date].present?
+        prepare_create
+      end
       create!
     end
   end
@@ -35,6 +38,22 @@ class CustomFiltersController < InheritedResources::Base
 
   def permitted_params
     params.permit(custom_filter: [
-      :id, :name, :apply_to, :filters, :default_view])[:custom_filter]
+      :id, :name, :apply_to, :filters, :default_view, :start_date, :end_date, :category_id])[:custom_filter]
+  end
+
+  def encode_uri(value)
+    URI.escape(value, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
+  end
+
+  def prepare_create
+    qs = ""
+    if params[:custom_filter][:start_date].present?
+      qs = "#{encode_uri("start_date")}=#{encode_uri(params[:custom_filter][:start_date])}"
+    end
+    if params[:custom_filter][:end_date].present?
+      qs += qs ?  '&' : ''
+      qs += "#{encode_uri("end_date")}=#{encode_uri(params[:custom_filter][:end_date])}"
+    end
+    params[:custom_filter][:filters] = qs
   end
 end

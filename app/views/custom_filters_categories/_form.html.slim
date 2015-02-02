@@ -1,10 +1,9 @@
 - remote ||= false
-= simple_form_for(@custom_filter, remote: remote || false) do |f|
+= simple_form_for(resource, :url => custom_filters_categories_path, remote: remote || false) do |f|
   = f.error_notification
 
   .form-inputs
     = f.input :name, :input_html => {class: 'input-xlarge'}
-    = f.input :apply_to, :input_html => {:rows => 6, class: 'input-xlarge'}
 
   .form-actions
     = f.button :submit,class: 'btn-primary', data: {disable_with: 'Please wait...'}

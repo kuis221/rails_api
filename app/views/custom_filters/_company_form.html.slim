@@ -1,10 +1,6 @@
-//- if resource.owner.is_a?(Company)
-//  = render partial: 'custom_filters/company_form', locals: {parent: resource, result: result}
-//- else
-//= render partial: 'custom_filters/user_form', locals: {resource: resource}
 - remote ||= false
 = simple_form_for(@custom_filter, remote: remote || false) do |f|
-  = f.hidden_field :apply_to, as: :hidden, value: 'events'
+  = f.hidden_field :apply_to, as: :hidden
   = f.error_notification
   .form-inputs
     .row-fluid
@@ -25,21 +21,10 @@
     = f.input :name, :input_html => {class: 'input-xlarge'}
     chosen-campaign
       = f.association :category,  collection: list_categories, input_html: {class: 'chosen-enabled'}, required: true
+
   .form-actions
     = f.button :submit,class: 'btn-primary', data: {disable_with: 'Please wait...'}
     = f.button :button, 'Cancel', class: 'btn-cancel'
-//   = f.button :button, 'ABRIR', class: 'btn btn-primary btn-lg', data: {toggle: "modal", target: "#myModal"}
-
-//div class= "modal fade" id= "myModal" tabindex= "-1" role= "dialog" aria-labelledby= "myModalLabel" aria-hidden= "true"
-//  .modal-dialog
-//   .modal-content
-//      .modal-header
-//        h4.modal-title#myModalLabel = 'Modal title'
-//      .modal-body#form_category
-//        = render partial: 'custom_filters_categories/form', locals: {parent: resource, remote: true}
-      //data-dismiss="modal"
-
-
 
 javascript:
   val = $('#calendar_start_date').text();

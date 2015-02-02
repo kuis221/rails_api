@@ -17,12 +17,15 @@ class CustomFilter < ActiveRecord::Base
   belongs_to :owner, polymorphic: true
   belongs_to :category, class_name: 'CustomFiltersCategory'
 
+
   # Required fields
   validates :owner, presence: true
   validates :name, presence: true
 
   validates :apply_to, presence: true
   validates :filters, presence: true
+
+  attr_accessor :start_date, :end_date, :criteria
 
   scope :by_type, ->(type) { order('id ASC').where(apply_to: type) }
   scope :user_saved_filters, -> { where(category: nil) }

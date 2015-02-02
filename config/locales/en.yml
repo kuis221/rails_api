@@ -280,6 +280,7 @@ en:
         brand_ambassadors/document: "New Document"
         document_folder: "New Folder"
         filter_setting: "Filtering options"
+        custom_filters_category: "New Custom Filters Category"
       edit:
         company_user: "Edit User"
         event: "Edit Event"
