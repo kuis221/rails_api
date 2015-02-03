@@ -14,4 +14,10 @@ module VenuesHelper
   def is_demographic_empty?(data)
     return true if data.blank? || data.map(&:last).uniq.first == 0
   end
+
+  def link_to_get_directions(venue)
+    address = [venue.street, venue.city, venue.state, venue.zipcode, venue.country].join(' ')
+    link_to 'Get Directions', "https://maps.google.com?#{ { daddr: address}.to_query }",
+            class: 'get-venue-directions', target: '_blank'
+  end
 end

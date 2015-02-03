@@ -31,7 +31,7 @@
             i.icon-wired-venue
             - venue_address = resource.formatted_address.present? ? resource.formatted_address : place_address(resource.place, false, ', ', ', ')
             => venue_address
-            / a href="#" Get Directions
+            = link_to_get_directions(resource)
           - if false # the places doesn't have a phone number yet
             li
               i.icon-mobile
