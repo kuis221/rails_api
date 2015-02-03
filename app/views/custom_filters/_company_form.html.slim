@@ -1,6 +1,7 @@
 - remote ||= false
-= simple_form_for(@custom_filter, remote: remote || false) do |f|
-  = f.hidden_field :apply_to, as: :hidden
+- apply_to ||= ""
+= simple_form_for([current_company, @custom_filter], remote: remote || false) do |f|
+  = f.hidden_field :apply_to, as: :hidden, value: "#{apply_to}"
   = f.error_notification
   .form-inputs
     .row-fluid
@@ -21,7 +22,6 @@
     = f.input :name, :input_html => {class: 'input-xlarge'}
     chosen-campaign
       = f.association :category,  collection: list_categories, input_html: {class: 'chosen-enabled'}, required: true
-
   .form-actions
     = f.button :submit,class: 'btn-primary', data: {disable_with: 'Please wait...'}
     = f.button :button, 'Cancel', class: 'btn-cancel'
@@ -52,4 +52,10 @@ javascript:
     showOtherMonths: true,
     selectOtherMonths: true,
     dateFormat: "mm/dd/yy",
+  });
+
+  $("#custom_filter_category_id").chosen().change(function(e){
+    if ($(this).chosen().find(":selected").attr('class') == "new_category_bt") {
+      $.get('#{new_custom_filters_category_path(format: :js)}');
+    }
   });

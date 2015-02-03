@@ -7,18 +7,12 @@ class CustomFiltersCategoriesController < InheritedResources::Base
   respond_to :json, only: [:list_filters]
   actions :index, :new, :create
 
-  def create
-    create! do |success|
-      success.json { render json: { result: 'OK' } }
-    end
-  end
-
   def list_filters
     groups = {}
-    CustomFiltersCategory.for_company_user(current_company_user)
+    current_company.custom_filters_categories
       .order('custom_filters_categories.name').each do |category|
         groups[category.name.upcase] ||= []
-        category.customFilters.where(apply_to: "events").each do |filter|
+        category.custom_filters.where(apply_to: params[:apply_to]).each do |filter|
           groups[category.name.upcase].push filter
         end
       end

@@ -1,6 +1,5 @@
 module CustomFiltersHelper
   def list_categories
-    categories = CustomFiltersCategory.all.order('name')
-    categories.pluck( :name, :id)
+    CustomFiltersCategory.all.order('name').pluck( :name, :id).concat([['Create New Category', 'new', class: 'new_category_bt']])
   end
 end

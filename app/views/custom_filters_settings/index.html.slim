@@ -9,19 +9,17 @@
     p = 'Viewing Events filter settings'
   .details_box
     .pull-left
-      = button_to 'Create Custom Filter', new_company_custom_filter_path(current_company), {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-custom-filter-btn'} if can? :create, CustomFilter
+      = button_to 'Create Custom Filter', new_company_custom_filter_path(current_company, apply_to: params[:apply_to]), {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-custom-filter-btn'} if can? :create, CustomFilter
       = button_to '   Exit   ', new_company_custom_filter_path(current_company), {method: :get, remote: true, class: 'btn btn-cancel', :id => 'cancel-custom-filter-btn'}
-      = button_to 'Create Custom Category', new_custom_filters_category_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-custom-filter-category-btn'}
     .text-right
       //p = 'Adding a new item at the bottom...' 
   .line_box
   .filter-box
     #list_filters
     #items_custom_filters.form-facet-filters.accordion
-  
+    
 javascript:
-
-  $.get('#{list_filters_custom_filters_categories_path(format: :json)}', function(response) {
+  $.get('/custom_filters_categories/list_filters/#{params[:apply_to]}', function(response) {
     customFiltersList(response)
   });
   customFiltersList = function(filters) {

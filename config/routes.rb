@@ -541,11 +541,12 @@ Brandscopic::Application.routes.draw do
     put :default_view, on: :member, format: :json
   end
 
-  resources :filter_settings, only: [:index, :new, :create, :update]
+  resources :filter_settings, only: [:index, :new, :create, :update] 
 
-  resources :custom_filters_settings, only: [:index]
+  match 'custom_filters_settings/:apply_to' => 'custom_filters_settings#index', via: :get, constraints: { apply_to: CustomFilter::APPLY_TO_OPTIONS.join("|") }
+
   resources :custom_filters_categories, only: [:index, :new, :create] do
-    get :list_filters, on: :collection, format: :json
+    match 'list_filters/:apply_to' => 'custom_filters_categories#list_filters', via: :get, on: :collection, format: :json
   end
 
   resources :company, only: [] do

@@ -1297,3 +1297,17 @@ div#spin{
 		}
 	}
 }
+
+.new_category_bt {
+	border-top: 1px solid $brand;
+	text-align: center;
+	color: $brand;
+	font-size: 12px;
+	&:before{
+		content: "\e61d";	
+		font-family: 'icons';
+		padding-right: 5px;
+		font-size: 14px;
+		vertical-align: middle;
+	}
+}	

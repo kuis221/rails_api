@@ -255,6 +255,7 @@ module FacetsHelper
       f.push build_areas_bucket
       f.push build_campaign_bucket
       f.push build_brands_bucket
+      f.concat build_custom_filters_bucket
     end
   end
 
