@@ -99,7 +99,7 @@ module PlacesHelper
   end
 
   def place_website(url)
-    link_to url.gsub(/https?:\/\//, '').gsub(/\/$/, ''), url
+    link_to url.gsub(/https?:\/\//, '').gsub(/\/$/, ''), url, target: '_blank'
   end
 
   def venue_score_narrative(venue)
