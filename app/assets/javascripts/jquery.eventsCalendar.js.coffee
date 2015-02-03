@@ -17,15 +17,22 @@ $.widget 'nmk.eventsCalendar', {
 		mode: 'month',
 		onEventsLoad: false,
 		onMonthChange: false,
-		weeks: 2
+		onGroupChange: false,
+		weeks: 2,
+		groupBy: null
 	},
 
 	_create: () ->
 		@element.addClass('eventsCalendar')
 
-		@groupBy = 'brand'
-		if typeof(Storage) isnt "undefined" && localStorage.getItem("events_calendar_grouping")
-			@groupBy = localStorage.getItem("events_calendar_grouping");
+		if @options.groupBy
+			@groupBy = @options.groupBy
+		else
+			@groupBy = if @options.groupBy then  'brand'
+
+			if (typeof(Storage) isnt "undefined") && (typeof(localStorage) isnt 'undefined')  && localStorage.getItem("events_calendar_grouping")
+				#@groupBy = localStorage.getItem("events_calendar_grouping")
+				@groupBy = 'brand'
 
 
 		cal_current_date = new Date()
@@ -79,6 +86,8 @@ $.widget 'nmk.eventsCalendar', {
 			@element.find('.calendar-grouping .dropdown-menu li').removeClass('active')
 			$a.parent().addClass('active')
 			@_drawCalendar()
+			@options.onGroupChange() if @options.onGroupChange
+			true
 
 		@element.on 'click', '.prev-month-btn', (e) =>
 			e.preventDefault()
@@ -207,6 +216,9 @@ $.widget 'nmk.eventsCalendar', {
 
 		@element.find('.calendar-month-name').html "#{monthName}&nbsp;#{@year}"
 
+	loadEvents2: () ->
+		alert 'si'
+
 	loadEvents: () ->
 		@calendar.find('.calendar-event').remove()
 		if typeof @options.eventsUrl is 'function'
@@ -233,6 +245,15 @@ $.widget 'nmk.eventsCalendar', {
 
 			true
 		@
+
+	getMonth: () ->
+		@month || @options.month
+
+	getYear: () ->
+		@year || @options.year
+
+	getGroupBy: () ->
+		@groupBy || @options.groupBy
 
 	_renderEvent: (eventElement) ->
 		title = if eventElement.url? then $('<a>').attr('href', eventElement.url).text(eventElement.title) else eventElement.title
