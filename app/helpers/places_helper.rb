@@ -21,15 +21,10 @@ module PlacesHelper
 
           # If the place was not found in API, create it
           if spot.nil?
-            if create_place_in_google_api(@place)
-              # Save the place on the database with the user's entered data
-              @place.save
-            else
-              @place.is_custom_place = true
-              @place.save
-            end
+            @place.is_custom_place = true
+            @place.save
           else
-            reference_value = spot.reference + '||' + spot.id
+            reference_value = spot.reference + '||' + spot.place_id
           end
         else
           @place.errors.add(:base, 'The entered address doesn\'t seems to be valid')
@@ -93,36 +88,8 @@ module PlacesHelper
     # Search a place in google's API by name in a radius of 1km and returns
     # the spot if found or nil if not
     def search_place_in_google_api_by_name(place)
-      spot = nil
-      spots = api_client.spots(place.latitude, place.longitude, name: place.name, radius: 1000)
-      spot = spots.first unless spots.empty?
-      spot
-    end
-
-    # Creates a new place in Google's API and returns true if success or false if an error
-    # ocurred
-    def create_place_in_google_api(place)
-      types = place.types || []
-      types = types.split(/\s*,\s*/) unless types.is_a?(Array)
-      address = {
-        location: {
-          lat: place.latitude,
-          lng: place.longitude
-        },
-        accuracy: 50,
-        name: place.name,
-        types: types
-      }
-      result = HTTParty.post("https://maps.googleapis.com/maps/api/place/add/json?sensor=true&key=#{GOOGLE_API_KEY}",
-                             body: address.to_json,
-                             headers: { 'Content-Type' => 'application/json' }
-                            )
-      if result['reference'].present? && result['id'].present?
-        place.reference = result['reference']
-        place.place_id = result['id']
-        true
-      else
-        false
+      api_client.spots(place.latitude, place.longitude, name: place.name, radius: 1000).detect do |spot|
+        spot.name.similar(place.name) >= 80
       end
     end
 
