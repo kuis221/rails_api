@@ -15,7 +15,7 @@ describe CustomFiltersController, type: :controller do
   end
 
   describe "POST 'create'" do
-    it 'should be able to create a custom filter' do
+    it 'creates a custom filter for the current user' do
       expect do
         xhr :post, 'create', custom_filter: { name: 'My Custom Filter', group: CustomFilter::SAVED_FILTERS_NAME, apply_to: 'events', filters: 'Filters' }, format: :js
       end.to change(CustomFilter, :count).by(1)
@@ -24,6 +24,28 @@ describe CustomFiltersController, type: :controller do
       expect(response).not_to render_template('_form_dialog')
       custom_filter = CustomFilter.last
       expect(custom_filter.owner).to eq(@company_user)
+      expect(custom_filter.name).to eq('My Custom Filter')
+      expect(custom_filter.apply_to).to eq('events')
+      expect(custom_filter.filters).to eq('Filters')
+      expect(custom_filter.group).to eq(CustomFilter::SAVED_FILTERS_NAME)
+    end
+
+    it 'creates a custom filter for the company' do
+      expect do
+        xhr :post, 'create',
+                   company_id: @company.id,
+                   custom_filter: {
+                     name: 'My Custom Filter',
+                     group: CustomFilter::SAVED_FILTERS_NAME,
+                     apply_to: 'events',
+                     filters: 'Filters' },
+                   format: :js
+      end.to change(CustomFilter, :count).by(1)
+      expect(response).to be_success
+      expect(response).to render_template('create')
+      expect(response).not_to render_template('_form_dialog')
+      custom_filter = CustomFilter.last
+      expect(custom_filter.owner).to eq(@company)
       expect(custom_filter.name).to eq('My Custom Filter')
       expect(custom_filter.apply_to).to eq('events')
       expect(custom_filter.filters).to eq('Filters')
