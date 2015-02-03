@@ -72,7 +72,7 @@ describe Results::PhotosController, type: :controller, search: true do
 
   describe "GET 'filters'" do
     it 'should return the correct buckets' do
-      create(:custom_filter, owner: company_user, group: 'SAVED FILTERS', apply_to: 'results_photos')
+      create(:custom_filter, owner: company_user, apply_to: 'results_photos')
       Sunspot.commit
       get 'filters', apply_to: :results_photos, format: :json
       expect(response).to be_success

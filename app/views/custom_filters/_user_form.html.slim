@@ -1,0 +1,35 @@
+- remote ||= false
+= simple_form_for(resource, remote: remote, html: { id: 'new_custom_filter' }) do |f|
+  = f.hidden_field :apply_to, as: :hidden
+  = f.hidden_field :filters, as: :hidden
+  .custom-filter-option
+    label.radio
+      = radio_button_tag('filter_option', 'new', true, id: 'filter_option_new')
+    .form-inputs
+      label.filter_option for="filter_option_new" New filter
+      = f.input :name, label: 'Filter name', :input_html => { class: 'input-xlarge' }
+
+  .custom-filter-option
+    label.radio
+      = radio_button_tag('filter_option', 'update', false, id: 'filter_option_update')
+    .form-inputs
+      label.filter_option for="filter_option_update" Overwrite an existing filter
+      = f.input :id, label: false, as: :select, collection: current_company_user.custom_filters.by_type(resource.apply_to).pluck(:name, :id), input_html: { class: 'input-xlarge chosen-enabled', disabled: true, data: { placeholder: 'Choose an existing filter' } }
+
+  .form-actions
+    = f.button :submit, "Save" ,class: 'btn-primary', data: {disable_with: 'Please wait...'}
+    = "&nbsp;".html_safe
+    = f.button :button, 'Cancel', class: 'btn-cancel'
+
+javascript:
+  $('input[name=filter_option]').on('change', function(){
+    if ($(this).val() === 'new') {
+      $('#custom_filter_id').val('').prop('disabled', true).trigger('liszt:updated');
+      $('#custom_filter_name').prop('disabled', false);
+    } else {
+      $('form#new_custom_filter .control-group.error').removeClass('error').find('.help-inline').remove();
+      $('#custom_filter_id').prop('disabled', false).trigger('liszt:updated');
+      $('#custom_filter_name').prop('disabled', true);
+      $($('#custom_filter_name')[0].form).validate();
+    }
+  });
