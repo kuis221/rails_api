@@ -431,6 +431,7 @@ GEM
       railties (>= 3.1)
     shoulda-matchers (2.6.2)
       activesupport (>= 3.0.0)
+    similar_text (0.0.4)
     simple-navigation (3.13.0)
       activesupport (>= 2.3.2)
     simple_form (3.0.2)
@@ -593,6 +594,7 @@ DEPENDENCIES
   rubyzip
   sass-rails (~> 4.0.3)
   shoulda-matchers
+  similar_text
   simple-navigation
   simple_form
   simplecov
