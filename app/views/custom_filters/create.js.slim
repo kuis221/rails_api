@@ -2,6 +2,12 @@
 - if resource.errors.any?
   = render 'form_dialog'
 - else
-  |
-    $('.bootbox.modal').modal('hide');
-    $('#collection-list-filters').filteredList('setSavedFilters', #{user_saved_filters(resource.apply_to).to_json.html_safe}, '#{ resource.id }');
+  - if resource.owner.is_a?(Company)
+    |
+      $.get('/custom_filters_categories/list_filters/#{resource.apply_to}', function(response) {
+        customFiltersList(response)
+      });
+  - else
+    |
+      $('#collection-list-filters').filteredList('setSavedFilters', #{user_saved_filters(resource.apply_to).to_json.html_safe}, '#{ resource.id }');
+  | $('.bootbox.modal').modal('hide');

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150127133851) do
+ActiveRecord::Schema.define(version: 20150127225850) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -353,9 +353,18 @@ ActiveRecord::Schema.define(version: 20150127133851) do
     t.datetime "updated_at"
     t.integer  "owner_id"
     t.string   "owner_type"
-    t.string   "group"
     t.boolean  "default_view", default: false
+    t.integer  "category_id"
   end
+
+  create_table "custom_filters_categories", force: true do |t|
+    t.string   "name"
+    t.integer  "company_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "custom_filters_categories", ["company_id"], :name => "index_custom_filters_categories_on_company_id"
 
   create_table "data_migrations", force: true do |t|
     t.integer  "remote_id"
@@ -695,6 +704,17 @@ ActiveRecord::Schema.define(version: 20150127133851) do
   add_index "memberships", ["company_user_id"], :name => "index_memberships_on_company_user_id"
   add_index "memberships", ["memberable_id", "memberable_type"], :name => "index_memberships_on_memberable_id_and_memberable_type"
   add_index "memberships", ["parent_id", "parent_type"], :name => "index_memberships_on_parent_id_and_parent_type"
+
+  create_table "neighborhoods", primary_key: "gid", force: true do |t|
+    t.string  "state",    limit: 2
+    t.string  "county",   limit: 43
+    t.string  "city",     limit: 64
+    t.string  "name",     limit: 64
+    t.decimal "regionid"
+    t.spatial "geog",     limit: {:srid=>4326, :type=>"multi_polygon", :geographic=>true}
+  end
+
+  add_index "neighborhoods", ["geog"], :name => "neighborhoods_geog_idx", :spatial => true
 
   create_table "notifications", force: true do |t|
     t.integer  "company_user_id"

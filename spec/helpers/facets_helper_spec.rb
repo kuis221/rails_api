@@ -16,7 +16,7 @@ describe FacetsHelper, type: :helper do
     it 'should the saved custom filter' do
       filter = create(:custom_filter, name: 'CustomFilter1',
         owner: company_user, apply_to: 'my_controller',
-        filters: 'my-filter=true', group: 'My Filters')
+        filters: 'my-filter=true', category: create(:custom_filters_category, name: 'My Filters', company: company))
       expect(helper.build_custom_filters_bucket).to eql [
         {
           label: 'MY FILTERS', items: [
@@ -29,7 +29,7 @@ describe FacetsHelper, type: :helper do
     it 'should the saved custom filters for the company' do
       filter = create(:custom_filter, name: 'CustomFilter1',
         owner: company, apply_to: 'my_controller',
-        filters: 'my-filter=true', group: 'My Filters')
+        filters: 'my-filter=true', category: create(:custom_filters_category, name: 'My Filters', company: company))
       expect(helper.build_custom_filters_bucket).to eql [
         {
           label: 'MY FILTERS', items: [
@@ -42,10 +42,10 @@ describe FacetsHelper, type: :helper do
     it 'should the saved custom filters grouped by :group' do
       global_filter = create(:custom_filter, name: 'CustomCompanyFilter1',
         owner: company, apply_to: 'my_controller',
-        filters: 'my-filter=true', group: 'Global Filters')
+        filters: 'my-filter=true', category: create(:custom_filters_category, name: 'Global Filters', company: company))
       user_filter = create(:custom_filter, name: 'CustomUserFilter1',
         owner: company_user, apply_to: 'my_controller',
-        filters: 'my-filter=true', group: 'My Filters')
+        filters: 'my-filter=true', category: create(:custom_filters_category, name: 'My Filters', company: company))
       expect(helper.build_custom_filters_bucket).to eql [
         {
           label: 'GLOBAL FILTERS', items: [

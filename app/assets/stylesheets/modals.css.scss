@@ -623,7 +623,8 @@ ul.select2-results{
 				width: 100%;
 				&[type="text"]{
 					color: $text !important;
-					&#campaign_start_date, &#campaign_end_date, &#event_start_date, &#event_end_date, &.goal_start_date, &.goal_end_date, &.field-type-date {
+					&#campaign_start_date, &#campaign_end_date, &#event_start_date, &#event_end_date, &.goal_start_date, &.goal_end_date, &.field-type-date, 
+					&#custom_filter_start_date, &#custom_filter_end_date {
 						background: image-url('calendar.svg') no-repeat left !important;
 						text-align: right;
 						height: 40px;
@@ -1296,3 +1297,17 @@ div#spin{
 		}
 	}
 }
+
+.new_category_bt {
+	border-top: 1px solid $brand;
+	text-align: center;
+	color: $brand;
+	font-size: 12px;
+	&:before{
+		content: "\e61d";	
+		font-family: 'icons';
+		padding-right: 5px;
+		font-size: 14px;
+		vertical-align: middle;
+	}
+}	

@@ -1,0 +1,54 @@
+.details_box.thinner
+  h3 = 'Events'
+  p = 'Modify global filtering settings for our organization below. These settings dictate how' 
+  p = 'filters are configured for all system users by default.'
+.sidebar
+.main.custom_filters_settings
+  .resource_top_details
+    span.icon-slimmed-arrow-left-rounded.custom_filters_arrow
+    p = 'Viewing Events filter settings'
+  .details_box
+    .pull-left
+      = button_to 'Create Custom Filter', new_company_custom_filter_path(current_company, apply_to: params[:apply_to]), {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-custom-filter-btn'} if can? :create, CustomFilter
+      = button_to '   Exit   ', new_company_custom_filter_path(current_company), {method: :get, remote: true, class: 'btn btn-cancel', :id => 'cancel-custom-filter-btn'}
+    .text-right
+      //p = 'Adding a new item at the bottom...' 
+  .line_box
+  .filter-box
+    #list_filters
+    #items_custom_filters.form-facet-filters.accordion
+    
+javascript:
+  $.get('/custom_filters_categories/list_filters/#{params[:apply_to]}', function(response) {
+    customFiltersList(response)
+  });
+  customFiltersList = function(filters) {
+    $('#items_custom_filters').empty();
+    $.each( filters, function(k, filter) {
+      $list = $('<ul>')
+      $filter_group = $('<div class="accordion-group">').append(
+        $('<div class="filter-wrapper accordion-heading">').data('name', filter.label).append(
+          $('<a>', { href: "#toogle-" + filter.label.replace(/\s+/g, '-').toLowerCase(), "class": 'accordion-toggle filter-title', 'data-toggle': 'collapse'}).text(filter.label).append(
+            $('<span class="icon pull-left" title="Expand">').addClass('icon-arrow-down')
+          ),
+          $('<div id="toogle-'+filter.label.replace(/\s+/g, '-').toLowerCase()+'" class="accordion-body">').addClass('in').append(
+            $('<div class="accordion-inner">').append($list)
+          )
+        )
+      ).on("show", function(e) {
+        $(e.target).closest(".accordion-group").find(".icon-arrow-right").removeClass("icon-arrow-right").addClass("icon-arrow-down").prop("title", "Collapse");
+      }).on("hide", function(e) {
+        $(e.target).closest(".accordion-group").find(".icon-arrow-down").removeClass("icon-arrow-down").addClass("icon-arrow-right").prop("title", "Expand");
+      });
+      $.each( filter.items, function(i, item) {
+        $list.append(
+          $('<li>').append(
+            $('<label>').append(
+              $('<input>', {type:'checkbox', value: item.id, name: item.name}), item.name
+            )
+          )
+        )
+      });
+      $('#items_custom_filters').append($filter_group);
+    });
+  }
