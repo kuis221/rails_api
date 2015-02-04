@@ -202,7 +202,6 @@ GEM
     fuubar (2.0.0)
       rspec (~> 3.0)
       ruby-progressbar (~> 1.4)
-    gctools (0.2.3)
     geocoder (1.2.4)
     google_places (0.22.0)
       httparty (~> 0.13.1)
@@ -571,7 +570,6 @@ DEPENDENCIES
   faker
   font_assets!
   fuubar (= 2.0.0)
-  gctools
   geocoder
   google_places
   guard-livereload

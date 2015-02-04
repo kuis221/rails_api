@@ -35,7 +35,6 @@ gem 'sunspot_rails'
 gem 'sunspot_stats'
 gem 'sunspot-queue'
 gem 'progress_bar', require: false
-gem 'gctools'
 gem 'unicorn-worker-killer'
 gem 'geocoder'
 gem 'rubyzip'
