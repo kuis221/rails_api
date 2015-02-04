@@ -538,7 +538,6 @@ class Event < ActiveRecord::Base
             stat(:spent, type: 'sum')
             stat(:gender_female, type: 'mean')
             stat(:gender_male, type: 'mean')
-            stat(:gender_male, type: 'mean')
             stat(:ethnicity_asian, type: 'mean')
             stat(:ethnicity_black, type: 'mean')
             stat(:ethnicity_hispanic, type: 'mean')

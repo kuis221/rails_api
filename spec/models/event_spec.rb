@@ -1018,7 +1018,7 @@ describe Event, type: :model do
 
   describe 'reindex_associated' do
     it 'should update the campaign first and last event dates ' do
-      campaign = create(:campaign, first_event_id: nil, last_event_at: nil, first_event_at: nil, last_event_at: nil)
+      campaign = create(:campaign, first_event_id: nil, last_event_at: nil, first_event_at: nil)
       event = build(:event, campaign: campaign, start_date: '01/23/2019', end_date: '01/25/2019')
       expect(campaign).to receive(:first_event=).with(event)
       expect(campaign).to receive(:last_event=).with(event)

@@ -20,7 +20,7 @@ describe BrandAmbassadors::VisitsController, type: :controller, search: true do
       result = JSON.parse(response.body)
       expect(result).to eql [
         { 'visit_type_name' => 'Market Visit',
-          'campaign_name' => campaign.name, 'city' => visit.city,
+          'campaign_name' => campaign.name,
           'color' => campaign.color, 'city' => visit.city,
           'start' => '2014-08-26', 'end' => '2014-08-27T23:59:59.999-07:00',
           'url' => "http://test.host/brand_ambassadors/visits/#{visit.id}",
@@ -80,7 +80,7 @@ describe BrandAmbassadors::VisitsController, type: :controller, search: true do
 
     describe "GET 'filters'" do
       it 'should return the correct buckets in the right order' do
-        custom_filters_category = create(:custom_filters_category, name: 'DIVISIONS', company: company)
+        custom_filters_category = create(:custom_filters_category, name: 'DIVISIONS', company: @company)
         create(:custom_filter, owner: @company_user, category: custom_filters_category, apply_to: 'visits')
         Sunspot.commit
         get 'filters', format: :json

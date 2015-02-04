@@ -19,7 +19,7 @@
 #  end_date         :date
 #  survey_brand_ids :integer          default([]), is an Array
 #  modules          :text
-#  color            :string(10)
+#  color            :string(30)
 #
 
 require 'rails_helper'
@@ -38,9 +38,7 @@ describe Campaign, type: :model do
   it { is_expected.not_to validate_presence_of(:color) }
   it { is_expected.to allow_value('').for(:color) }
   it { is_expected.to allow_value(nil).for(:color) }
-  it { is_expected.to allow_value('#d7a23c').for(:color) }
-  it { is_expected.not_to allow_value('d7a23c').for(:color) }
-  it { is_expected.not_to allow_value('#123456').for(:color) }
+  it { is_expected.to allow_value('rgb(100, 20, 200)').for(:color) }
 
   let(:company) { create(:company) }
 

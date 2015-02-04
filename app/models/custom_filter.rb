@@ -10,8 +10,8 @@
 #  updated_at   :datetime
 #  owner_id     :integer
 #  owner_type   :string(255)
-#  group        :string(255)
 #  default_view :boolean          default(FALSE)
+#  category_id  :integer
 #
 
 class CustomFilter < ActiveRecord::Base

@@ -17,7 +17,10 @@ describe CustomFiltersController, type: :controller do
   describe "POST 'create'" do
     it 'creates a custom filter for the current user' do
       expect do
-        xhr :post, 'create', custom_filter: { name: 'My Custom Filter', apply_to: 'events', filters: 'Filters' }, format: :js
+        xhr :post, 'create', custom_filter: {
+          name: 'My Custom Filter',
+          apply_to: 'events',
+          filters: 'Filters' }, format: :js
       end.to change(CustomFilter, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template('create')
@@ -31,12 +34,13 @@ describe CustomFiltersController, type: :controller do
     end
 
     it 'creates a custom filter for the company' do
+      category = create(:custom_filters_category, company: @company)
       expect do
         xhr :post, 'create',
                    company_id: @company.id,
                    custom_filter: {
                      name: 'My Custom Filter',
-                     group: CustomFilter::SAVED_FILTERS_NAME,
+                     category_id: category.id,
                      apply_to: 'events',
                      filters: 'Filters' },
                    format: :js
@@ -49,7 +53,7 @@ describe CustomFiltersController, type: :controller do
       expect(custom_filter.name).to eq('My Custom Filter')
       expect(custom_filter.apply_to).to eq('events')
       expect(custom_filter.filters).to eq('Filters')
-      expect(custom_filter.group).to eq(CustomFilter::SAVED_FILTERS_NAME)
+      expect(custom_filter.category_id).to eq(category.id)
     end
 
     it 'should render the form_dialog template if errors' do

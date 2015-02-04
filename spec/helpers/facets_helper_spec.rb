@@ -6,7 +6,7 @@ describe FacetsHelper, type: :helper do
 
   before { allow(helper).to receive(:current_company).and_return(company) }
   before { allow(helper).to receive(:current_company_user).and_return(company_user) }
-  before { allow(helper).to receive(:controller_name).and_return('my_controller') }
+  before { allow(helper).to receive(:controller_name).and_return('events') }
 
   describe 'build_custom_filters_bucket' do
     it 'should return empty if no custom filters have been created' do
@@ -15,7 +15,7 @@ describe FacetsHelper, type: :helper do
 
     it 'should the saved custom filter' do
       filter = create(:custom_filter, name: 'CustomFilter1',
-        owner: company_user, apply_to: 'my_controller',
+        owner: company_user, apply_to: 'events',
         filters: 'my-filter=true', category: create(:custom_filters_category, name: 'My Filters', company: company))
       expect(helper.build_custom_filters_bucket).to eql [
         {
@@ -28,7 +28,7 @@ describe FacetsHelper, type: :helper do
 
     it 'should the saved custom filters for the company' do
       filter = create(:custom_filter, name: 'CustomFilter1',
-        owner: company, apply_to: 'my_controller',
+        owner: company, apply_to: 'events',
         filters: 'my-filter=true', category: create(:custom_filters_category, name: 'My Filters', company: company))
       expect(helper.build_custom_filters_bucket).to eql [
         {
@@ -41,10 +41,10 @@ describe FacetsHelper, type: :helper do
 
     it 'should the saved custom filters grouped by :group' do
       global_filter = create(:custom_filter, name: 'CustomCompanyFilter1',
-        owner: company, apply_to: 'my_controller',
+        owner: company, apply_to: 'events',
         filters: 'my-filter=true', category: create(:custom_filters_category, name: 'Global Filters', company: company))
       user_filter = create(:custom_filter, name: 'CustomUserFilter1',
-        owner: company_user, apply_to: 'my_controller',
+        owner: company_user, apply_to: 'events',
         filters: 'my-filter=true', category: create(:custom_filters_category, name: 'My Filters', company: company))
       expect(helper.build_custom_filters_bucket).to eql [
         {

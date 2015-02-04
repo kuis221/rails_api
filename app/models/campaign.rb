@@ -19,7 +19,7 @@
 #  end_date         :date
 #  survey_brand_ids :integer          default([]), is an Array
 #  modules          :text
-#  color            :string(10)
+#  color            :string(30)
 #
 
 class Campaign < ActiveRecord::Base
