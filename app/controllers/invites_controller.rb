@@ -10,6 +10,23 @@ class InvitesController < InheritedResources::Base
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
 
+  def create
+    invite = build_resource
+    existing_invite =
+      if parent.is_a?(Event)
+        parent.invites.active.find_by(venue_id: invite.venue_id) if invite.venue_id
+      else
+        parent.invites.active.find_by(event_id: invite.event_id)
+      end
+    result =
+      if existing_invite.present?
+        existing_invite.invitees = invite.invitees.to_i + existing_invite.invitees.to_i
+        existing_invite.save
+      else
+        invite.save
+      end
+  end
+
   protected
 
   def invite_params
