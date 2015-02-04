@@ -125,9 +125,10 @@
             .field.module data-type="Comments"
               i.icon-chat
               | Comments
-            .field.module data-type="Attendance" 
-              i.icon-attendance
-              | Attendance
+            - if jbb_feature_enabled?
+              .field.module data-type="Attendance" 
+                i.icon-attendance
+                | Attendance
 
     .form-fields-sections
       .form-fields.clearfix.form-section.pull-left

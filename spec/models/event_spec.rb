@@ -828,8 +828,8 @@ describe Event, type: :model do
 
     it 'should queue a job to update venue details after a event have been updated if place_id changed' do
       expect do
-        event.place_id =  1199
-        event.save
+        event.place_id =  create(:place).id
+        expect(event.save).to be_truthy
       end.to change(Venue, :count).by(1)
       expect(VenueIndexer).to have_queued(event.venue.id)
     end

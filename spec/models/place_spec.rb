@@ -159,7 +159,7 @@ describe Place, type: :model do
       expect(described_class.in_areas([area_la, area_sf])).to match_array [place_la, place_sf]
     end
 
-    it 'should include events that are scheduled within the given scope if the place is a locality' do
+    it 'should include places that are scheduled within the given scope if the place is a locality' do
       los_angeles = create(:city, name: 'Los Angeles', country: 'US', state: 'California')
       place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
 
@@ -340,20 +340,20 @@ describe Place, type: :model do
       let(:google_results) do
         { results: [{
           'formatted_address' => 'Los Angeles, CA, USA',
-          'id' => 'PLACEID1',
+          'place_id' => 'PLACEID1',
           'name' => 'Los Angeles',
           'reference' => 'REFERENCE1',
           'types' => %w(locality political)
         },
                     {
                       'formatted_address' => 'Los Angeles, ON, Canada',
-                      'id' => 'PLACEID2',
+                      'place_id' => 'PLACEID2',
                       'name' => 'Los Angeles',
                       'reference' => 'REFERENCE2',
                       'types' => %w(locality political)
                     }, {
                       'formatted_address' => 'Tower 42, Los Angeles, CA 23211, United States',
-                      'id' => 'PLACEID3',
+                      'place_id' => 'PLACEID3',
                       'name' => 'Vertigo 42',
                       'reference' => 'REFERENCE3',
                       'types' => %w(food bar establishment)

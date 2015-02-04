@@ -149,7 +149,7 @@
   #venue-activities.details_box
     = render 'activities'
 
-  - if can?(:index_invites, Venue)
+  - if jbb_feature_enabled? && can?(:index_invites, Venue)
     #event-invites-list.details_box
       .dropdown.btn-download.pull-right
         a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
