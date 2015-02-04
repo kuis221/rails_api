@@ -28,7 +28,7 @@ $.widget 'nmk.eventsCalendar', {
 		if @options.groupBy
 			@groupBy = @options.groupBy
 		else
-			@groupBy = if @options.groupBy then  'brand'
+			@groupBy = 'brand'
 
 			if (typeof(Storage) isnt "undefined") && (typeof(localStorage) isnt 'undefined')  && localStorage.getItem("events_calendar_grouping")
 				#@groupBy = localStorage.getItem("events_calendar_grouping")
