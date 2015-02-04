@@ -37,6 +37,19 @@
 
     .clearfix
 
+    .export-xls
+      .dropdown.btn-download
+        a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+          i.icon-download
+          i.icon-arrow-down-small
+        ul#download-gva-btn.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+          li
+            a href="#" role="menuitem" data-url="#{results_attendance_path(format: :xls)}"
+              | Download as XLS
+          li
+            a href="#" role="menuitem" data-url="#{results_attendance_path(format: :pdf)}"
+              | Download as PDF
+
 javascript:
 
   $('#attendees-range-slider').rangeSlider({

@@ -9,9 +9,9 @@ describe Venue, type: :model, search: true do
     campaign = create(:campaign, company: company, brand_ids: [brand.id])
     campaign2 = create(:campaign, company: company, brand_ids: [brand.id, brand2.id])
     place = create(:place, name: 'Island Creek Oyster Bar', city: 'Boston',
-                           latitude: '42.348774', longitude: '-71.094994')
+                           lonlat: 'POINT(-71.094994 42.348774)')
     place2 = create(:place, name: 'Bar None', city: 'San Francisco',
-                            latitude: '37.79764', longitude: '-122.431913')
+                            lonlat: 'POINT(-122.431913 37.79764)')
     event = create(:event, campaign: campaign, place: place)
     event2 = create(:event, campaign: campaign2, place: place2)
     venue = event.venue

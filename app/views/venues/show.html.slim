@@ -151,6 +151,15 @@
 
   - if can?(:index_invites, Venue)
     #event-invites-list.details_box
+      .dropdown.btn-download.pull-right
+        a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+          i.icon-download
+          i.icon-arrow-down-small
+        ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+          li
+            = link_to 'Download as XLS', venue_invites_path(resource, format: :xls), role: :menuitem, class: 'xlsx-download-link', data: { url: venue_invites_path(resource, format: :xls) }
+          li
+            = link_to 'Download as PDF', venue_invites_path(resource, format: :pdf), role: :menuitem, class: 'xlsx-download-link', data: { url: venue_invites_path(resource, format: :pdf) }
       h5.module-title ATTENDANCE
       #invites-list.resource-list
         = render partial: 'invites/invite', collection: resource.invites.active.joins(:place).order('lower(places.name)'), locals: { parent: resource }

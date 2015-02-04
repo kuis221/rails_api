@@ -233,7 +233,7 @@ Brandscopic::Application.routes.draw do
       get :filters, on: :collection
       get :items, on: :collection
       resources :events, only: [:new, :create]
-      resources :invites, only: [:create, :edit, :update] do
+      resources :invites, only: [:create, :edit, :update, :index] do
         get :deactivate, on: :member
         get :activate, on: :member
       end

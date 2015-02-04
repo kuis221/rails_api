@@ -61,7 +61,7 @@ feature 'Areas', js: true, search: true  do
     scenario 'can add an NON existing place to the area. (place from Google\'s)' do
       expect(Place).to receive(:open).and_return(double(read: { results:
         [
-          { reference: 'xxxxx', id: '1111', name: 'Walt Disney World Dolphin', formatted_address: '1500 Epcot Resorts Blvd, Lake Buena Vista, Florida, United States' }
+          { reference: 'xxxxx', place_id: '1111', name: 'Walt Disney World Dolphin', formatted_address: '1500 Epcot Resorts Blvd, Lake Buena Vista, Florida, United States' }
         ]
       }.to_json))
       expect_any_instance_of(GooglePlaces::Client).to receive(:spot).with('xxxxx').and_return(double(
