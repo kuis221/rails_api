@@ -353,7 +353,6 @@ describe Api::V1::EventsController, type: :controller do
       groups = JSON.parse(response.body)
       expect(groups.first['fields'].first).to include(
           'name' => 'Age',
-          'type' => 'FormField::Percentage',
           'id' => result.id,
           'type' => 'FormField::Percentage',
           'segments' => [

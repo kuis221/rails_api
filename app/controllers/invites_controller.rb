@@ -10,6 +10,8 @@ class InvitesController < InheritedResources::Base
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
 
+  include ExportableController
+
   def create
     invite = build_resource
     existing_invite =
@@ -28,6 +30,10 @@ class InvitesController < InheritedResources::Base
   end
 
   protected
+
+  def collection
+    end_of_association_chain.active
+  end
 
   def invite_params
     params.require(:invite).permit(:place_reference, :venue_id, :event_id, :invitees, :attendees, :rsvps_count)

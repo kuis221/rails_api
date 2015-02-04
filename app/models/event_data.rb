@@ -22,7 +22,9 @@
 class EventData < ActiveRecord::Base
   SEGMENTS_NAMES_MAP = {
     gender:    { 'Male' => 'male', 'Female' => 'female' },
-    ethnicity: { 'Asian' => 'asian', 'Black / African American' => 'black', 'Hispanic / Latino' => 'hispanic', 'Native American' => 'native_american', 'White' => 'white' }
+    ethnicity: { 'Asian' => 'asian', 'Black / African American' => 'black',
+                 'Hispanic / Latino' => 'hispanic', 'Native American' => 'native_american',
+                 'White' => 'white' }
   }
 
   belongs_to :event

@@ -389,7 +389,7 @@ Brandscopic::Application.routes.draw do
       end
     end
 
-    resources :invites, only: [:create, :edit, :update] do
+    resources :invites, only: [:create, :edit, :update, :index] do
       get :deactivate, on: :member
       get :activate, on: :member
     end

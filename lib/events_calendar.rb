@@ -90,7 +90,6 @@ class EventsCalendar
       title = "#{start_at.strftime('%l%P').gsub(/([ap])m/, '\1')} #{campaign_names[campaign_id]}"
       days[day] ||= {}
       days[day][key] ||= {
-        count: 0,
         title: title,
         start: day,
         start_at: start_at,

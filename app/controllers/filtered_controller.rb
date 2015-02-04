@@ -5,9 +5,10 @@
 class FilteredController < InheritedResources::Base
   include FacetsHelper
   include AutocompleteHelper
+  include ExportableController
 
   helper_method :collection_count, :facets, :page,
-                :total_pages, :each_collection_item, :return_path
+                :total_pages, :return_path
 
   respond_to :json, only: :index
 
@@ -37,12 +38,7 @@ class FilteredController < InheritedResources::Base
   end
 
   def index
-    if request.format.xls? || request.format.pdf?
-      enqueue_export if list_exportable?
-      render action: :new_export, formats: [:js]
-    else
-      super
-    end
+    super
   end
 
   protected
@@ -69,34 +65,6 @@ class FilteredController < InheritedResources::Base
   end
 
   def action_permissions
-  end
-
-  def export_list(export)
-    @_export = export
-    @solr_search = resource_class.do_search(search_params.merge!(per_page: 100))
-    @collection_count = @solr_search.total
-    @total_pages = @solr_search.results.total_pages
-    set_collection_ivar(@solr_search.results)
-
-    Slim::Engine.with_options(pretty: true, sort_attrs: false, streaming: false) do
-      render_to_string :index,
-                       handlers: [:slim],
-                       formats: export.export_format.to_sym,
-                       layout: 'application'
-    end
-  end
-
-  def each_collection_item
-    (1..@total_pages).each do |page|
-      search = resource_class.do_search(@search_params.merge!(page: page))
-      search.results.each { |result| yield result }
-      @_export.update_column(
-        :progress, (page * 100 / @total_pages).round) unless @_export.nil?
-    end
-  end
-
-  def export_file_name
-    "#{controller_name.underscore.downcase}-#{Time.now.strftime('%Y%m%d%H%M%S')}"
   end
 
   def collection
@@ -188,28 +156,5 @@ class FilteredController < InheritedResources::Base
     true
   rescue URI::InvalidURIError
     false
-  end
-
-  def list_exportable?
-    return true if request.format.xls?
-    number_of_pages = resource_class.do_search(search_params).total / 11.0 #total-items / items-per-page
-    @export_errors = []
-    @export_errors = ['PDF exports are limited to 200 pages. Please narrow your results and try exporting again.'] if number_of_pages > 200
-    @export_errors.empty?
-  end
-
-  private
-
-  # Create and enqueue a ListExport for the current request
-  def enqueue_export
-    @export = ListExport.create(
-      controller: self.class.name,
-      params: params,
-      url_options: url_options,
-      export_format: params[:format],
-      company_user: current_company_user
-    )
-
-    @export.queue! if @export.new?
   end
 end
