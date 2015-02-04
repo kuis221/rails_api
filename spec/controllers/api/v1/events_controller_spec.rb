@@ -66,7 +66,7 @@ describe Api::V1::EventsController, type: :controller do
       create(:due_event, company: company, campaign: campaign, place: place)
 
       # Make sure custom filters are not returned
-      create(:custom_filter, owner: company, group: 'SAVED FILTERS', apply_to: 'events')
+      create(:custom_filter, owner: company, apply_to: 'events')
 
       Sunspot.commit
 

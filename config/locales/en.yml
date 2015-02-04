@@ -291,6 +291,7 @@ en:
         document_folder: "New Folder"
         filter_setting: "Filtering options"
         invite: "New Attendance"
+        custom_filters_category: "New Custom Filters Category"
       edit:
         company_user: "Edit User"
         event: "Edit Event"

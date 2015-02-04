@@ -170,7 +170,7 @@ describe EventsController, type: :controller, search: true do
     describe "GET 'filters'" do
       it 'should return the correct buckets in the right order' do
         Sunspot.commit
-        create(:custom_filter, owner: company_user, group: 'SAVED FILTERS', apply_to: 'events')
+        create(:custom_filter, owner: company_user, apply_to: 'events')
 
         get 'filters', format: :json
         expect(response).to be_success
@@ -197,7 +197,7 @@ describe EventsController, type: :controller, search: true do
                           ethnicity_hispanic: 26,
                           ethnicity_white: 12
         )
-        create(:custom_filter, owner: company_user, group: 'SAVED FILTERS', apply_to: 'events')
+        create(:custom_filter, owner: company_user, apply_to: 'events')
         Sunspot.commit
 
         get 'filters', with_event_data_only: true, format: :json

@@ -1,0 +1,28 @@
+- form_partial ||= 'form'
+|
+  var category_modal, parent_container = $('.customfilter_modal');
+  var content = "#{j render(partial: form_partial, locals: {remote: true})}";
+  bootbox.classes('form-create-category-modal');
+  container = $('<div id="form-create-category-modal">'+content+'</div>');
+  category_modal = bootbox.dialog(container, [], {header: 'New Custom Filter Category', 'onEscape': true, animate: (!$.fx.off)});
+  category_modal.css({
+        'margin-top': function () {
+          return window.pageYOffset;
+        },
+        'top': function() {
+          return Math.max(($(window).height() - resource_modal.height())/2 - 10, 10);
+        }
+    });
+  parent_container.hide();
+
+  category_modal.bind({
+    hide: function(e) {
+            category_modal.hide();
+            parent_container.show();
+          },
+  });
+
+  $('.btn-cancel').bind('click', function(e) {
+                                  category_modal.hide();
+                                  parent_container.show();
+                                });

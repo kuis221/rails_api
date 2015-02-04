@@ -46,6 +46,7 @@ class Company < ActiveRecord::Base
     end
   end
   has_many :custom_filters, dependent: :destroy, as: :owner, inverse_of: :owner
+  has_many :custom_filters_categories, dependent: :destroy
 
   has_many :tags, -> { order('tags.name ASC') }, autosave: true, dependent: :destroy
 

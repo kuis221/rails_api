@@ -1,0 +1,9 @@
+- render 'settings'
+- if resource.errors.any?
+  = render 'form_dialog'
+- else
+  |
+    $('#custom_filter_category_id').prepend('<option value="#{CustomFiltersCategory.last.id}" selected="selected">#{CustomFiltersCategory.last.name}</option>');
+    $('#custom_filter_category_id').trigger("liszt:updated");
+    $('.form-create-category-modal').hide();
+    parent_container.show();

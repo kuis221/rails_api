@@ -16,19 +16,25 @@
 
 class CustomFilter < ActiveRecord::Base
   belongs_to :owner, polymorphic: true
+  belongs_to :category, class_name: 'CustomFiltersCategory'
 
-  SAVED_FILTERS_NAME = 'Saved Filters'
+  APPLY_TO_OPTIONS = %w(events venues tasks visits company_users teams roles campaigns brands 
+    activity_types areas brand_portfolios date_ranges day_parts event_data activities results_comments 
+    results_expenses results_photos surveys)
+
 
   # Required fields
   validates :owner, presence: true
   validates :name, presence: true
-  validates :group, presence: true
-  validates :apply_to, presence: true
+
+  validates :apply_to, presence: true, inclusion: { in: APPLY_TO_OPTIONS }
   validates :filters, presence: true
 
+  attr_accessor :start_date, :end_date, :criteria
+
   scope :by_type, ->(type) { order('id ASC').where(apply_to: type) }
-  scope :user_saved_filters, -> { where(group: SAVED_FILTERS_NAME) }
-  scope :not_user_saved_filters, -> { where.not(group: SAVED_FILTERS_NAME) }
+  scope :user_saved_filters, -> { where(category: nil) }
+  scope :not_user_saved_filters, -> { where.not(category: nil) }
 
   scope :for_company_user, ->(company_user) {
     where(
