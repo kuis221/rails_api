@@ -31,7 +31,7 @@ gem 'aws-sdk'
 gem 'google_places'
 gem 'timeliness'
 gem 'american_date'
-gem 'sunspot_rails'
+gem 'sunspot_rails', :git => 'https://github.com/sunspot/sunspot.git'
 gem 'sunspot_stats'
 gem 'sunspot-queue'
 gem 'progress_bar', require: false
@@ -96,7 +96,7 @@ group :test, :development do
   gem 'factory_girl_rails'
   gem 'rspec-rails', '~> 3.0.0'
   gem 'populator'
-  gem 'sunspot_solr'
+  gem 'sunspot_solr', :git => 'https://github.com/sunspot/sunspot.git'
   gem 'timecop'
   gem 'faker'
   gem 'rubocop', require: false

@@ -89,6 +89,11 @@ class Venue < ActiveRecord::Base
       'Active'
     end
 
+    join(:events_start_at, target: Event, type: :time, join: { from: :place_id, to: :place_id }, as: 'start_at_dts')
+    join(:events_local_start_at, target: Event, type: :time, join: { from: :place_id, to: :place_id }, as: 'local_start_at_dts')
+    join(:events_end_at, target: Event, type: :time, join: { from: :place_id, to: :place_id }, as: 'end_at_dts')
+    join(:events_local_end_at, target: Event, type: :time, join: { from: :place_id, to: :place_id }, as: 'local_end_at_dts')
+
     integer :events_count, stored: true
     double :promo_hours, stored: true
     integer :impressions, stored: true
@@ -318,6 +323,17 @@ class Venue < ActiveRecord::Base
         end
       end
 
+      start_date = params[:start_date]
+      end_date = params[:end_date]
+      if start_date.present? && end_date.present?
+        d1 = Timeliness.parse(start_date, zone: :current).beginning_of_day
+        d2 = Timeliness.parse(end_date, zone: :current).end_of_day
+        with Venue.search_start_date_field, d1..d2
+      elsif start_date.present?
+        d = Timeliness.parse(start_date, zone: :current).beginning_of_day
+        with Venue.search_start_date_field, d..d.end_of_day
+      end
+
       stat(:events_count, type: 'max')
       stat(:promo_hours, type: 'max')
       stat(:impressions, type: 'max')
@@ -334,6 +350,22 @@ class Venue < ActiveRecord::Base
       order_by(params[:sorting] || :venue_score, params[:sorting_dir] || :desc)
       paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
 
+    end
+  end
+
+  def self.search_start_date_field
+    if Company.current && Company.current.timezone_support?
+      :events_local_start_at
+    else
+      :events_start_at
+    end
+  end
+
+  def self.search_end_date_field
+    if Company.current && Company.current.timezone_support?
+      :events_local_end_at
+    else
+      :events_end_at
     end
   end
 

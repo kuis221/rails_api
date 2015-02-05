@@ -12,8 +12,10 @@ describe Venue, type: :model, search: true do
                            lonlat: 'POINT(-71.094994 42.348774)')
     place2 = create(:place, name: 'Bar None', city: 'San Francisco',
                             lonlat: 'POINT(-122.431913 37.79764)')
-    event = create(:event, campaign: campaign, place: place)
-    event2 = create(:event, campaign: campaign2, place: place2)
+    event = create(:event, campaign: campaign, place: place,
+                           start_date: '02/22/2013', end_date: '02/23/2013')
+    event2 = create(:event, campaign: campaign2, place: place2,
+                            start_date: '03/22/2013', end_date: '03/22/2013')
     venue = event.venue
     venue2 = event2.venue
 
@@ -60,6 +62,18 @@ describe Venue, type: :model, search: true do
       .to match_array([venue2])
     expect(search(company_id: company.id, brand: [brand.id, brand2.id]))
       .to match_array([venue, venue2])
+
+    # Search for Venues with events on a given date range
+    expect(search(company_id: company.id, start_date: '02/21/2013', end_date: '02/23/2013'))
+      .to match_array([venue])
+    expect(search(company_id: company.id, start_date: '02/22/2013'))
+      .to match_array([venue])
+    expect(search(company_id: company.id, start_date: '03/21/2013', end_date: '03/23/2013'))
+      .to match_array([venue2])
+    expect(search(company_id: company.id, start_date: '03/22/2013'))
+      .to match_array([venue2])
+    expect(search(company_id: company.id, start_date: '01/21/2013', end_date: '01/23/2013'))
+      .to be_empty
 
     # Range filters
     [:events_count, :promo_hours, :impressions, :interactions,
