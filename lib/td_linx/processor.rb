@@ -116,8 +116,10 @@ module TdLinx
     end
 
     def self.load_data_into_tmp_table(path)
-      ActiveRecord::Base.connection.execute(
-        "COPY tdlinx_codes(td_linx_code,name,street,city,state,zipcode) FROM '#{path}' DELIMITER ',' CSV")
+      copy_data_from_file path
+      # ActiveRecord::Base.connection.execute(
+      #   "COPY tdlinx_codes(td_linx_code,name,street,city,state,zipcode) FROM '#{path}' DELIMITER ',' CSV")
+      Rails.logger.info 'TDLINX: Preparing imported data'
       ActiveRecord::Base.connection.execute(
         'UPDATE tdlinx_codes SET street=regexp_replace('\
           "street, ',\\s*' || city || '\\s*,\\s*' || state || '\\s*,\\s*' || zipcode || '\\s*', "\
@@ -125,15 +127,29 @@ module TdLinx
       ActiveRecord::Base.connection.execute(
         "UPDATE tdlinx_codes SET street=regexp_replace(street, '^\\s*' || name || '\\s*,?\s*', '')::varchar")
       ActiveRecord::Base.connection.execute(
-        "UPDATE tdlinx_codes SET street=normalize_addresss(street), city=lower(city), state=lower(state)")
+        'UPDATE tdlinx_codes SET street=normalize_addresss(street), city=lower(city), state=lower(state)')
+
+      Rails.logger.info 'TDLINX: Creatign indexes on tdlinx_codes table'
       ActiveRecord::Base.connection.execute(
         'CREATE INDEX td_linx_code_city_state_idx on tdlinx_codes (city,state)')
-      ActiveRecord::Base.connection.execute(
-        'CREATE INDEX td_linx_code_state_idx on tdlinx_codes (state)')
       ActiveRecord::Base.connection.execute(
         'CREATE INDEX td_linx_code_street_idx ON tdlinx_codes USING gist(street gist_trgm_ops)')
       ActiveRecord::Base.connection.execute(
         'CREATE INDEX td_linx_code_name_idx ON tdlinx_codes USING gist(name gist_trgm_ops)')
+    end
+
+    def self.copy_data_from_file(path)
+      Rails.logger.info "TDLINX: Loading file data into database"
+      dbconn = ActiveRecord::Base.connection_pool.checkout
+      raw  = dbconn.raw_connection
+
+      result = raw.copy_data "COPY tdlinx_codes FROM STDIN DELIMITER ',' CSV" do
+        File.open(path, 'r').each do |line|
+          raw.put_copy_data line
+        end
+      end
+
+      ActiveRecord::Base.connection_pool.checkin(dbconn)
     end
 
     def self.drop_tmp_table
