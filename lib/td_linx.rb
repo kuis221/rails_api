@@ -1,2 +1,2 @@
-module TdLinxSynch
+module TdLinx
 end

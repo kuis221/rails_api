@@ -84,7 +84,7 @@ module JbbFile
     end
 
     def find_place_by_address(attrs)
-      Place.find_tdlinx_place(name: attrs[:name], street: attrs[:route],
+      Place.find_place(name: attrs[:name], street: attrs[:route],
           city: attrs[:city], zipcode: nil,
           state: attrs[:state])
     end

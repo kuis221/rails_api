@@ -339,9 +339,9 @@ class Place < ActiveRecord::Base
                    sorting_dir: 'desc'
     end
 
-    def find_tdlinx_place(binds)
+    def find_place(binds)
       connection.select_value(
-        sanitize_sql_array(['select find_tdlinx_place(:name, :street, :city, :state, :zipcode)', binds])
+        sanitize_sql_array(['select find_place(:name, :street, :city, :state, :zipcode)', binds])
       ).try(:to_i)
     end
 

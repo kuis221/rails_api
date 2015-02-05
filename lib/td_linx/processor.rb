@@ -3,21 +3,24 @@ require 'zip'
 require 'open-uri'
 require 'tempfile'
 
-module TdLinxSynch
+module TdLinx
   class Processor
     attr_accessor :csv_path
 
     def self.download_and_process_file(file)
       path = file || 'tmp/td_linx_code.csv'
       download_file(path) unless file
-      process(path)
+      prepare_codes_table path   # creates a table from file
+      process!
     rescue => e
       logger.error "Something wrong happened in the process: #{e.message}"
       TdlinxMailer.td_linx_process_failed(e).deliver
       raise e # Raise the error so we see it on errbit
+    ensure
+      drop_tmp_table
     end
 
-    def self.process(path)
+    def self.process!
       paths = {
         master_only: 'tmp/td_master_only.csv',
         brandscopic_only: 'tmp/brandscopic_only.csv',
@@ -31,40 +34,32 @@ module TdLinxSynch
 
       # Here it comes... read each line in the downloaded CSV file
       # and look for a match in the database
-      logger.info "Start processing #{path}"
+      logger.info "Start processing venues"
       i = 0
-      CSV.foreach(path) do |row|
-        row[2].gsub!(/,\s*#{row[3]}\s*,\s*#{row[4]}\s*,\s*#{row[5]}\s*/, '')
-        row[2].gsub!(/\A\s*#{row[1]}\s*,?\s*/, '')
-        if place_id = find_place_for_row(row)
-          place = Place.find(place_id)
-          if place.td_linx_code != row[0]
-            files[:found] << row + [place.td_linx_code]
-            place.update_column(:td_linx_code, row[0])
+      Place.joins(:venues).joins('LEFT JOIN events ON events.place_id=places.id')
+        .select('places.*, count(events.id) as visits_count')
+        .group('places.id').order('places.id ASC')
+        .where('venues.company_id=2')
+        .where('types like \'%establishment%\'').each do |place|
+        next unless place.types.include?('establishment')
+        if row = find_place_in_td_linx_table(place)
+          p "Found #{row.inspect}"
+          if place.td_linx_code != row['td_linx_code']
+            p "updating code from #{place.td_linx_code} to #{row['td_linx_code']}"
+            files[:found] << row.values + [place.td_linx_code]
+            place.update_column(:td_linx_code, row['td_linx_code'])
           else
-            files[:found_not_updated] << row
+            files[:found_not_updated] << row.values
           end
         else
-          files[:master_only] << row
+          files[:missing] << [
+            place.name, place.street, place.city, place.state,
+            place.zipcode, place.visits_count] unless place.td_linx_code
         end
         i+=1
         logger.info "#{i} rows processed" if (i % 500) == 0
       end
 
-      # Search for establishments related to venues in LegacyCompany that doesn't
-      # have a code and add it to missing.csv file
-      logger.info "Looking for venues without TD Linx Code"
-      files[:missing] << ['Venue Name', 'Street', 'City', 'State', 'Zip Code', '# Events']
-      Place.joins(:venues).joins('LEFT JOIN events ON events.place_id=places.id')
-        .select('places.*, count(events.id) as visits_count')
-        .group('places.id')
-        .where('venues.company_id=2 AND td_linx_code is null')
-        .where('types like \'%establishment%\'')
-        .find_each do |place|
-        files[:missing] << [
-          place.name, place.street, place.city, place.state,
-          place.zipcode, place.visits_count]
-      end
       files.values.each(&:close)
 
       logger.info "Creating ZIP file with results"
@@ -84,9 +79,15 @@ module TdLinxSynch
       files.values.each { |f| f.close rescue true }
     end
 
-    def self.find_place_for_row(row)
-      Place.find_tdlinx_place(name: row[1].try(:strip), street: row[2].try(:strip), city: row[3].try(:strip),
-        state: state_name(row[4].try(:strip)), zipcode: row[5].try(:strip))
+    def self.find_place_in_td_linx_table(place)
+      c = ActiveRecord::Base.connection
+      street = [place.street_number, place.route].compact.join(' ')
+      city_state = [place.city, place.state_code].compact.join(' ')
+      c.select_one(
+        "select * from tdlinx_codes where city=#{c.quote(place.city.try(:downcase))} AND "\
+        "state=#{c.quote(place.state_code.try(:downcase))} AND "\
+        "similarity(street, normalize_addresss(#{c.quote(street)})) >= 0.5 AND "\
+        "similarity(name, #{c.quote(place.name)}) >= 0.5")
     end
 
     def self.logger
@@ -99,6 +100,44 @@ module TdLinxSynch
 
     def self.country
       @country ||= Country.new('US')
+    end
+
+    def self.create_tmp_table
+      ActiveRecord::Base.connection.execute(
+        'CREATE TABLE tdlinx_codes('\
+          'td_linx_code varchar, name varchar, street varchar, '\
+          'city varchar, state varchar, zipcode varchar)')
+    end
+
+    def self.prepare_codes_table(path)
+      drop_tmp_table
+      create_tmp_table
+      load_data_into_tmp_table path
+    end
+
+    def self.load_data_into_tmp_table(path)
+      ActiveRecord::Base.connection.execute(
+        "COPY tdlinx_codes(td_linx_code,name,street,city,state,zipcode) FROM '#{path}' DELIMITER ',' CSV")
+      ActiveRecord::Base.connection.execute(
+        'UPDATE tdlinx_codes SET street=regexp_replace('\
+          "street, ',\\s*' || city || '\\s*,\\s*' || state || '\\s*,\\s*' || zipcode || '\\s*', "\
+          "'')::varchar")
+      ActiveRecord::Base.connection.execute(
+        "UPDATE tdlinx_codes SET street=regexp_replace(street, '^\\s*' || name || '\\s*,?\s*', '')::varchar")
+      ActiveRecord::Base.connection.execute(
+        "UPDATE tdlinx_codes SET street=normalize_addresss(street), city=lower(city), state=lower(state)")
+      ActiveRecord::Base.connection.execute(
+        'CREATE INDEX td_linx_code_city_state_idx on tdlinx_codes (city,state)')
+      ActiveRecord::Base.connection.execute(
+        'CREATE INDEX td_linx_code_state_idx on tdlinx_codes (state)')
+      ActiveRecord::Base.connection.execute(
+        'CREATE INDEX td_linx_code_street_idx ON tdlinx_codes USING gist(street gist_trgm_ops)')
+      ActiveRecord::Base.connection.execute(
+        'CREATE INDEX td_linx_code_name_idx ON tdlinx_codes USING gist(name gist_trgm_ops)')
+    end
+
+    def self.drop_tmp_table
+      ActiveRecord::Base.connection.execute('DROP TABLE IF EXISTS tdlinx_codes')
     end
 
     def self.download_file(path)
