@@ -10,14 +10,14 @@ module TdLinx
     def self.download_and_process_file(file)
       path = file || 'tmp/td_linx_code.csv'
       download_file(path) unless file
-      #prepare_codes_table path   # creates a table from file
+      prepare_codes_table path   # creates a table from file
       process!
     rescue => e
       logger.error "Something wrong happened in the process: #{e.message}"
       TdlinxMailer.td_linx_process_failed(e).deliver
       raise e # Raise the error so we see it on errbit
-    # ensure
-    #   drop_tmp_table
+    ensure
+      drop_tmp_table
     end
 
     def self.process!
