@@ -10,14 +10,14 @@ module TdLinx
     def self.download_and_process_file(file)
       path = file || 'tmp/td_linx_code.csv'
       download_file(path) unless file
-      prepare_codes_table path   # creates a table from file
+      #prepare_codes_table path   # creates a table from file
       process!
     rescue => e
       logger.error "Something wrong happened in the process: #{e.message}"
       TdlinxMailer.td_linx_process_failed(e).deliver
       raise e # Raise the error so we see it on errbit
-    ensure
-      drop_tmp_table
+    # ensure
+    #   drop_tmp_table
     end
 
     def self.process!
@@ -84,10 +84,12 @@ module TdLinx
       street = [place.street_number, place.route].compact.join(' ')
       city_state = [place.city, place.state_code].compact.join(' ')
       c.select_one(
-        "select * from tdlinx_codes where city=#{c.quote(place.city.try(:downcase))} AND "\
+        "SELECT *, similarity(street, normalize_addresss('1644 Gause Blvd')) + similarity(name, 'Rouses Market') score "\
+        "FROM tdlinx_codes WHERE city=#{c.quote(place.city.try(:downcase))} AND "\
         "state=#{c.quote(place.state_code.try(:downcase))} AND "\
-        "similarity(street, normalize_addresss(#{c.quote(street)})) >= 0.5 AND "\
-        "similarity(name, #{c.quote(place.name)}) >= 0.5")
+        "similarity(street, normalize_addresss(#{c.quote(street)})) >= 0.6 AND "\
+        "similarity(name, #{c.quote(place.name)}) >= 0.5"\
+        "ORDER BY score DESC LIMIT 1")
     end
 
     def self.logger
