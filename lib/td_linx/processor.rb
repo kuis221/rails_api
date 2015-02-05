@@ -88,7 +88,8 @@ module TdLinx
         "FROM tdlinx_codes WHERE city=#{c.quote(place.city.try(:downcase))} AND "\
         "state=#{c.quote(place.state_code.try(:downcase))} AND "\
         "similarity(street, normalize_addresss(#{c.quote(street)})) >= 0.6 AND "\
-        "similarity(name, #{c.quote(place.name)}) >= 0.5"\
+        "( similarity(name, #{c.quote(place.name)}) >= 0.5 OR "\
+        "  similarity(normalize_place_name(name), normalize_place_name(#{c.quote(place.name)})) >= 0.8) "\
         "ORDER BY score DESC LIMIT 1")
     end
 

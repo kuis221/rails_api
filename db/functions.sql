@@ -4,26 +4,6 @@ procedures in this file and they will be loaded at the end of any calls to the
 db:schema:load Rake task.
 */
 
-CREATE OR REPLACE FUNCTION find_tdlinx_place(pname VARCHAR, pstreet VARCHAR, pcity VARCHAR, pstate VARCHAR, pzipcode VARCHAR) RETURNS integer AS $$
-DECLARE
-    place RECORD;
-    normalized_address VARCHAR;
-    normalized_address2 VARCHAR;
-    conditions VARCHAR;
-BEGIN
-    normalized_address := lower(normalize_addresss(pstreet));
-
-    FOR place IN SELECT * FROM places WHERE similarity(pname, name) > 0.5 AND lower(city)=lower(pcity) AND lower(state)=lower(pstate) AND (pzipcode is NULL OR lower(zipcode)=lower(pzipcode)) AND lower(normalize_addresss(coalesce(places.street_number, '') || ' ' || coalesce(places.route, ''))) = normalized_address  LOOP
-        return place.id;
-    END LOOP;
-
-    FOR place IN SELECT * FROM places WHERE similarity(pname, name) > 0.5 AND lower(city)=lower(pcity) AND lower(state)=lower(pstate) AND (pzipcode is NULL OR lower(zipcode)=lower(pzipcode)) AND similarity(normalize_addresss(coalesce(places.street_number, '') || ' ' || coalesce(places.route, '')), normalized_address) >= 0.5  LOOP
-        return place.id;
-    END LOOP;
-
-    RETURN NULL;
-END;
-$$ LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION find_place(pname VARCHAR, pstreet VARCHAR, pcity VARCHAR, pstate VARCHAR, pzipcode VARCHAR) RETURNS integer AS $$
@@ -75,3 +55,21 @@ BEGIN
     RETURN trim(both ' ' from address);
 END;
 $$ LANGUAGE plpgsql;
+
+
+
+CREATE OR REPLACE FUNCTION normalize_place_name(name VARCHAR) RETURNS VARCHAR AS $$
+BEGIN
+    name := regexp_replace(name, '(\s|,|^)&(\s|,|$)', '\1\2', 'ig');
+    name := regexp_replace(name, '(\s|,|^)\+(\s|,|$)', '\1\2', 'ig');
+    name := regexp_replace(name, '(\s|,|^)and(\s|,|$)', '\1\2', 'ig');
+    name := regexp_replace(name, '(\s|,|^)restaurant(\s|,|$)', '\1\2', 'ig');
+    name := regexp_replace(name, '(\s|,|^)pub(\s|,|$)', '\1\2', 'ig');
+    name := regexp_replace(name, '(\s|,|^)grub(\s|,|$)', '\1\2', 'ig');
+    name := regexp_replace(name, '(\s|,|^)\+(\s|,|$)', '\1\2', 'ig');
+    name := regexp_replace(name, '''|"|,|;|\.|:', '', 'ig');
+    name := regexp_replace(name, '\s+', ' ', 'ig');
+    RETURN trim(both ' ' from name);
+END;
+$$ LANGUAGE plpgsql;
+
