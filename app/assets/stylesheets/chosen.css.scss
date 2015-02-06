@@ -29,7 +29,23 @@
 			margin: 0;
 			padding: 0;
 			li{
-				padding: 9px 6px !important;
+				padding: 9px 6px 9px 28px !important;
+				position: relative;
+				&.result-selected{
+					&:before{
+						content: "\e64e";
+						color: $brand;
+						font-family: 'icons';
+						position: absolute;
+						top: 10px;
+						left: 8px;
+					}
+					&.highlighted{
+						&:before{
+							color: $white;
+						}
+					}
+				}
 				&:after{
 					color: #ccc;
 					content: attr(data-role);
