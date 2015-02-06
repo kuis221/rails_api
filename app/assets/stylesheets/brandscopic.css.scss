@@ -635,43 +635,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 				vertical-align: top;
 				text-decoration: underline;
 			}
-			&.icon-close{
-				color: $silver;
-			}
 		}
-		/*
-		.filter-item{
-			display: inline-block;
-			border: 1px solid $brand;
-			margin-left: 4px;
-			padding: 0 10px;
-			font-size: 12px;
-			text-transform: capitalize;
-			background-color: $brand;
-			margin-bottom: 3px;
-			@include border-radius (15px);
-			&:hover {
-				border-color: $white;
-				cursor: pointer;
-			}
-			a.icon-close {
-				font-size: 10px;
-				margin-right: -4px;
-				margin-left: 4px;
-				margin-top: 7px;
-				float: right;
-				position: relative;
-			}
-
-			.full {
-				color: #CBBB26;
-			}
-
-			.empty {
-	    	color: $gray-lighter;
-		  }
-		}
-		*/
 	}
 }
 
@@ -6600,7 +6564,7 @@ table td.sub-level-1 {
 			&.remove-tag{
 				margin-left: 6px;
 				position: relative;
-				top: 5px;
+				top: 7px;
 				float: right;
 				color: $brand;
 			}
@@ -6749,7 +6713,6 @@ table td.sub-level-1 {
 					background-color: $text;
 					font-size: 11px;
 					font-weight: 900;
-					border: 1px solid $gray-lighter;
 					color: $white;
 					display: inline-block;
 					margin: 6px 7px 0 0;
