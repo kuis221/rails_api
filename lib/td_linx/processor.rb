@@ -39,9 +39,8 @@ module TdLinx
       Place.joins(:venues).joins('LEFT JOIN events ON events.place_id=places.id')
         .select('places.*, count(events.id) as visits_count')
         .group('places.id').order('places.id ASC')
-        .where('venues.company_id=2')
-        .where('types like \'%establishment%\'').each do |place|
-        next unless place.types.include?('establishment')
+        .where('venues.company_id=? AND places.is_location=?', 2, false).each do |place|
+        next if place.city.blank? || place.state.blank?
         if row = find_place_in_td_linx_table(place)
           p "Found #{row.inspect}"
           if place.td_linx_code != row['td_linx_code']
