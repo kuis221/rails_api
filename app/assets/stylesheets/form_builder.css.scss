@@ -375,6 +375,7 @@ $margin-right: 240px;
 				position: relative;
 			}
 			p{
+				font-size: 11px;
 				line-height: 57px;
 			}
 		}
@@ -561,7 +562,14 @@ $margin-right: 240px;
 				width: 100%;
 			}
 			.chzn-container-single {
-				margin-bottom: 10px;
+				margin-bottom: 11px;
+				.chzn-single{
+					max-height: 37px;
+				}
+				input[type="text"]{
+					height: 37px;
+					margin-top: 3px;
+				}
 			}
 		}
 		&.range-without-format {

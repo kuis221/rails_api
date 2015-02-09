@@ -1039,7 +1039,8 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		}
 	}
 
-#list-tools {
+
+#list-tools, .list-tools{
 	margin: 1px 0 25px 0;
 	position: relative;
 	a, button{
@@ -1060,15 +1061,27 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			width:12px;
 		}
 	}
-	.btn-primary{
-		padding: 8px 25px;
-	}
-	.btn.download {
-		margin: 0px 3px;
-		text-decoration: none;
-		.icon-plus{
-			line-height: 19px;
+	.btn{
+		box-sizing: border-box;
+		height: 36px;
+		min-width: 50px;
+		&:not(.btn-primary){
+			line-height: 29px;
 		}
+		&.download {
+			margin: 0px 3px;
+			text-decoration: none;
+			/*.icon-plus, .icon-download{
+				line-height: 29px;
+			}*/
+		}
+	}
+	/*
+	.btn-group .btn{
+		line-height: 29px;
+	}*/
+	.btn-primary{
+		padding: 7px 25px;
 	}
 	.fullscreen-link{
 		margin: 0px 0 0 15px;
@@ -1077,16 +1090,15 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	.btn-download {
 		display: inline-block;
 		.btn{
-			padding: 8px 10px;
-		}
-		i{
-			line-height: 19px;
+			padding: 5px 10px;
 		}
 		.icon-download{
+			font-size: 16px;
 			margin-left: 5px;
 		}
 		.icon-arrow-down-small{
 			font-size: 11px;
+			line-height: 26px;
 			float: right;
 			margin: 0 0 0 12px;
 		}
@@ -3722,16 +3734,6 @@ body.events.index {
 			}
 		}
 	}
-	#list-tools {
-		.btn.download {
-			padding: 0px;
-			.icon-download:before {
-				height: 34px;
-				width: 48px;
-				padding-top: 10px;
-			}
-		}
-	}
 }
 
 
@@ -4451,7 +4453,7 @@ body.roles{
 	.place-jameson-account{
 		margin-bottom: 10px;
 	}
-	
+
 	.place-top-account {
 		margin-bottom: 20px;
 	}
@@ -6969,15 +6971,6 @@ table.table.likert-scale-table {
 }
 
 .chzn-container{
-	&.chzn-container-single{
-		.chzn-results{
-			li{
-				&.active-result{
-					padding: 9px 6px 9px 9px !important;
-				}
-			}
-		}
-	}
 	&.chzn-results{
 		padding: 0 !important;
 		li{
