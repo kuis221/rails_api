@@ -4451,7 +4451,7 @@ body.roles{
 	.place-jameson-account{
 		margin-bottom: 10px;
 	}
-	
+
 	.place-top-account {
 		margin-bottom: 20px;
 	}
@@ -6969,15 +6969,6 @@ table.table.likert-scale-table {
 }
 
 .chzn-container{
-	&.chzn-container-single{
-		.chzn-results{
-			li{
-				&.active-result{
-					padding: 9px 6px 9px 9px !important;
-				}
-			}
-		}
-	}
 	&.chzn-results{
 		padding: 0 !important;
 		li{
