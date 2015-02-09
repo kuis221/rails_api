@@ -32,7 +32,7 @@ javascript:
             if ($('#collection-list-filters').length > 0) {
               data = $('#collection-list-filters').filteredList('paramsQueryString') + "&start_date="+start.utc().format('MM/DD/YYYY')+"&end_date="+end.utc().format('MM/DD/YYYY');
             } else {
-              data += "&start="+start+"&end="+end;
+              data += "&start_date="+start.utc().format('MM/DD/YYYY')+"&end_date="+end.utc().format('MM/DD/YYYY');
             }
             $.ajax({
                 url: '#{brand_ambassadors_visits_url(format: :json)}',
