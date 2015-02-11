@@ -148,7 +148,7 @@ module PlacesHelper
 
   def place_opening_hours(opening_hours)
     return [] unless opening_hours && opening_hours.key?('periods')
-    place_days_opening_hours.values
+    place_days_opening_hours(opening_hours).values
   end
 
   def place_days_opening_hours(opening_hours)
