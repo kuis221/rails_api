@@ -412,3 +412,40 @@
 		}
 	}
 }
+
+// Role icons
+
+[class^="icon-role"]{
+	border-radius: 15px;
+	border-style: solid;
+	border-width: 2px;
+	display: inline-block;
+	height: 15px;
+	position: relative;
+	width: 15px;
+}
+
+.icon-role-none {
+	border-color: $silver;
+}
+
+.icon-role-all {
+	border-color: $stars;
+	&:before {
+		content: '';
+		height: 5px;
+		width: 15px;
+		background-color: $stars;
+		border-bottom-left-radius: 15px;
+		border-bottom-right-radius: 15px;
+		border: 2px solid $stars;
+		border-top: 0;
+		position: absolute;
+		bottom: 0;
+		left: -2px;
+	}
+}
+.icon-role-campaigns{
+	background-color: $approved;
+	border-color: $approved;
+}
