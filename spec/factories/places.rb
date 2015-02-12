@@ -37,6 +37,8 @@ FactoryGirl.define do
     is_custom_place true
     formatted_address '123 My Street'
     lonlat nil
+    street_number 11
+    route 'Main St.'
     zipcode '12345'
     city 'New York City'
     state 'NY'
