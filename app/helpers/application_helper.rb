@@ -270,7 +270,11 @@ module ApplicationHelper
 
   def link_to_if_permitted(permission_action, subject_class, options, html_options = {}, &block)
     content = capture(&block)
-    allowed = current_company_user.role.has_permission?(permission_action, subject_class)
+    allowed = if subject_class.is_a?(Class)
+       current_company_user.role.has_permission?(permission_action, subject_class)
+    else
+      can?(permission_action, subject_class)
+    end
     link_to_if allowed, content, options, html_options do
       content_tag(:div, content, html_options)
     end

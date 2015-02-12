@@ -1,10 +1,10 @@
 .resource-item id="event_#{event.id}" class="#{active_class(event)} #{event.aasm_state}#{event.late? && event.unsent? ? ' late' : '' }"
-  = link_to_if_permitted :show, Event, event_url(event), title: 'Event Details', class: 'resource-item-link' do
+  = link_to_if_permitted :show, event, event_url(event), title: 'Event Details', class: 'resource-item-link' do
     .span5.date= format_date_range(event_date(event, :start_at), event_date(event, :end_at))
     .span7
       .text-large.crop-text= event.campaign_name
       = event_place_address(event, false, ', ')
 
   .resource-item-actions
-    = button_to_edit event if can?(:edit, Event)
-    = button_to_activate_or_deactivate(event) if can?(:deactivate, Event)
+    = button_to_edit event if can?(:edit, event)
+    = button_to_activate_or_deactivate(event) if can?(:deactivate, event)
