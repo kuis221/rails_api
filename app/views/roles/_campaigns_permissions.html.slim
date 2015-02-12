@@ -1,4 +1,6 @@
 = simple_form_for resource, remote: true do |f|
+  = hidden_field_tag :partial, :campaigns_permissions
+  = render 'save_bar'
 
   .permissions
     .row-fluid
@@ -83,7 +85,3 @@
       .span12
         .span2 Deactivate custom KPIs
         .span2 = permission_checkbox(f, :deactivate_custom_kpis, Campaign)
-
-
-  = hidden_field_tag :partial, :campaigns_permissions
-  = f.button :submit, 'Save', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}

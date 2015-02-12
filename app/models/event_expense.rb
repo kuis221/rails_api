@@ -25,7 +25,7 @@ class EventExpense < ActiveRecord::Base
 
   after_destroy :update_event_data
 
-  delegate :company_id, to: :event
+  delegate :company_id, :campaign_id, to: :event
 
   has_one :receipt, class_name: 'AttachedAsset', as: :attachable, inverse_of: :attachable
 

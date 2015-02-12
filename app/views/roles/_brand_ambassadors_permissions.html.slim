@@ -1,4 +1,6 @@
 = simple_form_for resource, remote: true do |f|
+  = hidden_field_tag :partial, :brand_ambassadors_permissions
+  = render 'save_bar'
 
   .permissions
     .row-fluid
@@ -38,6 +40,3 @@
       .span12
         .span2 List
         .span2 = permission_checkbox(f, :index, BrandAmbassadors::Document)
-
-  = hidden_field_tag :partial, :brand_ambassadors_permissions
-  = f.button :submit, 'Save', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}

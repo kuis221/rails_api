@@ -7,6 +7,7 @@
 #  action        :string(255)
 #  subject_class :string(255)
 #  subject_id    :string(255)
+#  mode          :string(255)      default("none")
 #
 
 FactoryGirl.define do
@@ -15,5 +16,6 @@ FactoryGirl.define do
     action ''
     subject_class ''
     subject_id nil
+    mode 'none'
   end
 end

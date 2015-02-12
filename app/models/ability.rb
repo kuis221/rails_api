@@ -14,6 +14,8 @@ class Ability
     alias_action :reject, to: :approve
     alias_action :post_event_form, :update_post_event_form, to: :view_event_form
 
+    company_user = user.current_company_user if user.id
+
     # All users
     if user.id && !user.is_a?(AdminUser)
       can :find_similar_kpi, Campaign do
@@ -34,10 +36,10 @@ class Ability
       can [:notifications, :select_company, :dismiss_alert], CompanyUser
 
       # All users can update their own information
-      can :update, CompanyUser, id: user.current_company_user.id
+      can :update, CompanyUser, id: company_user.id
 
       can :super_update, CompanyUser do |_cu|
-        user.current_company_user.role.is_admin? || user.current_company_user.role.has_permission?(:update, CompanyUser)
+        company_user.role.is_admin? || company_user.role.has_permission?(:update, CompanyUser)
       end
 
       can [:enable_campaigns, :disable_campaigns, :remove_campaign, :select_campaigns, :add_campaign], CompanyUser do |cu|
@@ -50,6 +52,7 @@ class Ability
 
       can :cities, Area
     end
+
 
     # AdminUsers (logged in on Active Admin)
     if user.is_a?(AdminUser)
@@ -88,17 +91,15 @@ class Ability
 
     # A logged in user
     elsif user.id
-      role = user.current_company_user.role
+      role = company_user.role
       can do |action, subject_class, subject|
         Rails.logger.debug "Checking #{action} on #{subject_class} :: #{subject}"
-        user.role.cached_permissions.select { |p| aliases_for_action(action).map(&:to_s).include?(p.action.to_s) }.any? do |permission|
-          # p "a: #{subject.nil?}"
-          # p "b: #{( subject.respond_to?(:company_id) && ((subject.company_id.nil? && [:create, :new].include?(action)) || subject.company_id == user.current_company.id) )}"
-          # p "c: #{permission.subject_id.nil?} || (#{subject.respond_to?(:id)} ? #{permission.subject_id == subject.id} : #{permission.subject_id == subject.to_s}) )}"
-          permission.subject_class == subject_class.to_s &&
+        user.role.cached_permissions.select { |p| p['mode'] != 'none' && aliases_for_action(action).map(&:to_s).include?(p['action'].to_s) }.any? do |permission|
+          (permission['subject_class'] == subject_class.to_s) &&
+          (subject.nil? || permission['mode'] == 'all' || !subject.respond_to?(:campaign_id) || company_user.accessible_campaign_ids.include?(subject.campaign_id)) &&
           (subject.nil? ||
             (subject.respond_to?(:company_id) && ((subject.company_id.nil? && [:create, :new].include?(action)) || subject.company_id == user.current_company.id)) ||
-            (!subject.respond_to?(:company_id) && (permission.subject_id.nil? || (subject.respond_to?(:id) ? permission.subject_id == subject.id : permission.subject_id == subject.to_s)))
+            (!subject.respond_to?(:company_id) && (permission['subject_id'].nil? || (subject.respond_to?(:id) ? permission['subject_id'] == subject.id : permission['subject_id'] == subject.to_s)))
           )
         end
       end
@@ -106,7 +107,7 @@ class Ability
       can :search, Place
 
       can :index, Event do
-        can?(:view_list, Event) || can?(:view_map, Event)
+        can?(:view_list, Event) || can?(:view_map, Event) || can?(:view_calendar, Event)
       end
 
       can :index, Marque
@@ -118,11 +119,11 @@ class Ability
       end
 
       can :places, Campaign do |campaign|
-        user.current_company_user.accessible_campaign_ids.include?(campaign.id)
+        company_user.accessible_campaign_ids.include?(campaign.id)
       end
 
       can :report, Campaign do |campaign|
-        can?(:show_analysis, campaign) && user.current_company_user.accessible_campaign_ids.include?(campaign.id)
+        can?(:show_analysis, campaign) && company_user.accessible_campaign_ids.include?(campaign.id)
       end
 
       can [:add_place, :remove_place], [Area, CompanyUser] do |object|
@@ -140,7 +141,7 @@ class Ability
       end
 
       can [:profile, :edit_communications, :filter_settings], CompanyUser do |company_user|
-        user.current_company_user.id == company_user.id
+        company_user.id == company_user.id
       end
 
       can [:verify_phone, :send_code], CompanyUser do |company_user|
@@ -173,10 +174,10 @@ class Ability
       # end
 
       can [:analysis], Venue do |_venue|
-        user.current_company_user.role.has_permission?(:show, Venue) && (
-          user.current_company_user.role.has_permission?(:view_kpis, Venue) ||
-          user.current_company_user.role.has_permission?(:view_score, Venue) ||
-          user.current_company_user.role.has_permission?(:view_trends_day_week, Venue)
+        company_user.role.has_permission?(:show, Venue) && (
+          company_user.role.has_permission?(:view_kpis, Venue) ||
+          company_user.role.has_permission?(:view_score, Venue) ||
+          company_user.role.has_permission?(:view_trends_day_week, Venue)
         )
       end
 
@@ -188,23 +189,23 @@ class Ability
         can?(:show, report) || can?(:edit, report)
       end
 
-      # cannot :create, Report unless user.current_company_user.role.has_permission?(:create, Report)
+      # cannot :create, Report unless company_user.role.has_permission?(:create, Report)
 
       can :access, :results do
-        user.current_company_user.role.has_permission?(:index, Report) ||
-        user.current_company_user.role.has_permission?(:index_results, EventData) ||
-        user.current_company_user.role.has_permission?(:index_results, Comment) ||
-        user.current_company_user.role.has_permission?(:index_results, EventExpense) ||
-        user.current_company_user.role.has_permission?(:index_results, Survey) ||
-        user.current_company_user.role.has_permission?(:index_photo_results, AttachedAsset) ||
-        user.current_company_user.role.has_permission?(:gva_report, Campaign) ||
-        user.current_company_user.role.has_permission?(:event_status, Campaign)
+        company_user.role.has_permission?(:index, Report) ||
+        company_user.role.has_permission?(:index_results, EventData) ||
+        company_user.role.has_permission?(:index_results, Comment) ||
+        company_user.role.has_permission?(:index_results, EventExpense) ||
+        company_user.role.has_permission?(:index_results, Survey) ||
+        company_user.role.has_permission?(:index_photo_results, AttachedAsset) ||
+        company_user.role.has_permission?(:gva_report, Campaign) ||
+        company_user.role.has_permission?(:event_status, Campaign)
       end
 
       can :access, :brand_ambassadors do
-        user.current_company_user.role.has_permission?(:list, BrandAmbassadors::Visit) ||
-        user.current_company_user.role.has_permission?(:calendar, BrandAmbassadors::Visit) ||
-        user.current_company_user.role.has_permission?(:index, BrandAmbassadors::Document)
+        company_user.role.has_permission?(:list, BrandAmbassadors::Visit) ||
+        company_user.role.has_permission?(:calendar, BrandAmbassadors::Visit) ||
+        company_user.role.has_permission?(:index, BrandAmbassadors::Document)
       end
 
       if can?(:create, BrandAmbassadors::Document)
@@ -212,8 +213,8 @@ class Ability
       end
 
       can :index, BrandAmbassadors::Visit do
-        user.current_company_user.role.has_permission?(:list, BrandAmbassadors::Visit) ||
-        user.current_company_user.role.has_permission?(:calendar, BrandAmbassadors::Visit)
+        company_user.role.has_permission?(:list, BrandAmbassadors::Visit) ||
+        company_user.role.has_permission?(:calendar, BrandAmbassadors::Visit)
       end
 
       can :show, AttachedAsset do |asset|
@@ -221,25 +222,24 @@ class Ability
       end
 
       can [:build, :preview, :update], Report do |report|
-        user.current_company_user.role.has_permission?(:create, Report) &&
+        company_user.role.has_permission?(:create, Report) &&
         report.created_by_id == user.id
       end
 
       cannot [:edit, :update, :show, :share], Report do |report|
         report.created_by_id != user.id &&
-        Report.accessible_by_user(user.current_company_user).where(id: report.id).none?
+        Report.accessible_by_user(company_user).where(id: report.id).none?
       end
 
       can [:share_form], Report do |report|
-        user.current_company_user.role.has_permission?(:share, Report) &&
-        Report.accessible_by_user(user.current_company_user).where(id: report.id).any?
+        company_user.role.has_permission?(:share, Report) &&
+        Report.accessible_by_user(company_user).where(id: report.id).any?
       end
 
       # Event permissions
       can :access, Event do |event|
-        user.current_company_user.company_id == event.company_id &&
-        user.current_company_user.accessible_campaign_ids.include?(event.campaign_id) &&
-        user.current_company_user.allowed_to_access_place?(event.place)
+        company_user.company_id == event.company_id &&
+        company_user.allowed_to_access_place?(event.place)
       end
 
       # Event Data
@@ -267,27 +267,27 @@ class Ability
         can?(:view_calendar, Event) && can?(:show, event)
       end
 
-      cannot :show, Event do |event|
+      cannot [:show], Event do |event|
         cannot?(:access, event)
       end
 
       cannot :activate, Tag do |_tag|
-        !user.current_company_user.role.has_permission?(:activate, Tag)
+        !company_user.role.has_permission?(:activate, Tag)
       end
 
       can :gva_report_campaign, Campaign do |campaign|
         can?(:gva_report, Campaign) &&
-        user.current_company_user.accessible_campaign_ids.include?(campaign.id)
+        company_user.accessible_campaign_ids.include?(campaign.id)
       end
 
       can [:select_areas, :add_areas, :delete_area], Venue do |venue|
         can?(:show, venue) &&
-        user.current_company_user.role.has_permission?(:update, Area)
+        company_user.role.has_permission?(:update, Area)
       end
 
       can :event_status_report_campaign, Campaign do |campaign|
         can?(:event_status, Campaign) &&
-        user.current_company_user.accessible_campaign_ids.include?(campaign.id)
+        company_user.accessible_campaign_ids.include?(campaign.id)
       end
 
       can [:select_brands, :add_brands], BrandPortfolio do |brand_portfolio|
@@ -315,7 +315,7 @@ class Ability
       end
 
       can(:show, Contact) do |contact|
-        user.current_company_user.company_id == contact.company_id
+        company_user.company_id == contact.company_id
       end
 
       can [:add, :list], ContactEvent do
@@ -331,8 +331,8 @@ class Ability
         can?(:show, contact_event.event) && can?(:edit_contacts, contact_event.event)
       end
       can :update, Contact do |contact|
-        user.current_company_user.company_id == contact.company_id &&
-        user.current_company_user.role.has_permission?(:edit_contacts, Event)
+        company_user.company_id == contact.company_id &&
+        company_user.role.has_permission?(:edit_contacts, Event)
       end
 
       # Allow users to create kpis if have permissions to create custom kpis,
@@ -358,19 +358,22 @@ class Ability
 
       # Tasks permissions
       can :tasks, Event do |event|
-        user.role.has_permission?(:index_tasks, Event) && can?(:show, event)
+        user.role.has_permission?(:index_tasks, Event) &&
+        (user.role.permission_for(:index_documents, Event).mode == 'all' ||
+         company_user.accessible_campaign_ids.include?(event.campaign_id)) &&
+        can?(:show, event)
       end
 
       can :update, Task do |task|
         (user.role.has_permission?(:edit_task, Event) && can?(:show, task.event)) ||
-        (user.role.has_permission?(:edit_my, Task) && task.company_user_id == user.current_company_user.id) ||
-        (user.role.has_permission?(:edit_team, Task) && task.company_user_id != user.current_company_user.id && task.event.user_in_team?(user.current_company_user))
+        (user.role.has_permission?(:edit_my, Task) && task.company_user_id == company_user.id) ||
+        (user.role.has_permission?(:edit_team, Task) && task.company_user_id != company_user.id && task.event.user_in_team?(company_user))
       end
 
       can [:deactivate, :activate], Task do |task|
         (user.role.has_permission?(:deactivate_task, Event) && can?(:show, task.event)) ||
-        (user.role.has_permission?(:deactivate_my, Task) && task.company_user_id == user.current_company_user.id) ||
-        (user.role.has_permission?(:deactivate_team, Task) && task.company_user_id != user.current_company_user.id && task.event.user_in_team?(user.current_company_user))
+        (user.role.has_permission?(:deactivate_my, Task) && task.company_user_id == company_user.id) ||
+        (user.role.has_permission?(:deactivate_team, Task) && task.company_user_id != company_user.id && task.event.user_in_team?(company_user))
       end
 
       can :create, Task do |task|
@@ -380,7 +383,10 @@ class Ability
 
       # Documents permissions
       can :documents, Event do |event|
-        user.role.has_permission?(:index_documents, Event) && can?(:show, event)
+        user.role.has_permission?(:index_documents, Event) &&
+        (user.role.permission_for(:index_documents, Event).mode == 'all' ||
+         company_user.accessible_campaign_ids.include?(event.campaign_id)) &&
+        can?(:show, event)
       end
 
       if user.role.has_permission?(:create_photo, Event) || user.role.has_permission?(:create_document, Event)
@@ -399,15 +405,25 @@ class Ability
 
       # Photos permissions
       can :photos, Event do |event|
-        user.role.has_permission?(:index_photos, Event) && can?(:show, event)
+        user.role.has_permission?(:index_photos, Event) &&
+        (user.role.permission_for(:index_photos, Event).mode == 'all' ||
+         company_user.accessible_campaign_ids.include?(event.campaign_id)) &&
+         can?(:show, event)
       end
 
       can [:deactivate, :activate], AttachedAsset do |asset|
-        asset.attachable.is_a?(Event) && asset.asset_type == 'photo' && user.role.has_permission?(:deactivate_photo, Event) && can?(:show, asset.attachable)
+        asset.attachable.is_a?(Event) && asset.asset_type == 'photo' &&
+        user.role.has_permission?(:deactivate_photo, Event) &&
+        (user.role.permission_for(:deactivate_photo, Event).mode == 'all' ||
+         company_user.accessible_campaign_ids.include?(asset.campaign_id)) &&
+        can?(:show, asset.attachable)
       end
 
       can :rate, AttachedAsset do |asset|
-        asset.asset_type == 'photo' && user.role.has_permission?(:edit_rate, AttachedAsset)
+        asset.asset_type == 'photo' &&
+        (user.role.permission_for(:deactivate_photo, Event).mode == 'all' ||
+         company_user.accessible_campaign_ids.include?(asset.campaign_id)) &&
+        user.role.has_permission?(:edit_rate, AttachedAsset)
       end
 
       can :view_rate, AttachedAsset do |asset|
@@ -420,19 +436,31 @@ class Ability
 
       # Event Expenses permissions
       can :expenses, Event do |event|
-        user.role.has_permission?(:index_expenses, Event) && can?(:show, event)
+        user.role.has_permission?(:index_expenses, Event) &&
+        (user.role.permission_for(:index_expenses, Event).mode == 'all' ||
+         company_user.accessible_campaign_ids.include?(event.campaign_id)) &&
+        can?(:show, event)
       end
 
       can :update, EventExpense do |expense|
-        user.role.has_permission?(:edit_expense, Event) && can?(:show, expense.event)
+        user.role.has_permission?(:edit_expense, Event) &&
+        (user.role.permission_for(:edit_expense, Event).mode == 'all' ||
+         company_user.accessible_campaign_ids.include?(expense.event.campaign_id)) &&
+        can?(:show, expense.event)
       end
 
       can :destroy, EventExpense do |expense|
-        user.role.has_permission?(:deactivate_expense, Event) && can?(:show, expense.event)
+        user.role.has_permission?(:deactivate_expense, Event) &&
+        (user.role.permission_for(:deactivate_expense, Event).mode == 'all' ||
+         company_user.accessible_campaign_ids.include?(expense.event.campaign_id)) &&
+        can?(:show, expense.event)
       end
 
       can :create, EventExpense do |expense|
-        user.role.has_permission?(:create_expense, Event) && can?(:show, expense.event)
+        user.role.has_permission?(:create_expense, Event) &&
+        (user.role.permission_for(:create_expense, Event).mode == 'all' ||
+         company_user.accessible_campaign_ids.include?(expense.event.campaign_id)) &&
+        can?(:show, expense.event)
       end
 
       # Surveys permissions
@@ -461,8 +489,8 @@ class Ability
         user.role.has_permission?(:index_comments, Event) && can?(:show, event)
       end
       can :comments, Task do |task|
-        (user.role.has_permission?(:index_my_comments, Task) && task.company_user_id == user.current_company_user.id) ||
-        (user.role.has_permission?(:index_team_comments, Task) && task.company_user_id != user.current_company_user.id && task.event.user_in_team?(user.current_company_user))
+        (user.role.has_permission?(:index_my_comments, Task) && task.company_user_id == company_user.id) ||
+        (user.role.has_permission?(:index_team_comments, Task) && task.company_user_id != company_user.id && task.event.user_in_team?(company_user))
       end
 
       can :update, Comment do |comment|
@@ -475,12 +503,12 @@ class Ability
 
       can :create, Comment do |comment|
         (comment.commentable.is_a?(Event) && user.role.has_permission?(:create_comment, Event) && can?(:show, comment.commentable)) ||
-        (comment.commentable.is_a?(Task) && user.role.has_permission?(:create_my_comment, Task) && comment.commentable.company_user_id == user.current_company_user.id) ||
-        (comment.commentable.is_a?(Task) && user.role.has_permission?(:create_team_comment, Task) && comment.commentable.event.user_in_team?(user.current_company_user))
+        (comment.commentable.is_a?(Task) && user.role.has_permission?(:create_my_comment, Task) && comment.commentable.company_user_id == company_user.id) ||
+        (comment.commentable.is_a?(Task) && user.role.has_permission?(:create_team_comment, Task) && comment.commentable.event.user_in_team?(company_user))
       end
 
       can :view_promo_hours_data, Campaign do |campaign|
-        user.current_company_user.accessible_campaign_ids.include?(campaign.id)
+        company_user.accessible_campaign_ids.include?(campaign.id)
       end
     end
   end

@@ -4233,7 +4233,13 @@ body.roles{
 	table.table tbody tr:hover td{
 		background-color: $white !important;
 	}
-
+	.icon-legend {
+		margin-right: 10px;
+		.icon-role {
+			margin-right: 5px;
+			top: 2px;
+		}
+	}
 }
 
 .permissions{

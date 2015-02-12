@@ -415,29 +415,29 @@
 
 // Role icons
 
-[class^="icon-role"]{
+.icon-role {
 	border-radius: 15px;
 	border-style: solid;
 	border-width: 2px;
 	display: inline-block;
-	height: 15px;
+	height: 12px;
 	position: relative;
-	width: 15px;
+	width: 12px;
 }
 
 .icon-role-none {
 	border-color: $silver;
 }
 
-.icon-role-all {
+.icon-role-campaigns {
 	border-color: $stars;
 	&:before {
 		content: '';
 		height: 5px;
-		width: 15px;
+		width: 12px;
 		background-color: $stars;
-		border-bottom-left-radius: 15px;
-		border-bottom-right-radius: 15px;
+		border-bottom-left-radius: 12px;
+		border-bottom-right-radius: 12px;
 		border: 2px solid $stars;
 		border-top: 0;
 		position: absolute;
@@ -445,7 +445,7 @@
 		left: -2px;
 	}
 }
-.icon-role-campaigns{
+.icon-role-all {
 	background-color: $approved;
 	border-color: $approved;
 }

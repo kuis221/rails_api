@@ -1,4 +1,7 @@
 = simple_form_for resource, remote: true do |f|
+  = hidden_field_tag :partial, :events_permissions
+  = render 'save_bar'
+
   .permissions
     .row-fluid
       .span12.category
@@ -17,38 +20,38 @@
 
       .span12
         .span3 Events list
-        .span2 = permission_checkbox(f, :view_list, Event)
+        .span2 = permission_checkbox(f, :view_list, Event, allow_all: true)
         .span2
         .span2
         .span2
 
       .span12
         .span3 Events calendar
-        .span2 = permission_checkbox(f, :view_calendar, Event)
+        .span2 = permission_checkbox(f, :view_calendar, Event, allow_all: true)
         .span2
         .span2
         .span2
 
       .span12
         .span3 Events map
-        .span2 = permission_checkbox(f, :view_map, Event)
+        .span2 = permission_checkbox(f, :view_map, Event, allow_all: true)
         .span2
         .span2
         .span2
 
       .span12.separate
         .span3.title Event details
-        .span2 = permission_checkbox(f, :show, Event)
+        .span2 = permission_checkbox(f, :show, Event, allow_all: true)
         .span2
         .span2
         .span2
 
       .span12
         .span3 Event Team
-        .span2 = permission_checkbox(f, :view_members, Event)
+        .span2 = permission_checkbox(f, :view_members, Event, allow_all: true)
         .span2
-        .span2 = permission_checkbox(f, :add_members, Event)
-        .span2 = permission_checkbox(f, :delete_member, Event)
+        .span2 = permission_checkbox(f, :add_members, Event, allow_all: true)
+        .span2 = permission_checkbox(f, :delete_member, Event, allow_all: true)
 
       .span12
         .span3 Event Contacts
@@ -81,10 +84,10 @@
 
       .span12
         .span3 Photos
-        .span2 = permission_checkbox(f, :index_photos, Event)
-        .span2 = permission_checkbox(f, :create_photo, Event)
+        .span2 = permission_checkbox(f, :index_photos, Event, allow_all: true)
+        .span2 = permission_checkbox(f, :create_photo, Event, allow_all: true)
         .span2
-        .span2 = permission_checkbox(f, :deactivate_photo, Event)
+        .span2 = permission_checkbox(f, :deactivate_photo, Event, allow_all: true)
 
       .span12
         .span3 Rate photos
@@ -102,10 +105,10 @@
 
       .span12
         .span3 Expenses
-        .span2 = permission_checkbox(f, :index_expenses, Event)
-        .span2 = permission_checkbox(f, :create_expense, Event)
-        .span2 = permission_checkbox(f, :edit_expense, Event)
-        .span2 = permission_checkbox(f, :deactivate_expense, Event)
+        .span2 = permission_checkbox(f, :index_expenses, Event, allow_all: true)
+        .span2 = permission_checkbox(f, :create_expense, Event, allow_all: true)
+        .span2 = permission_checkbox(f, :edit_expense, Event, allow_all: true)
+        .span2 = permission_checkbox(f, :deactivate_expense, Event, allow_all: true)
 
       .span12
         .span3 Surveys
@@ -163,9 +166,3 @@
       .span12
         .span3 Edit approved data
         .span2 = permission_checkbox(f, :edit_approved_data, Event)
-
-
-
-
-  = hidden_field_tag :partial, :events_permissions
-  = f.button :submit, 'Save', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}

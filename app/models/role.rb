@@ -20,7 +20,7 @@ class Role < ActiveRecord::Base
   has_many :permissions, inverse_of: :role
   validates :name, presence: true
 
-  accepts_nested_attributes_for :permissions, reject_if: proc { |attributes| !attributes['enabled'] }
+  accepts_nested_attributes_for :permissions
 
   scope :active, -> { where(active: true) }
 
@@ -49,22 +49,22 @@ class Role < ActiveRecord::Base
     self.active? ? 'Active' : 'Inactive'
   end
 
-  def permission_for(action, subject_class, subject = nil)
-    cached_permissions.find(
-      proc { permissions.build(action: action, subject_class: subject_class.to_s, subject_id: subject) }
+  def permission_for(action, subject_class, subject: nil, mode: 'none')
+    permissions.find(
+      proc { permissions.build(action: action, subject_class: subject_class.to_s, subject_id: subject, mode: mode) }
     ) do |p|
       p.action.to_s == action.to_s && p.subject_class.to_s == subject_class.to_s && p.subject_id == subject
     end
   end
 
   def has_permission?(action, subject_class)
-    is_admin? || cached_permissions.any? { |p| p.action.to_s == action.to_s && p.subject_class.to_s == subject_class.to_s }
+    is_admin? || cached_permissions.any? { |p| p['mode'] != 'none' && p['action'].to_s == action.to_s && p['subject_class'].to_s == subject_class.to_s }
   end
 
   def cached_permissions
-    @cached_permissions ||= Rails.cache.fetch("role_permissions_#{id}") do
-      permissions.all.to_a
-    end
+    @cached_permissions ||= (Rails.cache.fetch("role_permissions_#{id}") do
+      permissions.map(&:attributes)
+    end)
   end
 
   def clear_cached_permissions

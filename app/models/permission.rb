@@ -7,6 +7,7 @@
 #  action        :string(255)
 #  subject_class :string(255)
 #  subject_id    :string(255)
+#  mode          :string(255)      default("none")
 #
 
 class Permission < ActiveRecord::Base
@@ -14,16 +15,5 @@ class Permission < ActiveRecord::Base
 
   validate :action, uniqueness: { scope: [:role_id, :subject_class] }
 
-  after_create {role.clear_cached_permissions }
-  after_destroy {role.clear_cached_permissions }
-
-  attr_accessor :enabled
-
-  def enabled=(value)
-    mark_for_destruction if value.to_s == '0'
-  end
-
-  def enabled
-    persisted?
-  end
+  after_save { role.clear_cached_permissions }
 end
