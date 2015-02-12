@@ -25,7 +25,7 @@ describe Api::V1::InvitesController, type: :controller do
   end
 
   describe "PUT 'update'" do
-    let(:invite) { create(:invite, event: event, venue: venue) }
+    let(:invite) { create(:invite, event: event, venue: event.venue) }
 
     it 'must deactivate the invite' do
       put 'update', event_id: event.id, id: invite.to_param,

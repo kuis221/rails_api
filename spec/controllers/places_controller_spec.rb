@@ -22,7 +22,7 @@ describe PlacesController, type: :controller do
       expect_any_instance_of(Place).to receive(:fetch_place_data).and_return(true)
       expect_any_instance_of(GooglePlaces::Client).to receive(:spots).and_return([])
       expect(HTTParty).to receive(:post).and_return('reference' => 'ABC', 'id' => 'XYZ')
-      expect_any_instance_of(PlacesController).to receive(:open).and_return(double(read: ActiveSupport::JSON.encode('results' => [{ 'geometry' => { 'location' => { 'lat' => '1.2322', lng: '-3.23455' } } }])))
+      expect_any_instance_of(described_class).to receive(:open).and_return(double(read: ActiveSupport::JSON.encode('results' => [{ 'geometry' => { 'location' => { 'lat' => '1.2322', lng: '-3.23455' } } }])))
       expect do
         xhr :post, 'create', area_id: area.to_param, add_new_place: true, place: { name: "Guille's place", street_number: '123 st', route: 'xyz 321', city: 'Curridabat', state: 'San José', zipcode: '12345', country: 'CR' }, format: :js
       end.to change(Place, :count).by(1)
@@ -47,8 +47,8 @@ describe PlacesController, type: :controller do
           name: 'APIs place name', lat: '1.111', lng: '2.222', formatted_address: 'api fmt address', types: ['bar'],
           address_components: nil
         ))
-        expect_any_instance_of(GooglePlaces::Client).to receive(:spots).and_return([double(id: '123', reference: 'XYZ')])
-        expect_any_instance_of(PlacesController).to receive(:open).and_return(double(read: ActiveSupport::JSON.encode('results' => [{ 'geometry' => { 'location' => { 'lat' => '1.2322', lng: '-3.23455' } } }])))
+        expect_any_instance_of(GooglePlaces::Client).to receive(:spots).and_return([double(id: '123', name: "Guille's place", reference: 'XYZ')])
+        expect_any_instance_of(described_class).to receive(:open).and_return(double(read: ActiveSupport::JSON.encode('results' => [{ 'geometry' => { 'location' => { 'lat' => '1.2322', lng: '-3.23455' } } }])))
         expect do
           xhr :post, 'create', area_id: area.id, add_new_place: true, place: { name: "Guille's place", street_number: '123 st', route: 'xyz 321', city: 'Curridabat', state: 'San José', zipcode: '12345', country: 'CR' }, format: :js
         end.to change(Place, :count).by(1)
@@ -112,13 +112,13 @@ describe PlacesController, type: :controller do
 
       it 'keeps the actual data if the place already exists on the DB' do
         create(:place,
-                           name: 'Current place name',
-                           formatted_address: 'api fmt address', zipcode: 44_332, route: '444 cc', street_number: 'Calle 2',
-                           city: 'Paraiso', state: 'Cartago', country: 'CR', lonlat: 'POINT(-1.234 1.234)',
-                           place_id: '123', reference: 'XYZ'
+               name: 'Current place name',
+               formatted_address: 'api fmt address', zipcode: 44_332, route: '444 cc', street_number: 'Calle 2',
+               city: 'Paraiso', state: 'Cartago', country: 'CR', lonlat: 'POINT(-1.234 1.234)',
+               place_id: '123', reference: 'XYZ'
         )
-        expect_any_instance_of(GooglePlaces::Client).to receive(:spots).and_return([double(id: '123', reference: 'XYZ')])
-        expect_any_instance_of(PlacesController).to receive(:open).and_return(double(read: ActiveSupport::JSON.encode('results' => [{ 'geometry' => { 'location' => { 'lat' => '1.2322', lng: '-3.23455' } } }])))
+        expect_any_instance_of(GooglePlaces::Client).to receive(:spots).and_return([double(id: '123', name: 'Current place name', reference: 'XYZ')])
+        expect_any_instance_of(described_class).to receive(:open).and_return(double(read: ActiveSupport::JSON.encode('results' => [{ 'geometry' => { 'location' => { 'lat' => '1.2322', lng: '-3.23455' } } }])))
 
         expect do
           xhr :post, 'create', area_id: area.id, add_new_place: true, place: { name: "Guille's place", street_number: '123 st', route: 'xyz 321', city: 'Curridabat', state: 'San Jose', zipcode: '12345', country: 'CR' }, format: :js

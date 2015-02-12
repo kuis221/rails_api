@@ -1154,7 +1154,7 @@ RSpec.shared_examples 'a fieldable element that accept modules' do
 
     expect(find('.form-wrapper')).to have_selector('.form-section.module[data-type=Photos]')
 
-    within form_field_settings_for(module_section('Gallery')) do
+    within form_field_settings_for(module_section('Photos')) do
       fill_in 'Min', with: '10'
       fill_in 'Max', with: '150'
     end
@@ -1166,12 +1166,12 @@ RSpec.shared_examples 'a fieldable element that accept modules' do
 
     visit fieldable_path
 
-    within form_field_settings_for(module_section('Gallery')) do
+    within form_field_settings_for(module_section('Photos')) do
       expect(find_field('Min').value).to eql '10'
       expect(find_field('Max').value).to eql '150'
     end
 
-    within module_section('Gallery') do
+    within module_section('Photos') do
       click_js_link 'Remove'
     end
 
