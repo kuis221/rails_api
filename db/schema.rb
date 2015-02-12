@@ -18,6 +18,7 @@ ActiveRecord::Schema.define(version: 20150127225850) do
   enable_extension "hstore"
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
+  enable_extension "postgres_fdw"
   enable_extension "tablefunc"
   enable_extension "postgis"
 
@@ -705,17 +706,6 @@ ActiveRecord::Schema.define(version: 20150127225850) do
   add_index "memberships", ["memberable_id", "memberable_type"], :name => "index_memberships_on_memberable_id_and_memberable_type"
   add_index "memberships", ["parent_id", "parent_type"], :name => "index_memberships_on_parent_id_and_parent_type"
 
-  create_table "neighborhoods", primary_key: "gid", force: true do |t|
-    t.string  "state",    limit: 2
-    t.string  "county",   limit: 43
-    t.string  "city",     limit: 64
-    t.string  "name",     limit: 64
-    t.decimal "regionid"
-    t.spatial "geog",     limit: {:srid=>4326, :type=>"multi_polygon", :geographic=>true}
-  end
-
-  add_index "neighborhoods", ["geog"], :name => "neighborhoods_geog_idx", :spatial => true
-
   create_table "notifications", force: true do |t|
     t.integer  "company_user_id"
     t.string   "message"
@@ -768,9 +758,9 @@ ActiveRecord::Schema.define(version: 20150127225850) do
     t.string   "td_linx_code"
     t.integer  "location_id"
     t.boolean  "is_location"
-    t.string   "neighborhoods",                                                                                array: true
     t.integer  "price_level"
     t.string   "phone_number"
+    t.string   "neighborhoods",                                                                                array: true
     t.spatial  "lonlat",                 limit: {:srid=>4326, :type=>"point", :geographic=>true}
   end
 

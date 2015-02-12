@@ -9,6 +9,18 @@ RSpec.describe Api::V1::ActivitiesController, :type => :controller do
 
   before { set_api_authentication_headers user, company }
 
+  #describe '#index' do
+  #  it 'returns a list of activity associated to event' do
+  #    let(:activity) { create(:activity, activity_type: activity_type, company_user: company_user, activitable: event) }
+  #    get :index, event_id: event.id, format: :json
+  #    expect(response).to be_success
+  #    result = JSON.parse(response.body)
+  #    expect(result.count).to eql 1
+  #    expect(result).to include(
+  #      'id' =>  activity.first.id)
+  #  end
+  #end
+
   describe "GET 'new'", search: true do
     it 'returns only the user/date if no fields have been aded to the activity type' do
       get :new, activity_type_id: activity_type.id, format: :json

@@ -48,6 +48,7 @@ class FormField::Marque < FormField::Dropdown
   end
 
   def options_for_field(result)
+    return [] if result.nil?
     @marques ||= [].tap do |b|
       ff_brand  = FormField.where(fieldable_id: fieldable_id, fieldable_type: fieldable_type, type: 'FormField::Brand').first
       if ff_brand.present?
