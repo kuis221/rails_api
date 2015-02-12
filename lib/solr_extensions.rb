@@ -22,7 +22,7 @@ module Sunspot
 
             with_user_teams params
 
-            restrict_search_to_user_permissions params[:current_company_user] if params[:current_company_user]
+            restrict_search_to_user_permissions clazz, params[:search_permission], params[:current_company_user] if params[:current_company_user]
 
             order_by(params[:sorting], params[:sorting_dir] || :asc) if params[:sorting]
             paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
@@ -232,9 +232,13 @@ module Sunspot
         end
       end
 
-      def restrict_search_to_user_permissions(company_user)
+      def restrict_search_to_user_permissions(clazz, permission, company_user)
         return if company_user.role.is_admin?
-        with_campaign company_user.accessible_campaign_ids + [0]
+        if company_user.role.permission_for(permission, clazz).mode == 'campaigns'
+          with_campaign company_user.accessible_campaign_ids + [0]
+        elsif company_user.role.permission_for(permission, clazz).mode == 'none'
+          with_campaign [0]
+        end
         within_user_locations(company_user)
       end
 

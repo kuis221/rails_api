@@ -1149,7 +1149,7 @@ RSpec.shared_examples 'a fieldable element that accept modules' do
 
     # Make sure the KPI is not longer available in the KPIs list
     within('.fields-wrapper') do
-      expect(page).to have_no_content('Photos')
+      expect(page).to have_no_content('Gallery')
     end
 
     expect(find('.form-wrapper')).to have_selector('.form-section.module[data-type=Photos]')
@@ -1194,11 +1194,11 @@ RSpec.shared_examples 'a fieldable element that accept modules' do
     expect(fieldable.reload.enabled_modules).to be_empty
 
     # the module should be available again in the list of modules
-    expect(find('.fields-wrapper')).to have_content('Photos')
+    expect(find('.fields-wrapper')).to have_content('Gallery')
 
     expect(find('.form-wrapper')).to have_no_selector('.form-section.module[data-type=Photos]')
     # the module should be available again in the list of modules
-    expect(find('.fields-wrapper')).to have_content('Photos')
+    expect(find('.fields-wrapper')).to have_content('Gallery')
   end
 end
 

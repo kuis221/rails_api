@@ -1,4 +1,7 @@
 = simple_form_for resource, remote: true do |f|
+  = hidden_field_tag :partial, :analysis_permissions
+  = render 'save_bar'
+
   .permissions
     .row-fluid
       / .span7
@@ -14,8 +17,4 @@
       .span7
         .span5 Trends
         .span2
-          = permission_checkbox(f, :access, Symbol, 'trends_report')
-
-
-  = hidden_field_tag :partial, :analysis_permissions
-  = f.button :submit, 'Save', class: 'btn btn-primary', data: { disable_with: 'Please wait...'}
+          = permission_checkbox(f, :access, Symbol, subject: 'trends_report')

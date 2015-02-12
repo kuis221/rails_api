@@ -8,6 +8,7 @@ class RolesController < FilteredController
   def update
     update! do |success, _failure|
       success.js do
+        p resource.permissions.map(&:mode)
         render 'update_partial' if params[:partial].present?
       end
     end
@@ -24,7 +25,9 @@ class RolesController < FilteredController
   protected
 
   def permitted_params
-    params.permit(role: [:name, :description, { permissions_attributes: [:id, :enabled, :action, :subject_class, :subject_id] }])[:role]
+    params.permit(role: [:name, :description,
+                         { permissions_attributes: [:id, :mode, :action, :subject_class, :subject_id] }
+                        ])[:role]
   end
 
   def facets

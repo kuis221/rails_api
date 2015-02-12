@@ -297,8 +297,8 @@ feature 'Campaigns', js: true do
         let(:company_user) { user.company_users.first }
 
         scenario 'User without permissions cannot add KPIs' do
-          company_user.role.permissions.create(action: :show, subject_class: 'Campaign')
-          company_user.role.permissions.create(action: :view_kpis, subject_class: 'Campaign')
+          company_user.role.permissions.create(action: :show, subject_class: 'Campaign', mode: 'campaigns')
+          company_user.role.permissions.create(action: :view_kpis, subject_class: 'Campaign', mode: 'campaigns')
 
           campaign = create(:campaign, company: company)
           visit campaign_path(campaign)
@@ -460,8 +460,8 @@ feature 'Campaigns', js: true do
 
         scenario 'User without permissions cannot edit Custom KPIs' do
           Kpi.create_global_kpis
-          company_user.role.permissions.create(action: :show, subject_class: 'Campaign')
-          company_user.role.permissions.create(action: :view_kpis, subject_class: 'Campaign')
+          company_user.role.permissions.create(action: :show, subject_class: 'Campaign', mode: 'campaigns')
+          company_user.role.permissions.create(action: :view_kpis, subject_class: 'Campaign', mode: 'campaigns')
 
           campaign.add_kpi(kpi)
 
@@ -479,9 +479,9 @@ feature 'Campaigns', js: true do
 
         scenario 'User without permissions to edit Custom KPIs and permission to edit goals' do
           Kpi.create_global_kpis
-          company_user.role.permissions.create(action: :show, subject_class: 'Campaign')
-          company_user.role.permissions.create(action: :view_kpis, subject_class: 'Campaign')
-          company_user.role.permissions.create(action: :edit_kpi_goals, subject_class: 'Campaign')
+          company_user.role.permissions.create(action: :show, subject_class: 'Campaign', mode: 'campaigns')
+          company_user.role.permissions.create(action: :view_kpis, subject_class: 'Campaign', mode: 'campaigns')
+          company_user.role.permissions.create(action: :edit_kpi_goals, subject_class: 'Campaign', mode: 'campaigns')
 
           campaign.add_kpi(kpi)
           create(:goal, goalable: campaign, kpi: kpi, value: 100)

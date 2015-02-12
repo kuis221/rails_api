@@ -1,4 +1,6 @@
 = simple_form_for resource, remote: true do |f|
+  = hidden_field_tag :partial, :tasks_permissions
+  = render 'save_bar'
 
   .permissions
     .row-fluid
@@ -36,7 +38,3 @@
         .span2 = permission_checkbox(f, :create_team_comment, Task)
         .span2
         .span2
-
-
-  = hidden_field_tag :partial, :tasks_permissions
-  = f.button :submit, 'Save', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}

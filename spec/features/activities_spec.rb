@@ -5,7 +5,7 @@ feature 'Activities management' do
   let(:campaign) { create(:campaign, company: company) }
   let(:user) { create(:user, company: company, role_id: role.id) }
   let(:company_user) { user.company_users.first }
-  let(:place) { create(:place, name: 'A Nice Place', country: 'CR', city: 'Curridabat', state: 'San Jose', is_custom_place: true, reference: nil) }
+  let(:place) { create(:place, name: 'A Nice Place', country: 'CR', city: 'Curridabat', state: 'San José', is_custom_place: true, reference: nil) }
   let(:permissions) { [] }
   let(:event) { create(:late_event, campaign: campaign, company: company, place: place) }
 
@@ -46,6 +46,8 @@ feature 'Activities management' do
                               activity_type: create(:activity_type, name: 'Test ActivityType', company: company, campaign_ids: [campaign.id]))
       visit activity_path(activity)
       expect(page).to have_selector('h2.special', text: 'Test ActivityType')
+      expect(page).to have_link(venue.name)
+      expect(page).to have_content("#{place.street} #{place.city}, #{place.state_code}, #{place.zipcode}")
       expect(current_path).to eql activity_path(activity)
     end
   end
@@ -448,12 +450,6 @@ feature 'Activities management' do
       before { company_user.campaigns << campaign }
       before { company_user.places << place }
       let(:permissions) { [[:show, 'Activity'], [:show, 'Event']] }
-    end
-  end
-
-  def add_permissions(permissions)
-    permissions.each do |p|
-      company_user.role.permissions.create(action: p[0], subject_class: p[1])
     end
   end
 end

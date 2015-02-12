@@ -1772,7 +1772,7 @@ li.dropdown a{
 		border: 0;
 		color: $brand;
 		text-align: center;
-		min-width: 92px;
+		min-width: 86px;
 		&:hover{
 			background-color: $user_menu;
 			border-bottom: 0;
@@ -4233,7 +4233,13 @@ body.roles{
 	table.table tbody tr:hover td{
 		background-color: $white !important;
 	}
-
+	.icon-legend {
+		margin-right: 10px;
+		.icon-role {
+			margin-right: 5px;
+			top: 2px;
+		}
+	}
 }
 
 .permissions{

@@ -77,7 +77,7 @@ group :web do
   gem 'font_assets', path: 'vendor/gems/font_assets'
   gem 'activeadmin', github: 'activeadmin/active_admin'
   gem 'unicorn'
-  gem 'simple_form'
+  gem 'simple_form', '3.0.3'
   gem 'country_select', '2.0.0.rc1'
 end
 

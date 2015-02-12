@@ -1,4 +1,6 @@
 = simple_form_for resource, remote: true do |f|
+  = hidden_field_tag :partial, :results_permissions
+  = render 'save_bar'
   .permissions
     .row-fluid
       .span7
@@ -78,6 +80,3 @@
         .span5 Share
         .span2
           = permission_checkbox(f, :share, Report)
-
-  = hidden_field_tag :partial, :results_permissions
-  = f.button :submit, 'Save', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}

@@ -6,7 +6,8 @@ class EventsCalendar
     @company_user = company_user
     @params = params.merge(
       company_id: @company_user.company_id,
-      current_company_user: @company_user)
+      current_company_user: @company_user,
+      search_permission: 'view_calendar')
   end
 
   def group(group)

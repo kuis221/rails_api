@@ -1,20 +1,23 @@
 = simple_form_for resource, remote: true do |f|
+  = hidden_field_tag :partial, :dashboard_permissions
+  / = f.button :submit, 'Save', class: 'btn btn-primary', data: { disable_with: 'Please wait...' }
+  = render 'save_bar'
   .permissions
     .row-fluid
       .span7
         .span5 Event Status
         .span2
-          = permission_checkbox(f, :kpi_trends_module, Symbol, 'dashboard')
+          = permission_checkbox(f, :kpi_trends_module, Symbol, subject: 'dashboard')
 
       .span7
         .span5 Upcoming events
         .span2
-          = permission_checkbox(f, :upcomings_events_module, Symbol, 'dashboard')
+          = permission_checkbox(f, :upcomings_events_module, Symbol, subject: 'dashboard')
 
       .span7
         .span5 Campaign Overview
         .span2
-          = permission_checkbox(f, :campaign_overview, Symbol, 'dashboard')
+          = permission_checkbox(f, :campaign_overview, Symbol, subject: 'dashboard')
 
       / .span7
       /   .span5 Demographics
@@ -24,22 +27,19 @@
       .span7
         .span5 Incomplete tasks
         .span2
-          = permission_checkbox(f, :incomplete_tasks_module, Symbol, 'dashboard')
+          = permission_checkbox(f, :incomplete_tasks_module, Symbol, subject: 'dashboard')
 
       .span7
         .span5 Venue Performance
         .span2
-          = permission_checkbox(f, :venue_performance_module, Symbol, 'dashboard')
+          = permission_checkbox(f, :venue_performance_module, Symbol, subject: 'dashboard')
 
       .span7
         .span5 Recent photos
         .span2
-          = permission_checkbox(f, :recent_photos_module, Symbol, 'dashboard')
+          = permission_checkbox(f, :recent_photos_module, Symbol, subject: 'dashboard')
 
       .span7
         .span5 Recent comments
         .span2
-          = permission_checkbox(f, :recent_comments_module, Symbol, 'dashboard')
-
-  = hidden_field_tag :partial, :dashboard_permissions
-  = f.button :submit, 'Save', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
+          = permission_checkbox(f, :recent_comments_module, Symbol, subject: 'dashboard')

@@ -25,10 +25,6 @@ feature 'Attendance', js: true, search: true do
       visit event_path(event)
       create_invite account: 'Guillermitos Bar', invites: 12
 
-      within '#activities-list' do
-        expect(page).to have_content('Invitation')
-      end
-
       within '#invites-list' do
         expect(page).to have_content('Guillermitos Bar')
         expect(page).to have_content('12 Invites')
@@ -42,29 +38,12 @@ feature 'Attendance', js: true, search: true do
       visit event_path(event)
 
       expect(page).to have_selector('#invites-list .resource-item')
-      expect(page).to have_selector('#activities-list .resource-item')
 
       hover_and_click '#invites-list .resource-item', 'Deactivate Attendance Record'
 
       confirm_prompt 'Are you sure you want to deactivate this attendance record?'
 
       expect(page).to have_no_selector('#invites-list .resource-item')
-      expect(page).to have_no_selector('#activities-list .resource-item')
-    end
-
-    scenario 'can deactivate invites from the activities list' do
-      create(:invite, venue: event.venue, event: event)
-      visit event_path(event)
-
-      expect(page).to have_selector('#invites-list .resource-item')
-      expect(page).to have_selector('#activities-list .resource-item')
-
-      hover_and_click '#activities-list .resource-item', 'Deactivate Attendance Record'
-
-      confirm_prompt 'Are you sure you want to deactivate this attendance record?'
-
-      expect(page).to have_no_selector('#invites-list .resource-item')
-      expect(page).to have_no_selector('#activities-list .resource-item')
     end
   end
 
@@ -91,19 +70,13 @@ feature 'Attendance', js: true, search: true do
     end
   end
 
-  def add_permissions(permissions)
-    permissions.each do |p|
-      company_user.role.permissions.create(action: p[0], subject_class: p[1])
-    end
-  end
-
   def create_invite(account: nil, invites: 12)
     Sunspot.commit
     click_js_button 'New Activity'
     within visible_modal do
       select_from_chosen('Invitation', from: 'Activity type')
       select_from_autocomplete 'Search for a place', 'Guillermitos Bar'
-      fill_in '# Invitees', with: '12'
+      fill_in '# Invites', with: '12'
       click_js_button 'Create'
     end
     ensure_modal_was_closed

@@ -11,7 +11,7 @@ describe Ability, type: :model do
     let(:other_company) { create(:company) }
     let(:event) { create(:event, campaign: campaign, company: company, place_id: place.id) }
     let(:event_in_other_company) do
-      without_current_user{ create(:event, campaign: create(:campaign), place: create(:place)) }
+      without_current_user{ create(:event, campaign: create(:campaign, company: other_company), place: create(:place)) }
     end
     let(:place) { create(:place) }
     let(:campaign) { create(:campaign, company: company) }
@@ -140,11 +140,9 @@ describe Ability, type: :model do
       it { is_expected.to be_able_to(:notifications, CompanyUser) }
 
       describe 'Event permissions' do
-        let(:campaign) { create(:campaign, company: company) }
         let(:event) do
           without_current_user do
-            create(:event, campaign: campaign,
-                                       place: create(:place))
+            create(:event, campaign: campaign, place: create(:place))
           end
         end
 
@@ -155,7 +153,7 @@ describe Ability, type: :model do
           expect(ability).not_to be_able_to(:update, event_in_other_company)
           expect(ability).not_to be_able_to(:edit_data, event_in_other_company)
 
-          user.role.permission_for(:edit_unsubmitted_data, Event).save
+          user.role.permission_for(:edit_unsubmitted_data, Event, mode: 'campaigns').save
 
           expect(ability).not_to be_able_to(:edit, event)
           expect(ability).not_to be_able_to(:update, event)
@@ -178,8 +176,52 @@ describe Ability, type: :model do
 
         it 'should be able to :edit Event if the role have the :update permission' do
           expect(ability).not_to be_able_to(:edit, Event)
-          user.role.permission_for(:update, Event).save
+          user.role.permission_for(:update, Event, mode: 'campaigns').save
           expect(ability).to be_able_to(:edit, Event)
+        end
+      end
+
+      describe 'Event campaign specific permissions' do
+        let(:company_user) { create(:company_user, company: company, role: create(:role, is_admin: false), user: create(:user,  current_company: company)) }
+        let(:user) { company_user.user }
+        let(:event) { without_current_user { create(:event, campaign: campaign, company: company, place_id: place.id) } }
+
+        before { company_user.places << event.place }
+
+        it 'cannot edit/update event if role has permission to edit only user campaigns\'s events' do
+          expect(ability).not_to be_able_to(:update, event)
+          user.role.permission_for(:update, Event, mode: 'campaigns').save
+          expect(ability).not_to be_able_to(:update, event)
+        end
+
+        it 'can edit/update event if role has permission to edit all campaigns\'s events' do
+          expect(ability).not_to be_able_to(:update, event)
+          user.role.permission_for(:update, Event, mode: 'all').save
+          expect(ability).to be_able_to(:update, event)
+        end
+
+        it 'cannot show event if role has permission to show only user campaigns\'s events' do
+          expect(ability).not_to be_able_to(:show, event)
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          expect(ability).not_to be_able_to(:show, event)
+        end
+
+        it 'can show event if role has permission to show all campaigns\'s events' do
+          expect(ability).not_to be_able_to(:show, event)
+          user.role.permission_for(:show, Event, mode: 'all').save
+          expect(ability).to be_able_to(:show, event)
+        end
+
+        it 'cannot show event if role has permission to show only user campaigns\'s events' do
+          expect(ability).not_to be_able_to(:show, event)
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          expect(ability).not_to be_able_to(:show, event)
+        end
+
+        it 'can show event if role has permission to show all campaigns\'s events' do
+          expect(ability).not_to be_able_to(:show, event)
+          user.role.permission_for(:show, Event, mode: 'all').save
+          expect(ability).to be_able_to(:show, event)
         end
       end
 
@@ -194,7 +236,7 @@ describe Ability, type: :model do
           expect(ability).not_to be_able_to(:add_kpi, campaign_in_other_comapany)
           expect(ability).not_to be_able_to(:remove_kpi, campaign_in_other_comapany)
 
-          user.role.permission_for(:activate_kpis, Campaign).save
+          user.role.permission_for(:activate_kpis, Campaign, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:add_kpi, campaign)
           expect(ability).to be_able_to(:remove_kpi, campaign)
@@ -208,7 +250,7 @@ describe Ability, type: :model do
           expect(ability).not_to be_able_to(:add_activity_type, campaign)
           expect(ability).not_to be_able_to(:remove_activity_type, campaign)
 
-          user.role.permission_for(:activate_kpis, Campaign).save
+          user.role.permission_for(:activate_kpis, Campaign, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:add_activity_type, campaign)
           expect(ability).to be_able_to(:remove_activity_type, campaign)
@@ -228,39 +270,39 @@ describe Ability, type: :model do
       #
       describe 'Event member permissions' do
         it 'should be able to view event members if has the permission :view_members on Event and can view the event' do
-          user.role.permission_for(:show, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
           other_event = without_current_user do
             create(:event, campaign: create(:campaign, company: create(:company)))
           end
           expect(ability).not_to be_able_to(:view_members, event)
 
-          user.role.permission_for(:view_members, Event).save
+          user.role.permission_for(:view_members, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:view_members, event)
           expect(ability).not_to be_able_to(:view_members, other_event)
         end
 
         it 'should be able to add members to event if has the permission :add_members on Event and can view the event' do
-          user.role.permission_for(:show, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
           other_event = without_current_user do
             create(:event, campaign: create(:campaign, company: create(:company)))
           end
           expect(ability).not_to be_able_to(:add_members, event)
 
-          user.role.permission_for(:add_members, Event).save
+          user.role.permission_for(:add_members, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:add_members, event)
           expect(ability).not_to be_able_to(:add_members, other_event)
         end
 
         it 'should be able to remove members from a event if has the permission :delete_member on Event and can view the event' do
-          user.role.permission_for(:show, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
           other_event = without_current_user do
             create(:event, campaign: create(:campaign, company: create(:company)))
           end
           expect(ability).not_to be_able_to(:delete_member, event)
 
-          user.role.permission_for(:delete_member, Event).save
+          user.role.permission_for(:delete_member, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:delete_member, event)
           expect(ability).not_to be_able_to(:delete_member, other_event)
@@ -277,52 +319,52 @@ describe Ability, type: :model do
       #
       describe 'Event contacts permissions' do
         it 'should be able to view event contacts if has the permission :view_contacts on Event and can view the event' do
-          user.role.permission_for(:show, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
           other_event = without_current_user do
             create(:event, campaign: create(:campaign, company: create(:company)))
           end
           expect(ability).not_to be_able_to(:view_contacts, event)
 
-          user.role.permission_for(:view_contacts, Event).save
+          user.role.permission_for(:view_contacts, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:view_contacts, event)
           expect(ability).not_to be_able_to(:view_contacts, other_event)
         end
 
         it 'should be able to add contacts to event if has the permission :create_contacts on Event and can view the event' do
-          user.role.permission_for(:show, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
           other_event = without_current_user do
             create(:event, campaign: create(:campaign, company: create(:company)))
           end
           expect(ability).not_to be_able_to(:create_contacts, event)
 
-          user.role.permission_for(:create_contacts, Event).save
+          user.role.permission_for(:create_contacts, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:create_contacts, event)
           expect(ability).not_to be_able_to(:create_contacts, other_event)
         end
 
         it 'should be able to remove contacts from a event if has the permission :delete_contact on Event and can view the event' do
-          user.role.permission_for(:show, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
           other_event = without_current_user do
             create(:event, campaign: create(:campaign, company: create(:company)))
           end
           expect(ability).not_to be_able_to(:delete_contact, event)
 
-          user.role.permission_for(:delete_contact, Event).save
+          user.role.permission_for(:delete_contact, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:delete_contact, event)
           expect(ability).not_to be_able_to(:delete_contact, other_event)
         end
 
         it 'should be able to remove contacts from a event if has the permission :delete_contact on Event and can view the event' do
-          user.role.permission_for(:show, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
           other_event = without_current_user do
             create(:event, campaign: create(:campaign, company: create(:company)))
           end
           expect(ability).not_to be_able_to(:delete_contact, event)
 
-          user.role.permission_for(:delete_contact, Event).save
+          user.role.permission_for(:delete_contact, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:delete_contact, event)
           expect(ability).not_to be_able_to(:delete_contact, other_event)
@@ -342,8 +384,8 @@ describe Ability, type: :model do
           task = create(:task, event: event)
           expect(ability).not_to be_able_to(:edit, task)
 
-          user.role.permission_for(:show, Event).save
-          user.role.permission_for(:edit_task, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          user.role.permission_for(:edit_task, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:edit, task)
           expect(ability).to be_able_to(:update, task)
@@ -353,7 +395,7 @@ describe Ability, type: :model do
           task = create(:task, event: event, company_user: company_user)
           expect(ability).not_to be_able_to(:edit, task)
 
-          user.role.permission_for(:edit_my, Task).save
+          user.role.permission_for(:edit_my, Task, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:edit, task)
           expect(ability).to be_able_to(:update, task)
@@ -364,7 +406,7 @@ describe Ability, type: :model do
           task = create(:task, event: event)
           expect(ability).not_to be_able_to(:edit, task)
 
-          user.role.permission_for(:edit_team, Task).save
+          user.role.permission_for(:edit_team, Task, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:edit, task)
           expect(ability).to be_able_to(:update, task)
@@ -374,8 +416,8 @@ describe Ability, type: :model do
           task = create(:task, event: event)
           expect(ability).not_to be_able_to(:deactivate, task)
 
-          user.role.permission_for(:show, Event).save
-          user.role.permission_for(:deactivate_task, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          user.role.permission_for(:deactivate_task, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:deactivate, task)
           expect(ability).to be_able_to(:activate, task)
@@ -385,7 +427,7 @@ describe Ability, type: :model do
           task = create(:task, event: event, company_user: company_user)
           expect(ability).not_to be_able_to(:deactivate, task)
 
-          user.role.permission_for(:deactivate_my, Task).save
+          user.role.permission_for(:deactivate_my, Task, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:deactivate, task)
           expect(ability).to be_able_to(:activate, task)
@@ -396,7 +438,7 @@ describe Ability, type: :model do
           task = create(:task, event: event)
           expect(ability).not_to be_able_to(:deactivate, task)
 
-          user.role.permission_for(:deactivate_team, Task).save
+          user.role.permission_for(:deactivate_team, Task, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:deactivate, task)
           expect(ability).to be_able_to(:activate, task)
@@ -406,8 +448,8 @@ describe Ability, type: :model do
           task = create(:task, event: event)
           expect(ability).not_to be_able_to(:create, task)
 
-          user.role.permission_for(:show, Event).save
-          user.role.permission_for(:create_task, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          user.role.permission_for(:create_task, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:create, task)
         end
@@ -416,8 +458,8 @@ describe Ability, type: :model do
           expect(ability).not_to be_able_to(:tasks, event)
           expect(ability).not_to be_able_to(:index_tasks, event)
 
-          user.role.permission_for(:show, Event).save
-          user.role.permission_for(:index_tasks, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          user.role.permission_for(:index_tasks, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:tasks, event)
           expect(ability).to be_able_to(:index_tasks, event)
@@ -437,8 +479,8 @@ describe Ability, type: :model do
           document = create(:document, attachable: event)
           expect(ability).not_to be_able_to(:deactivate, document)
 
-          user.role.permission_for(:show, Event).save
-          user.role.permission_for(:deactivate_document, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          user.role.permission_for(:deactivate_document, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:deactivate, document)
           expect(ability).to be_able_to(:activate, document)
@@ -448,8 +490,8 @@ describe Ability, type: :model do
           document = create(:document, attachable: event)
           expect(ability).not_to be_able_to(:create_document, Event)
 
-          user.role.permission_for(:show, Event).save
-          user.role.permission_for(:create_document, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          user.role.permission_for(:create_document, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:create_document, Event)
         end
@@ -458,8 +500,8 @@ describe Ability, type: :model do
           expect(ability).not_to be_able_to(:documents, event)
           expect(ability).not_to be_able_to(:index_documents, event)
 
-          user.role.permission_for(:show, Event).save
-          user.role.permission_for(:index_documents, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          user.role.permission_for(:index_documents, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:documents, event)
           expect(ability).to be_able_to(:index_documents, event)
@@ -475,12 +517,13 @@ describe Ability, type: :model do
       #  |_____| \_/  |_____||__|__|  |__|      |__|  |__|__| \___/   |__|   \___/  \___|
       #
       describe 'Event photos permissions' do
+        let(:new_photo) { build(:photo, attachable: event) }
         it 'should be able to deactivate a photo in a event if has the permission :deactivate_photo on Event' do
           photo = create(:photo, attachable: event)
           expect(ability).not_to be_able_to(:deactivate, photo)
 
-          user.role.permission_for(:show, Event).save
-          user.role.permission_for(:deactivate_photo, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          user.role.permission_for(:deactivate_photo, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:deactivate, photo)
           expect(ability).to be_able_to(:activate, photo)
@@ -488,13 +531,13 @@ describe Ability, type: :model do
 
         it 'should be able to create a photo in a event if has the permission :create_photo on Event' do
           photo = create(:photo, attachable: event)
-          expect(ability).not_to be_able_to(:create, AttachedAsset)
-          expect(ability).not_to be_able_to(:create, Event)
+          expect(ability).not_to be_able_to(:create, new_photo)
+          expect(ability).not_to be_able_to(:create_photo, Event)
 
-          user.role.permission_for(:show, Event).save
-          user.role.permission_for(:create_photo, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          user.role.permission_for(:create_photo, Event, mode: 'campaigns').save
 
-          expect(ability).not_to be_able_to(:create, AttachedAsset)
+          expect(ability).to be_able_to(:create, new_photo)
           expect(ability).to be_able_to(:create_photo, Event)
         end
 
@@ -502,29 +545,77 @@ describe Ability, type: :model do
           expect(ability).not_to be_able_to(:photos, event)
           expect(ability).not_to be_able_to(:index_photos, event)
 
-          user.role.permission_for(:show, Event).save
-          user.role.permission_for(:index_photos, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          user.role.permission_for(:index_photos, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:photos, event)
           expect(ability).to be_able_to(:index_photos, event)
         end
 
         it 'should be able to view rate of the photo' do
-          asset = build(:photo, attachable: Event.new(company: company))
+          asset = build(:photo, attachable: event)
           expect(ability).not_to be_able_to(:view_rate, asset)
 
-          user.role.permission_for(:view_rate, AttachedAsset).save
+          user.role.permission_for(:view_rate, AttachedAsset, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:view_rate, asset)
         end
 
         it 'should be able to rate a photo' do
-          asset = build(:photo, attachable: Event.new(company: company))
+          asset = build(:photo, attachable: event)
           expect(ability).not_to be_able_to(:rate, asset)
 
-          user.role.permission_for(:rate, AttachedAsset).save
+          user.role.permission_for(:rate, AttachedAsset, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:rate, asset)
+        end
+
+        describe 'when mode is set to "all"' do
+          let(:event) { without_current_user { create(:event, place: place, campaign: create(:campaign, company: company)) } }
+          let(:photo) { create(:photo, attachable: event) }
+          let(:new_photo) { build(:photo, attachable: event) }
+
+          it 'can deactivate any photo of any campaign in company' do
+            expect(ability).not_to be_able_to(:deactivate, photo)
+
+            user.role.permission_for(:show, Event, mode: 'all').save
+            user.role.permission_for(:deactivate_photo, Event, mode: 'all').save
+
+            expect(ability).to be_able_to(:deactivate, photo)
+            expect(ability).to be_able_to(:activate, photo)
+          end
+
+          it 'cannot deactivate photos that are not on user\'s allowed campaigns' do
+            expect(ability).not_to be_able_to(:deactivate, photo)
+
+            user.role.permission_for(:show, Event, mode: 'all').save
+            user.role.permission_for(:deactivate_photo, Event, mode: 'campaigns').save
+
+            expect(ability).to_not be_able_to(:deactivate, photo)
+            expect(ability).to_not be_able_to(:activate, photo)
+          end
+
+          it 'can deactivate any photo of any campaign in company' do
+            expect(ability).not_to be_able_to(:photos, event)
+            expect(ability).not_to be_able_to(:index_photos, event)
+
+            user.role.permission_for(:show, Event, mode: 'all').save
+            user.role.permission_for(:index_photos, Event, mode: 'all').save
+
+            expect(ability).to be_able_to(:photos, event)
+            expect(ability).to be_able_to(:index_photos, event)
+          end
+
+          it 'cannot deactivate photos that are not on user\'s allowed campaigns' do
+            expect(ability).not_to be_able_to(:photos, event)
+            expect(ability).not_to be_able_to(:index_photos, event)
+
+            user.role.permission_for(:show, Event, mode: 'all').save
+            user.role.permission_for(:index_photos, Event, mode: 'campaigns').save
+
+            expect(ability).to_not be_able_to(:photos, event)
+            expect(ability).to_not be_able_to(:index_photos, event)
+          end
         end
       end
 
@@ -541,8 +632,8 @@ describe Ability, type: :model do
           event_expense = create(:event_expense, event: event)
           expect(ability).not_to be_able_to(:destroy, event_expense)
 
-          user.role.permission_for(:show, Event).save
-          user.role.permission_for(:deactivate_expense, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          user.role.permission_for(:deactivate_expense, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:destroy, event_expense)
         end
@@ -551,8 +642,8 @@ describe Ability, type: :model do
           event_expense = create(:event_expense, event: event)
           expect(ability).not_to be_able_to(:edit, event_expense)
 
-          user.role.permission_for(:show, Event).save
-          user.role.permission_for(:edit_expense, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          user.role.permission_for(:edit_expense, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:edit, event_expense)
           expect(ability).to be_able_to(:update, event_expense)
@@ -562,8 +653,8 @@ describe Ability, type: :model do
           event_expense = create(:event_expense, event: event)
           expect(ability).not_to be_able_to(:create, event_expense)
 
-          user.role.permission_for(:show, Event).save
-          user.role.permission_for(:create_expense, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          user.role.permission_for(:create_expense, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:create, event_expense)
         end
@@ -572,8 +663,8 @@ describe Ability, type: :model do
           expect(ability).not_to be_able_to(:expenses, event)
           expect(ability).not_to be_able_to(:index_expenses, event)
 
-          user.role.permission_for(:show, Event).save
-          user.role.permission_for(:index_expenses, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          user.role.permission_for(:index_expenses, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:expenses, event)
           expect(ability).to be_able_to(:index_expenses, event)
@@ -593,8 +684,8 @@ describe Ability, type: :model do
           survey = build(:survey, event: event)
           expect(ability).not_to be_able_to(:deactivate, survey)
 
-          user.role.permission_for(:show, Event).save
-          user.role.permission_for(:deactivate_survey, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          user.role.permission_for(:deactivate_survey, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:deactivate, survey)
           expect(ability).to be_able_to(:activate, survey)
@@ -604,8 +695,8 @@ describe Ability, type: :model do
           survey = build(:survey, event: event)
           expect(ability).not_to be_able_to(:edit, survey)
 
-          user.role.permission_for(:show, Event).save
-          user.role.permission_for(:edit_survey, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          user.role.permission_for(:edit_survey, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:edit, survey)
           expect(ability).to be_able_to(:update, survey)
@@ -615,8 +706,8 @@ describe Ability, type: :model do
           survey = build(:survey, event: event)
           expect(ability).not_to be_able_to(:create, survey)
 
-          user.role.permission_for(:show, Event).save
-          user.role.permission_for(:create_survey, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          user.role.permission_for(:create_survey, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:create, survey)
         end
@@ -625,8 +716,8 @@ describe Ability, type: :model do
           expect(ability).not_to be_able_to(:surveys, event)
           expect(ability).not_to be_able_to(:index_surveys, event)
 
-          user.role.permission_for(:show, Event).save
-          user.role.permission_for(:index_surveys, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          user.role.permission_for(:index_surveys, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:surveys, event)
           expect(ability).to be_able_to(:index_surveys, event)
@@ -646,8 +737,8 @@ describe Ability, type: :model do
           comment = build(:comment, commentable: event)
           expect(ability).not_to be_able_to(:destroy, comment)
 
-          user.role.permission_for(:show, Event).save
-          user.role.permission_for(:deactivate_comment, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          user.role.permission_for(:deactivate_comment, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:destroy, comment)
         end
@@ -656,8 +747,8 @@ describe Ability, type: :model do
           comment = build(:comment, commentable: event)
           expect(ability).not_to be_able_to(:edit, comment)
 
-          user.role.permission_for(:show, Event).save
-          user.role.permission_for(:edit_comment, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          user.role.permission_for(:edit_comment, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:edit, comment)
           expect(ability).to be_able_to(:update, comment)
@@ -667,8 +758,8 @@ describe Ability, type: :model do
           comment = build(:comment, commentable: event)
           expect(ability).not_to be_able_to(:create, comment)
 
-          user.role.permission_for(:show, Event).save
-          user.role.permission_for(:create_comment, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          user.role.permission_for(:create_comment, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:create, comment)
         end
@@ -677,8 +768,8 @@ describe Ability, type: :model do
           expect(ability).not_to be_able_to(:comments, event)
           expect(ability).not_to be_able_to(:index_comments, event)
 
-          user.role.permission_for(:show, Event).save
-          user.role.permission_for(:index_comments, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          user.role.permission_for(:index_comments, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:comments, event)
           expect(ability).to be_able_to(:index_comments, event)
@@ -698,8 +789,8 @@ describe Ability, type: :model do
           contact = build(:contact_event, event: event)
           expect(ability).not_to be_able_to(:destroy, contact)
 
-          user.role.permission_for(:show, Event).save
-          user.role.permission_for(:delete_contact, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          user.role.permission_for(:delete_contact, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:destroy, contact)
         end
@@ -708,8 +799,8 @@ describe Ability, type: :model do
           contact = build(:contact_event, event: event)
           expect(ability).not_to be_able_to(:edit, contact)
 
-          user.role.permission_for(:show, Event).save
-          user.role.permission_for(:edit_contacts, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          user.role.permission_for(:edit_contacts, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:edit, contact)
           expect(ability).to be_able_to(:update, contact)
@@ -719,8 +810,8 @@ describe Ability, type: :model do
           contact = build(:contact_event, event: event)
           expect(ability).not_to be_able_to(:create, contact)
 
-          user.role.permission_for(:show, Event).save
-          user.role.permission_for(:create_contacts, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          user.role.permission_for(:create_contacts, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:create, contact)
           expect(ability).not_to be_able_to(:create, build(:contact_event, event: event_in_other_company))
@@ -729,8 +820,8 @@ describe Ability, type: :model do
         it 'should be able to list comments in a event if has the permission :view_contacts on Event' do
           expect(ability).not_to be_able_to(:view_contacts, event)
 
-          user.role.permission_for(:show, Event).save
-          user.role.permission_for(:view_contacts, Event).save
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          user.role.permission_for(:view_contacts, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:view_contacts, event)
           expect(ability).not_to be_able_to(:view_contacts, event_in_other_company)
@@ -752,7 +843,7 @@ describe Ability, type: :model do
           expect(ability).not_to be_able_to(:index_my_comments, Task)
           expect(ability).not_to be_able_to(:comments, task)
 
-          user.role.permission_for(:index_my_comments, Task).save
+          user.role.permission_for(:index_my_comments, Task, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:index_my_comments, Task)
           expect(ability).to be_able_to(:comments, task)
@@ -766,7 +857,7 @@ describe Ability, type: :model do
           expect(ability).not_to be_able_to(:index_team_comments, Task)
           expect(ability).not_to be_able_to(:comments, task)
 
-          user.role.permission_for(:index_team_comments, Task).save
+          user.role.permission_for(:index_team_comments, Task, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:index_team_comments, Task)
           expect(ability).to be_able_to(:comments, task)
@@ -785,43 +876,43 @@ describe Ability, type: :model do
 
         it 'should be able to view calendar module' do
           expect(ability).not_to be_able_to(:calendar_module, :dashboard)
-          user.role.permission_for(:calendar_module, Symbol, 'dashboard').save
+          user.role.permission_for(:calendar_module, Symbol, subject: 'dashboard', mode: 'campaigns').save
           expect(ability).to be_able_to(:calendar_module, :dashboard)
         end
 
         it 'should be able to view kpi trends module' do
           expect(ability).not_to be_able_to(:kpi_trends_module, :dashboard)
-          user.role.permission_for(:kpi_trends_module, Symbol, 'dashboard').save
+          user.role.permission_for(:kpi_trends_module, Symbol, subject: 'dashboard', mode: 'campaigns').save
           expect(ability).to be_able_to(:kpi_trends_module, :dashboard)
         end
 
         it 'should be able to view upcomings events module' do
           expect(ability).not_to be_able_to(:upcomings_events_module, :dashboard)
-          user.role.permission_for(:upcomings_events_module, Symbol, 'dashboard').save
+          user.role.permission_for(:upcomings_events_module, Symbol, subject: 'dashboard', mode: 'campaigns').save
           expect(ability).to be_able_to(:upcomings_events_module, :dashboard)
         end
 
         it 'should be able to view dashboard module' do
           expect(ability).not_to be_able_to(:demographics_module, :dashboard)
-          user.role.permission_for(:demographics_module, Symbol, 'dashboard').save
+          user.role.permission_for(:demographics_module, Symbol, subject: 'dashboard', mode: 'campaigns').save
           expect(ability).to be_able_to(:demographics_module, :dashboard)
         end
 
         it 'should be able to view incomplete task module' do
           expect(ability).not_to be_able_to(:incomplete_tasks_module, :dashboard)
-          user.role.permission_for(:incomplete_tasks_module, Symbol, 'dashboard').save
+          user.role.permission_for(:incomplete_tasks_module, Symbol, subject: 'dashboard', mode: 'campaigns').save
           expect(ability).to be_able_to(:incomplete_tasks_module, :dashboard)
         end
 
         it 'should be able to view recent photos module' do
           expect(ability).not_to be_able_to(:recent_photos_module, :dashboard)
-          user.role.permission_for(:recent_photos_module, Symbol, 'dashboard').save
+          user.role.permission_for(:recent_photos_module, Symbol, subject: 'dashboard', mode: 'campaigns').save
           expect(ability).to be_able_to(:recent_photos_module, :dashboard)
         end
 
         it 'should be able to view venue performance module' do
           expect(ability).not_to be_able_to(:venue_performance_module, :dashboard)
-          user.role.permission_for(:venue_performance_module, Symbol, 'dashboard').save
+          user.role.permission_for(:venue_performance_module, Symbol, subject: 'dashboard', mode: 'campaigns').save
           expect(ability).to be_able_to(:venue_performance_module, :dashboard)
         end
       end
@@ -839,7 +930,7 @@ describe Ability, type: :model do
           tag = create(:tag, company: company)
           expect(ability).not_to be_able_to(:remove, tag)
 
-          user.role.permission_for(:remove, Tag).save
+          user.role.permission_for(:remove, Tag, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:remove, tag)
         end
@@ -847,7 +938,7 @@ describe Ability, type: :model do
           tag = create(:tag, company: company)
           expect(ability).not_to be_able_to(:activate, tag)
 
-          user.role.permission_for(:activate, Tag).save
+          user.role.permission_for(:activate, Tag, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:activate, tag)
         end
@@ -856,7 +947,7 @@ describe Ability, type: :model do
           tag = create(:tag, company: company)
           expect(ability).not_to be_able_to(:activate, tag)
 
-          user.role.permission_for(:remove, Tag).save
+          user.role.permission_for(:remove, Tag, mode: 'campaigns').save
 
           expect(ability).not_to be_able_to(:activate, tag)
         end
@@ -874,7 +965,7 @@ describe Ability, type: :model do
         it 'should be able to access the GvA report' do
           expect(ability).not_to be_able_to(:gva_report, Campaign)
 
-          user.role.permission_for(:gva_report, Campaign).save
+          user.role.permission_for(:gva_report, Campaign, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:gva_report, Campaign)
         end
@@ -884,7 +975,7 @@ describe Ability, type: :model do
           expect(ability).not_to be_able_to(:gva_report, Campaign)
           expect(ability).not_to be_able_to(:gva_report_campaign, campaign)
 
-          user.role.permission_for(:gva_report, Campaign).save
+          user.role.permission_for(:gva_report, Campaign, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:gva_report, Campaign)
           expect(ability).not_to be_able_to(:gva_report_campaign, campaign)
@@ -910,7 +1001,7 @@ describe Ability, type: :model do
         it 'should be able to access the Event Status report' do
           expect(ability).not_to be_able_to(:gva_report, Campaign)
 
-          user.role.permission_for(:gva_report, Campaign).save
+          user.role.permission_for(:gva_report, Campaign, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:gva_report, Campaign)
         end
@@ -921,7 +1012,7 @@ describe Ability, type: :model do
           expect(ability).not_to be_able_to(:event_status, Campaign)
           expect(ability).not_to be_able_to(:event_status_report_campaign, campaign)
 
-          user.role.permission_for(:event_status, Campaign).save
+          user.role.permission_for(:event_status, Campaign, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:event_status, Campaign)
           expect(ability).not_to be_able_to(:event_status_report_campaign, campaign)
@@ -947,7 +1038,7 @@ describe Ability, type: :model do
         it 'should be able to view a list of custom reports' do
           expect(ability).not_to be_able_to(:index, Report)
 
-          user.role.permission_for(:index, Report).save
+          user.role.permission_for(:index, Report, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:index, Report)
         end
@@ -956,7 +1047,7 @@ describe Ability, type: :model do
           report  = company.reports.create(created_by_id: user.id)
           expect(ability).not_to be_able_to(:show, report)
 
-          user.role.permission_for(:show, Report).save
+          user.role.permission_for(:show, Report, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:show, report)
         end
@@ -968,7 +1059,7 @@ describe Ability, type: :model do
           non_shared_report.update_attribute(:created_by_id, user.id + 100)
           expect(ability).not_to be_able_to(:show, report)
 
-          user.role.permission_for(:show, Report).save
+          user.role.permission_for(:show, Report, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:show, report)
           expect(ability).not_to be_able_to(:show, non_shared_report)
@@ -978,7 +1069,7 @@ describe Ability, type: :model do
           report  = create(:report, company: company, created_by_id: user.id)
           expect(ability).not_to be_able_to(:update, report)
 
-          user.role.permission_for(:create, Report).save
+          user.role.permission_for(:create, Report, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:update, report)
         end
@@ -988,7 +1079,7 @@ describe Ability, type: :model do
           expect(ability).not_to be_able_to(:update, report)
           expect(ability).not_to be_able_to(:edit, report)
 
-          user.role.permission_for(:update, Report).save
+          user.role.permission_for(:update, Report, mode: 'campaigns').save
 
           expect(ability).not_to be_able_to(:update, report)
           expect(ability).not_to be_able_to(:edit, report)
@@ -1002,7 +1093,7 @@ describe Ability, type: :model do
           report = without_current_user { create(:report, company: company, created_by_id: user.id + 100) }
           expect(ability).not_to be_able_to(:update, report)
 
-          user.role.permission_for(:create, Report).save
+          user.role.permission_for(:create, Report, mode: 'campaigns').save
 
           expect(ability).not_to be_able_to(:update, report)
         end
@@ -1012,7 +1103,7 @@ describe Ability, type: :model do
           expect(ability).not_to be_able_to(:edit, report)
           expect(ability).not_to be_able_to(:update, report)
 
-          user.role.permission_for(:update, Report).save
+          user.role.permission_for(:update, Report, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:edit, report)
           expect(ability).to be_able_to(:update, report)
@@ -1024,7 +1115,7 @@ describe Ability, type: :model do
           expect(ability).not_to be_able_to(:edit, report)
           expect(ability).not_to be_able_to(:update, report)
 
-          user.role.permission_for(:update, Report).save
+          user.role.permission_for(:update, Report, mode: 'campaigns').save
 
           expect(ability).not_to be_able_to(:edit, report)
           expect(ability).not_to be_able_to(:update, report)
@@ -1038,7 +1129,7 @@ describe Ability, type: :model do
           report  = create(:report, company: company, created_by_id: user.id)
           expect(ability).not_to be_able_to(:share, report)
 
-          user.role.permission_for(:share, Report).save
+          user.role.permission_for(:share, Report, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:share, report)
         end
@@ -1048,7 +1139,7 @@ describe Ability, type: :model do
 
           expect(ability).not_to be_able_to(:share, report)
 
-          user.role.permission_for(:share, Report).save
+          user.role.permission_for(:share, Report, mode: 'campaigns').save
 
           expect(ability).not_to be_able_to(:share, report)
 
@@ -1066,41 +1157,42 @@ describe Ability, type: :model do
       #  |_____||__|__|    |_____| \___/ \____| \__,_||___|___||_____||__|__|  |__|   \___|
       #
       describe 'Brand ambassador documents permissions' do
+        let(:document) { create(:brand_ambassadors_document, attachable: company) }
+        let(:new_document) { build(:brand_ambassadors_document, attachable: company) }
         it 'should be able to list documents if has the permission :index on BrandAmbassadors::Document' do
           expect(ability).not_to be_able_to(:index, BrandAmbassadors::Document)
 
-          user.role.permission_for(:index, BrandAmbassadors::Document).save
+          user.role.permission_for(:index, BrandAmbassadors::Document, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:index, BrandAmbassadors::Document)
         end
 
         it 'should be able to create/move/edit/destory documents if has the permission :create on BrandAmbassadors::Document' do
-          expect(ability).not_to be_able_to(:create, BrandAmbassadors::Document)
-          expect(ability).not_to be_able_to(:move, BrandAmbassadors::Document)
-          expect(ability).not_to be_able_to(:update, BrandAmbassadors::Document)
-          expect(ability).not_to be_able_to(:edit, BrandAmbassadors::Document)
-          expect(ability).not_to be_able_to(:destroy, BrandAmbassadors::Document)
-          expect(ability).not_to be_able_to(:new, BrandAmbassadors::Document)
+          expect(ability).not_to be_able_to(:create, new_document)
+          expect(ability).not_to be_able_to(:move, document)
+          expect(ability).not_to be_able_to(:update, document)
+          expect(ability).not_to be_able_to(:edit, document)
+          expect(ability).not_to be_able_to(:destroy, document)
+          expect(ability).not_to be_able_to(:new, document)
 
-          user.role.permission_for(:create, BrandAmbassadors::Document).save
+          user.role.permission_for(:create, BrandAmbassadors::Document, mode: 'campaigns').save
 
           ability = Ability.new(user)
 
-          expect(ability).to be_able_to(:create, BrandAmbassadors::Document)
-          expect(ability).to be_able_to(:move, BrandAmbassadors::Document)
-          expect(ability).to be_able_to(:update, BrandAmbassadors::Document)
-          expect(ability).to be_able_to(:edit, BrandAmbassadors::Document)
-          expect(ability).to be_able_to(:destroy, BrandAmbassadors::Document)
-          expect(ability).to be_able_to(:new, BrandAmbassadors::Document)
+          expect(ability).to be_able_to(:create, new_document)
+          expect(ability).to be_able_to(:move, document)
+          expect(ability).to be_able_to(:update, document)
+          expect(ability).to be_able_to(:edit, document)
+          expect(ability).to be_able_to(:destroy, document)
+          expect(ability).to be_able_to(:new, document)
         end
 
-        it 'should be able to update  documents if has the permission :update on BrandAmbassadors::Document' do
-          document = create(:brand_ambassadors_document, attachable: company)
+        it 'should be able to update documents if has the permission :update on BrandAmbassadors::Document' do
           document_not_allowed = create(:brand_ambassadors_document, attachable: create(:company))
           expect(ability).not_to be_able_to(:update, document)
           expect(ability).not_to be_able_to(:edit, document)
 
-          user.role.permission_for(:update, BrandAmbassadors::Document).save
+          user.role.permission_for(:update, BrandAmbassadors::Document, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:update, document)
           expect(ability).to be_able_to(:edit, document)
@@ -1109,12 +1201,11 @@ describe Ability, type: :model do
           expect(ability).not_to be_able_to(:edit, document_not_allowed)
         end
 
-        it 'should be able to activate/deactivate  documents if has the permission :update on BrandAmbassadors::Document' do
-          document = BrandAmbassadors::Document.new(attachable: company)
+        it 'should be able to activate/deactivate documents if has the permission :update on BrandAmbassadors::Document' do
           expect(ability).not_to be_able_to(:deactivate, document)
           expect(ability).not_to be_able_to(:activate, document)
 
-          user.role.permission_for(:deactivate, BrandAmbassadors::Document).save
+          user.role.permission_for(:deactivate, BrandAmbassadors::Document, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:deactivate, document)
           expect(ability).to be_able_to(:activate, document)
@@ -1132,7 +1223,7 @@ describe Ability, type: :model do
         it 'can export campaign forms if has the permission :view_event_form on Campaign' do
           expect(ability).not_to be_able_to(:export_fieldable, campaign)
 
-          user.role.permission_for(:view_event_form, Campaign).save
+          user.role.permission_for(:view_event_form, Campaign, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:export_fieldable, campaign)
         end
@@ -1141,7 +1232,7 @@ describe Ability, type: :model do
           activity_type = company.activity_types.create(name: 'Prueba')
           expect(ability).not_to be_able_to(:export_fieldable, activity_type)
 
-          user.role.permission_for(:show, ActivityType).save
+          user.role.permission_for(:show, ActivityType, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:export_fieldable, activity_type)
         end
@@ -1154,7 +1245,7 @@ describe Ability, type: :model do
                             activity_type: campaign.activity_types.first)
           expect(ability).not_to be_able_to(:export_fieldable, activity)
 
-          user.role.permission_for(:show, Activity).save
+          user.role.permission_for(:show, Activity, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:export_fieldable, activity)
         end
@@ -1163,7 +1254,7 @@ describe Ability, type: :model do
           event = create(:event, campaign: campaign, place: place)
           expect(ability).not_to be_able_to(:export_fieldable, event)
 
-          user.role.permission_for(:edit_unsubmitted_data, Event).save
+          user.role.permission_for(:edit_unsubmitted_data, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:export_fieldable, event)
         end
@@ -1172,7 +1263,7 @@ describe Ability, type: :model do
           event = create(:submitted_event, campaign: campaign, place: place)
           expect(ability).not_to be_able_to(:export_fieldable, event)
 
-          user.role.permission_for(:edit_submitted_data, Event).save
+          user.role.permission_for(:edit_submitted_data, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:export_fieldable, event)
         end
@@ -1181,7 +1272,7 @@ describe Ability, type: :model do
           event = create(:approved_event, campaign: campaign, place: place)
           expect(ability).not_to be_able_to(:export_fieldable, event)
 
-          user.role.permission_for(:edit_approved_data, Event).save
+          user.role.permission_for(:edit_approved_data, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:export_fieldable, event)
         end
@@ -1190,7 +1281,7 @@ describe Ability, type: :model do
           event = create(:rejected_event, campaign: campaign, place: place)
           expect(ability).not_to be_able_to(:export_fieldable, event)
 
-          user.role.permission_for(:edit_rejected_data, Event).save
+          user.role.permission_for(:edit_rejected_data, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:export_fieldable, event)
         end
@@ -1199,7 +1290,7 @@ describe Ability, type: :model do
           event = create(:event, campaign: campaign, place: place)
           expect(ability).not_to be_able_to(:export_fieldable, event)
 
-          user.role.permission_for(:view_unsubmitted_data, Event).save
+          user.role.permission_for(:view_unsubmitted_data, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:export_fieldable, event)
         end
@@ -1208,7 +1299,7 @@ describe Ability, type: :model do
           event = create(:submitted_event, campaign: campaign, place: place)
           expect(ability).not_to be_able_to(:export_fieldable, event)
 
-          user.role.permission_for(:view_submitted_data, Event).save
+          user.role.permission_for(:view_submitted_data, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:export_fieldable, event)
         end
@@ -1217,7 +1308,7 @@ describe Ability, type: :model do
           event = create(:approved_event, campaign: campaign, place: place)
           expect(ability).not_to be_able_to(:export_fieldable, event)
 
-          user.role.permission_for(:view_approved_data, Event).save
+          user.role.permission_for(:view_approved_data, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:export_fieldable, event)
         end
@@ -1226,7 +1317,7 @@ describe Ability, type: :model do
           event = create(:rejected_event, campaign: campaign, place: place)
           expect(ability).not_to be_able_to(:export_fieldable, event)
 
-          user.role.permission_for(:view_rejected_data, Event).save
+          user.role.permission_for(:view_rejected_data, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:export_fieldable, event)
         end
@@ -1246,7 +1337,7 @@ describe Ability, type: :model do
           event = create(:event, campaign: campaign, place: place)
           expect(ability).not_to be_able_to(:index_invites, event)
 
-          user.role.permission_for(:index_invites, Event).save
+          user.role.permission_for(:index_invites, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:index_invites, event)
         end
@@ -1256,7 +1347,7 @@ describe Ability, type: :model do
           invite = build(:invite, event: event)
           expect(ability).not_to be_able_to(:create, invite)
 
-          user.role.permission_for(:create_invite, Event).save
+          user.role.permission_for(:create_invite, Event, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:create, invite)
         end
