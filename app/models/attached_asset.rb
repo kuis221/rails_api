@@ -194,7 +194,13 @@ class AttachedAsset < ActiveRecord::Base
         company_user = params[:current_company_user]
         if company_user.present?
           unless company_user.role.is_admin?
-            with(:campaign_id, company_user.accessible_campaign_ids + [0])
+            case company_user.role.permission_for(:index_photos, Event).mode
+            when 'campaigns'
+              with :campaign_id, company_user.accessible_campaign_ids + [0]
+            when 'none'
+              with :campaign_id, 0
+            end
+
             any_of do
               locations = company_user.accessible_locations
               places_ids = company_user.accessible_places
