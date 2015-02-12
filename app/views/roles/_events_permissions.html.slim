@@ -149,7 +149,7 @@
 
       .span12
         .span3 View approved data
-        .span2 = permission_checkbox(f, :view_approved_data, Event)
+        .span2 = permission_checkbox(f, :view_approved_data, Event, allow_all: true)
 
       .span12.separate_small
         .span3 Edit unsubmitted data
