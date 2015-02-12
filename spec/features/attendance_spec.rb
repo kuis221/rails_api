@@ -91,12 +91,6 @@ feature 'Attendance', js: true, search: true do
     end
   end
 
-  def add_permissions(permissions)
-    permissions.each do |p|
-      company_user.role.permissions.create(action: p[0], subject_class: p[1])
-    end
-  end
-
   def create_invite(account: nil, invites: 12)
     Sunspot.commit
     click_js_button 'New Activity'

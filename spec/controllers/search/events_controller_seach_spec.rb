@@ -178,7 +178,7 @@ describe EventsController, type: :controller, search: true do
         filters = JSON.parse(response.body)
         expect(filters['filters'].map { |b| b['label'] }).to eq([
           'Campaigns', 'Brands', 'Areas', 'People', 'Event Status',
-          'Active State', 'SAVED FILTERS'])
+          'Active State'])
       end
 
       it 'should return the correct buckets in the right order' do
@@ -207,7 +207,7 @@ describe EventsController, type: :controller, search: true do
 
         expect(filters['filters'].map { |b| b['label'] }).to eq([
           'Campaigns', 'Brands', 'Areas', 'People', 'Event Status',
-          'Active State', 'SAVED FILTERS'])
+          'Active State'])
         expect(filters['filters'][0]['items'].count).to eq(1)
         expect(filters['filters'][0]['items'].first['label']).to eq(campaign.name)
       end

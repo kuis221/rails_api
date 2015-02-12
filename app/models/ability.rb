@@ -14,7 +14,7 @@ class Ability
     alias_action :reject, to: :approve
     alias_action :post_event_form, :update_post_event_form, to: :view_event_form
 
-    company_user = user.current_company_user if user.id
+    company_user = user.current_company_user if user.id && !user.is_a?(AdminUser)
 
     # All users
     if user.id && !user.is_a?(AdminUser)
@@ -96,7 +96,7 @@ class Ability
         Rails.logger.debug "Checking #{action} on #{subject_class} :: #{subject}"
         user.role.cached_permissions.select { |p| p['mode'] != 'none' && aliases_for_action(action).map(&:to_s).include?(p['action'].to_s) }.any? do |permission|
           (permission['subject_class'] == subject_class.to_s) &&
-          (subject.nil? || permission['mode'] == 'all' || !subject.respond_to?(:campaign_id) || company_user.accessible_campaign_ids.include?(subject.campaign_id)) &&
+          (subject.nil? || permission['mode'] == 'all' || !subject.respond_to?(:campaign_id) || (action.to_s == 'new' && subject.new_record?)  || company_user.accessible_campaign_ids.include?(subject.campaign_id)) &&
           (subject.nil? ||
             (subject.respond_to?(:company_id) && ((subject.company_id.nil? && [:create, :new].include?(action)) || subject.company_id == user.current_company.id)) ||
             (!subject.respond_to?(:company_id) && (permission['subject_id'].nil? || (subject.respond_to?(:id) ? permission['subject_id'] == subject.id : permission['subject_id'] == subject.to_s)))
@@ -208,8 +208,8 @@ class Ability
         company_user.role.has_permission?(:index, BrandAmbassadors::Document)
       end
 
-      if can?(:create, BrandAmbassadors::Document)
-        can [:destroy, :move, :edit, :update], BrandAmbassadors::Document
+      can [:destroy, :move, :edit, :update], BrandAmbassadors::Document do |document|
+        can? :create, document
       end
 
       can :index, BrandAmbassadors::Visit do
@@ -389,18 +389,20 @@ class Ability
         can?(:show, event)
       end
 
-      if user.role.has_permission?(:create_photo, Event) || user.role.has_permission?(:create_document, Event)
-        can [:new, :create], AttachedAsset
-      end
-      # can :create, AttachedAsset do |asset|
-      #   can?(:show, asset.attachable) && asset.attachable.is_a?(Event) && (
-      #     ( asset.asset_type == 'document' && user.role.has_permission?(:create_document, Event) ) ||
-      #     ( asset.asset_type == 'photo' && user.role.has_permission?(:create_photo, Event) )
-      #   )
+      # if user.role.has_permission?(:create_photo, Event) || user.role.has_permission?(:create_document, Event)
+      #   can [:new, :create], AttachedAsset
       # end
+      can :create, AttachedAsset do |asset|
+        asset.attachable.is_a?(Event) && can?(:show, asset.attachable) && (
+          ( asset.asset_type == 'document' && can?(:create_document, asset.attachable) ) ||
+          ( asset.asset_type == 'photo' && can?(:create_photo, asset.attachable) )
+        )
+      end
 
       can [:deactivate, :activate], AttachedAsset do |asset|
-        asset.attachable.is_a?(Event) && asset.asset_type == 'document' && user.role.has_permission?(:deactivate_document, Event) && can?(:show, asset.attachable)
+        asset.attachable.is_a?(Event) && asset.asset_type == 'document' &&
+        user.role.has_permission?(:deactivate_document, Event) &&
+        can?(:show, asset.attachable)
       end
 
       # Photos permissions
@@ -415,14 +417,14 @@ class Ability
         asset.attachable.is_a?(Event) && asset.asset_type == 'photo' &&
         user.role.has_permission?(:deactivate_photo, Event) &&
         (user.role.permission_for(:deactivate_photo, Event).mode == 'all' ||
-         company_user.accessible_campaign_ids.include?(asset.campaign_id)) &&
+         company_user.accessible_campaign_ids.include?(asset.attachable.campaign_id)) &&
         can?(:show, asset.attachable)
       end
 
       can :rate, AttachedAsset do |asset|
         asset.asset_type == 'photo' &&
         (user.role.permission_for(:deactivate_photo, Event).mode == 'all' ||
-         company_user.accessible_campaign_ids.include?(asset.campaign_id)) &&
+         company_user.accessible_campaign_ids.include?(asset.attachable.campaign_id)) &&
         user.role.has_permission?(:edit_rate, AttachedAsset)
       end
 

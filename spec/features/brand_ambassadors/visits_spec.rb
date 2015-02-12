@@ -391,6 +391,7 @@ feature 'Brand Ambassadors Visits' do
 
   shared_examples_for 'a user that can create visits' do
     before { campaign.save  }
+
     scenario 'allows the user to create a new visit' do
       area.places << create(:city, name: 'My City')
       visit brand_ambassadors_root_path
@@ -620,7 +621,7 @@ feature 'Brand Ambassadors Visits' do
       end
     end
 
-    scenario 'allows to create a new event' do
+    scenario 'can create a new event' do
       today = Time.zone.local(Time.now.strftime('%Y'), Time.now.strftime('%m'), 18, 12, 00)
       expect(Place).to receive(:open).and_return(double(read: '{}')) # So we don't search in google places
 

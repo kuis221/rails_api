@@ -83,7 +83,7 @@ module TdLinx
       street = [place.street_number, place.route].compact.join(' ')
       city_state = [place.city, place.state_code].compact.join(' ')
       c.select_one(
-        "SELECT *, similarity(street, normalize_addresss('1644 Gause Blvd')) + similarity(name, 'Rouses Market') score "\
+        "SELECT *, similarity(street, normalize_addresss(#{c.quote(street)})) + similarity(name, #{c.quote(place.name)}) score "\
         "FROM tdlinx_codes WHERE city=#{c.quote(place.city.try(:downcase))} AND "\
         "state=#{c.quote(place.state_code.try(:downcase))} AND "\
         "similarity(street, normalize_addresss(#{c.quote(street)})) >= 0.6 AND "\

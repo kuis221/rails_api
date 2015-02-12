@@ -211,6 +211,18 @@ describe Ability, type: :model do
           user.role.permission_for(:show, Event, mode: 'all').save
           expect(ability).to be_able_to(:show, event)
         end
+
+        it 'cannot show event if role has permission to show only user campaigns\'s events' do
+          expect(ability).not_to be_able_to(:show, event)
+          user.role.permission_for(:show, Event, mode: 'campaigns').save
+          expect(ability).not_to be_able_to(:show, event)
+        end
+
+        it 'can show event if role has permission to show all campaigns\'s events' do
+          expect(ability).not_to be_able_to(:show, event)
+          user.role.permission_for(:show, Event, mode: 'all').save
+          expect(ability).to be_able_to(:show, event)
+        end
       end
 
       describe 'Campaign permissions' do
@@ -505,6 +517,7 @@ describe Ability, type: :model do
       #  |_____| \_/  |_____||__|__|  |__|      |__|  |__|__| \___/   |__|   \___/  \___|
       #
       describe 'Event photos permissions' do
+        let(:new_photo) { build(:photo, attachable: event) }
         it 'should be able to deactivate a photo in a event if has the permission :deactivate_photo on Event' do
           photo = create(:photo, attachable: event)
           expect(ability).not_to be_able_to(:deactivate, photo)
@@ -518,13 +531,13 @@ describe Ability, type: :model do
 
         it 'should be able to create a photo in a event if has the permission :create_photo on Event' do
           photo = create(:photo, attachable: event)
-          expect(ability).not_to be_able_to(:create, AttachedAsset)
-          expect(ability).not_to be_able_to(:create, Event)
+          expect(ability).not_to be_able_to(:create, new_photo)
+          expect(ability).not_to be_able_to(:create_photo, Event)
 
           user.role.permission_for(:show, Event, mode: 'campaigns').save
           user.role.permission_for(:create_photo, Event, mode: 'campaigns').save
 
-          expect(ability).not_to be_able_to(:create, AttachedAsset)
+          expect(ability).to be_able_to(:create, new_photo)
           expect(ability).to be_able_to(:create_photo, Event)
         end
 
@@ -540,7 +553,7 @@ describe Ability, type: :model do
         end
 
         it 'should be able to view rate of the photo' do
-          asset = build(:photo, attachable: Event.new(company: company))
+          asset = build(:photo, attachable: event)
           expect(ability).not_to be_able_to(:view_rate, asset)
 
           user.role.permission_for(:view_rate, AttachedAsset, mode: 'campaigns').save
@@ -549,12 +562,60 @@ describe Ability, type: :model do
         end
 
         it 'should be able to rate a photo' do
-          asset = build(:photo, attachable: Event.new(company: company))
+          asset = build(:photo, attachable: event)
           expect(ability).not_to be_able_to(:rate, asset)
 
           user.role.permission_for(:rate, AttachedAsset, mode: 'campaigns').save
 
           expect(ability).to be_able_to(:rate, asset)
+        end
+
+        describe 'when mode is set to "all"' do
+          let(:event) { without_current_user { create(:event, place: place, campaign: create(:campaign, company: company)) } }
+          let(:photo) { create(:photo, attachable: event) }
+          let(:new_photo) { build(:photo, attachable: event) }
+
+          it 'can deactivate any photo of any campaign in company' do
+            expect(ability).not_to be_able_to(:deactivate, photo)
+
+            user.role.permission_for(:show, Event, mode: 'all').save
+            user.role.permission_for(:deactivate_photo, Event, mode: 'all').save
+
+            expect(ability).to be_able_to(:deactivate, photo)
+            expect(ability).to be_able_to(:activate, photo)
+          end
+
+          it 'cannot deactivate photos that are not on user\'s allowed campaigns' do
+            expect(ability).not_to be_able_to(:deactivate, photo)
+
+            user.role.permission_for(:show, Event, mode: 'all').save
+            user.role.permission_for(:deactivate_photo, Event, mode: 'campaigns').save
+
+            expect(ability).to_not be_able_to(:deactivate, photo)
+            expect(ability).to_not be_able_to(:activate, photo)
+          end
+
+          it 'can deactivate any photo of any campaign in company' do
+            expect(ability).not_to be_able_to(:photos, event)
+            expect(ability).not_to be_able_to(:index_photos, event)
+
+            user.role.permission_for(:show, Event, mode: 'all').save
+            user.role.permission_for(:index_photos, Event, mode: 'all').save
+
+            expect(ability).to be_able_to(:photos, event)
+            expect(ability).to be_able_to(:index_photos, event)
+          end
+
+          it 'cannot deactivate photos that are not on user\'s allowed campaigns' do
+            expect(ability).not_to be_able_to(:photos, event)
+            expect(ability).not_to be_able_to(:index_photos, event)
+
+            user.role.permission_for(:show, Event, mode: 'all').save
+            user.role.permission_for(:index_photos, Event, mode: 'campaigns').save
+
+            expect(ability).to_not be_able_to(:photos, event)
+            expect(ability).to_not be_able_to(:index_photos, event)
+          end
         end
       end
 
@@ -1096,6 +1157,8 @@ describe Ability, type: :model do
       #  |_____||__|__|    |_____| \___/ \____| \__,_||___|___||_____||__|__|  |__|   \___|
       #
       describe 'Brand ambassador documents permissions' do
+        let(:document) { create(:brand_ambassadors_document, attachable: company) }
+        let(:new_document) { build(:brand_ambassadors_document, attachable: company) }
         it 'should be able to list documents if has the permission :index on BrandAmbassadors::Document' do
           expect(ability).not_to be_able_to(:index, BrandAmbassadors::Document)
 
@@ -1105,27 +1168,26 @@ describe Ability, type: :model do
         end
 
         it 'should be able to create/move/edit/destory documents if has the permission :create on BrandAmbassadors::Document' do
-          expect(ability).not_to be_able_to(:create, BrandAmbassadors::Document)
-          expect(ability).not_to be_able_to(:move, BrandAmbassadors::Document)
-          expect(ability).not_to be_able_to(:update, BrandAmbassadors::Document)
-          expect(ability).not_to be_able_to(:edit, BrandAmbassadors::Document)
-          expect(ability).not_to be_able_to(:destroy, BrandAmbassadors::Document)
-          expect(ability).not_to be_able_to(:new, BrandAmbassadors::Document)
+          expect(ability).not_to be_able_to(:create, new_document)
+          expect(ability).not_to be_able_to(:move, document)
+          expect(ability).not_to be_able_to(:update, document)
+          expect(ability).not_to be_able_to(:edit, document)
+          expect(ability).not_to be_able_to(:destroy, document)
+          expect(ability).not_to be_able_to(:new, document)
 
           user.role.permission_for(:create, BrandAmbassadors::Document, mode: 'campaigns').save
 
           ability = Ability.new(user)
 
-          expect(ability).to be_able_to(:create, BrandAmbassadors::Document)
-          expect(ability).to be_able_to(:move, BrandAmbassadors::Document)
-          expect(ability).to be_able_to(:update, BrandAmbassadors::Document)
-          expect(ability).to be_able_to(:edit, BrandAmbassadors::Document)
-          expect(ability).to be_able_to(:destroy, BrandAmbassadors::Document)
-          expect(ability).to be_able_to(:new, BrandAmbassadors::Document)
+          expect(ability).to be_able_to(:create, new_document)
+          expect(ability).to be_able_to(:move, document)
+          expect(ability).to be_able_to(:update, document)
+          expect(ability).to be_able_to(:edit, document)
+          expect(ability).to be_able_to(:destroy, document)
+          expect(ability).to be_able_to(:new, document)
         end
 
-        it 'should be able to update  documents if has the permission :update on BrandAmbassadors::Document' do
-          document = create(:brand_ambassadors_document, attachable: company)
+        it 'should be able to update documents if has the permission :update on BrandAmbassadors::Document' do
           document_not_allowed = create(:brand_ambassadors_document, attachable: create(:company))
           expect(ability).not_to be_able_to(:update, document)
           expect(ability).not_to be_able_to(:edit, document)
@@ -1139,8 +1201,7 @@ describe Ability, type: :model do
           expect(ability).not_to be_able_to(:edit, document_not_allowed)
         end
 
-        it 'should be able to activate/deactivate  documents if has the permission :update on BrandAmbassadors::Document' do
-          document = BrandAmbassadors::Document.new(attachable: company)
+        it 'should be able to activate/deactivate documents if has the permission :update on BrandAmbassadors::Document' do
           expect(ability).not_to be_able_to(:deactivate, document)
           expect(ability).not_to be_able_to(:activate, document)
 

@@ -1149,12 +1149,12 @@ RSpec.shared_examples 'a fieldable element that accept modules' do
 
     # Make sure the KPI is not longer available in the KPIs list
     within('.fields-wrapper') do
-      expect(page).to have_no_content('Photos')
+      expect(page).to have_no_content('Gallery')
     end
 
     expect(find('.form-wrapper')).to have_selector('.form-section.module[data-type=Photos]')
 
-    within form_field_settings_for(module_section('Photos')) do
+    within form_field_settings_for(module_section('Gallery')) do
       fill_in 'Min', with: '10'
       fill_in 'Max', with: '150'
     end
@@ -1166,12 +1166,12 @@ RSpec.shared_examples 'a fieldable element that accept modules' do
 
     visit fieldable_path
 
-    within form_field_settings_for(module_section('Photos')) do
+    within form_field_settings_for(module_section('Gallery')) do
       expect(find_field('Min').value).to eql '10'
       expect(find_field('Max').value).to eql '150'
     end
 
-    within module_section('Photos') do
+    within module_section('Gallery') do
       click_js_link 'Remove'
     end
 
@@ -1194,11 +1194,11 @@ RSpec.shared_examples 'a fieldable element that accept modules' do
     expect(fieldable.reload.enabled_modules).to be_empty
 
     # the module should be available again in the list of modules
-    expect(find('.fields-wrapper')).to have_content('Photos')
+    expect(find('.fields-wrapper')).to have_content('Gallery')
 
     expect(find('.form-wrapper')).to have_no_selector('.form-section.module[data-type=Photos]')
     # the module should be available again in the list of modules
-    expect(find('.fields-wrapper')).to have_content('Photos')
+    expect(find('.fields-wrapper')).to have_content('Gallery')
   end
 end
 

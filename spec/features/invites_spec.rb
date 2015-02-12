@@ -7,7 +7,7 @@ feature 'Invites', search: true, js: true do
   let(:company_user) { user.company_users.first }
   let(:place) { create(:place, name: 'Guillermitos Bar', country: 'CR', city: 'Curridabat', state: 'San Jose', is_custom_place: true, reference: nil) }
   let(:permissions) { [] }
-  let(:event) { create(:event, campaign: campaign, place: place) }
+  let(:event) { create(:late_event, campaign: campaign, place: place) }
   let(:venue) { create(:venue, company: company, place: place) }
   let(:role) { create(:non_admin_role, company: company) }
 
@@ -36,16 +36,17 @@ feature 'Invites', search: true, js: true do
     scenario 'user can create invites' do
       visit event_path(event)
 
-      click_js_button 'Add Invite'
+      click_js_button 'New Activity'
       within visible_modal do
+        select_from_chosen('Invitation', from: 'Activity type')
         select_from_autocomplete 'Search for a place', 'Guillermitos Bar'
-        fill_in '# Invitees', with: '100'
+        fill_in '# Invites', with: '100'
         click_js_button 'Create'
       end
       ensure_modal_was_closed
 
       within '#invites-list' do
-        expect(page).to have_content
+        expect(page).to have_content('Guillermitos Bar')
       end
     end
   end
