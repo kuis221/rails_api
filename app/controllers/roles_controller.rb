@@ -8,7 +8,6 @@ class RolesController < FilteredController
   def update
     update! do |success, _failure|
       success.js do
-        p resource.permissions.map(&:mode)
         render 'update_partial' if params[:partial].present?
       end
     end

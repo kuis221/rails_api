@@ -130,7 +130,6 @@ feature 'Events section' do
           find('#resource-close-details').click
           expect(page).to have_selector('#events-list .resource-item', count: 2)
         end
-
       end
 
       feature 'GET index' do
