@@ -209,7 +209,7 @@ class EventsController < FilteredController
     @search_params || (super.tap do |p|
       p[:sorting] ||= 'start_at'
       p[:sorting_dir] ||= 'asc'
-      p[:search_permission] = :view_list
+      p[:search_permission] = request.format.json? ? :view_map : :view_list
 
       # Get a list of new events notifications to obtain the
       # list of ids, then delete them as they are already seen, but
