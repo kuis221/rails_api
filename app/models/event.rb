@@ -521,6 +521,7 @@ class Event < ActiveRecord::Base
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets = false)
+      params[:search_permission] ||= :view_list
       timezone = Time.zone.name
       timezone = 'UTC' if Company.current && Company.current.timezone_support?
       Time.use_zone(timezone) do

@@ -22,7 +22,7 @@ class EventsController < FilteredController
 
   respond_to :js, only: [:new, :create, :edit, :update, :edit_results,
                          :edit_data, :edit_surveys, :submit]
-  respond_to :json, only: [:index, :calendar_highlights]
+  respond_to :json, only: [:map, :calendar_highlights]
   respond_to :xls, :pdf, only: :index
 
   custom_actions member: [:tasks, :edit_results, :edit_data, :edit_surveys]
@@ -41,6 +41,11 @@ class EventsController < FilteredController
       event_status: []
     )
     render json: buckets.flatten
+  end
+
+  def map
+    search_params.merge!(search_permission: :view_map)
+    collection
   end
 
   def submit
@@ -209,7 +214,7 @@ class EventsController < FilteredController
     @search_params || (super.tap do |p|
       p[:sorting] ||= 'start_at'
       p[:sorting_dir] ||= 'asc'
-      p[:search_permission] = request.format.json? ? :view_map : :view_list
+      p[:search_permission] = :view_list
 
       # Get a list of new events notifications to obtain the
       # list of ids, then delete them as they are already seen, but

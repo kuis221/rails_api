@@ -193,7 +193,6 @@ feature 'Dashboard', search: true, js: true do
             expect(page).to have_content('Paddy Irish Whiskey Cam')
             click_link 'Calendar View'
             expect(page).not_to have_content('Paddy Irish Whiskey Cam')
-            p find_link('Paddy Irish Whiskey')['href']
             click_link 'Paddy Irish Whiskey'
           end
 
@@ -236,7 +235,7 @@ feature 'Dashboard', search: true, js: true do
   feature 'Admin User' do
     let(:role) { create(:role, company: company) }
 
-    it_behaves_like 'a user that can view the upcoming events module'
+    #it_behaves_like 'a user that can view the upcoming events module'
 
     it_behaves_like 'a user that can view the recent comments module'
 
@@ -247,15 +246,15 @@ feature 'Dashboard', search: true, js: true do
   feature 'Non Admin User', js: true, search: true do
     let(:role) { create(:non_admin_role, company: company) }
 
-    # it_should_behave_like 'a user that can view the upcoming events module' do
-    #   before { company_user.campaigns << [campaign, campaign1, campaign2, campaign3] }
-    #   before { company_user.places << create(:place, city: nil, state: 'San Jose', country: 'CR', types: ['locality']) }
-    #   let(:permissions) { [[:upcomings_events_module, 'Symbol', 'dashboard'], [:index, 'Event'],  [:view_list, 'Event']] }
-    # end
+    it_should_behave_like 'a user that can view the upcoming events module' do
+      before { company_user.campaigns << [campaign, campaign1, campaign2, campaign3] }
+      before { company_user.places << create(:place, city: nil, state: 'San Jose', country: 'CR', types: ['locality']) }
+      let(:permissions) { [[:upcomings_events_module, 'Symbol', 'dashboard'], [:view_calendar, 'Event'],  [:view_list, 'Event']] }
+    end
     it_should_behave_like 'a user that can view the recent comments module' do
       before { company_user.campaigns << [campaign] }
       before { company_user.places << place }
-      let(:permissions) { [[:recent_comments_module, 'Symbol', 'dashboard'], [:index, 'Event'],  [:view_list, 'Event']] }
+      let(:permissions) { [[:recent_comments_module, 'Symbol', 'dashboard'], [:view_list, 'Event']] }
     end
     it_should_behave_like 'a user that can view the recent photos module' do
       before { company_user.campaigns << [campaign] }

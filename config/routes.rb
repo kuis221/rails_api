@@ -376,6 +376,7 @@ Brandscopic::Application.routes.draw do
     get :autocomplete, on: :collection
     get :filters, on: :collection, format: :json
     get :items, on: :collection, format: :html
+    get :map, on: :collection, format: :json
 
     get :calendar, on: :collection
     get :tasks, on: :member
@@ -567,7 +568,7 @@ Brandscopic::Application.routes.draw do
     put :default_view, on: :member, format: :json
   end
 
-  resources :filter_settings, only: [:index, :new, :create, :update] 
+  resources :filter_settings, only: [:index, :new, :create, :update]
 
   match 'custom_filters_settings/:apply_to' => 'custom_filters_settings#index', via: :get, constraints: { apply_to: CustomFilter::APPLY_TO_OPTIONS.join("|") }
 

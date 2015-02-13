@@ -272,11 +272,12 @@ class Ability
         cannot?(:access, event)
       end
 
-
       can :gva_report_campaign, Campaign do |campaign|
         can?(:gva_report, Campaign) &&
         company_user.accessible_campaign_ids.include?(campaign.id)
       end
+
+      can :map, Event if role.has_permission?(:view_map, Event)
 
       can [:select_areas, :add_areas, :delete_area], Venue do |venue|
         can?(:show, venue) &&

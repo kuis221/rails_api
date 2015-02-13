@@ -742,7 +742,7 @@ feature 'Brand Ambassadors Visits' do
     it_behaves_like 'a user that can deactivate visits'
     it_behaves_like 'a user that can edit visits'
     it_behaves_like 'a user that can create visits'
-    #it_behaves_like 'a user that can view visits details'
+    it_behaves_like 'a user that can view visits details'
     it_behaves_like 'a user that can view visits details and deactivate visits'
   end
 end
