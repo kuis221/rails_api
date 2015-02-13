@@ -22,7 +22,7 @@ class EventsController < FilteredController
 
   respond_to :js, only: [:new, :create, :edit, :update, :edit_results,
                          :edit_data, :edit_surveys, :submit]
-  respond_to :json, only: [:index, :calendar_highlights]
+  respond_to :json, only: [:map, :calendar_highlights]
   respond_to :xls, :pdf, only: :index
 
   custom_actions member: [:tasks, :edit_results, :edit_data, :edit_surveys]
@@ -41,6 +41,11 @@ class EventsController < FilteredController
       event_status: []
     )
     render json: buckets.flatten
+  end
+
+  def map
+    search_params.merge!(search_permission: :view_map)
+    collection
   end
 
   def submit

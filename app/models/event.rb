@@ -349,7 +349,7 @@ class Event < ActiveRecord::Base
   def place_reference=(value)
     @place_reference = value
     return unless value && value.present?
-    if value =~ /^[0-9]+$/
+    if value =~ /\A[0-9]+\z/
       self.place = Place.find(value)
     else
       reference, place_id = value.split('||')
@@ -521,6 +521,7 @@ class Event < ActiveRecord::Base
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets = false)
+      params[:search_permission] ||= :view_list
       timezone = Time.zone.name
       timezone = 'UTC' if Company.current && Company.current.timezone_support?
       Time.use_zone(timezone) do

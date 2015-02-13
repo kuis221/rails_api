@@ -38,13 +38,14 @@
       = button_to_edit resource if can?(:edit, resource)
       = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
 
-  #visit-events.details_box
-    h5.module-title EVENTS
-    - if can?(:create, Event)
-      = button_to 'Create', new_event_path(resource, event: {visit_id: resource.id, campaign_id: resource.campaign_id}, format: :js), remote: true, class: 'btn btn-primary', :id => 'new-event-btn', method: :get
+  - if can?(:view_list, Event)
+    #visit-events.details_box
+      h5.module-title EVENTS
+      - if can?(:create, Event)
+        = button_to 'Create', new_event_path(resource, event: {visit_id: resource.id, campaign_id: resource.campaign_id}, format: :js), remote: true, class: 'btn btn-primary', :id => 'new-event-btn', method: :get
 
-    #events-list-filters.hide
-    div#events-list.resource-list
+      #events-list-filters.hide
+      div#events-list.resource-list
 
 
   #visit-documents.details_box

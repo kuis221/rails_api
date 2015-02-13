@@ -3,7 +3,7 @@ require 'td_linx'
 
 describe TdLinx do
   describe TdLinx::Processor do
-    describe 'process' do
+    describe 'process!' do
       let(:path) { 'tmp/test_sync.csv' }
 
       after { File.delete(path) if File.exist?(path) }
@@ -26,7 +26,7 @@ describe TdLinx do
         )
         end
 
-        files = described_class.process(path)
+        files = described_class.process!(path)
 
         expect(place1.reload.td_linx_code).to eql '0000071'
         expect(place2.reload.td_linx_code).to eql '0000072'

@@ -158,7 +158,7 @@ describe Place, type: :model do
       expect(described_class.in_areas([area_la, area_sf])).to match_array [place_la, place_sf]
     end
 
-    it 'should include places that are scheduled within the given scope if the place is a locality' do
+    it 'should include places that are located within the given scope if the place is a locality' do
       los_angeles = create(:city, name: 'Los Angeles', country: 'US', state: 'California')
       place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
 
@@ -168,9 +168,9 @@ describe Place, type: :model do
       area_la = create(:area, company: company, place_ids: [los_angeles.id])
       area_sf = create(:area, company: company, place_ids: [san_francisco.id])
 
-      expect(described_class.in_areas([area_la])).to match_array [place_la]
-      expect(described_class.in_areas([area_sf])).to match_array [place_sf]
-      expect(described_class.in_areas([area_la, area_sf])).to match_array [place_la, place_sf]
+      expect(described_class.in_areas([area_la])).to match_array [place_la, los_angeles]
+      expect(described_class.in_areas([area_sf])).to match_array [place_sf, san_francisco]
+      expect(described_class.in_areas([area_la, area_sf])).to match_array [place_la, los_angeles, place_sf, san_francisco]
     end
   end
 
@@ -285,7 +285,7 @@ describe Place, type: :model do
           name: 'BENITOSS Bar', city: 'Los Angeles', state: 'California',
           street: '1234 street Maria Northweast', zipcode: nil
         )
-      ).to be_nil
+      ).to match(place.id)
     end
 
     it 'does not returns the place that have a different name with the same address' do

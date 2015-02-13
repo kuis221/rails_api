@@ -393,18 +393,7 @@
 
 /* To create icons with grey circle background */
 .special-icon {
-	background-color: $gray-light;
-	display: inline-block;
-	height: 46px;
-	@include border-radius(23px);
-	text-align: center;
-	width: 46px;
-	&:before { /*probably will need adjustments for another icons inside*/
-		color: #fff;
-		font-size: 22px;
-		top: 12px;
-		left: 1px;
-	}
+	@include icon-circle-background(46px, 22px);
 	&.icon-wired-venue {
 		&:before {
 			left: 2px;
@@ -433,7 +422,7 @@
 	border-color: $stars;
 	&:before {
 		content: '';
-		height: 5px;
+		height: 4px;
 		width: 12px;
 		background-color: $stars;
 		border-bottom-left-radius: 12px;
