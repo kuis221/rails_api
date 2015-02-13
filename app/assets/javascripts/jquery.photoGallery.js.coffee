@@ -56,10 +56,9 @@ $.widget 'nmk.photoGallery', {
 			else
 				@tags_list.hide()
 			@setTags()
+			@gallery.find('.photo-tags').show()
 		else
-			@tags.hide()
-			@tags_list.hide()
-			$('.tags').hide()
+			@gallery.find('.photo-tags').hide()
 
 	updateTags: (tags) ->
 		@tags_list.select2 $.extend(@_select2Options(), {tags: tags})
@@ -246,8 +245,10 @@ $.widget 'nmk.photoGallery', {
 							$('<div class="description">').append( @title ).append( @date ).append( @address ),
 							$('<div class="mini-slider">').append( @miniCarousel = @_createCarousel('small') ),
 							@rating,
+							$('<div class="photo-tags">').append(
 								$('<div class="icon-tag">'),
 								$('<div class="tags">').append( @tags = $('<div id="list" class="list">') , @tags_list)
+							)
 						),
 					$('<div class="slider">').append( $('<div class="slider-inner">').append( @carousel = @_createCarousel() ) ).append( @photoToolbar = $('<div class="photo-toolbar">') )
 				).append($('<div class="clearfix">'))

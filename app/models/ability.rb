@@ -13,6 +13,7 @@ class Ability
     alias_action :remove_activity_type, to: :activate_kpis
     alias_action :reject, to: :approve
     alias_action :post_event_form, :update_post_event_form, to: :view_event_form
+    alias_action :rate, to: :edit_rate
 
     company_user = user.current_company_user if user.id && !user.is_a?(AdminUser)
 
@@ -271,9 +272,6 @@ class Ability
         cannot?(:access, event)
       end
 
-      cannot :activate, Tag do |_tag|
-        !company_user.role.has_permission?(:activate, Tag)
-      end
 
       can :gva_report_campaign, Campaign do |campaign|
         can?(:gva_report, Campaign) &&
@@ -421,19 +419,14 @@ class Ability
         can?(:show, asset.attachable)
       end
 
-      can :rate, AttachedAsset do |asset|
-        asset.asset_type == 'photo' &&
-        (user.role.permission_for(:deactivate_photo, Event).mode == 'all' ||
-         company_user.accessible_campaign_ids.include?(asset.attachable.campaign_id)) &&
-        user.role.has_permission?(:edit_rate, AttachedAsset)
-      end
-
-      can :view_rate, AttachedAsset do |asset|
-        asset.asset_type == 'photo' && user.role.has_permission?(:view_rate, AttachedAsset)
-      end
-
-      can :activate, Tag do
-        can?(:create, Tag)
+      [:edit_rate, :view_rate, :index_tag, :activate_tag, :remove_tag].each do |action|
+        cannot action, AttachedAsset do |asset|
+          asset.asset_type == 'photo' &&
+          (!user.role.has_permission?(action, AttachedAsset) ||
+           (user.role.permission_for(action, AttachedAsset).mode == 'campaigns' &&
+           !company_user.accessible_campaign_ids.include?(asset.attachable.campaign_id))
+          )
+        end
       end
 
       # Event Expenses permissions
