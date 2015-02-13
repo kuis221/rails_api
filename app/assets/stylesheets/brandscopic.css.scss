@@ -4240,10 +4240,6 @@ body.roles{
 			top: 3px;
 		}
 	}
-	.icon-help {
-		@include icon-circle-background(17px, 12px, 1px, 3px);
-		background-color: $gray;
-	}
 	.role-permissions-legend {
 		.role-help-tooltip {
 			width: 300px;
@@ -4255,7 +4251,10 @@ body.roles{
 		.tooltip-inner {
 			max-width: none;
 		}
-
+		.icon-help {
+			@include icon-circle-background(17px, 12px, 1px, 3px);
+			background-color: $gray;
+		}
 	}
 }
 
