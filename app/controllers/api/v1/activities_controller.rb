@@ -3,9 +3,6 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
 
   belongs_to :event, :venue, optional: true
 
-  skip_before_action :verify_authenticity_token,
-                     if: proc { |c| c.request.format == 'application/json' }
-
   respond_to :json
 
   def_param_group :activity do
@@ -38,9 +35,9 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
   param_group :activity
   def update
     update! do |success, failure|
-      success.json {render :show }
+      success.json { render :show }
       success.xml { render :show }
-      failure.json {render json: resource.errors, status: :unprocessable_entity }
+      failure.json { render json: resource.errors, status: :unprocessable_entity }
       failure.xml { render xml: resource.errors, status: :unprocessable_entity }
     end
   end
@@ -703,11 +700,11 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
     end
   end
 
-  def permitted_params
-    params.permit(activity: [
+  def activity_params
+    params.require(:activity).permit([
       :activity_type_id, {
         results_attributes: [:id, :form_field_id, :value, { value: [] }, :_destroy] },
-      :campaign_id, :company_user_id, :activity_date])[:activity].tap do |whielisted|
+      :campaign_id, :company_user_id, :activity_date]).tap do |whielisted|
       unless whielisted.nil? || whielisted[:results_attributes].nil?
         whielisted[:results_attributes].each_with_index do |value, k|
           value[:value] = params[:activity][:results_attributes][k][:value]
@@ -715,5 +712,4 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
       end
     end
   end
-
 end

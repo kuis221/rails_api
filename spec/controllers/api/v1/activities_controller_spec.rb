@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::ActivitiesController, :type => :controller do
+RSpec.describe Api::V1::ActivitiesController, type: :controller do
   let(:user) { sign_in_as_user }
   let(:company_user) { user.company_users.first }
   let(:company) { user.company_users.first.company }
@@ -13,7 +13,7 @@ RSpec.describe Api::V1::ActivitiesController, :type => :controller do
   before { set_api_authentication_headers user, company }
 
 
-  
+
   #describe '#index' do
   #  it 'returns a list of activity associated to event' do
   #    let(:activity) { create(:activity, activity_type: activity_type, company_user: company_user, activitable: event) }
@@ -29,12 +29,13 @@ RSpec.describe Api::V1::ActivitiesController, :type => :controller do
   describe "PUT 'update'" do
     let(:another_user) { create(:company_user, user: create(:user), company_id: company.id) }
     let(:another_campaign) { create(:campaign, company: company) }
+
     it 'must update the activity attributes' do
       campaign.activity_types << activity_type
       another_campaign.activity_types << activity_type
-      put 'update', venue_id: venue.to_param, id: activity.to_param, activity: { 
-        campaign_id: another_campaign.id, 
-        company_user_id: another_user.id, 
+      put 'update', venue_id: venue.to_param, id: activity.to_param, activity: {
+        campaign_id: another_campaign.id,
+        company_user_id: another_user.id,
         activity_date: '02/12/2015' }, format: :json
       expect(assigns(:activity)).to eq(activity)
       expect(response).to be_success
@@ -49,24 +50,20 @@ RSpec.describe Api::V1::ActivitiesController, :type => :controller do
   describe "GET 'new'", search: true do
     it 'returns only the user/date if no fields have been aded to the activity type' do
       get :new, activity_type_id: activity_type.id, format: :json
-      results = JSON.parse(response.body)
-      expect(results.count).to eql 4
-      expect(results.first).to include({
+      expect(json['data'].count).to eql 1
+      expect(json['data'].first).to include(
         'name' => 'User/Date', 'value' => nil,
         'type' => 'FormField::UserDate', 'settings' => nil,
-        'ordering' => 1, 'required' => nil, 'kpi_id' => nil})
+        'ordering' => 1, 'required' => nil, 'kpi_id' => nil)
     end
 
     it 'returns the fields have been aded to the activity type' do
       create(:form_field_text, fieldable: activity_type, ordering: 2)
       create(:form_field_number, fieldable: activity_type, ordering: 3)
       get :new, activity_type_id: activity_type.id, format: :json
-      results = JSON.parse(response.body)
-      expect(results.count).to eql 4
-      results.map { |at|  at['type'] } do
-        p at
-      end
-      expect(results.map { |at|  at['type'] }).to eql [
+      expect(json['data'].count).to eql 3
+
+      expect(json['data'].map { |at|  at['type'] }).to eql [
         'FormField::UserDate', 'FormField::Text', 'FormField::Number']
     end
   end
@@ -77,29 +74,26 @@ RSpec.describe Api::V1::ActivitiesController, :type => :controller do
 
     it 'retruns the activity info' do
       get :show, id: activity.id, format: :json
-      results = JSON.parse(response.body)
-      expect(results['id']).to eql activity.id
-      expect(results['company_user']['id']).to eql activity.company_user_id
-      expect(results['company_user']['name']).to eql activity.company_user.full_name
+      expect(json['id']).to eql activity.id
+      expect(json['company_user']['id']).to eql activity.company_user_id
+      expect(json['company_user']['name']).to eql activity.company_user.full_name
     end
 
     it 'returns only the user/date if no fields have been aded to the activity type' do
       get :show, id: activity.id, format: :json
-      results = JSON.parse(response.body)
-      expect(results['data'].count).to eql 1
-      expect(results['data'].first).to include({
+      expect(json['data'].count).to eql 1
+      expect(json['data'].first).to include(
         'name' => 'User/Date', 'value' => nil,
         'type' => 'FormField::UserDate', 'settings' => nil,
-        'ordering' => 1, 'required' => nil, 'kpi_id' => nil })
+        'ordering' => 1, 'required' => nil, 'kpi_id' => nil)
     end
 
     it 'returns the fields have been aded to the activity type' do
       create(:form_field_text, fieldable: activity_type, ordering: 2)
       create(:form_field_number, fieldable: activity_type, ordering: 3)
       get :show, id: activity.id, format: :json
-      results = JSON.parse(response.body)
-      expect(results['data'].count).to eql 3
-      expect(results['data'].map { |at|  at['type'] }).to eql [
+      expect(json['data'].count).to eql 3
+      expect(json['data'].map { |at|  at['type'] }).to eql [
         'FormField::UserDate', 'FormField::Text', 'FormField::Number']
     end
   end

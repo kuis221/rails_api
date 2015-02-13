@@ -17,7 +17,7 @@ Brandscopic::Application.routes.draw do
             get :notifications
           end
         end
-        resources :activities, only: [:index, :new, :show, :update]
+        resources :activities, only: [:new, :show]
 
         resources :events, only: [:index, :show, :create, :update] do
           get :status_facets, on: :collection
