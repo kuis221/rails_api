@@ -4234,11 +4234,28 @@ body.roles{
 		background-color: $white !important;
 	}
 	.icon-legend {
-		margin-right: 10px;
+		margin-right: 20px;
 		.icon-role {
 			margin-right: 5px;
-			top: 2px;
+			top: 3px;
 		}
+	}
+	.icon-help {
+		@include icon-circle-background(17px, 12px, 1px, 3px);
+		background-color: $gray;
+	}
+	.role-permissions-legend {
+		.role-help-tooltip {
+			width: 300px;
+			p {
+				font-size: 11px;
+				text-align: left;
+			}
+		}
+		.tooltip-inner {
+			max-width: none;
+		}
+
 	}
 }
 
