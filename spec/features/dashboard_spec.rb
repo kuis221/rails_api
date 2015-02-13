@@ -259,7 +259,7 @@ feature 'Dashboard', search: true, js: true do
     it_should_behave_like 'a user that can view the recent photos module' do
       before { company_user.campaigns << [campaign] }
       before { company_user.places << place }
-      let(:permissions) { [[:recent_photos_module, 'Symbol', 'dashboard']] }
+      let(:permissions) { [[:recent_photos_module, 'Symbol', 'dashboard'], [:index_photos, Event]] }
     end
   end
 
