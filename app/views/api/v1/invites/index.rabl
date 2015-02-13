@@ -1,4 +1,4 @@
-collection @invites
+collection @invites;
 
 
 attributes :id, :invitees, :rsvps_count, :attendees, :active

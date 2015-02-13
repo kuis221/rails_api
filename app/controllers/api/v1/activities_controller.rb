@@ -31,13 +31,18 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
     end
   end
 
-  api :PUT, '/api/v1/events/:id', 'Update a event\'s details'
+  api :PUT, '/api/v1/events/:event_id/activities/:id', 'Update a activity\'s details'
   param :event_id, :number, required: false, desc: 'Event ID'
   param :venue_id, :number, required: false, desc: 'Venue ID'
   param :id, :number, required: true, desc: 'Activity ID'
   param_group :activity
   def update
-
+    update! do |success, failure|
+      success.json {render :show }
+      success.xml { render :show }
+      failure.json {render json: resource.errors, status: :unprocessable_entity }
+      failure.xml { render xml: resource.errors, status: :unprocessable_entity }
+    end
   end
 
   api :GET, '/api/v1/events/:id/activities/:id/deactivate', 'Deactivate activity'
@@ -71,14 +76,7 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
   }
   EOS
   def index
-    results = parent.activities.where(active: true)
-    respond_to do |format|
-      format.json do
-        render json: {
-          data: serialize_fields_for_index(results)
-        }
-      end
-    end
+    collection
   end
 
   api :GET, '/api/v1/actvities/new', 'Return a list of fields for a new activity of a given activity type'
@@ -646,18 +644,6 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
     current_company.activity_types.find(params[:activity_type_id]) if params[:activity_type_id].present?
   end
 
-  def serialize_fields_for_index(results)
-    results.map do |result|
-      {
-        id: result.id,
-        activity_type_id: result.activity_type_id,
-        activity_type_name: result.activity_type.name,
-        activity_date: result.activity_date,
-        company_user_name: result.company_user.full_name
-      }
-    end
-  end
-
   def serialize_fields_for_new(fields)
     fields.map do |field|
       serialize_field field
@@ -668,8 +654,7 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
     results.map do |result|
       field = result.form_field
       serialize_field(field, result).merge(
-        id: result.id,
-        value: result.value,
+        id: result.id
       )
     end
   end
@@ -700,7 +685,7 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
         segments: field.options_for_input.map { |s| { id: s[1], text: s[0], value: result ? result.value.include?(s[1]) : false } } }
     elsif field.type == 'FormField::Dropdown'
       { value: result ? result.value.to_i : nil,
-        segments: field.options_for_input.map { |s| { id: s[1], text: s[0], value: result ? result.value.eql?(s[1].to_s) : false } } }
+        segments: field.options_for_input.map { |s| { id: s[1], text: s[0] } } }
     elsif field.type == 'FormField::Brand'
       { value: result ? result.value.to_i : nil,
         segments: field.options_for_field(result).map { |s| { id: s.id, text: s.name } } }
@@ -720,7 +705,7 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
 
   def permitted_params
     params.permit(activity: [
-      :activity_type_id, :event_id, :venue_id, {
+      :activity_type_id, {
         results_attributes: [:id, :form_field_id, :value, { value: [] }, :_destroy] },
       :campaign_id, :company_user_id, :activity_date])[:activity].tap do |whielisted|
       unless whielisted.nil? || whielisted[:results_attributes].nil?
