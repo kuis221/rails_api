@@ -359,11 +359,11 @@ feature 'Events section' do
                'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL'],
               ['Another Campaign April 03', nil, "#{year_number}-#{month_number}-#{today.strftime('%d')}T08:00",
                "#{year_number}-#{month_number}-#{today.strftime('%d')}T09:00", '1.0', 'Place 2',
-               'Place 2, Los Angeles, CA, 67890', 'Los Angeles', 'CA', '67890', 'Active', 'Unsent',
+               'Place 2, 11 Main St., Los Angeles, CA, 67890', 'Los Angeles', 'CA', '67890', 'Active', 'Unsent',
                nil, "http://localhost:5100/events/#{event2.id}"],
               ['Campaign FY2012', nil, "#{year_number}-#{month_number}-#{today.strftime('%d')}T10:00",
                "#{year_number}-#{month_number}-#{today.strftime('%d')}T11:00", '1.0', 'Place 1',
-               'Place 1, New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active',
+               'Place 1, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active',
                'Unsent', nil, "http://localhost:5100/events/#{event1.id}"]
             ])
           end
@@ -1106,7 +1106,7 @@ feature 'Events section' do
         end
       end
     end
-    
+
     feature 'edit a event' do
       scenario 'allows to edit a event' do
         create(:campaign, company: company, name: 'ABSOLUT Vodka FY2013')

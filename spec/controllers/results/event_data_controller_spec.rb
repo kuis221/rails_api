@@ -79,7 +79,7 @@ describe Results::EventDataController, type: :controller do
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
          'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL', 'START', 'END', 'PROMO HOURS', 'SPENT'],
         ['Test Campaign FY01', 'My area', '443321', 'Bar Prueba',
-         'Bar Prueba, Los Angeles, California, 12345', 'Los Angeles', 'California', '12345',
+         'Bar Prueba, 11 Main St., Los Angeles, California, 12345', 'Los Angeles', 'California', '12345',
          'Active', 'Approved', 'Test User, zteam', "http://localhost:5100/events/#{event.id}",
          '2019-01-23T10:00', '2019-01-23T12:00', '2.0', '99.99']
       ])
@@ -99,7 +99,7 @@ describe Results::EventDataController, type: :controller do
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
          'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL', 'START', 'END', 'PROMO HOURS', 'SPENT', 'A CUSTOM KPI'],
-        ['Test Campaign FY01', nil, nil, 'Bar Prueba', 'Bar Prueba, Los Angeles, California, 12345',
+        ['Test Campaign FY01', nil, nil, 'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345',
          'Los Angeles', 'California', '12345', 'Active', 'Approved', nil,
          "http://localhost:5100/events/#{event.id}", '2013-01-23T10:00', '2013-01-23T12:00', '2.0', '0.0', '9876.0']
       ])
@@ -170,7 +170,7 @@ describe Results::EventDataController, type: :controller do
          'ETHNICITY/RACE: NATIVE AMERICAN', 'ETHNICITY/RACE: WHITE', 'IMPRESSIONS', 'INTERACTIONS',
          'SAMPLES', 'TEST KPI', 'EVENT TYPE: EVENT TYPE OPT 1', 'EVENT TYPE: EVENT TYPE OPT 2',
          'EVENT TYPE: EVENT TYPE OPT 3', 'RADIO FIELD TYPE'],
-        ['Test Campaign FY01', 'Angeles Area', '344221', 'Bar Prueba', 'Bar Prueba, Los Angeles, California, 12345',
+        ['Test Campaign FY01', 'Angeles Area', '344221', 'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345',
          'Los Angeles', 'California', '12345', 'Active', 'Approved', 'Test User',
          "http://localhost:5100/events/#{event.id}", '2019-01-23T10:00', '2019-01-23T12:00',
          '2.0', '99.99', '0.6',
@@ -219,7 +219,7 @@ describe Results::EventDataController, type: :controller do
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
          'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL', 'START', 'END',
          'PROMO HOURS', 'SPENT', 'TEST KPI 1'],
-        ['Test Campaign FY01', 'Angeles Area', '344221', 'Bar Prueba', 'Bar Prueba, Los Angeles, California, 12345',
+        ['Test Campaign FY01', 'Angeles Area', '344221', 'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345',
          'Los Angeles', 'California', '12345', 'Active', 'Approved', nil,
          "http://localhost:5100/events/#{event.id}", '2019-01-23T10:00', '2019-01-23T12:00',
          '2.0', '0.0', '8899.0']
