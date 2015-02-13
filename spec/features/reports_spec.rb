@@ -757,7 +757,7 @@ feature 'Reports', js: true do
     end
 
     feature 'preview' do
-      it 'should display a preview as the user make changes on the report' do
+      it 'displays a preview as the user make changes on the report' do
         create(:event, place: create(:place, name: 'Los Pollitos Bar'), company: company, results: { impressions: 100 })
         visit build_results_report_path(report)
 

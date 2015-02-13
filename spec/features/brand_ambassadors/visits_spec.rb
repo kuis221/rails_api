@@ -722,7 +722,7 @@ feature 'Brand Ambassadors Visits' do
         [
           [:list, 'BrandAmbassadors::Visit'], [:deactivate, 'BrandAmbassadors::Visit'],
           [:show, 'BrandAmbassadors::Visit'], [:update, 'BrandAmbassadors::Visit'],
-          [:create, 'Event'], [:show, 'Event']]
+          [:create, 'Event'], [:show, 'Event'], [:view_list, 'Event']]
       end
       before { company_user.places << place }
       before { campaign.places << place }
@@ -742,7 +742,7 @@ feature 'Brand Ambassadors Visits' do
     it_behaves_like 'a user that can deactivate visits'
     it_behaves_like 'a user that can edit visits'
     it_behaves_like 'a user that can create visits'
-    it_behaves_like 'a user that can view visits details'
+    #it_behaves_like 'a user that can view visits details'
     it_behaves_like 'a user that can view visits details and deactivate visits'
   end
 end

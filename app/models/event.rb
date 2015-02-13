@@ -349,7 +349,7 @@ class Event < ActiveRecord::Base
   def place_reference=(value)
     @place_reference = value
     return unless value && value.present?
-    if value =~ /^[0-9]+$/
+    if value =~ /\A[0-9]+\z/
       self.place = Place.find(value)
     else
       reference, place_id = value.split('||')
