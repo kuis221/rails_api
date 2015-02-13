@@ -259,7 +259,7 @@ $.widget 'nmk.eventsCalendar', {
 		title = if eventElement.url? then $('<a>').attr('href', eventElement.url).text(eventElement.title) else eventElement.title
 		$('<div>').addClass('calendar-event').append([
 			$('<span class="calendar-event-bullet">&#8226;</span>').css('color': eventElement.color),
-			$('<span class="calendar-event-name"></span>').append(title).tooltip({placement: 'bottom', html: true, title: eventElement.description}),
+			$('<span class="calendar-event-name"></span>').append(title).tooltip({placement: 'bottom', html: true, title: eventElement.description, container: 'body'}),
 		])
 
 	_moveMonth: (step) ->

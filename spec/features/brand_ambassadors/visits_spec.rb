@@ -722,7 +722,7 @@ feature 'Brand Ambassadors Visits' do
         [
           [:list, 'BrandAmbassadors::Visit'], [:deactivate, 'BrandAmbassadors::Visit'],
           [:show, 'BrandAmbassadors::Visit'], [:update, 'BrandAmbassadors::Visit'],
-          [:create, 'Event'], [:show, 'Event']]
+          [:create, 'Event'], [:show, 'Event'], [:view_list, 'Event']]
       end
       before { company_user.places << place }
       before { campaign.places << place }

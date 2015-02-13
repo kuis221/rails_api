@@ -47,6 +47,7 @@ class VenuesController < FilteredController
   end
 
   def create_venue_from_google_api
+    return if current_user.nil?
     return if params[:id] =~ /\A[0-9]+\z/
     place = Place.load_by_place_id(params[:id], params[:ref])
     fail ActiveRecord::RecordNotFound unless place

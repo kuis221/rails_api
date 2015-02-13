@@ -20,14 +20,28 @@ describe VenuesController, type: :controller do
       expect(response).to be_success
     end
 
-    it 'should redirect to the newly created venue if id and reference from Google Places is given' do
-      place = create(:place, place_id: '24d9cbaf29793a503e9', reference: 'CnRvAAAAjP74ZS9G')
-      expect do
-        get 'show', id: '24d9cbaf29793a503e9', ref: 'CnRvAAAAjP74ZS9G'
-      end.to change(Venue, :count).by(1)
-      venue = Venue.last
-      expect(venue.place).to eql place
-      expect(response).to redirect_to(venue_path(venue))
+    describe 'when accessed with Google Places params' do
+      it 'create a venue and redirects the user to it' do
+        place = create(:place, place_id: '24d9cbaf29793a503e9', reference: 'CnRvAAAAjP74ZS9G')
+        expect do
+          get 'show', id: '24d9cbaf29793a503e9', ref: 'CnRvAAAAjP74ZS9G'
+        end.to change(Venue, :count).by(1)
+        venue = Venue.last
+        expect(venue.place).to eql place
+        expect(response).to redirect_to(venue_path(venue))
+      end
+
+      describe 'when user is not authenticated' do
+        let(:user) { nil }
+
+        it 'redirects the user to the login page' do
+          place = create(:place, place_id: '24d9cbaf29793a503e9', reference: 'CnRvAAAAjP74ZS9G')
+          expect do
+            get 'show', id: '24d9cbaf29793a503e9', ref: 'CnRvAAAAjP74ZS9G'
+          end.to_not change(Venue, :count)
+          expect(response).to redirect_to(new_user_session_path)
+        end
+      end
     end
   end
 
