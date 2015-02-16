@@ -271,7 +271,7 @@ describe CompanyUser, type: :model do
     end
 
     it 'should return true if the user has the correct permissions' do
-      user.role.permissions.create(action: :read, subject_class: 'Campaign')
+      user.role.permissions.create(action: :read, subject_class: 'Campaign', mode: 'campaigns')
       expect(user.notification_setting_permission?('new_campaign')).to be_truthy
     end
   end

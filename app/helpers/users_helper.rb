@@ -10,6 +10,7 @@ module UsersHelper
         event_search_params = {
           company_id: company.id,
           status: ['Active'],
+          search_permission: :view_list,
           current_company_user: current_company_user }
 
         user_params = nil

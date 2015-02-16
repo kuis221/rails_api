@@ -136,7 +136,7 @@ jQuery ->
 	fecthAndPlaceMarkers = ->
 		params = $('#collection-list-filters').filteredList('getFilters');
 		params.push {name: 'per_page', value: '500'}
-		$.getJSON '/events.json', params, (events) ->
+		$.getJSON '/events/map.json', params, (events) ->
 			placeMarkers(map, events)
 
 	window.placeMarkers = (map, events) ->

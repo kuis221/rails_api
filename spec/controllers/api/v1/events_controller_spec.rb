@@ -3,6 +3,7 @@ require 'rails_helper'
 describe Api::V1::EventsController, type: :controller do
   let(:user) { sign_in_as_user }
   let(:company) { user.company_users.first.company }
+  let(:campaign) { create(:campaign, company: company) }
 
   before { set_api_authentication_headers user, company }
 
@@ -52,6 +53,25 @@ describe Api::V1::EventsController, type: :controller do
       result = JSON.parse(response.body)
 
       expect(result['results'].count).to eq(3)
+    end
+  end
+
+
+  describe "GET 'show'" do
+    let(:event) { create(:event, campaign: campaign, place: place) }
+    let(:place) { create(:place) }
+
+    it 'returns the event info' do
+      get :show, id: event.to_param, format: :json
+      expect(response).to be_success
+      expect(json.keys).to eq(%w(
+        id start_date start_time end_date end_time status description event_status
+        have_data actions tasks_late_count tasks_due_today_count place campaign))
+      expect(json['place'].keys).to eq(%w(
+        id venue_id name latitude longitude formatted_address
+        country state state_name city zipcode))
+      expect(json['campaign'].keys).to eq(%w(
+        id name enabled_modules))
     end
   end
 

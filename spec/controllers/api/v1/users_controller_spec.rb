@@ -240,8 +240,8 @@ describe Api::V1::UsersController, type: :controller do
       end
 
       it "should return only the permissions given to the user's role" do
-        role.permissions.create(action: :create, subject_class: 'Event')
-        role.permissions.create(action: :view_list, subject_class: 'Event')
+        role.permissions.create(action: :create, subject_class: 'Event', mode: 'campaigns')
+        role.permissions.create(action: :view_list, subject_class: 'Event', mode: 'campaigns')
 
         get 'permissions', format: :json
 

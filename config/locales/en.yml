@@ -505,4 +505,4 @@ en:
     activate: "Activate"
     deactivate_confirm_message: "Are you sure you want to deactivate this %{model}?"
 
-  role_permissions_tip: 'TO BE DEFINED'
+  role_permissions_tip: "<div class=role-help-tooltip><p>NO PERMISSIONS - Users in this role will not have any access to this item</p><p>MY CAMPAIGNS - Users in this role will only have access to this item for Campaigns that they have been directly granted access to.</p><p>ALL CAMPAIGNS - Users in this role will have access to this item for ALL of this company\'s Campaigns.</p></div>"

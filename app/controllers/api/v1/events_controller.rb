@@ -309,6 +309,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
       ],
       "place": {
           "id": 2624,
+          "venue_id": 2154,
           "name": "Kelly's Pub Too",
           "latitude": 39.7924104,
           "longitude": -86.2514126,

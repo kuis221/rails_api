@@ -142,7 +142,7 @@ describe EventsController, type: :controller do
           ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'DURATION', 'VENUE NAME', 'ADDRESS', 'CITY',
            'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL'],
           ['Test Campaign FY01', nil, '2019-01-23T10:00', '2019-01-23T12:00', '2.0',
-           'Bar Prueba', 'Bar Prueba, Los Angeles, California, 12345', 'Los Angeles', 'California',
+           'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345', 'Los Angeles', 'California',
            '12345', 'Active', 'Approved', 'Test User, zteam', "http://localhost:5100/events/#{event.id}"]
         ])
       end

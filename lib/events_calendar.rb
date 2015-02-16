@@ -46,7 +46,7 @@ class EventsCalendar
             start: day,
             end: day,
             color: COLORS[all_brands.index(brand.id) % COLORS.count],
-            url: Rails.application.routes.url_helpers.events_url('brand[]' => brand.id, 'start_date' => day.to_s(:slashes)) }
+            url: Rails.application.routes.url_helpers.events_path('brand[]' => brand.id, 'start_date' => day.to_s(:slashes)) }
           days[day][brand.id][:count] += 1
           days[day][brand.id][:description] = "<b>#{brand.name}</b><br />#{days[day][brand.id][:count]} Events"
         end
@@ -71,7 +71,7 @@ class EventsCalendar
           start: day,
           end: day,
           color: COLORS[campaign_ids.index(campaign_id) % COLORS.count],
-          url: Rails.application.routes.url_helpers.events_url('campaign[]' => campaign_id, 'start_date' => day.to_s(:slashes)) }
+          url: Rails.application.routes.url_helpers.events_path('campaign[]' => campaign_id, 'start_date' => day.to_s(:slashes)) }
         days[day][campaign_id][:count] += 1
         days[day][campaign_id][:description] = "<b>#{campaign_names[campaign_id]}</b><br />#{days[day][campaign_id][:count]} Events"
       end
@@ -98,7 +98,7 @@ class EventsCalendar
         count: 1,
         description: "<b>#{campaign_names[campaign_id]}</b><br />1 Event",
         color: COLORS[campaign_ids.index(campaign_id) % COLORS.count],
-        url: Rails.application.routes.url_helpers.events_url('id[]' => key) }
+        url: Rails.application.routes.url_helpers.events_path('id[]' => key) }
     end
     days.map { |_, bs| bs.values.sort { |a, b| a[:start_at] <=> b[:start_at] } }.flatten
   end
@@ -127,7 +127,7 @@ class EventsCalendar
             start: day,
             end: day,
             color: COLORS.sample,
-            url: Rails.application.routes.url_helpers.events_url('user[]' => user[0], 'start_date' => day.to_s(:slashes)) }
+            url: Rails.application.routes.url_helpers.events_path('user[]' => user[0], 'start_date' => day.to_s(:slashes)) }
           days[day][user[1]][:count] += 1
           days[day][user[1]][:description] = "<b>#{user[1]}</b><br />#{days[day][user[1]][:count]} Events"
         end

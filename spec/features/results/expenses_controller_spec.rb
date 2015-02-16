@@ -56,14 +56,14 @@ feature 'Results Expenses Page', js: true, search: true  do
       within resource_item 1 do
         expect(page).to have_content('First Campaign')
         expect(page).to have_content('WED Aug 21, 2013, 8:00 PM - 11:00 PM')
-        expect(page).to have_content('Place 1, New York City, 12345')
+        expect(page).to have_content('Place 1, 11 Main St., New York City, 12345')
         expect(page).to have_content('$10.00')
       end
       # Second Row
       within resource_item 2 do
         expect(page).to have_content('First Campaign')
         expect(page).to have_content('SUN Aug 25, 2013, 9:00 AM - 10:00 AM')
-        expect(page).to have_content('Place 2, New York City, 12345')
+        expect(page).to have_content('Place 2, 11 Main St., New York City, 12345')
         expect(page).to have_content('$20.00')
       end
       expect(page).to have_content('TOTAL:$30.00')
@@ -137,9 +137,9 @@ feature 'Results Expenses Page', js: true, search: true  do
 
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'BRAND', 'VENUE NAME', 'ADDRESS', 'START DATE', 'END DATE', 'EXPENSE', 'DESCRIPTION', 'ACTIVE STATE'],
-        [campaign1.name, 'Brand 1', 'Place 1', 'Place 1, New York City, NY, 12345', '2013-08-21T20:00',
+        [campaign1.name, 'Brand 1', 'Place 1', 'Place 1, 11 Main St., New York City, NY, 12345', '2013-08-21T20:00',
          '2013-08-21T23:00', '10.0', 'Expense #1 Event #1', 'Active'],
-        [campaign1.name, nil, 'Place 2', 'Place 2, New York City, NY, 12345', '2013-08-25T09:00',
+        [campaign1.name, nil, 'Place 2', 'Place 2, 11 Main St., New York City, NY, 12345', '2013-08-25T09:00',
          '2013-08-25T10:00', '20.0', 'Expense #1 Event #2', 'Active']
       ])
     end
