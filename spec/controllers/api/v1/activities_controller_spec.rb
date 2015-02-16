@@ -14,18 +14,6 @@ RSpec.describe Api::V1::ActivitiesController, type: :controller do
 
 
 
-  #describe '#index' do
-  #  it 'returns a list of activity associated to event' do
-  #    let(:activity) { create(:activity, activity_type: activity_type, company_user: company_user, activitable: event) }
-  #    get :index, event_id: event.id, format: :json
-  #    expect(response).to be_success
-  #    result = JSON.parse(response.body)
-  #    expect(result.count).to eql 1
-  #    expect(result).to include(
-  #      'id' =>  activity.first.id)
-  #  end
-  #end
-
   describe "PUT 'update'" do
     let(:another_user) { create(:company_user, user: create(:user), company_id: company.id) }
     let(:another_campaign) { create(:campaign, company: company) }
@@ -83,7 +71,7 @@ RSpec.describe Api::V1::ActivitiesController, type: :controller do
       get :show, id: activity.id, format: :json
       expect(json['data'].count).to eql 1
       expect(json['data'].first).to include(
-        'name' => 'User/Date', 'value' => nil,
+        'name' => 'User/Date', 'value' => [],
         'type' => 'FormField::UserDate', 'settings' => nil,
         'ordering' => 1, 'required' => nil, 'kpi_id' => nil)
     end

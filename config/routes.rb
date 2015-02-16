@@ -63,7 +63,11 @@ Brandscopic::Application.routes.draw do
           get :events, on: :member
         end
 
-        resources :activity_types, only: [:index]
+        resources :activity_types, only: [:index] do
+          member do
+            get :campaigns
+          end
+        end
 
         resources :venues, only: [:index, :show, :create] do
           get :search, on: :collection

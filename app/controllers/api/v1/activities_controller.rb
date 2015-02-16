@@ -679,16 +679,16 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
         segments: field.options_for_input.map { |s| { id: s[1], text: s[0], value: result ? result.value.include?(s[1]) : false } } }
     elsif field.type == 'FormField::Radio'
       { value: result ? result.value || [] : nil,
-        segments: field.options_for_input.map { |s| { id: s[1], text: s[0], value: result ? result.value.include?(s[1]) : false } } }
+        segments: field.options_for_input.map { |s| { id: s[1], text: s[0], value: result ? result.value.to_i.eql?(s[1]) : false } } }
     elsif field.type == 'FormField::Dropdown'
       { value: result ? result.value.to_i : nil,
-        segments: field.options_for_input.map { |s| { id: s[1], text: s[0] } } }
+        segments: field.options_for_input.map { |s| { id: s[1], text: s[0], value: result ? result.value.to_i.eql?(s[1]) : false } } }
     elsif field.type == 'FormField::Brand'
       { value: result ? result.value.to_i : nil,
-        segments: field.options_for_field(result).map { |s| { id: s.id, text: s.name } } }
+        segments: field.options_for_field(result).map { |s| { id: s.id, text: s.name, value: result ? result.value.to_i.eql?(s.id) : false } } }
     elsif field.type == 'FormField::Marque'
       { value: result ? result.value.to_i : nil,
-        segments: field.options_for_field(result).map { |s| { id: s[1], text: s[0] } } }
+        segments: field.options_for_field(result).map { |s| { id: s[1], text: s[0], value: result ? result.value.to_i.eql?(s[1]) : false } } }
     elsif field.type == 'FormField::Summation'
       { value: result ? result.value.map { |s| s[1].to_f }.reduce(0, :+) : nil,
         segments: field.options_for_input.map { |s| { id: s[1], text: s[0], value: result ? result.value[s[1].to_s] : nil } } }
@@ -696,7 +696,7 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
       { statements: field.statements.order(:ordering).map { |s| { id: s.id, text: s.name, value: result ? result.value[s.id.to_s] : nil } },
         segments: field.options_for_input.map { |s| { id: s[1], text: s[0] } } }
     else
-      {}
+      { value: result ? result.value || [] : nil}
     end
   end
 
