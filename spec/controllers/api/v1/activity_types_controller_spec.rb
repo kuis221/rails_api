@@ -36,11 +36,13 @@ RSpec.describe Api::V1::ActivityTypesController, :type => :controller do
 
   describe '#Campaigns' do
     it 'returns a list of campaigns associated to the activity type' do
+      campaign2 = create(:campaign, company: company, name: 'Cerveza Pilsen FY15')
       activity_type = create(:activity_type, company: company)
       activity_type.campaigns << create(:campaign, company: company, name: 'Cerveza Imperial FY14')
       get 'campaigns', id: activity_type.id, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
+      
       expect(result.count).to eql 1
       expect(result).to include(
         'id' =>  activity_type.campaigns.first.id, 'name' => 'Cerveza Imperial FY14')
