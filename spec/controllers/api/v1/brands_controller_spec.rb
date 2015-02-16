@@ -18,6 +18,19 @@ describe Api::V1::BrandsController, type: :controller do
       expect(result).to match_array([{ 'id' => brand1.id, 'name' => 'Cacique', 'active' => true },
                                      { 'id' => brand2.id, 'name' => 'Nikolai', 'active' => true }])
     end
+
+    it 'returns a list of brands for campaign' do
+      campaign = create(:campaign, company: company) 
+      brand1 = create(:brand, name: 'Cacique', company_id: company.to_param)
+      brand2 = create(:brand, name: 'Imperial', company_id: company.to_param)
+      
+      get 'index', id: campaign.to_param, format: :json
+      expect(response).to be_success
+      result = JSON.parse(response.body)
+
+      expect(result).to match_array([{ 'id' => brand1.id, 'name' => 'Cacique', "active"=>true },
+                                     { 'id' => brand2.id, 'name' => 'Imperial', "active"=>true }])
+    end
   end
 
   describe '#marques' do

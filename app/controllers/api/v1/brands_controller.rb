@@ -1,8 +1,10 @@
 class Api::V1::BrandsController < Api::V1::ApiController
   inherit_resources
 
-  skip_authorization_check only: [:index, :marques]
-  skip_authorize_resource only: [:index, :marques]
+  skip_authorization_check only: [:index, :marques, :campaign_brands]
+  skip_authorize_resource only: [:index, :marques, :campaign_brands]
+
+  belongs_to :campaign, optional: true
 
   resource_description do
     short 'Brands'
@@ -17,6 +19,7 @@ class Api::V1::BrandsController < Api::V1::ApiController
   end
 
   api :GET, '/api/v1/brands', 'Get a list of brands'
+  param :campaign_id, :number, required: false, desc: "The brand's ID."
   description <<-EOS
     Returns a list of brands sorted by name. Only those brands that are accessible for the user will be returned.
 
@@ -48,7 +51,8 @@ class Api::V1::BrandsController < Api::V1::ApiController
     ]
   EOS
   def index
-    @brands = current_company.brands.active.accessible_by_user(current_company_user).order(:name)
+    collection
+    #@brands = current_company.brands.active.accessible_by_user(current_company_user).order(:name)
   end
 
   api :GET, '/api/v1/brands/:id/marques', 'Get a list of marques for a brand'
@@ -82,5 +86,11 @@ class Api::V1::BrandsController < Api::V1::ApiController
   EOS
   def marques
     @marques = resource.marques
+  end
+ 
+  protected
+
+  def collection
+     @brands ||= end_of_association_chain.where(company_id: current_company.id).active.accessible_by_user(current_company_user).order(:name)
   end
 end

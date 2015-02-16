@@ -54,9 +54,9 @@ class FormField::Brand < FormField
 
   def options_for_field(result)
     if result.present? && result.resultable.present? && result.resultable.campaign
-      result.resultable.campaign.brands
+      result.resultable.campaign.brands.active
     else
-      ::Company.current.brands
+      ::Company.current.brands.active
     end
   end
 end
