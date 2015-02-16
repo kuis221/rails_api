@@ -17,8 +17,7 @@ Brandscopic::Application.routes.draw do
             get :notifications
           end
         end
-
-        resources :activities, only: [:new, :show, :update]
+        resources :activities, only: [:new, :show]
 
         resources :events, only: [:index, :show, :create, :update] do
           get :status_facets, on: :collection
@@ -34,6 +33,9 @@ Brandscopic::Application.routes.draw do
             get :brands, on: :collection
           end
           resources :invites, only: [:index, :show, :create, :update]
+          resources :activities, only: [:index, :create, :update] do
+            get :deactivate, on: :member
+          end
           get :autocomplete,   on: :collection
           member do
             put :submit
@@ -57,17 +59,25 @@ Brandscopic::Application.routes.draw do
             get :overall_stats
           end
           resources :activity_types, only: [:index]
+          resources :brands, only: [:index] 
           get :stats, on: :member
           get :events, on: :member
         end
 
-        resources :activity_types, only: [:index]
+        resources :activity_types, only: [:index] do
+          member do
+            get :campaigns
+          end
+        end
 
         resources :venues, only: [:index, :show, :create] do
           get :search, on: :collection
           get :types, on: :collection
           get :autocomplete, on: :collection
           resources :invites, only: [:index, :show, :create, :update]
+          resources :activities, only: [:index, :create, :update] do
+            get :deactivate, on: :member
+          end
           member do
             get :analysis
             get :photos

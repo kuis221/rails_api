@@ -184,7 +184,7 @@ class Activity < ActiveRecord::Base
   end
 
   def delegate_campaign_id_from_event
-    return unless activitable.is_a?(Event)
+    return true unless activitable.is_a?(Event)
     self.campaign = activitable.campaign
     self.campaign_id = activitable.campaign_id
   end

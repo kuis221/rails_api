@@ -3,10 +3,78 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
 
   belongs_to :event, :venue, optional: true
 
-  skip_before_action :verify_authenticity_token,
-                     if: proc { |c| c.request.format == 'application/json' }
-
   respond_to :json
+
+  def_param_group :activity do
+    param :activity, Hash, required: true, action_aware: true do
+      param :activity_type_id, :number, required: true, desc: 'Activity Type ID'
+      param :activity_date, %r{\A\d{1,2}/\d{1,2}/\d{4}\z}, required: true, desc: "Activity date. Should be in format MM/DD/YYYY."
+      param :results_attributes, :event_result, required: false, desc: "A list of activity results with the id and value. Eg: results_attributes: [{id: 1, value:'Some value'}, {id: 2, value: '123'}]"
+      param :company_user_id, :number, desc: 'Company user ID'
+      param :campaign_id, :number, desc: 'Campaign ID'
+      param :event_id, :number, desc: 'Event ID'
+      param :venue_id, :number, desc: 'Venue ID'
+    end
+  end
+
+  api :POST, '/api/v1/events/:event_id/activities', 'Create a new activity'
+  param_group :activity
+  def create
+    create! do |success, failure|
+      success.json { render :show }
+      success.xml { render :show }
+      failure.json { p resource.inspect; render json: resource.errors, status: :unprocessable_entity }
+      failure.xml { render xml: resource.errors, status: :unprocessable_entity }
+    end
+  end
+
+  api :PUT, '/api/v1/events/:event_id/activities/:id', 'Update a activity\'s details'
+  param :event_id, :number, required: false, desc: 'Event ID'
+  param :venue_id, :number, required: false, desc: 'Venue ID'
+  param :id, :number, required: true, desc: 'Activity ID'
+  param_group :activity
+  def update
+    update! do |success, failure|
+      success.json { render :show }
+      success.xml { render :show }
+      failure.json { render json: resource.errors, status: :unprocessable_entity }
+      failure.xml { render xml: resource.errors, status: :unprocessable_entity }
+    end
+  end
+
+  api :GET, '/api/v1/events/:id/activities/:id/deactivate', 'Deactivate activity'
+  param :event_id, :number, required: false, desc: 'Event ID'
+  param :venue_id, :number, required: false, desc: 'Venue ID'
+  param :id, :number, required: true, desc: 'Activity ID'
+
+  def deactivate
+    authorize! :deactivate, Activity
+    resource.deactivate!
+    render json: "ok"
+  end
+
+  api :GET, '/api/v1/events/:event_id/activities', 'Get a list of activities for an Event or Venue'
+  param :event_id, :number, required: false, desc: 'Event ID'
+  param :venue_id, :number, required: false, desc: 'Venue ID'
+  description <<-EOS
+    Returns a full list of the associated activity types for a campaign
+  EOS
+  example <<-EOS
+  {
+    "data": [
+      {
+        "id": 5135,
+        "activity_type_id": 27,
+        "activity_type_name": "Jameson BA POS Drop FY15",
+        "activity_date": "2015-02-06T02:00:00.000-06:00",
+        "company_user_name": "Chris Jaskot"
+      }
+    ]
+  }
+  EOS
+  def index
+    collection
+  end
 
   api :GET, '/api/v1/actvities/new', 'Return a list of fields for a new activity of a given activity type'
   param :activity_type_id, :number, required: true, desc: 'The activity type id'
@@ -267,7 +335,18 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
   def new
     respond_to do |format|
       format.json do
-        render json: serialize_fields_for_new(activity_type.form_fields)
+        render json: {
+          activity_date: resource.activity_date,
+          company_user: {
+            id: resource.company_user.id,
+            name: resource.company_user.full_name
+          },
+          activity_type: {
+            id: activity_type.id,
+            name: activity_type.name
+          },
+          data: serialize_fields_for_new(activity_type.form_fields)
+        }
       end
     end
   end
@@ -572,8 +651,7 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
     results.map do |result|
       field = result.form_field
       serialize_field(field, result).merge(
-        id: result.id,
-        value: result.value,
+        id: result.id
       )
     end
   end
@@ -599,12 +677,18 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
     elsif field.type == 'FormField::Checkbox'
       { value: result ? result.value || [] : nil,
         segments: field.options_for_input.map { |s| { id: s[1], text: s[0], value: result ? result.value.include?(s[1]) : false } } }
+    elsif field.type == 'FormField::Radio'
+      { value: result ? result.value || [] : nil,
+        segments: field.options_for_input.map { |s| { id: s[1], text: s[0], value: result ? result.value.to_i.eql?(s[1]) : false } } }
+    elsif field.type == 'FormField::Dropdown'
+      { value: result ? result.value.to_i : nil,
+        segments: field.options_for_input.map { |s| { id: s[1], text: s[0], value: result ? result.value.to_i.eql?(s[1]) : false } } }
     elsif field.type == 'FormField::Brand'
       { value: result ? result.value.to_i : nil,
-        segments: field.options_for_field(result).map { |s| { id: s.id, text: s.name } } }
+        segments: field.options_for_field(result).map { |s| { id: s.id, text: s.name, value: result ? result.value.to_i.eql?(s.id) : false } } }
     elsif field.type == 'FormField::Marque'
       { value: result ? result.value.to_i : nil,
-        segments: field.options_for_field(result).map { |s| { id: s[1], text: s[0] } } }
+        segments: field.options_for_field(result).map { |s| { id: s[1], text: s[0], value: result ? result.value.to_i.eql?(s[1]) : false } } }
     elsif field.type == 'FormField::Summation'
       { value: result ? result.value.map { |s| s[1].to_f }.reduce(0, :+) : nil,
         segments: field.options_for_input.map { |s| { id: s[1], text: s[0], value: result ? result.value[s[1].to_s] : nil } } }
@@ -612,8 +696,24 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
       { statements: field.statements.order(:ordering).map { |s| { id: s.id, text: s.name, value: result ? result.value[s.id.to_s] : nil } },
         segments: field.options_for_input.map { |s| { id: s[1], text: s[0] } } }
     else
-      {}
+      { value: result ? result.value || [] : nil}
     end
   end
 
+  def activity_params
+    params.require(:activity).permit([
+      :activity_type_id, {
+        results_attributes: [:id, :form_field_id, :value, { value: [] }, :_destroy] },
+      :campaign_id, :company_user_id, :activity_date]).tap do |whielisted|
+      unless whielisted.nil? || whielisted[:results_attributes].nil?
+        whielisted[:results_attributes].each_with_index do |value, k|
+          value[:value] = params[:activity][:results_attributes][k][:value]
+        end
+      end
+    end
+  end
+
+  def collection
+     @activities ||= end_of_association_chain.where(active: true)
+  end
 end
