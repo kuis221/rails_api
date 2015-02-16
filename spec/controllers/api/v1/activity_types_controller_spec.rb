@@ -51,7 +51,7 @@ RSpec.describe Api::V1::ActivityTypesController, :type => :controller do
       at2 = create(:activity_type, company: company)
       at1.campaigns << create(:campaign, company: company, name: 'Cerveza Imperial FY14')
       at2.campaigns << create(:campaign, company: company, name: 'Cerveza Pilsen FY14')
-      get 'campaigns',id: at1.id, format: :json
+      get 'campaigns', id: at1.id, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
       expect(result.count).to eql 1

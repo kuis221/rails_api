@@ -20,13 +20,18 @@ describe Api::V1::BrandsController, type: :controller do
     end
 
     it 'returns a list of brands for campaign' do
-      campaign = create(:campaign, company: company) 
+      campaign = create(:campaign, company: company)
+      campaign2 = create(:campaign, company: company) 
       brand1 = create(:brand, name: 'Cacique', company_id: company.to_param)
       brand2 = create(:brand, name: 'Imperial', company_id: company.to_param)
+      campaign2.brands << create(:brand, name: 'Pilsen', company_id: company.to_param)
+      campaign.brands << brand1
+      campaign.brands << brand2
       
-      get 'index', id: campaign.to_param, format: :json
+      get 'index', campaign_id: campaign.to_param, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
+      expect(result.count).to eql 2
 
       expect(result).to match_array([{ 'id' => brand1.id, 'name' => 'Cacique', "active"=>true },
                                      { 'id' => brand2.id, 'name' => 'Imperial', "active"=>true }])
