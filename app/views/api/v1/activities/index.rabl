@@ -1,4 +1,4 @@
-collection @activities.where(active: true)
+collection @activities
 
 attribute :id, :activity_date
 

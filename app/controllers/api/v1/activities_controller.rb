@@ -712,4 +712,8 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
       end
     end
   end
+
+  def collection
+     @activities ||= end_of_association_chain.where(active: true)
+  end
 end
