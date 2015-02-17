@@ -804,7 +804,6 @@ ul.select2-results{
 			top:2px;
 			&:after{
 				color: white;
-				content: "\e002";
 				display: block;
 				font-family: 'icons';
 				font-size: 9px;
@@ -840,7 +839,6 @@ ul.select2-results{
 
 	.ui-datepicker-prev span:after{
 		color: white;
-		content: "\e003";
 		display: block;
 		font-family: 'icons';
 		font-size: 9px;

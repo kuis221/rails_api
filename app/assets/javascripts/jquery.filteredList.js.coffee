@@ -708,6 +708,10 @@ $.widget 'nmk.filteredList', {
 						@customDatesFilter.find("[name=custom_start_date]").datepicker "option", "maxDate", selectedDate
 			)
 		)
+		# So the custom date picker is not closed when chosing dates
+		$('#ui-datepicker-div').on 'click', (e) =>
+			if $('.select-ranges.open').length
+				e.stopPropagation();
 
 		@customDatesPanel = $('<div class="dates-pref">').appendTo(@form).append(
 			$('<div class="dropdown select-ranges">').append(
