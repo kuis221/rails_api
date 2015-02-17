@@ -164,7 +164,7 @@ class CompanyUsersController < FilteredController
       memberable_type: params[:parent_type], memberable_id: params[:parent_id]).exists?
 
     parent = params['parent_type'].constantize.find(params['parent_id'])
-    @campaigns = parent.campaigns.where(company_id: current_company.id)
+    @campaigns = parent.campaigns.active.where(company_id: current_company.id)
       .where('campaigns.id not in (?)',
              resource.campaigns.children_of(parent).pluck('campaigns.id') + [0])
   end
