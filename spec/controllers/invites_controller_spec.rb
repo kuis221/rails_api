@@ -9,15 +9,6 @@ RSpec.describe InvitesController, type: :controller do
 
   before { user }
 
-  describe "GET 'new'" do
-    it 'returns http success' do
-      xhr :get, 'new', event_id: event.id, format: :js
-      expect(response).to be_success
-      expect(response).to render_template('new')
-      expect(response).to render_template('_form')
-    end
-  end
-
   describe "POST 'create'" do
     it 'should not render form_dialog if no errors' do
       expect do

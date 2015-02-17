@@ -510,7 +510,7 @@ $.widget 'nmk.filteredList', {
 					if not $(e.target).prop('checked')
 						@_removeParams(option.id)
 					else
-						@_setQueryString option.id.split('&id')[0]
+						@addParams option.id.split('&id')[0]
 				else
 					params = encodeURIComponent("#{option.name}[]") + '=' + encodeURIComponent(option.id)
 					if $(e.target).prop('checked')
