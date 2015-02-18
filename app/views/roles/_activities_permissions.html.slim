@@ -4,22 +4,22 @@
 
   .permissions
     .row-fluid
-      .span7
-        .span5 View
-        .span2
+      .span12
+        .span2 View
+        .span1
           = permission_checkbox(f, :show, Activity)
 
-      .span7
-        .span5 Create
-        .span2
+      .span12
+        .span2 Create
+        .span1
           = permission_checkbox(f, :create, Activity)
 
-      .span7
-        .span5 Edit
-        .span2
+      .span12
+        .span2 Edit
+        .span1
           = permission_checkbox(f, :update, Activity)
 
-      .span7
-        .span5 Deactivate
-        .span2
+      .span12
+        .span2 Deactivate
+        .span1
           = permission_checkbox(f, :deactivate, Activity)
