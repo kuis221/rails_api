@@ -12,14 +12,16 @@
         .span1 DEACTIVATE
 
       .span12
-        .span2.title Campaigns
+        .span2.title
+          h5 Campaigns
         .span1 = permission_checkbox(f, :read, Campaign)
         .span1 = permission_checkbox(f, :create, Campaign)
         .span1 = permission_checkbox(f, :update, Campaign)
         .span1 = permission_checkbox(f, :deactivate, Campaign)
 
-      .span12
-        .span2.title Post Event Form
+      .span12.separate_small
+        .span2.title
+          h5 Post Event Form
         .span1 = permission_checkbox(f, :view_event_form, Campaign)
 
       .span12.category.separate
@@ -30,37 +32,42 @@
         .span1
 
       .span12
-        .span2.title Places
+        .span2.title
+          h5 Places
         .span1 = permission_checkbox(f, :view_places, Campaign)
         .span1 = permission_checkbox(f, :add_place, Campaign)
         .span1 = permission_checkbox(f, :remove_place, Campaign)
 
-      .span12
-        .span2.title Staff
+      .span12.separate_small
+        .span2.title
+          h5 Staff
         .span1 = permission_checkbox(f, :view_staff, Campaign)
         .span1 = permission_checkbox(f, :add_staff, Campaign)
         .span1 = permission_checkbox(f, :remove_staff, Campaign)
 
-      .span12
-        .span2.title Date ranges
+      .span12.separate_small
+        .span2.title
+          h5 Date ranges
         .span1 = permission_checkbox(f, :view_date_ranges, Campaign)
         .span1 = permission_checkbox(f, :add_date_range, Campaign)
         .span1 = permission_checkbox(f, :remove_date_range, Campaign)
 
-      .span12
-        .span2.title Day Parts
+      .span12.separate_small
+        .span2.title
+          h5 Day Parts
         .span1 = permission_checkbox(f, :view_day_parts, Campaign)
         .span1 = permission_checkbox(f, :add_day_part, Campaign)
         .span1 = permission_checkbox(f, :remove_day_part, Campaign)
 
-      .span12
-        .span2.title Documents
+      .span12.separate_small
+        .span2.title
+          h5 Documents
         .span1 = permission_checkbox(f, :view_documents, Campaign)
         .span1 = permission_checkbox(f, :add_document, Campaign)
         .span1 = permission_checkbox(f, :remove_document, Campaign)
 
       .span12
-        .span2.title.separate_small
+        .span2.title.separate
           h5 KPIs
 
       .span12
