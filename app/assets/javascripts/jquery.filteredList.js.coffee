@@ -670,7 +670,7 @@ $.widget 'nmk.filteredList', {
 		@customDatesFilter = $('<div class="custom-dates-inputs">').appendTo(@form).append(
 			$('<div class="start-date">').append(
 				$('<label for="custom_start_date">').text('Start date'),
-				$('<input type="text" class="input-calendar date_picker disabled" id="custom_start_date" name="custom_start_date" readonly="readonly">').val('mm/dd/yyyy').datepicker
+				$('<input type="text" class="input-calendar date_picker disabled" id="custom_start_date" name="custom_start_date">').val('mm/dd/yyyy').datepicker
 					showOtherMonths: true
 					selectOtherMonths: true
 					dateFormat: "mm/dd/yy"
@@ -690,7 +690,7 @@ $.widget 'nmk.filteredList', {
 			$('<div class="separate">').text('-'),
 			$('<div class="end-date">').append(
 				$('<label for="custom_end_date">').text('End date'),
-				$('<input type="text" class="input-calendar date_picker disabled" id="custom_end_date" name="custom_end_date" readonly="readonly">').val('mm/dd/yyyy').datepicker
+				$('<input type="text" class="input-calendar date_picker disabled" id="custom_end_date" name="custom_end_date">').val('mm/dd/yyyy').datepicker
 					showOtherMonths: true
 					selectOtherMonths: true
 					dateFormat: "mm/dd/yy"
