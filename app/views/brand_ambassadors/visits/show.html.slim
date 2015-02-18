@@ -3,7 +3,6 @@
 
   .details_box.padding-top-close-bar
     h2= resource.visit_type_name
-
     .calendar-data
       i.icon-calendar
       span
@@ -40,11 +39,26 @@
 
   - if can?(:view_list, Event)
     #visit-events.details_box
-      h5.module-title EVENTS
-      - if can?(:create, Event)
-        = button_to 'Create', new_event_path(resource, event: {visit_id: resource.id, campaign_id: resource.campaign_id}, format: :js), remote: true, class: 'btn btn-primary', :id => 'new-event-btn', method: :get
+      h5.module-title EVENTS 
+      #list-tools
+        .pull-left
+          - if can?(:create, Event)
+          = button_to 'Create', new_event_path(resource, event: {visit_id: resource.id, campaign_id: resource.campaign_id}, format: :js), remote: true, class: 'btn btn-primary', :id => 'new-event-btn', method: :get  
 
-      #events-list-filters.hide
+        .text-right
+          .dropdown.btn-download
+            a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+              i.icon-download
+              i.icon-arrow-down-small
+            ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+              li
+                a.xlsx-download-link href="#" role="menuitem" data-url="#{events_path(format: :xls)}"
+                  | Download as XLS
+              li
+                a#pdf-export.xlsx-download-link href="#" role="menuitem" data-url="#{events_path(format: :pdf)}"
+                  | Download as PDF 
+
+      #collection-list-filters.hide
       div#events-list.resource-list
 
 
@@ -52,7 +66,7 @@
     = render partial: 'brand_ambassadors/document_folders/index', locals: {children: (resource.document_folders.root_children.active + resource.brand_ambassadors_documents.root_children.active).sort_by(&:name), parent: resource }
 
 javascript:
-  $('#events-list-filters').filteredList({
+  $('#collection-list-filters').filteredList({
     'source': '#{url_for(controller: '/events', action: :items)}',
     'filtersUrl': null,
     'listContainer' : '#events-list',
