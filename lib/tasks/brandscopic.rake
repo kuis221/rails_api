@@ -12,7 +12,9 @@ namespace :brandscopic do
         processed_ids.concat [place.id, copy.id]
 
         Venue.where(place_id: copy.id).each do |venue|
-          Venue.find_or_create_by(place_id: place.id, company_id: venue.company_id)
+          real_venue = Venue.find_or_create_by(place_id: place.id, company_id: venue.company_id)
+          venue.activities.update_all(activitable_id: real_venue.id)
+          venue.invites.update_all(venue_id: real_venue.id)
           venue.destroy
         end
 

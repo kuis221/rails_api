@@ -43,12 +43,14 @@
 }
 
 .icon-arrow-right:before,
-.datepick-cmd-next:before{
+.datepick-cmd-next:before,
+.ui-datepicker .ui-datepicker-next:after{
 	content:"\e605";
 }
 
 .icon-arrow-left:before,
-.datepick-cmd-prev:before{
+.datepick-cmd-prev:before,
+.ui-datepicker .ui-datepicker-prev:after{
 	content:"\e606";
 }
 
