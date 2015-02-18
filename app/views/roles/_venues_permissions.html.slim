@@ -15,7 +15,7 @@
         .span1
           = permission_checkbox(f, :index, Venue)
 
-      .span12.separate_small
+      .span12.separate
         .span2.title
           h5 Venue Details
         .span1
@@ -60,4 +60,4 @@
           = permission_checkbox(f, :view_comments, Venue)
 
   = hidden_field_tag :partial, :venues_permissions
-  = f.button :submit, 'Save', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
+  /*= f.button :submit, 'Save', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}

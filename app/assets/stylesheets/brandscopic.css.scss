@@ -4246,8 +4246,10 @@ body.roles{
 	}
 	.role-permissions-save-bar{
 		border-bottom: 1px solid $gray-light;
-		margin-bottom: 40px;
 		padding: 15px 12px 12px 12px;
+		&#list-tools{
+			margin-bottom: 40px;
+		}
 	}
 	.role-permissions-legend {
 		color: $brand;
@@ -4298,6 +4300,7 @@ body.roles{
 		margin-left: 20px;
 		&.category{
 			color: $brand;
+			font-size: 13px;
 			padding-bottom: 15px;
 			text-align: center;
 		}
