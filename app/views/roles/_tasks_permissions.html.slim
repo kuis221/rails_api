@@ -4,6 +4,13 @@
 
   .permissions
     .row-fluid
+      .span12.category
+        .span2
+        .span1 VIEW
+        .span1 CREATE
+        .span1 EDIT
+        .span1 DEACTIVATE
+
       .span12
         .span2.title
           h5 My tasks
@@ -19,7 +26,7 @@
         .span1
         .span1
 
-      .span12.separate_small
+      .span12.separate
         .span2.title
           h5 Team tasks
         .span1 = permission_checkbox(f, :index_team, Task)
