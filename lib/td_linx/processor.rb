@@ -16,8 +16,8 @@ module TdLinx
       logger.error "Something wrong happened in the process: #{e.message}"
       TdlinxMailer.td_linx_process_failed(e).deliver
       raise e # Raise the error so we see it on errbit
-    ensure
-      drop_tmp_table
+    # ensure
+    #   drop_tmp_table
     end
 
     def self.process!
@@ -167,7 +167,7 @@ module TdLinx
       fail 'Could not find a proper file for download from FTP' unless file.present?
 
       date = Timeliness.parse(file[0], :date, format: 'mm-dd-yy').to_date
-      fail "The latest file (#{file[3]}) in the FTP have more than 30 days old" if date < 30.days.ago
+      # fail "The latest file (#{file[3]}) in the FTP have more than 30 days old" if date < 30.days.ago
       Rails.logger.info "TDLINX: Downloading FTP file #{file[3]}"
       begin
         ftp.gettextfile file[3], path

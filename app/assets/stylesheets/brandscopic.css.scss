@@ -4263,20 +4263,33 @@ body.roles{
 				top: 3px;
 			}
 		}
-
-		.role-help-tooltip {
-			width: 300px;
-			p {
-				font-size: 11px;
-				text-align: left;
-			}
-		}
-		.tooltip-inner {
-			max-width: none;
-		}
 	}
 	.role-permission-item {
 		text-align: center;
+	}
+}
+.roles_box {
+	position: relative;
+	.tooltip {
+		position: absolute;
+		top: -170px !important;
+		left: initial !important;
+		right: 1px;
+		opacity: 1;
+		.tooltip-arrow {
+			left: initial !important;
+			right: 15px !important;
+		}
+		.tooltip-inner {
+			max-width: none;
+			.role-help-tooltip {
+				width: 300px;
+				p {
+					font-size: 11px;
+					text-align: left;
+				}
+			}		
+		}
 	}
 }
 
