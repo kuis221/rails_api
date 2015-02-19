@@ -621,6 +621,113 @@ feature 'Brand Ambassadors Visits' do
       end
     end
 
+    scenario 'should be able to export as xls' do
+      cities = [
+        create(:city, name: 'San Francisco', state: 'CA'),
+        create(:city, name: 'New York', state: 'NY')
+      ]
+      company_user.places << cities
+      campaign.places << cities
+
+      event1 = create(:event, start_date: '02/01/2014', end_date: '02/01/2014',
+                              start_time: '10:00am', end_time: '11:00am',
+                              campaign: campaign,
+                              users: [company_user],
+                              place: create(:place, name: 'My Place 1', city: 'New York', state: 'NY'))
+
+      event2 = create(:event, start_date: '02/01/2014', end_date: '02/01/2014',
+                              start_time: '09:00am', end_time: '11:00am',
+                              campaign: campaign,
+                              place: create(:place, name: 'My Place 2', city: 'San Francisco', state: 'CA'))
+
+      event3 = create(:event, start_date: '02/01/2014', end_date: '02/01/2014',
+                              start_time: '09:00am', end_time: '11:00am',
+                              campaign: campaign,
+                              users: [company_user],
+                              place: create(:place, name: 'My Place 3', city: 'New York', state: 'NY'))
+      Sunspot.commit
+
+      visit brand_ambassadors_visit_path(ba_visit)
+
+      click_js_link 'Download'
+      click_js_link 'Download as XLS'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        expect(ListExportWorker).to have_queued(ListExport.last.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+      expect(ListExport.last).to have_rows([
+        ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'DURATION', 'VENUE NAME', 'ADDRESS', 'CITY',
+         'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', "URL"],
+        ['ABSOLUT Vodka', nil, "2014-02-01T09:00","2014-02-01T11:00", '2.0', 'My Place 3',
+         'My Place 3, 11 Main St., New York, NY, 12345', 'New York', 'NY', '12345', 'Active', 'Unsent',
+         "Test User", "http://localhost:5100/events/#{event3.id}"],
+        ['ABSOLUT Vodka', nil, "2014-02-01T10:00","2014-02-01T11:00", '1.0', 'My Place 1',
+         'My Place 1, 11 Main St., New York, NY, 12345', 'New York', 'NY', '12345', 'Active', 'Unsent',
+         "Test User", "http://localhost:5100/events/#{event1.id}"]
+      ])
+    end
+
+    scenario 'should be able to export as PDF' do
+      cities = [
+        create(:city, name: 'San Francisco', state: 'CA'),
+        create(:city, name: 'New York', state: 'NY')
+      ]
+      company_user.places << cities
+      campaign.places << cities
+
+      event1 = create(:event, start_date: '02/01/2014', end_date: '02/01/2014',
+                              start_time: '10:00am', end_time: '11:00am',
+                              campaign: campaign,
+                              users: [company_user],
+                              place: create(:place, name: 'My Place 1', city: 'New York', state: 'NY'))
+
+      event2 = create(:event, start_date: '02/01/2014', end_date: '02/01/2014',
+                              start_time: '09:00am', end_time: '11:00am',
+                              campaign: campaign,
+                              place: create(:place, name: 'My Place 2', city: 'San Francisco', state: 'CA'))
+
+      event3 = create(:event, start_date: '02/01/2014', end_date: '02/01/2014',
+                              start_time: '09:00am', end_time: '11:00am',
+                              campaign: campaign,
+                              users: [company_user],
+                              place: create(:place, name: 'My Place 3', city: 'New York', state: 'NY'))
+      Sunspot.commit
+
+      visit brand_ambassadors_visit_path(ba_visit)
+
+      click_js_link 'Download'
+      click_js_link 'Download as PDF'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      export = ListExport.last
+      # Test the generated PDF...
+      reader = PDF::Reader.new(open(export.file.url))
+      reader.pages.each do |page|
+        # PDF to text seems to not always return the same results
+        # with white spaces, so, remove them and look for strings
+        # without whitespaces
+        text = page.text.gsub(/[\s\n]/, '')
+        expect(text).to include '2eventsfoundfor:'
+        expect(text).to include 'ABSOLUTVodka'
+        expect(text).to include 'NewYork,NY,12345'
+        expect(text).to include '10:00AM-11:00AM'
+        expect(text).to include '9:00AM-11:00AM'
+        expect(text).to include 'MyPlace3'
+        expect(text).to include 'MyPlace1'
+      end
+    end
+
+
     scenario 'can create a new event' do
       today = Time.zone.local(Time.now.strftime('%Y'), Time.now.strftime('%m'), 18, 12, 00)
       expect(Place).to receive(:open).and_return(double(read: '{}')) # So we don't search in google places
