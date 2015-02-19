@@ -165,6 +165,24 @@ feature 'Brand Ambassadors Documents', js: true do
       document = BrandAmbassadors::Document.last
       expect_to_have_document_in_list document
 
+      # Modify the name of the document to check the document is not moved to another folder
+      within documents_section do
+        hover_and_click '.resource-item', 'Edit'
+      end
+
+      within visible_modal do
+        fill_in 'Document name', with: 'renamed.pdf'
+        click_js_button 'Save'
+        wait_for_ajax(30) # For the file to be modified at S3
+      end
+      ensure_modal_was_closed
+
+      document.reload
+      expect(document.file_file_name).to eql('renamed.pdf')
+
+      # Check that the document still appears in the document list for current folder
+      expect_to_have_document_in_list document
+
       # Go to the root documents folder
       open_root_folder
       expect(page).not_to have_content(document.name)
@@ -237,6 +255,7 @@ feature 'Brand Ambassadors Documents', js: true do
       create(:brand_ambassadors_visit, campaign: campaign,
         company: company, company_user: company_user)
     end
+    before { company_user.campaigns << campaign }
 
     scenario 'A user can upload a document to a brand ambassador visit' do
       with_resque do
