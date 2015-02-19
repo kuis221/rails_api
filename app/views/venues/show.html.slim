@@ -21,7 +21,7 @@
         h2= resource.name
         / span.category
         /   | Restaurant, Food
-        - if resource.price_level >= 0
+        - if resource.price_level(fetch_from_google: true)
           span.price
             = place_price(resource.price_level)
 

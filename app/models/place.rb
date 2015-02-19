@@ -180,9 +180,9 @@ class Place < ActiveRecord::Base
     list_reviews.slice(0, 5)
   end
 
-  def price_level
-    fetch_price_level if self[:price_level].nil?
-    self[:price_level]
+  def price_level(fetch_from_google: false)
+    fetch_price_level if self[:price_level].nil? && fetch_from_google
+    self[:price_level].present? && self[:price_level] >= 0 ? self[:price_level] : nil
   end
 
   def fetch_price_level
