@@ -194,7 +194,7 @@ class AttachedAsset < ActiveRecord::Base
         company_user = params[:current_company_user]
         if company_user.present?
           unless company_user.role.is_admin?
-            case company_user.role.permission_for(:index_photos, Event).mode
+            case company_user.role.permission_for(params[:search_permission] || :index_photos, params[:search_permission_class] || Event).mode
             when 'campaigns'
               with :campaign_id, company_user.accessible_campaign_ids + [0]
             when 'none'

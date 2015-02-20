@@ -73,6 +73,8 @@ class Results::PhotosController < FilteredController
 
   def search_params
     @search_params || (super.tap do |p|
+      p[:search_permission] = :index_results
+      p[:search_permission_class] = EventData
       p[:asset_type] = 'photo'
     end)
   end
