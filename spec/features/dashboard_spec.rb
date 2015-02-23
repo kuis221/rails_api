@@ -251,15 +251,17 @@ feature 'Dashboard', search: true, js: true do
       before { company_user.places << create(:place, city: nil, state: 'San Jose', country: 'CR', types: ['locality']) }
       let(:permissions) { [[:upcomings_events_module, 'Symbol', 'dashboard'], [:view_calendar, 'Event'],  [:view_list, 'Event']] }
     end
+
     it_should_behave_like 'a user that can view the recent comments module' do
       before { company_user.campaigns << [campaign] }
       before { company_user.places << place }
       let(:permissions) { [[:recent_comments_module, 'Symbol', 'dashboard'], [:view_list, 'Event']] }
     end
+
     it_should_behave_like 'a user that can view the recent photos module' do
       before { company_user.campaigns << [campaign] }
       before { company_user.places << place }
-      let(:permissions) { [[:recent_photos_module, 'Symbol', 'dashboard'], [:index_photos, Event]] }
+      let(:permissions) { [[:recent_photos_module, 'Symbol', 'dashboard'], [:index_photos, 'Event']] }
     end
   end
 
