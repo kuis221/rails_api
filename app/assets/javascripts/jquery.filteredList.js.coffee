@@ -653,7 +653,6 @@ $.widget 'nmk.filteredList', {
 					@dateRange = false
 
 					if @_previousDates != @_datesToString(dates)
-						@form.find('input[name="custom_filter[]"]:checked').prop 'checked', false
 						@calendar.find('.datepick-month a').removeClass('first-selected last-selected')
 						@calendar.find('.datepick-selected:first').addClass('first-selected')
 						@calendar.find('.datepick-selected:last').addClass('last-selected')
