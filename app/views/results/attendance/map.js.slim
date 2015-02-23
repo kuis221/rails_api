@@ -4,12 +4,13 @@
 - else 
   |
     $('#attendance-map-canvas').show();
-    var arrayPolygon = [];
-    var color = '#{default_color}';
-    var valueMin = #{values.min || 0};
-    var valueMax = #{values.max || 0};
-
-    var showTootltip = function showTootltip(event, infoWindow) {
+    var arrayPolygon = [],
+        color = '#{default_color}',
+        valueMin = #{values.min || 0},
+        valueMax = #{values.max || 0},
+        selectedMin = valueMin,
+        selectedMax =valueMax,
+        showTootltip = function showTootltip(event, infoWindow) {
           infoWindow.setPosition(event.latLng);
           infoWindow.open(window.attendanceMap);
         },

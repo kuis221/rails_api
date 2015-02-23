@@ -51,7 +51,6 @@
               | Download as PDF
 
 javascript:
-
   $('#attendees-range-slider').rangeSlider({
     bounds: {min: 20, max: 210},
     defaultValues: { min: 20, max: 210 },
@@ -59,13 +58,16 @@ javascript:
     step: 1,
     range: 1
   }).on("userValuesChanged", function(e, data) {
-    $.each(arrayPolygon, function(index, item) {
-      if (item.quantity >= data.values.min && item.quantity <= data.values.max ) {
-        item.polygon.setMap(window.attendanceMap);      
-      } else {
-        item.polygon.setMap(null);
-      }
-    });
+      selectedMin = data.values.min;
+      selectedMax = data.values.max;
+      changeColorAllPolygon(color, tinycolor(color).toHsv())
+    // $.each(arrayPolygon, function(index, item) {
+      // if (item.quantity >= data.values.min && item.quantity <= data.values.max ) {
+      //  item.polygon.setMap(window.attendanceMap);      
+      // } else {
+      //  item.polygon.setMap(null);
+      // }
+    // });
   });
 
   var states = $('#report_state'),
@@ -95,7 +97,7 @@ javascript:
     if (cities.val() && states.val() && campaigns.val()){
       $.get('#{results_attendance_map_path(format: :js)}', {
         campaign: campaigns.val(), 
-        color: ($('#customize-fields').hasClass('hide') ? null : colorp.val()), 
+        color: ($('#customize-fields').hasClass('hide') ? null : colorp.spectrum("get")), 
         state: states.val(), 
         city: cities.val()});
     }
@@ -129,21 +131,23 @@ javascript:
 
   function changeColorAllPolygon(color, hsb) {
     $('.color-box').spectrum("set", color);
-    var arrayColor = generateColorList(color,hsb);
+    var arrayColor = generateColorList(hsb);
     //$('.ui-rangeSlider-handle').css({
     //  backgroundColor: '#' + arrayColor[9],
     //  borderColor: '#' + arrayColor[6]});
 
     $.each(arrayPolygon, function(index, value) {
-      value.polygon.setOptions({fillColor: '#' + arrayColor[selectColorIndex(value.quantity)], fillOpacity: 0.5});
+      if (value.quantity == 0 || (value.quantity < selectedMin || value.quantity > selectedMax)) {
+        value.polygon.setOptions({fillOpacity: 0.0, strokeColor: color});
+      } else {
+        value.polygon.setOptions({fillColor: '#' + arrayColor[selectColorIndex(value.quantity)], fillOpacity: 0.5, strokeColor: color});
+      }
     });
   }
 
-  function generateColorList(color, hsb) {
+  function generateColorList(hsb) {
     var arrayColor = [];
-    if (hsb.s < 100) {
-      hsb.s = 100;
-    }
+    if (hsb.s < 100) { hsb.s = 100; }
     for (var i = 0; i < 10; i++){
       arrayColor.push(tinycolor(hsb).toHex(hsb));
       hsb.s = hsb.s - 5;
@@ -152,7 +156,7 @@ javascript:
   }
 
   function selectColorIndex(value) {
-    var t = (valueMax - valueMin) / 10;
+    var t = (selectedMax - selectedMin) / 10;
     if (value != 0 && t != 0) {
       var colorIndex = Math.floor(value / t);
       if (value == valueMax)
@@ -162,17 +166,4 @@ javascript:
     }
     else
       return 9;
-  }
-
-  function hexc(colorval) {
-    var color;
-    var parts = colorval.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
-    delete(parts[0]);
-    for (var i = 1; i <= 3; ++i) {
-        parts[i] = parseInt(parts[i]).toString(16);
-        if (parts[i].length == 1) parts[i] = '0' + parts[i];
-    }
-    color = '#' + parts.join('');
-    console.log(color);
-    return color;
   }
