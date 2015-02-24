@@ -51,11 +51,6 @@ class FilteredController < InheritedResources::Base
     {}
   end
 
-  alias_method :devise_current_user, :current_user
-  def current_user
-    @_current_user ||= devise_current_user
-  end
-
   def authorize_actions
     if parent?
       authorize! "index_#{resource_class.to_s.pluralize.downcase}", parent

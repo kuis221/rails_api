@@ -7377,6 +7377,65 @@ body.dashboard.index {
 	}
 }
 
+// TOP LOGIN NAVIGATION  STYLES
+.top-admin-login-navigation {
+	background-color: $brand;
+	padding: 4px 0;
+	background-image: none;
+	border-bottom: 0;
+	height: 31px;
+	.admin-login-content {
+		padding-left: 25px;
+		.admin-login-block {
+			color: $white;
+			label {
+				float: left;
+				padding-top: 5px;
+			}
+			.admin-select-user {
+				width: 20%;
+				float: left;
+				#select_custom_user_chzn {
+					float: left;
+					margin: 0 10px;
+					a {
+						height: 29px;
+						span {
+							line-height: 29px;
+						}
+						b {
+							margin-top: -5px;
+						}
+					}
+					li {
+						color: $gray-darker;
+					}
+				}
+				.chzn-search {
+					top: -35px;
+					input[type="text"] {
+						height: 27px!important;
+						padding: 1px 0;
+						margin-bottom: 0;
+					}
+				}
+			}
+			#login-specific-user {
+				margin-top: 3px;
+				margin-left: 25px;
+			}
+		}
+		.link-select-user {
+			color: $white;
+			margin-left: 10px;
+			margin-top: 4px;
+			text-decoration: underline;
+			display: inline-block;
+
+		}
+	}
+}
+
 @import 'widgets/asset_upload_dialog';
 @import 'widgets/documents_list';
 @import 'widgets/resource_list';
