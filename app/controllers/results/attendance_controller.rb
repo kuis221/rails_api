@@ -35,12 +35,12 @@ class Results::AttendanceController < ApplicationController
   end
 
   def places_join
-    if params[:area_id]
+    if params[:area_id].blank?
+      'LEFT JOIN places'
+    else
       Place.connection.unprepared_statement do
         "LEFT JOIN (#{Place.in_areas(params[:area_id]).to_sql}) places"
       end
-    else
-      'LEFT JOIN places'
     end + ' ON ST_Intersects(places.lonlat, neighborhoods.geog)'
   end
 
