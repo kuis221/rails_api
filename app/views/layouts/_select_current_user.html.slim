@@ -1,0 +1,10 @@
+.admin-login-block
+  = label_tag 'select-custom-user', 'Choose a user that you want to login as'
+  .admin-select-user
+    = select_tag 'select-custom-user', options_for_select([[nil, '']] + current_company.company_users.active.for_dropdown_with_role), {class: 'chosen-enabled', 'data-placeholder' => 'Select a User'}
+  = link_to 'Login', '', id: 'login-specific-user', class: 'link-select-user'
+javascript:
+  $('#select-custom-user').chosen()
+  $("#select-custom-user").chosen().change(function(e){
+    $('#login-specific-user').attr('href','/select-custom-user/' + $(this).chosen().val())
+  });

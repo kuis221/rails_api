@@ -143,6 +143,7 @@ Brandscopic::Application.routes.draw do
   put '/users/dismiss_alert', to: 'company_users#dismiss_alert'
 
   get 'select-company/:company_id', to: 'company_users#select_company', as: :select_company, constraints: { company_id: /[0-9]+/ }
+  get 'select-custom-user/:user_id', to: 'company_users#select_custom_user', as: :select_custom_user, constraints: { user_id: /[0-9]+/ }
 
   resources :countries, only: [] do
     get :states, on: :collection

@@ -1,0 +1,17 @@
+.admin-login-content
+  - if behave_as_user
+    .admin-login-block
+      = label_tag "#{current_company_user.full_name}", "You are logged in as #{current_company_user.full_name}."
+    = link_to 'Login as different user', '', id: 'select-specific-user', class: 'link-select-user'
+    = link_to 'Login as Super Admin', "/select-custom-user/#{current_real_company_user.id}", class: 'link-select-user'
+  - else
+    .admin-login-block
+      = label_tag 'select-specific-user', "You are logged as a Super Admin."
+      = link_to 'Login as as specific user', '', id: 'select-specific-user', class: 'link-select-user'
+
+javascript:
+  $('#select-specific-user').click(function(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    $('.admin-login-content').html('#{escape_javascript(render(partial: 'layouts/select_current_user'))}');
+  });

@@ -424,4 +424,41 @@ describe CompanyUsersController, type: :controller do
       end
     end
   end
+
+  describe "GET 'select_custom_user'" do
+      let(:user) { sign_in_as_user }
+      let(:company_user) { user.company_users.first }
+      let(:company) { user.company_users.first.company }
+      
+      it 'should update the session with the selected user_id' do
+        role = create(:role, name: 'TestRole', company: company)
+        another_user = create(:user, first_name: 'Juan', last_name: 'Perez', email: 'email@hotmail.com',
+                              city: 'Los Angeles', state: 'CA', country: 'US', company: company, role_id: role.id)
+        another_user_id = another_user.company_users.first.id
+        get 'select_custom_user', user_id: another_user_id
+        expect(session[:behave_as_user_id]).to eq(another_user_id)
+        expect(response).to redirect_to root_path
+      end
+
+      describe "Login with a user not super admin" do
+        let(:user) { company_user.user }
+        let(:company) { create(:company) }
+        let(:role) { create(:non_admin_role, company: company) }
+        let(:permissions) { [[:index_results, 'Activity']] }
+        let(:company_user) { create(:company_user, company: company, role: role, permissions: permissions) }
+
+        before { sign_in_as_user company_user }
+ 
+        it 'should NOT update the session with a invalid user' do
+          role2 = create(:role, name: 'TestRole2', company: company)
+          another_user2 = create(:user, first_name: 'Ana', last_name: 'Perez', email: 'ana@hotmail.com',
+                  city: 'Los Angeles', state: 'CA', country: 'US', company: company, role_id: role.id)
+          
+          another_user2_id = another_user2.company_users.first.id
+          get 'select_custom_user', user_id: another_user2_id
+          expect(session[:behave_as_user_id]).to eq(nil)
+          expect(response).to redirect_to root_path
+        end
+      end
+    end
 end
