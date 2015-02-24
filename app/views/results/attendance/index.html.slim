@@ -10,9 +10,9 @@
 
         = f.input :campaign_id, label: '1. Choose a campaign', collection: campaigns_list_for_dropdown, selected: params[:report].try(:[], :campaign_id), include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Choose a campaign" } }
 
-        = f.input :state, label: '2. Choose a state', collection: @states, selected: params[:report].try(:[], :state), include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Choose a state" } }
+        = f.input :event_id, label: '2. Choose a event date', collection: [], selected: params[:report].try(:[], :event_id), include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Choose a event date" } }
 
-        = f.input :city, label: '2. Choose a city', collection: [], selected: params[:report].try(:[], :city), include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Choose a city" } }
+        = f.input :area_id, label: '2. Choose an area', collection: current_company.areas.active.order(:name).pluck(:name, :id), selected: params[:report].try(:[], :area_id), include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Choose an area" } }
 
         #customize-fields.hide
           .attendance-slider
@@ -70,41 +70,37 @@ javascript:
     // });
   });
 
-  var states = $('#report_state'),
-      cities = $('#report_city'),
+  var areas = $('#report_area_id'),
+      event_dates = $('#report_event_id'),
       colorp = $('#report_color'),
       campaigns = $('#report_campaign_id');
   
-  states.change(function(){
-    cities.html('<option></option>');
-    if ($(this).val()) {
-      $.get('/countries/US/cities.json', {state: $(this).val()}, function(response) {
-        var val = cities.val();
+  campaigns.change(function(){
+    event_dates.html('<option></option>');
+    if (campaigns.val()) {
+      $.get('/campaigns/'+campaigns.val()+'/event_dates.json', function(response) {
         for (i=0; i< response.length; i++){
-          city = response[i];
-          option = $('<option>').val(city).html(city);
-          if (val == city) {
-            option.attr('selected', 'selected')
-          }
-          cities.append(option);
+          event_date = response[i];
+          event_dates.append($('<option>').val(event_date[1]).html(event_date[0]));
         }
-        cities.trigger('liszt:updated');
+        event_dates.trigger('liszt:updated');
       });
     }
   });
 
   loadReport = function(){
-    if (cities.val() && states.val() && campaigns.val()){
+    if (event_dates.val() && campaigns.val()){
       $.get('#{results_attendance_map_path(format: :js)}', {
         campaign: campaigns.val(), 
-        color: ($('#customize-fields').hasClass('hide') ? null : colorp.spectrum("get")), 
-        state: states.val(), 
-        city: cities.val()});
+        color: ($('#customize-fields').hasClass('hide') ? null : colorp.spectrum("get").toHexString()), 
+        area_id: areas.val(), 
+        event_id: event_dates.val()});
     }
   }
 
-  cities.change(loadReport);
+  event_dates.change(loadReport);
   campaigns.change(loadReport);
+  areas.change(loadReport);
 
   $('#report_state').change();
 

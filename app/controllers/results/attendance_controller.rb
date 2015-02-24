@@ -24,14 +24,24 @@ class Results::AttendanceController < ApplicationController
 
   def load_neighborhoods
     @neighborhoods =
-      Neighborhood.where(state: params[:state], city: params[:city])
+      Neighborhood.where(events: { id:  params[:event_id] })
       .joins('LEFT JOIN places ON ST_Intersects(places.lonlat, neighborhoods.geog)')
       .joins('LEFT JOIN venues ON venues.place_id=places.id')
       .joins('INNER JOIN (SELECT * FROM invites INNER JOIN events ON invites.event_id=events.id AND events.campaign_id=' + params[:campaign].to_i.to_s + ') invites ON invites.venue_id=venues.id')
-      .joins('LEFT JOIN events ON invites.event_id=events.id AND events.campaign_id=' + params[:campaign].to_i.to_s)
+      .joins(events_join)
       .group('neighborhoods.gid')
       .select('neighborhoods.*, COALESCE(sum(invitees), 0) invitations, COALESCE(sum(attendees), 0) attendees,'\
               '0 attended, sum(rsvps_count) rsvps').to_a
+  end
+
+  def events_join
+    unless params[:area_id].blank?
+      Event.connection.unprepared_statement do
+        "LEFT JOIN (#{current_company.events.in_areas(params[:area_id]).to_sql}) events"
+      end
+    else
+      'LEFT JOIN events'
+    end + ' ON invites.event_id=events.id AND events.campaign_id=' + params[:campaign].to_i.to_s
   end
 
   def neighborhood_coordinates(neighborhood)
