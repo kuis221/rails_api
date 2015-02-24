@@ -10,7 +10,7 @@ describe Results::ActivitiesController, type: :controller do
   before { sign_in_as_user company_user }
 
   describe "GET 'index'" do
-    it 'should return http success' do
+    it 'returns http success' do
       get 'index'
       expect(response).to be_success
     end

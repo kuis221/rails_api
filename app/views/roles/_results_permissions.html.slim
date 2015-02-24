@@ -3,80 +3,81 @@
   = render 'save_bar'
   .permissions
     .row-fluid
-      .span7
-        .span5 Event Data
-        .span2
+      .span12
+        .span2 Event Data
+        .span1
           = permission_checkbox(f, :index_results, EventData)
 
-      .span7
-        .span5 Activity Data
-        .span2
+      .span12
+        .span2 Activity Data
+        .span1
           = permission_checkbox(f, :index_results, Activity)
 
-      .span7
-        .span5 Attendance by Neighborhood
-        .span2
+      .span12
+        .span2.crop-text Attendance by Neighborhood
+        .span1
           = permission_checkbox(f, :attendance, Event)
 
-      .span7
-        .span5 Comments
-        .span2
+      .span12
+        .span2 Comments
+        .span1
           = permission_checkbox(f, :index_results, Comment)
 
-      .span7
-        .span5 Photos
-        .span2
+      .span12
+        .span2 Photos
+        .span1
           = permission_checkbox(f, :index_photo_results, AttachedAsset)
 
-      .span7
-        .span5 Expenses
-        .span2
+      .span12
+        .span2 Expenses
+        .span1
           = permission_checkbox(f, :index_results, EventExpense)
 
-      .span7
-        .span5 Surveys
-        .span5
+      .span12
+        .span2 Surveys
+        .span1
           = permission_checkbox(f, :index_results, Survey)
 
-      .span7
-        .span5 Goals vs. Actual
-        .span5
+      .span12
+        .span2 Goals vs. Actual
+        .span1
           = permission_checkbox(f, :gva_report, Campaign)
 
-      .span7
-        .span5 Event Status
-        .span5
+      .span12
+        .span2 Event Status
+        .span1
           = permission_checkbox(f, :event_status, Campaign)
 
       .span12
-        .span2.title.separate_small Custom Reports
+        .span2.title.separate
+          h5 Custom Reports
 
-      .span7
-        .span5 View
-        .span2
+      .span12
+        .span2 View
+        .span1
           = permission_checkbox(f, :index, Report)
 
-      .span7
-        .span5 Run
-        .span2
+      .span12
+        .span2 Run
+        .span1
           = permission_checkbox(f, :show, Report)
 
-      .span7
-        .span5 Create
-        .span2
+      .span12
+        .span2 Create
+        .span1
           = permission_checkbox(f, :create, Report)
 
-      .span7
-        .span5 Edit
-        .span2
+      .span12
+        .span2 Edit
+        .span1
           = permission_checkbox(f, :update, Report)
 
-      .span7
-        .span5 Deactivate
-        .span2
+      .span12
+        .span2 Deactivate
+        .span1
           = permission_checkbox(f, :deactivate, Report)
 
-      .span7
-        .span5 Share
-        .span2
+      .span12
+        .span2 Share
+        .span1
           = permission_checkbox(f, :share, Report)

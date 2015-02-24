@@ -8,6 +8,8 @@ class Results::CommentsController < FilteredController
 
   def search_params
     @search_params || (super.tap do |p|
+      p[:search_permission] = :index_results
+      p[:search_permission_class] = Comment
       p[:with_comments_only] = true unless p.key?(:user) && !p[:user].empty?
     end)
   end

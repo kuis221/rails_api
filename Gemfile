@@ -56,6 +56,7 @@ gem 'rack-cors', :require => 'rack/cors'
 gem 'roo'
 gem 'similar_text'
 gem 'activerecord-postgis-adapter'
+gem 'clockwork', require: false
 
 # For memory debugging
 # gem "allocation_stats"

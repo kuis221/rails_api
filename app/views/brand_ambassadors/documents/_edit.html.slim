@@ -4,6 +4,7 @@
 
   .form-inputs
     = f.input :file_file_name, label: 'Document name', :input_html => {class: 'input-xlarge', maxlength: 255}
+    = f.input :folder_id, as: :hidden, value: resource.folder_id, wrapper: false, label: false
 
   .form-actions
     = f.button :submit, "Save", class: 'btn btn-primary', data: {disable_with: 'Please wait...'}

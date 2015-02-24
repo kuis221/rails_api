@@ -6,35 +6,37 @@
     .row-fluid
       .span12.category
         .span2
-        .span2 VIEW
-        .span2 CREATE
-        .span2 EDIT
-        .span2 DEACTIVATE
+        .span1 VIEW
+        .span1 CREATE
+        .span1 EDIT
+        .span1 DEACTIVATE
 
       .span12
-        .span2.title My tasks
-        .span2 = permission_checkbox(f, :index_my, Task)
-        .span2 = permission_checkbox(f, :create_my, Task)
-        .span2 = permission_checkbox(f, :edit_my, Task)
-        .span2 = permission_checkbox(f, :deactivate_my, Task)
-
-      .span12
-        .span2 Comments
-        .span2 = permission_checkbox(f, :index_my_comments, Task)
-        .span2 = permission_checkbox(f, :create_my_comment, Task)
-        .span2
-        .span2
-
-      .span12.separate_small
-        .span2.title Team tasks
-        .span2 = permission_checkbox(f, :index_team, Task)
-        .span2 = permission_checkbox(f, :create_team, Task)
-        .span2 = permission_checkbox(f, :edit_team, Task)
-        .span2 = permission_checkbox(f, :deactivate_team, Task)
+        .span2.title
+          h5 My tasks
+        .span1 = permission_checkbox(f, :index_my, Task)
+        .span1 = permission_checkbox(f, :create_my, Task)
+        .span1 = permission_checkbox(f, :edit_my, Task)
+        .span1 = permission_checkbox(f, :deactivate_my, Task)
 
       .span12
         .span2 Comments
-        .span2 = permission_checkbox(f, :index_team_comments, Task)
-        .span2 = permission_checkbox(f, :create_team_comment, Task)
-        .span2
-        .span2
+        .span1 = permission_checkbox(f, :index_my_comments, Task)
+        .span1 = permission_checkbox(f, :create_my_comment, Task)
+        .span1
+        .span1
+
+      .span12.separate
+        .span2.title
+          h5 Team tasks
+        .span1 = permission_checkbox(f, :index_team, Task)
+        .span1 = permission_checkbox(f, :create_team, Task)
+        .span1 = permission_checkbox(f, :edit_team, Task)
+        .span1 = permission_checkbox(f, :deactivate_team, Task)
+
+      .span12
+        .span2 Comments
+        .span1 = permission_checkbox(f, :index_team_comments, Task)
+        .span1 = permission_checkbox(f, :create_team_comment, Task)
+        .span1
+        .span1

@@ -6,37 +6,39 @@
     .row-fluid
       .span12.category
         .span2
-        .span2 VIEW
-        .span2 CREATE
-        .span2 EDIT
-        .span2 DEACTIVATE
+        .span1 VIEW
+        .span1 CREATE
+        .span1 EDIT
+        .span1 DEACTIVATE
 
       .span12
-        .span2.title Visits
-        .span2
-        .span2 = permission_checkbox(f, :create, BrandAmbassadors::Visit)
-        .span2 = permission_checkbox(f, :update, BrandAmbassadors::Visit)
-        .span2 = permission_checkbox(f, :deactivate, BrandAmbassadors::Visit)
+        .span2.title
+          h5 Visits
+        .span1
+        .span1 = permission_checkbox(f, :create, BrandAmbassadors::Visit)
+        .span1 = permission_checkbox(f, :update, BrandAmbassadors::Visit)
+        .span1 = permission_checkbox(f, :deactivate, BrandAmbassadors::Visit)
 
       .span12
         .span2 List
-        .span2 = permission_checkbox(f, :list, BrandAmbassadors::Visit)
+        .span1 = permission_checkbox(f, :list, BrandAmbassadors::Visit)
 
       .span12
         .span2 Calendar
-        .span2 = permission_checkbox(f, :calendar, BrandAmbassadors::Visit)
+        .span1 = permission_checkbox(f, :calendar, BrandAmbassadors::Visit)
 
       .span12
         .span2 Details
-        .span2 = permission_checkbox(f, :show, BrandAmbassadors::Visit)
+        .span1 = permission_checkbox(f, :show, BrandAmbassadors::Visit)
 
       .span12.separate
-        .span2.title Documents
-        .span2
-        .span2 = permission_checkbox(f, :create, BrandAmbassadors::Document)
-        .span2 = permission_checkbox(f, :update, BrandAmbassadors::Document)
-        .span2 = permission_checkbox(f, :deactivate, BrandAmbassadors::Document)
+        .span2.title
+          h5 Documents
+        .span1
+        .span1 = permission_checkbox(f, :create, BrandAmbassadors::Document)
+        .span1 = permission_checkbox(f, :update, BrandAmbassadors::Document)
+        .span1 = permission_checkbox(f, :deactivate, BrandAmbassadors::Document)
 
       .span12
         .span2 List
-        .span2 = permission_checkbox(f, :index, BrandAmbassadors::Document)
+        .span1 = permission_checkbox(f, :index, BrandAmbassadors::Document)
