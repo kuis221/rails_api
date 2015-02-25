@@ -20,7 +20,7 @@ class CompanyUsersController < FilteredController
                   :select_campaigns, :add_campaign]
 
   skip_load_and_authorize_resource only: [:export_status]
-  skip_authorize_resource only: [:select_custom_user]
+  skip_authorize_resource only: [:select_custom_user, :export_status]
 
   def autocomplete
     buckets = autocomplete_buckets(
@@ -106,13 +106,13 @@ class CompanyUsersController < FilteredController
         if params[:user_id].to_i == current_real_company_user.id
           session[:behave_as_user_id] = nil
         else
-          session[:behave_as_user_id] = user.user_id  
+          session[:behave_as_user_id] = user.user_id
         end
       end
     rescue ActiveRecord::RecordNotFound
       flash[:error] = 'You are not allowed login as this user'
     end
-    redirect_to root_path    
+    redirect_to root_path
   end
 
   def enable_campaigns
