@@ -25,12 +25,13 @@ javascript:
         },
         fixedWeekCount: false,
         eventLimit: false,
-        defaultDate: "#{(params[:start_date] && params[:end_date] ? Timeliness.parse(params[:start_date]) + 15.days : Date.today).to_s(:full_calendar) }",
+        defaultDate: "#{(params[:start_date] && params[:end_date] ? Timeliness.parse(params[:start_date]) : Date.today).to_s(:full_calendar) }",
         events: {
           events: function(start, end, timezone, callback){
-            var data = '#{j params.to_query.html_safe}';
+            window.loadingVisits = true;
+            var data = '#{j params.except(:start_date, :end_date).to_query.html_safe}';
             if ($('#collection-list-filters').length > 0) {
-              data = $('#collection-list-filters').filteredList('paramsQueryString') + "&start_date="+start.utc().format('MM/DD/YYYY')+"&end_date="+end.utc().format('MM/DD/YYYY');
+              data = $('#collection-list-filters').filteredList('selectCalendarDates', start.toDate(), end.toDate()).filteredList('paramsQueryString') + "&start_date="+start.utc().format('MM/DD/YYYY')+"&end_date="+end.utc().format('MM/DD/YYYY');
             } else {
               data += "&start_date="+start.utc().format('MM/DD/YYYY')+"&end_date="+end.utc().format('MM/DD/YYYY');
             }
@@ -52,6 +53,7 @@ javascript:
                     });
                     callback(events);
                     window.status = 'completed';
+                     window.loadingVisits = false;
                 }
             });
           },
