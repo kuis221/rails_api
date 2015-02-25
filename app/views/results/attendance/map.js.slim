@@ -1,6 +1,8 @@
 - values = @neighborhoods.map(&:attendees)
 - if @neighborhoods.count == 0
-  | $('#attendance-map-canvas').hide();
+  | 
+    $('#attendance-map-canvas').hide();
+    $('.export-xls').hide();
 - else 
   |
     $('#attendance-map-canvas').show();
@@ -57,7 +59,7 @@
   |
         window.attendanceMap.fitBounds(bounds);
         };
-
+        debugger;
         initializeNeighborhoodMap();
         changeColorAllPolygon(color, tinycolor(color).toHsv());
         $('#customize-fields').removeClass('hide');
@@ -66,3 +68,4 @@
         $('#attendees-range-slider').rangeSlider('min', valueMin);
         $('#attendees-range-slider').rangeSlider('max', valueMax);
         $('#attendees-range-slider').rangeSlider('resize');
+        $('.export-xls').show();

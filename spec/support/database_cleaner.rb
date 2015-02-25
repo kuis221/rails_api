@@ -1,7 +1,7 @@
 RSpec.configure do |config|
   config.before(:suite) do
-    DatabaseCleaner.strategy = :deletion
-    DatabaseCleaner.clean_with(:truncation)
+    DatabaseCleaner.strategy = :deletion, { except: ["public.spatial_ref_sys"] }
+    DatabaseCleaner.clean_with(:truncation, except: ["public.spatial_ref_sys"])
     DatabaseCleaner.logger = Rails.logger
   end
 

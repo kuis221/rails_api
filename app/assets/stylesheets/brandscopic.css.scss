@@ -7195,6 +7195,8 @@ body.dashboard.index {
 #attendance-report {
 	#attendance-left-column {
 		width: 290px;
+		height: 610px;
+		position: relative;
 		.control-label {
 			font-weight: bold;
 		}
@@ -7278,11 +7280,23 @@ body.dashboard.index {
 			margin-top:30px;
 			border: 1px solid white;
 		}
+		.export-xls {
+			position: absolute;
+			bottom: 0;
+			width: 100%;
+			a.btn.dropdown-toggle {
+				width: 100%;
+			}
+			.dropdown-menu {
+				width: 100%;
+			}
+		}
 	}
 	 #attendance-right-column {
 	 	display: inline-block;
 	 	width: calc(100% - 290px);
 	 	padding: 10px;
+	 	min-height: 600px;
 	 	@include box-sizing(border-box);
 	 	#attendance-map-canvas {
 	 		height: 600px;

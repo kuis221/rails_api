@@ -86,3 +86,10 @@ body.app-layout {
 		min-height: 114px;
 	}
 }
+
+#resource-close-details {
+	display: none;
+}
+.with-details-close-bar .padding-top-close-bar {
+	padding-top: 0;
+}
