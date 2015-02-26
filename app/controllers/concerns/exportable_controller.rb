@@ -11,7 +11,7 @@ module ExportableController
 
   def export_list(export)
     @_export = export
-    search_params.merge!(per_page: 100) if respond_to?(:search_params) && resource_class.respond_to?(:do_search)
+    search_params.merge!(per_page: 100) if respond_to?(:search_params, true) && resource_class.respond_to?(:do_search)
     collection
 
     Slim::Engine.with_options(pretty: true, sort_attrs: false, streaming: false) do
@@ -38,7 +38,7 @@ module ExportableController
   end
 
   def each_collection_item(&block)
-    if respond_to?(:resource_class) && resource_class.respond_to?(:do_search)
+    if respond_to?(:resource_class, true) && resource_class.respond_to?(:do_search)
       each_collection_item_solr(&block)
     elsif collection.is_a?(Array)
       each_collection_item_array(&block)
