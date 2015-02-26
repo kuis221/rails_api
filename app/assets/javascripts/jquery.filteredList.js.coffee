@@ -708,6 +708,24 @@ $.widget 'nmk.filteredList', {
 						@customDatesFilter.find("[name=custom_start_date]").datepicker "option", "maxDate", selectedDate
 			)
 		)
+
+		$('#custom_start_date, #custom_end_date').on 'input', (e) =>
+			input = $(e.target)
+			if input.val() == ''
+				input.val('mm/dd/yyyy')
+				input.addClass('disabled')
+			else
+				input.removeClass('disabled')
+
+		$('#custom_start_date, #custom_end_date').on 'blur', (e) =>
+			startDateInput = @customDatesFilter.find("[name=custom_start_date]")
+			endDateInput = @customDatesFilter.find("[name=custom_end_date]")
+			applyButton = @customDatesPanel.find("#apply-ranges-btn")
+			if startDateInput.val() != 'mm/dd/yyyy' && endDateInput.val() != 'mm/dd/yyyy' && startDateInput.val() != '' && endDateInput.val() != ''
+				applyButton.attr('disabled', false)
+			else
+				applyButton.attr('disabled', true)
+
 		# So the custom date picker is not closed when chosing dates
 		$('#ui-datepicker-div').on 'click', (e) =>
 			if $('.select-ranges.open').length
