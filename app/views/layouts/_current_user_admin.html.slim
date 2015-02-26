@@ -2,14 +2,9 @@
   - if behave_as_user
     #admin-login.admin-login-block
       = label_tag "#{current_company_user.full_name}", "You are logged in as #{current_company_user.full_name}."
-      = link_to 'Login as different user', '', id: 'select-specific-user', class: 'link-select-user'
-      = link_to 'Login as Super Admin', "/select-custom-user/#{current_real_company_user.id}", class: 'link-select-user'
+      = button_to 'Login as different user', '/', id: 'select-specific-user', class: 'link-select-user'
+      = button_to 'Login as Super Admin' , select_custom_user_path,  method: :put, class: 'link-select-user', params: { user_id: current_real_company_user.id }
   - else
     #admin-login.admin-login-block
       = label_tag 'select-specific-user', "You are logged as a Super Admin."
-      = link_to 'Login as as specific user', '', id: 'select-specific-user', class: 'link-select-user'
-  #admin-select-block.admin-login-block
-    = label_tag 'select-custom-user', 'Choose a user that you want to login as'
-    .admin-select-user
-      = select_tag 'select-custom-user', options_for_select([[nil, '']] + current_company.company_users.active.for_dropdown_with_role), {class: 'chosen-enabled', 'data-placeholder' => 'Select a User'}
-    = link_to 'Login', '', id: 'login-specific-user', class: 'link-select-user'
+      = button_to 'Login as specific user', '/', id: 'select-specific-user', class: 'link-select-user'
