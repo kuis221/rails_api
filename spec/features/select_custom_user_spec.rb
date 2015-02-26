@@ -37,14 +37,14 @@ feature 'As a Super Admin, I want to login as another system user' do
     end
 
     scenario 'a user that view custom user navigation' do
-      
+
       events[0].users << create(:company_user,
                       user: create(:user, first_name: 'Roberto', last_name: 'Gomez'), company: company, role_id: role2.id)
       events[1].users << create(:company_user,
                       user: create(:user, first_name: 'Mario', last_name: 'Cantinflas'), company: company)
       events  # make sure events are created before
       Sunspot.commit
-      
+
       visit events_path
 
       expect(page).to have_selector('.top-admin-login-navigation', count: 1)
@@ -64,6 +64,8 @@ feature 'As a Super Admin, I want to login as another system user' do
 
       click_link 'Login as Super Admin'
 
+      expect(page).to have_content('You are logged as a Super Admin.')
+      expect(page).to have_link('Login as as specific user')
       expect(page).to have_selector('li#admin', count: 1)
       expect(page).to have_content('VENUES')
     end
