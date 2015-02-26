@@ -3,6 +3,7 @@ html lang="en"
   head
     meta charset="utf-8"
     = stylesheet_link_tag "http://fonts.googleapis.com/css?family=Lato:100,300,400,700"
+    = javascript_include_tag "http://maps.googleapis.com/maps/api/js?key=#{GOOGLE_API_KEY}&libraries=places,geometry&sensor=false"
     = wicked_pdf_stylesheet_link_tag "plugins"
     = wicked_pdf_stylesheet_link_tag "pdf"
     = yield :pdf_scripts
