@@ -460,5 +460,26 @@ describe CompanyUsersController, type: :controller do
           expect(response).to redirect_to root_path
         end
       end
+
+      describe "Admin user tries to sign in as a user that is not in his company" do
+        let(:user) { sign_in_as_user }
+        let(:company_user) { user.company_users.first }
+        let(:company) { user.company_users.first.company }
+        let(:company2) { create(:company) }
+
+        before { sign_in_as_user company_user }
+ 
+        it 'should NOT update the session with a invalid user' do
+          role2 = create(:role, name: 'TestRole2', company: company2)
+          another_user2 = create(:user, first_name: 'Ana', last_name: 'Perez', email: 'ana@hotmail.com',
+                  city: 'Los Angeles', state: 'CA', country: 'US', company: company2, role_id: role2.id)
+          another_user2_id = another_user2.company_users.first.id
+          get 'select_custom_user', user_id: another_user2_id
+          
+          expect(session[:behave_as_user_id]).to eq(nil)
+          expect(flash[:error]).to eq('You are not allowed login as this user')
+          expect(response).to redirect_to root_path
+        end
+      end
     end
 end

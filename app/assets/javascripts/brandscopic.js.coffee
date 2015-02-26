@@ -430,6 +430,10 @@ jQuery ->
 		field.val().replace(/[^0-9\.]/g,'')
 
 	$(".totop").hide()
+	$('#admin-select-block').hide()
+
+	$('#select-custom-user').chosen().change (e) ->
+  	$('#login-specific-user').attr 'href', '/select-custom-user/' + $(this).chosen().val()
 
 	# TimeZone change detection methods
 	window.checkUserTimeZoneChanges = (userTimeZone, lastDetectedTimeZone) ->
@@ -796,3 +800,8 @@ $.rails.allowAction = (element) ->
 						$.rails.allowAction = oldAllowAction
 	false
 
+$(document).on 'click', '#select-specific-user', (e) ->
+	e.stopPropagation()
+	e.preventDefault()
+	$('#admin-select-block').show()
+	$('#admin-login').hide()
