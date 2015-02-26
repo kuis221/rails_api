@@ -45,6 +45,7 @@
 
 - if can?(:list, BrandAmbassadors::Visit) || can?(:calendar, BrandAmbassadors::Visit)
   javascript:
+    window.loadingVisits = false
     $('#collection-list-filters').filteredList({
       'source': '#{url_for(controller: 'brand_ambassadors/visits', action: :items)}',
       'filtersUrl': '#{url_for(controller: 'brand_ambassadors/visits', action: :filters, apply_to: :visits)}',
@@ -62,7 +63,7 @@
       'defaultParams': '#{j default_params_for_view('start_date=' + Time.zone.now.strftime("%m/%d/%Y") + '&end_date=' + (Time.zone.now + 10.years).strftime("%m/%d/%Y"))}',
       'applyTo': 'visits',
       'onChange': function() {
-        if (typeof visitsCalendar !== 'undefined') {
+        if (typeof visitsCalendar !== 'undefined' && !window.loadingVisits) {
          visitsCalendar.fullCalendar('refetchEvents');
         }
       }

@@ -17,7 +17,7 @@ class Results::EventStatusController < ApplicationController
       if @export.new?
         @export.queue!
       end
-      render template: 'inherited_resources/base/new_export', formats: [:js]
+      render template: 'application/new_export', formats: [:js]
     end
   end
 
