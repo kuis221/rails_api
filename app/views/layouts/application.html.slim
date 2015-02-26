@@ -56,6 +56,10 @@ body class="app-layout #{controller_name} #{action_name} #{custom_body_class} #{
 
   header class="navbar navbar-inverse navbar-fixed-top"
     = render 'layouts/messages'
+    - if current_real_company_user.is_admin?
+      .top-admin-login-navigation
+        .container
+          = render 'layouts/current_user_admin'
     .navbar-inner
       .container
         .pull-left
