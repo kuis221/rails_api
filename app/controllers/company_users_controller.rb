@@ -19,8 +19,7 @@ class CompanyUsersController < FilteredController
                   :enable_campaigns, :disable_campaigns, :remove_campaign,
                   :select_campaigns, :add_campaign]
 
-  skip_load_and_authorize_resource only: [:export_status]
-  skip_authorize_resource only: [:select_custom_user, :export_status]
+  skip_authorize_resource only: [:select_custom_user, :export_status, :login_as_select]
 
   def autocomplete
     buckets = autocomplete_buckets(
@@ -38,6 +37,10 @@ class CompanyUsersController < FilteredController
   def profile
     @company_user = current_company_user
     render :show
+  end
+
+  def login_as_select
+    render layout: false
   end
 
   def update

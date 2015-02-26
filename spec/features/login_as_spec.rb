@@ -51,21 +51,21 @@ feature 'As a Super Admin, I want to login as another system user' do
       expect(page).to have_selector('li#admin', count: 1)
       expect(page).to have_content('VENUES')
 
-      click_link 'Login as as specific user'
+      click_button 'Login as specific user'
 
-      expect(page).to have_selector('#select_custom_user_chzn', count: 1)
+      expect(page).to have_selector('#login_as_user_id_chzn', count: 1)
       select_from_chosen 'Roberto Gomez', from: 'Choose a user that you want to login as'
 
-      click_link 'Login'
+      click_button 'Login'
 
       expect(page).to have_content('You are logged in as Roberto Gomez')
       expect(page).to_not have_content('VENUES')
-      expect(page).to_not have_selector('li#admin', count: 1)
+      expect(page).to_not have_selector('li#admin')
 
-      click_link 'Login as Super Admin'
+      click_button 'Login as Super Admin'
 
       expect(page).to have_content('You are logged as a Super Admin.')
-      expect(page).to have_link('Login as as specific user')
+      expect(page).to have_button('Login as specific user')
       expect(page).to have_selector('li#admin', count: 1)
       expect(page).to have_content('VENUES')
     end

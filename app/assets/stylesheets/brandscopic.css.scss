@@ -7386,9 +7386,6 @@ body.dashboard.index {
 	height: 31px;
 	.admin-login-content {
 		padding-left: 25px;
-		#admin-select-block {
-		 	display: none;
-		}
 		.admin-login-block {
 			color: $white;
 			label {
@@ -7399,7 +7396,7 @@ body.dashboard.index {
 				width: 355px!important;
 				float: left;
 				display: inline-block;
-				#select_custom_user_chzn {
+				#login_as_user_id_chzn {
 					float: left;
 					width: 350px!important;
 					margin: 0 10px;
@@ -7437,10 +7434,15 @@ body.dashboard.index {
 		.link-select-user {
 			color: $white;
 			margin-left: 10px;
-			margin-top: 4px;
+			margin-top: 5px;
 			text-decoration: underline;
 			display: inline-block;
-
+			background-color: transparent;
+			border: none;
+			padding: 0;
+			&:focus, &:focus{
+    			outline: 0;
+			}
 		}
 	}
 }

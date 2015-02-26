@@ -59,7 +59,7 @@ Brandscopic::Application.routes.draw do
             get :overall_stats
           end
           resources :activity_types, only: [:index]
-          resources :brands, only: [:index] 
+          resources :brands, only: [:index]
           get :stats, on: :member
           get :events, on: :member
         end
@@ -143,7 +143,7 @@ Brandscopic::Application.routes.draw do
   put '/users/dismiss_alert', to: 'company_users#dismiss_alert'
 
   get 'select-company/:company_id', to: 'company_users#select_company', as: :select_company, constraints: { company_id: /[0-9]+/ }
-  get 'select-custom-user/:user_id', to: 'company_users#select_custom_user', as: :select_custom_user, constraints: { user_id: /[0-9]+/ }
+  put 'login-as', to: 'company_users#select_custom_user', as: :select_custom_user
 
   resources :countries, only: [] do
     get :states, on: :collection
@@ -278,6 +278,7 @@ Brandscopic::Application.routes.draw do
     post :time_zone_change, on: :collection
     put :time_zone_update, on: :collection
     get :event, via: :get, on: :collection # List of users by event
+    get :login_as_select, on: :collection
     resources :placeables, only: [:new] do
       post :add_area, on: :collection
       delete :remove_area, on: :collection
