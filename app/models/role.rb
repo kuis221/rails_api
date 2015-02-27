@@ -23,6 +23,7 @@ class Role < ActiveRecord::Base
   accepts_nested_attributes_for :permissions
 
   scope :active, -> { where(active: true) }
+  scope :not_admin, -> { where(is_admin: false)}
 
   searchable do
     integer :id
