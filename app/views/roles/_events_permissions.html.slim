@@ -138,6 +138,10 @@
         .span2 Approve/Reject
         .span1 = permission_checkbox(f, :approve, Event)
 
+      .span12
+        .span2 Unapprove
+        .span1 = permission_checkbox(f, :unapprove, Event)
+
       .span12.separate_small
         .span2 View unsubmitted data
         .span1 = permission_checkbox(f, :view_unsubmitted_data, Event)

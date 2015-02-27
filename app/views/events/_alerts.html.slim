@@ -54,7 +54,10 @@ r
 
 - elsif resource.approved?
   .alert.alert-success
+    - unapprove_link = link_to 'unapprove', unapprove_event_path(return: return_path), method: :put
     == "Your post event report has been approved."
+    - if can?(:unapprove, resource)
+      == " Click here to #{unapprove_link}."
 
 - elsif resource.rejected?
   .alert.alert-danger
