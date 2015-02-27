@@ -1,0 +1,10 @@
+.admin-login-content
+  - if behave_as_user
+    #admin-login.admin-login-block
+      = label_tag "#{current_company_user.full_name}", "You are logged in as #{current_company_user.full_name}."
+      = button_to 'Login as different user', '/', id: 'select-specific-user', class: 'link-select-user'
+      = button_to 'Login as Super Admin' , select_custom_user_path,  method: :put, class: 'link-select-user', params: { user_id: current_real_company_user.id }
+  - else
+    #admin-login.admin-login-block
+      = label_tag 'select-specific-user', "You are logged as a Super Admin."
+      = button_to 'Login as specific user', '/', id: 'select-specific-user', class: 'link-select-user'
