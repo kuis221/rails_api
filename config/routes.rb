@@ -59,7 +59,7 @@ Brandscopic::Application.routes.draw do
             get :overall_stats
           end
           resources :activity_types, only: [:index]
-          resources :brands, only: [:index] 
+          resources :brands, only: [:index]
           get :stats, on: :member
           get :events, on: :member
         end
@@ -444,6 +444,7 @@ Brandscopic::Application.routes.draw do
       get :activate
       put :submit
       put :approve
+      put :unapprove
       put :reject
       get :form, to: 'events#export_fieldable'
       match 'members/:member_id' => 'events#delete_member', via: :delete, as: :delete_member

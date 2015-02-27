@@ -307,7 +307,7 @@ class Ability
         can?(:show, campaign)
       end
 
-      cannot [:approve, :reject, :submit,
+      cannot [:approve, :unapprove, :reject, :submit,
               :view_members, :add_members, :delete_member,
               :view_contacts, :create_contacts, :edit_contacts, :delete_contact], Event do |event|
         cannot?(:show, event)
