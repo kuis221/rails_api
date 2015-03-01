@@ -55,7 +55,7 @@ form{
 
 .control-group {
 	label.control-label{
-		color:$text;
+		color: $brand;
 	}
 	&.error {
 		input, textarea {
