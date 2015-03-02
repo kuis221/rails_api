@@ -103,7 +103,7 @@
   - if can? :documents, resource
     #event-documents.details_box
 
-      h3.module-title DOCUMENTS
+      h5.module-title DOCUMENTS
       .documents-list
         #documents-list.resource-list
           = render :partial => "documents/document", :collection => resource.documents.active + resource.campaign.documents, :locals => { parent: resource }
