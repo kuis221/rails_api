@@ -158,6 +158,11 @@ textarea::-webkit-input-placeholder {
 	border-radius: 50%;
 }
 
+.radio, .checkbox{
+	min-height: auto;
+	height: 22px;
+}
+
 label.radio div.radio {
 	display: inline-block;
 	margin: 0 15px 5px 0;
