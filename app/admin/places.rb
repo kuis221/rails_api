@@ -33,7 +33,7 @@ ActiveAdmin.register Place do
     column :state
     column :country
     column :types do |place|
-      place.types.join(', ')
+      place.types.join(', ') unless place.types.nil?
     end
     actions
 

@@ -12,7 +12,7 @@
       = f.simple_fields_for :company_users, resource.company_users.select{|cu| cu.company_id == current_company.id} do |cf|
         = cf.association :teams, collection: current_company.teams.active.all, input_html: {class: 'chosen-enabled'}
         br>/
-        = cf.input :role_id, as: :select, collection: current_company.roles.active, input_html: {class: 'chosen-enabled'}
+        = cf.input :role_id, as: :select, collection: current_company.roles.active.not_admin, input_html: {class: 'chosen-enabled'}
     .row-fluid
       = f.input :email, input_html: {class: 'input-xxlarge'}
 

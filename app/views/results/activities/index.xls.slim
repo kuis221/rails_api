@@ -30,6 +30,7 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
       Column ss:Width="100"
       Column ss:Width="100"
       Column ss:Width="80"
+      Column ss:Width="100"
       - custom_fields_to_export_headers.each do |h|
         Column ss:Width="100"
       Row ss:StyleID="s1"
@@ -55,6 +56,8 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
           Data ss:Type="String" STATE
         Cell
           Data ss:Type="String" ZIP
+        Cell
+          Data ss:Type="String" ACTIVE STATE
 
         - custom_fields_to_export_headers.each do |h|
           Cell
@@ -84,6 +87,8 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
             Data ss:Type="String"= activity.place_state
           Cell ss:StyleID="s6"
             Data ss:Type="String"= activity.place_zipcode
+          Cell
+            Data ss:Type="String"= activity.status
 
           - custom_fields_to_export_values(activity).each do |v|
             Cell ss:StyleID=(v ? v[1] : 'normal')

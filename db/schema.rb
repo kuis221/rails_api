@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150212235756) do
+ActiveRecord::Schema.define(version: 20150226220017) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -773,6 +773,7 @@ ActiveRecord::Schema.define(version: 20150212235756) do
     t.string   "phone_number"
     t.string   "neighborhoods",                                                                                array: true
     t.spatial  "lonlat",                 limit: {:srid=>4326, :type=>"point", :geographic=>true}
+    t.integer  "td_linx_confidence"
   end
 
   add_index "places", ["city"], :name => "index_places_on_city"
