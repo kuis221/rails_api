@@ -148,13 +148,13 @@ module EventsHelper
 
   def describe_areas
     describe_resource_params(:area,
-                             current_company.areas.order('areas.name ASC'), 
+                             current_company.areas.order('areas.name ASC'),
                              expandible: true)
   end
 
   def describe_tasks
     describe_resource_params(:task,
-                             Task.by_companies(current_company).order('tasks.title ASC'), :title)
+                             Task.by_companies(current_company).order('tasks.title ASC'), label_attribute: :title)
   end
 
   def describe_activity_types
@@ -217,7 +217,7 @@ module EventsHelper
 
   def describe_teams
     describe_resource_params(:team,
-                             current_company.teams.order('teams.name ASC'), 
+                             current_company.teams.order('teams.name ASC'),
                              expandible: true)
   end
 
@@ -282,7 +282,7 @@ module EventsHelper
     content_tag(:div,  class: 'filter-item') do
       (expandible ? link_to('', '#', class: 'icon icon-plus',
                                      title: 'Expand this filter',
-                                     data: { filter: filter_name }) : ''.html_safe) + 
+                                     data: { filter: filter_name }) : ''.html_safe) +
       label.html_safe + link_to('', '#', class: 'icon icon-close',
                                          title: 'Remove this filter',
                                          data: { filter: filter_name })

@@ -10,6 +10,23 @@ filters:
     active_state:
       items: [Active, Inactive]
       name: 'status'
+  user_tasks:
+    campaigns: [Campaign]
+    task_status:
+      items: [Complete, Incomplete, Late]
+      name: 'event_status'
+    active_state:
+      items: [Active, Inactive]
+      name: 'status'
+  teams_tasks:
+    campaigns: [Campaign]
+    people: [CompanyUser, Team]
+    task_status:
+      items: [Complete, Incomplete, Late, Assigned, Unassigned]
+      name: 'event_status'
+    active_state:
+      items: [Active, Inactive]
+      name: 'status'
   venues:
     sliders: 
       method: venues_sliders
