@@ -381,9 +381,10 @@ class Report < ActiveRecord::Base
       filters.each do |filter|
         unless %w(brand_portfolio brand).include?(filter.model_name)  # BrandPortfolios/Brands filters are handled directly in #add_joins_scopes
           if filtered_by?(filter.field)
-            condition = filter_info = nil
+            filter_info = nil
             filter_info = filter.column_info[:filter].call(filter) if filter.column_info.present? && filter.column_info.key?(:filter)
             if filter_params[filter.field].is_a?(Hash)
+              condition = nil
               if filter_info && filter_info[:type] == 'calendar' && filter_params[filter.field]['start'] && filter_params[filter.field]['end']
                 start_date = Timeliness.parse(filter_params[filter.field]['start']).strftime('%Y-%m-%d 00:00:00')
                 end_date = Timeliness.parse(filter_params[filter.field]['end']).strftime('%Y-%m-%d 23:59:59')
@@ -400,12 +401,47 @@ class Report < ActiveRecord::Base
                 end
               end
             elsif filter_params[filter.field].is_a?(Array)
+              condition = ''
               opts = if filter.filter_column.match(/\.active\z/)
                        filter_params[filter.field].select { |o| ['true', 'false', true, false].include?(o) }.map { |o| o.to_s == 'true' ? true : false }
+                     else
+                       filter_params[filter.field]
+                     end
+
+              if filter_info[:type] == 'event_status' && opts.include?('due') || opts.include?('late')
+                special_conditions, in_conditions = [], []
+                opts.each do |opt|
+                  case opt
+                  when 'due'
+                    start_date = if Company.current.present?
+                                   Company.current.due_event_start_date
+                                 else
+                                   Date.yesterday.strftime('%Y-%m-%d 00:00:00')
+                                 end
+                    end_date = if Company.current.present?
+                                 Company.current.due_event_end_date
+                               else
+                                 Time.now.strftime('%Y-%m-%d 00:00:00')
+                               end
+                    special_conditions.push("(events.aasm_state = 'unsent' AND events.start_at > '#{start_date}' AND events.end_at <= '#{end_date}')")
+                  when 'late'
+                    date = if Company.current.present?
+                             Company.current.late_task_date
+                           else
+                             Date.yesterday.strftime('%Y-%m-%d 00:00:00')
+                           end
+                    special_conditions.push("(events.aasm_state = 'unsent' AND events.end_at <= '#{date}')")
+                  else
+                    in_conditions.push("'#{opt}'")
+                  end
+                end
+
+                condition += "#{filter.filter_column} IN (#{in_conditions.join(',')})" if in_conditions.present?
+                condition += ' OR ' if in_conditions.present? && special_conditions.present?
+                condition += "#{special_conditions.join(' OR ')}" if special_conditions.present?
               else
-                filter_params[filter.field]
+                condition = "#{filter.filter_column} IN (?)", opts
               end
-              condition = "#{filter.filter_column} IN (?)", opts
             end
             s = if condition[0] =~ /COUNT|SUM|AVG|MIN|MAX/
                   s.having(condition)
