@@ -408,7 +408,7 @@ class Report < ActiveRecord::Base
                        filter_params[filter.field]
                      end
 
-              if filter_info[:type] == 'event_status' && opts.include?('due') || opts.include?('late')
+              if filter_info.present? && filter_info[:type] == 'event_status' && (opts.include?('due') || opts.include?('late'))
                 special_conditions, in_conditions = [], []
                 opts.each do |opt|
                   case opt
