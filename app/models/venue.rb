@@ -57,6 +57,8 @@ class Venue < ActiveRecord::Base
   scope :top_venue, ->{ where(top_venue: true) }
   scope :jameson_locals, ->{ where(jameson_locals: true) }
 
+  before_destroy :check_for_associations
+
   searchable do
     integer :id
     integer :place_id
@@ -373,5 +375,12 @@ class Venue < ActiveRecord::Base
     @campaign_ids ||= Campaign.joins(:events)
         .where(events: { place_id: place_id }, company_id: company_id)
         .pluck('DISTINCT(events.campaign_id)')
+  end
+
+  def check_for_associations
+    if events.any? || activities.any? || invites.any?
+      errors.add(:base, "cannot delete venue because it have events, invites or activites associated")
+      return false
+    end
   end
 end

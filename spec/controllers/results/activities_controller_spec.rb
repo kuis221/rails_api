@@ -59,7 +59,7 @@ describe Results::ActivitiesController, type: :controller do
 
       expect(export.reload).to have_rows([
         ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE', 'VENUE NAME',
-         'ADDRESS', 'CITY', 'STATE', 'ZIP']
+         'ADDRESS', 'CITY', 'STATE', 'ZIP', 'ACTIVE STATE']
       ])
     end
 
@@ -83,10 +83,10 @@ describe Results::ActivitiesController, type: :controller do
 
       expect(export.reload).to have_rows([
         ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE', 'VENUE NAME',
-         'ADDRESS', 'CITY', 'STATE', 'ZIP', 'MY NUMERIC FIELD'],
+         'ADDRESS', 'CITY', 'STATE', 'ZIP', 'ACTIVE STATE', 'MY NUMERIC FIELD'],
         ['Test Campaign FY01', user.full_name, '2014-01-01T00:00', 'My Activity Type', 'My area',
          '443321', 'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345', 'Los Angeles',
-         'California', '12345', '123.0']
+         'California', '12345', 'Active', '123.0']
       ])
     end
 
@@ -114,7 +114,7 @@ describe Results::ActivitiesController, type: :controller do
 
         expect(export.reload).to have_rows([
           ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE', 'VENUE NAME',
-           'ADDRESS', 'CITY', 'STATE', 'ZIP', 'MY CHK FIELD: CHK OPT1', 'MY CHK FIELD: CHK OPT2']
+           'ADDRESS', 'CITY', 'STATE', 'ZIP', 'ACTIVE STATE', 'MY CHK FIELD: CHK OPT1', 'MY CHK FIELD: CHK OPT2']
         ])
       end
 
@@ -126,7 +126,7 @@ describe Results::ActivitiesController, type: :controller do
 
         expect(export.reload).to have_rows([
           ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE', 'VENUE NAME',
-           'ADDRESS', 'CITY', 'STATE', 'ZIP', 'MY CHK FIELD: CHK OPT1', 'MY CHK FIELD: CHK OPT2', 'MY RADIO FIELD']
+           'ADDRESS', 'CITY', 'STATE', 'ZIP', 'ACTIVE STATE', 'MY CHK FIELD: CHK OPT1', 'MY CHK FIELD: CHK OPT2', 'MY RADIO FIELD']
         ])
       end
     end

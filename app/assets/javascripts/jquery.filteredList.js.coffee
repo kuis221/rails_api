@@ -576,8 +576,15 @@ $.widget 'nmk.filteredList', {
 	addParams: (params) ->
 		@savedFiltersDropdown.val('').trigger('liszt:updated')
 		qs = @paramsQueryString()
-		qs = (if qs then qs + '&' else '')
-		@_setQueryString qs + params
+		for param in @_deparam(params)
+			paramValue = encodeURIComponent(param.name)+'='+encodeURIComponent(param.value)
+			paramValue = '' if param.value is '' or param.value is null
+			continue if qs.indexOf(paramValue) >= 0
+			if param.name.indexOf('[]') is -1 && qs.indexOf(encodeURIComponent(param.name)) >= 0
+				qs = qs.replace(new RegExp("(#{encodeURIComponent(param.name)}=[^&]*)"), paramValue)
+			else
+				qs = qs + '&' + paramValue
+		@_setQueryString qs.replace(/^&/, '')
 
 	setParams: (params) ->
 		return if @_settingQueryString
