@@ -650,7 +650,17 @@ class Event < ActiveRecord::Base
                               { id: 'true', label: 'Active', count: 1, name: 'event:event_active' },
                               { id: 'false', label: 'Inactive', count: 1, name: 'event:event_active' }] }
                         end },
-        event_status: { title: 'Event Status' }
+        event_status: { title: 'Status', filter_column: -> { 'events.aasm_state' },
+                        filter: lambda do |field|
+                          { name: 'event:event_status',
+                            type: 'event_status',
+                            label: field.label, items: [
+                              { id: 'approved', label: 'Approved', count: 1, name: 'event:event_status' },
+                              { id: 'due', label: 'Due', count: 1, name: 'event:event_status' },
+                              { id: 'late', label: 'Late', count: 1, name: 'event:event_status' },
+                              { id: 'rejected', label: 'Rejected', count: 1, name: 'event:event_status' },
+                              { id: 'submitted', label: 'Submitted', count: 1, name: 'event:event_status' }] }
+                        end }
       }
     end
   end
