@@ -17,11 +17,6 @@ if defined?(Unicorn)
   # Max memory size (RSS) per worker
   use Unicorn::WorkerKiller::Oom, oom_min, oom_max
   # --- End of unicorn worker killer code ---
-
-  require 'gctools/oobgc'
-  if defined?(Unicorn::HttpRequest)
-    use GC::OOB::UnicornMiddleware
-  end
 end
 
 require ::File.expand_path('../config/environment',  __FILE__)

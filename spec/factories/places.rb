@@ -8,8 +8,6 @@
 #  place_id               :string(100)
 #  types                  :string(255)
 #  formatted_address      :string(255)
-#  latitude               :float
-#  longitude              :float
 #  street_number          :string(255)
 #  route                  :string(255)
 #  zipcode                :string(255)
@@ -21,9 +19,12 @@
 #  administrative_level_1 :string(255)
 #  administrative_level_2 :string(255)
 #  td_linx_code           :string(255)
-#  neighborhood           :string(255)
 #  location_id            :integer
 #  is_location            :boolean
+#  neighborhoods          :string(255)      is an Array
+#  price_level            :integer
+#  phone_number           :string(255)
+#  lonlat                 :spatial          point, 4326
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl
@@ -31,11 +32,13 @@
 FactoryGirl.define do
   factory :place do
     sequence(:name) { |n| "Place #{n}" }
-    sequence(:place_id)
-    sequence(:reference) { |n| "$aojnoiweksadk-o19290f0i2ief0-#{n}" }
+    place_id nil
+    reference nil
+    is_custom_place true
     formatted_address '123 My Street'
-    latitude nil
-    longitude nil
+    lonlat nil
+    street_number 11
+    route 'Main St.'
     zipcode '12345'
     city 'New York City'
     state 'NY'
@@ -75,7 +78,7 @@ FactoryGirl.define do
       zipcode nil
       administrative_level_1 nil
       administrative_level_2 nil
-      neighborhood nil
+      neighborhoods nil
       types %w(natural_feature establishment)
     end
   end

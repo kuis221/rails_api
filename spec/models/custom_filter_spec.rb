@@ -2,15 +2,16 @@
 #
 # Table name: custom_filters
 #
-#  id         :integer          not null, primary key
-#  name       :string(255)
-#  apply_to   :string(255)
-#  filters    :text
-#  created_at :datetime
-#  updated_at :datetime
-#  owner_id   :integer
-#  owner_type :string(255)
-#  group      :string(255)
+#  id           :integer          not null, primary key
+#  name         :string(255)
+#  apply_to     :string(255)
+#  filters      :text
+#  created_at   :datetime
+#  updated_at   :datetime
+#  owner_id     :integer
+#  owner_type   :string(255)
+#  default_view :boolean          default(FALSE)
+#  category_id  :integer
 #
 
 require 'rails_helper'
@@ -19,7 +20,6 @@ describe CustomFilter, type: :model do
   it { is_expected.to belong_to(:owner) }
   it { is_expected.to validate_presence_of(:owner) }
   it { is_expected.to validate_presence_of(:name) }
-  it { is_expected.to validate_presence_of(:group) }
   it { is_expected.to validate_presence_of(:apply_to) }
   it { is_expected.to validate_presence_of(:filters) }
 

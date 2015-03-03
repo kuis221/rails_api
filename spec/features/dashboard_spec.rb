@@ -22,8 +22,8 @@ feature 'Dashboard', search: true, js: true do
   shared_examples_for 'a user that can view the recent comments module' do
     scenario 'should display only 9 comments' do
       create_list(:comment, 15, commentable: create(:event,
-                                                                            campaign: campaign,
-                                                                            company: company, place: place))
+                                                    campaign: campaign,
+                                                    company: company, place: place))
 
       visit root_path
       page.execute_script 'window.scrollBy(0,10000)' # Scrolls down to the bottom of the page
@@ -37,8 +37,8 @@ feature 'Dashboard', search: true, js: true do
   shared_examples_for 'a user that can view the recent photos module' do
     scenario 'should display latest photos module' do
       create_list(:photo, 15, attachable: create(:event,
-                                                                         campaign: campaign,
-                                                                         company: company, place: place))
+                                                 campaign: campaign,
+                                                 company: company, place: place))
 
       Sunspot.commit
 
@@ -53,21 +53,21 @@ feature 'Dashboard', search: true, js: true do
 
   shared_examples_for 'a user that can view the upcoming events module' do
     let(:campaign1) do
-      create(:campaign,  company: company,
-                                     name: 'Jameson + Kahlua Rum Campaign',
-                                     brands_list: 'Jameson,Kahlua Rum,Guaro Cacique,Ron Centenario,Ron Abuelo,Absolut Vodka')
+      create(:campaign, company: company,
+                        name: 'Jameson + Kahlua Rum Campaign',
+                        brands_list: 'Jameson,Kahlua Rum,Guaro Cacique,Ron Centenario,Ron Abuelo,Absolut Vodka')
     end
 
     let(:campaign2) do
       create(:campaign, company: company,
-                                    name: 'Mama Walker\'s + Martel Campaign',
-                                    brands_list: 'Mama Walker\'s,Martel')
+                        name: 'Mama Walker\'s + Martel Campaign',
+                        brands_list: 'Mama Walker\'s,Martel')
     end
 
     let(:campaign3) do
       create(:campaign, company: company,
-                                    name: 'Paddy Irish Whiskey Campaign',
-                                    brands_list: 'Paddy Irish Whiskey')
+                        name: 'Paddy Irish Whiskey Campaign',
+                        brands_list: 'Paddy Irish Whiskey')
     end
 
     let(:events) do
@@ -103,7 +103,8 @@ feature 'Dashboard', search: true, js: true do
     end
 
     feature 'Events List View' do
-      before { events.count; Sunspot.commit } # Create the events
+      before { events  } # Create the events
+      before { Sunspot.commit }
       scenario 'should display a list of upcoming events' do
         Timecop.travel(Time.zone.local(2014, 01, 14, 12, 00)) do
           visit root_path
@@ -118,7 +119,8 @@ feature 'Dashboard', search: true, js: true do
     end
 
     feature 'Events Calendar View' do
-      before { events.count; Sunspot.commit } # Create the events
+      before { events  } # Create the events
+      before { Sunspot.commit }
 
       scenario "should start with today's day and show 2 weeks" do
         # Today is Tuesday, Jan 11
@@ -188,15 +190,16 @@ feature 'Dashboard', search: true, js: true do
           visit root_path
 
           within upcoming_events_module do
+            expect(page).to have_content('Paddy Irish Whiskey Cam')
             click_link 'Calendar View'
-
+            expect(page).not_to have_content('Paddy Irish Whiskey Cam')
             click_link 'Paddy Irish Whiskey'
           end
 
-          expect(current_path).to eql events_path
-
           # The 14 should appear selected in the calendar
           expect(page).to have_selector('a.datepick-event.datepick-selected', text: 14)
+
+          expect(current_path).to eql events_path
 
           within('#events-list') do
             expect(all('.resource-item').count).to be 1
@@ -208,8 +211,8 @@ feature 'Dashboard', search: true, js: true do
       scenario "a day with more than 6 brands should display a 'more' link" do
         Timecop.travel(Time.zone.local(2014, 01, 14, 12, 00)) do
           create(:event,
-                             campaign: campaign1, place: place,
-                             start_date: '01/14/2014', end_date: '01/14/2014')
+                 campaign: campaign1, place: place,
+                 start_date: '01/14/2014', end_date: '01/14/2014')
           Sunspot.commit
 
           visit root_path
@@ -232,7 +235,7 @@ feature 'Dashboard', search: true, js: true do
   feature 'Admin User' do
     let(:role) { create(:role, company: company) }
 
-    it_behaves_like 'a user that can view the upcoming events module'
+    #it_behaves_like 'a user that can view the upcoming events module'
 
     it_behaves_like 'a user that can view the recent comments module'
 
@@ -246,17 +249,19 @@ feature 'Dashboard', search: true, js: true do
     it_should_behave_like 'a user that can view the upcoming events module' do
       before { company_user.campaigns << [campaign, campaign1, campaign2, campaign3] }
       before { company_user.places << create(:place, city: nil, state: 'San Jose', country: 'CR', types: ['locality']) }
-      let(:permissions) { [[:upcomings_events_module, 'Symbol', 'dashboard'], [:index, 'Event'],  [:view_list, 'Event']] }
+      let(:permissions) { [[:upcomings_events_module, 'Symbol', 'dashboard'], [:view_calendar, 'Event'],  [:view_list, 'Event']] }
     end
+
     it_should_behave_like 'a user that can view the recent comments module' do
       before { company_user.campaigns << [campaign] }
       before { company_user.places << place }
-      let(:permissions) { [[:recent_comments_module, 'Symbol', 'dashboard'], [:index, 'Event'],  [:view_list, 'Event']] }
+      let(:permissions) { [[:recent_comments_module, 'Symbol', 'dashboard'], [:view_list, 'Event']] }
     end
+
     it_should_behave_like 'a user that can view the recent photos module' do
       before { company_user.campaigns << [campaign] }
       before { company_user.places << place }
-      let(:permissions) { [[:recent_photos_module, 'Symbol', 'dashboard']] }
+      let(:permissions) { [[:recent_photos_module, 'Symbol', 'dashboard'], [:index_photos, 'Event']] }
     end
   end
 
@@ -270,12 +275,6 @@ feature 'Dashboard', search: true, js: true do
 
   def recent_photos_module
     find('div#recent-photos-module')
-  end
-
-  def add_permissions(permissions)
-    permissions.each do |p|
-      company_user.role.permissions.create(action: p[0], subject_class: p[1], subject_id: p[2])
-    end
   end
 
 end

@@ -30,6 +30,10 @@ module BrandscopiSpecHelpers
     described_class.do_search(*params).results
   end
 
+  def json
+    @json ||= JSON.parse(response.body)
+  end
+
   def set_event_results(event, results, autosave = true)
     event.result_for_kpi(Kpi.impressions).value = results[:impressions] if results.key?(:impressions)
     event.result_for_kpi(Kpi.interactions).value = results[:interactions] if results.key?(:interactions)
@@ -66,6 +70,7 @@ module BrandscopiSpecHelpers
 
     event.save if autosave
   end
+  module_function :set_event_results
 
   def without_current_user
     user = User.current
@@ -82,8 +87,4 @@ module BrandscopiSpecHelpers
     export.export_list
     yield REXML::Document.new(export.file.instance_variable_get(:@file).read)
   end
-end
-
-RSpec.configure do |config|
-  config.include BrandscopiSpecHelpers
 end

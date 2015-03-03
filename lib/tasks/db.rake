@@ -11,4 +11,10 @@ namespace :db do
       Rake::Task['db:functions:load'].invoke
     end
   end
+
+  namespace :test do
+    task :load do
+      Rake::Task['db:functions:load'].invoke
+    end
+  end
 end

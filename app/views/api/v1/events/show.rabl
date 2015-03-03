@@ -32,11 +32,12 @@ if resource.event_data? && resource.event_data.present?
 end
 
 child(venue: :place) do
-  attributes :id, :name, :latitude, :longitude, :formatted_address, :country, :state, :state_name, :city, :route, :street_number, :zipcode
+  attributes place_id: :id, id: :venue_id
+  attributes :name, :latitude, :longitude, :formatted_address, :country, :state, :state_name, :city, :route, :street_number, :zipcode
 end
 
 child :campaign do
-  attributes :id, :name
+  attributes :id, :name, :enabled_modules
 end
 
 node :actions do |event|

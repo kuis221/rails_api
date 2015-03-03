@@ -7,6 +7,7 @@ $.widget 'nmk.activityForm', {
 			if $(e.target).val()
 				$.get "#{@options.formUrl}?activity[activity_type_id]=#{$(e.target).val()}", (result) =>
 					@element.html('').append $(result).find('.activity-form')
+					$('.activity-form .places-autocomplete').placesAutocomplete();
 					return
 
 			return
@@ -39,6 +40,14 @@ $.widget 'nmk.activityForm', {
 				brands.trigger "liszt:updated"
 
 			return
+
+		@element.off('change.inviteCampaign').on 'change.inviteCampaign', '#venue_invite_campaign', (e) ->
+			$.getJSON '/campaigns/'+$(@).val()+'/event_dates.json', (results) ->
+				events = $('#invite_event_id');
+				events.html('<option></option>')
+				for result in results
+					$('#invite_event_id').append('<option value="' + result[1] + '">' + result[0] + '</option>')
+				events.trigger('liszt:updated')
 
 		@element.off('change.activityBrand').on "change.activityBrand", ".form-field-brand", ->
 			marques = $("select.form-field-marque")

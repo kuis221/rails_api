@@ -166,7 +166,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
       { id: f.value.to_s.titleize, name: :event_status, count: f.count, label: f.value.to_s.titleize }
     end
 
-    @facets.concat(items.map { |i| { id: i, name: :event_status, count: 0, label: i.to_s.titleize } })
+    @facets.concat(items.map { |i| { id: i.to_s.titleize, name: :event_status, count: 0, label: i.to_s.titleize } })
   end
 
   api :GET, '/api/v1/events/autocomplete', 'Return a list of results grouped by categories'
@@ -309,6 +309,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
       ],
       "place": {
           "id": 2624,
+          "venue_id": 2154,
           "name": "Kelly's Pub Too",
           "latitude": 39.7924104,
           "longitude": -86.2514126,
@@ -323,7 +324,14 @@ class Api::V1::EventsController < Api::V1::FilteredController
       },
       "campaign": {
           "id": 33,
-          "name": "Kahlua Midnight FY14"
+          "name": "Kahlua Midnight FY14",
+          "enabled_modules": [
+             "expenses",
+             "photos",
+             "videos",
+             "comments",
+             "attendance"
+          ]
       }
   }
   EOS
@@ -1597,7 +1605,10 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   def permitted_search_params
     params.permit(:page, :start_date, :end_date, { campaign: [] }, { place: [] }, { area: [] }, { venue: [] },
-                  { user: [] }, { team: [] }, { brand: [] }, { brand_porfolio: [] }, { status: [] }, event_status: [])
+                  { user: [] }, { team: [] }, { brand: [] }, { brand_porfolio: [] }, { status: [] }, event_status: []).tap do |p|
+      p[:sorting] ||= 'start_at'
+      p[:sorting_dir] ||= 'asc'
+    end
   end
 
   def load_contactable_from_request

@@ -140,8 +140,6 @@ describe Api::V1::VenuesController, type: :controller do
     it 'should create a new place that is no found in google places' do
       expect_any_instance_of(Place).to receive(:fetch_place_data).and_return(true)
       expect_any_instance_of(GooglePlaces::Client).to receive(:spots).and_return([])
-      expect_any_instance_of(GooglePlaces::Client).to receive(:spot).and_return(double(opening_hours: {}))
-      expect(HTTParty).to receive(:post).and_return('reference' => 'ABC', 'id' => 'XYZ')
       expect_any_instance_of(described_class).to receive(:open).and_return(double(
         read: ActiveSupport::JSON.encode(
           'results' => [{

@@ -20,7 +20,6 @@ describe Api::V1::ContactsController, type: :controller do
         'full_name' => contact.full_name,
         'title' => contact.title,
         'email' => contact.email,
-        'phone_number' => contact.phone_number,
         'street1' => contact.street1,
         'street2' => contact.street2,
         'phone_number' => contact.phone_number,

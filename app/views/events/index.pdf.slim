@@ -33,7 +33,7 @@ css:
     javascript:
       window.status='loading';
       jQuery(function(){
-        window.createCalendar(#{params[:month] || 'null'}, #{params[:year] || 'null'});
+        window.createCalendar(#{params[:month] || 'null'}, #{params[:year] || 'null'}, #{params[:group_by] ? "'#{params[:group_by]}'".html_safe : 'null'});
       });
 - else
   .filter-description

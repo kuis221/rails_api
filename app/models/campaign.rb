@@ -19,7 +19,7 @@
 #  end_date         :date
 #  survey_brand_ids :integer          default([]), is an Array
 #  modules          :text
-#  color            :string(10)
+#  color            :string(30)
 #
 
 class Campaign < ActiveRecord::Base
@@ -49,7 +49,6 @@ class Campaign < ActiveRecord::Base
   validates :end_date, format: { with: DATE_FORMAT, message: 'MM/DD/YYYY' }, allow_nil: true
   validates :end_date, presence: true, date: { on_or_after: :start_date, message: 'must be after' }, if: :start_date
   validates :start_date, presence: true, if: :end_date
-  validates :color, inclusion: {in: AVAILABLE_COLORS }, allow_nil: true, allow_blank: true
 
   validate :valid_modules?
 
@@ -180,6 +179,11 @@ class Campaign < ActiveRecord::Base
 
   def active
     active?
+  end
+
+  def event_dates
+    date_field = company.timezone_support? ? :local_start_at : :end_at
+    events.active.pluck("to_char(#{date_field}, 'Mon DD, YYYY')", :id)
   end
 
   def staff_users
@@ -327,7 +331,7 @@ class Campaign < ActiveRecord::Base
   end
 
   def enabled_modules_kpis
-    enabled_modules.map { |m| Kpi.send(m) }
+    (enabled_modules - ['attendance']).map { |m| Kpi.send(m) }
   end
 
   def active_global_kpis
@@ -514,7 +518,7 @@ class Campaign < ActiveRecord::Base
   end
 
   def valid_modules?
-    modules = %w(surveys photos expenses comments videos)
+    modules = %w(surveys photos expenses comments videos attendance)
     if (enabled_modules - modules).any?
       errors.add :modules, :invalid
     end

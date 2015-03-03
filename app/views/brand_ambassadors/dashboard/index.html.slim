@@ -13,7 +13,7 @@
       .dropdown.btn-download
         a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
           i.icon-download
-          i.icon-arrow-down
+          i.icon-arrow-down-small
         ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
           li
             a.xlsx-download-link href="#" role="menuitem" data-url="#{brand_ambassadors_visits_path(format: :xls)}"
@@ -45,6 +45,7 @@
 
 - if can?(:list, BrandAmbassadors::Visit) || can?(:calendar, BrandAmbassadors::Visit)
   javascript:
+    window.loadingVisits = false
     $('#collection-list-filters').filteredList({
       'source': '#{url_for(controller: 'brand_ambassadors/visits', action: :items)}',
       'filtersUrl': '#{filter_url('brand_ambassadors/visits', apply_to: :visits)}',
@@ -59,11 +60,10 @@
       'userFilters': #{user_saved_filters('visits').to_json.html_safe},
       'autoCompletePath': '#{autocomplete_path('brand_ambassadors/visits', format: :json)}',
       'fixListHeight': false,
-      'defaultParams': [{name: 'start_date', value:'#{Time.zone.now.strftime("%m/%d/%Y")}'}, {name: 'end_date', value:'#{(Time.zone.now + 10.years).strftime("%m/%d/%Y")}'}],
+      'defaultParams': '#{j default_params_for_view('start_date=' + Time.zone.now.strftime("%m/%d/%Y") + '&end_date=' + (Time.zone.now + 10.years).strftime("%m/%d/%Y"))}',
       'applyTo': 'visits',
-      'clearFilterParams': [{name: 'start_date', value:'#{Time.zone.now.strftime("%m/%d/%Y")}'}, {name: 'end_date', value:'#{(Time.zone.now + 10.years).strftime("%m/%d/%Y")}'}],
       'onChange': function() {
-        if (typeof visitsCalendar !== 'undefined') {
+        if (typeof visitsCalendar !== 'undefined' && !window.loadingVisits) {
          visitsCalendar.fullCalendar('refetchEvents');
         }
       }

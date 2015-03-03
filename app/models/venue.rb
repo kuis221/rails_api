@@ -20,6 +20,8 @@
 #  score_impressions    :integer
 #  score_cost           :integer
 #  score_dirty          :boolean          default(FALSE)
+#  jameson_locals       :boolean          default(FALSE)
+#  top_venue            :boolean          default(FALSE)
 #
 
 require 'normdist'
@@ -28,6 +30,8 @@ class Venue < ActiveRecord::Base
   scoped_to_company
 
   belongs_to :place
+
+  validates :place, presence: true, uniqueness: { scope: :company_id }
 
   has_many :events, through: :place
   has_many :activities, -> { order('activity_date ASC') }, as: :activitable do
@@ -41,12 +45,19 @@ class Venue < ActiveRecord::Base
     end
   end
 
+  has_many :invites, dependent: :destroy, inverse_of: :venue
+
   include Normdist
 
   delegate :name, :types, :formatted_address, :formatted_phone_number, :website, :price_level,
            :city, :street, :state, :state_name, :country, :country_name, :zipcode, :reference,
            :latitude, :longitude, :opening_hours, :td_linx_code,
            to: :place
+
+  scope :top_venue, ->{ where(top_venue: true) }
+  scope :jameson_locals, ->{ where(jameson_locals: true) }
+
+  before_destroy :check_for_associations
 
   searchable do
     integer :id
@@ -79,6 +90,11 @@ class Venue < ActiveRecord::Base
     string :status do
       'Active'
     end
+
+    join(:events_start_at, target: Event, type: :time, join: { from: :place_id, to: :place_id }, as: 'start_at_dts')
+    join(:events_local_start_at, target: Event, type: :time, join: { from: :place_id, to: :place_id }, as: 'local_start_at_dts')
+    join(:events_end_at, target: Event, type: :time, join: { from: :place_id, to: :place_id }, as: 'end_at_dts')
+    join(:events_local_end_at, target: Event, type: :time, join: { from: :place_id, to: :place_id }, as: 'local_end_at_dts')
 
     integer :events_count, stored: true
     double :promo_hours, stored: true
@@ -309,6 +325,17 @@ class Venue < ActiveRecord::Base
         end
       end
 
+      start_date = params[:start_date]
+      end_date = params[:end_date]
+      if start_date.present? && end_date.present?
+        d1 = Timeliness.parse(start_date, zone: :current).beginning_of_day
+        d2 = Timeliness.parse(end_date, zone: :current).end_of_day
+        with Venue.search_start_date_field, d1..d2
+      elsif start_date.present?
+        d = Timeliness.parse(start_date, zone: :current).beginning_of_day
+        with Venue.search_start_date_field, d..d.end_of_day
+      end
+
       stat(:events_count, type: 'max')
       stat(:promo_hours, type: 'max')
       stat(:impressions, type: 'max')
@@ -335,9 +362,32 @@ class Venue < ActiveRecord::Base
      venue_score: [:min, :max], price: [], area: [], campaign: [], brand: []]
   end
 
+  def self.search_start_date_field
+    if Company.current && Company.current.timezone_support?
+      :events_local_start_at
+    else
+      :events_start_at
+    end
+  end
+
+  def self.search_end_date_field
+    if Company.current && Company.current.timezone_support?
+      :events_local_end_at
+    else
+      :events_end_at
+    end
+  end
+
   def campaign_ids
     @campaign_ids ||= Campaign.joins(:events)
         .where(events: { place_id: place_id }, company_id: company_id)
         .pluck('DISTINCT(events.campaign_id)')
+  end
+
+  def check_for_associations
+    if events.any? || activities.any? || invites.any?
+      errors.add(:base, "cannot delete venue because it have events, invites or activites associated")
+      return false
+    end
   end
 end

@@ -8,8 +8,6 @@
 #  place_id               :string(100)
 #  types                  :string(255)
 #  formatted_address      :string(255)
-#  latitude               :float
-#  longitude              :float
 #  street_number          :string(255)
 #  route                  :string(255)
 #  zipcode                :string(255)
@@ -21,9 +19,12 @@
 #  administrative_level_1 :string(255)
 #  administrative_level_2 :string(255)
 #  td_linx_code           :string(255)
-#  neighborhood           :string(255)
 #  location_id            :integer
 #  is_location            :boolean
+#  neighborhoods          :string(255)      is an Array
+#  price_level            :integer
+#  phone_number           :string(255)
+#  lonlat                 :spatial          point, 4326
 #
 
 require 'rails_helper'
@@ -63,7 +64,7 @@ describe Place, type: :model do
                  { 'types' => ['street_number'], 'short_name' => '7', 'long_name' => '7' },
                  { 'types' => ['route'], 'short_name' => 'Calle Melancolia', 'long_name' => 'Calle Melancolia' }
                ]))
-      expect(api_client).to receive(:spots).and_return([])
+      expect(api_client).to receive(:spots).at_least(:once).and_return([])
 
       place.save
       place.reload
@@ -101,7 +102,7 @@ describe Place, type: :model do
                  { 'types' => ['street_number'], 'short_name' => '7', 'long_name' => '7' },
                  { 'types' => ['route'], 'short_name' => 'Calle Melancolia', 'long_name' => 'Calle Melancolia' }
                ]))
-      expect(api_client).to receive(:spots).and_return([])
+      expect(api_client).to receive(:spots).at_least(:once).and_return([])
       place.save
       place.reload
       expect(place.name).to eq('Shark\'s Cove')
@@ -139,6 +140,37 @@ describe Place, type: :model do
 
     it 'returns nil if no place is given' do
       expect(described_class.political_division(nil)).to be_nil
+    end
+  end
+
+  describe '#in_areas' do
+    let(:company) { create(:company) }
+    let(:campaign) { create(:campaign, company: company) }
+
+    it 'should include events that are scheduled on the given places' do
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      place_sf = create(:place, country: 'US', state: 'California', city: 'San Francisco')
+      area_la = create(:area, company: company, place_ids: [place_la.id])
+      area_sf = create(:area, company: company, place_ids: [place_sf.id])
+
+      expect(described_class.in_areas([area_la])).to match_array [place_la]
+      expect(described_class.in_areas([area_sf])).to match_array [place_sf]
+      expect(described_class.in_areas([area_la, area_sf])).to match_array [place_la, place_sf]
+    end
+
+    it 'should include places that are located within the given scope if the place is a locality' do
+      los_angeles = create(:city, name: 'Los Angeles', country: 'US', state: 'California')
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+
+      san_francisco = create(:city, name: 'San Francisco', country: 'US', state: 'California')
+      place_sf = create(:place, country: 'US', state: 'California', city: 'San Francisco')
+
+      area_la = create(:area, company: company, place_ids: [los_angeles.id])
+      area_sf = create(:area, company: company, place_ids: [san_francisco.id])
+
+      expect(described_class.in_areas([area_la])).to match_array [place_la, los_angeles]
+      expect(described_class.in_areas([area_sf])).to match_array [place_sf, san_francisco]
+      expect(described_class.in_areas([area_la, area_sf])).to match_array [place_la, los_angeles, place_sf, san_francisco]
     end
   end
 
@@ -184,6 +216,169 @@ describe Place, type: :model do
     end
   end
 
+  describe '#td_linx_match' do
+    before do
+      TdLinx::Processor.create_tdlinx_codes_table
+      ActiveRecord::Base.connection.execute("INSERT INTO tdlinx_codes VALUES
+        ('0000071','Big Es Supermarket','11 Union St','Easthampton','MA','01027'),
+        ('0000072','Valley Farms Store','128 Northampton St','Easthampton','MA','01027')")
+    end
+
+    it 'returns the correct value with a confidence of 10' do
+      place = create(:place, name: 'Big Es Supermarket', street_number: '11',
+                             route: 'Union St', zipcode: '01027', state: 'Massachusetts')
+      expect(described_class.td_linx_match(place.id, place.state_code)).to eql(
+        'code' => '0000071', 'name' => 'Big Es Supermarket', 'street' => '11 Union St',
+        'city' => 'Easthampton', 'state' => 'MA', 'zipcode' => '01027', 'confidence' => '10')
+    end
+
+    it 'returns the correct value with a confidence of 10 if the first letters match' do
+      place = create(:place, name: 'Big Es', street_number: '11',
+                             route: 'Un', zipcode: '01027', state: 'Massachusetts')
+      expect(described_class.td_linx_match(place.id, place.state_code)).to eql(
+        'code' => '0000071', 'name' => 'Big Es Supermarket', 'street' => '11 Union St',
+        'city' => 'Easthampton', 'state' => 'MA', 'zipcode' => '01027', 'confidence' => '10')
+    end
+
+    it 'returns the correct value with a confidence of 10 ignoring removing "the" at the begining of the name' do
+      place = create(:place, name: 'The Big Es Supermarket', street_number: '11',
+                             route: 'Union St', zipcode: '01027', state: 'Massachusetts')
+      expect(described_class.td_linx_match(place.id, place.state_code)).to eql(
+        'code' => '0000071', 'name' => 'Big Es Supermarket', 'street' => '11 Union St',
+        'city' => 'Easthampton', 'state' => 'MA', 'zipcode' => '01027', 'confidence' => '10')
+    end
+
+    it 'is case unsensitive' do
+      place = create(:place, name: 'BIG ES Supermarket', street_number: '11',
+                             route: 'union St', zipcode: '01027', state: 'Massachusetts')
+      expect(described_class.td_linx_match(place.id, place.state_code)).to eql(
+        'code' => '0000071', 'name' => 'Big Es Supermarket', 'street' => '11 Union St',
+        'city' => 'Easthampton', 'state' => 'MA', 'zipcode' => '01027', 'confidence' => '10')
+    end
+
+    it 'returns the correct value with a confidence of 5 if the name is slightly different'  do
+      place = create(:place, name: 'Supermarket Big ES', street_number: '11',
+                             route: ' Union', zipcode: '01027', state: 'Massachusetts')
+      expect(described_class.td_linx_match(place.id, place.state_code)).to eql(
+        'code' => '0000071', 'name' => 'Big Es Supermarket', 'street' => '11 Union St',
+        'city' => 'Easthampton', 'state' => 'MA', 'zipcode' => '01027', 'confidence' => '5')
+    end
+
+    it 'returns the correct value with a confidence of 5 if the first letters of the address match but its slightly different' do
+      place = create(:place, name: 'Supermarket Big Es', street_number: '11',
+                             route: 'Union Street N', zipcode: '01027', state: 'Massachusetts')
+      expect(described_class.td_linx_match(place.id, place.state_code)).to eql(
+        'code' => '0000071', 'name' => 'Big Es Supermarket', 'street' => '11 Union St',
+        'city' => 'Easthampton', 'state' => 'MA', 'zipcode' => '01027', 'confidence' => '5')
+    end
+
+    it 'returns the correct value with a confidence of 1 if the street doesn\'t match'  do
+      place = create(:place, name: 'Big Es Supermarket', street_number: '12',
+                             route: 'Union St', zipcode: '01027', state: 'Massachusetts')
+      expect(described_class.td_linx_match(place.id, place.state_code)).to eql(
+        'code' => '0000071', 'name' => 'Big Es Supermarket', 'street' => '11 Union St',
+        'city' => 'Easthampton', 'state' => 'MA', 'zipcode' => '01027', 'confidence' => '1')
+    end
+
+    it 'returns the correct value with a confidence of 1 if only the first two chars of the zipcode match'  do
+      place = create(:place, name: 'Big Es Supermarket', street_number: '11',
+                             route: 'Union St', zipcode: '01345', state: 'Massachusetts')
+      expect(described_class.td_linx_match(place.id, place.state_code)).to eql(
+        'code' => '0000071', 'name' => 'Big Es Supermarket', 'street' => '11 Union St',
+        'city' => 'Easthampton', 'state' => 'MA', 'zipcode' => '01027', 'confidence' => '1')
+    end
+
+    it 'returns the correct value with a confidence of 1 if the first letters match its in other state' do
+      place = create(:place, name: 'Big Es Supermarket', street_number: '11',
+                             route: 'Union Street', zipcode: '01020', state: 'California')
+      expect(described_class.td_linx_match(place.id, place.state_code)).to eql(
+        'code' => '0000071', 'name' => 'Big Es Supermarket', 'street' => '11 Union St',
+        'city' => 'Easthampton', 'state' => 'MA', 'zipcode' => '01027', 'confidence' => '1')
+    end
+  end
+
+  describe '#find_place' do
+    let(:place) do
+      create(:place, name: 'Benitos Bar', city: 'Los Angeles', state: 'California',
+                     street_number: '123 st', route: 'Maria nw', zipcode: '11223')
+    end
+
+    before { place }
+
+    it 'returns the place that exactly match the search params' do
+      expect(
+        described_class.find_place(
+          name: 'Benitos Bar', city: 'Los Angeles', state: 'California',
+          street: '123 st Maria nw', zipcode: '11223'
+        )
+      ).to match(place.id)
+    end
+
+    it 'returns the place that exactly match the search params without a zipcode' do
+      expect(
+        described_class.find_place(
+          name: 'Benitos Bar', city: 'Los Angeles', state: 'California',
+          street: '123 st Maria nw', zipcode: nil
+        )
+      ).to match(place.id)
+    end
+
+    it 'returns the place that have a similar name with the same address' do
+      expect(
+        described_class.find_place(
+          name: 'Benito Bar', city: 'Los Angeles', state: 'California',
+          street: '123 st Maria nw', zipcode: nil
+        )
+      ).to match(place.id)
+
+      expect(
+        described_class.find_place(
+          name: 'BENITOSS Bar', city: 'Los Angeles', state: 'California',
+          street: '123 st Maria nw', zipcode: nil
+        )
+      ).to match(place.id)
+    end
+
+    it 'returns the place that have a similar name with the same address written in different ways' do
+      expect(
+        described_class.find_place(
+          name: 'Benito Bar', city: 'Los Angeles', state: 'California',
+          street: '123 street Maria nw', zipcode: nil
+        )
+      ).to match(place.id)
+
+      expect(
+        described_class.find_place(
+          name: 'BENITOSS Bar', city: 'Los Angeles', state: 'California',
+          street: '123 st Maria Northweast', zipcode: nil
+        )
+      ).to match(place.id)
+
+      expect(
+        described_class.find_place(
+          name: 'BENITOSS Bar', city: 'Los Angeles', state: 'California',
+          street: '123 street Maria Northweast', zipcode: nil
+        )
+      ).to match(place.id)
+
+      expect(
+        described_class.find_place(
+          name: 'BENITOSS Bar', city: 'Los Angeles', state: 'California',
+          street: '1234 street Maria Northweast', zipcode: nil
+        )
+      ).to match(place.id)
+    end
+
+    it 'does not returns the place that have a different name with the same address' do
+      expect(
+        described_class.find_place(
+          name: 'Mercedes Bar', city: 'Los Angeles', state: 'California',
+          street: '123 st Maria nw', zipcode: nil
+        )
+      ).to be_nil
+    end
+  end
+
   describe '#combined_search', search: true do
     let(:google_results) { { results: [] } }
     let(:company_user) { create(:company_user, role: create(:non_admin_role)) }
@@ -225,20 +420,20 @@ describe Place, type: :model do
       let(:google_results) do
         { results: [{
           'formatted_address' => 'Los Angeles, CA, USA',
-          'id' => 'PLACEID1',
+          'place_id' => 'PLACEID1',
           'name' => 'Los Angeles',
           'reference' => 'REFERENCE1',
           'types' => %w(locality political)
         },
                     {
                       'formatted_address' => 'Los Angeles, ON, Canada',
-                      'id' => 'PLACEID2',
+                      'place_id' => 'PLACEID2',
                       'name' => 'Los Angeles',
                       'reference' => 'REFERENCE2',
                       'types' => %w(locality political)
                     }, {
                       'formatted_address' => 'Tower 42, Los Angeles, CA 23211, United States',
-                      'id' => 'PLACEID3',
+                      'place_id' => 'PLACEID3',
                       'name' => 'Vertigo 42',
                       'reference' => 'REFERENCE3',
                       'types' => %w(food bar establishment)

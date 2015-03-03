@@ -1,50 +1,70 @@
 = simple_form_for resource, remote: true do |f|
+  = hidden_field_tag :partial, :tasks_permissions
+  = render 'save_bar'
+
   .permissions
     .row-fluid
-      .span7
-        .span5.title Create
+      .span12.category
         .span2
+        .span1 VIEW
+        .span1 CREATE
+        .span1 EDIT
+        .span1 DEACTIVATE
+
+      .span12
+        .span2.title Create
+        .span1
           = permission_checkbox(f, :create, Venue)
 
-      .span7
-        .span5.title Venue List
-        .span2
+      .span12.separate_small
+        .span2.title
+          h5 Venues List
+        .span1
           = permission_checkbox(f, :index, Venue)
 
-      .span7
-        .span5.title Venue Details
-        .span2
+      .span12.separate
+        .span2.title
+          h5 Venue Details
+        .span1
           = permission_checkbox(f, :show, Venue)
 
-      .span7
-        .span5 Venue Score
-        .span2
+      .span12
+        .span2 Venue Score
+        .span1
           = permission_checkbox(f, :view_score, Venue)
 
-      .span7
-        .span5 Venue KPIs
-        .span2
+      .span12
+        .span2 Venue KPIs
+        .span1
           = permission_checkbox(f, :view_kpis, Venue)
 
-      .span7
-        .span5 Trends by day of week
-        .span2
+      .span12
+        .span2 Trends by day of week
+        .span1
           = permission_checkbox(f, :view_trends_day_week, Venue)
 
-      .span7
-        .span5 Events
-        .span2
+      .span12
+        .span2 Events
+        .span1
           = permission_checkbox(f, :view_events, Venue)
 
-      .span7
-        .span5 Photos
-        .span2
+      - if jbb_feature_enabled?
+        .span12
+          .span2 Invites
+          .span1 = permission_checkbox(f, :index_invites, Venue)
+          .span1 = permission_checkbox(f, :create_invite, Venue)
+          .span1 = permission_checkbox(f, :edit_invite, Venue)
+          .span1 = permission_checkbox(f, :deactivate_invite, Venue)
+
+      .span12
+        .span2 Photos
+        .span1
           = permission_checkbox(f, :view_photos, Venue)
 
-      .span7
-        .span5 Comments
-        .span2
+      .span12
+        .span2 Comments
+        .span1
           = permission_checkbox(f, :view_comments, Venue)
 
   = hidden_field_tag :partial, :venues_permissions
-  = f.button :submit, 'Save', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
+  /*= f.button :submit, 'Save', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}

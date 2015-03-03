@@ -1,6 +1,6 @@
 - parent ||= current_company
 #documents-container
-  h3.module-title
+  h5.module-title
     - if @folder.is_a?(DocumentFolder)
       = link_to 'DOCUMENTS', brand_ambassadors_document_folders_path(format: :js), remote: true
       - folder_parents(@folder).each do |p|

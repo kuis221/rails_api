@@ -10,55 +10,70 @@
       | for more information about this section.
 
 .row-fluid.with-details-close-bar
-  = resource_details_bar("You are viewing venue details. Click to close.")
 
-  .details_box
-    - unless resource.latitude.nil? || resource.longitude.nil? 
-      #venue-map-canvas.google-map data-latitude="#{resource.latitude}" data-longitude="#{resource.longitude}"
+
+  /! This must be dynamic with the name of the venue
+  = resource_details_bar("Viewing #{resource.name} venue details page.")
+
+  .details_box.padding-top-close-bar
+    .row-fluid.venue_details_container
+      .span6
+        h2= resource.name
+        / span.category
+        /   | Restaurant, Food
+        - if resource.price_level(fetch_from_google: true)
+          span.price
+            = place_price(resource.price_level)
+
+
+        ul.stripped-list.small.data-list
+          li
+            i.icon-wired-venue
+            - venue_address = resource.formatted_address.present? ? resource.formatted_address : place_address(resource.place, false, ', ', ', ')
+            => venue_address
+            = link_to_get_directions(resource)
+          - if false # the places doesn't have a phone number yet
+            li
+              i.icon-mobile
+              span (415) 863-5964
+          - if resource.website
+            li
+              i.icon-web
+              - if resource.website
+                = place_website(resource.website)
+
+
+        ul.stripped-list.small
+          - if resource.td_linx_code
+            li
+              b.highlight-text TD Linx Code: 
+              = resource.td_linx_code
+
+          - if resource.opening_hours && resource.opening_hours.key?('periods')
+            li
+              b.highlight-text Hours:
+              = place_opening_hours_formatted(resource.opening_hours)
+
+          - if jbb_feature_enabled?
+            li
+              b.highlight-text> Jameson Local Account:
+              b<= resource.jameson_locals ? 'Yes' : 'No'
+            li
+              b.highlight-text> Top 100 Account:
+              b<= resource.top_venue ? 'Yes' : 'No'
+
+        / p.small Quis nostrud exerci tation, ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat duis autem. Consuetudium lectorum mirum est notare quam littera gothica quam nunc putamus parum! Vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat vel illum dolore. Volutpat ut wisi enim ad minim veniam eu feugiat nulla. Imperdiet doming id quod mazim placerat facer possim assum typi non habent claritatem? Nunc nobis videntur parum clari fiant sollemnes in?
+
+        #venue-areas.areas
+          = render partial: 'areas', locals: {areas: resource.place.areas}
+
+      .span6.map_container
+        - unless resource.latitude.nil? || resource.longitude.nil?
+          #venue-map-canvas.google-map data-latitude="#{resource.latitude}" data-longitude="#{resource.longitude}"
             b= resource.name
             br>/
             = place_address(resource.is_a?(Venue) ? resource.place : resource)
 
-    - venue_address = resource.formatted_address.present? ? resource.formatted_address : place_address(resource.place, false, ', ', ', ')
-    h2= resource.name
-    .row-fluid
-      .place-data
-        i.icon-wired-venue
-        span
-          = venue_address
-          - if resource.formatted_address.present?
-            - unless venue_address.strip.blank?
-              br>/
-          = resource.formatted_phone_number
-          - if resource.website
-            .link
-              = place_website(resource.website)
-          = resource.price_level.times.map{ '$' }.join
-          = " "
-          = resource.types_without_establishment.map{|type| t("venue_types.#{type}") }.join(', ')
-
-          - if resource.place.td_linx_code
-            br>/
-            = 'TD Linx Code ' + resource.place.td_linx_code
-      - if resource.opening_hours
-        .time-data
-          i.icon-time
-          span
-            = place_opening_hours_formatted(resource.opening_hours)
-      / .description-data
-      /   p Cocktails “made with mixers like Hawaiian Punch and Tang”, beer “served in a brown paper bag” and “junk food” like “deep-fried Twinkies and chili cheese tater tots” conjure up “college days” at this “kitschy” SoMa bar with a “trailer park theme”; it may be “gimmicky” and the “dive bar decor” is a little “rough around the edges”, but most are buttered up by the “super-fun” vibe.º
-
-      // The is info will be displayed on the fixed bar when the window is scolled down to this position
-      .details-bar-info
-        h3= resource.name
-        br>/
-        = venue_address
-
-      - if resource.persisted?
-        .tools-icons
-          = link_to '', select_areas_venue_path(resource), remote: true, class: 'icon-plus-sign'
-        #venue-areas.row-fluid
-          = render partial: 'areas', locals: {areas: resource.place.areas}
 
 - if resource.events_count.present? && resource.events_count > 0
   - if can?(:view_score, resource) || can?(:view_kpis, resource)
@@ -114,29 +129,44 @@
 
   - if can?(:view_trends_day_week, resource)
     #venue-trends-week.details_box
-      h3 TRENDS BY DAY OF WEEK
+      h5.module-title TRENDS BY DAY OF WEEK
       #venue-trends-by-day-narrative= venue_trend_week_day_narrative(resource)
       #trends-day-week-graph
 
 - if can?(:view_events, resource)
   #venue-events.details_box
-    h3 EVENTS
+    h5.module-title EVENTS
     - if can?(:show, Venue) && can?(:create, Event)
       - if resource.persisted?
-        = button_to 'Create', new_venue_event_path(resource), method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn' if can? :create, Event
+        = button_to 'Create Event', new_venue_event_path(resource), method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn' if can? :create, Event
       - else
         = button_to 'Create', new_event_path(event: {place_reference: "#{resource.place.reference}||#{resource.place.place_id}"}, place_reference_display_name: "#{resource.place.name}, #{resource.place.city}, #{resource.place.state}"), method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn'
     - if resource.persisted?
       #venue-events-container
         = render partial: 'upcoming_events'
 
-- if resource.persisted? && can?(:show, Activity)
+- if resource.persisted? && (can?(:show, Activity) || can?(:index_invites, Venue))
   #venue-activities.details_box
     = render 'activities'
 
+  - if jbb_feature_enabled? && can?(:index_invites, Venue)
+    #event-invites-list.details_box
+      .dropdown.btn-download.pull-right
+        a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+          i.icon-download
+          i.icon-arrow-down-small
+        ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+          li
+            = link_to 'Download as XLS', venue_invites_path(resource, format: :xls), role: :menuitem, class: 'xlsx-download-link', data: { url: venue_invites_path(resource, format: :xls) }
+          li
+            = link_to 'Download as PDF', venue_invites_path(resource, format: :pdf), role: :menuitem, class: 'xlsx-download-link', data: { url: venue_invites_path(resource, format: :pdf) }
+      h5.module-title ATTENDANCE
+      #invites-list.resource-list
+        = render partial: 'invites/invite', collection: resource.invites.active.joins(:place).order('lower(places.name)'), locals: { parent: resource }
+
 - if can?(:view_photos, resource) && resource.photos.count > 0
   #venue-photos.details_box.box_photos
-    h3 GALLERY
+    h5.module-title GALLERY
     .gallery
       ul#photos-thumbs
         - resource.photos.each do |photo|
@@ -159,7 +189,7 @@
 
 - if can?(:view_comments, resource) && resource.reviews.count > 0
   #venue-comments.details_box
-    h3 COMMENTS
+    h5.module-title COMMENTS
     - resource.reviews.each do |review|
       .venue-review
         - unless review.is_a?(Comment)
@@ -175,10 +205,6 @@
 = render partial: 'help_tutorial'
 
 javascript:
-  $(document).ready(function() {
-    $(this).scrollTop(400);
-  });
-
 - if resource.persisted?
   - if can?(:view_kpis, resource)
     javascript:
@@ -310,3 +336,10 @@ javascript:
     $(document).on('areas:change', function(){
       $.get('#{areas_venue_path(resource, format: :js)}');
     });
+    $('#collapse-venue-hour').on('show', function(){
+      $('[data-target="#collapse-venue-hour"]').text('(Show less)');
+    });
+    $('#collapse-venue-hour').on('hide', function(){
+      $('[data-target="#collapse-venue-hour"]').text('(Show more)');
+    });
+    $('.show-more-link').click(function(e){ e.preventDefault(); return true; })

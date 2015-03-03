@@ -126,23 +126,32 @@ describe RolesController, type: :controller do
     it 'must update the role permissions, inserting them when they are selected' do
       expect do
         put 'update', id: role.to_param,
-                      role: { permissions_attributes: [{ enabled: '1', action: 'kpi_trends_module', subject_class: 'Symbol', subject_id: 'dashboard' },
-                                                       { enabled: '1', action: 'upcomings_events_module', subject_class: 'Symbol', subject_id: 'dashboard' },
-                                                       { enabled: '1', action: 'demographics_module', subject_class: 'Symbol', subject_id: 'dashboard' }
-                                                      ] },
+                      role: { permissions_attributes: [
+                        { action: 'kpi_trends_module', subject_class: 'Symbol', subject_id: 'dashboard', mode: 'none' },
+                        { action: 'upcomings_events_module', subject_class: 'Symbol', subject_id: 'dashboard', mode: 'all' },
+                        { action: 'demographics_module', subject_class: 'Symbol', subject_id: 'dashboard', mode: 'campaigns' }
+                      ]},
                       partial: 'dashboard_permissions',
                       format: :js
       end.to change(role.permissions, :count).by(3)
       expect(response).to render_template('update_partial')
     end
 
-    it 'must update the role permissions, deleting them when enabled = 0' do
-      permission1 = create(:permission, role_id: role.id, action: 'kpi_trends_module', subject_class: 'Symbol', subject_id: 'dashboard')
-      permission2 = create(:permission, role_id: role.id, action: 'upcomings_events_module', subject_class: 'Symbol', subject_id: 'dashboard')
-      permission3 = create(:permission, role_id: role.id, action: 'demographics_module', subject_class: 'Symbol', subject_id: 'dashboard')
+    it 'must update the role permissions' do
+      permission1 = create(:permission, role_id: role.id, action: 'kpi_trends_module', subject_class: 'Symbol', subject_id: 'dashboard', mode: 'none')
+      permission2 = create(:permission, role_id: role.id, action: 'upcomings_events_module', subject_class: 'Symbol', subject_id: 'dashboard', mode: 'none')
+      permission3 = create(:permission, role_id: role.id, action: 'demographics_module', subject_class: 'Symbol', subject_id: 'dashboard', mode: 'none')
       expect do
-        xhr :put, 'update', id: role.to_param, role: { permissions_attributes: [{ enabled: '0', id: permission1.id }, { enabled: '0', id: permission2.id }, { enabled: '0', id: permission3.id }] }, partial: 'dashboard_permissions', format: :js
-      end.to change(role.permissions, :count).by(-3)
+        xhr :put, 'update', id: role.to_param,
+                            role: { permissions_attributes: [
+                              { mode: 'all', id: permission1.id },
+                              { mode: 'all', id: permission2.id },
+                              { mode: 'campaigns', id: permission3.id }] },
+                            partial: 'dashboard_permissions', format: :js
+      end.to_not change(role.permissions, :count)
+      expect(permission1.reload.mode).to eql 'all'
+      expect(permission2.reload.mode).to eql 'all'
+      expect(permission3.reload.mode).to eql 'campaigns'
       expect(response).to render_template('update_partial')
     end
   end

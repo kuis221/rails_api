@@ -1,3 +1,39 @@
+/*
+A markup for resources list
+
+Styleguide 4.1
+*/
+
+/*
+Add ".select-list" to make the resource list scrollable
+
+max-items-3       - Display 3 items before start scrolling
+max-items-4       - Display 4 items before start scrolling
+max-items-5       - Display 5 items before start scrolling
+
+Styleguide 4.1.1
+*/
+
+/*
+Add ".without-actions for list that doesn't have action icons
+in the right
+
+
+Styleguide 4.1.2
+*/
+
+/*
+Add ".single-line to build a list of resources with just one line, title)
+
+Styleguide 4.1.3
+*/
+
+
+/*
+Add ".compact to a select-list build a compact list of resources
+
+Styleguide 4.1.4
+*/
 .resource-list {
 	color: $text;
 	width: 100%;
@@ -71,7 +107,7 @@
 			}
 		}
 		&:hover {
-			background-color: $grey_one;
+			background-color: $gray-lighter;
 			.resource-item-actions {
 				display: inline-block;
 			}
@@ -79,7 +115,7 @@
 				background-color: $user_menu;
 			}
 			&.complete {
-				border-color: $grey_one;
+				border-color: $gray-lighter;
 			}
 		}
 		&.inactive {
@@ -254,6 +290,28 @@
 		}
 		&.max-items-5 {
 			@include max-resource-items-height($resource-item-height-single-line, 5);
+		}
+	}
+}
+
+.resource-list-filters {
+	border: none !important;
+	margin-top: 5px !important;
+	.resource-item-filter {
+		border: none;
+		.resource-item-link {
+			float: left;
+		}
+		.resource-item-actions {
+			display: inline-block !important;
+		}
+		.radio {
+			position: relative;
+			width: 25px;
+			display: block !important;
+		}
+		&:hover {
+			background: none !important;
 		}
 	}
 }

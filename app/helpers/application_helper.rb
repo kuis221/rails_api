@@ -22,7 +22,7 @@ module ApplicationHelper
     city_parts = []
     address.push place.street unless place.street.nil? || place.street.strip.empty? || place.name == place.street
     city_parts.push place_city if place.city.present? && place.name != place.city
-    city_parts.push place.state if place.state.present?
+    city_parts.push place.state_code if place.state.present?
     city_parts.push place.zipcode if place.zipcode.present?
 
     address.push city_parts.compact.join(', ') unless city_parts.empty? || !place.city
@@ -208,18 +208,26 @@ module ApplicationHelper
     return if start_at.nil?
     return format_date_with_time(start_at) if end_at.nil?
     options[:date_separator] ||= '<br />'
+    options[:date_only] ||= false
 
     if start_at.to_date != end_at.to_date
-      format_date_with_time(start_at) +
-      options[:date_separator].html_safe +
-      format_date_with_time(end_at)
+      if options[:date_only]
+        format_date(start_at) +
+        options[:date_separator].html_safe +
+        format_date(end_at)
+      else
+        format_date_with_time(start_at) +
+        options[:date_separator].html_safe +
+        format_date_with_time(end_at)
+      end
     else
       if start_at.strftime('%Y') == Time.zone.now.year.to_s
         the_date = start_at.strftime('%^a <b>%b %e</b>' + options[:date_separator]).html_safe
       else
         the_date = start_at.strftime('%^a <b>%b %e, %Y</b>' + options[:date_separator]).html_safe
       end
-      the_date + "#{start_at.strftime('%l:%M %p').strip} - #{end_at.strftime('%l:%M %p').strip}".html_safe
+      the_date += "#{start_at.strftime('%l:%M %p').strip} - #{end_at.strftime('%l:%M %p').strip}".html_safe unless options[:date_only]
+      the_date
     end
   end
 
@@ -262,7 +270,11 @@ module ApplicationHelper
 
   def link_to_if_permitted(permission_action, subject_class, options, html_options = {}, &block)
     content = capture(&block)
-    allowed = current_company_user.role.has_permission?(permission_action, subject_class)
+    allowed = if subject_class.is_a?(Class)
+       current_company_user.role.has_permission?(permission_action, subject_class)
+    else
+      can?(permission_action, subject_class)
+    end
     link_to_if allowed, content, options, html_options do
       content_tag(:div, content, html_options)
     end
@@ -292,6 +304,20 @@ module ApplicationHelper
     path = image_path(img_path)
     path = request.protocol + request.host_with_port + path unless ActionController::Base.asset_host
     path
+  end
+
+  def jbb_feature_enabled?
+    current_company.id == 2
+  end
+
+  def default_params_for_view(default = '', scope: filter_settings_scope)
+    filter_string = CustomFilter.for_company_user(current_company_user).user_saved_filters
+            .order('custom_filters.name ASC').by_type(scope).where(default_view: true).limit(1).pluck(:filters).first
+    (filter_string || escape_query_params(default)).html_safe
+  end
+
+  def escape_query_params(query)
+    query.split('&').map{ |p| CGI::escape(p).gsub('%3D', '=') }.join('&')
   end
 
   def step_navigation_bar(steps, active)

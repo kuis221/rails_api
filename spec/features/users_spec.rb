@@ -94,6 +94,11 @@ feature 'Users', js: true do
       within resource_item list: '#users-list' do
         expect(page).to have_no_button('Deactivate User')
       end
+
+      remove_filter 'Invited'
+      add_filter 'ACTIVE STATE', 'Invited'
+      expect(page).not_to have_content('Pedro Navaja')
+
     end
 
     scenario 'allow a user to invite users' do

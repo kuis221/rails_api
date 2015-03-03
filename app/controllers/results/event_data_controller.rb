@@ -30,6 +30,13 @@ class Results::EventDataController < FilteredController
     end
   end
 
+  def search_params
+    @search_params || (super.tap do |p|
+      p[:search_permission] = :index_results
+      p[:search_permission_class] = EventData
+    end)
+  end
+
   def authorize_actions
     authorize! :index_results, EventData
   end

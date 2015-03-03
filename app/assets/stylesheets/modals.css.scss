@@ -1,14 +1,6 @@
 @import "variables";
 @import "mixins";
 
-/*-- COLOR PALETTE --*/
-$completed: #90bf43;
-$unassigned: #3e9ccf;
-$valid: #90bf43;
-
-/*-- FONT FAMILY STYLES --*/
-$baseFontFamily: 'Lato', sans-serif;
-
 //MODALS
 
 ul.select2-results{
@@ -30,6 +22,7 @@ ul.select2-results{
 	overflow: visible !important;
 	-webkit-box-shadow: none;
 	box-shadow: none;
+	z-index: 9999999;
 	.btn-primary, .btn-cancel{
 		padding: 11px 10px;
 		line-height: 16px;
@@ -70,12 +63,13 @@ ul.select2-results{
 			padding-top: 5px !important;
 			width: 398px !important;
 			.select2-search-choice{
-				background-color: $user_menu !important;
+				background-color: $brand !important;
 				background-image: none !important;
-				border: 1px solid $user_menu !important;
+				border-radius: 12px;
+				border: 0;
 				box-shadow: none;
 				color: white;
-				padding: 5px 5px 5px 18px;
+				padding: 5px 20px 6px 10px;
 			}
 			.select2-search-field{
 				input[type="text"]{
@@ -482,7 +476,7 @@ ul.select2-results{
 			line-height: 23px;
 		}
 		.close, button.close:before, a.close:before{
-			content: "\e019";
+			content: "\e616";
 			color: $user_menu;
 			display: inline-block;
 			font-family: 'icons';
@@ -629,7 +623,8 @@ ul.select2-results{
 				width: 100%;
 				&[type="text"]{
 					color: $text !important;
-					&#campaign_start_date, &#campaign_end_date, &#event_start_date, &#event_end_date, &.goal_start_date, &.goal_end_date, &.field-type-date {
+					&#campaign_start_date, &#campaign_end_date, &#event_start_date, &#event_end_date, &.goal_start_date, &.goal_end_date, &.field-type-date, 
+					&#custom_filter_start_date, &#custom_filter_end_date {
 						background: image-url('calendar.svg') no-repeat left !important;
 						text-align: right;
 						height: 40px;
@@ -765,14 +760,14 @@ ul.select2-results{
 		td{
 			&.ui-datepicker-today{
 				a{
-					color:$grey_three;
+					color:$gray;
 					font-weight: bold !important;
 					opacity: 1;
 				}
 			}
 		}
 		th{
-			color: $grey_three;
+			color: $gray;
 			padding: 4px 0 0 0;
 		}
 		.ui-datepicker-title{
@@ -809,7 +804,6 @@ ul.select2-results{
 			top:2px;
 			&:after{
 				color: white;
-				content: "\e002";
 				display: block;
 				font-family: 'icons';
 				font-size: 9px;
@@ -845,7 +839,6 @@ ul.select2-results{
 
 	.ui-datepicker-prev span:after{
 		color: white;
-		content: "\e003";
 		display: block;
 		font-family: 'icons';
 		font-size: 9px;
@@ -863,6 +856,7 @@ ul.select2-results{
 		border-radius: 6px !important;
 		box-shadow: none;
 		width:118px;
+		z-index: 9999999;
 		li{
 			color: $text;
 			padding: 3px 0 3px 32px;
@@ -878,7 +872,7 @@ ul.select2-results{
 
 		&.timepicker-filter{
 			width:98px !important;
-			border-color: $grey_three;
+			border-color: $gray;
 			li {
 				padding-left: 10px;
 			}
@@ -904,7 +898,7 @@ ul.select2-results{
 		opacity: 0.8;
 		text-align: center;
 		&:hover{
-			background:$grey_one !important;
+			background:$gray-lighter !important;
 			-webkit-border-radius: 14px;
 			border-radius: 14px;
 		}
@@ -936,7 +930,7 @@ ul.select2-results{
 // VALID
 
 .valid{
-	color: $valid;
+	color: $primary-green;
 	font-size: 11px;
 	margin-bottom: 2px;
 }
@@ -1056,7 +1050,7 @@ div#spin{
 .select2-drop.select2-dropdown{
 	ul{width: 100%;}
 	border-radius: 4px;
-	border: 1px solid $grey_three !important;
+	border: 1px solid $gray !important;
 	box-shadow: none;
 	-webkit-box-shadow: none;
 	-moz-box-shadow: none;
@@ -1142,6 +1136,7 @@ div#spin{
 .modal-backdrop, .modal-backdrop.fade.in{
 	background-color: #252525;
 	opacity: 0.9;
+	z-index: 999999;
 }
 
 
@@ -1172,7 +1167,7 @@ div#spin{
 					font-size: 14px;
 					color: $brand;
 					&:hover{
-						color: $grey_three;
+						color: $gray;
 					}
 				}
 			}
@@ -1182,6 +1177,9 @@ div#spin{
 		}
 		.saved-filters{
 			margin-top: 20px;
+			.default-filters-text {
+				width: 150px;
+			}
 		}
 	}
 }
@@ -1297,3 +1295,17 @@ div#spin{
 		}
 	}
 }
+
+.new_category_bt {
+	border-top: 1px solid $brand;
+	text-align: center;
+	color: $brand;
+	font-size: 12px;
+	&:before{
+		content: "\e61d";	
+		font-family: 'icons';
+		padding-right: 5px;
+		font-size: 14px;
+		vertical-align: middle;
+	}
+}	

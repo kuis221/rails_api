@@ -235,7 +235,7 @@ feature 'Campaigns', js: true do
     scenario 'should be able to include places to areas assigned to the campaign' do
       expect(Place).to receive(:open).and_return(double(read: { results:
         [
-          { reference: 'xxxxx', id: '1111', name: 'Walt Disney World Dolphin', formatted_address: '123 Blvr' }
+          { reference: 'xxxxx', place_id: '1111', name: 'Walt Disney World Dolphin', formatted_address: '123 Blvr' }
         ]
       }.to_json))
       expect_any_instance_of(GooglePlaces::Client).to receive(:spot).with('xxxxx').and_return(double(
@@ -297,8 +297,8 @@ feature 'Campaigns', js: true do
         let(:company_user) { user.company_users.first }
 
         scenario 'User without permissions cannot add KPIs' do
-          company_user.role.permissions.create(action: :show, subject_class: 'Campaign')
-          company_user.role.permissions.create(action: :view_kpis, subject_class: 'Campaign')
+          company_user.role.permissions.create(action: :show, subject_class: 'Campaign', mode: 'campaigns')
+          company_user.role.permissions.create(action: :view_kpis, subject_class: 'Campaign', mode: 'campaigns')
 
           campaign = create(:campaign, company: company)
           visit campaign_path(campaign)
@@ -460,8 +460,8 @@ feature 'Campaigns', js: true do
 
         scenario 'User without permissions cannot edit Custom KPIs' do
           Kpi.create_global_kpis
-          company_user.role.permissions.create(action: :show, subject_class: 'Campaign')
-          company_user.role.permissions.create(action: :view_kpis, subject_class: 'Campaign')
+          company_user.role.permissions.create(action: :show, subject_class: 'Campaign', mode: 'campaigns')
+          company_user.role.permissions.create(action: :view_kpis, subject_class: 'Campaign', mode: 'campaigns')
 
           campaign.add_kpi(kpi)
 
@@ -479,9 +479,9 @@ feature 'Campaigns', js: true do
 
         scenario 'User without permissions to edit Custom KPIs and permission to edit goals' do
           Kpi.create_global_kpis
-          company_user.role.permissions.create(action: :show, subject_class: 'Campaign')
-          company_user.role.permissions.create(action: :view_kpis, subject_class: 'Campaign')
-          company_user.role.permissions.create(action: :edit_kpi_goals, subject_class: 'Campaign')
+          company_user.role.permissions.create(action: :show, subject_class: 'Campaign', mode: 'campaigns')
+          company_user.role.permissions.create(action: :view_kpis, subject_class: 'Campaign', mode: 'campaigns')
+          company_user.role.permissions.create(action: :edit_kpi_goals, subject_class: 'Campaign', mode: 'campaigns')
 
           campaign.add_kpi(kpi)
           create(:goal, goalable: campaign, kpi: kpi, value: 100)
@@ -633,7 +633,7 @@ feature 'Campaigns', js: true do
         campaign.brands << create(:brand, name: 'Brand 2', company: company)
         company_user.campaigns << campaign
 
-        create(:brand_portfolio, name: 'A Vinos ticos', description: 'Algunos vinos de Costa Rica', company: company)
+        create(:brand_portfolio, name: 'A Vinos Ticos', description: 'Algunos vinos de Costa Rica', company: company)
         create(:brand_portfolio, name: 'B Licores Costarricenses', description: 'Licores ticos', company: company)
       end
 
@@ -643,7 +643,7 @@ feature 'Campaigns', js: true do
         [{ section: 'BRANDS', item: 'Brand 1' },
          { section: 'BRANDS', item: 'Brand 2' },
          { section: 'PEOPLE', item: user.full_name },
-         { section: 'BRAND PORTFOLIOS', item: 'A Vinos ticos' },
+         { section: 'BRAND PORTFOLIOS', item: 'A Vinos Ticos' },
          { section: 'ACTIVE STATE', item: 'Inactive' }]
       end
     end

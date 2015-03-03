@@ -4,7 +4,7 @@
 li.photo-item id="attached_asset_#{photo.id}" data-photo-id="#{photo.id}" data-processed="#{photo.processed?.to_s}"
   div.thumbnail-inner
     .thumbnail-toolbar
-      - if can? :deactivate_photo, Event
+      - if can? :deactivate_photo, photo.attachable
         - if photo.active?
           = link_to '', deactivate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-rounded-disable photo-deactivate-link', data: { :confirm=> I18n.t('confirmation.deactivate_confirm_message', model: 'photo') }, title: 'Deactivate'
         - else

@@ -34,8 +34,8 @@ RSpec.describe Api::V1::BrandAmbassadors::DocumentsController, type: :controller
       company_folder = create(:document_folder, folderable: company, company: company)
       company_document = create(:brand_ambassadors_document, attachable: company)
 
-      create(:document_folder, folderable: visit, folderable: company, parent_id: 19_999)
-      create(:brand_ambassadors_document, attachable: visit, attachable: company, folder_id: 19_999)
+      create(:document_folder, folderable: company, parent_id: 19_999)
+      create(:brand_ambassadors_document, attachable: company, folder_id: 19_999)
       xhr :get, 'index', format: :json
       expect(assigns(:folder_children)).to match_array([company_folder, company_document])
     end
@@ -44,8 +44,8 @@ RSpec.describe Api::V1::BrandAmbassadors::DocumentsController, type: :controller
       parent = create(:document_folder, folderable: company, company: company)
       create(:brand_ambassadors_document, attachable: company)
 
-      company_folder = create(:document_folder, folderable: visit, folderable: company, parent_id: parent.id)
-      company_document =  create(:brand_ambassadors_document, attachable: visit, attachable: company, folder_id: parent.id)
+      company_folder = create(:document_folder, folderable: company, parent_id: parent.id)
+      company_document =  create(:brand_ambassadors_document, attachable: company, folder_id: parent.id)
       xhr :get, 'index', parent_id: parent.id, format: :json
       expect(assigns(:folder_children)).to match_array([company_folder, company_document])
     end

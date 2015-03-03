@@ -7,7 +7,7 @@ namespace :tdlinx do
     desc 'Download and process file from FTP'
     task process: :environment do |_t, args|
       file = args.file
-      TdLinxSynch::Processor.download_and_process_file(file)
+      TdLinx::Processor.download_and_process_file(file)
     end
 
     # Because heroku doesn't give us option to run the job montly, we run it
@@ -18,7 +18,7 @@ namespace :tdlinx do
     task process_scheduled: :environment do |_t, args|
       if ENV['TDLINX_DAY_PROCESS'].to_i == Time.current.utc.day
         file = args.file
-        TdLinxSynch::Processor.download_and_process_file(file)
+        TdLinx::Processor.download_and_process_file(file)
       else
         p 'Not today'
       end
@@ -34,7 +34,7 @@ namespace :tdlinx do
         file = t.path
         t.close
       end
-      TdLinxSynch::Processor.download_and_process_file(file)
+      TdLinx::Processor.download_and_process_file(file)
     end
   end
 
@@ -47,7 +47,7 @@ namespace :tdlinx do
       end
       file = t.path
       t.close
-      TdLinxSynch::Processor.download_and_process_file(file)
+      TdLinx::Processor.download_and_process_file(file)
     end
   end
 end

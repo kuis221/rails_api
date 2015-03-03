@@ -17,6 +17,7 @@ module Brandscopic
 
     # Custom directories with classes and modules you want to be autoloadable.
     # config.autoload_paths += %W(#{config.root}/extras)
+    config.autoload_paths += %W(#{config.root}/app/controllers/concerns)
 
     # Only load the plugins named here, in the order given (default is alphabetical).
     # :all can be used as a placeholder for all plugins not explicitly named.
@@ -90,7 +91,8 @@ module Brandscopic
       end
     end
 
-    config.eager_load_paths += ["#{Rails.root}/lib"] if ENV['WEB']
+    config.eager_load_paths += ["#{Rails.root}/lib"]
+
     # We dont need controllers to be in eager_loaded in workers
     unless ENV['WEB']
       config.eager_load_paths.reject! { |a| a.include?('app/admin') || a.include?('app/inputs') }
@@ -98,5 +100,27 @@ module Brandscopic
     end
 
     GC::Profiler.enable
+  end
+end
+
+class ActiveRecordOverrideRailtie < Rails::Railtie
+  initializer 'active_record.initialize_database.override' do |app|
+
+    ActiveSupport.on_load(:active_record) do
+      if url = ENV['DATABASE_URL']
+        ActiveRecord::Base.connection_pool.disconnect!
+        parsed_url = URI.parse(url)
+        config =  {
+          adapter:             'postgis',
+          host:                parsed_url.host,
+          encoding:            'unicode',
+          database:            parsed_url.path.split("/")[-1],
+          port:                parsed_url.port,
+          username:            parsed_url.user,
+          password:            parsed_url.password
+        }
+        establish_connection(config)
+      end
+    end
   end
 end

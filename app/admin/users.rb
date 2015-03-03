@@ -45,6 +45,11 @@ ActiveAdmin.register User do
       f.input :password, required: false
       f.input :password_confirmation, required: false
     end
+    f.inputs 'Roles' do
+      f.has_many :company_users, heading: false, allow_destroy: false, new_record: false do |cu|
+        cu.input :role, label: cu.object.company.name, collection: cu.object.company.roles.active.pluck(:name, :id)
+      end
+    end
     f.actions
   end
 
@@ -90,7 +95,7 @@ ActiveAdmin.register User do
       params.permit(user: [
         :email, :first_name, :last_name,
         :country, :state, :city, :time_zone, :phone_number, :street_address,
-        :unit_number, :zip_code, :password, :password_confirmation])
+        :unit_number, :zip_code, :password, :password_confirmation, company_users_attributes: [:id, :role_id]])
     end
   end
 end

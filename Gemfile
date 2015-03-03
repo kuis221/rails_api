@@ -1,8 +1,8 @@
 source 'https://rubygems.org'
 
-ruby ENV['CUSTOM_RUBY_VERSION'] || '2.1.5'
+ruby ENV['CUSTOM_RUBY_VERSION'] || '2.2.0'
 
-gem 'rails', '4.1.7'
+gem 'rails', '4.1.9'
 gem 'rails-observers'
 gem 'activerecord-session_store'
 gem 'rack-timeout'
@@ -24,17 +24,17 @@ gem 'simple-navigation'
 gem 'aasm'
 gem 'countries'
 gem 'company_scoped', path: 'vendor/gems/company_scoped'
+gem 'legacy', path: 'vendor/gems/legacy', require: false
 gem 'newrelic_rpm'
 gem 'paperclip', '~> 4.1'
 gem 'aws-sdk'
 gem 'google_places'
 gem 'timeliness'
 gem 'american_date'
-gem 'sunspot_rails'
+gem 'sunspot_rails', :git => 'https://github.com/sunspot/sunspot.git'
 gem 'sunspot_stats'
 gem 'sunspot-queue'
 gem 'progress_bar', require: false
-gem 'gctools'
 gem 'unicorn-worker-killer'
 gem 'geocoder'
 gem 'rubyzip'
@@ -53,6 +53,10 @@ gem 'twilio-ruby'
 gem 'nested_form'
 gem 'wicked_pdf'
 gem 'rack-cors', :require => 'rack/cors'
+gem 'roo'
+gem 'similar_text'
+gem 'activerecord-postgis-adapter'
+gem 'clockwork', require: false
 
 # For memory debugging
 # gem "allocation_stats"
@@ -64,6 +68,8 @@ group :development do
   gem 'quiet_assets', '>= 1.0.1'
   gem 'oink'
   gem 'pry-rails'
+  gem 'haml'
+  gem 'nkss-rails', github: 'nadarei/nkss-rails'
 end
 
 # Gems that are only required for the web process, to prevent
@@ -72,7 +78,7 @@ group :web do
   gem 'font_assets', path: 'vendor/gems/font_assets'
   gem 'activeadmin', github: 'activeadmin/active_admin'
   gem 'unicorn'
-  gem 'simple_form'
+  gem 'simple_form', '3.0.3'
   gem 'country_select', '2.0.0.rc1'
 end
 
@@ -91,7 +97,7 @@ group :test, :development do
   gem 'factory_girl_rails'
   gem 'rspec-rails', '~> 3.0.0'
   gem 'populator'
-  gem 'sunspot_solr'
+  gem 'sunspot_solr', :git => 'https://github.com/sunspot/sunspot.git'
   gem 'timecop'
   gem 'faker'
   gem 'rubocop', require: false

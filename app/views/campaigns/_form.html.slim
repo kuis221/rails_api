@@ -7,12 +7,13 @@
 
     .row-fluid
       .span12
-        .span4
+        .span6
           = f.input :start_date, :as => :date_picker
-        .span4
+        .span6
           = f.input :end_date, :as => :date_picker
-        .span4
-          = f.input :color, :as => :color, class: 'color-picker'
+
+    .row-fluid
+      = f.input :color, :as => :color, class: 'color-picker'
 
     .row-fluid
       = f.input :brands_list
@@ -20,7 +21,7 @@
       = f.association :brand_portfolios, collection: current_company.brand_portfolios.active, input_html: {class: 'input-xlarge chosen-enabled', multiple: true}
 
     .row-fluid
-      = f.input :description, :input_html => {:rows => 6}, input_html: {class: 'input-xlarge'}
+      = f.input :description, :input_html => { rows: 6, class: 'input-xlarge' }
 
   .form-actions
     = f.button :submit, class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
@@ -30,8 +31,10 @@
 javascript:
   $('#campaign_brands_list').select2({tags: #{raw(current_company.brands.active.order(:name).pluck(:name).to_json).html_safe}});
 
-  $('.color-picker').colorPicker({
-    showHexField: false,
-    pickerDefault: '',
-    colors: #{Campaign::AVAILABLE_COLORS.map{ |c| c.gsub('#', '') }.to_json.html_safe}
-    });
+  $('.color-picker').spectrum({
+      allowEmpty: true,
+      showInput: true,
+      preferredFormat: "rgb",
+      showPalette: true,
+      showSelectionPalette: true
+  });

@@ -57,6 +57,10 @@ class CampaignsController < FilteredController
     @field.destroy
   end
 
+  def event_dates
+    render json: resource.event_dates
+  end
+
   def add_kpi
     if resource.form_fields.where(kpi_id: params[:kpi_id]).count == 0
       @kpi = Kpi.global_and_custom(current_company).find(params[:kpi_id])

@@ -1,89 +1,95 @@
 = simple_form_for resource, remote: true do |f|
+  = hidden_field_tag :partial, :campaigns_permissions
+  = render 'save_bar'
 
   .permissions
     .row-fluid
       .span12.category
         .span2
-        .span2 VIEW
-        .span2 CREATE
-        .span2 EDIT
-        .span2 DEACTIVATE
+        .span1 VIEW
+        .span1 CREATE
+        .span1 EDIT
+        .span1 DEACTIVATE
 
       .span12
-        .span2.title Campaigns
-        .span2 = permission_checkbox(f, :read, Campaign)
-        .span2 = permission_checkbox(f, :create, Campaign)
-        .span2 = permission_checkbox(f, :update, Campaign)
-        .span2 = permission_checkbox(f, :deactivate, Campaign)
+        .span2.title
+          h5 Campaigns
+        .span1 = permission_checkbox(f, :read, Campaign)
+        .span1 = permission_checkbox(f, :create, Campaign)
+        .span1 = permission_checkbox(f, :update, Campaign)
+        .span1 = permission_checkbox(f, :deactivate, Campaign)
 
-      .span12
-        .span2.title Post Event Form
-        .span2 = permission_checkbox(f, :view_event_form, Campaign)
+      .span12.separate_small
+        .span2.title
+          h5 Post Event Form
+        .span1 = permission_checkbox(f, :view_event_form, Campaign)
 
       .span12.category.separate
         .span2
-        .span2 VIEW
-        .span2 ADD
-        .span2 REMOVE
-        .span2
+        .span1 VIEW
+        .span1 ADD
+        .span1 REMOVE
+        .span1
 
       .span12
-        .span2.title Places
-        .span2 = permission_checkbox(f, :view_places, Campaign)
-        .span2 = permission_checkbox(f, :add_place, Campaign)
-        .span2 = permission_checkbox(f, :remove_place, Campaign)
+        .span2.title
+          h5 Places
+        .span1 = permission_checkbox(f, :view_places, Campaign)
+        .span1 = permission_checkbox(f, :add_place, Campaign)
+        .span1 = permission_checkbox(f, :remove_place, Campaign)
+
+      .span12.separate_small
+        .span2.title
+          h5 Staff
+        .span1 = permission_checkbox(f, :view_staff, Campaign)
+        .span1 = permission_checkbox(f, :add_staff, Campaign)
+        .span1 = permission_checkbox(f, :remove_staff, Campaign)
+
+      .span12.separate_small
+        .span2.title
+          h5 Date ranges
+        .span1 = permission_checkbox(f, :view_date_ranges, Campaign)
+        .span1 = permission_checkbox(f, :add_date_range, Campaign)
+        .span1 = permission_checkbox(f, :remove_date_range, Campaign)
+
+      .span12.separate_small
+        .span2.title
+          h5 Day Parts
+        .span1 = permission_checkbox(f, :view_day_parts, Campaign)
+        .span1 = permission_checkbox(f, :add_day_part, Campaign)
+        .span1 = permission_checkbox(f, :remove_day_part, Campaign)
+
+      .span12.separate_small
+        .span2.title
+          h5 Documents
+        .span1 = permission_checkbox(f, :view_documents, Campaign)
+        .span1 = permission_checkbox(f, :add_document, Campaign)
+        .span1 = permission_checkbox(f, :remove_document, Campaign)
 
       .span12
-        .span2.title Staff
-        .span2 = permission_checkbox(f, :view_staff, Campaign)
-        .span2 = permission_checkbox(f, :add_staff, Campaign)
-        .span2 = permission_checkbox(f, :remove_staff, Campaign)
-
-      .span12
-        .span2.title Date ranges
-        .span2 = permission_checkbox(f, :view_date_ranges, Campaign)
-        .span2 = permission_checkbox(f, :add_date_range, Campaign)
-        .span2 = permission_checkbox(f, :remove_date_range, Campaign)
-
-      .span12
-        .span2.title Day Parts
-        .span2 = permission_checkbox(f, :view_day_parts, Campaign)
-        .span2 = permission_checkbox(f, :add_day_part, Campaign)
-        .span2 = permission_checkbox(f, :remove_day_part, Campaign)
-
-      .span12
-        .span2.title Documents
-        .span2 = permission_checkbox(f, :view_documents, Campaign)
-        .span2 = permission_checkbox(f, :add_document, Campaign)
-        .span2 = permission_checkbox(f, :remove_document, Campaign)
-
-      .span12
-        .span2.title.separate_small KPIs
+        .span2.title.separate
+          h5 KPIs
 
       .span12
         .span2 View
-        .span2 = permission_checkbox(f, :view_kpis, Campaign)
+        .span1 = permission_checkbox(f, :view_kpis, Campaign)
 
       .span12
         .span2 Toggle on/off
-        .span2 = permission_checkbox(f, :activate_kpis, Campaign)
+        .span1 = permission_checkbox(f, :activate_kpis, Campaign)
 
       .span12
         .span2 Edit goals
-        .span2 = permission_checkbox(f, :edit_kpi_goals, Campaign)
+        .span1 = permission_checkbox(f, :edit_kpi_goals, Campaign)
 
       .span12
         .span2 Create custom KPIs
-        .span2 = permission_checkbox(f, :create_custom_kpis, Campaign)
+        .span1 = permission_checkbox(f, :create_custom_kpis, Campaign)
 
       .span12
         .span2 Edit custom KPIs
-        .span2 = permission_checkbox(f, :edit_custom_kpi, Campaign)
+        .span1 = permission_checkbox(f, :edit_custom_kpi, Campaign)
 
       .span12
         .span2 Deactivate custom KPIs
-        .span2 = permission_checkbox(f, :deactivate_custom_kpis, Campaign)
-
-
-  = hidden_field_tag :partial, :campaigns_permissions
-  = f.button :submit, 'Save', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
+        .span1 = permission_checkbox(f, :deactivate_custom_kpis, Campaign)

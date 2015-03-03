@@ -196,12 +196,6 @@ feature 'Trending report' do
     end
   end
 
-  def add_permissions(permissions)
-    permissions.each do |p|
-      company_user.role.permissions.create(action: p[0], subject_class: p[1])
-    end
-  end
-
   def delete_bubble(text)
     find('a.bubble-label', text: text).hover
     click_js_link('Remove this word')

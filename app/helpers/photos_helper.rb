@@ -4,11 +4,11 @@ module PhotosHelper
   def photo_permissions(photo)
     @_generic_photo_permissions ||= [
       (can?(:deactivate_photo, Event) ? 'deactivate_photo' : nil),
-      (can?(:download, AttachedAsset) ? 'index_photo_results' : nil),
-      (can?(:remove, Tag) ? 'deactivate_tag' : nil),
-      (can?(:create, Tag) ? 'create_tag' : nil),
-      (can?(:index, Tag) ? 'view_tag' : nil),
-      (can?(:activate, Tag) ? 'add_tag' : nil)
+      (can?(:download, AttachedAsset) ? 'download' : nil),
+      (can?(:remove_tag, photo) ? 'deactivate_tag' : nil),
+      (can?(:create_tag, photo) ? 'create_tag' : nil),
+      (can?(:index_tag, photo) ? 'view_tag' : nil),
+      (can?(:activate_tag, photo) ? 'add_tag' : nil)
     ].compact
     @_generic_photo_permissions + [
       (can?(:rate, photo) ? 'rate' : nil),

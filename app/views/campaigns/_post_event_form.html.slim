@@ -113,10 +113,22 @@
             .accordion-toggle.collapsed data-toggle="collapse" href="#modules-fields" Modules
 
           #modules-fields.accordion-body.collapse
-            .field.module data-type="Expenses" Expenses
-            .field.module data-type="Photos" Photos
-            .field.module data-type="Surveys" Surveys
-            .field.module data-type="Comments" Comments
+            .field.module data-type="Expenses"
+              i.icon-price
+              | Expenses
+            .field.module data-type="Photos"
+              i.icon-photo
+              | Gallery
+            .field.module data-type="Surveys"
+              i.icon-survey
+              | Surveys
+            .field.module data-type="Comments"
+              i.icon-chat
+              | Comments
+            - if jbb_feature_enabled?
+              .field.module data-type="Attendance" 
+                i.icon-attendance
+                | Attendance
 
     .form-fields-sections
       .form-fields.clearfix.form-section.pull-left

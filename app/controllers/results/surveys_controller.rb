@@ -9,6 +9,8 @@ class Results::SurveysController < FilteredController
   def search_params
     @search_params || (super.tap do |p|
       p[:with_surveys_only] = true unless p.key?(:user) && !p[:user].empty?
+      p[:search_permission] = :index_results
+      p[:search_permission_class] = Survey
     end)
   end
 

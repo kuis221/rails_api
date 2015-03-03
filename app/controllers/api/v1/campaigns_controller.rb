@@ -1,5 +1,5 @@
 class Api::V1::CampaignsController < Api::V1::FilteredController
-  skip_authorization_check only: [:all, :overall_stats]
+  skip_authorization_check only: [:all, :overall_stats, :events]
 
   resource_description do
     short 'Campaigns'
@@ -278,5 +278,22 @@ class Api::V1::CampaignsController < Api::V1::FilteredController
                xml: data.to_xml(root: 'results')
       end
     end
+  end
+
+  api :GET, '/api/v1/campaigns/:id/events', 'Returns a list of events for a given campaign.'
+  example <<-EOS
+  GET: /api/v1/campaigns/1/events.json
+  {
+    [
+      [38292,"2014-06-28T13:00:00.000-07:00"],
+      [36244,"2014-06-30T17:00:00.000-07:00"],
+      [36812,"2014-06-30T19:00:00.000-07:00"],
+      [36255,"2014-07-01T05:00:00.000-07:00"]
+    ]
+  }
+  EOS
+  def events
+    date_field = current_company.timezone_support? ? :local_start_at : :end_at
+    render json: resource.events.active.pluck(:id, date_field)
   end
 end

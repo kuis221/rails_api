@@ -28,6 +28,10 @@ after_fork do |_server, _worker|
     Rails.logger.info('Connected to Redis')
   end
 
-  defined?(ActiveRecord::Base) &&
-    ActiveRecord::Base.establish_connection
+  if defined?(ActiveRecord::Base)
+    config = ActiveRecord::Base.configurations[Rails.env] ||
+      Rails.application.config.database_configuration[Rails.env]
+    config['adapter'] = 'postgis'
+    ActiveRecord::Base.establish_connection(config)
+  end
 end

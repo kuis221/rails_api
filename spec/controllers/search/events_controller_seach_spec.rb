@@ -174,6 +174,7 @@ describe EventsController, type: :controller, search: true do
         Sunspot.commit
         get 'calendar', start: DateTime.new(2013, 01, 01, 0, 0, 0).to_i.to_s,
                         end: DateTime.new(2013, 01, 31, 23, 59, 59).to_i.to_s,
+                        group: :brand,
                         format: :json
         expect(response).to be_success
         results = JSON.parse(response.body)

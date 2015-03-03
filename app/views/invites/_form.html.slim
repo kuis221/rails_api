@@ -1,0 +1,25 @@
+= simple_form_for([parent, resource], remote: true) do |f|
+  .form-inputs.edit-invite
+    .row-fluid.google-places
+      = f.error :place
+      - if parent.is_a?(Event)
+        = f.input :place_reference, :as => :location, required: true, label: 'Venue', input_html: { display_value: params[:place_reference_display_name] || resource.place_name_with_location, placeholder: 'Search for venues' }
+      - elsif parent.is_a?(Venue)
+          .row-fluid = label_tag :venue_invite_campaign, 'Event', class: 'control-label required'
+          .row-fluid
+            .span7= select_tag 'venue_invite_campaign', options_for_select([[nil, '']] + allowed_campaigns(parent), @invite.campaign_id), class: 'required chosen-enabled', 'data-placeholder' => 'Select a Campaign'
+            .span5= f.input :event_id, as: :select, collection: (resource.event.campaign.event_dates), input_html: { class: 'required chosen-enabled', 'data-placeholder' => 'Event Date' }, label: false
+
+    = f.input :invitees, input_html: { placeholder: 'Number of invitees' }
+    - if resource.persisted?
+      = f.input :rsvps_count, required: true,\
+                input_html: { placeholder: 'Number of RSVPs' },\
+                hint: '<b>Warning</b>: Editing this value will override the existing data.<br>This canot be undone'.html_safe
+      = f.input :attendees, required: true,\
+                input_html: { placeholder: 'Number of attendees' },\
+                hint: '<b>Warning</b>: Editing this value will override the existing data.<br>This canot be undone'.html_safe
+
+  .form-actions
+    = f.button :submit, class: 'btn btn-primary', data: { disable_with: 'Please wait...' }
+    = "&nbsp;".html_safe
+    = f.button :button, 'Cancel', class: 'btn btn-cancel'

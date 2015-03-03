@@ -15,7 +15,7 @@
       .dropdown.btn-download
         a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
           i.icon-download
-          i.icon-arrow-down
+          i.icon-arrow-down-small
         ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
           li
             a.xlsx-download-link href="#" role="menuitem" data-url="#{url_for(controller: controller_name, action: :index, format: :xls)}"
@@ -41,7 +41,6 @@ javascript:
     'includeSearchBox': false,
     'includeAutoComplete': true,
     'autoCompletePath': '#{autocomplete_path(controller_name, format: :json)}',
-    'defaultParams': [{name: 'status[]', value: 'Active'}],
-    'clearFilterParams': [{name: 'status[]', value: 'Active'}],
+    'defaultParams': '#{j default_params_for_view('status[]=Active')}',
     'allowCustomizeFilters': true
   });

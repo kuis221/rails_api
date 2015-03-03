@@ -76,11 +76,49 @@ describe CompanyUser, type: :model do
         create(:company_user, company: event.company)
       ]
       other_event = create(:event, company: event.company)
-      users.each { |u| event.users << u }
-      other_users.each { |u| other_event.users << u }
+      event.users << users
+      other_event.users << other_users
       expect(described_class.by_events(event).all).to match_array(users)
       expect(described_class.by_events(other_event).all).to match_array(other_users)
       expect(described_class.by_events([event, other_event]).all).to match_array(users + other_users)
+    end
+  end
+
+  describe '#in_event_team scope' do
+    it 'should return users that assigned to a specific event' do
+      event = create(:event)
+      users = [
+        create(:company_user, company: event.company),
+        create(:company_user, company: event.company)
+      ]
+      other_users = [
+        create(:company_user, company: event.company)
+      ]
+      other_event = create(:event, company: event.company)
+      event.users << users
+      other_event.users << other_users
+      expect(described_class.in_event_team(event).all).to match_array(users)
+      expect(described_class.in_event_team(other_event).all).to match_array(other_users)
+    end
+
+    it 'should return users that are part of teams that are assigned to a specific event' do
+      event = create(:event)
+      team = create(:team, company: event.company)
+      other_team = create(:team, company: event.company)
+      users = [
+        create(:company_user, company: event.company),
+        create(:company_user, company: event.company)
+      ]
+      other_users = [
+        create(:company_user, company: event.company)
+      ]
+      team.users << users
+      other_team.users << other_users
+      other_event = create(:event, company: event.company)
+      event.teams << team
+      other_event.teams << other_team
+      expect(described_class.in_event_team(event).all).to match_array(users)
+      expect(described_class.in_event_team(other_event).all).to match_array(other_users)
     end
   end
 
@@ -233,7 +271,7 @@ describe CompanyUser, type: :model do
     end
 
     it 'should return true if the user has the correct permissions' do
-      user.role.permissions.create(action: :read, subject_class: 'Campaign')
+      user.role.permissions.create(action: :read, subject_class: 'Campaign', mode: 'campaigns')
       expect(user.notification_setting_permission?('new_campaign')).to be_truthy
     end
   end

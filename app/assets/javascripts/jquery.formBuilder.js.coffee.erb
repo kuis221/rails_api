@@ -359,9 +359,10 @@ $.widget 'nmk.formBuilder', {
 
 	_showFieldAttributes: (field) ->
 		$field = field.data('field')
+		@element.find('.selected').removeClass('selected')
+		field.addClass('selected')
+
 		if form = $field.attributesForm()
-			@element.find('.selected').removeClass('selected')
-			field.addClass('selected')
 			$('#form-field-tabs a[href="#attributes"]').tab('show')
 			@attributesPanel.html('').append $('<div class="arrow">'), form
 			applyFormUiFormatsTo @attributesPanel
@@ -375,12 +376,13 @@ $.widget 'nmk.formBuilder', {
 			$(document).on 'click.fbuidler', '.modal', (e) =>
 				e.ignoreClose = true
 
-			$(document).on 'click.fbuidler', (e) =>
-				select2open = $('.select2-drop').css('display') is 'block'
-				if $('.modal.in:visible').length is 0 and not e.ignoreClose? and !select2open
-					@_hideFieldAttributes()
-		else
-			@_hideFieldAttributes()
+		$(document).on 'click.fbuidler', (e) =>
+			select2open = $('.select2-drop').css('display') is 'block'
+			if $('.modal.in:visible').length is 0 and not e.ignoreClose? and !select2open
+				@_hideFieldAttributes()
+
+		# else
+		# 	@_hideFieldAttributes()
 
 	_hideFieldAttributes: () ->
 		$(document).off 'click.fbuidler'
@@ -1545,6 +1547,31 @@ ExpensesField = Module.extend {
 			@rangeField(),
 			@requiredField('Receipts required')
 		]
+}
+
+AttendanceField = Module.extend {
+	type: 'Attendance',
+
+	init: (form, attributes) ->
+		@form = form
+		@attributes = $.extend({
+			name: 'Attendance'
+		}, attributes)
+
+		@attributes.settings ||= {}
+
+		@
+
+	_renderField: () ->
+		[
+			$('<h4>ATTENDANCE MODULE</h4>'),
+			$('<div class="module-wrapper">').append(
+				@_removeButton(),
+				$('<img src="<%= asset_path('attendance.svg') %>" width="235" height="337" />')
+			)
+		]
+	attributesForm: () ->
+		false
 }
 
 applyFormUiFormatsTo = (element) ->

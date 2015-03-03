@@ -24,6 +24,8 @@ class RolesController < FilteredController
   protected
 
   def permitted_params
-    params.permit(role: [:name, :description, { permissions_attributes: [:id, :enabled, :action, :subject_class, :subject_id] }])[:role]
+    params.permit(role: [:name, :description,
+                         { permissions_attributes: [:id, :mode, :action, :subject_class, :subject_id] }
+                        ])[:role]
   end
 end

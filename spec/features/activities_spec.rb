@@ -5,7 +5,7 @@ feature 'Activities management' do
   let(:campaign) { create(:campaign, company: company) }
   let(:user) { create(:user, company: company, role_id: role.id) }
   let(:company_user) { user.company_users.first }
-  let(:place) { create(:place, name: 'A Nice Place', country: 'CR', city: 'Curridabat', state: 'San Jose', is_custom_place: true, reference: nil) }
+  let(:place) { create(:place, name: 'A Nice Place', country: 'CR', city: 'Curridabat', state: 'San José', is_custom_place: true, reference: nil) }
   let(:permissions) { [] }
   let(:event) { create(:late_event, campaign: campaign, company: company, place: place) }
 
@@ -22,8 +22,8 @@ feature 'Activities management' do
   shared_examples_for 'a user that view the activiy details' do
     let(:activity) do
       create(:activity,
-                         company_user: company_user, activitable: event,
-                         activity_type: create(:activity_type, name: 'Test ActivityType', company: company, campaign_ids: [campaign.id]))
+             company_user: company_user, activitable: event,
+             activity_type: create(:activity_type, name: 'Test ActivityType', company: company, campaign_ids: [campaign.id]))
     end
 
     scenario 'can see all the activity info', js: true do
@@ -41,11 +41,13 @@ feature 'Activities management' do
     scenario "can see all the info of a venue's activity", js: true do
       venue = create(:venue, place: place)
       venue_activity = create(:activity,
-                                          company_user: company_user, activitable: venue,
-                                          campaign: campaign,
-                                          activity_type: create(:activity_type, name: 'Test ActivityType', company: company, campaign_ids: [campaign.id]))
+                              company_user: company_user, activitable: venue,
+                              campaign: campaign,
+                              activity_type: create(:activity_type, name: 'Test ActivityType', company: company, campaign_ids: [campaign.id]))
       visit activity_path(activity)
       expect(page).to have_selector('h2.special', text: 'Test ActivityType')
+      expect(page).to have_link(venue.name)
+      expect(page).to have_content("#{place.street} #{place.city}, #{place.state_code}, #{place.zipcode}")
       expect(current_path).to eql activity_path(activity)
     end
   end
@@ -130,11 +132,11 @@ feature 'Activities management' do
       campaign.activity_types << activity_type
 
       activity = create(:activity,
-                                    activity_type: activity_type,
-                                    activitable: event,
-                                    campaign: campaign,
-                                    company_user: company_user,
-                                    activity_date: '08/21/2014'
+                        activity_type: activity_type,
+                        activitable: event,
+                        campaign: campaign,
+                        company_user: company_user,
+                        activity_date: '08/21/2014'
       )
 
       visit event_path(event)
@@ -416,13 +418,8 @@ feature 'Activities management' do
       activity_type = create(:activity_type, name: 'Activity Type #1', company: company)
       campaign.activity_types << activity_type
 
-      activity = create(:activity,
-                                    activity_type: activity_type,
-                                    activitable: venue,
-                                    campaign: campaign,
-                                    company_user: company_user,
-                                    activity_date: '08/21/2014'
-      )
+      create(:activity, activity_type: activity_type, activitable: venue, campaign: campaign,
+                        company_user: company_user, activity_date: '08/21/2014')
 
       visit venue_path(venue)
 
@@ -453,12 +450,6 @@ feature 'Activities management' do
       before { company_user.campaigns << campaign }
       before { company_user.places << place }
       let(:permissions) { [[:show, 'Activity'], [:show, 'Event']] }
-    end
-  end
-
-  def add_permissions(permissions)
-    permissions.each do |p|
-      company_user.role.permissions.create(action: p[0], subject_class: p[1])
     end
   end
 end

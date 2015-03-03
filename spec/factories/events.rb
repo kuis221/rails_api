@@ -58,7 +58,7 @@ FactoryGirl.define do
       if results = evaluator.results
         Kpi.create_global_kpis if Kpi.impressions.nil?
         event.campaign.assign_all_global_kpis if event.campaign.form_fields.empty?
-        set_event_results(event, results, false)
+        BrandscopiSpecHelpers.set_event_results(event, results, false)
       end
     end
     # after(:create) do |event, evaluator|

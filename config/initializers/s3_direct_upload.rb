@@ -1,5 +1,3 @@
-require 's3_direct_upload'
-
 ActionView::Base.send(:include, S3DirectUpload::UploadHelper) if defined?(ActionView::Base)
 
 S3DirectUpload.config do |c|

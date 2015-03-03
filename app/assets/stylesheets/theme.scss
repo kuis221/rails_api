@@ -41,7 +41,7 @@ input[type="tel"],
 input[type="color"],
 .uneditable-input{
 	background-color: white;
-	border: 1px solid $grey_four;
+	border: 1px solid $gray-light;
 	box-shadow: none;
 	box-sizing: border-box;
 	font-family: $baseFontFamily;
@@ -93,12 +93,12 @@ select:focus:invalid:focus {
 		input, select, textarea{
 			box-shadow:none;
 			-webkit-box-shadow: none;
-			border-color: $brand-red;
+			border-color: $primary-red;
 		}
 		.input-prepend .add-on, .input-append .add-on{
 			color: white;
-			background-color: $brand-red;
-			border-color: $brand-red;
+			background-color: $primary-red;
+			border-color: $primary-red;
 		}
 	}
 }
@@ -137,20 +137,20 @@ select:focus:invalid:focus {
 // --------------------------------------------------
 
 .btn{
-	background-color: $user_menu;
+	background-color: $silver;
 	background-image: none;
 	border: 0;
 	box-shadow:none;
 	color: white;
 	font-family: $baseFontFamily;
-	padding: 8px 17px;
 	text-shadow:none;
 	-webkit-box-shadow: none;
 	&:active{
 		box-shadow:none;
 	}
 	&:hover{
-		background-color: $user_menu;
+		background-color: $brand;
+		color: $white;
 	}
 	&:focus{
 		@extend .btn:hover;
@@ -163,7 +163,7 @@ select:focus:invalid:focus {
 			background-color:$brand;
 		}
 		&[disabled]{
-			background-color:$grey_one;
+			background-color:$gray-lighter;
 			color:$app_bg;
 			&:hover{
 				@extend .btn.btn-primary[disabled];
@@ -177,9 +177,10 @@ select:focus:invalid:focus {
 		box-shadow: none;
 		color:white;
 		font-size: 14px;
-		padding: 7px 25px;
+		padding: 7px 15px;
 		text-decoration: none !important;
 		text-shadow:none;
+		text-align: center;
 		&:hover{
 			background-color: $buttons-hover !important;
 		}
@@ -241,7 +242,7 @@ select:focus:invalid:focus {
 		}
 		&.btn-primary, &.btn-cancel{
 			box-sizing: border-box;
-			padding: 8px 25px;
+			padding: 8px 15px;
 			//height: 35px;
 			&.fileinput-button{
 				width: 140px;
@@ -334,13 +335,13 @@ select:focus:invalid:focus {
 	padding: 5px 8px;
 	text-shadow: none;
 	&.label-default{
-		background-color: $light-blue;
+		background-color: $primary-blue;
 		a{
 			color:white;
 		}
 	}
 	&.label-team{
-		background-color: $grey_four;
+		background-color: $gray-light;
 		color: white;
 		@include border-radius(15px);
 		line-height: 24px;

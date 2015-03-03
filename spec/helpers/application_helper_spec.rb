@@ -17,12 +17,14 @@ describe ApplicationHelper, type: :helper do
     end
 
     it "should not add the street to the address if it's the same as the place name" do
-      place = double(Place, name: 'Some Place Name', street: 'Some Place Name', state: nil, zipcode: nil, city: nil, formatted_address: nil)
+      place = double(Place, name: 'Some Place Name', street: 'Some Place Name', state: nil, state_code: nil,
+                            zipcode: nil, city: nil, formatted_address: nil)
       assert_dom_equal "<address><span class=\"address-name\">Some Place Name</span></address>", helper.place_address(place)
     end
 
     it 'should not add the street if it has an empty string or with spaces' do
-      place = double(Place, name: 'Some Place Name', street: ' ', state: nil, zipcode: nil, city: nil, formatted_address: nil)
+      place = double(Place, name: 'Some Place Name', street: ' ', state: nil, state_code: nil,
+                            zipcode: nil, city: nil, formatted_address: nil)
       assert_dom_equal "<address><span class=\"address-name\">Some Place Name</span></address>", helper.place_address(place)
     end
 
@@ -32,28 +34,33 @@ describe ApplicationHelper, type: :helper do
     end
 
     it 'should add the name and city to the address is separated lines' do
-      place = double(Place, name: 'Place name', street: nil, state: nil, zipcode: nil, city: 'Curridabat', formatted_address: nil)
+      place = double(Place, name: 'Place name', street: nil, state: nil, state_code: nil,
+                            zipcode: nil, city: 'Curridabat', formatted_address: nil)
       assert_dom_equal "<address><span class=\"address-name\">Place name</span><br />Curridabat</address>", helper.place_address(place)
     end
 
     it 'should add the name, street and city to the address is separated lines' do
-      place = double(Place, name: 'Place name', street: '123 uno dos tres', state: nil, zipcode: nil, city: 'Curridabat', formatted_address: nil)
+      place = double(Place, name: 'Place name', street: '123 uno dos tres', state: nil, state_code: nil,
+                            zipcode: nil, city: 'Curridabat', formatted_address: nil)
       assert_dom_equal "<address><span class=\"address-name\">Place name</span><br />123 uno dos tres<br />Curridabat</address>", helper.place_address(place)
     end
 
     it 'should add the state to the address' do
-      place = double(Place, name: nil, street: nil, state: 'California', zipcode: nil, city: 'Los Angeles', formatted_address: nil)
-      assert_dom_equal '<address>Los Angeles, California</address>', helper.place_address(place)
+      place = double(Place, name: nil, street: nil, state: 'California', state_code: 'CA',
+                            zipcode: nil, city: 'Los Angeles', formatted_address: nil)
+      assert_dom_equal '<address>Los Angeles, CA</address>', helper.place_address(place)
     end
 
     it 'should add the state and the zipcode to the address separated by a commma' do
-      place = double(Place, name: nil, street: nil, state: 'California', zipcode: '90210', city: 'Los Angeles', formatted_address: nil)
-      assert_dom_equal '<address>Los Angeles, California, 90210</address>', helper.place_address(place)
+      place = double(Place, name: nil, street: nil, state: 'California', state_code: 'CA',
+                            zipcode: '90210', city: 'Los Angeles', formatted_address: nil)
+      assert_dom_equal '<address>Los Angeles, CA, 90210</address>', helper.place_address(place)
     end
 
     it 'should add the city, state and the zipcode to the address separated by a commma' do
-      place = double(Place, name: nil, street: nil, state: 'California', zipcode: '90210', city: 'Beverly Hills', formatted_address: nil)
-      assert_dom_equal '<address>Beverly Hills, California, 90210</address>', helper.place_address(place)
+      place = double(Place, name: nil, street: nil, state: 'California', state_code: 'CA',
+                            zipcode: '90210', city: 'Beverly Hills', formatted_address: nil)
+      assert_dom_equal '<address>Beverly Hills, CA, 90210</address>', helper.place_address(place)
     end
   end
 

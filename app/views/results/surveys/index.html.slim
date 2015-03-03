@@ -44,7 +44,7 @@ javascript:
     'applyTo': '#{controller_name}',
     'userFilters': #{user_saved_filters(controller_name).to_json.html_safe},
     'autoCompletePath': '#{autocomplete_path(:events, format: :json)}',
-    'defaultParams': [{name: 'status[]', value: 'Active'}],
+    'defaultParams': '#{j default_params_for_view('status[]=Active')}',
     'onChange': function(filterBox){
       $(document).trigger('surveys-filter:changed')
     },

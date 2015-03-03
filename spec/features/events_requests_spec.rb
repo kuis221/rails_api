@@ -120,7 +120,7 @@ feature 'Events section' do
 
           expect(page).to have_selector('#events-list .resource-item', count: 1)
           add_filter 'EVENT STATUS', 'Submitted'
-          remove_filter 'today to the future'
+          remove_filter 'Today To The Future'
           expect(page).to have_selector('#events-list .resource-item', count: 3)
           resource_item(2).click
           within('.alert') do
@@ -130,7 +130,6 @@ feature 'Events section' do
           find('#resource-close-details').click
           expect(page).to have_selector('#events-list .resource-item', count: 2)
         end
-
       end
 
       feature 'GET index' do
@@ -202,13 +201,13 @@ feature 'Events section' do
 
           visit events_path
 
-          expect(page).to have_content('0 events found for: Active today to the future')
+          expect(page).to have_content('0 events found for: Active Today To The Future')
 
-          expect(collection_description).to have_filter_tag('today to the future')
-          remove_filter 'today to the future'
+          expect(collection_description).to have_filter_tag('Today To The Future')
+          remove_filter 'Today To The Future'
 
           expect(page).to have_content('1 event found for: Active')
-          expect(collection_description).not_to have_filter_tag('today to the future')
+          expect(collection_description).not_to have_filter_tag('Today To The Future')
 
           within resource_item do
             expect(page).to have_content(campaign.name)
@@ -222,7 +221,7 @@ feature 'Events section' do
 
           visit events_path
 
-          expect(page).to have_content('1 event found for: Active today to the future')
+          expect(page).to have_content('1 event found for: Active Today To The Future')
           add_filter 'ACTIVE STATE', 'Inactive'
 
           within resource_item do
@@ -268,7 +267,7 @@ feature 'Events section' do
 
             visit events_path
 
-            expect(page).to have_content('2 events found for: Active today to the future')
+            expect(page).to have_content('2 events found for: Active Today To The Future')
 
             within events_list do
               expect(page).to have_content('Campaign FY2012')
@@ -282,7 +281,7 @@ feature 'Events section' do
 
             add_filter 'CAMPAIGNS', 'Campaign FY2012'
 
-            expect(page).to have_content('1 event found for: Active today to the future Campaign FY2012')
+            expect(page).to have_content('1 event found for: Active Today To The Future Campaign FY2012')
 
             within events_list do
               expect(page).to have_no_content('Another Campaign April 03')
@@ -295,7 +294,7 @@ feature 'Events section' do
               expect(page).to have_content('Campaign FY2012')
             end
 
-            expect(page).to have_content('2 events found for: Active today to the future Another Campaign April 03 Campaign FY2012')
+            expect(page).to have_content('2 events found for: Active Today To The Future Another Campaign April 03 Campaign FY2012')
 
             select_filter_calendar_day('18')
             within events_list do
@@ -303,11 +302,11 @@ feature 'Events section' do
               expect(page).to have_content('Campaign FY2012')
             end
 
-            expect(page).to have_content('1 event found for: Active today Another Campaign April 03 Campaign FY2012')
+            expect(page).to have_content('1 event found for: Active Today Another Campaign April 03 Campaign FY2012')
 
             select_filter_calendar_day('18', '19')
             expect(page).to have_content(
-              '2 events found for: Active today - tomorrow Another Campaign April 03 Campaign FY2012'
+              '2 events found for: Active Today - Tomorrow Another Campaign April 03 Campaign FY2012'
             )
             within events_list do
               expect(page).to have_content('Another Campaign April 03')
@@ -359,11 +358,11 @@ feature 'Events section' do
                'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL'],
               ['Another Campaign April 03', nil, "#{year_number}-#{month_number}-#{today.strftime('%d')}T08:00",
                "#{year_number}-#{month_number}-#{today.strftime('%d')}T09:00", '1.0', 'Place 2',
-               'Place 2, Los Angeles, CA, 67890', 'Los Angeles', 'CA', '67890', 'Active', 'Unsent',
+               'Place 2, 11 Main St., Los Angeles, CA, 67890', 'Los Angeles', 'CA', '67890', 'Active', 'Unsent',
                nil, "http://localhost:5100/events/#{event2.id}"],
               ['Campaign FY2012', nil, "#{year_number}-#{month_number}-#{today.strftime('%d')}T10:00",
                "#{year_number}-#{month_number}-#{today.strftime('%d')}T11:00", '1.0', 'Place 1',
-               'Place 1, New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active',
+               'Place 1, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active',
                'Unsent', nil, "http://localhost:5100/events/#{event1.id}"]
             ])
           end
@@ -541,14 +540,14 @@ feature 'Events section' do
                            start_date: "#{month_number}/15/#{year}",
                            end_date: "#{month_number}/15/#{year}")
             create(:event, campaign: campaign1,
-                           start_date: "#{month_number - 1}/15/#{year}",
-                           end_date: "#{month_number - 1}/15/#{year}")
+                           start_date: "#{(today - 1.month).month}/15/#{(today - 1.month).year}",
+                           end_date: "#{(today - 1.month).month}/15/#{(today - 1.month).year}")
             create(:event, campaign: campaign1,
-                           start_date: "#{month_number - 1}/16/#{year}",
-                           end_date: "#{month_number - 1}/16/#{year}")
+                           start_date: "#{(today - 1.month).month}/16/#{(today - 1.month).year}",
+                           end_date: "#{(today - 1.month).month}/16/#{(today - 1.month).year}")
             create(:event, campaign: campaign3,
-                           start_date: "#{month_number - 1}/17/#{year}",
-                           end_date: "#{month_number - 1}/17/#{year}")
+                           start_date: "#{(today - 1.month).month}/17/#{(today - 1.month).year}",
+                           end_date: "#{(today - 1.month).month}/17/#{(today - 1.month).year}")
             Sunspot.commit
 
             visit events_path
@@ -732,7 +731,7 @@ feature 'Events section' do
 
             close_resource_details
 
-            expect(page).to have_content('1 event found for: Active today Campaign FY2012')
+            expect(page).to have_content('1 event found for: Active Today Campaign FY2012')
             expect(current_path).to eq(events_path)
 
             within events_list do
@@ -752,11 +751,11 @@ feature 'Events section' do
 
             visit events_path
 
-            expect(page).to have_content('1 event found for: Active today to the future')
+            expect(page).to have_content('1 event found for: Active Today To The Future')
             expect(page).to have_selector('#events-list .resource-item', count: 1)
 
             add_filter 'CAMPAIGNS', 'Campaign FY2012'
-            expect(page).to have_content('1 event found for: Active today to the future Campaign FY2012')  # The list shouldn't be filtered by date
+            expect(page).to have_content('1 event found for: Active Today To The Future Campaign FY2012')  # The list shouldn't be filtered by date
             expect(page).to have_selector('#events-list .resource-item', count: 1)
           end
         end
@@ -773,10 +772,10 @@ feature 'Events section' do
             Sunspot.commit
 
             visit events_path
-            expect(page).to have_content('1 event found for: Active today to the future')
+            expect(page).to have_content('1 event found for: Active Today To The Future')
             expect(page).to have_selector('#events-list .resource-item', count: 1)
 
-            expect(page).to have_content('1 event found for: Active today to the future')
+            expect(page).to have_content('1 event found for: Active Today To The Future')
 
             select_saved_filter 'My Custom Filter'
 
@@ -786,7 +785,7 @@ feature 'Events section' do
             expect(page).to have_content('2 events found for: Active Campaign FY2012')
 
             click_button 'Reset'
-            expect(page).to have_content('1 event found for: Active today to the future')
+            expect(page).to have_content('1 event found for: Active Today To The Future')
 
             within '#collection-list-filters' do
               expect(find_field('user-saved-filter', visible: false).value).to eq('')
@@ -795,15 +794,15 @@ feature 'Events section' do
             expect(page).to have_selector('#events-list .resource-item', count: 1)
             add_filter 'CAMPAIGNS', 'Campaign FY2012'
 
-            expect(page).to have_content('1 event found for: Active today to the future Campaign FY2012')
+            expect(page).to have_content('1 event found for: Active Today To The Future Campaign FY2012')
             expect(page).to have_selector('#events-list .resource-item', count: 1)
 
-            remove_filter 'today to the future'
+            remove_filter 'Today To The Future'
             expect(page).to have_content('2 events found for: Active Campaign FY2012')
             expect(page).to have_selector('#events-list .resource-item', count: 2)
 
             click_link 'Reset'
-            expect(page).to have_content('1 event found for: Active today to the future')
+            expect(page).to have_content('1 event found for: Active Today To The Future')
           end
         end
 
@@ -1073,6 +1072,35 @@ feature 'Events section' do
             find_field('event_start_time').set '4:00pm'
             find_field('event_end_time').click
             expect(find_field('event_end_time').value).to eql '5:00pm'
+          end
+        end
+      end
+
+      scenario 'end date are updated next day' do
+        Timecop.travel(Time.zone.local(2013, 07, 30, 12, 00)) do
+          create(:campaign, company: company)
+          visit events_path
+
+          click_button 'Create'
+
+          within visible_modal do
+            # Test both dates are the same
+            expect(find_field('event_start_date').value).to eql '07/30/2013'
+            expect(find_field('event_end_date').value).to eql '07/30/2013'
+
+            # Change the start time and make sure the end date is changed automatically
+            # to one day later
+            find_field('event_start_time').click
+            find_field('event_start_time').set '11:00pm'
+            find_field('event_end_time').click
+            expect(find_field('event_end_date').value).to eql '07/31/2013'
+
+            find_field('event_start_date').click
+            find_field('event_start_date').set '07/31/2013'
+            find_field('event_end_time').click
+            find_field('event_end_time').set '2:00pm'
+            find_field('event_end_time').click
+            expect(find_field('event_end_date').value).to eql '08/01/2013'
           end
         end
       end

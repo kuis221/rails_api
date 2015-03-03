@@ -1,7 +1,7 @@
 class VenuesController < FilteredController
   actions :index, :show
 
-  helper_method :data_totals
+  helper_method :data_totals, :venue_activities
 
   prepend_before_action :create_venue_from_google_api, only: :show
 
@@ -47,6 +47,7 @@ class VenuesController < FilteredController
   end
 
   def create_venue_from_google_api
+    return if current_user.nil?
     return if params[:id] =~ /\A[0-9]+\z/
     place = Place.load_by_place_id(params[:id], params[:ref])
     fail ActiveRecord::RecordNotFound unless place
@@ -81,5 +82,12 @@ class VenuesController < FilteredController
       totals['promo_hours'] = collection_search.stat_response['stats_fields']['promo_hours_es']['sum'] rescue 0
       totals['spent'] = collection_search.stat_response['stats_fields']['spent_es']['sum'] rescue 0
     end
+  end
+
+  def permitted_search_params
+    [:location, :q, :page, :sorting, :sorting_dir, :per_page, :start_date, :end_date,
+     events_count: [:min, :max], promo_hours: [:min, :max], impressions: [:min, :max],
+     interactions: [:min, :max], sampled: [:min, :max], spent: [:min, :max],
+     venue_score: [:min, :max], price: [], area: [], campaign: [], brand: []]
   end
 end

@@ -439,10 +439,4 @@ feature 'Notifications', search: true, js: true do
 
     page.find('#notifications .notifications-container li a', text: text).click
   end
-
-  def add_permissions(permissions)
-    permissions.each do |p|
-      company_user.role.permissions.create(action: p[0], subject_class: p[1])
-    end
-  end
 end

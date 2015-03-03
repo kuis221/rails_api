@@ -19,7 +19,7 @@ class CompanyUsersController < FilteredController
                   :enable_campaigns, :disable_campaigns, :remove_campaign,
                   :select_campaigns, :add_campaign]
 
-  skip_load_and_authorize_resource only: [:export_status]
+  skip_authorize_resource only: [:select_custom_user, :export_status, :login_as_select]
 
   def autocomplete
     buckets = autocomplete_buckets(
@@ -37,6 +37,10 @@ class CompanyUsersController < FilteredController
   def profile
     @company_user = current_company_user
     render :show
+  end
+
+  def login_as_select
+    render layout: false
   end
 
   def update
@@ -94,6 +98,22 @@ class CompanyUsersController < FilteredController
       session[:current_company_id] = company_user.company_id
     rescue ActiveRecord::RecordNotFound
       flash[:error] = 'You are not allowed login into this company'
+    end
+    redirect_to root_path
+  end
+
+  def select_custom_user
+    begin
+      if current_real_company_user.is_admin?
+        user = current_company.company_users.active.find(params[:user_id])
+        if params[:user_id].to_i == current_real_company_user.id
+          session[:behave_as_user_id] = nil
+        else
+          session[:behave_as_user_id] = user.user_id
+        end
+      end
+    rescue ActiveRecord::RecordNotFound
+      flash[:error] = 'You are not allowed login as this user'
     end
     redirect_to root_path
   end
@@ -164,7 +184,7 @@ class CompanyUsersController < FilteredController
       memberable_type: params[:parent_type], memberable_id: params[:parent_id]).exists?
 
     parent = params['parent_type'].constantize.find(params['parent_id'])
-    @campaigns = parent.campaigns.where(company_id: current_company.id)
+    @campaigns = parent.campaigns.active.where(company_id: current_company.id)
       .where('campaigns.id not in (?)',
              resource.campaigns.children_of(parent).pluck('campaigns.id') + [0])
   end

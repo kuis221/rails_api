@@ -1,108 +1,136 @@
 
-//
-// Variables
+
+// VARIABLES
+// ----------------------------------------------------------------------------------------
+
+
+// COLOR PALLETE
 // --------------------------------------------------
 
-
-// Color pallete
-// --------------------------------------------------
-
+$app_bg:                 #ececec;
+$white:                  #fff;
 
 // Grays
 // -------------------------
+$gray-darker:            #4f4f4f;
+$gray-dark:              #666666;
+$gray:                   #7a7a7a;
+$gray-light:             #cccccc;
+$gray-lighter:           #dfdfdf;
+$silver:                 #c0c0c0;
 
-$gray-darker:            lighten(#000, 13.5%); // #222
-$gray-dark:              lighten(#000, 20%);   // #333
-$gray:                   lighten(#000, 33.5%); // #555
-$gray-light:             lighten(#000, 60%);   // #999
-$gray-lighter:           lighten(#000, 93.5%); // #eee
+$brand:                  #989898;
+$tooltip:                #7a7a7a;
 
-$green: #90bf43;
+$menu:                   $gray-darker;
+$user_menu:              $silver;
 
-$brand-red: #de4d43;
+// Blue
+// -------------------------
+$primary-blue:           #3e9ccf;
+$secondary-blue:         #3990bf;
+$light_blue:             #90d5ef; // Trends colors
+$dark_blue:              #347B9B;
+$blue_hover:             #327da6; // Check - verify
 
-$app_bg: #ececec;
-$assigned: #d6d64b;
-$borders: #d3d3d3;
-$brand: #989898;
-$buttons: $brand-red;
-$buttons-border: #acacac;
-$buttons-hover: #cc4137;
-$btnHover: #d6d6d6;
+// Green
+// -------------------------
+$primary-green:          #90bf43;
+$secondary-green:        #7ca63a;
 
-$complete: $green;
+$green:                  $primary-green;
+$dark_green:             #6B9323;
 
-$grey_one: #dfdfdf;
-$grey_two: #ececec;
-$grey_three: #7a7a7a;
-$grey_four: #cccccc;
-$grey_five: #5B5B5B;
-$green: #91bf43;
-$dark_green: #6B9323;
-$header: #363636;
-$menu: #4f4f4f;
-$stars: #cfc53e;
+$yellow:				         #CFC53E;
 
-$blue: #3e9ccf;
-$light_blue: #90d5ef;
-$dark_blue: #347B9B;
-$blue_hover:#327da6;
+// Red
+// -------------------------
+$primary-red:            #de4d43;
+$secondary-red:          #cc4137;
 
-$due_today:$blue;
+// Pink
+// -------------------------
+$pink:                   #d93f99;
 
-$user_menu:#c0c0c0;
-$venues_blue:#3e9ccf;
-$late: $buttons;
-$submitted:#3e9ccf;
-$approved: $green;
-$rejected: $buttons;
+// Purple
+// -------------------------
+$purple:                 #7e42a4;
+$light-purple:           #a766cf;
 
-$alert_red: $buttons;
-$alert_blue: #3e9ccf;
-$alert_grey: #7a7a7a;
+// Special uses
+// -------------------------
+$buttons:                $primary-red;
+$buttons-hover:          $secondary-red;
+$header:                 #363636;
+$stars:                  #cfc53e; // Ratings
 
-$tooltip: #7a7a7a;
-
-$light-blue: #3e9ccf;
-
-$purple: #a766cf;
-
-
-
+$approved:               $green;
+$assigned:               #d6d64b;
+$complete:               $green;
+$due_today:              $primary-blue;
+$late:                   $primary-red;
+$submitted:              $primary-blue;
+$rejected:               $primary-red;
 
 // File type colors
 // -------------------------
+$adobe-ai-file:       	 #d7a23c;
+$adobe-pdf-file:      	 $primary-red;
+$adobe-psd-file:      	 #3881a8;
+$adobe-indd-file:     	 $pink;
 
-$adobe-ai-file:       #d7a23c;
-$adobe-pdf-file:      $brand-red;
-$adobe-psd-file:      #3881a8;
-$adobe-indd-file:     #d93f99;
-
-$ppt-file:            #cc4137;
-$xls-file:            #7ca63a;
+$ppt-file:            	 #cc4137;
+$xls-file:            	 $secondary-green;
 
 
-// Typography
+// TYPOGRAPHY
+// --------------------------------------------------------------------------
+$baseFontFamily:				 'Lato', sans-serif;
+$baseFontSize:             14px;
+$baseLineHeight:           22px;
+$text: 									 $gray-dark;
+$text-light: 						 $brand;
+
+// LINKS
 // -------------------------
+$link-color:             $primary-blue;
 
-$baseFontFamily:'Lato', sans-serif;
-$text: #666666;
-$text-light: $brand;
 
-// Links
+// GLYPHS
+// --------------------------------------------------------------------------
+$glyphs-color:            #fcfcfc;
+
+
+// RESOURCE ITEM LIST
+// --------------------------------------------------------------------------
+$resource-item-padding:   15px;
+$resource-item-height:    55px;
+$resource-item-height-single-line:   33px;
+
+
+// OTHER VALUES
+// --------------------------------------------------------------------------
+$btnPrimaryBackground:    $primary-red;
+$chzn-single-height:      39px;
+$footer-height:           35px;
+
+
+// Undefined uses - not present on the styleguide
+// --------------------------------------------------------------------------
+$borders:                 #d3d3d3;
+$buttons-border:          #acacac;
+$btnHover:                #d6d6d6;
+
+
+// Dropdowns
 // -------------------------
+$dropdownBorder:                $silver;
+// $dropdownDividerTop:            #e5e5e5;
+// $dropdownDividerBottom:         $white;
 
-$link-color:            $light-blue;
-//$link-hover-color:     ;
+$dropdownLinkColor:             $text;
+// $dropdownLinkColorHover:        $white;
+// $dropdownLinkColorActive:       $white;
 
-
-// Glyphs
-// -------------------------
-
-$glyphs-color: #fcfcfc;
-
-
-// Resource item list
-$resource-item-padding: 15px;
-$resource-item-height: 55px;
-$resource-item-height-single-line: 33px;
+// $dropdownLinkBackgroundActive:  $linkColor;
+// $dropdownLinkBackgroundHover:   $dropdownLinkBackgroundActive;

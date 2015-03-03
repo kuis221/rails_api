@@ -1,5 +1,6 @@
 Brandscopic::Application.routes.draw do
 
+  mount Nkss::Engine => '/styleguides' if Rails.env.development?
   apipie if ENV['WEB']
 
   namespace :api do
@@ -16,6 +17,7 @@ Brandscopic::Application.routes.draw do
             get :notifications
           end
         end
+        resources :activities, only: [:new, :show]
 
         resources :events, only: [:index, :show, :create, :update] do
           get :status_facets, on: :collection
@@ -29,6 +31,10 @@ Brandscopic::Application.routes.draw do
           resources :comments, only: [:index, :create, :update, :destroy]
           resources :surveys,  only: [:index, :create, :update, :show] do
             get :brands, on: :collection
+          end
+          resources :invites, only: [:index, :show, :create, :update]
+          resources :activities, only: [:index, :create, :update] do
+            get :deactivate, on: :member
           end
           get :autocomplete,   on: :collection
           member do
@@ -52,13 +58,26 @@ Brandscopic::Application.routes.draw do
             get :all
             get :overall_stats
           end
+          resources :activity_types, only: [:index]
+          resources :brands, only: [:index]
           get :stats, on: :member
+          get :events, on: :member
+        end
+
+        resources :activity_types, only: [:index] do
+          member do
+            get :campaigns
+          end
         end
 
         resources :venues, only: [:index, :show, :create] do
           get :search, on: :collection
           get :types, on: :collection
           get :autocomplete, on: :collection
+          resources :invites, only: [:index, :show, :create, :update]
+          resources :activities, only: [:index, :create, :update] do
+            get :deactivate, on: :member
+          end
           member do
             get :analysis
             get :photos
@@ -124,8 +143,12 @@ Brandscopic::Application.routes.draw do
   put '/users/dismiss_alert', to: 'company_users#dismiss_alert'
 
   get 'select-company/:company_id', to: 'company_users#select_company', as: :select_company, constraints: { company_id: /[0-9]+/ }
+  put 'login-as', to: 'company_users#select_custom_user', as: :select_custom_user
 
-  get 'countries/states'
+  resources :countries, only: [] do
+    get :states, on: :collection
+    get :cities, on: :member
+  end
 
   get '/notifications.json', to: 'company_users#notifications', format: :json
 
@@ -168,6 +191,11 @@ Brandscopic::Application.routes.draw do
     get :gva, to: 'gva#index'
     post :gva, to: 'gva#report'
     get :report_groups, to: 'gva#report_groups'
+
+    get 'attendance/map', to: 'attendance#map', as: :attendance_map
+    get 'attendance', to: 'attendance#index', as: :attendance
+    # resources :attendance, only: [:index] do
+    # end
 
     resources :reports, only: [:index, :new, :create, :edit, :update, :show] do
       get :build, on: :member
@@ -220,6 +248,10 @@ Brandscopic::Application.routes.draw do
       end
       get :items, on: :collection
       resources :events, only: [:new, :create]
+      resources :invites, only: [:create, :edit, :update, :index] do
+        get :deactivate, on: :member
+        get :activate, on: :member
+      end
       resources :activities, only: [:new, :create] do
         get :form, on: :collection
         get :empty_form, to: 'activities#export_empty_fieldable', on: :collection
@@ -245,6 +277,7 @@ Brandscopic::Application.routes.draw do
     post :time_zone_change, on: :collection
     put :time_zone_update, on: :collection
     get :event, via: :get, on: :collection # List of users by event
+    get :login_as_select, on: :collection
     resources :placeables, only: [:new] do
       post :add_area, on: :collection
       delete :remove_area, on: :collection
@@ -312,6 +345,7 @@ Brandscopic::Application.routes.draw do
       get :deactivate
       get :activate
       get :places
+      get :event_dates
       get :form, to: 'campaigns#export_fieldable'
       match 'members/:member_id' => 'campaigns#delete_member', via: :delete, as: :delete_member
       match 'teams/:team_id' => 'campaigns#delete_member', via: :delete, as: :delete_team
@@ -347,6 +381,7 @@ Brandscopic::Application.routes.draw do
 
   resources :events, except: [:destroy] do
     get :items, on: :collection, format: :html
+    get :map, on: :collection, format: :json
 
     get :calendar, on: :collection
     get :tasks, on: :member
@@ -358,6 +393,11 @@ Brandscopic::Application.routes.draw do
         get :deactivate
         get :activate
       end
+    end
+
+    resources :invites, only: [:create, :edit, :update, :index] do
+      get :deactivate, on: :member
+      get :activate, on: :member
     end
 
     resources :surveys, only: [:create, :new, :edit, :update] do
@@ -517,9 +557,21 @@ Brandscopic::Application.routes.draw do
 
   resources :tags, only: [:index]
 
-  resources :custom_filters, only: [:index, :new, :create, :destroy]
+  resources :custom_filters, only: [:index, :new, :create, :destroy] do
+    put :default_view, on: :member, format: :json
+  end
 
   resources :filter_settings, only: [:index, :new, :create, :update]
+
+  match 'custom_filters_settings/:apply_to' => 'custom_filters_settings#index', via: :get, constraints: { apply_to: CustomFilter::APPLY_TO_OPTIONS.join("|") }
+
+  resources :custom_filters_categories, only: [:index, :new, :create] do
+    match 'list_filters/:apply_to' => 'custom_filters_categories#list_filters', via: :get, on: :collection, format: :json
+  end
+
+  resources :company, only: [] do
+    resources :custom_filters, only: [:create,:new]
+  end
 
   namespace :brand_ambassadors do
     resources :visits, except: [:destroy] do

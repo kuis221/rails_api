@@ -9,6 +9,8 @@ feature 'Reports', js: true do
   before { user }
   after { Warden.test_reset! }
 
+  before {  page.driver.resize 1024, 3000 }
+
   feature 'Create a report' do
     scenario 'user is redirected to the report build page after creation' do
       visit results_reports_path
@@ -757,7 +759,7 @@ feature 'Reports', js: true do
     end
 
     feature 'preview' do
-      it 'should display a preview as the user make changes on the report' do
+      it 'displays a preview as the user make changes on the report' do
         create(:event, place: create(:place, name: 'Los Pollitos Bar'), company: company, results: { impressions: 100 })
         visit build_results_report_path(report)
 

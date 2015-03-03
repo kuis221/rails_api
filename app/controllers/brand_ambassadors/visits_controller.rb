@@ -57,4 +57,9 @@ class BrandAmbassadors::VisitsController < FilteredController
     [:start_date, :end_date, :page, :sorting, :sorting_dir, :per_page,
      campaign: [], area: [], user: [], city: []]
   end
+
+  def return_path
+    url_to_return = params[:return] || request.env['HTTP_REFERER'] || brand_ambassadors_root_path
+    url_to_return if url_valid? url_to_return
+  end
 end

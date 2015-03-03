@@ -346,6 +346,7 @@ describe FormFieldResult, type: :model do
       it { is_expected.to allow_value(form_field.options[0].id => 50, form_field.options[1].id => 50).for(:value) }
       it { is_expected.to allow_value(form_field.options[0].id.to_s => 50, form_field.options[1].id.to_s => 50).for(:value) }
       it { is_expected.to allow_value(form_field.options[0].id => '', form_field.options[1].id => '').for(:value) }
+      it { is_expected.to allow_value(form_field.options[0].id.to_s => '50', form_field.options[1].id.to_s => '50').for(:value) }
       it { is_expected.not_to allow_value(form_field.options[0].id => 'xx', form_field.options[1].id => 'uno').for(:value) }
       it { is_expected.not_to allow_value(form_field.options[0].id => 40, form_field.options[1].id => 10).for(:value) }
       it { is_expected.not_to allow_value(999 => 10, 888 => 90).for(:value) }

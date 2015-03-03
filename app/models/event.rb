@@ -68,6 +68,8 @@ class Event < ActiveRecord::Base
 
   has_many :contact_events, dependent: :destroy
 
+  has_many :invites, dependent: :destroy, inverse_of: :event
+
   accepts_nested_attributes_for :surveys
   accepts_nested_attributes_for :results
   accepts_nested_attributes_for :photos
@@ -200,11 +202,11 @@ class Event < ActiveRecord::Base
 
   #
   def self.in_areas(areas)
-    subquery = Place.select('DISTINCT places.location_id, placeables.placeable_id area_id')
+    subquery = Place.select('DISTINCT places.location_id')
                .joins(:placeables).where(placeables: { placeable_type: 'Area', placeable_id: areas }, is_location: true)
-    place_query = "select place_id, locations.area_id FROM locations_places INNER JOIN (#{subquery.to_sql})"\
+    place_query = "select place_id FROM locations_places INNER JOIN (#{subquery.to_sql})"\
                   ' locations on locations.location_id=locations_places.location_id'
-    area_query = Placeable.select('place_id, placeable_id area_id')
+    area_query = Placeable.select('place_id')
                  .where(placeable_type: 'Area', placeable_id: areas).to_sql
     joins(:place)
       .joins("INNER JOIN (#{area_query} UNION #{place_query}) areas_places ON events.place_id=areas_places.place_id")
@@ -350,7 +352,7 @@ class Event < ActiveRecord::Base
   def place_reference=(value)
     @place_reference = value
     return unless value && value.present?
-    if value =~ /^[0-9]+$/
+    if value =~ /\A[0-9]+\z/
       self.place = Place.find(value)
     else
       reference, place_id = value.split('||')
@@ -529,6 +531,7 @@ class Event < ActiveRecord::Base
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets = false)
+      params[:search_permission] ||= :view_list
       timezone = Time.zone.name
       timezone = 'UTC' if Company.current && Company.current.timezone_support?
       Time.use_zone(timezone) do
@@ -545,7 +548,6 @@ class Event < ActiveRecord::Base
             stat(:samples, type: 'sum')
             stat(:spent, type: 'sum')
             stat(:gender_female, type: 'mean')
-            stat(:gender_male, type: 'mean')
             stat(:gender_male, type: 'mean')
             stat(:ethnicity_asian, type: 'mean')
             stat(:ethnicity_black, type: 'mean')
@@ -705,16 +707,16 @@ class Event < ActiveRecord::Base
   # Copy some errors to the attributes used on the forms so the user
   # can see them
   def delegate_errors
-    errors[:start_at].each { |e| errors.add(:start_date, e) }
-    errors[:end_at].each { |e| errors.add(:end_date, e) }
+    errors[:start_at].each { |e| errors.add(:start_date, e) } if errors.include?(:start_at)
+    errors[:end_at].each { |e| errors.add(:end_date, e) } if errors.include?(:end_at)
     place.errors.full_messages.each { |e| errors.add(:place_reference, e) } if place
   end
 
   def parse_start_end
-    unless start_date.nil? || start_date.empty?
+    unless start_date.blank?
       self.start_at = Timeliness.parse([start_date, start_time.to_s.strip].compact.join(' ').strip, zone: :current)
     end
-    return if end_date.nil? || end_date.empty?
+    return if end_date.blank?
     self.end_at = Timeliness.parse([end_date, end_time.to_s.strip].compact.join(' ').strip, zone: :current)
   end
 

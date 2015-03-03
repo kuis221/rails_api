@@ -16,7 +16,7 @@ feature 'Results Event Status Page', js: true, search: true  do
     let(:place) { create(:place, name: 'Place 1') }
 
     before { Kpi.create_global_kpis }
-    before { company_user.role.permissions.create(action: :event_status, subject_class: 'Campaign') }
+    before { company_user.role.permissions.create(action: :event_status, subject_class: 'Campaign', mode: 'campaigns') }
 
     scenario 'a user can play and dismiss the video tutorial' do
       visit results_event_status_path
@@ -285,10 +285,10 @@ feature 'Results Event Status Page', js: true, search: true  do
         expect(text).to include 'Area1'
         expect(text).to include '2GOAL'
         expect(text).to include 'EVENTS'
-        expect(text).to include '0REMAINING11'
+        expect(text).to include 'REMAINING11'
         expect(text).to include '10GOAL'
         expect(text).to include 'PROMOHOURS'
-        expect(text).to include '6REMAINING22'
+        expect(text).to include 'REMAINING22'
       end
     end
 
@@ -333,10 +333,10 @@ feature 'Results Event Status Page', js: true, search: true  do
         expect(text).to include 'JuanitoBazooka'
         expect(text).to include '2GOAL'
         expect(text).to include 'EVENTS'
-        expect(text).to include '0REMAINING11'
+        expect(text).to match /0(EVENTS)?REMAINING11/
         expect(text).to include '10GOAL'
         expect(text).to include 'PROMOHOURS'
-        expect(text).to include '6REMAINING22'
+        expect(text).to match /6(PROMOHOURS)?REMAINING22/
       end
     end
   end

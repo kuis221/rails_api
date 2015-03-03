@@ -3,6 +3,7 @@ require 'rails_helper'
 describe Api::V1::EventsController, type: :controller do
   let(:user) { sign_in_as_user }
   let(:company) { user.company_users.first.company }
+  let(:campaign) { create(:campaign, company: company) }
 
   before { set_api_authentication_headers user, company }
 
@@ -55,6 +56,25 @@ describe Api::V1::EventsController, type: :controller do
     end
   end
 
+
+  describe "GET 'show'" do
+    let(:event) { create(:event, campaign: campaign, place: place) }
+    let(:place) { create(:place) }
+
+    it 'returns the event info' do
+      get :show, id: event.to_param, format: :json
+      expect(response).to be_success
+      expect(json.keys).to eq(%w(
+        id start_date start_time end_date end_time status description event_status
+        have_data actions tasks_late_count tasks_due_today_count place campaign))
+      expect(json['place'].keys).to eq(%w(
+        id venue_id name latitude longitude formatted_address
+        country state state_name city zipcode))
+      expect(json['campaign'].keys).to eq(%w(
+        id name enabled_modules))
+    end
+  end
+
   describe "GET 'status_facets'", search: true do
     it 'return the facets for the search' do
       campaign = create(:campaign, company: company)
@@ -66,7 +86,7 @@ describe Api::V1::EventsController, type: :controller do
       create(:due_event, company: company, campaign: campaign, place: place)
 
       # Make sure custom filters are not returned
-      create(:custom_filter, owner: company, group: 'SAVED FILTERS', apply_to: 'events')
+      create(:custom_filter, owner: company, apply_to: 'events')
 
       Sunspot.commit
 
@@ -184,6 +204,55 @@ describe Api::V1::EventsController, type: :controller do
       put 'update', id: event.to_param, event: { results_attributes: [{ id: result.id.to_s, value: '987' }] }, format: :json
       result.reload
       expect(result.value).to eq('987')
+    end
+
+    it 'accepts composed results for event results' do
+      Kpi.create_global_kpis
+      campaign.assign_all_global_kpis
+      gender_result = event.result_for_kpi(Kpi.gender)
+      gender_result.value = {
+        Kpi.gender.kpis_segments.first.id => 10,
+        Kpi.gender.kpis_segments.last.id => 90
+      }
+      event.save
+
+      put 'update', id: event.to_param, event: {
+        results_attributes: [{
+          id: gender_result.id.to_s,
+          value: {
+            Kpi.gender.kpis_segments.first.id.to_s => 50,
+            Kpi.gender.kpis_segments.last.id.to_s => 50
+          } }]
+      }, format: :json
+      expect(response.code).to eql '200'
+      expect(gender_result.reload.value).to eq(
+        Kpi.gender.kpis_segments.first.id.to_s => '50',
+        Kpi.gender.kpis_segments.last.id.to_s => '50')
+    end
+
+    it 'returns an error if the value is invalid' do
+      Kpi.create_global_kpis
+      campaign.assign_all_global_kpis
+      gender_result = event.result_for_kpi(Kpi.gender)
+      gender_result.value = {
+        Kpi.gender.kpis_segments.first.id => 10,
+        Kpi.gender.kpis_segments.last.id => 90,
+      }
+      event.save
+
+      age_result = event.result_for_kpi(Kpi.age)
+
+      put 'update', id: event.to_param, event: {
+        results_attributes: [{
+          id: gender_result.id.to_s,
+          value: {
+            Kpi.gender.kpis_segments.first.id.to_s => 5,
+            Kpi.gender.kpis_segments.last.id.to_s => 5
+          }}]
+      }, format: :json
+      expect(response.code).to eql '422'
+      errors = JSON.parse(response.body)
+      expect(errors).to eql("results.value" => ["is invalid"])
     end
   end
 
@@ -304,7 +373,6 @@ describe Api::V1::EventsController, type: :controller do
       groups = JSON.parse(response.body)
       expect(groups.first['fields'].first).to include(
           'name' => 'Age',
-          'type' => 'FormField::Percentage',
           'id' => result.id,
           'type' => 'FormField::Percentage',
           'segments' => [

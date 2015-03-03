@@ -12,7 +12,7 @@ $.widget 'nmk.filteredList', {
 		includeCalendars: false,
 		includeAutoComplete: false,
 		autoCompletePath: '',
-		defaultParams: [],
+		defaultParams: '',
 		customFilters: [],
 		userFilters: {},
 		selectDefaultDate: false,
@@ -137,7 +137,7 @@ $.widget 'nmk.filteredList', {
 		if window.location.search
 			@_parseQueryString window.location.search
 		else
-			@_parseQueryString $.param(@options.defaultParams)
+			@_parseQueryString @options.defaultParams
 
 		@loadFacets = true
 		firstTime = true
@@ -159,6 +159,11 @@ $.widget 'nmk.filteredList', {
 
 		@initialized = true
 		@dateRange = false
+
+		$(window).on 'resize ready', () =>
+			@marginFilterResize()
+
+		@marginFilterResize()
 
 		$(document).on 'click', (e) ->
 			$('.more-options-container').hide()
@@ -206,7 +211,9 @@ $.widget 'nmk.filteredList', {
 		$.loadingContent += 1
 		@formFilters.html('')
 		for filter in filters
-			if filter.items? and (filter.items.length > 0 or (filter.top_items? and filter.top_items.length))
+			if filter.type is 'rating'
+				@addStarRating filter
+			else if filter.items? and (filter.items.length > 0 or (filter.top_items? and filter.top_items.length))
 				@addFilterSection filter
 			else if filter.max? and filter.min?
 				@addSlider filter
@@ -221,6 +228,43 @@ $.widget 'nmk.filteredList', {
 		$.loadingContent -= 1
 		@
 
+	addStarRating: (filter) ->
+		items = filter.items
+		expanded = @_getFilterSectionState(filter.label.replace(/\s+/g, '-')) == 'true'
+		$list = $('<ul>')
+		$filter = $('<div class="accordion-group">').append(
+			$('<div class="filter-wrapper accordion-heading">').data('name', filter.name).append(
+				$('<a>',{href: "#toogle-"+filter.label.replace(/\s+/g, '-').toLowerCase(), class:'accordion-toggle filter-title', 'data-toggle': 'collapse'})
+					.text(filter.label).addClass(if expanded then '' else 'collapsed').append(
+						$('<span class="icon pull-left" title="Expand">').addClass(if expanded then 'icon-arrow-down' else 'icon-arrow-right')
+					)
+			),
+			$('<div id="toogle-'+filter.label.replace(/\s+/g, '-').toLowerCase()+'" class="accordion-body">').addClass(if expanded then 'in' else ' collapse').append(
+				$('<div class="accordion-inner">').append($list)
+			).on 'show', () =>
+				@_setFilterSectionState(filter.label.replace(/\s+/g, '-'), true)
+				true
+			.on 'hide',  () =>
+				@_setFilterSectionState(filter.label.replace(/\s+/g, '-'), false)
+				true
+		)
+		for item in filter.items
+			item.label = @_buildFilterStarRating item
+			$list.append @_buildFilterOption(item)
+
+		@formFilters.append $filter
+		$filter.data('filter', filter)
+
+	_buildFilterStarRating: (option) ->
+		i = 0
+		html = ""
+		while i < 5
+			if option.label > i
+				html += "<i class='icon-star full'></i>"
+			else
+				html += "<i class='icon-star empty'></i>"
+			i++
+		html
 
 	addSlider: (filter) ->
 		min_value = if filter.selected_min? then filter.selected_min else filter.min
@@ -478,7 +522,7 @@ $.widget 'nmk.filteredList', {
 					if not $(e.target).prop('checked')
 						@_removeParams(option.id)
 					else
-						@_setQueryString option.id.split('&id')[0]
+						@addParams option.id.split('&id')[0]
 				else
 					params = encodeURIComponent("#{option.name}[]") + '=' + encodeURIComponent(option.id)
 					if $(e.target).prop('checked')
@@ -531,7 +575,7 @@ $.widget 'nmk.filteredList', {
 	_resetFilters: () ->
 		@form.find('input:checkbox[name^="custom_filter"]').prop('checked', false)
 		@savedFiltersDropdown.val('').trigger('liszt:updated')
-		@_setQueryString $.param(@options.defaultParams)
+		@_setQueryString @options.defaultParams
 		false
 
 	_removeParams: (params) ->
@@ -558,8 +602,15 @@ $.widget 'nmk.filteredList', {
 	addParams: (params) ->
 		@savedFiltersDropdown.val('').trigger('liszt:updated')
 		qs = @paramsQueryString()
-		qs = (if qs then qs + '&' else '')
-		@_setQueryString qs + params
+		for param in @_deparam(params)
+			paramValue = encodeURIComponent(param.name)+'='+encodeURIComponent(param.value)
+			paramValue = '' if param.value is '' or param.value is null
+			continue if qs.indexOf(paramValue) >= 0
+			if param.name.indexOf('[]') is -1 && qs.indexOf(encodeURIComponent(param.name)) >= 0
+				qs = qs.replace(new RegExp("(#{encodeURIComponent(param.name)}=[^&]*)"), paramValue)
+			else
+				qs = qs + '&' + paramValue
+		@_setQueryString qs.replace(/^&/, '')
 
 	setParams: (params) ->
 		return if @_settingQueryString
@@ -587,7 +638,7 @@ $.widget 'nmk.filteredList', {
 			if document.location.search
 				document.location.search.replace(/^\?/, '')
 			else if not @initialized && @options.defaultParams
-				$.param(@options.defaultParams)
+				@options.defaultParams
 			else
 				''
 
@@ -652,7 +703,7 @@ $.widget 'nmk.filteredList', {
 		@customDatesFilter = $('<div class="custom-dates-inputs">').appendTo(@form).append(
 			$('<div class="start-date">').append(
 				$('<label for="custom_start_date">').text('Start date'),
-				$('<input type="text" class="input-calendar date_picker disabled" id="custom_start_date" name="custom_start_date" readonly="readonly">').val('mm/dd/yyyy').datepicker
+				$('<input type="text" class="input-calendar date_picker disabled" id="custom_start_date" name="custom_start_date">').val('mm/dd/yyyy').datepicker
 					showOtherMonths: true
 					selectOtherMonths: true
 					dateFormat: "mm/dd/yy"
@@ -672,7 +723,7 @@ $.widget 'nmk.filteredList', {
 			$('<div class="separate">').text('-'),
 			$('<div class="end-date">').append(
 				$('<label for="custom_end_date">').text('End date'),
-				$('<input type="text" class="input-calendar date_picker disabled" id="custom_end_date" name="custom_end_date" readonly="readonly">').val('mm/dd/yyyy').datepicker
+				$('<input type="text" class="input-calendar date_picker disabled" id="custom_end_date" name="custom_end_date">').val('mm/dd/yyyy').datepicker
 					showOtherMonths: true
 					selectOtherMonths: true
 					dateFormat: "mm/dd/yy"
@@ -690,6 +741,28 @@ $.widget 'nmk.filteredList', {
 						@customDatesFilter.find("[name=custom_start_date]").datepicker "option", "maxDate", selectedDate
 			)
 		)
+
+		$('#custom_start_date, #custom_end_date').on 'input', (e) =>
+			input = $(e.target)
+			if input.val() == ''
+				input.val('mm/dd/yyyy')
+				input.addClass('disabled')
+			else
+				input.removeClass('disabled')
+
+		$('#custom_start_date, #custom_end_date').on 'blur', (e) =>
+			startDateInput = @customDatesFilter.find("[name=custom_start_date]")
+			endDateInput = @customDatesFilter.find("[name=custom_end_date]")
+			applyButton = @customDatesPanel.find("#apply-ranges-btn")
+			if startDateInput.val() != 'mm/dd/yyyy' && endDateInput.val() != 'mm/dd/yyyy' && startDateInput.val() != '' && endDateInput.val() != ''
+				applyButton.attr('disabled', false)
+			else
+				applyButton.attr('disabled', true)
+
+		# So the custom date picker is not closed when chosing dates
+		$('#ui-datepicker-div').on 'click', (e) =>
+			if $('.select-ranges.open').length
+				e.stopPropagation();
 
 		@customDatesPanel = $('<div class="dates-pref">').appendTo(@form).append(
 			$('<div class="dropdown select-ranges">').append(
@@ -902,7 +975,7 @@ $.widget 'nmk.filteredList', {
 
 	_deparam: (queryString) ->
 		params = []
-		if queryString
+		if typeof queryString != 'undefined' and queryString
 			queryString = queryString.substring(queryString.indexOf("?") + 1).split("&")
 			pair = null
 			decode = decodeURIComponent
@@ -1000,6 +1073,7 @@ $.widget 'nmk.filteredList', {
 							$('<a id="clear-filters" href="#" title="Reset">').text('Reset').on 'click', (e) =>
 								@_resetFilters()
 						);
+					@marginFilterResize()
 
 					$response.remove()
 					$items.remove()
@@ -1017,7 +1091,6 @@ $.widget 'nmk.filteredList', {
 				@doneLoading = true
 
 		params = null
-
 		true
 
 	_pageLoaded: (page, response) ->
@@ -1048,7 +1121,6 @@ $.widget 'nmk.filteredList', {
 			@infiniteScroller = false
 
 	_parseQueryString: (query) ->
-		vars = query.split('&')
 		dates = []
 		selectedOptions = []
 
@@ -1090,13 +1162,23 @@ $.widget 'nmk.filteredList', {
 			@selectCalendarDates dates[0], dates[1]
 		else
 			@_deselectDates()
-		dates = vars = null
+		dates = null
 
 		query = null
 
 	reloadFilters: () ->
 		@loadFacets = true
 		@_loadFilters()
+
+	marginFilterResize: () ->
+		marginTopFilter = $('.collection-list-description').outerHeight()
+		extra = 0
+		if $(".main-nav-collapse").is(":visible")
+			marginTopFilter += $('.main-nav-collapse').outerHeight() + 8
+			extra = 8
+		$('#application-content').css('margin-top', marginTopFilter + 'px')
+		$('#resource-close-details').css('top', marginTopFilter + 43 - extra)
+
 }
 
 

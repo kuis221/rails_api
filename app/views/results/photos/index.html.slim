@@ -22,7 +22,7 @@
   #list-view.tab-pane.active
     #list-tools.text-right
       a.btn.download.icon id="download-photos-button" href="" title="Download"
-        i.icon-download
+        i.icon-plus
         #download-photos-counter-container
     .gallery.select-for-download.photo-results
       ul id="#{controller_name}-list"
@@ -45,13 +45,7 @@ javascript:
     'applyTo': 'results_photos',
     'userFilters': #{user_saved_filters('results_photos').to_json.html_safe},
     'autoCompletePath': '#{autocomplete_url('results_photos', format: :json)}',
-    'defaultParams': [{name: 'status[]', value: 'Active'}],
-    'clearFilterParams': [{name: 'status[]', value: 'Active'}],
-    'onItemsLoad': function(response, page){
-      if (response.find('div[data-content="filters-description"]').length > 0){
-        $('.collection-list-description .filter-label').html(response.find('div[data-content="filters-description"]'))
-      }
-    }
+    'defaultParams': '#{j default_params_for_view('status[]=Active')}'
   });
 
   $(document).delegate('#photo-download-add', 'click', function(e) {

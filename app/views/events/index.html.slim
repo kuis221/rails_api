@@ -25,7 +25,7 @@
       .dropdown.btn-download
         a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
           i.icon-download
-          i.icon-arrow-down
+          i.icon-arrow-down-small
         ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
           li
             a.xlsx-download-link href="#" role="menuitem" data-url="#{events_path(format: :xls)}"
@@ -76,8 +76,7 @@
       'includeAutoComplete': true,
       'autoCompletePath': '#{autocomplete_path(:events, format: :json)}',
       'userFilters': #{user_saved_filters(controller_name).to_json.html_safe},
-      'defaultParams': [{name: 'status[]', value: 'Active'}, {name: 'start_date', value:'#{Time.zone.now.strftime("%m/%d/%Y")}'}, {name: 'end_date', value:'#{(Time.zone.now + 10.years).strftime("%m/%d/%Y")}'}],
-      'clearFilterParams': [{name: 'status[]', value: 'Active'}, {name: 'start_date', value:'#{Time.zone.now.strftime("%m/%d/%Y")}'}, {name: 'end_date', value:'#{(Time.zone.now + 10.years).strftime("%m/%d/%Y")}'}],
+      'defaultParams': '#{j default_params_for_view('status[]=Active&start_date=' + Time.zone.now.strftime("%m/%d/%Y") + '&end_date=' + (Time.zone.now + 10.years).strftime("%m/%d/%Y"))}',
       'applyTo': '#{controller_name}',
       'onChange': function(filterBox){
         $(document).trigger('events-filter:changed')

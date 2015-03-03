@@ -45,7 +45,8 @@
           li
             a href="#brand_ambassadors_permissions" Brand Ambassadors
 
-        .campaigns_box
+        .roles_box
+
           .tab-content
             #dashboard_permissions.tab-pane.active
               = render 'dashboard_permissions'
@@ -85,8 +86,26 @@
 javascript:
   $(document).on('roles:change', function(){
     window.location.reload(false);
-  })
-
+  });
+  $(document).on('click', '.toggle-permission-btn', function(){
+    var value = '';
+    if ($(this).hasClass('icon-role-all')) {
+      $(this).removeClass('icon-role-all').addClass('icon-role-none');
+      value = 'none';
+    } else if ($(this).hasClass('icon-role-campaigns')) {
+      if ($(this).data('allow-all')){
+        $(this).removeClass('icon-role-campaigns').addClass('icon-role-all');
+        value = 'all';
+      } else {
+        $(this).removeClass('icon-role-campaigns').addClass('icon-role-none');
+        value = 'none';
+      }
+    } else if ($(this).hasClass('icon-role-none')) {
+      $(this).removeClass('icon-role-none').addClass('icon-role-campaigns')
+      value = 'campaigns';
+    }
+    $(this).parents('.role-permission-item').find('input.role-permission-value').val(value);
+  });
   $('#permissions-tabs a').click(function (e) {
     e.preventDefault();
     $(this).tab('show');

@@ -72,4 +72,20 @@ describe Api::V1::CampaignsController, type: :controller do
       expect(stats['areas'].first.key?('today_percentage')).to be_falsey
     end
   end
+
+  describe "GET 'events'"do
+    before { Kpi.create_global_kpis }
+    it 'return a list of events the campaign' do
+      campaign = create(:campaign, company: company, name: 'Cerveza Imperial FY14')
+
+      place = create(:place)
+      create_list(:event, 3, company: company, campaign: campaign, place: place)
+
+      get :events, id: campaign.to_param, format: :json
+      expect(response).to be_success
+      events = JSON.parse(response.body)
+
+      expect(events.count).to eq(3)
+    end
+  end
 end

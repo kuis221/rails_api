@@ -20,14 +20,16 @@
 #  score_impressions    :integer
 #  score_cost           :integer
 #  score_dirty          :boolean          default(FALSE)
+#  jameson_locals       :boolean          default(FALSE)
+#  top_venue            :boolean          default(FALSE)
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl
 
 FactoryGirl.define do
   factory :venue do
+    association(:place)
     company_id 1
-    place_id nil
     events_count 1
     promo_hours 9.5
     impressions 100

@@ -46,7 +46,7 @@ describe AreasCampaign, type: :model do
     end
 
     it 'should return true if the place is a neighborhood and the area includes the city' do
-      neighborhood = create(:place, types: ['locality'], route: nil, street_number: nil, neighborhood: 'South Central Houston', city: 'Houston', state: 'Texas', country: 'US')
+      neighborhood = create(:place, types: ['locality'], route: nil, street_number: nil, neighborhoods: ['South Central Houston'], city: 'Houston', state: 'Texas', country: 'US')
       area.places << create(:place, types: ['locality'], city: 'Houston', state: 'Texas', country: 'US')
 
       expect(areas_campaign.place_in_scope?(neighborhood)).to be_truthy

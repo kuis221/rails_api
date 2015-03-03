@@ -21,15 +21,10 @@ module PlacesHelper
 
           # If the place was not found in API, create it
           if spot.nil?
-            if create_place_in_google_api(@place)
-              # Save the place on the database with the user's entered data
-              @place.save
-            else
-              @place.is_custom_place = true
-              @place.save
-            end
+            @place.is_custom_place = true
+            @place.save
           else
-            reference_value = spot.reference + '||' + spot.id
+            reference_value = spot.reference + '||' + spot.place_id
           end
         else
           @place.errors.add(:base, 'The entered address doesn\'t seems to be valid')
@@ -79,8 +74,7 @@ module PlacesHelper
       if data['results'].count > 0
         result = data['results'].find { |r| r['geometry'].present? && r['geometry']['location'].present? }
         if result
-          place.latitude = result['geometry']['location']['lat']
-          place.longitude = result['geometry']['location']['lng']
+          place.lonlat = "POINT(#{result['geometry']['location']['lng']} #{result['geometry']['location']['lat']})"
           true
         else
           false
@@ -93,36 +87,8 @@ module PlacesHelper
     # Search a place in google's API by name in a radius of 1km and returns
     # the spot if found or nil if not
     def search_place_in_google_api_by_name(place)
-      spot = nil
-      spots = api_client.spots(place.latitude, place.longitude, name: place.name, radius: 1000)
-      spot = spots.first unless spots.empty?
-      spot
-    end
-
-    # Creates a new place in Google's API and returns true if success or false if an error
-    # ocurred
-    def create_place_in_google_api(place)
-      types = place.types || []
-      types = types.split(/\s*,\s*/) unless types.is_a?(Array)
-      address = {
-        location: {
-          lat: place.latitude,
-          lng: place.longitude
-        },
-        accuracy: 50,
-        name: place.name,
-        types: types
-      }
-      result = HTTParty.post("https://maps.googleapis.com/maps/api/place/add/json?sensor=true&key=#{GOOGLE_API_KEY}",
-                             body: address.to_json,
-                             headers: { 'Content-Type' => 'application/json' }
-                            )
-      if result['reference'].present? && result['id'].present?
-        place.reference = result['reference']
-        place.place_id = result['id']
-        true
-      else
-        false
+      api_client.spots(place.latitude, place.longitude, name: place.name, radius: 1000).detect do |spot|
+        spot.name.similar(place.name) >= 80
       end
     end
 
@@ -133,7 +99,7 @@ module PlacesHelper
   end
 
   def place_website(url)
-    link_to url.gsub(/https?:\/\//, '').gsub(/\/$/, ''), url
+    link_to url.gsub(/https?:\/\//, '').gsub(/\/$/, ''), url, target: '_blank'
   end
 
   def venue_score_narrative(venue)
@@ -181,12 +147,18 @@ module PlacesHelper
   end
 
   def place_opening_hours(opening_hours)
-    days = %w(Monday Tuesday Wednesday Thursday Friday Saturday Sunday)
-    if opening_hours && opening_hours.key?('periods')
-      (0..6).map do |i|
-        day = (i == 6 ? 0 : i + 1)
-        period = opening_hours['periods'].find { |p| p['open']['day'].to_i == day }
-        day_name = days[day]
+    return [] unless opening_hours && opening_hours.key?('periods')
+    place_days_opening_hours(opening_hours).values
+  end
+
+  def place_days_opening_hours(opening_hours)
+    days = %w(Mon Tue Wed Thu Fri Sat Sun)
+    return [] unless opening_hours && opening_hours.key?('periods')
+    Hash[(0..6).map do |i|
+      day = (i == 6 ? 0 : i + 1)
+      period = opening_hours['periods'].find { |p| p['open']['day'].to_i == day }
+      day_name = days[day]
+      desc =
         if period
           if period.key?('open') && period.key?('close')
             "#{day_name} #{Time.parse(period['open']['time'].gsub(/(^[0-9]{2})/, '\1:')).to_s(:time_only)} - #{Time.parse(period['close']['time'].gsub(/(^[0-9]{2})/, '\1:')).to_s(:time_only)}"
@@ -196,12 +168,26 @@ module PlacesHelper
         else
           "#{day_name} Closed"
         end
-      end
-    end
+      [day_name, desc]
+    end]
   end
 
   def place_opening_hours_formatted(opening_hours)
-    place_opening_hours(opening_hours).join('<br />').html_safe
+    full_days = place_days_opening_hours(opening_hours)
+    today = full_days[Time.now.strftime('%a')].sub(Time.now.strftime('%a'), 'Today')
+    full_days[Time.now.strftime('%a')] = '<b>' + full_days[Time.now.strftime('%a')] + '</b>'
+    content_tag(:div, class: 'venues-opening-hours display') do
+      content_tag(:span, today) +
+      link_to('(Show more)', '#', class: 'show-more-link', data: { toggle: 'collapse', target: '#collapse-venue-hour' })
+    end +
+    content_tag(:div, id: 'collapse-venue-hour', class: 'venues-opening-hours collapsible collapse') do
+      content_tag(:span, full_days.values.join('<br />').html_safe)
+    end
+  end
+
+  def place_price(price)
+    content_tag(:span, price.times.map {|_| '$' }.join, class: 'price-level' ) +
+    (5 - price).times.map {|_| '$' }.join.html_safe
   end
 
   private

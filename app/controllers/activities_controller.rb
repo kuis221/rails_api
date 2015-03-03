@@ -15,9 +15,14 @@ class ActivitiesController < FilteredController
   helper_method :assignable_users, :activity_types
 
   def form
-    build_resource
-    @brands = Brand.accessible_by_user(current_company_user.id).order(:name)
-    render layout: false
+    if params[:activity] && params[:activity][:activity_type_id] == 'attendance'
+      @invite = parent.invites.build
+      render 'invitation_form', layout: false
+    else
+      build_resource
+      @brands = Brand.accessible_by_user(current_company_user.id).order(:name)
+      render layout: false
+    end
   end
 
   protected
@@ -31,11 +36,20 @@ class ActivitiesController < FilteredController
   end
 
   def activity_types
-    if parent.is_a?(Event)
-      parent.campaign.activity_types.order('activity_types.name ASC')
-    else
-      current_company.activity_types.active.order(:name)
-    end
+    types =
+      if parent.is_a?(Event)
+        parent.campaign.activity_types.order('activity_types.name ASC')
+      else
+        current_company.activity_types.active.order(:name)
+      end.pluck(:name, :id)
+
+    return types unless can?(:create_invite, parent) &&
+                        ((parent.is_a?(Event) && parent.campaign.enabled_modules.include?('attendance')) ||
+                         parent.is_a?(Venue))
+
+    types.push %w(Invitation attendance)
+
+    types.sort { |a, b| a[0] <=> b[0] }
   end
 
   # Because there is no collection path, try to return a path

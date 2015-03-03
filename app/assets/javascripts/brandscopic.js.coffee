@@ -430,6 +430,7 @@ jQuery ->
 		field.val().replace(/[^0-9\.]/g,'')
 
 	$(".totop").hide()
+	$('#admin-select-block').hide()
 
 	# TimeZone change detection methods
 	window.checkUserTimeZoneChanges = (userTimeZone, lastDetectedTimeZone) ->
@@ -774,8 +775,11 @@ jQuery ->
 
 		false
 
-
-	makeFieldAttachable = () ->
+	$(document).on 'click', '#select-specific-user', (e) ->
+		e.stopPropagation()
+		e.preventDefault()
+		$('.admin-login-content').load('/users/login_as_select.html')
+		false
 
 
 # Hack to use bootbox's confirm dialog
@@ -795,4 +799,3 @@ $.rails.allowAction = (element) ->
 						element.trigger('click')
 						$.rails.allowAction = oldAllowAction
 	false
-

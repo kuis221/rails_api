@@ -26,7 +26,11 @@ span.form-result-label= form_field.name
                 layout: 'vertical',
                 align: 'right',
                 itemMarginBottom: 10,
-                borderWidth: 0
+                symbolWidth: 12,
+                borderWidth: 0,
+                itemStyle: {
+                  fontWeight: 'normal'
+                }
             },
             tooltip: {
                 pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'

@@ -39,6 +39,7 @@ class CollectionFilter
     else
       user.filter_setting_present('show_inactive_items', scope) ? [true, false] : [true]
     end
+  end
 
   def expand(type, id)
     type.classify.constantize.find(id).filter_subitems.map do |item|
@@ -140,10 +141,10 @@ class CollectionFilter
   end
 
   def user_saved_filters
-    items = CustomFilter.for_company_user(user).user_saved_filters
+    items = CustomFilter.for_company_user(current_company_user).user_saved_filters
             .order('custom_filters.name ASC').by_type(scope)
 
-    { label: CustomFilter::SAVED_FILTERS_NAME,
+    { label: 'Saved Filters',
       items: items.map do |cf|
         build_filter_item(id: cf.filters + '&id=' + cf.id.to_s,
                          label: cf.name, name: :custom_filter, count: 1)
@@ -152,7 +153,8 @@ class CollectionFilter
 
   def company_custom_filters
     groups = {}
-    CustomFilter.for_company_user(user).not_user_saved_filters
+    CustomFilter.for_company_user(current_company_user).joins(:category)
+      .select('custom_filters.*, custom_filters_categories.name as group').not_user_saved_filters
       .order('custom_filters.name ASC').by_type(scope).each do |filter|
       groups[filter.group.upcase] ||= []
       groups[filter.group.upcase].push filter

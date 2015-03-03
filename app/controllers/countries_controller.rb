@@ -8,4 +8,14 @@ class CountriesController < ApplicationController
   def states
     @country = Country.new(params[:country]) if params[:country].present?
   end
+
+  def cities
+    country = params[:id]
+    state = params[:state]
+    if country && state
+      render json: Neighborhood.where(state: state)
+                        .order('1')
+                        .pluck('DISTINCT(neighborhoods.city)')
+    end
+  end
 end

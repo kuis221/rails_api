@@ -35,10 +35,11 @@ jQuery ->
 	calendarCreated = false
 	# EVENTS INDEX
 
-	window.createCalendar = (month = null, year = null) -> 
+	window.createCalendar = (month = null, year = null, groupBy = null) ->
 		$('#calendar-canvas').eventsCalendar
 			month: month
 			year: year
+			groupBy: groupBy
 			eventsUrl: () ->
 				url = $('#calendar-canvas').data('events-url')
 				url += (if url.indexOf('?') >= 0 then '&' else '?') + $('#collection-list-filters').filteredList('paramsQueryString')
@@ -47,11 +48,14 @@ jQuery ->
 				date = "#{day.getMonth()+1}/#{day.getDate()}/#{day.getFullYear()}"
 				"<a class=\"cal-day-link\" data-date=\"#{date}\" href=\"#{document.location.protocol}//#{document.location.host}/events?start_date=#{date}&end_date=\">#{day.getDate()}</a>"
 			onEventsLoad: () ->
-				setTimeout () -> 
+				$('#pdf-export').data('url', "/events.pdf?mode=calendar&month=#{$('#calendar-canvas').eventsCalendar('getMonth')}&year=#{$('#calendar-canvas').eventsCalendar('getYear')}&group_by=#{$('#calendar-canvas').eventsCalendar('getGroupBy')}")
+				setTimeout () ->
 					window.status='completed';
 				, 100
 			onMonthChange: (month, year) ->
-				$('#pdf-export').data('url', "/events.pdf?mode=calendar&month=#{month}&year=#{year}")
+				$('#pdf-export').data('url', "/events.pdf?mode=calendar&month=#{month}&year=#{year}&group_by=#{$('#calendar-canvas').eventsCalendar('getGroupBy')}")
+			onGroupChange: (groupBy) ->
+				$('#pdf-export').data('url', "/events.pdf?mode=calendar&month=#{$('#calendar-canvas').eventsCalendar('getMonth')}&year=#{$('#calendar-canvas').eventsCalendar('getYear')}&group_by=#{groupBy}")
 
 
 	$('#toggle-events-view a').on 'click', ->
@@ -132,7 +136,7 @@ jQuery ->
 	fecthAndPlaceMarkers = ->
 		params = $('#collection-list-filters').filteredList('getFilters');
 		params.push {name: 'per_page', value: '500'}
-		$.getJSON '/events.json', params, (events) ->
+		$.getJSON '/events/map.json', params, (events) ->
 			placeMarkers(map, events)
 
 	window.placeMarkers = (map, events) ->

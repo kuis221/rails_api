@@ -25,8 +25,7 @@ class Activity < ActiveRecord::Base
   validates :activity_type_id, numericality: true, presence: true,
     inclusion: { in: :valid_activity_type_ids }
 
-  validates :campaign_id, presence: true, numericality: true,
-                          if: -> (_activitable) { activitable_type == 'Acivity' }
+  validates :campaign_id, presence: true, numericality: true
   validates :activitable_id, presence: true, numericality: true
   validates :activitable_type, presence: true
   validates :company_user_id, presence: true, numericality: true
@@ -185,7 +184,7 @@ class Activity < ActiveRecord::Base
   end
 
   def delegate_campaign_id_from_event
-    return unless activitable.is_a?(Event)
+    return true unless activitable.is_a?(Event)
     self.campaign = activitable.campaign
     self.campaign_id = activitable.campaign_id
   end

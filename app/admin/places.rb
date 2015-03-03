@@ -32,9 +32,25 @@ ActiveAdmin.register Place do
     column :city
     column :state
     column :country
-    column :types
+    column :types do |place|
+      place.types.join(', ') unless place.types.nil?
+    end
     actions
 
+  end
+
+  csv do
+    column :td_linx_code
+    column :name
+    column :street
+    column :city
+    column :state
+    column :country
+    column :types do |place|
+      place.types.join(', ') unless place.types.nil?
+    end
+    column :price_level
+    column :phone_number
   end
 
   collection_action :migrated_venues, method: :get do

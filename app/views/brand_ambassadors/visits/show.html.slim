@@ -3,7 +3,6 @@
 
   .details_box.padding-top-close-bar
     h2= resource.visit_type_name
-
     .calendar-data
       i.icon-calendar
       span
@@ -38,20 +37,36 @@
       = button_to_edit resource if can?(:edit, resource)
       = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
 
-  #visit-events.details_box
-    h3.module-title EVENTS
-    - if can?(:create, Event)
-      = button_to 'Create', new_event_path(resource, event: {visit_id: resource.id, campaign_id: resource.campaign_id}, format: :js), remote: true, class: 'btn btn-primary', :id => 'new-event-btn', method: :get
+  - if can?(:view_list, Event)
+    #visit-events.details_box
+      h5.module-title EVENTS 
+      #list-tools
+        .pull-left
+          - if can?(:create, Event)
+          = button_to 'Create', new_event_path(resource, event: {visit_id: resource.id, campaign_id: resource.campaign_id}, format: :js), remote: true, class: 'btn btn-primary', :id => 'new-event-btn', method: :get  
 
-    #events-list-filters.hide
-    div#events-list.resource-list
+        .text-right
+          .dropdown.btn-download
+            a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+              i.icon-download
+              i.icon-arrow-down-small
+            ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+              li
+                a.xlsx-download-link href="#" role="menuitem" data-url="#{events_path(format: :xls)}"
+                  | Download as XLS
+              li
+                a#pdf-export.xlsx-download-link href="#" role="menuitem" data-url="#{events_path(format: :pdf)}"
+                  | Download as PDF 
+
+      #collection-list-filters.hide
+      div#events-list.resource-list
 
 
   #visit-documents.details_box
     = render partial: 'brand_ambassadors/document_folders/index', locals: {children: (resource.document_folders.root_children.active + resource.brand_ambassadors_documents.root_children.active).sort_by(&:name), parent: resource }
 
 javascript:
-  $('#events-list-filters').filteredList({
+  $('#collection-list-filters').filteredList({
     'source': '#{url_for(controller: '/events', action: :items)}',
     'filtersUrl': null,
     'listContainer' : '#events-list',
@@ -63,12 +78,8 @@ javascript:
     'ytdDatesRange': '#{current_company.ytd_dates_range}',
     'includeAutoComplete': false,
     'fixListHeight': false,
-    'defaultParams': [
-      {name: 'start_date', value:'#{resource.start_date.strftime("%m/%d/%Y")}'}, 
-      {name: 'end_date', value:'#{resource.end_date.strftime("%m/%d/%Y")}'}, 
-      {name: 'campaign[]', value:'#{resource.campaign_id}'}, 
-      #{resource.area_id ? "{name: 'area[]', value: '#{resource.area_id}'},".html_safe : ''}
-      {name: 'user[]', value: '#{resource.company_user_id}'}],
+    'defaultParams': '#{j default_params_for_view('start_date=' + resource.start_date.strftime("%m/%d/%Y") + '&end_date=' + resource.end_date.strftime("%m/%d/%Y") + '&campaign[]=' + resource.campaign_id.to_s + (resource.area_id ? '&area[]=' + resource.area_id.to_s : '') + '&user[]=' +resource.company_user_id.to_s)}',
+
     'placeholderMessage': function(){
       return '<p>No events found for this Visit</p>';
     },

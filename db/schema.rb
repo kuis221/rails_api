@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141203165819) do
+ActiveRecord::Schema.define(version: 20150226220017) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,6 +19,7 @@ ActiveRecord::Schema.define(version: 20141203165819) do
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
   enable_extension "tablefunc"
+  enable_extension "postgis"
 
   create_table "active_admin_comments", force: true do |t|
     t.string   "resource_id",   null: false
@@ -31,9 +32,9 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.string   "namespace"
   end
 
-  add_index "active_admin_comments", ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id", using: :btree
-  add_index "active_admin_comments", ["namespace"], name: "index_active_admin_comments_on_namespace", using: :btree
-  add_index "active_admin_comments", ["resource_type", "resource_id"], name: "index_admin_notes_on_resource_type_and_resource_id", using: :btree
+  add_index "active_admin_comments", ["author_type", "author_id"], :name => "index_active_admin_comments_on_author_type_and_author_id"
+  add_index "active_admin_comments", ["namespace"], :name => "index_active_admin_comments_on_namespace"
+  add_index "active_admin_comments", ["resource_type", "resource_id"], :name => "index_admin_notes_on_resource_type_and_resource_id"
 
   create_table "activities", force: true do |t|
     t.integer  "activity_type_id"
@@ -47,9 +48,9 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.datetime "updated_at",                      null: false
   end
 
-  add_index "activities", ["activitable_id", "activitable_type"], name: "index_activities_on_activitable_id_and_activitable_type", using: :btree
-  add_index "activities", ["activity_type_id"], name: "index_activities_on_activity_type_id", using: :btree
-  add_index "activities", ["company_user_id"], name: "index_activities_on_company_user_id", using: :btree
+  add_index "activities", ["activitable_id", "activitable_type"], :name => "index_activities_on_activitable_id_and_activitable_type"
+  add_index "activities", ["activity_type_id"], :name => "index_activities_on_activity_type_id"
+  add_index "activities", ["company_user_id"], :name => "index_activities_on_company_user_id"
 
   create_table "activity_type_campaigns", force: true do |t|
     t.integer  "activity_type_id"
@@ -58,8 +59,8 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.datetime "updated_at",       null: false
   end
 
-  add_index "activity_type_campaigns", ["activity_type_id"], name: "index_activity_type_campaigns_on_activity_type_id", using: :btree
-  add_index "activity_type_campaigns", ["campaign_id"], name: "index_activity_type_campaigns_on_campaign_id", using: :btree
+  add_index "activity_type_campaigns", ["activity_type_id"], :name => "index_activity_type_campaigns_on_activity_type_id"
+  add_index "activity_type_campaigns", ["campaign_id"], :name => "index_activity_type_campaigns_on_campaign_id"
 
   create_table "activity_types", force: true do |t|
     t.string   "name"
@@ -70,7 +71,7 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.datetime "updated_at",                 null: false
   end
 
-  add_index "activity_types", ["company_id"], name: "index_activity_types_on_company_id", using: :btree
+  add_index "activity_types", ["company_id"], :name => "index_activity_types_on_company_id"
 
   create_table "admin_users", force: true do |t|
     t.string   "email",                  default: "", null: false
@@ -87,8 +88,8 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.datetime "updated_at",                          null: false
   end
 
-  add_index "admin_users", ["email"], name: "index_admin_users_on_email", unique: true, using: :btree
-  add_index "admin_users", ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true, using: :btree
+  add_index "admin_users", ["email"], :name => "index_admin_users_on_email", :unique => true
+  add_index "admin_users", ["reset_password_token"], :name => "index_admin_users_on_reset_password_token", :unique => true
 
   create_table "alerts_users", force: true do |t|
     t.integer  "company_user_id"
@@ -98,7 +99,7 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.datetime "updated_at",      null: false
   end
 
-  add_index "alerts_users", ["company_user_id"], name: "index_alerts_users_on_company_user_id", using: :btree
+  add_index "alerts_users", ["company_user_id"], :name => "index_alerts_users_on_company_user_id"
 
   create_table "areas", force: true do |t|
     t.string   "name"
@@ -113,8 +114,8 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.integer  "common_denominators_locations", default: [],                array: true
   end
 
-  add_index "areas", ["common_denominators_locations"], name: "index_areas_on_common_denominators_locations", using: :gin
-  add_index "areas", ["company_id"], name: "index_areas_on_company_id", using: :btree
+  add_index "areas", ["common_denominators_locations"], :name => "index_areas_on_common_denominators_locations"
+  add_index "areas", ["company_id"], :name => "index_areas_on_company_id"
 
   create_table "areas_campaigns", force: true do |t|
     t.integer "area_id"
@@ -137,7 +138,7 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.datetime "updated_at",        null: false
   end
 
-  add_index "asset_downloads", ["user_id"], name: "index_asset_downloads_on_user_id", using: :btree
+  add_index "asset_downloads", ["user_id"], :name => "index_asset_downloads_on_user_id"
 
   create_table "attached_assets", force: true do |t|
     t.string   "file_file_name"
@@ -158,17 +159,17 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.integer  "folder_id"
   end
 
-  add_index "attached_assets", ["attachable_type", "attachable_id"], name: "index_attached_assets_on_attachable_type_and_attachable_id", using: :btree
-  add_index "attached_assets", ["direct_upload_url"], name: "index_attached_assets_on_direct_upload_url", unique: true, using: :btree
-  add_index "attached_assets", ["folder_id"], name: "index_attached_assets_on_folder_id", using: :btree
+  add_index "attached_assets", ["attachable_type", "attachable_id"], :name => "index_attached_assets_on_attachable_type_and_attachable_id"
+  add_index "attached_assets", ["direct_upload_url"], :name => "index_attached_assets_on_direct_upload_url", :unique => true
+  add_index "attached_assets", ["folder_id"], :name => "index_attached_assets_on_folder_id"
 
   create_table "attached_assets_tags", force: true do |t|
     t.integer "attached_asset_id"
     t.integer "tag_id"
   end
 
-  add_index "attached_assets_tags", ["attached_asset_id"], name: "index_attached_assets_tags_on_attached_asset_id", using: :btree
-  add_index "attached_assets_tags", ["tag_id"], name: "index_attached_assets_tags_on_tag_id", using: :btree
+  add_index "attached_assets_tags", ["attached_asset_id"], :name => "index_attached_assets_tags_on_attached_asset_id"
+  add_index "attached_assets_tags", ["tag_id"], :name => "index_attached_assets_tags_on_tag_id"
 
   create_table "brand_ambassadors_visits", force: true do |t|
     t.integer  "company_id"
@@ -185,10 +186,10 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.integer  "campaign_id"
   end
 
-  add_index "brand_ambassadors_visits", ["area_id"], name: "index_brand_ambassadors_visits_on_area_id", using: :btree
-  add_index "brand_ambassadors_visits", ["campaign_id"], name: "index_brand_ambassadors_visits_on_campaign_id", using: :btree
-  add_index "brand_ambassadors_visits", ["company_id"], name: "index_brand_ambassadors_visits_on_company_id", using: :btree
-  add_index "brand_ambassadors_visits", ["company_user_id"], name: "index_brand_ambassadors_visits_on_company_user_id", using: :btree
+  add_index "brand_ambassadors_visits", ["area_id"], :name => "index_brand_ambassadors_visits_on_area_id"
+  add_index "brand_ambassadors_visits", ["campaign_id"], :name => "index_brand_ambassadors_visits_on_campaign_id"
+  add_index "brand_ambassadors_visits", ["company_id"], :name => "index_brand_ambassadors_visits_on_company_id"
+  add_index "brand_ambassadors_visits", ["company_user_id"], :name => "index_brand_ambassadors_visits_on_company_user_id"
 
   create_table "brand_portfolios", force: true do |t|
     t.string   "name"
@@ -201,24 +202,24 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.text     "description"
   end
 
-  add_index "brand_portfolios", ["company_id"], name: "index_brand_portfolios_on_company_id", using: :btree
+  add_index "brand_portfolios", ["company_id"], :name => "index_brand_portfolios_on_company_id"
 
   create_table "brand_portfolios_brands", force: true do |t|
     t.integer "brand_id"
     t.integer "brand_portfolio_id"
   end
 
-  add_index "brand_portfolios_brands", ["brand_id", "brand_portfolio_id"], name: "brand_portfolio_unique_idx", unique: true, using: :btree
-  add_index "brand_portfolios_brands", ["brand_id"], name: "index_brand_portfolios_brands_on_brand_id", using: :btree
-  add_index "brand_portfolios_brands", ["brand_portfolio_id"], name: "index_brand_portfolios_brands_on_brand_portfolio_id", using: :btree
+  add_index "brand_portfolios_brands", ["brand_id", "brand_portfolio_id"], :name => "brand_portfolio_unique_idx", :unique => true
+  add_index "brand_portfolios_brands", ["brand_id"], :name => "index_brand_portfolios_brands_on_brand_id"
+  add_index "brand_portfolios_brands", ["brand_portfolio_id"], :name => "index_brand_portfolios_brands_on_brand_portfolio_id"
 
   create_table "brand_portfolios_campaigns", force: true do |t|
     t.integer "brand_portfolio_id"
     t.integer "campaign_id"
   end
 
-  add_index "brand_portfolios_campaigns", ["brand_portfolio_id"], name: "index_brand_portfolios_campaigns_on_brand_portfolio_id", using: :btree
-  add_index "brand_portfolios_campaigns", ["campaign_id"], name: "index_brand_portfolios_campaigns_on_campaign_id", using: :btree
+  add_index "brand_portfolios_campaigns", ["brand_portfolio_id"], :name => "index_brand_portfolios_campaigns_on_brand_portfolio_id"
+  add_index "brand_portfolios_campaigns", ["campaign_id"], :name => "index_brand_portfolios_campaigns_on_campaign_id"
 
   create_table "brands", force: true do |t|
     t.string   "name"
@@ -230,15 +231,15 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.boolean  "active",        default: true
   end
 
-  add_index "brands", ["company_id"], name: "index_brands_on_company_id", using: :btree
+  add_index "brands", ["company_id"], :name => "index_brands_on_company_id"
 
   create_table "brands_campaigns", force: true do |t|
     t.integer "brand_id"
     t.integer "campaign_id"
   end
 
-  add_index "brands_campaigns", ["brand_id"], name: "index_brands_campaigns_on_brand_id", using: :btree
-  add_index "brands_campaigns", ["campaign_id"], name: "index_brands_campaigns_on_campaign_id", using: :btree
+  add_index "brands_campaigns", ["brand_id"], :name => "index_brands_campaigns_on_brand_id"
+  add_index "brands_campaigns", ["campaign_id"], :name => "index_brands_campaigns_on_campaign_id"
 
   create_table "campaigns", force: true do |t|
     t.string   "name"
@@ -257,10 +258,10 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.date     "end_date"
     t.integer  "survey_brand_ids",            default: [],              array: true
     t.text     "modules"
-    t.string   "color",            limit: 10
+    t.string   "color",            limit: 30
   end
 
-  add_index "campaigns", ["company_id"], name: "index_campaigns_on_company_id", using: :btree
+  add_index "campaigns", ["company_id"], :name => "index_campaigns_on_company_id"
 
   create_table "campaigns_date_ranges", force: true do |t|
     t.integer "campaign_id"
@@ -277,8 +278,8 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.integer "team_id"
   end
 
-  add_index "campaigns_teams", ["campaign_id"], name: "index_campaigns_teams_on_campaign_id", using: :btree
-  add_index "campaigns_teams", ["team_id"], name: "index_campaigns_teams_on_team_id", using: :btree
+  add_index "campaigns_teams", ["campaign_id"], :name => "index_campaigns_teams_on_campaign_id"
+  add_index "campaigns_teams", ["team_id"], :name => "index_campaigns_teams_on_team_id"
 
   create_table "comments", force: true do |t|
     t.integer  "commentable_id"
@@ -290,8 +291,8 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.datetime "updated_at",       null: false
   end
 
-  add_index "comments", ["commentable_type", "commentable_id"], name: "index_comments_on_commentable_type_and_commentable_id", using: :btree
-  add_index "comments", ["created_at"], name: "index_comments_on_created_at", using: :btree
+  add_index "comments", ["commentable_type", "commentable_id"], :name => "index_comments_on_commentable_type_and_commentable_id"
+  add_index "comments", ["created_at"], :name => "index_comments_on_created_at"
 
   create_table "companies", force: true do |t|
     t.string   "name"
@@ -313,8 +314,8 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.datetime "last_activity_mobile_at"
   end
 
-  add_index "company_users", ["company_id"], name: "index_company_users_on_company_id", using: :btree
-  add_index "company_users", ["user_id"], name: "index_company_users_on_user_id", using: :btree
+  add_index "company_users", ["company_id"], :name => "index_company_users_on_company_id"
+  add_index "company_users", ["user_id"], :name => "index_company_users_on_user_id"
 
   create_table "contact_events", force: true do |t|
     t.integer  "event_id"
@@ -324,8 +325,8 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.datetime "updated_at",       null: false
   end
 
-  add_index "contact_events", ["contactable_id", "contactable_type"], name: "index_contact_events_on_contactable_id_and_contactable_type", using: :btree
-  add_index "contact_events", ["event_id"], name: "index_contact_events_on_event_id", using: :btree
+  add_index "contact_events", ["contactable_id", "contactable_type"], :name => "index_contact_events_on_contactable_id_and_contactable_type"
+  add_index "contact_events", ["event_id"], :name => "index_contact_events_on_event_id"
 
   create_table "contacts", force: true do |t|
     t.integer  "company_id"
@@ -352,8 +353,18 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.datetime "updated_at"
     t.integer  "owner_id"
     t.string   "owner_type"
-    t.string   "group"
+    t.boolean  "default_view", default: false
+    t.integer  "category_id"
   end
+
+  create_table "custom_filters_categories", force: true do |t|
+    t.string   "name"
+    t.integer  "company_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "custom_filters_categories", ["company_id"], :name => "index_custom_filters_categories_on_company_id"
 
   create_table "data_migrations", force: true do |t|
     t.integer  "remote_id"
@@ -421,7 +432,7 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.datetime "updated_at",             null: false
   end
 
-  add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
+  add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
 
   create_table "document_folders", force: true do |t|
     t.string   "name"
@@ -435,8 +446,8 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.string   "folderable_type"
   end
 
-  add_index "document_folders", ["company_id"], name: "index_document_folders_on_company_id", using: :btree
-  add_index "document_folders", ["parent_id"], name: "index_document_folders_on_parent_id", using: :btree
+  add_index "document_folders", ["company_id"], :name => "index_document_folders_on_company_id"
+  add_index "document_folders", ["parent_id"], :name => "index_document_folders_on_parent_id"
 
   create_table "event_data", force: true do |t|
     t.integer  "event_id"
@@ -455,7 +466,7 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.datetime "updated_at",                                                       null: false
   end
 
-  add_index "event_data", ["event_id"], name: "index_event_data_on_event_id", using: :btree
+  add_index "event_data", ["event_id"], :name => "index_event_data_on_event_id"
 
   create_table "event_expenses", force: true do |t|
     t.integer  "event_id"
@@ -468,8 +479,8 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.integer  "brand_id"
   end
 
-  add_index "event_expenses", ["brand_id"], name: "index_event_expenses_on_brand_id", using: :btree
-  add_index "event_expenses", ["event_id"], name: "index_event_expenses_on_event_id", using: :btree
+  add_index "event_expenses", ["brand_id"], :name => "index_event_expenses_on_brand_id"
+  add_index "event_expenses", ["event_id"], :name => "index_event_expenses_on_event_id"
 
   create_table "events", force: true do |t|
     t.integer  "campaign_id"
@@ -491,10 +502,10 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.text     "description"
   end
 
-  add_index "events", ["aasm_state"], name: "index_events_on_aasm_state", using: :btree
-  add_index "events", ["campaign_id"], name: "index_events_on_campaign_id", using: :btree
-  add_index "events", ["company_id"], name: "index_events_on_company_id", using: :btree
-  add_index "events", ["place_id"], name: "index_events_on_place_id", using: :btree
+  add_index "events", ["aasm_state"], :name => "index_events_on_aasm_state"
+  add_index "events", ["campaign_id"], :name => "index_events_on_campaign_id"
+  add_index "events", ["company_id"], :name => "index_events_on_company_id"
+  add_index "events", ["place_id"], :name => "index_events_on_place_id"
 
   create_table "filter_settings", force: true do |t|
     t.integer  "company_user_id"
@@ -504,7 +515,7 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.datetime "updated_at"
   end
 
-  add_index "filter_settings", ["company_user_id"], name: "index_filter_settings_on_company_user_id", using: :btree
+  add_index "filter_settings", ["company_user_id"], :name => "index_filter_settings_on_company_user_id"
 
   create_table "form_field_options", force: true do |t|
     t.integer  "form_field_id"
@@ -515,8 +526,8 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.string   "option_type"
   end
 
-  add_index "form_field_options", ["form_field_id", "option_type"], name: "index_form_field_options_on_form_field_id_and_option_type", using: :btree
-  add_index "form_field_options", ["form_field_id"], name: "index_form_field_options_on_form_field_id", using: :btree
+  add_index "form_field_options", ["form_field_id", "option_type"], :name => "index_form_field_options_on_form_field_id_and_option_type"
+  add_index "form_field_options", ["form_field_id"], :name => "index_form_field_options_on_form_field_id"
 
   create_table "form_field_results", force: true do |t|
     t.integer  "form_field_id"
@@ -529,10 +540,10 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.string   "resultable_type"
   end
 
-  add_index "form_field_results", ["form_field_id"], name: "index_activity_results_on_form_field_id", using: :btree
-  add_index "form_field_results", ["hash_value"], name: "index_activity_results_on_hash_value", using: :gist
-  add_index "form_field_results", ["resultable_id", "resultable_type", "form_field_id"], name: "index_ff_results_on_resultable_and_form_field_id", using: :btree
-  add_index "form_field_results", ["resultable_id", "resultable_type"], name: "index_form_field_results_on_resultable_id_and_resultable_type", using: :btree
+  add_index "form_field_results", ["form_field_id"], :name => "index_activity_results_on_form_field_id"
+  add_index "form_field_results", ["hash_value"], :name => "index_activity_results_on_hash_value"
+  add_index "form_field_results", ["resultable_id", "resultable_type", "form_field_id"], :name => "index_ff_results_on_resultable_and_form_field_id"
+  add_index "form_field_results", ["resultable_id", "resultable_type"], :name => "index_form_field_results_on_resultable_id_and_resultable_type"
 
   create_table "form_fields", force: true do |t|
     t.integer  "fieldable_id"
@@ -547,7 +558,7 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.integer  "kpi_id"
   end
 
-  add_index "form_fields", ["fieldable_id", "fieldable_type"], name: "index_form_fields_on_fieldable_id_and_fieldable_type", using: :btree
+  add_index "form_fields", ["fieldable_id", "fieldable_type"], :name => "index_form_fields_on_fieldable_id_and_fieldable_type"
 
   create_table "goals", force: true do |t|
     t.integer  "kpi_id"
@@ -565,9 +576,45 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.integer  "activity_type_id"
   end
 
-  add_index "goals", ["goalable_id", "goalable_type"], name: "index_goals_on_goalable_id_and_goalable_type", using: :btree
-  add_index "goals", ["kpi_id"], name: "index_goals_on_kpi_id", using: :btree
-  add_index "goals", ["kpis_segment_id"], name: "index_goals_on_kpis_segment_id", using: :btree
+  add_index "goals", ["goalable_id", "goalable_type"], :name => "index_goals_on_goalable_id_and_goalable_type"
+  add_index "goals", ["kpi_id"], :name => "index_goals_on_kpi_id"
+  add_index "goals", ["kpis_segment_id"], :name => "index_goals_on_kpis_segment_id"
+
+  create_table "invite_rsvps", force: true do |t|
+    t.integer  "invite_id"
+    t.integer  "registrant_id"
+    t.date     "date_added"
+    t.string   "email"
+    t.string   "mobile_phone"
+    t.boolean  "mobile_signup"
+    t.string   "first_name"
+    t.string   "last_name"
+    t.string   "attended_previous_bartender_ball"
+    t.boolean  "opt_in_to_future_communication"
+    t.integer  "primary_registrant_id"
+    t.string   "bartender_how_long"
+    t.string   "bartender_role"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "invite_rsvps", ["invite_id"], :name => "index_invite_rsvps_on_invite_id"
+
+  create_table "invites", force: true do |t|
+    t.integer  "event_id"
+    t.integer  "venue_id"
+    t.string   "market"
+    t.integer  "invitees",    default: 0
+    t.integer  "rsvps_count", default: 0
+    t.integer  "attendees",   default: 0
+    t.date     "final_date"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "active",      default: true
+  end
+
+  add_index "invites", ["event_id"], :name => "index_invites_on_event_id"
+  add_index "invites", ["venue_id"], :name => "index_invites_on_venue_id"
 
   create_table "kpi_reports", force: true do |t|
     t.integer  "company_user_id"
@@ -604,7 +651,7 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.integer  "ordering"
   end
 
-  add_index "kpis_segments", ["kpi_id"], name: "index_kpis_segments_on_kpi_id", using: :btree
+  add_index "kpis_segments", ["kpi_id"], :name => "index_kpis_segments_on_kpi_id"
 
   create_table "list_exports", force: true do |t|
     t.text     "params"
@@ -622,13 +669,13 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.text     "url_options"
   end
 
-  add_index "list_exports", ["company_user_id"], name: "index_list_exports_on_user_id", using: :btree
+  add_index "list_exports", ["company_user_id"], :name => "index_list_exports_on_user_id"
 
   create_table "locations", force: true do |t|
     t.string "path", limit: 500
   end
 
-  add_index "locations", ["path"], name: "index_locations_on_path", unique: true, using: :btree
+  add_index "locations", ["path"], :name => "index_locations_on_path", :unique => true
 
   create_table "locations_places", force: true do |t|
     t.integer "location_id"
@@ -642,7 +689,7 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.datetime "updated_at", null: false
   end
 
-  add_index "marques", ["brand_id"], name: "index_marques_on_brand_id", using: :btree
+  add_index "marques", ["brand_id"], :name => "index_marques_on_brand_id"
 
   create_table "memberships", force: true do |t|
     t.integer  "company_user_id"
@@ -654,9 +701,20 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.string   "parent_type"
   end
 
-  add_index "memberships", ["company_user_id"], name: "index_memberships_on_company_user_id", using: :btree
-  add_index "memberships", ["memberable_id", "memberable_type"], name: "index_memberships_on_memberable_id_and_memberable_type", using: :btree
-  add_index "memberships", ["parent_id", "parent_type"], name: "index_memberships_on_parent_id_and_parent_type", using: :btree
+  add_index "memberships", ["company_user_id"], :name => "index_memberships_on_company_user_id"
+  add_index "memberships", ["memberable_id", "memberable_type"], :name => "index_memberships_on_memberable_id_and_memberable_type"
+  add_index "memberships", ["parent_id", "parent_type"], :name => "index_memberships_on_parent_id_and_parent_type"
+
+  create_table "neighborhoods", primary_key: "gid", force: true do |t|
+    t.string  "state",    limit: 2
+    t.string  "county",   limit: 43
+    t.string  "city",     limit: 64
+    t.string  "name",     limit: 64
+    t.decimal "regionid"
+    t.spatial "geog",     limit: {:srid=>4326, :type=>"multi_polygon", :geographic=>true}
+  end
+
+  add_index "neighborhoods", ["geog"], :name => "neighborhoods_geog_idx", :spatial => true
 
   create_table "notifications", force: true do |t|
     t.integer  "company_user_id"
@@ -671,15 +729,16 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.hstore   "params"
   end
 
-  add_index "notifications", ["company_user_id"], name: "index_notifications_on_company_user_id", using: :btree
-  add_index "notifications", ["message"], name: "index_notifications_on_message", using: :btree
-  add_index "notifications", ["params"], name: "index_notifications_on_params", using: :gist
+  add_index "notifications", ["company_user_id"], :name => "index_notifications_on_company_user_id"
+  add_index "notifications", ["message"], :name => "index_notifications_on_message"
+  add_index "notifications", ["params"], :name => "index_notifications_on_params"
 
   create_table "permissions", force: true do |t|
     t.integer "role_id"
     t.string  "action"
     t.string  "subject_class"
     t.string  "subject_id"
+    t.string  "mode",          default: "none"
   end
 
   create_table "placeables", force: true do |t|
@@ -688,8 +747,8 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.string  "placeable_type"
   end
 
-  add_index "placeables", ["place_id"], name: "index_placeables_on_place_id", using: :btree
-  add_index "placeables", ["placeable_id", "placeable_type"], name: "index_placeables_on_placeable_id_and_placeable_type", using: :btree
+  add_index "placeables", ["place_id"], :name => "index_placeables_on_place_id"
+  add_index "placeables", ["placeable_id", "placeable_type"], :name => "index_placeables_on_placeable_id_and_placeable_type"
 
   create_table "places", force: true do |t|
     t.string   "name"
@@ -697,29 +756,31 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.string   "place_id",               limit: 100
     t.string   "types"
     t.string   "formatted_address"
-    t.float    "latitude"
-    t.float    "longitude"
     t.string   "street_number"
     t.string   "route"
     t.string   "zipcode"
     t.string   "city"
     t.string   "state"
     t.string   "country"
-    t.datetime "created_at",                         null: false
-    t.datetime "updated_at",                         null: false
+    t.datetime "created_at",                                                                      null: false
+    t.datetime "updated_at",                                                                      null: false
     t.string   "administrative_level_1"
     t.string   "administrative_level_2"
     t.string   "td_linx_code"
-    t.string   "neighborhood"
     t.integer  "location_id"
     t.boolean  "is_location"
+    t.integer  "price_level"
+    t.string   "phone_number"
+    t.string   "neighborhoods",                                                                                array: true
+    t.spatial  "lonlat",                 limit: {:srid=>4326, :type=>"point", :geographic=>true}
+    t.integer  "td_linx_confidence"
   end
 
-  add_index "places", ["city"], name: "index_places_on_city", using: :btree
-  add_index "places", ["country"], name: "index_places_on_country", using: :btree
-  add_index "places", ["name"], name: "index_places_on_name", using: :btree
-  add_index "places", ["reference"], name: "index_places_on_reference", using: :btree
-  add_index "places", ["state"], name: "index_places_on_state", using: :btree
+  add_index "places", ["city"], :name => "index_places_on_city"
+  add_index "places", ["country"], :name => "index_places_on_country"
+  add_index "places", ["name"], :name => "index_places_on_name"
+  add_index "places", ["reference"], :name => "index_places_on_reference"
+  add_index "places", ["state"], :name => "index_places_on_state"
 
   create_table "read_marks", force: true do |t|
     t.integer  "readable_id"
@@ -728,7 +789,7 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.datetime "timestamp"
   end
 
-  add_index "read_marks", ["user_id", "readable_type", "readable_id"], name: "index_read_marks_on_user_id_and_readable_type_and_readable_id", using: :btree
+  add_index "read_marks", ["user_id", "readable_type", "readable_id"], :name => "index_read_marks_on_user_id_and_readable_type_and_readable_id"
 
   create_table "report_sharings", force: true do |t|
     t.integer "report_id"
@@ -736,7 +797,7 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.string  "shared_with_type"
   end
 
-  add_index "report_sharings", ["shared_with_id", "shared_with_type"], name: "index_report_sharings_on_shared_with_id_and_shared_with_type", using: :btree
+  add_index "report_sharings", ["shared_with_id", "shared_with_type"], :name => "index_report_sharings_on_shared_with_id_and_shared_with_type"
 
   create_table "reports", force: true do |t|
     t.integer "company_id"
@@ -771,7 +832,7 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.datetime "updated_at",      null: false
   end
 
-  add_index "satisfaction_surveys", ["company_user_id"], name: "index_satisfaction_surveys_on_company_user_id", using: :btree
+  add_index "satisfaction_surveys", ["company_user_id"], :name => "index_satisfaction_surveys_on_company_user_id"
 
   create_table "sessions", force: true do |t|
     t.string   "session_id", null: false
@@ -780,8 +841,8 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.datetime "updated_at", null: false
   end
 
-  add_index "sessions", ["session_id"], name: "index_sessions_on_session_id", using: :btree
-  add_index "sessions", ["updated_at"], name: "index_sessions_on_updated_at", using: :btree
+  add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
+  add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
 
   create_table "surveys", force: true do |t|
     t.integer  "event_id"
@@ -792,7 +853,7 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.datetime "updated_at",                   null: false
   end
 
-  add_index "surveys", ["event_id"], name: "index_surveys_on_event_id", using: :btree
+  add_index "surveys", ["event_id"], :name => "index_surveys_on_event_id"
 
   create_table "surveys_answers", force: true do |t|
     t.integer  "survey_id"
@@ -826,8 +887,8 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.integer  "company_user_id"
   end
 
-  add_index "tasks", ["company_user_id"], name: "index_tasks_on_company_user_id", using: :btree
-  add_index "tasks", ["event_id"], name: "index_tasks_on_event_id", using: :btree
+  add_index "tasks", ["company_user_id"], :name => "index_tasks_on_company_user_id"
+  add_index "tasks", ["event_id"], :name => "index_tasks_on_event_id"
 
   create_table "teamings", force: true do |t|
     t.integer "team_id"
@@ -835,9 +896,9 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.string  "teamable_type"
   end
 
-  add_index "teamings", ["team_id", "teamable_id", "teamable_type"], name: "index_teamings_on_team_id_and_teamable_id_and_teamable_type", unique: true, using: :btree
-  add_index "teamings", ["team_id"], name: "index_teamings_on_team_id", using: :btree
-  add_index "teamings", ["teamable_id", "teamable_type"], name: "index_teamings_on_teamable_id_and_teamable_type", using: :btree
+  add_index "teamings", ["team_id", "teamable_id", "teamable_type"], :name => "index_teamings_on_team_id_and_teamable_id_and_teamable_type", :unique => true
+  add_index "teamings", ["team_id"], :name => "index_teamings_on_team_id"
+  add_index "teamings", ["teamable_id", "teamable_type"], :name => "index_teamings_on_teamable_id_and_teamable_type"
 
   create_table "teams", force: true do |t|
     t.string   "name"
@@ -850,7 +911,7 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.integer  "company_id"
   end
 
-  add_index "teams", ["company_id"], name: "index_teams_on_company_id", using: :btree
+  add_index "teams", ["company_id"], :name => "index_teams_on_company_id"
 
   create_table "users", force: true do |t|
     t.string   "first_name"
@@ -899,10 +960,10 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.string   "phone_number_verification"
   end
 
-  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
-  add_index "users", ["invitation_token"], name: "index_users_on_invitation_token", unique: true, using: :btree
-  add_index "users", ["invited_by_id"], name: "index_users_on_invited_by_id", using: :btree
-  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
+  add_index "users", ["email"], :name => "index_users_on_email", :unique => true
+  add_index "users", ["invitation_token"], :name => "index_users_on_invitation_token", :unique => true
+  add_index "users", ["invited_by_id"], :name => "index_users_on_invited_by_id"
+  add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
 
   create_table "venues", force: true do |t|
     t.integer  "company_id"
@@ -922,10 +983,12 @@ ActiveRecord::Schema.define(version: 20141203165819) do
     t.integer  "score_impressions"
     t.integer  "score_cost"
     t.boolean  "score_dirty",                                   default: false
+    t.boolean  "jameson_locals",                                default: false
+    t.boolean  "top_venue",                                     default: false
   end
 
-  add_index "venues", ["company_id", "place_id"], name: "index_venues_on_company_id_and_place_id", unique: true, using: :btree
-  add_index "venues", ["company_id"], name: "index_venues_on_company_id", using: :btree
-  add_index "venues", ["place_id"], name: "index_venues_on_place_id", using: :btree
+  add_index "venues", ["company_id", "place_id"], :name => "index_venues_on_company_id_and_place_id", :unique => true
+  add_index "venues", ["company_id"], :name => "index_venues_on_company_id"
+  add_index "venues", ["place_id"], :name => "index_venues_on_place_id"
 
 end

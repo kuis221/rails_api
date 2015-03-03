@@ -8,8 +8,6 @@
 #  place_id               :string(100)
 #  types                  :string(255)
 #  formatted_address      :string(255)
-#  latitude               :float
-#  longitude              :float
 #  street_number          :string(255)
 #  route                  :string(255)
 #  zipcode                :string(255)
@@ -21,9 +19,12 @@
 #  administrative_level_1 :string(255)
 #  administrative_level_2 :string(255)
 #  td_linx_code           :string(255)
-#  neighborhood           :string(255)
 #  location_id            :integer
 #  is_location            :boolean
+#  neighborhoods          :string(255)      is an Array
+#  price_level            :integer
+#  phone_number           :string(255)
+#  lonlat                 :spatial          point, 4326
 #
 
 require 'base64'
@@ -44,6 +45,12 @@ class Place < ActiveRecord::Base
   has_and_belongs_to_many :locations, autosave: true
   belongs_to :location, autosave: true
 
+  # By default, use the GEOS implementation for spatial columns.
+  self.rgeo_factory_generator = RGeo::Geos.factory_generator
+
+  # But use a geographic implementation for the :lonlat column.
+  set_rgeo_factory_for_column(:lonlat, RGeo::Geographic.spherical_factory(:srid => 4326))
+
   with_options through: :placeables, source: :placeable do |place|
     place.has_many :areas, source_type: 'Area'
     place.has_many :campaigns, source_type: 'Campaign'
@@ -53,6 +60,9 @@ class Place < ActiveRecord::Base
 
   attr_accessor :do_not_connect_to_api
   attr_accessor :is_custom_place
+
+  before_create :set_lat_lng
+
   before_create :fetch_place_data
 
   after_save :clear_cache
@@ -72,6 +82,16 @@ class Place < ActiveRecord::Base
              '(placeables.placeable_type=\'Area\' AND placeables.placeable_id  in ('\
              ' select area_id FROM areas_campaigns where campaign_id=:campaign_id'\
              '))', campaign_id: campaign)
+  end
+
+  def self.in_areas(areas)
+    subquery = Place.select('DISTINCT places.location_id')
+               .joins(:placeables).where(placeables: { placeable_type: 'Area', placeable_id: areas }, is_location: true)
+    place_query = "select place_id FROM locations_places INNER JOIN (#{subquery.to_sql})"\
+                  ' locations on locations.location_id=locations_places.location_id'
+    area_query = Placeable.select('place_id')
+                 .where(placeable_type: 'Area', placeable_id: areas).to_sql
+    joins("INNER JOIN (#{area_query} UNION #{place_query}) areas_places ON places.id=areas_places.place_id")
   end
 
   def street
@@ -126,6 +146,29 @@ class Place < ActiveRecord::Base
     types.include?('locality')
   end
 
+  def latitude
+    lonlat.lat if lonlat.present?
+  end
+
+  def longitude
+    lonlat.lon if lonlat.present?
+  end
+
+  # Try to find the latitude and logitude based on a physicical address and returns
+  # true if found or false if not
+  def set_lat_lng
+    return if do_not_connect_to_api
+    return if latitude.present? && longitude.present?
+    address_txt = URI.encode([street_number, route, city,
+                              state.to_s + ' ' + zipcode.to_s, country].compact.join(', '))
+
+    data = JSON.parse(open("http://maps.googleapis.com/maps/api/geocode/json?address=#{address_txt}&sensor=true").read)
+    return unless data['results'].count > 0
+    result = data['results'].find { |r| r['geometry'].present? && r['geometry']['location'].present? }
+    return unless result
+    self.lonlat = "POINT(#{result['geometry']['location']['lng']} #{result['geometry']['location']['lat']})"
+  end
+
   # First try to find comments in the app from events, then if there no enough comments in the app,
   # search for reviews from Google Places API
   def reviews(company_id)
@@ -137,8 +180,20 @@ class Place < ActiveRecord::Base
     list_reviews.slice(0, 5)
   end
 
-  def price_level
-    spot.price_level.to_i rescue 0
+  def price_level(fetch_from_google: false)
+    fetch_price_level if self[:price_level].nil? && fetch_from_google
+    self[:price_level].present? && self[:price_level] >= 0 ? self[:price_level] : nil
+  end
+
+  def fetch_price_level
+    self[:price_level] =
+      if spot.present? && spot.price_level.present?
+        p "spot.price_level ==> #{spot.price_level}"
+        spot.price_level.to_i
+      else
+        -1
+      end
+    save
   end
 
   def formatted_phone_number
@@ -189,6 +244,33 @@ class Place < ActiveRecord::Base
     end
   end
 
+  def td_linx_match
+    Place.td_linx_match(id, state_code)
+  end
+
+  # Merge the record with the given place
+  def merge(place)
+    fail "Cannot merge place with itself" if id == place.id
+    self.class.connection.transaction do
+      Venue.where(place_id: place.id).each do |venue|
+        real_venue = Venue.find_or_create_by(place_id: id, company_id: venue.company_id)
+        venue.activities.update_all(activitable_id: real_venue.id)
+        venue.invites.update_all(venue_id: real_venue.id)
+        venue.destroy
+      end
+
+      Event.where(place_id: place.id).each do |event|
+        event.update_attribute(:place_id, id) or fail('cannot update event')
+      end
+
+      Placeable.where(place_id: place.id).update_all(place_id: place.id)
+
+      place.td_linx_code ||= place.td_linx_code
+
+      place.destroy
+    end
+  end
+
   class << self
     def load_by_place_id(place_id, reference)
       Place.find_or_initialize_by(place_id: place_id) do |p|
@@ -199,7 +281,7 @@ class Place < ActiveRecord::Base
 
     def political_division(place)
       return if place.nil?
-      neighborhood = place.neighborhood
+      neighborhood = place.neighborhoods.first if place.neighborhoods.present?
       neighborhood ||= place.name if place.types.is_a?(Array) && place.types.include?('sublocality') && place.name != place.city
       [place.continent_name, place.country_name, place.state_name, place.city, neighborhood].compact if place.present?
     end
@@ -216,9 +298,12 @@ class Place < ActiveRecord::Base
         td_linx_code:  { title: 'TD Linx Code' }
       }
     end
-  end
 
-  class << self
+    def state_name(country, state)
+      return unless country && state
+      Country.new(country).states[state.upcase]['name'] rescue nil
+    end
+
     # Combine search results from Google API and Existing places
     def combined_search(params)
       local_results = Venue.do_search(combined_search_params(params)).results
@@ -250,7 +335,7 @@ class Place < ActiveRecord::Base
             {
               value: label,
               label: label,
-              id: "#{p['reference']}||#{p['id']}",
+              id: "#{p['reference']}||#{p['place_id']}",
               valid: valid_flag.call(p)
             }
           end.sort! { |x, y| sort_index[x[:valid]] <=> sort_index[y[:valid]] }.slice!(0, 5 - results.count))
@@ -281,10 +366,16 @@ class Place < ActiveRecord::Base
                    sorting_dir: 'desc'
     end
 
-    def find_tdlinx_place(binds)
+    def find_place(binds)
       connection.select_value(
-        sanitize_sql_array(['select find_tdlinx_place(:name, :street, :city, :state, :zipcode)', binds])
+        sanitize_sql_array(['select find_place(:name, :street, :city, :state, :zipcode)', binds])
       ).try(:to_i)
+    end
+
+    def td_linx_match(id, state_code)
+      connection.select_one(
+        sanitize_sql_array(['select * from incremental_place_match(:id, :state)', id: id, state: state_code])
+      )
     end
 
     def build_from_autocoplete_result(result)
@@ -309,8 +400,7 @@ class Place < ActiveRecord::Base
   def fetch_place_data
     if reference && !do_not_connect_to_api
       self.name = spot.name
-      self.latitude = spot.lat
-      self.longitude = spot.lng
+      self.lonlat = "POINT(#{spot.lng} #{spot.lat})"
       self.formatted_address = spot.formatted_address
       self.types = spot.types
       self.types ||= []
@@ -334,54 +424,22 @@ class Place < ActiveRecord::Base
             self.street_number = component['long_name']
           elsif component['types'].include?('route')
             self.route = component['long_name']
-          elsif component['types'].include?('sublocality') || component['types'].include?('neighborhood')
-            self.neighborhood = component['long_name']
+          elsif component['types'].include?('neighborhood')
+            self.neighborhoods = [component['long_name']]
           end
         end
       end
+
+      return if types.include?('country')
 
       # Sometimes the API doesn't provide the state's long_name
       if country == 'US' && state =~ /^[A-Z]{1,2}$/
         self.state = load_country.states[administrative_level_1]['name'] rescue state if load_country
       end
 
-      # Make sure the city returned by Google is the correct one
-      if city.present?
-        results = client.spots(latitude, longitude, types: 'political', name: city, radius: 50_000)
-        if results.any?
-          results.each do |result|
-            city_spot = client.spot(result.reference)
-            if city_spot.city == city_spot.name || city_spot.name == city
-              self.city = city_spot.city if city_spot.present? && city_spot.city.present?
-              break
-            end
-          end
-        end
-      end
+      return if types.include?('administrative_area_level_1')
 
-      sublocality = neighborhood
-      sublocality ||= route if self.types && self.types.include?('establishment')
-      sublocality ||= zipcode if self.types && self.types.include?('establishment')
-
-      # There are cases where the API doesn't give a city but a neighborhood (sublocality)
-      if !city && !self.types.include?('administrative_area_level_2') && sublocality
-        spots = client.spots(latitude, longitude, keywords: sublocality)
-        spots.each do |aspot|
-          s = client.spot(aspot.reference)
-          if s.address_components.present?
-            city = s.address_components.find { |c| c['types'].include?('locality') }.try(:[], 'long_name')
-            if city.present?
-              self.city = city
-              break
-            end
-          end
-        end
-
-        # If still there is no city... :s then assign it's own name as the city
-        # Example of places with this issue:
-        # West Lake, TX: client.spot('CnRoAAAATClnCR7qKsJeD5nYegW8j9BLrDI2OsM-89wiA-NO-acvlYhSYXcef09z4Dns2p92zVfCCYJPET33QkrkzKeBt9y_fVOF-UfckvjwADE-rGsj4FIBJ4-s7O88LC0Y4yOz5e8vwYy5RjmMjx-dhG0IQxIQ3RfSNWKpoqim4qMLhdGhUhoUkH8hTzQ8E7Wgv6afi0RQmYzBP2Y')
-        self.city = name unless self.city
-      end
+      find_city
 
       self.city.strip! unless self.city.nil?
       state.strip! unless state.nil?
@@ -389,6 +447,48 @@ class Place < ActiveRecord::Base
 
       update_locations
       self
+    end
+  end
+
+  def find_city
+    # Make sure the city returned by Google is the correct one
+    validate_city_from_api
+
+    sublocality = neighborhoods.join(' ') if neighborhoods.present?
+    sublocality ||= route if self.types && self.types.include?('establishment')
+    sublocality ||= zipcode if self.types && self.types.include?('establishment')
+
+    # There are cases where the API doesn't give a city but a neighborhood (sublocality)
+    return if city || self.types.include?('administrative_area_level_2') || sublocality.blank?
+
+    spots = client.spots(latitude, longitude, keywords: sublocality)
+    spots.each do |aspot|
+      s = client.spot(aspot.reference)
+      next unless s.address_components.present?
+      city = s.address_components.find { |c| c['types'].include?('locality') }.try(:[], 'long_name')
+      if city.present?
+        self.city = city
+        break
+      end
+    end
+
+    # If still there is no city... :s then assign it's own name as the city
+    # Example of places with this issue:
+    # West Lake, TX: client.spot('CnRoAAAATClnCR7qKsJeD5nYegW8j9BLrDI2OsM-89wiA-NO-acvlYhSYXcef09z4Dns2p92zVfCCYJPET33QkrkzKeBt9y_fVOF-UfckvjwADE-rGsj4FIBJ4-s7O88LC0Y4yOz5e8vwYy5RjmMjx-dhG0IQxIQ3RfSNWKpoqim4qMLhdGhUhoUkH8hTzQ8E7Wgv6afi0RQmYzBP2Y')
+    self.city ||= name if (%w(political natural_feature) & types).any?
+  end
+
+  def validate_city_from_api
+    return unless city.present?
+    results = client.spots(latitude, longitude, types: 'political', name: city, radius: 50_000)
+    return if results.empty?
+
+    results.each do |result|
+      city_spot = client.spot(result.reference)
+      if city_spot.city == city_spot.name || city_spot.name == city
+        self.city = city_spot.city if city_spot.present? && city_spot.city.present?
+        break
+      end
     end
   end
 

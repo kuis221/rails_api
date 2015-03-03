@@ -47,11 +47,26 @@
 	b {
 		margin-top: 10px;
 		display: block;
-		color: $grey_one;
+		color: $gray-lighter;
 		font-weight: normal;
 		&:first-child {
 			margin-top: 0px;
 		}
 	}
 	width: 156px;
+}
+
+@mixin icon-circle-background($size, $icon-size, $icon-top: (($size - $icon-size) / 2), $icon-left: 1px) {
+	background-color: $gray-light;
+	display: inline-block;
+	height: $size;
+	@include border-radius($size/2);
+	text-align: center;
+	width: $size;
+	&:before { /*probably will need adjustments for another icons inside*/
+		color: #fff;
+		font-size: $icon-size;
+		top: $icon-top;
+		left: $icon-left;
+	}
 }

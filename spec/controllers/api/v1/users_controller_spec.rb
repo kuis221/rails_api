@@ -177,12 +177,12 @@ describe Api::V1::UsersController, type: :controller do
     it 'should return list of companies associated to the current logged in user' do
       company = user.company_users.first.company
       company2 = create(:company)
-      create(:company_user, company: company2, user: user, role: create(:role, company: company2))
+      cu2 = create(:company_user, company: company2, user: user, role: create(:role, company: company2))
       get 'companies', auth_token: user.authentication_token, format: :json
       companies = JSON.parse(response.body)
       expect(companies).to match_array([
-        { 'name' => company.name,  'id' => company.id },
-        { 'name' => company2.name, 'id' => company2.id }
+        { 'name' => company.name,  'id' => company.id, 'company_user_id' => user.company_users.first.id  },
+        { 'name' => company2.name, 'id' => company2.id, 'company_user_id' => cu2.id }
       ])
       expect(response).to be_success
     end
@@ -240,8 +240,8 @@ describe Api::V1::UsersController, type: :controller do
       end
 
       it "should return only the permissions given to the user's role" do
-        role.permissions.create(action: :create, subject_class: 'Event')
-        role.permissions.create(action: :view_list, subject_class: 'Event')
+        role.permissions.create(action: :create, subject_class: 'Event', mode: 'campaigns')
+        role.permissions.create(action: :view_list, subject_class: 'Event', mode: 'campaigns')
 
         get 'permissions', format: :json
 

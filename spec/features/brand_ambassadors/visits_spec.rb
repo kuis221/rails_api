@@ -214,7 +214,7 @@ feature 'Brand Ambassadors Visits' do
 
         add_filter 'CAMPAIGNS', 'My Campaign'
 
-        expect(page).to have_content('2 visits found for: today to the future My Campaign')
+        expect(page).to have_content('2 visits found for: Today To The Future My Campaign')
 
         within '#visits-list' do
           expect(page).to have_content('My Campaign')
@@ -227,7 +227,7 @@ feature 'Brand Ambassadors Visits' do
         remove_filter 'My Campaign'
         add_filter 'BRAND AMBASSADORS', 'Test User'
 
-        expect(page).to have_content('1 visit found for: today to the future Test User')
+        expect(page).to have_content('1 visit found for: Today To The Future Test User')
 
         within '#visits-list' do
           expect(page).to have_content('Brand Program')
@@ -241,7 +241,7 @@ feature 'Brand Ambassadors Visits' do
           expect(page).to have_content('Market Visit')
         end
 
-        expect(page).to have_content('2 visits found for: today to the future Roberto Gomez Test User')
+        expect(page).to have_content('2 visits found for: Today To The Future Roberto Gomez Test User')
 
         add_filter 'AREAS', 'California'
 
@@ -250,7 +250,7 @@ feature 'Brand Ambassadors Visits' do
           expect(page).to have_no_content('Market Visit')
         end
 
-        expect(page).to have_content('1 visit found for: today to the future California Roberto Gomez Test User')
+        expect(page).to have_content('1 visit found for: Today To The Future California Roberto Gomez Test User')
 
         add_filter 'AREAS', 'Texas'
 
@@ -259,7 +259,7 @@ feature 'Brand Ambassadors Visits' do
           expect(page).to have_content('Market Visit')
         end
 
-        expect(page).to have_content('2 visits found for: today to the future California Texas Roberto Gomez Test User')
+        expect(page).to have_content('2 visits found for: Today To The Future California Texas Roberto Gomez Test User')
 
         remove_filter 'California'
         remove_filter 'Texas'
@@ -270,7 +270,7 @@ feature 'Brand Ambassadors Visits' do
           expect(page).to have_no_content('Market Visit')
         end
 
-        expect(page).to have_content('1 visit found for: today to the future Los Angeles Roberto Gomez Test User')
+        expect(page).to have_content('1 visit found for: Today To The Future Los Angeles Roberto Gomez Test User')
 
         filter_section('CITIES').unicheck('Austin')
 
@@ -279,7 +279,7 @@ feature 'Brand Ambassadors Visits' do
           expect(page).to have_content('Market Visit')
         end
 
-        expect(page).to have_content('2 visits found for: today to the future Austin Los Angeles Roberto Gomez Test User')
+        expect(page).to have_content('2 visits found for: Today To The Future Austin Los Angeles Roberto Gomez Test User')
 
         select_filter_calendar_day('18')
         within '#visits-list' do
@@ -287,7 +287,7 @@ feature 'Brand Ambassadors Visits' do
           expect(page).to have_no_content('Market Visit')
         end
 
-        expect(page).to have_content('1 visit found for: today Austin Los Angeles Roberto Gomez Test User')
+        expect(page).to have_content('1 visit found for: Today Austin Los Angeles Roberto Gomez Test User')
 
         select_filter_calendar_day('18', '19')
         within '#visits-list' do
@@ -295,7 +295,7 @@ feature 'Brand Ambassadors Visits' do
           expect(page).to have_content('Market Visit')
         end
 
-        expect(page).to have_content('2 visits found for: today - tomorrow Austin Los Angeles Roberto Gomez Test User')
+        expect(page).to have_content('2 visits found for: Today - Tomorrow Austin Los Angeles Roberto Gomez Test User')
       end
     end
   end
@@ -391,6 +391,7 @@ feature 'Brand Ambassadors Visits' do
 
   shared_examples_for 'a user that can create visits' do
     before { campaign.save  }
+
     scenario 'allows the user to create a new visit' do
       area.places << create(:city, name: 'My City')
       visit brand_ambassadors_root_path
@@ -620,7 +621,114 @@ feature 'Brand Ambassadors Visits' do
       end
     end
 
-    scenario 'allows to create a new event' do
+    scenario 'should be able to export as xls' do
+      cities = [
+        create(:city, name: 'San Francisco', state: 'CA'),
+        create(:city, name: 'New York', state: 'NY')
+      ]
+      company_user.places << cities
+      campaign.places << cities
+
+      event1 = create(:event, start_date: '02/01/2014', end_date: '02/01/2014',
+                              start_time: '10:00am', end_time: '11:00am',
+                              campaign: campaign,
+                              users: [company_user],
+                              place: create(:place, name: 'My Place 1', city: 'New York', state: 'NY'))
+
+      event2 = create(:event, start_date: '02/01/2014', end_date: '02/01/2014',
+                              start_time: '09:00am', end_time: '11:00am',
+                              campaign: campaign,
+                              place: create(:place, name: 'My Place 2', city: 'San Francisco', state: 'CA'))
+
+      event3 = create(:event, start_date: '02/01/2014', end_date: '02/01/2014',
+                              start_time: '09:00am', end_time: '11:00am',
+                              campaign: campaign,
+                              users: [company_user],
+                              place: create(:place, name: 'My Place 3', city: 'New York', state: 'NY'))
+      Sunspot.commit
+
+      visit brand_ambassadors_visit_path(ba_visit)
+
+      click_js_link 'Download'
+      click_js_link 'Download as XLS'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        expect(ListExportWorker).to have_queued(ListExport.last.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+      expect(ListExport.last).to have_rows([
+        ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'DURATION', 'VENUE NAME', 'ADDRESS', 'CITY',
+         'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', "URL"],
+        ['ABSOLUT Vodka', nil, "2014-02-01T09:00","2014-02-01T11:00", '2.0', 'My Place 3',
+         'My Place 3, 11 Main St., New York, NY, 12345', 'New York', 'NY', '12345', 'Active', 'Unsent',
+         "Test User", "http://localhost:5100/events/#{event3.id}"],
+        ['ABSOLUT Vodka', nil, "2014-02-01T10:00","2014-02-01T11:00", '1.0', 'My Place 1',
+         'My Place 1, 11 Main St., New York, NY, 12345', 'New York', 'NY', '12345', 'Active', 'Unsent',
+         "Test User", "http://localhost:5100/events/#{event1.id}"]
+      ])
+    end
+
+    scenario 'should be able to export as PDF' do
+      cities = [
+        create(:city, name: 'San Francisco', state: 'CA'),
+        create(:city, name: 'New York', state: 'NY')
+      ]
+      company_user.places << cities
+      campaign.places << cities
+
+      event1 = create(:event, start_date: '02/01/2014', end_date: '02/01/2014',
+                              start_time: '10:00am', end_time: '11:00am',
+                              campaign: campaign,
+                              users: [company_user],
+                              place: create(:place, name: 'My Place 1', city: 'New York', state: 'NY'))
+
+      event2 = create(:event, start_date: '02/01/2014', end_date: '02/01/2014',
+                              start_time: '09:00am', end_time: '11:00am',
+                              campaign: campaign,
+                              place: create(:place, name: 'My Place 2', city: 'San Francisco', state: 'CA'))
+
+      event3 = create(:event, start_date: '02/01/2014', end_date: '02/01/2014',
+                              start_time: '09:00am', end_time: '11:00am',
+                              campaign: campaign,
+                              users: [company_user],
+                              place: create(:place, name: 'My Place 3', city: 'New York', state: 'NY'))
+      Sunspot.commit
+
+      visit brand_ambassadors_visit_path(ba_visit)
+
+      click_js_link 'Download'
+      click_js_link 'Download as PDF'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        export = ListExport.last
+        expect(ListExportWorker).to have_queued(export.id)
+        ResqueSpec.perform_all(:export)
+      end
+      ensure_modal_was_closed
+
+      export = ListExport.last
+      # Test the generated PDF...
+      reader = PDF::Reader.new(open(export.file.url))
+      reader.pages.each do |page|
+        # PDF to text seems to not always return the same results
+        # with white spaces, so, remove them and look for strings
+        # without whitespaces
+        text = page.text.gsub(/[\s\n]/, '')
+        expect(text).to include '2eventsfoundfor:'
+        expect(text).to include 'ABSOLUTVodka'
+        expect(text).to include 'NewYork,NY,12345'
+        expect(text).to include '10:00AM-11:00AM'
+        expect(text).to include '9:00AM-11:00AM'
+        expect(text).to include 'MyPlace3'
+        expect(text).to include 'MyPlace1'
+      end
+    end
+
+
+    scenario 'can create a new event' do
       today = Time.zone.local(Time.now.strftime('%Y'), Time.now.strftime('%m'), 18, 12, 00)
       expect(Place).to receive(:open).and_return(double(read: '{}')) # So we don't search in google places
 
@@ -721,7 +829,7 @@ feature 'Brand Ambassadors Visits' do
         [
           [:list, 'BrandAmbassadors::Visit'], [:deactivate, 'BrandAmbassadors::Visit'],
           [:show, 'BrandAmbassadors::Visit'], [:update, 'BrandAmbassadors::Visit'],
-          [:create, 'Event'], [:show, 'Event']]
+          [:create, 'Event'], [:show, 'Event'], [:view_list, 'Event']]
       end
       before { company_user.places << place }
       before { campaign.places << place }

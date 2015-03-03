@@ -488,6 +488,55 @@ describe Event, type: :model do
     end
   end
 
+  describe '#in_areas' do
+    let(:company) { create(:company) }
+    let(:campaign) { create(:campaign, company: company) }
+
+    it 'should include only events within the given areas' do
+      event_la = create(:event, campaign: campaign,
+                                place: create(:place, country: 'US',
+                                                      state: 'California', city: 'Los Angeles'))
+
+      event_sf = create(:event, campaign: campaign,
+                                place: create(:place, country: 'US',
+                                                      state: 'California', city: 'San Francisco'))
+
+      area_la = create(:area, company: company)
+      area_sf = create(:area, company: company)
+
+      campaign.areas << [area_la, area_sf]
+
+      area_la.places << create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
+      area_sf.places << create(:place, country: 'US', state: 'California', city: 'San Francisco', types: ['locality'])
+
+      expect(Event.in_areas([area_la])).to match_array [event_la]
+      expect(Event.in_areas([area_sf])).to match_array [event_sf]
+      expect(Event.in_areas([area_la, area_sf])).to match_array [event_la, event_sf]
+    end
+
+    it 'should include events that are scheduled on places that are part of the areas' do
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      event_la = create(:event, campaign: campaign, place: place_la)
+
+      place_sf = create(:place, country: 'US', state: 'California', city: 'San Francisco')
+      event_sf = create(:event, campaign: campaign, place: place_sf)
+
+      area_la = create(:area, company: company)
+      area_sf = create(:area, company: company)
+
+      area_la.places << place_la
+      area_sf.places << place_sf
+
+      # Create another campaign just to test
+      campaign2 = create(:campaign, company: company)
+
+      expect(Event.in_areas([area_la])).to match_array [event_la]
+      expect(Event.in_areas([area_sf])).to match_array [event_sf]
+      expect(Event.in_areas([area_la, area_sf])).to match_array [event_la, event_sf]
+    end
+
+  end
+
   describe '#in_places' do
     let(:company) { create(:company) }
     let(:campaign) { create(:campaign, company: company) }
@@ -779,8 +828,8 @@ describe Event, type: :model do
 
     it 'should queue a job to update venue details after a event have been updated if place_id changed' do
       expect do
-        event.place_id =  1199
-        event.save
+        event.place_id =  create(:place).id
+        expect(event.save).to be_truthy
       end.to change(Venue, :count).by(1)
       expect(VenueIndexer).to have_queued(event.venue.id)
     end
@@ -969,7 +1018,7 @@ describe Event, type: :model do
 
   describe 'reindex_associated' do
     it 'should update the campaign first and last event dates ' do
-      campaign = create(:campaign, first_event_id: nil, last_event_at: nil, first_event_at: nil, last_event_at: nil)
+      campaign = create(:campaign, first_event_id: nil, last_event_at: nil, first_event_at: nil)
       event = build(:event, campaign: campaign, start_date: '01/23/2019', end_date: '01/25/2019')
       expect(campaign).to receive(:first_event=).with(event)
       expect(campaign).to receive(:last_event=).with(event)

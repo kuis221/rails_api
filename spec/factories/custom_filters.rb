@@ -2,15 +2,16 @@
 #
 # Table name: custom_filters
 #
-#  id         :integer          not null, primary key
-#  name       :string(255)
-#  apply_to   :string(255)
-#  filters    :text
-#  created_at :datetime
-#  updated_at :datetime
-#  owner_id   :integer
-#  owner_type :string(255)
-#  group      :string(255)
+#  id           :integer          not null, primary key
+#  name         :string(255)
+#  apply_to     :string(255)
+#  filters      :text
+#  created_at   :datetime
+#  updated_at   :datetime
+#  owner_id     :integer
+#  owner_type   :string(255)
+#  default_view :boolean          default(FALSE)
+#  category_id  :integer
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl
@@ -21,6 +22,5 @@ FactoryGirl.define do
     sequence(:name) { |n| "Area #{n}" }
     apply_to 'events'
     filters 'param=true'
-    group CustomFilter::SAVED_FILTERS_NAME
   end
 end
