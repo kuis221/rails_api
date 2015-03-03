@@ -55,6 +55,20 @@ feature 'Invitations', js: true do
       expect(find_field('Role', visible: false)).to have_error('This field is required.')
       expect(find_field('Email')).to have_error('This field is required.')
     end
+
+    scenario 'should validate who is not present the role admin' do
+      role = create(:role, name: 'Test admin role', company: company)
+      role2 = create(:role, name: 'Test not admin role', company: company, is_admin: false)
+
+      visit company_users_path
+
+      click_button 'Invite user'
+
+      expect(page).to_not have_content('Test admin role')
+      expect(page).to have_content('Test not admin role')
+    end
+
+
   end
 
   feature 'accept invitation' do
