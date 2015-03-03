@@ -24,7 +24,7 @@ describe TdLinx do
         File.open(path, 'w') do |file|
           file.write(
             "0000071,Big Es Supermarket,11 Union St,Easthampton,MA,01027\n" \
-            '0000072,Valley Farms Store,128 Northampton St,Easthampton,MA,01027'
+            '0000072,Bar Valley Farms,128 Northampton St,Easthampton,MA,03027'
           )
         end
 
