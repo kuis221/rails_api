@@ -39,6 +39,15 @@ class CollectionFilter
     else
       user.filter_setting_present('show_inactive_items', scope) ? [true, false] : [true]
     end
+
+  def expand(type, id)
+    type.classify.constantize.find(id).filter_subitems.map do |item|
+      {
+        id: item[0],
+        name: item[1],
+        type: item[2]
+      }
+    end
   end
 
   private

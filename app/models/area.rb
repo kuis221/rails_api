@@ -166,6 +166,10 @@ class Area < ActiveRecord::Base
     }
   end
 
+  def filter_subitems
+    self.places.pluck('places.id, places.name, \'place\'')
+  end
+
   protected
 
   # Generates the common denominators of the places within this area. Example:

@@ -109,4 +109,8 @@ class Team < ActiveRecord::Base
       }
     end
   end
+
+  def filter_subitems
+    self.users.pluck('users.id, users.name, \'users\'')
+  end
 end
