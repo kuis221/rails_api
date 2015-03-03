@@ -244,6 +244,33 @@ class Place < ActiveRecord::Base
     end
   end
 
+  def td_linx_match
+    Place.td_linx_match(id, state_code)
+  end
+
+  # Merge the record with the given place
+  def merge(place)
+    fail "Cannot merge place with itself" if id == place.id
+    self.class.connection.transaction do
+      Venue.where(place_id: place.id).each do |venue|
+        real_venue = Venue.find_or_create_by(place_id: id, company_id: venue.company_id)
+        venue.activities.update_all(activitable_id: real_venue.id)
+        venue.invites.update_all(venue_id: real_venue.id)
+        venue.destroy
+      end
+
+      Event.where(place_id: place.id).each do |event|
+        event.update_attribute(:place_id, id) or fail('cannot update event')
+      end
+
+      Placeable.where(place_id: place.id).update_all(place_id: place.id)
+
+      place.td_linx_code ||= place.td_linx_code
+
+      place.destroy
+    end
+  end
+
   class << self
     def load_by_place_id(place_id, reference)
       Place.find_or_initialize_by(place_id: place_id) do |p|
@@ -343,6 +370,12 @@ class Place < ActiveRecord::Base
       connection.select_value(
         sanitize_sql_array(['select find_place(:name, :street, :city, :state, :zipcode)', binds])
       ).try(:to_i)
+    end
+
+    def td_linx_match(id, state_code)
+      connection.select_one(
+        sanitize_sql_array(['select * from incremental_place_match(:id, :state)', id: id, state: state_code])
+      )
     end
 
     def build_from_autocoplete_result(result)

@@ -216,6 +216,72 @@ describe Place, type: :model do
     end
   end
 
+  describe '#td_linx_match' do
+    before(:all) do
+      TdLinx::Processor.create_tdlinx_codes_table
+      ActiveRecord::Base.connection.execute("INSERT INTO tdlinx_codes VALUES
+        ('0000071','Big Es Supermarket','11 Union St','Easthampton','MA','01027'),
+        ('0000072','Valley Farms Store','128 Northampton St','Easthampton','MA','01027')")
+    end
+    after(:all) { TdLinx::Processor.drop_tmp_table }
+
+    it 'returns the correct value with a confidence of 10' do
+      place = create(:place, name: 'Big Es Supermarket', street_number: '11',
+                             route: 'Union St', zipcode: '01027')
+      expect(described_class.td_linx_match(place.id)).to eql(
+        'code' => '0000071', 'name' => 'Big Es Supermarket', 'street' => '11 Union St',
+        'city' => 'Easthampton', 'state' => 'MA', 'zipcode' => '01027', 'confidence' => '10')
+    end
+
+    it 'returns the correct value with a confidence of 10 if the first letters match' do
+      place = create(:place, name: 'Big Es', street_number: '11',
+                             route: 'Un', zipcode: '0102')
+      expect(described_class.td_linx_match(place.id)).to eql(
+        'code' => '0000071', 'name' => 'Big Es Supermarket', 'street' => '11 Union St',
+        'city' => 'Easthampton', 'state' => 'MA', 'zipcode' => '01027', 'confidence' => '10')
+    end
+
+    it 'is case unsensitive' do
+      place = create(:place, name: 'BIG ES Supermarket', street_number: '11',
+                             route: 'union St', zipcode: '01027')
+      expect(described_class.td_linx_match(place.id)).to eql(
+        'code' => '0000071', 'name' => 'Big Es Supermarket', 'street' => '11 Union St',
+        'city' => 'Easthampton', 'state' => 'MA', 'zipcode' => '01027', 'confidence' => '10')
+    end
+
+    it 'returns the correct value with a confidence of 5 if the zipcode doesn\'t match'  do
+      place = create(:place, name: 'Big Es Supermarket', street_number: '11',
+                             route: 'Union St', zipcode: '22311')
+      expect(described_class.td_linx_match(place.id)).to eql(
+        'code' => '0000071', 'name' => 'Big Es Supermarket', 'street' => '11 Union St',
+        'city' => 'Easthampton', 'state' => 'MA', 'zipcode' => '01027', 'confidence' => '5')
+    end
+
+    it 'returns the correct value with a confidence of 5 if the first letters match but the zipcode doesn\'t match' do
+      place = create(:place, name: 'Big Es', street_number: '11',
+                             route: 'Un', zipcode: '22311')
+      expect(described_class.td_linx_match(place.id)).to eql(
+        'code' => '0000071', 'name' => 'Big Es Supermarket', 'street' => '11 Union St',
+        'city' => 'Easthampton', 'state' => 'MA', 'zipcode' => '01027', 'confidence' => '5')
+    end
+
+    it 'returns the correct value with a confidence of 1 if the street doesn\'t match'  do
+      place = create(:place, name: 'Big Es Supermarket', street_number: '12',
+                             route: 'Union St', zipcode: '01027')
+      expect(described_class.td_linx_match(place.id)).to eql(
+        'code' => '0000071', 'name' => 'Big Es Supermarket', 'street' => '11 Union St',
+        'city' => 'Easthampton', 'state' => 'MA', 'zipcode' => '01027', 'confidence' => '1')
+    end
+
+    it 'returns the correct value with a confidence of 1 if the first letters match but the street doesn\'t match' do
+      place = create(:place, name: 'Big Es', street_number: '12',
+                             route: 'Un', zipcode: '0102')
+      expect(described_class.td_linx_match(place.id)).to eql(
+        'code' => '0000071', 'name' => 'Big Es Supermarket', 'street' => '11 Union St',
+        'city' => 'Easthampton', 'state' => 'MA', 'zipcode' => '01027', 'confidence' => '1')
+    end
+  end
+
   describe '#find_place' do
     let(:place) do
       create(:place, name: 'Benitos Bar', city: 'Los Angeles', state: 'California',
