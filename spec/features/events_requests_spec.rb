@@ -1548,6 +1548,21 @@ feature 'Events section' do
 
         expect(page).to have_no_content('Your post event report has been submitted for approval.')
       end
+
+      scenario 'allows to unapprove an approved event' do
+        event = create(:approved_event,
+                       start_date: Date.yesterday.to_s(:slashes),
+                       end_date: Date.yesterday.to_s(:slashes),
+                       campaign: campaign)
+
+        visit event_path(event)
+
+        expect(page).to have_content('Your post event report has been approved. Click here to unapprove.')
+
+        click_js_link 'unapprove'
+
+        expect(page).to have_content('Your post event report has been submitted for approval.')
+      end
     end
   end
 
