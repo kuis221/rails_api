@@ -50,10 +50,10 @@ module TdLinx
         .group('places.id, venues.id').order('places.id ASC')
         .where('venues.company_id=? AND places.is_location=?', COMPANY_ID, false).each do |place|
         next if place.types.present? && place.types.include?('street_address')
+
         row = place.td_linx_match
         if row.present? && row['code'].present?
           if place.td_linx_code != row['code'] && (place.td_linx_confidence.nil? || place.td_linx_confidence < row['confidence'].to_i)
-            p "updating code from '#{place.td_linx_code}' to '#{row['code']}'"
             files[:found] << row.merge(
                                'confidence' => CONFIDENCE_LEVELS[row['confidence']]
                              ).values +
@@ -112,21 +112,21 @@ module TdLinx
         'CREATE TABLE IF NOT EXISTS tdlinx_codes('\
           'td_linx_code varchar, name varchar, street varchar, '\
           'city varchar, state varchar, zipcode varchar)')
-      Rails.logger.info 'TDLINX: Creating indexes on tdlinx_codes table'
+      logger.info 'TDLINX: Creating indexes on tdlinx_codes table'
       ActiveRecord::Base.connection.execute(
         'CREATE INDEX td_linx_code_state_idx on tdlinx_codes (state)')
       ActiveRecord::Base.connection.execute(
-        'CREATE INDEX td_linx_code_normalized_address_idx on tdlinx_codes (lower(normalize_addresss(street)))')
+        'CREATE INDEX td_linx_code_norm_name_idx on tdlinx_codes (normalize_place_name(name))')
       ActiveRecord::Base.connection.execute(
-        'CREATE INDEX td_linx_code_substr_name_idx on tdlinx_codes (substr(lower(normalize_place_name(name)), 1, 5))')
+        'CREATE INDEX td_linx_code_substr_name_idx on tdlinx_codes (substr(lower(name), 1, 5))')
       ActiveRecord::Base.connection.execute(
         'CREATE INDEX td_linx_code_substr_street_idx on tdlinx_codes (substr(lower(street), 1, 5))')
       ActiveRecord::Base.connection.execute(
-        'CREATE INDEX td_linx_code_substr_zipcode_idx on tdlinx_codes (substr(zipcode, 1, 4))')
+        'CREATE INDEX td_linx_code_substr_zipcode_idx on tdlinx_codes (substr(zipcode, 1, 2))')
       ActiveRecord::Base.connection.execute(
-        'CREATE INDEX td_linx_name_trgm_idx ON tdlinx_codes USING gist (substr(lower(normalize_place_name(name)), 1, 5) gist_trgm_ops)')
+        'CREATE INDEX td_linx_full_name_trgm_idx ON tdlinx_codes USING gist (name gist_trgm_ops)')
       ActiveRecord::Base.connection.execute(
-        'CREATE INDEX td_linx_street_trgm_idx ON tdlinx_codes USING gist (substr(lower(street), 1, 5) gist_trgm_ops)')
+        'CREATE INDEX td_linx_full_street_trgm_idx ON tdlinx_codes USING gist (street gist_trgm_ops)')
     end
 
     def self.prepare_codes_table(path)
@@ -139,13 +139,19 @@ module TdLinx
       copy_data_from_file path
       # ActiveRecord::Base.connection.execute(
       #   "COPY tdlinx_codes(td_linx_code,name,street,city,state,zipcode) FROM '#{path}' DELIMITER ',' CSV")
-      Rails.logger.info 'TDLINX: Preparing imported data'
+      logger.info 'TDLINX: Preparing imported data'
+      ActiveRecord::Base.connection.execute(
+        'UPDATE tdlinx_codes SET street=normalize_addresss(street)')
+       ActiveRecord::Base.connection.execute(
+        'UPDATE tdlinx_codes SET street=regexp_replace('\
+          "street, ',\\s*' || city || '\\s*,\\s*' || state || '\\s*,\\s*' || zipcode || '\\s*', "\
+          "'')::varchar")
       ActiveRecord::Base.connection.execute(
         "UPDATE tdlinx_codes SET street=regexp_replace(street, '^\\s*' || name || '\\s*,?\s*', '')::varchar")
     end
 
     def self.copy_data_from_file(path)
-      Rails.logger.info "TDLINX: Loading file data into database"
+      logger.info "TDLINX: Loading file data into database"
       dbconn = ActiveRecord::Base.connection_pool.checkout
       raw  = dbconn.raw_connection
 
@@ -172,7 +178,7 @@ module TdLinx
 
       date = Timeliness.parse(file[0], :date, format: 'mm-dd-yy').to_date
       # fail "The latest file (#{file[3]}) in the FTP have more than 30 days old" if date < 30.days.ago
-      Rails.logger.info "TDLINX: Downloading FTP file #{file[3]}"
+      logger.info "TDLINX: Downloading FTP file #{file[3]}"
       begin
         ftp.gettextfile file[3], path
       rescue Exception => e

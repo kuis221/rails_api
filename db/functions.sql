@@ -60,6 +60,7 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION normalize_place_name(name VARCHAR) RETURNS VARCHAR IMMUTABLE AS $$
 BEGIN
     name := regexp_replace(name, '^the\s+', '', 'ig');
+    name := regexp_replace(name, '''', '', 'ig');
     RETURN trim(both ' ' from name);
 END;
 $$ LANGUAGE plpgsql;
@@ -73,22 +74,23 @@ DECLARE
     td_place RECORD;
     place_name VARCHAR;
     place_address VARCHAR;
-    place_zip VARCHAR;
+    place_address2 VARCHAR;
+    place_zip2 VARCHAR;
 BEGIN
     SELECT * INTO place FROM places where places.id=incremental_place_match.place_id;
-    place_name := lower(substr(normalize_place_name(place.name), 1, 5));
-    place_address := normalize_addresss(lower(substr(trim(both 'x' from place.street_number || ' ' || place.route), 1, 5)));
-    place_zip := substr(place.zipcode, 1, 4);
-    RAISE NOTICE 'SEARCHING PLACE WITH name: %, street: %, zip: %', place_name, place_address, place_zip;
-    FOR td_place IN SELECT tdlinx_codes.*, 10 FROM tdlinx_codes WHERE state=state_code AND substr(lower(normalize_place_name(name)), 1, 5) = place_name AND substr(street, 1, 5) = place_address AND substr(zipcode, 1, 4) = place_zip ORDER BY similarity(name, place_name) LOOP
+    place_name := normalize_place_name(place.name);
+    place_address := normalize_addresss(COALESCE(place.street_number, '') || ' ' || COALESCE(place.route, ''));
+    place_address2 := normalize_addresss(COALESCE(place.formatted_address, ''));
+    place_zip2 := substr(place.zipcode, 1, 2);
+    FOR td_place IN SELECT tdlinx_codes.*, 10 FROM tdlinx_codes WHERE state=state_code AND substr(lower(normalize_place_name(name)), 1, 5) = substr(lower(place_name), 1, 5) AND (substr(lower(street), 1, 5) = substr(lower(place_address), 1, 5) OR substr(lower(street), 1, 5) = substr(lower(place_address2), 1, 5)) AND zipcode = place.zipcode ORDER BY similarity(name, place_name) LOOP
         return td_place;
     END LOOP;
 
-    FOR td_place IN SELECT tdlinx_codes.*, 5 FROM tdlinx_codes WHERE state=state_code AND (substr(lower(normalize_place_name(name)), 1, 5) % place_name) AND (substr(street, 1, 5) % place_address) ORDER BY similarity(name, place_name) LOOP
+    FOR td_place IN SELECT tdlinx_codes.*, 5 FROM tdlinx_codes WHERE state=state_code AND normalize_place_name(name) % place_name AND (similarity(street, place_address) >= 0.5 AND (substr(lower(street), 1, 5) = substr(lower(place_address), 1, 5) OR substr(lower(street), 1, 5) = substr(lower(place_address2), 1, 5)) ) AND zipcode = place.zipcode ORDER BY similarity(name, place_name) LOOP
         return td_place;
     END LOOP;
 
-    FOR td_place IN SELECT tdlinx_codes.*, 1 FROM tdlinx_codes WHERE state=state_code AND substr(lower(normalize_place_name(name)), 1, 5) = place_name AND substr(zipcode, 1, 4) = place_zip ORDER BY similarity(name, place_name) DESC LOOP
+    FOR td_place IN SELECT tdlinx_codes.*, 1 FROM tdlinx_codes WHERE similarity(normalize_place_name(name), place_name) >= 0.5 AND similarity(street, place_address) >= 0.4 AND (place_zip2 IS NULL OR substr(zipcode, 1, 2) = place_zip2) ORDER BY similarity(name, place_name) DESC LOOP
         return td_place;
     END LOOP;
 
