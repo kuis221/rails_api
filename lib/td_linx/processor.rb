@@ -7,6 +7,15 @@ module TdLinx
   class Processor
     attr_accessor :csv_path
 
+    COMPANY_ID = 2
+
+    CONFIDENCE_LEVELS = {
+      '10' => 'High',
+      '7' => 'Manual',
+      '5' => 'Medium',
+      '1' => 'Low'
+    }
+
     def self.download_and_process_file(file)
       path = file || 'tmp/td_linx_code.csv'
       download_file(path) unless file
@@ -17,7 +26,7 @@ module TdLinx
       TdlinxMailer.td_linx_process_failed(e).deliver
       raise e # Raise the error so we see it on errbit
     # ensure
-    #   drop_tmp_table
+    #   drop_tdlinx_codes_table
     end
 
     def self.process!
@@ -37,23 +46,30 @@ module TdLinx
       logger.info "Start processing venues"
       i = 0
       Place.joins(:venues).joins('LEFT JOIN events ON events.place_id=places.id')
-        .select('places.*, count(events.id) as visits_count')
-        .group('places.id').order('places.id ASC')
-        .where('venues.company_id=? AND places.is_location=?', 2, false).each do |place|
-        next if place.city.blank? || place.state.blank?
-        if row = find_place_in_td_linx_table(place)
-          p "Found #{row.inspect}"
-          if place.td_linx_code != row['td_linx_code']
-            p "updating code from #{place.td_linx_code} to #{row['td_linx_code']}"
-            files[:found] << row.values + [place.td_linx_code]
-            place.update_column(:td_linx_code, row['td_linx_code'])
+        .select('places.*, venues.id venue_id, count(events.id) as events_count')
+        .group('places.id, venues.id').order('places.id ASC')
+        .where('venues.company_id=? AND places.is_location=?', COMPANY_ID, false).each do |place|
+        next if place.types.present? && place.types.include?('street_address')
+        row = place.td_linx_match
+        if row.present? && row['code'].present?
+          if place.td_linx_code != row['code'] && (place.td_linx_confidence.nil? || place.td_linx_confidence < row['confidence'].to_i)
+            p "updating code from '#{place.td_linx_code}' to '#{row['code']}'"
+            files[:found] << row.merge(
+                               'confidence' => CONFIDENCE_LEVELS[row['confidence']]
+                             ).values +
+                             [place.td_linx_code,
+                              'http://login.brandscopic.com/research/venues/' + place.venue_id.to_s]
+            place.update_columns(td_linx_code: row['code'], td_linx_confidence: row['confidence'])
           else
+            if place.td_linx_code == row['code'] && place.td_linx_confidence != row['confidence'].to_i
+              place.update_column(:td_linx_confidence, row['confidence'])
+            end
             files[:found_not_updated] << row.values
           end
         else
           files[:missing] << [
             place.name, place.street, place.city, place.state,
-            place.zipcode, place.visits_count] unless place.td_linx_code
+            place.zipcode, place.events_count] unless place.td_linx_code
         end
         i+=1
         logger.info "#{i} rows processed" if (i % 500) == 0
@@ -78,20 +94,6 @@ module TdLinx
       files.values.each { |f| f.close rescue true }
     end
 
-    def self.find_place_in_td_linx_table(place)
-      c = ActiveRecord::Base.connection
-      street = [place.street_number, place.route].compact.join(' ')
-      city_state = [place.city, place.state_code].compact.join(' ')
-      c.select_one(
-        "SELECT *, similarity(street, normalize_addresss(#{c.quote(street)})) + similarity(name, #{c.quote(place.name)}) score "\
-        "FROM tdlinx_codes WHERE city=#{c.quote(place.city.try(:downcase))} AND "\
-        "state=#{c.quote(place.state_code.try(:downcase))} AND "\
-        "similarity(street, normalize_addresss(#{c.quote(street)})) >= 0.6 AND "\
-        "( similarity(name, #{c.quote(place.name)}) >= 0.5 OR "\
-        "  similarity(normalize_place_name(name), normalize_place_name(#{c.quote(place.name)})) >= 0.8) "\
-        "ORDER BY score DESC LIMIT 1")
-    end
-
     def self.logger
       Rails.logger
     end
@@ -104,16 +106,32 @@ module TdLinx
       @country ||= Country.new('US')
     end
 
-    def self.create_tmp_table
+    def self.create_tdlinx_codes_table
+      return if ActiveRecord::Base.connection.table_exists? 'tdlinx_codes'
       ActiveRecord::Base.connection.execute(
-        'CREATE TABLE tdlinx_codes('\
+        'CREATE TABLE IF NOT EXISTS tdlinx_codes('\
           'td_linx_code varchar, name varchar, street varchar, '\
           'city varchar, state varchar, zipcode varchar)')
+      Rails.logger.info 'TDLINX: Creating indexes on tdlinx_codes table'
+      ActiveRecord::Base.connection.execute(
+        'CREATE INDEX td_linx_code_state_idx on tdlinx_codes (state)')
+      ActiveRecord::Base.connection.execute(
+        'CREATE INDEX td_linx_code_normalized_address_idx on tdlinx_codes (lower(normalize_addresss(street)))')
+      ActiveRecord::Base.connection.execute(
+        'CREATE INDEX td_linx_code_substr_name_idx on tdlinx_codes (substr(lower(normalize_place_name(name)), 1, 5))')
+      ActiveRecord::Base.connection.execute(
+        'CREATE INDEX td_linx_code_substr_street_idx on tdlinx_codes (substr(lower(street), 1, 5))')
+      ActiveRecord::Base.connection.execute(
+        'CREATE INDEX td_linx_code_substr_zipcode_idx on tdlinx_codes (substr(zipcode, 1, 4))')
+      ActiveRecord::Base.connection.execute(
+        'CREATE INDEX td_linx_name_trgm_idx ON tdlinx_codes USING gist (substr(lower(normalize_place_name(name)), 1, 5) gist_trgm_ops)')
+      ActiveRecord::Base.connection.execute(
+        'CREATE INDEX td_linx_street_trgm_idx ON tdlinx_codes USING gist (substr(lower(street), 1, 5) gist_trgm_ops)')
     end
 
     def self.prepare_codes_table(path)
-      drop_tmp_table
-      create_tmp_table
+      drop_tdlinx_codes_table
+      create_tdlinx_codes_table
       load_data_into_tmp_table path
     end
 
@@ -123,21 +141,7 @@ module TdLinx
       #   "COPY tdlinx_codes(td_linx_code,name,street,city,state,zipcode) FROM '#{path}' DELIMITER ',' CSV")
       Rails.logger.info 'TDLINX: Preparing imported data'
       ActiveRecord::Base.connection.execute(
-        'UPDATE tdlinx_codes SET street=regexp_replace('\
-          "street, ',\\s*' || city || '\\s*,\\s*' || state || '\\s*,\\s*' || zipcode || '\\s*', "\
-          "'')::varchar")
-      ActiveRecord::Base.connection.execute(
         "UPDATE tdlinx_codes SET street=regexp_replace(street, '^\\s*' || name || '\\s*,?\s*', '')::varchar")
-      ActiveRecord::Base.connection.execute(
-        'UPDATE tdlinx_codes SET street=normalize_addresss(street), city=lower(city), state=lower(state)')
-
-      Rails.logger.info 'TDLINX: Creatign indexes on tdlinx_codes table'
-      ActiveRecord::Base.connection.execute(
-        'CREATE INDEX td_linx_code_city_state_idx on tdlinx_codes (city,state)')
-      ActiveRecord::Base.connection.execute(
-        'CREATE INDEX td_linx_code_street_idx ON tdlinx_codes USING gist(street gist_trgm_ops)')
-      ActiveRecord::Base.connection.execute(
-        'CREATE INDEX td_linx_code_name_idx ON tdlinx_codes USING gist(name gist_trgm_ops)')
     end
 
     def self.copy_data_from_file(path)
@@ -154,7 +158,7 @@ module TdLinx
       ActiveRecord::Base.connection_pool.checkin(dbconn)
     end
 
-    def self.drop_tmp_table
+    def self.drop_tdlinx_codes_table
       ActiveRecord::Base.connection.execute('DROP TABLE IF EXISTS tdlinx_codes')
     end
 

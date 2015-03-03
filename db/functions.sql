@@ -11,7 +11,6 @@ DECLARE
     place RECORD;
     normalized_address VARCHAR;
     normalized_address2 VARCHAR;
-    conditions VARCHAR;
 BEGIN
     normalized_address := lower(normalize_addresss(pstreet));
 
@@ -27,7 +26,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION normalize_addresss(address VARCHAR) RETURNS VARCHAR AS $$
+CREATE OR REPLACE FUNCTION normalize_addresss(address VARCHAR) RETURNS VARCHAR IMMUTABLE AS $$
 BEGIN
     address := regexp_replace(address, '(\s|,|^)(rd\.?)(\s|,|$)', '\1Road\3', 'ig');
     address := regexp_replace(address, '(\s|,|^)(st\.?)(\s|,|$)', '\1Street\3', 'ig');
@@ -58,18 +57,42 @@ $$ LANGUAGE plpgsql;
 
 
 
-CREATE OR REPLACE FUNCTION normalize_place_name(name VARCHAR) RETURNS VARCHAR AS $$
+CREATE OR REPLACE FUNCTION normalize_place_name(name VARCHAR) RETURNS VARCHAR IMMUTABLE AS $$
 BEGIN
-    name := regexp_replace(name, '(\s|,|^)&(\s|,|$)', '\1\2', 'ig');
-    name := regexp_replace(name, '(\s|,|^)\+(\s|,|$)', '\1\2', 'ig');
-    name := regexp_replace(name, '(\s|,|^)and(\s|,|$)', '\1\2', 'ig');
-    name := regexp_replace(name, '(\s|,|^)restaurant(\s|,|$)', '\1\2', 'ig');
-    name := regexp_replace(name, '(\s|,|^)pub(\s|,|$)', '\1\2', 'ig');
-    name := regexp_replace(name, '(\s|,|^)grub(\s|,|$)', '\1\2', 'ig');
-    name := regexp_replace(name, '(\s|,|^)\+(\s|,|$)', '\1\2', 'ig');
-    name := regexp_replace(name, '''|"|,|;|\.|:', '', 'ig');
-    name := regexp_replace(name, '\s+', ' ', 'ig');
+    name := regexp_replace(name, '^the\s+', '', 'ig');
     RETURN trim(both ' ' from name);
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TYPE td_linx_result AS (code varchar, name varchar, street varchar, city varchar, state varchar, zipcode varchar, confidence integer);
+
+CREATE OR REPLACE FUNCTION incremental_place_match(place_id INTEGER, state_code VARCHAR) RETURNS td_linx_result AS $$
+DECLARE
+    place RECORD;
+    td_place RECORD;
+    place_name VARCHAR;
+    place_address VARCHAR;
+    place_zip VARCHAR;
+BEGIN
+    SELECT * INTO place FROM places where places.id=incremental_place_match.place_id;
+    place_name := lower(substr(normalize_place_name(place.name), 1, 5));
+    place_address := normalize_addresss(lower(substr(trim(both 'x' from place.street_number || ' ' || place.route), 1, 5)));
+    place_zip := substr(place.zipcode, 1, 4);
+    RAISE NOTICE 'SEARCHING PLACE WITH name: %, street: %, zip: %', place_name, place_address, place_zip;
+    FOR td_place IN SELECT tdlinx_codes.*, 10 FROM tdlinx_codes WHERE state=state_code AND substr(lower(normalize_place_name(name)), 1, 5) = place_name AND substr(street, 1, 5) = place_address AND substr(zipcode, 1, 4) = place_zip ORDER BY similarity(name, place_name) LOOP
+        return td_place;
+    END LOOP;
+
+    FOR td_place IN SELECT tdlinx_codes.*, 5 FROM tdlinx_codes WHERE state=state_code AND (substr(lower(normalize_place_name(name)), 1, 5) % place_name) AND (substr(street, 1, 5) % place_address) ORDER BY similarity(name, place_name) LOOP
+        return td_place;
+    END LOOP;
+
+    FOR td_place IN SELECT tdlinx_codes.*, 1 FROM tdlinx_codes WHERE state=state_code AND substr(lower(normalize_place_name(name)), 1, 5) = place_name AND substr(zipcode, 1, 4) = place_zip ORDER BY similarity(name, place_name) DESC LOOP
+        return td_place;
+    END LOOP;
+
+    return null;
 END;
 $$ LANGUAGE plpgsql;
 
