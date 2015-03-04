@@ -17,6 +17,7 @@ FactoryGirl.define do
     sequence(:name) { |n| "Company #{n}" }
     no_create_admin true
     settings {}
+    timezone_support false
 
     factory :company_with_user do
       no_create_admin false
