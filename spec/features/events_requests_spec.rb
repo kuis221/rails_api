@@ -122,10 +122,17 @@ feature 'Events section' do
           add_filter 'EVENT STATUS', 'Submitted'
           remove_filter 'Today To The Future'
           expect(page).to have_selector('#events-list .resource-item', count: 3)
-          resource_item(2).click
+
+          within resource_item(2) do
+            click_js_link 'Event Details'
+          end
+
+          expect(page).to have_selector('h2', text: 'Campaign #2 FY2012')
+
           within('.alert') do
             click_link 'approve'
           end
+
           expect(page).to have_content('Your post event report has been approved.')
           find('#resource-close-details').click
           expect(page).to have_selector('#events-list .resource-item', count: 2)
@@ -359,11 +366,11 @@ feature 'Events section' do
               ['Another Campaign April 03', nil, "#{year_number}-#{month_number}-#{today.strftime('%d')}T08:00",
                "#{year_number}-#{month_number}-#{today.strftime('%d')}T09:00", '1.0', 'Place 2',
                'Place 2, 11 Main St., Los Angeles, CA, 67890', 'Los Angeles', 'CA', '67890', 'Active', 'Unsent',
-               nil, "#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event2.id}"],
+               nil, "http://#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event2.id}"],
               ['Campaign FY2012', nil, "#{year_number}-#{month_number}-#{today.strftime('%d')}T10:00",
                "#{year_number}-#{month_number}-#{today.strftime('%d')}T11:00", '1.0', 'Place 1',
                'Place 1, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active',
-               'Unsent', nil, "#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event1.id}"]
+               'Unsent', nil, "http://#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event1.id}"]
             ])
           end
 
