@@ -95,6 +95,6 @@ class BrandPortfolio < ActiveRecord::Base
   end
 
    def filter_subitems
-    self.users.pluck('brands.id, brands.name, \'brand\'')
+    self.brands.pluck('brands.id, brands.name, \'brand\'')
   end
 end
