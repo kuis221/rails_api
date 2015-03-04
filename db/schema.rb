@@ -18,7 +18,6 @@ ActiveRecord::Schema.define(version: 20150226220017) do
   enable_extension "hstore"
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
-  enable_extension "postgres_fdw"
   enable_extension "tablefunc"
   enable_extension "postgis"
 
