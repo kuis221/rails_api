@@ -413,24 +413,9 @@ class Report < ActiveRecord::Base
                 opts.each do |opt|
                   case opt
                   when 'due'
-                    start_date = if Company.current.present?
-                                   Company.current.due_event_start_date
-                                 else
-                                   Date.yesterday.strftime('%Y-%m-%d 00:00:00')
-                                 end
-                    end_date = if Company.current.present?
-                                 Company.current.due_event_end_date
-                               else
-                                 Time.now.strftime('%Y-%m-%d 00:00:00')
-                               end
-                    special_conditions.push("(events.aasm_state = 'unsent' AND events.start_at > '#{start_date}' AND events.end_at <= '#{end_date}')")
+                    special_conditions.push("(events.aasm_state = 'unsent' AND events.start_at > '#{company.due_event_start_date}' AND events.end_at <= '#{company.due_event_end_date}')")
                   when 'late'
-                    date = if Company.current.present?
-                             Company.current.late_task_date
-                           else
-                             Date.yesterday.strftime('%Y-%m-%d 00:00:00')
-                           end
-                    special_conditions.push("(events.aasm_state = 'unsent' AND events.end_at <= '#{date}')")
+                    special_conditions.push("(events.aasm_state = 'unsent' AND events.end_at <= '#{company.late_task_date}')")
                   else
                     in_conditions.push("'#{opt}'")
                   end
