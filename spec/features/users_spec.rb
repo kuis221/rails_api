@@ -102,7 +102,7 @@ feature 'Users', js: true do
     end
 
     scenario 'allow a user to invite users' do
-      create(:role, name: 'TestRole', company_id: company.id)
+      create(:non_admin_role, name: 'TestRole', company_id: company.id)
       visit company_users_path
 
       click_js_button 'Invite user'

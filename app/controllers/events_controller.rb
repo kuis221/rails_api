@@ -78,6 +78,12 @@ class EventsController < FilteredController
     redirect_to resource_path(status: 'approved', return: params[:return])
   end
 
+  def unapprove
+    resource.unapprove! if resource.approved?
+    flash[:alert] = resource.errors.full_messages if resource.errors.any?
+    redirect_to resource_path(status: 'unapproved', return: params[:return])
+  end
+
   def reject
     reject_reason = params[:reason]
     return unless resource.submitted? && reject_reason.present?
