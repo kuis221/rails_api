@@ -359,11 +359,11 @@ feature 'Events section' do
               ['Another Campaign April 03', nil, "#{year_number}-#{month_number}-#{today.strftime('%d')}T08:00",
                "#{year_number}-#{month_number}-#{today.strftime('%d')}T09:00", '1.0', 'Place 2',
                'Place 2, 11 Main St., Los Angeles, CA, 67890', 'Los Angeles', 'CA', '67890', 'Active', 'Unsent',
-               nil, "http://localhost:5100/events/#{event2.id}"],
+               nil, "#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event2.id}"],
               ['Campaign FY2012', nil, "#{year_number}-#{month_number}-#{today.strftime('%d')}T10:00",
                "#{year_number}-#{month_number}-#{today.strftime('%d')}T11:00", '1.0', 'Place 1',
                'Place 1, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active',
-               'Unsent', nil, "http://localhost:5100/events/#{event1.id}"]
+               'Unsent', nil, "#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event1.id}"]
             ])
           end
 
@@ -405,6 +405,8 @@ feature 'Events section' do
 
             click_link 'Calendar View'
 
+            expect(find('.calendar-table')).to have_text 'My Kool Brand'
+
             click_js_link 'Download'
             click_js_link 'Download as PDF'
 
@@ -429,7 +431,7 @@ feature 'Events section' do
             end
           end
 
-          scenario 'should be able to export as PDF' do
+          scenario 'event list export is limited to 200 pages' do
             allow(Event).to receive(:do_search).and_return(double(total: 3000))
 
             visit events_path
