@@ -270,6 +270,10 @@ class Event < ActiveRecord::Base
       transitions from: :submitted, to: :approved
     end
 
+    event :unapprove do
+      transitions from: :approved, to: :submitted
+    end
+
     event :reject do
       transitions from: :submitted, to: :rejected
     end
