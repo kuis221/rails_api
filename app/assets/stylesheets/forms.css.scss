@@ -55,7 +55,7 @@ form{
 
 .control-group {
 	label.control-label{
-		color:$text;
+		color: $brand;
 	}
 	&.error {
 		input, textarea {
@@ -156,6 +156,11 @@ textarea::-webkit-input-placeholder {
 	height: 14px;
 	width: 14px;
 	border-radius: 50%;
+}
+
+.radio, .checkbox{
+	min-height: auto;
+	height: 22px;
 }
 
 label.radio div.radio {
