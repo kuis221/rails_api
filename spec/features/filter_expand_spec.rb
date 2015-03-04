@@ -29,11 +29,9 @@ feature 'Filter Expand', js: true, search: true do
     end
 
     scenario 'Allows expanding the filter team' do
-      team.users << user1
-      team.users << user2
+      team.users << [user1, user2]
       events[0].users << user1
       events[1].users << user2
-      events
       Sunspot.commit
 
       visit events_path
@@ -46,11 +44,8 @@ feature 'Filter Expand', js: true, search: true do
       filter_section('PEOPLE').unicheck('Costa Rica Team')
 
       expect(collection_description).to have_filter_tag('Costa Rica Team')
-
-      within '.collection-list-description' do
-        find('.filter-item', text: 'Costa Rica Team').click_js_link 'Expand this filter'
-      end
-
+      expand_filter 'Costa Rica Team'
+      
       expect(collection_description).to_not have_filter_tag('Costa Rica Team')
       expect(collection_description).to have_filter_tag('Mario Moreno')
       expect(collection_description).to have_filter_tag('Roberto Gomez')
