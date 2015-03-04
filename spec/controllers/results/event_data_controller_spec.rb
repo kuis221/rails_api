@@ -81,7 +81,7 @@ describe Results::EventDataController, type: :controller do
         ['Test Campaign FY01', 'My area', '443321', 'Bar Prueba',
          'Bar Prueba, 11 Main St., Los Angeles, California, 12345', 'Los Angeles', 'California', '12345',
          'Active', 'Approved', 'Test User, zteam', "http://localhost:5100/events/#{event.id}",
-         '2019-01-23T10:00', '2019-01-23T12:00', '2.0', '99.99']
+         '2019-01-23T10:00', '2019-01-23T12:00', '2.00', '99.99']
       ])
     end
 
@@ -101,7 +101,7 @@ describe Results::EventDataController, type: :controller do
          'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL', 'START', 'END', 'PROMO HOURS', 'SPENT', 'A CUSTOM KPI'],
         ['Test Campaign FY01', nil, nil, 'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345',
          'Los Angeles', 'California', '12345', 'Active', 'Approved', nil,
-         "http://localhost:5100/events/#{event.id}", '2013-01-23T10:00', '2013-01-23T12:00', '2.0', '0.0', '9876.0']
+         "http://localhost:5100/events/#{event.id}", '2013-01-23T10:00', '2013-01-23T12:00', '2.00', '0.0', '9876.0']
       ])
       spreadsheet_from_last_export do |doc|
         rows = doc.elements.to_a('//Row')
@@ -173,7 +173,7 @@ describe Results::EventDataController, type: :controller do
         ['Test Campaign FY01', 'Angeles Area', '344221', 'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345',
          'Los Angeles', 'California', '12345', 'Active', 'Approved', 'Test User',
          "http://localhost:5100/events/#{event.id}", '2019-01-23T10:00', '2019-01-23T12:00',
-         '2.0', '99.99', '0.6',
+         '2.00', '99.99', '0.6',
          '0.4', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.18', '0.2', '0.21',
          '0.19', '0.22', '10.0', '11.0', '12.0', '8899.0', 'Yes', nil, nil, 'Radio Field Opt 1']
       ])
@@ -222,7 +222,7 @@ describe Results::EventDataController, type: :controller do
         ['Test Campaign FY01', 'Angeles Area', '344221', 'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345',
          'Los Angeles', 'California', '12345', 'Active', 'Approved', nil,
          "http://localhost:5100/events/#{event.id}", '2019-01-23T10:00', '2019-01-23T12:00',
-         '2.0', '0.0', '8899.0']
+         '2.00', '0.0', '8899.0']
       ])
     end
 
@@ -251,10 +251,10 @@ describe Results::EventDataController, type: :controller do
          'START', 'END', 'PROMO HOURS', 'SPENT', 'A CUSTOM KPI', 'ANOTHER KPI'],
         ['Test Campaign FY01', nil, nil, nil, nil, nil, nil, nil, 'Active', 'Approved', nil,
          "http://localhost:5100/events/#{event1.id}", '2013-01-23T10:00', '2013-01-23T12:00',
-         '2.0', '0.0', '9876.0', nil],
+         '2.00', '0.0', '9876.0', nil],
         [campaign2.name, nil, nil, nil, nil, nil, nil, nil, 'Active', 'Approved', nil,
          "http://localhost:5100/events/#{event2.id}", '2013-01-24T10:00', '2013-01-24T12:00',
-         '2.0', '0.0', nil, '7654.0']
+         '2.00', '0.0', nil, '7654.0']
       ])
     end
 
@@ -283,7 +283,7 @@ describe Results::EventDataController, type: :controller do
          'INTERACTIONS', 'SAMPLES'],
         ['Test Campaign FY01', nil, nil, nil, nil, nil, nil, nil, 'Active', 'Approved', nil,
          "http://localhost:5100/events/#{event1.id}", '2013-01-23T10:00', '2013-01-23T12:00',
-         '2.0', '0.0', '0.0', '0.0',
+         '2.00', '0.0', '0.0', '0.0',
          '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0',
          '0.0', '111.0', nil, nil]
       ])
@@ -320,10 +320,10 @@ describe Results::EventDataController, type: :controller do
          'MY KPI: UNO', 'MY KPI: DOS', 'MY OTHER KPI'],
         ['Test Campaign FY01', nil, nil, nil, nil, nil, nil, nil, 'Active', 'Approved', nil,
          "http://localhost:5100/events/#{event1.id}", '2013-01-23T10:00', '2013-01-23T12:00',
-         '2.0', '0.0', '0.63', '0.37', nil],
+         '2.00', '0.0', '0.63', '0.37', nil],
         ['Test Campaign FY01', nil, nil, nil, nil, nil, nil, nil, 'Active', 'Approved', nil,
          "http://localhost:5100/events/#{event2.id}", '2013-01-24T10:00', '2013-01-24T12:00',
-         '2.0', '0.0', '0.0', '0.0', '134.0']
+         '2.00', '0.0', '0.0', '0.0', '134.0']
       ])
     end
   end

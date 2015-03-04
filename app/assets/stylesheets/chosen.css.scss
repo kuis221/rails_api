@@ -111,7 +111,7 @@ select.chosen-enabled{
 			text-overflow: ellipsis;
 			white-space: nowrap;
 			line-height: $chzn-single-height;
-			color: #444;
+			color: $text;
 		}
 		&.chzn-default span{
 			color: $user_menu;

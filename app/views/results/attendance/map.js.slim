@@ -1,15 +1,18 @@
 - values = @neighborhoods.map(&:attendees)
 - if @neighborhoods.count == 0
-  | $('#attendance-map-canvas').hide();
+  | 
+    $('#attendance-map-canvas').hide();
+    $('.export-xls').hide();
 - else 
   |
     $('#attendance-map-canvas').show();
-    var arrayPolygon = [];
-    var color = '#{default_color}';
-    var valueMin = #{values.min || 0};
-    var valueMax = #{values.max || 0};
-
-    var showTootltip = function showTootltip(event, infoWindow) {
+    var arrayPolygon = [],
+        color = '#{default_color}',
+        valueMin = #{values.min || 0},
+        valueMax = #{values.max || 0},
+        selectedMin = valueMin,
+        selectedMax =valueMax,
+        showTootltip = function showTootltip(event, infoWindow) {
           infoWindow.setPosition(event.latLng);
           infoWindow.open(window.attendanceMap);
         },
@@ -56,7 +59,7 @@
   |
         window.attendanceMap.fitBounds(bounds);
         };
-
+        debugger;
         initializeNeighborhoodMap();
         changeColorAllPolygon(color, tinycolor(color).toHsv());
         $('#customize-fields').removeClass('hide');
@@ -65,3 +68,4 @@
         $('#attendees-range-slider').rangeSlider('min', valueMin);
         $('#attendees-range-slider').rangeSlider('max', valueMax);
         $('#attendees-range-slider').rangeSlider('resize');
+        $('.export-xls').show();

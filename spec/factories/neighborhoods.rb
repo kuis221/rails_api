@@ -15,11 +15,10 @@
 
 FactoryGirl.define do
   factory :neighborhood do
-    name "MyString"
-    city "MyString"
-    state "MyString"
-    county "MyString"
-    country "MyString"
-    geometry "MyText"
+    name 'MyString'
+    city 'Los Angeles'
+    state 'CA'
+    county 'MyString'
+    regionid 1.1
   end
 end

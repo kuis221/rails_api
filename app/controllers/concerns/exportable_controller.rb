@@ -11,7 +11,7 @@ module ExportableController
 
   def export_list(export)
     @_export = export
-    search_params.merge!(per_page: 100) if resource_class.respond_to?(:do_search)
+    search_params.merge!(per_page: 100) if respond_to?(:search_params, true) && resource_class.respond_to?(:do_search)
     collection
 
     Slim::Engine.with_options(pretty: true, sort_attrs: false, streaming: false) do
@@ -38,8 +38,10 @@ module ExportableController
   end
 
   def each_collection_item(&block)
-    if resource_class.respond_to?(:do_search)
+    if respond_to?(:resource_class, true) && resource_class.respond_to?(:do_search)
       each_collection_item_solr(&block)
+    elsif collection.is_a?(Array)
+      each_collection_item_array(&block)
     else
       each_collection_item_database(&block)
     end
@@ -48,9 +50,18 @@ module ExportableController
   def each_collection_item_database
     items_per_page = 100
     total_pages = (collection.count / items_per_page.to_f).ceil
-    puts "total_pages ==> #{total_pages}"
     (1..(total_pages)).each do |page|
       collection.limit(items_per_page).offset(items_per_page * (page - 1)).each do |result|
+        yield result
+      end
+    end
+  end
+
+  def each_collection_item_array
+    items_per_page = 100
+    total_pages = (collection.count / items_per_page.to_f).ceil
+    (1..(total_pages)).each do |page|
+      collection.slice(items_per_page * (page - 1), items_per_page).each do |result|
         yield result
       end
     end

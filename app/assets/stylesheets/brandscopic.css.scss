@@ -4288,7 +4288,7 @@ body.roles{
 					font-size: 11px;
 					text-align: left;
 				}
-			}		
+			}
 		}
 	}
 }
@@ -5496,8 +5496,10 @@ body.campaigns{
 			color: $brand;
 			font-size: 11px;
 		}
-		h3{
-			margin-top: 45px;
+		.results-title{
+			font-weight: bold;
+			margin-bottom: 20px;
+			margin-top: 35px;
 			&+#list-tools{
 				margin: 10px 0 0px 0;
 			}
@@ -5830,14 +5832,14 @@ margin: 45px 0 25px 25px;
 	color: $brand;
 	.control-group {
 		display: inline-block;
-		margin-left: 57px;
+		margin-left: 35px;
 		&.report_campaign_id {
 			margin-left: 0;
 		}
 		&.report_group_by label {
+			color: $brand;
 			display: inline-block;
 			font-size: 11px;
-			vertical-align: middle;
 		}
 		.export-xls {
 			margin-top: 22px;
@@ -5850,12 +5852,11 @@ margin: 45px 0 25px 25px;
 				color: #FFFFFF;
 				font-weight: bold;
 				font-size: 13px;
-				padding: 7px 10px;
-				width: 60px;
+				min-width: 70px;
 				&:first-child{
 					border-bottom-left-radius: 6px;
 					border-top-left-radius: 6px;
-					border-right: 1px solid $brand;
+					border-right: 1px solid rgba(152,152,152,0.3);
 					&+label{
 						border-left:0;
 					}
@@ -5863,7 +5864,7 @@ margin: 45px 0 25px 25px;
 				&:last-child{
 						border-bottom-right-radius: 6px;
 						border-top-right-radius: 6px;
-						border-left: 1px solid $brand;
+						border-left: 1px solid rgba(152,152,152,0.3);
 				}
 				&.active{
 					background-color: $brand;
@@ -7195,6 +7196,8 @@ body.dashboard.index {
 #attendance-report {
 	#attendance-left-column {
 		width: 290px;
+		height: 610px;
+		position: relative;
 		.control-label {
 			font-weight: bold;
 		}
@@ -7278,11 +7281,23 @@ body.dashboard.index {
 			margin-top:30px;
 			border: 1px solid white;
 		}
+		.export-xls {
+			position: absolute;
+			bottom: 0;
+			width: 100%;
+			a.btn.dropdown-toggle {
+				width: 100%;
+			}
+			.dropdown-menu {
+				width: 100%;
+			}
+		}
 	}
 	 #attendance-right-column {
 	 	display: inline-block;
 	 	width: calc(100% - 290px);
 	 	padding: 10px;
+	 	min-height: 600px;
 	 	@include box-sizing(border-box);
 	 	#attendance-map-canvas {
 	 		height: 600px;
@@ -7359,6 +7374,76 @@ body.dashboard.index {
 			position: relative;
 			top: 5px;
 			left: -2px;
+		}
+	}
+}
+
+// TOP LOGIN NAVIGATION  STYLES
+.top-admin-login-navigation {
+	background-color: $brand;
+	padding: 4px 0;
+	background-image: none;
+	border-bottom: 0;
+	height: 31px;
+	.admin-login-content {
+		padding-left: 25px;
+		.admin-login-block {
+			color: $white;
+			label {
+				float: left;
+				padding-top: 5px;
+			}
+			.admin-select-user {
+				width: 355px!important;
+				float: left;
+				display: inline-block;
+				#login_as_user_id_chzn {
+					float: left;
+					width: 350px!important;
+					margin: 0 10px;
+					a {
+						height: 29px;
+						span {
+							line-height: 29px;
+						}
+						b {
+							margin-top: -5px;
+						}
+					}
+					li {
+						color: $gray-darker;
+						width: 350px!important;
+					}
+					.chzn-drop {
+						width: 350px!important;
+					}
+				}
+				.chzn-search {
+					top: -35px;
+					input[type="text"] {
+						height: 27px!important;
+						padding: 1px 0;
+						margin-bottom: 0;
+					}
+				}
+			}
+			#login-specific-user {
+				margin-top: 3px;
+				margin-left: 25px;
+			}
+		}
+		.link-select-user {
+			color: $white;
+			margin-left: 10px;
+			margin-top: 5px;
+			text-decoration: underline;
+			display: inline-block;
+			background-color: transparent;
+			border: none;
+			padding: 0;
+			&:focus, &:focus{
+    			outline: 0;
+			}
 		}
 	}
 }

@@ -576,8 +576,15 @@ $.widget 'nmk.filteredList', {
 	addParams: (params) ->
 		@savedFiltersDropdown.val('').trigger('liszt:updated')
 		qs = @paramsQueryString()
-		qs = (if qs then qs + '&' else '')
-		@_setQueryString qs + params
+		for param in @_deparam(params)
+			paramValue = encodeURIComponent(param.name)+'='+encodeURIComponent(param.value)
+			paramValue = '' if param.value is '' or param.value is null
+			continue if qs.indexOf(paramValue) >= 0
+			if param.name.indexOf('[]') is -1 && qs.indexOf(encodeURIComponent(param.name)) >= 0
+				qs = qs.replace(new RegExp("(#{encodeURIComponent(param.name)}=[^&]*)"), paramValue)
+			else
+				qs = qs + '&' + paramValue
+		@_setQueryString qs.replace(/^&/, '')
 
 	setParams: (params) ->
 		return if @_settingQueryString
@@ -707,6 +714,24 @@ $.widget 'nmk.filteredList', {
 						@customDatesFilter.find("[name=custom_start_date]").datepicker "option", "maxDate", selectedDate
 			)
 		)
+
+		$('#custom_start_date, #custom_end_date').on 'input', (e) =>
+			input = $(e.target)
+			if input.val() == ''
+				input.val('mm/dd/yyyy')
+				input.addClass('disabled')
+			else
+				input.removeClass('disabled')
+
+		$('#custom_start_date, #custom_end_date').on 'blur', (e) =>
+			startDateInput = @customDatesFilter.find("[name=custom_start_date]")
+			endDateInput = @customDatesFilter.find("[name=custom_end_date]")
+			applyButton = @customDatesPanel.find("#apply-ranges-btn")
+			if startDateInput.val() != 'mm/dd/yyyy' && endDateInput.val() != 'mm/dd/yyyy' && startDateInput.val() != '' && endDateInput.val() != ''
+				applyButton.attr('disabled', false)
+			else
+				applyButton.attr('disabled', true)
+
 		# So the custom date picker is not closed when chosing dates
 		$('#ui-datepicker-div').on 'click', (e) =>
 			if $('.select-ranges.open').length

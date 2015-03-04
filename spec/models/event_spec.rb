@@ -158,30 +158,35 @@ describe Event, type: :model do
   end
 
   describe 'states' do
-    before(:each) do
-      @event = create(:event)
-    end
+    let(:event) { create(:event) }
 
     describe ':unsent' do
       it 'should be an initial state' do
-        expect(@event).to be_unsent
+        expect(event).to be_unsent
       end
 
       it 'should change to :submitted on :unsent or :rejected' do
-        @event.submit
-        expect(@event).to be_submitted
+        event.submit
+        expect(event).to be_submitted
       end
 
       it 'should change to :approved on :submitted' do
-        @event.submit
-        @event.approve
-        expect(@event).to be_approved
+        event.submit
+        event.approve
+        expect(event).to be_approved
+      end
+
+      it 'should change to :submitted on :approved' do
+        event.submit
+        event.approve
+        event.unapprove
+        expect(event).to be_submitted
       end
 
       it 'should change to :rejected on :submitted' do
-        @event.submit
-        @event.reject
-        expect(@event).to be_rejected
+        event.submit
+        event.reject
+        expect(event).to be_rejected
       end
     end
   end
