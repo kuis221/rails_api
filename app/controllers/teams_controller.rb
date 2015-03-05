@@ -8,16 +8,6 @@ class TeamsController < FilteredController
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
 
-  def autocomplete
-    buckets = autocomplete_buckets(
-      teams: [Team],
-      users: [CompanyUser],
-      campaigns: [Campaign],
-      active_state: [])
-
-    render json: buckets.flatten
-  end
-
   private
 
   def permitted_params

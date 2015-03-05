@@ -11,14 +11,6 @@ class BrandPortfoliosController < FilteredController
 
   custom_actions resource: [:select_brands, :add_brands]
 
-  def autocomplete
-    buckets = autocomplete_buckets(
-      brands: [Brand, BrandPortfolio],
-      active_state: []
-    )
-    render json: buckets.flatten
-  end
-
   def add_brands
     @brand = current_company.brands.find(params[:brand_id])
     return if resource.brands.exists?(params[:brand_id])

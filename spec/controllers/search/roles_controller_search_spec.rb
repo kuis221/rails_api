@@ -7,29 +7,6 @@ describe RolesController, type: :controller, search: true do
 
   before { user }
 
-  describe "GET 'autocomplete'" do
-    it 'should return the correct buckets in the right order' do
-      Sunspot.commit
-      get 'autocomplete'
-      expect(response).to be_success
-
-      buckets = JSON.parse(response.body)
-      expect(buckets.map { |b| b['label'] }).to eq(['Roles', 'Active State'])
-    end
-
-    it 'should return the roles in the Roles Bucket' do
-      role = create(:role, name: 'Role 1', company: company)
-      Sunspot.commit
-
-      get 'autocomplete', q: 'rol'
-      expect(response).to be_success
-
-      buckets = JSON.parse(response.body)
-      roles_bucket = buckets.select { |b| b['label'] == 'Roles' }.first
-      expect(roles_bucket['value']).to eq([{ 'label' => '<i>Rol</i>e 1', 'value' => role.id.to_s, 'type' => 'role' }])
-    end
-  end
-
   describe "GET 'filters'" do
     it 'should return the correct filters in the right order' do
       Sunspot.commit

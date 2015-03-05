@@ -53,7 +53,7 @@ en:
 
   filters:
     areas: 'Areas'
-    active_state: 'Active State'
+    status: 'Active State'
     activity_types: 'Activity Types'
     brands: 'Brands'
     brand_portfolios: 'Brand Portfolios'

@@ -18,14 +18,6 @@ class ActivityTypesController < FilteredController
     @campaign = current_company.campaigns.find(params[:campaign_id])
   end
 
-  def autocomplete
-    buckets = autocomplete_buckets(
-      activity_types: [ActivityType],
-      active_state: []
-    )
-    render json: buckets.flatten
-  end
-
   def update
     update! do |success, failure|
       success.js { render }

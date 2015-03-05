@@ -32,16 +32,6 @@ class CampaignsController < FilteredController
     end
   end
 
-  def autocomplete
-    buckets = autocomplete_buckets(
-      campaigns: [Campaign],
-      brands: [Brand, BrandPortfolio],
-      places: [Venue],
-      people: [CompanyUser, Team]
-    )
-    render json: buckets.flatten
-  end
-
   def find_similar_kpi
     search = Sunspot.search(Kpi) do
       keywords(params[:name]) do

@@ -13,13 +13,6 @@ class BrandsController < FilteredController
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
 
-  def autocomplete
-    buckets = autocomplete_buckets(
-      brands: [Brand],
-      active_state: [])
-    render json: buckets.flatten
-  end
-
   def create
     create! do |success, _|
       success.js do

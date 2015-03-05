@@ -10,13 +10,6 @@ class Results::PhotosController < FilteredController
 
   skip_load_and_authorize_resource
 
-  def autocomplete
-    buckets = autocomplete_buckets(campaigns: [Campaign],
-                                   brands: [Brand, BrandPortfolio],
-                                   places: [Venue])
-    render json: buckets.flatten
-  end
-
   def download
     @download = AssetDownload.find_by_uid(params[:download_id])
   end

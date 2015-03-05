@@ -9,13 +9,6 @@ class DateRangesController < FilteredController
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
 
-  def autocomplete
-    buckets = autocomplete_buckets(
-      date_ranges: [DateRange]
-    )
-    render json: buckets.flatten
-  end
-
   protected
 
   def permitted_params

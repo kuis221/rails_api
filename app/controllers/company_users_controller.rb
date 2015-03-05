@@ -21,19 +21,6 @@ class CompanyUsersController < FilteredController
 
   skip_authorize_resource only: [:select_custom_user, :export_status, :login_as_select]
 
-  def autocomplete
-    buckets = autocomplete_buckets(
-      users: [CompanyUser],
-      teams: [Team],
-      roles: [Role],
-      campaigns: [Campaign],
-      places: [Venue],
-      user_active_state: []
-    )
-
-    render json: buckets.flatten
-  end
-
   def profile
     @company_user = current_company_user
     render :show

@@ -15,14 +15,6 @@ class AreasController < FilteredController
 
   custom_actions member: [:select_places, :add_places, :add_to_campaign]
 
-  def autocomplete
-    buckets = autocomplete_buckets(
-      areas: [Area],
-      active_state: []
-    )
-    render json: buckets.flatten
-  end
-
   def create
     create! do |success, _|
       success.js do

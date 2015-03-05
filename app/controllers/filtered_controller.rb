@@ -3,7 +3,6 @@
 # This class in intented to be used as a base for all those
 # controllers that have filtering capabilities
 class FilteredController < InheritedResources::Base
-  include AutocompleteHelper
   include ExportableController
 
   helper_method :collection_count, :facets, :page,
@@ -11,7 +10,7 @@ class FilteredController < InheritedResources::Base
 
   respond_to :json, only: :index
 
-  CUSTOM_VALIDATION_ACTIONS = [:index, :items, :filters, :autocomplete, :export, :new_export]
+  CUSTOM_VALIDATION_ACTIONS = [:index, :items, :export, :new_export]
   load_and_authorize_resource except: CUSTOM_VALIDATION_ACTIONS
 
   before_action :authorize_actions, only: CUSTOM_VALIDATION_ACTIONS
