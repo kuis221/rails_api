@@ -4,3 +4,4 @@
     .admin-select-user
       = select_tag 'user_id', options_for_select([[nil, '']] + current_company.company_users.active.for_dropdown_with_role), { id: 'login-as-user-id', class: 'chosen-enabled', 'data-placeholder' => 'Select a User'}
     = submit_tag 'Login', id: 'login-specific-user', class: 'link-select-user'
+    = submit_tag 'Cancel', class: 'link-select-user link-cancel-user', id: 'cancel-login-specific-user'
