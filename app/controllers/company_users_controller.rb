@@ -103,19 +103,17 @@ class CompanyUsersController < FilteredController
   end
 
   def select_custom_user
-    unless params[:commit].eql?('Cancel')
-      begin
-        if current_real_company_user.is_admin?
-          user = current_company.company_users.active.find(params[:user_id])
-          if params[:user_id].to_i == current_real_company_user.id
-            session[:behave_as_user_id] = nil
-          else
-            session[:behave_as_user_id] = user.user_id
-          end
+    begin
+      if current_real_company_user.is_admin?
+        user = current_company.company_users.active.find(params[:user_id])
+        if params[:user_id].to_i == current_real_company_user.id
+          session[:behave_as_user_id] = nil
+        else
+          session[:behave_as_user_id] = user.user_id
         end
-      rescue ActiveRecord::RecordNotFound
-        flash[:error] = 'You are not allowed login as this user'
       end
+    rescue ActiveRecord::RecordNotFound
+      flash[:error] = 'You are not allowed login as this user'
     end
     redirect_to root_path
   end
