@@ -108,7 +108,10 @@ $.widget 'nmk.filteredList', {
 			filterParts = $(e.currentTarget).data('filter').split(':')
 			params = {filter_type: filterParts[0], filter_id: filterParts[1] }
 			$.get '/filters/expand', params, (data) =>
-				@replaceParams data, filterParts
+				if data[0].type == 'cfid'
+					@_setQueryString data[0].filters
+				else
+					@replaceParams data, filterParts
 			, "json"
 			false
 

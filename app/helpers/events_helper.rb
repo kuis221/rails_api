@@ -41,7 +41,7 @@ module EventsHelper
       describe_areas, describe_places, describe_venues, describe_cities, describe_users,
       describe_teams, describe_roles, describe_activity_types, describe_date_ranges,
       describe_day_parts, describe_tasks, describe_range_filters, describe_tags,
-      describe_rating
+      describe_rating, describe_custom_filters
     ].compact.join(' ').strip
     first_part = "for: #{first_part}" unless first_part.blank?
     [
@@ -252,6 +252,13 @@ module EventsHelper
       '5' => '5 stars'
     }
     build_filter_object_list :rating, filter_params(:rating).map{ |rating| [rating, ratings[rating]] }
+  end
+
+  def describe_custom_filters
+    custom_filter = CustomFilter.for_company_user(current_user.current_company_user)
+            .order('custom_filters.name ASC')
+    describe_resource_params(:cfid,
+                             custom_filter, expandible: true)
   end
 
   def filter_params(param_name)

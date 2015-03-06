@@ -45,13 +45,21 @@ class CollectionFilter
     end
   end
 
-  def expand(type, id)
-    type.classify.constantize.find_by(id: id, company_id: user.company_id).filter_subitems.map do |item|
-      {
-        id: item[0],
-        name: item[1],
-        type: item[2]
-      }
+  def expand(type, id) 
+    if (type.eql? 'cfid')
+      [{
+        id: id,
+        filters: custom_filter_subitems(id),
+        type: type
+      }] 
+    else
+      type.classify.constantize.find_by(id: id, company_id: user.company_id).filter_subitems.map do |item|
+        {
+          id: item[0],
+          name: item[1],
+          type: item[2]
+        }
+      end
     end
   end
 
@@ -61,8 +69,7 @@ class CollectionFilter
 
     { label: 'Saved Filters',
       items: items.map do |cf|
-        build_filter_item(id: cf.filters + '&id=' + cf.id.to_s,
-                         label: cf.name, name: :custom_filter)
+        build_filter_item(id: cf.id.to_s, label: cf.name, name: :cfid)
       end }
   end
 
@@ -194,8 +201,7 @@ class CollectionFilter
     groups.map do |group, filters|
       { label: group,
         items: filters.map do |cf|
-          build_filter_item(id: cf.filters + '&id=' + cf.id.to_s,
-                           label: cf.name, name: :custom_filter)
+          build_filter_item(id: cf.id.to_s, label: cf.name, name: :cfid)
         end }
     end
   end
@@ -230,5 +236,9 @@ class CollectionFilter
 
   def scope_filters
     SETTINGS['filters'][scope]
+  end
+  
+  def custom_filter_subitems(id)
+    CustomFilter.find(id).filters
   end
 end
