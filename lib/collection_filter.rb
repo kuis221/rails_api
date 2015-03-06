@@ -46,7 +46,7 @@ class CollectionFilter
   end
 
   def expand(type, id)
-    type.classify.constantize.find(id).filter_subitems.map do |item|
+    type.classify.constantize.find_by(id: id, company_id: user.company_id).filter_subitems.map do |item|
       {
         id: item[0],
         name: item[1],
