@@ -80,20 +80,19 @@ class FilteredController < InheritedResources::Base
 
   def search_params
     @search_params ||= params.permit(permitted_search_params).tap do |p|
-      cfids = p.delete(:cfid)
-      CustomFilter.where(id: cfids).each do |cf|
+      CustomFilter.where(id: params[:cfid]).each do |cf|
         puts cf.filters
         p.deep_merge!(Rack::Utils.parse_nested_query(cf.filters)) do |key, v1, v2| 
           (Array(v1) + Array(v2)).uniq
         end
-      end if cfids.present?
+      end if params[:cfid].present? && params[:cfid].present?
       p[:company_id] = current_company.id
       p[:current_company_user] = current_company_user
     end
   end
 
   def permitted_search_params
-    [:page, :sorting, :per_page, :sorting_dir, cfid: []].concat resource_class.searchable_params
+    [:page, :sorting, :per_page, :sorting_dir].concat resource_class.searchable_params
   end
 
   def collection_count
