@@ -317,7 +317,7 @@ module ApplicationHelper
   end
 
   def user_saved_filters(scope)
-    CollectionFilter.new(scope, current_company_user, params)
+    CollectionFilter.new(scope, current_company_user, params).user_saved_filters
   end
 
   def escape_query_params(query)

@@ -30,15 +30,10 @@ autocomplete:
       items: [Active, Inactive]
       name: 'status'
   venues:
-    venues: [Venue]
-    sliders: 
-      method: venues_sliders
-    price:
-      items: [[1, '$'], [2, '$$'], [3, '$$$'], [4, '$$$$']]
-      name: 'event_status'
-    areas: [Area]
+    places: [Venue, Area]
     campaigns: [Campaign]
-    brands: [Brand]
+    brands: [Brand, BrandPortfolio]
+    people: [CompanyUser, Team]
   campaigns:
     campaigns: [Campaign]
     brands: [Brand, BrandPortfolio]
@@ -99,13 +94,10 @@ autocomplete:
     status:
       items: [Active, Inactive]
       name: 'status'
-  brand_ambassadors/visits:
-    brand_ambassadors:
-      method: brand_ambassadors_bucket
+  visits:
     campaigns: [Campaign]
-    areas: [Area]
-    cities: 
-      method: cities_bucket
+    places: [Area]
+    people: [CompanyUser]
   activities:
     activity_types: [ActivityType]
     brands: [Brand]

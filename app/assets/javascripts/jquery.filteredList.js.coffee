@@ -420,11 +420,9 @@ $.widget 'nmk.filteredList', {
 		if not top5
 			optionsCount = items.length
 			top5 = []
-			while i < optionsCount
-				option = items[i]
+			for option, i in items
 				if (i < 15 or option.selected)
 					top5.push option
-				i++
 		else
 			optionsCount = top5.length + items.length
 

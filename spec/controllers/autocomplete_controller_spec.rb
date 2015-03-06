@@ -609,4 +609,151 @@ describe AutocompleteController, type: :controller, search: true do
       expect(places_bucket['value']).to eq([{ 'label' => '<i>Mot</i>el Paraiso', 'value' => venue.id.to_s, 'type' => 'venue' }])
     end
   end
+
+  describe 'Venues', search: true do
+    it 'should return the correct buckets in the right order' do
+      get 'show', id: 'venues', q: '', format: :json
+      expect(response).to be_success
+
+      expect(json.map { |b| b['label'] }).to eq(%w(Places Campaigns Brands People))
+    end
+
+    it 'should return the users in the People Bucket' do
+      user = create(:user, first_name: 'Guillermo', last_name: 'Vargas', company_id: company.id)
+      company_user = user.company_users.first
+      Sunspot.commit
+
+      get 'show', id: 'venues', q: 'gu', format: :json
+      expect(response).to be_success
+
+      people_bucket = json.select { |b| b['label'] == 'People' }.first
+      expect(people_bucket['value']).to eq([{
+        'label' => '<i>Gu</i>illermo Vargas',
+        'value' => company_user.id.to_s,
+        'type' => 'user' }])
+    end
+
+    it 'should return the teams in the People Bucket' do
+      team = create(:team, name: 'Spurs', company_id: company.id)
+      Sunspot.commit
+
+      get 'show', id: 'venues', q: 'sp', format: :json
+      expect(response).to be_success
+
+      people_bucket = json.select { |b| b['label'] == 'People' }.first
+      expect(people_bucket['value']).to eq([{ 'label' => '<i>Sp</i>urs', 'value' => team.id.to_s, 'type' => 'team' }])
+    end
+
+    it 'should return the teams and users in the People Bucket' do
+      team = create(:team, name: 'Valladolid', company_id: company.id)
+      user = create(:user, first_name: 'Guillermo', last_name: 'Vargas', company_id: company.id)
+      company_user = user.company_users.first
+      Sunspot.commit
+
+      get 'show', id: 'venues', q: 'va', format: :json
+      expect(response).to be_success
+
+      people_bucket = json.select { |b| b['label'] == 'People' }.first
+      expect(people_bucket['value']).to eq([
+        { 'label' => '<i>Va</i>lladolid',
+          'value' => team.id.to_s,
+          'type' => 'team' },
+        { 'label' => 'Guillermo <i>Va</i>rgas',
+          'value' => company_user.id.to_s,
+          'type' => 'user' }])
+    end
+
+    it 'should return the campaigns in the Campaigns Bucket' do
+      campaign = create(:campaign, name: 'Cacique para todos', company_id: company.id)
+      Sunspot.commit
+
+      get 'show', id: 'venues', q: 'cac', format: :json
+      expect(response).to be_success
+
+      campaigns_bucket = json.select { |b| b['label'] == 'Campaigns' }.first
+      expect(campaigns_bucket['value']).to eq([{
+        'label' => '<i>Cac</i>ique para todos',
+        'value' => campaign.id.to_s,
+        'type' => 'campaign' }])
+    end
+
+    it 'should return the brands in the Brands Bucket' do
+      brand = create(:brand, name: 'Cacique', company_id: company.to_param)
+      Sunspot.commit
+
+      get 'show', id: 'venues', q: 'cac', format: :json
+      expect(response).to be_success
+
+      brands_bucket = json.select { |b| b['label'] == 'Brands' }.first
+      expect(brands_bucket['value']).to eq([{ 'label' => '<i>Cac</i>ique', 'value' => brand.id.to_s, 'type' => 'brand' }])
+    end
+
+    it 'should return the areas in the Places Bucket' do
+      area = create(:area, company_id: company.id, name: 'Guanacaste')
+      Sunspot.commit
+
+      get 'show', id: 'venues', q: 'gua', format: :json
+      expect(response).to be_success
+
+      places_bucket = json.select { |b| b['label'] == 'Places' }.first
+      expect(places_bucket['value']).to eq([{ 'label' => '<i>Gua</i>nacaste', 'value' => area.id.to_s, 'type' => 'area' }])
+    end
+
+    it 'should return the venues in the Places Bucket' do
+      venue = create(:venue, company_id: company.id,
+                     place: create(:place, name: 'Guanacaste'))
+      Sunspot.commit
+
+      get 'show', id: 'venues', q: 'gua', format: :json
+      expect(response).to be_success
+
+      places_bucket = json.select { |b| b['label'] == 'Places' }.first
+      expect(places_bucket['value']).to eq([{ 'label' => '<i>Gua</i>nacaste', 'value' => venue.id.to_s, 'type' => 'venue' }])
+    end
+  end
+
+  describe 'Brand Ambassadors Visits' do
+    it 'should return the correct buckets in the right order' do
+      get 'show', id: 'visits'
+      expect(response).to be_success
+
+      expect(json.map { |b| b['label'] }).to eq(%w(Campaigns Places People))
+    end
+
+    it 'should return the users in the People Bucket' do
+      user = create(:user, first_name: 'Guillermo', last_name: 'Vargas', company_id: company.id)
+      company_user = user.company_users.first
+      Sunspot.commit
+
+      get 'show', id: 'visits', q: 'gu'
+      expect(response).to be_success
+
+      people_bucket = json.select { |b| b['label'] == 'People' }.first
+      expect(people_bucket['value']).to eq([{ 'label' => '<i>Gu</i>illermo Vargas', 'value' => company_user.id.to_s, 'type' => 'user' }])
+    end
+
+    it 'should return users only in the People Bucket' do
+      create(:team, name: 'Valladolid', company_id: company.id)
+      user = create(:user, first_name: 'Guillermo', last_name: 'Vargas', company_id: company.id)
+      company_user = user.company_users.first
+      Sunspot.commit
+
+      get 'show', id: 'visits', q: 'va'
+      expect(response).to be_success
+
+      people_bucket = json.select { |b| b['label'] == 'People' }.first
+      expect(people_bucket['value']).to eq([{ 'label' => 'Guillermo <i>Va</i>rgas', 'value' => company_user.id.to_s, 'type' => 'user' }])
+    end
+
+    it 'should return the campaigns in the Campaigns Bucket' do
+      campaign = create(:campaign, name: 'Cosmos', company_id: company.id)
+      Sunspot.commit
+
+      get 'show', id: 'visits', q: 'cos'
+      expect(response).to be_success
+
+      campaigns_bucket = json.select { |b| b['label'] == 'Campaigns' }.first
+      expect(campaigns_bucket['value']).to eq([{ 'label' => '<i>Cos</i>mos', 'value' => campaign.id.to_s, 'type' => 'campaign' }])
+    end
+  end
 end

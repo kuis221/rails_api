@@ -24,13 +24,17 @@ class CollectionFilter
   end
 
   def filters
-    result = company_custom_filters
-    return result if SETTINGS['filters'][scope].nil?
-    result.concat(
-      SETTINGS['filters'][scope].map do |_bucket_name, bucket_config|
-        build_filter_bucket bucket_config
-      end.flatten.append(user_saved_filters)
-    )
+    company_filters = company_custom_filters
+    return company_filters if scope_filters.nil?
+    [].concat(
+      scope_filters.map do |bucket_name, bucket_config|
+        if bucket_name == 'custom_filter' # Allow to specify the position of custom filters
+          company_filters.delete(company_filters.find { |r| r[:label] == bucket_config.upcase })
+        else
+          build_filter_bucket bucket_config
+        end
+      end.flatten.compact
+    ).concat(company_filters).append(user_saved_filters)
   end
 
   def items_to_show(format: :boolean)
@@ -58,7 +62,7 @@ class CollectionFilter
     { label: 'Saved Filters',
       items: items.map do |cf|
         build_filter_item(id: cf.filters + '&id=' + cf.id.to_s,
-                         label: cf.name, name: :custom_filter, count: 1)
+                         label: cf.name, name: :custom_filter)
       end }
   end
 
@@ -95,7 +99,7 @@ class CollectionFilter
   def venues_sliders
     facet_search = Venue.do_search({ current_company_user: user, company_id: user.company_id }, true)
     rows = facet_search.stats.first.rows
-    return unless rows
+    return [] unless rows
     max_events       = rows.find { |r| r.stat_field == 'events_count_is' }.try(:value).try(:to_i) || 1
     max_promo_hours  = rows.find { |r| r.stat_field == 'promo_hours_es' }.try(:value).try(:to_i) || 1
     max_impressions  = rows.find { |r| r.stat_field == 'impressions_is' }.try(:value).try(:to_i) || 1
@@ -118,26 +122,53 @@ class CollectionFilter
   def cities_bucket
     cities = user.company.brand_ambassadors_visits
       .active.where.not(city: '').reorder(:city).pluck('DISTINCT brand_ambassadors_visits.city').map do |r|
-      build_filter_item(label: r, id: r, name: :city, count: 1)
+      build_filter_item(label: r, id: r, name: :city)
     end
     { label: 'Cities', items: cities }
   end
 
   def brand_ambassadors_bucket
-    users = brand_ambassadors_users.where('company_users.active in (?)', items_to_show)
+    users = user.company.brand_ambassadors_users.where('company_users.active in (?)', items_to_show)
       .joins(:user).order('2 ASC')
       .pluck('company_users.id, users.first_name || \' \' || users.last_name as name').map do |r|
-      build_filter_item(label: r[1], id: r[0], name: :user, count: 1)
+      build_filter_item(label: r[1], id: r[0], name: :user)
     end
     { label: 'Brand Ambassadors', items: users }
   end
 
-  def brand_ambassadors_users
-    @brand_ambassadors_users ||= begin
-      s = CompanyUser.accessible_by_user(user).active
-      s = s.where(role_id: user.company.brand_ambassadors_role_ids) if user.company.brand_ambassadors_role_ids.any?
-      s
+  def trend_sources
+    items = []
+    if params.key?(:source) && params[:source].include?('Comment')
+      items.push(build_filter_item(label: 'Comments', id: 'Comment', name: :source))
     end
+    selected_sources = (params[:source] || [0]).delete_if(&:blank?)
+    activity_type_ids = selected_sources
+      .select { |s| s =~ /\AActivityType:[0-9]+\z/ }
+      .map { |s| s.tr('ActivityType:', '') }
+    if activity_type_ids && activity_type_ids.any?
+      items.concat(user.company.activity_types.where(id: activity_type_ids).map do |at|
+        build_filter_item(label: at.name, id: "ActivityType:#{at.id}", name: :source, value: "ActivityType:#{at.id}")
+      end)
+    end
+    { label: 'Source', items: items }
+  end
+
+  def trend_campaigns
+    selected_campaign_ids = (params[:campaign] || [0]).delete_if(&:blank?)
+    items = Campaign.accessible_by_user(user).where(id: selected_campaign_ids).order(:name).pluck(:name, :id).map do |r|
+      build_filter_item(label: r[0], id: r[1], name: :campaign, value: r[1])
+    end
+    { label: 'Campaigns', items: items }
+  end
+
+  def trend_questions
+    items = []
+    if params.key?(:question) && params[:question].any?
+      items.concat(FormField.where(id: params[:question]).map do |question|
+        build_filter_item(label: question.name, id: question.id, name: :question)
+      end)
+    end
+    { label: 'Questions', items: items }
   end
 
   def filter_items_from_clasess(classes)
@@ -164,7 +195,7 @@ class CollectionFilter
       { label: group,
         items: filters.map do |cf|
           build_filter_item(id: cf.filters + '&id=' + cf.id.to_s,
-                           label: cf.name, name: :custom_filter, count: 1)
+                           label: cf.name, name: :custom_filter)
         end }
     end
   end
@@ -173,10 +204,19 @@ class CollectionFilter
     if klass.respond_to?(:filters_scope)
       klass.accessible_by_user(user).filters_scope(self)
     else
-      klass.accessible_by_user(user).order(:name).pluck(:id, :name)
+      klass.accessible_by_user(user).where(query_filter_params(klass)).order(:name).pluck(:id, :name)
     end
   end
 
+  def query_filter_params(klass)
+    if klass.column_names.include?('active')
+      { active: items_to_show }
+    elsif klass.column_names.include?('aasm_state')
+      { aasm_state: items_to_show(format: :string) }
+    else
+      {}
+    end
+  end
   def build_filter_item(options)
     options[:selected] ||=
       params.key?(options[:name]) &&
@@ -186,5 +226,9 @@ class CollectionFilter
         (params[options[:name]] == options[:id]) || (params[options[:name]] == options[:id].to_s)
       )
     options
+  end
+
+  def scope_filters
+    SETTINGS['filters'][scope]
   end
 end

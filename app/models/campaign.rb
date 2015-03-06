@@ -121,7 +121,8 @@ class Campaign < ActiveRecord::Base
   has_many :places, through: :placeables, after_remove: :campaign_area_removed, after_add: :clear_locations_cache
 
   # Attached Documents
-  has_many :documents, -> { order('created_at DESC').where(asset_type: :document) }, class_name: 'AttachedAsset', as: :attachable, inverse_of: :attachable
+  has_many :documents, -> { order('created_at DESC').where(asset_type: :document) },
+           class_name: 'AttachedAsset', as: :attachable, inverse_of: :attachable
 
   accepts_nested_attributes_for :form_fields, allow_destroy: true
 

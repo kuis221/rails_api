@@ -14,16 +14,16 @@ filters:
     campaigns: [Campaign]
     task_status:
       items: [Complete, Incomplete, Late]
-      name: 'event_status'
+      name: 'task_status'
     status:
       items: [Active, Inactive]
       name: 'status'
   teams_tasks:
     campaigns: [Campaign]
-    people: [CompanyUser, Team]
     task_status:
       items: [Complete, Incomplete, Late, Assigned, Unassigned]
-      name: 'event_status'
+      name: 'task_status'
+    staff: [CompanyUser, Team]
     status:
       items: [Active, Inactive]
       name: 'status'
@@ -52,7 +52,7 @@ filters:
     campaigns: [Campaign]
     teams: [Team]
     status:
-      items: [Active, Inactive]
+      items: [Active, Inactive, Invited]
       name: 'status'
   teams:
     campaigns: [Campaign]
@@ -84,7 +84,8 @@ filters:
     status:
       items: [Active, Inactive]
       name: 'status'
-  brand_ambassadors/visits:
+  visits:
+    custom_filter: 'DIVISIONS'  # So it's displayed first
     brand_ambassadors:
       method: brand_ambassadors_bucket
     campaigns: [Campaign]
@@ -104,6 +105,19 @@ filters:
     campaigns: [Campaign]
     brands: [Brand]
     areas: [Area]
+    tags: [Tag]
+    rating:
+      items: [5, 4, 3, 2, 1, 0]
+      name: 'rating'
     status:
       items: [Active, Inactive]
       name: 'status'
+  trends:
+    source: 
+      method: trend_sources
+    questions: 
+      method: trend_questions
+    campaigns: 
+      method: trend_campaigns
+    brands: [Brand]
+    areas: [Area]

@@ -7,17 +7,6 @@ describe CampaignsController, type: :controller, search: true do
 
   before { user }
 
-  describe "GET 'filters'" do
-    it 'should return the correct filters in the right order' do
-      Sunspot.commit
-      get 'filters', format: :json
-      expect(response).to be_success
-
-      filters = JSON.parse(response.body)
-      expect(filters['filters'].map { |b| b['label'] }).to eq(['Brands', 'Brand Portfolios', 'People', 'Active State'])
-    end
-  end
-
   describe "POST 'find_similar_kpi'" do
     it 'should return empty if there are no kpis' do
       get 'find_similar_kpi', name: 'brands'

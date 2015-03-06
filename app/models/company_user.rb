@@ -113,8 +113,6 @@ class CompanyUser < ActiveRecord::Base
 
   scope :accessible_by_user, ->(user) { where(company_id: user.company_id) }
 
-  scope :filters_scope, ->(_) { joins(:user).pluck('company_users.id, users.first_name || \' \' || users.last_name') }
-
   searchable do
     integer :id
     integer :company_id
@@ -149,6 +147,12 @@ class CompanyUser < ActiveRecord::Base
   end
 
   accepts_nested_attributes_for :user, allow_destroy: false, update_only: true
+
+  def self.filters_scope(filters)
+    joins(:user)
+    .where(active: filters.items_to_show)
+    .pluck('company_users.id, users.first_name || \' \' || users.last_name')
+  end
 
   def active_status
     if invited_to_sign_up? && self[:active]

@@ -162,4 +162,24 @@ describe ApplicationHelper, type: :helper do
       end
     end
   end
+
+  describe '#user_saved_fitlers' do
+    let(:user) { create(:company_user) }
+    let(:scope) { 'events' }
+    let(:subject) { helper.user_saved_filters(scope) }
+
+    before { allow(helper).to receive(:current_company_user).and_return(user) }
+
+    it 'returns empty if not saved filters exists' do
+      expect(subject[:items]).to be_empty
+    end
+
+    it 'returns any saved filters for the given scope if not saved filters exists' do
+      filter = create(:custom_filter, owner: user, name: 'My Prueba',
+                                      apply_to: 'events', filters: 'foo=bar')
+      expect(subject[:items]).to eql [
+        { id: "foo=bar&id=#{filter.id}", label: 'My Prueba',
+          name: :custom_filter, selected: false }]
+    end
+  end
 end

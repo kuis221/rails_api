@@ -26,14 +26,6 @@ describe 'routes for tasks', type: :routing do
     expect(delete: '/tasks/1').not_to be_routable
   end
 
-  it 'routes to #autocomplete' do
-    expect(get: '/tasks/autocomplete').to route_to('tasks#autocomplete')
-  end
-
-  it 'routes to #filters with user as scope' do
-    expect(get: '/tasks/user/filters').to route_to('tasks#filters', scope: 'user')
-  end
-
   it 'routes to #items with user as scope' do
     expect(get: '/tasks/user/items').to route_to('tasks#items', scope: 'user')
   end

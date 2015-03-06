@@ -78,23 +78,21 @@ class Autocomplete
   end
 
   def build_special_bucket(bucket_name, options, q)
-    results = options.select do |a|
+    value = options.select do |opt|
+      a = opt.is_a?(Array) ? opt[0].to_s : opt
       (params[bucket_name].blank? || !params[bucket_name].include?(a)) &&
       a.downcase.include?(q)
-    end.first(5)
-    { label: I18n.translate("filters.#{bucket_name}"),
-      value: results.map { |x| { label: x.gsub(/(#{q})/i, '<i>\1</i>'), value: x, type: bucket_name } } }
-  end
+    end.first(5).map do |opt|
+      if opt.is_a?(Array)
+        { label: opt[1].gsub(/(#{q})/i, '<i>\1</i>'), value: opt[0], type: bucket_name }
+      else
+        { label: opt.gsub(/(#{q})/i, '<i>\1</i>'), value: opt, type: bucket_name }
+      end
+    end
 
-  # def special_buckets_options(bucket_name)
-  #   @_special_buckets_options ||= {
-  #     active_state: %w(Active Inactive),
-  #     user_active_state: %w(Active Inactive Invited),
-  #     event_status: %w(Submitted Rejected Approved Late Due),
-  #     task_status: %w(Complete Incomplete Late)
-  #   }
-  #   @_special_buckets_options[bucket_name] || []
-  # end
+    { label: I18n.translate("filters.#{bucket_name}"),
+      value:  value}
+  end
 
   def build_bucket(search, bucket_name, klasess)
     results = []
