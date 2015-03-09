@@ -135,7 +135,7 @@ describe CollectionFilter do
         expect(subject.filters).to eql [
           {
             label: 'MY FILTERS', items: [
-              { id: 'my-filter=true&id=' + filter.id.to_s, label: 'CustomFilter1', name: :custom_filter, selected: false }
+              { id: filter.id.to_s, label: 'CustomFilter1', name: :cfid, selected: false }
             ]
           },
           { label: 'Saved Filters', items: [] }
@@ -149,7 +149,7 @@ describe CollectionFilter do
         expect(subject.filters).to eql [
           {
             label: 'MY FILTERS', items: [
-              { id: 'my-filter=true&id=' + filter.id.to_s, label: 'CustomFilter1', name: :custom_filter, selected: false }
+              { id: filter.id.to_s, label: 'CustomFilter1', name: :cfid, selected: false }
             ]
           },
           { label: 'Saved Filters', items: [] }
@@ -166,12 +166,12 @@ describe CollectionFilter do
         expect(subject.filters).to eql [
           {
             label: 'GLOBAL FILTERS', items: [
-              { id: 'my-filter=true&id=' + global_filter.id.to_s, label: 'CustomCompanyFilter1', name: :custom_filter, selected: false }
+              { id: global_filter.id.to_s, label: 'CustomCompanyFilter1', name: :cfid, selected: false }
             ]
           },
           {
             label: 'MY FILTERS', items: [
-              { id: 'my-filter=true&id=' + user_filter.id.to_s, label: 'CustomUserFilter1', name: :custom_filter, selected: false }
+              { id: user_filter.id.to_s, label: 'CustomUserFilter1', name: :cfid, selected: false }
             ]
           },
           { label: 'Saved Filters', items: [] }
@@ -195,8 +195,8 @@ describe CollectionFilter do
           expect(subject.filters).to eql [
             { label: 'Brands', items: [] },
             { label: 'GLOBAL FILTERS', items: [
-              { id: 'my-filter=true&id=' + global_filter.id.to_s, label: 'CustomCompanyFilter1',
-                name: :custom_filter, selected: false }] },
+              { id: global_filter.id.to_s, label: 'CustomCompanyFilter1',
+                name: :cfid, selected: false }] },
             { label: 'Campaigns', items: [] }, { label: 'Saved Filters', items: [] }]
         end
       end

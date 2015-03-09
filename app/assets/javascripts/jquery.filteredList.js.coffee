@@ -359,7 +359,7 @@ $.widget 'nmk.filteredList', {
 						.find('select').chosen().end()
 						.on 'change', () =>
 							option = @savedFiltersDropdown.find('option:selected')[0]
-							@_setQueryString option.value.split('&id')[0]
+							@_setQueryString encodeURIComponent("cfid[]") + '=' + encodeURIComponent(option.value.split('&id')[0]) 
 		@setSavedFilters(@options.userFilters)
 
 	setSavedFilters: (userFilters, selected=@savedFiltersDropdown.val()) ->

@@ -255,7 +255,7 @@ module EventsHelper
   end
 
   def describe_custom_filters
-    custom_filter = CustomFilter.for_company_user(current_user.current_company_user)
+    custom_filter = CustomFilter.for_company_user(current_company_user)
             .order('custom_filters.name ASC')
     describe_resource_params(:cfid,
                              custom_filter, expandible: true)

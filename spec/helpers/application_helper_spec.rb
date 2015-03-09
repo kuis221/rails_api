@@ -178,8 +178,8 @@ describe ApplicationHelper, type: :helper do
       filter = create(:custom_filter, owner: user, name: 'My Prueba',
                                       apply_to: 'events', filters: 'foo=bar')
       expect(subject[:items]).to eql [
-        { id: "foo=bar&id=#{filter.id}", label: 'My Prueba',
-          name: :custom_filter, selected: false }]
+        { id: "#{filter.id}", label: 'My Prueba',
+          name: :cfid, selected: false }]
     end
   end
 end

@@ -53,5 +53,39 @@ feature 'Filter Expand', js: true, search: true do
       remove_filter 'Roberto Gomez'
       expect(page).to have_selector('#events-list .resource-item', count: 1)
     end
+
+    scenario 'Allows expanding the saved filters' do
+      campaign2 = create(:campaign, name: 'Imperial FYU', company: company) 
+      events_list = create_list(:event, 3, company: company, campaign: campaign2)
+      events
+      Sunspot.commit
+
+      visit events_path
+      remove_filter 'Today To The Future'
+
+      expect(page).to have_selector('#events-list .resource-item', count: 5)
+      
+      filter_section('CAMPAIGN').unicheck('Imperial FYU')
+
+      expect(page).to have_selector('#events-list .resource-item', count: 3)
+      create(:custom_filter,
+              owner: company_user, name: 'My Custom Filter', apply_to: 'events',
+              filters:  "status%5B%5D=Active&campaign%5B%5D=#{campaign2.id}")
+
+      visit events_path
+      remove_filter 'Today To The Future'
+      expect(page).to have_selector('#events-list .resource-item', count: 5)
+
+      filter_section('SAVED FILTERS').unicheck('My Custom Filter')
+      expect(page).to have_selector('#events-list .resource-item', count: 3)
+      expect(collection_description).to have_filter_tag('My Custom Filter')
+
+      expand_filter 'My Custom Filter'
+      expect(collection_description).to_not have_filter_tag('My Custom Filter')
+      expect(collection_description).to have_filter_tag('Imperial FYU')
+
+      remove_filter 'Imperial FYU'
+      expect(page).to have_selector('#events-list .resource-item', count: 5)
+    end
   end
 end
