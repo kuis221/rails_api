@@ -687,7 +687,7 @@ $.widget 'nmk.filteredList', {
 					@dateRange = false
 
 					if @_previousDates != @_datesToString(dates)
-						@form.find('input[name="custom_filter[]"]:checked').prop 'checked', false
+						@_uncheckDateCustomFilters() if !@updatingFilters
 						@calendar.find('.datepick-month a').removeClass('first-selected last-selected')
 						@calendar.find('.datepick-selected:first').addClass('first-selected')
 						@calendar.find('.datepick-selected:last').addClass('last-selected')
@@ -968,6 +968,15 @@ $.widget 'nmk.filteredList', {
 		)
 		p = custom_filter[0].value.split('&id')[0] if custom_filter.length > 0
 
+	_uncheckDateCustomFilters: () ->
+		customFilters = @form.find('input[name="custom_filter[]"]:checked')
+		for filter in customFilters
+			if @_isDateCustomFilter(filter)
+				$(filter).prop 'checked', false
+
+	_isDateCustomFilter: (filter) ->
+		if filter.value.indexOf('start_date') >= 0 && filter.value.indexOf('end_date') >= 0 then true else false
+
 	buildParams: (params=[]) ->
 		data = @_deparam(@paramsQueryString())
 		for param in data
@@ -1124,7 +1133,6 @@ $.widget 'nmk.filteredList', {
 	_parseQueryString: (query) ->
 		dates = []
 		selectedOptions = []
-
 		for param in @_deparam(query)
 			name = param.name
 			value = param.value
@@ -1148,6 +1156,14 @@ $.widget 'nmk.filteredList', {
 					field = @form.find("input[name=\"#{name}\"]:not(:checkbox)")
 					if field.length > 0
 						field.val(value)
+
+				#When an item from custom filters is removed from filters, uncheck the corresponding checkboxes
+				customFilters = @form.find('input[name="custom_filter[]"]:checked')
+				for filter in customFilters
+					unless @_isDateCustomFilter(filter)
+						for custom in @_deparam(filter.value)
+							if custom.name != 'id' && query.indexOf("#{encodeURIComponent(custom.name)}=#{custom.value}") < 0
+								$(filter).prop 'checked', false
 
 		for name, slider of @sliders
 			unless query.indexOf(encodeURIComponent("#{name}[min]")) > -1 || query.indexOf(encodeURIComponent("#{name}[max]")) > -1

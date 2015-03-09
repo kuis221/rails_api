@@ -21,7 +21,7 @@
       = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
 
   #area-places.details_box
-    h3 PLACES
+    h5.results-title PLACES
     #area-places-list
       = render partial: 'places', locals: { places: resource.places.order(:name) }
     = link_to "", new_area_place_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Place' if can?(:edit, resource)
