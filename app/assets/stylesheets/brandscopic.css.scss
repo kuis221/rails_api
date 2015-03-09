@@ -7351,11 +7351,10 @@ body.dashboard.index {
 	}
 	a.icon-close {
 		color: $gray-light;
-		float: right;
 		font-size: 10px;
 		margin-right: -4px;
 		margin-left: 4px;
-		margin-top: 8px;
+		top: 1px;
 		position: relative;
 		text-decoration: underline;
 	}
