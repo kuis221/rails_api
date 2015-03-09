@@ -1572,6 +1572,30 @@ feature 'Events section' do
 
         expect(page).to have_content('Your post event report has been submitted for approval.')
       end
+
+      scenario "display errors when an event don't meet a campaign module range" do
+        event = create(:late_event,
+                       campaign: create(:campaign, company: company, name: 'Campaign FY2012', brands: [brand], modules: { 'comments' => { 'name' => 'comments', 'field_type' => 'module', 'settings' => { 'range_min' => '1', 'range_max' => '2'} } }))
+
+        visit event_path(event)
+
+        expect(page).to have_content('Your post event report is late. Please submit post event data and enter comments now. Once complete, please submit your post event form.')
+
+        click_js_link 'submit'
+
+        within visible_modal do
+          expect(page).to have_content('It is required at least 1 and not more than 2 comments')
+          click_js_link 'OK'
+        end
+        ensure_modal_was_closed
+
+        event.comments << create(:comment, content: 'Comment #1', commentable: event)
+        event.save
+
+        click_js_link 'submit'
+
+        expect(page).to have_content('Your post event report has been submitted for approval.')
+      end
     end
   end
 
