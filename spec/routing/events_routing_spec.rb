@@ -13,14 +13,6 @@ describe 'routes for events', type: :routing do
     expect(get: '/events/1').to route_to('events#show', id: '1')
   end
 
-  it 'routes to #autocomplete' do
-    expect(get: '/events/autocomplete').to route_to('events#autocomplete')
-  end
-
-  it 'routes to #filters' do
-    expect(get: '/events/filters').to route_to('events#filters')
-  end
-
   it 'routes to #items' do
     expect(get: '/events/items').to route_to('events#items')
   end

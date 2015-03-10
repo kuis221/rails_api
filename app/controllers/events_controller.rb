@@ -31,18 +31,6 @@ class EventsController < FilteredController
   skip_load_and_authorize_resource only: :update
   before_action :authorize_update, only: :update
 
-  def autocomplete
-    buckets = autocomplete_buckets(
-      campaigns: [Campaign],
-      brands: [Brand, BrandPortfolio],
-      places: [Venue, Area],
-      people: [CompanyUser, Team],
-      active_state: [],
-      event_status: []
-    )
-    render json: buckets.flatten
-  end
-
   def map
     search_params.merge!(search_permission: :view_map)
     collection
@@ -237,10 +225,6 @@ class EventsController < FilteredController
         end
       end
     end)
-  end
-
-  def permitted_search_params
-    permitted_events_search_params
   end
 
   def list_exportable?

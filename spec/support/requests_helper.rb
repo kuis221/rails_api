@@ -73,6 +73,14 @@ module CapybaraBrandscopicHelpers
     end
   end
 
+  def expand_filter(filter_name)
+    wait_for_ajax
+    within '.collection-list-description' do
+      find('.filter-item', text: filter_name).click_js_link 'Expand this filter'
+      expect(page).to have_no_selector('.filter-item', text: filter_name)
+    end
+  end
+
   def add_filter(filter_category, filter)
     field = filter_section(filter_category).find_field(filter)
     filter_section(filter_category).unicheck(filter)

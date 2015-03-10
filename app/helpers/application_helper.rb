@@ -310,6 +310,20 @@ module ApplicationHelper
     current_company.id == 2
   end
 
+  def default_params_for_view(default = '', scope: controller_name)
+    filter_string = CustomFilter.for_company_user(current_company_user).user_saved_filters
+            .order('custom_filters.name ASC').by_type(scope).where(default_view: true).limit(1).pluck(:filters).first
+    (filter_string || escape_query_params(default)).html_safe
+  end
+
+  def user_saved_filters(scope)
+    CollectionFilter.new(scope, current_company_user, params).user_saved_filters
+  end
+
+  def escape_query_params(query)
+    query.split('&').map{ |p| CGI::escape(p).gsub('%3D', '=') }.join('&')
+  end
+
   def step_navigation_bar(steps, active)
     content_tag :div, class: 'steps-wizard' do
       content_tag(:div, class: 'row-fluid') do

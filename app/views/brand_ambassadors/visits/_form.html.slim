@@ -10,7 +10,7 @@
         .pull-left
           = f.input :end_date, :as => :date_picker
 
-    = f.association :company_user, collection: brand_ambassadors_users.for_dropdown_with_role, input_html: {class: 'chosen-enabled', 'data-placeholder' => " "}, label: 'Employee'
+    = f.association :company_user, collection: current_company.brand_ambassadors_users.for_dropdown_with_role, input_html: {class: 'chosen-enabled', 'data-placeholder' => " "}, label: 'Employee'
 
     = f.association :campaign, collection: allowed_campaigns, input_html: {class: 'chosen-enabled'}
 

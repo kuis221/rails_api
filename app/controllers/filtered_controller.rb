@@ -3,8 +3,6 @@
 # This class in intented to be used as a base for all those
 # controllers that have filtering capabilities
 class FilteredController < InheritedResources::Base
-  include FacetsHelper
-  include AutocompleteHelper
   include ExportableController
 
   helper_method :collection_count, :facets, :page,
@@ -12,7 +10,7 @@ class FilteredController < InheritedResources::Base
 
   respond_to :json, only: :index
 
-  CUSTOM_VALIDATION_ACTIONS = [:index, :items, :filters, :autocomplete, :export, :new_export]
+  CUSTOM_VALIDATION_ACTIONS = [:index, :items, :export, :new_export]
   load_and_authorize_resource except: CUSTOM_VALIDATION_ACTIONS
 
   before_action :authorize_actions, only: CUSTOM_VALIDATION_ACTIONS
@@ -82,13 +80,18 @@ class FilteredController < InheritedResources::Base
 
   def search_params
     @search_params ||= params.permit(permitted_search_params).tap do |p|
+      CustomFilter.where(id: params[:cfid]).each do |cf|
+        p.deep_merge!(Rack::Utils.parse_nested_query(cf.filters)) do |key, v1, v2| 
+          (Array(v1) + Array(v2)).uniq
+        end
+      end if params[:cfid].present? && params[:cfid].present?
       p[:company_id] = current_company.id
       p[:current_company_user] = current_company_user
     end
   end
 
   def permitted_search_params
-    [:page, :sorting, :sorting_dir]
+    [:page, :sorting, :per_page, :sorting_dir].concat resource_class.searchable_params
   end
 
   def collection_count

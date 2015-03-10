@@ -53,7 +53,7 @@ en:
 
   filters:
     areas: 'Areas'
-    active_state: 'Active State'
+    status: 'Active State'
     activity_types: 'Activity Types'
     brands: 'Brands'
     brand_portfolios: 'Brand Portfolios'
@@ -63,13 +63,20 @@ en:
     day_parts: 'Day Parts'
     event_status: 'Event Status'
     people: 'People'
+    staff: 'Staff'
     places: 'Places'
     roles: 'Roles'
+    tags: 'Tags'
     tasks: 'Tasks'
     teams: 'Teams'
     task_status: 'Task Status'
     user_active_state: 'Active State'
     users: 'Users'
+    price: 'Price'
+    rating: 'Star Rating'
+    venues: 'Venues'
+    sources: 'Sources'
+    questions: 'Questions'
 
   exports:
     pdf:

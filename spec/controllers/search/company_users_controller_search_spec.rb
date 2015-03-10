@@ -9,149 +9,6 @@ describe CompanyUsersController, type: :controller, search: true do
   describe 'As Super User' do
     let(:company_user) { create(:company_user, company: company) }
 
-    describe "GET 'autocomplete'" do
-      it 'should return the correct buckets in the right order' do
-        Sunspot.commit
-        get 'autocomplete'
-        expect(response).to be_success
-
-        buckets = JSON.parse(response.body)
-        expect(buckets.map { |b| b['label'] }).to eq([
-          'Users', 'Teams', 'Roles', 'Campaigns', 'Places', 'Active State'])
-      end
-
-      it 'should return the users in the User Bucket' do
-        user = create(:user, first_name: 'Guillermo', last_name: 'Vargas', company_id: company.id)
-        company_user = user.company_users.first
-        Sunspot.commit
-
-        get 'autocomplete', q: 'gu'
-        expect(response).to be_success
-
-        buckets = JSON.parse(response.body)
-        people_bucket = buckets.select { |b| b['label'] == 'Users' }.first
-        expect(people_bucket['value']).to eq([
-          { 'label' => '<i>Gu</i>illermo Vargas',
-            'value' => company_user.id.to_s, 'type' => 'user' }])
-      end
-
-      it 'should return the teams in the Teams Bucket' do
-        team = create(:team, name: 'Spurs', company_id: company.id)
-        Sunspot.commit
-
-        get 'autocomplete', q: 'sp'
-        expect(response).to be_success
-
-        buckets = JSON.parse(response.body)
-        people_bucket = buckets.select { |b| b['label'] == 'Teams' }.first
-        expect(people_bucket['value']).to eq([
-          { 'label' => '<i>Sp</i>urs', 'value' => team.id.to_s, 'type' => 'team' }])
-      end
-
-      it 'should return the campaigns in the Campaigns Bucket' do
-        campaign = create(:campaign, name: 'Cacique para todos', company_id: company.id)
-        Sunspot.commit
-
-        get 'autocomplete', q: 'cac'
-        expect(response).to be_success
-
-        buckets = JSON.parse(response.body)
-        campaigns_bucket = buckets.select { |b| b['label'] == 'Campaigns' }.first
-        expect(campaigns_bucket['value']).to eq([
-          { 'label' => '<i>Cac</i>ique para todos',
-            'value' => campaign.id.to_s, 'type' => 'campaign' }])
-      end
-
-      it 'should return the roles in the Roles Bucket' do
-        role = create(:role, name: 'Campaing Staff', company: company)
-        Sunspot.commit
-
-        get 'autocomplete', q: 'staff'
-        expect(response).to be_success
-
-        buckets = JSON.parse(response.body)
-        places_bucket = buckets.select { |b| b['label'] == 'Roles' }.first
-        expect(places_bucket['value']).to eq([
-          { 'label' => 'Campaing <i>Staff</i>', 'value' => role.id.to_s, 'type' => 'role' }])
-      end
-
-      it 'should return the venues in the Places Bucket' do
-        expect_any_instance_of(Place).to receive(:fetch_place_data).and_return(true)
-        venue = create(:venue, company_id: company.id, place: create(:place, name: 'Motel Paraiso'))
-        Sunspot.commit
-
-        get 'autocomplete', q: 'mot'
-        expect(response).to be_success
-
-        buckets = JSON.parse(response.body)
-        places_bucket = buckets.select { |b| b['label'] == 'Places' }.first
-        expect(places_bucket['value']).to eq([
-          { 'label' => '<i>Mot</i>el Paraiso', 'value' => venue.id.to_s, 'type' => 'venue' }])
-      end
-
-      describe 'when notification policy is set to EVENT_ALERT_POLICY_ALL' do
-        let(:campaign) { create(:campaign, company: company) }
-        before { company.update_attribute(:event_alerts_policy, Notification::EVENT_ALERT_POLICY_ALL) }
-
-        it 'should notify all users about late events that they have access to' do
-          company_user.update_attributes(notifications_settings: ['event_recap_late_app'])
-          create(:late_event, campaign: campaign)
-          Sunspot.commit
-
-          get 'notifications', id: company_user.to_param, format: :json
-
-          expect(response).to be_success
-
-          notifications = JSON.parse(response.body)
-          expect(notifications).to include(
-            'message' => 'There is one late event recap',
-            'level' => 'red',
-            'url' => '/events?end_date=&event_status%5B%5D=Late&start_date=&status%5B%5D=Active',
-            'unread' => true,
-            'icon' => 'icon-events',
-            'type' => 'event_recaps_late')
-        end
-
-        it 'should return a notification if the user have a submitted event recap that is waiting for approval' do
-          company_user.update_attributes(notifications_settings: ['event_recap_pending_approval_app'])
-          create(:submitted_event, campaign: campaign)
-          Sunspot.commit
-
-          get 'notifications', id: company_user.to_param, format: :json
-
-          expect(response).to be_success
-
-          notifications = JSON.parse(response.body)
-          expect(notifications).to include(
-            'message' => 'There is one event recap that is pending approval',
-            'level' => 'blue',
-            'url' => '/events?end_date=&event_status%5B%5D=Submitted&start_date=&status%5B%5D=Active',
-            'unread' => true,
-            'icon' => 'icon-events',
-            'type' => 'event_recaps_pending')
-        end
-
-        it 'should return a notification if the user have a due event recap' do
-          company_user.update_attributes(notifications_settings: ['event_recap_due_app'])
-          create(:due_event, campaign: campaign)
-          Sunspot.commit
-
-          get 'notifications', id: company_user.to_param, format: :json
-
-          expect(response).to be_success
-
-          notifications = JSON.parse(response.body)
-          expect(notifications).to include(
-            'message' => 'There is one event recap that is due',
-            'level' => 'grey',
-            'url' => '/events?end_date=&event_status%5B%5D=Due&start_date=&status%5B%5D=Active',
-            'unread' => true,
-            'icon' => 'icon-events',
-            'type' => 'event_recaps_due')
-        end
-      end
-    end
-
     describe "GET 'notifications'" do
       let(:timestamp) { Time.now.to_datetime.strftime('%Q').to_i }
       it 'should return a notification if a user is added to a campaign' do
@@ -425,6 +282,68 @@ describe CompanyUsersController, type: :controller, search: true do
           'icon' => 'icon-comments',
           'type' => 'team_task_comments',
           'task_id' => task.id)
+      end
+    end
+
+    describe 'when notification policy is set to EVENT_ALERT_POLICY_ALL' do
+      let(:campaign) { create(:campaign, company: company) }
+      before { company.update_attribute(:event_alerts_policy, Notification::EVENT_ALERT_POLICY_ALL) }
+
+      it 'should notify all users about late events that they have access to' do
+        company_user.update_attributes(notifications_settings: ['event_recap_late_app'])
+        create(:late_event, campaign: campaign)
+        Sunspot.commit
+
+        get 'notifications', id: company_user.to_param, format: :json
+
+        expect(response).to be_success
+
+        notifications = JSON.parse(response.body)
+        expect(notifications).to include(
+          'message' => 'There is one late event recap',
+          'level' => 'red',
+          'url' => '/events?end_date=&event_status%5B%5D=Late&start_date=&status%5B%5D=Active',
+          'unread' => true,
+          'icon' => 'icon-events',
+          'type' => 'event_recaps_late')
+      end
+
+      it 'should return a notification if the user have a submitted event recap that is waiting for approval' do
+        company_user.update_attributes(notifications_settings: ['event_recap_pending_approval_app'])
+        create(:submitted_event, campaign: campaign)
+        Sunspot.commit
+
+        get 'notifications', id: company_user.to_param, format: :json
+
+        expect(response).to be_success
+
+        notifications = JSON.parse(response.body)
+        expect(notifications).to include(
+          'message' => 'There is one event recap that is pending approval',
+          'level' => 'blue',
+          'url' => '/events?end_date=&event_status%5B%5D=Submitted&start_date=&status%5B%5D=Active',
+          'unread' => true,
+          'icon' => 'icon-events',
+          'type' => 'event_recaps_pending')
+      end
+
+      it 'should return a notification if the user have a due event recap' do
+        company_user.update_attributes(notifications_settings: ['event_recap_due_app'])
+        create(:due_event, campaign: campaign)
+        Sunspot.commit
+
+        get 'notifications', id: company_user.to_param, format: :json
+
+        expect(response).to be_success
+
+        notifications = JSON.parse(response.body)
+        expect(notifications).to include(
+          'message' => 'There is one event recap that is due',
+          'level' => 'grey',
+          'url' => '/events?end_date=&event_status%5B%5D=Due&start_date=&status%5B%5D=Active',
+          'unread' => true,
+          'icon' => 'icon-events',
+          'type' => 'event_recaps_due')
       end
     end
   end

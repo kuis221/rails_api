@@ -73,6 +73,8 @@ class Kpi < ActiveRecord::Base
     .reorder('name ASC')
   }
 
+  scope :campaign_eq, ->() { self }
+
   after_save :sync_segments_and_goals
 
   def self.campaign_eq(campaigns)
@@ -102,6 +104,10 @@ class Kpi < ActiveRecord::Base
 
   def currency?
     capture_mechanism == 'currency'
+  end
+
+  def self.ransackable_scopes(auth_object = nil)
+    [:campaign_eq]
   end
 
   def sync_segments_and_goals

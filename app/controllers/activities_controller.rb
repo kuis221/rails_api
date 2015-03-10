@@ -20,7 +20,7 @@ class ActivitiesController < FilteredController
       render 'invitation_form', layout: false
     else
       build_resource
-      @brands = Brand.accessible_by_user(current_company_user.id).order(:name)
+      @brands = Brand.accessible_by_user(current_company_user).order(:name)
       render layout: false
     end
   end

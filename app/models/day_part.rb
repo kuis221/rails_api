@@ -66,6 +66,10 @@ class DayPart < ActiveRecord::Base
       end
     end
 
+    def searchable_params
+      [day_part: [], status: []]
+    end
+
     def report_fields
       {
         name: { title: 'Name' }

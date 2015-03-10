@@ -7345,6 +7345,7 @@ body.dashboard.index {
 	font-size: 12px;
 	text-transform: capitalize;
 	white-space: nowrap;
+	margin-bottom: 1px;
 	@include border-radius (15px);
 	&:hover {
 		border-color: $white;
@@ -7356,6 +7357,16 @@ body.dashboard.index {
 		margin-right: -4px;
 		margin-left: 4px;
 		top: 1px;
+		position: relative;
+		text-decoration: underline;
+	}
+	a.icon-plus {
+		color: $white;
+		float: left;
+		font-size: 10px;
+		margin-right: 4px;
+		margin-left: -4px;
+		margin-top: 7px;
 		position: relative;
 		text-decoration: underline;
 	}

@@ -29,6 +29,8 @@ class BrandPortfolio < ActiveRecord::Base
 
   scope :active, -> { where(active: true) }
 
+  scope :accessible_by_user, ->(user) { in_company(user.company_id) }
+
   searchable do
     integer :id
 
@@ -81,10 +83,18 @@ class BrandPortfolio < ActiveRecord::Base
       end
     end
 
+    def searchable_params
+      [brand: [], brand_portfolio: [], status: []]
+    end
+
     def report_fields
       {
         name: { title: 'Name' }
       }
     end
+  end
+
+   def filter_subitems
+    self.brands.pluck('brands.id, brands.name, \'brand\'')
   end
 end

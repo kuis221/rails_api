@@ -134,7 +134,7 @@ feature 'Photos', js: true do
 
       visit results_photos_path
 
-      filter_section('STATUS').unicheck('Inactive')
+      filter_section('ACTIVE STATE').unicheck('Inactive')
 
       # Check that the image appears on the page
       within find('.gallery.photoGallery') do
