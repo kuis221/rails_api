@@ -82,7 +82,11 @@ class FilteredController < InheritedResources::Base
     @search_params ||= params.permit(permitted_search_params).tap do |p|
       CustomFilter.where(id: params[:cfid]).each do |cf|
         p.deep_merge!(Rack::Utils.parse_nested_query(cf.filters)) do |key, v1, v2| 
-          (Array(v1) + Array(v2)).uniq
+          if ['start_date', 'end_date'].include?(key)
+            v2
+          else
+            (Array(v1) + Array(v2)).uniq
+          end
         end
       end if params[:cfid].present? && params[:cfid].present?
       p[:company_id] = current_company.id

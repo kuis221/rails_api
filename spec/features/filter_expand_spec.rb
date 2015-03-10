@@ -87,5 +87,34 @@ feature 'Filter Expand', js: true, search: true do
       remove_filter 'Imperial FYU'
       expect(page).to have_selector('#events-list .resource-item', count: 5)
     end
+
+    scenario 'Allows expanding the saved filters - Date Range' do
+      campaign2 = create(:campaign, name: 'Imperial FYU', company: company) 
+      events_list = create_list(:event, 3, company: company, campaign: campaign2)
+      events
+      Sunspot.commit
+
+      visit events_path
+      remove_filter 'Today To The Future'
+
+      expect(page).to have_selector('#events-list .resource-item', count: 5)
+
+      create(:custom_filter,
+              owner: company_user, name: 'My Custom Filter', apply_to: 'events',
+              filters:  "status%5B%5D=Active&start_date=8%2F28%2F2013&end_date=8%2F29%2F2013")
+
+      visit events_path
+      remove_filter 'Today To The Future'
+      filter_section('SAVED FILTERS').unicheck('My Custom Filter')
+      expect(page).to have_selector('#events-list .resource-item', count: 1)
+
+      expect(collection_description).to have_filter_tag('My Custom Filter')
+
+      expand_filter 'My Custom Filter'
+      expect(collection_description).to_not have_filter_tag('My Custom Filter')
+      expect(collection_description).to have_filter_tag('Aug 28, 2013 - Aug 29, 2013')
+      
+      expect(page).to have_selector('#events-list .resource-item', count: 1)
+    end
   end
 end
