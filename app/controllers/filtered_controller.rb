@@ -81,7 +81,6 @@ class FilteredController < InheritedResources::Base
   def search_params
     @search_params ||= params.permit(permitted_search_params).tap do |p|
       CustomFilter.where(id: params[:cfid]).each do |cf|
-        puts cf.filters
         p.deep_merge!(Rack::Utils.parse_nested_query(cf.filters)) do |key, v1, v2| 
           (Array(v1) + Array(v2)).uniq
         end
