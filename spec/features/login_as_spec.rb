@@ -17,7 +17,7 @@ feature 'As a Super Admin, I want to login as another system user' do
     Warden.test_reset!
   end
 
-  feature 'admin user', js: true  do
+  feature 'admin user', js: true, search: true  do
     let(:role) { create(:role, company: company) }
     let(:role2) { create(:non_admin_role, company: company) }
 
@@ -68,6 +68,21 @@ feature 'As a Super Admin, I want to login as another system user' do
       expect(page).to have_button('Login as specific user')
       expect(page).to have_selector('li#admin', count: 1)
       expect(page).to have_content('VENUES')
+    end
+
+    scenario 'user can cancel login with other user' do
+      visit events_path
+
+      expect(page).to have_selector('.top-admin-login-navigation', count: 1)
+
+      click_button 'Login as specific user'
+
+      expect(page).to have_selector('#cancel-login-specific-user')
+
+      click_button 'Cancel'
+
+      expect(page).to_not have_selector('#cancel-login-specific-user')
+      expect(page).to have_button('Login as specific user')
     end
   end
 
