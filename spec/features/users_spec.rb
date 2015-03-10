@@ -102,7 +102,7 @@ feature 'Users', js: true do
     end
 
     scenario 'allow a user to invite users' do
-      create(:role, name: 'TestRole', company_id: company.id)
+      create(:non_admin_role, name: 'TestRole', company_id: company.id)
       visit company_users_path
 
       click_js_button 'Invite user'
@@ -201,8 +201,8 @@ feature 'Users', js: true do
     end
 
     scenario 'allows the user to edit another user' do
-      role = create(:role, name: 'TestRole', company_id: company.id)
-      create(:role, name: 'Another Role', company_id: company.id, is_admin: false)
+      role = create(:non_admin_role, name: 'TestRole', company_id: company.id)
+      create(:non_admin_role, name: 'Another Role', company_id: company.id)
       user = create(:user, first_name: 'Juanito', last_name: 'Mora', role_id: role.id, company_id: company.id)
       company_user = user.company_users.first
       visit company_user_path(company_user)
@@ -229,8 +229,8 @@ feature 'Users', js: true do
 
     scenario 'should validate who is not present the role admin' do
       role = create(:role, name: 'Test admin role', company: company)
-      role2 = create(:role, name: 'Test not admin role', company: company, is_admin: false)
-      user = create(:user, first_name: 'Juanito', last_name: 'Mora', role_id: role.id, company_id: company.id)
+      role2 = create(:non_admin_role, name: 'Test not admin role', company: company)
+      user = create(:user, first_name: 'Juanito', last_name: 'Mora', role_id: role2.id, company_id: company.id)
       company_user = user.company_users.first
       visit company_user_path(company_user)
 

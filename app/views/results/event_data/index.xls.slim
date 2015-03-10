@@ -108,7 +108,7 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
           Cell ss:StyleID="s2"
             Data ss:Type="DateTime"= Timeliness.parse(event_date(event, :end_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%FT%R')
           Cell
-            Data ss:Type="Number"= number_with_precision(event.promo_hours, precision: 1)
+            Data ss:Type="Number"= number_with_precision(event.promo_hours, precision: 2)
           Cell ss:StyleID="s4"
             Data ss:Type="Number"= event.spent
           - custom_fields_to_export_values(event).each do |v|

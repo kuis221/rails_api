@@ -10,23 +10,7 @@ namespace :brandscopic do
         puts "   ORIGINAL: #{place.inspect}\n"
         puts "   COPY:     #{copy.inspect}\n"
         processed_ids.concat [place.id, copy.id]
-
-        Venue.where(place_id: copy.id).each do |venue|
-          real_venue = Venue.find_or_create_by(place_id: place.id, company_id: venue.company_id)
-          venue.activities.update_all(activitable_id: real_venue.id)
-          venue.invites.update_all(venue_id: real_venue.id)
-          venue.destroy
-        end
-
-        Event.where(place_id: copy.id).each do |event|
-          event.update_attribute(:place_id, place.id) or fail('cannot update event')
-        end
-
-        Placeable.where(place_id: copy.id).update_all(place_id: place.id)
-
-        place.td_linx_code ||= copy.td_linx_code
-
-        copy.destroy
+        place.merge(copy)
         count += 1;
       end
     end

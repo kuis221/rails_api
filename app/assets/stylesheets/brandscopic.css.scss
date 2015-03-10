@@ -613,7 +613,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	min-height: 37px;
 	line-height: 22px;
 	margin: 0 10px 0 90px;
-	padding: 10px 20px 10px 21px;
+	padding: 10px 20px 6px 21px;
 	position: fixed;
 	-webkit-border-radius: 0px 0px 8px 8px;
 	border-radius: 0px 0px 8px 8px;
@@ -4288,7 +4288,7 @@ body.roles{
 					font-size: 11px;
 					text-align: left;
 				}
-			}		
+			}
 		}
 	}
 }
@@ -5496,8 +5496,10 @@ body.campaigns{
 			color: $brand;
 			font-size: 11px;
 		}
-		h3{
-			margin-top: 45px;
+		.results-title{
+			font-weight: bold;
+			margin-bottom: 20px;
+			margin-top: 35px;
 			&+#list-tools{
 				margin: 10px 0 0px 0;
 			}
@@ -5830,14 +5832,14 @@ margin: 45px 0 25px 25px;
 	color: $brand;
 	.control-group {
 		display: inline-block;
-		margin-left: 57px;
+		margin-left: 35px;
 		&.report_campaign_id {
 			margin-left: 0;
 		}
 		&.report_group_by label {
+			color: $brand;
 			display: inline-block;
 			font-size: 11px;
-			vertical-align: middle;
 		}
 		.export-xls {
 			margin-top: 22px;
@@ -5850,12 +5852,11 @@ margin: 45px 0 25px 25px;
 				color: #FFFFFF;
 				font-weight: bold;
 				font-size: 13px;
-				padding: 7px 10px;
-				width: 60px;
+				min-width: 70px;
 				&:first-child{
 					border-bottom-left-radius: 6px;
 					border-top-left-radius: 6px;
-					border-right: 1px solid $brand;
+					border-right: 1px solid rgba(152,152,152,0.3);
 					&+label{
 						border-left:0;
 					}
@@ -5863,7 +5864,7 @@ margin: 45px 0 25px 25px;
 				&:last-child{
 						border-bottom-right-radius: 6px;
 						border-top-right-radius: 6px;
-						border-left: 1px solid $brand;
+						border-left: 1px solid rgba(152,152,152,0.3);
 				}
 				&.active{
 					background-color: $brand;
@@ -6265,6 +6266,7 @@ table td.sub-level-1 {
 	border: 1px solid #ccc;
 	top: 81px;
 	left: 30px;
+	overflow:hidden;
 	position: absolute;
 
 	.ui-menu-item {
@@ -7336,7 +7338,8 @@ body.dashboard.index {
 	border: 0;
 	color: $white;
 	line-height: 23px;
-	margin-left: 4px;
+	margin-bottom: 4px;
+	margin-left: 1px;
 	min-height: 24px;
 	padding: 0 10px;
 	font-size: 12px;
@@ -7349,11 +7352,10 @@ body.dashboard.index {
 	}
 	a.icon-close {
 		color: $gray-light;
-		float: right;
 		font-size: 10px;
 		margin-right: -4px;
 		margin-left: 4px;
-		margin-top: 8px;
+		top: 1px;
 		position: relative;
 		text-decoration: underline;
 	}
@@ -7443,6 +7445,10 @@ body.dashboard.index {
 			&:focus, &:focus{
     			outline: 0;
 			}
+		}
+		.link-cancel-user {
+			margin-top: 4px;
+			margin-left: 10px;
 		}
 	}
 }

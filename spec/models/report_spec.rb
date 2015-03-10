@@ -1910,6 +1910,65 @@ describe Report, type: :model do
       ]
     end
 
+    it 'can filter results by event status' do
+      Timecop.travel Date.new(2014, 05, 05) do
+        campaign.assign_all_global_kpis
+
+        create(:late_event, start_date: '01/01/2014', start_time: '10:00 AM',
+          end_date: '01/01/2014', end_time: '11:00 AM', campaign: campaign,
+          results: { impressions: 100, interactions: 50 })
+
+        create(:approved_event, start_date: '05/05/2014', start_time: '10:00 AM',
+          end_date: '05/05/2014', end_time: '11:00 AM', campaign: campaign,
+          results: { impressions: 300, interactions: 50 })
+
+        create(:due_event, campaign: campaign, start_date: '05/04/2014', start_time: '10:00 AM',
+          end_date: '05/04/2014', end_time: '11:00 AM', campaign: campaign,
+          results: { impressions: 200, interactions: 150 })
+
+        report = create(:report,
+                        company: company,
+                        columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                        rows:    [{ 'field' => 'event:start_date', 'label' => 'Start date' }],
+                        filters: [{ 'field' => 'event:event_status', 'label' => 'Event Status' }],
+                        values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions',
+                                    'aggregate' => 'sum' }]
+        )
+        # With no filtering
+        expect(report.fetch_page).to eql [
+          { 'event_start_date' => '2014/01/01', 'values' => [100.00] },
+          { 'event_start_date' => '2014/05/04', 'values' => [200.00] },
+          { 'event_start_date' => '2014/05/05', 'values' => [300.00] }
+        ]
+
+        # filtering by late events
+        report.filter_params = { 'event:event_status' => ['late'] }
+        expect(report.fetch_page).to eql [
+          { 'event_start_date' => '2014/01/01', 'values' => [100.00] }
+        ]
+
+        # filtering by due events
+        report.filter_params = { 'event:event_status' => ['due'] }
+        expect(report.fetch_page).to eql [
+          { 'event_start_date' => '2014/05/04', 'values' => [200.00] }
+        ]
+
+        # filtering by approved events
+        report.filter_params = { 'event:event_status' => ['approved'] }
+        expect(report.fetch_page).to eql [
+          { 'event_start_date' => '2014/05/05', 'values' => [300.00] }
+        ]
+
+        # filtering by late, due and approved events
+        report.filter_params = { 'event:event_status' => %w(approved late due) }
+        expect(report.fetch_page).to eql [
+          { 'event_start_date' => '2014/01/01', 'values' => [100.00] },
+          { 'event_start_date' => '2014/05/04', 'values' => [200.00] },
+          { 'event_start_date' => '2014/05/05', 'values' => [300.00] }
+        ]
+      end
+    end
+
     it 'can filter results by start/end times using timezone support' do
       company.timezone_support = true
       Company.current = company

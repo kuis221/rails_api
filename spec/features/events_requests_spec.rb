@@ -122,10 +122,17 @@ feature 'Events section' do
           add_filter 'EVENT STATUS', 'Submitted'
           remove_filter 'Today To The Future'
           expect(page).to have_selector('#events-list .resource-item', count: 3)
-          resource_item(2).click
+
+          within resource_item(2) do
+            click_js_link 'Event Details'
+          end
+
+          expect(page).to have_selector('h2', text: 'Campaign #2 FY2012')
+
           within('.alert') do
             click_link 'approve'
           end
+
           expect(page).to have_content('Your post event report has been approved.')
           find('#resource-close-details').click
           expect(page).to have_selector('#events-list .resource-item', count: 2)
@@ -359,11 +366,11 @@ feature 'Events section' do
               ['Another Campaign April 03', nil, "#{year_number}-#{month_number}-#{today.strftime('%d')}T08:00",
                "#{year_number}-#{month_number}-#{today.strftime('%d')}T09:00", '1.0', 'Place 2',
                'Place 2, 11 Main St., Los Angeles, CA, 67890', 'Los Angeles', 'CA', '67890', 'Active', 'Unsent',
-               nil, "http://localhost:5100/events/#{event2.id}"],
+               nil, "http://#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event2.id}"],
               ['Campaign FY2012', nil, "#{year_number}-#{month_number}-#{today.strftime('%d')}T10:00",
                "#{year_number}-#{month_number}-#{today.strftime('%d')}T11:00", '1.0', 'Place 1',
                'Place 1, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active',
-               'Unsent', nil, "http://localhost:5100/events/#{event1.id}"]
+               'Unsent', nil, "http://#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event1.id}"]
             ])
           end
 
@@ -405,6 +412,8 @@ feature 'Events section' do
 
             click_link 'Calendar View'
 
+            expect(find('.calendar-table')).to have_text 'My Kool Brand'
+
             click_js_link 'Download'
             click_js_link 'Download as PDF'
 
@@ -429,7 +438,7 @@ feature 'Events section' do
             end
           end
 
-          scenario 'should be able to export as PDF' do
+          scenario 'event list export is limited to 200 pages' do
             allow(Event).to receive(:do_search).and_return(double(total: 3000))
 
             visit events_path
@@ -1547,6 +1556,21 @@ feature 'Events section' do
         expect(find_field('Test Field')).to have_error('This field is required.')
 
         expect(page).to have_no_content('Your post event report has been submitted for approval.')
+      end
+
+      scenario 'allows to unapprove an approved event' do
+        event = create(:approved_event,
+                       start_date: Date.yesterday.to_s(:slashes),
+                       end_date: Date.yesterday.to_s(:slashes),
+                       campaign: campaign)
+
+        visit event_path(event)
+
+        expect(page).to have_content('Your post event report has been approved. Click here to unapprove.')
+
+        click_js_link 'unapprove'
+
+        expect(page).to have_content('Your post event report has been submitted for approval.')
       end
     end
   end

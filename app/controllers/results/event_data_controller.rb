@@ -34,6 +34,7 @@ class Results::EventDataController < FilteredController
     @search_params || (super.tap do |p|
       p[:search_permission] = :index_results
       p[:search_permission_class] = EventData
+      p[:event_data_stats] = true
     end)
   end
 

@@ -86,8 +86,12 @@
 	content: "\e616";
 }
 
+.icon-expanded:before, .icon-angle-up:before{
+	content: "\e646";
+}
+
 .icon-collapsed:before, .icon-angle-down:before{
-	content: "\e617";
+	content: "\e642";
 }
 
 .icon-dashboard:before{
@@ -104,10 +108,6 @@
 
 .icon-events:before{
 	content:"\e60a";
-}
-
-.icon-expanded:before, .icon-angle-up:before{
-	content: "\e61b";
 }
 
 .icon-female:before{

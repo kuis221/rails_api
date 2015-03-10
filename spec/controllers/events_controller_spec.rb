@@ -590,6 +590,17 @@ describe EventsController, type: :controller do
       end
     end
 
+    describe "PUT 'unapprove'" do
+      it 'should unapprove event' do
+        event = create(:approved_event, active: true, company: company)
+        expect do
+          put 'unapprove', id: event.to_param
+          expect(response).to redirect_to(event_path(event, status: 'unapproved'))
+          event.reload
+        end.to change(event, :submitted?).to(true)
+      end
+    end
+
     describe "PUT 'reject'" do
       it 'should reject event' do
         Timecop.freeze do
