@@ -25,9 +25,9 @@
       .row-fluid.users
         = uf.input :phone_number, input_html: {class: 'input-xxlarge'}, required: !is_admin
 
-      - if is_admin
+      - if is_admin && resource.id != current_company_user.id
         .row-fluid.users-teams-roles
-          = f.input :role_id, as: :select, collection: current_company.roles.active, input_html: {class: 'input-large chosen-enabled'}
+          = f.input :role_id, as: :select, collection: current_company.roles.active.not_admin, input_html: {class: 'input-large chosen-enabled'}
       - if resource.id == current_company_user.id || is_admin
         .row-fluid.users
             = uf.input :password, input_html: {class: 'input-xxlarge', minlength: 8, maxlength: 128}, hint: 'Password must contain at least 8 characters, at least 1 number, at least 1 lowercase character (a-z) and at least 1 uppercase character (A-Z)'
