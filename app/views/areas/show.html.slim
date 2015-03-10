@@ -26,6 +26,13 @@
       = render partial: 'places', locals: { places: resource.places.order(:name) }
     = link_to "", new_area_place_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Place' if can?(:edit, resource)
 
+  #area-campaigns.details_box
+    h5.results-title CAMPAIGNS
+
+    #area-campaigns-list.resource-list.without-actions
+      = render partial: 'campaigns/campaign', collection: resource.campaigns, locals: { hide_actions: true }
+
+
 = render partial: 'help_tutorial'
 
 - reload_page_on_edit_resource

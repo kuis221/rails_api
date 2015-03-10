@@ -61,7 +61,8 @@ feature 'Areas', js: true, search: true  do
     scenario 'can add an NON existing place to the area. (place from Google\'s)', :vcr do
       expect(Place).to receive(:open).and_return(double(read: { results:
         [
-          { reference: 'xxxxx', place_id: '1111', name: 'Walt Disney World Dolphin', formatted_address: '1500 Epcot Resorts Blvd, Lake Buena Vista, Florida, United States' }
+          { reference: 'xxxxx', place_id: '1111', name: 'Walt Disney World Dolphin',
+            formatted_address: '1500 Epcot Resorts Blvd, Lake Buena Vista, Florida, United States' }
         ]
       }.to_json))
       expect_any_instance_of(GooglePlaces::Client).to receive(:spot).with('xxxxx').and_return(double(
@@ -180,17 +181,16 @@ feature 'Areas', js: true, search: true  do
     end
 
     feature '/areas/:area_id', js: true do
+      let(:area) { create(:area, name: 'Some Area', description: 'an area description', company: company) }
+
       scenario 'GET show should display the area details page' do
-        area = create(:area, name: 'Some Area', description: 'an area description', company: company)
         visit area_path(area)
         expect(page).to have_selector('h2', text: 'Some Area')
         expect(page).to have_selector('div.description-data', text: 'an area description')
       end
 
       scenario 'diplays a table of places within the area' do
-        area = create(:area, name: 'Some do', description: 'an area description', company: company)
-        places = [create(:place, name: 'Place 1'), create(:place, name: 'Place 2')]
-        places.map { |p| area.places << p }
+        area.places << [create(:place, name: 'Place 1'), create(:place, name: 'Place 2')]
         visit area_path(area)
         within('#area-places-list') do
           within('div.area-place:nth-child(1)') do
@@ -204,8 +204,24 @@ feature 'Areas', js: true, search: true  do
         end
       end
 
+      scenario 'diplays a list of campaigns within the area' do
+        area.campaigns << [
+          create(:campaign, company: company, name: 'Test Campaign 1'),
+          create(:campaign, company: company, name: 'Test Campaign 2')]
+        create(:campaign, company: company, name: 'Test Campaign 3')
+
+        visit area_path(area)
+
+        within resource_item(1, list: '#area-campaigns-list') do
+          expect(page).to have_text('Test Campaign 1')
+        end
+
+        within resource_item(2, list: '#area-campaigns-list') do
+          expect(page).to have_text('Test Campaign 2')
+        end
+      end
+
       scenario 'allows the user to activate/deactivate a area' do
-        area = create(:area, name: 'Some area', description: 'an area description', active: true, company: company)
         visit area_path(area)
         within('.links-data') do
           click_js_button 'Deactivate Area'
@@ -221,12 +237,16 @@ feature 'Areas', js: true, search: true  do
     end
 
     feature 'export' do
-      let(:area1) { create(:area, name: 'Gran Area Metropolitana',
-                                  description: 'Ciudades principales de Costa Rica',
-                                  active: true, company: @company) }
-      let(:area2) { create(:area, name: 'Zona Norte',
-                                  description: 'Ciudades del Norte de Costa Rica',
-                                  active: true, company: @company) }
+      let(:area1) do
+        create(:area, name: 'Gran Area Metropolitana',
+                      description: 'Ciudades principales de Costa Rica',
+                      active: true, company: company)
+      end
+      let(:area2) do
+        create(:area, name: 'Zona Norte',
+                      description: 'Ciudades del Norte de Costa Rica',
+                      active: true, company: company)
+      end
 
       before do
         # make sure tasks are created before
