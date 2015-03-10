@@ -121,7 +121,7 @@ describe EventsController, type: :controller do
         ResqueSpec.perform_all(:export)
         expect(ListExport.last).to have_rows([
           ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'DURATION', 'VENUE NAME', 'ADDRESS', 'CITY',
-           'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL']
+           'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL']
         ])
       end
 
@@ -134,16 +134,20 @@ describe EventsController, type: :controller do
         team = create(:team, company: company, name: 'zteam')
         event.teams << team
         event.users << company_user
+        contact1 = create(:contact, first_name: 'Guillermo', last_name: 'Vargas', email: 'guilleva@gmail.com', company: company)
+        contact2 = create(:contact, first_name: 'Chris', last_name: 'Jaskot', email: 'cjaskot@gmail.com', company: company)
+        create(:contact_event, event: event, contactable: contact1)
+        create(:contact_event, event: event, contactable: contact2)
         Sunspot.commit
 
         expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
         ResqueSpec.perform_all(:export)
         expect(ListExport.last).to have_rows([
           ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'DURATION', 'VENUE NAME', 'ADDRESS', 'CITY',
-           'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'URL'],
+           'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL'],
           ['Test Campaign FY01', nil, '2019-01-23T10:00', '2019-01-23T12:00', '2.0',
            'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345', 'Los Angeles', 'California',
-           '12345', 'Active', 'Approved', 'Test User, zteam', "http://localhost:5100/events/#{event.id}"]
+           '12345', 'Active', 'Approved', 'Test User, zteam', 'Chris Jaskot, Guillermo Vargas', "http://localhost:5100/events/#{event.id}"]
         ])
       end
     end
