@@ -31,7 +31,8 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
       Column ss:Width="100"
       Column ss:Width="100"
       Column ss:Width="80"
-      Column ss:Width="80"
+      Column ss:Width="150"
+      Column ss:Width="150"
       Column ss:Width="80"
       Column ss:Width="80"
       Column ss:Width="80"
@@ -62,6 +63,8 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
           Data ss:Type="String" EVENT STATUS
         Cell
           Data ss:Type="String" TEAM MEMBERS
+        Cell
+          Data ss:Type="String" CONTACTS
         Cell
           Data ss:Type="String" URL
         Cell
@@ -100,6 +103,8 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
             Data ss:Type="String"= event.event_status
           Cell
             Data ss:Type="String"= team_member_for_event event
+          Cell
+            Data ss:Type="String"= contacts_for_event event
           - link = url_for_event(event)
           Cell ss:StyleID="s3" ss:HRef="#{link}"
             Data ss:Type="String"= link

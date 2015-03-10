@@ -96,6 +96,10 @@ module Results
       end
     end
 
+    def contacts_for_event(event)
+      event.contact_events.map(&:full_name).sort.join(', ')
+    end
+
     def url_for_event(event)
       Rails.application.routes.url_helpers.event_url(event)
     end
