@@ -43,7 +43,7 @@ describe Place, type: :model do
   it { is_expected.not_to allow_value('Costa Rica').for(:country).with_message('is not valid') }
   it { is_expected.not_to allow_value('United States').for(:country).with_message('is not valid') }
 
-  describe 'fetch_place_data' do
+  describe 'fetch_place_data', :vcr do
     it 'should correctly assign the attributes returned by the api call' do
       place = described_class.new(reference: 'YXZ', place_id: '123')
       api_client = double(:google_places_client)

@@ -36,7 +36,7 @@ feature 'Venues Section', js: true, search: true do
       expect(page).to have_no_selector('h5', text: feature_name)
     end
 
-    scenario 'search for places' do
+    scenario 'search for places', :vcr do
       visit venues_path
       select_places_autocomplete 'San Francisco CA', from: 'Enter a location'
       fill_in 'I am looking for', with: 'Alcatraz'
@@ -120,7 +120,7 @@ feature 'Venues Section', js: true, search: true do
       Sunspot.commit
     end
 
-    scenario 'should be able to export as xls' do
+    scenario 'should be able to export as xls', :vcr, match_requests_on: [:s3_file]  do
       visit venues_path
 
       click_js_link 'Download'
@@ -140,7 +140,7 @@ feature 'Venues Section', js: true, search: true do
       ])
     end
 
-    scenario 'should be able to export as PDF' do
+    scenario 'should be able to export as PDF', :vcr, match_requests_on: [:s3_file] do
       visit venues_path
 
       click_js_link 'Download'

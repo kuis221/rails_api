@@ -148,7 +148,7 @@
   </updateHandler>
 
   <query>
-    <maxBooleanClauses>1024</maxBooleanClauses>
+    <maxBooleanClauses>2048</maxBooleanClauses>
 
 
     <!-- Solr Internal Query Caches
