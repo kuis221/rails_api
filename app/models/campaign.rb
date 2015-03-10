@@ -524,4 +524,13 @@ class Campaign < ActiveRecord::Base
       errors.add :modules, :invalid
     end
   end
+
+  def range_module_settings?(module_name)
+    settings = modules[module_name]['settings']
+    settings &&
+    (
+      (settings.key?('range_min') && settings['range_min'].present?) ||
+      (settings.key?('range_max') && settings['range_max'].present?)
+    )
+  end
 end
