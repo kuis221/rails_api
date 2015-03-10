@@ -130,7 +130,7 @@ feature 'Tasks', js: true, search: true do
         expect(task_counters).to have_content '3 INCOMPLETE'
         expect(task_counters).to have_content '1 LATE'
 
-        filter_section('TASK STATUS').unicheck('Complete')
+        filter_section('TASK STATUS').unicheck 'Complete'
 
         expect(task_counters).to have_content '0 INCOMPLETE'
         expect(task_counters).to have_content '0 LATE'

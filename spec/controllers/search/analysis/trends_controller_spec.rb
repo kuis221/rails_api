@@ -184,7 +184,7 @@ describe Analysis::TrendsController, search: true do
       ]
     end
 
-    describe 'filters' do
+    describe 'items' do
       it 'correctly returns the words for comments' do
         create(:comment, commentable: event, content: 'hola')
         Sunspot.commit

@@ -23,6 +23,7 @@ class Role < ActiveRecord::Base
   accepts_nested_attributes_for :permissions
 
   scope :active, -> { where(active: true) }
+  scope :accessible_by_user, ->(user) { in_company(user.company_id) }
   scope :not_admin, -> { where(is_admin: false)}
 
   searchable do
@@ -86,6 +87,10 @@ class Role < ActiveRecord::Base
         order_by(params[:sorting] || :name, params[:sorting_dir] || :asc)
         paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
       end
+    end
+
+    def searchable_params
+      [role: [], status: []]
     end
 
     def report_fields

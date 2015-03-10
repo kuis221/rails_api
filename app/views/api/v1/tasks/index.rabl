@@ -17,9 +17,3 @@ child @tasks => 'results' do
     attributes :id, :full_name
   end
 end
-
-if params[:page].nil? || params[:page].to_i == 1
-  node :facets do
-    facets
-  end
-end

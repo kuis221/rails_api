@@ -1,7 +1,5 @@
 class Api::V1::FilteredController < Api::V1::ApiController
   inherit_resources
-  include FacetsHelper
-  include AutocompleteHelper
 
   helper_method :facets, :collection_count, :total_pages
 

@@ -14,19 +14,6 @@ class TasksController < FilteredController
   before_action :set_body_class, only: :index
   after_action :force_resource_reindex, only: [:create, :update]
 
-  def autocomplete
-    buckets = autocomplete_buckets({
-      tasks: [Task],
-      campaigns: [Campaign]
-    }.merge!(
-      params[:scope] == 'teams' ? { people: [CompanyUser, Team] } : {}
-    ).merge!(
-      task_status: [],
-      active_state: []
-    ))
-    render json: buckets.flatten
-  end
-
   def assignable_users
     if resource.event.present?
       (company_users.active.by_events(resource.event).for_dropdown +
@@ -120,11 +107,5 @@ class TasksController < FilteredController
 
   def set_body_class
     @custom_body_class = params[:scope]
-  end
-
-  def permitted_search_params
-    [:start_date, :end_date, :page, :sorting, :sorting_dir, :per_page,
-     campaign: [], user: [], team: [], task_status: [], status: [],
-     task: []]
   end
 end

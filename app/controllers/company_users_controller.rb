@@ -21,19 +21,6 @@ class CompanyUsersController < FilteredController
 
   skip_authorize_resource only: [:select_custom_user, :export_status, :login_as_select]
 
-  def autocomplete
-    buckets = autocomplete_buckets(
-      users: [CompanyUser],
-      teams: [Team],
-      roles: [Role],
-      campaigns: [Campaign],
-      places: [Venue],
-      user_active_state: []
-    )
-
-    render json: buckets.flatten
-  end
-
   def profile
     @company_user = current_company_user
     render :show
@@ -248,17 +235,6 @@ class CompanyUsersController < FilteredController
     @roles ||= current_company.roles
   end
 
-  def facets
-    @facets ||= Array.new.tap do |f|
-      # select what params should we use for the facets search
-      f.push build_role_bucket
-      f.push build_campaign_bucket
-      f.push build_team_bucket
-      f.push build_state_bucket
-      f.concat build_custom_filters_bucket
-    end
-  end
-
   def build_state_bucket
     items = %w(Active Inactive Invited).map do |x|
       build_facet_item(label: x, id: x, name: :status, count: 1)
@@ -308,10 +284,5 @@ class CompanyUsersController < FilteredController
 
   def viewing_profile?
     action_name == 'profile'
-  end
-
-  def permitted_search_params
-    [:page, :sorting, :sorting_dir, :per_page,
-     campaign: [], role: [], user: [], team: [], status: [], venue: []]
   end
 end

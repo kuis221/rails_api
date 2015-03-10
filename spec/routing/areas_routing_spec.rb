@@ -25,14 +25,6 @@ describe 'routes for areas', type: :routing do
     expect(put: '/areas/1').to route_to('areas#update', id: '1')
   end
 
-  it 'routes to #autocomplete' do
-    expect(get: '/areas/autocomplete').to route_to('areas#autocomplete')
-  end
-
-  it 'routes to #filters' do
-    expect(get: '/areas/filters').to route_to('areas#filters')
-  end
-
   it 'routes to #items' do
     expect(get: '/areas/items').to route_to('areas#items')
   end

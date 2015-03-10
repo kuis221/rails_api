@@ -1,9 +1,17 @@
 class AutocompleteController < ApplicationController
+  before_action :sanitize_id
+
   def show
-    render json: { filters: collection_filters.filters }
+    render json: autocomplete.search
   end
 
-  def collection_filters
-    @collection_filters ||= CollectionFilter.new(params[:id], current_company_user, params)
+  protected
+
+  def autocomplete
+    @autocomplete ||= Autocomplete.new(params[:id], current_company_user, params)
+  end
+
+  def sanitize_id
+    fail ActiveRecord::RecordNotFound unless params[:id] =~ /\A[a-z_]+\z/
   end
 end

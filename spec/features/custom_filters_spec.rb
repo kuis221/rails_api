@@ -22,7 +22,7 @@ feature 'Custom filters', js: true do
     expect(page).to have_filter_tag('Today To The Future')
 
     select_saved_filter 'FY2014'
-
+    expand_filter('FY2014')
     expect(collection_description).to have_filter_tag('Jul 01, 2013 - Jun 30, 2014')
     expect(page).to_not have_filter_tag('Today To The Future')
   end
@@ -41,9 +41,9 @@ feature 'Custom filters', js: true do
 
     filter_section('DIVISIONS').unicheck('Continental')
 
-    within '.form-facet-filters' do
-      expect(find_field('Continental')).to be_checked
-    end
+    expect(collection_description).to have_filter_tag('Continental')
+
+    expand_filter('Continental')
     expect(page).to have_filter_tag('Some Area')
     expect(page).to have_filter_tag('Another Area')
 
@@ -69,15 +69,16 @@ feature 'Custom filters', js: true do
     filter_section('FISCAL YEARS').unicheck('FY2014')
 
     within '.form-facet-filters' do
-      expect(find_field('FY2014')).to be_checked
+      expect(page).not_to have_content('FY2014')
     end
+    expand_filter('FY2014')
     expect(collection_description).to have_filter_tag('Jul 01, 2013 - Jun 30, 2014')
 
-    select_filter_calendar_day('18', '19')
+    select_filter_calendar_day('18')
 
     within '.form-facet-filters' do
       expect(find_field('FY2014')).not_to be_checked
     end
-    expect(collection_description).to have_filter_tag('Jul 18, 2013 - Jul 19, 2013')
+    expect(collection_description).to have_filter_tag('Jul 18, 2013')
   end
 end
