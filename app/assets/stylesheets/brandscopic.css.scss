@@ -4886,7 +4886,6 @@ body.roles{
 // Maps on venue and event details
 
 .areas{
- 	margin-top: 20px;
  	.icon-wired-map{
  		color: $silver;
  		font-size: 16px;
@@ -7345,7 +7344,6 @@ body.dashboard.index {
 	font-size: 12px;
 	text-transform: capitalize;
 	white-space: nowrap;
-	margin-bottom: 1px;
 	@include border-radius (15px);
 	&:hover {
 		border-color: $white;
