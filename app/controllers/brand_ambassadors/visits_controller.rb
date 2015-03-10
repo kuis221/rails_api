@@ -7,14 +7,7 @@ class BrandAmbassadors::VisitsController < FilteredController
 
   include EventsHelper
 
-  helper_method :brand_ambassadors_users, :return_path
-
-  def autocomplete
-    buckets = autocomplete_buckets(campaigns: [Campaign],
-                                   places: [Area],
-                                   people: [CompanyUser])
-    render json: buckets.flatten
-  end
+  helper_method :return_path
 
   protected
 

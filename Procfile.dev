@@ -1,7 +1,7 @@
 redis-server: redis-server
 
-web: env LOG_CONSOLE=1 WEB=1 bundle exec unicorn -p $PORT -c ./config/unicorn.rb
-assets: env WEB=1 bundle exec unicorn -p 5111 -c ./config/unicorn.rb
+web: env LOG_CONSOLE=1 WEB_CONCURRENCY=1 WEB=1 bundle exec unicorn -p $PORT -c ./config/unicorn.rb
+assets: env WEB=1 WEB_CONCURRENCY=5 bundle exec unicorn -p 5111 -c ./config/unicorn.rb
 worker: env LOG_CONSOLE=1 TERM_CHILD=1 INTERVAL=0.5   QUEUE=* bin/rake resque:work
 
 guard-livereload: bundle exec guard

@@ -79,47 +79,6 @@ class Analysis::TrendsController < FilteredController
     authorize! :access, :trends_report
   end
 
-  def facets
-    @facets ||= Array.new.tap do |f|
-      f.push build_source_bucket
-      f.push build_question_bucket
-      f.push build_campaign_bucket
-      f.push build_brands_bucket
-      f.push build_areas_bucket
-    end
-  end
-
-  def build_source_bucket
-    items = []
-    if params.key?(:source) && params[:source].include?('Comment')
-      items.push(build_facet_item(label: 'Comments', id: 'Comment', name: :source, count: 1))
-    end
-    activity_type_ids = selected_activity_type_ids
-    if activity_type_ids && activity_type_ids.any?
-      items.concat(current_company.activity_types.where(id: activity_type_ids).map do |at|
-        build_facet_item(label: at.name, id: "ActivityType:#{at.id}", name: :source, count: 1)
-      end)
-    end
-    { label: 'Source', items: items }
-  end
-
-  def build_campaign_bucket
-    items = Campaign.accessible_by_user(current_company_user).where(id: selected_campaign_ids).order(:name).pluck(:name, :id).map do |r|
-      build_facet_item(label: r[0], id: r[1], name: :campaign, count: 1)
-    end
-    { label: 'Campaigns', items: items }
-  end
-
-  def build_question_bucket
-    items = []
-    if params.key?(:question) && params[:question].any?
-      items.concat(FormField.where(id: params[:question]).map do |question|
-        build_facet_item(label: question.name, id: question.id, name: :question, count: 1)
-      end)
-    end
-    { label: 'Questions', items: items }
-  end
-
   def trend_words
     search = resource_class.do_search(search_params)
     add_trending_values(search.facet(:description).rows.map do |r|

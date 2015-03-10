@@ -35,12 +35,25 @@ class Area < ActiveRecord::Base
 
   def self.accessible_by_user(company_user)
     if company_user.is_admin?
-      all
+      in_company(company_user.company_id)
     else
-      where('areas.id in (?) OR common_denominators_locations && \'{?}\'::int[]',
-            company_user.area_ids,
-            company_user.accessible_locations + [-1])
+      in_company(company_user.company_id).where(
+        'areas.id in (?) OR common_denominators_locations && \'{?}\'::int[]',
+        company_user.area_ids,
+        company_user.accessible_locations + [-1])
     end
+  end
+
+  def self.filters_scope(filters)
+    areas = filters.user.company.areas.where('active in (?)', filters.items_to_show)
+            .accessible_by_user(filters.user).order(:name).to_a
+    filters.user.places.each do |p|
+      areas.concat filters.user.company.areas
+                   .where('active in (?)', filters.items_to_show || [true, false])
+                   .where('id NOT IN (?)', areas.map(&:id) + [0]).select { |a| a.place_in_locations?(p) }
+    end
+
+    areas = areas.sort_by(&:name).map { |a| [a.id, a.name] }
   end
 
   serialize :common_denominators
@@ -133,6 +146,10 @@ class Area < ActiveRecord::Base
       end
     end
 
+    def searchable_params
+      [area: [], status: []]
+    end
+
     def update_common_denominators(area)
       area.send(:update_common_denominators)
       Rails.cache.delete("area_locations_#{area.id}")
@@ -147,6 +164,10 @@ class Area < ActiveRecord::Base
     {
       name: { title: 'Name' }
     }
+  end
+
+  def filter_subitems
+    self.places.pluck('places.id, places.name, \'place\'')
   end
 
   protected

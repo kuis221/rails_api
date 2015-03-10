@@ -1,0 +1,116 @@
+autocomplete:
+  events:
+    campaigns: [Campaign]
+    brands: [Brand, BrandPortfolio]
+    places: [Area, Venue]
+    people: [CompanyUser, Team]
+    status:
+      items: [Active, Inactive]
+      name: 'status'
+    event_status:
+      items: [Submitted, Late, Due, Approved, Rejected]
+      name: 'event_status'
+  user_tasks:
+    tasks: [Task]
+    campaigns: [Campaign]
+    task_status:
+      items: [Complete, Incomplete, Late]
+      name: 'event_status'
+    status:
+      items: [Active, Inactive]
+      name: 'status'
+  teams_tasks:
+    tasks: [Task]
+    campaigns: [Campaign]
+    people: [CompanyUser, Team]
+    task_status:
+      items: [Complete, Incomplete, Late, Assigned, Unassigned]
+      name: 'event_status'
+    status:
+      items: [Active, Inactive]
+      name: 'status'
+  venues:
+    places: [Venue, Area]
+    campaigns: [Campaign]
+    brands: [Brand, BrandPortfolio]
+    people: [CompanyUser, Team]
+  campaigns:
+    campaigns: [Campaign]
+    brands: [Brand, BrandPortfolio]
+    places: [Venue]
+    people: [CompanyUser, Team]
+    status:
+      items: [Active, Inactive]
+      name: 'status'
+  brands:
+    brands: [Brand]
+    status:
+      items: [Active, Inactive]
+      name: 'status'
+  company_users:
+    company_users: [CompanyUser]
+    teams: [Team]
+    roles: [Role]
+    campaigns: [Campaign]
+    places: [Venue]
+    status:
+      items: [Active, Inactive, Invited]
+      name: 'status'
+  teams:
+    teams: [Team]
+    users: [CompanyUser]
+    campaigns: [Campaign]
+    status:
+      items: [Active, Inactive]
+      name: 'status'
+  roles:
+    roles: [Role]
+    status:
+      items: [Active, Inactive]
+      name: 'status'
+  activity_types:
+    activity_types: [ActivityType]
+    status:
+      items: [Active, Inactive]
+      name: 'status'
+  areas:
+    areas: [Area]
+    status:
+      items: [Active, Inactive]
+      name: 'status'
+  brand_portfolios:
+    brand_portfolios: [BrandPortfolio]
+    brands: [Brand]
+    status:
+      items: [Active, Inactive]
+      name: 'status'
+  date_ranges:
+    date_ranges: [DateRange]
+    status:
+      items: [Active, Inactive]
+      name: 'status'
+  day_parts:
+    day_parts: [DayPart]
+    status:
+      items: [Active, Inactive]
+      name: 'status'
+  visits:
+    campaigns: [Campaign]
+    places: [Area]
+    people: [CompanyUser]
+  activities:
+    activity_types: [ActivityType]
+    brands: [Brand]
+    campaigns: [Campaign]
+    areas: [Area]
+    users: [CompanyUser]
+    status:
+      items: [Active, Inactive]
+      name: 'status'
+  results_photos:
+    campaigns: [Campaign]
+    brands: [Brand]
+    places: [Venue]
+    status:
+      items: [Active, Inactive]
+      name: 'status'

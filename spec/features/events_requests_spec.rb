@@ -788,10 +788,10 @@ feature 'Events section' do
 
             select_saved_filter 'My Custom Filter'
 
-            expect(page).to have_content('2 events found for: Active')
+            expect(page).to have_content('2 events found for: My Custom Filter')
 
             add_filter 'CAMPAIGNS', 'Campaign FY2012'
-            expect(page).to have_content('2 events found for: Active Campaign FY2012')
+            expect(page).to have_content('2 events found for: Campaign FY2012 My Custom Filter')
 
             click_button 'Reset'
             expect(page).to have_content('1 event found for: Active Today To The Future')
@@ -975,14 +975,8 @@ feature 'Events section' do
           expect(find_field('Mario Moreno')['checked']).to be_falsey
           expect(find_field('Late')['checked']).to be_falsey
 
-          expect(collection_description).to have_filter_tag('Active')
-          expect(collection_description).to have_filter_tag('Submitted')
-          expect(collection_description).to have_filter_tag('Campaign 1')
-          expect(collection_description).to have_filter_tag('Roberto Gomez')
-          expect(page).not_to have_field('Active')
-          expect(page).not_to have_field('Roberto Gomez')
-          expect(page).not_to have_field('Submitted')
-          expect(page).not_to have_field('Campaign 1')
+          expect(collection_description).to have_filter_tag('Custom Filter 1')
+          expect(page).not_to have_field('Custom Filter 1')
 
           expect(find_field('Inactive')['checked']).to be_falsey
         end
@@ -996,10 +990,7 @@ feature 'Events section' do
         expect(collection_description).not_to have_filter_tag('Roberto Gomez')
 
         # Should have the Custom Filter 2's
-        expect(collection_description).to have_filter_tag('Active')
-        expect(collection_description).to have_filter_tag('Campaign 2')
-        expect(collection_description).to have_filter_tag('Mario Moreno')
-        expect(collection_description).to have_filter_tag('Late')
+        expect(collection_description).to have_filter_tag('Custom Filter 2')
 
         within events_list do
           expect(page).not_to have_content('Campaign 1')
@@ -1011,10 +1002,7 @@ feature 'Events section' do
           expect(page).to have_field('Roberto Gomez')
           expect(page).to have_field('Submitted')
           expect(page).to have_field('Inactive')
-          expect(page).not_to have_field('Campaign 2')
-          expect(page).not_to have_field('Mario Moreno')
-          expect(page).not_to have_field('Late')
-          expect(page).not_to have_field('Active')
+          expect(page).not_to have_field('Custom Filter 2')
         end
       end
     end

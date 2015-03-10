@@ -1,3 +1,4 @@
+- can_view_status = can?(:event_status, Campaign)
 #kpis-trends-module.details_box
   #kpis-trends-bars
     h5.module-title EVENT STATUS
@@ -17,6 +18,6 @@
       - dashboard_promo_hours_graph_data.each do |campaign|
         .kpi-trend
           .name= campaign['name']
-          - if can?(:event_status, Campaign)
+          - if can_view_status
             = link_to "View details", results_event_status_path(campaign_id: campaign['id'])
           = campaign_promo_hours_chart(campaign)

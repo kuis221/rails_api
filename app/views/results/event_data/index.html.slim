@@ -43,7 +43,7 @@
 javascript:
   $('#collection-list-filters').filteredList({
     'source': '#{url_for(controller: 'results/event_data', action: :items)}',
-    'filtersUrl': '#{filters_events_path(with_event_data_only: true, apply_to: controller_name)}',
+    'filtersUrl': '#{filter_url(:events, apply_to: controller_name)}',
     'listContainer': '#event-data-list',
     'sorting': 'start_at',
     'sorting_dir': 'asc',
@@ -52,7 +52,7 @@ javascript:
     'selectDefaultDate': false,
     'ytdDatesRange': '#{current_company.ytd_dates_range}',
     'includeAutoComplete': true,
-    'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
+    'autoCompletePath': '#{autocomplete_path(:events, format: :json)}',
     'applyTo': '#{controller_name}',
     'userFilters': #{user_saved_filters(controller_name).to_json.html_safe},
     'defaultParams': '#{j default_params_for_view('status[]=Active')}',

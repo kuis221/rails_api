@@ -238,11 +238,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
   EOS
   def autocomplete
     authorize! :index, Event
-    buckets = autocomplete_buckets(campaigns: [Campaign],
-                                   brands: [Brand, BrandPortfolio],
-                                   places: [Venue, Area],
-                                   people: [CompanyUser, Team])
-    render json: buckets.flatten
+    autocomplete = Autocomplete.new('events', current_company_user, params)
+    render json: autocomplete.search
   end
 
   api :GET, '/api/v1/events/:id', 'Return a event\'s details'

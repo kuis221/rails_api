@@ -121,11 +121,9 @@ describe Api::V1::BrandAmbassadors::VisitsController, type: :controller do
 
       get :index, format: :json
       expect(response).to be_success
-      result = JSON.parse(response.body)
-
-      expect(result['results'].count).to eq(2)
-      expect(result['facets'].map { |f| f['label'] }).to match_array([
-        'DIVISIONS', 'Brand Ambassadors', 'Campaigns', 'Areas', 'Cities'])
+      expect(json['results'].count).to eq(2)
+      expect(json['facets'].map { |f| f['label'] }).to match_array([
+        'DIVISIONS', 'Brand Ambassadors', 'Campaigns', 'Areas', 'Cities', 'Saved Filters'])
     end
 
     it 'should not include the facets when the page is greater than 1' do

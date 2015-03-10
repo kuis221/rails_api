@@ -207,7 +207,8 @@ class User < ActiveRecord::Base
   end
 
   def companies_active_role
-    company_users.select { |cu| cu.active? && cu.role.active? }.map(&:company).sort_by(&:name)
+    Company.order(:name).where(
+      id: company_users.joins(:role).where(active: true, roles: { active: true }).pluck(:company_id))
   end
 
   def is_super_admin?

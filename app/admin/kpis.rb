@@ -30,7 +30,10 @@ ActiveAdmin.register Kpi do
         else
           Resque.enqueue KpiMergeWorker, @kpis.map(&:id), params[:merge]
 
-          redirect_to collection_path, notice: 'A job have been queued to merge the KPIs. This can take up to 2 minutes depending of the number of events/campaigns those KPIs are used'
+          redirect_to collection_path,
+                      notice: 'A job have been queued to merge the KPIs. '\
+                              'This can take up to 2 minutes depending of the number of '\
+                              'events/campaigns those KPIs are used'
         end
       end
     end

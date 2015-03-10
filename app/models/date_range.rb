@@ -85,6 +85,10 @@ class DateRange < ActiveRecord::Base
       end
     end
 
+    def searchable_params
+      [date_range: [], status: []]
+    end
+
     def report_fields
       {
         name: { title: 'Name' }
