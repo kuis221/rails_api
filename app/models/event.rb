@@ -527,7 +527,7 @@ class Event < ActiveRecord::Base
   # Validates that the event meets the min and max items for the assigned modules
   def validate_modules_ranges
     campaign.modules.each do |campaign_module|
-      if campaign.has_range_module_settings?(campaign_module[0])
+      if campaign.range_module_settings?(campaign_module[0])
         settings = campaign_module[1]['settings']
 
         case campaign_module[1]['name']
@@ -551,7 +551,7 @@ class Event < ActiveRecord::Base
       end
     end if campaign.modules.present?
 
-    !errors.any?
+    errors.empty?
   end
 
   class << self

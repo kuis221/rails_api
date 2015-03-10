@@ -519,7 +519,7 @@ class Campaign < ActiveRecord::Base
     end
   end
 
-  def has_range_module_settings?(module_name)
+  def range_module_settings?(module_name)
     settings = modules[module_name]['settings']
     settings &&
     (
