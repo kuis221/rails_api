@@ -529,7 +529,39 @@ class Event < ActiveRecord::Base
   # Returns true if all the results for the current campaign are valid
   def valid_results?
     # Ensure all the results have been assigned/initialized
-    results_for(campaign.form_fields).all?(&:valid?) if campaign.present?
+    if campaign.present?
+      results_for(campaign.form_fields).all?(&:valid?) && validate_modules_ranges
+    end
+  end
+
+  # Validates that the event meets the min and max items for the assigned modules
+  def validate_modules_ranges
+    campaign.modules.each do |campaign_module|
+      if campaign.range_module_settings?(campaign_module[0])
+        settings = campaign_module[1]['settings']
+
+        case campaign_module[1]['name']
+        when 'photos'
+          items = photos.active.length
+        when 'expenses'
+          items = event_expenses.length
+        when 'comments'
+          items = comments.length
+        end
+
+        min_result = !settings['range_min'].present? || (items >= settings['range_min'].to_i)
+        max_result = !settings['range_max'].present? || (items <= settings['range_max'].to_i)
+
+        if !min_result || !max_result
+          message = []
+          message.push("at least #{settings['range_min']}") if settings['range_min'].present?
+          message.push("not more than #{settings['range_max']}") if settings['range_max'].present?
+          errors.add :base, "It is required #{message.join(' and ')} #{campaign_module[1]['name']}"
+        end
+      end
+    end if campaign.modules.present?
+
+    errors.empty?
   end
 
   class << self

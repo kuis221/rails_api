@@ -948,6 +948,29 @@ describe Event, type: :model do
     end
   end
 
+  describe 'validate_modules_ranges' do
+    let(:event) { create(:event, campaign: create(:campaign, modules: { 'comments' => { 'name' => 'comments', 'field_type' => 'module', 'settings' => { 'range_min' => '1', 'range_max' => '2'} } }) ) }
+    it 'should validate ranges for event campaign modules' do
+      expect(event.validate_modules_ranges).to be_falsey
+      expect(event.errors[:base]).to include('It is required at least 1 and not more than 2 comments')
+
+      comment_to_delete = create(:comment, content: 'Comment #1', commentable: event)
+      event.comments << comment_to_delete
+      event.comments << create(:comment, content: 'Comment #2', commentable: event)
+      event.comments << create(:comment, content: 'Comment #3', commentable: event)
+      event.save
+
+      expect(event.validate_modules_ranges).to be_falsey
+      expect(event.errors[:base]).to include('It is required at least 1 and not more than 2 comments')
+
+      event.comments.delete(comment_to_delete)
+      event.save
+
+      expect(event.validate_modules_ranges).to be_truthy
+      expect(event.errors[:base]).to be_empty
+    end
+  end
+
   describe 'survey_statistics' do
     pending 'Add tests for this method'
   end
