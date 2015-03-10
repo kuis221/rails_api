@@ -74,11 +74,11 @@ feature 'Custom filters', js: true do
     expand_filter('FY2014')
     expect(collection_description).to have_filter_tag('Jul 01, 2013 - Jun 30, 2014')
 
-    select_filter_calendar_day('18', '19')
+    select_filter_calendar_day('18')
 
     within '.form-facet-filters' do
       expect(find_field('FY2014')).not_to be_checked
     end
-    expect(collection_description).to have_filter_tag('Jul 18, 2013 - Jul 19, 2013')
+    expect(collection_description).to have_filter_tag('Jul 18, 2013')
   end
 end
