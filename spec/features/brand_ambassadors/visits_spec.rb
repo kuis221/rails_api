@@ -660,13 +660,13 @@ feature 'Brand Ambassadors Visits' do
       ensure_modal_was_closed
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'DURATION', 'VENUE NAME', 'ADDRESS', 'CITY',
-         'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', "URL"],
+         'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL'],
         ['ABSOLUT Vodka', nil, "2014-02-01T09:00","2014-02-01T11:00", '2.0', 'My Place 3',
          'My Place 3, 11 Main St., New York, NY, 12345', 'New York', 'NY', '12345', 'Active', 'Unsent',
-         "Test User", "http://#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event3.id}"],
+         "Test User", nil, "http://#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event3.id}"],
         ['ABSOLUT Vodka', nil, "2014-02-01T10:00","2014-02-01T11:00", '1.0', 'My Place 1',
          'My Place 1, 11 Main St., New York, NY, 12345', 'New York', 'NY', '12345', 'Active', 'Unsent',
-         "Test User", "http://#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event1.id}"]
+         "Test User", nil, "http://#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event1.id}"]
       ])
     end
 
