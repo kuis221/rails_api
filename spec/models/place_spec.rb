@@ -218,6 +218,7 @@ describe Place, type: :model do
 
   describe '#td_linx_match' do
     before do
+      TdLinx::Processor.drop_tdlinx_codes_table
       TdLinx::Processor.create_tdlinx_codes_table
       ActiveRecord::Base.connection.execute("INSERT INTO tdlinx_codes VALUES
         ('0000071','Big Es Supermarket','11 Union St','Easthampton','MA','01027'),
