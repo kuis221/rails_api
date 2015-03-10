@@ -15,10 +15,3 @@ child @venues => 'results' do
              :impressions, :interactions, :sampled, :spent, :score,
              :avg_impressions, :avg_impressions_hour, :avg_impressions_cost
 end
-
-
-if params[:page].nil? || params[:page].to_i == 1
-  node :facets do
-    facets
-  end
-end

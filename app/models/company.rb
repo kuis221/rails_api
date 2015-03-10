@@ -68,6 +68,14 @@ class Company < ActiveRecord::Base
     Thread.current[:company]
   end
 
+  def brand_ambassadors_users
+    @brand_ambassadors_users ||= begin
+      s = company_users.active
+      s = s.where(role_id: brand_ambassadors_role_ids) if brand_ambassadors_role_ids.any?
+      s
+    end
+  end
+
   # Return the value stored in "settings" or the default
   # Notification::EVENT_ALERT_POLICY_TEAM if not set
   def event_alerts_policy

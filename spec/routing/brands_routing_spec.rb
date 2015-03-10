@@ -45,14 +45,6 @@ describe 'routes for brands', type: :routing do
       expect(delete: '/brands/1').not_to be_routable
     end
 
-    it 'routes to #autocomplete' do
-      expect(get: '/brands/autocomplete').to route_to('brands#autocomplete')
-    end
-
-    it 'routes to #filters' do
-      expect(get: '/brands/filters').to route_to('brands#filters')
-    end
-
     it 'routes to #items' do
       expect(get: '/brands/items').to route_to('brands#items')
     end

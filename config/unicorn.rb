@@ -1,8 +1,4 @@
-if ENV['RAILS_ENV'] == 'development'
-  worker_processes 1
-else
-  worker_processes Integer(ENV['WEB_CONCURRENCY'] || 3)
-end
+worker_processes Integer(ENV['WEB_CONCURRENCY'] || 3)
 
 timeout 25
 preload_app true

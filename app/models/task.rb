@@ -245,6 +245,11 @@ class Task < ActiveRecord::Base
       end
     end
 
+    def searchable_params
+      [:start_date, :end_date, campaign: [], user: [], team: [],
+       task_status: [], status: [], task: []]
+    end
+
     def report_fields
       {
         title:       { title: 'Title' },

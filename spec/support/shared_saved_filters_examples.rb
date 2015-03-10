@@ -24,23 +24,17 @@ RSpec.shared_examples 'a list that allow saving custom filters' do
 
     select_saved_filter 'My Custom Filter'
 
-    filters.each do |filter|
-      expect(collection_description).to have_filter_tag(filter[:item])
-    end
+    expect(collection_description).to have_filter_tag('My Custom Filter')
 
     # Deselect filter
     click_button 'Reset'
 
-    filters.each do |filter|
-      expect(collection_description).not_to have_filter_tag(filter[:item])
-    end
+    expect(collection_description).not_to have_filter_tag('My Custom Filter')
 
     # Apply the saved filter
     select_saved_filter 'My Custom Filter'
 
-    filters.each do |filter|
-      expect(collection_description).to have_filter_tag(filter[:item])
-    end
+    expect(collection_description).to have_filter_tag('My Custom Filter')
 
     # Remove the custom filter
     remove_saved_filter 'My Custom Filter'

@@ -13,31 +13,11 @@ class RolesController < FilteredController
     end
   end
 
-  def autocomplete
-    buckets = autocomplete_buckets(
-      roles: [Role],
-      active_state: []
-    )
-    render json: buckets.flatten
-  end
-
   protected
 
   def permitted_params
     params.permit(role: [:name, :description,
                          { permissions_attributes: [:id, :mode, :action, :subject_class, :subject_id] }
                         ])[:role]
-  end
-
-  def facets
-    @facets ||= Array.new.tap do |f|
-      f.push build_state_bucket
-      f.concat build_custom_filters_bucket
-    end
-  end
-
-  def permitted_search_params
-    [:page, :sorting, :sorting_dir, :per_page,
-     role: [], status: []]
   end
 end

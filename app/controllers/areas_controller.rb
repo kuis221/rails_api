@@ -15,14 +15,6 @@ class AreasController < FilteredController
 
   custom_actions member: [:select_places, :add_places, :add_to_campaign]
 
-  def autocomplete
-    buckets = autocomplete_buckets(
-      areas: [Area],
-      active_state: []
-    )
-    render json: buckets.flatten
-  end
-
   def create
     create! do |success, _|
       success.js do
@@ -40,17 +32,5 @@ class AreasController < FilteredController
 
   def permitted_params
     params.permit(area: [:name, :description])[:area]
-  end
-
-  def facets
-    @facets ||= Array.new.tap do |f|
-      f.push build_state_bucket
-      f.concat build_custom_filters_bucket
-    end
-  end
-
-  def permitted_search_params
-    [:page, :sorting, :sorting_dir, :per_page,
-     area: [], status: []]
   end
 end

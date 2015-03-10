@@ -111,6 +111,8 @@ class CompanyUser < ActiveRecord::Base
 
   scope :with_user_and_role, -> { joins([:role, :user]).includes([:role, :user]) }
 
+  scope :accessible_by_user, ->(user) { where(company_id: user.company_id) }
+
   searchable do
     integer :id
     integer :company_id
@@ -145,6 +147,12 @@ class CompanyUser < ActiveRecord::Base
   end
 
   accepts_nested_attributes_for :user, allow_destroy: false, update_only: true
+
+  def self.filters_scope(filters)
+    joins(:user)
+    .where(active: filters.items_to_show)
+    .pluck('company_users.id, users.first_name || \' \' || users.last_name')
+  end
 
   def active_status
     if invited_to_sign_up? && self[:active]
@@ -297,6 +305,10 @@ class CompanyUser < ActiveRecord::Base
         order_by(params[:sorting] || :name, params[:sorting_dir] || :asc)
         paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
       end
+    end
+
+    def searchable_params
+      [campaign: [], role: [], user: [], team: [], status: [], venue: []]
     end
 
     def for_dropdown

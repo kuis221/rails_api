@@ -113,13 +113,13 @@ javascript:
 
   $('#collection-list-filters').filteredList({
     'source': '#{url_for(controller: :venues, action: :items)}',
-    'filtersUrl': '#{url_for(controller: :venues, action: :filters)}',
+    'filtersUrl': '#{filter_url(:venues)}',
     'listContainer' : '#venues-list',
     'sorting': 'name',
     'sorting_dir': 'asc',
     'includeCalendars': true,
     'includeAutoComplete': false,
-    'autoCompletePath': '#{autocomplete_events_path(format: :json)}',
+    'autoCompletePath': '#{autocomplete_path(:venues, format: :json)}',
     'applyTo': '#{controller_name}',
     'userFilters': #{user_saved_filters(controller_name).to_json.html_safe},
     'defaultParams': '#{j default_params_for_view('')}',

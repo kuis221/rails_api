@@ -25,14 +25,6 @@ describe 'routes for brand portfolios', type: :routing do
     expect(put: '/brand_portfolios/1').to route_to('brand_portfolios#update', id: '1')
   end
 
-  it 'routes to #autocomplete' do
-    expect(get: '/brand_portfolios/autocomplete').to route_to('brand_portfolios#autocomplete')
-  end
-
-  it 'routes to #filters' do
-    expect(get: '/brand_portfolios/filters').to route_to('brand_portfolios#filters')
-  end
-
   it 'routes to #items' do
     expect(get: '/brand_portfolios/items').to route_to('brand_portfolios#items')
   end

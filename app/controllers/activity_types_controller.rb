@@ -18,14 +18,6 @@ class ActivityTypesController < FilteredController
     @campaign = current_company.campaigns.find(params[:campaign_id])
   end
 
-  def autocomplete
-    buckets = autocomplete_buckets(
-      activity_types: [ActivityType],
-      active_state: []
-    )
-    render json: buckets.flatten
-  end
-
   def update
     update! do |success, failure|
       success.js { render }
@@ -76,17 +68,5 @@ class ActivityTypesController < FilteredController
       { goals_attributes: [
         :id, :goalable_id, :goalable_type, :activity_type_id, :value, value: []] }
     ])[:activity_type]
-  end
-
-  def facets
-    @facets ||= Array.new.tap do |f|
-      f.push build_state_bucket
-      f.concat build_custom_filters_bucket
-    end
-  end
-
-  def permitted_search_params
-    [:page, :sorting, :sorting_dir,
-     status: [], activity_type: []]
   end
 end

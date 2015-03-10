@@ -68,32 +68,6 @@ describe Api::V1::VenuesController, type: :controller do
       end
     end
 
-    it 'return the facets for the search', strategy: :deletion do
-      with_resque do
-        campaign = create(:campaign, company: company)
-        place = create(:place)
-        create(:event, company: company, campaign: campaign, place: place)
-        Sunspot.commit
-
-        get :index, format: :json
-        expect(response).to be_success
-        result = JSON.parse(response.body)
-
-        expect(result['results'].count).to eql 1
-        expect(result['facets'].map { |f| f['label'] }).to match_array [
-          '$ Spent', 'Areas', 'Brands', 'Campaigns', 'Events', 'Impressions',
-          'Interactions', 'Price', 'Promo Hours', 'Samples', 'Venue Score']
-      end
-    end
-
-    it 'should not include the facets when the page is greater than 1' do
-      get :index, page: 2, format: :json
-      expect(response).to be_success
-      result = JSON.parse(response.body)
-      expect(result['results']).to eq([])
-      expect(result['facets']).to be_nil
-      expect(result['page']).to eq(2)
-    end
   end
 
   describe "GET 'show'" do
@@ -211,12 +185,10 @@ describe Api::V1::VenuesController, type: :controller do
 
   describe "GET 'autocomplete'", search: true do
     it 'should return the correct buckets in the right order' do
-      Sunspot.commit
       get 'autocomplete', q: '', format: :json
       expect(response).to be_success
 
-      buckets = JSON.parse(response.body)
-      expect(buckets.map { |b| b['label'] }).to eq(%w(Places Campaigns Brands People))
+      expect(json.map { |b| b['label'] }).to eq(%w(Places Campaigns Brands People))
     end
 
     it 'should return the users in the People Bucket' do
@@ -227,8 +199,7 @@ describe Api::V1::VenuesController, type: :controller do
       get 'autocomplete', q: 'gu', format: :json
       expect(response).to be_success
 
-      buckets = JSON.parse(response.body)
-      people_bucket = buckets.select { |b| b['label'] == 'People' }.first
+      people_bucket = json.select { |b| b['label'] == 'People' }.first
       expect(people_bucket['value']).to eq([{
         'label' => '<i>Gu</i>illermo Vargas',
         'value' => company_user.id.to_s,
@@ -242,8 +213,7 @@ describe Api::V1::VenuesController, type: :controller do
       get 'autocomplete', q: 'sp', format: :json
       expect(response).to be_success
 
-      buckets = JSON.parse(response.body)
-      people_bucket = buckets.select { |b| b['label'] == 'People' }.first
+      people_bucket = json.select { |b| b['label'] == 'People' }.first
       expect(people_bucket['value']).to eq([{ 'label' => '<i>Sp</i>urs', 'value' => team.id.to_s, 'type' => 'team' }])
     end
 
@@ -256,8 +226,7 @@ describe Api::V1::VenuesController, type: :controller do
       get 'autocomplete', q: 'va', format: :json
       expect(response).to be_success
 
-      buckets = JSON.parse(response.body)
-      people_bucket = buckets.select { |b| b['label'] == 'People' }.first
+      people_bucket = json.select { |b| b['label'] == 'People' }.first
       expect(people_bucket['value']).to eq([
         { 'label' => '<i>Va</i>lladolid',
           'value' => team.id.to_s,
@@ -274,8 +243,7 @@ describe Api::V1::VenuesController, type: :controller do
       get 'autocomplete', q: 'cac', format: :json
       expect(response).to be_success
 
-      buckets = JSON.parse(response.body)
-      campaigns_bucket = buckets.select { |b| b['label'] == 'Campaigns' }.first
+      campaigns_bucket = json.select { |b| b['label'] == 'Campaigns' }.first
       expect(campaigns_bucket['value']).to eq([{
         'label' => '<i>Cac</i>ique para todos',
         'value' => campaign.id.to_s,
@@ -289,8 +257,7 @@ describe Api::V1::VenuesController, type: :controller do
       get 'autocomplete', q: 'cac', format: :json
       expect(response).to be_success
 
-      buckets = JSON.parse(response.body)
-      brands_bucket = buckets.select { |b| b['label'] == 'Brands' }.first
+      brands_bucket = json.select { |b| b['label'] == 'Brands' }.first
       expect(brands_bucket['value']).to eq([{ 'label' => '<i>Cac</i>ique', 'value' => brand.id.to_s, 'type' => 'brand' }])
     end
 
@@ -301,8 +268,7 @@ describe Api::V1::VenuesController, type: :controller do
       get 'autocomplete', q: 'gua', format: :json
       expect(response).to be_success
 
-      buckets = JSON.parse(response.body)
-      places_bucket = buckets.select { |b| b['label'] == 'Places' }.first
+      places_bucket = json.select { |b| b['label'] == 'Places' }.first
       expect(places_bucket['value']).to eq([{ 'label' => '<i>Gua</i>nacaste', 'value' => area.id.to_s, 'type' => 'area' }])
     end
 
@@ -314,8 +280,7 @@ describe Api::V1::VenuesController, type: :controller do
       get 'autocomplete', q: 'gua', format: :json
       expect(response).to be_success
 
-      buckets = JSON.parse(response.body)
-      places_bucket = buckets.select { |b| b['label'] == 'Places' }.first
+      places_bucket = json.select { |b| b['label'] == 'Places' }.first
       expect(places_bucket['value']).to eq([{ 'label' => '<i>Gua</i>nacaste', 'value' => venue.id.to_s, 'type' => 'venue' }])
     end
   end

@@ -13,7 +13,6 @@
 
 class SatisfactionSurvey < ActiveRecord::Base
   RATING_OPTIONS = %w(neutral negative positive)
-  scoped_to_company
 
   belongs_to :company_user
   has_one :company, through: :company_user
