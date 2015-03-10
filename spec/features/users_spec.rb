@@ -202,7 +202,7 @@ feature 'Users', js: true do
 
     scenario 'allows the user to edit another user' do
       role = create(:role, name: 'TestRole', company_id: company.id)
-      create(:role, name: 'Another Role', company_id: company.id)
+      create(:role, name: 'Another Role', company_id: company.id, is_admin: false)
       user = create(:user, first_name: 'Juanito', last_name: 'Mora', role_id: role.id, company_id: company.id)
       company_user = user.company_users.first
       visit company_user_path(company_user)
@@ -225,6 +225,21 @@ feature 'Users', js: true do
       expect(page).to have_no_content('Juanito Mora')
       expect(page).to have_selector('h2', text: 'Pedro Navaja')
       expect(page).to have_selector('div.user-role', text: 'Another Role')
+    end
+
+    scenario 'should validate who is not present the role admin' do
+      role = create(:role, name: 'Test admin role', company: company)
+      role2 = create(:role, name: 'Test not admin role', company: company, is_admin: false)
+      user = create(:user, first_name: 'Juanito', last_name: 'Mora', role_id: role.id, company_id: company.id)
+      company_user = user.company_users.first
+      visit company_user_path(company_user)
+
+      expect(page).to have_content('Juanito Mora')
+
+      within('.profile-data') { click_js_button 'Edit Profile Data' }
+
+      expect(page).to_not have_content('Test admin role')
+      expect(page).to have_content('Test not admin role')
     end
 
     scenario 'allows to assign areas to the user' do

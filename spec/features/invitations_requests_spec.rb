@@ -14,7 +14,7 @@ feature 'Invitations', js: true do
     before { sign_in user }
 
     scenario 'should allow the user fill the invitation form and send the invitation' do
-      role = create(:role, name: 'Test role', company: company)
+      role = create(:role, name: 'Test role', company: company, is_admin: false)
       team = create(:team, name: 'Test team', company: company)
       visit company_users_path
 
