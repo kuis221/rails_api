@@ -21,7 +21,7 @@ development:
 test:
   solr:
     hostname: 127.0.0.1
-    port: 8981
+    port: <%= 8981 + ENV['TEST_ENV_NUMBER'].to_i %>
     log_level: DEBUG
     path: /solr/test
   auto_commit_after_request: true

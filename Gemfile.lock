@@ -310,6 +310,9 @@ GEM
       activesupport (>= 3.0.0)
       cocaine (~> 0.5.3)
       mime-types
+    parallel (1.4.1)
+    parallel_tests (1.3.5)
+      parallel
     parser (2.2.0.pre.4)
       ast (>= 1.1, < 3.0)
       slop (~> 3.4, >= 3.4.5)
@@ -603,6 +606,7 @@ DEPENDENCIES
   oink
   oj
   paperclip (~> 4.1)
+  parallel_tests
   pdf-reader
   pg
   poltergeist

@@ -70,6 +70,7 @@ group :development do
   gem 'pry-rails'
   gem 'haml'
   gem 'nkss-rails', github: 'nadarei/nkss-rails'
+  gem 'parallel_tests'
 end
 
 # Gems that are only required for the web process, to prevent
