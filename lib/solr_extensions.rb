@@ -15,6 +15,7 @@ module Sunspot
             with_status params[:status] if params[:status]
             with_id params[:id] if params[:id]
             with_brand params[:brand] if params[:brand]
+            with_brand_portfolio params[:brand_portfolio] if params[:brand_portfolio]
             with_venue params[:venue] if params[:venue]
             with_event_status params[:event_status] if params[:event_status]
 
@@ -113,6 +114,22 @@ module Sunspot
           with_campaign campaigns
         else
           fail 'could not find a field for filtering by brand'
+        end
+      end
+
+      def with_brand_portfolio(brand_portfolios)
+        if field?(:brand_portfolio_id)
+          with :brand_portfolio_id, brand_portfolios
+        elsif field?(:brand_ids)
+          with_brand BrandPortfolio.joins(:brands).where(id: brand_portfolios).pluck('brands.id')
+        elsif field?(:campaign_ids) || field?(:campaign_id)
+          campaigns = Campaign.with_brands(BrandPortfolio.joins(:brands).where(id: brand_portfolios)
+                                                         .pluck('brands.id'))
+                              .pluck('campaigns.id')
+          campaigns = '-1' if campaigns.empty?
+          with_campaign campaigns
+        else
+          fail 'could not find a field for filtering by brand portfolio'
         end
       end
 
