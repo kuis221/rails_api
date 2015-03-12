@@ -1104,27 +1104,10 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			left: initial;
 			text-align: left;
 			box-shadow:none;
-			margin-top: 10px;
+			margin-top: 3px;
 
 			&:before {
-				position: absolute;
-				top: -9px;
-				left: 130px;
-				display: inline-block;
-				border-right: 8px solid transparent;
-				border-bottom: 8px solid $silver;
-				border-left: 8px solid transparent;
-				content: '';
-			}
-			&:after {
-				position: absolute;
-				top: -8px;
-				left: 130px;
-				display: inline-block;
-				border-right: 8px solid transparent;
-				border-bottom: 8px solid $white;
-				border-left: 8px solid transparent;
-				content: '';
+				display: none;
 			}
 			li:first-child a {
 				border-top-right-radius: 5px;
