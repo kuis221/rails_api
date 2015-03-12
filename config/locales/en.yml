@@ -13,6 +13,10 @@ en:
       kpi: "KPI"
       activity_type: "Activity Type"
       invite: "Attendance"
+      event: "Event"
+      event: "Event Data"
+      task: "Task"
+      campaign: "Campaign"  
     attributes:
       activity:
         start_date_date: "Start date"

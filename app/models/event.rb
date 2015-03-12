@@ -253,6 +253,7 @@ class Event < ActiveRecord::Base
   delegate :name, to: :campaign, prefix: true, allow_nil: true
   delegate :name, :state, :city, :zipcode, :neighborhood, :street_number, :route, :latitude,
            :state_name, :longitude, :formatted_address, :name_with_location, :td_linx_code,
+           :street,
            to: :place, prefix: true, allow_nil: true
 
   delegate :impressions, :interactions, :samples, :spent, :gender_female, :gender_male,
@@ -409,6 +410,17 @@ class Event < ActiveRecord::Base
             btrim(array_to_string(avals(form_field_results.hash_value), \'\'))<>\'\')'
         ).count > 0
       )
+  end
+
+  def event_team_members
+    ActiveRecord::Base.connection.unprepared_statement do
+      ActiveRecord::Base.connection.select_values("
+        #{users.joins(:user).select('users.first_name || \' \' || users.last_name AS name').reorder(nil).to_sql}
+        UNION ALL
+        #{teams.select('teams.name').reorder(nil).to_sql}
+        ORDER BY name
+      ").join(', ')
+    end
   end
 
   def venue

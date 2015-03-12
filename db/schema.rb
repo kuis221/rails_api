@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150226220017) do
+ActiveRecord::Schema.define(version: 20150311205444) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -365,6 +365,25 @@ ActiveRecord::Schema.define(version: 20150226220017) do
   end
 
   add_index "custom_filters_categories", ["company_id"], :name => "index_custom_filters_categories_on_company_id"
+
+  create_table "data_extracts", force: true do |t|
+    t.string   "type"
+    t.integer  "company_id"
+    t.boolean  "active"
+    t.string   "sharing"
+    t.string   "name"
+    t.text     "description"
+    t.text     "filters"
+    t.text     "columns"
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "data_extracts", ["company_id"], :name => "index_data_extracts_on_company_id"
+  add_index "data_extracts", ["created_by_id"], :name => "index_data_extracts_on_created_by_id"
+  add_index "data_extracts", ["updated_by_id"], :name => "index_data_extracts_on_updated_by_id"
 
   create_table "data_migrations", force: true do |t|
     t.integer  "remote_id"
