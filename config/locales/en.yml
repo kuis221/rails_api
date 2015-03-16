@@ -14,7 +14,7 @@ en:
       activity_type: "Activity Type"
       invite: "Attendance"
       event: "Event"
-      event: "Event Data"
+      event_data: "Event Data"
       task: "Task"
       campaign: "Campaign"  
     attributes:

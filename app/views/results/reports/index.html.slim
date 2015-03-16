@@ -15,7 +15,8 @@
 .main.no-margin
   - if can?(:create, Report)
     .pull-left
-      = button_to 'New Report', new_results_report_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-report-btn'}
+      = button_to 'New Report', new_results_data_extract_path, {method: :get, class: 'btn btn-primary', :id => 'new-report-btn'}
+
 
   .tab-content
     - if can?(:index_results, EventData) || can?(:index_results, Comment) ||  can?(:event_status, Campaign) || can?(:index_results, EventExpense) || can?(:gva_report, Campaign) || can?(:index_photo_results, AttachedAsset) || can?(:index_results, Survey)

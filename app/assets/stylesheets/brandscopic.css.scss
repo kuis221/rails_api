@@ -7462,6 +7462,68 @@ body.dashboard.index {
 	}
 }
 
+// DATA EXTRACT STYLES
+.data_extract_top_details {
+		background-color: $gray-darker;
+		-webkit-border-radius: 0 0 7px 7px;
+		-moz-border-radius: 0 0 7px 7px;
+		border-radius: 0 0 7px 7px;
+		min-height: 40px;
+		margin-top: -8px;
+
+		.custom_filters_arrow {
+			width: 40px;
+			height: 40px;
+			text-align: center;
+			float: left;
+			padding-top: 12px;
+			font-size: 16px;
+			color: $gray-light;
+		}
+		p {
+			padding: 10px 0 5px 16px;
+			color: $white;
+		}
+		.text-right {
+			margin-right: 15px;
+
+			p {
+				padding-left: 10px;
+			}
+
+			.icon-arrow-down {
+				margin-top: 20px;
+				margin-left: 10px; 
+				color: $white;
+			}
+			.circle {
+				color: $white;
+				-moz-border-radius: 50%;
+     		-webkit-border-radius: 50%;
+     		border-radius: 50%;
+     		border: solid 1px $white;
+     		width: 20px;
+     		height: 20px;
+     		float: right;
+     		padding: 0;
+     		text-align: center;
+     		margin-top: 10px;
+			}
+		}
+	}
+.data_extract {
+	padding: 10px;
+	margin-top: 10px;
+	min-height: 800px;
+
+	.select_data_source {
+		width: 400px;
+	}
+	.btn-data-source {
+		float: right;
+	}
+}
+
 @import 'widgets/asset_upload_dialog';
 @import 'widgets/documents_list';
 @import 'widgets/resource_list';

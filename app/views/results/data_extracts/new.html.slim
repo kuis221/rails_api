@@ -1,0 +1,12 @@
+.data_extract_top_details
+  .pull-left
+    p = 'Create New Report'
+  .text-right
+    span.icon-arrow-down.pull-right
+    p.pull-right = @step == 2 ? 'Configure' : 'Select Data Sources'
+    p.circle.pull-righ = @step ||= 1
+- if @step == 2
+  = render partial: 'form_configure'
+- else
+  = render partial: 'form_select_data_source'
+

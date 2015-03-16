@@ -1,0 +1,7 @@
+.main.no-margin.data_extract
+  = form_tag '', method: :get, name: "data_source_form" do
+    = submit_tag 'Next', class: 'btn btn-data-source'
+    = hidden_field_tag :step, 2
+    .select_data_source
+      = label_tag('data_source-id', "Select a data source for your report")
+      = select_tag 'data_source', options_for_select([[nil, '']] + @data_sources.sort), { id: 'data_source-id', class: 'chosen-enabled', 'data-placeholder' => 'Select a data source'}
