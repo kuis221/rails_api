@@ -16,9 +16,9 @@
       h5.results-title GOALS VS. ACTUAL
       #list-tools
         = simple_form_for :report, url: results_gva_path, remote: true, html: { id: 'report-settings' } do |f|
-          = f.input :campaign_id, collection: campaigns_list_for_dropdown, selected: params[:campaign_id] || params[:report].try(:[], :campaign_id), include_blank: '', required: false, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Select a campaign" } }
+          = f.input :campaign_id, collection: campaigns_list_for_dropdown, selected: params[:campaign_id] || params[:report].try(:[], :campaign_id), include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Select a campaign" } }
 
-          = f.input :group_by, label: 'GROUP BY:', checked: report_group_by, required: false, label_html: {id: '#group-by-title'}, wrapper: :btn_group, as: :radio_buttons, collection: [['Campaign', 'campaign'],['Place', 'place'],['Staff', 'staff']], wrapper_html: { id: 'group-by-criterion' }, item_wrapper_class: 'btn'
+          = f.input :group_by, label: 'GROUP BY:', checked: report_group_by, required: true, label_html: {id: '#group-by-title'}, wrapper: :btn_group, as: :radio_buttons, collection: [['Campaign', 'campaign'],['Place', 'place'],['Staff', 'staff']], wrapper_html: { id: 'group-by-criterion' }, item_wrapper_class: 'btn'
           = f.input :view_mode, label: false, checked: report_view_mode, required: false, label_html: {id: '#group-by-title'}, wrapper: :btn_group, as: :radio_buttons, collection: [[content_tag(:i, '', class: 'icon-analysis'), 'graph'],[content_tag(:i, '', class: 'icon-list'), 'table']], wrapper_html: { id: 'group-by-criterion' }, item_wrapper_class: 'btn'
 
         .export-xls.pull-right
