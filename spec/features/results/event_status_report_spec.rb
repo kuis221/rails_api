@@ -16,9 +16,10 @@ feature 'Results Event Status Page', js: true, search: true  do
     let(:place) { create(:place, name: 'Place 1') }
 
     before { Kpi.create_global_kpis }
-    before { company_user.role.permissions.create(action: :event_status, subject_class: 'Campaign', mode: 'campaigns') }
 
     scenario 'a user can play and dismiss the video tutorial' do
+      company_user.role.permissions.create(action: :event_status_campaigns, subject_class: 'Campaign', mode: 'campaigns')
+
       visit results_event_status_path
 
       feature_name = 'GETTING STARTED: EVENT STATUS REPORT'
@@ -42,6 +43,10 @@ feature 'Results Event Status Page', js: true, search: true  do
     end
 
     scenario 'should display the event status report for selected campaign and grouping' do
+      company_user.role.permissions.create(action: :event_status_campaigns, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_places, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_users, subject_class: 'Campaign', mode: 'campaigns')
+
       area.places << place
       campaign.areas << area
       company_user.campaigns << campaign
@@ -122,7 +127,38 @@ feature 'Results Event Status Page', js: true, search: true  do
       end
     end
 
+    scenario 'should display the places Event Status for selected campaign whithout select group by when it is the unique permission' do
+      company_user.role.permissions.create(action: :event_status_places, subject_class: 'Campaign', mode: 'campaigns')
+
+      area.places << place
+      campaign.areas << area
+      company_user.campaigns << campaign
+      company_user.areas << area
+
+      create(:goal, goalable: campaign, kpi: Kpi.promo_hours, value: '77')
+      create(:goal, parent: campaign, goalable: company_user, kpi: Kpi.promo_hours, value: 100)
+      create(:goal, parent: campaign, goalable: company_user, kpi: Kpi.events, value: 10)
+      create(:goal, parent: campaign, goalable: area, kpi: Kpi.events, value: 3)
+      create(:goal, parent: campaign, goalable: area, kpi: Kpi.promo_hours, value: 14)
+
+      create(:approved_event, company: company, campaign: campaign, place: place,
+            user_ids: [company_user.id],
+            start_time: '08:00AM', end_time: '9:00AM', start_date: '01/23/2013', end_date: '01/23/2013')
+
+      visit results_event_status_path
+
+      choose_campaign('Test Campaign FY01')
+
+      within('#report-container') do
+        expect(page).to have_content('Area 1')
+      end
+    end
+
     scenario 'should export the overall campaign Event Status to Excel' do
+      company_user.role.permissions.create(action: :event_status_campaigns, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_places, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_users, subject_class: 'Campaign', mode: 'campaigns')
+
       campaign.places << place
       company_user.campaigns << campaign
       company_user.places << place
@@ -148,6 +184,10 @@ feature 'Results Event Status Page', js: true, search: true  do
     end
 
     scenario 'should export the Event Status grouped by Place to Excel' do
+      company_user.role.permissions.create(action: :event_status_campaigns, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_places, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_users, subject_class: 'Campaign', mode: 'campaigns')
+
       area.places << place
       campaign.areas << area
       company_user.campaigns << campaign
@@ -176,6 +216,10 @@ feature 'Results Event Status Page', js: true, search: true  do
     end
 
     scenario 'should export the Event Status grouped by Staff to Excel' do
+      company_user.role.permissions.create(action: :event_status_campaigns, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_places, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_users, subject_class: 'Campaign', mode: 'campaigns')
+
       area.places << place
       campaign.areas << area
       company_user.campaigns << campaign
@@ -204,6 +248,10 @@ feature 'Results Event Status Page', js: true, search: true  do
     end
 
     scenario 'should be able to export the overall campaign Event Status as PDF' do
+      company_user.role.permissions.create(action: :event_status_campaigns, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_places, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_users, subject_class: 'Campaign', mode: 'campaigns')
+
       campaign.places << place
       company_user.campaigns << campaign
       company_user.places << place
@@ -245,6 +293,10 @@ feature 'Results Event Status Page', js: true, search: true  do
     end
 
     scenario 'should be able to export the campaign Event Status grouped by Place as PDF' do
+      company_user.role.permissions.create(action: :event_status_campaigns, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_places, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_users, subject_class: 'Campaign', mode: 'campaigns')
+
       area.places << place
       campaign.areas << area
       company_user.campaigns << campaign
@@ -293,6 +345,10 @@ feature 'Results Event Status Page', js: true, search: true  do
     end
 
     scenario 'should be able to export the campaign Event Status grouped by Staff as PDF' do
+      company_user.role.permissions.create(action: :event_status_campaigns, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_places, subject_class: 'Campaign', mode: 'campaigns')
+      company_user.role.permissions.create(action: :event_status_users, subject_class: 'Campaign', mode: 'campaigns')
+
       area.places << place
       campaign.areas << area
       company_user.campaigns << campaign

@@ -5,7 +5,7 @@ class Results::GvaController < InheritedResources::Base
   before_action :authorize_actions
   before_action :set_scopes , if: ->{ action_name == 'report' || request.format.pdf? }
 
-  helper_method :return_path, :report_view_mode, :report_group_by
+  helper_method :return_path, :report_view_mode, :report_group_by, :report_group_permissions
 
   def index
     if request.format.xls? || request.format.pdf?
@@ -74,7 +74,7 @@ class Results::GvaController < InheritedResources::Base
     if params[:report] && params[:report][:campaign_id]
       authorize! :gva_report_campaign, campaign
     else
-      authorize! :gva_report, Campaign
+      authorize! :view_gva_report, Campaign
     end
   end
 
@@ -223,7 +223,13 @@ class Results::GvaController < InheritedResources::Base
     @_group_by ||= if params[:report].present? && params[:report][:group_by].present?
       params[:report][:group_by]
     else
-      'campaign'
+      if can?(:gva_report_campaigns, Campaign)
+        'campaign'
+      elsif can?(:gva_report_places, Campaign)
+        'place'
+      elsif can?(:gva_report_users, Campaign)
+        'staff'
+      end
     end
   end
 
@@ -233,6 +239,14 @@ class Results::GvaController < InheritedResources::Base
     else
       'graph'
     end
+  end
+
+  def report_group_permissions
+    permissions = []
+    permissions.push(%w(Campaign campaign)) if can?(:gva_report_campaigns, Campaign)
+    permissions.push(%w(Place place)) if can?(:gva_report_places, Campaign)
+    permissions.push(%w(Staff staff)) if can?(:gva_report_users, Campaign)
+    permissions
   end
 
   def return_path
