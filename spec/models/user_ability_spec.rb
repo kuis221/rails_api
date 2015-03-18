@@ -986,26 +986,26 @@ describe Ability, type: :model do
       #
       describe 'GvA reports' do
         it 'can access the GvA report' do
-          expect(ability).not_to be_able_to(:gva_report, Campaign)
+          expect(ability).not_to be_able_to(:view_gva_report, Campaign)
 
-          user.role.permission_for(:gva_report, Campaign, mode: 'campaigns').save
+          user.role.permission_for(:view_gva_report, Campaign, mode: 'campaigns').save
 
-          expect(ability).to be_able_to(:gva_report, Campaign)
+          expect(ability).to be_able_to(:view_gva_report, Campaign)
         end
         it 'can view the GvA report for a specific campaign' do
           campaign = create(:campaign, company: company)
-          expect(ability).not_to be_able_to(:gva_report, Campaign)
+          expect(ability).not_to be_able_to(:view_gva_report, Campaign)
           expect(ability).not_to be_able_to(:gva_report_campaign, campaign)
 
-          user.role.permission_for(:gva_report, Campaign, mode: 'campaigns').save
+          user.role.permission_for(:view_gva_report, Campaign, mode: 'campaigns').save
 
-          expect(ability).to be_able_to(:gva_report, Campaign)
+          expect(ability).to be_able_to(:view_gva_report, Campaign)
           expect(ability).not_to be_able_to(:gva_report_campaign, campaign)
 
           User.current.current_company_user.campaigns << campaign
           User.current.current_company_user.instance_variable_set(:@accessible_campaign_ids,  nil)
 
-          expect(ability).to be_able_to(:gva_report, Campaign)
+          expect(ability).to be_able_to(:view_gva_report, Campaign)
           expect(ability).to be_able_to(:gva_report_campaign, campaign)
           expect(ability).not_to be_able_to(:gva_report_campaign, other_campaign)
         end
@@ -1021,27 +1021,27 @@ describe Ability, type: :model do
       #
       describe 'Event Status report' do
         it 'can access the Event Status report' do
-          expect(ability).not_to be_able_to(:gva_report, Campaign)
+          expect(ability).not_to be_able_to(:view_event_status, Campaign)
 
-          user.role.permission_for(:gva_report, Campaign, mode: 'campaigns').save
+          user.role.permission_for(:view_event_status, Campaign, mode: 'campaigns').save
 
-          expect(ability).to be_able_to(:gva_report, Campaign)
+          expect(ability).to be_able_to(:view_event_status, Campaign)
         end
 
         it 'can view the Event Status report for a specific campaign' do
           campaign = create(:campaign, company: company)
-          expect(ability).not_to be_able_to(:event_status, Campaign)
+          expect(ability).not_to be_able_to(:view_event_status, Campaign)
           expect(ability).not_to be_able_to(:event_status_report_campaign, campaign)
 
-          user.role.permission_for(:event_status, Campaign, mode: 'campaigns').save
+          user.role.permission_for(:view_event_status, Campaign, mode: 'campaigns').save
 
-          expect(ability).to be_able_to(:event_status, Campaign)
+          expect(ability).to be_able_to(:view_event_status, Campaign)
           expect(ability).not_to be_able_to(:event_status_report_campaign, campaign)
 
           User.current.current_company_user.campaigns << campaign
           User.current.current_company_user.instance_variable_set(:@accessible_campaign_ids,  nil)
 
-          expect(ability).to be_able_to(:event_status, Campaign)
+          expect(ability).to be_able_to(:view_event_status, Campaign)
           expect(ability).to be_able_to(:event_status_report_campaign, campaign)
           expect(ability).not_to be_able_to(:event_status_report_campaign, other_campaign)
         end

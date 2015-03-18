@@ -4,7 +4,7 @@ class Results::EventStatusController < ApplicationController
   before_action :campaign, except: :index
   before_action :authorize_actions
 
-  helper_method :return_path, :report_group_by
+  helper_method :return_path, :report_group_by, :report_group_permissions
 
   def index
     if request.format.xls? || request.format.pdf?
@@ -52,7 +52,7 @@ class Results::EventStatusController < ApplicationController
     if params[:report] && params[:report][:campaign_id]
       authorize! :event_status_report_campaign, campaign
     else
-      authorize! :event_status, Campaign
+      authorize! :view_event_status, Campaign
     end
   end
 
@@ -61,10 +61,24 @@ class Results::EventStatusController < ApplicationController
   end
 
   def report_group_by
-    @_view_mode ||= if params[:report] && params[:report][:group_by]
+    @_group_by ||= if params[:report] && params[:report][:group_by]
                       params[:report][:group_by]
     else
-      'campaign'
+      if can?(:event_status_campaigns, Campaign)
+        'campaign'
+      elsif can?(:event_status_places, Campaign)
+        'place'
+      elsif can?(:event_status_users, Campaign)
+        'staff'
+      end
     end
+  end
+
+  def report_group_permissions
+    permissions = []
+    permissions.push(%w(Campaign campaign)) if can?(:event_status_campaigns, Campaign)
+    permissions.push(%w(Place place)) if can?(:event_status_places, Campaign)
+    permissions.push(%w(Staff staff)) if can?(:event_status_users, Campaign)
+    permissions
   end
 end
