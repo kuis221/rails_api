@@ -16,7 +16,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
       before { Kpi.create_global_kpis }
 
       scenario 'a user can play and dismiss the video tutorial' do
-        company_user.role.permissions.create(action: :gva_report, subject_class: 'Campaign', mode: 'campaigns')
+        company_user.role.permissions.create(action: :gva_report_campaigns, subject_class: 'Campaign', mode: 'campaigns')
 
         visit results_gva_path
 
@@ -41,7 +41,9 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
       end
 
       scenario 'should display the GvA stats for selected campaign and grouping' do
-        company_user.role.permissions.create(action: :gva_report, subject_class: 'Campaign', mode: 'campaigns')
+        company_user.role.permissions.create(action: :gva_report_campaigns, subject_class: 'Campaign', mode: 'campaigns')
+        company_user.role.permissions.create(action: :gva_report_places, subject_class: 'Campaign', mode: 'campaigns')
+        company_user.role.permissions.create(action: :gva_report_users, subject_class: 'Campaign', mode: 'campaigns')
         campaign = create(:campaign, name: 'Test Campaign FY01', start_date: '07/21/2013', end_date: '03/30/2014', company: company)
         kpi = Kpi.samples
         campaign.add_kpi kpi
@@ -152,7 +154,9 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
       end
 
       scenario 'should remove items from GvA results' do
-        company_user.role.permissions.create(action: :gva_report, subject_class: 'Campaign', mode: 'campaigns')
+        company_user.role.permissions.create(action: :gva_report_campaigns, subject_class: 'Campaign', mode: 'campaigns')
+        company_user.role.permissions.create(action: :gva_report_places, subject_class: 'Campaign', mode: 'campaigns')
+        company_user.role.permissions.create(action: :gva_report_users, subject_class: 'Campaign', mode: 'campaigns')
         campaign = create(:campaign, name: 'Test Campaign FY01', company: company)
         kpi = create(:kpi, name: 'Interactions', company: company)
         campaign.add_kpi kpi
@@ -183,8 +187,36 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         end
       end
 
+      scenario 'should display the places GvA stats for selected campaign whithout select group by when it is the unique permission' do
+        company_user.role.permissions.create(action: :gva_report_places, subject_class: 'Campaign', mode: 'campaigns')
+        campaign = create(:campaign, name: 'Test Campaign FY01', company: company)
+        kpi = create(:kpi, name: 'Interactions', company: company)
+        campaign.add_kpi kpi
+
+        place = create(:place, name: 'Place 1')
+        campaign.places << place
+        company_user.campaigns << campaign
+        company_user.places << place
+
+        create(:goal, goalable: campaign, kpi: kpi)
+        create(:goal, parent: campaign, goalable: place, kpi: kpi)
+
+        event1 = create(:approved_event, company: company, campaign: campaign, place: place)
+        event1.save
+
+        visit results_gva_path
+
+        choose_campaign('Test Campaign FY01')
+
+        within('#gva-results') do
+          expect(page).to have_content('Place 1')
+        end
+      end
+
       scenario 'should export the overall campaign GvA to Excel' do
-        company_user.role.permissions.create(action: :gva_report, subject_class: 'Campaign', mode: 'campaigns')
+        company_user.role.permissions.create(action: :gva_report_campaigns, subject_class: 'Campaign', mode: 'campaigns')
+        company_user.role.permissions.create(action: :gva_report_places, subject_class: 'Campaign', mode: 'campaigns')
+        company_user.role.permissions.create(action: :gva_report_users, subject_class: 'Campaign', mode: 'campaigns')
         campaign = create(:campaign, name: 'Test Campaign FY01', start_date: '07/21/2013', end_date: '03/30/2014', company: company)
         campaign.add_kpi Kpi.samples
         campaign.add_kpi Kpi.events
@@ -220,7 +252,9 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
       end
 
       scenario 'should export the GvA grouped by Place to Excel' do
-        company_user.role.permissions.create(action: :gva_report, subject_class: 'Campaign', mode: 'campaigns')
+        company_user.role.permissions.create(action: :gva_report_campaigns, subject_class: 'Campaign', mode: 'campaigns')
+        company_user.role.permissions.create(action: :gva_report_places, subject_class: 'Campaign', mode: 'campaigns')
+        company_user.role.permissions.create(action: :gva_report_users, subject_class: 'Campaign', mode: 'campaigns')
         campaign = create(:campaign, name: 'Test Campaign FY01', start_date: '07/21/2013', end_date: '03/30/2014', company: company)
         kpi = Kpi.samples
         kpi2 = Kpi.events
@@ -263,7 +297,9 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
       end
 
       scenario 'should export the GvA grouped by Staff to Excel' do
-        company_user.role.permissions.create(action: :gva_report, subject_class: 'Campaign', mode: 'campaigns')
+        company_user.role.permissions.create(action: :gva_report_campaigns, subject_class: 'Campaign', mode: 'campaigns')
+        company_user.role.permissions.create(action: :gva_report_places, subject_class: 'Campaign', mode: 'campaigns')
+        company_user.role.permissions.create(action: :gva_report_users, subject_class: 'Campaign', mode: 'campaigns')
         campaign = create(:campaign, name: 'Test Campaign FY01', start_date: '07/21/2013', end_date: '03/30/2014', company: company)
         kpi = Kpi.samples
         kpi2 = Kpi.events

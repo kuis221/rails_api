@@ -40,13 +40,40 @@
 
       .span12
         .span2 Goals vs. Actual
+
+      .span12
+        .span2.indented Group by campaign
         .span1
-          = permission_checkbox(f, :gva_report, Campaign)
+          = permission_checkbox(f, :gva_report_campaigns, Campaign)
+
+      .span12
+        .span2.indented Group by place
+        .span1
+          = permission_checkbox(f, :gva_report_places, Campaign)
+
+      .span12
+        .span2.indented Group by user
+        .span1
+          = permission_checkbox(f, :gva_report_users, Campaign)
 
       .span12
         .span2 Event Status
         .span1
-          = permission_checkbox(f, :event_status, Campaign)
+
+      .span12
+        .span2.indented Group by campaign
+        .span1
+          = permission_checkbox(f, :event_status_campaigns, Campaign)
+
+      .span12
+        .span2.indented Group by place
+        .span1
+          = permission_checkbox(f, :event_status_places, Campaign)
+
+      .span12
+        .span2.indented Group by user
+        .span1
+          = permission_checkbox(f, :event_status_users, Campaign)
 
       .span12
         .span2.title.separate

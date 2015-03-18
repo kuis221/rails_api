@@ -17,8 +17,11 @@
       #list-tools
         = simple_form_for :report, url: results_gva_path, remote: true, html: { id: 'report-settings' } do |f|
           = f.input :campaign_id, collection: campaigns_list_for_dropdown, selected: params[:campaign_id] || params[:report].try(:[], :campaign_id), include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Select a campaign" } }
-
-          = f.input :group_by, label: 'GROUP BY:', checked: report_group_by, required: true, label_html: {id: '#group-by-title'}, wrapper: :btn_group, as: :radio_buttons, collection: [['Campaign', 'campaign'],['Place', 'place'],['Staff', 'staff']], wrapper_html: { id: 'group-by-criterion' }, item_wrapper_class: 'btn'
+          - group_permissions = report_group_permissions
+          - if group_permissions.length > 1
+            = f.input :group_by, label: 'GROUP BY:', checked: report_group_by, required: true, label_html: {id: '#group-by-title'}, wrapper: :btn_group, as: :radio_buttons, collection: report_group_permissions, wrapper_html: { id: 'group-by-criterion' }, item_wrapper_class: 'btn'
+          - elsif group_permissions.length == 1
+            = f.input :group_by, as: :hidden, input_html: { value: group_permissions.first.second }, wrapper: false, label: false
           = f.input :view_mode, label: false, checked: report_view_mode, required: false, label_html: {id: '#group-by-title'}, wrapper: :btn_group, as: :radio_buttons, collection: [[content_tag(:i, '', class: 'icon-analysis'), 'graph'],[content_tag(:i, '', class: 'icon-list'), 'table']], wrapper_html: { id: 'group-by-criterion' }, item_wrapper_class: 'btn'
 
         .export-xls.pull-right
@@ -44,8 +47,11 @@ javascript:
   var currentView = null;
 
   submitForm = function() {
-    var groupBy = $('input:radio[name="report[group_by]"]:checked').val(),
-        view =  $('#report_campaign_id').val() + groupBy;
+    var groupBy = $('input:radio[name="report[group_by]"]:checked').val()
+    if (typeof groupBy == 'undefined'){
+      groupBy = $('input:hidden[name="report[group_by]"]').val()
+    }
+    var view =  $('#report_campaign_id').val() + groupBy;
     if (view != currentView) {
       currentView = view;
       if ( $('#report_campaign_id').val() && groupBy == 'campaign'){

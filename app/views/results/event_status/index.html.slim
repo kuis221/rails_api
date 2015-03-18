@@ -16,8 +16,12 @@
       h5.results-title EVENT STATUS
       #list-tools
         = simple_form_for :report, url: results_event_status_path, remote: true, html: { id: 'report-settings' } do |f|
-          = f.input :campaign_id, collection: campaigns_list_for_dropdown, selected: params[:campaign_id], include_blank: '', required: false, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Select a campaign" } }
-          = f.input :group_by, label: 'GROUP BY:', required: false, checked: report_group_by, label_html: {id: '#group-by-title'}, wrapper: :btn_group, as: :radio_buttons, collection: [['Campaign', 'campaign'],['Place', 'place'],['Staff', 'staff']], wrapper_html: { id: 'group-by-criterion' }, item_wrapper_class: 'btn'
+          = f.input :campaign_id, collection: campaigns_list_for_dropdown, selected: params[:campaign_id], include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Select a campaign" } }
+          - group_permissions = report_group_permissions
+          - if group_permissions.length > 1
+            = f.input :group_by, label: 'GROUP BY:', checked: report_group_by, required: true, label_html: {id: '#group-by-title'}, wrapper: :btn_group, as: :radio_buttons, collection: report_group_permissions, wrapper_html: { id: 'group-by-criterion' }, item_wrapper_class: 'btn'
+          - elsif group_permissions.length == 1
+            = f.input :group_by, as: :hidden, input_html: { value: group_permissions.first.second }, wrapper: false, label: false
 
         .export-xls.pull-right
           .dropdown.btn-download
@@ -58,6 +62,9 @@ javascript:
 
   $('#download-status-btn a').on('click', function(e){
     var groupBy = $('input:radio[name="report[group_by]"]:checked').val();
+    if (typeof groupBy == 'undefined'){
+      groupBy = $('input:hidden[name="report[group_by]"]').val()
+    }
     if ($('#report_campaign_id').val()) {
       $.get($(this).data('url') + '?report[campaign_id]='+$('#report_campaign_id').val()+'&report[group_by]='+groupBy);
     }

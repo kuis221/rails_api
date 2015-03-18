@@ -199,8 +199,8 @@ class Ability
         company_user.role.has_permission?(:index_results, EventExpense) ||
         company_user.role.has_permission?(:index_results, Survey) ||
         company_user.role.has_permission?(:index_photo_results, AttachedAsset) ||
-        company_user.role.has_permission?(:gva_report, Campaign) ||
-        company_user.role.has_permission?(:event_status, Campaign)
+        company_user.role.has_permission?(:view_gva_report, Campaign) ||
+        company_user.role.has_permission?(:view_event_status, Campaign)
       end
 
       can :access, :brand_ambassadors do
@@ -273,9 +273,13 @@ class Ability
       end
 
       can :gva_report_campaign, Campaign do |campaign|
-        can?(:gva_report, Campaign) &&
+        can?(:view_gva_report, Campaign) &&
         company_user.accessible_campaign_ids.include?(campaign.id)
       end
+
+      can :view_gva_report, Campaign if can?(:gva_report_campaigns, Campaign) ||
+                                        can?(:gva_report_places, Campaign) ||
+                                        can?(:gva_report_users, Campaign)
 
       can :map, Event if role.has_permission?(:view_map, Event)
 
@@ -285,9 +289,13 @@ class Ability
       end
 
       can :event_status_report_campaign, Campaign do |campaign|
-        can?(:event_status, Campaign) &&
+        can?(:view_event_status, Campaign) &&
         company_user.accessible_campaign_ids.include?(campaign.id)
       end
+
+      can :view_event_status, Campaign if can?(:event_status_campaigns, Campaign) ||
+                                          can?(:event_status_places, Campaign) ||
+                                          can?(:event_status_users, Campaign)
 
       can [:select_brands, :add_brands], BrandPortfolio do |brand_portfolio|
         can?(:edit, brand_portfolio)
