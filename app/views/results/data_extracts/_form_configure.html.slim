@@ -1,10 +1,10 @@
 .sidebar
   h4 = 'Available Fields'
   .available-fields-box
-    = set_available_fields @available_fields
+    = render_available_fields @available_fields
 .main.data-extract
   .data-extract-box
     table.data-extract-table
-      = set_table_cols @selected_fields
-      = set_table_rows @data_source.rows if @data_source.present?
+      = render_table_cols @selected_fields
+      = render_table_rows @data_source.rows if @data_source.present?
     .data-extract-tools

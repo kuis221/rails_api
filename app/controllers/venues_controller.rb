@@ -9,6 +9,8 @@ class VenuesController < FilteredController
 
   custom_actions member: [:select_areas, :add_areas]
 
+  before_action :redirect_to_merged_venue, only: [:show]
+
   def collection
     @extended_places ||= (super || []).tap do |places|
       ids = places.map { |p| p.place.place_id }
@@ -89,5 +91,12 @@ class VenuesController < FilteredController
      events_count: [:min, :max], promo_hours: [:min, :max], impressions: [:min, :max],
      interactions: [:min, :max], sampled: [:min, :max], spent: [:min, :max],
      venue_score: [:min, :max], price: [], area: [], campaign: [], brand: []]
+  end
+
+  def redirect_to_merged_venue
+    return if resource.merged_with_place_id.blank?
+    redirect_to venue_path(Venue.find_or_create_by(
+      company_id: resource.company_id,
+      place_id: resource.merged_with_place_id))
   end
 end

@@ -21,10 +21,12 @@
 #  td_linx_code           :string(255)
 #  location_id            :integer
 #  is_location            :boolean
-#  neighborhoods          :string(255)      is an Array
 #  price_level            :integer
 #  phone_number           :string(255)
+#  neighborhoods          :string(255)      is an Array
 #  lonlat                 :spatial          point, 4326
+#  td_linx_confidence     :integer
+#  merged_with_place_id   :integer
 #
 
 require 'base64'
@@ -266,8 +268,7 @@ class Place < ActiveRecord::Base
       Placeable.where(place_id: place.id).update_all(place_id: place.id)
 
       place.td_linx_code ||= place.td_linx_code
-
-      place.destroy
+      place.update_attribute(:merged_with_place_id, id)
     end
   end
 
@@ -326,9 +327,10 @@ class Place < ActiveRecord::Base
 
       google_results = JSON.parse(open("https://maps.googleapis.com/maps/api/place/textsearch/json?key=#{GOOGLE_API_KEY}&sensor=false&query=#{CGI.escape(params[:q])}").read)
       if google_results && google_results['results'].present?
+        merged_ids = Place.where.not(merged_with_place_id: nil).where(place_id: google_results['results'].map{ |r| r['place_id'] }).pluck(:place_id)
         sort_index = { true => 0, false => 1 } # elements with :valid=true should go first
         results.concat(google_results['results']
-          .reject { |p| local_references.include?(p['reference']) || local_references.include?(p['id']) }
+          .reject { |p| local_references.include?(p['reference']) || local_references.include?(p['place_id']) || merged_ids.include?(p['place_id']) }
           .map do |p|
             name = p['formatted_address'].match(/\A#{Regexp.escape(p['name'])}/i) ? nil : p['name']
             label = [name, p['formatted_address'].to_s].compact.join(', ')
@@ -507,7 +509,11 @@ class Place < ActiveRecord::Base
   end
 
   def reindex_associated
-    Sunspot.index Venue.where(place_id: id)
+    if merged_with_place_id.blank?
+      Sunspot.index Venue.where(place_id: id)
+    else
+      Sunspot.remove Venue.where(place_id: id)
+    end
     areas.each do |area|
       Area.update_common_denominators(area)
     end
