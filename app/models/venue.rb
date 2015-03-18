@@ -51,7 +51,7 @@ class Venue < ActiveRecord::Base
 
   delegate :name, :types, :formatted_address, :formatted_phone_number, :website, :price_level,
            :city, :street, :state, :state_name, :country, :country_name, :zipcode, :reference,
-           :latitude, :longitude, :opening_hours, :td_linx_code,
+           :latitude, :longitude, :opening_hours, :td_linx_code, :merged_with_place_id,
            to: :place
 
   scope :top_venue, ->{ where(top_venue: true) }
@@ -59,7 +59,7 @@ class Venue < ActiveRecord::Base
 
   before_destroy :check_for_associations
 
-  searchable do
+  searchable if: ->(v) { v.merged_with_place_id.blank? } do
     integer :id
     integer :place_id
     integer :company_id
