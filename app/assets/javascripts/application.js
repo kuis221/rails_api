@@ -37,6 +37,7 @@
 //= require jquery.attachmentUploadZone
 //= require jquery.fancybox
 //= require jquery.filteredList
+//= require jquery.dataExtract
 //= require jquery.notifications
 //= require jquery.number
 //= require jquery.photoGallery

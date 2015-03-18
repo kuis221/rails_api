@@ -5,27 +5,24 @@ class Results::DataExtractsController < InheritedResources::Base
 
   def new
     permitted_params
-    if params[:data_source].present?
-      @step = 2
+    if params[:data_source].present? 
+      init_configure 
     else
       @step = 1
-      @data_sources = select_data_sources
-    end      
+    end
   end
 
   protected
 
-  def select_data_sources
-    [
-      ['Events', :event], ['Post Event Data (PERs)', :event_data], ['Activities', :activity],
-      ['Attendance', :invite], ['Comments', :comment], ['Contacts', :contact], ['Expenses', :event_expense],
-      ['Surveys', :survey], ['Tasks', :task], ['Venues', :venue], ['Users', :user], ['Teams', :team],
-      ['Roles', :role], ['Campaign', :campaign], ['Brands', :brands], ['Activity Types', :activity_type],
-      ['Areas', :area], ['Brand Porfolios', :brand_porfolio], ['Data Ranges', :date_range], ['Day Parts', :day_part]
-    ]
+  def permitted_params
+    params.permit([:data_source, :step, available_fields: [], selected_fields: []])
   end
 
-  def permitted_params
-    params.permit([:data_source, :step])
+  def init_configure
+    @step = 2
+    source = 'DataExtract::' + params[:data_source].humanize.split.map(&:capitalize)*''
+    @data_source = source.constantize.new(company: current_company)
+    @available_fields = params[:available_fields] || []
+    @selected_fields = params[:selected_fields] || @data_source.exportable_columns
   end
 end
