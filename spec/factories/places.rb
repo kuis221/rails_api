@@ -21,10 +21,12 @@
 #  td_linx_code           :string(255)
 #  location_id            :integer
 #  is_location            :boolean
-#  neighborhoods          :string(255)      is an Array
 #  price_level            :integer
 #  phone_number           :string(255)
+#  neighborhoods          :string(255)      is an Array
 #  lonlat                 :spatial          point, 4326
+#  td_linx_confidence     :integer
+#  merged_with_place_id   :integer
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl
