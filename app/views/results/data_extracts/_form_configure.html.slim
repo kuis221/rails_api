@@ -1,10 +1,19 @@
 .sidebar
   h4 = 'Available Fields'
   .available-fields-box
-    = render_available_fields @available_fields
+
 .main.data-extract
-  .data-extract-box
-    table.data-extract-table
-      = render_table_cols @selected_fields
-      = render_table_rows @data_source.rows if @data_source.present?
-    .data-extract-tools
+  = simple_form_for resource, as: :data_extract, url: form_action, method: :get, name: "data_source_form" do |f|
+    = hidden_field_tag :step, 3
+    = f.input :source, as: :hidden
+    - f.object.columns.each do |col|
+      = hidden_field_tag 'data_extract[columns][]', col
+    .data-extract-box
+      table.data-extract-table
+
+      .data-extract-tools
+
+javascript:
+  $('.data-extract').dataExtract({
+    'step': #{process_step},
+  });

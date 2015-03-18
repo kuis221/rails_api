@@ -3,15 +3,10 @@
     .pull-left
       h3 = 'NEW REPORT:'
     .pull-left
-      = data_source_navigation_bar(@step)
+      = data_extract_navigation_bar(process_step)
     .text-right
       = button_to 'Exit New Report', results_reports_path, method: :get, id: 'exit-new-report', class: 'link-exit-new-report'
-- if @step == 2
+- if process_step == 2
   = render partial: 'form_configure'
 - else
   = render partial: 'form_select_data_source'
-
-javascript:
-  $('.data_extract_top_details').dataExtract({
-    'step': #{@step},
-  });

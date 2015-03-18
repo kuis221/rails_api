@@ -1,28 +1,49 @@
 class Results::DataExtractsController < InheritedResources::Base
   respond_to :js, only: [:new, :create]
 
-  helper_method :return_path
+  helper_method :return_path, :process_step, :resource, :form_action
 
   def new
-    permitted_params
-    if params[:data_source].present? 
-      init_configure 
-    else
-      @step = 1
-    end
+  end
+
+  def preview
+    render layout: false
+  end
+
+  def available_fields
+    render layout: false
   end
 
   protected
 
-  def permitted_params
-    params.permit([:data_source, :step, available_fields: [], selected_fields: []])
+  def resource
+    @data_extract ||=
+      if params[:id]
+        DataExtract.find(params[:id])
+      elsif params.key?(:data_extract) && params[:data_extract][:source]
+        "DataExtract::#{params[:data_extract][:source].classify}".constantize.new(extract_params.merge(company: current_company))
+      else
+        current_company.data_extracts.new
+      end
   end
 
-  def init_configure
-    @step = 2
-    source = 'DataExtract::' + params[:data_source].humanize.split.map(&:capitalize)*''
-    @data_source = source.constantize.new(company: current_company)
-    @available_fields = params[:available_fields] || []
-    @selected_fields = params[:selected_fields] || @data_source.exportable_columns
+  def extract_params
+    params.require(:data_extract).permit([:name, :description, filters: [], columns: []])
+  end
+
+  def process_step
+    params[:step].to_i || 1
+  end
+
+  def form_action
+    if resource.new_record?
+      new_results_data_extract_path
+    else
+      edit_results_data_extract_path
+    end
+  end
+
+  def permitted_params
+    params.permit([:data_source, :step, available_fields: [], selected_fields: []])
   end
 end

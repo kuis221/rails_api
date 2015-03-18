@@ -207,7 +207,10 @@ Brandscopic::Application.routes.draw do
       post :preview, on: :member
     end
 
-    resources :data_extracts, only: [:new, :create]
+    resources :data_extracts, only: [:new, :create] do
+      get :preview, on: :collection
+      get :available_fields, on: :collection
+    end
 
     # For The KPI report
     get :kpi_report, to: 'kpi_reports#index'

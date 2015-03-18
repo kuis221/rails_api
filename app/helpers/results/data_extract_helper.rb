@@ -1,14 +1,14 @@
 module Results
   module DataExtractHelper
-    def data_source_navigation_bar(active)
-      step_navigation_bar([
+    def data_extract_navigation_bar(active)
+      data_extract_step_navigation_bar([
         content_tag(:div, 'SELECT SOURCES', class: 'text-large'),
         content_tag(:div, 'CONFIGURE', class: 'text-large'),
         content_tag(:div, 'PREVIEW & SAVE', class: 'text-large')
       ], active)
     end
 
-    def step_navigation_bar(steps, active)
+    def data_extract_step_navigation_bar(steps, active)
       content_tag :div, class: 'steps-wizard-data-source' do
         content_tag(:div, class: 'row-fluid') do
           steps.each_with_index.map do |step, i|
@@ -30,8 +30,13 @@ module Results
           if columns.present?
             columns.map do |col|
               content_tag(:th, class: 'data-extract-th', data:{name: col}) do
-                content_tag(:span, I18n.t("data_exports.fields.#{col.to_s}")) +
-                link_to('','', title: 'tool', class: 'icon-arrow-down pull-right dropdown-toggle', data:{ name: col, toggle: 'dropdown'}) 
+                content_tag(:div, class: 'dropdown') do
+                  content_tag(:span, I18n.t("data_exports.fields.#{col.to_s}")) +
+                  link_to('','', title: 'tool', class: 'icon-arrow-down pull-right dropdown-toggle', data:{ name: col, toggle: 'dropdown'}) +
+                  content_tag(:ul, class: 'dropdown-menu', role: 'menu') do
+                    content_tag(:li, link_to('Hide', '#', class: 'btn-remove-column', data: { column: col }))
+                  end
+                end
               end
             end.join.html_safe
           end

@@ -1,46 +1,37 @@
 $.widget 'nmk.dataExtract', {
   options: {
-    step: 1,
-    selectedFields: [],
-    available_fields: []
   },
 
   _create: () ->
-    
-    $(document).on 'click', '.available-field-list .available-field', (e) =>
-      e.stopPropagation()
-      e.preventDefault()
-      @options.selectedFields.push($(e.currentTarget).data("name"))
-      @_addColumn($(e.currentTarget).data("name"), $(e.currentTarget).text())
-      @_removeField($(e.currentTarget))
+    @_loadPreview()
+    @_loadAvailableFields()
 
-    $(document).on 'click', '.data-extract-head .data-extract-th', (e) =>
-      e.stopPropagation()
-      e.preventDefault()
-      @options.available_fields.push($(e.currentTarget).data("name"))
-      @_addField($(e.currentTarget).data("name"), $(e.currentTarget).text())
-      @_removeColumn($(e.currentTarget).index() + 1)
+    $('.available-fields-box').on 'click', '.available-field', (e) =>
+        e.preventDefault()
+        @_addColumn($(e.currentTarget).data('name'))
 
-  _addField: (field, name) ->
-    $item = $(".available-field-list").append(
-      $("<li class='available-field' data-name='#{field}'>").text(name)
-      )
-    
-  _removeField: (field) ->
-    field.remove()
+    @element.on 'click', '.btn-remove-column', (e) =>
+        e.preventDefault()
+        @_hideColumn($(e.currentTarget).data('column'))
 
-  _addColumn: (field, name) ->
-    $('.data-extract-head').append(@_formatColumnHeader(field, name))
-    
-  _removeColumn: (index) ->
-    $('.data-extract-table thead').find("tr th:nth-child(#{index})").each ->
-      $(this).remove()
-    $('.data-extract-table tbody').find("tr td:nth-child(#{index})").each ->
-      $(this).remove()
+  _hideColumn:(column) ->
+    @element.find('form').find('[name="data_extract[columns][]"][value="' + column + '"]').remove()
+    @_loadPreview()
+    @_loadAvailableFields()
 
-  _formatColumnHeader: (field, name) ->
-    $column = $("<th class='data-extract-th' data-name='#{field}'>").append(
-      $('<span>').text(name)).append(
-        $("<a href='' title='Tool' class='icon-arrow-down pull-right dropdown-toggle' data-name='"+field+"'>")
-      ) 
+  _addColumn:(column) ->
+    $('<input>', { type: 'hidden', name: 'data_extract[columns][]', value: column }).insertAfter(
+        @element.find('form').find('[name="data_extract[columns][]"]:last'))
+    @_loadPreview()
+    @_loadAvailableFields()
+
+  _loadPreview: () ->
+    form = @element.find('form')
+    @element.find('.data-extract-table').load '/results/data_extracts/preview?' + form.serialize()
+
+  _loadAvailableFields: () ->
+    form = @element.find('form')
+    $('.available-fields-box').load '/results/data_extracts/available_fields?' + form.serialize()
+
+
 }

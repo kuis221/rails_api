@@ -1,7 +1,6 @@
 .main.no-margin.data-extract
-  = form_tag '', method: :get, name: "data_source_form" do
-    = hidden_field_tag :step, @step
+  = simple_form_for resource, as: :data_extract, url: form_action, method: :get, name: "data_source_form" do |f|
+    = hidden_field_tag :step, 2
     .select-data-source
-      = label_tag('data_source-id', "1. Choose a data source for your report")
-      = select_tag 'data_source', options_for_select([[nil, '']] + DataExtract::DATA_SOURCES.sort), { id: 'data_source-id', class: 'chosen-enabled', 'data-placeholder' => 'Select a data source'}
+      = f.input :source, collection: DataExtract::DATA_SOURCES.sort, input_html: { class: 'chosen-enabled', 'data-placeholder' => 'Select a data source' }, label: '1. Choose a data source for your report'
     = submit_tag 'Next', class: 'btn btn-primary btn-data-source icon-slimmed-arrow-right-rounded'
