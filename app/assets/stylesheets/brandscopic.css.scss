@@ -1075,15 +1075,8 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		&.download {
 			margin: 0px 3px;
 			text-decoration: none;
-			/*.icon-plus, .icon-download{
-				line-height: 29px;
-			}*/
 		}
 	}
-	/*
-	.btn-group .btn{
-		line-height: 29px;
-	}*/
 	.btn-primary{
 		padding: 7px 25px;
 	}
@@ -1111,10 +1104,11 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			left: initial;
 			text-align: left;
 			box-shadow:none;
+			margin-top: 3px;
+
 			&:before {
-				border: none;
+				display: none;
 			}
-			padding: 0;
 			li:first-child a {
 				border-top-right-radius: 5px;
 				border-top-left-radius: 5px;
@@ -2055,7 +2049,7 @@ li#notifications{
 		background-color: $gray-lighter;
 		border: 1px solid #d5d5d5;
 		box-shadow: none;
-		margin-top: 22px;
+		margin-top: 12px;
 		min-width: 270px;
 		left: -181px;
 		h5{
@@ -2159,16 +2153,7 @@ li#notifications{
 	border-left: 10px solid transparent;
 	content: '';
 }
-.dropdown-menu:after{
-	position: absolute;
-	top: -9px;
-	left: 114px;
-	display: inline-block;
-	border-right: 10px solid transparent;
-	border-bottom: 10px solid $white;
-	border-left: 10px solid transparent;
-	content: '';
-}
+
 .navbar .nav>li> .dropdown-menu:before{
 	position: absolute;
 	top: -8px;
@@ -5831,7 +5816,7 @@ margin: 45px 0 25px 25px;
 
 // GVA - GOALS VS ACTUAL
 #report-settings {
-	color: $brand;
+	color: $text;
 	.control-group {
 		display: inline-block;
 		margin-left: 35px;
