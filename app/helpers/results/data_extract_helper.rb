@@ -24,21 +24,22 @@ module Results
       end
     end
 
-    def set_table_cols(columns)
-      return unless columns.present?
+    def render_table_cols(columns)
       content_tag(:thead) do
         content_tag(:tr, class: 'data-extract-head') do
-          columns.map do |col|
-            content_tag(:th, class: 'data-extract-th', data:{name: col}) do
-              content_tag(:span, I18n.t("data_exports.fields.#{col.to_s}")) +
-              link_to('','', title: 'tool', class: 'icon-arrow-down pull-right dropdown-toggle', data:{ name: col, toggle: 'dropdown'}) 
-            end
-          end.join.html_safe
+          if columns.present?
+            columns.map do |col|
+              content_tag(:th, class: 'data-extract-th', data:{name: col}) do
+                content_tag(:span, I18n.t("data_exports.fields.#{col.to_s}")) +
+                link_to('','', title: 'tool', class: 'icon-arrow-down pull-right dropdown-toggle', data:{ name: col, toggle: 'dropdown'}) 
+              end
+            end.join.html_safe
+          end
         end
       end
     end
 
-    def set_table_rows(rows)
+    def render_table_rows(rows)
       return unless rows.present?
       rows.map do |row|
         content_tag(:tr, class: 'data-extract-row') do
@@ -49,13 +50,14 @@ module Results
       end.join.html_safe
     end
 
-    def set_available_fields(fields)
-      return unless fields.present?
+    def render_available_fields(fields)
       content_tag(:ul, class: 'available-field-list') do
-        fields.sort.map do |field|
-          content_tag(:li, I18n.t("data_exports.fields.#{field.to_s}"), class: 'available-field', data:{name: field})
-        end.join.html_safe
-      end
+        if fields.present?
+          fields.sort.map do |field|
+            content_tag(:li, I18n.t("data_exports.fields.#{field.to_s}"), class: 'available-field', data:{name: field})
+          end.join.html_safe
+        end
+       end
     end
   end
 end
