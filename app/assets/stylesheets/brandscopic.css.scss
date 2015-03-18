@@ -4286,6 +4286,9 @@ body.roles{
 	.separate{
 		margin-top: 30px;
 	}
+	.indented{
+		padding-left: 20px;
+	}
 	.span7, .span7:first-child{
 		font-size: 16px;
 		line-height: 40px;
@@ -5873,6 +5876,9 @@ margin: 45px 0 25px 25px;
 				}
 			}
 		}
+	}
+	.controls {
+		display: inline-block;
 	}
 }
 

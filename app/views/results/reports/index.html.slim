@@ -18,7 +18,7 @@
       = button_to 'New Report', new_results_report_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-report-btn'}
 
   .tab-content
-    - if can?(:index_results, EventData) || can?(:index_results, Comment) ||  can?(:event_status, Campaign) || can?(:index_results, EventExpense) || can?(:gva_report, Campaign) || can?(:index_photo_results, AttachedAsset) || can?(:index_results, Survey)
+    - if can?(:index_results, EventData) || can?(:index_results, Comment) || can?(:view_event_status, Campaign) || can?(:index_results, EventExpense) || can?(:view_gva_report, Campaign) || can?(:index_photo_results, AttachedAsset) || can?(:index_results, Survey)
       #global-reports-list.resource-list.reports-list
         - if can?(:index_results, EventData)
           .resource-item id="report_event_data"
@@ -48,7 +48,7 @@
                 .text-large Comments
                 p View consumer comments by event
 
-        - if can?(:event_status, Campaign)
+        - if can?(:view_event_status, Campaign)
           .resource-item id="report_event_status"
             = link_to results_event_status_path, title: 'Event Status' do
               .span10.report-item
@@ -62,7 +62,7 @@
                 .text-large Expenses
                 p View expenses by event
 
-        - if can?(:gva_report, Campaign)
+        - if can?(:view_gva_report, Campaign)
           .resource-item id="report_gva"
             = link_to results_gva_path, title: 'Goals vs. Actual' do
               .span10.report-item
