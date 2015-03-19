@@ -5839,7 +5839,7 @@ margin: 45px 0 25px 25px;
 				color: #FFFFFF;
 				font-weight: bold;
 				font-size: 13px;
-				min-width: 70px;
+				min-width: 85px;
 				&:first-child{
 					border-bottom-left-radius: 6px;
 					border-top-left-radius: 6px;
@@ -6057,6 +6057,18 @@ body.gva {
 				}
 			}
 		}
+	}
+}
+
+// Specific GVA report campaign select
+
+#report_campaign_id{
+	width: 300px;
+}
+
+#report_campaign_id_chzn{
+	.chzn-drop{
+		width: 300px !important;
 	}
 }
 
