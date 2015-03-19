@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150317180935) do
+ActiveRecord::Schema.define(version: 20150319192414) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,7 +19,6 @@ ActiveRecord::Schema.define(version: 20150317180935) do
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
   enable_extension "postgis"
-  enable_extension "postgres_fdw"
   enable_extension "tablefunc"
 
   create_table "active_admin_comments", force: true do |t|
@@ -313,6 +312,7 @@ ActiveRecord::Schema.define(version: 20150317180935) do
     t.datetime "last_activity_at"
     t.string   "notifications_settings",  default: [],                array: true
     t.datetime "last_activity_mobile_at"
+    t.string   "tableau_username"
   end
 
   add_index "company_users", ["company_id"], :name => "index_company_users_on_company_id"
