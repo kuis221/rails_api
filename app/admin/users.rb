@@ -96,7 +96,7 @@ ActiveAdmin.register User do
       params.permit(user: [
         :email, :first_name, :last_name,
         :country, :state, :city, :time_zone, :phone_number, :street_address,
-        :unit_number, :zip_code, :password, :password_confirmation, company_users_attributes: [:id, :role_id]])
+        :unit_number, :zip_code, :password, :password_confirmation, company_users_attributes: [:id, :role_id, :tableau_username]])
     end
   end
 end
