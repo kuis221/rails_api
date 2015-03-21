@@ -1,0 +1,17 @@
+|
+  newPlaceDialog.modal('hide')
+  var areaConfirm = bootbox.confirm("Are you sure you want to add this Place? This Place has already been added to the following Area(s): #{@overlaped_places.join(', ')}", function(result){
+    if (result){
+      $.ajax({
+          url: '#{add_place_campaign_areas_campaign_path(resource.campaign_id, resource.area_id)}',
+          type: 'POST',
+          data: { areas_campaign: { reference: '#{params[:areas_campaign][:reference]}' }, confirmed: true }
+      });
+    } else {
+      //This is because clicking cancel on confirm modal was closing all opened modals
+      areaConfirm.modal('hide');
+      newPlaceDialog.modal('show')
+      event.stopPropagation();
+      event.preventDefault();
+    }
+  });

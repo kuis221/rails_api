@@ -289,6 +289,67 @@ feature 'Campaigns', js: true do
       end
     end
 
+    scenario 'confirm from user to include existing places to areas assigned to the campaign' do
+      expect(Place).to receive(:open).and_return(double(read: { results:
+        [
+          { reference: '1111', place_id: '1111', name: 'Walt Disney World Dolphin', formatted_address: '123 Blvr' }
+        ]
+      }.to_json))
+      Kpi.create_global_kpis
+
+      area = create(:area, name: 'Orlando', company: company)
+      another_area = create(:area, name: 'Florida', company: company)
+      another_area.places << create(:place, place_id: '1111', reference: '1111', name: 'Walt Disney World Dolphin')
+
+      campaign.areas << [area, another_area]
+      visit campaign_path(campaign)
+
+      tab = open_tab('Places')
+
+      within tab do
+        expect(page).to have_content('Orlando')
+        find("a#customize_area_#{area.id}").click # tooltip changes the title
+      end
+
+      within visible_modal do
+        expect(page).to have_content('Customize Orlando Area')
+        click_js_link('Add new place')
+      end
+
+      within visible_modal do
+        expect(page).to have_content('New Place')
+        select_from_autocomplete 'Search for a place', 'Walt Disney World Dolphin'
+        click_js_button 'Add'
+      end
+
+      within visible_modal do
+        expect(page).to have_content('Are you sure you want to add this Place? This Place has already been added to the following Area(s): Walt Disney World Dolphin')
+        click_js_link('OK')
+      end
+
+      wait_for_ajax
+      new_place_id = Place.last.id
+      expect(campaign.areas_campaigns.find_by(area_id: area.id).inclusions).to eql [new_place_id]
+
+      within visible_modal do
+        expect(page).to have_content('Customize Orlando Area')
+        expect(page).to have_content('Walt Disney World Dolphin')
+        within(resource_item("#area-campaign-place-#{new_place_id}")) { click_js_link 'Deactivate' }
+        expect(page).to have_selector("#area-campaign-place-#{new_place_id}.inactive")
+        click_js_button('Done')
+      end
+      ensure_modal_was_closed
+
+      within tab do
+        find("a#customize_area_#{area.id}").click # tooltip changes the title
+      end
+
+      within visible_modal do
+        expect(page).to have_content('Customize Orlando Area')
+        expect(page).to have_no_content('Walt Disney World Dolphin')
+      end
+    end
+
     feature 'Add KPIs', search: false do
 
       feature 'with a non admin user', search: false do

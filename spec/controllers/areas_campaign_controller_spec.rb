@@ -31,6 +31,28 @@ describe AreasCampaignsController, type: :controller do
       expect(campaign.areas_campaigns.first.exclusions).not_to include place.id
     end
 
+    it 'do not add a place to the inclusions list if it is in another area that is included in the campaign' do
+      another_area = create(:area, company: company)
+      another_area.places << place
+      campaign.areas << another_area
+      xhr :post, 'add_place', campaign_id: campaign.id, id: area.to_param, areas_campaign: { reference: place.id.to_s }, format: :js
+      expect(response).to be_success
+      expect(response).to render_template 'place_overlap_prompt'
+      expect(campaign.areas_campaigns.first.inclusions).not_to include place.id
+      expect(campaign.areas_campaigns.first.exclusions).not_to include place.id
+    end
+
+    it 'add a place to the inclusions list when the action is confirmed no matter it is in another area that is included in the campaign' do
+      another_area = create(:area, company: company)
+      another_area.places << place
+      campaign.areas << another_area
+      xhr :post, 'add_place', campaign_id: campaign.id, id: area.to_param, areas_campaign: { reference: place.id.to_s }, confirmed: true, format: :js
+      expect(response).to be_success
+      expect(response).to render_template 'add_place'
+      expect(campaign.areas_campaigns.first.inclusions).to eql [place.id]
+      expect(campaign.areas_campaigns.first.exclusions).not_to include place.id
+    end
+
     it 'try add a repeated place to the inclusions list' do
       expect(Rails.cache).to receive(:delete).with("campaign_locations_#{campaign.id}")
       expect(Rails.cache).to receive(:delete).with("area_campaign_locations_#{area.id}_#{campaign.id}")
