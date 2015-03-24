@@ -1104,7 +1104,8 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			left: initial;
 			text-align: left;
 			box-shadow:none;
-			margin-top: 3px;
+			padding:0;
+			min-width: 100%;
 
 			&:before {
 				display: none;
