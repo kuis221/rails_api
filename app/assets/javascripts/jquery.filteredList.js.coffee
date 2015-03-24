@@ -109,7 +109,8 @@ $.widget 'nmk.filteredList', {
 			params = {filter_type: filterParts[0], filter_id: filterParts[1] }
 			$.get '/filters/expand', params, (data) =>
 				if data[0].type == 'cfid'
-					@_setQueryString data[0].filters
+					qs = @paramsQueryString().replace(new RegExp('(&)?'+ encodeURIComponent("#{data[0].type}[]")+'='+@_escapeRegExp(encodeURIComponent(data[0].id))+'(&|$)', "g"), '$2')
+					@_setQueryString data[0].filters + '&' + qs
 				else
 					@replaceParams data, filterParts
 			, "json"
@@ -359,7 +360,7 @@ $.widget 'nmk.filteredList', {
 						.find('select').chosen().end()
 						.on 'change', () =>
 							option = @savedFiltersDropdown.find('option:selected')[0]
-							@_setQueryString encodeURIComponent("cfid[]") + '=' + encodeURIComponent(option.value.split('&id')[0]) 
+							@_setQueryString encodeURIComponent("cfid[]") + '=' + encodeURIComponent(option.value.split('&id')[0])
 		@setSavedFilters(@options.userFilters)
 
 	setSavedFilters: (userFilters, selected=@savedFiltersDropdown.val()) ->
