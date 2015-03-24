@@ -1,4 +1,6 @@
 class Results::GvaController < InheritedResources::Base
+  include ExportableController
+
   respond_to :xls, :pdf, only: :index
 
   before_action :campaign, except: :index
@@ -8,18 +10,6 @@ class Results::GvaController < InheritedResources::Base
   helper_method :return_path, :report_view_mode, :report_group_by, :report_group_permissions
 
   def index
-    if request.format.xls? || request.format.pdf?
-      @export = ListExport.create(
-        controller: self.class.name,
-        params: params,
-        url_options: url_options,
-        export_format: params[:format],
-        company_user: current_company_user)
-      if @export.new?
-        @export.queue!
-      end
-      render action: :new_export, formats: [:js]
-    end
   end
 
   def report_groups
@@ -29,22 +19,22 @@ class Results::GvaController < InheritedResources::Base
     render layout: false
   end
 
-  def export_list(export)
-    @goalables_data = goalables_by_type.map do |goalable|
-      set_report_scopes_for(goalable)
-      {name: goalable.name, item: goalable, event_goal: view_context.each_events_goal}
-    end
-
-    Slim::Engine.with_options(pretty: true, sort_attrs: false, streaming: false) do
-      render_to_string :index, handlers: [:slim], formats: export.export_format.to_sym, layout: 'application'
-    end
-  end
-
   def export_file_name
     "#{controller_name.underscore.downcase}-#{Time.now.strftime('%Y%m%d%H%M%S')}"
   end
 
   private
+
+  def prepare_collection_for_export
+    @goalables_data = goalables_by_type.map do |goalable|
+      set_report_scopes_for(goalable)
+      {name: goalable.name, item: goalable, event_goal: view_context.each_events_goal}
+    end
+  end
+
+  def list_exportable?
+    true
+  end
 
   def set_scopes
     set_report_scopes_for(area || place || company_user || team || campaign)
