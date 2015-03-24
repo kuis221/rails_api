@@ -9,7 +9,7 @@
           .crop-text= activity.company_user.full_name
         .span3
           .date= format_date(activity.activity_date)
-        .span4.text-large= activity.campaign.name
+        .span4.text-large= activity.campaign.present? ? activity.campaign.name : ''
       - else
         .span7.text-large= activity.activity_type.name
         .span5
