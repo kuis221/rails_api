@@ -4,6 +4,7 @@ ActiveAdmin.register User do
   actions :all, except: [:new, :create]
 
   index do
+    id_column
     column :first_name
     column :last_name
     column :email
