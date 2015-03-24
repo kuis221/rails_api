@@ -15,7 +15,7 @@ feature 'Filter Expand', js: true, search: true do
     Warden.test_reset!
   end
 
-  feature 'filter expand' do 
+  feature 'filter expand' do
     let(:team) { create(:team, name: 'Costa Rica Team', description: 'el grupo de ticos', active: true, company_id: company.id) }
     let(:user1) { create(:company_user, user: create(:user, first_name: 'Roberto', last_name: 'Gomez'), company: company) }
     let(:user2) { create(:company_user, user: create(:user, first_name: 'Mario', last_name: 'Moreno'), company: company) }
@@ -40,12 +40,12 @@ feature 'Filter Expand', js: true, search: true do
       expect(page).to have_selector('#events-list .resource-item', count: 2)
       expect(page).to have_filter_section('PEOPLE',
                                           options: ['Costa Rica Team', 'Mario Moreno', 'Roberto Gomez', 'Test User'])
-      
+
       filter_section('PEOPLE').unicheck('Costa Rica Team')
 
       expect(collection_description).to have_filter_tag('Costa Rica Team')
       expand_filter 'Costa Rica Team'
-      
+
       expect(collection_description).to_not have_filter_tag('Costa Rica Team')
       expect(collection_description).to have_filter_tag('Mario Moreno')
       expect(collection_description).to have_filter_tag('Roberto Gomez')
@@ -55,8 +55,8 @@ feature 'Filter Expand', js: true, search: true do
     end
 
     scenario 'Allows expanding the saved filters' do
-      campaign2 = create(:campaign, name: 'Imperial FYU', company: company) 
-      events_list = create_list(:event, 3, company: company, campaign: campaign2)
+      campaign2 = create(:campaign, name: 'Imperial FYU', company: company)
+      create_list(:event, 3, company: company, campaign: campaign2)
       events
       Sunspot.commit
 
@@ -64,7 +64,7 @@ feature 'Filter Expand', js: true, search: true do
       remove_filter 'Today To The Future'
 
       expect(page).to have_selector('#events-list .resource-item', count: 5)
-      
+
       filter_section('CAMPAIGN').unicheck('Imperial FYU')
 
       expect(page).to have_selector('#events-list .resource-item', count: 3)
@@ -89,8 +89,8 @@ feature 'Filter Expand', js: true, search: true do
     end
 
     scenario 'Allows expanding the saved filters - Date Range' do
-      campaign2 = create(:campaign, name: 'Imperial FYU', company: company) 
-      events_list = create_list(:event, 3, company: company, campaign: campaign2)
+      campaign2 = create(:campaign, name: 'Imperial FYU', company: company)
+      create_list(:event, 3, company: company, campaign: campaign2)
       events
       Sunspot.commit
 
@@ -113,8 +113,49 @@ feature 'Filter Expand', js: true, search: true do
       expand_filter 'My Custom Filter'
       expect(collection_description).to_not have_filter_tag('My Custom Filter')
       expect(collection_description).to have_filter_tag('Aug 28, 2013 - Aug 29, 2013')
-      
+
       expect(page).to have_selector('#events-list .resource-item', count: 1)
+    end
+
+    scenario 'Expanding custom filters should not clear previously selected filters' do
+      today = Time.zone.local(Time.now.year, Time.now.month, Time.now.day, 12, 00)
+      custom_filter_category = create(:custom_filters_category, name: 'Divisions', company: company)
+      area1 = create(:area, name: 'Some Area', description: 'an area description', company: company)
+      area2 = create(:area, name: 'Another Area', description: 'another area description', company: company)
+
+      create(:custom_filter,
+             owner: company_user, name: 'Continental', apply_to: 'events',
+             filters: "area%5B%5D=#{area1.id}&area%5B%5D=#{area2.id}",
+             category: custom_filter_category)
+
+      create_list(:event, 2,
+                  start_date: today.to_s(:slashes), end_date: today.to_s(:slashes),
+                  company: company, campaign: campaign)
+      events
+      Sunspot.commit
+
+      visit events_path
+
+      remove_filter 'Today To The Future'
+      choose_predefined_date_range 'Today'
+      wait_for_ajax
+
+      expect(page).to have_selector('#events-list .resource-item', count: 2)
+
+      filter_section('DIVISIONS').unicheck('Continental')
+
+      expect(collection_description).to have_filter_tag('Continental')
+
+      expand_filter('Continental')
+      expect(page).to have_filter_tag('Some Area')
+      expect(page).to have_filter_tag('Another Area')
+      expect(page).to have_filter_tag('Today')
+
+      expect(page).to have_selector('#events-list .resource-item', count: 0)
+
+      within('.select-ranges') do
+        expect(page).to have_no_content('Choose a date range')
+      end
     end
   end
 end
