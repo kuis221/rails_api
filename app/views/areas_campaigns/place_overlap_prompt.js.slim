@@ -1,6 +1,6 @@
 |
   newPlaceDialog.modal('hide')
-  var areaConfirm = bootbox.confirm("Are you sure you want to add this Place? This Place has already been added to the following Area(s): #{@overlaped_areas.join(', ')}", function(result){
+  var areaConfirm = bootbox.confirm("Are you sure you want to add this Place? This Place has already been added to the following Area(s): #{@overlapped_areas.join(', ')}", function(result){
     if (result){
       $.ajax({
           url: '#{add_place_campaign_areas_campaign_path(resource.campaign_id, resource.area_id)}',

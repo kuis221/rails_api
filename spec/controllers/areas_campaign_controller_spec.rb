@@ -54,12 +54,10 @@ describe AreasCampaignsController, type: :controller do
     end
 
     it 'try add a repeated place to the inclusions list' do
-      expect(Rails.cache).to receive(:delete).with("campaign_locations_#{campaign.id}")
-      expect(Rails.cache).to receive(:delete).with("area_campaign_locations_#{area.id}_#{campaign.id}")
       campaign.areas_campaigns.first.update_column :inclusions, [place.id.to_s]
       xhr :post, 'add_place', campaign_id: campaign.id, id: area.to_param, areas_campaign: { reference: place.id.to_s }, format: :js
       expect(response).to be_success
-      expect(response).to render_template 'add_place'
+      expect(response).to render_template 'place_overlap_prompt'
       expect(campaign.areas_campaigns.first.inclusions).to eql [place.id]
       expect(campaign.areas_campaigns.first.exclusions).not_to include place.id
     end
