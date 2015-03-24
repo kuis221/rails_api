@@ -12,9 +12,11 @@ class AreasCampaignsController < FilteredController
   def add_place
     return unless params[:areas_campaign][:reference].present?
     place_reference = resource.place_reference(params[:areas_campaign][:reference])
-    @overlaped_places = Place.in_areas(resource.campaign.areas.where.not(id: resource.area).pluck(:id)).where(id: place_reference.id).map(&:name)
 
-    if @overlaped_places.present? && params[:confirmed].blank?
+    if Place.in_areas(resource.campaign.areas.where.not(id: resource.area).pluck(:id)).where(id: place_reference.id) &&
+       params[:confirmed].blank?
+      @overlaped_areas = []
+      resource.campaign.areas_campaigns.select{ |ac| ac.place_in_scope?(place_reference) }.each{ |oa| @overlaped_areas << oa.area.name }
       render 'place_overlap_prompt'
     else
       resource.inclusions = (resource.inclusions + [place_reference.id]).uniq

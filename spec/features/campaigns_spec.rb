@@ -323,7 +323,7 @@ feature 'Campaigns', js: true do
       end
 
       within visible_modal do
-        expect(page).to have_content('Are you sure you want to add this Place? This Place has already been added to the following Area(s): Walt Disney World Dolphin')
+        expect(page).to have_content('Are you sure you want to add this Place? This Place has already been added to the following Area(s): Florida')
         click_js_link('OK')
       end
 
