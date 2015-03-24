@@ -32,7 +32,7 @@
         .span6
           = f.input :zip_code, required: true
       .row-fluid
-        .span6
+        .span12
           = f.input :time_zone, required: true, input_html: {class: 'chosen-enabled'}
       .row-fluid
         = f.input :password, :label => "New Password", :required => true, :input_html => {class: 'oneupperletter onedigit', minlength: 8, maxlength: 128}, hint: 'Password must contain at least 8 characters, at least 1 number, at least 1 lowercase character (a-z) and at least 1 uppercase character (A-Z)'
