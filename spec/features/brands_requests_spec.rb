@@ -175,7 +175,7 @@ feature 'Brands', js: true do
       ])
     end
 
-    scenario 'should be able to export as PDF' do
+    scenario 'export list of brands as PDF' do
       visit brands_path
 
       click_js_link 'Download'

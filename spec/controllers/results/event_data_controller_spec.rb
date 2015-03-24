@@ -188,7 +188,6 @@ describe Results::EventDataController, type: :controller do
       ])
     end
 
-
     it 'should include the event data results only for the campaigns associatted to a given brand' do
       custom_kpi = create(:kpi, name: 'Test KPI 1', company: company)
       custom_kpi2 = create(:kpi, name: 'Test KPI 2', company: company)
