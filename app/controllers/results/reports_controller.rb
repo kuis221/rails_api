@@ -65,8 +65,12 @@ class Results::ReportsController < InheritedResources::Base
 
   private
 
-  def export_list(export)
-    render_to_string(text: resource.to_csv { |total, i| export.update_column(:progress, (i * 100 / total).round) })
+  def export_list(export, path)
+    File.open(path, 'w') do |f|
+      f.write render_to_string(
+        text: resource.to_csv { |total, i| export.update_column(:progress, (i * 100 / total).round) }
+      )
+    end
   end
 
   def build_resource_params

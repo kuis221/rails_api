@@ -1,1 +1,1 @@
-Resque::Plugins::Timeout.timeout = 900
+Resque::Plugins::Timeout.timeout = 1800

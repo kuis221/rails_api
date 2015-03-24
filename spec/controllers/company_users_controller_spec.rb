@@ -394,6 +394,7 @@ describe CompanyUsersController, type: :controller do
 
     describe "GET 'list_export'", search: true do
       it 'should return a book with the correct headers and the Admin user' do
+      	Sunspot.commit
         expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
         ResqueSpec.perform_all(:export)
         expect(ListExport.last).to have_rows([
