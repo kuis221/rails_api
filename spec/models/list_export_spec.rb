@@ -34,7 +34,8 @@ describe ListExport, type: :model do
     end
     before do
       expect_any_instance_of(Results::EventDataController)
-        .to receive(:export_list).with(exporter).and_return('')
+        .to receive(:export_list).and_return('')
+      expect(exporter).to receive(:build_xlsx_file)
     end
 
     it 'calls the export_list on the controller and set the required variables' do
@@ -63,7 +64,8 @@ describe ListExport, type: :model do
   describe 'EventsController#export_list' do
     it 'should call the export_list on the controller and set the required variables' do
       exporter = described_class.new(controller: 'EventsController', company_user: company_user, url_options: {}, export_format: 'xls', params: {})
-      expect_any_instance_of(EventsController).to receive(:export_list).with(exporter).and_return('')
+      expect_any_instance_of(EventsController).to receive(:export_list).and_return('')
+      expect(exporter).to receive(:build_xlsx_file)
 
       # Prevent export to save and upload attachment to S3
       expect(exporter).to receive(:save).at_least(:once).and_return(true)

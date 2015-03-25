@@ -22,7 +22,7 @@ feature 'Activities management' do
   shared_examples_for 'a user that view the activiy details' do
     let(:activity) do
       create(:activity,
-             company_user: company_user, activitable: event,
+             company_user: company_user, activitable: event, activity_date: '08/21/2014',
              activity_type: create(:activity_type, name: 'Test ActivityType', company: company, campaign_ids: [campaign.id]))
     end
 
@@ -39,16 +39,51 @@ feature 'Activities management' do
     end
 
     scenario "can see all the info of a venue's activity", js: true do
-      venue = create(:venue, place: place)
+      venue = create(:venue, company: company, place: place)
       venue_activity = create(:activity,
                               company_user: company_user, activitable: venue,
-                              campaign: campaign,
-                              activity_type: create(:activity_type, name: 'Test ActivityType', company: company, campaign_ids: [campaign.id]))
-      visit activity_path(activity)
+                              campaign: campaign, activity_type: create(:activity_type,
+                                                                        name: 'Test ActivityType',
+                                                                        company: company,
+                                                                        campaign_ids: [campaign.id]))
+      visit activity_path(venue_activity)
       expect(page).to have_selector('h2.special', text: 'Test ActivityType')
       expect(page).to have_link(venue.name)
-      expect(page).to have_content("#{place.street} #{place.city}, #{place.state_code}, #{place.zipcode}")
-      expect(current_path).to eql activity_path(activity)
+      expect(page).to have_content("#{place.street}, #{place.city}, #{place.state_code}, #{place.zipcode}")
+      expect(current_path).to eql activity_path(venue_activity)
+    end
+
+    scenario 'can see the info of activities in the event details', js: true do
+      campaign.activity_types << create(:activity_type, company: company)
+      activity
+
+      visit event_path(event)
+
+      within("#activity_#{activity.id}") do
+        expect(page).to have_content('Test ActivityType')
+        expect(page).to have_content('THU Aug 21, 2014')
+        expect(page).to have_content(company_user.full_name)
+      end
+    end
+
+    scenario 'can see the info of activities in the venues details', js: true do
+      venue = create(:venue, company: company, place: place)
+      venue_activity = create(:activity,
+                              company_user: company_user, activitable: venue, activity_date: '08/21/2014',
+                              campaign: campaign, activity_type: create(:activity_type,
+                                                                        name: 'Test ActivityType',
+                                                                        company: company,
+                                                                        campaign_ids: [campaign.id]))
+      campaign.activity_types << create(:activity_type, company: company)
+
+      visit venue_path(venue)
+
+      within("#activity_#{venue_activity.id}") do
+        expect(page).to have_content('Test ActivityType')
+        expect(page).to have_content('THU Aug 21, 2014')
+        expect(page).to have_content(company_user.full_name)
+        expect(page).to have_content(venue_activity.campaign.name)
+      end
     end
   end
 
@@ -449,7 +484,7 @@ feature 'Activities management' do
     it_should_behave_like 'a user that view the activiy details' do
       before { company_user.campaigns << campaign }
       before { company_user.places << place }
-      let(:permissions) { [[:show, 'Activity'], [:show, 'Event']] }
+      let(:permissions) { [[:show, 'Activity'], [:show, 'Event'], [:show, 'Venue']] }
     end
   end
 end

@@ -38,7 +38,6 @@ class Invite < ActiveRecord::Base
         Place.find(value)
       else
         reference, place_id = value.split('||')
-        p "#{reference} ==> #{place_id}"
         Place.load_by_place_id(place_id, reference)
       end
     place.save unless place.persisted?
