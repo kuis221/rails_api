@@ -171,10 +171,10 @@ feature 'Reports', js: true do
     it 'should display a message if the report returns not results' do
       Kpi.create_global_kpis
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'place:name', 'label' => 'Venue Name' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'place:name', 'label' => 'Venue Name' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
       )
 
       visit results_report_path(report)
@@ -199,10 +199,10 @@ feature 'Reports', js: true do
         results: { impressions: 321, interactions: 25 })
 
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'place:name', 'label' => 'Venue Name' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'place:name', 'label' => 'Venue Name' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
       )
 
       visit results_report_path(report)
@@ -233,11 +233,11 @@ feature 'Reports', js: true do
         results: { impressions: 321, interactions: 25 })
 
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }],
-                                  rows:    [{ 'field' => 'place:name', 'label' => 'Venue Name' },
-                                            { 'field' => 'event:start_date', 'label' => 'Start Date' }],
-                                  values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }],
+                      rows:    [{ 'field' => 'place:name', 'label' => 'Venue Name' },
+                                { 'field' => 'event:start_date', 'label' => 'Start Date' }],
+                      values:  [{ 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum' }]
       )
 
       visit results_report_path(report)
@@ -274,29 +274,29 @@ feature 'Reports', js: true do
       campaign1 = create(:campaign, company: company, name: 'Campaign 1')
       campaign2 = create(:campaign, company: company, name: 'Campaign 2')
       create(:event, campaign: campaign1,
-                                 place: create(:place, name: 'Bar 1', state: 'State 1'),
-                                 results: { impressions: 300, interactions: 20 })
+                     place: create(:place, name: 'Bar 1', state: 'State 1'),
+                     results: { impressions: 300, interactions: 20 })
 
       create(:event, campaign: campaign1,
-                                 place: create(:place, name: 'Bar 2', state: 'State 2'),
-                                 results: { impressions: 700, interactions: 40 })
+                     place: create(:place, name: 'Bar 2', state: 'State 2'),
+                     results: { impressions: 700, interactions: 40 })
 
       create(:event, campaign: campaign2,
-                                 place: create(:place, name: 'Bar 3', state: 'State 1'),
-                                 results: { impressions: 200, interactions: 80 })
+                     place: create(:place, name: 'Bar 3', state: 'State 1'),
+                     results: { impressions: 200, interactions: 80 })
 
       create(:event, campaign: campaign2,
-                                 place: create(:place, name: 'Bar 4', state: 'State 2'),
-                                 results: { impressions: 100, interactions: 60 })
+                     place: create(:place, name: 'Bar 4', state: 'State 2'),
+                     results: { impressions: 100, interactions: 60 })
 
       report = create(:report,
-                                  company: company,
-                                  columns: [{ 'field' => 'values', 'label' => 'Values' }, { 'field' => 'place:state', 'label' => 'State' }],
-                                  rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign Name' }],
-                                  values:  [
-                                    { 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum', 'display' => 'perc_of_row' },
-                                    { 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions', 'aggregate' => 'sum', 'display' => 'perc_of_total', 'precision' => '1' }
-                                  ]
+                      company: company,
+                      columns: [{ 'field' => 'values', 'label' => 'Values' }, { 'field' => 'place:state', 'label' => 'State' }],
+                      rows:    [{ 'field' => 'campaign:name', 'label' => 'Campaign Name' }],
+                      values:  [
+                        { 'field' => "kpi:#{Kpi.impressions.id}", 'label' => 'Impressions', 'aggregate' => 'sum', 'display' => 'perc_of_row' },
+                        { 'field' => "kpi:#{Kpi.interactions.id}", 'label' => 'Interactions', 'aggregate' => 'sum', 'display' => 'perc_of_total', 'precision' => '1' }
+                      ]
       )
 
       visit results_report_path(report)
@@ -357,8 +357,8 @@ feature 'Reports', js: true do
 
     scenario 'share a report' do
       user = create(:company_user,
-                                user: create(:user, first_name: 'Guillermo', last_name: 'Vargas'),
-                                company: company)
+                    user: create(:user, first_name: 'Guillermo', last_name: 'Vargas'),
+                    company: company)
       team = create(:team, name: 'Los Fantasticos', company: company)
       role = create(:role, name: 'Super Hero', company: company)
 

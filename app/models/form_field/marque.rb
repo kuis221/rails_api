@@ -39,7 +39,7 @@ class FormField::Marque < FormField::Dropdown
   end
 
   def format_html(result)
-    return if result.value.blank?
+    return if result.value.blank? || result.value == 0
     ::Marque.where(id: result.value).pluck(:name).join(', ')
   end
 

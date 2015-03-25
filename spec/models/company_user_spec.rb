@@ -140,10 +140,11 @@ describe CompanyUser, type: :model do
         expect(user.accessible_campaign_ids).to eq([campaign.id])
       end
 
-      it 'should return the ids of campaigns of a brand assigend to the user' do
+      it 'should not return campaigns for inactive brands' do
+        brand.update_attribute(:active, false)
         campaign.brands << brand
         user.brands << brand
-        expect(user.accessible_campaign_ids).to eq([campaign.id])
+        expect(user.accessible_campaign_ids).to be_empty
       end
 
       it 'should return the ids of campaigns of a brand portfolio assigned to the user' do
@@ -151,7 +152,15 @@ describe CompanyUser, type: :model do
         user.brand_portfolios << portfolio
         expect(user.accessible_campaign_ids).to eq([campaign.id])
       end
+
+      it 'should not return campaigns for inactive brand portfolios' do
+        portfolio.update_attribute(:active, false)
+        campaign.brand_portfolios << portfolio
+        user.brand_portfolios << portfolio
+        expect(user.accessible_campaign_ids).to be_empty
+      end
     end
+
     describe 'as an admin user' do
       let(:user)      { create(:company_user, company: create(:company)) }
 

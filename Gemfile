@@ -57,6 +57,7 @@ gem 'roo'
 gem 'similar_text'
 gem 'activerecord-postgis-adapter'
 gem 'clockwork', require: false
+gem 'pgbackups-archive'
 
 # For memory debugging
 # gem "allocation_stats"

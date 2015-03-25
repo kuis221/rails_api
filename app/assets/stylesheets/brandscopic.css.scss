@@ -1104,7 +1104,8 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			left: initial;
 			text-align: left;
 			box-shadow:none;
-			margin-top: 3px;
+			padding:0;
+			min-width: 100%;
 
 			&:before {
 				display: none;
@@ -1183,59 +1184,30 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		}
 	}
 	&.first_login{
+		padding-left: 40px;
+		padding-right: 40px;
 		width:600px;
 		height: auto;
 		h2{
 			margin-bottom: 20px;
 		}
+		label{
+			display: inline-block;
+			float: left;
+		}
 		.chzn-container{
-			display:block;
 			margin-bottom: 10px;
 		}
 		form {
 			span.help-inline {
 				display: inline !important;
+				line-height: 22px;
 			}
 		}
 		input[type="submit"].btn{
 			margin: 40px 0 0 0;
 		}
 		.control-group{
-			&.user_city, &.user_state, &.user_email{
-				label.control-label{
-					display: inline-block;
-					float: left;
-					width:45px;
-				}
-			}
-			&.user_first_name, &.user_last_name, &.user_time_zone, &.user_street_address{
-				label.control-label{
-					display: inline-block;
-					float: left;
-					width:80px;
-				}
-			}
-			&.user_country, &.user_zip_code{
-				label.control-label{
-					display: inline-block;
-					float: left;
-					width:65px;
-				}
-			}
-			&.user_password, &.user_phone_number{
-				label.control-label{
-					display: inline-block;
-					float: left;
-					width:110px;
-				}
-			}
-			&.user_password_confirmation{
-				label.control-label{
-					display: inline-block;
-					float: left;
-					width:160px;
-				}
-			}
 			&.error{
 				.help-inline{
 					float: left;
@@ -1252,11 +1224,12 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		.controls{
 			margin-right: 10px;
 			text-align: left;
-			width: 268px;
 			.chzn-container-single .chzn-single{
-				height: 38px !important;
-				padding-top: 3px;
-				width: 252px !important;
+				border:0;
+				box-sizing: border-box;
+				height: 42px;
+				padding-left: 15px;
+				width: 100%;
 				div b{
 					margin-top: 3px !important;
 				}
@@ -1264,9 +1237,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			.chzn-search{
 				input[type="text"]{
 					background-image: none;
-					box-shadow: 0 !important;
-					margin: 3px 0 0 5px;
-					width: 530px !important;
+					margin: -1px;
 					&:focus{
 						background-image: none;
 						box-shadow: none !important;
@@ -1280,68 +1251,39 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 			}
 			#user_country_chzn, #user_state_chzn{
 				box-shadow: none;
-				float: left;
 				.chzn-search{
 				input[type="text"]{
 					background-image: none;
 					box-shadow: 0 !important;
-					margin: 3px 0 0 5px;
-					width: 250px !important;
 					&:focus{
 						background-image: none;
 						box-shadow: none !important;
 						}
 					}
 				}
-				.chzn-drop{
-					width: 262px !important;
-				}
 			}
 		}
 		.time_zone{
 			.chzn-container-single{
 				.chzn-single{
+					border: 0;
 					float: left;
-					height: 38px !important;
-					margin-left: 13px;
 					padding-top: 3px;
-					width: 558px !important;
-				}
-				.chzn-drop{
-					margin-left: 13px !important;
-					width: 568px !important;
 				}
 			}
 		}
-		.email, .tel, .user_street_address, .user_unit_number, .password,
-		.time_zone{
-			.controls{
-				width:575px;
-			}
-		}
-		input[type="text"]{
+		input[type="text"], input[type="email"], input[type="password"], input[type="tel"],{
 			background-color: $white !important;
+			border:0;
 			box-shadow: none !important;
-			width: 250px;
-		}
-		input[type="email"],input[type="tel"],input#user_street_address[type="text"]
-		,input#user_unit_number[type="text"],input[type="password"]{
-			background-color: $white !important;
-			width:556px !important;
-		}
-		input[type="password"]{
-			margin-bottom: 0;
-		}
-		label{
-			display:block;
-			padding: 0 0 2px 10px;
-			text-align: left;
+			height: 42px;
+			width: 100%;
 		}
 		p{
 			font-size: 11px;
 			line-height: 15px;
 			&.help-block{
-				margin: 5px 0 10px 0;
+				margin: -10px 0 10px 0;
 				text-align: left;
 			}
 		}
@@ -5839,7 +5781,7 @@ margin: 45px 0 25px 25px;
 				color: #FFFFFF;
 				font-weight: bold;
 				font-size: 13px;
-				min-width: 70px;
+				min-width: 85px;
 				&:first-child{
 					border-bottom-left-radius: 6px;
 					border-top-left-radius: 6px;
@@ -6057,6 +5999,18 @@ body.gva {
 				}
 			}
 		}
+	}
+}
+
+// Specific GVA report campaign select
+
+#report_campaign_id{
+	width: 300px;
+}
+
+#report_campaign_id_chzn{
+	.chzn-drop{
+		width: 300px !important;
 	}
 }
 

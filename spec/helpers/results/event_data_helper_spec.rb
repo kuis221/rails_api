@@ -23,7 +23,7 @@ describe Results::EventDataHelper, type: :helper do
         allow(helper).to receive(:resource_class).and_return(Event)
       end
 
-      it 'include NUMBER fields that are not linked to a KPI' do
+      it 'includes NUMBER fields that are not linked to a KPI' do
         field = create(:form_field_number, name: 'My Numeric Field', fieldable: campaign)
 
         event.results_for([field]).first.value = 123
@@ -33,7 +33,7 @@ describe Results::EventDataHelper, type: :helper do
         expect(helper.custom_fields_to_export_values(event)).to eq([['Number', 'normal', 123]])
       end
 
-      it 'include RADIO fields that are not linked to a KPI' do
+      it 'includes RADIO fields that are not linked to a KPI' do
         field = create(:form_field_radio, name: 'My Radio Field',
           fieldable: campaign, options: [
             option = create(:form_field_option, name: 'Radio Opt1'),
@@ -46,7 +46,7 @@ describe Results::EventDataHelper, type: :helper do
         expect(helper.custom_fields_to_export_values(event)).to eq([['String', 'normal', 'Radio Opt1']])
       end
 
-      it 'include CHECKBOX fields that are not linked to a KPI' do
+      it 'includes CHECKBOX fields that are not linked to a KPI' do
         field = create(:form_field_checkbox, name: 'My Chk Field',
           fieldable: campaign, options: [
             option1 = create(:form_field_option, name: 'Chk Opt1'),
@@ -77,7 +77,7 @@ describe Results::EventDataHelper, type: :helper do
         expect(helper.custom_fields_to_export_values(event)).to eq([nil, nil])
       end
 
-      it 'include DROPDOWN fields that are not linked to a KPI' do
+      it 'includes DROPDOWN fields that are not linked to a KPI' do
         field = create(:form_field_dropdown, name: 'My Ddown Field',
           fieldable: campaign, options: [
             option1 = create(:form_field_option, name: 'Ddwon Opt1'),
@@ -91,7 +91,7 @@ describe Results::EventDataHelper, type: :helper do
         expect(helper.custom_fields_to_export_values(event)).to eq([['String', 'normal', 'Ddwon Opt1']])
       end
 
-      it 'include PERCENTAGE fields that are not linked to a KPI' do
+      it 'includes PERCENTAGE fields that are not linked to a KPI' do
         field = create(:form_field_percentage, name: 'My Perc Field',
           fieldable: campaign, options: [
             option1 = create(:form_field_option, name: 'Perc Opt1'),
@@ -105,7 +105,7 @@ describe Results::EventDataHelper, type: :helper do
         expect(helper.custom_fields_to_export_values(event)).to eq([['Number', 'percentage', 0.3], ['Number', 'percentage', 0.7]])
       end
 
-      it 'include SUMMATION fields that are not linked to a KPI' do
+      it 'includes SUMMATION fields that are not linked to a KPI' do
         field = create(:form_field_summation, name: 'My Summation Field',
           fieldable: campaign, options: [
             option1 = create(:form_field_option, name: 'Sum Opt1'),
@@ -123,7 +123,7 @@ describe Results::EventDataHelper, type: :helper do
         ])
       end
 
-      it 'include LIKERT SCALE fields that are not linked to a KPI' do
+      it 'includes LIKERT SCALE fields that are not linked to a KPI' do
         field = create(:form_field_likert_scale, name: 'My LikertScale Field',
           fieldable: campaign,
           options: [
@@ -153,7 +153,7 @@ describe Results::EventDataHelper, type: :helper do
         ])
       end
 
-      it 'include TIME fields that are not linked to a KPI' do
+      it 'includes TIME fields that are not linked to a KPI' do
         field = create(:form_field, type: 'FormField::Time', name: 'My Time Field',
           fieldable: campaign)
 
@@ -165,7 +165,7 @@ describe Results::EventDataHelper, type: :helper do
         expect(helper.custom_fields_to_export_values(event)).to eq([['String', 'normal', '12:22 pm']])
       end
 
-      it 'include DATE fields that are not linked to a KPI' do
+      it 'includes DATE fields that are not linked to a KPI' do
         field = create(:form_field, type: 'FormField::Date', name: 'My Date Field',
           fieldable: campaign)
 
@@ -177,7 +177,7 @@ describe Results::EventDataHelper, type: :helper do
         expect(helper.custom_fields_to_export_values(event)).to eq([['String', 'normal', '01/31/2014']])
       end
 
-      it 'include MARQUE fields' do
+      it 'includes MARQUE fields' do
         brand = create(:brand, name: 'My Brand', company: company)
         marque = create(:marque, name: 'My Brand Marque', brand: brand)
         campaign.brands << brand
@@ -421,7 +421,7 @@ describe Results::EventDataHelper, type: :helper do
         allow(helper).to receive(:resource_class).and_return(Activity)
       end
 
-      it 'include NUMBER fields' do
+      it 'includes NUMBER fields' do
         field = create(:form_field_number, name: 'My Numeric Field', fieldable: activity_type)
 
         activity.results_for([field]).first.value = 123
@@ -431,7 +431,7 @@ describe Results::EventDataHelper, type: :helper do
         expect(helper.custom_fields_to_export_values(activity)).to eq([['Number', 'normal', 123]])
       end
 
-      it 'include RADIO fields' do
+      it 'includes RADIO fields' do
         field = create(:form_field_radio, name: 'My Radio Field',
           fieldable: activity_type, options: [
             option = create(:form_field_option, name: 'Radio Opt1'),
@@ -444,7 +444,7 @@ describe Results::EventDataHelper, type: :helper do
         expect(helper.custom_fields_to_export_values(activity)).to eq([['String', 'normal', 'Radio Opt1']])
       end
 
-      it 'include CHECKBOX fields' do
+      it 'includes CHECKBOX fields' do
         field = create(:form_field_checkbox, name: 'My Chk Field',
           fieldable: activity_type, options: [
             option1 = create(:form_field_option, name: 'Chk Opt1'),
@@ -461,7 +461,7 @@ describe Results::EventDataHelper, type: :helper do
         ])
       end
 
-      it 'include DROPDOWN fields' do
+      it 'includes DROPDOWN fields' do
         field = create(:form_field_dropdown, name: 'My Ddown Field',
           fieldable: activity_type, options: [
             option1 = create(:form_field_option, name: 'Ddwon Opt1'),
@@ -474,7 +474,7 @@ describe Results::EventDataHelper, type: :helper do
         expect(helper.custom_fields_to_export_values(activity)).to eq([['String', 'normal', 'Ddwon Opt1']])
       end
 
-      it 'include PERCENTAGE fields that are not linked to a KPI' do
+      it 'includes PERCENTAGE fields that are not linked to a KPI' do
         field = create(:form_field_percentage, name: 'My Perc Field',
           fieldable: activity_type, options: [
             option1 = create(:form_field_option, name: 'Perc Opt1'),
@@ -488,7 +488,7 @@ describe Results::EventDataHelper, type: :helper do
         expect(helper.custom_fields_to_export_values(activity)).to eq([['Number', 'percentage', 0.3], ['Number', 'percentage', 0.7]])
       end
 
-      it 'include SUMMATION fields that are not linked to a KPI' do
+      it 'includes SUMMATION fields that are not linked to a KPI' do
         field = create(:form_field_summation, name: 'My Summation Field',
           fieldable: activity_type, options: [
             option1 = create(:form_field_option, name: 'Sum Opt1'),
@@ -506,7 +506,7 @@ describe Results::EventDataHelper, type: :helper do
         ])
       end
 
-      it 'include BRAND fields' do
+      it 'includes BRAND fields' do
         field = create(:form_field_brand, name: 'My Brand Field',
           fieldable: activity_type)
         brand = create(:brand, name: 'My Brand', company: company)
@@ -519,7 +519,7 @@ describe Results::EventDataHelper, type: :helper do
         expect(helper.custom_fields_to_export_values(activity)).to eq([['String', 'normal', 'My Brand']])
       end
 
-      it 'include TIME fields that are not linked to a KPI' do
+      it 'includes TIME fields that are not linked to a KPI' do
         field = create(:form_field, type: 'FormField::Time', name: 'My Time Field',
           fieldable: activity_type)
 
@@ -530,7 +530,7 @@ describe Results::EventDataHelper, type: :helper do
         expect(helper.custom_fields_to_export_values(activity)).to eq([['String', 'normal', '12:22 pm']])
       end
 
-      it 'include DATE fields that are not linked to a KPI' do
+      it 'includes DATE fields that are not linked to a KPI' do
         field = create(:form_field, type: 'FormField::Date', name: 'My Date Field',
           fieldable: activity_type)
 
@@ -544,7 +544,7 @@ describe Results::EventDataHelper, type: :helper do
       describe 'when filtered by activity_type' do
         let(:params) { { activity_type: [activity_type.id] } }
 
-        it 'include only fields that are assigned to the selected activity types' do
+        it 'includes only fields that are assigned to the selected activity types' do
           activity_type2 = create(:activity_type, company: company)
           campaign.activity_types << activity_type2
           field1 = create(:form_field_number, name: 'My Numeric Field 1', fieldable: activity_type)
@@ -565,7 +565,7 @@ describe Results::EventDataHelper, type: :helper do
       describe 'when filtered by activity_type and campaign ' do
         let(:params) { { activity_type: [activity_type.id], campaign: [campaign.id] } }
 
-        it 'include only fields that are assigned to the selected activity types' do
+        it 'includes only fields that are assigned to the selected activity types' do
           activity_type2 = create(:activity_type, campaign_ids: [campaign.id], company: company)
           field1 = create(:form_field_number, name: 'My Numeric Field 1', fieldable: activity_type)
           field2 = create(:form_field_number, name: 'My Numeric Field 2', fieldable: activity_type2)
