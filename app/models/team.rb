@@ -78,6 +78,10 @@ class Team < ActiveRecord::Base
     Sunspot.index(user)
   end
 
+  def team_created_by
+    CompanyUser.find(self.created_by_id).full_name if self.created_by_id.present?
+  end
+
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets = false)

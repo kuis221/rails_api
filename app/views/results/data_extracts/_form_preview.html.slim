@@ -1,0 +1,31 @@
+.sidebar.collapsed#resource-filter-column
+  #collection-list-filters
+
+.main.data-extract
+  = simple_form_for resource, as: :data_extract, url: results_data_extracts_path, method: :post, name: "data_source_form" do |f|
+    = hidden_field_tag :step, 4
+    = f.input :source, as: :hidden
+    - f.object.columns.each do |col|
+      = hidden_field_tag 'data_extract[columns][]', col
+    .data-extract-buttons
+      = submit_tag 'Save', class: 'btn btn-primary btn-data-extract'
+      = link_to 'Exit', results_reports_path, id: 'exit-new-report', class: 'btn btn-data-extract'
+    .export-xls.pull-right
+      .dropdown.btn-download
+        a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+          i.icon-download
+          i.icon-arrow-down-small
+        ul#download-status-btn.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+          li
+            a href="#" role="menuitem" data-url="#{results_event_status_path(format: :xls)}"
+              | Download as XLS
+          li
+            a href="#" role="menuitem" data-url="#{results_event_status_path(format: :pdf)}"
+              | Download as PDF
+    .data-extract-box
+      table.data-extract-table
+
+javascript:
+  $('.data-extract').dataExtract({
+    'step': #{process_step},
+  });

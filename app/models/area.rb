@@ -131,6 +131,11 @@ class Area < ActiveRecord::Base
     self.active? ? 'Active' : 'Inactive'
   end
 
+  def area_created_by
+    company_user = CompanyUser.find(self.created_by_id) if self.created_by_id.present?
+    company_user.full_name if company_user.present?
+  end
+
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets = false)

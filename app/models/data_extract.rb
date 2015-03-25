@@ -23,15 +23,18 @@ class DataExtract < ActiveRecord::Base
 
   serialize :columns
   serialize :filters
-
-  cattr_accessor :exportable_columns
+  
+  class << self
+    attr_accessor :exportable_columns
+  end
+  
 
   DATA_SOURCES = [
     ['Events', :event], ['Post Event Data (PERs)', :event_data], ['Activities', :activity],
     ['Attendance', :invite], ['Comments', :comment], ['Contacts', :contact], ['Expenses', :event_expense],
-    ['Surveys', :survey], ['Tasks', :task], ['Venues', :venue], ['Users', :user], ['Teams', :team],
-    ['Roles', :role], ['Campaign', :campaign], ['Brands', :brands], ['Activity Types', :activity_type],
-    ['Areas', :area], ['Brand Porfolios', :brand_porfolio], ['Data Ranges', :date_range], ['Day Parts', :day_part]
+    ['Surveys', :survey], ['Tasks', :task], ['Venues', :venue], ['Users', :company_user], ['Teams', :team],
+    ['Roles', :role], ['Campaign', :campaign], ['Brands', :brand], ['Activity Types', :activity_type],
+    ['Areas', :area], ['Brand Portfolios', :brand_portfolio], ['Data Ranges', :date_range], ['Day Parts', :day_part]
   ]
 
   after_initialize  do

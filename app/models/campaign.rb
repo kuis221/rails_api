@@ -431,6 +431,14 @@ class Campaign < ActiveRecord::Base
     clear_locations_cache(area)
   end
 
+  def campaign_created_by
+    CompanyUser.find(self.created_by_id).full_name if self.created_by_id.present?
+  end
+
+  def campaign_brand_portfolios
+    self.brand_portfolios.map {|b| b.name}.join(" ,")
+  end
+
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets = false)

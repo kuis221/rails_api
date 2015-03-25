@@ -138,6 +138,14 @@ class Task < ActiveRecord::Base
     event.try(:campaign_id)
   end
 
+  def task_created_by
+    CompanyUser.find(self.company_user_id).full_name if self.company_user_id.present?
+  end
+
+  def task_statuses
+    statuses.map{|s| s.humanize}.join(", ") if statuses.present?
+  end
+
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets = false)
