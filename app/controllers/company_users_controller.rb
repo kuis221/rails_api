@@ -187,7 +187,7 @@ class CompanyUsersController < FilteredController
 
   def export_status
     url = nil
-    export = ListExport.find_by(id: params[:download_id], company_user_id: current_company_user.id)
+    export = ListExport.find_by!(id: params[:download_id], company_user_id: current_company_user.id)
     url = export.download_url if export.completed? && export.file_file_name
     respond_to do |format|
       format.json do
