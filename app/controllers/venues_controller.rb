@@ -14,7 +14,7 @@ class VenuesController < FilteredController
   def collection
     @extended_places ||= (super || []).tap do |places|
       ids = places.map { |p| p.place.place_id }
-      google_results = load_google_places.reject { |gp| ids.include?(gp.id) }
+      google_results = load_google_places.reject { |gp| ids.include?(gp.place_id) }
       @collection_count = @collection_count.to_i + google_results.count
       places.concat google_results
     end
