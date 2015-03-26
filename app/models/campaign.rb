@@ -26,6 +26,9 @@ class Campaign < ActiveRecord::Base
   include AASM
   include GoalableModel
 
+  # Defines the method do_search
+  include SolrSearchable
+
   # Created_by_id and updated_by_id fields
   track_who_does_it
 
@@ -439,31 +442,6 @@ class Campaign < ActiveRecord::Base
   end
 
   class << self
-    # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
-    def do_search(params, include_facets = false)
-      solr_search do
-        with(:company_id, params[:company_id])
-        with(:user_ids, params[:user]) if params.key?(:user) && params[:user].present?
-        with(:team_ids, params[:team]) if params.key?(:team) && params[:team].present?
-        with(:brand_ids, params[:brand]) if params.key?(:brand) && params[:brand].present?
-        with(:brand_portfolio_ids, params[:brand_portfolio]) if params.key?(:brand_portfolio) && params[:brand_portfolio].present?
-        with(:status, params[:status]) if params.key?(:status) && params[:status].present?
-        with(:id, params[:id]) if params.key?(:id) && params[:id].present?
-        with(:id, params[:campaign]) if params.key?(:campaign) && params[:campaign].present?
-
-        if include_facets
-          facet :user_ids
-          facet :team_ids
-          facet :brand_ids
-          facet :brand_portfolio_ids
-          facet :status
-        end
-
-        order_by(params[:sorting] || :name, params[:sorting_dir] || :asc)
-        paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
-      end
-    end
-
     def searchable_params
       [campaign: [], user: [], team: [], brand: [], status: [], venue: [],
        role: [], brand_portfolio: []]

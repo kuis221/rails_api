@@ -17,6 +17,9 @@
 class CompanyUser < ActiveRecord::Base
   include GoalableModel
 
+  # Defines the method do_search
+  include SolrSearchable
+
   belongs_to :user
   belongs_to :company
   belongs_to :role
@@ -288,29 +291,6 @@ class CompanyUser < ActiveRecord::Base
   end
 
   class << self
-    # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
-    def do_search(params, include_facets = false)
-      options = { include: [:user, :role] }
-      solr_search(options) do
-        with(:company_id, params[:company_id])
-        with(:id, params[:user]) if params.key?(:user) && params[:user]
-        with(:campaign_ids, params[:campaign]) if params.key?(:campaign) && params[:campaign]
-        with(:team_ids, params[:team]) if params.key?(:team) && params[:team]
-        with(:role_id, params[:role]) if params.key?(:role) && params[:role].present?
-        with(:status, params[:status]) if params.key?(:status) && params[:status].present?
-
-        if include_facets
-          facet :role_id
-          facet :team_ids
-          facet :campaign_ids
-          facet :status
-        end
-
-        order_by(params[:sorting] || :name, params[:sorting_dir] || :asc)
-        paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
-      end
-    end
-
     def searchable_params
       [campaign: [], role: [], user: [], team: [], status: [], venue: []]
     end

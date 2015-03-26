@@ -21,6 +21,9 @@ class Area < ActiveRecord::Base
 
   scoped_to_company
 
+  # Defines the method do_search
+  include SolrSearchable
+
   validates :name, presence: true, uniqueness: { scope: :company_id }
   validates :company_id, presence: true
 
@@ -135,20 +138,6 @@ class Area < ActiveRecord::Base
   end
 
   class << self
-    # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
-    def do_search(params, include_facets = false)
-      solr_search do
-        with(:company_id, params[:company_id])
-        with(:status, params[:status]) if params.key?(:status) && params[:status].present?
-        with(:id, params[:area]) if params.key?(:area) && params[:area].present?
-
-        facet :status if include_facets
-
-        order_by(params[:sorting] || :name, params[:sorting_dir] || :asc)
-        paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
-      end
-    end
-
     def searchable_params
       [area: [], status: []]
     end

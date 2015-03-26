@@ -29,6 +29,9 @@ class Event < ActiveRecord::Base
 
   attr_accessor :visit_id
 
+  # Defines the method do_search
+  include SolrSearchable
+
   belongs_to :campaign
   belongs_to :place, autosave: true
 
@@ -583,7 +586,7 @@ class Event < ActiveRecord::Base
       timezone = Time.zone.name
       timezone = 'UTC' if Company.current && Company.current.timezone_support?
       Time.use_zone(timezone) do
-        super do
+        super(params, include_facets, includes: [:campaign, :place]) do
           with(:has_event_data, true) if params[:with_event_data_only].present?
           with(:spent).greater_than(0) if params[:with_expenses_only].present?
           with(:has_surveys, true) if params[:with_surveys_only].present?
