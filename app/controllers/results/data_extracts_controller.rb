@@ -14,6 +14,14 @@ class Results::DataExtractsController < InheritedResources::Base
     render layout: false
   end
 
+  def create
+    if resource.save && resource.errors.empty?
+      redirect_to results_reports_path
+    else
+       render layout: false
+    end
+  end
+
   protected
 
   def resource
@@ -41,9 +49,5 @@ class Results::DataExtractsController < InheritedResources::Base
     else
       edit_results_data_extract_path
     end
-  end
-
-  def permitted_params
-    params.permit([:data_source, :step, available_fields: [], selected_fields: []])
   end
 end

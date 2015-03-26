@@ -15,7 +15,7 @@ module Results
             step_class = (active == (i + 1) ? 'active' : (active > i ? 'completed' : ''))
             content_tag(:div, class: 'step ' + step_class) do
               content_tag :div, class: 'step-box' do
-                content_tag(:div, i + 1, class: 'circle-step ' +  (active > i + 1 ? 'icon-checked' : '')) +
+                content_tag(:div,((i + 1) >= active ? i + 1 : content_tag(:i, '', class: 'icon-checked')), class: 'circle-step ') +
                 content_tag(:div, step, class: 'step-name')
               end
             end
@@ -24,7 +24,7 @@ module Results
       end
     end
 
-    def render_table_cols(columns)
+    def render_table_cols(columns, step)
       content_tag(:thead) do
         content_tag(:tr, class: 'data-extract-head') do
           if columns.present?
@@ -34,7 +34,7 @@ module Results
                   content_tag(:span, I18n.t("data_exports.fields.#{col.to_s}")) +
                   link_to('','', title: 'tool', class: 'icon-arrow-down pull-right dropdown-toggle', data:{ name: col, toggle: 'dropdown'}) +
                   content_tag(:ul, class: 'dropdown-menu', role: 'menu') do
-                    content_tag(:li, link_to('Hide', '#', class: 'btn-remove-column', data: { column: col }))
+                    content_tag(:li, link_to('Hide', '#', class: 'btn-remove-column', data: { column: col })) if step < 4
                   end
                 end
               end

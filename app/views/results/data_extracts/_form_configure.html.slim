@@ -10,8 +10,7 @@
       = hidden_field_tag 'data_extract[columns][]', col
     .data-extract-box
       table.data-extract-table
-
-      .data-extract-tools
+    = submit_tag 'Next', class: 'btn btn-primary btn-data-source icon-slimmed-arrow-right-rounded'
 
 javascript:
   $('.data-extract').dataExtract({

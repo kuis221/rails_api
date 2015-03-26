@@ -261,6 +261,10 @@ class Venue < ActiveRecord::Base
     @overall_graphs_data
   end
 
+  def venues_types
+    self.types.map{|t| t.humanize}.join(", ") if self.types.present?
+  end
+
   def self.do_search(params, include_facets = false)
     ss = solr_search(include: [:place]) do
 

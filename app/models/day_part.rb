@@ -25,6 +25,9 @@ class DayPart < ActiveRecord::Base
 
   has_many :day_items
 
+  belongs_to :created_by, class_name: 'User'
+  delegate :full_name, to: :created_by, prefix: true, allow_nil: true
+
   searchable do
     integer :id
 
