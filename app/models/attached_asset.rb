@@ -350,5 +350,6 @@ class AttachedAsset < ActiveRecord::Base
     else
       transfer_and_cleanup
     end
+    true
   end
 end
