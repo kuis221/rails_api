@@ -19,5 +19,5 @@
 
 class DataExtract::Campaign < DataExtract
   self.exportable_columns = [:name, :description, :brands_list, :campaign_brand_portfolios,
-    :start_date, :end_date, :color, :campaign_created_by, :created_at]
+    :start_date, :end_date, :color, :created_by_full_name, :created_at]
 end

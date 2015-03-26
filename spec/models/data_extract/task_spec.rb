@@ -25,7 +25,7 @@ RSpec.describe DataExtract::Task, type: :model do
 
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql(
-       [:title, :task_statuses, :due_at, :task_created_by, :created_at])
+       [:title, :task_statuses, :due_at, :created_by_full_name, :created_at])
     end
   end
 

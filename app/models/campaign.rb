@@ -124,6 +124,9 @@ class Campaign < ActiveRecord::Base
   has_many :documents, -> { order('created_at DESC').where(asset_type: :document) },
            class_name: 'AttachedAsset', as: :attachable, inverse_of: :attachable
 
+  belongs_to :created_by, class_name: 'User'
+  delegate :full_name, to: :created_by, prefix: true, allow_nil: true
+
   accepts_nested_attributes_for :form_fields, allow_destroy: true
 
   aasm do
@@ -431,12 +434,8 @@ class Campaign < ActiveRecord::Base
     clear_locations_cache(area)
   end
 
-  def campaign_created_by
-    CompanyUser.find(self.created_by_id).full_name if self.created_by_id.present?
-  end
-
   def campaign_brand_portfolios
-    self.brand_portfolios.map {|b| b.name}.join(" ,")
+    self.brand_portfolios.pluck(:name).join(' ,')
   end
 
   class << self

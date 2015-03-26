@@ -41,6 +41,9 @@ class Task < ActiveRecord::Base
   scope :due_today_and_late, -> { where(['due_at is not null and due_at <= ? and completed = ?', Date.today.end_of_day, false]) }
   scope :assigned_to, ->(users) { where(company_user_id: users) }
 
+  belongs_to :created_by, class_name: 'User'
+  delegate :full_name, to: :created_by, prefix: true, allow_nil: true
+
   searchable do
     integer :id
     text :name, stored: true do
@@ -136,10 +139,6 @@ class Task < ActiveRecord::Base
     # For those tasks created from Task section,
     # campaign ID will be nil
     event.try(:campaign_id)
-  end
-
-  def task_created_by
-    CompanyUser.find(self.company_user_id).full_name if self.company_user_id.present?
   end
 
   def task_statuses

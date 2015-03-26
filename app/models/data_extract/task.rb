@@ -18,5 +18,5 @@
 #
 
 class DataExtract::Task < DataExtract
-  self.exportable_columns = [:title, :task_statuses, :due_at, :task_created_by, :created_at]
+  self.exportable_columns = [:title, :task_statuses, :due_at, :created_by_full_name, :created_at]
 end

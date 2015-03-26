@@ -25,7 +25,7 @@ RSpec.describe DataExtract::DayPart, type: :model do
 
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql(
-       [:name, :description, :day_part_created_by, :created_at])
+       [:name, :description, :created_by_full_name, :created_at])
     end
   end
 

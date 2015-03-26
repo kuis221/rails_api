@@ -18,5 +18,5 @@
 #
 
 class DataExtract::BrandPortfolio < DataExtract
-  self.exportable_columns = [:name, :description, :brand_created_by, :created_at]
+  self.exportable_columns = [:name, :description, :created_by_full_name, :created_at]
 end

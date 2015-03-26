@@ -25,7 +25,7 @@ RSpec.describe DataExtract::Team, type: :model do
 
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql(
-       [:name, :description, :team_created_by, :created_at])
+       [:name, :description, :created_by_full_name, :created_at])
     end
   end
 

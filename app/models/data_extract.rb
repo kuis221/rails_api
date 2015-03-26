@@ -54,4 +54,8 @@ class DataExtract < ActiveRecord::Base
   def model
     @model ||= "::#{self.class.name.split('::')[1]}".constantize
   end
+
+  def exportable_columns
+    self.class.exportable_columns
+  end
 end

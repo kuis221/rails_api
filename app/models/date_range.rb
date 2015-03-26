@@ -27,6 +27,9 @@ class DateRange < ActiveRecord::Base
 
   scope :active, -> { where(active: true) }
 
+  belongs_to :created_by, class_name: 'User'
+  delegate :full_name, to: :created_by, prefix: true, allow_nil: true
+
   searchable do
     integer :id
     text :name, stored: true
@@ -68,10 +71,6 @@ class DateRange < ActiveRecord::Base
 
   def deactivate!
     update_attribute :active, false
-  end
-
-  def date_range_created_by
-    CompanyUser.find(self.created_by_id).full_name if self.created_by_id.present?
   end
 
   class << self

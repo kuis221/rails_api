@@ -259,7 +259,7 @@ class CompanyUser < ActiveRecord::Base
   end
 
   def teams_name
-    self.teams.map{|t| t.name}.join(", ") if self.teams.present?
+    self.teams.pluck(:name).join(' ,')
   end
 
   def dismissed_alert?(alert, version = 1)

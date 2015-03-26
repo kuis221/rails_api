@@ -33,6 +33,9 @@ class Area < ActiveRecord::Base
   scope :active, -> { where(active: true) }
   scope :not_in_venue, ->(place) { where('areas.id not in (?)', place.area_ids + [0]) }
 
+  belongs_to :created_by, class_name: 'User'
+  delegate :full_name, to: :created_by, prefix: true, allow_nil: true
+  
   def self.accessible_by_user(company_user)
     if company_user.is_admin?
       in_company(company_user.company_id)
@@ -129,11 +132,6 @@ class Area < ActiveRecord::Base
 
   def status
     self.active? ? 'Active' : 'Inactive'
-  end
-
-  def area_created_by
-    company_user = CompanyUser.find(self.created_by_id) if self.created_by_id.present?
-    company_user.full_name if company_user.present?
   end
 
   class << self

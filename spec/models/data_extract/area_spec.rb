@@ -25,7 +25,7 @@ RSpec.describe DataExtract::Area, type: :model do
 
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql(
-       [:name, :description, :area_created_by, :created_at])
+       [:name, :description, :created_by_full_name, :created_at])
     end
   end
 
@@ -33,7 +33,6 @@ RSpec.describe DataExtract::Area, type: :model do
     let(:company) { create(:company) }
     let(:subject) { described_class.new(company: company) }
     let(:user) { create(:user, company: company) }
-    let(:company_user) { user.company_users.first }
 
     it 'returns empty if no rows are found' do
       expect(subject.rows).to be_empty
@@ -42,7 +41,7 @@ RSpec.describe DataExtract::Area, type: :model do
     describe 'with data' do
       before do
         create(:area, name: 'Zona Norte', description: 'Ciudades del Norte de Costa Rica',
-                 active: true, company: company, created_by_id: company_user.id, created_at: Time.zone.local(2013, 8, 23, 9, 15))
+                 active: true, company: company, created_by_id: user.id, created_at: Time.zone.local(2013, 8, 23, 9, 15))
         Sunspot.commit
       end
 

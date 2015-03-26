@@ -40,25 +40,31 @@ RSpec.describe DataExtract::CompanyUser, type: :model do
 
     describe 'with data' do
       before do
-        user = create(:user, company: company, created_at: Time.zone.local(2013, 8, 23, 9, 15))
-        create(:company_user, user: user, created_at: Time.zone.local(2013, 8, 23, 9, 15))
+        user = create(:user, company: company, email: 'testuser2@brandscopic.com')
+        create(:company_user, user: user)
         Sunspot.commit
       end
 
       it 'returns all the events in the company with all the columns' do
-        expect(subject.rows).to eql [
-          ["Test", "User", nil, "testuser2@brandscopic.com", "+1000000000", 
-            "Role 3", "Street Address 123", "CR", "SJ", "90210", "Pacific Time (US & Canada)", Time.zone.local(2013, 8, 23, 9, 15)]
-        ]
+        row = subject.rows.first
+        expect(row[0]).to eql ('Test')
+        expect(row[1]).to eql ('User')
+        expect(row[2]).to eql ('')
+        expect(row[3]).to eql ('testuser2@brandscopic.com')
+        expect(row[4]).to eql ('+1000000000')
+        expect(row[6]).to eql ('Street Address 123')
       end
 
       it 'allows to filter the results' do
 
         subject.filters = { email: ['testuser2@brandscopic.com'] }
-        expect(subject.rows).to eql [
-          ["Test", "User", nil, "testuser2@brandscopic.com", "+1000000000", 
-            "Role 3", "Street Address 123", "CR", "SJ", "90210", "Pacific Time (US & Canada)", Time.zone.local(2013, 8, 23, 9, 15)]
-        ]
+        row = subject.rows.first
+        expect(row[0]).to eql ('Test')
+        expect(row[1]).to eql ('User')
+        expect(row[2]).to eql ('')
+        expect(row[3]).to eql ('testuser2@brandscopic.com')
+        expect(row[4]).to eql ('+1000000000')
+        expect(row[6]).to eql ('Street Address 123')
       end
     end
   end

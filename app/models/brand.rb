@@ -32,6 +32,9 @@ class Brand < ActiveRecord::Base
 
   scope :active, -> { where(active: true) }
 
+  belongs_to :created_by, class_name: 'User'
+  delegate :full_name, to: :created_by, prefix: true, allow_nil: true
+
   searchable do
     integer :id
 
@@ -75,10 +78,6 @@ class Brand < ActiveRecord::Base
       marques << marque unless existing_ids.include?(marque.id)
     end
     marques.each { |marque| marque.mark_for_destruction unless marques_names.include?(marque.name) }
-  end
-
-  def brand_created_by
-    CompanyUser.find(self.created_by_id).full_name if self.created_by_id.present?
   end
 
   class << self

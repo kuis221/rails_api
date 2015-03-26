@@ -25,7 +25,7 @@ RSpec.describe DataExtract::Brand, type: :model do
 
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql(
-       [:name, :marques_list, :brand_created_by, :created_at])
+       [:name, :marques_list, :created_by_full_name, :created_at])
     end
   end
 

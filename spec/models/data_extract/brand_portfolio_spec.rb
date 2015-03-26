@@ -24,7 +24,7 @@ RSpec.describe DataExtract::BrandPortfolio, type: :model do
     let(:subject) { described_class }
 
     it 'returns the correct columns' do
-      expect(subject.exportable_columns).to eql([:name, :description, :brand_created_by, :created_at])
+      expect(subject.exportable_columns).to eql([:name, :description, :created_by_full_name, :created_at])
     end
   end
 
