@@ -190,7 +190,6 @@ class Place < ActiveRecord::Base
   def fetch_price_level
     self[:price_level] =
       if spot.present? && spot.price_level.present?
-        p "spot.price_level ==> #{spot.price_level}"
         spot.price_level.to_i
       else
         -1

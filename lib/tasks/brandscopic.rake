@@ -52,10 +52,14 @@ namespace :brandscopic do
   desc 'Fix places place_id'
   task fix_place_id: :environment do
     Place.where('char_length(place_id) > 39').where.not(reference: nil).find_each do |place|
-      sleep Random.rand(2)
-      spot = place.send(:spot)
-      next unless spot.present?
-      place.update_column(:place_id, spot.place_id) unless place.place_id == spot.place_id
+      begin
+        sleep Random.rand(2)
+        spot = place.send(:spot)
+        next unless spot.present?
+        place.update_column(:place_id, spot.place_id) unless place.place_id == spot.place_id
+      rescue e
+        puts "Failed updating place ##{place.id}: #{e.inspect}"
+      end
     end
   end
 end
