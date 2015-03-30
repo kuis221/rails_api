@@ -72,15 +72,15 @@ describe Task, type: :model, search: true do
       .to match_array([task])
 
     # Search for tasks on a given date range
-    expect(search(company_id: company.id, start_date: '02/21/2013', end_date: '02/23/2013'))
+    expect(search(company_id: company.id, start_date: ['02/21/2013'], end_date: ['02/23/2013']))
       .to match_array(user_tasks)
-    expect(search(company_id: company.id, start_date: '02/22/2013'))
+    expect(search(company_id: company.id, start_date: ['02/22/2013']))
       .to match_array(user_tasks)
-    expect(search(company_id: company.id, start_date: '03/21/2013', end_date: '03/23/2013'))
+    expect(search(company_id: company.id, start_date: ['03/21/2013'], end_date: ['03/23/2013']))
       .to match_array(user2_tasks)
-    expect(search(company_id: company.id, start_date: '03/22/2013'))
+    expect(search(company_id: company.id, start_date: ['03/22/2013']))
       .to match_array(user2_tasks)
-    expect(search(company_id: company.id, start_date: '01/21/2013', end_date: '01/23/2013')).to eq([])
+    expect(search(company_id: company.id, start_date: ['01/21/2013'], end_date: ['01/23/2013'])).to eq([])
 
     # Search for Events on a given Event
     expect(search(company_id: company.id, status: ['Active']))

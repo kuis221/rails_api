@@ -325,14 +325,14 @@ class Venue < ActiveRecord::Base
         end
       end
 
-      start_date = params[:start_date]
-      end_date = params[:end_date]
-      if start_date.present? && end_date.present?
-        d1 = Timeliness.parse(start_date, zone: :current).beginning_of_day
-        d2 = Timeliness.parse(end_date, zone: :current).end_of_day
+      if params[:start_date].present? && params[:end_date].present?
+        params[:start_date] = Array(params[:start_date])
+        params[:end_date] = Array(params[:end_date])
+        d1 = Timeliness.parse(params[:start_date][0], zone: :current).beginning_of_day
+        d2 = Timeliness.parse(params[:end_date][0], zone: :current).end_of_day
         with Venue.search_start_date_field, d1..d2
-      elsif start_date.present?
-        d = Timeliness.parse(start_date, zone: :current).beginning_of_day
+      elsif params[:start_date].present?
+        d = Timeliness.parse(params[:start_date][0], zone: :current).beginning_of_day
         with Venue.search_start_date_field, d..d.end_of_day
       end
 

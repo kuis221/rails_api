@@ -646,7 +646,7 @@ class Event < ActiveRecord::Base
     end
 
     def searchable_params
-      [:start_date, :end_date, :page, :sorting, :sorting_dir, :per_page,
+      [:page, :sorting, :sorting_dir, :per_page, start_date: [], end_date: [],
        campaign: [], area: [], user: [], team: [], event_status: [], brand: [], status: [],
        venue: [], role: [], brand_portfolio: [], id: [], event: [], place: []]
     end
