@@ -76,7 +76,7 @@
       'includeAutoComplete': true,
       'autoCompletePath': '#{autocomplete_path(:events, format: :json)}',
       'userFilters': #{user_saved_filters(controller_name).to_json.html_safe},
-      'defaultParams': '#{j default_params_for_view('status[]=Active&start_date=' + Time.zone.now.strftime("%m/%d/%Y") + '&end_date=' + (Time.zone.now + 10.years).strftime("%m/%d/%Y"))}',
+      'defaultParams': '#{j default_params_for_view('status[]=Active&start_date[]=' + Time.zone.now.strftime("%m/%d/%Y") + '&end_date[]=' + (Time.zone.now + 10.years).strftime("%m/%d/%Y"))}',
       'applyTo': '#{controller_name}',
       'onChange': function(filterBox){
         $(document).trigger('events-filter:changed')

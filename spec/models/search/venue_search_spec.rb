@@ -64,15 +64,15 @@ describe Venue, type: :model, search: true do
       .to match_array([venue, venue2])
 
     # Search for Venues with events on a given date range
-    expect(search(company_id: company.id, start_date: '02/21/2013', end_date: '02/23/2013'))
+    expect(search(company_id: company.id, start_date: ['02/21/2013'], end_date: ['02/23/2013']))
       .to match_array([venue])
-    expect(search(company_id: company.id, start_date: '02/22/2013'))
+    expect(search(company_id: company.id, start_date: ['02/22/2013']))
       .to match_array([venue])
-    expect(search(company_id: company.id, start_date: '03/21/2013', end_date: '03/23/2013'))
+    expect(search(company_id: company.id, start_date: ['03/21/2013'], end_date: ['03/23/2013']))
       .to match_array([venue2])
-    expect(search(company_id: company.id, start_date: '03/22/2013'))
+    expect(search(company_id: company.id, start_date: ['03/22/2013']))
       .to match_array([venue2])
-    expect(search(company_id: company.id, start_date: '01/21/2013', end_date: '01/23/2013'))
+    expect(search(company_id: company.id, start_date: ['01/21/2013'], end_date: ['01/23/2013']))
       .to be_empty
 
     # Range filters

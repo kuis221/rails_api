@@ -29,7 +29,7 @@
             - weeks = weeks_in_month(date)
             - weeks.each_with_index do |week, index|
               td.week class="#{campaing_cell_clasess(campaign, week)} week-#{index} month-#{i+1}"
-                = link_to events_path(start_date: week.to_s(:slashes), end_date: week.end_of_week.to_s(:slashes), campaign: [campaign.id], status: ['Active']) do
+                = link_to events_path(start_date: [week.to_s(:slashes)], end_date: [week.end_of_week.to_s(:slashes)], campaign: [campaign.id], status: ['Active']) do
                   span.week-marker
 
     .clearfix

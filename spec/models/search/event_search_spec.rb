@@ -115,15 +115,15 @@ describe Event, type: :model, search: true do
       .to match_array([event, event2])
 
     # Search for Events on a given date range
-    expect(search(company_id: company.id, start_date: '02/21/2013', end_date: '02/23/2013'))
+    expect(search(company_id: company.id, start_date: ['02/21/2013'], end_date: ['02/23/2013']))
       .to match_array([event])
-    expect(search(company_id: company.id, start_date: '02/22/2013'))
+    expect(search(company_id: company.id, start_date: ['02/22/2013']))
       .to match_array([event])
-    expect(search(company_id: company.id, start_date: '03/21/2013', end_date: '03/23/2013'))
+    expect(search(company_id: company.id, start_date: ['03/21/2013'], end_date: ['03/23/2013']))
       .to match_array([event2])
-    expect(search(company_id: company.id, start_date: '03/22/2013'))
+    expect(search(company_id: company.id, start_date: ['03/22/2013']))
       .to match_array([event2])
-    expect(search(company_id: company.id, start_date: '01/21/2013', end_date: '01/23/2013'))
+    expect(search(company_id: company.id, start_date: ['01/21/2013'], end_date: ['01/23/2013']))
       .to be_empty
 
     # Search for Events on a given status
@@ -161,7 +161,7 @@ describe Event, type: :model, search: true do
 
   it 'correctly search on the localized date fields', search: false, sunspot_matcher: true do
     Company.current = company
-    described_class.do_search(company_id: company.id, start_date: '01/01/2014')
+    described_class.do_search(company_id: company.id, start_date: ['01/01/2014'])
     d = Timeliness.parse('01/01/2014', zone: :current)
     expect(Sunspot.session).to have_search_params(:with) {
       all_of do
@@ -171,7 +171,7 @@ describe Event, type: :model, search: true do
     }
 
     company.update_attribute :timezone_support, true
-    described_class.do_search(company_id: company.id, start_date: '01/01/2014')
+    described_class.do_search(company_id: company.id, start_date: ['01/01/2014'])
     d = Timeliness.parse('01/01/2014', zone: 'UTC')
     expect(Sunspot.session).to have_search_params(:with) {
       all_of do

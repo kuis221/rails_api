@@ -13,18 +13,22 @@ feature 'Custom filters', js: true do
   before { sign_in user }
 
   scenario 'correctly applies the start end dates' do
+    custom_filter_category = create(:custom_filters_category, name: 'Fiscal Years', company: company)
+
     create(:custom_filter,
            owner: company_user, name: 'FY2014', apply_to: 'events',
-           filters: 'start_date=7%2F1%2F2013&end_date=6%2F30%2F2014')
+           filters: 'start_date=7%2F1%2F2013&end_date=6%2F30%2F2014',
+           category: custom_filter_category)
 
     visit events_path
 
     expect(page).to have_filter_tag('Today To The Future')
 
-    select_saved_filter 'FY2014'
+    filter_section('FISCAL YEARS').unicheck('FY2014')
     expand_filter('FY2014')
+
     expect(collection_description).to have_filter_tag('Jul 01, 2013 - Jun 30, 2014')
-    expect(page).to_not have_filter_tag('Today To The Future')
+    expect(page).to have_filter_tag('Today To The Future')
   end
 
   scenario 'remove checked for custom filters checkboxes when filter is removed' do
@@ -65,6 +69,8 @@ feature 'Custom filters', js: true do
            category: custom_filter_category)
 
     visit events_path
+
+    remove_filter('Today To The Future')
 
     filter_section('FISCAL YEARS').unicheck('FY2014')
 

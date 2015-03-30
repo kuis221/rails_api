@@ -119,15 +119,33 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
         end
       end
 
+      if params[:start] && params[:end]
+        start_date = DateTime.strptime(params[:start], '%Q')
+        end_date = DateTime.strptime(params[:end], '%Q')
+        params[:start_date] = start_date.to_s(:slashes)
+        params[:end_date] = end_date.to_s(:slashes)
+      end
+
       if params[:start_date].present? && params[:end_date].present?
-        d1 = Timeliness.parse(params[:start_date], zone: :current)
-        d2 = Timeliness.parse(params[:end_date], zone: :current)
+        params[:start_date] = Array(params[:start_date])
+        params[:end_date] = Array(params[:end_date])
         any_of do
-          with :start_date, d1..d2
-          with :end_date, d1..d2
+          params[:start_date].each_with_index do |start, index|
+            d1 = Timeliness.parse(start, zone: :current)
+            d2 = Timeliness.parse(params[:end_date][index], zone: :current)
+            if d1 == d2
+              all_of do
+                with(:start_date).less_than(d1 + 1.day)
+                with(:end_date).greater_than(d1 - 1.day)
+              end
+            else
+              with :start_date, d1..d2
+              with :end_date, d1..d2
+            end
+          end
         end
       elsif params[:start_date].present?
-        d = Timeliness.parse(params[:start_date], zone: :current)
+        d = Timeliness.parse(params[:start_date][0], zone: :current)
         all_of do
           with(:start_date).less_than(d + 1.day)
           with(:end_date).greater_than(d - 1.day)
@@ -144,28 +162,6 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
       with :area_id, params[:area] if params.key?(:area) && params[:area].present?
       with :campaign_id, params[:campaign] if params.key?(:campaign) && params[:campaign].present?
       with :city, params[:city] if params.key?(:city) && params[:city].present?
-
-      if params[:start] && params[:end]
-        start_date = DateTime.strptime(params[:start], '%Q')
-        end_date = DateTime.strptime(params[:end], '%Q')
-        params[:start_date] = start_date.to_s(:slashes)
-        params[:end_date] = end_date.to_s(:slashes)
-      end
-
-      if params[:start_date].present? && params[:end_date].present?
-        d1 = Timeliness.parse(params[:start_date], zone: 'UTC').to_date
-        d2 = Timeliness.parse(params[:end_date], zone: 'UTC').to_date
-        any_of do
-          with :start_date, d1..d2
-          with :end_date, d1..d2
-        end
-      elsif params[:start_date].present?
-        d = Timeliness.parse(params[:start_date], zone: 'UTC').to_date
-        all_of do
-          with(:start_date).less_than_or_equal_to(d)
-          with(:end_date).greater_than_or_equal_to(d.beginning_of_day)
-        end
-      end
 
       if params.key?(:q) && params[:q].present?
         (attribute, value) = params[:q].split(',')
