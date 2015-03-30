@@ -1,2 +1,3 @@
-= render_table_cols resource.columns, process_step
-= render_table_rows resource.rows
+= render_table_cols resource.columns, 2, resource.default_sort_by, resource.default_sort_dir
+tbody
+  = render_table_rows resource.rows

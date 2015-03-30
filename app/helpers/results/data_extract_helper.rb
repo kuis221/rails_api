@@ -15,7 +15,7 @@ module Results
             step_class = (active == (i + 1) ? 'active' : (active > i ? 'completed' : ''))
             content_tag(:div, class: 'step ' + step_class) do
               content_tag :div, class: 'step-box' do
-                content_tag(:div,((i + 1) >= active ? i + 1 : content_tag(:i, '', class: 'icon-checked')), class: 'circle-step ') +
+                content_tag(:div, ((i + 1) >= active ? i + 1 : content_tag(:i, '', class: 'icon-checked')), class: 'circle-step ') +
                 content_tag(:div, step, class: 'step-name')
               end
             end
@@ -24,18 +24,24 @@ module Results
       end
     end
 
-    def render_table_cols(columns, step)
+    def render_table_cols(columns, step, sort_by, sort_dir)
       content_tag(:thead) do
         content_tag(:tr, class: 'data-extract-head') do
           if columns.present?
             columns.map do |col|
-              content_tag(:th, class: 'data-extract-th', data:{name: col}) do
+              content_tag(:th, class: 'data-extract-th', data: { name: col }) do
                 content_tag(:div, class: 'dropdown') do
-                  content_tag(:span, I18n.t("data_exports.fields.#{col.to_s}")) +
-                  link_to('','', title: 'tool', class: 'icon-arrow-down pull-right dropdown-toggle', data:{ name: col, toggle: 'dropdown'}) +
-                  content_tag(:ul, class: 'dropdown-menu', role: 'menu') do
-                    content_tag(:li, link_to('Hide', '#', class: 'btn-remove-column', data: { column: col })) if step < 4
-                  end
+                  icon = sort_by == col ? content_tag(:i, '', class: 'icon-checked') : ''
+                  content_tag(:span, I18n.t("data_exports.fields.#{col}")) +
+                  (if step < 3
+                     link_to('', '', title: 'tool', class: 'icon-arrow-down pull-right dropdown-toggle', data: { name: col, toggle: 'dropdown' }) +
+                     content_tag(:ul, class: 'dropdown-menu', role: 'menu') do
+                       content_tag(:li, link_to(('Sort Ascending' + (sort_dir == 'asc' ? icon : '')).html_safe, '#', class: 'btn-sort-asc btn-sort-table', data: { column: col, dir: 'asc' })) +
+                       content_tag(:li, link_to(('Sort Descending' + (sort_dir == 'desc' ? icon : '')).html_safe, '#', class: 'btn-sort-desc btn-sort-table', data: { column: col, dir: 'desc' })) +
+                       content_tag(:li, nil, class: 'divider') +
+                       content_tag(:li, link_to('Hide', '#', class: 'btn-remove-column', data: { column: col }))
+                     end
+                   end)
                 end
               end
             end.join.html_safe
@@ -59,10 +65,10 @@ module Results
       content_tag(:ul, class: 'available-field-list') do
         if fields.present?
           fields.sort.map do |field|
-            content_tag(:li, I18n.t("data_exports.fields.#{field.to_s}"), class: 'available-field', data:{name: field})
+            content_tag(:li, I18n.t("data_exports.fields.#{field}"), class: 'available-field', data: { name: field })
           end.join.html_safe
         end
-       end
+      end
     end
   end
 end

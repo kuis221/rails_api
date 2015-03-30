@@ -5,7 +5,9 @@
 .main.data-extract
   = simple_form_for resource, as: :data_extract, url: form_action, method: :get, name: "data_source_form" do |f|
     = hidden_field_tag :step, 3
-    = f.input :source, as: :hidden
+    = f.input :source, as: :hidden, wrapper: false
+    = f.input :default_sort_by, as: :hidden, wrapper: false
+    = f.input :default_sort_dir, as: :hidden, wrapper: false
     - f.object.columns.each do |col|
       = hidden_field_tag 'data_extract[columns][]', col
     .data-extract-box

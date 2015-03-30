@@ -1,0 +1,10 @@
+table 
+  tbody data-content="items" data-total="#{params[:page].to_i > 1 ? nil : collection_count}" data-pages="#{params[:page].to_i > 1 ? nil : resource.total_pages}" data-page="#{params[:page].to_i || 1}"
+    - resource.rows(params[:page].to_i || 1).each do |row|
+      tr
+        - row.each do |col|
+          td= col
+
+- if params[:page].nil? || params[:page] == '1'
+  div data-content="filters-description"
+    = describe_filters('items')

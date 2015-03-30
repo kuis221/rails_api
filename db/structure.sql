@@ -1336,7 +1336,10 @@ CREATE TABLE data_extracts (
     created_by_id integer,
     updated_by_id integer,
     created_at timestamp without time zone,
-    updated_at timestamp without time zone
+    updated_at timestamp without time zone,
+    default_sort_by character varying(255),
+    default_sort_dir character varying(255),
+    params text
 );
 
 
@@ -1714,6 +1717,104 @@ CREATE TABLE events (
     local_end_at timestamp without time zone,
     description text
 );
+
+
+--
+-- Name: teamings; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE teamings (
+    id integer NOT NULL,
+    team_id integer,
+    teamable_id integer,
+    teamable_type character varying(255)
+);
+
+
+--
+-- Name: teams; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE teams (
+    id integer NOT NULL,
+    name character varying(255),
+    description text,
+    created_by_id integer,
+    updated_by_id integer,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    active boolean DEFAULT true,
+    company_id integer
+);
+
+
+--
+-- Name: users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE users (
+    id integer NOT NULL,
+    first_name character varying(255),
+    last_name character varying(255),
+    email character varying(255) DEFAULT ''::character varying NOT NULL,
+    encrypted_password character varying(255) DEFAULT ''::character varying,
+    reset_password_token character varying(255),
+    reset_password_sent_at timestamp without time zone,
+    remember_created_at timestamp without time zone,
+    sign_in_count integer DEFAULT 0,
+    current_sign_in_at timestamp without time zone,
+    last_sign_in_at timestamp without time zone,
+    current_sign_in_ip character varying(255),
+    last_sign_in_ip character varying(255),
+    confirmation_token character varying(255),
+    confirmed_at timestamp without time zone,
+    confirmation_sent_at timestamp without time zone,
+    unconfirmed_email character varying(255),
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    country character varying(4),
+    state character varying(255),
+    city character varying(255),
+    created_by_id integer,
+    updated_by_id integer,
+    invitation_token character varying(255),
+    invitation_sent_at timestamp without time zone,
+    invitation_accepted_at timestamp without time zone,
+    invitation_limit integer,
+    invited_by_id integer,
+    invited_by_type character varying(255),
+    current_company_id integer,
+    time_zone character varying(255),
+    detected_time_zone character varying(255),
+    phone_number character varying(255),
+    street_address character varying(255),
+    unit_number character varying(255),
+    zip_code character varying(255),
+    authentication_token character varying(255),
+    invitation_created_at timestamp without time zone,
+    avatar_file_name character varying(255),
+    avatar_content_type character varying(255),
+    avatar_file_size integer,
+    avatar_updated_at timestamp without time zone,
+    phone_number_verified boolean,
+    phone_number_verification character varying(255)
+);
+
+
+--
+-- Name: event_team_members; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW event_team_members AS
+ SELECT events.id AS event_id,
+    users.id AS user_id,
+    company_users.id AS company_user_id
+   FROM (((((events
+     LEFT JOIN teamings ON (((teamings.teamable_id = events.id) AND ((teamings.teamable_type)::text = 'Event'::text))))
+     LEFT JOIN teams ON ((teams.id = teamings.team_id)))
+     LEFT JOIN memberships ON ((((memberships.memberable_id = events.id) AND ((memberships.memberable_type)::text = 'Event'::text)) OR ((memberships.memberable_id = teams.id) AND ((memberships.memberable_type)::text = 'Team'::text)))))
+     LEFT JOIN company_users ON ((company_users.id = memberships.company_user_id)))
+     LEFT JOIN users ON ((users.id = company_users.user_id)));
 
 
 --
@@ -2815,18 +2916,6 @@ CREATE TABLE tdlinx_codes (
 
 
 --
--- Name: teamings; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE teamings (
-    id integer NOT NULL,
-    team_id integer,
-    teamable_id integer,
-    teamable_type character varying(255)
-);
-
-
---
 -- Name: teamings_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -2846,23 +2935,6 @@ ALTER SEQUENCE teamings_id_seq OWNED BY teamings.id;
 
 
 --
--- Name: teams; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE teams (
-    id integer NOT NULL,
-    name character varying(255),
-    description text,
-    created_by_id integer,
-    updated_by_id integer,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    active boolean DEFAULT true,
-    company_id integer
-);
-
-
---
 -- Name: teams_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -2879,59 +2951,6 @@ CREATE SEQUENCE teams_id_seq
 --
 
 ALTER SEQUENCE teams_id_seq OWNED BY teams.id;
-
-
---
--- Name: users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE users (
-    id integer NOT NULL,
-    first_name character varying(255),
-    last_name character varying(255),
-    email character varying(255) DEFAULT ''::character varying NOT NULL,
-    encrypted_password character varying(255) DEFAULT ''::character varying,
-    reset_password_token character varying(255),
-    reset_password_sent_at timestamp without time zone,
-    remember_created_at timestamp without time zone,
-    sign_in_count integer DEFAULT 0,
-    current_sign_in_at timestamp without time zone,
-    last_sign_in_at timestamp without time zone,
-    current_sign_in_ip character varying(255),
-    last_sign_in_ip character varying(255),
-    confirmation_token character varying(255),
-    confirmed_at timestamp without time zone,
-    confirmation_sent_at timestamp without time zone,
-    unconfirmed_email character varying(255),
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    country character varying(4),
-    state character varying(255),
-    city character varying(255),
-    created_by_id integer,
-    updated_by_id integer,
-    invitation_token character varying(255),
-    invitation_sent_at timestamp without time zone,
-    invitation_accepted_at timestamp without time zone,
-    invitation_limit integer,
-    invited_by_id integer,
-    invited_by_type character varying(255),
-    current_company_id integer,
-    time_zone character varying(255),
-    detected_time_zone character varying(255),
-    phone_number character varying(255),
-    street_address character varying(255),
-    unit_number character varying(255),
-    zip_code character varying(255),
-    authentication_token character varying(255),
-    invitation_created_at timestamp without time zone,
-    avatar_file_name character varying(255),
-    avatar_content_type character varying(255),
-    avatar_file_size integer,
-    avatar_updated_at timestamp without time zone,
-    phone_number_verified boolean,
-    phone_number_verification character varying(255)
-);
 
 
 --
@@ -5361,4 +5380,10 @@ INSERT INTO schema_migrations (version) VALUES ('20150317180935');
 INSERT INTO schema_migrations (version) VALUES ('20150319192414');
 
 INSERT INTO schema_migrations (version) VALUES ('20150320155037');
+
+INSERT INTO schema_migrations (version) VALUES ('20150327220003');
+
+INSERT INTO schema_migrations (version) VALUES ('20150327230921');
+
+INSERT INTO schema_migrations (version) VALUES ('20150330040536');
 
