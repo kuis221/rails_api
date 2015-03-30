@@ -20,5 +20,27 @@
 #
 
 class DataExtract::Task < DataExtract
-  define_columns [:title, :task_statuses, :due_at, :created_by_full_name, :created_at]
+  define_columns title: 'title', 
+                 task_statuses: 'CASE WHEN tasks.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END', 
+                 due_at: proc { "to_char(tasks.due_at, 'MM/DD/YYYY')" }, 
+                 created_by: 'trim(users.first_name || \' \' || users.last_name)', 
+                 created_at: proc { "to_char(tasks.created_at, 'MM/DD/YYYY')" }
+
+  def add_joins_to_scope(s)
+    if columns.include?('created_by') || filters.present? && filters['user'].present?
+      s = s.joins('LEFT JOIN users ON tasks.created_by_id=users.id')
+    end
+    s
+  end
+
+  def total_results
+    Task.connection.select_value("SELECT COUNT(*) FROM (#{base_scope.select(*selected_columns_to_sql).to_sql}) sq").to_i
+  end
+
+  def add_filter_conditions_to_scope(s)
+    return s if filters.nil? || filters.empty?
+    s = s.joins(:campaigns).where(campaigns: { id: filters[:campaign] } ) if filters.present? && filters['campaign'].present?
+    s = s.where(active: filters['active_state'].map { |f| f == 'active' ? true : false }) if filters['active_state'].present?
+    s
+  end
 end
