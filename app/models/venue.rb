@@ -56,6 +56,7 @@ class Venue < ActiveRecord::Base
 
   scope :top_venue, ->{ where(top_venue: true) }
   scope :jameson_locals, ->{ where(jameson_locals: true) }
+  scope :accessible_by_user, ->(user) { in_company(user.company_id) }
 
   before_destroy :check_for_associations
 

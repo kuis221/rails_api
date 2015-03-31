@@ -40,6 +40,7 @@ class Task < ActiveRecord::Base
   scope :due_today, -> { where(['due_at BETWEEN ? and ? and completed = ?', Date.today, Date.tomorrow, false]) }
   scope :due_today_and_late, -> { where(['due_at is not null and due_at <= ? and completed = ?', Date.today.end_of_day, false]) }
   scope :assigned_to, ->(users) { where(company_user_id: users) }
+  scope :accessible_by_user, ->(company_user) { where(company_id: company_user.company_id) }
 
   belongs_to :created_by, class_name: 'User'
   delegate :full_name, to: :created_by, prefix: true, allow_nil: true
