@@ -562,3 +562,5 @@ en:
       marques_list: "Marques"
       campaign_brand_portfolios: "Brand Portfolios"
       created_by: "Created By"
+      street1: "Address"
+      street2: "Address 2"
