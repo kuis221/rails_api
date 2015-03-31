@@ -41,6 +41,8 @@
   <h2>Supported Formats</h2>
   json, xml
 
+
+
 <div class='accordion' id='accordion'>
 
     <hr>
@@ -70,47 +72,14 @@ the &lt;page&gt; param.</p>
 
 <p>All the times and dates are returned on the user&#39;s timezone.</p>
 
-<p><strong>Facets</strong></p>
-
-<p>Faceting is a feature of Solr that determines the number of documents that
-match a given search and an additional criteria</p>
-
-<p>When &lt;page&gt; is “1”, the result will include a list of facets scoped
-on the following search params</p>
-<ul><li>
-<p>start_date</p>
-</li><li>
-<p>end_date</p>
-</li></ul>
-
-<p>*Facets Results*</p>
-
-<p>The API returns the facets on the following format:</p>
-
-<pre>[
-  {
-    label: String,            # Any of: Campaigns, Brands, Location, People, Active State, Event Status
-    items: [                  # List of items for the facet sorted by relevance
-      {
-        &quot;label&quot;: String,      # The name of the item
-        &quot;id&quot;: String,         # The id of the item, this should be used to filter the list by this items
-        &quot;name&quot;: String,       # The param name to be use for filtering the list (campaign, user, team, place, area, status, event_status)
-        &quot;count&quot;: Number,      # The number of results for this item
-        &quot;selected&quot;: Boolean   # True if the list is being filtered by this item
-      },
-      ....
-    ],
-    top_items: [              # Some facets will return this as a list of items that have the greater number of results
-      &lt;other list of items&gt;
-    ]
-  }
-]</pre>
-
 
   <h3>Supported Formats</h3>
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     401
     Unauthorized access
     <br>
@@ -206,48 +175,6 @@ on the following search params</p>
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>start_date </strong><br>
       <small>
         optional
@@ -261,7 +188,9 @@ on the following search params</p>
 this day. The date should be in the format MM/DD/YYYY.</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must match regular expression /Ad{1,2}/d{1,2}/d{4}z/.</p>
+
 
 
     </td>
@@ -285,7 +214,9 @@ those events that are between that range. The date should be in the format
 MM/DD/YYYY.</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must match regular expression /Ad{1,2}/d{1,2}/d{4}z/.</p>
+
 
 
     </td>
@@ -306,7 +237,9 @@ MM/DD/YYYY.</p>
 <p>A list of campaign ids to filter the results</p>
 
         <br>
-        Value: Must be an array of any type
+        Value: 
+<p>Must be an array of any type</p>
+
 
 
     </td>
@@ -327,7 +260,32 @@ MM/DD/YYYY.</p>
 <p>A list of places to filter the results</p>
 
         <br>
-        Value: Must be an array of any type
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>venue </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of venues to filter the results</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
 
 
     </td>
@@ -348,7 +306,9 @@ MM/DD/YYYY.</p>
 <p>A list of areas to filter the results</p>
 
         <br>
-        Value: Must be an array of any type
+        Value: 
+<p>Must be an array of any type</p>
+
 
 
     </td>
@@ -369,7 +329,9 @@ MM/DD/YYYY.</p>
 <p>A list of users to filter the results</p>
 
         <br>
-        Value: Must be an array of any type
+        Value: 
+<p>Must be an array of any type</p>
+
 
 
     </td>
@@ -390,7 +352,9 @@ MM/DD/YYYY.</p>
 <p>A list of teams to filter the results</p>
 
         <br>
-        Value: Must be an array of any type
+        Value: 
+<p>Must be an array of any type</p>
+
 
 
     </td>
@@ -411,7 +375,9 @@ MM/DD/YYYY.</p>
 <p>A list of brands to filter the results</p>
 
         <br>
-        Value: Must be an array of any type
+        Value: 
+<p>Must be an array of any type</p>
+
 
 
     </td>
@@ -432,7 +398,9 @@ MM/DD/YYYY.</p>
 <p>A list of brand portfolios to filter the results</p>
 
         <br>
-        Value: Must be an array of any type
+        Value: 
+<p>Must be an array of any type</p>
+
 
 
     </td>
@@ -454,7 +422,9 @@ MM/DD/YYYY.</p>
 &#39;Active&#39;, &#39;Inactive&#39;</p>
 
         <br>
-        Value: Must be an array of any type
+        Value: 
+<p>Must be an array of any type</p>
+
 
 
     </td>
@@ -477,7 +447,9 @@ are: &#39;Scheduled&#39;, &#39;Executed&#39;, &#39;Submitted&#39;,
 &#39;Approved&#39;, &#39;Rejected&#39;, &#39;Late&#39;, &#39;Due&#39;</p>
 
         <br>
-        Value: Must be an array of any type
+        Value: 
+<p>Must be an array of any type</p>
+
 
 
     </td>
@@ -498,7 +470,9 @@ are: &#39;Scheduled&#39;, &#39;Executed&#39;, &#39;Submitted&#39;,
 <p>The number of the page, Default: 1</p>
 
         <br>
-        Value: Must be a number.
+        Value: 
+<p>Must be a number.</p>
+
 
 
     </td>
@@ -509,6 +483,398 @@ are: &#39;Scheduled&#39;, &#39;Executed&#39;, &#39;Submitted&#39;,
 
     </tbody>
   </table>
+
+
+
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/events/status_facets.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-status_facets'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/events/status_facets
+          </a>
+          <br>
+          <small>Returns the facets for the event status</small>
+        </h2>
+    </div>
+
+
+    <div id='description-status_facets' class='collapse accordion-body'>
+      
+<p>The API returns the facets on the following format:</p>
+
+<pre>[
+  {
+    label: String,            # Any of: Campaigns, Brands, Location, People, Active State, Event Status
+    items: [                  # List of items for the facet sorted by relevance
+      {
+        &quot;label&quot;: String,      # The name of the item
+        &quot;id&quot;: String,         # The id of the item, this should be used to filter the list by this items
+        &quot;name&quot;: String,       # The param name to be use for filtering the list (campaign, user, team, place, area, status, event_status)
+        &quot;count&quot;: Number,      # The number of results for this item
+        &quot;selected&quot;: Boolean   # True if the list is being filtered by this item
+      },
+      ....
+    ],
+    top_items: [              # Some facets will return this as a list of items that have the greater number of results
+      &lt;other list of items&gt;
+    ]
+  }
+]</pre>
+
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
+    401
+    Unauthorized access
+    <br>
+    404
+    The requested resource was not found
+    <br>
+    406
+    The server cannot return data in the requested format
+    <br>
+    422
+    Unprocessable Entity: The change could not be processed because of errors on the data
+    <br>
+    500
+    Server crashed for some reason. Possible because of missing required params or wrong parameters
+    <br>
+
+
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>start_date </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A date to filter the event list. When provided a start_date without an
+<code>end_date</code>, the result will only include events that happen on
+this day. The date should be in the format MM/DD/YYYY.</p>
+
+        <br>
+        Value: 
+<p>Must match regular expression /Ad{1,2}/d{1,2}/d{4}z/.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>end_date </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A date to filter the event list. This should be provided together with the
+<code>start_date</code> param and when provided will filter the list with
+those events that are between that range. The date should be in the format
+MM/DD/YYYY.</p>
+
+        <br>
+        Value: 
+<p>Must match regular expression /Ad{1,2}/d{1,2}/d{4}z/.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>campaign </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of campaign ids to filter the results</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>place </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of places to filter the results</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>venue </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of venues to filter the results</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>area </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of areas to filter the results</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>user </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of users to filter the results</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>team </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of teams to filter the results</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>brand </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of brands to filter the results</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>brand_porfolio </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of brand portfolios to filter the results</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>status </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of event status to filter the results. The possible options are:
+&#39;Active&#39;, &#39;Inactive&#39;</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>event_status </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of event recap status to filter the results. The possible options
+are: &#39;Scheduled&#39;, &#39;Executed&#39;, &#39;Submitted&#39;,
+&#39;Approved&#39;, &#39;Rejected&#39;, &#39;Late&#39;, &#39;Due&#39;</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>page </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>The number of the page, Default: 1</p>
+
+        <br>
+        Value: 
+<p>Must be a number.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+
 
     </div>
     <hr>
@@ -548,6 +914,9 @@ following categories</p>
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     401
     Unauthorized access
     <br>
@@ -566,7 +935,7 @@ following categories</p>
 
 
   <h3>Examples</h3>
-    <pre class="prettyprint">GET: /api/v1/events/autocomplete.json?auth_token=XXssU!suwq92-1&amp;company_id=2&amp;q=jam
+    <pre class="prettyprint">GET: /api/v1/events/autocomplete.json?q=jam
 [
     {
         &quot;label&quot;: &quot;Campaigns&quot;,
@@ -635,48 +1004,6 @@ following categories</p>
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>q </strong><br>
       <small>
         required
@@ -688,7 +1015,9 @@ following categories</p>
 <p>The search term</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -699,6 +1028,8 @@ following categories</p>
 
     </tbody>
   </table>
+
+
 
     </div>
     <hr>
@@ -740,8 +1071,6 @@ mm/dd/yyyy</p>
 <p><strong>end_time</strong>: the event&#39;s end time in 12 hours format</p>
 </li><li>
 <p><strong>description</strong>: the event&#39;s description</p>
-</li><li>
-<p><strong>summary</strong>: the event&#39;s summary</p>
 </li><li>
 <p><strong>status</strong>: the event&#39;s active state, can be Active or
 Inactive</p>
@@ -810,6 +1139,9 @@ information with the following attributes</p>
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     401
     Unauthorized access
     <br>
@@ -837,7 +1169,6 @@ information with the following attributes</p>
     &quot;status&quot;: &quot;Active&quot;,
     &quot;event_status&quot;: &quot;Unsent&quot;,
     &quot;description&quot;: &quot;This is the events description&quot;,
-    &quot;summary&quot;: &quot;This is a test summary&quot;,
     &quot;have_data&quot;: true,
     &quot;data&quot;: {
       spent_by_impression: &quot;6.0&quot;
@@ -853,6 +1184,7 @@ information with the following attributes</p>
     ],
     &quot;place&quot;: {
         &quot;id&quot;: 2624,
+        &quot;venue_id&quot;: 2154,
         &quot;name&quot;: &quot;Kelly&#39;s Pub Too&quot;,
         &quot;latitude&quot;: 39.7924104,
         &quot;longitude&quot;: -86.2514126,
@@ -867,7 +1199,14 @@ information with the following attributes</p>
     },
     &quot;campaign&quot;: {
         &quot;id&quot;: 33,
-        &quot;name&quot;: &quot;Kahlua Midnight FY14&quot;
+        &quot;name&quot;: &quot;Kahlua Midnight FY14&quot;,
+        &quot;enabled_modules&quot;: [
+           &quot;expenses&quot;,
+           &quot;photos&quot;,
+           &quot;videos&quot;,
+           &quot;comments&quot;,
+           &quot;attendance&quot;
+        ]
     }
 }
 </pre>
@@ -883,48 +1222,6 @@ information with the following attributes</p>
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>id </strong><br>
       <small>
         required
@@ -936,7 +1233,9 @@ information with the following attributes</p>
 <p>Event ID</p>
 
         <br>
-        Value: Must be a number.
+        Value: 
+<p>Must be a number.</p>
+
 
 
     </td>
@@ -947,6 +1246,8 @@ information with the following attributes</p>
 
     </tbody>
   </table>
+
+
 
     </div>
     <hr>
@@ -974,6 +1275,9 @@ information with the following attributes</p>
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     401
     Unauthorized access
     <br>
@@ -1003,48 +1307,6 @@ information with the following attributes</p>
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>event </strong><br>
       <small>
         required
@@ -1054,7 +1316,9 @@ information with the following attributes</p>
     <td>
       
         <br>
-        Value: Must be a Hash
+        Value: 
+<p>Must be a Hash</p>
+
 
 
     </td>
@@ -1074,7 +1338,9 @@ information with the following attributes</p>
 <p>Campaign ID</p>
 
         <br>
-        Value: Must be a number.
+        Value: 
+<p>Must be a number.</p>
+
 
 
     </td>
@@ -1092,10 +1358,12 @@ information with the following attributes</p>
     </td>
     <td>
       
-<p>Event&#39;s start date</p>
+<p>Event&#39;s start date. Should be in format MM/DD/YYYY.</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must match regular expression /Ad{1,2}/d{1,2}/d{4}z/.</p>
+
 
 
     </td>
@@ -1113,10 +1381,12 @@ information with the following attributes</p>
     </td>
     <td>
       
-<p>Event&#39;s end date</p>
+<p>Event&#39;s end date. Should be in format MM/DD/YYYY.</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must match regular expression /Ad{1,2}/d{1,2}/d{4}z/.</p>
+
 
 
     </td>
@@ -1134,10 +1404,12 @@ information with the following attributes</p>
     </td>
     <td>
       
-<p>Event&#39;s start time&#39;</p>
+<p>Event&#39;s start time&#39;. Should be in format HH:MM AM/PM</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -1155,10 +1427,12 @@ information with the following attributes</p>
     </td>
     <td>
       
-<p>Event&#39;s end time</p>
+<p>Event&#39;s end time. Should be in format HH:MM AM/PM</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -1187,7 +1461,9 @@ href="/apidoc/1.0/venues/search.html">Venues&nbsp;Search</a>, you should
 use the value for the <code>id</code> attribute</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -1208,28 +1484,9 @@ use the value for the <code>id</code> attribute</p>
 <p>Event&#39;s status</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
 
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(250,250,250);'>
-    <td>
-      <strong>event[summary] </strong><br>
-      <small>
-        optional
-        , nil allowed
-      </small>
-    </td>
-    <td>
-      
-<p>Event&#39;s summary</p>
-
-        <br>
-        Value: Must be String
 
 
     </td>
@@ -1250,7 +1507,9 @@ use the value for the <code>id</code> attribute</p>
 <p>Event&#39;s description</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -1272,7 +1531,32 @@ use the value for the <code>id</code> attribute</p>
 [{id: 1, value:&#39;Some value&#39;}, {id: 2, value: &#39;123&#39;}]</p>
 
         <br>
-        Value: Must be a list of results [id, value].
+        Value: 
+<p>Must be a list of results [id, value].</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>event[visit_id] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Visit ID</p>
+
+        <br>
+        Value: 
+<p>Must be a number.</p>
+
 
 
     </td>
@@ -1284,6 +1568,8 @@ use the value for the <code>id</code> attribute</p>
 
     </tbody>
   </table>
+
+
 
     </div>
     <hr>
@@ -1311,6 +1597,9 @@ use the value for the <code>id</code> attribute</p>
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     401
     Unauthorized access
     <br>
@@ -1340,48 +1629,6 @@ use the value for the <code>id</code> attribute</p>
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>id </strong><br>
       <small>
         required
@@ -1393,7 +1640,9 @@ use the value for the <code>id</code> attribute</p>
 <p>Event ID</p>
 
         <br>
-        Value: Must be a number.
+        Value: 
+<p>Must be a number.</p>
+
 
 
     </td>
@@ -1412,7 +1661,9 @@ use the value for the <code>id</code> attribute</p>
     <td>
       
         <br>
-        Value: Must be a Hash
+        Value: 
+<p>Must be a Hash</p>
+
 
 
     </td>
@@ -1432,7 +1683,9 @@ use the value for the <code>id</code> attribute</p>
 <p>Campaign ID</p>
 
         <br>
-        Value: Must be a number.
+        Value: 
+<p>Must be a number.</p>
+
 
 
     </td>
@@ -1450,10 +1703,12 @@ use the value for the <code>id</code> attribute</p>
     </td>
     <td>
       
-<p>Event&#39;s start date</p>
+<p>Event&#39;s start date. Should be in format MM/DD/YYYY.</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must match regular expression /Ad{1,2}/d{1,2}/d{4}z/.</p>
+
 
 
     </td>
@@ -1471,10 +1726,12 @@ use the value for the <code>id</code> attribute</p>
     </td>
     <td>
       
-<p>Event&#39;s end date</p>
+<p>Event&#39;s end date. Should be in format MM/DD/YYYY.</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must match regular expression /Ad{1,2}/d{1,2}/d{4}z/.</p>
+
 
 
     </td>
@@ -1492,10 +1749,12 @@ use the value for the <code>id</code> attribute</p>
     </td>
     <td>
       
-<p>Event&#39;s start time&#39;</p>
+<p>Event&#39;s start time&#39;. Should be in format HH:MM AM/PM</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -1513,10 +1772,12 @@ use the value for the <code>id</code> attribute</p>
     </td>
     <td>
       
-<p>Event&#39;s end time</p>
+<p>Event&#39;s end time. Should be in format HH:MM AM/PM</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -1545,7 +1806,9 @@ href="/apidoc/1.0/venues/search.html">Venues&nbsp;Search</a>, you should
 use the value for the <code>id</code> attribute</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -1566,28 +1829,9 @@ use the value for the <code>id</code> attribute</p>
 <p>Event&#39;s status</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
 
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(250,250,250);'>
-    <td>
-      <strong>event[summary] </strong><br>
-      <small>
-        optional
-        , nil allowed
-      </small>
-    </td>
-    <td>
-      
-<p>Event&#39;s summary</p>
-
-        <br>
-        Value: Must be String
 
 
     </td>
@@ -1608,7 +1852,9 @@ use the value for the <code>id</code> attribute</p>
 <p>Event&#39;s description</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -1630,7 +1876,32 @@ use the value for the <code>id</code> attribute</p>
 [{id: 1, value:&#39;Some value&#39;}, {id: 2, value: &#39;123&#39;}]</p>
 
         <br>
-        Value: Must be a list of results [id, value].
+        Value: 
+<p>Must be a list of results [id, value].</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(250,250,250);'>
+    <td>
+      <strong>event[visit_id] </strong><br>
+      <small>
+        optional
+        , nil allowed
+      </small>
+    </td>
+    <td>
+      
+<p>Visit ID</p>
+
+        <br>
+        Value: 
+<p>Must be a number.</p>
+
 
 
     </td>
@@ -1642,6 +1913,8 @@ use the value for the <code>id</code> attribute</p>
 
     </tbody>
   </table>
+
+
 
     </div>
     <hr>
@@ -1669,6 +1942,9 @@ use the value for the <code>id</code> attribute</p>
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     401
     Unauthorized access
     <br>
@@ -1688,7 +1964,7 @@ use the value for the <code>id</code> attribute</p>
 
   <h3>Examples</h3>
     <pre class="prettyprint">Response when the event was successfully submitted
-PUT /api/v1/events/123/approve.json?auth_token=XXXXX&amp;company_id=1
+PUT /api/v1/events/123/approve.json
 {
   success: true
   info: &quot;Event successfully approved&quot;
@@ -1696,7 +1972,7 @@ PUT /api/v1/events/123/approve.json?auth_token=XXXXX&amp;company_id=1
 }
 </pre>
     <pre class="prettyprint">Response when trying to submit a event that is already submitted
-PUT /api/v1/events/123/approve.json?auth_token=XXXXX&amp;company_id=1
+PUT /api/v1/events/123/approve.json
 {
   success: false
   info: &quot;Event cannot transition to submitted from submitted&quot;
@@ -1715,48 +1991,6 @@ PUT /api/v1/events/123/approve.json?auth_token=XXXXX&amp;company_id=1
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>id </strong><br>
       <small>
         required
@@ -1768,7 +2002,9 @@ PUT /api/v1/events/123/approve.json?auth_token=XXXXX&amp;company_id=1
 <p>Event ID</p>
 
         <br>
-        Value: Must be a number.
+        Value: 
+<p>Must be a number.</p>
+
 
 
     </td>
@@ -1779,6 +2015,8 @@ PUT /api/v1/events/123/approve.json?auth_token=XXXXX&amp;company_id=1
 
     </tbody>
   </table>
+
+
 
     </div>
     <hr>
@@ -1806,6 +2044,9 @@ PUT /api/v1/events/123/approve.json?auth_token=XXXXX&amp;company_id=1
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     401
     Unauthorized access
     <br>
@@ -1825,7 +2066,7 @@ PUT /api/v1/events/123/approve.json?auth_token=XXXXX&amp;company_id=1
 
   <h3>Examples</h3>
     <pre class="prettyprint">Response when the event was successfully approved
-PUT /api/v1/events/123/approve.json?auth_token=XXXXX&amp;company_id=1
+PUT /api/v1/events/123/approve.json
 {
   success: true
   info: &quot;Event successfully approved&quot;
@@ -1833,7 +2074,7 @@ PUT /api/v1/events/123/approve.json?auth_token=XXXXX&amp;company_id=1
 }
 </pre>
     <pre class="prettyprint">Response when trying to approve a event that is already approved
-PUT /api/v1/events/123/approve.json?auth_token=XXXXX&amp;company_id=1
+PUT /api/v1/events/123/approve.json
 {
   success: false
   info: &quot;Event cannot transition to approved from approved&quot;
@@ -1852,48 +2093,6 @@ PUT /api/v1/events/123/approve.json?auth_token=XXXXX&amp;company_id=1
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>id </strong><br>
       <small>
         required
@@ -1905,7 +2104,9 @@ PUT /api/v1/events/123/approve.json?auth_token=XXXXX&amp;company_id=1
 <p>Event ID</p>
 
         <br>
-        Value: Must be a number.
+        Value: 
+<p>Must be a number.</p>
+
 
 
     </td>
@@ -1916,6 +2117,8 @@ PUT /api/v1/events/123/approve.json?auth_token=XXXXX&amp;company_id=1
 
     </tbody>
   </table>
+
+
 
     </div>
     <hr>
@@ -1943,6 +2146,9 @@ PUT /api/v1/events/123/approve.json?auth_token=XXXXX&amp;company_id=1
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     401
     Unauthorized access
     <br>
@@ -1962,7 +2168,7 @@ PUT /api/v1/events/123/approve.json?auth_token=XXXXX&amp;company_id=1
 
   <h3>Examples</h3>
     <pre class="prettyprint">Response when the event was successfully rejected
-PUT /api/v1/events/123/reject.json?auth_token=XXXXX&amp;company_id=1
+PUT /api/v1/events/123/reject.json
 DATA: {
   reason: &#39;Please attach some photos of the event&#39;
 }
@@ -1975,7 +2181,7 @@ RESPONSE:
 }
 </pre>
     <pre class="prettyprint">Response when trying to reject a event that is already rejected
-PUT /api/v1/events/123/reject.json?auth_token=XXXXX&amp;company_id=1
+PUT /api/v1/events/123/reject.json
 DATA: {
   reason: &#39;Add the invoice for the expenses&#39;
 }
@@ -1998,48 +2204,6 @@ RESPONSE:
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>id </strong><br>
       <small>
         required
@@ -2051,7 +2215,9 @@ RESPONSE:
 <p>Event ID</p>
 
         <br>
-        Value: Must be a number.
+        Value: 
+<p>Must be a number.</p>
+
 
 
     </td>
@@ -2072,7 +2238,9 @@ RESPONSE:
 <p>Rejection reason (required when rejecting a event)</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -2083,6 +2251,8 @@ RESPONSE:
 
     </tbody>
   </table>
+
+
 
     </div>
     <hr>
@@ -2201,6 +2371,9 @@ the event</p>
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     401
     Unauthorized access
     <br>
@@ -2220,7 +2393,7 @@ the event</p>
 
   <h3>Examples</h3>
     <pre class="prettyprint">A response with all the different kind of fields
-GET /api/v1/events/123/results.json?auth_token=AYUjmsdi-jau123&amp;company_id=1
+GET /api/v1/events/123/results.json
 [
     {
         &quot;module&quot;: &quot;demographics&quot;,
@@ -2600,48 +2773,6 @@ GET /api/v1/events/123/results.json?auth_token=AYUjmsdi-jau123&amp;company_id=1
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>id </strong><br>
       <small>
         required
@@ -2653,7 +2784,9 @@ GET /api/v1/events/123/results.json?auth_token=AYUjmsdi-jau123&amp;company_id=1
 <p>Event ID</p>
 
         <br>
-        Value: Must be a number.
+        Value: 
+<p>Must be a number.</p>
+
 
 
     </td>
@@ -2664,6 +2797,8 @@ GET /api/v1/events/123/results.json?auth_token=AYUjmsdi-jau123&amp;company_id=1
 
     </tbody>
   </table>
+
+
 
     </div>
     <hr>
@@ -2735,6 +2870,9 @@ team. The items are sorted by name.</p>
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     401
     Unauthorized access
     <br>
@@ -2754,7 +2892,7 @@ team. The items are sorted by name.</p>
 
   <h3>Examples</h3>
     <pre class="prettyprint">An example with a event with both, users and teams
-GET: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&amp;company_id=1
+GET: /api/v1/events/8383/members.json
 [
     {
         &quot;id&quot;: 22,
@@ -2785,7 +2923,7 @@ GET: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&amp;compan
 ]
 </pre>
     <pre class="prettyprint">An example with a event with only users and no teams
-GET: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&amp;company_id=1
+GET: /api/v1/events/8383/members.json
 [
     {
         &quot;id&quot;: 268,
@@ -2804,7 +2942,7 @@ GET: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&amp;compan
 ]
 </pre>
     <pre class="prettyprint">An example requesting only the teams and not the users
-GET: /api/v1/events/8383/members.json?type=team&amp;auth_token=swyonWjtcZsbt7N8LArj&amp;company_id=1
+GET: /api/v1/events/8383/members.json?type=team
 [
     {
         &quot;id&quot;: 22,
@@ -2831,48 +2969,6 @@ GET: /api/v1/events/8383/members.json?type=team&amp;auth_token=swyonWjtcZsbt7N8L
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>id </strong><br>
       <small>
         required
@@ -2884,7 +2980,9 @@ GET: /api/v1/events/8383/members.json?type=team&amp;auth_token=swyonWjtcZsbt7N8L
 <p>Event ID</p>
 
         <br>
-        Value: Must be a number.
+        Value: 
+<p>Must be a number.</p>
+
 
 
     </td>
@@ -2905,7 +3003,9 @@ GET: /api/v1/events/8383/members.json?type=team&amp;auth_token=swyonWjtcZsbt7N8L
 <p>Filter the results by type</p>
 
         <br>
-        Value: Must be one of: user, team.
+        Value: 
+<p>Must be one of: user, team.</p>
+
 
 
     </td>
@@ -2916,6 +3016,8 @@ GET: /api/v1/events/8383/members.json?type=team&amp;auth_token=swyonWjtcZsbt7N8L
 
     </tbody>
   </table>
+
+
 
     </div>
     <hr>
@@ -2961,6 +3063,9 @@ descrition</p>
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     401
     Unauthorized access
     <br>
@@ -2980,7 +3085,7 @@ descrition</p>
 
   <h3>Examples</h3>
     <pre class="prettyprint">An example with a user and a contact in the response
-GET: /api/v1/events/8383/assignable_members.json?auth_token=swyonWjtcZsbt7N8LArj&amp;company_id=1
+GET: /api/v1/events/8383/assignable_members.json
 [
   {
       &quot;id&quot;: 268,
@@ -3007,48 +3112,6 @@ GET: /api/v1/events/8383/assignable_members.json?auth_token=swyonWjtcZsbt7N8LArj
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>id </strong><br>
       <small>
         required
@@ -3060,7 +3123,9 @@ GET: /api/v1/events/8383/assignable_members.json?auth_token=swyonWjtcZsbt7N8LArj
 <p>Event ID</p>
 
         <br>
-        Value: Must be a number.
+        Value: 
+<p>Must be a number.</p>
+
 
 
     </td>
@@ -3071,6 +3136,8 @@ GET: /api/v1/events/8383/assignable_members.json?auth_token=swyonWjtcZsbt7N8LArj
 
     </tbody>
   </table>
+
+
 
     </div>
     <hr>
@@ -3099,6 +3166,9 @@ GET: /api/v1/events/8383/assignable_members.json?auth_token=swyonWjtcZsbt7N8LArj
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     401
     Unauthorized access
     <br>
@@ -3118,7 +3188,7 @@ GET: /api/v1/events/8383/assignable_members.json?auth_token=swyonWjtcZsbt7N8LArj
 
   <h3>Examples</h3>
     <pre class="prettyprint">Adding an user to the event members
-POST: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&amp;company_id=1
+POST: /api/v1/events/8383/members.json
 DATA:
 {
   &#39;memberable_id&#39;: 1,
@@ -3133,7 +3203,7 @@ RESPONSE:
 }
 </pre>
     <pre class="prettyprint">Adding a team to the event members
-POST: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&amp;company_id=1
+POST: /api/v1/events/8383/members.json
 DATA:
 {
   &#39;memberable_id&#39;: 1,
@@ -3159,48 +3229,6 @@ RESPONSE:
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>memberable_id </strong><br>
       <small>
         required
@@ -3212,7 +3240,9 @@ RESPONSE:
 <p>The ID of team/user to be added as a member</p>
 
         <br>
-        Value: Must be a number.
+        Value: 
+<p>Must be a number.</p>
+
 
 
     </td>
@@ -3233,7 +3263,9 @@ RESPONSE:
 <p>The type of element to be added as a member</p>
 
         <br>
-        Value: Must be one of: user, team.
+        Value: 
+<p>Must be one of: user, team.</p>
+
 
 
     </td>
@@ -3244,6 +3276,8 @@ RESPONSE:
 
     </tbody>
   </table>
+
+
 
     </div>
     <hr>
@@ -3271,6 +3305,9 @@ RESPONSE:
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     401
     Unauthorized access
     <br>
@@ -3290,7 +3327,7 @@ RESPONSE:
 
   <h3>Examples</h3>
     <pre class="prettyprint">Deleting an user from the event members
-DELETE: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&amp;company_id=1
+DELETE: /api/v1/events/8383/members.json
 DATA:
 {
   &#39;memberable_id&#39;: 1,
@@ -3305,7 +3342,7 @@ RESPONSE:
 }
 </pre>
     <pre class="prettyprint">Deleting a team from the event members
-DELETE: /api/v1/events/8383/members.json?auth_token=swyonWjtcZsbt7N8LArj&amp;company_id=1
+DELETE: /api/v1/events/8383/members.json
 DATA:
 {
   &#39;memberable_id&#39;: 1,
@@ -3331,48 +3368,6 @@ RESPONSE:
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>memberable_id </strong><br>
       <small>
         required
@@ -3384,7 +3379,9 @@ RESPONSE:
 <p>The ID of team/user to be deleted as a member</p>
 
         <br>
-        Value: Must be a number.
+        Value: 
+<p>Must be a number.</p>
+
 
 
     </td>
@@ -3405,7 +3402,9 @@ RESPONSE:
 <p>The type of element to be deleted as a member</p>
 
         <br>
-        Value: Must be one of: user, team.
+        Value: 
+<p>Must be one of: user, team.</p>
+
 
 
     </td>
@@ -3416,6 +3415,8 @@ RESPONSE:
 
     </tbody>
   </table>
+
+
 
     </div>
     <hr>
@@ -3505,6 +3506,9 @@ The results are sorted by the contact&#39;s full name.</p>
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     401
     Unauthorized access
     <br>
@@ -3524,7 +3528,7 @@ The results are sorted by the contact&#39;s full name.</p>
 
   <h3>Examples</h3>
     <pre class="prettyprint">An example with a event with one contact
-GET: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&amp;company_id=1
+GET: /api/v1/events/8383/contacts.json
 [
   {
       &quot;id&quot;: 268,
@@ -3543,7 +3547,7 @@ GET: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&amp;compa
 ]
 </pre>
     <pre class="prettyprint">An example with a event with one contact and one user
-GET: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&amp;company_id=1
+GET: /api/v1/events/8383/contacts.json
 [
   {
       &quot;id&quot;: 268,
@@ -3588,48 +3592,6 @@ GET: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&amp;compa
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>id </strong><br>
       <small>
         required
@@ -3641,7 +3603,9 @@ GET: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&amp;compa
 <p>Event ID</p>
 
         <br>
-        Value: Must be a number.
+        Value: 
+<p>Must be a number.</p>
+
 
 
     </td>
@@ -3652,6 +3616,8 @@ GET: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&amp;compa
 
     </tbody>
   </table>
+
+
 
     </div>
     <hr>
@@ -3696,6 +3662,9 @@ users but excluding those that are already associted.</p>
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     401
     Unauthorized access
     <br>
@@ -3715,7 +3684,7 @@ users but excluding those that are already associted.</p>
 
   <h3>Examples</h3>
     <pre class="prettyprint">An example with a user and a contact in the response
-GET: /api/v1/events/8383/assignable_contacts.json?auth_token=swyonWjtcZsbt7N8LArj&amp;company_id=1
+GET: /api/v1/events/8383/assignable_contacts.json
 [
   {
       &quot;id&quot;: 268,
@@ -3731,7 +3700,7 @@ GET: /api/v1/events/8383/assignable_contacts.json?auth_token=swyonWjtcZsbt7N8LAr
 ]
 </pre>
     <pre class="prettyprint">An example with a term search
-GET: /api/v1/events/8383/assignable_contacts.json?auth_token=swyonWjtcZsbt7N8LArj&amp;company_id=1&amp;term=ruiz
+GET: /api/v1/events/8383/assignable_contacts.json?term=ruiz
 [
   {
       &quot;id&quot;: 268,
@@ -3758,48 +3727,6 @@ GET: /api/v1/events/8383/assignable_contacts.json?auth_token=swyonWjtcZsbt7N8LAr
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>id </strong><br>
       <small>
         required
@@ -3811,7 +3738,9 @@ GET: /api/v1/events/8383/assignable_contacts.json?auth_token=swyonWjtcZsbt7N8LAr
 <p>Event ID</p>
 
         <br>
-        Value: Must be a number.
+        Value: 
+<p>Must be a number.</p>
+
 
 
     </td>
@@ -3832,7 +3761,9 @@ GET: /api/v1/events/8383/assignable_contacts.json?auth_token=swyonWjtcZsbt7N8LAr
 <p>A search term to filter the list of contacts/events</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -3843,6 +3774,8 @@ GET: /api/v1/events/8383/assignable_contacts.json?auth_token=swyonWjtcZsbt7N8LAr
 
     </tbody>
   </table>
+
+
 
     </div>
     <hr>
@@ -3871,6 +3804,9 @@ GET: /api/v1/events/8383/assignable_contacts.json?auth_token=swyonWjtcZsbt7N8LAr
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     401
     Unauthorized access
     <br>
@@ -3890,7 +3826,7 @@ GET: /api/v1/events/8383/assignable_contacts.json?auth_token=swyonWjtcZsbt7N8LAr
 
   <h3>Examples</h3>
     <pre class="prettyprint">Adding a user to the event contacts
-POST: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&amp;company_id=1
+POST: /api/v1/events/8383/contacts.json
 DATA:
 {
   &#39;contactable_id&#39;: 1,
@@ -3905,7 +3841,7 @@ RESPONSE:
 }
 </pre>
     <pre class="prettyprint">Adding a contact to the event contacts
-POST: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&amp;company_id=1
+POST: /api/v1/events/8383/contacts.json
 DATA:
 {
   &#39;contactable_id&#39;: 1,
@@ -3931,48 +3867,6 @@ RESPONSE:
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>contactable_id </strong><br>
       <small>
         required
@@ -3984,7 +3878,9 @@ RESPONSE:
 <p>The ID of contact/user to be added as a contact</p>
 
         <br>
-        Value: Must be a number.
+        Value: 
+<p>Must be a number.</p>
+
 
 
     </td>
@@ -4005,7 +3901,9 @@ RESPONSE:
 <p>The type of element to be added as a contact</p>
 
         <br>
-        Value: Must be one of: user, contact.
+        Value: 
+<p>Must be one of: user, contact.</p>
+
 
 
     </td>
@@ -4016,6 +3914,8 @@ RESPONSE:
 
     </tbody>
   </table>
+
+
 
     </div>
     <hr>
@@ -4043,6 +3943,9 @@ RESPONSE:
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     401
     Unauthorized access
     <br>
@@ -4062,7 +3965,7 @@ RESPONSE:
 
   <h3>Examples</h3>
     <pre class="prettyprint">Deleting an user from the event contacts
-DELETE: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&amp;company_id=1
+DELETE: /api/v1/events/8383/contacts.json
 DATA:
 {
   &#39;contactable_id&#39;: 1,
@@ -4077,7 +3980,7 @@ RESPONSE:
 }
 </pre>
     <pre class="prettyprint">Deleting a contact from the event contacts
-DELETE: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&amp;company_id=1
+DELETE: /api/v1/events/8383/contacts.json
 DATA:
 {
   &#39;contactable_id&#39;: 1,
@@ -4103,48 +4006,6 @@ RESPONSE:
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>contactable_id </strong><br>
       <small>
         required
@@ -4156,7 +4017,9 @@ RESPONSE:
 <p>The ID of contact/user to be deleted as a contact</p>
 
         <br>
-        Value: Must be a number.
+        Value: 
+<p>Must be a number.</p>
+
 
 
     </td>
@@ -4177,7 +4040,9 @@ RESPONSE:
 <p>The type of element to be deleted as a contact</p>
 
         <br>
-        Value: Must be one of: user, contact.
+        Value: 
+<p>Must be one of: user, contact.</p>
+
 
 
     </td>
@@ -4188,6 +4053,8 @@ RESPONSE:
 
     </tbody>
   </table>
+
+
 
     </div>
 </div>

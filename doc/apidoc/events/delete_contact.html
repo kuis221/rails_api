@@ -49,6 +49,9 @@
   json, xml
 
   <h2>Errors</h2>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     401
     Unauthorized access
     <br>
@@ -68,7 +71,7 @@
 
   <h2>Examples</h2>
     <pre class="prettyprint">Deleting an user from the event contacts
-DELETE: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&amp;company_id=1
+DELETE: /api/v1/events/8383/contacts.json
 DATA:
 {
   &#39;contactable_id&#39;: 1,
@@ -83,7 +86,7 @@ RESPONSE:
 }
 </pre>
     <pre class="prettyprint">Deleting a contact from the event contacts
-DELETE: /api/v1/events/8383/contacts.json?auth_token=swyonWjtcZsbt7N8LArj&amp;company_id=1
+DELETE: /api/v1/events/8383/contacts.json
 DATA:
 {
   &#39;contactable_id&#39;: 1,
@@ -109,48 +112,6 @@ RESPONSE:
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>contactable_id </strong><br>
       <small>
         required
@@ -162,7 +123,9 @@ RESPONSE:
 <p>The ID of contact/user to be deleted as a contact</p>
 
         <br>
-        Value: Must be a number.
+        Value: 
+<p>Must be a number.</p>
+
 
 
     </td>
@@ -183,7 +146,9 @@ RESPONSE:
 <p>The type of element to be deleted as a contact</p>
 
         <br>
-        Value: Must be one of: user, contact.
+        Value: 
+<p>Must be one of: user, contact.</p>
+
 
 
     </td>
@@ -194,6 +159,8 @@ RESPONSE:
 
     </tbody>
   </table>
+
+
 
 </div>
 

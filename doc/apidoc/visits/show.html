@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>API documentation</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/bootstrap.min.css'/>
+<link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/prettify.css'/>
+<link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/bootstrap-responsive.min.css'/>
+  <link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/application.css'/>
+  <!-- IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div id='container'>
+        <ul class='breadcrumb'>
+  <li>
+    <a href='../../apidoc.html'>Brandscopic 1.0</a>
+    <span class='divider'>/</span>
+  </li>
+  <li>
+    <a href='../../apidoc/visits.html'>
+      Brand Ambassadors Visits
+      
+    </a>
+    <span class='divider'>/</span>
+  </li>
+  <li class='active'>show</li>
+  
+
+</ul>
+
+  <div class='page-header'>
+    <h1>
+      GET /api/v1/brand_ambassadors/visits/:id
+      <br>
+      <small>Return a visit's details</small>
+    </h1>
+  </div>
+
+<div>
+
+  
+<p>Returns the event&#39;s details, including the actions that a user can
+perform on this event according to the user&#39;s permissions and the KPIs
+that are enabled for the event&#39;s campaign.</p>
+
+<p>The possible attributes returned are:</p>
+
+<pre>* *id*: the visits&#39;s ID
+* *visit_type_name*: the visit&#39;s type name
+* *start_date*: the visit&#39;s start date
+* *end_date*: the visit&#39;s end date
+* *campaign_name*: the campaign to which the visit belongs
+* *area_name*: the area to which the visit belongs
+* *city*: the city for the visit
+* *description*: the visit&#39;s description
+* *status*: the visit&#39;s status
+* *user*:
+  * *id*: the user id
+  * *full_name*: the name of the user to which the visit belongs</pre>
+
+
+  <h2>Supported Formats</h2>
+  json, xml
+
+  <h2>Errors</h2>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
+    401
+    Unauthorized access
+    <br>
+    404
+    The requested resource was not found
+    <br>
+    406
+    The server cannot return data in the requested format
+    <br>
+    422
+    Unprocessable Entity: The change could not be processed because of errors on the data
+    <br>
+    500
+    Server crashed for some reason. Possible because of missing required params or wrong parameters
+    <br>
+
+
+  <h2>Examples</h2>
+    <pre class="prettyprint">{
+  id: 319,
+  visit_type_name: &quot;Brand Program&quot;,
+  start_date: &quot;2014-11-08&quot;,
+  end_date: &quot;2014-11-08&quot;,
+  campaign_name: &quot;Whisky Show TGL FY15&quot;,
+  area_name: &quot;Atlanta&quot;,
+  city: &quot;Atlanta&quot;,
+  description: &quot;Whiskies of the World show. &quot;,
+  status: &quot;Active&quot;,
+  user: {
+    id: 88,
+    full_name: &quot;Craig Vaught&quot;
+  }
+}
+</pre>
+
+  <h2>Params</h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>id </strong><br>
+      <small>
+        required
+        
+      </small>
+    </td>
+    <td>
+      
+<p>Visit ID</p>
+
+        <br>
+        Value: 
+<p>Must be Integer.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+
+
+</div>
+
+
+        
+      </div>
+    </div>
+    <hr>
+    <footer></footer>
+  </div>
+  <script type='text/javascript' src='../../apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/bundled/bootstrap-collapse.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/bundled/prettify.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/apipie.js'></script>
+</body>
+</html>

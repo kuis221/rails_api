@@ -51,47 +51,14 @@ the &lt;page&gt; param.</p>
 
 <p>All the times and dates are returned on the user&#39;s timezone.</p>
 
-<p><strong>Facets</strong></p>
-
-<p>Faceting is a feature of Solr that determines the number of documents that
-match a given search and an additional criteria</p>
-
-<p>When &lt;page&gt; is “1”, the result will include a list of facets scoped
-on the following search params</p>
-<ul><li>
-<p>start_date</p>
-</li><li>
-<p>end_date</p>
-</li></ul>
-
-<p>*Facets Results*</p>
-
-<p>The API returns the facets on the following format:</p>
-
-<pre>[
-  {
-    label: String,            # Any of: Campaigns, Brands, Location, People, Active State, Event Status
-    items: [                  # List of items for the facet sorted by relevance
-      {
-        &quot;label&quot;: String,      # The name of the item
-        &quot;id&quot;: String,         # The id of the item, this should be used to filter the list by this items
-        &quot;name&quot;: String,       # The param name to be use for filtering the list (campaign, user, team, place, area, status, event_status)
-        &quot;count&quot;: Number,      # The number of results for this item
-        &quot;selected&quot;: Boolean   # True if the list is being filtered by this item
-      },
-      ....
-    ],
-    top_items: [              # Some facets will return this as a list of items that have the greater number of results
-      &lt;other list of items&gt;
-    ]
-  }
-]</pre>
-
 
   <h2>Supported Formats</h2>
   json, xml
 
   <h2>Errors</h2>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     401
     Unauthorized access
     <br>
@@ -187,48 +154,6 @@ on the following search params</p>
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>start_date </strong><br>
       <small>
         optional
@@ -242,7 +167,9 @@ on the following search params</p>
 this day. The date should be in the format MM/DD/YYYY.</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must match regular expression /Ad{1,2}/d{1,2}/d{4}z/.</p>
+
 
 
     </td>
@@ -266,7 +193,9 @@ those events that are between that range. The date should be in the format
 MM/DD/YYYY.</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must match regular expression /Ad{1,2}/d{1,2}/d{4}z/.</p>
+
 
 
     </td>
@@ -287,7 +216,9 @@ MM/DD/YYYY.</p>
 <p>A list of campaign ids to filter the results</p>
 
         <br>
-        Value: Must be an array of any type
+        Value: 
+<p>Must be an array of any type</p>
+
 
 
     </td>
@@ -308,7 +239,32 @@ MM/DD/YYYY.</p>
 <p>A list of places to filter the results</p>
 
         <br>
-        Value: Must be an array of any type
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>venue </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of venues to filter the results</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
 
 
     </td>
@@ -329,7 +285,9 @@ MM/DD/YYYY.</p>
 <p>A list of areas to filter the results</p>
 
         <br>
-        Value: Must be an array of any type
+        Value: 
+<p>Must be an array of any type</p>
+
 
 
     </td>
@@ -350,7 +308,9 @@ MM/DD/YYYY.</p>
 <p>A list of users to filter the results</p>
 
         <br>
-        Value: Must be an array of any type
+        Value: 
+<p>Must be an array of any type</p>
+
 
 
     </td>
@@ -371,7 +331,9 @@ MM/DD/YYYY.</p>
 <p>A list of teams to filter the results</p>
 
         <br>
-        Value: Must be an array of any type
+        Value: 
+<p>Must be an array of any type</p>
+
 
 
     </td>
@@ -392,7 +354,9 @@ MM/DD/YYYY.</p>
 <p>A list of brands to filter the results</p>
 
         <br>
-        Value: Must be an array of any type
+        Value: 
+<p>Must be an array of any type</p>
+
 
 
     </td>
@@ -413,7 +377,9 @@ MM/DD/YYYY.</p>
 <p>A list of brand portfolios to filter the results</p>
 
         <br>
-        Value: Must be an array of any type
+        Value: 
+<p>Must be an array of any type</p>
+
 
 
     </td>
@@ -435,7 +401,9 @@ MM/DD/YYYY.</p>
 &#39;Active&#39;, &#39;Inactive&#39;</p>
 
         <br>
-        Value: Must be an array of any type
+        Value: 
+<p>Must be an array of any type</p>
+
 
 
     </td>
@@ -458,7 +426,9 @@ are: &#39;Scheduled&#39;, &#39;Executed&#39;, &#39;Submitted&#39;,
 &#39;Approved&#39;, &#39;Rejected&#39;, &#39;Late&#39;, &#39;Due&#39;</p>
 
         <br>
-        Value: Must be an array of any type
+        Value: 
+<p>Must be an array of any type</p>
+
 
 
     </td>
@@ -479,7 +449,9 @@ are: &#39;Scheduled&#39;, &#39;Executed&#39;, &#39;Submitted&#39;,
 <p>The number of the page, Default: 1</p>
 
         <br>
-        Value: Must be a number.
+        Value: 
+<p>Must be a number.</p>
+
 
 
     </td>
@@ -490,6 +462,8 @@ are: &#39;Scheduled&#39;, &#39;Executed&#39;, &#39;Submitted&#39;,
 
     </tbody>
   </table>
+
+
 
 </div>
 

@@ -41,6 +41,8 @@
   <h2>Supported Formats</h2>
   json, xml
 
+
+
 <div class='accordion' id='accordion'>
 
     <hr>
@@ -98,6 +100,9 @@ to (if any)</p>
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     404
     Missing
     <br>
@@ -113,7 +118,7 @@ to (if any)</p>
 
 
   <h3>Examples</h3>
-    <pre class="prettyprint">GET: /api/v1/events/1351/surveys.json?auth_token=swyonWjtcZsbt7N8LArj&amp;company_id=1
+    <pre class="prettyprint">GET: /api/v1/events/1351/surveys.json
 [
     {
         &quot;id&quot;: 1,
@@ -242,48 +247,6 @@ to (if any)</p>
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>event_id </strong><br>
       <small>
         required
@@ -295,7 +258,9 @@ to (if any)</p>
 <p>Event ID</p>
 
         <br>
-        Value: Must be a number.
+        Value: 
+<p>Must be a number.</p>
+
 
 
     </td>
@@ -306,6 +271,8 @@ to (if any)</p>
 
     </tbody>
   </table>
+
+
 
     </div>
     <hr>
@@ -359,6 +326,9 @@ to (if any)</p>
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     404
     Missing
     <br>
@@ -374,7 +344,7 @@ to (if any)</p>
 
 
   <h3>Examples</h3>
-    <pre class="prettyprint">GET: /api/v1/events/1351/surveys/1.json?auth_token=swyonWjtcZsbt7N8LArj&amp;company_id=1
+    <pre class="prettyprint">GET: /api/v1/events/1351/surveys/1.json
 [
     {
         &quot;id&quot;: 1,
@@ -503,48 +473,6 @@ to (if any)</p>
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>event_id </strong><br>
       <small>
         required
@@ -556,7 +484,9 @@ to (if any)</p>
 <p>Event ID</p>
 
         <br>
-        Value: Must be a number.
+        Value: 
+<p>Must be a number.</p>
+
 
 
     </td>
@@ -567,6 +497,8 @@ to (if any)</p>
 
     </tbody>
   </table>
+
+
 
     </div>
     <hr>
@@ -602,6 +534,9 @@ to (if any)</p>
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     404
     Missing
     <br>
@@ -734,48 +669,6 @@ RESPONSE:
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>survey </strong><br>
       <small>
         required
@@ -785,7 +678,9 @@ RESPONSE:
     <td>
       
         <br>
-        Value: Must be a Hash
+        Value: 
+<p>Must be a Hash</p>
+
 
 
     </td>
@@ -870,7 +765,9 @@ this for, the value can be one of the following:</p>
 </li></ul>
 
         <br>
-        Value: Must be a list of answers [id, answer].
+        Value: 
+<p>Must be a list of answers [id, answer].</p>
+
 
 
     </td>
@@ -882,6 +779,8 @@ this for, the value can be one of the following:</p>
 
     </tbody>
   </table>
+
+
 
     </div>
     <hr>
@@ -909,6 +808,9 @@ this for, the value can be one of the following:</p>
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     404
     Missing
     <br>
@@ -1041,48 +943,6 @@ RESPONSE:
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>survey </strong><br>
       <small>
         required
@@ -1092,7 +952,9 @@ RESPONSE:
     <td>
       
         <br>
-        Value: Must be a Hash
+        Value: 
+<p>Must be a Hash</p>
+
 
 
     </td>
@@ -1110,7 +972,9 @@ RESPONSE:
     <td>
       
         <br>
-        Value: Must be a list of answers [id, answer].
+        Value: 
+<p>Must be a list of answers [id, answer].</p>
+
 
 
     </td>
@@ -1122,6 +986,8 @@ RESPONSE:
 
     </tbody>
   </table>
+
+
 
     </div>
     <hr>
@@ -1151,6 +1017,9 @@ RESPONSE:
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     404
     Missing
     <br>
@@ -1183,60 +1052,8 @@ RESPONSE:
 ]
 </pre>
 
-  <h3>Params</h3>
-  <table class='table'>
-    <thead>
-      <tr>
-        <th>Param name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
 
 
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-
-    </tbody>
-  </table>
 
     </div>
 </div>

@@ -49,6 +49,9 @@
   json, xml
 
   <h2>Errors</h2>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     404
     Missing
     <br>
@@ -181,48 +184,6 @@ RESPONSE:
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>survey </strong><br>
       <small>
         required
@@ -232,7 +193,9 @@ RESPONSE:
     <td>
       
         <br>
-        Value: Must be a Hash
+        Value: 
+<p>Must be a Hash</p>
+
 
 
     </td>
@@ -250,7 +213,9 @@ RESPONSE:
     <td>
       
         <br>
-        Value: Must be a list of answers [id, answer].
+        Value: 
+<p>Must be a list of answers [id, answer].</p>
+
 
 
     </td>
@@ -262,6 +227,8 @@ RESPONSE:
 
     </tbody>
   </table>
+
+
 
 </div>
 
