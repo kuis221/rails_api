@@ -20,5 +20,25 @@
 #
 
 class DataExtract::DateRange < DataExtract
-  define_columns [:name, :description, :created_by_full_name, :created_at]
+  define_columns name: 'name', 
+                 description: 'description', 
+                 created_by: 'trim(users.first_name || \' \' || users.last_name)', 
+                 created_at: proc { "to_char(date_ranges.created_at, 'MM/DD/YYYY')" }
+
+  def add_joins_to_scope(s)
+    if columns.include?('created_by') || filters.present? && filters['user'].present?
+      s = s.joins('LEFT JOIN users ON date_ranges.created_by_id=users.id')
+    end
+    s
+  end
+
+  def total_results
+    DateRange.connection.select_value("SELECT COUNT(*) FROM (#{base_scope.select(*selected_columns_to_sql).to_sql}) sq").to_i
+  end
+
+  def add_filter_conditions_to_scope(s)
+    return s if filters.nil? || filters.empty?
+    s = s.where(active: filters['active_state'].map { |f| f == 'active' ? true : false }) if filters['active_state'].present?
+    s
+  end
 end
