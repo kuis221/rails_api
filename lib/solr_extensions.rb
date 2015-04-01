@@ -164,14 +164,25 @@ module Sunspot
           end
 
         if start_date.present? && end_date.present?
-          d1 = Timeliness.parse(start_date, zone: :current).beginning_of_day
-          d2 = Timeliness.parse(end_date, zone: :current).end_of_day
+          start_date = Array(start_date)
+          end_date = Array(end_date)
           any_of do
-            with start_at_field, d1..d2
-            with end_at_field, d1..d2
+            start_date.each_with_index do |start, index|
+              d1 = Timeliness.parse(start, zone: :current).beginning_of_day
+              d2 = Timeliness.parse(end_date[index], zone: :current).end_of_day
+              if d1 == d2
+                all_of do
+                  with(start_at_field).less_than(d1.end_of_day)
+                  with(end_at_field).greater_than(d1.beginning_of_day)
+                end
+              else
+                with start_at_field, d1..d2
+                with end_at_field, d1..d2
+              end
+            end
           end
         elsif start_date.present?
-          d = Timeliness.parse(start_date, zone: :current)
+          d = Timeliness.parse(start_date[0], zone: :current)
           all_of do
             with(start_at_field).less_than(d.end_of_day)
             with(end_at_field).greater_than(d.beginning_of_day)

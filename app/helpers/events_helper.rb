@@ -111,10 +111,21 @@ module EventsHelper
   end
 
   def describe_custom_date_ranges
-    start_date = params[:start_date].blank? ? nil : params[:start_date]
-    end_date = params[:end_date].blank? ? nil : params[:end_date]
+    params[:start_date] = Array(params[:start_date])
+    params[:end_date] = Array(params[:end_date])
+
+    dates_descriptions = ''
+    params[:start_date].each_with_index do |start_date, index|
+      start_date = start_date.blank? ? nil : start_date
+      end_date = params[:end_date][index].blank? ? nil : params[:end_date][index]
+      dates_descriptions += describe_custom_date_range(start_date, end_date)
+    end
+    dates_descriptions
+  end
+
+  def describe_custom_date_range(start_date, end_date)
     return if start_date.nil?
-    dates = [start_date, end_date].compact.map { |d| Timeliness.parse(d).to_date }.map do |d|
+    dates = [start_date, end_date == start_date ? nil : end_date].compact.map { |d| Timeliness.parse(d).to_date }.map do |d|
       if d == Time.current.to_date
         'today'
       elsif d == (Time.current - 1.day).to_date
@@ -130,13 +141,14 @@ module EventsHelper
       if dates.count > 1 && dates[1].is_a?(Date) && (dates[1].year > Time.zone.now.year + 2)
         "#{dates[0].is_a?(Date) ? dates[0].to_s(:simple_short) : dates[0]} to the future"
       else
-        dates.map{ |d| d.is_a?(Date) ? d.to_s(:simple_short) : d }.join(' - ')
+        dates.map { |d| d.is_a?(Date) ? d.to_s(:simple_short) : d }.join(' - ')
       end
-    build_filter_object_item dates, "date"
+
+    build_filter_object_item dates, 'date', expandible: false, start_date: start_date, end_date: end_date
   end
 
   def describe_range_filters
-    params.select{ |k, v| v.is_a?(Hash) && v.key?(:max) && v.key?(:min) }.map do |k, v|
+    params.select { |_k, v| v.is_a?(Hash) && v.key?(:max) && v.key?(:min) }.map do |k, v|
       build_filter_object_item "#{I18n.t('range_filters.' + k.to_s)} between #{v[:min]} and #{v[:max]}", k
     end
   end
@@ -189,7 +201,7 @@ module EventsHelper
   end
 
   def describe_cities
-    build_filter_object_list :city, filter_params(:city).map{ |city| [city,city] }
+    build_filter_object_list :city, filter_params(:city).map { |city| [city, city] }
   end
 
   def describe_prices
@@ -197,9 +209,9 @@ module EventsHelper
       '1' => '$',
       '2' => '$$',
       '3' => '$$$',
-      '4' => '$$$$',
+      '4' => '$$$$'
     }
-    build_filter_object_list :price, filter_params(:price).map{ |price| [price, prices[price]] }
+    build_filter_object_list :price, filter_params(:price).map { |price| [price, prices[price]] }
   end
 
 
@@ -231,9 +243,9 @@ module EventsHelper
     event_status = filter_params(:event_status).sort
     task_status = filter_params(:task_status).sort
     [
-      build_filter_object_list(:status, status.map{ |status| [status,status] }),
-      build_filter_object_list(:event_status, event_status.map{ |status| [status,status] }),
-      build_filter_object_list(:task_status, task_status.map{ |status| [status,status] })
+      build_filter_object_list(:status, status.map { |status| [status, status] }),
+      build_filter_object_list(:event_status, event_status.map { |status| [status, status] }),
+      build_filter_object_list(:task_status, task_status.map { |status| [status, status] })
     ].compact.join(' ')
   end
 
@@ -251,7 +263,7 @@ module EventsHelper
       '4' => '4 stars',
       '5' => '5 stars'
     }
-    build_filter_object_list :rating, filter_params(:rating).map{ |rating| [rating, ratings[rating]] }
+    build_filter_object_list :rating, filter_params(:rating).map { |rating| [rating, ratings[rating]] }
   end
 
   def describe_custom_filters
@@ -285,14 +297,17 @@ module EventsHelper
     end.join(' ').html_safe
   end
 
-  def build_filter_object_item(label, filter_name, expandible: false)
+  def build_filter_object_item(label, filter_name, expandible: false, start_date: '', end_date: '')
+    remove_data = { filter: filter_name }
+    remove_data[:start_date] = start_date if start_date.present?
+    remove_data[:end_date] = end_date if end_date.present?
     content_tag(:div,  class: 'filter-item') do
       (expandible ? link_to('', '#', class: 'icon icon-plus',
                                      title: 'Expand this filter',
                                      data: { filter: filter_name }) : ''.html_safe) +
       label.html_safe + link_to('', '#', class: 'icon icon-close',
                                          title: 'Remove this filter',
-                                         data: { filter: filter_name })
+                                         data: remove_data)
     end
   end
 
