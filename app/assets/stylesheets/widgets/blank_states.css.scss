@@ -5,7 +5,35 @@ A markup for Blank States
 Styleguide 5.1
 */
 
+.blank-state{
+	p{
+		color: $brand;
+		max-width: 410px;
+		margin-left: auto;
+		margin-right: auto;
+		position: relative;
+		&:before{
+			content: "";
+			background: image-url('blank-states-arrow.svg');
+			height: 75px;
+			left: -158px;
+			position: absolute;
+			top: -58px;
+			width: 148px;
+		}
+	}
+}
 
-.lalal{
-	background-color: red;
+.blank-state-icon{
+	height: 100px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 65px;
+	width: 100px;
+}
+
+.arrow-indicator{
+	position: absolute;
+	left:0;
+	top:0;
 }
