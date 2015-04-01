@@ -648,6 +648,19 @@ class Event < ActiveRecord::Base
       end
     end
 
+    def apply_user_permissions_to_search(permission_class, permission, company_user)
+      proc do
+        unless company_user.role.is_admin?
+          if company_user.role.permission_for(permission, permission_class).mode == 'campaigns'
+            with_campaign company_user.accessible_campaign_ids + [0]
+          elsif company_user.role.permission_for(permission, permission_class).mode == 'none'
+            with_campaign [0]
+          end
+          within_user_locations(company_user)
+        end
+      end
+    end
+
     def searchable_params
       [:start_date, :end_date, :page, :sorting, :sorting_dir, :per_page,
        campaign: [], area: [], user: [], team: [], event_status: [], brand: [], status: [],

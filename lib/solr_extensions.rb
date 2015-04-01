@@ -212,20 +212,11 @@ module Sunspot
         end
       end
 
-      def restrict_search_to_user_permissions(permission_class, permission, company_user)
-        return if company_user.role.is_admin?
-        if company_user.role.permission_for(permission, permission_class).mode == 'campaigns'
-          with_campaign company_user.accessible_campaign_ids + [0]
-        elsif company_user.role.permission_for(permission, permission_class).mode == 'none'
-          with_campaign [0]
-        end
-        within_user_locations(company_user)
-      end
-
       def within_user_locations(company_user)
+        return unless field?(:place_id) || field?(:location)
         any_of do
-          with(:place_id, company_user.accessible_places + [0])
-          with(:location, company_user.accessible_locations + [0])
+          with(:place_id, company_user.accessible_places + [0]) if field?(:place_id)
+          with(:location, company_user.accessible_locations + [0]) if field?(:location)
         end
       end
 

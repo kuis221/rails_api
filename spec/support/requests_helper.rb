@@ -292,12 +292,6 @@ module RequestsHelper
     div.hover
     div
   end
-
-  def add_permissions(permissions)
-    permissions.each do |p|
-      company_user.role.permissions.create(action: p[0], subject_class: p[1], subject_id: p[2], mode: p[3] || 'campaigns')
-    end
-  end
 end
 
 module Capybara

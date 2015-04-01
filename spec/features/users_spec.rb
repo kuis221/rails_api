@@ -477,7 +477,7 @@ feature 'Users', js: true do
         ['Pablo', 'Baltodano', 'email@hotmail.com', '+1000000000', 'TestRole', 'Street Address 123',
          'Unit Number 456', 'Los Angeles', 'CA', '90210', 'United States', 'Pacific Time (US & Canada)', nil, 'Active'],
         ['Test', 'User', user.email, '+1000000000', Role.first.name, 'Street Address 123',
-         'Unit Number 456', 'Curridabat', 'SJ', '90210', 'Costa Rica', 'Pacific Time (US & Canada)', 'about 0 minutes ago', 'Active']
+         'Unit Number 456', 'Curridabat', 'SJ', '90210', 'Costa Rica', 'Pacific Time (US & Canada)', company_user.last_activity_at.to_s, 'Active']
       ])
     end
 

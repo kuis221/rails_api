@@ -6,7 +6,7 @@ class FilteredController < InheritedResources::Base
   include ExportableController
 
   helper_method :collection_count, :facets, :page,
-                :total_pages, :return_path
+                :total_pages, :return_path, :search_params
 
   respond_to :json, only: :index
 
@@ -81,7 +81,7 @@ class FilteredController < InheritedResources::Base
   def search_params
     @search_params ||= params.permit(permitted_search_params).tap do |p|
       CustomFilter.where(id: params[:cfid]).each do |cf|
-        p.deep_merge!(Rack::Utils.parse_nested_query(cf.filters)) do |key, v1, v2| 
+        p.deep_merge!(Rack::Utils.parse_nested_query(cf.filters)) do |key, v1, v2|
           if ['start_date', 'end_date'].include?(key)
             v2
           else
