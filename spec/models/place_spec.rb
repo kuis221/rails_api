@@ -535,4 +535,88 @@ describe Place, type: :model do
       end
     end
   end
+
+  describe '#in_campaign_scope' do
+    let(:company) { create(:company) }
+    let(:campaign) { create(:campaign, company: company) }
+
+    it 'includes only places within the campaign areas' do
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      place_sf = create(:place, country: 'US', state: 'California', city: 'San Francisco')
+      city_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
+      city_sf = create(:place, country: 'US', state: 'California', city: 'San Francisco', types: ['locality'])
+
+      area_la = create(:area, company: company)
+      area_sf = create(:area, company: company)
+
+      campaign.areas << [area_la, area_sf]
+
+      area_la.places << [city_la, city_sf]
+
+      expect(described_class.in_campaign_scope(campaign)).to match_array [place_la, place_sf, city_la, city_sf]
+    end
+
+    it 'excludes places that are in places that were excluded from the campaign' do
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+
+      place_sf = create(:place, country: 'US', state: 'California', city: 'San Francisco')
+
+      area_la = create(:area, company: company)
+      area_sf = create(:area, company: company)
+
+      area_la.places << place_la
+      area_sf.places << place_sf
+
+      # Associate areas to campaigns
+      create(:areas_campaign, area: area_la, campaign: campaign, exclusions: [place_la.id])
+      create(:areas_campaign, area: area_sf, campaign: campaign)
+
+      expect(described_class.in_campaign_scope(campaign)).to match_array [place_sf]
+    end
+
+    it 'excludes places that are in places inside an excluded city' do
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+
+      city_la = create(:city, name: 'Los Angeles', country: 'US', state: 'California')
+      area_la = create(:area, company: company)
+
+      area_la.places << city_la
+
+      area_campaign_la = create(:areas_campaign, area: area_la, campaign: campaign)
+      expect(described_class.in_campaign_scope(campaign)).to match_array [place_la, city_la]
+
+      area_campaign_la.update_attribute :exclusions, [city_la.id]
+      expect(described_class.in_campaign_scope(campaign)).to be_empty
+    end
+
+    it 'includes places that are inside an included city' do
+      campaign2 = create(:campaign, company: company)
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      place_sf = create(:place, country: 'US', state: 'California', city: 'San Francisco')
+
+      city_la = create(:city, name: 'Los Angeles', country: 'US', state: 'California')
+      city_sf = create(:city, name: 'San Francisco', country: 'US', state: 'California')
+      area_la = create(:area, company: company)
+      area_sf = create(:area, company: company)
+      area_sf.places << city_sf
+
+      area_campaign_la = create(:areas_campaign, area: area_la, campaign: campaign)
+      create(:areas_campaign, area: area_sf, campaign: campaign)
+      create(:areas_campaign, area: area_la, campaign: campaign2)
+
+      expect(described_class.in_campaign_scope(campaign)).to match_array [place_sf, city_sf]
+
+      area_campaign_la.update_attribute :inclusions, [city_la.id]
+      expect(described_class.in_campaign_scope(campaign)).to match_array [place_sf, place_la, city_la, city_sf]
+    end
+
+    it 'includes places that are inside a city added directly to the campaign' do
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      city_la = create(:city, name: 'Los Angeles', country: 'US', state: 'California')
+
+      campaign.places << city_la
+
+      expect(described_class.in_campaign_scope(campaign)).to match_array [place_la, city_la]
+    end
+  end
 end

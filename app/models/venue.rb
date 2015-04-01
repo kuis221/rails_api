@@ -262,8 +262,9 @@ class Venue < ActiveRecord::Base
   end
 
   def self.in_campaign_scope(campaign)
-    subquery = Place.connection.unprepared_statement { Place.in_campaign_areas(campaign, campaign.areas.to_a).to_sql }
+    subquery = Place.connection.unprepared_statement { Place.in_campaign_scope(campaign).to_sql }
     joins("INNER JOIN (#{subquery}) campaign_places ON campaign_places.id=venues.place_id")
+      .where(company_id: campaign.company_id)
   end
 
   def self.do_search(params, include_facets = false)

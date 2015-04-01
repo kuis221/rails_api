@@ -14,12 +14,10 @@ describe Analysis::ReportsHelper, type: :helper do
       kpi_events = create(:kpi, name: 'Events', kpi_type: 'events_count', capture_mechanism: '', company: company)
       kpi_interactions = create(:kpi, name: 'Interactions', kpi_type: 'number', capture_mechanism: 'integer', company: company)
 
-
       campaign.add_kpi kpi_impressions
       campaign.add_kpi kpi_events
       campaign.add_kpi kpi_interactions
-      campaign.activity_types << activity_type1
-      campaign.activity_types << activity_type2
+      campaign.activity_types << [activity_type1, activity_type2]
 
       goals = [
         create(:goal, goalable: campaign, kpi: kpi_impressions, value: '100'),
@@ -81,6 +79,39 @@ describe Analysis::ReportsHelper, type: :helper do
       expect(results[goals[4].id][:remaining_count]).to eq(9.0)
       expect(results[goals[4].id][:total_count]).to eq(1)
       expect(results[goals[4].id][:submitted]).to eq(0)
+    end
+
+    it 'returns the goals for activities created at venue level' do
+      activity_type = create(:activity_type, company: company)
+
+      campaign.areas << create(:area, company: company, place_ids: [
+        create(:city, country: 'US', state: 'California', name: 'Los Angeles').id
+      ])
+      campaign.places << create(:city, country: 'US', state: 'California', name: 'San Francisco')
+      campaign.activity_types << activity_type
+
+      goals = [create(:goal, goalable: campaign, kpi: nil, activity_type_id: activity_type.id, value: '5')]
+
+      venue = create(:venue, place: create(:place, country: 'US', state: 'California', city: 'Los Angeles'), company: company)
+      create(:activity, activity_type: activity_type, activitable: venue, company_user: company_user, campaign: campaign)
+      create(:activity, activity_type: activity_type, activitable: venue, company_user: company_user, campaign: campaign)
+
+      venue = create(:venue, place: create(:place, country: 'US', state: 'California', city: 'San Francisco'), company: company)
+      create(:activity, activity_type: activity_type, activitable: venue, company_user: company_user, campaign: campaign)
+
+      helper.instance_variable_set(:@events_scope, Event.all)
+      helper.instance_variable_set(:@campaign, campaign)
+      helper.instance_variable_set(:@goals, goals)
+
+      results = helper.each_events_goal
+
+      expect(results[goals[0].id][:goal].activity_type_id).to eq(activity_type.id)
+      expect(results[goals[0].id][:goal].goalable_id).to eq(campaign.id)
+      expect(results[goals[0].id][:completed_percentage]).to eq(60.0)
+      expect(results[goals[0].id][:remaining_percentage]).to eq(40.0)
+      expect(results[goals[0].id][:remaining_count]).to eq(2.0)
+      expect(results[goals[0].id][:total_count]).to eq(3)
+      expect(results[goals[0].id][:submitted]).to eq(0)
     end
 
     describe 'for checkbox KPIs' do
