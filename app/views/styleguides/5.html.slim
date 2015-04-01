@@ -3,7 +3,17 @@
 = kss_block '5.1' do |modifier_class|
   .example
     .blank-state
+      h5.text-center There aren't any contacts for this event
+      input.btn.btn-primary value="Add Contact" type="submit"
+
+= kss_block '5.2' do |modifier_class|
+  .example
+    .blank-state
       h5.text-center Something that tells there is nothing here
-      p.text-center Here goes a second (more descriptive) line of the copy. This can be even a paragraph of copy. I see it 2 to 3 lines at maximum.
+      p.text-center
+        | Here goes a second (more descriptive) line of the copy. This can be even a paragraph of copy. We can even have some
+        a.underlined href="#"  Link Here
       .blank-state-icon
         img src="../assets/blank-search.png"/
+
+
