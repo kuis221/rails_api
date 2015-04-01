@@ -32,8 +32,9 @@ RSpec.describe DataExtract::BrandPortfolio, type: :model do
 
   describe '#rows' do
     let(:company) { create(:company) }
-    let(:user) { create(:company_user, company: company) }
-    let(:subject) { described_class.new(company: company, current_user: user) }
+    let(:company_user) { create(:company_user, company: company,
+                         user: create(:user, first_name: 'Benito', last_name: 'Camelas')) }
+    let(:subject) { described_class.new(company: company, current_user: company_user) }
 
     it 'returns empty if no rows are found' do
       expect(subject.rows).to be_empty
@@ -44,13 +45,13 @@ RSpec.describe DataExtract::BrandPortfolio, type: :model do
         create(:brand_portfolio, name: 'A Vinos ticos',
                                  description: 'Algunos vinos de Costa Rica',
                                  active: true, company: company, 
-                                 created_by_id: user.id, 
+                                 created_by_id: company_user.user.id, 
                                  created_at: Time.zone.local(2013, 8, 23, 9, 15))
       end
 
       it 'returns all the events in the company with all the columns' do
         expect(subject.rows).to eql [
-          ['A Vinos ticos', 'Algunos vinos de Costa Rica', 'Test User', "08/23/2013"]
+          ['A Vinos ticos', 'Algunos vinos de Costa Rica', 'Benito Camelas', "08/23/2013"]
         ]
       end
 
@@ -60,7 +61,7 @@ RSpec.describe DataExtract::BrandPortfolio, type: :model do
 
         subject.filters = { 'active_state' => ['active'] }
         expect(subject.rows).to eql [
-          ['A Vinos ticos', 'Algunos vinos de Costa Rica', 'Test User', "08/23/2013"]
+          ['A Vinos ticos', 'Algunos vinos de Costa Rica', 'Benito Camelas', "08/23/2013"]
         ]
       end
 
@@ -68,7 +69,7 @@ RSpec.describe DataExtract::BrandPortfolio, type: :model do
         create(:brand_portfolio, name: 'Cervezas Ticas',
                                  description: 'Cervezas de Costa Rica',
                                  active: true, company: company, 
-                                 created_by_id: user.id, 
+                                 created_by_id: company_user.user.id, 
                                  created_at: Time.zone.local(2014, 3, 26, 9, 15))
         subject.columns = ['name', 'description', 'created_at']
         subject.default_sort_by = 'name'

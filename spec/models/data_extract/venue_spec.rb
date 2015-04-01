@@ -34,8 +34,9 @@ RSpec.describe DataExtract::Venue, type: :model do
 
   describe '#rows' do
     let(:company) { create(:company) }
-    let(:user) { create(:company_user, company: company) }
-    let(:subject) { described_class.new(company: company, current_user: user) }
+    let(:company_user) { create(:company_user, company: company,
+                         user: create(:user, first_name: 'Benito', last_name: 'Camelas')) }
+    let(:subject) { described_class.new(company: company, current_user: company_user) }
 
     it 'returns empty if no rows are found' do
       expect(subject.rows).to be_empty

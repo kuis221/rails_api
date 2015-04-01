@@ -15,13 +15,13 @@ RSpec.describe Results::DataExtractsController, :type => :controller do
       expect(response).to render_template('_form_select_data_source')
     end
     it 'Not select data source' do
-      xhr :get, 'new', step: 2, data_source: '', format: :js
+      xhr :get, 'new', step: 2, data_extract: {source: ''}, format: :js
       expect(response).to be_success
       expect(response).to render_template('new')
-      expect(response).to render_template('_form_select_data_source')
+      expect(response).to render_template('_form_configure')
     end
     it 'select data source' do
-      xhr :get, 'new', step: 2, data_source: 'event', format: :js
+      xhr :get, 'new', step: 2, data_extract: {source: 'event'}, format: :js
       expect(response).to be_success
       expect(response).to render_template('new')
       expect(response).to render_template('_form_configure')

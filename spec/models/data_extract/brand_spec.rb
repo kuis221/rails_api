@@ -33,10 +33,11 @@ RSpec.describe DataExtract::Brand, type: :model do
 
   describe '#rows' do
     let(:company) { create(:company) }
-    let(:user) { create(:company_user, company: company) }
+    let(:company_user) { create(:company_user, company: company,
+                         user: create(:user, first_name: 'Benito', last_name: 'Camelas')) }
 
     let(:campaign) { create(:campaign, name: 'Campaign Absolut FY12', company: company) }
-    let(:subject) { described_class.new(company: company, current_user: user) }
+    let(:subject) { described_class.new(company: company, current_user: company_user) }
 
     it 'returns empty if no rows are found' do
       expect(subject.rows).to be_empty
@@ -44,7 +45,7 @@ RSpec.describe DataExtract::Brand, type: :model do
 
     describe 'with data' do
       before do
-        brand = create(:brand, name: 'Guaro Cacique', company: company, created_by_id: user.id, created_at: Time.zone.local(2013, 8, 23, 9, 15))
+        brand = create(:brand, name: 'Guaro Cacique', company: company, created_by_id: company_user.user.id, created_at: Time.zone.local(2013, 8, 23, 9, 15))
         brand.marques << create(:marque,  name: 'Marque 1')
         brand.marques << create(:marque,  name: 'Marque 2')
         brand.marques << create(:marque,  name: 'Marque 3')
@@ -52,7 +53,7 @@ RSpec.describe DataExtract::Brand, type: :model do
 
       it 'returns all the events in the company with all the columns' do
         expect(subject.rows).to eql [
-          ["Guaro Cacique", "Marque 3, Marque 2, Marque 1", "Test User", "08/23/2013"]
+          ["Guaro Cacique", "Marque 1, Marque 2, Marque 3", "Benito Camelas", "08/23/2013"]
         ]
       end
 
@@ -62,12 +63,12 @@ RSpec.describe DataExtract::Brand, type: :model do
 
         subject.filters = { 'active_state' => ['active'] }
         expect(subject.rows).to eql [
-          ["Guaro Cacique", "Marque 3, Marque 2, Marque 1", "Test User", "08/23/2013"]
+          ["Guaro Cacique", "Marque 1, Marque 2, Marque 3", "Benito Camelas", "08/23/2013"]
         ]
       end
 
       it 'allows to sort the results' do
-        create(:brand, name: 'Cerveza Imperial', company: company, created_by_id: user.id, created_at: Time.zone.local(2014, 2, 12, 9, 15))
+        create(:brand, name: 'Cerveza Imperial', company: company, created_by_id: company_user.user.id, created_at: Time.zone.local(2014, 2, 12, 9, 15))
         
         subject.columns = ['name', 'created_at']
         subject.default_sort_by = 'name'
