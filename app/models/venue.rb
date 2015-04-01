@@ -262,8 +262,9 @@ class Venue < ActiveRecord::Base
     @overall_graphs_data
   end
 
-  def venues_types
-    self.types.map{|t| t.humanize}.join(", ") if self.types.present?
+  def self.in_campaign_scope(campaign)
+    subquery = Place.connection.unprepared_statement { Place.in_campaign_areas(campaign, campaign.areas.to_a).to_sql }
+    joins("INNER JOIN (#{subquery}) campaign_places ON campaign_places.id=venues.place_id")
   end
 
   def self.do_search(params, include_facets = false)
