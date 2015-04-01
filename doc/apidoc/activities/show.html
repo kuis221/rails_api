@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>API documentation</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/bootstrap.min.css'/>
+<link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/prettify.css'/>
+<link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/bootstrap-responsive.min.css'/>
+  <link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/application.css'/>
+  <!-- IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div id='container'>
+        <ul class='breadcrumb'>
+  <li>
+    <a href='../../apidoc.html'>Brandscopic 1.0</a>
+    <span class='divider'>/</span>
+  </li>
+  <li>
+    <a href='../../apidoc/activities.html'>
+      Activities
+      
+    </a>
+    <span class='divider'>/</span>
+  </li>
+  <li class='active'>show</li>
+  
+
+</ul>
+
+  <div class='page-header'>
+    <h1>
+      GET /api/v1/actvities/:id/edit
+      <br>
+      <small>Return a list of fields with results for an existing activity</small>
+    </h1>
+  </div>
+
+<div>
+
+  
+<p>Returns a full list of the associated activity types for a campaign</p>
+
+
+
+
+
+  <h2>Examples</h2>
+    <pre class="prettyprint">{
+  &quot;id&quot;:2021,
+  &quot;campaign&quot;:{
+    &quot;id&quot;:5,
+    &quot;name&quot;:&quot;Jameson Locals FY14&quot;
+  },
+  &quot;company_user&quot;:{
+    &quot;id&quot;:990,
+    &quot;name&quot;:&quot;Adam Kost&quot;
+  },
+  &quot;activity_type&quot;:{
+    &quot;id&quot;:1,
+    &quot;name&quot;:&quot;POS Drop&quot;
+  },
+  &quot;activitable&quot;:{
+    &quot;id&quot;:28205,
+    &quot;type&quot;:&quot;Event&quot;
+  },
+  &quot;data&quot;:[
+    {
+      &quot;field_id&quot;:17,
+      &quot;name&quot;:&quot;User/Date&quot;,
+      &quot;value&quot;:null,
+      &quot;type&quot;:&quot;FormField::UserDate&quot;,
+      &quot;settings&quot;:null,
+      &quot;ordering&quot;:0,
+      &quot;required&quot;:null,
+      &quot;kpi_id&quot;:null,
+      &quot;id&quot;:822768
+    },
+    {
+      &quot;field_id&quot;:3461,
+      &quot;name&quot;:&quot;POS Drop Date&quot;,
+      &quot;value&quot;:&quot;01/21/2015&quot;,
+      &quot;type&quot;:&quot;FormField::Date&quot;,
+      &quot;settings&quot;:null,
+      &quot;ordering&quot;:1,
+      &quot;required&quot;:true,
+      &quot;kpi_id&quot;:null,
+      &quot;id&quot;:822764
+    },
+    {
+      &quot;field_id&quot;:3462,
+      &quot;name&quot;:&quot;POS Removal Date&quot;,
+      &quot;value&quot;:&quot;01/14/2015&quot;,
+      &quot;type&quot;:&quot;FormField::Date&quot;,
+      &quot;settings&quot;:null,
+      &quot;ordering&quot;:2,
+      &quot;required&quot;:false,
+      &quot;kpi_id&quot;:null,
+      &quot;id&quot;:822765
+    },
+    {
+      &quot;field_id&quot;:1,
+      &quot;name&quot;:&quot;Brand&quot;,
+      &quot;value&quot;:&quot;8&quot;,
+      &quot;type&quot;:&quot;FormField::Brand&quot;,
+      &quot;settings&quot;:null,
+      &quot;ordering&quot;:4,
+      &quot;required&quot;:true,
+      &quot;kpi_id&quot;:null,
+      &quot;segments&quot;:[
+        {
+          &quot;id&quot;:8,
+          &quot;text&quot;:&quot;Jameson Irish Whiskey&quot;
+        }
+      ],
+      &quot;id&quot;:10923
+    },
+    {
+      &quot;field_id&quot;:2,
+      &quot;name&quot;:&quot;Marque&quot;,
+      &quot;value&quot;:&quot;2&quot;,
+      &quot;type&quot;:&quot;FormField::Marque&quot;,
+      &quot;settings&quot;:{
+
+      },
+      &quot;ordering&quot;:5,
+      &quot;required&quot;:false,
+      &quot;kpi_id&quot;:null,
+      &quot;segments&quot;:[
+        {
+          &quot;id&quot;:2,
+          &quot;text&quot;:&quot;Black Barrel&quot;
+        },
+        {
+          &quot;id&quot;:13,
+          &quot;text&quot;:&quot;Standard&quot;
+        },
+        {
+          &quot;id&quot;:14,
+          &quot;text&quot;:&quot;Gold&quot;
+        },
+        {
+          &quot;id&quot;:15,
+          &quot;text&quot;:&quot;18 Year Old&quot;
+        },
+        {
+          &quot;id&quot;:16,
+          &quot;text&quot;:&quot;Rarest Vintage Reserve&quot;
+        },
+        {
+          &quot;id&quot;:17,
+          &quot;text&quot;:&quot;12 Year Old&quot;
+        }
+      ],
+      &quot;id&quot;:10924
+    },
+    {
+      &quot;field_id&quot;:3465,
+      &quot;name&quot;:&quot;Seasonal Sales Program&quot;,
+      &quot;value&quot;:&quot;1126&quot;,
+      &quot;type&quot;:&quot;FormField::Dropdown&quot;,
+      &quot;settings&quot;:null,
+      &quot;ordering&quot;:7,
+      &quot;required&quot;:true,
+      &quot;kpi_id&quot;:null,
+      &quot;id&quot;:822766
+    },
+    {
+      &quot;field_id&quot;:3466,
+      &quot;name&quot;:&quot;Movember Item(s) Dropped&quot;,
+      &quot;value&quot;:[
+        703,
+        705
+      ],
+      &quot;type&quot;:&quot;FormField::Checkbox&quot;,
+      &quot;settings&quot;:null,
+      &quot;ordering&quot;:8,
+      &quot;required&quot;:false,
+      &quot;kpi_id&quot;:null,
+      &quot;segments&quot;:[
+        {
+          &quot;id&quot;:701,
+          &quot;text&quot;:&quot;Posters&quot;,
+          &quot;value&quot;:false
+        },
+        {
+          &quot;id&quot;:702,
+          &quot;text&quot;:&quot;Chalkboard&quot;,
+          &quot;value&quot;:false
+        },
+        {
+          &quot;id&quot;:703,
+          &quot;text&quot;:&quot;Window Clings&quot;,
+          &quot;value&quot;:true
+        },
+        {
+          &quot;id&quot;:704,
+          &quot;text&quot;:&quot;Coasters&quot;,
+          &quot;value&quot;:false
+        },
+        {
+          &quot;id&quot;:705,
+          &quot;text&quot;:&quot;Table Tents&quot;,
+          &quot;value&quot;:true
+        },
+        {
+          &quot;id&quot;:706,
+          &quot;text&quot;:&quot;Buttons&quot;,
+          &quot;value&quot;:false
+        },
+        {
+          &quot;id&quot;:707,
+          &quot;text&quot;:&quot;Menu Stickers&quot;,
+          &quot;value&quot;:false
+        }
+      ],
+      &quot;id&quot;:822767
+    },
+    {
+      &quot;field_id&quot;:3,
+      &quot;name&quot;:&quot;Miscellaneous Item(s) Dropped&quot;,
+      &quot;value&quot;:[
+        2
+      ],
+      &quot;type&quot;:&quot;FormField::Checkbox&quot;,
+      &quot;settings&quot;:null,
+      &quot;ordering&quot;:9,
+      &quot;required&quot;:false,
+      &quot;kpi_id&quot;:null,
+      &quot;segments&quot;:[
+        {
+          &quot;id&quot;:1,
+          &quot;text&quot;:&quot;Chalk board&quot;,
+          &quot;value&quot;:false
+        },
+        {
+          &quot;id&quot;:2,
+          &quot;text&quot;:&quot;Mirror&quot;,
+          &quot;value&quot;:true
+        },
+        {
+          &quot;id&quot;:3,
+          &quot;text&quot;:&quot;Rail mat&quot;,
+          &quot;value&quot;:false
+        },
+        {
+          &quot;id&quot;:4,
+          &quot;text&quot;:&quot;Wearable&quot;,
+          &quot;value&quot;:false
+        },
+        {
+          &quot;id&quot;:5,
+          &quot;text&quot;:&quot;Church key&quot;,
+          &quot;value&quot;:false
+        },
+        {
+          &quot;id&quot;:6,
+          &quot;text&quot;:&quot;Napkin caddie&quot;,
+          &quot;value&quot;:false
+        },
+        {
+          &quot;id&quot;:7,
+          &quot;text&quot;:&quot;Poster&quot;,
+          &quot;value&quot;:false
+        },
+        {
+          &quot;id&quot;:21,
+          &quot;text&quot;:&quot;Table Tent&quot;,
+          &quot;value&quot;:false
+        },
+        {
+          &quot;id&quot;:22,
+          &quot;text&quot;:&quot;Glassware&quot;,
+          &quot;value&quot;:false
+        },
+        {
+          &quot;id&quot;:23,
+          &quot;text&quot;:&quot;Other&quot;,
+          &quot;value&quot;:false
+        }
+      ],
+      &quot;id&quot;:10925
+    },
+    {
+      &quot;field_id&quot;:6,
+      &quot;name&quot;:&quot;Description&quot;,
+      &quot;value&quot;:&quot;&quot;,
+      &quot;type&quot;:&quot;FormField::TextArea&quot;,
+      &quot;settings&quot;:null,
+      &quot;ordering&quot;:11,
+      &quot;required&quot;:false,
+      &quot;kpi_id&quot;:null,
+      &quot;id&quot;:10928
+    }
+  ]
+}
+</pre>
+
+
+
+
+</div>
+
+
+        
+      </div>
+    </div>
+    <hr>
+    <footer></footer>
+  </div>
+  <script type='text/javascript' src='../../apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/bundled/bootstrap-collapse.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/bundled/prettify.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/apipie.js'></script>
+</body>
+</html>

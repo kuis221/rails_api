@@ -1,11 +1,12 @@
 require 'rails_helper'
 
 describe Results::EventDataController, type: :controller do
-  let(:user) { sign_in_as_user }
-  let(:company) { user.companies.first }
-  let(:company_user) { user.current_company_user }
+  let(:user) { company_user.user }
+  let(:company) { create(:company) }
+  let(:company_user) { create(:company_user, company: company, role: role) }
+  let(:role) { create(:role, company: company) }
 
-  before { user }
+  before { sign_in_as_user company_user }
 
   describe "GET 'index'" do
     it 'should return http success' do
@@ -112,6 +113,59 @@ describe Results::EventDataController, type: :controller do
         rows = doc.elements.to_a('//Row')
         expect(rows[0].elements.to_a('Cell/Data').map(&:text)).to include('A CUSTOM KPI')
         expect(rows[1].elements.to_a('Cell/Data').map(&:text)).to include('9876.0')
+      end
+    end
+
+    it 'includes any custom fields for the campaigns in the custom filter' do
+      cf = create(:custom_filter, owner: company_user, filters: "campaign[]=#{campaign.id}")
+      field = create(:form_field_number, name: 'My Numeric Field', fieldable: campaign)
+      place = create(:place, name: 'Bar Prueba', city: 'Los Angeles', state: 'California', country: 'US')
+      event = build(:approved_event, company: company, campaign: campaign, place: place, start_date: '01/23/2013', end_date: '01/23/2013')
+      event.results_for([field]).first.value = '9876'
+      event.save
+      Sunspot.commit
+
+      expect { xhr :get, 'index', cfid: [cf.id], format: :xls }.to change(ListExport, :count).by(1)
+      ResqueSpec.perform_all(:export)
+      expect(ListExport.last).to have_rows([
+        ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
+         'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL', 'START', 'END', 'PROMO HOURS', 'SPENT', 'MY NUMERIC FIELD'],
+        ['Test Campaign FY01', nil, nil, 'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345',
+         'Los Angeles', 'California', '12345', 'Active', 'Approved', nil, nil,
+         "http://localhost:5100/events/#{event.id}", '2013-01-23T10:00', '2013-01-23T12:00', '2.00', '0.0', '9876.0']
+      ])
+      spreadsheet_from_last_export do |doc|
+        rows = doc.elements.to_a('//Row')
+        expect(rows[0].elements.to_a('Cell/Data').map(&:text)).to include('MY NUMERIC FIELD')
+        expect(rows[1].elements.to_a('Cell/Data').map(&:text)).to include('9876.0')
+      end
+    end
+
+    describe 'when logged in as a non admin user' do
+      let(:role) { create(:non_admin_role) }
+
+      before { add_permissions [ [:index_results, 'EventData'] ] }
+
+      it 'only include data from campaigns included in the custom filter' do
+        place = create(:place, name: 'Bar Prueba', city: 'Los Angeles', state: 'California', country: 'US')
+        campaign2 = create(:campaign, company: company)
+
+        company_user.places << place
+        company_user.campaigns << [campaign, campaign2]
+        create(:form_field_number, name: 'My Numeric Field', fieldable: campaign)
+        create(:form_field_number, name: 'Other Field', fieldable: campaign2)
+
+        cf = create(:custom_filter, owner: company_user, filters: "campaign[]=#{campaign.id}")
+
+        Sunspot.commit
+
+        expect { xhr :get, 'index', cfid: [cf.id], format: :xls }.to change(ListExport, :count).by(1)
+
+        ResqueSpec.perform_all(:export)
+        expect(ListExport.last).to have_rows([
+          ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
+           'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL', 'START', 'END', 'PROMO HOURS', 'SPENT', 'MY NUMERIC FIELD']
+        ])
       end
     end
 

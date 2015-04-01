@@ -37,12 +37,14 @@
 </div>
 
   <div>
-<h2 id="label-Token+Authentication">Token Authentication<span><a href="#label-Token+Authentication">&para;</a> <a href="#documentation">&uarr;</a></span></h2>
+<h2 id="label-Token+Authentication">Token Authentication<span><a href="#label-Token+Authentication">&para;</a> <a href="#top">&uarr;</a></span></h2>
 </div>
 
 
   <h2>Supported Formats</h2>
   json, xml
+
+
 
 <div class='accordion' id='accordion'>
 
@@ -74,6 +76,9 @@ valid.</p>
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     404
     Missing
     <br>
@@ -86,7 +91,14 @@ valid.</p>
 
 
   <h3>Examples</h3>
-    <pre class="prettyprint">POST /api/v1/sessions.json?email=fulano@detal.com&amp;password=MySuperSecretPassword
+    <pre class="prettyprint">POST /api/v1/sessions.json
+
+POST DATA: {
+  email: &#39;fulano@detal.com&#39;,
+  password: &#39;MySuperSecretPassword&#39;
+}
+
+RESPONSE:
 {
   sucess: true,
   info: &#39;Logged in&#39;,
@@ -119,7 +131,9 @@ valid.</p>
 <p>User&#39;s email</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -140,7 +154,9 @@ valid.</p>
 <p>User&#39;s password</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -151,6 +167,8 @@ valid.</p>
 
     </tbody>
   </table>
+
+
 
     </div>
     <hr>
@@ -178,6 +196,9 @@ valid.</p>
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     404
     Missing
     <br>
@@ -212,7 +233,9 @@ valid.</p>
 <p>Authentication token</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -223,6 +246,8 @@ valid.</p>
 
     </tbody>
   </table>
+
+
 
     </div>
 </div>

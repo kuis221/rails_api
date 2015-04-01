@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>API documentation</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/bootstrap.min.css'/>
+<link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/prettify.css'/>
+<link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/bootstrap-responsive.min.css'/>
+  <link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/application.css'/>
+  <!-- IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div id='container'>
+        <ul class='breadcrumb'>
+  <li>
+    <a href='../../apidoc.html'>Brandscopic 1.0</a>
+    <span class='divider'>/</span>
+  </li>
+  <li>
+    <a href='../../apidoc/events.html'>
+      Events
+      
+    </a>
+    <span class='divider'>/</span>
+  </li>
+  <li class='active'>status_facets</li>
+  
+
+</ul>
+
+  <div class='page-header'>
+    <h1>
+      GET /api/v1/events/status_facets
+      <br>
+      <small>Returns the facets for the event status</small>
+    </h1>
+  </div>
+
+<div>
+
+  
+<p>The API returns the facets on the following format:</p>
+
+<pre>[
+  {
+    label: String,            # Any of: Campaigns, Brands, Location, People, Active State, Event Status
+    items: [                  # List of items for the facet sorted by relevance
+      {
+        &quot;label&quot;: String,      # The name of the item
+        &quot;id&quot;: String,         # The id of the item, this should be used to filter the list by this items
+        &quot;name&quot;: String,       # The param name to be use for filtering the list (campaign, user, team, place, area, status, event_status)
+        &quot;count&quot;: Number,      # The number of results for this item
+        &quot;selected&quot;: Boolean   # True if the list is being filtered by this item
+      },
+      ....
+    ],
+    top_items: [              # Some facets will return this as a list of items that have the greater number of results
+      &lt;other list of items&gt;
+    ]
+  }
+]</pre>
+
+
+  <h2>Supported Formats</h2>
+  json, xml
+
+  <h2>Errors</h2>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
+    401
+    Unauthorized access
+    <br>
+    404
+    The requested resource was not found
+    <br>
+    406
+    The server cannot return data in the requested format
+    <br>
+    422
+    Unprocessable Entity: The change could not be processed because of errors on the data
+    <br>
+    500
+    Server crashed for some reason. Possible because of missing required params or wrong parameters
+    <br>
+
+
+
+  <h2>Params</h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>start_date </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A date to filter the event list. When provided a start_date without an
+<code>end_date</code>, the result will only include events that happen on
+this day. The date should be in the format MM/DD/YYYY.</p>
+
+        <br>
+        Value: 
+<p>Must match regular expression /Ad{1,2}/d{1,2}/d{4}z/.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>end_date </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A date to filter the event list. This should be provided together with the
+<code>start_date</code> param and when provided will filter the list with
+those events that are between that range. The date should be in the format
+MM/DD/YYYY.</p>
+
+        <br>
+        Value: 
+<p>Must match regular expression /Ad{1,2}/d{1,2}/d{4}z/.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>campaign </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of campaign ids to filter the results</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>place </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of places to filter the results</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>venue </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of venues to filter the results</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>area </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of areas to filter the results</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>user </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of users to filter the results</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>team </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of teams to filter the results</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>brand </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of brands to filter the results</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>brand_porfolio </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of brand portfolios to filter the results</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>status </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of event status to filter the results. The possible options are:
+&#39;Active&#39;, &#39;Inactive&#39;</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>event_status </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of event recap status to filter the results. The possible options
+are: &#39;Scheduled&#39;, &#39;Executed&#39;, &#39;Submitted&#39;,
+&#39;Approved&#39;, &#39;Rejected&#39;, &#39;Late&#39;, &#39;Due&#39;</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>page </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>The number of the page, Default: 1</p>
+
+        <br>
+        Value: 
+<p>Must be a number.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+
+
+</div>
+
+
+        
+      </div>
+    </div>
+    <hr>
+    <footer></footer>
+  </div>
+  <script type='text/javascript' src='../../apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/bundled/bootstrap-collapse.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/bundled/prettify.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/apipie.js'></script>
+</body>
+</html>

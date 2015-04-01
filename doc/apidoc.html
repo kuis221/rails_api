@@ -21,10 +21,130 @@
   
 </ul>
 
-<div>Another API description</div>
+<div>
+<h2 id="label-User+Authentication">User Authentication<span><a href="#label-User+Authentication">&para;</a> <a href="#top">&uarr;</a></span></h2>
+
+<p>Use the method sessions#create to authenticate a user and get the
+authorization key.</p>
+
+<p>For those methods that require an authenticated user, you must provide the
+user&#39;s email and authentication token in the headers as:
+<code>X-Auth-Token</code> and <code>X-User-Email</code>, otherwise, you
+will receive a response code 401 from the server. Most of the methods
+require also the <code>X-Company-Id</code> header to be present. This
+should reflect the company where the user is currently working.</p>
+</div>
 
 <h1 class='page-header'>Resources</h1>
 
+  <h2>
+    <a href='./apidoc/activities.html'>
+      Activities
+    </a><br>
+    <small></small>
+  </h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Resource</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>
+              <a href='./apidoc/activities/create.html'>POST /api/v1/events/:event_id/activities</a>
+            </td>
+            <td width='60%'>Create a new activity</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/activities/update.html'>PUT /api/v1/events/:event_id/activities/:id</a>
+            </td>
+            <td width='60%'>Update a activity&#39;s details</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/activities/deactivate.html'>GET /api/v1/events/:id/activities/:id/deactivate</a>
+            </td>
+            <td width='60%'>Deactivate activity</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/activities/index.html'>GET /api/v1/events/:event_id/activities</a>
+            </td>
+            <td width='60%'>Get a list of activities for an Event or Venue</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/activities/new.html'>GET /api/v1/actvities/new</a>
+            </td>
+            <td width='60%'>Return a list of fields for a new activity of a given activity type</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/activities/show.html'>GET /api/v1/actvities/:id/edit</a>
+            </td>
+            <td width='60%'>Return a list of fields with results for an existing activity</td>
+          </tr>
+    </tbody>
+  </table>
+  <h2>
+    <a href='./apidoc/activity_types.html'>
+      Activity types
+    </a><br>
+    <small></small>
+  </h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Resource</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>
+              <a href='./apidoc/activity_types/index.html'>GET /api/v1/campaigns/:campaign_id/activity_types</a>
+            </td>
+            <td width='60%'>Get a list of contacts for a specific company</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/activity_types/campaigns.html'>GET /api/v1/activity_types/:activity_type_id/campaigns</a>
+            </td>
+            <td width='60%'>Get a list the campaings for a specific activity type</td>
+          </tr>
+    </tbody>
+  </table>
+  <h2>
+    <a href='./apidoc/areas.html'>
+      Areas
+    </a><br>
+    <small>Areas</small>
+  </h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Resource</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>
+              <a href='./apidoc/areas/index.html'>GET /api/v1/areas</a>
+            </td>
+            <td width='60%'>Get a list of areas</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/areas/cities.html'>GET /api/v1/areas/:id/cities</a>
+            </td>
+            <td width='60%'>Get a list of cities for an Area</td>
+          </tr>
+    </tbody>
+  </table>
   <h2>
     <a href='./apidoc/brands.html'>
       Brands
@@ -84,6 +204,12 @@
               <a href='./apidoc/campaigns/stats.html'>GET /api/v1/campaigns/:id/stats</a>
             </td>
             <td width='60%'>Returns the stats of events and promo hours goals grouped by area for a given campaign.</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/campaigns/events.html'>GET /api/v1/campaigns/:id/events</a>
+            </td>
+            <td width='60%'>Returns a list of events for a given campaign.</td>
           </tr>
     </tbody>
   </table>
@@ -196,6 +322,28 @@
     </tbody>
   </table>
   <h2>
+    <a href='./apidoc/documents.html'>
+      Brand Ambassadors Documents
+    </a><br>
+    <small>Documents</small>
+  </h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Resource</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>
+              <a href='./apidoc/documents/index.html'>GET /api/v1/brand_ambassadors/documents</a>
+            </td>
+            <td width='60%'>Obtain a list of documents and folders.</td>
+          </tr>
+    </tbody>
+  </table>
+  <h2>
     <a href='./apidoc/event_expenses.html'>
       Event expenses
     </a><br>
@@ -248,6 +396,12 @@
               <a href='./apidoc/events/index.html'>GET /api/v1/events</a>
             </td>
             <td width='60%'>Search for a list of events</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/events/status_facets.html'>GET /api/v1/events/status_facets</a>
+            </td>
+            <td width='60%'>Returns the facets for the event status</td>
           </tr>
           <tr>
             <td>
@@ -344,6 +498,40 @@
               <a href='./apidoc/events/delete_contact.html'>DELETE /api/v1/events/:id/contacts</a>
             </td>
             <td width='60%'>Delete a contact from the event</td>
+          </tr>
+    </tbody>
+  </table>
+  <h2>
+    <a href='./apidoc/invites.html'>
+      Invites
+    </a><br>
+    <small>Invites</small>
+  </h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Resource</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>
+              <a href='./apidoc/invites/index.html'>GET /api/v1/events/:event_id/invites</a>
+            </td>
+            <td width='60%'>Get a list of invites for an Event</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/invites/create.html'>POST /api/v1/events</a>
+            </td>
+            <td width='60%'>Create a new invite</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/invites/update.html'>PUT /api/v1/events/:id</a>
+            </td>
+            <td width='60%'>Update a event&#39;s details</td>
           </tr>
     </tbody>
   </table>
@@ -620,6 +808,58 @@
               <a href='./apidoc/venues/autocomplete.html'>GET /api/v1/venues/autocomplete</a>
             </td>
             <td width='60%'>Return a list of results grouped by categories</td>
+          </tr>
+    </tbody>
+  </table>
+  <h2>
+    <a href='./apidoc/visits.html'>
+      Brand Ambassadors Visits
+    </a><br>
+    <small>Visits</small>
+  </h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Resource</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+          <tr>
+            <td>
+              <a href='./apidoc/visits/index.html'>GET /api/v1/brand_ambassadors/visits</a>
+            </td>
+            <td width='60%'>Search for a list of visits</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/visits/show.html'>GET /api/v1/brand_ambassadors/visits/:id</a>
+            </td>
+            <td width='60%'>Return a visit&#39;s details</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/visits/create.html'>POST /api/v1/brand_ambassadors/visits</a>
+            </td>
+            <td width='60%'>Create a new visit</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/visits/update.html'>PUT /api/v1/brand_ambassadors/visits/:id</a>
+            </td>
+            <td width='60%'>Update a visit&#39;s details</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/visits/types.html'>GET /api/v1/brand_ambassadors/visits/types</a>
+            </td>
+            <td width='60%'>Returns a list of valid Visit Types to be used in forms</td>
+          </tr>
+          <tr>
+            <td>
+              <a href='./apidoc/visits/events.html'>GET /api/v1/brand_ambassadors/visits/:id/events</a>
+            </td>
+            <td width='60%'>Get a list of events for a visit</td>
           </tr>
     </tbody>
   </table>

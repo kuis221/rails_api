@@ -211,11 +211,13 @@ class Task < ActiveRecord::Base
         end
 
         if params[:start_date].present? && params[:end_date].present?
-          d1 = Timeliness.parse(params[:start_date], zone: :current).beginning_of_day
-          d2 = Timeliness.parse(params[:end_date], zone: :current).end_of_day
+          params[:start_date] = Array(params[:start_date])
+          params[:end_date] = Array(params[:end_date])
+          d1 = Timeliness.parse(params[:start_date][0], zone: :current).beginning_of_day
+          d2 = Timeliness.parse(params[:end_date][0], zone: :current).end_of_day
           with :due_at, d1..d2
         elsif params[:start_date].present?
-          d = Timeliness.parse(params[:start_date], zone: :current)
+          d = Timeliness.parse(params[:start_date][0], zone: :current)
           with :due_at, d.beginning_of_day..d.end_of_day
         end
 
@@ -254,7 +256,7 @@ class Task < ActiveRecord::Base
     end
 
     def searchable_params
-      [:start_date, :end_date, campaign: [], user: [], team: [],
+      [campaign: [], user: [], team: [], start_date: [], end_date: [],
        task_status: [], status: [], task: []]
     end
 

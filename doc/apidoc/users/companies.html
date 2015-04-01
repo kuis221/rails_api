@@ -49,6 +49,9 @@
   json, xml
 
   <h2>Errors</h2>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     404
     Missing
     <br>
@@ -61,51 +64,24 @@
 
 
   <h2>Examples</h2>
-    <pre class="prettyprint">GET /api/v1/companies?auth_token=XXXXXYYYYYZZZZZ
+    <pre class="prettyprint">GET /api/v1/companies.json
 
 [
     {
         &quot;name&quot;: &quot;Brandscopic&quot;,
+        &quot;company_user_id&quot;: 1,
         &quot;id&quot;: 1
     },
     {
-        &quot;name&quot;: &quot;Legacy Marketing Partners&quot;,
+        &quot;name&quot;: &quot;ABC Marketing Inc.&quot;,
+        &quot;company_user_id&quot;: 2,
         &quot;id&quot;: 2
     }
 ]
 </pre>
 
-  <h2>Params</h2>
-  <table class='table'>
-    <thead>
-      <tr>
-        <th>Param name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-        <br>
-        Value: Must be String
 
 
-    </td>
-
-  </tr>
-
-  
-
-    </tbody>
-  </table>
 
 </div>
 

@@ -52,6 +52,9 @@ valid.</p>
   json, xml
 
   <h2>Errors</h2>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     404
     Missing
     <br>
@@ -64,7 +67,14 @@ valid.</p>
 
 
   <h2>Examples</h2>
-    <pre class="prettyprint">POST /api/v1/sessions.json?email=fulano@detal.com&amp;password=MySuperSecretPassword
+    <pre class="prettyprint">POST /api/v1/sessions.json
+
+POST DATA: {
+  email: &#39;fulano@detal.com&#39;,
+  password: &#39;MySuperSecretPassword&#39;
+}
+
+RESPONSE:
 {
   sucess: true,
   info: &#39;Logged in&#39;,
@@ -97,7 +107,9 @@ valid.</p>
 <p>User&#39;s email</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -118,7 +130,9 @@ valid.</p>
 <p>User&#39;s password</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -129,6 +143,8 @@ valid.</p>
 
     </tbody>
   </table>
+
+
 
 </div>
 

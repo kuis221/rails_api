@@ -109,6 +109,9 @@ $.widget 'nmk.filteredList', {
 			params = {filter_type: filterParts[0], filter_id: filterParts[1] }
 			$.get '/filters/expand', params, (data) =>
 				if data[0].type == 'cfid'
+					# Replace filters with start and end dates in string format by arrays
+					data[0].filters = data[0].filters.replace('start_date=', 'start_date%5B%5D=').replace('end_date=', 'end_date%5B%5D=')
+
 					qs = @paramsQueryString().replace(new RegExp('(&)?'+ encodeURIComponent("#{data[0].type}[]")+'='+@_escapeRegExp(encodeURIComponent(data[0].id))+'(&|$)', "g"), '$2')
 					@_setQueryString data[0].filters + '&' + qs
 				else
@@ -123,7 +126,7 @@ $.widget 'nmk.filteredList', {
 			$(e.currentTarget).closest('.filter-item').fadeTo(1000, 0.3)
 			filterParts = $(e.currentTarget).data('filter').split(':')
 			if filterParts[0] == 'date'
-				@_deselectDates()
+				@_deselectDates($(e.currentTarget).data('start-date'), $(e.currentTarget).data('end-date'))
 			else if @sliders[filterParts[0]]
 				@setParams "#{filterParts[0]}[min]=&#{filterParts[0]}[max]="
 			else
@@ -866,19 +869,33 @@ $.widget 'nmk.filteredList', {
 		dates[1] = @_parseDate(dates[1]) if dates.length > 0 && typeof dates[1] == 'string'
 
 		if dates.length > 0 && dates[0]
-			params = "start_date=#{@_formatDate(dates[0])}"
+			params = "start_date[]=#{@_formatDate(dates[0])}"
 			if dates[0].toLocaleString() != dates[1].toLocaleString()
-				params += "&end_date=#{@_formatDate(dates[1])}"
+				params += "&end_date[]=#{@_formatDate(dates[1])}"
 			else
-				params += "&end_date="
+				params += "&end_date[]=#{@_formatDate(dates[0])}"
 
 		else
-			params = 'start_date=&end_date='
+			params = 'start_date[]=&end_date=[]'
 		@setParams params
 		@
 
-	_deselectDates: ->
-		matches = @paramsQueryString().match(/((start_date|end_date)=[^&]*)/g)
+	_deselectDates: (startDate=null, endDate=null)->
+		re = []
+
+		if startDate
+			re.push "start_date(%5B%5D)*=" + encodeURIComponent(startDate)
+
+		if endDate
+			re.push "end_date(%5B%5D)*=" + encodeURIComponent(endDate)
+
+		expression =
+			if re.length > 0
+				re.join('|')
+			else
+				"(start_date|end_date)(%5B%5D)*=[^&]*"
+
+		matches = @paramsQueryString().match(new RegExp(expression, "g"))
 		if matches && matches.length > 0
 			@_removeParams matches.join('&')
 
@@ -1132,17 +1149,18 @@ $.widget 'nmk.filteredList', {
 			@infiniteScroller = false
 
 	_parseQueryString: (query) ->
-		dates = []
+		startDates = []
+		endDates = []
 		selectedOptions = []
 		for param in @_deparam(query)
 			name = param.name
 			value = param.value
 			sliderMatch = name.match /(.+)\[(max|min)\]$/
-			if @options.includeCalendars and value and name in ['start_date', 'end_date']
-				if name is 'start_date' and value
-					dates[0] = @_parseDate(value)
+			if @options.includeCalendars and value and name in ['start_date[]', 'end_date[]']
+				if name is 'start_date[]' and value
+					startDates.push @_parseDate(value)
 				else
-					dates[1] = @_parseDate(value)
+					endDates.push @_parseDate(value)
 			else if sliderMatch && @sliders[sliderMatch[1]]
 				if sliderMatch[2] is 'min'
 					@sliders[sliderMatch[1]].rangeSlider 'values', parseInt(value, 10), @sliders[sliderMatch[1]].rangeSlider('values').max
@@ -1171,16 +1189,18 @@ $.widget 'nmk.filteredList', {
 				bounds = slider.rangeSlider("bounds")
 				slider.rangeSlider 'values', bounds.min, bounds.max
 
-
 		for checkbox in @form.find("input:checkbox:hidden").not(selectedOptions)
 			$(checkbox).prop('checked', false).closest('li').show()
 
-
-		if dates.length > 0
-			@selectCalendarDates dates[0], dates[1]
+		if startDates.length > 0
+			# Select date when qs have one range only
+			if startDates.length == 1
+				@selectCalendarDates startDates[0], endDates[0]
 		else
 			@_deselectDates()
-		dates = null
+
+		startDates = null
+		endDates = null
 
 		query = null
 

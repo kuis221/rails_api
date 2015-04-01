@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>API documentation</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/bundled/bootstrap.min.css'/>
+<link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/bundled/prettify.css'/>
+<link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/bundled/bootstrap-responsive.min.css'/>
+  <link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/application.css'/>
+  <!-- IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div id='container'>
+        <ul class='breadcrumb'>
+  <li>
+    <a href='../apidoc.html'>Brandscopic 1.0</a>
+    <span class='divider'>/</span>
+  </li>
+  <li class='active'>
+    Brand Ambassadors Documents
+    
+  </li>
+  
+</ul>
+
+<div class='page-header'>
+  <h1>
+    Brand Ambassadors Documents
+    <br>
+    <small>Documents</small>
+  </h1>
+</div>
+
+
+
+  <h2>Supported Formats</h2>
+  json, xml
+
+
+
+<div class='accordion' id='accordion'>
+
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/documents/index.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-index'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/brand_ambassadors/documents
+          </a>
+          <br>
+          <small>Obtain a list of documents and folders.</small>
+        </h2>
+    </div>
+
+
+    <div id='description-index' class='collapse accordion-body'>
+      
+
+  <h3>Supported Formats</h3>
+  json, xml
+
+  <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
+    401
+    Unauthorized access
+    <br>
+    404
+    The requested resource was not found
+    <br>
+    406
+    The server cannot return data in the requested format
+    <br>
+    422
+    Unprocessable Entity: The change could not be processed because of errors on the data
+    <br>
+    500
+    Server crashed for some reason. Possible because of missing required params or wrong parameters
+    <br>
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">GET /api/v1/brand_ambassadors/documents.json?visit_id=1&amp;parent_id=12
+
+[
+  {
+    id: 10,
+    name: &quot;ACCOUNT LISTS&quot;,
+    type: &quot;folder&quot;,
+    updated_at: &quot;2014-09-05T15:35:32.236-07:00&quot;,
+    file_name: null,
+    content_type: null,
+    url: null,
+    thumbnail: null
+  },
+  {
+    id: 155,
+    name: &quot;BA BIOS&quot;,
+    updated_at: &quot;2014-09-05T15:35:32.236-07:00&quot;,
+    type: &quot;folder&quot;,
+    file_name: null,
+    content_type: null,
+    url: null,
+    thumbnail: null
+  },
+  {
+    id: 156,
+    name: &quot;BA EVENT PHOTOS&quot;,
+    updated_at: &quot;2014-09-05T15:35:32.236-07:00&quot;,
+    type: &quot;folder&quot;,
+    file_name: null,
+    content_type: null,
+    url: null,
+    thumbnail: null
+  },
+  {
+    id: 208341,
+    name: &quot;IMG_20140330_165611&quot;,
+    updated_at: &quot;2014-09-05T15:35:32.236-07:00&quot;,
+    type: &quot;document&quot;,
+    file_name: &quot;IMG_20140330_165611.jpg&quot;,
+    content_type: &quot;image/jpeg&quot;,
+    url: &quot;https://s3.amazonaws.com/brandscopic-dev/brand_ambassadors/documents/files/000/208/341/original/IMG_20140330_165611.jpg?AWSAccessKeyId=AKIAIDG2GYLK4WMVHGPA&amp;Expires=1414703372&amp;Signature=wUdu6ssvH0mbW3Ws8JhH5YNc2mw%3D&amp;response-content-disposition=attachment%3B%20filename%3DIMG_20140330_165611.jpg&quot;,
+    thumbnail: &quot;http://s3.amazonaws.com/brandscopic-dev/brand_ambassadors/documents/files/000/208/341/small/IMG_20140330_165611.jpg?1414459534&quot;
+  },
+  {
+    id: 8,
+    name: &quot;ORG CHART&quot;,
+    updated_at: &quot;2014-09-05T15:35:32.236-07:00&quot;,
+    type: &quot;folder&quot;,
+    file_name: null,
+    content_type: null,
+    url: null,
+    thumbnail: null
+  }
+]
+</pre>
+
+  <h3>Params</h3>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>parent_id </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A valid folder id</p>
+
+        <br>
+        Value: 
+<p>Must be a number.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>visit_id </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A valid visit id</p>
+
+        <br>
+        Value: 
+<p>Must be a number.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+
+
+    </div>
+</div>
+
+
+        
+      </div>
+    </div>
+    <hr>
+    <footer></footer>
+  </div>
+  <script type='text/javascript' src='../apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
+<script type='text/javascript' src='../apidoc/javascripts/bundled/bootstrap-collapse.js'></script>
+<script type='text/javascript' src='../apidoc/javascripts/bundled/prettify.js'></script>
+<script type='text/javascript' src='../apidoc/javascripts/apipie.js'></script>
+</body>
+</html>
