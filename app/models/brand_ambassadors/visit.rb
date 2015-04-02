@@ -69,7 +69,7 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
     integer :id, stored: true
     integer :company_id
     integer :company_user_id
-    integer :location, multiple: true
+    join(:location, target: Area, type: :integer, join: { from: :id, to: :area_id }, as: 'location_ids_im')
     date :start_date, stored: true
     date :end_date, stored: true
 
@@ -96,15 +96,15 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
   end
 
   # Returns a list of Location ids based on the assigned area/city
-  def location
-    if area && city
-      area.cities.find { |c| c.name == city }.try(:location_ids)
-    elsif area
-      area.locations.map(&:id)
-    else
-      0
-    end
-  end
+  # def location
+  #   if area && city
+  #     area.cities.find { |c| c.name == city }.try(:location_ids)
+  #   elsif area
+  #     area.locations.map(&:id)
+  #   else
+  #     0
+  #   end
+  # end
 
   def self.do_search(params, _include_facets = false)
     solr_search(include: [:campaign, :area, company_user: :user]) do
@@ -116,6 +116,10 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
         unless company_user.role.is_admin?
           with :campaign_id, company_user.accessible_campaign_ids + [0]
           with :location, company_user.accessible_locations + [0]
+          # any_of do
+          #   with(:area_id, nil)
+          #   with(:location, company_user.accessible_locations + [0])
+          # end
         end
       end
 
