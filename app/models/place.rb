@@ -463,6 +463,7 @@ class Place < ActiveRecord::Base
 
   def fetch_place_data
     if reference && !do_not_connect_to_api
+      return unless spot
       self.name = spot.name
       self.lonlat = "POINT(#{spot.lng} #{spot.lat})"
       self.formatted_address = spot.formatted_address
