@@ -1,60 +1,13 @@
 require 'sunspot'
 
 module Sunspot
-  module Rails
-    module Searchable
-      module ClassMethods
-        def build_solr_search(params)
-          clazz = self
-          Sunspot.new_search(self) do
-            with :company_id, params[:company_id]
-            with_campaign params[:campaign] if params[:campaign]
-            with_area params[:area], params[:campaign] if params[:area]
-            with_place params[:place] if params[:place]
-            with_location params[:location] if params[:location]
-            with_status params[:status] if params[:status]
-            with_id params[:id] if params[:id]
-            with_brand params[:brand] if params[:brand]
-            with_brand_portfolio params[:brand_portfolio] if params[:brand_portfolio]
-            with_venue params[:venue] if params[:venue]
-            with_event_status params[:event_status] if params[:event_status]
-
-            between_date_range clazz, params[:start_date], params[:end_date]
-
-            with_user_teams params
-
-            if params[:current_company_user]
-              restrict_search_to_user_permissions (params[:search_permission_class] || clazz),
-                                                  params[:search_permission],
-                                                  params[:current_company_user]
-            end
-
-            order_by(params[:sorting], params[:sorting_dir] || :asc) if params[:sorting]
-            paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
-          end
-        end
-
-        def do_search(params, include_facets = false, &block)
-          search = build_solr_search(params)
-          search.build(&block) if block
-          search.build(&search_facets) if include_facets
-          solr_execute_search(include: [:campaign, :place]) do
-            search
-          end
-        end
-      end
-    end
-  end
-end
-
-module Sunspot
   module DSL
     class Scope
       def with_campaign(campaigns)
         if field?(:campaign_id)
           with :campaign_id, campaigns
-        elsif field?(:campaing_ids)
-          with :campaing_ids, campaigns
+        elsif field?(:campaign_ids)
+          with :campaign_ids, campaigns
         end
       end
 
@@ -120,6 +73,8 @@ module Sunspot
       def with_brand_portfolio(brand_portfolios)
         if field?(:brand_portfolio_id)
           with :brand_portfolio_id, brand_portfolios
+        elsif field?(:brand_portfolio_ids)
+          with :brand_portfolio_ids, brand_portfolios
         elsif field?(:brand_ids)
           with_brand BrandPortfolio.joins(:brands).where(id: brand_portfolios).pluck('brands.id')
         elsif field?(:campaign_ids) || field?(:campaign_id)
@@ -173,16 +128,20 @@ module Sunspot
         with :user_ids, ids if field?(:user_ids)
       end
 
+      def with_role(ids)
+        with :role_id, ids if field?(:role_id)
+      end
+
       def with_user_teams(params)
         return unless (params.key?(:user) && params[:user].present?) ||
                       (params.key?(:team) && params[:team].present?)
         team_ids = []
-        team_ids += params[:team] if params.key?(:team) && params[:team].any?
-        team_ids += Team.with_user(params[:user]).map(&:id) if params.key?(:user) && params[:user].any?
+        team_ids.concat Array(params[:team]) if params.key?(:team) && Array(params[:team]).any?
+        team_ids.concat Team.with_user(params[:user]).pluck(:id) if params.key?(:user) && Array(params[:user]).any?
 
         any_of do
-          with(:user_ids, params[:user]) if params.key?(:user) && params[:user].present?
-          with(:team_ids, team_ids) if team_ids.any?
+          with(:user_ids, params[:user]) if field?(:user_ids) &&  params.key?(:user) && params[:user].present?
+          with(:team_ids, team_ids) if field?(:team_ids) && team_ids.any?
         end
       end
 
@@ -264,20 +223,11 @@ module Sunspot
         end
       end
 
-      def restrict_search_to_user_permissions(permission_class, permission, company_user)
-        return if company_user.role.is_admin?
-        if company_user.role.permission_for(permission, permission_class).mode == 'campaigns'
-          with_campaign company_user.accessible_campaign_ids + [0]
-        elsif company_user.role.permission_for(permission, permission_class).mode == 'none'
-          with_campaign [0]
-        end
-        within_user_locations(company_user)
-      end
-
       def within_user_locations(company_user)
+        return unless field?(:place_id) || field?(:location)
         any_of do
-          with(:place_id, company_user.accessible_places + [0])
-          with(:location, company_user.accessible_locations + [0])
+          with(:place_id, company_user.accessible_places + [0]) if field?(:place_id)
+          with(:location, company_user.accessible_locations + [0]) if field?(:location)
         end
       end
 

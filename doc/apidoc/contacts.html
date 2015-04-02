@@ -41,6 +41,8 @@
   <h2>Supported Formats</h2>
   json, xml
 
+
+
 <div class='accordion' id='accordion'>
 
     <hr>
@@ -99,6 +101,9 @@ this is the concatanation of stree1+street2</p>
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     406
     The server cannot return data in the requested format
     <br>
@@ -112,7 +117,7 @@ this is the concatanation of stree1+street2</p>
 
   <h3>Examples</h3>
     <pre class="prettyprint">A list of contacts for company id 1:
-GET /api/v1/contacts?auth_token=XXXXXYYYYYZZZZZ&amp;company_id=1
+GET /api/v1/contacts
 [
     {
         &quot;id&quot;: 268,
@@ -134,60 +139,8 @@ GET /api/v1/contacts?auth_token=XXXXXYYYYYZZZZZ&amp;company_id=1
 ]
 </pre>
 
-  <h3>Params</h3>
-  <table class='table'>
-    <thead>
-      <tr>
-        <th>Param name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
 
 
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-
-    </tbody>
-  </table>
 
     </div>
     <hr>
@@ -215,6 +168,9 @@ GET /api/v1/contacts?auth_token=XXXXXYYYYYZZZZZ&amp;company_id=1
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     406
     The server cannot return data in the requested format
     <br>
@@ -257,48 +213,6 @@ GET /api/v1/contacts?auth_token=XXXXXYYYYYZZZZZ&amp;company_id=1
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>id </strong><br>
       <small>
         required
@@ -310,7 +224,9 @@ GET /api/v1/contacts?auth_token=XXXXXYYYYYZZZZZ&amp;company_id=1
 <p>Contact ID</p>
 
         <br>
-        Value: Must be a number.
+        Value: 
+<p>Must be a number.</p>
+
 
 
     </td>
@@ -321,6 +237,8 @@ GET /api/v1/contacts?auth_token=XXXXXYYYYYZZZZZ&amp;company_id=1
 
     </tbody>
   </table>
+
+
 
     </div>
     <hr>
@@ -351,6 +269,9 @@ assigned unique ID.</p>
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     406
     The server cannot return data in the requested format
     <br>
@@ -366,7 +287,7 @@ assigned unique ID.</p>
 
 
   <h3>Examples</h3>
-    <pre class="prettyprint">POST /api/v1/contacts?auth_token=XXXXXYYYYYZZZZZ&amp;company_id=1
+    <pre class="prettyprint">POST /api/v1/contacts
 DATA:
 {
     contact: {
@@ -415,48 +336,6 @@ RESPONSE:
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>contact </strong><br>
       <small>
         required
@@ -466,7 +345,9 @@ RESPONSE:
     <td>
       
         <br>
-        Value: Must be a Hash
+        Value: 
+<p>Must be a Hash</p>
+
 
 
     </td>
@@ -486,7 +367,9 @@ RESPONSE:
 <p>Contact&#39;s first name</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -507,7 +390,9 @@ RESPONSE:
 <p>Contact&#39;s last name</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -528,7 +413,9 @@ RESPONSE:
 <p>Contact&#39;s title</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -549,7 +436,9 @@ RESPONSE:
 <p>Contact&#39;s email address</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -570,7 +459,9 @@ RESPONSE:
 <p>Contact&#39;s phone number&#39;</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -591,7 +482,9 @@ RESPONSE:
 <p>Contact&#39;s street address 1</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -612,7 +505,9 @@ RESPONSE:
 <p>Contact&#39;s street address 2</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -633,7 +528,9 @@ RESPONSE:
 <p>Contact&#39;s country code, eg: US, UK, AR</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -654,7 +551,9 @@ RESPONSE:
 <p>Contact&#39;s state code, eg: CA, TX</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -675,7 +574,9 @@ RESPONSE:
 <p>Contact&#39;s city</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -696,7 +597,9 @@ RESPONSE:
 <p>Contact&#39;s ZIP code</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -708,6 +611,8 @@ RESPONSE:
 
     </tbody>
   </table>
+
+
 
     </div>
     <hr>
@@ -738,6 +643,9 @@ updated info.</p>
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     406
     The server cannot return data in the requested format
     <br>
@@ -750,7 +658,7 @@ updated info.</p>
 
 
   <h3>Examples</h3>
-    <pre class="prettyprint">PUT /api/v1/contacts/268?auth_token=XXXXXYYYYYZZZZZ&amp;company_id=1
+    <pre class="prettyprint">PUT /api/v1/contacts/268
 DATA:
 {
     contact: {
@@ -800,48 +708,6 @@ RESPONSE:
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>id </strong><br>
       <small>
         required
@@ -853,7 +719,9 @@ RESPONSE:
 <p>Contact ID</p>
 
         <br>
-        Value: Must be a number.
+        Value: 
+<p>Must be a number.</p>
+
 
 
     </td>
@@ -872,7 +740,9 @@ RESPONSE:
     <td>
       
         <br>
-        Value: Must be a Hash
+        Value: 
+<p>Must be a Hash</p>
+
 
 
     </td>
@@ -892,7 +762,9 @@ RESPONSE:
 <p>Contact&#39;s first name</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -913,7 +785,9 @@ RESPONSE:
 <p>Contact&#39;s last name</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -934,7 +808,9 @@ RESPONSE:
 <p>Contact&#39;s title</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -955,7 +831,9 @@ RESPONSE:
 <p>Contact&#39;s email address</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -976,7 +854,9 @@ RESPONSE:
 <p>Contact&#39;s phone number&#39;</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -997,7 +877,9 @@ RESPONSE:
 <p>Contact&#39;s street address 1</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -1018,7 +900,9 @@ RESPONSE:
 <p>Contact&#39;s street address 2</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -1039,7 +923,9 @@ RESPONSE:
 <p>Contact&#39;s country code, eg: US, UK, AR</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -1060,7 +946,9 @@ RESPONSE:
 <p>Contact&#39;s state code, eg: CA, TX</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -1081,7 +969,9 @@ RESPONSE:
 <p>Contact&#39;s city</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -1102,7 +992,9 @@ RESPONSE:
 <p>Contact&#39;s ZIP code</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -1114,6 +1006,8 @@ RESPONSE:
 
     </tbody>
   </table>
+
+
 
     </div>
 </div>

@@ -25,7 +25,6 @@ describe CompanyUser, type: :model, search: true do
     expect(search(company_id: 2))
       .to match_array([user2_in_company2])
 
-
     # Search for a specific users
     expect(search(company_id: 1, user: [user.id]))
       .to match_array([user])

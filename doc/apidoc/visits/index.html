@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>API documentation</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/bootstrap.min.css'/>
+<link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/prettify.css'/>
+<link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/bundled/bootstrap-responsive.min.css'/>
+  <link type='text/css' rel='stylesheet' href='../../apidoc/stylesheets/application.css'/>
+  <!-- IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div id='container'>
+        <ul class='breadcrumb'>
+  <li>
+    <a href='../../apidoc.html'>Brandscopic 1.0</a>
+    <span class='divider'>/</span>
+  </li>
+  <li>
+    <a href='../../apidoc/visits.html'>
+      Brand Ambassadors Visits
+      
+    </a>
+    <span class='divider'>/</span>
+  </li>
+  <li class='active'>index</li>
+  
+
+</ul>
+
+  <div class='page-header'>
+    <h1>
+      GET /api/v1/brand_ambassadors/visits
+      <br>
+      <small>Search for a list of visits</small>
+    </h1>
+  </div>
+
+<div>
+
+  
+<p>Returns a list of visits filtered by the given params.</p>
+
+<p>The results are returned on groups of 30 per request. To obtain the next 30
+results provide the &lt;page&gt; param.</p>
+
+<p>The dates are returned on the user&#39;s timezone.</p>
+
+<p><strong>Facets</strong></p>
+
+<p>Faceting is a feature of Solr that determines the number of documents that
+match a given search and an additional criteria.</p>
+
+<p>When &lt;page&gt; is “1”, the result will include a list of facets scoped
+on the following search params:</p>
+<ul><li>
+<p>start_date</p>
+</li><li>
+<p>end_date</p>
+</li></ul>
+
+<p>*Facets Results*</p>
+
+<p>The API returns the facets on the following format:</p>
+
+<pre>[
+  {
+    label: String,            # Any of: Campaigns, Brands, Location, People, Active State, Event Status
+    items: [                  # List of items for the facet sorted by relevance
+      {
+        &quot;label&quot;: String,      # The name of the item
+        &quot;id&quot;: String,         # The id of the item, this should be used to filter the list by this items
+        &quot;name&quot;: String,       # The param name to be use for filtering the list (campaign, user, team, place, area, status, event_status)
+        &quot;count&quot;: Number,      # The number of results for this item
+        &quot;selected&quot;: Boolean   # True if the list is being filtered by this item
+      },
+      ....
+    ],
+    top_items: [              # Some facets will return this as a list of items that have the greater number of results
+      &lt;other list of items&gt;
+    ]
+  }
+]</pre>
+
+<p>Each visit in the result set has the following attributes:</p>
+<ul><li>
+<p><strong>id</strong>: the visits&#39;s ID</p>
+</li><li>
+<p><strong>visit_type_name</strong>: the visit&#39;s type name</p>
+</li><li>
+<p><strong>start_date</strong>: the visit&#39;s start date</p>
+</li><li>
+<p><strong>end_date</strong>: the visit&#39;s end date</p>
+</li><li>
+<p><strong>campaign_name</strong>: the campaign to which the visit belongs</p>
+</li><li>
+<p><strong>area_name</strong>: the area to which the visit belongs</p>
+</li><li>
+<p><strong>city</strong>: the city for the visit</p>
+</li><li>
+<p><strong>description</strong>: the visit&#39;s description</p>
+</li><li>
+<p><strong>status</strong>: the visit&#39;s status</p>
+</li><li>
+<p><strong>user</strong>:</p>
+<ul><li>
+<p><strong>id</strong>: the user id</p>
+</li><li>
+<p><strong>full_name</strong>: the name of the user to which the visit belongs</p>
+</li></ul>
+</li></ul>
+
+
+  <h2>Supported Formats</h2>
+  json, xml
+
+  <h2>Errors</h2>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
+    401
+    Unauthorized access
+    <br>
+    404
+    The requested resource was not found
+    <br>
+    406
+    The server cannot return data in the requested format
+    <br>
+    422
+    Unprocessable Entity: The change could not be processed because of errors on the data
+    <br>
+    500
+    Server crashed for some reason. Possible because of missing required params or wrong parameters
+    <br>
+
+
+  <h2>Examples</h2>
+    <pre class="prettyprint">GET /api/v1/brand_ambassadors/visits.json
+{
+  &quot;page&quot;: 1,
+  &quot;total_pages&quot;: 8
+  &quot;total&quot;: 215,
+  &quot;facets&quot;: [
+    &lt;HERE GOES THE LIST FACETS DESCRIBED ABOVE&gt;
+  ],
+  &quot;results&quot;: [
+    {
+      id: 213,
+      visit_type_name: &quot;Market Visit&quot;,
+      start_date: &quot;2014-07-01&quot;,
+      end_date: &quot;2014-07-02&quot;,
+      campaign_name: &quot;Gin BA FY15&quot;,
+      area_name: &quot;Miami&quot;,
+      city: &quot;Miami&quot;,
+      description: &quot;Three Martini Lunch&quot;,
+      status: &quot;Active&quot;,
+      user: {
+        id: 130,
+        full_name: &quot;Nick van Tiel&quot;
+      }
+    },
+    {
+      id: 115,
+      visit_type_name: &quot;PTO&quot;,
+      start_date: &quot;2014-07-07&quot;,
+      end_date: &quot;2014-07-11&quot;,
+      campaign_name: &quot;Absolut BA FY15&quot;,
+      area_name: null,
+      city: null,
+      description: &quot;&quot;,
+      status: &quot;Active&quot;,
+      user: {
+        id: 103,
+        full_name: &quot;Rudy Aguero&quot;
+      }
+    },
+    ...
+  ]
+}
+</pre>
+
+  <h2>Params</h2>
+  <table class='table'>
+    <thead>
+      <tr>
+        <th>Param name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>start_date </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A date to filter the visit list. When provided a start_date without an
+<code>end_date</code>, the result will only include visits that happen on
+this day. The date should be in the format MM/DD/YYYY.</p>
+
+        <br>
+        Value: 
+<p>Must match regular expression /Ad{2}/d{2}/d{4}z/.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>end_date </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A date to filter the visit list. This should be provided together with the
+<code>start_date</code> param and when provided will filter the list with
+those visits that are between that range. The date should be in the format
+MM/DD/YYYY.</p>
+
+        <br>
+        Value: 
+<p>Must match regular expression /Ad{2}/d{2}/d{4}z/.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>user </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of Brand Ambassador ids to filter the results</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>campaign </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of Campaign ids to filter the results</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>area </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of Area ids to filter the results</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>city </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>A list of City ids to filter the results</p>
+
+        <br>
+        Value: 
+<p>Must be an array of any type</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+  <tr style='background-color:rgb(255,255,255);'>
+    <td>
+      <strong>page </strong><br>
+      <small>
+        optional
+        
+      </small>
+    </td>
+    <td>
+      
+<p>The number of the page, Default: 1</p>
+
+        <br>
+        Value: 
+<p>Must be Integer.</p>
+
+
+
+    </td>
+
+  </tr>
+
+  
+
+    </tbody>
+  </table>
+
+
+
+</div>
+
+
+        
+      </div>
+    </div>
+    <hr>
+    <footer></footer>
+  </div>
+  <script type='text/javascript' src='../../apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/bundled/bootstrap-collapse.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/bundled/prettify.js'></script>
+<script type='text/javascript' src='../../apidoc/javascripts/apipie.js'></script>
+</body>
+</html>

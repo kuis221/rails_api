@@ -261,6 +261,11 @@ class Venue < ActiveRecord::Base
     @overall_graphs_data
   end
 
+  def self.in_campaign_scope(campaign)
+    subquery = Place.connection.unprepared_statement { Place.in_campaign_areas(campaign, campaign.areas.to_a).to_sql }
+    joins("INNER JOIN (#{subquery}) campaign_places ON campaign_places.id=venues.place_id")
+  end
+
   def self.do_search(params, include_facets = false)
     ss = solr_search(include: [:place]) do
 

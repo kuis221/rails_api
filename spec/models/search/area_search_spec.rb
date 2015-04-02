@@ -3,8 +3,8 @@ require 'rails_helper'
 describe Area, type: :model, search: true do
   it 'should search for areas' do
     # First populate the Database with some data
-    area = create(:area)
-    area2 = create(:area)
+    area = create(:area, company_id: 1)
+    area2 = create(:area, company_id: 1)
 
     # Create an Area on company 2
     company2_area = create(:area, company_id: 2)

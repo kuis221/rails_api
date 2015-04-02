@@ -77,6 +77,9 @@ are returned. Each user have the following attributes:</p>
   json, xml
 
   <h2>Errors</h2>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     404
     Missing
     <br>
@@ -90,7 +93,7 @@ are returned. Each user have the following attributes:</p>
 
   <h2>Examples</h2>
     <pre class="prettyprint">A list of users for company id 1:
-GET /api/v1/users?auth_token=XXXXXYYYYYZZZZZ&amp;company_id=1
+GET /api/v1/users
 [
     {
         &quot;id&quot;: 268,
@@ -110,7 +113,7 @@ GET /api/v1/users?auth_token=XXXXXYYYYYZZZZZ&amp;company_id=1
 ]
 </pre>
     <pre class="prettyprint">A list of ACTIVE users for company id 1 filtered by roles 1 and 2:
-GET /api/v1/users?auth_token=XXXXXYYYYYZZZZZ&amp;company_id=1&amp;role[]=1&amp;role[]=2
+GET /api/v1/users?role[]=1&amp;role[]=2
 [
     {
         &quot;id&quot;: 268,
@@ -141,44 +144,6 @@ GET /api/v1/users?auth_token=XXXXXYYYYYZZZZZ&amp;company_id=1&amp;role[]=1&amp;r
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>campaign </strong><br>
       <small>
         optional
@@ -191,7 +156,9 @@ GET /api/v1/users?auth_token=XXXXXYYYYYZZZZZ&amp;company_id=1&amp;role[]=1&amp;r
 assigned to these campaigns</p>
 
         <br>
-        Value: Must be an array of any type
+        Value: 
+<p>Must be an array of any type</p>
+
 
 
     </td>
@@ -213,7 +180,9 @@ assigned to these campaigns</p>
 members of these teams</p>
 
         <br>
-        Value: Must be an array of any type
+        Value: 
+<p>Must be an array of any type</p>
+
 
 
     </td>
@@ -235,7 +204,9 @@ members of these teams</p>
 roles</p>
 
         <br>
-        Value: Must be an array of any type
+        Value: 
+<p>Must be an array of any type</p>
+
 
 
     </td>
@@ -246,6 +217,8 @@ roles</p>
 
     </tbody>
   </table>
+
+
 
 </div>
 

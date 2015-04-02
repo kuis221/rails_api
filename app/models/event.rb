@@ -29,6 +29,9 @@ class Event < ActiveRecord::Base
 
   attr_accessor :visit_id
 
+  # Defines the method do_search
+  include SolrSearchable
+
   belongs_to :campaign
   belongs_to :place, autosave: true
 
@@ -176,40 +179,13 @@ class Event < ActiveRecord::Base
   # Similar to in_campaign_area, except that this accepts severals areas and filter
   # the events based on given areas scope validating the custom exclusions for that area in that campaign
   def self.in_campaign_areas(campaign, areas)
-    subquery =
-      Place.select('DISTINCT places.location_id, areas_campaigns.area_id')
-      .joins(:placeables)
-      .where(placeables: { placeable_type: 'Area', placeable_id: areas }, is_location: true)
-      .joins('INNER JOIN areas_campaigns
-                ON areas_campaigns.campaign_id=' + campaign.id.to_s + ' AND
-                areas_campaigns.area_id=placeables.placeable_id')
-      .where('NOT (places.id = ANY (areas_campaigns.exclusions))').to_sql
-
-    subquery += ' UNION ' +
-      Place.select('DISTINCT places.location_id, areas_campaigns.area_id')
-      .joins('INNER JOIN areas_campaigns ON places.id = ANY (areas_campaigns.inclusions)')
-      .where(is_location: true, areas_campaigns: { area_id: areas, campaign_id: campaign.id }).to_sql
-
-    place_query = "select place_id, locations.area_id FROM locations_places INNER JOIN (#{subquery})"\
-                  ' locations ON locations.location_id=locations_places.location_id'
-    area_query = Placeable.select('place_id, placeable_id area_id').where(placeable_type: 'Area', placeable_id: areas)
-                 .joins("INNER JOIN areas_campaigns ON areas_campaigns.campaign_id=#{campaign.id} "\
-                        'AND areas_campaigns.area_id=placeables.placeable_id')
-                 .where('NOT (place_id = ANY (areas_campaigns.exclusions))').to_sql
-    joins(:place)
-      .joins("INNER JOIN (#{area_query} UNION #{place_query}) areas_places ON events.place_id=areas_places.place_id")
+    subquery = Place.connection.unprepared_statement { Place.in_campaign_areas(campaign, areas).to_sql }
+    joins("INNER JOIN (#{subquery}) campaign_places ON campaign_places.id=events.place_id")
   end
 
-  #
   def self.in_areas(areas)
-    subquery = Place.select('DISTINCT places.location_id')
-               .joins(:placeables).where(placeables: { placeable_type: 'Area', placeable_id: areas }, is_location: true)
-    place_query = "select place_id FROM locations_places INNER JOIN (#{subquery.to_sql})"\
-                  ' locations on locations.location_id=locations_places.location_id'
-    area_query = Placeable.select('place_id')
-                 .where(placeable_type: 'Area', placeable_id: areas).to_sql
-    joins(:place)
-      .joins("INNER JOIN (#{area_query} UNION #{place_query}) areas_places ON events.place_id=areas_places.place_id")
+    subquery = Place.connection.unprepared_statement { Place.in_areas(areas).to_sql }
+    joins("INNER JOIN (#{subquery}) areas_places ON areas_places.id=events.place_id")
   end
 
   def self.in_places(places)
@@ -571,7 +547,7 @@ class Event < ActiveRecord::Base
       timezone = Time.zone.name
       timezone = 'UTC' if Company.current && Company.current.timezone_support?
       Time.use_zone(timezone) do
-        super do
+        super(params, include_facets, includes: [:campaign, :place]) do
           with(:has_event_data, true) if params[:with_event_data_only].present?
           with(:spent).greater_than(0) if params[:with_expenses_only].present?
           with(:has_surveys, true) if params[:with_surveys_only].present?
@@ -641,6 +617,19 @@ class Event < ActiveRecord::Base
             with(search_start_date_field).less_than(Time.zone.now.end_of_day)
             with(search_end_date_field).greater_than(Time.zone.now.beginning_of_day)
           end
+        end
+      end
+    end
+
+    def apply_user_permissions_to_search(permission_class, permission, company_user)
+      proc do
+        unless company_user.role.is_admin?
+          if company_user.role.permission_for(permission, permission_class).mode == 'campaigns'
+            with_campaign company_user.accessible_campaign_ids + [0]
+          elsif company_user.role.permission_for(permission, permission_class).mode == 'none'
+            with_campaign [0]
+          end
+          within_user_locations(company_user)
         end
       end
     end

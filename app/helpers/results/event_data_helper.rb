@@ -135,7 +135,7 @@ module Results
     def custom_fields_to_export
       @custom_fields_to_export ||= begin
         campaign_ids = []
-        campaign_ids = params[:campaign].uniq.compact if params[:campaign] && params[:campaign].any?
+        campaign_ids = search_params[:campaign].uniq.compact if search_params[:campaign] && search_params[:campaign].any?
         unless current_company_user.is_admin?
           if campaign_ids.any?
             campaign_ids = campaign_ids.map(&:to_i) & current_company_user.accessible_campaign_ids
@@ -149,11 +149,11 @@ module Results
     end
 
     def filter_campaigns_by_brands(campaign_ids)
-      return campaign_ids unless params[:brand] && params[:brand].any?
+      return campaign_ids unless search_params[:brand] && search_params[:brand].any?
       if campaign_ids.any?
-        Campaign.with_brands(params[:brand]).where(id: campaign_ids).pluck(:id)
+        Campaign.with_brands(search_params[:brand]).where(id: campaign_ids).pluck(:id)
       else
-        Campaign.with_brands(params[:brand]).pluck(:id)
+        Campaign.with_brands(search_params[:brand]).pluck(:id)
       end
     end
 
@@ -187,7 +187,7 @@ module Results
         else
           FormField.for_activity_types_in_campaigns(campaign_ids)
         end.where.not(type: exclude_field_types).order('lower(form_fields.name) ASC, form_fields.type ASC')
-      s = s.where(fieldable_id: params[:activity_type]) if params[:activity_type] && params[:activity_type].any?
+      s = s.where(fieldable_id: search_params[:activity_type]) if search_params[:activity_type] && search_params[:activity_type].any?
       s.map { |field| [field.id, field] }
     end
 

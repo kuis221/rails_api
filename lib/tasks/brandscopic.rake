@@ -32,10 +32,11 @@ namespace :brandscopic do
             place = venues.first.place
             place.name = name.strip
             place.route = route.gsub(/^[0-9]+\w/, '').strip
-            place.street_number = route.gsub(/^([0-9]+)\w.*$/, '$1').strip
+            place.street_number = route.gsub(/^([0-9]+)\w.*$/, '\1').strip
             place.zipcode = zip.strip
-            place.city = zip.strip
+            place.city = city.strip
             place.state = state.strip
+            place.state = Country.new(place.country).states[state.upcase.strip]['name']  if state.strip =~ /^[A-Z]{2}$/i
             place.td_linx_code = td_linx_code.strip unless td_linx_code.blank?
             place.save
             place.merge(venues[1].place)
@@ -50,11 +51,15 @@ namespace :brandscopic do
 
   desc 'Fix places place_id'
   task fix_place_id: :environment do
-    Place.where.not(place_id: nil).where.not(place_id: '').find_each do |place|
-      spot = place.send(:spot)
-      next unless spot.present?
-      place.place_id = spot.place_id
-      sleep Random.rand(3)
+    Place.where('char_length(place_id) > 39').where.not(reference: nil).find_each do |place|
+      begin
+        sleep Random.rand(2)
+        spot = place.send(:spot)
+        next unless spot.present?
+        place.update_column(:place_id, spot.place_id) unless place.place_id == spot.place_id
+      rescue e
+        puts "Failed updating place ##{place.id}: #{e.inspect}"
+      end
     end
   end
 end

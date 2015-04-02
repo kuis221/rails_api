@@ -200,7 +200,7 @@ describe Event, type: :model, search: true do
     expect(search(company_id: company.id, with_comments_only: true)).to match_array([event1])
   end
 
-  describe "area customizations searches" do
+  describe 'area customizations searches' do
     it 'should return events inside cities included to areas in campaigns' do
       place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
       area_la = create(:area, company: company)

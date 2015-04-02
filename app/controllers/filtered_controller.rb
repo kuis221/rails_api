@@ -6,7 +6,7 @@ class FilteredController < InheritedResources::Base
   include ExportableController
 
   helper_method :collection_count, :facets, :page,
-                :total_pages, :return_path
+                :total_pages, :return_path, :search_params
 
   respond_to :json, only: :index
 

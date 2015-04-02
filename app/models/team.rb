@@ -21,6 +21,9 @@ class Team < ActiveRecord::Base
 
   scoped_to_company
 
+  # Defines the method do_search
+  include SolrSearchable
+
   validates :name, presence: true
   validates :company_id, presence: true, numericality: true
 
@@ -79,26 +82,6 @@ class Team < ActiveRecord::Base
   end
 
   class << self
-    # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
-    def do_search(params, include_facets = false)
-      ss = solr_search do
-
-        with(:company_id, params[:company_id])
-        with(:campaign_ids, params[:campaign]) unless params[:campaign].blank?
-        with(:status, params[:status]) unless params[:status].blank?
-        with(:id, params[:team]) unless params[:team].blank?
-        with(:user_ids, params[:user]) unless params[:user].blank?
-
-        if include_facets
-          facet :campaigns
-          facet :status
-        end
-
-        order_by(params[:sorting] || :name, params[:sorting_dir] || :asc)
-        paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
-      end
-    end
-
     def searchable_params
       [campaign: [], user: [], team: [], status: []]
     end

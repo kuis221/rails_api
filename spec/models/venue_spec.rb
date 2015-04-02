@@ -41,7 +41,8 @@ describe Venue, type: :model do
 
     it 'count the number of events for the company' do
       venue.save
-      e = create(:event, place_id: venue.place_id, company: company, start_date: '01/23/2019', end_date: '01/23/2019', start_time: '8:00am', end_time: '11:00am')
+      create(:event, place_id: venue.place_id, company: company, start_date: '01/23/2019',
+                     end_date: '01/23/2019', start_time: '8:00am', end_time: '11:00am')
       create(:event, company: company, place_id: create(:place).id) # Create another event for other place
       create(:event, place_id: venue.place_id) # Create another event for other company
 
@@ -56,7 +57,7 @@ describe Venue, type: :model do
 
   describe 'compute_scoring', search: true do
     it 'should correctly compute the scoring based on the venues in a radius of 5KM' do
-      place1 = create(:venue, place: create(:place, lonlat: 'POINT(-84.050045 9.930713)' ),
+      place1 = create(:venue, place: create(:place, lonlat: 'POINT(-84.050045 9.930713)'),
         avg_impressions_hour: 142, avg_impressions_cost: 167)
       place2 = create(:venue, place: create(:place, lonlat: 'POINT(-84.050045 9.929967)'),
         avg_impressions_hour: 183, avg_impressions_cost: 217)
@@ -65,7 +66,7 @@ describe Venue, type: :model do
       place4 = create(:venue, place: create(:place, lonlat: 'POINT(-84.044348 9.931795)'),
         avg_impressions_hour: 167, avg_impressions_cost: 142)
 
-      Venue.reindex
+      described_class.reindex
       Sunspot.commit
 
       place1.compute_scoring
@@ -97,7 +98,8 @@ describe Venue, type: :model do
       it 'should correctly count the amounts for :age, :gender and :ethnicity' do
         Kpi.create_global_kpis
         campaign.assign_all_global_kpis
-        event = create(:event, campaign: campaign, place_id: venue.place_id, start_date: '01/23/2013', end_date: '01/23/2013', start_time: '6:00pm', end_time: '9:00pm')
+        event = create(:event, campaign: campaign, place_id: venue.place_id, start_date: '01/23/2013',
+                               end_date: '01/23/2013', start_time: '6:00pm', end_time: '9:00pm')
         set_event_results(event,
                           gender_male: 35,  gender_female: 65,
                           ethnicity_asian: 15,
@@ -115,7 +117,8 @@ describe Venue, type: :model do
                           age_65: 13
         )
 
-        event = create(:event, campaign: campaign, place_id: venue.place_id, start_date: '01/23/2013', end_date: '01/23/2013', start_time: '6:00pm', end_time: '9:00pm')
+        event = create(:event, campaign: campaign, place_id: venue.place_id, start_date: '01/23/2013',
+                               end_date: '01/23/2013', start_time: '6:00pm', end_time: '9:00pm')
         set_event_results(event,
                           gender_male: 20,  gender_female: 80,
                           ethnicity_asian: 15,
@@ -134,19 +137,24 @@ describe Venue, type: :model do
         )
         data = venue.overall_graphs_data
 
-        expect(data[:age]).to eq('< 12' => 1.0, '12 – 17' => 2.0, '18 – 24' => 4.0, '25 – 34' => 8.0, '35 – 44' => 16.0, '45 – 54' => 32.0, '55 – 64' => 24.0, '65+' => 13.0)
+        expect(data[:age]).to eq('< 12' => 1.0, '12 – 17' => 2.0, '18 – 24' => 4.0, '25 – 34' => 8.0,
+                                 '35 – 44' => 16.0, '45 – 54' => 32.0, '55 – 64' => 24.0, '65+' => 13.0)
         expect(data[:gender]).to eq('Female' => 72.5, 'Male' => 27.5)
-        expect(data[:ethnicity]).to eq('Asian' => 15.0, 'Black / African American' => 24.0, 'Hispanic / Latino' => 26.0, 'Native American' => 23.0, 'White' => 12.0)
+        expect(data[:ethnicity]).to eq('Asian' => 15.0, 'Black / African American' => 24.0,
+                                       'Hispanic / Latino' => 26.0, 'Native American' => 23.0,
+                                       'White' => 12.0)
 
       end
 
       it 'should correctly distribute the promo hours for events happening in the same day' do
         Kpi.create_global_kpis
         campaign.assign_all_global_kpis
-        event = create(:event, campaign: campaign, place_id: venue.place_id, start_date: '01/23/2013', end_date: '01/23/2013', start_time: '6:00pm', end_time: '9:00pm')
+        event = create(:event, campaign: campaign, place_id: venue.place_id, start_date: '01/23/2013',
+                               end_date: '01/23/2013', start_time: '6:00pm', end_time: '9:00pm')
         set_event_results(event, impressions: 100)
 
-        event = create(:event, campaign: campaign, place_id: venue.place_id, start_date: '01/24/2013', end_date: '01/24/2013', start_time: '8:00pm', end_time: '10:00pm')
+        event = create(:event, campaign: campaign, place_id: venue.place_id, start_date: '01/24/2013',
+                               end_date: '01/24/2013', start_time: '8:00pm', end_time: '10:00pm')
         set_event_results(event, impressions: 50)
 
         data = venue.overall_graphs_data
@@ -163,7 +171,8 @@ describe Venue, type: :model do
       it 'should correctly distribute the promo hours for events happening in more than one day' do
         Kpi.create_global_kpis
         campaign.assign_all_global_kpis
-        event = create(:event, campaign: campaign, place_id: venue.place_id, start_date: '01/23/2013', end_date: '01/24/2013', start_time: '8:00pm', end_time: '03:00am')
+        event = create(:event, campaign: campaign, place_id: venue.place_id, start_date: '01/23/2013',
+                               end_date: '01/24/2013', start_time: '8:00pm', end_time: '03:00am')
         event.event_expenses.create(amount: 1000, name: 'Test expense')
         set_event_results(event, impressions: 100)
 
@@ -184,6 +193,88 @@ describe Venue, type: :model do
         expect(data[:cost_impression][5].round).to eq(0)
         expect(data[:cost_impression][6].round).to eq(0)
       end
+    end
+  end
+
+  describe '#in_campaign_scope' do
+    let(:company) { create(:company) }
+    let(:campaign) { create(:campaign, company: company) }
+
+    it 'includes only venues within the campaign areas' do
+      venue_la = create(:venue, company: company,
+                                place: create(:place, country: 'US', state: 'California', city: 'Los Angeles'))
+
+      venue_sf = create(:venue, company: company,
+                                place: create(:place, country: 'US', state: 'California', city: 'San Francisco'))
+
+      area_la = create(:area, company: company)
+      area_sf = create(:area, company: company)
+
+      campaign.areas << [area_la, area_sf]
+
+      area_la.places << create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
+      area_sf.places << create(:place, country: 'US', state: 'California', city: 'San Francisco', types: ['locality'])
+
+      expect(described_class.in_campaign_scope(campaign)).to match_array [venue_la, venue_sf]
+    end
+
+    it 'excludes venues that are in places that were excluded from the campaign' do
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      create(:venue, company: company, place: place_la)
+
+      place_sf = create(:place, country: 'US', state: 'California', city: 'San Francisco')
+      venue_sf = create(:venue, company: company, place: place_sf)
+
+      area_la = create(:area, company: company)
+      area_sf = create(:area, company: company)
+
+      area_la.places << place_la
+      area_sf.places << place_sf
+
+      # Associate areas to campaigns
+      create(:areas_campaign, area: area_la, campaign: campaign, exclusions: [place_la.id])
+      create(:areas_campaign, area: area_sf, campaign: campaign)
+
+      expect(described_class.in_campaign_scope(campaign)).to match_array [venue_sf]
+    end
+
+    it 'excludes venues that are in places inside an excluded city' do
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      venue_la = create(:venue, company: company, place: place_la)
+
+      city_la = create(:city, name: 'Los Angeles', country: 'US', state: 'California')
+      area_la = create(:area, company: company)
+
+      area_la.places << city_la
+
+      area_campaign_la = create(:areas_campaign, area: area_la, campaign: campaign)
+      expect(described_class.in_campaign_scope(campaign)).to match_array [venue_la]
+
+      area_campaign_la.update_attribute :exclusions, [city_la.id]
+      expect(described_class.in_campaign_scope(campaign)).to be_empty
+    end
+
+    it 'includes venues that are inside an included city' do
+      campaign2 = create(:campaign, company: company)
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      place_sf = create(:place, country: 'US', state: 'California', city: 'San Francisco')
+      venue_la = create(:venue, company: company, place: place_la)
+      venue_sf = create(:venue, company: company, place: place_sf)
+
+      city_la = create(:city, name: 'Los Angeles', country: 'US', state: 'California')
+      city_sf = create(:city, name: 'San Francisco', country: 'US', state: 'California')
+      area_la = create(:area, company: company)
+      area_sf = create(:area, company: company)
+      area_sf.places << city_sf
+
+      area_campaign_la = create(:areas_campaign, area: area_la, campaign: campaign)
+      create(:areas_campaign, area: area_sf, campaign: campaign)
+      create(:areas_campaign, area: area_la, campaign: campaign2)
+
+      expect(described_class.in_campaign_scope(campaign)).to match_array [venue_sf]
+
+      area_campaign_la.update_attribute :inclusions, [city_la.id]
+      expect(described_class.in_campaign_scope(campaign)).to match_array [venue_sf, venue_la]
     end
   end
 end

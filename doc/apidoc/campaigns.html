@@ -41,6 +41,8 @@
   <h2>Supported Formats</h2>
   json, xml
 
+
+
 <div class='accordion' id='accordion'>
 
     <hr>
@@ -78,6 +80,9 @@ accessible for the user will be returned.</p>
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     404
     Missing
     <br>
@@ -90,7 +95,7 @@ accessible for the user will be returned.</p>
 
 
   <h3>Examples</h3>
-    <pre class="prettyprint">GET: /api/v1/campaigns/all.json?auth_token=ehWs_NZ2Uq539tGzWpZ&amp;company_id=1
+    <pre class="prettyprint">GET: /api/v1/campaigns/all.json
 [
     {
         &quot;id&quot;: 14,
@@ -108,60 +113,8 @@ accessible for the user will be returned.</p>
 ]
 </pre>
 
-  <h3>Params</h3>
-  <table class='table'>
-    <thead>
-      <tr>
-        <th>Param name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
 
 
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-
-    </tbody>
-  </table>
 
     </div>
     <hr>
@@ -231,6 +184,9 @@ events or promo hours that should have been executed until today.</p>
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     404
     Missing
     <br>
@@ -243,7 +199,7 @@ events or promo hours that should have been executed until today.</p>
 
 
   <h3>Examples</h3>
-    <pre class="prettyprint">GET: /api/v1/campaigns/overall_stats.json?auth_token=ehWs_NZ2Uq539tGzWpZ&amp;company_id=1
+    <pre class="prettyprint">GET: /api/v1/campaigns/overall_stats.json
 [
   {
       &quot;id&quot;: 14,
@@ -307,60 +263,8 @@ events or promo hours that should have been executed until today.</p>
 ]
 </pre>
 
-  <h3>Params</h3>
-  <table class='table'>
-    <thead>
-      <tr>
-        <th>Param name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
 
 
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-
-    </tbody>
-  </table>
 
     </div>
     <hr>
@@ -426,6 +330,9 @@ events or promo hours that should have been executed until today.</p>
   json, xml
 
   <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     404
     Missing
     <br>
@@ -438,7 +345,7 @@ events or promo hours that should have been executed until today.</p>
 
 
   <h3>Examples</h3>
-    <pre class="prettyprint">GET: /api/v1/campaigns/1/stats.json?auth_token=ehWs_NZ2Uq539tGzWpZ&amp;company_id=1
+    <pre class="prettyprint">GET: /api/v1/campaigns/1/stats.json
 {
   id: 14,
   name: &quot;ABSOLUT BA FY14&quot;,
@@ -530,60 +437,63 @@ areas: [
 }
 </pre>
 
-  <h3>Params</h3>
-  <table class='table'>
-    <thead>
-      <tr>
-        <th>Param name</th>
-        <th>Description</th>
-      </tr>
-    </thead>
-    <tbody>
-        <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
+
+
+
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/campaigns/events.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-events'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/campaigns/:id/events
+          </a>
+          <br>
+          <small>Returns a list of events for a given campaign.</small>
+        </h2>
+    </div>
+
+
+    <div id='description-events' class='collapse accordion-body'>
       
-<p>User&#39;s authorization token returned by login method</p>
 
-        <br>
-        Value: Must be String
+  <h3>Supported Formats</h3>
+  json, xml
 
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
+  <h3>Errors</h3>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
+    404
+    Missing
+    <br>
+    401
+    Unauthorized access
+    <br>
+    500
+    Server crashed for some reason
+    <br>
 
 
-    </td>
+  <h3>Examples</h3>
+    <pre class="prettyprint">GET: /api/v1/campaigns/1/events.json
+{
+  [
+    [38292,&quot;2014-06-28T13:00:00.000-07:00&quot;],
+    [36244,&quot;2014-06-30T17:00:00.000-07:00&quot;],
+    [36812,&quot;2014-06-30T19:00:00.000-07:00&quot;],
+    [36255,&quot;2014-07-01T05:00:00.000-07:00&quot;]
+  ]
+}
+</pre>
 
-  </tr>
 
-  
 
-    </tbody>
-  </table>
 
     </div>
 </div>
