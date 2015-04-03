@@ -15,7 +15,7 @@ class ApplicationController < ActionController::Base
 
   layout :set_layout
 
-  helper_method :custom_body_class, :modal_dialog_title
+  helper_method :custom_body_class, :modal_dialog_title, :request
 
   rescue_from 'CanCan::AccessDenied', with: :access_denied
 

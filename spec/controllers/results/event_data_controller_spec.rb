@@ -26,7 +26,7 @@ describe Results::EventDataController, type: :controller do
   describe "GET 'index'" do
     it 'queue the job for export the list' do
       expect do
-        xhr :get, :index, format: :xls
+        xhr :get, :index, format: :csv
       end.to change(ListExport, :count).by(1)
       export = ListExport.last
       expect(ListExportWorker).to have_queued(export.id)
@@ -37,9 +37,11 @@ describe Results::EventDataController, type: :controller do
     before do
       Kpi.create_global_kpis
     end
+
     let(:campaign) { create(:campaign, company: company, name: 'Test Campaign FY01') }
-    it 'should return an empty book with the correct headers' do
-      expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+
+    it 'should return an empty csv with the correct headers' do
+      expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
       export = ListExport.last
       expect(ListExportWorker).to have_queued(export.id)
       ResqueSpec.perform_all(:export)
@@ -76,7 +78,7 @@ describe Results::EventDataController, type: :controller do
 
       Sunspot.commit
 
-      expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+      expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
       export = ListExport.last
       expect(ListExportWorker).to have_queued(export.id)
       ResqueSpec.perform_all(:export)
@@ -87,7 +89,7 @@ describe Results::EventDataController, type: :controller do
         ['Test Campaign FY01', 'My area', '443321', 'Bar Prueba',
          'Bar Prueba, 11 Main St., Los Angeles, California, 12345', 'Los Angeles', 'California', '12345',
          'Active', 'Approved', 'Test User, zteam', 'Chris Jaskot, Guillermo Vargas',
-         "http://localhost:5100/events/#{event.id}", '2019-01-23T10:00', '2019-01-23T12:00', '2.00', '99.99']
+         "http://test.host/events/#{event.id}", '2019-01-23T10:00', '2019-01-23T12:00', '2.00', '99.99']
       ])
     end
 
@@ -100,20 +102,15 @@ describe Results::EventDataController, type: :controller do
       event.save
       Sunspot.commit
 
-      expect { xhr :get, 'index', campaign: [campaign.id], format: :xls }.to change(ListExport, :count).by(1)
+      expect { xhr :get, 'index', campaign: [campaign.id], format: :csv }.to change(ListExport, :count).by(1)
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
          'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL', 'START', 'END', 'PROMO HOURS', 'SPENT', 'A CUSTOM KPI'],
-        ['Test Campaign FY01', nil, nil, 'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345',
-         'Los Angeles', 'California', '12345', 'Active', 'Approved', nil, nil,
-         "http://localhost:5100/events/#{event.id}", '2013-01-23T10:00', '2013-01-23T12:00', '2.00', '0.0', '9876.0']
+        ['Test Campaign FY01', '', nil, 'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345',
+         'Los Angeles', 'California', '12345', 'Active', 'Approved', '', '',
+         "http://test.host/events/#{event.id}", '2013-01-23T10:00', '2013-01-23T12:00', '2.00', '0.0', '9876.0']
       ])
-      spreadsheet_from_last_export do |doc|
-        rows = doc.elements.to_a('//Row')
-        expect(rows[0].elements.to_a('Cell/Data').map(&:text)).to include('A CUSTOM KPI')
-        expect(rows[1].elements.to_a('Cell/Data').map(&:text)).to include('9876.0')
-      end
     end
 
     it 'includes any custom fields for the campaigns in the custom filter' do
@@ -125,20 +122,15 @@ describe Results::EventDataController, type: :controller do
       event.save
       Sunspot.commit
 
-      expect { xhr :get, 'index', cfid: [cf.id], format: :xls }.to change(ListExport, :count).by(1)
+      expect { xhr :get, 'index', cfid: [cf.id], format: :csv }.to change(ListExport, :count).by(1)
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
          'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL', 'START', 'END', 'PROMO HOURS', 'SPENT', 'MY NUMERIC FIELD'],
-        ['Test Campaign FY01', nil, nil, 'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345',
-         'Los Angeles', 'California', '12345', 'Active', 'Approved', nil, nil,
-         "http://localhost:5100/events/#{event.id}", '2013-01-23T10:00', '2013-01-23T12:00', '2.00', '0.0', '9876.0']
+        ['Test Campaign FY01', '', nil, 'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345',
+         'Los Angeles', 'California', '12345', 'Active', 'Approved', '', '',
+         "http://test.host/events/#{event.id}", '2013-01-23T10:00', '2013-01-23T12:00', '2.00', '0.0', '9876.0']
       ])
-      spreadsheet_from_last_export do |doc|
-        rows = doc.elements.to_a('//Row')
-        expect(rows[0].elements.to_a('Cell/Data').map(&:text)).to include('MY NUMERIC FIELD')
-        expect(rows[1].elements.to_a('Cell/Data').map(&:text)).to include('9876.0')
-      end
     end
 
     describe 'when logged in as a non admin user' do
@@ -159,7 +151,7 @@ describe Results::EventDataController, type: :controller do
 
         Sunspot.commit
 
-        expect { xhr :get, 'index', cfid: [cf.id], format: :xls }.to change(ListExport, :count).by(1)
+        expect { xhr :get, 'index', cfid: [cf.id], format: :csv }.to change(ListExport, :count).by(1)
 
         ResqueSpec.perform_all(:export)
         expect(ListExport.last).to have_rows([
@@ -218,7 +210,7 @@ describe Results::EventDataController, type: :controller do
 
       Sunspot.commit
 
-      expect { xhr :get, 'index', campaign: [campaign.id], format: :xls }.to change(ListExport, :count).by(1)
+      expect { xhr :get, 'index', campaign: [campaign.id], format: :csv }.to change(ListExport, :count).by(1)
       export = ListExport.last
       expect(ListExportWorker).to have_queued(export.id)
       ResqueSpec.perform_all(:export)
@@ -235,7 +227,7 @@ describe Results::EventDataController, type: :controller do
          'EVENT TYPE: EVENT TYPE OPT 3', 'RADIO FIELD TYPE'],
         ['Test Campaign FY01', 'Angeles Area', '344221', 'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345',
          'Los Angeles', 'California', '12345', 'Active', 'Approved', 'Test User', 'Chris Jaskot, Guillermo Vargas',
-         "http://localhost:5100/events/#{event.id}", '2019-01-23T10:00', '2019-01-23T12:00',
+         "http://test.host/events/#{event.id}", '2019-01-23T10:00', '2019-01-23T12:00',
          '2.00', '99.99', '0.6',
          '0.4', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.18', '0.2', '0.21',
          '0.19', '0.22', '10.0', '11.0', '12.0', '8899.0', 'Yes', nil, nil, 'Radio Field Opt 1']
@@ -272,7 +264,7 @@ describe Results::EventDataController, type: :controller do
 
       Sunspot.commit
 
-      expect { xhr :get, 'index', brand: [brand.id], format: :xls }.to change(ListExport, :count).by(1)
+      expect { xhr :get, 'index', brand: [brand.id], format: :csv }.to change(ListExport, :count).by(1)
       export = ListExport.last
       expect(ListExportWorker).to have_queued(export.id)
       ResqueSpec.perform_all(:export)
@@ -282,8 +274,8 @@ describe Results::EventDataController, type: :controller do
          'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL', 'START', 'END',
          'PROMO HOURS', 'SPENT', 'TEST KPI 1'],
         ['Test Campaign FY01', 'Angeles Area', '344221', 'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345',
-         'Los Angeles', 'California', '12345', 'Active', 'Approved', nil, nil,
-         "http://localhost:5100/events/#{event.id}", '2019-01-23T10:00', '2019-01-23T12:00',
+         'Los Angeles', 'California', '12345', 'Active', 'Approved', "", "",
+         "http://test.host/events/#{event.id}", '2019-01-23T10:00', '2019-01-23T12:00',
          '2.00', '0.0', '8899.0']
       ])
     end
@@ -305,17 +297,17 @@ describe Results::EventDataController, type: :controller do
 
       Sunspot.commit
 
-      expect { xhr :get, 'index', campaign: [campaign.id, campaign2.id], format: :xls }.to change(ListExport, :count).by(1)
+      expect { xhr :get, 'index', campaign: [campaign.id, campaign2.id], format: :csv }.to change(ListExport, :count).by(1)
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY',
          'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL',
          'START', 'END', 'PROMO HOURS', 'SPENT', 'A CUSTOM KPI', 'ANOTHER KPI'],
-        ['Test Campaign FY01', nil, nil, nil, nil, nil, nil, nil, 'Active', 'Approved', nil, nil,
-         "http://localhost:5100/events/#{event1.id}", '2013-01-23T10:00', '2013-01-23T12:00',
+        ['Test Campaign FY01', nil, nil, nil, '', nil, nil, nil, 'Active', 'Approved', '', '',
+         "http://test.host/events/#{event1.id}", '2013-01-23T10:00', '2013-01-23T12:00',
          '2.00', '0.0', '9876.0', nil],
-        [campaign2.name, nil, nil, nil, nil, nil, nil, nil, 'Active', 'Approved', nil, nil,
-         "http://localhost:5100/events/#{event2.id}", '2013-01-24T10:00', '2013-01-24T12:00',
+        [campaign2.name, nil, nil, nil, '', nil, nil, nil, 'Active', 'Approved', '', '',
+         "http://test.host/events/#{event2.id}", '2013-01-24T10:00', '2013-01-24T12:00',
          '2.00', '0.0', nil, '7654.0']
       ])
     end
@@ -333,7 +325,7 @@ describe Results::EventDataController, type: :controller do
 
       Sunspot.commit
 
-      expect { xhr :get, 'index', format: :xls, campaign: [campaign.id] }.to change(ListExport, :count).by(1)
+      expect { xhr :get, 'index', format: :csv, campaign: [campaign.id] }.to change(ListExport, :count).by(1)
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
@@ -343,8 +335,8 @@ describe Results::EventDataController, type: :controller do
          'ETHNICITY/RACE: BLACK / AFRICAN AMERICAN', 'ETHNICITY/RACE: HISPANIC / LATINO',
          'ETHNICITY/RACE: NATIVE AMERICAN', 'ETHNICITY/RACE: WHITE', 'IMPRESSIONS',
          'INTERACTIONS', 'SAMPLES'],
-        ['Test Campaign FY01', nil, nil, nil, nil, nil, nil, nil, 'Active', 'Approved', nil, nil,
-         "http://localhost:5100/events/#{event1.id}", '2013-01-23T10:00', '2013-01-23T12:00',
+        ['Test Campaign FY01', nil, nil, nil, '', nil, nil, nil, 'Active', 'Approved', '', '',
+         "http://test.host/events/#{event1.id}", '2013-01-23T10:00', '2013-01-23T12:00',
          '2.00', '0.0', '0.0', '0.0',
          '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0',
          '0.0', '111.0', nil, nil]
@@ -374,17 +366,17 @@ describe Results::EventDataController, type: :controller do
 
       Sunspot.commit
 
-      expect { xhr :get, 'index', campaign: [campaign.id], format: :xls }.to change(ListExport, :count).by(1)
+      expect { xhr :get, 'index', campaign: [campaign.id], format: :csv }.to change(ListExport, :count).by(1)
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
          'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL', 'START', 'END', 'PROMO HOURS', 'SPENT',
          'MY KPI: UNO', 'MY KPI: DOS', 'MY OTHER KPI'],
-        ['Test Campaign FY01', nil, nil, nil, nil, nil, nil, nil, 'Active', 'Approved', nil, nil,
-         "http://localhost:5100/events/#{event1.id}", '2013-01-23T10:00', '2013-01-23T12:00',
+        ['Test Campaign FY01', nil, nil, nil, '', nil, nil, nil, 'Active', 'Approved', '', '',
+         "http://test.host/events/#{event1.id}", '2013-01-23T10:00', '2013-01-23T12:00',
          '2.00', '0.0', '0.63', '0.37', nil],
-        ['Test Campaign FY01', nil, nil, nil, nil, nil, nil, nil, 'Active', 'Approved', nil, nil,
-         "http://localhost:5100/events/#{event2.id}", '2013-01-24T10:00', '2013-01-24T12:00',
+        ['Test Campaign FY01', nil, nil, nil, '', nil, nil, nil, 'Active', 'Approved', '', '',
+         "http://test.host/events/#{event2.id}", '2013-01-24T10:00', '2013-01-24T12:00',
          '2.00', '0.0', '0.0', '0.0', '134.0']
       ])
     end

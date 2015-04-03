@@ -145,9 +145,9 @@ describe EventsController, type: :controller do
         expect(ListExport.last).to have_rows([
           ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'DURATION', 'VENUE NAME', 'ADDRESS', 'CITY',
            'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL'],
-          ['Test Campaign FY01', nil, '2019-01-23T10:00', '2019-01-23T12:00', '2.0',
+          ['Test Campaign FY01', nil, '2019-01-23T10:00', '2019-01-23T12:00', '2.00',
            'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345', 'Los Angeles', 'California',
-           '12345', 'Active', 'Approved', 'Test User, zteam', 'Chris Jaskot, Guillermo Vargas', "http://localhost:5100/events/#{event.id}"]
+           '12345', 'Active', 'Approved', 'Test User, zteam', 'Chris Jaskot, Guillermo Vargas', "http://test.host/events/#{event.id}"]
         ])
       end
     end

@@ -16,13 +16,17 @@ module ExportableController
   def export_list(export, path)
     @_export = export
     run_callbacks :export do
-      Slim::Engine.with_options(pretty: false, sort_attrs: false, streaming: false) do
-        render_to_string :index,
-                         to_file: path,
-                         stream: true,
-                         handlers: [:slim],
-                         formats: export.export_format.to_sym,
-                         layout: 'application'
+      if export.export_format == 'csv'
+        File.open(path, 'w:UTF-8') { |f| f.write collection_to_csv.force_encoding(Encoding::UTF_8) }
+      else
+        Slim::Engine.with_options(pretty: false, sort_attrs: false, streaming: false) do
+          render_to_string :index,
+                           to_file: path,
+                           stream: true,
+                           handlers: [:slim],
+                           formats: export.export_format.to_sym,
+                           layout: 'application'
+        end
       end
     end
   end
@@ -33,7 +37,7 @@ module ExportableController
   end
 
   def list_exportable?
-    return true if request.format.xls?
+    return true unless request.format.pdf?
     @export_errors = []
     @export_errors = ['PDF exports are limited to 200 pages. Please narrow your results and try exporting again.'] if total_export_pages > 200
     @export_errors.empty?
@@ -62,7 +66,7 @@ module ExportableController
     total_pages = (collection.count / items_per_page.to_f).ceil
     (1..(total_pages)).each do |page|
       collection.limit(items_per_page).offset(items_per_page * (page - 1)).each do |result|
-        yield result
+        yield present(result, params['format'])
       end
     end
   end
@@ -72,7 +76,7 @@ module ExportableController
     total_pages = (collection.count / items_per_page.to_f).ceil
     (1..(total_pages)).each do |page|
       collection.slice(items_per_page * (page - 1), items_per_page).each do |result|
-        yield result
+        yield view_context.present(result, params['format'])
       end
     end
   end
@@ -80,7 +84,7 @@ module ExportableController
   def each_collection_item_solr
     (1..@total_pages).each do |page|
       search = resource_class.do_search(@search_params.merge!(page: page))
-      search.results.each { |result| yield result }
+      search.results.each { |result| yield view_context.present(result, params['format']) }
       @_export.update_column(
         :progress, (page * 100 / @total_pages).round) unless @_export.nil?
     end

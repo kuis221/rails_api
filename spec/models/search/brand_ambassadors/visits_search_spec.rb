@@ -85,6 +85,7 @@ describe BrandAmbassadors::Visit, type: :model, search: true do
     user.places << city
     user.campaigns << campaign
     area.places << city
+
     visit = create(:brand_ambassadors_visit, company: company,
       area: area, campaign: campaign, city: 'Los Angeles')
     visit_without_area = create(:brand_ambassadors_visit, company: company,
@@ -103,7 +104,33 @@ describe BrandAmbassadors::Visit, type: :model, search: true do
         .to match_array([visit, visit_without_area])
   end
 
-  it 'should not fail if a brand without campaings is given' do
+  it 'return visits that are inside the user geographic permissions' do
+    user = create(:company_user, company: company, role: create(:non_admin_role, company: company))
+    area = create(:area, company: company)
+
+    visit = create(:brand_ambassadors_visit, company: company,
+      area: area, campaign: campaign, city: nil)
+
+    area.places << create(:city, name: 'Los Angeles', state: 'California')
+    user.places << create(:country, name: 'United States')
+    user.campaigns << campaign
+
+    expect(search(company_id: company.id, current_company_user: user))
+        .to match_array([visit])
+  end
+
+  it 'return visits without area' do
+    user = create(:company_user, company: company, role: create(:non_admin_role, company: company))
+
+    visit = create(:brand_ambassadors_visit, company: company,
+      area: nil, campaign: campaign, city: nil)
+    user.campaigns << campaign
+
+    expect(search(company_id: company.id, current_company_user: user))
+        .to match_array([visit])
+  end
+
+  it 'not fail if a brand without campaings is given' do
     create(:event, company: company)
 
     # Invalid brand

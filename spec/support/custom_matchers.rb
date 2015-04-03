@@ -44,9 +44,13 @@ end
 RSpec::Matchers.define :have_rows do |rows|
   match do |export|
     @rows = rows
-    doc = REXML::Document.new(open(export.file.url).read)
-    @doc_rows = doc.elements.to_a('//Row').map do |r|
-      r.elements.to_a('Cell/Data').map(&:text)
+    if export.export_format == 'csv'
+      @doc_rows = CSV.parse(open(export.file.url, 'r:UTF-8').read)
+    else
+      doc = REXML::Document.new(open(export.file.url).read)
+      @doc_rows = doc.elements.to_a('//Row').map do |r|
+        r.elements.to_a('Cell/Data').map(&:text)
+      end
     end
     @rows == @doc_rows
   end

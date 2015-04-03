@@ -1,9 +1,30 @@
+
 class Results::EventDataController < FilteredController
   defaults resource_class: ::Event
 
   helper_method :data_totals, :return_path
 
   private
+
+  def collection_to_csv
+    exporter = FormFieldDataExporter.new(current_company_user, search_params, resource_class)
+    CSV.generate do |csv|
+      csv << [
+        'CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS',
+        'CITY', 'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS',
+        'CONTACTS', 'URL', 'START', 'END', 'PROMO HOURS', 'SPENT'] +
+        exporter.custom_fields_to_export_headers
+      each_collection_item do |event|
+        csv << [
+          event.campaign_name, exporter.area_for_event(event), event.place_td_linx_code,
+          event.place_name, event.place_address, event.place_city, event.place_state,
+          event.place_zipcode, event.status, event.event_status, event.team_members,
+          event.contacts, event.url, event.start_date, event.end_date, event.promo_hours,
+          event.spent] +
+          exporter.custom_fields_to_export_values(event)
+      end
+    end
+  end
 
   def search_params
     @search_params || (super.tap do |p|
