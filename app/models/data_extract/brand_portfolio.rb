@@ -29,6 +29,9 @@ class DataExtract::BrandPortfolio < DataExtract
     if columns.include?('created_by') || filters.present? && filters['user'].present?
       s = s.joins('LEFT JOIN users ON brand_portfolios.created_by_id=users.id')
     end
+    if filters.present? && filters['brand'].present?
+      s = s.joins('LEFT JOIN brand_portfolios_brands ON brand_portfolios.id=brand_portfolios_brands.brand_portfolio_id')
+    end
     s
   end
 
@@ -38,7 +41,8 @@ class DataExtract::BrandPortfolio < DataExtract
 
   def add_filter_conditions_to_scope(s)
     return s if filters.nil? || filters.empty?
-    s = s.where(active: filters['active_state'].map { |f| f == 'active' ? true : false }) if filters['active_state'].present?
+    s = s.where(brand_portfolios_brands: { brand_id: filters['brand'] }) if filters['brand'].present?
+    s = s.where(active: filters['status'].map { |f| f.downcase == 'active' ? true : false }) if filters['status'].present?
     s
   end
 end
