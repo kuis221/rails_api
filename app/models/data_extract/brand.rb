@@ -49,8 +49,7 @@ class DataExtract::Brand < DataExtract
 
   def add_filter_conditions_to_scope(s)
     return s if filters.nil? || filters.empty?
-    s = s.joins(:campaigns).where(campaigns: { id: filters[:campaign] } ) if filters.present? && filters['campaign'].present?
-    s = s.where(active: filters['active_state'].map { |f| f == 'active' ? true : false }) if filters['active_state'].present?
+    s = s.where(active: filters['status'].map { |f| f.downcase == 'active' ? true : false }) if filters['status'].present?
     s
   end
 end
