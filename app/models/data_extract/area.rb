@@ -29,4 +29,15 @@ class DataExtract::Area < DataExtract
     s = s.joins(:created_by) if columns.include?('created_by')
     s
   end
+
+  def total_results
+    Area.connection.select_value("SELECT COUNT(*) FROM (#{base_scope.select(*selected_columns_to_sql).to_sql}) sq").to_i
+  end
+
+  def add_filter_conditions_to_scope(s)
+    return s if filters.nil? || filters.empty?
+    s = s.where(active: filters['status'].map { |f| f.downcase == 'active' ? true : false }) if filters['status'].present?
+    s
+  end
+
 end
