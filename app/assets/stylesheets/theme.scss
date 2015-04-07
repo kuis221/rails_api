@@ -9,6 +9,10 @@ a{
 	&:before, &:after{
 		font-weight:normal;
 	}
+	&.underlined{
+		text-decoration: underline;
+		color: inherit;
+	}
 }
 
 html {
