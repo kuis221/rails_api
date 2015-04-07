@@ -28,12 +28,6 @@ module SolrSearchable
 
         with_user_teams params
 
-        if params[:current_company_user]
-          restrict_search_to_user_permissions (params[:search_permission_class] || clazz),
-                                              params[:search_permission],
-                                              params[:current_company_user]
-        end
-
         order_by(params[:sorting], params[:sorting_dir] || :asc) if params[:sorting]
         paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
       end
@@ -43,6 +37,11 @@ module SolrSearchable
       search = build_solr_search(params)
       search.build(&block) if block
       search.build(&search_facets) if include_facets && respond_to?(:search_facets, true)
+      if params[:current_company_user] && respond_to?(:apply_user_permissions_to_search, true)
+        search.build(&apply_user_permissions_to_search((params[:search_permission_class] || self),
+                                                       params[:search_permission],
+                                                       params[:current_company_user]))
+      end
       solr_execute_search(include: includes) do
         search
       end

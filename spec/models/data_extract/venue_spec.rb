@@ -32,11 +32,11 @@ RSpec.describe DataExtract::Venue, type: :model do
     end
   end
 
-  describe '#rows', search: true do
+  describe '#rows' do
     let(:company) { create(:company) }
-    let(:subject) { described_class.new(company: company) }
-    let(:user) { create(:user, company: company) }
-    let(:company_user) { user.company_users.first }
+    let(:company_user) { create(:company_user, company: company,
+                         user: create(:user, first_name: 'Benito', last_name: 'Camelas')) }
+    let(:subject) { described_class.new(company: company, current_user: company_user) }
 
     it 'returns empty if no rows are found' do
       expect(subject.rows).to be_empty
@@ -45,20 +45,44 @@ RSpec.describe DataExtract::Venue, type: :model do
     describe 'with data' do
       before do
         create(:venue, place: create(:place, name: 'My Place'), company: company, created_at: Time.zone.local(2013, 8, 23, 9, 15))
-        Sunspot.commit
       end
 
       it 'returns all the events in the company with all the columns' do
         expect(subject.rows).to eql [
-          ["My Place", "Establishment", "11 Main St.", "New York City", "NY", "United States", "12345", nil, Time.zone.local(2013, 8, 23, 9, 15)]
+          ["My Place", "---\n- establishment\n", "11 Main St.", "New York City", "NY", "US", "12345", nil, "08/23/2013"]
         ]
       end
 
-      it 'allows to filter the results' do
-
-        subject.filters = { name: ['MyString'] }
+      it 'allows to sort the results' do
+        create(:venue, place: create(:place, name: 'Tres Rios', city: 'La Unión'), company: company, created_at: Time.zone.local(2014, 2, 12, 9, 15))
+        
+        subject.columns = ['name', 'city']
+        subject.default_sort_by = 'name'
+        subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
-          ["My Place", "Establishment", "11 Main St.", "New York City", "NY", "United States", "12345", nil, Time.zone.local(2013, 8, 23, 9, 15)]
+          ["My Place", "New York City"], 
+          ["Tres Rios", "La Unión"]
+        ]
+
+        subject.default_sort_by = 'name'
+        subject.default_sort_dir = 'DESC'
+        expect(subject.rows).to eql [
+          ["Tres Rios", "La Unión"], 
+          ["My Place", "New York City"]
+        ]
+
+        subject.default_sort_by = 'city'
+        subject.default_sort_dir = 'ASC'
+        expect(subject.rows).to eql [
+          ["Tres Rios", "La Unión"], 
+          ["My Place", "New York City"]
+        ]
+
+        subject.default_sort_by = 'city'
+        subject.default_sort_dir = 'DESC'
+        expect(subject.rows).to eql [
+          ["My Place", "New York City"], 
+          ["Tres Rios", "La Unión"]
         ]
       end
     end

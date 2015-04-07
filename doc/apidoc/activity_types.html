@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>API documentation</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/bundled/bootstrap.min.css'/>
+<link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/bundled/prettify.css'/>
+<link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/bundled/bootstrap-responsive.min.css'/>
+  <link type='text/css' rel='stylesheet' href='../apidoc/stylesheets/application.css'/>
+  <!-- IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div id='container'>
+        <ul class='breadcrumb'>
+  <li>
+    <a href='../apidoc.html'>Brandscopic 1.0</a>
+    <span class='divider'>/</span>
+  </li>
+  <li class='active'>
+    Activity types
+    
+  </li>
+  
+</ul>
+
+<div class='page-header'>
+  <h1>
+    Activity types
+    <br>
+    <small></small>
+  </h1>
+</div>
+
+
+
+
+
+
+<div class='accordion' id='accordion'>
+
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/activity_types/index.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-index'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/campaigns/:campaign_id/activity_types
+          </a>
+          <br>
+          <small>Get a list of contacts for a specific company</small>
+        </h2>
+    </div>
+
+
+    <div id='description-index' class='collapse accordion-body'>
+      
+<p>Returns a full list of the associated activity types for a campaign</p>
+
+
+
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">GET /api/v1/campaigns/1/activity_types
+[
+    {
+        &quot;id&quot;: 268,
+        &quot;name&quot;: &quot;Bar Placement&quot;
+    },
+    {
+        &quot;id&quot;: &#39;attendance&#39;,
+        &quot;name&quot;: &quot;Invitation&quot;
+    }
+]
+</pre>
+
+
+
+
+    </div>
+    <hr>
+    <div class='pull-right small'>
+      <a href='../apidoc/activity_types/campaigns.html'> >>> </a>
+    </div>
+    <div>
+        <h2>
+          <a href='#description-campaigns'
+           class='accordion-toggle'
+           data-toggle='collapse'
+           data-parent='#accordion'>
+            GET /api/v1/activity_types/:activity_type_id/campaigns
+          </a>
+          <br>
+          <small>Get a list the campaings for a specific activity type</small>
+        </h2>
+    </div>
+
+
+    <div id='description-campaigns' class='collapse accordion-body'>
+      
+<p>Returns a full list of the associated campaigns for activity type</p>
+
+
+
+
+
+  <h3>Examples</h3>
+    <pre class="prettyprint">GET /api/v1/activity_types/1/campaigns
+[
+    {
+        &quot;id&quot;: 268,
+        &quot;name&quot;: &quot;Bar Placement&quot;
+    },
+    {
+        &quot;id&quot;: &#39;attendance&#39;,
+        &quot;name&quot;: &quot;Invitation&quot;
+    }
+]
+</pre>
+
+
+
+
+    </div>
+</div>
+
+
+        
+      </div>
+    </div>
+    <hr>
+    <footer></footer>
+  </div>
+  <script type='text/javascript' src='../apidoc/javascripts/bundled/jquery-1.7.2.js'></script>
+<script type='text/javascript' src='../apidoc/javascripts/bundled/bootstrap-collapse.js'></script>
+<script type='text/javascript' src='../apidoc/javascripts/bundled/prettify.js'></script>
+<script type='text/javascript' src='../apidoc/javascripts/apipie.js'></script>
+</body>
+</html>

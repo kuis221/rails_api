@@ -20,6 +20,24 @@
 #
 
 class DataExtract::Venue < DataExtract
-  define_columns [:name, :venues_types, :street, :city, :state_name, :country_name,
-    :zipcode, :td_linx_code, :created_at]
+  define_columns name: 'name', 
+                 venues_types: 'places.types', 
+                 street: 'trim(places.street_number || \' \' || places.route)', 
+                 city: 'places.city', 
+                 state_name: 'places.state',
+                 country_name: 'places.country',
+                 zipcode: 'places.zipcode', 
+                 td_linx_code: 'places.td_linx_code', 
+                 created_at: proc { "to_char(venues.created_at, 'MM/DD/YYYY')" }
+
+  def add_joins_to_scope(s)
+    if (columns & ['city', 'street', 'state_name', 'country_name', 'zipcode', 'td_linx_code']).any? || filters.present? && filters['area'].present?
+      s = s.joins('LEFT JOIN places ON venues.place_id=places.id')
+    end
+    s
+  end
+
+  def total_results
+    Venue.connection.select_value("SELECT COUNT(*) FROM (#{base_scope.select(*selected_columns_to_sql).to_sql}) sq").to_i
+  end
 end

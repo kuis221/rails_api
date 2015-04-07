@@ -53,13 +53,13 @@ describe AttachedAsset, type: :model, search: true do
       .to match_array([asset, asset2])
 
     # Search for Attached Assets on a given date range
-    expect(search(company_id: company.id, start_date: '02/21/2013', end_date: '02/23/2013'))
+    expect(search(company_id: company.id, start_date: ['02/21/2013'], end_date: ['02/23/2013']))
       .to match_array([asset])
-    expect(search(company_id: company.id, start_date: '02/22/2013')).to match_array([asset])
-    expect(search(company_id: company.id, start_date: '03/21/2013', end_date: '03/23/2013'))
+    expect(search(company_id: company.id, start_date: ['02/22/2013'])).to match_array([asset])
+    expect(search(company_id: company.id, start_date: ['03/21/2013'], end_date: ['03/23/2013']))
       .to match_array([asset2])
-    expect(search(company_id: company.id, start_date: '03/22/2013')).to match_array([asset2])
-    expect(search(company_id: company.id, start_date: '01/21/2013', end_date: '01/23/2013'))
+    expect(search(company_id: company.id, start_date: ['03/22/2013'])).to match_array([asset2])
+    expect(search(company_id: company.id, start_date: ['01/21/2013'], end_date: ['01/23/2013']))
       .to be_empty
 
     # Search for Attached Assets on a given status

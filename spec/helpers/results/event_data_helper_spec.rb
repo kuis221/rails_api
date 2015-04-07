@@ -8,12 +8,13 @@ describe Results::EventDataHelper, type: :helper do
   let(:activity) { create(:activity, activity_type: activity_type, activitable: event, company_user: company_user) }
   let(:company_user) { create(:company_user, company: campaign.company) }
   let(:params) { { campaign: [campaign.id] } }
+  let(:search_params) { params }
 
   before do
     # Ugly hack as a workoround for https://github.com/rspec/rspec-rails/issues/1076
     helper.class.class_attribute :resource_class
     allow(helper).to receive(:current_company_user).and_return(company_user)
-    allow(helper).to receive(:params).and_return(params)
+    allow(helper).to receive(:search_params).and_return(search_params)
     Kpi.create_global_kpis
   end
 
@@ -346,7 +347,7 @@ describe Results::EventDataHelper, type: :helper do
 
       it "returns nil for the fields that doesn't apply to the event's campaign" do
         campaign2 = create(:campaign, company: campaign.company)
-        allow(helper).to receive(:params).and_return(campaign: [campaign.id, campaign2.id])
+        allow(helper).to receive(:search_params).and_return(campaign: [campaign.id, campaign2.id])
 
         kpi = create(:kpi, company_id: campaign.company_id, name: 'A Custom KPI')
         kpi2 = create(:kpi, company_id: campaign.company_id, name: 'Another KPI')
@@ -389,7 +390,7 @@ describe Results::EventDataHelper, type: :helper do
 
       it 'returns custom kpis grouped on the same column' do
         campaign2 = create(:campaign, company: campaign.company)
-        allow(helper).to receive(:params).and_return(campaign: [campaign.id, campaign2.id])
+        allow(helper).to receive(:search_params).and_return(campaign: [campaign.id, campaign2.id])
 
         kpi = create(:kpi, company_id: campaign.company_id, name: 'A Custom KPI')
         kpi2 = create(:kpi, company_id: campaign.company_id, name: 'Another KPI')
@@ -414,6 +415,7 @@ describe Results::EventDataHelper, type: :helper do
         expect(helper.custom_fields_to_export_values(event)).to eq([['Number', 'normal', 1111], ['Number', 'normal', 2222]])
         expect(helper.custom_fields_to_export_values(event2)).to eq([['Number', 'normal', 3333], ['Number', 'normal', 4444]])
       end
+
     end
 
     describe 'for activity data' do

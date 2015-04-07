@@ -56,6 +56,7 @@ class Venue < ActiveRecord::Base
 
   scope :top_venue, ->{ where(top_venue: true) }
   scope :jameson_locals, ->{ where(jameson_locals: true) }
+  scope :accessible_by_user, ->(user) { in_company(user.company_id) }
 
   before_destroy :check_for_associations
 
@@ -261,8 +262,9 @@ class Venue < ActiveRecord::Base
     @overall_graphs_data
   end
 
-  def venues_types
-    self.types.map{|t| t.humanize}.join(", ") if self.types.present?
+  def self.in_campaign_scope(campaign)
+    subquery = Place.connection.unprepared_statement { Place.in_campaign_areas(campaign, campaign.areas.to_a).to_sql }
+    joins("INNER JOIN (#{subquery}) campaign_places ON campaign_places.id=venues.place_id")
   end
 
   def self.do_search(params, include_facets = false)
@@ -329,14 +331,14 @@ class Venue < ActiveRecord::Base
         end
       end
 
-      start_date = params[:start_date]
-      end_date = params[:end_date]
-      if start_date.present? && end_date.present?
-        d1 = Timeliness.parse(start_date, zone: :current).beginning_of_day
-        d2 = Timeliness.parse(end_date, zone: :current).end_of_day
+      if params[:start_date].present? && params[:end_date].present?
+        params[:start_date] = Array(params[:start_date])
+        params[:end_date] = Array(params[:end_date])
+        d1 = Timeliness.parse(params[:start_date][0], zone: :current).beginning_of_day
+        d2 = Timeliness.parse(params[:end_date][0], zone: :current).end_of_day
         with Venue.search_start_date_field, d1..d2
-      elsif start_date.present?
-        d = Timeliness.parse(start_date, zone: :current).beginning_of_day
+      elsif params[:start_date].present?
+        d = Timeliness.parse(params[:start_date][0], zone: :current).beginning_of_day
         with Venue.search_start_date_field, d..d.end_of_day
       end
 

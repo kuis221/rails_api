@@ -60,7 +60,7 @@
       'userFilters': #{user_saved_filters('visits').to_json.html_safe},
       'autoCompletePath': '#{autocomplete_path(:visits, format: :json)}',
       'fixListHeight': false,
-      'defaultParams': '#{j default_params_for_view('start_date=' + Time.zone.now.strftime("%m/%d/%Y") + '&end_date=' + (Time.zone.now + 10.years).strftime("%m/%d/%Y"))}',
+      'defaultParams': '#{j default_params_for_view('start_date[]=' + Time.zone.now.strftime("%m/%d/%Y") + '&end_date[]=' + (Time.zone.now + 10.years).strftime("%m/%d/%Y"))}',
       'applyTo': 'visits',
       'onChange': function() {
         if (typeof visitsCalendar !== 'undefined' && !window.loadingVisits) {

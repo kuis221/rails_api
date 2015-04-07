@@ -220,8 +220,8 @@ describe Analysis::TrendsController, search: true do
 
         get 'items', campaign: [campaign.id], source: ['Comment'],
                      format: :json,
-                     start_date: 2.days.ago.to_s(:slashes),
-                     end_date: Date.tomorrow.to_s(:slashes)
+                     start_date: [2.days.ago.to_s(:slashes)],
+                     end_date: [Date.tomorrow.to_s(:slashes)]
 
         items = JSON.parse(response.body)
 
@@ -245,8 +245,8 @@ describe Analysis::TrendsController, search: true do
 
         get 'items', campaign: [campaign.id], source: ['Comment'],
                      format: :json,
-                     start_date: 5.days.ago.to_s(:slashes),
-                     end_date: 2.days.ago.to_s(:slashes)
+                     start_date: [5.days.ago.to_s(:slashes)],
+                     end_date: [2.days.ago.to_s(:slashes)]
 
         items = JSON.parse(response.body)
 

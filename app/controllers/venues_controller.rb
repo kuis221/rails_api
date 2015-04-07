@@ -87,7 +87,7 @@ class VenuesController < FilteredController
   end
 
   def permitted_search_params
-    [:location, :q, :page, :sorting, :sorting_dir, :per_page, :start_date, :end_date,
+    [:location, :q, :page, :sorting, :sorting_dir, :per_page, start_date: [], end_date: [],
      events_count: [:min, :max], promo_hours: [:min, :max], impressions: [:min, :max],
      interactions: [:min, :max], sampled: [:min, :max], spent: [:min, :max],
      venue_score: [:min, :max], price: [], area: [], campaign: [], brand: []]

@@ -31,9 +31,6 @@ class BrandPortfolio < ActiveRecord::Base
 
   scope :accessible_by_user, ->(user) { in_company(user.company_id) }
 
-  belongs_to :created_by, class_name: 'User'
-  delegate :full_name, to: :created_by, prefix: true, allow_nil: true
-
   searchable do
     integer :id
 

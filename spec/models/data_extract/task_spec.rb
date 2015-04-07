@@ -27,15 +27,16 @@ RSpec.describe DataExtract::Task, type: :model do
 
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql(
-       [:title, :task_statuses, :due_at, :created_by_full_name, :created_at])
+       [:title, :task_statuses, :due_at, :created_by, :created_at])
     end
   end
 
-  describe '#rows', search: true do
+  pending '#rows', search: true do
     let(:company) { create(:company) }
-    let(:subject) { described_class.new(company: company) }
-    let(:user) { create(:user, company: company) }
-    let(:company_user) { user.company_users.first }
+    let(:company_user) { create(:company_user, company: company,
+                         user: create(:user, first_name: 'Benito', last_name: 'Camelas')) }
+
+    let(:subject) { described_class.new(company: company, current_user: company_user) }
 
     it 'returns empty if no rows are found' do
       expect(subject.rows).to be_empty

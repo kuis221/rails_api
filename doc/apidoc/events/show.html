@@ -64,8 +64,6 @@ mm/dd/yyyy</p>
 </li><li>
 <p><strong>description</strong>: the event&#39;s description</p>
 </li><li>
-<p><strong>summary</strong>: the event&#39;s summary</p>
-</li><li>
 <p><strong>status</strong>: the event&#39;s active state, can be Active or
 Inactive</p>
 </li><li>
@@ -133,6 +131,9 @@ information with the following attributes</p>
   json, xml
 
   <h2>Errors</h2>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     401
     Unauthorized access
     <br>
@@ -160,7 +161,6 @@ information with the following attributes</p>
     &quot;status&quot;: &quot;Active&quot;,
     &quot;event_status&quot;: &quot;Unsent&quot;,
     &quot;description&quot;: &quot;This is the events description&quot;,
-    &quot;summary&quot;: &quot;This is a test summary&quot;,
     &quot;have_data&quot;: true,
     &quot;data&quot;: {
       spent_by_impression: &quot;6.0&quot;
@@ -176,6 +176,7 @@ information with the following attributes</p>
     ],
     &quot;place&quot;: {
         &quot;id&quot;: 2624,
+        &quot;venue_id&quot;: 2154,
         &quot;name&quot;: &quot;Kelly&#39;s Pub Too&quot;,
         &quot;latitude&quot;: 39.7924104,
         &quot;longitude&quot;: -86.2514126,
@@ -190,7 +191,14 @@ information with the following attributes</p>
     },
     &quot;campaign&quot;: {
         &quot;id&quot;: 33,
-        &quot;name&quot;: &quot;Kahlua Midnight FY14&quot;
+        &quot;name&quot;: &quot;Kahlua Midnight FY14&quot;,
+        &quot;enabled_modules&quot;: [
+           &quot;expenses&quot;,
+           &quot;photos&quot;,
+           &quot;videos&quot;,
+           &quot;comments&quot;,
+           &quot;attendance&quot;
+        ]
     }
 }
 </pre>
@@ -206,48 +214,6 @@ information with the following attributes</p>
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>User&#39;s authorization token returned by login method</p>
-
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the “User companies” API method</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>id </strong><br>
       <small>
         required
@@ -259,7 +225,9 @@ information with the following attributes</p>
 <p>Event ID</p>
 
         <br>
-        Value: Must be a number.
+        Value: 
+<p>Must be a number.</p>
+
 
 
     </td>
@@ -270,6 +238,8 @@ information with the following attributes</p>
 
     </tbody>
   </table>
+
+
 
 </div>
 

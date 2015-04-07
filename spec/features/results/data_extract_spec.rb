@@ -14,24 +14,12 @@ feature 'Data Extract Report', js: true do
 
       click_js_button 'New Report'
 
-      expect(page).to have_selector('#data_source_id_chzn', count: 1)
-      select_from_chosen 'Events', from: '1. Choose a data source for your report'
+      expect(page).to have_selector('#data_extract_source_chzn', count: 1)
+      select_from_chosen 'Events', from: 'Choose a data source for your report (optional)'
       
       click_button 'Next'
 
       expect(page).to have_content('Available Fields')
-    end
-
-    scenario 'user no select data source - step 1' do
-      visit results_reports_path
-
-      click_js_button 'New Report'
-
-      expect(page).to have_selector('#data_source_id_chzn', count: 1)
-      
-      click_button 'Next'
-
-      expect(page).to_not have_content('Available Fields')
     end
   end
 end

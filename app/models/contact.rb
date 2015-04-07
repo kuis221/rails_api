@@ -33,7 +33,8 @@ class Contact < ActiveRecord::Base
   validates :city,    presence: true
 
   validates_format_of :email, with: /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/, allow_blank: true, if: :email_changed?
-
+  scope :accessible_by_user, ->(user) { in_company(user.company_id) }
+  
   before_validation do
     self.country ||= 'US'
   end

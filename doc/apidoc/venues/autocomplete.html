@@ -61,6 +61,9 @@ following categories</p>
   json, xml
 
   <h2>Errors</h2>
+    400
+    Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.
+    <br>
     404
     Missing
     <br>
@@ -73,7 +76,7 @@ following categories</p>
 
 
   <h2>Examples</h2>
-    <pre class="prettyprint">GET: /api/v1/venues/autocomplete.json?auth_token=XXssU!suwq92-1&amp;company_id=2&amp;q=jam
+    <pre class="prettyprint">GET: /api/v1/venues/autocomplete.json?q=jam
 [
     {
         &quot;label&quot;: &quot;Campaigns&quot;,
@@ -122,46 +125,6 @@ following categories</p>
     <tbody>
         <tr style='background-color:rgb(255,255,255);'>
     <td>
-      <strong>auth_token </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-        <br>
-        Value: Must be String
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
-      <strong>company_id </strong><br>
-      <small>
-        required
-        
-      </small>
-    </td>
-    <td>
-      
-<p>One of the allowed company ids returned by the</p>
-
-        <br>
-        Value: Must be a number.
-
-
-    </td>
-
-  </tr>
-
-  
-  <tr style='background-color:rgb(255,255,255);'>
-    <td>
       <strong>q </strong><br>
       <small>
         required
@@ -173,7 +136,9 @@ following categories</p>
 <p>The search term</p>
 
         <br>
-        Value: Must be String
+        Value: 
+<p>Must be String</p>
+
 
 
     </td>
@@ -184,6 +149,8 @@ following categories</p>
 
     </tbody>
   </table>
+
+
 
 </div>
 

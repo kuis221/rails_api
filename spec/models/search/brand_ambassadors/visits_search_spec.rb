@@ -71,11 +71,11 @@ describe BrandAmbassadors::Visit, type: :model, search: true do
     expect(search(company_id: company.id, campaign: [campaign.id, campaign2.id])).to match_array([visit, visit2])
 
     # Search for Visits on a given date range
-    expect(search(company_id: company.id, start_date: '02/21/2013', end_date: '02/23/2013')).to match_array([visit])
-    expect(search(company_id: company.id, start_date: '02/22/2013')).to match_array([visit])
-    expect(search(company_id: company.id, start_date: '03/21/2013', end_date: '03/23/2013')).to match_array([visit2])
-    expect(search(company_id: company.id, start_date: '03/22/2013')).to match_array([visit2])
-    expect(search(company_id: company.id, start_date: '01/21/2013', end_date: '01/23/2013')).to eq([])
+    expect(search(company_id: company.id, start_date: ['02/21/2013'], end_date: ['02/23/2013'])).to match_array([visit])
+    expect(search(company_id: company.id, start_date: ['02/22/2013'])).to match_array([visit])
+    expect(search(company_id: company.id, start_date: ['03/21/2013'], end_date: ['03/23/2013'])).to match_array([visit2])
+    expect(search(company_id: company.id, start_date: ['03/22/2013'])).to match_array([visit2])
+    expect(search(company_id: company.id, start_date: ['01/21/2013'], end_date: ['01/23/2013'])).to eq([])
   end
 
   it 'returns only results accessible for the current user' do
