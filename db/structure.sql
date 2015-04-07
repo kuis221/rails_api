@@ -80,6 +80,20 @@ COMMENT ON EXTENSION postgis IS 'PostGIS geometry, geography, and raster spatial
 
 
 --
+-- Name: postgres_fdw; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS postgres_fdw WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION postgres_fdw; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION postgres_fdw IS 'foreign-data wrapper for remote PostgreSQL servers';
+
+
+--
 -- Name: tablefunc; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -94,48 +108,6 @@ COMMENT ON EXTENSION tablefunc IS 'functions that manipulate whole tables, inclu
 
 
 SET search_path = public, pg_catalog;
-
---
--- Name: td_linx_result; Type: TYPE; Schema: public; Owner: -
---
-
-CREATE TYPE td_linx_result AS (
-	code character varying,
-	name character varying,
-	street character varying,
-	city character varying,
-	state character varying,
-	zipcode character varying,
-	confidence integer
-);
-
-
---
--- Name: find_place(character varying, character varying, character varying, character varying, character varying); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION find_place(pname character varying, pstreet character varying, pcity character varying, pstate character varying, pzipcode character varying) RETURNS integer
-    LANGUAGE plpgsql
-    AS $$
-DECLARE
-    place RECORD;
-    normalized_address VARCHAR;
-    normalized_address2 VARCHAR;
-BEGIN
-    normalized_address := lower(normalize_addresss(pstreet));
-
-    FOR place IN SELECT * FROM places WHERE similarity(pname, name) > 0.5 AND lower(city)=lower(pcity) AND lower(state)=lower(pstate) AND (pzipcode is NULL OR lower(zipcode)=lower(pzipcode)) AND lower(normalize_addresss(coalesce(places.street_number, '') || ' ' || coalesce(places.route, ''))) = normalized_address  LOOP
-        return place.id;
-    END LOOP;
-
-    FOR place IN SELECT * FROM places WHERE similarity(pname, name) > 0.5 AND lower(city)=lower(pcity) AND lower(state)=lower(pstate) AND (pzipcode is NULL OR lower(zipcode)=lower(pzipcode)) AND similarity(normalize_addresss(coalesce(places.street_number, '') || ' ' || coalesce(places.route, '')), normalized_address) >= 0.5  LOOP
-        return place.id;
-    END LOOP;
-
-    RETURN NULL;
-END;
-$$;
-
 
 --
 -- Name: find_tdlinx_place(character varying, character varying, character varying, character varying, character varying); Type: FUNCTION; Schema: public; Owner: -
@@ -161,84 +133,11 @@ $$;
 
 
 --
--- Name: incremental_place_match(integer); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION incremental_place_match(place_id integer) RETURNS td_linx_result
-    LANGUAGE plpgsql
-    AS $$
-DECLARE
-    place RECORD;
-    td_place RECORD;
-    place_name VARCHAR;
-    place_address VARCHAR;
-    place_zip VARCHAR;
-BEGIN
-    SELECT * INTO place FROM places where places.id=incremental_place_match.place_id;
-    place_name := lower(substr(place.name, 1, 5));
-    place_address := normalize_addresss(lower(substr(trim(both 'x' from place.street_number || ' ' || place.route), 1, 5)));
-    place_zip := substr(place.zipcode, 1, 4);
-    RAISE NOTICE 'SEARCHING PLACE WITH name: %, street: %, zip: %', place_name, place_address, place_zip;
-    FOR td_place IN SELECT tdlinx_codes.*, 10 FROM tdlinx_codes WHERE substr(lower(name), 1, 5) = place_name AND substr(street, 1, 5) = place_address AND substr(zipcode, 1, 4) = place_zip LOOP
-        return td_place;
-    END LOOP;
-
-    FOR td_place IN SELECT tdlinx_codes.*, 5 FROM tdlinx_codes WHERE (substr(lower(name), 1, 5) % place_name) AND (substr(street, 1, 5) % place_address) LOOP
-        return td_place;
-    END LOOP;
-
-    FOR td_place IN SELECT tdlinx_codes.*, 1 FROM tdlinx_codes WHERE (substr(lower(name), 1, 5) % place_name) AND substr(zipcode, 1, 4) = place_zip LOOP
-        return td_place;
-    END LOOP;
-
-    return null;
-END;
-$$;
-
-
---
--- Name: incremental_place_match(integer, character varying); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION incremental_place_match(place_id integer, state_code character varying) RETURNS td_linx_result
-    LANGUAGE plpgsql
-    AS $$
-DECLARE
-    place RECORD;
-    td_place RECORD;
-    place_name VARCHAR;
-    place_address VARCHAR;
-    place_address2 VARCHAR;
-    place_zip2 VARCHAR;
-BEGIN
-    SELECT * INTO place FROM places where places.id=incremental_place_match.place_id;
-    place_name := normalize_place_name(place.name);
-    place_address := normalize_addresss(COALESCE(place.street_number, '') || ' ' || COALESCE(place.route, ''));
-    place_address2 := normalize_addresss(COALESCE(place.formatted_address, ''));
-    place_zip2 := substr(place.zipcode, 1, 2);
-    FOR td_place IN SELECT tdlinx_codes.*, 10 FROM tdlinx_codes WHERE state=state_code AND substr(lower(normalize_place_name(name)), 1, 5) = substr(lower(place_name), 1, 5) AND (substr(lower(street), 1, 5) = substr(lower(place_address), 1, 5) OR substr(lower(street), 1, 5) = substr(lower(place_address2), 1, 5)) AND zipcode = place.zipcode ORDER BY similarity(name, place_name) LOOP
-        return td_place;
-    END LOOP;
-
-    FOR td_place IN SELECT tdlinx_codes.*, 5 FROM tdlinx_codes WHERE state=state_code AND normalize_place_name(name) % place_name AND (similarity(street, place_address) >= 0.5 AND (substr(lower(street), 1, 5) = substr(lower(place_address), 1, 5) OR substr(lower(street), 1, 5) = substr(lower(place_address2), 1, 5)) ) AND zipcode = place.zipcode ORDER BY similarity(name, place_name) LOOP
-        return td_place;
-    END LOOP;
-
-    FOR td_place IN SELECT tdlinx_codes.*, 1 FROM tdlinx_codes WHERE similarity(normalize_place_name(name), place_name) >= 0.5 AND similarity(street, place_address) >= 0.4 AND (place_zip2 IS NULL OR substr(zipcode, 1, 2) = place_zip2) ORDER BY similarity(name, place_name) DESC LOOP
-        return td_place;
-    END LOOP;
-
-    return null;
-END;
-$$;
-
-
---
 -- Name: normalize_addresss(character varying); Type: FUNCTION; Schema: public; Owner: -
 --
 
 CREATE FUNCTION normalize_addresss(address character varying) RETURNS character varying
-    LANGUAGE plpgsql IMMUTABLE
+    LANGUAGE plpgsql
     AS $_$
 BEGIN
     address := regexp_replace(address, '(\s|,|^)(rd\.?)(\s|,|$)', '\1Road\3', 'ig');
@@ -246,11 +145,7 @@ BEGIN
     address := regexp_replace(address, '(\s|,|^)(ste\.?)(\s|,|$)', '\1Suite\3', 'ig');
     address := regexp_replace(address, '(\s|,|^)(av|ave\.?)(\s|,|$)', '\1Avenue\3', 'ig');
     address := regexp_replace(address, '(\s|,|^)(blvd\.?)(\s|,|$)', '\1Boulevard\3', 'ig');
-    address := regexp_replace(address, '(\s|,|^)(fwy\.?)(\s|,|$)', '\1Freeway\3', 'ig');
     address := regexp_replace(address, '(\s|,|^)(hwy\.?)(\s|,|$)', '\1Highway\3', 'ig');
-
-    address := regexp_replace(address, '(\s|,|^)(Road|Street|Avenue|Boulevard|Freeway|Highway\.?)(\s|,|$)', '\1\3', 'ig');
-
     address := regexp_replace(address, '(\s|,|^)(fifth\.?)(\s|,|$)', '\15th\3', 'ig');
     address := regexp_replace(address, '(\s|,|^)(dr\.?)(\s|,|$)', '\1Drive\3', 'ig');
     address := regexp_replace(address, '(\s|,|^)(w\.?)(\s|,|$)', '\1West\3', 'ig');
@@ -258,9 +153,9 @@ BEGIN
     address := regexp_replace(address, '(\s|,|^)(e\.?)(\s|,|$)', '\1East\3', 'ig');
     address := regexp_replace(address, '(\s|,|^)(n\.?)(\s|,|$)', '\1North\3', 'ig');
     address := regexp_replace(address, '(\s|,|^)(ne\.?)(\s|,|$)', '\1Northeast\3', 'ig');
-    address := regexp_replace(address, '(\s|,|^)(nw\.?)(\s|,|$)', '\1Northwest\3', 'ig');
-    address := regexp_replace(address, '(\s|,|^)(se\.?)(\s|,|$)', '\1Southeast\3', 'ig');
-    address := regexp_replace(address, '(\s|,|^)(sw\.?)(\s|,|$)', '\1Southwest\3', 'ig');
+    address := regexp_replace(address, '(\s|,|^)(nw\.?)(\s|,|$)', '\1Northweast\3', 'ig');
+    address := regexp_replace(address, '(\s|,|^)(se\.?)(\s|,|$)', '\1Northwest\3', 'ig');
+    address := regexp_replace(address, '(\s|,|^)(sw\.?)(\s|,|$)', '\1Southweast\3', 'ig');
     address := regexp_replace(address, '(\s|,|^)(pkwy\.?)(\s|,|$)', '\1Parkway\3', 'ig');
     address := regexp_replace(address, '[\.,]+', '', 'ig');
     address := regexp_replace(address, '\s+', ' ', 'ig');
@@ -270,18 +165,14 @@ $_$;
 
 
 --
--- Name: normalize_place_name(character varying); Type: FUNCTION; Schema: public; Owner: -
+-- Name: legacy_prod; Type: SERVER; Schema: -; Owner: -
 --
 
-CREATE FUNCTION normalize_place_name(name character varying) RETURNS character varying
-    LANGUAGE plpgsql IMMUTABLE
-    AS $$
-BEGIN
-    name := regexp_replace(name, '^the\s+', '', 'ig');
-    name := regexp_replace(name, '''', '', 'ig');
-    RETURN trim(both ' ' from name);
-END;
-$$;
+CREATE SERVER legacy_prod FOREIGN DATA WRAPPER postgres_fdw OPTIONS (
+    dbname 'd9ncqhfqis29bj',
+    host 'ec2-54-235-194-252.compute-1.amazonaws.com',
+    port '5432'
+);
 
 
 SET default_tablespace = '';
@@ -1320,46 +1211,6 @@ ALTER SEQUENCE custom_filters_id_seq OWNED BY custom_filters.id;
 
 
 --
--- Name: data_extracts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE data_extracts (
-    id integer NOT NULL,
-    type character varying(255),
-    company_id integer,
-    active boolean,
-    sharing character varying(255),
-    name character varying(255),
-    description text,
-    filters text,
-    columns text,
-    created_by_id integer,
-    updated_by_id integer,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone
-);
-
-
---
--- Name: data_extracts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE data_extracts_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: data_extracts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE data_extracts_id_seq OWNED BY data_extracts.id;
-
-
---
 -- Name: data_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2109,6 +1960,107 @@ ALTER SEQUENCE kpis_segments_id_seq OWNED BY kpis_segments.id;
 
 
 --
+-- Name: legacy_accounts; Type: FOREIGN TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE FOREIGN TABLE legacy_accounts (
+    id integer NOT NULL,
+    name character varying(255),
+    td_linx_code character varying(255),
+    url character varying(255),
+    description text,
+    active boolean DEFAULT true,
+    creator_id integer,
+    updater_id integer,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    neighborhood character varying(255)
+)
+SERVER legacy_prod
+OPTIONS (
+    table_name 'accounts'
+);
+
+
+--
+-- Name: legacy_addresses; Type: FOREIGN TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE FOREIGN TABLE legacy_addresses (
+    id integer NOT NULL,
+    addressable_id integer,
+    addressable_type character varying(255),
+    street_address character varying(255),
+    supplemental_address character varying(255),
+    city character varying(255),
+    state character varying(255),
+    postal_code integer,
+    active boolean DEFAULT true,
+    creator_id integer,
+    updater_id integer,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+)
+SERVER legacy_prod
+OPTIONS (
+    table_name 'addresses'
+);
+
+
+--
+-- Name: legacy_events; Type: FOREIGN TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE FOREIGN TABLE legacy_events (
+    id integer NOT NULL,
+    program_id integer,
+    account_id integer,
+    start_at timestamp without time zone,
+    end_at timestamp without time zone,
+    notes text,
+    staff character varying(255),
+    deactivation_reason character varying(255),
+    event_type_id integer,
+    confirmed boolean DEFAULT true,
+    active boolean DEFAULT true,
+    creator_id integer,
+    updater_id integer,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    drink_special boolean DEFAULT false NOT NULL,
+    market_id integer
+)
+SERVER legacy_prod
+OPTIONS (
+    table_name 'events'
+);
+
+
+--
+-- Name: legacy_programs; Type: FOREIGN TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE FOREIGN TABLE legacy_programs (
+    id integer NOT NULL,
+    name character varying(255),
+    brand_id integer,
+    events_based boolean DEFAULT true,
+    hours_based boolean DEFAULT false,
+    managed_bar_night boolean DEFAULT true,
+    brand_ambassador boolean DEFAULT false,
+    active boolean DEFAULT true,
+    creator_id integer,
+    updater_id integer,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+)
+SERVER legacy_prod
+OPTIONS (
+    table_name 'programs'
+);
+
+
+--
 -- Name: list_exports; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -2257,40 +2209,6 @@ CREATE SEQUENCE memberships_id_seq
 --
 
 ALTER SEQUENCE memberships_id_seq OWNED BY memberships.id;
-
-
---
--- Name: neighborhoods; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE neighborhoods (
-    gid integer NOT NULL,
-    state character varying(2),
-    county character varying(43),
-    city character varying(64),
-    name character varying(64),
-    regionid numeric,
-    geog geography(MultiPolygon,4326)
-);
-
-
---
--- Name: neighborhoods_gid_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE neighborhoods_gid_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: neighborhoods_gid_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE neighborhoods_gid_seq OWNED BY neighborhoods.gid;
 
 
 --
@@ -2801,20 +2719,6 @@ ALTER SEQUENCE tasks_id_seq OWNED BY tasks.id;
 
 
 --
--- Name: tdlinx_codes; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE tdlinx_codes (
-    td_linx_code character varying,
-    name character varying,
-    street character varying,
-    city character varying,
-    state character varying,
-    zipcode character varying
-);
-
-
---
 -- Name: teamings; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -3200,13 +3104,6 @@ ALTER TABLE ONLY custom_filters_categories ALTER COLUMN id SET DEFAULT nextval('
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY data_extracts ALTER COLUMN id SET DEFAULT nextval('data_extracts_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
 ALTER TABLE ONLY data_migrations ALTER COLUMN id SET DEFAULT nextval('data_migrations_id_seq'::regclass);
 
 
@@ -3376,13 +3273,6 @@ ALTER TABLE ONLY marques ALTER COLUMN id SET DEFAULT nextval('marques_id_seq'::r
 --
 
 ALTER TABLE ONLY memberships ALTER COLUMN id SET DEFAULT nextval('memberships_id_seq'::regclass);
-
-
---
--- Name: gid; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY neighborhoods ALTER COLUMN gid SET DEFAULT nextval('neighborhoods_gid_seq'::regclass);
 
 
 --
@@ -3744,14 +3634,6 @@ ALTER TABLE ONLY custom_filters
 
 
 --
--- Name: data_extracts_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY data_extracts
-    ADD CONSTRAINT data_extracts_pkey PRIMARY KEY (id);
-
-
---
 -- Name: data_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -3933,14 +3815,6 @@ ALTER TABLE ONLY marques
 
 ALTER TABLE ONLY memberships
     ADD CONSTRAINT memberships_pkey PRIMARY KEY (id);
-
-
---
--- Name: neighborhoods_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY neighborhoods
-    ADD CONSTRAINT neighborhoods_pkey PRIMARY KEY (gid);
 
 
 --
@@ -4418,27 +4292,6 @@ CREATE INDEX index_custom_filters_categories_on_company_id ON custom_filters_cat
 
 
 --
--- Name: index_data_extracts_on_company_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_data_extracts_on_company_id ON data_extracts USING btree (company_id);
-
-
---
--- Name: index_data_extracts_on_created_by_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_data_extracts_on_created_by_id ON data_extracts USING btree (created_by_id);
-
-
---
--- Name: index_data_extracts_on_updated_by_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_data_extracts_on_updated_by_id ON data_extracts USING btree (updated_by_id);
-
-
---
 -- Name: index_document_folders_on_company_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -4835,62 +4688,6 @@ CREATE UNIQUE INDEX index_venues_on_company_id_and_place_id ON venues USING btre
 --
 
 CREATE INDEX index_venues_on_place_id ON venues USING btree (place_id);
-
-
---
--- Name: neighborhoods_geog_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX neighborhoods_geog_idx ON neighborhoods USING gist (geog);
-
-
---
--- Name: td_linx_code_norm_name_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX td_linx_code_norm_name_idx ON tdlinx_codes USING btree (normalize_place_name(name));
-
-
---
--- Name: td_linx_code_state_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX td_linx_code_state_idx ON tdlinx_codes USING btree (state);
-
-
---
--- Name: td_linx_code_substr_name_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX td_linx_code_substr_name_idx ON tdlinx_codes USING btree (substr(lower((name)::text), 1, 5));
-
-
---
--- Name: td_linx_code_substr_street_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX td_linx_code_substr_street_idx ON tdlinx_codes USING btree (substr(lower((street)::text), 1, 5));
-
-
---
--- Name: td_linx_code_substr_zipcode_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX td_linx_code_substr_zipcode_idx ON tdlinx_codes USING btree (substr((zipcode)::text, 1, 2));
-
-
---
--- Name: td_linx_full_name_trgm_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX td_linx_full_name_trgm_idx ON tdlinx_codes USING gist (name gist_trgm_ops);
-
-
---
--- Name: td_linx_full_street_trgm_idx; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX td_linx_full_street_trgm_idx ON tdlinx_codes USING gist (street gist_trgm_ops);
 
 
 --
@@ -5353,8 +5150,6 @@ INSERT INTO schema_migrations (version) VALUES ('20150210030844');
 INSERT INTO schema_migrations (version) VALUES ('20150212235756');
 
 INSERT INTO schema_migrations (version) VALUES ('20150226220017');
-
-INSERT INTO schema_migrations (version) VALUES ('20150311205444');
 
 INSERT INTO schema_migrations (version) VALUES ('20150317180935');
 
