@@ -1,7 +1,7 @@
 module Csv
   class ActivityPresenter < BasePresenter
     def date
-      Timeliness.parse(@model.activity_date.strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%F %R')
+      Timeliness.parse(@model.activity_date.strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%F')
     end
 
     def place_address
