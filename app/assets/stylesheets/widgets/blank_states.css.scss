@@ -1,0 +1,47 @@
+
+/*
+A markup for Blank States // Details pages
+Blank states for details pages
+
+Styleguide 5.1
+*/
+
+/*
+A markup for Blank States // Results views
+Reports and Lists views
+
+Styleguide 5.2
+*/
+
+.blank-state{
+	.btn{
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		margin-top: 30px;
+	}
+	p{
+		color: $brand;
+		max-width: 410px;
+		margin-left: auto;
+		margin-right: auto;
+		position: relative;
+		&:before{
+			content: "";
+			background: image-url('blank-states-arrow.svg');
+			height: 75px;
+			left: -158px;
+			position: absolute;
+			top: -58px;
+			width: 148px;
+		}
+	}
+}
+
+.blank-state-icon{
+	height: 100px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 65px;
+	width: 100px;
+}
