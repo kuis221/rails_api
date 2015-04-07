@@ -26,7 +26,7 @@ describe Results::ActivitiesController, type: :controller do
   describe "GET 'index'" do
     it 'queue the job for export the list' do
       expect do
-        xhr :get, :index, format: :xls
+        xhr :get, :index, format: :csv
       end.to change(ListExport, :count).by(1)
       export = ListExport.last
       expect(ListExportWorker).to have_queued(export.id)
@@ -52,7 +52,7 @@ describe Results::ActivitiesController, type: :controller do
     before { company_user.campaigns << campaign }
 
     it 'return an empty book with the correct headers' do
-      expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+      expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
       export = ListExport.last
       expect(ListExportWorker).to have_queued(export.id)
       ResqueSpec.perform_all(:export)
@@ -76,7 +76,7 @@ describe Results::ActivitiesController, type: :controller do
 
       Sunspot.commit
 
-      expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+      expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
       export = ListExport.last
       expect(ListExportWorker).to have_queued(export.id)
       ResqueSpec.perform_all(:export)
@@ -107,7 +107,7 @@ describe Results::ActivitiesController, type: :controller do
       end
 
       it 'should include the activity data results only for the given campaign' do
-        expect { xhr :get, 'index', campaign: [campaign.id], format: :xls }.to change(ListExport, :count).by(1)
+        expect { xhr :get, 'index', campaign: [campaign.id], format: :csv }.to change(ListExport, :count).by(1)
         export = ListExport.last
         expect(ListExportWorker).to have_queued(export.id)
         ResqueSpec.perform_all(:export)
@@ -119,7 +119,7 @@ describe Results::ActivitiesController, type: :controller do
       end
 
       it 'should include any custom kpis from all the campaigns' do
-        expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+        expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
         export = ListExport.last
         expect(ListExportWorker).to have_queued(export.id)
         ResqueSpec.perform_all(:export)

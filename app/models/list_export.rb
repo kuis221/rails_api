@@ -67,6 +67,7 @@ class ListExport < ActiveRecord::Base
       :read,
       secure: true,
       expires: 300, # 5 minutes
+      response_content_encoding: 'utf-8',
       response_content_disposition: "attachment; filename=#{file_file_name}").to_s
   end
 

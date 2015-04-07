@@ -74,6 +74,10 @@ class Area < ActiveRecord::Base
 
     string :name
 
+    integer :location_ids, multiple: true do
+      common_denominators_locations + locations.map(&:id)
+    end
+
     string :status
 
     boolean :active

@@ -53,10 +53,10 @@ RSpec.describe DataExtract::DayPart, type: :model do
       end
 
       it 'allows to filter the results' do
-        subject.filters = { 'active_state' => ['inactive'] }
+        subject.filters = { 'status' => ['inactive'] }
         expect(subject.rows).to be_empty
 
-        subject.filters = { 'active_state' => ['active'] }
+        subject.filters = { 'status' => ['active'] }
         expect(subject.rows).to eql [
           ["Day Part 1", "Some Day Part description", "Benito Camelas", "08/23/2013"]
         ]

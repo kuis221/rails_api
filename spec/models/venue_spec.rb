@@ -276,5 +276,15 @@ describe Venue, type: :model do
       area_campaign_la.update_attribute :inclusions, [city_la.id]
       expect(described_class.in_campaign_scope(campaign)).to match_array [venue_sf, venue_la]
     end
+
+    it 'includes venues that are inside a city added directly to the campaign' do
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      venue_la = create(:venue, company: company, place: place_la)
+      city_la = create(:city, name: 'Los Angeles', country: 'US', state: 'California')
+
+      campaign.places << city_la
+
+      expect(described_class.in_campaign_scope(campaign)).to match_array [venue_la]
+    end
   end
 end

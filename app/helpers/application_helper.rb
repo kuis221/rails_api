@@ -1,6 +1,20 @@
 require 'base64'
 
 module ApplicationHelper
+  def present(model, format = :html)
+    @presenters ||= {}
+    format = format.to_s.capitalize
+    class_name = "#{model.class}Presenter" if Kernel.const_defined?("#{model.class}Presenter")
+    class_name = "#{format}::#{model.class}Presenter" if Kernel.const_defined?("#{format}::#{model.class}Presenter")
+    return model unless class_name
+    # cache object so we dont create a new object when interting through many objects
+    # for example, when exporting thousands of records
+    @presenters[class_name] ||= class_name.constantize.new(model, self)
+    @presenters[class_name].model = model
+    return @presenters[class_name] unless block_given?
+    yield(presenter)
+  end
+
   def place_address(place, link_name = false, line_separator = '<br />', name_separator = '<br />')
     return if place.nil?
     place_name = place.name
