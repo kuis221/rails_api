@@ -14,6 +14,10 @@ Styleguide 5.2
 */
 
 .blank-state{
+	border: 1px solid lightgrey;
+	padding: 30px 10px;
+	position: relative;
+	width: 100%;
 	.btn{
 		display: block;
 		margin-left: auto;
@@ -26,16 +30,13 @@ Styleguide 5.2
 		margin-left: auto;
 		margin-right: auto;
 		position: relative;
-		&:before{
-			content: "";
-			background: image-url('blank-states-arrow.png');
-			height: 75px;
-			left: -158px;
-			position: absolute;
-			top: -58px;
-			width: 148px;
-		}
 	}
+}
+
+.blank-state-arrow{
+	left: 60px;
+	position: absolute;
+	top: 15px;
 }
 
 .blank-state-icon{
