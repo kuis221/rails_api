@@ -80,6 +80,20 @@ COMMENT ON EXTENSION postgis IS 'PostGIS geometry, geography, and raster spatial
 
 
 --
+-- Name: postgres_fdw; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS postgres_fdw WITH SCHEMA public;
+
+
+--
+-- Name: EXTENSION postgres_fdw; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION postgres_fdw IS 'foreign-data wrapper for remote PostgreSQL servers';
+
+
+--
 -- Name: tablefunc; Type: EXTENSION; Schema: -; Owner: -
 --
 
@@ -156,42 +170,6 @@ BEGIN
     END LOOP;
 
     RETURN NULL;
-END;
-$$;
-
-
---
--- Name: incremental_place_match(integer); Type: FUNCTION; Schema: public; Owner: -
---
-
-CREATE FUNCTION incremental_place_match(place_id integer) RETURNS td_linx_result
-    LANGUAGE plpgsql
-    AS $$
-DECLARE
-    place RECORD;
-    td_place RECORD;
-    place_name VARCHAR;
-    place_address VARCHAR;
-    place_zip VARCHAR;
-BEGIN
-    SELECT * INTO place FROM places where places.id=incremental_place_match.place_id;
-    place_name := lower(substr(place.name, 1, 5));
-    place_address := normalize_addresss(lower(substr(trim(both 'x' from place.street_number || ' ' || place.route), 1, 5)));
-    place_zip := substr(place.zipcode, 1, 4);
-    RAISE NOTICE 'SEARCHING PLACE WITH name: %, street: %, zip: %', place_name, place_address, place_zip;
-    FOR td_place IN SELECT tdlinx_codes.*, 10 FROM tdlinx_codes WHERE substr(lower(name), 1, 5) = place_name AND substr(street, 1, 5) = place_address AND substr(zipcode, 1, 4) = place_zip LOOP
-        return td_place;
-    END LOOP;
-
-    FOR td_place IN SELECT tdlinx_codes.*, 5 FROM tdlinx_codes WHERE (substr(lower(name), 1, 5) % place_name) AND (substr(street, 1, 5) % place_address) LOOP
-        return td_place;
-    END LOOP;
-
-    FOR td_place IN SELECT tdlinx_codes.*, 1 FROM tdlinx_codes WHERE (substr(lower(name), 1, 5) % place_name) AND substr(zipcode, 1, 4) = place_zip LOOP
-        return td_place;
-    END LOOP;
-
-    return null;
 END;
 $$;
 
@@ -282,6 +260,17 @@ BEGIN
     RETURN trim(both ' ' from name);
 END;
 $$;
+
+
+--
+-- Name: legacy_prod; Type: SERVER; Schema: -; Owner: -
+--
+
+CREATE SERVER legacy_prod FOREIGN DATA WRAPPER postgres_fdw OPTIONS (
+    dbname 'd9ncqhfqis29bj',
+    host 'ec2-54-235-194-252.compute-1.amazonaws.com',
+    port '5432'
+);
 
 
 SET default_tablespace = '';
@@ -1320,46 +1309,6 @@ ALTER SEQUENCE custom_filters_id_seq OWNED BY custom_filters.id;
 
 
 --
--- Name: data_extracts; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE data_extracts (
-    id integer NOT NULL,
-    type character varying(255),
-    company_id integer,
-    active boolean,
-    sharing character varying(255),
-    name character varying(255),
-    description text,
-    filters text,
-    columns text,
-    created_by_id integer,
-    updated_by_id integer,
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone
-);
-
-
---
--- Name: data_extracts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE data_extracts_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: data_extracts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE data_extracts_id_seq OWNED BY data_extracts.id;
-
-
---
 -- Name: data_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -1975,7 +1924,8 @@ CREATE TABLE invites (
     final_date date,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
-    active boolean DEFAULT true
+    active boolean DEFAULT true,
+    area_id integer
 );
 
 
@@ -2106,6 +2056,107 @@ CREATE SEQUENCE kpis_segments_id_seq
 --
 
 ALTER SEQUENCE kpis_segments_id_seq OWNED BY kpis_segments.id;
+
+
+--
+-- Name: legacy_accounts; Type: FOREIGN TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE FOREIGN TABLE legacy_accounts (
+    id integer NOT NULL,
+    name character varying(255),
+    td_linx_code character varying(255),
+    url character varying(255),
+    description text,
+    active boolean DEFAULT true,
+    creator_id integer,
+    updater_id integer,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    neighborhood character varying(255)
+)
+SERVER legacy_prod
+OPTIONS (
+    table_name 'accounts'
+);
+
+
+--
+-- Name: legacy_addresses; Type: FOREIGN TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE FOREIGN TABLE legacy_addresses (
+    id integer NOT NULL,
+    addressable_id integer,
+    addressable_type character varying(255),
+    street_address character varying(255),
+    supplemental_address character varying(255),
+    city character varying(255),
+    state character varying(255),
+    postal_code integer,
+    active boolean DEFAULT true,
+    creator_id integer,
+    updater_id integer,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+)
+SERVER legacy_prod
+OPTIONS (
+    table_name 'addresses'
+);
+
+
+--
+-- Name: legacy_events; Type: FOREIGN TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE FOREIGN TABLE legacy_events (
+    id integer NOT NULL,
+    program_id integer,
+    account_id integer,
+    start_at timestamp without time zone,
+    end_at timestamp without time zone,
+    notes text,
+    staff character varying(255),
+    deactivation_reason character varying(255),
+    event_type_id integer,
+    confirmed boolean DEFAULT true,
+    active boolean DEFAULT true,
+    creator_id integer,
+    updater_id integer,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone,
+    drink_special boolean DEFAULT false NOT NULL,
+    market_id integer
+)
+SERVER legacy_prod
+OPTIONS (
+    table_name 'events'
+);
+
+
+--
+-- Name: legacy_programs; Type: FOREIGN TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE FOREIGN TABLE legacy_programs (
+    id integer NOT NULL,
+    name character varying(255),
+    brand_id integer,
+    events_based boolean DEFAULT true,
+    hours_based boolean DEFAULT false,
+    managed_bar_night boolean DEFAULT true,
+    brand_ambassador boolean DEFAULT false,
+    active boolean DEFAULT true,
+    creator_id integer,
+    updater_id integer,
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+)
+SERVER legacy_prod
+OPTIONS (
+    table_name 'programs'
+);
 
 
 --
@@ -3200,13 +3251,6 @@ ALTER TABLE ONLY custom_filters_categories ALTER COLUMN id SET DEFAULT nextval('
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY data_extracts ALTER COLUMN id SET DEFAULT nextval('data_extracts_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
 ALTER TABLE ONLY data_migrations ALTER COLUMN id SET DEFAULT nextval('data_migrations_id_seq'::regclass);
 
 
@@ -3741,14 +3785,6 @@ ALTER TABLE ONLY custom_filters_categories
 
 ALTER TABLE ONLY custom_filters
     ADD CONSTRAINT custom_filters_pkey PRIMARY KEY (id);
-
-
---
--- Name: data_extracts_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY data_extracts
-    ADD CONSTRAINT data_extracts_pkey PRIMARY KEY (id);
 
 
 --
@@ -4418,27 +4454,6 @@ CREATE INDEX index_custom_filters_categories_on_company_id ON custom_filters_cat
 
 
 --
--- Name: index_data_extracts_on_company_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_data_extracts_on_company_id ON data_extracts USING btree (company_id);
-
-
---
--- Name: index_data_extracts_on_created_by_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_data_extracts_on_created_by_id ON data_extracts USING btree (created_by_id);
-
-
---
--- Name: index_data_extracts_on_updated_by_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_data_extracts_on_updated_by_id ON data_extracts USING btree (updated_by_id);
-
-
---
 -- Name: index_document_folders_on_company_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -4569,6 +4584,13 @@ CREATE INDEX index_goals_on_kpis_segment_id ON goals USING btree (kpis_segment_i
 --
 
 CREATE INDEX index_invite_rsvps_on_invite_id ON invite_rsvps USING btree (invite_id);
+
+
+--
+-- Name: index_invites_on_area_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_invites_on_area_id ON invites USING btree (area_id);
 
 
 --
@@ -5354,11 +5376,11 @@ INSERT INTO schema_migrations (version) VALUES ('20150212235756');
 
 INSERT INTO schema_migrations (version) VALUES ('20150226220017');
 
-INSERT INTO schema_migrations (version) VALUES ('20150311205444');
-
 INSERT INTO schema_migrations (version) VALUES ('20150317180935');
 
 INSERT INTO schema_migrations (version) VALUES ('20150319192414');
 
 INSERT INTO schema_migrations (version) VALUES ('20150320155037');
+
+INSERT INTO schema_migrations (version) VALUES ('20150407181402');
 

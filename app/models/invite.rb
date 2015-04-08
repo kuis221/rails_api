@@ -18,17 +18,24 @@
 class Invite < ActiveRecord::Base
   belongs_to :event
   belongs_to :venue
+  belongs_to :area
   has_one :place, through: :venue
   has_many :rsvps, class_name: 'InviteRsvp'
 
   delegate :name_with_location, :id, :name, to: :place, prefix: true, allow_nil: true
   delegate :campaign_name, :campaign_id, to: :event, prefix: false, allow_nil: true
 
-  validates :venue, presence: true
+  validates :venue, presence: true, if: :venue_id
   validates :event, presence: true
+  validates :area, presence: true, if: :area_id
   validates :invitees, presence: true, numericality: true
 
   scope :active, -> { where active: true }
+
+  ATTENDANCE_DISPLAY_BY_TYPES = {
+    '1' => 'venue',
+    '2' => 'market'
+  }
 
   def place_reference=(value)
     @place_reference = value

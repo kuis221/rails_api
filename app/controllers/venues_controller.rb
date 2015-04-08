@@ -9,6 +9,8 @@ class VenuesController < FilteredController
 
   custom_actions member: [:select_areas, :add_areas]
 
+  layout false, only: :invites
+
   before_action :redirect_to_merged_venue, only: [:show]
 
   def collection
