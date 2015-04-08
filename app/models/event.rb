@@ -203,16 +203,9 @@ class Event < ActiveRecord::Base
       .joins("INNER JOIN (#{area_query} UNION #{place_query}) areas_places ON events.place_id=areas_places.place_id")
   end
 
-  #
   def self.in_areas(areas)
-    subquery = Place.select('DISTINCT places.location_id')
-               .joins(:placeables).where(placeables: { placeable_type: 'Area', placeable_id: areas }, is_location: true)
-    place_query = "select place_id FROM locations_places INNER JOIN (#{subquery.to_sql})"\
-                  ' locations on locations.location_id=locations_places.location_id'
-    area_query = Placeable.select('place_id')
-                 .where(placeable_type: 'Area', placeable_id: areas).to_sql
-    joins(:place)
-      .joins("INNER JOIN (#{area_query} UNION #{place_query}) areas_places ON events.place_id=areas_places.place_id")
+    subquery = Place.connection.unprepared_statement { Place.in_areas(areas).to_sql }
+    joins("INNER JOIN (#{subquery}) areas_places ON areas_places.id=events.place_id")
   end
 
   def self.in_places(places)

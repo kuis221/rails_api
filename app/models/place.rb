@@ -92,7 +92,70 @@ class Place < ActiveRecord::Base
     place_query = "select place_id FROM locations_places INNER JOIN (#{subquery.to_sql})"\
                   ' locations on locations.location_id=locations_places.location_id'
     area_query = Placeable.select('place_id')
-                 .where(placeable_type: 'Area', placeable_id: areas).to_sql
+                 .where(placeable_type: 'Area', placeable_id: areas + [0]).to_sql
+    joins("INNER JOIN (#{area_query} UNION #{place_query}) areas_places ON places.id=areas_places.place_id")
+  end
+
+  def self.in_campaign_areas(campaign, areas)
+    subquery = Place.connection.unprepared_statement do
+      Place.select('DISTINCT places.location_id, areas_campaigns.area_id')
+      .joins(:placeables)
+      .where(placeables: { placeable_type: 'Area', placeable_id: areas + [0] }, is_location: true)
+      .joins('INNER JOIN areas_campaigns
+                ON areas_campaigns.campaign_id=' + campaign.id.to_s + ' AND
+                areas_campaigns.area_id=placeables.placeable_id')
+      .where('NOT (places.id = ANY (areas_campaigns.exclusions))').to_sql
+    end
+
+    subquery += ' UNION ' + Place.connection.unprepared_statement do
+      Place.select('DISTINCT(places.location_id), areas_campaigns.area_id')
+      .joins('INNER JOIN areas_campaigns ON places.id = ANY (areas_campaigns.inclusions)')
+      .where(is_location: true, areas_campaigns: { area_id: areas + [0], campaign_id: campaign.id }).to_sql
+    end
+
+    place_query = "select place_id, locations.area_id FROM locations_places INNER JOIN (#{subquery})"\
+                  ' locations ON locations.location_id=locations_places.location_id'
+    area_query = Placeable.select('place_id, placeable_id area_id').where(placeable_type: 'Area', placeable_id: areas)
+                 .joins("INNER JOIN areas_campaigns ON areas_campaigns.campaign_id=#{campaign.id} "\
+                        'AND areas_campaigns.area_id=placeables.placeable_id')
+                 .where('NOT (place_id = ANY (areas_campaigns.exclusions))').to_sql
+
+    joins("INNER JOIN (#{area_query} UNION #{place_query}) areas_places ON places.id=areas_places.place_id")
+  end
+
+  def self.in_campaign_scope(campaign)
+    areas = campaign.areas.pluck(:id) + [0]
+
+    # Places that are inside the areas scope excluding the ones in the exclusions list
+    subquery = Place.connection.unprepared_statement do
+      Place.select('DISTINCT places.location_id')
+      .joins(:placeables)
+      .where(placeables: { placeable_type: 'Area', placeable_id: areas }, is_location: true)
+      .joins('INNER JOIN areas_campaigns
+                ON areas_campaigns.campaign_id=' + campaign.id.to_s + ' AND
+                areas_campaigns.area_id=placeables.placeable_id')
+      .where('NOT (places.id = ANY (areas_campaigns.exclusions))').to_sql
+    end
+
+    # Places that are inside the inclusions lists
+    subquery += ' UNION ' + Place.connection.unprepared_statement do
+      Place.select('DISTINCT(places.location_id)')
+      .joins('INNER JOIN areas_campaigns ON places.id = ANY (areas_campaigns.inclusions)')
+      .where(is_location: true, areas_campaigns: { area_id: areas, campaign_id: campaign.id }).to_sql
+    end
+
+    # Places that are inside  places directly assigned to the campaign
+    subquery += ' UNION ' + Place.connection.unprepared_statement do
+      campaign.places.where(is_location: true).select('DISTINCT(places.location_id)').to_sql
+    end
+
+    place_query = "select place_id FROM locations_places INNER JOIN (#{subquery})"\
+                  ' locations ON locations.location_id=locations_places.location_id'
+    area_query = Placeable.select('place_id').where(placeable_type: 'Area', placeable_id: areas)
+                 .joins("INNER JOIN areas_campaigns ON areas_campaigns.campaign_id=#{campaign.id} "\
+                        'AND areas_campaigns.area_id=placeables.placeable_id')
+                 .where('NOT (place_id = ANY (areas_campaigns.exclusions))').to_sql
+
     joins("INNER JOIN (#{area_query} UNION #{place_query}) areas_places ON places.id=areas_places.place_id")
   end
 

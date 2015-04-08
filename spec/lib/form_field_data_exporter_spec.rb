@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Results::EventDataHelper, type: :helper do
+describe FormFieldDataExporter, type: :model do
   let(:company) { campaign.company }
   let(:campaign) { create(:campaign, name: 'Test Campaign FY01') }
   let(:event) { create(:approved_event, campaign: campaign) }
@@ -10,19 +10,15 @@ describe Results::EventDataHelper, type: :helper do
   let(:params) { { campaign: [campaign.id] } }
   let(:search_params) { params }
 
-  before do
-    # Ugly hack as a workoround for https://github.com/rspec/rspec-rails/issues/1076
-    helper.class.class_attribute :resource_class
-    allow(helper).to receive(:current_company_user).and_return(company_user)
-    allow(helper).to receive(:search_params).and_return(search_params)
-    Kpi.create_global_kpis
-  end
+  before { Kpi.create_global_kpis }
+
+  let(:resource_class) { Event }
+
+  let(:subject) { FormFieldDataExporter.new(company_user, params, resource_class) }
 
   describe '#custom_fields_to_export_values and #custom_fields_to_export_headers' do
     describe 'for event data' do
-      before do
-        allow(helper).to receive(:resource_class).and_return(Event)
-      end
+
 
       it 'includes NUMBER fields that are not linked to a KPI' do
         field = create(:form_field_number, name: 'My Numeric Field', fieldable: campaign)
@@ -30,8 +26,8 @@ describe Results::EventDataHelper, type: :helper do
         event.results_for([field]).first.value = 123
         expect(event.save).to be_truthy
 
-        expect(helper.custom_fields_to_export_headers).to eq(['MY NUMERIC FIELD'])
-        expect(helper.custom_fields_to_export_values(event)).to eq([['Number', 'normal', 123]])
+        expect(subject.custom_fields_to_export_headers).to eq(['MY NUMERIC FIELD'])
+        expect(subject.custom_fields_to_export_values(event)).to eq([123])
       end
 
       it 'includes RADIO fields that are not linked to a KPI' do
@@ -43,8 +39,8 @@ describe Results::EventDataHelper, type: :helper do
         event.results_for([field]).first.value = option.id
         expect(event.save).to be_truthy
 
-        expect(helper.custom_fields_to_export_headers).to eq(['MY RADIO FIELD'])
-        expect(helper.custom_fields_to_export_values(event)).to eq([['String', 'normal', 'Radio Opt1']])
+        expect(subject.custom_fields_to_export_headers).to eq(['MY RADIO FIELD'])
+        expect(subject.custom_fields_to_export_values(event)).to eq(['Radio Opt1'])
       end
 
       it 'includes CHECKBOX fields that are not linked to a KPI' do
@@ -57,11 +53,8 @@ describe Results::EventDataHelper, type: :helper do
         event.save
         expect(event.save).to be_truthy
 
-        expect(helper.custom_fields_to_export_headers).to eq(['MY CHK FIELD: CHK OPT1', 'MY CHK FIELD: CHK OPT2'])
-        expect(helper.custom_fields_to_export_values(event)).to eq([
-          ['String', 'normal', 'Yes'],
-          ['String', 'normal', 'Yes']
-        ])
+        expect(subject.custom_fields_to_export_headers).to eq(['MY CHK FIELD: CHK OPT1', 'MY CHK FIELD: CHK OPT2'])
+        expect(subject.custom_fields_to_export_values(event)).to eq(['Yes', 'Yes'])
       end
 
       it 'return empty if no options were selected in checkbox fields' do
@@ -74,8 +67,8 @@ describe Results::EventDataHelper, type: :helper do
         event.save
         expect(event.save).to be_truthy
 
-        expect(helper.custom_fields_to_export_headers).to eq(['MY CHK FIELD: CHK OPT1', 'MY CHK FIELD: CHK OPT2'])
-        expect(helper.custom_fields_to_export_values(event)).to eq([nil, nil])
+        expect(subject.custom_fields_to_export_headers).to eq(['MY CHK FIELD: CHK OPT1', 'MY CHK FIELD: CHK OPT2'])
+        expect(subject.custom_fields_to_export_values(event)).to eq([nil, nil])
       end
 
       it 'includes DROPDOWN fields that are not linked to a KPI' do
@@ -88,8 +81,8 @@ describe Results::EventDataHelper, type: :helper do
         event.save
         expect(event.save).to be_truthy
 
-        expect(helper.custom_fields_to_export_headers).to eq(['MY DDOWN FIELD'])
-        expect(helper.custom_fields_to_export_values(event)).to eq([['String', 'normal', 'Ddwon Opt1']])
+        expect(subject.custom_fields_to_export_headers).to eq(['MY DDOWN FIELD'])
+        expect(subject.custom_fields_to_export_values(event)).to eq(['Ddwon Opt1'])
       end
 
       it 'includes PERCENTAGE fields that are not linked to a KPI' do
@@ -102,8 +95,8 @@ describe Results::EventDataHelper, type: :helper do
         event.save
         expect(event.save).to be_truthy
 
-        expect(helper.custom_fields_to_export_headers).to eq(['MY PERC FIELD: PERC OPT1', 'MY PERC FIELD: PERC OPT2'])
-        expect(helper.custom_fields_to_export_values(event)).to eq([['Number', 'percentage', 0.3], ['Number', 'percentage', 0.7]])
+        expect(subject.custom_fields_to_export_headers).to eq(['MY PERC FIELD: PERC OPT1', 'MY PERC FIELD: PERC OPT2'])
+        expect(subject.custom_fields_to_export_values(event)).to eq([ 0.3,  0.7])
       end
 
       it 'includes SUMMATION fields that are not linked to a KPI' do
@@ -116,11 +109,11 @@ describe Results::EventDataHelper, type: :helper do
         event.save
         expect(event.save).to be_truthy
 
-        expect(helper.custom_fields_to_export_headers).to eq([
+        expect(subject.custom_fields_to_export_headers).to eq([
           'MY SUMMATION FIELD: SUM OPT1', 'MY SUMMATION FIELD: SUM OPT2', 'MY SUMMATION FIELD: TOTAL'
         ])
-        expect(helper.custom_fields_to_export_values(event)).to eq([
-          ['Number', 'normal', '20'], ['Number', 'normal', '50'], ['Number', 'normal', 70.0]
+        expect(subject.custom_fields_to_export_values(event)).to eq([
+          '20', '50', 70.0
         ])
       end
 
@@ -142,14 +135,14 @@ describe Results::EventDataHelper, type: :helper do
         event.results_for([field]).first.value = nil
         expect(event.save).to be_truthy
 
-        expect(helper.custom_fields_to_export_headers).to eq([
+        expect(subject.custom_fields_to_export_headers).to eq([
           'MY LIKERTSCALE FIELD: LIKERTSCALE OPT1', 'MY LIKERTSCALE FIELD: LIKERTSCALE OPT2'
         ])
-        expect(helper.custom_fields_to_export_values(event)).to eq([
-          ['String', 'normal', 'LikertScale Stat1'], ['String', 'normal', 'LikertScale Stat2']
+        expect(subject.custom_fields_to_export_values(event)).to eq([
+          'LikertScale Stat1', 'LikertScale Stat2'
         ])
 
-        expect(helper.custom_fields_to_export_values(event2)).to eq([
+        expect(subject.custom_fields_to_export_values(event2)).to eq([
           nil, nil
         ])
       end
@@ -162,8 +155,8 @@ describe Results::EventDataHelper, type: :helper do
         event.save
         expect(event.save).to be_truthy
 
-        expect(helper.custom_fields_to_export_headers).to eq(['MY TIME FIELD'])
-        expect(helper.custom_fields_to_export_values(event)).to eq([['String', 'normal', '12:22 pm']])
+        expect(subject.custom_fields_to_export_headers).to eq(['MY TIME FIELD'])
+        expect(subject.custom_fields_to_export_values(event)).to eq(['12:22 pm'])
       end
 
       it 'includes DATE fields that are not linked to a KPI' do
@@ -174,8 +167,8 @@ describe Results::EventDataHelper, type: :helper do
         event.save
         expect(event.save).to be_truthy
 
-        expect(helper.custom_fields_to_export_headers).to eq(['MY DATE FIELD'])
-        expect(helper.custom_fields_to_export_values(event)).to eq([['String', 'normal', '01/31/2014']])
+        expect(subject.custom_fields_to_export_headers).to eq(['MY DATE FIELD'])
+        expect(subject.custom_fields_to_export_values(event)).to eq(['01/31/2014'])
       end
 
       it 'includes MARQUE fields' do
@@ -193,10 +186,10 @@ describe Results::EventDataHelper, type: :helper do
         event.save
         expect(event.save).to be_truthy
 
-        expect(helper.custom_fields_to_export_headers).to eq(['MY BRAND FIELD', 'MY MARQUE FIELD'])
-        expect(helper.custom_fields_to_export_values(event)).to eq([
-          ['String', 'normal', 'My Brand'],
-          ['String', 'normal', 'My Brand Marque']])
+        expect(subject.custom_fields_to_export_headers).to eq(['MY BRAND FIELD', 'MY MARQUE FIELD'])
+        expect(subject.custom_fields_to_export_values(event)).to eq([
+          'My Brand',
+          'My Brand Marque'])
       end
 
       describe "form fields merging" do
@@ -216,9 +209,9 @@ describe Results::EventDataHelper, type: :helper do
           event2.save
           expect(event2.save).to be_truthy
 
-          expect(helper.custom_fields_to_export_headers).to eq(['MY NUMERIC FIELD'])
-          expect(helper.custom_fields_to_export_values(event)).to eq([['Number', 'normal', 123.0]])
-          expect(helper.custom_fields_to_export_values(event2)).to eq([['Number', 'normal', 456.0]])
+          expect(subject.custom_fields_to_export_headers).to eq(['MY NUMERIC FIELD'])
+          expect(subject.custom_fields_to_export_values(event)).to eq([123.0])
+          expect(subject.custom_fields_to_export_values(event2)).to eq([456.0])
         end
 
         it 'merge custom segmented fields of different campaigns with the same name and type into the same columns' do
@@ -241,9 +234,9 @@ describe Results::EventDataHelper, type: :helper do
           event2.save
           expect(event2.save).to be_truthy
 
-          expect(helper.custom_fields_to_export_headers).to eq(['MY PERC FIELD: PERC OPT1', 'MY PERC FIELD: PERC OPT2'])
-          expect(helper.custom_fields_to_export_values(event)).to eq([['Number', 'percentage', 0.3], ['Number', 'percentage', 0.7]])
-          expect(helper.custom_fields_to_export_values(event2)).to eq([['Number', 'percentage', 0.1], ['Number', 'percentage', 0.9]])
+          expect(subject.custom_fields_to_export_headers).to eq(['MY PERC FIELD: PERC OPT1', 'MY PERC FIELD: PERC OPT2'])
+          expect(subject.custom_fields_to_export_values(event)).to eq([0.3, 0.7])
+          expect(subject.custom_fields_to_export_values(event2)).to eq([0.1, 0.9])
         end
 
       it 'merge custom segmented fields of different campaigns with the same name and type into the same column even with different options' do
@@ -273,9 +266,11 @@ describe Results::EventDataHelper, type: :helper do
           event2.save
           expect(event2.save).to be_truthy
 
-          expect(helper.custom_fields_to_export_headers).to eq(['MY PERC FIELD', 'MY PERC FIELD: PERC OPT1', 'MY PERC FIELD: PERC OPT2', 'MY PERC FIELD: PERC OPT3'])
-          expect(helper.custom_fields_to_export_values(event)).to eq([nil, ['Number', 'percentage', 0.3], ['Number', 'percentage', 0.7], nil])
-          expect(helper.custom_fields_to_export_values(event2)).to eq([nil, ['Number', 'percentage', 0.1], ['Number', 'percentage', 0.2], ['Number', 'percentage', 0.7]])
+          expect(subject.custom_fields_to_export_headers).to eq([
+            'MY PERC FIELD', 'MY PERC FIELD: PERC OPT1',
+            'MY PERC FIELD: PERC OPT2', 'MY PERC FIELD: PERC OPT3'])
+          expect(subject.custom_fields_to_export_values(event)).to eq([nil, 0.3, 0.7, nil])
+          expect(subject.custom_fields_to_export_values(event2)).to eq([nil, 0.1, 0.2, 0.7])
         end
 
         it 'does not merge custom fields of the same campaigns with the same name and type into the same column' do
@@ -287,9 +282,9 @@ describe Results::EventDataHelper, type: :helper do
           event.save
           expect(event.save).to be_truthy
 
-          expect(helper.custom_fields_to_export_headers).to eq(['MY NUMERIC FIELD', 'MY NUMERIC FIELD'])
-          expect(helper.custom_fields_to_export_values(event)).to match_array([
-            ['Number', 'normal', 123.0], ['Number', 'normal', 456.0]
+          expect(subject.custom_fields_to_export_headers).to eq(['MY NUMERIC FIELD', 'MY NUMERIC FIELD'])
+          expect(subject.custom_fields_to_export_values(event)).to match_array([
+            123.0, 456.0
           ])
         end
 
@@ -297,7 +292,7 @@ describe Results::EventDataHelper, type: :helper do
           create(:form_field_number, name: 'My Numeric Field', fieldable: campaign)
           create(:form_field_text, name: 'My Numeric Field', fieldable: campaign2)
 
-          expect(helper.custom_fields_to_export_headers).to eq(['MY NUMERIC FIELD', 'MY NUMERIC FIELD'])
+          expect(subject.custom_fields_to_export_headers).to eq(['MY NUMERIC FIELD', 'MY NUMERIC FIELD'])
         end
       end
 
@@ -311,8 +306,8 @@ describe Results::EventDataHelper, type: :helper do
         event.result_for_kpi(kpi).value = { seg1.id.to_s => '88', seg2.id.to_s => '12' }
         expect(event.save).to be_truthy
 
-        expect(helper.custom_fields_to_export_headers).to eq(['MY KPI: UNO', 'MY KPI: DOS'])
-        expect(helper.custom_fields_to_export_values(event)).to eq([['Number', 'percentage', 0.88], ['Number', 'percentage', 0.12]])
+        expect(subject.custom_fields_to_export_headers).to eq(['MY KPI: UNO', 'MY KPI: DOS'])
+        expect(subject.custom_fields_to_export_values(event)).to eq([0.88, 0.12])
       end
 
       it 'correctly include segmented kpis and non-segmented kpis together' do
@@ -326,28 +321,27 @@ describe Results::EventDataHelper, type: :helper do
         campaign.add_kpi kpi2
 
         # Set the results for the event
-        expect(helper.custom_fields_to_export_values(event)).to eq([nil, nil, nil])
+        expect(subject.custom_fields_to_export_values(event)).to eq([nil, nil, nil])
 
         event.result_for_kpi(kpi).value = { seg1.id.to_s => '66', seg2.id.to_s => '34' }
         event.save
 
-        expect(helper.custom_fields_to_export_values(event)).to eq([
-          ["Number", "percentage", 0.66], ["Number", "percentage", 0.34], nil
+        expect(subject.custom_fields_to_export_values(event)).to eq([
+          0.66, 0.34, nil
         ])
 
         event.result_for_kpi(kpi2).value = '666666'
         event.save
 
-        expect(helper.custom_fields_to_export_headers).to eq(
-          ['MY KPI: UNO', 'MY KPI: DOS', 'A CUSTOM KPI'])
-        expect(helper.custom_fields_to_export_values(event)).to eq([
-          ['Number', 'percentage', 0.66], ['Number', 'percentage', 0.34], ['Number', 'normal', 666_666]
-        ])
+        expect(subject.custom_fields_to_export_headers).to eq([
+          'MY KPI: UNO', 'MY KPI: DOS', 'A CUSTOM KPI'])
+        expect(subject.custom_fields_to_export_values(event)).to eq([
+          0.66, 0.34, 666_666])
       end
 
       it "returns nil for the fields that doesn't apply to the event's campaign" do
         campaign2 = create(:campaign, company: campaign.company)
-        allow(helper).to receive(:search_params).and_return(campaign: [campaign.id, campaign2.id])
+        subject.params = { campaign: [campaign.id, campaign2.id] }
 
         kpi = create(:kpi, company_id: campaign.company_id, name: 'A Custom KPI')
         kpi2 = create(:kpi, company_id: campaign.company_id, name: 'Another KPI')
@@ -363,10 +357,10 @@ describe Results::EventDataHelper, type: :helper do
         event2.result_for_kpi(kpi2).value = '7654'
         event2.save
 
-        expect(helper.custom_fields_to_export_headers).to eq(['A CUSTOM KPI', 'ANOTHER KPI'])
+        expect(subject.custom_fields_to_export_headers).to eq(['A CUSTOM KPI', 'ANOTHER KPI'])
 
-        expect(helper.custom_fields_to_export_values(event)).to eq([['Number', 'normal', 9876], nil])
-        expect(helper.custom_fields_to_export_values(event2)).to eq([nil, ['Number', 'normal', 7654]])
+        expect(subject.custom_fields_to_export_values(event)).to eq([9876, nil])
+        expect(subject.custom_fields_to_export_values(event2)).to eq([nil, 7654])
       end
 
       it 'returns the segment name for count kpis' do
@@ -383,14 +377,14 @@ describe Results::EventDataHelper, type: :helper do
         event2.result_for_kpi(kpi).value = answer.id
         event2.save
 
-        expect(helper.custom_fields_to_export_headers).to eq(['ARE YOU GREAT?'])
-        expect(helper.custom_fields_to_export_values(event)).to eq([%w(String normal Yes)])
-        expect(helper.custom_fields_to_export_values(event2)).to eq([%w(String normal Yes)])
+        expect(subject.custom_fields_to_export_headers).to eq(['ARE YOU GREAT?'])
+        expect(subject.custom_fields_to_export_values(event)).to eq(['Yes'])
+        expect(subject.custom_fields_to_export_values(event2)).to eq(['Yes'])
       end
 
       it 'returns custom kpis grouped on the same column' do
         campaign2 = create(:campaign, company: campaign.company)
-        allow(helper).to receive(:search_params).and_return(campaign: [campaign.id, campaign2.id])
+        subject.params = { campaign: [campaign.id, campaign2.id] }
 
         kpi = create(:kpi, company_id: campaign.company_id, name: 'A Custom KPI')
         kpi2 = create(:kpi, company_id: campaign.company_id, name: 'Another KPI')
@@ -410,18 +404,16 @@ describe Results::EventDataHelper, type: :helper do
         event2.result_for_kpi(kpi2).value = '4444'
         event2.save
 
-        expect(helper.custom_fields_to_export_headers).to eq(['A CUSTOM KPI', 'ANOTHER KPI'])
+        expect(subject.custom_fields_to_export_headers).to eq(['A CUSTOM KPI', 'ANOTHER KPI'])
 
-        expect(helper.custom_fields_to_export_values(event)).to eq([['Number', 'normal', 1111], ['Number', 'normal', 2222]])
-        expect(helper.custom_fields_to_export_values(event2)).to eq([['Number', 'normal', 3333], ['Number', 'normal', 4444]])
+        expect(subject.custom_fields_to_export_values(event)).to eq([1111, 2222])
+        expect(subject.custom_fields_to_export_values(event2)).to eq([3333, 4444])
       end
 
     end
 
     describe 'for activity data' do
-      before do
-        allow(helper).to receive(:resource_class).and_return(Activity)
-      end
+      let(:resource_class) { Activity }
 
       it 'includes NUMBER fields' do
         field = create(:form_field_number, name: 'My Numeric Field', fieldable: activity_type)
@@ -429,8 +421,8 @@ describe Results::EventDataHelper, type: :helper do
         activity.results_for([field]).first.value = 123
         expect(activity.save).to be_truthy
 
-        expect(helper.custom_fields_to_export_headers).to eq(['MY NUMERIC FIELD'])
-        expect(helper.custom_fields_to_export_values(activity)).to eq([['Number', 'normal', 123]])
+        expect(subject.custom_fields_to_export_headers).to eq(['MY NUMERIC FIELD'])
+        expect(subject.custom_fields_to_export_values(activity)).to eq([123])
       end
 
       it 'includes RADIO fields' do
@@ -442,8 +434,8 @@ describe Results::EventDataHelper, type: :helper do
         activity.results_for([field]).first.value = option.id
         expect(activity.save).to be_truthy
 
-        expect(helper.custom_fields_to_export_headers).to eq(['MY RADIO FIELD'])
-        expect(helper.custom_fields_to_export_values(activity)).to eq([['String', 'normal', 'Radio Opt1']])
+        expect(subject.custom_fields_to_export_headers).to eq(['MY RADIO FIELD'])
+        expect(subject.custom_fields_to_export_values(activity)).to eq(['Radio Opt1'])
       end
 
       it 'includes CHECKBOX fields' do
@@ -456,10 +448,10 @@ describe Results::EventDataHelper, type: :helper do
         activity.save
         expect(activity.save).to be_truthy
 
-        expect(helper.custom_fields_to_export_headers).to eq(['MY CHK FIELD: CHK OPT1', 'MY CHK FIELD: CHK OPT2'])
-        expect(helper.custom_fields_to_export_values(activity)).to eq([
-          ['String', 'normal', 'Yes'],
-          ['String', 'normal', 'Yes']
+        expect(subject.custom_fields_to_export_headers).to eq(['MY CHK FIELD: CHK OPT1', 'MY CHK FIELD: CHK OPT2'])
+        expect(subject.custom_fields_to_export_values(activity)).to eq([
+          'Yes',
+          'Yes'
         ])
       end
 
@@ -472,8 +464,8 @@ describe Results::EventDataHelper, type: :helper do
         activity.results_for([field]).first.value = option1.id
         expect(activity.save).to be_truthy
 
-        expect(helper.custom_fields_to_export_headers).to eq(['MY DDOWN FIELD'])
-        expect(helper.custom_fields_to_export_values(activity)).to eq([['String', 'normal', 'Ddwon Opt1']])
+        expect(subject.custom_fields_to_export_headers).to eq(['MY DDOWN FIELD'])
+        expect(subject.custom_fields_to_export_values(activity)).to eq(['Ddwon Opt1'])
       end
 
       it 'includes PERCENTAGE fields that are not linked to a KPI' do
@@ -486,8 +478,8 @@ describe Results::EventDataHelper, type: :helper do
         activity.save
         expect(activity.save).to be_truthy
 
-        expect(helper.custom_fields_to_export_headers).to eq(['MY PERC FIELD: PERC OPT1', 'MY PERC FIELD: PERC OPT2'])
-        expect(helper.custom_fields_to_export_values(activity)).to eq([['Number', 'percentage', 0.3], ['Number', 'percentage', 0.7]])
+        expect(subject.custom_fields_to_export_headers).to eq(['MY PERC FIELD: PERC OPT1', 'MY PERC FIELD: PERC OPT2'])
+        expect(subject.custom_fields_to_export_values(activity)).to eq([0.3, 0.7])
       end
 
       it 'includes SUMMATION fields that are not linked to a KPI' do
@@ -500,11 +492,11 @@ describe Results::EventDataHelper, type: :helper do
         activity.save
         expect(activity.save).to be_truthy
 
-        expect(helper.custom_fields_to_export_headers).to eq([
+        expect(subject.custom_fields_to_export_headers).to eq([
           'MY SUMMATION FIELD: SUM OPT1', 'MY SUMMATION FIELD: SUM OPT2', 'MY SUMMATION FIELD: TOTAL'
         ])
-        expect(helper.custom_fields_to_export_values(activity)).to eq([
-          ['Number', 'normal', '20'], ['Number', 'normal', '50'], ['Number', 'normal', 70.0]
+        expect(subject.custom_fields_to_export_values(activity)).to eq([
+          '20', '50', 70.0
         ])
       end
 
@@ -517,8 +509,8 @@ describe Results::EventDataHelper, type: :helper do
         activity.results_for([field]).first.value = brand.id
         expect(activity.save).to be_truthy
 
-        expect(helper.custom_fields_to_export_headers).to eq(['MY BRAND FIELD'])
-        expect(helper.custom_fields_to_export_values(activity)).to eq([['String', 'normal', 'My Brand']])
+        expect(subject.custom_fields_to_export_headers).to eq(['MY BRAND FIELD'])
+        expect(subject.custom_fields_to_export_values(activity)).to eq(['My Brand'])
       end
 
       it 'includes TIME fields that are not linked to a KPI' do
@@ -528,8 +520,8 @@ describe Results::EventDataHelper, type: :helper do
         activity.results_for([field]).first.value = '12:22 pm'
         expect(activity.save).to be_truthy
 
-        expect(helper.custom_fields_to_export_headers).to eq(['MY TIME FIELD'])
-        expect(helper.custom_fields_to_export_values(activity)).to eq([['String', 'normal', '12:22 pm']])
+        expect(subject.custom_fields_to_export_headers).to eq(['MY TIME FIELD'])
+        expect(subject.custom_fields_to_export_values(activity)).to eq(['12:22 pm'])
       end
 
       it 'includes DATE fields that are not linked to a KPI' do
@@ -539,8 +531,8 @@ describe Results::EventDataHelper, type: :helper do
         activity.results_for([field]).first.value = '01/31/2014'
         expect(activity.save).to be_truthy
 
-        expect(helper.custom_fields_to_export_headers).to eq(['MY DATE FIELD'])
-        expect(helper.custom_fields_to_export_values(activity)).to eq([['String', 'normal', '01/31/2014']])
+        expect(subject.custom_fields_to_export_headers).to eq(['MY DATE FIELD'])
+        expect(subject.custom_fields_to_export_values(activity)).to eq(['01/31/2014'])
       end
 
       describe 'when filtered by activity_type' do
@@ -559,8 +551,8 @@ describe Results::EventDataHelper, type: :helper do
           activity2.results_for([field2]).first.value = 666
           expect(activity2.save).to be_truthy
 
-          expect(helper.custom_fields_to_export_headers).to eq(['MY NUMERIC FIELD 1'])
-          expect(helper.custom_fields_to_export_values(activity)).to eq([['Number', 'normal', 123]])
+          expect(subject.custom_fields_to_export_headers).to eq(['MY NUMERIC FIELD 1'])
+          expect(subject.custom_fields_to_export_values(activity)).to eq([123])
         end
       end
 
@@ -579,8 +571,8 @@ describe Results::EventDataHelper, type: :helper do
           activity2.results_for([field2]).first.value = 666
           expect(activity2.save).to be_truthy
 
-          expect(helper.custom_fields_to_export_headers).to eq(['MY NUMERIC FIELD 1'])
-          expect(helper.custom_fields_to_export_values(activity)).to eq([['Number', 'normal', 123]])
+          expect(subject.custom_fields_to_export_headers).to eq(['MY NUMERIC FIELD 1'])
+          expect(subject.custom_fields_to_export_values(activity)).to eq([123])
         end
       end
     end
@@ -600,7 +592,7 @@ describe Results::EventDataHelper, type: :helper do
       area.places << city_la
       campaign.areas << area
 
-      expect(area_for_event(event)).to eql 'MyArea'
+      expect(subject.area_for_event(event)).to eql 'MyArea'
     end
 
     it 'should return the area names separated by comma if more than one' do
@@ -613,7 +605,7 @@ describe Results::EventDataHelper, type: :helper do
       area2.places << place_la
       campaign.areas << [area1, area2]
 
-      expect(area_for_event(event)).to eql 'MyArea1, MyArea2'
+      expect(subject.area_for_event(event)).to eql 'MyArea1, MyArea2'
     end
 
     it 'should include the area if the place is part of a city included for it' do
@@ -623,7 +615,7 @@ describe Results::EventDataHelper, type: :helper do
 
       create(:areas_campaign, area: area, campaign: campaign, inclusions: [city_la.id])
 
-      expect(area_for_event(event)).to eql 'MyArea1'
+      expect(subject.area_for_event(event)).to eql 'MyArea1'
     end
 
     it 'should NOT include the area if the place was excluded from it' do
@@ -637,7 +629,7 @@ describe Results::EventDataHelper, type: :helper do
       create(:areas_campaign, area: area1, campaign: campaign)
       create(:areas_campaign, area: area2, campaign: campaign, exclusions: [place_la.id])
 
-      expect(area_for_event(event)).to eql 'MyArea1'
+      expect(subject.area_for_event(event)).to eql 'MyArea1'
     end
   end
 end

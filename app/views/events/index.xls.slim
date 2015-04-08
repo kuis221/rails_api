@@ -60,22 +60,23 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
           Data ss:Type="String" CONTACTS
         Cell
           Data ss:Type="String" URL
+      - exporter_helper = FormFieldDataExporter.new(current_company_user, search_params, resource_class)
       - each_collection_item do |event|
         Row
           Cell
             Data ss:Type="String"= event.campaign_name
           Cell
-            Data ss:Type="String"= area_for_event(event)
+            Data ss:Type="String"= exporter_helper.area_for_event(event)
           Cell ss:StyleID="s2"
-            Data ss:Type="DateTime"= Timeliness.parse(event_date(event, :start_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%FT%R')
+            Data ss:Type="DateTime"= event.start_date
           Cell ss:StyleID="s2"
-            Data ss:Type="DateTime"= Timeliness.parse(event_date(event, :end_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%FT%R')
+            Data ss:Type="DateTime"= event.end_date
           Cell
             Data ss:Type="String"= event.promo_hours
           Cell
             Data ss:Type="String"= event.place_name
           Cell
-            Data ss:Type="String"= strip_tags event_place_address(event, false, ', ', ', ')
+            Data ss:Type="String"= event.place_address
           Cell
             Data ss:Type="String"= event.place_city
           Cell
@@ -87,9 +88,8 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
           Cell
             Data ss:Type="String"= event.event_status
           Cell
-            Data ss:Type="String"= team_member_for_event event
+            Data ss:Type="String"= event.team_members
           Cell
-            Data ss:Type="String"= contacts_for_event event
-          - link = url_for_event(event)
-          Cell ss:StyleID="s3" ss:HRef="#{link}"
-            Data ss:Type="String"= link
+            Data ss:Type="String"= event.contacts
+          Cell ss:StyleID="s3" ss:HRef="#{event.url}"
+            Data ss:Type="String"= event.url

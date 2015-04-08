@@ -59,7 +59,7 @@ describe Results::AttendanceController, type: :controller do
 
     before { neighborhood }
 
-    it 'should return an empty book with the correct headers' do
+    it 'exports an empty book with the correct headers' do
       expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
       export = ListExport.last
       expect(ListExportWorker).to have_queued(export.id)
@@ -69,7 +69,7 @@ describe Results::AttendanceController, type: :controller do
         ['NEIGHBORHOOD', 'CITY', 'STATE', 'ATTENDEES', 'ACCOUNTS ATTENDED', 'INVITATIONS']])
     end
 
-    it 'should return a list of neighborhoods for the selected campaign/event' do
+    it 'exports the list of neighborhoods for the selected campaign/event' do
       create(:invite, event: event, venue: create(:venue, company: company, place: place))
 
       expect { xhr :get, 'index', campaign_id: campaign.id, event_id: event.id, format: :xls }.to change(ListExport, :count).by(1)

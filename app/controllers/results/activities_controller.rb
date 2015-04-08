@@ -2,6 +2,22 @@ module Results
   class ActivitiesController < FilteredController
     respond_to :xls, :pdf, only: :index
 
+    def collection_to_csv
+      exporter = FormFieldDataExporter.new(current_company_user, search_params, resource_class)
+      CSV.generate do |csv|
+        csv << ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE',
+                'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP', 'ACTIVE STATE'] +
+               exporter.custom_fields_to_export_headers
+        each_collection_item do |activity|
+          csv << [
+            activity.campaign_name, activity.company_user_full_name, activity.date, activity.activity_type_name,
+            exporter.area_for_activity(activity), activity.place_td_linx_code, activity.place_name, activity.place_address,
+            activity.place_city, activity.place_state, activity.place_zipcode, activity.status] +
+            exporter.custom_fields_to_export_values(activity)
+        end
+      end
+    end
+
     private
 
     def authorize_actions
