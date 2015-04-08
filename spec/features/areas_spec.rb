@@ -58,7 +58,7 @@ feature 'Areas', js: true, search: true  do
       expect(Area.last.places.count).to eql 0
     end
 
-    scenario 'can add an NON existing place to the area. (place from Google\'s)', :vcr do
+    scenario 'can add an NON existing place to the area. (place from Google\'s)' do
       expect(Place).to receive(:open).and_return(double(read: { results:
         [
           { reference: 'xxxxx', place_id: '1111', name: 'Walt Disney World Dolphin',

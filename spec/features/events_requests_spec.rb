@@ -15,6 +15,7 @@ feature 'Events section' do
     add_permissions permissions
     sign_in user
   end
+
   after { Warden.test_reset! }
 
   shared_examples_for 'a user that can activate/deactivate events' do
@@ -371,11 +372,11 @@ feature 'Events section' do
               ['CAMPAIGN NAME', 'AREA', 'START', 'END', 'DURATION', 'VENUE NAME', 'ADDRESS', 'CITY',
                'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL'],
               ['Another Campaign April 03', nil, "#{year_number}-#{month_number}-#{today.strftime('%d')} 08:00",
-               "#{year_number}-#{month_number}-#{today.strftime('%d')} 09:00", '1.00', 'Place 2',
+               "#{year_number}-#{month_number}-#{today.strftime('%d')}T09:00", '1.00', 'Place 2',
                'Place 2, 11 Main St., Los Angeles, CA, 67890', 'Los Angeles', 'CA', '67890', 'Active', 'Unsent',
                nil, nil, "http://#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event2.id}"],
               ['Campaign FY2012', nil, "#{year_number}-#{month_number}-#{today.strftime('%d')} 10:00",
-               "#{year_number}-#{month_number}-#{today.strftime('%d') T11:00", '1.00', 'Place 1',
+               "#{year_number}-#{month_number}-#{today.strftime('%d')}T11:00", '1.00', 'Place 1',
                'Place 1, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active',
                'Unsent', nil, 'Chris Jaskot, Guillermo Vargas',
                "http://#{Capybara.current_session.server.host}:#{Capybara.current_session.server.port}/events/#{event1.id}"]
@@ -1472,11 +1473,6 @@ feature 'Events section' do
           click_js_button 'Submit'
         end
 
-        expect(page).to have_text('0 UNASSIGNED')
-        expect(page).to have_text('0 COMPLETED')
-        expect(page).to have_text('1 ASSIGNED')
-        expect(page).to have_text('1 LATE')
-
         within resource_item list: '#tasks-list' do
           expect(page).to have_content('Pick up the kidz at school')
           expect(page).to have_content('Juanito Bazooka')
@@ -1495,11 +1491,6 @@ feature 'Events section' do
           expect(find('.task-completed-checkbox', visible: :false)['checked']).to be_truthy
         end
 
-        # Check that the totals where properly updated
-        expect(page).to have_text('0 UNASSIGNED')
-        expect(page).to have_text('1 COMPLETED')
-        expect(page).to have_text('1 ASSIGNED')
-        expect(page).to have_text('0 LATE')
 
         # Delete Juanito Bazooka from the team and make sure that the tasks list
         # is refreshed and the task unassigned
