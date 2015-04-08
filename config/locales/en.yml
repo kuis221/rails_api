@@ -78,6 +78,139 @@ en:
     sources: 'Sources'
     questions: 'Questions'
 
+  blank_states:
+    filters_line1: 'There are no results matching the filtering criteria you selected.'
+    filters_line2: 'Please select different filtering criteria.'
+    events:
+      empty:
+        line1: 'You do not have any events right now.'
+        line2:
+          without_schedule_permissions: 'No problem, as soon as events are added they will display in this section.'
+          with_schedule_permissions: 'Click the New Event button to schedule a new event.'
+      filters:
+        line1: 'There are no events matching the filtering criteria you selected.'
+    results_photos:
+      empty:
+        line1: 'There are currently no photos for you to view. '
+        line2: 'Once Photos have been uploaded they will be displayed in this report. '
+      filters:
+        line1: 'There are no Photos matching the filtering criteria you selected.'
+    results_activities:
+      empty:
+        line1: 'You do not have any activity data at this time.'
+        line2: 'Once Activities have been captured they will be displayed in this report. '
+      filters:
+        line1: 'There are no events matching the filtering criteria you selected.'
+    results_event_data:
+      empty:
+        line1: 'You do not have any post event data to view at this time.'
+        line2: 'You will see data here once post event reports have been submitted for your events'
+      filters:
+        line1: 'There are no events matching the filtering criteria you selected.'
+    results_expenses:
+      empty:
+        line1: 'There are currently no expenses to view for your campaign(s).'
+        line2: "Use this report to track event expenses, you'll be able to view them here as soon as they're added."
+      filters:
+        line1: 'There are no Expenses matching the filtering criteria you selected.'
+    results_comments:
+      empty:
+        line1: 'There are currently no comments to view for your campaign(s). '
+        line2: 'Check back later once comments have been captured.'
+      filters:
+        line1: 'There are no Comments matching the filtering criteria you selected.'
+    results_surveys:
+      empty:
+        line1: 'There are currently no Surveys for you to view.'
+        line2: ''
+      filters:
+        line1: 'There are no Surveys matching the filtering criteria you selected.'
+    visits:
+      empty:
+        line1: 'You do not have any visits right now.'
+        line2:
+          without_schedule_permissions: 'No problem, as soon as visits are added they will display in this section.'
+          with_schedule_permissions: 'Click the New Event button to schedule a new event.'
+      filters:
+        line1: 'There are no visits matching the filtering criteria you selected.'
+    user_tasks:
+      empty:
+        line1: 'There are not any tasks assigned to you.'
+        line2:
+          without_create_permissions: "No worries, once you've been assigned tasks, they will show up right here."
+          with_create_permissions: 'Want to add a new task? Easy. Click Add Task to assign a new task to yourself or teammates.'
+      filters:
+        line1: 'There are no tasks matching the filtering criteria you selected.'
+    teams_tasks:
+      empty:
+        line1: 'There are not any tasks assigned to you.'
+        line2:
+          without_create_permissions: "No worries, once you've been assigned tasks, they will show up right here."
+          with_create_permissions: 'Want to add a new task? Easy. Click Add Task to assign a new task to yourself or teammates.'
+      filters:
+        line1: 'There are no tasks matching the filtering criteria you selected.'
+    venues:
+      empty:
+        line1: 'You do not have any venues right now.'
+        line2:
+          without_schedule_permissions: 'No problem, as soon as events are added they will display in this section.'
+          with_schedule_permissions: 'Click the New Event button to schedule a new event.'
+      filters:
+        line1: 'There are no venues matching the filtering criteria you selected.'
+        line2: 'Please try another search.'
+    campaigns:
+      filters:
+        line1: 'There are no Campaigns matching the filtering criteria you selected.'
+    company_users:
+      filters:
+        line1: 'There are no Users matching the filtering criteria you selected.'
+    activity_types:
+      filters:
+        line1: 'There are no Activity Types matching the filtering criteria you selected.'
+    teams:
+      filters:
+        line1: 'There are no Teams matching the filtering criteria you selected.'
+    roles:
+      filters:
+        line1: 'There are no Roles matching the filtering criteria you selected.'
+    brands:
+      filters:
+        line1: 'There are no Brands matching the filtering criteria you selected.'
+    brand_portfolios:
+      filters:
+        line1: 'There are no Brand Portfolios matching the filtering criteria you selected.'
+    day_parts:
+      filters:
+        line1: 'There are no Day Parts matching the filtering criteria you selected.'
+    date_ranges:
+      filters:
+        line1: 'There are no Date Ranges matching the filtering criteria you selected.'
+    invite_events:
+      empty:
+        line1: 'No events have been scheduled for this visit.'
+        line2: ''
+      filters:
+        line1: 'No events have been scheduled for this visit.'
+        line2: ''
+    invite_events:
+      empty:
+        line1: 'No events have been scheduled for this visit.'
+        line2: ''
+      filters:
+        line1: 'No events have been scheduled for this visit.'
+        line2: ''
+
+
+    modules:
+      event:
+        contacts: 'No Contacts have been added to this event.'
+        team_members: 'No Team Members have been added to this event.'
+        activities: 'No Activities have been added to this event.'
+        comments: 'No Consumer Comments have been added to this event.'
+        expenses: 'No Expenses have been added to this event.'
+      venue:
+        activities: 'No Activities have been added to this venue.'
+        events: 'No Events have been added to this venue.'
   exports:
     pdf:
       title:

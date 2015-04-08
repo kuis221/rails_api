@@ -1023,7 +1023,7 @@ feature 'Events section' do
         create(:campaign, company: company, name: 'ABSOLUT Vodka')
         visit events_path
 
-        click_button 'Create'
+        click_button 'New Event'
 
         within visible_modal do
           expect(page).to have_content(company_user.full_name)
@@ -1045,7 +1045,7 @@ feature 'Events section' do
           create(:campaign, company: company)
           visit events_path
 
-          click_button 'Create'
+          click_button 'New Event'
 
           within visible_modal do
             # Test both dates are the same
@@ -1086,7 +1086,7 @@ feature 'Events section' do
           create(:campaign, company: company)
           visit events_path
 
-          click_button 'Create'
+          click_button 'New Event'
 
           within visible_modal do
             # Test both dates are the same

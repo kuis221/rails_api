@@ -12,8 +12,13 @@
             .accordion-body.collapse id="toggle-item-#{item.class.name}#{item.id}" data-type="#{item.class.name}" data-id="#{item.id}"
               .accordion-inner.goals-actual
     - else
-      .details_box
-        p.text-center This campaign has no stats for the selected grouping
+      .details_box.content
+        .blank-state
+          h5.text-center 
+            - if params['report'].try(:[], 'group_by') == 'place'
+              | No Place goals have been set for this Campaign. 
+            - elsif params['report'].try(:[], 'group_by') == 'staff'
+              | No Staff goals have been set for this Campaign. 
 
 javascript:
   $('.remove-item').on('click', function(e){

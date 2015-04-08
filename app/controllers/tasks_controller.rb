@@ -75,10 +75,6 @@ class TasksController < FilteredController
 
   def search_params
     @search_params || (super.tap do |p|
-      unless p.key?(:user) && !p[:user].empty?
-        p.merge! Task.search_params_for_scope(params[:scope], current_company_user)
-      end
-
       # Get a list of new tasks notifications to obtain the list of ids, then delete them as they are already seen, but
       # store them in the session to allow the user to navigate, paginate, etc
       if params.key?(:new_at) && params[:new_at]
@@ -90,6 +86,15 @@ class TasksController < FilteredController
         end
       end
     end)
+  end
+
+  def base_search_params
+    p = super
+    if p.key?(:user) && p[:user].present?
+      p
+    else
+      p.merge! Task.search_params_for_scope(params[:scope], current_company_user)
+    end
   end
 
   # TODO: this doesn't work for teams, but tomorrow is the demo

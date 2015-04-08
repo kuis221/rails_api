@@ -1,7 +1,11 @@
 #activities-container
   h5.module-title ACTIVITIES
-  - if can?(:create, Activity)
-    = button_to 'Create Activity', new_venue_activity_path(resource), method: :get, remote: true, class: 'btn btn-primary', title: 'New Activity'
+  - if resource.activities.active.any?
+    - if can?(:create, Activity)
+      = button_to 'Create Activity', new_venue_activity_path(resource), method: :get, remote: true, class: 'btn btn-primary', title: 'New Activity'
 
-  #activities-list.resource-list
-    = render partial: 'activities/activity', collection: resource.activities.active.include_from_events, locals: { parent: resource }
+    #activities-list.resource-list
+      = render partial: 'activities/activity', collection: resource.activities.active.include_from_events, locals: { parent: resource }
+  - else
+    = blank_state_module('venue.activities') do
+      = button_to 'Add Activity', new_venue_activity_path(resource), method: :get, remote: true, class: 'btn btn-primary', title: 'Add Activity'

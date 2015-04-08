@@ -42,5 +42,7 @@ javascript:
     'includeAutoComplete': true,
     'autoCompletePath': '#{autocomplete_path(controller_name, format: :json)}',
     'defaultParams': '#{j default_params_for_view('status[]=Active')}',
-    'allowCustomizeFilters': true
+    'allowCustomizeFilters': true,
+    'emptyFilterResultsMessage': '#{j t("blank_states.#{controller_name}.filters.line1") }',
+    'emptyFilterResultsMessageLine2': '#{j t("#{controller_name}.filters.line2", default: :filters_line2, scope: :blank_states) }'
   });

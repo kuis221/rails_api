@@ -46,6 +46,10 @@ javascript:
     'userFilters': #{user_saved_filters('results_comments').to_json.html_safe},
     'autoCompletePath': '#{autocomplete_path(:events, format: :json)}',
     'defaultParams': '#{j default_params_for_view('status[]=Active', scope: 'results_comments')}',
+    'emptyStateMessage': '#{j t("results_comments.empty.line1", scope: :blank_states) }',
+    'emptyStateMessageLine2': '#{j t("results_comments.empty.line2", scope: :blank_states) }',
+    'emptyFilterResultsMessage': '#{j t("results_comments.filters.line1", default: :filters_line1, scope: :blank_states) }',
+    'emptyFilterResultsMessageLine2': '#{j t("results_comments.filters.line1", default: :filters_line1, scope: :blank_states) }',
     'onChange': function(filterBox){
       $(document).trigger('comments-filter:changed')
     },

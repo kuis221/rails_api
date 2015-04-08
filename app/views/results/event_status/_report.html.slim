@@ -3,5 +3,11 @@
     - if @data.count > 0
       = render 'report_event_status'
     - else
-      .empty-state
-        p.text-center No Event or Promo Hour goals have been set for this campaign. Please set these goals or select another campaign to run the report against.
+      .blank-state
+        h5.text-center 
+          - if params['report'].try(:[], 'group_by') == 'place'
+           | No Place event or promo hour goals have been set for this Campaign.
+          - elsif params['report'].try(:[], 'group_by') == 'staff'
+           | No Staff event or promo hour goals have been set for this Campaign.
+          - else
+           | No Campaign event or promo hour goals have been set for this Campaign.

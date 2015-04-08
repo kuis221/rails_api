@@ -1,6 +1,6 @@
 module VenuesHelper
   def upcomming_venue_events_list
-    @venue_events = Event.do_search(
+    @venue_events ||= Event.do_search(
       company_id: current_company.id,
       current_company_user: current_company_user,
       venue: [resource.id], per_page: 5,

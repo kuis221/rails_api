@@ -48,6 +48,13 @@ module ApplicationHelper
     "<address>#{address_with_name}</address>".html_safe
   end
 
+  def blank_state_module(module_name, &block)
+    content_tag(:div, class: 'blank-state') do
+      content_tag(:h5, t("blank_states.modules.#{module_name}"), class: 'text-center') +
+      (block_given? ? capture(&block) : ''.html_safe)
+    end
+  end
+
   def icon_button_to(icon, options = {}, html_options = {})
     html_options[:class] ||= ''
     html_options[:class] = [html_options[:class], 'button-with-icon'].join(' ')
