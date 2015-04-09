@@ -15,6 +15,7 @@ feature 'Events section' do
     add_permissions permissions
     sign_in user
   end
+
   after { Warden.test_reset! }
 
   shared_examples_for 'a user that can activate/deactivate events' do
@@ -1472,11 +1473,6 @@ feature 'Events section' do
           click_js_button 'Submit'
         end
 
-        expect(page).to have_text('0 UNASSIGNED')
-        expect(page).to have_text('0 COMPLETED')
-        expect(page).to have_text('1 ASSIGNED')
-        expect(page).to have_text('1 LATE')
-
         within resource_item list: '#tasks-list' do
           expect(page).to have_content('Pick up the kidz at school')
           expect(page).to have_content('Juanito Bazooka')
@@ -1495,11 +1491,6 @@ feature 'Events section' do
           expect(find('.task-completed-checkbox', visible: :false)['checked']).to be_truthy
         end
 
-        # Check that the totals where properly updated
-        expect(page).to have_text('0 UNASSIGNED')
-        expect(page).to have_text('1 COMPLETED')
-        expect(page).to have_text('1 ASSIGNED')
-        expect(page).to have_text('0 LATE')
 
         # Delete Juanito Bazooka from the team and make sure that the tasks list
         # is refreshed and the task unassigned

@@ -10,5 +10,3 @@ unless ENV['RAILS_ENV'] == 'production'
 end
 
 Brandscopic::Application.load_tasks
-
-Rake::Task["db:structure:dump"].clear unless Rails.env.development?

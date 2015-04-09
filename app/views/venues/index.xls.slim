@@ -8,7 +8,7 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
       NumberFormat ss:Format="mm/dd/yy hh:mm AM/PM"
     Style ss:ID="s3" ss:Name="Currency"
       NumberFormat ss:Format='"$"#,##0.00'
-    Style ss:ID="s4" ss:Name="TDLinkCode"
+    Style ss:ID="s4" ss:Name="TDLinxCode"
       Alignment ss:Horizontal="Left"
   Worksheet ss:Name="Venues"
 
@@ -44,7 +44,7 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
             Data ss:Type="String"= venue.name
           - if !!(venue.td_linx_code =~ /^[0-9]+$/)
               Cell ss:StyleID="s4"
-                Data ss:Type="Number"= venue.td_linx_code
+                Data ss:Type="String"= venue.td_linx_code
           - else
               Cell
                 Data ss:Type="String"= venue.td_linx_code

@@ -66,7 +66,12 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-CREATE TYPE td_linx_result AS (code varchar, name varchar, street varchar, city varchar, state varchar, zipcode varchar, confidence integer);
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'td_linx_result') THEN
+        CREATE TYPE td_linx_result AS (code varchar, name varchar, street varchar, city varchar, state varchar, zipcode varchar, confidence integer);
+    END IF;
+END$$;
 
 CREATE OR REPLACE FUNCTION incremental_place_match(place_id INTEGER, state_code VARCHAR) RETURNS td_linx_result AS $$
 DECLARE

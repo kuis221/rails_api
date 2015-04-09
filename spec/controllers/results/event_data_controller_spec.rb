@@ -86,10 +86,10 @@ describe Results::EventDataController, type: :controller do
       expect(export.reload).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
          'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL', 'START', 'END', 'PROMO HOURS', 'SPENT'],
-        ['Test Campaign FY01', 'My area', '443321', 'Bar Prueba',
+        ['Test Campaign FY01', 'My area', '="443321"', 'Bar Prueba',
          'Bar Prueba, 11 Main St., Los Angeles, California, 12345', 'Los Angeles', 'California', '12345',
          'Active', 'Approved', 'Test User, zteam', 'Chris Jaskot, Guillermo Vargas',
-         "http://test.host/events/#{event.id}", '2019-01-23T10:00', '2019-01-23T12:00', '2.00', '99.99']
+         "http://test.host/events/#{event.id}", '2019-01-23 10:00', '2019-01-23 12:00', '2.00', '99.99']
       ])
     end
 
@@ -109,7 +109,7 @@ describe Results::EventDataController, type: :controller do
          'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL', 'START', 'END', 'PROMO HOURS', 'SPENT', 'A CUSTOM KPI'],
         ['Test Campaign FY01', '', nil, 'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345',
          'Los Angeles', 'California', '12345', 'Active', 'Approved', '', '',
-         "http://test.host/events/#{event.id}", '2013-01-23T10:00', '2013-01-23T12:00', '2.00', '0.0', '9876.0']
+         "http://test.host/events/#{event.id}", '2013-01-23 10:00', '2013-01-23 12:00', '2.00', '0.0', '9876.0']
       ])
     end
 
@@ -129,7 +129,7 @@ describe Results::EventDataController, type: :controller do
          'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL', 'START', 'END', 'PROMO HOURS', 'SPENT', 'MY NUMERIC FIELD'],
         ['Test Campaign FY01', '', nil, 'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345',
          'Los Angeles', 'California', '12345', 'Active', 'Approved', '', '',
-         "http://test.host/events/#{event.id}", '2013-01-23T10:00', '2013-01-23T12:00', '2.00', '0.0', '9876.0']
+         "http://test.host/events/#{event.id}", '2013-01-23 10:00', '2013-01-23 12:00', '2.00', '0.0', '9876.0']
       ])
     end
 
@@ -225,9 +225,9 @@ describe Results::EventDataController, type: :controller do
          'ETHNICITY/RACE: NATIVE AMERICAN', 'ETHNICITY/RACE: WHITE', 'IMPRESSIONS', 'INTERACTIONS',
          'SAMPLES', 'TEST KPI', 'EVENT TYPE: EVENT TYPE OPT 1', 'EVENT TYPE: EVENT TYPE OPT 2',
          'EVENT TYPE: EVENT TYPE OPT 3', 'RADIO FIELD TYPE'],
-        ['Test Campaign FY01', 'Angeles Area', '344221', 'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345',
+        ['Test Campaign FY01', 'Angeles Area', '="344221"', 'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345',
          'Los Angeles', 'California', '12345', 'Active', 'Approved', 'Test User', 'Chris Jaskot, Guillermo Vargas',
-         "http://test.host/events/#{event.id}", '2019-01-23T10:00', '2019-01-23T12:00',
+         "http://test.host/events/#{event.id}", '2019-01-23 10:00', '2019-01-23 12:00',
          '2.00', '99.99', '0.6',
          '0.4', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.18', '0.2', '0.21',
          '0.19', '0.22', '10.0', '11.0', '12.0', '8899.0', 'Yes', nil, nil, 'Radio Field Opt 1']
@@ -273,9 +273,9 @@ describe Results::EventDataController, type: :controller do
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY', 'STATE', 'ZIP',
          'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL', 'START', 'END',
          'PROMO HOURS', 'SPENT', 'TEST KPI 1'],
-        ['Test Campaign FY01', 'Angeles Area', '344221', 'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345',
+        ['Test Campaign FY01', 'Angeles Area', '="344221"', 'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345',
          'Los Angeles', 'California', '12345', 'Active', 'Approved', "", "",
-         "http://test.host/events/#{event.id}", '2019-01-23T10:00', '2019-01-23T12:00',
+         "http://test.host/events/#{event.id}", '2019-01-23 10:00', '2019-01-23 12:00',
          '2.00', '0.0', '8899.0']
       ])
     end
@@ -304,10 +304,10 @@ describe Results::EventDataController, type: :controller do
          'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL',
          'START', 'END', 'PROMO HOURS', 'SPENT', 'A CUSTOM KPI', 'ANOTHER KPI'],
         ['Test Campaign FY01', nil, nil, nil, '', nil, nil, nil, 'Active', 'Approved', '', '',
-         "http://test.host/events/#{event1.id}", '2013-01-23T10:00', '2013-01-23T12:00',
+         "http://test.host/events/#{event1.id}", '2013-01-23 10:00', '2013-01-23 12:00',
          '2.00', '0.0', '9876.0', nil],
         [campaign2.name, nil, nil, nil, '', nil, nil, nil, 'Active', 'Approved', '', '',
-         "http://test.host/events/#{event2.id}", '2013-01-24T10:00', '2013-01-24T12:00',
+         "http://test.host/events/#{event2.id}", '2013-01-24 10:00', '2013-01-24 12:00',
          '2.00', '0.0', nil, '7654.0']
       ])
     end
@@ -336,7 +336,7 @@ describe Results::EventDataController, type: :controller do
          'ETHNICITY/RACE: NATIVE AMERICAN', 'ETHNICITY/RACE: WHITE', 'IMPRESSIONS',
          'INTERACTIONS', 'SAMPLES'],
         ['Test Campaign FY01', nil, nil, nil, '', nil, nil, nil, 'Active', 'Approved', '', '',
-         "http://test.host/events/#{event1.id}", '2013-01-23T10:00', '2013-01-23T12:00',
+         "http://test.host/events/#{event1.id}", '2013-01-23 10:00', '2013-01-23 12:00',
          '2.00', '0.0', '0.0', '0.0',
          '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0', '0.0',
          '0.0', '111.0', nil, nil]
@@ -373,10 +373,10 @@ describe Results::EventDataController, type: :controller do
          'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL', 'START', 'END', 'PROMO HOURS', 'SPENT',
          'MY KPI: UNO', 'MY KPI: DOS', 'MY OTHER KPI'],
         ['Test Campaign FY01', nil, nil, nil, '', nil, nil, nil, 'Active', 'Approved', '', '',
-         "http://test.host/events/#{event1.id}", '2013-01-23T10:00', '2013-01-23T12:00',
+         "http://test.host/events/#{event1.id}", '2013-01-23 10:00', '2013-01-23 12:00',
          '2.00', '0.0', '0.63', '0.37', nil],
         ['Test Campaign FY01', nil, nil, nil, '', nil, nil, nil, 'Active', 'Approved', '', '',
-         "http://test.host/events/#{event2.id}", '2013-01-24T10:00', '2013-01-24T12:00',
+         "http://test.host/events/#{event2.id}", '2013-01-24 10:00', '2013-01-24 12:00',
          '2.00', '0.0', '0.0', '0.0', '134.0']
       ])
     end
