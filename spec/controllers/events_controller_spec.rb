@@ -200,7 +200,6 @@ describe EventsController, type: :controller do
         get 'tasks', id: event.to_param
         expect(response).to be_success
         expect(response).to render_template(:tasks)
-        expect(response).to render_template('_tasks_counters')
       end
     end
 

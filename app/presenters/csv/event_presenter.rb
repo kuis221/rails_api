@@ -20,11 +20,11 @@ module Csv
     end
 
     def start_date
-      Timeliness.parse(@model.start_at.strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%FT%R')
+      Timeliness.parse(@model.start_at.strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%F %R')
     end
 
     def end_date
-      Timeliness.parse(@model.end_at.strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%FT%R')
+      Timeliness.parse(@model.end_at.strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%F %R')
     end
 
     def promo_hours
@@ -33,6 +33,10 @@ module Csv
 
     def place_address
       h.strip_tags(h.event_place_address(@model, false, ', ', ', '))
+    end
+
+    def place_td_linx_code
+      "=\"#{@model.place_td_linx_code}\"" unless @model.place_td_linx_code.blank?
     end
   end
 end
