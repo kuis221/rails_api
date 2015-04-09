@@ -55,6 +55,11 @@ RSpec.configure do |config|
   config.include SignHelper, type: :feature
   config.include RequestsHelper, type: :feature
 
+  config.before(:suite) do
+    ActiveRecord::Base.connection.execute(IO.read("db/functions.sql"))
+    ActiveRecord::Base.connection.execute(IO.read("db/views.sql"))
+  end
+
   config.before(:each) do |example|
     allow(Resque::Worker).to receive_messages(working: [])
 

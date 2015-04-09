@@ -33,7 +33,7 @@ gem 'timeliness'
 gem 'american_date'
 gem 'sunspot_rails', :git => 'https://github.com/sunspot/sunspot.git'
 gem 'sunspot_stats'
-gem 'sunspot-queue'
+gem 'sunspot-queue', github: 'guilleva/sunspot-queue'
 gem 'progress_bar', require: false
 gem 'unicorn-worker-killer'
 gem 'geocoder'

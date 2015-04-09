@@ -105,7 +105,6 @@ module JbbFile
     def create_event(date, city)
       place = find_city(city)
       return unless place.present?
-      p (date + 1.day).to_s(:slashes)
       event = campaign.events.create(
         company: campaign.company,
         start_date: date.to_s(:slashes),

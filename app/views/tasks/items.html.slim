@@ -3,8 +3,5 @@ div data-content="items" data-total="#{collection_count}" data-pages="#{total_pa
   = render collection: collection, partial: 'task', locals: {show_user: show_user}
 
 - if params[:page].nil? || params[:page] == '1'
-  div data-content="counters"
-    = render 'counters'
-
   div data-content="filters-description"
     = describe_filters

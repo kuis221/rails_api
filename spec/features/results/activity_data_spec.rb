@@ -94,9 +94,9 @@ feature 'Results Activity Data Page', js: true, search: true  do
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'USER', 'DATE', 'ACTIVITY TYPE', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS',
          'CITY', 'STATE', 'ZIP', 'ACTIVE STATE'],
-        [campaign.name, 'Test User', '2013-02-04T00:00', 'My Activity Type', '', nil, 'My Place',
+        [campaign.name, 'Test User', '2013-02-04', 'My Activity Type', '', nil, 'My Place',
          'My Place, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active'],
-        [campaign.name, 'Juanito Bazooka', '2013-03-16T00:00', 'Second Activity Type', '', nil,
+        [campaign.name, 'Juanito Bazooka', '2013-03-16', 'Second Activity Type', '', nil,
          'My Place', 'My Place, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active']
       ])
     end
