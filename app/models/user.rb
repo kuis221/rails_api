@@ -106,6 +106,7 @@ class User < ActiveRecord::Base
   scope :active, -> { where('invitation_accepted_at is not null') }
   scope :active_in_company, ->(company) { active.joins(:company_users).where(company_users: { company_id: company, active: true }) }
   scope :in_company, ->(company) { active_in_company(company) }
+  scope :accessible_by_user, ->(user) { in_company(user.company_id) }
 
   # search_methods :active_eq if ENV['WEB']
   if ENV['WEB']

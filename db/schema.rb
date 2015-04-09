@@ -18,8 +18,8 @@ ActiveRecord::Schema.define(version: 20150408211531) do
   enable_extension "hstore"
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
-  enable_extension "postgis"
   enable_extension "tablefunc"
+  enable_extension "postgis"
 
   create_table "active_admin_comments", force: true do |t|
     t.string   "resource_id",   null: false
@@ -366,6 +366,28 @@ ActiveRecord::Schema.define(version: 20150408211531) do
   end
 
   add_index "custom_filters_categories", ["company_id"], :name => "index_custom_filters_categories_on_company_id"
+
+  create_table "data_extracts", force: true do |t|
+    t.string   "type"
+    t.integer  "company_id"
+    t.boolean  "active"
+    t.string   "sharing"
+    t.string   "name"
+    t.text     "description"
+    t.text     "filters"
+    t.text     "columns"
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "default_sort_by"
+    t.string   "default_sort_dir"
+    t.text     "params"
+  end
+
+  add_index "data_extracts", ["company_id"], :name => "index_data_extracts_on_company_id"
+  add_index "data_extracts", ["created_by_id"], :name => "index_data_extracts_on_created_by_id"
+  add_index "data_extracts", ["updated_by_id"], :name => "index_data_extracts_on_updated_by_id"
 
   create_table "data_migrations", force: true do |t|
     t.integer  "remote_id"
@@ -891,19 +913,6 @@ ActiveRecord::Schema.define(version: 20150408211531) do
 
   add_index "tasks", ["company_user_id"], :name => "index_tasks_on_company_user_id"
   add_index "tasks", ["event_id"], :name => "index_tasks_on_event_id"
-
-  create_table "tdlinx_codes", id: false, force: true do |t|
-    t.string "td_linx_code", limit: nil
-    t.string "name",         limit: nil
-    t.string "street",       limit: nil
-    t.string "city",         limit: nil
-    t.string "state",        limit: nil
-    t.string "zipcode",      limit: nil
-  end
-
-  add_index "tdlinx_codes", ["name"], :name => "td_linx_full_name_trgm_idx"
-  add_index "tdlinx_codes", ["state"], :name => "td_linx_code_state_idx"
-  add_index "tdlinx_codes", ["street"], :name => "td_linx_full_street_trgm_idx"
 
   create_table "teamings", force: true do |t|
     t.integer "team_id"
