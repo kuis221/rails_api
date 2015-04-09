@@ -13,6 +13,7 @@
 #  created_at  :datetime
 #  updated_at  :datetime
 #  active      :boolean          default(TRUE)
+#  area_id     :integer
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

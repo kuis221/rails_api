@@ -12,6 +12,5 @@
 
   h5.module-title ATTENDANCE
 
-
   #invites-list.resource-list
-    = render partial: 'invites/invite', collection: resource.invites.active.joins(:place).order('lower(places.name)'), locals: { parent: resource }
+    = render template: 'inherited_resources/base/invites'

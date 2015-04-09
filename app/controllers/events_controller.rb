@@ -25,8 +25,8 @@ class EventsController < FilteredController
   respond_to :json, only: [:map, :calendar_highlights]
   respond_to :xls, :pdf, only: :index
 
-  custom_actions member: [:tasks, :edit_results, :edit_data, :edit_surveys]
-  layout false, only: :tasks
+  custom_actions member: [:tasks, :invites, :edit_results, :edit_data, :edit_surveys]
+  layout false, only: [:tasks, :invites]
 
   skip_load_and_authorize_resource only: :update
   before_action :authorize_update, only: :update

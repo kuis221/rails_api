@@ -371,6 +371,17 @@ class Ability
         can?(:show, event)
       end
 
+      can :invites, Event do |event|
+        user.role.has_permission?(:index_invites, Event) &&
+        company_user.accessible_campaign_ids.include?(event.campaign_id) &&
+        can?(:show, event)
+      end
+
+      can :invites, Venue do |venue|
+        user.role.has_permission?(:index_invites, Venue) &&
+        can?(:show, venue)
+      end
+
       can :update, Task do |task|
         (user.role.has_permission?(:edit_task, Event) && can?(:show, task.event)) ||
         (user.role.has_permission?(:edit_my, Task) && task.company_user_id == company_user.id) ||

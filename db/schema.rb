@@ -14,12 +14,12 @@
 ActiveRecord::Schema.define(version: 20150408211531) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "tablefunc"
   enable_extension "plpgsql"
   enable_extension "hstore"
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
   enable_extension "postgis"
-  enable_extension "tablefunc"
 
   create_table "active_admin_comments", force: true do |t|
     t.string   "resource_id",   null: false
@@ -612,8 +612,10 @@ ActiveRecord::Schema.define(version: 20150408211531) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "active",      default: true
+    t.integer  "area_id"
   end
 
+  add_index "invites", ["area_id"], :name => "index_invites_on_area_id"
   add_index "invites", ["event_id"], :name => "index_invites_on_event_id"
   add_index "invites", ["venue_id"], :name => "index_invites_on_venue_id"
 

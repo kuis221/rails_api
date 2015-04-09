@@ -2,6 +2,8 @@
 - if resource.errors.any?
   = render 'form_dialog'
 - else
-  |
-    $('.bootbox.modal').modal('hide');
-    $('#invites-list').html('#{j render(parent.invites.active)}');
+  | $('.bootbox.modal').modal('hide');
+  - if parent.is_a?(Event)
+    | $('#invites-list').load('#{invites_event_path(parent)}');
+  - else
+    | $('#invites-list').load('#{invites_venue_path(parent)}');
