@@ -12,6 +12,7 @@
 #  last_activity_at        :datetime
 #  notifications_settings  :string(255)      default([]), is an Array
 #  last_activity_mobile_at :datetime
+#  tableau_username        :string(255)
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

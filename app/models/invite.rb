@@ -13,6 +13,7 @@
 #  created_at  :datetime
 #  updated_at  :datetime
 #  active      :boolean          default(TRUE)
+#  area_id     :integer
 #
 
 class Invite < ActiveRecord::Base
@@ -25,9 +26,9 @@ class Invite < ActiveRecord::Base
   delegate :name_with_location, :id, :name, to: :place, prefix: true, allow_nil: true
   delegate :campaign_name, :campaign_id, to: :event, prefix: false, allow_nil: true
 
-  validates :venue, presence: true, if: :venue_id
   validates :event, presence: true
-  validates :area, presence: true, if: :area_id
+  validates :venue, presence: true, unless: :market_level?
+  validates :area, presence: true, if: :market_level?
   validates :invitees, presence: true, numericality: true
 
   scope :active, -> { where active: true }
@@ -70,5 +71,11 @@ class Invite < ActiveRecord::Base
 
   def deactivate!
     update_attribute :active, false
+  end
+
+  private
+
+  def market_level?
+    area_id.present?
   end
 end

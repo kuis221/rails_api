@@ -11,7 +11,7 @@
     - elsif parent.is_a?(Venue)
         .row-fluid = label_tag :venue_invite_campaign, 'Event', class: 'control-label required'
         .row-fluid
-          .span7= select_tag 'venue_invite_campaign', options_for_select([[nil, '']] + allowed_campaigns(parent), @invite.campaign_id), class: 'required chosen-enabled', 'data-placeholder' => 'Select a Campaign'
+          .span7= select_tag 'venue_invite_campaign', options_for_select(allowed_campaigns(parent), @invite.campaign_id), include_blank: true, class: 'required chosen-enabled', 'data-placeholder' => 'Select a Campaign'
           .span5= f.input :event_id, as: :select, collection: (resource.event.campaign.event_dates), input_html: { class: 'required chosen-enabled', 'data-placeholder' => 'Event Date' }, label: false
 
     = f.input :invitees, input_html: { placeholder: 'Number of invitees' }

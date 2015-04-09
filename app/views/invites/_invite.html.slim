@@ -21,12 +21,14 @@ div.resource-item.invite id="invite_#{invite.id}"
         .text-large= invite.venue.present? ? invite.place_name : invite.area.name
 
       .span2
-        .text-large= invite.venue.present? && invite.venue.jameson_locals? ? 'Yes' : 'No'
-        | Jameson Locals
+        - if invite.venue.present?
+          .text-large= invite.venue.jameson_locals? ? 'Yes' : 'No'
+          | Jameson Locals
 
       .span2
-        .text-large= invite.venue.present? && invite.venue.top_venue? ? 'Yes' : 'No'
-        | Top 100
+        - if invite.venue.present?
+          .text-large= invite.venue.top_venue? ? 'Yes' : 'No'
+          | Top 100
 
       .span1
         .text-large= invite.invitees
@@ -39,5 +41,5 @@ div.resource-item.invite id="invite_#{invite.id}"
         | Attendees
 
   .resource-item-actions
-    = button_to_edit invite, url: url_for([:edit, parent, invite]) if can?(:edit_invite, Event)
-    = button_to_activate_or_deactivate(invite, activate_url: url_for([:activate, parent, invite]), deactivate_url: url_for([:deactivate, parent, invite])) if can?(:deactivate_invite, Event)
+    = button_to_edit invite, url: url_for([:edit, parent, invite]) if can?(:edit_invite, parent.class)
+    = button_to_activate_or_deactivate(invite, activate_url: url_for([:activate, parent, invite]), deactivate_url: url_for([:deactivate, parent, invite])) if can?(:deactivate_invite, parent.class)
