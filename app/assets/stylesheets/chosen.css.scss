@@ -9,6 +9,7 @@
 	font-size: 14px;
 	zoom: 1;
 	*display: inline;
+	width: 100% !important;
 	.chzn-drop {
 		position: absolute;
 		top: 100%;
@@ -17,7 +18,7 @@
 		-webkit-box-sizing: border-box;
 		-moz-box-sizing: border-box;
 		box-sizing: border-box;
-		width: 100%;
+		width: 100% !important;
 		background: #fff;
 		border: 1px solid $brand;
 		border-top: 1px solid $brand;
@@ -157,6 +158,8 @@ select.chosen-enabled{
 		white-space: nowrap;
 		top: -($chzn-single-height + 8);
 		left:0;
+		box-sizing: border-box;
+		width: 100% !important;
 		input {
 			-webkit-box-sizing: border-box;
 			-moz-box-sizing: border-box;

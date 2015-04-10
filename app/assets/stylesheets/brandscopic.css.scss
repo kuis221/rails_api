@@ -1084,49 +1084,52 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		margin: 0px 0 0 15px;
 		text-decoration: none;
 	}
-	.btn-download {
-		display: inline-block;
-		.btn{
-			padding: 5px 10px;
-		}
-		.icon-download{
-			font-size: 16px;
-			margin-left: 5px;
-		}
-		.icon-arrow-down-small{
-			font-size: 11px;
-			line-height: 26px;
-			float: right;
-			margin: 0 0 0 12px;
-		}
-		.download-options-menu {
-			right: 0;
-			left: initial;
-			text-align: left;
-			box-shadow:none;
-			padding:0;
-			min-width: 100%;
+}
 
-			&:before {
-				display: none;
-			}
-			li:first-child a {
-				border-top-right-radius: 5px;
-				border-top-left-radius: 5px;
-			}
-			li:last-child a {
-				border-bottom-right-radius: 5px;
-				border-bottom-left-radius: 5px;
-			}
-			&> li > a {
-				color: $text;
-			}
-			&> li > a:hover,
-			&> li > a:focus,
-			.dropdown-submenu:hover > a,
-			.dropdown-submenu:focus > a {
-				color: #fff;
-			}
+.btn-download {
+	display: inline-block;
+	.btn{
+		padding: 5px 10px;
+	}
+	.icon-download{
+		font-size: 16px;
+		margin-left: 5px;
+	  line-height: 26px;
+
+	}
+	.icon-arrow-down-small{
+		font-size: 11px;
+		line-height: 26px;
+		float: right;
+		margin: 0 0 0 12px;
+	}
+	.download-options-menu {
+		right: 0;
+		left: initial;
+		text-align: left;
+		box-shadow:none;
+		padding:0;
+		min-width: 100%;
+
+		&:before {
+			display: none;
+		}
+		li:first-child a {
+			border-top-right-radius: 5px;
+			border-top-left-radius: 5px;
+		}
+		li:last-child a {
+			border-bottom-right-radius: 5px;
+			border-bottom-left-radius: 5px;
+		}
+		&> li > a {
+			color: $text;
+		}
+		&> li > a:hover,
+		&> li > a:focus,
+		.dropdown-submenu:hover > a,
+		.dropdown-submenu:focus > a {
+			color: #fff;
 		}
 	}
 }
@@ -7456,13 +7459,15 @@ body.dashboard.index {
 .data-extract {
 	padding: 10px;
 	margin-top: 10px;
-	min-height: 1000px;
-	position: relative;
+	min-height: 200px;
+
+	.span6{
+		min-height: 110px;
+		padding-right: 40px;
+	}
 
 	.btn-primary{
-		position: absolute;
-		top: 150px;
-		right: 10px;
+		position: relative;
 	}
 
 	.btn-data-source {
@@ -7513,6 +7518,10 @@ body.dashboard.index {
   		width: 80px;
 		}
 	}
+}
+
+.next-data-extract{
+	height: 40px;
 }
 
 .data_extract_source, #data-extact-activity-types{
