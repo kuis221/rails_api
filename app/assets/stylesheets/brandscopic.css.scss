@@ -6105,7 +6105,7 @@ body.campaigns_report, body.staff_report {
 
 .tooltip {
 	.tooltip-inner{
-		background-color:#515151;
+		background-color: $gray-dark;
 		opacity: 1;
 		z-index: 90;
 	}
@@ -6113,15 +6113,23 @@ body.campaigns_report, body.staff_report {
 	.tooltip .tooltip-arrow{
 		border-left:5px solid transparent;
 		border-right:5px solid transparent;
-		border-top:5px solid #515151;
+		border-top:5px solid $gray-dark;
 		opacity: 0.5;
 	}
 	&.left .tooltip-arrow{
-		border-left-color: #515151;
+		border-left-color: $gray-dark;
 		border-top-color: transparent;
 	}
 	&.top .tooltip-arrow{
-		border-top-color: #515151;
+		border-top-color: $gray-dark;
+	}
+	&.bottom .tooltip-arrow{
+		border-bottom-color: $gray-dark;
+		border-width: 0 5px 5px;
+	}
+	&.in{
+		opacity: 1;
+		filter: alpha(opacity=100);
 	}
 }
 
