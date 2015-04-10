@@ -27,11 +27,11 @@ RSpec.describe DataExtract::Task, type: :model do
 
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql(
-       [:title, :task_statuses, :due_at, :created_by, :created_at])
+       [:title, :task_statuses, :due_at, :created_by, :created_at, :assigned_to, :comment1, :comment2, :comment3, :comment4, :comment5])
     end
   end
 
-  pending '#rows', search: true do
+  describe '#rows' do
     let(:company) { create(:company) }
     let(:company_user) { create(:company_user, company: company,
                          user: create(:user, first_name: 'Benito', last_name: 'Camelas')) }
@@ -45,23 +45,56 @@ RSpec.describe DataExtract::Task, type: :model do
     describe 'with data' do
       before do
         event = create(:event, company: company)
-        create(:task, event_id: event.id, due_at: Time.zone.local(2013, 2, 10, 9, 15), created_at: Time.zone.local(2013, 8, 23, 9, 15))
-        Sunspot.commit
+        task = create(:task, event_id: event.id, due_at: Time.zone.local(2013, 2, 10, 9, 15), 
+              created_at: Time.zone.local(2013, 8, 23, 9, 15), company_user: company_user,
+              created_by: company_user.user)
+        comment1 = create(:comment, content: 'Comment #1', commentable: task, created_at: Time.zone.local(2013, 8, 22, 11, 59))
+        comment2 = create(:comment, content: 'Comment #2', commentable: task, created_at: Time.zone.local(2013, 8, 23, 9, 15))
+        comment2 = create(:comment, content: 'Comment #3', commentable: task, created_at: Time.zone.local(2013, 8, 23, 9, 15))
+        comment2 = create(:comment, content: 'Comment #4', commentable: task, created_at: Time.zone.local(2013, 8, 23, 9, 15))
+        comment2 = create(:comment, content: 'Comment #5', commentable: task, created_at: Time.zone.local(2013, 8, 23, 9, 15))
       end
 
       it 'returns all the events in the company with all the columns' do
         expect(subject.rows).to eql [
-          ["MyString", "Active, Unassigned, Incomplete, Late", Time.zone.local(2013, 2, 10, 9, 15), 
-            nil, Time.zone.local(2013, 8, 23, 9, 15)]
+          ["MyString", "Active, Assigned, Incomplete", "02/10/2013", "Benito Camelas", "08/23/2013", "Benito Camelas",
+           "Comment #5", "Comment #4", "Comment #3", "Comment #2", "Comment #1"]
         ]
       end
 
-      it 'allows to filter the results' do
-
-        subject.filters = { name: ['MyString'] }
+      it 'allows to sort the results' do
+        event = create(:event, company: company)
+        create(:task, event_id: event.id, due_at: Time.zone.local(2013, 2, 10, 9, 15), 
+              created_at: Time.zone.local(2015, 2, 12, 9, 15), company_user: company_user,
+              created_by: company_user.user, title: "Other Task", active: false)
+        
+        subject.columns = ['title', 'task_statuses', 'created_by']
+        subject.default_sort_by = 'title'
+        subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
-          ["MyString", "Active, Unassigned, Incomplete, Late", Time.zone.local(2013, 2, 10, 9, 15), 
-            nil, Time.zone.local(2013, 8, 23, 9, 15)]
+          ["MyString", "Active, Assigned, Incomplete", "Benito Camelas"], 
+          ["Other Task", "Inactive, Assigned, Incomplete", "Benito Camelas"]
+        ]
+
+        subject.default_sort_by = 'title'
+        subject.default_sort_dir = 'DESC'
+        expect(subject.rows).to eql [
+          ["Other Task", "Inactive, Assigned, Incomplete", "Benito Camelas"], 
+          ["MyString", "Active, Assigned, Incomplete", "Benito Camelas"]
+        ]
+
+        subject.default_sort_by = 'task_statuses'
+        subject.default_sort_dir = 'ASC'
+        expect(subject.rows).to eql [
+          ["MyString", "Active, Assigned, Incomplete", "Benito Camelas"], 
+          ["Other Task", "Inactive, Assigned, Incomplete", "Benito Camelas"]
+        ]
+
+        subject.default_sort_by = 'task_statuses'
+        subject.default_sort_dir = 'DESC'
+        expect(subject.rows).to eql [
+          ["Other Task", "Inactive, Assigned, Incomplete", "Benito Camelas"], 
+          ["MyString", "Active, Assigned, Incomplete", "Benito Camelas"]
         ]
       end
     end

@@ -21,7 +21,7 @@
 
 require 'rails_helper'
 
-RSpec.describe DataExtract::CompanyUser, type: :model do
+RSpec.describe DataExtract::User, type: :model do
   pending '#available_columns' do
     let(:subject) { described_class }
 
@@ -32,9 +32,12 @@ RSpec.describe DataExtract::CompanyUser, type: :model do
     end
   end
 
-  pending '#rows', search: true do
+  pending '#rows' do
     let(:company) { create(:company) }
-    let(:subject) { described_class.new(company: company) }
+    let(:company_user) { create(:company_user, company: company,
+                         user: create(:user, first_name: 'Benito', last_name: 'Camelas')) }
+
+    let(:subject) { described_class.new() }
 
     it 'returns empty if no rows are found' do
       expect(subject.rows).to be_empty
