@@ -34,7 +34,7 @@ module Results
                   icon = sort_by == col ? content_tag(:i, '', class: 'icon-checked') : ''
                   content_tag(:span, I18n.t("data_exports.fields.#{col}")) +
                   (if step < 3
-                     link_to('', '', title: 'tool', class: 'icon-arrow-down pull-right dropdown-toggle', data: { name: col, toggle: 'dropdown' }) +
+                     link_to('', '', title: 'tool', class: 'icon-arrow-down-small pull-right dropdown-toggle', data: { name: col, toggle: 'dropdown' }) +
                      content_tag(:ul, class: 'dropdown-menu', role: 'menu') do
                        content_tag(:li, link_to(('Sort Ascending' + (sort_dir == 'asc' ? icon : '')).html_safe, '#', class: 'btn-sort-asc btn-sort-table', data: { column: col, dir: 'asc' })) +
                        content_tag(:li, link_to(('Sort Descending' + (sort_dir == 'desc' ? icon : '')).html_safe, '#', class: 'btn-sort-desc btn-sort-table', data: { column: col, dir: 'desc' })) +
