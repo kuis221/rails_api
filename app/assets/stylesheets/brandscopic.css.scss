@@ -7411,16 +7411,17 @@ body.dashboard.index {
 	  padding: 7px 0px 7px 10px;
 	  -webkit-border-radius: 7px;
 	  -moz-border-radius: 7px;
-	  border-radius: 7px;	
+	  border-radius: 7px;
 	  min-height: 45px;
 
-	  h3 {
-			padding: 0 0 5px 16px;
+	  .new-report-title{
+			margin: 5px 0 5px 16px;
 			color: $borders;
 			font-weight: bold;
 		}
 
-		.link-exit-new-report {
+		.link-exit-new-report{
+			color: $brand;
 			margin-left: 10px;
 			margin-top: 5px;
 			text-decoration: underline;
@@ -7433,30 +7434,42 @@ body.dashboard.index {
 			}
 		}
 	}
-		
-	.text-right {
-		margin-right: 15px;
 
+	.text-right {
 		p {
 			padding-left: 10px;
 		}
 
 		.icon-arrow-down {
 			margin-top: 20px;
-			margin-left: 10px; 
+			margin-left: 10px;
 			color: $white;
 		}
 	}
 }
+
+.available-fields-title{
+	color: $brand;
+	margin:0;
+}
+
 .data-extract {
 	padding: 10px;
 	margin-top: 10px;
-	min-height: 800px;
+	min-height: 1000px;
+	position: relative;
+
+	.btn-primary{
+		position: absolute;
+		top: 150px;
+		right: 10px;
+	}
 
 	.btn-data-source {
 		float: right;
 	}
 	.data-extract-box{
+		font-size: 13px;
 		width: 100%;
 		max-height: 700px;
 		overflow-x: auto;
@@ -7468,7 +7481,7 @@ body.dashboard.index {
 
 			th {
 				border: solid 1px $borders;
-				padding: 2px 10px;
+				padding: 2px 2px 2px 10px;
 				text-align: left;
 				min-width: 150px;
 
@@ -7485,6 +7498,7 @@ body.dashboard.index {
 				padding: 2px 10px;
 				border-left: solid 1px $borders;
 				border-right: solid 1px $borders;
+				vertical-align: top;
 			}
 		}
 	}
@@ -7498,6 +7512,16 @@ body.dashboard.index {
   		padding: 8px 15px;
   		width: 80px;
 		}
+	}
+}
+
+.data_extract_source, #data-extact-activity-types{
+	padding-top: 30px;
+	label{
+		color: $brand;
+		font-size: 16px;
+		font-weight: bold;
+		margin-bottom: 8px;
 	}
 }
 
