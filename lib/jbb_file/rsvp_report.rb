@@ -16,7 +16,9 @@ module JbbFile
       opt_in_to_future_communication: 'OptInToFutureCommunication',
       primary_registrant_id: 'PrimaryRegistrantId',
       bartender_how_long: 'BartenderHowLong',
-      bartender_role: 'BartenderRole'
+      bartender_role: 'BartenderRole',
+      date_of_birth: 'DOB',
+      zip_code: 'Zip Code'
     }
 
     INVITE_COLUMNS = [:market, :final_date]
@@ -46,7 +48,6 @@ module JbbFile
         files = download_files(dir)
         return invalid_format if invalid_files.any?
         return unless files.any?
-
         ActiveRecord::Base.transaction do
           files.each do |file|
             each_sheet(file[:excel]) do |sheet|
