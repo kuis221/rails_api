@@ -22,4 +22,8 @@
 
 class InviteRsvp < ActiveRecord::Base
   belongs_to :invite
+
+  delegate :place_name, :campaign_name, :invitees, :rsvps_count, :attendees,
+           :jameson_locals?, :top_venue?, :event,
+           to: :invite
 end

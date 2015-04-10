@@ -634,8 +634,10 @@ ActiveRecord::Schema.define(version: 20150408211531) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "active",      default: true
+    t.integer  "area_id"
   end
 
+  add_index "invites", ["area_id"], :name => "index_invites_on_area_id"
   add_index "invites", ["event_id"], :name => "index_invites_on_event_id"
   add_index "invites", ["venue_id"], :name => "index_invites_on_venue_id"
 
@@ -734,7 +736,7 @@ ActiveRecord::Schema.define(version: 20150408211531) do
     t.string  "city",     limit: 64
     t.string  "name",     limit: 64
     t.decimal "regionid"
-    t.spatial "geog",     limit: {:srid=>0, :type=>"multi_polygon"}
+    t.spatial "geog",     limit: {:srid=>4326, :type=>"multi_polygon", :geographic=>true}
   end
 
   add_index "neighborhoods", ["geog"], :name => "index_neighborhoods_on_geog", :spatial => true

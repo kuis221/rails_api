@@ -23,7 +23,7 @@ module EventsHelper
   def allowed_campaigns(venue = nil)
     campaigns = company_campaigns.active.accessible_by_user(current_company_user)
     if venue.present? && !current_company_user.is_admin?
-      campaigns.select { |c| c.place_allowed_for_event?(venue.place) }
+      campaigns.select { |c| c.place_allowed_for_event?(venue.place) }.map { |c| [c.name, c.id] }
     else
       campaigns.for_dropdown
     end
