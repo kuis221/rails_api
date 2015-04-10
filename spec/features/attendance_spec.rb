@@ -124,10 +124,8 @@ feature 'Attendance', js: true, search: true do
 
       ensure_modal_was_closed
       expect(ListExport.last).to have_rows([
-        ['ACCOUNT', 'JAMESON LOCALS', 'TOP 100', 'INVITES', 'RSVPs', 'ATTENDEES', 'REGISTRANT ID',
-         'DATE ADDED', "EMAIL", "MOBILE PHONE", 'MOBILE SIGN UP', 'FIRST NAME', 'LAST NAME',
-         'ATTENDED PREVIOUS BARTENDER BALL', 'OPT IN TO FUTURE COMMUNICATION', 'PRIMARY REGISTRANT ID',
-         'BARTENDER HOW LONG', 'BARTENDER ROLE']
+        ['ACCOUNT', 'JAMESON LOCALS', 'TOP 100', 'INVITES', 'RSVPs', 'ATTENDEES'],
+        ['Guillermitos Bar', 'NO', 'NO', '12', '0', '0']
       ])
     end
 
@@ -146,8 +144,8 @@ feature 'Attendance', js: true, search: true do
 
       ensure_modal_was_closed
       expect(ListExport.last).to have_rows([
-        ['ACCOUNT', 'JAMESON LOCALS', 'TOP 100', 'INVITES', 'RSVPs', 'ATTENDEES'],
-        ["Guillermitos Bar", "NO", "NO", "12", "0", "0"]
+        ['MARKET', 'INVITES', 'RSVPs', 'ATTENDEES'],
+        [nil, "12", "0", "0"]
       ])
     end
   end
