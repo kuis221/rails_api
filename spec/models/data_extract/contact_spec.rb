@@ -28,7 +28,7 @@ RSpec.describe DataExtract::Contact, type: :model do
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql(
        [:first_name, :last_name, :title, :email, :phone_number, 
-        :street1, :street2, :country, :state, :city, :zip_code, :created_at])
+        :street1, :street2, :country, :state, :city, :zip_code, :created_by, :created_at])
     end
   end
 
@@ -50,12 +50,13 @@ RSpec.describe DataExtract::Contact, type: :model do
 
       it 'returns all the events in the company with all the columns' do
         expect(subject.rows).to eql [
-          ["Julian", "Guerra", "Bar Owner", "somecontact@email.com", "344-23333", "12th St.", "", "US", "CA", "Hollywood", "43212", "08/23/2013"]
+          ["Julian", "Guerra", "Bar Owner", "somecontact@email.com", "344-23333", "12th St.", "", "US", "CA", "Hollywood", "43212", nil, "08/23/2013"]
         ]
       end
 
       it 'allows to sort the results' do
-        create(:contact, first_name: 'Ana', last_name: 'Soto', email: 'ana_soto@email.com', company: company, created_at: Time.zone.local(2014, 2, 12, 9, 15))
+        create(:contact, first_name: 'Ana', last_name: 'Soto', email: 'ana_soto@email.com', company: company, 
+               created_at: Time.zone.local(2014, 2, 12, 9, 15))
         
         subject.columns = ['first_name', 'last_name', 'email']
         subject.default_sort_by = 'first_name'
