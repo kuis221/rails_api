@@ -128,9 +128,9 @@ describe EventsController, type: :controller do
       it 'should include the event results' do
         place = create(:place, name: 'Bar Prueba', city: 'Los Angeles', state: 'California', country: 'US')
         event = create(:approved_event, company: company, campaign: campaign,
-          start_date: '01/23/2019', end_date: '01/23/2019',
-          start_time: '10:00 am', end_time: '12:00 pm',
-          place: place)
+                                        start_date: '01/23/2019', end_date: '01/23/2019',
+                                        start_time: '10:00 am', end_time: '12:00 pm',
+                                        place: place)
         team = create(:team, company: company, name: 'zteam')
         event.teams << team
         event.users << company_user
@@ -399,7 +399,6 @@ describe EventsController, type: :controller do
         event.reload
         user_tasks.each { |t| expect(t.reload.company_user_id).to be_nil }
         other_tasks.each { |t| expect(t.reload.company_user_id).not_to be_nil }
-
       end
 
       it 'should not unassign any tasks assigned the team users if the user is directly assigned to the event' do

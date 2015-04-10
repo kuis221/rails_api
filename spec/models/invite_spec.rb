@@ -13,6 +13,7 @@
 #  created_at  :datetime
 #  updated_at  :datetime
 #  active      :boolean          default(TRUE)
+#  area_id     :integer
 #
 
 require 'rails_helper'
@@ -20,6 +21,7 @@ require 'rails_helper'
 RSpec.describe Invite, :type => :model do
   it { is_expected.to belong_to(:event) }
   it { is_expected.to belong_to(:venue) }
+  it { is_expected.to belong_to(:area) }
   it { is_expected.to have_one(:place).through(:venue) }
   it { is_expected.to have_many(:rsvps) }
 
