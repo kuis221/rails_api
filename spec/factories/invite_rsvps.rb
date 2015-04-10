@@ -27,15 +27,15 @@ FactoryGirl.define do
     invite nil
     registrant_id 1
     date_added "2015-01-06"
-    email "MyString"
-    mobile_phone "MyString"
+    email "rsvp@email.com"
+    mobile_phone "123456789"
     mobile_signup false
-    first_name "MyString"
-    last_name ""
-    attended_previous_bartender_ball "MyString"
+    first_name "Fulano"
+    last_name "de Tal"
+    attended_previous_bartender_ball "no"
     opt_in_to_future_communication false
     primary_registrant_id 1
-    bartender_how_long "MyString"
-    bartender_role "MyString"
+    bartender_how_long "2 years"
+    bartender_role "Main"
   end
 end

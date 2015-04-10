@@ -240,7 +240,6 @@ Brandscopic::Application.routes.draw do
 
   scope '/research' do
     resources :venues, only: [:index, :show] do
-      get :invites, on: :member
       member do
         match 'areas/:area_id' => 'venues#delete_area', via: :delete, as: :delete_area
         match 'areas/select' => 'venues#select_areas', via: :get, as: :select_areas
@@ -386,7 +385,6 @@ Brandscopic::Application.routes.draw do
 
     get :calendar, on: :collection
     get :tasks, on: :member
-    get :invites, on: :member
     get :edit_data, on: :member
     get :edit_surveys, on: :member
     get :calendar_dates, on: :collection, to: :calendar_highlights

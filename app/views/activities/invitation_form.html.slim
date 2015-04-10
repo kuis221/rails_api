@@ -8,7 +8,7 @@
 
       .control-group.required
         - if parent.is_a?(Event)
-          - if parent.campaign.modules['attendance'].present? && Invite::ATTENDANCE_DISPLAY_BY_TYPES[parent.campaign.modules['attendance']['settings']['attendance_display']] == 'market'
+          - if parent.campaign.enabled_modules.include?('attendance') && Invite::ATTENDANCE_DISPLAY_BY_TYPES.try(:[], parent.campaign.module_setting('attendance', 'attendance_display')) == 'market'
             .row-fluid
               = f.association :area, collection: parent.campaign.areas.accessible_by_user(current_company_user), required: true, label: 'Market', input_html: {class: 'chosen-enabled', data: { placeholder: "Choose an area" } }
           - else

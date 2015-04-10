@@ -108,6 +108,50 @@ feature 'Attendance', js: true, search: true do
     end
   end
 
+  shared_examples_for 'a user that can download invites' do
+    scenario 'can export individual as csv' do
+      visit event_path(event)
+      create_invite account: 'Guillermitos Bar', invites: 12, type: 'venue'
+
+      click_js_link 'Download'
+      click_js_link 'Download individual to XLS'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        expect(ListExportWorker).to have_queued(ListExport.last.id)
+        ResqueSpec.perform_all(:export)
+      end
+
+      ensure_modal_was_closed
+      expect(ListExport.last).to have_rows([
+        ['ACCOUNT', 'JAMESON LOCALS', 'TOP 100', 'INVITES', 'RSVPs', 'ATTENDEES', 'REGISTRANT ID',
+         'DATE ADDED', "EMAIL", "MOBILE PHONE", 'MOBILE SIGN UP', 'FIRST NAME', 'LAST NAME',
+         'ATTENDED PREVIOUS BARTENDER BALL', 'OPT IN TO FUTURE COMMUNICATION', 'PRIMARY REGISTRANT ID',
+         'BARTENDER HOW LONG', 'BARTENDER ROLE']
+      ])
+    end
+
+    scenario 'can export aggregate as csv' do
+      visit event_path(event)
+      create_invite account: 'Guillermitos Bar', invites: 12, type: 'venue'
+
+      click_js_link 'Download'
+      click_js_link 'Download aggregate to XLS'
+
+      within visible_modal do
+        expect(page).to have_content('We are processing your request, the download will start soon...')
+        expect(ListExportWorker).to have_queued(ListExport.last.id)
+        ResqueSpec.perform_all(:export)
+      end
+
+      ensure_modal_was_closed
+      expect(ListExport.last).to have_rows([
+        ['ACCOUNT', 'JAMESON LOCALS', 'TOP 100', 'INVITES', 'RSVPs', 'ATTENDEES'],
+        ["Guillermitos Bar", "NO", "NO", "12", "0", "0"]
+      ])
+    end
+  end
+
   feature 'admin user' do
     let(:role) { create(:role, company: company) }
 
@@ -117,6 +161,7 @@ feature 'Attendance', js: true, search: true do
     end
 
     it_behaves_like 'a user that can deactivate invites'
+    it_behaves_like 'a user that can download invites'
   end
 
   feature 'non admin user' do

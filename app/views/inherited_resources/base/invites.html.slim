@@ -1,1 +1,0 @@
-= render partial: 'invites/invite', collection: (resource.invites.active.joins(:place).select("invites.*, places.name") + resource.invites.active.joins(:area).select("invites.*, areas.name")).sort_by(&:name), locals: { parent: resource }

@@ -6,11 +6,12 @@
       i.icon-arrow-down-small
     ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
       li
-        = link_to 'Download as XLS', event_invites_path(resource, format: :xls), role: :menuitem, class: 'xlsx-download-link', data: { url: event_invites_path(resource, format: :xls) }
+        = link_to 'Download individual to XLS', event_invites_path(resource, export_mode: :individual, format: :csv), role: :menuitem, class: 'xlsx-download-link', data: { url: event_invites_path(resource, export_mode: :individual, format: :csv) }
+        = link_to 'Download aggregate to XLS', event_invites_path(resource, format: :csv), role: :menuitem, class: 'xlsx-download-link', data: { url: event_invites_path(resource, format: :csv) }
       li
-        = link_to 'Download as PDF', event_invites_path(resource, format: :pdf), role: :menuitem, class: 'xlsx-download-link', data: { url: event_invites_path(resource, format: :pdf) }
+        = link_to 'Download aggregate to PDF', event_invites_path(resource, format: :pdf), role: :menuitem, class: 'xlsx-download-link', data: { url: event_invites_path(resource, format: :pdf) }
 
   h5.module-title ATTENDANCE
 
   #invites-list.resource-list
-    = render template: 'inherited_resources/base/invites'
+    = render partial: 'invites/invite', collection: (resource.invites.active.joins(:place).select("invites.*, places.name") + resource.invites.active.joins(:area).select("invites.*, areas.name")).sort_by(&:name), locals: { parent: resource }

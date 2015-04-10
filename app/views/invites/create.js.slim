@@ -3,7 +3,4 @@
   = render 'form_dialog'
 - else
   | $('.bootbox.modal').modal('hide');
-  - if parent.is_a?(Event)
-    | $('#invites-list').load('#{invites_event_path(parent)}');
-  - else
-    | $('#invites-list').load('#{invites_venue_path(parent)}');
+  | $('#invites-list').html('#{j render(partial: 'invites/invite', collection: (parent.invites.active.joins(:place).select("invites.*, places.name") + parent.invites.active.joins(:area).select("invites.*, areas.name")).sort_by(&:name), locals: { parent: parent }) }');

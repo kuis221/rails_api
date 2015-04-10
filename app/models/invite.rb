@@ -24,6 +24,7 @@ class Invite < ActiveRecord::Base
   has_many :rsvps, class_name: 'InviteRsvp'
 
   delegate :name_with_location, :id, :name, to: :place, prefix: true, allow_nil: true
+  delegate :jameson_locals?, :top_venue?, to: :venue, allow_nil: true
   delegate :campaign_name, :campaign_id, to: :event, prefix: false, allow_nil: true
 
   validates :event, presence: true
