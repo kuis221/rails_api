@@ -20,6 +20,9 @@
 #
 
 class Contact < ActiveRecord::Base
+  # Created_by_id and updated_by_id fields
+  track_who_does_it
+  
   scoped_to_company
 
   has_many :contact_events, dependent: :destroy, as: :contactable
