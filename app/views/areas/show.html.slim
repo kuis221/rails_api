@@ -21,13 +21,13 @@
       = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
 
   #area-places.details_box
-    h5.results-title PLACES
+    h5.module-title PLACES
     #area-places-list
       = render partial: 'places', locals: { places: resource.places.order(:name) }
     = link_to "", new_area_place_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Place' if can?(:edit, resource)
 
   #area-campaigns.details_box
-    h5.results-title CAMPAIGNS
+    h5.module-title CAMPAIGNS
 
     #area-campaigns-list.resource-list.without-actions
       = render partial: 'campaigns/campaign', collection: resource.campaigns, locals: { hide_actions: true }
