@@ -125,9 +125,9 @@ feature 'Attendance', js: true, search: true do
       ensure_modal_was_closed
       expect(ListExport.last).to have_rows([
         ['ACCOUNT', 'JAMESON LOCALS', 'TOP 100', 'INVITES', 'RSVPs', 'ATTENDEES', 'REGISTRANT ID',
-         'DATE ADDED', "EMAIL", "MOBILE PHONE", 'MOBILE SIGN UP', 'FIRST NAME', 'LAST NAME',
+         'DATE ADDED', 'EMAIL', 'MOBILE PHONE', 'MOBILE SIGN UP', 'FIRST NAME', 'LAST NAME',
          'ATTENDED PREVIOUS BARTENDER BALL', 'OPT IN TO FUTURE COMMUNICATION', 'PRIMARY REGISTRANT ID',
-         'BARTENDER HOW LONG', 'BARTENDER ROLE']
+         'BARTENDER HOW LONG', 'BARTENDER ROLE', 'DATE OF BIRTH', 'ZIP CODE']
       ])
     end
 

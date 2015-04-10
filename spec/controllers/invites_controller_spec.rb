@@ -123,7 +123,7 @@ RSpec.describe InvitesController, type: :controller do
         ['ACCOUNT', 'JAMESON LOCALS', 'TOP 100', 'INVITES', 'RSVPs', 'ATTENDEES',
          'REGISTRANT ID', 'DATE ADDED', 'EMAIL', 'MOBILE PHONE', 'MOBILE SIGN UP', 'FIRST NAME', 'LAST NAME',
          'ATTENDED PREVIOUS BARTENDER BALL', 'OPT IN TO FUTURE COMMUNICATION', 'PRIMARY REGISTRANT ID',
-         'BARTENDER HOW LONG', 'BARTENDER ROLE']
+         'BARTENDER HOW LONG', 'BARTENDER ROLE', 'DATE OF BIRTH', 'ZIP CODE']
       ])
     end
 
@@ -140,11 +140,11 @@ RSpec.describe InvitesController, type: :controller do
         ['EVENT DATE', 'CAMPAIGN', 'JAMESON LOCALS', 'TOP 100', 'INVITES', 'RSVPs', 'ATTENDEES',
          'REGISTRANT ID', 'DATE ADDED', 'EMAIL', 'MOBILE PHONE', 'MOBILE SIGN UP', 'FIRST NAME', 'LAST NAME',
          'ATTENDED PREVIOUS BARTENDER BALL', 'OPT IN TO FUTURE COMMUNICATION', 'PRIMARY REGISTRANT ID',
-         'BARTENDER HOW LONG', 'BARTENDER ROLE'],
+         'BARTENDER HOW LONG', 'BARTENDER ROLE', 'DATE OF BIRTH', 'ZIP CODE'],
         ['2015-01-01 10:00', 'Test Campaign FY01', 'YES', 'NO', '100', '99', '2', '1',
-         '01/06/2015', 'rsvp@email.com', '123456789', 'NO', 'Fulano', 'de Tal', 'no', 'NO', '1', '2 years', 'Main'],
+         '01/06/2015', 'rsvp@email.com', '123456789', 'NO', 'Fulano', 'de Tal', 'no', 'NO', '1', '2 years', 'Main', '3/2/1977', '90210'],
         ['2015-01-01 10:00', 'Test Campaign FY01', 'YES', 'NO', '100', '99', '2', '1', '01/06/2015', 'rsvp@email.com', '123456789', 'NO',
-         'Fulano', 'de Tal', 'no', 'NO', '1', '2 years', 'Main']
+         'Fulano', 'de Tal', 'no', 'NO', '1', '2 years', 'Main', '3/2/1977', '90210']
       ])
     end
 
@@ -161,11 +161,11 @@ RSpec.describe InvitesController, type: :controller do
         ['ACCOUNT', 'JAMESON LOCALS', 'TOP 100', 'INVITES', 'RSVPs', 'ATTENDEES',
          'REGISTRANT ID', 'DATE ADDED', 'EMAIL', 'MOBILE PHONE', 'MOBILE SIGN UP', 'FIRST NAME', 'LAST NAME',
          'ATTENDED PREVIOUS BARTENDER BALL', 'OPT IN TO FUTURE COMMUNICATION', 'PRIMARY REGISTRANT ID',
-         'BARTENDER HOW LONG', 'BARTENDER ROLE'],
+         'BARTENDER HOW LONG', 'BARTENDER ROLE', 'DATE OF BIRTH', 'ZIP CODE'],
         ['My Super Place', 'YES', 'NO', '100', '99', '2', '1',
-         '01/06/2015', 'rsvp@email.com', '123456789', 'NO', 'Fulano', 'de Tal', 'no', 'NO', '1', '2 years', 'Main'],
+         '01/06/2015', 'rsvp@email.com', '123456789', 'NO', 'Fulano', 'de Tal', 'no', 'NO', '1', '2 years', 'Main', '3/2/1977', '90210'],
         ['My Super Place', 'YES', 'NO', '100', '99', '2', '1', '01/06/2015', 'rsvp@email.com', '123456789', 'NO',
-         'Fulano', 'de Tal', 'no', 'NO', '1', '2 years', 'Main']
+         'Fulano', 'de Tal', 'no', 'NO', '1', '2 years', 'Main', '3/2/1977', '90210']
       ])
     end
   end
