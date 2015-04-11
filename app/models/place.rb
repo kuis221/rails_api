@@ -73,8 +73,6 @@ class Place < ActiveRecord::Base
 
   after_commit :reindex_associated
 
-  serialize :types
-
   scope :in_company, ->(company) { joins(:venues).where(venues: { company_id: company }) }
 
   def self.linked_to_campaign(campaign)
