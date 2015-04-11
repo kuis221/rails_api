@@ -13,22 +13,31 @@
 #  created_at  :datetime
 #  updated_at  :datetime
 #  active      :boolean          default(TRUE)
+#  area_id     :integer
 #
 
 class Invite < ActiveRecord::Base
   belongs_to :event
   belongs_to :venue
+  belongs_to :area
   has_one :place, through: :venue
   has_many :rsvps, class_name: 'InviteRsvp'
 
   delegate :name_with_location, :id, :name, to: :place, prefix: true, allow_nil: true
+  delegate :jameson_locals?, :top_venue?, to: :venue, allow_nil: true
   delegate :campaign_name, :campaign_id, to: :event, prefix: false, allow_nil: true
 
-  validates :venue, presence: true
   validates :event, presence: true
+  validates :venue, presence: true, unless: :market_level?
+  validates :area, presence: true, if: :market_level?
   validates :invitees, presence: true, numericality: true
 
   scope :active, -> { where active: true }
+
+  ATTENDANCE_DISPLAY_BY_TYPES = {
+    '1' => 'venue',
+    '2' => 'market'
+  }
 
   def place_reference=(value)
     @place_reference = value
@@ -63,5 +72,11 @@ class Invite < ActiveRecord::Base
 
   def deactivate!
     update_attribute :active, false
+  end
+
+  private
+
+  def market_level?
+    area_id.present?
   end
 end

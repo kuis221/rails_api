@@ -8,7 +8,7 @@ class CreateNeighborhoods < ActiveRecord::Migration
       t.string :city, limit: 64
       t.string :name, limit: (64)
       t.decimal :regionid
-      t.multi_polygon :geog
+      t.multi_polygon :geog, geographic: true
     end
 
     add_index :neighborhoods, :geog, using: :gist
