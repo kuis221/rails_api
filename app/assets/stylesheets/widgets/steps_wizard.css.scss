@@ -108,7 +108,6 @@ $steps-wizard-margin: 50px;
 .steps-wizard-data-source {
 	position: relative;
 	z-index: 1;
-	margin-left: 25px;
 	.step {
 		text-align: left;
 		float: left;
@@ -119,24 +118,28 @@ $steps-wizard-margin: 50px;
 				float: left;
 				color: $borders;
 				padding: 3px;
+				font-weight: bold;
+				font-size: 13px;
 			}
 			.circle-step {
 				width: $steps-wizard-active-circle-size;
 				height: $steps-wizard-active-circle-size;
-				line-height: $steps-wizard-active-circle-size;
+				line-height: 22px;
+				font-weight: bold;
 				font-size: $steps-wizard-active-circle-size/2;
-				margin-right: 10px;
+				margin-right: 3px;
 				text-align: center;
 				background-color: $white;
 				color: $borders;
 				border-radius: 500px 500px 500px 500px;
-				border: solid 1px $borders;
+				border: solid 2px $borders;
 				z-index: 1;
 				float: left;
+				box-sizing: border-box;
 			}
 			&:first-child {
 				text-align:left;
-				
+
 				&.active {
 					.circle-step {
 						margin-left: -($steps-wizard-active-circle-size/2);
@@ -153,8 +156,9 @@ $steps-wizard-margin: 50px;
 		}
 		&.active {
 			.circle-step {
-				border-color: $text;
+				border: 2px solid $text;
 				color: $text;
+				line-height: 22px;
 			}
 			.step-name {
 				color: $text;
@@ -165,6 +169,7 @@ $steps-wizard-margin: 50px;
 				border-color: $green;
 				background-color: $green;
 				color: $white;
+				line-height: 27px;
 			}
 			.step-name {
 				color: $green;
