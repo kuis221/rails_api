@@ -39,17 +39,32 @@ class InvitesController < InheritedResources::Base
   def collection_to_csv
     for_event = parent.is_a?(Event)
     CSV.generate do |csv|
-      cols = for_event ? ['ACCOUNT'] : ['EVENT DATE', 'CAMPAIGN']
-      cols.concat ['JAMESON LOCALS', 'TOP 100', 'INVITES', 'RSVPs', 'ATTENDEES']
-      cols.concat ['REGISTRANT ID', 'DATE ADDED', 'EMAIL',
-                   'MOBILE PHONE', 'MOBILE SIGN UP', 'FIRST NAME', 'LAST NAME',
-                   'ATTENDED PREVIOUS BARTENDER BALL', 'OPT IN TO FUTURE COMMUNICATION',
-                   'PRIMARY REGISTRANT ID', 'BARTENDER HOW LONG', 'BARTENDER ROLE'] if export_individual?
+      cols =
+        if for_event
+          if export_individual?
+            ['ACCOUNT']
+          else
+            ['MARKET']
+          end
+        else
+          ['EVENT DATE', 'CAMPAIGN']
+        end
+      cols.concat ['JAMESON LOCALS', 'TOP 100'] if export_individual?
+      cols.concat ['INVITES', 'RSVPs', 'ATTENDEES']
       csv << cols
       each_collection_item do |item|
-        cols = (for_event ? [item.place_name] : [item.event_date, item.campaign_name])
-        cols.concat [item.jameson_locals, item.top_venue, item.invitees, item.rsvps_count, item.attendees]
-        cols.concat invividal_data(item) if export_individual?
+        cols =
+          if for_event
+            if export_individual?
+              [item.place_name]
+            else
+              [item.market]
+            end
+          else
+            [item.event_date, item.campaign_name]
+          end
+        cols.concat [item.jameson_locals, item.top_venue] if export_individual?
+        cols.concat [item.invitees, item.rsvps_count, item.attendees]
         csv << cols
       end
     end
@@ -64,9 +79,11 @@ class InvitesController < InheritedResources::Base
 
   def collection
     if export_individual?
-      InviteRsvp.where(invite_id: end_of_association_chain.active)
+      end_of_association_chain.active
     else
       end_of_association_chain.active
+        .select('market, sum(attendees) attendees, sum(invitees) invitees, sum(rsvps_count) rsvps_count')
+        .group('market')
     end
   end
 

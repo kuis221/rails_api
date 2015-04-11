@@ -72,7 +72,7 @@ RSpec.describe InvitesController, type: :controller do
       ResqueSpec.perform_all(:export)
 
       expect(export.reload).to have_rows([
-        ['ACCOUNT', 'JAMESON LOCALS', 'TOP 100', 'INVITES', 'RSVPs', 'ATTENDEES']
+        ['MARKET', 'INVITES', 'RSVPs', 'ATTENDEES']
       ])
     end
 
@@ -83,33 +83,24 @@ RSpec.describe InvitesController, type: :controller do
       ResqueSpec.perform_all(:export)
 
       expect(export.reload).to have_rows([
-        ['EVENT DATE', 'CAMPAIGN', 'JAMESON LOCALS', 'TOP 100', 'INVITES', 'RSVPs', 'ATTENDEES']
+        ['EVENT DATE', 'CAMPAIGN', 'INVITES', 'RSVPs', 'ATTENDEES']
       ])
     end
 
     it 'includes the invites in aggregate mode' do
-      create(:invite, event: event, venue: venue, invitees: 100, attendees: 2, rsvps_count: 99)
+      venue2 = create(:venue, company: company)
+      create(:invite, event: event, venue: venue, market: 'My Market', invitees: 100, attendees: 2, rsvps_count: 99)
+      create(:invite, event: event, venue: venue2, market: 'My Market', invitees: 100, attendees: 2, rsvps_count: 99)
+      create(:invite, event: event, venue: venue2, market: 'Market 2', invitees: 100, attendees: 2, rsvps_count: 99)
       expect { xhr :get, 'index', event_id: event.id, format: :csv }.to change(ListExport, :count).by(1)
       export = ListExport.last
       expect(ListExportWorker).to have_queued(export.id)
       ResqueSpec.perform_all(:export)
 
       expect(export.reload).to have_rows([
-        ['ACCOUNT', 'JAMESON LOCALS', 'TOP 100', 'INVITES', 'RSVPs', 'ATTENDEES'],
-        ['My Super Place', 'YES', 'NO', '100', '99', '2']
-      ])
-    end
-
-    it 'includes the invites in aggregate mode  when exporting invites for a venue' do
-      create(:invite, event: event, venue: venue, invitees: 100, attendees: 2, rsvps_count: 99)
-      expect { xhr :get, 'index', venue_id: venue.id, format: :csv }.to change(ListExport, :count).by(1)
-      export = ListExport.last
-      expect(ListExportWorker).to have_queued(export.id)
-      ResqueSpec.perform_all(:export)
-
-      expect(export.reload).to have_rows([
-        ['EVENT DATE', 'CAMPAIGN', 'JAMESON LOCALS', 'TOP 100', 'INVITES', 'RSVPs', 'ATTENDEES'],
-        ['2015-01-01 10:00', 'Test Campaign FY01', 'YES', 'NO', '100', '99', '2']
+        ['MARKET', 'INVITES', 'RSVPs', 'ATTENDEES'],
+        ['Market 2', '100', '99', '2'],
+        ['My Market', '200', '198', '4']
       ])
     end
 
@@ -120,16 +111,12 @@ RSpec.describe InvitesController, type: :controller do
       ResqueSpec.perform_all(:export)
 
       expect(export.reload).to have_rows([
-        ['ACCOUNT', 'JAMESON LOCALS', 'TOP 100', 'INVITES', 'RSVPs', 'ATTENDEES',
-         'REGISTRANT ID', 'DATE ADDED', 'EMAIL', 'MOBILE PHONE', 'MOBILE SIGN UP', 'FIRST NAME', 'LAST NAME',
-         'ATTENDED PREVIOUS BARTENDER BALL', 'OPT IN TO FUTURE COMMUNICATION', 'PRIMARY REGISTRANT ID',
-         'BARTENDER HOW LONG', 'BARTENDER ROLE']
+        ['ACCOUNT', 'JAMESON LOCALS', 'TOP 100', 'INVITES', 'RSVPs', 'ATTENDEES']
       ])
     end
 
     it 'includes the invites and rsvps information in individual mode when exporting from venue details' do
       invite = create(:invite, event: event, venue: venue, invitees: 100, attendees: 2, rsvps_count: 99)
-      create(:invite_rsvp, invite: invite)
       create(:invite_rsvp, invite: invite)
       expect { xhr :get, 'index', venue_id: venue.id, export_mode: 'individual', format: :csv }.to change(ListExport, :count).by(1)
       export = ListExport.last
@@ -137,20 +124,13 @@ RSpec.describe InvitesController, type: :controller do
       ResqueSpec.perform_all(:export)
 
       expect(export.reload).to have_rows([
-        ['EVENT DATE', 'CAMPAIGN', 'JAMESON LOCALS', 'TOP 100', 'INVITES', 'RSVPs', 'ATTENDEES',
-         'REGISTRANT ID', 'DATE ADDED', 'EMAIL', 'MOBILE PHONE', 'MOBILE SIGN UP', 'FIRST NAME', 'LAST NAME',
-         'ATTENDED PREVIOUS BARTENDER BALL', 'OPT IN TO FUTURE COMMUNICATION', 'PRIMARY REGISTRANT ID',
-         'BARTENDER HOW LONG', 'BARTENDER ROLE'],
-        ['2015-01-01 10:00', 'Test Campaign FY01', 'YES', 'NO', '100', '99', '2', '1',
-         '01/06/2015', 'rsvp@email.com', '123456789', 'NO', 'Fulano', 'de Tal', 'no', 'NO', '1', '2 years', 'Main'],
-        ['2015-01-01 10:00', 'Test Campaign FY01', 'YES', 'NO', '100', '99', '2', '1', '01/06/2015', 'rsvp@email.com', '123456789', 'NO',
-         'Fulano', 'de Tal', 'no', 'NO', '1', '2 years', 'Main']
+        ['EVENT DATE', 'CAMPAIGN', 'JAMESON LOCALS', 'TOP 100', 'INVITES', 'RSVPs', 'ATTENDEES'],
+        ['2015-01-01 10:00', 'Test Campaign FY01', 'YES', 'NO', '100', '99', '2']
       ])
     end
 
     it 'includes the invites and rsvps information in individual mode when exporting from event details' do
       invite = create(:invite, event: event, venue: venue, invitees: 100, attendees: 2, rsvps_count: 99)
-      create(:invite_rsvp, invite: invite)
       create(:invite_rsvp, invite: invite)
       expect { xhr :get, 'index', event_id: event.id, export_mode: 'individual', format: :csv }.to change(ListExport, :count).by(1)
       export = ListExport.last
@@ -158,14 +138,8 @@ RSpec.describe InvitesController, type: :controller do
       ResqueSpec.perform_all(:export)
 
       expect(export.reload).to have_rows([
-        ['ACCOUNT', 'JAMESON LOCALS', 'TOP 100', 'INVITES', 'RSVPs', 'ATTENDEES',
-         'REGISTRANT ID', 'DATE ADDED', 'EMAIL', 'MOBILE PHONE', 'MOBILE SIGN UP', 'FIRST NAME', 'LAST NAME',
-         'ATTENDED PREVIOUS BARTENDER BALL', 'OPT IN TO FUTURE COMMUNICATION', 'PRIMARY REGISTRANT ID',
-         'BARTENDER HOW LONG', 'BARTENDER ROLE'],
-        ['My Super Place', 'YES', 'NO', '100', '99', '2', '1',
-         '01/06/2015', 'rsvp@email.com', '123456789', 'NO', 'Fulano', 'de Tal', 'no', 'NO', '1', '2 years', 'Main'],
-        ['My Super Place', 'YES', 'NO', '100', '99', '2', '1', '01/06/2015', 'rsvp@email.com', '123456789', 'NO',
-         'Fulano', 'de Tal', 'no', 'NO', '1', '2 years', 'Main']
+        ['ACCOUNT', 'JAMESON LOCALS', 'TOP 100', 'INVITES', 'RSVPs', 'ATTENDEES'],
+        ['My Super Place', 'YES', 'NO', '100', '99', '2']
       ])
     end
   end
