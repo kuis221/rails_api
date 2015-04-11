@@ -1,7 +1,7 @@
 
 #attendance-report.row-fluid.with-details-close-bar
   = resource_details_bar("You are viewing the Attendance by Neighborhood report. Click to close.")
-  
+
   .details_box.padding-top-close-bar
     #attendance-left-column.pull-left
       h3 ATTENDANCE BY NEIGHBORHOOD
@@ -69,7 +69,7 @@ javascript:
       event_dates = $('#report_event_id'),
       colorp = $('#report_color'),
       campaigns = $('#report_campaign_id');
-  
+
   campaigns.change(function(){
     event_dates.html('<option></option>');
     if (campaigns.val()) {
@@ -89,12 +89,12 @@ javascript:
         $(link).data('url', $(link).data('base-url') + '?campaign_id='+campaigns.val()+'&area_id='+areas.val()+'&event_id='+event_dates.val())
       })
       $.ajax({
-        url: '#{results_attendance_map_url(format: :js)}', 
+        url: '#{results_attendance_map_url(format: :js)}',
         method: 'GET',
         data: {
-          campaign_id: campaigns.val(), 
-          color: ($('#customize-fields').hasClass('hide') ? null : colorp.spectrum("get").toHexString()), 
-          area_id: areas.val(), 
+          campaign_id: campaigns.val(),
+          color: ($('#customize-fields').hasClass('hide') ? null : colorp.spectrum("get").toHexString()),
+          area_id: areas.val(),
           event_id: event_dates.val() },
         headers: {
           'X-User-Email': '#{User.current.email}',
