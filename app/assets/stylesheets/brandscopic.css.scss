@@ -3404,6 +3404,9 @@ body.company_users{
 
 	.campaigns-group {
 		border: 1px solid $gray-lighter;
+		.campaigns-group-body{
+			padding: 20px 0 0 20px;
+		}
 		.campaigns-group-header {
 			border-bottom: 1px solid $gray-lighter;
 			padding: 5px;
@@ -3415,7 +3418,6 @@ body.company_users{
 		margin-bottom: 20px;
 
 		.campaigns-list {
-			padding: 20px 0 0 10px;
 			width: auto;
 			.user-campaign{
 				margin-left: 0;
