@@ -25,9 +25,6 @@
             li
               a href="#" role="menuitem" data-url="#{results_data_extracts_path(format: :xls)}"
                 | Download as XLS
-            li
-              a href="#" role="menuitem" data-url="#{results_event_status_path(format: :pdf)}"
-                | Download as PDF
     .data-extract-box
       table#extract-table.data-extract-table
         = render_table_cols resource.columns, process_step, resource.default_sort_by, resource.default_sort_dir
