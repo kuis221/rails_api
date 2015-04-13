@@ -22,7 +22,7 @@ class RsvpReportMailer < ActionMailer::Base
 
     files.each do |path|
       attachments[File.basename(path)] = File.read(path)
-    end
+    end if files
 
     mail to: recipients, subject: 'RSVP Report Synch – Successfully Completed'
   end
