@@ -38,24 +38,29 @@ class InvitesController < InheritedResources::Base
 
   def collection_to_csv
     for_event = parent.is_a?(Event)
+    for_market = parent.is_a?(Event) &&
+                 parent.campaign.enabled_modules.include?('attendance') &&
+                 Invite::ATTENDANCE_DISPLAY_BY_TYPES.try(:[], parent.campaign.module_setting('attendance', 'attendance_display')) == 'market'
     CSV.generate do |csv|
-      cols = for_event ? ['ACCOUNT'] : ['EVENT DATE', 'CAMPAIGN']
-      cols.concat ['JAMESON LOCALS', 'TOP 100', 'INVITES', 'RSVPs', 'ATTENDEES']
+      name_col = for_market ? ['MARKET'] : ['ACCOUNT', 'JAMESON LOCALS', 'TOP 100']
+      cols = for_event ? name_col : ['EVENT DATE', 'CAMPAIGN']
+      cols.concat ['INVITES', 'RSVPs', 'ATTENDEES']
       cols.concat ['REGISTRANT ID', 'DATE ADDED', 'EMAIL',
                    'MOBILE PHONE', 'MOBILE SIGN UP', 'FIRST NAME', 'LAST NAME',
                    'ATTENDED PREVIOUS BARTENDER BALL', 'OPT IN TO FUTURE COMMUNICATION',
                    'PRIMARY REGISTRANT ID', 'BARTENDER HOW LONG', 'BARTENDER ROLE'] if export_individual?
       csv << cols
       each_collection_item do |item|
-        cols = (for_event ? [item.place_name] : [item.event_date, item.campaign_name])
-        cols.concat [item.jameson_locals, item.top_venue, item.invitees, item.rsvps_count, item.attendees]
-        cols.concat invividal_data(item) if export_individual?
+        name_val = for_market ? [item.area.try(:name)] : [item.place_name, item.jameson_locals, item.top_venue]
+        cols = (for_event ? name_val : [item.event_date, item.campaign_name])
+        cols.concat [item.invitees, item.rsvps_count, item.attendees]
+        cols.concat individual_data(item) if export_individual?
         csv << cols
       end
     end
   end
 
-  def invividal_data(rsvp)
+  def individual_data(rsvp)
     [rsvp.registrant_id, rsvp.date_added, rsvp.email, rsvp.mobile_phone, rsvp.mobile_signup,
      rsvp.first_name, rsvp.last_name, rsvp.attended_previous_bartender_ball,
      rsvp.opt_in_to_future_communication, rsvp.primary_registrant_id, rsvp.bartender_how_long,
