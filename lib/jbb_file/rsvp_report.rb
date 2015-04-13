@@ -1,6 +1,7 @@
 module JbbFile
   class RsvpReport < JbbFile::Base
     COLUMNS = {
+      campaign: 'Campaign',
       market: 'Market',
       final_date: 'FinalDate',
       event_date: 'EventDate',
@@ -10,7 +11,7 @@ module JbbFile
       mobile_phone: 'MobilePhone',
       mobile_signup: 'MobileSignup',
       first_name: 'FirstName',
-      last_name: 'lastName',
+      last_name: 'LastName',
       account_name: 'AccountName',
       attended_previous_bartender_ball: 'AttendedPreviousBartenderBall',
       opt_in_to_future_communication: 'OptInToFutureCommunication',
@@ -21,11 +22,9 @@ module JbbFile
 
     INVITE_COLUMNS = [:market, :final_date]
 
-    RSVP_COLUMNS = COLUMNS.keys - INVITE_COLUMNS - [:account_name, :event_date]
+    RSVP_COLUMNS = COLUMNS.keys - INVITE_COLUMNS - [:account_name, :event_date, :campaign]
 
     VALID_COLUMNS = COLUMNS.values
-
-    CAMPAIGN_ID = 210
 
     attr_accessor :created, :failed, :multiple_events
 
@@ -35,6 +34,9 @@ module JbbFile
       self.ftp_password  = ENV['TDLINX_FTP_PASSWORD']
       self.ftp_folder    = ENV['RSVP_REPORT_FTP_FOLDER']
       self.invalid_files = []
+
+      @areas = {}
+      @campaigns = {}
 
       self.mailer = RsvpReportMailer
     end
@@ -52,12 +54,16 @@ module JbbFile
             each_sheet(file[:excel]) do |sheet|
               sheet.each(COLUMNS) do |row|
                 next if row[:final_date] == 'FinalDate'
-                event = find_event_for_row(row)
-                venue = find_venue(row) if event
-                if venue && event
+                campaign = find_campaign(row)
+                market_level = campaign.module_setting('attendance', 'attendance_display') == '2' if campaign
+                event = find_event_for_row(campaign, row) if campaign
+                venue = find_venue(row) unless market_level || event.nil?
+                area = find_area(campaign, row) if event
+                if (market_level || venue) && event && area
+                  invite_scope_params = market_level ? { area_id: area.id } : {venue_id: venue.id}
                   invite = event.invites.create_with(
-                    row.select { |k, _| INVITE_COLUMNS.include?(k) }.merge(venue_id: venue.id)
-                  ).find_or_create_by(venue_id: venue.id)
+                    row.select { |k, _| INVITE_COLUMNS.include?(k) }.merge(invite_scope_params)
+                  ).find_or_create_by(invite_scope_params)
                   if invite.rsvps.create(row.select { |k, _| RSVP_COLUMNS.include?(k) })
                     invite.increment!(:rsvps_count)
                   end
@@ -87,9 +93,14 @@ module JbbFile
       @areas[name]
     end
 
-    def find_event_for_row(row)
+    def find_event_for_row(campaign, row)
       @events ||= {}
-      date = Timeliness.parse(row[:event_date].split[0], format: 'm/d/yyyy', zone: :current)
+      date =
+        if row[:event_date].is_a?(String)
+          Timeliness.parse(row[:event_date].split[0], format: 'm/d/yyyy', zone: :current)
+        else
+          row[:event_date]
+        end
       date_str = date.to_date.to_s(:db)
       scope = campaign.events.where('events.local_start_at::date=?', date_str).active
       return @events[date_str] unless @events[date_str].nil?
@@ -98,11 +109,11 @@ module JbbFile
         return
       end
       @events[date_str] ||= scope.first
-      @events[date_str] ||= create_event(date, row[:market])
+      @events[date_str] ||= create_event(campaign, date, row[:market])
       @events[date_str]
     end
 
-    def create_event(date, city)
+    def create_event(campaign, date, city)
       place = find_city(city)
       return unless place.present?
       event = campaign.events.create(
@@ -138,6 +149,16 @@ module JbbFile
       Venue.find_or_create_by(company_id: COMPANY_ID, place_id: place.id)
     end
 
+    def find_area(campaign, attrs)
+      return unless attrs[:market]
+      @areas[attrs[:market]] ||= campaign.areas.where('lower(name)=?', attrs[:market].downcase.strip).first
+    end
+
+    def find_campaign(attrs)
+      return unless attrs[:campaign]
+      @campaigns[attrs[:campaign]] ||= Campaign.where(company_id: COMPANY_ID).where('lower(name)=?', attrs[:campaign].downcase.strip).first
+    end
+
     def find_place_in_database(name, city_or_state)
       a = area(city_or_state)
       base = Place.where('similarity(places.name, :name) > 0.5', name: name)
@@ -157,10 +178,6 @@ module JbbFile
     rescue => e
       p "Error in request: #{e.message}"
       nil
-    end
-
-    def campaign
-      @campaign ||= Company.find(COMPANY_ID).campaigns.find(CAMPAIGN_ID)
     end
   end
 end
