@@ -1558,7 +1558,7 @@ AttendanceField = Module.extend {
 			name: 'Attendance'
 		}, attributes)
 
-		@attributes.settings ||= {}
+		@attributes.settings ||= { attendance_display: 1 }
 
 		@
 
@@ -1581,6 +1581,14 @@ AttendanceField = Module.extend {
 				).val(@attributes.settings.attendance_display).on 'change', (e) =>
 					input = $(e.target)
 					@attributes.settings.attendance_display = input.val()
+					@form.setModified()
+					true
+			],
+			$('<div class="control-group">').append [
+				$('<label class="control-label" for="attendance_api_key">').text('KBMG API Key'),
+				$('<input id="attendance_api_key" name="api_key" type="text">').val(@attributes.settings.api_key).on 'keyup', (e) =>
+					input = $(e.target)
+					@attributes.settings.api_key = input.val()
 					@form.setModified()
 					true
 			]
