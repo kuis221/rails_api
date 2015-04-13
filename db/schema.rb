@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150408211531) do
+ActiveRecord::Schema.define(version: 20150411172402) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -65,10 +65,12 @@ ActiveRecord::Schema.define(version: 20150408211531) do
   create_table "activity_types", force: true do |t|
     t.string   "name"
     t.text     "description"
-    t.boolean  "active",      default: true
+    t.boolean  "active",        default: true
     t.integer  "company_id"
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
   end
 
   add_index "activity_types", ["company_id"], :name => "index_activity_types_on_company_id"
@@ -342,8 +344,10 @@ ActiveRecord::Schema.define(version: 20150408211531) do
     t.string   "state"
     t.string   "city"
     t.string   "zip_code"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
   end
 
   create_table "custom_filters", force: true do |t|
@@ -736,7 +740,7 @@ ActiveRecord::Schema.define(version: 20150408211531) do
     t.string  "city",     limit: 64
     t.string  "name",     limit: 64
     t.decimal "regionid"
-    t.spatial "geog",     limit: {:srid=>4326, :type=>"multi_polygon", :geographic=>true}
+    t.spatial "geog",     limit: {:srid=>0, :type=>"multi_polygon"}
   end
 
   add_index "neighborhoods", ["geog"], :name => "index_neighborhoods_on_geog", :spatial => true
@@ -779,7 +783,7 @@ ActiveRecord::Schema.define(version: 20150408211531) do
     t.string   "name"
     t.string   "reference",              limit: 400
     t.string   "place_id",               limit: 100
-    t.string   "types"
+    t.string   "types_old"
     t.string   "formatted_address"
     t.string   "street_number"
     t.string   "route"
@@ -800,6 +804,7 @@ ActiveRecord::Schema.define(version: 20150408211531) do
     t.spatial  "lonlat",                 limit: {:srid=>4326, :type=>"point", :geographic=>true}
     t.integer  "td_linx_confidence"
     t.integer  "merged_with_place_id"
+    t.string   "types",                                                                                        array: true
   end
 
   add_index "places", ["city"], :name => "index_places_on_city"
@@ -841,12 +846,14 @@ ActiveRecord::Schema.define(version: 20150408211531) do
 
   create_table "roles", force: true do |t|
     t.string   "name"
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
     t.integer  "company_id"
-    t.boolean  "active",      default: true
+    t.boolean  "active",        default: true
     t.text     "description"
-    t.boolean  "is_admin",    default: false
+    t.boolean  "is_admin",      default: false
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
   end
 
   create_table "satisfaction_surveys", force: true do |t|
@@ -1011,6 +1018,8 @@ ActiveRecord::Schema.define(version: 20150408211531) do
     t.boolean  "score_dirty",                                   default: false
     t.boolean  "jameson_locals",                                default: false
     t.boolean  "top_venue",                                     default: false
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
   end
 
   add_index "venues", ["company_id", "place_id"], :name => "index_venues_on_company_id_and_place_id", :unique => true

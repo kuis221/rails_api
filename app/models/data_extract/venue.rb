@@ -21,18 +21,22 @@
 
 class DataExtract::Venue < DataExtract
   define_columns name: 'name', 
-                 venues_types: 'places.types', 
+                 venues_types: 'array_to_string(places.types, \', \')',
                  street: 'trim(places.street_number || \' \' || places.route)', 
                  city: 'places.city', 
                  state_name: 'places.state',
                  country_name: 'places.country',
                  zipcode: 'places.zipcode', 
                  td_linx_code: 'places.td_linx_code', 
+                 created_by: 'trim(users.first_name || \' \' || users.last_name)',
                  created_at: proc { "to_char(venues.created_at, 'MM/DD/YYYY')" }
 
   def add_joins_to_scope(s)
     if (columns & ['city', 'street', 'state_name', 'country_name', 'zipcode', 'td_linx_code']).any? || filters.present? && filters['area'].present?
       s = s.joins('LEFT JOIN places ON venues.place_id=places.id')
+    end
+    if columns.include?('created_by') || filters.present? && filters['user'].present?
+      s = s.joins('LEFT JOIN users ON venues.created_by_id=users.id')
     end
     s
   end

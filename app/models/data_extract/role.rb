@@ -22,7 +22,15 @@
 class DataExtract::Role < DataExtract
   define_columns name: 'name',
                  description: 'description', 
+                 created_by: 'trim(users.first_name || \' \' || users.last_name)', 
                  created_at: proc { "to_char(roles.created_at, 'MM/DD/YYYY')" }
+
+  def add_joins_to_scope(s)
+    if columns.include?('created_by') || filters.present? && filters['user'].present?
+      s = s.joins('LEFT JOIN users ON roles.created_by_id=users.id')
+    end
+    s
+  end
 
   def total_results
     Role.connection.select_value("SELECT COUNT(*) FROM (#{base_scope.select(*selected_columns_to_sql).to_sql}) sq").to_i
@@ -30,7 +38,7 @@ class DataExtract::Role < DataExtract
 
   def add_filter_conditions_to_scope(s)
     return s if filters.nil? || filters.empty?
-    s = s.where(active: filters['active_state'].map { |f| f == 'active' ? true : false }) if filters['active_state'].present?
+    s = s.where(active: filters['status'].map { |f| f.downcase == 'active' ? true : false }) if filters['status'].present?
     s
   end
 end

@@ -27,6 +27,9 @@
 require 'normdist'
 
 class Venue < ActiveRecord::Base
+  # Created_by_id and updated_by_id fields
+  track_who_does_it
+
   scoped_to_company
 
   belongs_to :place
