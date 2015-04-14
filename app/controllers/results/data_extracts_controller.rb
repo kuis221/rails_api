@@ -4,6 +4,7 @@ class Results::DataExtractsController < InheritedResources::Base
   helper_method :return_path, :process_step, :resource, :form_action, :collection_count
 
   before_action :initialize_resource, only: [:new, :preview, :show, :items]
+  respond_to :xls, only: :export
 
   def new
   end
@@ -14,6 +15,9 @@ class Results::DataExtractsController < InheritedResources::Base
 
   def available_fields
     render layout: false
+  end
+
+  def export
   end
 
   def create
