@@ -211,7 +211,6 @@ Brandscopic::Application.routes.draw do
       get :preview, on: :collection
       get :available_fields, on: :collection
       get :items, on: :collection
-      get :export, on: :collection
     end
 
     # For The KPI report
