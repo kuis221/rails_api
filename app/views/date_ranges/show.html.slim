@@ -21,7 +21,7 @@
       = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
 
   #dates.details_box
-    h3= "DATES"
+    h5.module-title= "DATES"
 
     #date_range-dates-list
       = render 'date_items'
