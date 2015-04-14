@@ -18,6 +18,8 @@
 #  bartender_role                   :string(255)
 #  created_at                       :datetime
 #  updated_at                       :datetime
+#  date_of_birth                    :string(255)
+#  zip_code                         :string(255)
 #
 
 class InviteRsvp < ActiveRecord::Base

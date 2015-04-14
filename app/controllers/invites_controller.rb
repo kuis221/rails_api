@@ -48,7 +48,8 @@ class InvitesController < InheritedResources::Base
       cols.concat ['REGISTRANT ID', 'DATE ADDED', 'EMAIL',
                    'MOBILE PHONE', 'MOBILE SIGN UP', 'FIRST NAME', 'LAST NAME',
                    'ATTENDED PREVIOUS BARTENDER BALL', 'OPT IN TO FUTURE COMMUNICATION',
-                   'PRIMARY REGISTRANT ID', 'BARTENDER HOW LONG', 'BARTENDER ROLE'] if export_individual?
+                   'PRIMARY REGISTRANT ID', 'BARTENDER HOW LONG', 'BARTENDER ROLE',
+                   'DATE OF BIRTH', 'ZIP CODE'] if export_individual?
       csv << cols
       each_collection_item do |item|
         name_val = for_market ? [item.area.try(:name)] : [item.place_name, item.jameson_locals, item.top_venue]
@@ -64,7 +65,7 @@ class InvitesController < InheritedResources::Base
     [rsvp.registrant_id, rsvp.date_added, rsvp.email, rsvp.mobile_phone, rsvp.mobile_signup,
      rsvp.first_name, rsvp.last_name, rsvp.attended_previous_bartender_ball,
      rsvp.opt_in_to_future_communication, rsvp.primary_registrant_id, rsvp.bartender_how_long,
-     rsvp.bartender_role]
+     rsvp.bartender_role, rsvp.date_of_birth, rsvp.zip_code]
   end
 
   def collection

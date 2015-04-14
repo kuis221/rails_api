@@ -99,7 +99,7 @@ RSpec.describe InvitesController, type: :controller do
         ['MARKET', 'INVITES', 'RSVPs', 'ATTENDEES',
          'REGISTRANT ID', 'DATE ADDED', 'EMAIL', 'MOBILE PHONE', 'MOBILE SIGN UP', 'FIRST NAME', 'LAST NAME',
          'ATTENDED PREVIOUS BARTENDER BALL', 'OPT IN TO FUTURE COMMUNICATION', 'PRIMARY REGISTRANT ID',
-         'BARTENDER HOW LONG', 'BARTENDER ROLE']
+         'BARTENDER HOW LONG', 'BARTENDER ROLE', 'DATE OF BIRTH', 'ZIP CODE']
       ])
     end
 
@@ -153,11 +153,11 @@ RSpec.describe InvitesController, type: :controller do
         ['MARKET', 'INVITES', 'RSVPs', 'ATTENDEES',
          'REGISTRANT ID', 'DATE ADDED', 'EMAIL', 'MOBILE PHONE', 'MOBILE SIGN UP', 'FIRST NAME', 'LAST NAME',
          'ATTENDED PREVIOUS BARTENDER BALL', 'OPT IN TO FUTURE COMMUNICATION', 'PRIMARY REGISTRANT ID',
-         'BARTENDER HOW LONG', 'BARTENDER ROLE'],
+         'BARTENDER HOW LONG', 'BARTENDER ROLE', 'DATE OF BIRTH', 'ZIP CODE'],
         ['California', '100', '99', '2', '1',
-         '01/06/2015', 'rsvp@email.com', '123456789', 'NO', 'Fulano', 'de Tal', 'no', 'NO', '1', '2 years', 'Main'],
+         '01/06/2015', 'rsvp@email.com', '123456789', 'NO', 'Fulano', 'de Tal', 'no', 'NO', '1', '2 years', 'Main', '3/2/1977', '90210'],
         ['California', '100', '99', '2', '1', '01/06/2015', 'rsvp@email.com', '123456789', 'NO',
-         'Fulano', 'de Tal', 'no', 'NO', '1', '2 years', 'Main']
+         'Fulano', 'de Tal', 'no', 'NO', '1', '2 years', 'Main', '3/2/1977', '90210']
       ])
     end
 
