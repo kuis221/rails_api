@@ -116,26 +116,6 @@ feature 'Tasks', js: true, search: true do
       end
     end
 
-    feature 'tasks counters' do
-      scenario 'filtering list will update the counters' do
-        create(:late_task, company_user: company_user)
-        create(:assigned_task, due_at: 1.week.from_now, company_user: company_user)
-        create(:completed_task, company_user: company_user)
-        create(:uncompleted_task, due_at: nil, company_user: company_user)
-
-        Sunspot.commit
-
-        visit mine_tasks_path
-
-        expect(task_counters).to have_content '3 INCOMPLETE'
-        expect(task_counters).to have_content '1 LATE'
-
-        filter_section('TASK STATUS').unicheck 'Complete'
-
-        expect(task_counters).to have_content '0 INCOMPLETE'
-        expect(task_counters).to have_content '0 LATE'
-      end
-    end
   end
 
   scenario 'allows to create a new task' do
@@ -148,9 +128,6 @@ feature 'Tasks', js: true, search: true do
       select_from_chosen('Test User', from: 'Assigned To')
       click_js_button 'Submit'
     end
-
-    expect(page).to have_text('0 INCOMPLETE')
-    expect(page).to have_text('1 LATE')
 
     within resource_item do
       expect(page).to have_content('Do the math homework')
@@ -211,47 +188,6 @@ feature 'Tasks', js: true, search: true do
          { section: 'STAFF', item: user.full_name },
          { section: 'TASK STATUS', item: 'Complete' },
          { section: 'ACTIVE STATE', item: 'Inactive' }]
-      end
-    end
-
-    feature 'tasks counters' do
-      scenario 'filtering list will update the counters' do
-        event = create(:event, campaign: create(:campaign, company: company))
-        team_member = create(:company_user, company: company)
-        event.users << [team_member, company_user]
-        create(:late_task, company_user: team_member, event: event)
-        create(:assigned_task, due_at: 1.week.from_now, company_user: team_member, event: event)
-        create(:completed_task, company_user: team_member, event: event)
-        create(:uncompleted_task, due_at: nil, company_user: team_member, event: event)
-        create(:unassigned_task, due_at: nil, event: event)
-
-        Sunspot.commit
-
-        visit my_teams_tasks_path
-
-        expect(task_counters).to have_content '1 UNASSIGNED'
-        expect(task_counters).to have_content '4 INCOMPLETE'
-        expect(task_counters).to have_content '1 LATE'
-
-        add_filter 'TASK STATUS', 'Complete'
-
-        expect(task_counters).to have_content '0 UNASSIGNED'
-        expect(task_counters).to have_content '0 INCOMPLETE'
-        expect(task_counters).to have_content '0 LATE'
-
-        remove_filter 'Complete'
-        add_filter 'TASK STATUS', 'Incomplete'
-
-        expect(task_counters).to have_content '1 UNASSIGNED'
-        expect(task_counters).to have_content '4 INCOMPLETE'
-        expect(task_counters).to have_content '1 LATE'
-
-        remove_filter 'Incomplete'
-        add_filter 'TASK STATUS', 'Late'
-
-        expect(task_counters).to have_content '0 UNASSIGNED'
-        expect(task_counters).to have_content '1 INCOMPLETE'
-        expect(task_counters).to have_content '1 LATE'
       end
     end
   end
@@ -342,10 +278,6 @@ feature 'Tasks', js: true, search: true do
       end
       ensure_modal_was_closed
     end
-  end
-
-  def task_counters
-    find('.task-counter-bar')
   end
 
   def tasks_list

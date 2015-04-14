@@ -82,7 +82,7 @@
 
   - unless viewing_profile?
     #user-places.details_box
-      h3 PLACES
+      h5.module-title PLACES
       #company_user-areas-list
        = render partial: 'company_users/area', collection: resource.areas.order('areas.name ASC')
 
@@ -94,7 +94,7 @@
 
   - unless viewing_profile?
     #user-campaigns.details_box
-      h3 CAMPAIGNS
+      h5.module-title CAMPAIGNS
 
       = render 'campaigns'
 

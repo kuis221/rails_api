@@ -4,15 +4,14 @@ module ApplicationHelper
   def present(model, format = :html)
     @presenters ||= {}
     format = format.to_s.capitalize
-    class_name = "#{model.class}Presenter" if Kernel.const_defined?("#{model.class}Presenter")
-    class_name = "#{format}::#{model.class}Presenter" if Kernel.const_defined?("#{format}::#{model.class}Presenter")
-    return model unless class_name
-    # cache object so we dont create a new object when interting through many objects
+    @presenters[model.class.to_s] ||= "#{format}::#{model.class}Presenter".constantize.new(model, self) rescue nil
+    @presenters[model.class.to_s] ||= "#{model.class}Presenter".constantize.new(model, self) rescue nil
+    return model unless @presenters[model.class.to_s]
+    # cache object so we dont create a new object when interacting through many objects
     # for example, when exporting thousands of records
-    @presenters[class_name] ||= class_name.constantize.new(model, self)
-    @presenters[class_name].model = model
-    return @presenters[class_name] unless block_given?
-    yield(presenter)
+    @presenters[model.class.to_s].model = model
+    return @presenters[model.class.to_s] unless block_given?
+    yield(@presenters[model.class.to_s])
   end
 
   def place_address(place, link_name = false, line_separator = '<br />', name_separator = '<br />')

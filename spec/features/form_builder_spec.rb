@@ -1185,7 +1185,7 @@ RSpec.shared_examples 'a fieldable element that accept modules' do
     find('.fields-wrapper .accordion-toggle', text: 'Modules').click
     find('.fields-wrapper .accordion-toggle', text: 'Fields').click # Hide fields
 
-    # Wait for accordeon effect to complate
+    # Wait for accordeon effect to complete
     within('.fields-wrapper') do
       expect(page).to have_no_content('Dropdown')
     end
@@ -1200,12 +1200,51 @@ RSpec.shared_examples 'a fieldable element that accept modules' do
     # the module should be available again in the list of modules
     expect(find('.fields-wrapper')).to have_content('Gallery')
   end
+
+  scenario 'add and configure an Attendance module' do
+    visit fieldable_path
+    expect(page).to have_selector('h2', text: fieldable.name)
+    find('.fields-wrapper .accordion-toggle', text: 'Modules').click
+    find('.fields-wrapper .accordion-toggle', text: 'Fields').click # Hide fields
+
+    # Wait for accordeon effect to complate
+    within('.fields-wrapper') do
+      expect(page).to have_no_content('Dropdown')
+    end
+
+    module_field('Attendance').drag_to form_builder
+
+    within('.fields-wrapper') do
+      expect(page).to have_no_content('Attendance')
+    end
+
+    expect(find('.form-wrapper')).to have_selector('.form-section.module[data-type=Attendance]')
+
+    within form_field_settings_for(module_section('Attendance')) do
+      expect(find_field('Display attendance by', visible: false).value).to eql '1'
+      select_from_chosen 'Market', from: 'Display attendance by'
+      fill_in 'KBMG API Key', with: 'SOME-API-TOKEN'
+    end
+
+    click_js_button 'Save'
+    wait_for_ajax
+    expect(fieldable.reload.enabled_modules).to include('attendance')
+
+    visit fieldable_path
+
+    within form_field_settings_for(module_section('Attendance')) do
+      expect(find_field('Display attendance by', visible: false).value).to eql '2'
+      expect(find_field('KBMG API Key').value).to eql 'SOME-API-TOKEN'
+    end
+  end
 end
 
 feature 'Campaign Form Builder', js: true do
-  let(:user) { create(:user, company_id: create(:company).id, role_id: create(:role).id) }
+  before { Company.destroy_all }
 
-  let(:company) {  user.companies.first }
+  let(:user) { create(:user, company_id: company.id, role_id: create(:role).id) }
+
+  let(:company) {  create(:company) }
 
   before { sign_in user }
 
@@ -1220,6 +1259,7 @@ feature 'Campaign Form Builder', js: true do
   end
 
   it_behaves_like 'a fieldable element that accept modules' do
+    let(:company) { create(:company, id: 2) }
     let(:fieldable) { create(:campaign, company: company) }
     let(:fieldable_path) { campaign_path(fieldable) }
   end

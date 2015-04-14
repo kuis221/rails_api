@@ -44,13 +44,12 @@ class Activity < ActiveRecord::Base
 
   after_initialize :set_default_values
 
-  delegate :company_id, :company, :place, to: :activitable, allow_nil: true
-  delegate :td_linx_code, :name, :city, :state, :zipcode, :street_number, :route,
+  delegate :company_id, :company, :place, :place_id, to: :activitable, allow_nil: true
+  delegate :td_linx_code, :name, :city, :state, :zipcode, :street_number, :route, :formatted_address,
            to: :place, allow_nil: true, prefix: true
   delegate :name, to: :campaign, allow_nil: true, prefix: true
   delegate :full_name, to: :company_user, allow_nil: true, prefix: true
   delegate :name, :description, to: :activity_type, allow_nil: true, prefix: true
-  delegate :place, :place_id, to: :activitable, allow_nil: true
 
   accepts_nested_attributes_for :results, allow_destroy: true
 

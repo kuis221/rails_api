@@ -1558,7 +1558,7 @@ AttendanceField = Module.extend {
 			name: 'Attendance'
 		}, attributes)
 
-		@attributes.settings ||= {}
+		@attributes.settings ||= { attendance_display: 1 }
 
 		@
 
@@ -1570,8 +1570,29 @@ AttendanceField = Module.extend {
 				$('<img src="<%= asset_path('attendance.svg') %>" width="235" height="337" />')
 			)
 		]
+
 	attributesForm: () ->
-		false
+		[
+			$('<h4>').text('Module Settings'),
+			$('<div class="control-group">').append [
+				$('<label class="control-label" for="attendance_display_by">').text('Display attendance by'),
+				$('<select id="attendance_display_by" name="attendance_display">').append(
+					$.map [{id: 1, text: 'Venue'}, {id: 2, text: 'Market'}], (option) => $('<option>').val(option.id).text(option.text).attr('selected', @attributes.settings.attendance_display is option.id )
+				).val(@attributes.settings.attendance_display).on 'change', (e) =>
+					input = $(e.target)
+					@attributes.settings.attendance_display = input.val()
+					@form.setModified()
+					true
+			],
+			$('<div class="control-group">').append [
+				$('<label class="control-label" for="attendance_api_key">').text('KBMG API Key'),
+				$('<input id="attendance_api_key" name="api_key" type="text">').val(@attributes.settings.api_key).on 'keyup', (e) =>
+					input = $(e.target)
+					@attributes.settings.api_key = input.val()
+					@form.setModified()
+					true
+			]
+		]
 }
 
 applyFormUiFormatsTo = (element) ->
