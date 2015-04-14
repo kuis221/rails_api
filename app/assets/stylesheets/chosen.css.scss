@@ -288,7 +288,7 @@ select.chosen-enabled{
 			&.search-choice {
 				position: relative;
 				margin: 1px 0 3px 5px;
-				padding: 4px 20px 4px 10px;
+				padding: 4px 22px 4px 10px;
 				border: 1px solid #aaa;
 				border-radius: 12px;
 				background-color: $brand;
@@ -297,18 +297,18 @@ select.chosen-enabled{
 				line-height: 13px;
 				cursor: default;
 				.search-choice-close {
-					color: $gray-light;
+					color: $white;
 					display: block;
 					font-size: 10px;
 					position: absolute;
 					top: 5px;
-					right: 5px;
+					right: 7px;
 					&:after{
-						content: "\e019";
+						content: "\e616";
 						font-family: 'icons';
 					}
 					&:hover {
-						background-position: -48px -10px;
+						text-decoration: none;
 					}
 				}
 			}
