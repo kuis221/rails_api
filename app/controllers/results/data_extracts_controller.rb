@@ -1,10 +1,14 @@
 class Results::DataExtractsController < InheritedResources::Base
+  include ExportableController
+
   respond_to :js, only: [:new, :create]
 
   helper_method :return_path, :process_step, :resource, :form_action, :collection_count
 
   before_action :initialize_resource, only: [:new, :preview, :show, :items]
-  respond_to :xls, only: :export
+  before_action :enqueue_export, only: [:new, :show]
+
+  set_callback :export, :initialize_resource
 
   def new
   end
@@ -15,9 +19,6 @@ class Results::DataExtractsController < InheritedResources::Base
 
   def available_fields
     render layout: false
-  end
-
-  def export
   end
 
   def create
@@ -37,6 +38,26 @@ class Results::DataExtractsController < InheritedResources::Base
   end
 
   protected
+
+  def collection_to_csv
+    CSV.generate do |csv|
+      csv << resource.columns.map { |c| I18n.t("data_exports.fields.#{c}") }
+      each_extract_page do |page|
+        page.each { |row| csv << row }
+      end
+    end
+  end
+
+  def each_extract_page
+    items_per_page = 100
+    total_pages = (collection_count / items_per_page.to_f).ceil
+    (1..(total_pages)).each do |page|
+      yield resource.rows(page)
+      @_export.update_column(
+        :progress, (page * 100 / total_pages).round) unless @_export.nil?
+
+    end
+  end
 
   def initialize_resource
     resource.current_user = current_company_user

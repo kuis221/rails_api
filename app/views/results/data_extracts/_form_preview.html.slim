@@ -23,8 +23,8 @@
             i.icon-arrow-down-small
           ul#download-status-btn.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
             li
-              a href="#" role="menuitem" data-url="#{export_results_data_extracts_path(format: :xls)}"
-                | Download as XLS
+              a.xlsx-download-link href="#" role="menuitem" data-url="#{new_results_data_extract_path(format: :csv)}"
+                | Download as CSV
     .data-extract-box
       table#extract-table.data-extract-table
         = render_table_cols resource.columns, process_step, resource.default_sort_by, resource.default_sort_dir
