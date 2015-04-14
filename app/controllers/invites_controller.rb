@@ -44,18 +44,24 @@ class InvitesController < InheritedResources::Base
     CSV.generate do |csv|
       name_col = for_market ? ['MARKET'] : ['ACCOUNT', 'JAMESON LOCALS', 'TOP 100']
       cols = for_event ? name_col : ['EVENT DATE', 'CAMPAIGN']
-      cols.concat ['INVITES', 'RSVPs', 'ATTENDEES']
-      cols.concat ['REGISTRANT ID', 'DATE ADDED', 'EMAIL',
+      if export_individual?
+        cols.concat ['REGISTRANT ID', 'DATE ADDED', 'EMAIL',
                    'MOBILE PHONE', 'MOBILE SIGN UP', 'FIRST NAME', 'LAST NAME',
                    'ATTENDED PREVIOUS BARTENDER BALL', 'OPT IN TO FUTURE COMMUNICATION',
                    'PRIMARY REGISTRANT ID', 'BARTENDER HOW LONG', 'BARTENDER ROLE',
-                   'DATE OF BIRTH', 'ZIP CODE'] if export_individual?
+                   'DATE OF BIRTH', 'ZIP CODE']
+      else
+        cols.concat ['INVITES', 'RSVPs', 'ATTENDEES']
+      end
       csv << cols
       each_collection_item do |item|
         name_val = for_market ? [item.area.try(:name)] : [item.place_name, item.jameson_locals, item.top_venue]
         cols = (for_event ? name_val : [item.event_date, item.campaign_name])
-        cols.concat [item.invitees, item.rsvps_count, item.attendees]
-        cols.concat individual_data(item) if export_individual?
+        if export_individual?
+          cols.concat individual_data(item)
+        else
+          cols.concat [item.invitees, item.rsvps_count, item.attendees]
+        end
         csv << cols
       end
     end
