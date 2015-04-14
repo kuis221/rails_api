@@ -209,6 +209,7 @@ Brandscopic::Application.routes.draw do
 
     resources :data_extracts, only: [:new, :create] do
       get :preview, on: :collection
+      get :save, on: :collection
       get :available_fields, on: :collection
       get :items, on: :collection
     end

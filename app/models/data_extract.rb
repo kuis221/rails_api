@@ -27,6 +27,8 @@ class DataExtract < ActiveRecord::Base
   serialize :filters
   serialize :params
 
+  validates :name, presence: true
+
   DEFAULT_LIMIT = 30
 
   attr_accessor :current_user
