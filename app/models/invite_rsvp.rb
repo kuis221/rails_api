@@ -18,12 +18,14 @@
 #  bartender_role                   :string(255)
 #  created_at                       :datetime
 #  updated_at                       :datetime
+#  date_of_birth                    :string(255)
+#  zip_code                         :string(255)
 #
 
 class InviteRsvp < ActiveRecord::Base
   belongs_to :invite
 
   delegate :place_name, :campaign_name, :invitees, :rsvps_count, :attendees,
-           :jameson_locals?, :top_venue?, :event,
+           :jameson_locals?, :top_venue?, :event, :area,
            to: :invite
 end

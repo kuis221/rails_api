@@ -18,8 +18,8 @@ ActiveRecord::Schema.define(version: 20150411172402) do
   enable_extension "hstore"
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
-  enable_extension "tablefunc"
   enable_extension "postgis"
+  enable_extension "tablefunc"
 
   create_table "active_admin_comments", force: true do |t|
     t.string   "resource_id",   null: false
@@ -623,6 +623,8 @@ ActiveRecord::Schema.define(version: 20150411172402) do
     t.string   "bartender_role"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "date_of_birth"
+    t.string   "zip_code"
   end
 
   add_index "invite_rsvps", ["invite_id"], :name => "index_invite_rsvps_on_invite_id"
@@ -740,7 +742,7 @@ ActiveRecord::Schema.define(version: 20150411172402) do
     t.string  "city",     limit: 64
     t.string  "name",     limit: 64
     t.decimal "regionid"
-    t.spatial "geog",     limit: {:srid=>0, :type=>"multi_polygon"}
+    t.spatial "geog",     limit: {:srid=>4326, :type=>"multi_polygon", :geographic=>true}
   end
 
   add_index "neighborhoods", ["geog"], :name => "index_neighborhoods_on_geog", :spatial => true
@@ -922,6 +924,19 @@ ActiveRecord::Schema.define(version: 20150411172402) do
 
   add_index "tasks", ["company_user_id"], :name => "index_tasks_on_company_user_id"
   add_index "tasks", ["event_id"], :name => "index_tasks_on_event_id"
+
+  create_table "tdlinx_codes", id: false, force: true do |t|
+    t.string "td_linx_code", limit: nil
+    t.string "name",         limit: nil
+    t.string "street",       limit: nil
+    t.string "city",         limit: nil
+    t.string "state",        limit: nil
+    t.string "zipcode",      limit: nil
+  end
+
+  add_index "tdlinx_codes", ["name"], :name => "td_linx_full_name_trgm_idx"
+  add_index "tdlinx_codes", ["state"], :name => "td_linx_code_state_idx"
+  add_index "tdlinx_codes", ["street"], :name => "td_linx_full_street_trgm_idx"
 
   create_table "teamings", force: true do |t|
     t.integer "team_id"
