@@ -5549,12 +5549,8 @@ body.campaigns{
 .edition-links{
 	display: inline-block;
 	margin: 6px 0 0 20px;
-	.icon-edit, .icon-rounded-disable{
-		color: $glyphs-color;
+	i{
 		font-size: 18px;
-		/*&:hover{
-			color: $glyphs-color;
-		}*/
 		&:first-child{
 			margin-right: 10px;
 		}
