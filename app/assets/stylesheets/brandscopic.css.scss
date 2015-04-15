@@ -5528,23 +5528,36 @@ body.campaigns{
 		}
 	}
 	h2{
-		//margin-top: 10px;
-		//margin-bottom: 30px;
 		&.special{
-			margin-top: 45px;
+			//margin-top: 45px;
 		}
 	}
 	h5{
 		margin: 0 0 30px;
 	}
-	.links-data{
-		margin: 20px 0 0 30px;
-	}
-
 	.alert {
 		-webkit-border-radius: 0;
 		border-radius: 0;
-		margin-bottom: 4px;
+		margin-bottom: 35px;
+	}
+}
+
+.details-main-title{
+	margin-bottom: 30px;
+}
+
+.edition-links{
+	display: inline-block;
+	margin: 6px 0 0 20px;
+	i{
+		color: $brand;
+		font-size: 18px;
+		&:hover{
+			color: $gray;
+		}
+		&:first-child{
+			margin-right: 10px;
+		}
 	}
 }
 
