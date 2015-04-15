@@ -243,6 +243,8 @@ Brandscopic::Application.routes.draw do
 
     get :staff_report, to: 'staff_report#index'
     post :staff_report, to: 'staff_report#report'
+
+    get '/', to: 'analysis#index'
   end
 
   scope '/research' do

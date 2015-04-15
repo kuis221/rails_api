@@ -1,0 +1,34 @@
+.main.no-margin
+  .tab-content
+    - if can?(:view_event_status, Campaign) || can?(:view_gva_report, Campaign)
+    #global-reports-list.resource-list.reports-list
+      - if jbb_feature_enabled? && can?(:attendance, Event)
+          .resource-item id="report_activity_data"
+            = link_to results_attendance_path, title: 'Attendance by Neighborhood' do
+              .span10.report-item
+                .text-large Attendance by Neighborhood
+                p View event attendance by neighborhood
+
+      - if can?(:view_event_status, Campaign)
+          .resource-item id="report_event_status"
+            = link_to results_event_status_path, title: 'Event Status' do
+              .span10.report-item
+                .text-large Event Status
+                p View progress of event and promo hours against goals
+
+      - if can?(:view_gva_report, Campaign)
+          .resource-item id="report_gva"
+            = link_to results_gva_path, title: 'Goals vs. Actual' do
+              .span10.report-item
+                .text-large Goals vs. Actual
+                p View results relative to campaign goals
+
+      .resource-item id="report_trends_tracker"
+        = link_to sources_analysis_trends_path, title: 'Trends Tracker' do
+          .span10.report-item
+            .text-large Trends Tracker
+            p View results relative to trends tracker
+
+    
+
+      
