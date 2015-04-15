@@ -31,6 +31,8 @@ class DataExtract < ActiveRecord::Base
 
   DEFAULT_LIMIT = 30
 
+  scope :active, -> { where(active: true) }
+
   attr_accessor :current_user
 
   class << self
