@@ -27,7 +27,8 @@ RSpec.describe DataExtract::Task, type: :model do
 
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql(
-       [:title, :task_statuses, :due_at, :created_by, :created_at, :assigned_to, :comment1, :comment2, :comment3, :comment4, :comment5])
+       [:title, :task_statuses, :due_at, :created_by, :created_at, :assigned_to,
+        :comment1, :comment2, :comment3, :comment4, :comment5, :active_state])
     end
   end
 
@@ -58,7 +59,7 @@ RSpec.describe DataExtract::Task, type: :model do
       it 'returns all the events in the company with all the columns' do
         expect(subject.rows).to eql [
           ["MyString", "Active, Assigned, Incomplete", "02/10/2013", "Benito Camelas", "08/23/2013", "Benito Camelas",
-           "Comment #5", "Comment #4", "Comment #3", "Comment #2", "Comment #1"]
+           "Comment #5", "Comment #4", "Comment #3", "Comment #2", "Comment #1", "Active"]
         ]
       end
 

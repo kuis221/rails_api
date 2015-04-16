@@ -32,7 +32,8 @@ class DataExtract::Task < DataExtract
                  comment2: '(SELECT content FROM comments WHERE commentable_type = \'Task\' AND commentable_id=tasks.id LIMIT 1 OFFSET 1) AS column2',
                  comment3: '(SELECT content FROM comments WHERE commentable_type = \'Task\' AND commentable_id=tasks.id LIMIT 1 OFFSET 2) AS column3',
                  comment4: '(SELECT content FROM comments WHERE commentable_type = \'Task\' AND commentable_id=tasks.id LIMIT 1 OFFSET 3) AS column4',
-                 comment5: '(SELECT content FROM comments WHERE commentable_type = \'Task\' AND commentable_id=tasks.id LIMIT 1 OFFSET 4) AS column5'
+                 comment5: '(SELECT content FROM comments WHERE commentable_type = \'Task\' AND commentable_id=tasks.id LIMIT 1 OFFSET 4) AS column5',
+                 active_state: 'CASE WHEN tasks.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END'
 
   def add_joins_to_scope(s)
     if columns.include?('created_by') || filters.present? && filters['user'].present?
