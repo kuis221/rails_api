@@ -593,3 +593,4 @@ en:
       address2: 'Address 2'
       comment: 'Comment'
       amount: 'Amount'
+      active_state: "Active State"
