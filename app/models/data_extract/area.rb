@@ -24,7 +24,7 @@ class DataExtract::Area < DataExtract
   define_columns name: 'name',
                  description: 'description',
                  created_by: 'users.first_name || \' \' || users.last_name',
-                 created_at: 'to_char(areas.created_at, \'MM/DD/YYYY HH12:MI AM\')',
+                 created_at: proc { "to_char(areas.created_at, 'MM/DD/YYYY')" },
                  active_state: 'CASE WHEN areas.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END'
 
   def add_joins_to_scope(s)
