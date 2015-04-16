@@ -27,7 +27,7 @@ RSpec.describe DataExtract::Brand, type: :model do
 
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql(
-       [:name, :marques_list, :created_by, :created_at])
+       [:name, :marques_list, :created_by, :created_at, :active_state])
     end
   end
 
@@ -53,7 +53,7 @@ RSpec.describe DataExtract::Brand, type: :model do
 
       it 'returns all the events in the company with all the columns' do
         expect(subject.rows).to eql [
-          ["Guaro Cacique", "Marque 1, Marque 2, Marque 3", "Benito Camelas", "08/23/2013"]
+          ["Guaro Cacique", "Marque 1, Marque 2, Marque 3", "Benito Camelas", "08/23/2013", "Active"]
         ]
       end
 
@@ -63,7 +63,7 @@ RSpec.describe DataExtract::Brand, type: :model do
 
         subject.filters = { 'status' => ['active'] }
         expect(subject.rows).to eql [
-          ["Guaro Cacique", "Marque 1, Marque 2, Marque 3", "Benito Camelas", "08/23/2013"]
+          ["Guaro Cacique", "Marque 1, Marque 2, Marque 3", "Benito Camelas", "08/23/2013", "Active"]
         ]
       end
 
