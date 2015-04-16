@@ -28,7 +28,7 @@ RSpec.describe DataExtract::Campaign, type: :model do
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql(
         [:name, :description, :brands_list, :campaign_brand_portfolios,
-         :start_date, :end_date, :color, :created_by, :created_at])
+         :start_date, :end_date, :color, :created_by, :created_at, :active_state])
     end
   end
 
@@ -50,7 +50,7 @@ RSpec.describe DataExtract::Campaign, type: :model do
 
       it 'returns all the events in the company with all the columns' do
         expect(subject.rows).to eql [
-          ["Campaign Absolut FY12", "Description campaign", "", "", nil, nil, "#de4d43", "Benito Camelas", "08/23/2013"]
+          ["Campaign Absolut FY12", "Description campaign", "", "", nil, nil, "#de4d43", "Benito Camelas", "08/23/2013", "Active"]
         ]
       end
 
@@ -60,7 +60,7 @@ RSpec.describe DataExtract::Campaign, type: :model do
 
         subject.filters = { 'status' => ['active'] }
         expect(subject.rows).to eql [
-          ["Campaign Absolut FY12", "Description campaign", "", "", nil, nil, "#de4d43", "Benito Camelas", "08/23/2013"]
+          ["Campaign Absolut FY12", "Description campaign", "", "", nil, nil, "#de4d43", "Benito Camelas", "08/23/2013", "Active"]
         ]
       end
     end

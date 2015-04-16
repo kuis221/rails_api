@@ -32,7 +32,8 @@ class DataExtract::Campaign < DataExtract
                  end_date: proc { "to_char(campaigns.end_date, 'MM/DD/YYYY')" }, 
                  color: 'color', 
                  created_by: 'trim(users.first_name || \' \' || users.last_name)', 
-                 created_at: proc { "to_char(campaigns.created_at, 'MM/DD/YYYY')" }
+                 created_at: proc { "to_char(campaigns.created_at, 'MM/DD/YYYY')" },
+                 active_state: 'CASE WHEN campaigns.aasm_state=\'active\' THEN \'Active\' ELSE \'Inactive\' END'
 
   def add_joins_to_scope(s)
     s = s.joins('LEFT JOIN places ON places.id=events.place_id') if columns.any? { |c| c.match(/^place_/)  }
