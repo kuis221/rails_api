@@ -3681,24 +3681,13 @@ body.show {
 	#event-contacts-list, #event-team-members, #team-members-list,
 	#area-places-list {
 		clear: both;
+		margin-top: 40px;
 	}
 	.place, .area-user{
 		font-family: $baseFontFamily;
 		font-size: 16px;
 		margin: 0 10% 30px 0;
 		.pull-left{
-			width: 90%;
-			i{
-				background-color: #cccccc;
-				color: $white;
-				display: inline-block;
-				height: 32px;
-				margin-right: 10px;
-				line-height: 33px;
-				text-align: center;
-				@include border-radius(20px);
-				width: 32px;
-			}
 			.place-address{
 				font-size: 11px;
 				margin-top: 5px;
@@ -3753,21 +3742,6 @@ body.show {
 			display: inline-block;
 		}
 	}
-
-	.team-member, .team{
-		.icon-user, .icon-team{
-			color: $user_menu;
-			float: left;
-			font-size: 18px;
-			margin-right: 15px;
-			position: relative;
-			top: 2px;
-		}
-		span{
-			display: inline-block;
-		}
-	}
-
 
 	.area-place:before{
 		display: block;
@@ -7410,6 +7384,27 @@ body.dashboard.index {
 			margin-left: 10px;
 		}
 	}
+}
+
+.rounded-icon{
+	background-color: #cccccc;
+	display: inline-block;
+	height: 33px;
+	margin-right: 10px;
+	line-height: 33px;
+	text-align: center;
+	@include border-radius(20px);
+	vertical-align: top;
+	width: 32px;
+	i{
+		color: $white;
+		font-size: 16px;
+		line-height: 32px;
+	}
+}
+
+.module-item{
+	display: inline-block;
 }
 
 @import 'widgets/asset_upload_dialog';
