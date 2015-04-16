@@ -549,6 +549,8 @@ en:
       place_city: "Venue City"
       place_state: "Venue State"
       place_zipcode: "Venue ZIP code"
+      place_address1: 'Venue Address 1'
+      place_address2: 'Venue Address 2'
       event_team_members: "Event Team"
       event_status: "Event Status"
       status: "Active State"

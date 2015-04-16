@@ -28,9 +28,9 @@ RSpec.describe DataExtract::Event, type: :model do
 
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql(
-       [:campaign_name, :end_date, :end_time, :start_date, :start_time,
-        :place_street, :place_city, :place_name, :place_state,
-        :place_zipcode, :event_team_members, :event_status, :status])
+       [:campaign_name, :end_date, :end_time, :start_date, :start_time, :place_address1, :place_address2, 
+        :place_city, :place_name, :place_state, :place_zipcode, :event_team_members, :event_status, 
+        :created_by, :created_at, :status])
     end
   end
 
@@ -62,8 +62,8 @@ RSpec.describe DataExtract::Event, type: :model do
                                    company: company,
                                    user: create(:user, first_name: 'Pedro', last_name: 'Almodovar'))
         expect(subject.rows).to eql [
-          ['Campaign Absolut FY12', '01/01/2014', '11:00 PM', '01/01/2014', '10:00 PM', '21st Jump Street',
-           'Santa Rosa Beach', 'My place', 'Florida', '12345', 'Benito Camelas, Pedro Almodovar', 'Unsent', 'Active']
+          ['Campaign Absolut FY12', '01/01/2014', '11:00 PM', '01/01/2014', '10:00 PM', '21st', 'Jump Street',
+           'Santa Rosa Beach', 'My place', 'Florida', '12345', 'Benito Camelas, Pedro Almodovar', 'Unsent', "Benito Camelas", "08/23/2013", 'Active']
         ]
       end
 
@@ -78,8 +78,8 @@ RSpec.describe DataExtract::Event, type: :model do
 
         subject.filters = { 'campaign' => [campaign.id] }
         expect(subject.rows).to eql [
-          ['Campaign Absolut FY12', '01/01/2014', '11:00 PM', '01/01/2014', '10:00 PM', '21st Jump Street',
-           'Santa Rosa Beach', 'My place', 'Florida', '12345', 'Benito Camelas', 'Unsent', 'Active']
+          ['Campaign Absolut FY12', '01/01/2014', '11:00 PM', '01/01/2014', '10:00 PM', '21st', 'Jump Street',
+           'Santa Rosa Beach', 'My place', 'Florida', '12345', 'Benito Camelas, Pedro Almodovar', 'Unsent', "Benito Camelas", "08/23/2013", 'Active']
         ]
       end
 

@@ -25,13 +25,16 @@ class DataExtract::Event < DataExtract
                  end_time: proc { "to_char(#{date_field_prefix}end_at, 'HH12:MI AM')" },
                  start_date: proc { "to_char(#{date_field_prefix}start_at, 'MM/DD/YYYY')" },
                  start_time: proc { "to_char(#{date_field_prefix}start_at, 'HH12:MI AM')" },
-                 place_street: 'trim(both \' \' from places.street_number || \' \' || places.route)',
+                 place_address1: 'places.street_number',
+                 place_address2: 'places.route',
                  place_city: 'places.city',
                  place_name: 'places.name',
                  place_state: 'places.state',
                  place_zipcode: 'places.zipcode',
                  event_team_members: 'array_to_string(array_agg(team_users.first_name || \' \' || team_users.last_name), \', \')',
                  event_status: 'initcap(events.aasm_state)',
+                 created_by: '(SELECT trim(us.first_name || \' \' || us.last_name) FROM users as us WHERE events.created_by_id=us.id)',
+                 created_at: proc { "to_char(events.created_at, 'MM/DD/YYYY')" },
                  status: 'CASE WHEN events.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END'
 
   def add_joins_to_scope(s)
