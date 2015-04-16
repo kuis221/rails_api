@@ -54,6 +54,23 @@ module ApplicationHelper
     end
   end
 
+  def blank_state_drag_drop_module(module_name, &block)
+    content_tag(:div, id: "#{module_name}", class: 'attachment-panel blank-state-drag-drop') do
+      content_tag(:div, class: 'attachment-select-file-view') do
+        content_tag(:div, class: 'drag-box') do
+          content_tag(:i, nil, class: 'icon-upload') +
+          content_tag(:h4, t("blank_states.modules.#{module_name}")) +
+          content_tag(:p) do
+            content_tag(:span, 'your file or ') +
+            content_tag(:span, nil, class: 'file-browse') do
+              ('browse' + file_field_tag(:file, multiple: true, 'data-no-uniform' => "true")).html_safe
+            end
+          end
+        end
+      end
+    end
+  end
+
   def icon_button_to(icon, options = {}, html_options = {})
     html_options[:class] ||= ''
     html_options[:class] = [html_options[:class], 'button-with-icon'].join(' ')

@@ -3270,7 +3270,7 @@ ul.ui-widget-content{
 
 .attachment-panel{
 	@include box-sizing(border-box);
-	border: 2px dashed $gray-lighter;
+	border: 2px dashed $user_menu;
 	color: $user_menu;
 	line-height: 17px;
 	padding: 40px 20px 20px;
@@ -3334,6 +3334,39 @@ ul.ui-widget-content{
 	.uploader {
 		.filename, .action {
 			display: none;
+		}
+	}
+}
+
+.attachment-uploading-panel{
+	background-color: $gray-lighter;
+	display: none;
+	line-height: 100%;
+	padding: 40px 0;
+	width: 100%;
+	.upload-file-info{
+		.documents-counter{
+			color: $brand;
+			font-weight: bold;
+		}
+	}
+	.upload-file-progress{
+		.progress{
+			float: left;
+			height: 12px;
+			width: 10% !important;
+			position: relative;
+			background-color: $gray-lighter !important;
+			border-bottom: 1px solid #dfdfdf;
+			margin-left: 45%;
+  			margin-top: 3px;
+		}
+		i{
+			&.icon-remove-circle{
+				color: $silver;
+				float: left;
+				margin-left: 15px;
+			}
 		}
 	}
 }

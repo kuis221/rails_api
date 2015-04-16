@@ -98,12 +98,11 @@
 
   - if can? :documents, resource
     #event-documents.details_box
-
       h5.module-title DOCUMENTS
       .documents-list
         #documents-list.resource-list
           = render :partial => "documents/document", :collection => resource.documents.active + resource.campaign.documents, :locals => { parent: resource }
-      = button_to_add 'Add Document', new_event_document_path(resource) if can?(:create_document, resource)
+      = render partial: 'attachments', locals: { attach_type: 'documents' }
 
 = render partial: 'help_tutorial'
 - content_for :footer do
