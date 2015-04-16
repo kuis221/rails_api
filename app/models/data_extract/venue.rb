@@ -22,7 +22,8 @@
 class DataExtract::Venue < DataExtract
   define_columns name: 'name', 
                  venues_types: 'array_to_string(places.types, \', \')',
-                 street: 'trim(places.street_number || \' \' || places.route)', 
+                 address1: 'places.street_number',
+                 address2: 'places.route',
                  city: 'places.city', 
                  state_name: 'places.state',
                  country_name: 'places.country',
