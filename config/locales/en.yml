@@ -205,7 +205,6 @@ en:
         line1: 'No events have been scheduled for this visit.'
         line2: ''
 
-
     modules:
       event:
         contacts: 'No Contacts have been added to this event.'
@@ -217,6 +216,12 @@ en:
       venue:
         activities: 'No Activities have been added to this venue.'
         events: 'No Events have been added to this venue.'
+
+  drag_n_drop:
+    items:
+      documents: 'files'
+      gallery: 'photos'
+
   exports:
     pdf:
       title:

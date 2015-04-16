@@ -2,96 +2,61 @@
 - max_file_size ||= 60.megabytes
 
 #asset_upload_form
-  = s3_uploader_form callback_url: "/events/69211/photos.js", id: "s3_uploader", callback_param: "attached_asset[direct_upload_url]", expiration: 24.hours.from_now.utc.iso8601, max_file_size: max_file_size do
+  = s3_uploader_form callback_url: event_documents_path(resource, format: :js), id: "documents_s3_uploader", callback_param: "attached_asset[direct_upload_url]", expiration: 24.hours.from_now.utc.iso8601, max_file_size: max_file_size do
     - if resource.errors.any?
       = resource.errors.full_messages
 
-    = blank_state_drag_drop_module('event.documents')
-
-    .attachment-panel.attachment-uploading-panel
-      #attachment-uploads-container
-  /     .upload id='upload_31'
-  /       .upload-file-info
-  /         .documents-counter Uploading document ()
-  /         .document-info
-  /           span.document-name Documento.pdf
-  /           = '&nbsp;&nbsp;'.html_safe
-  /           span.document-size 2.29 MB
-  /       .upload-file-progress
-  /         .progress
-  /           .bar style='width: 10%'
-  /         i.icon-remove-circle
-
-|
-  <script id="template-document-upload" type="text/x-tmpl">
-  <div class="upload" id="upload_{%=o.unique_id%}">
-    <div class="upload-file-info">
-      <div class="documents-counter">Uploading document ({%=o.file_counter%}/{%=o.total_files%})
-      </div>
-      <div class="document-info">
-        <span class="document-name">{%=o.name%}</span>&nbsp;&nbsp;<span class="document-size">{%=o.size%}</span>
-      </div>
-    </div>
-    <div class="upload-file-progress">
-      <div class="progress">
-        <div class="bar" style="width: 0%"></div>
-      </div>
-      <i class="icon-remove-circle"></i>
-    </div>
-  </div>
-  </script>
+    = drag_drop_module('documents') do
+      .documents-upload-progress-info
+        .upload-file-info
+          .documents-counter
+          .document-info
+            span.document-name
+            = '&nbsp;&nbsp;'.html_safe
+            span.document-size 2.29 MB
+        .upload-file-progress
+          .progress
+            .bar style='width: 10%'
+          i.icon-remove-circle
 
 javascript:
-  var drop = document.getElementById('event.documents');
-
-  drop.addEventListener('dragover', function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      $(this).addClass('drag');
-  });
-
-  drop.addEventListener('dragleave', function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      $(this).removeClass('drag');
-  });
-
   $(function() {
     var assetsPath = #{Hash[Dir.glob("#{Rails.root}/app/assets/images/file-types/32px/*.png").map{ |image| name = image.split('/').last; ext = name.split('.').first; [ext, asset_path("file-types/32px/" + name)]; }].to_json.html_safe};
-    $('#s3_uploader').S3Uploader(
+    $('#documents_s3_uploader').S3Uploader(
       {
         remove_completed_progress_bar: false,
         progress_bar_target: $('#attachment-uploads-container'),
+        drop_zone: $('#drag-drop-documents'),
+        limit_concurrent_uploads: 1,
+        sequential_uploads: true,
         before_add: function(file) {
-          var file, image_types;
-          image_types = /(\.|\/)(gif|jpe?g|png)$/i;
+          var file;
 
-          if (file.size > #{max_file_size}){
+          if (file.size > #{max_file_size}) {
             alert('File is larger than maximum file size supported (#{max_file_size.to_s(:human_size)})');
             return false;
           }
+          return true;
         }
       }
     ).bind('fileuploadprogress', function (e, data) {
-      var progress = parseInt(data.loaded / data.total * 100, 10);
-      data.context.find('.upload-file-status').text(progress+'%');
-      if (!data._icon){
-        var file_extension = data.files[0].name.split('.').pop().toLowerCase();
-        if (file_extension == 'jpeg'){
-          file_extension = 'jpg';
-        }
-        var icon = assetsPath._blank;
-        if (typeof assetsPath[file_extension] != 'undefined') {
-          icon = assetsPath[file_extension];
-        }
-        data._icon = data.context.find('.upload-file-icon').html($('<img src="'+icon+'">'));
-      }
-    }).bind('fileuploaddone', function (e, data) {
-      data.context.addClass('complete').find('.upload-file-status').html($('<i class="icon-ok-sign"></i>'), $('<i class="icon-minus-sign"></i>'));
-    });
-    $('#s3_uploader').bind('s3_upload_failed', function(e, content) {
-      return alert(content.filename + ' failed to upload');
-    }).bind('s3_uploads_start', function() {
-      $('#asset_upload_form').addClass('upload-started');
+      var progress = parseInt(data.loaded / data.total * 100, 10),
+          totalFiles = data.originalFiles.length,
+          currentFileIndex = data.originalFiles.indexOf(data.files[0]) + 1;
+      context = $('#drag-drop-documents .documents-upload-progress-info')
+
+      context.find('.documents-counter').text('Uploading document ('+ currentFileIndex +'/'+ totalFiles +')');
+      context.find('.document-name').text(data.files[0].name);
+      context.find('.progress .bar').css({ width: progress + '%' });
+    }).bind('fileuploadstop', function (e, data) {
+      $('#drag-drop-documents').removeClass('uploading');
+      $('#drag-drop-documents .attachment-select-file-view').show();
+      $('#drag-drop-documents .documents-upload-progress-info').hide();
+    }).bind('fileuploadfail', function(e, data) {
+      return alert(data.filename + ' failed to upload');
+    }).bind('fileuploadstart', function() {
+      $('#drag-drop-documents').addClass('uploading');
+      $('#drag-drop-documents .attachment-select-file-view').hide();
+      $('#drag-drop-documents .documents-upload-progress-info').show();
     });
   });
