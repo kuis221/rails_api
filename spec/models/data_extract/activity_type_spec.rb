@@ -27,7 +27,7 @@ RSpec.describe DataExtract::ActivityType, type: :model do
 
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql(
-       [:name, :description, :created_by, :created_at])
+       [:name, :description, :created_by, :created_at, :active_state])
     end
   end
 
@@ -48,7 +48,7 @@ RSpec.describe DataExtract::ActivityType, type: :model do
 
       it 'returns all the activity types in the company with all the columns' do
         expect(subject.rows).to eql [
-          ["Activty Type Test1", "Activity Type description", "Benito Camelas", "08/23/2013"]
+          ["Activty Type Test1", "Activity Type description", "Benito Camelas", "08/23/2013", "Active"]
         ]
       end
 
@@ -58,7 +58,7 @@ RSpec.describe DataExtract::ActivityType, type: :model do
 
         subject.filters = { 'status' => ['active'] }
         expect(subject.rows).to eql [
-          ["Activty Type Test1", "Activity Type description", "Benito Camelas", "08/23/2013"]
+          ["Activty Type Test1", "Activity Type description", "Benito Camelas", "08/23/2013", "Active"]
         ]
       end
 
