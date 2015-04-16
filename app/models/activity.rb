@@ -40,7 +40,7 @@ class Activity < ActiveRecord::Base
     .where('form_field_results.value is not NULL AND form_field_results.value !=\'\'')
   }
 
-  scope :accessible_by_user, -> { self }
+  scope :accessible_by_user, ->(user) { self }
 
   after_initialize :set_default_values
 

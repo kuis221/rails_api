@@ -17,12 +17,13 @@
 #  updated_at       :datetime
 #  default_sort_by  :string(255)
 #  default_sort_dir :string(255)
+#  params           :text
 #
 
 class DataExtract::EventExpense < DataExtract
   define_columns name: 'event_expenses.name',
                  amount: 'event_expenses.amount',
-                 created_by: 'trim(users.first_name || \' \' || users.last_name)', 
+                 created_by: 'trim(users.first_name || \' \' || users.last_name)',
                  created_at: proc { "to_char(event_expenses.created_at, 'MM/DD/YYYY')" },
                  campaign_name: 'campaigns.name',
                  end_date: proc { "to_char(events.#{date_field_prefix}end_at, 'MM/DD/YYYY')" },
@@ -59,5 +60,9 @@ class DataExtract::EventExpense < DataExtract
 
   def date_field_prefix
     @date_field_prefix ||= current_user.company.timezone_support? ? 'local_' : ''
+  end
+
+  def filters_scope
+    'events'
   end
 end

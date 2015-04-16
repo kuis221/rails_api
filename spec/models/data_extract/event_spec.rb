@@ -17,27 +17,31 @@
 #  updated_at       :datetime
 #  default_sort_by  :string(255)
 #  default_sort_dir :string(255)
+#  params           :text
 #
 
 require 'rails_helper'
 
 RSpec.describe DataExtract::Event, type: :model do
-
   describe '#available_columns' do
     let(:subject) { described_class }
 
     it 'returns the correct columns' do
-      expect(subject.exportable_columns).to eql(
-       [:campaign_name, :end_date, :end_time, :start_date, :start_time,
-        :place_street, :place_city, :place_name, :place_state,
-        :place_zipcode, :event_team_members, :event_status, :status])
+      expect(subject.exportable_columns).to eql([
+        %w(campaign_name Campaign), ['end_date', 'End Date'], ['end_time', 'End Time'],
+        ['start_date', 'Start Date'], ['start_time', 'Start Time'], ['place_street', 'Venue Street'],
+        ['place_city', 'Venue City'], ['place_name', 'Venue Name'], ['place_state', 'Venue State'],
+        ['place_zipcode', 'Venue ZIP code'], ['event_team_members', 'Event Team'],
+        ['event_status', 'Event Status'], ['status', 'Active State']])
     end
   end
 
   describe '#rows' do
     let(:company) { create(:company) }
-    let(:company_user) { create(:company_user, company: company,
-                         user: create(:user, first_name: 'Benito', last_name: 'Camelas')) }
+    let(:company_user) do
+      create(:company_user, company: company,
+                            user: create(:user, first_name: 'Benito', last_name: 'Camelas'))
+    end
 
     let(:campaign) { create(:campaign, name: 'Campaign Absolut FY12', company: company) }
     let(:subject) { described_class.new(company: company, current_user: company_user) }
@@ -52,9 +56,7 @@ RSpec.describe DataExtract::Event, type: :model do
                        city: 'Santa Rosa Beach', state: 'Florida')
         create(:event, campaign: campaign, start_date: '01/01/2014', start_time: '02:00 pm',
                        end_date: '01/01/2014', end_time: '03:00 pm', place: place,
-                       users: [create(:company_user, company: company,
-                                                     user: create(:user, first_name: 'Benito', last_name: 'Camelas'))]
-              )
+                       users: [company_user])
       end
 
       it 'returns all the events in the company with all the columns' do
@@ -77,6 +79,15 @@ RSpec.describe DataExtract::Event, type: :model do
         expect(subject.rows).to be_empty
 
         subject.filters = { 'campaign' => [campaign.id] }
+        expect(subject.rows).to eql [
+          ['Campaign Absolut FY12', '01/01/2014', '11:00 PM', '01/01/2014', '10:00 PM', '21st Jump Street',
+           'Santa Rosa Beach', 'My place', 'Florida', '12345', 'Benito Camelas', 'Unsent', 'Active']
+        ]
+
+        subject.filters = { 'user' => [company_user.id + 1] }
+        expect(subject.rows).to be_empty
+
+        subject.filters = { 'user' => [company_user.id, company_user.id + 1] }
         expect(subject.rows).to eql [
           ['Campaign Absolut FY12', '01/01/2014', '11:00 PM', '01/01/2014', '10:00 PM', '21st Jump Street',
            'Santa Rosa Beach', 'My place', 'Florida', '12345', 'Benito Camelas', 'Unsent', 'Active']

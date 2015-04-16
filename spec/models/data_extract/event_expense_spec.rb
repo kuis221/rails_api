@@ -26,9 +26,13 @@ RSpec.describe DataExtract::EventExpense, type: :model do
     let(:subject) { described_class }
 
     it 'returns the correct columns' do
-      expect(subject.exportable_columns).to eql(
-       [:name, :amount, :created_by, :created_at, :campaign_name, :end_date, :end_time, :start_date, :start_time, :event_status, 
-        :status, :address1, :address2, :place_city, :place_name, :place_state, :place_zipcode])
+      expect(subject.exportable_columns).to eql([
+        %w(name Name), %w(amount Amount), ['created_by', 'Created By'], ['created_at', 'Created At'],
+        %w(campaign_name Campaign), ['end_date', 'End Date'], ['end_time', 'End Time'],
+        ['start_date', 'Start Date'], ['start_time', 'Start Time'], ['event_status', 'Event Status'],
+        ['status', 'Active State'], ['address1', 'Address 1'], ['address2', 'Address 2'],
+        ['place_city', 'Venue City'], ['place_name', 'Venue Name'], ['place_state', 'Venue State'],
+        ['place_zipcode', 'Venue ZIP code']])
     end
   end
 
@@ -36,10 +40,14 @@ RSpec.describe DataExtract::EventExpense, type: :model do
     let(:company) { create(:company) }
     let(:campaign) { create(:campaign, company: company, name: 'Test Campaign FY01') }
     let(:place) { create(:place, name: 'Place 2') }
-    let(:company_user) { create(:company_user, company: company,
-                         user: create(:user, first_name: 'Benito', last_name: 'Camelas')) }
-    let(:event) {create(:event, company: company, campaign: campaign, place: place, 
-                        start_date: '01/01/2014', end_date: '01/01/2014') }
+    let(:company_user) do
+      create(:company_user, company: company,
+                            user: create(:user, first_name: 'Benito', last_name: 'Camelas'))
+    end
+    let(:event) do
+      create(:event, company: company, campaign: campaign, place: place,
+                     start_date: '01/01/2014', end_date: '01/01/2014')
+    end
     let(:subject) { described_class.new(company: company, current_user: company_user) }
 
     it 'returns empty if no rows are found' do
@@ -52,10 +60,9 @@ RSpec.describe DataExtract::EventExpense, type: :model do
       end
 
       it 'returns all the comments in the company with all the columns' do
-        subject.columns = ['name', 'created_by', 'created_at', 'campaign_name', 'end_date', 'end_time', 'start_date', 'start_time', 'event_status', 
-        'status', 'address1', 'address2', 'place_city', 'place_name', 'place_state', 'place_zipcode']
+        subject.columns = %w(name created_by created_at campaign_name end_date end_time start_date start_time event_status status address1 address2 place_city place_name place_state place_zipcode)
         expect(subject.rows).to eql [
-          ["Expense #1", nil, "08/22/2013", "Test Campaign FY01", "01/01/2014", "08:00 PM", "01/01/2014", "06:00 PM", "Unsent", "Active", "11", "Main St.", "New York City", "Place 2", "NY", "12345"]
+          ['Expense #1', nil, '08/22/2013', 'Test Campaign FY01', '01/01/2014', '08:00 PM', '01/01/2014', '06:00 PM', 'Unsent', 'Active', '11', 'Main St.', 'New York City', 'Place 2', 'NY', '12345']
         ]
       end
 
@@ -63,34 +70,34 @@ RSpec.describe DataExtract::EventExpense, type: :model do
         other_campaign = create(:campaign, company: company, name: 'Campaign FY15')
         other_event = create(:approved_event, company: company, campaign: other_campaign, place: place)
         expense2 = create(:event_expense, amount: 34, name: 'Expense #2', event: other_event, created_at: Time.zone.local(2014, 2, 17, 11, 59))
-        
-        subject.columns = ['name', 'campaign_name', 'created_at']
+
+        subject.columns = %w(name created_at campaign_name)
         subject.default_sort_by = 'name'
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
-          ["Expense #1", "08/22/2013", "Test Campaign FY01"], 
-          ["Expense #2", "02/17/2014", "Campaign FY15"]
+          ['Expense #1', '08/22/2013', 'Test Campaign FY01'],
+          ['Expense #2', '02/17/2014', 'Campaign FY15']
         ]
 
         subject.default_sort_by = 'name'
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
-          ["Expense #2", "02/17/2014", "Campaign FY15"], 
-          ["Expense #1", "08/22/2013", "Test Campaign FY01"]
+          ['Expense #2', '02/17/2014', 'Campaign FY15'],
+          ['Expense #1', '08/22/2013', 'Test Campaign FY01']
         ]
 
         subject.default_sort_by = 'campaign_name'
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
-          ["Expense #2", "02/17/2014", "Campaign FY15"], 
-          ["Expense #1", "08/22/2013", "Test Campaign FY01"]
+          ['Expense #2', '02/17/2014', 'Campaign FY15'],
+          ['Expense #1', '08/22/2013', 'Test Campaign FY01']
         ]
 
         subject.default_sort_by = 'campaign_name'
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
-          ["Expense #1", "08/22/2013", "Test Campaign FY01"], 
-          ["Expense #2", "02/17/2014", "Campaign FY15"]
+          ['Expense #1', '08/22/2013', 'Test Campaign FY01'],
+          ['Expense #2', '02/17/2014', 'Campaign FY15']
         ]
       end
     end

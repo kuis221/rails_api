@@ -76,9 +76,9 @@ class Results::DataExtractsController < InheritedResources::Base
         DataExtract.find(params[:id])
       elsif params.key?(:data_extract) && params[:data_extract][:source]
         if params[:data_extract][:source] == 'event_data'
-          DataExtract::EventData.new(extract_params.merge(company: current_company))
+          DataExtract::EventData.new(extract_params)
         else
-          "DataExtract::#{params[:data_extract][:source].classify}".constantize.new(extract_params.merge(company: current_company))
+          "DataExtract::#{params[:data_extract][:source].classify}".constantize.new(extract_params)
         end
       else
         current_company.data_extracts.new
@@ -87,7 +87,9 @@ class Results::DataExtractsController < InheritedResources::Base
 
   def extract_params
     params.require(:data_extract).permit([
-      :name, :description, :default_sort_by, :default_sort_dir, filters: [], columns: []])
+      :name, :description, :default_sort_by, :default_sort_dir,
+      filters: [], columns: [], params: { campaign_id: [], activity_type_id: [] }
+    ]).merge(company: current_company)
   end
 
   def process_step

@@ -17,6 +17,7 @@
 #  updated_at       :datetime
 #  default_sort_by  :string(255)
 #  default_sort_dir :string(255)
+#  params           :text
 #
 
 require 'rails_helper'
@@ -61,7 +62,6 @@ RSpec.describe DataExtract::User, type: :model do
       end
 
       it 'allows to filter the results' do
-
         subject.filters = { email: ['testuser2@brandscopic.com'] }
         row = subject.rows.first
         expect(row[0]).to eql ('Test')

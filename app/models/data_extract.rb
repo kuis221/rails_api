@@ -39,7 +39,7 @@ class DataExtract < ActiveRecord::Base
     end
 
     def exportable_columns
-      columns_definitions.keys
+      @exportable_columns ||= columns_definitions.keys.map { |c| [c.to_s,  I18n.t("data_exports.fields.#{c}")] }
     end
 
     def columns_definitions
@@ -56,13 +56,16 @@ class DataExtract < ActiveRecord::Base
   ]
 
   after_initialize  do
-    self.columns ||= self.class.exportable_columns.map(&:to_s) if new_record?
+    self.columns ||= exportable_columns.map { |c| c[0] } if new_record?
     self.filters ||= HashWithIndifferentAccess.new
   end
 
   def columns=(cols)
-    valid_cols = exportable_columns.map(&:to_s)
-    self['columns'] = cols.select { |c| valid_cols.include?(c)  }.uniq
+    self['columns'] = cols.uniq
+  end
+
+  def columns_with_names
+    columns.map { |c| [c, exportable_columns.find { |ec| ec[0] == c }.try(:[], 1) ] }
   end
 
   def rows(page = 1)
@@ -100,7 +103,8 @@ class DataExtract < ActiveRecord::Base
   end
 
   def total_results
-    base_scope.count
+    p "Counting total of results"
+    @total_results ||= base_scope.count
   end
 
   def to_hash
@@ -112,10 +116,9 @@ class DataExtract < ActiveRecord::Base
   end
 
   def selected_columns_to_sql
-    columns_definitions.select { |k, v| columns.include?(k.to_s) }.values.map do |column|
-      # Check if the column is a proc that we should call
-      column_definition column
-    end
+    columns.map do |col|
+      column_definition columns_definitions[col.to_sym]
+    end.compact
   end
 
   def sort_by

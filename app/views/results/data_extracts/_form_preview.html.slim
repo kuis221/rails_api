@@ -11,6 +11,17 @@
     = f.input :source, as: :hidden
     = f.input :default_sort_by, as: :hidden, wrapper: false
     = f.input :default_sort_dir, as: :hidden, wrapper: false
+
+    - if resource.params && resource.params['campaign_id']
+      - list = Array(resource.params['campaign_id'])
+      - list.each do |id|
+        = hidden_field_tag 'data_extract[params][campaign_id][]', id
+
+    - if resource.params && resource.params['activity_type_id']
+      - list = Array(resource.params['activity_type_id'])
+      - list.each do |id|
+        = hidden_field_tag 'data_extract[params][activity_type_id][]', id
+
     - f.object.columns.each do |col|
       = hidden_field_tag 'data_extract[columns][]', col
     .data-extract-buttons
@@ -27,7 +38,7 @@
                 | Download as CSV
     .data-extract-box
       table#extract-table.data-extract-table
-        = render_table_cols resource.columns, process_step, resource.default_sort_by, resource.default_sort_dir
+        = render_table_cols resource.columns_with_names, process_step, resource.default_sort_by, resource.default_sort_dir
         tbody
 
 
