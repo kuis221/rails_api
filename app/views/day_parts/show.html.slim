@@ -2,15 +2,16 @@
   = resource_details_bar("Viewing Day Part Details")
 
   .details_box.padding-top-close-bar
-    h2= resource.name
+    .details-main-title
+      h2.pull-left= resource.name
+      .edition-links
+        = button_to_edit resource if can?(:edit, resource)
+        = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
+
     - if resource.description.present?
       .description-data
         span
           = resource.description
-
-    .links-data
-      = button_to_edit resource if can?(:edit, resource)
-      = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
 
     // This info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info

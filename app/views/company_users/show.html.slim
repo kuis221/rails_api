@@ -16,11 +16,12 @@
             li
               a href="#" Cancel
 
-      .profile-data
-        h2
-          = resource.full_name
-          = button_to_edit resource if can?(:edit, resource)
-          = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource) && !viewing_profile?
+      .profile-info
+        .details-main-title
+          h2.special.pull-left = resource.full_name
+          .edition-links
+            = button_to_edit resource if can?(:edit, resource)
+            = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource) && !viewing_profile?
 
         - if resource.role.present?
           .user-role.label.label-default
