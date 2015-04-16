@@ -28,6 +28,7 @@ class DataExtract < ActiveRecord::Base
   serialize :params
 
   validates :name, presence: true
+  validates :source, presence: true
 
   DEFAULT_LIMIT = 30
 

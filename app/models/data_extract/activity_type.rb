@@ -24,8 +24,9 @@ class DataExtract::ActivityType < DataExtract
   define_columns name: 'name', 
                  description: 'description', 
                  created_by: 'trim(users.first_name || \' \' || users.last_name)', 
-                 created_at: proc { "to_char(activity_types.created_at, 'MM/DD/YYYY')" }
-
+                 created_at: proc { "to_char(activity_types.created_at, 'MM/DD/YYYY')" },
+                 active_state: 'CASE WHEN activity_types.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END'
+  
   def add_joins_to_scope(s)
     if columns.include?('created_by') || filters.present? && filters['user'].present?
       s = s.joins('LEFT JOIN users ON activity_types.created_by_id=users.id')

@@ -600,4 +600,4 @@ en:
       event_start_time: 'Event End Time'
       event_end_date: 'Event End Date'
       event_end_time: 'Event End Time'
-
+      active_state: "Active State"

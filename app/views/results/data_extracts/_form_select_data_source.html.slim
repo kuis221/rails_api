@@ -27,6 +27,17 @@ javascript:
     } else {
       $('#data-extact-campaigns').css({position: 'absolute', left: '-9999px'});
     }
+    enableDisableBtnNext();
+  }
+  
+  enableDisableBtnNext = function(){
+    if ($('#data_extract_source').val() != '') {
+      $('.btn-data-source').prop( "disabled", false );
+    }
+    else {
+      $('.btn-data-source').prop( "disabled", true );
+    }
   }
   $('#data_extract_source').change(showHideDropdowns);
   showHideDropdowns();
+  enableDisableBtnNext();
