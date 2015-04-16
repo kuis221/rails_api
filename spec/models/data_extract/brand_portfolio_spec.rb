@@ -26,7 +26,7 @@ RSpec.describe DataExtract::BrandPortfolio, type: :model do
     let(:subject) { described_class }
 
     it 'returns the correct columns' do
-      expect(subject.exportable_columns).to eql([:name, :description, :created_by, :created_at])
+      expect(subject.exportable_columns).to eql([:name, :description, :created_by, :created_at, :active_state])
     end
   end
 
@@ -51,7 +51,7 @@ RSpec.describe DataExtract::BrandPortfolio, type: :model do
 
       it 'returns all the events in the company with all the columns' do
         expect(subject.rows).to eql [
-          ['A Vinos ticos', 'Algunos vinos de Costa Rica', 'Benito Camelas', "08/23/2013"]
+          ['A Vinos ticos', 'Algunos vinos de Costa Rica', 'Benito Camelas', "08/23/2013", "Active"]
         ]
       end
 
@@ -61,7 +61,7 @@ RSpec.describe DataExtract::BrandPortfolio, type: :model do
 
         subject.filters = { 'status' => ['active'] }
         expect(subject.rows).to eql [
-          ['A Vinos ticos', 'Algunos vinos de Costa Rica', 'Benito Camelas', "08/23/2013"]
+          ['A Vinos ticos', 'Algunos vinos de Costa Rica', 'Benito Camelas', "08/23/2013", "Active"]
         ]
       end
 
