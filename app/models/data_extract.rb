@@ -69,9 +69,9 @@ class DataExtract < ActiveRecord::Base
     columns.map { |c| [c, exportable_columns.find { |ec| ec[0] == c }.try(:[], 1) ] }
   end
 
-  def rows(page = 1)
-    offset = (page - 1) * DEFAULT_LIMIT
-    base_scope.order(sort_by).limit(DEFAULT_LIMIT).offset(offset)
+  def rows(page = 1, per_page: DEFAULT_LIMIT)
+    offset = (page - 1) * per_page
+    base_scope.order(sort_by).limit(per_page).offset(offset)
               .pluck(*selected_columns_to_sql)
   end
 
