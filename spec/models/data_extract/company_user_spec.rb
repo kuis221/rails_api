@@ -22,14 +22,14 @@
 
 require 'rails_helper'
 
-RSpec.describe DataExtract::User, type: :model do
+RSpec.describe DataExtract::CompanyUser, type: :model do
   pending '#available_columns' do
     let(:subject) { described_class }
 
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql(
         [:first_name, :last_name, :teams_name, :email, :phone_number, :role_name,
-        :street_address, :country, :state, :zip_code, :time_zone, :created_at])
+        :street_address, :country, :state, :zip_code, :time_zone, :created_at, :active_state])
     end
   end
 
