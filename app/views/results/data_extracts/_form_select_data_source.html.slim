@@ -5,12 +5,12 @@
       .span6
         = f.input :source, collection: DataExtract::DATA_SOURCES.sort, input_html: { class: 'chosen-enabled', 'data-placeholder' => 'Select a data source' }, label: 'Choose a data source for your report'
       .span6
-        #data-extact-activity-types
+        #data-extact-activity-types.data-source-params
           = label_tag 'data_extract_activity_type_id', 'Choose an activity type'
-          = select_tag 'data_extract[params][activity_type_id]',  options_for_select(current_company.activity_types.pluck(:name, :id), resource.params.try(:[], 'activity_type_id')), include_blank: true, class: 'chosen-enabled', 'data-placeholder' => 'Select an activity type', id: 'data_extract_activity_type_id'
-        #data-extact-campaigns
-            = label_tag 'data_extract_campaign_id', 'Choose a campaign'
-            = select_tag 'data_extract[params][campaign_id]',  options_for_select(current_company.campaigns.accessible_by_user(current_company_user).for_dropdown, resource.params.try(:[], 'campaign_id')), include_blank: true, class: 'chosen-enabled', 'data-placeholder' => 'Select a campaign', id: 'data_extract_campaign_id'
+          = select_tag 'data_extract[params][activity_type_id][]',  options_for_select(current_company.activity_types.pluck(:name, :id), resource.params.try(:[], 'activity_type_id')), include_blank: true, class: 'chosen-enabled', 'data-placeholder' => 'Select an activity type', id: 'data_extract_activity_type_id'
+        #data-extact-campaigns.data-source-params
+          = label_tag 'data_extract_campaign_id', 'Choose a campaign'
+          = select_tag 'data_extract[params][campaign_id][]',  options_for_select(current_company.campaigns.accessible_by_user(current_company_user).for_dropdown, resource.params.try(:[], 'campaign_id')), include_blank: true, class: 'chosen-enabled', 'data-placeholder' => 'Select a campaign', id: 'data_extract_campaign_id'
 
     = submit_tag 'Next', class: 'btn btn-primary btn-data-source icon-slimmed-arrow-right-rounded'
 

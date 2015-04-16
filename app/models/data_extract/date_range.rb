@@ -17,6 +17,7 @@
 #  updated_at       :datetime
 #  default_sort_by  :string(255)
 #  default_sort_dir :string(255)
+#  params           :text
 #
 
 class DataExtract::DateRange < DataExtract

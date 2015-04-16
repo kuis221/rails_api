@@ -17,8 +17,65 @@
 #  updated_at       :datetime
 #  default_sort_by  :string(255)
 #  default_sort_dir :string(255)
+#  params           :text
 #
-
 class DataExtract::Activity < DataExtract
-  define_columns({})
+  include DataExtractFieldableBase
+
+  # The name of the view to use in DataExtractFieldableBase to fetch the results
+  RESULTS_VIEW_NAME = 'activity_results'
+
+  define_columns activity_type: 'activity_types.name',
+                 user: 'users.first_name || \' \' || users.last_name',
+                 activity_date: proc { "to_char(activity_date, 'HH12:MI AM')" },
+                 campaign_name: 'campaigns.name',
+                 event_end_date: proc { "to_char(events.end_at, 'MM/DD/YYYY')" },
+                 event_end_time: proc { "to_char(events.end_at, 'HH12:MI AM')" },
+                 event_start_date: proc { "to_char(events.start_at, 'MM/DD/YYYY')" },
+                 event_start_time: proc { "to_char(events.start_at, 'HH12:MI AM')" },
+                 place_street: 'trim(both \' \' from places.street_number || \' \' || places.route)',
+                 place_city: 'places.city',
+                 place_name: 'places.name',
+                 place_state: 'places.state',
+                 place_zipcode: 'places.zipcode',
+                 event_status: 'initcap(events.aasm_state)',
+                 status: 'CASE WHEN events.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END'
+
+  def add_filter_conditions_to_scope(s)
+    return s if filters.nil? || filters.empty?
+    s = s.where(campaign_id: filters['campaign']) if filters['campaign'].present?
+    s = s.where(company_user_id: filters['user']) if filters['user'].present?
+    s = s.where(events: { aasm_state: filters['event_status'] }) if filters['status'].present?
+    s = s.where(events: { active: filters['active_state'].map { |f| f == 'active' ? true : false } }) if filters['active_state'].present?
+    s = s.where(activity_type_id: params['activity_type_id']) if params && params.key?('activity_type_id')
+    s
+  end
+
+  def add_joins_to_scope(s)
+    s = s.joins(:campaign) if columns.include?('campaign_name')
+    s = s.joins(:activity_type) if columns.include?('activity_type')
+    s = s.joins(company_user: :user) if columns.include?('user')
+    if columns.any? { |c| c.match(/^event_/)  }
+      s = s.joins('LEFT JOIN events ON events.id=activities.activitable_id AND activities.activitable_type=\'Event\'')
+    end
+    if columns.any? { |c| c.match(/^place_/)  }
+      s = s.joins('LEFT JOIN venues ON venues.id=activities.activitable_id AND activities.activitable_type=\'Venue\'')
+          .joins('LEFT JOIN places ON places.id=venues.place_id')
+    end
+    add_form_field_joins s
+  end
+
+  def model
+    ::Activity
+  end
+
+  def form_fields
+    return [] unless params.present? && params['activity_type_id'].present?
+    @form_fields ||= FormField.for_activity_types(params['activity_type_id'])
+                     .where.not(type: ['FormField::UserDate', 'FormField::Photo', 'FormField::Attachment'] )
+  end
+
+  def filters_scope
+    'data_extract_activities'
+  end
 end

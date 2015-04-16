@@ -27,14 +27,17 @@ RSpec.describe DataExtract::ActivityType, type: :model do
 
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql(
-       [:name, :description, :created_by, :created_at, :active_state])
+        [%w(name Name), %w(description Description), ['created_by', 'Created By'],
+         ['created_at', 'Created At'], ['active_state', 'Active State']])
     end
   end
 
   describe '#rows' do
     let(:company) { create(:company) }
-    let(:company_user) { create(:company_user, company: company,
-                         user: create(:user, first_name: 'Benito', last_name: 'Camelas')) }
+    let(:company_user) do
+      create(:company_user, company: company,
+                            user: create(:user, first_name: 'Benito', last_name: 'Camelas'))
+    end
     let(:subject) { described_class.new(company: company, current_user: company_user) }
 
     it 'returns empty if no rows are found' do
@@ -43,12 +46,12 @@ RSpec.describe DataExtract::ActivityType, type: :model do
 
     describe 'with data' do
       before do
-        create(:activity_type, name: "Activty Type Test1", active: true, created_by_id: company_user.user.id, company: company, created_at: Time.zone.local(2013, 8, 23, 9, 15))
+        create(:activity_type, name: 'Activty Type Test1', active: true, created_by_id: company_user.user.id, company: company, created_at: Time.zone.local(2013, 8, 23, 9, 15))
       end
 
       it 'returns all the activity types in the company with all the columns' do
         expect(subject.rows).to eql [
-          ["Activty Type Test1", "Activity Type description", "Benito Camelas", "08/23/2013", "Active"]
+          ['Activty Type Test1', 'Activity Type description', 'Benito Camelas', '08/23/2013', 'Active']
         ]
       end
 
@@ -58,40 +61,40 @@ RSpec.describe DataExtract::ActivityType, type: :model do
 
         subject.filters = { 'status' => ['active'] }
         expect(subject.rows).to eql [
-          ["Activty Type Test1", "Activity Type description", "Benito Camelas", "08/23/2013", "Active"]
+          ['Activty Type Test1', 'Activity Type description', 'Benito Camelas', '08/23/2013', 'Active']
         ]
       end
 
       it 'allows to sort the results' do
-        create(:activity_type, name: "Other Activity Type", active: true, created_by_id: company_user.user.id, company: company, created_at: Time.zone.local(2015, 2, 12, 9, 15))
-        
-        subject.columns = ['name', 'created_at']
+        create(:activity_type, name: 'Other Activity Type', active: true, created_by_id: company_user.user.id, company: company, created_at: Time.zone.local(2015, 2, 12, 9, 15))
+
+        subject.columns = %w(name created_at)
         subject.default_sort_by = 'name'
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
-          ["Activty Type Test1", "08/23/2013"], 
-          ["Other Activity Type", "02/12/2015"]
+          ['Activty Type Test1', '08/23/2013'],
+          ['Other Activity Type', '02/12/2015']
         ]
 
         subject.default_sort_by = 'name'
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
-          ["Other Activity Type", "02/12/2015"], 
-          ["Activty Type Test1", "08/23/2013"]
+          ['Other Activity Type', '02/12/2015'],
+          ['Activty Type Test1', '08/23/2013']
         ]
 
         subject.default_sort_by = 'created_at'
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
-          ["Other Activity Type", "02/12/2015"], 
-          ["Activty Type Test1", "08/23/2013"]
+          ['Other Activity Type', '02/12/2015'],
+          ['Activty Type Test1', '08/23/2013']
         ]
 
         subject.default_sort_by = 'created_at'
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
-          ["Activty Type Test1", "08/23/2013"], 
-          ["Other Activity Type", "02/12/2015"]
+          ['Activty Type Test1', '08/23/2013'],
+          ['Other Activity Type', '02/12/2015']
         ]
       end
     end
