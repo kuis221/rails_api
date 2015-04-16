@@ -23,7 +23,8 @@ class DataExtract::DateRange < DataExtract
   define_columns name: 'name', 
                  description: 'description', 
                  created_by: 'trim(users.first_name || \' \' || users.last_name)', 
-                 created_at: proc { "to_char(date_ranges.created_at, 'MM/DD/YYYY')" }
+                 created_at: proc { "to_char(date_ranges.created_at, 'MM/DD/YYYY')" },
+                 active_state: 'CASE WHEN date_ranges.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END'
 
   def add_joins_to_scope(s)
     if columns.include?('created_by') || filters.present? && filters['user'].present?
