@@ -1,3 +1,4 @@
+DROP VIEW IF EXISTS campaign_users;
 CREATE OR REPLACE VIEW campaign_users AS
  SELECT memberships.memberable_id AS campaign_id,
     memberships.company_user_id,
@@ -27,6 +28,7 @@ UNION
      JOIN campaigns ON ((campaigns.id = brand_portfolios_campaigns.campaign_id)))
      JOIN brand_portfolios ON (((brand_portfolios.id = brand_portfolios_campaigns.brand_portfolio_id) AND (brand_portfolios.active = true))));
 
+DROP VIEW IF EXISTS event_team_members;
 CREATE OR REPLACE VIEW event_team_members AS 
    SELECT events.id AS event_id,
     array_agg(users.first_name || ' ' || users.last_name) AS names,
@@ -41,6 +43,7 @@ CREATE OR REPLACE VIEW event_team_members AS
    GROUP BY events.id;
 
 
+DROP VIEW IF EXISTS event_data_results;
 CREATE OR REPLACE VIEW event_data_results AS 
 SELECT r.resultable_id event_id, ff.id form_field_id, CASE 
                     WHEN ff.type = 'FormField::Dropdown' OR ff.type = 'FormField::Radio' THEN hstore('value', CASE WHEN ff.kpi_id IS NULL THEN ffo.name ELSE k.text END)
@@ -57,6 +60,8 @@ LEFT JOIN kpis_segments kc ON ff.kpi_id IS NOT NULL AND kc.kpi_id=ff.kpi_id AND 
 WHERE r.resultable_type='Event'
 GROUP BY r.resultable_id, ff.id, ff.type, ff.kpi_id, ffo.name, k.text, r.hash_value, r.value;
 
+
+DROP VIEW IF EXISTS activity_results;
 CREATE OR REPLACE VIEW activity_results AS 
 SELECT r.resultable_id activity_id, ff.id form_field_id, CASE 
                     WHEN ff.type = 'FormField::Dropdown' OR ff.type = 'FormField::Radio' THEN hstore('value', ffo.name)
