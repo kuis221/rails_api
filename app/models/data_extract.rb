@@ -27,6 +27,8 @@ class DataExtract < ActiveRecord::Base
   serialize :filters
   serialize :params
 
+  validates :name, presence: true
+
   DEFAULT_LIMIT = 30
 
   attr_accessor :current_user
@@ -50,7 +52,7 @@ class DataExtract < ActiveRecord::Base
     ['Attendance', :invite], ['Comments', :comment], ['Contacts', :contact], ['Expenses', :event_expense],
     ['Tasks', :task], ['Venues', :venue], ['Users', :user], ['Teams', :team],
     ['Roles', :role], ['Campaign', :campaign], ['Brands', :brand], ['Activity Types', :activity_type],
-    ['Areas', :area], ['Brand Portfolios', :brand_portfolio], ['Data Ranges', :date_range], ['Day Parts', :day_part]
+    ['Areas', :area], ['Brand Portfolios', :brand_portfolio], ['Date Ranges', :date_range], ['Day Parts', :day_part]
   ]
 
   after_initialize  do

@@ -16,7 +16,11 @@ module Results
             content_tag(:div, class: 'step ' + step_class) do
               content_tag :div, class: 'step-box' do
                 content_tag(:div, ((i + 1) >= active ? i + 1 : content_tag(:i, '', class: 'icon-checked')), class: 'circle-step ') +
-                content_tag(:div, step, class: 'step-name')
+                if (i + 1) < active
+                  content_tag(:a, step, href: form_action(params.merge(step: (i + 1))) , class: 'step-name')
+                else
+                  content_tag(:div, step, class: 'step-name')
+                end
               end
             end
           end.join.html_safe
