@@ -48,14 +48,19 @@ class Results::DataExtractsController < InheritedResources::Base
     end
   end
 
+  def export_file_name
+    "#{params[:data_extract][:source].pluralize}-export-#{Time.now.strftime('%Y%m%d%H%M%S')}"
+  end
+
+  # TODO: perhaps we should use a PG cursor here to speed up the export.
+  # maybe using: https://github.com/afair/postgresql_cursor
   def each_extract_page
-    items_per_page = 100
+    items_per_page = 500
     total_pages = (collection_count / items_per_page.to_f).ceil
     (1..(total_pages)).each do |page|
-      yield resource.rows(page)
+      yield resource.rows(page, per_page: items_per_page)
       @_export.update_column(
         :progress, (page * 100 / total_pages).round) unless @_export.nil?
-
     end
   end
 
@@ -96,7 +101,7 @@ class Results::DataExtractsController < InheritedResources::Base
     params[:step].to_i || 1
   end
 
-  def form_action(params_extract = "")
+  def form_action(params_extract = '')
     if resource.new_record?
       new_results_data_extract_path(params_extract)
     else

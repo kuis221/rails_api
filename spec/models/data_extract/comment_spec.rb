@@ -58,13 +58,36 @@ RSpec.describe DataExtract::Comment, type: :model do
 
     describe 'with data' do
       before do
-        create(:comment, content: 'Comment #1', commentable: event, created_at: Time.zone.local(2013, 8, 22, 11, 59))
+        create(:comment, content: 'Comment #1', commentable: event,
+                         user: company_user.user,
+                         created_at: Time.zone.local(2013, 8, 22, 11, 59))
       end
 
       it 'returns all the comments in the company with all the columns' do
         expect(subject.rows).to eql [
-          ['Comment #1', nil, '08/22/2013', 'Test Campaign FY01', '01/01/2014',
+          ['Comment #1', 'Benito Camelas', '08/22/2013', 'Test Campaign FY01', '01/01/2014',
            '08:00 PM', '01/01/2014', '06:00 PM', 'Unsent', 'Active', '11', 'Main St.', 'New York City', 'Place 1', 'NY', '12345']
+        ]
+      end
+
+      it 'allows to filter the results' do
+        subject.columns = %w(comment campaign_name)
+        subject.filters = { 'campaign' => [campaign.id + 1] }
+        expect(subject.rows).to be_empty
+
+        subject.filters = { 'campaign' => [campaign.id] }
+        expect(subject.rows).to eql [
+          ['Campaign Absolut FY12', '01/01/2014', '11:00 PM', '01/01/2014', '10:00 PM', '21st Jump Street',
+           'Santa Rosa Beach', 'My place', 'Florida', '12345', 'Benito Camelas', 'Unsent', 'Active']
+        ]
+
+        subject.filters = { 'user' => [company_user.id + 1] }
+        expect(subject.rows).to be_empty
+
+        subject.filters = { 'user' => [company_user.id, company_user.id + 1] }
+        expect(subject.rows).to eql [
+          ['Campaign Absolut FY12', '01/01/2014', '11:00 PM', '01/01/2014', '10:00 PM', '21st Jump Street',
+           'Santa Rosa Beach', 'My place', 'Florida', '12345', 'Benito Camelas', 'Unsent', 'Active']
         ]
       end
 
