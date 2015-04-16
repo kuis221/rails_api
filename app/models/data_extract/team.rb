@@ -23,7 +23,8 @@ class DataExtract::Team < DataExtract
   define_columns name: 'name',
                 description: 'description',
                 created_by: 'trim(users.first_name || \' \' || users.last_name)', 
-                created_at: proc { "to_char(teams.created_at, 'MM/DD/YYYY')" }
+                created_at: proc { "to_char(teams.created_at, 'MM/DD/YYYY')" },
+                active_state: 'CASE WHEN teams.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END'
 
   def add_joins_to_scope(s)
     if columns.include?('created_by') || filters.present? && filters['user'].present?
