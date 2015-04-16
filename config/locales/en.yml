@@ -167,6 +167,11 @@ en:
     activity_types:
       filters:
         line1: 'There are no Activity Types matching the filtering criteria you selected.'
+      empty:
+        line1: 'You do not have any activity types right now.'
+        line2:
+          without_schedule_permissions: 'No problem, as soon as activity types are added they will display in this section.'
+          with_schedule_permissions: 'Click the New Activity Type button to create a new activity type.'
     teams:
       filters:
         line1: 'There are no Teams matching the filtering criteria you selected.'
