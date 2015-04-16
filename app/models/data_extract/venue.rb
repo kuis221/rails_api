@@ -21,15 +21,14 @@
 #
 
 class DataExtract::Venue < DataExtract
-  define_columns name: 'name', 
+  define_columns name: 'name',
                  venues_types: 'array_to_string(places.types, \', \')',
-                 address1: 'places.street_number',
-                 address2: 'places.route',
-                 city: 'places.city', 
+                 street: 'trim(places.street_number || \' \' || places.route)',
+                 city: 'places.city',
                  state_name: 'places.state',
                  country_name: 'places.country',
-                 zipcode: 'places.zipcode', 
-                 td_linx_code: 'places.td_linx_code', 
+                 zipcode: 'places.zipcode',
+                 td_linx_code: 'places.td_linx_code',
                  created_by: 'trim(users.first_name || \' \' || users.last_name)',
                  created_at: proc { "to_char(venues.created_at, 'MM/DD/YYYY')" }
 

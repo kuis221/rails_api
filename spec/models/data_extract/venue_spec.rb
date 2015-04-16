@@ -28,7 +28,7 @@ RSpec.describe DataExtract::Venue, type: :model do
 
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql([
-        %w(name Name), %w(venues_types Types), ['address1', 'Address 1'], ['address2', 'Address 2'], %w(city City),
+        %w(name Name), %w(venues_types Types), ['street', 'Venue Street'], %w(city City),
         %w(state_name State), %w(country_name Country), ['zipcode', 'ZIP code'],
         ['td_linx_code', 'TD Linx Code'], ['created_by', 'Created By'], ['created_at', 'Created At']])
     end
@@ -53,7 +53,7 @@ RSpec.describe DataExtract::Venue, type: :model do
 
       it 'returns all the events in the company with all the columns' do
         expect(subject.rows).to eql [
-          ['My Place', 'establishment', '11', 'Main St.', 'New York City', 'NY', 'US', '12345', nil, nil, '08/23/2013']
+          ['My Place', 'establishment', '11 Main St.', 'New York City', 'NY', 'US', '12345', nil, nil, '08/23/2013']
         ]
       end
 
