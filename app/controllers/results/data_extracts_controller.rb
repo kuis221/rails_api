@@ -41,7 +41,7 @@ class Results::DataExtractsController < InheritedResources::Base
 
   def collection_to_csv
     CSV.generate do |csv|
-      csv << resource.columns.map { |c| I18n.t("data_exports.fields.#{c}") }
+      csv << resource.columns_with_names.map { |c| c[1] }
       each_extract_page do |page|
         page.each { |row| csv << row }
       end
