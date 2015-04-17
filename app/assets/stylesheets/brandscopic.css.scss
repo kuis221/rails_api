@@ -2098,15 +2098,18 @@ li#notifications{
 	}
 }
 
-.dropdown-menu:before{
-	position: absolute;
-	top: -10px;
-	left: 114px;
-	display: inline-block;
-	border-right: 10px solid transparent;
-	border-bottom: 10px solid $dropdownBorder;
-	border-left: 10px solid transparent;
-	content: '';
+.dropdown-menu{
+	box-shadow: none;
+	&:before{
+		position: absolute;
+		top: -10px;
+		left: 114px;
+		display: inline-block;
+		border-right: 10px solid transparent;
+		border-bottom: 10px solid $dropdownBorder;
+		border-left: 10px solid transparent;
+		content: '';
+	}
 }
 
 .navbar .nav>li> .dropdown-menu:before{
@@ -7527,9 +7530,31 @@ body.dashboard.index {
 					display: inline-block;
 				}
 
+				.divider{
+					margin: 4px 0;
+				}
+
 				a {
-					color: $borders;
+					color: $text;
+					padding-left: 30px;
 					padding-top: 4px;
+				}
+
+				li{
+					position: relative;
+					&:hover{
+						a, i{
+							color: $white;
+						}
+					}
+				}
+
+				i{
+					color: silver;
+					left: 6px;
+					font-size: 17px;
+					position: absolute;
+					top: 6px;
 				}
 			}
 			td {
