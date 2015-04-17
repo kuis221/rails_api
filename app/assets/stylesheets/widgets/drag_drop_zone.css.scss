@@ -1,0 +1,54 @@
+.drag-drop-zone{
+	line-height: 100%;
+	width: 100%;
+	padding: 0;
+	.attachment-select-file-view{
+		width: 190px;
+		margin: 0 auto;
+		padding: 40px 0;
+  	}
+  	&.uploading {
+		background-color: $gray-lighter;
+  	}
+	&.hover{
+		background-color: $gray-lighter;
+	}
+	&.fade {
+		-webkit-transition: all 0.3s ease-out;
+		-moz-transition: all 0.3s ease-out;
+		-ms-transition: all 0.3s ease-out;
+		-o-transition: all 0.3s ease-out;
+		transition: all 0.3s ease-out;
+		opacity: 1;
+	}
+	.documents-upload-progress-info {
+		padding: 40px 0;
+		width: 100%;
+		display: none;
+		.upload-file-info{
+			.documents-counter{
+				color: $brand;
+				font-weight: bold;
+			}
+		}
+		.upload-file-progress{
+			.progress {
+				float: left;
+				height: 12px;
+				width: 10% !important;
+				position: relative;
+				background-color: $gray-lighter !important;
+				border-bottom: 1px solid #dfdfdf;
+				margin-left: 45%;
+	  			margin-top: 3px;
+			}
+			i{
+				&.icon-remove-circle{
+					color: $silver;
+					float: left;
+					margin-left: 15px;
+				}
+			}
+		}
+	}
+}

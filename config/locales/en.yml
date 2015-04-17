@@ -247,6 +247,12 @@ en:
       venue:
         activities: 'No Activities have been added to this venue.'
         events: 'No Events have been added to this venue.'
+
+  drag_n_drop:
+    items:
+      documents: 'files'
+      gallery: 'photos'
+
   exports:
     pdf:
       title:

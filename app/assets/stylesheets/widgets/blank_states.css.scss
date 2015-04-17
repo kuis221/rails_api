@@ -37,19 +37,6 @@ Styleguide 5.2
 	}
 }
 
-.blank-state-drag-drop{
-	line-height: 100%;
-	padding: 40px 0;
-	width: 100%;
-	.attachment-select-file-view{
-		width: 55%;
-		float: right;
-	}
-	&.drag{
-		background-color: $gray-lighter;
-	}
-}
-
 .blank-state-arrow{
 	left: 60px;
 	position: absolute;
