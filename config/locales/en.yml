@@ -321,7 +321,7 @@ en:
         data_extract/role: "New Roles Report"
         data_extract/task: "New Tasks Report"
         data_extract/team: "New Teams Report"
-        data_extract/user: "New Users Report"
+        data_extract/company_user: "New Users Report"
         data_extract/venue: "New Venues Report"
       edit:
         company_user: "Edit User"

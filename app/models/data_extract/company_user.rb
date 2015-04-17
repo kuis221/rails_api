@@ -20,23 +20,24 @@
 #
 class DataExtract::CompanyUser < DataExtract
   define_columns first_name: 'users.first_name',
-  last_name: 'users.last_name', 
-  teams_name: 'array_to_string(ARRAY(SELECT teams.name FROM teams 
-              LEFT JOIN memberships ON memberable_type=\'Team\' AND memberable_id=teams.id 
-              WHERE company_users.id=memberships.company_user_id  ),\', \') AS teams_name', 
-  email: 'users.email', 
-  phone_number: 'users.phone_number', 
-  role_name: 'roles.name',
-  address1: 'users.street_address', 
-  address2: 'users.unit_number', 
-  country: 'users.country', 
-  state: 'users.state', 
-  zip_code: 'users.zip_code', 
-  time_zone: 'users.time_zone', 
-  created_at: proc { "to_char(users.created_at, 'MM/DD/YYYY')" },
-  created_by: '(SELECT trim(us.first_name || \' \' || us.last_name) FROM users as us WHERE users.created_by_id=us.id)',
-  active_state: 'CASE WHEN company_users.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END'
-  
+                 last_name: 'users.last_name',
+                 teams_name: 'array_to_string(ARRAY(SELECT teams.name FROM teams
+                             LEFT JOIN memberships ON memberable_type=\'Team\' AND memberable_id=teams.id
+                             WHERE company_users.id=memberships.company_user_id  ),\', \') AS teams_name',
+                 email: 'users.email',
+                 phone_number: 'users.phone_number',
+                 role_name: 'roles.name',
+                 address1: 'users.street_address',
+                 address2: 'users.unit_number',
+                 country: 'users.country',
+                 city: 'users.city',
+                 state: 'users.state',
+                 zip_code: 'users.zip_code',
+                 time_zone: 'users.time_zone',
+                 created_at: proc { "to_char(users.created_at, 'MM/DD/YYYY')" },
+                 created_by: '(SELECT trim(us.first_name || \' \' || us.last_name) FROM users as us WHERE users.created_by_id=us.id)',
+                 active_state: 'CASE WHEN company_users.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END'
+
   def add_joins_to_scope(s)
     s = s.joins('LEFT JOIN users ON users.id=company_users.user_id')
     if columns.include?('role_name')
