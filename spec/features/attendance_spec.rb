@@ -19,7 +19,7 @@ feature 'Attendance', js: true, search: true do
     scenario 'can view the attendance module' do
       visit event_path(event)
       expect(page).to have_selector('h5', text: 'ATTENDANCE')
-      expect(page).to have_button('New Activity')
+      expect(page).to have_button('Add Activity')
     end
 
     scenario 'can create and edit an invite when attendance display is set as Venue' do
@@ -220,7 +220,7 @@ feature 'Attendance', js: true, search: true do
 
   def create_invite(account: nil, invites: 12, type: 'venue')
     Sunspot.commit
-    click_js_button 'New Activity'
+    click_js_button 'Add Activity'
     within visible_modal do
       select_from_chosen 'Invitation', from: 'Activity type'
       select_from_autocomplete 'Search for a place', account if type == 'venue'

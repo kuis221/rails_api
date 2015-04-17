@@ -28,6 +28,8 @@ $.widget 'nmk.filteredList', {
 		emptyStateMessageLine2: 'Please select different filtering criteria.',
 		emptyFilterResultsMessage: 'There are no results matching the filtering criteria you selected.',
 		emptyFilterResultsMessageLine2: 'Please select different filtering criteria.',
+		emptyStateImage: 'blank-search.png',
+		canCreatePermission: false
 	},
 
 	_create: () ->
@@ -1025,15 +1027,22 @@ $.widget 'nmk.filteredList', {
 
 
 	_placeholderEmptyState: () ->
-		$('<div class="blank-state">
-		    <h5 class="text-center"></h5>
-		    <p class="text-center"></p>
-		    <div class="blank-state-icon">
-		      <img src="/assets/blank-search.png" />
-		    </div>
+		arrow = $('<div class="blank-state-arrow hide">
+					  <img src="/assets/blank-states-arrow.png">
+				  </div>')
+		if @options.canCreatePermission
+			arrow.removeClass('hide')
+
+		$('<div class="blank-state">')
+		  .append(arrow)
+		  .append('<h5 class="text-center"></h5>
+			  	   <p class="text-center"></p>
+			  	   <div class="blank-state-icon">
+					   <img src="/assets/'+@options.emptyStateImage+'" />
+			  	   </div>
 		  </div>').find('h5.text-center').html(@options.emptyStateMessage).end()
-				.find('p.text-center').html(@options.emptyStateMessageLine2).end()
-				.appendTo @listContainer
+				  .find('p.text-center').html(@options.emptyStateMessageLine2).end()
+				  .appendTo @listContainer
 
 	_placeholderEmptyFilterResults: () ->
 		line1 = @options.emptyFilterResultsMessage
@@ -1045,11 +1054,11 @@ $.widget 'nmk.filteredList', {
 			@options.placeholderElement(message)
 		else
 			$('<div class="blank-state">
-			    <h5 class="text-center"></h5>
-			    <p class="text-center"></p>
-			    <div class="blank-state-icon">
-			      <img src="/assets/blank-search.png" />
-			    </div>
+				<h5 class="text-center"></h5>
+				<p class="text-center"></p>
+				<div class="blank-state-icon">
+					<img src="/assets/blank-search.png" />
+				</div>
 			  </div>').find('h5.text-center').html(line1).end()
 					.find('p.text-center').html(line2).end()
 					.appendTo @listContainer

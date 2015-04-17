@@ -4,10 +4,13 @@
       = render 'report_event_status'
     - else
       .blank-state
-        h5.text-center 
+        h5.text-center
           - if params['report'].try(:[], 'group_by') == 'place'
            | No Place event or promo hour goals have been set for this Campaign.
           - elsif params['report'].try(:[], 'group_by') == 'staff'
            | No Staff event or promo hour goals have been set for this Campaign.
           - else
            | No Campaign event or promo hour goals have been set for this Campaign.
+        p.text-center Please select different filtering criteria.
+        .blank-state-icon
+          img src="/assets/blank-search.png"

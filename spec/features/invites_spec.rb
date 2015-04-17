@@ -36,7 +36,7 @@ feature 'Invites', search: true, js: true do
     scenario 'user can create invites' do
       visit event_path(event)
 
-      click_js_button 'New Activity'
+      click_js_button 'Add Activity'
       within visible_modal do
         select_from_chosen('Invitation', from: 'Activity type')
         select_from_autocomplete 'Search for a place', 'Guillermitos Bar'

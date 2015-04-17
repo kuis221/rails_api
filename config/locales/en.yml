@@ -115,14 +115,14 @@ en:
         line1: 'There are no Expenses matching the filtering criteria you selected.'
     results_comments:
       empty:
-        line1: 'There are currently no comments to view for your campaign(s). '
+        line1: 'There are currently no comments to view for your campaign(s).'
         line2: 'Check back later once comments have been captured.'
       filters:
         line1: 'There are no Comments matching the filtering criteria you selected.'
     results_surveys:
       empty:
         line1: 'There are currently no Surveys for you to view.'
-        line2: ''
+        line2: 'Check back later once surveys have been captured.'
       filters:
         line1: 'There are no Surveys matching the filtering criteria you selected.'
     visits:
@@ -130,7 +130,7 @@ en:
         line1: 'You do not have any visits right now.'
         line2:
           without_schedule_permissions: 'No problem, as soon as visits are added they will display in this section.'
-          with_schedule_permissions: 'Click the New Event button to schedule a new event.'
+          with_schedule_permissions: 'Click the New Visit button to create a new visit.'
       filters:
         line1: 'There are no visits matching the filtering criteria you selected.'
     user_tasks:
@@ -154,13 +154,18 @@ en:
         line1: 'You do not have any venues right now.'
         line2:
           without_schedule_permissions: 'No problem, as soon as events are added they will display in this section.'
-          with_schedule_permissions: 'Click the New Event button to schedule a new event.'
+          with_schedule_permissions: 'Click the New Venue button to create a new venue.'
       filters:
         line1: 'There are no venues matching the filtering criteria you selected.'
         line2: 'Please try another search.'
     campaigns:
       filters:
         line1: 'There are no Campaigns matching the filtering criteria you selected.'
+      empty:
+        line1: 'You do not have any campaigns right now.'
+        line2:
+          without_schedule_permissions: 'No problem, as soon as campaigns are added they will display in this section.'
+          with_schedule_permissions: 'Click the New Campaign button to create a new campaign.'
     company_users:
       filters:
         line1: 'There are no Users matching the filtering criteria you selected.'
@@ -172,39 +177,64 @@ en:
         line2:
           without_schedule_permissions: 'No problem, as soon as activity types are added they will display in this section.'
           with_schedule_permissions: 'Click the New Activity Type button to create a new activity type.'
+    areas:
+      filters:
+        line1: 'There are no Areas matching the filtering criteria you selected.'
+      empty:
+        line1: 'You do not have any areas right now.'
+        line2:
+          without_schedule_permissions: 'No problem, as soon as areas are added they will display in this section.'
+          with_schedule_permissions: 'Click the New Area button to create a new area.'
     teams:
       filters:
         line1: 'There are no Teams matching the filtering criteria you selected.'
+      empty:
+        line1: 'You do not have any teams right now.'
+        line2:
+          without_schedule_permissions: 'No problem, as soon as teams are added they will display in this section.'
+          with_schedule_permissions: 'Click the New Team button to create a new team.'
     roles:
       filters:
         line1: 'There are no Roles matching the filtering criteria you selected.'
     brands:
       filters:
         line1: 'There are no Brands matching the filtering criteria you selected.'
+      empty:
+        line1: 'You do not have any brands right now.'
+        line2:
+          without_schedule_permissions: 'No problem, as soon as brands are added they will display in this section.'
+          with_schedule_permissions: 'Click the New Brand button to create a new brand.'
     brand_portfolios:
       filters:
         line1: 'There are no Brand Portfolios matching the filtering criteria you selected.'
-    day_parts:
-      filters:
-        line1: 'There are no Day Parts matching the filtering criteria you selected.'
+      empty:
+        line1: 'You do not have any brand portfolios right now.'
+        line2:
+          without_schedule_permissions: 'No problem, as soon as brand portfolios are added they will display in this section.'
+          with_schedule_permissions: 'Click the New Brand Portfolio button to create a new brand portfolio.'
     date_ranges:
       filters:
         line1: 'There are no Date Ranges matching the filtering criteria you selected.'
-    invite_events:
       empty:
-        line1: 'No events have been scheduled for this visit.'
-        line2: ''
+        line1: 'You do not have any date ranges right now.'
+        line2:
+          without_schedule_permissions: 'No problem, as soon as date ranges are added they will display in this section.'
+          with_schedule_permissions: 'Click the New Date Range button to create a new date range.'
+    day_parts:
+      filters:
+        line1: 'There are no Day Parts matching the filtering criteria you selected.'
+      empty:
+        line1: 'You do not have any date parts right now.'
+        line2:
+          without_schedule_permissions: 'No problem, as soon as date parts are added they will display in this section.'
+          with_schedule_permissions: 'Click the New Date Part button to create a new date part.'
+    invite_events:
       filters:
         line1: 'No events have been scheduled for this visit.'
         line2: ''
-    invite_events:
       empty:
         line1: 'No events have been scheduled for this visit.'
         line2: ''
-      filters:
-        line1: 'No events have been scheduled for this visit.'
-        line2: ''
-
 
     modules:
       event:

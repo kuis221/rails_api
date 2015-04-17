@@ -39,6 +39,8 @@ javascript:
     'emptyStateMessageLine2': '#{j t("#{params[:scope]}_tasks.empty.line2.with#{can?(:create, Event) ? '' : 'out'}_create_permissions", scope: :blank_states) }',
     'emptyFilterResultsMessage': '#{j t("#{params[:scope]}_tasks.filters.line1", default: :filters_line1, scope: :blank_states) }',
     'emptyFilterResultsMessageLine2': '#{j t("#{params[:scope]}_tasks.filters.line2", default: :filters_line2, scope: :blank_states) }',
+    'emptyStateImage': 'blank-tasks.png',
+    'canCreatePermission': #{can?(:create, Task)},
     'onItemsLoad': function(response, page){
       if (response.find('div[data-content="counters"]').length > 0){
         $('.tasks-progress-bar').html(response.find('div[data-content="counters"]'));

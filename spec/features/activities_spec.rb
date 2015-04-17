@@ -126,7 +126,7 @@ feature 'Activities management' do
 
       expect(page).to_not have_content('Activity Type #1')
 
-      click_js_button 'New Activity'
+      click_js_button 'Add Activity'
 
       within visible_modal do
         select_from_chosen('Activity Type #1', from: 'Activity type')
@@ -220,7 +220,7 @@ feature 'Activities management' do
 
       expect(page).to_not have_content 'Activity Type #1'
 
-      click_js_button 'New Activity'
+      click_js_button 'Add Activity'
 
       within visible_modal do
         select_from_chosen('Activity Type #1', from: 'Activity type')
@@ -263,7 +263,7 @@ feature 'Activities management' do
 
       visit event_path(event)
 
-      click_js_button('New Activity')
+      click_js_button('Add Activity')
 
       within visible_modal do
         select_from_chosen('Activity Type #1', from: 'Activity type')
@@ -297,7 +297,7 @@ feature 'Activities management' do
       with_resque do # So the image is processed
         visit event_path(event)
 
-        click_js_button('New Activity')
+        click_js_button('Add Activity')
 
         within visible_modal do
           select_from_chosen('Activity Type #1', from: 'Activity type')
@@ -368,7 +368,7 @@ feature 'Activities management' do
       with_resque do # So the document is processed
         visit event_path(event)
 
-        click_js_button('New Activity')
+        click_js_button('Add Activity')
 
         within visible_modal do
           select_from_chosen('Activity Type #1', from: 'Activity type')

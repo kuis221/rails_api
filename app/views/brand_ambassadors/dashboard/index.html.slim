@@ -70,7 +70,8 @@
       'emptyStateMessage': '#{j t("visits.empty.line1", scope: :blank_states) }',
       'emptyStateMessageLine2': '#{j t("visits.empty.line2.with#{can?(:create, BrandAmbassadors::Visit) ? '' : 'out'}_schedule_permissions", scope: :blank_states) }',
       'emptyFilterResultsMessage': '#{j t("visits.filters.line1", default: :filters_line1, scope: :blank_states) }',
-      'emptyFilterResultsMessageLine2': '#{j t("visits.filters.line2", default: :filters_line2, scope: :blank_states) }'
+      'emptyFilterResultsMessageLine2': '#{j t("visits.filters.line2", default: :filters_line2, scope: :blank_states) }',
+      'canCreatePermission': #{can?(:create, BrandAmbassadors::Visit)}
     });
 
     $(document).ready(function() {
