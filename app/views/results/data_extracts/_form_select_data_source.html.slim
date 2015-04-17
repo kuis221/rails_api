@@ -7,7 +7,7 @@
       .span6
         #data-extact-activity-types.data-source-params
           = label_tag 'data_extract_activity_type_id', 'Choose an activity type'
-          = select_tag 'data_extract[params][activity_type_id][]',  options_for_select(current_company.activity_types.pluck(:name, :id), resource.params.try(:[], 'activity_type_id')), include_blank: true, class: 'chosen-enabled', 'data-placeholder' => 'Select an activity type', id: 'data_extract_activity_type_id'
+          = select_tag 'data_extract[params][activity_type_id][]',  options_for_select(current_company.activity_types.pluck(:name, :id).sort, resource.params.try(:[], 'activity_type_id')), include_blank: true, class: 'chosen-enabled', 'data-placeholder' => 'Select an activity type', id: 'data_extract_activity_type_id'
         #data-extact-campaigns.data-source-params
           = label_tag 'data_extract_campaign_id', 'Choose a campaign'
           = select_tag 'data_extract[params][campaign_id][]',  options_for_select(current_company.campaigns.accessible_by_user(current_company_user).for_dropdown, resource.params.try(:[], 'campaign_id')), include_blank: true, class: 'chosen-enabled', 'data-placeholder' => 'Select a campaign', id: 'data_extract_campaign_id'
@@ -19,19 +19,33 @@ javascript:
   showHideDropdowns = function(){
     if ($('#data_extract_source').val() == 'activity') {
       $('#data-extact-activity-types').css({position: '', left: ''});
+      $('#data_extract_activity_type_id').change(changeStateBtnNext);
     } else {
       $('#data-extact-activity-types').css({position: 'absolute', left: '-9999px'})
     }
     if ($('#data_extract_source').val() == 'event_data') {
       $('#data-extact-campaigns').css({position: '', left: ''});
+      $('#data_extract_campaign_id').change(changeStateBtnNext);
     } else {
       $('#data-extact-campaigns').css({position: 'absolute', left: '-9999px'});
     }
-    enableDisableBtnNext();
+    changeStateBtnNext();
   }
   
-  enableDisableBtnNext = function(){
-    if ($('#data_extract_source').val() != '') {
+  changeStateBtnNext = function(){
+    if ($('#data_extract_source').val() == 'activity') {
+      enableDisableBtnNext('#data_extract_activity_type_id');
+    }
+    else if ($('#data_extract_source').val() == 'event_data') {
+      enableDisableBtnNext('#data_extract_campaign_id');
+    }
+    else {
+      enableDisableBtnNext('#data_extract_source');
+    }
+  }
+
+  enableDisableBtnNext = function(field_source){
+    if ($(field_source).val() != '') {
       $('.btn-data-source').prop( "disabled", false );
     }
     else {
@@ -40,4 +54,4 @@ javascript:
   }
   $('#data_extract_source').change(showHideDropdowns);
   showHideDropdowns();
-  enableDisableBtnNext();
+  changeStateBtnNext();
