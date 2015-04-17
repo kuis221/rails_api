@@ -200,7 +200,8 @@ select:focus:invalid:focus {
 			background-color:#f28179;
 			color: #f5b8b8;
 			&:hover{
-				@extend .btn.btn-primary[disabled];
+				background-color:#f28179 !important;
+				color: #f5b8b8;
 			}
 		}
 		&.active{

@@ -71,6 +71,16 @@ h1, h2, h3{
 	line-height: 30px;
 }
 
+.btn-primary{
+	.icon-angle-right{
+		line-height: 5px;
+	  font-size: 19px;
+	  position: relative;
+	  top: 6px;
+	  right: -12px;
+	}
+}
+
 .big{
 	font-size: 16px;
 }
@@ -7435,6 +7445,7 @@ body.dashboard.index {
 
 		.link-exit-new-report{
 			color: $brand;
+			font-size: 12px;
 			margin-left: 10px;
 			margin-top: 5px;
 			text-decoration: underline;
@@ -7487,6 +7498,14 @@ body.dashboard.index {
 	.btn-data-source {
 		float: right;
 	}
+	.select-data-source{
+		padding: 0 18px;
+	}
+	.data-source-dropdown{
+		display: inline-block;
+		margin-right: 40px;
+		width: 360px;
+	}
 	.data-extract-box{
 		font-size: 13px;
 		width: 100%;
@@ -7535,14 +7554,16 @@ body.dashboard.index {
 }
 
 .next-data-extract{
+	margin-top: 20px;
 	height: 40px;
+	.btn{
+		width: 91px;
+	}
 }
 
 .data_extract_source, .data-source-params {
 	padding-top: 30px;
 	label{
-		color: $brand;
-		font-size: 16px;
 		font-weight: bold;
 		margin-bottom: 8px;
 	}
