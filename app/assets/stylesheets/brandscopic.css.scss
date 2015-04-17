@@ -7551,10 +7551,16 @@ body.dashboard.index {
 
 				i{
 					color: silver;
-					left: 6px;
 					font-size: 17px;
 					position: absolute;
 					top: 6px;
+					&.icon-sort-asc, &.icon-sort-desc, &.icon-visibility-off{
+						left: 6px;
+					}
+					&.icon-checked{
+						color: $brand;
+						right: 8px;
+					}
 				}
 			}
 			td {
