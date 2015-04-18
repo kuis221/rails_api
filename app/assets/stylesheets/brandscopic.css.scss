@@ -644,6 +644,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 				float: right;
 				vertical-align: top;
 				text-decoration: underline;
+				line-height: 16px;
 			}
 		}
 	}
@@ -2102,11 +2103,21 @@ li#notifications{
 	box-shadow: none;
 	&:before{
 		position: absolute;
+		top: -11px;
+		left: 114px;
+		display: inline-block;
+		border-right: 10px solid transparent;
+		border-bottom: 10px solid silver;
+		border-left: 10px solid transparent;
+		content: '';
+	}
+	&:after{
+		position: absolute;
 		top: -10px;
 		left: 114px;
 		display: inline-block;
 		border-right: 10px solid transparent;
-		border-bottom: 10px solid $dropdownBorder;
+		border-bottom: 10px solid $white;
 		border-left: 10px solid transparent;
 		content: '';
 	}
@@ -7502,7 +7513,7 @@ body.dashboard.index {
 		float: right;
 	}
 	.select-data-source{
-		padding: 0 18px;
+		padding: 30px 18px 0 18px;
 	}
 	.data-source-dropdown{
 		display: inline-block;
@@ -7510,6 +7521,7 @@ body.dashboard.index {
 		width: 360px;
 	}
 	.data-extract-box{
+		border: 1px solid $borders;
 		font-size: 13px;
 		width: 100%;
 		max-height: 700px;
@@ -7518,16 +7530,29 @@ body.dashboard.index {
 		margin-bottom: 10px;
 
 		table.data-extract-table {
-			border: solid 1px $borders;
+
+			thead tr{
+				border-top: 0;
+
+			}
+
+			tr{
+				border-top: solid 1px $borders;
+				white-space: nowrap;
+			}
 
 			th {
-				border: solid 1px $borders;
-				padding: 2px 6px 2px 10px;
+				line-height: 24px;
+				padding: 5px 30px 6px 10px;
 				text-align: left;
 				min-width: 150px;
+				position: relative;
+				white-space: nowrap;
 
-				span {
-					display: inline-block;
+				.dropdown-menu{
+					right: -52px;
+  				left: auto;
+  				top: 28px;
 				}
 
 				.divider{
@@ -7535,9 +7560,16 @@ body.dashboard.index {
 				}
 
 				a {
-					color: $text;
 					padding-left: 30px;
 					padding-top: 4px;
+				  &.dropdown-toggle{
+				  	color: silver;
+				  	&:before{
+							position: absolute;
+						  right: -22px;
+						  top: 6px;
+					  }
+				  }
 				}
 
 				li{
@@ -7560,13 +7592,12 @@ body.dashboard.index {
 					&.icon-checked{
 						color: $brand;
 						right: 8px;
+						top: 8px;
 					}
 				}
 			}
 			td {
-				padding: 2px 10px;
-				border-left: solid 1px $borders;
-				border-right: solid 1px $borders;
+				padding: 3px 10px 4px 10px;
 				vertical-align: top;
 			}
 		}
@@ -7593,8 +7624,8 @@ body.dashboard.index {
 }
 
 .data_extract_source, .data-source-params {
-	padding-top: 30px;
 	label{
+		color: $brand;
 		font-weight: bold;
 		margin-bottom: 8px;
 	}

@@ -24,7 +24,9 @@
     .data-extract-box
       table.data-extract-table
     .next-data-extract
-      = submit_tag 'Next', class: 'btn btn-primary btn-data-source icon-slimmed-arrow-right-rounded'
+      button.btn.btn-primary.pull-right type="submit"
+        | Next
+        i.icon-angle-right
 
 javascript:
   $('.data-extract').dataExtract({
