@@ -127,6 +127,24 @@ RSpec.describe DataExtract::Event, type: :model do
           ['Campaign Absolut FY13', '02/02/2014', nil],
           ['Campaign Absolut FY12', '01/01/2014', 'My place']
         ]
+
+        create(:event, campaign: create(:campaign, name: 'Campaign Absolut FY13', company: company),
+                       start_date: '02/02/2013', start_time: '03:00 am',
+                       end_date: '02/02/2013', end_time: '03:00 pm')
+
+        subject.default_sort_by = 'start_date'
+        subject.default_sort_dir = 'DESC'
+        expect(subject.rows).to eql [
+          ['Campaign Absolut FY13', '02/02/2014', nil],
+          ['Campaign Absolut FY12', '01/01/2014', 'My place'],
+          ['Campaign Absolut FY13', '02/02/2013', nil]
+        ]
+        subject.default_sort_dir = 'ASC'
+        expect(subject.rows).to eql [
+          ['Campaign Absolut FY13', '02/02/2013', nil],
+          ['Campaign Absolut FY12', '01/01/2014', 'My place'],
+          ['Campaign Absolut FY13', '02/02/2014', nil]
+        ]
       end
     end
   end
