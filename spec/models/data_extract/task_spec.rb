@@ -31,7 +31,7 @@ RSpec.describe DataExtract::Task, type: :model do
         %w(title Title), %w(task_statuses Statuses), ['due_at', 'Due At'],
         ['created_by', 'Created By'], ['created_at', 'Created At'], ['assigned_to', 'Assigned To'],
         ['comment1', 'Comment 1'], ['comment2', 'Comment 2'], ['comment3', 'Comment 3'],
-        ['comment4', 'Comment 4'], ['comment5', 'Comment 5']])
+        ['comment4', 'Comment 4'], ['comment5', 'Comment 5'], ['active_state', 'Active State']])
     end
   end
 
@@ -63,8 +63,8 @@ RSpec.describe DataExtract::Task, type: :model do
 
       it 'returns all the events in the company with all the columns' do
         expect(subject.rows).to eql [
-          ['MyString', 'Active, Assigned, Incomplete', '02/10/2013', 'Benito Camelas', '08/23/2013', 'Benito Camelas',
-           'Comment #5', 'Comment #4', 'Comment #3', 'Comment #2', 'Comment #1']
+          ["MyString", "Active, Assigned, Incomplete", "02/10/2013", "Benito Camelas", "08/23/2013", "Benito Camelas",
+           "Comment #5", "Comment #4", "Comment #3", "Comment #2", "Comment #1", "Active"]
         ]
       end
 

@@ -556,7 +556,7 @@ en:
       description: "Description"
       created_at: "Created At"
       venues_types: "Types"
-      street: "Street"
+      street: "Venue Street"
       city: "City"
       state_name: "State"
       state: "State"

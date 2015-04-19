@@ -31,7 +31,7 @@ RSpec.describe DataExtract::Campaign, type: :model do
         %w(name Name), %w(description Description), %w(brands_list Brands),
         ['campaign_brand_portfolios', 'Brand Portfolios'], ['start_date', 'Start Date'],
         ['end_date', 'End Date'], %w(color Color), ['created_by', 'Created By'],
-        ['created_at', 'Created At']])
+        ['created_at', 'Created At'], ['active_state', 'Active State']])
     end
   end
 
@@ -55,7 +55,7 @@ RSpec.describe DataExtract::Campaign, type: :model do
 
       it 'returns all the events in the company with all the columns' do
         expect(subject.rows).to eql [
-          ['Campaign Absolut FY12', 'Description campaign', '', '', nil, nil, '#de4d43', 'Benito Camelas', '08/23/2013']
+          ["Campaign Absolut FY12", "Description campaign", "", "", nil, nil, "#de4d43", "Benito Camelas", "08/23/2013", "Active"]
         ]
       end
 
@@ -65,7 +65,7 @@ RSpec.describe DataExtract::Campaign, type: :model do
 
         subject.filters = { 'status' => ['active'] }
         expect(subject.rows).to eql [
-          ['Campaign Absolut FY12', 'Description campaign', '', '', nil, nil, '#de4d43', 'Benito Camelas', '08/23/2013']
+          ["Campaign Absolut FY12", "Description campaign", "", "", nil, nil, "#de4d43", "Benito Camelas", "08/23/2013", "Active"]
         ]
       end
     end

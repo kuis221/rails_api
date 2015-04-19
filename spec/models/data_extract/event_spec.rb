@@ -31,8 +31,8 @@ RSpec.describe DataExtract::Event, type: :model do
         %w(campaign_name Campaign), ['end_date', 'End Date'], ['end_time', 'End Time'],
         ['start_date', 'Start Date'], ['start_time', 'Start Time'], ['place_street', 'Venue Street'],
         ['place_city', 'Venue City'], ['place_name', 'Venue Name'], ['place_state', 'Venue State'],
-        ['place_zipcode', 'Venue ZIP code'], ['event_team_members', 'Event Team'],
-        ['event_status', 'Event Status'], ['status', 'Active State']])
+        ['place_zipcode', 'Venue ZIP code'], ['event_team_members', 'Event Team'], ['event_status', 'Event Status'],
+        ['created_by', 'Created By'], ['created_at', 'Created At'], ['status', 'Active State']])
     end
   end
 
@@ -56,7 +56,7 @@ RSpec.describe DataExtract::Event, type: :model do
                        city: 'Santa Rosa Beach', state: 'Florida')
         create(:event, campaign: campaign, start_date: '01/01/2014', start_time: '02:00 pm',
                        end_date: '01/01/2014', end_time: '03:00 pm', place: place,
-                       users: [company_user])
+                       users: [company_user], created_at: Time.zone.local(2013, 8, 23, 9, 15))
       end
 
       it 'returns all the events in the company with all the columns' do
@@ -65,7 +65,7 @@ RSpec.describe DataExtract::Event, type: :model do
                                    user: create(:user, first_name: 'Pedro', last_name: 'Almodovar'))
         expect(subject.rows).to eql [
           ['Campaign Absolut FY12', '01/01/2014', '11:00 PM', '01/01/2014', '10:00 PM', '21st Jump Street',
-           'Santa Rosa Beach', 'My place', 'Florida', '12345', 'Benito Camelas, Pedro Almodovar', 'Unsent', 'Active']
+           'Santa Rosa Beach', 'My place', 'Florida', '12345', 'Benito Camelas, Pedro Almodovar', 'Unsent', nil, '08/23/2013', 'Active']
         ]
       end
 
@@ -81,7 +81,7 @@ RSpec.describe DataExtract::Event, type: :model do
         subject.filters = { 'campaign' => [campaign.id] }
         expect(subject.rows).to eql [
           ['Campaign Absolut FY12', '01/01/2014', '11:00 PM', '01/01/2014', '10:00 PM', '21st Jump Street',
-           'Santa Rosa Beach', 'My place', 'Florida', '12345', 'Benito Camelas', 'Unsent', 'Active']
+           'Santa Rosa Beach', 'My place', 'Florida', '12345', 'Benito Camelas', 'Unsent', nil, '08/23/2013', 'Active']
         ]
 
         subject.filters = { 'user' => [company_user.id + 1] }
@@ -90,7 +90,7 @@ RSpec.describe DataExtract::Event, type: :model do
         subject.filters = { 'user' => [company_user.id, company_user.id + 1] }
         expect(subject.rows).to eql [
           ['Campaign Absolut FY12', '01/01/2014', '11:00 PM', '01/01/2014', '10:00 PM', '21st Jump Street',
-           'Santa Rosa Beach', 'My place', 'Florida', '12345', 'Benito Camelas', 'Unsent', 'Active']
+           'Santa Rosa Beach', 'My place', 'Florida', '12345', 'Benito Camelas', 'Unsent', nil, '08/23/2013', 'Active']
         ]
       end
 

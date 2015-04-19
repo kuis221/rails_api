@@ -28,7 +28,7 @@ RSpec.describe DataExtract::Venue, type: :model do
 
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql([
-        %w(name Name), %w(venues_types Types), %w(street Street), %w(city City),
+        %w(name Name), %w(venues_types Types), ['street', 'Venue Street'], %w(city City),
         %w(state_name State), %w(country_name Country), ['zipcode', 'ZIP code'],
         ['td_linx_code', 'TD Linx Code'], ['created_by', 'Created By'], ['created_at', 'Created At']])
     end
