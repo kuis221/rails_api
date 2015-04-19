@@ -2,8 +2,9 @@
   - resource_members.each do |user|
     .span3.team-member.clearfix id = "team-member-#{user.id}"
       .pull-left
-        i.icon-user
-        span
+        .rounded-icon.pull-left
+          i.icon-user
+        .module-item
           .full-name
             = user.full_name
           .role-name
