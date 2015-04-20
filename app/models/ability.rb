@@ -198,7 +198,11 @@ class Ability
         company_user.role.has_permission?(:index_results, Comment) ||
         company_user.role.has_permission?(:index_results, EventExpense) ||
         company_user.role.has_permission?(:index_results, Survey) ||
-        company_user.role.has_permission?(:index_photo_results, AttachedAsset) ||
+        company_user.role.has_permission?(:index_photo_results, AttachedAsset)
+      end
+
+      can :access, :analysis do
+        company_user.role.has_permission?(:index, Analysis) ||
         company_user.role.has_permission?(:view_gva_report, Campaign) ||
         company_user.role.has_permission?(:view_event_status, Campaign)
       end
