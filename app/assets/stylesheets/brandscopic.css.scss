@@ -7015,7 +7015,6 @@ table.table.likert-scale-table {
 		}
 	}
 	.chzn-choices{
-		background-image: none !important;
 		border:1px solid $user_menu !important;
 		box-shadow: 0 0 5px rgba(0, 0, 0, 0);
 		min-height: 40px !important;
@@ -7417,3 +7416,4 @@ body.dashboard.index {
 @import 'widgets/resource_list';
 @import 'widgets/steps_wizard';
 @import 'widgets/blank_states';
+@import 'widgets/tags';
