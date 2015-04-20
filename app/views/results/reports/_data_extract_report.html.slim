@@ -1,6 +1,6 @@
 - @extract_reports.each do |report|
   div.resource-item id="data_extract_report_#{report.id}"
-    = link_to_if_permitted :show, Report, results_report_path(report), title: report.name, class: 'resource-item-link' do
+    = link_to_if_permitted :show, Report, results_data_extract_path(report), title: report.name, class: 'resource-item-link' do
       .span10.report-item
         .text-large= report.name
         p= report.description
