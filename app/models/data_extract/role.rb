@@ -22,8 +22,8 @@
 
 class DataExtract::Role < DataExtract
   define_columns name: 'name',
-                 description: 'description', 
-                 created_by: 'trim(users.first_name || \' \' || users.last_name)', 
+                 description: 'description',
+                 created_by: 'trim(users.first_name || \' \' || users.last_name)',
                  created_at: proc { "to_char(roles.created_at, 'MM/DD/YYYY')" },
                  active_state: 'CASE WHEN roles.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END'
 
@@ -42,5 +42,14 @@ class DataExtract::Role < DataExtract
     return s if filters.nil? || filters.empty?
     s = s.where(active: filters['status'].map { |f| f.downcase == 'active' ? true : false }) if filters['status'].present?
     s
+  end
+
+  def sort_by_column(col)
+    case col
+    when 'created_at'
+      'roles.created_at'
+    else
+      super
+    end
   end
 end

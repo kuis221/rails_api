@@ -47,4 +47,13 @@ class DataExtract::BrandPortfolio < DataExtract
     s = s.where(active: filters['status'].map { |f| f.downcase == 'active' ? true : false }) if filters['status'].present?
     s
   end
+
+  def sort_by_column(col)
+    case col
+    when 'created_at'
+      'brand_portfolios.created_at'
+    else
+      super
+    end
+  end
 end

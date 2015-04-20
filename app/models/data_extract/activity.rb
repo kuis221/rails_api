@@ -78,4 +78,16 @@ class DataExtract::Activity < DataExtract
   def filters_scope
     'data_extract_activities'
   end
+
+  def sort_by_column(col)
+    case col
+    when 'event_start_date'
+      'events.start_at'
+    when 'event_end_date'
+      'events.end_at'
+    else
+      super
+    end
+  end
+
 end

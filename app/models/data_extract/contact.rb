@@ -32,17 +32,26 @@ class DataExtract::Contact < DataExtract
                  state: 'state',
                  city: 'city',
                  zip_code: 'zip_code',
-                 created_by: 'trim(users.first_name || \' \' || users.last_name)', 
+                 created_by: 'trim(users.first_name || \' \' || users.last_name)',
                  created_at: proc { "to_char(contacts.created_at, 'MM/DD/YYYY')" }
-  
+
   def add_joins_to_scope(s)
     if columns.include?('created_by') || filters.present? && filters['user'].present?
       s = s.joins('LEFT JOIN users ON contacts.created_by_id=users.id')
     end
     s
   end
-                 
+
   def total_results
     Contact.connection.select_value("SELECT COUNT(*) FROM (#{base_scope.select(*selected_columns_to_sql).to_sql}) sq").to_i
+  end
+
+  def sort_by_column(col)
+    case col
+    when 'created_at'
+      'contacts.created_at'
+    else
+      super
+    end
   end
 end
