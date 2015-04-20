@@ -26,7 +26,7 @@
       = hidden_field_tag 'data_extract[columns][]', col
     .data-extract-buttons
       = submit_tag 'Save', class: 'btn btn-primary btn-data-extract'
-      = link_to 'Exit', results_reports_path, id: 'exit-new-report', class: 'btn btn-data-extract'
+      = link_to 'Exit', results_reports_path, id: 'exit-new-report', class: 'btn btn-cancel btn-data-extract'
       .export-xls.pull-right
         .dropdown.btn-download
           a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
