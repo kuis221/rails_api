@@ -1,0 +1,18 @@
+// This is an example markup for a KSS section.
+// The definition for `6.1` can be found in your app/assets/stylesheets/ folder.
+= kss_block '6.1' do
+  ul.tags-list
+    li
+      p User Tag
+      .search-choice
+        .user-type
+          i.icon-user
+        span Admin User
+        a href="#" class="icon-close"
+    li
+      p Team Tag
+      .search-choice
+        .user-type
+          i.icon-team
+        span Chris Jaskot Team
+        a href="#" class="icon-close"
