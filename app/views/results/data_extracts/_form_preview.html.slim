@@ -26,7 +26,7 @@
       = hidden_field_tag 'data_extract[columns][]', col
     .data-extract-buttons
       = submit_tag 'Save', class: 'btn btn-primary btn-data-extract'
-      = link_to 'Exit', results_reports_path, id: 'exit-new-report', class: 'btn btn-data-extract'
+      = link_to 'Exit', results_reports_path, id: 'exit-new-report', class: 'btn btn-cancel btn-data-extract'
       .export-xls.pull-right
         .dropdown.btn-download
           a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
@@ -44,7 +44,7 @@
 
 javascript:
   $('#collection-list-filters').filteredList({
-    'source': '#{items_results_data_extracts_path(resource.to_hash)}',
+    'source': '#{items_results_data_extracts_path(resource.to_hash).html_safe}',
     'filtersUrl': '#{filter_url(resource.filters_scope)}',
     'listContainer' : '#extract-table tbody',
     'includeCalendars': true,
@@ -52,5 +52,15 @@ javascript:
     'selectDefaultDateRange': false,
     'ytdDatesRange': '#{current_company.ytd_dates_range}',
     'includeAutoComplete': true,
-    'autoCompletePath': '#{autocomplete_path(resource.filters_scope, format: :json)}'
+    'autoCompletePath': '#{autocomplete_path(resource.filters_scope, format: :json)}',
+    'onPageLoaded': function() {
+      scrollerApi = $('.data-extract-box').data('jsp')
+      scrollerApi.destroy();
+      $('.data-extract-box').jScrollPane();
+    },
+    placeholderElement: function(message) {
+      $('<tr><td></td></tr>').appendTo($('table#extract-table tbody')).find('td').attr('colspan', $('table#extract-table thead th').length).addClass('placeholder-empty-state').html(message);
+    }
   });
+
+  $('.data-extract-box').jScrollPane();

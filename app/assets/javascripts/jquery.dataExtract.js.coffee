@@ -36,9 +36,13 @@ $.widget 'nmk.dataExtract', {
     @_loadAvailableFields()
 
   _loadPreview: () ->
+    scrollerApi = $('.data-extract-box').data('jsp');
     form = @element.find('form')
     @element.find('.data-extract-table').css(cursor: 'wait').fadeTo('slow', 0.5).load '/results/data_extracts/preview?' + form.serialize(), =>
+        if scrollerApi
+            scrollerApi.destroy()
         @element.find('.data-extract-table').css(cursor: 'auto').fadeTo('fast', 1)
+        $('.data-extract-box').jScrollPane();
 
   _loadAvailableFields: () ->
     form = @element.find('form')
