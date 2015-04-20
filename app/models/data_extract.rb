@@ -126,7 +126,11 @@ class DataExtract < ActiveRecord::Base
     col = default_sort_by
     col = columns.first if col.blank? || !columns.include?(col)
     return if col.blank? || !columns_definitions.key?(col.to_sym)
-    "#{columns.index(col) + 1} #{default_sort_dir || 'ASC'}"
+    "#{sort_by_column(col)} #{default_sort_dir || 'ASC'}"
+  end
+
+  def sort_by_column(col)
+    columns.index(col) + 1
   end
 
   def column_definition(column)

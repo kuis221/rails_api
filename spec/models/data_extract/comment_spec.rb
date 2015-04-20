@@ -120,6 +120,42 @@ RSpec.describe DataExtract::Comment, type: :model do
           ['Comment #1', '08/22/2013', 'Test Campaign FY01'],
           ['Comment #2', '02/15/2014', 'Campaign FY15']
         ]
+
+        event = create(:event, campaign: create(:campaign, name: 'Campaign Absolut FY13', company: company),
+                               start_date: '02/02/2013', start_time: '03:00 am',
+                               end_date: '02/02/2013', end_time: '03:00 pm')
+        create(:comment, content: 'Comment #3', commentable: event,
+                         created_at: Time.zone.local(2014, 5, 1, 11, 59))
+
+        # test sort by date fields
+        subject.columns = %w(comment created_at start_date)
+        subject.default_sort_by = 'start_date'
+        subject.default_sort_dir = 'DESC'
+        expect(subject.rows).to eql [
+          ['Comment #2', '02/15/2014', '04/17/2015'],
+          ['Comment #1', '08/22/2013', '01/01/2014'],
+          ['Comment #3', '05/01/2014', '02/02/2013']
+        ]
+        subject.default_sort_dir = 'ASC'
+        expect(subject.rows).to eql [
+          ['Comment #3', '05/01/2014', '02/02/2013'],
+          ['Comment #1', '08/22/2013', '01/01/2014'],
+          ['Comment #2', '02/15/2014', '04/17/2015']
+        ]
+        subject.default_sort_by = 'created_at'
+        subject.default_sort_dir = 'ASC'
+        expect(subject.rows).to eql [
+          ['Comment #1', '08/22/2013', '01/01/2014'],
+          ['Comment #2', '02/15/2014', '04/17/2015'],
+          ['Comment #3', '05/01/2014', '02/02/2013']
+        ]
+        subject.default_sort_by = 'created_at'
+        subject.default_sort_dir = 'DESC'
+        expect(subject.rows).to eql [
+          ['Comment #3', '05/01/2014', '02/02/2013'],
+          ['Comment #2', '02/15/2014', '04/17/2015'],
+          ['Comment #1', '08/22/2013', '01/01/2014']
+        ]
       end
     end
   end

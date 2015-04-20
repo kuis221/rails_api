@@ -27,10 +27,10 @@ class DataExtract::Comment < DataExtract
                  created_by: 'trim(users.first_name || \' \' || users.last_name)',
                  created_at: proc { "to_char(comments.created_at, 'MM/DD/YYYY')" },
                  campaign_name: 'campaigns.name',
-                 end_date: proc { "to_char(events.#{date_field_prefix}end_at, 'MM/DD/YYYY')" },
-                 end_time: proc { "to_char(events.#{date_field_prefix}end_at, 'HH12:MI AM')" },
                  start_date: proc { "to_char(events.#{date_field_prefix}start_at, 'MM/DD/YYYY')" },
                  start_time: proc { "to_char(events.#{date_field_prefix}start_at, 'HH12:MI AM')" },
+                 end_date: proc { "to_char(events.#{date_field_prefix}end_at, 'MM/DD/YYYY')" },
+                 end_time: proc { "to_char(events.#{date_field_prefix}end_at, 'HH12:MI AM')" },
                  event_status: 'initcap(events.aasm_state)',
                  status: 'CASE WHEN events.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END',
                  street: 'trim(places.street_number || \' \' || places.route)',
@@ -47,5 +47,18 @@ class DataExtract::Comment < DataExtract
 
   def filters_scope
     'events'
+  end
+
+  def sort_by_column(col)
+    case col
+    when 'start_date'
+      'events.start_at'
+    when 'end_date'
+      'events.start_at'
+    when 'created_at'
+      'comments.created_at'
+    else
+      super
+    end
   end
 end
