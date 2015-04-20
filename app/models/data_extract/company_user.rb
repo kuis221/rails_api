@@ -46,6 +46,15 @@ class DataExtract::CompanyUser < DataExtract
     s
   end
 
+  def add_filter_conditions_to_scope(s)
+    return s if filters.nil? || filters.empty?
+    s = s.where(role_id: filters['role']) if filters['role'].present?
+    s = s.where(active: filters['status'].map { |f| f.downcase == 'active' ? true : false }) if filters['status'].present?
+    s = s.joins('LEFT JOIN memberships AS member ON member.memberable_type=\'Team\'')
+          .where("member.memberable_id IN (#{filters['team'].join(', ')}) AND company_users.id=member.company_user_id") if filters['team'].present?
+    s
+  end
+
   def total_results
     CompanyUser.connection.select_value("SELECT COUNT(*) FROM (#{base_scope.select(*selected_columns_to_sql).to_sql}) sq").to_i
   end
