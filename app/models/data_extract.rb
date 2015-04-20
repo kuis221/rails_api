@@ -34,6 +34,8 @@ class DataExtract < ActiveRecord::Base
 
   attr_accessor :current_user
 
+  scope :active, -> { where(active: true) }
+
   class << self
     def define_columns(columns)
       @export_columns_definitions = columns
@@ -139,5 +141,9 @@ class DataExtract < ActiveRecord::Base
 
   def filters_scope
     model.name.underscore.pluralize
+  end
+
+  def to_partial_path
+    'data_extract'
   end
 end

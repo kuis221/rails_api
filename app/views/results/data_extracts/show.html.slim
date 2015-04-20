@@ -1,7 +1,7 @@
 .data_extract_top_details
   .details_box
     .pull-left
-      h4.new-report-title = resource.name.upcase + ' REPORT:'
+      h4.new-report-title = resource.name.upcase + ' REPORT: ' + resource.description
 - content_for :alerts
   div.collection-list-description
     .filter-label
@@ -9,7 +9,7 @@
   #collection-list-filters
 .main.data-extract
   .data-extract-buttons
-    .export-xls.pull-right
+    .export-xls.pull-right.data-extract-margin-bottom
       .dropdown.btn-download
         a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
           i.icon-download
@@ -18,13 +18,13 @@
           li
             a.xlsx-download-link href="#" role="menuitem" data-url="#{new_results_data_extract_path(format: :csv)}"
               | Download as CSV
-    .data-extract-box
-      table#extract-table.data-extract-table
-        = render_table_cols resource.columns_with_names, 3, resource.default_sort_by, resource.default_sort_dir
-        tbody
+  .data-extract-box
+    table#extract-table.data-extract-table
+      = render_table_cols resource.columns_with_names, 3, resource.default_sort_by, resource.default_sort_dir
+      tbody
 javascript:
   $('#collection-list-filters').filteredList({
-    'source': '#{items_results_data_extracts_path(resource.to_hash)}',
+    'source': '#{items_results_data_extracts_path(id: resource.id)}',
     'filtersUrl': '#{filter_url(resource.filters_scope)}',
     'listContainer' : '#extract-table tbody',
     'includeCalendars': true,
