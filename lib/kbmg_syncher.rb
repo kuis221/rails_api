@@ -112,12 +112,12 @@ class KbmgSyncher
   end
 
   def kbmg_client(campaign)
-    return unless campaign.module_setting('attendance', 'api_key')
+    return if campaign.module_setting('attendance', 'api_key').blank?
     @kbmg_clients[campaign.id] ||= KBMG.new(campaign.module_setting('attendance', 'api_key'))
   end
 
   def valid_campaign_api_key?(campaign)
-    kbmg_client(campaign) && test_api_call(kbmg_client(campaign))
+    kbmg_client(campaign) && test_api_call(campaign)
   end
 
   def logger
@@ -129,7 +129,9 @@ class KbmgSyncher
   end
 
   # Tests the API key by performing a test call and checking for the error code
-  def test_api_call(client)
+  def test_api_call(campaign)
+    client = kbmg_client(campaign)
+    return false unless client
     result = client.events(limit: 1)
     result['Success'] != false || result['Error']['ErrorCode'] != 'API01'
   end
