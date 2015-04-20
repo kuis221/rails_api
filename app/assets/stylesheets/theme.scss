@@ -3,6 +3,10 @@
 
 
 a{
+	color:$text;
+	&:hover{
+		color: $text;
+	}
 	&.special{
 		color: $link-color;
 	}
