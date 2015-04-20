@@ -40,10 +40,10 @@ module Results
                   (if step < 3
                      link_to('', '', title: 'tool', class: 'icon-arrow-down-small dropdown-toggle', data: { name: col[0], toggle: 'dropdown' }) +
                      content_tag(:ul, class: 'dropdown-menu', role: 'menu') do
-                       content_tag(:li, link_to(('Sort Ascending' + (sort_dir == 'asc' ? icon : '')).html_safe, '#', class: 'btn-sort-asc btn-sort-table', data: { column: col[0], dir: 'asc' })) +
-                       content_tag(:li, link_to(('Sort Descending' + (sort_dir == 'desc' ? icon : '')).html_safe, '#', class: 'btn-sort-desc btn-sort-table', data: { column: col[0], dir: 'desc' })) +
+                       content_tag(:li, icon_sort_asc + link_to(('Sort Ascending' + (sort_dir == 'asc' ? icon : '')).html_safe, '#', class: 'btn-sort-asc btn-sort-table', data: { column: col[0], dir: 'asc' })) +
+                       content_tag(:li, icon_sort_desc + link_to(('Sort Descending' + (sort_dir == 'desc' ? icon : '')).html_safe, '#', class: 'btn-sort-desc btn-sort-table', data: { column: col[0], dir: 'desc' })) +
                        content_tag(:li, nil, class: 'divider') +
-                       content_tag(:li, link_to('Hide', '#', class: 'btn-remove-column', data: { column: col[0] }))
+                       content_tag(:li, icon_visibility_off + link_to('Hide', '#', class: 'btn-remove-column', data: { column: col[0] }))
                      end
                    end)
                 end
@@ -52,6 +52,18 @@ module Results
           end
         end
       end
+    end
+
+    def icon_sort_asc
+      content_tag(:i, '', class: 'icon-sort-asc')
+    end
+
+    def icon_sort_desc
+      content_tag(:i, '', class: 'icon-sort-desc')
+    end
+
+    def icon_visibility_off
+      content_tag(:i, '', class: 'icon-visibility-off')
     end
 
     def render_table_rows(rows)

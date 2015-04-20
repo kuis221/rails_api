@@ -1909,8 +1909,6 @@ li#notifications{
 		background-color: #cccccc;
 		height: 261px;
 		margin-bottom: 2px;
-		overflow-y: auto;
-		overflow-x: hidden;
 		ul li{
 			width: 100%;
 			i{
@@ -7398,8 +7396,7 @@ body.dashboard.index {
 		font-size: 13px;
 		width: 100%;
 		max-height: 700px;
-		overflow-x: auto;
-		overflow-y: auto;
+		min-height: 300px;
 		margin-bottom: 10px;
 
 		table.data-extract-table {
