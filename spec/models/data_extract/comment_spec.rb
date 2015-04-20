@@ -30,9 +30,8 @@ RSpec.describe DataExtract::Comment, type: :model do
         [%w(comment Comment), ['created_by', 'Created By'], ['created_at', 'Created At'],
          %w(campaign_name Campaign), ['end_date', 'End Date'], ['end_time', 'End Time'],
          ['start_date', 'Start Date'], ['start_time', 'Start Time'], ['event_status', 'Event Status'],
-         ['status', 'Active State'], ['address1', 'Address 1'], ['address2', 'Address 2'],
-         ['place_city', 'Venue City'], ['place_name', 'Venue Name'], ['place_state', 'Venue State'],
-         ['place_zipcode', 'Venue ZIP code']])
+         ['status', 'Active State'], ['street', 'Venue Street'], ['place_city', 'Venue City'],
+         ['place_name', 'Venue Name'], ['place_state', 'Venue State'], ['place_zipcode', 'Venue ZIP code']])
     end
   end
 
@@ -66,7 +65,7 @@ RSpec.describe DataExtract::Comment, type: :model do
       it 'returns all the comments in the company with all the columns' do
         expect(subject.rows).to eql [
           ['Comment #1', 'Benito Camelas', '08/22/2013', 'Test Campaign FY01', '01/01/2014',
-           '08:00 PM', '01/01/2014', '06:00 PM', 'Unsent', 'Active', '11', 'Main St.', 'New York City', 'Place 1', 'NY', '12345']
+           '08:00 PM', '01/01/2014', '06:00 PM', 'Unsent', 'Active', '11 Main St.', 'New York City', 'Place 1', 'NY', '12345']
         ]
       end
 
@@ -77,18 +76,14 @@ RSpec.describe DataExtract::Comment, type: :model do
 
         subject.filters = { 'campaign' => [campaign.id] }
         expect(subject.rows).to eql [
-          ['Campaign Absolut FY12', '01/01/2014', '11:00 PM', '01/01/2014', '10:00 PM', '21st Jump Street',
-           'Santa Rosa Beach', 'My place', 'Florida', '12345', 'Benito Camelas', 'Unsent', 'Active']
+          ['Comment #1', 'Test Campaign FY01']
         ]
 
         subject.filters = { 'user' => [company_user.id + 1] }
         expect(subject.rows).to be_empty
 
         subject.filters = { 'user' => [company_user.id, company_user.id + 1] }
-        expect(subject.rows).to eql [
-          ['Campaign Absolut FY12', '01/01/2014', '11:00 PM', '01/01/2014', '10:00 PM', '21st Jump Street',
-           'Santa Rosa Beach', 'My place', 'Florida', '12345', 'Benito Camelas', 'Unsent', 'Active']
-        ]
+        expect(subject.rows).to be_empty
       end
 
       it 'allows to sort the results' do

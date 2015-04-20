@@ -29,14 +29,14 @@ RSpec.describe DataExtract::CompanyUser, type: :model do
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql(
         [:first_name, :last_name, :teams_name, :email, :phone_number, :role_name,
-        :street_address, :country, :state, :zip_code, :time_zone, :created_at, :active_state])
+         :street_address, :country, :city, :state, :zip_code, :time_zone, :created_at, :active_state])
     end
   end
 
   pending '#rows' do
     let(:company) { create(:company) }
     let(:company_user) { create(:company_user, company: company,
-                         user: create(:user, first_name: 'Benito', last_name: 'Camelas')) }
+                        user: create(:user, first_name: 'Benito', last_name: 'Camelas')) }
 
     let(:subject) { described_class.new() }
 
@@ -53,23 +53,23 @@ RSpec.describe DataExtract::CompanyUser, type: :model do
 
       it 'returns all the events in the company with all the columns' do
         row = subject.rows.first
-        expect(row[0]).to eql ('Test')
-        expect(row[1]).to eql ('User')
-        expect(row[2]).to eql ('')
-        expect(row[3]).to eql ('testuser2@brandscopic.com')
-        expect(row[4]).to eql ('+1000000000')
-        expect(row[6]).to eql ('Street Address 123')
+        expect(row[0]).to eql('Test')
+        expect(row[1]).to eql('User')
+        expect(row[2]).to eql('')
+        expect(row[3]).to eql('testuser2@brandscopic.com')
+        expect(row[4]).to eql('+1000000000')
+        expect(row[6]).to eql('Street Address 123')
       end
 
       it 'allows to filter the results' do
         subject.filters = { email: ['testuser2@brandscopic.com'] }
         row = subject.rows.first
-        expect(row[0]).to eql ('Test')
-        expect(row[1]).to eql ('User')
-        expect(row[2]).to eql ('')
-        expect(row[3]).to eql ('testuser2@brandscopic.com')
-        expect(row[4]).to eql ('+1000000000')
-        expect(row[6]).to eql ('Street Address 123')
+        expect(row[0]).to eql('Test')
+        expect(row[1]).to eql('User')
+        expect(row[2]).to eql('')
+        expect(row[3]).to eql('testuser2@brandscopic.com')
+        expect(row[4]).to eql('+1000000000')
+        expect(row[6]).to eql('Street Address 123')
       end
     end
   end
