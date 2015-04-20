@@ -54,7 +54,7 @@ RSpec.describe DataExtract::Team, type: :model do
 
       it 'returns all the events in the company with all the columns' do
         expect(subject.rows).to eql [
-          ["Costa Rica Team", "el grupo de ticos", "Benito Camelas", "08/23/2013", "Active"]
+          ['Costa Rica Team', 'el grupo de ticos', 'Benito Camelas', '08/23/2013', 'Active']
         ]
       end
 
@@ -64,25 +64,29 @@ RSpec.describe DataExtract::Team, type: :model do
 
         subject.filters = { 'active_state' => ['active'] }
         expect(subject.rows).to eql [
-          ["Costa Rica Team", "el grupo de ticos", "Benito Camelas", "08/23/2013", "Active"]
+          ['Costa Rica Team', 'el grupo de ticos', 'Benito Camelas', '08/23/2013', 'Active']
         ]
       end
 
       it 'allows to sort the results' do
         create(:team, name: 'Otro Team', description: 'Somos otro team', active: true,
                       company_id: company.id, created_by_id: company_user.user.id, created_at: Time.zone.local(2014, 8, 23, 9, 15))
+        create(:team, name: 'Pilsen Team', description: 'Somos pilsen team', active: true,
+                      company_id: company.id, created_by_id: company_user.user.id, created_at: Time.zone.local(2015, 8, 23, 9, 15))
 
         subject.columns = %w(name description created_at)
         subject.default_sort_by = 'name'
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
           ['Costa Rica Team', 'el grupo de ticos', '08/23/2013'],
-          ['Otro Team', 'Somos otro team', '08/23/2014']
+          ['Otro Team', 'Somos otro team', '08/23/2014'],
+          ['Pilsen Team', 'Somos pilsen team', '08/23/2015']
         ]
 
         subject.default_sort_by = 'name'
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
+          ['Pilsen Team', 'Somos pilsen team', '08/23/2015'],
           ['Otro Team', 'Somos otro team', '08/23/2014'],
           ['Costa Rica Team', 'el grupo de ticos', '08/23/2013']
         ]
@@ -91,12 +95,14 @@ RSpec.describe DataExtract::Team, type: :model do
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
           ['Costa Rica Team', 'el grupo de ticos', '08/23/2013'],
-          ['Otro Team', 'Somos otro team', '08/23/2014']
+          ['Otro Team', 'Somos otro team', '08/23/2014'],
+          ['Pilsen Team', 'Somos pilsen team', '08/23/2015']
         ]
 
         subject.default_sort_by = 'created_at'
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
+          ['Pilsen Team', 'Somos pilsen team', '08/23/2015'],
           ['Otro Team', 'Somos otro team', '08/23/2014'],
           ['Costa Rica Team', 'el grupo de ticos', '08/23/2013']
         ]

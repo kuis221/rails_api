@@ -56,7 +56,7 @@ RSpec.describe DataExtract::BrandPortfolio, type: :model do
 
       it 'returns all the events in the company with all the columns' do
         expect(subject.rows).to eql [
-          ['A Vinos ticos', 'Algunos vinos de Costa Rica', 'Benito Camelas', "08/23/2013", "Active"]
+          ['A Vinos ticos', 'Algunos vinos de Costa Rica', 'Benito Camelas', '08/23/2013', 'Active']
         ]
       end
 
@@ -66,7 +66,7 @@ RSpec.describe DataExtract::BrandPortfolio, type: :model do
 
         subject.filters = { 'status' => ['active'] }
         expect(subject.rows).to eql [
-          ['A Vinos ticos', 'Algunos vinos de Costa Rica', 'Benito Camelas', "08/23/2013", "Active"]
+          ['A Vinos ticos', 'Algunos vinos de Costa Rica', 'Benito Camelas', '08/23/2013', 'Active']
         ]
       end
 
@@ -76,17 +76,24 @@ RSpec.describe DataExtract::BrandPortfolio, type: :model do
                                  active: true, company: company,
                                  created_by_id: company_user.user.id,
                                  created_at: Time.zone.local(2014, 3, 26, 9, 15))
+        create(:brand_portfolio, name: 'Ron Barcardi',
+                                 description: 'Cervezas de Costa Rica',
+                                 active: true, company: company,
+                                 created_by_id: company_user.user.id,
+                                 created_at: Time.zone.local(2015, 3, 26, 9, 15))
         subject.columns = %w(name description created_at)
         subject.default_sort_by = 'name'
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
           ['A Vinos ticos', 'Algunos vinos de Costa Rica', '08/23/2013'],
-          ['Cervezas Ticas', 'Cervezas de Costa Rica', '03/26/2014']
+          ['Cervezas Ticas', 'Cervezas de Costa Rica', '03/26/2014'],
+          ['Ron Barcardi', 'Cervezas de Costa Rica', '03/26/2015']
         ]
 
         subject.default_sort_by = 'name'
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
+          ['Ron Barcardi', 'Cervezas de Costa Rica', '03/26/2015'],
           ['Cervezas Ticas', 'Cervezas de Costa Rica', '03/26/2014'],
           ['A Vinos ticos', 'Algunos vinos de Costa Rica', '08/23/2013']
         ]
@@ -94,15 +101,17 @@ RSpec.describe DataExtract::BrandPortfolio, type: :model do
         subject.default_sort_by = 'created_at'
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
+          ['A Vinos ticos', 'Algunos vinos de Costa Rica', '08/23/2013'],
           ['Cervezas Ticas', 'Cervezas de Costa Rica', '03/26/2014'],
-          ['A Vinos ticos', 'Algunos vinos de Costa Rica', '08/23/2013']
+          ['Ron Barcardi', 'Cervezas de Costa Rica', '03/26/2015']
         ]
 
         subject.default_sort_by = 'created_at'
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
-          ['A Vinos ticos', 'Algunos vinos de Costa Rica', '08/23/2013'],
-          ['Cervezas Ticas', 'Cervezas de Costa Rica', '03/26/2014']
+          ['Ron Barcardi', 'Cervezas de Costa Rica', '03/26/2015'],
+          ['Cervezas Ticas', 'Cervezas de Costa Rica', '03/26/2014'],
+          ['A Vinos ticos', 'Algunos vinos de Costa Rica', '08/23/2013']
         ]
       end
     end

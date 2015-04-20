@@ -66,12 +66,16 @@ RSpec.describe DataExtract::ActivityType, type: :model do
       end
 
       it 'allows to sort the results' do
-        create(:activity_type, name: 'Other Activity Type', active: true, created_by_id: company_user.user.id, company: company, created_at: Time.zone.local(2015, 2, 12, 9, 15))
+        create(:activity_type, name: 'Other Activity Type', active: true, created_by_id: company_user.user.id,
+                company: company, created_at: Time.zone.local(2015, 2, 12, 9, 15))
+        create(:activity_type, name: 'Activity Type 3', active: true, created_by_id: company_user.user.id,
+                company: company, created_at: Time.zone.local(2014, 2, 12, 9, 15))
 
         subject.columns = %w(name created_at)
         subject.default_sort_by = 'name'
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
+          ['Activity Type 3', '02/12/2014'],
           ['Activty Type Test1', '08/23/2013'],
           ['Other Activity Type', '02/12/2015']
         ]
@@ -80,21 +84,24 @@ RSpec.describe DataExtract::ActivityType, type: :model do
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
           ['Other Activity Type', '02/12/2015'],
-          ['Activty Type Test1', '08/23/2013']
+          ['Activty Type Test1', '08/23/2013'],
+          ['Activity Type 3', '02/12/2014']
         ]
 
         subject.default_sort_by = 'created_at'
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
-          ['Other Activity Type', '02/12/2015'],
-          ['Activty Type Test1', '08/23/2013']
+          ['Activty Type Test1', '08/23/2013'],
+          ['Activity Type 3', '02/12/2014'],
+          ['Other Activity Type', '02/12/2015']
         ]
 
         subject.default_sort_by = 'created_at'
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
-          ['Activty Type Test1', '08/23/2013'],
-          ['Other Activity Type', '02/12/2015']
+          ['Other Activity Type', '02/12/2015'],
+          ['Activity Type 3', '02/12/2014'],
+          ['Activty Type Test1', '08/23/2013']
         ]
       end
     end
