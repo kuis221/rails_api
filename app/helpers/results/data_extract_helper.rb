@@ -70,9 +70,9 @@ module Results
     def render_table_rows(rows)
       return unless rows.present?
       rows.map do |row|
-        content_tag(:tr, class: 'data-extract-row') do
-          row.map do |field|
-            content_tag(:td, field, class: 'data-extract-td')
+        content_tag(:tr) do
+          Array(row).map do |field|
+            content_tag(:td, field)
           end.join.html_safe
         end
       end.join.html_safe

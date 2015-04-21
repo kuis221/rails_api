@@ -52,7 +52,7 @@ class DataExtract < ActiveRecord::Base
 
   DATA_SOURCES = [
     ['Events', :event], ['Post Event Data (PERs)', :event_data], ['Activities', :activity],
-    ['Attendance', :invite], ['Comments', :comment], ['Contacts', :contact], ['Expenses', :event_expense],
+    ['Comments', :comment], ['Contacts', :contact], ['Expenses', :event_expense],
     ['Tasks', :task], ['Venues', :venue], ['Users', :company_user], ['Teams', :team],
     ['Roles', :role], ['Campaigns', :campaign], ['Brands', :brand], ['Activity Types', :activity_type],
     ['Areas', :area], ['Brand Portfolios', :brand_portfolio], ['Date Ranges', :date_range], ['Day Parts', :day_part]
@@ -106,7 +106,6 @@ class DataExtract < ActiveRecord::Base
   end
 
   def total_results
-    p "Counting total of results"
     @total_results ||= base_scope.count
   end
 

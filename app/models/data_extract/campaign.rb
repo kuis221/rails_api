@@ -41,6 +41,7 @@ class DataExtract::Campaign < DataExtract
     if columns.include?('created_by') || filters.present? && filters['user'].present?
       s = s.joins('LEFT JOIN users ON campaigns.created_by_id=users.id')
     end
+    s
   end
 
   def add_filter_conditions_to_scope(s)

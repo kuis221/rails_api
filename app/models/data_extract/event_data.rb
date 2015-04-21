@@ -50,5 +50,4 @@ class DataExtract::EventData < DataExtract
   def filters_scope
     'data_extracts_event_data'
   end
-
 end

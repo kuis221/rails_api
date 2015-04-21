@@ -47,6 +47,7 @@ class DataExtract::EventExpense < DataExtract
     if columns.include?('campaign_name')
       s = s.joins('LEFT JOIN campaigns ON events.campaign_id=campaigns.id')
     end
+    s
   end
 
   def total_results
