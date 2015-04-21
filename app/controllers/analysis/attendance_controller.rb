@@ -1,4 +1,4 @@
-class Results::AttendanceController < ApplicationController
+class Analysis::AttendanceController < ApplicationController
   include ExportableController
 
   helper_method :return_path, :neighborhood_coordinates, :default_color, :campaign_events

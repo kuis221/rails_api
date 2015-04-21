@@ -6,7 +6,7 @@
     #attendance-left-column.pull-left
       h3 ATTENDANCE BY NEIGHBORHOOD
 
-      = simple_form_for :report, url: results_attendance_path, remote: true do |f|
+      = simple_form_for :report, url: analysis_attendance_path, remote: true do |f|
 
         = f.input :campaign_id, label: '1. Choose a campaign', collection: campaigns_list_for_dropdown, selected: params[:campaign_id], include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Choose a campaign" } }
 
@@ -39,10 +39,10 @@
             ==< "Export"
           ul#download-gva-btn.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
             li
-              a.xlsx-download-link href="#" role="menuitem" data-base-url="#{results_attendance_path(format: :xls)}"
+              a.xlsx-download-link href="#" role="menuitem" data-base-url="#{analysis_attendance_path(format: :xls)}"
                 | Download as XLS
             li
-              a.xlsx-download-link href="#" role="menuitem" data-base-url="#{results_attendance_path(format: :pdf)}"
+              a.xlsx-download-link href="#" role="menuitem" data-base-url="#{analysis_attendance_path(format: :pdf)}"
                 | Download as PDF
 
 
@@ -89,7 +89,7 @@ javascript:
         $(link).data('url', $(link).data('base-url') + '?campaign_id='+campaigns.val()+'&area_id='+areas.val()+'&event_id='+event_dates.val())
       })
       $.ajax({
-        url: '#{results_attendance_map_url(format: :js)}',
+        url: '#{analysis_attendance_map_url(format: :js)}',
         method: 'GET',
         data: {
           campaign_id: campaigns.val(),

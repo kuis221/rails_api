@@ -6,6 +6,7 @@ Brandscopic::Application.routes.draw do
   # Redirect old urls to new ones
   get '/results/gva', to: redirect('/analysis/gva')
   get '/results/event_status', to: redirect('/analysis/event_status')
+  get '/results/attendance', to: redirect('/analysis/attendance')
 
 
   namespace :api do
@@ -194,8 +195,6 @@ Brandscopic::Application.routes.draw do
       get :items, on: :collection
     end
 
-    get 'attendance/map', to: 'attendance#map', as: :attendance_map
-    get 'attendance', to: 'attendance#index', as: :attendance
     # resources :attendance, only: [:index] do
     # end
 
@@ -237,6 +236,9 @@ Brandscopic::Application.routes.draw do
       get 't/:term', on: :collection, to: :show
       get 't/:term/:action', on: :collection
     end
+
+    get 'attendance/map', to: 'attendance#map', as: :attendance_map
+    get 'attendance', to: 'attendance#index', as: :attendance
 
     get :gva, to: 'gva#index'
     post :gva, to: 'gva#report'
