@@ -34,6 +34,8 @@ class DataExtract < ActiveRecord::Base
 
   attr_accessor :current_user
 
+  scope :active, -> { where(active: true) }
+
   class << self
     def define_columns(columns)
       @export_columns_definitions = columns
@@ -126,7 +128,11 @@ class DataExtract < ActiveRecord::Base
     col = default_sort_by
     col = columns.first if col.blank? || !columns.include?(col)
     return if col.blank? || !columns_definitions.key?(col.to_sym)
-    "#{columns.index(col) + 1} #{default_sort_dir || 'ASC'}"
+    "#{sort_by_column(col)} #{default_sort_dir || 'ASC'}"
+  end
+
+  def sort_by_column(col)
+    columns.index(col) + 1
   end
 
   def column_definition(column)
@@ -135,5 +141,9 @@ class DataExtract < ActiveRecord::Base
 
   def filters_scope
     model.name.underscore.pluralize
+  end
+
+  def to_partial_path
+    'data_extract'
   end
 end

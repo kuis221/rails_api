@@ -61,34 +61,40 @@ RSpec.describe DataExtract::Contact, type: :model do
       it 'allows to sort the results' do
         create(:contact, first_name: 'Ana', last_name: 'Soto', email: 'ana_soto@email.com', company: company,
                          created_at: Time.zone.local(2014, 2, 12, 9, 15))
+        create(:contact, first_name: 'Mariela', last_name: 'Castro', email: 'mariela_castro@email.com', company: company,
+                         created_at: Time.zone.local(2015, 2, 12, 9, 15))
 
-        subject.columns = %w(first_name last_name email)
+        subject.columns = %w(first_name last_name email, created_at)
         subject.default_sort_by = 'first_name'
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
-          ['Ana', 'Soto', 'ana_soto@email.com'],
-          ['Julian', 'Guerra', 'somecontact@email.com']
+          ['Ana', 'Soto', '02/12/2014'],
+          ['Julian', 'Guerra', '08/23/2013'],
+          ['Mariela', 'Castro', '02/12/2015']
         ]
 
         subject.default_sort_by = 'first_name'
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
-          ['Julian', 'Guerra', 'somecontact@email.com'],
-          ['Ana', 'Soto', 'ana_soto@email.com']
+          ['Mariela', 'Castro', '02/12/2015'],
+          ['Julian', 'Guerra', '08/23/2013'],
+          ['Ana', 'Soto', '02/12/2014']
         ]
 
-        subject.default_sort_by = 'email'
+        subject.default_sort_by = 'created_at'
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
-          ['Ana', 'Soto', 'ana_soto@email.com'],
-          ['Julian', 'Guerra', 'somecontact@email.com']
+          ['Julian', 'Guerra', '08/23/2013'],
+          ['Ana', 'Soto', '02/12/2014'],
+          ['Mariela', 'Castro', '02/12/2015']
         ]
 
-        subject.default_sort_by = 'email'
+        subject.default_sort_by = 'created_at'
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
-          ['Julian', 'Guerra', 'somecontact@email.com'],
-          ['Ana', 'Soto', 'ana_soto@email.com']
+          ['Mariela', 'Castro', '02/12/2015'],
+          ['Ana', 'Soto', '02/12/2014'],
+          ['Julian', 'Guerra', '08/23/2013']
         ]
       end
     end

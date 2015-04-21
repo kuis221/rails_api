@@ -1,0 +1,77 @@
+/*
+A markup for tags
+
+Styleguide 6.1
+*/
+
+.tags-list{
+  list-style-type: none;
+  padding: 0px;
+  margin: 0px;
+  p{
+  	margin-bottom: 6px;
+  }
+  li{
+  	margin-bottom: 15px;
+  }
+}
+
+.user-tag {
+	display: inline-block;
+	font-size: 13px;
+	position: relative;
+	margin: 1px 5px 3px 0;
+	padding: 0 22px 0 28px;
+  height: 24px;
+	border-radius: 12px;
+	background-color: $gray-light;
+	color: $white;
+	cursor: default;
+	.user-type{
+		background-color: $silver;
+		display: inline-block;
+		@include border-radius(12px);
+		height: 24px;
+		position: absolute;
+		left: 0;
+		line-height: 26px;
+		text-align: center;
+		width: 24px;
+	}
+	.icon-close {
+		color: $icons-silver;
+		display: block;
+		font-size: 10px;
+		position: absolute;
+		top: 8px;
+		right: 7px;
+		&:hover {
+			text-decoration: none;
+		}
+	}
+}
+
+.search-choice {
+	display: inline-block;
+	font-size: 13px;
+	position: relative;
+	margin: 1px 5px 3px 0;
+	padding: 0 22px 0 10px;
+	line-height: 24px;
+  height: 24px;
+	border-radius: 12px;
+	background-color: $brand;
+	color: $white;
+	cursor: default;
+	.icon-close{
+		color: $white;
+		display: block;
+		font-size: 10px;
+		position: absolute;
+		top: 8px;
+		right: 7px;
+		&:hover {
+			text-decoration: none;
+		}
+	}
+}

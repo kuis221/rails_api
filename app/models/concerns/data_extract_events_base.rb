@@ -44,6 +44,17 @@ module DataExtractEventsBase
     s
   end
 
+  def sort_by_column(col)
+    case col
+    when 'start_date'
+      :start_at
+    when 'end_date'
+      :end_at
+    else
+      super
+    end
+  end
+
   def date_field_prefix
     @date_field_prefix ||= current_user.company.timezone_support? ? 'local_' : ''
   end

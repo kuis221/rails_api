@@ -19,6 +19,8 @@ $gray-light:             #cccccc;
 $gray-lighter:           #dfdfdf;
 $silver:                 #c0c0c0;
 
+$icons-silver:           #fbfbfb;
+
 $brand:                  #989898;
 $tooltip:                #7a7a7a;
 
@@ -121,6 +123,10 @@ $borders:                 #d3d3d3;
 $buttons-border:          #acacac;
 $btnHover:                #d6d6d6;
 
+// Links
+// -------------------------
+$linkColor:             	$text;
+$linkColorHover:        	$text;
 
 // Dropdowns
 // -------------------------
@@ -134,3 +140,12 @@ $dropdownLinkColor:             $text;
 
 // $dropdownLinkBackgroundActive:  $linkColor;
 // $dropdownLinkBackgroundHover:   $dropdownLinkBackgroundActive;
+
+
+// Buttons
+// -------------------------
+$btnBackground:                     $silver;
+
+$btnPrimaryBackground:              $buttons;
+$btnPrimaryBackgroundHighlight:     $buttons;
+

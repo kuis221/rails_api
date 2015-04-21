@@ -1,7 +1,7 @@
 class Results::DataExtractsController < InheritedResources::Base
   include ExportableController
 
-  respond_to :js, only: [:new, :create]
+  respond_to :js, only: [:new, :create, :show]
 
   helper_method :return_path, :process_step, :resource, :form_action, :collection_count
 
@@ -9,9 +9,6 @@ class Results::DataExtractsController < InheritedResources::Base
   before_action :enqueue_export, only: [:new, :show]
 
   set_callback :export, :initialize_resource
-
-  def new
-  end
 
   def preview
     render layout: false

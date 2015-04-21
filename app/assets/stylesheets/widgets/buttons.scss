@@ -1,0 +1,292 @@
+/*
+A markup for buttons
+
+Styleguide 3.1
+*/
+
+.buttons-example{
+	list-style: none;
+	li{
+		margin-bottom: 30px;
+		p{
+			margin-bottom: 6px;
+		}
+	}
+}
+
+.btn{
+	background-image: none;
+	border: 0;
+	box-shadow: none;
+	box-sizing: border-box;
+	color: white;
+	font-family: $baseFontFamily;
+	font-weight: 400;
+	text-shadow: none;
+	height: 34px;
+	line-height: 26px;
+	padding: 4px 8px;
+	min-width: 101px;
+	&.download, &.fullscreen{
+		min-width: 50px;
+	}
+	&:active{
+		box-shadow: none;
+		color: $white;
+	}
+	&:hover{
+		background-color: $brand;
+		color: $app_bg;
+	}
+	&:focus{
+		background-color: $silver;
+		color: $white;
+		outline: none;
+	}
+	&[disabled]{
+		background-color: $gray-lighter;
+		color: $app_bg;
+		opacity: 1;
+		&:hover{
+			@extend .btn[disabled];
+		}
+	}
+}
+
+.btn-primary{
+	&:hover, &:active, &:focus{
+		background-color: $buttons-hover;
+		color: $white;
+	}
+	&[disabled]{
+		background-color: #f28179;
+		color: #f5b8b8;
+		&:hover{
+			@extend .btn-primary[disabled];
+		}
+	}
+	.icon-angle-right{
+		line-height: 5px;
+	  font-size: 19px;
+	  position: relative;
+	  top: 6px;
+	  right: -12px;
+	}
+}
+
+.btn-cancel{
+	background-color: $silver;
+	&:hover, &:active, &:focus{
+		background-color: $brand;
+	}
+}
+
+
+/* Btn large should be used only for buttons inside of dialogue boxes */
+
+.btn-large{
+	height: 41px;
+}
+
+/* Use btn-download for download icons with dropdown */
+
+.btn-download {
+	display: inline-block;
+	.btn{
+		background-color: $silver;
+		padding: 10px 8px;
+		min-width: 60px;
+		&:hover{
+			background-color: $brand;
+		}
+	}
+	.icon-download{
+		float: left;
+		font-size: 16px;
+		margin-left: 5px;
+	}
+	.icon-arrow-down-small{
+		font-size: 11px;
+		line-height: 16px;
+		float: right;
+	}
+	.download-options-menu {
+		right: 0;
+		left: initial;
+		text-align: left;
+		box-shadow:none;
+		padding:0;
+		min-width: 100%;
+
+		&:before {
+			display: none;
+		}
+		li:first-child a {
+			border-top-right-radius: 5px;
+			border-top-left-radius: 5px;
+		}
+		li:last-child a {
+			border-bottom-right-radius: 5px;
+			border-bottom-left-radius: 5px;
+		}
+		&> li > a {
+			color: $text;
+		}
+		&> li > a:hover,
+		&> li > a:focus,
+		.dropdown-submenu:hover > a,
+		.dropdown-submenu:focus > a {
+			color: #fff;
+		}
+	}
+}
+
+// BTN INFO
+// ----------------------------------------------------------------------
+
+.btn-info{
+	background-color: $user_menu !important;
+	font-size: 13px;
+	padding-bottom:9px;
+	padding-top: 9px;
+	i{
+		line-height: 5px;
+		font-size: 19px;
+		position: relative;
+		top: 6px;
+		right: -12px;
+	}
+	&:hover{
+		background-color: $brand !important;
+	}
+}
+
+
+// BTN GROUP
+// According to the Style Guide there is no hover effect for this element
+// ----------------------------------------------------------------------
+
+
+.btn-group {
+	margin-left: 0;
+	&>.btn+.btn{
+		margin-left: 0;
+	}
+	&.controls{
+		margin-left: 0 !important;
+		label.radio{
+			color: $white;
+			font-size: 13px;
+			height: 34px;
+			line-height: 26px;
+			min-width: 80px;
+			&.active{
+				color: $gray-lighter;
+			}
+		}
+	}
+	.btn {
+		background-color: $user_menu;
+		box-shadow: none;
+		color: #FFFFFF;
+		font-weight: bold;
+		line-height: 28px;
+		min-width: 42px;
+		&:first-child{
+			border-bottom-left-radius: 4px;
+			border-top-left-radius: 4px;
+			border-right: 1px solid rgba(152,152,152,0.3);
+			&+label{
+				border-left:0;
+			}
+		}
+		&:last-child{
+				border-bottom-right-radius: 4px;
+				border-top-right-radius: 4px;
+				border-left: 1px solid rgba(152,152,152,0.3);
+		}
+		&.active{
+			background-color: $brand;
+			color: $gray-lighter;
+		}
+	}
+}
+
+//
+// Buttons
+// --------------------------------------------------
+
+/*
+.btn{
+	&.btn-default{
+		background-color:$user_menu;
+		background-image:none;
+		&:hover, &:active{
+			background-color:$brand;
+		}
+		&[disabled]{
+			background-color:$gray-lighter;
+			color:$app_bg;
+			&:hover{
+				@extend .btn.btn-primary[disabled];
+			}
+		}
+	}
+	&.btn-primary{
+		&:active{
+			background-color: $buttons-hover;
+			box-shadow: none;
+		}
+		&.fileinput-button{
+			padding: 7px 23px;
+			line-height: 24px;
+		}
+		&.active{
+			background-color: $brand;
+			border: 0;
+			box-shadow: none;
+			&.list, &.map, &.calendar, &.table, &.graph{
+				&:after{
+					color: $user_menu;
+				}
+			}
+		}
+		&.list:after, &.table:after{
+			font-size: 14px;
+			top:1px;
+		}
+		&.map:after{
+			font-size: 15px;
+			left: 2px;
+			top:1px;
+		}
+		&.calendar:after{
+			font-size: 15px;
+			top: 2px;
+		}
+		&.graph:after{
+			font-size: 14px;
+			top: 1px;
+		}
+		.icon-calendar:before{
+			font-size: 19px;
+			left: 2px;
+			top:1px;
+		}
+		&.btn-primary, &.btn-cancel{
+			&.fileinput-button{
+				width: 140px;
+			}
+		}
+	}
+}
+
+*/
+
+.btn-small {
+	padding: 2px 10px;
+}
+
+
+
+

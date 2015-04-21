@@ -42,4 +42,12 @@ class DataExtract::Area < DataExtract
     s
   end
 
+  def sort_by_column(col)
+    case col
+    when 'created_at'
+      'areas.created_at'
+    else
+      super
+    end
+  end
 end

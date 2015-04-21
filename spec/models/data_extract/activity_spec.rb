@@ -39,11 +39,11 @@ RSpec.describe DataExtract::Activity, type: :model do
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql([
         ['activity_type', 'Activity Type'], %w(user User), %w(activity_date Date),
-        %w(campaign_name Campaign), ['event_end_date', 'Event End Date'],
-        ['event_end_time', 'Event End Time'], ['event_start_date', 'Event End Date'],
-        ['event_start_time', 'Event End Time'], ['place_street', 'Venue Street'],
+        %w(campaign_name Campaign), ['event_start_date', 'Event Start Date'],
+        ['event_start_time', 'Event Start Time'], ['event_end_date', 'Event End Date'],
+        ['event_end_time', 'Event End Time'], ['place_street', 'Venue Street'],
         ['place_city', 'Venue City'], ['place_name', 'Venue Name'], ['place_state', 'Venue State'],
-        ['place_zipcode', 'Venue ZIP code'],
+        ['place_zipcode', 'Venue ZIP Code'],
         ['event_status', 'Event Status'], ['status', 'Active State']])
     end
 
@@ -52,11 +52,11 @@ RSpec.describe DataExtract::Activity, type: :model do
       field = create(:form_field_number, name: 'My Numeric Field', fieldable: activity_type)
       expect(subject.exportable_columns).to eql([
         ['activity_type', 'Activity Type'], %w(user User), %w(activity_date Date),
-        %w(campaign_name Campaign), ['event_end_date', 'Event End Date'],
-        ['event_end_time', 'Event End Time'], ['event_start_date', 'Event End Date'],
-        ['event_start_time', 'Event End Time'], ['place_street', 'Venue Street'],
+        %w(campaign_name Campaign), ['event_start_date', 'Event Start Date'],
+        ['event_start_time', 'Event Start Time'], ['event_end_date', 'Event End Date'],
+        ['event_end_time', 'Event End Time'], ['place_street', 'Venue Street'],
         ['place_city', 'Venue City'], ['place_name', 'Venue Name'], ['place_state', 'Venue State'],
-        ['place_zipcode', 'Venue ZIP code'],
+        ['place_zipcode', 'Venue ZIP Code'],
         ['event_status', 'Event Status'], ['status', 'Active State'],
         ["ff_#{field.id}", 'My Numeric Field']])
     end
@@ -129,8 +129,8 @@ RSpec.describe DataExtract::Activity, type: :model do
 
       it 'returns all the activites in the company with all the columns' do
         expect(subject.rows).to eql [
-          ["My Activity Type", "Test User", "12:09 AM", "Campaign Absolut FY12", "01/01/2014",
-           "11:00 PM", "01/01/2014", "10:00 PM", nil, nil, nil, nil, nil, "Unsent", "Active"]
+          ['My Activity Type', 'Test User', '02/05/2014 12:09 AM', 'Campaign Absolut FY12', '01/01/2014', '10:00 PM',
+           '01/01/2014', '11:00 PM', nil, nil, nil, nil, nil, 'Unsent', 'Active']
         ]
       end
 
@@ -217,8 +217,8 @@ RSpec.describe DataExtract::Activity, type: :model do
 
         subject.filters = { 'campaign' => [campaign.id] }
         expect(subject.rows).to eql [
-          ["My Activity Type", "Test User", "12:09 AM", "Campaign Absolut FY12", "01/01/2014",
-           "11:00 PM", "01/01/2014", "10:00 PM", nil, nil, nil, nil, nil, "Unsent", "Active"]
+          ['My Activity Type', 'Test User', '02/05/2014 12:09 AM', 'Campaign Absolut FY12', '01/01/2014', '10:00 PM',
+           '01/01/2014', '11:00 PM', nil, nil, nil, nil, nil, 'Unsent', 'Active']
         ]
       end
 

@@ -27,12 +27,12 @@ class DataExtract::Activity < DataExtract
 
   define_columns activity_type: 'activity_types.name',
                  user: 'users.first_name || \' \' || users.last_name',
-                 activity_date: proc { "to_char(activity_date, 'HH12:MI AM')" },
+                 activity_date: proc { "to_char(activity_date, 'MM/DD/YYYY HH12:MI AM')" },
                  campaign_name: 'campaigns.name',
-                 event_end_date: proc { "to_char(events.end_at, 'MM/DD/YYYY')" },
-                 event_end_time: proc { "to_char(events.end_at, 'HH12:MI AM')" },
                  event_start_date: proc { "to_char(events.start_at, 'MM/DD/YYYY')" },
                  event_start_time: proc { "to_char(events.start_at, 'HH12:MI AM')" },
+                 event_end_date: proc { "to_char(events.end_at, 'MM/DD/YYYY')" },
+                 event_end_time: proc { "to_char(events.end_at, 'HH12:MI AM')" },
                  place_street: 'trim(both \' \' from places.street_number || \' \' || places.route)',
                  place_city: 'places.city',
                  place_name: 'places.name',
@@ -78,4 +78,18 @@ class DataExtract::Activity < DataExtract
   def filters_scope
     'data_extract_activities'
   end
+
+  def sort_by_column(col)
+    case col
+    when 'event_start_date'
+      'events.start_at'
+    when 'event_end_date'
+      'events.end_at'
+    when 'activity_date'
+      'activity_date'
+    else
+      super
+    end
+  end
+
 end

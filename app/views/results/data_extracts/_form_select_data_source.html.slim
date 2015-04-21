@@ -2,17 +2,20 @@
   = simple_form_for resource, as: :data_extract, url: form_action, method: :get, name: "data_source_form" do |f|
     = hidden_field_tag :step, 2
     .select-data-source
-      .span6
+      .data-source-dropdown
         = f.input :source, collection: DataExtract::DATA_SOURCES.sort, input_html: { class: 'chosen-enabled', 'data-placeholder' => 'Select a data source' }, label: 'Choose a data source for your report'
-      .span6
+      .data-source-dropdown
         #data-extact-activity-types.data-source-params
           = label_tag 'data_extract_activity_type_id', 'Choose an activity type'
           = select_tag 'data_extract[params][activity_type_id][]',  options_for_select(current_company.activity_types.pluck(:name, :id).sort, resource.params.try(:[], 'activity_type_id')), include_blank: true, class: 'chosen-enabled', 'data-placeholder' => 'Select an activity type', id: 'data_extract_activity_type_id'
-        #data-extact-campaigns.data-source-params
+        #data-extact-campaigns.data-source-params.control-group
           = label_tag 'data_extract_campaign_id', 'Choose a campaign'
           = select_tag 'data_extract[params][campaign_id][]',  options_for_select(current_company.campaigns.accessible_by_user(current_company_user).for_dropdown, resource.params.try(:[], 'campaign_id')), include_blank: true, class: 'chosen-enabled', 'data-placeholder' => 'Select a campaign', id: 'data_extract_campaign_id'
 
-    = submit_tag 'Next', class: 'btn btn-primary btn-data-source icon-slimmed-arrow-right-rounded'
+    .next-data-extract
+      button#btn-data-source.btn.btn-primary.pull-right type="submit"
+        | Next
+        i.icon-angle-right
 
 
 javascript:
@@ -46,10 +49,10 @@ javascript:
 
   enableDisableBtnNext = function(field_source){
     if ($(field_source).val() != '') {
-      $('.btn-data-source').prop( "disabled", false );
+      $('#btn-data-source').prop( "disabled", false );
     }
     else {
-      $('.btn-data-source').prop( "disabled", true );
+      $('#btn-data-source').prop( "disabled", true );
     }
   }
   $('#data_extract_source').change(showHideDropdowns);

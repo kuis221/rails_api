@@ -64,4 +64,17 @@ class DataExtract::EventExpense < DataExtract
   def filters_scope
     'events'
   end
+
+  def sort_by_column(col)
+    case col
+    when 'start_date'
+      "events.#{date_field_prefix}start_at"
+    when 'end_date'
+      "events.#{date_field_prefix}end_at"
+    when 'created_at'
+      'event_expenses.created_at'
+    else
+      super
+    end
+  end
 end

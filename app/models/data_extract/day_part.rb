@@ -21,9 +21,9 @@
 #
 
 class DataExtract::DayPart < DataExtract
-  define_columns name: 'name', 
-                 description: 'description', 
-                 created_by: 'trim(users.first_name || \' \' || users.last_name)', 
+  define_columns name: 'name',
+                 description: 'description',
+                 created_by: 'trim(users.first_name || \' \' || users.last_name)',
                  created_at: proc { "to_char(day_parts.created_at, 'MM/DD/YYYY')" },
                  active_state: 'CASE WHEN day_parts.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END'
 
@@ -44,4 +44,12 @@ class DataExtract::DayPart < DataExtract
     s
   end
 
+  def sort_by_column(col)
+    case col
+    when 'created_at'
+      'day_parts.created_at'
+    else
+      super
+    end
+  end
 end

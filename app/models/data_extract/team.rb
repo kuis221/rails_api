@@ -22,10 +22,10 @@
 
 class DataExtract::Team < DataExtract
   define_columns name: 'name',
-                description: 'description',
-                created_by: 'trim(users.first_name || \' \' || users.last_name)', 
-                created_at: proc { "to_char(teams.created_at, 'MM/DD/YYYY')" },
-                active_state: 'CASE WHEN teams.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END'
+                 description: 'description',
+                 created_by: 'trim(users.first_name || \' \' || users.last_name)',
+                 created_at: proc { "to_char(teams.created_at, 'MM/DD/YYYY')" },
+                 active_state: 'CASE WHEN teams.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END'
 
   def add_joins_to_scope(s)
     if columns.include?('created_by') || filters.present? && filters['user'].present?
@@ -41,7 +41,16 @@ class DataExtract::Team < DataExtract
   def add_filter_conditions_to_scope(s)
     return s if filters.nil? || filters.empty?
     s = s.joins(:campaigns).where(campaigns: { id: filters[:campaign] } ) if filters.present? && filters['campaign'].present?
-    s = s.where(active: filters['active_state'].map { |f| f == 'active' ? true : false }) if filters['active_state'].present?
+    s = s.where(active: filters['status'].map { |f| f.downcase == 'active' ? true : false }) if filters['status'].present?
     s
+  end
+
+  def sort_by_column(col)
+    case col
+    when 'created_at'
+      'teams.created_at'
+    else
+      super
+    end
   end
 end

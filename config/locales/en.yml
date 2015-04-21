@@ -596,8 +596,8 @@ en:
       activity_type: 'Activity Type'
       user: 'User'
       activity_date: 'Date'
-      event_start_date: 'Event End Date'
-      event_start_time: 'Event End Time'
+      event_start_date: 'Event Start Date'
+      event_start_time: 'Event Start Time'
       event_end_date: 'Event End Date'
       event_end_time: 'Event End Time'
       active_state: "Active State"

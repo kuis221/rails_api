@@ -3,21 +3,23 @@ $.widget 'nmk.dataExtract', {
   },
 
   _create: () ->
+    @table = @element.find('.data-extract-table').addClass('dragtable-sortable')
+    @_buildDragtable()
     @_loadPreview()
     @_loadAvailableFields()
 
     $('.available-fields-box').on 'click', '.available-field', (e) =>
-        e.preventDefault()
-        @_addColumn($(e.currentTarget).data('name'))
+      e.preventDefault()
+      @_addColumn($(e.currentTarget).data('name'))
 
     @element.on 'click', '.btn-remove-column', (e) =>
-        e.preventDefault()
-        @_hideColumn($(e.currentTarget).data('column'))
+      e.preventDefault()
+      @_hideColumn($(e.currentTarget).data('column'))
 
     @element.on 'click', '.btn-sort-table', (e) =>
-        e.preventDefault()
-        btn = $(e.currentTarget)
-        @_sortTable btn.data('column'), btn.data('dir')
+      e.preventDefault()
+      btn = $(e.currentTarget)
+      @_sortTable btn.data('column'), btn.data('dir')
 
   _hideColumn:(column) ->
     @element.find('form').find('[name="data_extract[columns][]"][value="' + column + '"]').remove()
@@ -36,13 +38,23 @@ $.widget 'nmk.dataExtract', {
     @_loadAvailableFields()
 
   _loadPreview: () ->
+    scrollerApi = $('.data-extract-box').data('jsp');
     form = @element.find('form')
-    @element.find('.data-extract-table').css(cursor: 'wait').fadeTo('slow', 0.5).load '/results/data_extracts/preview?' + form.serialize(), =>
+    @table.dragtable('destroy')
+    @element.find('.data-extract-table')
+      .css(cursor: 'wait')
+      .fadeTo('slow', 0.5)
+      .load '/results/data_extracts/preview?' + form.serialize(), =>
+        @_buildDragtable()
+        if scrollerApi
+          scrollerApi.destroy()
         @element.find('.data-extract-table').css(cursor: 'auto').fadeTo('fast', 1)
+        $('.data-extract-box').jScrollPane();
 
   _loadAvailableFields: () ->
     form = @element.find('form')
     $('.available-fields-box').load '/results/data_extracts/available_fields?' + form.serialize()
 
-
+  _buildDragtable: () ->
+    @table.dragtable()
 }

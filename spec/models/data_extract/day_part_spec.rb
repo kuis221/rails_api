@@ -53,7 +53,7 @@ RSpec.describe DataExtract::DayPart, type: :model do
 
       it 'returns all the events in the company with all the columns' do
         expect(subject.rows).to eql [
-          ["Day Part 1", "Some Day Part description", "Benito Camelas", "08/23/2013", "Active"]
+          ['Day Part 1', 'Some Day Part description', 'Benito Camelas', '08/23/2013', 'Active']
         ]
       end
 
@@ -63,25 +63,29 @@ RSpec.describe DataExtract::DayPart, type: :model do
 
         subject.filters = { 'status' => ['active'] }
         expect(subject.rows).to eql [
-          ["Day Part 1", "Some Day Part description", "Benito Camelas", "08/23/2013", "Active"]
+          ['Day Part 1', 'Some Day Part description', 'Benito Camelas', '08/23/2013', 'Active']
         ]
       end
 
       it 'allows to sort the results' do
         create(:day_part, name: 'Fecha 2', active: true, created_by_id: company_user.user.id,
                           company: company, created_at: Time.zone.local(2015, 2, 12, 9, 15))
+        create(:day_part, name: 'La Fecha 3', active: true, created_by_id: company_user.user.id,
+                          company: company, created_at: Time.zone.local(2014, 2, 12, 9, 15))
 
         subject.columns = %w(name created_at)
         subject.default_sort_by = 'name'
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
           ['Day Part 1', '08/23/2013'],
-          ['Fecha 2', '02/12/2015']
+          ['Fecha 2', '02/12/2015'],
+          ['La Fecha 3', '02/12/2014']
         ]
 
         subject.default_sort_by = 'name'
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
+          ['La Fecha 3', '02/12/2014'],
           ['Fecha 2', '02/12/2015'],
           ['Day Part 1', '08/23/2013']
         ]
@@ -89,15 +93,17 @@ RSpec.describe DataExtract::DayPart, type: :model do
         subject.default_sort_by = 'created_at'
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
-          ['Fecha 2', '02/12/2015'],
-          ['Day Part 1', '08/23/2013']
+          ['Day Part 1', '08/23/2013'],
+          ['La Fecha 3', '02/12/2014'],
+          ['Fecha 2', '02/12/2015']
         ]
 
         subject.default_sort_by = 'created_at'
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
-          ['Day Part 1', '08/23/2013'],
-          ['Fecha 2', '02/12/2015']
+          ['Fecha 2', '02/12/2015'],
+          ['La Fecha 3', '02/12/2014'],
+          ['Day Part 1', '08/23/2013']
         ]
       end
     end

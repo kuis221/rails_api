@@ -55,7 +55,7 @@ RSpec.describe DataExtract::Campaign, type: :model do
 
       it 'returns all the events in the company with all the columns' do
         expect(subject.rows).to eql [
-          ["Campaign Absolut FY12", "Description campaign", "", "", nil, nil, "#de4d43", "Benito Camelas", "08/23/2013", "Active"]
+          ['Campaign Absolut FY12', 'Description campaign', '', '', nil, nil, '#de4d43', 'Benito Camelas', '08/23/2013', 'Active']
         ]
       end
 
@@ -65,7 +65,7 @@ RSpec.describe DataExtract::Campaign, type: :model do
 
         subject.filters = { 'status' => ['active'] }
         expect(subject.rows).to eql [
-          ["Campaign Absolut FY12", "Description campaign", "", "", nil, nil, "#de4d43", "Benito Camelas", "08/23/2013", "Active"]
+          ['Campaign Absolut FY12', 'Description campaign', '', '', nil, nil, '#de4d43', 'Benito Camelas', '08/23/2013', 'Active']
         ]
       end
     end

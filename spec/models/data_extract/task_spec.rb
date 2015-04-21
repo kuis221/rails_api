@@ -63,44 +63,51 @@ RSpec.describe DataExtract::Task, type: :model do
 
       it 'returns all the events in the company with all the columns' do
         expect(subject.rows).to eql [
-          ["MyString", "Active, Assigned, Incomplete", "02/10/2013", "Benito Camelas", "08/23/2013", "Benito Camelas",
-           "Comment #5", "Comment #4", "Comment #3", "Comment #2", "Comment #1", "Active"]
+          ['MyString', 'Active, Assigned, Incomplete', '02/10/2013', 'Benito Camelas', '08/23/2013', 'Benito Camelas',
+           'Comment #5', 'Comment #4', 'Comment #3', 'Comment #2', 'Comment #1', 'Active']
         ]
       end
 
       it 'allows to sort the results' do
         event = create(:event, company: company)
-        create(:task, event_id: event.id, due_at: Time.zone.local(2013, 2, 10, 9, 15),
+        create(:task, event_id: event.id, due_at: Time.zone.local(2014, 2, 10, 9, 15),
                       created_at: Time.zone.local(2015, 2, 12, 9, 15), company_user: company_user,
                       created_by: company_user.user, title: 'Other Task', active: false)
+        create(:task, event_id: event.id, due_at: Time.zone.local(2015, 2, 10, 9, 15),
+                      created_at: Time.zone.local(2014, 2, 12, 9, 15), company_user: company_user,
+                      created_by: company_user.user, title: 'Super Task', active: false)
 
-        subject.columns = %w(title task_statuses created_by)
+        subject.columns = %w(title task_statuses due_at)
         subject.default_sort_by = 'title'
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
-          ['MyString', 'Active, Assigned, Incomplete', 'Benito Camelas'],
-          ['Other Task', 'Inactive, Assigned, Incomplete', 'Benito Camelas']
+          ['MyString', 'Active, Assigned, Incomplete', '02/10/2013'],
+          ['Other Task', 'Inactive, Assigned, Incomplete', '02/10/2014'],
+          ['Super Task', 'Inactive, Assigned, Incomplete', '02/10/2015']
         ]
 
         subject.default_sort_by = 'title'
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
-          ['Other Task', 'Inactive, Assigned, Incomplete', 'Benito Camelas'],
-          ['MyString', 'Active, Assigned, Incomplete', 'Benito Camelas']
+          ['Super Task', 'Inactive, Assigned, Incomplete', '02/10/2015'],
+          ['Other Task', 'Inactive, Assigned, Incomplete', '02/10/2014'],
+          ['MyString', 'Active, Assigned, Incomplete', '02/10/2013']
         ]
 
-        subject.default_sort_by = 'task_statuses'
+        subject.default_sort_by = 'due_at'
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
-          ['MyString', 'Active, Assigned, Incomplete', 'Benito Camelas'],
-          ['Other Task', 'Inactive, Assigned, Incomplete', 'Benito Camelas']
+          ['MyString', 'Active, Assigned, Incomplete', '02/10/2013'],
+          ['Other Task', 'Inactive, Assigned, Incomplete', '02/10/2014'],
+          ['Super Task', 'Inactive, Assigned, Incomplete', '02/10/2015']
         ]
 
-        subject.default_sort_by = 'task_statuses'
+        subject.default_sort_by = 'due_at'
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
-          ['Other Task', 'Inactive, Assigned, Incomplete', 'Benito Camelas'],
-          ['MyString', 'Active, Assigned, Incomplete', 'Benito Camelas']
+          ['Super Task', 'Inactive, Assigned, Incomplete', '02/10/2015'],
+          ['Other Task', 'Inactive, Assigned, Incomplete', '02/10/2014'],
+          ['MyString', 'Active, Assigned, Incomplete', '02/10/2013']
         ]
       end
     end
