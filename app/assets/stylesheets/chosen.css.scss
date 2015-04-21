@@ -255,16 +255,13 @@ select.chosen-enabled{
 		box-sizing: border-box;
 		margin: 0;
 		padding: 0;
+		padding-right: 28px;
+		padding-left: 6px;
 		width: 100%;
 		height: auto;
-		height: 1%;
 		border: 1px solid #aaa;
 		background-color: #fff;
-		background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(1%, #eeeeee), color-stop(15%, white));
-		background-image: -webkit-linear-gradient(#eeeeee 1%, white 15%);
-		background-image: -moz-linear-gradient(#eeeeee 1%, white 15%);
-		background-image: -o-linear-gradient(#eeeeee 1%, white 15%);
-		background-image: linear-gradient(#eeeeee 1%, white 15%);
+		background: image-url('triangle-down.svg') no-repeat calc(100% - 6px) 16px;
 		cursor: text;
 		li {
 			float: left;
@@ -286,33 +283,6 @@ select.chosen-enabled{
 				}
 				.default {
 					color: #999;
-				}
-			}
-			&.search-choice {
-				position: relative;
-				margin: 1px 0 3px 5px;
-				padding: 4px 20px 4px 10px;
-				border: 1px solid #aaa;
-				border-radius: 12px;
-				background-color: $brand;
-				background-clip: padding-box;
-				color: white;
-				line-height: 13px;
-				cursor: default;
-				.search-choice-close {
-					color: $gray-light;
-					display: block;
-					font-size: 10px;
-					position: absolute;
-					top: 5px;
-					right: 5px;
-					&:after{
-						content: "\e019";
-						font-family: 'icons';
-					}
-					&:hover {
-						background-position: -48px -10px;
-					}
 				}
 			}
 			&.search-choice-disabled {
