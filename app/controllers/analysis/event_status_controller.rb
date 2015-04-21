@@ -1,4 +1,4 @@
-class Results::EventStatusController < ApplicationController
+class Analysis::EventStatusController < ApplicationController
   include ExportableController
 
   respond_to :xls, :pdf, only: :index
@@ -45,7 +45,7 @@ class Results::EventStatusController < ApplicationController
   end
 
   def return_path
-    results_reports_path
+    analysis_path
   end
 
   def report_group_by

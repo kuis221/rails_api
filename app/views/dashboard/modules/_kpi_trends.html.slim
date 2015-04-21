@@ -19,5 +19,5 @@
         .kpi-trend
           .name= campaign['name']
           - if can_view_status
-            = link_to "View details", results_event_status_path(campaign_id: campaign['id'])
+            = link_to "View details", analysis_event_status_path(campaign_id: campaign['id'])
           = campaign_promo_hours_chart(campaign)

@@ -1,4 +1,4 @@
-class Results::GvaController < InheritedResources::Base
+class Analysis::GvaController < InheritedResources::Base
   include ExportableController
 
   respond_to :xls, :pdf, only: :index
@@ -240,6 +240,6 @@ class Results::GvaController < InheritedResources::Base
   end
 
   def return_path
-    results_reports_path
+    analysis_path
   end
 end

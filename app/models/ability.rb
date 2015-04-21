@@ -88,7 +88,7 @@ class Ability
 
       can :edit_data, Event
 
-      can :access, [:results, :brand_ambassadors]
+      can :access, [:results, :brand_ambassadors, :analysis]
 
     # A logged in user
     elsif user.id

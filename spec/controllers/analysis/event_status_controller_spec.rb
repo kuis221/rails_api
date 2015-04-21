@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Results::EventStatusController, type: :controller do
+describe Analysis::EventStatusController, type: :controller do
   let(:user) { sign_in_as_user }
   let(:company_user) { user.current_company_user }
   let(:company) { user.companies.first }
