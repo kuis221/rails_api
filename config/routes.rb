@@ -3,6 +3,11 @@ Brandscopic::Application.routes.draw do
   mount Nkss::Engine => '/styleguides' if Rails.env.development?
   apipie if ENV['WEB']
 
+  # Redirect old urls to new ones
+  get '/results/gva', to: redirect('/analysis/gva')
+  get '/results/event_status', to: redirect('/analysis/event_status')
+
+
   namespace :api do
     namespace :v1 do
       devise_scope :user do
@@ -216,6 +221,7 @@ Brandscopic::Application.routes.draw do
 
     post :kpi_report, to: 'kpi_reports#report'
     get :kpi_report_status, to: 'kpi_reports#status'
+
   end
 
   namespace :analysis do
