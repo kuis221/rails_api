@@ -45,4 +45,13 @@ class DataExtract::Venue < DataExtract
   def total_results
     Venue.connection.select_value("SELECT COUNT(*) FROM (#{base_scope.select(*selected_columns_to_sql).to_sql}) sq").to_i
   end
+
+  def sort_by_column(col)
+    case col
+    when 'created_at'
+      'venues.created_at'
+    else
+      super
+    end
+  end
 end

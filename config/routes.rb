@@ -207,7 +207,7 @@ Brandscopic::Application.routes.draw do
       post :preview, on: :member
     end
 
-    resources :data_extracts, only: [:new, :create] do
+    resources :data_extracts, only: [:new, :create, :show] do
       get :preview, on: :collection
       get :save, on: :collection
       get :available_fields, on: :collection

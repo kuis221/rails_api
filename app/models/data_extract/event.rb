@@ -37,4 +37,17 @@ class DataExtract::Event < DataExtract
                  created_by: '(SELECT trim(us.first_name || \' \' || us.last_name) FROM users as us WHERE events.created_by_id=us.id)',
                  created_at: proc { "to_char(events.created_at, 'MM/DD/YYYY')" },
                  status: 'CASE WHEN events.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END'
+
+  def sort_by_column(col)
+    case col
+    when 'start_date'
+      :start_at
+    when 'end_date'
+      :end_at
+    when 'created_at'
+      'events.created_at'
+    else
+      super
+    end
+  end
 end

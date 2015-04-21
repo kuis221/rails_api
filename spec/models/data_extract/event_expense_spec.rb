@@ -61,42 +61,48 @@ RSpec.describe DataExtract::EventExpense, type: :model do
       it 'returns all the comments in the company with all the columns' do
         subject.columns = %w(name created_by created_at campaign_name end_date end_time start_date start_time event_status status place_street place_city place_name place_state place_zipcode)
         expect(subject.rows).to eql [
-          ['Expense #1', nil, '08/22/2013', 'Test Campaign FY01', '01/01/2014', '08:00 PM', '01/01/2014', '06:00 PM', 'Unsent', 'Active', '11 Main St.', 'New York City', 'Place 2', 'NY', '12345']
+          ['Expense #1', nil, '08/22/2013', 'Test Campaign FY01', '01/01/2014', '08:00 PM',
+           '01/01/2014', '06:00 PM', 'Unsent', 'Active', '11 Main St.', 'New York City', 'Place 2', 'NY', '12345']
         ]
       end
 
       it 'allows to sort the results' do
         other_campaign = create(:campaign, company: company, name: 'Campaign FY15')
         other_event = create(:approved_event, company: company, campaign: other_campaign, place: place)
-        expense2 = create(:event_expense, amount: 34, name: 'Expense #2', event: other_event, created_at: Time.zone.local(2014, 2, 17, 11, 59))
+        create(:event_expense, amount: 34, name: 'Expense #2', event: other_event, created_at: Time.zone.local(2014, 2, 17, 11, 59))
+        create(:event_expense, amount: 21, name: 'Expense #3', event: other_event, created_at: Time.zone.local(2015, 2, 17, 11, 59))
 
         subject.columns = %w(name created_at campaign_name)
         subject.default_sort_by = 'name'
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
           ['Expense #1', '08/22/2013', 'Test Campaign FY01'],
-          ['Expense #2', '02/17/2014', 'Campaign FY15']
+          ['Expense #2', '02/17/2014', 'Campaign FY15'],
+          ['Expense #3', '02/17/2015', 'Campaign FY15']
         ]
 
         subject.default_sort_by = 'name'
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
+          ['Expense #3', '02/17/2015', 'Campaign FY15'],
           ['Expense #2', '02/17/2014', 'Campaign FY15'],
           ['Expense #1', '08/22/2013', 'Test Campaign FY01']
         ]
 
-        subject.default_sort_by = 'campaign_name'
+        subject.default_sort_by = 'created_at'
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
+          ['Expense #1', '08/22/2013', 'Test Campaign FY01'],
           ['Expense #2', '02/17/2014', 'Campaign FY15'],
-          ['Expense #1', '08/22/2013', 'Test Campaign FY01']
+          ['Expense #3', '02/17/2015', 'Campaign FY15']
         ]
 
-        subject.default_sort_by = 'campaign_name'
+        subject.default_sort_by = 'created_at'
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
-          ['Expense #1', '08/22/2013', 'Test Campaign FY01'],
-          ['Expense #2', '02/17/2014', 'Campaign FY15']
+          ['Expense #3', '02/17/2015', 'Campaign FY15'],
+          ['Expense #2', '02/17/2014', 'Campaign FY15'],
+          ['Expense #1', '08/22/2013', 'Test Campaign FY01']
         ]
       end
     end

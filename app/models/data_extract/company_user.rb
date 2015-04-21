@@ -58,4 +58,13 @@ class DataExtract::CompanyUser < DataExtract
   def total_results
     CompanyUser.connection.select_value("SELECT COUNT(*) FROM (#{base_scope.select(*selected_columns_to_sql).to_sql}) sq").to_i
   end
+
+  def sort_by_column(col)
+    case col
+    when 'created_at'
+      'users.created_at'
+    else
+      super
+    end
+  end
 end

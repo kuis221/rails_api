@@ -53,7 +53,7 @@ RSpec.describe DataExtract::Area, type: :model do
 
       it 'returns all the events in the company with all the columns' do
         expect(subject.rows).to eql [
-          ["Zona Norte", "Ciudades del Norte de Costa Rica", "Benito Camelas", "08/23/2013 04:15 PM", "Active"]
+          ['Zona Norte', 'Ciudades del Norte de Costa Rica', 'Benito Camelas', '08/23/2013', 'Active']
         ]
       end
 
@@ -63,41 +63,47 @@ RSpec.describe DataExtract::Area, type: :model do
 
         subject.filters = { 'status' => ['active'] }
         expect(subject.rows).to eql [
-          ["Zona Norte", "Ciudades del Norte de Costa Rica", "Benito Camelas", "08/23/2013 04:15 PM", "Active"]
+          ['Zona Norte', 'Ciudades del Norte de Costa Rica', 'Benito Camelas', '08/23/2013', 'Active']
         ]
       end
 
       it 'allows to sort the results' do
         create(:area, name: 'Zona Sur', description: 'Ciudades del Sur de Costa Rica',
                       active: true, company: company, created_by_id: company_user.user.id, created_at: Time.zone.local(2014, 3, 14, 9, 15))
+        create(:area, name: 'Zona Oeste', description: 'Ciudades del Oeste de Costa Rica',
+                      active: true, company: company, created_by_id: company_user.user.id, created_at: Time.zone.local(2015, 3, 14, 9, 15))
 
         subject.columns = %w(name created_at)
         subject.default_sort_by = 'name'
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
-          ['Zona Norte', '08/23/2013 04:15 PM'],
-          ['Zona Sur', '03/14/2014 04:15 PM']
+          ['Zona Norte', '08/23/2013'],
+          ['Zona Oeste', '03/14/2015'],
+          ['Zona Sur', '03/14/2014']
         ]
 
         subject.default_sort_by = 'name'
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
-          ['Zona Sur', '03/14/2014 04:15 PM'],
-          ['Zona Norte', '08/23/2013 04:15 PM']
+          ['Zona Sur', '03/14/2014'],
+          ['Zona Oeste', '03/14/2015'],
+          ['Zona Norte', '08/23/2013']
         ]
 
         subject.default_sort_by = 'created_at'
         subject.default_sort_dir = 'ASC'
         expect(subject.rows).to eql [
-          ['Zona Sur', '03/14/2014 04:15 PM'],
-          ['Zona Norte', '08/23/2013 04:15 PM']
+          ['Zona Norte', '08/23/2013'],
+          ['Zona Sur', '03/14/2014'],
+          ['Zona Oeste', '03/14/2015']
         ]
 
         subject.default_sort_by = 'created_at'
         subject.default_sort_dir = 'DESC'
         expect(subject.rows).to eql [
-          ['Zona Norte', '08/23/2013 04:15 PM'],
-          ['Zona Sur', '03/14/2014 04:15 PM']
+          ['Zona Oeste', '03/14/2015'],
+          ['Zona Sur', '03/14/2014'],
+          ['Zona Norte', '08/23/2013']
         ]
       end
     end
