@@ -644,34 +644,25 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 // Datepick styles
 
 	.datepick-nav{
-		float: right;
-		margin-right:15px;
-		width: 34px;
-	}
-	.datepick-nav .datepick-cmd{
-		width: 15px;
+	  padding: 0 6px;
+	  box-sizing: border-box;
 	}
 	a.datepick-cmd{
 		display: inline-block;
 		margin-top: 13px;
 		overflow: hidden;
 		position:relative;
-		text-indent: 13%;
 	}
 	a.datepick-cmd:hover{
-		background-color: $brand;
+		background-color: $white;
 	}
 
 	.datepick-cmd-next, .datepick-cmd-prev{
 		font-size: 11px;
 		color: transparent !important;
 		&:before{
-			color: $white;
+			color: $borders;
 		}
-	}
-
-	.datepick-cmd-prev{
-		right: 35%;
 	}
 
 	.task-list {
@@ -695,11 +686,17 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		border: 0;
 		width: 208px;
 		table{
-			border: 1px solid $user_menu;
+			border: 1px solid $borders;
 			display: block;
 			font-size: 13px;
 			padding: 0 6px 4px;
 			width: auto;
+			-webkit-border-bottom-left-radius: 6px;
+			-webkit-border-bottom-right-radius: 6px;
+			-moz-border-radius-bottomleft: 6px;
+			-moz-border-radius-bottomright: 6px;
+			border-bottom-left-radius: 6px;
+			border-bottom-right-radius: 6px;
 		}
 		thead{
 			border-bottom: 0;
@@ -858,20 +855,21 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		background-color: $white; /*changed*/
 	}
 	.datepick-month-header{
-		background-color:$brand;
-		color: $white;
-		font-weight: normal;
+		background-color: $white;
+		border: 1px solid $borders;
+		border-bottom: 0;
+		color: $gray;
+		font-weight: 600;
+		font-size: 12px;
 		height:25px;
-		line-height: 16px;
-		padding: 10px 0 0 15px;
-		text-align: left;
-		width: 193px;
+		padding: 6px 15px 0 15px;
 		-webkit-border-top-left-radius: 6px;
 		-webkit-border-top-right-radius: 6px;
 		-moz-border-radius-topleft: 6px;
 		-moz-border-radius-topright: 6px;
 		border-top-left-radius: 6px;
 		border-top-right-radius: 6px;
+		text-align: center;
 	}
 
 
@@ -879,6 +877,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 
 .dates-pref{
 	margin-bottom: 20px;
+	margin-top: -6px;
 	.select-ranges{
 		a{
 			color: $brand;
@@ -892,7 +891,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 				@include border-radius (6px);
 				color: $silver;
 				display: block;
-				padding: 9px 10px;
+				padding: 6px 4px 6px 10px;
 				width: 100%;
 				&.off{
 					color: $user_menu;
@@ -901,7 +900,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 					text-decoration: none;
 				}
 				.icon-arrow-down {
-					margin-top: 7px;
+					margin-top: 8px;
 				}
 				.icon-arrow-up {
 					display: none;
@@ -2454,7 +2453,6 @@ input.search-query {
 	background-image: image-url('search-grey.svg');
 	background-position: center right;
 	background-repeat: no-repeat;
-	border: 1px solid $gray-lighter;
 	box-shadow: none;
 	color: $text;
 	font-family: $baseFontFamily;
@@ -2465,9 +2463,7 @@ input.search-query {
 	padding-left: 8px;
 	padding-left: 8px \9;
 	/* IE7-8 doesn't have border-radius, so don't indent the padding */
-	-webkit-border-radius: 6px;
-	-moz-border-radius: 6px;
-	border-radius: 6px;
+	@include border-radius(20px);
 	width:207px;
 	&:focus{
 		border: 1px solid $gray-light !important;
@@ -2681,12 +2677,44 @@ ul.ui-widget-content{
 		}
 	}
 	input[type="text"]{
-		height: 36px;
+		border: 0;
+		height: 34px;
+		margin-bottom: 30px;
 		width: 100%;
+		&::-webkit-input-placeholder { /* WebKit browsers */
+		  color: $white;
+		}
+		&:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+			color: $white;
+		}
+		&::-moz-placeholder { /* Mozilla Firefox 19+ */
+		  color: $white;
+		}
+		&:-ms-input-placeholder { /* Internet Explorer 10+ */
+		  color: $white;
+		}
+	}
+
+	.chzn-container-single{
+		.chzn-single{
+			height: 34px;
+			span{
+				line-height: 34px;
+			}
+			div b{
+				background-position: 0px 14px;
+			}
+			&.chzn-single-with-drop div b{
+				background-position: 0px 14px;
+			}
+		}
+		.chzn-search{
+			top: -42px;
+		}
 	}
 
 	.user-saved-filters {
-		margin-bottom: 10px;
+		margin-bottom: 30px;
 	}
 
 	.form-facet-filters {
@@ -2737,7 +2765,6 @@ ul.ui-widget-content{
 		.filter-title {
 			font-size: 13px;
 			font-weight: bold;
-			margin-bottom: 10px;
 			padding: 0;
 			text-transform: uppercase;
 			&:hover {
