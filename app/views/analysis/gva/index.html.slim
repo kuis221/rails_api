@@ -15,7 +15,7 @@
     .details_box.tool-box.first
       h5.results-title GOALS VS. ACTUAL
       #list-tools
-        = simple_form_for :report, url: results_gva_path, remote: true, html: { id: 'report-settings' } do |f|
+        = simple_form_for :report, url: analysis_gva_path, remote: true, html: { id: 'report-settings' } do |f|
           = f.input :campaign_id, collection: campaigns_list_for_dropdown, selected: params[:campaign_id] || params[:report].try(:[], :campaign_id), include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Select a campaign" } }
           - group_permissions = report_group_permissions
           - if group_permissions.length > 1
@@ -31,10 +31,10 @@
               i.icon-arrow-down-small
             ul#download-gva-btn.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
               li
-                a href="#" role="menuitem" data-url="#{results_gva_path(format: :xls)}"
+                a href="#" role="menuitem" data-url="#{analysis_gva_path(format: :xls)}"
                   | Download as XLS
               li
-                a href="#" role="menuitem" data-url="#{results_gva_path(format: :pdf)}"
+                a href="#" role="menuitem" data-url="#{analysis_gva_path(format: :pdf)}"
                   | Download as PDF
 
   #report-container
@@ -57,7 +57,7 @@ javascript:
       if ( $('#report_campaign_id').val() && groupBy == 'campaign'){
         $('form#report-settings').submit();
       } else if ( $('#report_campaign_id').val() ) {
-        $('#report-container').load('#{results_report_groups_path}?'+$('#report-settings').serialize());
+        $('#report-container').load('#{analysis_report_groups_path}?'+$('#report-settings').serialize());
       } else {
         $('#download-gva-btn').attr('disabled', true);
       }

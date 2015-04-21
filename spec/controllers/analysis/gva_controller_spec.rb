@@ -1,7 +1,7 @@
 require 'rails_helper'
 require 'open-uri'
 
-describe Results::GvaController, type: :controller do
+describe Analysis::GvaController, type: :controller do
   before(:each) do
     @user = sign_in_as_user
     @company = @user.companies.first
@@ -158,8 +158,8 @@ describe Results::GvaController, type: :controller do
     it 'should return http success' do
       xhr :post, 'report', report: { campaign_id: campaign.id }, format: :js
       expect(response).to be_success
-      expect(response).to render_template('results/gva/report')
-      expect(response).to render_template('results/gva/_report')
+      expect(response).to render_template('analysis/gva/report')
+      expect(response).to render_template('analysis/gva/_report')
     end
 
     it 'should include any goals for the campaign' do

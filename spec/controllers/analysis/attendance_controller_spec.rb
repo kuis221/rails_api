@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Results::AttendanceController, type: :controller do
+describe Analysis::AttendanceController, type: :controller do
 
   let(:user) { company_user.user }
   let(:company) { create(:company) }
