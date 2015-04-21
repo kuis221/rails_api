@@ -7398,6 +7398,9 @@ body.dashboard.index {
 		max-height: 700px;
 		min-height: 300px;
 		margin-bottom: 10px;
+		&:focus {
+			outline: 0;
+		}
 
 		table.data-extract-table {
 

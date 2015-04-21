@@ -1,3 +1,4 @@
-= render_table_cols resource.columns_with_names, 2, resource.default_sort_by, resource.default_sort_dir
+= render_table_cols(resource.columns_with_names, 2, resource.default_sort_by, resource.default_sort_dir) do |col|
+  = hidden_field_tag 'data_extract[columns][]', col
 tbody
   = render_table_rows resource.rows

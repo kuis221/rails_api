@@ -28,11 +28,12 @@ module Results
       end
     end
 
-    def render_table_cols(columns, step, sort_by, sort_dir)
+    def render_table_cols(columns, step, sort_by, sort_dir, &block)
       content_tag(:thead) do
         content_tag(:tr, class: 'data-extract-head') do
           if columns.present?
             columns.map do |col|
+              block_content = capture(col[0], &block) if block_given?
               content_tag(:th, class: 'data-extract-th', data: { name: col[0] }) do
                 content_tag(:div, class: 'dropdown') do
                   icon = sort_by == col[0] ? content_tag(:i, '', class: 'icon-checked') : ''
@@ -46,7 +47,7 @@ module Results
                        content_tag(:li, icon_visibility_off + link_to('Hide', '#', class: 'btn-remove-column', data: { column: col[0] }))
                      end
                    end)
-                end
+                end + (block_given? ? block_content : '').html_safe
               end
             end.join.html_safe
           end
