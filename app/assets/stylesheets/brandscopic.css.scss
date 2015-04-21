@@ -792,15 +792,15 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		}
 	}
 	.datepick-month td .datepick-selected {
-		background-color: #3e9ccf;
+		background-color: $silver;
 		border-radius: 0;
 		color: $white;
 		font-weight: 400;
 		&.datepick-today{
-			background-color: #3381a8;
+			background-color: $brand;
 			background-image: image-url('rounded-circle.svg');
 			&:hover{
-				background-color: #3381a8;
+				background-color: $brand;
 			}
 		}
 		&.datepick-event:before{
@@ -809,7 +809,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		&:after{
 			content: "";
 			width:3px;
-			background-color: #3e9ccf;
+			background-color: $silver;
 			height:100%;
 			position:absolute;
 			right:-3px;
@@ -821,12 +821,11 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 				display:none;
 			}
 		}
-
 		&:hover{
-			background-color: $primary-blue;
+			background-color: $silver;
 		}
 		&.first-selected.last-selected{
-			background-color: $primary-blue;
+			background-color: $silver;
 		}
 		&.first-selected{
 			-webkit-border-top-left-radius: 14px;
@@ -2677,7 +2676,7 @@ ul.ui-widget-content{
 		}
 	}
 	input[type="text"]{
-		border: 0;
+		border: 1px solid $gray-lighter;
 		height: 34px;
 		margin-bottom: 30px;
 		width: 100%;
