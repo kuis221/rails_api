@@ -27,11 +27,11 @@ RSpec.describe DataExtract::EventExpense, type: :model do
 
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql([
-        %w(name Name), %w(amount Amount), ['created_by', 'Created By'], ['created_at', 'Created At'],
-        %w(campaign_name Campaign), ['end_date', 'End Date'], ['end_time', 'End Time'],
-        ['start_date', 'Start Date'], ['start_time', 'Start Time'], ['event_status', 'Event Status'],
-        ['status', 'Active State'], ['place_street', 'Venue Street'], ['place_city', 'Venue City'],
-        ['place_name', 'Venue Name'], ['place_state', 'Venue State'], ['place_zipcode', 'Venue ZIP Code']])
+        %w(name Name), %w(amount Amount), %w(campaign_name Campaign), ['end_date', 'End Date'],
+        ['end_time', 'End Time'], ['start_date', 'Start Date'], ['start_time', 'Start Time'],
+        ['event_status', 'Event Status'], ['place_street', 'Venue Street'], ['place_city', 'Venue City'],
+        ['place_name', 'Venue Name'], ['place_state', 'Venue State'], ['place_zipcode', 'Venue ZIP Code'],
+        ['created_by', 'Created By'], ['created_at', 'Created At']])
     end
   end
 
@@ -59,10 +59,10 @@ RSpec.describe DataExtract::EventExpense, type: :model do
       end
 
       it 'returns all the comments in the company with all the columns' do
-        subject.columns = %w(name created_by created_at campaign_name end_date end_time start_date start_time event_status status place_street place_city place_name place_state place_zipcode)
+        subject.columns = %w(name created_by created_at campaign_name end_date end_time start_date start_time event_status place_street place_city place_name place_state place_zipcode)
         expect(subject.rows).to eql [
           ['Expense #1', nil, '08/22/2013', 'Test Campaign FY01', '01/01/2014', '08:00 PM',
-           '01/01/2014', '06:00 PM', 'Unsent', 'Active', '11 Main St.', 'New York City', 'Place 2', 'NY', '12345']
+           '01/01/2014', '06:00 PM', 'Unsent', '11 Main St.', 'New York City', 'Place 2', 'NY', '12345']
         ]
       end
 
