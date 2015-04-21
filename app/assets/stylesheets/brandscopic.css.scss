@@ -110,7 +110,6 @@ h1, h2, h3{
  * Styleguide 1.1.
  */
 a{
-	color:$text;
 	outline: 0;
 	&:focus{
 		color:$text;
@@ -891,7 +890,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 				border: 1px solid $gray-light;
 				box-sizing: border-box;
 				@include border-radius (6px);
-				color: $text;
+				color: $silver;
 				display: block;
 				padding: 9px 10px;
 				width: 100%;
@@ -4400,14 +4399,13 @@ body.roles{
 	}
 
 	.venue-review{
+		margin-bottom: 35px;
 		margin-top: 20px;
-		.review-author-name{
-			margin-bottom: 5px;
-		}
 		.review-date{
 			color:  $brand;
 			font-size: 11px;
-			margin-bottom: 15px;
+			margin-bottom: 6px;
+			line-height: 18px;
 		}
 		.review-text{
 			font-size: 13px;
@@ -6998,7 +6996,6 @@ table.table.likert-scale-table {
 		}
 	}
 	.chzn-choices{
-		background-image: none !important;
 		border:1px solid $user_menu !important;
 		box-shadow: 0 0 5px rgba(0, 0, 0, 0);
 		min-height: 40px !important;
@@ -7011,7 +7008,6 @@ table.table.likert-scale-table {
 			&.search-choice{
 				border:0 !important;
 				box-shadow: none !important;
-				line-height: 16px !important;
 			}
 			&.search-field{
 				input{
@@ -7421,3 +7417,4 @@ body.dashboard.index {
 @import 'widgets/resource_list';
 @import 'widgets/steps_wizard';
 @import 'widgets/blank_states';
+@import 'widgets/tags';

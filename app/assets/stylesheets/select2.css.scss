@@ -546,12 +546,17 @@ disabled look for disabled choices in the results dropdown
 }
 
 .select2-search-choice-close {
-		display: block;
-		position: absolute;
-		right: 6px;
-		top: 7px;
-		font-size: 10px;
-		outline: none;
+	color: $white;
+	display: block;
+	position: absolute;
+	right: 6px;
+	top: 7px;
+	font-size: 9px;
+	outline: none;
+	&:hover{
+		text-decoration: none;
+		color: $white;
+	}
 }
 
 .select2-search-choice-close a{
@@ -559,7 +564,7 @@ disabled look for disabled choices in the results dropdown
 }
 
 .select2-search-choice-close:after {
-	content: "\e019";
+	content: "\e616";
 	font-family: 'icons';
 }
 
