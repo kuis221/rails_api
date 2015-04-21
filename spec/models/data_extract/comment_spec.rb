@@ -27,11 +27,10 @@ RSpec.describe DataExtract::Comment, type: :model do
 
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql(
-        [%w(comment Comment), ['created_by', 'Created By'], ['created_at', 'Created At'],
-         %w(campaign_name Campaign), ['end_date', 'End Date'], ['end_time', 'End Time'],
-         ['start_date', 'Start Date'], ['start_time', 'Start Time'], ['event_status', 'Event Status'],
-         ['status', 'Active State'], ['street', 'Venue Street'], ['place_city', 'Venue City'],
-         ['place_name', 'Venue Name'], ['place_state', 'Venue State'], ['place_zipcode', 'Venue ZIP code']])
+        [%w(comment Comment), %w(campaign_name Campaign), ['start_date', 'Start Date'], ['start_time', 'Start Time'],
+         ['end_date', 'End Date'], ['end_time', 'End Time'], ['event_status', 'Event Status'],
+         ['street', 'Venue Street'], ['place_city', 'Venue City'], ['place_name', 'Venue Name'],
+         ['place_state', 'Venue State'], ['place_zipcode', 'Venue ZIP Code'], ['created_by', 'Created By'], ['created_at', 'Created At']])
     end
   end
 
@@ -64,8 +63,8 @@ RSpec.describe DataExtract::Comment, type: :model do
 
       it 'returns all the comments in the company with all the columns' do
         expect(subject.rows).to eql [
-          ['Comment #1', 'Benito Camelas', '08/22/2013', 'Test Campaign FY01', '01/01/2014',
-           '08:00 PM', '01/01/2014', '06:00 PM', 'Unsent', 'Active', '11 Main St.', 'New York City', 'Place 1', 'NY', '12345']
+          ['Comment #1', 'Test Campaign FY01', '01/01/2014', '06:00 PM', '01/01/2014',
+           '08:00 PM', 'Unsent', '11 Main St.', 'New York City', 'Place 1', 'NY', '12345', 'Benito Camelas', '08/22/2013']
         ]
       end
 
@@ -88,7 +87,9 @@ RSpec.describe DataExtract::Comment, type: :model do
 
       it 'allows to sort the results' do
         other_campaign = create(:campaign, company: company, name: 'Campaign FY15')
-        other_event = create(:approved_event, company: company, campaign: other_campaign, place: place)
+        other_event = create(:approved_event, company: company, campaign: other_campaign, place: place,
+                              start_date: '04/17/2015', start_time: '03:00 am',
+                              end_date: '04/18/2015', end_time: '03:00 pm')
         create(:comment, content: 'Comment #2', commentable: other_event,
                          created_at: Time.zone.local(2014, 2, 15, 11, 59))
 
