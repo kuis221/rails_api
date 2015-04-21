@@ -661,7 +661,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		font-size: 11px;
 		color: transparent !important;
 		&:before{
-			color: $borders;
+			color: $silver;
 		}
 	}
 
@@ -2449,7 +2449,7 @@ div.loading-spinner, li.loading-spinner {
 .search-filter-label,
 input.search-query {
 	background-color: $gray-lighter !important;
-	background-image: image-url('search-grey.svg');
+	background-image: image-url('search3.svg');
 	background-position: center right;
 	background-repeat: no-repeat;
 	box-shadow: none;
