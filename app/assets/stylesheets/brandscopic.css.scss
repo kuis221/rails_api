@@ -4399,14 +4399,13 @@ body.roles{
 	}
 
 	.venue-review{
+		margin-bottom: 35px;
 		margin-top: 20px;
-		.review-author-name{
-			margin-bottom: 5px;
-		}
 		.review-date{
 			color:  $brand;
 			font-size: 11px;
-			margin-bottom: 15px;
+			margin-bottom: 6px;
+			line-height: 18px;
 		}
 		.review-text{
 			font-size: 13px;
