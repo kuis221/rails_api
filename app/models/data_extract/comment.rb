@@ -24,20 +24,19 @@ class DataExtract::Comment < DataExtract
   include DataExtractEventsBase
 
   define_columns comment: 'comments.content',
-                 created_by: 'trim(users.first_name || \' \' || users.last_name)',
-                 created_at: proc { "to_char(comments.created_at, 'MM/DD/YYYY')" },
                  campaign_name: 'campaigns.name',
                  start_date: proc { "to_char(events.#{date_field_prefix}start_at, 'MM/DD/YYYY')" },
                  start_time: proc { "to_char(events.#{date_field_prefix}start_at, 'HH12:MI AM')" },
                  end_date: proc { "to_char(events.#{date_field_prefix}end_at, 'MM/DD/YYYY')" },
                  end_time: proc { "to_char(events.#{date_field_prefix}end_at, 'HH12:MI AM')" },
                  event_status: 'initcap(events.aasm_state)',
-                 status: 'CASE WHEN events.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END',
                  street: 'trim(places.street_number || \' \' || places.route)',
                  place_city: 'places.city',
                  place_name: 'places.name',
                  place_state: 'places.state',
-                 place_zipcode: 'places.zipcode'
+                 place_zipcode: 'places.zipcode',
+                 created_by: 'trim(users.first_name || \' \' || users.last_name)',
+                 created_at: proc { "to_char(comments.created_at, 'MM/DD/YYYY')" }
 
   def add_joins_to_scope(s)
     s = super.joins(:comments)
