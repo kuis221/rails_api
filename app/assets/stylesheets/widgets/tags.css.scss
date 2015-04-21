@@ -75,3 +75,15 @@ Styleguide 6.1
 		}
 	}
 }
+
+.rounded-tag{
+	background-color: $gray-light;
+	color: $white;
+	@include border-radius(15px);
+	height: 25px;
+	text-align: center;
+	width: 25px;
+	i{
+		line-height: 25px;
+	}
+}

@@ -13,7 +13,7 @@
 
       - if is_admin
         .row-fluid.users
-            = f.association :teams, collection: company_teams.active.all, input_html: {class: 'input-xxlarge chosen-enabled'}
+            = f.association :teams, collection: company_teams.active.all, input_html: {class: 'input-xxlarge chosen-enabled', "data-placeholder" => 'Select Teams'}
       .row-fluid.users
         - if resource.unconfirmed_email.present? && resource.unconfirmed_email != resource.email
           .email-confirmation-message
