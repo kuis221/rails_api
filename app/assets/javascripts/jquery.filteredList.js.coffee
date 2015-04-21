@@ -28,7 +28,7 @@ $.widget 'nmk.filteredList', {
 		emptyStateMessageLine2: 'Please select different filtering criteria.',
 		emptyFilterResultsMessage: 'There are no results matching the filtering criteria you selected.',
 		emptyFilterResultsMessageLine2: 'Please select different filtering criteria.',
-		emptyStateImage: 'blank-search.png',
+		emptyStateImage: null,
 		canCreatePermission: false
 	},
 
@@ -1036,11 +1036,11 @@ $.widget 'nmk.filteredList', {
 		$('<div class="blank-state">')
 		  .append(arrow)
 		  .append('<h5 class="text-center"></h5>
-			  	   <p class="text-center"></p>
-			  	   <div class="blank-state-icon">
-					   <img src="/assets/'+@options.emptyStateImage+'" />
-			  	   </div>
-		  </div>').find('h5.text-center').html(@options.emptyStateMessage).end()
+			  	   <p class="text-center"></p>' +
+			  	   ( if @options.emptyStateImage then '<div class="blank-state-icon">
+					   <img src="/assets/'+ @options.emptyStateImage+'" />
+			  	   </div>' else '') +
+		  '</div>').find('h5.text-center').html(@options.emptyStateMessage).end()
 				  .find('p.text-center').html(@options.emptyStateMessageLine2).end()
 				  .appendTo @listContainer
 
