@@ -2520,7 +2520,7 @@ input.search-query:focus{
 	}
 }
 ul.ui-widget-content{
-	background: $gray-lighter !important;
+	background: white !important;
 	border: 1px solid $gray-light !important;
 	margin-top: 10px;
 	overflow-x: hidden;
@@ -2531,15 +2531,15 @@ ul.ui-widget-content{
 	li{
 		&.ui-menu-item{
 			a{
-				color: $user_menu;
+				color: $tooltip;
 				font-weight: normal !important;
 				padding: 7px 10px;
 				font-size: 13px;
 				&:active, &:hover{
-					background-color: $tooltip !important;
+					background-color: $text !important;
 					background-image: none !important;
 					border:0;
-					color:$white;
+					color: $white;
 					font-weight: normal;
 					padding: 5px 10px;
 					&.ui-corner-all{
@@ -2551,13 +2551,13 @@ ul.ui-widget-content{
 					}
 				}
 				i{
-					color: $text;
+					color: $gray-darker;
 					font-weight: normal !important;
 				}
 			}
 		}
 		&.ui-autocomplete-category{
-			color: $brand;
+			color: $tooltip;
 			font-size: 13px;
 			font-weight: bold;
 			padding: 24px 10px 6px 10px;
@@ -2568,11 +2568,11 @@ ul.ui-widget-content{
 		}
 	}
 	.ui-state-hover, .ui-state-focus{
-		background-color: $tooltip !important;
+		background-color: $text !important;
 		background-image: none !important;
 		border:0 !important;
 		border-radius: 0px !important;
-		color: $white;
+		color: $white !important;
 		font-weight: normal !important;
 		padding: 8px 10px !important;
 		i{
@@ -7279,9 +7279,6 @@ body.dashboard.index {
 	}
 }
 
-.icon-star{
-	color: #cfc53e;
-}
 .icon-star-empty{
 	color: $silver;
 }
