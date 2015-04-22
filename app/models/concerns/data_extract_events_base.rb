@@ -41,6 +41,7 @@ module DataExtractEventsBase
     s = s.where('ARRAY[?] && event_team_members.ids', filters['user']) if filters['user'].present?
     s = s.where(aasm_state: filters['event_status']) if filters['status'].present?
     s = s.where(active: filters['active_state'].map { |f| f == 'active' ? true : false }) if filters['active_state'].present?
+    s = s.filters_between_dates(filters['start_date'].to_s, filters['end_date'].to_s) if filters['start_date'].present? && filters['end_date'].present?
     s
   end
 

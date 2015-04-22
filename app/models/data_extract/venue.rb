@@ -42,6 +42,12 @@ class DataExtract::Venue < DataExtract
     s
   end
 
+  def add_filter_conditions_to_scope(s)
+    return s if filters.nil? || filters.empty?
+    s = s.filters_between_dates(filters['start_date'].to_s, filters['end_date'].to_s) if filters['start_date'].present? && filters['end_date'].present?
+    s
+  end
+
   def total_results
     Venue.connection.select_value("SELECT COUNT(*) FROM (#{base_scope.select(*selected_columns_to_sql).to_sql}) sq").to_i
   end
