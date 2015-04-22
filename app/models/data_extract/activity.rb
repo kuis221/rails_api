@@ -92,4 +92,7 @@ class DataExtract::Activity < DataExtract
     end
   end
 
+  def filters_include_calendar
+    true
+  end
 end

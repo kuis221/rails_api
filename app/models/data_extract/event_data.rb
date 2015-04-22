@@ -50,4 +50,8 @@ class DataExtract::EventData < DataExtract
   def filters_scope
     'data_extracts_event_data'
   end
+
+  def filters_include_calendar
+    true
+  end
 end
