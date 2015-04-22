@@ -106,7 +106,6 @@ class DataExtract < ActiveRecord::Base
   end
 
   def total_results
-    p "Counting total of results"
     @total_results ||= base_scope.count
   end
 

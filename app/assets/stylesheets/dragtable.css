@@ -13,16 +13,8 @@
 .dragtable-sortable th { 
     cursor: move;
 }
-.dragtable-sortable li {
-    margin: 0; padding: 0; float: left; font-size: 1em; background: white; 
-}
-
 .dragtable-sortable th, .dragtable-sortable td{
     border-left: 0px;
-}
-
-.dragtable-sortable li:first-child th, .dragtable-sortable li:first-child td {
-    border-left: 1px solid #CCC; 
 }
 
 .ui-sortable-helper {
