@@ -54,4 +54,8 @@ class DataExtract::Venue < DataExtract
       super
     end
   end
+
+  def filters_include_calendar
+    true
+  end
 end

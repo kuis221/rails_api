@@ -51,4 +51,7 @@ class DataExtract::EventData < DataExtract
     'data_extracts_event_data'
   end
 
+  def filters_include_calendar
+    true
+  end
 end

@@ -146,4 +146,8 @@ class DataExtract < ActiveRecord::Base
   def to_partial_path
     'data_extract'
   end
+
+  def filters_include_calendar
+    false
+  end
 end
