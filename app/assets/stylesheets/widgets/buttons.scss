@@ -30,6 +30,11 @@ Styleguide 3.1
 	&.download, &.fullscreen{
 		min-width: 50px;
 	}
+	&.download{
+		.icon-plus{
+			line-height: 26px;
+		}
+	}
 	&:active{
 		box-shadow: none;
 		color: $white;
