@@ -89,13 +89,13 @@ feature 'Roles', js: true do
     scenario 'allows the user to activate/deactivate a role' do
       role = create(:role, name: 'Admin', active: true, company_id: company.id)
       visit role_path(role)
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button 'Deactivate Role'
       end
 
       confirm_prompt 'Admin users can no longer login if you deactivate that role. Would you like to continue?'
 
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button 'Activate Role'
         expect(page).to have_button 'Deactivate Role' # test the link have changed
       end
@@ -106,7 +106,7 @@ feature 'Roles', js: true do
       Sunspot.commit
       visit role_path(role)
 
-      within('.links-data') { click_js_button 'Edit Role' }
+      within('.edition-links') { click_js_button 'Edit Role' }
 
       within visible_modal do
         fill_in 'Name', with: 'edited role name'

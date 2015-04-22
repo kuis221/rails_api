@@ -135,13 +135,13 @@ feature 'Campaigns', js: true do
     scenario 'allows the user to activate/deactivate a campaign' do
       campaign = create(:campaign, name: 'Some Campaign', description: 'a campaign description', company: company)
       visit campaign_path(campaign)
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button('Deactivate Campaign')
       end
 
       confirm_prompt 'Are you sure you want to deactivate this campaign?'
 
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button('Activate Campaign')
         expect(page).to have_button('Deactivate Campaign') # test the link have changed
       end
@@ -150,7 +150,7 @@ feature 'Campaigns', js: true do
     scenario 'allows the user to edit the campaign' do
       visit campaign_path(campaign)
 
-      within('.links-data') { click_js_button 'Edit Campaign' }
+      within('.edition-links') { click_js_button 'Edit Campaign' }
 
       within("form#edit_campaign_#{campaign.id}") do
         fill_in 'Name', with: 'edited campaign name'
