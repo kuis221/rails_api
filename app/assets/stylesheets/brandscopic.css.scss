@@ -1746,6 +1746,12 @@ li.dropdown a{
 		}
 	}
 }
+
+#brand-ambassador-documents{
+	#documents-container form.button_to{
+		margin-right: 6px;
+	}
+}
 label{
 	margin-bottom: 0;
 }
@@ -7154,11 +7160,13 @@ body.dashboard.index {
 	}
 }
 
-.icon-star{
-	color: #cfc53e;
-}
-.icon-star-empty{
-	color: $silver;
+.review-rating{
+	.icon-star{
+		color: #cfc53e;
+	}
+	.icon-star-empty{
+		color: $silver;
+	}
 }
 
 .filter-item{
