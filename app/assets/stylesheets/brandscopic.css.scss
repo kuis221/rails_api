@@ -2873,11 +2873,11 @@ ul.ui-widget-content{
 /* Info bar for details pages (Below the header) */
 
 #resource-close-details {
-	background-color: $menu;
+	background-color: $gray-darker;
 	border-radius: 7px 7px 0px 0px;
 	position: absolute;
 	left: 0;
-	min-height: 40px;
+	height: 40px;
 	z-index: 200;
 	-webkit-border-radius: 7px 7px 0px 0px;
 	width: 100%;
@@ -2892,12 +2892,33 @@ ul.ui-widget-content{
 	&.affix-top {
 		top: 0 !important;
 	}
-	a.close-details {
+	.close-details {
 		display: inline-block;
 		width: 99%;
-		padding: 10px 0 5px 16px;
+		padding: 8px 0 5px 16px;
 		text-decoration: none;
 		color: $brand;
+		.primary-info {
+			color: $white;
+			display: inline-block;
+			margin-bottom: 0;
+			margin-top: 0;
+			margin-right: 8px;
+		}
+		.secondary-info{
+			font-size: 12px;
+			b{
+				font-weight: normal;
+			}
+		}
+		i{
+			position: relative;
+			&:hover{
+				&:before{
+					color:$app_bg;
+				}
+			}
+		}
 	}
 	.icon-close {
 		position: absolute;
@@ -2910,32 +2931,11 @@ ul.ui-widget-content{
 		font-size: 12px;
 		margin: 0 10px 0 0;
 	}
-
-	a{
-		color: $brand;
-		font-size: 14px;
-		text-decoration: none;
-		h3 {
-			color: $gray-lighter;
-			font-size: 16px;
-			display: inline-block;
-			margin-bottom: 0;
-			margin-top: 0;
-		}
-		i{
-			position: relative;
-			&:hover{
-				&:before{
-					color:$app_bg;
-				}
-			}
-		}
-	}
 	.button_to_edit {
 		margin-right: 0;
 	}
 	.button_to {
-		margin: 0 0 0 15px;
+		margin: 0 0 0 8px;
 		&:first-of-type {
 			margin: 0;
 		}
