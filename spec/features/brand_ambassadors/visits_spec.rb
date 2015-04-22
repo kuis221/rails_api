@@ -157,8 +157,8 @@ feature 'Brand Ambassadors Visits' do
     let(:another_user) { create(:company_user, user: create(:user, first_name: 'Roberto', last_name: 'Gomez'), company: company) }
     let(:area1) { create(:area, name: 'California', company: company) }
     let(:area2) { create(:area, name: 'Texas', company: company) }
-    let(:place1) { create(:place, name: 'Place 1', city: 'Los Angeles', state: 'CA', country: 'US', types: %w(political locality)) }
-    let(:place2) { create(:place, name: 'Place 2', city: 'Austin', state: 'TX', country: 'US', types: %w(political locality)) }
+    let(:place1) { create(:place, name: 'Place 1', city: 'Los Angeles', state: 'California', country: 'US') }
+    let(:place2) { create(:place, name: 'Place 2', city: 'Austin', state: 'Texas', country: 'US') }
     let(:campaign1) { create(:campaign, name: 'Campaign FY2012', company: company) }
     let(:campaign2) { create(:campaign, name: 'Another Campaign April 03', company: company) }
     let(:ba_visit1) do
@@ -193,10 +193,8 @@ feature 'Brand Ambassadors Visits' do
         area1.places << [la, au]
         area2.places << [la, au]
         company_user.areas << [area1, area2]
-        company_user.places << place1
-        company_user.places << place2
-        company_user.campaigns << campaign1
-        company_user.campaigns << campaign2
+        company_user.places << [place1, place2]
+        company_user.campaigns << [campaign1, campaign2]
         event1.users << another_user
         ba_visit1
         ba_visit2
@@ -469,7 +467,7 @@ feature 'Brand Ambassadors Visits' do
       end
       expect(current_path).to eql brand_ambassadors_visit_path(ba_visit)
 
-      within('.links-data') { click_js_button 'Edit Visit' }
+      within('.edition-links') { click_js_button 'Edit Visit' }
       within visible_modal do
         fill_in 'Description', with: 'Some description'
         click_js_button 'Save'
@@ -782,13 +780,13 @@ feature 'Brand Ambassadors Visits' do
 
       visit brand_ambassadors_visit_path(ba_visit)
 
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button 'Deactivate Visit'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this visit?'
 
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button 'Activate Visit'
         expect(page).to have_button 'Deactivate Visit' # test the link have changed
       end

@@ -66,7 +66,7 @@ module ExportableController
     total_pages = (collection.count / items_per_page.to_f).ceil
     (1..(total_pages)).each do |page|
       collection.limit(items_per_page).offset(items_per_page * (page - 1)).each do |result|
-        yield present(result, params['format'])
+        yield view_context.present(result, params['format'])
       end
     end
   end

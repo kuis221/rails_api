@@ -20,11 +20,11 @@ module Csv
     end
 
     def start_date
-      Timeliness.parse(@model.start_at.strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%F %R')
+      datetime @model.start_at
     end
 
     def end_date
-      Timeliness.parse(@model.end_at.strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%F %R')
+      datetime @model.end_at
     end
 
     def promo_hours

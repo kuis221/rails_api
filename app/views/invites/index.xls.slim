@@ -52,9 +52,9 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
             Cell
               Data ss:Type="String"= item.event.campaign_name
           Cell
-            Data ss:Type="String"= item.venue.jameson_locals ? 'YES' : 'NO'
+            Data ss:Type="String"= item.venue.present? && item.venue.jameson_locals ? 'YES' : 'NO'
           Cell
-            Data ss:Type="String"= item.venue.top_venue ? 'YES' : 'NO'
+            Data ss:Type="String"= item.venue.present? && item.venue.top_venue ? 'YES' : 'NO'
           Cell
             Data ss:Type="String"= item.invitees
           Cell

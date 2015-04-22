@@ -9,6 +9,7 @@ module JbbFile
       valid = false
       each_sheet(file) do |sheet|
         unless (self.class::VALID_COLUMNS - sheet.row(1)).empty?
+          p self.class::VALID_COLUMNS - sheet.row(1)
           return false
         end
         valid = true
@@ -32,7 +33,7 @@ module JbbFile
         end
       end.compact
     ensure
-      p "closing connection"
+      p 'closing connection'
       close_connection
     end
 
@@ -40,7 +41,7 @@ module JbbFile
       begin
         ftp_connecion.mkdir('OLD') unless ftp_connecion.list("*").any? { |dir| dir.match(/\sOLD$/) }
       rescue Net::FTPPermError
-        p "Archive directory already exists"
+        p 'Archive directory already exists'
       end
       ftp_connecion.rename(file, "OLD/#{file}")
     end
@@ -91,9 +92,9 @@ module JbbFile
     end
 
     def find_files
-      file = ftp_connecion.list('*xlsx').map do |l|
-        l.split(/\s+/, 4)
-      end.map{ |f| f[3] }
+      ftp_connecion.nlst('*xlsx')
+    rescue Net::FTPTempError
+      []
     end
   end
 end

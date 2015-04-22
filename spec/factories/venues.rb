@@ -42,5 +42,8 @@ FactoryGirl.define do
     avg_impressions_cost 1.00
     score_impressions 100
     score_cost 1000
+    score_dirty false
+    jameson_locals false
+    top_venue false
   end
 end

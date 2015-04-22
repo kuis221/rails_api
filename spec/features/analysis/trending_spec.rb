@@ -39,7 +39,7 @@ feature 'Trending report' do
 
       select_from_chosen(campaign.name, from: '1. Choose one or more campaigns')
       select_from_chosen('Comments', from: '2. Choose one or more data sources within those campaigns')
-      click_button 'Done'
+      click_button 'Next'
 
       expect(page).to have_text 'QUESTIONS'
       expect(current_path).to eql(questions_analysis_trends_path)
@@ -85,7 +85,7 @@ feature 'Trending report' do
 
       select_from_chosen(campaign.name, from: '1. Choose one or more campaigns')
       select_from_chosen('Comments', from: '2. Choose one or more data sources within those campaigns')
-      click_button 'Done'
+      click_button 'Next'
 
       expect(page).to have_text 'QUESTIONS'
       unicheck 'My Text Field'
@@ -142,7 +142,7 @@ feature 'Trending report' do
 
       select_from_chosen(campaign.name, from: '1. Choose one or more campaigns')
       select_from_chosen('Whiskey Survey', from: '2. Choose one or more data sources within those campaigns')
-      click_button 'Done'
+      click_button 'Next'
 
       expect(page).to have_text 'QUESTIONS'
       unicheck 'My Text Field'

@@ -16,11 +16,12 @@
             li
               a href="#" Cancel
 
-      .profile-data
-        h2
-          = resource.full_name
-          = button_to_edit resource if can?(:edit, resource)
-          = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource) && !viewing_profile?
+      .profile-info
+        .details-main-title
+          h2.special.pull-left = resource.full_name
+          .edition-links
+            = button_to_edit resource if can?(:edit, resource)
+            = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource) && !viewing_profile?
 
         - if resource.role.present?
           .user-role.label.label-default
@@ -75,14 +76,15 @@
 
     // The is info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
-      h3= resource.full_name
+      span.primary-info
+        = resource.full_name
       = button_to_edit resource if can?(:edit, resource)
       = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource) && !viewing_profile?
 
 
   - unless viewing_profile?
     #user-places.details_box
-      h3 PLACES
+      h5.module-title PLACES
       #company_user-areas-list
        = render partial: 'company_users/area', collection: resource.areas.order('areas.name ASC')
 
@@ -94,7 +96,7 @@
 
   - unless viewing_profile?
     #user-campaigns.details_box
-      h3 CAMPAIGNS
+      h5.module-title CAMPAIGNS
 
       = render 'campaigns'
 

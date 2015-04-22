@@ -1,13 +1,11 @@
-- content_for :head
-  = javascript_include_tag "https://www.google.com/jsapi"
-
 .details_box
   h3 MENTIONS ACROSS LOCATIONS
   #mentions-breadcrumbs
 
   #mentions-across-locations-graph
 
-- content_for :footer do
+- content_for :head do
+  = javascript_include_tag "https://www.google.com/jsapi"  
   javascript:
     var cache = {}
     google.load('visualization', '1', { 'packages': ['geomap'] });

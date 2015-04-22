@@ -327,18 +327,21 @@ $margin-right: 240px;
 		.accordion-heading {
 			font-weight: bold;
 			.accordion-toggle {
-				padding: 8px 0;
+				padding: 8px 0 8px 16px;
 				color: $brand;
+				position: relative;
 				&:before {
 					font-family: 'icons';
 					content: '\e607';
-					position: relative;
-					top: 4px;
+					position: absolute;
+					top: 12px;
+  				left: 0;
 				}
 				&.collapsed:before {
-					top: 0;
+					top: 9px;
 					content: '\e605';
 					font-size: 10px;
+					margin-right: 4px;
 				}
 			}
 		}
