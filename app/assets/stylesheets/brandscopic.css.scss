@@ -618,6 +618,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	box-sizing: border-box;
 	width: calc(100% - 100px);
 	z-index: 110000;
+	height: 44px;
 	.results-count {
 		font-weight: bold;
 	}
@@ -632,7 +633,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 				float: right;
 				vertical-align: top;
 				text-decoration: underline;
-				line-height: 16px;
+				line-height: 20px;
 			}
 		}
 	}
@@ -1744,6 +1745,12 @@ li.dropdown a{
 				}
 			}
 		}
+	}
+}
+
+#brand-ambassador-documents{
+	#documents-container form.button_to{
+		margin-right: 6px;
 	}
 }
 label{
@@ -7154,11 +7161,13 @@ body.dashboard.index {
 	}
 }
 
-.icon-star{
-	color: #cfc53e;
-}
-.icon-star-empty{
-	color: $silver;
+.review-rating{
+	.icon-star{
+		color: #cfc53e;
+	}
+	.icon-star-empty{
+		color: $silver;
+	}
 }
 
 .filter-item{
