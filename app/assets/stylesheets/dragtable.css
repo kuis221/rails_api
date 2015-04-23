@@ -10,11 +10,18 @@
 .dragtable-sortable { 
     list-style-type: none; margin: 0; padding: 0; -moz-user-select: none;
 }
-.dragtable-sortable th { 
+.dragtable-sortable th {
     cursor: move;
+}
+.dragtable-sortable li.dragtable-li {
+    margin: 0; padding: 0; float: left; font-size: 1em; background: white; 
 }
 .dragtable-sortable th, .dragtable-sortable td{
     border-left: 0px;
+}
+
+.dragtable-sortable li.dragtable-li:first-child th, .dragtable-sortable li.dragtable-li:first-child td {
+    border-left: 1px solid #CCC; 
 }
 
 .ui-sortable-helper {
