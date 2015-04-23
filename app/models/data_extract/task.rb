@@ -21,10 +21,13 @@
 #
 
 class DataExtract::Task < DataExtract
-  define_columns title: 'title', 
-                 task_statuses: 'CASE WHEN tasks.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END
-                                || \', \' || CASE WHEN tasks.completed=\'t\' THEN \'Unassigned\' ELSE \'Assigned\' END
-                                || \', \' || CASE WHEN tasks.company_user_id=null THEN \'Complete\' ELSE \'Incomplete\' END',
+  define_columns title: 'title',
+                 task_statuses: "CASE WHEN tasks.active='t' THEN 'Active' ELSE 'Inactive' END
+                                || ', ' || CASE WHEN tasks.company_user_id is null THEN 'Unassigned' ELSE 'Assigned' END
+                                || ', ' || CASE WHEN tasks.completed='t' THEN 'Complete' ELSE 'Incomplete' END
+                                || '' || CASE WHEN (tasks.due_at is not null AND due_at < '#{Date.today.to_s(:db)}' AND completed = 'f')
+                                THEN ', Late' ELSE '' END || '' || CASE WHEN (tasks.due_at is not null AND
+                                  tasks.due_at = '#{Date.today.to_s(:db)}') THEN ', Due' ELSE '' END",
                  due_at: proc { "to_char(tasks.due_at, 'MM/DD/YYYY')" },
                  created_by: 'trim(users.first_name || \' \' || users.last_name)',
                  created_at: proc { "to_char(tasks.created_at, 'MM/DD/YYYY')" },
@@ -56,6 +59,15 @@ class DataExtract::Task < DataExtract
     s = s.joins(:event).where(events: { campaign_id: filters[:campaign] } ) if filters.present? && filters['campaign'].present?
     s = s.where(active: filters['status'].map { |f| f.downcase == 'active' ? true : false }) if filters['status'].present?
     s = s.filters_between_dates(filters['start_date'].to_s, filters['end_date'].to_s) if filters['start_date'].present? && filters['end_date'].present?
+    s = add_filter_task_status(s)
+    s
+  end
+
+  def add_filter_task_status(s)
+    filters[:task_status].each do |status|
+      s = s.where(completed: status.downcase == 'complete' ? true : false) if status.downcase == 'complete' || status.downcase == 'incomplete'
+      s = s.where("tasks.due_at is not null AND due_at < '#{Date.today.to_s(:db)}' AND completed = 'f'") if status.downcase == 'late'
+    end if filters[:task_status].present?
     s
   end
 
