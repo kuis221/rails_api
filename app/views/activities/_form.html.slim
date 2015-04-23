@@ -28,10 +28,10 @@
           .form-actions
             = f.button :submit, 'Submit', id: 'save-activity-btn', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
             = "&nbsp;".html_safe
-            = f.button :button, 'Cancel', class: 'btn btn-cancel'
+            = link_to 'Cancel', url_for(action: :thanks, controller: :activities, activity_type_id: resource.activity_type_id), class: 'btn'
       - else
         .form-actions
           = f.button :button, 'Cancel', class: 'btn btn-cancel'
 
 javascript:
-  $('#form-container').activityForm({formUrl: "#{url_for([:form, resource.activitable, :activities])}"});
+  $('#form-container').activityForm();

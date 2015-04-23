@@ -18,6 +18,3 @@
 
         .form-actions
           = f.button :button, 'Cancel', class: 'btn btn-cancel'
-
-javascript:
-  $('#form-container').activityForm({formUrl: "#{url_for([:form, resource.activitable, :activities])}"});

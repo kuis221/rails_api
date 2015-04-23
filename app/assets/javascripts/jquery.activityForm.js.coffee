@@ -1,17 +1,7 @@
 $.widget 'nmk.activityForm', {
 	options: {
-		formUrl: null
 	},
 	_create: () ->
-		@element.off('change.activityType').on "change.activityType", "#activity_activity_type_id", (e) =>
-			if $(e.target).val()
-				$.get "#{@options.formUrl}?activity[activity_type_id]=#{$(e.target).val()}", (result) =>
-					@element.html('').append $(result).find('.activity-form')
-					$('.activity-form .places-autocomplete').placesAutocomplete();
-					return
-
-			return
-
 		@element.off('change.activityCampaign').on "change.activityCampaign", "#activity_campaign_id", (e) =>
 			brands  = @element.find(".form-field-brand")
 			marques = @element.find("select.form-field-marque")

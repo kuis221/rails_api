@@ -6,6 +6,8 @@ class ActivitiesController < FilteredController
   respond_to :js, only: [:new, :edit, :update]
   custom_actions member: [:form]
 
+  layout 'empty'
+
   # This helper provide the methods to export HTML to PDF
   extend ExportableFormHelper
 
@@ -17,21 +19,24 @@ class ActivitiesController < FilteredController
   def new
     if params[:activity] && params[:activity][:activity_type_id] == 'attendance'
       @invite = parent.invites.build
-      render 'invitation_form', layout: 'empty'
+      render 'invitation_form'
     elsif params[:activity] && params[:activity][:activity_type_id]
       build_resource
       @brands = Brand.accessible_by_user(current_company_user).order(:name)
-      render layout: 'empty'
     elsif request.format.js?
       render partial: 'form_dialog', locals: { form_partial: 'select_activity_type_form' }
     end
+  end
+
+  def thanks
+    @activity_type = current_company.activity_types.find(params[:activity_type_id])
   end
 
   def create
     create! do |success, failure|
       success.html do
         flash.clear
-        render layout: 'empty'
+        redirect_to url_for(action: :thanks, activity_type_id: resource.activity_type_id)
       end
     end
   end
