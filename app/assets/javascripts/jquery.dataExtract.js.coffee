@@ -1,4 +1,4 @@
-$.widget 'nmk.dataExtract', {
+$.widget 'brandscopic.dataExtract', {
   options: {
   },
 
@@ -8,6 +8,10 @@ $.widget 'nmk.dataExtract', {
     @_buildDragtable()
     @_loadPreview()
     @_loadAvailableFields()
+
+    @element.on 'mousedown', '.dropdown-toggle', (e) =>
+      e.stopPropagation();
+      true
 
     $('.available-fields-box').on 'click', '.available-field', (e) =>
       e.preventDefault()
@@ -22,19 +26,6 @@ $.widget 'nmk.dataExtract', {
       btn = $(e.currentTarget)
       @_sortTable btn.data('column'), btn.data('dir')
       
-    $('#available-field-list .available-field').tooltip
-      html: true, container: @element, delay: 0, animation: false
-      title: (a, b) ->
-        $(this).data('title')
-      placement: (tooltip, field) ->
-        window.setTimeout ->
-          $(tooltip).css
-            left: (parseInt($(tooltip).css('left'))-15)+'px'
-        10
-
-        return 'left';
-
-
     $(window).on 'resize', () =>
       @scrollerApi.reinitialise()
       @_resizePreviewZone()
@@ -78,5 +69,5 @@ $.widget 'nmk.dataExtract', {
     $('.available-fields-box').load '/results/data_extracts/available_fields?' + form.serialize()
 
   _buildDragtable: () ->
-    @element.find('.data-extract-table').dragtable()
+    @element.find('.data-extract-table').dragtable({dragHandle:'span'})
 }

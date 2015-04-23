@@ -7412,9 +7412,9 @@ body.dashboard.index {
 
 			th {
 				line-height: 24px;
-				padding: 5px 30px 6px 10px;
+				padding: 5px 10px 6px 10px;
 				text-align: left;
-				min-width: 150px;
+				min-width: 170px;
 				position: relative;
 				white-space: nowrap;
 
@@ -7428,16 +7428,19 @@ body.dashboard.index {
 					margin: 4px 0;
 				}
 
+				span {
+					width: 85%;
+					display: inline-block;
+					float: left;
+				}
+
 				a {
-					padding-left: 30px;
-					padding-top: 4px;
-				  &.dropdown-toggle{
-				  	color: silver;
-				  	&:before{
-							position: absolute;
-						  right: -22px;
-						  top: 6px;
-					  }
+          padding-top: 4px;
+          padding-left: 30px;
+          &.dropdown-toggle{
+            color: silver;
+            float: right;
+            padding-left: 0!important;
 				  }
 				}
 
