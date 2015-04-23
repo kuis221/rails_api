@@ -52,6 +52,8 @@ class DataExtract::CompanyUser < DataExtract
     s = s.where(active: filters['status'].map { |f| f.downcase == 'active' ? true : false }) if filters['status'].present?
     s = s.joins('LEFT JOIN memberships AS member ON member.memberable_type=\'Team\'')
           .where("member.memberable_id IN (#{filters['team'].join(', ')}) AND company_users.id=member.company_user_id") if filters['team'].present?
+    s = s.joins('LEFT JOIN memberships AS member_campaign ON member_campaign.memberable_type=\'Campaign\'')
+          .where("member_campaign.memberable_id IN (#{filters['campaign'].join(', ')}) AND company_users.id=member_campaign.company_user_id") if filters['campaign'].present?
     s
   end
 
