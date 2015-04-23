@@ -27,7 +27,7 @@ $.widget 'nmk.dataExtract', {
       @_resizePreviewZone()
 
   _resizePreviewZone:() ->
-    maxHeight = $(window).height() - $('.data-extract-box').offset().top - 100;
+    maxHeight = $(window).height() - $('.data-extract-box').offset().top - 150;
     $('.data-extract-box').css 'height': maxHeight+'px'
     @scrollerApi.reinitialise()
 
