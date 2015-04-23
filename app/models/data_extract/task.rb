@@ -62,6 +62,14 @@ class DataExtract::Task < DataExtract
     add_filter_conditions_to_scope add_joins_to_scope(model)
   end
 
+  def filters_scope
+    'user_tasks'
+  end
+
+  def filters_include_calendar
+    true
+  end
+
   def sort_by_column(col)
     case col
     when 'created_at'

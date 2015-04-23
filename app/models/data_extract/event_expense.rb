@@ -77,4 +77,8 @@ class DataExtract::EventExpense < DataExtract
       super
     end
   end
+  
+  def filters_include_calendar
+    true
+  end
 end

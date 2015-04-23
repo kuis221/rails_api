@@ -30,6 +30,11 @@ Styleguide 3.1
 	&.download, &.fullscreen{
 		min-width: 50px;
 	}
+	&.download{
+		.icon-plus{
+			line-height: 26px;
+		}
+	}
 	&:active{
 		box-shadow: none;
 		color: $white;
@@ -146,9 +151,6 @@ Styleguide 3.1
 
 .btn-info{
 	background-color: $user_menu !important;
-	font-size: 13px;
-	padding-bottom:9px;
-	padding-top: 9px;
 	i{
 		line-height: 5px;
 		font-size: 19px;
