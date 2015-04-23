@@ -20,6 +20,19 @@ $.widget 'nmk.dataExtract', {
       e.preventDefault()
       btn = $(e.currentTarget)
       @_sortTable btn.data('column'), btn.data('dir')
+      
+    $('#available-field-list .available-field').tooltip
+      html: true, container: @element, delay: 0, animation: false
+      title: (a, b) ->
+        $(this).data('title')
+      placement: (tooltip, field) ->
+        window.setTimeout ->
+          $(tooltip).css
+            left: (parseInt($(tooltip).css('left'))-15)+'px'
+        10
+
+        return 'left';
+
 
   _hideColumn:(column) ->
     @element.find('form').find('[name="data_extract[columns][]"][value="' + column + '"]').remove()
