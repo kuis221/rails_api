@@ -1,1 +1,21 @@
 = render_available_fields resource.exportable_columns.reject { |f| resource.columns.include?(f[0]) }
+
+javascript:
+  $('#available-field-list .available-field').tooltip({
+    html: true,
+    container: this.element,
+    delay: 0,
+    animation: false,
+    title: function(a, b) {
+      return $(this).data('title');
+    },
+    placement: function(tooltip, field) {
+      window.setTimeout(function() {
+        return $(tooltip).css({
+          left: (parseInt($(tooltip).css('left')) - 15) + 'px'
+        });
+      });
+      10;
+      return 'left';
+    }
+  })
