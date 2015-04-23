@@ -3,7 +3,8 @@ $.widget 'nmk.dataExtract', {
   },
 
   _create: () ->
-    @table = @element.find('.data-extract-table').addClass('dragtable-sortable')
+    $('.data-extract-box').jScrollPane();
+    @scrollerApi = $('.data-extract-box').data('jsp');
     @_buildDragtable()
     @_loadPreview()
     @_loadAvailableFields()
@@ -34,6 +35,15 @@ $.widget 'nmk.dataExtract', {
         return 'left';
 
 
+    $(window).on 'resize', () =>
+      @scrollerApi.reinitialise()
+      @_resizePreviewZone()
+
+  _resizePreviewZone:() ->
+    maxHeight = $(window).height() - $('.data-extract-box').offset().top - 150;
+    $('.data-extract-box').css 'height': maxHeight+'px'
+    @scrollerApi.reinitialise()
+
   _hideColumn:(column) ->
     @element.find('form').find('[name="data_extract[columns][]"][value="' + column + '"]').remove()
     @_loadPreview()
@@ -51,23 +61,22 @@ $.widget 'nmk.dataExtract', {
     @_loadAvailableFields()
 
   _loadPreview: () ->
-    scrollerApi = $('.data-extract-box').data('jsp');
     form = @element.find('form')
-    @table.dragtable('destroy')
     @element.find('.data-extract-table')
       .css(cursor: 'wait')
       .fadeTo('slow', 0.5)
-      .load '/results/data_extracts/preview?' + form.serialize(), =>
+    $.get '/results/data_extracts/preview?' + form.serialize(), (response) =>
+        @element.find('.data-extract-table').replaceWith(response)
+        @scrollerApi.reinitialise()
+        #@element.find('.data-extract-table').css(cursor: 'auto').fadeTo('fast', 1)
         @_buildDragtable()
-        if scrollerApi
-          scrollerApi.destroy()
-        @element.find('.data-extract-table').css(cursor: 'auto').fadeTo('fast', 1)
-        $('.data-extract-box').jScrollPane();
+        @_resizePreviewZone()
+
 
   _loadAvailableFields: () ->
     form = @element.find('form')
     $('.available-fields-box').load '/results/data_extracts/available_fields?' + form.serialize()
 
   _buildDragtable: () ->
-    @table.dragtable()
+    @element.find('.data-extract-table').dragtable()
 }
