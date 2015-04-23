@@ -209,7 +209,6 @@ label.radio div.radio {
 .radio span{
 	background-image: none !important;
 	@extend .radio-style;
-	position: absolute;
 	&.checked{
 		border-color: $brand;
 		&:after{

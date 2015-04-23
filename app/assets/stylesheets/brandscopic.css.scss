@@ -3364,6 +3364,9 @@ ul.ui-widget-content{
 }
 
 body.activities{
+	&.empty-layout {
+		background-color: white;
+	}
 	.details_box{
 		.event-info{
 			display: block;
@@ -7433,6 +7436,40 @@ body.dashboard.index {
 
 .module-item{
 	display: inline-block;
+}
+
+.survey-mode-wrapper {
+	.survey-header {
+		background-color: $gray-dark;
+		padding: 20px 30px;
+		h5 {
+			display: block;
+			width: 400px;
+			margin: 0 auto;
+			font-size: 22px;
+		}
+		a {
+			float: right;
+			text-decoration: underline;
+			font-size: 12px;
+		}
+	}
+	.survey-form {
+		background-color: #fff;
+		padding: 30px 0;
+		#form-container {
+			width: 400px;
+			margin: 0 auto;
+		}
+	}
+	.thanks {
+		background-color: #fff;
+		padding: 100px 0;
+		text-align: center;
+		.btn + .btn {
+			margin-right: 20px;
+		}
+	}
 }
 
 @import 'widgets/asset_upload_dialog';

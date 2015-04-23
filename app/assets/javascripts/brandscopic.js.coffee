@@ -118,7 +118,8 @@ jQuery ->
 
 		# Check if we should automatically activate a tab on the app
 		if window.location.hash
-			smoothScrollTo $(".nav-tabs a[href=#{window.location.hash}]").tab('show')
+			if $(".nav-tabs a[href=#{window.location.hash}]").length > 0
+				smoothScrollTo $(".nav-tabs a[href=#{window.location.hash}]").tab('show')
 
 
 	updateSummationTotals = () ->
@@ -173,6 +174,8 @@ jQuery ->
 
 		$('.bs-checkbox:checkbox').bootstrapSwitch
 			animated: false
+
+		$('.select-list-seach-box').selectListSearch()
 
 		updateSummationTotals()
 
