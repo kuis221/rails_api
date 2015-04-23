@@ -44,13 +44,13 @@ class DataExtract::Venue < DataExtract
 
   def add_filter_conditions_to_scope(s)
     return s if filters.nil? || filters.empty?
-    s = s.where(events_count: filters['events_count']['min']..filters['events_count']['max'])if filters['events_count'].present?
-    s = s.where(impressions: filters['impressions']['min']..filters['impressions']['max'])if filters['impressions'].present?
-    s = s.where(interactions: filters['interactions']['min']..filters['interactions']['max'])if filters['interactions'].present?
-    s = s.where(promo_hours: filters['promo_hours']['min']..filters['promo_hours']['max'])if filters['promo_hours'].present?
-    s = s.where(sampled: filters['sampled']['min']..filters['sampled']['max'])if filters['sampled'].present?
-    s = s.where(score: filters['venue_score']['min']..filters['venue_score']['max'])if filters['venue_score'].present?
-    s = s.where(spent: filters['spent']['min']..filters['spent']['max'])if filters['spent'].present?
+    s = s.where(events_count: filters['events_count']['min']..filters['events_count']['max']) if filters['events_count'].present?
+    s = s.where(impressions: filters['impressions']['min']..filters['impressions']['max']) if filters['impressions'].present?
+    s = s.where(interactions: filters['interactions']['min']..filters['interactions']['max']) if filters['interactions'].present?
+    s = s.where(promo_hours: filters['promo_hours']['min']..filters['promo_hours']['max']) if filters['promo_hours'].present?
+    s = s.where(sampled: filters['sampled']['min']..filters['sampled']['max']) if filters['sampled'].present?
+    s = s.where(score: filters['venue_score']['min']..filters['venue_score']['max']) if filters['venue_score'].present?
+    s = s.where(spent: filters['spent']['min']..filters['spent']['max']) if filters['spent'].present?
     s = s.filters_between_dates(filters['start_date'].to_s, filters['end_date'].to_s) if filters['start_date'].present? && filters['end_date'].present?
     s
   end
