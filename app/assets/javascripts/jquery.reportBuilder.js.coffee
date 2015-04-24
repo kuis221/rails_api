@@ -386,8 +386,8 @@ $.widget 'nmk.reportBuilder',
 		else
 			@fieldSettings.css({
 				position: 'absolute',
-				top: (element.position().top+element.outerHeight()+10)+'px',
-				left: (element.position().left+leftFix)+'px'
+				top: (element.offset().top+element.outerHeight()+10)+'px',
+				left: (element.offset().left+leftFix)+'px'
 			})
 
 	_getColumns: () ->

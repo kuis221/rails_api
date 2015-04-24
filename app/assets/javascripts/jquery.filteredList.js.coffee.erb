@@ -1125,6 +1125,7 @@ $.widget 'nmk.filteredList', {
 					@listContainer.css height: ''
 
 					resultsCount = $items.data('total')
+					resultsCount = $items.find('>*').length if resultsCount is undefined
 					totalItemsCount = $items.data('existing-total')
 
 					if page is 1
@@ -1167,7 +1168,7 @@ $.widget 'nmk.filteredList', {
 		if page == 1
 			@totalPages = response.data('pages')
 
-			if (@totalPages is undefined or @totalPages > 1) and !@infiniteScroller
+			if (@totalPages is undefined or @totalPages > 1) and response.find('>*').length  > 0 and !@infiniteScroller
 				@infiniteScroller = @listContainer.infiniteScrollHelper {
 					loadMore: (page) =>
 						if (@totalPages is undefined or page <= @totalPages) && @doneLoading
