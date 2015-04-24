@@ -313,7 +313,6 @@ body{
 
 .calendar-data{
 	b{
-		font-size:16px;
 		font-weight: 400;
 	}
 }
@@ -7396,6 +7395,7 @@ body.dashboard.index {
 		}
 		.link-select-user {
 			color: $white;
+			font-size: 12px;
 			margin-left: 10px;
 			margin-top: 5px;
 			text-decoration: underline;
