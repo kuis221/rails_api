@@ -7441,13 +7441,19 @@ body.dashboard.index {
 	display: inline-block;
 }
 
+// Special styles for survey mode wrapper
+
 .survey-mode-wrapper {
 	color: $text;
-	padding-bottom: 50px;
+	padding: 70px 0;
 	.survey-header {
 		color: $gray-lighter;
 		background-color: $text;
-		padding: 20px 30px;
+		padding: 20px 0;
+	  position: fixed;
+	  width: 100%;
+	  top: 0;
+	  z-index: 9;
 		h5 {
 			display: block;
 			width: 400px;
@@ -7459,6 +7465,30 @@ body.dashboard.index {
 			float: right;
 			text-decoration: underline;
 			font-size: 12px;
+			margin-right: 30px;
+		}
+	}
+	.section-title{
+		color: $brand;
+	}
+	.likert-scale-table{
+		label{
+			line-height: 16px;
+		}
+		tbody{
+			tr td{
+				&:first-child{
+					padding-left: 0;
+				}
+				padding-right: 0;
+			}
+		}
+	}
+	.activity-form .attachment-panel{
+		padding: 40px 15px 20px;
+		width: 220px;
+		.attachment-select-file-view{
+			width: auto;
 		}
 	}
 	.large-inputs{
@@ -7474,12 +7504,11 @@ body.dashboard.index {
 			font-weight: bold;
 			margin-bottom: 4px;
 		}
-		.controls .checkbox{
-			padding-top: 3px;
-			padding-bottom: 3px;
-			padding: 3px 0;
-			&:first-child{
-				margin-top: 10px;
+		.controls{
+			.checkbox, .radio{
+				padding-top: 3px;
+				padding-bottom: 3px;
+				padding: 3px 0;
 			}
 		}
 		.checker{
