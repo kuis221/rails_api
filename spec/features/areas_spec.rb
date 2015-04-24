@@ -18,7 +18,7 @@ feature 'Areas', js: true, search: true  do
     scenario 'allows the user to edit the area' do
       visit area_path(area)
 
-      within('.links-data') { click_js_button 'Edit Area' }
+      within('.edition-links') { click_js_button 'Edit Area' }
 
       within visible_modal do
         fill_in 'Name', with: 'edited area name'
@@ -223,13 +223,13 @@ feature 'Areas', js: true, search: true  do
 
       scenario 'allows the user to activate/deactivate a area' do
         visit area_path(area)
-        within('.links-data') do
+        within('.edition-links') do
           click_js_button 'Deactivate Area'
         end
 
         confirm_prompt 'Are you sure you want to deactivate this area?'
 
-        within('.links-data') do
+        within('.edition-links') do
           click_js_button 'Activate Area'
           expect(page).to have_button 'Deactivate Area' # test the link have changed
         end

@@ -38,7 +38,11 @@
 
     = render 'alerts'
 
-    h2.special = resource.campaign_name
+    .details-main-title
+      h2.special.pull-left = resource.campaign_name
+      .edition-links
+        = button_to_edit resource if can_edit
+        = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
 
     .calendar-data
       i.icon-calendar
@@ -52,20 +56,16 @@
 
     - unless resource.description.nil? || resource.description.empty?
       .description-data
-        i.icon-wired-description
         span= simple_format resource.description
-
-    .links-data
-      = button_to_edit resource if can_edit
-      = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
 
     // The is info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
-      h3= resource.campaign_name
+      span.primary-info
+        = resource.campaign_name
+      span.secondary-info
+        = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at), date_separator: ' –  ')
       = button_to_edit resource if can_edit
       = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
-      br>/
-      = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at), date_separator: ' ')
 
 
   - if can?(:view_members, resource)

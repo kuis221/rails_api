@@ -192,6 +192,7 @@ feature 'Brand Ambassadors Visits' do
         au = create(:city, name: 'Austin', state: 'Texas', country: 'US')
         area1.places << [la, au]
         area2.places << [la, au]
+        Sunspot.index [area1, area2]
         company_user.areas << [area1, area2]
         company_user.places << [place1, place2]
         company_user.campaigns << [campaign1, campaign2]
@@ -467,7 +468,7 @@ feature 'Brand Ambassadors Visits' do
       end
       expect(current_path).to eql brand_ambassadors_visit_path(ba_visit)
 
-      within('.links-data') { click_js_button 'Edit Visit' }
+      within('.edition-links') { click_js_button 'Edit Visit' }
       within visible_modal do
         fill_in 'Description', with: 'Some description'
         click_js_button 'Save'
@@ -780,13 +781,13 @@ feature 'Brand Ambassadors Visits' do
 
       visit brand_ambassadors_visit_path(ba_visit)
 
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button 'Deactivate Visit'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this visit?'
 
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button 'Activate Visit'
         expect(page).to have_button 'Deactivate Visit' # test the link have changed
       end
