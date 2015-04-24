@@ -6230,6 +6230,14 @@ table td.sub-level-1 {
 	}
 }
 
+@media (max-width: 1179px){
+	.blank-state-arrow {
+		left: 30px !important;
+		img {
+			width: 60%;
+		}
+	}
+}
 
 .ui-autocomplete {
 	z-index: 9999;

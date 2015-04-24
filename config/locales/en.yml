@@ -100,13 +100,13 @@ en:
         line1: 'You do not have any activity data at this time.'
         line2: 'Once Activities have been captured they will be displayed in this report. '
       filters:
-        line1: 'There are no events matching the filtering criteria you selected.'
+        line1: 'There are no activities matching the filtering criteria you selected.'
     results_event_data:
       empty:
         line1: 'You do not have any post event data to view at this time.'
         line2: 'You will see data here once post event reports have been submitted for your events'
       filters:
-        line1: 'There are no events matching the filtering criteria you selected.'
+        line1: 'There are is no post event data matching the filtering criteria you selected.'
     results_expenses:
       empty:
         line1: 'There are currently no expenses to view for your campaign(s).'
@@ -157,7 +157,7 @@ en:
           with_schedule_permissions: 'Click the New Venue button to create a new venue.'
       filters:
         line1: 'There are no venues matching the filtering criteria you selected.'
-        line2: 'Please try another search.'
+        line2: 'Please select different filtering criteria.'
     campaigns:
       filters:
         line1: 'There are no Campaigns matching the filtering criteria you selected.'
