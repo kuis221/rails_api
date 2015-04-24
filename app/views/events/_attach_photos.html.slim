@@ -1,0 +1,82 @@
+- max_file_size ||= 60.megabytes
+
+#photos_upload_form
+  = s3_uploader_form callback_url: event_photos_path(resource, format: :js), id: "photos_s3_uploader", callback_param: "attached_asset[direct_upload_url]", expiration: 24.hours.from_now.utc.iso8601, max_file_size: max_file_size do
+    - if resource.errors.any?
+      = resource.errors.full_messages
+
+    .gallery
+      ul#photos-thumbs
+        = render partial: 'results/photos/photo', collection: resource.active_photos.includes(:tags).map{|a| a.attachable = resource; a }
+        li
+          = drag_drop_module('photos', close_button_class)
+
+|
+  <script id="template-upload" type="text/x-tmpl">
+  <li>
+    <div class="attachment-panel drag-drop-zone photos">
+      <div class="attachment-upload-progress-info" id="upload_{%=o.unique_id%}">
+        <div class="upload-file-info">
+          <div class="documents-counter"></div>
+          <div class="document-info">
+            <span class="document-name">{%=o.name%}</span>
+            &nbsp;&nbsp;
+            <span class="document-size">{%=o.size%}</span>
+          </div>
+        </div>
+        <div class="upload-file-progress">
+          <div class="progress">
+            <div class="bar" style="width: 0%"></div>
+          </div>
+          <i id="upload-file-cancel" class="icon-remove-circle"></i>
+        </div>
+      </div>
+    </div>
+  </li>
+  </script>
+
+
+javascript:
+  $(function() {
+    var assetsPath = #{Hash[Dir.glob("#{Rails.root}/app/assets/images/file-types/32px/*.png").map{ |image| name = image.split('/').last; ext = name.split('.').first; [ext, asset_path("file-types/32px/" + name)]; }].to_json.html_safe};
+    $('#photos_s3_uploader').S3Uploader(
+      {
+        remove_completed_progress_bar: false,
+        progress_bar_target: $('#photos-thumbs'),
+        progress_bar_target_prepend: true,
+        drop_zone: $("#drag-drop-photos"),
+        limit_concurrent_uploads: 1,
+        sequential_uploads: true,
+        cancel_upload_target: '#upload-file-cancel',
+        before_add: function(file) {
+          var file, image_types;
+          image_types = /(\.|\/)(gif|jpe?g|png)$/i;
+
+          if (file.size > #{max_file_size}){
+            alert('File is larger than maximum file size supported (#{max_file_size.to_s(:human_size)})');
+            return false;
+          }
+
+          if (image_types.test(file.type) || image_types.test(file.name)) {
+            return true;
+          } else {
+            alert('File is not in a supported image format. ('+file.name+')');
+            return false;
+          }
+        }
+      }
+    ).bind('fileuploadprogress', function (e, data) {
+      var progress = parseInt(data.loaded / data.total * 100, 10);
+      context = data.context.find('.attachment-upload-progress-info');
+
+      context.show();
+      context.find('.progress .bar').css({ width: progress + '%' });
+      context.find('.documents-counter').text('Uploading...');
+      context.find('.document-name').text(data.files[0].name);
+      context.find('.document-size').text(filesize(data.files[0].size));
+    }).bind('fileuploaddone', function (e, data) {
+      data.context.remove();
+    }).bind('fileuploadfail', function(e, data) {
+      data.context.remove();
+    });
+  });

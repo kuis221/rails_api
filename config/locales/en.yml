@@ -251,7 +251,7 @@ en:
   drag_n_drop:
     items:
       documents: 'files'
-      gallery: 'photos'
+      photos: 'images'
 
   exports:
     pdf:

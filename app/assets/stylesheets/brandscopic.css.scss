@@ -3323,7 +3323,7 @@ ul.ui-widget-content{
 					opacity: 0;
 					left: 0;
 					-ms-filter: 'alpha(opacity=0)';
-					font-size: 200px;
+					font-size: 14px;
 					direction: ltr;
 					cursor: pointer;
 				}
@@ -3601,6 +3601,9 @@ body.events.index {
 			}
 			a {
 				color: $text;
+				img {
+					margin-right: 10px;
+				}
 			}
 		}
 		&.result_photo {

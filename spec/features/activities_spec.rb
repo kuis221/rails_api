@@ -302,15 +302,22 @@ feature 'Activities management' do
         within visible_modal do
           select_from_chosen('Activity Type #1', from: 'Activity type')
 
+          expect(page).to have_content('DRAG & DROP')
+
           # Should validate the type of the image
           attach_file 'file', 'spec/fixtures/file.pdf'
           expect(page).to have_content('is not a valid file')
 
           attach_file 'file', 'spec/fixtures/photo.jpg'
-          expect(page).to have_content('Uploading photo.jpg....')
+          expect(page).to have_content('Uploading...')
           expect(page).to have_no_content('is not a valid file')
           wait_for_ajax(30) # For the image to upload to S3
-          expect(page).to have_content('File attached: photo.jpg')
+          expect(page).to_not have_content('DRAG & DROP')
+          find('.attachment-attached-view').hover
+          within '.attachment-attached-view' do
+            expect(page).to have_link('Remove')
+            expect(page).to_not have_link('Download')
+          end
 
           select_from_chosen(user.name, from: 'User')
           fill_in 'Date', with: '05/16/2013'
@@ -331,31 +338,25 @@ feature 'Activities management' do
         expect(photo.attachable).to be_a FormFieldResult
         expect(photo.file_file_name).to eql 'photo.jpg'
 
-        # Change the photo
+        # Remove the file
         within resource_item do
           click_js_link('Edit')
         end
-        within visible_modal do
-          expect(page).to have_content('File attached: photo.jpg')
-          click_js_link('Change')
-          attach_file 'file', 'spec/fixtures/photo2.jpg'
-          expect(page).to have_content('Uploading photo2.jpg....')
-          wait_for_ajax(30) # For the image to upload to S3
-          expect(page).to have_content('File attached: photo2.jpg')
-          wait_for_photo_to_process 30 do
+        expect do
+          within visible_modal do
+            expect(page).to_not have_content('DRAG & DROP')
+            find('.attachment-attached-view').hover
+            within '.attachment-attached-view' do
+              expect(page).to have_link('Remove')
+              expect(page).to have_link('Download')
+              click_js_link('Remove')
+            end
+            expect(page).to have_content('DRAG & DROP')
             click_js_button 'Save'
+            wait_for_ajax(30) # To wait for the file being deleted from S3
           end
-        end
-        ensure_modal_was_closed
-
-        within resource_item do
-          click_js_link('Activity Details')
-        end
-        expect(page).to have_selector('h2', text: 'Activity Type #1')
-        expect(current_path).to eql activity_path(activity)
-        photo = AttachedAsset.last
-        src = photo.reload.file.url(:thumbnail, timestamp: false)
-        expect(page).to have_xpath("//img[starts-with(@src, \"#{src}\")]")
+          ensure_modal_was_closed
+        end.to change(AttachedAsset, :count).by(-1)
       end
     end
 
@@ -373,11 +374,14 @@ feature 'Activities management' do
         within visible_modal do
           select_from_chosen('Activity Type #1', from: 'Activity type')
 
+          expect(page).to have_content('DRAG & DROP')
           attach_file 'file', 'spec/fixtures/file.pdf'
-          expect(page).to have_content('Uploading file.pdf....')
+          expect(page).to have_content('Uploading...')
           expect(page).to have_no_content('is not a valid file')
           wait_for_ajax(30) # For the file to upload to S3
-          expect(page).to have_content('File attached: file.pdf')
+          expect(page).to_not have_content('DRAG & DROP')
+          expect(page).to have_content('file.pdf')
+          expect(page).to have_link('Remove')
 
           select_from_chosen(user.name, from: 'User')
           fill_in 'Date', with: '05/16/2013'
@@ -415,9 +419,10 @@ feature 'Activities management' do
         end
         expect do
           within visible_modal do
-            expect(page).to have_content('File attached: file.pdf')
+            expect(page).to_not have_content('DRAG & DROP')
+            expect(page).to have_link('Remove')
             click_js_link('Remove')
-            expect(page).to have_no_content('File attached')
+            expect(page).to have_content('DRAG & DROP')
             click_js_button 'Save'
             wait_for_ajax(30) # To wait for the file being deleted from S3
           end

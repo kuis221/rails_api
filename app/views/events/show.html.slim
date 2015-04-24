@@ -99,10 +99,12 @@
   - if can? :documents, resource
     #event-documents.details_box
       h5.module-title DOCUMENTS
+      - upload_button_class = resource.documents.active.any? || resource.campaign.documents.any? ? '' : 'hide'
+      = render partial: 'attach_documents', locals: { upload_button_class: upload_button_class }
+      = link_to 'Upload', '', id: 'event-upload-documents', class: "btn btn-primary #{upload_button_class}", title: 'Add Documents' if can? :create_document, Event
       .documents-list
         #documents-list.resource-list
           = render :partial => "documents/document", :collection => resource.documents.active + resource.campaign.documents, :locals => { parent: resource }
-      = render partial: 'attachments', locals: { attach_type: 'documents' }
 
 = render partial: 'help_tutorial'
 - content_for :footer do
@@ -122,5 +124,13 @@
           })
         });
       }
+
+  - if can? :create_document, Event
+    javascript:
+      $('#event-upload-documents').on('click', function (e) {
+        e.preventDefault()
+        e.stopPropagation()
+        $('#documents_upload_form').show();
+      })
 
   - reload_page_on_edit_resource
