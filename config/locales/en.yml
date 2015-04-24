@@ -157,7 +157,7 @@ en:
           with_schedule_permissions: 'Click the New Venue button to create a new venue.'
       filters:
         line1: 'There are no venues matching the filtering criteria you selected.'
-        line2: 'Please try another search.'
+        line2: 'Please select different filtering criteria.'
     campaigns:
       filters:
         line1: 'There are no Campaigns matching the filtering criteria you selected.'
