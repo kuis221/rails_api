@@ -3080,6 +3080,9 @@ ul.ui-widget-content{
 					color: #fff;
 				}
 			}
+			.radio, .checkbox {
+				color: $text;
+			}
 		}
 		label{
 			display:inline-block;
