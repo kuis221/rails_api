@@ -49,7 +49,7 @@ javascript:
     'emptyStateMessageLine2': '#{j t("results_expenses.empty.line2", scope: :blank_states) }',
     'emptyFilterResultsMessage': '#{j t("results_expenses.filters.line1", default: :filters_line1, scope: :blank_states) }',
     'emptyFilterResultsMessageLine2': '#{j t("results_expenses.filters.line1", default: :filters_line1, scope: :blank_states) }',
-    'emptyStateImage': 'blank-expenses.png',
+    'emptyStateImage': '#{asset_path('blank-expenses.png')}',
     'onChange': function(filterBox){
       $(document).trigger('expenses-filter:changed');
     },
