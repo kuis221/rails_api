@@ -29,6 +29,10 @@ $.widget 'nmk.formBuilder', {
 		@wrapper.find('.form-builder-actions').affix
 			offset: {
 				top: () =>
+					if @wrapper.find('.form-builder-actions').hasClass('affix')
+						@wrapper.find('.form-builder-actions').css top: $('#resource-close-details').position().top + $('#resource-close-details').outerHeight()
+					else
+						@wrapper.find('.form-builder-actions').css top: 0
 					@formWrapper.offset().top - (parseInt($('#resource-close-details').css('top'),10) - 3 + $('#resource-close-details').outerHeight())
 			}
 

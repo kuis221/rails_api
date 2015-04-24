@@ -60,7 +60,7 @@ javascript:
     'emptyStateMessageLine2': '#{j t("results_event_data.empty.line2", scope: :blank_states) }',
     'emptyFilterResultsMessage': '#{j t("results_event_data.filters.line1", default: :filters_line1, scope: :blank_states) }',
     'emptyFilterResultsMessageLine2': '#{j t("results_event_data.filters.line2", default: :filters_line2, scope: :blank_states) }',
-    'emptyStateImage': 'blank-eventdata.png',
+    'emptyStateImage': '#{asset_path('blank-eventdata.png')}',
     'onChange': function(filterBox){
       $(document).trigger('event-data-filter:changed')
     },

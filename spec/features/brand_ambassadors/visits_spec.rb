@@ -192,6 +192,7 @@ feature 'Brand Ambassadors Visits' do
         au = create(:city, name: 'Austin', state: 'Texas', country: 'US')
         area1.places << [la, au]
         area2.places << [la, au]
+        Sunspot.index [area1, area2]
         company_user.areas << [area1, area2]
         company_user.places << [place1, place2]
         company_user.campaigns << [campaign1, campaign2]
