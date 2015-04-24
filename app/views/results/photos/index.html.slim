@@ -50,7 +50,7 @@ javascript:
     'emptyStateMessageLine2': '#{j t("results_photos.empty.line2", scope: :blank_states) }',
     'emptyFilterResultsMessage': '#{j t("results_photos.filters.line1", default: :filters_line1, scope: :blank_states) }',
     'emptyFilterResultsMessageLine2': '#{j t("results_photos.filters.line1", default: :filters_line1, scope: :blank_states) }',
-    'emptyStateImage': 'blank-photos.png'
+    'emptyStateImage': '#{asset_path('blank-photos.png')}'
   });
 
   $(document).delegate('#photo-download-add', 'click', function(e) {

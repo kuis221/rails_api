@@ -116,11 +116,11 @@ feature 'DayParts', js: true, search: true do
     scenario 'allows the user to activate/deactivate a day part' do
       day_part = create(:day_part, company: company, active: true)
       visit day_part_path(day_part)
-      find('.links-data').click_js_button 'Deactivate Day Part'
+      find('.edition-links').click_js_button 'Deactivate Day Part'
 
       confirm_prompt 'Are you sure you want to deactivate this day part?'
 
-      find('.links-data').click_js_button 'Activate Day Part'
+      find('.edition-links').click_js_button 'Activate Day Part'
     end
 
     scenario 'allows the user to edit the day_part' do
@@ -128,7 +128,7 @@ feature 'DayParts', js: true, search: true do
       visit day_part_path(day_part)
 
       expect(page).to have_content('Old name')
-      find('.links-data').click_js_button('Edit Day Part')
+      find('.edition-links').click_js_button('Edit Day Part')
 
       within("form#edit_day_part_#{day_part.id}") do
         fill_in 'Name', with: 'edited day part name'

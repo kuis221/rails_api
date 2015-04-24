@@ -128,13 +128,13 @@ feature 'BrandPortfolios', js: true, search: true do
                                            description: 'a portfolio description',
                                            active: true, company: company)
       visit brand_portfolio_path(portfolio)
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button 'Deactivate Brand Portfolio'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this brand portfolio?'
 
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button 'Activate Brand Portfolio'
         expect(page).to have_button 'Deactivate Brand Portfolio' # test the link have changed
       end
@@ -144,7 +144,7 @@ feature 'BrandPortfolios', js: true, search: true do
       portfolio = create(:brand_portfolio, name: 'Old name', company: company)
       visit brand_portfolio_path(portfolio)
       expect(page).to have_content('Old name')
-      within('.links-data') { click_js_button 'Edit Brand Portfolio' }
+      within('.edition-links') { click_js_button 'Edit Brand Portfolio' }
 
       within("form#edit_brand_portfolio_#{portfolio.id}") do
         fill_in 'Name', with: 'edited portfolio name'

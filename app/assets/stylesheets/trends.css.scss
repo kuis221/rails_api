@@ -148,7 +148,12 @@
 			}
 		}
 	}
+}
 
+.trends_report_campaigns, .trends_report_sources{
+	p.small{
+		color: $brand;
+	}
 }
 
 #terms-container{

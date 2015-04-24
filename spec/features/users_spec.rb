@@ -188,13 +188,13 @@ feature 'Users', js: true do
       company_user = user.company_users.first
       visit company_user_path(company_user)
 
-      within('.profile-data') do
+      within('.edition-links') do
         click_js_button 'Deactivate User'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this user?'
 
-      within('.profile-data') do
+      within('.edition-links') do
         click_js_button 'Activate User'
         expect(page).to have_button('Deactivate User') # test the link have changed
       end
@@ -209,7 +209,7 @@ feature 'Users', js: true do
 
       expect(page).to have_content('Juanito Mora')
 
-      within('.profile-data') { click_js_button 'Edit Profile Data' }
+      within('.edition-links') { click_js_button 'Edit Profile Data' }
 
       within "form#edit_company_user_#{company_user.id}" do
         fill_in 'First name', with: 'Pedro'
@@ -236,7 +236,7 @@ feature 'Users', js: true do
 
       expect(page).to have_content('Juanito Mora')
 
-      within('.profile-data') { click_js_button 'Edit Profile Data' }
+      within('.edition-links') { click_js_button 'Edit Profile Data' }
 
       expect(page).to_not have_content('Test admin role')
       expect(page).to have_content('Test not admin role')
@@ -344,7 +344,7 @@ feature 'Users', js: true do
       expect(page).to have_selector('h2', text: company_user.full_name)
       expect(current_path).to eql '/users/profile'
 
-      within('.profile-data') { click_js_button 'Edit Profile Data' }
+      within('.edition-links') { click_js_button 'Edit Profile Data' }
 
       within visible_modal do
         fill_in 'First name', with: 'Pedro'
@@ -373,7 +373,7 @@ feature 'Users', js: true do
     scenario 'user can modify his email address' do
       visit company_user_path(company_user)
 
-      within('.profile-data') { click_js_button 'Edit Profile Data' }
+      within('.edition-links') { click_js_button 'Edit Profile Data' }
 
       within visible_modal do
         fill_in 'Email', with: 'pedro@navaja.com'
@@ -384,7 +384,7 @@ feature 'Users', js: true do
         'Your email will not be changed until you complete this step.'
       )
 
-      within('.profile-data') { click_js_button 'Edit Profile Data' }
+      within('.edition-links') { click_js_button 'Edit Profile Data' }
       within visible_modal do
         expect(page).to have_content(
           'Check your (pedro@navaja.com) to confirm your new address. '\
@@ -396,7 +396,7 @@ feature 'Users', js: true do
     scenario 'user can cancel his email address change before confirmation' do
       visit company_user_path(company_user)
 
-      within('.profile-data') { click_js_button 'Edit Profile Data' }
+      within('.edition-links') { click_js_button 'Edit Profile Data' }
 
       confirmation_message = 'A confirmation email was sent to pedro@navaja.com. '\
         'Your email will not be changed until you complete this step.'
@@ -408,7 +408,7 @@ feature 'Users', js: true do
 
       expect(page).to have_content confirmation_message
 
-      within('.profile-data') { click_js_button 'Edit Profile Data' }
+      within('.edition-links') { click_js_button 'Edit Profile Data' }
       within visible_modal do
         click_js_link 'Cancel this change'
       end

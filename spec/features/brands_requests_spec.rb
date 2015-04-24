@@ -95,13 +95,13 @@ feature 'Brands', js: true do
     scenario 'allows the user to activate/deactivate a team' do
       brand = create(:brand, active: true, company_id: user.current_company.id)
       visit brand_path(brand)
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button 'Deactivate Brand'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this brand?'
 
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button 'Activate Brand'
         expect(page).to have_button 'Deactivate Brand' # test the link have changed
       end
@@ -112,7 +112,7 @@ feature 'Brands', js: true do
       Sunspot.commit
       visit brand_path(brand)
 
-      within('.links-data') { click_js_button 'Edit Brand' }
+      within('.edition-links') { click_js_button 'Edit Brand' }
 
       within visible_modal do
         fill_in 'Name', with: 'Edited brand name'
@@ -131,7 +131,7 @@ feature 'Brands', js: true do
       Sunspot.commit
       visit brand_path(brand)
 
-      within('.links-data') { click_js_button 'Edit Brand' }
+      within('.edition-links') { click_js_button 'Edit Brand' }
 
       within visible_modal do
         select2_remove_tag('Marque 1')

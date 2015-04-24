@@ -110,7 +110,6 @@ h1, h2, h3{
  * Styleguide 1.1.
  */
 a{
-	color:$text;
 	outline: 0;
 	&:focus{
 		color:$text;
@@ -314,7 +313,6 @@ body{
 
 .calendar-data{
 	b{
-		font-size:16px;
 		font-weight: 400;
 	}
 }
@@ -645,34 +643,25 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 // Datepick styles
 
 	.datepick-nav{
-		float: right;
-		margin-right:15px;
-		width: 34px;
-	}
-	.datepick-nav .datepick-cmd{
-		width: 15px;
+	  padding: 0 6px;
+	  box-sizing: border-box;
 	}
 	a.datepick-cmd{
 		display: inline-block;
 		margin-top: 13px;
 		overflow: hidden;
 		position:relative;
-		text-indent: 13%;
 	}
 	a.datepick-cmd:hover{
-		background-color: $brand;
+		background-color: $white;
 	}
 
 	.datepick-cmd-next, .datepick-cmd-prev{
 		font-size: 11px;
 		color: transparent !important;
 		&:before{
-			color: $white;
+			color: $silver;
 		}
-	}
-
-	.datepick-cmd-prev{
-		right: 35%;
 	}
 
 	.task-list {
@@ -696,11 +685,17 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		border: 0;
 		width: 208px;
 		table{
-			border: 1px solid $user_menu;
+			border: 1px solid $borders;
 			display: block;
 			font-size: 13px;
 			padding: 0 6px 4px;
 			width: auto;
+			-webkit-border-bottom-left-radius: 6px;
+			-webkit-border-bottom-right-radius: 6px;
+			-moz-border-radius-bottomleft: 6px;
+			-moz-border-radius-bottomright: 6px;
+			border-bottom-left-radius: 6px;
+			border-bottom-right-radius: 6px;
 		}
 		thead{
 			border-bottom: 0;
@@ -796,15 +791,15 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		}
 	}
 	.datepick-month td .datepick-selected {
-		background-color: #3e9ccf;
+		background-color: $silver;
 		border-radius: 0;
 		color: $white;
 		font-weight: 400;
 		&.datepick-today{
-			background-color: #3381a8;
+			background-color: $brand;
 			background-image: image-url('rounded-circle.svg');
 			&:hover{
-				background-color: #3381a8;
+				background-color: $brand;
 			}
 		}
 		&.datepick-event:before{
@@ -813,7 +808,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		&:after{
 			content: "";
 			width:3px;
-			background-color: #3e9ccf;
+			background-color: $silver;
 			height:100%;
 			position:absolute;
 			right:-3px;
@@ -825,12 +820,11 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 				display:none;
 			}
 		}
-
 		&:hover{
-			background-color: $primary-blue;
+			background-color: $silver;
 		}
 		&.first-selected.last-selected{
-			background-color: $primary-blue;
+			background-color: $silver;
 		}
 		&.first-selected{
 			-webkit-border-top-left-radius: 14px;
@@ -859,20 +853,21 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 		background-color: $white; /*changed*/
 	}
 	.datepick-month-header{
-		background-color:$brand;
-		color: $white;
-		font-weight: normal;
+		background-color: $white;
+		border: 1px solid $borders;
+		border-bottom: 0;
+		color: $gray;
+		font-weight: 600;
+		font-size: 12px;
 		height:25px;
-		line-height: 16px;
-		padding: 10px 0 0 15px;
-		text-align: left;
-		width: 193px;
+		padding: 6px 15px 0 15px;
 		-webkit-border-top-left-radius: 6px;
 		-webkit-border-top-right-radius: 6px;
 		-moz-border-radius-topleft: 6px;
 		-moz-border-radius-topright: 6px;
 		border-top-left-radius: 6px;
 		border-top-right-radius: 6px;
+		text-align: center;
 	}
 
 
@@ -880,6 +875,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 
 .dates-pref{
 	margin-bottom: 20px;
+	margin-top: -6px;
 	.select-ranges{
 		a{
 			color: $brand;
@@ -891,9 +887,9 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 				border: 1px solid $gray-light;
 				box-sizing: border-box;
 				@include border-radius (6px);
-				color: $text;
+				color: $silver;
 				display: block;
-				padding: 9px 10px;
+				padding: 6px 4px 6px 10px;
 				width: 100%;
 				&.off{
 					color: $user_menu;
@@ -902,7 +898,7 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 					text-decoration: none;
 				}
 				.icon-arrow-down {
-					margin-top: 7px;
+					margin-top: 8px;
 				}
 				.icon-arrow-up {
 					display: none;
@@ -2452,10 +2448,9 @@ div.loading-spinner, li.loading-spinner {
 .search-filter-label,
 input.search-query {
 	background-color: $gray-lighter !important;
-	background-image: image-url('search-grey.svg');
+	background-image: image-url('search3.svg');
 	background-position: center right;
 	background-repeat: no-repeat;
-	border: 1px solid $gray-lighter;
 	box-shadow: none;
 	color: $text;
 	font-family: $baseFontFamily;
@@ -2466,9 +2461,7 @@ input.search-query {
 	padding-left: 8px;
 	padding-left: 8px \9;
 	/* IE7-8 doesn't have border-radius, so don't indent the padding */
-	-webkit-border-radius: 6px;
-	-moz-border-radius: 6px;
-	border-radius: 6px;
+	@include border-radius(20px);
 	width:207px;
 	&:focus{
 		border: 1px solid $gray-light !important;
@@ -2526,7 +2519,7 @@ input.search-query:focus{
 	}
 }
 ul.ui-widget-content{
-	background: $gray-lighter !important;
+	background: white !important;
 	border: 1px solid $gray-light !important;
 	margin-top: 10px;
 	overflow-x: hidden;
@@ -2537,15 +2530,15 @@ ul.ui-widget-content{
 	li{
 		&.ui-menu-item{
 			a{
-				color: $user_menu;
+				color: $tooltip;
 				font-weight: normal !important;
 				padding: 7px 10px;
 				font-size: 13px;
 				&:active, &:hover{
-					background-color: $tooltip !important;
+					background-color: $text !important;
 					background-image: none !important;
 					border:0;
-					color:$white;
+					color: $white;
 					font-weight: normal;
 					padding: 5px 10px;
 					&.ui-corner-all{
@@ -2557,13 +2550,13 @@ ul.ui-widget-content{
 					}
 				}
 				i{
-					color: $text;
+					color: $gray-darker;
 					font-weight: normal !important;
 				}
 			}
 		}
 		&.ui-autocomplete-category{
-			color: $brand;
+			color: $tooltip;
 			font-size: 13px;
 			font-weight: bold;
 			padding: 24px 10px 6px 10px;
@@ -2574,11 +2567,11 @@ ul.ui-widget-content{
 		}
 	}
 	.ui-state-hover, .ui-state-focus{
-		background-color: $tooltip !important;
+		background-color: $text !important;
 		background-image: none !important;
 		border:0 !important;
 		border-radius: 0px !important;
-		color: $white;
+		color: $white !important;
 		font-weight: normal !important;
 		padding: 8px 10px !important;
 		i{
@@ -2656,6 +2649,16 @@ ul.ui-widget-content{
 	margin-top: 36px;
 }
 
+#company_user_user_attributes_country_chzn{
+	.chzn-drop{
+		ul{
+			li:first-child{
+				border-bottom: 1px solid $brand;
+			}
+		}
+	}
+}
+
 #resource-index-container {
 	padding-right: 250px;
 	#resource-filter-column {
@@ -2682,12 +2685,44 @@ ul.ui-widget-content{
 		}
 	}
 	input[type="text"]{
-		height: 36px;
+		border: 1px solid $gray-lighter;
+		height: 34px;
+		margin-bottom: 30px;
 		width: 100%;
+		&::-webkit-input-placeholder { /* WebKit browsers */
+		  color: $white;
+		}
+		&:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+			color: $white;
+		}
+		&::-moz-placeholder { /* Mozilla Firefox 19+ */
+		  color: $white;
+		}
+		&:-ms-input-placeholder { /* Internet Explorer 10+ */
+		  color: $white;
+		}
+	}
+
+	.chzn-container-single{
+		.chzn-single{
+			height: 34px;
+			span{
+				line-height: 34px;
+			}
+			div b{
+				background-position: 0px 14px;
+			}
+			&.chzn-single-with-drop div b{
+				background-position: 0px 14px;
+			}
+		}
+		.chzn-search{
+			top: -42px;
+		}
 	}
 
 	.user-saved-filters {
-		margin-bottom: 10px;
+		margin-bottom: 30px;
 	}
 
 	.form-facet-filters {
@@ -2738,7 +2773,6 @@ ul.ui-widget-content{
 		.filter-title {
 			font-size: 13px;
 			font-weight: bold;
-			margin-bottom: 10px;
 			padding: 0;
 			text-transform: uppercase;
 			&:hover {
@@ -2848,11 +2882,11 @@ ul.ui-widget-content{
 /* Info bar for details pages (Below the header) */
 
 #resource-close-details {
-	background-color: $menu;
+	background-color: $gray-darker;
 	border-radius: 7px 7px 0px 0px;
 	position: absolute;
 	left: 0;
-	min-height: 40px;
+	height: 40px;
 	z-index: 200;
 	-webkit-border-radius: 7px 7px 0px 0px;
 	width: 100%;
@@ -2867,12 +2901,33 @@ ul.ui-widget-content{
 	&.affix-top {
 		top: 0 !important;
 	}
-	a.close-details {
+	.close-details {
 		display: inline-block;
 		width: 99%;
-		padding: 10px 0 5px 16px;
+		padding: 8px 0 5px 16px;
 		text-decoration: none;
 		color: $brand;
+		.primary-info {
+			color: $white;
+			display: inline-block;
+			margin-bottom: 0;
+			margin-top: 0;
+			margin-right: 8px;
+		}
+		.secondary-info{
+			font-size: 12px;
+			b{
+				font-weight: normal;
+			}
+		}
+		i{
+			position: relative;
+			&:hover{
+				&:before{
+					color:$app_bg;
+				}
+			}
+		}
 	}
 	.icon-close {
 		position: absolute;
@@ -2885,32 +2940,11 @@ ul.ui-widget-content{
 		font-size: 12px;
 		margin: 0 10px 0 0;
 	}
-
-	a{
-		color: $brand;
-		font-size: 14px;
-		text-decoration: none;
-		h3 {
-			color: $gray-lighter;
-			font-size: 16px;
-			display: inline-block;
-			margin-bottom: 0;
-			margin-top: 0;
-		}
-		i{
-			position: relative;
-			&:hover{
-				&:before{
-					color:$app_bg;
-				}
-			}
-		}
-	}
 	.button_to_edit {
 		margin-right: 0;
 	}
 	.button_to {
-		margin: 0 0 0 15px;
+		margin: 0 0 0 8px;
 		&:first-of-type {
 			margin: 0;
 		}
@@ -3683,24 +3717,13 @@ body.show {
 	#event-contacts-list, #event-team-members, #team-members-list,
 	#area-places-list {
 		clear: both;
+		margin-top: 40px;
 	}
 	.place, .area-user{
 		font-family: $baseFontFamily;
 		font-size: 16px;
 		margin: 0 10% 30px 0;
 		.pull-left{
-			width: 90%;
-			i{
-				background-color: #cccccc;
-				color: $white;
-				display: inline-block;
-				height: 32px;
-				margin-right: 10px;
-				line-height: 33px;
-				text-align: center;
-				@include border-radius(20px);
-				width: 32px;
-			}
 			.place-address{
 				font-size: 11px;
 				margin-top: 5px;
@@ -3755,21 +3778,6 @@ body.show {
 			display: inline-block;
 		}
 	}
-
-	.team-member, .team{
-		.icon-user, .icon-team{
-			color: $user_menu;
-			float: left;
-			font-size: 18px;
-			margin-right: 15px;
-			position: relative;
-			top: 2px;
-		}
-		span{
-			display: inline-block;
-		}
-	}
-
 
 	.area-place:before{
 		display: block;
@@ -4428,14 +4436,13 @@ body.roles{
 	}
 
 	.venue-review{
+		margin-bottom: 35px;
 		margin-top: 20px;
-		.review-author-name{
-			margin-bottom: 5px;
-		}
 		.review-date{
 			color:  $brand;
 			font-size: 11px;
-			margin-bottom: 15px;
+			margin-bottom: 6px;
+			line-height: 18px;
 		}
 		.review-text{
 			font-size: 13px;
@@ -5530,23 +5537,32 @@ body.campaigns{
 		}
 	}
 	h2{
-		//margin-top: 10px;
-		//margin-bottom: 30px;
 		&.special{
-			margin-top: 45px;
+			//margin-top: 45px;
 		}
 	}
 	h5{
 		margin: 0 0 30px;
 	}
-	.links-data{
-		margin: 20px 0 0 30px;
-	}
-
 	.alert {
 		-webkit-border-radius: 0;
 		border-radius: 0;
-		margin-bottom: 4px;
+		margin-bottom: 35px;
+	}
+}
+
+.details-main-title{
+	margin-bottom: 30px;
+}
+
+.edition-links{
+	display: inline-block;
+	margin: 6px 0 0 20px;
+	i{
+		font-size: 18px;
+		&:first-child{
+			margin-right: 10px;
+		}
 	}
 }
 
@@ -7017,7 +7033,6 @@ table.table.likert-scale-table {
 		}
 	}
 	.chzn-choices{
-		background-image: none !important;
 		border:1px solid $user_menu !important;
 		box-shadow: 0 0 5px rgba(0, 0, 0, 0);
 		min-height: 40px !important;
@@ -7030,7 +7045,6 @@ table.table.likert-scale-table {
 			&.search-choice{
 				border:0 !important;
 				box-shadow: none !important;
-				line-height: 16px !important;
 			}
 			&.search-field{
 				input{
@@ -7276,9 +7290,6 @@ body.dashboard.index {
 	}
 }
 
-.icon-star{
-	color: #cfc53e;
-}
 .icon-star-empty{
 	color: $silver;
 }
@@ -7396,6 +7407,7 @@ body.dashboard.index {
 		}
 		.link-select-user {
 			color: $white;
+			font-size: 12px;
 			margin-left: 10px;
 			margin-top: 5px;
 			text-decoration: underline;
@@ -7414,9 +7426,31 @@ body.dashboard.index {
 	}
 }
 
+.rounded-icon{
+	background-color: #cccccc;
+	display: inline-block;
+	height: 33px;
+	margin-right: 10px;
+	line-height: 33px;
+	text-align: center;
+	@include border-radius(20px);
+	vertical-align: top;
+	width: 32px;
+	i{
+		color: $white;
+		font-size: 16px;
+		line-height: 32px;
+	}
+}
+
+.module-item{
+	display: inline-block;
+}
+
 @import 'widgets/asset_upload_dialog';
 @import 'widgets/documents_list';
 @import 'widgets/resource_list';
 @import 'widgets/steps_wizard';
 @import 'widgets/blank_states';
 @import 'widgets/drag_drop_zone';
+@import 'widgets/tags';

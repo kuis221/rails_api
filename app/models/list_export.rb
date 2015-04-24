@@ -99,7 +99,7 @@ class ListExport < ActiveRecord::Base
   end
 
   def save_html_export(path)
-    File.cp path, "tmp/export-#{controller.underscore.gsub('/', '-')}.html"
+    FileUtils.cp path, "tmp/export-#{controller.underscore.gsub('/', '-')}.html"
   end
 
   def build_file_from_path(path, name)

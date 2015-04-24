@@ -136,6 +136,6 @@ javascript:
     'emptyStateMessageLine2': '#{j t("venues.empty.line2.with#{can?(:create, Event) ? '' : 'out'}_schedule_permissions", scope: :blank_states) }',
     'emptyFilterResultsMessage': '#{j t("venues.filters.line1", default: :filters_line1, scope: :blank_states) }',
     'emptyFilterResultsMessageLine2': '#{j t("venues.filters.line2", default: :filters_line2, scope: :blank_states) }',
-    'emptyStateImage': 'blank-venues.png',
+    'emptyStateImage': '#{asset_path('blank-venues.png')}',
     'canCreatePermission': #{can?(:create, Venue)}
   });

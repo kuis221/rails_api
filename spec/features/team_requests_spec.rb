@@ -119,13 +119,13 @@ feature 'Teams', js: true do
     scenario 'allows the user to activate/deactivate a team' do
       team = create(:team, active: true, company_id: company.id)
       visit team_path(team)
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button 'Deactivate Team'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this team?'
 
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button 'Activate Team'
         expect(page).to have_button('Deactivate Team') # test the link have changed
       end
@@ -136,7 +136,7 @@ feature 'Teams', js: true do
       Sunspot.commit
       visit team_path(team)
 
-      within('.links-data') { click_js_button 'Edit Team' }
+      within('.edition-links') { click_js_button 'Edit Team' }
 
       within visible_modal do
         fill_in 'Name', with: 'edited team name'

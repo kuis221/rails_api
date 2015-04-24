@@ -28,7 +28,7 @@ $.widget 'nmk.filteredList', {
 		emptyStateMessageLine2: 'Please select different filtering criteria.',
 		emptyFilterResultsMessage: 'There are no results matching the filtering criteria you selected.',
 		emptyFilterResultsMessageLine2: 'Please select different filtering criteria.',
-		emptyStateImage: 'blank-search.png',
+		emptyStateImage: null,
 		canCreatePermission: false
 	},
 
@@ -1027,20 +1027,21 @@ $.widget 'nmk.filteredList', {
 
 
 	_placeholderEmptyState: () ->
-		arrow = $('<div class="blank-state-arrow hide">
-					  <img src="/assets/blank-states-arrow.png">
-				  </div>')
 		if @options.canCreatePermission
-			arrow.removeClass('hide')
+			arrow = $('<div class="blank-state-arrow">
+						  <img src="<%= asset_path('blank-states-arrow.png') %>">
+					  </div>')
+		else
+			arrow = ''
 
 		$('<div class="blank-state">')
 		  .append(arrow)
 		  .append('<h5 class="text-center"></h5>
-			  	   <p class="text-center"></p>
-			  	   <div class="blank-state-icon">
-					   <img src="/assets/'+@options.emptyStateImage+'" />
-			  	   </div>
-		  </div>').find('h5.text-center').html(@options.emptyStateMessage).end()
+			  	   <p class="text-center"></p>' +
+			  	   ( if @options.emptyStateImage then '<div class="blank-state-icon">
+					   <img src="'+ @options.emptyStateImage+'" />
+			  	   </div>' else '') +
+		  '</div>').find('h5.text-center').html(@options.emptyStateMessage).end()
 				  .find('p.text-center').html(@options.emptyStateMessageLine2).end()
 				  .appendTo @listContainer
 
@@ -1057,7 +1058,7 @@ $.widget 'nmk.filteredList', {
 				<h5 class="text-center"></h5>
 				<p class="text-center"></p>
 				<div class="blank-state-icon">
-					<img src="/assets/blank-search.png" />
+					<img src="<%= asset_path("blank-search.png") %>" />
 				</div>
 			  </div>').find('h5.text-center').html(line1).end()
 					.find('p.text-center').html(line2).end()
@@ -1124,6 +1125,7 @@ $.widget 'nmk.filteredList', {
 					@listContainer.css height: ''
 
 					resultsCount = $items.data('total')
+					resultsCount = $items.find('>*').length if resultsCount is undefined
 					totalItemsCount = $items.data('existing-total')
 
 					if page is 1
@@ -1166,7 +1168,7 @@ $.widget 'nmk.filteredList', {
 		if page == 1
 			@totalPages = response.data('pages')
 
-			if (@totalPages is undefined or @totalPages > 1) and !@infiniteScroller
+			if (@totalPages is undefined or @totalPages > 1) and response.find('>*').length  > 0 and !@infiniteScroller
 				@infiniteScroller = @listContainer.infiniteScrollHelper {
 					loadMore: (page) =>
 						if (@totalPages is undefined or page <= @totalPages) && @doneLoading

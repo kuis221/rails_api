@@ -9,12 +9,14 @@
     .trends_report_campaigns
       = label_tag :campaign, '1. Choose one or more campaigns'
       = select_tag :campaign, options_for_select(allowed_campaigns), class: 'input-xlarge chosen-enabled', multiple: true, required: true
+      p.small If no campaigns chosen, all campaigns will be added.
 
     .trends_report_sources
       = label_tag :source, '2. Choose one or more data sources within those campaigns'
       = select_tag :source, options_for_select(available_data_sources), class: 'input-xlarge chosen-enabled', multiple: true, required: true
+      p.small If no campaigns chosen, all campaigns will be added.
 
     .form-actions
-      = f.button :submit, 'Done', class: 'btn btn-primary'
+      = f.button :submit, 'Next', class: 'btn btn-primary'
 
 

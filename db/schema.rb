@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150410151725) do
+ActiveRecord::Schema.define(version: 20150418003746) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -501,6 +501,7 @@ ActiveRecord::Schema.define(version: 20150410151725) do
     t.datetime "local_start_at"
     t.datetime "local_end_at"
     t.text     "description"
+    t.string   "kbmg_event_id"
   end
 
   add_index "events", ["aasm_state"], :name => "index_events_on_aasm_state"
@@ -599,6 +600,9 @@ ActiveRecord::Schema.define(version: 20150410151725) do
     t.datetime "updated_at"
     t.string   "date_of_birth"
     t.string   "zip_code"
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
+    t.boolean  "attended"
   end
 
   add_index "invite_rsvps", ["invite_id"], :name => "index_invite_rsvps_on_invite_id"
@@ -607,14 +611,16 @@ ActiveRecord::Schema.define(version: 20150410151725) do
     t.integer  "event_id"
     t.integer  "venue_id"
     t.string   "market"
-    t.integer  "invitees",    default: 0
-    t.integer  "rsvps_count", default: 0
-    t.integer  "attendees",   default: 0
+    t.integer  "invitees",      default: 0
+    t.integer  "rsvps_count",   default: 0
+    t.integer  "attendees",     default: 0
     t.date     "final_date"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "active",      default: true
+    t.boolean  "active",        default: true
     t.integer  "area_id"
+    t.integer  "created_by_id"
+    t.integer  "updated_by_id"
   end
 
   add_index "invites", ["area_id"], :name => "index_invites_on_area_id"
