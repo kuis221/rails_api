@@ -545,11 +545,11 @@ ul.select2-results{
 
 		input[type="text"], input[type="email"], input[type="password"], input[type="tel"], input[type="number"]{
 			background-color: white !important;
-			background-image: none !important;
+			//background-image: none !important;
 			box-shadow: none;
 			font-family: $baseFontFamily;
 			margin-bottom: 0;
-			padding-left: 10px;
+			//padding-left: 10px;
 			width: 100%;
 		}
 		textarea{
@@ -623,17 +623,6 @@ ul.select2-results{
 				width: 100%;
 				&[type="text"]{
 					color: $text !important;
-					&#campaign_start_date, &#campaign_end_date, &#event_start_date, &#event_end_date, &.goal_start_date, &.goal_end_date, &.field-type-date,
-					&#custom_filter_start_date, &#custom_filter_end_date {
-						background: image-url('calendar.svg') no-repeat left !important;
-						text-align: right;
-						height: 40px;
-					}
-					&#event_start_time, &#event_end_time, &.field-type-time {
-						background: image-url('time.svg') no-repeat left !important;
-						padding-left:10px;
-						text-align: center;
-					}
 					&.search-place-box {
 						padding-right: 30px;
 					}
