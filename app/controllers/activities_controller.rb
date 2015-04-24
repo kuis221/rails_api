@@ -6,7 +6,7 @@ class ActivitiesController < FilteredController
   respond_to :js, only: [:new]
   custom_actions member: [:form]
 
-  layout 'empty'
+  layout 'empty', except: :show
 
   # This helper provide the methods to export HTML to PDF
   extend ExportableFormHelper
