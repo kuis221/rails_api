@@ -2649,6 +2649,16 @@ ul.ui-widget-content{
 	margin-top: 36px;
 }
 
+#company_user_user_attributes_country_chzn{
+	.chzn-drop{
+		ul{
+			li:first-child{
+				border-bottom: 1px solid $brand;
+			}
+		}
+	}
+}
+
 #resource-index-container {
 	padding-right: 250px;
 	#resource-filter-column {

@@ -2,7 +2,12 @@
   = resource_details_bar("You are viewing visit details. Click to close.")
 
   .details_box.padding-top-close-bar
-    h2= resource.visit_type_name
+    .details-main-title
+      h2.pull-left= resource.visit_type_name
+      .edition-links
+        = button_to_edit resource if can?(:edit, resource)
+        = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
+
     .calendar-data
       i.icon-calendar
       span
@@ -32,10 +37,6 @@
         i.icon-wired-description
         span
           = resource.description
-
-    .links-data
-      = button_to_edit resource if can?(:edit, resource)
-      = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
 
   - if can?(:view_list, Event)
     #visit-events.details_box
