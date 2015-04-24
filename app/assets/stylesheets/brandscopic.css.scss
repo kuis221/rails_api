@@ -3366,6 +3366,9 @@ ul.ui-widget-content{
 body.activities{
 	&.empty-layout {
 		background-color: white;
+		a.btn{
+			color: $white;
+		}
 	}
 	.details_box{
 		.event-info{
@@ -7440,6 +7443,7 @@ body.dashboard.index {
 
 .survey-mode-wrapper {
 	color: $text;
+	padding-bottom: 50px;
 	.survey-header {
 		color: $gray-lighter;
 		background-color: $text;
@@ -7499,6 +7503,18 @@ body.dashboard.index {
 			margin-left: 8px;
 		}
 	}
+}
+
+.btn-cancel{
+	color: $white;
+}
+
+.btn-large{
+	box-sizing: border-box;
+	font-size: 16px;
+	padding: 10px 16px;
+	height: 42px;
+	min-width: 160px;
 }
 
 @import 'widgets/asset_upload_dialog';

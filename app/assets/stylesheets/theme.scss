@@ -180,7 +180,6 @@ select:focus:invalid:focus {
 		border: 0;
 		box-shadow: none;
 		color:white;
-		font-size: 14px;
 		padding: 7px 15px;
 		text-decoration: none !important;
 		text-shadow:none;
@@ -245,9 +244,6 @@ select:focus:invalid:focus {
 			top:1px;
 		}
 		&.btn-primary, &.btn-cancel{
-			box-sizing: border-box;
-			padding: 8px 15px;
-			//height: 35px;
 			&.fileinput-button{
 				width: 140px;
 			}

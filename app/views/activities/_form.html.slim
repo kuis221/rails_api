@@ -2,7 +2,7 @@
   .activity-form
     = simple_form_for [resource.new_record? ? parent : nil, resource], remote: (request.format.js? ) do |f|
       = f.input :activity_type_id, as: :hidden, wrapper: false
-      - if resource.activity_type.present? 
+      - if resource.activity_type.present?
         = f.error_notification
         = resource.errors.full_messages.join("<br />").html_safe
 
@@ -26,9 +26,9 @@
                   = rf.input :form_field_id, as: :hidden, wrapper: false
 
           .form-actions
-            = f.button :submit, 'Submit', id: 'save-activity-btn', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
+            = f.button :submit, 'Submit', id: 'save-activity-btn', class: 'btn btn-primary btn-large', data: {disable_with: 'Please wait...'}
             = "&nbsp;".html_safe
-            = link_to 'Cancel', url_for(action: :thanks, controller: :activities, activity_type_id: resource.activity_type_id), class: 'btn'
+            = link_to 'Cancel', url_for(action: :thanks, controller: :activities, activity_type_id: resource.activity_type_id), class: 'btn btn-cancel btn-large'
       - else
         .form-actions
           = f.button :button, 'Cancel', class: 'btn btn-cancel'
