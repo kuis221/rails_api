@@ -7461,6 +7461,9 @@ body.dashboard.index {
 			font-size: 12px;
 		}
 	}
+	.section-title{
+		color: $brand;
+	}
 	.large-inputs{
 		margin: 30px 0;
 	}
@@ -7474,12 +7477,11 @@ body.dashboard.index {
 			font-weight: bold;
 			margin-bottom: 4px;
 		}
-		.controls .checkbox{
-			padding-top: 3px;
-			padding-bottom: 3px;
-			padding: 3px 0;
-			&:first-child{
-				margin-top: 10px;
+		.controls{
+			.checkbox, .radio{
+				padding-top: 3px;
+				padding-bottom: 3px;
+				padding: 3px 0;
 			}
 		}
 		.checker{
