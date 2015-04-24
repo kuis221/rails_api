@@ -35,5 +35,10 @@ javascript:
     'includeAutoComplete': true,
     'autoCompletePath': '#{autocomplete_path(:events, format: :json)}',
     'ytdDatesRange': '#{current_company.ytd_dates_range}',
-    'defaultParams': '#{j default_params_for_view('status[]=Active')}'
+    'defaultParams': '#{j default_params_for_view('status[]=Active')}',
+    'emptyStateMessage': '#{j t("results_activities.empty.line1", scope: :blank_states) }',
+    'emptyStateMessageLine2': '#{j t("results_activities.empty.line2", scope: :blank_states) }',
+    'emptyFilterResultsMessage': '#{j t("results_activities.filters.line1", default: :filters_line1, scope: :blank_states) }',
+    'emptyFilterResultsMessageLine2': '#{j t("results_activities.filters.line2", default: :filters_line2, scope: :blank_states) }',
+    'emptyStateImage': 'blank-activity.png'
   });

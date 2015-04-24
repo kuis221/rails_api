@@ -3302,7 +3302,7 @@ ul.ui-widget-content{
 
 .attachment-panel{
 	@include box-sizing(border-box);
-	border: 2px dashed $gray-lighter;
+	border: 2px dashed $user_menu;
 	color: $user_menu;
 	line-height: 17px;
 	padding: 40px 20px 20px;
@@ -3369,7 +3369,6 @@ ul.ui-widget-content{
 		}
 	}
 }
-
 body.activities{
 	&.empty-layout {
 		background-color: white;
@@ -7586,3 +7585,4 @@ input[type="text"]{
 @import 'widgets/steps_wizard';
 @import 'widgets/blank_states';
 @import 'widgets/tags';
+@import 'widgets/drag_drop_zone';

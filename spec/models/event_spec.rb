@@ -520,10 +520,10 @@ describe Event, type: :model do
     end
 
     it 'should include events that are scheduled on places that are part of the areas' do
-      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
       event_la = create(:event, campaign: campaign, place: place_la)
 
-      place_sf = create(:place, country: 'US', state: 'California', city: 'San Francisco')
+      place_sf = create(:place, country: 'US', state: 'California', city: 'San Francisco', types: ['locality'])
       event_sf = create(:event, campaign: campaign, place: place_sf)
 
       area_la = create(:area, company: company)

@@ -6,4 +6,8 @@
   #table-view.view-style class="#{report_view_mode=='table' ? nil : 'hide'}"
     = render partial: 'report_goals_actual_item_table', locals: {each_events_goal: events_goal}
 - else
-  p.text-center There is no available data
+  .blank-state
+    h5.text-center No Campaign goals have been set for this Campaign.
+    p.text-center Please select different filtering criteria.
+    .blank-state-icon
+      img src="/assets/blank-search.png"

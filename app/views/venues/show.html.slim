@@ -136,14 +136,15 @@
 - if can?(:view_events, resource)
   #venue-events.details_box
     h5.module-title EVENTS
-    - if can?(:show, Venue) && can?(:create, Event)
-      - if resource.persisted?
-        = button_to 'Create Event', new_venue_event_path(resource), method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn' if can? :create, Event
-      - else
-        = button_to 'Create', new_event_path(event: {place_reference: "#{resource.place.reference}||#{resource.place.place_id}"}, place_reference_display_name: "#{resource.place.name}, #{resource.place.city}, #{resource.place.state}"), method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn'
-    - if resource.persisted?
+    - upcomming_venue_events_list
+    - if @venue_events_total > 0
+      = button_to 'Create Event', new_venue_event_path(resource), method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn' if can? :create, Event
       #venue-events-container
         = render partial: 'upcoming_events'
+    - else
+      = blank_state_module('venue.events') do
+        = button_to 'Create Event', new_venue_event_path(resource), method: :get, remote: true, class: 'btn btn-primary', title: 'Create Event'
+
 
 - if resource.persisted? && (can?(:show, Activity) || can?(:index_invites, Venue))
   #venue-activities.details_box

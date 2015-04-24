@@ -56,6 +56,11 @@ javascript:
     'applyTo': '#{controller_name}',
     'userFilters': #{user_saved_filters(controller_name).to_json.html_safe},
     'defaultParams': '#{j default_params_for_view('status[]=Active')}',
+    'emptyStateMessage': '#{j t("results_event_data.empty.line1", scope: :blank_states) }',
+    'emptyStateMessageLine2': '#{j t("results_event_data.empty.line2", scope: :blank_states) }',
+    'emptyFilterResultsMessage': '#{j t("results_event_data.filters.line1", default: :filters_line1, scope: :blank_states) }',
+    'emptyFilterResultsMessageLine2': '#{j t("results_event_data.filters.line2", default: :filters_line2, scope: :blank_states) }',
+    'emptyStateImage': 'blank-eventdata.png',
     'onChange': function(filterBox){
       $(document).trigger('event-data-filter:changed')
     },
@@ -73,8 +78,6 @@ javascript:
       }
     }
   });
-
-
 
   $('#columns-scoller-arrows .right-arrow').on('click', function(){
     var $lastItem = $('.results-box-container>span:last-child:first');

@@ -47,6 +47,31 @@ module ApplicationHelper
     "<address>#{address_with_name}</address>".html_safe
   end
 
+  def blank_state_module(module_name, &block)
+    content_tag(:div, class: 'blank-state') do
+      content_tag(:h5, t("blank_states.modules.#{module_name}"), class: 'text-center') +
+      (block_given? ? capture(&block) : ''.html_safe)
+    end
+  end
+
+  def drag_drop_module(module_name, &block)
+    content_tag(:div, id: "drag-drop-#{module_name}", class: 'attachment-panel drag-drop-zone') do
+      content_tag(:div, class: 'attachment-select-file-view') do
+        content_tag(:div, class: 'drag-box') do
+          content_tag(:i, nil, class: 'icon-upload') +
+          content_tag(:h4, 'DRAG & DROP') +
+          content_tag(:p) do
+            content_tag(:span, 'your ' + I18n.t("drag_n_drop.items.#{module_name}") + ' or ') +
+            content_tag(:span, nil, class: 'file-browse') do
+              ('browse' + file_field_tag("file", multiple: true, 'data-no-uniform' => "true")).html_safe
+            end
+          end
+        end
+      end +
+      (block_given? ? capture(&block) : ''.html_safe)
+    end
+  end
+
   def icon_button_to(icon, options = {}, html_options = {})
     html_options[:class] ||= ''
     html_options[:class] = [html_options[:class], 'button-with-icon'].join(' ')

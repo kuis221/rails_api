@@ -124,7 +124,7 @@ feature 'Trending report' do
 
       visit event_path(event)
 
-      click_js_button('New Activity')
+      click_js_button('Add Activity')
 
       within visible_modal do
         select_from_chosen('Whiskey Survey', from: 'Activity type')

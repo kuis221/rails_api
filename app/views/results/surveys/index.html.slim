@@ -45,6 +45,11 @@ javascript:
     'userFilters': #{user_saved_filters(controller_name).to_json.html_safe},
     'autoCompletePath': '#{autocomplete_path(:events, format: :json)}',
     'defaultParams': '#{j default_params_for_view('status[]=Active')}',
+    'emptyStateMessage': '#{j t("results_surveys.empty.line1", scope: :blank_states) }',
+    'emptyStateMessageLine2': '#{j t("results_surveys.empty.line2", scope: :blank_states) }',
+    'emptyFilterResultsMessage': '#{j t("results_surveys.filters.line1", default: :filters_line1, scope: :blank_states) }',
+    'emptyFilterResultsMessageLine2': '#{j t("results_surveys.filters.line1", default: :filters_line1, scope: :blank_states) }',
+    'emptyStateImage': '#{asset_path('blank-surveys.png')}',
     'onChange': function(filterBox){
       $(document).trigger('surveys-filter:changed')
     },

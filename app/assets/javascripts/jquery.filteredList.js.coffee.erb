@@ -23,7 +23,13 @@ $.widget 'nmk.filteredList', {
 		scope: null,
 		applyTo: null,
 		fixListHeight: true,
-		allowCustomizeFilters: true
+		allowCustomizeFilters: true,
+		emptyStateMessage: 'There are no results matching the filtering criteria you selected.',
+		emptyStateMessageLine2: 'Please select different filtering criteria.',
+		emptyFilterResultsMessage: 'There are no results matching the filtering criteria you selected.',
+		emptyFilterResultsMessageLine2: 'Please select different filtering criteria.',
+		emptyStateImage: null,
+		canCreatePermission: false
 	},
 
 	_create: () ->
@@ -1021,13 +1027,41 @@ $.widget 'nmk.filteredList', {
 
 
 	_placeholderEmptyState: () ->
-		message = '<p>There are no results matching the filtering criteria you selected.<br />Please select different filtering criteria.</p>'
+		arrow = $('<div class="blank-state-arrow hide">
+					  <img src="/assets/blank-states-arrow.png">
+				  </div>')
+		if @options.canCreatePermission
+			arrow.removeClass('hide')
+
+		$('<div class="blank-state">')
+		  .append(arrow)
+		  .append('<h5 class="text-center"></h5>
+			  	   <p class="text-center"></p>' +
+			  	   ( if @options.emptyStateImage then '<div class="blank-state-icon">
+					   <img src="'+ @options.emptyStateImage+'" />
+			  	   </div>' else '') +
+		  '</div>').find('h5.text-center').html(@options.emptyStateMessage).end()
+				  .find('p.text-center').html(@options.emptyStateMessageLine2).end()
+				  .appendTo @listContainer
+
+	_placeholderEmptyFilterResults: () ->
+		line1 = @options.emptyFilterResultsMessage
+		line2 = @options.emptyFilterResultsMessageLine2
+		message = "<p>#{line1}<br />#{line2}</p>"
 		if @options.placeholderMessage?
 			message = @options.placeholderMessage()
 		if @options.placeholderElement?
 			@options.placeholderElement(message)
 		else
-			$('<div class="placeholder-empty-state">').html(message).appendTo @listContainer
+			$('<div class="blank-state">
+				<h5 class="text-center"></h5>
+				<p class="text-center"></p>
+				<div class="blank-state-icon">
+					<img src="<%= asset_path("blank-search.png") %>" />
+				</div>
+			  </div>').find('h5.text-center').html(line1).end()
+					.find('p.text-center').html(line2).end()
+					.appendTo @listContainer
 
 	reloadData: () ->
 		@_loadPage 1
@@ -1089,10 +1123,14 @@ $.widget 'nmk.filteredList', {
 					@_pageLoaded page, $items
 					@listContainer.css height: ''
 
-					resultsCount = $items.find('>*').length
+					resultsCount = $items.data('total')
+					totalItemsCount = $items.data('existing-total')
 
-					if page is 1 and resultsCount is 0
-						@emptyState = @_placeholderEmptyState()
+					if page is 1
+						if totalItemsCount is 0
+							@emptyState = @_placeholderEmptyState()
+						else if resultsCount is 0
+							@emptyState = @_placeholderEmptyFilterResults()
 
 					if $response.find('div[data-content="filters-description"]').length > 0
 						$('.collection-list-description .filter-label').html(

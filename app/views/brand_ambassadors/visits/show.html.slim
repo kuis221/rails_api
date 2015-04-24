@@ -43,7 +43,7 @@
       #list-tools
         .pull-left
           - if can?(:create, Event)
-          = button_to 'Create', new_event_path(resource, event: {visit_id: resource.id, campaign_id: resource.campaign_id}, format: :js), remote: true, class: 'btn btn-primary', :id => 'new-event-btn', method: :get
+          = button_to 'Add Event', new_event_path(resource, event: { visit_id: resource.id, campaign_id: resource.campaign_id }, format: :js), remote: true, class: 'btn btn-primary', :id => 'new-event-btn', method: :get
 
         .text-right
           .dropdown.btn-download
@@ -83,7 +83,11 @@ javascript:
     'placeholderMessage': function(){
       return '<p>No events found for this Visit</p>';
     },
-    'applyTo': 'visits'
+    'applyTo': 'visits',
+    'emptyStateMessage': '#{j t("invite_events.empty.line1", scope: :blank_states) }',
+    'emptyStateMessageLine2': '#{j t("invite_events.empty.line2.with#{can?(:create, Event) ? '' : 'out'}_schedule_permissions", scope: :blank_states) }',
+    'emptyFilterResultsMessage': '#{j t("invite_events.filters.line1", default: :filters_line1, scope: :blank_states) }',
+    'emptyFilterResultsMessageLine2': '#{j t("invite_events.filters.line2", default: :filters_line2, scope: :blank_states) }'
   });
 
 - reload_page_on_edit_resource

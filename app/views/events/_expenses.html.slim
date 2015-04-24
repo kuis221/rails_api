@@ -1,16 +1,20 @@
 #event-expenses-container
-  = button_to 'Add Expense', new_event_event_expense_path(resource), method: :get, remote: true, class: 'btn btn-primary' if can?(:create_expense, resource)
+  - if resource.event_expenses.any?
+    = button_to 'Add Expense', new_event_event_expense_path(resource), method: :get, remote: true, class: 'btn btn-primary' if can?(:create_expense, resource)
 
-  .expenses-gallery
-    div#expenses-list.resource-list
-      = render resource.event_expenses
-      div.resource-item.total-expenses.text-large
-        .span10
-        .span2.total-expenses-value
-          .pull-left.text-large TOTAL:
-          .pull-right.text-large
-            b= number_to_currency(resource.event_expenses.map(&:amount).compact.sum, precision: 2)
+    .expenses-gallery
+      div#expenses-list.resource-list
+        = render resource.event_expenses
+        div.resource-item.total-expenses.text-large
+          .span10
+          .span2.total-expenses-value
+            .pull-left.text-large TOTAL:
+            .pull-right.text-large
+              b= number_to_currency(resource.event_expenses.map(&:amount).compact.sum, precision: 2)
+    javascript:
 
-javascript:
+      $("div.expenses-gallery").photoGallery({showSidebar: false});
 
-  $("div.expenses-gallery").photoGallery({showSidebar: false});
+  - else
+    = blank_state_module('event.expenses') do
+      = button_to 'Add Expense', new_event_event_expense_path(resource), method: :get, remote: true, class: 'btn btn-primary' if can?(:create_expense, resource)
