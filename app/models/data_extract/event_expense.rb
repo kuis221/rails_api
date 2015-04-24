@@ -21,6 +21,8 @@
 #
 
 class DataExtract::EventExpense < DataExtract
+  include DataExtractEventsBase
+
   define_columns name: 'event_expenses.name',
                  amount: 'event_expenses.amount',
                  campaign_name: 'campaigns.name',
@@ -38,23 +40,15 @@ class DataExtract::EventExpense < DataExtract
                  created_at: proc { "to_char(event_expenses.created_at, 'MM/DD/YYYY')" }
 
   def add_joins_to_scope(s)
-    s = s.joins('LEFT JOIN events ON events.id=event_expenses.event_id')
-    s = s.joins('LEFT JOIN places ON places.id=events.place_id')
+    s = super.joins(:event_expenses)
     if columns.include?('created_by') || filters.present? && filters['user'].present?
       s = s.joins('LEFT JOIN users ON event_expenses.created_by_id=users.id')
-    end
-    if columns.include?('campaign_name')
-      s = s.joins('LEFT JOIN campaigns ON events.campaign_id=campaigns.id')
     end
     s
   end
 
   def total_results
     EventExpense.connection.select_value("SELECT COUNT(*) FROM (#{base_scope.select(*selected_columns_to_sql).to_sql}) sq").to_i
-  end
-
-  def base_scope
-    add_filter_conditions_to_scope add_joins_to_scope(model.for_user_accessible_events(current_user))
   end
 
   def date_field_prefix

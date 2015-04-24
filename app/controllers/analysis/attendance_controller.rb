@@ -62,4 +62,8 @@ class Analysis::AttendanceController < ApplicationController
       current_company.campaigns.find(params[:campaign_id]).event_dates
     end
   end
+
+  def return_path
+    analysis_path
+  end
 end

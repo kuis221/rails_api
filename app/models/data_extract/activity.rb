@@ -45,8 +45,7 @@ class DataExtract::Activity < DataExtract
     return s if filters.nil? || filters.empty?
     s = s.where(campaign_id: filters['campaign']) if filters['campaign'].present?
     s = s.where(company_user_id: filters['user']) if filters['user'].present?
-    s = s.where(events: { aasm_state: filters['event_status'] }) if filters['status'].present?
-    s = s.where(events: { active: filters['active_state'].map { |f| f == 'active' ? true : false } }) if filters['active_state'].present?
+    s = s.where(events: { active: filters['status'].map { |f| f.downcase == 'active' ? true : false } }) if filters['status'].present?
     s = s.where(activity_type_id: params['activity_type_id']) if params && params.key?('activity_type_id')
     s
   end
@@ -92,7 +91,4 @@ class DataExtract::Activity < DataExtract
     end
   end
 
-  def filters_include_calendar
-    true
-  end
 end

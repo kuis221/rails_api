@@ -86,6 +86,7 @@ class Event < ActiveRecord::Base
   scope :by_campaigns, ->(campaigns) { where(campaign_id: campaigns) }
   scope :in_past, -> { where('events.end_at < ?', Time.now) }
   scope :with_team, ->(team) { joins(:teamings).where(teamings: { team_id: team }) }
+  scope :filters_between_dates, ->(start_date, end_date) { where(start_at: DateTime.parse(start_date)..DateTime.parse(end_date))}
 
   def self.between_dates(start_date, end_date)
     prefix = ''

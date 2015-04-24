@@ -1,4 +1,4 @@
-$.widget 'nmk.dataExtract', {
+$.widget 'brandscopic.dataExtract', {
   options: {
   },
 
@@ -8,6 +8,10 @@ $.widget 'nmk.dataExtract', {
     @_buildDragtable()
     @_loadPreview()
     @_loadAvailableFields()
+
+    @element.on 'mousedown', '.dropdown-toggle', (e) =>
+      e.stopPropagation();
+      true
 
     $('.available-fields-box').on 'click', '.available-field', (e) =>
       e.preventDefault()
@@ -21,7 +25,7 @@ $.widget 'nmk.dataExtract', {
       e.preventDefault()
       btn = $(e.currentTarget)
       @_sortTable btn.data('column'), btn.data('dir')
-
+      
     $(window).on 'resize', () =>
       @scrollerApi.reinitialise()
       @_resizePreviewZone()
@@ -65,5 +69,5 @@ $.widget 'nmk.dataExtract', {
     $('.available-fields-box').load '/results/data_extracts/available_fields?' + form.serialize()
 
   _buildDragtable: () ->
-    @element.find('.data-extract-table').dragtable()
+    @element.find('.data-extract-table').dragtable({dragHandle:'span'})
 }

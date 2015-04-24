@@ -11,6 +11,7 @@ $.widget 'nmk.filteredList', {
 		onFiltersLoaded: false,
 		includeCalendars: false,
 		includeAutoComplete: false,
+		includeSaveFilters: true,
 		autoCompletePath: '',
 		defaultParams: '',
 		customFilters: [],
@@ -86,13 +87,14 @@ $.widget 'nmk.filteredList', {
 		if @options.filters
 			@setFilters @options.filters
 
-		@form.append(
-			$('<input class="btn btn-primary" id="save-filters-btn" type="submit" value="Save">').on 'click', (e) =>
-				@_saveFilters()
+		if @options.includeSaveFilters
+			@form.append(
+				$('<input class="btn btn-primary" id="save-filters-btn" type="submit" value="Save">').on 'click', (e) =>
+					@_saveFilters()
 
-			$('<input class="btn btn-cancel" id="cancel-save-filters" type="reset" value="Reset">').on 'click', (e) =>
-				@_resetFilters()
-		)
+				$('<input class="btn btn-cancel" id="cancel-save-filters" type="reset" value="Reset">').on 'click', (e) =>
+					@_resetFilters()
+			)
 
 		if @options.allowCustomizeFilters
 			@form.append $('<a class="settings-for-filters" title="Filter Settings" href="#"><span class="icon-gear"></span></a>').on 'click', (e) =>

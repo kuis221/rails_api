@@ -38,9 +38,13 @@ module DataExtractEventsBase
     return s if filters.nil? || filters.empty?
     s = s.where(campaign_id: filters['campaign']) if filters['campaign'].present?
     s = s.in_areas(params['area']) if filters['area'].present?
-    s = s.where('ARRAY[?] && event_team_members.ids', filters['user']) if filters['user'].present?
-    s = s.where(aasm_state: filters['event_status']) if filters['status'].present?
-    s = s.where(active: filters['active_state'].map { |f| f == 'active' ? true : false }) if filters['active_state'].present?
+    s = s.where(aasm_state: filters['event_status'].map { |f| f.downcase}) if filters['event_status'].present?
+    s = s.where(active: filters['status'].map { |f| f.downcase == 'active' ? true : false }) if filters['status'].present?
+    s = s.filters_between_dates(filters['start_date'].to_s, filters['end_date'].to_s) if filters['start_date'].present? && filters['end_date'].present?
+    s = s.joins('LEFT JOIN brands_campaigns ON brands_campaigns.campaign_id=events.campaign_id')
+            .where("brands_campaigns.brand_id IN (#{filters['brand'].join(', ')})") if filters['brand'].present?
+    s = s.joins('LEFT JOIN memberships AS member_events ON member_events.memberable_type=\'Event\'')
+          .where("member_events.memberable_id = events.id AND member_events.company_user_id IN (#{filters['user'].join(', ')})") if filters['user'].present?
     s
   end
 
