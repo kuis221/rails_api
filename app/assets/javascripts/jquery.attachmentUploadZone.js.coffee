@@ -138,6 +138,10 @@ $.widget 'nmk.attachmentUploadZone', {
 			form.find('div[id="panel-' + fieldId + '"]').show()
 			false
 
+		form.on "click", ".download-attachment", (e) ->
+			e.stopPropagation()
+			true
+
 		form.on "click", "a.file-browse", (e) ->
 			e.preventDefault()
 			e.stopPropagation()
