@@ -1,4 +1,4 @@
-$.widget 'nmk.activityForm', {
+$.widget 'brandscopic.activityForm', {
 	options: {
 	},
 	_create: () ->

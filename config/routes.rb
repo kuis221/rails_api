@@ -76,7 +76,6 @@ Brandscopic::Application.routes.draw do
           get :autocomplete, on: :collection
           resources :invites, only: [:index, :show, :create, :update]
           resources :activities, only: [:index, :create, :update] do
-            get :thanks, on: :collection
             get :deactivate, on: :member
           end
           member do
@@ -254,6 +253,7 @@ Brandscopic::Application.routes.draw do
         get :activate, on: :member
       end
       resources :activities, only: [:new, :create] do
+        get :thanks, on: :collection
         get :form, on: :collection
         get :empty_form, to: 'activities#export_empty_fieldable', on: :collection
       end
