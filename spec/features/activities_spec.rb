@@ -185,13 +185,9 @@ feature 'Activities management' do
 
       hover_and_click("#activities-list #activity_#{activity.id}", 'Edit')
 
-      within visible_modal do
-        select_from_chosen('Juanito Bazooka', from: 'User')
-        fill_in 'Date', with: '05/16/2013'
-        click_js_button 'Submit'
-      end
-
-      ensure_modal_was_closed
+      select_from_chosen('Juanito Bazooka', from: 'User')
+      fill_in 'Date', with: '05/16/2013'
+      click_button 'Submit'
 
       within resource_item do
         expect(page).to have_content('Juanito Bazooka')
@@ -303,13 +299,11 @@ feature 'Activities management' do
         expect(page).to have_content(user.name)
         expect(page).to have_content('THU May 16')
         expect(page).to have_content('Activity Type #1')
-        click_js_link('Edit')
+        click_link('Edit')
       end
 
-      within visible_modal do
-        expect(find_field('Option 1').value).to eql '10'
-        expect(find_field('Option 2').value).to eql '90'
-      end
+      expect(find_field('Option 1').value).to eql '10'
+      expect(find_field('Option 2').value).to eql '90'
     end
 
     scenario 'user can attach a photo to an activity' do
@@ -365,20 +359,18 @@ feature 'Activities management' do
 
         # Change the photo
         within resource_item do
-          click_js_link('Edit')
+          click_link('Edit')
         end
-        within visible_modal do
-          expect(page).to have_content('File attached: photo.jpg')
-          click_js_link('Change')
-          attach_file 'file', 'spec/fixtures/photo2.jpg'
-          expect(page).to have_content('Uploading photo2.jpg....')
-          wait_for_ajax(30) # For the image to upload to S3
-          expect(page).to have_content('File attached: photo2.jpg')
-          wait_for_photo_to_process 30 do
-            click_button 'Submit'
-          end
+
+        expect(page).to have_content('File attached: photo.jpg')
+        click_js_link('Change')
+        attach_file 'file', 'spec/fixtures/photo2.jpg'
+        expect(page).to have_content('Uploading photo2.jpg....')
+        wait_for_ajax(30) # For the image to upload to S3
+        expect(page).to have_content('File attached: photo2.jpg')
+        wait_for_photo_to_process 30 do
+          click_button 'Submit'
         end
-        ensure_modal_was_closed
 
         within resource_item do
           click_js_link('Activity Details')
@@ -447,17 +439,16 @@ feature 'Activities management' do
 
         # Remove the file
         within resource_item do
-          click_js_link('Edit')
+          click_link('Edit')
         end
         expect do
-          within visible_modal do
-            expect(page).to have_content('File attached: file.pdf')
-            click_js_link('Remove')
-            expect(page).to have_no_content('File attached')
-            click_button 'Submit'
-            wait_for_ajax(30) # To wait for the file being deleted from S3
+          expect(page).to have_content('File attached: file.pdf')
+          click_js_link('Remove')
+          expect(page).to have_no_content('File attached')
+          click_button 'Submit'
+          within resource_item do
+            expect(page).to have_content('Activity Type #1')
           end
-          ensure_modal_was_closed
         end.to change(AttachedAsset, :count).by(-1)
       end
     end
@@ -494,16 +485,12 @@ feature 'Activities management' do
       visit venue_path(venue)
 
       within resource_item do
-        click_js_link 'Edit'
+        click_link 'Edit'
       end
 
-      within visible_modal do
-        select_from_chosen('Juanito Bazooka', from: 'User')
-        fill_in 'Date', with: '05/16/2013'
-        click_js_button 'Submit'
-      end
-
-      ensure_modal_was_closed
+      select_from_chosen('Juanito Bazooka', from: 'User')
+      fill_in 'Date', with: '05/16/2013'
+      click_button 'Submit'
 
       within resource_item do
         expect(page).to have_content('Juanito Bazooka')

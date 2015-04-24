@@ -41,6 +41,15 @@ class ActivitiesController < FilteredController
     end
   end
 
+  def update
+    update! do |success, failure|
+      success.html do
+        flash.clear
+        redirect_to url_for(resource.activitable) + '#activities-list'
+      end
+    end
+  end
+
   protected
 
   def pdf_form_file_name
