@@ -65,13 +65,13 @@ feature 'Events section' do
 
     scenario 'allows the user to activate/deactivate a event from the event details page' do
       visit event_path(events.first)
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button 'Deactivate Event'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this event?'
 
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button('Activate Event')
         expect(page).to have_button('Deactivate Event') # test the link have changed
       end
@@ -442,7 +442,7 @@ feature 'Events section' do
               # with white spaces, so, remove them and look for strings
               # without whitespaces
               text = page.text.gsub(/[\s\n]/, '')
-              expect(text).to include 'MyKoolBrand'
+              expect(text).to include 'MyKool'
               expect(text).to include "#{today.strftime('%B')}#{year_number}"
             end
           end

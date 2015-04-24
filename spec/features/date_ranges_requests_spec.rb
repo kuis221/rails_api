@@ -110,11 +110,11 @@ feature 'DateRanges', search: true, js: true do
     scenario 'allows the user to activate/deactivate a date range' do
       date_range = create(:date_range, company: company, active: true)
       visit date_range_path(date_range)
-      find('.links-data').click_js_button('Deactivate Date Range')
+      find('.edition-links').click_js_button('Deactivate Date Range')
 
       confirm_prompt 'Are you sure you want to deactivate this date range?'
 
-      within('.links-data') do
+      within('.edition-links') do
         click_js_button 'Activate Date Range'
         expect(page).to have_button 'Deactivate Date Range' # test the link have changed
       end
@@ -125,7 +125,7 @@ feature 'DateRanges', search: true, js: true do
       visit date_range_path(date_range)
       expect(page).to have_content('Old name')
 
-      find('.links-data').click_js_button('Edit Date Range')
+      find('.edition-links').click_js_button('Edit Date Range')
 
       within("form#edit_date_range_#{date_range.id}") do
         fill_in 'Name', with: 'edited date range name'

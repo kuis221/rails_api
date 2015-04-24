@@ -21,7 +21,8 @@
 
     // The is info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
-      h3= resource.name
+      span.primary-info
+        = resource.name
       = button_to_edit resource if can?(:edit, resource)
       = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
 
