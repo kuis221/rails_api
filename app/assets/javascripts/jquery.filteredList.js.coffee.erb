@@ -1027,11 +1027,12 @@ $.widget 'nmk.filteredList', {
 
 
 	_placeholderEmptyState: () ->
-		arrow = $('<div class="blank-state-arrow hide">
-					  <img src="/assets/blank-states-arrow.png">
-				  </div>')
 		if @options.canCreatePermission
-			arrow.removeClass('hide')
+			arrow = $('<div class="blank-state-arrow">
+						  <img src="<%= asset_path('blank-states-arrow.png') %>">
+					  </div>')
+		else
+			arrow = ''
 
 		$('<div class="blank-state">')
 		  .append(arrow)
