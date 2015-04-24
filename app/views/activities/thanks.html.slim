@@ -2,7 +2,7 @@
   .thanks
     = image_tag 'blank-surveys.png'
     .row-fluid
-      | Thank You!
+      h3 Thank You!
 
     .row-fluid
       = link_to "New Activity #{@activity_type.name}", url_for(params.merge(action: 'new', activity: { activity_type_id: @activity_type.id })), class: 'btn btn-primary', method: 'get'
