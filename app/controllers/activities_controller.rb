@@ -3,7 +3,7 @@
 # This class handle the requests for managing the Activities
 class ActivitiesController < FilteredController
   belongs_to :venue, :event, polymorphic: true, optional: true
-  respond_to :js, only: [:new, :edit, :update]
+  respond_to :js, only: [:new]
   custom_actions member: [:form]
 
   layout 'empty'
