@@ -3365,6 +3365,9 @@ ul.ui-widget-content{
 body.activities{
 	&.empty-layout {
 		background-color: white;
+		a.btn{
+			color: $white;
+		}
 	}
 	.details_box{
 		.event-info{
@@ -7439,8 +7442,11 @@ body.dashboard.index {
 }
 
 .survey-mode-wrapper {
+	color: $text;
+	padding-bottom: 50px;
 	.survey-header {
-		background-color: $gray-dark;
+		color: $gray-lighter;
+		background-color: $text;
 		padding: 20px 30px;
 		h5 {
 			display: block;
@@ -7448,15 +7454,41 @@ body.dashboard.index {
 			margin: 0 auto;
 			font-size: 22px;
 		}
-		a {
+		a{
+			color: $gray-lighter;
 			float: right;
 			text-decoration: underline;
 			font-size: 12px;
 		}
 	}
+	.large-inputs{
+		margin: 30px 0;
+	}
+	.control-group{
+		margin-bottom: 0;
+		&.error .control-label{
+			color: $text;
+		}
+		.control-label{
+			color: $text;
+			font-weight: bold;
+			margin-bottom: 4px;
+		}
+		.controls .checkbox{
+			padding-top: 3px;
+			padding-bottom: 3px;
+			padding: 3px 0;
+			&:first-child{
+				margin-top: 10px;
+			}
+		}
+		.checker{
+			margin-right: 15px;
+			margin-top: 1px;
+		}
+	}
 	.survey-form {
 		background-color: #fff;
-		padding: 30px 0;
 		#form-container {
 			width: 400px;
 			margin: 0 auto;
@@ -7466,11 +7498,50 @@ body.dashboard.index {
 		background-color: #fff;
 		padding: 100px 0;
 		text-align: center;
+		h3{
+			font-weight: bold;
+			margin: 20px 0 60px 0;
+		}
 		.btn + .btn {
-			margin-right: 20px;
+			margin-left: 8px;
 		}
 	}
 }
+
+// Review hotfix for buttons on survey mode wrapper once results-enhancements is finally merged
+
+.btn-cancel{
+	color: $white;
+}
+
+.btn-large{
+	box-sizing: border-box;
+	font-size: 16px;
+	padding: 10px 16px !important;
+	height: 42px;
+	min-width: 160px;
+}
+
+// Date picker fix
+
+input[type="text"]{
+	&.date_picker{
+		background-image: image-url('calendar.svg');
+		background-repeat: no-repeat;
+		background-position: 4px;
+		padding-left: 35px;
+		text-align: left;
+	}
+	&.time_picker{
+		background: image-url('time.svg');
+		background-repeat: no-repeat;
+		background-position: 4px;
+		padding-left: 35px;
+		text-align: left;
+	}
+}
+
+
 
 @import 'widgets/asset_upload_dialog';
 @import 'widgets/documents_list';

@@ -255,7 +255,9 @@ Styleguide 4.1.5
 		}
 		&.single-line .resource-item {
 			.resource-item-link {
-				padding-top: 2px;
+				font-size: 16px;
+				padding-left: 0;
+				padding-top: 4px;
 			}
 		}
 		&.max-items-3 {
@@ -307,23 +309,26 @@ Styleguide 4.1.5
 		}
 		div.radio {
 			float: right;
+			margin-right: 6px;
 			span {
 				background-color: #FFF;
 				border: 0;
 				width: 25px;
-  				height: 25px;
-  				&.checked {
-  					background-color: $green;
-  					&:after {
-  						font-family: 'icons';
-  						color: white;
-  						content: "\e64e";
-  						border: 0;
-  						background-color: transparent;
-  						left: 6px;
-  						font-weight: bold;
-  					}
-  				}
+				height: 25px;
+				&.checked {
+					background-color: $green;
+					&:after {
+						font-family: 'icons';
+						color: white;
+						content: "\e64e";
+						border: 0;
+						background-color: transparent;
+						font-size: 14px;
+						left: 6px;
+						top: 4px;
+						font-weight: bold;
+					}
+				}
 			}
 		}
 	}
