@@ -87,11 +87,10 @@ class Area < ActiveRecord::Base
 
   # Returns a list of locations ids that are associated to the area
   def locations
-    @locations ||=
-      Rails.cache.fetch("area_locations_#{id}") do
-        Location.joins('INNER JOIN places ON places.location_id=locations.id')
-                .where(places: { id: place_ids, is_location: true }).group('locations.id').to_a
-      end
+    Rails.cache.fetch("area_locations_#{id}") do
+      Location.joins('INNER JOIN places ON places.location_id=locations.id')
+              .where(places: { id: place_ids, is_location: true }).group('locations.id').to_a
+    end
   end
 
   def cities

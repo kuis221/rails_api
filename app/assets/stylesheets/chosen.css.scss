@@ -92,12 +92,14 @@ select.chosen-enabled{
 		&.chzn-single-with-drop {
 			border: 1px solid $brand;
 			div b{
-				background: image-url('triangle-up.svg') no-repeat 0px 15px ;
+				background: image-url('triangle-down.svg') no-repeat 0px 16px;
+				background-size: 65%;
 			}
 		}
 		div{
 			b {
-				background: image-url('triangle-down.svg') no-repeat 0px 17px ;
+				background: image-url('triangle-down.svg') no-repeat 0px 16px ;
+				background-size: 65%;
 			}
 		}
 	}
