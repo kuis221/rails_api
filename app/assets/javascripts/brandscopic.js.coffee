@@ -171,6 +171,8 @@ jQuery ->
 
 		$('.attached_asset_upload_form').attachmentUploadZone();
 
+		$('.attachment-attached-view.photo').photoGallery({showSidebar: false});
+
 		$('.bs-checkbox:checkbox').bootstrapSwitch
 			animated: false
 

@@ -54,8 +54,9 @@ module ApplicationHelper
     end
   end
 
-  def drag_drop_module(module_name, &block)
-    content_tag(:div, id: "drag-drop-#{module_name}", class: 'attachment-panel drag-drop-zone') do
+  def drag_drop_module(module_name, close_button_class = '', &block)
+    content_tag(:div, id: "drag-drop-#{module_name}", class: "attachment-panel drag-drop-zone #{module_name}") do
+      content_tag(:span, nil, class: "close #{close_button_class}") +
       content_tag(:div, class: 'attachment-select-file-view') do
         content_tag(:div, class: 'drag-box') do
           content_tag(:i, nil, class: 'icon-upload') +
@@ -63,7 +64,7 @@ module ApplicationHelper
           content_tag(:p) do
             content_tag(:span, 'your ' + I18n.t("drag_n_drop.items.#{module_name}") + ' or ') +
             content_tag(:span, nil, class: 'file-browse') do
-              ('browse' + file_field_tag("file", multiple: true, 'data-no-uniform' => "true")).html_safe
+              ('browse' + file_field_tag('file', multiple: true, 'data-no-uniform' => 'true')).html_safe
             end
           end
         end

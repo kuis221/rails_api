@@ -1,23 +1,23 @@
-- resource_param_name = resource.class.name.underscore.gsub('/','_')
 - max_file_size ||= 60.megabytes
+- upload_form_class = upload_button_class.blank? ? 'hide' : ''
 
-#asset_upload_form
+#documents_upload_form class='#{upload_form_class}'
   = s3_uploader_form callback_url: event_documents_path(resource, format: :js), id: "documents_s3_uploader", callback_param: "attached_asset[direct_upload_url]", expiration: 24.hours.from_now.utc.iso8601, max_file_size: max_file_size do
     - if resource.errors.any?
       = resource.errors.full_messages
 
-    = drag_drop_module('documents') do
-      .documents-upload-progress-info
+    = drag_drop_module('documents', upload_button_class) do
+      .attachment-upload-progress-info
         .upload-file-info
           .documents-counter
           .document-info
             span.document-name
             = '&nbsp;&nbsp;'.html_safe
-            span.document-size 2.29 MB
+            span.document-size
         .upload-file-progress
           .progress
-            .bar style='width: 10%'
-          i.icon-remove-circle
+            .bar style='width: 0%'
+          i.icon-remove-circle id='upload-file-cancel'
 
 javascript:
   $(function() {
@@ -39,24 +39,41 @@ javascript:
           return true;
         }
       }
-    ).bind('fileuploadprogress', function (e, data) {
+    ).bind('fileuploadadd', function(e, data) {
+      var jqXHR = data.submit();
+      $('#upload-file-cancel').on('click', function(e) {
+        if (jqXHR) {
+          jqXHR.abort();
+          jqXHR = null;
+        }
+      });
+    }).bind('fileuploadprogress', function (e, data) {
       var progress = parseInt(data.loaded / data.total * 100, 10),
           totalFiles = data.originalFiles.length,
           currentFileIndex = data.originalFiles.indexOf(data.files[0]) + 1;
-      context = $('#drag-drop-documents .documents-upload-progress-info')
+      context = $('#drag-drop-documents .attachment-upload-progress-info')
 
+      context.find('.progress .bar').css({ width: progress + '%' });
       context.find('.documents-counter').text('Uploading document ('+ currentFileIndex +'/'+ totalFiles +')');
       context.find('.document-name').text(data.files[0].name);
-      context.find('.progress .bar').css({ width: progress + '%' });
+      context.find('.document-size').text(filesize(data.files[0].size));
     }).bind('fileuploadstop', function (e, data) {
       $('#drag-drop-documents').removeClass('uploading');
       $('#drag-drop-documents .attachment-select-file-view').show();
-      $('#drag-drop-documents .documents-upload-progress-info').hide();
+      $('#drag-drop-documents .attachment-upload-progress-info').hide();
+      $('#drag-drop-documents .close').removeClass('hide');
+      context.find('.progress .bar').css({ width: '0%' });
+      $('#documents_upload_form').hide();
+      $('#event-upload-documents').removeClass('hide');
     }).bind('fileuploadfail', function(e, data) {
-      return alert(data.filename + ' failed to upload');
+      return alert(data.files[0].name + ' was not uploaded');
     }).bind('fileuploadstart', function() {
       $('#drag-drop-documents').addClass('uploading');
       $('#drag-drop-documents .attachment-select-file-view').hide();
-      $('#drag-drop-documents .documents-upload-progress-info').show();
+      $('#drag-drop-documents .attachment-upload-progress-info').show();
     });
+  });
+
+  $('.drag-drop-zone .close').on('click', function (e) {
+    $('#documents_upload_form').hide();
   });

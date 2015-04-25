@@ -23,15 +23,12 @@ feature 'Photos', js: true do
       with_resque do
         visit event_path(event)
 
-        gallery_box.click_js_button 'Add Photos'
-
-        within visible_modal do
+        within '#event-photos' do
           attach_file 'file', 'spec/fixtures/photo.jpg'
-          expect(upload_queue).to have_file_in_queue('photo.jpg')
+          expect(page).to have_content('Uploading...')
+          expect(page).to have_content('photo.jpg')
           wait_for_ajax(30) # For the image to upload to S3
-          find('#btn-upload-ok').click
         end
-        ensure_modal_was_closed
 
         photo = AttachedAsset.last
         # Check that the image appears on the page
@@ -48,12 +45,12 @@ feature 'Photos', js: true do
 
       # Check that the image appears on the page
       within gallery_box do
-        expect(page).to have_selector('li')
-        hover_and_click 'li', 'Deactivate'
+        expect(page).to have_selector('li.photo-item')
+        hover_and_click 'li.photo-item', 'Deactivate'
       end
 
       confirm_prompt 'Are you sure you want to deactivate this photo?'
-      expect(gallery_box).to have_no_selector('li')
+      expect(gallery_box).to have_no_selector('li.photo-item')
     end
   end
 
@@ -197,10 +194,6 @@ feature 'Photos', js: true do
 
   def gallery_box
     find('.details_box.box_photos')
-  end
-
-  def upload_queue
-    find('#uploads_container')
   end
 
   def gallery_modal

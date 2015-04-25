@@ -1,16 +1,37 @@
-.drag-drop-zone{
+.drag-drop-zone {
 	line-height: 100%;
+	margin-bottom: 20px;
 	width: 100%;
-	padding: 0;
-	.attachment-select-file-view{
-		width: 190px;
+	padding: 2px 10px 0 0;
+	&.photos {
+		height: 224px;
+		padding: 40px 20px 20px;
+		width: 339px;
+	}
+	&.attach-field {
+		height: 150px;
+		width: 240px;
+		.attachment-select-file-view {
+			padding: 40px 23px;
+		}
+		.attachment-upload-progress-info {
+			.upload-file-progress {
+				.progress {
+					width: 70% !important;
+					margin-left: 12%;
+				}
+			}
+		}
+	}
+	.attachment-select-file-view {
 		margin: 0 auto;
-		padding: 40px 0;
-  	}
-  	&.uploading {
+		padding: 40px;
+		width: 190px;
+	}
+	&.uploading {
 		background-color: $gray-lighter;
-  	}
-	&.hover{
+	}
+	&.hover {
 		background-color: $gray-lighter;
 	}
 	&.fade {
@@ -21,7 +42,7 @@
 		transition: all 0.3s ease-out;
 		opacity: 1;
 	}
-	.documents-upload-progress-info {
+	.attachment-upload-progress-info {
 		padding: 40px 0;
 		width: 100%;
 		display: none;
@@ -31,7 +52,7 @@
 				font-weight: bold;
 			}
 		}
-		.upload-file-progress{
+		.upload-file-progress {
 			.progress {
 				float: left;
 				height: 12px;
@@ -42,11 +63,86 @@
 				margin-left: 45%;
 	  			margin-top: 3px;
 			}
-			i{
-				&.icon-remove-circle{
-					color: $silver;
-					float: left;
-					margin-left: 15px;
+			#upload-file-cancel {
+				color: $silver;
+				cursor: pointer;
+				float: left;
+				margin-left: 15px;
+			}
+		}
+	}
+	.close:before {
+		content: "\e616";
+		color: silver;
+		display: inline-block;
+		font-family: 'icons';
+		font-size: 16px;
+		opacity: 1 !important;
+		width: 100%;
+		speak: none;
+		text-align: right;
+	}
+}
+
+.attachment-attached-view {
+	&.photo {
+		height: 150px;
+		position: relative;
+		width: 240px;
+	}
+	.document {
+		.file-name {
+			margin-top: 5px;
+		}
+		.remove-attachment {
+			color: $user_menu;
+			margin-left: 15px;
+			&:before {
+				margin-top: 8px;
+			}
+		}
+	}
+	.image {
+		text-align: center;
+		#image-attached {
+			max-height: 150px;
+			max-width: 240px;
+		}
+	}
+	.image-toolbar {
+		display: none;
+		max-width: 240px;
+	}
+	&:hover{
+		.image-toolbar {
+			background-color: rgba(0, 0, 0, 0.6);
+			bottom: -10px;
+			display: block;
+			height: 30px;
+			left: 0;
+			overflow: hidden;
+			position: absolute;
+			right: 0;
+			a {
+				color: $app_bg;
+				font-size: 15px;
+				float: right;
+				margin: 8px;
+				opacity: 1 !important;
+				text-decoration: none;
+			}
+		}
+	}
+}
+
+#photos_upload_form {
+	.attachment-panel {
+		margin-bottom: 0;
+		.attachment-upload-progress-info {
+			.upload-file-progress {
+				.progress {
+					width: 70% !important;
+					margin-left: 12%;
 				}
 			}
 		}
