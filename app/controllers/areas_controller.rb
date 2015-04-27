@@ -6,12 +6,14 @@ class AreasController < FilteredController
   respond_to :json, only: [:cities]
   respond_to :xls, :pdf, only: :index
 
-  belongs_to :place, optional: true
+  helper_method :assignable_areas
+
+  belongs_to :place, :campaign, :company_user, optional: true
 
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableHelper
 
-  skip_authorize_resource only: [:add, :remove]
+  skip_load_and_authorize_resource only: [:assign, :unassign, :select_form]
 
   custom_actions member: [:select_places, :add_places, :add_to_campaign]
 
@@ -28,7 +30,25 @@ class AreasController < FilteredController
     render json: resource.cities.map(&:name)
   end
 
+  def select_form
+    authorize!(:add_place, parent)
+  end
+
+  def assign
+    authorize!(:add_place, parent)
+    parent.areas << current_company.areas.find(params[:id])
+  end
+
+  def unassign
+    authorize!(:remove_place, parent)
+    parent.areas.destroy resource
+  end
+
   private
+
+  def assignable_areas
+    @assignable_areas ||= current_company.areas.active.where('areas.id not in (?)', parent.area_ids + [0]).order('name ASC')
+  end
 
   def permitted_params
     params.permit(area: [:name, :description])[:area]

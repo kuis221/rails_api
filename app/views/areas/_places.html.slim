@@ -1,8 +1,14 @@
-.row-fluid
-  - places.each do |place|
-    .span3.area-place.clearfix id="place-#{place.id}"
-      .pull-left
-        .place-address
-          = place_address(place)
-      .pull-right
-        = link_to(content_tag(:i,'', class: 'icon-remove-circle'),  area_place_path(resource, place), class: 'remove-area-btn', title: 'Remove Place', remote: true, method: :delete)
+h5.module-title PLACES
+- if resource.places.any?
+  #area-places-list.row-fluid
+    - resource.places.order(:name).each do |place|
+      .span3.area-place.clearfix id="place-#{place.id}"
+        .pull-left
+          .place-address
+            = place_address(place)
+        .pull-right
+          = link_to(content_tag(:i,'', class: 'icon-remove-circle'),  area_place_path(resource, place), class: 'remove-area-btn', title: 'Remove Place', remote: true, method: :delete)
+  = button_to_add 'Add Place', new_area_place_path(resource) if can?(:edit, resource)
+- else
+  = blank_state_module('areas.places') do
+    = button_to 'Add Place', new_area_place_path(resource), remote: true, method: :get, class: 'btn btn-primary'  if can?(:edit, resource)

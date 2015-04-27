@@ -1,0 +1,6 @@
+h5.module-title CAMPAIGNS
+- if resource.campaigns.any?
+  #area-campaigns-list.resource-list.without-actions
+    = render partial: 'campaigns/campaign', collection: resource.campaigns, locals: { hide_actions: true }
+- else
+  = blank_state_module('areas.campaigns')

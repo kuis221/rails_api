@@ -1374,6 +1374,41 @@ describe Ability, type: :model do
         end
 
       end
+
+      describe 'company users' do
+        it 'can create company users' do
+          the_user = create(:company_user, company: company)
+          expect(ability).not_to be_able_to(:create, the_user)
+          expect(ability).not_to be_able_to(:new, the_user)
+
+          user.role.permission_for(:create, CompanyUser, mode: 'campaigns').save
+
+          expect(ability).to be_able_to(:create, the_user)
+          expect(ability).to be_able_to(:new, the_user)
+        end
+
+        it 'can edit company users' do
+          the_user = create(:company_user, company: company)
+          expect(ability).not_to be_able_to(:edit, the_user)
+          expect(ability).not_to be_able_to(:update, the_user)
+          expect(ability).not_to be_able_to(:add_place, the_user)
+          expect(ability).not_to be_able_to(:remove_place, the_user)
+
+          user.role.permission_for(:update, CompanyUser, mode: 'campaigns').save
+
+          expect(ability).to be_able_to(:edit, the_user)
+          expect(ability).to be_able_to(:update, the_user)
+          expect(ability).to be_able_to(:add_place, the_user)
+          expect(ability).to be_able_to(:remove_place, the_user)
+
+          # A user in other company
+          other_user = create(:company_user, company: create(:company))
+          expect(ability).not_to be_able_to(:edit, other_user)
+          expect(ability).not_to be_able_to(:update, other_user)
+          expect(ability).not_to be_able_to(:add_place, other_user)
+          expect(ability).not_to be_able_to(:remove_place, other_user)
+        end
+      end
     end
   end
 end
