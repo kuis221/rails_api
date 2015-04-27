@@ -42,6 +42,7 @@
 //= require jquery.number
 //= require jquery.photoGallery
 //= require jquery.placesAutocomplete
+//= require jquery.selectListSearch
 //= require jquery.timepicker
 //= require jquery.uniform
 //= require jquery.validate

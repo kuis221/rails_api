@@ -271,6 +271,7 @@ Brandscopic::Application.routes.draw do
         get :activate, on: :member
       end
       resources :activities, only: [:new, :create] do
+        get :thanks, on: :collection
         get :form, on: :collection
         get :empty_form, to: 'activities#export_empty_fieldable', on: :collection
       end
@@ -449,7 +450,7 @@ Brandscopic::Application.routes.draw do
     end
 
     resources :activities, only: [:new, :create] do
-      get :form, on: :collection
+      get :thanks, on: :collection
     end
 
     member do
