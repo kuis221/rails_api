@@ -47,10 +47,17 @@ javascript:
 
   var scrollerApi = $('.data-extract-box').data('jsp'),
       resizePreviewZone = function() {
-        var maxHeight = $(window).height() - $('.data-extract-box').offset().top - 100;
+        var maxHeight = $(window).height() - $('.data-extract-box').offset().top;
+        var diff = ($('#main-left-nav ul.nav').offset().top + $('#main-left-nav ul.nav').outerHeight() + $('footer').outerHeight()) -  $(window).height();
+        maxHeight -= (90 - Math.max(diff, 0));
         $('.data-extract-box').css({'height': maxHeight+'px'});
         scrollerApi.reinitialise();
       };
+
+  $('.data-extract-box').on('scroll', function(e){
+    $(window).trigger('scroll');
+    return true;
+  });
 
   $('#collection-list-filters').filteredList({
     'source': '#{items_results_data_extracts_path(resource.to_hash).html_safe}',
@@ -66,6 +73,12 @@ javascript:
     'autoCompletePath': '#{autocomplete_path(resource.filters_scope, format: :json)}',
     'onPageLoaded': function() {
       resizePreviewZone();
+    },
+    spinnerElement: function() {
+      spinner = $('<div class="loading-spinner" style="height: 60px; width: 100%"></div>')
+          .insertAfter($('table#extract-table'));
+      scrollerApi.reinitialise();
+      return spinner;
     },
     placeholderElement: function(message) {
       $('<tr><td></td></tr>').appendTo($('table#extract-table tbody')).find('td').attr('colspan', $('table#extract-table thead th').length).addClass('placeholder-empty-state').html(message);
