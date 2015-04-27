@@ -4,9 +4,11 @@
 	width: 100%;
 	padding: 2px 10px 0 0;
 	&.photos {
-		height: 224px;
-		padding: 40px 20px 20px;
-		width: 339px;
+		position: relative;
+		width: 100%;
+		padding-bottom: 64%;
+		float: left;
+		height: 0;
 	}
 	&.attach-field {
 		height: 150px;
@@ -24,9 +26,8 @@
 		}
 	}
 	.attachment-select-file-view {
-		margin: 0 auto;
-		padding: 40px;
-		width: 190px;
+		margin-left: 24%;
+		margin-top: 25%;
 	}
 	&.uploading {
 		background-color: $gray-lighter;
@@ -43,11 +44,11 @@
 		opacity: 1;
 	}
 	.attachment-upload-progress-info {
-		padding: 40px 0;
+		padding: 0 0 40px 0;
 		width: 100%;
 		display: none;
-		.upload-file-info{
-			.documents-counter{
+		.upload-file-info {
+			.documents-counter {
 				color: $brand;
 				font-weight: bold;
 			}
@@ -69,6 +70,9 @@
 				float: left;
 				margin-left: 15px;
 			}
+		}
+		.step-counter {
+  			margin-bottom: 30px;
 		}
 	}
 	.close:before {

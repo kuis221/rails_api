@@ -6385,6 +6385,9 @@ table td.sub-level-1 {
 					}
 				}
 			}
+			&.hidden {
+				display: none !important;
+			}
 		}
 	}
 }

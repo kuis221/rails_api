@@ -18,6 +18,13 @@ class PhotosController < InheritedResources::Base
 
   def processing_status
     @photos = parent.photos.find(params[:photos])
+    @photos.each do |p|
+      if p.aasm_state == 'processing' && p.upload_percentage < 90
+        p.upload_percentage += 10
+        p.save
+      end
+    end
+    @photos
   end
 
   protected

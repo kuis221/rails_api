@@ -19,6 +19,8 @@
 #  processed         :boolean          default(FALSE), not null
 #  rating            :integer          default(0)
 #  folder_id         :integer
+#  aasm_state        :string(255)
+#  upload_percentage :integer
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

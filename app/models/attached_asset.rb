@@ -19,9 +19,12 @@
 #  processed         :boolean          default(FALSE), not null
 #  rating            :integer          default(0)
 #  folder_id         :integer
+#  aasm_state        :string(255)
+#  upload_percentage :integer
 #
 
 class AttachedAsset < ActiveRecord::Base
+  include AASM
   track_who_does_it
   has_and_belongs_to_many :tags, -> { order 'name ASC' },
                           autosave: true,
@@ -78,6 +81,30 @@ class AttachedAsset < ActiveRecord::Base
 
   delegate :company_id, to: :attachable
 
+  aasm do
+    state :new, initial: true
+    state :queued, before_enter: :start_percentage
+    state :processing
+    state :completed
+    state :failed
+
+    event :queue do
+      transitions from: [:new, :failed], to: :queued
+    end
+
+    event :process do
+      transitions from: [:new, :queued, :failed], to: :processing
+    end
+
+    event :complete do
+      transitions from: :processing, to: :completed
+    end
+
+    event :fail do
+      transitions from: :processing, to: :failed
+    end
+  end
+
   searchable if: :processed? do
     string :status
     string :asset_type
@@ -131,6 +158,10 @@ class AttachedAsset < ActiveRecord::Base
     integer :location, multiple: true do
       attachable.locations_for_index if attachable_type == 'Event'
     end
+  end
+
+  def start_percentage
+    self.upload_percentage = 50
   end
 
   def activate!
@@ -291,6 +322,8 @@ class AttachedAsset < ActiveRecord::Base
       file.reprocess!
     end
     self.processed = true
+    self.upload_percentage = 100
+    self.complete!
 
     direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
     file.s3_bucket.objects[direct_upload_url_data[:path]].delete if save
@@ -341,6 +374,7 @@ class AttachedAsset < ActiveRecord::Base
       sleep(1)
       retry
     else
+      self.fail!
       raise e
     end
   rescue AWS::S3::Errors::NoSuchKey
@@ -352,6 +386,7 @@ class AttachedAsset < ActiveRecord::Base
 
     move_uploaded_file
     if post_process_required?
+      self.queue! if self.new? || self.failed?
       Resque.enqueue(AssetsUploadWorker, id, self.class.name)
     else
       transfer_and_cleanup
