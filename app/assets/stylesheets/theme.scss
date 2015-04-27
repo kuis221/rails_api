@@ -28,6 +28,19 @@ select{
 // Form elements
 // --------------------------------------------------
 
+.form-elements-style{
+	background-color: white;
+	border: 1px solid $gray-light;
+	box-shadow: none;
+	box-sizing: border-box;
+	font-family: $baseFontFamily;
+	font-size: 13px;
+	font-weight: normal;
+	-webkit-box-shadow: none;
+	padding: 10px;
+	width: 100%;
+	transition: none;
+}
 textarea,
 input[type="text"],
 input[type="password"],
@@ -44,18 +57,7 @@ input[type="search"],
 input[type="tel"],
 input[type="color"],
 .uneditable-input{
-	background-color: white;
-	border: 1px solid $gray-light;
-	box-shadow: none;
-	box-sizing: border-box;
-	font-family: $baseFontFamily;
-	font-size: 13px;
-	font-weight: normal;
-	-webkit-box-shadow: none;
-	height:39px;
-	padding: 10px;
-	width: 100%;
-	transition: none;
+	@extend .form-elements-style;
 	&:focus{
 		border: 1px solid $brand;
 		box-shadow: none;
@@ -73,6 +75,18 @@ input[type="color"],
 		background: image-url('time.svg') no-repeat left !important;
 		text-align: right;
 	}
+}
+
+input[type="text"], input[type="password"],
+input[type="datetime"], input[type="datetime-local"], input[type="date"],
+input[type="month"], input[type="time"], input[type="week"],
+input[type="number"], input[type="email"], input[type="url"],
+input[type="search"], input[type="tel"], input[type="color"]{
+	height: 39px;
+}
+
+textarea{
+	min-height: 39px;
 }
 
 input[disabled], select[disabled], textarea[disabled],
@@ -144,6 +158,7 @@ select:focus:invalid:focus {
 	background-color: $silver;
 	background-image: none;
 	border: 0;
+	padding: 7px 15px;
 	box-shadow:none;
 	color: white;
 	font-family: $baseFontFamily;
@@ -180,8 +195,6 @@ select:focus:invalid:focus {
 		border: 0;
 		box-shadow: none;
 		color:white;
-		font-size: 14px;
-		padding: 7px 15px;
 		text-decoration: none !important;
 		text-shadow:none;
 		text-align: center;
@@ -245,9 +258,6 @@ select:focus:invalid:focus {
 			top:1px;
 		}
 		&.btn-primary, &.btn-cancel{
-			box-sizing: border-box;
-			padding: 8px 15px;
-			//height: 35px;
 			&.fileinput-button{
 				width: 140px;
 			}
@@ -276,6 +286,7 @@ select:focus:invalid:focus {
 		border: 0;
 		box-shadow: none;
 		color: white;
+		padding: 5px;
 		&.active{
 			background-color: $brand;
 			color: $user_menu;

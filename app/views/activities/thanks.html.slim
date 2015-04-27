@@ -1,0 +1,9 @@
+.survey-mode-wrapper
+  .thanks
+    = image_tag 'blank-surveys.png'
+    .row-fluid
+      h3 Thank You!
+
+    .row-fluid
+      = link_to "New #{@activity_type.name}", url_for(params.merge(action: 'new', activity: { activity_type_id: @activity_type.id })), class: 'btn btn-primary btn-large', method: 'get'
+      = link_to "Finish", url_for(parent) + '#activities-list', class: 'btn btn-cancel btn-large', method: 'get'

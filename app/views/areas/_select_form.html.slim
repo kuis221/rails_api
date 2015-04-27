@@ -1,7 +1,7 @@
 .campaigns-modals
   p Add areas from the list below
 
-  input#place-search-box.search-box type="text" name="q"
+  input#place-search-box.search-box.select-list-seach-box type="text" name="q" data-list="#areas-places-list"
   #areas-places-list.resource-list.select-list.compact
     - if assignable_areas.any?
       - assignable_areas.each do |area|
@@ -34,14 +34,3 @@
 
 javascript:
   $('.modal .places-autocomplete').placesAutocomplete();
-
-  $('#place-search-box').on('keyup', function () {
-    var value = $(this).val().toLowerCase();
-    $("#areas-places-list .resource-item").each(function() {
-      if ($(this).text().toLowerCase().search(value) > -1) {
-        $(this).show();
-      } else {
-        $(this).hide();
-      }
-    });
-  });
