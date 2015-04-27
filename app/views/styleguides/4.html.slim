@@ -234,3 +234,13 @@
         .resource-item-actions
           a.icon-edit href="#" title="Edit"
           a.icon-rounded-disable href="#" title="Deactivate"
+
+= kss_block '4.1.5' do |modifier_class|
+  .example
+    .resource-list.compact.select-list.single-line.select-list-input class="#{modifier_class}"
+      .resource-item
+        label.radio.resource-item-link
+          | Option 1
+          div.radio
+            span
+              input type="radio" value=1

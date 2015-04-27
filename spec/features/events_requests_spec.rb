@@ -442,7 +442,7 @@ feature 'Events section' do
               # with white spaces, so, remove them and look for strings
               # without whitespaces
               text = page.text.gsub(/[\s\n]/, '')
-              expect(text).to include 'MyKoolBrand'
+              expect(text).to include 'MyKool'
               expect(text).to include "#{today.strftime('%B')}#{year_number}"
             end
           end

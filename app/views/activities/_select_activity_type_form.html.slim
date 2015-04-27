@@ -1,0 +1,20 @@
+#form-container
+  .activity-form
+    = simple_form_for resource, url: url_for(params), method: :get do |f|
+      - if activity_types.any? 
+        = f.error_notification
+        = resource.errors.full_messages.join("<br />").html_safe
+
+        .form-inputs
+          .large-inputs class="form_field_dropdown"
+            = f.input :activity_type_id, as: :select_list, collection: activity_types, input_html: { class: 'chosen-enabled' }, disabled: (resource.new_record? ? false : true), label: false, search_box_placeholder: 'Search activty types'
+            
+        .form-actions
+          = f.button :submit, 'Create', id: 'save-activity-btn', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
+          = "&nbsp;".html_safe
+          = f.button :button, 'Cancel', class: 'btn btn-cancel'
+      - else
+        p There are no activity types available.
+
+        .form-actions
+          = f.button :button, 'Cancel', class: 'btn btn-cancel'
