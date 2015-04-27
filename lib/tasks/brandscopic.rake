@@ -24,8 +24,11 @@ namespace :brandscopic do
       CSV($stdin, row_sep: "\n", col_sep: ',') do |csv|
         csv.each do |venue1, venue2, venue3, name, route, city, state, zip, td_linx_code|
           next if venue1.blank?
-          venues = Venue.find([venue1, venue2, venue3])
-          raise "NOT ALL VENUES WHERE FOUND #{[venue1, venue2, venue3].compact}" if [venue1, venue2, venue3].compact.count > venues.count
+          venues = Venue.where(id: [venue1, venue2, venue3])
+          if [venue1, venue2, venue3].compact.count > venues.count
+            puts "NOT ALL VENUES WHERE FOUND #{[venue1, venue2, venue3].compact}"
+            next
+          end
           raise "TWO OR MORE VENUES ARE SHARING THE SAME PLACE ID #{[venue1, venue2, venue3]}" if venues.map(&:place_id).uniq.count < venues.count
           if venues.count > 1
             puts "Merging #{venues.first.name} with #{venues[1, 2].map(&:name).join(' and ')} keeping the name: #{name}"
