@@ -78,14 +78,19 @@ module Results
       end.join.html_safe
     end
 
-    def render_available_fields(fields)
+    def render_available_fields(fields, source)
       content_tag(:ul, class: 'available-field-list', id: 'available-field-list') do
         if fields.present?
           fields.sort.map do |field|
-            content_tag(:li, field[1], class: 'available-field', data: { name: field[0], title: I18n.t("data_exports.description.#{field[0]}")})
+            content_tag(:li, field[1], class: 'available-field', data: { name: field[0], title: render_descripcion_available_field(field[0], source)})
           end.join.html_safe
         end
       end
+    end
+
+    def render_descripcion_available_field(field, source)
+      desc = "<p class=\"name\">#{I18n.t("data_exports.fields.#{field}")}</p>"
+      desc << "<p class=\"description\">#{I18n.t("data_exports.descriptions.#{source}.#{field}")}</p>"
     end
   end
 end

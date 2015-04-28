@@ -49,11 +49,19 @@ class DataExtract::CompanyUser < DataExtract
   def add_filter_conditions_to_scope(s)
     return s if filters.nil? || filters.empty?
     s = s.where(role_id: filters['role']) if filters['role'].present?
-    s = s.where(active: filters['status'].map { |f| f.downcase == 'active' ? true : false }) if filters['status'].present?
     s = s.joins('LEFT JOIN memberships AS member ON member.memberable_type=\'Team\'')
           .where("member.memberable_id IN (#{filters['team'].join(', ')}) AND company_users.id=member.company_user_id") if filters['team'].present?
     s = s.joins('LEFT JOIN memberships AS member_campaign ON member_campaign.memberable_type=\'Campaign\'')
           .where("member_campaign.memberable_id IN (#{filters['campaign'].join(', ')}) AND company_users.id=member_campaign.company_user_id") if filters['campaign'].present?
+    s = add_filter_status(s)
+    s
+  end
+
+  def add_filter_status(s)
+    filters[:status].each do |status|
+      s = s.where(active: filters['status'].map { |f| f.downcase == 'active' ? true : false }) if status.downcase == 'active' || status.downcase == 'inactive'
+      s = s.where('users.invited_by_id is not null') if status.downcase == 'invited'
+    end if filters[:status].present?
     s
   end
 
