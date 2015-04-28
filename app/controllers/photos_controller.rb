@@ -7,7 +7,7 @@ class PhotosController < InheritedResources::Base
   skip_load_and_authorize_resource only: [:new, :create]
   before_action :authorize_create, only: [:new, :create]
 
-  include DeactivableHelper
+  include DeactivableController
   include PhotosHelper
 
   custom_actions collection: [:processing_status]

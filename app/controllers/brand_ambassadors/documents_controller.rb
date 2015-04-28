@@ -5,7 +5,7 @@ class BrandAmbassadors::DocumentsController < ::DocumentsController
 
   defaults resource_class: ::BrandAmbassadors::Document, collection_name: :brand_ambassadors_documents
 
-  include DeactivableHelper
+  include DeactivableController
 
   load_and_authorize_resource
 

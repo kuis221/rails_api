@@ -11,7 +11,7 @@ class AreasController < FilteredController
   belongs_to :place, :campaign, :company_user, optional: true
 
   # This helper provide the methods to activate/deactivate the resource
-  include DeactivableHelper
+  include DeactivableController
 
   skip_load_and_authorize_resource only: [:assign, :unassign, :select_form]
 

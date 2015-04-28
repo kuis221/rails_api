@@ -2,7 +2,7 @@ class TasksController < FilteredController
   belongs_to :event, :company_user, optional: true
 
   # This helper provide the methods to activate/deactivate the resource
-  include DeactivableHelper
+  include DeactivableController
   include ApplicationHelper
 
   respond_to :js, only: [:new, :create, :edit, :update, :show]
@@ -88,8 +88,6 @@ class TasksController < FilteredController
     end
   end
 
-  # TODO: this doesn't work for teams, but tomorrow is the demo
-  # and there is no much time to fix it
   def user_ids_scope
     ids = nil
     if params[:scope] == 'user'

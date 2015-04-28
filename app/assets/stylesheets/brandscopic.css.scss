@@ -5533,9 +5533,6 @@ body.campaigns{
 		}
 	}
 	&#event-tasks{
-		#event-tasks-container{
-			clear: both;
-		}
 		.task-comments{
 			#comment-form-container{
 				margin: 20px 0 5px 38px;
@@ -5544,10 +5541,8 @@ body.campaigns{
 				}
 			}
 		}
-		.pull-left{
-			a{
-				margin-top: 15px;
-			}
+		.resource-list{
+			margin-bottom: 15px;
 		}
 	}
 	h2{

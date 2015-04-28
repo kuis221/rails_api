@@ -3,7 +3,7 @@ class SurveysController < FilteredController
   respond_to :js, only: [:new, :create, :edit, :update]
   actions :new, :create, :edit, :update
 
-  include DeactivableHelper
+  include DeactivableController
 
   protected
 

@@ -9,7 +9,7 @@ class ActivityTypesController < FilteredController
   belongs_to :company, :campaign, optional: true
 
   # This helper provide the methods to activate/deactivate the resource
-  include DeactivableHelper
+  include DeactivableController
 
   # This helper provide the methods to export HTML to PDF
   extend ExportableFormHelper

@@ -11,7 +11,7 @@ class BrandsController < FilteredController
   has_scope :not_in_portfolio
 
   # This helper provide the methods to activate/deactivate the resource
-  include DeactivableHelper
+  include DeactivableController
 
   def create
     create! do |success, _|

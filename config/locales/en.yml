@@ -243,6 +243,7 @@ en:
         activities: 'No Activities have been added to this event.'
         comments: 'No Consumer Comments have been added to this event.'
         expenses: 'No Expenses have been added to this event.'
+        tasks: 'No Tasks have been added to this event.'
         documents: 'DRAG & DROP'
       venue:
         activities: 'No Activities have been added to this venue.'

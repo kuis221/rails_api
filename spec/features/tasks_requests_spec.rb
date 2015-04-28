@@ -174,7 +174,6 @@ feature 'Tasks', js: true, search: true do
     end
 
     it_behaves_like 'a list that allow saving custom filters' do
-
       before do
         create(:campaign, name: 'Campaign 1', company: company)
         create(:campaign, name: 'Campaign 2', company: company)
@@ -250,11 +249,15 @@ feature 'Tasks', js: true, search: true do
       export = ListExport.last
       # Test the generated PDF...
       reader = PDF::Reader.new(open(export.file.url))
+      p "reader.page_count => #{reader.page_count}"
       reader.pages.each do |page|
+        p page.text
+        p page.raw_content
         # PDF to text seems to not always return the same results
         # with white spaces, so, remove them and look for strings
         # without whitespaces
         text = page.text.gsub(/[\s\n]/, '')
+        p "text ==> #{page.text}"
         expect(text).to include 'Pickupkidzatschool'
         expect(text).to include 'Bringbeerstotheparty'
         expect(text).to include 'CaciqueFY14'
