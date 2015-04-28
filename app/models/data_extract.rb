@@ -102,7 +102,7 @@ class DataExtract < ActiveRecord::Base
   end
 
   def total_pages
-    total_results / DEFAULT_LIMIT
+    (total_results.to_f / DEFAULT_LIMIT.to_f).ceil
   end
 
   def total_results
