@@ -1480,7 +1480,7 @@ feature 'Events section' do
         end
 
         # Mark the tasks as completed
-        within('#event-tasks-container') do
+        within('#event-tasks') do
           checkbox = find('.task-completed-checkbox', visible: :false)
           expect(checkbox['checked']).to be_falsey
           find('.task-completed-checkbox').trigger('click')
@@ -1499,7 +1499,7 @@ feature 'Events section' do
                        'Would you like to remove Juanito Bazooka from the event team?'
         expect(page).to_not have_content('Juanito Bazooka')
 
-        within('#event-tasks-container') do
+        within('#event-tasks') do
           expect(page).to_not have_content('Juanito Bazooka')
         end
       end
