@@ -1,0 +1,16 @@
+- if jbb_feature_enabled? && can?(:index_invites, Venue)
+  - items = resource.invites.active.joins(:place).order('lower(places.name)')
+  - if items.any?
+    #resource-invites-list.details_box
+      .dropdown.btn-download.pull-right
+        a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+          i.icon-download
+          i.icon-arrow-down-small
+        ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+          li
+            = link_to 'Download as XLS', venue_invites_path(resource, format: :csv), role: :menuitem, class: 'xlsx-download-link', data: { url: venue_invites_path(resource, format: :csv) }
+          li
+            = link_to 'Download as PDF', venue_invites_path(resource, format: :pdf), role: :menuitem, class: 'xlsx-download-link', data: { url: venue_invites_path(resource, format: :pdf) }
+      h5.module-title ATTENDANCE
+      #invites-list.resource-list
+        = render partial: 'invites/invite', collection: items, locals: { parent: resource }
