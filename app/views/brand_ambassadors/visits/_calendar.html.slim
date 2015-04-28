@@ -96,12 +96,16 @@ javascript:
     $('#toggle-visits-view a').click(function(e){
       if (e.currentTarget.getAttribute('href') === '#calendar-view' && document.location.pathname.indexOf('/calendar') < 0){
         $('#collection-list-filters').filteredList('disableScrolling');
-        history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname.replace('/calendar', '') + '/calendar' + document.location.search);
+        if (history.pushState) {
+          history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname.replace('/calendar', '') + '/calendar' + document.location.search);
+        }
         $('.collection-list-description').find('[data-filter="date"]').closest('.filter-item').hide()
       } else if (e.currentTarget.getAttribute('href') !== '#calendar-view' && document.location.pathname.indexOf('/calendar') >= 0) {
         $('.collection-list-description').find('[data-filter="date"]').closest('.filter-item').show()
         $('#collection-list-filters').filteredList('enableScrolling');
-        history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname.replace('/calendar', '') + document.location.search);
+        if (history.pushState) {
+          history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname.replace('/calendar', '') + document.location.search);
+        }
       }
     });
     $('#toggle-visits-view a').on('shown', function(e){
