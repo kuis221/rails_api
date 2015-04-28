@@ -3104,7 +3104,7 @@ ul.ui-widget-content{
 					color: $text;
 				}
 				span.optional {
-					font-size: 12px;
+					font-size: 14px;
 					color: $gray-light;
 					font-weight: normal;
 				}
@@ -7477,11 +7477,19 @@ body.dashboard.index {
 		color: $brand;
 	}
 	.likert-scale-table{
-		label{
+		.likert-statement, .likert-option{
+			font-weight: normal;
 			line-height: 16px;
+		}
+		.likert-option{
+			font-size: 12px;
+		}
+		.likert-statement{
+			font-size: 14px;
 		}
 		tbody{
 			tr td{
+				width: 10%;
 				&:first-child{
 					padding-left: 0;
 				}
@@ -7562,15 +7570,15 @@ input[type="text"]{
 	&.date_picker{
 		background-image: image-url('calendar.svg');
 		background-repeat: no-repeat;
-		background-position: 4px;
-		padding-left: 35px;
+		background-position: 2px;
+		padding-left: 30px;
 		text-align: left;
 	}
 	&.time_picker{
 		background: image-url('time.svg');
 		background-repeat: no-repeat;
-		background-position: 4px;
-		padding-left: 35px;
+		background-position: 2px;
+		padding-left: 30px;
 		text-align: left;
 	}
 }
