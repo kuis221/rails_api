@@ -32,6 +32,9 @@ class InvitesController < InheritedResources::Base
       else
         invite.save
       end
+    if result
+      redirect_to url_for(controller: :activities, action: :thanks, activity_type_id: 'attendance')
+    end
   end
 
   protected
