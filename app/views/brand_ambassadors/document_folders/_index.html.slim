@@ -2,7 +2,10 @@
 #documents-container
   h5.module-title
     - if @folder.is_a?(DocumentFolder)
-      = link_to 'DOCUMENTS', brand_ambassadors_document_folders_path(format: :js), remote: true
+      - if @folder.folderable.is_a?(BrandAmbassadors::Visit)
+        = link_to 'DOCUMENTS', brand_ambassadors_document_folders_path(visit_id: @folder.folderable.id, format: :js), remote: true
+      - else
+        = link_to 'DOCUMENTS', brand_ambassadors_document_folders_path(format: :js), remote: true
       - folder_parents(@folder).each do |p|
         i.icon-angle-right
         = link_to p.name, brand_ambassadors_document_folders_path(parent_id: p.id, format: :js), remote: true
