@@ -17,7 +17,15 @@
 		.attachment-select-file-view {
 			padding: 40px 23px;
 		}
+		&.small {
+			height: 100px;
+			padding: 0;
+			.attachment-select-file-view {
+				padding: 10px 23px 20px 23px;
+			}		
+		}
 		.attachment-upload-progress-info {
+			padding: 20px 0;
 			.upload-file-progress {
 				.progress {
 					width: 70% !important;

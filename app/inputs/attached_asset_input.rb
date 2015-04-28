@@ -20,7 +20,7 @@ class AttachedAssetInput < SimpleForm::Inputs::Base
     output_html << @builder.hidden_field('_destroy', value: '')
 
     if form_field_class.blank?
-      output_html << '<div class="attachment-panel" data-id="' + (has_attached_asset ? attached_asset.id.to_s : '') + '" >
+      output_html << '<div class="attachment-panel ' + (options[:panel_class] || '') + '" data-id="' + (has_attached_asset ? attached_asset.id.to_s : '') + '" >
                         <div class="attachment-select-file-view"' + (has_attached_asset ? 'style="display: none"' : '') + '>
                           <div class="drag-box">
                             <i class="icon-upload"></i>
@@ -43,12 +43,14 @@ class AttachedAssetInput < SimpleForm::Inputs::Base
                       </div>
                     </div>'.html_safe
     else
-      output_html << '<div id="panel-' + options[:field_id].to_s + '" class="attachment-panel drag-drop-zone attach-field" data-id="' + (has_attached_asset ? attached_asset.id.to_s : '') + '" ' + (has_attached_asset ? 'style="display: none"' : '') + '>
+      output_html << '<div id="panel-' + options[:field_id].to_s + '" class="attachment-panel drag-drop-zone attach-field ' + (options[:panel_class] || '') + '" data-id="' + (has_attached_asset ? attached_asset.id.to_s : '') + '" ' + (has_attached_asset ? 'style="display: none"' : '') + '>
                         <div class="attachment-select-file-view"' + (has_attached_asset ? 'style="display: none"' : '') + '>
                           <div class="drag-box">
                             <i class="icon-upload"></i>
-                            <h4>DRAG &amp; DROP</h4>
-                            <p>' + I18n.translate(options[:browse_legend], browse: '<span class="file-browse">browse<input id="fileupload" type="file" name="file" data-accept-file-types="(\.|\/)(gif|jpe?g|png)$" data-max-file-size="' + max_file_size.to_s + '" /></span>') + '</p>
+                            <div class="drag-box-text">
+                              <h4>DRAG &amp; DROP</h4>
+                              <p>' + I18n.translate(options[:browse_legend], browse: '<span class="file-browse">browse<input id="fileupload" type="file" name="file" data-accept-file-types="(\.|\/)(gif|jpe?g|png)$" data-max-file-size="' + max_file_size.to_s + '" /></span>') + '</p>
+                            </div>
                           </div>
                         </div>
                         <div class="attachment-upload-progress-info attachment-uploading-view">
