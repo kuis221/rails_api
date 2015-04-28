@@ -271,7 +271,8 @@ en:
       areas:
         places: 'There are no Places added to this Area.'
         campaigns: 'There are no Campaigns assigned to this Area.'
-
+      brand_portfolio:
+        brands: 'There are no Brands added to this Brand Portfolio.'
 
   drag_n_drop:
     items:

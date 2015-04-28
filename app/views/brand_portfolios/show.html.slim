@@ -20,10 +20,7 @@
       = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
 
   #brands.details_box
-    h5.module-title BRANDS
-    #brands-list
-      = render 'brands'
-    = button_to_add 'Add Brand', select_brands_brand_portfolio_path(resource) if can?(:edit, resource)
+    = render 'brands'
 
 = render partial: 'help_tutorial'
 
