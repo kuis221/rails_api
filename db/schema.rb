@@ -150,15 +150,14 @@ ActiveRecord::Schema.define(version: 20150427162428) do
     t.string   "attachable_type"
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
-    t.datetime "created_at",                        null: false
-    t.datetime "updated_at",                        null: false
-    t.boolean  "active",            default: true
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
+    t.boolean  "active",                default: true
     t.string   "direct_upload_url"
-    t.boolean  "processed",         default: false, null: false
-    t.integer  "rating",            default: 0
+    t.integer  "rating",                default: 0
     t.integer  "folder_id"
-    t.string   "aasm_state"
-    t.integer  "upload_percentage"
+    t.integer  "status",                default: 0
+    t.integer  "processing_percentage", default: 0
   end
 
   add_index "attached_assets", ["attachable_type", "attachable_id"], :name => "index_attached_assets_on_attachable_type_and_attachable_id"
@@ -724,7 +723,7 @@ ActiveRecord::Schema.define(version: 20150427162428) do
     t.string  "city",     limit: 64
     t.string  "name",     limit: 64
     t.decimal "regionid"
-    t.spatial "geog",     limit: {:srid=>0, :type=>"multi_polygon"}
+    t.spatial "geog",     limit: {:srid=>4326, :type=>"multi_polygon", :geographic=>true}
   end
 
   add_index "neighborhoods", ["geog"], :name => "index_neighborhoods_on_geog", :spatial => true

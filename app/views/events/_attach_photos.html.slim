@@ -14,14 +14,13 @@
 |
   <script id="template-upload" type="text/x-tmpl">
   <li id="processed_asset_{%=o.unique_id%}">
-    <div class="attachment-panel drag-drop-zone photos">
+    <div class="attachment-panel drag-drop-zone photos progress-status">
       <div class="attachment-upload-progress-info" id="upload_{%=o.unique_id%}">
         <div class="step-counter"></div>
         <div class="upload-file-info">
           <div class="documents-counter"></div>
           <div class="document-info">
             <span class="document-name">{%=o.name%}</span>
-            &nbsp;&nbsp;
             <span class="document-size">{%=o.size%}</span>
           </div>
         </div>
@@ -77,9 +76,10 @@ javascript:
       context.find('.document-name').text(data.files[0].name);
       context.find('.document-size').text(filesize(data.files[0].size));
     }).bind('fileuploaddone', function (e, data) {
-      context.find('.step-counter').text('STEP 2 OF 2');
-      context.find('.documents-counter').text('Processing...');
-      context.find('.progress .bar').css({ width: '0%' });
+      context.find('.progress').hide();
+      context.find('.document-name').hide();
+      context.find('.document-size').hide();
+      context.find('.upload-file-cancel').hide();
     }).bind('fileuploadfail', function(e, data) {
       data.context.remove();
     });

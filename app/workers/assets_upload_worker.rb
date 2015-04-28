@@ -10,7 +10,6 @@ class AssetsUploadWorker
     klass ||= asset_class.constantize
     tries ||= 3
     asset = klass.find(asset_id)
-    asset.process! if asset.queued? || asset.new?
     asset.transfer_and_cleanup
     asset = nil
     GC.start
@@ -18,8 +17,7 @@ class AssetsUploadWorker
   rescue Resque::TermException, Resque::DirtyExit
     # if the worker gets killed, (when deploying for example)
     # re-enqueue the job so it will be processed when worker is restarted
-    self.queue!
-    Resque.enqueue(AssetsUploadWorker, asset_id, asset_class)
+    self.queued!
 
   # AWS connections sometimes fail, so let's retry it a few times before raising the error
   rescue Errno::ECONNRESET, Net::ReadTimeout, Net::OpenTimeout => e
@@ -28,7 +26,7 @@ class AssetsUploadWorker
       sleep(3)
       retry
     else
-      asset.fail! if asset
+      asset.failed! if asset
       raise e
     end
   end

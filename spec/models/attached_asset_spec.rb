@@ -2,25 +2,24 @@
 #
 # Table name: attached_assets
 #
-#  id                :integer          not null, primary key
-#  file_file_name    :string(255)
-#  file_content_type :string(255)
-#  file_file_size    :integer
-#  file_updated_at   :datetime
-#  asset_type        :string(255)
-#  attachable_id     :integer
-#  attachable_type   :string(255)
-#  created_by_id     :integer
-#  updated_by_id     :integer
-#  created_at        :datetime         not null
-#  updated_at        :datetime         not null
-#  active            :boolean          default(TRUE)
-#  direct_upload_url :string(255)
-#  processed         :boolean          default(FALSE), not null
-#  rating            :integer          default(0)
-#  folder_id         :integer
-#  aasm_state        :string(255)
-#  upload_percentage :integer
+#  id                    :integer          not null, primary key
+#  file_file_name        :string(255)
+#  file_content_type     :string(255)
+#  file_file_size        :integer
+#  file_updated_at       :datetime
+#  asset_type            :string(255)
+#  attachable_id         :integer
+#  attachable_type       :string(255)
+#  created_by_id         :integer
+#  updated_by_id         :integer
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  active                :boolean          default(TRUE)
+#  direct_upload_url     :string(255)
+#  rating                :integer          default(0)
+#  folder_id             :integer
+#  status                :integer          default(0)
+#  processing_percentage :integer          default(0)
 #
 
 require 'rails_helper'

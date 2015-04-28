@@ -199,5 +199,4 @@ feature 'Photos', js: true do
   def gallery_modal
     find('.gallery-modal')
   end
-
 end

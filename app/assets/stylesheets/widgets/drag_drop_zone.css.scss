@@ -3,6 +3,11 @@
 	margin-bottom: 20px;
 	width: 100%;
 	padding: 2px 10px 0 0;
+
+	&.progress-status{
+		border: 0;
+		background-color: #eee;
+	}
 	&.photos {
 		position: relative;
 		width: 100%;
@@ -47,10 +52,29 @@
 		padding: 0 0 40px 0;
 		width: 100%;
 		display: none;
+		&.complete {
+			display: block;
+		}
 		.upload-file-info {
 			.documents-counter {
 				color: $brand;
 				font-weight: bold;
+				margin-bottom: 10px;
+			}
+			.document-size {
+				overflow: hidden;
+				display: inline-block;
+				margin-bottom: 10px;
+			}
+			.document-name {
+				margin-right: 10px;
+				max-width: 180px;
+				overflow: hidden;
+				display: inline-block;
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				line-height: normal;
+				margin-bottom: 10px;
 			}
 		}
 		.upload-file-progress {
@@ -63,6 +87,7 @@
 				border-bottom: 1px solid #dfdfdf;
 				margin-left: 45%;
 	  			margin-top: 3px;
+	  			height: 8px;
 			}
 			#upload-file-cancel {
 				color: $silver;
@@ -70,8 +95,12 @@
 				float: left;
 				margin-left: 15px;
 			}
+			.photo-deactivate-link {
+				font-size: 16px;
+			}
 		}
 		.step-counter {
+  			margin-top: 25px;
   			margin-bottom: 30px;
 		}
 	}

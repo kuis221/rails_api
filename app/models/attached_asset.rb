@@ -2,29 +2,27 @@
 #
 # Table name: attached_assets
 #
-#  id                :integer          not null, primary key
-#  file_file_name    :string(255)
-#  file_content_type :string(255)
-#  file_file_size    :integer
-#  file_updated_at   :datetime
-#  asset_type        :string(255)
-#  attachable_id     :integer
-#  attachable_type   :string(255)
-#  created_by_id     :integer
-#  updated_by_id     :integer
-#  created_at        :datetime         not null
-#  updated_at        :datetime         not null
-#  active            :boolean          default(TRUE)
-#  direct_upload_url :string(255)
-#  processed         :boolean          default(FALSE), not null
-#  rating            :integer          default(0)
-#  folder_id         :integer
-#  aasm_state        :string(255)
-#  upload_percentage :integer
+#  id                    :integer          not null, primary key
+#  file_file_name        :string(255)
+#  file_content_type     :string(255)
+#  file_file_size        :integer
+#  file_updated_at       :datetime
+#  asset_type            :string(255)
+#  attachable_id         :integer
+#  attachable_type       :string(255)
+#  created_by_id         :integer
+#  updated_by_id         :integer
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#  active                :boolean          default(TRUE)
+#  direct_upload_url     :string(255)
+#  rating                :integer          default(0)
+#  folder_id             :integer
+#  status                :integer          default(0)
+#  processing_percentage :integer          default(0)
 #
 
 class AttachedAsset < ActiveRecord::Base
-  include AASM
   track_who_does_it
   has_and_belongs_to_many :tags, -> { order 'name ASC' },
                           autosave: true,
@@ -35,6 +33,8 @@ class AttachedAsset < ActiveRecord::Base
   belongs_to :folder, class_name: 'DocumentFolder'
 
   attr_accessor :new_name
+
+  enum status: { queued: 0, processing: 1, processed: 2,  failed: 3 }
 
   has_attached_file :file,
       PAPERCLIP_SETTINGS.merge(
@@ -70,7 +70,7 @@ class AttachedAsset < ActiveRecord::Base
   after_update :rename_existing_file, if: :processed?
   before_post_process :post_process_required?
 
-  before_validation :check_if_file_updated
+  #before_validation :check_if_file_updated
 
   validates :attachable, presence: true
 
@@ -81,30 +81,6 @@ class AttachedAsset < ActiveRecord::Base
 
   delegate :company_id, to: :attachable
 
-  aasm do
-    state :new, initial: true
-    state :queued, before_enter: :start_percentage
-    state :processing
-    state :completed
-    state :failed
-
-    event :queue do
-      transitions from: [:new, :failed], to: :queued
-    end
-
-    event :process do
-      transitions from: [:new, :queued, :failed], to: :processing
-    end
-
-    event :complete do
-      transitions from: :processing, to: :completed
-    end
-
-    event :fail do
-      transitions from: :processing, to: :failed
-    end
-  end
-
   searchable if: :processed? do
     string :status
     string :asset_type
@@ -112,7 +88,9 @@ class AttachedAsset < ActiveRecord::Base
 
     string :file_file_name
     integer :file_file_size
-    boolean :processed
+    boolean :processed do
+      processed?
+    end
 
     integer :attachable_id
 
@@ -158,10 +136,6 @@ class AttachedAsset < ActiveRecord::Base
     integer :location, multiple: true do
       attachable.locations_for_index if attachable_type == 'Event'
     end
-  end
-
-  def start_percentage
-    self.upload_percentage = 50
   end
 
   def activate!
@@ -296,6 +270,8 @@ class AttachedAsset < ActiveRecord::Base
   def move_uploaded_file
     direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
     paperclip_file_path = file.path(:original).sub(/\A\//, '')
+    return if file.s3_bucket.objects[paperclip_file_path].exists? ||
+              !file.s3_bucket.objects[direct_upload_url_data[:path]].exists?
     file.s3_bucket.objects[paperclip_file_path].copy_from(
       direct_upload_url_data[:path], acl: :public_read)
   end
@@ -317,17 +293,15 @@ class AttachedAsset < ActiveRecord::Base
 
   # Final upload processing step
   def transfer_and_cleanup
-    @processing = true
+    processing!
     if post_process_required?
       file.reprocess!
     end
-    self.processed = true
-    self.upload_percentage = 100
-    self.complete!
+    self.processing_percentage = 100
 
     direct_upload_url_data = DIRECT_UPLOAD_URL_FORMAT.match(direct_upload_url)
     file.s3_bucket.objects[direct_upload_url_data[:path]].delete if save
-    @processing = false
+    processed!
   end
 
   protected
@@ -339,12 +313,12 @@ class AttachedAsset < ActiveRecord::Base
     end
   end
 
-  def check_if_file_updated
-    if direct_upload_url.present? && self.direct_upload_url_changed?
-      self.processed = false
-    end
-    true
-  end
+  # def check_if_file_updated
+  #   if direct_upload_url.present? && self.direct_upload_url_changed?
+  #     self.processed = false
+  #   end
+  #   true
+  # end
 
   # Determines if file requires post-processing (image resizing, etc)
   def post_process_required?
@@ -382,11 +356,10 @@ class AttachedAsset < ActiveRecord::Base
 
   # Queue file processing
   def queue_processing
-    return if processed? || @processing || direct_upload_url.nil?
+    return if !queued? || direct_upload_url.nil?
 
     move_uploaded_file
     if post_process_required?
-      self.queue! if self.new? || self.failed?
       Resque.enqueue(AssetsUploadWorker, id, self.class.name)
     else
       transfer_and_cleanup
