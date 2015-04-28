@@ -129,18 +129,26 @@ feature 'Activities management' do
       click_js_button 'Add Activity'
 
       within visible_modal do
-        select_from_chosen('Activity Type #1', from: 'Activity type')
-        select_from_chosen('Brand #2', from: 'Brand')
-        wait_for_ajax
-        select_from_chosen('Marque #1 for Brand #2', from: 'Marque')
-        fill_in 'Form Field #1', with: '122'
-        select_from_chosen('Dropdown option #2', from: 'Form Field #2')
-        select_from_chosen('Juanito Bazooka', from: 'User')
-        fill_in 'Date', with: '05/16/2013'
+        choose('Activity Type #1')
         click_js_button 'Create'
       end
-
       ensure_modal_was_closed
+
+      within('.survey-header') do
+        expect(page).to have_content 'Activity Type #1'
+      end
+
+      select_from_chosen('Brand #2', from: 'Brand')
+      wait_for_ajax
+      select_from_chosen('Marque #1 for Brand #2', from: 'Marque')
+      fill_in 'Form Field #1', with: '122'
+      select_from_chosen('Dropdown option #2', from: 'Form Field #2')
+      select_from_chosen('Juanito Bazooka', from: 'User')
+      fill_in 'Date', with: '05/16/2013'
+      click_button 'Submit'
+
+      expect(page).to have_content('Thank You!')
+      click_link 'Finish'
 
       within resource_item do
         expect(page).to have_content('Juanito Bazooka')
@@ -178,13 +186,9 @@ feature 'Activities management' do
 
       hover_and_click("#activities-list #activity_#{activity.id}", 'Edit')
 
-      within visible_modal do
-        select_from_chosen('Juanito Bazooka', from: 'User')
-        fill_in 'Date', with: '05/16/2013'
-        click_js_button 'Save'
-      end
-
-      ensure_modal_was_closed
+      select_from_chosen('Juanito Bazooka', from: 'User')
+      fill_in 'Date', with: '05/16/2013'
+      click_button 'Submit'
 
       within resource_item do
         expect(page).to have_content('Juanito Bazooka')
@@ -223,18 +227,28 @@ feature 'Activities management' do
       click_js_button 'Add Activity'
 
       within visible_modal do
-        select_from_chosen('Activity Type #1', from: 'Activity type')
-        select_from_chosen('Campaign #1', from: 'Campaign')
-        select_from_chosen('Brand #2', from: 'Brand')
-        select_from_chosen('Marque #1 for Brand #2', from: 'Marque')
-        fill_in 'Form Field #1', with: '122'
-        select_from_chosen('Dropdown option #2', from: 'Form Field #2')
-        select_from_chosen('Juanito Bazooka', from: 'User')
-        fill_in 'Date', with: '05/16/2013'
+        choose('Activity Type #1')
         click_js_button 'Create'
       end
+      ensure_modal_was_closed
+
+      within('.survey-header') do
+        expect(page).to have_content 'Activity Type #1'
+      end
+
+      select_from_chosen('Campaign #1', from: 'Campaign')
+      select_from_chosen('Brand #2', from: 'Brand')
+      select_from_chosen('Marque #1 for Brand #2', from: 'Marque')
+      fill_in 'Form Field #1', with: '122'
+      select_from_chosen('Dropdown option #2', from: 'Form Field #2')
+      select_from_chosen('Juanito Bazooka', from: 'User')
+      fill_in 'Date', with: '05/16/2013'
+      click_button 'Submit'
 
       ensure_modal_was_closed
+
+      expect(page).to have_content('Thank You!')
+      click_link 'Finish'
 
       within resource_item do
         expect(page).to have_content('Juanito Bazooka')
@@ -266,26 +280,32 @@ feature 'Activities management' do
       click_js_button('Add Activity')
 
       within visible_modal do
-        select_from_chosen('Activity Type #1', from: 'Activity type')
-        fill_in 'Option 1', with: '10'
-        fill_in 'Option 2', with: '90'
-        select_from_chosen(user.name, from: 'User')
-        fill_in 'Date', with: '05/16/2013'
+        choose('Activity Type #1')
         click_js_button 'Create'
       end
-      ensure_modal_was_closed
+
+      within('.survey-header') do
+        expect(page).to have_content 'Activity Type #1'
+      end
+
+      fill_in 'Option 1', with: '10'
+      fill_in 'Option 2', with: '90'
+      select_from_chosen(user.name, from: 'User')
+      fill_in 'Date', with: '05/16/2013'
+      click_button 'Submit'
+
+      expect(page).to have_content('Thank You!')
+      click_link 'Finish'
 
       within resource_item do
         expect(page).to have_content(user.name)
         expect(page).to have_content('THU May 16')
         expect(page).to have_content('Activity Type #1')
-        click_js_link('Edit')
+        click_link('Edit')
       end
 
-      within visible_modal do
-        expect(find_field('Option 1').value).to eql '10'
-        expect(find_field('Option 2').value).to eql '90'
-      end
+      expect(find_field('Option 1').value).to eql '10'
+      expect(find_field('Option 2').value).to eql '90'
     end
 
     scenario 'user can attach a photo to an activity' do
@@ -300,32 +320,39 @@ feature 'Activities management' do
         click_js_button('Add Activity')
 
         within visible_modal do
-          select_from_chosen('Activity Type #1', from: 'Activity type')
-
-          expect(page).to have_content('DRAG & DROP')
-
-          # Should validate the type of the image
-          attach_file 'file', 'spec/fixtures/file.pdf'
-          expect(page).to have_content('is not a valid file')
-
-          attach_file 'file', 'spec/fixtures/photo.jpg'
-          expect(page).to have_content('Uploading...')
-          expect(page).to have_no_content('is not a valid file')
-          wait_for_ajax(30) # For the image to upload to S3
-          expect(page).to_not have_content('DRAG & DROP')
-          find('.attachment-attached-view').hover
-          within '.attachment-attached-view' do
-            expect(page).to have_link('Remove')
-            expect(page).to_not have_link('Download')
-          end
-
-          select_from_chosen(user.name, from: 'User')
-          fill_in 'Date', with: '05/16/2013'
-          wait_for_photo_to_process 30 do
-            click_js_button 'Create'
-          end
+          choose('Activity Type #1')
+          click_js_button 'Create'
         end
-        ensure_modal_was_closed
+
+        within('.survey-header') do
+          expect(page).to have_content 'Activity Type #1'
+        end
+
+        expect(page).to have_content('DRAG & DROP')
+
+        # Should validate the type of the image
+        attach_file 'file', 'spec/fixtures/file.pdf'
+        expect(page).to have_content('is not a valid file')
+
+        attach_file 'file', 'spec/fixtures/photo.jpg'
+        expect(page).to have_content('Uploading...')
+        expect(page).to have_no_content('is not a valid file')
+        wait_for_ajax(30) # For the image to upload to S3
+        expect(page).to_not have_content('DRAG & DROP')
+        find('.attachment-attached-view').hover
+        within '.attachment-attached-view' do
+          expect(page).to have_link('Remove')
+          expect(page).to_not have_link('Download')
+        end
+
+        select_from_chosen(user.name, from: 'User')
+        fill_in 'Date', with: '05/16/2013'
+        wait_for_photo_to_process 30 do
+          click_button 'Submit'
+        end
+
+        expect(page).to have_content('Thank You!')
+        click_link 'Finish'
 
         within resource_item do
           expect(page).to have_content(user.name)
@@ -340,22 +367,21 @@ feature 'Activities management' do
 
         # Remove the file
         within resource_item do
-          click_js_link('Edit')
+          click_link('Edit')
         end
         expect do
-          within visible_modal do
-            expect(page).to_not have_content('DRAG & DROP')
-            find('.attachment-attached-view').hover
-            within '.attachment-attached-view' do
-              expect(page).to have_link('Remove')
-              expect(page).to have_link('Download')
-              click_js_link('Remove')
-            end
-            expect(page).to have_content('DRAG & DROP')
-            click_js_button 'Save'
-            wait_for_ajax(30) # To wait for the file being deleted from S3
+          expect(page).to_not have_content('DRAG & DROP')
+          find('.attachment-attached-view').hover
+          within '.attachment-attached-view' do
+            expect(page).to have_link('Remove')
+            expect(page).to have_link('Download')
+            click_js_link('Remove')
           end
-          ensure_modal_was_closed
+          expect(page).to have_content('DRAG & DROP')
+          click_button 'Submit'
+          within resource_item do
+            expect(page).to have_content('Activity Type #1')
+          end
         end.to change(AttachedAsset, :count).by(-1)
       end
     end
@@ -372,24 +398,28 @@ feature 'Activities management' do
         click_js_button('Add Activity')
 
         within visible_modal do
-          select_from_chosen('Activity Type #1', from: 'Activity type')
-
-          expect(page).to have_content('DRAG & DROP')
-          attach_file 'file', 'spec/fixtures/file.pdf'
-          expect(page).to have_content('Uploading...')
-          expect(page).to have_no_content('is not a valid file')
-          wait_for_ajax(30) # For the file to upload to S3
-          expect(page).to_not have_content('DRAG & DROP')
-          expect(page).to have_content('file.pdf')
-          expect(page).to have_link('Remove')
-
-          select_from_chosen(user.name, from: 'User')
-          fill_in 'Date', with: '05/16/2013'
-          wait_for_photo_to_process 30 do
-            click_js_button 'Create'
-          end
+          choose('Activity Type #1')
+          click_js_button 'Create'
         end
         ensure_modal_was_closed
+
+        expect(page).to have_content('DRAG & DROP')
+        attach_file 'file', 'spec/fixtures/file.pdf'
+        expect(page).to have_content('Uploading...')
+        expect(page).to have_no_content('is not a valid file')
+        wait_for_ajax(30) # For the file to upload to S3
+        expect(page).to_not have_content('DRAG & DROP')
+        expect(page).to have_content('file.pdf')
+        expect(page).to have_link('Remove')
+
+        select_from_chosen(user.name, from: 'User')
+        fill_in 'Date', with: '05/16/2013'
+        wait_for_photo_to_process 30 do
+          click_js_button 'Submit'
+        end
+
+        expect(page).to have_content('Thank You!')
+        click_link 'Finish'
 
         within resource_item do
           expect(page).to have_content(user.name)
@@ -415,20 +445,18 @@ feature 'Activities management' do
 
         # Remove the file
         within resource_item do
-          click_js_link('Edit')
+          click_link('Edit')
         end
-        expect do
-          within visible_modal do
-            expect(page).to_not have_content('DRAG & DROP')
-            expect(page).to have_link('Remove')
-            click_js_link('Remove')
-            expect(page).to have_content('DRAG & DROP')
-            click_js_button 'Save'
-            wait_for_ajax(30) # To wait for the file being deleted from S3
-          end
-          ensure_modal_was_closed
-        end.to change(AttachedAsset, :count).by(-1)
 
+        expect do
+          expect(page).to_not have_content('DRAG & DROP')
+          click_js_link('Remove')
+          expect(page).to have_content('DRAG & DROP')
+          click_button 'Submit'
+          within resource_item do
+            expect(page).to have_content('Activity Type #1')
+          end
+        end.to change(AttachedAsset, :count).by(-1)
       end
     end
 
@@ -464,16 +492,12 @@ feature 'Activities management' do
       visit venue_path(venue)
 
       within resource_item do
-        click_js_link 'Edit'
+        click_link 'Edit'
       end
 
-      within visible_modal do
-        select_from_chosen('Juanito Bazooka', from: 'User')
-        fill_in 'Date', with: '05/16/2013'
-        click_js_button 'Save'
-      end
-
-      ensure_modal_was_closed
+      select_from_chosen('Juanito Bazooka', from: 'User')
+      fill_in 'Date', with: '05/16/2013'
+      click_button 'Submit'
 
       within resource_item do
         expect(page).to have_content('Juanito Bazooka')

@@ -9,7 +9,7 @@ class CampaignsController < FilteredController
 
   before_action :search_params, only: [:index]
 
-  include DeactivableHelper
+  include DeactivableController
 
   # This helper provide the methods to add/remove campaigns members to the event
   extend TeamMembersHelper

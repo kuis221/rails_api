@@ -1,16 +1,16 @@
 .campaigns-modals
   p Add areas from the list below
 
-  input#place-search-box.search-box type="text" name="q"
+  input#place-search-box.search-box.select-list-seach-box type="text" name="q" data-list="#areas-places-list"
   #areas-places-list.resource-list.select-list.compact
-    - if @areas.present?
-      - @areas.each do |area|
+    - if assignable_areas.any?
+      - assignable_areas.each do |area|
         .resource-item id="area-#{area.id}"
           .resource-item-link
             .text-large= area.name
             = area.description
           .resource-item-actions
-            = link_to '', url_for({controller: :placeables, action: :add_area, "#{parent.class.name.underscore.downcase}_id" => parent.id, area: area.id}), remote: true, method: :post, enable_with: '...', class: 'icon-plus-sign', title: 'Add Area' if area.active?
+            = link_to '', assign_area_path(area, "#{parent.class.name.underscore.downcase}_id" => parent.id, format: :js), remote: true, method: :post, enable_with: '...', class: 'icon-plus-sign', title: 'Add Area' if area.active?
     - else
       .empty-list-message
         p There are not assignable areas
@@ -34,14 +34,3 @@
 
 javascript:
   $('.modal .places-autocomplete').placesAutocomplete();
-
-  $('#place-search-box').on('keyup', function () {
-    var value = $(this).val().toLowerCase();
-    $("#areas-places-list .resource-item").each(function() {
-      if ($(this).text().toLowerCase().search(value) > -1) {
-        $(this).show();
-      } else {
-        $(this).hide();
-      }
-    });
-  });

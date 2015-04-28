@@ -1,3 +1,5 @@
 = render template: 'inherited_resources/base/deactivate'
 |
-  $('#activity_invite_#{resource.id}').slideUp();
+  if ($('#invites-list > *').length == 0) {
+    $('#event-invites-list').hide();
+  }

@@ -70,10 +70,6 @@
             - zone = ActiveSupport::TimeZone.new(resource.time_zone)
             = "(#{zone.formatted_offset}) #{zone.name}"
 
-      //.links-data
-        //= link_to '', edit_company_user_path(resource), remote: true, title: 'Edit', class: 'icon-edit' if can?(:edit, resource)
-        //= active_inactive_buttons(resource) if can?(:deactivate, resource)
-
     // The is info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
       span.primary-info
@@ -84,15 +80,7 @@
 
   - unless viewing_profile?
     #user-places.details_box
-      h5.module-title PLACES
-      #company_user-areas-list
-       = render partial: 'company_users/area', collection: resource.areas.order('areas.name ASC')
-
-      #company_user-places-list
-       = render 'places'
-
-      .row-fluid.plus
-       = link_to "", new_company_user_placeable_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Area' if can?(:edit, resource)
+      = render 'areas_and_places'
 
   - unless viewing_profile?
     #user-campaigns.details_box

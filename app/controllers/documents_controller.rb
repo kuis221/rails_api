@@ -7,7 +7,7 @@ class DocumentsController < InheritedResources::Base
 
   belongs_to :event, :campaign, polymorphic: true
 
-  include DeactivableHelper
+  include DeactivableController
   include PhotosHelper
 
   defaults resource_class: AttachedAsset

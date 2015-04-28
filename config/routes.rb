@@ -253,6 +253,7 @@ Brandscopic::Application.routes.draw do
         get :activate, on: :member
       end
       resources :activities, only: [:new, :create] do
+        get :thanks, on: :collection
         get :form, on: :collection
         get :empty_form, to: 'activities#export_empty_fieldable', on: :collection
       end
@@ -278,10 +279,6 @@ Brandscopic::Application.routes.draw do
     put :time_zone_update, on: :collection
     get :event, via: :get, on: :collection # List of users by event
     get :login_as_select, on: :collection
-    resources :placeables, only: [:new] do
-      post :add_area, on: :collection
-      delete :remove_area, on: :collection
-    end
     resources :places, only: [:destroy, :create]
     resources :goals, only: [:create, :update, :edit, :new]
     resources :tasks do
@@ -331,10 +328,6 @@ Brandscopic::Application.routes.draw do
     resources :kpis, only: [:new, :create, :edit, :update]
     resources :activity_types, only: [] do
       get :set_goal
-    end
-    resources :placeables, only: [:new] do
-      post :add_area, on: :collection
-      delete :remove_area, on: :collection
     end
     resources :places, only: [:destroy, :create]
     get :items, on: :collection, format: :html
@@ -431,7 +424,7 @@ Brandscopic::Application.routes.draw do
     end
 
     resources :activities, only: [:new, :create] do
-      get :form, on: :collection
+      get :thanks, on: :collection
     end
 
     member do
@@ -490,12 +483,15 @@ Brandscopic::Application.routes.draw do
 
   resources :areas, except: [:destroy] do
     get :items, on: :collection, format: :html
+    get :select_form, on: :collection
 
     resources :places, only: [:new, :create, :destroy]
     member do
       get :deactivate
       get :activate
       get :cities
+      post :assign
+      delete :unassign
     end
   end
 
