@@ -841,15 +841,6 @@
 	.gallery.photo-results ul>li{
 		width: 33.3%;
 	}
-	.drag-drop-zone {
-		&.photos {
-			padding-bottom: 63%;
-		}
-		.attachment-select-file-view {
-			margin-left: 18%;
-			margin-top: 23%;
-		}
-	}
 }
 @media only screen and (max-width:1291px) and (min-width:1041px) {
 	#recent-comments-list ul>li.comment,
@@ -859,42 +850,17 @@
 	.gallery.photo-results ul>li{
 		width: 33.3%;
 	}
-	.drag-drop-zone {
-		&.photos {
-			padding-bottom: 63%;
-		}
-		.attachment-select-file-view {
-			margin-left: 15%;
-			margin-top: 21%;
-		}
-	}
 }
 @media only screen and (max-width:1041px) and (min-width:791px) {
 	#recent-comments-list ul>li.comment,
 	.gallery ul>li {
 		width: 33.3333%;
 	}
-	.drag-drop-zone {
-		&.photos {
-			padding-bottom: 63%;
-		}
-		.attachment-select-file-view {
-			margin-left: 13%;
-		}
-	}
 }
 @media only screen and (max-width:791px) {
 	#recent-comments-list ul>li.comment,
 	.gallery ul>li {
 		width: 50%;
-	}
-	.drag-drop-zone {
-		&.photos {
-			padding-bottom: 63%;
-		}
-		.attachment-select-file-view {
-			margin-left: 21%;
-		}
 	}
 }
 

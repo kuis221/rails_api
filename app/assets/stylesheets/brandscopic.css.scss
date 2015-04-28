@@ -3331,7 +3331,6 @@ ul.ui-widget-content{
 	.icon-upload{
 		display:inline-block;
 		font-size: 28px;
-		float: left;
 		line-height: 40px;
 		margin-right: 10px;
 	}
@@ -3370,6 +3369,9 @@ ul.ui-widget-content{
 					cursor: pointer;
 				}
 			}
+		}
+		.drag-box-text{
+			display: inline-block;
 		}
 	}
 
