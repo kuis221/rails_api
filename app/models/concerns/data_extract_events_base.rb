@@ -37,7 +37,8 @@ module DataExtractEventsBase
   def add_filter_conditions_to_scope(s)
     return s if filters.nil? || filters.empty?
     s = s.where(campaign_id: filters['campaign']) if filters['campaign'].present?
-    s = s.in_areas(params['area']) if filters['area'].present?
+    s = s.in_areas(filters['area']) if filters['area'].present?
+    s = in_places(s, filters['place']) if filters['place'].present?
     s = s.where(aasm_state: filters['event_status'].map { |f| f.downcase}) if filters['event_status'].present?
     s = s.where(active: filters['status'].map { |f| f.downcase == 'active' ? true : false }) if filters['status'].present?
     s = s.filters_between_dates(filters['start_date'].to_s, filters['end_date'].to_s) if filters['start_date'].present? && filters['end_date'].present?
@@ -61,5 +62,16 @@ module DataExtractEventsBase
 
   def date_field_prefix
     @date_field_prefix ||= current_user.company.timezone_support? ? 'local_' : ''
+  end
+
+  def in_places(s, places)
+    places_list = Place.where(id: places)
+    s = s.where(
+      'events.place_id in (?) or events.place_id in (
+          select place_id FROM locations_places where location_id in (?)
+      )',
+      places_list.map(&:id).uniq + [0],
+      places_list.select(&:is_location?).map(&:location_id).compact.uniq + [0])
+    s
   end
 end

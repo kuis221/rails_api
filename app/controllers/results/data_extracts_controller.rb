@@ -108,7 +108,7 @@ class Results::DataExtractsController < InheritedResources::Base
   end
 
   def search_filter_params
-    @search_params ||= params.tap do |par|
+    @search_params ||= params.dup.tap do |par|
       CustomFilter.where(id: params[:cfid]).each do |cf|
         par[:end_date] = params[:start_date] if params.key?('start_date') && !params.key?('end_date')
         par.deep_merge!(Rack::Utils.parse_nested_query(cf.filters)) do |key, v1, v2|
