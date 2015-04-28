@@ -6,11 +6,11 @@
       .blank-state
         h5.text-center
           - if params['report'].try(:[], 'group_by') == 'place'
-           | No Place event or promo hour goals have been set for this Campaign.
+            = I18n.translate(:'blank_states.results_event_status.filters.line3')
           - elsif params['report'].try(:[], 'group_by') == 'staff'
-           | No Staff event or promo hour goals have been set for this Campaign.
+            = I18n.translate(:'blank_states.results_event_status.filters.line4')
           - else
-           | No Campaign event or promo hour goals have been set for this Campaign.
-        p.text-center Please select different filtering criteria.
+           = I18n.translate(:'blank_states.results_event_status.filters.line1')
+        p.text-center = I18n.translate(:'blank_states.results_event_status.filters.line2')
         .blank-state-icon
           img src="/assets/blank-search.png"

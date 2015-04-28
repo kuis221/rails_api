@@ -109,13 +109,13 @@ en:
         line1: 'There are is no post event data matching the filtering criteria you selected.'
     results_expenses:
       empty:
-        line1: 'There are currently no expenses to view for your campaign(s).'
-        line2: "Use this report to track event expenses, you'll be able to view them here as soon as they're added."
+        line1: 'There are currently no expenses to view for your campaigns.'
+        line2: "Use this report to track event expenses. You can view them here as soon as they've been added."
       filters:
         line1: 'There are no Expenses matching the filtering criteria you selected.'
     results_comments:
       empty:
-        line1: 'There are currently no comments to view for your campaign(s).'
+        line1: 'There are currently no comments to view for your campaigns.'
         line2: 'Check back later once comments have been captured.'
       filters:
         line1: 'There are no Comments matching the filtering criteria you selected.'
@@ -125,6 +125,24 @@ en:
         line2: 'Check back later once surveys have been captured.'
       filters:
         line1: 'There are no Surveys matching the filtering criteria you selected.'
+    results_gva:
+      empty:
+        line1: 'Choose a campaign to run the goals vs. actual report.'
+        line2: 'Use this report to track progress against campaign, place, and staff goals.'
+      filters:
+        line1: No Campaign goals have been set for this Campaign.
+        line2: Please select different filtering criteria.
+        line3: No Place goals have been set for this Campaign.
+        line4: No Staff goals have been set for this Campaign.
+    results_event_status:
+      empty:
+        line1: 'Choose a campaign to run the Event Status report.'
+        line2: 'Use this report to track progress against your event and promo hour goals.'
+      filters:
+        line1: No Campaign event or promo hour goals have been set for this Campaign.
+        line2: Please select different filtering criteria.
+        line3: No Place event or promo hour goals have been set for this Campaign.
+        line4: No Staff event or promo hour goals have been set for this Campaign.
     visits:
       empty:
         line1: 'You do not have any visits right now.'
