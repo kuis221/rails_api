@@ -118,7 +118,8 @@ jQuery ->
 
 		# Check if we should automatically activate a tab on the app
 		if window.location.hash
-			smoothScrollTo $(".nav-tabs a[href=#{window.location.hash}]").tab('show')
+			if $(".nav-tabs a[href=#{window.location.hash}]").length > 0
+				smoothScrollTo $(".nav-tabs a[href=#{window.location.hash}]").tab('show')
 
 
 	updateSummationTotals = () ->
@@ -173,6 +174,8 @@ jQuery ->
 
 		$('.bs-checkbox:checkbox').bootstrapSwitch
 			animated: false
+
+		$('.select-list-seach-box').selectListSearch()
 
 		updateSummationTotals()
 
@@ -258,6 +261,7 @@ jQuery ->
 		if not $(this).valid()
 			e.preventDefault()
 			e.stopPropagation()
+			$.rails.enableFormElements $(this)
 			false
 		else
 			button = $(this).find('input[type=submit], button')
@@ -784,6 +788,10 @@ jQuery ->
 
 # Hack to use bootbox's confirm dialog
 $.rails.allowAction = (element) ->
+	# check if
+	if element.is('input[type=submit]') && !$(element[0].form).valid()
+		return false
+
 	message = element.data('confirm')
 	if !message
 		return true
