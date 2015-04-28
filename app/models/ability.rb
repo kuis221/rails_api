@@ -202,9 +202,10 @@ class Ability
       end
 
       can :access, :analysis do
-        company_user.role.has_permission?(:index, Analysis) ||
-        company_user.role.has_permission?(:view_gva_report, Campaign) ||
-        company_user.role.has_permission?(:view_event_status, Campaign)
+        can?(:index, Analysis) ||
+        can?(:view_gva_report, Campaign) ||
+        can?(:view_event_status, Campaign) ||
+        can?(:access, :trends_report)
       end
 
       can :access, :brand_ambassadors do

@@ -77,6 +77,7 @@ class Results::DataExtractsController < InheritedResources::Base
       if params[:id]
         DataExtract.find(params[:id])
       elsif params.key?(:data_extract) && params[:data_extract][:source]
+        search_filter_params
         if params[:data_extract][:source] == 'event_data'
           DataExtract::EventData.new(extract_params)
         else
@@ -103,6 +104,21 @@ class Results::DataExtractsController < InheritedResources::Base
       new_results_data_extract_path(params_extract)
     else
       edit_results_data_extract_path(params_extract)
+    end
+  end
+
+  def search_filter_params
+    @search_params ||= params.dup.tap do |par|
+      CustomFilter.where(id: params[:cfid]).each do |cf|
+        par[:end_date] = params[:start_date] if params.key?('start_date') && !params.key?('end_date')
+        par.deep_merge!(Rack::Utils.parse_nested_query(cf.filters)) do |key, v1, v2|
+          if %w(start_date end_date).include?(key)
+            Array(v1) + Array(v2)
+          else
+            (Array(v1) + Array(v2)).uniq
+          end
+        end
+      end if params[:cfid].present?
     end
   end
 end

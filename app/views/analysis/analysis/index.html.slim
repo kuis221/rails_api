@@ -23,11 +23,12 @@
                 .text-large Goals vs. Actual
                 p View results relative to campaign goals
 
-      .resource-item id="report_trends_tracker"
-        = link_to sources_analysis_trends_path, title: 'Trends Tracker' do
-          .span10.report-item
-            .text-large Trends Tracker
-            p Explore and identify trends for your campaigns
+      - if can?(:access, :trends_report)        
+        .resource-item id="report_trends_tracker"
+          = link_to sources_analysis_trends_path, title: 'Trends Tracker' do
+            .span10.report-item
+              .text-large Trends Tracker
+              p Explore and identify trends for your campaigns
 
     
 
