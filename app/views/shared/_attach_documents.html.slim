@@ -1,12 +1,13 @@
 - max_file_size ||= 60.megabytes
-- upload_form_class = upload_button_class.blank? ? 'hide' : ''
+- upload_form_class = hidden ? '' : 'in'
+- resource_param_name = resource.class.name.underscore.gsub('/','_')
 
-#documents_upload_form class='#{upload_form_class}'
-  = s3_uploader_form callback_url: event_documents_path(resource, format: :js), id: "documents_s3_uploader", callback_param: "attached_asset[direct_upload_url]", expiration: 24.hours.from_now.utc.iso8601, max_file_size: max_file_size do
+#documents_upload_form.collapse class='#{upload_form_class}'
+  = s3_uploader_form callback_url: callback_url, id: "documents_s3_uploader", callback_param: "#{resource_param_name}[direct_upload_url]", expiration: 24.hours.from_now.utc.iso8601, max_file_size: max_file_size do
     - if resource.errors.any?
       = resource.errors.full_messages
 
-    = drag_drop_module('documents', upload_button_class) do
+    = drag_drop_module('documents', hidden ? '' : 'hide') do
       .attachment-upload-progress-info
         .upload-file-info
           .documents-counter
@@ -63,7 +64,7 @@ javascript:
       $('#drag-drop-documents .attachment-upload-progress-info').hide();
       $('#drag-drop-documents .close').removeClass('hide');
       context.find('.progress .bar').css({ width: '0%' });
-      $('#documents_upload_form').hide();
+      $('#documents_upload_form').collapse('hide');
       $('#event-upload-documents').removeClass('hide');
     }).bind('fileuploadfail', function(e, data) {
       return alert(data.files[0].name + ' was not uploaded');
@@ -75,5 +76,5 @@ javascript:
   });
 
   $('.drag-drop-zone .close').on('click', function (e) {
-    $('#documents_upload_form').hide();
+    $('#documents_upload_form').collapse('hide');
   });

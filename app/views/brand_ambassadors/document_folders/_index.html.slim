@@ -11,15 +11,11 @@
         = @folder.name
     - else
       | DOCUMENTS
-      / #asset_upload_dialog
-      /   #drop-zone
-      /     i.icon-upload
-      /     span
-      /       h3 DRAG & DROP
-      /       p your files or
-      /       a  browse
+    
+    = render partial: 'shared/attach_documents', locals: { hidden: children.any?, resource: BrandAmbassadors::Document.new, callback_url: callback_url } if can? :create,  BrandAmbassadors::Document
 
-  = button_to 'Upload', url_for(controller: 'brand_ambassadors/documents', action: :new, "#{parent.class.name.underscore.split('/').last}_id" => parent.to_param, folder_id: params[:parent_id], format: :js), class: 'btn btn-primary', title: 'Add Documents', remote: true, method: :get if can? :create,  BrandAmbassadors::Document
+
+  = link_to 'Upload', '#documents_upload_form', 'data-toggle' => 'collapse', class: 'btn btn-primary', title: 'Add Documents' if can? :create,  BrandAmbassadors::Document
   = link_to 'New Folder', "#new-folder-form", class: 'btn', 'data-toggle' => 'collapse' if can? :create,  BrandAmbassadors::Document
 
   .resource-list.documents-list#documents-list
@@ -33,6 +29,9 @@
     = render children
 
 javascript:
+  $('div#new-folder-form').on('show', function(){
+    $('#documents-list').prepend($('div#new-folder-form'));
+  })
   $(document).off('documents:change.docs').on('documents:change.docs', function(e){
     $.get('#{brand_ambassadors_document_folders_path("#{parent.class.name.underscore.split('/').last}_id" => parent.to_param, format: :js)}');
   });

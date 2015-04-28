@@ -64,7 +64,7 @@
 
 
   #visit-documents.details_box
-    = render partial: 'brand_ambassadors/document_folders/index', locals: {children: (resource.document_folders.root_children.active + resource.brand_ambassadors_documents.root_children.active).sort_by(&:name), parent: resource }
+    = render partial: 'brand_ambassadors/document_folders/index', locals: {children: (resource.document_folders.root_children.active + resource.brand_ambassadors_documents.root_children.active).sort_by(&:name), parent: resource, callback_url: brand_ambassadors_visit_documents_path(resource, format: :js) }
 
 javascript:
   $('#collection-list-filters').filteredList({

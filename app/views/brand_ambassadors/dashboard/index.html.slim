@@ -41,7 +41,7 @@
 
 - if can?(:index, BrandAmbassadors::Document)
   #brand-ambassador-documents.main.details_box.thinner
-    = render partial: 'brand_ambassadors/document_folders/index', locals: { children: (current_company.document_folders.root_children.active + current_company.brand_ambassadors_documents.root_children.active).sort_by(&:name) }
+    = render partial: 'brand_ambassadors/document_folders/index', locals: { children: (current_company.document_folders.root_children.active + current_company.brand_ambassadors_documents.root_children.active).sort_by(&:name), callback_url: brand_ambassadors_documents_path(format: :js)  }
 
 - if can?(:list, BrandAmbassadors::Visit) || can?(:calendar, BrandAmbassadors::Visit)
   javascript:
