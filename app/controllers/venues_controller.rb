@@ -43,7 +43,9 @@ class VenuesController < FilteredController
   def load_google_places
     return [] unless params[:location].present? && params[:q].present?
     (lat, lng) = params[:location].split(',')
-    google_places_client.spots(lat, lng, keyword: params[:q], radius: 50_000)
+    spots = google_places_client.spots(lat, lng, keyword: params[:q], radius: 50_000)
+    merged_ids = Place.where.not(merged_with_place_id: nil).where(place_id: spots['results'].map{ |s| s['place_id'] }).pluck(:place_id)
+    spots.reject { |s| merged_ids.include?(s['place_id']) }
   rescue
     []
   end
