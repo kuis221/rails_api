@@ -11,42 +11,46 @@ describe ActivitiesController, type: :controller do
   let(:activity_type) { create(:activity_type, company: @company) }
   let(:venue) { create(:venue, place: create(:place), company: @company) }
   let(:campaign) { create(:campaign, company: @company) }
-  let(:activity) { create(:activity, activity_type: activity_type, activitable: venue, campaign: campaign, company_user: @company_user) }
+  let(:activity) do
+    create(:activity, activity_type: activity_type, activitable: venue,
+                      campaign: campaign, company_user: @company_user)
+  end
 
   describe "GET 'new'" do
     it 'returns http success' do
-      xhr :get, 'new', venue_id: venue.to_param, format: :js
+      get 'new', venue_id: venue.to_param, activity: { activity_type_id: activity_type.id }
       expect(response).to be_success
     end
   end
 
   describe "POST 'create'" do
-    it 'returns http success' do
-      xhr :post, 'create', venue_id: venue.to_param, format: :js
-      expect(response).to be_success
-    end
-
-    it 'should not render form_dialog if no errors' do
+    it 'should redirect to the thanks page if no errors' do
       expect do
-        xhr :post, 'create', venue_id: venue.to_param, activity: { activity_type_id: activity_type.to_param, campaign_id: campaign.to_param, company_user_id: @company_user.to_param }, format: :js
+        xhr :post, 'create', venue_id: venue.to_param,
+                             activity: { activity_type_id: activity_type.to_param,
+                                         campaign_id: campaign.to_param,
+                                         company_user_id: @company_user.to_param }
       end.to change(Activity, :count).by(1)
-      expect(response).to be_success
-      expect(response).to render_template(:create)
-      expect(response).not_to render_template('_form_dialog')
+      expect(response).to redirect_to(thanks_venue_activities_url(activity_type_id: activity_type.id))
     end
 
-    it 'should render the form_dialog template if errors' do
+    it 'should render the new template if errors' do
       expect do
-        xhr :post, 'create', venue_id: venue.to_param, format: :js
+        xhr :post, 'create', venue_id: venue.to_param,
+                             activity: { activity_type_id: activity_type.to_param }
       end.not_to change(Activity, :count)
-      expect(response).to render_template(:create)
-      expect(response).to render_template('_form_dialog')
+      expect(response).to render_template('new')
+      expect(response).to render_template('_form')
       assigns(:venue).errors.count > 0
     end
 
     it 'should assign the correct venue id' do
       expect do
-        xhr :post, 'create', venue_id: venue.to_param, activity: { activity_type_id: activity_type.to_param, campaign_id: campaign.to_param, company_user_id: @company_user.to_param, activity_date: '05/23/2020' }, format: :js
+        xhr :post, 'create', venue_id: venue.to_param,
+                             activity: { activity_type_id: activity_type.to_param,
+                                         campaign_id: campaign.to_param,
+                                         company_user_id: @company_user.to_param,
+                                         activity_date: '05/23/2020' }
       end.to change(Activity, :count).by(1)
       expect(assigns(:venue)).to eq(venue)
       expect(assigns(:activity).activitable_id).to eq(venue.id)
@@ -68,7 +72,7 @@ describe ActivitiesController, type: :controller do
                 form_field.options.last.id.to_s => '90'
               } }
             }
-        }, format: :js
+        }
       end.to change(Activity, :count).by(1)
       activity = Activity.last
       expect(activity.results.count).to eql 1
@@ -81,7 +85,7 @@ describe ActivitiesController, type: :controller do
 
   describe "GET 'edit'" do
     it 'returns http success' do
-      xhr :get, 'edit', venue_id: venue.to_param, id: activity.to_param, format: :js
+      get 'edit', venue_id: venue.to_param, id: activity.to_param
       expect(response).to be_success
     end
   end
@@ -92,9 +96,12 @@ describe ActivitiesController, type: :controller do
 
     it 'must update the activity attributes' do
       another_campaign.activity_types << activity_type
-      xhr :put, 'update', venue_id: venue.to_param, id: activity.to_param, activity: { campaign_id: another_campaign.id, company_user_id: another_user.id, activity_date: '12/31/2013' }, format: :js
+      put 'update', venue_id: venue.to_param, id: activity.to_param,
+                    activity: { campaign_id: another_campaign.id,
+                                company_user_id: another_user.id,
+                                activity_date: '12/31/2013' }
       expect(assigns(:activity)).to eq(activity)
-      expect(response).to be_success
+      expect(response).to redirect_to(venue_path(venue) + '#activities-list')
       activity.reload
       expect(activity.campaign_id).to eq(another_campaign.id)
       expect(activity.activity_date).to eq(Time.zone.parse('2013-12-31 00:00:00'))

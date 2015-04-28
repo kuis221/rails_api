@@ -313,7 +313,6 @@ body{
 
 .calendar-data{
 	b{
-		font-size:16px;
 		font-weight: 400;
 	}
 }
@@ -2650,6 +2649,16 @@ ul.ui-widget-content{
 	margin-top: 36px;
 }
 
+#company_user_user_attributes_country_chzn{
+	.chzn-drop{
+		ul{
+			li:first-child{
+				border-bottom: 1px solid $brand;
+			}
+		}
+	}
+}
+
 #resource-index-container {
 	padding-right: 250px;
 	#resource-filter-column {
@@ -3081,6 +3090,9 @@ ul.ui-widget-content{
 					color: #fff;
 				}
 			}
+			.radio, .checkbox {
+				color: $text;
+			}
 		}
 		label{
 			display:inline-block;
@@ -3103,6 +3115,11 @@ ul.ui-widget-content{
 				font-size: 14px;
 				&.field-label{
 					color: $text;
+				}
+				span.optional {
+					font-size: 12px;
+					color: $gray-light;
+					font-weight: normal;
 				}
 			}
 			&.control-group-label{
@@ -7402,6 +7419,7 @@ body.dashboard.index {
 		}
 		.link-select-user {
 			color: $white;
+			font-size: 12px;
 			margin-left: 10px;
 			margin-top: 5px;
 			text-decoration: underline;
@@ -7506,9 +7524,9 @@ body.dashboard.index {
 		}
 		.controls{
 			.checkbox, .radio{
-				padding-top: 3px;
-				padding-bottom: 3px;
-				padding: 3px 0;
+				padding-top: 0;
+				padding-bottom: 0;
+				padding: 0;
 			}
 		}
 		.checker{
