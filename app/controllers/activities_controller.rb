@@ -29,7 +29,11 @@ class ActivitiesController < FilteredController
   end
 
   def thanks
-    @activity_type = current_company.activity_types.find(params[:activity_type_id])
+    if params[:activity_type_id] == 'attendance'
+      @activity_type = OpenStruct.new(id: params[:activity_type_id], name: 'Invitation')
+    else
+      @activity_type = current_company.activity_types.find(params[:activity_type_id])
+    end
   end
 
   def create
