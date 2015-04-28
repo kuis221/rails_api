@@ -162,13 +162,11 @@ feature 'Dashboard', search: true, js: true do
       end
 
       scenario 'clicking on the day should take the user to the event list for that day' do
-
         Timecop.travel(Time.zone.local(2014, 01, 14, 12, 00)) do
           visit root_path
 
           within upcoming_events_module do
             click_link 'Calendar View'
-
             click_link '14'
           end
 

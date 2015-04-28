@@ -273,6 +273,10 @@ en:
         campaigns: 'There are no Campaigns assigned to this Area.'
       brand_portfolio:
         brands: 'There are no Brands added to this Brand Portfolio.'
+      date_range:
+        dates: 'There are no Dates added to this Date Range.'
+      day_part:
+        times: 'There are no Time Ranges added to this Day Part.'
 
   drag_n_drop:
     items:

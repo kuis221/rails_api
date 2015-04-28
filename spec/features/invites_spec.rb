@@ -37,13 +37,10 @@ feature 'Invites', search: true, js: true do
       visit event_path(event)
 
       click_js_button 'Add Activity'
-      within visible_modal do
-        select_from_chosen('Invitation', from: 'Activity type')
-        select_from_autocomplete 'Search for a place', 'Guillermitos Bar'
-        fill_in '# Invites', with: '100'
-        click_js_button 'Create'
-      end
-      ensure_modal_was_closed
+      select_from_chosen('Invitation', from: 'Activity type')
+      select_from_autocomplete 'Search for a place', 'Guillermitos Bar'
+      fill_in '# Invites', with: '100'
+      click_button 'Submit'
 
       within '#invites-list' do
         expect(page).to have_content('Guillermitos Bar')
