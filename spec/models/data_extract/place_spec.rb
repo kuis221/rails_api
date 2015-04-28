@@ -22,8 +22,8 @@
 
 require 'rails_helper'
 
-RSpec.describe DataExtract::Venue, type: :model do
-  describe '#available_columns' do
+RSpec.describe DataExtract::Place, type: :model do
+  pending '#available_columns' do
     let(:subject) { described_class }
 
     it 'returns the correct columns' do
@@ -34,7 +34,7 @@ RSpec.describe DataExtract::Venue, type: :model do
     end
   end
 
-  describe '#rows' do
+  pending '#rows' do
     let(:company) { create(:company) }
     let(:company_user) do
       create(:company_user, company: company,
