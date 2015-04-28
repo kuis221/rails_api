@@ -50,8 +50,8 @@ class DataExtract::Campaign < DataExtract
           .where("brands.brand_id IN (#{filters['brand'].join(', ')})") if filters['brand'].present?
     s = s.joins('LEFT JOIN brand_portfolios_campaigns AS portfolios ON portfolios.campaign_id = campaigns.id')
           .where("portfolios.brand_portfolio_id IN (#{filters['brand_portfolio'].join(', ')})") if filters['brand_portfolio'].present?
-    s = s.joins('LEFT JOIN company_users ON company_users.user_id = users.id')
-          .where("company_users.user_id IN (#{filters['user'].join(', ')})") if filters['user'].present?
+    s = s.joins('LEFT JOIN campaign_users ON campaign_users.campaign_id = campaigns.id')
+          .where("campaign_users.company_user_id IN (#{filters['user'].join(', ')})") if filters['user'].present?
     s = s.where(aasm_state: filters['status'].map { |f| f.downcase == 'active' ? 'active' : 'inactive' }) if filters['status'].present?
     s
   end
