@@ -1,4 +1,5 @@
 #activities-container
+  h5.module-title ACTIVITIES
   - if resource.activities.active.any?
     - if can?(:create, Activity) || can?(:create_invite, resource)
       = button_to 'New Activity', new_event_activity_path(resource), method: :get, remote: true, class: 'btn btn-primary', title: 'New Activity'

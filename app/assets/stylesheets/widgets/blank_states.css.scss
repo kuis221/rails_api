@@ -14,10 +14,13 @@ Styleguide 5.2
 */
 
 .blank-state{
-	border: 1px solid lightgrey;
 	padding: 30px 10px;
 	position: relative;
 	width: 98%;
+	h5 {
+		font-size: 14px;
+		font-weight: normal;
+	}
 	form.button_to {
 		margin: 0 auto;
 		display: block;

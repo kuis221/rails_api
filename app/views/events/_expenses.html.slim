@@ -1,4 +1,5 @@
 #event-expenses-container
+  h5.module-title EXPENSES
   - if resource.event_expenses.any?
     = button_to 'Add Expense', new_event_event_expense_path(resource), method: :get, remote: true, class: 'btn btn-primary' if can?(:create_expense, resource)
 

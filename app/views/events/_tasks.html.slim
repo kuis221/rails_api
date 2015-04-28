@@ -1,4 +1,5 @@
-- if  tasks.any?
+h5.module-title TASKS
+- if tasks.any?
   div#tasks-list.resource-list
     = render collection: tasks, partial: 'tasks/task', locals: {show_user: true}
   = button_to 'Create Task', new_event_task_path(resource), method: :get, remote: true, class: 'btn btn-primary' if can? :create_task, resource

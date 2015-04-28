@@ -277,6 +277,8 @@ en:
         dates: 'There are no Dates added to this Date Range.'
       day_part:
         times: 'There are no Time Ranges added to this Day Part.'
+      visit:
+        events: 'No events have been scheduled for this visit. '
 
   drag_n_drop:
     items:
