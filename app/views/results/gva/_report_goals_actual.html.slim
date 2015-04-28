@@ -7,7 +7,7 @@
     = render partial: 'report_goals_actual_item_table', locals: {each_events_goal: events_goal}
 - else
   .blank-state
-    h5.text-center No Campaign goals have been set for this Campaign.
-    p.text-center Please select different filtering criteria.
+    h5.text-center = I18n.translate(:'blank_states.results_gva.filters.line1')
+    p.text-center = I18n.translate(:'blank_states.results_gva.filters.line2')
     .blank-state-icon
       img src="/assets/blank-search.png"
