@@ -2910,15 +2910,13 @@ ul.ui-widget-content{
 		&:first-of-type {
 			margin: 0;
 		}
-		i.icon {
-			color: $brand;
-			&:hover {
-				color: $app_bg;
-			}
-		}
 	}
-	.icon-edit{
-		margin: 0 0 0 15px;
+	i{
+		color: $brand;
+		font-size: 14px;
+		&.icon-edit{
+			margin: 0 0 0 15px;
+		}
 	}
 }
 
