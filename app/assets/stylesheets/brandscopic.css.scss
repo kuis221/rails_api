@@ -3059,12 +3059,18 @@ ul.ui-widget-content{
 	}
 
 	.form-actions {
-		margin-top: 20px;
+		margin-top: 40px;
 		input {
 			width: auto;
 			&.btn-primary {
 				min-width: 154px;
 			}
+		}
+	}
+	input{
+		&.date_picker, &.time_picker{
+			color: $silver;
+			width: 120px;
 		}
 	}
 	.form_field_userdate {
@@ -3074,9 +3080,6 @@ ul.ui-widget-content{
 	.control-group{
 		margin-bottom: 0;
 
-		.input-xlarge{
-			width:220px;
-		}
 		.segment-total{
 			display: none;
 		}
@@ -3117,7 +3120,7 @@ ul.ui-widget-content{
 					color: $text;
 				}
 				span.optional {
-					font-size: 12px;
+					font-size: 14px;
 					color: $gray-light;
 					font-weight: normal;
 				}
@@ -3136,18 +3139,6 @@ ul.ui-widget-content{
 				}
 				&:last-child{
 					margin-bottom: 0;
-				}
-			}
-		}
-
-		.likert-scale-table {
-			td {
-				padding: 4px;
-			}
-			label {
-				margin-right: 0;
-				div.radio {
-					margin-right: 0;
 				}
 			}
 		}
@@ -3186,9 +3177,9 @@ ul.ui-widget-content{
 				width: auto;
 				label {
 					text-align: left;
-					color: text;
+					color: $text;
 					margin-right: 20px;
-					width: 100px;
+					width: auto;
 					display: inline-block;
 					overflow: hidden;
 					height: 20px;
@@ -3216,9 +3207,6 @@ ul.ui-widget-content{
 			}
 		}
 	}
-	.form_field_section {
-		margin-top: 40px;
-	}
 	.form_field_photo {
 		.form-result-label {
 			display: block;
@@ -3233,6 +3221,7 @@ ul.ui-widget-content{
 		color: $brand;
 		font-size: 20px;
 		font-weight: normal;
+		line-height: 40px;
 	}
 	p.section-description {
 		margin-top: -20px;
@@ -3257,10 +3246,10 @@ ul.ui-widget-content{
 	.input-append, .input-prepend{
 		margin-bottom: 0;
 		input{
-			width: 176px;
+			width: 175px;
 		}
 		.input-xlarge{
-			width:176px;
+			width:175px;
 		}
 		&+label{
 			margin-left: 14px;
@@ -3275,35 +3264,6 @@ ul.ui-widget-content{
 	table{
 		margin-bottom: 0;
 	}
-	input{
-		&.date_picker{
-			@include box-sizing(border-box);
-			text-align: right;
-			width: 120px;
-			background: image-url('calendar.svg') no-repeat 0px 7px;
-			height: 40px;
-			padding: 2px 10px 0 0;
-			width: 120px;
-			font-size: 12px;
-			&[readonly] {
-				color: silver;
-			}
-		}
-		&.time_picker{
-			@include box-sizing(border-box);
-			text-align: right;
-			height: 40px;
-			width: 120px;
-			padding: 2px 18px 0 0;
-			background: image-url('time.svg') no-repeat 3px 7px;
-			&[readonly] {
-				color: silver;
-			}
-		}
-		&.waiting-files {
-			width: auto !important;
-		}
-	}
 }
 
 
@@ -3315,15 +3275,11 @@ ul.ui-widget-content{
 	border: 2px dashed $gray-lighter;
 	color: $user_menu;
 	line-height: 17px;
-	padding: 40px 20px 20px;
+	padding: 48px 16px 10px;
 	text-align: center;
-	height: 150px;
+	height: 160px;
 	width: 240px;
 
-	&.small{
-		padding: 20px 20px 20px;
-		height: 100px;
-	}
 	&.big{
 		width: 100%;
 	}
@@ -3340,18 +3296,19 @@ ul.ui-widget-content{
 		text-decoration:underline;
 	}
 	.drag-box{
-		h4, p{
+		h5,p{
 			color: $user_menu;
 			font-family: $baseFontFamily;
 			font-weight: normal;
 			text-align: left;
 			margin-bottom:0;
 		}
-		h4{
+		h5{
+			line-height: 16px;
 			margin-top:10px;
 		}
 		p{
-			font-size:14px;
+			font-size: 16px;
 			span.file-browse {
 				text-decoration: underline;
 				position: relative;
@@ -6867,8 +6824,40 @@ table.table.likert-scale-table {
 		border-top: none;
 		text-align: center;
 	}
-	tbody tr:hover td {
-		background-color: transparent !important;
+	thead{
+		label{
+			color: silver;
+			font-size: 12px;
+		}
+		tr{
+			th{
+				&:nth-child(2){
+					padding-left: 25px;
+				}
+				&:nth-child(3){
+					width: 50px;
+				}
+				&:nth-child(4){
+					width: 120px;
+				}
+				&:nth-child(5){
+					padding-left:0;
+				}
+			}
+		}
+	}
+	tbody{
+		tr{
+			td:first-of-type{
+				padding-left: 0;
+			}
+			td:nth-child(2){
+				padding-left: 25px;
+			}
+			&:hover td{
+				background-color: transparent !important;
+			}
+		}
 	}
 	td {
 		&:first-child {
@@ -6879,6 +6868,20 @@ table.table.likert-scale-table {
 		text-transform:uppercase;
 		font-weight: normal;
 	}
+	label{
+		font-weight: normal;
+		font-size: 14px;
+		margin-right: 0;
+		line-height: 16px;
+		div.radio {
+			margin-right: 0;
+		}
+	}
+}
+
+.likert-scale-table{
+
+
 }
 // CUSTOM FILTERS SETTING
 // ----------------------------------------------------------------------
@@ -7463,7 +7466,7 @@ body.dashboard.index {
 
 .survey-mode-wrapper {
 	color: $text;
-	padding: 70px 0;
+	padding: 70px 0 30px 0;
 	.survey-header {
 		color: $gray-lighter;
 		background-color: $text;
@@ -7474,7 +7477,7 @@ body.dashboard.index {
 	  z-index: 9;
 		h5 {
 			display: block;
-			width: 400px;
+			width: 460px;
 			margin: 0 auto;
 			font-size: 22px;
 		}
@@ -7489,28 +7492,8 @@ body.dashboard.index {
 	.section-title{
 		color: $brand;
 	}
-	.likert-scale-table{
-		label{
-			line-height: 16px;
-		}
-		tbody{
-			tr td{
-				&:first-child{
-					padding-left: 0;
-				}
-				padding-right: 0;
-			}
-		}
-	}
-	.activity-form .attachment-panel{
-		padding: 40px 15px 20px;
-		width: 220px;
-		.attachment-select-file-view{
-			width: auto;
-		}
-	}
 	.large-inputs{
-		margin: 30px 0;
+		margin: 40px 0;
 	}
 	.control-group{
 		margin-bottom: 0;
@@ -7521,6 +7504,9 @@ body.dashboard.index {
 			color: $text;
 			font-weight: bold;
 			margin-bottom: 4px;
+			&.check_boxes, &.radio_buttons{
+				margin-bottom: 15px;
+			}
 		}
 		.controls{
 			.checkbox, .radio{
@@ -7537,7 +7523,7 @@ body.dashboard.index {
 	.survey-form {
 		background-color: #fff;
 		#form-container {
-			width: 400px;
+			width: 460px;
 			margin: 0 auto;
 		}
 	}
@@ -7575,15 +7561,15 @@ input[type="text"]{
 	&.date_picker{
 		background-image: image-url('calendar.svg');
 		background-repeat: no-repeat;
-		background-position: 4px;
-		padding-left: 35px;
+		background-position: 2px;
+		padding-left: 30px;
 		text-align: left;
 	}
 	&.time_picker{
 		background: image-url('time.svg');
 		background-repeat: no-repeat;
-		background-position: 4px;
-		padding-left: 35px;
+		background-position: 2px;
+		padding-left: 30px;
 		text-align: left;
 	}
 }
