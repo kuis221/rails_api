@@ -1,13 +1,21 @@
-.row-fluid
-  - resource_members.each do |user|
-    .span3.team-member.clearfix id = "team-member-#{user.id}"
-      .pull-left
-        .rounded-icon.pull-left
-          i.icon-user
-        .module-item
-          .full-name
-            = user.full_name
-          .role-name
-            = user.role_name
-      .pull-right
-        = link_to(content_tag(:i,'', class: 'icon-remove-circle'),  delete_member_team_path(resource, member_id: user.to_param), class: 'remove-member-btn', remote: true, method: :delete) if can?(:edit, resource)
+h5.module-title TEAM MEMBERS
+- if resource_members.any?
+  #team-members-list.row-fluid
+    - resource_members.each do |user|
+      .span3.team-member.clearfix id = "team-member-#{user.id}"
+        .pull-left
+          .rounded-icon.pull-left
+            i.icon-user
+          .module-item
+            .full-name
+              = user.full_name
+            .role-name
+              = user.role_name
+        .pull-right
+          = link_to(content_tag(:i,'', class: 'icon-remove-circle'),  delete_member_team_path(resource, member_id: user.to_param), class: 'remove-member-btn', remote: true, method: :delete) if can?(:edit, resource)
+
+  = button_to_add 'Add Team Member', new_member_team_path(resource) if can?(:edit, resource)
+
+- else
+  = blank_state_module('team.members') do
+    = button_to 'Add Team Member', new_member_team_path(resource), remote: true, method: :get, class: 'btn btn-primary' if can?(:edit, resource)

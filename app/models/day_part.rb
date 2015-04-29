@@ -25,6 +25,8 @@ class DayPart < ActiveRecord::Base
 
   has_many :day_items
 
+  scope :active, -> { where(active: true) }
+
   searchable do
     integer :id
 
@@ -57,7 +59,6 @@ class DayPart < ActiveRecord::Base
         with(:company_id, params[:company_id])
         with(:status, params[:status]) if params.key?(:status) && params[:status].present?
         with(:id, params[:day_part]) if params.key?(:day_part) && params[:day_part].present?
-
 
         facet :status if include_facets
 

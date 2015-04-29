@@ -25,6 +25,11 @@ Styleguide 5.2
 			font-size: 14px;
 			font-weight: normal;
 		}
+		.btn-primary {
+			min-width: 130px;
+  			width: auto !important;
+  			max-width: none !important;
+		}
 	}
 	form.button_to {
 		margin: 0 auto;

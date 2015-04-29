@@ -279,6 +279,14 @@ en:
         times: 'There are no Time Ranges added to this Day Part.'
       visit:
         events: 'No events have been scheduled for this visit. '
+      campaign:
+        places: 'No Places have been added to this Campaign.'
+        staff: 'No Staff have been added to this Campaign.'
+        date_ranges: 'No Date Ranges have been added to this Campaign.'
+        day_parts: 'No Day Parts have been added to this Campaign'
+        documents: 'No Documents have been uploaded to this Campaign.'
+      team:
+        members: 'No users have been added to this Team.'
 
   drag_n_drop:
     items:
