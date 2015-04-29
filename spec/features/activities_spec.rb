@@ -28,7 +28,7 @@ feature 'Activities management' do
 
     scenario 'can see all the activity info', js: true do
       visit activity_path(activity)
-      expect(page).to have_selector('h2.special', text: 'Test ActivityType')
+      expect(page).to have_selector('h2', text: 'Test ActivityType')
       expect(current_path).to eql activity_path(activity)
     end
 
@@ -47,7 +47,7 @@ feature 'Activities management' do
                                                                         company: company,
                                                                         campaign_ids: [campaign.id]))
       visit activity_path(venue_activity)
-      expect(page).to have_selector('h2.special', text: 'Test ActivityType')
+      expect(page).to have_selector('h2', text: 'Test ActivityType')
       expect(page).to have_link(venue.name)
       expect(page).to have_content("#{place.street}, #{place.city}, #{place.state_code}, #{place.zipcode}")
       expect(current_path).to eql activity_path(venue_activity)

@@ -92,11 +92,11 @@ module ApplicationHelper
       form_class: 'button_to button_to_add')
   end
 
-  def button_to_edit(resource, title: nil, url: nil)
+  def button_to_edit(resource, title: nil, url: nil, remote: true)
     url ||= url_for([:edit, resource])
     title = I18n.t("buttons.edit.#{resource.class.name.underscore}")
     icon_button_to 'icon-edit', url,
-                   remote: true,
+                   remote: remote,
                    method: :get,
                    title: title,
                    form_class: 'button_to button_to_edit'

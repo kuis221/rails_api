@@ -127,16 +127,17 @@ feature 'Trending report' do
       click_js_button('Add Activity')
 
       within visible_modal do
-        select_from_chosen('Whiskey Survey', from: 'Activity type')
-        fill_in 'My Text Field', with: 'Texto con hola en medio!'
-        fill_in 'My Paragraph Field', with: 'hola mundo'
-        select_from_chosen(user.full_name, from: 'User')
-        fill_in 'Date', with: '05/16/2013'
+        choose 'Whiskey Survey'
         click_js_button 'Create'
       end
-      ensure_modal_was_closed
 
-      expect(page).to have_text 'Whiskey Survey'
+      fill_in 'My Text Field', with: 'Texto con hola en medio!'
+      fill_in 'My Paragraph Field', with: 'hola mundo'
+      select_from_chosen(user.full_name, from: 'User')
+      fill_in 'Date', with: '05/16/2013'
+      click_js_button 'Submit'
+
+      expect(page).to have_content 'Thank You!'
 
       visit sources_analysis_trends_path
 
