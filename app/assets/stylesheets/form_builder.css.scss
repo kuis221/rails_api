@@ -11,11 +11,9 @@ $margin-right: 240px;
 	.tooltip {
 		@include kpi-desc-tooltip;
 	}
-
 	.field-tooltip-trigger {
 		height: 30px;
 	}
-
 	&.activities-wrapper{
 		.form-wrapper{
 			.form-builder-actions.affix{
@@ -25,8 +23,6 @@ $margin-right: 240px;
 	}
 	.form-wrapper {
 		margin-right: $margin-right;
-
-
 		.form-builder-actions {
 			position: absolute;
 			top: 0;
@@ -98,7 +94,6 @@ $margin-right: 240px;
 			&.sorting {
 				padding-bottom: 30px;
 			}
-
 			.field, .module {
 				a.close {
 					display: none;
@@ -140,8 +135,7 @@ $margin-right: 240px;
 			.btn[disabled=disabled] {
 				opacity: 0.5;
 			}
-			.field { // Fields added to the form
-
+			.field { // FIELDS WHEN ADDED TO THE FORM
 				float: left;
 				clear: both;
 				padding: 8px 10px 10px 10px;
@@ -155,6 +149,12 @@ $margin-right: 240px;
 				min-width:220px;
 				label.radio .radio{
 					margin-right: 10px;
+				}
+
+				&:not(.form_field_userdate){
+					select{
+						width: 390px;
+					}
 				}
 
 				&:hover {
@@ -196,6 +196,14 @@ $margin-right: 240px;
 						font-weight: bolder;
 					}
 				}
+				&.form_field_text {
+					width: 390px;
+				}
+				&.text_area{
+					textarea{
+						width:220px;
+					}
+				}
 				&[data-type="Date"], &[data-type="Time"] {
 					min-width:100px;
 				}
@@ -233,7 +241,6 @@ $margin-right: 240px;
 						}
 					}
 				}
-
 				&[data-type="Dropdown"]{
 					&.selected{
 						.icon-remove-circle:before{
@@ -246,11 +253,6 @@ $margin-right: 240px;
 						.checker{
 							background-color: $user_menu;
 						}
-					}
-				}
-				&.text_area{
-					textarea{
-						width:220px;
 					}
 				}
 				&[data-type="Radio"] {
@@ -266,57 +268,18 @@ $margin-right: 240px;
 						margin-bottom:10px;
 					}
 				}
-				&[data-type="LikertScale"]{
-					table{
-						label{
-							font-weight:normal;
-						}
-						thead{
-							label{
-								font-size: 12px;
-							}
-							tr{
-								th{
-									&:nth-child(2){
-										padding-left: 25px;
-									}
-									&:nth-child(3){
-										width: 50px;
-									}
-									&:nth-child(4){
-										width: 120px;
-									}
-									&:nth-child(5){
-										padding-left:0;
-									}
-								}
-							}
-						}
-						tbody{
-							tr{
-								td:first-of-type{
-									padding-left: 0;
-								}
-								td:nth-child(2){
-									padding-left: 25px;
-								}
-							}
-						}
-					}
-				}
 			}
 			div.empty-form-legend {
 				display: none;
 				padding: 50px 30px;
 				text-align: center;
 			}
-
 			div.empty-form-legend:first-child:last-child {
 					display: block;
 			}
 		}
 	}
-	.fields-wrapper { // Options to add to the form
+	.fields-wrapper { // OPTIONS TO ADD TO THE FORM - RIGHT MENU
 		background-color: #fff;
 		border-radius: 5px;
 		font-weight: 400;
@@ -360,7 +323,6 @@ $margin-right: 240px;
 		.search-fields {
 			margin-top: 5px;
 		}
-
 		.scrollable-list {
 			max-height: 400px;
 			min-height: 71px;
@@ -371,7 +333,6 @@ $margin-right: 240px;
 			margin-bottom: 10px;
 			text-transform:uppercase;
 		}
-
 		.custom {
 			line-height: 16px;
 			.field:nth-child(odd) {
@@ -388,8 +349,7 @@ $margin-right: 240px;
 				line-height: 57px;
 			}
 		}
-
-		.field {
+		.field { // FIELDS TO ADD TO THE FORM - RIGHT MENU
 			border: 1px solid $gray-light;
 			border-radius: 5px;
 			padding: 10px;
@@ -461,7 +421,6 @@ $margin-right: 240px;
 					top: 12px;
 				}
 			}
-
 			// Styles for when the field is being dragged
 			&.ui-draggable-dragging {
 				padding: 10px;
@@ -480,6 +439,7 @@ $margin-right: 240px;
 				.checkbox{
 					padding-left:0;
 				}
+				/*
 				input{
 					&.date_picker, &.time_picker {
 						color:$user_menu;
@@ -487,14 +447,9 @@ $margin-right: 240px;
 						width: 120px;
 					}
 					&.date_picker{
-						background: image-url('calendar.svg') no-repeat 3px 8px;
 						height: 43px;
-						width: 140px;
 					}
-					&.time_picker{
-						background: image-url('time.svg') no-repeat 3px 8px;
-					}
-				}
+				}*/
 				label{
 					font-weight:bold;
 					margin-bottom:4px;
@@ -726,4 +681,6 @@ $margin-right: 240px;
 		padding: 40px 50px;
 	}
 }
+
+
 
