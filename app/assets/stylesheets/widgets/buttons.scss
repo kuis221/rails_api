@@ -19,7 +19,7 @@ Styleguide 3.1
 	border: 0;
 	box-shadow: none;
 	box-sizing: border-box;
-	color: white;
+	color: $white;
 	font-family: $baseFontFamily;
 	font-weight: 400;
 	text-shadow: none;
@@ -27,6 +27,9 @@ Styleguide 3.1
 	line-height: 26px;
 	padding: 4px 8px;
 	min-width: 101px;
+	a{
+		color: $white;
+	}
 	&.download, &.fullscreen{
 		min-width: 50px;
 	}

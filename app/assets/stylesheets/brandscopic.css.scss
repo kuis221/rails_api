@@ -5231,6 +5231,13 @@ body.campaigns{
 		margin-bottom: -1px;
 	}
 
+	a, i{
+		&.icon-plus-sign, &.icon-edit{
+			color: $brand;
+			font-size: 18px;
+		}
+	}
+
 	.map_header{
 		top: 5px;
 		bottom: 32px;
