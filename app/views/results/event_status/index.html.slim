@@ -41,10 +41,12 @@
       .details_box
         .content
         .blank-state
+          .blank-state-arrow
+            img src="#{asset_path('blank-states-arrow.png')}"
           h5.text-center = I18n.translate(:'blank_states.results_event_status.empty.line1')
           p.text-center = I18n.translate(:'blank_states.results_event_status.empty.line2')
           .blank-state-icon
-            img src="/assets/blank-gva.png"
+            img src="#{asset_path('blank-gva.png')}"
 
 = render partial: 'help_tutorial'
 

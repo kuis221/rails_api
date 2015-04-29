@@ -2181,6 +2181,11 @@ li#notifications{
 }
 
 #kpis-trends-module {
+	.blank-state {
+		h5 {
+			margin: 11px 0;
+		}
+	}
 	.empty-state {
 		padding: 50px 0;
 		color: $user_menu;
@@ -2209,6 +2214,11 @@ li#notifications{
 	.container-kpi-trend{
 		margin-top: 21px;
 		margin-left: 0px;
+	}
+	.blank-state {
+		h5 {
+			margin: 11px 0;
+		}
 	}
 	.empty-state {
 		padding: 50px 0;

@@ -156,15 +156,15 @@ en:
         line1: 'There are not any tasks assigned to you.'
         line2:
           without_create_permissions: "No worries, once you've been assigned tasks, they will show up right here."
-          with_create_permissions: 'Want to add a new task? Easy. Click Add Task to assign a new task to yourself or teammates.'
+          with_create_permissions: 'Want to add a new task? Click Add Tasks to assign a new task to yourself or teammates.'
       filters:
         line1: 'There are no tasks matching the filtering criteria you selected.'
     teams_tasks:
       empty:
-        line1: 'There are not any tasks assigned to you.'
+        line1: 'There are not any tasks assigned to your team right now.'
         line2:
           without_create_permissions: "No worries, once you've been assigned tasks, they will show up right here."
-          with_create_permissions: 'Want to add a new task? Easy. Click Add Task to assign a new task to yourself or teammates.'
+          with_create_permissions: 'Want to add a new task? Click Add Tasks to assign a new task to yourself or teammates.'
       filters:
         line1: 'There are no tasks matching the filtering criteria you selected.'
     venues:
