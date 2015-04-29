@@ -2902,23 +2902,18 @@ ul.ui-widget-content{
 		font-size: 12px;
 		margin: 0 10px 0 0;
 	}
-	.button_to_edit {
-		margin-right: 0;
-	}
 	.button_to {
 		margin: 0 0 0 8px;
 		&:first-of-type {
 			margin: 0;
 		}
-		i.icon {
-			color: $brand;
-			&:hover {
-				color: $app_bg;
-			}
-		}
 	}
-	.icon-edit{
-		margin: 0 0 0 15px;
+	i{
+		color: $brand;
+		font-size: 14px;
+		&.icon-edit{
+			margin: 0 0 0 15px;
+		}
 	}
 }
 
@@ -5231,6 +5226,13 @@ body.campaigns{
 		margin-bottom: -1px;
 	}
 
+	a, i{
+		&.icon-plus-sign, &.icon-edit, &.icon-remove-circle{
+			color: $brand;
+			font-size: 18px;
+		}
+	}
+
 	.map_header{
 		top: 5px;
 		bottom: 32px;
@@ -5576,106 +5578,6 @@ div.chardinjs-tooltip
 
 .main.with-details-close-bar {
 	padding-top: 70px !important;
-}
-
-.switch-toggle {
-	width: 75px;
-	height: 28px;
-	margin: 9px 0 0 18px;
-	overflow: hidden;
-	a.btn {
-		line-height: normal !important;
-		float: left;
-		width: 50px;
-		height: 20px;
-		padding: 4px 5px;
-		color: #fff;
-		font-size: 14px;
-		border-radius: 15px;
-		span {
-			background-color: #fff;
-			width: 18px;
-			height: 18px;
-			border-radius: 10px;
-			display: block;
-			float: right;
-			margin: 1px 0 0 0;
-		}
-	}
-	a.toggle-on-btn {
-		display: none;
-		background-color: #90BE42;
-		text-align: left;
-		padding-left: 10px;
-		.on{
-			float: left;
-			line-height: 20px;
-		}
-	}
-	a.toggle-off-btn {
-		text-align: right;
-		padding-right: 10px;
-		background-color: $user_menu;
-		span {
-			float: left;
-		}
-		.off{
-			line-height: 20px;
-		}
-	}
-	&.inactive{
-		.toggle-on-btn {
-			display: none;
-		}
-		.toggle-off-btn {
-			display: block;
-		}
-	}
-	&.active{
-		.toggle-on-btn {
-			display: block;
-		}
-		.toggle-off-btn {
-			display: none;
-		}
-	}
-	a.toggle-on-btn-activity-type {
-		display: none;
-		background-color: #90BE42;
-		text-align: left;
-		padding-left: 10px;
-		.on{
-			float: left;
-			line-height: 20px;
-		}
-	}
-	a.toggle-off-btn-activity-type {
-		text-align: right;
-		padding-right: 10px;
-		background-color: $user_menu;
-		span {
-			float: left;
-		}
-		.off{
-			line-height: 20px;
-		}
-	}
-	&.inactive{
-		.toggle-on-btn-activity-type {
-			display: none;
-		}
-		.toggle-off-btn-activity-type {
-			display: block;
-		}
-	}
-	&.active{
-		.toggle-on-btn-activity-type {
-			display: block;
-		}
-		.toggle-off-btn {
-			display: none;
-		}
-	}
 }
 
 h4.custom-reports {
@@ -7680,38 +7582,15 @@ body.dashboard.index {
 	}
 }
 
-// Review hotfix for buttons on survey mode wrapper once results-enhancements is finally merged
-
-.btn-cancel{
-	color: $white;
+form.button_to .button-with-icon {
+  border-width: 0;
+  border-image-width: 0;
+  padding: 0;
+  background: none;
+  outline: none;
+  line-height: normal;
 }
 
-.btn-large{
-	box-sizing: border-box;
-	font-size: 16px;
-	padding: 10px 16px !important;
-	height: 42px;
-	min-width: 160px;
-}
-
-// Date picker fix
-
-input[type="text"]{
-	&.date_picker{
-		background-image: image-url('calendar.svg');
-		background-repeat: no-repeat;
-		background-position: 2px;
-		padding-left: 30px;
-		text-align: left;
-	}
-	&.time_picker{
-		background: image-url('time.svg');
-		background-repeat: no-repeat;
-		background-position: 2px;
-		padding-left: 30px;
-		text-align: left;
-	}
-}
 
 
 

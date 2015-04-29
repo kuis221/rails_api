@@ -19,7 +19,7 @@ Styleguide 3.1
 	border: 0;
 	box-shadow: none;
 	box-sizing: border-box;
-	color: white;
+	color: $white;
 	font-family: $baseFontFamily;
 	font-weight: 400;
 	text-shadow: none;
@@ -27,6 +27,9 @@ Styleguide 3.1
 	line-height: 26px;
 	padding: 4px 8px;
 	min-width: 101px;
+	a{
+		color: $white;
+	}
 	&.download, &.fullscreen{
 		min-width: 50px;
 	}
@@ -86,11 +89,109 @@ Styleguide 3.1
 	}
 }
 
+/* Toogle button */
+
+.switch-toggle{
+	border-radius: 15px;
+	overflow: hidden;
+	a.btn{
+		height: 28px;
+		line-height: 20px;
+		min-width: 65px;
+		&.btn-small{
+			padding: 4px 6px;
+		}
+		span {
+			background-color: #fff;
+			width: 18px;
+			height: 18px;
+			border-radius: 10px;
+			display: block;
+			float: right;
+			margin: 1px 0 0 0;
+		}
+		&.toogle-off-btn, &.toogle-on-btn{
+			.on, .off{
+				line-height: 20px;
+			}
+		}
+	}
+	a.toggle-on-btn {
+		display: none;
+		background-color: #90BE42;
+		text-align: left;
+		padding-left: 10px;
+	}
+	a.toggle-off-btn {
+		text-align: right;
+		padding-right: 10px;
+		background-color: $user_menu;
+		span {
+			float: left;
+		}
+	}
+	&.inactive{
+		.toggle-on-btn {
+			display: none;
+		}
+		.toggle-off-btn {
+			display: block;
+		}
+		.toggle-on-btn-activity-type {
+			display: none;
+		}
+		.toggle-off-btn-activity-type {
+			display: block;
+		}
+	}
+	&.active{
+		.toggle-on-btn {
+			display: block;
+		}
+		.toggle-off-btn {
+			display: none;
+		}
+		.toggle-on-btn-activity-type {
+			display: block;
+		}
+		.toggle-off-btn {
+			display: none;
+		}
+	}
+	a.toggle-on-btn-activity-type {
+		display: none;
+		background-color: #90BE42;
+		text-align: left;
+		padding-left: 10px;
+		.on{
+			float: left;
+			line-height: 20px;
+		}
+	}
+	a.toggle-off-btn-activity-type {
+		text-align: right;
+		padding-right: 10px;
+		background-color: $user_menu;
+		span {
+			float: left;
+		}
+		.off{
+			line-height: 20px;
+		}
+	}
+}
+
+
+
 
 /* Btn large should be used only for buttons inside of dialogue boxes */
 
 .btn-large{
 	height: 41px;
+}
+
+.btn-details{
+	min-width: 120px;
 }
 
 /* Use btn-download for download icons with dropdown */
