@@ -5,7 +5,7 @@ module JbbFile
       market: 'Market',
       final_date: 'FinalDate',
       event_date: 'EventDate',
-      registrant_id: 'RegistrantId',
+      registrant_id: 'RegistrantID',
       date_added: 'DateAdded',
       email: 'Email',
       mobile_phone: 'MobilePhone',
