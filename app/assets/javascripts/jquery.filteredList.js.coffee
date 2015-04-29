@@ -634,7 +634,8 @@ $.widget 'nmk.filteredList', {
 	_setQueryString: (qs) ->
 		@_settingQueryString = true
 		@_paramsQueryString = qs
-		history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' + qs)
+		if history.pushState
+			history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' + qs)
 		@_filtersChanged(false)
 		@_settingQueryString = false
 
@@ -963,7 +964,7 @@ $.widget 'nmk.filteredList', {
 		data = @paramsQueryString()
 		if @form.data('serializedData') != data
 			@form.data('serializedData', data)
-			if updateState
+			if updateState && history.pushState
 				history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' +@form.data('serializedData'));
 
 			@_parseQueryString(data)
