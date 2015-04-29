@@ -25,7 +25,7 @@ class AttachedAssetInput < SimpleForm::Inputs::Base
                           <div class="drag-box">
                             <i class="icon-upload"></i>
                             <div class="drag-box-text">
-                              <h4>DRAG &amp; DROP</h4>
+                              <h5>DRAG &amp; DROP</h5>
                               <p>' + I18n.translate(options[:browse_legend], browse: '<span class="file-browse">browse<input id="fileupload" type="file" name="file" data-accept-file-types="(\.|\/)(gif|jpe?g|png)$" data-max-file-size="' + max_file_size.to_s + '" /></span>') + '</p>
                               <a href="#" class="cancel-upload"' + (has_attached_asset ? '' : 'style="display: none"') + '>Cancel</a>
                             </div>
@@ -48,7 +48,7 @@ class AttachedAssetInput < SimpleForm::Inputs::Base
                           <div class="drag-box">
                             <i class="icon-upload"></i>
                             <div class="drag-box-text">
-                              <h4>DRAG &amp; DROP</h4>
+                              <h5>DRAG &amp; DROP</h5>
                               <p>' + I18n.translate(options[:browse_legend], browse: '<span class="file-browse">browse<input id="fileupload" type="file" name="file" data-accept-file-types="(\.|\/)(gif|jpe?g|png)$" data-max-file-size="' + max_file_size.to_s + '" /></span>') + '</p>
                             </div>
                           </div>
