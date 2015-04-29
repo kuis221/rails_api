@@ -1,7 +1,7 @@
 - total = 0
 span.form-result-label= form_field.name
 - form_field.options.each do |field_option|
-  - total += (result.value[field_option.id.to_s].to_i || 0)
+  - total += (result.value[field_option.id.to_s].to_f || 0)
   .summation-segment
     label.pull-left= field_option.name
     .segment-value= number_with_delimiter(result.value[field_option.id.to_s] || 0)
