@@ -48,7 +48,7 @@ module ApplicationHelper
   end
 
   def blank_state_module(module_name, &block)
-    content_tag(:div, class: 'blank-state') do
+    content_tag(:div, class: 'blank-state section-module') do
       content_tag(:h5, t("blank_states.modules.#{module_name}"), class: 'text-center') +
       (block_given? ? capture(&block) : ''.html_safe)
     end

@@ -17,9 +17,14 @@ Styleguide 5.2
 	padding: 30px 10px;
 	position: relative;
 	width: 98%;
-	h5 {
-		font-size: 14px;
-		font-weight: normal;
+	border: 1px solid lightgrey;
+	&.section-module {
+		border: 0;
+		padding: 10px 10px;
+		h5 {
+			font-size: 14px;
+			font-weight: normal;
+		}
 	}
 	form.button_to {
 		margin: 0 auto;
