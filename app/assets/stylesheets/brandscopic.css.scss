@@ -7680,42 +7680,7 @@ body.dashboard.index {
 	}
 }
 
-/*
 
-// Review hotfix for buttons on survey mode wrapper once results-enhancements is finally merged
-
-.btn-cancel{
-	color: $white;
-}
-
-.btn-large{
-	box-sizing: border-box;
-	font-size: 16px;
-	padding: 10px 16px !important;
-	height: 42px;
-	min-width: 160px;
-}
-
-*/
-
-// Date picker fix
-
-input[type="text"]{
-	&.date_picker{
-		background-image: image-url('calendar.svg');
-		background-repeat: no-repeat;
-		background-position: 2px;
-		padding-left: 30px;
-		text-align: left;
-	}
-	&.time_picker{
-		background: image-url('time.svg');
-		background-repeat: no-repeat;
-		background-position: 2px;
-		padding-left: 30px;
-		text-align: left;
-	}
-}
 
 
 

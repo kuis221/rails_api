@@ -93,7 +93,7 @@
     #event-tasks.details_box
 
       .pull-left
-        = button_to 'Create Task', new_event_task_path(resource), method: :get, remote: true, class: 'btn btn-primary' if can? :create_task, resource
+        = button_to 'Create Task', new_event_task_path(resource), method: :get, remote: true, class: 'btn btn-details btn-primary' if can? :create_task, resource
 
       #event-tasks-container
         = render partial: 'tasks', locals: {tasks: resource.tasks.active}
