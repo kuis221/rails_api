@@ -7561,16 +7561,15 @@ input[type="text"]{
 	&.date_picker{
 		background-image: image-url('calendar.svg');
 		background-repeat: no-repeat;
-		background-position: 4px;
-		font-size: 13px;
-		padding-left: 35px;
+		background-position: 2px;
+		padding-left: 30px;
 		text-align: left;
 	}
 	&.time_picker{
 		background: image-url('time.svg');
 		background-repeat: no-repeat;
-		background-position: 4px;
-		padding-left: 35px;
+		background-position: 2px;
+		padding-left: 30px;
 		text-align: left;
 	}
 }

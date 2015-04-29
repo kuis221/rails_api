@@ -386,23 +386,26 @@ class Place < ActiveRecord::Base
         params[:current_company_user].is_admin? ||
         params[:current_company_user].allowed_to_access_place?(build_from_autocoplete_result(result))
       end
-
-      google_results = JSON.parse(open("https://maps.googleapis.com/maps/api/place/textsearch/json?key=#{GOOGLE_API_KEY}&sensor=false&query=#{CGI.escape(params[:q])}").read)
-      if google_results && google_results['results'].present?
-        merged_ids = Place.where.not(merged_with_place_id: nil).where(place_id: google_results['results'].map{ |r| r['place_id'] }).pluck(:place_id)
-        sort_index = { true => 0, false => 1 } # elements with :valid=true should go first
-        results.concat(google_results['results']
-          .reject { |p| local_references.include?(p['reference']) || local_references.include?(p['place_id']) || merged_ids.include?(p['place_id']) }
-          .map do |p|
-            name = p['formatted_address'].match(/\A#{Regexp.escape(p['name'])}/i) ? nil : p['name']
-            label = [name, p['formatted_address'].to_s].compact.join(', ')
-            {
-              value: label,
-              label: label,
-              id: "#{p['reference']}||#{p['place_id']}",
-              valid: valid_flag.call(p)
-            }
-          end.sort! { |x, y| sort_index[x[:valid]] <=> sort_index[y[:valid]] }.slice!(0, 5 - results.count))
+      begin
+        google_results = JSON.parse(open("https://maps.googleapis.com/maps/api/place/textsearch/json?key=#{GOOGLE_API_KEY}&sensor=false&query=#{CGI.escape(params[:q])}").read)
+        if google_results && google_results['results'].present?
+          merged_ids = Place.where.not(merged_with_place_id: nil).where(place_id: google_results['results'].map{ |r| r['place_id'] }).pluck(:place_id)
+          sort_index = { true => 0, false => 1 } # elements with :valid=true should go first
+          results.concat(google_results['results']
+            .reject { |p| local_references.include?(p['reference']) || local_references.include?(p['place_id']) || merged_ids.include?(p['place_id']) }
+            .map do |p|
+              name = p['formatted_address'].match(/\A#{Regexp.escape(p['name'])}/i) ? nil : p['name']
+              label = [name, p['formatted_address'].to_s].compact.join(', ')
+              {
+                value: label,
+                label: label,
+                id: "#{p['reference']}||#{p['place_id']}",
+                valid: valid_flag.call(p)
+              }
+            end.sort! { |x, y| sort_index[x[:valid]] <=> sort_index[y[:valid]] }.slice!(0, 5 - results.count))
+        end
+      rescue OpenURI::HTTPError => e
+        Rails.logger.info "failed to load results from Google: #{e.message}"
       end
       results
     end
@@ -463,6 +466,7 @@ class Place < ActiveRecord::Base
 
   def fetch_place_data
     if reference && !do_not_connect_to_api
+      return unless spot
       self.name = spot.name
       self.lonlat = "POINT(#{spot.lng} #{spot.lat})"
       self.formatted_address = spot.formatted_address

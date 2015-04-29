@@ -25,7 +25,7 @@ javascript:
         },
         fixedWeekCount: false,
         eventLimit: false,
-        defaultDate: "#{(params[:start_date] && params[:end_date] ? Timeliness.parse(params[:start_date].first) + 15.days : Date.today).to_s(:full_calendar) }",
+        defaultDate: "#{(params[:start_date] && params[:end_date] ? Timeliness.parse(Array(params[:start_date]).first) + 15.days : Date.today).to_s(:full_calendar) }",
         events: {
           events: function(start, end, timezone, callback){
             window.loadingVisits = true;

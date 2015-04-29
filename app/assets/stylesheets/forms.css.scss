@@ -77,23 +77,6 @@ form{
 	color: $user_menu;
 }
 
-// Input styles
-
-input:-moz-placeholder,
-textarea:-moz-placeholder {
-	color: white;
-}
-
-input:-ms-input-placeholder,
-textarea:-ms-input-placeholder {
-	color: white;
-}
-
-input::-webkit-input-placeholder,
-textarea::-webkit-input-placeholder {
-	color: white;
-}
-
 /* Checkboxes */
 .checker {
 	background-color: $gray-lighter;
