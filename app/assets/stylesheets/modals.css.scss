@@ -559,7 +559,7 @@ ul.select2-results{
 			height: 136px;
 			margin-bottom: 0;
 			padding-top: 9px;
-			width: 100px;
+			width: 100%;
 			&.input-large{width:210px;}
 			&.input-xlarge{width:100%;}
 			&.input-xxlarge{width:540px;}
@@ -717,190 +717,6 @@ ul.select2-results{
 }
 
 
-// DATEPICKER STYLES
-
-.ui-widget{
-	font-family: $baseFontFamily;
-	width: 190px;
-}
-
-.ui-widget-header{
-	background:$brand;
-	border:$brand;
-}
-
-.ui-corner-all{
-	-webkit-border-radius: 6px 6px 0px 0px !important;
-	border-radius: 6px 6px 0px 0px !important;
-}
-
-.ui-datepicker{
-	border:1px solid $user_menu;
-	a{
-		color: red;
-	}
-		table{
-			font-size: 10px;
-			margin: 0 0 4px 4px;
-			width: 95%;
-		}
-		td{
-			&.ui-datepicker-today{
-				a{
-					color:$gray;
-					font-weight: bold !important;
-					opacity: 1;
-				}
-			}
-		}
-		th{
-			color: $gray;
-			padding: 4px 0 0 0;
-		}
-		.ui-datepicker-title{
-			font-size: 13px;
-			font-weight: normal;
-			margin: 0 9px;
-			text-align: left;
-		}
-		.ui-datepicker-prev{
-			background: none;
-			left: 140px;
-			right:-2px !important;
-			top:2px;
-			&:after{
-				color: white;
-				content: "\e003";
-				display: block;
-				font-family: 'icons';
-				font-size: 9px;
-				left: 5px;
-				position: absolute;
-				speak:none;
-				text-indent: 0;
-				top:5px;
-				-webkit-font-smoothing: antialiased;
-			}
-			&:hover{
-				background: none;
-				border:0;
-			}
-		}
-		.ui-datepicker-next{
-			right:1px !important;
-			top:2px;
-			&:after{
-				color: white;
-				display: block;
-				font-family: 'icons';
-				font-size: 9px;
-				left: 5px;
-				position: absolute;
-				speak:none;
-				text-indent: 0;
-				top:5px;
-				-webkit-font-smoothing: antialiased;
-			}
-			&:hover{
-				background: none;
-				border:0;
-			}
-		}
-	}
-
-	.ui-datepicker-calendar{
-		.ui-datepicker-other-month{
-			.ui-state-default, .ui-widget-content .ui-state-default{
-				color: $user_menu!important;
-				&:hover{
-					color: $menu !important;
-				}
-			}
-		}
-	}
-
-	#ui-datepicker-div{
-		margin-top: 6px !important;
-		padding: 0 !important;
-	}
-
-	.ui-datepicker-prev span:after{
-		color: white;
-		display: block;
-		font-family: 'icons';
-		font-size: 9px;
-		left: 0;
-		position: absolute;
-		speak:none;
-		text-indent: 0;
-		top:1px;
-		-webkit-font-smoothing: antialiased;
-	}
-
-	.ui-timepicker-list{
-		border: 1px solid $brand;
-		-webkit-border-radius: 6px !important;
-		border-radius: 6px !important;
-		box-shadow: none;
-		width:118px;
-		z-index: 9999999;
-		li{
-			color: $text;
-			padding: 3px 0 3px 32px;
-			&:hover{
-				background-color: $brand !important;
-				color: white !important;
-			}
-			&.ui-timepicker-selected{
-				background-color: $brand !important;
-				color: white !important;
-			}
-		}
-
-		&.timepicker-filter{
-			width:98px !important;
-			border-color: $gray;
-			li {
-				padding-left: 10px;
-			}
-		}
-	}
-	.ui-icon{
-		visibility: hidden;
-	}
-
-	.event_modal .modal-body {
-		textarea {
-			width: 100%;
-			height: 65px;
-		}
-	}
-
-	.ui-state-default, .ui-widget-content .ui-state-default{
-		background: white !important;
-		border:0;
-		color: $menu;
-		font-size: 11px;
-		font-weight: normal;
-		opacity: 0.8;
-		text-align: center;
-		&:hover{
-			background:$gray-lighter !important;
-			-webkit-border-radius: 14px;
-			border-radius: 14px;
-		}
-	}
-	.ui-state-disabled, .ui-widget-content .ui-state-disabled{
-		color: $user_menu;
-	}
-
-	.ui-icon, .ui-widget-content .ui-icon{
-		background-image: none !important;
-	}
-	.ui-widget-header .ui-icon{
-		background-image: none;
-	}
-
 // ERROR
 .control-group.error{
 	.control-label{
@@ -913,6 +729,7 @@ ul.select2-results{
 		line-height: 31px;
 	}
 }
+
 
 // VALID
 
