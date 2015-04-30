@@ -618,7 +618,6 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	box-sizing: border-box;
 	width: calc(100% - 100px);
 	z-index: 110000;
-	height: 44px;
 	.results-count {
 		font-weight: bold;
 	}
@@ -2902,23 +2901,18 @@ ul.ui-widget-content{
 		font-size: 12px;
 		margin: 0 10px 0 0;
 	}
-	.button_to_edit {
-		margin-right: 0;
-	}
 	.button_to {
 		margin: 0 0 0 8px;
 		&:first-of-type {
 			margin: 0;
 		}
-		i.icon {
-			color: $brand;
-			&:hover {
-				color: $app_bg;
-			}
-		}
 	}
-	.icon-edit{
-		margin: 0 0 0 15px;
+	i{
+		color: $brand;
+		font-size: 14px;
+		&.icon-edit{
+			margin: 0 0 0 15px;
+		}
 	}
 }
 
@@ -3016,14 +3010,24 @@ ul.ui-widget-content{
 		}
 	}
 
+	textarea{
+		min-height: 120px;
+	}
+
 	[class*='form_field']{
 		margin-bottom:25px;
 	}
 
 	.form-actions {
-		margin-top: 20px;
+		margin-top: 40px;
 		input {
 			width: auto;
+		}
+	}
+	input{
+		&.date_picker, &.time_picker{
+			color: $silver;
+			width: 120px;
 		}
 	}
 	.form_field_userdate {
@@ -3033,9 +3037,6 @@ ul.ui-widget-content{
 	.control-group{
 		margin-bottom: 0;
 
-		.input-xlarge{
-			width:220px;
-		}
 		.segment-total{
 			display: none;
 		}
@@ -3098,18 +3099,6 @@ ul.ui-widget-content{
 				}
 			}
 		}
-
-		.likert-scale-table {
-			td {
-				padding: 4px;
-			}
-			label {
-				margin-right: 0;
-				div.radio {
-					margin-right: 0;
-				}
-			}
-		}
 	}
 	.form_field_percentage{
 		.controls .control-group{
@@ -3136,47 +3125,47 @@ ul.ui-widget-content{
 			max-width: none;
 		}
 	}
-	.form_field_summation {
-		display: inline-block;
-		.controls {
+
+	.form_field_text,
+	.form_field_number,
+	.form_field_dropdown,
+	.form_field_text_area,
+	.form_field_marque,
+	.form_field_brand,{
+		width: 390px
+	}
+
+	.form_field_summation, .field.summation {
+		min-width: 320px;
+		max-width: 390px;
+		.controls{
+			clear: both;
+			margin-top: 15px;
+		}
+		.field-option{
+			height: 50px;
+			input[type="text"]{
+				float: right;
+				width: 200px;
+			}
+			label{
+				height: 40px;
+				line-height: 38px;
+				margin-right:30px;
+				float: left;
+				font-weight:normal;
+			}
+		}
+		.summation-total-field{
+			border-top: 2px solid $user_menu;
+			padding-top: 15px;
 			margin-top: 10px;
-			.field-option {
-				text-align: right;
-				width: auto;
-				label {
-					text-align: left;
-					color: text;
-					margin-right: 20px;
-					width: 100px;
-					display: inline-block;
-					overflow: hidden;
-					height: 20px;
-				}
-				input {
-					text-align: left;
-				}
-				&.error input {
-					border-color: #B94A49;
-				}
-				.control-label{
-					float:left;
-				}
-				input {
-					width: 220px;
-				}
-				margin-bottom: 10px;
-				&.summation-total-field {
-					border-top: 2px solid $gray-light;
-					padding-top: 10px;
-					label {
-						text-align: right;
-					}
+			.summation{
+				&:first-of-type{
+					margin-top: 0;
 				}
 			}
 		}
-	}
-	.form_field_section {
-		margin-top: 40px;
 	}
 	.form_field_photo {
 		.form-result-label {
@@ -3186,12 +3175,12 @@ ul.ui-widget-content{
 			margin-bottom: 5px;
 		}
 	}
-	h3.section-title {
+	.section-title {
 		display: inline-block;
 		margin-bottom: 15px;
 		color: $brand;
-		font-size: 20px;
 		font-weight: normal;
+		line-height: 40px;
 	}
 	p.section-description {
 		margin-top: -20px;
@@ -3205,21 +3194,13 @@ ul.ui-widget-content{
 			text-align: center;
 		}
 	}
-	input, textarea{
-		margin-bottom:0;
-		width: 390px;
-	}
-	textarea{
-		height: 120px;
-		margin-bottom:0;
-	}
 	.input-append, .input-prepend{
 		margin-bottom: 0;
 		input{
-			width: 176px;
+			width: 175px;
 		}
 		.input-xlarge{
-			width:176px;
+			width:175px;
 		}
 		&+label{
 			margin-left: 14px;
@@ -3234,35 +3215,6 @@ ul.ui-widget-content{
 	table{
 		margin-bottom: 0;
 	}
-	input{
-		&.date_picker{
-			@include box-sizing(border-box);
-			text-align: right;
-			width: 120px;
-			background: image-url('calendar.svg') no-repeat 0px 7px;
-			height: 40px;
-			padding: 2px 10px 0 0;
-			width: 120px;
-			font-size: 12px;
-			&[readonly] {
-				color: silver;
-			}
-		}
-		&.time_picker{
-			@include box-sizing(border-box);
-			text-align: right;
-			height: 40px;
-			width: 120px;
-			padding: 2px 18px 0 0;
-			background: image-url('time.svg') no-repeat 3px 7px;
-			&[readonly] {
-				color: silver;
-			}
-		}
-		&.waiting-files {
-			width: auto !important;
-		}
-	}
 }
 
 
@@ -3274,15 +3226,11 @@ ul.ui-widget-content{
 	border: 2px dashed $gray-lighter;
 	color: $user_menu;
 	line-height: 17px;
-	padding: 40px 20px 20px;
+	padding: 48px 16px 10px;
 	text-align: center;
-	height: 150px;
+	height: 160px;
 	width: 240px;
 
-	&.small{
-		padding: 20px 20px 20px;
-		height: 100px;
-	}
 	&.big{
 		width: 100%;
 	}
@@ -3299,18 +3247,19 @@ ul.ui-widget-content{
 		text-decoration:underline;
 	}
 	.drag-box{
-		h4, p{
+		h5,p{
 			color: $user_menu;
 			font-family: $baseFontFamily;
 			font-weight: normal;
 			text-align: left;
 			margin-bottom:0;
 		}
-		h4{
+		h5{
+			line-height: 16px;
 			margin-top:10px;
 		}
 		p{
-			font-size:14px;
+			font-size: 16px;
 			span.file-browse {
 				text-decoration: underline;
 				position: relative;
@@ -3360,10 +3309,9 @@ body.activities{
 				margin-bottom: 30px;
 			}
 		}
-		h3{
-			margin-bottom: 20px;
+		h5.module-title{
 			&:first-of-type{
-				margin-top: 50px;
+				margin-top: 30px;
 			}
 		}
 		.calendar-data{
@@ -5231,6 +5179,13 @@ body.campaigns{
 		margin-bottom: -1px;
 	}
 
+	a, i{
+		&.icon-plus-sign, &.icon-edit, &.icon-remove-circle{
+			color: $brand;
+			font-size: 18px;
+		}
+	}
+
 	.map_header{
 		top: 5px;
 		bottom: 32px;
@@ -5576,106 +5531,6 @@ div.chardinjs-tooltip
 
 .main.with-details-close-bar {
 	padding-top: 70px !important;
-}
-
-.switch-toggle {
-	width: 75px;
-	height: 28px;
-	margin: 9px 0 0 18px;
-	overflow: hidden;
-	a.btn {
-		line-height: normal !important;
-		float: left;
-		width: 50px;
-		height: 20px;
-		padding: 4px 5px;
-		color: #fff;
-		font-size: 14px;
-		border-radius: 15px;
-		span {
-			background-color: #fff;
-			width: 18px;
-			height: 18px;
-			border-radius: 10px;
-			display: block;
-			float: right;
-			margin: 1px 0 0 0;
-		}
-	}
-	a.toggle-on-btn {
-		display: none;
-		background-color: #90BE42;
-		text-align: left;
-		padding-left: 10px;
-		.on{
-			float: left;
-			line-height: 20px;
-		}
-	}
-	a.toggle-off-btn {
-		text-align: right;
-		padding-right: 10px;
-		background-color: $user_menu;
-		span {
-			float: left;
-		}
-		.off{
-			line-height: 20px;
-		}
-	}
-	&.inactive{
-		.toggle-on-btn {
-			display: none;
-		}
-		.toggle-off-btn {
-			display: block;
-		}
-	}
-	&.active{
-		.toggle-on-btn {
-			display: block;
-		}
-		.toggle-off-btn {
-			display: none;
-		}
-	}
-	a.toggle-on-btn-activity-type {
-		display: none;
-		background-color: #90BE42;
-		text-align: left;
-		padding-left: 10px;
-		.on{
-			float: left;
-			line-height: 20px;
-		}
-	}
-	a.toggle-off-btn-activity-type {
-		text-align: right;
-		padding-right: 10px;
-		background-color: $user_menu;
-		span {
-			float: left;
-		}
-		.off{
-			line-height: 20px;
-		}
-	}
-	&.inactive{
-		.toggle-on-btn-activity-type {
-			display: none;
-		}
-		.toggle-off-btn-activity-type {
-			display: block;
-		}
-	}
-	&.active{
-		.toggle-on-btn-activity-type {
-			display: block;
-		}
-		.toggle-off-btn {
-			display: none;
-		}
-	}
 }
 
 h4.custom-reports {
@@ -6764,8 +6619,40 @@ table.table.likert-scale-table {
 		border-top: none;
 		text-align: center;
 	}
-	tbody tr:hover td {
-		background-color: transparent !important;
+	thead{
+		label{
+			color: silver;
+			font-size: 12px;
+		}
+		tr{
+			th{
+				&:nth-child(2){
+					padding-left: 25px;
+				}
+				&:nth-child(3){
+					width: 50px;
+				}
+				&:nth-child(4){
+					width: 120px;
+				}
+				&:nth-child(5){
+					padding-left:0;
+				}
+			}
+		}
+	}
+	tbody{
+		tr{
+			td:first-of-type{
+				padding-left: 0;
+			}
+			td:nth-child(2){
+				padding-left: 25px;
+			}
+			&:hover td{
+				background-color: transparent !important;
+			}
+		}
 	}
 	td {
 		&:first-child {
@@ -6776,6 +6663,20 @@ table.table.likert-scale-table {
 		text-transform:uppercase;
 		font-weight: normal;
 	}
+	label{
+		font-weight: normal;
+		font-size: 14px;
+		margin-right: 0;
+		line-height: 16px;
+		div.radio {
+			margin-right: 0;
+		}
+	}
+}
+
+.likert-scale-table{
+
+
 }
 // CUSTOM FILTERS SETTING
 // ----------------------------------------------------------------------
@@ -7606,7 +7507,7 @@ body.dashboard.index {
 
 .survey-mode-wrapper {
 	color: $text;
-	padding: 70px 0;
+	padding: 70px 0 30px 0;
 	.survey-header {
 		color: $gray-lighter;
 		background-color: $text;
@@ -7617,7 +7518,7 @@ body.dashboard.index {
 	  z-index: 9;
 		h5 {
 			display: block;
-			width: 400px;
+			width: 460px;
 			margin: 0 auto;
 			font-size: 22px;
 		}
@@ -7632,36 +7533,8 @@ body.dashboard.index {
 	.section-title{
 		color: $brand;
 	}
-	.likert-scale-table{
-		.likert-statement, .likert-option{
-			font-weight: normal;
-			line-height: 16px;
-		}
-		.likert-option{
-			font-size: 12px;
-		}
-		.likert-statement{
-			font-size: 14px;
-		}
-		tbody{
-			tr td{
-				width: 10%;
-				&:first-child{
-					padding-left: 0;
-				}
-				padding-right: 0;
-			}
-		}
-	}
-	.activity-form .attachment-panel{
-		padding: 40px 15px 20px;
-		width: 220px;
-		.attachment-select-file-view{
-			width: auto;
-		}
-	}
 	.large-inputs{
-		margin: 30px 0;
+		margin: 40px 0;
 	}
 	.control-group{
 		margin-bottom: 0;
@@ -7672,6 +7545,9 @@ body.dashboard.index {
 			color: $text;
 			font-weight: bold;
 			margin-bottom: 4px;
+			&.check_boxes, &.radio_buttons{
+				margin-bottom: 15px;
+			}
 		}
 		.controls{
 			.checkbox, .radio{
@@ -7688,7 +7564,7 @@ body.dashboard.index {
 	.survey-form {
 		background-color: #fff;
 		#form-container {
-			width: 400px;
+			width: 460px;
 			margin: 0 auto;
 		}
 	}
@@ -7706,38 +7582,15 @@ body.dashboard.index {
 	}
 }
 
-// Review hotfix for buttons on survey mode wrapper once results-enhancements is finally merged
-
-.btn-cancel{
-	color: $white;
+form.button_to .button-with-icon {
+  border-width: 0;
+  border-image-width: 0;
+  padding: 0;
+  background: none;
+  outline: none;
+  line-height: normal;
 }
 
-.btn-large{
-	box-sizing: border-box;
-	font-size: 16px;
-	padding: 10px 16px !important;
-	height: 42px;
-	min-width: 160px;
-}
-
-// Date picker fix
-
-input[type="text"]{
-	&.date_picker{
-		background-image: image-url('calendar.svg');
-		background-repeat: no-repeat;
-		background-position: 2px;
-		padding-left: 30px;
-		text-align: left;
-	}
-	&.time_picker{
-		background: image-url('time.svg');
-		background-repeat: no-repeat;
-		background-position: 2px;
-		padding-left: 30px;
-		text-align: left;
-	}
-}
 
 
 
