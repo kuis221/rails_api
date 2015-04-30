@@ -61,7 +61,7 @@ module ApplicationHelper
         content_tag(:div, class: 'drag-box') do
           content_tag(:i, nil, class: 'icon-upload') +
           content_tag(:div, class: 'drag-box-text') do
-            content_tag(:h4, 'DRAG & DROP') +
+            content_tag(:h5, 'DRAG & DROP') +
             content_tag(:p) do
               content_tag(:span, 'your ' + I18n.t("drag_n_drop.items.#{module_name}") + ' or ') +
               content_tag(:span, nil, class: 'file-browse') do
