@@ -2914,7 +2914,7 @@ ul.ui-widget-content{
 	.close-details {
 		display: inline-block;
 		width: 99%;
-		padding: 8px 0 5px 16px;
+		padding: 10px 0 5px 16px;
 		text-decoration: none;
 		color: $brand;
 		.primary-info {
@@ -4736,7 +4736,8 @@ body.roles{
 	}
 }
 
-// Maps on venue and event details
+// MAPS ZONE FOR VENUE AND EVENT DETAILS
+// Same structure for both pages
 
 .areas{
  	.icon-wired-map{
@@ -4752,6 +4753,7 @@ body.roles{
 }
 
 .venue_details_container{
+	min-height: 270px;
 	overflow: hidden;
 	position: relative;
 	.data-list{
