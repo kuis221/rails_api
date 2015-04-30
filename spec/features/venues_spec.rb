@@ -38,6 +38,7 @@ feature 'Venues Section', js: true, search: true do
 
     scenario 'search for places', :vcr do
       visit venues_path
+      expect(page).to have_content('You do not have any venues right now.')
       select_places_autocomplete 'San Francisco CA', from: 'Enter a location'
       fill_in 'I am looking for', with: 'Alcatraz'
       click_js_button 'Search'

@@ -26,7 +26,7 @@
           = f.input :invitees, input_html: { placeholder: 'Number of invitees', value: nil }
 
           .form-actions
-            = f.button :submit, class: 'btn btn-primary', data: { disable_with: 'Please wait...' }
+            = f.button :submit, 'Submit', class: 'btn btn-primary', data: { disable_with: 'Please wait...' }
             = "&nbsp;".html_safe
             = f.button :button, 'Cancel', class: 'btn btn-cancel'
 javascript:

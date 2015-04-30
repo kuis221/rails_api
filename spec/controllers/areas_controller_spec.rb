@@ -1,12 +1,14 @@
 require 'rails_helper'
 
 describe AreasController, type: :controller do
-  before(:each) do
-    @user = sign_in_as_user
-    @company = @user.companies.first
-  end
+  let(:user) { sign_in_as_user }
+  let(:company) { user.companies.first }
+  let(:company_user) { user.current_company_user }
+  let(:campaign) { create(:campaign, company: company) }
 
-  let(:area) { create(:area, company: @company) }
+  before { user }
+
+  let(:area) { create(:area, company: company) }
 
   describe "GET 'edit'" do
     it 'returns http success' do
@@ -75,7 +77,7 @@ describe AreasController, type: :controller do
   end
 
   describe "POST 'create'" do
-    it 'should not render form_dialog if no errors' do
+    it 'does not render form_dialog if no errors' do
       expect do
         xhr :post, 'create', area: { name: 'Test Area', description: 'Test Area description' }, format: :js
       end.to change(Area, :count).by(1)
@@ -87,7 +89,7 @@ describe AreasController, type: :controller do
       expect(response).not_to render_template('_form_dialog')
     end
 
-    it 'should render the form_dialog template if errors' do
+    it 'renders the form_dialog template if errors' do
       expect do
         xhr :post, 'create', format: :js
       end.not_to change(Area, :count)
@@ -115,7 +117,6 @@ describe AreasController, type: :controller do
 
   describe "PUT 'update'" do
     it 'must update the area attributes' do
-      t = create(:area)
       put 'update', id: area.to_param, area: { name: 'Test Area', description: 'Test Area description' }
       expect(assigns(:area)).to eq(area)
       expect(response).to redirect_to(area_path(area))
@@ -126,7 +127,7 @@ describe AreasController, type: :controller do
   end
 
   describe "GET 'list_export'", search: true do
-    it 'should return an empty book with the correct headers' do
+    it 'returns an empty book with the correct headers' do
       expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
       ResqueSpec.perform_all(:export)
       expect(ListExport.last).to have_rows([
@@ -134,9 +135,10 @@ describe AreasController, type: :controller do
       ])
     end
 
-    it 'should include the results' do
-      create(:area, name: 'Gran Area Metropolitana', description: 'Ciudades principales de Costa Rica',
-              active: true, company: @company)
+    it 'includes the results' do
+      create(:area, name: 'Gran Area Metropolitana',
+                    description: 'Ciudades principales de Costa Rica',
+                    active: true, company: company)
       Sunspot.commit
 
       expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
@@ -146,6 +148,104 @@ describe AreasController, type: :controller do
         ['NAME', 'DESCRIPTION', 'ACTIVE STATE'],
         ['Gran Area Metropolitana', 'Ciudades principales de Costa Rica', 'Active']
       ])
+    end
+  end
+
+  describe "GET 'select_form'" do
+    it 'includes all the active areas' do
+      area = create(:area, company: company)
+      create(:area, company: company, active: false) # Inactive area
+
+      xhr :get, :select_form, campaign_id: campaign.id, format: :js
+
+      expect(response).to be_success
+
+      expect(assigns(:assignable_areas)).to eq([area])
+    end
+
+    it 'do not include the areas that belongs to the campaign' do
+      area = create(:area, company: company)
+      campaign.areas << create(:area, company: company)
+      xhr :get, :select_form, campaign_id: campaign.id, format: :js
+
+      expect(response).to be_success
+
+      expect(assigns(:assignable_areas)).to eq([area])
+    end
+
+    it 'do not include the areas that belongs to the company user' do
+      area = create(:area, company: company)
+      company_user.areas << create(:area, company: company)
+      xhr :get, :select_form, company_user_id: company_user.id, format: :js
+
+      expect(response).to be_success
+
+      expect(assigns(:assignable_areas)).to eq([area])
+    end
+  end
+
+  describe "POST 'assign'" do
+    let(:area) { create(:area, company: company) }
+    it 'adds the area to the campaign' do
+      expect do
+        xhr :post, 'assign', campaign_id: campaign.id, id: area.id, format: :js
+      end.to change(campaign.areas, :count).by(1)
+      expect(response).to be_success
+      expect(response).to render_template('areas/assign')
+    end
+
+    it 'adds the area to the company user' do
+      expect(Rails.cache).to receive(:delete).with("user_accessible_locations_#{company_user.id}")
+      expect(Rails.cache).to receive(:delete).with("user_accessible_places_#{company_user.id}")
+      expect do
+        xhr :post, 'assign', company_user_id: company_user.id, id: area.id, format: :js
+      end.to change(company_user.areas, :count).by(1)
+      expect(response).to be_success
+      expect(response).to render_template('areas/assign')
+      expect(response).to render_template('company_users/_areas_and_places')
+      expect(response).to render_template('company_users/_areas')
+    end
+  end
+
+  describe "DELETE 'unassign'" do
+    let(:area) { create(:area, company: company) }
+    let(:kpi) { create(:kpi, company: company) }
+
+    it 'removes the area and the goals for the associated kpis from the campaign' do
+      campaign.areas << area
+
+      area_goal = area.goals.for_kpi(kpi)
+      area_goal.parent = campaign
+      area_goal.value = 100
+      area_goal.save
+
+      expect do
+        expect do
+          delete 'unassign', campaign_id: campaign.id, id: area.id, format: :js
+        end.to change(campaign.areas, :count).by(-1)
+      end.to change(Goal, :count).by(-1)
+
+      expect(response).to be_success
+      expect(response).to render_template('areas/unassign')
+    end
+
+    it 'removes the area from the company user' do
+      company_user.areas << area
+
+      area_goal = area.goals.for_kpi(kpi)
+      area_goal.parent = company_user
+      area_goal.value = 100
+      area_goal.save
+
+      expect(Rails.cache).to receive(:delete).with("user_accessible_locations_#{company_user.id}")
+      expect(Rails.cache).to receive(:delete).with("user_accessible_places_#{company_user.id}")
+      expect do
+        expect do
+          delete 'unassign', company_user_id: company_user.id, id: area.id, format: :js
+        end.to change(company_user.areas, :count).by(-1)
+      end.to change(Goal, :count).by(-1)
+      expect(response).to be_success
+      expect(response).to render_template('areas/unassign')
     end
   end
 end

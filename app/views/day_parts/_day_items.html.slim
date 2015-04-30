@@ -1,5 +1,12 @@
-.row-fluid
-  - resource.day_items.each do |day_item|
-    .span3.date-item.clearfix id="day_item-#{day_item.id}"
-      .pull-left= day_item.label
-      .pull-right= link_to content_tag(:i,'', class: 'icon-rounded-disable'), day_part_day_item_path(resource, day_item), method: :delete, title: 'Remove', remote: true
+h5.module-title TIME RANGES
+- if resource.day_items.any?
+  #day-part-days-list
+    .row-fluid
+      - resource.day_items.each do |day_item|
+        .span3.date-item.clearfix id="day_item-#{day_item.id}"
+          .pull-left= day_item.label
+          .pull-right= link_to content_tag(:i,'', class: 'icon-rounded-disable'), day_part_day_item_path(resource, day_item), method: :delete, title: 'Remove', remote: true
+  = button_to_add 'Add Time', new_day_part_day_item_path(resource) if can?(:edit, resource)
+- else
+  = blank_state_module('day_part.times') do
+    = button_to 'Add Time', new_day_part_day_item_path(resource), remote: true, method: :get, class: 'btn btn-primary'  if can?(:edit, resource)

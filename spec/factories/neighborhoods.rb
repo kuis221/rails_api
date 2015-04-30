@@ -8,7 +8,7 @@
 #  city     :string(64)
 #  name     :string(64)
 #  regionid :decimal(, )
-#  geog     :spatial          multipolygon, 0
+#  geog     :spatial          multipolygon, 4326
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

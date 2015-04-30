@@ -21,8 +21,14 @@ $.fn.S3Uploader = (options) ->
     remove_completed_progress_bar: true
     remove_failed_progress_bar: false
     progress_bar_target: null
+    progress_bar_target_prepend: false
     click_submit_target: null
+    cancel_upload_target: null
     allow_multiple_files: true
+    template_name: 'template-upload'
+    drop_zone: null
+    sequential_uploads: false
+    limit_concurrent_uploads: 3
 
   $.extend settings, options
 
@@ -36,17 +42,33 @@ $.fn.S3Uploader = (options) ->
   setUploadForm = ->
     $uploadForm.fileupload
 
+      dropZone: settings.drop_zone
+      limitConcurrentUploads: settings.limit_concurrent_uploads
+      sequentialUploads: settings.sequential_uploads
+
       add: (e, data) ->
         file = data.files[0]
         file.unique_id = Math.random().toString(36).substr(2,16)
 
         unless settings.before_add and not settings.before_add(file)
           current_files.push data
-          if $('#template-upload').length > 0
-            data.context = $($.trim(tmpl("template-upload", file)))
-            $(data.context).appendTo(settings.progress_bar_target || $uploadForm)
+          if $('#' + settings.template_name).length > 0
+            data.context = $($.trim(tmpl(settings.template_name, file)))
+            if settings.progress_bar_target_prepend
+              $(data.context).prependTo(settings.progress_bar_target || $uploadForm)
+            else
+              $(data.context).appendTo(settings.progress_bar_target || $uploadForm)
           else if !settings.allow_multiple_files
             data.context = settings.progress_bar_target
+
+          if settings.cancel_upload_target
+            jqXHR = data
+            $(data.context).find(settings.cancel_upload_target).on 'click', (e) ->
+              if jqXHR
+                jqXHR.abort()
+                jqXHR = null
+              return
+
           if settings.click_submit_target
             if settings.allow_multiple_files
               forms_for_submit.push data

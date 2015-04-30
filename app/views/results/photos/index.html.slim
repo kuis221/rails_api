@@ -45,7 +45,12 @@ javascript:
     'applyTo': 'results_photos',
     'userFilters': #{user_saved_filters('results_photos').to_json.html_safe},
     'autoCompletePath': '#{autocomplete_url('results_photos', format: :json)}',
-    'defaultParams': '#{j default_params_for_view('status[]=Active')}'
+    'defaultParams': '#{j default_params_for_view('status[]=Active')}',
+    'emptyStateMessage': '#{j t("results_photos.empty.line1", scope: :blank_states) }',
+    'emptyStateMessageLine2': '#{j t("results_photos.empty.line2", scope: :blank_states) }',
+    'emptyFilterResultsMessage': '#{j t("results_photos.filters.line1", default: :filters_line1, scope: :blank_states) }',
+    'emptyFilterResultsMessageLine2': '#{j t("results_photos.filters.line2", default: :filters_line2, scope: :blank_states) }',
+    'emptyStateImage': '#{asset_path('blank-photos.png')}'
   });
 
   $(document).delegate('#photo-download-add', 'click', function(e) {
