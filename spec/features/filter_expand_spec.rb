@@ -157,7 +157,7 @@ feature 'Filter Expand', js: true, search: true do
     end
 
     scenario 'Expanding custom filters should not clear previously selected filters' do
-      today = Time.zone.local(Time.now.year, Time.now.month, Time.now.day, 12, 00)
+      today = Time.zone.local(Time.zone.now.year, Time.zone.now.month, Time.zone.now.day, 12, 00)
       custom_filter_category = create(:custom_filters_category, name: 'Divisions', company: company)
       area1 = create(:area, name: 'Some Area', description: 'an area description', company: company)
       area2 = create(:area, name: 'Another Area', description: 'another area description', company: company)

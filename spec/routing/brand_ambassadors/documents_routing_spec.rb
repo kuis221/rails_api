@@ -4,11 +4,6 @@ describe 'routes for brand ambassadors documents', type: :routing do
   it "doesn't routes to #index" do
     expect(get: '/brand_ambassadors/documents').not_to be_routable
   end
-
-  it 'routes to #new' do
-    expect(get: '/brand_ambassadors/documents/new').to route_to('brand_ambassadors/documents#new')
-  end
-
   it "doesn't routes to #show" do
     expect(get: '/brand_ambassadors/documents/1').not_to be_routable
   end
@@ -33,10 +28,6 @@ end
 describe 'routes for brand ambassadors documents nested inside a visit', type: :routing do
   it "doesn't routes to #index" do
     expect(get: '/brand_ambassadors/visits/1/documents').not_to be_routable
-  end
-
-  it 'routes to #new' do
-    expect(get: '/brand_ambassadors/visits/1/documents/new').to route_to('brand_ambassadors/documents#new', visit_id: '1')
   end
 
   it "doesn't routes to #show" do
