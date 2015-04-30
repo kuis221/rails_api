@@ -203,6 +203,7 @@ class Ability
 
       can :access, :analysis do
         can?(:index, Analysis) ||
+        can?(:attendance, Event) ||
         can?(:view_gva_report, Campaign) ||
         can?(:view_event_status, Campaign) ||
         can?(:access, :trends_report)

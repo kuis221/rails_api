@@ -1,6 +1,9 @@
 .sidebar
   h5.available-fields-title = 'Available Fields'
-  .available-fields-box
+  .available-fields.searchable-field-list
+    .search-fields
+      input type="search" class="field-search-input" name="field_search" title="Field Search" placeholder="Search for fields"
+    .available-fields-box
 
 .main.data-extract
   = simple_form_for resource, as: :data_extract, url: form_action, method: :get, name: "data_source_form" do |f|
