@@ -26,6 +26,10 @@ $.widget 'brandscopic.dataExtract', {
       btn = $(e.currentTarget)
       @_sortTable btn.data('column'), btn.data('dir')
 
+    $('.available-fields').on 'keyup', '.field-search-input', (e) =>
+      e.preventDefault()
+      @_searchFieldList $(e.target).val().toLowerCase()
+
     $(window).on 'resize', () =>
       @scrollerApi.reinitialise()
       @_resizePreviewZone()
@@ -73,4 +77,12 @@ $.widget 'brandscopic.dataExtract', {
 
   _buildDragtable: () ->
     @element.find('.data-extract-table').dragtable({dragHandle:'span'})
+
+  _searchFieldList: (value) ->
+    for li in $('#available-field-list').find("li:not(.hidden)")
+      if "#{$(li).text()}".toLowerCase().search(value) > -1
+        $(li).show()
+      else
+        $(li).hide()
+    true
 }
