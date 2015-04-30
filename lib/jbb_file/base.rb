@@ -76,7 +76,7 @@ module JbbFile
     end
 
     def invalid_format
-      mailer.invalid_format(self.invalid_files).deliver
+      mailer.invalid_format(self.invalid_files, self::class::VALID_COLUMNS).deliver
       false
     end
 
