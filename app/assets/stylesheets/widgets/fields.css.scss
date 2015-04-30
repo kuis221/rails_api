@@ -1,0 +1,25 @@
+/*
+A markup for fields
+
+Styleguide 8.1
+*/
+
+.summation-field{
+	tr {
+		&:last-child{
+			border-top: 2px solid silver;
+			td{
+				padding-top: 10px;
+			}
+		}
+		td{
+			&:last-child{
+				padding-left: 25px;
+				width: 200px;
+			}
+		}
+	}
+	input{
+		width: 210px;
+	}
+}

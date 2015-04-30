@@ -1,0 +1,28 @@
+// This is an example markup for a KSS section.
+// The definition for `6.1` can be found in your app/assets/stylesheets/ folder.
+= kss_block '8.1' do
+  ul.fields-list.stripped-list
+    li
+      p This is an example for SUMMATION FIELD
+      table.summation-field
+        tbody
+          tr
+            td
+              label Weekly Tasks
+            td
+              input type="text" class="summation"
+          tr
+            td
+              label Social Media
+            td
+              input type="text" class="summation"
+          tr
+            td
+              label Admin (weekly prep, reporting, CM calls)
+            td
+              input type="text" class="summation"
+          tr
+            td
+              label TOTAL
+            td
+              input type="text" class="summation"
