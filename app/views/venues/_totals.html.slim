@@ -1,7 +1,7 @@
 .create-box
   .pull-left
     - if can? :create, Venue
-      = button_to 'Create', new_place_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-venue-btn'}
+      = button_to 'New Venue', new_place_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-venue-btn'}
     - else
       = "&nbsp;".html_safe
 .results-box-container

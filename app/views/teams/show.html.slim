@@ -21,10 +21,7 @@
       = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
 
   #team-members.details_box
-    h5.module-title TEAM MEMBERS
-    #team-members-list
-      = render 'members'
-    = link_to "", new_member_team_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Team Member' if can?(:edit, resource)
+    = render 'members'
 
 = render partial: 'help_tutorial'
 

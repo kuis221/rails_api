@@ -3,7 +3,7 @@
 # This class handle the requests for managing the Company Users
 #
 class CompanyUsersController < FilteredController
-  include DeactivableHelper
+  include DeactivableController
   include UsersHelper
 
   respond_to :js, only: [:new, :create, :edit, :update, :time_zone_change, :time_zone_update]

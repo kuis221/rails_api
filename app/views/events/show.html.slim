@@ -73,7 +73,6 @@
       h5.module-title EVENT STAFF
       #event-team-members
         = render partial: 'team_member_list', locals: {can_delete: can?(:delete_member, resource)}
-      = button_to_add 'Add Team Member', new_member_event_path(resource) if can?(:add_members, resource)
 
 
   - if can?(:view_contacts, resource)
@@ -81,7 +80,6 @@
       h5.module-title CONTACTS
       #event-contacts-list
         = render 'contacts'
-      = button_to_add 'Add Contact', add_event_contact_events_path(resource) if can?(:create_contacts, resource)
 
   - resource.results.each { |r| r.errors.clear }
   - if resource.event_data? && !resource.rejected?
@@ -91,21 +89,17 @@
 
   - if can_tasks
     #event-tasks.details_box
-
-      .pull-left
-        = button_to 'Create Task', new_event_task_path(resource), method: :get, remote: true, class: 'btn btn-details btn-primary' if can? :create_task, resource
-
-      #event-tasks-container
-        = render partial: 'tasks', locals: {tasks: resource.tasks.active}
+      = render partial: 'tasks', locals: { tasks: resource.tasks.active }
 
   - if can? :documents, resource
     #event-documents.details_box
-
       h5.module-title DOCUMENTS
+      - hidden = resource.documents.active.any? || resource.campaign.documents.any?
+      = render partial: 'attached_assets/document_form', locals: { hidden: hidden, resource: AttachedAsset.new, callback_url: event_documents_path(resource, format: :js) }
+      = link_to 'Upload', '#documents_upload_form', 'data-toggle' => 'collapse', id: 'event-upload-documents', class: "btn btn-primary #{hidden ? '' : 'hide'}", title: 'Add Documents' if can? :create_document, Event
       .documents-list
         #documents-list.resource-list
           = render :partial => "documents/document", :collection => resource.documents.active + resource.campaign.documents, :locals => { parent: resource }
-      = button_to_add 'Add Document', new_event_document_path(resource) if can?(:create_document, resource)
 
 = render partial: 'help_tutorial'
 - content_for :footer do
@@ -118,10 +112,10 @@
   - if can_tasks
     javascript:
       if (#{can_tasks}){
-        $(document).on('tasks:change', function(){
+        $(document).on('tasks:change task:deactivated', function(){
           $.get('#{tasks_event_path(resource)}', function(response){
             $response = $('<div>').append(response);
-            $('#event-tasks-container').html($response.find('[data-content="tasks"]').html());
+            $('#event-tasks').html($response.find('[data-content="tasks"]').html());
           })
         });
       }

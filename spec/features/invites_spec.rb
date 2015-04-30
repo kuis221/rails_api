@@ -36,14 +36,17 @@ feature 'Invites', search: true, js: true do
     scenario 'user can create invites' do
       visit event_path(event)
 
-      click_js_button 'New Activity'
+      click_js_button 'Add Activity'
       within visible_modal do
-        select_from_chosen('Invitation', from: 'Activity type')
-        select_from_autocomplete 'Search for a place', 'Guillermitos Bar'
-        fill_in '# Invites', with: '100'
+        choose 'Invitation'
         click_js_button 'Create'
       end
-      ensure_modal_was_closed
+      select_from_autocomplete 'Search for a place', 'Guillermitos Bar'
+      fill_in '# Invites', with: '100'
+      click_button 'Submit'
+
+      expect(page).to have_content 'Thank You!'
+      click_link 'Finish'
 
       within '#invites-list' do
         expect(page).to have_content('Guillermitos Bar')

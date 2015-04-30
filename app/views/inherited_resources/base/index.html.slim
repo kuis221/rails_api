@@ -42,5 +42,10 @@ javascript:
     'includeAutoComplete': true,
     'autoCompletePath': '#{autocomplete_path(controller_name, format: :json)}',
     'defaultParams': '#{j default_params_for_view('status[]=Active')}',
-    'allowCustomizeFilters': true
+    'allowCustomizeFilters': true,
+    'emptyStateMessage': '#{j t("#{controller_name}.empty.line1", scope: :blank_states) }',
+    'emptyStateMessageLine2': '#{j t("#{controller_name}.empty.line2.with#{can?(:create, resource_class) ? '' : 'out'}_schedule_permissions", scope: :blank_states) }',
+    'emptyFilterResultsMessage': '#{j t("blank_states.#{controller_name}.filters.line1") }',
+    'emptyFilterResultsMessageLine2': '#{j t("#{controller_name}.filters.line2", default: :filters_line2, scope: :blank_states) }',
+    'canCreatePermission': #{can?(:create, resource_class)}
   });

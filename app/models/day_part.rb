@@ -29,6 +29,7 @@ class DayPart < ActiveRecord::Base
   delegate :full_name, to: :created_by, prefix: true, allow_nil: true
 
   scope :accessible_by_user, ->(user) { in_company(user.company_id) }
+  scope :active, -> { where(active: true) }
 
   searchable do
     integer :id
@@ -62,7 +63,6 @@ class DayPart < ActiveRecord::Base
         with(:company_id, params[:company_id])
         with(:status, params[:status]) if params.key?(:status) && params[:status].present?
         with(:id, params[:day_part]) if params.key?(:day_part) && params[:day_part].present?
-
 
         facet :status if include_facets
 

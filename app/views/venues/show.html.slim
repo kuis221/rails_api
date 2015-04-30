@@ -136,33 +136,21 @@
 - if can?(:view_events, resource)
   #venue-events.details_box
     h5.module-title EVENTS
-    - if can?(:show, Venue) && can?(:create, Event)
-      - if resource.persisted?
-        = button_to 'Create Event', new_venue_event_path(resource), method: :get, remote: true, class: 'btn btn-details btn-primary', :id => 'new-event-btn' if can? :create, Event
-      - else
-        = button_to 'Create', new_event_path(event: {place_reference: "#{resource.place.reference}||#{resource.place.place_id}"}, place_reference_display_name: "#{resource.place.name}, #{resource.place.city}, #{resource.place.state}"), method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn'
-    - if resource.persisted?
+    - upcomming_venue_events_list
+    - if @venue_events_total > 0
+      = button_to 'Create Event', new_venue_event_path(resource), method: :get, remote: true, class: 'btn btn-primary', :id => 'new-event-btn' if can? :create, Event
       #venue-events-container
         = render partial: 'upcoming_events'
+    - else
+      = blank_state_module('venue.events') do
+        = button_to 'Create Event', new_venue_event_path(resource), method: :get, remote: true, class: 'btn btn-primary', title: 'Create Event'
+
 
 - if resource.persisted? && (can?(:show, Activity) || can?(:index_invites, Venue))
   #venue-activities.details_box
     = render 'activities'
 
-  - if jbb_feature_enabled? && can?(:index_invites, Venue)
-    #event-invites-list.details_box
-      .dropdown.btn-download.pull-right
-        a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
-          i.icon-download
-          i.icon-arrow-down-small
-        ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
-          li
-            = link_to 'Download as XLS', venue_invites_path(resource, format: :csv), role: :menuitem, class: 'xlsx-download-link', data: { url: venue_invites_path(resource, format: :csv) }
-          li
-            = link_to 'Download as PDF', venue_invites_path(resource, format: :pdf), role: :menuitem, class: 'xlsx-download-link', data: { url: venue_invites_path(resource, format: :pdf) }
-      h5.module-title ATTENDANCE
-      #invites-list.resource-list
-        = render partial: 'invites/invite', collection: resource.invites.active.joins(:place).order('lower(places.name)'), locals: { parent: resource }
+  = render 'attendance'
 
 - if can?(:view_photos, resource) && resource.photos.count > 0
   #venue-photos.details_box.box_photos

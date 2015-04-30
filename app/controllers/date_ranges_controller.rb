@@ -7,7 +7,7 @@ class DateRangesController < FilteredController
   respond_to :xls, :pdf, only: :index
 
   # This helper provide the methods to activate/deactivate the resource
-  include DeactivableHelper
+  include DeactivableController
 
   protected
 

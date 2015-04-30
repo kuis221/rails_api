@@ -1,5 +1,9 @@
 .details_box
+  - hidden = resource.documents.active.any?
+  = render partial: 'attached_assets/document_form', locals: { hidden: hidden, resource: AttachedAsset.new, callback_url: campaign_documents_path(resource, format: :js) }
+
+  = link_to 'Upload', '#documents_upload_form', 'data-toggle' => 'collapse', id: 'event-upload-documents', class: "btn btn-primary #{hidden ? '' : 'hide'}", title: 'Add Documents' if can? :create_document, Event
+
   .documents-list
     #documents-list.resource-list
       = render :partial => "documents/document", :collection => resource.documents.active, :locals => { parent: resource }
-  = button_to_add 'Add Document', new_campaign_document_path(resource)

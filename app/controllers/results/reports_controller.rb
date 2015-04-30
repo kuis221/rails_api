@@ -10,7 +10,7 @@ class Results::ReportsController < InheritedResources::Base
   helper_method :return_path
 
   # This helper provide the methods to activate/deactivate the resource
-  include DeactivableHelper
+  include DeactivableController
 
   def index
     @reports = current_company.reports.active.accessible_by_user(current_company_user).order('reports.name ASC')

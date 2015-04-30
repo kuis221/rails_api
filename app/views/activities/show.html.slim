@@ -1,7 +1,13 @@
 .row-fluid.with-details-close-bar
   = resource_details_bar("You are viewing activity details. Click to close.")
   .details_box.form-results-box
-    h2.special = resource.activity_type.name
+    .details-main-title
+      h2.pull-left= resource.activity_type.name
+      .edition-links
+        = button_to_edit resource, remote: false if can?(:edit, resource)
+        = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
+
+
     - if resource.campaign.present?
       p.big= resource.campaign.name
     .calendar-data
@@ -20,10 +26,6 @@
       b= resource.company_user.name
     = render partial: 'event_info', locals: { event: resource.activitable }
     = render 'details'
-
-    .links-data
-      = link_to '', [:edit, resource], remote: true, class: 'icon-edit' if can?(:edit, resource)
-      = active_inactive_buttons(resource) if can? :deactivate, resource
 
 javascript:
   $(document).on('activities:change', function(){

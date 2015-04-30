@@ -1,0 +1,4 @@
+|
+  $('##{parent.class.name.underscore}-area-#{params[:id]}').remove();
+  $('#goal-area-#{params[:id]}').remove();
+= render partial: "#{parent.class.name.underscore.pluralize}/areas", locals: { resource: parent }

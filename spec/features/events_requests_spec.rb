@@ -1024,7 +1024,7 @@ feature 'Events section' do
         create(:campaign, company: company, name: 'ABSOLUT Vodka')
         visit events_path
 
-        click_button 'Create'
+        click_button 'New Event'
 
         within visible_modal do
           expect(page).to have_content(company_user.full_name)
@@ -1046,7 +1046,7 @@ feature 'Events section' do
           create(:campaign, company: company)
           visit events_path
 
-          click_button 'Create'
+          click_button 'New Event'
 
           within visible_modal do
             # Test both dates are the same
@@ -1087,7 +1087,7 @@ feature 'Events section' do
           create(:campaign, company: company)
           visit events_path
 
-          click_button 'Create'
+          click_button 'New Event'
 
           within visible_modal do
             # Test both dates are the same
@@ -1465,7 +1465,7 @@ feature 'Events section' do
 
         visit event_path(event)
 
-        click_js_button 'Create Task'
+        click_js_button 'Add Task'
         within('form#new_task') do
           fill_in 'Title', with: 'Pick up the kidz at school'
           fill_in 'Due at', with: '05/16/2013'
@@ -1480,7 +1480,7 @@ feature 'Events section' do
         end
 
         # Mark the tasks as completed
-        within('#event-tasks-container') do
+        within('#event-tasks') do
           checkbox = find('.task-completed-checkbox', visible: :false)
           expect(checkbox['checked']).to be_falsey
           find('.task-completed-checkbox').trigger('click')
@@ -1499,7 +1499,7 @@ feature 'Events section' do
                        'Would you like to remove Juanito Bazooka from the event team?'
         expect(page).to_not have_content('Juanito Bazooka')
 
-        within('#event-tasks-container') do
+        within('#event-tasks') do
           expect(page).to_not have_content('Juanito Bazooka')
         end
       end
