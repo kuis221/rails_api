@@ -16,19 +16,26 @@ Styleguide 6.1
   }
 }
 
-.user-tag {
+.user-tag{
+	padding: 0 10px 0 28px;
+}
+
+.user-tag-option{
+	padding: 0 22px 0 28px;
+}
+
+.user-tag, .user-tag-option{
 	display: inline-block;
 	font-size: 13px;
 	position: relative;
 	margin: 1px 5px 3px 0;
-	padding: 0 22px 0 28px;
   height: 24px;
 	border-radius: 12px;
-	background-color: $gray-light;
+	background-color: $brand;
 	color: $white;
 	cursor: default;
 	.user-type{
-		background-color: $silver;
+		background-color: $tags-gray;
 		display: inline-block;
 		@include border-radius(12px);
 		height: 24px;
@@ -39,7 +46,7 @@ Styleguide 6.1
 		width: 24px;
 	}
 	.icon-close {
-		color: $icons-silver;
+		color: $gray-light;
 		display: block;
 		font-size: 10px;
 		position: absolute;

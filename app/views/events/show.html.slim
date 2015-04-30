@@ -29,32 +29,11 @@
 
   .details_box class="#{(resource.place.nil? or resource.place.latitude.nil?) ?  'padding-top-close-bar' : ''}"
 
-    h3 EVENT PHASES
+    h5.new-report-title = 'EVENT PHASES'
+    // Can we add the steps from results to use same structure and styles?
 
-    .data_extract_top_details
-      .details_box
-        .pull-left
-          h5.new-report-title NEW REPORT:
-        .pull-left
-          .steps-wizard-data-source
-            .row-fluid
-              .step
-                .step-box
-                  .circle-step 1
-                  .step-name
-                    .text-large PLAN
-                .step
-                .step-box
-                  .circle-step 2
-                  .step-name
-                    .text-large EXECUTE
-              .step
-                .step-box
-                  .circle-step 3
-                  .step-name
-                    .text-large RESULTS
 
-    .row-fluid.venue_details_container
+    .row-fluid.details_first_container
       .span6
         h2.special.pull-left = resource.campaign_name
         .edition-links
@@ -74,6 +53,21 @@
         - unless resource.description.nil? || resource.description.empty?
           .description-data
             span= simple_format resource.description
+
+        .add-details-info
+          i.icon-team.indicate-icon
+
+          // Tags from structure in the styleguide
+          .user-tag
+            .user-type
+              i.icon-team
+            span Chris Jaskot Team
+
+          .user-tag
+            .user-type
+              i.icon-user
+            span Steven Thomson
+
       .span6.map_container
         - unless resource.place.nil? || resource.place.latitude.nil? || resource.place.latitude == 1.0
           #venue-map-canvas.google-map data-latitude="#{resource.place.latitude}" data-longitude="#{resource.place.longitude}"
