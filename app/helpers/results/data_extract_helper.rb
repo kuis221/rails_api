@@ -89,8 +89,7 @@ module Results
     end
 
     def render_descripcion_available_field(field, source)
-      desc = "<p class=\"name\">#{I18n.t("data_exports.fields.#{field}")}</p>"
-      desc << "<p class=\"description\">#{I18n.t("data_exports.descriptions.#{source}.#{field}")}</p>"
+      desc = "<p class=\"description\">#{I18n.t("data_exports.descriptions.#{source}.#{field}")}</p>"
     end
   end
 end
