@@ -157,7 +157,6 @@ feature 'Filter Expand', js: true, search: true do
     end
 
     scenario 'Expanding custom filters should not clear previously selected filters' do
-      today = Time.zone.local(Time.zone.now.year, Time.zone.now.month, Time.zone.now.day, 12, 00)
       custom_filter_category = create(:custom_filters_category, name: 'Divisions', company: company)
       area1 = create(:area, name: 'Some Area', description: 'an area description', company: company)
       area2 = create(:area, name: 'Another Area', description: 'another area description', company: company)
@@ -167,19 +166,11 @@ feature 'Filter Expand', js: true, search: true do
              filters: "area%5B%5D=#{area1.id}&area%5B%5D=#{area2.id}",
              category: custom_filter_category)
 
-      create_list(:event, 2,
-                  start_date: today.to_s(:slashes), end_date: today.to_s(:slashes),
-                  company: company, campaign: campaign)
-      events
-      Sunspot.commit
-
       visit events_path
 
       remove_filter 'Today To The Future'
       choose_predefined_date_range 'Today'
       wait_for_ajax
-
-      expect(page).to have_selector('#events-list .resource-item', count: 2)
 
       filter_section('DIVISIONS').unicheck('Continental')
 
@@ -189,8 +180,6 @@ feature 'Filter Expand', js: true, search: true do
       expect(page).to have_filter_tag('Some Area')
       expect(page).to have_filter_tag('Another Area')
       expect(page).to have_filter_tag('Today')
-
-      expect(page).to have_selector('#events-list .resource-item', count: 0)
 
       within('.select-ranges') do
         expect(page).to have_no_content('Choose a date range')
