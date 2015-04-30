@@ -31,6 +31,30 @@
 
     h3 EVENT PHASES
 
+
+.data_extract_top_details
+  .details_box
+    .pull-left
+      h5.new-report-title NEW REPORT:
+    .pull-left
+      .steps-wizard-data-source
+        .row-fluid
+          .step
+            .step-box
+              .circle-step 1
+              .step-name
+                .text-large PLAN
+            .step
+            .step-box
+              .circle-step 2
+              .step-name
+                .text-large EXECUTE
+          .step
+            .step-box
+              .circle-step 3
+              .step-name
+                .text-large RESULTS
+
     .row-fluid.venue_details_container
       .span6
         h2.special.pull-left = resource.campaign_name
@@ -60,7 +84,8 @@
               br>/
               = place_address(resource.place)
 
-    = render 'alerts'
+    // This should not appear anymore
+    // = render 'alerts'
 
     // The is info will be displayed on the fixed bar when the window is scolled down to this position
     .details-bar-info
