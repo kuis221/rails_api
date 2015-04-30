@@ -64,9 +64,6 @@ input[type="color"],
 		-webkit-box-shadow: none;
 		outline:0;
 	}
-	&.date_picker[readonly]{
-		color: silver;
-	}
 	&.input-calendar{
 		background: image-url('calendar.svg') no-repeat left !important;
 		text-align: right;
