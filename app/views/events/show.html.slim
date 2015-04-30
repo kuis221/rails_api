@@ -95,7 +95,7 @@
     #event-documents.details_box
       h5.module-title DOCUMENTS
       - hidden = resource.documents.active.any? || resource.campaign.documents.any?
-      = render partial: 'shared/attach_documents', locals: { hidden: hidden, resource: AttachedAsset.new, callback_url: event_documents_path(resource, format: :js) }
+      = render partial: 'attached_assets/document_form', locals: { hidden: hidden, resource: AttachedAsset.new, callback_url: event_documents_path(resource, format: :js) }
       = link_to 'Upload', '#documents_upload_form', 'data-toggle' => 'collapse', id: 'event-upload-documents', class: "btn btn-primary #{hidden ? '' : 'hide'}", title: 'Add Documents' if can? :create_document, Event
       .documents-list
         #documents-list.resource-list

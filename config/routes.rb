@@ -364,7 +364,7 @@ Brandscopic::Application.routes.draw do
       match 'activity_types/:activity_type_id' => 'campaigns#remove_activity_type', via: :delete, as: :remove_activity_type
     end
 
-    resources :documents, only: [:create, :new] do
+    resources :documents, only: [:create] do
       member do
         get :deactivate
         get :activate
@@ -400,7 +400,7 @@ Brandscopic::Application.routes.draw do
       end
     end
 
-    resources :documents, only: [:create, :new] do
+    resources :documents, only: [:create] do
       member do
         get :deactivate
         get :activate
@@ -578,7 +578,7 @@ Brandscopic::Application.routes.draw do
         get :activate
       end
       resources :document_folders, path: 'folders', only: [:new, :create]
-      resources :documents, only: [:new, :create]
+      resources :documents, only: [:create]
     end
     resources :document_folders, path: 'folders', only: [:new, :create, :index] do
       member do
@@ -586,7 +586,7 @@ Brandscopic::Application.routes.draw do
         get :activate
       end
     end
-    resources :documents, only: [:new, :edit, :create, :update, :destroy] do
+    resources :documents, only: [:edit, :create, :update, :destroy] do
       get :move, on: :member
     end
     get '/:tab', constraints: { tab: /calendar/ }, to: 'dashboard#index'
