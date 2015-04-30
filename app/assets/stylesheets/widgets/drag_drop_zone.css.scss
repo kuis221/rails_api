@@ -1,6 +1,87 @@
+/*
+A markup for Attachment zones - Drag and drop view
+
+Styleguide 7.1
+*/
+
+.attachments-list{
+	list-style:none;
+	li{
+		margin-bottom: 20px;
+	}
+}
+
+.attachment-panel{
+	@include box-sizing(border-box);
+	border: 2px dashed $user_menu;
+	color: $user_menu;
+	line-height: 17px;
+	padding: 48px 16px 10px;
+	text-align: center;
+	height: 100px;
+
+	&.photos{
+		height: 160px;
+		width: 240px;
+	}
+
+	.icon-upload{
+		display:inline-block;
+		font-size: 28px;
+		line-height: 40px;
+		margin-right: 10px;
+	}
+	a {
+		color: $brand;
+		text-decoration:underline;
+	}
+	.drag-box{
+		h5,p{
+			color: $user_menu;
+			font-family: $baseFontFamily;
+			font-weight: normal;
+			text-align: left;
+			margin-bottom:0;
+		}
+		h5{
+			line-height: 16px;
+			margin-top:10px;
+		}
+		p{
+			font-size: 16px;
+			span.file-browse {
+				text-decoration: underline;
+				position: relative;
+				color: $brand;
+				overflow: hidden;
+				input[type=file] {
+					position: absolute;
+					top: 0;
+					right: 0;
+					margin: 0;
+					opacity: 0;
+					left: 0;
+					-ms-filter: 'alpha(opacity=0)';
+					font-size: 14px;
+					direction: ltr;
+					cursor: pointer;
+				}
+			}
+		}
+		.drag-box-text{
+			display: inline-block;
+		}
+	}
+
+	.uploader {
+		.filename, .action {
+			display: none;
+		}
+	}
+}
+
 .drag-drop-zone {
 	line-height: 100%;
-	margin-bottom: 20px;
 	width: 100%;
 	padding: 2px 10px 0 0;
 	display: table;
@@ -22,7 +103,7 @@
 			padding: 0;
 			.attachment-select-file-view {
 				padding: 10px 23px 20px 23px;
-			}		
+			}
 		}
 		.attachment-upload-progress-info {
 			padding: 20px 0;

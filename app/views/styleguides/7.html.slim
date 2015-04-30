@@ -1,0 +1,22 @@
+// This is an example markup for a KSS section.
+// The definition for `1.1` can be found in your app/assets/stylesheets/ folder.
+= kss_block '7.1' do
+  ul.attachments-list
+    li
+      p ATTACHMENT ZONE - Full dynamic size
+      .attachment-panel.drag-drop-zone
+        .attachment-select-file-view
+          .drag-box
+            i.icon-upload
+            .drag-box-text
+              h5 DRAG &amp; DROP
+              p your files or browse
+      li
+        p SMALL ATTACHMENT ZONE - Specially for photos in Activity Types - No droppable
+        .attachment-panel.photos
+          .attachment-select-file-view
+            .drag-box
+              i.icon-upload
+              .drag-box-text
+                h5 DRAG &amp; DROP
+                p your files or browse
