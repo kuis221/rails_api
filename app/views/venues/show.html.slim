@@ -18,9 +18,10 @@
   .details_box.padding-top-close-bar
     .row-fluid.details_first_container
       .span6
-        h2= resource.name
-        / span.category
-        /   | Restaurant, Food
+        .details-title
+          h2.special.pull-left
+            b= resource.name
+
         - if resource.price_level(fetch_from_google: true)
           span.price
             = place_price(resource.price_level)

@@ -42,8 +42,17 @@ Styleguide 6.1
 		position: absolute;
 		left: 0;
 		line-height: 26px;
+		overflow: hidden;
 		text-align: center;
 		width: 24px;
+		img{
+			vertical-align: top;
+			height: 100%;
+		  max-width: 200%;
+	    position: relative;
+	    left: 100%;
+	    margin-left: -200%;
+		}
 	}
 	.icon-close {
 		color: $gray-light;

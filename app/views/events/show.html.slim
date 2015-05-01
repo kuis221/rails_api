@@ -29,16 +29,19 @@
 
   .details_box class="#{(resource.place.nil? or resource.place.latitude.nil?) ?  'padding-top-close-bar' : ''}"
 
-    h5.new-report-title = 'EVENT PHASES'
+    .phases
+      h5 = 'EVENT PHASES'
     // Can we add the steps from results to use same structure and styles?
 
 
     .row-fluid.details_first_container
       .span6
-        h2.special.pull-left = resource.campaign_name
-        .edition-links
-          = button_to_edit resource if can_edit
-          = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
+        .details-title
+          h2.special.pull-left
+            b= resource.campaign_name
+          .edition-links
+            = button_to_edit resource if can_edit
+            = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
 
         .calendar-data
           i.icon-calendar
@@ -62,6 +65,11 @@
             .user-type
               i.icon-team
             span Chris Jaskot Team
+
+          .user-tag
+            .user-type
+              image src="../assets/profile-pic.jpg"
+            span Santiago Miller
 
           .user-tag
             .user-type
