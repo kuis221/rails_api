@@ -24,11 +24,12 @@ class DataExtract < ActiveRecord::Base
   track_who_does_it
 
   serialize :columns
-  serialize :filters
   serialize :params
 
   validates :name, presence: true
   validates :source, presence: true
+
+  attr_accessor :filters
 
   DEFAULT_LIMIT = 30
 
@@ -60,7 +61,6 @@ class DataExtract < ActiveRecord::Base
 
   after_initialize  do
     self.columns ||= exportable_columns.map { |c| c[0] } if new_record?
-    self.filters ||= HashWithIndifferentAccess.new
   end
 
   def columns=(cols)
@@ -110,7 +110,7 @@ class DataExtract < ActiveRecord::Base
   end
 
   def to_hash
-    { data_extract: attributes }
+    { data_extract: attributes.merge( source: source ) }
   end
 
   def base_scope
@@ -148,5 +148,9 @@ class DataExtract < ActiveRecord::Base
 
   def filters_include_calendar
     false
+  end
+
+  def source
+    self.class.name.split('::').last.underscore
   end
 end
