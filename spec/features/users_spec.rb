@@ -245,40 +245,45 @@ feature 'Users', js: true do
     scenario 'allows to assign areas to the user' do
       other_company_user = create(:company_user, company_id: company.id)
       area = create(:area, name: 'San Francisco Area', company: company)
-      area2 = create(:area, name: 'Los Angeles Area', company: company)
+      create(:area, name: 'Los Angeles Area', company: company)
       visit company_user_path(other_company_user)
 
-      click_js_link 'Add Area'
+      expect(page).to have_content 'No Places have been assigned to this user.'
+
+      click_js_button 'Add Place'
 
       within visible_modal do
         fill_in 'place-search-box', with: 'San'
-        expect(page).to have_selector("#area-#{area.id}")
-        expect(page).to have_no_selector("#area-#{area2.id}")
         expect(page).to have_content('San Francisco Area')
         expect(page).to have_no_content('Los Angeles Area')
         within resource_item area do
-          click_js_link('Add Area')
+          click_js_link 'Add Area'
         end
         expect(page).to have_no_selector("#area-#{area.id}") # The area was removed from the available areas list
       end
       close_modal
 
+      expect(page).to_not have_content 'No Places have been assigned to this user.'
+
       # Re-open the modal to make sure it's not added again to the list
-      click_js_link 'Add Area'
+      click_js_button 'Add Place'
       within visible_modal do
-        expect(page).to have_no_selector("#area-#{area.id}") # The area does not longer appear on the list after it was added to the user
-        expect(page).to have_selector("#area-#{area2.id}")
+        fill_in 'place-search-box', with: 'San'
+        expect(page).to_not have_content('San Francisco Area')
+        expect(page).to have_no_content('Los Angeles Area')
       end
       close_modal
 
       # Ensure the area now appears on the list of areas
-      within '#company_user-areas-list' do
-        expect(page).to have_content('San Francisco Area')
+      expect(page).to have_content('San Francisco Area')
 
-        # Test the area removal
+      # Test the area removal
+      within '#company_user-areas-list' do
         hover_and_click('.hover-item', 'Remove Area')
-        expect(page).to have_no_content('San Francisco Area')
       end
+      expect(page).to_not have_content('San Francisco Area')
+
+      expect(page).to have_content 'No Places have been assigned to this user.'
     end
 
     scenario 'should be able to assign brand portfolios to the user' do

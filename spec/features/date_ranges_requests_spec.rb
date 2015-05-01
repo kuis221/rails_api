@@ -143,7 +143,7 @@ feature 'DateRanges', search: true, js: true do
       date_range = create(:date_range, company: company)
       visit date_range_path(date_range)
 
-      click_js_link('Add Date')
+      click_js_button 'Add Date'
 
       within visible_modal do
         find('#calendar_start_date').click_js_link '25'

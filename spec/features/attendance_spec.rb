@@ -16,10 +16,17 @@ feature 'Attendance', js: true, search: true do
   end
 
   shared_examples_for 'a user that can create invites' do
-    scenario 'can view the attendance module' do
+    scenario 'cannot view the attendance module if not invitations were created' do
+      visit event_path(event)
+      expect(page).to_not have_selector('h5', text: 'ATTENDANCE')
+      expect(page).to have_button('Add Activity')
+    end
+
+    scenario 'can view the attendance module if invites were created' do
+      create(:invite, event: event, venue: event.venue)
       visit event_path(event)
       expect(page).to have_selector('h5', text: 'ATTENDANCE')
-      expect(page).to have_button('New Activity')
+      expect(page).to have_button('Add Activity')
     end
 
     scenario 'can create and edit an invite when attendance display is set as Venue' do
@@ -220,14 +227,20 @@ feature 'Attendance', js: true, search: true do
 
   def create_invite(account: nil, invites: 12, type: 'venue')
     Sunspot.commit
-    click_js_button 'New Activity'
+    click_js_button 'Add Activity'
     within visible_modal do
-      select_from_chosen 'Invitation', from: 'Activity type'
-      select_from_autocomplete 'Search for a place', account if type == 'venue'
-      select_from_chosen account, from: 'Market' if type == 'market'
-      fill_in '# Invites', with: invites
+      choose('Invitation')
       click_js_button 'Create'
     end
     ensure_modal_was_closed
+
+    select_from_autocomplete 'Search for a place', account if type == 'venue'
+    select_from_chosen account, from: 'Market' if type == 'market'
+    wait_for_ajax
+    fill_in '# Invites', with: invites
+    click_button 'Submit'
+
+    expect(page).to have_content('Thank You!')
+    click_link 'Finish'
   end
 end

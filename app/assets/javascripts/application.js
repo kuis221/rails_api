@@ -57,3 +57,4 @@
 //= require campaigns
 //= require events
 //= require spectrum.js
+//= require filesize.min.js

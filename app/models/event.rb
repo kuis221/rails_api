@@ -20,6 +20,7 @@
 #  local_start_at :datetime
 #  local_end_at   :datetime
 #  description    :text
+#  kbmg_event_id  :string(255)
 #
 
 class Event < ActiveRecord::Base

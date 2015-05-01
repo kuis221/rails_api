@@ -64,6 +64,7 @@ $.widget 'nmk.formBuilder', {
 				cancel: '.empty-form-legend, .module'
 				revert: true,
 				stop: (e, ui) =>
+					@element.find('.empty-form-legend').hide()
 					if ui.item.hasClass('ui-draggable')
 						options = {type: ui.item.data('type')}
 						if ui.item.data('kpi-id')
@@ -84,6 +85,8 @@ $.widget 'nmk.formBuilder', {
 					@element.find('.empty-form-legend').hide()
 
 				out: (event, ui) =>
+					if @formFields(false).length == 0
+						@element.find('.empty-form-legend').show()
 					@formWrapper.removeClass 'sorting'
 
 				receive: (event, ui) =>
@@ -247,6 +250,13 @@ $.widget 'nmk.formBuilder', {
 			else
 				@element.find('.empty-form-legend').show()
 
+		# So the save bar (affix) is correctly placed
+		setTimeout () =>
+			$(window).trigger('scroll')
+			$(window).trigger('scroll')
+			$(window).trigger('scroll')
+		, 500
+
 	_addFieldToForm: (options) ->
 		if options.kpi_id? && @kpiInForm(options)
 			return false
@@ -333,9 +343,14 @@ $.widget 'nmk.formBuilder', {
 		@modified = true
 		@_updateSaveButtonState()
 
-	formFields: () ->
-		$.map @formWrapper.find('.field'), (element, index) =>
+	formFields: (includedRemoved=true) ->
+		fields = $.map @formWrapper.find('.field'), (element, index) =>
 			$(element).data('field')
+		if includedRemoved
+			fields
+		else
+			$.grep fields, (field, index) ->
+				field.attributes._destroy isnt true
 
 	formModules: () ->
 		$.map @formSections.find('.module'), (element, index) =>
@@ -638,6 +653,8 @@ FormField = Class.extend {
 					@attributes._destroy = true
 					@form.setModified()
 					@form._hideFieldAttributes()
+					if @form.formFields(false).length == 0
+						@form.element.find('.empty-form-legend').show()
 					if @attributes.kpi_id?
 						@form.fieldsWrapper.find("[data-kpi-id=#{@attributes.kpi_id}]").removeClass('hidden')
 		else
@@ -646,6 +663,8 @@ FormField = Class.extend {
 					@field.remove()
 					@form.setModified()
 					@form._hideFieldAttributes()
+					if @form.formFields(false).length == 0
+						@form.element.find('.empty-form-legend').show()
 					@_onRemove()
 		false
 
@@ -1050,12 +1069,14 @@ PhotoField = FormField.extend {
 		[
 			$('<label class="control-label">').text(@attributes.name),
 			$('<div class="controls">').append(
-				$('<div class="attachment-panel">').append(
+				$('<div class="attachment-panel photos">').append(
 					$('<div class="attachment-select-file-view">').append(
 						$('<div class="drag-box">').append(
 							$('<i class="icon-upload">'),
-							$('<h4>').text('DRAG & DROP'),
-							$('<p>').append('your file or ', $('<span class="file-browse">browse</span>').append('<input id="fileupload" type="file" name="file" class="valid">'))
+							$('<div class="drag-box-text">').append(
+								$('<h5>').text('DRAG & DROP'),
+								$('<p>').append('your file or ', $('<span class="file-browse">browse</span>').append('<input id="fileupload" type="file" name="file" class="valid">'))
+							)
 						)
 					)
 				)
@@ -1096,8 +1117,10 @@ AttachmentField = FormField.extend {
 					$('<div class="attachment-select-file-view">').append(
 						$('<div class="drag-box">').append(
 							$('<i class="icon-upload">'),
-							$('<h4>').text('DRAG & DROP'),
-							$('<p>').append('your file or ', $('<span class="file-browse">browse</span>').append('<input id="fileupload" type="file" name="file" class="valid">'))
+							$('<div class="drag-box-text">').append(
+								$('<h5>').text('DRAG & DROP'),
+								$('<p>').append('your file or ', $('<span class="file-browse">browse</span>').append('<input id="fileupload" type="file" name="file" class="valid">'))
+							)
 						)
 					)
 				)

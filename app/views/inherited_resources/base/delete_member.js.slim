@@ -8,3 +8,5 @@
     $("##{resource.class.name.underscore}-team-#{@team.id}").remove()
     $(document).trigger('tasks:change');
     $(document).trigger('team:delete', #{@team.id});
+
+= render 'delete_member'

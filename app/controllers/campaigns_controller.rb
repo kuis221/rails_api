@@ -9,7 +9,7 @@ class CampaignsController < FilteredController
 
   before_action :search_params, only: [:index]
 
-  include DeactivableHelper
+  include DeactivableController
 
   # This helper provide the methods to add/remove campaigns members to the event
   extend TeamMembersHelper
@@ -86,7 +86,7 @@ class CampaignsController < FilteredController
   end
 
   def new_date_range
-    @date_ranges = current_company.date_ranges
+    @date_ranges = current_company.date_ranges.active
       .where('date_ranges.id not in (?)', resource.date_range_ids + [0])
   end
 
@@ -101,7 +101,7 @@ class CampaignsController < FilteredController
   end
 
   def new_day_part
-    @day_parts = current_company.day_parts
+    @day_parts = current_company.day_parts.active
       .where('day_parts.id not in (?)', resource.day_part_ids + [0])
   end
 

@@ -6,7 +6,7 @@ class TeamsController < FilteredController
   extend TeamMembersHelper
 
   # This helper provide the methods to activate/deactivate the resource
-  include DeactivableHelper
+  include DeactivableController
 
   private
 

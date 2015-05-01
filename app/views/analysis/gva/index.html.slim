@@ -39,7 +39,13 @@
 
   #report-container
     #kpis-trends-bars.details_box.content
-      p.text-center.empty-state Select a campaign from the list above
+      .blank-state
+        .blank-state-arrow
+          img src="#{asset_path('blank-states-arrow.png')}"
+        h5.text-center = I18n.translate(:'blank_states.results_gva.empty.line1')
+        p.text-center = I18n.translate(:'blank_states.results_gva.empty.line2')
+        .blank-state-icon
+          img src="#{asset_path('blank-gva.png')}"
 
 = render partial: 'help_tutorial'
 
@@ -70,10 +76,14 @@ javascript:
       $('#kpis-trends-bars .content');
       $('#kpis-trends-bars').empty().addClass('loading-spinner');
       submitForm();
-      history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' + $('#report-settings').serialize());
+      if (history.pushState) {
+        history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' + $('#report-settings').serialize());
+      }
     } else {
       $('#download-gva-btn').attr('disabled', true);
-      history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' + $('#report-settings').serialize());
+      if (history.pushState) {
+        history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' + $('#report-settings').serialize());
+      }
       $('#kpis-trends-bars').empty().addClass("details_box content empty-state").prepend('<p class="text-center empty-state">Select a campaign from the list above');
     }
   });

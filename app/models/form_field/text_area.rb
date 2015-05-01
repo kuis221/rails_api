@@ -27,7 +27,7 @@ class FormField::TextArea < FormField
         value: result.value,
         class: field_classes,
         data: field_data,
-        placeholder: 'Type a short description here...',
+        placeholder: 'Type your text here...',
         required: (self.required? ? 'required' : nil)
       }
     }

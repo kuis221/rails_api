@@ -20,6 +20,9 @@
 #  updated_at                       :datetime
 #  date_of_birth                    :string(255)
 #  zip_code                         :string(255)
+#  created_by_id                    :integer
+#  updated_by_id                    :integer
+#  attended                         :boolean
 #
 
 class InviteRsvp < ActiveRecord::Base

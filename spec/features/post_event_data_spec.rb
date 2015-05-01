@@ -260,6 +260,8 @@ feature 'Post Event Data' do
       fill_in 'Impressions', with: '3333'
       fill_in 'Interactions', with: '222222'
       fill_in 'Samples', with: '4444444'
+      fill_in 'Summation Opt1', with: '0.75'
+      fill_in 'Summation Opt2', with: '0.5'
 
       click_button 'Save'
 
@@ -267,6 +269,9 @@ feature 'Post Event Data' do
         expect(page).to have_content('3,333')
         expect(page).to have_content('222,222')
         expect(page).to have_content('4,444,444')
+        expect(page).to have_content('Summation Opt1 0.75')
+        expect(page).to have_content('Summation Opt2 0.5')
+        expect(page).to have_content('TOTAL:1.25')
       end
 
       # Submit the event
