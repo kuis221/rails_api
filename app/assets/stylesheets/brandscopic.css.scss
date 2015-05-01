@@ -618,7 +618,6 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	box-sizing: border-box;
 	width: calc(100% - 100px);
 	z-index: 110000;
-	height: 44px;
 	.results-count {
 		font-weight: bold;
 	}
@@ -3227,7 +3226,6 @@ ul.ui-widget-content{
 		margin-bottom: 0;
 	}
 }
-
 
 body.activities{
 	&.empty-layout {
@@ -7266,6 +7264,15 @@ body.dashboard.index {
 	margin:0;
 }
 
+.description-available-field {
+	font-size: 12px!important;
+	padding: 0;
+	margin-bottom: 0;
+	line-height: 15px;
+	p {
+		margin-bottom: 1px!important;
+	}
+}
 
 .available-fields {
 	border: 1px solid #ccc;
