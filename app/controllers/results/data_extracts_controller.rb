@@ -68,7 +68,7 @@ class Results::DataExtractsController < InheritedResources::Base
 
   def filter_params
     excluded_keys = [:action, :data_extact, :cotroller, :format, :page, :sorting, :sorting_dir,
-                     :commit, :step, :utf]
+                     :commit, :step, :utf, :source]
     params.reject { |k, _| excluded_keys.include?(k) }
   end
 
@@ -91,7 +91,7 @@ class Results::DataExtractsController < InheritedResources::Base
   def extract_params
     params.require(:data_extract).permit([
       :name, :description, :default_sort_by, :default_sort_dir,
-      filters: [], columns: [], params: { campaign_id: [], activity_type_id: [] }
+      columns: [], params: { campaign_id: [], activity_type_id: [] }
     ]).merge(company: current_company)
   end
 
