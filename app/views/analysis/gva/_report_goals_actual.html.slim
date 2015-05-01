@@ -1,0 +1,13 @@
+- events_goal = each_events_goal
+- if events_goal.any?
+  = render partial: 'report_goals_actual_item_summary', locals: {item: @campaign}
+  #graph-view.view-style class="#{report_view_mode.nil? || report_view_mode=='graph' ? nil : 'hide'}"
+    = render partial: 'report_goals_actual_item', locals: {each_events_goal: events_goal}
+  #table-view.view-style class="#{report_view_mode=='table' ? nil : 'hide'}"
+    = render partial: 'report_goals_actual_item_table', locals: {each_events_goal: events_goal}
+- else
+  .blank-state
+    h5.text-center = I18n.translate(:'blank_states.results_gva.filters.line1')
+    p.text-center = I18n.translate(:'blank_states.results_gva.filters.line2')
+    .blank-state-icon
+      = image_tag 'blank-search.png'

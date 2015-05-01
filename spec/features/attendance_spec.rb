@@ -238,7 +238,7 @@ feature 'Attendance', js: true, search: true do
     select_from_chosen account, from: 'Market' if type == 'market'
     wait_for_ajax
     fill_in '# Invites', with: invites
-    click_button 'Create'
+    click_button 'Submit'
 
     expect(page).to have_content('Thank You!')
     click_link 'Finish'

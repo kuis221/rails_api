@@ -31,6 +31,7 @@ class Company < ActiveRecord::Base
   has_many :kpis, dependent: :destroy
   has_many :reports, dependent: :destroy
   has_many :activity_types, dependent: :destroy
+  has_many :data_extracts, dependent: :destroy
   has_many :brand_ambassadors_visits, -> { order 'brand_ambassadors_visits.start_date ASC' },
            class_name: 'BrandAmbassadors::Visit', dependent: :destroy
   has_many :brand_ambassadors_documents, -> { order('attached_assets.file_file_name ASC') },

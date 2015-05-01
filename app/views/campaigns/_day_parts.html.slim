@@ -1,3 +1,7 @@
-= link_to "Add Day Part", new_day_part_campaign_path(resource), remote: true, id: 'add-day-part-btn', class: 'btn btn-primary', title: 'Add Day Part'
-= render layout: 'goalable_list', locals: { goalables: resource.day_parts, kpis: resource.active_kpis, activity_types: resource.activity_types } do |day_part|
-  = link_to '', delete_day_part_campaign_path(resource, day_part), remote: true, method: :delete, class: 'icon-remove-circle'
+- if resource.day_parts.any?
+  = link_to "Add Day Part", new_day_part_campaign_path(resource), remote: true, id: 'add-day-part-btn', class: 'btn btn-primary', title: 'Add Day Part' if can?(:add_day_part, resource)
+  = render layout: 'goalable_list', locals: { goalables: resource.day_parts, kpis: resource.active_kpis, activity_types: resource.activity_types } do |day_part|
+    = link_to '', delete_day_part_campaign_path(resource, day_part), remote: true, method: :delete, class: 'icon-remove-circle'
+- else
+  = blank_state_module('campaign.day_parts') do
+    = button_to 'Add Day Part', new_day_part_campaign_path(resource), id: 'add-staff-btn', remote: true, method: :get, class: 'btn btn-primary'  if can?(:add_day_part, resource)

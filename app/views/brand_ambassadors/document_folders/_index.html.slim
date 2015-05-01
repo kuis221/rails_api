@@ -15,7 +15,7 @@
     - else
       | DOCUMENTS
     
-    = render partial: 'shared/attach_documents', locals: { hidden: children.any?, resource: BrandAmbassadors::Document.new, callback_url: callback_url } if can? :create,  BrandAmbassadors::Document
+    = render partial: 'attached_assets/document_form', locals: { hidden: children.any?, resource: BrandAmbassadors::Document.new, callback_url: callback_url } if can? :create,  BrandAmbassadors::Document
 
 
   = link_to 'Upload', '#documents_upload_form', 'data-toggle' => 'collapse', class: 'btn btn-primary', title: 'Add Documents' if can? :create,  BrandAmbassadors::Document

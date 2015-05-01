@@ -1,0 +1,35 @@
+.sidebar
+  h5.available-fields-title = 'Available Fields'
+  .available-fields.searchable-field-list
+    .search-fields
+      input type="search" class="field-search-input" name="field_search" title="Field Search" placeholder="Search for fields"
+    .available-fields-box
+
+.main.data-extract
+  = simple_form_for resource, as: :data_extract, url: form_action, method: :get, name: "data_source_form" do |f|
+    = hidden_field_tag :step, 3
+    = f.input :source, as: :hidden, wrapper: false
+    = f.input :default_sort_by, as: :hidden, wrapper: false
+    = f.input :default_sort_dir, as: :hidden, wrapper: false
+
+    - if resource.params && resource.params['campaign_id']
+      - list = Array(resource.params['campaign_id'])
+      - list.each do |id|
+        = hidden_field_tag 'data_extract[params][campaign_id][]', id
+
+    - if resource.params && resource.params['activity_type_id']
+      - list = Array(resource.params['activity_type_id'])
+      - list.each do |id|
+        = hidden_field_tag 'data_extract[params][activity_type_id][]', id
+
+    .data-extract-box
+      table.data-extract-table
+    .next-data-extract
+      button.btn.btn-primary.pull-right type="submit"
+        | Next
+        i.icon-angle-right
+
+javascript:
+  $('.data-extract').dataExtract({
+    'step': #{process_step},
+  });

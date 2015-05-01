@@ -8,7 +8,7 @@
     .gallery
       ul#photos-thumbs
         = render partial: 'results/photos/photo', collection: resource.active_photos.includes(:tags).map{|a| a.attachable = resource; a }
-        li
+        li.photo-drop-zone
           = drag_drop_module('photos', close_button_class)
 
 |

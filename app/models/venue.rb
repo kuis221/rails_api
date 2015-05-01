@@ -27,6 +27,9 @@
 require 'normdist'
 
 class Venue < ActiveRecord::Base
+  # Created_by_id and updated_by_id fields
+  track_who_does_it
+
   scoped_to_company
 
   belongs_to :place
@@ -56,6 +59,8 @@ class Venue < ActiveRecord::Base
 
   scope :top_venue, ->{ where(top_venue: true) }
   scope :jameson_locals, ->{ where(jameson_locals: true) }
+  scope :accessible_by_user, ->(user) { in_company(user.company_id) }
+  scope :filters_between_dates, ->(start_date, end_date) { where(created_at: DateTime.parse(start_date)..DateTime.parse(end_date))}
 
   before_destroy :check_for_associations
 

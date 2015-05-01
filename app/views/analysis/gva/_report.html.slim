@@ -1,0 +1,10 @@
+#kpis-trends-bars
+  .details_box.content
+    - if @campaign.events.count > 0
+      = render 'report_goals_actual'
+    - else
+      .blank-state
+        h5.text-center This campaign has no events.
+        p.text-center Please select different filtering criteria.
+        .blank-state-icon
+          = image_tag 'blank-search.png'

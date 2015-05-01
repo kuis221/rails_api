@@ -1,0 +1,47 @@
+#kpis-trends-bars
+  - if @goalables.present?
+    #gva-results.accordion
+      - @goalables.each do |item|
+        .details_box
+          .accordion-group
+            .accordion-heading
+              a href="#toggle-item-#{item.class.name}#{item.id}" class="accordion-toggle" data-toggle="collapse" title="#{item.name}"
+                = render partial: 'report_goals_actual_item_summary', locals: {item: item}
+                span.icon.pull-right.icon-collapsed
+                a href="#" class="icon-close remove-item" title="Remove #{item.name}"
+            .accordion-body.collapse id="toggle-item-#{item.class.name}#{item.id}" data-type="#{item.class.name}" data-id="#{item.id}"
+              .accordion-inner.goals-actual
+  - else
+    .details_box.content
+      .blank-state
+        h5.text-center
+          - if params['report'].try(:[], 'group_by') == 'place'
+            = I18n.translate(:'blank_states.results_gva.filters.line3')
+          - elsif params['report'].try(:[], 'group_by') == 'staff'
+            = I18n.translate(:'blank_states.results_gva.filters.line4')
+        p.text-center = I18n.translate(:'blank_states.results_gva.filters.line2')
+        .blank-state-icon
+          = image_tag 'blank-search.png'
+
+javascript:
+  $('.remove-item').on('click', function(e){
+    $(this).closest(".details_box").remove();
+    e.preventDefault();
+  })
+
+  $('#gva-results').on('show', function(e){
+    $target = $(e.target);
+    // For some reason this is being called when the tooltips are being desplayed
+    if ($target.hasClass('accordion-body')){
+      $(e.target).closest('.accordion-group').find(".icon-collapsed").removeClass("icon-collapsed").addClass("icon-expanded").prop('title', 'Collapse');
+      //if (!$target.data('loaded')) {
+        $('#' + $target.attr('id') + ' .accordion-inner').empty().addClass('loading-spinner');
+        $.post("#{analysis_gva_path}", {item_type: $target.data('type'),item_id: $target.data('id'), report: {campaign_id: "#{@campaign.id}", view_mode: $('input:radio[name="report[view_mode]"]:checked').val()} }, function(){
+          //$target.data('loaded', true);
+          $('#' + $target.attr('id') + ' .accordion-inner').removeClass('loading-spinner');
+        });
+      //}
+    }
+  }).on('hide', function(e){
+    $(e.target).closest('.accordion-group').find(".icon-expanded").removeClass("icon-expanded").addClass("icon-collapsed").prop('title', 'Expand');
+  });
