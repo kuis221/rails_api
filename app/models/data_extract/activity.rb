@@ -49,8 +49,8 @@ class DataExtract::Activity < DataExtract
     s = s.where(activity_type_id: params['activity_type_id']) if params && params.key?('activity_type_id')
     s = s.joins('LEFT JOIN brands_campaigns ON brands_campaigns.campaign_id=events.campaign_id')
             .where("brands_campaigns.brand_id IN (#{filters['brand'].join(', ')})") if filters['brand'].present?
-    s = in_areas(s, filters['area']) if filters['area'].present?
-    s = in_places(s, filters['place']) if filters['place'].present?
+    s = s.in_areas(filters['area']) if filters['area'].present?
+    s = s.in_places(filters['place']) if filters['place'].present?
     s
   end
 
@@ -93,22 +93,5 @@ class DataExtract::Activity < DataExtract
     else
       super
     end
-  end
-
-  def in_areas(s, areas)
-    subquery = Place.connection.unprepared_statement { Place.in_areas(areas).to_sql }
-    s = s.joins("INNER JOIN (#{subquery}) areas_places ON areas_places.id=events.place_id")
-    s
-  end
-
-  def in_places(s, places)
-    places_list = Place.where(id: places)
-    s = s.where(
-      'events.place_id in (?) or events.place_id in (
-          select place_id FROM locations_places where location_id in (?)
-      )',
-      places_list.map(&:id).uniq + [0],
-      places_list.select(&:is_location?).map(&:location_id).compact.uniq + [0])
-    s
   end
 end
