@@ -541,12 +541,12 @@
 }
 
 .ui-timepicker-list{
-	border: 1px solid $brand;
+	border: 1px solid $brand !important;
 	-webkit-border-radius: 6px !important;
 	border-radius: 6px !important;
-	box-shadow: none;
-	width:118px;
-	z-index: 9999999;
+	box-shadow: none !important;
+	width:118px !important;
+	z-index: 9999999 !important;
 	li{
 		color: $text;
 		padding: 3px 0 3px 32px;
