@@ -129,6 +129,9 @@ a{
 			text-decoration:underline;
 		}
 	}
+	&.no-decorate{
+		text-decoration: none;
+	}
 }
 
 .link{
@@ -7566,109 +7569,7 @@ form.button_to .button-with-icon {
   line-height: normal;
 }
 
-.details-bar{
-	position: relative;
-	.back-arrow{
-	  background-color: $gray-darker;
-	  box-sizing: border-box;
-	  border-right: 1px solid $divider;
-	  color: $brand;
-	  font-size: 25px;
-	  @include border-radius(6px 0 0 0);
-	  line-height: 25px;
-	  padding: 11px 12px;
-	  position: absolute;
-	  height: 40px;
-	  left: 0;
-	  top: 0;
-	  width: 38px;
-	}
-	.panel{
-		background-color: $gray-darker;
-		box-sizing: border-box;
-		margin-left: 38px;
-	}
-	.panel-collapse{
-		background-color: $gray-darker;
-		color: $white;
-	}
-	.panel-heading{
-		color: $brand;
-		padding: 8px 20px 0 20px;
-		h5, p{
-			margin: 0;
-		}
-	}
-	.panel-body{
-		color: $silver;
-		border-top: 1px solid $divider;
-	}
-	.bar-title{
-		color: $tooltip;
-		font-size: 12px;
-		margin-bottom: 10px;
-	}
-	.bar-event{
-		color: $white;
-	}
-	.info-list{
-		margin-top: 10px;
-		li{
-			padding-bottom: 2px;
-		}
-		i{
-			color: $tooltip;
-			margin-right: 10px;
-		}
-	}
-	.phase-indicator{
-		text-align: right;
-	}
-}
 
-.phase-id{
-	background-color: $silver;
-	@include border-radius(15px);
-	color: $gray-darker;
-	display: inline-block;
-	font-size: 10px;
-	line-height: 15px;
-	margin-right: 6px;
-	height: 15px;
-	text-align: center;
-	width: 15px;
-}
-
-.phases-list{
-	font-size: 12px;
-	.active{
-		.phase, .step-active{
-			color: $primary-green;
-		}
-	}
-	.phase-steps{
-		padding-left: 20px;
-	}
-}
-
-.event-phases{
-	border-left: 1px solid $divider;
-}
-
-.event-info, .event-phases{
-	padding: 15px 20px 10px 20px;
-}
-
-.guide-bar{
-	background-color: $brand;
-	color: $white;
-	padding: 18px 0;
-	a{
-		color: $white;
-		margin-left: 6px;
-		text-decoration: underline;
-	}
-}
 
 
 @import 'widgets/asset_upload_dialog';
@@ -7679,3 +7580,4 @@ form.button_to .button-with-icon {
 @import 'widgets/buttons';
 @import 'widgets/tags';
 @import 'widgets/drag_drop_zone';
+@import 'widgets/details_bar';

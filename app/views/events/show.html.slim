@@ -35,21 +35,24 @@
     .panel
       #headingOne.panel-heading role="tab"
         .row-fluid
-          .span9
-            // p Viewing event details screen.
-            p Absolut Texas Incremental Mini Shaker FY14 - Jun 1 at 11.00 AM - Jun 2 at 12:00 AM
-          .span3.phase-indicator
-            h5
-              a aria-controls="collapseOne" aria-expanded="true" data-parent="#accordion" data-toggle="collapse" href="#collapseOne"
-                span.phase-id 1
-                | PLAN: Contacts
+          .span10
+            // span Viewing event details screen.
+            span.event-name.pull-left
+              | Absolut Texas Incremental Mini Shaker FY14
+            span.event-date.small Jun 1 at 11.00 AM ― Jun 2 at 12:00 AM
+          .span2.phase-indicator
+            a aria-controls="collapseOne" aria-expanded="true" data-parent="#accordion" data-toggle="collapse" href="#collapseOne" class="small no-decorate"
+              span.phase-id 1
+              b> PLAN:
+              | Contacts
+              i.icon-arrow-up
       #collapseOne.panel-collapse.collapse aria-labelledby="headingOne" role="tabpanel"
         .panel-body
           .row-fluid
-            .span9.event-info
-              .bar-title
+            .span10.event-info
+              .bar-title.small
                 b BASIC INFO
-              .bar-event Absolut Texas Incremental Mini Shaker FY14
+              .event-name Absolut Texas Incremental Mini Shaker FY14
               ul.unstyled.info-list
                 li
                   i.icon-calendar
@@ -60,17 +63,20 @@
                 li
                   i.icon-team
                   | Sara Miller, James Franco, San Francisco Team
-            .span3.event-phases
+            .span2.event-phases
               ul.unstyled.phases-list
                 li
-                  .bar-title
+                  .bar-title.small
                     b EVENT PHASES
+
                 li href="plan" class="active"
                   span.phase-id 1
                   b.phase PLAN
                   ul.unstyled.phase-steps
-                    li.step-active Basic info
-                    li Contacts
+                    li.step-active
+                      i.icon-checked
+                      | Basic info
+                    li.next-step Contacts
                     li Tasks
                     li Documents
 
@@ -80,7 +86,7 @@
 
                 li href="resolve"
                   span.phase-id 3
-                  b.phase RESOLVE
+                  b.phase RESULTS
 
     .guide-bar.text-center
       span
