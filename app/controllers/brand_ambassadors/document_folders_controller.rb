@@ -5,7 +5,7 @@ class BrandAmbassadors::DocumentFoldersController < InheritedResources::Base
 
   defaults resource_class: ::DocumentFolder
 
-  include DeactivableHelper
+  include DeactivableController
 
   def index
     @folder_children = (

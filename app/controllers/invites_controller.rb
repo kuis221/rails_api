@@ -8,7 +8,7 @@ class InvitesController < InheritedResources::Base
   helper_method :parent_activities
 
   # This helper provide the methods to activate/deactivate the resource
-  include DeactivableHelper
+  include DeactivableController
 
   include ExportableController
 

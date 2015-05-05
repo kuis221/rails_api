@@ -1,7 +1,7 @@
 class Results::PhotosController < FilteredController
   belongs_to :event, optional: true
 
-  include DeactivableHelper
+  include DeactivableController
   include PhotosHelper
 
   defaults resource_class: AttachedAsset

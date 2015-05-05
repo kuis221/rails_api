@@ -172,6 +172,8 @@ jQuery ->
 
 		$('.attached_asset_upload_form').attachmentUploadZone();
 
+		$('.attachment-attached-view.photo').photoGallery({showSidebar: false});
+
 		$('.bs-checkbox:checkbox').bootstrapSwitch
 			animated: false
 
@@ -326,11 +328,34 @@ jQuery ->
 		}
 		false
 
-	# # Fix warning https://github.com/thoughtbot/capybara-webkit/issues/260
-	# $(document).on 'ajax:beforeSend', 'a[data-remote="true"][data-method="post"]', (event, xhr, settings) ->
-	# 	if settings.type == 'POST'
-	# 		xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+	$(document).bind 'dragover',  (e) ->
+		dropZone = $('.drag-drop-zone')
+		timeout = window.dropZoneTimeout
+		if !timeout
+			dropZone.addClass 'in'
+		else
+			clearTimeout timeout
 
+		found = false
+		node = e.target
+
+		while node != null
+			if $(node).hasClass('drag-drop-zone')
+				found = true
+				foundDropzone = $(node)
+				break
+
+			node = node.parentNode
+
+		dropZone.removeClass('in hover')
+
+		if found
+			foundDropzone.addClass('hover')
+
+		window.dropZoneTimeout = setTimeout () ->
+			window.dropZoneTimeout = null
+			dropZone.removeClass 'in hover'
+		, 100
 
 	$(document).delegate '.modal .btn-cancel', 'click', (e) ->
 		e.preventDefault()
@@ -438,10 +463,10 @@ jQuery ->
 
 	# TimeZone change detection methods
 	window.checkUserTimeZoneChanges = (userTimeZone, lastDetectedTimeZone) ->
-   browserTimeZone = $window.get_timezone()
-   if browserTimeZone? and browserTimeZone != ''
-    if userTimeZone != browserTimeZone && browserTimeZone != lastDetectedTimeZone
-     askForTimeZoneChange(browserTimeZone)
+		browserTimeZone = $window.get_timezone()
+		if browserTimeZone? and browserTimeZone != ''
+			if userTimeZone != browserTimeZone && browserTimeZone != lastDetectedTimeZone
+				askForTimeZoneChange(browserTimeZone)
 
 	askForTimeZoneChange = (browserTimeZone) ->
 		$.get '/users/time_zone_change.js', {time_zone: browserTimeZone}

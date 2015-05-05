@@ -4,5 +4,5 @@
 - else
   |
     $('.bootbox.modal').modal('hide');
-    $('#day-part-days-list').html('#{escape_javascript(render(partial: 'day_parts/day_items', locals: {resource: parent}))}');
+    $('#time_ranges').html('#{escape_javascript(render(partial: 'day_parts/day_items', locals: {resource: parent}))}');
     $(document).trigger('day_items:change');

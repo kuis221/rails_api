@@ -1,9 +1,14 @@
-- if can?(:add_place, resource)
-  = link_to "Add Places", new_campaign_placeable_path(resource), remote: true, id: 'add-place-btn', class: 'btn btn-primary', title: 'Add Place'
-= render layout: 'goalable_list', locals: { goalables: resource.areas_and_places, kpis: resource.active_kpis, activity_types: resource.activity_types } do |goalable|
-  - if can?(:remove_place, resource)
-    - if goalable.is_a?(Area)
-      = link_to '', edit_campaign_areas_campaign_path(resource, goalable), remote: true, id: "customize_area_#{goalable.id}", class: 'icon-gear has-tooltip', title: 'Customize area', 'data-container' => 'body'
-      = link_to '', remove_area_campaign_placeables_path(resource, area: goalable.id), method: :delete, remote: true, class: 'icon-remove-circle', title: 'Remove Area'
-    - else
-      = link_to '', campaign_place_path(resource, goalable), remote: true, method: :delete, class: 'icon-remove-circle', title: 'Remove Place'
+- items = resource.areas_and_places
+- if items.any?
+  - if can?(:add_place, resource)
+    = link_to "Add Places", select_form_areas_path(campaign_id: resource), remote: true, id: 'add-place-btn', class: 'btn btn-primary', title: 'Add Place'
+  = render layout: 'goalable_list', locals: { goalables: items, kpis: resource.active_kpis, activity_types: resource.activity_types } do |goalable|
+    - if can?(:remove_place, resource)
+      - if goalable.is_a?(Area)
+        = link_to '', edit_campaign_areas_campaign_path(resource, goalable), remote: true, id: "customize_area_#{goalable.id}", class: 'icon-gear has-tooltip', title: 'Customize area', 'data-container' => 'body'
+        = link_to '', unassign_area_path(goalable, campaign_id: resource.id), method: :delete, remote: true, class: 'icon-remove-circle', title: 'Remove Area'
+      - else
+        = link_to '', campaign_place_path(resource, goalable), remote: true, method: :delete, class: 'icon-remove-circle', title: 'Remove Place'
+- else
+  = blank_state_module('campaign.places') do
+    = button_to 'Add Places', select_form_areas_path(campaign_id: resource), id: 'add-place-btn', remote: true, method: :get, class: 'btn btn-primary'  if can?(:add_place, resource)

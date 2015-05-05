@@ -172,7 +172,7 @@ feature 'Campaigns', js: true do
 
       tab = open_tab('Places')
 
-      click_js_link 'Add Places'
+      click_js_button 'Add Places'
 
       within visible_modal do
         fill_in 'place-search-box', with: 'San'
@@ -184,7 +184,7 @@ feature 'Campaigns', js: true do
       close_modal
 
       # Re-open the modal to make sure it's not added again to the list
-      click_js_link 'Add Places'
+      click_js_button 'Add Places'
 
       within visible_modal do
         expect(page).to have_no_selector("#area-#{area.id}") # The area does not longer appear on the list after it was added to the campaign

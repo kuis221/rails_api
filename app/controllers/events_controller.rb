@@ -14,7 +14,7 @@ class EventsController < FilteredController
   extend ExportableFormHelper
 
   # This helper provide the methods to activate/deactivate the resource
-  include DeactivableHelper
+  include DeactivableController
   include EventsHelper
   include ApplicationHelper
 

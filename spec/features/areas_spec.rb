@@ -41,7 +41,7 @@ feature 'Areas', js: true, search: true  do
       company_user.places << venue.place
       visit area_path(area)
 
-      click_js_link 'Add Place'
+      click_js_button 'Add Place'
 
       within visible_modal do
         select_from_autocomplete 'Search for a place', 'Guillermitos Bar'
@@ -77,7 +77,7 @@ feature 'Areas', js: true, search: true  do
       ))
       visit area_path(area)
 
-      click_js_link 'Add Place'
+      click_js_button 'Add Place'
 
       expect do
         within visible_modal do
@@ -306,5 +306,4 @@ feature 'Areas', js: true, search: true  do
       end
     end
   end
-
 end

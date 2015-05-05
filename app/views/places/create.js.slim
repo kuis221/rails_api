@@ -5,8 +5,7 @@
   |
     $('.bootbox.modal').modal('hide');
   - if parent.present?
-    |
-      $('##{parent.class.name.underscore}-places-list').html('#{escape_javascript(render partial: "#{parent.class.name.pluralize.underscore}/places", locals: {resource: parent, places: parent.places})}');
+    = render partial: "#{parent.class.name.pluralize.underscore}/places", locals: { resource: parent }
   - if params[:add_new_place].present?
     - if parent.is_a?(Campaign)
       |

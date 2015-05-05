@@ -7,7 +7,7 @@ FactoryGirl.define do
     file_content_type 'image/jpg'
     file_updated_at Time.now
     asset_type 'ba_document'
-    processed true
+    status 2
     active true
   end
 end

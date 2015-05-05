@@ -161,7 +161,7 @@ feature 'Teams', js: true do
 
       expect(page).to_not have_content('Fulanito')
 
-      click_js_link('Add Team Member')
+      click_js_button('Add Team Member')
 
       within visible_modal do
         find("#staff-member-user-#{company_user.id}").hover

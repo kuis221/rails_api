@@ -7,7 +7,7 @@ class PhotosController < InheritedResources::Base
   skip_load_and_authorize_resource only: [:new, :create]
   before_action :authorize_create, only: [:new, :create]
 
-  include DeactivableHelper
+  include DeactivableController
   include PhotosHelper
 
   custom_actions collection: [:processing_status]
@@ -18,6 +18,12 @@ class PhotosController < InheritedResources::Base
 
   def processing_status
     @photos = parent.photos.find(params[:photos])
+    @photos.each do |p|
+      if p.processing? && p.processing_percentage < 90
+        p.increment!(:processing_percentage, 10)
+      end
+    end
+    @photos
   end
 
   protected

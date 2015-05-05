@@ -1,0 +1,3 @@
+|
+  $('#areas-places-list #area-#{params[:id]}').remove();
+= render partial: "#{parent.class.name.underscore.pluralize}/areas", locals: { resource: parent }

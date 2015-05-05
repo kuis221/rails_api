@@ -2181,6 +2181,11 @@ li#notifications{
 }
 
 #kpis-trends-module {
+	.blank-state {
+		h5 {
+			margin: 11px 0;
+		}
+	}
 	.empty-state {
 		padding: 50px 0;
 		color: $user_menu;
@@ -2209,6 +2214,11 @@ li#notifications{
 	.container-kpi-trend{
 		margin-top: 21px;
 		margin-left: 0px;
+	}
+	.blank-state {
+		h5 {
+			margin: 11px 0;
+		}
 	}
 	.empty-state {
 		padding: 50px 0;
@@ -3265,76 +3275,6 @@ ul.ui-widget-content{
 }
 
 
-// ATTACHMENT PANEL FOR PHOTOS UPLOAD
-// --------------------------------------------------
-
-.attachment-panel{
-	@include box-sizing(border-box);
-	border: 2px dashed $gray-lighter;
-	color: $user_menu;
-	line-height: 17px;
-	padding: 48px 16px 10px;
-	text-align: center;
-	height: 160px;
-	width: 240px;
-
-	&.big{
-		width: 100%;
-	}
-
-	.icon-upload{
-		display:inline-block;
-		font-size: 28px;
-		float: left;
-		line-height: 40px;
-		margin-right: 10px;
-	}
-	a {
-		color: $brand;
-		text-decoration:underline;
-	}
-	.drag-box{
-		h5,p{
-			color: $user_menu;
-			font-family: $baseFontFamily;
-			font-weight: normal;
-			text-align: left;
-			margin-bottom:0;
-		}
-		h5{
-			line-height: 16px;
-			margin-top:10px;
-		}
-		p{
-			font-size: 16px;
-			span.file-browse {
-				text-decoration: underline;
-				position: relative;
-				color: $brand;
-				overflow: hidden;
-				input[type=file] {
-					position: absolute;
-					top: 0;
-					right: 0;
-					margin: 0;
-					opacity: 0;
-					left: 0;
-					-ms-filter: 'alpha(opacity=0)';
-					font-size: 200px;
-					direction: ltr;
-					cursor: pointer;
-				}
-			}
-		}
-	}
-
-	.uploader {
-		.filename, .action {
-			display: none;
-		}
-	}
-}
-
 body.activities{
 	&.empty-layout {
 		background-color: white;
@@ -3604,6 +3544,9 @@ body.events.index {
 			}
 			a {
 				color: $text;
+				img {
+					margin-right: 10px;
+				}
 			}
 		}
 		&.result_photo {
@@ -5485,9 +5428,6 @@ body.campaigns{
 		}
 	}
 	&#event-tasks{
-		#event-tasks-container{
-			clear: both;
-		}
 		.task-comments{
 			#comment-form-container{
 				margin: 20px 0 5px 38px;
@@ -5496,10 +5436,8 @@ body.campaigns{
 				}
 			}
 		}
-		.pull-left{
-			a{
-				margin-top: 15px;
-			}
+		.resource-list{
+			margin-bottom: 15px;
 		}
 	}
 	h2{
@@ -6185,6 +6123,14 @@ table td.sub-level-1 {
 	}
 }
 
+@media (max-width: 1179px){
+	.blank-state-arrow {
+		left: 30px !important;
+		img {
+			width: 60%;
+		}
+	}
+}
 
 .ui-autocomplete {
 	z-index: 9999;
@@ -6287,6 +6233,18 @@ table td.sub-level-1 {
 			overflow: hidden;
 			margin-bottom: 6px;
 			padding: 2px 5px;
+			&.photo-drop-zone:first-child:last-child {
+				width: 100%;
+				height: 100px;
+				.drag-drop-zone.photos {
+					height: 98px;
+					padding: 0;
+					.attachment-select-file-view {
+						margin: 0;
+						padding: 20px 0 0 0;
+					}
+				}
+			}
 			.thumbnail-toolbar{
 				display: none;
 			}
@@ -6342,6 +6300,9 @@ table td.sub-level-1 {
 						}
 					}
 				}
+			}
+			&.hidden {
+				display: none !important;
 			}
 		}
 	}
@@ -7579,3 +7540,4 @@ input[type="text"]{
 @import 'widgets/steps_wizard';
 @import 'widgets/blank_states';
 @import 'widgets/tags';
+@import 'widgets/drag_drop_zone';

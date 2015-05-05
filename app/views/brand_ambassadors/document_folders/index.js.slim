@@ -1,5 +1,5 @@
 |
-  $('#documents-container').replaceWith('#{j render partial: 'index', locals: {children: @folder_children} }');
+  $('#documents-container').replaceWith('#{j render partial: 'index', locals: {children: @folder_children, callback_url: url_for(action: :create, controller: :documents, visit_id: params[:visit_id], folder_id: params[:parent_id], format: :js) } }');
 
   $(document).off('documents:change.docs').on('documents:change.docs', function(e){
     $.get('#{url_for(params)}');

@@ -282,7 +282,12 @@ module RequestsHelper
       else
         root.find(".resource-item##{resource.class.name.underscore}_#{resource.id}, .resource-item##{resource.class.name.underscore}-#{resource.id}")
       end
-    item.hover
+    begin
+      item.hover
+    rescue Capybara::Poltergeist::MouseEventFailed
+      page.evaluate_script 'window.scrollBy(0, -100);'
+      item.hover
+    end
     item
   end
 

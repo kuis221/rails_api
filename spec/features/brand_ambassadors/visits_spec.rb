@@ -745,7 +745,7 @@ feature 'Brand Ambassadors Visits' do
       visit brand_ambassadors_visit_path(ba_visit)
 
       within '#visit-events' do
-        click_button 'Create'
+        click_button 'Add Event'
       end
 
       within visible_modal do

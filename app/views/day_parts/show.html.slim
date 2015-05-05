@@ -21,12 +21,8 @@
       = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
 
   #time_ranges.details_box
-    h5.module-title TIME RANGES
-
-    #day-part-days-list
-      = render 'day_items'
-
-    = link_to '', new_day_part_day_item_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Time' if can?(:edit, resource)
+    = render 'day_items'
+    
 = render partial: 'help_tutorial'
 
 - reload_page_on_edit_resource
