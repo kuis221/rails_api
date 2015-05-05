@@ -1,0 +1,161 @@
+
+// DETAILS BAR (Details pages bar)
+
+.details-bar{
+	position: relative;
+	.back-arrow{
+	  background-color: $gray-darker;
+	  box-sizing: border-box;
+	  border-right: 1px solid $divider;
+	  color: $brand;
+	  font-size: 25px;
+	  @include border-radius(6px 0 0 0);
+	  line-height: 25px;
+	  padding: 11px 12px;
+	  position: absolute;
+	  height: 40px;
+	  left: 0;
+	  top: 0;
+	  width: 38px;
+	}
+	.panel{
+		background-color: $gray-darker;
+		box-sizing: border-box;
+		@include border-radius(0 6px 0 0);
+		margin-left: 38px;
+	}
+	.panel-collapse{
+		background-color: $gray-darker;
+		color: $white;
+	}
+
+	// Heading
+
+	.panel-heading{
+		color: $brand;
+		padding: 8px 20px 0 20px;
+		h5{
+			margin: 0;
+		}
+		.event-date{
+			color: $brand;
+			margin-left: 6px;
+			line-height: 14px;
+		}
+	}
+	.phase-indicator{
+		text-align: right;
+		a{
+			color: $app_bg;
+			padding-right: 4px;
+  		padding-left: 0;
+  		.icon-arrow-up{
+  			color: $brand;
+  			font-size: 14px;
+  			margin-left: 20px;
+  		}
+		}
+		.phase-id{
+			background-color: $app_bg;
+		}
+	}
+	.bar-title{
+		color: $tooltip;
+		margin-bottom: 10px;
+	}
+	// Body
+
+	.panel-body{
+		color: $silver;
+		border-top: 1px solid $divider;
+	}
+	.event-phases{
+		border-left: 1px solid $divider;
+	}
+	.event-name{
+		color: $app_bg;
+	}
+	.info-list{
+		margin-top: 10px;
+		li{
+			padding-bottom: 2px;
+		}
+		i{
+			color: $tooltip;
+			margin-right: 10px;
+		}
+	}
+}
+
+.phase-id{
+	background-color: $silver;
+	@include border-radius(15px);
+	color: $gray-darker;
+	display: inline-block;
+	font-size: 10px;
+	font-weight: bold;
+	line-height: 15px;
+	margin-right: 6px;
+	height: 15px;
+	text-align: center;
+	width: 15px;
+}
+
+.phases-list{
+	font-size: 12px;
+	.active-phase{
+		.phase, .step-active{
+			color: $primary-green;
+		}
+		.phase-id{
+			background-color: $primary-green;
+		}
+	}
+	.next-step{
+		color: $white;
+	}
+	.phase-steps{
+		padding-left: 20px;
+		li{
+			position: relative;
+		}
+		.icon-checked{
+			font-size: 10px;
+			position: absolute;
+		  left: -18px;
+		  top: 7px;
+		}
+	}
+}
+
+.event-info, .event-phases{
+	padding: 15px 20px 10px 20px;
+}
+
+.guide-bar{
+	background-color: $brand;
+	color: $white;
+	padding: 18px 0;
+	a{
+		color: $white;
+		margin-left: 6px;
+		text-decoration: underline;
+	}
+}
+
+.scrollspy-style{
+	.switch-list{
+		margin-bottom: 0;
+		&>li{
+			a{
+				&:hover{
+					cursor: default;
+					text-decoration: none;
+				}
+			}
+			&:not(.active){
+				display: none;
+			}
+		}
+	}
+}

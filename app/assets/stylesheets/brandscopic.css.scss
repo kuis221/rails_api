@@ -129,6 +129,9 @@ a{
 			text-decoration:underline;
 		}
 	}
+	&.no-decorate{
+		text-decoration: none;
+	}
 }
 
 .link{
@@ -7577,3 +7580,4 @@ form.button_to .button-with-icon {
 @import 'widgets/buttons';
 @import 'widgets/tags';
 @import 'widgets/drag_drop_zone';
+@import 'widgets/details_bar';
