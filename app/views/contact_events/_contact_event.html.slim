@@ -2,20 +2,23 @@
 - can_edit ||= can?(:edit_contacts, parent)
 
 // Tags structure in the styleguide
-.user-tag
+.user-tag-option
   .user-type
     i.icon-team
   span #{h contact_event.full_name}
+  a class="icon-close" href="#"
 
-.user-tag
+.user-tag-option
   .user-type
     image src="../assets/profile-pic.jpg"
   span #{h contact_event.full_name}
+  a class="icon-close" href="#"
 
-.user-tag
+.user-tag-option.has-tooltip data-html="true" data-original-title="<div class='contacts-tooltip'><h5>Susan Jones</h5><p>Bar Manager</p><ul class='unstyled'><li><i class='icon-wired-email'></i>susan.jones@company.com</li> <li><i class='icon-wired-email'></i>+1(241)555-5555</li><li><i class='icon-wired-email'></i>1743, Oak Street, San Francisco, CA 94123 United States</li></ul></div>"
   .user-type
     i.icon-user
   span #{h contact_event.full_name}
+  a class="icon-close" href="#"
 
 
 //div.span3.team-member.event-contact.clearfix id="contact_event_#{contact_event.id}"
