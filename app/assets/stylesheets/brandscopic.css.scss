@@ -7570,33 +7570,38 @@ form.button_to .button-with-icon {
 	position: relative;
 	.back-arrow{
 	  background-color: $gray-darker;
+	  box-sizing: border-box;
+	  border-right: 1px solid $divider;
 	  color: $brand;
 	  font-size: 25px;
+	  @include border-radius(6px 0 0 0);
 	  line-height: 25px;
-	  width: 40px;
+	  padding: 11px 12px;
 	  position: absolute;
 	  height: 40px;
-	  top: 0;
 	  left: 0;
+	  top: 0;
+	  width: 38px;
 	}
 	.panel{
 		background-color: $gray-darker;
 		box-sizing: border-box;
-		margin-left: 40px;
+		margin-left: 38px;
 	}
 	.panel-collapse{
 		background-color: $gray-darker;
-		border-top: 1px solid $header;
 		color: $white;
 	}
 	.panel-heading{
-		padding: 10px 20px 0 20px;
-		h5{
+		color: $brand;
+		padding: 8px 20px 0 20px;
+		h5, p{
 			margin: 0;
 		}
 	}
-	.panel-heading, .panel-body{
+	.panel-body{
 		color: $silver;
+		border-top: 1px solid $divider;
 	}
 	.bar-title{
 		color: $tooltip;
@@ -7623,7 +7628,7 @@ form.button_to .button-with-icon {
 
 .phase-id{
 	background-color: $silver;
-	border-radius: 15px;
+	@include border-radius(15px);
 	color: $gray-darker;
 	display: inline-block;
 	font-size: 10px;
@@ -7647,11 +7652,22 @@ form.button_to .button-with-icon {
 }
 
 .event-phases{
-	border-left: 1px solid $header;
+	border-left: 1px solid $divider;
 }
 
 .event-info, .event-phases{
 	padding: 15px 20px 10px 20px;
+}
+
+.guide-bar{
+	background-color: $brand;
+	color: $white;
+	padding: 18px 0;
+	a{
+		color: $white;
+		margin-left: 6px;
+		text-decoration: underline;
+	}
 }
 
 
