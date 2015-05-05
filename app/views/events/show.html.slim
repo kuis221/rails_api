@@ -40,14 +40,16 @@
           .span3.phase-indicator
             h5
               a aria-controls="collapseOne" aria-expanded="true" data-parent="#accordion" data-toggle="collapse" href="#collapseOne"
+                span.phase-id 1
                 | PLAN: Contacts
       #collapseOne.panel-collapse.collapse aria-labelledby="headingOne" role="tabpanel"
         .panel-body
           .row-fluid
-            .span9
-              h5 BASIC INFO
-              p Absolut Texas Incremental Mini Shaker FY14 - Jun 1 at 11.00 AM - Jun 2 at 12:00 AM
-              ul.unstyled.basic-info
+            .span9.event-info
+              .bar-title
+                b BASIC INFO
+              .bar-event Absolut Texas Incremental Mini Shaker FY14
+              ul.unstyled.info-list
                 li
                   i.icon-calendar
                   | Jun 1 at 11.00 AM - Jun 2 at 12:00 AM
@@ -57,22 +59,27 @@
                 li
                   i.icon-team
                   | Sara Miller, James Franco, San Francisco Team
-            .span3
-              ul.unstyled
-                li EVENT PHASES
-                li href="plan"
-                  | PLAN
-                  ul.unstyled
-                    li Basic info
+            .span3.event-phases
+              ul.unstyled.phases-list
+                li
+                  .bar-title
+                    b EVENT PHASES
+                li href="plan" class="active"
+                  span.phase-id 1
+                  b.phase PLAN
+                  ul.unstyled.phase-steps
+                    li.step-active Basic info
                     li Contacts
                     li Tasks
                     li Documents
 
                 li href="execute"
-                  | 2.EXECUTE
+                  span.phase-id 2
+                  b.phase EXECUTE
 
                 li href="resolve"
-                  | 3.RESOLVE
+                  span.phase-id 3
+                  b.phase RESOLVE
 
     // data-spy="scroll" should be added to the rest of the structure to "spy" this links I guess...
 

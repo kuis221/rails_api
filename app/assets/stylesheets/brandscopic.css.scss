@@ -7589,21 +7589,69 @@ form.button_to .button-with-icon {
 		border-top: 1px solid $header;
 		color: $white;
 	}
+	.panel-heading{
+		padding: 10px 20px 0 20px;
+		h5{
+			margin: 0;
+		}
+	}
 	.panel-heading, .panel-body{
-		padding: 8px 20px 0 20px;
+		color: $silver;
 	}
-	h5{
-		margin: 0;
+	.bar-title{
+		color: $tooltip;
+		font-size: 12px;
+		margin-bottom: 10px;
 	}
-	.phase-indicator{
-		text-align: right;
+	.bar-event{
+		color: $white;
 	}
-	.basic-info{
+	.info-list{
+		margin-top: 10px;
+		li{
+			padding-bottom: 2px;
+		}
 		i{
 			color: $tooltip;
 			margin-right: 10px;
 		}
 	}
+	.phase-indicator{
+		text-align: right;
+	}
+}
+
+.phase-id{
+	background-color: $silver;
+	border-radius: 15px;
+	color: $gray-darker;
+	display: inline-block;
+	font-size: 10px;
+	line-height: 15px;
+	margin-right: 6px;
+	height: 15px;
+	text-align: center;
+	width: 15px;
+}
+
+.phases-list{
+	font-size: 12px;
+	.active{
+		.phase, .step-active{
+			color: $primary-green;
+		}
+	}
+	.phase-steps{
+		padding-left: 20px;
+	}
+}
+
+.event-phases{
+	border-left: 1px solid $header;
+}
+
+.event-info, .event-phases{
+	padding: 15px 20px 10px 20px;
 }
 
 
