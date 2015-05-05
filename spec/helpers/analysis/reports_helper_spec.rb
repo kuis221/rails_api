@@ -8,6 +8,7 @@ describe Analysis::ReportsHelper, type: :helper do
   describe '#each_events_goal' do
     it 'returns the goals results for each campaign KPI and Activity Type' do
       place = create(:place)
+      create(:venue, place: create(:place, country: 'US', state: 'California', city: 'Los Angeles'), company: company)
       activity_type1 = create(:activity_type, company: company)
       activity_type2 = create(:activity_type, company: company)
       kpi_impressions = create(:kpi, name: 'Impressions', kpi_type: 'number', capture_mechanism: 'integer', company: company)
@@ -35,6 +36,7 @@ describe Analysis::ReportsHelper, type: :helper do
       create(:activity, activity_type: activity_type2, activitable: event, company_user: company_user, campaign: campaign)
 
       helper.instance_variable_set(:@events_scope, Event.where(id: event.id))
+      helper.instance_variable_set(:@venues_scope, Venue.all)
       helper.instance_variable_set(:@campaign, campaign)
       helper.instance_variable_set(:@goals, goals)
 
@@ -100,6 +102,7 @@ describe Analysis::ReportsHelper, type: :helper do
       create(:activity, activity_type: activity_type, activitable: venue, company_user: company_user, campaign: campaign)
 
       helper.instance_variable_set(:@events_scope, Event.all)
+      helper.instance_variable_set(:@venues_scope, Venue.all)
       helper.instance_variable_set(:@campaign, campaign)
       helper.instance_variable_set(:@goals, goals)
 
@@ -137,6 +140,7 @@ describe Analysis::ReportsHelper, type: :helper do
       before do
         campaign.add_kpi kpi
         helper.instance_variable_set(:@events_scope, Event.where(campaign_id: campaign))
+        helper.instance_variable_set(:@venues_scope, Venue.all)
         helper.instance_variable_set(:@campaign, campaign)
         helper.instance_variable_set(:@goals, goals)
       end
