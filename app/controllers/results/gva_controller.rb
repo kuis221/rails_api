@@ -77,6 +77,14 @@ class Results::GvaController < InheritedResources::Base
     scope
   end
 
+  def filter_venues_scope
+    if params[:item_type].present? && params[:item_type] == 'Area'
+      Venue.in_campaign_areas(@campaign, [params[:item_id]])
+    else
+      Venue.in_campaign_scope(@campaign)
+    end
+  end
+
   def goalables_by_type
     if report_group_by == 'campaign'
       campaign.goals
@@ -95,6 +103,7 @@ class Results::GvaController < InheritedResources::Base
       params.merge!(item_type: goalable.class.name, item_id: goalable.id)
     end
     @events_scope = filter_events_scope
+    @venues_scope = filter_venues_scope
     @group_header_data = {}
     goals = if area
       area.goals.in(campaign)
