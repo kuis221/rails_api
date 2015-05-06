@@ -311,4 +311,55 @@ module EventsHelper
     end
   end
 
+  def event_members_name(users, teams, line_separator = '<br />') 
+    return if users.nil? && teams.nil?
+    members = []
+    users.each do |team_member|
+      members.push team_member.full_name if team_member.full_name.present?
+    end unless users.nil?
+
+    teams.each do |team|
+      members.push team.name if team.name.present?
+    end unless teams.nil?
+
+    members_list = members.compact.sort.join(line_separator) unless members.compact.empty?
+    members_list.html_safe if members_list.present?
+  end
+
+  def event_member_tag(users, teams)
+    return if users.nil? && teams.nil?
+    render_teams_tag(teams).html_safe + render_users_tag(users).html_safe
+  end
+
+  def render_teams_tag(teams)
+    return if teams.nil?
+    team_list = ""
+    teams.each do |team|
+      team_list = content_tag(:div, class: 'user-tag') do
+        content_tag(:div, class: 'user-type') do
+          content_tag(:i, '', class: 'icon-team')
+        end +
+        content_tag(:span, team.name)
+      end.html_safe
+    end
+    team_list
+  end
+
+  def render_users_tag(users)
+    return if users.nil?
+    users_list = ""
+    users.each do |team_member|
+      users_list = content_tag(:div, class: 'user-tag') do
+        content_tag(:div, class: 'user-type') do
+          unless team_member.user.avatar_file_name.nil?
+            content_tag(:image, src: team_member.user.avatar_file_name)
+          else
+            content_tag(:i, '', class: 'icon-user')
+          end
+        end +
+        content_tag(:span, team_member.full_name)
+      end.html_safe
+    end
+    users_list
+  end
 end

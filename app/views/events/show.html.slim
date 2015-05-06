@@ -25,130 +25,10 @@
         | for more information about this section.
 
 .row-fluid.with-details-close-bar
-  // OLD STRUCTURE
-  // = resource_details_bar("You are viewing event details. Click to close.")
+  = render 'details_bar'
 
-  // NEW STRUCTURE
-  .details-bar
-    .back-arrow
-      i.icon-angle-left
-    .panel
-      #headingOne.panel-heading role="tab"
-        .row-fluid
-          .span10
-            nav id="spyOnThis" class="scrollspy-style"
-              ul.switch-list.unstyled
-                li
-                  a href="#mdo"
-                    span Viewing event details screen.
-                li class="active"
-                  a href="#mdq"
-                    span.event-name.pull-left Absolut Texas Incremental Mini Shaker FY14
-                    span.event-date.small Jun 1 at 11.00 AM ― Jun 2 at 12:00 AM
-
-          .span2.phase-indicator
-            nav id="spyOnThisToo" class="scrollspy-style"
-              ul.switch-list.unstyled
-                li class="active"
-                  a aria-controls="collapseOne" aria-expanded="true" data-parent="#accordion" data-toggle="collapse" href="#collapseOne" class="small no-decorate"
-                    span.phase-id 1
-                    b> PLAN:
-                    | Contacts
-                    i.icon-arrow-up
-                li
-                  a aria-controls="collapseOne" aria-expanded="true" data-parent="#accordion" data-toggle="collapse" href="#collapseOne" class="small no-decorate"
-                    span.phase-id 2
-                    b> EXECUTE:
-                    | Contacts
-                    i.icon-arrow-up
-                li
-                  a aria-controls="collapseOne" aria-expanded="true" data-parent="#accordion" data-toggle="collapse" href="#collapseOne" class="small no-decorate"
-                    span.phase-id 3
-                    b> RESULTS:
-                    | Contacts
-                    i.icon-arrow-up
-
-      #collapseOne.panel-collapse.collapse aria-labelledby="headingOne" role="tabpanel"
-        .panel-body
-          .row-fluid
-            .span10.event-info
-              .bar-title.small
-                b BASIC INFO
-              .event-name Absolut Texas Incremental Mini Shaker FY14
-              ul.unstyled.info-list
-                li
-                  i.icon-calendar
-                  | Jun 1 at 11.00 AM - Jun 2 at 12:00 AM
-                li
-                  i.icon-wired-venue
-                  | Bar None, 5555 Union Street, San Francisco, CA 94110
-                li
-                  i.icon-team
-                  | Sara Miller, James Franco, San Francisco Team
-            .span2.event-phases
-              nav id="spyOnThisPhases" class="scrollspy-style"
-                ul.switch-list.unstyled
-                  li class="active"
-                    ul.unstyled.phases-list
-                      li
-                        .bar-title.small
-                          b EVENT PHASES
-
-                      li class="active-phase"
-                        span.phase-id 1
-                        b.phase PLAN
-                        ul.unstyled.phase-steps
-                          li.step-active
-                            i.icon-checked
-                            | Basic info
-                          li.next-step Contacts
-                          li Tasks
-                          li Documents
-
-                      li
-                        span.phase-id 2
-                        b.phase EXECUTE
-
-                      li
-                        span.phase-id 3
-                        b.phase RESULTS
-
-                  li
-                    ul.unstyled.phases-list
-                      li
-                        .bar-title.small
-                          b EVENT PHASES
-
-                      li
-                        span.phase-id 1
-                        b.phase PLAN
-
-                      li class="active-phase"
-                        span.phase-id 2
-                        b.phase EXECUTE
-                        ul.unstyled.phase-steps
-                          li.step-active
-                            i.icon-checked
-                            | Basic info
-                          li.next-step Contacts
-                          li Tasks
-                          li Documents
-
-                      li
-                        span.phase-id 3
-                        b.phase RESULTS
-
-    .guide-bar.text-center
-      span
-        | Do you want to keep track of any contacts?
-        a href="#" (Yes)
-        a href="#" (Skip)
-
-
-
-
-  .span data-spy="scroll" data-target="#spyOnThis"
-
+  //.span data-spy="scroll" data-target="#spyOnThis"
+  .span
     .details_box class="#{(resource.place.nil? or resource.place.latitude.nil?) ?  'padding-top-close-bar' : ''}"
 
       .phases
@@ -179,25 +59,10 @@
             .description-data
               span= simple_format resource.description
 
-          .add-details-info
-            i.icon-team.indicate-icon
-
-            // Tags from structure in the styleguide
-            .user-tag
-              .user-type
-                i.icon-team
-              span Chris Jaskot Team
-
-            .user-tag
-              .user-type
-                image src="../assets/profile-pic.jpg"
-              span Santiago Miller
-
-            .user-tag
-              .user-type
-                i.icon-user
-              span Steven Thomson
-
+          - unless resource.users.empty? && resource.teams.empty?    
+            .add-details-info
+              i.icon-team.indicate-icon
+              = event_member_tag(resource.users, resource.teams)
         .span6.map_container
           - unless resource.place.nil? || resource.place.latitude.nil? || resource.place.latitude == 1.0
             #venue-map-canvas.google-map data-latitude="#{resource.place.latitude}" data-longitude="#{resource.place.longitude}"

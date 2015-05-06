@@ -1,0 +1,120 @@
+// OLD STRUCTURE
+// = resource_details_bar("You are viewing event details. Click to close.")
+
+// NEW STRUCTURE
+.details-bar
+  .back-arrow
+    i.icon-angle-left
+  .panel
+    #headingOne.panel-heading role="tab"
+      .row-fluid
+        .span10
+          nav id="spyOnThis" class="scrollspy-style"
+            ul.switch-list.unstyled
+              li
+                a href="#mdo"
+                  span Viewing event details screen.
+              li class="active"
+                a href="#mdq"
+                  span.event-name.pull-left= resource.campaign_name
+                  span.event-date.small = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at), date_separator: ' - ')
+
+        .span2.phase-indicator
+          nav id="spyOnThisToo" class="scrollspy-style"
+            ul.switch-list.unstyled
+              li class="active"
+                a aria-controls="collapseOne" aria-expanded="true" data-parent="#accordion" data-toggle="collapse" href="#collapseOne" class="small no-decorate"
+                  span.phase-id 1
+                  b> PLAN:
+                  | Contacts
+                  i.icon-arrow-up
+              li
+                a aria-controls="collapseOne" aria-expanded="true" data-parent="#accordion" data-toggle="collapse" href="#collapseOne" class="small no-decorate"
+                  span.phase-id 2
+                  b> EXECUTE:
+                  | Contacts
+                  i.icon-arrow-up
+              li
+                a aria-controls="collapseOne" aria-expanded="true" data-parent="#accordion" data-toggle="collapse" href="#collapseOne" class="small no-decorate"
+                  span.phase-id 3
+                  b> RESULTS:
+                  | Contacts
+                  i.icon-arrow-up
+
+    #collapseOne.panel-collapse.collapse aria-labelledby="headingOne" role="tabpanel"
+      .panel-body
+        .row-fluid
+          .span10.event-info
+            .bar-title.small
+              b BASIC INFO
+            .event-name= resource.campaign_name
+            ul.unstyled.info-list
+              li
+                i.icon-calendar
+                = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at), date_separator: ' - ')
+              - unless resource.place.nil?
+                li
+                  i.icon-wired-venue
+                  = place_address(resource.place, false, ', ', ', ') if resource.place
+              - unless resource.users.empty? && resource.teams.empty?
+                li
+                  i.icon-team
+                  = event_members_name(resource.users, resource.teams, ', ')
+          .span2.event-phases
+            nav id="spyOnThisPhases" class="scrollspy-style"
+              ul.switch-list.unstyled
+                li class="active"
+                  ul.unstyled.phases-list
+                    li
+                      .bar-title.small
+                        b EVENT PHASES
+
+                    li class="active-phase"
+                      span.phase-id 1
+                      b.phase PLAN
+                      ul.unstyled.phase-steps
+                        li.step-active
+                          i.icon-checked
+                          | Basic info
+                        li.next-step Contacts
+                        li Tasks
+                        li Documents
+
+                    li
+                      span.phase-id 2
+                      b.phase EXECUTE
+
+                    li
+                      span.phase-id 3
+                      b.phase RESULTS
+
+                li
+                  ul.unstyled.phases-list
+                    li
+                      .bar-title.small
+                        b EVENT PHASES
+
+                    li
+                      span.phase-id 1
+                      b.phase PLAN
+
+                    li class="active-phase"
+                      span.phase-id 2
+                      b.phase EXECUTE
+                      ul.unstyled.phase-steps
+                        li.step-active
+                          i.icon-checked
+                          | Basic info
+                        li.next-step Contacts
+                        li Tasks
+                        li Documents
+
+                    li
+                      span.phase-id 3
+                      b.phase RESULTS
+
+  .guide-bar.text-center
+    span
+      | Do you want to keep track of any contacts?
+      a href="#" (Yes)
+      a href="#" (Skip)
