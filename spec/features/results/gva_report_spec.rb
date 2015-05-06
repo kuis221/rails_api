@@ -48,38 +48,87 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         kpi = Kpi.samples
         campaign.add_kpi kpi
 
-        place1 = create(:place, name: 'Place 1')
-        campaign.places << place1
+        place = create(:place, name: 'The Place')
+        another_place = create(:place, name: 'Place 3')
+        campaign.places << [place, another_place]
         company_user.campaigns << campaign
-        company_user.places << place1
+        company_user.places << [place, another_place]
 
         create(:goal, goalable: campaign, kpi: kpi, value: '100')
         create(:goal, parent: campaign, goalable: company_user, kpi: kpi, value: 100)
         create(:goal, parent: campaign, goalable: company_user, kpi: Kpi.events, value: 3)
-        create(:goal, parent: campaign, goalable: place1, kpi: kpi, value: 150)
-        create(:goal, parent: campaign, goalable: place1, kpi: Kpi.events, value: 2)
-        create(:goal, parent: campaign, goalable: place1, kpi: Kpi.promo_hours, value: 4)
-        create(:goal, parent: campaign, goalable: place1, kpi: Kpi.expenses, value: 50)
+        create(:goal, parent: campaign, goalable: place, kpi: kpi, value: 150)
+        create(:goal, parent: campaign, goalable: place, kpi: Kpi.events, value: 2)
+        create(:goal, parent: campaign, goalable: place, kpi: Kpi.promo_hours, value: 4)
+        create(:goal, parent: campaign, goalable: place, kpi: Kpi.expenses, value: 50)
 
-        event1 = create(:approved_event, company: company, campaign: campaign, place: place1)
+        event1 = create(:approved_event, company: company, campaign: campaign, place: place)
         event1.result_for_kpi(kpi).value = '25'
         event1.save
         event1.users << company_user
 
-        event2 = create(:submitted_event, company: company, campaign: campaign, place: place1)
+        event2 = create(:submitted_event, company: company, campaign: campaign, place: place)
         event2.result_for_kpi(kpi).value = '20'
         event2.save
         event2.users << company_user
 
-        event3 = create(:rejected_event, company: company, campaign: campaign, place: place1)
+        event3 = create(:rejected_event, company: company, campaign: campaign, place: place)
         event3.result_for_kpi(kpi).value = '33'
         event3.save
         event3.users << company_user
 
-        visit analysis_gva_path
+        ### Setting data to test Activities
+        activity_type = create(:activity_type, name: 'Activity Type', company: company)
+        campaign.activity_types << activity_type
+
+        # Activities settings for Place
+        area1 = create(:area, name: 'Area 1', company: company)
+        area2 = create(:area, name: 'Area 2', company: company)
+        place1 = create(:place, name: 'Place 1')
+        place2 = create(:place, name: 'Place 2')
+        area1.places << place1
+        area2.places << place2
+        campaign.areas << [area1, area2]
+        company_user.areas << [area1, area2]
+        venue1 = create(:venue, place: place1, company: company)
+        venue2 = create(:venue, place: place2, company: company)
+        event4 = create(:approved_event, company: company, campaign: campaign, place: another_place)
+        # Activities settings for Staff
+        another_user = create(:company_user, company: company)
+        team1 = create(:team, name: 'Team 1', company: company)
+        team1.users << another_user
+        event1.teams << team1
+        campaign.teams << team1
+
+        # Activities goals for Place
+        create(:goal, parent: campaign, goalable: area1, activity_type_id: activity_type.id, value: 5)
+        create(:goal, parent: campaign, goalable: area2, activity_type_id: activity_type.id, value: 10)
+        create(:goal, parent: campaign, goalable: another_place, activity_type_id: activity_type.id, value: 7)
+        # Activities goals for Staff
+        create(:goal, parent: campaign, goalable: team1, activity_type_id: activity_type.id, value: 8)
+
+        # Activities for Place
+        create(:activity, activity_type: activity_type, activitable: venue1, campaign: campaign,
+                          company_user: company_user, activity_date: '2013-07-22')
+        create(:activity, activity_type: activity_type, activitable: venue1, campaign: campaign,
+                          company_user: company_user, activity_date: '2013-07-23')
+        create(:activity, activity_type: activity_type, activitable: venue2, campaign: campaign,
+                          company_user: company_user, activity_date: '2013-07-24')
+        create(:activity, activity_type: activity_type, activitable: event4, campaign: campaign,
+                          company_user: company_user, activity_date: '2013-07-25')
+        # Activities for Staff
+        create(:activity, activity_type: activity_type, activitable: venue2, campaign: campaign,
+                          company_user: another_user, activity_date: '2013-07-26')
+        create(:activity, activity_type: activity_type, activitable: event1, campaign: campaign,
+                          company_user: another_user, activity_date: '2013-07-27')
+
+        Sunspot.commit
+
+        visit results_gva_path
 
         choose_campaign('Test Campaign FY01')
 
+        ### Testing group by Campaign
         within('.container-kpi-trend') do
           expect(page).to have_content('Samples')
           find('.progress').hover
@@ -94,11 +143,11 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
           end
         end
 
-        # Testing group by Place
+        ### Testing group by Place
         report_form.find('label', text: 'Place').click
 
-        within('.item-summary') do
-          expect(page).to have_content('Place 1')
+        within('#gva-result-Place' + place.id.to_s + ' .item-summary') do
+          expect(page).to have_content('The Place')
           within('.goals-summary') do
             expect(page).to have_content('50% EVENTS')
             expect(page).to have_content('50% PROMO HOURS')
@@ -107,11 +156,10 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
           end
         end
 
-        within('.accordion-heading') do
-          click_js_link('Place 1')
+        within('#gva-result-Place' + place.id.to_s + ' .accordion-heading') do
+          click_js_link('The Place')
         end
-
-        within('.container-kpi-trend .kpi-trend:nth-child(3)') do
+        within('#gva-result-Place' + place.id.to_s + ' .kpi-trend:nth-child(3)') do
           expect(page).to have_content('Samples')
           find('.progress').hover
           expect(page).to have_selector('.executed-label', text: '25')
@@ -123,11 +171,69 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
             expect(page).to have_content('78 OF 150 GOAL')
           end
         end
+        within('#gva-result-Place' + place.id.to_s + ' .accordion-heading') do
+          click_js_link('The Place')
+        end
 
-        # Testing group by Staff
+        within('#gva-result-Place' + another_place.id.to_s + ' .accordion-heading') do
+          click_js_link('Place 3')
+        end
+        within('#gva-result-Place' + another_place.id.to_s + ' .kpi-trend:nth-child(1)') do
+          expect(page).to have_content('Activity Type')
+          find('.progress').hover
+          expect(page).to have_selector('.executed-label', text: '1')
+          expect(page).to have_selector('.submitted-label', text: '0')
+          expect(page).to have_selector('.rejected-label', text: '0')
+          expect(page).to have_css('.today-line-indicator')
+          within('.progress-label') do
+            expect(page).to have_content('14%')
+            expect(page).to have_content('1 OF 7 GOAL')
+          end
+        end
+        within('#gva-result-Place' + another_place.id.to_s + ' .accordion-heading') do
+          click_js_link('Place 3')
+        end
+
+        # Checking that activities for Venues are in the corresponding Area only
+        within('#gva-result-Area' + area1.id.to_s + ' .accordion-heading') do
+          click_js_link('Area 1')
+        end
+        within('#gva-result-Area' + area1.id.to_s + ' .kpi-trend:nth-child(1)') do
+          expect(page).to have_content('Activity Type')
+          find('.progress').hover
+          expect(page).to have_selector('.executed-label', text: '2')
+          expect(page).to have_selector('.submitted-label', text: '0')
+          expect(page).to have_selector('.rejected-label', text: '0')
+          expect(page).to have_css('.today-line-indicator')
+          within('.progress-label') do
+            expect(page).to have_content('40%')
+            expect(page).to have_content('2 OF 5 GOAL')
+          end
+        end
+        within('#gva-result-Area' + area1.id.to_s + ' .accordion-heading') do
+          click_js_link('Area 1')
+        end
+
+        within('#gva-result-Area' + area2.id.to_s + ' .accordion-heading') do
+          click_js_link('Area 2')
+        end
+        within('#gva-result-Area' + area2.id.to_s + ' .kpi-trend:nth-child(1)') do
+          expect(page).to have_content('Activity Type')
+          find('.progress').hover
+          expect(page).to have_selector('.executed-label', text: '2')
+          expect(page).to have_selector('.submitted-label', text: '0')
+          expect(page).to have_selector('.rejected-label', text: '0')
+          expect(page).to have_css('.today-line-indicator')
+          within('.progress-label') do
+            expect(page).to have_content('20%')
+            expect(page).to have_content('2 OF 10 GOAL')
+          end
+        end
+
+        ### Testing group by Staff
         report_form.find('label', text: 'Staff').click
 
-        within('.item-summary') do
+        within('#gva-result-CompanyUser' + company_user.id.to_s + ' .item-summary') do
           expect(page).to have_content('Juanito Bazooka')
           within('.goals-summary') do
             expect(page).to have_content('100% EVENTS')
@@ -135,11 +241,10 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
           end
         end
 
-        within('.accordion-heading') do
+        within('#gva-result-CompanyUser' + company_user.id.to_s + ' .accordion-heading') do
           click_js_link('Juanito Bazooka')
         end
-
-        within('.container-kpi-trend .kpi-trend:nth-child(2)') do
+        within('#gva-result-CompanyUser' + company_user.id.to_s + ' .kpi-trend:nth-child(2)') do
           expect(page).to have_content('Samples')
           find('.progress').hover
           expect(page).to have_selector('.executed-label', text: '25')
@@ -149,6 +254,26 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
           within('.progress-label') do
             expect(page).to have_content('78%')
             expect(page).to have_content('78 OF 100 GOAL')
+          end
+        end
+        within('#gva-result-CompanyUser' + company_user.id.to_s + ' .accordion-heading') do
+          click_js_link('Juanito Bazooka')
+        end
+
+        # Checking that activities for Venues are in the corresponding Team only
+        within('#gva-result-Team' + team1.id.to_s + ' .accordion-heading') do
+          click_js_link('Team 1')
+        end
+        within('#gva-result-Team' + team1.id.to_s + ' .kpi-trend:nth-child(1)') do
+          expect(page).to have_content('Activity Type')
+          find('.progress').hover
+          expect(page).to have_selector('.executed-label', text: '2')
+          expect(page).to have_selector('.submitted-label', text: '0')
+          expect(page).to have_selector('.rejected-label', text: '0')
+          expect(page).to have_css('.today-line-indicator')
+          within('.progress-label') do
+            expect(page).to have_content('25%')
+            expect(page).to have_content('2 OF 8 GOAL')
           end
         end
       end

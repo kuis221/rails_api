@@ -64,6 +64,7 @@ feature 'Results Activity Data Page', js: true, search: true  do
 
   feature 'export', search: true do
     before do
+      event = create(:event, campaign: campaign, place: venue.place)
       another_user = create(:user, company: company, first_name: 'Juanito', last_name: 'Bazooka')
       activity_type2 = create(:activity_type, name: 'Second Activity Type', company: company)
 
@@ -74,6 +75,8 @@ feature 'Results Activity Data Page', js: true, search: true  do
                         company_user: company_user, activity_date: '2013-02-04')
       create(:activity, activity_type: activity_type2, activitable: venue, campaign: campaign,
                         company_user: another_user.company_users.first, activity_date: '2013-03-16')
+      create(:activity, activity_type: activity_type, activitable: event, campaign: campaign,
+                        company_user: another_user.company_users.first, activity_date: '2013-09-04')
 
       Sunspot.commit
     end
@@ -97,6 +100,8 @@ feature 'Results Activity Data Page', js: true, search: true  do
         [campaign.name, 'Test User', '2013-02-04', 'My Activity Type', '', nil, 'My Place',
          'My Place, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active'],
         [campaign.name, 'Juanito Bazooka', '2013-03-16', 'Second Activity Type', '', nil,
+         'My Place', 'My Place, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active'],
+        [campaign.name, 'Juanito Bazooka', '2013-09-04', 'My Activity Type', '', nil,
          'My Place', 'My Place, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active']
       ])
     end

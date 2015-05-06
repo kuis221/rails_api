@@ -424,6 +424,7 @@ describe Place, type: :model do
             value: 'Qwerty, 123 My Street',
             label: 'Qwerty, 123 My Street',
             id: venue.place_id,
+            location: { latitude: nil, longitude: nil },
             valid: true
           }
         ]
@@ -431,26 +432,32 @@ describe Place, type: :model do
 
       describe 'with results form Google API' do
         let(:google_results) do
-          { results: [{
-            'formatted_address' => 'Los Angeles, CA, USA',
-            'place_id' => 'PLACEID1',
-            'name' => 'Los Angeles',
-            'reference' => 'REFERENCE1',
-            'types' => %w(locality political)
-          },
-                      {
-                        'formatted_address' => 'Los Angeles, ON, Canada',
-                        'place_id' => 'PLACEID2',
-                        'name' => 'Los Angeles',
-                        'reference' => 'REFERENCE2',
-                        'types' => %w(locality political)
-                      }, {
-                        'formatted_address' => 'Tower 42, Los Angeles, CA 23211, United States',
-                        'place_id' => 'PLACEID3',
-                        'name' => 'Vertigo 42',
-                        'reference' => 'REFERENCE3',
-                        'types' => %w(food bar establishment)
-                      }] }
+          {
+            results: [
+              {
+                'formatted_address' => 'Los Angeles, CA, USA',
+                'place_id' => 'PLACEID1',
+                'name' => 'Los Angeles',
+                'reference' => 'REFERENCE1',
+                'types' => %w(locality political),
+                'geometry' => { 'location' => { 'lat' => 22.22, 'lng' => 33.33 }  }
+              }, {
+                'formatted_address' => 'Los Angeles, ON, Canada',
+                'place_id' => 'PLACEID2',
+                'name' => 'Los Angeles',
+                'reference' => 'REFERENCE2',
+                'types' => %w(locality political),
+                'geometry' => { 'location' => { 'lat' => 11.22, 'lng' => 22.33 }  }
+              }, {
+                'formatted_address' => 'Tower 42, Los Angeles, CA 23211, United States',
+                'place_id' => 'PLACEID3',
+                'name' => 'Vertigo 42',
+                'reference' => 'REFERENCE3',
+                'types' => %w(food bar establishment),
+                'geometry' => { 'location' => { 'lat' => 11.11, 'lng' => 44.44 }  }
+              }
+            ]
+          }
         end
 
         it "should include all the places returned by google with the 'valid' flag set to false" do
@@ -460,18 +467,21 @@ describe Place, type: :model do
               value: 'Los Angeles, CA, USA',
               label: 'Los Angeles, CA, USA',
               id: 'REFERENCE1||PLACEID1',
+              location: { latitude: 22.22, longitude: 33.33 },
               valid: false
             },
             {
               value: 'Los Angeles, ON, Canada',
               label: 'Los Angeles, ON, Canada',
               id: 'REFERENCE2||PLACEID2',
+              location: { latitude: 11.22, longitude: 22.33 },
               valid: false
             },
             {
               value: 'Vertigo 42, Tower 42, Los Angeles, CA 23211, United States',
               label: 'Vertigo 42, Tower 42, Los Angeles, CA 23211, United States',
               id: 'REFERENCE3||PLACEID3',
+              location: { latitude: 11.11, longitude: 44.44 },
               valid: false
             }
           ]
@@ -485,18 +495,21 @@ describe Place, type: :model do
               value: 'Los Angeles, CA, USA',
               label: 'Los Angeles, CA, USA',
               id: 'REFERENCE1||PLACEID1',
+              location: { latitude: 22.22, longitude: 33.33 },
               valid: true
             },
             {
               value: 'Vertigo 42, Tower 42, Los Angeles, CA 23211, United States',
               label: 'Vertigo 42, Tower 42, Los Angeles, CA 23211, United States',
               id: 'REFERENCE3||PLACEID3',
+              location: { latitude: 11.11, longitude: 44.44 },
               valid: true
             },
             {
               value: 'Los Angeles, ON, Canada',
               label: 'Los Angeles, ON, Canada',
               id: 'REFERENCE2||PLACEID2',
+              location: { latitude: 11.22, longitude: 22.33 },
               valid: false
             }
           ]
@@ -505,7 +518,8 @@ describe Place, type: :model do
         it "returns mixed places from google and the app listing app's places first " do
           venue = create(:venue,
                          place: create(:place, name: 'Qwerty', city: 'Los Angeles',
-                                               state: 'California', country: 'US'),
+                                               state: 'California', country: 'US',
+                                               lonlat: 'POINT(1 2)'),
                          company: company_user.company)
           create(:venue,
                  place: create(:place, name: 'Qwerty', city: 'XY', state: 'California', country: 'CR'),
@@ -521,24 +535,28 @@ describe Place, type: :model do
               value: 'Qwerty, 123 My Street',
               label: 'Qwerty, 123 My Street',
               id: venue.place_id,
+              location: { latitude: 2.0, longitude: 1.0 },
               valid: true
             },
             {
               value: 'Los Angeles, CA, USA',
               label: 'Los Angeles, CA, USA',
               id: 'REFERENCE1||PLACEID1',
+              location: { latitude: 22.22, longitude: 33.33 },
               valid: true
             },
             {
               value: 'Vertigo 42, Tower 42, Los Angeles, CA 23211, United States',
               label: 'Vertigo 42, Tower 42, Los Angeles, CA 23211, United States',
               id: 'REFERENCE3||PLACEID3',
+              location: { latitude: 11.11, longitude: 44.44 },
               valid: true
             },
             {
               value: 'Los Angeles, ON, Canada',
               label: 'Los Angeles, ON, Canada',
               id: 'REFERENCE2||PLACEID2',
+              location: { latitude: 11.22, longitude: 22.33 },
               valid: false
             }
           ]
