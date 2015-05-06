@@ -82,7 +82,7 @@ class Results::GvaController < InheritedResources::Base
       Venue.in_campaign_areas(@campaign, [params[:item_id]])
     elsif place.present?
       if place.is_location?
-        Venue.joins('INNER JOIN locations_places ON locations_places.place_id=venues.place_id AND locations_places.location_id=#{place.location_id}')
+        Venue.joins("INNER JOIN locations_places ON locations_places.place_id=venues.place_id AND locations_places.location_id=#{place.location_id}")
       else
         Venue.where(place_id: place.id)
       end

@@ -48,10 +48,11 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         kpi = Kpi.samples
         campaign.add_kpi kpi
 
-        place = create(:place, name: 'Place 1')
-        campaign.places << place
+        place = create(:place, name: 'The Place')
+        another_place = create(:place, name: 'Place 3')
+        campaign.places << [place, another_place]
         company_user.campaigns << campaign
-        company_user.places << place
+        company_user.places << [place, another_place]
 
         create(:goal, goalable: campaign, kpi: kpi, value: '100')
         create(:goal, parent: campaign, goalable: company_user, kpi: kpi, value: 100)
@@ -83,14 +84,15 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         # Activities settings for Place
         area1 = create(:area, name: 'Area 1', company: company)
         area2 = create(:area, name: 'Area 2', company: company)
-        place1 = create(:place, name: 'Place 2')
-        place2 = create(:place, name: 'Place 3')
+        place1 = create(:place, name: 'Place 1')
+        place2 = create(:place, name: 'Place 2')
         area1.places << place1
         area2.places << place2
         campaign.areas << [area1, area2]
         company_user.areas << [area1, area2]
         venue1 = create(:venue, place: place1, company: company)
         venue2 = create(:venue, place: place2, company: company)
+        event4 = create(:approved_event, company: company, campaign: campaign, place: another_place)
         # Activities settings for Staff
         another_user = create(:company_user, company: company)
         team1 = create(:team, name: 'Team 1', company: company)
@@ -101,6 +103,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         # Activities goals for Place
         create(:goal, parent: campaign, goalable: area1, activity_type_id: activity_type.id, value: 5)
         create(:goal, parent: campaign, goalable: area2, activity_type_id: activity_type.id, value: 10)
+        create(:goal, parent: campaign, goalable: another_place, activity_type_id: activity_type.id, value: 7)
         # Activities goals for Staff
         create(:goal, parent: campaign, goalable: team1, activity_type_id: activity_type.id, value: 8)
 
@@ -111,11 +114,13 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
                           company_user: company_user, activity_date: '2013-07-23')
         create(:activity, activity_type: activity_type, activitable: venue2, campaign: campaign,
                           company_user: company_user, activity_date: '2013-07-24')
+        create(:activity, activity_type: activity_type, activitable: event4, campaign: campaign,
+                          company_user: company_user, activity_date: '2013-07-25')
         # Activities for Staff
         create(:activity, activity_type: activity_type, activitable: venue2, campaign: campaign,
-                          company_user: another_user, activity_date: '2013-07-25')
-        create(:activity, activity_type: activity_type, activitable: event1, campaign: campaign,
                           company_user: another_user, activity_date: '2013-07-26')
+        create(:activity, activity_type: activity_type, activitable: event1, campaign: campaign,
+                          company_user: another_user, activity_date: '2013-07-27')
 
         Sunspot.commit
 
@@ -142,7 +147,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         report_form.find('label', text: 'Place').click
 
         within('#gva-result-Place' + place.id.to_s + ' .item-summary') do
-          expect(page).to have_content('Place 1')
+          expect(page).to have_content('The Place')
           within('.goals-summary') do
             expect(page).to have_content('50% EVENTS')
             expect(page).to have_content('50% PROMO HOURS')
@@ -152,7 +157,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         end
 
         within('#gva-result-Place' + place.id.to_s + ' .accordion-heading') do
-          click_js_link('Place 1')
+          click_js_link('The Place')
         end
         within('#gva-result-Place' + place.id.to_s + ' .kpi-trend:nth-child(3)') do
           expect(page).to have_content('Samples')
@@ -167,7 +172,26 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
           end
         end
         within('#gva-result-Place' + place.id.to_s + ' .accordion-heading') do
-          click_js_link('Place 1')
+          click_js_link('The Place')
+        end
+
+        within('#gva-result-Place' + another_place.id.to_s + ' .accordion-heading') do
+          click_js_link('Place 3')
+        end
+        within('#gva-result-Place' + another_place.id.to_s + ' .kpi-trend:nth-child(1)') do
+          expect(page).to have_content('Activity Type')
+          find('.progress').hover
+          expect(page).to have_selector('.executed-label', text: '1')
+          expect(page).to have_selector('.submitted-label', text: '0')
+          expect(page).to have_selector('.rejected-label', text: '0')
+          expect(page).to have_css('.today-line-indicator')
+          within('.progress-label') do
+            expect(page).to have_content('14%')
+            expect(page).to have_content('1 OF 7 GOAL')
+          end
+        end
+        within('#gva-result-Place' + another_place.id.to_s + ' .accordion-heading') do
+          click_js_link('Place 3')
         end
 
         # Checking that activities for Venues are in the corresponding Area only
