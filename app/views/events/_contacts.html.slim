@@ -1,5 +1,5 @@
 - if resource.contact_events.any?
-  .row-fluid
+  .row-fluid.contacts-tags
     = render partial: 'contact_events/contact_event', collection: resource.contact_events, locals: {can_delete: can?(:delete_contact, resource), can_edit: can?(:edit_contacts, resource), parent: resource}
   = button_to_add 'Add Contact', add_event_contact_events_path(resource) if can?(:create_contacts, resource)
 
