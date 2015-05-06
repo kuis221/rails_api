@@ -10,6 +10,7 @@ class Analysis::CampaignsReportController < ApplicationController
   def report
     authorize! :report, campaign
     @events_scope = Event.where(campaign_id: campaign, aasm_state: 'approved')
+    @venues_scope = Venue.in_campaign_scope(campaign)
     @goals = campaign.goals.base.joins(:kpi).where(kpi_id: campaign.active_kpis).where('goals.value is not null').includes(:kpi).all
   end
 
