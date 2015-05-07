@@ -2,12 +2,13 @@
 #
 # Table name: companies
 #
-#  id               :integer          not null, primary key
-#  name             :string(255)
-#  created_at       :datetime         not null
-#  updated_at       :datetime         not null
-#  timezone_support :boolean
-#  settings         :hstore
+#  id                 :integer          not null, primary key
+#  name               :string(255)
+#  created_at         :datetime         not null
+#  updated_at         :datetime         not null
+#  timezone_support   :boolean
+#  settings           :hstore
+#  expense_categories :text
 #
 
 class Company < ActiveRecord::Base
