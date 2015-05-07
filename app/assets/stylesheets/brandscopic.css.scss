@@ -89,7 +89,7 @@ h1, h2, h3{
 
 // Titles for all the modules
 .module-title{
-	color: $text;
+	color: $silver;
 	a.icon-edit {
 		margin-left: 10px;
 	}
@@ -5630,9 +5630,9 @@ div.chardinjs-tooltip
 	}
 }
 
-h4.custom-reports {
-font-size: 16px;
-margin: 45px 0 25px 25px;
+.custom-reports {
+	font-size: 16px;
+	margin-top: 45px;
 }
 
 // REPORTS
