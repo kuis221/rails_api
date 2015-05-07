@@ -1,9 +1,11 @@
 h5.module-title id="mdq" TASKS
 - if tasks.any?
+  = button_to 'Create Task', new_event_task_path(resource), method: :get, remote: true, class: 'btn btn-primary' if can? :create_task, resource
   div#tasks-list.resource-list
     = render collection: tasks, partial: 'tasks/task', locals: {show_user: true}
-  = button_to 'Create Task', new_event_task_path(resource), method: :get, remote: true, class: 'btn btn-primary' if can? :create_task, resource
+
 
 - else
+  h5.module-title TASKS
   = blank_state_module('event.tasks') do
     = button_to 'Add Task', new_event_task_path(resource), method: :get, remote: true, class: 'btn btn-primary' if can? :create_task, resource

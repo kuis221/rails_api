@@ -124,7 +124,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
 
         Sunspot.commit
 
-        visit results_gva_path
+        visit analysis_gva_path
 
         choose_campaign('Test Campaign FY01')
 

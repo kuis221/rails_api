@@ -64,7 +64,7 @@
                 p View survey results by event
 
     - if can?(:index, Report) && @reports.any?
-      h4.custom-reports CUSTOM REPORTS
+      h5.module-title.custom-reports CUSTOM REPORTS
       #custom-reports-list.resource-list.reports-list
         = render (@reports + @data_extracts).sort_by(&:name)
 

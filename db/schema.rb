@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150427162428) do
+ActiveRecord::Schema.define(version: 20150501005557) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -379,7 +379,6 @@ ActiveRecord::Schema.define(version: 20150427162428) do
     t.string   "sharing"
     t.string   "name"
     t.text     "description"
-    t.text     "filters"
     t.text     "columns"
     t.integer  "created_by_id"
     t.integer  "updated_by_id"

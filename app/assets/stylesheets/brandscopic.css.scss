@@ -89,7 +89,7 @@ h1, h2, h3{
 
 // Titles for all the modules
 .module-title{
-	color: $text;
+	color: $silver;
 	a.icon-edit {
 		margin-left: 10px;
 	}
@@ -415,9 +415,6 @@ body.events.show{
 			}
 		}
 	}
-	.button_to_add {
-		margin-left:30px;
-	}
 }
 
 .navbar-fixed-top {
@@ -621,7 +618,6 @@ input[type="email"]:focus, input[type="password"]:focus, select:focus{
 	box-sizing: border-box;
 	width: calc(100% - 100px);
 	z-index: 110000;
-	height: 44px;
 	.results-count {
 		font-weight: bold;
 	}
@@ -3231,7 +3227,6 @@ ul.ui-widget-content{
 	}
 }
 
-
 body.activities{
 	&.empty-layout {
 		background-color: white;
@@ -3375,6 +3370,14 @@ body.events.index {
 	}
 }
 
+#documents-container{
+	.btn-primary{
+		margin-right: 10px;
+	}
+	#documents_upload_form{
+		margin-top: 10px;
+	}
+}
 
 #event-contacts.details_box, #event-members.details_box,
 #event-documents.details_box {
@@ -3574,10 +3577,15 @@ body.events.index {
 
 body.show {
 	#company_user-areas-list, #company_user-places-list,
-	#event-contacts-list, #event-team-members, #team-members-list,
+	#event-team-members, #team-members-list,
 	#area-places-list {
 		clear: both;
 		margin-top: 40px;
+	}
+	#event-contacts-list{
+		.contacts-tags{
+			margin-bottom: 30px;
+		}
 	}
 	.place, .area-user{
 		font-family: $baseFontFamily;
@@ -4300,13 +4308,12 @@ body.roles{
 		margin-top: 20px;
 		.review-date{
 			color:  $brand;
-			font-size: 11px;
 			margin-bottom: 6px;
 			line-height: 18px;
 		}
 		.review-text{
-			font-size: 13px;
-			max-width: 410px;
+			line-height: 20px;
+			max-width: 460px;
 		}
 	}
 	.place-jameson-account{
@@ -5488,9 +5495,109 @@ div.chardinjs-tooltip
 	padding-top: 70px !important;
 }
 
-h4.custom-reports {
-font-size: 16px;
-margin: 45px 0 25px 25px;
+.switch-toggle {
+	width: 75px;
+	height: 28px;
+	margin: 9px 0 0 18px;
+	overflow: hidden;
+	a.btn {
+		line-height: normal !important;
+		float: left;
+		width: 50px;
+		height: 20px;
+		padding: 4px 5px;
+		color: #fff;
+		font-size: 14px;
+		border-radius: 15px;
+		span {
+			background-color: #fff;
+			width: 18px;
+			height: 18px;
+			border-radius: 10px;
+			display: block;
+			float: right;
+			margin: 1px 0 0 0;
+		}
+	}
+	a.toggle-on-btn {
+		display: none;
+		background-color: #90BE42;
+		text-align: left;
+		padding-left: 10px;
+		.on{
+			float: left;
+			line-height: 20px;
+		}
+	}
+	a.toggle-off-btn {
+		text-align: right;
+		padding-right: 10px;
+		background-color: $user_menu;
+		span {
+			float: left;
+		}
+		.off{
+			line-height: 20px;
+		}
+	}
+	&.inactive{
+		.toggle-on-btn {
+			display: none;
+		}
+		.toggle-off-btn {
+			display: block;
+		}
+	}
+	&.active{
+		.toggle-on-btn {
+			display: block;
+		}
+		.toggle-off-btn {
+			display: none;
+		}
+	}
+	a.toggle-on-btn-activity-type {
+		display: none;
+		background-color: #90BE42;
+		text-align: left;
+		padding-left: 10px;
+		.on{
+			float: left;
+			line-height: 20px;
+		}
+	}
+	a.toggle-off-btn-activity-type {
+		text-align: right;
+		padding-right: 10px;
+		background-color: $user_menu;
+		span {
+			float: left;
+		}
+		.off{
+			line-height: 20px;
+		}
+	}
+	&.inactive{
+		.toggle-on-btn-activity-type {
+			display: none;
+		}
+		.toggle-off-btn-activity-type {
+			display: block;
+		}
+	}
+	&.active{
+		.toggle-on-btn-activity-type {
+			display: block;
+		}
+		.toggle-off-btn {
+			display: none;
+		}
+	}
+}
+
+.custom-reports {
+	font-size: 16px;
+	margin-top: 45px;
 }
 
 // REPORTS
@@ -5846,6 +5953,7 @@ body.campaigns_report, body.staff_report {
 	.tooltip-inner{
 		background-color: $gray-dark;
 		opacity: 1;
+		text-align: left;
 		z-index: 90;
 	}
 
@@ -5871,7 +5979,6 @@ body.campaigns_report, body.staff_report {
 		filter: alpha(opacity=100);
 	}
 }
-
 
 // SCROLL
 
@@ -7238,7 +7345,7 @@ body.dashboard.index {
 		background-color: white;
 	  box-sizing: border-box;
 	  margin-bottom: 10px;
-	  padding: 7px 0px 7px 10px;
+	  padding: 7px 10px 7px 10px;
 	  -webkit-border-radius: 7px;
 	  -moz-border-radius: 7px;
 	  border-radius: 7px;
@@ -7283,6 +7390,15 @@ body.dashboard.index {
 	margin:0;
 }
 
+.description-available-field {
+	font-size: 12px!important;
+	padding: 0;
+	margin-bottom: 0;
+	line-height: 15px;
+	p {
+		margin-bottom: 1px!important;
+	}
+}
 
 .available-fields {
 	border: 1px solid #ccc;
@@ -7577,6 +7693,40 @@ form.button_to .button-with-icon {
 	z-index: 1;
 }
 
+// Tooltips for contacts section
+
+.contacts-tooltip{
+	padding: 4px 10px;
+	text-align: left;
+	h6{
+		margin: 0;
+	}
+	.contact-role{
+		color: $gray-light;
+		font-size: 12px;
+	}
+	.contact-info{
+		color: $white;
+		margin-left: 20px;
+		margin-bottom: 0;
+		margin-top: 6px;
+		li{
+			position: relative;
+		}
+		i{
+			color: $gray-light;
+			font-size: 14px;
+			position: absolute;
+			left: -20px;
+			&.icon-wired-email{
+				top: 8px;
+			}
+			&.icon-mobile, &.icon-wired-venue{
+				top: 4px;
+			}
+		}
+	}
+}
 
 @import 'widgets/asset_upload_dialog';
 @import 'widgets/documents_list';

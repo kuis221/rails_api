@@ -189,6 +189,21 @@ class Activity < ActiveRecord::Base
     end
   end
 
+  def self.in_areas(areas)
+    subquery = Place.connection.unprepared_statement { Place.in_areas(areas).to_sql }
+    joins("INNER JOIN (#{subquery}) areas_places ON areas_places.id=events.place_id")
+  end
+
+  def self.in_places(places)
+    places_list = Place.where(id: places)
+    where(
+      'events.place_id in (?) or events.place_id in (
+          select place_id FROM locations_places where location_id in (?)
+      )',
+      places_list.map(&:id).uniq + [0],
+      places_list.select(&:is_location?).map(&:location_id).compact.uniq + [0])
+  end
+
   private
 
   # Sets the default date (today), user and campaign for new records

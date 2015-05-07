@@ -196,6 +196,7 @@ module Analysis
                           .where(activities: { activity_type_id: @goals.map(&:activity_type), campaign_id: @campaign.id, active: true })
                           .select(fields_select_activities)
                           .group('2')
+        p "venues_totals_activities ==> #{venues_totals_activities.map{|t| [t.activity_type_id, t.total_count]}}"
       end
 
       goals_result = {}
