@@ -233,7 +233,8 @@ $.widget 'nmk.formBuilder', {
 	_loadForm: () ->
 		@element.find('.empty-form-legend').hide()
 		$.getJSON "#{@options.url}", (response) =>
-			@formWrapper.find('.field, .module').remove()
+			@formWrapper.find('.field').remove()
+			@element.find('.form-section.module').remove()
 			@modified = false
 			@_updateSaveButtonState()
 			if response.form_fields.length > 0 || (response.modules && Object.keys(response.modules).length > 0)
