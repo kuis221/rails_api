@@ -37,6 +37,7 @@
 //= require jquery.attachmentUploadZone
 //= require jquery.fancybox
 //= require jquery.filteredList
+//= require jquery.dataExtract
 //= require jquery.notifications
 //= require jquery.number
 //= require jquery.photoGallery
@@ -47,6 +48,7 @@
 //= require jquery.validate
 //= require jquery.mousewheel
 //= require jquery.jscrollpane
+//= require jquery.dragtable
 //= require markerclusterer
 //= require select2
 //= require moment.min.js

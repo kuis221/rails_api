@@ -1,0 +1,18 @@
+- remote ||= false
+= simple_form_for resource, as: :data_extract, url: results_data_extracts_path, method: :post, name: "data_source_form" do |f|
+  = hidden_field_tag :step, 4
+  = f.input :source, as: :hidden
+  = f.input :default_sort_by, as: :hidden, wrapper: false
+  = f.input :default_sort_dir, as: :hidden, wrapper: false
+  - f.object.columns.each do |col|
+    = hidden_field_tag 'data_extract[columns][]', col
+
+  .form-inputs
+    .date-ranges
+    = f.input :name, :input_html => {class: 'input-xlarge'}
+    = f.input :description, :input_html => {:rows => 6, class: 'input-xlarge'}
+
+  .form-actions
+    = f.button :submit, 'Save', class: 'btn-primary', data: {disable_with: 'Please wait...'}
+    = "&nbsp;".html_safe
+    = f.button :button, 'Cancel', class: 'btn-cancel'

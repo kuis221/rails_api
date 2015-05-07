@@ -45,13 +45,13 @@ class CollectionFilter
     end
   end
 
-  def expand(type, id) 
+  def expand(type, id)
     if (type.eql? 'cfid')
       [{
         id: id,
         filters: custom_filter_subitems(id),
         type: type
-      }] 
+      }]
     else
       type.classify.constantize.find_by(id: id, company_id: user.company_id).filter_subitems.map do |item|
         {
@@ -237,7 +237,7 @@ class CollectionFilter
   def scope_filters
     SETTINGS['filters'][scope]
   end
-  
+
   def custom_filter_subitems(id)
     CustomFilter.find(id).filters
   end

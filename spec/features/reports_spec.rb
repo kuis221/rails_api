@@ -11,7 +11,7 @@ feature 'Reports', js: true do
 
   before {  page.driver.resize 1024, 3000 }
 
-  feature 'Create a report' do
+  pending 'Create a report' do
     scenario 'user is redirected to the report build page after creation' do
       visit results_reports_path
 

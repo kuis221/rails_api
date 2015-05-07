@@ -35,6 +35,8 @@ class EventExpense < ActiveRecord::Base
                                 allow_destroy: true,
                                 reject_if: proc { |attributes| attributes['direct_upload_url'].blank? && attributes['_destroy'].blank? }
 
+  scope :for_user_accessible_events, ->(company_user) { joins('INNER JOIN events ec ON ec.id=event_id AND ec.id in (' + Event.select('events.id').where(company_id: company_user.company_id).accessible_by_user(company_user).to_sql + ')') }
+
   private
 
   def update_event_data

@@ -1,0 +1,5 @@
+div.resource-item id="data_extract_report_#{data_extract.id}"
+  = link_to_if_permitted :show, Report, results_data_extract_path(data_extract), title: data_extract.name, class: 'resource-item-link' do
+    .span10.report-item
+      .text-large= data_extract.name
+      p= data_extract.description
