@@ -3418,6 +3418,14 @@ body.events.index {
 	}
 }
 
+#documents-container{
+	.btn-primary{
+		margin-right: 10px;
+	}
+	#documents_upload_form{
+		margin-top: 10px;
+	}
+}
 
 #event-contacts.details_box, #event-members.details_box,
 #event-documents.details_box {
