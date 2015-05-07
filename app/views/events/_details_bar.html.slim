@@ -11,10 +11,10 @@
         .span10
           nav id="spyOnThis" class="scrollspy-style"
             ul.switch-list.unstyled
-              li
+              li class="active"
                 a href="#mdo"
                   span Viewing event details screen.
-              li class="active"
+              li
                 a href="#mdq"
                   span.event-name.pull-left= resource.campaign_name
                   span.event-date.small = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at), date_separator: ' - ')

@@ -27,7 +27,7 @@
 .row-fluid.with-details-close-bar
   = render 'details_bar'
 
-  //.span data-spy="scroll" data-target="#spyOnThisToo"
+  //.span data-spy="scroll" data-target="#spyOnThis"
   .span
     .details_box class="#{(resource.place.nil? or resource.place.latitude.nil?) ?  'padding-top-close-bar' : ''}"
 
@@ -122,21 +122,32 @@
 
   = render partial: 'help_tutorial'
   - content_for :footer do
-    - unless resource.place.nil?
-      javascript:
-        $(document).ready(function() {
-          $(this).scrollTop(400);
+  - unless resource.place.nil?
+    javascript:
+      $(document).ready(function() {
+        $(this).scrollTop(400);
+      });
+
+  - if can_tasks
+    javascript:
+      if (#{can_tasks}){
+        $(document).on('tasks:change task:deactivated', function(){
+          $.get('#{tasks_event_path(resource)}', function(response){
+            $response = $('<div>').append(response);
+            $('#event-tasks').html($response.find('[data-content="tasks"]').html());
+          })
         });
+      }
 
-    - if can_tasks
-      javascript:
-        if (#{can_tasks}){
-          $(document).on('tasks:change task:deactivated', function(){
-            $.get('#{tasks_event_path(resource)}', function(response){
-              $response = $('<div>').append(response);
-              $('#event-tasks').html($response.find('[data-content="tasks"]').html());
-            })
-          });
+  javascript:
+    $(document).ready(function() {
+      $(window).bind('scroll', function() {
+        if ($(window).scrollTop() > 35) {
+          $('.details-bar').addClass('fixed');
         }
-
-    - reload_page_on_edit_resource
+        else {
+          $('.details-bar').removeClass('fixed');
+        }
+      });
+    });
+  - reload_page_on_edit_resource

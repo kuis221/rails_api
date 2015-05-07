@@ -7570,7 +7570,12 @@ form.button_to .button-with-icon {
   line-height: normal;
 }
 
-
+.fixed {
+	position: fixed!important; 
+	top: 80px;
+	width: calc(100% - 100px); 
+	z-index: 1;
+}
 
 
 @import 'widgets/asset_upload_dialog';
