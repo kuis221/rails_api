@@ -6038,6 +6038,7 @@ body.campaigns_report, body.staff_report {
 	.tooltip-inner{
 		background-color: $gray-dark;
 		opacity: 1;
+		text-align: left;
 		z-index: 90;
 	}
 
@@ -6063,7 +6064,6 @@ body.campaigns_report, body.staff_report {
 		filter: alpha(opacity=100);
 	}
 }
-
 
 // SCROLL
 
@@ -7539,6 +7539,7 @@ input[type="text"]{
 		text-align: left;
 	}
 }
+
 
 
 
