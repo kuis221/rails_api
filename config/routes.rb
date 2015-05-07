@@ -3,6 +3,12 @@ Brandscopic::Application.routes.draw do
   mount Nkss::Engine => '/styleguides' if Rails.env.development?
   apipie if ENV['WEB']
 
+  # Redirect old urls to new ones
+  get '/results/gva', to: redirect('/analysis/gva')
+  get '/results/event_status', to: redirect('/analysis/event_status')
+  get '/results/attendance', to: redirect('/analysis/attendance')
+
+
   namespace :api do
     namespace :v1 do
       devise_scope :user do
@@ -192,12 +198,7 @@ Brandscopic::Application.routes.draw do
     resources :surveys, only: [:index] do
       get :items, on: :collection
     end
-    get :gva, to: 'gva#index'
-    post :gva, to: 'gva#report'
-    get :report_groups, to: 'gva#report_groups'
 
-    get 'attendance/map', to: 'attendance#map', as: :attendance_map
-    get 'attendance', to: 'attendance#index', as: :attendance
     # resources :attendance, only: [:index] do
     # end
 
@@ -211,14 +212,19 @@ Brandscopic::Application.routes.draw do
       post :preview, on: :member
     end
 
+    resources :data_extracts, only: [:new, :create, :show] do
+      get :preview, on: :collection
+      get :save, on: :collection
+      get :available_fields, on: :collection
+      get :items, on: :collection
+    end
+
     # For The KPI report
     get :kpi_report, to: 'kpi_reports#index'
 
     post :kpi_report, to: 'kpi_reports#report'
     get :kpi_report_status, to: 'kpi_reports#status'
 
-    get :event_status, to: 'event_status#index'
-    post :event_status, to: 'event_status#report'
   end
 
   namespace :analysis do
@@ -235,11 +241,23 @@ Brandscopic::Application.routes.draw do
       get 't/:term/:action', on: :collection
     end
 
+    get 'attendance/map', to: 'attendance#map', as: :attendance_map
+    get 'attendance', to: 'attendance#index', as: :attendance
+
+    get :gva, to: 'gva#index'
+    post :gva, to: 'gva#report'
+    get :report_groups, to: 'gva#report_groups'
+
+    get :event_status, to: 'event_status#index'
+    post :event_status, to: 'event_status#report'
+
     get :campaigns_report, to: 'campaigns_report#index'
     post :campaigns_report, to: 'campaigns_report#report'
 
     get :staff_report, to: 'staff_report#index'
     post :staff_report, to: 'staff_report#report'
+
+    get '/', to: 'analysis#index'
   end
 
   scope '/research' do

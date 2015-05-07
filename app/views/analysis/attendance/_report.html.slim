@@ -1,0 +1,166 @@
+
+#attendance-report.row-fluid.with-details-close-bar
+  = resource_details_bar("You are viewing the Attendance by Neighborhood report. Click to close.")
+
+  .details_box.padding-top-close-bar
+    #attendance-left-column.pull-left
+      h3 ATTENDANCE BY NEIGHBORHOOD
+
+      = simple_form_for :report, url: analysis_attendance_path, remote: true do |f|
+
+        = f.input :campaign_id, label: '1. Choose a campaign', collection: campaigns_list_for_dropdown, selected: params[:campaign_id], include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Choose a campaign" } }
+
+        = f.input :event_id, label: '2. Choose a event date', collection: campaign_events, selected: params[:event_id], include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Choose a event date" } }
+
+        = f.input :area_id, label: '2. Choose an area', collection: current_company.areas.active.order(:name).pluck(:name, :id), selected: params[:area_id], include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Choose an area" } }
+
+        #customize-fields.hide
+          .attendance-slider
+            label.control-label # Attendees
+            .attendees-range-labels
+              span LOW
+              span MEDIUM
+              span HIGH
+              .separator.left-separator
+              .separator.right-separator
+            #attendees-range-slider
+              .attendees-range-bar
+                .point-range.left-point
+                .point-range.right-point
+          label.control-label Color Overlay
+          input#report_color.color-box type="color"
+          = f.input 'attendees[min]', as: :hidden
+          = f.input 'attendees[max]', as: :hidden
+
+      .export-xls.hide
+        .dropdown.btn-download
+          a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+            i.icon-download
+            ==< "Export"
+          ul#download-gva-btn.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+            li
+              a.xlsx-download-link href="#" role="menuitem" data-base-url="#{analysis_attendance_path(format: :xls)}"
+                | Download as XLS
+            li
+              a.xlsx-download-link href="#" role="menuitem" data-base-url="#{analysis_attendance_path(format: :pdf)}"
+                | Download as PDF
+
+
+    #attendance-right-column
+      #attendance-map-canvas.google-map
+
+    .clearfix
+
+javascript:
+  window.status='loading';
+  $('#attendees-range-slider').rangeSlider({
+    bounds: {min: 20, max: 210},
+    defaultValues: { min: 20, max: 210 },
+    arrows: false,
+    step: 1,
+    range: 1
+  }).on("userValuesChanged", function(e, data) {
+      selectedMin = data.values.min;
+      selectedMax = data.values.max;
+      changeColorAllPolygon(color, tinycolor(color).toHsv())
+  });
+
+  var areas = $('#report_area_id'),
+      event_dates = $('#report_event_id'),
+      colorp = $('#report_color'),
+      campaigns = $('#report_campaign_id');
+
+  campaigns.change(function(){
+    event_dates.html('<option></option>');
+    if (campaigns.val()) {
+      $.get('/campaigns/'+campaigns.val()+'/event_dates.json', function(response) {
+        for (i=0; i< response.length; i++){
+          event_date = response[i];
+          event_dates.append($('<option>').val(event_date[1]).html(event_date[0]));
+        }
+        event_dates.trigger('liszt:updated');
+      });
+    }
+  });
+
+  loadReport = function(){
+    if (event_dates.val() && campaigns.val()){
+      $('.xlsx-download-link').each(function(index, link){
+        $(link).data('url', $(link).data('base-url') + '?campaign_id='+campaigns.val()+'&area_id='+areas.val()+'&event_id='+event_dates.val())
+      })
+      $.ajax({
+        url: '#{analysis_attendance_map_url(format: :js)}',
+        method: 'GET',
+        data: {
+          campaign_id: campaigns.val(),
+          color: ($('#customize-fields').hasClass('hide') ? null : colorp.spectrum("get").toHexString()),
+          area_id: areas.val(),
+          event_id: event_dates.val() },
+        headers: {
+          'X-User-Email': '#{User.current.email}',
+          'X-Auth-Token': '#{User.current.authentication_token}'
+        }
+      });
+    } else {
+      $('.export-xls').hide();
+    }
+  }
+
+  event_dates.change(loadReport);
+  campaigns.change(loadReport);
+  areas.change(loadReport);
+
+  loadReport();
+
+  $('#report_state').change();
+
+
+  $('.color-box').spectrum({
+      showInput: true,
+      preferredFormat: "rgb",
+      showPalette: true,
+      showSelectionPalette: true,
+      change: function(color){
+        changeColorAllPolygon(color.toHexString(), color.toHsv());
+      }
+  });
+
+
+  function changeColorAllPolygon(color, hsb) {
+    $('.color-box').spectrum("set", color);
+    var arrayColor = generateColorList(hsb);
+    //$('.ui-rangeSlider-handle').css({
+    //  backgroundColor: '#' + arrayColor[9],
+    //  borderColor: '#' + arrayColor[6]});
+
+    $.each(arrayPolygon, function(index, value) {
+      if (value.quantity == 0 || (value.quantity < selectedMin || value.quantity > selectedMax)) {
+        value.polygon.setOptions({fillOpacity: 0.0, strokeColor: color});
+      } else {
+        value.polygon.setOptions({fillColor: '#' + arrayColor[selectColorIndex(value.quantity)], fillOpacity: 0.5, strokeColor: color});
+      }
+    });
+  }
+
+  function generateColorList(hsb) {
+    var arrayColor = [];
+    if (hsb.s < 100) { hsb.s = 100; }
+    for (var i = 0; i < 10; i++){
+      arrayColor.push(tinycolor(hsb).toHex(hsb));
+      hsb.s = hsb.s - 5;
+    }
+    return arrayColor;
+  }
+
+  function selectColorIndex(value) {
+    var t = (selectedMax - selectedMin) / 10;
+    if (value != 0 && t != 0) {
+      var colorIndex = Math.floor(value / t);
+      if (value == valueMax)
+        return 0;
+      else
+        return 10 - Math.floor(value / t);
+    }
+    else
+      return 9;
+  }

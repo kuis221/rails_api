@@ -73,10 +73,9 @@ class Place < ActiveRecord::Base
   before_save :update_locations
 
   after_commit :reindex_associated
-
-  serialize :types
-
+  scope :accessible_by_user, ->(user) { in_company(user.company_id) }
   scope :in_company, ->(company) { joins(:venues).where(venues: { company_id: company }) }
+  scope :filters_between_dates, ->(start_date, end_date) { where(venues: {created_at: DateTime.parse(start_date)..DateTime.parse(end_date)})}
 
   def self.linked_to_campaign(campaign)
     select('DISTINCT places.*')

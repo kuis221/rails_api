@@ -44,6 +44,9 @@ class FormField < ActiveRecord::Base
   validates :kpi_id,
             uniqueness: { scope: [:fieldable_id, :fieldable_type], allow_blank: true, allow_nil: true }
 
+  scope :for_campaigns, ->(campaigns) { where(fieldable_type: 'Campaign', fieldable_id: campaigns) }
+  scope :for_activity_types, ->(activity_types) { where(fieldable_type: 'ActivityType', fieldable_id: activity_types) }
+
   def self.for_events_in_company(companies)
     joins(
       'INNER JOIN campaigns ON campaigns.id=form_fields.fieldable_id AND

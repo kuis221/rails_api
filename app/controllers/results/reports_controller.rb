@@ -14,6 +14,7 @@ class Results::ReportsController < InheritedResources::Base
 
   def index
     @reports = current_company.reports.active.accessible_by_user(current_company_user).order('reports.name ASC')
+    @data_extracts = current_company.data_extracts.active.order('data_extracts.name ASC')
   end
 
   def preview

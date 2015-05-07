@@ -75,7 +75,7 @@ describe Place, type: :model do
       expect(place.latitude).to eq(12.345678)
       expect(place.longitude).to eq(-87.654321)
       expect(place.formatted_address).to eq('123 Mi Casa, Costa Rica')
-      expect(place.types).to eq([1, 2, 3])
+      expect(place.types).to eq(["1", "2", "3"])
       expect(place.country).to eq('CR')
       expect(place.city).to eq('Curridabat')
       expect(place.state).to eq('San Jose')

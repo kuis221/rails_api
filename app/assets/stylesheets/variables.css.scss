@@ -18,6 +18,8 @@ $gray:                   #7a7a7a;
 $gray-light:             #cccccc;
 $gray-lighter:           #dfdfdf;
 $silver:                 #c0c0c0;
+$divider:                #474747;
+$tags-gray:           	 #acacac;
 
 $icons-silver:           #fbfbfb;
 
@@ -141,3 +143,12 @@ $dropdownLinkColor:             $text;
 
 // $dropdownLinkBackgroundActive:  $linkColor;
 // $dropdownLinkBackgroundHover:   $dropdownLinkBackgroundActive;
+
+
+// Buttons
+// -------------------------
+$btnBackground:                     $silver;
+
+$btnPrimaryBackground:              $buttons;
+$btnPrimaryBackgroundHighlight:     $buttons;
+

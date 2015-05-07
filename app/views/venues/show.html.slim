@@ -16,11 +16,12 @@
   = resource_details_bar("Viewing #{resource.name} venue details page.")
 
   .details_box.padding-top-close-bar
-    .row-fluid.venue_details_container
+    .row-fluid.details_first_container
       .span6
-        h2= resource.name
-        / span.category
-        /   | Restaurant, Food
+        .details-title
+          h2.special.pull-left
+            b= resource.name
+
         - if resource.price_level(fetch_from_google: true)
           span.price
             = place_price(resource.price_level)
@@ -64,7 +65,7 @@
 
         / p.small Quis nostrud exerci tation, ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat duis autem. Consuetudium lectorum mirum est notare quam littera gothica quam nunc putamus parum! Vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat vel illum dolore. Volutpat ut wisi enim ad minim veniam eu feugiat nulla. Imperdiet doming id quod mazim placerat facer possim assum typi non habent claritatem? Nunc nobis videntur parum clari fiant sollemnes in?
 
-        #venue-areas.areas
+        #venue-areas.add-details-info
           = render partial: 'areas', locals: {areas: resource.place.areas}
 
       .span6.map_container
@@ -181,9 +182,10 @@
     - resource.reviews.each do |review|
       .venue-review
         - unless review.is_a?(Comment)
-          .review-author-name= review.author_name
+          .review-author-name
+            b= review.author_name
           .review-rating= rating_stars(review.rating)
-          .review-date= time_ago_in_words(DateTime.strptime(review.time.to_s,'%s'))
+          .review-date.small= time_ago_in_words(DateTime.strptime(review.time.to_s,'%s'))
           .review-text= review.text
         - else
           .review-author-name= review.user_full_name

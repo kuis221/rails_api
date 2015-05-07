@@ -1,0 +1,55 @@
+// OLD STRUCTURE
+// = resource_details_bar("You are viewing event details. Click to close.")
+
+// NEW STRUCTURE
+.details-bar
+  .back-arrow
+    i.icon-angle-left
+  .panel
+    #headingOne.panel-heading role="tab"
+      .row-fluid
+        .span10
+          nav id="spyOnThis" class="scrollspy-style"
+            ul.switch-list.unstyled
+              li
+                a href="#mdo"
+                  span Viewing event details screen.
+              li class="active"
+                a href="#mdq"
+                  span.event-name.pull-left= resource.campaign_name
+                  span.event-date.small = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at), date_separator: ' - ')
+
+        .span2.phase-indicator
+          nav id="spyOnThisToo" class="scrollspy-style"
+            = presenter.render_nav_too
+
+    #collapseOne.panel-collapse.collapse aria-labelledby="headingOne" role="tabpanel"
+      .panel-body
+        .row-fluid
+          .span10.event-info
+            .bar-title.small
+              b BASIC INFO
+            .event-name= resource.campaign_name
+            ul.unstyled.info-list
+              li
+                i.icon-calendar
+                = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at), date_separator: ' - ')
+              - unless resource.place.nil?
+                li
+                  i.icon-wired-venue
+                  = place_address(resource.place, false, ', ', ', ') if resource.place
+              - unless resource.users.empty? && resource.teams.empty?
+                li
+                  i.icon-team
+                  = presenter.event_members_name(', ')
+          .span2.event-phases
+            nav id="spyOnThisPhases" class="scrollspy-style"
+              .bar-title.small
+                b EVENT PHASES
+              = presenter.render_nav_phases
+
+  .guide-bar.text-center
+    span
+      | Do you want to keep track of any contacts?
+      a href="#" (Yes)
+      a href="#" (Skip)
