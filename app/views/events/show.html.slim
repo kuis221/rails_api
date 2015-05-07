@@ -1,3 +1,301 @@
+
+
+All Gists
+sileleo
+
+ Edit
+Delete
+
+Star0
+ sileleo / gist:ef1916d644c42d827630 SECRET
+Created 2 minutes ago
+ Code
+ Revisions 1
+Embed URL
+
+HTTPS clone URL
+
+You can clone with HTTPS or SSH.
+
+ Download Gist
+ gistfile1.slim Raw
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
 - can_edit = can?(:update, resource)
 - can_tasks = can?(:tasks, resource)
 
@@ -36,16 +334,38 @@
       #headingOne.panel-heading role="tab"
         .row-fluid
           .span10
-            // span Viewing event details screen.
-            span.event-name.pull-left
-              | Absolut Texas Incremental Mini Shaker FY14
-            span.event-date.small Jun 1 at 11.00 AM ― Jun 2 at 12:00 AM
+            nav id="spyOnThis" class="scrollspy-style"
+              ul.switch-list.unstyled
+                li
+                  a href="#mdo"
+                    span Viewing event details screen.
+                li class="active"
+                  a href="#mdq"
+                    span.event-name.pull-left Absolut Texas Incremental Mini Shaker FY14
+                    span.event-date.small Jun 1 at 11.00 AM ― Jun 2 at 12:00 AM
+
           .span2.phase-indicator
-            a aria-controls="collapseOne" aria-expanded="true" data-parent="#accordion" data-toggle="collapse" href="#collapseOne" class="small no-decorate"
-              span.phase-id 1
-              b> PLAN:
-              | Contacts
-              i.icon-arrow-up
+            nav id="spyOnThisToo" class="scrollspy-style"
+              ul.switch-list.unstyled
+                li class="active"
+                  a aria-controls="collapseOne" aria-expanded="true" data-parent="#accordion" data-toggle="collapse" href="#collapseOne" class="small no-decorate"
+                    span.phase-id 1
+                    b> PLAN:
+                    | Contacts
+                    i.icon-arrow-up
+                li
+                  a aria-controls="collapseOne" aria-expanded="true" data-parent="#accordion" data-toggle="collapse" href="#collapseOne" class="small no-decorate"
+                    span.phase-id 2
+                    b> EXECUTE:
+                    | Contacts
+                    i.icon-arrow-up
+                li
+                  a aria-controls="collapseOne" aria-expanded="true" data-parent="#accordion" data-toggle="collapse" href="#collapseOne" class="small no-decorate"
+                    span.phase-id 3
+                    b> RESULTS:
+                    | Contacts
+                    i.icon-arrow-up
+
       #collapseOne.panel-collapse.collapse aria-labelledby="headingOne" role="tabpanel"
         .panel-body
           .row-fluid
@@ -64,29 +384,57 @@
                   i.icon-team
                   | Sara Miller, James Franco, San Francisco Team
             .span2.event-phases
-              ul.unstyled.phases-list
-                li
-                  .bar-title.small
-                    b EVENT PHASES
+              nav id="spyOnThisPhases" class="scrollspy-style"
+                ul.switch-list.unstyled
+                  li class="active"
+                    ul.unstyled.phases-list
+                      li
+                        .bar-title.small
+                          b EVENT PHASES
 
-                li href="plan" class="active"
-                  span.phase-id 1
-                  b.phase PLAN
-                  ul.unstyled.phase-steps
-                    li.step-active
-                      i.icon-checked
-                      | Basic info
-                    li.next-step Contacts
-                    li Tasks
-                    li Documents
+                      li class="active-phase"
+                        span.phase-id 1
+                        b.phase PLAN
+                        ul.unstyled.phase-steps
+                          li.step-active
+                            i.icon-checked
+                            | Basic info
+                          li.next-step Contacts
+                          li Tasks
+                          li Documents
 
-                li href="execute"
-                  span.phase-id 2
-                  b.phase EXECUTE
+                      li
+                        span.phase-id 2
+                        b.phase EXECUTE
 
-                li href="resolve"
-                  span.phase-id 3
-                  b.phase RESULTS
+                      li
+                        span.phase-id 3
+                        b.phase RESULTS
+
+                  li
+                    ul.unstyled.phases-list
+                      li
+                        .bar-title.small
+                          b EVENT PHASES
+
+                      li
+                        span.phase-id 1
+                        b.phase PLAN
+
+                      li class="active-phase"
+                        span.phase-id 2
+                        b.phase EXECUTE
+                        ul.unstyled.phase-steps
+                          li.step-active
+                            i.icon-checked
+                            | Basic info
+                          li.next-step Contacts
+                          li Tasks
+                          li Documents
+
+                      li
+                        span.phase-id 3
+                        b.phase RESULTS
 
     .guide-bar.text-center
       span
@@ -94,134 +442,139 @@
         a href="#" (Yes)
         a href="#" (Skip)
 
-    // data-spy="scroll" should be added to the rest of the structure to "spy" this links I guess...
 
 
 
+  .span data-spy="scroll" data-target="#spyOnThis"
+
+    .details_box class="#{(resource.place.nil? or resource.place.latitude.nil?) ?  'padding-top-close-bar' : ''}"
+
+      .phases
+        h5 = 'EVENT PHASES'
+      // Can we add the steps from results to use same structure and styles?
 
 
-
-  .details_box class="#{(resource.place.nil? or resource.place.latitude.nil?) ?  'padding-top-close-bar' : ''}"
-
-    .phases
-      h5 = 'EVENT PHASES'
-    // Can we add the steps from results to use same structure and styles?
-
-
-    .row-fluid.details_first_container
-      .span6
-        .details-title
-          h2.special.pull-left
-            b= resource.campaign_name
-          .edition-links
-            = button_to_edit resource if can_edit
-            = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
-
-        .calendar-data
-          i.icon-calendar
-          span
-            = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at))
-        - unless resource.place.nil?
-          .place-data
-            i.icon-wired-venue
-            span
-              = place_address(resource.place, true, ', ') if resource.place
-
-        - unless resource.description.nil? || resource.description.empty?
-          .description-data
-            span= simple_format resource.description
-
-        .add-details-info
-          i.icon-team.indicate-icon
-
-          // Tags structure in the styleguide
-          .user-tag
-            .user-type
-              i.icon-team
-            span Chris Jaskot Team
-
-          .user-tag
-            .user-type
-              image src="../assets/profile-pic.jpg"
-            span Santiago Miller
-
-          .user-tag
-            .user-type
-              i.icon-user
-            span Steven Thomson
-
-      .span6.map_container
-        - unless resource.place.nil? || resource.place.latitude.nil? || resource.place.latitude == 1.0
-          #venue-map-canvas.google-map data-latitude="#{resource.place.latitude}" data-longitude="#{resource.place.longitude}"
+      .row-fluid.details_first_container
+        .span6
+          .details-title
+            h2.special.pull-left
               b= resource.campaign_name
-              br>/
-              = event_date(resource, :start_at).to_s
-              br>/
-              = place_address(resource.place)
+            .edition-links
+              = button_to_edit resource if can_edit
+              = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
 
-    // This should not appear anymore
-    // = render 'alerts'
+          .calendar-data
+            i.icon-calendar
+            span
+              = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at))
+          - unless resource.place.nil?
+            .place-data
+              i.icon-wired-venue
+              span
+                = place_address(resource.place, true, ', ') if resource.place
 
-    // The is info will be displayed on the fixed bar when the window is scolled down to this position
-    .details-bar-info
-      span.primary-info
-        = resource.campaign_name
-      span.secondary-info
-        = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at), date_separator: ' –  ')
-      = button_to_edit resource if can_edit
-      = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
+          - unless resource.description.nil? || resource.description.empty?
+            .description-data
+              span= simple_format resource.description
+
+          .add-details-info
+            i.icon-team.indicate-icon
+
+            // Tags from structure in the styleguide
+            .user-tag
+              .user-type
+                i.icon-team
+              span Chris Jaskot Team
+
+            .user-tag
+              .user-type
+                image src="../assets/profile-pic.jpg"
+              span Santiago Miller
+
+            .user-tag
+              .user-type
+                i.icon-user
+              span Steven Thomson
+
+        .span6.map_container
+          - unless resource.place.nil? || resource.place.latitude.nil? || resource.place.latitude == 1.0
+            #venue-map-canvas.google-map data-latitude="#{resource.place.latitude}" data-longitude="#{resource.place.longitude}"
+                b= resource.campaign_name
+                br>/
+                = event_date(resource, :start_at).to_s
+                br>/
+                = place_address(resource.place)
 
 
-  - if can?(:view_members, resource)
-    #event-members.details_box
-      h5.module-title EVENT STAFF
-      #event-team-members
-        = render partial: 'team_member_list', locals: {can_delete: can?(:delete_member, resource)}
+
+      // This should not appear anymore
+      // = render 'alerts'
+
+      // The is info will be displayed on the fixed bar when the window is scolled down to this position
+      .details-bar-info
+        span.primary-info
+          = resource.campaign_name
+        span.secondary-info
+          = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at), date_separator: ' –  ')
+        = button_to_edit resource if can_edit
+        = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
 
 
-  - if can?(:view_contacts, resource)
-    #event-contacts.details_box
-      h5.module-title CONTACTS
-      #event-contacts-list
-        = render 'contacts'
+    - if can?(:view_members, resource)
+      #event-members.details_box
+        h5.module-title EVENT STAFF
+        #event-team-members
+          = render partial: 'team_member_list', locals: {can_delete: can?(:delete_member, resource)}
 
-  - resource.results.each { |r| r.errors.clear }
-  - if resource.event_data? && !resource.rejected?
-    = render 'show_results'
-  - elsif resource.happens_today? || resource.in_past?
-    = render 'edit_results'
 
-  - if can_tasks
-    #event-tasks.details_box
-      = render partial: 'tasks', locals: { tasks: resource.tasks.active }
+    - if can?(:view_contacts, resource)
+      #event-contacts.details_box
+        h5.module-title id="mdo" CONTACTS
+        #event-contacts-list
+          = render 'contacts'
 
-  - if can? :documents, resource
-    #event-documents.details_box
-      h5.module-title DOCUMENTS
-      - hidden = resource.documents.active.any? || resource.campaign.documents.any?
-      = render partial: 'attached_assets/document_form', locals: { hidden: hidden, resource: AttachedAsset.new, callback_url: event_documents_path(resource, format: :js) }
-      = link_to 'Upload', '#documents_upload_form', 'data-toggle' => 'collapse', id: 'event-upload-documents', class: "btn btn-primary #{hidden ? '' : 'hide'}", title: 'Add Documents' if can? :create_document, Event
-      .documents-list
-        #documents-list.resource-list
-          = render :partial => "documents/document", :collection => resource.documents.active + resource.campaign.documents, :locals => { parent: resource }
+    - resource.results.each { |r| r.errors.clear }
+    - if resource.event_data? && !resource.rejected?
+      = render 'show_results'
+    - elsif resource.happens_today? || resource.in_past?
+      = render 'edit_results'
 
-= render partial: 'help_tutorial'
-- content_for :footer do
-  - unless resource.place.nil?
-    javascript:
-      $(document).ready(function() {
-        $(this).scrollTop(400);
-      });
+    - if can_tasks
+      #event-tasks.details_box
+        = render partial: 'tasks', locals: { tasks: resource.tasks.active }
 
-  - if can_tasks
-    javascript:
-      if (#{can_tasks}){
-        $(document).on('tasks:change task:deactivated', function(){
-          $.get('#{tasks_event_path(resource)}', function(response){
-            $response = $('<div>').append(response);
-            $('#event-tasks').html($response.find('[data-content="tasks"]').html());
-          })
+    - if can? :documents, resource
+      #event-documents.details_box
+        h5.module-title DOCUMENTS
+        - hidden = resource.documents.active.any? || resource.campaign.documents.any?
+        = render partial: 'attached_assets/document_form', locals: { hidden: hidden, resource: AttachedAsset.new, callback_url: event_documents_path(resource, format: :js) }
+        = link_to 'Upload', '#documents_upload_form', 'data-toggle' => 'collapse', id: 'event-upload-documents', class: "btn btn-primary #{hidden ? '' : 'hide'}", title: 'Add Documents' if can? :create_document, Event
+        .documents-list
+          #documents-list.resource-list
+            = render :partial => "documents/document", :collection => resource.documents.active + resource.campaign.documents, :locals => { parent: resource }
+
+  = render partial: 'help_tutorial'
+  - content_for :footer do
+    - unless resource.place.nil?
+      javascript:
+        $(document).ready(function() {
+          $(this).scrollTop(400);
         });
-      }
 
-  - reload_page_on_edit_resource
+    - if can_tasks
+      javascript:
+        if (#{can_tasks}){
+          $(document).on('tasks:change task:deactivated', function(){
+            $.get('#{tasks_event_path(resource)}', function(response){
+              $response = $('<div>').append(response);
+              $('#event-tasks').html($response.find('[data-content="tasks"]').html());
+            })
+          });
+        }
+
+    - reload_page_on_edit_resource
+
+Write Preview Parsed as Markdown  Edit in fullscreen
+
+Comment
+Status API Blog About © 2015 GitHub, Inc. Terms Privacy Security Contact
