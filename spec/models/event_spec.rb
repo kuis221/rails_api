@@ -20,6 +20,7 @@
 #  local_start_at :datetime
 #  local_end_at   :datetime
 #  description    :text
+#  kbmg_event_id  :string(255)
 #
 
 require 'rails_helper'
@@ -229,7 +230,7 @@ describe Event, type: :model do
       expect(described_class.accessible_by_user(company_user)).to be_empty
     end
 
-    it 'should return empty if the user have access to the campaing but not the place' do
+    it 'should return empty if the user have access to the campaign but not the place' do
       company_user.campaigns << campaign
       expect(described_class.accessible_by_user(company_user)).to be_empty
     end
@@ -520,10 +521,10 @@ describe Event, type: :model do
     end
 
     it 'should include events that are scheduled on places that are part of the areas' do
-      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles')
+      place_la = create(:place, country: 'US', state: 'California', city: 'Los Angeles', types: ['locality'])
       event_la = create(:event, campaign: campaign, place: place_la)
 
-      place_sf = create(:place, country: 'US', state: 'California', city: 'San Francisco')
+      place_sf = create(:place, country: 'US', state: 'California', city: 'San Francisco', types: ['locality'])
       event_sf = create(:event, campaign: campaign, place: place_sf)
 
       area_la = create(:area, company: company)
@@ -1274,7 +1275,7 @@ describe Event, type: :model do
       expect(event.valid?).to be_falsey
       expect(event.errors[:place_reference]).to include(
         'You do not have permissions to this place. '\
-        'Please contact your campaingn administrator to request access.')
+        'Please contact your campaign administrator to request access.')
 
       event.place = place_LA
       expect(event.valid?).to be_truthy
@@ -1432,6 +1433,116 @@ describe Event, type: :model do
       event.save
       activity.reload
       expect(activity.campaign_id).to eql(new_campaign.id)
+    end
+  end
+
+  describe 'Phases' do
+    let(:campaign) { create(:campaign, company: company) }
+    let(:company) { create(:company) }
+
+    describe '#currrent_phase' do
+      it 'return plan for events in the future' do
+        event = create(:event, start_date: 3.days.from_now.to_s(:slashes),
+                               end_date: 3.days.from_now.to_s(:slashes), campaign: campaign)
+        expect(event.current_phase).to eql :plan
+      end
+      it 'returns execute for late events' do
+        event = create(:late_event, campaign: campaign)
+        expect(event.current_phase).to eql :execute
+      end
+
+      it 'returns execute for due events' do
+        event = create(:due_event, campaign: campaign)
+        expect(event.current_phase).to eql :execute
+      end
+
+      it 'returns execute for events happenning today' do
+        event = create(:event, start_date: Time.zone.now.to_s(:slashes),
+                               end_date: Time.zone.now.to_s(:slashes), campaign: campaign)
+        expect(event.current_phase).to eql :execute
+      end
+
+      it 'returns results for events happenning in the past with PER results' do
+        field = create(:form_field_number, fieldable: campaign, required: true)
+        event = create(:event, start_date: Time.zone.now.to_s(:slashes),
+                               end_date: Time.zone.now.to_s(:slashes), campaign: campaign)
+        event.results_for([field]).each { |r| r.value = 100 }
+        event.save
+        expect(event.current_phase).to eql :results
+      end
+    end
+
+    describe 'plan_phases' do
+      it 'return plan for events in the future' do
+        event = create(:event, campaign: campaign)
+        expect(event.plan_phases).to eql [
+          {:id=>:info, :title=>"Basic Info", :complete=>true},
+          {:id=>:contacts, :title=>"Contacts", :complete=>false},
+          {:id=>:tasks, :title=>"Tasks", :complete=>false},
+          {:id=>:documents, :title=>"Documents", :complete=>false}]
+      end
+    end
+
+    describe 'execute_phases' do
+      it 'includes the activities step if campaign have any activity type' do
+        event = create(:event, campaign: campaign)
+        campaign.activity_types << create(:activity_type, company: company)
+        expect(event.execute_phases.find { |s| s[:id] == :activities }).to include(
+          id: :activities, title: 'Activities', complete: false)
+      end
+
+      it 'does not include the activities step if campaign have no activity types' do
+        event = create(:event, campaign: campaign)
+        expect(event.execute_phases.find { |s| s[:id] == :activities }).to be_nil
+      end
+
+      it 'includes the attendance step if campaign have the module assigned' do
+        event = create(:event, campaign: campaign)
+        campaign.update_attribute(:modules, 'attendance' => {})
+        expect(event.execute_phases.find { |s| s[:id] == :attendance }).to include(
+          id: :attendance, title: 'Attendance', complete: false)
+      end
+
+      it 'does not include the attendance step if campaign does not have the module assigned' do
+        event = create(:event, campaign: campaign)
+        expect(event.execute_phases.find { |s| s[:id] == :attendance }).to be_nil
+      end
+
+      it 'includes the photos step if campaign have the module assigned' do
+        event = create(:event, campaign: campaign)
+        campaign.update_attribute(:modules, 'photos' => {})
+        expect(event.execute_phases.find { |s| s[:id] == :photos }).to include(
+          id: :photos, title: 'Photos', complete: false)
+      end
+
+      it 'does not include the photos step if campaign does not have the module assigned' do
+        event = create(:event, campaign: campaign)
+        expect(event.execute_phases.find { |s| s[:id] == :photos }).to be_nil
+      end
+
+      it 'includes the expenses step if campaign have the module assigned' do
+        event = create(:event, campaign: campaign)
+        campaign.update_attribute(:modules, 'expenses' => {})
+        expect(event.execute_phases.find { |s| s[:id] == :expenses }).to include(
+          id: :expenses, title: 'Expenses', complete: false)
+      end
+
+      it 'does not include the expenses step if campaign does not have the module assigned' do
+        event = create(:event, campaign: campaign)
+        expect(event.execute_phases.find { |s| s[:id] == :expenses }).to be_nil
+      end
+
+      it 'includes the comments step if campaign have the module assigned' do
+        event = create(:event, campaign: campaign)
+        campaign.update_attribute(:modules, 'comments' => {})
+        expect(event.execute_phases.find { |s| s[:id] == :comments }).to include(
+          id: :comments, title: 'Consumer Comments', complete: false)
+      end
+
+      it 'does not include the comments step if campaign does not have the module assigned' do
+        event = create(:event, campaign: campaign)
+        expect(event.execute_phases.find { |s| s[:id] == :comments }).to be_nil
+      end
     end
   end
 end

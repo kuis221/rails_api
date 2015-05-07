@@ -1,5 +1,13 @@
-.row-fluid
-  - resource.date_items.each do |date_item|
-    .span3.date-item.clearfix id="date_item-#{date_item.id}"
-      .pull-left= date_item.label
-      .pull-right= link_to content_tag(:i,'', class: 'icon-rounded-disable'), date_range_date_item_path(resource, date_item), title: 'Remove', method: :delete, remote: true  if can?(:edit, resource)
+h5.module-title= "DATES"
+- if resource.date_items.any?
+  #date_range-dates-list
+    .row-fluid
+      - resource.date_items.each do |date_item|
+        .span3.date-item.clearfix id="date_item-#{date_item.id}"
+          .pull-left= date_item.label
+          .pull-right= link_to content_tag(:i,'', class: 'icon-rounded-disable'), date_range_date_item_path(resource, date_item), title: 'Remove', method: :delete, remote: true  if can?(:edit, resource)
+
+  = link_to '', new_date_range_date_item_path(resource), remote: true, class: 'icon-plus-sign', title: 'Add Date' if can?(:edit, resource)
+- else
+  = blank_state_module('date_range.dates') do
+    = button_to 'Add Date', new_date_range_date_item_path(resource), remote: true, method: :get, class: 'btn btn-primary'  if can?(:edit, resource)

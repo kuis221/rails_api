@@ -129,7 +129,7 @@ class Report < ActiveRecord::Base
       row_fields = rows.map(&:to_sql_name)
       results = fetch_page
       total = results.count
-      fetch_page.each_with_index do |row, i|
+      results.each_with_index do |row, i|
         csv << row_fields.map { |n| row[n] } + format_values(row[VALUES])
         yield total, i if block_given? && i % 50 == 0
       end

@@ -1,19 +1,32 @@
 - @_photo_permissions = {}
-
 - show_date_details ||= true
-li.photo-item id="attached_asset_#{photo.id}" data-photo-id="#{photo.id}" data-processed="#{photo.processed?.to_s}"
-  div.thumbnail-inner
-    .thumbnail-toolbar
-      - if can? :deactivate_photo, photo.attachable
-        - if photo.active?
+- if photo.processed?
+  li.photo-item id="attached_asset_#{photo.id}" data-photo-id="#{photo.id}" data-processed="#{photo.processed?.to_s}"
+    div.thumbnail-inner
+      .thumbnail-toolbar
+        - if can? :deactivate_photo, photo.attachable
+          - if photo.active?
+            = link_to '', deactivate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-rounded-disable photo-deactivate-link', data: { :confirm=> I18n.t('confirmation.deactivate_confirm_message', model: 'photo') }, title: 'Deactivate'
+          - else
+            = link_to '', activate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-rounded-ok icon-rounded-disable', title: 'Activate'
+        = link_to '', photo.download_url, class: 'icon-download', title: "Select Photo", id: 'photo-download-add' if can?(:index_photo_results, AttachedAsset)
+      - if photo.processed?
+        = link_to photo.file.url(:medium), 'data-toggle' => 'gallery', title: 'View Photo' do
+            = image_tag photo.file.url(:thumbnail), id: 'thumbnail_'+photo.id.to_s, data: { image_id: photo.id }
+      - else
+        .image-loading-container
+
+- else
+  li.photo-item id="attached_asset_#{photo.id}" data-processed="false" data-photo-id="#{photo.id}"
+    .attachment-panel.drag-drop-zone.photos.progress-status
+      .attachment-upload-progress-info.complete id="upload_#{photo.id}"
+        .step-counter STEP 2 OF 2
+        .upload-file-info
+          div.documents-counter Processing...
+          div.document-info
+            span.document-name= photo.file_file_name
+            span.document-size= number_to_human_size(photo.file_file_size)
+        .upload-file-progress
+          .progress
+            .bar style="width: 0%"
           = link_to '', deactivate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-rounded-disable photo-deactivate-link', data: { :confirm=> I18n.t('confirmation.deactivate_confirm_message', model: 'photo') }, title: 'Deactivate'
-        - else
-          = link_to '', activate_event_photo_path(photo.attachable, photo), remote: true, class: 'icon-rounded-ok icon-rounded-disable', title: 'Activate'
-      = link_to '', photo.download_url, class: 'icon-download', title: "Select Photo", id: 'photo-download-add' if can?(:index_photo_results, AttachedAsset)
-    - if photo.processed?
-      = link_to photo.file.url(:medium), 'data-toggle' => 'gallery', title: 'View Photo' do
-          = image_tag photo.file.url(:thumbnail), id: 'thumbnail_'+photo.id.to_s, data: { image_id: photo.id }
-    - else
-      .image-loading-container
-
-

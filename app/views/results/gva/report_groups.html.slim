@@ -1,8 +1,8 @@
 #kpis-trends-bars
-  #gva-results.accordion
-    - if @goalables.present?
+  - if @goalables.present?
+    #gva-results.accordion
       - @goalables.each do |item|
-        .details_box
+        .details_box id="gva-result-#{item.class.name}#{item.id}"
           .accordion-group
             .accordion-heading
               a href="#toggle-item-#{item.class.name}#{item.id}" class="accordion-toggle" data-toggle="collapse" title="#{item.name}"
@@ -11,9 +11,17 @@
                 a href="#" class="icon-close remove-item" title="Remove #{item.name}"
             .accordion-body.collapse id="toggle-item-#{item.class.name}#{item.id}" data-type="#{item.class.name}" data-id="#{item.id}"
               .accordion-inner.goals-actual
-    - else
-      .details_box
-        p.text-center This campaign has no stats for the selected grouping
+  - else
+    .details_box.content
+      .blank-state
+        h5.text-center
+          - if params['report'].try(:[], 'group_by') == 'place'
+            = I18n.translate(:'blank_states.results_gva.filters.line3')
+          - elsif params['report'].try(:[], 'group_by') == 'staff'
+            = I18n.translate(:'blank_states.results_gva.filters.line4')
+        p.text-center = I18n.translate(:'blank_states.results_gva.filters.line2')
+        .blank-state-icon
+          = image_tag 'blank-search.png'
 
 javascript:
   $('.remove-item').on('click', function(e){

@@ -45,6 +45,11 @@ javascript:
     'userFilters': #{user_saved_filters('results_expenses').to_json.html_safe},
     'autoCompletePath': '#{autocomplete_path(:events, format: :json)}',
     'defaultParams': '#{j default_params_for_view('status[]=Active', scope: 'results_expenses')}',
+    'emptyStateMessage': '#{j t("results_expenses.empty.line1", scope: :blank_states) }',
+    'emptyStateMessageLine2': '#{j t("results_expenses.empty.line2", scope: :blank_states) }',
+    'emptyFilterResultsMessage': '#{j t("results_expenses.filters.line1", default: :filters_line1, scope: :blank_states) }',
+    'emptyFilterResultsMessageLine2': '#{j t("results_expenses.filters.line2", default: :filters_line2, scope: :blank_states) }',
+    'emptyStateImage': '#{asset_path('blank-expenses.png')}',
     'onChange': function(filterBox){
       $(document).trigger('expenses-filter:changed');
     },

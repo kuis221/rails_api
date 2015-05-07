@@ -121,7 +121,7 @@ feature 'Tasks', js: true, search: true do
   scenario 'allows to create a new task' do
     visit mine_tasks_path
 
-    click_js_button 'Create'
+    click_js_button 'Add Task'
     within('form#new_task') do
       fill_in 'Title', with: 'Do the math homework'
       fill_in 'Due at', with: '05/16/2013'
@@ -174,7 +174,6 @@ feature 'Tasks', js: true, search: true do
     end
 
     it_behaves_like 'a list that allow saving custom filters' do
-
       before do
         create(:campaign, name: 'Campaign 1', company: company)
         create(:campaign, name: 'Campaign 2', company: company)

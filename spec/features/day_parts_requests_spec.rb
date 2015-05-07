@@ -145,7 +145,7 @@ feature 'DayParts', js: true, search: true do
       day_part = create(:day_part, company: company)
       visit day_part_path(day_part)
 
-      click_js_link('Add Time')
+      click_js_button 'Add Time'
 
       within visible_modal do
         fill_in 'Start', with: '1:00am'

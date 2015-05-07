@@ -5,7 +5,7 @@
 class FilteredController < InheritedResources::Base
   include ExportableController
 
-  helper_method :collection_count, :facets, :page,
+  helper_method :collection_count, :collection_total_count, :facets, :page,
                 :total_pages, :return_path, :search_params
 
   respond_to :json, only: :index
@@ -90,9 +90,15 @@ class FilteredController < InheritedResources::Base
           end
         end
       end if params[:cfid].present?
-      p[:company_id] = current_company.id
-      p[:current_company_user] = current_company_user
+      p.merge!(base_search_params)
     end
+  end
+
+  def base_search_params
+    {
+      company_id: current_company.id,
+      current_company_user: current_company_user
+    }
   end
 
   def permitted_search_params
@@ -102,6 +108,16 @@ class FilteredController < InheritedResources::Base
   def collection_count
     collection
     @collection_count ||= @collection_count_scope.count
+  end
+
+  def collection_total_count
+    @collection_total_count ||= begin
+      if resource_class.respond_to?(:do_search)
+        resource_class.do_search(base_search_params).total
+      else
+        end_of_association_chain.accessible_by_user(current_user).count
+      end
+    end
   end
 
   def collection_search

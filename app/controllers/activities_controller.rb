@@ -12,7 +12,7 @@ class ActivitiesController < FilteredController
   extend ExportableFormHelper
 
   # This helper provide the methods to activate/deactivate the resource
-  include DeactivableHelper
+  include DeactivableController
 
   helper_method :assignable_users, :activity_types
 

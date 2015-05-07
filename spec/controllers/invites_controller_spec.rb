@@ -12,28 +12,24 @@ RSpec.describe InvitesController, type: :controller do
   before { user }
 
   describe "POST 'create'" do
-    it 'when invite is a Venue, should not render form_dialog if no errors' do
+    it 'creates the invitation linked to a venue and redirects the user to the thanks page' do
       expect do
         xhr :post, 'create', event_id: event.id, invite: {
           place_reference: place.id.to_s,
           invitees: 100
         }, format: :js
       end.to change(Invite, :count).by(1)
-      expect(response).to be_success
-      expect(response).to render_template(:create)
-      expect(response).not_to render_template('_form_dialog')
+      expect(response).to redirect_to(thanks_event_activities_path(activity_type_id: 'attendance'))
     end
 
-    it 'when invite is a Market, should not render form_dialog if no errors' do
+    it 'creates the invitation linked to a venue and redirects the user to the thanks page' do
       expect do
         xhr :post, 'create', event_id: event.id, invite: {
           area_id: area.id.to_s,
           invitees: 100
         }, format: :js
       end.to change(Invite, :count).by(1)
-      expect(response).to be_success
-      expect(response).to render_template(:create)
-      expect(response).not_to render_template('_form_dialog')
+      expect(response).to redirect_to(thanks_event_activities_path(activity_type_id: 'attendance'))
     end
 
     it 'when invite is a Venue, should render the form_dialog template if errors' do

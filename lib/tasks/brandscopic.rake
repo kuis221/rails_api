@@ -34,7 +34,7 @@ namespace :brandscopic do
           place = venues.first.place
           place.name = name.strip
           place.route = route.gsub(/^[0-9]+\w/, '').strip
-          place.street_number = route.gsub(/^([0-9]+)\w.*$/, '\1').strip
+          place.street_number = route.gsub(/^([0-9]+).*$/, '\1').strip
           place.zipcode = zip.strip
           place.city = city.strip
           place.state = state.strip
