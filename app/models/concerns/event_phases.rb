@@ -35,10 +35,10 @@ module EventPhases
 
   def plan_phases
     @plan_phases ||= [].tap do |phases|
-      phases.push({ id: :info, title: 'Basic Info', complete: true, required: true })
-      phases.push({ id: :contacts, title: 'Contacts', complete: contacts.any?, required: false })
-      phases.push({ id: :tasks, title: 'Tasks', complete: tasks.any?, required: false })
-      phases.push({ id: :documents, title: 'Documents', complete: documents.any?, required: false })
+      phases.push(id: :info, title: 'Basic Info', complete: true, required: true)
+      phases.push(id: :contacts, title: 'Contacts', complete: contacts.any?, required: false)
+      phases.push(id: :tasks, title: 'Tasks', complete: tasks.any?, required: false)
+      phases.push(id: :documents, title: 'Documents', complete: documents.any?, required: false)
     end
   end
 

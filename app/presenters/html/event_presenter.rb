@@ -15,12 +15,12 @@ module Html
       members_list.html_safe if members_list.present?
     end
 
-    def event_member_tag
+    def team_members
       return if @model.users.nil? && @model.teams.nil?
-      render_teams_tag.html_safe + render_users_tag.html_safe
+      teams_tags.html_safe + users_tags.html_safe
     end
 
-    def render_teams_tag
+    def teams_tags
       return if @model.teams.nil?
       team_list = ''
       @model.teams.each do |team|
@@ -34,18 +34,17 @@ module Html
       team_list
     end
 
-    def render_users_tag
+    def users_tags
       return if @model.users.nil?
       users_list = ''
-      @model.users.each do |team_member|
-        users_list = h.content_tag(:div, class: 'user-tag') do
+      @model.users.map do |team_member|
+        h.content_tag(:div, class: 'user-tag has-tooltip', data: { title: h.contact_info_tooltip(team_member).to_str, trigger: :click, container: 'body' } ) do
           h.content_tag(:div, class: 'user-type') do
             h.content_tag(:i, '', class: 'icon-user')
           end +
           h.content_tag(:span, team_member.full_name)
-        end.html_safe
-      end
-      users_list
+        end
+      end.join.html_safe
     end
 
     def render_nav_phases

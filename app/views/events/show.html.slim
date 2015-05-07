@@ -58,10 +58,11 @@
             .description-data
               span= simple_format resource.description
 
-          - unless resource.users.empty? && resource.teams.empty?    
-            .add-details-info
-              i.icon-team.indicate-icon
-              = presenter.event_member_tag
+          - if can?(:view_members, resource)
+            - unless resource.users.empty? && resource.teams.empty?    
+              #event-team-members.add-details-info
+                i.icon-team.indicate-icon
+                = presenter.team_members
         .span6.map_container
           - unless resource.place.nil? || resource.place.latitude.nil? || resource.place.latitude == 1.0
             #venue-map-canvas.google-map data-latitude="#{resource.place.latitude}" data-longitude="#{resource.place.longitude}"
@@ -71,16 +72,6 @@
                 br>/
                 = place_address(resource.place)
       #test
-
-
-      // This should not appear anymore
-      // = render 'alerts'
-
-    - if can?(:view_members, resource)
-      #event-members.details_box
-        h5.module-title EVENT STAFF
-        #event-team-members
-          = render partial: 'team_member_list', locals: {can_delete: can?(:delete_member, resource)}
 
 
     - if can?(:view_contacts, resource)

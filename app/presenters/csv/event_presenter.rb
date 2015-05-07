@@ -5,14 +5,7 @@ module Csv
     end
 
     def team_members
-      ActiveRecord::Base.connection.unprepared_statement do
-        ActiveRecord::Base.connection.select_values("
-          #{@model.users.joins(:user).select('users.first_name || \' \' || users.last_name AS name').reorder(nil).to_sql}
-          UNION ALL
-          #{@model.teams.select('teams.name').reorder(nil).to_sql}
-          ORDER BY name
-        ").join(', ')
-      end
+      @model.event_team_members
     end
 
     def url
