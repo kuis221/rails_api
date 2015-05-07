@@ -216,6 +216,7 @@ feature 'Post Event Data' do
       expect(page).to have_content '66%'
 
       expect(page).to have_content '9%'
+      expect(page).to have_content '10%'
       expect(page).to have_content '11%'
       expect(page).to have_content '12%'
       expect(page).to have_content '13%'
