@@ -375,6 +375,7 @@ class Place < ActiveRecord::Base
           value: p.name + ', ' + address,
           label: p.name + ', ' + address,
           id: p.place_id,
+          location: { latitude: p.latitude, longitude: p.longitude },
           valid: true
         }
       end
@@ -395,10 +396,15 @@ class Place < ActiveRecord::Base
             .map do |p|
               name = p['formatted_address'].match(/\A#{Regexp.escape(p['name'])}/i) ? nil : p['name']
               label = [name, p['formatted_address'].to_s].compact.join(', ')
+              location  =
+                if p.key?('geometry') && p['geometry'].key?('location')
+                  { latitude: p['geometry']['location']['lat'], longitude: p['geometry']['location']['lng'] }
+                end
               {
                 value: label,
                 label: label,
                 id: "#{p['reference']}||#{p['place_id']}",
+                location: location,
                 valid: valid_flag.call(p)
               }
             end.sort! { |x, y| sort_index[x[:valid]] <=> sort_index[y[:valid]] }.slice!(0, 5 - results.count))
