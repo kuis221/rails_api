@@ -77,6 +77,24 @@ class Results::GvaController < InheritedResources::Base
     scope
   end
 
+  def filter_venues_scope
+    if area.present?
+      Venue.in_campaign_areas(@campaign, [params[:item_id]])
+    elsif place.present?
+      if place.is_location?
+        Venue.joins("INNER JOIN locations_places ON locations_places.place_id=venues.place_id AND locations_places.location_id=#{place.location_id}")
+      else
+        Venue.where(place_id: place.id)
+      end
+    elsif company_user.present?
+      Venue.in_campaign_scope(@campaign).joins(:activities).where(activities: { company_user_id: company_user.id })
+    elsif team.present?
+      Venue.in_campaign_scope(@campaign).joins(:activities).where(activities: { company_user_id: team.users.ids })
+    else
+      Venue.in_campaign_scope(@campaign)
+    end
+  end
+
   def goalables_by_type
     if report_group_by == 'campaign'
       campaign.goals
@@ -95,6 +113,7 @@ class Results::GvaController < InheritedResources::Base
       params.merge!(item_type: goalable.class.name, item_id: goalable.id)
     end
     @events_scope = filter_events_scope
+    @venues_scope = filter_venues_scope
     @group_header_data = {}
     goals = if area
       area.goals.in(campaign)
@@ -153,7 +172,7 @@ class Results::GvaController < InheritedResources::Base
             elsif goalable_type == 'CompanyUser'
               events_scope.with_user_in_team(goaleables_ids[kpi]).select("ARRAY[memberships.company_user_id::varchar, '#{goalable_type}'], '{KPI_NAME}', {KPI_AGGR}")
             elsif goalable_type == 'Team'
-              events_scope.with_team(goaleables_ids[kpi]).select("ARRAY[teams.id::varchar, '#{goalable_type}'], '{KPI_NAME}', {KPI_AGGR}")
+              events_scope.with_team(goaleables_ids[kpi]).select("ARRAY[teamings.id::varchar, '#{goalable_type}'], '{KPI_NAME}', {KPI_AGGR}")
             else
               events_scope.select("ARRAY[events.campaign_id::varchar, 'Campaign'], '{KPI_NAME}', {KPI_AGGR}")
             end

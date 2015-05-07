@@ -64,11 +64,14 @@ class Activity < ActiveRecord::Base
     integer :location, multiple: true do
       locations_for_index
     end
+    integer :activitable_id
+    string :activitable_type
     string :activitable do
       "#{activitable_type}#{activitable_id}"
     end
     date :activity_date
     string :status
+    join(:events_active, target: Event, type: :boolean, join: { from: :id, to: :activitable_id }, as: :active_b)
   end
 
   def activate!
@@ -170,6 +173,14 @@ class Activity < ActiveRecord::Base
         elsif params[:start_date].present?
           d = Timeliness.parse(params[:start_date][0], zone: :current)
           with :activity_date, d
+        end
+
+        any_of do
+           all_of do
+             with :activitable_type, 'Event'
+             with :events_active, true
+           end
+           with :activitable_type, 'Venue'
         end
 
         order_by(params[:sorting] || :activity_date, params[:sorting_dir] || :asc)

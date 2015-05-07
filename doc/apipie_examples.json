@@ -1,0 +1,925 @@
+{
+  "events#add_contact": [
+    {
+      "verb": "POST",
+      "path": "/api/v1/events/19/contacts.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "contactable_id": 4,
+        "contactable_type": "contact"
+      },
+      "response_data": {
+        "success": true,
+        "info": "Contact successfully added to event",
+        "data": {
+        }
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "events#assignable_contacts": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/6/assignable_contacts.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": [
+        {
+          "id": 5,
+          "full_name": "Test User",
+          "title": "Super Admin",
+          "type": "user"
+        },
+        {
+          "id": 2,
+          "full_name": "Luis Perez",
+          "title": "Field Ambassador",
+          "type": "contact"
+        },
+        {
+          "id": 3,
+          "full_name": "Pedro Guerra",
+          "title": "Coach",
+          "type": "contact"
+        }
+      ],
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "events#autocomplete": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/autocomplete.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "q=",
+      "request_data": null,
+      "response_data": [
+        {
+          "label": "Campaigns",
+          "value": [
+
+          ]
+        },
+        {
+          "label": "Brands",
+          "value": [
+
+          ]
+        },
+        {
+          "label": "Places",
+          "value": [
+
+          ]
+        },
+        {
+          "label": "People",
+          "value": [
+
+          ]
+        },
+        {
+          "label": "Active State",
+          "value": [
+            {
+              "label": "<i></i>A<i></i>c<i></i>t<i></i>i<i></i>v<i></i>e<i></i>",
+              "value": "Active",
+              "type": "status"
+            },
+            {
+              "label": "<i></i>I<i></i>n<i></i>a<i></i>c<i></i>t<i></i>i<i></i>v<i></i>e<i></i>",
+              "value": "Inactive",
+              "type": "status"
+            }
+          ]
+        },
+        {
+          "label": "Event Status",
+          "value": [
+            {
+              "label": "<i></i>S<i></i>u<i></i>b<i></i>m<i></i>i<i></i>t<i></i>t<i></i>e<i></i>d<i></i>",
+              "value": "Submitted",
+              "type": "event_status"
+            },
+            {
+              "label": "<i></i>L<i></i>a<i></i>t<i></i>e<i></i>",
+              "value": "Late",
+              "type": "event_status"
+            },
+            {
+              "label": "<i></i>D<i></i>u<i></i>e<i></i>",
+              "value": "Due",
+              "type": "event_status"
+            },
+            {
+              "label": "<i></i>A<i></i>p<i></i>p<i></i>r<i></i>o<i></i>v<i></i>e<i></i>d<i></i>",
+              "value": "Approved",
+              "type": "event_status"
+            },
+            {
+              "label": "<i></i>R<i></i>e<i></i>j<i></i>e<i></i>c<i></i>t<i></i>e<i></i>d<i></i>",
+              "value": "Rejected",
+              "type": "event_status"
+            }
+          ]
+        }
+      ],
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "events#delete_contact": [
+    {
+      "verb": "DELETE",
+      "path": "/api/v1/events/1/contacts.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "contactable_id=2&contactable_type=user",
+      "request_data": null,
+      "response_data": {
+        "success": true,
+        "info": "Contact successfully deleted from event",
+        "data": {
+        }
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "events#index": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/events.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "campaign%5B%5D=3&place%5B%5D=2",
+      "request_data": null,
+      "response_data": {
+        "page": 1,
+        "total_pages": 1,
+        "total": 3,
+        "filters": [
+          {
+            "label": "Campaign 3",
+            "name": "campaign:3",
+            "expandible": false
+          },
+          {
+            "label": "Place 2",
+            "name": "place:2",
+            "expandible": false
+          }
+        ],
+        "results": [
+          {
+            "id": 3,
+            "start_date": "01/23/2019",
+            "start_time": "10:00 AM",
+            "end_date": "01/23/2019",
+            "end_time": "12:00 PM",
+            "status": "Active",
+            "event_status": "Scheduled",
+            "campaign": {
+              "id": 3,
+              "name": "Campaign 3"
+            },
+            "place": {
+              "id": 2,
+              "name": "Place 2",
+              "latitude": null,
+              "longitude": null,
+              "formatted_address": "123 My Street",
+              "country": "US",
+              "state": "NY",
+              "state_name": "NY",
+              "city": "New York City",
+              "zipcode": "12345"
+            }
+          },
+          {
+            "id": 4,
+            "start_date": "01/23/2019",
+            "start_time": "10:00 AM",
+            "end_date": "01/23/2019",
+            "end_time": "12:00 PM",
+            "status": "Active",
+            "event_status": "Scheduled",
+            "campaign": {
+              "id": 3,
+              "name": "Campaign 3"
+            },
+            "place": {
+              "id": 2,
+              "name": "Place 2",
+              "latitude": null,
+              "longitude": null,
+              "formatted_address": "123 My Street",
+              "country": "US",
+              "state": "NY",
+              "state_name": "NY",
+              "city": "New York City",
+              "zipcode": "12345"
+            }
+          },
+          {
+            "id": 5,
+            "start_date": "01/23/2019",
+            "start_time": "10:00 AM",
+            "end_date": "01/23/2019",
+            "end_time": "12:00 PM",
+            "status": "Active",
+            "event_status": "Scheduled",
+            "campaign": {
+              "id": 3,
+              "name": "Campaign 3"
+            },
+            "place": {
+              "id": 2,
+              "name": "Place 2",
+              "latitude": null,
+              "longitude": null,
+              "formatted_address": "123 My Street",
+              "country": "US",
+              "state": "NY",
+              "state_name": "NY",
+              "city": "New York City",
+              "zipcode": "12345"
+            }
+          }
+        ]
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    },
+    {
+      "verb": "GET",
+      "path": "/api/v1/events.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "campaign%5B%5D=7&place%5B%5D=5",
+      "request_data": null,
+      "response_data": {
+        "page": 1,
+        "total_pages": 1,
+        "total": 3,
+        "filters": [
+          {
+            "label": "Campaign 7",
+            "name": "campaign:7",
+            "expandible": false
+          },
+          {
+            "label": "Place 5",
+            "name": "place:5",
+            "expandible": false
+          }
+        ],
+        "results": [
+          {
+            "id": 16,
+            "start_date": "01/23/2019",
+            "start_time": "10:00 AM",
+            "end_date": "01/23/2019",
+            "end_time": "12:00 PM",
+            "status": "Active",
+            "event_status": "Scheduled",
+            "campaign": {
+              "id": 7,
+              "name": "Campaign 7"
+            },
+            "place": {
+              "id": 5,
+              "name": "Place 5",
+              "latitude": null,
+              "longitude": null,
+              "formatted_address": "123 My Street",
+              "country": "US",
+              "state": "NY",
+              "state_name": "NY",
+              "city": "New York City",
+              "zipcode": "12345"
+            }
+          },
+          {
+            "id": 17,
+            "start_date": "01/23/2019",
+            "start_time": "10:00 AM",
+            "end_date": "01/23/2019",
+            "end_time": "12:00 PM",
+            "status": "Active",
+            "event_status": "Scheduled",
+            "campaign": {
+              "id": 7,
+              "name": "Campaign 7"
+            },
+            "place": {
+              "id": 5,
+              "name": "Place 5",
+              "latitude": null,
+              "longitude": null,
+              "formatted_address": "123 My Street",
+              "country": "US",
+              "state": "NY",
+              "state_name": "NY",
+              "city": "New York City",
+              "zipcode": "12345"
+            }
+          },
+          {
+            "id": 18,
+            "start_date": "01/23/2019",
+            "start_time": "10:00 AM",
+            "end_date": "01/23/2019",
+            "end_time": "12:00 PM",
+            "status": "Active",
+            "event_status": "Scheduled",
+            "campaign": {
+              "id": 7,
+              "name": "Campaign 7"
+            },
+            "place": {
+              "id": 5,
+              "name": "Place 5",
+              "latitude": null,
+              "longitude": null,
+              "formatted_address": "123 My Street",
+              "country": "US",
+              "state": "NY",
+              "state_name": "NY",
+              "city": "New York City",
+              "zipcode": "12345"
+            }
+          }
+        ]
+      },
+      "code": "200",
+      "show_in_doc": 0,
+      "recorded": true
+    }
+  ],
+  "events#requiring_attention": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/requiring_attention.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": [
+        {
+          "id": 12,
+          "start_date": "04/14/2015",
+          "start_time": "10:00 AM",
+          "end_date": "04/14/2015",
+          "end_time": "12:00 PM",
+          "status": "Active",
+          "phases": {
+            "current_phase": "execute",
+            "next_step": {
+              "id": "per",
+              "title": "Post Event Recap",
+              "complete": false
+            },
+            "phases": {
+              "plan": [
+                {
+                  "id": "info",
+                  "title": "Basic Info",
+                  "complete": true
+                },
+                {
+                  "id": "contacts",
+                  "title": "Contacts",
+                  "complete": false
+                },
+                {
+                  "id": "tasks",
+                  "title": "Tasks",
+                  "complete": false
+                },
+                {
+                  "id": "documents",
+                  "title": "Documents",
+                  "complete": false
+                }
+              ],
+              "execute": [
+                {
+                  "id": "per",
+                  "title": "Post Event Recap",
+                  "complete": false
+                }
+              ],
+              "results": [
+                {
+                  "id": "approve_per",
+                  "title": "Approve PER",
+                  "complete": false,
+                  "if": {
+                  }
+                }
+              ]
+            }
+          },
+          "event_status": "Late",
+          "campaign": {
+            "id": 6,
+            "name": "Campaign 6"
+          },
+          "place": {
+            "id": 4,
+            "name": "Place 4",
+            "latitude": null,
+            "longitude": null,
+            "formatted_address": "123 My Street",
+            "country": "US",
+            "state": "NY",
+            "state_name": "NY",
+            "city": "New York City",
+            "zipcode": "12345"
+          }
+        },
+        {
+          "id": 13,
+          "start_date": "05/04/2015",
+          "start_time": "8:00 PM",
+          "end_date": "05/04/2015",
+          "end_time": "9:00 PM",
+          "status": "Active",
+          "phases": {
+            "current_phase": "execute",
+            "next_step": {
+              "id": "per",
+              "title": "Post Event Recap",
+              "complete": false
+            },
+            "phases": {
+              "plan": [
+                {
+                  "id": "info",
+                  "title": "Basic Info",
+                  "complete": true
+                },
+                {
+                  "id": "contacts",
+                  "title": "Contacts",
+                  "complete": false
+                },
+                {
+                  "id": "tasks",
+                  "title": "Tasks",
+                  "complete": false
+                },
+                {
+                  "id": "documents",
+                  "title": "Documents",
+                  "complete": false
+                }
+              ],
+              "execute": [
+                {
+                  "id": "per",
+                  "title": "Post Event Recap",
+                  "complete": false
+                }
+              ],
+              "results": [
+                {
+                  "id": "approve_per",
+                  "title": "Approve PER",
+                  "complete": false,
+                  "if": {
+                  }
+                }
+              ]
+            }
+          },
+          "event_status": "Due",
+          "campaign": {
+            "id": 6,
+            "name": "Campaign 6"
+          },
+          "place": {
+            "id": 4,
+            "name": "Place 4",
+            "latitude": null,
+            "longitude": null,
+            "formatted_address": "123 My Street",
+            "country": "US",
+            "state": "NY",
+            "state_name": "NY",
+            "city": "New York City",
+            "zipcode": "12345"
+          }
+        },
+        {
+          "id": 14,
+          "start_date": "05/05/2015",
+          "start_time": "10:00 AM",
+          "end_date": "05/05/2015",
+          "end_time": "12:00 PM",
+          "status": "Active",
+          "phases": {
+            "current_phase": "execute",
+            "next_step": {
+              "id": "per",
+              "title": "Post Event Recap",
+              "complete": false
+            },
+            "phases": {
+              "plan": [
+                {
+                  "id": "info",
+                  "title": "Basic Info",
+                  "complete": true
+                },
+                {
+                  "id": "contacts",
+                  "title": "Contacts",
+                  "complete": false
+                },
+                {
+                  "id": "tasks",
+                  "title": "Tasks",
+                  "complete": false
+                },
+                {
+                  "id": "documents",
+                  "title": "Documents",
+                  "complete": false
+                }
+              ],
+              "execute": [
+                {
+                  "id": "per",
+                  "title": "Post Event Recap",
+                  "complete": false
+                }
+              ],
+              "results": [
+                {
+                  "id": "approve_per",
+                  "title": "Approve PER",
+                  "complete": false,
+                  "if": {
+                  }
+                }
+              ]
+            }
+          },
+          "event_status": "Due",
+          "campaign": {
+            "id": 6,
+            "name": "Campaign 6"
+          },
+          "place": {
+            "id": 4,
+            "name": "Place 4",
+            "latitude": null,
+            "longitude": null,
+            "formatted_address": "123 My Street",
+            "country": "US",
+            "state": "NY",
+            "state_name": "NY",
+            "city": "New York City",
+            "zipcode": "12345"
+          }
+        }
+      ],
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "events#show": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/2.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": {
+        "id": 2,
+        "start_date": "01/23/2019",
+        "start_time": "10:00 AM",
+        "end_date": "01/23/2019",
+        "end_time": "12:00 PM",
+        "status": "Active",
+        "phases": {
+          "current_phase": "plan",
+          "next_step": {
+            "id": "contacts",
+            "title": "Contacts",
+            "complete": false
+          },
+          "phases": {
+            "plan": [
+              {
+                "id": "info",
+                "title": "Basic Info",
+                "complete": true
+              },
+              {
+                "id": "contacts",
+                "title": "Contacts",
+                "complete": false
+              },
+              {
+                "id": "tasks",
+                "title": "Tasks",
+                "complete": false
+              },
+              {
+                "id": "documents",
+                "title": "Documents",
+                "complete": false
+              }
+            ],
+            "execute": [
+              {
+                "id": "per",
+                "title": "Post Event Recap",
+                "complete": false
+              }
+            ],
+            "results": [
+              {
+                "id": "approve_per",
+                "title": "Approve PER",
+                "complete": false,
+                "if": {
+                }
+              }
+            ]
+          }
+        },
+        "description": null,
+        "event_status": "Scheduled",
+        "have_data": false,
+        "actions": [
+          "enter post event data"
+        ],
+        "tasks_late_count": 0,
+        "tasks_due_today_count": 0,
+        "place": {
+          "id": 1,
+          "venue_id": 1,
+          "name": "Place 1",
+          "latitude": null,
+          "longitude": null,
+          "formatted_address": "123 My Street",
+          "country": "US",
+          "state": "NY",
+          "state_name": "NY",
+          "city": "New York City",
+          "zipcode": "12345"
+        },
+        "campaign": {
+          "id": 2,
+          "name": "Campaign 2",
+          "enabled_modules": [
+
+          ]
+        }
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "events#status_facets": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/status_facets.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": {
+        "facets": [
+          {
+            "id": "Late",
+            "name": "event_status",
+            "count": 1,
+            "label": "Late"
+          },
+          {
+            "id": "Due",
+            "name": "event_status",
+            "count": 1,
+            "label": "Due"
+          },
+          {
+            "id": "Rejected",
+            "name": "event_status",
+            "count": 1,
+            "label": "Rejected"
+          },
+          {
+            "id": "Submitted",
+            "name": "event_status",
+            "count": 1,
+            "label": "Submitted"
+          },
+          {
+            "id": "Approved",
+            "name": "event_status",
+            "count": 1,
+            "label": "Approved"
+          }
+        ]
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "filters#show": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/filters/events.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": {
+        "filters": [
+          {
+            "label": "Campaigns",
+            "items": [
+              {
+                "id": 10,
+                "label": "Campaign 10",
+                "value": 10,
+                "name": "campaign",
+                "selected": false
+              },
+              {
+                "id": 9,
+                "label": "Campaign 9",
+                "value": 9,
+                "name": "campaign",
+                "selected": false
+              }
+            ]
+          },
+          {
+            "label": "Brands",
+            "items": [
+              {
+                "id": 1,
+                "label": "Test Brand 1",
+                "value": 1,
+                "name": "brand",
+                "selected": false
+              },
+              {
+                "id": 2,
+                "label": "Test Brand 2",
+                "value": 2,
+                "name": "brand",
+                "selected": false
+              }
+            ]
+          },
+          {
+            "label": "Areas",
+            "items": [
+              {
+                "id": 1,
+                "label": "Area 1",
+                "value": 1,
+                "name": "area",
+                "selected": false
+              },
+              {
+                "id": 2,
+                "label": "Area 2",
+                "value": 2,
+                "name": "area",
+                "selected": false
+              }
+            ]
+          },
+          {
+            "label": "People",
+            "items": [
+              {
+                "id": 11,
+                "label": "Test User",
+                "value": 11,
+                "name": "user",
+                "selected": false
+              },
+              {
+                "id": 1,
+                "label": "Team 1",
+                "value": 1,
+                "name": "team",
+                "selected": false
+              },
+              {
+                "id": 2,
+                "label": "Team 2",
+                "value": 2,
+                "name": "team",
+                "selected": false
+              }
+            ]
+          },
+          {
+            "label": "Event Status",
+            "items": [
+              {
+                "id": "Submitted",
+                "label": "Submitted",
+                "value": "Submitted",
+                "name": "event_status",
+                "selected": false
+              },
+              {
+                "id": "Late",
+                "label": "Late",
+                "value": "Late",
+                "name": "event_status",
+                "selected": false
+              },
+              {
+                "id": "Due",
+                "label": "Due",
+                "value": "Due",
+                "name": "event_status",
+                "selected": false
+              },
+              {
+                "id": "Approved",
+                "label": "Approved",
+                "value": "Approved",
+                "name": "event_status",
+                "selected": false
+              },
+              {
+                "id": "Rejected",
+                "label": "Rejected",
+                "value": "Rejected",
+                "name": "event_status",
+                "selected": false
+              }
+            ]
+          },
+          {
+            "label": "Active State",
+            "items": [
+              {
+                "id": "Active",
+                "label": "Active",
+                "value": "Active",
+                "name": "status",
+                "selected": false
+              },
+              {
+                "id": "Inactive",
+                "label": "Inactive",
+                "value": "Inactive",
+                "name": "status",
+                "selected": false
+              }
+            ]
+          },
+          {
+            "label": "Saved Filters",
+            "items": [
+
+            ]
+          }
+        ]
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ]
+}

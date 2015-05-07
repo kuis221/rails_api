@@ -2,7 +2,7 @@
   - if @goalables.present?
     #gva-results.accordion
       - @goalables.each do |item|
-        .details_box
+        .details_box id="gva-result-#{item.class.name}#{item.id}"
           .accordion-group
             .accordion-heading
               a href="#toggle-item-#{item.class.name}#{item.id}" class="accordion-toggle" data-toggle="collapse" title="#{item.name}"

@@ -8,19 +8,22 @@ describe Api::V1::EventsController, type: :controller do
   before { set_api_authentication_headers user, company }
 
   describe "GET 'index'", search: true do
-    it 'return a list of events' do
+    it 'return a list of events', :show_in_doc do
       campaign = create(:campaign, company: company)
       place = create(:place)
       create_list(:event, 3, company: company, campaign: campaign, place: place)
       Sunspot.commit
 
-      get :index, format: :json
+      get :index, campaign: [campaign.id], place: [place.id], format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
 
       expect(result['results'].count).to eq(3)
       expect(result['total']).to eq(3)
       expect(result['page']).to eq(1)
+      expect(result['filters']).to eq([
+        { 'label' => campaign.name, 'name' => "campaign:#{campaign.id}", 'expandible' => false },
+        { 'label' => place.name, 'name' => "place:#{place.id}", 'expandible' => false }])
       expect(result['results'].first.keys).to match_array(%w(id start_date start_time end_date end_time status event_status campaign place))
     end
 
@@ -56,16 +59,39 @@ describe Api::V1::EventsController, type: :controller do
     end
   end
 
+  describe "GET 'requiring_attention'", search: true do
+    it 'returns a list of events late, due and today events', :show_in_doc do
+      campaign = create(:campaign, company: company)
+      place = create(:place)
+      event1 = create(:late_event, campaign: campaign, place: place)
+      event2 = create(:due_event, campaign: campaign, place: place)
+      event3 = create(:event, start_date: Time.zone.now.to_s(:slashes),
+                              end_date: Time.zone.now.to_s(:slashes),
+                              campaign: campaign, place: place)
+
+      create(:approved_event, campaign: campaign, place: place)
+      Sunspot.commit
+
+      get :requiring_attention, format: :json
+      expect(response).to be_success
+      expect(json.count).to eq(3)
+      expect(json.first.keys).to match_array(%w(
+        id start_date start_time end_date end_time status phases event_status
+        campaign place))
+
+      expect(json.map { |e| e['id'] }).to eql [event1.id, event2.id, event3.id]
+    end
+  end
 
   describe "GET 'show'" do
     let(:event) { create(:event, campaign: campaign, place: place) }
     let(:place) { create(:place) }
 
-    it 'returns the event info' do
+    it 'returns the event info', :show_in_doc do
       get :show, id: event.to_param, format: :json
       expect(response).to be_success
       expect(json.keys).to eq(%w(
-        id start_date start_time end_date end_time status description event_status
+        id start_date start_time end_date end_time status phases description event_status
         have_data actions tasks_late_count tasks_due_today_count place campaign))
       expect(json['place'].keys).to eq(%w(
         id venue_id name latitude longitude formatted_address
@@ -76,7 +102,7 @@ describe Api::V1::EventsController, type: :controller do
   end
 
   describe "GET 'status_facets'", search: true do
-    it 'return the facets for the search' do
+    it 'return the facets for the search', :show_in_doc do
       campaign = create(:campaign, company: company)
       place = create(:place)
       create(:approved_event, company: company, campaign: campaign, place: place)
@@ -665,7 +691,7 @@ describe Api::V1::EventsController, type: :controller do
       ])
     end
 
-    it 'returns users and contacts mixed on the list' do
+    it 'returns users and contacts mixed on the list', :show_in_doc do
       contacts = [
         create(:contact, first_name: 'Luis', last_name: 'Perez', email: 'luis@gmail.com', street1: 'ABC', street2: '1', zip_code: 12_345, title: 'Field Ambassador', company: company),
         create(:contact, first_name: 'Pedro', last_name: 'Guerra', email: 'pedro@gmail.com', street1: 'ABC', street2: '1', zip_code: 12_345, title: 'Coach', company: company)
@@ -705,7 +731,7 @@ describe Api::V1::EventsController, type: :controller do
   describe "POST 'add_contact'" do
     let(:event) { create(:event, company: company, campaign: create(:campaign, company: company)) }
 
-    it 'should add a contact to the event as a contact' do
+    it 'should add a contact to the event as a contact', :show_in_doc do
       contact = create(:contact, first_name: 'Luis', last_name: 'Perez', email: 'luis@gmail.com', street1: 'ABC', street2: '1', zip_code: 12_345, title: 'Field Ambassador', company: company)
       expect do
         post :add_contact, id: event.to_param, contactable_id: contact.id, contactable_type: 'contact', format: :json
@@ -733,7 +759,7 @@ describe Api::V1::EventsController, type: :controller do
   describe "DELETE 'delete_contact'" do
     let(:event) { create(:event, company: company, campaign: create(:campaign, company: company)) }
 
-    it 'should remove a contact (type = user) from the event' do
+    it 'should remove a contact (type = user) from the event', :show_in_doc do
       contact_to_delete = create(:company_user, user: create(:user, first_name: 'Pedro', last_name: 'Guerra', email: 'pedro@gmail.com', street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12_345), role: create(:role, name: 'Coach', company: event.company))
       another_contact = create(:contact, first_name: 'Juan', last_name: 'Rodriguez', email: 'juan@gmail.com', street1: 'ABC', street2: '1', zip_code: 12_345, title: 'Field Ambassador')
       create(:contact_event, event: event, contactable: contact_to_delete)
@@ -783,8 +809,8 @@ describe Api::V1::EventsController, type: :controller do
     end
   end
 
-  describe "GET 'autocomplete'", search: true do
-    it 'should return the correct buckets in the right order' do
+  describe "GET 'autocomplete'", :search do
+    it 'should return the correct buckets in the right order', :show_in_doc do
       get 'autocomplete', q: '', format: :json
       expect(response).to be_success
 
