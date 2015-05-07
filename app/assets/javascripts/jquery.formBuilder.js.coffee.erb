@@ -1558,6 +1558,7 @@ ExpensesField = Module.extend {
 		}, attributes)
 
 		@attributes.settings ||= {}
+		@attributes.settings.categories ||= @form.options.defaultExpensesCategories
 
 		@
 
@@ -1582,7 +1583,7 @@ ExpensesField = Module.extend {
 			@requiredField('Receipts required'),
 			$('<div class="control-group">').append [
 				$('<label class="control-label">').text('Categories'),
-				$('<div class="controls">').append $('<input type="text" name="categories" class="select2-field">').hide().val(if @attributes.settings? && @attributes.settings.categories  then  @attributes.settings.categories else @form.options.defaultExpensesCategories).on "change", (e) =>
+				$('<div class="controls">').append $('<input type="text" name="categories" class="select2-field">').hide().val(@attributes.settings.categories).on "change", (e) =>
 					input = $(e.target)
 					@attributes.settings.categories = input.select2("val")
 					@form.setModified()

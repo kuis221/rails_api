@@ -25,6 +25,8 @@ en:
         end_date_time: "End time"
       kpis_segment:
         text: 'Name'
+      event_expense:
+        expense_date: 'Date'
       invite:
         invitees: '# Invites'
         rsvps_count: '# RSVPs'

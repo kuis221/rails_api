@@ -3,18 +3,28 @@
   .expense-info-form
     - resource.build_receipt unless resource.receipt.present?
     = simple_form_for([parent, resource], id: 'new-expense-form', remote: true) do |f|
-      .inputs-side
-        = f.input :name, size: 50, class: 'string required'
-        - if brands.count > 1
-          = f.input :brand_id, as: :select, collection: brands, input_html: {class: 'input-large chosen-enabled'}
-        - elsif brands.count == 1
-          = f.input :brand_id, as: :hidden, input_html: { value: brands.first.id }, wrapper: false
-        = f.input :amount, as: :currency, label: false, size: 50, class: 'string required'
+      .row-fluid
+        #expense-fields.span5
+          = f.input :category, collection: expense_categories, input_html: { class: 'chosen-enabled' }
+          = f.input :expense_date, as: :date_picker
+          = f.input :amount, as: :currency, class: 'string required'
 
+          .row-fuild
+            .span6
+              = f.input :reimbursable, wrapper: :checkbox
+            .span6
+              = f.input :billable, wrapper: :checkbox
+          
+          = f.input :brand_id, as: :select, collection: brands, input_html: {class: 'input-large chosen-enabled'}
+          = f.input :merchant
+          = f.input :description
+
+        .span6
+          = f.fields_for :receipt do |rf|
+            = rf.input :id, as: :hidden, wrapper: false
+            = rf.input :file, label: false, as: :attached_asset, hidden_field_name: 'direct_upload_url'
+
+      .row-fluid
         .form-actions.inside-form
           = submit_tag 'Save', id: 'save-expense-btn', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
           = "&nbsp;".html_safe
-      .expense-file-form
-        = f.fields_for :receipt do |rf|
-          = rf.input :id, as: :hidden, wrapper: false
-          = rf.input :file, label: false, as: :attached_asset, hidden_field_name: 'direct_upload_url'

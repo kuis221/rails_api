@@ -1,6 +1,6 @@
 div.resource-item id="event_expense_#{event_expense.id}"
   .resource-item-link
-    .span9.text-large= event_expense.name
+    .span9.text-large= event_expense.category
     .span3.text-large= number_to_currency(event_expense.amount, precision: 2)
   div.resource-item-actions
     - if event_expense.receipt.present? && event_expense.receipt.file_file_name.present?

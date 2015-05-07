@@ -5,11 +5,10 @@
 #  id               :integer          not null, primary key
 #  type             :string(255)
 #  company_id       :integer
-#  active           :boolean
+#  active           :boolean          default(TRUE)
 #  sharing          :string(255)
 #  name             :string(255)
 #  description      :text
-#  filters          :text
 #  columns          :text
 #  created_by_id    :integer
 #  updated_by_id    :integer
@@ -17,6 +16,7 @@
 #  updated_at       :datetime
 #  default_sort_by  :string(255)
 #  default_sort_dir :string(255)
+#  params           :text
 #
 
 class DataExtract < ActiveRecord::Base

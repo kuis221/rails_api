@@ -59,6 +59,11 @@ class Company < ActiveRecord::Base
 
   after_create :create_admin_role_and_user
 
+  before_save do
+    self.expense_categories ||= "Uncategorized\n Entertainment\nFuel/Mileage\n"\
+                                "Lodging\nMeals\nOther\nPhone\nTransportation"
+  end
+
   YTD_DEFAULT = 1
   YTD_JULY1_JUNE30 = 2 # Alternative YTD from July 1 to June 30
 

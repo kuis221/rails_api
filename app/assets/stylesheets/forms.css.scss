@@ -64,6 +64,11 @@ form{
 			}
 		}
 	}
+	.simple-checkbox {
+		.checkbox {
+			padding-left: 0;
+		}
+	}
 }
 
 .select2-container-multi {
