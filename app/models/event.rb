@@ -25,13 +25,13 @@
 
 class Event < ActiveRecord::Base
   include AASM
+  include EventPhases
+  # Defines the method do_search
+  include SolrSearchable
 
   track_who_does_it
 
   attr_accessor :visit_id
-
-  # Defines the method do_search
-  include SolrSearchable
 
   belongs_to :campaign
   belongs_to :place, autosave: true
@@ -552,15 +552,15 @@ class Event < ActiveRecord::Base
 
         case campaign_module[1]['name']
         when 'photos'
-          items = photos.active.length
+          items = photos.active.count
         when 'expenses'
-          items = event_expenses.length
+          items = event_expenses.count
         when 'comments'
-          items = comments.length
+          items = comments.count
         end
 
-        min_result = !settings['range_min'].present? || (items >= settings['range_min'].to_i)
-        max_result = !settings['range_max'].present? || (items <= settings['range_max'].to_i)
+        min_result = settings['range_min'].blank? || (items >= settings['range_min'].to_i)
+        max_result = settings['range_max'].blank? || (items <= settings['range_max'].to_i)
 
         if !min_result || !max_result
           message = []
@@ -911,7 +911,7 @@ class Event < ActiveRecord::Base
               User.current.current_company_user.allowed_to_access_place?(place)
     errors.add(:place_reference,
                'You do not have permissions to this place. '\
-               'Please contact your campaingn administrator to request access.')
+               'Please contact your campaign administrator to request access.')
     errors.add(:place_reference, 'is not part of your authorized locations')
   end
 

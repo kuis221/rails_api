@@ -51,6 +51,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   end
 
   api :GET, '/api/v1/events', 'Search for a list of events'
+  api :POST, '/api/v1/events/filter', 'Search for a list of events. This is an alias method for events#index to allow sending params by POST'
   param_group :search_params
   see 'users#companies', 'User companies'
 
@@ -60,99 +61,27 @@ class Api::V1::EventsController < Api::V1::FilteredController
     All the times and dates are returned on the user's timezone.
 
   EOS
-  example <<-EOS
-  {
-      "page": 1,
-      "total": 7238,
-      "facets": [
-          <HERE GOES THE LIST FACETS DESCRIBED ABOVE>
-      ],
-      "results": [
-          {
-              "id": 5486,
-              "start_date": "05/24/2014",
-              "start_time": " 9:00 PM",
-              "end_date": "05/24/2014",
-              "end_time": "10:00 PM",
-              "status": "Active",
-              "event_status": "Unsent",
-              "place": {
-                  "id": 2624,
-                  "name": "Kelly's Pub Too",
-                  "latitude": 39.7924104,
-                  "longitude": -86.2514126,
-                  "formatted_address": "5341 W. 10th Street, Indianapolis, IN 46224",
-                  "country": "US",
-                  "state": "Indiana",
-                  "state_name": "Indiana",
-                  "city": "Indianapolis",
-                  "route": "5341 W. 10th Street",
-                  "street_number": null,
-                  "zipcode": "46224"
-              },
-              "campaign": {
-                  "id": 33,
-                  "name": "Kahlua Midnight FY14"
-              }
-          },
-          {
-              "id": 5199,
-              "start_date": "05/03/2014",
-              "start_time": " 7:30 PM",
-              "end_date": "05/03/2014",
-              "end_time": " 8:30 PM",
-              "status": "Active",
-              "event_status": "Unsent",
-              "place": {
-                  "id": 2587,
-                  "name": "8 Seconds Saloon",
-                  "latitude": 39.767723,
-                  "longitude": -86.24897,
-                  "formatted_address": "111 North Lynhurst Drive, Indianapolis, IN, United States",
-                  "country": "US",
-                  "state": "Indiana",
-                  "state_name": "Indiana",
-                  "city": "Indianapolis",
-                  "route": "North Lynhurst Drive",
-                  "street_number": "111",
-                  "zipcode": "46224"
-              },
-              "campaign": {
-                  "id": 33,
-                  "name": "Kahlua Midnight FY14"
-              }
-          },
-          ....
-      ]
-  }
-  EOS
   def index
+    @filter_tags = FilterTags.new(params, current_company_user).tags
     collection
   end
 
-  api :GET, '/api/v1/events/status_facets', 'Returns the facets for the event status'
+  api :GET, '/api/v1/events/status_facets', 'Returns count of the different status given a filtering criteria'
   param_group :search_params
   description <<-EOS
+    This is useful to display a counter of events for each event status
+
     The API returns the facets on the following format:
 
-      [
-        {
-          label: String,            # Any of: Campaigns, Brands, Location, People, Active State, Event Status
-          items: [                  # List of items for the facet sorted by relevance
-            {
-              "label": String,      # The name of the item
-              "id": String,         # The id of the item, this should be used to filter the list by this items
-              "name": String,       # The param name to be use for filtering the list (campaign, user, team, place, area, status, event_status)
-              "count": Number,      # The number of results for this item
-              "selected": Boolean   # True if the list is being filtered by this item
-            },
-            ....
-          ],
-          top_items: [              # Some facets will return this as a list of items that have the greater number of results
-            <other list of items>
-          ]
-        }
-      ]
+        facets: [                  # List of items for the facet sorted by relevance
+          {
+            "id": String,         # The id of the item, this should be used to filter the list by this items
+            "name": String,       # The param name to be use for filtering the list (campaign, user, team, place, area, status, event_status)
+            "count": Number,      # The number of results for this item
+            "label": String,      # The name of the item
+          },
+          ....
+        ]
   EOS
   def status_facets
     authorize! :index, Event
@@ -178,64 +107,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
   * *Places*: Includes venues and areas
   * *Peope*: Includes users and teams
   EOS
-  example <<-EOS
-  GET: /api/v1/events/autocomplete.json?q=jam
-  [
-      {
-          "label": "Campaigns",
-          "value": []
-      },
-      {
-          "label": "Brands",
-          "value": [
-              {
-                  "label": "<i>Jam</i>eson LOCALS",
-                  "value": "13",
-                  "type": "brand"
-              },
-              {
-                  "label": "<i>Jam</i>eson Whiskey",
-                  "value": "8",
-                  "type": "brand"
-              }
-          ]
-      },
-      {
-          "label": "Places",
-          "value": [
-              {
-                  "label": "<i>Jam</i>es' Beach",
-                  "value": "2386",
-                  "type": "venue"
-              },
-              {
-                  "label": "<i>Jam</i>es' Beach",
-                  "value": "374",
-                  "type": "venue"
-              },
-              {
-                  "label": "The <i>Jam</i>es Joyce",
-                  "value": "377",
-                  "type": "venue"
-              },
-              {
-                  "label": "The <i>Jam</i>es Royal Palm",
-                  "value": "825",
-                  "type": "venue"
-              },
-              {
-                  "label": "The <i>Jam</i>es Chicago",
-                  "value": "2203",
-                  "type": "venue"
-              }
-          ]
-      },
-      {
-          "label": "People",
-          "value": []
-      }
-  ]
-  EOS
   def autocomplete
     authorize! :index, Event
     autocomplete = Autocomplete.new('events', current_company_user, params)
@@ -257,6 +128,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   * *end_time*: the event's end time in 12 hours format
   * *description*: the event's description
   * *status*: the event's active state, can be Active or Inactive
+  * *phases*: indicate the different phases and steps applicable for the event an they current status
   * *event_status*: the event's status, can be any of ['Late', 'Due', 'Submitted', 'Unsent', 'Approved', 'Rejected']
   * *have_data*: returns true if data have been entered for the event, otherwise, returns false
   * *data*: Calculated data based on event results, returned only when have_data is true
@@ -279,58 +151,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
   * *campaign*: On object with the event's campaign information with the following attributes
     * *id*: the campaign's id
     * *name*: the campaign's name
-  EOS
-
-  example <<-EOS
-  {
-      "id": 5486,
-      "start_date": "05/24/2014",
-      "start_time": " 9:00 PM",
-      "end_date": "05/24/2014",
-      "end_time": "10:00 PM",
-      "status": "Active",
-      "event_status": "Unsent",
-      "description": "This is the events description",
-      "have_data": true,
-      "data": {
-        spent_by_impression: "6.0"
-        spent_by_interaction: "6.857142857"
-        spent_by_sample: "6.857142857"
-      },
-      "actions": [
-          "enter post event data",
-          "upload photos",
-          "conduct surveys",
-          "enter expenses",
-          "gather comments"
-      ],
-      "place": {
-          "id": 2624,
-          "venue_id": 2154,
-          "name": "Kelly's Pub Too",
-          "latitude": 39.7924104,
-          "longitude": -86.2514126,
-          "formatted_address": "5341 W. 10th Street, Indianapolis, IN 46224",
-          "country": "US",
-          "state": "Indiana",
-          "state_name": "Indiana",
-          "city": "Indianapolis",
-          "route": "5341 W. 10th Street",
-          "street_number": null,
-          "zipcode": "46224"
-      },
-      "campaign": {
-          "id": 33,
-          "name": "Kahlua Midnight FY14",
-          "enabled_modules": [
-             "expenses",
-             "photos",
-             "videos",
-             "comments",
-             "attendance"
-          ]
-      }
-  }
   EOS
   def show
     if resource.present?
@@ -1410,42 +1230,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
     * *type*: indicates if the current item is a user or contact
   EOS
   see 'events#add_contact'
-
-  example <<-EOS
-    An example with a user and a contact in the response
-    GET: /api/v1/events/8383/assignable_contacts.json
-    [
-      {
-          "id": 268,
-          "full_name": "Trinity Ruiz",
-          "title": "Bartender",
-          "type": "contact"
-      },{
-          "id": 268,
-          "full_name": "Jonh Connor",
-          "title": "Human Soldier",
-          "type": "user"
-      }
-    ]
-  EOS
-
-  example <<-EOS
-    An example with a term search
-    GET: /api/v1/events/8383/assignable_contacts.json?term=ruiz
-    [
-      {
-          "id": 268,
-          "full_name": "Trinity Ruiz",
-          "title": "Bartender",
-          "type": "contact"
-      },{
-          "id": 268,
-          "full_name": "Bryan Ruiz",
-          "title": "Field Ambassador",
-          "type": "user"
-      }
-    ]
-  EOS
   def assignable_contacts
     authorize! :add, ContactEvent
     @contacts =  ContactEvent.contactables_for_event(resource, params[:term])
@@ -1455,40 +1239,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
   param :contactable_id, :number, required: true, desc: 'The ID of contact/user to be added as a contact'
   param :contactable_type, %w(user contact), required: true, desc: 'The type of element to be added as a contact'
   see 'events#assignable_contacts'
-
-  example <<-EOS
-    Adding a user to the event contacts
-    POST: /api/v1/events/8383/contacts.json
-    DATA:
-    {
-      'contactable_id': 1,
-      'contactable_type': 'user'
-    }
-
-    RESPONSE:
-    {
-      'success': true,
-      'info': "Contact successfully added to event",
-      'data': {}
-    }
-  EOS
-
-  example <<-EOS
-    Adding a contact to the event contacts
-    POST: /api/v1/events/8383/contacts.json
-    DATA:
-    {
-      'contactable_id': 1,
-      'contactable_type': 'contact'
-    }
-
-    RESPONSE:
-    {
-      'success': true,
-      'info': "Contact successfully added to event",
-      'data': {}
-    }
-  EOS
   def add_contact
     authorize! :create_contacts, resource
     contact = resource.contact_events.build(contactable: load_contactable_from_request)
@@ -1517,39 +1267,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
   api :DELETE, '/api/v1/events/:id/contacts', 'Delete a contact from the event'
   param :contactable_id, :number, required: true, desc: 'The ID of contact/user to be deleted as a contact'
   param :contactable_type, %w(user contact), required: true, desc: 'The type of element to be deleted as a contact'
-  example <<-EOS
-    Deleting an user from the event contacts
-    DELETE: /api/v1/events/8383/contacts.json
-    DATA:
-    {
-      'contactable_id': 1,
-      'contactable_type': 'user'
-    }
-
-    RESPONSE:
-    {
-      'success': true,
-      'info': "Contact successfully deleted from event",
-      'data': {}
-    }
-  EOS
-
-  example <<-EOS
-    Deleting a contact from the event contacts
-    DELETE: /api/v1/events/8383/contacts.json
-    DATA:
-    {
-      'contactable_id': 1,
-      'contactable_type': 'contact'
-    }
-
-    RESPONSE:
-    {
-      'success': true,
-      'info': "Contact successfully deleted from event",
-      'data': {}
-    }
-  EOS
   def delete_contact
     authorize! :delete_contact, resource
     contact = find_contactable_from_request
@@ -1569,19 +1286,13 @@ class Api::V1::EventsController < Api::V1::FilteredController
     end
   end
 
-  protected
-
-  def facets
-    @facets ||= Array.new.tap do |f|
-      f.push build_campaign_bucket
-      f.push build_brands_bucket
-      f.push build_areas_bucket
-      f.push build_people_bucket
-
-      f.push build_status_bucket
-      f.push build_state_bucket
-    end
+  api :GET, '/api/v1/events/requiring_attention', 'Return a list of events requiring the users attention'
+  def requiring_attention
+    authorize! :index, Event
+    @events = events_requiring_attention
   end
+
+  protected
 
   def permitted_params
     parameters = {}
@@ -1641,5 +1352,14 @@ class Api::V1::EventsController < Api::V1::FilteredController
     return unless cannot?(:update, resource) && cannot?(:edit_data, resource)
 
     fail CanCan::AccessDenied, unauthorized_message(:update, resource)
+  end
+
+  def events_requiring_attention
+    Event.do_search(
+      company_id: current_company.id,
+      current_company_user: current_company_user,
+      start_date: '01/01/1900',
+      end_date: Time.zone.now.to_s(:slashes),
+      event_status: %w(Late Due Rejected)).results
   end
 end

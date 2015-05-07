@@ -25,8 +25,12 @@ Brandscopic::Application.routes.draw do
         end
         resources :activities, only: [:new, :show]
 
+        resources :filters, only: [:show]
+
         resources :events, only: [:index, :show, :create, :update] do
           get :status_facets, on: :collection
+          get :requiring_attention, on: :collection
+          post :filter, to: 'events#index', on: :collection
           resources :photos, only: [:index, :create, :update] do
             get :form, on: :collection
           end

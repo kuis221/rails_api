@@ -6,12 +6,14 @@ feature 'Results Activity Data Page', js: true, search: true  do
   let(:company_user) { user.current_company_user }
   let(:campaign) { create(:campaign, company: company) }
   let(:activity_type) { create(:activity_type, name: 'My Activity Type', company: company) }
+  let(:inactive_event) { create(:submitted_event, company: company, campaign: campaign, place: create(:place, name: 'The Place'), active: false) }
   let(:venue) { create(:venue, place: create(:place, name: 'My Place'), company: company) }
 
   before { sign_in user }
 
   feature 'Activity Results', js: true, search: true do
     scenario 'GET index should display a table with the activities' do
+      event = create(:approved_event, company: company, campaign: campaign, place: create(:place, name: 'Another Place'))
       another_user = create(:user, company: company, first_name: 'Juanito', last_name: 'Bazooka')
       another_at = create(:activity_type, name: 'Second Activity Type', company: company)
       campaign.activity_types << [activity_type, another_at]
@@ -20,6 +22,10 @@ feature 'Results Activity Data Page', js: true, search: true  do
                         company_user: company_user, activity_date: '2013-02-04')
       create(:activity, activity_type: another_at, activitable: venue, campaign: campaign,
                         company_user: another_user.company_users.first, activity_date: '2013-03-16')
+      create(:activity, activity_type: activity_type, activitable: event, campaign: campaign,
+                        company_user: company_user, activity_date: '2013-03-25')
+      create(:activity, activity_type: activity_type, activitable: inactive_event, campaign: campaign,
+                        company_user: another_user.company_users.first, activity_date: '2013-03-28')
 
       campaign.activity_types << activity_type
       campaign.activity_types << another_at
@@ -41,6 +47,16 @@ feature 'Results Activity Data Page', js: true, search: true  do
           expect(page).to have_content('SAT Mar 16, 2013')
           expect(page).to have_content('Juanito Bazooka')
         end
+
+        # Third Row
+        within resource_item 3 do
+          expect(page).to have_content('My Activity Type')
+          expect(page).to have_content('MON Mar 25, 2013')
+          expect(page).to have_content('Test User')
+        end
+
+        # Activities from inactive events should not be displayed
+        expect(page).to_not have_content('THU Mar 28, 2013')
       end
     end
 
@@ -64,6 +80,7 @@ feature 'Results Activity Data Page', js: true, search: true  do
 
   feature 'export', search: true do
     before do
+      event = create(:event, campaign: campaign, place: venue.place)
       another_user = create(:user, company: company, first_name: 'Juanito', last_name: 'Bazooka')
       activity_type2 = create(:activity_type, name: 'Second Activity Type', company: company)
 
@@ -74,6 +91,10 @@ feature 'Results Activity Data Page', js: true, search: true  do
                         company_user: company_user, activity_date: '2013-02-04')
       create(:activity, activity_type: activity_type2, activitable: venue, campaign: campaign,
                         company_user: another_user.company_users.first, activity_date: '2013-03-16')
+      create(:activity, activity_type: activity_type, activitable: event, campaign: campaign,
+                        company_user: another_user.company_users.first, activity_date: '2013-09-04')
+      create(:activity, activity_type: activity_type, activitable: inactive_event, campaign: campaign,
+                        company_user: another_user.company_users.first, activity_date: '2013-03-28')
 
       Sunspot.commit
     end
@@ -97,7 +118,14 @@ feature 'Results Activity Data Page', js: true, search: true  do
         [campaign.name, 'Test User', '2013-02-04', 'My Activity Type', '', nil, 'My Place',
          'My Place, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active'],
         [campaign.name, 'Juanito Bazooka', '2013-03-16', 'Second Activity Type', '', nil,
+         'My Place', 'My Place, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active'],
+        [campaign.name, 'Juanito Bazooka', '2013-09-04', 'My Activity Type', '', nil,
          'My Place', 'My Place, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active']
+      ])
+
+      expect(ListExport.last).to_not have_rows([
+        [campaign.name, 'Juanito Bazooka', '2013-03-28', 'My Activity Type', '', nil, 'The Place',
+         'The Place, 11 Main St., New York City, NY, 12345', 'New York City', 'NY', '12345', 'Active']
       ])
     end
 
@@ -129,6 +157,8 @@ feature 'Results Activity Data Page', js: true, search: true  do
         expect(text).to include 'SecondActivityType'
         expect(text).to include 'SATMar16,2013'
         expect(text).to include 'JuanitoBazooka'
+        expect(text).to include 'WEDSep4,2013'
+        expect(text).to_not include 'THUMar28,2013'
       end
     end
   end
