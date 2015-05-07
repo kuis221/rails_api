@@ -4357,13 +4357,12 @@ body.roles{
 		margin-top: 20px;
 		.review-date{
 			color:  $brand;
-			font-size: 11px;
 			margin-bottom: 6px;
 			line-height: 18px;
 		}
 		.review-text{
-			font-size: 13px;
-			max-width: 410px;
+			line-height: 20px;
+			max-width: 460px;
 		}
 	}
 	.place-jameson-account{
