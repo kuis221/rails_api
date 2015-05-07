@@ -1,6 +1,10 @@
 object @event
 
-attributes :id, :start_date, :start_time, :end_date, :end_time, :status, :phases, :description
+attributes :id, :start_date, :start_time, :end_date, :end_time, :status, :description
+
+node :phases do |event|
+  event_phases_and_steps_for_api(event)
+end
 
 node :event_status do |event|
   if event.unsent?
