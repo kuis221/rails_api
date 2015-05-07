@@ -49,9 +49,47 @@ module Html
     end
 
     def render_nav_phases
-      p "DDDDDDDDDDDDDDDDDDDDDDDDDDDDd"
-      @model.
-      e =''
+      return if @model.phases.nil?
+      current_phase = @model.phases[:current_phase]
+      phases_list = h.content_tag(:ul, class: 'unstyled phases-list') do
+        @model.phases[:phases].each_with_index.map do |phase, i|
+          h.content_tag(:li, class: "#{'active-phase' if phase[0] == current_phase}") do
+            h.content_tag(:span, i + 1, class: 'phase-id') +
+            h.content_tag(:b, phase[0].to_s.upcase, class: 'phase') +
+            h.content_tag(:ul, class: 'unstyled phase-steps') do
+              phase[1].each.map do |step|
+                list_step = h.content_tag(:i, '', class: 'icon-checked') if step[:complete] ||= ''
+                list_step << step[:title]
+                h.content_tag(:li, list_step)
+              end.join.html_safe
+            end
+          end
+        end.join.html_safe
+      end
+      phases_list
+    end
+
+    def render_nav_too
+      return if @model.phases.nil?
+      current_phase = @model.phases[:current_phase]
+      phases_list = h.content_tag(:ul, class: 'switch-list unstyled') do
+        active = true
+        @model.phases[:phases].each_with_index.map do |phase, i|
+          phase[1].each.map do |step|
+            h.content_tag(:li, class: "#{'active' if active}") do
+              phase_step = h.content_tag(:a, class: 'small no-decorate', 'aria-expanded': true, 'aria-controls': 'collapseOne',
+                data: {parent: '#accordion', toggle: 'collapse'}, href: '#collapseOne') do
+                h.content_tag(:span, i + 1, class: 'phase-id') +
+                h.content_tag(:b, "#{phase[0].to_s.upcase}: #{step[:title]}") +
+                h.content_tag(:i, '', class: 'icon-arrow-up')
+              end
+              active = false
+              phase_step
+            end
+          end.join.html_safe
+        end.join.html_safe
+      end
+      phases_list
     end
   end
 end

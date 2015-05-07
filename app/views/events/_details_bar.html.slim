@@ -21,25 +21,7 @@
 
         .span2.phase-indicator
           nav id="spyOnThisToo" class="scrollspy-style"
-            ul.switch-list.unstyled
-              li class="active"
-                a aria-controls="collapseOne" aria-expanded="true" data-parent="#accordion" data-toggle="collapse" href="#collapseOne" class="small no-decorate"
-                  span.phase-id 1
-                  b> PLAN:
-                  | Contacts
-                  i.icon-arrow-up
-              li
-                a aria-controls="collapseOne" aria-expanded="true" data-parent="#accordion" data-toggle="collapse" href="#collapseOne" class="small no-decorate"
-                  span.phase-id 2
-                  b> EXECUTE:
-                  | Contacts
-                  i.icon-arrow-up
-              li
-                a aria-controls="collapseOne" aria-expanded="true" data-parent="#accordion" data-toggle="collapse" href="#collapseOne" class="small no-decorate"
-                  span.phase-id 3
-                  b> RESULTS:
-                  | Contacts
-                  i.icon-arrow-up
+            = presenter.render_nav_too
 
     #collapseOne.panel-collapse.collapse aria-labelledby="headingOne" role="tabpanel"
       .panel-body
@@ -59,59 +41,12 @@
               - unless resource.users.empty? && resource.teams.empty?
                 li
                   i.icon-team
-                  = event_members_name(resource.users, resource.teams, ', ')
+                  = presenter.event_members_name(', ')
           .span2.event-phases
             nav id="spyOnThisPhases" class="scrollspy-style"
-              ul.switch-list.unstyled
-                li class="active"
-                  ul.unstyled.phases-list
-                    li
-                      .bar-title.small
-                        b EVENT PHASES
-
-                    li class="active-phase"
-                      span.phase-id 1
-                      b.phase PLAN
-                      ul.unstyled.phase-steps
-                        li.step-active
-                          i.icon-checked
-                          | Basic info
-                        li.next-step Contacts
-                        li Tasks
-                        li Documents
-
-                    li
-                      span.phase-id 2
-                      b.phase EXECUTE
-
-                    li
-                      span.phase-id 3
-                      b.phase RESULTS
-
-                li
-                  ul.unstyled.phases-list
-                    li
-                      .bar-title.small
-                        b EVENT PHASES
-
-                    li
-                      span.phase-id 1
-                      b.phase PLAN
-
-                    li class="active-phase"
-                      span.phase-id 2
-                      b.phase EXECUTE
-                      ul.unstyled.phase-steps
-                        li.step-active
-                          i.icon-checked
-                          | Basic info
-                        li.next-step Contacts
-                        li Tasks
-                        li Documents
-
-                    li
-                      span.phase-id 3
-                      b.phase RESULTS
+              .bar-title.small
+                b EVENT PHASES
+              = presenter.render_nav_phases
 
   .guide-bar.text-center
     span

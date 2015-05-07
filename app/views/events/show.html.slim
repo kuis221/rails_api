@@ -27,7 +27,7 @@
 .row-fluid.with-details-close-bar
   = render 'details_bar'
 
-  //.span data-spy="scroll" data-target="#spyOnThis"
+  //.span data-spy="scroll" data-target="#spyOnThisToo"
   .span
     .details_box class="#{(resource.place.nil? or resource.place.latitude.nil?) ?  'padding-top-close-bar' : ''}"
 
@@ -62,7 +62,7 @@
           - unless resource.users.empty? && resource.teams.empty?    
             .add-details-info
               i.icon-team.indicate-icon
-              = event_member_tag(resource.users, resource.teams)
+              = presenter.event_member_tag
         .span6.map_container
           - unless resource.place.nil? || resource.place.latitude.nil? || resource.place.latitude == 1.0
             #venue-map-canvas.google-map data-latitude="#{resource.place.latitude}" data-longitude="#{resource.place.longitude}"
