@@ -1312,8 +1312,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
   end
 
   def permitted_search_params
-    params.permit(:page, :start_date, :end_date, { campaign: [] }, { place: [] }, { area: [] }, { venue: [] },
-                  { user: [] }, { team: [] }, { brand: [] }, { brand_porfolio: [] }, { status: [] }, event_status: []).tap do |p|
+    params.permit(:page, campaign: [], place: [], area: [], venue: [], start_date: [], end_date: [],
+                             user: [], team: [], brand: [], brand_porfolio: [], status: [], event_status: []).tap do |p|
       p[:sorting] ||= 'start_at'
       p[:sorting_dir] ||= 'asc'
     end
@@ -1360,6 +1360,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
       current_company_user: current_company_user,
       start_date: '01/01/1900',
       end_date: Time.zone.now.to_s(:slashes),
-      event_status: %w(Late Due Rejected)).results
+      event_status: %w(Late Due Rejected Unsent)).results
   end
 end
