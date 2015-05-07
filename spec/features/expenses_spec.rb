@@ -23,7 +23,8 @@ feature 'Events section' do
     before do
       Kpi.create_global_kpis
       campaign.brands << [brand1, brand2]
-      event.campaign.update_attribute(:modules, 'expenses' => {})
+      event.campaign.update_attribute(:modules, 'expenses' => {
+        'settings' => { 'categories' => %w(Phone) } })
     end
     scenario 'can attach a expense to event' do
       with_resque do # So the document is processed
@@ -36,10 +37,12 @@ feature 'Events section' do
 
           # Test validations
           click_js_button 'Save'
-          expect(find_field('Name')).to have_error('This field is required.')
+          expect(find_field('Category', visible: false)).to have_error('This field is required.')
 
-          fill_in 'Name', with: 'test expense'
+          select_from_chosen 'Phone', from: 'Category'
           select_from_chosen 'Brand 2', from: 'Brand'
+          fill_in 'Date', with: '01/01/2014'
+          fill_in 'Amount', with: '13'
           expect(page).to have_content('File attached: file.pdf')
 
           wait_for_photo_to_process 15 do
@@ -49,7 +52,8 @@ feature 'Events section' do
         ensure_modal_was_closed
 
         within '.details_box.box_expenses' do
-          expect(page).to have_content('test expense')
+          expect(page).to have_content 'Phone'
+          expect(page).to have_content '$13.00'
         end
         asset = AttachedAsset.last
         expect(asset.file_file_name).to eql 'file.pdf'

@@ -23,6 +23,7 @@ require 'rails_helper'
 describe EventExpense, type: :model do
   it { is_expected.to belong_to(:event) }
 
-  it { is_expected.to validate_presence_of(:name) }
+  it { is_expected.to validate_presence_of(:category) }
+  it { is_expected.to validate_presence_of(:expense_date) }
   it { is_expected.to validate_presence_of(:amount) }
 end

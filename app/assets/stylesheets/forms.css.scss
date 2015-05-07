@@ -67,6 +67,9 @@ form{
 	.simple-checkbox {
 		.checkbox {
 			padding-left: 0;
+			.optional {
+				display: none;
+			}
 		}
 	}
 }
