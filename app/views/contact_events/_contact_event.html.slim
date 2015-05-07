@@ -1,12 +1,33 @@
 - can_delete ||= can?(:delete_contact, parent)
 - can_edit ||= can?(:edit_contacts, parent)
-div.span3.team-member.event-contact.clearfix id="contact_event_#{contact_event.id}"
-  .pull-left
-    .full-name.has-popover data-placement="bottom" data-trigger="click" title="#{h contact_event.full_name}" data-content="#{h contact_info_tooltip(contact_event)}"
-      = contact_event.full_name
-    .contact-title
-      = contact_event.title
-  - if can_edit || can_delete
-    .pull-right
-      = link_to('',  edit_event_contact_event_path(parent, contact_event), title: 'Edit Contact', class: 'icon-edit', remote: true) if contact_event.contactable.is_a?(Contact) and can_edit
-      = link_to(content_tag(:i,'', class: 'icon-remove-circle'),  event_contact_event_path(parent, contact_event), title: 'Remove Contact', class: 'remove-contact-btn', remote: true, method: :delete) if can_delete
+
+// Tags structure in the styleguide
+.user-tag-option
+  .user-type
+    i.icon-team
+  span #{h contact_event.full_name}
+  a class="icon-close" href="#"
+
+.user-tag-option
+  .user-type
+    image src="../assets/profile-pic.jpg"
+  span #{h contact_event.full_name}
+  a class="icon-close" href="#"
+
+.user-tag-option.has-tooltip data-html="true" data-original-title="<div class='contacts-tooltip'><h6 class='contact-name'>Susan Jones</h6><span class='contact-role'>Bar Manager</span><ul class='unstyled contact-info'><li><i class='icon-wired-email'></i>susan.jones@company.com</li> <li><i class='icon-mobile'></i>+1(241)555-5555</li><li><i class='icon-wired-venue'></i>1743, Oak Street, San Francisco, CA 94123 United States</li></ul></div>"
+  .user-type
+    i.icon-user
+  span #{h contact_event.full_name}
+  a class="icon-close" href="#"
+
+// OLD STRUCTURE
+//div.span3.team-member.event-contact.clearfix id="contact_event_#{contact_event.id}"
+//  .pull-left
+//    .full-name.has-popover data-placement="bottom" data-trigger="click" title="#{h contact_event.full_name}" data-content="#{h contact_info_tooltip(contact_event)}"
+//      = contact_event.full_name
+//    .contact-title
+//      = contact_event.title
+//  - if can_edit || can_delete
+//    .pull-right
+//      = link_to('',  edit_event_contact_event_path(parent, contact_event), title: 'Edit Contact', class: 'icon-edit', remote: true) if contact_event.contactable.is_a?(Contact) and can_edit
+//      = link_to(content_tag(:i,'', class: 'icon-remove-circle'),  event_contact_event_path(parent, contact_event), title: 'Remove Contact', class: 'remove-contact-btn', remote: true, method: :delete) if can_delete

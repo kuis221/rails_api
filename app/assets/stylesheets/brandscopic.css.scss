@@ -415,9 +415,6 @@ body.events.show{
 			}
 		}
 	}
-	.button_to_add {
-		margin-left:30px;
-	}
 }
 
 .navbar-fixed-top {
@@ -3574,10 +3571,15 @@ body.events.index {
 
 body.show {
 	#company_user-areas-list, #company_user-places-list,
-	#event-contacts-list, #event-team-members, #team-members-list,
+	#event-team-members, #team-members-list,
 	#area-places-list {
 		clear: both;
 		margin-top: 40px;
+	}
+	#event-contacts-list{
+		.contacts-tags{
+			margin-bottom: 30px;
+		}
 	}
 	.place, .area-user{
 		font-family: $baseFontFamily;
@@ -7569,6 +7571,40 @@ form.button_to .button-with-icon {
   line-height: normal;
 }
 
+// Tooltips for contacts section
+
+.contacts-tooltip{
+	padding: 4px 10px;
+	text-align: left;
+	h6{
+		margin: 0;
+	}
+	.contact-role{
+		color: $gray-light;
+		font-size: 12px;
+	}
+	.contact-info{
+		color: $white;
+		margin-left: 20px;
+		margin-bottom: 0;
+		margin-top: 6px;
+		li{
+			position: relative;
+		}
+		i{
+			color: $gray-light;
+			font-size: 14px;
+			position: absolute;
+			left: -20px;
+			&.icon-wired-email{
+				top: 8px;
+			}
+			&.icon-mobile, &.icon-wired-venue{
+				top: 4px;
+			}
+		}
+	}
+}
 
 
 

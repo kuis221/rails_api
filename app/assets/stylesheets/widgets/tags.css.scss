@@ -49,13 +49,12 @@ Styleguide 6.1
 			vertical-align: top;
 			height: 100%;
 		  max-width: 200%;
-	    position: relative;
 	    left: 100%;
-	    margin-left: -200%;
+	    margin-left: -20%;
 		}
 	}
 	.icon-close {
-		color: $gray-light;
+		color: $white;
 		display: block;
 		font-size: 10px;
 		position: absolute;
