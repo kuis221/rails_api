@@ -3,7 +3,12 @@
 - if form_fields.any?
   - form_fields.each do |form_field|
     - result = resource.results_for([form_field]).first
-    - field_class = form_field.type_name.underscore
+    - if form_field.name == 'Gender'
+      - field_class = 'gender'
+    - elsif form_field.name == 'Age'
+      - field_class = 'age'
+    - else
+      - field_class = form_field.type_name.underscore
     div.form-result class="result_#{field_class}"
       - if partial_field_types.include?(form_field.type)
         = render partial: 'form_fields/'+field_class, locals: {form_field: form_field, result: result}
