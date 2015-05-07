@@ -23,10 +23,9 @@
         'Welcome to the Event Details page. On this page you can edit event information, fill out Post Event data, as well as submit, approve, or reject reports. Click on the video to the left for a quick overview or visit our
         a> href="http://support.brandscopic.com" target="_blank" support site
         | for more information about this section.
-
-.row-fluid.with-details-close-bar
+#top
+.row-fluid.with-details-close-bar 
   = render 'details_bar'
-
   //.span data-spy="scroll" data-target="#spyOnThis"
   .span
     .details_box class="#{(resource.place.nil? or resource.place.latitude.nil?) ?  'padding-top-close-bar' : ''}"
@@ -71,21 +70,11 @@
                 = event_date(resource, :start_at).to_s
                 br>/
                 = place_address(resource.place)
-
+      #test
 
 
       // This should not appear anymore
       // = render 'alerts'
-
-      // The is info will be displayed on the fixed bar when the window is scolled down to this position
-      .details-bar-info
-        span.primary-info
-          = resource.campaign_name
-        span.secondary-info
-          = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at), date_separator: ' –  ')
-        = button_to_edit resource if can_edit
-        = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
-
 
     - if can?(:view_members, resource)
       #event-members.details_box
@@ -150,4 +139,5 @@
         }
       });
     });
+    $('#spyOnThis').scrollspy();
   - reload_page_on_edit_resource
