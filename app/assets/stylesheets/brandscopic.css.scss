@@ -1639,6 +1639,8 @@ header{
 				}
 				li#user_menu {
 					>a {
+						font-size: 12px;
+						font-weight: bold;
 						padding-top: 14px;
 						padding-bottom: 13px;
 					}
@@ -1647,6 +1649,7 @@ header{
 						top: 4px;
 						right: -5px;
 					}
+					/*
 					ul.dropdown-menu{
 						box-shadow: none;
 						margin-top: 12px;
@@ -1657,7 +1660,7 @@ header{
 							border-bottom: 10px solid $gray;
 							left:155px;
 						}
-					}
+					}*/
 				}
 
 				li#notifications {
@@ -2593,6 +2596,44 @@ ul.ui-widget-content{
 	}
 }
 
+// SPECIAL REDESIGNED MENU FOR HEADER
+
+.header-menu{
+	min-width:200px;
+	&:before{
+		display: none;
+	}
+	li a{
+		font-weight: bold;
+		&:hover{
+			background-color: $menu !important;
+			background-image: none;
+		}
+	}
+	&.dropdown.open{
+		li a{
+			color: $app_bg;
+			font-size: 13px;
+			padding: 6px 15px;
+			&:hover{
+				color: $white;
+			}
+		}
+		&>.dropdown-menu{
+			background-color: $gray-darker;
+			border: 1px solid $gray-darker;
+			-webkit-box-shadow: none;
+			-moz-box-shadow: none;
+			box-shadow: none;
+			left: -26px;
+			&:before{
+				border-bottom: 10px solid $gray;
+				left: 230px;
+			}
+		}
+	}
+}
+
 #company-name {
 	font-size: 14px;
 	margin-bottom: 0;
@@ -2624,6 +2665,7 @@ ul.ui-widget-content{
 	.caret{
 		display: none;
 	}
+	/*
 	.dropdown-menu{
 		min-width:200px;
 		li a{
@@ -2656,6 +2698,7 @@ ul.ui-widget-content{
 			}
 		}
 	}
+	*/
 }
 
 #company_user-places-list{
