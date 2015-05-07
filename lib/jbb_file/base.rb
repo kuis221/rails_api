@@ -93,7 +93,7 @@ module JbbFile
 
     def find_files
       ftp_connecion.nlst('*xlsx')
-    rescue Net::FTPTempError
+    rescue
       []
     end
   end
