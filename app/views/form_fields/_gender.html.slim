@@ -1,0 +1,4 @@
+span.form-result-label= form_field.name
+- if resource.demographics_graph_data[:gender].present?
+  #gender-graph.chart-area
+    = gender_graph(resource.demographics_graph_data[:gender])

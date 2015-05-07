@@ -304,11 +304,17 @@ module ApplicationHelper
     return unless data.present? && data.values.max > 0
 
     content_tag(:div, class: :male) do
-      content_tag(:div, "#{data.try(:[], 'Male').try(:round) || 0} %", class: 'percent') +
+      content_tag(:div, class: 'percent') do
+        content_tag(:span, "#{data.try(:[], 'Male').try(:round) || 0}") +
+        content_tag(:span, '%', class: 'percent-sign')
+      end +
       content_tag(:div, 'MALE', class: 'gender')
     end +
     content_tag(:div, class: :female) do
-      content_tag(:div, "#{data.try(:[], 'Female').try(:round) || 0} %", class: 'percent') +
+      content_tag(:div, class: 'percent') do
+        content_tag(:span, "#{data.try(:[], 'Female').try(:round) || 0}") +
+        content_tag(:span, '%', class: 'percent-sign')
+      end +
       content_tag(:div, 'FEMALE', class: 'gender')
     end
   end
