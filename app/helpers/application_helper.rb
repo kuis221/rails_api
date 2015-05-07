@@ -14,6 +14,10 @@ module ApplicationHelper
     yield(@presenters[model.class.to_s])
   end
 
+  def presenter
+    @presenter ||= present(resource)
+  end
+
   def place_address(place, link_name = false, line_separator = '<br />', name_separator = '<br />')
     return if place.nil?
     place_name = place.name

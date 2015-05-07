@@ -38,6 +38,7 @@
 			margin: 0;
 		}
 		.event-date{
+			color: $brand;
 			margin-left: 6px;
 			line-height: 14px;
 		}
@@ -45,15 +46,17 @@
 	.phase-indicator{
 		text-align: right;
 		a{
-			color: $white;
-			padding-right: 6px;
+			color: $app_bg;
+			padding-right: 4px;
   		padding-left: 0;
   		.icon-arrow-up{
-  			margin-left: 4px;
+  			color: $brand;
+  			font-size: 14px;
+  			margin-left: 20px;
   		}
 		}
 		.phase-id{
-			background-color: $white;
+			background-color: $app_bg;
 		}
 	}
 	.bar-title{
@@ -69,8 +72,8 @@
 	.event-phases{
 		border-left: 1px solid $divider;
 	}
-	.event-title{
-		color: $white;
+	.event-name{
+		color: $app_bg;
 	}
 	.info-list{
 		margin-top: 10px;
@@ -80,6 +83,9 @@
 		i{
 			color: $tooltip;
 			margin-right: 10px;
+		}
+		address{
+			display: inline-block;
 		}
 	}
 }
@@ -100,7 +106,7 @@
 
 .phases-list{
 	font-size: 12px;
-	.active{
+	.active-phase{
 		.phase, .step-active{
 			color: $primary-green;
 		}
@@ -137,5 +143,22 @@
 		color: $white;
 		margin-left: 6px;
 		text-decoration: underline;
+	}
+}
+
+.scrollspy-style{
+	.switch-list{
+		margin-bottom: 0;
+		&>li{
+			a{
+				&:hover{
+					cursor: default;
+					text-decoration: none;
+				}
+			}
+			&:not(.active){
+				display: none;
+			}
+		}
 	}
 }
