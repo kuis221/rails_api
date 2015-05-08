@@ -53,7 +53,7 @@ SimpleNavigation::Configuration.run do |navigation|
       secondary.item :loading, 'Wait...'
     end
 
-    primary.item :user_menu,  current_user.full_name, '#', class: 'header-menu',link: { 'class' => 'dropdown-toggle', 'data-toggle' => 'dropdown', icon_class: 'icon-arrow-down pull-right' }, if: lambda { user_signed_in? } do |secondary|
+    primary.item :user_menu,  current_user.full_name, '#', link: { 'class' => 'dropdown-toggle', 'data-toggle' => 'dropdown', icon_class: 'icon-arrow-down pull-right' }, if: lambda { user_signed_in? } do |secondary|
       secondary.item :users, 'View Profile',  profile_company_users_path, link: { icon_class: 'icon-user pull-left' }
       secondary.item :users, 'Logout', destroy_user_session_path, link: { method: :delete, icon_class: 'icon-on pull-left' }
     end

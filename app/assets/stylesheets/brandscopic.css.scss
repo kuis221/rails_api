@@ -1582,10 +1582,9 @@ header{
 				}
 
 				ul.dropdown-menu{
-					background-color: $gray;
+					background-color: $gray-darker;
 					box-shadow: none;
-					margin-top: 12px;
-					border:1px solid #707070;
+					border:1px solid $gray-darker;
 					li{
 						a {
 							color: $app_bg;
@@ -1637,6 +1636,7 @@ header{
 					background-image: none;
 					background-color: $menu;
 				}
+				/*
 				li#user_menu {
 					>a {
 						font-size: 12px;
@@ -1649,7 +1649,7 @@ header{
 						top: 4px;
 						right: -5px;
 					}
-					/*
+
 					ul.dropdown-menu{
 						box-shadow: none;
 						margin-top: 12px;
@@ -1660,7 +1660,14 @@ header{
 							border-bottom: 10px solid $gray;
 							left:155px;
 						}
-					}*/
+					}
+				}*/
+
+				li#user_menu{
+					ul.dropdown-menu{
+						right: 0 !important;
+						left: auto !important;
+					}
 				}
 
 				li#notifications {
@@ -1676,6 +1683,7 @@ header{
 						vertical-align: middle;
 					}
 				}
+				/*
 				li#admin{
 					ul.dropdown-menu{
 						min-width: 200px;
@@ -1689,6 +1697,7 @@ header{
 						font-size: 16px;
 					}
 				}
+				*/
 			}
 		}
 	}
