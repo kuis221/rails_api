@@ -18,6 +18,11 @@
 	  top: 0;
 	  width: 38px;
 	}
+	&.fixed{
+		.panel, .back-arrow{
+			@include border-radius(0);
+		}
+	}
 	.panel{
 		background-color: $gray-darker;
 		box-sizing: border-box;
