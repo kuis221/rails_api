@@ -120,6 +120,7 @@ header{
 						background-image: none;
 					}
 					.icon-checked{
+						display: none;
 						position: absolute;
 						top: 12px;
 						left: 10px;
@@ -129,6 +130,9 @@ header{
 			&> .active > a{
 				background-image: none;
 				background-color: $menu-hover;
+				.icon-checked{
+					display: inline;
+				}
 			}
 			&:before{
 				display: none;
