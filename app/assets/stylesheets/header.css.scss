@@ -19,7 +19,7 @@ header{
 					border-radius: 0px;
 					box-sizing:border-box;
 					margin: 0;
-					padding: 13px 14px 14px;
+					padding: 13px 10px 14px;
 					line-height: 16px;
 					height: 42px;
 					white-space: nowrap;
@@ -48,7 +48,7 @@ header{
 				}
 
 				li#admin{
-					a{
+					a.dropdown-toggle{
 						padding-top: 14px;
 					}
 					ul.dropdown-menu{
@@ -181,6 +181,7 @@ header{
 	.header-menu a{
 		padding-left: 12px;
 		padding-right: 30px;
+		text-decoration: none;
 	}
 	.caret{
 		display: none;
