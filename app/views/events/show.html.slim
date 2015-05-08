@@ -23,15 +23,28 @@
         'Welcome to the Event Details page. On this page you can edit event information, fill out Post Event data, as well as submit, approve, or reject reports. Click on the video to the left for a quick overview or visit our
         a> href="http://support.brandscopic.com" target="_blank" support site
         | for more information about this section.
+
 .row-fluid.with-details-close-bar 
   = render 'details_bar'
-  //.span data-spy="scroll" data-target="#spyOnThis"
-  .span
+  div
     #event-info.details_box class="#{(resource.place.nil? or resource.place.latitude.nil?) ?  'padding-top-close-bar' : ''}"
 
-      .phases
-        h5 = 'EVENT PHASES'
-      // Can we add the steps from results to use same structure and styles?
+      .phases-top-nav
+        h5.pull-left = 'EVENT PHASES:'
+        span.step.completed
+          span.circle-step
+            i.icon-checked
+          | PLAN
+
+        span.step.active
+          span.circle-step
+            | 2
+          | EXECUTE
+
+        span.step
+          span.circle-step
+            | 3
+          | RESULTS
 
 
       .row-fluid.details_first_container
@@ -58,10 +71,11 @@
               span= simple_format resource.description
 
           - if can?(:view_members, resource)
-            - unless resource.users.empty? && resource.teams.empty?    
+            - unless resource.users.empty? && resource.teams.empty?
               #event-team-members.add-details-info
                 i.icon-team.indicate-icon
                 = presenter.team_members
+
         .span6.map_container
           - unless resource.place.nil? || resource.place.latitude.nil? || resource.place.latitude == 1.0
             #venue-map-canvas.google-map data-latitude="#{resource.place.latitude}" data-longitude="#{resource.place.longitude}"
@@ -124,5 +138,4 @@
         }
       });
     });
-    
   - reload_page_on_edit_resource

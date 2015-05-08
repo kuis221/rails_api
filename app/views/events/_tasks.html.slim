@@ -1,4 +1,3 @@
-h5.module-title id="mdq" TASKS
 - if tasks.any?
   = button_to 'Create Task', new_event_task_path(resource), method: :get, remote: true, class: 'btn btn-primary' if can? :create_task, resource
   div#tasks-list.resource-list

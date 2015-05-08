@@ -18,6 +18,11 @@ $detail-bar-height: 40px;
 		top: 0;
 		width: 38px;
 	}
+	&.fixed{
+		.panel, .back-arrow{
+			@include border-radius(0);
+		}
+	}
 	.panel{
 		background-color: $gray-darker;
 		box-sizing: border-box;
@@ -81,10 +86,12 @@ $detail-bar-height: 40px;
 	.info-list{
 		margin-top: 10px;
 		li{
+			font-size: 12px;
 			padding-bottom: 2px;
 		}
 		i{
 			color: $tooltip;
+			font-size: 14px;
 			margin-right: 10px;
 		}
 		address{
