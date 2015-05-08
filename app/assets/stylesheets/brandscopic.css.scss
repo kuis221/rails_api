@@ -4909,14 +4909,16 @@ table.table td.comments-container {
 }
 
 //MAIN - Without top left rounded corner
-.event_data, .comments, .photos, .expenses, .surveys, .tasks{
+.event_data, .comments, .expenses, .surveys, .tasks{
 	.main{
-		-webkit-border-radius: 0px 7px 7px 7px;
-		border-radius: 0px 7px 7px 7px;
+		@include border-radius(0px 7px 7px 7px);
 	}
 }
 
 .photos{
+	.main{
+		@include border-radius(7px);
+	}
 	.gallery{
 		margin-top: 12px !important;
 	}
