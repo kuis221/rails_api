@@ -20,6 +20,10 @@ $back-arrow-width: 38px;
 		width: $back-arrow-width;
 	}
 	&.fixed{
+		position: fixed !important;
+		top: 80px;
+		width: calc(100% - 100px);
+		z-index: 1;
 		.panel, .back-arrow{
 			@include border-radius(0);
 		}
