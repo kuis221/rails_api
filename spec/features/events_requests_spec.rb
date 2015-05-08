@@ -130,11 +130,6 @@ feature 'Events section' do
 
           expect(page).to have_selector('h2', text: 'Campaign #2 FY2012')
 
-          within('.alert') do
-            click_link 'approve'
-          end
-
-          expect(page).to have_content('Your post event report has been approved.')
           find('#resource-close-details').click
           expect(page).to have_selector('#events-list .resource-item', count: 2)
         end
@@ -281,7 +276,6 @@ feature 'Events section' do
               expect(page).to have_content('Campaign FY2012')
               expect(page).to have_content('Another Campaign April 03')
             end
-
 
             expect(page).to have_filter_section(title: 'CAMPAIGNS',
                                                 options: ['Campaign FY2012', 'Another Campaign April 03'])
@@ -1282,52 +1276,6 @@ feature 'Events section' do
         end
       end
 
-      scenario 'allows to add a member to the event', js: true do
-        pablo = create(:user,
-                       first_name: 'Pablo', last_name: 'Baltodano', email: 'palinair@gmail.com',
-                       company_id: company.id, role_id: company_user.role_id).company_users.first
-        create(:user,
-               first_name: 'Anonymous', last_name: 'User', email: 'anonymous@gmail.com',
-               company_id: company.id, role_id: company_user.role_id)
-
-        visit event_path(event)
-
-        click_js_button 'Add Team Member'
-        within visible_modal do
-          fill_in 'staff-search-item', with: 'Pab'
-          expect(page).to have_text 'Pablo Baltodano'
-          expect(page).to have_no_text 'Anonymous User'
-          within resource_item("#staff-member-user-#{pablo.id}") do
-            click_js_link 'Add'
-          end
-
-          expect(page).to have_no_text('Pablo Baltodano')
-        end
-        close_modal
-
-        # Re-open the modal to make sure it's not added again to the list
-        click_js_button 'Add Team Member'
-        within visible_modal do
-          expect(page).to have_no_text('Pablo Baltodano')
-          expect(page).to have_text('Anonymous User')
-        end
-        close_modal
-
-        # Test the user was added to the list of event members and it can be removed
-        within event_team_member(pablo) do
-          expect(page).to have_content('Pablo Baltodano')
-          click_js_link 'Remove Member'
-        end
-
-        confirm_prompt('Any tasks that are assigned to Pablo Baltodano must be reassigned. '\
-                       'Would you like to remove Pablo Baltodano from the event team?')
-        expect(page).not_to have_content('Pablo Baltodano')
-
-        # Refresh the page and make sure the user is not there
-        visit event_path(event)
-        expect(all('#event-team-members .team-member').count).to eq(0)
-      end
-
       scenario 'allows to add a user as contact to the event', js: true do
         create(:user, first_name: 'Pablo', last_name: 'Baltodano',
                       email: 'palinair@gmail.com', company_id: company.id,
@@ -1351,7 +1299,7 @@ feature 'Events section' do
         # Test the user was added to the list of event members and it can be removed
         within '#event-contacts-list' do
           expect(page).to have_content('Pablo Baltodano')
-          hover_and_click('.event-contact', 'Remove Contact')
+          click_js_link 'Remove Contact'
         end
 
         # Refresh the page and make sure the user is not there
@@ -1383,7 +1331,7 @@ feature 'Events section' do
         # Test the user was added to the list of event members and it can be removed
         within '#event-contacts-list' do
           expect(page).to have_content('Guillermo Vargas')
-          hover_and_click('.event-contact', 'Remove Contact')
+          click_js_link 'Remove Contact'
         end
 
         # Refresh the page and make sure the user is not there
@@ -1419,40 +1367,13 @@ feature 'Events section' do
         end
 
         # Test removal of the contact
-        hover_and_click('#event-contacts-list .event-contact', 'Remove Contact')
+        click_js_link 'Remove Contact'
         expect(page).to_not have_content('Pedro Picapiedra')
 
         # Refresh the page and make sure the contact is not there
         visit event_path(event)
 
         expect(page).to_not have_content('Pedro Picapiedra')
-      end
-
-      scenario 'allows to edit a contact', js: true do
-        contact = create(:contact, first_name: 'Guillermo', last_name: 'Vargas', email: 'guilleva@gmail.com', company: company)
-        create(:contact_event, event: event, contactable: contact)
-        Sunspot.commit
-
-        visit event_path(event)
-
-        expect(page).to have_content('Guillermo Vargas')
-
-        hover_and_click('#event-contacts-list .event-contact', 'Edit Contact')
-
-        within visible_modal do
-          fill_in 'First name', with: 'Pedro'
-          fill_in 'Last name', with: 'Picapiedra'
-          click_js_button 'Save'
-        end
-        sleep 1
-        ensure_modal_was_closed
-
-        # Test the user was added to the list of event members and it can be removed
-        within '#event-contacts-list' do
-          expect(page).to have_no_content('Guillermo Vargas')
-          expect(page).to have_content('Pedro Picapiedra')
-          # find('a.remove-member-btn').click
-        end
       end
 
       scenario 'allows to create a new task for the event and mark it as completed' do
@@ -1489,18 +1410,6 @@ feature 'Events section' do
           # refresh the page to make sure the checkbox remains selected
           visit event_path(event)
           expect(find('.task-completed-checkbox', visible: :false)['checked']).to be_truthy
-        end
-
-
-        # Delete Juanito Bazooka from the team and make sure that the tasks list
-        # is refreshed and the task unassigned
-        hover_and_click("#event-member-#{juanito_user.id}", 'Remove Member')
-        confirm_prompt 'Any tasks that are assigned to Juanito Bazooka must be reassigned. ' \
-                       'Would you like to remove Juanito Bazooka from the event team?'
-        expect(page).to_not have_content('Juanito Bazooka')
-
-        within('#event-tasks') do
-          expect(page).to_not have_content('Juanito Bazooka')
         end
       end
 

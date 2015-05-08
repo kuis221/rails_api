@@ -13,11 +13,35 @@ module EventsHelper
   end
 
   def contact_info_tooltip(contact)
-    [
-      (contact.respond_to?(:title) ? contact.title : contact.role_name),
-      contact.email, contact.phone_number, contact.street_address,
-      [contact.city, contact.state, contact.country_name].delete_if(&:blank?).join(', ')
-    ].delete_if(&:blank?).join('<br />').html_safe
+    details = contact_details(contact)
+    details =
+      if details.any?
+        content_tag(:ul, class: 'unstyled contact-info') do
+          details.map { |d| content_tag(:li, tag(:i, class: d[:icon]) + d[:txt]) }.join.html_safe
+        end
+      else
+        ''.html_safe
+      end
+    content_tag(:div, class: 'contacts-tooltip') do
+      content_tag(:h6, contact.full_name, class: 'contact-name') +
+      content_tag(:span, (contact.respond_to?(:title) ? contact.title : contact.role_name), class: 'contact-role') +
+      details
+    end
+  end
+
+  def contact_details(contact)
+    [].tap do |a|
+      a.push(
+        icon: 'icon-wired-email',
+        txt: link_to(contact.email, "mailto:#{contact.email}")) unless contact.email.blank?
+      a.push(
+        icon: 'icon-mobile',
+        txt: link_to(contact.phone_number, "tel:#{contact.phone_number}")) unless contact.phone_number.blank?
+      address = [contact.street_address, contact.city, contact.state, contact.country_name].delete_if(&:blank?).join(', ')
+      a.push(
+        icon: 'icon-wired-venue',
+        txt: link_to(address, "https://maps.google.com?daddr=#{address}", target: '_blank')) unless address.blank?
+    end
   end
 
   def describe_before_event_alert(resource)
@@ -34,6 +58,15 @@ module EventsHelper
     end
     description += ' You can ' + alert_parts.compact.to_sentence unless alert_parts.empty?
     description.html_safe
+  end
+
+  def event_phases_and_steps_for_api(event)
+    phases = event.phases
+    phases.merge(
+      phases: Hash[phases[:phases].map do |k, steps|
+                      [k, steps.select { |s| !s.key?(:if) || instance_exec(event, &s[:if]) }.map { |s| s.reject { |k, v| k == :if } }]
+                   end]
+    )
   end
 
   def describe_today_event_alert(resource)

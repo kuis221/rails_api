@@ -3579,7 +3579,7 @@ body.events.index {
 
 body.show {
 	#company_user-areas-list, #company_user-places-list,
-	#event-team-members, #team-members-list,
+	#team-members-list,
 	#area-places-list {
 		clear: both;
 		margin-top: 40px;
@@ -7744,6 +7744,9 @@ form.button_to .button-with-icon {
 	text-align: left;
 	h6{
 		margin: 0;
+	}
+	a {
+		color: white;
 	}
 	.contact-role{
 		color: $gray-light;
