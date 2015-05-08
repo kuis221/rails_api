@@ -3439,7 +3439,6 @@ body.events.index {
 				color: $primary-blue;
 				display: block;
 				&:before{
-					top: 6px;
 					position: relative;
 					font-family: 'icons';
 					font-size: 16px;
@@ -3456,11 +3455,15 @@ body.events.index {
 			}
 		}
 		&.result_time .form-result-value:before {
+			top: 6px;
 			font-size: 20px;
 			content: "\e61b";
 		}
-		&.result_date .form-result-value:before {
-			content: "\e61e";
+		&.result_date .form-result-value{
+			&:before {
+				top: 2px;
+				content: "\e61e";
+			}
 		}
 		&.result_brand, &.result_date, &.result_time {
 			.form-result-label {
@@ -3471,11 +3474,10 @@ body.events.index {
 				}
 			}
 			.form-result-value i {
-				font-size: 10px;
 				font-style: normal;
 			}
 		}
-		&.result_checkbox {
+		&.result_checkbox, &.result_radio {
 			margin-bottom: 30px;
 			.form-result-value span {
 				color: $primary-blue;
