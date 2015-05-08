@@ -77,11 +77,12 @@ module Html
       h.content_tag(:ul, class: 'switch-list unstyled') do
         steps.each.each_with_index.map do |step, i|
           h.content_tag(:li) do
-            h.content_tag(:a, class: 'small no-decorate', 'aria-expanded': true, 'aria-controls': 'event-details-collapse',
+            h.content_tag(:a, class: 'small no-decorate collapsed', 'aria-expanded': true, 'aria-controls': 'event-details-collapse',
               data: {toggle: 'collapse', spytarget: ( i == 0 ? '#application-body' : "#event-#{step[:id]}")}, href: '#event-details-collapse') do
               h.content_tag(:span, phases[:phases].keys.index(name) + 1, class: 'phase-id') +
               h.content_tag(:b, "#{name.to_s.upcase}: #{step[:title]}") +
-              h.content_tag(:i, '', class: 'icon-arrow-up')
+              h.content_tag(:span, '', class: 'arrow')
+
             end
           end
         end.join.html_safe

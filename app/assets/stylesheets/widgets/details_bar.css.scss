@@ -62,10 +62,22 @@ $back-arrow-width: 38px;
 			color: $app_bg;
 			padding-right: 4px;
 			padding-left: 0;
-			.icon-arrow-up{
-				color: $brand;
-				font-size: 14px;
+			.arrow{
 				margin-left: 20px;
+				&:after{
+					content: "\e610";
+					font-size: 12px;
+					font-family: "icons";
+					color: $brand;
+					top: -1px;
+					position: relative;
+				}
+			}
+			&.collapsed{
+				.arrow:after{
+					top: 4px;
+					content: "\e607";
+				}
 			}
 		}
 		.phase-id{
