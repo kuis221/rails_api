@@ -8,7 +8,7 @@
   .panel
     #headingOne.panel-heading role="tab"
       .row-fluid
-        .span10
+        .span6
           nav id="spyOnThis" class="scrollspy-style"
             ul.switch-list.unstyled
               li
@@ -19,14 +19,14 @@
                   span.event-name.pull-left= resource.campaign_name
                   span.event-date.small = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at), date_separator: ' - ')
 
-        .span2.phase-indicator
+        .span6.phase-indicator
           nav id="spyOnThisToo" class="scrollspy-style"
             = presenter.render_nav_too
 
     #collapseOne.panel-collapse.collapse aria-labelledby="headingOne" role="tabpanel"
       .panel-body
         .row-fluid
-          .span10.event-info
+          .span9.event-info
             .bar-title.small
               b BASIC INFO
             .event-name= resource.campaign_name
@@ -42,7 +42,7 @@
                 li
                   i.icon-team
                   = presenter.event_members_name(', ')
-          .span2.event-phases
+          .span3.event-phases
             nav id="spyOnThisPhases" class="scrollspy-style"
               .bar-title.small
                 b EVENT PHASES
