@@ -80,7 +80,7 @@ module Html
                 data: {parent: '#accordion', toggle: 'collapse'}, href: '#collapseOne') do
                 h.content_tag(:span, i + 1, class: 'phase-id') +
                 h.content_tag(:b, "#{phase[0].to_s.upcase}: #{step[:title]}") +
-                h.content_tag(:i, '', class: 'icon-arrow-up')
+                h.content_tag(:span, '', class: 'arrow')
               end
               active = false
               phase_step
