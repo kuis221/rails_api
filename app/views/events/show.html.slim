@@ -24,10 +24,10 @@
         a> href="http://support.brandscopic.com" target="_blank" support site
         | for more information about this section.
 #top
-.row-fluid.with-details-close-bar 
+.row-fluid.with-details-close-bar
   = render 'details_bar'
   //.span data-spy="scroll" data-target="#spyOnThis"
-  .span
+  div
     .details_box class="#{(resource.place.nil? or resource.place.latitude.nil?) ?  'padding-top-close-bar' : ''}"
 
       .phases
@@ -58,7 +58,7 @@
             .description-data
               span= simple_format resource.description
 
-          - unless resource.users.empty? && resource.teams.empty?    
+          - unless resource.users.empty? && resource.teams.empty?
             .add-details-info
               i.icon-team.indicate-icon
               = presenter.event_member_tag
@@ -139,6 +139,6 @@
         }
       });
     });
-    
+
     $('#spyOnThis').scrollspy();
   - reload_page_on_edit_resource

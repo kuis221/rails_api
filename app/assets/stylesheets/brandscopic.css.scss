@@ -3405,9 +3405,10 @@ body.events.index {
 			}
 		}
 
-		span.form-result-label {
+		.form-result-label {
 			font-weight: bold;
 			display: block;
+			margin-bottom: 10px;
 		}
 		h3.section-title {
 			margin-bottom: 10px;
@@ -3428,17 +3429,6 @@ body.events.index {
 				width: 450px;
 				display: block;
 			}
-		}
-		&.result_number, &.result_currency, &.result_brand, &.result_date, &.result_time {
-			.form-result-label {
-				text-transform: uppercase;
-				font-weight: normal;
-				color: $brand;
-				font-size: 11px;
-			}
-		}
-		&.result_checkbox, &.result_dropdown{
-			font-size:13px;
 		}
 		&.result_number, &.result_currency {
 			.form-result-value {
@@ -3476,13 +3466,14 @@ body.events.index {
 		&.result_checkbox {
 			margin-bottom: 30px;
 			.form-result-value span {
+				color: $primary-blue;
 				display: block;
 				margin-top: 5px;
 				i.icon {
-					color: $primary-blue;
-					margin-right: 5px;
+					font-size: 16px;
+					margin-right: 15px;
 					&:before {
-						top: 2px;
+						top: 4px;
 					}
 				}
 			}
@@ -7718,9 +7709,9 @@ form.button_to .button-with-icon {
 }
 
 .fixed {
-	position: fixed!important; 
+	position: fixed!important;
 	top: 80px;
-	width: calc(100% - 100px); 
+	width: calc(100% - 100px);
 	z-index: 1;
 }
 
