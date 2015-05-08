@@ -1564,6 +1564,7 @@ header{
 			padding: 0;
 			background-image: none;
 			border-bottom: 0;
+			height: 42px;
 
 			.nav {
 				margin: 0;
@@ -1573,7 +1574,7 @@ header{
 					margin: 0;
 					padding: 13px 14px 14px;
 					line-height: 16px;
-					height: 43px;
+					height: 42px;
 					white-space: nowrap;
 					&:hover {
 						background-color: $menu;
@@ -2081,6 +2082,7 @@ li#notifications{
 	}
 }
 
+/*
 .dropdown-menu:before{
 	position: absolute;
 	top: -10px;
@@ -2091,6 +2093,7 @@ li#notifications{
 	border-left: 10px solid transparent;
 	content: '';
 }
+*/
 
 .navbar .nav>li> .dropdown-menu:before{
 	position: absolute;
@@ -2591,13 +2594,14 @@ ul.ui-widget-content{
 }
 
 #company-name {
-	font-size: 20px;
+	font-size: 14px;
 	margin-bottom: 0;
 	margin-top: 0;
 	padding: 5px 0 0 25px;
 	height: 35px;
 	a {
-		color: $brand;
+		color: $silver;
+		font-weight: bold;
 		text-decoration: none;
 		&.dropdown-toggle{
 			&:after{
@@ -2621,7 +2625,7 @@ ul.ui-widget-content{
 		display: none;
 	}
 	.dropdown-menu{
-		min-width:260px;
+		min-width:200px;
 		li a{
 			font-weight: bold;
 			&:hover{
@@ -2640,13 +2644,12 @@ ul.ui-widget-content{
 			}
 		}
 		&>.dropdown-menu{
-			background-color: $gray;
-			border: 1px solid #707070;
+			background-color: $gray-darker;
+			border: 1px solid $gray-darker;
 			-webkit-box-shadow: none;
 			-moz-box-shadow: none;
 			box-shadow: none;
-			left: -13px;
-			margin: 15px 0 0;
+			left: -26px;
 			&:before{
 				border-bottom: 10px solid $gray;
 				left: 230px;
