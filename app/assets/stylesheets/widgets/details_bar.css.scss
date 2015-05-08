@@ -1,22 +1,22 @@
 
 // DETAILS BAR (Details pages bar)
-
+$detail-bar-height: 40px;
 .details-bar{
 	position: relative;
 	.back-arrow{
-	  background-color: $gray-darker;
-	  box-sizing: border-box;
-	  border-right: 1px solid $divider;
-	  color: $brand;
-	  font-size: 25px;
-	  @include border-radius(6px 0 0 0);
-	  line-height: 25px;
-	  padding: 11px 12px;
-	  position: absolute;
-	  height: 40px;
-	  left: 0;
-	  top: 0;
-	  width: 38px;
+		background-color: $gray-darker;
+		box-sizing: border-box;
+		border-right: 1px solid $divider;
+		color: $brand;
+		font-size: 25px;
+		@include border-radius(6px 0 0 0);
+		line-height: 25px;
+		padding: 11px 12px;
+		position: absolute;
+		height: $detail-bar-height;
+		left: 0;
+		top: 0;
+		width: 38px;
 	}
 	.panel{
 		background-color: $gray-darker;
@@ -27,6 +27,9 @@
 	.panel-collapse{
 		background-color: $gray-darker;
 		color: $white;
+		z-index: 2;
+		position: absolute;
+		width: 100%;
 	}
 
 	// Heading
@@ -48,12 +51,12 @@
 		a{
 			color: $app_bg;
 			padding-right: 4px;
-  		padding-left: 0;
-  		.icon-arrow-up{
-  			color: $brand;
-  			font-size: 14px;
-  			margin-left: 20px;
-  		}
+			padding-left: 0;
+			.icon-arrow-up{
+				color: $brand;
+				font-size: 14px;
+				margin-left: 20px;
+			}
 		}
 		.phase-id{
 			background-color: $app_bg;
@@ -107,7 +110,7 @@
 .phases-list{
 	font-size: 12px;
 	.active-phase{
-		.phase, .step-active{
+		.phase {
 			color: $primary-green;
 		}
 		.phase-id{
@@ -121,12 +124,16 @@
 		padding-left: 20px;
 		li{
 			position: relative;
+			&.active a {
+				color: #fff;
+
+			}
 		}
 		.icon-checked{
 			font-size: 10px;
 			position: absolute;
-		  left: -18px;
-		  top: 7px;
+			left: -18px;
+			top: 7px;
 		}
 	}
 }
@@ -139,6 +146,10 @@
 	background-color: $brand;
 	color: $white;
 	padding: 18px 0;
+	position: absolute;
+  	top: $detail-bar-height;
+  	width: 100%;
+  	z-index: 1;
 	a{
 		color: $white;
 		margin-left: 6px;
