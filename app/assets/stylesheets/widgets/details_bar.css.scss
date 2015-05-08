@@ -83,10 +83,12 @@
 	.info-list{
 		margin-top: 10px;
 		li{
+			font-size: 12px;
 			padding-bottom: 2px;
 		}
 		i{
 			color: $tooltip;
+			font-size: 14px;
 			margin-right: 10px;
 		}
 		address{

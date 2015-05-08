@@ -3407,7 +3407,6 @@ body.events.index {
 		.form-result-label {
 			font-weight: bold;
 			display: block;
-			margin-bottom: 10px;
 		}
 		h3.section-title {
 			margin-bottom: 10px;
@@ -3425,15 +3424,15 @@ body.events.index {
 		}
 		&.result_text_area, &.result_text {
 			.form-result-value {
-				width: 450px;
+				width: 460px;
+				margin-top: 6px;
 				display: block;
 			}
 		}
 		&.result_number, &.result_currency {
 			.form-result-value {
 				color: $primary-blue;
-				font-size: 22px;
-				font-weight:bold;
+				font-size: 16px;
 			}
 		}
 		&.result_brand, &.result_date, &.result_time {
