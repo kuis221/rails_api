@@ -3431,9 +3431,36 @@ body.events.index {
 		}
 		&.result_number, &.result_currency {
 			.form-result-value {
-				color: $primary-blue;
 				font-size: 16px;
 			}
+		}
+		&.result_number, &.result_currency, &.result_brand, &.result_time, &.result_date,{
+			.form-result-value{
+				color: $primary-blue;
+				display: block;
+				&:before{
+					top: 6px;
+					position: relative;
+					font-family: 'icons';
+					font-size: 16px;
+					margin-right: 15px;
+				}
+			}
+		}
+		&.result_brand{
+			.form-result-value{
+				&:before{
+					top: 2px;
+					content: "\e628";
+				}
+			}
+		}
+		&.result_time .form-result-value:before {
+			font-size: 20px;
+			content: "\e61b";
+		}
+		&.result_date .form-result-value:before {
+			content: "\e61e";
 		}
 		&.result_brand, &.result_date, &.result_time {
 			.form-result-label {
@@ -3442,19 +3469,6 @@ body.events.index {
 				&:after {
 					content: ":";
 				}
-			}
-			.form-result-value:before{
-				color: $user_menu;
-				display: inline-block;
-				font-family: 'icons';
-				position:relative;
-				top: 2px;
-				speak: none;
-				text-shadow: none;
-				-webkit-font-smoothing: antialiased;
-				-moz-osx-font-smoothing: grayscale;
-				margin-right: 10px;
-				font-size: 14px;
 			}
 			.form-result-value i {
 				font-size: 10px;
@@ -3475,17 +3489,6 @@ body.events.index {
 					}
 				}
 			}
-		}
-		&.result_brand .form-result-value:before {
-			content: "\e030";
-		}
-		&.result_time .form-result-value:before {
-			top: 4px;
-			font-size: 16px;
-			content: "\e01f";
-		}
-		&.result_date .form-result-value:before {
-			content: "\e022";
 		}
 		&.result_attachment {
 			.form-result-label {
