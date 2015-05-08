@@ -1,6 +1,7 @@
 
 // DETAILS BAR (Details pages bar)
 $detail-bar-height: 40px;
+$back-arrow-width: 38px;
 .details-bar{
 	position: relative;
 	.back-arrow{
@@ -16,7 +17,7 @@ $detail-bar-height: 40px;
 		height: $detail-bar-height;
 		left: 0;
 		top: 0;
-		width: 38px;
+		width: $back-arrow-width;
 	}
 	&.fixed{
 		.panel, .back-arrow{
@@ -27,14 +28,14 @@ $detail-bar-height: 40px;
 		background-color: $gray-darker;
 		box-sizing: border-box;
 		@include border-radius(0 6px 0 0);
-		margin-left: 38px;
+		margin-left: $back-arrow-width;
 	}
 	.panel-collapse{
 		background-color: $gray-darker;
 		color: $white;
 		z-index: 2;
 		position: absolute;
-		width: 100%;
+		width: calc(100% - #{$back-arrow-width});
 	}
 
 	// Heading
