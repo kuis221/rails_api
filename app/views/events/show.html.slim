@@ -30,9 +30,22 @@
   div
     .details_box class="#{(resource.place.nil? or resource.place.latitude.nil?) ?  'padding-top-close-bar' : ''}"
 
-      .phases
-        h5 = 'EVENT PHASES'
-      // Can we add the steps from results to use same structure and styles?
+      .phases-top-nav
+        h5.pull-left = 'EVENT PHASES:'
+        span.step.active
+          span.step-id
+            | 1
+          | PLAN
+
+        span.step
+          span.step-id
+            | 2
+          | EXECUTE
+
+        span.step
+          span.step-id
+            | 3
+          | RESULTS
 
 
       .row-fluid.details_first_container

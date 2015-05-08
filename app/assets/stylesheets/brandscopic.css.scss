@@ -4716,8 +4716,29 @@ body.roles{
 // MAPS ZONE FOR VENUE AND EVENT DETAILS
 // Same structure for both pages
 
-.phases{
+.phases-top-nav{
 	color: $silver;
+	font-weight: bold;
+	.active{
+		color: $text;
+		.step-id{
+			border: 2px solid $text;
+		}
+	}
+	.step{
+		font-size: 12px;
+	}
+	.step-id{
+		border: 2px solid $silver;
+		display: inline-block;
+		height: 22px;
+		@include border-radius(15px);
+		line-height: 22px;
+		margin-right: 8px;
+		margin-left: 15px;
+		text-align: center;
+		width: 22px;
+	}
 }
 
 .details-title{
