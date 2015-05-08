@@ -1,0 +1,383 @@
+@import "variables";
+
+header{
+	&.navbar-inverse {
+		.nav > li > a{
+			color:$user_menu;
+			text-shadow: none;
+		}
+		.navbar-inner {
+			background-color: $header;
+			padding: 0;
+			background-image: none;
+			border-bottom: 0;
+			height: 42px;
+
+			.nav {
+				margin: 0;
+				>li>a{
+					border-radius: 0px;
+					box-sizing:border-box;
+					margin: 0;
+					padding: 13px 10px 14px;
+					line-height: 16px;
+					height: 42px;
+					white-space: nowrap;
+					&:hover {
+						background-color: $menu-hover;
+					}
+				}
+
+				li#user_menu{
+					font-size: 12px;
+					.dropdown-toggle{
+						padding-right: 25px;
+					}
+					ul.dropdown-menu{
+						right: 0 !important;
+						left: auto !important;
+						a{
+							padding-left: 50px;
+						}
+					}
+					.icon-user, .icon-on{
+						position: absolute;
+						top: 10px;
+						left: 20px;
+					}
+				}
+
+				li#admin{
+					a.dropdown-toggle{
+						padding-top: 14px;
+					}
+					ul.dropdown-menu{
+						left: -118px;
+					}
+				}
+
+				li#notifications {
+					ul li a {
+						padding-left: 0;
+						padding-right: 0;
+					}
+				}
+				li#help_menu {
+					span:before {
+						left: 4px;
+						font-size: 16px;
+						vertical-align: middle;
+					}
+				}
+			}
+		}
+	}
+}
+
+.navbar .nav > .active > a, .navbar .nav > .active > a:hover, .navbar .nav > .active > a:focus{
+	box-shadow: none;
+}
+
+// Special redesigned menu dropdown for header
+
+.header-menu{
+	&.open{
+		background-color: $menu-hover !important;
+		a.dropdown-toggle{
+			color: $white;
+		}
+	}
+	a.dropdown-toggle{
+		color: $silver;
+		.icon-arrow-down{
+			font-size: 10px;
+			margin-top: 6px;
+			margin-left: 6px;
+		}
+	}
+	&.dropdown.open{
+		> .dropdown-toggle{
+			background-color: $menu-hover !important;
+			text-decoration: none;
+		}
+		.dropdown-menu{
+			background-color: $gray-darker;
+			border: 1px solid $gray-darker;
+			-webkit-box-shadow: none;
+			-moz-box-shadow: none;
+			box-shadow: none;
+			margin-top: 0;
+			left: 0;
+			li{
+				position: relative;
+				a{
+					color: $app_bg;
+					font-size: 13px;
+					padding: 6px 15px 6px 30px;
+					&:hover, &:focus{
+						background-color: $menu-hover;
+						color: $white;
+						background-image: none;
+					}
+					.icon-checked{
+						display: none;
+						position: absolute;
+						top: 12px;
+						left: 10px;
+					}
+				}
+			}
+			&> .active > a{
+				background-image: none;
+				background-color: $menu-hover;
+				.icon-checked{
+					display: inline;
+				}
+			}
+			&:before{
+				display: none;
+			}
+		}
+	}
+	a{
+		&:hover{
+			text-decoration: none;
+		}
+	}
+}
+
+// Dropdown arrow for menu in header
+
+#company-name .header-menu, #user_menu.header-menu{
+	&:after{
+		content: "\e607";
+		font-size: 9px;
+		font-family: "icons";
+		color: $silver;
+		position: absolute;
+	}
+	&.open{
+		&:after{
+			content: "\e610";
+		}
+	}
+}
+#user_menu.header-menu{
+	&:after{
+		top: 14px;
+		right: 5px;
+	}
+	&.open{
+		&:after{
+			top: 10px;
+		}
+	}
+}
+
+// Special menu for company
+
+#company-name {
+	font-weight: bold;
+	color: $silver;
+	font-size: 14px;
+	line-height: 42px;
+	margin-bottom: 0;
+	.header-menu a{
+		padding-left: 12px;
+		padding-right: 30px;
+		text-decoration: none;
+	}
+	.caret{
+		display: none;
+	}
+	.dropdown-menu{
+		width: 220px;
+	}
+}
+
+
+#company-name .header-menu{
+	&:after{
+	top: 4px;
+	right: 10px;
+	}
+	&.open{
+		&:after{
+			top: 0;
+		}
+	}
+}
+
+// Notifications dropdown in header
+
+li#notifications{
+	.notification-state{
+		background-color: #626763;
+		color: $white;
+		border: 1px solid $header;
+		text-align:center;
+		font-size: 9px;
+		line-height: 16px;
+		border-radius:12px;
+		height: 15px;
+		width:15px;
+		position:absolute;
+		z-index:9;
+		right: 4px;
+		top:6px
+	}
+	.icon-bell{
+		position:relative;
+		top:2px;
+	}
+	&:hover, &:active, &.open{
+		.notification-state{
+			border: 1px solid $menu;
+		}
+	}
+
+	&.has-notifications {
+		.dropdown-toggle:hover { color:  #fff; }
+		.notification-state { background-color:  $primary_red; }
+	}
+
+	&.without-notifications ul {
+		height: 100%;
+		li.empty-state {
+			height: 100%;
+			width: 100%;
+			background-color: #cccccc;
+			color: #A5A4A5;
+			p {
+				display: table;
+				margin: 40% auto;
+				font-weight: bold;
+			}
+			&:hover {
+				background-color: #cccccc;
+			}
+		}
+	}
+
+	.notifications-container{
+		background-color: #cccccc;
+		height: 261px;
+		margin-bottom: 2px;
+		overflow-y: auto;
+		overflow-x: hidden;
+		ul li{
+			width: 100%;
+			i{
+				font-size: 17px;
+				margin: 0 10px;
+				position: relative;
+				top: 2px;
+			}
+		}
+
+		.jspVerticalBar {
+			width: 7px;
+			.jspTrack {
+				width: 7px;
+			}
+			.jspDrag {
+				width: 5px;
+			}
+		}
+	}
+
+	.dropdown-menu{
+		background-color: $gray-lighter;
+		border: 1px solid #d5d5d5;
+		box-shadow: none;
+		min-width: 270px;
+		left: -181px;
+		h5{
+			color: $text;
+			font-size: 13px;
+			font-weight: bold;
+			padding-left: 7px;
+			margin-top: 5px;
+		}
+		&:before {
+			display: none;
+		}
+		ul {
+			border-collapse: collapse;
+			display: table;
+			list-style: none;
+			margin: 0;
+			padding: 0;
+			width: 100%;
+			li {
+				display: inline-block;
+				vertical-align: middle;
+				background-color: #fff;
+				border-top: 1px solid $borders;
+				position:relative;
+				padding: 10px 0;
+
+				&:first-child{
+					border-top: 0;
+				}
+				&.red {
+					background-color: $primary-red;
+					&:hover{
+						background-color: #cc4137;
+					}
+				}
+				&.blue {
+					background-color: $primary-blue;
+					&:hover{
+						background-color: #3990bf;
+					}
+				}
+				&.grey {
+					background-color: $brand;
+					&:hover{
+						background-color:#858585;
+					}
+				}
+
+				.alert-message{
+					display: inline-block;
+					font-weight: 500;
+					font-size: 13px;
+					width: 220px;  /* leave room for the scrollbar */
+					line-height: 16px;
+					span{
+						color: $gray-lighter;
+					}
+				}
+
+				&:hover{
+					background-color: $app_bg;
+					.icon-notification-event:before, .icon-notification-task:before,
+					.icon-notification-comment:before, .icon-notification-campaign:before,
+					.icon-notification-action:before, .icon-notification-group:before,
+					.icon-notification-venue:before, .icon-angle-right:before{
+						color:$white;
+					}
+				}
+
+				// Icons
+				a{
+					color: $white;
+					font-size: 11px;
+					display: table-cell;
+					vertical-align: middle;
+					height: 32px;
+					i{
+						&.icon-angle-right{
+							position: absolute;
+							top: 21px;
+						}
+					}
+					&:hover{
+						text-decoration: none;
+					}
+				}
+			}
+		}
+	}
+}
