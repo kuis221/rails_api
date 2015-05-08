@@ -3082,7 +3082,6 @@ ul.ui-widget-content{
 			&.control-label{
 				color: $text;
 				display: inline-block;
-				font-size: 14px;
 				&.field-label{
 					color: $text;
 				}
@@ -4720,16 +4719,28 @@ body.roles{
 	color: $silver;
 	font-weight: bold;
 	margin: 10px 0 40px 0;
+	.completed{
+		color: $primary-green;
+		.circle-step{
+			background-color: $primary-green;
+			border-color: $primary-green;
+			color: $white;
+			.icon-checked{
+				position: relative;
+				top: 3px;
+			}
+		}
+	}
 	.active{
 		color: $text;
-		.step-id{
+		.circle-step{
 			border: 2px solid $text;
 		}
 	}
 	.step{
 		font-size: 12px;
 	}
-	.step-id{
+	.circle-step{
 		border: 2px solid $silver;
 		display: inline-block;
 		height: 22px;
