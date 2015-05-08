@@ -24,7 +24,7 @@ describe Api::V1::EventsController, type: :controller do
       expect(result['filters']).to eq([
         { 'label' => campaign.name, 'name' => "campaign:#{campaign.id}", 'expandible' => false },
         { 'label' => place.name, 'name' => "place:#{place.id}", 'expandible' => false }])
-      expect(result['results'].first.keys).to match_array(%w(id start_date start_time end_date end_time status event_status campaign place))
+      expect(result['results'].first.keys).to match_array(%w(id start_date start_time end_date end_time status phases event_status campaign place))
     end
 
     it 'sencond page returns empty results' do
@@ -62,6 +62,7 @@ describe Api::V1::EventsController, type: :controller do
   describe "GET 'requiring_attention'", search: true do
     it 'returns a list of events late, due and today events', :show_in_doc do
       campaign = create(:campaign, company: company)
+      campaign.modules = {'expenses' => {}, 'comments' => {}, 'photos' => {}}
       place = create(:place)
       event1 = create(:late_event, campaign: campaign, place: place)
       event2 = create(:due_event, campaign: campaign, place: place)
@@ -91,7 +92,7 @@ describe Api::V1::EventsController, type: :controller do
       get :show, id: event.to_param, format: :json
       expect(response).to be_success
       expect(json.keys).to eq(%w(
-        id start_date start_time end_date end_time status phases description event_status
+        id start_date start_time end_date end_time status description phases event_status
         have_data actions tasks_late_count tasks_due_today_count place campaign))
       expect(json['place'].keys).to eq(%w(
         id venue_id name latitude longitude formatted_address

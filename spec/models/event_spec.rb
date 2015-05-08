@@ -1476,10 +1476,10 @@ describe Event, type: :model do
       it 'return plan for events in the future' do
         event = create(:event, campaign: campaign)
         expect(event.plan_phases).to eql [
-          {:id=>:info, :title=>"Basic Info", :complete=>true},
-          {:id=>:contacts, :title=>"Contacts", :complete=>false},
-          {:id=>:tasks, :title=>"Tasks", :complete=>false},
-          {:id=>:documents, :title=>"Documents", :complete=>false}]
+          { id: :info, title: "Basic Info", complete: true, required: true },
+          { id: :contacts, title: "Contacts", complete: false, required: false },
+          { id: :tasks, title: "Tasks", complete: false, required: false },
+          { id: :documents, title: "Documents", complete: false, required: false }]
       end
     end
 

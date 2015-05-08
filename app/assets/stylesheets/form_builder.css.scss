@@ -69,10 +69,7 @@ $margin-right: 240px;
 					position: relative;
 				}
 				&.module{
-					h4{
-						font-size:18px;
-						font-weight: 400;
-						color: $user_menu;
+					.module-title{
 						margin-top:0;
 					}
 					&.selected {
