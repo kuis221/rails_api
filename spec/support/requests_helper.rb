@@ -206,6 +206,11 @@ module RequestsHelper
     match_when_negated { |node| find("span[for=#{node['id']}].help-inline").has_no_content?(text) }
   end
 
+  matcher :have_hint do |text|
+    match { |node| find("#hint-#{node['data-field-id']}").has_content?(text) }
+    match_when_negated { |node| find("#hint-#{node['data-field-id']}").has_no_content?(text) }
+  end
+
   def visible_modal
     find('.modal.in', visible: true)
   end

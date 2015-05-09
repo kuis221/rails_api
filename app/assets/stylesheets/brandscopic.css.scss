@@ -3049,13 +3049,12 @@ ul.ui-widget-content{
 
 	.control-group{
 		margin-bottom: 0;
-
 		.segment-total{
 			display: none;
 		}
 		&.error {
 			.help-inline {
-				line-height: 25px;
+				line-height: 24px;
 			}
 			.input-append, .input-prepend {
 				input[type="text"] {
@@ -3078,6 +3077,16 @@ ul.ui-widget-content{
 				.counter {
 					color: $primary-red !important;
 				}
+			}
+			p.range-help-block {
+				color: $primary-red !important;
+			}
+		}
+		p.range-help-block {
+			color: $gray-light;
+			font-size: 12px;
+			.range-counter-container {
+				float: right;
 			}
 		}
 		label{
@@ -3103,7 +3112,7 @@ ul.ui-widget-content{
 					color: $text;
 				}
 				span.optional {
-					font-size: 14px;
+					font-size: 12px;
 					color: $gray-light;
 					font-weight: normal;
 				}
@@ -3124,13 +3133,18 @@ ul.ui-widget-content{
 			&.radio{
 				display: block;
 				font-weight: normal;
-				padding:0;
+				padding: 0;
 				div.radio{
-					margin:0 10px 0 0;
+					margin: 0 10px 0 0;
 				}
 				&:last-child{
 					margin-bottom: 0;
 				}
+			}
+		}
+		.controls {
+			input, textarea {
+				margin-bottom: 0px;
 			}
 		}
 	}

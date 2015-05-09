@@ -151,6 +151,8 @@ jQuery ->
 		$('.has-popover').popover({html: true})
 		$("input:checkbox, input:radio").not('[data-no-uniform="true"], #uniform-is-ajax, .bs-checkbox').uniform()
 
+		$('.elements-range').keyup()
+
 		$('.segment-field').keyup()
 
 		$(".fancybox").fancybox {
@@ -224,12 +226,28 @@ jQuery ->
 			element.closest('.form_field_percentage').find('.control-group-label').find('.ok-message').remove()
 			element.closest('.form_field_percentage').find('.control-group-label').append('<span class="ok-message"><span>OK!</span></span>')
 		onkeyup: (element, event) ->
+			items = items_count(element)
+			$('#item-counter-' + $(element).data('field-id')).html(items);
+
 			if event.which == 9 and @elementValue(element) == ''
 				return true
 	}
 
 	window.makeFormValidatable = (e) ->
 		e.validate()
+
+	items_count = (field) ->
+		number = 0
+
+		if $(field).data('range-format') == 'characters'
+			number = field.value.length
+		else if $(field).data('range-format') == 'words'
+			matches = $(field).val().split(' ')
+			number = matches.filter((word) ->
+				word.length > 0
+			).length
+
+		number
 
 	# Check what graph labels are colliding with others and adjust the position
 	$(window).on 'resize ready', () ->
