@@ -120,6 +120,15 @@ class FormField < ActiveRecord::Base
     result.value
   end
 
+  def format_chart_data(result)
+    return unless is_optionable?
+    if result.present?
+      Hash[options_for_input.map do |s|
+        [s[0], result.value[s[1].to_s].try(:to_f) || 0]
+      end]
+    end
+  end
+
   def css_class
     self.class.name.underscore.gsub('/', '_')
   end

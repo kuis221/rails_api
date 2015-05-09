@@ -167,8 +167,7 @@ jQuery ->
 
 		$("a.smooth-scroll[href^='#']").off('click.branscopic').on 'click.branscopic', (e) ->
 			e.preventDefault()
-			e.stopPropagation()
-			smoothScrollTo($(this.hash))
+			smoothScrollTo($(this.hash), this)
 
 		$('form[data-watch-changes]').watchChanges();
 
@@ -183,8 +182,16 @@ jQuery ->
 
 		updateSummationTotals()
 
-	window.smoothScrollTo = (element) ->
-		$('html, body').animate({ scrollTop: element.offset().top - ($('#resource-close-details').outerHeight() || 0) - ($('header').outerHeight() || 0) - 20 }, 300)
+	window.smoothScrollTo = (element, link) ->
+		$('html, body').animate {
+			scrollTop: element.offset().top -
+						($('#resource-close-details').outerHeight() || 0) -
+						($('header').outerHeight() || 0) -
+						($('.details-bar').outerHeight() || 0) -
+						($('.guide-bar').outerHeight() || 0) -
+						20
+			}, 300, () ->
+				$(link).trigger('smooth-scroll:end') if link
 
 
 	$.validator.setDefaults {
@@ -813,22 +820,6 @@ jQuery ->
 		goFullscreen $(this).data("fullscreen-element")
 		false
 
-	$(".reject-post-event").click (e) ->
-		e.preventDefault()
-		$link = $(this)
-		bootbox.classes('modal-med rejection-prompt')
-		bootbox.prompt "Why is the post event being rejected?", 'Cancel', 'Submit', (result) ->
-			if result isnt null and result isnt ""
-				$.ajax $link.attr("href"),
-					method: "PUT"
-					dataType: "script"
-					data:
-						reason: result
-			else if result isnt null
-				bootbox.alert "You must enter a reason for the rejection", ->
-					$link.click()
-
-		false
 
 	$(document).on 'click', '#select-specific-user', (e) ->
 		e.stopPropagation()

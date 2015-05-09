@@ -3,11 +3,6 @@
 - if can?(:edit_data, resource)
   = render partial: 'edit_event_data'
 
-/ Expenses module
-- if enabled_modules.include?('expenses') && can?(:expenses, resource)
-  #event-expenses.details_box.box_expenses
-    = render partial: 'expenses'
-
 / Activities module
 - if (can?(:show, Activity) && resource.campaign.activity_types.any?) || \
      (can?(:index_invites, resource) && resource.campaign.activity_types.any? || enabled_modules.include?('attendance'))
@@ -16,6 +11,11 @@
 
 - if can?(:index_invites, Event) && resource.campaign.enabled_modules.include?('attendance')
   = render 'attendance'
+
+/ Expenses module
+- if enabled_modules.include?('expenses') && can?(:expenses, resource)
+  #event-expenses.details_box.box_expenses
+    = render partial: 'expenses'
 
 / Photos module
 - if enabled_modules.include?('photos') && can?(:photos, resource)

@@ -4375,13 +4375,10 @@ body.roles{
 	}
 }
 
-// MAPS ZONE FOR VENUE AND EVENT DETAILS
-// Same structure for both pages
-
 .phases-top-nav{
 	color: $silver;
 	font-weight: bold;
-	margin: 10px 0 40px 0;
+	margin: 20px 0 40px 0;
 	.completed{
 		color: $primary-green;
 		.circle-step{

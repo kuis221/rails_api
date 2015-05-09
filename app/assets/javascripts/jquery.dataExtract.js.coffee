@@ -38,7 +38,6 @@ $.widget 'brandscopic.dataExtract', {
     maxHeight = $(window).height() - $('.data-extract-box').offset().top;
     diff = ($('#main-left-nav ul.nav').offset().top + $('#main-left-nav ul.nav').outerHeight() + $('footer').outerHeight()) -  $(window).height();
     maxHeight -= (140 - Math.max(diff, 0))
-    console.log("Diff: #{diff}; maxHeight: #{maxHeight}")
     $('.data-extract-box').css 'height': maxHeight+'px'
     @scrollerApi.reinitialise()
 

@@ -188,6 +188,19 @@ $back-arrow-width: 38px;
 		margin-left: 6px;
 		text-decoration: underline;
 	}
+	.btn {
+		height: 25px;
+		padding: 0px;
+	}
+	.btn-cancel {
+		background-color: $gray-dark;
+		&:hover {
+			background-color: $gray-darker;
+		}
+	}
+	.button_to {
+		margin-left: 10px;
+	}
 }
 
 .scrollspy-style{

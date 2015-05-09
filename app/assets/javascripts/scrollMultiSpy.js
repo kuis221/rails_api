@@ -10,10 +10,11 @@
     var process = $.proxy(this.process, this)
       , $element = $(element).is('body') ? $(window) : $(element)
       , href
+    this.originalElement = element
     this.options = $.extend({}, $.fn.scrollmultispy.defaults, options)
     this.$scrollElement = $element.on('scroll.scroll-spy.data-api', process)
     this.navs = $(this.options.target)
-    this.selector = ' ul li > a'
+    this.selector = ' ul li > a:not([data-spyignore])'
     this.$body = $('body')
     this.refresh()
     this.process()
@@ -62,12 +63,19 @@
             , activeTarget = nav.activeTarget
             , i
 
-          if (scrollTop >= maxScroll) {
-            return activeTarget != (i = targets.last()[0])
-              && self.activate ( i, nav )
-          }
+          // if (scrollTop >= maxScroll) {
+          //   return activeTarget != (i = targets.last()[0])
+          //     && self.activate ( i, nav )
+          // }
 
-          for (i = offsets.length; i--;) {
+          // for (i = offsets.length; i--;) {
+          //   activeTarget != targets[i]
+          //     && scrollTop >= offsets[i]
+          //     && (!offsets[i + 1] || scrollTop <= offsets[i + 1])
+          //     && self.activate( targets[i], nav )
+          // }
+
+          for (i = 0; i < offsets.length; i++) {
             activeTarget != targets[i]
               && scrollTop >= offsets[i]
               && (!offsets[i + 1] || scrollTop <= offsets[i + 1])
@@ -80,11 +88,16 @@
         var active
           , selector
 
+        // if (nav.activeTarget == target) {
+        //   return true;
+        // }
+
         nav.activeTarget = target
 
         $(nav).find(this.selector)
           .parent('.active')
           .removeClass('active')
+          .trigger('deactivate')
 
         selector = this.selector
           + '[data-spytarget="' + target + '"],'
@@ -101,6 +114,10 @@
 
         active.trigger('activate')
       }
+    , destroy: function () {
+      this.$scrollElement.off('scroll.scroll-spy.data-api')
+      $(this.originalElement).removeData('scrollmultispy', null)
+    }
 
   }
 
@@ -110,13 +127,13 @@
 
   var old = $.fn.scrollmultispy
 
-  $.fn.scrollmultispy = function (option) {
+  $.fn.scrollmultispy = function (option, args) {
     return this.each(function () {
       var $this = $(this)
         , data = $this.data('scrollmultispy')
         , options = typeof option == 'object' && option
       if (!data) $this.data('scrollmultispy', (data = new ScrollMultiSpy(this, options)))
-      if (typeof option == 'string') data[option]()
+      if (typeof option == 'string') data[option].apply(data, args)
     })
   }
 

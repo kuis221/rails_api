@@ -1,7 +1,8 @@
 - unless resource.errors.any?
   |
     $('.bootbox.modal').modal('hide');
-    $('#event-expenses-container').replaceWith('#{j render(partial: 'events/expenses', locals: {resource: parent})}')
+    $('#event-expenses-container').replaceWith('#{j render(partial: 'events/expenses', locals: {resource: parent})}');
+    $(document).trigger('expense:added');
 - else
   |
-    alert('#{j resource.errors.inspect}');
+    alert('#{j resource.errors.full_messages.join("\n")}');

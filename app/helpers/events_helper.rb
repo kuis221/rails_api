@@ -2,6 +2,26 @@ module EventsHelper
   include ActionView::Helpers::NumberHelper
   include SurveySeriesHelper
 
+  def update_event_details_bar(event)
+    presenter = present(event)
+    contents = render(partial: 'events/details_bar', locals: { resource: event, presenter: presenter })
+    "
+      $('.details-bar').replaceWith('#{j contents }');
+      $('body').scrollmultispy('destroy');
+      #{create_scrollmultispy_js}
+      $(window).trigger('scroll');
+    \n".html_safe
+  end
+
+  def create_scrollmultispy_js
+    "
+      $('body').scrollmultispy({
+          target: '.event-details-scroll-spy',
+          offset: 200
+      });
+    ".html_safe
+  end
+
   def kpi_goal_progress_bar(goal, result)
     return unless goal.present?
     result ||= 0

@@ -36,7 +36,6 @@ module Html
 
     def users_tags
       return if @model.users.nil?
-      users_list = ''
       @model.users.map do |team_member|
         h.content_tag(:div, class: 'user-tag has-tooltip', data: { title: h.contact_info_tooltip(team_member).to_str, trigger: :click, container: 'body' } ) do
           h.content_tag(:div, class: 'user-type') do
@@ -60,7 +59,7 @@ module Html
                 h.content_tag(:ul, class: 'unstyled phase-steps') do
                   phase[1].each.map do |step|
                     list_step = step[:complete] ?  h.content_tag(:i, '', class: 'icon-checked') : ''
-                    list_step << h.link_to(step[:title], "#event-#{step[:id]}")
+                    list_step << h.link_to(step[:title], "#event-#{step[:id]}", class: 'smooth-scroll')
                     list_step << ' '.html_safe + h.content_tag(:span, "(optional)", class: 'optional') unless step[:required]
                     h.content_tag(:li, list_step.html_safe, class: "#{'completed' if step[:complete]}")
                   end.join.html_safe
@@ -79,11 +78,10 @@ module Html
         steps.each.each_with_index.map do |step, i|
           h.content_tag(:li) do
             h.content_tag(:a, class: 'small no-decorate collapsed', 'aria-expanded': true, 'aria-controls': 'event-details-collapse',
-              data: {toggle: 'collapse', spytarget: ( i == 0 ? '#application-body' : "#event-#{step[:id]}")}, href: '#event-details-collapse') do
+              data: { toggle: 'collapse', spytarget: (i == 0 ? '#application-body' : "#event-#{step[:id]}") }, href: '#event-details-collapse') do
               h.content_tag(:span, phases[:phases].keys.index(name) + 1, class: 'phase-id') +
-              h.content_tag(:b, "#{name.to_s.upcase}: #{step[:title]}") +
-              h.content_tag(:span, '', class: 'arrow')
-
+                h.content_tag(:b, "#{name.to_s.upcase}: #{step[:title]}") +
+                h.content_tag(:span, '', class: 'arrow')
             end
           end
         end.join.html_safe
@@ -102,6 +100,24 @@ module Html
           phase[0].to_s.upcase
         end
       end.join.html_safe
+    end
+
+    def guided_bar
+      phases = @model.phases
+      guided_message = Html::EventGuidedMessagePresenter.new(@model, h)
+      steps = guided_message.current_steps
+      h.content_tag(:div, class: 'guide-bar text-center scrollspy-style event-details-scroll-spy') do
+        h.content_tag(:ul, id: 'event-guided-step-nav', class: 'unstyled switch-list') do
+          steps.each_with_index.map do |step, i|
+            h.content_tag(:li,  data: { next: guided_message.next_target_after(step[:id]) }) do
+              [
+                (i == 0 ? h.link_to('', '#application-body', data: { spytarget: '#application-body'}) : '') +
+                guided_message.send("#{phases[:current_phase]}_#{step[:id]}")
+              ].join.html_safe
+            end
+          end.join.html_safe
+        end
+      end
     end
   end
 end

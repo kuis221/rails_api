@@ -12,6 +12,7 @@
       $('.box_event_data').html("#{escape_javascript(render('results_event_data'))}").show();
       smoothScrollTo($('.box_event_data'));
       setTimeout(function(){ $(window).resize() });
+      $(document).trigger('per:completed')
   - else
     |
       $('.bootbox.modal').modal('hide');

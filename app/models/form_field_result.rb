@@ -55,6 +55,10 @@ class FormFieldResult < ActiveRecord::Base
     form_field.format_csv self
   end
 
+  def to_chart_data
+    form_field.format_chart_data self
+  end
+
   protected
 
   def valid_value?

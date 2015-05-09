@@ -79,7 +79,6 @@
         #event-contacts-list
           = render 'contacts'
 
-    #event-approve_per
     - resource.results.each { |r| r.errors.clear }
     - if resource.event_data? && !resource.rejected?
       = render 'show_results'
@@ -100,28 +99,37 @@
           #documents-list.resource-list
             = render :partial => "documents/document", :collection => resource.documents.active + resource.campaign.documents, :locals => { parent: resource }
 
-  = render partial: 'help_tutorial'
-  - if can_tasks
-    javascript:
-      if (#{can_tasks}){
-        $(document).on('tasks:change task:deactivated', function(){
-          $.get('#{tasks_event_path(resource)}', function(response){
-            $response = $('<div>').append(response);
-            $('#event-tasks').html($response.find('[data-content="tasks"]').html());
-          })
-        });
-      }
 
+#event-last
+= render partial: 'help_tutorial'
+- if can_tasks
   javascript:
-    $(document).ready(function() {
+    if (#{can_tasks}) {
+      $(document).on('tasks:change task:deactivated', function(){
+        $.get('#{tasks_event_path(resource)}', function(response){
+          $response = $('<div>').append(response);
+          $('#event-tasks').html($response.find('[data-content="tasks"]').html());
+        })
+      });
+    }
+
+- reload_page_on_edit_resource
+
+- content_for :footer
+  javascript:
+    jQuery(function(){
       $(window).bind('scroll', function() {
-        console.log($(window).scrollTop() + $('header').outerHeight() + ' > ' + $('header').outerHeight())
-        if (($(window).scrollTop() + $('header').outerHeight()) >  $('header').outerHeight()) {
+        if (($(window).scrollTop() + $('header').outerHeight()) >  ($('header').outerHeight() + ($('.new-feature').outerHeight() || 0)) ) {
           $('.details-bar').addClass('fixed');
+          $('#event-info.details_box').css({paddingTop: $('.guide-bar').outerHeight() + $('.details-bar').outerHeight()});
         }
         else {
           $('.details-bar').removeClass('fixed');
+          $('#event-info.details_box').css({paddingTop: $('.guide-bar').outerHeight()});
         }
-      });
+      })
+
+      #{create_scrollmultispy_js}
+
+      $(window).trigger('scroll');
     });
-  - reload_page_on_edit_resource

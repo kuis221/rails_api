@@ -16,4 +16,8 @@ class BasePresenter < SimpleDelegator
   def datetime(d)
     Timeliness.parse(d.strftime(STRFTIME_FORMAT), zone: 'UTC').strftime(EXPORT_FORMAT)
   end
+
+  def can?(action)
+    h.can?(action, @model)
+  end
 end
