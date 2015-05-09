@@ -4,7 +4,8 @@
 // NEW STRUCTURE
 .details-bar
   .back-arrow
-    i.icon-angle-left
+    a href="#{events_path}"
+      i.icon-angle-left
   .panel
     #headingOne.panel-heading role="tab"
       .row-fluid
@@ -12,7 +13,7 @@
           nav class="scrollspy-style event-details-scroll-spy"
             ul.switch-list.unstyled
               li
-                a href="" data-spytarget="#application-body"
+                a href="#event-details-collapse" data-toggle="collapse" data-spytarget="#application-body"
                   span Viewing event details screen.
               li
                 a href="#event-details-collapse" data-toggle="collapse" data-spytarget="#event-details-info-end"

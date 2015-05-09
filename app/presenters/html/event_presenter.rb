@@ -50,9 +50,10 @@ module Html
     def render_nav_phases
       return if @model.phases.nil?
       current_phase = @model.phases[:current_phase]
+      index_phase = phases[:phases].keys.index(current_phase)
       h.content_tag(:ul, id: 'event-phases-step', class: 'unstyled phases-list') do
         @model.phases[:phases].each_with_index.map do |phase, i|
-          h.content_tag(:li, class: "#{'active-phase' if phase[0] == current_phase}") do
+          h.content_tag(:li, class: "#{'active-phase' if phase[0] == current_phase} #{'completed' if i < index_phase}") do
             h.content_tag(:span, i + 1, class: 'phase-id') +
             h.content_tag(:b, phase[0].to_s.upcase, class: 'phase') + (
               if current_phase == phase[0]
@@ -61,7 +62,7 @@ module Html
                     list_step = step[:complete] ?  h.content_tag(:i, '', class: 'icon-checked') : ''
                     list_step << h.link_to(step[:title], "#event-#{step[:id]}")
                     list_step << ' '.html_safe + h.content_tag(:span, "(optional)", class: 'optional') unless step[:required]
-                    h.content_tag(:li, list_step.html_safe)
+                    h.content_tag(:li, list_step.html_safe, class: "#{'completed' if step[:complete]}")
                   end.join.html_safe
                 end
               end)
@@ -87,6 +88,20 @@ module Html
           end
         end.join.html_safe
       end
+    end
+
+    def current_phases_indicator
+      return if @model.phases.nil?
+      phases = @model.phases
+      current_phase = phases[:current_phase]
+      index_phase = phases[:phases].keys.index(current_phase)
+      phases[:phases].each_with_index.map do |phase, i|
+        h.content_tag(:span, class: "step #{'active' if phase[0] == current_phase} #{'completed' if i < index_phase}") do
+          value_phase =  i < index_phase ? h.content_tag(:i, '', class: 'icon-checked') : i + 1
+          h.content_tag(:span, value_phase, class: 'circle-step') +
+          phase[0].to_s.upcase
+        end
+      end.join.html_safe
     end
   end
 end
