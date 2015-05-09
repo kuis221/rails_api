@@ -151,6 +151,8 @@ jQuery ->
 		$('.has-popover').popover({html: true})
 		$("input:checkbox, input:radio").not('[data-no-uniform="true"], #uniform-is-ajax, .bs-checkbox').uniform()
 
+		$('.elements-range').keyup()
+
 		$('.segment-field').keyup()
 
 		$(".fancybox").fancybox {
@@ -197,14 +199,15 @@ jQuery ->
 				$(element).removeClass('valid').closest('.field-option').removeClass('success').addClass('error')
 			else
 				$(element).removeClass('valid').closest('.control-group').removeClass('success').addClass('error')
-
+				# For percentage fields
+				$('#progress-error-' + $(element).data('segment-field-id')).removeClass('success').addClass('error')
+				$('#progress-error-' + $(element).data('segment-field-id')).closest('.form_field_percentage').find('.control-group-label').find('.ok-message').remove()
 		errorPlacement: (error, element) ->
 			label = element.closest(".control-group").find("label.control-label[for=\"#{element.attr('id')}\"]")
 			label = element.closest(".control-group").find("label.control-label") if label.length is 0
 			label.addClass('with_message')
 			if label.length > 0
 				error.insertAfter label
-
 		focusInvalid: false,
 		invalidHandler: (form, validator) ->
 			return unless validator.numberOfInvalids()
@@ -216,13 +219,35 @@ jQuery ->
 				scrollTop: element.offset().top - 200
 			, 1000
 		success: (element) ->
-			element.addClass('valid').append('<span class="ok-message"><span>OK!</span></span>')
-				.closest('.control-group').removeClass('error')
+			element.addClass('valid').append('<span class="ok-message"><span>OK!</span></span>').closest('.control-group').removeClass('error')
 			element.closest('.field-option').removeClass('error')
+			# For percentage fields
+			$('#progress-for-' + element.data('segment-field-id')).removeClass('error')
+			element.closest('.form_field_percentage').find('.control-group-label').find('.ok-message').remove()
+			element.closest('.form_field_percentage').find('.control-group-label').append('<span class="ok-message"><span>OK!</span></span>')
+		onkeyup: (element, event) ->
+			items = items_count(element)
+			$('#item-counter-' + $(element).data('field-id')).html(items);
+
+			if event.which == 9 and @elementValue(element) == ''
+				return true
 	}
 
 	window.makeFormValidatable = (e) ->
 		e.validate()
+
+	items_count = (field) ->
+		number = 0
+
+		if $(field).data('range-format') == 'characters'
+			number = field.value.length
+		else if $(field).data('range-format') == 'words'
+			matches = $(field).val().split(' ')
+			number = matches.filter((word) ->
+				word.length > 0
+			).length
+
+		number
 
 	# Check what graph labels are colliding with others and adjust the position
 	$(window).on 'resize ready', () ->
@@ -239,7 +264,6 @@ jQuery ->
 			for label, i in labels
 				$label = $(label)
 				# if $(label).text() is '101'
-				# 	debugger
 				position = $label.offset()
 				level = 0
 				for o, j in labels

@@ -246,7 +246,6 @@ feature 'Post Event Data' do
         expect(page).to have_content('TOTAL:2,100')
       end
 
-      # screenshot_and_open_image
       visit event_path(event)
 
       # expect(page).to still display the post-event format and not the form
@@ -397,6 +396,15 @@ feature 'Post Event Data' do
 
       visit event_path(event)
 
+      expect(find_field('Numeric with Min Max')).to have_hint('Enter a number between 5 and 20.')
+      expect(find_field('Numeric Max')).to have_hint('Enter a number no higher than 20.')
+      expect(find_field('Price with Min Max')).to have_hint('Enter a number between 2 and 4.')
+      expect(find_field('Price Min')).to have_hint('Enter a number higher than 2.')
+      expect(find_field('Text with Min Max')).to have_hint('Must be between 1 and 10 characters. Currently: 0 characters')
+      expect(find_field('Text Max')).to have_hint('Must be no more than 10 characters. Currently: 0 characters')
+      expect(find_field('Text Area with Min Max')).to have_hint('Must be between 3 and 5 words. Currently: 0 words')
+      expect(find_field('Text Area Min')).to have_hint('Must be at least 3 words. Currently: 0 words')
+
       fill_in('Numeric with Min Max', with: 35)
       fill_in('Numeric Max', with: 35)
       fill_in('Price with Min Max', with: 1)
@@ -405,6 +413,11 @@ feature 'Post Event Data' do
       fill_in('Text Max', with: 'This field has more than 10 characters')
       fill_in('Text Area with Min Max', with: 'Incorrect text')
       fill_in('Text Area Min', with: 'Incorrect text')
+
+      expect(find_field('Text with Min Max')).to have_hint('Must be between 1 and 10 characters. Currently: 38 characters')
+      expect(find_field('Text Max')).to have_hint('Must be no more than 10 characters. Currently: 38 characters')
+      expect(find_field('Text Area with Min Max')).to have_hint('Must be between 3 and 5 words. Currently: 2 words')
+      expect(find_field('Text Area Min')).to have_hint('Must be at least 3 words. Currently: 2 words')
 
       click_js_button 'Save'
 
