@@ -104,7 +104,7 @@ select.chosen-enabled{
 		}
 	}
 	.chzn-default {
-		color: #999;
+		color: $silver;
 	}
 	.chzn-single{
 		span {
@@ -351,7 +351,7 @@ select.chosen-enabled{
 		border:1px solid $user_menu;
 		box-shadow: 0 0 5px rgba(0, 0, 0, 0);
 		li.search-field input {
-			color: #111 !important;
+			color: $text !important;
 		}
 	}
 }

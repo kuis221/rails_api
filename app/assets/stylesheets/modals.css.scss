@@ -617,7 +617,10 @@ ul.select2-results{
 			input{
 				width: 100%;
 				&[type="text"]{
-					color: $text !important;
+					color: $text;
+					&.default{
+						color: $silver;
+					}
 					&.search-place-box {
 						padding-right: 30px;
 					}

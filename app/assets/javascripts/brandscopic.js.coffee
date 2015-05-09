@@ -560,6 +560,7 @@ jQuery ->
 				if not found and $link.data('default-content')
 					$link.html $link.data('default-content')
 					$link.data 'default-content', null
+		true
 
 
 	lazyLoadElements = () ->
@@ -632,6 +633,7 @@ jQuery ->
 					true
 				else # On small screens, leave it static
 					$filterSidebar.css({position: ''}).addClass('responsive-mode')
+			true
 		).trigger('scroll')
 
 	$(document).on 'click', '[data-toggle="filterbar"]', (e) ->

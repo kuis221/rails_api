@@ -23,18 +23,16 @@
         'Welcome to the Event Details page. On this page you can edit event information, fill out Post Event data, as well as submit, approve, or reject reports. Click on the video to the left for a quick overview or visit our
         a> href="http://support.brandscopic.com" target="_blank" support site
         | for more information about this section.
-#top
+
 .row-fluid.with-details-close-bar 
   = render 'details_bar'
-  //.span data-spy="scroll" data-target="#spyOnThis"
-  .span
-    .details_box class="#{(resource.place.nil? or resource.place.latitude.nil?) ?  'padding-top-close-bar' : ''}"
+  div
+    #event-info.details_box class="#{(resource.place.nil? or resource.place.latitude.nil?) ?  'padding-top-close-bar' : ''}"
 
-      .phases
-        h5 = 'EVENT PHASES'
-      // Can we add the steps from results to use same structure and styles?
-
-
+      .phases-top-nav
+        h5.pull-left = 'EVENT PHASES:'
+        = presenter.current_phases_indicator
+        
       .row-fluid.details_first_container
         .span6
           .details-title
@@ -59,10 +57,11 @@
               span= simple_format resource.description
 
           - if can?(:view_members, resource)
-            - unless resource.users.empty? && resource.teams.empty?    
+            - unless resource.users.empty? && resource.teams.empty?
               #event-team-members.add-details-info
                 i.icon-team.indicate-icon
                 = presenter.team_members
+
         .span6.map_container
           - unless resource.place.nil? || resource.place.latitude.nil? || resource.place.latitude == 1.0
             #venue-map-canvas.google-map data-latitude="#{resource.place.latitude}" data-longitude="#{resource.place.longitude}"
@@ -71,7 +70,7 @@
                 = event_date(resource, :start_at).to_s
                 br>/
                 = place_address(resource.place)
-      #test
+    #event-details-info-end
 
 
     - if can?(:view_contacts, resource)
@@ -80,6 +79,7 @@
         #event-contacts-list
           = render 'contacts'
 
+    #event-approve_per
     - resource.results.each { |r| r.errors.clear }
     - if resource.event_data? && !resource.rejected?
       = render 'show_results'
@@ -101,13 +101,6 @@
             = render :partial => "documents/document", :collection => resource.documents.active + resource.campaign.documents, :locals => { parent: resource }
 
   = render partial: 'help_tutorial'
-  - content_for :footer do
-  - unless resource.place.nil?
-    javascript:
-      $(document).ready(function() {
-        $(this).scrollTop(400);
-      });
-
   - if can_tasks
     javascript:
       if (#{can_tasks}){
@@ -122,7 +115,8 @@
   javascript:
     $(document).ready(function() {
       $(window).bind('scroll', function() {
-        if ($(window).scrollTop() > 35) {
+        console.log($(window).scrollTop() + $('header').outerHeight() + ' > ' + $('header').outerHeight())
+        if (($(window).scrollTop() + $('header').outerHeight()) >  $('header').outerHeight()) {
           $('.details-bar').addClass('fixed');
         }
         else {
@@ -130,6 +124,4 @@
         }
       });
     });
-    
-    $('#spyOnThis').scrollspy();
   - reload_page_on_edit_resource

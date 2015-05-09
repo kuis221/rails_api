@@ -144,6 +144,11 @@ $margin-right: 240px;
 				height: auto;
 				width:auto;
 				min-width:220px;
+
+				&.form_field_number, &.form_field_textarea{
+					width: 390px;
+				}
+
 				label.radio .radio{
 					margin-right: 10px;
 				}

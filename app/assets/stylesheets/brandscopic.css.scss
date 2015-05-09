@@ -404,6 +404,9 @@ body{
 // --------------------------------------------------
 
 body.events.show{
+	#event-info.details_box {
+		padding-top: 55px;
+	}
 	.event-contact {
 		a.edit {
 			display: none;
@@ -1492,150 +1495,6 @@ footer{
 	}
 }
 
-// HEADER STYLES
-// --------------------------------------------------
-
-.navbar .nav > .active > a, .navbar .nav > .active > a:hover, .navbar .nav > .active > a:focus{
-	box-shadow: none;
-}
-
-header{
-	&.navbar-inverse {
-		.nav > li > a{
-			color:$user_menu;
-			text-shadow: none;
-		}
-		.navbar-inner {
-			background-color: $header;
-			padding: 0;
-			background-image: none;
-			border-bottom: 0;
-
-			.nav {
-				margin: 0;
-				>li>a{
-					border-radius: 0px;
-					box-sizing:border-box;
-					margin: 0;
-					padding: 13px 14px 14px;
-					line-height: 16px;
-					height: 43px;
-					white-space: nowrap;
-					&:hover {
-						background-color: $menu;
-					}
-				}
-
-				ul.dropdown-menu{
-					background-color: $gray;
-					box-shadow: none;
-					margin-top: 12px;
-					border:1px solid #707070;
-					li{
-						a {
-							color: $app_bg;
-							font-size: 13px;
-							font-weight: bold;
-							padding: 6px 15px;
-							span{
-								color: $app_bg;
-								font-size: 15px;
-								margin-right: 10px;
-								position: relative;
-								top: 3px;
-								&.icon-user{
-									font-size: 13px;
-								}
-							}
-							&:hover{
-								color: $white;
-								background-color: $menu;
-								span{
-									color: $white;
-								}
-							}
-						}
-					}
-				}
-				li.dropdown.open,
-				li.dropdown.open.active {
-					&>.dropdown-toggle {
-						color: $silver;
-						background-color: $menu;
-					}
-				}
-				li.dropdown.active{
-					&> .dropdown-toggle{
-						color: $silver;
-						background-color: $header;
-						&:hover{
-							color: $white;
-							background-color: $gray-darker;
-						}
-					}
-				}
-				.dropdown-menu>li>a:hover,
-				.dropdown-menu>li>a:focus,
-				.active ul li.active a,
-				.dropdown-submenu:hover>a,
-				.dropdown-submenu:focus>a {
-					background-image: none;
-					background-color: $menu;
-				}
-				li#user_menu {
-					>a {
-						padding-top: 14px;
-						padding-bottom: 13px;
-					}
-					.icon-arrow-down:before {
-						font-size: 12px;
-						top: 4px;
-						right: -5px;
-					}
-					ul.dropdown-menu{
-						box-shadow: none;
-						margin-top: 12px;
-						width: 186px !important;
-						right: 8px !important;
-						left: auto !important;
-						&:before{
-							border-bottom: 10px solid $gray;
-							left:155px;
-						}
-					}
-				}
-
-				li#notifications {
-					ul li a {
-						padding-left: 0;
-						padding-right: 0;
-					}
-				}
-				li#help_menu {
-					span:before {
-						left: 4px;
-						font-size: 16px;
-						vertical-align: middle;
-					}
-				}
-				li#admin{
-					ul.dropdown-menu{
-						min-width: 200px;
-						left: -161px;
-						&:before{
-							border-bottom: 10px solid $gray;
-							left: 170px;
-						}
-					}
-					.icon-gear:before {
-						font-size: 16px;
-					}
-				}
-			}
-		}
-	}
-}
-
 li.dropdown a{
 	color:$user_menu;
 }
@@ -1859,177 +1718,7 @@ label{
 li#user_menu{
 	margin-right:8px;
 }
-li#notifications{
-	.notification-state{
-		background-color: #626763;
-		color: $white;
-		border: 1px solid $header;
-		text-align:center;
-		font-size: 9px;
-		line-height: 16px;
-		border-radius:12px;
-		height: 15px;
-		width:15px;
-		position:absolute;
-		z-index:9;
-		right: 4px;
-		top:6px
-	}
-	.icon-bell{
-		position:relative;
-		top:2px;
-	}
-	&:hover, &:active, &.open{
-		.notification-state{
-			border: 1px solid $menu;
-		}
-	}
 
-	&.has-notifications {
-		.dropdown-toggle:hover { color:  #fff; }
-		.notification-state { background-color:  $primary_red; }
-	}
-
-	&.without-notifications ul {
-		height: 100%;
-		li.empty-state {
-			height: 100%;
-			width: 100%;
-			background-color: #cccccc;
-			color: #A5A4A5;
-			p {
-				display: table;
-				margin: 40% auto;
-				font-weight: bold;
-			}
-			&:hover {
-				background-color: #cccccc;
-			}
-		}
-	}
-
-	.notifications-container{
-		background-color: #cccccc;
-		height: 261px;
-		margin-bottom: 2px;
-		ul li{
-			width: 100%;
-			i{
-				font-size: 17px;
-				margin: 0 10px;
-				position: relative;
-				top: 2px;
-			}
-		}
-
-		.jspVerticalBar {
-			width: 7px;
-			.jspTrack {
-				width: 7px;
-			}
-			.jspDrag {
-				width: 5px;
-			}
-		}
-	}
-
-	.dropdown-menu{
-		background-color: $gray-lighter;
-		border: 1px solid #d5d5d5;
-		box-shadow: none;
-		margin-top: 12px;
-		min-width: 270px;
-		left: -181px;
-		h5{
-			color: $text;
-			font-size: 13px;
-			font-weight: bold;
-			padding-left: 7px;
-			margin-top: 5px;
-		}
-		&:before {
-			left: 199px;
-			border-bottom: 10px solid $gray-lighter;
-		}
-		ul {
-			border-collapse: collapse;
-			display: table;
-			list-style: none;
-			margin: 0;
-			padding: 0;
-			width: 100%;
-			li {
-				display: inline-block;
-				vertical-align: middle;
-				background-color: #fff;
-				border-top: 1px solid $borders;
-				position:relative;
-				padding: 10px 0;
-
-				&:first-child{
-					border-top: 0;
-				}
-				&.red {
-					background-color: $primary-red;
-					&:hover{
-						background-color: #cc4137;
-					}
-				}
-				&.blue {
-					background-color: $primary-blue;
-					&:hover{
-						background-color: #3990bf;
-					}
-				}
-				&.grey {
-					background-color: $brand;
-					&:hover{
-						background-color:#858585;
-					}
-				}
-
-				.alert-message{
-					display: inline-block;
-					font-weight: 500;
-					font-size: 13px;
-					width: 220px;  /* leave room for the scrollbar */
-					line-height: 16px;
-					span{
-						color: $gray-lighter;
-					}
-				}
-
-				&:hover{
-					background-color: $app_bg;
-					.icon-notification-event:before, .icon-notification-task:before,
-					.icon-notification-comment:before, .icon-notification-campaign:before,
-					.icon-notification-action:before, .icon-notification-group:before,
-					.icon-notification-venue:before, .icon-angle-right:before{
-						color:$white;
-					}
-				}
-
-				// Icons
-				a{
-					color: $white;
-					font-size: 11px;
-					display: table-cell;
-					vertical-align: middle;
-					height: 32px;
-					i{
-						&.icon-angle-right{
-							position: absolute;
-							top: 21px;
-						}
-					}
-					&:hover{
-						text-decoration: none;
-					}
-				}
-			}
-		}
-	}
-}
 
 .dropdown-menu{
 	box-shadow: none;
@@ -2551,71 +2240,6 @@ ul.ui-widget-content{
 	}
 }
 
-#company-name {
-	font-size: 20px;
-	margin-bottom: 0;
-	margin-top: 0;
-	padding: 5px 0 0 25px;
-	height: 35px;
-	a {
-		color: $brand;
-		text-decoration: none;
-		&.dropdown-toggle{
-			&:after{
-				content: "\e607";
-				color: $brand;
-				display: inline-block;
-				font-family: 'icons';
-				font-size: 12px;
-				left: 5px;
-				padding-bottom: 5px;
-				position: relative;
-				top: 5px;
-				speak: none;
-				text-align: center;
-				vertical-align: middle;
-				-webkit-font-smoothing: antialiased;
-			}
-		}
-	}
-	.caret{
-		display: none;
-	}
-	.dropdown-menu{
-		min-width:260px;
-		li a{
-			font-weight: bold;
-			&:hover{
-				background-color: $menu !important;
-				background-image: none;
-			}
-		}
-	}
-	.dropdown.open{
-		li a{
-			color: $app_bg;
-			font-size: 13px;
-			padding: 6px 15px;
-			&:hover{
-				color: $white;
-			}
-		}
-		&>.dropdown-menu{
-			background-color: $gray;
-			border: 1px solid #707070;
-			-webkit-box-shadow: none;
-			-moz-box-shadow: none;
-			box-shadow: none;
-			left: -13px;
-			margin: 15px 0 0;
-			&:before{
-				border-bottom: 10px solid $gray;
-				left: 230px;
-			}
-		}
-	}
-}
-
 #company_user-places-list{
 	margin-top: 36px;
 }
@@ -2879,7 +2503,7 @@ ul.ui-widget-content{
 		text-decoration: none;
 		color: $brand;
 		.primary-info {
-			color: $white;
+			color: $gray-lighter;
 			display: inline-block;
 			margin-bottom: 0;
 			margin-top: 0;
@@ -3107,7 +2731,6 @@ ul.ui-widget-content{
 			&.control-label{
 				color: $text;
 				display: inline-block;
-				font-size: 14px;
 				&.field-label{
 					color: $text;
 				}
@@ -3440,7 +3063,7 @@ body.events.index {
 			}
 		}
 
-		span.form-result-label {
+		.form-result-label {
 			font-weight: bold;
 			display: block;
 		}
@@ -3460,26 +3083,45 @@ body.events.index {
 		}
 		&.result_text_area, &.result_text {
 			.form-result-value {
-				width: 450px;
+				width: 460px;
+				margin-top: 6px;
 				display: block;
 			}
 		}
-		&.result_number, &.result_currency, &.result_brand, &.result_date, &.result_time {
-			.form-result-label {
-				text-transform: uppercase;
-				font-weight: normal;
-				color: $brand;
-				font-size: 11px;
-			}
-		}
-		&.result_checkbox, &.result_dropdown{
-			font-size:13px;
-		}
 		&.result_number, &.result_currency {
 			.form-result-value {
+				font-size: 16px;
+			}
+		}
+		&.result_number, &.result_currency, &.result_brand, &.result_time, &.result_date,{
+			.form-result-value{
 				color: $primary-blue;
-				font-size: 22px;
-				font-weight:bold;
+				display: block;
+				&:before{
+					position: relative;
+					font-family: 'icons';
+					font-size: 16px;
+					margin-right: 15px;
+				}
+			}
+		}
+		&.result_brand{
+			.form-result-value{
+				&:before{
+					top: 2px;
+					content: "\e628";
+				}
+			}
+		}
+		&.result_time .form-result-value:before {
+			top: 6px;
+			font-size: 20px;
+			content: "\e61b";
+		}
+		&.result_date .form-result-value{
+			&:before {
+				top: 2px;
+				content: "\e61e";
 			}
 		}
 		&.result_brand, &.result_date, &.result_time {
@@ -3490,48 +3132,24 @@ body.events.index {
 					content: ":";
 				}
 			}
-			.form-result-value:before{
-				color: $user_menu;
-				display: inline-block;
-				font-family: 'icons';
-				position:relative;
-				top: 2px;
-				speak: none;
-				text-shadow: none;
-				-webkit-font-smoothing: antialiased;
-				-moz-osx-font-smoothing: grayscale;
-				margin-right: 10px;
-				font-size: 14px;
-			}
 			.form-result-value i {
-				font-size: 10px;
 				font-style: normal;
 			}
 		}
-		&.result_checkbox {
+		&.result_checkbox, &.result_radio {
 			margin-bottom: 30px;
 			.form-result-value span {
+				color: $primary-blue;
 				display: block;
 				margin-top: 5px;
 				i.icon {
-					color: $primary-blue;
-					margin-right: 5px;
+					font-size: 16px;
+					margin-right: 15px;
 					&:before {
-						top: 2px;
+						top: 4px;
 					}
 				}
 			}
-		}
-		&.result_brand .form-result-value:before {
-			content: "\e030";
-		}
-		&.result_time .form-result-value:before {
-			top: 4px;
-			font-size: 16px;
-			content: "\e01f";
-		}
-		&.result_date .form-result-value:before {
-			content: "\e022";
 		}
 		&.result_attachment {
 			.form-result-label {
@@ -4760,8 +4378,42 @@ body.roles{
 // MAPS ZONE FOR VENUE AND EVENT DETAILS
 // Same structure for both pages
 
-.phases{
+.phases-top-nav{
 	color: $silver;
+	font-weight: bold;
+	margin: 10px 0 40px 0;
+	.completed{
+		color: $primary-green;
+		.circle-step{
+			background-color: $primary-green;
+			border-color: $primary-green;
+			color: $white;
+			.icon-checked{
+				position: relative;
+				top: 3px;
+			}
+		}
+	}
+	.active{
+		color: $text;
+		.circle-step{
+			border: 2px solid $text;
+		}
+	}
+	.step{
+		font-size: 12px;
+	}
+	.circle-step{
+		border: 2px solid $silver;
+		display: inline-block;
+		height: 22px;
+		@include border-radius(15px);
+		line-height: 22px;
+		margin-right: 8px;
+		margin-left: 15px;
+		text-align: center;
+		width: 22px;
+	}
 }
 
 .details-title{
@@ -4939,14 +4591,16 @@ table.table td.comments-container {
 }
 
 //MAIN - Without top left rounded corner
-.event_data, .comments, .photos, .expenses, .surveys, .tasks{
+.event_data, .comments, .expenses, .surveys, .tasks{
 	.main{
-		-webkit-border-radius: 0px 7px 7px 7px;
-		border-radius: 0px 7px 7px 7px;
+		@include border-radius(0px 7px 7px 7px);
 	}
 }
 
 .photos{
+	.main{
+		@include border-radius(7px);
+	}
 	.gallery{
 		margin-top: 12px !important;
 	}
@@ -7750,13 +7404,6 @@ form.button_to .button-with-icon {
   background: none;
   outline: none;
   line-height: normal;
-}
-
-.fixed {
-	position: fixed!important;
-	top: 80px;
-	width: calc(100% - 100px);
-	z-index: 1;
 }
 
 // Tooltips for contacts section
