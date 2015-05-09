@@ -50,8 +50,7 @@ module Html
     def render_nav_phases
       return if @model.phases.nil?
       current_phase = @model.phases[:current_phase]
-      index_phase = nil
-      @model.phases[:phases].each_with_index { |phase, i| index_phase = i if phase[0] == current_phase}
+      index_phase = phases[:phases].keys.index(current_phase)
       h.content_tag(:ul, id: 'event-phases-step', class: 'unstyled phases-list') do
         @model.phases[:phases].each_with_index.map do |phase, i|
           h.content_tag(:li, class: "#{'active-phase' if phase[0] == current_phase} #{'completed' if i < index_phase}") do
@@ -96,7 +95,6 @@ module Html
       phases = @model.phases
       current_phase = phases[:current_phase]
       index_phase = phases[:phases].keys.index(current_phase)
-      #@model.phases[:phases].each_with_index { |phase, i| index_phase = i if phase[0] == current_phase}
       phases[:phases].each_with_index.map do |phase, i|
         h.content_tag(:span, class: "step #{'active' if phase[0] == current_phase} #{'completed' if i < index_phase}") do
           value_phase =  i < index_phase ? h.content_tag(:i, '', class: 'icon-checked') : i + 1
