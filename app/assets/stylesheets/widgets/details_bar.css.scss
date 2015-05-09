@@ -133,6 +133,15 @@ $back-arrow-width: 38px;
 
 .phases-list{
 	font-size: 12px;
+	.completed{
+		color: $primary-green;
+		a {
+			color: $primary-green;
+		}
+		.phase-id{
+			background-color: $primary-green;
+		}
+	}
 	.active-phase{
 		.phase {
 			color: $primary-green;

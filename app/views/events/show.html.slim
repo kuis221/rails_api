@@ -31,22 +31,8 @@
 
       .phases-top-nav
         h5.pull-left = 'EVENT PHASES:'
-        span.step.completed
-          span.circle-step
-            i.icon-checked
-          | PLAN
-
-        span.step.active
-          span.circle-step
-            | 2
-          | EXECUTE
-
-        span.step
-          span.circle-step
-            | 3
-          | RESULTS
-
-
+        = presenter.current_phases_indicator
+        
       .row-fluid.details_first_container
         .span6
           .details-title
