@@ -2,7 +2,7 @@
   |
     $('.bootbox.modal').modal('hide');
     $('#event-expenses-container').replaceWith('#{j render(partial: 'events/expenses', locals: {resource: parent})}');
-  = update_event_details_bar(resource)
+  = update_event_details_bar(resource.event)
   |  $(document).trigger('expense:added');
 - else
   |
