@@ -99,39 +99,22 @@ feature 'Events section' do
       end
 
       feature 'Close bar' do
-        let(:events)do
-          [
-            create(:submitted_event,
-                   start_date: '08/21/2013', end_date: '08/21/2013',
-                   campaign: create(:campaign, name: 'Campaign #1 FY2012', company: company)),
-            create(:submitted_event,
-                   start_date: '08/28/2013', end_date: '08/29/2013',
-                   campaign: create(:campaign, name: 'Campaign #2 FY2012', company: company)),
-            create(:submitted_event,
-                   start_date: '08/28/2013', end_date: '08/29/2013',
-                   campaign: create(:campaign, name: 'Campaign #3 FY2012', company: company)),
-            create(:event, campaign: create(:campaign, name: 'Campaign #4 FY2012', company: company))
-          ]
-        end
-
-        scenario 'Close bar should return the list of events' do
-          events  # make sure users are created before
-          Sunspot.commit
+        scenario 'clicking the return button should preserve the filter tags' do
+          create(:submitted_event, campaign: campaign)
           visit events_path
 
-          expect(page).to have_selector('#events-list .resource-item', count: 1)
           add_filter 'EVENT STATUS', 'Submitted'
+          add_filter 'EVENT STATUS', 'Approved'
           remove_filter 'Today To The Future'
-          expect(page).to have_selector('#events-list .resource-item', count: 3)
 
-          within resource_item(2) do
+          within resource_item(1) do
             click_js_link 'Event Details'
           end
 
-          expect(page).to have_selector('h2', text: 'Campaign #2 FY2012')
-
           close_resource_details
-          expect(page).to have_selector('#events-list .resource-item', count: 2)
+          expect(collection_description).to have_filter_tag 'Submitted'
+          expect(collection_description).to have_filter_tag 'Approved'
+          expect(collection_description).to_to have_filter_tag 'Today To The Future'
         end
       end
 

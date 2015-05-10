@@ -83,18 +83,9 @@ module Html
     end
 
     def results_last
-      if @model.approved?
-        message_with_buttons 'Your post event report has been approved. Check out your post event results below for a recap of your event.', :last,
-                            [unapprove_button]
-      else
-        if can?(:approve)
-          message_with_buttons 'Your post event report has been submitted for approval. '\
-                              'Please review and either approve or reject.', :last,
-                              [approve_button, reject_button]
-        else
-          info 'Your post event report has been submitted for approval. Once your report has been reviewed you will be alerted in your notifications.', :last
-        end
-      end
+      return '' unless @model.approved?
+      message_with_buttons 'Your post event report has been approved. Check out your post event results below for a recap of your event.', :last,
+                           [unapprove_button]
     end
 
     def yes_or_skip(message, step)
