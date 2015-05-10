@@ -77,7 +77,7 @@ class EventsController < FilteredController
     return unless resource.submitted? && reject_reason.present?
 
     resource.reject!
-    resource.update_column(:reject_reason, reject_reason)
+    resource.update_columns(reject_reason: reject_reason, rejected_at: Time.now)
     resource.users.each do |company_user|
       if company_user.allow_notification?('event_recap_rejected_sms')
         sms_message = I18n.translate(

@@ -259,6 +259,7 @@ $.widget 'nmk.formBuilder', {
 		, 500
 
 	_addFieldToForm: (options) ->
+		@element.find('.empty-form-legend').hide()
 		if options.kpi_id? && @kpiInForm(options)
 			return false
 

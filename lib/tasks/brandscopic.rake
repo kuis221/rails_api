@@ -25,8 +25,12 @@ namespace :brandscopic do
     s3 = AWS::S3.new
     AttachedAsset.photos.where(attachable_type: 'Event')
       .joins('INNER JOIN events ON events.id=attachable_id').find_each do |at|
+      if at.file.exists?
+        Rails.logger.info "Skpping asset #{at.id} because it exists in the bucket #{ENV['S3_BUCKET_NAME']}"
+        next
+      end
       (at.file.styles.keys + [:original]).each do |style_name|
-        key =  at.file.path(style_name).gsub(/^\//,'')
+        key = at.file.path(style_name).gsub(/^\//,'')
         begin
           if s3.buckets[production_bucket].objects[key].exists?
             s3.buckets[production_bucket].objects[key].copy_to(

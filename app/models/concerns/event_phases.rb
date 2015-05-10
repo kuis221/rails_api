@@ -44,7 +44,9 @@ module EventPhases
 
   def execute_phases
     @execute_phases ||= [].tap do |phases|
-      phases.push(id: :per, title: 'Post Event Recap', complete: event_data?, required: true)
+      phases.push(id: :per, title: 'Post Event Recap',
+                  complete: event_data?, required: true
+                 ) if campaign.form_fields.any?
       phases.push(id: :activities, title: 'Activities',
                   complete: activities.any?,
                   if: proc { |_| can?(:show, Activity) }

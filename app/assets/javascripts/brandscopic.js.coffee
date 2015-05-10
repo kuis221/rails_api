@@ -180,6 +180,8 @@ jQuery ->
 
 		$('.select-list-seach-box').selectListSearch()
 
+		$("abbr.timeago").timeago();
+
 		updateSummationTotals()
 
 	window.smoothScrollTo = (element, link) ->

@@ -1,6 +1,6 @@
 - enabled_modules = resource.campaign.enabled_modules
 
-- if can?(:edit_data, resource)
+- if can?(:edit_data, resource) && resource.campaign.form_fields.any?
   = render partial: 'edit_event_data'
 
 / Activities module

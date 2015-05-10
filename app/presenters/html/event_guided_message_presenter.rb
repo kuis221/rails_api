@@ -54,7 +54,7 @@ module Html
 
     def execute_last
       if @model.rejected?
-        message_with_buttons 'Your post event report form has been rejected for the following reasons: <br />' +
+        message_with_buttons "Your post event report form was rejected #{rejected_at} for the following reasons: <br />" +
                              @model.reject_reason +
                              '<p>Please make the necessary changes and resubmit when ready</p>', :last,
                              [submit_button]
@@ -70,8 +70,12 @@ module Html
 
     def results_approve_per
       if can?(:approve)
-        message_with_buttons 'Your post event report has been submitted for approval. '\
-                            'Please review and either approve or reject.', :approve_per,
+        rejection_message = if @model.reject_reason
+           "<br />It was previously rejected #{rejected_at} for the following reason: <br />#{@model.reject_reason}<br />"
+        end
+        message_with_buttons "Your post event report has been submitted for approval. #{rejection_message}" +
+                            'Please review and either approve or reject.' +
+                            (rejection_message ? '<br />' : ''), :approve_per,
                             [approve_button, reject_button]
       else
         info 'Your post event report has been submitted for approval. Once your report has been reviewed you will be alerted in your notifications.', :approve_per
@@ -145,9 +149,14 @@ module Html
 
     def submit_button
       return unless can?(:submit)
-      h.button_to 'Submit', h.submit_event_path(format: :js, return: h.return_path),
+      h.button_to 'Submit', h.submit_event_path(@model, format: :js, return: h.return_path),
                   class: 'btn btn-cancel', method: :put,
                   remote: true, data: { disable_with: 'submitting'}
+    end
+
+    def rejected_at
+      date = (@model.rejected_at || @model.updated_at)
+      timeago_tag(date)
     end
 
   end

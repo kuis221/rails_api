@@ -49,6 +49,7 @@
 //= require jquery.mousewheel
 //= require jquery.jscrollpane
 //= require jquery.dragtable
+//= require jquery.timeago
 //= require scrollMultiSpy
 //= require markerclusterer
 //= require select2

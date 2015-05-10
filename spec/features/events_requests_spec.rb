@@ -130,7 +130,7 @@ feature 'Events section' do
 
           expect(page).to have_selector('h2', text: 'Campaign #2 FY2012')
 
-          find('#resource-close-details').click
+          close_resource_details
           expect(page).to have_selector('#events-list .resource-item', count: 2)
         end
       end
@@ -1413,27 +1413,7 @@ feature 'Events section' do
         end
       end
 
-      scenario 'the entered data should be saved automatically when submitting the event recap' do
-        kpi = create(:kpi, name: 'Test Field', kpi_type: 'number', capture_mechanism: 'integer')
-
-        campaign.add_kpi kpi
-
-        event = create(:event,
-                       start_date: Date.yesterday.to_s(:slashes),
-                       end_date: Date.yesterday.to_s(:slashes),
-                       campaign: campaign)
-
-        visit event_path(event)
-
-        fill_in 'Test Field', with: '98765'
-
-        click_js_link 'submit'
-
-        expect(page).to have_content('Your post event report has been submitted for approval.')
-        expect(page).to have_content('TEST FIELD 98,765')
-      end
-
-      scenario 'should not submit the event data if there are validation errors' do
+      scenario 'cannot submit a event if the per is not valid' do
         kpi = create(:kpi, name: 'Test Field', kpi_type: 'number', capture_mechanism: 'integer')
 
         field = campaign.add_kpi(kpi)
@@ -1447,11 +1427,15 @@ feature 'Events section' do
 
         visit event_path(event)
 
-        click_js_link 'submit'
+        expect(page).to_not have_button 'Submit'
+
+        click_js_button 'Save'
 
         expect(find_field('Test Field')).to have_error('This field is required.')
+        fill_in 'Test Field', with: '123'
+        click_js_button 'Save'
 
-        expect(page).to have_no_content('Your post event report has been submitted for approval.')
+        expect(page).to have_button 'Submit'
       end
 
       scenario 'allows to unapprove an approved event' do
@@ -1462,33 +1446,40 @@ feature 'Events section' do
 
         visit event_path(event)
 
-        expect(page).to have_content('Your post event report has been approved. Click here to unapprove.')
+        expect(page).to have_content(
+          'Your post event report has been approved. '\
+          'Check out your post event results below for a recap of your event.')
 
-        click_js_link 'unapprove'
+        click_js_button 'Unapprove'
 
         expect(page).to have_content('Your post event report has been submitted for approval.')
       end
 
       scenario "display errors when an event don't meet a campaign module range" do
         event = create(:late_event,
-                       campaign: create(:campaign, company: company, name: 'Campaign FY2012', brands: [brand], modules: { 'comments' => { 'name' => 'comments', 'field_type' => 'module', 'settings' => { 'range_min' => '1', 'range_max' => '2'} } }))
+                       campaign: create(:campaign,
+                                        company: company, name: 'Campaign FY2012',
+                                        brands: [brand],
+                                        modules: {
+                                          'comments' => {
+                                            'name' => 'comments', 'field_type' => 'module',
+                                            'settings' => { 'range_min' => '1',
+                                                            'range_max' => '2'} } }))
 
         visit event_path(event)
 
-        expect(page).to have_content('Your post event report is late. Please submit post event data and enter comments now. Once complete, please submit your post event form.')
+        expect(page).to_not have_button 'Submit'
 
-        click_js_link 'submit'
-
+        click_js_button 'Add Comment'
         within visible_modal do
-          expect(page).to have_content('It is required at least 1 and not more than 2 comments')
-          click_js_link 'OK'
+          fill_in "comment[content]", with: 'This is a test comment'
+          click_js_button 'Create'
         end
-        ensure_modal_was_closed
+        expect(page).to have_content 'This is a test comment'
+        expect(page).to have_content 'it looks like you\'ve collected all required post event info.'
+                                     ' Are you ready to submit your report for approval?'
 
-        event.comments << create(:comment, content: 'Comment #1', commentable: event)
-        event.save
-
-        click_js_link 'submit'
+        click_js_button 'Submit'
 
         expect(page).to have_content('Your post event report has been submitted for approval.')
       end

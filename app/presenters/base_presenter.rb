@@ -20,4 +20,8 @@ class BasePresenter < SimpleDelegator
   def can?(action)
     h.can?(action, @model)
   end
+
+  def timeago_tag(date)
+    h.content_tag(:abbr, '', title: date.iso8601, class: :timeago)
+  end
 end

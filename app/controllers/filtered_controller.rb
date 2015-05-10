@@ -6,7 +6,7 @@ class FilteredController < InheritedResources::Base
   include ExportableController
 
   helper_method :collection_count, :collection_total_count, :facets, :page,
-                :total_pages, :return_path, :search_params
+                :total_pages, :search_params
 
   respond_to :json, only: :index
 
@@ -18,11 +18,6 @@ class FilteredController < InheritedResources::Base
   after_action :remove_resource_new_notifications, only: :show
 
   custom_actions collection: [:filters, :items]
-
-  def return_path
-    url_to_return = params[:return] || request.env['HTTP_REFERER']
-    url_to_return if url_valid? url_to_return
-  end
 
   def filters
   end
@@ -168,12 +163,5 @@ class FilteredController < InheritedResources::Base
       current_company_user.notifications.new_campaigns
         .where('params->? = (?)', 'campaign_id', resource.id.to_s).destroy_all
     end
-  end
-
-  def url_valid?(url)
-    URI.parse(url)
-    true
-  rescue URI::InvalidURIError
-    false
   end
 end

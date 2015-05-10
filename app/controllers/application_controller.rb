@@ -4,6 +4,7 @@
 # environment for the currently logged in user
 class ApplicationController < ActionController::Base
   include CurrentUser
+  include ReturnableControllerHelper
   protect_from_forgery
 
   skip_before_action :verify_authenticity_token, if: lambda {
