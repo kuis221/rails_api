@@ -25,8 +25,8 @@ class EventsController < FilteredController
   respond_to :json, only: [:map, :calendar_highlights]
   respond_to :xls, :pdf, only: :index
 
-  custom_actions member: [:tasks, :attendance, :edit_results, :edit_data, :edit_surveys]
-  layout false, only: [:tasks, :attendance]
+  custom_actions member: [:attendance, :edit_results, :edit_data, :edit_surveys]
+  layout false, only: [:attendance]
 
   skip_load_and_authorize_resource only: :update
   before_action :authorize_update, only: :update
@@ -230,4 +230,11 @@ class EventsController < FilteredController
   def list_exportable?
     params['mode'] == 'calendar' || super
   end
+
+  def default_url_options
+    options = super
+    options[:phase] = params[:phase] if params[:phase]
+    options
+  end
+
 end

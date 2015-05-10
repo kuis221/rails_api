@@ -115,7 +115,7 @@ feature 'Events section' do
           close_resource_details
           expect(collection_description).to have_filter_tag 'Submitted'
           expect(collection_description).to have_filter_tag 'Approved'
-          expect(collection_description).to_to have_filter_tag 'Today To The Future'
+          expect(collection_description).to_not have_filter_tag 'Today To The Future'
         end
       end
 
@@ -623,13 +623,13 @@ feature 'Events section' do
             create(:event, campaign: campaign2,
                            start_date: today.to_s(:slashes), end_date: today.to_s(:slashes))
             create(:event, campaign: campaign2,
-                           start_date: Date.today.beginning_of_week.to_s(:slashes),
-                           end_date: Date.today.beginning_of_week.to_s(:slashes))
+                           start_date: Date.today.beginning_of_week(:sunday).to_s(:slashes),
+                           end_date: Date.today.beginning_of_week(:sunday).to_s(:slashes))
             create(:event, campaign: campaign3,
                            start_date: today.to_s(:slashes), end_date: today.to_s(:slashes))
             create(:event, campaign: campaign3,
-                           start_date: (Date.today.beginning_of_week + 5.days).to_s(:slashes),
-                           end_date: (Date.today.beginning_of_week + 5.days).to_s(:slashes))
+                           start_date: (Date.today.beginning_of_week(:sunday) + 5.days).to_s(:slashes),
+                           end_date: (Date.today.beginning_of_week(:sunday) + 5.days).to_s(:slashes))
             Sunspot.commit
 
             visit events_path
@@ -639,9 +639,9 @@ feature 'Events section' do
             within 'ul.dropdown-menu' do
               expect(page).to have_button('Apply', disabled: true)
               find_field('Start date').click
-              select_and_fill_from_datepicker('custom_start_date', Date.today.beginning_of_week.to_s(:slashes))
+              select_and_fill_from_datepicker('custom_start_date', Date.today.beginning_of_week(:sunday).to_s(:slashes))
               find_field('End date').click
-              select_and_fill_from_datepicker('custom_end_date', (Date.today.beginning_of_week + 5.days).to_s(:slashes))
+              select_and_fill_from_datepicker('custom_end_date', (Date.today.beginning_of_week(:sunday) + 5.days).to_s(:slashes))
               expect(page).to have_button('Apply', disabled: false)
               click_js_button 'Apply'
             end
@@ -1379,9 +1379,9 @@ feature 'Events section' do
         end
 
         within resource_item list: '#tasks-list' do
-          expect(page).to have_content('Pick up the kidz at school')
-          expect(page).to have_content('Juanito Bazooka')
-          expect(page).to have_content('THU May 16')
+          expect(page).to have_content 'Pick up the kidz at school'
+          expect(page).to have_content 'Juanito Bazooka'
+          expect(page).to have_content 'THU May 16'
         end
 
         # Mark the tasks as completed
@@ -1460,7 +1460,7 @@ feature 'Events section' do
           click_js_button 'Create'
         end
         expect(page).to have_content 'This is a test comment'
-        expect(page).to have_content 'it looks like you\'ve collected all required post event info.'
+        expect(page).to have_content 'it looks like you\'ve collected all required post event info.'\
                                      ' Are you ready to submit your report for approval?'
 
         click_js_button 'Submit'

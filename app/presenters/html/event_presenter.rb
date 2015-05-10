@@ -1,29 +1,61 @@
 module Html
   class EventPresenter < BasePresenter
-    def event_members_name(line_separator = '<br />')
-      return if @model.users.nil? && @model.teams.nil?
-      members = []
-      @model.users.each do |team_member|
-        members.push team_member.full_name if team_member.full_name.present?
-      end unless @model.users.nil?
+    # What event phase to render
+    def current_phase
+      (h.params[:phase] || phases[:current_phase]).to_sym
+    end
 
-      @model.teams.each do |team|
+    def event_members_name(line_separator = '<br />')
+      return if users.nil? && teams.nil?
+      members = []
+      users.each do |team_member|
+        members.push team_member.full_name if team_member.full_name.present?
+      end unless users.nil?
+
+      teams.each do |team|
         members.push team.name if team.name.present?
-      end unless @model.teams.nil?
+      end unless teams.nil?
 
       members_list = members.compact.sort.join(line_separator) unless members.compact.empty?
       members_list.html_safe if members_list.present?
     end
 
+    def date_range(options={})
+      return if start_at.nil?
+      return format_date_with_time(start_at) if end_at.nil?
+      options[:date_separator] ||= '<br />'
+      options[:date_only] ||= false
+
+      if start_at.to_date != end_at.to_date
+        if options[:date_only]
+          format_date(start_at) +
+          options[:date_separator].html_safe +
+          format_date(end_at)
+        else
+          format_date_with_time(start_at) +
+          options[:date_separator].html_safe +
+          format_date_with_time(end_at)
+        end
+      else
+        if start_at.strftime('%Y') == Time.zone.now.year.to_s
+          the_date = start_at.strftime('%^a <b>%b %e</b>' + options[:date_separator]).html_safe
+        else
+          the_date = start_at.strftime('%^a <b>%b %e, %Y</b>' + options[:date_separator]).html_safe
+        end
+        the_date += "#{start_at.strftime('%l:%M %p').strip} - #{end_at.strftime('%l:%M %p').strip}".html_safe unless options[:date_only]
+        the_date
+      end
+    end
+
     def team_members
-      return if @model.users.nil? && @model.teams.nil?
+      return if users.nil? && teams.nil?
       teams_tags.html_safe + users_tags.html_safe
     end
 
     def teams_tags
-      return if @model.teams.nil?
+      return if teams.nil?
       team_list = ''
-      @model.teams.each do |team|
+      teams.each do |team|
         team_list = h.content_tag(:div, class: 'user-tag') do
           h.content_tag(:div, class: 'user-type') do
             h.content_tag(:i, '', class: 'icon-team')
@@ -35,8 +67,8 @@ module Html
     end
 
     def users_tags
-      return if @model.users.nil?
-      @model.users.map do |team_member|
+      return if users.nil?
+      users.map do |team_member|
         h.content_tag(:div, class: 'user-tag has-tooltip', data: { title: h.contact_info_tooltip(team_member).to_str, trigger: :click, container: 'body' } ) do
           h.content_tag(:div, class: 'user-type') do
             h.content_tag(:i, '', class: 'icon-user')
@@ -47,33 +79,36 @@ module Html
     end
 
     def render_nav_phases
-      return if @model.phases.nil?
-      current_phase = @model.phases[:current_phase]
-      index_phase = phases[:phases].keys.index(current_phase)
+      return if phases.nil?
+      index_phase = phases[:phases].keys.index(phases[:current_phase])
       h.content_tag(:ul, id: 'event-phases-step', class: 'unstyled phases-list') do
-        @model.phases[:phases].each_with_index.map do |phase, i|
-          h.content_tag(:li, class: "#{'active-phase' if phase[0] == current_phase} #{'completed' if i < index_phase}") do
+        phases[:phases].each_with_index.map do |phase, i|
+          completed = i < index_phase
+          h.content_tag(:li, class: "#{'active-phase' if phase[0] == phases[:current_phase]} #{'completed' if completed}") do
             h.content_tag(:span, i + 1, class: 'phase-id') +
-            h.content_tag(:b, phase[0].to_s.upcase, class: 'phase') + (
-              if current_phase == phase[0]
-                h.content_tag(:ul, class: 'unstyled phase-steps') do
-                  phase[1].each.map do |step|
-                    list_step = step[:complete] ?  h.content_tag(:i, '', class: 'icon-checked') : ''
-                    list_step << h.link_to(step[:title], "#event-#{step[:id]}", class: 'smooth-scroll')
-                    list_step << ' '.html_safe + h.content_tag(:span, "(optional)", class: 'optional') unless step[:required]
-                    h.content_tag(:li, list_step.html_safe, class: "#{'completed' if step[:complete]}")
-                  end.join.html_safe
-                end
-              end)
+            h.content_tag(:b, phase_link(phase[0], completed), class: 'phase') +
+            phase_steps(phase)
           end
         end.join.html_safe
       end
     end
 
+    def phase_steps(phase)
+      if current_phase == phase[0]
+        h.content_tag(:ul, class: 'unstyled phase-steps') do
+          phase[1].each.map do |step|
+            list_step = step[:complete] ?  h.content_tag(:i, '', class: 'icon-checked') : ''
+            list_step << h.link_to(step[:title], "#event-#{step[:id]}", class: 'smooth-scroll')
+            list_step << ' '.html_safe + h.content_tag(:span, "(optional)", class: 'optional') unless step[:required]
+            h.content_tag(:li, list_step.html_safe, class: "#{'completed' if step[:complete]}")
+          end.join.html_safe
+        end
+      end
+    end
+
     def current_step_indicator
-      return if @model.phases.nil?
-      phases = @model.phases
-      (name, steps) = phases[:phases].find { |name, _| name == phases[:current_phase] }
+      return if phases.nil?
+      (name, steps) = phases[:phases].find { |name, _| name == current_phase }
       h.content_tag(:ul, class: 'switch-list unstyled') do
         steps.each.each_with_index.map do |step, i|
           h.content_tag(:li) do
@@ -89,21 +124,18 @@ module Html
     end
 
     def current_phases_indicator
-      return if @model.phases.nil?
-      phases = @model.phases
-      current_phase = phases[:current_phase]
-      index_phase = phases[:phases].keys.index(current_phase)
+      return if phases.nil?
+      completed_index = phases[:phases].keys.index(phases[:current_phase])
       phases[:phases].each_with_index.map do |phase, i|
-        h.content_tag(:span, class: "step #{'active' if phase[0] == current_phase} #{'completed' if i < index_phase}") do
-          value_phase =  i < index_phase ? h.content_tag(:i, '', class: 'icon-checked') : i + 1
+        h.content_tag(:span, class: "step #{'active' if phase[0] == current_phase} #{'completed' if i <= completed_index && phase[0] != current_phase}") do
+          value_phase =  i <= completed_index && phase[0] != current_phase ? h.content_tag(:i, '', class: 'icon-checked') : i + 1
           h.content_tag(:span, value_phase, class: 'circle-step') +
-          phase[0].to_s.upcase
+          phase_link(phase[0], i <= completed_index && phase[0] != current_phase)
         end
       end.join.html_safe
     end
 
     def guided_bar
-      phases = @model.phases
       guided_message = Html::EventGuidedMessagePresenter.new(@model, h)
       steps = guided_message.current_steps
       h.content_tag(:div, class: 'guide-bar text-center scrollspy-style event-details-scroll-spy') do
@@ -118,6 +150,12 @@ module Html
           end.join.html_safe
         end
       end
+    end
+
+    def phase_link(phase, linked)
+      h.link_to_if linked, phase.to_s.upcase,
+                   h.phase_event_path(@model, phase: phase,
+                                              return: h.return_path)
     end
   end
 end

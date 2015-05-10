@@ -2,7 +2,8 @@
 - if resource.errors.any?
   = render 'form_dialog'
 - else
+  = update_event_details_bar(parent)
   |
     $('.bootbox.modal').modal('hide');
-    $(document).trigger('tasks:change');
-    $(document).trigger('task:added');
+  - if params[:event_id]
+    | $('#event-tasks').html('#{j render(partial: 'events/tasks', locals: { resource: parent }) }')

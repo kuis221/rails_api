@@ -4379,8 +4379,13 @@ body.roles{
 	color: $silver;
 	font-weight: bold;
 	margin: 20px 0 40px 0;
+	a {
+		color: $silver;
+	}
 	.completed{
-		color: $primary-green;
+		a {
+			color: $primary-green;
+		}
 		.circle-step{
 			background-color: $primary-green;
 			border-color: $primary-green;

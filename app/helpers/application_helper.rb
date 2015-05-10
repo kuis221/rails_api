@@ -4,14 +4,14 @@ module ApplicationHelper
   def present(model, format = :html)
     @presenters ||= {}
     format = format.to_s.capitalize
-    @presenters[model.class.to_s] ||= "#{format}::#{model.class}Presenter".constantize.new(model, self) rescue nil
-    @presenters[model.class.to_s] ||= "#{model.class}Presenter".constantize.new(model, self) rescue nil
-    return model unless @presenters[model.class.to_s]
+    @presenters[model.class] ||= "#{format}::#{model.class}Presenter".constantize.new(model, self) rescue nil
+    @presenters[model.class] ||= "#{model.class}Presenter".constantize.new(model, self) rescue nil
+    return model unless @presenters[model.class]
     # cache object so we dont create a new object when interacting through many objects
     # for example, when exporting thousands of records
-    @presenters[model.class.to_s].model = model
-    return @presenters[model.class.to_s] unless block_given?
-    yield(@presenters[model.class.to_s])
+    @presenters[model.class].model = model
+    return @presenters[model.class] unless block_given?
+    yield(@presenters[model.class])
   end
 
   def presenter
@@ -93,6 +93,7 @@ module ApplicationHelper
       remote: true,
       method: :get,
       title: title,
+      return: return_path,
       form_class: 'button_to button_to_add')
   end
 
@@ -103,6 +104,7 @@ module ApplicationHelper
                    remote: remote,
                    method: :get,
                    title: title,
+                   return: return_path,
                    form_class: 'button_to button_to_edit'
   end
 
@@ -216,14 +218,6 @@ module ApplicationHelper
         minutes = ((Time.zone.now - the_date)  / 60).to_i
         the_date.strftime("about #{pluralize(minutes, 'minute')} ago")
       end
-    end
-  end
-
-  def format_date_with_time(the_date)
-    if the_date.strftime('%Y') == Time.zone.now.year.to_s
-      the_date.strftime('%^a <b>%b %e</b> at %l:%M %p').html_safe unless the_date.nil?
-    else
-      the_date.strftime('%^a <b>%b %e, %Y</b> at %l:%M %p').html_safe unless the_date.nil?
     end
   end
 

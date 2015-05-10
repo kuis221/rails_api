@@ -68,6 +68,13 @@ class ApplicationController < ActionController::Base
       "modals.title.#{resource.new_record? ? 'new' : 'edit'}.#{resource.class.name.underscore}")
   end
 
+  def default_url_options
+    options = {}
+    options[:return] = return_path if params[:return]
+    options[:phase] = params[:phase] if params[:phase]
+    options
+  end
+
   # Allow GET methods for JS/JSON requests so PDF exports can work in background jobs
   def authenticate_user_by_token
     return unless request.format.js? || request.format.json?

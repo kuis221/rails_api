@@ -395,11 +395,12 @@ Brandscopic::Application.routes.draw do
   end
 
   resources :events, except: [:destroy] do
+    get ':phase', to: 'events#show', on: :member,
+                  as: :phase, constraints: { phase: /plan|execute|results/ }
     get :items, on: :collection, format: :html
     get :map, on: :collection, format: :json
 
     get :calendar, on: :collection
-    get :tasks, on: :member
     get :edit_data, on: :member
     get :edit_surveys, on: :member
     get :calendar_dates, on: :collection, to: :calendar_highlights
