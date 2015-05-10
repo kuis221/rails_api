@@ -243,6 +243,14 @@ module ApplicationHelper
     the_date.strftime('%l:%M %P') unless the_date.nil?
   end
 
+  def format_date_with_time(date)
+    if date.strftime('%Y') == Time.zone.now.year.to_s
+      date.strftime('%^a <b>%b %e</b> at %l:%M %p').html_safe unless date.nil?
+    else
+      date.strftime('%^a <b>%b %e, %Y</b> at %l:%M %p').html_safe unless date.nil?
+    end
+  end
+
   def format_date_range(start_at, end_at, options = {})
     return if start_at.nil?
     return format_date_with_time(start_at) if end_at.nil?
