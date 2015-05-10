@@ -101,6 +101,7 @@ feature 'Events section' do
       feature 'Close bar' do
         scenario 'clicking the return button should preserve the filter tags' do
           create(:submitted_event, campaign: campaign)
+          Sunspot.commit
           visit events_path
 
           add_filter 'EVENT STATUS', 'Submitted'
