@@ -839,7 +839,6 @@ $.rails.allowAction = (element) ->
 		return true
 
 	if $.rails.fire(element, 'confirm')
-			bootbox.moda
 			bootbox.confirm message, (answer) ->
 				if answer
 					callback = $.rails.fire(element, 'confirm:complete', [answer])

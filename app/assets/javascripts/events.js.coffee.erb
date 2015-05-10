@@ -9,6 +9,7 @@ jQuery ->
 
 
 	showStep = (target, message) ->
+		return unless target
 		guidedBarNav = $('.guide-bar.event-details-scroll-spy')
 		$li = guidedBarNav.find("li>a[data-spytarget=\"#{target}\"]").parent('li')
 		$('body').scrollmultispy('activate', [target, guidedBarNav])
