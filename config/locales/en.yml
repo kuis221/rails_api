@@ -746,6 +746,7 @@ en:
 
   confirm:
     deactivate:
+      activity: "Are you sure you want to deactivate this activity?"
       event: "Are you sure you want to deactivate this event?"
       company_user: "Are you sure you want to deactivate this user?"
       team: "Are you sure you want to deactivate this team?"
