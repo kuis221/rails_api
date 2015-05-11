@@ -81,7 +81,7 @@ jQuery ->
 		$this.parent().find('.toggle-input-hidden').val($this.data('value')).trigger 'click'
 		false
 
-	$(document).on 'keyup', '.segment-field', () ->
+	updateSegmentFields = () ->
 		total = 0;
 		segmentFieldId = $(this).data('segment-field-id')
 
@@ -101,8 +101,10 @@ jQuery ->
 
 
 		$("#total-field-" + segmentFieldId).val(if total then total else '')
-		$("#total-field-" + segmentFieldId).valid()
+		#$("#total-field-" + segmentFieldId).valid()
 		true
+
+	$(document).on 'keyup', '.segment-field', updateSegmentFields
 
 	$('header .nav #notifications').notifications();
 
@@ -120,6 +122,8 @@ jQuery ->
 		if window.location.hash
 			if $(".nav-tabs a[href=#{window.location.hash}]").length > 0
 				smoothScrollTo $(".nav-tabs a[href=#{window.location.hash}]").tab('show')
+			else if $(window.location.hash).length > 0
+				smoothScrollTo $(window.location.hash)
 
 
 	updateSummationTotals = () ->
@@ -153,7 +157,8 @@ jQuery ->
 
 		$('.elements-range').keyup()
 
-		$('.segment-field').keyup()
+		$('.segment-field').each (i, element) ->
+			updateSegmentFields.apply element
 
 		$(".fancybox").fancybox {
 			padding : 0,
@@ -185,6 +190,7 @@ jQuery ->
 		updateSummationTotals()
 
 	window.smoothScrollTo = (element, link) ->
+		return if element.length is 0
 		$('html, body').animate {
 			scrollTop: element.offset().top -
 						($('#resource-close-details').outerHeight() || 0) -

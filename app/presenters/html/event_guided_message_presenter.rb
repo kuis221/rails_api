@@ -54,9 +54,9 @@ module Html
 
     def execute_last
       if @model.rejected?
-        message_with_buttons "Your post event report form was rejected #{rejected_at} for the following reasons: <br />" +
+        message_with_buttons "Your post event report form was rejected #{rejected_at} for the following reasons: <i>" +
                              @model.reject_reason +
-                             '<p>Please make the necessary changes and resubmit when ready</p>', :last,
+                             '</i><br /> Please make the necessary changes and resubmit when ready ', :last,
                              [submit_button]
 
       elsif can?(:submit) && @model.valid_results?
@@ -71,11 +71,10 @@ module Html
     def results_approve_per
       if can?(:approve)
         rejection_message = if @model.reject_reason
-           "<br />It was previously rejected #{rejected_at} for the following reason: <br />#{@model.reject_reason}<br />"
+           "<br />It was previously rejected #{rejected_at} for the following reason: <i>#{@model.reject_reason}</i> "
         end
         message_with_buttons "Your post event report has been submitted for approval. #{rejection_message}" +
-                            'Please review and either approve or reject.' +
-                            (rejection_message ? '<br />' : ''), :approve_per,
+                            'Please review and either approve or reject.', :approve_per,
                             [approve_button, reject_button]
       else
         info 'Your post event report has been submitted for approval. Once your report has been reviewed you will be alerted in your notifications.', :approve_per
@@ -94,7 +93,7 @@ module Html
       [
         h.content_tag(:span, '', class: 'transitional-message'),
         message,
-        h.link_to('Yes', target, class: 'step-yes-link smooth-scroll', data: { spytarget: target }),
+        h.link_to('Yes', step_link(target), class: 'step-yes-link smooth-scroll', data: { spytarget: target }),
         h.link_to('Skip', next_target, class: 'step-skip-link smooth-scroll', data: { spyignore: 'ignore' })
       ].join.html_safe
     end
@@ -148,6 +147,14 @@ module Html
     def rejected_at
       date = (@model.rejected_at || @model.updated_at)
       timeago_tag(date)
+    end
+
+    def step_link(target)
+      if h.presenter.current_phase != phases[:current_phase]
+        h.phase_event_path(@model, phase: phases[:current_phase]) + target
+      else
+        target
+      end
     end
 
   end

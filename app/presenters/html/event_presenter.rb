@@ -2,7 +2,7 @@ module Html
   class EventPresenter < BasePresenter
     # What event phase to render
     def current_phase
-      (h.params[:phase] || phases[:current_phase]).to_sym
+      [h.params[:phase], phases[:current_phase]].delete_if(&:blank?).first.to_sym
     end
 
     def event_members_name(line_separator = '<br />')
@@ -83,10 +83,10 @@ module Html
       index_phase = phases[:phases].keys.index(phases[:current_phase])
       h.content_tag(:ul, id: 'event-phases-step', class: 'unstyled phases-list') do
         phases[:phases].each_with_index.map do |phase, i|
-          completed = i < index_phase
+          completed = i <= index_phase
           h.content_tag(:li, class: "#{'active-phase' if phase[0] == phases[:current_phase]} #{'completed' if completed}") do
             h.content_tag(:span, i + 1, class: 'phase-id') +
-            h.content_tag(:b, phase_link(phase[0], completed), class: 'phase') +
+            h.content_tag(:b, phase_link(phase[0], completed && phase[0] != current_phase), class: 'phase') +
             phase_steps(phase)
           end
         end.join.html_safe
@@ -94,15 +94,14 @@ module Html
     end
 
     def phase_steps(phase)
-      if current_phase == phase[0]
-        h.content_tag(:ul, class: 'unstyled phase-steps') do
-          phase[1].each.map do |step|
-            list_step = step[:complete] ?  h.content_tag(:i, '', class: 'icon-checked') : ''
-            list_step << h.link_to(step[:title], "#event-#{step[:id]}", class: 'smooth-scroll')
-            list_step << ' '.html_safe + h.content_tag(:span, "(optional)", class: 'optional') unless step[:required]
-            h.content_tag(:li, list_step.html_safe, class: "#{'completed' if step[:complete]}")
-          end.join.html_safe
-        end
+      return unless current_phase == phase[0]
+      h.content_tag(:ul, class: 'unstyled phase-steps') do
+        phase[1].each.map do |step|
+          list_step = step[:complete] ?  h.content_tag(:i, '', class: 'icon-checked') : ''
+          list_step << h.link_to(step[:title], "#event-#{step[:id]}", class: 'smooth-scroll')
+          list_step << ' '.html_safe + h.content_tag(:span, "(optional)", class: 'optional') unless step[:required]
+          h.content_tag(:li, list_step.html_safe, class: "#{'completed' if step[:complete]}")
+        end.join.html_safe
       end
     end
 

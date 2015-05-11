@@ -765,7 +765,7 @@ feature 'Brand Ambassadors Visits' do
       expect(page).to have_content('ABSOLUT Vodka')
       expect(page).to have_content('some event description')
 
-      click_link 'You are viewing event details. Click to close.'
+      click_link 'Close Event'
 
       expect(current_path).to eq(brand_ambassadors_visit_path(ba_visit))
       within '#visit-events' do

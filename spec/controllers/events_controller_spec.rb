@@ -194,15 +194,6 @@ describe EventsController, type: :controller do
       end
     end
 
-    describe "GET 'tasks'" do
-      let(:event) { create(:event, company: company) }
-      it 'returns http success' do
-        get 'tasks', id: event.to_param
-        expect(response).to be_success
-        expect(response).to render_template(:tasks)
-      end
-    end
-
     describe "POST 'create'" do
       let(:campaign) { create(:campaign, company: company) }
       it 'should not render form_dialog if no errors' do
