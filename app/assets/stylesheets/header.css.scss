@@ -87,9 +87,15 @@ header{
 
 .header-menu{
 	&.open{
-		background-color: $menu-hover !important;
+		background-color: $menu-hover;
 		a.dropdown-toggle{
 			color: $white;
+		}
+	}
+	.dropdown-toggle.active{
+		&:hover{
+			background-color: $menu-hover !important;
+			color: $white !important;
 		}
 	}
 	a.dropdown-toggle{
@@ -166,6 +172,12 @@ header{
 			content: "\e610";
 		}
 	}
+	&:hover{
+		background-color: $menu-hover;
+		a{
+			color: $white;
+		}
+	}
 }
 #user_menu.header-menu{
 	&:after{
@@ -234,11 +246,6 @@ li#notifications{
 	.icon-bell{
 		position:relative;
 		top:2px;
-	}
-	&:hover, &:active, &.open{
-		.notification-state{
-			border: 1px solid $menu;
-		}
 	}
 
 	&.has-notifications {
