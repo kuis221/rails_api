@@ -4,6 +4,9 @@ $detail-bar-height: 40px;
 $back-arrow-width: 38px;
 .details-bar{
 	position: relative;
+	a{
+		color: $brand;
+	}
 	.back-arrow{
 		background-color: $gray-darker;
 		box-sizing: border-box;
@@ -98,7 +101,7 @@ $back-arrow-width: 38px;
 		border-left: 1px solid $divider;
 	}
 	.event-name{
-		color: $app_bg;
+		color: $gray-lighter;
 	}
 	.info-list{
 		margin-top: 10px;
@@ -157,10 +160,6 @@ $back-arrow-width: 38px;
 		padding-left: 20px;
 		li{
 			position: relative;
-			&.active a {
-				color: #fff;
-
-			}
 		}
 		.icon-checked{
 			font-size: 10px;
