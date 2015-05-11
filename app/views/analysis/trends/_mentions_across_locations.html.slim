@@ -81,6 +81,7 @@
         } else {
           $.get('#{j url_for(params.merge(action: :mentions_across_locations, format: :json)).html_safe}', function(response){
             cache['world'] = response;
+            if (response.length == 1) { return; }
             if (response.length == 2) {
               drawStatesMap(response[1][0]);
             } else {

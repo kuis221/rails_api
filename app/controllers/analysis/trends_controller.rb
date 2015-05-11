@@ -196,7 +196,7 @@ class Analysis::TrendsController < FilteredController
   end
 
   def permitted_search_params
-    [:page, :sorting, :sorting_dir, start_date: [], end_date: [],
+    [:page, :sorting, :sorting_dir, :term, start_date: [], end_date: [],
       campaign: [], question: [], source: [], brand: [], area: []]
   end
 end
