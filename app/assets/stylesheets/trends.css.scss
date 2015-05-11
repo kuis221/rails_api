@@ -178,13 +178,14 @@
 	}
 	button{
 		background-color: $brand;
-		color: white;
 		font-size: 25px;
 		font-weight: 300;
 		line-height: 21px;
 		padding: 7px 12px;
 		-webkit-border-radius: 0px 6px 6px 0px;
 		border-radius: 0px 6px 6px 0px;
+		min-width: 0;
+		height: 39px;
 	}
 	legend{
 		border-bottom:0;
