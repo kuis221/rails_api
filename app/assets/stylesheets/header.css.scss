@@ -74,6 +74,11 @@ header{
 	}
 }
 
+.navbar-inverse .nav li.dropdown.open>.dropdown-toggle, .navbar-inverse .nav li.dropdown.active>.dropdown-toggle, .navbar-inverse .nav li.dropdown.open.active>.dropdown-toggle{
+	background-color:#363636;
+	color: $silver;
+}
+
 .navbar .nav > .active > a, .navbar .nav > .active > a:hover, .navbar .nav > .active > a:focus{
 	box-shadow: none;
 }
@@ -82,9 +87,15 @@ header{
 
 .header-menu{
 	&.open{
-		background-color: $menu-hover !important;
+		background-color: $menu-hover;
 		a.dropdown-toggle{
 			color: $white;
+		}
+	}
+	.dropdown-toggle.active{
+		&:hover{
+			background-color: $menu-hover !important;
+			color: $white !important;
 		}
 	}
 	a.dropdown-toggle{
@@ -134,7 +145,7 @@ header{
 					display: inline;
 				}
 			}
-			&:before{
+			&:before, &:after{
 				display: none;
 			}
 		}
@@ -159,6 +170,12 @@ header{
 	&.open{
 		&:after{
 			content: "\e610";
+		}
+	}
+	&:hover{
+		background-color: $menu-hover;
+		a{
+			color: $white;
 		}
 	}
 }
@@ -229,11 +246,6 @@ li#notifications{
 	.icon-bell{
 		position:relative;
 		top:2px;
-	}
-	&:hover, &:active, &.open{
-		.notification-state{
-			border: 1px solid $menu;
-		}
 	}
 
 	&.has-notifications {
