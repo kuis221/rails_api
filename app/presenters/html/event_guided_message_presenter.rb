@@ -150,7 +150,7 @@ module Html
     end
 
     def step_link(target)
-      if h.presenter.current_phase != phases[:current_phase]
+      if h.present(@model).current_phase != phases[:current_phase]
         h.phase_event_path(@model, phase: phases[:current_phase]) + target
       else
         target
