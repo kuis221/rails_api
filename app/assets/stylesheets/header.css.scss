@@ -134,7 +134,7 @@ header{
 					display: inline;
 				}
 			}
-			&:before{
+			&:before, &:after{
 				display: none;
 			}
 		}
