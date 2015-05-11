@@ -43,7 +43,7 @@ feature 'Dashboard', search: true, js: true do
       Sunspot.commit
 
       visit root_path
-      page.execute_script 'window.scrollBy(0,10000)' # Scrolls down to the bottom of the page
+      page.execute_script 'window.scrollBy(0,10000);' # Scrolls down to the bottom of the page
 
       within recent_photos_module do
         expect(page).to have_selector('ul#photos-thumbs li', count: 12)
@@ -233,12 +233,11 @@ feature 'Dashboard', search: true, js: true do
   feature 'Admin User' do
     let(:role) { create(:role, company: company) }
 
-    #it_behaves_like 'a user that can view the upcoming events module'
+    it_behaves_like 'a user that can view the upcoming events module'
 
     it_behaves_like 'a user that can view the recent comments module'
 
     it_behaves_like 'a user that can view the recent photos module'
-
   end
 
   feature 'Non Admin User', js: true, search: true do

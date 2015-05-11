@@ -69,12 +69,11 @@ describe EventsController, type: :controller do
             get 'show', id: event.to_param
             expect(response).to be_success
             expect(response).to render_template('show')
-            expect(response).to render_template('_edit_results')
-            expect(response).to render_template('_surveys')
+            expect(response).to render_template('_basic_info')
+            expect(response).to render_template('_edit_event_data')
             expect(response).to render_template('_comments')
             expect(response).to render_template('_photos')
             expect(response).to render_template('_expenses')
-            expect(response).not_to render_template('_show_results')
           end
         end
       end

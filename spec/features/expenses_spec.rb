@@ -48,7 +48,7 @@ feature 'Events section' do
         end
         ensure_modal_was_closed
 
-        within '.details_box.box_expenses' do
+        within '#event-expenses' do
           expect(page).to have_content('test expense')
         end
         asset = AttachedAsset.last

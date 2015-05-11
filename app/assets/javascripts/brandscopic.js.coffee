@@ -124,6 +124,7 @@ jQuery ->
 				smoothScrollTo $(".nav-tabs a[href=#{window.location.hash}]").tab('show')
 			else if $(window.location.hash).length > 0
 				smoothScrollTo $(window.location.hash)
+		true
 
 
 	updateSummationTotals = () ->
@@ -265,7 +266,7 @@ jQuery ->
 		number
 
 	# Check what graph labels are colliding with others and adjust the position
-	$(window).on 'resize ready', () ->
+	$(window).on 'resize ready load', () ->
 		adjustChartsPositions()
 		lazyLoadElements()
 
@@ -585,7 +586,6 @@ jQuery ->
 		$(".lazyloaded").each () ->
 			ot = $(@).offset().top;
 			ob = ot + $(@).height();
-
 			if not $(@).attr("loaded") && wt <= ob && wb >= ot
 				$(@).removeClass "lazyloaded"
 				$(@).load $(@).data('content-url')
