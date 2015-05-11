@@ -6,8 +6,9 @@ class RsvpReportMailer < ActionMailer::Base
     mail to: recipients, subject: 'RSVP Report Synch – File Not Found'
   end
 
-  def invalid_format(files)
+  def invalid_format(files, columns)
     recipients = ENV['RSVP_INVALID_FORMAT_EMAILS'].split(',')
+    @columns = columns
     files.each do |path|
       attachments[File.basename(path)] = File.read(path)
     end
