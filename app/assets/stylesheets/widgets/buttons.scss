@@ -187,7 +187,10 @@ Styleguide 3.1
 /* Btn large should be used only for buttons inside of dialogue boxes */
 
 .btn-large{
-	height: 41px;
+	font-size: 16px;
+  line-height: 32px;
+  height: 41px;
+  min-width: 154px;
 }
 
 .btn-details{
