@@ -86,9 +86,10 @@ class Place < ActiveRecord::Base
   end
 
   def self.in_areas(areas)
-    subquery = Place.select('DISTINCT places.location_id')
+    subquery = Place.unscoped.select('DISTINCT places.location_id')
                .joins(:placeables).where(placeables: { placeable_type: 'Area', placeable_id: areas }, is_location: true)
-    place_query = "select place_id FROM locations_places INNER JOIN (#{subquery.to_sql})"\
+               .to_sql
+    place_query = "select place_id FROM locations_places INNER JOIN (#{subquery})"\
                   ' locations on locations.location_id=locations_places.location_id'
     area_query = Placeable.select('place_id')
                  .where(placeable_type: 'Area', placeable_id: areas + [0]).to_sql
