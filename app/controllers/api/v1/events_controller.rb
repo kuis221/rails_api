@@ -401,6 +401,19 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
     * *required:* indicates whether this field is required or not
 
+  * *range:* contains the range constraints for the field if any. This will be provided with the following info:
+
+    * *format:* either digits or value for numeric fields or words, characters for text fields
+    * *min:* the mininum number of chars/words/digits/value accepted by this field
+    * *max:* the max number of chars/words/digits/value accepted by this field
+
+    A field can include both min or max, or only a min or a max and it validates the info based in the following rules:
+
+    * min and max: the value must be between `min` and `max`
+    * min only: the value must be greater than `min`
+    * max only: the value must be smaller than `max`
+
+
   EOS
   example <<-EOS
     A response with all the different kind of fields
@@ -729,6 +742,11 @@ class Api::V1::EventsController < Api::V1::FilteredController
                     "description": "The number of bottles depleted during execution. This includes bottles we use for sampling in addition to any bottles the bar pours through while we are there.",
                     "module": "custom",
                     "id": 160096,
+                    "range": {
+                      "format": "value",
+                      "min": "1",
+                      "max": "10",
+                    },
                     "value": "1.5"
                 },
                 {

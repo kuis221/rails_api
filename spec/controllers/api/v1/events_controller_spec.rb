@@ -407,7 +407,6 @@ describe Api::V1::EventsController, type: :controller do
             { 'id' => seg2.id, 'text' => 'Dos', 'value' => nil, 'goal' => nil }
           ]
         )
-
     end
   end
 
