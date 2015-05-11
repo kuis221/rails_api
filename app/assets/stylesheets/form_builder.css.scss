@@ -298,6 +298,8 @@ $margin-right: 240px;
 			width: 200px;
 		}
 		.group-name {
+			color: $brand;
+			font-size: 12px;
 			margin-left: 10px;
 			margin-bottom: 10px;
 			text-transform:uppercase;
@@ -357,7 +359,7 @@ $margin-right: 240px;
 				width: initial;
 				text-align: left;
 				height: 25px;
-				font-size: 12px;
+				font-size: 14px;
 				overflow: hidden;
 				width: 180px;
 				border: 0;
