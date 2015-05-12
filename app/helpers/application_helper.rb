@@ -18,7 +18,7 @@ module ApplicationHelper
     @presenter ||= present(resource)
   end
 
-  def place_address(place, link_name = false, line_separator = '<br />', name_separator = '<br />')
+  def place_address(place, link_name = false, line_separator = '<br />', name_separator = '<br />', concat_zip_code = false)
     return if place.nil?
     place_name = place.name
     place_city = place.city
@@ -39,8 +39,16 @@ module ApplicationHelper
     city_parts = []
     address.push place.street unless place.street.nil? || place.street.strip.empty? || place.name == place.street
     city_parts.push place_city if place.city.present? && place.name != place.city
-    city_parts.push place.state_code if place.state.present?
-    city_parts.push place.zipcode if place.zipcode.present?
+
+    if concat_zip_code
+      state_zipcode = []
+      state_zipcode.push place.state_code if place.state.present?
+      state_zipcode.push place.zipcode if place.zipcode.present?
+      city_parts.push state_zipcode.compact.join(' ') unless state_zipcode.empty?
+    else
+      city_parts.push place.state_code if place.state.present?
+      city_parts.push place.zipcode if place.zipcode.present?
+    end
 
     address.push city_parts.compact.join(', ') unless city_parts.empty? || !place.city
     address.push place.formatted_address if place.formatted_address.present? && city_parts.empty? && (place.city || !place.types.include?('political'))
