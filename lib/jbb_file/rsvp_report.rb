@@ -51,7 +51,7 @@ module JbbFile
         ActiveRecord::Base.transaction do
           files.each do |file|
             each_sheet(file[:excel]) do |sheet|
-              sheet.each(COLUMNS) do |row|
+              sheet.each(self.class::COLUMNS) do |row|
                 next if row[:final_date] == 'FinalDate'
                 campaign = find_campaign(row)
                 market_level = campaign.module_setting('attendance', 'attendance_display') == '2' if campaign
