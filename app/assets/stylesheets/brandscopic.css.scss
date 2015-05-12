@@ -4120,7 +4120,7 @@ body.roles{
 	position: relative;
 	padding-left: 45px;
 	&.display{
-		margin-top: -20px;
+		margin-top: -22px;
 		max-height: 18px;
 		overflow: hidden;
 		.show-more-link{
@@ -4437,6 +4437,9 @@ body.roles{
 	min-height: 270px;
 	overflow: hidden;
 	position: relative;
+	.highlight-text{
+		margin-right: 10px;
+	}
 	.data-list{
 		margin-top: 20px;
 	}
@@ -4461,7 +4464,6 @@ body.roles{
 
 .price{
 	color: $silver;
-	margin-left: 10px;
 	.price-level{
 		color: #cfc53e;
 	}
