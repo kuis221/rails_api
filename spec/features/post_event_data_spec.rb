@@ -225,34 +225,34 @@ feature 'Post Event Data' do
       expect(page).to have_content '16%'
 
       within '.form-results-box' do
-        expect(page).to have_content('INTEGER FIELD 99')
-        expect(page).to have_content('DECIMAL FIELD 99.9')
-        expect(page).to have_content('CURRENCY FIELD $79.90')
+        expect(page).to have_content('Integer field 99')
+        expect(page).to have_content('Decimal field 99.9')
+        expect(page).to have_content('Currency field $79.90')
         expect(page).to have_content('Radio field Radio Option 1')
         expect(page).to have_content('Checkbox field Checkbox Option 1 Checkbox Option 2')
         expect(page).to have_content('Custom Checkbox Checkbox Opt1 Checkbox Opt2')
         expect(page).to have_content('Custom Radio Radio Opt1')
         expect(page).to have_content('Custom Single Text Testing Single')
         expect(page).to have_content('Custom TextArea Testing Area')
-        expect(page).to have_content('CUSTOM NUMERIC 10')
-        expect(page).to have_content('CUSTOM CURRENCY $30.00')
+        expect(page).to have_content('Custom Numeric 10')
+        expect(page).to have_content('Custom Currency $30.00')
         expect(page).to have_content('Marque Marque #2 for Cacique')
-        expect(page).to have_content('BRANDCacique')
-        expect(page).to have_content('CUSTOM DATETUE Aug 13, 2013')
-        expect(page).to have_content('CUSTOM TIME02:30 AM')
+        expect(page).to have_content('Brand Cacique')
+        expect(page).to have_content('Custom Date TUE Aug 13, 2013')
+        expect(page).to have_content('Custom Time 02:30 AM')
 
         expect(page).to have_content('Summation Opt1 100')
         expect(page).to have_content('Summation Opt2 2,000')
-        expect(page).to have_content('TOTAL:2,100')
+        expect(page).to have_content('TOTAL:2,100.0')
       end
 
       visit event_path(event)
 
       # expect(page).to still display the post-event format and not the form
       within '.form-results-box' do
-        expect(page).to have_content('INTEGER FIELD 99')
-        expect(page).to have_content('DECIMAL FIELD 99.9')
-        expect(page).to have_content('CURRENCY FIELD $79.90')
+        expect(page).to have_content('Integer field 99')
+        expect(page).to have_content('Decimal field 99.9')
+        expect(page).to have_content('Currency field $79.90')
       end
 
       click_js_link 'Edit event data'
@@ -315,8 +315,9 @@ feature 'Post Event Data' do
 
       click_js_button 'Save'
 
-      expect(find_field('Male')).to have_error('This field is required.')
-      expect(find_field('Female')).to have_error('This field is required.')
+      within '#progress-error-' + field.id.to_s do
+        expect(page).to have_content('This field is required.')
+      end
 
       fill_in('Male', with: 35)
       fill_in('Female', with: 30)

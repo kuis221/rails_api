@@ -2662,6 +2662,7 @@ ul.ui-widget-content{
 		}
 	}
 	input{
+		border-color: $gray-light !important;
 		&.date_picker, &.time_picker{
 			color: $silver;
 			width: 120px;
@@ -2705,6 +2706,9 @@ ul.ui-widget-content{
 			p.range-help-block {
 				color: $primary-red !important;
 			}
+			input {
+				border-color: $primary-red !important;
+			}
 		}
 		p.range-help-block {
 			color: $gray-light;
@@ -2744,13 +2748,11 @@ ul.ui-widget-content{
 				&.control-label{
 					color: $text;
 				}
-				.optional{
-					margin-right: 15px;
-				}
 				.ok-message{
 					color: #90bf43;
 					font-size: 11px;
 					font-weight: normal;
+					margin-left: 15px;
 				}
 			}
 			&.radio{
