@@ -23,6 +23,8 @@
 #  score_dirty          :boolean          default(FALSE)
 #  jameson_locals       :boolean          default(FALSE)
 #  top_venue            :boolean          default(FALSE)
+#  created_by_id        :integer
+#  updated_by_id        :integer
 #
 
 require 'rails_helper'

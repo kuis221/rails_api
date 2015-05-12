@@ -23,7 +23,7 @@ FactoryGirl.define do
     sequence(:name) { |n| "Form Field #{n}" }
     type nil
     settings nil
-    ordering 1
+    sequence(ordering) { |n| n }
     required false
   end
 
@@ -36,6 +36,12 @@ FactoryGirl.define do
   factory :form_field_number, class: FormField::Number do
     sequence(:name) { |n| "Form Field Number #{n}" }
     type 'FormField::Number'
+    ordering 1
+  end
+
+  factory :form_field_section, class: FormField::Section do
+    sequence(:name) { |n| "Section #{n}" }
+    type 'FormField::Section'
     ordering 1
   end
 
@@ -90,6 +96,24 @@ FactoryGirl.define do
   factory :form_field_marque, class: FormField::Marque do
     sequence(:name) { |n| "Form Field Marque #{n}" }
     type 'FormField::Marque'
+    ordering 1
+  end
+
+  factory :form_field_attachment, class: FormField::Attachment do
+    sequence(:name) { |n| "Attachment #{n}" }
+    type 'FormField::Attachment'
+    ordering 1
+  end
+
+  factory :form_field_photo, class: FormField::Photo do
+    sequence(:name) { |n| "Photo #{n}" }
+    type 'FormField::Photo'
+    ordering 1
+  end
+
+  factory :form_field_time, class: FormField::Time do
+    sequence(:name) { |n| "Form Field Time #{n}" }
+    type 'FormField::Time'
     ordering 1
   end
 end
