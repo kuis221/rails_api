@@ -13,15 +13,15 @@
           = button_to_edit resource if can?(:update, resource)
           = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
 
-      .calendar-data
+      .event-calendar.calendar-data
         i.icon-calendar
         span
-          = presenter.date_range
+          = presenter.date_range_basic_info
       - unless resource.place.nil?
         .place-data
           i.icon-wired-venue
           span
-            = place_address(resource.place, true, ', ') if resource.place
+            = place_address(resource.place, true, ', ', ' ', true) if resource.place
 
       - unless resource.description.nil? || resource.description.empty?
         .description-data
