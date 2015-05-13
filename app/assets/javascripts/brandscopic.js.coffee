@@ -735,27 +735,19 @@ jQuery ->
 				items = parseFloat(value, 10)
 			else if $element.data('range-format') is "digits"
 				items = val.replace(/[\s,\,\,]+/g, "").length
+		else if $element.data('range-format') is "characters" || $element.data('range-format') is "words"
+			items = 0
 
-		minResult = if $element.data('range-min') && items then items >= $element.data('range-min') else true
-		maxResult = if $element.data('range-max') && items then items <= $element.data('range-max') else true
+		if $.inArray($element.data('range-format'), ['value', 'characters', 'words']) > -1 && items == 0
+			# Special case when format is value, chars or words and items is zero because zero is evaluated as false
+			minResult = if $element.data('range-min') then items >= $element.data('range-min') else true
+			maxResult = if $element.data('range-max') then items <= $element.data('range-max') else true
+		else
+			minResult = if $element.data('range-min') && items then items >= $element.data('range-min') else true
+			maxResult = if $element.data('range-max') && items then items <= $element.data('range-max') else true
 
 		return minResult && maxResult
-	, (params, element) ->
-		$element = $(element)
-		if $element.data('range-format') is 'value'
-			if $element.data('range-min') && $element.data('range-max')
-				"should be between #{$element.data('range-min')} and #{$element.data('range-max')}"
-			else if $element.data('range-min')
-				"should be greater than #{$element.data('range-min')}"
-			else if $element.data('range-max')
-				"should be smaller than #{$element.data('range-max')}"
-		else
-			message = if $element.data('range-min') then "at least #{$element.data('range-min')}" else ''
-			message += if message.length > 0 && $element.data('range-max') then ' but ' else ''
-			message += if $element.data('range-max') then "no more than #{$element.data('range-max')}" else ''
-
-			"should have #{message} #{$element.data('range-format')}"
-	);
+	, ' ');
 
 	$(window).load () ->
 		setTimeout () ->
