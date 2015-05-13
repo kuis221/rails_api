@@ -20,6 +20,45 @@ module Html
       members_list.html_safe if members_list.present?
     end
 
+    def date_range_basic_info(options={})
+      return if start_at.nil?
+      return format_date_with_time(start_at) if end_at.nil?
+      options[:date_separator] ||= ' - '
+      if start_at.to_date != end_at.to_date
+        the_date = format_date(start_at, true)
+        the_date += options[:date_separator].html_safe
+        the_date += format_date(end_at, true).html_safe
+        the_date += " <b>from</b> #{start_at.strftime('%l:%M %p').strip} <b>to</b> #{end_at.strftime('%l:%M %p').strip}".html_safe
+      else
+        if start_at.strftime('%Y') == Time.zone.now.year.to_s
+          the_date = start_at.strftime('%^a %b %e').html_safe
+        else
+          the_date = start_at.strftime('%^a %b %e, %Y').html_safe
+        end
+        the_date += " <b>from</b> #{start_at.strftime('%l:%M %p').strip} <b>to</b> #{end_at.strftime('%l:%M %p').strip}".html_safe
+      end
+      the_date.html_safe
+    end
+
+    def date_range_for_details_bar(options={})
+      return if start_at.nil?
+      return format_date_with_time(start_at, true, false) if end_at.nil?
+      options[:date_separator] ||= ' - '
+      if start_at.to_date != end_at.to_date
+        format_date_with_time(start_at, true, false) +
+        options[:date_separator].html_safe +
+        format_date_with_time(end_at, true, false)
+      else
+        if start_at.strftime('%Y') == Time.zone.now.year.to_s
+          the_date = start_at.strftime('%b %e' + options[:date_separator]).html_safe
+        else
+          the_date = start_at.strftime('%b %e, %Y' + options[:date_separator]).html_safe
+        end
+        the_date += "#{start_at.strftime('%l:%M %p').strip} - #{end_at.strftime('%l:%M %p').strip}".html_safe
+        the_date
+      end
+    end
+
     def date_range(options={})
       return if start_at.nil?
       return format_date_with_time(start_at) if end_at.nil?
@@ -37,38 +76,47 @@ module Html
         end
       else
         if start_at.strftime('%Y') == Time.zone.now.year.to_s
-          the_date = start_at.strftime('<b>%b %e</b>' + options[:date_separator]).html_safe
+          the_date = start_at.strftime('%^a <b>%b %e</b>' + options[:date_separator]).html_safe
         else
-          the_date = start_at.strftime('<b>%b %e, %Y</b>' + options[:date_separator]).html_safe
+          the_date = start_at.strftime('%^a <b>%b %e, %Y</b>' + options[:date_separator]).html_safe
         end
         the_date += "#{start_at.strftime('%l:%M %p').strip} - #{end_at.strftime('%l:%M %p').strip}".html_safe unless options[:date_only]
         the_date
       end
     end
+    
 
-    def format_date(the_date, plain = false)
+    def format_date(the_date, plain = false, day_name = true)
       unless the_date.nil?
         if plain
           if the_date.strftime('%Y') == Time.zone.now.year.to_s
-            the_date.strftime('%b %e')
+            the_date.strftime("#{'%^a ' if day_name}%b %e")
           else
-            the_date.strftime('%b %e, %Y')
+            the_date.strftime("#{'%^a ' if day_name}%b %e, %Y")
           end
         else
           if the_date.strftime('%Y') == Time.zone.now.year.to_s
-            the_date.strftime('<b>%b %e</b>').html_safe
+            the_date.strftime("#{'%^a ' if day_name}<b>%b %e</b>").html_safe
           else
-            the_date.strftime('<b>%b %e, %Y</b>').html_safe
+            the_date.strftime("#{'%^a ' if day_name}<b>%b %e, %Y</b>").html_safe
           end
         end
       end
     end
 
-    def format_date_with_time(date)
-      if date.strftime('%Y') == Time.zone.now.year.to_s
-        date.strftime('<b>%b %e</b> at %l:%M %p').html_safe unless date.nil?
+    def format_date_with_time(date, plain = false, day_name = true)
+      if plain
+        if date.strftime('%Y') == Time.zone.now.year.to_s
+          date.strftime("#{'%^a ' if day_name}%b %e at %l:%M %p").html_safe unless date.nil?
+        else
+          date.strftime("#{'%^a ' if day_name}%b %e, %Y at %l:%M %p").html_safe unless date.nil?
+        end
       else
-        date.strftime('<b>%b %e, %Y</b> at %l:%M %p').html_safe unless date.nil?
+        if date.strftime('%Y') == Time.zone.now.year.to_s
+          date.strftime("#{'%^a ' if day_name}<b>%b %e</b> at %l:%M %p").html_safe unless date.nil?
+        else
+          date.strftime("#{'%^a ' if day_name}<b>%b %e, %Y</b> at %l:%M %p").html_safe unless date.nil?
+        end
       end
     end
 

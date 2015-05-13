@@ -26,7 +26,7 @@ $back-arrow-width: 38px;
 		position: fixed !important;
 		top: 80px;
 		width: calc(100% - 100px);
-		z-index: 1;
+		z-index: 1100;
 		.panel, .back-arrow{
 			@include border-radius(0);
 		}
@@ -40,7 +40,7 @@ $back-arrow-width: 38px;
 	.panel-collapse{
 		background-color: $gray-darker;
 		color: $white;
-		z-index: 2;
+		z-index: 1110;
 		position: absolute;
 		width: calc(100% - #{$back-arrow-width});
 	}
