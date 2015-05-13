@@ -16,6 +16,13 @@ form.button_to {
 		outline: none;
 		line-height: normal;
 	}
+	.button-with-icon-and-text {
+		font-size: 12px;
+		line-height: 17px;
+		text-decoration: underline;
+		vertical-align: top;
+		color: $brand;
+	}
 }
 
 .form-actions{

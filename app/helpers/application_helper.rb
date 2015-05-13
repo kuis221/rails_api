@@ -80,20 +80,21 @@ module ApplicationHelper
   end
 
   def icon_button_to(icon, options = {}, html_options = {})
+    show_text = html_options.delete(:show_text)
     html_options[:class] ||= ''
     html_options[:class] = [html_options[:class], 'button-with-icon'].join(' ')
+    html_options[:class] += ' button-with-icon-and-text' if show_text
 
     button_to options, html_options do
-      content_tag(:i, nil, class: "icon #{icon}")
+      content_tag(:i, nil, class: "icon #{icon}") +
+      (show_text ? html_options[:title] : '')
     end
   end
 
   def button_to_add(title, url, options = {})
     icon_button_to 'icon-plus-sign', url, options.merge(
-      remote: true,
-      method: :get,
-      title: title,
-      return: return_path,
+      remote: true, method: :get,
+      title: title, return: return_path,
       form_class: 'button_to button_to_add')
   end
 

@@ -1268,7 +1268,7 @@ feature 'Events section' do
 
         visit event_path(event)
 
-        click_js_button 'Add Contact'
+        click_js_button 'Add Contacts'
         within visible_modal do
           fill_in 'contact-search-box', with: 'Pab'
           expect(page).to have_content('Pablo Baltodano')
@@ -1300,7 +1300,7 @@ feature 'Events section' do
 
         visit event_path(event)
 
-        click_js_button 'Add Contact'
+        click_js_button 'Add Contacts'
         within visible_modal do
           fill_in 'contact-search-box', with: 'Gui'
           expect(page).to have_content('Guillermo Vargas')
@@ -1327,7 +1327,7 @@ feature 'Events section' do
       scenario 'allows to create a contact', js: true do
         visit event_path(event)
 
-        click_js_button 'Add Contact'
+        click_js_button 'Add Contacts'
         visible_modal.click_js_link('Create New Contact')
 
         within '.contactevent_modal' do

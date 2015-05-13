@@ -2,13 +2,12 @@
 
 = render 'basic_info'
 
-- if can?(:view_data, resource)
-  - if resource.event_data?
-    #event-results-form
-      #event-results-container.details_box.box_event_data
-        = render partial: 'results_event_data'
-  - else
-    = render partial: 'edit_event_data'
+- if resource.event_data? && can?(:view_data, resource)
+  #event-results-form
+    #event-results-container.details_box.box_event_data
+      = render partial: 'results_event_data'
+- elsif can?(:edit_data, resource)
+  = render partial: 'edit_event_data'
 
 - if (can?(:show, Activity) && resource.campaign.activity_types.any?) || \
      (can?(:index_invites, resource) && resource.campaign.activity_types.any? || enabled_modules.include?('attendance'))
