@@ -1,15 +1,13 @@
 .details_box
-  h3 MENTIONS ACROSS LOCATIONS
+  h5.module-title MENTIONS ACROSS LOCATIONS
   #mentions-breadcrumbs
 
   #mentions-across-locations-graph
 
 - content_for :head do
-  = javascript_include_tag "https://www.google.com/jsapi"  
+  = javascript_include_tag "https://www.google.com/jsapi"
   javascript:
-    var cache = {}
-    google.load('visualization', '1', { 'packages': ['geomap'] });
-    google.setOnLoadCallback(initializeMap);
+    var cache = {};
     function drawCitiesMap(region, cities) {
       parts = region.split('-');
       $('#mentions-breadcrumbs').html('');
@@ -79,8 +77,9 @@
         if (typeof cache['world'] != 'undefined') {
           drawWorldMap(cache['world']);
         } else {
-          $.get('#{j url_for(params.merge(action: :mentions_across_locations, format: :json)).html_safe}', function(response){
+          $.get('#{j url_for(params.merge(action: :mentions_across_locations, only_path: false, format: :json)).html_safe}', function(response){
             cache['world'] = response;
+            if (response.length == 1) { return; }
             if (response.length == 2) {
               drawStatesMap(response[1][0]);
             } else {
@@ -110,3 +109,8 @@
     function initializeMap() {
       drawWorldMap();
     }
+
+    $(window).on('load', function(){
+      google.load('visualization', '1', { 'packages': ['geomap'], 'callback': initializeMap });
+      //google.setOnLoadCallback(initializeMap);
+    });

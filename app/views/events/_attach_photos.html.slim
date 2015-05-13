@@ -45,8 +45,8 @@ javascript:
         progress_bar_target: $('#photos-thumbs'),
         progress_bar_target_prepend: true,
         drop_zone: $("#drag-drop-photos"),
-        limit_concurrent_uploads: 1,
-        sequential_uploads: true,
+        limit_concurrent_uploads: 3,
+        sequential_uploads: false,
         cancel_upload_target: '#upload-file-cancel',
         before_add: function(file) {
           var file, image_types;

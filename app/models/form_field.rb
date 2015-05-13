@@ -231,27 +231,28 @@ class FormField < ActiveRecord::Base
   end
 
   def range_message
-    message = ''
-    if has_range_value_settings?
-      message = if settings['range_min'].present? && settings['range_max'].present?
-                  I18n.translate("form_fields_ranges.#{type_name.downcase}.min_max",
-                                 range_min: settings['range_min'],
-                                 range_max: settings['range_max'],
-                                 range_format: settings['range_format'],
-                                 field_id: id)
-                elsif settings['range_min'].present?
-                  I18n.translate("form_fields_ranges.#{type_name.downcase}.min",
-                                 range_min: settings['range_min'],
-                                 range_format: settings['range_format'],
-                                 field_id: id)
-                elsif settings['range_max'].present?
-                  I18n.translate("form_fields_ranges.#{type_name.downcase}.max",
-                                 range_max: settings['range_max'],
-                                 range_format: settings['range_format'],
-                                 field_id: id)
-                end
-    end
-    message.html_safe
+    return unless has_range_value_settings?
+    if settings['range_min'].present? && settings['range_max'].present?
+      range_format_msg = %w(Number Currency).include?(type_name) && settings['range_format'] == 'value' ? '' : settings['range_format']
+      I18n.translate("form_fields_ranges.#{type_name.downcase}.min_max",
+                     range_min: settings['range_min'],
+                     range_max: settings['range_max'],
+                     range_format: range_format_msg,
+                     field_id: id)
+    elsif settings['range_min'].present?
+      range_digits_msg = %w(Number Currency).include?(type_name) && settings['range_format'] == 'digits' ? 'min_digits' : 'min'
+      I18n.translate("form_fields_ranges.#{type_name.downcase}.#{range_digits_msg}",
+                     range_min: settings['range_min'],
+                     range_format: settings['range_format'],
+                     field_id: id)
+    elsif settings['range_max'].present?
+      I18n.translate("form_fields_ranges.#{type_name.downcase}.max",
+                     range_max: settings['range_max'],
+                     range_format: settings['range_format'],
+                     field_id: id)
+    else
+      ''
+    end.html_safe
   end
 
 

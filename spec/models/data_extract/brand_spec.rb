@@ -5,11 +5,10 @@
 #  id               :integer          not null, primary key
 #  type             :string(255)
 #  company_id       :integer
-#  active           :boolean
+#  active           :boolean          default(TRUE)
 #  sharing          :string(255)
 #  name             :string(255)
 #  description      :text
-#  filters          :text
 #  columns          :text
 #  created_by_id    :integer
 #  updated_by_id    :integer
@@ -65,11 +64,13 @@ RSpec.describe DataExtract::Brand, type: :model do
 
       it 'allows to filter the results' do
         subject.filters = { 'status' => ['inactive'] }
+        subject.filters = { 'status' => ['inactive'] }
+        subject.columns = %w(name created_by created_at active_state)
         expect(subject.rows).to be_empty
 
         subject.filters = { 'status' => ['active'] }
         expect(subject.rows).to eql [
-          ['Guaro Cacique', 'Marque 1, Marque 2, Marque 3', 'Benito Camelas', '08/23/2013', 'Active']
+          ['Guaro Cacique', 'Benito Camelas', '08/23/2013', 'Active']
         ]
       end
 

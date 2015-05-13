@@ -1,4 +1,4 @@
-class Analysis::AttendanceController < ApplicationController
+class Results::AttendanceController < ApplicationController
   include ExportableController
 
   helper_method :return_path, :neighborhood_coordinates, :default_color, :campaign_events
@@ -61,9 +61,5 @@ class Analysis::AttendanceController < ApplicationController
     else
       current_company.campaigns.find(params[:campaign_id]).event_dates
     end
-  end
-
-  def return_path
-    analysis_path
   end
 end

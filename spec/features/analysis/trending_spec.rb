@@ -77,7 +77,7 @@ feature 'Trending report' do
 
       fill_in 'My Text Field', with: 'Texto con hola en medio!'
       fill_in 'My Paragraph Field', with: 'hola mundo'
-      click_button 'Save'
+      click_js_button 'Save'
 
       expect(page).to have_selector('.form-result-value', text: 'hola mundo')
 

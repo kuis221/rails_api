@@ -42,12 +42,11 @@ class FormField::Number < FormField
 
   def field_data
     data = {}
-    if settings.present?
-      data['range-format'] = settings['range_format'] if settings['range_format'].present?
-      data['range-min'] = settings['range_min'] if settings['range_min'].present?
-      data['range-max'] = settings['range_max'] if settings['range_max'].present?
-      data['field-id'] = id
-    end
+    return data unless settings.present?
+    data['range-format'] = settings['range_format'] if settings['range_format'].present?
+    data['range-min'] = settings['range_min'] if settings['range_min'].present?
+    data['range-max'] = settings['range_max'] if settings['range_max'].present?
+    data['field-id'] = id
     data
   end
 

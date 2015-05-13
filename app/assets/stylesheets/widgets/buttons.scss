@@ -21,7 +21,7 @@ Styleguide 3.1
 	box-sizing: border-box;
 	color: $white;
 	font-family: $baseFontFamily;
-	font-weight: 400;
+	font-weight: 600;
 	text-shadow: none;
 	height: 34px;
 	line-height: 26px;
@@ -187,7 +187,9 @@ Styleguide 3.1
 /* Btn large should be used only for buttons inside of dialogue boxes */
 
 .btn-large{
-	height: 41px;
+  line-height: 32px;
+  height: 41px;
+  min-width: 154px;
 }
 
 .btn-details{

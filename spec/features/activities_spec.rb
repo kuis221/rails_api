@@ -175,16 +175,13 @@ feature 'Activities management' do
       campaign.activity_types << activity_type
 
       activity = create(:activity,
-                        activity_type: activity_type,
-                        activitable: event,
-                        campaign: campaign,
-                        company_user: company_user,
-                        activity_date: '08/21/2014'
-      )
+                        activity_type: activity_type, activitable: event,
+                        campaign: campaign, company_user: company_user,
+                        activity_date: '08/21/2014')
 
       visit event_path(event)
 
-      hover_and_click("#activities-list #activity_#{activity.id}", 'Edit')
+      hover_and_click(resource_item(activity), 'Edit')
 
       select_from_chosen('Juanito Bazooka', from: 'User')
       fill_in 'Date', with: '05/16/2013'
@@ -301,8 +298,8 @@ feature 'Activities management' do
         expect(page).to have_content(user.name)
         expect(page).to have_content('THU May 16')
         expect(page).to have_content('Activity Type #1')
-        click_link('Edit')
       end
+      hover_and_click resource_item, 'Edit'
 
       expect(find_field('Option 1').value).to eql '10'
       expect(find_field('Option 2').value).to eql '90'
@@ -366,9 +363,8 @@ feature 'Activities management' do
         expect(photo.file_file_name).to eql 'photo.jpg'
 
         # Remove the file
-        within resource_item do
-          click_link('Edit')
-        end
+        hover_and_click resource_item, 'Edit'
+
         expect do
           expect(page).to_not have_content('DRAG & DROP')
           find('.attachment-attached-view').hover
@@ -432,9 +428,8 @@ feature 'Activities management' do
         expect(photo.attachable).to be_a FormFieldResult
         expect(photo.file_file_name).to eql 'file.pdf'
 
-        within resource_item do
-          click_js_link('Activity Details')
-        end
+        hover_and_click resource_item, 'Activity Details'
+
         expect(page).to have_selector('h2', text: 'Activity Type #1')
         expect(current_path).to eql activity_path(activity)
         file = AttachedAsset.last
@@ -444,9 +439,7 @@ feature 'Activities management' do
         visit event_path(event)
 
         # Remove the file
-        within resource_item do
-          click_link('Edit')
-        end
+        hover_and_click resource_item, 'Edit'
 
         expect do
           expect(page).to_not have_content('DRAG & DROP')
@@ -491,9 +484,7 @@ feature 'Activities management' do
 
       visit venue_path(venue)
 
-      within resource_item do
-        click_link 'Edit'
-      end
+      hover_and_click resource_item, 'Edit'
 
       select_from_chosen('Juanito Bazooka', from: 'User')
       fill_in 'Date', with: '05/16/2013'

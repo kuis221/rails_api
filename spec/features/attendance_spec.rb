@@ -43,7 +43,8 @@ feature 'Attendance', js: true, search: true do
       end
 
       # Edit the invite
-      hover_and_click '#invites-list .resource-item', 'Edit Invite'
+      hover_and_click resource_item(1, list: '#invites-list'), 'Edit'
+
       within visible_modal do
         fill_in '# Invites', with: '20'
         fill_in '# RSVPs', with: '8'
@@ -79,7 +80,7 @@ feature 'Attendance', js: true, search: true do
       end
 
       # Edit the invite
-      hover_and_click '#invites-list .resource-item', 'Edit Invite'
+      hover_and_click resource_item(1, list: '#invites-list'), 'Edit Invite'
       within visible_modal do
         fill_in '# Invites', with: '15'
         fill_in '# RSVPs', with: '6'
@@ -107,7 +108,7 @@ feature 'Attendance', js: true, search: true do
 
       expect(page).to have_selector('#invites-list .resource-item')
 
-      hover_and_click '#invites-list .resource-item', 'Deactivate Attendance Record'
+      hover_and_click resource_item(1, list: '#invites-list'), 'Deactivate Attendance Record'
 
       confirm_prompt 'Are you sure you want to deactivate this attendance record?'
 

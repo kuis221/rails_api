@@ -6,7 +6,7 @@
 #  name                   :string(255)
 #  reference              :string(400)
 #  place_id               :string(100)
-#  types                  :string(255)
+#  types_old              :string(255)
 #  formatted_address      :string(255)
 #  street_number          :string(255)
 #  route                  :string(255)
@@ -27,6 +27,7 @@
 #  lonlat                 :spatial          point, 4326
 #  td_linx_confidence     :integer
 #  merged_with_place_id   :integer
+#  types                  :string(255)      is an Array
 #
 
 require 'rails_helper'

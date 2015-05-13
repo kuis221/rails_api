@@ -6,8 +6,9 @@ class TopAccountsMailer < ActionMailer::Base
     mail to: recipients, subject: 'Top 100 Accounts List Synch – File Not Found'
   end
 
-  def invalid_format(files)
+  def invalid_format(files, columns)
     recipients = ENV['TOP_ACCOUNTS_INVALID_FORMAT_EMAILS'].split(',')
+    @columns = columns
     files.each do |path|
       attachments[File.basename(path)] = File.read(path)
     end

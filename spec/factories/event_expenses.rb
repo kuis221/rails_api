@@ -5,7 +5,7 @@
 #  id            :integer          not null, primary key
 #  event_id      :integer
 #  name          :string(255)
-#  amount        :decimal(9, 2)    default(0.0)
+#  amount        :decimal(15, 2)   default(0.0)
 #  created_by_id :integer
 #  updated_by_id :integer
 #  created_at    :datetime         not null

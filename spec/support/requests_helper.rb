@@ -15,9 +15,10 @@ module CapybaraBrandscopicHelpers
   end
 
   def hover_and_click(parent, locator, options = {})
-    parent_element = find(parent)
-    parent_element.hover
-    parent_element.find(:link_or_button, locator, options).trigger('click')
+    parent = find(parent) if parent.is_a?(String)
+    parent.hover
+    within(parent) { expect(page).to have_selector(:link_or_button, locator) }
+    parent.find(:link_or_button, locator, options).trigger('click')
     self
   end
 
