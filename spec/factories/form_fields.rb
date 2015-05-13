@@ -23,7 +23,7 @@ FactoryGirl.define do
     sequence(:name) { |n| "Form Field #{n}" }
     type nil
     settings nil
-    sequence(ordering) { |n| n }
+    sequence(:ordering) { |n| n }
     required false
   end
 
