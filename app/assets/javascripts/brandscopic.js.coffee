@@ -99,12 +99,12 @@ jQuery ->
 		  .find('.progress').removeClass('progress-success progress-info progress-danger').addClass(progressClass).end()
 		  .find('.bar').css({width: total+'%'}).end().find('.counter').text(total+'%');
 
-
 		$("#total-field-" + segmentFieldId).val(if total then total else '')
-		#$("#total-field-" + segmentFieldId).valid()
 		true
 
-	$(document).on 'keyup', '.segment-field', updateSegmentFields
+	$(document).on 'keyup', '.segment-field', () ->
+		updateSegmentFields.apply this
+		$("#total-field-" + $(this).data('segment-field-id')).valid()
 
 	$('header .nav #notifications').notifications();
 
@@ -155,8 +155,6 @@ jQuery ->
 		$('.has-tooltip').tooltip({html: true, delay: 0, animation: false})
 		$('.has-popover').popover({html: true})
 		$("input:checkbox, input:radio").not('[data-no-uniform="true"], #uniform-is-ajax, .bs-checkbox').uniform()
-
-		$('.elements-range').keyup()
 
 		$('.segment-field').each (i, element) ->
 			updateSegmentFields.apply element
@@ -238,9 +236,10 @@ jQuery ->
 			element.addClass('valid').append('<span class="ok-message"><span>OK!</span></span>').closest('.control-group').removeClass('error')
 			element.closest('.field-option').removeClass('error')
 			# For percentage fields
-			$('#progress-for-' + element.data('segment-field-id')).removeClass('error')
-			element.closest('.form_field_percentage').find('.control-group-label').find('.ok-message').remove()
-			element.closest('.form_field_percentage').find('.control-group-label').append('<span class="ok-message"><span>OK!</span></span>')
+			if (element.attr('id') && $('.segment-error-' + element.data('segment-field-id')).not('.valid').length == 0)
+				$('#progress-for-' + element.data('segment-field-id')).removeClass('error')
+				element.closest('.form_field_percentage').find('.control-group-label').find('.ok-message').remove()
+				element.closest('.form_field_percentage').find('.control-group-label').append('<span class="ok-message"><span>OK!</span></span>')
 		onkeyup: (element, event) ->
 			items = items_count(element)
 			$('#item-counter-' + $(element).data('field-id')).html(items);
@@ -668,7 +667,20 @@ jQuery ->
 
 	$('.totop a').click (e) ->
 		e.preventDefault()
-		$('body,html').animate {scrollTop: 0}, 500
+		$('body,html').animate { scrollTop: 0 }, 500
+
+	percentageTimeouts = {}
+	$(document).on 'blur', 'input.segment-field', () ->
+		if !$(this).val()
+			$(this).val(0).valid()
+		fieldId = $(this).data('segment-field-id')
+		percentageTimeouts[fieldId] = setTimeout () ->
+			$("input.segment-total[data-segment-field-id=#{fieldId}]").valid()
+		, 200
+
+	$(document).on 'focus', 'input.segment-field', () ->
+		fieldId = $(this).data('segment-field-id')
+		clearTimeout percentageTimeouts[fieldId] if percentageTimeouts[fieldId]
 
 	$.validator.addMethod("oneupperletter",  (value, element) ->
 		return $.trim(value) == '' || /[A-Z]/.test(value);
@@ -694,6 +706,8 @@ jQuery ->
 	$.validator.addClassRules("segment-total", { segmentTotalMax: true, segmentTotalRequired: true });
 
 	$.validator.addMethod("segment-field", (value, element) ->
+		if !$(element).val()
+			$(element).val(0).valid()
 		return (value == '' || (/^[0-9]+$/.test(value) && parseInt(value) <= 100));
 	, " ");
 
@@ -721,27 +735,19 @@ jQuery ->
 				items = parseFloat(value, 10)
 			else if $element.data('range-format') is "digits"
 				items = val.replace(/[\s,\,\,]+/g, "").length
+		else if $element.data('range-format') is "characters" || $element.data('range-format') is "words"
+			items = 0
 
-		minResult = if $element.data('range-min') && items then items >= $element.data('range-min') else true
-		maxResult = if $element.data('range-max') && items then items <= $element.data('range-max') else true
+		if $.inArray($element.data('range-format'), ['value', 'characters', 'words']) > -1 && items == 0
+			# Special case when format is value, chars or words and items is zero because zero is evaluated as false
+			minResult = if $element.data('range-min') then items >= $element.data('range-min') else true
+			maxResult = if $element.data('range-max') then items <= $element.data('range-max') else true
+		else
+			minResult = if $element.data('range-min') && items then items >= $element.data('range-min') else true
+			maxResult = if $element.data('range-max') && items then items <= $element.data('range-max') else true
 
 		return minResult && maxResult
-	, (params, element) ->
-		$element = $(element)
-		if $element.data('range-format') is 'value'
-			if $element.data('range-min') && $element.data('range-max')
-				"should be between #{$element.data('range-min')} and #{$element.data('range-max')}"
-			else if $element.data('range-min')
-				"should be greater than #{$element.data('range-min')}"
-			else if $element.data('range-max')
-				"should be smaller than #{$element.data('range-max')}"
-		else
-			message = if $element.data('range-min') then "at least #{$element.data('range-min')}" else ''
-			message += if message.length > 0 && $element.data('range-max') then ' but ' else ''
-			message += if $element.data('range-max') then "no more than #{$element.data('range-max')}" else ''
-
-			"should have #{message} #{$element.data('range-format')}"
-	);
+	, ' ');
 
 	$(window).load () ->
 		setTimeout () ->

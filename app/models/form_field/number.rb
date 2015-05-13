@@ -41,8 +41,8 @@ class FormField::Number < FormField
   end
 
   def field_data
-    return {} unless settings.present?
     data = {}
+    return data unless settings.present?
     data['range-format'] = settings['range_format'] if settings['range_format'].present?
     data['range-min'] = settings['range_min'] if settings['range_min'].present?
     data['range-max'] = settings['range_max'] if settings['range_max'].present?

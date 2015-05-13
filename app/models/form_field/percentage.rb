@@ -25,7 +25,7 @@ class FormField::Percentage < FormField
       options: settings,
       required: required,
       label_html: { class: 'control-group-label' },
-      input_html: {
+      segment_html: {
         value: result.value,
         class: field_classes,
         min: 0,
@@ -36,7 +36,7 @@ class FormField::Percentage < FormField
   end
 
   def field_classes
-    [:number, 'segment-field']
+    [:percentage, :number, 'segment-field']
   end
 
   def is_hashed_value?
