@@ -4456,6 +4456,14 @@ body.roles{
 		position: absolute;
 		right: 0;
 	}
+	.event-calendar {
+		width: 480px!important;
+		font-size: 14px;
+
+		b{
+			color: $silver;
+		}
+	}
 }
 
 .category{
