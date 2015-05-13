@@ -4,7 +4,7 @@
   default: '%m/%d/%Y %H:%M:%S',
   simple: '%B %d, %Y',
   simple_short: '%b %d, %Y',
-  document: '%b %d, %Y at %l:%M %p',
+  document: '%b %-d, %Y at %l:%M %p',
   event: '%m/%d/%Y @ %l:%M %p',
   full_friendly: '%b %e, %Y %l:%M%p',
   time_only: '%l:%M %p',
