@@ -40,7 +40,7 @@ $back-arrow-width: 38px;
 	.panel-collapse{
 		background-color: $gray-darker;
 		color: $white;
-		z-index: 2;
+		z-index: 1110;
 		position: absolute;
 		width: calc(100% - #{$back-arrow-width});
 	}
