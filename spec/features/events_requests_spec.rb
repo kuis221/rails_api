@@ -1281,7 +1281,7 @@ feature 'Events section' do
         close_modal
 
         # Test the user was added to the list of event members and it can be removed
-        within '#event-contacts-list' do
+        within contact_list do
           expect(page).to have_content('Pablo Baltodano')
           click_js_link 'Remove Contact'
         end
@@ -1313,7 +1313,7 @@ feature 'Events section' do
         close_modal
 
         # Test the user was added to the list of event members and it can be removed
-        within '#event-contacts-list' do
+        within contact_list do
           expect(page).to have_content('Guillermo Vargas')
           click_js_link 'Remove Contact'
         end
@@ -1346,9 +1346,29 @@ feature 'Events section' do
         ensure_modal_was_closed
 
         # Test the contact was added to the list of event members and it can be removed
-        within '#event-contacts-list' do
+        within contact_list do
           expect(page).to have_content('Pedro Picapiedra')
         end
+
+        # Test tooltip
+        within contact_list do
+          find('.has-tooltip').click
+        end
+
+        within '.tooltip.in' do
+          expect(page).to have_content 'Pedro Picapiedra'
+          expect(page).to have_link 'pedro@racadura.com'
+          expect(page).to have_link '+1 505 22343222'
+          expect(page).to have_content 'ABC 123, Los Angeles, CA, United States'
+        end
+
+        # Clink in the tooltip and make sure it isn't closed
+        find('.tooltip .contact-name').click
+        expect(page).to have_selector('.tooltip.in')
+
+        # Click outside the tooltip and make sure it's closed
+        find('.guide-bar').click
+        expect(page).to_not have_selector('.tooltip.in')
 
         # Test removal of the contact
         click_js_link 'Remove Contact'
@@ -1476,5 +1496,9 @@ feature 'Events section' do
 
   def events_list
     '#events-list'
+  end
+
+  def contact_list
+    '#event-contacts-list'
   end
 end

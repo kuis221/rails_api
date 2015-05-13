@@ -62,6 +62,11 @@ jQuery ->
 		$('.has-popover').each () ->
 			if !$(this).is(e.target) && $(this).has(e.target).length is 0 && $('.popover').has(e.target).length is 0
 				$(this).popover('hide')
+		return if $(e.target).closest('.tooltip').length > 0
+		$('.has-tooltip').each () ->
+			tooltipElement = if $(e.target).hasClass('.has-tooltip') then e.target else $(e.target).closest('.has-tooltip')
+			if !$(this).is(tooltipElement)
+				$(this).tooltip('hide')
 
 	bootbox.setBtnClasses {CANCEL: 'btn-cancel', OK: 'btn-primary', CONFIRM: 'btn-primary'}
 
