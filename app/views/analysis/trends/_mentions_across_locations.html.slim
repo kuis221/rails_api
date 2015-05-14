@@ -111,6 +111,8 @@
     }
 
     $(window).on('load', function(){
+      console.log(google);
+      console.log(window.google);
       google.load('visualization', '1', { 'packages': ['geomap'], 'callback': initializeMap });
       //google.setOnLoadCallback(initializeMap);
     });

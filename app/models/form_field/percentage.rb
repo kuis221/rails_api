@@ -28,6 +28,7 @@ class FormField::Percentage < FormField
       segment_html: {
         value: result.value,
         class: field_classes,
+        maxlength: 3,
         min: 0,
         step: 'any',
         required: (self.required? ? 'required' : nil)

@@ -1229,8 +1229,7 @@ feature 'Events section' do
         visit event_path(event)
         expect(page).to have_selector('h2', text: 'Campaign FY2012')
         within('.calendar-data') do
-          expect(page).to have_content('WED Aug 28')
-          expect(page).to have_content('8:00 PM - 11:00 PM')
+          expect(page).to have_content('WED Aug 28, 2013 from 8:00 PM to 11:00 PM')
         end
       end
 
@@ -1254,8 +1253,7 @@ feature 'Events section' do
           visit event_path(event)
 
           within('.calendar-data') do
-            expect(page).to have_content('WED Aug 21')
-            expect(page).to have_content('10:00 AM - 11:00 AM')
+            expect(page).to have_content('WED Aug 21, 2013 from 10:00 AM to 11:00 AM')
           end
         end
       end
@@ -1456,7 +1454,7 @@ feature 'Events section' do
 
         click_js_button 'Unapprove'
 
-        expect(page).to have_content('Your post event report has been submitted for approval.')
+        expect(page).to have_content('Your post event report has been submitted for approval less than a minute ago.')
       end
 
       scenario "display errors when an event don't meet a campaign module range" do
@@ -1485,7 +1483,7 @@ feature 'Events section' do
 
         click_js_button 'Submit'
 
-        expect(page).to have_content('Your post event report has been submitted for approval.')
+        expect(page).to have_content('Your post event report has been submitted for approval less than a minute ago.')
       end
     end
   end

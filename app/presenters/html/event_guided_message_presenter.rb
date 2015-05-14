@@ -73,11 +73,11 @@ module Html
         rejection_message = if @model.reject_reason
            "<br />It was previously rejected #{rejected_at} for the following reason: <i>#{@model.reject_reason}</i> "
         end
-        message_with_buttons "Your post event report has been submitted for approval. #{rejection_message}" +
+        message_with_buttons "Your post event report has been submitted for approval #{submitted_at}. #{rejection_message}" +
                             'Please review and either approve or reject.', :approve_per,
                             [approve_button, reject_button]
       else
-        info 'Your post event report has been submitted for approval. Once your report has been reviewed you will be alerted in your notifications.', :approve_per
+        info 'Your post event report has been submitted for approval #{submitted_at}. Once your report has been reviewed you will be alerted in your notifications.', :approve_per
       end
     end
 
@@ -145,7 +145,12 @@ module Html
     end
 
     def rejected_at
-      date = (@model.rejected_at || @model.updated_at)
+      date = @model.rejected_at || @model.updated_at
+      timeago_tag(date)
+    end
+
+    def submitted_at
+      date = @model.submitted_at || @model.updated_at
       timeago_tag(date)
     end
 

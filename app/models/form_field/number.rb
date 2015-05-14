@@ -35,6 +35,7 @@ class FormField::Number < FormField
         class: field_classes.push('elements-range'),
         data: field_data,
         step: 'any',
+        maxlength: max_length,
         required: (self.required? ? 'required' : nil)
       }
     }
@@ -48,6 +49,11 @@ class FormField::Number < FormField
     data['range-max'] = settings['range_max'] if settings['range_max'].present?
     data['field-id'] = id
     data
+  end
+
+  def max_length
+    max_range = settings && settings.key?('range_max') && settings['range_max']
+    [max_range, 15].reject(&:blank?).map(&:to_i).min
   end
 
   def validate_result(result)
