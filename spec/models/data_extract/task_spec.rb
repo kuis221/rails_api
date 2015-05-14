@@ -53,17 +53,17 @@ RSpec.describe DataExtract::Task, type: :model do
         task = create(:task, event_id: event.id, due_at: Time.zone.local(2013, 2, 10, 9, 15),
                              created_at: Time.zone.local(2013, 8, 23, 9, 15), company_user: company_user,
                              created_by: company_user.user)
-        comment1 = create(:comment, content: 'Comment #1', commentable: task, created_at: Time.zone.local(2013, 8, 22, 11, 59))
-        comment2 = create(:comment, content: 'Comment #2', commentable: task, created_at: Time.zone.local(2013, 8, 23, 9, 15))
-        comment2 = create(:comment, content: 'Comment #3', commentable: task, created_at: Time.zone.local(2013, 8, 23, 9, 15))
-        comment2 = create(:comment, content: 'Comment #4', commentable: task, created_at: Time.zone.local(2013, 8, 23, 9, 15))
+        comment1 = create(:comment, content: 'Comment #1', commentable: task, created_at: Time.zone.local(2013, 8, 15, 11, 59))
+        comment2 = create(:comment, content: 'Comment #2', commentable: task, created_at: Time.zone.local(2013, 8, 16, 9, 15))
+        comment2 = create(:comment, content: 'Comment #3', commentable: task, created_at: Time.zone.local(2013, 8, 17, 9, 15))
+        comment2 = create(:comment, content: 'Comment #4', commentable: task, created_at: Time.zone.local(2013, 8, 18, 9, 15))
         comment2 = create(:comment, content: 'Comment #5', commentable: task, created_at: Time.zone.local(2013, 8, 23, 9, 15))
       end
 
       it 'returns all the events in the company with all the columns' do
         expect(subject.rows).to eql [
           ['MyString', 'Active, Assigned, Incomplete, Late', '02/10/2013', 'Benito Camelas', '08/23/2013', 'Benito Camelas',
-           'Comment #5', 'Comment #4', 'Comment #3', 'Comment #2', 'Comment #1', 'Active']
+           'Comment #1', 'Comment #2', 'Comment #3', 'Comment #4', 'Comment #5', 'Active']
         ]
       end
 
