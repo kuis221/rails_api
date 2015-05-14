@@ -116,6 +116,14 @@ module CapybaraBrandscopicHelpers
     find('ul.ui-autocomplete li.ui-menu-item a', text: text, match: :first).click
   end
 
+  def select_time(time, from: '.timepicker')
+    find_field(from).trigger('focus')
+    within '.ui-timepicker-list' do
+      find('li', text:  /\A#{time}\z/).click
+    end
+    expect(find_field(from).value).to eql time
+  end
+
   def select2(item_text, options)
     select_name = options[:from]
     select2_container = first('label', text: select_name).find(:xpath, '..').find('.select2-container')
