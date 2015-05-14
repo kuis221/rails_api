@@ -34,6 +34,16 @@ class Results::DataExtractsController < InheritedResources::Base
     @collection_count ||= resource.total_results
   end
 
+  def deactivate
+    resource.deactivate! if resource.active == true
+    render 'deactivate_data_extract'
+  end
+
+  def activate
+    resource.activate! unless resource.active == true
+    render 'deactivate_data_extract'
+  end
+
   protected
 
   def collection_to_csv

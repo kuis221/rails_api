@@ -3,3 +3,9 @@ div.resource-item id="data_extract_report_#{data_extract.id}"
     .span10.report-item
       .text-large= data_extract.name
       p= data_extract.description
+
+  div.resource-item-actions
+    - if can?(:edit, data_extract)
+      //= icon_button_to 'icon-share', share_results_report_path(report, format: :js), remote: true, method: :get, title: 'Share', form_class: 'button_to button_to_edit'
+      //= button_to_edit report, url: edit_results_report_path(report)
+      = button_to_activate_or_deactivate(data_extract, deactivate_url: deactivate_results_data_extract_path(data_extract), activate_url: activate_results_data_extract_path(data_extract))

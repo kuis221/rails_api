@@ -58,7 +58,7 @@ RSpec.describe DataExtract::Brand, type: :model do
 
       it 'returns all the events in the company with all the columns' do
         expect(subject.rows).to eql [
-          ['Guaro Cacique', 'Marque 1, Marque 2, Marque 3', 'Benito Camelas', '08/23/2013', 'Active']
+          ['Guaro Cacique', 'Marque 3, Marque 2, Marque 1', 'Benito Camelas', '08/23/2013', 'Active']
         ]
       end
 

@@ -153,4 +153,12 @@ class DataExtract < ActiveRecord::Base
   def source
     self.class.name.split('::').last.underscore
   end
+
+  def activate!
+    update_attribute :active, true
+  end
+
+  def deactivate!
+    update_attribute :active, false
+  end
 end
