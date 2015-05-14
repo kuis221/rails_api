@@ -458,7 +458,7 @@ feature 'Events section' do
             visit events_path
 
             choose_predefined_date_range 'Today'
-            wait_for_ajax
+            expect(page).to have_filter_tag('Today')
 
             expect(page).to have_selector('#events-list .resource-item', count: 2)
             within events_list do
@@ -502,7 +502,7 @@ feature 'Events section' do
             visit events_path
 
             choose_predefined_date_range 'Current month'
-            wait_for_ajax
+            expect(page).to have_content('2 events found for:')
 
             expect(page).to have_selector('#events-list .resource-item', count: 2)
             within events_list do
@@ -521,7 +521,7 @@ feature 'Events section' do
             visit events_path
 
             choose_predefined_date_range 'Previous week'
-            wait_for_ajax
+            expect(page).to have_content('2 events found for:')
 
             expect(page).to have_selector('#events-list .resource-item', count: 1)
             within events_list do
@@ -831,9 +831,7 @@ feature 'Events section' do
         end
 
         feature 'filters' do
-
           it_behaves_like 'a list that allow saving custom filters' do
-
             before do
               create(:campaign, name: 'Campaign 1', company: company)
               create(:campaign, name: 'Campaign 2', company: company)
@@ -1028,8 +1026,8 @@ feature 'Events section' do
 
           within visible_modal do
             # Test both dates are the same
-            expect(find_field('event_start_date').value).to eql '07/30/2013'
-            expect(find_field('event_end_date').value).to eql '07/30/2013'
+            expect(page).to have_field('Start', with: '07/30/2013')
+            expect(page).to have_field('End', with: '07/30/2013')
 
             # Change the start date and make sure the end date is changed automatically
             find_field('event_start_date').click
@@ -1047,15 +1045,15 @@ feature 'Events section' do
 
             # Change the start time and make sure the end date is changed automatically
             # to one hour later
-            find_field('event_start_time').click
-            find_field('event_start_time').set '08:00am'
-            find_field('event_end_time').click
-            expect(find_field('event_end_time').value).to eql '9:00am'
+            find_field('event[start_time]').click
+            find_field('event[start_time]').set '08:00am'
+            find_field('event[end_time]').click
+            expect(page).to have_field('event[end_time]', with: '9:00am')
 
-            find_field('event_start_time').click
-            find_field('event_start_time').set '4:00pm'
-            find_field('event_end_time').click
-            expect(find_field('event_end_time').value).to eql '5:00pm'
+            find_field('event[start_time]').click
+            find_field('event[start_time]').set '4:00pm'
+            find_field('event[end_time]').click
+            expect(page).to have_field('event[end_time]', with: '5:00pm')
           end
         end
       end
@@ -1314,6 +1312,8 @@ feature 'Events section' do
           expect(page).to have_content('Pedro Urrutia')
           click_js_link 'Remove Contact'
         end
+        ensure_modal_was_closed
+        expect(page).to_not have_content('Pedro Urrutia')
 
         # Refresh the page and make sure the user is not there
         visit event_path(event)

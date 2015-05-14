@@ -98,7 +98,7 @@ RSpec.shared_examples 'a list that allow saving custom filters' do
       find('.resource-item', text: name)
       choose('default')
       expect(find_field('default')).to be_checked
-      wait_for_ajax
+      wait_until { CustomFilter.where(name: name, default_view: true).any? }
       click_button 'Done'
     end
     ensure_modal_was_closed

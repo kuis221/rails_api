@@ -440,7 +440,8 @@ feature 'Post Event Data' do
 
       click_js_button 'Save'
 
-      expect(page).to have_link('edit-event-data-btn')
+      expect(page).to have_link('Edit event data')
+      expect(page).to_not have_button('Save')
     end
   end
 
