@@ -1291,35 +1291,34 @@ feature 'Events section' do
       end
 
       scenario 'allows to add a contact as contact to the event', js: true do
-        create(:contact,
-               first_name: 'Guillermo', last_name: 'Vargas',
-               email: 'guilleva@gmail.com', company_id: company.id)
+        create(:contact, first_name: 'Pedro', last_name: 'Urrutia',
+                         company_id: company.id)
         Sunspot.commit
 
         visit event_path(event)
 
         click_js_button 'Add Contacts'
         within visible_modal do
-          fill_in 'contact-search-box', with: 'Gui'
-          expect(page).to have_content('Guillermo Vargas')
+          fill_in 'contact-search-box', with: 'Ped'
+          expect(page).to have_content('Pedro Urrutia')
           within resource_item do
             click_js_link 'Add'
           end
 
-          expect(page).to have_no_content 'Guillermo Vargas'
+          expect(page).to have_no_content 'Pedro Urrutia'
         end
         close_modal
 
         # Test the user was added to the list of event members and it can be removed
         within contact_list do
-          expect(page).to have_content('Guillermo Vargas')
+          expect(page).to have_content('Pedro Urrutia')
           click_js_link 'Remove Contact'
         end
 
         # Refresh the page and make sure the user is not there
         visit event_path(event)
 
-        expect(page).to_not have_content('Guillermo Vargas')
+        expect(page).to_not have_content('Pedro Urrutia')
       end
 
       scenario 'allows to create a contact', js: true do
