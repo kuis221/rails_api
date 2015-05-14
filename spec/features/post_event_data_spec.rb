@@ -184,7 +184,7 @@ feature 'Post Event Data' do
       fill_in 'Custom Numeric', with: '10'
       fill_in 'Custom Currency', with: '30'
       fill_in 'Custom Date', with: '08/13/2013'
-      fill_in 'Custom Time', with: '2:30am'
+      select_time '2:30am', from: 'Custom Time'
 
       fill_in 'Summation Opt1', with: '100'
       fill_in 'Summation Opt2', with: '2000'
