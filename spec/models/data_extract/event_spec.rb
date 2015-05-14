@@ -30,7 +30,7 @@ RSpec.describe DataExtract::Event, type: :model do
         %w(campaign_name Campaign), ['end_date', 'End Date'], ['end_time', 'End Time'],
         ['start_date', 'Start Date'], ['start_time', 'Start Time'], ['place_street', 'Venue Street'],
         ['place_city', 'Venue City'], ['place_name', 'Venue Name'], ['place_state', 'Venue State'],
-        ['place_zipcode', 'Venue ZIP code'], ['event_team_members', 'Event Team'], ['event_status', 'Event Status'],
+        ['place_zipcode', 'Venue ZIP Code'], ['event_team_members', 'Event Team'], ['event_status', 'Event Status'],
         ['created_by', 'Created By'], ['created_at', 'Created At'], ['status', 'Active State']])
     end
   end
