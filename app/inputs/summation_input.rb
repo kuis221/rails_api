@@ -12,7 +12,7 @@ class SummationInput < SimpleForm::Inputs::Base
       output_html << "<span for=\"#{field_id}\" class=\"help-inline\" style=\"display:none;\"></span>"
       output_html << '<div class="clearfix"></div>'
       output_html << "<label for=\"#{field_id}\" class=\"control-label\">#{ERB::Util.html_escape(ffo.name)}</label>"
-      output_html << @builder.text_field(nil, input_html_options.merge(name: field_name, id: field_id, value: value, 'data-group' => group))
+      output_html << @builder.text_field(nil, input_html_options.merge(name: field_name, maxlength: 10, id: field_id, value: value, 'data-group' => group))
       output_html << '</div>'
       total += value.to_f
     end

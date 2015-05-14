@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150512141803) do
+ActiveRecord::Schema.define(version: 20150513214934) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -529,6 +529,7 @@ ActiveRecord::Schema.define(version: 20150512141803) do
     t.text     "description"
     t.string   "kbmg_event_id"
     t.datetime "rejected_at"
+    t.datetime "submitted_at"
   end
 
   add_index "events", ["aasm_state"], :name => "index_events_on_aasm_state"
@@ -564,7 +565,7 @@ ActiveRecord::Schema.define(version: 20150512141803) do
     t.datetime "created_at",                                             null: false
     t.datetime "updated_at",                                             null: false
     t.hstore   "hash_value"
-    t.decimal  "scalar_value",    precision: 10, scale: 2, default: 0.0
+    t.decimal  "scalar_value",    precision: 15, scale: 2, default: 0.0
     t.integer  "resultable_id"
     t.string   "resultable_type"
   end
