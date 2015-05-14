@@ -47,7 +47,7 @@ namespace :brandscopic do
     CSV($stdin, row_sep: "\n", col_sep: ',') do |csv|
       csv.each do |venue1, venue2, venue3, name, route, city, state, zip, td_linx_code|
         next if venue1.blank?
-        venues = Venue.where(id: [venue1, venue2, venue3])
+        venues = Venue.where(id: [venue1, venue2, venue3]).where(merged_with_place_id: nil)
         if [venue1, venue2, venue3].compact.count > venues.count
           puts "NOT ALL VENUES WHERE FOUND #{[venue1, venue2, venue3].compact}"
           next

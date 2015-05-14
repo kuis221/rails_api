@@ -315,6 +315,7 @@ class Place < ActiveRecord::Base
 
   # Merge the record with the given place
   def merge(place)
+    fail "Cannot merge a venue into a merged venued" unless merged_with_place_id.blank?
     fail "Cannot merge place with itself" if id == place.id
     self.class.connection.transaction do
       Venue.where(place_id: place.id).each do |venue|
