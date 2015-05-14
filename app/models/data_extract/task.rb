@@ -31,11 +31,11 @@ class DataExtract::Task < DataExtract
                  created_by: 'trim(users.first_name || \' \' || users.last_name)',
                  created_at: proc { "to_char(tasks.created_at, 'MM/DD/YYYY')" },
                  assigned_to: 'trim(cu.first_name || \' \' || cu.last_name)',
-                 comment1: '(SELECT content FROM comments WHERE commentable_type = \'Task\' AND commentable_id=tasks.id LIMIT 1 OFFSET 0) AS column1',
-                 comment2: '(SELECT content FROM comments WHERE commentable_type = \'Task\' AND commentable_id=tasks.id LIMIT 1 OFFSET 1) AS column2',
-                 comment3: '(SELECT content FROM comments WHERE commentable_type = \'Task\' AND commentable_id=tasks.id LIMIT 1 OFFSET 2) AS column3',
-                 comment4: '(SELECT content FROM comments WHERE commentable_type = \'Task\' AND commentable_id=tasks.id LIMIT 1 OFFSET 3) AS column4',
-                 comment5: '(SELECT content FROM comments WHERE commentable_type = \'Task\' AND commentable_id=tasks.id LIMIT 1 OFFSET 4) AS column5',
+                 comment1: '(SELECT content FROM comments WHERE commentable_type = \'Task\' AND commentable_id=tasks.id ORDER BY created_at LIMIT 1 OFFSET 0) AS column1',
+                 comment2: '(SELECT content FROM comments WHERE commentable_type = \'Task\' AND commentable_id=tasks.id ORDER BY created_at LIMIT 1 OFFSET 1) AS column2',
+                 comment3: '(SELECT content FROM comments WHERE commentable_type = \'Task\' AND commentable_id=tasks.id ORDER BY created_at LIMIT 1 OFFSET 2) AS column3',
+                 comment4: '(SELECT content FROM comments WHERE commentable_type = \'Task\' AND commentable_id=tasks.id ORDER BY created_at LIMIT 1 OFFSET 3) AS column4',
+                 comment5: '(SELECT content FROM comments WHERE commentable_type = \'Task\' AND commentable_id=tasks.id ORDER BY created_at LIMIT 1 OFFSET 4) AS column5',
                  active_state: 'CASE WHEN tasks.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END'
 
   def add_joins_to_scope(s)
