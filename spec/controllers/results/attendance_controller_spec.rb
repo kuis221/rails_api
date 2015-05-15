@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 describe Results::AttendanceController, type: :controller do
-
   let(:user) { company_user.user }
   let(:company) { create(:company) }
   let(:role) { create(:non_admin_role, company: company) }
@@ -10,6 +9,7 @@ describe Results::AttendanceController, type: :controller do
   let(:place) { create(:place, city: 'Los Angeles', state: 'California', lonlat: 'POINT (-118.23994 34.017892)') }
   let(:campaign) { create(:campaign, company: company, name: 'Test Campaign FY01') }
   let(:event) { without_current_user { create(:event, campaign: campaign, place: create(:place)) } }
+  let(:area) { create(:area, company: company, places: [create(:state, name: 'California')]) }
 
   let(:neighborhood) do
     create(:neighborhood,
@@ -29,6 +29,8 @@ describe Results::AttendanceController, type: :controller do
                  '3FD915DC04D90DE496701414050115685F9915DC059ED13E825024140')
   end
 
+  before { company_user.campaigns << campaign }
+  before { company_user.places << event.place }
   before { sign_in_as_user company_user }
 
   describe 'GET index' do
@@ -42,25 +44,48 @@ describe Results::AttendanceController, type: :controller do
     before { neighborhood }
 
     it 'returns http success' do
-      xhr :get, :map, city: 'Los Angeles', state: 'CA', format: :js
+      xhr :get, :map, campaign_id: campaign.id, event_id: event.id, format: :js
       expect(response).to be_success
     end
 
     it 'loads the correct set of neighborhoods' do
       create(:invite, event: event, venue: create(:venue, company: company, place: place))
 
-      xhr :get, :map, campaign_id: campaign.id, event_id: event.id, state: 'CA', format: :js
+      xhr :get, :map, campaign_id: campaign.id, event_id: event.id, area_id: area.id, format: :js
 
       expect(assigns(:neighborhoods)).to match_array [neighborhood]
+    end
+
+    describe 'for market level campaigns' do
+      before do
+        campaign.update_attribute :modules, 'attendance' => { 'settings' => { 'attendance_display' => '2' } }
+      end
+
+      it 'loads the zip codes from Google API and stores it in DB' do
+        expect_any_instance_of(Results::AttendanceController).to receive(:open).and_return(double(
+          read: '{"results":[{"geometry":{"location":{"lat":"34.0187789203171","lng":"-118.259249420375"}}}]}'
+        ))
+        invite = create(:invite, area: area, event: event)
+        invite.rsvps.create(zip_code: '90011', attended: false)
+        invite.rsvps.create(zip_code: '90011', attended: true)
+        xhr :get, :map, campaign_id: campaign.id, event_id: event.id, format: :js
+
+        expect(assigns(:neighborhoods)).to match_array [neighborhood]
+        result = assigns(:neighborhoods).first
+        expect(result.attendees).to eql 1
+        expect(result.invitations).to eql 2
+      end
     end
   end
 
   describe "GET 'list_export'", search: true do
-
     before { neighborhood }
 
     it 'exports an empty book with the correct headers' do
-      expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+      expect do
+        xhr :get, 'index', campaign_id: campaign.id,
+                           event_id: event.id, format: :xls
+      end.to change(ListExport, :count).by(1)
       export = ListExport.last
       expect(ListExportWorker).to have_queued(export.id)
       ResqueSpec.perform_all(:export)
@@ -72,7 +97,9 @@ describe Results::AttendanceController, type: :controller do
     it 'exports the list of neighborhoods for the selected campaign/event' do
       create(:invite, event: event, venue: create(:venue, company: company, place: place))
 
-      expect { xhr :get, 'index', campaign_id: campaign.id, event_id: event.id, format: :xls }.to change(ListExport, :count).by(1)
+      expect do
+        xhr :get, 'index', campaign_id: campaign.id, event_id: event.id, format: :xls
+      end.to change(ListExport, :count).by(1)
       export = ListExport.last
       expect(ListExportWorker).to have_queued(export.id)
       ResqueSpec.perform_all(:export)
@@ -82,5 +109,4 @@ describe Results::AttendanceController, type: :controller do
         ["Central City", "Los Angeles", "CA", "1", "0", "1"]])
     end
   end
-
 end

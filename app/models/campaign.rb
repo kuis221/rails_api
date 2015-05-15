@@ -336,7 +336,9 @@ class Campaign < ActiveRecord::Base
 
   # Returns the setting for a module or nil if not setting is set
   def module_setting(module_name, setting_name)
-    return unless modules.key?(module_name) && modules[module_name].key?('settings') && modules[module_name]['settings']
+    return unless modules && modules.key?(module_name) &&
+                  modules[module_name].key?('settings') &&
+                  modules[module_name]['settings']
     modules[module_name]['settings'][setting_name]
   end
 

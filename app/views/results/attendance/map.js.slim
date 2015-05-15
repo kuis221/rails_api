@@ -35,7 +35,7 @@
   - @neighborhoods.each do |neighborhood|
     |
           infoWindows["#{j neighborhood.name}"] = new google.maps.InfoWindow();
-          infoWindows["#{j neighborhood.name}"].setContent('<div style="white-space: nowrap;"><b>#{j neighborhood.name}</b><br> <span style="font-size:15px; font-weight: bold;">#{neighborhood.attendees}</span> <span style="font-size:13px">ATTENDEES</span><br><span style="font-size:12px">#{neighborhood.attended} ACCOUNTS ATTENDED</span><br><span style="font-size:12px;">#{neighborhood.invitations} INVITATIONS</span></div>');
+          infoWindows["#{j neighborhood.name}"].setContent('<div style="white-space: nowrap;"><b>#{j neighborhood.name}</b><br> <span style="font-size:15px; font-weight: bold;">#{neighborhood.attendees}</span> <span style="font-size:13px">ATTENDEES</span>#{ neighborhood.try(:attended) ? "<br><span style=\"font-size:12px\">#{neighborhood.attended} ACCOUNTS ATTENDED</span>" : '' }<br><span style="font-size:12px;">#{neighborhood.invitations} INVITATIONS</span></div>');
           neighborhoodsCoordinates = [#{neighborhood_coordinates(neighborhood)}];
           neighborhoodPolygon = new google.maps.Polygon({
             paths: neighborhoodsCoordinates,
@@ -59,7 +59,6 @@
   |
         window.attendanceMap.fitBounds(bounds);
         };
-        debugger;
         initializeNeighborhoodMap();
         changeColorAllPolygon(color, tinycolor(color).toHsv());
         $('#customize-fields').removeClass('hide');
