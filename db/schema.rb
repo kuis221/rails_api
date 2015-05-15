@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150513214934) do
+ActiveRecord::Schema.define(version: 20150514210725) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -1050,6 +1050,11 @@ ActiveRecord::Schema.define(version: 20150513214934) do
   add_index "venues", ["place_id"], :name => "index_venues_on_place_id"
 
   create_table "views_for_data_extracts", force: true do |t|
+  end
+
+  create_table "zipcode_locations", force: true do |t|
+    t.string  "zipcode",                                                          null: false
+    t.spatial "lonlat",  limit: {:srid=>4326, :type=>"point", :geographic=>true}
   end
 
 end
