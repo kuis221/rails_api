@@ -42,11 +42,11 @@ class InviteRsvp < ActiveRecord::Base
   end
 
   def self.update_zip_code_location(zip_code, latlng)
-    point = "POINT(#{latlng['lng']} #{latlng['lat']})"
+    point = latlng ? connection.quote("POINT(#{latlng['lng']} #{latlng['lat']})") : 'NULL'
     connection.execute(<<-EOQ)
       INSERT INTO zipcode_locations(zipcode, lonlat)
       VALUES (#{connection.quote(zip_code)},
-              #{connection.quote(point)})
+              #{point})
     EOQ
   end
 end
