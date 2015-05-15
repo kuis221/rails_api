@@ -31,4 +31,22 @@ class InviteRsvp < ActiveRecord::Base
   delegate :place_name, :campaign_name, :invitees, :rsvps_count, :attendees,
            :jameson_locals?, :top_venue?, :event, :area,
            to: :invite
+
+  def self.for_event(event)
+    where(invite: event.invites)
+  end
+
+  def self.without_locations
+    joins('LEFT JOIN zipcode_locations zl ON zl.zipcode=invite_rsvps.zip_code')
+      .where('zl.zipcode IS NULL')
+  end
+
+  def self.update_zip_code_location(zip_code, latlng)
+    point = "POINT(#{latlng['lng']} #{latlng['lat']})"
+    connection.execute(<<-EOQ)
+      INSERT INTO zipcode_locations(zipcode, lonlat)
+      VALUES (#{connection.quote(zip_code)},
+              #{connection.quote(point)})
+    EOQ
+  end
 end

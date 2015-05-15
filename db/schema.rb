@@ -11,15 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150427162428) do
+ActiveRecord::Schema.define(version: 20150514210725) do
 
   # These are extensions that must be enabled in order to support this database
-  enable_extension "tablefunc"
   enable_extension "plpgsql"
   enable_extension "hstore"
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
   enable_extension "postgis"
+  enable_extension "tablefunc"
 
   create_table "active_admin_comments", force: true do |t|
     t.string   "resource_id",   null: false
@@ -1016,5 +1016,10 @@ ActiveRecord::Schema.define(version: 20150427162428) do
   add_index "venues", ["company_id", "place_id"], :name => "index_venues_on_company_id_and_place_id", :unique => true
   add_index "venues", ["company_id"], :name => "index_venues_on_company_id"
   add_index "venues", ["place_id"], :name => "index_venues_on_place_id"
+
+  create_table "zipcode_locations", force: true do |t|
+    t.string  "zipcode",                                                          null: false
+    t.spatial "lonlat",  limit: {:srid=>4326, :type=>"point", :geographic=>true}
+  end
 
 end

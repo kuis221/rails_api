@@ -12,7 +12,7 @@
 
         = f.input :event_id, label: '2. Choose a event date', collection: campaign_events, selected: params[:event_id], include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Choose a event date" } }
 
-        = f.input :area_id, label: '2. Choose an area', collection: current_company.areas.active.order(:name).pluck(:name, :id), selected: params[:area_id], include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Choose an area" } }
+        = f.input :area_id, label: '3. Choose an area', collection: current_company.areas.active.order(:name).pluck(:name, :id), selected: params[:area_id], include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Choose an area" } }
 
         #customize-fields.hide
           .attendance-slider
