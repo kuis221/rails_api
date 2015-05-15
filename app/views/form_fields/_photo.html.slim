@@ -3,7 +3,24 @@
 span.form-result-label= form_field.name + (form_field.required || params[:action] != 'export_fieldable' ? '' : ' (optional)')
 
 - if result.attached_asset.present? && result.attached_asset.processed?
-  a href="#{result.attached_asset.download_url}" title="Download"
-    img src="#{result.attached_asset.file.url(preview_style)}" alt=""
+  .field-gallery.gallery
+    ul#photos-thumbs
+      li.photo-item
+        div.thumbnail-inner
+          .thumbnail-toolbar
+            = link_to '', result.attached_asset.download_url, class: 'icon-download', title: "Download", id: 'photo-download-add'
+          = link_to result.attached_asset.preview_url, 'data-toggle' => 'gallery', title: 'View Image', class: '' do
+              = image_tag "#{result.attached_asset.file.url(preview_style)}", id: 'field_image_' + result.attached_asset.id.to_s, data: {\
+                  info: {\
+                    urls: {\
+                      download: result.attached_asset.download_url\
+                    },\
+                    permissions: ['download'],\
+                    image_id: result.attached_asset.id\
+                  }\
+                }
+  javascript:
+    $("div.field-gallery").photoGallery({ showSidebar: false });
+
 - elsif result.attached_asset.present?
   | The photo is being processed. It will be available soon..
