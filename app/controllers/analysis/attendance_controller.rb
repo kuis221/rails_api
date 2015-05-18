@@ -43,8 +43,8 @@ class Analysis::AttendanceController < ApplicationController
       .joins('INNER JOIN invite_rsvps ON zipcode_locations.zipcode=invite_rsvps.zip_code')
       .joins('INNER JOIN invites ON invite_rsvps.invite_id=invites.id')
       .group('neighborhoods.gid')
-      .select('neighborhoods.*, COALESCE(sum(invitees), 0) invitations, count(invite_rsvps.id) attendees,'\
-              'sum(CASE WHEN invite_rsvps.attended = \'t\' THEN 1 ELSE 0 END) attended, sum(rsvps_count) rsvps').to_a
+      .select('neighborhoods.*, COALESCE(sum(invitees), 0) invitations, sum(CASE WHEN invite_rsvps.attended = \'t\' THEN 1 ELSE 0 END) attendees,'\
+              'sum(rsvps_count) rsvps').to_a
   end
 
   def event
@@ -56,8 +56,9 @@ class Analysis::AttendanceController < ApplicationController
     InviteRsvp.for_event(event).without_locations.where.not(zip_code: nil)
       .where.not(zip_code: '')
       .pluck('DISTINCT invite_rsvps.zip_code').each do |zipcode|
+        next unless zipcode.match(/\A[0-9]{5}(-[0-9]+)?\z/)
         latlng = get_latlng_for_zip_code(zipcode)
-        InviteRsvp.update_zip_code_location(zipcode, latlng) if latlng
+        InviteRsvp.update_zip_code_location(zipcode, latlng)
     end
   end
 

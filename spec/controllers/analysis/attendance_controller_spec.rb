@@ -72,8 +72,7 @@ describe Analysis::AttendanceController, type: :controller do
 
         expect(assigns(:neighborhoods)).to match_array [neighborhood]
         result = assigns(:neighborhoods).first
-        expect(result.attendees).to eql 2
-        expect(result.attended).to eql 1
+        expect(result.attendees).to eql 1
         expect(result.invitations).to eql 2
       end
     end
