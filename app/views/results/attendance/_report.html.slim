@@ -144,23 +144,23 @@ javascript:
 
   function generateColorList(hsb) {
     var arrayColor = [];
-    if (hsb.s < 100) { hsb.s = 100; }
-    for (var i = 0; i < 10; i++){
+    hsb.s = 210
+    for (var i = 0; i < 8; i++){
       arrayColor.push(tinycolor(hsb).toHex(hsb));
-      hsb.s = hsb.s - 5;
+      hsb.s = hsb.s - 25;
     }
     return arrayColor;
   }
 
   function selectColorIndex(value) {
-    var t = (selectedMax - selectedMin) / 10;
+    var t = (selectedMax - selectedMin) / 8;
     if (value != 0 && t != 0) {
       var colorIndex = Math.floor(value / t);
       if (value == valueMax)
         return 0;
       else
-        return 10 - Math.floor(value / t);
+        return 8 - Math.floor(value / t);
     }
     else
-      return 9;
+      return 7;
   }
