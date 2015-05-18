@@ -21,8 +21,9 @@
 
 class DataExtract::Brand < DataExtract
   define_columns name: 'brands.name', 
-                 marques_list: 'array_to_string(array_agg(marques.name), \', \')', 
-                 created_by: 'trim(users.first_name || \' \' || users.last_name)', 
+                 marques_list: 'array_to_string(ARRAY(SELECT marques.name FROM marques
+                              WHERE brands.id=marques.brand_id ORDER BY marques.name),\', \') AS marques_list',
+                 created_by: 'trim(users.first_name || \' \' || users.last_name)',
                  created_at: proc { "to_char(brands.created_at, 'MM/DD/YYYY')" },
                  active_state: 'CASE WHEN brands.active=\'t\' THEN \'Active\' ELSE \'Inactive\' END'
 
@@ -30,22 +31,11 @@ class DataExtract::Brand < DataExtract
     if columns.include?('created_by') || filters.present? && filters['user'].present?
       s = s.joins('LEFT JOIN users ON brands.created_by_id=users.id')
     end
-    if columns.include?('marques_list')
-      s = s.joins('LEFT JOIN marques ON brands.id=marques.brand_id')
-           .group(group_by_columns)
-    end
     s
   end
 
   def total_results
     Brand.connection.select_value("SELECT COUNT(*) FROM (#{base_scope.select(*selected_columns_to_sql).to_sql}) sq").to_i
-  end
-
-  def group_by_columns
-    (
-      ['brands.id'] + columns.each_with_index.map { |c, i| i + 1 } -
-      [columns.index('marques_list') + 1]     # Do not group by marques
-    ).join(',')
   end
 
   def add_filter_conditions_to_scope(s)
