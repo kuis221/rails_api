@@ -1,7 +1,7 @@
 class Results::DataExtractsController < InheritedResources::Base
   include ExportableController
 
-  respond_to :js, only: [:new, :create, :show]
+  respond_to :js, only: [:new, :create, :show, :update, :edit]
 
   helper_method :return_path, :process_step, :resource, :form_action, :collection_count
 
