@@ -48,7 +48,7 @@ class InviteRsvp < ActiveRecord::Base
       INSERT INTO zipcode_locations(zipcode, lonlat, neighborhood_id)
       VALUES (#{connection.quote(zip_code)},
               #{point},
-              #{neighborhood_id})
+              #{neighborhood_id || 'NULL'})
     EOQ
   end
 
