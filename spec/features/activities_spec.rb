@@ -145,7 +145,7 @@ feature 'Activities management' do
       select_from_chosen('Dropdown option #2', from: 'Form Field #2')
       select_from_chosen('Juanito Bazooka', from: 'User')
       fill_in 'Date', with: '05/16/2013'
-      click_button 'Submit'
+      click_button 'Save'
 
       expect(page).to have_content('Thank You!')
       click_link 'Finish'
@@ -185,7 +185,7 @@ feature 'Activities management' do
 
       select_from_chosen('Juanito Bazooka', from: 'User')
       fill_in 'Date', with: '05/16/2013'
-      click_button 'Submit'
+      click_button 'Save'
 
       within resource_item do
         expect(page).to have_content('Juanito Bazooka')
@@ -240,7 +240,7 @@ feature 'Activities management' do
       select_from_chosen('Dropdown option #2', from: 'Form Field #2')
       select_from_chosen('Juanito Bazooka', from: 'User')
       fill_in 'Date', with: '05/16/2013'
-      click_button 'Submit'
+      click_button 'Save'
 
       ensure_modal_was_closed
 
@@ -289,7 +289,7 @@ feature 'Activities management' do
       fill_in 'Option 2', with: '90'
       select_from_chosen(user.name, from: 'User')
       fill_in 'Date', with: '05/16/2013'
-      click_button 'Submit'
+      click_button 'Save'
 
       expect(page).to have_content('Thank You!')
       click_link 'Finish'
@@ -345,7 +345,7 @@ feature 'Activities management' do
         select_from_chosen(user.name, from: 'User')
         fill_in 'Date', with: '05/16/2013'
         wait_for_photo_to_process 30 do
-          click_button 'Submit'
+          click_button 'Save'
         end
 
         expect(page).to have_content('Thank You!')
@@ -374,7 +374,7 @@ feature 'Activities management' do
             click_js_link('Remove')
           end
           expect(page).to have_content('DRAG & DROP')
-          click_button 'Submit'
+          click_button 'Save'
           within resource_item do
             expect(page).to have_content('Activity Type #1')
           end
@@ -411,7 +411,7 @@ feature 'Activities management' do
         select_from_chosen(user.name, from: 'User')
         fill_in 'Date', with: '05/16/2013'
         wait_for_photo_to_process 30 do
-          click_js_button 'Submit'
+          click_js_button 'Save'
         end
 
         expect(page).to have_content('Thank You!')
@@ -445,7 +445,7 @@ feature 'Activities management' do
           expect(page).to_not have_content('DRAG & DROP')
           click_js_link('Remove')
           expect(page).to have_content('DRAG & DROP')
-          click_button 'Submit'
+          click_button 'Save'
           within resource_item do
             expect(page).to have_content('Activity Type #1')
           end
@@ -488,7 +488,7 @@ feature 'Activities management' do
 
       select_from_chosen('Juanito Bazooka', from: 'User')
       fill_in 'Date', with: '05/16/2013'
-      click_button 'Submit'
+      click_button 'Save'
 
       within resource_item do
         expect(page).to have_content('Juanito Bazooka')
