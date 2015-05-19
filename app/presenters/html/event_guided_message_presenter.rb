@@ -9,14 +9,17 @@ module Html
     end
 
     def plan_contacts
+      return rejected_message if @model.rejected?
       yes_or_skip 'Do you want to keep track of any contacts?', :contacts
     end
 
     def plan_tasks
+      return rejected_message if @model.rejected?
       yes_or_skip 'Are there any tasks that need to be completed for your event?', :tasks
     end
 
     def plan_documents
+      return rejected_message if @model.rejected?
       yes_or_skip 'Are there any supporting documents to add?', :documents
     end
 
@@ -25,41 +28,43 @@ module Html
     end
 
     def execute_per
+      return rejected_message if @model.rejected?
       yes_or_skip 'Ready to fill out your Post Event Recap?', :per
     end
 
     def execute_activities
+      return rejected_message if @model.rejected?
       yes_or_skip 'Do you have any activities to add?', :activities
     end
 
     def execute_attendance
+      return rejected_message if @model.rejected?
       yes_or_skip 'Want to add attendees?', :attendance
     end
 
     def execute_photos
+      return rejected_message if @model.rejected?
       yes_or_skip 'Let\'s take a look, have any event photos to upload?', :photos
     end
 
     def execute_comments
+      return rejected_message if @model.rejected?
       yes_or_skip 'What were attendees saying? Do you have consumer comments to add?', :comments
     end
 
     def execute_expenses
+      return rejected_message if @model.rejected?
       yes_or_skip 'Do you have any expenses to add?', :expenses
     end
 
     def execute_surveys
+      return rejected_message if @model.rejected?
       yes_or_skip 'Do you have any surveys to add?', :surveys
     end
 
     def execute_last
-      if @model.rejected?
-        message_with_buttons "Your post event report form was rejected #{rejected_at} for the following reasons: <i>" +
-                             @model.reject_reason +
-                             '</i><br /> Please make the necessary changes and resubmit when ready ', :last,
-                             [submit_button]
-
-      elsif can?(:submit) && @model.valid_results?
+      return rejected_message if @model.rejected?
+      if can?(:submit) && @model.valid_results?
         message_with_buttons 'it looks like you\'ve collected all required post event info. '\
                              'Are you ready to submit your report for approval? ', :last,
                              [submit_button]
@@ -105,6 +110,13 @@ module Html
       ].join.html_safe
     end
 
+    def rejected_message
+      message_with_buttons "Your post event report form was rejected #{rejected_at} for the following reasons: <i>" +
+                           (@model.reject_reason.present? ? @model.reject_reason : '') +
+                           '</i><br /> Please make the necessary changes and resubmit when ready ', :last,
+                           [submit_button]
+    end
+
     def message_with_buttons(message, step, buttons)
       ([
          h.link_to('', "#event-#{step}", data: { spytarget: "#event-#{step}" }),
@@ -121,27 +133,27 @@ module Html
     def unapprove_button
       return unless can?(:unapprove)
       h.button_to 'Unapprove', h.unapprove_event_path(@model, return: h.return_path),
-                 method: :put, class: 'btn btn-cancel'
+                  method: :put, class: 'btn btn-cancel'
     end
 
     def approve_button
       return unless can?(:unapprove)
       h.button_to 'Approve', h.approve_event_path(@model, return: h.return_path),
-                 method: :put, class: 'btn btn-primary'
+                  method: :put, class: 'btn btn-primary'
     end
 
     def reject_button
       return unless can?(:unapprove)
       h.button_to 'Reject', h.reject_event_path(@model, format: :js, return: h.return_path),
-                 form: { id: 'reject-post-event' },
-                 method: :put, class: 'btn btn-cancel', remote: true
+                  form: { id: 'reject-post-event' },
+                  method: :put, class: 'btn btn-cancel', remote: true
     end
 
     def submit_button
       return unless can?(:submit)
       h.button_to 'Submit', h.submit_event_path(@model, format: :js, return: h.return_path),
                   class: 'btn btn-cancel', method: :put,
-                  remote: true, data: { disable_with: 'submitting'}
+                  remote: true, data: { disable_with: 'submitting' }
     end
 
     def rejected_at
