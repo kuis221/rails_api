@@ -76,8 +76,9 @@ class Results::AttendanceController < ApplicationController
 
   def default_color
     color = current_company.campaigns.find(params[:campaign_id]).color unless params[:campaign_id].blank?
-    color ||= params[:color] unless params[:color].blank?
-    color ||= '#347B9B'
+    color = params[:color] if color.blank?
+    color = '#347B9B' if color.blank?
+    color
   end
 
   def places_join
