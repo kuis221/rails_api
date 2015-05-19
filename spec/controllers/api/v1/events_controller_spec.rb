@@ -86,7 +86,7 @@ describe Api::V1::EventsController, type: :controller do
 
   describe "GET 'show'" do
     let(:event) { create(:event, campaign: campaign, place: place) }
-    let(:place) { create(:place) }
+    let(:place) { create(:place, state: 'New York') }
 
     it 'returns the event info', :show_in_doc do
       get :show, id: event.to_param, format: :json
@@ -94,9 +94,10 @@ describe Api::V1::EventsController, type: :controller do
       expect(json.keys).to eq(%w(
         id start_date start_time end_date end_time status description phases event_status
         have_data actions tasks_late_count tasks_due_today_count place campaign))
+      expect(json['place']['state']).to eq('NY')
       expect(json['place'].keys).to eq(%w(
-        id venue_id name latitude longitude formatted_address
-        country state state_name city zipcode))
+        id venue_id state name latitude longitude formatted_address
+        country state_name city zipcode))
       expect(json['campaign'].keys).to eq(%w(
         id name enabled_modules))
     end
@@ -184,7 +185,7 @@ describe Api::V1::EventsController, type: :controller do
     end
   end
 
-  describe "PUT 'update'" do
+  describe "PUT 'update'", :show_in_doc do
     let(:campaign) { create(:campaign, company: company) }
     let(:event) { create(:event, company: company, campaign: campaign) }
     it 'must update the event attributes' do

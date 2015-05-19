@@ -11,8 +11,12 @@ describe Api::V1::CommentsController, type: :controller do
   describe "GET 'index'" do
     it 'returns the list of comments for the event' do
       event = create(:approved_event, company: company, campaign: campaign, place: place)
-      comment1 = create(:comment, content: 'Comment #1', commentable: event, created_at: Time.zone.local(2013, 8, 22, 11, 59))
-      comment2 = create(:comment, content: 'Comment #2', commentable: event, created_at: Time.zone.local(2013, 8, 23, 9, 15))
+      comment1 = create(:comment, content: 'Comment #1', commentable: event,
+                                  created_at: Time.zone.local(2013, 8, 22, 11, 59),
+                                  user: user)
+      comment2 = create(:comment, content: 'Comment #2', commentable: event,
+                                  created_at: Time.zone.local(2013, 8, 23, 9, 15),
+                                  user: user)
       event.comments << comment1
       event.comments << comment2
       event.save
@@ -22,16 +26,20 @@ describe Api::V1::CommentsController, type: :controller do
       expect(response).to be_success
       result = JSON.parse(response.body)
       expect(result.count).to eq(2)
-      expect(result).to eq([{
-                             'id' => comment1.id,
-                             'content' => 'Comment #1',
-                             'created_at' => '2013-08-22T11:59:00.000-07:00'
-                           },
-                            {
-                              'id' => comment2.id,
-                              'content' => 'Comment #2',
-                              'created_at' => '2013-08-23T09:15:00.000-07:00'
-                            }])
+      expect(result).to eq([
+        {
+           'id' => comment1.id,
+           'content' => 'Comment #1',
+           'created_at' => '2013-08-22T11:59:00.000-07:00',
+           'created_by' => { 'id' =>  user.id, 'full_name' => user.full_name }
+        },
+        {
+            'id' => comment2.id,
+            'content' => 'Comment #2',
+            'created_at' => '2013-08-23T09:15:00.000-07:00',
+            'created_by' => { 'id' =>  user.id, 'full_name' => user.full_name }
+        }
+      ])
     end
   end
 

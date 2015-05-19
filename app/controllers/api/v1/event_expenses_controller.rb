@@ -186,6 +186,19 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
     end
   end
 
+  api :DELETE, '/api/v1/events/:event_id/event_expenses/:id', 'Deletes an expense'
+  param :event_id, :number, required: true, desc: 'Event ID'
+  param :id, :number, required: true, desc: 'Expense ID'
+  def destroy
+    authorize!(:deactivate_expense, parent)
+    destroy! do |success, failure|
+      success.json { render json: { success: true, info: 'The expense was successfully deleted', data: {} } }
+      success.xml  { render xml: { success: true, info: 'The expense was successfully deleted', data: {} } }
+      failure.json { render json: resource.errors, status: :unprocessable_entity }
+      failure.xml  { render xml: resource.errors, status: :unprocessable_entity }
+    end
+  end
+
   protected
 
   def build_resource_params
