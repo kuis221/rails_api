@@ -132,35 +132,37 @@ javascript:
     //$('.ui-rangeSlider-handle').css({
     //  backgroundColor: '#' + arrayColor[9],
     //  borderColor: '#' + arrayColor[6]});
+    var transparencyLevel= 3;
 
     $.each(arrayPolygon, function(index, value) {
       if (value.quantity == 0 || (value.quantity < selectedMin || value.quantity > selectedMax)) {
         value.polygon.setOptions({fillOpacity: 0.0, strokeColor: color});
       } else {
-        value.polygon.setOptions({fillColor: '#' + arrayColor[selectColorIndex(value.quantity)], fillOpacity: 0.5, strokeColor: color});
+        transparencyLevel = value.quantity  / (selectedMax - selectedMin) * 0.5;
+        value.polygon.setOptions({fillColor: arrayColor[selectColorIndex(value.quantity)], fillOpacity: Math.round((0.3 + transparencyLevel) * 10) / 10, strokeColor: color});
       }
     });
   }
 
   function generateColorList(hsb) {
-    var arrayColor = [];
-    if (hsb.s < 100) { hsb.s = 100; }
-    for (var i = 0; i < 10; i++){
-      arrayColor.push(tinycolor(hsb).toHex(hsb));
-      hsb.s = hsb.s - 5;
+    var arrayColor = [],
+        s = 100;
+    for (var i = 0; i < 8; i++){
+      arrayColor.push(tinycolor({ h: hsb.h, s: s +'%', v: hsb.v }).toRgbString());
+      s -= 7;
     }
     return arrayColor;
   }
 
   function selectColorIndex(value) {
-    var t = (selectedMax - selectedMin) / 10;
+    var t = (selectedMax - selectedMin) / 8;
     if (value != 0 && t != 0) {
       var colorIndex = Math.floor(value / t);
       if (value == valueMax)
         return 0;
       else
-        return 10 - Math.floor(value / t);
+        return 7 - Math.floor(value / t);
     }
     else
-      return 9;
+      return 7;
   }

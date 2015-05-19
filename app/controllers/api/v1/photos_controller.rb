@@ -107,6 +107,22 @@ class Api::V1::PhotosController < Api::V1::FilteredController
     end
   end
 
+
+  api :PUT, '/api/v1/events/:event_id/photos/:id', 'Updates a photo'
+  param :event_id, :number, required: true, desc: 'Event ID'
+  param :id, :number, required: true, desc: 'Photo ID'
+  param :attached_asset, Hash, required: true, action_aware: true do
+    param :active, %w(true false), required: true, desc: 'Photo status'
+  end
+  def update
+    update! do |success, failure|
+      success.json { render :show }
+      success.xml  { render :show }
+      failure.json { render json: resource.errors, status: :unprocessable_entity }
+      failure.xml  { render xml: resource.errors, status: :unprocessable_entity }
+    end
+  end
+
   api :GET, '/api/v1/events/:event_id/photos/form', 'Returns a list of requred fields for making a POST to S3'
   description <<-EOS
   This method returns all the info required to make a POST to Amazon S3 to upload a new file. The key sent to S3 should start with
@@ -155,7 +171,7 @@ class Api::V1::PhotosController < Api::V1::FilteredController
   end
 
   def permitted_params
-    params.permit(attached_asset: [:direct_upload_url])[:attached_asset]
+    params.permit(attached_asset: [:direct_upload_url, :active])[:attached_asset]
   end
 
   def search_params

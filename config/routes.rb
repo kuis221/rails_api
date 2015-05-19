@@ -34,7 +34,7 @@ Brandscopic::Application.routes.draw do
           resources :photos, only: [:index, :create, :update] do
             get :form, on: :collection
           end
-          resources :event_expenses, only: [:index, :create] do
+          resources :event_expenses, only: [:index, :create, :destroy] do
             get :form, on: :collection
           end
           resources :tasks, only: [:index]

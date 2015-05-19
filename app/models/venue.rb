@@ -54,9 +54,10 @@ class Venue < ActiveRecord::Base
 
   include Normdist
 
-  delegate :name, :types, :formatted_address, :formatted_phone_number, :website, :price_level,
-           :city, :street, :state, :state_name, :country, :country_name, :zipcode, :reference,
-           :latitude, :longitude, :opening_hours, :td_linx_code, :merged_with_place_id,
+  delegate :name, :types, :formatted_address, :formatted_phone_number, :website,
+           :price_level, :city, :street, :state, :state_name, :country,
+           :country_name, :zipcode, :reference, :latitude, :longitude,
+           :opening_hours, :td_linx_code, :merged_with_place_id, :state_code,
            to: :place
 
   scope :top_venue, ->{ where(top_venue: true) }
@@ -305,12 +306,16 @@ class Venue < ActiveRecord::Base
         radius = params.key?(:radius) ? params[:radius] : 50
         (lat, lng) = params[:location].split(',')
         with(:location).in_radius(lat, lng, radius, bbox: true)
+        order_by_geodist(:location, lat, lng)
       end
 
       if params[:q].present?
         fulltext params[:q] do
-          fields(:types, name: 5.0)
+          fields(:types, :name)
+          boost_fields name: 5.0
           phrase_fields name: 5.0
+          phrase_slop 1
+          minimum_match 1
           fields(address: 2.0) if params[:search_address]
         end
       end
@@ -368,7 +373,9 @@ class Venue < ActiveRecord::Base
         facet :campaign_ids
       end
 
-      order_by(params[:sorting] || :venue_score, params[:sorting_dir] || :desc)
+      unless params[:location]
+        order_by(params[:sorting] || :venue_score, params[:sorting_dir] || :desc)
+      end
       paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
 
     end

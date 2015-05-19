@@ -2,9 +2,9 @@ require 'rails_helper'
 require 'sunspot_test/rspec'
 
 describe VenuesController, type: :controller do
-  let(:user){ sign_in_as_user }
-  let(:company){ user.companies.first }
-  let(:company_user){ user.current_company_user }
+  let(:user) { sign_in_as_user }
+  let(:company) { user.companies.first }
+  let(:company_user) { user.current_company_user }
 
   before { user }
 
