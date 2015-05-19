@@ -43,7 +43,10 @@ RSpec.describe DataExtract::Event, type: :model do
     end
 
     let(:campaign) { create(:campaign, name: 'Campaign Absolut FY12', company: company) }
-    let(:subject) { described_class.new(company: company, current_user: company_user) }
+    let(:subject) { described_class.new(company: company, current_user: company_user,
+                    columns: ['campaign_name', 'end_date', 'end_time', 'start_date', 'start_time',
+                    'place_street', 'place_city', 'place_name', 'place_state', 'place_zipcode',
+                    'event_team_members', 'event_status', 'created_by', 'created_at', 'status']) }
 
     it 'returns empty if no rows are found' do
       expect(subject.rows).to be_empty
