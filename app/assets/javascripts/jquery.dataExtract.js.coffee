@@ -16,7 +16,7 @@ $.widget 'brandscopic.dataExtract', {
     $('.available-fields-box').on 'click', '.available-field', (e) =>
       e.preventDefault()
       @_addColumn($(e.currentTarget).data('name'))
-      @_view_tooltip($(e.currentTarget).data('title'))
+      @_view_tooltip("#{$(e.currentTarget).text()} has been added")
 
     @element.on 'click', '.btn-remove-column', (e) =>
       e.preventDefault()
@@ -106,5 +106,5 @@ $.widget 'brandscopic.dataExtract', {
     @_toolTipTimeout = setTimeout =>
       $('.available-fields-title').tooltip 'hide'
       $('.available-fields-title').data('title', '')
-    , 1000
+    , 1500
 }
