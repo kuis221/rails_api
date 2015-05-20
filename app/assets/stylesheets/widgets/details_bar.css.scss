@@ -143,6 +143,10 @@ $back-arrow-width: 38px;
 		}
 		.phase-id{
 			background-color: $primary-green;
+			a {
+				color: $gray-darker;
+				text-decoration: none;
+			}
 		}
 	}
 	.active-phase{

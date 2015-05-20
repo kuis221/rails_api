@@ -158,7 +158,9 @@ module Html
         phases[:phases].each_with_index.map do |phase, i|
           completed = i <= index_phase
           h.content_tag(:li, class: "#{'active-phase' if phase[0] == phases[:current_phase]} #{'completed' if completed}") do
-            h.content_tag(:span, i + 1, class: 'phase-id') +
+            h.content_tag(:span, class: 'phase-id') do
+              phase_link(phase[0], completed && phase[0] != current_phase, (i + 1).to_s)
+            end +
             h.content_tag(:b, phase_link(phase[0], completed && phase[0] != current_phase), class: 'phase') +
             phase_steps(phase)
           end
@@ -224,8 +226,8 @@ module Html
       end
     end
 
-    def phase_link(phase, linked)
-      h.link_to_if linked, phase.to_s.upcase,
+    def phase_link(phase, linked, label = '')
+      h.link_to_if linked, label.present? ? label : phase.to_s.upcase,
                    h.phase_event_path(@model, phase: phase,
                                               return: h.return_path)
     end
