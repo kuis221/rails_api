@@ -84,7 +84,7 @@ module Html
         the_date
       end
     end
-    
+
 
     def format_date(the_date, plain = false, day_name = true)
       unless the_date.nil?
@@ -210,7 +210,7 @@ module Html
     def guided_bar
       guided_message = Html::EventGuidedMessagePresenter.new(@model, h)
       steps = guided_message.current_steps
-      h.content_tag(:div, class: 'guide-bar text-center scrollspy-style event-details-scroll-spy') do
+      h.content_tag(:div, class: "guide-bar text-center scrollspy-style event-details-scroll-spy #{@model.aasm_state}") do
         h.content_tag(:ul, id: 'event-guided-step-nav', class: 'unstyled switch-list') do
           steps.each_with_index.map do |step, i|
             h.content_tag(:li,  data: { next: guided_message.next_target_after(step[:id]) }) do
