@@ -199,7 +199,7 @@ module Html
       return if phases.nil?
       completed_index = phases[:phases].keys.index(phases[:current_phase])
       phases[:phases].each_with_index.map do |phase, i|
-        h.content_tag(:span, class: "step #{'active' if phase[0] == current_phase} #{'completed' if i <= completed_index && phase[0] != current_phase}") do
+        h.content_tag(:span, class: "step #{'active' if phase[0] == current_phase} #{'completed' if i <= completed_index && phase[0] != current_phase} #{@model.aasm_state}") do
           value_phase =  i <= completed_index && phase[0] != current_phase ? h.content_tag(:i, '', class: 'icon-checked') : i + 1
           h.content_tag(:span, value_phase, class: 'circle-step') +
           phase_link(phase[0], i <= completed_index && phase[0] != current_phase)
