@@ -1719,7 +1719,6 @@ li#user_menu{
 	margin-right:8px;
 }
 
-
 .dropdown-menu{
 	box-shadow: none;
 	&:before{
@@ -7283,25 +7282,20 @@ body.dashboard.index {
 		}
 		.blank-state {
 			text-align: center;
-			min-height: 300px;
 			border: none;
+			background: #fff image-url('blank-states-arrow.png') 50px calc(50% - 40px) no-repeat;
+			-webkit-transform: scaleX(-1);
+	    -moz-transform: scaleX(-1);
+	    -ms-transform: scaleX(-1);
+	    -o-transform: scaleX(-1);
+	    transform: scaleX(-1);
 
-			p {
-				max-width: 460px;
-			}
 			.blank-message {
-				float: left;
-				border: none;
-				width: 85%;
-			}
-			.blank-states-arrow {
-				margin-top: 40px;
-				float: left;
-				-moz-transform: scaleX(-1); /* Firefox */
-				-o-transform: scaleX(-1); /* Opera */
-				-webkit-transform: scaleX(-1); /* Chrome y Safari */
-				transform: scaleX(-1); /* w3org */
-				filter: blank-state-arrow; /* Internet Explorer */
+				-webkit-transform: scaleX(-1);
+		    -moz-transform: scaleX(-1);
+		    -ms-transform: scaleX(-1);
+		    -o-transform: scaleX(-1);
+		    transform: scaleX(-1);
 			}
 		}
 	}
