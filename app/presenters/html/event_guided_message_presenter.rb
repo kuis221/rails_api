@@ -76,7 +76,7 @@ module Html
     def results_approve_per
       if can?(:approve)
         rejection_message = if @model.reject_reason
-           "<br />It was previously rejected #{rejected_at} for the following reason: <i>#{@model.reject_reason}</i> "
+           "It was previously rejected #{rejected_at} for the following reason: <i>#{@model.reject_reason}</i> "
         end
         message_with_buttons "Your post event report has been submitted for approval #{submitted_at}. #{rejection_message}" +
                             'Please review and either approve or reject.', :approve_per,
@@ -113,7 +113,7 @@ module Html
     def rejected_message
       message_with_buttons "Your post event report form was rejected #{rejected_at} for the following reasons: <i>" +
                            (@model.reject_reason.present? ? @model.reject_reason : '') +
-                           '</i><br /> Please make the necessary changes and resubmit when ready ', :last,
+                           '</i>. Please make the necessary changes and resubmit when ready ', :last,
                            [submit_button]
     end
 
@@ -137,13 +137,13 @@ module Html
     end
 
     def approve_button
-      return unless can?(:unapprove)
+      return unless can?(:approve)
       h.button_to 'Approve', h.approve_event_path(@model, return: h.return_path),
                   method: :put, class: 'btn btn-primary'
     end
 
     def reject_button
-      return unless can?(:unapprove)
+      return unless can?(:reject)
       h.button_to 'Reject', h.reject_event_path(@model, format: :js, return: h.return_path),
                   form: { id: 'reject-post-event' },
                   method: :put, class: 'btn btn-cancel', remote: true
