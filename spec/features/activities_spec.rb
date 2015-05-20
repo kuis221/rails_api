@@ -145,7 +145,7 @@ feature 'Activities management' do
       select_from_chosen('Dropdown option #2', from: 'Form Field #2')
       select_from_chosen('Juanito Bazooka', from: 'User')
       fill_in 'Date', with: '05/16/2013'
-      click_button 'Save'
+      click_button 'Submit'
 
       expect(page).to have_content('Thank You!')
       click_link 'Finish'
@@ -240,7 +240,7 @@ feature 'Activities management' do
       select_from_chosen('Dropdown option #2', from: 'Form Field #2')
       select_from_chosen('Juanito Bazooka', from: 'User')
       fill_in 'Date', with: '05/16/2013'
-      click_button 'Save'
+      click_button 'Submit'
 
       ensure_modal_was_closed
 
@@ -289,7 +289,7 @@ feature 'Activities management' do
       fill_in 'Option 2', with: '90'
       select_from_chosen(user.name, from: 'User')
       fill_in 'Date', with: '05/16/2013'
-      click_button 'Save'
+      click_button 'Submit'
 
       expect(page).to have_content('Thank You!')
       click_link 'Finish'
@@ -345,7 +345,7 @@ feature 'Activities management' do
         select_from_chosen(user.name, from: 'User')
         fill_in 'Date', with: '05/16/2013'
         wait_for_photo_to_process 30 do
-          click_button 'Save'
+          click_button 'Submit'
         end
 
         expect(page).to have_content('Thank You!')
@@ -411,7 +411,7 @@ feature 'Activities management' do
         select_from_chosen(user.name, from: 'User')
         fill_in 'Date', with: '05/16/2013'
         wait_for_photo_to_process 30 do
-          click_js_button 'Save'
+          click_js_button 'Submit'
         end
 
         expect(page).to have_content('Thank You!')
