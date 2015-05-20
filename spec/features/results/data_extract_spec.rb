@@ -38,11 +38,11 @@ feature 'Data Extract Report', js: true do
 
       expect(page).to have_selector('#collection-list-filters', count: 1)
 
-      click_link 'CONFIGURE'
+      click_link 'SELECT FIELDS'
 
       expect(page).to have_content('Available Fields')
 
-      click_link 'SELECT SOURCES'
+      click_link 'SELECT REPORT TYPE'
 
       expect(page).to have_selector('#data_extract_source_chzn', count: 1)
     end
