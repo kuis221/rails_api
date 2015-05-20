@@ -60,7 +60,7 @@ class DataExtract < ActiveRecord::Base
   ]
 
   after_initialize  do
-    self.columns ||= exportable_columns.map { |c| c[0] } if new_record?
+    self.columns ||= []
   end
 
   def columns=(cols)

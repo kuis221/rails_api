@@ -16,6 +16,7 @@ $.widget 'brandscopic.dataExtract', {
     $('.available-fields-box').on 'click', '.available-field', (e) =>
       e.preventDefault()
       @_addColumn($(e.currentTarget).data('name'))
+      @_view_tooltip($(e.currentTarget).data('title'))
 
     @element.on 'click', '.btn-remove-column', (e) =>
       e.preventDefault()
@@ -45,6 +46,9 @@ $.widget 'brandscopic.dataExtract', {
     @element.find('form').find('[name="data_extract[columns][]"][value="' + column + '"]').remove()
     @_loadPreview()
     @_loadAvailableFields()
+    if $('[name="data_extract[columns][]"]').size() <= 0
+      @element.find('.data-extract-table').hide()
+      @_view_message_empty(true)
 
   _sortTable: (column, dir) ->
     @element.find('form').find('[name="data_extract[default_sort_by]"]').val(column)
@@ -52,22 +56,27 @@ $.widget 'brandscopic.dataExtract', {
     @_loadPreview()
 
   _addColumn:(column) ->
-    $('<input>', { type: 'hidden', name: 'data_extract[columns][]', value: column }).insertAfter(
-        @element.find('form').find('[name="data_extract[columns][]"]:last'))
+    if $('[name="data_extract[columns][]"]').size() > 0
+      $('<input>', { type: 'hidden', name: 'data_extract[columns][]', value: column }).insertAfter(
+          @element.find('form').find('[name="data_extract[columns][]"]:last'))
+    else
+      @element.find('form').append($('<input>', { type: 'hidden', name: 'data_extract[columns][]', value: column }))
     @_loadPreview()
     @_loadAvailableFields()
 
   _loadPreview: () ->
-    form = @element.find('form')
-    @element.find('.data-extract-table')
-      .css(cursor: 'wait')
-      .fadeTo('slow', 0.5)
-    $.get '/results/data_extracts/preview?' + form.serialize(), (response) =>
-        @element.find('.data-extract-table').replaceWith(response)
-        @scrollerApi.reinitialise()
-        #@element.find('.data-extract-table').css(cursor: 'auto').fadeTo('fast', 1)
-        @_buildDragtable()
-        @_resizePreviewZone()
+    if $('[name="data_extract[columns][]"]').size() > 0
+      @_view_message_empty(false)
+      form = @element.find('form')
+      @element.find('.data-extract-table')
+        .css(cursor: 'wait')
+        .fadeTo('slow', 0.5)
+      $.get '/results/data_extracts/preview?' + form.serialize(), (response) =>
+          @element.find('.data-extract-table').replaceWith(response)
+          @scrollerApi.reinitialise()
+          #@element.find('.data-extract-table').css(cursor: 'auto').fadeTo('fast', 1)
+          @_buildDragtable()
+          @_resizePreviewZone()
 
 
   _loadAvailableFields: () ->
@@ -84,4 +93,18 @@ $.widget 'brandscopic.dataExtract', {
       else
         $(li).hide()
     true
+
+  _view_message_empty: (state) ->
+    if state
+      $('.blank-state').show()
+    else
+      $('.blank-state').hide()
+
+  _view_tooltip: (message) ->
+    $('.available-fields-title').data('title', message).tooltip 'show'
+    clearTimeout @_toolTipTimeout if @_toolTipTimeout
+    @_toolTipTimeout = setTimeout =>
+      $('.available-fields-title').tooltip 'hide'
+      $('.available-fields-title').data('title', '')
+    , 1000
 }

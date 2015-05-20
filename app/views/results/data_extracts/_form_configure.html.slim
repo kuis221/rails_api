@@ -1,5 +1,6 @@
 .sidebar
-  h5.available-fields-title = 'Available Fields'
+  h5.available-fields-title data-title="" 
+    = 'Available Fields'
   .available-fields.searchable-field-list
     .search-fields
       input type="search" class="field-search-input" name="field_search" title="Field Search" placeholder="Search for fields"
@@ -23,6 +24,15 @@
         = hidden_field_tag 'data_extract[params][activity_type_id][]', id
 
     .data-extract-box
+      .blank-state
+        .blank-message
+          h5 No values have been added to your report
+          p Drag and drop fields from the right column to start configuring your report
+          .blank-state-icon
+            = image_tag 'blank-results.png'
+        .blank-states-arrow
+          = image_tag 'blank-states-arrow.png'
+
       table.data-extract-table
     .next-data-extract
       button.btn.btn-primary.pull-right type="submit"
@@ -33,3 +43,23 @@ javascript:
   $('.data-extract').dataExtract({
     'step': #{process_step},
   });
+
+javascript:
+  $('.available-fields-title').tooltip({
+    html: true,
+    container: this.element,
+    delay: 0,
+    animation: false,
+    title: function(a, b) {
+      return $(this).data('title');
+    },
+    placement: function(tooltip, field) {
+      window.setTimeout(function() {
+        return $(tooltip).css({
+          left: (parseInt($(tooltip).css('left')) - 45) + 'px'
+        });
+      });
+      10;
+      return 'left';
+    }
+  })
