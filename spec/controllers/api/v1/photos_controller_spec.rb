@@ -113,9 +113,23 @@ describe Api::V1::PhotosController, type: :controller do
 
       get :form, event_id: event.to_param, format: :json
       expect(response).to be_success
-      result = JSON.parse(response.body)
-      expect(result.keys).to match_array(%w(fields url))
-      expect(result['fields'].keys).to match_array(%w(AWSAccessKeyId Secure key policy signature acl success_action_status))
+      expect(json.keys).to match_array(%w(fields url))
+      expect(json['fields'].keys).to match_array(%w(AWSAccessKeyId Secure key policy signature acl success_action_status))
+    end
+  end
+
+  describe "PUT 'update'", :show_in_doc do
+    it 'deactivates the photo' do
+      place = create(:place)
+      event = create(:event, company: company, campaign: campaign, place: place)
+      photo = create(:photo, attachable: event)
+
+      expect do
+        put :update, event_id: event.id, id: photo.id,
+                     attached_asset: { active: 'false' }, format: :json
+        photo.reload
+      end.to change(photo, :active).to(false)
+      expect(response).to be_success
     end
   end
 end

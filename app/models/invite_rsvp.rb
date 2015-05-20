@@ -42,11 +42,21 @@ class InviteRsvp < ActiveRecord::Base
   end
 
   def self.update_zip_code_location(zip_code, latlng)
+    neighborhood_id = find_closest_neighborhood(latlng)
     point = latlng ? connection.quote("POINT(#{latlng['lng']} #{latlng['lat']})") : 'NULL'
     connection.execute(<<-EOQ)
-      INSERT INTO zipcode_locations(zipcode, lonlat)
+      INSERT INTO zipcode_locations(zipcode, lonlat, neighborhood_id)
       VALUES (#{connection.quote(zip_code)},
-              #{point})
+              #{point},
+              #{neighborhood_id || 'NULL'})
     EOQ
+  end
+
+  def self.find_closest_neighborhood(latlng)
+    return unless latlng
+    point = "POINT(#{latlng['lng']} #{latlng['lat']})"
+    id = Neighborhood.where('ST_Intersects(ST_GeomFromText(?), geog)', point).pluck(:gid).first
+    id ||= Neighborhood.order("ST_Distance(ST_GeomFromText('#{point}'), geog) ASC").pluck(:gid).first
+    id
   end
 end

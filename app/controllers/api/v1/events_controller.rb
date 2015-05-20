@@ -143,7 +143,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
     * *longitude*: the venue's longitude
     * *formatted_address*: the venue's formatted address
     * *country*: the venue's country
-    * *state*: the venue's state
+    * *state*: the venue's state code
+    * *state_name*: the venue's state name
     * *city*: the venue's city
     * *route*: the venue's route
     * *street_number*: the venue's street_number

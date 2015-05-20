@@ -102,7 +102,11 @@ RSpec.describe DataExtract::Activity, type: :model do
   end
 
   describe '#rows' do
-    let(:subject) { described_class.new(company: company, current_user: user) }
+    let(:subject) { described_class.new(company: company, current_user: user,
+                    columns: ['activity_type', 'user', 'activity_date', 'campaign_name',
+                    'event_start_date', 'event_start_time', 'event_end_date', 'event_end_time',
+                    'place_street', 'place_city', 'place_name', 'place_state', 'place_zipcode',
+                    'event_status', 'status']) }
 
     it 'returns empty if no rows are found' do
       expect(subject.rows).to be_empty

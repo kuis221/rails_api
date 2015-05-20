@@ -169,11 +169,11 @@ class Place < ActiveRecord::Base
   end
 
   def state_name
-    state || load_country.states[administrative_level_1]['name'] rescue nil if load_country && state
+    state || load_country.states[administrative_level_1]['name'] rescue state if load_country && state
   end
 
   def state_code
-    load_country.states.detect{|code, info| info['name'] == state}[0] rescue nil if state and load_country
+    load_country.states.find { |code, info| info['name'] == state }[0] rescue state if state and load_country
   end
 
   def continent_name

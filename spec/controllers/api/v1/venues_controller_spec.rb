@@ -67,7 +67,6 @@ describe Api::V1::VenuesController, type: :controller do
         expect(result['results'].first).to include('id' => venue.id)
       end
     end
-
   end
 
   describe "GET 'show'" do
@@ -274,7 +273,7 @@ describe Api::V1::VenuesController, type: :controller do
 
     it 'should return the venues in the Places Bucket' do
       venue = create(:venue, company_id: company.id,
-                     place: create(:place, name: 'Guanacaste'))
+                             place: create(:place, name: 'Guanacaste'))
       Sunspot.commit
 
       get 'autocomplete', q: 'gua', format: :json

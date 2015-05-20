@@ -39,12 +39,13 @@ class Analysis::AttendanceController < ApplicationController
     populate_zipcode_locations_for_event
     @neighborhoods =
       Neighborhood.where(invites: { event_id:  event.id })
-      .joins('INNER JOIN zipcode_locations ON ST_Intersects(zipcode_locations.lonlat, neighborhoods.geog)')
-      .joins('INNER JOIN invite_rsvps ON zipcode_locations.zipcode=invite_rsvps.zip_code')
-      .joins('INNER JOIN invites ON invite_rsvps.invite_id=invites.id')
+      .joins('INNER JOIN zipcode_locations zl ON zl.neighborhood_id=gid')
+      .joins('INNER JOIN invite_rsvps ON zl.zipcode=invite_rsvps.zip_code')
+      .joins('INNER JOIN invites ON invite_rsvps.invite_id=invites.id AND invites.event_id= ' + event.id.to_s)
       .group('neighborhoods.gid')
-      .select('neighborhoods.*, COALESCE(sum(invitees), 0) invitations, sum(CASE WHEN invite_rsvps.attended = \'t\' THEN 1 ELSE 0 END) attendees,'\
-              'sum(rsvps_count) rsvps').to_a
+      .select('neighborhoods.*, count(invite_rsvps.id) rsvps, '\
+              'sum(CASE WHEN invite_rsvps.attended = \'t\' THEN 1 ELSE 0 END) attendees'
+             ).to_a
   end
 
   def event
@@ -71,8 +72,9 @@ class Analysis::AttendanceController < ApplicationController
 
   def default_color
     color = current_company.campaigns.find(params[:campaign_id]).color unless params[:campaign_id].blank?
-    color ||= params[:color] unless params[:color].blank?
-    color ||= '#347B9B'
+    color = params[:color] if color.blank?
+    color = '#347B9B' if color.blank?
+    color
   end
 
   def places_join
