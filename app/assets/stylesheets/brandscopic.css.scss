@@ -7151,12 +7151,13 @@ body.dashboard.index {
 				list-style: none;
 				cursor: pointer;
 				color: $text;
-				font-weight: bold;
-				padding-left: 15px;
+				padding-left: 5px;
+				margin-bottom: 8px;
 
 				&:hover {
 					background-color: $gray-lighter;
 					border-radius: 5px;
+					color: $gray-darker;
 				}
 			}
 		}
