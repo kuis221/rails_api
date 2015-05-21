@@ -143,6 +143,10 @@ $back-arrow-width: 38px;
 		}
 		.phase-id{
 			background-color: $primary-green;
+			a {
+				color: $gray-darker;
+				text-decoration: none;
+			}
 		}
 	}
 	.active-phase{
@@ -175,7 +179,7 @@ $back-arrow-width: 38px;
 }
 
 .guide-bar{
-	background-color: $brand;
+	background-color: $primary-blue;
 	color: $white;
 	padding: 18px 0;
 	position: absolute;
@@ -189,17 +193,24 @@ $back-arrow-width: 38px;
 		cursor: pointer;
 	}
 	.btn {
+		background-color: $secondary-blue;
 		height: 25px;
 		padding: 0px;
 	}
-	.btn-cancel {
-		background-color: $gray-dark;
-		&:hover {
-			background-color: $gray-darker;
-		}
-	}
 	.button_to {
 		margin-left: 10px;
+	}
+	&.rejected {
+		background-color: $primary-red;
+		.btn {
+			background-color: $secondary-red;
+		}
+	}
+	&.approved {
+		background-color: $primary-green;
+		.btn {
+			background-color: $secondary-green;
+		}
 	}
 }
 
