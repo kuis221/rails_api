@@ -1,7 +1,7 @@
 = render_available_fields resource.exportable_columns.reject { |f| resource.columns.include?(f[0]) }, params[:data_extract][:source]
 
 javascript:
-  $('#available-field-list .available-fields-title').tooltip({
+  $('#available-field-list .available-field').tooltip({
     html: true,
     container: this.element,
     delay: 0,

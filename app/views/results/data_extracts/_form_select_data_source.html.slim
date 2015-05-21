@@ -3,7 +3,7 @@
     = hidden_field_tag :step, 2
     .select-data-source
       .data-source-dropdown
-        = f.input :source, collection: DataExtract::DATA_SOURCES.sort, input_html: { class: 'chosen-enabled', 'data-placeholder' => 'Select a data source' }, label: 'Choose a data source for your report'
+        = f.input :source, collection: DataExtract::DATA_SOURCES.sort, input_html: { class: 'chosen-enabled', 'data-placeholder' => 'Select a data source' }, label: 'What type of report do you want to create?'
       .data-source-dropdown
         #data-extact-activity-types.data-source-params
           = label_tag 'data_extract_activity_type_id', 'Choose an activity type'

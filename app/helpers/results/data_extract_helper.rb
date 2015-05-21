@@ -2,9 +2,9 @@ module Results
   module DataExtractHelper
     def data_extract_navigation_bar(active)
       data_extract_step_navigation_bar([
-        content_tag(:div, 'SELECT SOURCES', class: 'text-large'),
-        content_tag(:div, 'CONFIGURE', class: 'text-large'),
-        content_tag(:div, 'PREVIEW & SAVE', class: 'text-large')
+        content_tag(:div, 'SELECT REPORT TYPE', class: 'text-large'),
+        content_tag(:div, 'SELECT FIELDS', class: 'text-large'),
+        content_tag(:div, 'EXPORT & SAVE', class: 'text-large')
       ], active)
     end
 
@@ -44,7 +44,7 @@ module Results
                        content_tag(:li, icon_sort_asc + link_to(('Sort Ascending' + (sort_dir == 'asc' ? icon : '')).html_safe, '#', class: 'btn-sort-asc btn-sort-table', data: { column: col[0], dir: 'asc' })) +
                        content_tag(:li, icon_sort_desc + link_to(('Sort Descending' + (sort_dir == 'desc' ? icon : '')).html_safe, '#', class: 'btn-sort-desc btn-sort-table', data: { column: col[0], dir: 'desc' })) +
                        content_tag(:li, nil, class: 'divider') +
-                       content_tag(:li, icon_visibility_off + link_to('Hide', '#', class: 'btn-remove-column', data: { column: col[0] }))
+                       content_tag(:li, icon_visibility_off + link_to('Remove', '#', class: 'btn-remove-column', data: { column: col[0] }))
                      end
                    end)
                 end + (block_given? ? block_content : '').html_safe
