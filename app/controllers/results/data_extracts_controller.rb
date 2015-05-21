@@ -26,6 +26,14 @@ class Results::DataExtractsController < InheritedResources::Base
     end
   end
 
+  def update
+    if resource.update_attributes(extract_params) && resource.errors.empty?
+      redirect_to results_reports_path
+    else
+      render layout: false
+    end
+  end
+
   def items
     render layout: false
   end
@@ -106,7 +114,7 @@ class Results::DataExtractsController < InheritedResources::Base
   end
 
   def process_step
-    params[:step].to_i || 1
+    params[:step].nil? ? 1 : params[:step].to_i
   end
 
   def form_action(params_extract = '')

@@ -15,7 +15,7 @@ feature 'Data Extract Report', js: true do
       click_js_button 'New Report'
 
       expect(page).to have_selector('#data_extract_source_chzn', count: 1)
-      select_from_chosen 'Events', from: 'Choose a data source for your report'
+      select_from_chosen 'Events', from: 'What type of report do you want to create?'
       
       click_button 'Next'
 
@@ -28,7 +28,7 @@ feature 'Data Extract Report', js: true do
       click_js_button 'New Report'
 
       expect(page).to have_selector('#data_extract_source_chzn', count: 1)
-      select_from_chosen 'Events', from: 'Choose a data source for your report'
+      select_from_chosen 'Events', from: 'What type of report do you want to create?'
       
       click_button 'Next'
 
@@ -38,11 +38,11 @@ feature 'Data Extract Report', js: true do
 
       expect(page).to have_selector('#collection-list-filters', count: 1)
 
-      click_link 'CONFIGURE'
+      click_link 'SELECT FIELDS'
 
       expect(page).to have_content('Available Fields')
 
-      click_link 'SELECT SOURCES'
+      click_link 'SELECT REPORT TYPE'
 
       expect(page).to have_selector('#data_extract_source_chzn', count: 1)
     end

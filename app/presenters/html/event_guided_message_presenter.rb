@@ -75,8 +75,8 @@ module Html
 
     def results_approve_per
       if can?(:approve)
-        rejection_message = if @model.reject_reason
-           "It was previously rejected #{rejected_at} for the following reason: <i>#{@model.reject_reason}</i> "
+        rejection_message = if @model.reject_reason.to_s.present?
+          "It was previously rejected #{rejected_at} for the following reason: <i>#{@model.reject_reason}.</i> "
         end
         message_with_buttons "Your post event report has been submitted for approval #{submitted_at}. #{rejection_message}" +
                             'Please review and either approve or reject.', :approve_per,
@@ -92,14 +92,16 @@ module Html
                            [unapprove_button]
     end
 
-    def yes_or_skip(message, step)
+    def yes_or_skip_or_back(message, step)
       target = "#event-#{step}"
       next_target = next_target_after(step)
+      prev_target = prev_target_before(step)
       [
         h.content_tag(:span, '', class: 'transitional-message'),
         message,
         h.link_to('Yes', step_link(target), class: 'step-yes-link smooth-scroll', data: { spytarget: target }),
-        h.link_to('Skip', next_target, class: 'step-skip-link smooth-scroll', data: { spyignore: 'ignore' })
+        h.link_to('Skip', next_target, class: 'step-skip-link smooth-scroll', data: { spyignore: 'ignore' }),
+        prev_target.present? ? h.link_to('Back', prev_target, class: 'step-back-link smooth-scroll', data: { spyignore: 'ignore' }) : ''
       ].join.html_safe
     end
 
@@ -121,13 +123,19 @@ module Html
       ([
          h.link_to('', "#event-#{step}", data: { spytarget: "#event-#{step}" }),
          message
-       ] + buttons.compact).join.html_safe
+       ] + [h.content_tag(:div, buttons.compact.join.html_safe, class: 'step-buttons')]).join.html_safe
     end
 
     def next_target_after(step)
       index = current_steps.index { |s| s[:id] == step }
       next_step = current_steps[index + 1] || nil
       next_step ? "#event-#{next_step[:id]}" : ''
+    end
+
+    def prev_target_before(step)
+      index = current_steps.index { |s| s[:id] == step }
+      prev_step = index > 0 ? current_steps[index - 1] : nil
+      prev_step ? "#event-#{prev_step[:id]}" : ''
     end
 
     def unapprove_button

@@ -185,7 +185,7 @@ feature 'Activities management' do
 
       select_from_chosen('Juanito Bazooka', from: 'User')
       fill_in 'Date', with: '05/16/2013'
-      click_button 'Submit'
+      click_button 'Save'
 
       within resource_item do
         expect(page).to have_content('Juanito Bazooka')
@@ -374,7 +374,7 @@ feature 'Activities management' do
             click_js_link('Remove')
           end
           expect(page).to have_content('DRAG & DROP')
-          click_button 'Submit'
+          click_button 'Save'
           within resource_item do
             expect(page).to have_content('Activity Type #1')
           end
@@ -445,7 +445,7 @@ feature 'Activities management' do
           expect(page).to_not have_content('DRAG & DROP')
           click_js_link('Remove')
           expect(page).to have_content('DRAG & DROP')
-          click_button 'Submit'
+          click_button 'Save'
           within resource_item do
             expect(page).to have_content('Activity Type #1')
           end
@@ -488,7 +488,7 @@ feature 'Activities management' do
 
       select_from_chosen('Juanito Bazooka', from: 'User')
       fill_in 'Date', with: '05/16/2013'
-      click_button 'Submit'
+      click_button 'Save'
 
       within resource_item do
         expect(page).to have_content('Juanito Bazooka')
