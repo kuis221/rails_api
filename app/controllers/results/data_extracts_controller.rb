@@ -114,7 +114,7 @@ class Results::DataExtractsController < InheritedResources::Base
   end
 
   def process_step
-    params[:step].to_i || 1
+    params[:step].nil? ? 1 : params[:step].to_i
   end
 
   def form_action(params_extract = '')
