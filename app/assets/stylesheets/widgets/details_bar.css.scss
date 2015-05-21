@@ -159,6 +159,7 @@ $back-arrow-width: 38px;
 			background-color: $primary-green;
 			a {
 				color: $gray-darker;
+				display: block;
 				text-decoration: none;
 			}
 		}
@@ -214,7 +215,7 @@ $back-arrow-width: 38px;
 	.button_to {
 		margin-left: 10px;
 	}
-	&.rejected {
+	&.rejected, &.late {
 		background-color: $primary-red;
 		.btn {
 			background-color: $secondary-red;
@@ -240,6 +241,9 @@ $back-arrow-width: 38px;
 			}
 			&:not(.active){
 				display: none;
+			}
+			.step-buttons{
+				display: inline-block;
 			}
 		}
 	}

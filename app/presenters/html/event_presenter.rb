@@ -203,7 +203,9 @@ module Html
       phases[:phases].each_with_index.map do |phase, i|
         h.content_tag(:span, class: "step #{'active' if phase[0] == current_phase} #{'completed' if i <= completed_index && phase[0] != current_phase} #{@model.aasm_state}") do
           value_phase =  i <= completed_index && phase[0] != current_phase ? h.content_tag(:i, '', class: 'icon-checked') : i + 1
-          h.content_tag(:span, value_phase, class: 'circle-step') +
+          h.content_tag(:span, value_phase, class: 'circle-step') do
+            phase_link(phase[0], i <= completed_index && phase[0] != current_phase, value_phase)
+          end +
           phase_link(phase[0], i <= completed_index && phase[0] != current_phase)
         end
       end.join.html_safe
@@ -212,7 +214,7 @@ module Html
     def guided_bar
       guided_message = Html::EventGuidedMessagePresenter.new(@model, h)
       steps = guided_message.current_steps
-      h.content_tag(:div, class: "guide-bar text-center scrollspy-style event-details-scroll-spy #{@model.aasm_state}") do
+      h.content_tag(:div, class: "guide-bar text-center scrollspy-style event-details-scroll-spy #{@model.aasm_state}#{@model.late? && @model.unsent? ? ' late' : '' }") do
         h.content_tag(:ul, id: 'event-guided-step-nav', class: 'unstyled switch-list') do
           steps.each_with_index.map do |step, i|
             h.content_tag(:li,  data: { next: guided_message.next_target_after(step[:id]) }) do

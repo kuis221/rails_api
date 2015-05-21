@@ -70,8 +70,8 @@ module Html
 
     def results_approve_per
       if can?(:approve)
-        rejection_message = if @model.reject_reason.to_s
-           "It was previously rejected #{rejected_at} for the following reason: <i>#{@model.reject_reason}.</i> "
+        rejection_message = if @model.reject_reason.to_s.present?
+          "It was previously rejected #{rejected_at} for the following reason: <i>#{@model.reject_reason}.</i> "
         end
         message_with_buttons "Your post event report has been submitted for approval #{submitted_at}. #{rejection_message}" +
                             'Please review and either approve or reject.', :approve_per,
@@ -109,7 +109,7 @@ module Html
       ([
          h.link_to('', "#event-#{step}", data: { spytarget: "#event-#{step}" }),
          message
-       ] + buttons.compact).join.html_safe
+       ] + [h.content_tag(:div, buttons.compact.join.html_safe, class: 'step-buttons')]).join.html_safe
     end
 
     def next_target_after(step)
