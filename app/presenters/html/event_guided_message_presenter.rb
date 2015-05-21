@@ -2,25 +2,26 @@ module Html
   class EventGuidedMessagePresenter < BasePresenter
     def current_steps
       @current_steps ||= begin
-        name, steps = phases[:phases].find { |name, _| name == phases[:current_phase] }
-        steps.select { |s| !s[:complete] && self.respond_to?("#{name}_#{s[:id]}") } +
-        [{id: 'last'}]
+        if @model.rejected?
+          [{ id: 'rejected' }]
+        else
+          name, steps = phases[:phases].find { |name, _| name == phases[:current_phase] }
+          steps.select { |s| !s[:complete] && self.respond_to?("#{name}_#{s[:id]}") } +
+          [{ id: 'last' }]
+        end
       end
     end
 
     def plan_contacts
-      return rejected_message if @model.rejected?
-      yes_or_skip 'Do you want to keep track of any contacts?', :contacts
+      yes_or_skip_or_back 'Do you want to keep track of any contacts?', :contacts
     end
 
     def plan_tasks
-      return rejected_message if @model.rejected?
-      yes_or_skip 'Are there any tasks that need to be completed for your event?', :tasks
+      yes_or_skip_or_back 'Are there any tasks that need to be completed for your event?', :tasks
     end
 
     def plan_documents
-      return rejected_message if @model.rejected?
-      yes_or_skip 'Are there any supporting documents to add?', :documents
+      yes_or_skip_or_back 'Are there any supporting documents to add?', :documents
     end
 
     def plan_last
@@ -28,42 +29,34 @@ module Html
     end
 
     def execute_per
-      return rejected_message if @model.rejected?
-      yes_or_skip 'Ready to fill out your Post Event Recap?', :per
+      yes_or_skip_or_back 'Ready to fill out your Post Event Recap?', :per
     end
 
     def execute_activities
-      return rejected_message if @model.rejected?
-      yes_or_skip 'Do you have any activities to add?', :activities
+      yes_or_skip_or_back 'Do you have any activities to add?', :activities
     end
 
     def execute_attendance
-      return rejected_message if @model.rejected?
-      yes_or_skip 'Want to add attendees?', :attendance
+      yes_or_skip_or_back 'Want to add attendees?', :attendance
     end
 
     def execute_photos
-      return rejected_message if @model.rejected?
-      yes_or_skip 'Let\'s take a look, have any event photos to upload?', :photos
+      yes_or_skip_or_back 'Let\'s take a look, have any event photos to upload?', :photos
     end
 
     def execute_comments
-      return rejected_message if @model.rejected?
-      yes_or_skip 'What were attendees saying? Do you have consumer comments to add?', :comments
+      yes_or_skip_or_back 'What were attendees saying? Do you have consumer comments to add?', :comments
     end
 
     def execute_expenses
-      return rejected_message if @model.rejected?
-      yes_or_skip 'Do you have any expenses to add?', :expenses
+      yes_or_skip_or_back 'Do you have any expenses to add?', :expenses
     end
 
     def execute_surveys
-      return rejected_message if @model.rejected?
-      yes_or_skip 'Do you have any surveys to add?', :surveys
+      yes_or_skip_or_back 'Do you have any surveys to add?', :surveys
     end
 
     def execute_last
-      return rejected_message if @model.rejected?
       if can?(:submit) && @model.valid_results?
         message_with_buttons 'it looks like you\'ve collected all required post event info. '\
                              'Are you ready to submit your report for approval? ', :last,
@@ -71,6 +64,13 @@ module Html
       else
         info 'Done! You\'ve completed the execute phase of your event.', :last
       end
+    end
+
+    def execute_rejected
+      message_with_buttons "Your post event report form was rejected #{rejected_at} for the following reasons: <i>" +
+                           (@model.reject_reason.present? ? @model.reject_reason : '') +
+                           '</i>. Please make the necessary changes and resubmit when ready ', :last,
+                           [submit_button]
     end
 
     def results_approve_per
@@ -110,13 +110,6 @@ module Html
         h.link_to('', "#event-#{step}", data: { spytarget: "#event-#{step}" }),
         message
       ].join.html_safe
-    end
-
-    def rejected_message
-      message_with_buttons "Your post event report form was rejected #{rejected_at} for the following reasons: <i>" +
-                           (@model.reject_reason.present? ? @model.reject_reason : '') +
-                           '</i>. Please make the necessary changes and resubmit when ready ', :last,
-                           [submit_button]
     end
 
     def message_with_buttons(message, step, buttons)
