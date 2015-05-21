@@ -1441,6 +1441,18 @@ Module =  FormField.extend {
 
 	_removeConfirmationMessage: (withData) ->
 		"Removing this module will remove all the entered data associated with it.<br/>&nbsp;<p>Are you sure you want to do this?</p>"
+
+	requiredField: (label = 'Required') ->
+		$('<div class="control-group">').append([
+			$('<div class="controls">').append(
+				$('<label class="control-label" for="option_required_chk">').text(label).prepend(
+					$('<input type="checkbox" id="option_required_chk" name="required"'+(if @attributes.settings.required == 'true' then ' checked="checked"' else '')+'">').on 'change', (e) =>
+						@attributes.settings.required = (if e.target.checked then 'true' else 'false')
+						@form.setModified()
+						true
+				)
+			)
+		])
 }
 
 SurveysField = Module.extend {

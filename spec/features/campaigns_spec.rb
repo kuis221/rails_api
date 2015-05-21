@@ -233,7 +233,7 @@ feature 'Campaigns', js: true do
     end
 
     scenario 'should be able to include places to areas assigned to the campaign' do
-      expect(Place).to receive(:open).and_return(double(read: { results:
+      expect_any_instance_of(CombinedSearch).to receive(:open).and_return(double(read: { results:
         [
           { reference: 'xxxxx', place_id: '1111', name: 'Walt Disney World Dolphin', formatted_address: '123 Blvr' }
         ]
@@ -290,7 +290,7 @@ feature 'Campaigns', js: true do
     end
 
     scenario 'confirm from user to include existing places to areas assigned to the campaign' do
-      expect(Place).to receive(:open).and_return(double(read: { results:
+      expect_any_instance_of(CombinedSearch).to receive(:open).and_return(double(read: { results:
         [
           { reference: '1111', place_id: '1111', name: 'Walt Disney World Dolphin', formatted_address: '123 Blvr' }
         ]
