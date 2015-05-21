@@ -148,18 +148,21 @@ describe Api::V1::VenuesController, type: :controller do
       expect(response).to be_success
       result = JSON.parse(response.body)
       expect(result.count).to eq(2)
-      expect(result).to match_array [{
-        'id' => comment2.id,
-        'content' => 'Comment #2',
-        'created_at' => '2013-08-23T09:15:00.000-07:00',
-        'type' => 'brandscopic'
-      },
-                                     {
-                                       'id' => comment1.id,
-                                       'content' => 'Comment #1',
-                                       'created_at' => '2013-08-22T11:59:00.000-07:00',
-                                       'type' => 'brandscopic'
-                                     }]
+      expect(result).to match_array [
+        {
+          'id' => comment2.id,
+          'content' => 'Comment #2',
+          'created_at' => '2013-08-23T09:15:00.000-07:00',
+          'created_by'=>{ 'id'=>user.id, 'full_name' => user.full_name },
+          'type' => 'brandscopic'
+        },
+        {
+          'id' => comment1.id,
+          'content' => 'Comment #1',
+          'created_at' => '2013-08-22T11:59:00.000-07:00',
+          'created_by'=>{ 'id'=>user.id, 'full_name' => user.full_name },
+          'type' => 'brandscopic'
+       }]
     end
   end
 
