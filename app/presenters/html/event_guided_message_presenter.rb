@@ -55,7 +55,7 @@ module Html
     def execute_last
       if @model.rejected?
         message_with_buttons "Your post event report form was rejected #{rejected_at} for the following reasons: <i>" +
-                             @model.reject_reason +
+                             @model.reject_reason.to_s +
                              '</i><br /> Please make the necessary changes and resubmit when ready ', :last,
                              [submit_button]
 
@@ -70,7 +70,7 @@ module Html
 
     def results_approve_per
       if can?(:approve)
-        rejection_message = if @model.reject_reason
+        rejection_message = if @model.reject_reason.to_s
            "It was previously rejected #{rejected_at} for the following reason: <i>#{@model.reject_reason}.</i> "
         end
         message_with_buttons "Your post event report has been submitted for approval #{submitted_at}. #{rejection_message}" +
