@@ -9,15 +9,15 @@ module Html
     end
 
     def plan_contacts
-      yes_or_skip 'Do you want to keep track of any contacts?', :contacts
+      yes_or_skip_or_back 'Do you want to keep track of any contacts?', :contacts
     end
 
     def plan_tasks
-      yes_or_skip 'Are there any tasks that need to be completed for your event?', :tasks
+      yes_or_skip_or_back 'Are there any tasks that need to be completed for your event?', :tasks
     end
 
     def plan_documents
-      yes_or_skip 'Are there any supporting documents to add?', :documents
+      yes_or_skip_or_back 'Are there any supporting documents to add?', :documents
     end
 
     def plan_last
@@ -25,31 +25,31 @@ module Html
     end
 
     def execute_per
-      yes_or_skip 'Ready to fill out your Post Event Recap?', :per
+      yes_or_skip_or_back 'Ready to fill out your Post Event Recap?', :per
     end
 
     def execute_activities
-      yes_or_skip 'Do you have any activities to add?', :activities
+      yes_or_skip_or_back 'Do you have any activities to add?', :activities
     end
 
     def execute_attendance
-      yes_or_skip 'Want to add attendees?', :attendance
+      yes_or_skip_or_back 'Want to add attendees?', :attendance
     end
 
     def execute_photos
-      yes_or_skip 'Let\'s take a look, have any event photos to upload?', :photos
+      yes_or_skip_or_back 'Let\'s take a look, have any event photos to upload?', :photos
     end
 
     def execute_comments
-      yes_or_skip 'What were attendees saying? Do you have consumer comments to add?', :comments
+      yes_or_skip_or_back 'What were attendees saying? Do you have consumer comments to add?', :comments
     end
 
     def execute_expenses
-      yes_or_skip 'Do you have any expenses to add?', :expenses
+      yes_or_skip_or_back 'Do you have any expenses to add?', :expenses
     end
 
     def execute_surveys
-      yes_or_skip 'Do you have any surveys to add?', :surveys
+      yes_or_skip_or_back 'Do you have any surveys to add?', :surveys
     end
 
     def execute_last
@@ -87,14 +87,16 @@ module Html
                            [unapprove_button]
     end
 
-    def yes_or_skip(message, step)
+    def yes_or_skip_or_back(message, step)
       target = "#event-#{step}"
       next_target = next_target_after(step)
+      prev_target = prev_target_before(step)
       [
         h.content_tag(:span, '', class: 'transitional-message'),
         message,
         h.link_to('Yes', step_link(target), class: 'step-yes-link smooth-scroll', data: { spytarget: target }),
-        h.link_to('Skip', next_target, class: 'step-skip-link smooth-scroll', data: { spyignore: 'ignore' })
+        h.link_to('Skip', next_target, class: 'step-skip-link smooth-scroll', data: { spyignore: 'ignore' }),
+        prev_target.present? ? h.link_to('Back', prev_target, class: 'step-back-link smooth-scroll', data: { spyignore: 'ignore' }) : ''
       ].join.html_safe
     end
 
@@ -116,6 +118,12 @@ module Html
       index = current_steps.index { |s| s[:id] == step }
       next_step = current_steps[index + 1] || nil
       next_step ? "#event-#{next_step[:id]}" : ''
+    end
+
+    def prev_target_before(step)
+      index = current_steps.index { |s| s[:id] == step }
+      prev_step = index > 0 ? current_steps[index - 1] : nil
+      prev_step ? "#event-#{prev_step[:id]}" : ''
     end
 
     def unapprove_button

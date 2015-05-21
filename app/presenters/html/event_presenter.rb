@@ -217,7 +217,7 @@ module Html
       h.content_tag(:div, class: "guide-bar text-center scrollspy-style event-details-scroll-spy #{@model.aasm_state}#{@model.late? && @model.unsent? ? ' late' : '' }") do
         h.content_tag(:ul, id: 'event-guided-step-nav', class: 'unstyled switch-list') do
           steps.each_with_index.map do |step, i|
-            h.content_tag(:li,  data: { next: guided_message.next_target_after(step[:id]) }) do
+            h.content_tag(:li,  data: { next: guided_message.next_target_after(step[:id]), prev: guided_message.prev_target_before(step[:id]) }) do
               [
                 (i == 0 ? h.link_to('', '#application-body', data: { spytarget: '#application-body'}) : '') +
                 guided_message.send("#{phases[:current_phase]}_#{step[:id]}")
