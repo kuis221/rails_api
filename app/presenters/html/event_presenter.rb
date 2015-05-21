@@ -84,7 +84,7 @@ module Html
         the_date
       end
     end
-    
+
 
     def format_date(the_date, plain = false, day_name = true)
       unless the_date.nil?
@@ -158,7 +158,9 @@ module Html
         phases[:phases].each_with_index.map do |phase, i|
           completed = i <= index_phase
           h.content_tag(:li, class: "#{'active-phase' if phase[0] == phases[:current_phase]} #{'completed' if completed}") do
-            h.content_tag(:span, i + 1, class: 'phase-id') +
+            h.content_tag(:span, class: 'phase-id') do
+              phase_link(phase[0], completed && phase[0] != current_phase, (i + 1).to_s)
+            end +
             h.content_tag(:b, phase_link(phase[0], completed && phase[0] != current_phase), class: 'phase') +
             phase_steps(phase)
           end
@@ -199,7 +201,7 @@ module Html
       return if phases.nil?
       completed_index = phases[:phases].keys.index(phases[:current_phase])
       phases[:phases].each_with_index.map do |phase, i|
-        h.content_tag(:span, class: "step #{'active' if phase[0] == current_phase} #{'completed' if i <= completed_index && phase[0] != current_phase}") do
+        h.content_tag(:span, class: "step #{'active' if phase[0] == current_phase} #{'completed' if i <= completed_index && phase[0] != current_phase} #{@model.aasm_state}") do
           value_phase =  i <= completed_index && phase[0] != current_phase ? h.content_tag(:i, '', class: 'icon-checked') : i + 1
           h.content_tag(:span, value_phase, class: 'circle-step') +
           phase_link(phase[0], i <= completed_index && phase[0] != current_phase)
@@ -210,7 +212,7 @@ module Html
     def guided_bar
       guided_message = Html::EventGuidedMessagePresenter.new(@model, h)
       steps = guided_message.current_steps
-      h.content_tag(:div, class: 'guide-bar text-center scrollspy-style event-details-scroll-spy') do
+      h.content_tag(:div, class: "guide-bar text-center scrollspy-style event-details-scroll-spy #{@model.aasm_state}") do
         h.content_tag(:ul, id: 'event-guided-step-nav', class: 'unstyled switch-list') do
           steps.each_with_index.map do |step, i|
             h.content_tag(:li,  data: { next: guided_message.next_target_after(step[:id]) }) do
@@ -224,8 +226,8 @@ module Html
       end
     end
 
-    def phase_link(phase, linked)
-      h.link_to_if linked, phase.to_s.upcase,
+    def phase_link(phase, linked, label = '')
+      h.link_to_if linked, label.present? ? label : phase.to_s.upcase,
                    h.phase_event_path(@model, phase: phase,
                                               return: h.return_path)
     end

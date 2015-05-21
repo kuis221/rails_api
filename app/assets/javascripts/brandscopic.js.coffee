@@ -224,6 +224,8 @@ jQuery ->
 		errorPlacement: (error, element) ->
 			label = element.closest(".control-group").find("label.control-label[for=\"#{element.attr('id')}\"]")
 			label = element.closest(".control-group").find("label.control-label") if label.length is 0
+			if element.is('input[type=file]')
+				label = element.closest('.attachment-select-file-view')
 			label.addClass('with_message')
 			if label.length > 0
 				error.insertAfter label
@@ -698,6 +700,12 @@ jQuery ->
 	$.validator.addMethod("integer", (value, element) ->
 		return $.trim(value) == '' || /^[0-9]+$/.test(value);
 	, "Please enter an integer number");
+
+	$.validator.addMethod("required-file", (value, element) ->
+		hidden = $(element).closest('.attached_asset_upload_form').find('.direct_upload_url')
+		destroy = $(element).closest('.attached_asset_upload_form').find('[name$="[_destroy]"]')
+		return $.trim(hidden.val()) isnt '' && destroy.val() isnt '1';
+	, "Must select a file");
 
 	$.validator.addMethod("segmentTotalRequired", (value, element) ->
 		return ($(element).hasClass('optional') && ($.trim(value) == '' || $.trim(value) == '0')) || value == '100';

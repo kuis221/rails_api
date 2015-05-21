@@ -4385,11 +4385,11 @@ body.roles{
 	}
 	.completed{
 		a {
-			color: $primary-green;
+			color: $silver;
 		}
 		.circle-step{
-			background-color: $primary-green;
-			border-color: $primary-green;
+			background-color: $silver;
+			border-color: $silver;
 			color: $white;
 			.icon-checked{
 				position: relative;
@@ -4398,9 +4398,25 @@ body.roles{
 		}
 	}
 	.active{
-		color: $text;
+		color: $secondary-blue;
 		.circle-step{
-			border: 2px solid $text;
+			background-color: $secondary-blue;
+			border-color: $secondary-blue;
+			color: $white;
+		}
+		&.rejected{
+			color: $secondary-red;
+			.circle-step{
+				background-color: $secondary-red;
+				border-color: $secondary-red;
+			}
+		}
+		&.approved{
+			color: $secondary-green;
+			.circle-step{
+				background-color: $secondary-green;
+				border-color: $secondary-green;
+			}
 		}
 	}
 	.step{

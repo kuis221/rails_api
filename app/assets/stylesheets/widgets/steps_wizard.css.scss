@@ -156,23 +156,24 @@ $steps-wizard-margin: 50px;
 		}
 		&.active {
 			.circle-step {
-				border: 2px solid $text;
-				color: $text;
+				background-color: $green;
+				border-color: $green;
+				color: $white;
 				line-height: 22px;
 			}
 			.step-name {
-				color: $text;
+				color: $green;
 			}
 		}
 		&.completed {
 			.circle-step {
-				border-color: $green;
-				background-color: $green;
+				background-color: $gray-dark;
+				border-color: $gray-dark;
 				color: $white;
 				line-height: 27px;
 			}
 			.step-name {
-				color: $green;
+				color: $gray-dark;
 			}
 
 			a:hover {

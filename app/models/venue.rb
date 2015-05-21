@@ -306,7 +306,7 @@ class Venue < ActiveRecord::Base
         radius = params.key?(:radius) ? params[:radius] : 50
         (lat, lng) = params[:location].split(',')
         with(:location).in_radius(lat, lng, radius, bbox: true)
-        order_by_geodist(:location, lat, lng)
+        order_by_geodist(:location, lat, lng) unless params[:q]
       end
 
       if params[:q].present?
@@ -374,7 +374,11 @@ class Venue < ActiveRecord::Base
       end
 
       unless params[:location]
-        order_by(params[:sorting] || :venue_score, params[:sorting_dir] || :desc)
+        if params[:q]
+          order_by(:score, :desc)
+        else
+          order_by(params[:sorting] || :venue_score, params[:sorting_dir] || :desc)
+        end
       end
       paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
 

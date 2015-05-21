@@ -6,6 +6,7 @@ class AttachedAssetInput < SimpleForm::Inputs::Base
     options[:file_types] ||= ''
     options[:hidden_field_name] ||= attribute_name
     options[:browse_legend] ||= 'inputs.attached_asset.select_file.attachment'
+    required = options[:required] ? 'class="required-file"' : ''
     uploader = S3DirectUpload::UploadHelper::S3Uploader.new({})
     output_html = '<div class="attached_asset_upload_form" data-accept-file-types="' + options[:file_types] + '" data-max-file-size="' + max_file_size.to_s + '" data-field-type="' + form_field_class + '"><div class="s3fields" style="margin:0;padding:0;display:inline">'
     uploader.fields.map do |name, value|
@@ -26,7 +27,7 @@ class AttachedAssetInput < SimpleForm::Inputs::Base
                             <i class="icon-upload"></i>
                             <div class="drag-box-text">
                               <h5>DRAG &amp; DROP</h5>
-                              <p>' + I18n.translate(options[:browse_legend], browse: '<span class="file-browse">browse<input id="fileupload" type="file" name="file" data-accept-file-types="(\.|\/)(gif|jpe?g|png)$" data-max-file-size="' + max_file_size.to_s + '" /></span>') + '</p>
+                              <p>' + I18n.translate(options[:browse_legend], browse: '<span class="file-browse">browse<input id="fileupload" type="file" ' + required + ' name="file" data-accept-file-types="(\.|\/)(gif|jpe?g|png)$" data-max-file-size="' + max_file_size.to_s + '" /></span>') + '</p>
                               <a href="#" class="cancel-upload"' + (has_attached_asset ? '' : 'style="display: none"') + '>Cancel</a>
                             </div>
                           </div>
@@ -49,7 +50,7 @@ class AttachedAssetInput < SimpleForm::Inputs::Base
                             <i class="icon-upload"></i>
                             <div class="drag-box-text">
                               <h5>DRAG &amp; DROP</h5>
-                              <p>' + I18n.translate(options[:browse_legend], browse: '<span class="file-browse">browse<input id="fileupload" type="file" name="file" data-accept-file-types="(\.|\/)(gif|jpe?g|png)$" data-max-file-size="' + max_file_size.to_s + '" /></span>') + '</p>
+                              <p>' + I18n.translate(options[:browse_legend], browse: '<span class="file-browse">browse<input id="fileupload" type="file" ' + required + ' name="file" data-accept-file-types="(\.|\/)(gif|jpe?g|png)$" data-max-file-size="' + max_file_size.to_s + '" /></span>') + '</p>
                             </div>
                           </div>
                         </div>
