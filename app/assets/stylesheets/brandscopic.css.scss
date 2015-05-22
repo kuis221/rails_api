@@ -4408,7 +4408,7 @@ body.roles{
 			border-color: $secondary-blue;
 			color: $white;
 		}
-		&.rejected{
+		&.rejected, &.late{
 			color: $secondary-red;
 			.circle-step{
 				background-color: $secondary-red;
