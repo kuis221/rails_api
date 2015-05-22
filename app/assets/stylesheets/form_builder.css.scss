@@ -69,10 +69,7 @@ $margin-right: 240px;
 					position: relative;
 				}
 				&.module{
-					h4{
-						font-size:18px;
-						font-weight: 400;
-						color: $user_menu;
+					.module-title{
 						margin-top:0;
 					}
 					&.selected {
@@ -147,6 +144,11 @@ $margin-right: 240px;
 				height: auto;
 				width:auto;
 				min-width:220px;
+
+				&.form_field_number, &.form_field_textarea{
+					width: 390px;
+				}
+
 				label.radio .radio{
 					margin-right: 10px;
 				}

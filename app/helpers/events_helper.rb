@@ -36,6 +36,15 @@ module EventsHelper
     description.html_safe
   end
 
+  def event_phases_and_steps_for_api(event)
+    phases = event.phases
+    phases.merge(
+      phases: Hash[phases[:phases].map do |k, steps|
+                      [k, steps.select { |s| !s.key?(:if) || instance_exec(event, &s[:if]) }.map { |s| s.reject { |k, v| k == :if } }]
+                   end]
+    )
+  end
+
   def describe_today_event_alert(resource)
     description = 'Your event is scheduled for today. '
     alert_parts = []
