@@ -1,7 +1,10 @@
 class Api::V1::ActivitiesController < Api::V1::ApiController
   inherit_resources
-
+  skip_authorization_check only: [:index]
+  skip_authorize_resource only: [:index]
   belongs_to :event, :venue, optional: true
+
+  before_action :authorize_parent
 
   respond_to :json
 
@@ -73,6 +76,7 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
   }
   EOS
   def index
+    authorize!(:show, Activity)
     collection
   end
 
@@ -715,5 +719,9 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
 
   def collection
      @activities ||= end_of_association_chain.where(active: true)
+  end
+
+  def authorize_parent
+    authorize!(:show, parent)
   end
 end
