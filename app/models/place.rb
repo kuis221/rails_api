@@ -501,7 +501,7 @@ class Place < ActiveRecord::Base
 
   def spot
     @spot ||= client.spot(reference) if reference.present?
-  rescue GooglePlaces::NotFoundError
+  rescue GooglePlaces::NotFoundError, GooglePlaces::OverQueryLimitError
     @spot = false
   end
 
