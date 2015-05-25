@@ -77,7 +77,7 @@ module Html
                             'Please review and either approve or reject.', :approve_per,
                             [approve_button, reject_button]
       else
-        info 'Your post event report has been submitted for approval #{submitted_at}. Once your report has been reviewed you will be alerted in your notifications.', :approve_per
+        info "Your post event report has been submitted for approval #{submitted_at}. Once your report has been reviewed you will be alerted in your notifications.", :approve_per
       end
     end
 
@@ -133,13 +133,13 @@ module Html
     end
 
     def approve_button
-      return unless can?(:unapprove)
+      return unless can?(:approve)
       h.button_to 'Approve', h.approve_event_path(@model, return: h.return_path),
                  method: :put, class: 'btn btn-primary'
     end
 
     def reject_button
-      return unless can?(:unapprove)
+      return unless can?(:approve)
       h.button_to 'Reject', h.reject_event_path(@model, format: :js, return: h.return_path),
                  form: { id: 'reject-post-event' },
                  method: :put, class: 'btn btn-cancel', remote: true
