@@ -134,7 +134,7 @@ describe CombinedSearch, type: :model do
           ]
         end
 
-        it "returns mixed places from google and the app listing app's places first " do
+        it "returns mixed places from Google and the app listing app's places first" do
           venue = create(:venue,
                          place: create(:place, name: 'Qwerty', city: 'Los Angeles',
                                                state: 'California', country: 'US',
@@ -169,6 +169,46 @@ describe CombinedSearch, type: :model do
               label: 'Vertigo 42, Tower 42, Los Angeles, CA 23211, United States',
               id: 'REFERENCE3||PLACEID3',
               location: { latitude: 11.11, longitude: 44.44 },
+              valid: true
+            },
+            {
+              value: 'Los Angeles, ON, Canada',
+              label: 'Los Angeles, ON, Canada',
+              id: 'REFERENCE2||PLACEID2',
+              location: { latitude: 11.22, longitude: 22.33 },
+              valid: false
+            }
+          ]
+        end
+
+        it 'returns places from Google and the app removing repeated places from Google' do
+          venue = create(:venue,
+                         place: create(:place, name: 'Vertigo 42',
+                                               reference: 'REFERENCE3',
+                                               place_id: 'PLACEID3',
+                                               formatted_address: 'Tower 42, Los Angeles, CA 23211, United States',
+                                               city: 'Los Angeles', state: 'California', country: 'US',
+                                               lonlat: 'POINT(44.44 11.11)'),
+                         company: company_user.company)
+
+          Sunspot.commit
+
+          company_user.places << create(:city, name: 'Los Angeles', state: 'California', country: 'US')
+
+          params = { q: 'Vertigo', current_company_user: company_user }
+          expect(described_class.new(params).results).to eql [
+            {
+              value: 'Vertigo 42, Tower 42, Los Angeles, CA 23211, United States',
+              label: 'Vertigo 42, Tower 42, Los Angeles, CA 23211, United States',
+              id: venue.place_id,
+              location: { latitude: 11.11, longitude: 44.44 },
+              valid: true
+            },
+            {
+              value: 'Los Angeles, CA, USA',
+              label: 'Los Angeles, CA, USA',
+              id: 'REFERENCE1||PLACEID1',
+              location: { latitude: 22.22, longitude: 33.33 },
               valid: true
             },
             {
