@@ -2823,6 +2823,7 @@ ul.ui-widget-content{
 				margin-right:30px;
 				float: left;
 				font-weight:normal;
+        white-space: nowrap;
 			}
 		}
 		.summation-total-field{
@@ -4408,7 +4409,7 @@ body.roles{
 			border-color: $secondary-blue;
 			color: $white;
 		}
-		&.rejected{
+		&.rejected, &.late{
 			color: $secondary-red;
 			.circle-step{
 				background-color: $secondary-red;
@@ -7503,5 +7504,6 @@ form.button_to .button-with-icon {
 @import 'widgets/blank_states';
 @import 'widgets/buttons';
 @import 'widgets/tags';
+@import 'widgets/fields';
 @import 'widgets/drag_drop_zone';
 @import 'widgets/details_bar';
