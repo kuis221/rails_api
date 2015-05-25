@@ -1166,16 +1166,28 @@ SummationField = FormField.extend {
 		[
 			$('<label class="control-label control-group-label">').text(@attributes.name),
 			$('<div class="controls">').append(
-				$.map @attributes.options, (option, index) =>
-					if option._destroy isnt '1' and not @_optionIsExcluded(option)
-						$('<div class="field-option">').append(
-							$('<label for="option-'+fieldId+index+'">').addClass('summation').text(option.name+ ' '),
-							$('<input name="option-'+fieldId+index+'" id="option-'+fieldId+index+'" type="text" readonly="readonly">')
+				$('<table class="summation-field">').append(
+					$('<tbody>').append(
+						$.map @attributes.options, (option, index) =>
+							if option._destroy isnt '1' and not @_optionIsExcluded(option)
+								$('<tr class="field-option">').append(
+									$('<td>').append(
+										$('<label for="option-'+fieldId+index+'">').addClass('summation').text(option.name+ ' ')
+									),
+									$('<td>').append(
+										$('<input name="option-'+fieldId+index+'" id="option-'+fieldId+index+'" type="text" readonly="readonly">')
+									)
+								)
+					).append(
+						$('<tr class="field-option summation-total-field">').append(
+							$('<td>').append(
+								$('<label>').addClass('summation').text('TOTAL ')
+							),
+							$('<td>').append(
+								$('<input type="text" readonly="readonly">')
+							)
 						)
-			).append(
-				$('<div class="field-option summation-total-field">').append(
-					$('<label>').addClass('summation').text('TOTAL: '),
-					$('<input type="text" readonly="readonly">')
+					)
 				)
 			)
 		]
