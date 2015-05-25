@@ -2,9 +2,13 @@ module Html
   class EventGuidedMessagePresenter < BasePresenter
     def current_steps
       @current_steps ||= begin
-        name, steps = phases[:phases].find { |name, _| name == phases[:current_phase] }
-        steps.select { |s| !s[:complete] && self.respond_to?("#{name}_#{s[:id]}") } +
-        [{id: 'last'}]
+        if @model.rejected?
+          [{ id: 'rejected' }]
+        else
+          name, steps = phases[:phases].find { |name, _| name == phases[:current_phase] }
+          steps.select { |s| !s[:complete] && self.respond_to?("#{name}_#{s[:id]}") } +
+          [{ id: 'last' }]
+        end
       end
     end
 
@@ -53,19 +57,20 @@ module Html
     end
 
     def execute_last
-      if @model.rejected?
-        message_with_buttons "Your post event report form was rejected #{rejected_at} for the following reasons: <i>" +
-                             @model.reject_reason.to_s +
-                             '</i><br /> Please make the necessary changes and resubmit when ready ', :last,
-                             [submit_button]
-
-      elsif can?(:submit) && @model.valid_results?
+      if can?(:submit) && @model.valid_results?
         message_with_buttons 'it looks like you\'ve collected all required post event info. '\
                              'Are you ready to submit your report for approval? ', :last,
                              [submit_button]
       else
         info 'Done! You\'ve completed the execute phase of your event.', :last
       end
+    end
+
+    def execute_rejected
+      message_with_buttons "Your post event report form was rejected #{rejected_at} for the following reasons: <i>" +
+                           (@model.reject_reason.present? ? @model.reject_reason : '') +
+                           '</i>. Please make the necessary changes and resubmit when ready ', :last,
+                           [submit_button]
     end
 
     def results_approve_per
@@ -129,27 +134,27 @@ module Html
     def unapprove_button
       return unless can?(:unapprove)
       h.button_to 'Unapprove', h.unapprove_event_path(@model, return: h.return_path),
-                 method: :put, class: 'btn btn-cancel'
+                  method: :put, class: 'btn btn-cancel'
     end
 
     def approve_button
       return unless can?(:approve)
       h.button_to 'Approve', h.approve_event_path(@model, return: h.return_path),
-                 method: :put, class: 'btn btn-primary'
+                  method: :put, class: 'btn btn-primary'
     end
 
     def reject_button
-      return unless can?(:approve)
+      return unless can?(:reject)
       h.button_to 'Reject', h.reject_event_path(@model, format: :js, return: h.return_path),
-                 form: { id: 'reject-post-event' },
-                 method: :put, class: 'btn btn-cancel', remote: true
+                  form: { id: 'reject-post-event' },
+                  method: :put, class: 'btn btn-cancel', remote: true
     end
 
     def submit_button
       return unless can?(:submit)
       h.button_to 'Submit', h.submit_event_path(@model, format: :js, return: h.return_path),
                   class: 'btn btn-cancel', method: :put,
-                  remote: true, data: { disable_with: 'submitting'}
+                  remote: true, data: { disable_with: 'submitting' }
     end
 
     def rejected_at

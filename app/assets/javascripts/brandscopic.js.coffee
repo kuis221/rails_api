@@ -135,18 +135,17 @@ jQuery ->
 	updateSummationTotals = () ->
 		for wrapper in $('.form_field_summation')
 			$wrapper = $(wrapper)
-			$options = $wrapper.find('.field-option:not(.summation-total-field) input')
+			$options = $wrapper.find('.field-option:not(.summation-total-field)')
 			$total   = $wrapper.find('.summation-total-field input')
-			$options.keyup () =>
-				total = $.map($options, (input) ->
+			$options.keyup () ->
+				siblings = $('.field-option[data-field-id=' + $(this).data('field-id') + ']:not(.summation-total-field) input')
+				total = $.map(siblings, (input) ->
 				  parseFloat($(input).val(), 10) || 0
 				).reduce((a, b) ->
 					a + b
 				, 0)
-				$total.val(total)
+				$('.summation-total-field[data-field-id=' + $(this).data('field-id') + '] input').val(total)
 			true
-
-	updateSummationTotals();
 
 	attachPluginsToElements = () ->
 		$('input.datepicker').datepicker

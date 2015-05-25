@@ -34,8 +34,8 @@ class CombinedSearch
   def filter_duplicated(results, place_ids)
     merged_ids = Place.where.not(merged_with_place_id: nil).where(place_id: results.map{ |r| r[:id] }).pluck(:place_id)
     results.reject do |p|
-      place_ids.include?(p['reference']) || place_ids.include?(p['place_id']) ||
-      merged_ids.include?(p['place_id'])
+      reference, id = p[:id].split('||')
+      place_ids.include?(reference) || place_ids.include?(id) || merged_ids.include?(id)
     end
   end
 

@@ -9,6 +9,8 @@ class Api::V1::ActivityTypesController < Api::V1::ApiController
   skip_before_action :verify_authenticity_token,
                      if: proc { |c| c.request.format == 'application/json' }
 
+  before_action :authorize_campaign, only: [:index]
+
   api :GET, '/api/v1/campaigns/:campaign_id/activity_types', 'Get a list of contacts for a specific company'
   description <<-EOS
     Returns a full list of the associated activity types for a campaign
@@ -27,7 +29,6 @@ class Api::V1::ActivityTypesController < Api::V1::ApiController
     ]
   EOS
   def index
-    authorize! :show, parent
     activity_types = collection.pluck(:id, :name)  # Sets @activity_types
     if jbb_feature_enabled? && (parent.nil? || parent.enabled_modules.include?('attendance'))
       activity_types.push [:attendance, 'Invitations']
@@ -61,5 +62,12 @@ class Api::V1::ActivityTypesController < Api::V1::ApiController
 
   def begin_of_association_chain
     current_company
+  end
+
+  def authorize_campaign
+    return if current_company.campaigns.active.accessible_by_user(current_company_user)
+                .where(id: params[:campaign_id]).any?
+
+    raise CanCan::AccessDenied
   end
 end
