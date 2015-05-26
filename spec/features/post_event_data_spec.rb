@@ -315,7 +315,7 @@ feature 'Post Event Data' do
 
       fill_in('Male', with: 35)
       fill_in('Female', with: 30)
-      expect(page).to have_content('Field should sum 100%')
+      expect(page).to have_content('Field must sum to 100%')
 
       within '#event-results-form' do
         expect(page).to have_content('65%')
@@ -337,9 +337,16 @@ feature 'Post Event Data' do
              required: true)
 
       create(:form_field,
-             name: 'Numeric Max',
+             name: 'Numeric Max Value',
              type: 'FormField::Number',
              settings: { 'range_format' => 'value', 'range_min' => '', 'range_max' => '20' },
+             fieldable: campaign,
+             required: false)
+
+      create(:form_field,
+             name: 'Numeric Max Digits',
+             type: 'FormField::Number',
+             settings: { 'range_format' => 'digits', 'range_min' => '', 'range_max' => '2' },
              fieldable: campaign,
              required: false)
 
@@ -351,9 +358,16 @@ feature 'Post Event Data' do
              required: false)
 
       create(:form_field,
-             name: 'Price Min',
+             name: 'Price Min Digits',
              type: 'FormField::Currency',
              settings: { 'range_format' => 'digits', 'range_min' => '2', 'range_max' => '' },
+             fieldable: campaign,
+             required: false)
+
+      create(:form_field,
+             name: 'Price Min Value',
+             type: 'FormField::Currency',
+             settings: { 'range_format' => 'value', 'range_min' => '5', 'range_max' => '' },
              fieldable: campaign,
              required: false)
 
@@ -395,18 +409,22 @@ feature 'Post Event Data' do
       expect(all('.event_results_value.error').count).to be 0
 
       expect(find_field('Numeric with Min Max')).to have_hint('Enter a number between 5 and 20')
-      expect(find_field('Numeric Max')).to have_hint('Enter a number no higher than 20')
+      expect(find_field('Numeric Max Value')).to have_hint('Enter a number no higher than 20')
+      expect(find_field('Numeric Max Digits')).to have_hint('Enter a number with no higher than 2 digits')
       expect(find_field('Price with Min Max')).to have_hint('Enter a number between 2 and 4')
-      expect(find_field('Price Min')).to have_hint('Enter a number with 2 digits or higher')
+      expect(find_field('Price Min Digits')).to have_hint('Enter a number with 2 digits or higher')
+      expect(find_field('Price Min Value')).to have_hint('Enter a number 5 or higher')
       expect(find_field('Text with Min Max')).to have_hint('Must be between 1 and 10 characters Currently: 0 characters')
       expect(find_field('Text Max')).to have_hint('Must be no more than 10 characters Currently: 0 characters')
       expect(find_field('Text Area with Min Max')).to have_hint('Must be between 3 and 5 words Currently: 0 words')
       expect(find_field('Text Area Min')).to have_hint('Must be at least 3 words Currently: 0 words')
 
       fill_in('Numeric with Min Max', with: 35)
-      fill_in('Numeric Max', with: 35)
+      fill_in('Numeric Max Value', with: 35)
+      fill_in('Numeric Max Digits', with: 400)
       fill_in('Price with Min Max', with: 1)
-      fill_in('Price Min', with: 1)
+      fill_in('Price Min Digits', with: 1)
+      fill_in('Price Min Value', with: 3)
       fill_in('Text with Min Max', with: 'This field has more than 10 characters')
       fill_in('Text Max', with: 'This field has more than 10 characters')
       fill_in('Text Area with Min Max', with: 'Incorrect text')
@@ -421,18 +439,22 @@ feature 'Post Event Data' do
 
       expect(find_field('Numeric with Min Max')).to_not have_css('.valid')
       expect(find_field('Numeric with Min Max')).to_not have_css('.valid')
-      expect(find_field('Numeric Max')).to_not have_css('.valid')
+      expect(find_field('Numeric Max Value')).to_not have_css('.valid')
+      expect(find_field('Numeric Max Digits')).to_not have_css('.valid')
       expect(find_field('Price with Min Max')).to_not have_css('.valid')
-      expect(find_field('Price Min')).to_not have_css('.valid')
+      expect(find_field('Price Min Digits')).to_not have_css('.valid')
+      expect(find_field('Price Min Value')).to_not have_css('.valid')
       expect(find_field('Text with Min Max')).to_not have_css('.valid')
       expect(find_field('Text Max')).to_not have_css('.valid')
       expect(find_field('Text Area with Min Max')).to_not have_css('.valid')
       expect(find_field('Text Area Min')).to_not have_css('.valid')
 
       fill_in('Numeric with Min Max', with: 10)
-      fill_in('Numeric Max', with: 10)
+      fill_in('Numeric Max Value', with: 10)
+      fill_in('Numeric Max Digits', with: 15)
       fill_in('Price with Min Max', with: 1000)
-      fill_in('Price Min', with: 1000)
+      fill_in('Price Min Digits', with: 1000)
+      fill_in('Price Min Value', with: 100)
       fill_in('Text with Min Max', with: 'Correct')
       fill_in('Text Max', with: 'Correct')
       fill_in('Text Area with Min Max', with: 'This is a correct text')
