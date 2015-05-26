@@ -196,7 +196,6 @@ $back-arrow-width: 38px;
 .guide-bar{
 	background-color: $primary-blue;
 	color: $white;
-  font-size: 12px;
   font-weight: normal;
 	padding: 18px 0;
 	position: absolute;
@@ -211,7 +210,6 @@ $back-arrow-width: 38px;
 	}
 	.btn {
 		background-color: $btn-blue;
-    font-size: 13px;
 		padding: 0px;
     @include border-radius(5px);
     height: 28px;
