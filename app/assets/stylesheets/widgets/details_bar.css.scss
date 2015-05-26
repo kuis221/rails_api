@@ -196,11 +196,13 @@ $back-arrow-width: 38px;
 .guide-bar{
 	background-color: $primary-blue;
 	color: $white;
+  font-size: 12px;
+  font-weight: normal;
 	padding: 18px 0;
 	position: absolute;
-  	top: $detail-bar-height;
-  	width: 100%;
-  	z-index: 1;
+	top: $detail-bar-height;
+	width: 100%;
+	z-index: 1;
 	a{
 		color: $white;
 		margin-left: 6px;
@@ -208,9 +210,17 @@ $back-arrow-width: 38px;
 		cursor: pointer;
 	}
 	.btn {
-		background-color: $secondary-blue;
-		height: 25px;
+		background-color: $btn-blue;
+    font-size: 13px;
 		padding: 0px;
+    @include border-radius(5px);
+    height: 28px;
+    line-height: 14px;
+    min-width: 81px;
+    &:hover{
+      color: $white;
+      background-color: $btn-blue-hover;
+    }
 	}
 	.button_to {
 		margin-left: 10px;
@@ -218,13 +228,19 @@ $back-arrow-width: 38px;
 	&.rejected, &.late {
 		background-color: $primary-red;
 		.btn {
-			background-color: $secondary-red;
+			background-color: $btn-red;
+      &:hover{
+        background-color: $btn-red-hover;
+      }
 		}
 	}
 	&.approved {
 		background-color: $primary-green;
 		.btn {
-			background-color: $secondary-green;
+			background-color: $btn-green;
+      &:hover{
+        background-color: $btn-green-hover;
+      }
 		}
 	}
 }
