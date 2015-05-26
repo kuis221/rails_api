@@ -246,7 +246,8 @@ class FormField < ActiveRecord::Base
                      range_format: settings['range_format'],
                      field_id: id)
     elsif settings['range_max'].present?
-      I18n.translate("form_fields_ranges.#{type_name.downcase}.max",
+      range_digits_msg = %w(Number Currency).include?(type_name) && settings['range_format'] == 'digits' ? 'max_digits' : 'max'
+      I18n.translate("form_fields_ranges.#{type_name.downcase}.#{range_digits_msg}",
                      range_max: settings['range_max'],
                      range_format: settings['range_format'],
                      field_id: id)
