@@ -404,7 +404,7 @@ feature 'Post Event Data' do
                      campaign: campaign, place: place)
 
       visit event_path(event)
-      screenshot_and_open_image
+
       # Ensure that validation errors are not displayed after first time form load
       expect(all('.event_results_value.error').count).to be 0
 
