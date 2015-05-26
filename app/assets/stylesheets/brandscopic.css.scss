@@ -4378,49 +4378,47 @@ body.roles{
 }
 
 .phases-top-nav{
-	color: $silver;
+	color: $gray-light;
 	font-weight: bold;
 	margin: 20px 0 40px 0;
 	a {
-		color: $silver;
+		color: $gray-light;
 	}
 	.completed{
 		a {
-			color: $silver;
+			color: $brand;
 		}
 		.circle-step{
-			background-color: $silver;
-			border-color: $silver;
-			color: $white;
+			border-color: $brand;
 			.icon-checked{
 				position: relative;
 				top: 3px;
 			}
 			a{
-				color: $white;
+				color: $brand;
 				display: block;
 			}
 		}
 	}
 	.active{
-		color: $secondary-blue;
+		color: $primary-blue;
 		.circle-step{
-			background-color: $secondary-blue;
-			border-color: $secondary-blue;
+			background-color: $primary-blue;
+			border-color: $primary-blue;
 			color: $white;
 		}
 		&.rejected, &.late{
-			color: $secondary-red;
+			color: $primary-red;
 			.circle-step{
-				background-color: $secondary-red;
-				border-color: $secondary-red;
+				background-color: $primary-red;
+				border-color: $primary-red;
 			}
 		}
 		&.approved{
-			color: $secondary-green;
+			color: $primary-green;
 			.circle-step{
-				background-color: $secondary-green;
-				border-color: $secondary-green;
+				background-color: $primary-green;
+				border-color: $primary-green;
 			}
 		}
 	}
@@ -4428,7 +4426,7 @@ body.roles{
 		font-size: 12px;
 	}
 	.circle-step{
-		border: 2px solid $silver;
+		border: 2px solid $gray-light;
 		display: inline-block;
 		height: 22px;
 		@include border-radius(15px);
