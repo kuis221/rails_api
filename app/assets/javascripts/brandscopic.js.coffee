@@ -688,6 +688,10 @@ jQuery ->
 		fieldId = $(this).data('segment-field-id')
 		clearTimeout percentageTimeouts[fieldId] if percentageTimeouts[fieldId]
 
+	$(document).on 'blur', 'input.summation-field', () ->
+		if !$(this).val()
+			$(this).val(0).valid()
+
 	$.validator.addMethod("oneupperletter",  (value, element) ->
 		return $.trim(value) == '' || /[A-Z]/.test(value);
 	, "Should have at least one upper case letter");
@@ -708,7 +712,7 @@ jQuery ->
 
 	$.validator.addMethod("segmentTotalRequired", (value, element) ->
 		return ($(element).hasClass('optional') && ($.trim(value) == '' || $.trim(value) == '0')) || value == '100';
-	, "Field should sum 100%");
+	, "Field must sum to 100%");
 
 	$.validator.addMethod("segmentTotalMax", (value, element) ->
 		intVal = parseInt(value);
@@ -721,7 +725,13 @@ jQuery ->
 		if !$(element).val()
 			$(element).val(0).valid()
 		return (value == '' || (/^[0-9]+$/.test(value) && parseInt(value) <= 100));
-	, " ");
+	, ' ');
+
+	$.validator.addMethod("summation-field", (value, element) ->
+		if !$(element).val()
+			$(element).val(0).valid()
+		return true;
+	, ' ');
 
 	$.validator.addMethod("optional", (value, element) ->
 		return true;
