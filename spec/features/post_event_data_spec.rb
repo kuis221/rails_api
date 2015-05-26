@@ -315,7 +315,7 @@ feature 'Post Event Data' do
 
       fill_in('Male', with: 35)
       fill_in('Female', with: 30)
-      expect(page).to have_content('Field should sum 100%')
+      expect(page).to have_content('Field must sum to 100%')
 
       within '#event-results-form' do
         expect(page).to have_content('65%')
