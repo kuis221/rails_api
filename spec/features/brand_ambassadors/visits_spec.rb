@@ -728,7 +728,8 @@ feature 'Brand Ambassadors Visits' do
 
     scenario 'can create a new event' do
       today = Time.zone.local(Time.now.strftime('%Y'), Time.now.strftime('%m'), 18, 12, 00)
-      expect_any_instance_of(CombinedSearch).and_return(double(read: '{}')) # So we don't search in google places
+      # So we don't search in google places
+      expect_any_instance_of(CombinedSearch).to receive(:open).and_return(double(read: '{}'))
 
       Venue.create(place_id: place.id, company: company)
       create(:company_user, company: company,

@@ -65,6 +65,7 @@ class Api::V1::ActivityTypesController < Api::V1::ApiController
   end
 
   def authorize_campaign
+    return unless params.key?(:campaign_id)
     return if current_company.campaigns.active.accessible_by_user(current_company_user)
                 .where(id: params[:campaign_id]).any?
 
