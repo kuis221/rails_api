@@ -138,14 +138,14 @@ class Venue < ActiveRecord::Base
     if reindex_neighbors_venues && neighbors_establishments_search
       Venue.where(
         id: neighbors_establishments_search.hits.map(&:primary_key)
-      ).update_all(score_dirty: true)
+      ).where.not(id: self.id).update_all(score_dirty: true)
     end
 
     true
   end
 
+  # Calculates the scoring for the venue
   def compute_scoring
-    # Calculates the scoring for the venue
     self.score = nil
     if neighbors_establishments_search && neighbors_establishments_search.respond_to?(:stat_response)
       unless neighbors_establishments_search.stat_response['stats_fields']['avg_impressions_hour_es'].nil?
@@ -275,7 +275,7 @@ class Venue < ActiveRecord::Base
   end
 
   def self.do_search(params, include_facets = false)
-    ss = solr_search(include: [:place]) do
+    solr_search(include: [:place]) do
 
       with :company_id, params[:company_id] if params.key?(:company_id) && params[:company_id].present?
       with :id, params[:venue] if params.key?(:venue) && params[:venue].present?

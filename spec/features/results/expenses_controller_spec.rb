@@ -40,12 +40,12 @@ feature 'Results Expenses Page', js: true, search: true  do
 
     scenario 'GET index should display a table with the expenses' do
       event = build(:approved_event, campaign: campaign1, company: company, start_date: '08/21/2013', end_date: '08/21/2013',
-                    start_time: '8:00pm', end_time: '11:00pm', place: create(:place, name: 'Place 1'))
+                                     start_time: '8:00pm', end_time: '11:00pm', place: create(:place, name: 'Place 1'))
       event.event_expenses.build(name: 'Expense #1 Event #1', event_id: event.id, amount: 10)
       event.save
 
       event2 = build(:approved_event, campaign: campaign1, company: company, start_date: '08/25/2013', end_date: '08/25/2013',
-                     start_time: '9:00am', end_time: '10:00am', place: create(:place, name: 'Place 2'))
+                                      start_time: '9:00am', end_time: '10:00am', place: create(:place, name: 'Place 2'))
       event2.event_expenses.build(name: 'Expense #1 Event #2', event_id: event.id, amount: 20)
       event2.save
 
@@ -71,7 +71,7 @@ feature 'Results Expenses Page', js: true, search: true  do
 
     scenario 'clicking on the expense item should redirect the user to the event' do
       event = build(:approved_event, campaign: campaign1, company: company, start_date: '08/21/2013',
-                    end_date: '08/21/2013', start_time: '8:00pm', end_time: '11:00pm')
+                                     end_date: '08/21/2013', start_time: '8:00pm', end_time: '11:00pm')
       event.event_expenses.build(name: 'Expense #1 Event #1', event_id: event.id, amount: 10)
       event.save
 
@@ -85,7 +85,6 @@ feature 'Results Expenses Page', js: true, search: true  do
   end
 
   it_behaves_like 'a list that allow saving custom filters' do
-
     before do
       create(:campaign, name: 'Campaign 1', company: company)
       create(:campaign, name: 'Campaign 2', company: company)
@@ -108,18 +107,17 @@ feature 'Results Expenses Page', js: true, search: true  do
 
     before do
       create(:approved_event, campaign: campaign1,
-             start_date: '08/21/2013', end_date: '08/21/2013',
-             start_time: '8:00pm', end_time: '11:00pm', place: create(:place, name: 'Place 1'),
-             event_expenses: [
-               build(:event_expense, name: 'Expense #1 Event #1', amount: 10, brand_id: brand.id)])
+                              start_date: '08/21/2013', end_date: '08/21/2013',
+                              start_time: '8:00pm', end_time: '11:00pm', place: create(:place, name: 'Place 1'),
+                              event_expenses: [
+                                build(:event_expense, name: 'Expense #1 Event #1', amount: 10, brand_id: brand.id)])
 
       create(:approved_event, campaign: campaign1,
-             start_date: '08/25/2013', end_date: '08/25/2013',
-             start_time: '9:00am', end_time: '10:00am', place: create(:place, name: 'Place 2'),
-             event_expenses: [
-               build(:event_expense, name: 'Expense #1 Event #2', amount: 20)])
+                              start_date: '08/25/2013', end_date: '08/25/2013',
+                              start_time: '9:00am', end_time: '10:00am', place: create(:place, name: 'Place 2'),
+                              event_expenses: [
+                                build(:event_expense, name: 'Expense #1 Event #2', amount: 20)])
 
-      Sunspot.index Event.all.to_a
       Sunspot.commit
     end
 
