@@ -135,18 +135,17 @@ jQuery ->
 	updateSummationTotals = () ->
 		for wrapper in $('.form_field_summation')
 			$wrapper = $(wrapper)
-			$options = $wrapper.find('.field-option:not(.summation-total-field) input')
+			$options = $wrapper.find('.field-option:not(.summation-total-field)')
 			$total   = $wrapper.find('.summation-total-field input')
-			$options.keyup () =>
-				total = $.map($options, (input) ->
+			$options.keyup () ->
+				siblings = $('.field-option[data-field-id=' + $(this).data('field-id') + ']:not(.summation-total-field) input')
+				total = $.map(siblings, (input) ->
 				  parseFloat($(input).val(), 10) || 0
 				).reduce((a, b) ->
 					a + b
 				, 0)
-				$total.val(total)
+				$('.summation-total-field[data-field-id=' + $(this).data('field-id') + '] input').val(total)
 			true
-
-	updateSummationTotals();
 
 	attachPluginsToElements = () ->
 		$('input.datepicker').datepicker
@@ -689,6 +688,10 @@ jQuery ->
 		fieldId = $(this).data('segment-field-id')
 		clearTimeout percentageTimeouts[fieldId] if percentageTimeouts[fieldId]
 
+	$(document).on 'blur', 'input.summation-field', () ->
+		if !$(this).val()
+			$(this).val(0).valid()
+
 	$.validator.addMethod("oneupperletter",  (value, element) ->
 		return $.trim(value) == '' || /[A-Z]/.test(value);
 	, "Should have at least one upper case letter");
@@ -709,7 +712,7 @@ jQuery ->
 
 	$.validator.addMethod("segmentTotalRequired", (value, element) ->
 		return ($(element).hasClass('optional') && ($.trim(value) == '' || $.trim(value) == '0')) || value == '100';
-	, "Field should sum 100%");
+	, "Field must sum to 100%");
 
 	$.validator.addMethod("segmentTotalMax", (value, element) ->
 		intVal = parseInt(value);
@@ -722,7 +725,13 @@ jQuery ->
 		if !$(element).val()
 			$(element).val(0).valid()
 		return (value == '' || (/^[0-9]+$/.test(value) && parseInt(value) <= 100));
-	, " ");
+	, ' ');
+
+	$.validator.addMethod("summation-field", (value, element) ->
+		if !$(element).val()
+			$(element).val(0).valid()
+		return true;
+	, ' ');
 
 	$.validator.addMethod("optional", (value, element) ->
 		return true;

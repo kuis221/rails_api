@@ -82,7 +82,7 @@ module Html
                             'Please review and either approve or reject.', :approve_per,
                             [approve_button, reject_button]
       else
-        info 'Your post event report has been submitted for approval #{submitted_at}. Once your report has been reviewed you will be alerted in your notifications.', :approve_per
+        info "Your post event report has been submitted for approval #{submitted_at}. Once your report has been reviewed you will be alerted in your notifications.", :approve_per
       end
     end
 
