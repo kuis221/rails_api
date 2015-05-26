@@ -58,7 +58,7 @@ module Html
 
     def execute_last
       if can?(:submit) && @model.valid_results?
-        message_with_buttons 'it looks like you\'ve collected all required post event info. '\
+        message_with_buttons 'It looks like you\'ve collected all required post event info. '\
                              'Are you ready to submit your report for approval? ', :last,
                              [submit_button]
       else
