@@ -575,21 +575,6 @@ class Event < ActiveRecord::Base
     errors.empty?
   end
 
-  def module_range_message(module_name)
-    return unless campaign.range_module_settings?(module_name)
-    min = campaign.module_setting(module_name, 'range_min')
-    max = campaign.module_setting(module_name, 'range_max')
-    if min.present? && max.present?
-      I18n.translate("campaign_module_ranges.#{module_name}.min_max", range_min: min, range_max: max)
-    elsif min.present?
-      I18n.translate("campaign_module_ranges.#{module_name}.min", range_min: min)
-    elsif max.present?
-      I18n.translate("campaign_module_ranges.#{module_name}.max", range_max: max)
-    else
-      ''
-    end.html_safe
-  end
-
   class << self
     # We are calling this method do_search to avoid conflicts with other gems like meta_search used by ActiveAdmin
     def do_search(params, include_facets = false)
