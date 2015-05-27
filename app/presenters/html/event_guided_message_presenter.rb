@@ -48,21 +48,15 @@ module Html
     end
 
     def execute_photos
-      range_message = module_range_message('photos')
-      yes_or_skip_or_back 'Do you have any photos to upload? ' + (range_message.present? ? range_message : ''),
-                          :photos
+      yes_or_skip_or_back "Do you have any photos to upload? #{module_range_message('photos')}", :photos
     end
 
     def execute_comments
-      range_message = module_range_message('comments')
-      yes_or_skip_or_back 'What were attendees saying? Do you have consumer comments to add? ' + (range_message.present? ? range_message : ''),
-                          :comments
+      yes_or_skip_or_back "What were attendees saying? Do you have consumer comments to add? #{module_range_message('comments')}", :comments
     end
 
     def execute_expenses
-      range_message = module_range_message('expenses')
-      yes_or_skip_or_back 'Do you have any expenses to add? ' + (range_message.present? ? range_message : ''),
-                          :expenses
+      yes_or_skip_or_back "Do you have any expenses to add? #{module_range_message('expenses')}", :expenses
     end
 
     def execute_surveys
@@ -78,11 +72,7 @@ module Html
         if incomplete_steps.empty?
           info 'Done! You\'ve completed the execute phase of your event.', :last
         else
-          incomplete_messages = []
-          @incomplete_steps.each do |incomplete|
-            incomplete_messages.push(I18n.translate("incomplete_execute_steps.#{incomplete[:id]}"))
-          end
-          info "You must #{incomplete_messages.to_sentence} before the execute phase is complete.", :last
+          info "You must #{incomplete_messages} before the execute phase is complete.", :last
         end
       end
     end
@@ -126,6 +116,12 @@ module Html
       else
         ''
       end.html_safe
+    end
+
+    def incomplete_messages
+      incomplete_steps.map do |incomplete|
+        I18n.translate("incomplete_execute_steps.#{incomplete[:id]}")
+      end.to_sentence(last_word_connector: ' and ')
     end
 
     def yes_or_skip_or_back(message, step)
