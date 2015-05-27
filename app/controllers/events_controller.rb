@@ -206,7 +206,7 @@ class EventsController < FilteredController
 
   def search_params
     @search_params || (super.tap do |p|
-      p[:sorting] ||= 'start_at'
+      p[:sorting] ||= Event.search_start_date_field
       p[:sorting_dir] ||= 'asc'
       p[:search_permission] = :view_list
 

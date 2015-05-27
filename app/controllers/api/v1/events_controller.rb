@@ -800,7 +800,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   def permitted_search_params
     params.permit(:page, campaign: [], place: [], area: [], venue: [], start_date: [], end_date: [],
                              user: [], team: [], brand: [], brand_porfolio: [], status: [], event_status: []).tap do |p|
-      p[:sorting] ||= 'start_at'
+      p[:sorting] ||= Event.search_start_date_field
       p[:sorting_dir] ||= 'asc'
     end
   end
