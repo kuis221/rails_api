@@ -12,6 +12,13 @@ module Html
       end
     end
 
+    def incomplete_steps
+      @incomplete_steps ||= begin
+        name, steps = phases[:phases].find { |name, _| name == phases[:current_phase] }
+        steps.select { |s| !s[:complete] && s[:required] }
+      end
+    end
+
     def plan_contacts
       yes_or_skip_or_back 'Do you want to keep track of any contacts?', :contacts
     end
@@ -29,7 +36,7 @@ module Html
     end
 
     def execute_per
-      yes_or_skip_or_back 'Ready to fill out your Post Event Recap?', :per
+      yes_or_skip_or_back 'Ready to fill out your Post Event Recap? This is required.', :per
     end
 
     def execute_activities
@@ -41,15 +48,21 @@ module Html
     end
 
     def execute_photos
-      yes_or_skip_or_back 'Let\'s take a look, have any event photos to upload?', :photos
+      range_message = @model.module_range_message('photos')
+      yes_or_skip_or_back 'Do you have any photos to upload? ' + (range_message.present? ? range_message : ''),
+                          :photos
     end
 
     def execute_comments
-      yes_or_skip_or_back 'What were attendees saying? Do you have consumer comments to add?', :comments
+      range_message = @model.module_range_message('comments')
+      yes_or_skip_or_back 'What were attendees saying? Do you have consumer comments to add? ' + (range_message.present? ? range_message : ''),
+                          :comments
     end
 
     def execute_expenses
-      yes_or_skip_or_back 'Do you have any expenses to add?', :expenses
+      range_message = @model.module_range_message('expenses')
+      yes_or_skip_or_back 'Do you have any expenses to add? ' + (range_message.present? ? range_message : ''),
+                          :expenses
     end
 
     def execute_surveys
@@ -62,7 +75,15 @@ module Html
                              'Are you ready to submit your report for approval? ', :last,
                              [submit_button]
       else
-        info 'Done! You\'ve completed the execute phase of your event.', :last
+        if incomplete_steps.empty?
+          info 'Done! You\'ve completed the execute phase of your event.', :last
+        else
+          incomplete_messages = []
+          @incomplete_steps.each do |incomplete|
+            incomplete_messages.push(I18n.translate("incomplete_execute_steps.#{incomplete[:id]}"))
+          end
+          info "You must #{incomplete_messages.to_sentence} before the execute phase is complete.", :last
+        end
       end
     end
 
