@@ -7,7 +7,7 @@ module Html
         else
           name, steps = phases[:phases].find { |name, _| name == phases[:current_phase] }
           steps.select { |s| !s[:complete] && self.respond_to?("#{name}_#{s[:id]}") } +
-          [{ id: 'last' }]
+          [{ id: :last }]
         end
       end
     end
@@ -96,19 +96,23 @@ module Html
       target = "#event-#{step}"
       next_target = next_target_after(step)
       prev_target = prev_target_before(step)
+      first_step = current_steps.first[:id] == step
       [
         h.content_tag(:span, '', class: 'transitional-message'),
         message,
-        h.link_to('(Yes)', step_link(target), class: 'step-yes-link smooth-scroll', data: { spytarget: target }),
-        h.link_to('(Skip)', next_target, class: 'step-skip-link smooth-scroll', data: { spyignore: 'ignore' }),
-        prev_target.present? ? h.link_to('Back', prev_target, class: 'step-back-link smooth-scroll', data: { spyignore: 'ignore' }) : ''
+        h.link_to(first_step ? '(Yes)' : '', step_link(target), class: 'step-yes-link smooth-scroll', data: { spytarget: target }),
+        prev_target.present? ? h.link_to('(Back)', prev_target, class: 'step-back-link smooth-scroll', data: { spyignore: 'ignore' }) : '',
+        h.link_to('(Skip)', next_target, class: 'step-skip-link smooth-scroll', data: { spyignore: 'ignore' })
+        
       ].join.html_safe
     end
 
     def info(message, step)
+      prev_target = prev_target_before(step)
       [
         h.link_to('', "#event-#{step}", data: { spytarget: "#event-#{step}" }),
-        message
+        message,
+        prev_target.present? ? h.link_to('(Back)', prev_target, class: 'step-back-link smooth-scroll', data: { spyignore: 'ignore' }) : ''
       ].join.html_safe
     end
 
