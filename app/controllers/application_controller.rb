@@ -60,7 +60,7 @@ class ApplicationController < ActionController::Base
   end
 
   def custom_body_class
-    @custom_body_class ||= ''
+    @custom_body_class ||= current_real_company_user.is_admin? ? 'with-login-as-bar' : ''
   end
 
   def modal_dialog_title
