@@ -4443,7 +4443,7 @@ body.roles{
 }
 
 .details-title{
-	height: 50px;
+	margin-bottom: 35px;
 }
 
 .add-details-info{
@@ -4469,8 +4469,7 @@ body.roles{
 	}
 	.special{
 		line-height: 35px;
-		margin-bottom: 35px;
-		max-width: 86%;
+		max-width: 82%;
 	}
 	.map_container{
 		border:1px solid $user_menu;
@@ -5189,7 +5188,7 @@ body.campaigns{
 
 .edition-links{
 	display: inline-block;
-	margin: 10px 0 0 20px;
+	margin: 8px 0 0 20px;
 	i{
 		font-size: 18px;
 		&:first-child{
