@@ -12,6 +12,13 @@ module Html
       end
     end
 
+    def incomplete_steps
+      @incomplete_steps ||= begin
+        name, steps = phases[:phases].find { |name, _| name == phases[:current_phase] }
+        steps.select { |s| !s[:complete] && s[:required] }
+      end
+    end
+
     def plan_contacts
       yes_or_skip_or_back 'Do you want to keep track of any contacts?', :contacts
     end
@@ -29,7 +36,7 @@ module Html
     end
 
     def execute_per
-      yes_or_skip_or_back 'Ready to fill out your Post Event Recap?', :per
+      yes_or_skip_or_back 'Ready to fill out your Post Event Recap? This is required.', :per
     end
 
     def execute_activities
@@ -41,15 +48,15 @@ module Html
     end
 
     def execute_photos
-      yes_or_skip_or_back 'Let\'s take a look, have any event photos to upload?', :photos
+      yes_or_skip_or_back "Do you have any photos to upload? #{module_range_message('photos')}", :photos
     end
 
     def execute_comments
-      yes_or_skip_or_back 'What were attendees saying? Do you have consumer comments to add?', :comments
+      yes_or_skip_or_back "What were attendees saying? Do you have consumer comments to add? #{module_range_message('comments')}", :comments
     end
 
     def execute_expenses
-      yes_or_skip_or_back 'Do you have any expenses to add?', :expenses
+      yes_or_skip_or_back "Do you have any expenses to add? #{module_range_message('expenses')}", :expenses
     end
 
     def execute_surveys
@@ -62,7 +69,11 @@ module Html
                              'Are you ready to submit your report for approval? ', :last,
                              [submit_button]
       else
-        info 'Done! You\'ve completed the execute phase of your event.', :last
+        if incomplete_steps.empty?
+          info 'Done! You\'ve completed the execute phase of your event.', :last
+        else
+          info "You must #{incomplete_messages} before the execute phase is complete.", :last
+        end
       end
     end
 
@@ -90,6 +101,27 @@ module Html
       return '' unless @model.approved?
       message_with_buttons 'Your post event report has been approved. Check out your post event results below for a recap of your event.', :last,
                            [unapprove_button]
+    end
+
+    def module_range_message(module_name)
+      return unless @model.campaign.range_module_settings?(module_name)
+      min = @model.campaign.module_setting(module_name, 'range_min')
+      max = @model.campaign.module_setting(module_name, 'range_max')
+      if min.present? && max.present?
+        I18n.translate("campaign_module_ranges.#{module_name}.min_max", range_min: min, range_max: max)
+      elsif min.present?
+        I18n.translate("campaign_module_ranges.#{module_name}.min", range_min: min)
+      elsif max.present?
+        I18n.translate("campaign_module_ranges.#{module_name}.max", range_max: max)
+      else
+        ''
+      end.html_safe
+    end
+
+    def incomplete_messages
+      incomplete_steps.map do |incomplete|
+        I18n.translate("incomplete_execute_steps.#{incomplete[:id]}")
+      end.to_sentence(last_word_connector: ' and ')
     end
 
     def yes_or_skip_or_back(message, step)
