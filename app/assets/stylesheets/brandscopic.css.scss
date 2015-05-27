@@ -4384,7 +4384,7 @@ body.roles{
 .phases-top-nav{
 	color: $gray-light;
 	font-weight: bold;
-	margin: 20px 0 40px 0;
+	margin: 35px 0 20px 0;
 	a {
 		color: $gray-light;
 	}
@@ -4447,7 +4447,7 @@ body.roles{
 }
 
 .add-details-info{
-	margin-top: 20px;
+	margin-top: 6px;
  	.indicate-icon{
  		color: $silver;
  		font-size: 16px;
@@ -4470,7 +4470,7 @@ body.roles{
 	.special{
 		line-height: 35px;
 		margin-bottom: 35px;
-		width: 82%;
+		max-width: 86%;
 	}
 	.map_container{
 		border:1px solid $user_menu;
@@ -5189,7 +5189,7 @@ body.campaigns{
 
 .edition-links{
 	display: inline-block;
-	margin: 6px 0 0 20px;
+	margin: 10px 0 0 20px;
 	i{
 		font-size: 18px;
 		&:first-child{
