@@ -63,9 +63,12 @@ $back-arrow-width: 38px;
 				cursor: pointer!important;
 				width: 100%;
 				display: inline-block;
-				padding: 8px 0 0 20px;
+				padding: 9px 0 0 20px;
 				height: 40px;
 			}
+      &.view-indicator a{
+        font-size: 12px;
+      }
 		}
 		&:hover{
 			background-color: #484848;
@@ -80,7 +83,7 @@ $back-arrow-width: 38px;
 			padding-right: 4px;
 			padding-left: 0;
 			.arrow{
-				margin-left: 20px;
+				margin-left: 10px;
 				&:after{
 					content: "\e610";
 					font-size: 12px;
@@ -196,22 +199,23 @@ $back-arrow-width: 38px;
 .guide-bar{
 	background-color: $primary-blue;
 	color: $white;
-  font-size: 12px;
   font-weight: normal;
-	padding: 18px 0;
+	padding: 14px 0;
 	position: absolute;
 	top: $detail-bar-height;
 	width: 100%;
 	z-index: 1;
+  li{
+    line-height: 30px;
+  }
 	a{
 		color: $white;
-		margin-left: 6px;
+		margin-bottom: 6px;
 		text-decoration: underline;
 		cursor: pointer;
 	}
 	.btn {
 		background-color: $btn-blue;
-    font-size: 13px;
 		padding: 0px;
     @include border-radius(5px);
     height: 28px;
