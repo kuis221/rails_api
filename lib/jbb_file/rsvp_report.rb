@@ -56,10 +56,10 @@ module JbbFile
                 campaign = find_campaign(row)
                 market_level = campaign.module_setting('attendance', 'attendance_display') == '2' if campaign
                 event = find_event_for_row(campaign, row) if campaign
+                area = find_area(campaign, row) if event && market_level
                 venue = find_venue(row) unless market_level || event.nil?
-                area = find_area(campaign, row) if event
-                if (market_level || venue) && event && area
-                  invite_scope_params = market_level ? { area_id: area.id } : {venue_id: venue.id}
+                if (market_level || venue) && event && (!market_level || area)
+                  invite_scope_params = market_level ? { area_id: area.id } : { venue_id: venue.id }
                   invite = event.invites.create_with(
                     row.select { |k, _| self.class::INVITE_COLUMNS.include?(k) }.merge(invite_scope_params)
                   ).find_or_create_by(invite_scope_params)
@@ -68,7 +68,7 @@ module JbbFile
                   end
                   self.created += 1
                 else
-                  p "INVALID EVENT OR VENUE #{venue.inspect} #{event.inspect}"
+                  p "INVALID EVENT OR VENUE #{event.inspect} #{venue.inspect} #{area}"
                   invalid_rows.push row
                 end
               end
@@ -88,7 +88,7 @@ module JbbFile
 
     def area(name)
       @areas ||= {}
-      @areas[name] ||= Area.find_by(name: name)
+      @areas[name] ||= company.areas.find_by(name: name)
       @areas[name]
     end
 
@@ -145,7 +145,7 @@ module JbbFile
       place ||= find_place_in_google_api(attrs[:account_name], attrs[:market])
       return unless place.present?
       p "Found #{place.name} for #{attrs[:account_name]}"
-      Venue.find_or_create_by(company_id: COMPANY_ID, place_id: place.id)
+      company.venues.find_or_create_by(place_id: place.id)
     end
 
     def find_area(campaign, attrs)
@@ -155,7 +155,7 @@ module JbbFile
 
     def find_campaign(attrs)
       return unless attrs[:campaign]
-      @campaigns[attrs[:campaign]] ||= Campaign.where(company_id: COMPANY_ID).where('lower(name)=?', attrs[:campaign].downcase.strip).first
+      @campaigns[attrs[:campaign]] ||= company.campaigns.where('lower(name)=?', attrs[:campaign].downcase.strip).first
     end
 
     def find_place_in_database(name, city_or_state)

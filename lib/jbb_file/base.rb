@@ -96,5 +96,9 @@ module JbbFile
     rescue
       []
     end
+
+    def company
+      @company ||= Company.find(COMPANY_ID)
+    end
   end
 end
