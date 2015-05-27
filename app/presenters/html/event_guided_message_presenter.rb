@@ -121,7 +121,7 @@ module Html
         h.content_tag(:span, '', class: 'transitional-message'),
         message,
         h.link_to('(Yes)', step_link(target), class: 'step-yes-link smooth-scroll', data: { spytarget: target }),
-        h.link_to('(No)', next_target, class: 'step-skip-link smooth-scroll', data: { spyignore: 'ignore' }),
+        h.link_to('(Skip)', next_target, class: 'step-skip-link smooth-scroll', data: { spyignore: 'ignore' }),
         prev_target.present? ? h.link_to('Back', prev_target, class: 'step-back-link smooth-scroll', data: { spyignore: 'ignore' }) : ''
       ].join.html_safe
     end
