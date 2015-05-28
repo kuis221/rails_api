@@ -1477,7 +1477,7 @@ feature 'Events section' do
           click_js_button 'Create'
         end
         expect(page).to have_content 'This is a test comment'
-        expect(page).to have_content 'it looks like you\'ve collected all required post event info.'\
+        expect(page).to have_content 'It looks like you\'ve collected all required post event info.'\
                                      ' Are you ready to submit your report for approval?'
 
         click_js_button 'Submit'
