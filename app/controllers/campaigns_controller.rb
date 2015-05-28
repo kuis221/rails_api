@@ -17,6 +17,9 @@ class CampaignsController < FilteredController
   # This helper provide the methods to export HTML to PDF
   extend ExportableFormHelper
 
+  # Handle the noticaitions for new campaigns
+  include NotificableController
+
   skip_authorize_resource only: :tab
 
   layout false, only: :kpis
