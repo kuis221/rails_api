@@ -9,7 +9,7 @@ html lang="en"
     = yield :pdf_scripts
 
 
-  body class="app-layout #{controller_name} #{action_name} #{custom_body_class} #{user_signed_in? ? 'with-fixed-top' : ''}"
+  body class="app-layout #{controller_name} #{action_name}"
 
     #main-container.container
       #application-content
