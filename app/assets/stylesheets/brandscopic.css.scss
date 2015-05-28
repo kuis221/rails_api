@@ -2708,6 +2708,11 @@ ul.ui-widget-content{
 			input {
 				border-color: $primary-red !important;
 			}
+			.chzn-container {
+				a {
+					border-color: $primary-red !important;
+				}
+			}
 		}
 		p.range-help-block {
 			color: $gray-light;

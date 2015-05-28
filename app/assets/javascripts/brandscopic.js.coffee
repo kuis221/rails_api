@@ -692,6 +692,9 @@ jQuery ->
 		if !$(this).val()
 			$(this).val(0).valid()
 
+	$(document).on 'change', 'select.select', () ->
+		$(this).valid()
+
 	$.validator.addMethod("oneupperletter",  (value, element) ->
 		return $.trim(value) == '' || /[A-Z]/.test(value);
 	, "Should have at least one upper case letter");
