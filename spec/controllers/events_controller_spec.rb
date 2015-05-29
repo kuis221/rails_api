@@ -51,7 +51,10 @@ describe EventsController, type: :controller do
         let(:event) { create(:event, company: company, campaign: create(:campaign, company: company), start_date: 1.week.from_now.to_s(:slashes), end_date: 1.week.from_now.to_s(:slashes)) }
 
         it 'renders the correct templates' do
-          get 'show', id: event.to_param
+          event.users << company_user
+          expect do
+            get 'show', id: event.to_param
+          end.to change(Notification, :count).by(-1)
           expect(response).to be_success
           expect(response).to render_template('show')
           expect(response).not_to render_template('show_results')

@@ -2708,6 +2708,11 @@ ul.ui-widget-content{
 			input {
 				border-color: $primary-red !important;
 			}
+			.chzn-container {
+				a {
+					border-color: $primary-red !important;
+				}
+			}
 		}
 		p.range-help-block {
 			color: $gray-light;
@@ -4856,16 +4861,18 @@ svg{
 	padding: 20px 0 30px 0;
 }
 
-body.campaigns{
-	.details_box{
-		h2{
-			margin-bottom: 8px;
-		}
-	}
-	.campaign-brands{
-		font-size: 16px;
-		margin-bottom: 30px;
-	}
+body{
+  &.campaigns{
+	  .details_box{
+		  h2{
+			  margin-bottom: 8px;
+		  }
+	  }
+	  .campaign-brands{
+		  font-size: 16px;
+		  margin-bottom: 30px;
+	  }
+  }
 }
 
 .button-with-icon i{

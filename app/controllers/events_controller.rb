@@ -18,6 +18,9 @@ class EventsController < FilteredController
   include EventsHelper
   include ApplicationHelper
 
+  # Handle the noticaitions for new events
+  include NotificableController
+
   helper_method :calendar_highlights, :event_activities
 
   respond_to :js, only: [:new, :create, :edit, :update, :edit_results,

@@ -1,6 +1,9 @@
 class Api::V1::EventsController < Api::V1::FilteredController
   extend TeamMembersHelper
 
+  # Handle the noticaitions for new events
+  include NotificableController
+
   skip_load_and_authorize_resource only: :update
   skip_authorization_check only: :update
   before_action :authorize_update, only: :update
@@ -154,9 +157,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     * *name*: the campaign's name
   EOS
   def show
-    if resource.present?
-      render
-    end
+    render if resource.present?
   end
 
   api :POST, '/api/v1/events', 'Create a new event'

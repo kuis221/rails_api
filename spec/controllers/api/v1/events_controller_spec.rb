@@ -4,13 +4,12 @@ describe Api::V1::EventsController, type: :controller do
   let(:user) { sign_in_as_user }
   let(:company) { user.company_users.first.company }
   let(:campaign) { create(:campaign, company: company) }
+  let(:place) { create(:place) }
 
   before { set_api_authentication_headers user, company }
 
   describe "GET 'index'", search: true do
     it 'return a list of events', :show_in_doc do
-      campaign = create(:campaign, company: company)
-      place = create(:place)
       create_list(:event, 3, company: company, campaign: campaign, place: place)
       Sunspot.commit
 
@@ -28,8 +27,6 @@ describe Api::V1::EventsController, type: :controller do
     end
 
     it 'sencond page returns empty results' do
-      campaign = create(:campaign, company: company)
-      place = create(:place)
       create_list(:event, 3, company: company, campaign: campaign, place: place)
       Sunspot.commit
 
@@ -44,9 +41,7 @@ describe Api::V1::EventsController, type: :controller do
     end
 
     it 'return a list of events filtered by campaign id' do
-      campaign = create(:campaign, company: company)
       other_campaign = create(:campaign, company: company)
-      place = create(:place)
       create_list(:event, 3, company: company, campaign: campaign, place: place)
       create_list(:event, 3, company: company, campaign: other_campaign, place: place)
       Sunspot.commit
@@ -61,9 +56,7 @@ describe Api::V1::EventsController, type: :controller do
 
   describe "GET 'requiring_attention'", search: true do
     it 'returns a list of events late, due and today events', :show_in_doc do
-      campaign = create(:campaign, company: company)
       campaign.modules = { 'expenses' => {}, 'comments' => {}, 'photos' => {} }
-      place = create(:place)
       event1 = create(:late_event, campaign: campaign, place: place)
       event2 = create(:due_event, campaign: campaign, place: place)
       event3 = create(:event, start_date: Time.zone.now.to_s(:slashes),
@@ -89,7 +82,10 @@ describe Api::V1::EventsController, type: :controller do
     let(:place) { create(:place, state: 'New York') }
 
     it 'returns the event info', :show_in_doc do
-      get :show, id: event.to_param, format: :json
+      event.users << user.company_users.first
+      expect do
+        get :show, id: event.to_param, format: :json
+      end.to change(Notification, :count).by(-1)
       expect(response).to be_success
       expect(json.keys).to eq(%w(
         id start_date start_time end_date end_time status description phases event_status
@@ -105,8 +101,6 @@ describe Api::V1::EventsController, type: :controller do
 
   describe "GET 'status_facets'", search: true do
     it 'return the facets for the search', :show_in_doc do
-      campaign = create(:campaign, company: company)
-      place = create(:place)
       create(:approved_event, company: company, campaign: campaign, place: place)
       create(:rejected_event, company: company, campaign: campaign, place: place)
       create(:submitted_event, company: company, campaign: campaign, place: place)
@@ -148,12 +142,12 @@ describe Api::V1::EventsController, type: :controller do
         post 'create', event: { campaign_id: campaign.id, start_date: '05/21/2020', start_time: '12:00pm',
                                 end_date: '05/21/2020', end_time: '01:00pm', place_id: place.id }, format: :json
       end.to change(Event, :count).by(1)
-      event = Event.last
-      expect(event.campaign_id).to eq(campaign.id)
-      expect(event.start_at).to eq(Time.zone.parse('2020/05/21 12:00pm'))
-      expect(event.end_at).to eq(Time.zone.parse('2020/05/21 01:00pm'))
-      expect(event.place_id).to eq(place.id)
-      expect(event.promo_hours).to eq(1)
+      new_event = Event.last
+      expect(new_event.campaign_id).to eq(campaign.id)
+      expect(new_event.start_at).to eq(Time.zone.parse('2020/05/21 12:00pm'))
+      expect(new_event.end_at).to eq(Time.zone.parse('2020/05/21 01:00pm'))
+      expect(new_event.place_id).to eq(place.id)
+      expect(new_event.promo_hours).to eq(1)
     end
 
     it 'should not create the event when dates are not valid for a visit' do
@@ -175,21 +169,21 @@ describe Api::V1::EventsController, type: :controller do
         post 'create', event: { campaign_id: campaign.id, start_date: '11/10/2014', start_time: '12:00pm',
                                 end_date: '11/10/2014', end_time: '01:00pm', place_id: place.id, visit_id: visit.id }, format: :json
       end.to change(Event, :count).by(1)
-      event = Event.last
-      expect(event.campaign_id).to eq(campaign.id)
-      expect(event.start_at).to eq(Time.zone.parse('2014/11/10 12:00pm'))
-      expect(event.end_at).to eq(Time.zone.parse('2014/11/10 01:00pm'))
-      expect(event.place_id).to eq(place.id)
-      expect(event.promo_hours).to eq(1)
+      new_event = Event.last
+      expect(new_event.campaign_id).to eq(campaign.id)
+      expect(new_event.start_at).to eq(Time.zone.parse('2014/11/10 12:00pm'))
+      expect(new_event.end_at).to eq(Time.zone.parse('2014/11/10 01:00pm'))
+      expect(new_event.place_id).to eq(place.id)
+      expect(new_event.promo_hours).to eq(1)
     end
   end
 
   describe "PUT 'update'", :show_in_doc do
     let(:campaign) { create(:campaign, company: company) }
     let(:event) { create(:event, company: company, campaign: campaign) }
+
     it 'must update the event attributes' do
       new_campaign = create(:campaign, company: company)
-      place = create(:place)
       put 'update', id: event.to_param, event: {
         campaign_id: new_campaign.id,
         start_date: '05/21/2020', start_time: '12:00pm', end_date: '05/22/2020', end_time: '01:00pm',
@@ -267,7 +261,7 @@ describe Api::V1::EventsController, type: :controller do
       }
       event.save
 
-      age_result = event.result_for_kpi(Kpi.age)
+      event.result_for_kpi(Kpi.age)
 
       put 'update', id: event.to_param, event: {
         results_attributes: [{
@@ -284,8 +278,9 @@ describe Api::V1::EventsController, type: :controller do
   end
 
   describe "PUT 'submit'" do
+    let(:event) { create(:event, campaign: campaign) }
+
     it 'should submit event' do
-      event = create(:event, active: true, company: company)
       expect do
         put 'submit', id: event.to_param, format: :json
         expect(response).to be_success
@@ -294,9 +289,7 @@ describe Api::V1::EventsController, type: :controller do
     end
 
     it 'should not allow to submit the event if the event data is not valid' do
-      campaign = create(:campaign, company_id: company)
-      field = create(:form_field_number, fieldable: campaign, kpi: create(:kpi, company_id: 1), required: true)
-      event = create(:event, active: true, company: company, campaign: campaign)
+      create(:form_field_number, fieldable: campaign, kpi: create(:kpi, company_id: 1), required: true)
       expect do
         put 'submit', id: event.to_param, format: :json
         expect(response.response_code).to eq(422)
@@ -306,8 +299,9 @@ describe Api::V1::EventsController, type: :controller do
   end
 
   describe "PUT 'approve'" do
+    let(:event) { create(:submitted_event, active: true, company: company) }
+
     it 'should approve event' do
-      event = create(:submitted_event, active: true, company: company)
       expect do
         put 'approve', id: event.to_param, format: :json
         expect(response).to be_success
@@ -317,8 +311,9 @@ describe Api::V1::EventsController, type: :controller do
   end
 
   describe "PUT 'reject'" do
+    let(:event) { create(:submitted_event, active: true, company: company) }
+
     it 'should reject event' do
-      event = create(:submitted_event, active: true, company: company)
       expect do
         put 'reject', id: event.to_param, reason: 'blah blah blah', format: :json
         expect(response).to be_success
@@ -469,7 +464,6 @@ describe Api::V1::EventsController, type: :controller do
       get :members, id: event.to_param, format: :json
       expect(response).to be_success
       result = JSON.parse(response.body)
-      log_company_user = user.company_users.first
       expect(result).to match_array([
         { 'id' => users.last.id, 'first_name' => 'Pedro', 'last_name' => 'Guerra', 'full_name' => 'Pedro Guerra', 'role_name' => 'Coach', 'email' => 'pedro@gmail.com', 'phone_number' => '+1000000000', 'street_address' => 'ABC 1', 'unit_number' => '#123 2nd floor', 'city' => 'Curridabat', 'state' => 'SJ', 'zip_code' => '12345', 'time_zone' => 'Pacific Time (US & Canada)', 'country' => 'Costa Rica', 'type' => 'user' },
         { 'id' => users.first.id, 'first_name' => 'Luis', 'last_name' => 'Perez', 'full_name' => 'Luis Perez', 'role_name' => 'Field Ambassador', 'email' => 'luis@gmail.com', 'phone_number' => '+1000000000', 'street_address' => 'ABC 1', 'unit_number' => '#123 2nd floor', 'city' => 'Curridabat', 'state' => 'SJ', 'zip_code' => '12345', 'time_zone' => 'Pacific Time (US & Canada)', 'country' => 'Costa Rica', 'type' => 'user' }
@@ -606,7 +600,7 @@ describe Api::V1::EventsController, type: :controller do
       result = JSON.parse(response.body)
 
       expect(result).to match_array([
-        { 'id' => company_user.id, 'first_name' => 'Albert', 'last_name' => 'Einstain', 'full_name' => 'Albert Einstain', 'role_name' => 'Physicist', 'email' => 'luis@gmail.com', 'email' => 'albert@einstain.com', 'phone_number' => '+1000000000', 'street_address' => 'Street Address 123', 'unit_number' => 'Unit Number 456', 'city' => 'Ulm', 'state' => 'BW', 'zip_code' => '90210', 'time_zone' => 'Pacific Time (US & Canada)', 'country' => 'Germany', 'type' => 'user'  },
+        { 'id' => company_user.id, 'first_name' => 'Albert', 'last_name' => 'Einstain', 'full_name' => 'Albert Einstain', 'role_name' => 'Physicist', 'email' => 'albert@einstain.com', 'phone_number' => '+1000000000', 'street_address' => 'Street Address 123', 'unit_number' => 'Unit Number 456', 'city' => 'Ulm', 'state' => 'BW', 'zip_code' => '90210', 'time_zone' => 'Pacific Time (US & Canada)', 'country' => 'Germany', 'type' => 'user'  },
         { 'id' => contacts.first.id, 'first_name' => 'Luis', 'last_name' => 'Perez', 'full_name' => 'Luis Perez', 'title' => 'Field Ambassador', 'email' => 'luis@gmail.com', 'phone_number' => '344-23333', 'street1' => 'ABC', 'street2' => '1', 'street_address' => 'ABC, 1', 'city' => 'Hollywood', 'state' => 'CA', 'zip_code' => '12345', 'country' => 'US', 'country_name' => 'United States', 'type' => 'contact' },
         { 'id' => contacts.last.id, 'first_name' => 'Pedro', 'last_name' => 'Guerra', 'full_name' => 'Pedro Guerra', 'title' => 'Coach', 'email' => 'pedro@gmail.com', 'phone_number' => '344-23333', 'street1' => 'ABC', 'street2' => '1', 'street_address' => 'ABC, 1', 'city' => 'Hollywood', 'state' => 'CA', 'zip_code' => '12345', 'country' => 'US', 'country_name' => 'United States', 'type' => 'contact' }
       ])
@@ -789,7 +783,6 @@ describe Api::V1::EventsController, type: :controller do
         create(:contact, first_name: 'Luis', last_name: 'Perez', email: 'luis@gmail.com', street1: 'ABC', street2: '1', zip_code: 12_345, title: 'Field Ambassador', company: company),
         create(:contact, first_name: 'Pedro', last_name: 'Guerra', email: 'pedro@gmail.com', street1: 'ABC', street2: '1', zip_code: 12_345, title: 'Coach', company: company)
       ]
-      company_user = user.company_users.first
       Sunspot.commit
 
       get :assignable_contacts, id: event.to_param, term: 'luis', format: :json

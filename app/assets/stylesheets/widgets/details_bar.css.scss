@@ -1,5 +1,15 @@
 
 // DETAILS BAR (Details pages bar)
+//
+
+.with-login-as-bar{
+  .details-bar{
+    &.fixed{
+      top: 80px;
+    }
+  }
+}
+
 $detail-bar-height: 40px;
 $back-arrow-width: 38px;
 .details-bar{
@@ -22,15 +32,15 @@ $back-arrow-width: 38px;
 		top: 0;
 		width: $back-arrow-width;
 	}
-	&.fixed{
-		position: fixed !important;
-		top: 80px;
-		width: calc(100% - 100px);
-		z-index: 1100;
-		.panel, .back-arrow{
-			@include border-radius(0);
-		}
-	}
+  &.fixed{
+    position: fixed !important;
+    top: 42px;
+    width: calc(100% - 100px);
+    z-index: 1100;
+    .panel, .back-arrow{
+      @include border-radius(0);
+    }
+  }
 	.panel{
 		background-color: $gray-darker;
 		box-sizing: border-box;
