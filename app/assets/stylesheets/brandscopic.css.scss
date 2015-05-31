@@ -4433,7 +4433,13 @@ body.roles{
 	}
 	.step{
 		font-size: 12px;
-	}
+    &.locked{
+      &:hover{
+        cursor: pointer;
+        text-decoration: underline;
+      }
+    }
+  }
 	.circle-step{
 		border: 2px solid $gray-light;
 		display: inline-block;
