@@ -89,6 +89,10 @@ module JbbFile
         ftp.binary = true
         ftp
       end
+    rescue Errno::ECONNRESET
+      @ftp_connecion = nil
+      sleep 1
+      retry
     end
 
     def find_files
