@@ -48,8 +48,8 @@ module JbbFile
         files = download_files(dir)
         return invalid_format if invalid_files.any?
         return unless files.any?
-        ActiveRecord::Base.transaction do
-          files.each do |file|
+        files.each do |file|
+          ActiveRecord::Base.transaction do
             each_sheet(file[:excel]) do |sheet|
               sheet.each(self.class::COLUMNS) do |row|
                 next if row[:final_date] == 'FinalDate'
@@ -73,12 +73,10 @@ module JbbFile
                 end
               end
             end
+            archive_file file[:file_name]
           end
-
-          p 'ENDED!'
         end
-
-        files.each { |file| archive_file file[:file_name] }
+        p 'ENDED!'
 
         success created, invalid_rows.count, multiple_events, invalid_rows
       end
