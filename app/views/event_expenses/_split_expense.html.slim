@@ -18,7 +18,7 @@
               .controls
                 = label_tag 'event_expense_percentage', 'Percent', class: 'control-label'
                 .input-append
-                  = text_field_tag 'event_expense_percentage', nil, class: 'amount-percentage', disabled: true
+                  = text_field_tag 'event_expense_percentage', nil, class: 'amount-percentage'
                   span.add-on %
           .remove-expense
             = ef.link_to_remove '', class: 'icon-rounded-minus'
@@ -63,7 +63,14 @@ javascript:
     amount = parseFloat($(this).val()).toFixed(2);
     if (isNaN(amount)) amount = '0.00';
     $(this).val(amount);
-    doCalculation();
+    doCalculation('currency');
+  });
+
+  $form.delegate('input.amount-percentage', 'change', function(){
+    percentage = parseInt($(this).val());
+    if (isNaN(percentage)) percentage = '0';
+    $(this).val(percentage);
+    doCalculation('percentage');
   });
 
   $(document).on('nested:fieldAdded', function(e){
@@ -85,18 +92,24 @@ javascript:
     doCalculation();
   });
 
-  doCalculation = function(){
+  doCalculation = function(inputType){
     var sum = 0,
-        summands = $form.find('.fields:visible input.amount-currency'),
-        percentages = $form.find('.fields:visible input.amount-percentage');
+        summands = $form.find('.fields:visible input.amount-currency');
 
     summands.each(function (){
-        var value = Number($(this).val());
-        if (!isNaN(value)) sum += value;
-        percentageField = $('#' + $(this).attr('id').replace('amount', 'percentage'));
-        percentageValue = (value * 100) / $expenseAmount;
-        percentageField.val(percentageValue);
+        if (inputType == 'currency') {
+          amountValue = $(this).val();
+          percentageField = $('#' + $(this).attr('id').replace('amount', 'percentage'));
+          percentageValue = (amountValue * 100) / $expenseAmount;
+          percentageField.val(percentageValue);
+        } else {
+          percentageValue = $('#' + $(this).attr('id').replace('amount', 'percentage')).val();
+          amountValue = parseFloat(($expenseAmount * percentageValue) / 100).toFixed(2);
+          $(this).val(amountValue);
+        }
+        if (!isNaN(amountValue)) sum += Number(amountValue);
     });
+
     $sumContainer.html(sum);
     $leftContainer.html($expenseAmount - sum);
   }
