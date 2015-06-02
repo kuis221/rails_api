@@ -74,6 +74,10 @@
   content:"\e62b";
 }
 
+.icon-brands:before{
+  content: "\e65b";
+}
+
 .icon-chat:before{
 	content: "\e60e";
 }
@@ -84,6 +88,14 @@
 
 .icon-close:before{
 	content: "\e616";
+}
+
+.icon-rounded-minus:before{
+  content: "\e65a";
+}
+
+.icon-lock:before{
+  content: "\e659";
 }
 
 .icon-sort-asc:before{
