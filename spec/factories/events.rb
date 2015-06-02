@@ -21,6 +21,8 @@
 #  local_end_at   :datetime
 #  description    :text
 #  kbmg_event_id  :string(255)
+#  rejected_at    :datetime
+#  submitted_at   :datetime
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

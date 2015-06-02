@@ -21,6 +21,8 @@
 #  local_end_at   :datetime
 #  description    :text
 #  kbmg_event_id  :string(255)
+#  rejected_at    :datetime
+#  submitted_at   :datetime
 #
 
 class Event < ActiveRecord::Base
@@ -74,6 +76,7 @@ class Event < ActiveRecord::Base
 
   has_many :invites, dependent: :destroy, inverse_of: :event
 
+  accepts_nested_attributes_for :event_expenses, allow_destroy: true
   accepts_nested_attributes_for :surveys
   accepts_nested_attributes_for :results
   accepts_nested_attributes_for :photos

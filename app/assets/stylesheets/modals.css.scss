@@ -960,7 +960,28 @@ div#spin{
 .eventexpense_modal{
 	width: 660px;
 	.expense-info-form{
+		display: inline-block;
+		position: relative;
 		width: 100%;
+		.checker{
+			display: inline-block !important;
+			span.checked:after{
+				top: 6px;
+			}
+		}
+		#expense-fields {
+			.split-expense {
+				margin-bottom: 10px;
+				.split-expense-link {
+					background: none!important;
+					border: none;
+					color: $primary-blue;
+					cursor: pointer;
+					outline: none;
+					padding: 0!important;
+				}
+			}
+		}
 		.inputs-side {
 			width: 60%;
 			.control-group{
@@ -980,10 +1001,6 @@ div#spin{
 			}
 		}
 	}
-	.expense-info-form {
-		display: inline-block;
-		position: relative;
-	}
 	.expense-file-form {
 		top:0;
 		right:0;
@@ -997,6 +1014,76 @@ div#spin{
 		display: inline-block;
 		&.inside-form{
 			margin-bottom:10px;
+		}
+	}
+}
+
+.spliteventexpense_modal{
+	margin-left: -400px !important;
+	width: 900px;
+	.split-expense-form{
+		// .fields{
+		// 	.control-label{
+		// 		display: none !important;
+		// 	}
+		// 	&:first-child{
+		// 		.control-label{
+		// 			display: block !important;
+		// 		}
+		// 	}
+		// }
+		// .fields:not(:first-child){
+		// 	.control-label{
+		// 		display: none !important;
+		// 	}
+		// }
+		.form-inputs{
+			.percent-field{
+				margin-left: 80px;
+			}
+			.controls{
+				.input-append{
+					input{
+						width: 100%;
+					}
+				}
+				input{
+					&.amount-currency, &.amount-percentage{
+						text-align: right;
+					}
+				}
+			}
+			.remove-expense{
+				float: right;
+				.icon-rounded-minus{
+					color: $silver;
+					font-size: 22px;
+					padding-top: 33px;
+					position: absolute;
+					// &:first-child{
+					// 	display: none;
+					// }
+				}
+			}
+		}
+		.expense-total{
+			border-top: 1px solid $silver;
+			font-size: 16px;
+			font-weight: bold;
+			margin-top: 15px;
+			padding-top: 15px;
+			.total-label{
+				color: $brand;
+			}
+			.total-amount{
+				color: $gray-dark;
+			}
+			.left-amount{
+				color: $silver;
+			}
+			.row-fluid [class*="span"] {
+				min-height: 20px;
+			}
 		}
 	}
 }

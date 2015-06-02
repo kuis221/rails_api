@@ -1,0 +1,102 @@
+- brands = parent.campaign.brands
+.split-expense-form
+  = simple_nested_form_for(parent, url: split_event_event_expenses_path(parent), method: :post, remote: true) do |f|
+    = f.error_notification
+    = f.fields_for :event_expenses, [resource] do |ef|
+      .form-inputs
+        .row-fluid.expense-item
+          .span2
+            = ef.input :expense_date, as: :date_picker
+          .span3
+            = ef.input :category, collection: expense_categories, input_html: { class: 'chosen-enabled category-chosen' }
+          .span3
+            = ef.input :brand_id, as: :select, collection: brands, input_html: { class: 'chosen-enabled brand-chosen' }
+          .span1
+            = ef.input :amount, as: :currency, input_html: { class: 'amount-currency' }
+          .span1.percent-field
+            .control-group
+              .controls
+                = label_tag 'event_expense_percentage', 'Percent', class: 'control-label'
+                .input-append
+                  = text_field_tag 'event_expense_percentage', nil, class: 'amount-percentage', disabled: true
+                  span.add-on %
+          .remove-expense
+            = ef.link_to_remove '', class: 'icon-rounded-minus'
+    = f.link_to_add '', :event_expenses, class: 'icon-rounded-add'
+
+    .expense-total
+      .row-fluid
+        .span8
+        .span1.total-label
+          .pull-left TOTAL:
+        .span2.total-amount
+          .pull-left
+            b= "$<span>0</span>".html_safe
+      .row-fluid
+        .span8
+        .span1.total-label
+          .pull-left
+        .span2.left-amount
+          .pull-left
+            b= "$<span></span> left".html_safe
+
+
+    .form-actions
+      = submit_tag 'Create Expenses', id: 'save-expense-btn', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
+      = "&nbsp;".html_safe
+      = f.button :button, 'Cancel', class: 'btn btn-cancel'
+
+javascript:
+  var $form = $('.split-expense-form form'),
+      $sumContainer = $('.total-amount span'),
+      $leftContainer = $('.left-amount span')
+      $expenseAmount = 0;
+
+  $(document).ready(function(){
+    $expenseAmount = $('.split-expense-form input.amount-currency:first').val();
+    $leftContainer.html($expenseAmount);
+    $('.split-expense-form input.amount-currency:first').val('0.00');
+    $('.split-expense-form input.amount-percentage:first').attr('id', $('.split-expense-form input.amount-currency:first').attr('id').replace('amount', 'percentage'));
+  });
+
+  $form.delegate('input.amount-currency', 'change', function(){
+    amount = parseFloat($(this).val()).toFixed(2);
+    if (isNaN(amount)) amount = '0.00';
+    $(this).val(amount);
+    doCalculation();
+  });
+
+  $(document).on('nested:fieldAdded', function(e){
+    $('.split-expense-form input.datepicker:last').datepicker({
+      showOtherMonths: true,
+      selectOtherMonths: true,
+      dateFormat: "mm/dd/yy",
+      onClose: function(selectedDate) {
+        return $(this).valid();
+      }
+    });
+    $('.split-expense-form select.category-chosen:last').chosen();
+    $('.split-expense-form select.brand-chosen:last').chosen();
+    $('.split-expense-form input.amount-currency:last').val('0.00');
+    $('.split-expense-form input.amount-percentage:last').attr('id', $('.split-expense-form input.amount-currency:last').attr('id').replace('amount', 'percentage'))
+  });
+
+  $(document).on('nested:fieldRemoved', function(e){
+    doCalculation();
+  });
+
+  doCalculation = function(){
+    var sum = 0,
+        summands = $form.find('.fields:visible input.amount-currency'),
+        percentages = $form.find('.fields:visible input.amount-percentage');
+
+    summands.each(function (){
+        var value = Number($(this).val());
+        if (!isNaN(value)) sum += value;
+        percentageField = $('#' + $(this).attr('id').replace('amount', 'percentage'));
+        percentageValue = (value * 100) / $expenseAmount;
+        percentageField.val(percentageValue);
+    });
+    $sumContainer.html(sum);
+    $leftContainer.html($expenseAmount - sum);
+  }
