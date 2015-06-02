@@ -52,13 +52,6 @@ javascript:
       $leftContainer = $('.left-amount span')
       $expenseAmount = 0;
 
-  $(document).ready(function(){
-    $expenseAmount = $('.split-expense-form input.amount-currency:first').val();
-    $leftContainer.html($expenseAmount);
-    $('.split-expense-form input.amount-currency:first').val('0.00');
-    $('.split-expense-form input.amount-percentage:first').attr('id', $('.split-expense-form input.amount-currency:first').attr('id').replace('amount', 'percentage'));
-  });
-
   $form.delegate('input.amount-currency', 'change', function(){
     amount = parseFloat($(this).val()).toFixed(2);
     if (isNaN(amount)) amount = '0.00';
@@ -90,6 +83,19 @@ javascript:
 
   $(document).on('nested:fieldRemoved', function(e){
     doCalculation();
+  });
+
+  $(document).ready(function(){
+    $expenseAmount = $('.split-expense-form input.amount-currency:first').val();
+    $leftContainer.html($expenseAmount);
+    $('.split-expense-form input.amount-currency:first').val('0.00');
+    $('.split-expense-form input.amount-percentage:first').attr('id', $('.split-expense-form input.amount-currency:first').attr('id').replace('amount', 'percentage'));
+    $('.icon-rounded-add').click();
+    $('.split-expense-form input.date_picker:last').val($('.split-expense-form input.date_picker:first').val());
+    $('.split-expense-form select.category-chosen:last').val($('.split-expense-form select.category-chosen:first').val());
+    $('.split-expense-form select.category-chosen:last').trigger('liszt:updated');
+    $('.split-expense-form select.brand-chosen:last').val($('.split-expense-form select.brand-chosen:first').val());
+    $('.split-expense-form select.brand-chosen:last').trigger('liszt:updated');
   });
 
   doCalculation = function(inputType){
