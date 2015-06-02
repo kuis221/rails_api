@@ -50,7 +50,7 @@ class BrandAmbassadors::Visit < ActiveRecord::Base
 
   VISIT_TYPE_OPTIONS = { 'Brand Program' => 'brand_program',
                          'PTO' => 'pto',
-                         'Market Visit' => 'market_visit',
+                         'Formal Market Visit' => 'market_visit',
                          'Local Market Request' => 'local_market_request' }
 
   before_validation { self.city = nil if city == '' }
