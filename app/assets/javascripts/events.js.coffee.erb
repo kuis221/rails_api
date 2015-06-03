@@ -23,11 +23,11 @@ jQuery ->
 		message = transitionalMessages.yes[Math.floor(Math.random()*transitionalMessages.skip.length)]
 		showStep target, message
 
-	showPrevStepYes = (currentStep) ->
-		guidedBarNav = $('.guide-bar.event-details-scroll-spy')
-		target = guidedBarNav.find("a[data-spytarget=\"#{currentStep}\"]").parent('li').data('prev')
-		message = transitionalMessages.yes[Math.floor(Math.random()*transitionalMessages.skip.length)]
-		showStep target, message
+	showGuideBarWithTime = (time = 3000) ->
+		$('.guide-bar').show()
+		setTimeout (->
+  		$('.guide-bar').slideUp()
+		), time
 
 	$(document).on 'smooth-scroll:end', 'a.step-skip-link', () ->
 		target = $(this).parent('li').data('next')
@@ -41,28 +41,24 @@ jQuery ->
 
 	$(document).on 'contact:added', () ->
 		showNextStepYes '#event-contacts'
-		showPrevStepYes '#event-contacts'
 	$(document).on 'task:added', () ->
 		showNextStepYes '#event-tasks'
-		showPrevStepYes '#event-tasks'
 	$(document).on 'document:added', () ->
 		showNextStepYes '#event-documents'
-		showPrevStepYes '#event-documents'
 	$(document).on 'per:completed', () ->
 		showNextStepYes '#event-per'
-		showPrevStepYes '#event-per'
 	$(document).on 'activity:added', () ->
 		showNextStepYes '#event-activities'
-		showPrevStepYes '#event-activities'
 	$(document).on 'expense:added', () ->
 		showNextStepYes '#event-expenses'
-		showPrevStepYes '#event-expenses'
 	$(document).on 'photo:added', () ->
 		showNextStepYes '#event-photos'
-		showPrevStepYes '#event-photos'
 	$(document).on 'comment:added', () ->
 		showNextStepYes '#event-comments'
-		showPrevStepYes '#event-comments'
+
+	$('.phase-steps').on 'click', 'li', (e) ->
+		showGuideBarWithTime()
+
 
 	$("#reject-post-event").submit (e) ->
 		e.preventDefault()
