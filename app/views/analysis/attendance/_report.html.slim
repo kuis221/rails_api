@@ -125,7 +125,6 @@ javascript:
       }
   });
 
-
   function changeColorAllPolygon(color, hsb) {
     $('.color-box').spectrum("set", color);
     var arrayColor = generateColorList(hsb);
@@ -166,3 +165,7 @@ javascript:
     else
       return 7;
   }
+  
+  $( "#attendance-map-canvas" ).click(function() {
+    $('.gm-style-iw').parent().draggable();
+  });

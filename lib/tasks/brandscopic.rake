@@ -42,7 +42,7 @@ namespace :brandscopic do
     end
   end
 
-  desc 'Merge venues '
+  desc 'Merge venues from a CSV file sent through the STDIN'
   task merge_venues: :environment do
     CSV($stdin, row_sep: "\n", col_sep: ',') do |csv|
       csv.each do |venue1, venue2, venue3, name, route, city, state, zip, td_linx_code|

@@ -11,7 +11,7 @@ describe Api::V1::BrandAmbassadors::VisitsController, type: :controller do
   before { set_api_authentication_headers user, company }
 
   describe "GET 'index'", search: true do
-    it 'return a list of visits' do
+    it 'return a list of visits', show_in_doc: true do
       campaign = create(:campaign, company: company)
       create_list(:brand_ambassadors_visit, 3, company: company, campaign: campaign)
       Sunspot.commit
