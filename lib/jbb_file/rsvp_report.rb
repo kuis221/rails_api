@@ -42,6 +42,7 @@ module JbbFile
     end
 
     def process
+      puts "RsvpReport.process STARTED!"
       self.created = self.failed = self.multiple_events = 0
       invalid_rows = []
       Dir.mktmpdir do |dir|
