@@ -9,7 +9,7 @@ module JbbFile
       valid = false
       each_sheet(file) do |sheet|
         unless (self.class::VALID_COLUMNS - sheet.row(1)).empty?
-          p self.class::VALID_COLUMNS - sheet.row(1)
+          Rails.logger.info "Invalid columns: #{self.class::VALID_COLUMNS - sheet.row(1)}"
           return false
         end
         valid = true
@@ -85,7 +85,8 @@ module JbbFile
       @ftp_connecion ||= Net::FTP.new(ftp_server).tap do |ftp|
         ftp.passive = true
         ftp.login(ftp_username, ftp_password)
-        ftp.chdir(ftp_folder) if ftp_folder
+        Rails.logger.info "Changing directory to #{self.ftp_folder}" if self.ftp_folder
+        ftp.chdir(self.ftp_folder) if self.ftp_folder
         ftp.binary = true
         ftp
       end
@@ -96,6 +97,7 @@ module JbbFile
     end
 
     def find_files
+      Rails.logger.info "Getting list of file from #{ftp_connecion.pwd}"
       ftp_connecion.nlst('*xlsx')
     rescue
       []
