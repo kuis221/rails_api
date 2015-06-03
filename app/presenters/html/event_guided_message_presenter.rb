@@ -201,7 +201,7 @@ module Html
     def submit_button
       return unless can?(:submit) && is_current_phase
       h.button_to 'Submit', h.submit_event_path(@model, format: :js, return: h.return_path),
-                  class: 'btn btn-cancel', method: :put,
+                  class: 'btn btn-cancel submit-event-data-link', method: :put,
                   remote: true, data: { disable_with: 'submitting' }
     end
 
