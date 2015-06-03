@@ -18,8 +18,10 @@ module JbbFile
     end
 
     def download_files(dir)
+      puts "Downloading files"
       files = find_files
       unless files.any?
+        puts "No files found #{files}"
         file_not_fould
         return files
       end
