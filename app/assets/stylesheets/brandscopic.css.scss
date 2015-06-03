@@ -2708,6 +2708,11 @@ ul.ui-widget-content{
 			input {
 				border-color: $primary-red !important;
 			}
+			.chzn-container {
+				a {
+					border-color: $primary-red !important;
+				}
+			}
 		}
 		p.range-help-block {
 			color: $gray-light;
@@ -4428,14 +4433,28 @@ body.roles{
 	}
 	.step{
 		font-size: 12px;
-	}
+    &:not(.locked){
+      &:hover{
+        cursor: pointer;
+        text-decoration: underline;
+      }
+    }
+    &.locked{
+      .circle-step{
+        margin-right: 2px;
+      }
+      .icon-lock{
+        margin-left: 6px;
+      }
+    }
+  }
 	.circle-step{
 		border: 2px solid $gray-light;
 		display: inline-block;
 		height: 22px;
 		@include border-radius(15px);
 		line-height: 22px;
-		margin-right: 8px;
+		margin-right: 4px;
 		margin-left: 15px;
 		text-align: center;
 		width: 22px;

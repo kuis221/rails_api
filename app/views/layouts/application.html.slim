@@ -20,12 +20,12 @@ head
     = stylesheet_link_tag "https://d218iqt4mo6adh.cloudfront.net/assets/widget_embed_191.css" unless is_test
     = javascript_include_tag "application"
     - if is_test
-      javascript: 
-        $.fx.off = true; 
+      javascript:
+        $.fx.off = true;
         $.support.transition=false;
         !function ($) {
           $(function () {
-            $.fx.off = true; 
+            $.fx.off = true;
             $.support.transition=false;
           })
         }(window.jQuery);
@@ -63,7 +63,9 @@ body id="application-body" class="app-layout #{controller_name} #{action_name} #
     .navbar-inner
       .container
         .pull-left
-          h1#company-name= user_company_dropdown(current_user)
+          h1#company-name
+            .header-menu
+              = user_company_dropdown(current_user)
         .pull-right
           #mobile-main-nav-bar-btn.btn.btn-navbar data-toggle="collapse" data-target=".main-nav-collapse"
             span class="icon-bar"

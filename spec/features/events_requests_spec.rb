@@ -1414,6 +1414,27 @@ feature 'Events section' do
         end
       end
 
+      scenario 'the entered data should be saved automatically when submitting the event recap' do
+        kpi = create(:kpi, name: 'Test Field', kpi_type: 'number', capture_mechanism: 'integer')
+
+        campaign.add_kpi kpi
+
+        event = create(:event,
+                       start_date: Date.yesterday.to_s(:slashes),
+                       end_date: Date.yesterday.to_s(:slashes),
+                       campaign: campaign)
+
+        visit event_path(event)
+
+        fill_in 'Test Field', with: '98765'
+
+        click_js_link '(Skip)'
+        click_js_button 'Submit'
+
+        expect(page).to have_content('Your post event report has been submitted for approval')
+        expect(page).to have_content('Test Field 98,765')
+      end
+
       scenario 'cannot submit a event if the per is not valid' do
         kpi = create(:kpi, name: 'Test Field', kpi_type: 'number', capture_mechanism: 'integer')
 
@@ -1477,7 +1498,7 @@ feature 'Events section' do
           click_js_button 'Create'
         end
         expect(page).to have_content 'This is a test comment'
-        expect(page).to have_content 'it looks like you\'ve collected all required post event info.'\
+        expect(page).to have_content 'It looks like you\'ve collected all required post event info.'\
                                      ' Are you ready to submit your report for approval?'
 
         click_js_button 'Submit'
