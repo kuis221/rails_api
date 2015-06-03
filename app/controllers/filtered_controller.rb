@@ -6,7 +6,7 @@ class FilteredController < InheritedResources::Base
   include ExportableController
 
   helper_method :collection_count, :collection_total_count, :facets, :page,
-                :total_pages, :return_path, :search_params
+                :total_pages, :search_params
 
   respond_to :json, only: :index
 
@@ -15,14 +15,7 @@ class FilteredController < InheritedResources::Base
 
   before_action :authorize_actions, only: CUSTOM_VALIDATION_ACTIONS
 
-  after_action :remove_resource_new_notifications, only: :show
-
   custom_actions collection: [:filters, :items]
-
-  def return_path
-    url_to_return = params[:return] || request.env['HTTP_REFERER']
-    url_to_return if url_valid? url_to_return
-  end
 
   def filters
   end
@@ -154,26 +147,5 @@ class FilteredController < InheritedResources::Base
     Sunspot.commit
   ensure
     Sunspot.session = old_session
-  end
-
-  def remove_resource_new_notifications
-    case resource.class.name
-    when 'Event'
-      # Remove the notifications related to new events (including for teams)
-      # and keep the notifications for new tasks associated to the event and user
-      current_company_user.notifications
-        .where('message = ? OR message = ?', 'new_event', 'new_team_event')
-        .where("params->'event_id' = (?)", resource.id.to_s).destroy_all
-    when 'Campaign'
-      current_company_user.notifications.new_campaigns
-        .where('params->? = (?)', 'campaign_id', resource.id.to_s).destroy_all
-    end
-  end
-
-  def url_valid?(url)
-    URI.parse(url)
-    true
-  rescue URI::InvalidURIError
-    false
   end
 end

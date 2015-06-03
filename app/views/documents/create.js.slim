@@ -2,3 +2,4 @@
   | alert('The document could not be saved!')
 - else
   | $('#documents-list').prepend('#{j render(resource)}');
+  | $(document).trigger('document:added');

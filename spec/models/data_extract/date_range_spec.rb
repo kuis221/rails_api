@@ -38,7 +38,8 @@ RSpec.describe DataExtract::DateRange, type: :model do
       create(:company_user, company: company,
                             user: create(:user, first_name: 'Benito', last_name: 'Camelas'))
     end
-    let(:subject) { described_class.new(company: company, current_user: company_user) }
+    let(:subject) { described_class.new(company: company, current_user: company_user,
+                  columns: ['name', 'description', 'created_by', 'created_at', 'active_state']) }
 
     it 'returns empty if no rows are found' do
       expect(subject.rows).to be_empty

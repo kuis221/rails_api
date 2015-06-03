@@ -1,6 +1,9 @@
 class Api::V1::EventsController < Api::V1::FilteredController
   extend TeamMembersHelper
 
+  # Handle the noticaitions for new events
+  include NotificableController
+
   skip_load_and_authorize_resource only: :update
   skip_authorization_check only: :update
   before_action :authorize_update, only: :update
@@ -143,7 +146,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
     * *longitude*: the venue's longitude
     * *formatted_address*: the venue's formatted address
     * *country*: the venue's country
-    * *state*: the venue's state
+    * *state*: the venue's state code
+    * *state_name*: the venue's state name
     * *city*: the venue's city
     * *route*: the venue's route
     * *street_number*: the venue's street_number
@@ -153,9 +157,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
     * *name*: the campaign's name
   EOS
   def show
-    if resource.present?
-      render
-    end
+    render if resource.present?
   end
 
   api :POST, '/api/v1/events', 'Create a new event'
@@ -401,376 +403,17 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
     * *required:* indicates whether this field is required or not
 
-  EOS
-  example <<-EOS
-    A response with all the different kind of fields
-    GET /api/v1/events/123/results.json
-    [
-        {
-            "module": "demographics",
-            "fields": [
-                {
-                    "name": "Gender",
-                    "ordering": 0,
-                    "field_type": "percentage",
-                    "options": {
-                        "capture_mechanism": "integer",
-                        "predefined_value": ""
-                    },
-                    "description": "Number of consumers who try a product sample",
-                    "module": "demographics",
-                    "segments": [
-                        {
-                            "id": 160068,
-                            "text": "Female",
-                            "value": 60
-                        },
-                        {
-                            "id": 160069,
-                            "text": "Male",
-                            "value": 40
-                        }
-                    ]
-                },
-                {
-                    "name": "Age",
-                    "ordering": 26,
-                    "field_type": "percentage",
-                    "options": {
-                        "capture_mechanism": "integer"
-                    },
-                    "description": "Percentage of attendees who are within a certain age range",
-                    "module": "demographics",
-                    "segments": [
-                        {
-                            "id": 160070,
-                            "text": "< 12",
-                            "value": null
-                        },
-                        {
-                            "id": 160071,
-                            "text": "12 – 17",
-                            "value": null
-                        },
-                        {
-                            "id": 331155,
-                            "text": "18 – 20",
-                            "value": null
-                        },
-                        {
-                            "id": 160072,
-                            "text": "21 – 24",
-                            "value": 0
-                        },
-                        {
-                            "id": 160073,
-                            "text": "25 – 34",
-                            "value": 0
-                        },
-                        {
-                            "id": 160074,
-                            "text": "35 – 44",
-                            "value": 0
-                        },
-                        {
-                            "id": 160075,
-                            "text": "45 – 54",
-                            "value": 0
-                        },
-                        {
-                            "id": 160076,
-                            "text": "55 – 64",
-                            "value": 0
-                        },
-                        {
-                            "id": 160077,
-                            "text": "65+",
-                            "value": null
-                        }
-                    ]
-                },
-                {
-                    "name": "Ethnicity/Race",
-                    "ordering": 27,
-                    "field_type": "percentage",
-                    "options": {
-                        "capture_mechanism": "integer"
-                    },
-                    "description": "Percentage of attendees who are of a certain ethnicity or race",
-                    "module": "demographics",
-                    "segments": [
-                        {
-                            "id": 160078,
-                            "text": "Asian",
-                            "value": 0
-                        },
-                        {
-                            "id": 160079,
-                            "text": "Black / African American",
-                            "value": 0
-                        },
-                        {
-                            "id": 160080,
-                            "text": "Hispanic / Latino",
-                            "value": 0
-                        },
-                        {
-                            "id": 160081,
-                            "text": "Native American",
-                            "value": null
-                        },
-                        {
-                            "id": 160082,
-                            "text": "White",
-                            "value": 0
-                        }
-                    ]
-                }
-            ],
-            "label": "Demographics"
-        },
-        {
-            "module": "consumer_reach",
-            "fields": [
-                {
-                    "name": "Impressions",
-                    "ordering": 7,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "",
-                        "predefined_value": ""
-                    },
-                    "description": "Total number of consumers who come in contact with an event",
-                    "module": "consumer_reach",
-                    "id": 160065,
-                    "value": 40
-                },
-                {
-                    "name": "Interactions",
-                    "ordering": 8,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "",
-                        "predefined_value": ""
-                    },
-                    "description": "Total number of consumers who directly interact with an event",
-                    "module": "consumer_reach",
-                    "id": 160067,
-                    "value": 35
-                },
-                {
-                    "name": "Samples",
-                    "ordering": 9,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "",
-                        "predefined_value": ""
-                    },
-                    "description": "Number of consumers who try a product sample",
-                    "module": "consumer_reach",
-                    "id": 160066,
-                    "value": 35
-                }
-            ],
-            "label": "Consumer Reach"
-        },
-        {
-            "module": "custom",
-            "fields": [
-                {
-                    "name": "$ Discretionary Funds (New Jersey Only)",
-                    "ordering": 11,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "integer"
-                    },
-                    "description": null,
-                    "module": "custom",
-                    "id": 160083,
-                    "value": 0
-                },
-                {
-                    "name": "# Drink Coupons Distributed",
-                    "ordering": 14,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "integer"
-                    },
-                    "description": null,
-                    "module": "custom",
-                    "id": 160086,
-                    "value": 0
-                },
-                {
-                    "name": "# T-Shirts Distributed",
-                    "ordering": 15,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "integer"
-                    },
-                    "description": "",
-                    "module": "custom",
-                    "id": 160087,
-                    "value": 5
-                },
-                {
-                    "name": "Name Of Bloody recipe submitted",
-                    "ordering": 15,
-                    "field_type": "text",
-                    "options": {
-                        "capture_mechanism": null
-                    },
-                    "description": null,
-                    "module": "custom",
-                    "id": 160088,
-                    "value": "Surf n' Turf"
-                },
-                {
-                    "name": "Point of Sale Presence (describe, do not list)",
-                    "ordering": 15,
-                    "field_type": "textarea",
-                    "options": {
-                        "capture_mechanism": null
-                    },
-                    "description": null,
-                    "module": "custom",
-                    "id": 160089,
-                    "value": "Banner was placed at the entrance of venue. FA' wore uniforms while sampling along with Absolut table. Table tents with Bloody recipe placed throughout the venue. Patrons were handed bloody samples in Absolut branded sample cups "
-                },
-                {
-                    "name": "ABSOLUT Bloody on Drink Menu",
-                    "ordering": 16,
-                    "field_type": "count",
-                    "options": {
-                        "capture_mechanism": "radio"
-                    },
-                    "description": null,
-                    "module": "custom",
-                    "segments": [
-                        {
-                            "id": 302,
-                            "text": "Yes"
-                        },
-                        {
-                            "id": 303,
-                            "text": "No"
-                        }
-                    ],
-                    "id": 160090,
-                    "value": 302
-                },
-                {
-                    "name": "ABSOLUT Bloody Regular Price",
-                    "ordering": 17,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "currency"
-                    },
-                    "description": null,
-                    "module": "custom",
-                    "id": 160091,
-                    "value": "0.0"
-                },
-                {
-                    "name": "ABSOLUT Bloody Featured",
-                    "ordering": 18,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "currency"
-                    },
-                    "description": null,
-                    "module": "custom",
-                    "id": 160092,
-                    "value": null
-                },
-                {
-                    "name": "% Consumers Age 21-29",
-                    "ordering": 19,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "integer"
-                    },
-                    "description": null,
-                    "module": "custom",
-                    "id": 160093,
-                    "value": 75
-                },
-                {
-                    "name": "% General Market",
-                    "ordering": 20,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "integer"
-                    },
-                    "description": null,
-                    "module": "custom",
-                    "id": 160094,
-                    "value": 100
-                },
-                {
-                    "name": "# Trade Interactions",
-                    "ordering": 21,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "integer"
-                    },
-                    "description": "Number of members of the trade with whom you interacted during execution.",
-                    "module": "custom",
-                    "id": 160095,
-                    "value": 10
-                },
-                {
-                    "name": "# Bottles Depleted",
-                    "ordering": 22,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "decimal"
-                    },
-                    "description": "The number of bottles depleted during execution. This includes bottles we use for sampling in addition to any bottles the bar pours through while we are there.",
-                    "module": "custom",
-                    "id": 160096,
-                    "value": "1.5"
-                },
-                {
-                    "name": "# FA Hours",
-                    "ordering": 23,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "decimal"
-                    },
-                    "description": "Total number of FA hours for which we will be invoiced. Time should include travel and set-up time for all FAs working the event.",
-                    "module": "custom",
-                    "id": 160098,
-                    "value": "1.5"
-                },
-                {
-                    "name": " # Table Tents Dist.",
-                    "ordering": 24,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "integer"
-                    },
-                    "description": "",
-                    "module": "custom",
-                    "id": 251164,
-                    "value": 10
-                },
-                {
-                    "name": "# Posters",
-                    "ordering": 25,
-                    "field_type": "number",
-                    "options": {
-                        "capture_mechanism": "integer"
-                    },
-                    "description": "Number of posters displayed during execution.",
-                    "module": "custom",
-                    "id": 251841,
-                    "value": 1
-                }
-            ],
-            "label": "Custom"
-        }
-    ]
+  * *range:* contains the range constraints for the field if any. This will be provided with the following info:
+
+    * *format:* either digits or value for numeric fields or words, characters for text fields
+    * *min:* the mininum number of chars/words/digits/value accepted by this field
+    * *max:* the max number of chars/words/digits/value accepted by this field
+
+    A field can include both min or max, or only a min or a max and it validates the info based in the following rules:
+
+    * min and max: the value must be between `min` and `max`
+    * min only: the value must be greater than `min`
+    * max only: the value must be smaller than `max`
   EOS
   def results
     authorize! :view_or_edit_data, resource
@@ -809,13 +452,14 @@ class Api::V1::EventsController < Api::V1::FilteredController
           result.merge!(segments: field.options_for_input.map { |s| { id: s[1], text: s[0], goal: (field.kpi_id.present? && resource.kpi_goals.key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][s[1]] : nil) } })
         end
         v = field.value_is_numeric?(r.value) ? r.value.to_f : r.value
-        if field.settings && field.settings['range_format'] && field.settings['range_min'].to_s != '' && field.settings['range_max'].to_s != ''
+        if field.settings && field.settings.key?('range_format') && (!field.settings['range_min'].blank? || !field.settings['range_max'].blank?)
           result[:range] = { format: field.settings['range_format'], min: field.settings['range_min'], max: field.settings['range_max'] }
         end
         result.merge!(value: v)
       end
 
       result.merge!(description: field.kpi.description) if field.kpi.present?
+      result.merge!(description: field.settings['description']) if field.settings && field.settings.key?('description')
 
       result
     end
@@ -874,78 +518,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
       * *type*: the type of the current item (team)
 
   EOS
-
-  example <<-EOS
-    An example with a event with both, users and teams
-    GET: /api/v1/events/8383/members.json
-    [
-        {
-            "id": 22,
-            "name": "Northerners", "description": "he people from the north",
-            "type": "team"
-        },
-        {
-            "id": 268,
-            "first_name": "Trinity",
-            "last_name": "Ruiz",
-            "full_name": "Trinity Ruiz",
-            "role_name": "MBN Supervisor",
-            "email": "trinity.ruiz@gmail.com",
-            "phone_number": "+1 233 245 4332",
-            "street_address": "1st Young st.,",
-            "city": "Toronto",
-            "state": "ON",
-            "country": "Canada",
-            "zip_code": "Canada",
-            "type": "user"
-        },
-        {
-            "id":  1,
-            "name": "Southerners",
-            "description": "The people from the south",
-            "type": "team"
-        }
-    ]
-  EOS
-
-  example <<-EOS
-    An example with a event with only users and no teams
-    GET: /api/v1/events/8383/members.json
-    [
-        {
-            "id": 268,
-            "first_name": "Trinity",
-            "last_name": "Ruiz",
-            "full_name": "Trinity Ruiz",
-            "role_name": "MBN Supervisor",
-            "phone_number": "+1 233 245 4332",
-            "street_address": "1st Young st.,",
-            "city": "Toronto",
-            "state": "ON",
-            "country": "Canada",
-            "zip_code": "12345",
-            "type": "user"
-        }
-    ]
-  EOS
-
-  example <<-EOS
-    An example requesting only the teams and not the users
-    GET: /api/v1/events/8383/members.json?type=team
-    [
-        {
-            "id": 22,
-            "name": "Northerners", "description": "he people from the north",
-            "type": "team"
-        },
-        {
-            "id":  1,
-            "name": "Southerners",
-            "description": "The people from the south",
-            "type": "team"
-        }
-    ]
-  EOS
   def members
     authorize! :view_members, resource
     @users = @teams = []
@@ -968,24 +540,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
     * *type*: indicates if the current item is a user or a team
   EOS
   see 'events#add_member'
-
-  example <<-EOS
-    An example with a user and a contact in the response
-    GET: /api/v1/events/8383/assignable_members.json
-    [
-      {
-          "id": 268,
-          "name": "Trinity Ruiz",
-          "description": "Bartender",
-          "type": "user"
-      },{
-          "id": 268,
-          "name": "San Francisco MBN Team",
-          "description": "Field Ambassador",
-          "type": "team"
-      }
-    ]
-  EOS
   def assignable_members
     authorize! :add_members, resource
     respond_to do |format|
@@ -1004,40 +558,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
   param :memberable_id, :number, required: true, desc: 'The ID of team/user to be added as a member'
   param :memberable_type, %w(user team), required: true, desc: 'The type of element to be added as a member'
   see 'events#assignable_members'
-
-  example <<-EOS
-    Adding an user to the event members
-    POST: /api/v1/events/8383/members.json
-    DATA:
-    {
-      'memberable_id': 1,
-      'memberable_type': 'user'
-    }
-
-    RESPONSE:
-    {
-      'success': true,
-      'info': "Member successfully added to event",
-      'data': {}
-    }
-  EOS
-
-  example <<-EOS
-    Adding a team to the event members
-    POST: /api/v1/events/8383/members.json
-    DATA:
-    {
-      'memberable_id': 1,
-      'memberable_type': 'team'
-    }
-
-    RESPONSE:
-    {
-      'success': true,
-      'info': "Member successfully added to event",
-      'data': {}
-    }
-  EOS
   def add_member
     authorize! :add_members, resource
     memberable = build_memberable_from_request
@@ -1067,39 +587,6 @@ class Api::V1::EventsController < Api::V1::FilteredController
   api :DELETE, '/api/v1/events/:id/members', 'Delete an user or team from the event\'s team'
   param :memberable_id, :number, required: true, desc: 'The ID of team/user to be deleted as a member'
   param :memberable_type, %w(user team), required: true, desc: 'The type of element to be deleted as a member'
-  example <<-EOS
-    Deleting an user from the event members
-    DELETE: /api/v1/events/8383/members.json
-    DATA:
-    {
-      'memberable_id': 1,
-      'memberable_type': 'user'
-    }
-
-    RESPONSE:
-    {
-      'success': true,
-      'info': "Member successfully deleted from event",
-      'data': {}
-    }
-  EOS
-
-  example <<-EOS
-    Deleting a team from the event members
-    DELETE: /api/v1/events/8383/members.json
-    DATA:
-    {
-      'memberable_id': 1,
-      'memberable_type': 'team'
-    }
-
-    RESPONSE:
-    {
-      'success': true,
-      'info': "Member successfully deleted from event",
-      'data': {}
-    }
-  EOS
   def delete_member
     authorize! :delete_member, resource
     memberable = find_memberable_from_request
@@ -1314,7 +801,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
   def permitted_search_params
     params.permit(:page, campaign: [], place: [], area: [], venue: [], start_date: [], end_date: [],
                              user: [], team: [], brand: [], brand_porfolio: [], status: [], event_status: []).tap do |p|
-      p[:sorting] ||= 'start_at'
+      p[:sorting] ||= Event.search_start_date_field
       p[:sorting_dir] ||= 'asc'
     end
   end

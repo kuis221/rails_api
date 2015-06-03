@@ -1,6 +1,3 @@
-- can_edit = can?(:update, resource)
-- can_tasks = can?(:tasks, resource)
-
 - if resource.approved?
   = user_new_feature('event_details_approved') do
     h5 Getting Started: Event Details
@@ -24,124 +21,34 @@
         a> href="http://support.brandscopic.com" target="_blank" support site
         | for more information about this section.
 
-.row-fluid.with-details-close-bar
+.row-fluid
   = render 'details_bar'
+  
 
-  //.span data-spy="scroll" data-target="#spyOnThisToo"
-  .span
-    .details_box class="#{(resource.place.nil? or resource.place.latitude.nil?) ?  'padding-top-close-bar' : ''}"
-
-      .phases
-        h5 = 'EVENT PHASES'
-      // Can we add the steps from results to use same structure and styles?
+  = render "events/phases/#{presenter.current_phase}"
+    
 
 
-      .row-fluid.details_first_container
-        .span6
-          .details-title
-            h2.special.pull-left
-              b= resource.campaign_name
-            .edition-links
-              = button_to_edit resource if can_edit
-              = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
+#event-last
+= render partial: 'help_tutorial'
 
-          .calendar-data
-            i.icon-calendar
-            span
-              = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at))
-          - unless resource.place.nil?
-            .place-data
-              i.icon-wired-venue
-              span
-                = place_address(resource.place, true, ', ') if resource.place
+- reload_page_on_edit_resource
 
-          - unless resource.description.nil? || resource.description.empty?
-            .description-data
-              span= simple_format resource.description
-
-          - unless resource.users.empty? && resource.teams.empty?    
-            .add-details-info
-              i.icon-team.indicate-icon
-              = presenter.event_member_tag
-        .span6.map_container
-          - unless resource.place.nil? || resource.place.latitude.nil? || resource.place.latitude == 1.0
-            #venue-map-canvas.google-map data-latitude="#{resource.place.latitude}" data-longitude="#{resource.place.longitude}"
-                b= resource.campaign_name
-                br>/
-                = event_date(resource, :start_at).to_s
-                br>/
-                = place_address(resource.place)
-
-
-
-      // This should not appear anymore
-      // = render 'alerts'
-
-      // The is info will be displayed on the fixed bar when the window is scolled down to this position
-      .details-bar-info
-        span.primary-info
-          = resource.campaign_name
-        span.secondary-info
-          = format_date_range(event_date(resource, :start_at), event_date(resource, :end_at), date_separator: ' –  ')
-        = button_to_edit resource if can_edit
-        = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
-
-
-    - if can?(:view_members, resource)
-      #event-members.details_box
-        h5.module-title EVENT STAFF
-        #event-team-members
-          = render partial: 'team_member_list', locals: {can_delete: can?(:delete_member, resource)}
-
-
-    - if can?(:view_contacts, resource)
-      #event-contacts.details_box
-        h5.module-title id="mdo" CONTACTS
-        #event-contacts-list
-          = render 'contacts'
-
-    - resource.results.each { |r| r.errors.clear }
-    - if resource.event_data? && !resource.rejected?
-      = render 'show_results'
-    - elsif resource.happens_today? || resource.in_past?
-      = render 'edit_results'
-
-    - if can_tasks
-      #event-tasks.details_box
-        = render partial: 'tasks', locals: { tasks: resource.tasks.active }
-
-    - if can? :documents, resource
-      #event-documents.details_box
-        h5.module-title DOCUMENTS
-        - hidden = resource.documents.active.any? || resource.campaign.documents.any?
-        = render partial: 'attached_assets/document_form', locals: { hidden: hidden, resource: AttachedAsset.new, callback_url: event_documents_path(resource, format: :js) }
-        = link_to 'Upload', '#documents_upload_form', 'data-toggle' => 'collapse', id: 'event-upload-documents', class: "btn btn-primary #{hidden ? '' : 'hide'}", title: 'Add Documents' if can? :create_document, Event
-        .documents-list
-          #documents-list.resource-list
-            = render :partial => "documents/document", :collection => resource.documents.active + resource.campaign.documents, :locals => { parent: resource }
-
-  = render partial: 'help_tutorial'
-  - content_for :footer do
-    - unless resource.place.nil?
-      javascript:
-        $(document).ready(function() {
-          $(this).scrollTop(400);
-        });
-
-    - if can_tasks
-      javascript:
-        if (#{can_tasks}){
-          $(document).on('tasks:change task:deactivated', function(){
-            $.get('#{tasks_event_path(resource)}', function(response){
-              $response = $('<div>').append(response);
-              $('#event-tasks').html($response.find('[data-content="tasks"]').html());
-            })
-          });
+- content_for :footer
+  javascript:
+    jQuery(function(){
+      $(window).bind('scroll', function() {
+        if (($(window).scrollTop() + $('header').outerHeight()) >  ($('header').outerHeight() + ($('.new-feature').outerHeight() || 0)) ) {
+          $('.details-bar').addClass('fixed');
+          $('#event-info.details_box').css({paddingTop: $('.guide-bar').outerHeight() + $('.details-bar').outerHeight()});
         }
+        else {
+          $('.details-bar').removeClass('fixed');
+          $('#event-info.details_box').css({paddingTop: $('.guide-bar').outerHeight()});
+        }
+      })
 
-    - reload_page_on_edit_resource
+      #{create_scrollmultispy_js}
 
-Write Preview Parsed as Markdown  Edit in fullscreen
-
-Comment
-Status API Blog About © 2015 GitHub, Inc. Terms Privacy Security Contact
+      $(window).trigger('scroll');
+    });

@@ -60,7 +60,7 @@ class DataExtract < ActiveRecord::Base
   ]
 
   after_initialize  do
-    self.columns ||= exportable_columns.map { |c| c[0] } if new_record?
+    self.columns ||= []
   end
 
   def columns=(cols)
@@ -152,5 +152,13 @@ class DataExtract < ActiveRecord::Base
 
   def source
     self.class.name.split('::').last.underscore
+  end
+
+  def activate!
+    update_attribute :active, true
+  end
+
+  def deactivate!
+    update_attribute :active, false
   end
 end

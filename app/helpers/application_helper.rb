@@ -4,21 +4,21 @@ module ApplicationHelper
   def present(model, format = :html)
     @presenters ||= {}
     format = format.to_s.capitalize
-    @presenters[model.class.to_s] ||= "#{format}::#{model.class}Presenter".constantize.new(model, self) rescue nil
-    @presenters[model.class.to_s] ||= "#{model.class}Presenter".constantize.new(model, self) rescue nil
-    return model unless @presenters[model.class.to_s]
+    @presenters[model.class] ||= "#{format}::#{model.class}Presenter".constantize.new(model, self) rescue nil
+    @presenters[model.class] ||= "#{model.class}Presenter".constantize.new(model, self) rescue nil
+    return model unless @presenters[model.class]
     # cache object so we dont create a new object when interacting through many objects
     # for example, when exporting thousands of records
-    @presenters[model.class.to_s].model = model
-    return @presenters[model.class.to_s] unless block_given?
-    yield(@presenters[model.class.to_s])
+    @presenters[model.class].model = model
+    return @presenters[model.class] unless block_given?
+    yield(@presenters[model.class])
   end
 
   def presenter
     @presenter ||= present(resource)
   end
 
-  def place_address(place, link_name = false, line_separator = '<br />', name_separator = '<br />')
+  def place_address(place, link_name = false, line_separator = '<br />', name_separator = '<br />', concat_zip_code = false)
     return if place.nil?
     place_name = place.name
     place_city = place.city
@@ -39,8 +39,16 @@ module ApplicationHelper
     city_parts = []
     address.push place.street unless place.street.nil? || place.street.strip.empty? || place.name == place.street
     city_parts.push place_city if place.city.present? && place.name != place.city
-    city_parts.push place.state_code if place.state.present?
-    city_parts.push place.zipcode if place.zipcode.present?
+
+    if concat_zip_code
+      state_zipcode = []
+      state_zipcode.push place.state_code if place.state.present?
+      state_zipcode.push place.zipcode if place.zipcode.present?
+      city_parts.push state_zipcode.compact.join(' ') unless state_zipcode.empty?
+    else
+      city_parts.push place.state_code if place.state.present?
+      city_parts.push place.zipcode if place.zipcode.present?
+    end
 
     address.push city_parts.compact.join(', ') unless city_parts.empty? || !place.city
     address.push place.formatted_address if place.formatted_address.present? && city_parts.empty? && (place.city || !place.types.include?('political'))
@@ -80,19 +88,21 @@ module ApplicationHelper
   end
 
   def icon_button_to(icon, options = {}, html_options = {})
+    show_text = html_options.delete(:show_text)
     html_options[:class] ||= ''
     html_options[:class] = [html_options[:class], 'button-with-icon'].join(' ')
+    html_options[:class] += ' button-with-icon-and-text' if show_text
 
     button_to options, html_options do
-      content_tag(:i, nil, class: "icon #{icon}")
+      content_tag(:i, nil, class: "icon #{icon}") +
+      (show_text ? html_options[:title] : '')
     end
   end
 
   def button_to_add(title, url, options = {})
     icon_button_to 'icon-plus-sign', url, options.merge(
-      remote: true,
-      method: :get,
-      title: title,
+      remote: true, method: :get,
+      title: title, return: return_path,
       form_class: 'button_to button_to_add')
   end
 
@@ -103,6 +113,7 @@ module ApplicationHelper
                    remote: remote,
                    method: :get,
                    title: title,
+                   return: return_path,
                    form_class: 'button_to button_to_edit'
   end
 
@@ -219,14 +230,6 @@ module ApplicationHelper
     end
   end
 
-  def format_date_with_time(the_date)
-    if the_date.strftime('%Y') == Time.zone.now.year.to_s
-      the_date.strftime('%^a <b>%b %e</b> at %l:%M %p').html_safe unless the_date.nil?
-    else
-      the_date.strftime('%^a <b>%b %e, %Y</b> at %l:%M %p').html_safe unless the_date.nil?
-    end
-  end
-
   def format_date(the_date, plain = false)
     unless the_date.nil?
       if plain
@@ -247,6 +250,14 @@ module ApplicationHelper
 
   def format_time(the_date)
     the_date.strftime('%l:%M %P') unless the_date.nil?
+  end
+
+  def format_date_with_time(date)
+    if date.strftime('%Y') == Time.zone.now.year.to_s
+      date.strftime('%^a <b>%b %e</b> at %l:%M %p').html_safe unless date.nil?
+    else
+      date.strftime('%^a <b>%b %e, %Y</b> at %l:%M %p').html_safe unless date.nil?
+    end
   end
 
   def format_date_range(start_at, end_at, options = {})
@@ -289,11 +300,13 @@ module ApplicationHelper
     if companies.size == 1
       link_to companies.first.name, root_path, class: 'current-company-title'
     else
-      content_tag(:div, class: 'dropdown') do
+      content_tag(:div, class: 'header-menu dropdown header-menu') do
         link_to((current_company.name + ' ' + content_tag(:b, '', class: 'caret')).html_safe, root_path, class: 'dropdown-toggle current-company-title', 'data-toggle' => 'dropdown') +
         content_tag(:ul, class: 'dropdown-menu', id: 'user-company-dropdown', role: 'menu', 'aria-labelledby' => 'dLabel') do
           companies.map do |company|
-            content_tag(:li, link_to(company.name, select_company_path(company), id: 'select-company-' + company.id.to_s), role: 'presentation')
+            content_tag(:li, link_to(content_tag(:i, nil, class: 'icon-checked') + company.name, select_company_path(company),
+                                                     id: 'select-company-' + company.id.to_s),
+                             role: 'presentation', class: (company.id == current_company.id ? ' active' : ''))
           end.join('').html_safe
         end
       end
@@ -304,11 +317,17 @@ module ApplicationHelper
     return unless data.present? && data.values.max > 0
 
     content_tag(:div, class: :male) do
-      content_tag(:div, "#{data.try(:[], 'Male').try(:round) || 0} %", class: 'percent') +
+      content_tag(:div, class: 'percent') do
+        content_tag(:span, "#{data.try(:[], 'Male').try(:round) || 0}") +
+        content_tag(:span, '%', class: 'percent-sign')
+      end +
       content_tag(:div, 'MALE', class: 'gender')
     end +
     content_tag(:div, class: :female) do
-      content_tag(:div, "#{data.try(:[], 'Female').try(:round) || 0} %", class: 'percent') +
+      content_tag(:div, class: 'percent') do
+        content_tag(:span, "#{data.try(:[], 'Female').try(:round) || 0}") +
+        content_tag(:span, '%', class: 'percent-sign')
+      end +
       content_tag(:div, 'FEMALE', class: 'gender')
     end
   end

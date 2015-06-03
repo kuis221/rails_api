@@ -39,4 +39,12 @@ class PhotosController < InheritedResources::Base
   def authorize_create
     authorize! :create_photo, parent
   end
+
+  def return_path
+    super || (if @photo
+      event_path(@photo)
+    else
+      events_path
+    end)
+  end
 end

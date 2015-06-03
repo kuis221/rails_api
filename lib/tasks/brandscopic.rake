@@ -11,19 +11,43 @@ namespace :brandscopic do
         puts "   COPY:     #{copy.inspect}\n"
         processed_ids.concat [place.id, copy.id]
         place.merge(copy)
-        count += 1;
+        count += 1
       end
     end
 
     puts "Found #{count} duplicates\n"
   end
 
-  desc 'Merge venues '
+  desc 'Copy all assets production to this environment\'s bucket'
+  task synch_assets: :environment do
+    production_bucket = 'brandscopic-prod'
+    fail 'Cannot copy to the same bucket' if ENV['S3_BUCKET_NAME'] == production_bucket
+    s3 = AWS::S3.new
+    AttachedAsset.photos.where(attachable_type: 'Event')
+      .joins('INNER JOIN events ON events.id=attachable_id').find_each do |at|
+      if at.file.exists?
+        Rails.logger.info "Skpping asset #{at.id} because it exists in the bucket #{ENV['S3_BUCKET_NAME']}"
+        next
+      end
+      (at.file.styles.keys + [:original]).each do |style_name|
+        key = at.file.path(style_name).gsub(/^\//,'')
+        begin
+          if s3.buckets[production_bucket].objects[key].exists?
+            s3.buckets[production_bucket].objects[key].copy_to(
+              key, :bucket_name => ENV['S3_BUCKET_NAME'], acl: :public_read)
+          end
+        rescue
+        end
+      end
+    end
+  end
+
+  desc 'Merge venues from a CSV file sent through the STDIN'
   task merge_venues: :environment do
     CSV($stdin, row_sep: "\n", col_sep: ',') do |csv|
       csv.each do |venue1, venue2, venue3, name, route, city, state, zip, td_linx_code|
         next if venue1.blank?
-        venues = Venue.where(id: [venue1, venue2, venue3])
+        venues = Venue.where(id: [venue1, venue2, venue3]).where(merged_with_place_id: nil)
         if [venue1, venue2, venue3].compact.count > venues.count
           puts "NOT ALL VENUES WHERE FOUND #{[venue1, venue2, venue3].compact}"
           next

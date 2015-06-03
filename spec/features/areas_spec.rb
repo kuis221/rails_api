@@ -59,7 +59,7 @@ feature 'Areas', js: true, search: true  do
     end
 
     scenario 'can add an NON existing place to the area. (place from Google\'s)' do
-      expect(Place).to receive(:open).and_return(double(read: { results:
+      expect_any_instance_of(CombinedSearch).to receive(:open).and_return(double(read: { results:
         [
           { reference: 'xxxxx', place_id: '1111', name: 'Walt Disney World Dolphin',
             formatted_address: '1500 Epcot Resorts Blvd, Lake Buena Vista, Florida, United States' }

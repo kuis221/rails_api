@@ -17,6 +17,8 @@ class IndexWorker
     Resque.enqueue(IndexWorker, klass, id)
 
   # Try it again a few times in case of a connection issue before raising the error
+  # We are also retrying ActiveRecord::RecordNotFound errors for cases where
+  # the job starts before the transaction commits the changes
   rescue Errno::ECONNRESET, Net::ReadTimeout, Net::ReadTimeout,
          Net::OpenTimeout, ActiveRecord::RecordNotFound => e
     tries -= 1
@@ -24,7 +26,14 @@ class IndexWorker
       sleep(3)
       retry
     else
-      raise e
+      # Do not raise errors when the record is not found since
+      # it happens that some records are inmediately removed after created,
+      # specially comments
+      if e.class == ActiveRecord::RecordNotFound
+        Rails.logger.info "#{klass} record with id #{id} not found!"
+      else
+        raise e
+      end
     end
   end
 end

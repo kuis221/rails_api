@@ -51,7 +51,10 @@ describe EventsController, type: :controller do
         let(:event) { create(:event, company: company, campaign: create(:campaign, company: company), start_date: 1.week.from_now.to_s(:slashes), end_date: 1.week.from_now.to_s(:slashes)) }
 
         it 'renders the correct templates' do
-          get 'show', id: event.to_param
+          event.users << company_user
+          expect do
+            get 'show', id: event.to_param
+          end.to change(Notification, :count).by(-1)
           expect(response).to be_success
           expect(response).to render_template('show')
           expect(response).not_to render_template('show_results')
@@ -69,12 +72,11 @@ describe EventsController, type: :controller do
             get 'show', id: event.to_param
             expect(response).to be_success
             expect(response).to render_template('show')
-            expect(response).to render_template('_edit_results')
-            expect(response).to render_template('_surveys')
+            expect(response).to render_template('_basic_info')
+            expect(response).to render_template('_edit_event_data')
             expect(response).to render_template('_comments')
             expect(response).to render_template('_photos')
             expect(response).to render_template('_expenses')
-            expect(response).not_to render_template('_show_results')
           end
         end
       end
@@ -191,15 +193,6 @@ describe EventsController, type: :controller do
       it 'returns http success' do
         get 'items'
         expect(response).to be_success
-      end
-    end
-
-    describe "GET 'tasks'" do
-      let(:event) { create(:event, company: company) }
-      it 'returns http success' do
-        get 'tasks', id: event.to_param
-        expect(response).to be_success
-        expect(response).to render_template(:tasks)
       end
     end
 

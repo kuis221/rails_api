@@ -15,5 +15,7 @@
         }
       },3000);
     }
+  = update_event_details_bar(resource.attachable)
+  | $(document).trigger('photo:added');
 - else
   | $('#upload_#{params[:unique_id]}').addClass('failed').find('div.progress').removeClass('active').end().find('.upload-file-error').text('#{j resource.errors.full_messages.to_sentence}');

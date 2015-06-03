@@ -8,6 +8,14 @@ Brandscopic::Application.routes.draw do
   get '/results/event_status', to: redirect('/analysis/event_status')
   get '/results/attendance', to: redirect('/analysis/attendance')
 
+  concern :deactivatable do
+    get :deactivate, on: :member
+    get :activate, on: :member
+  end
+
+  concern :filterable do
+    get :items, on: :collection, format: :html
+  end
 
   namespace :api do
     namespace :v1 do
@@ -34,7 +42,7 @@ Brandscopic::Application.routes.draw do
           resources :photos, only: [:index, :create, :update] do
             get :form, on: :collection
           end
-          resources :event_expenses, only: [:index, :create] do
+          resources :event_expenses, only: [:index, :create, :destroy] do
             get :form, on: :collection
           end
           resources :tasks, only: [:index]
@@ -43,7 +51,7 @@ Brandscopic::Application.routes.draw do
             get :brands, on: :collection
           end
           resources :invites, only: [:index, :show, :create, :update]
-          resources :activities, only: [:index, :create, :update] do
+          resources :activities, only: [:index, :create, :update], concerns: [:deactivatable] do
             get :deactivate, on: :member
           end
           get :autocomplete,   on: :collection
@@ -126,7 +134,6 @@ Brandscopic::Application.routes.draw do
           end
           resources :documents, only: [:create, :update, :destroy, :index]
         end
-
       end
     end
   end
@@ -148,8 +155,6 @@ Brandscopic::Application.routes.draw do
     get '/users/password/thanks', to: 'passwords#thanks', as: :passwords_thanks
   end
 
-  get '/users/complete-profile', to: 'users#complete', as: :complete_profile
-  put '/users/update-profile', to: 'users#update_profile', as: :update_profile
   put '/users/dismiss_alert', to: 'company_users#dismiss_alert'
 
   get 'select-company/:company_id', to: 'company_users#select_company', as: :select_company, constraints: { company_id: /[0-9]+/ }
@@ -177,46 +182,36 @@ Brandscopic::Application.routes.draw do
   resources :autocomplete, only: [:show]
 
   namespace :results do
-    resources :event_data, only: [:index] do
-      get :items, on: :collection
-    end
-    resources :comments, only: [:index] do
-      get :items, on: :collection
-    end
-    resources :photos, only: [:index] do
-      get :items, on: :collection
+    resources :event_data, only: [:index], concerns: [:filterable]
+    resources :comments, only: [:index], concerns: [:filterable]
+    resources :photos, only: [:index], concerns: [:filterable] do
       post 'downloads', to: 'photos#new_download', on: :collection, format: :js
       get 'downloads/:download_id', to: 'photos#download', on: :collection, as: :download, format: :js
       get 'downloads/:download_id/status', to: 'photos#download_status', on: :collection, as: :download_status, format: :json
     end
-    resources :activities, only: [:index] do
-      get :items, on: :collection
-    end
-    resources :expenses, only: [:index] do
-      get :items, on: :collection
-    end
-    resources :surveys, only: [:index] do
-      get :items, on: :collection
-    end
+    resources :activities, only: [:index], concerns: [:filterable]
+    resources :expenses, only: [:index], concerns: [:filterable]
+    resources :surveys, only: [:index], concerns: [:filterable]
 
     # resources :attendance, only: [:index] do
     # end
 
-    resources :reports, only: [:index, :new, :create, :edit, :update, :show] do
+    resources :reports, only: [:index, :new, :create, :edit, :update, :show],
+                        concerns: [:deactivatable] do
       get :build, on: :member
       get :rows, on: :member
       get :filters, on: :member
       get :share, to: 'reports#share_form', on: :member
-      get :deactivate, on: :member
-      get :activate, on: :member
       post :preview, on: :member
     end
 
-    resources :data_extracts, only: [:new, :create, :show] do
+    resources :data_extracts, only: [:new, :create, :show, :edit, :update] do
       get :preview, on: :collection
       get :save, on: :collection
       get :available_fields, on: :collection
       get :items, on: :collection
+      get :deactivate, on: :member
+      get :activate, on: :member
     end
 
     # For The KPI report
@@ -261,19 +256,15 @@ Brandscopic::Application.routes.draw do
   end
 
   scope '/research' do
-    resources :venues, only: [:index, :show] do
+    resources :venues, only: [:index, :show], concerns: [:filterable] do
       member do
         match 'areas/:area_id' => 'venues#delete_area', via: :delete, as: :delete_area
         match 'areas/select' => 'venues#select_areas', via: :get, as: :select_areas
         match 'areas/add' => 'venues#add_areas', via: :post, as: :add_area
         match 'areas' => 'venues#areas', via: :get, as: :areas
       end
-      get :items, on: :collection
       resources :events, only: [:new, :create]
-      resources :invites, only: [:create, :edit, :update, :index] do
-        get :deactivate, on: :member
-        get :activate, on: :member
-      end
+      resources :invites, only: [:create, :edit, :update, :index], concerns: [:deactivatable]
       resources :activities, only: [:new, :create] do
         get :thanks, on: :collection
         get :form, on: :collection
@@ -282,38 +273,22 @@ Brandscopic::Application.routes.draw do
     end
   end
 
-  resources :roles, except: [:destroy] do
-    get :items, on: :collection, format: :html
+  resources :roles, except: [:destroy], concerns: [:deactivatable, :filterable]
 
-    member do
-      get :deactivate
-      get :activate
-    end
-  end
-
-  resources :company_users, except: [:new, :create, :destroy], path: 'users' do
-    get :items, on: :collection, format: :html
+  resources :company_users, except: [:new, :create, :destroy], path: 'users', concerns: [:deactivatable, :filterable] do
     get :profile, on: :collection
     get :time_zone_change, on: :collection
     get :resend_email_confirmation, on: :member
     get :cancel_email_change, on: :member
     post :time_zone_change, on: :collection
     put :time_zone_update, on: :collection
-    get :event, via: :get, on: :collection # List of users by event
     get :login_as_select, on: :collection
     resources :places, only: [:destroy, :create]
     resources :goals, only: [:create, :update, :edit, :new]
-    resources :tasks do
-      member do
-        get :deactivate
-        get :activate
-      end
-    end
+    resources :tasks, concerns: [:deactivatable]
     member do
       post :verify_phone
       get :send_code
-      get :deactivate
-      get :activate
       get :resend_invite
       post :enable_campaigns
       post :disable_campaigns
@@ -324,12 +299,8 @@ Brandscopic::Application.routes.draw do
     end
   end
 
-  resources :teams, except: [:destroy] do
-    get :items, on: :collection, format: :html
-
+  resources :teams, except: [:destroy], concerns: [:deactivatable, :filterable] do
     member do
-      get :deactivate
-      get :activate
       match 'members/:member_id' => 'teams#delete_member', via: :delete, as: :delete_member
       match 'members/new' => 'teams#new_member', via: :get, as: :new_member
       match 'members' => 'teams#add_members', via: :post, as: :add_member
@@ -338,7 +309,7 @@ Brandscopic::Application.routes.draw do
 
   resources :kpis, only: [:index]
 
-  resources :campaigns, except: [:destroy] do
+  resources :campaigns, except: [:destroy], concerns: [:deactivatable, :filterable] do
     resources :areas_campaigns, only: [:edit, :update] do
       post :exclude_place, on: :member
       post :include_place, on: :member
@@ -352,13 +323,10 @@ Brandscopic::Application.routes.draw do
       get :set_goal
     end
     resources :places, only: [:destroy, :create]
-    get :items, on: :collection, format: :html
     get :find_similar_kpi, on: :collection
     member do
       get :post_event_form
       post :update_post_event_form
-      get :deactivate
-      get :activate
       get :places
       get :event_dates
       get :form, to: 'campaigns#export_fieldable'
@@ -386,55 +354,28 @@ Brandscopic::Application.routes.draw do
       match 'activity_types/:activity_type_id' => 'campaigns#remove_activity_type', via: :delete, as: :remove_activity_type
     end
 
-    resources :documents, only: [:create] do
-      member do
-        get :deactivate
-        get :activate
-      end
-    end
+    resources :documents, only: [:create], concerns: [:deactivatable]
   end
 
-  resources :events, except: [:destroy] do
-    get :items, on: :collection, format: :html
+  resources :events, except: [:destroy], concerns: [:deactivatable, :filterable] do
+    get ':phase', to: 'events#show', on: :member,
+                  as: :phase, constraints: { phase: /plan|execute|results/ }
     get :map, on: :collection, format: :json
 
     get :calendar, on: :collection
-    get :tasks, on: :member
     get :edit_data, on: :member
     get :edit_surveys, on: :member
     get :calendar_dates, on: :collection, to: :calendar_highlights
-    resources :tasks, only: [:create, :new] do
-      member do
-        get :deactivate
-        get :activate
-      end
-    end
+    resources :tasks, only: [:create, :new], concerns: [:deactivatable]
 
-    resources :invites, only: [:create, :edit, :update, :index] do
-      get :deactivate, on: :member
-      get :activate, on: :member
-    end
+    resources :invites, only: [:create, :edit, :update, :index], concerns: [:deactivatable]
 
-    resources :surveys, only: [:create, :new, :edit, :update] do
-      member do
-        get :deactivate
-        get :activate
-      end
-    end
+    resources :surveys, only: [:create, :new, :edit, :update], concerns: [:deactivatable]
 
-    resources :documents, only: [:create] do
-      member do
-        get :deactivate
-        get :activate
-      end
-    end
+    resources :documents, only: [:create], concerns: [:deactivatable]
 
-    resources :photos, only: [:create, :new] do
+    resources :photos, only: [:create, :new], concerns: [:deactivatable] do
       get :processing_status, on: :collection
-      member do
-        get :deactivate
-        get :activate
-      end
     end
 
     resources :comments, only: [:create, :new, :destroy, :edit, :update]
@@ -452,8 +393,6 @@ Brandscopic::Application.routes.draw do
     end
 
     member do
-      get :deactivate
-      get :activate
       put :submit
       put :approve
       put :unapprove
@@ -466,28 +405,19 @@ Brandscopic::Application.routes.draw do
     end
   end
 
-  resources :tasks, only: [:new, :create, :edit, :update] do
+  resources :tasks, only: [:new, :create, :edit, :update], concerns: [:deactivatable] do
     collection do
-      get :autocomplete
-      get ':scope/filters', to: 'tasks#filters', constraints: { scope: /user|teams/ }, format: :json
       get ':scope/items', to: 'tasks#items', constraints: { scope: /user|teams/ }, format: :json
 
       get :mine, to: :index, defaults: { scope: 'user' }, constraints: { scope: 'user' }
       get :my_teams, to: :index, defaults: { scope: 'teams' }, constraints: { scope: 'teams' }
     end
-    member do
-      get :deactivate
-      get :activate
-    end
     resources :comments, only: [:create, :index]
   end
 
-  resources :brand_portfolios, except: [:destroy] do
-    get :items, on: :collection, format: :html
+  resources :brand_portfolios, except: [:destroy], concerns: [:deactivatable, :filterable] do
     resources :brands, only: [:new, :create]
     member do
-      get :deactivate
-      get :activate
       match 'brands/:brand_id' => 'brand_portfolios#delete_brand', via: :delete, as: :delete_brand
       match 'brands/select' => 'brand_portfolios#select_brands', via: :get, as: :select_brands
       match 'brands/add' => 'brand_portfolios#add_brands', via: :post, as: :add_brand
@@ -495,24 +425,15 @@ Brandscopic::Application.routes.draw do
     end
   end
 
-  resources :brands, except: [:destroy] do
-    get :items, on: :collection, format: :html
-
+  resources :brands, except: [:destroy], concerns: [:deactivatable, :filterable] do
     resources :marques, only: [:index]
-    member do
-      get :deactivate
-      get :activate
-    end
   end
 
-  resources :areas, except: [:destroy] do
-    get :items, on: :collection, format: :html
+  resources :areas, except: [:destroy], concerns: [:deactivatable, :filterable] do
     get :select_form, on: :collection
 
     resources :places, only: [:new, :create, :destroy]
     member do
-      get :deactivate
-      get :activate
       get :cities
       post :assign
       delete :unassign
@@ -534,38 +455,22 @@ Brandscopic::Application.routes.draw do
     end
   end
 
-  resources :date_ranges, except: [:destroy] do
-    get :items, on: :collection, format: :html
-
+  resources :date_ranges, except: [:destroy], concerns: [:deactivatable, :filterable] do
     resources :date_items, path: 'dates', only: [:new, :create, :destroy]
-    member do
-      get :deactivate
-      get :activate
-    end
   end
 
-  resources :day_parts, except: [:destroy] do
-    get :items, on: :collection, format: :html
+  resources :day_parts, except: [:destroy], concerns: [:deactivatable, :filterable] do
     resources :day_items, path: 'days', only: [:new, :create, :destroy]
-    member do
-      get :deactivate
-      get :activate
-    end
   end
 
-  resources :activities, only: [:show, :edit, :update] do
+  resources :activities, only: [:show, :edit, :update], concerns: [:deactivatable] do
     member do
-      get :deactivate
-      get :activate
       get :form, to: 'activities#export_fieldable'
     end
   end
 
-  resources :activity_types, except: [:destroy]  do
-    get :items, on: :collection, format: :html
+  resources :activity_types, except: [:destroy], concerns: [:deactivatable, :filterable] do
     member do
-      get :deactivate
-      get :activate
       get :form, to: 'activity_types#export_fieldable'
     end
   end
@@ -591,25 +496,15 @@ Brandscopic::Application.routes.draw do
   end
 
   resources :company, only: [] do
-    resources :custom_filters, only: [:create,:new]
+    resources :custom_filters, only: [:create, :new]
   end
 
   namespace :brand_ambassadors do
-    resources :visits, except: [:destroy] do
-      get :items, on: :collection, format: :html
-      member do
-        get :deactivate
-        get :activate
-      end
+    resources :visits, except: [:destroy], concerns: [:deactivatable, :filterable] do
       resources :document_folders, path: 'folders', only: [:new, :create]
       resources :documents, only: [:create]
     end
-    resources :document_folders, path: 'folders', only: [:new, :create, :index] do
-      member do
-        get :deactivate
-        get :activate
-      end
-    end
+    resources :document_folders, path: 'folders', only: [:new, :create, :index], concerns: [:deactivatable]
     resources :documents, only: [:edit, :create, :update, :destroy] do
       get :move, on: :member
     end

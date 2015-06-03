@@ -1,13 +1,13 @@
 @import "variables";
 
 
-@media (min-width: 979px) {
+@media (min-width: 767px) {
 	.main-nav-collapse {
 		display: none;
 	}
 }
 
-@media (max-width: 979px) {
+@media (max-width: 767px) {
 	#main-left-nav {
 		display: none;
 	}
@@ -28,6 +28,12 @@
 				left: 10px;
 			}
 		}
+	}
+
+	.details-bar.fixed {
+		position: relative !important;
+		top: 0;
+		width: auto;
 	}
 
 	.new-feature {
@@ -227,9 +233,6 @@
 		}
 	}
 
-}
-
-@media (max-width: 767px) {
 	#main-container {
 		#resource-close-details {
 			&.affix {

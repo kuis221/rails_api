@@ -586,7 +586,10 @@ ul.select2-results{
 			input{
 				width: 100%;
 				&[type="text"]{
-					color: $text !important;
+					color: $text;
+					&.default{
+						color: $silver;
+					}
 					&.search-place-box {
 						padding-right: 30px;
 					}
@@ -1106,6 +1109,14 @@ div#spin{
 				font-size: 14px;
 				margin-right: 8px;
 				margin-bottom: 15px;
+			}
+		}
+	}
+	.resource-list{
+		.resource-item{
+			.resource-item-link{
+				font-size: 15px;
+				font-weight: bold;
 			}
 		}
 	}

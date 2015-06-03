@@ -87,9 +87,10 @@ class Place < ActiveRecord::Base
   end
 
   def self.in_areas(areas)
-    subquery = Place.select('DISTINCT places.location_id')
+    subquery = Place.unscoped.select('DISTINCT places.location_id')
                .joins(:placeables).where(placeables: { placeable_type: 'Area', placeable_id: areas }, is_location: true)
-    place_query = "select place_id FROM locations_places INNER JOIN (#{subquery.to_sql})"\
+               .to_sql
+    place_query = "select place_id FROM locations_places INNER JOIN (#{subquery})"\
                   ' locations on locations.location_id=locations_places.location_id'
     area_query = Placeable.select('place_id')
                  .where(placeable_type: 'Area', placeable_id: areas + [0]).to_sql
@@ -168,11 +169,11 @@ class Place < ActiveRecord::Base
   end
 
   def state_name
-    state || load_country.states[administrative_level_1]['name'] rescue nil if load_country && state
+    state || load_country.states[administrative_level_1]['name'] rescue state if load_country && state
   end
 
   def state_code
-    load_country.states.detect{|code, info| info['name'] == state}[0] rescue nil if state and load_country
+    load_country.states.find { |code, info| info['name'] == state }[0] rescue state if state and load_country
   end
 
   def continent_name
@@ -314,6 +315,7 @@ class Place < ActiveRecord::Base
 
   # Merge the record with the given place
   def merge(place)
+    fail "Cannot merge a venue into a merged venued" unless merged_with_place_id.blank?
     fail "Cannot merge place with itself" if id == place.id
     self.class.connection.transaction do
       Venue.where(place_id: place.id).each do |venue|
@@ -367,60 +369,15 @@ class Place < ActiveRecord::Base
       Country.new(country).states[state.upcase]['name'] rescue nil
     end
 
-    # Combine search results from Google API and Existing places
     def combined_search(params)
-      local_results = Venue.do_search(combined_search_params(params)).results
-      results = local_results.map do |p|
-        address = (p.formatted_address || [p.city, (p.country == 'US' ? p.state : p.state_name), p.country].compact.join(', '))
-        {
-          value: p.name + ', ' + address,
-          label: p.name + ', ' + address,
-          id: p.place_id,
-          location: { latitude: p.latitude, longitude: p.longitude },
-          valid: true
-        }
-      end
-      local_references = local_results.map { |p| [p.reference, p.place.place_id] }.flatten.compact
-
-      valid_flag = ->(result) do
-        params[:current_company_user].nil? ||
-        params[:current_company_user].is_admin? ||
-        params[:current_company_user].allowed_to_access_place?(build_from_autocoplete_result(result))
-      end
-      begin
-        google_results = JSON.parse(open("https://maps.googleapis.com/maps/api/place/textsearch/json?key=#{GOOGLE_API_KEY}&sensor=false&query=#{CGI.escape(params[:q])}").read)
-        if google_results && google_results['results'].present?
-          merged_ids = Place.where.not(merged_with_place_id: nil).where(place_id: google_results['results'].map{ |r| r['place_id'] }).pluck(:place_id)
-          sort_index = { true => 0, false => 1 } # elements with :valid=true should go first
-          results.concat(google_results['results']
-            .reject { |p| local_references.include?(p['reference']) || local_references.include?(p['place_id']) || merged_ids.include?(p['place_id']) }
-            .map do |p|
-              name = p['formatted_address'].match(/\A#{Regexp.escape(p['name'])}/i) ? nil : p['name']
-              label = [name, p['formatted_address'].to_s].compact.join(', ')
-              location  =
-                if p.key?('geometry') && p['geometry'].key?('location')
-                  { latitude: p['geometry']['location']['lat'], longitude: p['geometry']['location']['lng'] }
-                end
-              {
-                value: label,
-                label: label,
-                id: "#{p['reference']}||#{p['place_id']}",
-                location: location,
-                valid: valid_flag.call(p)
-              }
-            end.sort! { |x, y| sort_index[x[:valid]] <=> sort_index[y[:valid]] }.slice!(0, 5 - results.count))
-        end
-      rescue OpenURI::HTTPError => e
-        Rails.logger.info "failed to load results from Google: #{e.message}"
-      end
-      results
+      CombinedSearch.new(params).results
     end
 
     def latlon_for_city(name, state, country)
       points = Rails.cache.fetch("latlon_#{name.parameterize('_')}_#{state.parameterize('_')}_#{country.parameterize('_')}") do
         data = JSON.parse(open(URI.encode("http://maps.googleapis.com/maps/api/geocode/json?address=#{URI::encode(name)}&components=country:#{URI::encode(country)}|administrative_area:#{URI::encode(state)}&sensor=false")).read)
         if data['results'].count > 0
-          result = data['results'].detect{|r| r['geometry'].present? && r['geometry']['location'].present?}
+          result = data['results'].detect { |r| r['geometry'].present? && r['geometry']['location'].present? }
           [result['geometry']['location']['lat'],  result['geometry']['location']['lng']] if result
         else
           nil
@@ -430,13 +387,6 @@ class Place < ActiveRecord::Base
 
     def google_client
       @client ||= GooglePlaces::Client.new(GOOGLE_API_KEY)
-    end
-
-    def combined_search_params(params)
-      params.merge per_page: 5,
-                   search_address: true,
-                   sorting: 'score',
-                   sorting_dir: 'desc'
     end
 
     def find_place(binds)
@@ -449,22 +399,6 @@ class Place < ActiveRecord::Base
       connection.select_one(
         sanitize_sql_array(['select * from incremental_place_match(:id, :state)', id: id, state: state_code])
       )
-    end
-
-    def build_from_autocoplete_result(result)
-      if result['formatted_address'] &&
-         (m = result['formatted_address'].match(/\A.*?,?\s*([^,]+)\s*,\s*([^,]+)\s*,\s*([^,]+)\s*\z/))
-        country = m[3]
-        country = Country.all.find(-> { [country, country] }) { |c| b = Country.new(c[1]); b.alpha3 == country }[1] if country.match(/\A[A-Z]{3}\z/)
-        country = Country.all.find(-> { [country, country] }) { |c| c[0].downcase == country.downcase }[1] unless country.match(/\A[A-Z]{2}\z/)
-        if (country_obj = Country.new(country)) && country_obj.data
-          state = m[2]
-          state.gsub!(/\s+[0-9\-]+\s*\z/, '') # Strip Zip code from stage if present
-          city = m[1]
-          state = country_obj.states[state]['name'] if country_obj.states.key?(state)
-          Place.new(name: result['name'], city: city, state: state, country: country, types: result['types'])
-        end
-      end
     end
   end
 
@@ -568,7 +502,7 @@ class Place < ActiveRecord::Base
 
   def spot
     @spot ||= client.spot(reference) if reference.present?
-  rescue GooglePlaces::NotFoundError
+  rescue GooglePlaces::NotFoundError, GooglePlaces::OverQueryLimitError
     @spot = false
   end
 

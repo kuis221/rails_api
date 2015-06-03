@@ -14,7 +14,6 @@ feature 'Invitations', js: true do
     before { sign_in user }
 
     scenario 'should allow the user fill the invitation form and send the invitation' do
-
       role = create(:non_admin_role, name: 'Test role', company: company)
       team = create(:team, name: 'Test team', company: company)
       visit company_users_path
@@ -58,8 +57,8 @@ feature 'Invitations', js: true do
     end
 
     scenario 'should validate who is not present the role admin' do
-      role = create(:role, name: 'Test admin role', company: company)
-      role2 = create(:role, name: 'Test not admin role', company: company, is_admin: false)
+      create(:role, name: 'Test admin role', company: company)
+      create(:role, name: 'Test not admin role', company: company, is_admin: false)
 
       visit company_users_path
 
@@ -68,8 +67,6 @@ feature 'Invitations', js: true do
       expect(page).to_not have_content('Test admin role')
       expect(page).to have_content('Test not admin role')
     end
-
-
   end
 
   feature 'accept invitation' do
@@ -87,18 +84,19 @@ feature 'Invitations', js: true do
 
     scenario 'should allow the user to complete the profile and log him in after that' do
       visit accept_user_invitation_path(invitation_token: 'XYZ123')
-      expect(find_field('First name').value).to eq('Pedro')
-      expect(find_field('Last name').value).to eq('Picapiedra')
-      expect(find_field('Email').value).to eq('pedro@rocadura.com')
-      expect(find_field('Phone number').value).to eq('(506)22728899')
-      expect(find_field('Country', visible: false).value).to eq('CR')
-      expect(find_field('State', visible: false).value).to eq('SJ')
-      expect(find_field('City').value).to eq('Curridabat')
-      expect(find('#user_street_address').value).to eq('This is the street address')
-      expect(find('#user_unit_number').value).to eq('This is the unit number')
-      expect(find_field('Zip code').value).to eq('90210')
-      expect(find_field('New Password', match: :first).value).to eq('')
-      expect(find_field('Confirm New Password').value).to eq('')
+
+      expect(page).to have_field('First name', with: 'Pedro')
+      expect(page).to have_field('Last name', with: 'Picapiedra')
+      expect(page).to have_field('Email', with: 'pedro@rocadura.com')
+      expect(page).to have_field('Phone number', with: '(506)22728899')
+      expect(page).to have_field('Country', visible: false, with: 'CR')
+      expect(page).to have_field('State', visible: false, with: 'SJ')
+      expect(page).to have_field('City', with: 'Curridabat')
+      expect(page).to have_field('user[street_address]', with: 'This is the street address')
+      expect(page).to have_field('user[unit_number]', with: 'This is the unit number')
+      expect(page).to have_field('Zip code', with: '90210')
+      expect(page).to have_field('New Password', match: :first, with: '')
+      expect(page).to have_field('Confirm New Password', with: '')
 
       fill_in('First name', with: 'Pablo')
       fill_in('Last name', with: 'Marmol')
@@ -176,13 +174,12 @@ feature 'Invitations', js: true do
   feature 'deactivated user' do
     let(:user) do
       create(:invited_user, invitation_token: 'XYZ123', invitation_sent_at: 1.days.ago, active: false,
-             role_id: create(:role, company: company).id, company: company)
+                            role_id: create(:role, company: company).id, company: company)
     end
 
     before { user }
 
     it 'should let the user know that the invitation token have expired' do
-
       visit accept_user_invitation_path(invitation_token: 'XYZ123')
 
       expect(page).to have_content(

@@ -46,7 +46,6 @@ RSpec.configure do |config|
 
   config.render_views
 
-  config.treat_symbols_as_metadata_keys_with_true_values = true
   config.filter_run show_in_doc: true if ENV['APIPIE_RECORD']
 
   # If true, the base class of anonymous controllers will be inferred

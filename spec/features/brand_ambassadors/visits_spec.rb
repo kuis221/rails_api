@@ -54,7 +54,7 @@ feature 'Brand Ambassadors Visits' do
 
       # First Row
       within resource_item 1 do
-        expect(page).to have_content('Market Visit')
+        expect(page).to have_content('Formal Market Visit')
         expect(page).to have_content('My Area (New York)')
         expect(page).to have_content(company_user.full_name)
         expect(page).to have_content("#{month_name} 18")
@@ -93,7 +93,7 @@ feature 'Brand Ambassadors Visits' do
 
       expect(ListExport.last).to have_rows([
         ['START DATE', 'END DATE', 'EMPLOYEE', 'AREA', 'CITY', 'CAMPAIGN', 'TYPE', 'DESCRIPTION'],
-        ["#{year_number}-#{month_number}-18T00:00", "#{year_number}-#{month_number}-19T00:00", 'Test User', 'My Area', 'New York', 'My Campaign', 'Market Visit', 'The first visit description'],
+        ["#{year_number}-#{month_number}-18T00:00", "#{year_number}-#{month_number}-19T00:00", 'Test User', 'My Area', 'New York', 'My Campaign', 'Formal Market Visit', 'The first visit description'],
         ["#{year_number}-#{month_number}-20T00:00", "#{year_number}-#{month_number}-21T00:00", 'Test User', 'My Area', 'New York', 'My Campaign', 'Brand Program', 'Visit description'],
         ["#{year_number}-#{month_number}-22T00:00", "#{year_number}-#{month_number}-23T00:00", 'Test User', nil, nil, 'My Campaign', 'PTO', 'Visit description']
       ])
@@ -208,7 +208,7 @@ feature 'Brand Ambassadors Visits' do
 
         within '#visits-list' do
           expect(page).to have_content('Brand Program')
-          expect(page).to have_content('Market Visit')
+          expect(page).to have_content('Formal Market Visit')
         end
 
         add_filter 'CAMPAIGNS', 'My Campaign'
@@ -230,14 +230,14 @@ feature 'Brand Ambassadors Visits' do
 
         within '#visits-list' do
           expect(page).to have_content('Brand Program')
-          expect(page).to have_no_content('Market Visit')
+          expect(page).to have_no_content('Formal Market Visit')
         end
 
         add_filter 'BRAND AMBASSADORS', 'Roberto Gomez'
 
         within '#visits-list' do
           expect(page).to have_content('Brand Program')
-          expect(page).to have_content('Market Visit')
+          expect(page).to have_content('Formal Market Visit')
         end
 
         expect(page).to have_content('2 visits found for: Today To The Future Roberto Gomez Test User')
@@ -246,7 +246,7 @@ feature 'Brand Ambassadors Visits' do
 
         within '#visits-list' do
           expect(page).to have_content('Brand Program')
-          expect(page).to have_no_content('Market Visit')
+          expect(page).to have_no_content('Formal Market Visit')
         end
 
         expect(page).to have_content('1 visit found for: Today To The Future California Roberto Gomez Test User')
@@ -255,7 +255,7 @@ feature 'Brand Ambassadors Visits' do
 
         within '#visits-list' do
           expect(page).to have_content('Brand Program')
-          expect(page).to have_content('Market Visit')
+          expect(page).to have_content('Formal Market Visit')
         end
 
         expect(page).to have_content('2 visits found for: Today To The Future California Texas Roberto Gomez Test User')
@@ -266,7 +266,7 @@ feature 'Brand Ambassadors Visits' do
 
         within '#visits-list' do
           expect(page).to have_content('Brand Program')
-          expect(page).to have_no_content('Market Visit')
+          expect(page).to have_no_content('Formal Market Visit')
         end
 
         expect(page).to have_content('1 visit found for: Today To The Future Los Angeles Roberto Gomez Test User')
@@ -275,7 +275,7 @@ feature 'Brand Ambassadors Visits' do
 
         within '#visits-list' do
           expect(page).to have_content('Brand Program')
-          expect(page).to have_content('Market Visit')
+          expect(page).to have_content('Formal Market Visit')
         end
 
         expect(page).to have_content('2 visits found for: Today To The Future Austin Los Angeles Roberto Gomez Test User')
@@ -283,7 +283,7 @@ feature 'Brand Ambassadors Visits' do
         select_filter_calendar_day('18')
         within '#visits-list' do
           expect(page).to have_content('Brand Program')
-          expect(page).to have_no_content('Market Visit')
+          expect(page).to have_no_content('Formal Market Visit')
         end
 
         expect(page).to have_content('1 visit found for: Today Austin Los Angeles Roberto Gomez Test User')
@@ -291,7 +291,7 @@ feature 'Brand Ambassadors Visits' do
         select_filter_calendar_day('18', '19')
         within '#visits-list' do
           expect(page).to have_content('Brand Program')
-          expect(page).to have_content('Market Visit')
+          expect(page).to have_content('Formal Market Visit')
         end
 
         expect(page).to have_content('2 visits found for: Today - Tomorrow Austin Los Angeles Roberto Gomez Test User')
@@ -323,13 +323,13 @@ feature 'Brand Ambassadors Visits' do
       within('div#calendar-view') do
         expect(find('.fc-toolbar .fc-left h2')).to have_content("#{month_name}, #{year}")
         expect(page).to have_content 'Brand Program - My Campaign Test User - New York'
-        expect(page).to have_content 'Market Visit - My Campaign Test User - New York'
+        expect(page).to have_content 'Formal Market Visit - My Campaign Test User - New York'
 
-        click_link 'Market Visit'
+        click_link 'Formal Market Visit'
       end
 
       expect(current_path).to eql brand_ambassadors_visit_path(ba_visit1)
-      expect(page).to have_selector('h2', text: 'Market Visit')
+      expect(page).to have_selector('h2', text: 'Formal Market Visit')
       expect(page).to have_content 'Test User'
       expect(page).to have_content 'Visit1 description'
 
@@ -355,7 +355,7 @@ feature 'Brand Ambassadors Visits' do
       visit brand_ambassadors_root_path
 
       click_link 'Calendar View'
-      expect(page).to have_content('Market Visit')
+      expect(page).to have_content('Formal Market Visit')
       expect(page).to have_content('Brand Program')
 
       click_js_link 'Download'
@@ -401,7 +401,7 @@ feature 'Brand Ambassadors Visits' do
         fill_in 'Start date', with: '01/23/2014'
         fill_in 'End date', with: '01/24/2014'
         select_from_chosen company_user.name, from: 'Employee'
-        select_from_chosen 'Market Visit', from: 'Visit type'
+        select_from_chosen 'Formal Market Visit', from: 'Visit type'
         select_from_chosen 'My Area', from: 'Area'
         select_from_chosen 'My Campaign', from: 'Campaign'
         select_from_chosen 'My City', from: 'City'
@@ -410,8 +410,8 @@ feature 'Brand Ambassadors Visits' do
       end
       ensure_modal_was_closed
 
-      find('h2', text: 'Market Visit') # Wait for the page to load
-      expect(page).to have_selector('h2', text: 'Market Visit')
+      find('h2', text: 'Formal Market Visit') # Wait for the page to load
+      expect(page).to have_selector('h2', text: 'Formal Market Visit')
       expect(page).to have_content('new visit description')
       expect(page).to have_content(company_user.name)
       expect(page).to have_content('My Campaign')
@@ -517,7 +517,7 @@ feature 'Brand Ambassadors Visits' do
 
     scenario 'should display the visit details page' do
       visit brand_ambassadors_visit_path(ba_visit)
-      expect(page).to have_selector('h2', text: 'Market Visit')
+      expect(page).to have_selector('h2', text: 'Formal Market Visit')
       expect(page).to have_content('Visit1 description')
       expect(page).to have_content(company_user.full_name)
     end
@@ -726,10 +726,10 @@ feature 'Brand Ambassadors Visits' do
       end
     end
 
-
     scenario 'can create a new event' do
       today = Time.zone.local(Time.now.strftime('%Y'), Time.now.strftime('%m'), 18, 12, 00)
-      expect(Place).to receive(:open).and_return(double(read: '{}')) # So we don't search in google places
+      # So we don't search in google places
+      expect_any_instance_of(CombinedSearch).to receive(:open).and_return(double(read: '{}'))
 
       Venue.create(place_id: place.id, company: company)
       create(:company_user, company: company,
@@ -765,7 +765,7 @@ feature 'Brand Ambassadors Visits' do
       expect(page).to have_content('ABSOLUT Vodka')
       expect(page).to have_content('some event description')
 
-      click_link 'You are viewing event details. Click to close.'
+      click_link 'Close Event'
 
       expect(current_path).to eq(brand_ambassadors_visit_path(ba_visit))
       within '#visit-events' do

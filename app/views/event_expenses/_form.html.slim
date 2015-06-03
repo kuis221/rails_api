@@ -25,7 +25,7 @@
         .span6
           = f.fields_for :receipt do |rf|
             = rf.input :id, as: :hidden, wrapper: false
-            = rf.input :file, label: false, as: :attached_asset, hidden_field_name: 'direct_upload_url'
+            = rf.input :file, label: false, required: resource.receipt_required?, as: :attached_asset, hidden_field_name: 'direct_upload_url'
 
       .row-fluid
         .form-actions.inside-form

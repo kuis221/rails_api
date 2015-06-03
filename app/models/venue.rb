@@ -54,9 +54,10 @@ class Venue < ActiveRecord::Base
 
   include Normdist
 
-  delegate :name, :types, :formatted_address, :formatted_phone_number, :website, :price_level,
-           :city, :street, :state, :state_name, :country, :country_name, :zipcode, :reference,
-           :latitude, :longitude, :opening_hours, :td_linx_code, :merged_with_place_id,
+  delegate :name, :types, :formatted_address, :formatted_phone_number, :website,
+           :price_level, :city, :street, :state, :state_name, :country,
+           :country_name, :zipcode, :reference, :latitude, :longitude,
+           :opening_hours, :td_linx_code, :merged_with_place_id, :state_code,
            to: :place
 
   scope :top_venue, ->{ where(top_venue: true) }
@@ -144,14 +145,14 @@ class Venue < ActiveRecord::Base
     if reindex_neighbors_venues && neighbors_establishments_search
       Venue.where(
         id: neighbors_establishments_search.hits.map(&:primary_key)
-      ).update_all(score_dirty: true)
+      ).where.not(id: self.id).update_all(score_dirty: true)
     end
 
     true
   end
 
+  # Calculates the scoring for the venue
   def compute_scoring
-    # Calculates the scoring for the venue
     self.score = nil
     if neighbors_establishments_search && neighbors_establishments_search.respond_to?(:stat_response)
       unless neighbors_establishments_search.stat_response['stats_fields']['avg_impressions_hour_es'].nil?
@@ -281,7 +282,7 @@ class Venue < ActiveRecord::Base
   end
 
   def self.do_search(params, include_facets = false)
-    ss = solr_search(include: [:place]) do
+    solr_search(include: [:place]) do
 
       with :company_id, params[:company_id] if params.key?(:company_id) && params[:company_id].present?
       with :id, params[:venue] if params.key?(:venue) && params[:venue].present?
@@ -305,12 +306,16 @@ class Venue < ActiveRecord::Base
         radius = params.key?(:radius) ? params[:radius] : 50
         (lat, lng) = params[:location].split(',')
         with(:location).in_radius(lat, lng, radius, bbox: true)
+        order_by_geodist(:location, lat, lng) unless params[:q]
       end
 
       if params[:q].present?
         fulltext params[:q] do
-          fields(:types, name: 5.0)
+          fields(:types, :name)
+          boost_fields name: 5.0
           phrase_fields name: 5.0
+          phrase_slop 1
+          minimum_match 1
           fields(address: 2.0) if params[:search_address]
         end
       end
@@ -368,7 +373,13 @@ class Venue < ActiveRecord::Base
         facet :campaign_ids
       end
 
-      order_by(params[:sorting] || :venue_score, params[:sorting_dir] || :desc)
+      unless params[:location]
+        if params[:q]
+          order_by(:score, :desc)
+        else
+          order_by(params[:sorting] || :venue_score, params[:sorting_dir] || :desc)
+        end
+      end
       paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
 
     end

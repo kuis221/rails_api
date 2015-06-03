@@ -31,4 +31,32 @@ class InviteRsvp < ActiveRecord::Base
   delegate :place_name, :campaign_name, :invitees, :rsvps_count, :attendees,
            :jameson_locals?, :top_venue?, :event, :area,
            to: :invite
+
+  def self.for_event(event)
+    where(invite: event.invites)
+  end
+
+  def self.without_locations
+    joins('LEFT JOIN zipcode_locations zl ON zl.zipcode=invite_rsvps.zip_code')
+      .where('zl.zipcode IS NULL')
+  end
+
+  def self.update_zip_code_location(zip_code, latlng)
+    neighborhood_id = find_closest_neighborhood(latlng)
+    point = latlng ? connection.quote("POINT(#{latlng['lng']} #{latlng['lat']})") : 'NULL'
+    connection.execute(<<-EOQ)
+      INSERT INTO zipcode_locations(zipcode, lonlat, neighborhood_id)
+      VALUES (#{connection.quote(zip_code)},
+              #{point},
+              #{neighborhood_id || 'NULL'})
+    EOQ
+  end
+
+  def self.find_closest_neighborhood(latlng)
+    return unless latlng
+    point = "POINT(#{latlng['lng']} #{latlng['lat']})"
+    id = Neighborhood.where('ST_Intersects(ST_GeomFromText(?), geog)', point).pluck(:gid).first
+    id ||= Neighborhood.order("ST_Distance(ST_GeomFromText('#{point}'), geog) ASC").pluck(:gid).first
+    id
+  end
 end

@@ -16,7 +16,7 @@ en:
       event: "Event"
       event_data: "Event Data"
       task: "Task"
-      campaign: "Campaign"  
+      campaign: "Campaign"
     attributes:
       activity:
         start_date_date: "Start date"
@@ -357,6 +357,25 @@ en:
       report: "Edit Report"
       brand_ambassadors/visit: "Edit Visit"
       invite: "Edit Invite"
+      data_extract/activity: "Edit Report"
+      data_extract/activity_type: "Edit Report"
+      data_extract/area: "Edit Report"
+      data_extract/attendance: "Edit Report"
+      data_extract/brand_portfolio: "Edit Report"
+      data_extract/brand: "Edit Report"
+      data_extract/campaign: "Edit Report"
+      data_extract/comment: "Edit Report"
+      data_extract/contact: "Edit Report"
+      data_extract/date_range: "Edit Report"
+      data_extract/day_part: "Edit Report"
+      data_extract/event: "Edit Report"
+      data_extract/event_expense: "Edit Report"
+      data_extract/event_data: "Edit Report"
+      data_extract/role: "Edit Report"
+      data_extract/task: "Edit Report"
+      data_extract/team: "Edit Report"
+      data_extract/company_user: "Edit Report"
+      data_extract/venue: "Edit Report"
     deactivate:
       event: "Deactivate Event"
       company_user: "Deactivate User"
@@ -372,6 +391,25 @@ en:
       report: "Deactivate Report"
       brand_ambassadors/visit: "Deactivate Visit"
       invite: "Deactivate Attendance Record"
+      data_extract/activity: "Deactivate Report"
+      data_extract/activity_type: "Deactivate Report"
+      data_extract/area: "Deactivate Report"
+      data_extract/attendance: "Deactivate Report"
+      data_extract/brand_portfolio: "Deactivate Report"
+      data_extract/brand: "Deactivate Report"
+      data_extract/campaign: "Deactivate Report"
+      data_extract/comment: "Deactivate Report"
+      data_extract/contact: "Deactivate Report"
+      data_extract/date_range: "Deactivate Report"
+      data_extract/day_part: "Deactivate Report"
+      data_extract/event: "Deactivate Report"
+      data_extract/event_expense: "Deactivate Report"
+      data_extract/event_data: "Deactivate Report"
+      data_extract/role: "Deactivate Report"
+      data_extract/task: "Deactivate Report"
+      data_extract/team: "Deactivate Report"
+      data_extract/company_user: "Deactivate Report"
+      data_extract/venue: "Deactivate Report"
     activate:
       event: "Activate Event"
       company_user: "Activate User"
@@ -523,13 +561,13 @@ en:
         custom_filters_category: "New Custom Filters Category"
         data_extract/activity: "Save Report"
         data_extract/activity_type: "Save Report"
-        data_extract/area: "Save ReportSave Report"
-        data_extract/attendance: "Save ReportSave Report"
-        data_extract/brand_portfolio: "Save ReportSave Report"
-        data_extract/brand: "Save ReportSave Report"
+        data_extract/area: "Save Report"
+        data_extract/attendance: "Save Report"
+        data_extract/brand_portfolio: "Save Report"
+        data_extract/brand: "Save Report"
         data_extract/campaign: "Save Report"
         data_extract/comment: "Save Report"
-        data_extract/contact: "Save Reportt"
+        data_extract/contact: "Save Report"
         data_extract/date_range: "Save Report"
         data_extract/day_part: "Save Report"
         data_extract/event: "Save Report"
@@ -572,6 +610,25 @@ en:
         document_folder: "Edit Folder"
         filter_setting: "Filtering options"
         invite: "Edit Attendance"
+        data_extract/activity: "Edit Report"
+        data_extract/activity_type: "Edit Report"
+        data_extract/area: "Edit Report"
+        data_extract/attendance: "Edit Report"
+        data_extract/brand_portfolio: "Edit Report"
+        data_extract/brand: "Edit Report"
+        data_extract/campaign: "Edit Report"
+        data_extract/comment: "Edit Report"
+        data_extract/contact: "Edit Report"
+        data_extract/date_range: "Edit Report"
+        data_extract/day_part: "Edit Report"
+        data_extract/event: "Edit Report"
+        data_extract/event_expense: "Edit Report"
+        data_extract/event_data: "Edit Report"
+        data_extract/role: "Edit Report"
+        data_extract/task: "Edit Report"
+        data_extract/team: "Edit Report"
+        data_extract/company_user: "Edit Report"
+        data_extract/venue: "Edit Report"
 
   form_builder:
     modules:
@@ -592,6 +649,51 @@ en:
       checkbox: 'Checkbox'
       dropdown: 'Dropdown'
       radio: 'Radio'
+
+  form_fields_ranges:
+    number:
+      min_max: 'Enter a number between %{range_min} and %{range_max} %{range_format}'
+      min: 'Enter a number %{range_min} or higher'
+      min_digits: 'Enter a number with %{range_min} digits or higher'
+      max: 'Enter a number no higher than %{range_max}'
+      max_digits: 'Enter a number with no higher than %{range_max} digits'
+    currency:
+      min_max: 'Enter a number between %{range_min} and %{range_max} %{range_format}'
+      min: 'Enter a number %{range_min} or higher'
+      min_digits: 'Enter a number with %{range_min} digits or higher'
+      max: 'Enter a number no higher than %{range_max}'
+      max_digits: 'Enter a number with no higher than %{range_max} digits'
+    text:
+      min_max: 'Must be between %{range_min} and %{range_max} %{range_format} <span class="range-counter-container">Currently: <span id="item-counter-%{field_id}">0</span> %{range_format}</span>'
+      min: 'Must be at least %{range_min} %{range_format} <span class="range-counter-container">Currently: <span id="item-counter-%{field_id}">0</span> %{range_format}</span>'
+      max: 'Must be no more than %{range_max} %{range_format} <span class="range-counter-container">Currently: <span id="item-counter-%{field_id}">0</span> %{range_format}</span>'
+    textarea:
+      min_max: 'Must be between %{range_min} and %{range_max} %{range_format} <span class="range-counter-container">Currently: <span id="item-counter-%{field_id}">0</span> %{range_format}</span>'
+      min: 'Must be at least %{range_min} %{range_format} <span class="range-counter-container">Currently: <span id="item-counter-%{field_id}">0</span> %{range_format}</span>'
+      max: 'Must be no more than %{range_max} %{range_format} <span class="range-counter-container">Currently: <span id="item-counter-%{field_id}">0</span> %{range_format}</span>'
+
+  campaign_module_ranges:
+    photos:
+      min_max: 'Between %{range_min} and %{range_max} photos are required for this event.'
+      min: 'There are at least %{range_min} photos required for this event.'
+      max: 'No more than %{range_max} photos can be uploaded for this event.'
+    expenses:
+      min_max: 'Between %{range_min} and %{range_max} expenses are required for this event.'
+      min: 'There are at least %{range_min} expenses required for this event.'
+      max: 'No more than %{range_max} expenses can be created for this event.'
+    comments:
+      min_max: 'Between %{range_min} and %{range_max} comments are required for this event.'
+      min: 'There are at least %{range_min} comments required for this event.'
+      max: 'No more than %{range_max} comments can be captured for this event.'
+
+  incomplete_execute_steps:
+    per: '<a class="step-skip-link smooth-scroll" data-spyignore="ignore" href="#event-per">fill out your post event recap</a>'
+    activities: '<a class="step-skip-link smooth-scroll" data-spyignore="ignore" href="#event-activities">create activities</a>'
+    attendance: '<a class="step-skip-link smooth-scroll" data-spyignore="ignore" href="#event-attendance">report attendance</a>'
+    photos: '<a class="step-skip-link smooth-scroll" data-spyignore="ignore" href="#event-photos">upload photos</a>'
+    expenses: '<a class="step-skip-link smooth-scroll" data-spyignore="ignore" href="#event-expenses">create expenses</a>'
+    comments: '<a class="step-skip-link smooth-scroll" data-spyignore="ignore" href="#event-comments">capture consumer comments</a>'
+    surveys: '<a class="step-skip-link smooth-scroll" data-spyignore="ignore" href="#event-surveys">create surveys</a>'
 
   errors:
     result:
@@ -730,6 +832,7 @@ en:
 
   confirm:
     deactivate:
+      activity: "Are you sure you want to deactivate this activity?"
       event: "Are you sure you want to deactivate this event?"
       company_user: "Are you sure you want to deactivate this user?"
       team: "Are you sure you want to deactivate this team?"
@@ -744,6 +847,25 @@ en:
       report: "Are you sure you want to deactivate this report?"
       brand_ambassadors/visit: "Are you sure you want to deactivate this visit?"
       invite: "Are you sure you want to deactivate this attendance record?"
+      data_extract/activity: "Are you sure you want to deactivate this report?"
+      data_extract/activity_type: "Are you sure you want to deactivate this report?"
+      data_extract/area: "Are you sure you want to deactivate this report?"
+      data_extract/attendance: "Are you sure you want to deactivate this report?"
+      data_extract/brand_portfolio: "Are you sure you want to deactivate this report?"
+      data_extract/brand: "Are you sure you want to deactivate this report?"
+      data_extract/campaign: "Are you sure you want to deactivate this report?"
+      data_extract/comment: "Are you sure you want to deactivate this report?"
+      data_extract/contact: "Are you sure you want to deactivate this report?"
+      data_extract/date_range: "Are you sure you want to deactivate this report?"
+      data_extract/day_part: "Are you sure you want to deactivate this report?"
+      data_extract/event: "Are you sure you want to deactivate this report?"
+      data_extract/event_expense: "Are you sure you want to deactivate this report?"
+      data_extract/event_data: "Are you sure you want to deactivate this report?"
+      data_extract/role: "Are you sure you want to deactivate this report?"
+      data_extract/task: "Are you sure you want to deactivate this report?"
+      data_extract/team: "Are you sure you want to deactivate this report?"
+      data_extract/company_user: "Are you sure you want to deactivate this report?"
+      data_extract/venue: "Are you sure you want to deactivate this report?"
     invitations:
       resend: "Are you sure you want to resend the invitation to this user?"
 

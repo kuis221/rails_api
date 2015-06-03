@@ -1,6 +1,85 @@
 jQuery ->
+	transitionalMessages = {
+		yes: ['Great!', 'Nice work.', 'All set.', 'Like it.', 'Looks great.', 'Sounds good.', 'Looks good!'],
+		skip: ['No problem, you can add at any time.', 'You can always add these later.', 'Always here if you need to add later.', 'No problem.', 'Maybe later.']
+	}
+
 	$(document).delegate ".task-completed-checkbox", "click", ->
 		$(@form).submit()
+
+
+	showStep = (target, message) ->
+		return unless target
+		guidedBarNav = $('.guide-bar.event-details-scroll-spy')
+		$li = guidedBarNav.find("li>a[data-spytarget=\"#{target}\"]").parent('li')
+		$('body').scrollmultispy('activate', [target, guidedBarNav])
+		if $li.length > 0
+			$li.find('.transitional-message').text(message + ' ').end().on 'deactivate', () ->
+				$(this).find('.transitional-message').text('')
+
+	showNextStepYes = (currentStep) ->
+		guidedBarNav = $('.guide-bar.event-details-scroll-spy')
+		target = guidedBarNav.find("a[data-spytarget=\"#{currentStep}\"]").parent('li').data('next')
+		message = transitionalMessages.yes[Math.floor(Math.random()*transitionalMessages.skip.length)]
+		showStep target, message
+
+	showPrevStepYes = (currentStep) ->
+		guidedBarNav = $('.guide-bar.event-details-scroll-spy')
+		target = guidedBarNav.find("a[data-spytarget=\"#{currentStep}\"]").parent('li').data('prev')
+		message = transitionalMessages.yes[Math.floor(Math.random()*transitionalMessages.skip.length)]
+		showStep target, message
+
+	$(document).on 'smooth-scroll:end', 'a.step-skip-link', () ->
+		target = $(this).parent('li').data('next')
+		message = transitionalMessages.skip[Math.floor(Math.random()*transitionalMessages.skip.length)]
+		showStep target, message
+
+	$(document).on 'smooth-scroll:end', 'a.step-back-link', () ->
+		target = $(this).parent('li').data('prev')
+		message = transitionalMessages.skip[Math.floor(Math.random()*transitionalMessages.skip.length)]
+		showStep target, message
+
+	$(document).on 'contact:added', () ->
+		showNextStepYes '#event-contacts'
+		showPrevStepYes '#event-contacts'
+	$(document).on 'task:added', () ->
+		showNextStepYes '#event-tasks'
+		showPrevStepYes '#event-tasks'
+	$(document).on 'document:added', () ->
+		showNextStepYes '#event-documents'
+		showPrevStepYes '#event-documents'
+	$(document).on 'per:completed', () ->
+		showNextStepYes '#event-per'
+		showPrevStepYes '#event-per'
+	$(document).on 'activity:added', () ->
+		showNextStepYes '#event-activities'
+		showPrevStepYes '#event-activities'
+	$(document).on 'expense:added', () ->
+		showNextStepYes '#event-expenses'
+		showPrevStepYes '#event-expenses'
+	$(document).on 'photo:added', () ->
+		showNextStepYes '#event-photos'
+		showPrevStepYes '#event-photos'
+	$(document).on 'comment:added', () ->
+		showNextStepYes '#event-comments'
+		showPrevStepYes '#event-comments'
+
+	$("#reject-post-event").submit (e) ->
+		e.preventDefault()
+		$form = $(this)
+		bootbox.classes('modal-med rejection-prompt')
+		bootbox.prompt "Why is the post event being rejected?", 'Cancel', 'Submit', (result) ->
+			if result isnt null and result isnt ""
+				$.ajax $form.attr("action"),
+					method: "PUT"
+					dataType: "script"
+					data:
+						reason: result
+			else if result isnt null
+				bootbox.alert "You must enter a reason for the rejection", ->
+					$form.submit()
+
+		false
 
 	$(document).delegate 'a.load-comments-link', 'click', (e) ->
 		$row = $(this).parents('li');
@@ -15,15 +94,14 @@ jQuery ->
 		return false
 
 
-	$('.submit-event-data-link').on 'ajax:before.event_data', () ->
-		link = $(this)
+	$('.step-buttons').on 'ajax:before.event_data', () ->
 		form = $('form.event-data-form')
 		if form.length
 			if form.valid()
 				$(document).off('ajaxComplete.event_data').on 'ajaxComplete.event_data', (event, xhr, settings) ->
 					$(document).off('ajaxComplete.event_data')
-					$('.submit-event-data-link').off('ajax:before.event_data')
-					link.trigger('click')
+					$('.step-buttons').off('ajax:before.event_data')
+					$('.submit-event-data-link').trigger('click')
 				form.submit()
 			false
 		else

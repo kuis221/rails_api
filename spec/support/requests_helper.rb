@@ -15,9 +15,10 @@ module CapybaraBrandscopicHelpers
   end
 
   def hover_and_click(parent, locator, options = {})
-    parent_element = find(parent)
-    parent_element.hover
-    parent_element.find(:link_or_button, locator, options).trigger('click')
+    parent = find(parent) if parent.is_a?(String)
+    parent.hover
+    within(parent) { expect(page).to have_selector(:link_or_button, locator) }
+    parent.find(:link_or_button, locator, options).trigger('click')
     self
   end
 
@@ -115,6 +116,14 @@ module CapybaraBrandscopicHelpers
     find('ul.ui-autocomplete li.ui-menu-item a', text: text, match: :first).click
   end
 
+  def select_time(time, from: '.timepicker')
+    find_field(from).trigger('focus')
+    within '.ui-timepicker-list' do
+      find('li', text:  /\A#{time}\z/).click
+    end
+    expect(find_field(from).value).to eql time
+  end
+
   def select2(item_text, options)
     select_name = options[:from]
     select2_container = first('label', text: select_name).find(:xpath, '..').find('.select2-container')
@@ -204,6 +213,11 @@ module RequestsHelper
   matcher :have_error do |text|
     match { |node| find("span[for=#{node['id']}].help-inline").has_content?(text) }
     match_when_negated { |node| find("span[for=#{node['id']}].help-inline").has_no_content?(text) }
+  end
+
+  matcher :have_hint do |text|
+    match { |node| find("#hint-#{node['data-field-id']}").has_content?(text) }
+    match_when_negated { |node| find("#hint-#{node['data-field-id']}").has_no_content?(text) }
   end
 
   def visible_modal
