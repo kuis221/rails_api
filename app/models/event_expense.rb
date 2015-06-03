@@ -4,7 +4,7 @@
 #
 #  id            :integer          not null, primary key
 #  event_id      :integer
-#  amount        :decimal(9, 2)    default(0.0)
+#  amount        :decimal(15, 2)   default(0.0)
 #  created_by_id :integer
 #  updated_by_id :integer
 #  created_at    :datetime         not null
@@ -26,6 +26,7 @@ class EventExpense < ActiveRecord::Base
   validates :category, presence: true
   validates :expense_date, presence: true
   validates :amount, presence: true, numericality: true
+  validate :valid_receipt?, if: :receipt_required?
 
   after_save :update_event_data
 
@@ -43,11 +44,21 @@ class EventExpense < ActiveRecord::Base
 
   scope :for_user_accessible_events, ->(company_user) { joins('INNER JOIN events ec ON ec.id=event_id AND ec.id in (' + Event.select('events.id').where(company_id: company_user.company_id).accessible_by_user(company_user).to_sql + ')') }
 
+  def receipt_required?
+    return false unless event.present?
+    event.campaign.module_setting('expenses', 'required') == 'true'
+  end
+
   private
 
   def update_event_data
     return unless event.present?
     Resque.enqueue(EventDataIndexer, event.event_data.id) if event.event_data.present?
     Resque.enqueue(VenueIndexer, event.venue.id) if event.venue.present?
+  end
+
+  def valid_receipt?
+    build_receipt unless receipt.present?
+    receipt.errors.add(:file, :required)
   end
 end

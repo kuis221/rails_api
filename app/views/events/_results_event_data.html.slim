@@ -1,8 +1,10 @@
+#event-approve_per
+#event-per
 .form-results-box
   #list-tools.row-fluid
     .pull-left
       h5.module-title
-        = "POST EVENT FORM"
+        = "POST EVENT RECAP"
         = link_to '', edit_data_event_path(resource), remote: true, id: 'edit-event-data-btn', class: 'icon-edit', title: 'Edit event data' if can?(:edit_data, resource)
     .pull-right
       .btn.download title="Download"

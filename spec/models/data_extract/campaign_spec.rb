@@ -40,7 +40,9 @@ RSpec.describe DataExtract::Campaign, type: :model do
       create(:company_user, company: company,
                             user: create(:user, first_name: 'Benito', last_name: 'Camelas'))
     end
-    let(:subject) { described_class.new(company: company, current_user: company_user) }
+    let(:subject) { described_class.new(company: company, current_user: company_user,
+                    columns: ['name', 'description', 'brands_list', 'campaign_brand_portfolios',
+                    'start_date', 'end_date', 'color', 'created_by', 'created_at', 'active_state']) }
 
     it 'returns empty if no rows are found' do
       expect(subject.rows).to be_empty

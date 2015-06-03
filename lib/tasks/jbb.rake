@@ -1,6 +1,6 @@
 namespace :jbb do
   desc 'Run the RSVP report process'
   task rsvp: :environment do
-    JbbFile::RsvpReport.new.process if Time.current.utc.thursday?
+    JbbFile::RsvpReport.new.process if Time.current.utc.thursday? || ENV['FORCE'] = 'true'
   end
 end

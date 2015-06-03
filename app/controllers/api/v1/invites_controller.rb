@@ -21,7 +21,7 @@ class Api::V1::InvitesController < Api::V1::ApiController
 
   def_param_group :invite do
     param :invite, Hash, required: true, action_aware: true do
-      param :active, String, desc: "Invitation's status"
+      param :active, %w(true false), desc: "Invitation's status"
     end
   end
 
@@ -164,7 +164,7 @@ class Api::V1::InvitesController < Api::V1::ApiController
   end
 
   def authorize_update
-    return unless cannot?(:update, resource) && 
+    return unless cannot?(:update, resource) &&
                   cannot?(:edit_invite, parent) &&
                   cannot?(:deactivate_invite, parent)
 

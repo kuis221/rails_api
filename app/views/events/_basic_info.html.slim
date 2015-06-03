@@ -1,0 +1,44 @@
+#event-info.details_box class="#{(resource.place.nil? or resource.place.latitude.nil?) ?  'padding-top-close-bar' : ''}"
+
+  .phases-top-nav
+    h5.pull-left = 'EVENT PHASES:'
+    = presenter.current_phases_indicator
+
+  .row-fluid.details_first_container
+    .span6
+      .details-title
+        h2.special.pull-left
+          b= resource.campaign_name
+        .edition-links
+          = button_to_edit resource if can?(:update, resource)
+          = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
+
+      .event-calendar.calendar-data
+        span
+          i.icon-calendar
+          = presenter.date_range_basic_info
+      - unless resource.place.nil?
+        .place-data
+          i.icon-wired-venue
+          span
+            = place_address(resource.place, true, ', ', ' ', true) if resource.place
+
+      - unless resource.description.nil? || resource.description.empty?
+        .description-data
+          span= simple_format resource.description
+
+      - if can?(:view_members, resource)
+        - unless resource.users.empty? && resource.teams.empty?
+          #event-team-members.add-details-info
+            i.icon-team.indicate-icon
+            = presenter.team_members
+
+    .span6.map_container
+      - unless resource.place.nil? || resource.place.latitude.nil? || resource.place.latitude == 1.0
+        #venue-map-canvas.google-map data-latitude="#{resource.place.latitude}" data-longitude="#{resource.place.longitude}"
+            b= resource.campaign_name
+            br>/
+            = event_date(resource, :start_at).to_s
+            br>/
+            = place_address(resource.place)
+#event-details-info-end

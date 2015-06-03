@@ -84,4 +84,18 @@ describe Api::V1::EventExpensesController, type: :controller do
       expect(result['fields'].keys).to match_array(%w(AWSAccessKeyId Secure key policy signature acl success_action_status))
     end
   end
+
+  describe "DELETE 'destroy'", :show_in_doc do
+    let(:campaign) { create(:campaign, company: company) }
+    let(:event) { create(:event, company: company, campaign: campaign) }
+    let(:expense) { create(:event_expense, event: event) }
+
+    it 'destroys the expense' do
+      expense
+      expect do
+        delete 'destroy', id: expense.to_param, event_id: event.to_param, format: :json
+      end.to change(EventExpense, :count).by(-1)
+      expect(response).to be_success
+    end
+  end
 end

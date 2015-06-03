@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150507200605) do
+ActiveRecord::Schema.define(version: 20150518215142) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -498,11 +498,11 @@ ActiveRecord::Schema.define(version: 20150507200605) do
 
   create_table "event_expenses", force: true do |t|
     t.integer  "event_id"
-    t.decimal  "amount",        precision: 9, scale: 2, default: 0.0
+    t.decimal  "amount",        precision: 15, scale: 2, default: 0.0
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
-    t.datetime "created_at",                                          null: false
-    t.datetime "updated_at",                                          null: false
+    t.datetime "created_at",                                           null: false
+    t.datetime "updated_at",                                           null: false
     t.integer  "brand_id"
     t.string   "category"
     t.date     "expense_date"
@@ -534,6 +534,8 @@ ActiveRecord::Schema.define(version: 20150507200605) do
     t.datetime "local_end_at"
     t.text     "description"
     t.string   "kbmg_event_id"
+    t.datetime "rejected_at"
+    t.datetime "submitted_at"
   end
 
   add_index "events", ["aasm_state"], :name => "index_events_on_aasm_state"
@@ -569,7 +571,7 @@ ActiveRecord::Schema.define(version: 20150507200605) do
     t.datetime "created_at",                                             null: false
     t.datetime "updated_at",                                             null: false
     t.hstore   "hash_value"
-    t.decimal  "scalar_value",    precision: 10, scale: 2, default: 0.0
+    t.decimal  "scalar_value",    precision: 15, scale: 2, default: 0.0
     t.integer  "resultable_id"
     t.string   "resultable_type"
   end
@@ -1054,6 +1056,12 @@ ActiveRecord::Schema.define(version: 20150507200605) do
   add_index "venues", ["place_id"], :name => "index_venues_on_place_id"
 
   create_table "views_for_data_extracts", force: true do |t|
+  end
+
+  create_table "zipcode_locations", force: true do |t|
+    t.string  "zipcode",                                                                  null: false
+    t.spatial "lonlat",          limit: {:srid=>4326, :type=>"point", :geographic=>true}
+    t.integer "neighborhood_id"
   end
 
 end

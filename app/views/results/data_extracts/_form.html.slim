@@ -1,5 +1,5 @@
 - remote ||= false
-= simple_form_for resource, as: :data_extract, url: results_data_extracts_path, method: :post, name: "data_source_form" do |f|
+= simple_form_for resource, as: :data_extract, url: ( resource.new_record? ?  results_data_extracts_path : results_data_extract_path(resource)), name: "data_source_form" do |f|
   = hidden_field_tag :step, 4
   = f.input :source, as: :hidden
   = f.input :default_sort_by, as: :hidden, wrapper: false

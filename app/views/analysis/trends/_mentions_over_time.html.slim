@@ -1,9 +1,9 @@
 .details_box
-  h3 MENTIONS OVER TIME
+  h5.module-title MENTIONS OVER TIME
   #mentions-over-time-graph
 
 javascript:
-  $.getJSON('#{j url_for(params.merge(action: :mentions_over_time)).html_safe}', function(data) {
+  $.getJSON('#{j url_for(params.merge(action: :mentions_over_time, only_path: false)).html_safe}', function(data) {
     $('#mentions-over-time-graph').highcharts('StockChart', {
       chart: {
         style: {

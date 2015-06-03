@@ -14,6 +14,7 @@
 #  updated_at     :datetime         not null
 #  kpi_id         :integer
 #
+
 include ActionView::Helpers::NumberHelper
 
 class FormField::Currency < FormField
@@ -24,6 +25,11 @@ class FormField::Currency < FormField
       field_id: id,
       options: settings,
       required: required,
+      hint: range_message,
+      hint_html: {
+        id: "hint-#{id}",
+        class: 'range-help-block'
+      },
       input_html: {
         value: result.value,
         class: field_classes.push('elements-range'),
@@ -40,6 +46,7 @@ class FormField::Currency < FormField
       data['range-format'] = settings['range_format'] if settings['range_format'].present?
       data['range-min'] = settings['range_min'] if settings['range_min'].present?
       data['range-max'] = settings['range_max'] if settings['range_max'].present?
+      data['field-id'] = id
     end
     data
   end

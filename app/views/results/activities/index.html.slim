@@ -18,7 +18,7 @@
         li
           a#pdf-export.xlsx-download-link href="#" role="menuitem" data-url="#{results_activities_path(format: :pdf)}"
             | Download as PDF
-  div.resource-list id="#{controller_name}-list"
+  div.resource-list.without-actions id="#{controller_name}-list"
 
 = render partial: 'help_tutorial'
 

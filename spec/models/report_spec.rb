@@ -1922,7 +1922,7 @@ describe Report, type: :model do
           end_date: '05/05/2014', end_time: '11:00 AM', campaign: campaign,
           results: { impressions: 300, interactions: 50 })
 
-        create(:due_event, campaign: campaign, start_date: '05/04/2014', start_time: '10:00 AM',
+        create(:due_event, start_date: '05/04/2014', start_time: '10:00 AM',
           end_date: '05/04/2014', end_time: '11:00 AM', campaign: campaign,
           results: { impressions: 200, interactions: 150 })
 

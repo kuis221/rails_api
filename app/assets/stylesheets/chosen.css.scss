@@ -104,7 +104,7 @@ select.chosen-enabled{
 		}
 	}
 	.chzn-default {
-		color: #999;
+		color: $silver;
 	}
 	.chzn-single{
 		span {
@@ -168,7 +168,7 @@ select.chosen-enabled{
 			box-sizing: border-box;
 			margin: 1px 0;
 			padding: 4px 20px 4px 5px;
-			width: 100%;
+			width: 100% !important;
 			height: 36px;
 			background: white;
 			outline: 0;
@@ -351,7 +351,7 @@ select.chosen-enabled{
 		border:1px solid $user_menu;
 		box-shadow: 0 0 5px rgba(0, 0, 0, 0);
 		li.search-field input {
-			color: #111 !important;
+			color: $text !important;
 		}
 	}
 }

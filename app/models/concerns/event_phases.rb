@@ -2,7 +2,7 @@ module EventPhases
   extend ActiveSupport::Concern
 
   def phases
-    {
+    @phases ||= {
       current_phase: current_phase,
       next_step: next_step,
       phases: {
@@ -18,9 +18,9 @@ module EventPhases
   # * execute: if the event is NOT in the future and no results have been entered
   # * results: if the event is NOT in the future and results have been entered
   def current_phase
-    if in_future?
+    if in_future? && !happens_today?
       :plan
-    elsif event_data?
+    elsif submitted? || approved?
       :results
     else
       :execute
@@ -35,16 +35,18 @@ module EventPhases
 
   def plan_phases
     @plan_phases ||= [].tap do |phases|
-      phases.push({ id: :info, title: 'Basic Info', complete: true, required: true })
-      phases.push({ id: :contacts, title: 'Contacts', complete: contacts.any?, required: false })
-      phases.push({ id: :tasks, title: 'Tasks', complete: tasks.any?, required: false })
-      phases.push({ id: :documents, title: 'Documents', complete: documents.any?, required: false })
+      phases.push(id: :info, title: 'Basic Info', complete: true, required: true)
+      phases.push(id: :contacts, title: 'Contacts', complete: contacts.any?, required: false)
+      phases.push(id: :tasks, title: 'Tasks', complete: tasks.any?, required: false)
+      phases.push(id: :documents, title: 'Documents', complete: documents.any?, required: false)
     end
   end
 
   def execute_phases
     @execute_phases ||= [].tap do |phases|
-      phases.push(id: :per, title: 'Post Event Recap', complete: event_data?)
+      phases.push(id: :per, title: 'Post Event Recap',
+                  complete: event_data?, required: true
+                 ) if campaign.form_fields.any?
       phases.push(id: :activities, title: 'Activities',
                   complete: activities.any?,
                   if: proc { |_| can?(:show, Activity) }

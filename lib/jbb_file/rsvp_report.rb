@@ -1,25 +1,23 @@
 module JbbFile
   class RsvpReport < JbbFile::Base
     COLUMNS = {
-      campaign: 'Campaign',
+      campaign: 'Campaign Name',
       market: 'Market',
       final_date: 'FinalDate',
       event_date: 'EventDate',
-      registrant_id: 'RegistrantID',
+      registrant_id: 'RegistrantId',
       date_added: 'DateAdded',
       email: 'Email',
       mobile_phone: 'MobilePhone',
       mobile_signup: 'MobileSignup',
       first_name: 'FirstName',
-      last_name: 'LastName',
+      last_name: 'lastName',
       account_name: 'AccountName',
       attended_previous_bartender_ball: 'AttendedPreviousBartenderBall',
       opt_in_to_future_communication: 'OptInToFutureCommunication',
       primary_registrant_id: 'PrimaryRegistrantId',
       bartender_how_long: 'BartenderHowLong',
-      bartender_role: 'BartenderRole',
-      date_of_birth: 'DOB',
-      zip_code: 'Zip Code'
+      bartender_role: 'BartenderRole'
     }
 
     INVITE_COLUMNS = [:market, :final_date]
@@ -53,7 +51,7 @@ module JbbFile
         ActiveRecord::Base.transaction do
           files.each do |file|
             each_sheet(file[:excel]) do |sheet|
-              sheet.each(COLUMNS) do |row|
+              sheet.each(self.class::COLUMNS) do |row|
                 next if row[:final_date] == 'FinalDate'
                 campaign = find_campaign(row)
                 market_level = campaign.module_setting('attendance', 'attendance_display') == '2' if campaign
@@ -63,9 +61,9 @@ module JbbFile
                 if (market_level || venue) && event && area
                   invite_scope_params = market_level ? { area_id: area.id } : {venue_id: venue.id}
                   invite = event.invites.create_with(
-                    row.select { |k, _| INVITE_COLUMNS.include?(k) }.merge(invite_scope_params)
+                    row.select { |k, _| self.class::INVITE_COLUMNS.include?(k) }.merge(invite_scope_params)
                   ).find_or_create_by(invite_scope_params)
-                  if invite.rsvps.create(row.select { |k, _| RSVP_COLUMNS.include?(k) })
+                  if invite.rsvps.create(row.select { |k, _| self.class::RSVP_COLUMNS.include?(k) })
                     invite.increment!(:rsvps_count)
                   end
                   self.created += 1
@@ -162,7 +160,7 @@ module JbbFile
 
     def find_place_in_database(name, city_or_state)
       a = area(city_or_state)
-      base = Place.where('similarity(places.name, :name) > 0.5', name: name)
+      base = Place.select("similarity(places.name, #{Place.connection.quote(name)}), places.*").where('similarity(places.name, :name) > 0.5', name: name).order('1 DESC')
       base.where('lower(city)=:name OR lower(state)=:name', name: city_or_state.downcase).first ||
       (a && base.in_areas([a]).first)
     end

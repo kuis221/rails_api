@@ -21,6 +21,8 @@
 #  local_end_at   :datetime
 #  description    :text
 #  kbmg_event_id  :string(255)
+#  rejected_at    :datetime
+#  submitted_at   :datetime
 #
 
 require 'rails_helper'
@@ -1462,12 +1464,10 @@ describe Event, type: :model do
         expect(event.current_phase).to eql :execute
       end
 
-      it 'returns results for events happenning in the past with PER results' do
+      it 'returns results for submitted events' do
         field = create(:form_field_number, fieldable: campaign, required: true)
-        event = create(:event, start_date: Time.zone.now.to_s(:slashes),
+        event = create(:submitted_event, start_date: Time.zone.now.to_s(:slashes),
                                end_date: Time.zone.now.to_s(:slashes), campaign: campaign)
-        event.results_for([field]).each { |r| r.value = 100 }
-        event.save
         expect(event.current_phase).to eql :results
       end
     end

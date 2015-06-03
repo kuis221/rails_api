@@ -1,7 +1,10 @@
 class Api::V1::ActivitiesController < Api::V1::ApiController
   inherit_resources
-
+  skip_authorization_check only: [:index]
+  skip_authorize_resource only: [:index]
   belongs_to :event, :venue, optional: true
+
+  before_action :authorize_parent, except: [:new, :show]
 
   respond_to :json
 
@@ -17,7 +20,8 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
     end
   end
 
-  api :POST, '/api/v1/events/:event_id/activities', 'Create a new activity'
+  api :POST, '/api/v1/events/:event_id/activities', 'Create a new activity for a event'
+  api :POST, '/api/v1/events/:venue_id/activities', 'Create a new activity for a venue'
   param_group :activity
   def create
     create! do |success, failure|
@@ -28,7 +32,8 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
     end
   end
 
-  api :PUT, '/api/v1/events/:event_id/activities/:id', 'Update a activity\'s details'
+  api :PUT, '/api/v1/events/:event_id/activities/:id', 'Update a event\'s activity details'
+  api :PUT, '/api/v1/events/:venue_id/activities/:id', 'Update a venue\'s activity details'
   param :event_id, :number, required: false, desc: 'Event ID'
   param :venue_id, :number, required: false, desc: 'Venue ID'
   param :id, :number, required: true, desc: 'Activity ID'
@@ -42,7 +47,8 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
     end
   end
 
-  api :GET, '/api/v1/events/:id/activities/:id/deactivate', 'Deactivate activity'
+  api :GET, '/api/v1/events/:event_id/activities/:id/deactivate', 'Deactivate a event\'s activity'
+  api :GET, '/api/v1/events/:venue_id/activities/:id/deactivate', 'Deactivate a venue\'s activity'
   param :event_id, :number, required: false, desc: 'Event ID'
   param :venue_id, :number, required: false, desc: 'Venue ID'
   param :id, :number, required: true, desc: 'Activity ID'
@@ -53,7 +59,8 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
     render json: "ok"
   end
 
-  api :GET, '/api/v1/events/:event_id/activities', 'Get a list of activities for an Event or Venue'
+  api :GET, '/api/v1/events/:event_id/activities', 'Get a list of activities for an Event'
+  api :GET, '/api/v1/events/:venue_id/activities', 'Get a list of activities for an Venue'
   param :event_id, :number, required: false, desc: 'Event ID'
   param :venue_id, :number, required: false, desc: 'Venue ID'
   description <<-EOS
@@ -73,6 +80,7 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
   }
   EOS
   def index
+    authorize!(:show, Activity)
     collection
   end
 
@@ -351,7 +359,7 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
     end
   end
 
-  api :GET, '/api/v1/actvities/:id/edit', 'Return a list of fields with results for an existing activity'
+  api :GET, '/api/v1/actvities/:id', 'Return a list of fields with results for an existing activity'
   description <<-EOS
     Returns a full list of the associated activity types for a campaign
   EOS
@@ -606,6 +614,7 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
   }
   EOS
   def show
+    authorize! :show, resource.activitable
     results = resource.form_field_results
     results.each { |r| r.save(validate: false) if r.new_record? }
     respond_to do |format|
@@ -715,5 +724,9 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
 
   def collection
      @activities ||= end_of_association_chain.where(active: true)
+  end
+
+  def authorize_parent
+    authorize!(:show, parent)
   end
 end

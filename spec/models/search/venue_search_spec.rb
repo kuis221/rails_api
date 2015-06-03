@@ -136,6 +136,26 @@ describe Venue, type: :model, search: true do
     end
   end
 
+  describe 'fulltext searches' do
+    it 'should return the correct results' do
+      maximus = create(:venue, company_id: 1, place: create(:place, name: 'Maximus Place', types: %w(restaurant)))
+      cats_saloon = create(:venue, company_id: 1, place: create(:place, name: 'Cat\'s Eye Saloon', types: %w(bar)))
+      j_bar = create(:venue, company_id: 1, place: create(:place, name: 'The J Bar N', types: %w(bar)))
+
+      expect(search(company_id: 1, q: 'Bar', sorting: :score, sorting_dir: :desc))
+        .to eql [j_bar, cats_saloon]
+      expect(search(company_id: 1, q: 'The J Bar N', sorting: :score, sorting_dir: :desc))
+        .to eql [j_bar, cats_saloon]
+
+      expect(search(company_id: 1, q: 'restaurant', sorting: :score, sorting_dir: :desc))
+        .to eql([maximus])
+      expect(search(company_id: 1, q: 'maximus restaurant', sorting: :score, sorting_dir: :desc))
+        .to eql([maximus])
+      expect(search(company_id: 1, q: 'bar restaurant', sorting: :score, sorting_dir: :desc))
+        .to eql([j_bar, cats_saloon, maximus])
+    end
+  end
+
   describe 'user permissions' do
     it 'should include only venues that are between the user permissions' do
       company = create(:company)

@@ -175,8 +175,6 @@ feature 'Post Event Data' do
       fill_in 'Decimal field', with: '99.9'
       fill_in 'Currency field', with: '79.9'
 
-      choose 'Radio Option 1'
-
       unicheck 'Checkbox Option 1'
       unicheck 'Checkbox Option 2'
 
@@ -186,7 +184,7 @@ feature 'Post Event Data' do
       fill_in 'Custom Numeric', with: '10'
       fill_in 'Custom Currency', with: '30'
       fill_in 'Custom Date', with: '08/13/2013'
-      fill_in 'Custom Time', with: '2:30am'
+      select_time '2:30am', from: 'Custom Time'
 
       fill_in 'Summation Opt1', with: '100'
       fill_in 'Summation Opt2', with: '2000'
@@ -197,12 +195,13 @@ feature 'Post Event Data' do
       unicheck 'Checkbox Opt1'
       unicheck 'Checkbox Opt2'
 
+      choose 'Radio Option 1'
       choose 'Radio Opt1'
 
       select_from_chosen('Cacique', from: 'Brand')
       select_from_chosen('Marque #2 for Cacique', from: 'Marque')
 
-      click_button 'Save'
+      click_js_button 'Save'
 
       # Ensure the results are displayed on the page
 
@@ -216,6 +215,7 @@ feature 'Post Event Data' do
       expect(page).to have_content '66%'
 
       expect(page).to have_content '9%'
+      expect(page).to have_content '10%'
       expect(page).to have_content '11%'
       expect(page).to have_content '12%'
       expect(page).to have_content '13%'
@@ -224,35 +224,34 @@ feature 'Post Event Data' do
       expect(page).to have_content '16%'
 
       within '.form-results-box' do
-        expect(page).to have_content('INTEGER FIELD 99')
-        expect(page).to have_content('DECIMAL FIELD 99.9')
-        expect(page).to have_content('CURRENCY FIELD $79.90')
+        expect(page).to have_content('Integer field 99')
+        expect(page).to have_content('Decimal field 99.9')
+        expect(page).to have_content('Currency field $79.90')
         expect(page).to have_content('Radio field Radio Option 1')
         expect(page).to have_content('Checkbox field Checkbox Option 1 Checkbox Option 2')
         expect(page).to have_content('Custom Checkbox Checkbox Opt1 Checkbox Opt2')
         expect(page).to have_content('Custom Radio Radio Opt1')
         expect(page).to have_content('Custom Single Text Testing Single')
         expect(page).to have_content('Custom TextArea Testing Area')
-        expect(page).to have_content('CUSTOM NUMERIC 10')
-        expect(page).to have_content('CUSTOM CURRENCY $30.00')
+        expect(page).to have_content('Custom Numeric 10')
+        expect(page).to have_content('Custom Currency $30.00')
         expect(page).to have_content('Marque Marque #2 for Cacique')
-        expect(page).to have_content('BRANDCacique')
-        expect(page).to have_content('CUSTOM DATETUE Aug 13, 2013')
-        expect(page).to have_content('CUSTOM TIME02:30 AM')
+        expect(page).to have_content('Brand Cacique')
+        expect(page).to have_content('Custom Date TUE Aug 13, 2013')
+        expect(page).to have_content('Custom Time 02:30 AM')
 
         expect(page).to have_content('Summation Opt1 100')
         expect(page).to have_content('Summation Opt2 2,000')
-        expect(page).to have_content('TOTAL:2,100')
+        expect(page).to have_content('TOTAL:2,100.0')
       end
 
-      # screenshot_and_open_image
       visit event_path(event)
 
       # expect(page).to still display the post-event format and not the form
       within '.form-results-box' do
-        expect(page).to have_content('INTEGER FIELD 99')
-        expect(page).to have_content('DECIMAL FIELD 99.9')
-        expect(page).to have_content('CURRENCY FIELD $79.90')
+        expect(page).to have_content('Integer field 99')
+        expect(page).to have_content('Decimal field 99.9')
+        expect(page).to have_content('Currency field $79.90')
       end
 
       click_js_link 'Edit event data'
@@ -263,7 +262,7 @@ feature 'Post Event Data' do
       fill_in 'Summation Opt1', with: '0.75'
       fill_in 'Summation Opt2', with: '0.5'
 
-      click_button 'Save'
+      click_js_button 'Save'
 
       within '.form-results-box' do
         expect(page).to have_content('3,333')
@@ -273,11 +272,6 @@ feature 'Post Event Data' do
         expect(page).to have_content('Summation Opt2 0.5')
         expect(page).to have_content('TOTAL:1.25')
       end
-
-      # Submit the event
-      visit event_path(event)
-      click_link 'submit'
-      expect(page).to have_content('Your post event report has been submitted for approval')
     end
 
     scenario 'should allow 0 for not required percentage fields' do
@@ -315,12 +309,13 @@ feature 'Post Event Data' do
 
       click_js_button 'Save'
 
-      expect(find_field('Male')).to have_error('This field is required.')
-      expect(find_field('Female')).to have_error('This field is required.')
+      within '#progress-error-' + field.id.to_s do
+        expect(page).to have_content('This field is required.')
+      end
 
       fill_in('Male', with: 35)
       fill_in('Female', with: 30)
-      expect(page).to have_content('Field should sum 100%')
+      expect(page).to have_content('Field must sum to 100%')
 
       within '#event-results-form' do
         expect(page).to have_content('65%')
@@ -339,12 +334,19 @@ feature 'Post Event Data' do
              type: 'FormField::Number',
              settings: { 'range_format' => 'value', 'range_min' => '5', 'range_max' => '20' },
              fieldable: campaign,
+             required: true)
+
+      create(:form_field,
+             name: 'Numeric Max Value',
+             type: 'FormField::Number',
+             settings: { 'range_format' => 'value', 'range_min' => '', 'range_max' => '20' },
+             fieldable: campaign,
              required: false)
 
       create(:form_field,
-             name: 'Numeric Max',
+             name: 'Numeric Max Digits',
              type: 'FormField::Number',
-             settings: { 'range_format' => 'value', 'range_min' => '', 'range_max' => '20' },
+             settings: { 'range_format' => 'digits', 'range_min' => '', 'range_max' => '2' },
              fieldable: campaign,
              required: false)
 
@@ -356,9 +358,16 @@ feature 'Post Event Data' do
              required: false)
 
       create(:form_field,
-             name: 'Price Min',
+             name: 'Price Min Digits',
              type: 'FormField::Currency',
              settings: { 'range_format' => 'digits', 'range_min' => '2', 'range_max' => '' },
+             fieldable: campaign,
+             required: false)
+
+      create(:form_field,
+             name: 'Price Min Value',
+             type: 'FormField::Currency',
+             settings: { 'range_format' => 'value', 'range_min' => '5', 'range_max' => '' },
              fieldable: campaign,
              required: false)
 
@@ -396,30 +405,56 @@ feature 'Post Event Data' do
 
       visit event_path(event)
 
+      # Ensure that validation errors are not displayed after first time form load
+      expect(all('.event_results_value.error').count).to be 0
+
+      expect(find_field('Numeric with Min Max')).to have_hint('Enter a number between 5 and 20')
+      expect(find_field('Numeric Max Value')).to have_hint('Enter a number no higher than 20')
+      expect(find_field('Numeric Max Digits')).to have_hint('Enter a number with no higher than 2 digits')
+      expect(find_field('Price with Min Max')).to have_hint('Enter a number between 2 and 4')
+      expect(find_field('Price Min Digits')).to have_hint('Enter a number with 2 digits or higher')
+      expect(find_field('Price Min Value')).to have_hint('Enter a number 5 or higher')
+      expect(find_field('Text with Min Max')).to have_hint('Must be between 1 and 10 characters Currently: 0 characters')
+      expect(find_field('Text Max')).to have_hint('Must be no more than 10 characters Currently: 0 characters')
+      expect(find_field('Text Area with Min Max')).to have_hint('Must be between 3 and 5 words Currently: 0 words')
+      expect(find_field('Text Area Min')).to have_hint('Must be at least 3 words Currently: 0 words')
+
       fill_in('Numeric with Min Max', with: 35)
-      fill_in('Numeric Max', with: 35)
+      fill_in('Numeric Max Value', with: 35)
+      fill_in('Numeric Max Digits', with: 400)
       fill_in('Price with Min Max', with: 1)
-      fill_in('Price Min', with: 1)
+      fill_in('Price Min Digits', with: 1)
+      fill_in('Price Min Value', with: 3)
       fill_in('Text with Min Max', with: 'This field has more than 10 characters')
       fill_in('Text Max', with: 'This field has more than 10 characters')
       fill_in('Text Area with Min Max', with: 'Incorrect text')
       fill_in('Text Area Min', with: 'Incorrect text')
 
+      expect(find_field('Text with Min Max')).to have_hint('Must be between 1 and 10 characters Currently: 38 characters')
+      expect(find_field('Text Max')).to have_hint('Must be no more than 10 characters Currently: 38 characters')
+      expect(find_field('Text Area with Min Max')).to have_hint('Must be between 3 and 5 words Currently: 2 words')
+      expect(find_field('Text Area Min')).to have_hint('Must be at least 3 words Currently: 2 words')
+
       click_js_button 'Save'
 
-      expect(find_field('Numeric with Min Max')).to have_error('should be between 5 and 20')
-      expect(find_field('Numeric Max')).to have_error('should be smaller than 20')
-      expect(find_field('Price with Min Max')).to have_error('should have at least 2 but no more than 4 digits')
-      expect(find_field('Price Min')).to have_error('should have at least 2 digits')
-      expect(find_field('Text with Min Max')).to have_error('should have at least 1 but no more than 10 characters')
-      expect(find_field('Text Max')).to have_error('should have no more than 10 characters')
-      expect(find_field('Text Area with Min Max')).to have_error('should have at least 3 but no more than 5 words')
-      expect(find_field('Text Area Min')).to have_error('should have at least 3 words')
+      expect(find_field('Numeric with Min Max')).to_not have_css('.valid')
+      expect(find_field('Numeric with Min Max')).to_not have_css('.valid')
+      expect(find_field('Numeric Max Value')).to_not have_css('.valid')
+      expect(find_field('Numeric Max Digits')).to_not have_css('.valid')
+      expect(find_field('Price with Min Max')).to_not have_css('.valid')
+      expect(find_field('Price Min Digits')).to_not have_css('.valid')
+      expect(find_field('Price Min Value')).to_not have_css('.valid')
+      expect(find_field('Text with Min Max')).to_not have_css('.valid')
+      expect(find_field('Text Max')).to_not have_css('.valid')
+      expect(find_field('Text Area with Min Max')).to_not have_css('.valid')
+      expect(find_field('Text Area Min')).to_not have_css('.valid')
 
       fill_in('Numeric with Min Max', with: 10)
-      fill_in('Numeric Max', with: 10)
+      fill_in('Numeric Max Value', with: 10)
+      fill_in('Numeric Max Digits', with: 15)
       fill_in('Price with Min Max', with: 1000)
-      fill_in('Price Min', with: 1000)
+      fill_in('Price Min Digits', with: 1000)
+      fill_in('Price Min Value', with: 100)
       fill_in('Text with Min Max', with: 'Correct')
       fill_in('Text Max', with: 'Correct')
       fill_in('Text Area with Min Max', with: 'This is a correct text')
@@ -427,14 +462,8 @@ feature 'Post Event Data' do
 
       click_js_button 'Save'
 
-      expect(page).not_to have_text('should be betwee 5 and 20')
-      expect(page).not_to have_text('should be smaller than 20')
-      expect(page).not_to have_text('should have at least 2 but no more than 4 digits')
-      expect(page).not_to have_text('should have at least 2 digits')
-      expect(page).not_to have_text('should have at least 1 but no more than 10 characters')
-      expect(page).not_to have_text('should have no more than 10 characters')
-      expect(page).not_to have_text('should have at least 3 but no more than 5 words')
-      expect(page).not_to have_text('should have at least 3 words')
+      expect(page).to have_link('Edit event data')
+      expect(page).to_not have_button('Save')
     end
   end
 

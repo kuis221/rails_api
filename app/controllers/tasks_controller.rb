@@ -100,6 +100,6 @@ class TasksController < FilteredController
   end
 
   def set_body_class
-    @custom_body_class = params[:scope]
+    @custom_body_class = "#{custom_body_class} #{params[:scope]}"
   end
 end

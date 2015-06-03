@@ -41,7 +41,9 @@ RSpec.describe DataExtract::Contact, type: :model do
                             user: create(:user, first_name: 'Benito', last_name: 'Camelas'))
     end
 
-    let(:subject) { described_class.new(company: company, current_user: company_user) }
+    let(:subject) { described_class.new(company: company, current_user: company_user,
+                    columns: ['first_name', 'last_name', 'title', 'email', 'phone_number', 'street1',
+                      'street2', 'country', 'state', 'city', 'zip_code', 'created_by', 'created_at']) }
 
     it 'returns empty if no rows are found' do
       expect(subject.rows).to be_empty

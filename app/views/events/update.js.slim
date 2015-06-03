@@ -10,8 +10,9 @@
     |
       $('#edit_event_data_form').remove();
       $('.box_event_data').html("#{escape_javascript(render('results_event_data'))}").show();
-      smoothScrollTo($('.box_event_data'));
       setTimeout(function(){ $(window).resize() });
+    = update_event_details_bar(resource)
+    |  $(document).trigger('per:completed')
   - else
     |
       $('.bootbox.modal').modal('hide');

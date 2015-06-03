@@ -4,6 +4,8 @@
     | $('.bootbox.modal').modal('hide');
   - else
     | $("#task_#{parent.id}_comments").html('#{escape_javascript(render('comments_list'))}')
+  = update_event_details_bar(parent) if parent.is_a?(Event)
+  | $(document).trigger('comment:added');
 - else
   = resource.errors.inspect
   | $('#comment-form-container').html('#{escape_javascript(render('form'))}')

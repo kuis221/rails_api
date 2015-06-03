@@ -47,7 +47,10 @@ RSpec.describe DataExtract::Comment, type: :model do
                      start_date: '01/01/2014', end_date: '01/01/2014')
     end
     let(:subject) do
-      described_class.new(company: company, current_user: company_user)
+      described_class.new(company: company, current_user: company_user,
+                          columns: ['comment', 'campaign_name', 'start_date', 'start_time', 'end_date',
+                          'end_time', 'event_status', 'street', 'place_city', 'place_name', 'place_state',
+                          'place_zipcode', 'created_by', 'created_at'])
     end
 
     it 'returns empty if no rows are found' do

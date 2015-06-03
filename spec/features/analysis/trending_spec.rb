@@ -67,6 +67,7 @@ feature 'Trending report' do
     end
 
     scenario 'can see the bubbles with the most popular words in event data fields' do
+      page.driver.add_header("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36")
       event = create(:late_event, campaign: campaign, place: place)
       create(:form_field_text,
              fieldable: campaign, name: 'My Text Field')
@@ -77,7 +78,7 @@ feature 'Trending report' do
 
       fill_in 'My Text Field', with: 'Texto con hola en medio!'
       fill_in 'My Paragraph Field', with: 'hola mundo'
-      click_button 'Save'
+      click_js_button 'Save'
 
       expect(page).to have_selector('.form-result-value', text: 'hola mundo')
 

@@ -28,14 +28,17 @@ RSpec.describe DataExtract::EventData, type: :model do
   let(:campaign) { create(:campaign, name: 'Campaign Absolut FY12', company: company) }
 
   describe '#exportable_columns' do
-    let(:subject) { described_class.new(company: company, current_user: user) }
+    let(:subject) { described_class.new(company: company, current_user: user,
+                    columns: ['campaign_name', 'start_date', 'start_time', 'end_date',
+                              'end_time', 'event_status', 'street', 'place_city', 'place_name', 'place_state',
+                              'place_zipcode', 'created_by', 'created_at']) }
 
     it 'returns the correct columns' do
       expect(subject.exportable_columns).to eql([
         %w(campaign_name Campaign), ['end_date', 'End Date'], ['end_time', 'End Time'],
         ['start_date', 'Start Date'], ['start_time', 'Start Time'], ['place_street', 'Venue Street'],
         ['place_city', 'Venue City'], ['place_name', 'Venue Name'], ['place_state', 'Venue State'],
-        ['place_zipcode', 'Venue ZIP code'], ['event_team_members', 'Event Team'],
+        ['place_zipcode', 'Venue ZIP Code'], ['event_team_members', 'Event Team'],
         ['event_status', 'Event Status'], ['status', 'Active State']])
     end
 
@@ -46,7 +49,7 @@ RSpec.describe DataExtract::EventData, type: :model do
         %w(campaign_name Campaign), ['end_date', 'End Date'], ['end_time', 'End Time'],
         ['start_date', 'Start Date'], ['start_time', 'Start Time'], ['place_street', 'Venue Street'],
         ['place_city', 'Venue City'], ['place_name', 'Venue Name'], ['place_state', 'Venue State'],
-        ['place_zipcode', 'Venue ZIP code'], ['event_team_members', 'Event Team'],
+        ['place_zipcode', 'Venue ZIP Code'], ['event_team_members', 'Event Team'],
         ['event_status', 'Event Status'], ['status', 'Active State'],
         ["ff_#{field.id}", 'My Numeric Field']])
     end
@@ -93,7 +96,10 @@ RSpec.describe DataExtract::EventData, type: :model do
   end
 
   describe '#rows' do
-    let(:subject) { described_class.new(company: company, current_user: user) }
+    let(:subject) { described_class.new(company: company, current_user: user,
+                                        columns: ['campaign_name', 'end_date', 'end_time', 'start_date', 'start_time',
+                                        'place_street','place_city', 'place_name', 'place_state', 'place_zipcode', 
+                                        'event_team_members', 'event_status', 'status']) }
 
     it 'returns empty if no rows are found' do
       expect(subject.rows).to be_empty
