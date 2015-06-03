@@ -215,6 +215,7 @@ $back-arrow-width: 38px;
 	top: $detail-bar-height;
 	width: 100%;
 	z-index: 1;
+	display: none;
   li{
     line-height: 30px;
   }
