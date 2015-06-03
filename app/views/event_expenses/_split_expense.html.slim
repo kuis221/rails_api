@@ -21,8 +21,8 @@
                   = text_field_tag 'event_expense_percentage', nil, class: 'amount-percentage'
                   span.add-on %
           .remove-expense
-            = ef.link_to_remove '', class: 'icon-rounded-minus'
-    = f.link_to_add '', :event_expenses, class: 'icon-rounded-add'
+            = ef.link_to_remove '', class: 'icon-rounded-minus', title: 'Remove Expense'
+    = f.link_to_add '', :event_expenses, class: 'icon-rounded-add', title: 'Add Expense'
 
     .expense-total
       .row-fluid
