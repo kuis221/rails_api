@@ -3,7 +3,7 @@
   .expense-info-form
     - resource.build_receipt unless resource.receipt.present?
     = simple_form_for([parent, resource], id: 'new-expense-form', remote: true) do |f|
-      .row-fluid
+      .row-fluid.expense-fields-wrapper
         #expense-fields.span5
           = f.input :category, collection: expense_categories, input_html: { class: 'chosen-enabled' }
           = f.input :expense_date, as: :date_picker
@@ -18,14 +18,15 @@
           .row-fuild.split-expense class="#{resource.id.present? ? nil : 'hide'}"
             = f.submit 'Split Expense', class: 'split-expense-link'
 
-          = f.input :brand_id, as: :select, collection: brands, input_html: {class: 'input-large chosen-enabled'}
+          = f.input :brand_id, as: :select, collection: brands, input_html: { class: 'input-large chosen-enabled' }
           = f.input :merchant
           = f.input :description
 
-        .span6
+        .span1
+        .span6.receipt-wrapper
           = f.fields_for :receipt do |rf|
             = rf.input :id, as: :hidden, wrapper: false
-            = rf.input :file, label: false, required: resource.receipt_required?, as: :attached_asset, hidden_field_name: 'direct_upload_url'
+            = rf.input :file, label: false, required: resource.receipt_required?, as: :attached_asset, hidden_field_name: 'direct_upload_url', browse_legend: 'inputs.attached_asset.select_file.expense'
 
       .row-fluid
         .form-actions.inside-form

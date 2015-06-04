@@ -972,6 +972,32 @@ div#spin{
 				top: 6px;
 			}
 		}
+		.expense-fields-wrapper {
+
+			position: relative;
+			.receipt-wrapper, .attachment-panel {
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				height: 100%;
+				width: 300px;
+			}
+			.attachment-panel { 
+				.attachment-select-file-view {
+					padding-top: 50px;
+				}
+				.drag-box {
+					line-height: 90px;
+					p { 
+						font-size: 12px;
+						line-height: 17px;
+					}
+					.icon-upload:before {
+						top: -16px;
+					}
+				}
+			}
+		}
 		#expense-fields {
 			.split-expense {
 				margin-bottom: 10px;

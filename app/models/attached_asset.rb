@@ -155,7 +155,7 @@ class AttachedAsset < ActiveRecord::Base
   end
 
   def file_extension
-    File.extname(file_file_name)[1..-1]
+    File.extname(file_file_name)[1..-1] if file_file_name
   end
 
   # Store an unescaped version of the escaped URL that Amazon returns from direct upload.

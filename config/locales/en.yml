@@ -435,6 +435,7 @@ en:
       select_file:
         photo: 'your image or %{browse}'
         attachment: 'your file or %{browse}'
+        expense: 'the photographed<br /> receipt or %{browse}'
 
   notifications:
     task_late_user:
