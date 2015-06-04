@@ -139,6 +139,19 @@ module ApplicationHelper
                            url: url }
   end
 
+  def button_to_destroy(resource, title: nil, url: nil)
+    url ||= url_for([:destroy, resource])
+    icon_button_to 'icon-rounded-disable', url,
+                   remote: true,
+                   method: :delete,
+                   title: I18n.t("buttons.deactivate.#{resource.class.name.underscore}"),
+                   form_class: 'button_to button_to_edit active-toggle-btn-' + resource.class.name.underscore.gsub('/', '_').downcase + '-' + resource.id.to_s,
+                   data: { confirm: I18n.t("confirm.deactivate.#{resource.class.name.underscore}",
+                                           model: resource.class.model_name.human.downcase,
+                                           name: resource.try(:name)),
+                           url: url }
+  end
+
   def button_to_resend_invitation(resource, title: nil)
     icon_button_to 'icon-resend', resend_invite_company_user_path(resource),
                    method: :get,

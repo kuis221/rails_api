@@ -23,8 +23,9 @@
 FactoryGirl.define do
   factory :event_expense do
     event nil
-    sequence(:name) { |n| "Expense #{n}" }
     amount '9.99'
+    category 'Entertainment'
+    expense_date '01/01/2015'
     brand_id nil
   end
 end

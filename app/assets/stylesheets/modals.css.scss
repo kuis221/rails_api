@@ -1068,6 +1068,9 @@ div#spin{
 					// }
 				}
 			}
+			.error .help-inline {
+				display: none !important;
+			}
 		}
 		.expense-total{
 			border-top: 1px solid $silver;

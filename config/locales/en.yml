@@ -331,6 +331,7 @@ en:
   buttons:
     new:
       event: "New Event"
+      event_expense: "Add Expense"
       team: "New Team"
       campaign: "New Campaign"
       brand: "New Brand"
@@ -344,6 +345,7 @@ en:
       invite: "Add Invite"
     edit:
       event: "Edit Event"
+      event_expense: "Edit Expense"
       company_user: "Edit Profile Data"
       team: "Edit Team"
       campaign: "Edit Campaign"
@@ -834,6 +836,7 @@ en:
     deactivate:
       activity: "Are you sure you want to deactivate this activity?"
       event: "Are you sure you want to deactivate this event?"
+      event_expense: "Are you sure you want to deactivate this expense?"
       company_user: "Are you sure you want to deactivate this user?"
       team: "Are you sure you want to deactivate this team?"
       campaign: "Are you sure you want to deactivate this campaign?"

@@ -15,19 +15,23 @@ class EventExpensesController < InheritedResources::Base
   before_action :check_split_expense, only: [:update, :create]
 
   def split
-    #authorize! :split, event_expense
+    load_resource_from_split_params
+    authorize! :split, resource
     parent.update_attributes(split_attributes)
-    render template: 'event_expenses/create', locals: { resource: parent }
+    render :create
   end
 
   private
 
   def check_split_expense
-    render 'split_expense' if params['commit'] == 'Split Expense'
+    return unless params['commit'] == 'Split Expense'
+    render 'split_expense'
   end
 
   def split_attributes
-    params.require(:event).permit(event_expenses_attributes: [:expense_date, :category, :brand_id, :amount])
+    params.require(:event).permit(
+      event_expenses_attributes: [
+        :id, :expense_date, :category, :brand_id, :amount, :_destroy])
   end
 
   def expense_categories
@@ -45,5 +49,14 @@ class EventExpensesController < InheritedResources::Base
         :billable, :merchant, :description,
         { receipt_attributes: [:id, :direct_upload_url, :_destroy] }]
     )[:event_expense]
+  end
+
+  def load_resource_from_split_params
+    @event_expense =
+      if params[:id].present?
+        parent.event_expenses.find(params[:id])
+      else
+        EventExpense.new(event: parent)
+      end
   end
 end

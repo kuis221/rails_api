@@ -14,6 +14,5 @@ div.resource-item id="event_expense_#{event_expense.id}"
                 image_id: event_expense.receipt.id\
               }\
             }
-    = link_to '', edit_event_event_expense_path(event_expense.event, event_expense), remote: true, class: 'icon-edit' if can?(:edit, event_expense)
-    = "&nbsp;".html_safe
-    = link_to '', event_event_expense_path(event_expense.event, event_expense), remote: true, method: :delete, class: 'icon-rounded-disable' if can?(:destroy, event_expense)
+    = button_to_edit event_expense, url: edit_event_event_expense_path(event_expense.event, event_expense) if can?(:edit, event_expense)
+    = button_to_destroy event_expense, url: event_event_expense_path(event_expense.event, event_expense) if can?(:destroy, event_expense)
