@@ -2,6 +2,11 @@
 // DETAILS BAR (Details pages bar)
 //
 
+$detail-bar-height: 40px;
+$back-arrow-width: 38px;
+$phase-height: 66px;
+
+
 .with-login-as-bar{
   .details-bar{
     &.fixed{
@@ -10,10 +15,61 @@
   }
 }
 
-$detail-bar-height: 40px;
-$back-arrow-width: 38px;
+// Alerts for events on events bar
+
+.event-alert{
+  display: table;
+  position: relative;
+  width: 100%;
+  .alert-main-text{
+    color: $white;
+    font-weight: normal;
+    line-height: 20px;
+    margin: 0;
+  }
+  .alert-secondary-text{
+    color: $btn-red-hover;
+    margin: 0;
+  }
+  .alert-msg{
+    box-sizing: border-box;
+    display: table-cell;
+    height: $phase-height;
+    padding: 10px 0;
+    vertical-align: middle;
+  }
+  .close{
+    color: $red-dark;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+  }
+}
+
+.alert-rejected{
+  background-color: $primary-red;
+}
+.alert-submitted{
+  background-color: $primary-blue;
+}
+.alert-approved{
+  background-color: $primary-green;
+}
+
+// Details bar
+
 .details-bar{
 	position: relative;
+  .info-bar{
+	  background-color: $gray-darker;
+	  box-sizing: border-box;
+    height: $detail-bar-height;
+	  @include border-radius(0 6px 0 0);
+    padding-left: 60px;
+  }
+  .trackers-bar{
+    background-color: $white;
+  }
 	a{
 		color: $brand;
 	}
@@ -42,24 +98,18 @@ $back-arrow-width: 38px;
     }
   }
 	.panel{
-		background-color: $gray-darker;
 		box-sizing: border-box;
 		@include border-radius(0 6px 0 0);
-		margin-left: $back-arrow-width;
 	}
 	.panel-collapse{
-		background-color: $gray-darker;
 		color: $white;
-		z-index: 1110;
-		position: absolute;
-		width: calc(100% - #{$back-arrow-width});
+    margin-bottom: 20px;
 	}
 
 	// Heading
 
 	.panel-heading{
 		color: $brand;
-		height: 40px;
 		h5{
 			margin: 0;
 		}
@@ -79,10 +129,6 @@ $back-arrow-width: 38px;
       &.view-indicator a{
         font-size: 12px;
       }
-		}
-		&:hover{
-			background-color: #484848;
-			@include border-radius(0 6px 0 0);
 		}
 	}
 	.phase-indicator{
@@ -121,14 +167,8 @@ $back-arrow-width: 38px;
 	// Body
 
 	.panel-body{
+    background-color: $white;
 		color: $silver;
-		border-top: 1px solid $divider;
-	}
-	.event-phases{
-		border-left: 1px solid $divider;
-	}
-	.event-name{
-		color: $gray-lighter;
 	}
 	.info-list{
 		margin-top: 10px;
@@ -147,118 +187,63 @@ $back-arrow-width: 38px;
 	}
 }
 
-.phase-id{
-	background-color: $silver;
-	@include border-radius(15px);
-	color: $gray-darker;
-	display: inline-block;
-	font-size: 10px;
-	font-weight: bold;
-	line-height: 15px;
-	margin-right: 6px;
-	height: 15px;
-	text-align: center;
-	width: 15px;
-}
-
-.phases-list{
-	font-size: 12px;
-	.completed{
-		color: $primary-green;
-		a {
-			color: $primary-green;
-		}
-		.phase-id{
-			background-color: $primary-green;
-			a {
-				color: $gray-darker;
-				display: block;
-				text-decoration: none;
-			}
-		}
-	}
-	.active-phase{
-		.phase {
-			color: $primary-green;
-		}
-		.phase-id{
-			background-color: $primary-green;
-		}
-	}
-	.next-step{
-		color: $white;
-	}
-	.phase-steps{
-		padding-left: 20px;
-		li{
-			position: relative;
-		}
-		.icon-checked{
-			font-size: 10px;
-			position: absolute;
-			left: -18px;
-			top: 7px;
-		}
-	}
-}
-
-.event-info, .event-phases{
-	padding: 15px 20px 10px 20px;
-}
-
-.guide-bar{
-	background-color: $primary-blue;
-	color: $white;
-  font-weight: normal;
-	padding: 14px 0;
-	position: absolute;
-	top: $detail-bar-height;
-	width: 100%;
-	z-index: 1;
-  li{
-    line-height: 30px;
+.panel-body{
+  .phase-container:last-child{
+    border-bottom: 2px solid $gray-lighter;
   }
-	a{
-		color: $white;
-		margin-bottom: 6px;
-		text-decoration: underline;
-		cursor: pointer;
-    margin-left: 4px;
-	}
-	.btn {
-		background-color: $btn-blue;
-		padding: 0px;
-    @include border-radius(5px);
-    height: 28px;
-    line-height: 14px;
-    min-width: 81px;
-    &:hover{
-      color: $white;
-      background-color: $btn-blue-hover;
-    }
-	}
-	.button_to {
-		margin-left: 10px;
-	}
-	&.rejected, &.late {
-		background-color: $primary-red;
-		.btn {
-			background-color: $btn-red;
-      &:hover{
-        background-color: $btn-red-hover;
-      }
-		}
-	}
-	&.approved {
-		background-color: $primary-green;
-		.btn {
-			background-color: $btn-green;
-      &:hover{
-        background-color: $btn-green-hover;
-      }
-		}
-	}
 }
+
+
+
+    .phase-container{
+      height: $phase-height;
+      border-bottom: 1px solid $gray-lighter;
+      .phase-steps, .phase-actions{
+        float: left;
+      }
+      .phase-steps{
+                //line-height: 68px;
+        width: 81.5%;
+        .phase-id{
+          &:not(.phase){
+            color: $gray;
+            font-size: 11px;
+          }
+          box-sizing: border-box;
+          @extend .crop-text;
+          font-size: 13px;
+          font-weight: bold;
+          float: left;
+          height: $phase-height;
+          padding: 14px 0;
+          text-align: center;
+          width: 8.8%;
+          .phase-icon{
+            display:block;
+          }
+        }
+      }
+      .phase-actions{
+        height: $phase-height;
+        position: relative;
+        width: 18%;
+        .status-indicator{
+          bottom: 5px;
+          font-size: 11px;
+          position: absolute;
+          right: 4px;
+        }
+      }
+    }
+    .phase{
+      background-color: $phase-bg;
+      color: $gray-light;
+      font-size: 12px;
+      text-align: center;
+    }
+
+
+// Scrollspy
 
 .scrollspy-style{
 	.switch-list{

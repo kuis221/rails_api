@@ -1,8 +1,130 @@
 // OLD STRUCTURE
 // = resource_details_bar("You are viewing event details. Click to close.")
 
-// NEW STRUCTURE
+// OLD STRUCTURE
+
 .details-bar
+  .info-bar
+    .back-arrow
+      a.close-details href="#{return_path || collection_path}" title="Close Event"
+        i.icon-angle-left
+    .details-bar-status
+      nav class="scrollspy-style event-details-scroll-spy"
+        ul.switch-list.unstyled.view-indicator
+          li
+            a data-spytarget="#application-body"
+              span Viewing event details. Click to expand the event menu.
+          li
+            a href="#event-details-collapse" data-toggle="collapse" data-spytarget="#event-details-info-end"
+              span.event-name.pull-left= resource.campaign_name
+              span.event-date.small = presenter.date_range_for_details_bar(date_separator: ' - ')
+  .trackers-bar
+    .panel
+      #headingOne.panel-heading role="tab"
+        // The heading of the panel changes depending on if it is collapsed or expanded. We should add the class .hide to the element that it is not active
+        .phases-expanded.hide data-spytarget="#application-body"
+          .row-fluid
+            .span1
+              p Viewing the event map
+              //p Here we may put something more descriptive about the part below.
+            .span1
+              a href="#event-details-collapse" data-toggle="collapse" arrow
+        .phases-collapsed
+          .phase-container
+            .phase-steps
+              .phase-id.phase PLAN
+              .phase-id POST EVENT RESULTS
+              .phase-id ACTIVITIES
+              .phase-id ATTENDANCE
+              .phase-id COMMENTS
+              .phase-id SENTIMENT SUSCRIBER
+              .phase-id SOME OTHER
+              .phase-id SOME OTHER
+              .phase-id SOME OTHER
+              .phase-id SOME OTHER
+              .phase-id SOME OTHER
+            .phase-actions
+              a href="#event-details-collapse" data-toggle="collapse" arrow
+
+
+
+        // Alerts of status: should appear in the heading a couple of seconds to indicate the status. Only the red one should be dismissed by the user
+
+        //.alert-rejected.event-alert.text-center.hide
+          .alert-msg
+            h4.alert-main-text Your event has been rejected for the following reason:
+            p.alert-secondary-text “Tousled fap typewriter 8-bit. Chia lo-fi church-key whatever, typewriter hella McSweeney's fixie.”
+          a.close.btn-dismiss-alert href="#" title="Dismiss"
+            i.icon-close
+
+        //.alert-approved.event-alert.text-center.hide
+          .alert-msg
+            h4.alert-main-text Your event has been approved. No further action is required.
+
+        //.alert-submitted.event-alert.text-center.hide
+          .alert-msg
+            h4.alert-main-text The Execute phase of your event is not complete.
+            h4.alert-main-text You can approve your event once it has been submitted for review.
+
+      #event-details-collapse.panel-collapse.collapse aria-labelledby="headingOne" role="tabpanel"
+        .panel-body
+          .phase-container
+            .phase-steps
+                .phase-id.phase PLAN
+                .phase-id BASIC INFO
+                .phase-id CONTACTS
+                .phase-id TASKS
+                .phase-id DOCUMENTS
+                .phase-id
+                .phase-id
+                .phase-id
+                .phase-id
+                .phase-id
+                .phase-id
+            .phase-actions
+              span.status-indicator 0% COMPLETE
+          .phase-container
+            .phase-steps
+                .phase-id.phase EXECUTE
+                .phase-id POST EVENT RESULTS
+                .phase-id ACTIVITIES
+                .phase-id ATTENDANCE
+                .phase-id COMMENTS
+                .phase-id SENTIMENT SUSCRIBER
+                .phase-id SOME OTHER
+                .phase-id SOME OTHER
+                .phase-id SOME OTHER
+                .phase-id SOME OTHER
+                .phase-id SOME OTHER
+            .phase-actions
+              input.btn.btn-primary value="Submit" type="submit"
+              span.status-indicator 50% COMPLETE
+          .phase-container
+            .phase-steps
+              .row-fluid
+                .phase-id.phase RESULTS
+                .phase-id
+                  span.phase-icon> lala
+                  APPROVE PER
+
+                .phase-id
+                .phase-id
+                .phase-id
+                .phase-id
+                .phase-id
+                .phase-id
+                .phase-id
+                .phase-id
+            .phase-actions
+              .row-fluid
+                .span6
+                  input.btn.btn-primary value="Approve" type="submit" disabled="disabled"
+                .span6
+                  input.btn.btn-primary value="Reject" type="submit" disabled="disabled"
+              span.status-indicator 0% COMPLETE
+
+
+//.details-bar
   .back-arrow
     a.close-details href="#{return_path || collection_path}" title="Close Event"
       i.icon-angle-left
@@ -20,11 +142,11 @@
                   span.event-name.pull-left= resource.campaign_name
                   span.event-date.small = presenter.date_range_for_details_bar(date_separator: ' - ')
 
-        .span4.phase-indicator
+        //.span4.phase-indicator
           nav class="scrollspy-style event-details-scroll-spy"
             = presenter.current_step_indicator
 
-    #event-details-collapse.panel-collapse.collapse aria-labelledby="headingOne" role="tabpanel"
+    //#event-details-collapse.panel-collapse.collapse aria-labelledby="headingOne" role="tabpanel"
       .panel-body
         .row-fluid
           .span9.event-info
@@ -49,4 +171,4 @@
                 b EVENT PHASES
               = presenter.render_nav_phases
 
-  = presenter.guided_bar
+  //= presenter.guided_bar
