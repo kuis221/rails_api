@@ -27,24 +27,51 @@
             .span1
               p Viewing the event map
               //p Here we may put something more descriptive about the part below.
-            .span1
-              a href="#event-details-collapse" data-toggle="collapse" arrow
         .phases-collapsed
           .phase-container
-            .phase-steps
-              .phase-id.phase PLAN
-              .phase-id POST EVENT RESULTS
-              .phase-id ACTIVITIES
-              .phase-id ATTENDANCE
-              .phase-id COMMENTS
-              .phase-id SENTIMENT SUSCRIBER
-              .phase-id SOME OTHER
-              .phase-id SOME OTHER
-              .phase-id SOME OTHER
-              .phase-id SOME OTHER
-              .phase-id SOME OTHER
-            .phase-actions
-              a href="#event-details-collapse" data-toggle="collapse" arrow
+            .step.phase-id
+              .icon-check-circle
+              | PLAN
+            .step
+              .icon-connect
+                i.icon-check-circle
+              | POST EVENT RESULTS
+            .step
+              .icon-connect
+                i.icon-check-circle
+              | ACTIVITIES
+            .step
+              .icon-connect
+                i.icon-check-circle
+              | ATTENDANCE
+            .step
+              .icon-connect
+                i.icon-check-circle
+              | COMMENTS
+            .step.active
+              .icon-connect
+                span.active-circle
+              | SENTIMENT SUSCRIBER
+            .step.pending
+              .icon-connect
+                i.icon-circle
+              | SOME OTHER
+            .step.pending
+              .icon-connect
+                i.icon-circle
+              | SOME OTHER
+            .step.pending
+              .icon-connect
+                i.icon-circle
+              | SOME OTHER
+            .step.pending
+              .icon-connect
+                i.icon-circle
+              | SOME OTHER
+            .step.last-step.pending
+              .icon-connect
+                i.icon-circle
+              | SOME OTHER
 
 
 
@@ -69,59 +96,90 @@
       #event-details-collapse.panel-collapse.collapse aria-labelledby="headingOne" role="tabpanel"
         .panel-body
           .phase-container
-            .phase-steps
-                .phase-id.phase PLAN
-                .phase-id BASIC INFO
-                .phase-id CONTACTS
-                .phase-id TASKS
-                .phase-id DOCUMENTS
-                .phase-id
-                .phase-id
-                .phase-id
-                .phase-id
-                .phase-id
-                .phase-id
-            .phase-actions
+            .step.phase-id
+              .icon-check-circle
+              | PLAN
+            .step
+              .icon-connect
+                i.icon-check-circle
+              | BASIC INFO
+            .step
+              .icon-connect
+                i.icon-check-circle
+              | CONTACTS
+            .step
+              .icon-connect
+                i.icon-check-circle
+              | TASKS
+            .step.last-step
+              .icon-connect
+                i.icon-check-circle
+              | DOCUMENTS
+            .step.actions
               span.status-indicator 0% COMPLETE
+
           .phase-container
-            .phase-steps
-                .phase-id.phase EXECUTE
-                .phase-id POST EVENT RESULTS
-                .phase-id ACTIVITIES
-                .phase-id ATTENDANCE
-                .phase-id COMMENTS
-                .phase-id SENTIMENT SUSCRIBER
-                .phase-id SOME OTHER
-                .phase-id SOME OTHER
-                .phase-id SOME OTHER
-                .phase-id SOME OTHER
-                .phase-id SOME OTHER
-            .phase-actions
+            .step.phase-id EXECUTE
+            .step
+              .icon-connect
+                i.icon-check-circle
+              | POST EVENT RESULTS
+            .step
+              .icon-connect
+                i.icon-check-circle
+              | ACTIVITIES
+            .step
+              .icon-connect
+                i.icon-check-circle
+              | ATTENDANCE
+            .step
+              .icon-connect
+                i.icon-check-circle
+              | COMMENTS
+            .step.active
+              .icon-connect
+                span.active-circle
+              | SENTIMENT SUSCRIBER
+            .step.pending
+              .icon-connect
+                i.icon-circle
+              | SOME OTHER
+            .step.pending
+              .icon-connect
+                i.icon-circle
+              | SOME OTHER
+            .step.pending
+              .icon-connect
+                i.icon-circle
+              | SOME OTHER
+            .step.pending
+              .icon-connect
+                i.icon-circle
+              | SOME OTHER
+            .step.last-step.pending
+              .icon-connect
+                i.icon-circle
+              | SOME OTHER
+            .step.actions
               input.btn.btn-primary value="Submit" type="submit"
               span.status-indicator 50% COMPLETE
-          .phase-container
-            .phase-steps
-              .row-fluid
-                .phase-id.phase RESULTS
-                .phase-id
-                  span.phase-icon> lala
-                  APPROVE PER
 
-                .phase-id
-                .phase-id
-                .phase-id
-                .phase-id
-                .phase-id
-                .phase-id
-                .phase-id
-                .phase-id
-            .phase-actions
-              .row-fluid
-                .span6
-                  input.btn.btn-primary value="Approve" type="submit" disabled="disabled"
-                .span6
-                  input.btn.btn-primary value="Reject" type="submit" disabled="disabled"
+
+
+          .phase-container
+            .step.phase-id RESULTS
+            .step.last-step
+              .icon-connect
+                i.icon-check-circle
+              | APPROVE PER
+
+            .step.actions
+              input.btn.btn-primary value="Approve" type="submit" disabled="disabled"
+            .step.actions
+              input.btn.btn-primary value="Reject" type="submit" disabled="disabled"
               span.status-indicator 0% COMPLETE
+      .controller
+        a href="#event-details-collapse" data-toggle="collapse" arrow
 
 
 //.details-bar

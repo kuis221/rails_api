@@ -64,22 +64,18 @@ $phase-height: 66px;
 	  background-color: $gray-darker;
 	  box-sizing: border-box;
     height: $detail-bar-height;
-	  @include border-radius(0 6px 0 0);
+	  @include border-radius(6px 6px 0 0);
     padding-left: 60px;
-  }
-  .trackers-bar{
-    background-color: $white;
+    position: relative;
   }
 	a{
 		color: $brand;
 	}
 	.back-arrow{
-		background-color: $gray-darker;
 		box-sizing: border-box;
 		border-right: 1px solid $divider;
 		color: $brand;
 		font-size: 25px;
-		@include border-radius(6px 0 0 0);
 		line-height: 25px;
 		padding: 11px 12px;
 		position: absolute;
@@ -93,18 +89,30 @@ $phase-height: 66px;
     top: 42px;
     width: calc(100% - 100px);
     z-index: 1100;
-    .panel, .back-arrow{
+    .info-bar{
       @include border-radius(0);
     }
   }
 	.panel{
 		box-sizing: border-box;
-		@include border-radius(0 6px 0 0);
 	}
 	.panel-collapse{
 		color: $white;
-    margin-bottom: 20px;
 	}
+
+    .controller{
+      background-color: white;
+      border: 1px solid $gray-lighter;
+      border-bottom: 2px solid $gray-lighter;
+      border-top: 0;
+      margin-left: auto;
+      margin-right: auto;
+      height:20px;
+      width: 40px;
+    }
+
+
+
 
 	// Heading
 
@@ -167,26 +175,10 @@ $phase-height: 66px;
 	// Body
 
 	.panel-body{
-    background-color: $white;
 		color: $silver;
-	}
-	.info-list{
-		margin-top: 10px;
-		li{
-			font-size: 12px;
-			padding-bottom: 2px;
-		}
-		i{
-			color: $tooltip;
-			font-size: 14px;
-			margin-right: 10px;
-		}
-		address{
-			display: inline-block;
-		}
+    position:relative;
 	}
 }
-
 .panel-body{
   .phase-container:last-child{
     border-bottom: 2px solid $gray-lighter;
@@ -196,18 +188,62 @@ $phase-height: 66px;
 
 
     .phase-container{
+      background-color: $white;
       height: $phase-height;
       border-bottom: 1px solid $gray-lighter;
+      .btn-primary{
+        line-height: 16px;
+        height: 28px;
+        min-width: 82px;
+      }
       .phase-steps, .phase-actions{
         float: left;
       }
-      .phase-steps{
-                //line-height: 68px;
-        width: 81.5%;
-        .phase-id{
-          &:not(.phase){
+        .step{
+          &.phase-id{
+            background-color: $phase-bg;
+            color: $gray-light;
+            .icon-check-circle{
+              font-size: 18px;
+            }
+          }
+          &:not(.phase-id){
             color: $gray;
             font-size: 11px;
+          }
+          &.active{
+            color: $primary-blue;
+            line-height: 12px;
+            padding: 13px 0;
+            .icon-connect{
+              &:after{
+                border-color: $gray-light;
+              }
+            }
+.active-circle:before{
+  content:"\2022";
+  font-size: 36px;
+  line-height: 14px;
+}
+
+          }
+          &.pending{
+            color: $gray-light;
+            .icon-connect{
+              &:after, &:before{
+                border-color: $gray-light;
+              }
+            }
+          }
+          &.actions{
+            float: right;
+            position: relative;
+            .status-indicator{
+              bottom: 5px;
+              font-size: 11px;
+              position: absolute;
+              right: 4px;
+            }
           }
           box-sizing: border-box;
           @extend .crop-text;
@@ -215,24 +251,45 @@ $phase-height: 66px;
           font-weight: bold;
           float: left;
           height: $phase-height;
-          padding: 14px 0;
+          padding: 18px 0;
           text-align: center;
-          width: 8.8%;
-          .phase-icon{
-            display:block;
+          width: 8.333%;
+          &:nth-child(2){
+            .icon-connect{
+              &:before{
+                display: none;
+              }
+            }
           }
-        }
-      }
-      .phase-actions{
-        height: $phase-height;
-        position: relative;
-        width: 18%;
-        .status-indicator{
-          bottom: 5px;
-          font-size: 11px;
-          position: absolute;
-          right: 4px;
-        }
+          &.last-step{
+            .icon-connect{
+              &:after{
+                display:none;
+              }
+            }
+          }
+          .icon-connect{
+            position: relative;
+            &:before, &:after{
+              content:"";
+              width: 43%;
+              border-bottom: solid 1px $gray;
+              position: absolute;
+              top: 50%;
+              z-index: 1;
+            }
+            &:before{
+              left: 0;
+            }
+            &:after{
+              right: 0;
+            }
+
+          }
+          .icon-check-circle, .icon-circle{
+            display:block;
+            font-size: 14px;
+          }
       }
     }
     .phase{
@@ -241,6 +298,7 @@ $phase-height: 66px;
       font-size: 12px;
       text-align: center;
     }
+
 
 
 // Scrollspy
@@ -263,4 +321,8 @@ $phase-height: 66px;
 			}
 		}
 	}
+}
+
+.event-details-scroll-spy{
+  padding: 8px 0;
 }
