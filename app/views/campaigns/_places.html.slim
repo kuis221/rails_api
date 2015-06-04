@@ -1,7 +1,7 @@
 - items = resource.areas_and_places
 - if items.any?
   - if can?(:add_place, resource)
-    = link_to "Add Places", select_form_areas_path(campaign_id: resource), remote: true, id: 'add-place-btn', class: 'btn btn-primary', title: 'Add Place'
+    = button_to "Add Places", select_form_areas_path(campaign_id: resource), remote: true, method: :get, id: 'add-place-btn', class: 'btn btn-primary', title: 'Add Place'
   = render layout: 'goalable_list', locals: { goalables: items, kpis: resource.active_kpis, activity_types: resource.activity_types } do |goalable|
     - if can?(:remove_place, resource)
       - if goalable.is_a?(Area)
