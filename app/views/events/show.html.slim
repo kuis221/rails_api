@@ -37,6 +37,10 @@
 - content_for :footer
   javascript:
     jQuery(function(){
+      if ($('.guide-bar.event-details-scroll-spy').hasClass('rejected')){
+        $('.guide-bar').show();
+      }
+
       $(window).bind('scroll', function() {
         if (($(window).scrollTop() + $('header').outerHeight()) >  ($('header').outerHeight() + ($('.new-feature').outerHeight() || 0)) ) {
           $('.details-bar').addClass('fixed');

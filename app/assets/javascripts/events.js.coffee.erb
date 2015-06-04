@@ -57,7 +57,8 @@ jQuery ->
 		showNextStepYes '#event-comments'
 
 	$('.phase-steps').on 'click', 'li', (e) ->
-		showGuideBarWithTime()
+		if !$('.guide-bar.event-details-scroll-spy').hasClass('rejected')
+			showGuideBarWithTime()
 
 
 	$("#reject-post-event").submit (e) ->
