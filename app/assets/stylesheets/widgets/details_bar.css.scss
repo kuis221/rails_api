@@ -202,7 +202,6 @@ $phase-height: 66px;
       color: $gray-light;
       line-height: 32px;
       padding-top: 12px;
-      position: relative;
       &.active{
         .id{
           background-color: $gray-light;
@@ -212,8 +211,8 @@ $phase-height: 66px;
       .icon-lock{
         background-color: $phase-bg;
         position: absolute;
-        top: 10px;
-        right: 30px;
+        top: -3px;
+        right: -8px;
       }
       .icon-check-circle{
         font-size: 22px;
@@ -229,6 +228,7 @@ $phase-height: 66px;
         width: 16px;
         line-height: 16px;
         font-size: 11px;
+        position: relative;
       }
     }
     &:not(.phase-id){
