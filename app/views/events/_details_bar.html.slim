@@ -1,8 +1,201 @@
 // OLD STRUCTURE
 // = resource_details_bar("You are viewing event details. Click to close.")
 
-// NEW STRUCTURE
+// OLD STRUCTURE
+
 .details-bar
+  .info-bar
+    .back-arrow
+      a.close-details href="#{return_path || collection_path}" title="Close Event"
+        i.icon-angle-left
+    .details-bar-status
+      nav class="scrollspy-style event-details-scroll-spy"
+        ul.switch-list.unstyled.view-indicator
+          li
+            a data-spytarget="#application-body"
+              span Viewing event details. Click to expand the event menu.
+          li
+            a href="#event-details-collapse" data-toggle="collapse" data-spytarget="#event-details-info-end"
+              span.event-name.pull-left= resource.campaign_name
+              span.event-date.small = presenter.date_range_for_details_bar(date_separator: ' - ')
+  .trackers-bar
+    .panel
+      #headingOne.panel-heading role="tab"
+        // The heading of the panel changes depending on if it is collapsed or expanded. We should add the class .hide to the element that it is not active
+        .phases-expanded.hide
+          .phase-container
+            .step.phase-id
+            .phase-msg
+              h5.heading Viewing the event map
+              p Here we may put something more descriptive about the part below.
+
+        .phases-collapsed
+          .phase-container
+            .step.phase-id.active
+              span.id 2
+              | EXECUTE
+            .step
+              .icon-connect
+                i.icon-check-circle
+              .phase-name POST EVENT RESULTS
+            .step
+              .icon-connect
+                i.icon-check-circle
+              .phase-name ACTIVITIES
+            .step
+              .icon-connect
+                i.icon-check-circle
+              .phase-name ATTENDANCE
+            .step
+              .icon-connect
+                i.icon-check-circle
+              .phase-name COMMENTS
+            .step.active
+              .icon-connect
+                span.active-circle
+              .phase-name SENTIMENT SUSCRIBER
+            .step.pending
+              .icon-connect
+                i.icon-circle
+              .phase-name SOME OTHER
+            .step.pending
+              .icon-connect
+                i.icon-circle
+              .phase-name SOME OTHER
+            .step.pending
+              .icon-connect
+                i.icon-circle
+              .phase-name SOME OTHER
+            .step.pending
+              .icon-connect
+                i.icon-circle
+              .phase-name SOME OTHER
+            .step.last-step.pending
+              .icon-connect
+                i.icon-circle
+              .phase-name SOME OTHER
+
+
+
+        // Alerts of status: should appear in the heading a couple of seconds to indicate the status. Only the red one should be dismissed by the user. Now they are hidden, .hide class must be deleted
+
+        .event-alert.hide
+          .alert-rejected.text-center
+            .alert-msg
+              h4.alert-main-text Your event has been rejected for the following reason:
+              p.alert-secondary-text “Tousled fap typewriter 8-bit. Chia lo-fi church-key whatever, typewriter hella McSweeney's fixie.”
+            a.close.btn-dismiss-alert href="#" title="Dismiss"
+              i.icon-close
+
+        .event-alert.hide
+          .alert-approved.event-alert.text-center.hide
+            .alert-msg
+              h4.alert-main-text Your event has been approved. No further action is required.
+
+        .event-alert.hide
+          .alert-submitted.event-alert.text-center.hide
+            .alert-msg
+              h4.alert-main-text The Execute phase of your event is not complete.
+              h4.alert-main-text You can approve your event once it has been submitted for review.
+
+      #event-details-collapse.panel-collapse.collapse aria-labelledby="headingOne" role="tabpanel"
+        .panel-body
+          .phase-container
+            .step.phase-id
+              .icon-check-circle
+              | PLAN
+            .step
+              .icon-connect
+                i.icon-check-circle
+              .phase-name BASIC INFO
+            .step
+              .icon-connect
+                i.icon-check-circle
+              .phase-name CONTACTS
+            .step
+              .icon-connect
+                i.icon-check-circle
+              .phase-name TASKS
+            .step.last-step
+              .icon-connect
+                i.icon-check-circle
+              .phase-name DOCUMENTS
+            .step.actions
+              span.status-indicator 0% COMPLETE
+
+          .phase-container
+            .step.phase-id.active
+              span.id 2
+              | EXECUTE
+            .step
+              .icon-connect
+                i.icon-check-circle
+              .phase-name POST EVENT RESULTS
+            .step
+              .icon-connect
+                i.icon-check-circle
+              .phase-name ACTIVITIES
+            .step
+              .icon-connect
+                i.icon-check-circle
+              .phase-name ATTENDANCE
+            .step
+              .icon-connect
+                i.icon-check-circle
+              .phase-name COMMENTS
+            .step.active
+              .icon-connect
+                span.active-circle
+              .phase-name SENTIMENT SUSCRIBER
+            .step.pending
+              .icon-connect
+                i.icon-circle
+              .phase-name SOME OTHER
+            .step.pending
+              .icon-connect
+                i.icon-circle
+              .phase-name SOME OTHER
+            .step.pending
+              .icon-connect
+                i.icon-circle
+              .phase-name SOME OTHER
+            .step.pending
+              .icon-connect
+                i.icon-circle
+              .phase-name SOME OTHER
+            .step.last-step.pending
+              .icon-connect
+                i.icon-circle
+              .phase-name SOME OTHER
+            .step.actions
+              input.btn.btn-primary value="Submit" type="submit"
+              span.status-indicator 50% COMPLETE
+
+
+
+          .phase-container
+            .step.phase-id
+              span.id
+                | 3
+                .icon-lock
+              | RESULTS
+            .step.last-step
+              .icon-connect
+                i.icon-circle
+              .phase-name APPROVE PER
+
+            .step.actions
+              input.btn.btn-primary value="Reject" type="submit" disabled="disabled"
+              span.status-indicator 0% COMPLETE
+
+            .step.actions
+              input.btn.btn-primary value="Approve" type="submit" disabled="disabled"
+      .controller
+        a href="#event-details-collapse" data-toggle="collapse"
+          i.icon-hamburguer
+
+
+//.details-bar
   .back-arrow
     a.close-details href="#{return_path || collection_path}" title="Close Event"
       i.icon-angle-left
@@ -20,11 +213,11 @@
                   span.event-name.pull-left= resource.campaign_name
                   span.event-date.small = presenter.date_range_for_details_bar(date_separator: ' - ')
 
-        .span4.phase-indicator
+        //.span4.phase-indicator
           nav class="scrollspy-style event-details-scroll-spy"
             = presenter.current_step_indicator
 
-    #event-details-collapse.panel-collapse.collapse aria-labelledby="headingOne" role="tabpanel"
+    //#event-details-collapse.panel-collapse.collapse aria-labelledby="headingOne" role="tabpanel"
       .panel-body
         .row-fluid
           .span9.event-info
@@ -49,4 +242,4 @@
                 b EVENT PHASES
               = presenter.render_nav_phases
 
-  = presenter.guided_bar
+  //= presenter.guided_bar
