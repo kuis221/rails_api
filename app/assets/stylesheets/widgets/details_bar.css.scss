@@ -65,12 +65,37 @@ $phase-height: 66px;
 	  box-sizing: border-box;
     height: $detail-bar-height;
 	  @include border-radius(6px 6px 0 0);
-    padding-left: 60px;
+    padding-left: 40px;
     position: relative;
+		color: $brand;
+		h5{
+			margin: 0;
+		}
+    .event-name{
+      color: $gray-lighter;
+    }
+		.event-date{
+			color: $brand;
+			margin-left: 6px;
+			line-height: 14px;
+		}
   }
 	a{
 		color: $brand;
 	}
+		.switch-list{
+			a{
+				cursor: pointer!important;
+				width: 100%;
+				display: inline-block;
+				padding: 9px 0 0 20px;
+				height: 40px;
+			}
+      &.view-indicator a{
+        font-size: 12px;
+      }
+		}
+
 	.back-arrow{
 		box-sizing: border-box;
 		border-right: 1px solid $divider;
@@ -99,6 +124,7 @@ $phase-height: 66px;
 	.panel-collapse{
 		color: $white;
 	}
+}
 
     .controller{
       background-color: white;
@@ -111,79 +137,22 @@ $phase-height: 66px;
       width: 40px;
     }
 
-
-
-
-	// Heading
-
-	.panel-heading{
-		color: $brand;
-		h5{
-			margin: 0;
-		}
-		.event-date{
-			color: $brand;
-			margin-left: 6px;
-			line-height: 14px;
-		}
-		.switch-list{
-			a{
-				cursor: pointer!important;
-				width: 100%;
-				display: inline-block;
-				padding: 9px 0 0 20px;
-				height: 40px;
-			}
-      &.view-indicator a{
-        font-size: 12px;
-      }
-		}
-	}
-	.phase-indicator{
-		text-align: right;
-		padding-right: 40px;
-		a{
-			color: $app_bg;
-			padding-right: 4px;
-			padding-left: 0;
-			.arrow{
-				margin-left: 10px;
-				&:after{
-					content: "\e610";
-					font-size: 12px;
-					font-family: "icons";
-					color: $brand;
-					top: -1px;
-					position: relative;
-				}
-			}
-			&.collapsed{
-				.arrow:after{
-					top: 4px;
-					content: "\e607";
-				}
-			}
-		}
-		.phase-id{
-			background-color: $app_bg;
-		}
-	}
-	.bar-title{
-		color: $tooltip;
-		margin-bottom: 10px;
-	}
-	// Body
-
-	.panel-body{
-		color: $silver;
-    position:relative;
-	}
-}
-.panel-body{
-  .phase-container:last-child{
-    border-bottom: 2px solid $gray-lighter;
+.phases-expanded{
+  background-color: $white;
+  color: $silver;
+  .phase-msg{
+    padding-left: 30px;
+  }
+  .heading{
+    color: $brand;
+    font-weight: normal;
+    margin-bottom: 0;
   }
 }
+
+
+	// Panel Body
+
 
 .trackers-bar{
   position: absolute;
@@ -242,12 +211,14 @@ $phase-height: 66px;
           }
           &.actions{
             float: right;
+            padding: 10px 2px 0 0;
             position: relative;
             .status-indicator{
+              color: $gray-light;
               bottom: 5px;
               font-size: 11px;
               position: absolute;
-              right: 4px;
+              right: 8px;
             }
           }
           box-sizing: border-box;
@@ -328,6 +299,3 @@ $phase-height: 66px;
 	}
 }
 
-.event-details-scroll-spy{
-  padding: 8px 0;
-}

@@ -22,12 +22,14 @@
     .panel
       #headingOne.panel-heading role="tab"
         // The heading of the panel changes depending on if it is collapsed or expanded. We should add the class .hide to the element that it is not active
-        .phases-expanded.hide data-spytarget="#application-body"
-          .row-fluid
-            .span1
-              p Viewing the event map
-              //p Here we may put something more descriptive about the part below.
-        .phases-collapsed
+        .phases-expanded
+          .phase-container
+            .step.phase-id
+            .phase-msg
+              h5.heading Viewing the event map
+              p Here we may put something more descriptive about the part below.
+
+        .phases-collapsed.hide
           .phase-container
             .step.phase-id
               .icon-check-circle
@@ -174,10 +176,11 @@
               | APPROVE PER
 
             .step.actions
-              input.btn.btn-primary value="Approve" type="submit" disabled="disabled"
-            .step.actions
               input.btn.btn-primary value="Reject" type="submit" disabled="disabled"
               span.status-indicator 0% COMPLETE
+
+            .step.actions
+              input.btn.btn-primary value="Approve" type="submit" disabled="disabled"
       .controller
         a href="#event-details-collapse" data-toggle="collapse" arrow
 
