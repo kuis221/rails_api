@@ -29,6 +29,12 @@ jQuery ->
   		$('.guide-bar').slideUp()
 		), time
 
+	window.EventDetails = ->
+		this.showMessage = (message, color, close = false) ->
+			$('.guide-bar').addClass(color)
+			$('.guide-bar span').text(message)
+			showGuideBarWithTime()
+
 	$(document).on 'smooth-scroll:end', 'a.step-skip-link', () ->
 		target = $(this).parent('li').data('next')
 		message = transitionalMessages.skip[Math.floor(Math.random()*transitionalMessages.skip.length)]
