@@ -86,19 +86,18 @@ $phase-height: 66px;
 	a{
 		color: $brand;
 	}
-		.switch-list{
-			a{
-				cursor: pointer!important;
-				width: 100%;
-				display: inline-block;
-				padding: 9px 0 0 20px;
-				height: 40px;
-			}
-      &.view-indicator a{
-        font-size: 12px;
-      }
+	.switch-list{
+		a{
+			cursor: pointer!important;
+			width: 100%;
+			display: inline-block;
+			padding: 9px 0 0 20px;
+			height: 40px;
 		}
-
+    &.view-indicator a{
+      font-size: 12px;
+    }
+	}
 	.back-arrow{
 		box-sizing: border-box;
 		border-right: 1px solid $divider;
@@ -129,22 +128,24 @@ $phase-height: 66px;
 	}
 }
 
-    .controller{
-      background-color: white;
-      border: 1px solid $gray-lighter;
-      border-bottom: 2px solid $gray-lighter;
-      border-top: 0;
-      font-size: 6px;
-      line-height: 12px;
-      margin-left: auto;
-      margin-right: auto;
-      height:10px;
-      text-align: center;
-      width: 35px;
-      a{
-        display: block;
-      }
-    }
+// Controller to open and close the panel
+
+.controller{
+  background-color: white;
+  border: 1px solid $gray-lighter;
+  border-bottom: 2px solid $gray-lighter;
+  border-top: 0;
+  font-size: 6px;
+  line-height: 12px;
+  margin-left: auto;
+  margin-right: auto;
+  height:10px;
+  text-align: center;
+  width: 35px;
+  a{
+    display: block;
+  }
+}
 
 .phases-expanded{
   background-color: $white;
@@ -161,7 +162,7 @@ $phase-height: 66px;
 }
 
 
-	// Panel Body
+// Trackers Bar
 
 
 .trackers-bar{
@@ -170,120 +171,141 @@ $phase-height: 66px;
   z-index: 9;
 }
 
-
-    .phase-container{
-      background-color: $white;
-      height: $phase-height;
-      border-bottom: 1px solid $gray-lighter;
-      .btn-primary{
-        line-height: 16px;
-        height: 28px;
-        min-width: 82px;
-      }
-      .phase-steps, .phase-actions{
-        float: left;
-      }
-        .step{
-          &.phase-id{
-            background-color: $phase-bg;
-            color: $gray-light;
-            .icon-check-circle{
-              font-size: 18px;
-            }
-          }
-          &:not(.phase-id){
-            color: $gray;
-            font-size: 11px;
-          }
-          &.active{
-            color: $primary-blue;
-            line-height: 12px;
-            padding: 13px 0;
-            .icon-connect{
-              &:after{
-                border-color: $gray-light;
-              }
-            }
-.active-circle:before{
-  content:"\2022";
-  font-size: 36px;
-  line-height: 14px;
-}
-
-          }
-          &.pending{
-            color: $gray-light;
-            .icon-connect{
-              &:after, &:before{
-                border-color: $gray-light;
-              }
-            }
-          }
-          &.actions{
-            float: right;
-            padding: 10px 2px 0 0;
-            position: relative;
-            .status-indicator{
-              color: $gray-light;
-              bottom: 5px;
-              font-size: 11px;
-              position: absolute;
-              right: 8px;
-            }
-          }
-          box-sizing: border-box;
-          @extend .crop-text;
-          font-size: 13px;
-          font-weight: bold;
-          float: left;
-          height: $phase-height;
-          padding: 18px 0;
-          text-align: center;
-          width: 8.333%;
-          &:nth-child(2){
-            .icon-connect{
-              &:before{
-                display: none;
-              }
-            }
-          }
-          &.last-step{
-            .icon-connect{
-              &:after{
-                display:none;
-              }
-            }
-          }
-          .icon-connect{
-            position: relative;
-            &:before, &:after{
-              content:"";
-              width: 43%;
-              border-bottom: solid 1px $gray;
-              position: absolute;
-              top: 50%;
-              z-index: 1;
-            }
-            &:before{
-              left: 0;
-            }
-            &:after{
-              right: 0;
-            }
-
-          }
-          .icon-check-circle, .icon-circle{
-            display:block;
-            font-size: 14px;
-          }
-      }
-    }
-    .phase{
+.phase-container{
+  background-color: $white;
+  height: $phase-height;
+  border-bottom: 1px solid $gray-lighter;
+  .btn-primary{
+    line-height: 16px;
+    height: 28px;
+    min-width: 82px;
+  }
+  .phase-name{
+    @extend .crop-text;
+    padding: 6px 4px;
+  }
+  .phase-steps, .phase-actions{
+    float: left;
+  }
+  .step{
+    box-sizing: border-box;
+    font-size: 13px;
+    font-weight: bold;
+    float: left;
+    height: $phase-height;
+    padding: 17px 0;
+    text-align: center;
+    width: 8.333%;
+    &.phase-id{
       background-color: $phase-bg;
       color: $gray-light;
-      font-size: 12px;
-      text-align: center;
+      line-height: 32px;
+      padding-top: 12px;
+      &.active{
+        .id{
+          background-color: $gray-light;
+          color: $phase-bg;
+        }
+      }
+      .icon-check-circle{
+        font-size: 22px;
+      }
+      .id{
+        display:block;
+        border: 0.28em solid $gray-light;
+        @include border-radius(15px);
+        height: 16px;
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+        width: 16px;
+        line-height: 16px;
+        font-size: 11px;
+      }
     }
+    &:not(.phase-id){
+      color: $gray;
+      font-size: 11px;
+      &.active{
+        color: $primary-blue;
+        line-height: 12px;
+        padding: 13px 0;
+        .icon-connect{
+          &:after{
+            border-color: $gray-light;
+          }
+        }
+        .active-circle:before{
+          content:"\2022";
+          font-size: 40px;
+          line-height: 12px;
+        }
+      }
+    }
+    &.pending{
+      color: $gray-light;
+      .icon-connect{
+        &:after, &:before{
+          border-color: $gray-light;
+        }
+      }
+    }
+    &.actions{
+      float: right;
+      padding: 10px 2px 0 0;
+      position: relative;
+      .status-indicator{
+        color: $gray-light;
+        bottom: 5px;
+        font-size: 11px;
+        position: absolute;
+        right: 8px;
+      }
+    }
+    &:nth-child(2){
+      .icon-connect{
+        &:before{
+          display: none;
+        }
+      }
+    }
+    &.last-step{
+      .icon-connect{
+        &:after{
+          display:none;
+        }
+      }
+    }
+    .icon-connect{
+      position: relative;
+      &:before, &:after{
+        content:"";
+        width: 43%;
+        border-bottom: solid 1px $gray;
+        position: absolute;
+        top: 50%;
+        z-index: 1;
+      }
+      &:before{
+        left: 0;
+      }
+      &:after{
+        right: 0;
+      }
+    }
+    .icon-check-circle, .icon-circle{
+      display:block;
+      font-size: 16px;
+    }
+  }
+}
+
+.phase{
+  background-color: $phase-bg;
+  color: $gray-light;
+  font-size: 12px;
+  text-align: center;
+}
 
 
 
