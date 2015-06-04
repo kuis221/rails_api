@@ -185,6 +185,11 @@ $phase-height: 66px;
   }
 }
 
+.trackers-bar{
+  position: absolute;
+  width: 100%;
+  z-index: 9;
+}
 
 
     .phase-container{
