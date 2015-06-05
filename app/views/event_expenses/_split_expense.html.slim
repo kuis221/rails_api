@@ -31,22 +31,16 @@
 
     .expense-total
       .row-fluid
-        .span8
-        .span1.total-label
-          .pull-left TOTAL:
+        .span1.offset8.total-label TOTAL:
         .span2.total-amount
-          .pull-left
             b= "$<span>0</span>".html_safe
       .row-fluid
-        .span8
-        .span1.total-label
-          .pull-left
+        .span1.offset8.total-label
         .span2.left-amount
-          .pull-left= "$<span></span> left".html_safe
 
 
     .form-actions
-      = submit_tag 'Create Expenses', id: 'save-expense-btn', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
+      = submit_tag 'Create Expenses', id: 'save-expense-btn', class: 'btn btn-primary', data: { disable_with: 'Please wait...' }
       = "&nbsp;".html_safe
       = f.button :button, 'Cancel', class: 'btn btn-cancel'
 

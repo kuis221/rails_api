@@ -1121,6 +1121,9 @@ div#spin{
 			}
 			.total-amount{
 				color: $gray-dark;
+				&.text-error {
+					color: $primary-red;
+				}
 			}
 			.left-amount{
 				font-weight: normal;

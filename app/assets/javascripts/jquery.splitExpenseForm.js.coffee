@@ -6,8 +6,8 @@ $.widget 'branscopic.splitExpenseForm', {
 
 	_create: () ->
 		@element = $('.split-expense-form form')
-		@sumContainer = @element.find('.total-amount span')
-		@leftContainer = @element.find('.left-amount span')
+		@sumContainer = @element.find('.total-amount')
+		@leftContainer = @element.find('.left-amount')
 		@expenseAmount = parseFloat(@options.expenseAmount)
 		@totalExpenses = 0
 		@defaultDate = @element.find('input.date_picker:first').val()
@@ -55,7 +55,7 @@ $.widget 'branscopic.splitExpenseForm', {
 
 		@element.find('#save-expense-btn').attr 'disabled', true
 
-		@leftContainer.html @expenseAmount
+		@doCalculation()
 
 	doCalculation: (inputType) ->
 		@totalExpenses = 0
@@ -72,8 +72,18 @@ $.widget 'branscopic.splitExpenseForm', {
 				$(row).find('.amount-currency').val amountValue
 			@totalExpenses += Number(amountValue) if !isNaN(amountValue)
 
-		@sumContainer.html @totalExpenses
-		@leftContainer.html @expenseAmount - @totalExpenses
+		@sumContainer.find('span').html @totalExpenses.toFixed(2).replace(/\.00$/, '')
+		@leftContainer.html @amountLeftOverLabel(@expenseAmount - @totalExpenses)
+		if @totalExpenses > @expenseAmount
+			@sumContainer.removeClass('text-success').addClass('text-error')
+			@leftContainer.show()
+		else
+			@sumContainer.removeClass('text-error text-success')
+			if @totalExpenses is @expenseAmount
+				@sumContainer.addClass('text-success')
+				@leftContainer.hide()
+			else
+				@leftContainer.show()
 
 	checkValid: () ->
 		if @formValid() && @totalExpenses == @expenseAmount
@@ -86,4 +96,11 @@ $.widget 'branscopic.splitExpenseForm', {
 		valid = validate.checkForm()
 		validate.submitted = {}
 		valid
+
+	amountLeftOverLabel: (amount) ->
+		if amount < 0
+			"$<span>#{Math.abs(amount)}</span> over"
+		else
+			"$<span>#{amount}</span> left"
+
 }
