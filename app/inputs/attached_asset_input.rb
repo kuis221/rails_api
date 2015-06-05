@@ -118,7 +118,7 @@ class AttachedAssetInput < SimpleForm::Inputs::Base
     hidden = thumbnable? ? '' : 'style="display: none;"'
     '<div id="view-' + options[:field_id].to_s + '" class="attachment-attached-view asset-thumbnail"' + hidden + '>
         <i class="remove-attachment icon icon-remove-circle"></i>
-        <img id="image-attached" src="' + attached_asset.file.url(:medium) + '">
+        <img id="image-attached" src="' + (attached_asset? ? attached_asset.file.url(:medium) : '') + '">
     </div>'
   end
 
