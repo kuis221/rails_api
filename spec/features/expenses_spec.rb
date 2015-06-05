@@ -102,8 +102,13 @@ feature 'Events section', js: true do
 
           select_from_chosen 'Phone', from: 'Category'
           select_from_chosen 'Brand 2', from: 'Brand'
-          fill_in 'Date', with: '01/01/2014'
           fill_in 'Amount', with: '500'
+          fill_in 'Merchant', with: 'the merchant'
+          fill_in 'Description', with: 'this is the description'
+          unicheck 'Reimbursable'
+          unicheck 'Billable'
+          attach_file 'file', 'spec/fixtures/photo.jpg'
+          fill_in 'Date', with: '01/01/2014'
 
           click_js_button 'Split Expense'
         end
@@ -118,25 +123,25 @@ feature 'Events section', js: true do
 
           expense_items = page.all('.split-expense-form .expense-item')
 
-          within(expense_items[0]) do
+          within expense_items[0] do
             expect(find_field('event_expense_percentage').value).to eql ''
             select_from_chosen 'Phone', from: 'Category'
             select_from_chosen 'Brand 1', from: 'Brand'
             fill_in 'Date', with: '01/01/2014'
             fill_in 'Amount', with: '300'
-            expect(find_field('event_expense_percentage').value).to eql '60'
+            expect(page).to have_field('event_expense_percentage', with: '60')
           end
 
-          within(expense_items[1]) do
+          within expense_items[1] do
             expect(find_field('event_expense_percentage').value).to eql '0'
             select_from_chosen 'Other', from: 'Category'
             select_from_chosen 'Brand 2', from: 'Brand'
             fill_in 'Date', with: '02/02/2014'
             fill_in 'Amount', with: '200'
-            expect(find_field('event_expense_percentage').value).to eql '40'
+            expect(page).to have_field('event_expense_percentage', with: '40')
           end
 
-          within(expense_items[2]) do
+          within expense_items[2] do
             click_js_link 'Remove Expense'
           end
 
@@ -144,7 +149,20 @@ feature 'Events section', js: true do
           expect(page).to have_content('TOTAL:$500')
           expect(page).to have_content('$0 left')
 
-          #click_js_button 'Create Expenses'
+          click_js_button 'Create Expenses'
+        end
+        ensure_modal_was_closed
+
+        within expenses_list do
+          expect(page).to have_content 'Phone'
+          expect(page).to have_content 'Other'
+        end
+        event.event_expenses.each do |expense|
+          expect(expense.description).to eql 'this is the description'
+          expect(expense.merchant).to eql 'the merchant'
+          expect(expense.billable).to be_truthy
+          expect(expense.reimbursable).to be_truthy
+          expect(expense.receipt.file_file_name).to eql 'photo.jpg'
         end
       end
     end
@@ -206,5 +224,9 @@ feature 'Events section', js: true do
         end
       end
     end
+  end
+
+  def expenses_list
+    '#expenses-list'
   end
 end

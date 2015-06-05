@@ -33,6 +33,14 @@ class AttachedAssetInput < SimpleForm::Inputs::Base
     options[:required] ? 'class="required-file"' : ''
   end
 
+  def panel_classes
+    [
+      options[:panel_class],
+      (attached_asset? ? 'has-attachment' : nil),
+      (thumbnable? ? 'thumbnable' : nil)
+    ].compact.join(' ')
+  end
+
   def attached_asset?
     attached_asset.present? && attached_asset.persisted?
   end
@@ -54,7 +62,7 @@ class AttachedAssetInput < SimpleForm::Inputs::Base
   end
 
   def default_drop_zone
-    '<div class="attachment-panel ' + (options[:panel_class] || '') + '" data-id="' + (attached_asset? ? attached_asset.id.to_s : '') + '" >
+    '<div class="attachment-panel ' + panel_classes + '" data-id="' + (attached_asset? ? attached_asset.id.to_s : '') + '" >
         <div class="attachment-select-file-view"' + (attached_asset? ? 'style="display: none"' : '') + '>
           <div class="drag-box">
             <i class="icon-upload"></i>
@@ -69,13 +77,14 @@ class AttachedAssetInput < SimpleForm::Inputs::Base
           Uploading <span class="file-name"></span>.... (<span class="upload-progress"></span>)<br />
           <a href="#" class="cancel-upload">Cancel</a>
         </div>' +
-      (thumbnable? ? thumbnail_view_panel : file_view_panel) +
+      thumbnail_view_panel +
+      file_view_panel +
       '</div>
     </div>'
   end
 
   def form_field_drop_zone
-    '<div id="panel-' + options[:field_id].to_s + '" class="attachment-panel drag-drop-zone attach-field ' + (options[:panel_class] || '') + '" data-id="' + (attached_asset? ? attached_asset.id.to_s : '') + '" ' + (attached_asset? ? 'style="display: none"' : '') + '>
+    '<div id="panel-' + options[:field_id].to_s + '" class="attachment-panel drag-drop-zone attach-field ' + panel_classes + '" data-id="' + (attached_asset? ? attached_asset.id.to_s : '') + '" ' + (attached_asset? ? 'style="display: none"' : '') + '>
       <div class="attachment-select-file-view"' + (attached_asset? ? 'style="display: none"' : '') + '>
         <div class="drag-box">
           <i class="icon-upload"></i>
@@ -106,14 +115,16 @@ class AttachedAssetInput < SimpleForm::Inputs::Base
   end
 
   def thumbnail_view_panel
-    '<div id="view-' + options[:field_id].to_s + '" class="attachment-attached-view photo">
-        <img id="image-attached" src="' + attached_asset.file.url(:medium) + '" data-info="{&quot;image_id&quot;:' + attached_asset.id.to_s + ', &quot;permissions&quot;:[]}">
-      </div>
+    hidden = thumbnable? ? '' : 'style="display: none;"'
+    '<div id="view-' + options[:field_id].to_s + '" class="attachment-attached-view asset-thumbnail"' + hidden + '>
+        <i class="remove-attachment icon icon-remove-circle"></i>
+        <img id="image-attached" src="' + attached_asset.file.url(:medium) + '">
     </div>'
   end
 
   def file_view_panel
-    '<div class="attachment-attached-view"' + (attached_asset? ? '' : 'style="display: none"') + '>
+    hidden = attached_asset? && thumbnable? ? '' : 'style="display: none"'
+    '<div class="attachment-attached-view asset-text-mode"' + hidden + '>
       File attached: <span class="file-name">' + attached_asset.try(:file_file_name).to_s + '</span>
       <a href="#" class="remove-attachment">Remove</a>
       <a href="#" class="change-attachment">Change</a>

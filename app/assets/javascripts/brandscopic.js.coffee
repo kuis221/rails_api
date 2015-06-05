@@ -722,6 +722,10 @@ jQuery ->
 		return ($.trim(value) == '' || intVal <= 100);
 	, "Field cannot exceed 100%");
 
+	$.validator.addMethod('greaterthan',  (value, el, param) ->
+	    return value > param;
+	,  jQuery.validator.format("Must be greater than {0}"));
+
 	$.validator.addClassRules("segment-total", { segmentTotalMax: true, segmentTotalRequired: true });
 
 	$.validator.addMethod("segment-field", (value, element) ->

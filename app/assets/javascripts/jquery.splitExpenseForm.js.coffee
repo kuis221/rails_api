@@ -15,10 +15,12 @@ $.widget 'branscopic.splitExpenseForm', {
 		@defaultBrand = @element.find('select.brand-chosen:first').val()
 
 		@element.on 'change', 'input.amount-currency', (e) =>
+			@doCalculation 'currency'
+		.on 'blur', 'input.amount-currency', (e) =>
 			amount = parseFloat($(e.target).val()).toFixed(2)
 			amount = '0.00' if isNaN(amount)
-			$(this).val(amount)
-			@doCalculation 'currency'
+			$(e.target).val(amount)
+			@checkValid()
 
 		@element.on 'change', 'input.amount-percentage', (e) =>
 			percentage = parseInt($(e.target).val())
@@ -28,6 +30,9 @@ $.widget 'branscopic.splitExpenseForm', {
 
 		@element.on 'change', 'input, select', () =>
 			@checkValid()
+
+		# @element.find('.expense-item:last .remove-expense').append(
+		# 	@element.find('.add_nested_fields'))
 
 		$(document).on 'nested:fieldAdded', (e) =>
 			row = @element.find('.expense-item:last')
@@ -39,8 +44,14 @@ $.widget 'branscopic.splitExpenseForm', {
 			row.find('select.category-chosen').chosen()
 			row.find('select.brand-chosen').chosen()
 			row.find('input.amount-currency').val('0.00')
+			#row.find('.remove-expense').append @element.find('.add_nested_fields')
+			@element.validate()
+			@checkValid()
 
-		$(document).on 'nested:fieldRemoved', => @doCalculation()
+		$(document).on 'nested:fieldRemoved', (e) =>
+			e.field.remove()
+			@doCalculation()
+			@checkValid()
 
 		@element.find('#save-expense-btn').attr 'disabled', true
 

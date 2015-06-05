@@ -276,6 +276,14 @@ class AttachedAsset < ActiveRecord::Base
       direct_upload_url_data[:path], acl: :public_read)
   end
 
+  def self.copy_file_to_uploads_folder(url)
+    path = CGI.unescape(URI.parse(URI.encode(url)).path.gsub("/#{ENV['S3_BUCKET_NAME']}/", ''))
+    paperclip_file_path = "uploads/#{Time.now.to_i}-#{rand(5000)}/#{File.basename(path)}"
+    AWS::S3.new.buckets[ENV['S3_BUCKET_NAME']].objects[paperclip_file_path].copy_from(
+      path, acl: :public_read)
+    "https://s3.amazonaws.com/#{ENV['S3_BUCKET_NAME']}/#{paperclip_file_path}"
+  end
+
   # Rename existing file in S3
   def rename_existing_file
     return unless file_file_name_changed?

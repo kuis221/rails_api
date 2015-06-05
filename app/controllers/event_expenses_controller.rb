@@ -25,13 +25,20 @@ class EventExpensesController < InheritedResources::Base
 
   def check_split_expense
     return unless params['commit'] == 'Split Expense'
+    resource.attributes = permitted_params
     render 'split_expense'
   end
 
   def split_attributes
     params.require(:event).permit(
       event_expenses_attributes: [
-        :id, :expense_date, :category, :brand_id, :amount, :_destroy])
+        :id, :expense_date, :category, :brand_id, :amount, :_destroy]).tap do |p|
+      if receipt_url = receipt_url_from_params
+        p[:event_expenses_attributes].each do |k, e|
+          e[:receipt_attributes] = { direct_upload_url: AttachedAsset.copy_file_to_uploads_folder(receipt_url) }
+        end
+      end
+    end
   end
 
   def expense_categories
@@ -58,5 +65,15 @@ class EventExpensesController < InheritedResources::Base
       else
         EventExpense.new(event: parent)
       end
+  end
+
+  def receipt_url_from_params
+    if params[:expense_id]
+      receipt = AttachedAsset.find(params[:expense_id])
+      fail 'Cannot use this receipt' if receipt.attachable != @event_expense
+      receipt.file.url
+    elsif params[:expense_direct_upload_url]
+      CGI.unescape(params[:expense_direct_upload_url])
+    end
   end
 end

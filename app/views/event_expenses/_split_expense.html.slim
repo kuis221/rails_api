@@ -3,27 +3,31 @@
   = simple_nested_form_for(parent, url: split_event_event_expenses_path(parent), method: :post, remote: true) do |f|
     = f.error_notification
     = hidden_field_tag :id, resource.id
-    = f.fields_for :event_expenses, [resource, resource.dup] do |ef|
-      .form-inputs
-        .row-fluid.expense-item
-          .span2
+    - if resource.receipt.present?
+      = hidden_field_tag :expense_id, resource.receipt.id if resource.receipt.persisted?
+      = hidden_field_tag :expense_direct_upload_url, resource.receipt.direct_upload_url unless resource.receipt.persisted?
+    .expenses-list
+      = f.fields_for :event_expenses, [resource, resource.dup] do |ef|
+        = ef.hidden_field :reimbursable
+        = ef.hidden_field :billable
+        = ef.hidden_field :merchant
+        = ef.hidden_field :description
+
+        .form-inputs
+          .expense-item
             = ef.input :expense_date, as: :date_picker
-          .span3
             = ef.input :category, collection: expense_categories, input_html: { class: 'chosen-enabled category-chosen' }
-          .span3
             = ef.input :brand_id, as: :select, collection: brands, input_html: { class: 'chosen-enabled brand-chosen' }
-          .span1
-            = ef.input :amount, as: :currency, input_html: { class: 'amount-currency', value: '0.00' }
-          .span1.percent-field
+            = ef.input :amount, as: :currency, input_html: { class: 'amount-currency', value: '0.00', data: { 'rule-greaterthan' => 0 } }
             .control-group
               .controls
                 = label_tag 'event_expense_percentage', 'Percent', class: 'control-label'
                 .input-append
                   = text_field_tag 'event_expense_percentage', nil, class: 'amount-percentage'
                   span.add-on %
-          .remove-expense
-            = ef.link_to_remove '', class: 'icon-rounded-minus', title: 'Remove Expense'
-    = f.link_to_add '', :event_expenses, class: 'icon-rounded-add', title: 'Add Expense'
+            .control-group.remove-expense
+              = ef.link_to_remove '', class: 'icon icon-minus-rounded', title: 'Remove Expense'
+    = f.link_to_add '', :event_expenses, class: 'icon icon-rounded-add', title: 'Add Expense', data: { target: ".expenses-list" }
 
     .expense-total
       .row-fluid

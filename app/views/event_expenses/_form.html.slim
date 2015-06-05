@@ -7,7 +7,7 @@
         #expense-fields.span5
           = f.input :category, collection: expense_categories, input_html: { class: 'chosen-enabled' }
           = f.input :expense_date, as: :date_picker
-          = f.input :amount, as: :currency, class: 'string required'
+          = f.input :amount, as: :currency, class: 'string required number', input_html: { data: { 'rule-greaterthan' => 0 } } 
 
           .row-fuild
             .span6
@@ -35,7 +35,7 @@
           = f.button :button, 'Cancel', class: 'btn btn-cancel'
 
 javascript:
-    $('#event_expense_category, #event_expense_expense_date, #event_expense_amount').on('change', function(e) {
+    $('#new-expense-form').find('input, select').on('change', function(e) {
       if ($("select#event_expense_category").val() !== '' && $('input#event_expense_expense_date').val().length > 0 &&
           parseFloat($('#event_expense_amount').val()) > 0 && !$("div.event_expense_category").hasClass('error') &&
           !$("div.event_expense_expense_date").hasClass('error')){

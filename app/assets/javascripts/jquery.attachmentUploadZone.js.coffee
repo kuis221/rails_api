@@ -66,11 +66,12 @@ $.widget 'nmk.attachmentUploadZone', {
 				return
 
 			done: (e, data) ->
-				if fieldType
+				isImage = data.files[0] and data.files[0].type.indexOf('image/') is 0
+				if fieldType or isImage
 					docExtension = data.files[0].name.substr(data.files[0].name.lastIndexOf('.') + 1)
 					form.find("input[type=hidden].direct_upload_url").val $(data.result).find("Location").text()
 					form.removeClass("uploading")
-					if fieldType == 'photo'
+					if isImage
 						form.find('.attachment-uploading-view, .attachment-select-file-view').hide().end().find('.attachment-attached-view').show()
 						if data.files and data.files[0]
 							reader = new FileReader
