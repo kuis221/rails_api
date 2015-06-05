@@ -151,6 +151,33 @@ module Html
       end.join.html_safe
     end
 
+    def current_phase_steps
+      return if phases.nil?
+      guided_bar
+      (name, steps) = phases[:phases].find { |name, _| name == current_phase }
+      index_phase = phases[:phases].keys.index(phases[:current_phase])
+      h.content_tag(:div, class: "step phase-id #{'active' if name == phases[:current_phase]}") do
+        h.content_tag(:span, index_phase + 1, class: 'id') +
+        name.to_s.upcase
+      end + phase_steps(name, steps)
+    end
+
+    def phase_steps(phase, steps)
+      return if steps.nil?
+      step_last_id = steps.last[:id]
+      steps.map do |step|
+        h.content_tag(:div, class: "step #{'last-step' if step_last_id == step[:id]} #{'pending' unless step[:complete]}") do
+          h.content_tag(:div, class: 'icon-connect') do
+            h.content_tag(:i, '', class: "#{step[:complete] ? 'icon-check-circle' : 'icon-circle'}")
+          end + h.content_tag(:div, class: 'phase-name') do
+            h.link_to(step[:title].upcase, "#event-#{step[:id]}", class: 'smooth-scroll event-phase-step',
+              data:{ message: I18n.t("instructive_messages.#{phase}.#{step[:id]}.add"), message_color: 'green'})
+          end
+        end
+      end.join.html_safe
+    end
+
+
     def render_nav_phases
       return if phases.nil?
       index_phase = phases[:phases].keys.index(phases[:current_phase])
@@ -168,17 +195,17 @@ module Html
       end
     end
 
-    def phase_steps(phase)
-      return unless current_phase == phase[0]
-      h.content_tag(:ul, class: 'unstyled phase-steps') do
-        phase[1].each.map do |step|
-          list_step = step[:complete] ?  h.content_tag(:i, '', class: 'icon-checked') : ''
-          list_step << h.link_to(step[:title], "#event-#{step[:id]}", class: 'smooth-scroll')
-          list_step << ' '.html_safe + h.content_tag(:span, "(optional)", class: 'optional') unless step[:required]
-          h.content_tag(:li, list_step.html_safe, class: "#{'completed' if step[:complete]}")
-        end.join.html_safe
-      end
-    end
+    #def phase_steps(phase)
+    #  return unless current_phase == phase[0]
+    #  h.content_tag(:ul, class: 'unstyled phase-steps') do
+    #    phase[1].each.map do |step|
+    #      list_step = step[:complete] ?  h.content_tag(:i, '', class: 'icon-checked') : ''
+    #      list_step << h.link_to(step[:title], "#event-#{step[:id]}", class: 'smooth-scroll')
+    #      list_step << ' '.html_safe + h.content_tag(:span, "(optional)", class: 'optional') unless step[:required]
+    #      h.content_tag(:li, list_step.html_safe, class: "#{'completed' if step[:complete]}")
+    #    end.join.html_safe
+    #  end
+    #end
 
     def current_step_indicator
       return if phases.nil?
