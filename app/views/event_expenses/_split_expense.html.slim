@@ -1,6 +1,7 @@
 - brands = parent.campaign.brands
 .split-expense-form
   = simple_nested_form_for(parent, url: split_event_event_expenses_path(parent), method: :post, remote: true) do |f|
+    = button_tag 'Split Evenly', class: 'btn btn-default split-evenly-btn'
     = f.error_notification
     = hidden_field_tag :id, resource.id
     - if resource.receipt.present?

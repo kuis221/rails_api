@@ -121,8 +121,6 @@ feature 'Events section', js: true do
           click_js_link 'Add Expense'
           expect(page).to have_selector('.split-expense-form .expense-item', count: 3)
 
-          expense_items = page.all('.split-expense-form .expense-item')
-
           within expense_items[0] do
             expect(find_field('event_expense_percentage').value).to eql ''
             select_from_chosen 'Phone', from: 'Category'
@@ -130,6 +128,7 @@ feature 'Events section', js: true do
             fill_in 'Date', with: '01/01/2014'
             fill_in 'Amount', with: '300'
             expect(page).to have_field('event_expense_percentage', with: '60')
+            expect(page).to_not have_content('$200 left')
           end
 
           within expense_items[1] do
@@ -147,7 +146,7 @@ feature 'Events section', js: true do
 
           expect(page).to have_selector('.split-expense-form .expense-item', count: 2)
           expect(page).to have_content('TOTAL:$500')
-          expect(page).to have_content('$0 left')
+          expect(page).to_not have_content('$0 left')
 
           click_js_button 'Create Expenses'
         end
@@ -163,6 +162,60 @@ feature 'Events section', js: true do
           expect(expense.billable).to be_truthy
           expect(expense.reimbursable).to be_truthy
           expect(expense.receipt.file_file_name).to eql 'photo.jpg'
+        end
+      end
+
+      scenario 'split evenly a expense' do
+        visit event_path(event)
+
+        click_js_button 'Add Expense'
+
+        within visible_modal do
+          expect(page).to_not have_button('Split Expense')
+
+          select_from_chosen 'Phone', from: 'Category'
+          fill_in 'Amount', with: '200'
+          fill_in 'Date', with: '01/01/2014'
+
+          click_js_button 'Split Expense'
+        end
+
+        within visible_modal do
+          expect(page).to have_selector('.split-expense-form .expense-item', count: 2)
+          expect(page).to have_content('TOTAL:$0')
+          expect(page).to have_content('$200 left')
+          click_js_button 'Split Evenly'
+
+          within expense_items[0] do
+            expect(page).to have_field('Amount', with: '100.00')
+            expect(page).to have_field('Percent', with: '50')
+          end
+
+          within expense_items[1] do
+            expect(page).to have_field('Amount', with: '100.00')
+            expect(page).to have_field('Percent', with: '50')
+          end
+
+          click_js_link 'Add Expense'
+
+          click_js_button 'Split Evenly'
+
+          within expense_items[0] do
+            expect(page).to have_field('Amount', with: '66.68')
+            expect(page).to have_field('Percent', with: '33.34')
+          end
+
+          within expense_items[1] do
+            expect(page).to have_field('Amount', with: '66.66')
+            expect(page).to have_field('Percent', with: '33.33')
+          end
+
+          within expense_items[2] do
+            expect(page).to have_field('Amount', with: '66.66')
+            expect(page).to have_field('Percent', with: '33.33')
+          end
+
+          expect(page).to have_content 'TOTAL:$200'
         end
       end
     end
@@ -218,7 +271,7 @@ feature 'Events section', js: true do
 
           expect(page).to have_selector('.split-expense-form .expense-item', count: 2)
           expect(page).to have_content('TOTAL:$500')
-          expect(page).to have_content('$0 left')
+          expect(page).to_not have_content('$0 left')
 
           #click_js_button 'Create Expenses'
         end
@@ -228,5 +281,9 @@ feature 'Events section', js: true do
 
   def expenses_list
     '#expenses-list'
+  end
+
+  def expense_items
+    page.all('.split-expense-form .expense-item')
   end
 end
