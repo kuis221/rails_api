@@ -9,6 +9,8 @@ jQuery ->
 
 	EventDetails = ->
 		this.showMessage = (message, color, close = false) ->
+			$('.event-alert').removeClass (index, css) ->
+				(css.match(/(^|\s)alert-\S+/g) or []).join ' '
 			alertColor = 'alert-' + color
 			$('.event-alert').addClass(alertColor)
 			$('.event-alert .alert-main-text').text(message)
@@ -17,10 +19,10 @@ jQuery ->
 		this.showGuideBarWithTime = (time = 3000) ->
 			$('.event-alert').show()
 			setTimeout (->
-	  		$('.event-alert').slideUp()
+				$('.event-alert').slideUp()
 			), time
 		@
-		
+
 	window.EventDetails = new EventDetails()
 
 
