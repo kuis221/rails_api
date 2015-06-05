@@ -37,6 +37,13 @@ $.widget 'branscopic.splitExpenseForm', {
 			@updateTotals()
 			@checkValid()
 
+		@element.find('.btn-cancel').on 'click', (e) =>
+			e.preventDefault()
+			e.stopPropagation()
+			$('.spliteventexpense_modal.modal').on 'hidden', ->
+				window.resource_modal.appendTo($('body')).modal('show')
+			$('.spliteventexpense_modal.modal').modal('hide');
+
 		$(document).on 'nested:fieldAdded', (e) =>
 			row = @element.find('.expense-item:last')
 			row.find('input.datepicker').datepicker

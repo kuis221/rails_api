@@ -16,7 +16,7 @@
               = f.input :billable, wrapper: :checkbox
 
           .row-fuild.split-expense class="#{resource.id.present? ? nil : 'hide'}"
-            = f.submit 'Split Expense', class: 'split-expense-link'
+            = f.submit 'Split Expense', data: { disable_with: 'Split Expense' }, class: 'split-expense-link'
 
           = f.input :brand_id, as: :select, collection: brands, input_html: { class: 'input-large chosen-enabled' }
           = f.input :merchant

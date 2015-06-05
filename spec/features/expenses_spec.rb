@@ -149,6 +149,7 @@ feature 'Events section', js: true do
           expect(page).to_not have_content('$0 left')
 
           click_js_button 'Create Expenses'
+          wait_for_ajax(15)
         end
         ensure_modal_was_closed
 
@@ -216,6 +217,34 @@ feature 'Events section', js: true do
           end
 
           expect(page).to have_content 'TOTAL:$200'
+        end
+      end
+
+      scenario 'canceling a split modal will show the new expense dialog' do
+        visit event_path(event)
+
+        click_js_button 'Add Expense'
+
+        within visible_modal do
+          expect(page).to_not have_button('Split Expense')
+
+          select_from_chosen 'Phone', from: 'Category'
+          fill_in 'Amount', with: '200'
+          fill_in 'Date', with: '01/01/2014'
+
+          click_js_button 'Split Expense'
+        end
+
+        within visible_modal do
+          expect(page).to have_content('Split Expense')
+          click_js_button 'Cancel'
+        end
+
+        expect(page).to have_content('New Expense')
+        within visible_modal do
+          expect(page).to have_field('Amount', with: '200')
+          expect(page).to have_field('Category', with: 'Phone', visible: false)
+          expect(page).to have_field('Date', with: '01/01/2014')
         end
       end
     end
