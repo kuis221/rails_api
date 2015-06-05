@@ -14,7 +14,11 @@ jQuery ->
 			alertColor = 'alert-' + color
 			$('.event-alert').addClass(alertColor)
 			$('.event-alert .alert-main-text').text(message)
-			this.showGuideBarWithTime()
+			if close
+				$('.event-alert').show()
+				$('.event-alert .close').show()
+			else
+				this.showGuideBarWithTime()
 
 		this.showGuideBarWithTime = (time = 3000) ->
 			$('.event-alert').show()
@@ -24,6 +28,10 @@ jQuery ->
 		@
 
 	window.EventDetails = new EventDetails()
+
+	$('.btn-dismiss-alert').on 'click', (e) ->
+		$('.event-alert').slideUp()
+		$('.event-alert .close').hide()
 
 
 	showStep = (target, message) ->

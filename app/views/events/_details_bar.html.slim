@@ -98,9 +98,11 @@
         //      h4.alert-main-text The Execute phase of your event is not complete.
         //      h4.alert-main-text You can approve your event once it has been submitted for review.
         
-        .event-alert.text-center
+        .event-alert.text-center.hide
           .alert-msg
             h4.alert-main-text
+          a.close.btn-dismiss-alert.hide title="Dismiss"
+            i.icon-close
 
       #event-details-collapse.panel-collapse.collapse aria-labelledby="headingOne" role="tabpanel"
         .panel-body
