@@ -1123,7 +1123,11 @@ div#spin{
 				color: $gray-dark;
 			}
 			.left-amount{
+				font-weight: normal;
 				color: $silver;
+				span {
+					font-weight: bold;
+				}
 			}
 			.row-fluid [class*="span"] {
 				min-height: 20px;
