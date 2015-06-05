@@ -1047,9 +1047,17 @@ div#spin{
 	}
 }
 
-.spliteventexpense_modal{
+.spliteventexpense_modal {
 	margin-left: -400px !important;
 	width: 930px;
+	.add_nested_fields {
+		float: right;
+  		position: relative;
+  		bottom: 42px;
+  		right: -5px;
+  		font-size: 22px;
+  		color: $silver;
+	}
 	.form-inputs {
 		display: table;
 		table-layout: fixed;
@@ -1072,22 +1080,14 @@ div#spin{
 		}
 	}
 	.expenses-list > .fields {
-		.add_nested_fields {
-			display: none;
-			&:before {
-				top: 2px;
-			}
-		}
 		&:nth-child(1), &:nth-child(2) { 
 			.remove_nested_fields {
 				display:none;
 			}
 		}
-		&:last-child .add_nested_fields {
-			display: inline;
-		}
 	}
 	.split-expense-form{
+
 		.form-inputs{
 			.percent-field{
 				margin-left: 80px;
