@@ -43,19 +43,19 @@ $phase-height: 66px;
   }
 }
 
-.alert-rejected, .alert-submitted, .alert-approved{
+.alert-red, .alert-blue, .alert-green{
   display: table;
   position: relative;
   width: 100%;
 }
 
-.alert-rejected{
+.alert-red{
   background-color: $primary-red;
 }
-.alert-submitted{
+.alert-blue{
   background-color: $primary-blue;
 }
-.alert-approved{
+.alert-green{
   background-color: $primary-green;
 }
 

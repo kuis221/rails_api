@@ -79,24 +79,28 @@
 
         // Alerts of status: should appear in the heading a couple of seconds to indicate the status. Only the red one should be dismissed by the user. Now they are hidden, .hide class must be deleted
 
-        .event-alert.hide
-          .alert-rejected.text-center
-            .alert-msg
-              h4.alert-main-text Your event has been rejected for the following reason:
-              p.alert-secondary-text “Tousled fap typewriter 8-bit. Chia lo-fi church-key whatever, typewriter hella McSweeney's fixie.”
-            a.close.btn-dismiss-alert href="#" title="Dismiss"
-              i.icon-close
+        //.event-alert.hide
+        //  .alert-rejected.text-center
+        //    .alert-msg
+        //      h4.alert-main-text Your event has been rejected for the following reason:
+        //      p.alert-secondary-text “Tousled fap typewriter 8-bit. Chia lo-fi church-key whatever, typewriter hella McSweeney's fixie.”
+        //    a.close.btn-dismiss-alert href="#" title="Dismiss"
+        //      i.icon-close
+        //
+        //.event-alert.hide
+        //  .alert-approved.event-alert.text-center.hide
+        //    .alert-msg
+        //      h4.alert-main-text Your event has been approved. No further action is required.
 
-        .event-alert.hide
-          .alert-approved.event-alert.text-center.hide
-            .alert-msg
-              h4.alert-main-text Your event has been approved. No further action is required.
-
-        .event-alert
-          .alert-submitted.event-alert.text-center.hide
-            .alert-msg
-              h4.alert-main-text The Execute phase of your event is not complete.
-              h4.alert-main-text You can approve your event once it has been submitted for review.
+        //.event-alert.hide
+        //  .alert-green.event-alert.text-center
+        //    .alert-msg
+        //      h4.alert-main-text The Execute phase of your event is not complete.
+        //      h4.alert-main-text You can approve your event once it has been submitted for review.
+        
+        .event-alert.text-center
+          .alert-msg
+            h4.alert-main-text
 
       #event-details-collapse.panel-collapse.collapse aria-labelledby="headingOne" role="tabpanel"
         .panel-body

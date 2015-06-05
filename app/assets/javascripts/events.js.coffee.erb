@@ -7,6 +7,22 @@ jQuery ->
 	$(document).delegate ".task-completed-checkbox", "click", ->
 		$(@form).submit()
 
+	EventDetails = ->
+		this.showMessage = (message, color, close = false) ->
+			alertColor = 'alert-' + color
+			$('.event-alert').addClass(alertColor)
+			$('.event-alert .alert-main-text').text(message)
+			this.showGuideBarWithTime()
+
+		this.showGuideBarWithTime = (time = 3000) ->
+			$('.event-alert').show()
+			setTimeout (->
+	  		$('.event-alert').slideUp()
+			), time
+		@
+		
+	window.EventDetails = new EventDetails()
+
 
 	showStep = (target, message) ->
 		return unless target
@@ -22,18 +38,6 @@ jQuery ->
 		target = guidedBarNav.find("a[data-spytarget=\"#{currentStep}\"]").parent('li').data('next')
 		message = transitionalMessages.yes[Math.floor(Math.random()*transitionalMessages.skip.length)]
 		showStep target, message
-
-	showGuideBarWithTime = (time = 3000) ->
-		$('.guide-bar').show()
-		setTimeout (->
-  		$('.guide-bar').slideUp()
-		), time
-
-	window.EventDetails = ->
-		this.showMessage = (message, color, close = false) ->
-			$('.guide-bar').addClass(color)
-			$('.guide-bar span').text(message)
-			showGuideBarWithTime()
 
 	$(document).on 'smooth-scroll:end', 'a.step-skip-link', () ->
 		target = $(this).parent('li').data('next')
