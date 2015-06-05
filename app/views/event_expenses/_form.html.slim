@@ -2,7 +2,7 @@
 .form-inputs
   .expense-info-form
     - resource.build_receipt unless resource.receipt.present?
-    = simple_form_for([parent, resource], id: 'new-expense-form', remote: true) do |f|
+    = simple_form_for([parent, resource], html: { id: 'new-expense-form' }, remote: true) do |f|
       .row-fluid.expense-fields-wrapper
         #expense-fields.span5
           = f.input :category, collection: expense_categories, input_html: { class: 'chosen-enabled' }
@@ -30,17 +30,16 @@
 
       .row-fluid
         .form-actions.inside-form
-          = submit_tag 'Create', id: 'save-expense-btn', class: 'btn btn-primary', data: {disable_with: 'Please wait...'}
+          = submit_tag 'Create', id: 'save-expense-btn', class: 'btn btn-primary', data: { disable_with: 'Please wait...' }
           = "&nbsp;".html_safe
           = f.button :button, 'Cancel', class: 'btn btn-cancel'
 
 javascript:
-    $('#new-expense-form').find('input, select').on('change', function(e) {
-      if ($("select#event_expense_category").val() !== '' && $('input#event_expense_expense_date').val().length > 0 &&
-          parseFloat($('#event_expense_amount').val()) > 0 && !$("div.event_expense_category").hasClass('error') &&
-          !$("div.event_expense_expense_date").hasClass('error')){
-        $('.split-expense').show();
-      } else {
-        $('.split-expense').hide();
-      }
-    });
+  $('#new-expense-form').find('input, select').on('change', function(e) {
+    if ($('#new-expense-form').validate().checkForm()){
+      $('.split-expense').show();
+    } else {
+      $('.split-expense').hide();
+    }
+    $('#new-expense-form').validate().submitted = {}
+  });
