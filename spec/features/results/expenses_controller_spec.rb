@@ -70,11 +70,9 @@ feature 'Results Expenses Page', js: true, search: true  do
     end
 
     scenario 'clicking on the expense item should redirect the user to the event' do
-      event = build(:approved_event, campaign: campaign1, company: company, start_date: '08/21/2013',
-                                     end_date: '08/21/2013', start_time: '8:00pm', end_time: '11:00pm')
-      event.event_expenses.build(name: 'Entertainment', event_id: event.id, amount: 10, expense_date: '01/01/2015')
-      event.save
-
+      event = create(:approved_event, campaign: campaign1, company: company, start_date: '08/21/2013',
+                                      end_date: '08/21/2013', start_time: '8:00pm', end_time: '11:00pm',
+                                      event_expenses: [ build(:event_expense, amount: 10) ])
       Sunspot.commit
       visit results_expenses_path
 

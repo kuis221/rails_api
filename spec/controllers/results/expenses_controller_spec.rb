@@ -38,8 +38,9 @@ describe Results::ExpensesController, type: :controller do
       ResqueSpec.perform_all(:export)
 
       expect(export.reload).to have_rows([
-        ['CAMPAIGN NAME', 'BRAND', 'VENUE NAME', 'ADDRESS', 'START DATE',
-         'END DATE', 'CATEGORY', 'DESCRIPTION', 'ACTIVE STATE']
+        ['CAMPAIGN NAME', 'BRAND', 'VENUE NAME', 'ADDRESS', 'DATE', 'START DATE', 'END DATE',
+         'AMOUNT', 'CATEGORY', 'REIMBURSABLE', 'BILLABLE', 'MERCHANT', 'DESCRIPTION',
+         'ACTIVE STATE']
       ])
     end
 

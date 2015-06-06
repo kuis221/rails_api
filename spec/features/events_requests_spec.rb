@@ -1461,10 +1461,9 @@ feature 'Events section' do
       end
 
       scenario 'allows to unapprove an approved event' do
-        event = create(:approved_event,
-                       start_date: Date.yesterday.to_s(:slashes),
-                       end_date: Date.yesterday.to_s(:slashes),
-                       campaign: campaign)
+        event = create(:approved_event, start_date: Date.yesterday.to_s(:slashes),
+                                        end_date: Date.yesterday.to_s(:slashes),
+                                        campaign: campaign)
 
         visit event_path(event)
 
