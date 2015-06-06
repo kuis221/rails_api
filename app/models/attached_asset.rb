@@ -79,6 +79,8 @@ class AttachedAsset < ActiveRecord::Base
                                 format: { with: DIRECT_UPLOAD_URL_FORMAT }
   validates :direct_upload_url, presence: true, unless: :file_file_name
 
+  validate :event_photos, before: :create, if: proc { |a| a.attachable.is_a?(Event) && a.asset_type == 'photo'}
+
   delegate :company_id, to: :attachable
 
   searchable if: :processed? do
@@ -365,5 +367,11 @@ class AttachedAsset < ActiveRecord::Base
       transfer_and_cleanup
     end
     true
+  end
+
+  def event_photos
+    return true unless attachable.campaign.range_module_settings?('photos')
+    max = attachable.campaign.module_setting('photos', 'range_max')
+    errors.add(:base, I18n.translate('instructive_messages.execute.photo.add_exceeded', photos_max: max)) if attachable.photos.active.count >= max.to_i
   end
 end

@@ -7,12 +7,12 @@
     = render 'form_dialog'
 - else
   - if params['partial'] == 'event_data'
+    = update_event_details_bar(resource)
     |
       $('#edit_event_data_form').remove();
       $('.box_event_data').html("#{escape_javascript(render('results_event_data'))}").show();
+      window.EventDetails.showMessage("#{j I18n.translate('instructive_messages.execute.per.completed')}", 'green');
       setTimeout(function(){ $(window).resize() });
-    = update_event_details_bar(resource)
-    |  $(document).trigger('per:completed')
   - else
     |
       $('.bootbox.modal').modal('hide');

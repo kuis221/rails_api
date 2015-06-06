@@ -231,6 +231,7 @@ jQuery ->
 		focusInvalid: false,
 		invalidHandler: (form, validator) ->
 			return unless validator.numberOfInvalids()
+			window.EventDetails.showMessage($('form.event-data-form').data('per-save-failed'), 'red');
 			element = $(validator.errorList[0].element)
 			while element.is(":hidden")
 				element = element.parent()
