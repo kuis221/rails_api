@@ -11,8 +11,7 @@ jQuery ->
 		this.showMessage = (message, color, close = false) ->
 			$('.event-alert').removeClass (index, css) ->
 				(css.match(/(^|\s)alert-\S+/g) or []).join ' '
-			alertColor = 'alert-' + color
-			$('.event-alert').addClass(alertColor)
+			$('.event-alert').addClass('alert-' + color)
 			$('.event-alert .alert-main-text').text(message)
 			if close
 				$('.event-alert').show()
@@ -28,6 +27,9 @@ jQuery ->
 		@
 
 	window.EventDetails = new EventDetails()
+
+	$('.event-phase-step').on 'click', (e) ->
+		window.EventDetails.showMessage($(this).data('message'), $(this).data('message-color'))
 
 	$('.btn-dismiss-alert').on 'click', (e) ->
 		$('.event-alert').slideUp()

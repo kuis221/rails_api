@@ -31,6 +31,10 @@
 
         .phases-collapsed
           .phase-container
+            = presenter.current_phase_steps
+
+        .phases-collapsed
+          .phase-container
             .step.phase-id.active
               span.id 2
               | EXECUTE
@@ -106,6 +110,7 @@
 
       #event-details-collapse.panel-collapse.collapse aria-labelledby="headingOne" role="tabpanel"
         .panel-body
+          = presenter.render_nav_phases
           .phase-container
             .step.phase-id
               .icon-check-circle
@@ -246,4 +251,4 @@
             nav id="event-details-scroll-spy" class="scrollspy-style event-details-scroll-spy"
               .bar-title.small
                 b EVENT PHASES
-              = presenter.render_nav_phases
+              //= presenter.render_nav_phases
