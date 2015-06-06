@@ -26,6 +26,10 @@ FactoryGirl.define do
     amount '9.99'
     category 'Entertainment'
     expense_date '01/01/2015'
+    reimbursable false
+    billable false
+    merchant nil
+    description nil
     brand_id nil
   end
 end

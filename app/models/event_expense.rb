@@ -25,7 +25,7 @@ class EventExpense < ActiveRecord::Base
   # validates :event_id, presence: true, numericality: true
   validates :category, presence: true
   validates :expense_date, presence: true
-  validates :amount, presence: true, numericality: true
+  validates :amount, presence: true, numericality: { greater_than: 0 }
   validate :valid_receipt?, if: :receipt_required?
 
   after_save :update_event_data

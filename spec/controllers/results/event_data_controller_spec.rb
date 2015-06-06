@@ -67,7 +67,7 @@ describe Results::EventDataController, type: :controller do
       event.users << company_user
       team = create(:team, company: company, name: 'zteam')
       event.teams << team
-      event.event_expenses.build(amount: 99.99, name: 'sample expense')
+      event.event_expenses.build(amount: 99.99, category: 'Entertainment')
       set_event_results(event,
                         impressions: 10, interactions: 11, samples: 12, gender_male: 40, gender_female: 60,
                         ethnicity_asian: 18, ethnicity_native_american: 19, ethnicity_black: 20, ethnicity_hispanic: 21, ethnicity_white: 22)
@@ -188,7 +188,7 @@ describe Results::EventDataController, type: :controller do
         start_date: '01/23/2019', end_date: '01/23/2019',
         start_time: '10:00 am', end_time: '12:00 pm')
       event.users << company_user
-      event.event_expenses.build(amount: 99.99, name: 'sample expense')
+      event.event_expenses.build(amount: 99.99, category: 'Entertainment')
       event.result_for_kpi(custom_kpi).value = 8899
       event.result_for_kpi(checkbox_kpi).value = [checkbox_kpi.kpis_segments.first.id]
       event.result_for_kpi(radio_kpi).value = radio_kpi.kpis_segments.first.id

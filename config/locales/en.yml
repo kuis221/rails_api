@@ -944,6 +944,11 @@ en:
       event_end_date: 'Event End Date'
       event_end_time: 'Event End Time'
       active_state: "Active State"
+      category: "Category"
+      expense_date: "Date"
+      reimbursable: "Reimbursable"
+      billable: "Billable"
+      merchant: "Merchant"
     descriptions:
       event:
         campaign_name: "The assigned campaign of the event"

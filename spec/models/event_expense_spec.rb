@@ -26,4 +26,8 @@ describe EventExpense, type: :model do
   it { is_expected.to validate_presence_of(:category) }
   it { is_expected.to validate_presence_of(:expense_date) }
   it { is_expected.to validate_presence_of(:amount) }
+  it { is_expected.to validate_numericality_of(:amount) }
+  it { is_expected.to allow_value('0.50').for(:amount) }
+  it { is_expected.to allow_value('50').for(:amount) }
+  it { is_expected.to_not allow_value('0.00').for(:amount) }
 end

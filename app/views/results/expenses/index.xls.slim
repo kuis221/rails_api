@@ -30,11 +30,21 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
         Cell
           Data ss:Type="String" ADDRESS
         Cell
+          Data ss:Type="String" DATE
+        Cell
           Data ss:Type="String" START DATE
         Cell
           Data ss:Type="String" END DATE
         Cell
-          Data ss:Type="String" EXPENSE
+          Data ss:Type="String" AMOUNT
+        Cell
+          Data ss:Type="String" CATEGORY
+        Cell
+          Data ss:Type="String" REIMBURSABLE
+        Cell
+          Data ss:Type="String" BILLABLE
+        Cell
+          Data ss:Type="String" MERCHANT
         Cell
           Data ss:Type="String" DESCRIPTION
         Cell
@@ -42,22 +52,33 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
 
       - each_collection_item do |event|
         - event.event_expenses.each do |expense|
+          - presenter = present(expense, :xls)
           Row
             Cell
               Data ss:Type="String"= event.campaign_name
             Cell
-              Data ss:Type="String"= expense.brand.try(:name)
+              Data ss:Type="String"= presenter.brand
             Cell
               Data ss:Type="String"= event.place_name
             Cell
-              Data ss:Type="String"= strip_tags(event_place_address(event, false, ', ', ', '))
+              Data ss:Type="String"= presenter.event_address
             Cell ss:StyleID="s2"
-              Data ss:Type="DateTime"= Timeliness.parse(event_date(event, :start_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%FT%R')
+              Data ss:Type="DateTime"= presenter.expense_date
             Cell ss:StyleID="s2"
-              Data ss:Type="DateTime"= Timeliness.parse(event_date(event, :end_at).strftime('%Y-%m-%d %H:%M:%S'), zone: 'UTC').strftime('%FT%R')
+              Data ss:Type="DateTime"= presenter.end_date
+            Cell ss:StyleID="s2"
+              Data ss:Type="DateTime"= presenter.start_date
             Cell ss:StyleID="s4"
-              Data ss:Type="Number"= expense.amount
+              Data ss:Type="Number"= presenter.amount
             Cell
-              Data ss:Type="String"= expense.name
+              Data ss:Type="String"= presenter.category
+            Cell
+              Data ss:Type="String"= presenter.reimbursable
+            Cell
+              Data ss:Type="String"= presenter.billable
+            Cell
+              Data ss:Type="String"= presenter.merchant
+            Cell
+              Data ss:Type="String"= presenter.description
             Cell
               Data ss:Type="String"= event.status

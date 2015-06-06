@@ -86,7 +86,7 @@ describe EventData, type: :model do
 
       event.save
 
-      event.event_expenses.create(name: 'test expense', amount: 345)
+      event.event_expenses.create(category: 'test expense', amount: 345, expense_date: '01/01/2014')
 
       # Call the method manually
       event.event_data.update_data
