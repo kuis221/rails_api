@@ -38,6 +38,10 @@ class BasePresenter < SimpleDelegator
     end
   end
 
+  def icon(name)
+    h.content_tag(:i, '', class: "icon icon-#{name}")
+  end
+
   def format_date(the_date, plain = false)
     unless the_date.nil?
       if plain

@@ -8,33 +8,45 @@ jQuery ->
 		$(@form).submit()
 
 	EventDetails = ->
+		this.alertBox = $('.event-alert')
+		this.closeAlertTimeout = false
 		this.showMessage = (message, color, close = false) ->
+			clearTimeout this.closeAlertTimeout if this.closeAlertTimeout
 			$('.event-alert').removeClass (index, css) ->
 				(css.match(/(^|\s)alert-\S+/g) or []).join ' '
-			$('.event-alert').addClass('alert-' + color)
-			$('.event-alert .alert-main-text').text(message)
+			this.alertBox.addClass('alert-' + color).find('.alert-main-text').text(message)
 			if close
-				$('.event-alert').show()
-				$('.event-alert .close').show()
+				this.show().find('.close').show()
 			else
-				this.showGuideBarWithTime()
+				this.showMessageWithAutoClose()
 
-		this.showGuideBarWithTime = (time = 3000) ->
-			$('.event-alert').show()
-			setTimeout (->
-				$('.event-alert').slideUp()
-			), time
+		this.showMessageWithAutoClose = (time = 3000, duration='slow') ->
+			$('.event-alert').slideDown(duration)
+			this.closeAlertTimeout = setTimeout ->
+				$('.event-alert').slideUp(duration)
+			, time
+		this.closeMessage= (duration = 'slow') ->
+			this.alertBox.slideUp(duration)
 		@
 
 	window.EventDetails = new EventDetails()
 
-	$('.event-phase-step').on 'click', (e) ->
-		window.EventDetails.showMessage($(this).data('message'), $(this).data('message-color'))
+	$(document)
+		.on 'click', '.event-phase-step', (e) ->
+			window.EventDetails.closeMessage('fast')
+			$('#phases-container .phase-container:not(.active)').slideUp()
+		.on 'smooth-scroll:end', '.event-phase-step', (e) ->
+			window.EventDetails.showMessage($(this).data('message'), $(this).data('message-color'))
 
 	$('.btn-dismiss-alert').on 'click', (e) ->
 		$('.event-alert').slideUp()
 		$('.event-alert .close').hide()
 
+	$('#toggle-phases-steps').on 'click', (e) ->
+		e.preventDefault()
+		window.EventDetails.closeMessage('fast')
+		$('#phases-container .phase-container:not(.active)').slideToggle()
+		false
 
 	showStep = (target, message) ->
 		return unless target

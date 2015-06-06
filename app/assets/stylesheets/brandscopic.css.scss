@@ -405,7 +405,7 @@ body{
 
 body.events.show{
 	#event-info.details_box {
-		padding-top: 55px;
+		padding-top: 90px;
 	}
 	.event-contact {
 		a.edit {
@@ -4383,81 +4383,6 @@ body.roles{
 	display: none;
 	&:hover {
 		color: #fff;
-	}
-}
-
-.phases-top-nav{
-	color: $gray-light;
-	font-weight: bold;
-	margin: 35px 0 20px 0;
-	a {
-		color: $gray-light;
-	}
-	.completed{
-		a {
-			color: $brand;
-		}
-		.circle-step{
-			border-color: $brand;
-			.icon-checked{
-				position: relative;
-				top: 3px;
-			}
-			a{
-				color: $brand;
-				display: block;
-			}
-		}
-	}
-	.active{
-		color: $primary-blue;
-		.circle-step{
-			background-color: $primary-blue;
-			border-color: $primary-blue;
-			color: $white;
-		}
-		&.rejected, &.late{
-			color: $primary-red;
-			.circle-step{
-				background-color: $primary-red;
-				border-color: $primary-red;
-			}
-		}
-		&.approved{
-			color: $primary-green;
-			.circle-step{
-				background-color: $primary-green;
-				border-color: $primary-green;
-			}
-		}
-	}
-	.step{
-		font-size: 12px;
-    &:not(.locked){
-      &:hover{
-        cursor: pointer;
-        text-decoration: underline;
-      }
-    }
-    &.locked{
-      .circle-step{
-        margin-right: 2px;
-      }
-      .icon-lock{
-        margin-left: 6px;
-      }
-    }
-  }
-	.circle-step{
-		border: 2px solid $gray-light;
-		display: inline-block;
-		height: 22px;
-		@include border-radius(15px);
-		line-height: 22px;
-		margin-right: 4px;
-		margin-left: 15px;
-		text-align: center;
-		width: 22px;
 	}
 }
 

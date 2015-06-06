@@ -18,6 +18,17 @@ $phase-height: 66px;
 // Alerts for events on events bar
 
 .event-alert{
+  display: block;
+  position: absolute;
+  width: 100%;
+  z-index: 2;
+  text-align: center;
+  .alert-inner {
+    display: table;
+    position: relative;
+    width: 100%
+  }
+
   .alert-main-text{
     color: $white;
     font-weight: normal;
@@ -41,12 +52,6 @@ $phase-height: 66px;
     right: 10px;
     top: 10px;
   }
-}
-
-.alert-red, .alert-blue, .alert-green{
-  display: table;
-  position: relative;
-  width: 100%;
 }
 
 .alert-red{

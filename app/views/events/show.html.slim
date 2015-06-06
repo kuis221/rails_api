@@ -37,18 +37,14 @@
 - content_for :footer
   javascript:
     jQuery(function(){
-      if ($('.guide-bar.event-details-scroll-spy').hasClass('rejected')){
-        //$('.guide-bar').show();
-      }
-
       $(window).bind('scroll', function() {
         if (($(window).scrollTop() + $('header').outerHeight()) >  ($('header').outerHeight() + ($('.new-feature').outerHeight() || 0)) ) {
           $('.details-bar').addClass('fixed');
-          $('#event-info.details_box').css({paddingTop: $('.guide-bar').outerHeight() + $('.details-bar').outerHeight()});
+          // $('#event-info.details_box').css({paddingTop: $('.trackers-bar').outerHeight() + $('.details-bar').outerHeight()});
         }
         else {
           $('.details-bar').removeClass('fixed');
-          $('#event-info.details_box').css({paddingTop: $('.guide-bar').outerHeight()});
+          // $('#event-info.details_box').css({paddingTop: $('.trackers-bar').outerHeight()});
         }
       })
 

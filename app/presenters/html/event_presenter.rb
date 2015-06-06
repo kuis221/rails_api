@@ -40,19 +40,17 @@ module Html
       the_date.html_safe
     end
 
-    def date_range_for_details_bar(options={})
+    def date_range_for_details_bar
       return if start_at.nil?
       return format_date_with_time(start_at, true, false) if end_at.nil?
-      options[:date_separator] ||= ' - '
       if start_at.to_date != end_at.to_date
-        format_date_with_time(start_at, true, false) +
-        options[:date_separator].html_safe +
-        format_date_with_time(end_at, true, false)
+        format_date_with_time(start_at, true, false) + ' - '.html_safe +
+          format_date_with_time(end_at, true, false)
       else
         if start_at.strftime('%Y') == Time.zone.now.year.to_s
-          the_date = start_at.strftime('%b %e' + options[:date_separator]).html_safe
+          the_date = start_at.strftime('%b %e' + ' - ').html_safe
         else
-          the_date = start_at.strftime('%b %e, %Y' + options[:date_separator]).html_safe
+          the_date = start_at.strftime('%b %e, %Y' + ' - ').html_safe
         end
         the_date += "#{start_at.strftime('%l:%M %p').strip} - #{end_at.strftime('%l:%M %p').strip}".html_safe
         the_date
@@ -157,30 +155,41 @@ module Html
       index_phase = phases[:phases].keys.index(phases[:current_phase])
       h.content_tag(:div, class: "step phase-id #{'active' if name == phases[:current_phase]}") do
         h.content_tag(:span, index_phase + 1, class: 'id') +
-        name.to_s.upcase
-      end + phase_steps(name, steps)
+          name.to_s.upcase
+      end + phase_steps(name, index_phase, steps)
     end
 
-    def phase_steps(phase, steps)
+    def phase_steps(phase, index, steps)
       return if steps.nil?
       step_last_id = steps.last[:id]
+      current_phase_index = phases[:phases].keys.index(phases[:current_phase])
       steps.map do |step|
-        h.content_tag(:div, class: "step #{'last-step' if step_last_id == step[:id]} #{'pending' unless step[:complete]}") do
+        button = h.content_tag(:div, class: "step #{'last-step' if step_last_id == step[:id]} #{'pending' unless step[:complete]}") do
           h.content_tag(:div, class: 'icon-connect') do
             h.content_tag(:i, '', class: "#{step[:complete] ? 'icon-check-circle' : 'icon-circle'}")
-          end + h.content_tag(:div, class: 'phase-name') do
-            h.link_to(step[:title].upcase, "#event-#{step[:id]}", class: 'smooth-scroll event-phase-step',
-              data:{ message: I18n.t("instructive_messages.#{phase}.#{step[:id]}.add"), message_color: 'green'})
-          end
+          end +
+            h.content_tag(:div, step[:title].upcase, class: 'phase-name')
         end
+        step_link(phase, step, button, index <= current_phase_index)
       end.join.html_safe
+    end
+
+    def step_link(phase, step, content, linked)
+      url = target = "#event-#{step[:id]}"
+      url = h.phase_event_path(@model, phase: phase) + target unless phase == current_phase
+      h.link_to_if linked, content, url,
+                 class: 'smooth-scroll event-phase-step',
+                 data: { message: I18n.t("instructive_messages.#{phase}.#{step[:id].to_s.singularize}.add"),
+                         message_color: 'green',
+                         target: target }
     end
 
     def render_nav_phases
       return if phases.nil?
+      current_phase_index = phases[:phases].keys.index(current_phase)
       phases[:phases].each_with_index.map do |phase, i|
-        h.content_tag(:div, class: 'phase-container') do
-          render_nav_phase( phase, i)
+        h.content_tag(:div, class: "phase-container #{i == current_phase_index ? 'active' : 'hide'}") do
+          render_nav_phase(phase, i)
         end
       end.join.html_safe
     end
@@ -190,30 +199,15 @@ module Html
       index_phase = phases[:phases].keys.index(phases[:current_phase])
       completed = i <= index_phase
       h.content_tag(:div, class: "step phase-id #{'active' if phase[0] == phases[:current_phase]}") do
-        (completed ? h.content_tag(:div, '', class: 'icon-check-circle') : h.content_tag(:span, i + 1, class: 'id')) +
-        phase[0].upcase
-      end + phase_steps(phase[0], phase[1])
-    end
-
-    #should be removed
-    def current_phases_indicator
-      return if phases.nil?
-      completed_index = phases[:phases].keys.index(phases[:current_phase])
-      phases[:phases].each_with_index.map do |phase, i|
-        h.content_tag(:span, class: "step #{'active' if phase[0] == current_phase} #{'completed' if i <= completed_index && phase[0] != current_phase} #{@model.aasm_state}#{@model.late? && @model.unsent? ? ' late' : '' }") do
-          value_phase =  i <= completed_index && phase[0] != current_phase ? h.content_tag(:i, '', class: 'icon-checked') : i + 1
-          h.content_tag(:span, value_phase, class: 'circle-step') do
-            phase_link(phase[0], i <= completed_index && phase[0] != current_phase, value_phase)
-          end +
-          phase_link(phase[0], i <= completed_index && phase[0] != current_phase)
-        end
-      end.join.html_safe
-    end
-
-    def phase_link(phase, linked, label = '')
-      h.link_to_if linked, label.present? ? label : phase.to_s.upcase,
-                   h.phase_event_path(@model, phase: phase,
-                                              return: h.return_path)
+        (if completed
+           h.content_tag(:div, '', class: "icon-check-circle")
+         else
+           h.content_tag(:span, class: 'id') do
+            "#{i + 1}#{icon(:lock) if i > index_phase}".html_safe
+           end
+         end) +
+          phase[0].upcase
+      end + phase_steps(phase[0], i, phase[1])
     end
   end
 end
