@@ -149,16 +149,6 @@ module Html
       end.join.html_safe
     end
 
-    def current_phase_steps
-      return if phases.nil?
-      (name, steps) = phases[:phases].find { |name, _| name == current_phase }
-      index_phase = phases[:phases].keys.index(phases[:current_phase])
-      h.content_tag(:div, class: "step phase-id #{'active' if name == phases[:current_phase]}") do
-        h.content_tag(:span, index_phase + 1, class: 'id') +
-          name.to_s.upcase
-      end + phase_steps(name, index_phase, steps)
-    end
-
     def phase_steps(phase, index, steps)
       return if steps.nil?
       step_last_id = steps.last[:id]
