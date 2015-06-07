@@ -16,6 +16,14 @@ module Html
     end
 
     def plan_tasks
+      message_route =  'instructive_messages.plan.task.'
+      if @model.tasks.count > 0
+        can?(:tasks) ?
+          #I18n.t("#{message_route}added_more", contacts_count: @model.contacts.count) :
+          #I18n.t("#{message_route}details")
+      else
+        can?(:tasks) ? I18n.t("#{message_route}add") : I18n.t("#{message_route}empty")
+      end
     end
 
     def plan_documents
