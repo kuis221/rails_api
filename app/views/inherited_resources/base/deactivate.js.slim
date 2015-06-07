@@ -13,10 +13,20 @@
 
   - if resource.is_a?(AttachedAsset) && resource.asset_type == 'photo'
     - if resource.attachable_type == 'Event'
-      | $('#photos-thumbs ##{resource_class}_#{resource.id}').remove();
+      |
+        $('#photos-thumbs ##{resource_class}_#{resource.id}').remove();
+        window.EventDetails.showMessage("#{j I18n.translate('instructive_messages.execute.photo.deactivated')}", 'green');
 
   - if resource.is_a?(AttachedAsset) && resource.asset_type == 'document' && resource.attachable_type == 'Event'
-    | $('##{resource_class}_#{resource.id}').remove();
+    |
+      $('##{resource_class}_#{resource.id}').remove();
+      window.EventDetails.showMessage("#{j I18n.translate('instructive_messages.plan.document.removed')}", 'green');
+
+  - if resource.is_a?(Task) && resource.event_id.present?
+    | window.EventDetails.showMessage("#{j I18n.translate('instructive_messages.plan.task.deactivated')}", 'green');
+
+  - if resource.is_a?(Activity)
+    | window.EventDetails.showMessage("#{j I18n.translate('instructive_messages.execute.activity.deactivated', activity_type: @activity.activity_type.name)}", 'green');
 
   |
     if (element.length && !element.data('no-remove-on-deactivate')) {

@@ -11,7 +11,7 @@
             i.icon.icon-download
 
     - fields = resource.campaign.form_fields.includes(:kpi)
-    = simple_form_for(resource, remote: true, html: {class: 'event-data-form', data: {'prompt-message' => 'Your post event form has not been saved', 'watch-changes' => true}}) do |f|
+    = simple_form_for(resource, remote: true, html: { class: 'event-data-form', data: { 'prompt-message' => 'Your post event form has not been saved', 'watch-changes' => true, 'per-save-failed' => I18n.translate('instructive_messages.execute.per.failed') } }) do |f|
       = f.error_notification
 
       = render partial: 'event_data', locals: { fields: fields, f: f }
@@ -30,8 +30,4 @@ javascript:
     if (typeof makeFormValidatable != 'undefined'){
       makeFormValidatable($('form#edit_event_#{resource.id}'));
     }
-
-    $('#save-event-results').click(function(){
-      $('form#edit_event_#{resource.id}').submit();
-    });
   });

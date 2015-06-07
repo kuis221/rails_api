@@ -1,4 +1,5 @@
 - if resource.persisted?
+  = update_event_details_bar(resource.attachable)
   |
     $('#upload_#{params[:unique_id]}').addClass('complete');
     $('#processed_asset_#{params[:unique_id]}').replaceWith($('#{j render(partial: 'results/photos/photo', locals: {photo: resource}).gsub(/[\n\r]+/, '').html_safe}'));
@@ -15,7 +16,7 @@
         }
       },3000);
     }
-  = update_event_details_bar(resource.attachable)
-  | $(document).trigger('photo:added');
 - else
-  | $('#upload_#{params[:unique_id]}').addClass('failed').find('div.progress').removeClass('active').end().find('.upload-file-error').text('#{j resource.errors.full_messages.to_sentence}');
+  |
+    $('#upload_#{params[:unique_id]}').addClass('failed').find('div.progress').removeClass('active').end().find('.upload-file-error').text('#{j resource.errors.full_messages.to_sentence}');
+    window.EventDetails.showMessage('#{resource.errors.full_messages.first}', 'red');

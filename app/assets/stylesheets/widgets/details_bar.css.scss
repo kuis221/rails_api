@@ -18,6 +18,17 @@ $phase-height: 66px;
 // Alerts for events on events bar
 
 .event-alert{
+  display: block;
+  position: absolute;
+  width: 100%;
+  z-index: 2;
+  text-align: center;
+  .alert-inner {
+    display: table;
+    position: relative;
+    width: 100%
+  }
+
   .alert-main-text{
     color: $white;
     font-weight: normal;
@@ -43,19 +54,13 @@ $phase-height: 66px;
   }
 }
 
-.alert-rejected, .alert-submitted, .alert-approved{
-  display: table;
-  position: relative;
-  width: 100%;
-}
-
-.alert-rejected{
+.alert-red{
   background-color: $primary-red;
 }
-.alert-submitted{
+.alert-blue{
   background-color: $primary-blue;
 }
-.alert-approved{
+.alert-green{
   background-color: $primary-green;
 }
 
