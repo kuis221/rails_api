@@ -125,10 +125,11 @@ jQuery ->
 
 		# Check if we should automatically activate a tab on the app
 		if window.location.hash
+			link = $("a[href=#{window.location.hash}]")
 			if $(".nav-tabs a[href=#{window.location.hash}]").length > 0
 				smoothScrollTo $(".nav-tabs a[href=#{window.location.hash}]").tab('show')
 			else if $(window.location.hash).length > 0
-				smoothScrollTo $(window.location.hash)
+				smoothScrollTo $(window.location.hash), link
 		true
 
 
@@ -175,7 +176,7 @@ jQuery ->
 
 		$("a.smooth-scroll[href^='#']").off('click.branscopic').on 'click.branscopic', (e) ->
 			e.preventDefault()
-			smoothScrollTo($(this.hash), this)
+			smoothScrollTo $(this.hash), this
 
 		$('form[data-watch-changes]').watchChanges();
 
@@ -231,6 +232,7 @@ jQuery ->
 		focusInvalid: false,
 		invalidHandler: (form, validator) ->
 			return unless validator.numberOfInvalids()
+			window.EventDetails.showMessage($('form.event-data-form').data('per-save-failed'), 'red');
 			element = $(validator.errorList[0].element)
 			while element.is(":hidden")
 				element = element.parent()

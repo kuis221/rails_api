@@ -1,5 +1,6 @@
 - if resource.errors.any?
   | alert('The document could not be saved!')
 - else
-  | $('#documents-list').prepend('#{j render(resource)}');
-  | $(document).trigger('document:added');
+  |
+    $('#documents-list').prepend('#{j render(resource)}');
+    window.EventDetails.showMessage("#{j I18n.translate('instructive_messages.plan.document.added')}", 'green');

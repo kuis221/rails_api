@@ -9,6 +9,8 @@ class ContactEventsController < InheritedResources::Base
 
   custom_actions collection: [:add, :list]
 
+  before_action :copy_of_destroyed, only: [:destroy]
+
   defaults resource_class: ContactEvent
 
   load_and_authorize_resource
@@ -28,6 +30,10 @@ class ContactEventsController < InheritedResources::Base
   end
 
   protected
+
+  def copy_of_destroyed
+    @contact = resource
+  end
 
   def build_resource(*args)
     @contact_event ||= super

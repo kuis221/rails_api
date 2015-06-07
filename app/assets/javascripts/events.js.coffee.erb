@@ -7,6 +7,46 @@ jQuery ->
 	$(document).delegate ".task-completed-checkbox", "click", ->
 		$(@form).submit()
 
+	EventDetails = ->
+		this.alertBox = $('.event-alert')
+		this.closeAlertTimeout = false
+		this.showMessage = (message, color, close = false) ->
+			clearTimeout this.closeAlertTimeout if this.closeAlertTimeout
+			$('.event-alert').removeClass (index, css) ->
+				(css.match(/(^|\s)alert-\S+/g) or []).join ' '
+			this.alertBox.addClass('alert-' + color).find('.alert-main-text').text(message)
+			if close
+				this.show().find('.close').show()
+			else
+				this.showMessageWithAutoClose()
+
+		this.showMessageWithAutoClose = (time = 3000, duration='slow') ->
+			$('.event-alert').slideDown(duration)
+			this.closeAlertTimeout = setTimeout ->
+				$('.event-alert').slideUp(duration)
+			, time
+		this.closeMessage= (duration = 'slow') ->
+			this.alertBox.slideUp(duration)
+		@
+
+	window.EventDetails = new EventDetails()
+
+	$(document)
+		.on 'click', '.event-phase-step', (e) ->
+			window.EventDetails.closeMessage('fast')
+			$('#phases-container .phase-container:not(.active)').slideUp()
+		.on 'smooth-scroll:end', '.event-phase-step', (e) ->
+			window.EventDetails.showMessage($(this).data('message'), $(this).data('message-color'))
+
+	$('.btn-dismiss-alert').on 'click', (e) ->
+		$('.event-alert').slideUp()
+		$('.event-alert .close').hide()
+
+	$('#toggle-phases-steps').on 'click', (e) ->
+		e.preventDefault()
+		window.EventDetails.closeMessage('fast')
+		$('#phases-container .phase-container:not(.active)').slideToggle()
+		false
 
 	showStep = (target, message) ->
 		return unless target
@@ -23,12 +63,6 @@ jQuery ->
 		message = transitionalMessages.yes[Math.floor(Math.random()*transitionalMessages.skip.length)]
 		showStep target, message
 
-	showPrevStepYes = (currentStep) ->
-		guidedBarNav = $('.guide-bar.event-details-scroll-spy')
-		target = guidedBarNav.find("a[data-spytarget=\"#{currentStep}\"]").parent('li').data('prev')
-		message = transitionalMessages.yes[Math.floor(Math.random()*transitionalMessages.skip.length)]
-		showStep target, message
-
 	$(document).on 'smooth-scroll:end', 'a.step-skip-link', () ->
 		target = $(this).parent('li').data('next')
 		message = transitionalMessages.skip[Math.floor(Math.random()*transitionalMessages.skip.length)]
@@ -41,28 +75,25 @@ jQuery ->
 
 	$(document).on 'contact:added', () ->
 		showNextStepYes '#event-contacts'
-		showPrevStepYes '#event-contacts'
 	$(document).on 'task:added', () ->
 		showNextStepYes '#event-tasks'
-		showPrevStepYes '#event-tasks'
 	$(document).on 'document:added', () ->
 		showNextStepYes '#event-documents'
-		showPrevStepYes '#event-documents'
 	$(document).on 'per:completed', () ->
 		showNextStepYes '#event-per'
-		showPrevStepYes '#event-per'
 	$(document).on 'activity:added', () ->
 		showNextStepYes '#event-activities'
-		showPrevStepYes '#event-activities'
 	$(document).on 'expense:added', () ->
 		showNextStepYes '#event-expenses'
-		showPrevStepYes '#event-expenses'
 	$(document).on 'photo:added', () ->
 		showNextStepYes '#event-photos'
-		showPrevStepYes '#event-photos'
 	$(document).on 'comment:added', () ->
 		showNextStepYes '#event-comments'
-		showPrevStepYes '#event-comments'
+
+	$('.phase-steps').on 'click', 'li', (e) ->
+		if !$('.guide-bar.event-details-scroll-spy').hasClass('rejected')
+			showGuideBarWithTime()
+
 
 	$("#reject-post-event").submit (e) ->
 		e.preventDefault()
