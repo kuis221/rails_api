@@ -1,5 +1,56 @@
 module Html
   class EventGuidedMessagePresenter < BasePresenter
+
+    def plan_info
+    end
+
+    def plan_contacts
+      message_route =  'instructive_messages.plan.contact.'
+      if @model.contacts.count > 0
+        can?(:create_contact) ?
+          I18n.t("#{message_route}added_more", contacts_count: @model.contacts.count) :
+          I18n.t("#{message_route}details")
+      else
+        can?(:create_contact) ? I18n.t("#{message_route}add") : I18n.t("#{message_route}empty")
+      end
+    end
+
+    def plan_tasks
+    end
+
+    def plan_documents
+      message_route =  'instructive_messages.plan.document.'
+      if @model.documents.count > 0
+        can?(:documents) ? I18n.t("#{message_route}manage") : I18n.t("#{message_route}view")
+      else
+        can?(:documents) ? I18n.t("#{message_route}add") : I18n.t("#{message_route}empty")
+      end
+    end
+
+    def execute_per
+    end
+
+    def execute_activities
+    end
+
+    def execute_attendance
+    end
+
+    def execute_photos
+    end
+
+    def execute_comments
+    end
+
+    def execute_expenses
+    end
+
+    def execute_surveys
+    end
+
+
+    #OLD DEF'S
+
     def current_steps
       @current_steps ||= begin
         if @model.rejected?
@@ -17,50 +68,6 @@ module Html
         name, steps = phases[:phases].find { |name, _| name == phases[:current_phase] }
         steps.select { |s| !s[:complete] && s[:required] }
       end
-    end
-
-    def plan_contacts
-      yes_or_skip_or_back 'Do you want to keep track of any contacts?', :contacts
-    end
-
-    def plan_tasks
-      yes_or_skip_or_back 'Are there any tasks that need to be completed for your event?', :tasks
-    end
-
-    def plan_documents
-      yes_or_skip_or_back 'Are there any supporting documents to add?', :documents
-    end
-
-    def plan_last
-      info 'Done! You\'ve completed the planning phase of your event.', :last
-    end
-
-    def execute_per
-      yes_or_skip_or_back 'Ready to fill out your Post Event Recap? This is required.', :per
-    end
-
-    def execute_activities
-      yes_or_skip_or_back 'Do you have any activities to add?', :activities
-    end
-
-    def execute_attendance
-      yes_or_skip_or_back 'Want to add attendees?', :attendance
-    end
-
-    def execute_photos
-      yes_or_skip_or_back "Do you have any photos to upload? #{module_range_message('photos')}", :photos
-    end
-
-    def execute_comments
-      yes_or_skip_or_back "What were attendees saying? Do you have consumer comments to add? #{module_range_message('comments')}", :comments
-    end
-
-    def execute_expenses
-      yes_or_skip_or_back "Do you have any expenses to add? #{module_range_message('expenses')}", :expenses
-    end
-
-    def execute_surveys
-      yes_or_skip_or_back 'Do you have any surveys to add?', :surveys
     end
 
     def execute_last
@@ -168,15 +175,15 @@ module Html
     end
       
     def next_target_after(step)
-      index = current_steps.index { |s| s[:id] == step }
-      next_step = current_steps[index + 1] || nil
-      next_step ? "#event-#{next_step[:id]}" : ''
+     # index = current_steps.index { |s| s[:id] == step }
+      #next_step = current_steps[index + 1] || nil
+      #next_step ? "#event-#{next_step[:id]}" : ''
     end
 
     def prev_target_before(step)
-      index = current_steps.index { |s| s[:id] == step }
-      prev_step = index > 0 ? current_steps[index - 1] : nil
-      prev_step ? "#event-#{prev_step[:id]}" : ''
+      #index = current_steps.index { |s| s[:id] == step }
+      #prev_step = index > 0 ? current_steps[index - 1] : nil
+      #prev_step ? "#event-#{prev_step[:id]}" : ''
     end
 
     def unapprove_button

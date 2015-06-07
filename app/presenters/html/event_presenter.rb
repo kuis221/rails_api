@@ -165,12 +165,14 @@ module Html
     end
 
     def step_link(phase, step, content, linked)
+      guided_message = Html::EventGuidedMessagePresenter.new(@model, h)
       url = target = "#event-#{step[:id]}"
       url = h.phase_event_path(@model, phase: phase) + target unless phase == current_phase
+      message = guided_message.respond_to?("#{phase}_#{step[:id]}".to_sym) ? guided_message.send("#{phase}_#{step[:id]}") : ''
       h.link_to_if linked, content, url,
                  class: 'smooth-scroll event-phase-step',
-                 data: { message: I18n.t("instructive_messages.#{phase}.#{step[:id].to_s.singularize}.add"),
-                         message_color: 'green',
+                 data: { message: message,
+                         message_color: 'blue',
                          target: target }
     end
 
