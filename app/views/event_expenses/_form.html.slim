@@ -1,4 +1,4 @@
-- brands = parent.campaign.brands
+- brands = parent.campaign.brands.pluck(:name, :id)
 .form-inputs
   .expense-info-form
     - resource.build_receipt unless resource.receipt.present?
@@ -18,7 +18,7 @@
           .row-fuild.split-expense class="#{resource.id.present? ? nil : 'hide'}"
             = f.submit 'Split Expense', data: { disable_with: 'Split Expense' }, class: 'split-expense-link'
 
-          = f.input :brand_id, as: :select, collection: brands, input_html: { class: 'input-large chosen-enabled' }
+          = f.input :brand_id, as: :select, collection: brands, input_html: { class: 'input-large chosen-enabled' }, include_blank: '&nbsp;'.html_safe
           = f.input :merchant
           = f.input :description
 
