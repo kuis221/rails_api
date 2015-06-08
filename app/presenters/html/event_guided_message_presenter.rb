@@ -79,14 +79,14 @@ module Html
         min = module_range_val('photos', 'range_min')
         max = module_range_val('photos', 'range_max')
 
-        if !min.present? && !max.present?
-          I18n.t("#{message_route}add_min_max", photos_min: min, photos_max: max)
-        elsif min.present? && @model.photos.active.count < max.to_i
-          I18n.t("#{message_route}add_max", photos_max: max)
-        elsif max.present? && @model.photos.active.count < min.to_i
-          I18n.t("#{message_route}add_min", photos_min: min)
-        else
+        if min.blank? && max.blank?
           I18n.t("#{message_route}add")
+        elsif max.blank?
+          I18n.t("#{message_route}add_min", photos_min: min)
+        elsif min.blank?
+          I18n.t("#{message_route}add_max", photos_max: max)
+        else
+          I18n.t("#{message_route}add_min_max", photos_min: min, photos_max: max)
         end
       else
         @model.photos.active.count > 0 ? I18n.t("#{message_route}view") : I18n.t("#{message_route}empty")
@@ -147,7 +147,7 @@ module Html
         [h.t('instructive_messages.results.rejected', reject_reason: reject_reason), 'red']
       end
     end
-    
+
     def results_approve_per
     end
   end
