@@ -179,7 +179,7 @@ module Html
       current_phase_index = phases[:phases].keys.index(current_phase)
       phases[:phases].each_with_index.map do |phase, i|
         h.content_tag(:div, class: "phase-container #{i == current_phase_index ? 'active' : 'hide'}") do
-          render_nav_phase(phase, i)
+          render_nav_phase(phase, i) + phase_buttons(phase)
         end
       end.join.html_safe
     end
@@ -198,6 +198,63 @@ module Html
          end) +
           phase[0].upcase
       end + phase_steps(phase[0], i, phase[1])
+    end
+
+    def phase_buttons(phase)
+      buttons =
+        case phase[0]
+        when :execute
+          [submit_button]
+        when :results
+          approve_reject_buttons
+        else
+          []
+        end.compact
+      h.content_tag(:div, class: 'step actions') do
+        buttons.join.html_safe + complete_percentage(phase)
+      end
+    end
+
+    def complete_percentage(phase)
+      p phase[1].inspect
+      completed_steps = phase[1].count { |s| s[:complete] }
+      percentage = completed_steps * 100 / phase[1].count
+      h.content_tag(:span, "#{percentage.to_i}% COMPLETE", class: 'status-indicator')
+    end
+
+    def approve_reject_buttons
+      if approved?
+        [unapprove_button]
+      else
+        [approve_button, reject_button].compact
+      end
+    end
+
+    def unapprove_button
+      return unless can?(:unapprove)
+      h.button_to 'Unapprove', h.unapprove_event_path(@model, return: h.return_path),
+                  method: :put, class: 'btn btn-primary'
+    end
+
+    def approve_button
+      return unless can?(:approve)
+      h.button_to 'Approve', h.approve_event_path(@model, return: h.return_path),
+                  method: :put, class: 'btn btn-primary', disabled: !submitted?
+    end
+
+    def reject_button
+      return unless can?(:reject)
+      h.button_to 'Reject', h.reject_event_path(@model, format: :js, return: h.return_path),
+                  form: { id: 'reject-post-event' },
+                  method: :put, class: 'btn btn-primary', remote: true, disabled: !submitted?
+    end
+
+    def submit_button
+      return unless can?(:submit)
+      h.button_to 'Submit', h.submit_event_path(@model, format: :js, return: h.return_path),
+                  class: 'btn btn-cancel submit-event-data-link', method: :put,
+                  remote: true, data: { disable_with: 'submitting' },
+                  disabled: submitted? || approved? || !valid_results?
     end
 
     def guided_message(phase, step)
