@@ -1,4 +1,8 @@
-attributes :id, :name, :amount
+attributes :id, :category, :amount, :expense_date, :brand_id, :reimbursable, :billable, :merchant, :description
+
+node :expense_date do |r|
+  r.expense_date.to_s(:slashes) if r.expense_date
+end
 
 child :receipt => 'receipt' do
 

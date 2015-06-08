@@ -299,10 +299,11 @@ ActiveRecord::Schema.define(version: 20150518215142) do
 
   create_table "companies", force: true do |t|
     t.string   "name"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
     t.boolean  "timezone_support"
     t.hstore   "settings"
+    t.text     "expense_categories"
   end
 
   create_table "company_users", force: true do |t|
@@ -497,13 +498,18 @@ ActiveRecord::Schema.define(version: 20150518215142) do
 
   create_table "event_expenses", force: true do |t|
     t.integer  "event_id"
-    t.string   "name"
     t.decimal  "amount",        precision: 15, scale: 2, default: 0.0
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
     t.datetime "created_at",                                           null: false
     t.datetime "updated_at",                                           null: false
     t.integer  "brand_id"
+    t.string   "category"
+    t.date     "expense_date"
+    t.boolean  "reimbursable"
+    t.boolean  "billable"
+    t.string   "merchant"
+    t.text     "description"
   end
 
   add_index "event_expenses", ["brand_id"], :name => "index_event_expenses_on_brand_id"

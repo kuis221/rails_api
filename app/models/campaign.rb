@@ -217,6 +217,14 @@ class Campaign < ActiveRecord::Base
     end
   end
 
+  def expense_categories
+    if enabled_modules.include?('expenses')
+      module_setting('expenses', 'categories')
+    else
+      []
+    end
+  end
+
   def areas_and_places
     (areas + places).sort_by(&:name)
   end

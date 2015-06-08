@@ -25,6 +25,8 @@ en:
         end_date_time: "End time"
       kpis_segment:
         text: 'Name'
+      event_expense:
+        expense_date: 'Date'
       invite:
         invitees: '# Invites'
         rsvps_count: '# RSVPs'
@@ -329,6 +331,7 @@ en:
   buttons:
     new:
       event: "New Event"
+      event_expense: "Add Expense"
       team: "New Team"
       campaign: "New Campaign"
       brand: "New Brand"
@@ -342,6 +345,7 @@ en:
       invite: "Add Invite"
     edit:
       event: "Edit Event"
+      event_expense: "Edit Expense"
       company_user: "Edit Profile Data"
       team: "Edit Team"
       campaign: "Edit Campaign"
@@ -376,6 +380,7 @@ en:
       data_extract/venue: "Edit Report"
     deactivate:
       event: "Deactivate Event"
+      event_expense: "Deactivate Expense"
       company_user: "Deactivate User"
       team: "Deactivate Team"
       campaign: "Deactivate Campaign"
@@ -431,6 +436,7 @@ en:
       select_file:
         photo: 'your image or %{browse}'
         attachment: 'your file or %{browse}'
+        expense: 'the photographed<br /> receipt or %{browse}'
 
   notifications:
     task_late_user:
@@ -930,6 +936,7 @@ en:
     deactivate:
       activity: "Are you sure you want to deactivate this activity?"
       event: "Are you sure you want to deactivate this event?"
+      event_expense: "Are you sure you want to deactivate this expense?"
       company_user: "Are you sure you want to deactivate this user?"
       team: "Are you sure you want to deactivate this team?"
       campaign: "Are you sure you want to deactivate this campaign?"
@@ -1036,6 +1043,11 @@ en:
       event_end_date: 'Event End Date'
       event_end_time: 'Event End Time'
       active_state: "Active State"
+      category: "Category"
+      expense_date: "Date"
+      reimbursable: "Reimbursable"
+      billable: "Billable"
+      merchant: "Merchant"
     descriptions:
       event:
         campaign_name: "The assigned campaign of the event"

@@ -26,7 +26,7 @@ describe DashboardHelper, type: :helper do
           start_date: '01/23/2019', start_time: '10:00am',
           end_date:   '01/23/2019',   end_time: '11:00am',
           results: { impressions: 15, interactions: 16, samples: 17 },
-          expenses: [{ name: 'Expense 1', amount: 18 }])
+          expenses: [{ category: 'Entertainment', amount: 18, expense_date: '01/01/2015' }])
 
       Sunspot.commit
 

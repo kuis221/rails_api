@@ -157,7 +157,7 @@ class AttachedAsset < ActiveRecord::Base
   end
 
   def file_extension
-    File.extname(file_file_name)[1..-1]
+    File.extname(file_file_name)[1..-1] if file_file_name
   end
 
   # Store an unescaped version of the escaped URL that Amazon returns from direct upload.
@@ -276,6 +276,16 @@ class AttachedAsset < ActiveRecord::Base
               !file.s3_bucket.objects[direct_upload_url_data[:path]].exists?
     file.s3_bucket.objects[paperclip_file_path].copy_from(
       direct_upload_url_data[:path], acl: :public_read)
+  end
+
+  def self.copy_file_to_uploads_folder(url)
+    path = CGI.unescape(URI.parse(URI.encode(url)).path.gsub("/#{ENV['S3_BUCKET_NAME']}/", ''))
+    paperclip_file_path = "uploads/#{Time.now.to_i}-#{rand(5000)}/#{File.basename(path)}"
+    AWS::S3.new.buckets[ENV['S3_BUCKET_NAME']].objects[paperclip_file_path].copy_from(
+      path, acl: :public_read)
+    "https://s3.amazonaws.com/#{ENV['S3_BUCKET_NAME']}/#{paperclip_file_path}"
+  rescue AWS::S3::Errors::NoSuchKey
+    nil
   end
 
   # Rename existing file in S3

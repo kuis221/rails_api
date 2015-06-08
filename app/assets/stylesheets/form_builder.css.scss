@@ -512,6 +512,10 @@ $margin-right: 240px;
 				width: 50%;
 			}
 		}
+
+		.select2-container-multi .select2-choices {
+			height: auto !important;
+		}
 	}
 	label.range {
 		font-weight: bold;

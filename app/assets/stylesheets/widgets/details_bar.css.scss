@@ -187,7 +187,7 @@ $phase-height: 66px;
   background-color: $white;
   height: $phase-height;
   border-bottom: 1px solid $gray-lighter;
-  .btn-primary{
+  .btn {
     line-height: 16px;
     height: 28px;
     min-width: 82px;
@@ -265,6 +265,10 @@ $phase-height: 66px;
       float: right;
       padding: 10px 2px 0 0;
       position: relative;
+      width: auto;
+      .button_to:first-child:not(:last-child) {
+        margin-right: 10px;
+      }
       .status-indicator{
         color: $gray-light;
         bottom: 5px;
