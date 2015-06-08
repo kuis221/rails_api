@@ -82,9 +82,9 @@ module Html
         if min.blank? && max.blank?
           I18n.t("#{message_route}add")
         elsif max.blank?
-          I18n.t("#{message_route}add_min", photos_min: min)
+          I18n.t("#{message_route}add_min", count: min.to_i)
         elsif min.blank?
-          I18n.t("#{message_route}add_max", photos_max: max)
+          I18n.t("#{message_route}add_max", count: max.to_i)
         else
           I18n.t("#{message_route}add_min_max", photos_min: min, photos_max: max)
         end
@@ -98,12 +98,12 @@ module Html
       if can?(:create_comment)
         min = module_range_val('comments', 'range_min')
         max = module_range_val('comments', 'range_max')
-        if !min.present? && !max.present?
+        if !min.blank? && !max.blank?
           I18n.t("#{message_route}add_min_max", comments_min: min, comments_max: max)
-        elsif min.present?
-          I18n.t("#{message_route}add_max", comments_max: max)
-        elsif max.present?
-          I18n.t("#{message_route}add_min", comments_min: min)
+        elsif min.blank?
+          I18n.t("#{message_route}add_max", count: max.to_i)
+        elsif max.blank?
+          I18n.t("#{message_route}add_min", count: min.to_i)
         else
           I18n.t("#{message_route}add")
         end
@@ -118,12 +118,12 @@ module Html
         min = module_range_val('expenses', 'range_min')
         max = module_range_val('expenses', 'range_max')
 
-        if !min.present? && !max.present? && @model.event_expenses.count < max.to_i
+        if !min.blank? && !max.blank?
           I18n.t("#{message_route}add_min_max", expenses_min: min, expenses_max: max)
-        elsif min.present? && @model.event_expenses.count < min.to_i
-          I18n.t("#{message_route}add_min", expenses_min: min)
-        elsif max.present? && @model.event_expenses.count < max.to_i
-          I18n.t("#{message_route}add_max", expenses_max: max)
+        elsif max.blank?
+          I18n.t("#{message_route}add_min", count: min.to_i)
+        elsif min.blank?
+          I18n.t("#{message_route}add_max", count: max.to_i)
         else
           I18n.t("#{message_route}add")
         end
