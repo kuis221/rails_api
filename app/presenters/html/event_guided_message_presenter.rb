@@ -87,14 +87,14 @@ module Html
 
     def execute_comments
       message_route =  'instructive_messages.execute.comment.'
-      if can?(:create_photo)
+      if can?(:create_comment)
         min = module_range_val('comments', 'range_min')
         max = module_range_val('comments', 'range_max')
         if !min.empty? && !max.empty?
           I18n.t("#{message_route}add_min_max", comments_min: min, comments_max: max)
-        elsif min.empty? && @model.comments.count < max.to_i
+        elsif min.empty?
           I18n.t("#{message_route}add_max", comments_max: max)
-        elsif max.empty? && @model.comments.count < min.to_i
+        elsif max.empty?
           I18n.t("#{message_route}add_min", comments_min: min)
         else
           I18n.t("#{message_route}add")
@@ -105,6 +105,23 @@ module Html
     end
 
     def execute_expenses
+      message_route =  'instructive_messages.execute.expense.'
+      if can?(:create_expense)
+        min = module_range_val('expenses', 'range_min')
+        max = module_range_val('expenses', 'range_max')
+
+        if !min.empty? && !max.empty? && @model.event_expenses.count < max.to_i
+          I18n.t("#{message_route}add_min_max", expenses_min: min, expenses_max: max)
+        elsif min.empty? && @model.event_expenses.count < min.to_i
+          I18n.t("#{message_route}add_min", expenses_min: min)
+        elsif max.empty? && @model.event_expenses.count < max.to_i
+          I18n.t("#{message_route}add_max", expenses_max: max)
+        else
+          I18n.t("#{message_route}add")
+        end
+      else
+        @model.event_expenses.count > 0 ? I18n.t("#{message_route}view") : I18n.t("#{message_route}empty")
+      end
     end
 
     def execute_surveys
