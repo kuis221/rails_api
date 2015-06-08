@@ -4,9 +4,9 @@ module EventsHelper
 
   def update_event_details_bar(event)
     presenter = present(event)
-    contents = render(partial: 'events/details_bar', locals: { resource: event, presenter: presenter })
+    contents = presenter.render_nav_phases
     "
-      $('.details-bar').replaceWith('#{j contents }');
+      $('#phases-container').html('#{j contents }');
       $('body').scrollmultispy('destroy');
       #{create_scrollmultispy_js}
       $(window).trigger('scroll');

@@ -8,7 +8,6 @@ jQuery ->
 		$(@form).submit()
 
 	EventDetails = ->
-		this.alertBox = $('.event-alert')
 		this.closeAlertTimeout = false
 
 		$('.event-alert').find('.close').show().on 'click', =>
@@ -20,7 +19,7 @@ jQuery ->
 			clearTimeout this.closeAlertTimeout if this.closeAlertTimeout
 			$('.event-alert').removeClass (index, css) ->
 				(css.match(/(^|\s)alert-\S+/g) or []).join ' '
-			this.alertBox.addClass('alert-' + color).find('.alert-main-text').text(message)
+			$('.event-alert').addClass('alert-' + color).find('.alert-main-text').text(message)
 			if close
 				this.showPermanentMessage()
 			else
@@ -35,7 +34,7 @@ jQuery ->
 				$('.event-alert').slideUp(duration)
 			, time
 		this.closeMessage= (duration = 'fast') ->
-			this.alertBox.slideUp(duration)
+			$('.event-alert').slideUp(duration)
 		@
 
 	window.EventDetails = new EventDetails()

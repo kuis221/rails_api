@@ -190,7 +190,7 @@ module Html
       completed = i < index_phase
       h.content_tag(:div, class: "step phase-id #{'active' if phase[0] == phases[:current_phase]}") do
         (if completed
-           h.content_tag(:div, '', class: "icon-check-circle")
+           h.content_tag(:div, '', class: 'icon-check-circle')
          else
            h.content_tag(:span, class: 'id') do
             "#{i + 1}#{icon(:lock) if i > index_phase}".html_safe
