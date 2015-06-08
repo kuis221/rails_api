@@ -380,6 +380,7 @@ en:
       data_extract/venue: "Edit Report"
     deactivate:
       event: "Deactivate Event"
+      event_expense: "Deactivate Expense"
       company_user: "Deactivate User"
       team: "Deactivate Team"
       campaign: "Deactivate Campaign"

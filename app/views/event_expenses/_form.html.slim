@@ -30,16 +30,18 @@
 
       .row-fluid
         .form-actions.inside-form
-          = submit_tag 'Create', id: 'save-expense-btn', class: 'btn btn-primary', data: { disable_with: 'Please wait...' }
+          = f.submit id: 'save-expense-btn', class: 'btn btn-primary', data: { disable_with: 'Please wait...' }
           = "&nbsp;".html_safe
           = f.button :button, 'Cancel', class: 'btn btn-cancel'
 
 javascript:
-  $('#new-expense-form').find('input, select').on('change', function(e) {
+  toggleSplit = function(e) {
     if ($('#new-expense-form').validate().checkForm()){
       $('.split-expense').show();
     } else {
       $('.split-expense').hide();
     }
     $('#new-expense-form').validate().submitted = {}
-  });
+  };
+  $('#new-expense-form').find('input, select').on('change', toggleSplit);
+  toggleSplit();
