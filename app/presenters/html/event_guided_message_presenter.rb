@@ -128,13 +128,24 @@ module Html
 
     def initial_message
       if approved?
-        [h.t('instructive_messages.results.approve'), 'green']
+        [h.t('instructive_messages.results.approved'), 'green', true]
       elsif rejected?
-        [h.t('instructive_messages.results.rejected', reject_reason: reject_reason), 'red']
+        if h.flash[:event_message_fail].present?
+          [h.flash[:event_message_fail], 'red', false]
+        else
+          [h.t('instructive_messages.results.rejected_info', rejected_at: rejected_at, reject_reason: reject_reason).html_safe, 'red', true]
+        end
+      elsif h.flash[:event_message_success].present?
+        [h.flash[:event_message_success], 'green', false]
       end
     end
 
     def results_approve_per
+    end
+
+    def rejected_at
+      date = @model.rejected_at || @model.updated_at
+      h.time_ago_in_words(date)
     end
   end
 end

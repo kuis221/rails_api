@@ -796,14 +796,15 @@ en:
         deactivated: 'Your Expense has been deactivated'
         split: 'Your expense has successfully been split'
         view: 'View expenses that have been logged for your event below'
-      submit: 'Oops! %{event_requirements} before you can submit your event for approval'
+      submit:
+        success: 'Great job! Your PER has been submitted for approval.'
+        fail: 'Oops! %{event_requirements} before you can submit your event for approval'
       approve: 'The Execute phase of your event is not complete. You can approve your event once it has been submitted for review.'
       reject: 'The Execute phase of your event is not complete. You can reject your event once it has been submitted for review.'
     results:
-      submit: 'Great job! Your PER has been submitted for approval.'
-      approve: 'Nice! Your event has been Approved.'
-      rejecte: 'Thanks. The event has been Rejected and the event team has been notified.'
-      rejected: 'Your event has been rejected for the following reason(s): %{reject_reason}. Please make the necessary updates and resubmit.'
+      approved: 'Nice! Your event has been Approved.'
+      rejected: 'Thanks. The event has been Rejected and the event team has been notified.'
+      rejected_info: 'Your event has been rejected %{rejected_at} for the following reason(s): %{reject_reason}. Please make the necessary updates and resubmit.'
       approve_per:
         can_approve: 'Your post event report has been submitted for approval %{submitted_at}. %{rejection_message}. Please review and either approve or reject.'
         cannot_approve: 'Your post event report has been submitted for approval #{submitted_at}. Once your report has been reviewed you will be alerted in your notifications.'
