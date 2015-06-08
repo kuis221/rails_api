@@ -71,11 +71,11 @@ module Html
         min = module_range_val('photos', 'range_min')
         max = module_range_val('photos', 'range_max')
 
-        if !min.empty? && !max.empty?
+        if !min.present? && !max.present?
           I18n.t("#{message_route}add_min_max", photos_min: min, photos_max: max)
-        elsif min.empty? && @model.photos.active.count < max.to_i
+        elsif min.present? && @model.photos.active.count < max.to_i
           I18n.t("#{message_route}add_max", photos_max: max)
-        elsif max.empty? && @model.photos.active.count < min.to_i
+        elsif max.present? && @model.photos.active.count < min.to_i
           I18n.t("#{message_route}add_min", photos_min: min)
         else
           I18n.t("#{message_route}add")
@@ -90,11 +90,11 @@ module Html
       if can?(:create_comment)
         min = module_range_val('comments', 'range_min')
         max = module_range_val('comments', 'range_max')
-        if !min.empty? && !max.empty?
+        if !min.present? && !max.present?
           I18n.t("#{message_route}add_min_max", comments_min: min, comments_max: max)
-        elsif min.empty?
+        elsif min.present?
           I18n.t("#{message_route}add_max", comments_max: max)
-        elsif max.empty?
+        elsif max.present?
           I18n.t("#{message_route}add_min", comments_min: min)
         else
           I18n.t("#{message_route}add")
@@ -110,11 +110,11 @@ module Html
         min = module_range_val('expenses', 'range_min')
         max = module_range_val('expenses', 'range_max')
 
-        if !min.empty? && !max.empty? && @model.event_expenses.count < max.to_i
+        if !min.present? && !max.present? && @model.event_expenses.count < max.to_i
           I18n.t("#{message_route}add_min_max", expenses_min: min, expenses_max: max)
-        elsif min.empty? && @model.event_expenses.count < min.to_i
+        elsif min.present? && @model.event_expenses.count < min.to_i
           I18n.t("#{message_route}add_min", expenses_min: min)
-        elsif max.empty? && @model.event_expenses.count < max.to_i
+        elsif max.present? && @model.event_expenses.count < max.to_i
           I18n.t("#{message_route}add_max", expenses_max: max)
         else
           I18n.t("#{message_route}add")
@@ -228,7 +228,7 @@ module Html
         h.link_to(first_step ? '(Yes)' : '', step_link(target), class: 'step-yes-link smooth-scroll', data: { spytarget: target }),
         prev_target.present? ? h.link_to('(Back)', prev_target, class: 'step-back-link smooth-scroll', data: { spyignore: 'ignore' }) : '',
         h.link_to('(Skip)', next_target, class: 'step-skip-link smooth-scroll', data: { spyignore: 'ignore' })
-        
+
       ].join.html_safe
     end
 
@@ -256,7 +256,7 @@ module Html
         message,
       ].join.html_safe
     end
-      
+
     def next_target_after(step)
      # index = current_steps.index { |s| s[:id] == step }
       #next_step = current_steps[index + 1] || nil

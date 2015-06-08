@@ -6,4 +6,5 @@
     window.EventDetails.showMessage("#{j I18n.translate('instructive_messages.execute.expense.added')}", 'green');
 - else
   |
-    alert('#{j resource.errors.full_messages.join("\n")}');
+    $('.bootbox.modal').modal('hide');
+    window.EventDetails.showMessage('#{resource.errors.full_messages.first}', 'red');
