@@ -78,16 +78,7 @@ module Html
       if can?(:create_photo)
         min = module_range_val('photos', 'range_min')
         max = module_range_val('photos', 'range_max')
-
-        if min.blank? && max.blank?
-          I18n.t("#{message_route}add")
-        elsif max.blank?
-          I18n.t("#{message_route}add_min", count: min.to_i)
-        elsif min.blank?
-          I18n.t("#{message_route}add_max", count: max.to_i)
-        else
-          I18n.t("#{message_route}add_min_max", photos_min: min, photos_max: max)
-        end
+        range_conditional_message message_route, min, max
       else
         @model.photos.active.count > 0 ? I18n.t("#{message_route}view") : I18n.t("#{message_route}empty")
       end
@@ -98,15 +89,7 @@ module Html
       if can?(:create_comment)
         min = module_range_val('comments', 'range_min')
         max = module_range_val('comments', 'range_max')
-        if !min.blank? && !max.blank?
-          I18n.t("#{message_route}add_min_max", comments_min: min, comments_max: max)
-        elsif min.blank?
-          I18n.t("#{message_route}add_max", count: max.to_i)
-        elsif max.blank?
-          I18n.t("#{message_route}add_min", count: min.to_i)
-        else
-          I18n.t("#{message_route}add")
-        end
+        range_conditional_message message_route, min, max
       else
         @model.comments.count > 0 ? I18n.t("#{message_route}view") : I18n.t("#{message_route}empty")
       end
@@ -117,18 +100,21 @@ module Html
       if can?(:create_expense)
         min = module_range_val('expenses', 'range_min')
         max = module_range_val('expenses', 'range_max')
-
-        if !min.blank? && !max.blank?
-          I18n.t("#{message_route}add_min_max", expenses_min: min, expenses_max: max)
-        elsif max.blank?
-          I18n.t("#{message_route}add_min", count: min.to_i)
-        elsif min.blank?
-          I18n.t("#{message_route}add_max", count: max.to_i)
-        else
-          I18n.t("#{message_route}add")
-        end
+        range_conditional_message message_route, min, max
       else
         @model.event_expenses.count > 0 ? I18n.t("#{message_route}view") : I18n.t("#{message_route}empty")
+      end
+    end
+
+    def range_conditional_message(scope, min, max)
+      if !min.blank? && !max.blank? && min.to_i > 0 && max.to_i > 0
+        I18n.t("#{scope}add_min_max", min: min, max: max)
+      elsif !min.blank? && min.to_i > 0
+        I18n.t("#{scope}add_min", count: min.to_i)
+      elsif !max.blank? && max.to_i > 0
+        I18n.t("#{scope}add_max", count: max.to_i)
+      else
+        I18n.t("#{scope}add")
       end
     end
 
