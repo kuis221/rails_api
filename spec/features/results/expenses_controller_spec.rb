@@ -132,7 +132,7 @@ feature 'Results Expenses Page', js: true, search: true  do
       ensure_modal_was_closed
 
       expect(ListExport.last).to have_rows([
-        ["CAMPAIGN NAME", "BRAND", "VENUE NAME", "ADDRESS", "DATE", "START DATE", "END DATE",
+        ["CAMPAIGN NAME", "BRAND", "VENUE NAME", "ADDRESS", "EXPENSE DATE", "EVENT START DATE", "EVENT END DATE",
          "AMOUNT", "CATEGORY", "REIMBURSABLE", "BILLABLE", "MERCHANT", "DESCRIPTION", "ACTIVE STATE"],
         ["First Campaign", "Brand 1", "Place 1", "Place 1, 11 Main St., New York City, NY, 12345",
          "2015-01-01T00:00", "2013-08-21T23:00", "2013-08-21T20:00", "10.0", "Entertainment", "No",
