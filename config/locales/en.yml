@@ -738,6 +738,13 @@ en:
         added_more: '%{activities_count} activities have been added. Would you like to add more?'
         deactivated: 'Your %{activity_type} activity has been deactivated'
         view: 'View your event activities below'
+      attendance:
+        add: 'Do you have any attendances to add? This is optional.'
+        empty: 'There are no attendances to view at this time'
+        added: 'Nice work. %{attendances_count} attendances have been added.'
+        added_more: '%{attendances_count} attendances have been added. Would you like to add more?'
+        deactivated: 'Your %{attendances_type} attendances has been deactivated'
+        view: 'View your event attendances below'
       photo:
         add: 'Do you have any event photos to upload? This is optional.'
         add_min: 'Do you have any event photos to upload? At least %{photos_min} photos are required.'

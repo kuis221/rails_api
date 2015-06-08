@@ -63,6 +63,14 @@ module Html
     end
 
     def execute_attendance
+      message_route =  'instructive_messages.execute.attendance.'
+      if @model.invites.active.count > 0
+        can?(:index_invites) ?
+                              I18n.t("#{message_route}added_more", attendances_count: @model.invites.active.count) :
+                              I18n.t("#{message_route}view")
+      else
+        can?(:index_invites) ? I18n.t("#{message_route}add") : I18n.t("#{message_route}empty")
+      end
     end
 
     def execute_photos
