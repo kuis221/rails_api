@@ -52,6 +52,14 @@ module Html
     end
 
     def execute_activities
+      message_route =  'instructive_messages.execute.activity.'
+      if @model.activities.active.count > 0
+        h.can?(:create, Activity) || can?(:create_invite) ?
+                                                          I18n.t("#{message_route}added_more", activities_count: @model.activities.active.count) :
+                                                          I18n.t("#{message_route}view")
+      else
+        h.can?(:create, Activity) || can?(:create_invite) ? I18n.t("#{message_route}add") : I18n.t("#{message_route}empty")
+      end
     end
 
     def execute_attendance
