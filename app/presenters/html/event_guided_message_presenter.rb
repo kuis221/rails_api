@@ -43,6 +43,12 @@ module Html
     end
 
     def execute_per
+      message_route =  'instructive_messages.execute.per.'
+      if event_data?
+        can?(:view_data) ? I18n.t("#{message_route}saved") : I18n.t("#{message_route}view")
+      else
+        can?(:edit_data) ? I18n.t("#{message_route}add") : I18n.t("#{message_route}pending")
+      end
     end
 
     def execute_activities
