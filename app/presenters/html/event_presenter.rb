@@ -189,7 +189,7 @@ module Html
     def render_nav_phase(phase, i)
       return if phase.nil?
       index_phase = phases[:phases].keys.index(phases[:current_phase])
-      completed = i <= index_phase
+      completed = i < index_phase
       h.content_tag(:div, class: "step phase-id #{'active' if phase[0] == phases[:current_phase]}") do
         (if completed
            h.content_tag(:div, '', class: "icon-check-circle")
