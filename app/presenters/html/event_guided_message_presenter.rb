@@ -141,6 +141,9 @@ module Html
     end
 
     def results_approve_per
+      message, color, close = initial_message
+      message = h.flash[:event_message] if h.flash[:event_message].present?
+      message
     end
 
     def rejected_at
