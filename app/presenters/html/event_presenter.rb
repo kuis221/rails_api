@@ -165,15 +165,13 @@ module Html
     end
 
     def step_link(phase, step, content, linked)
-      guided_message = Html::EventGuidedMessagePresenter.new(@model, h)
       url = target = "#event-#{step[:id]}"
       url = h.phase_event_path(@model, phase: phase) + target unless phase == current_phase
-      message = guided_message.respond_to?("#{phase}_#{step[:id]}".to_sym) ? guided_message.send("#{phase}_#{step[:id]}") : ''
       h.link_to_if linked, content, url,
                  class: 'smooth-scroll event-phase-step',
-                 data: { message: message,
+                 data: { message: guided_message(phase, step),
                          message_color: 'blue',
-                         target: target }
+                         spytarget: target }
     end
 
     def render_nav_phases
@@ -200,6 +198,20 @@ module Html
          end) +
           phase[0].upcase
       end + phase_steps(phase[0], i, phase[1])
+    end
+
+    def guided_message(phase, step)
+      guided_message_presenter.send("#{phase}_#{step[:id]}") || ''
+    end
+
+    def initial_message_js
+      message, color = guided_message_presenter.initial_message
+      return unless message && color
+      "EventDetails.showMessage('#{h.j(message)}', '#{color}', true);".html_safe
+    end
+
+    def guided_message_presenter
+      @guided_message_presenter ||= Html::EventGuidedMessagePresenter.new(@model, h)
     end
   end
 end

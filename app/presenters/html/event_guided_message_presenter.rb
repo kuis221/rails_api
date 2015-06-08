@@ -175,18 +175,32 @@ module Html
     end
 
     def results_approve_per
-      return complete_message_step(:approve_per) unless is_current_phase
-      if can?(:approve)
-        rejection_message = if @model.reject_reason.to_s.present?
-          "It was previously rejected #{rejected_at} for the following reason: <i>#{@model.reject_reason}.</i> "
-        end
-        message_with_buttons "Your post event report has been submitted for approval #{submitted_at}. #{rejection_message}" +
-                            'Please review and either approve or reject.', :approve_per,
-                            [approve_button, reject_button]
-      else
-        info "Your post event report has been submitted for approval #{submitted_at}. Once your report has been reviewed you will be alerted in your notifications.", :approve_per
+    end
+
+    def initial_message
+      if approved?
+        [h.t('instructive_messages.results.approve'), 'green']
+      elsif rejected?
+        [h.t('instructive_messages.results.rejected', reject_reason: reject_reason), 'red']
       end
     end
+
+    # def results_approve_per
+    #   return complete_message_step(:approve_per) unless is_current_phase
+    #   if can?(:approve)
+    #     rejection_message = if @model.reject_reason.to_s.present?
+    #       h.t('instructive_messages.results.approve_per.rejection_reason', reason: @model.reject_reason, rejected_at: rejected_at)
+    #     end
+    #     h.t('instructive_messages.results.approve_per.can_approve',
+    #         submitted_at: submitted_at,
+    #         rejection_message: rejection_message, )
+    #     message_with_buttons "Your post event report has been submitted for approval #{submitted_at}. #{rejection_message}" +
+    #                         'Please review and either approve or reject.', :approve_per,
+    #                         [approve_button, reject_button]
+    #   else
+    #     h.t('instructive_messages.results.approve_per.cannot_approve', submitted_at: submitted_at)
+    #   end
+    # end
 
     def results_last
       return '' unless @model.approved?
@@ -228,7 +242,7 @@ module Html
         h.link_to(first_step ? '(Yes)' : '', step_link(target), class: 'step-yes-link smooth-scroll', data: { spytarget: target }),
         prev_target.present? ? h.link_to('(Back)', prev_target, class: 'step-back-link smooth-scroll', data: { spyignore: 'ignore' }) : '',
         h.link_to('(Skip)', next_target, class: 'step-skip-link smooth-scroll', data: { spyignore: 'ignore' })
-        
+
       ].join.html_safe
     end
 
@@ -256,7 +270,7 @@ module Html
         message,
       ].join.html_safe
     end
-      
+
     def next_target_after(step)
      # index = current_steps.index { |s| s[:id] == step }
       #next_step = current_steps[index + 1] || nil
