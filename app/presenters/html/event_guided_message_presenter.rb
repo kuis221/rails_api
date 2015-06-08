@@ -18,9 +18,16 @@ module Html
     def plan_tasks
       message_route =  'instructive_messages.plan.task.'
       if @model.tasks.count > 0
-        can?(:tasks) ?
-          #I18n.t("#{message_route}added_more", contacts_count: @model.contacts.count) :
-          #I18n.t("#{message_route}details")
+        user_tasks = @model.tasks.active.assigned_to(h.current_company_user).count
+        if user_tasks > 0
+          if @model.tasks.active.count > 0
+            I18n.t("#{message_route}assigned_user_team", tasks_count: user_tasks)
+          else
+            I18n.t("#{message_route}assigned_user", tasks_count: user_tasks)
+          end
+        else
+          I18n.t("#{message_route}assigned_team", tasks_count: @model.tasks.active.count)
+        end
       else
         can?(:tasks) ? I18n.t("#{message_route}add") : I18n.t("#{message_route}empty")
       end
@@ -29,9 +36,9 @@ module Html
     def plan_documents
       message_route =  'instructive_messages.plan.document.'
       if @model.documents.count > 0
-        can?(:documents) ? I18n.t("#{message_route}manage") : I18n.t("#{message_route}view")
+        can?(:create_document) ? I18n.t("#{message_route}manage") : I18n.t("#{message_route}view")
       else
-        can?(:documents) ? I18n.t("#{message_route}add") : I18n.t("#{message_route}empty")
+        can?(:create_document) ? I18n.t("#{message_route}add") : I18n.t("#{message_route}empty")
       end
     end
 
