@@ -262,9 +262,9 @@ module Html
     end
 
     def initial_message_js
-      message, color = guided_message_presenter.initial_message
+      message, color, close = guided_message_presenter.initial_message
       return unless message && color
-      "EventDetails.showMessage('#{h.j(message)}', '#{color}', true);".html_safe
+      "EventDetails.showMessage('#{h.j(message)}', '#{color}', #{close});".html_safe
     end
 
     def guided_message_presenter
