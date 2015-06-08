@@ -284,6 +284,8 @@ class AttachedAsset < ActiveRecord::Base
     AWS::S3.new.buckets[ENV['S3_BUCKET_NAME']].objects[paperclip_file_path].copy_from(
       path, acl: :public_read)
     "https://s3.amazonaws.com/#{ENV['S3_BUCKET_NAME']}/#{paperclip_file_path}"
+  rescue AWS::S3::Errors::NoSuchKey
+    nil
   end
 
   # Rename existing file in S3
