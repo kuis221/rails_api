@@ -37,6 +37,10 @@ $.widget 'branscopic.splitExpenseForm', {
 			@updateTotals()
 			@checkValid()
 
+		$('.spliteventexpense_modal.modal').on 'hide.once', (e) =>
+			$('.spliteventexpense_modal.modal').off 'hide.once'
+			@element.find('.btn-cancel').click() unless @saved
+
 		@element.find('.btn-cancel').on 'click', (e) =>
 			e.preventDefault()
 			e.stopPropagation()
@@ -62,6 +66,9 @@ $.widget 'branscopic.splitExpenseForm', {
 			e.field.remove()
 			@doCalculation()
 			@checkValid()
+
+		@element.on 'submit', =>
+			@saved = true
 
 		@element.find('#save-expense-btn').attr 'disabled', true
 
