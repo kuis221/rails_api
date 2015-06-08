@@ -150,7 +150,7 @@ module Html
     end
 
     def phase_steps(phase, index, steps)
-      return if steps.nil?
+      return if steps.nil? || steps.empty?
       step_last_id = steps.last[:id]
       current_phase_index = phases[:phases].keys.index(phases[:current_phase])
       steps.map do |step|
@@ -216,7 +216,7 @@ module Html
     end
 
     def complete_percentage(phase)
-      p phase[1].inspect
+      return '' if phase[1].nil? || phase[1].empty?
       completed_steps = phase[1].count { |s| s[:complete] }
       percentage = completed_steps * 100 / phase[1].count
       h.content_tag(:span, "#{percentage.to_i}% COMPLETE", class: 'status-indicator')

@@ -29,12 +29,13 @@
             i.icon-team.indicate-icon
             = presenter.team_members
 
-    .span6.map_container
-      - unless resource.place.nil? || resource.place.latitude.nil? || resource.place.latitude == 1.0
-        #venue-map-canvas.google-map data-latitude="#{resource.place.latitude}" data-longitude="#{resource.place.longitude}"
-            b= resource.campaign_name
-            br>/
-            = event_date(resource, :start_at).to_s
-            br>/
-            = place_address(resource.place)
+    - if presenter.current_phase == :plan
+      .span6.map_container
+        - unless resource.place.nil? || resource.place.latitude.nil? || resource.place.latitude == 1.0
+          #venue-map-canvas.google-map data-latitude="#{resource.place.latitude}" data-longitude="#{resource.place.longitude}"
+              b= resource.campaign_name
+              br>/
+              = event_date(resource, :start_at).to_s
+              br>/
+              = place_address(resource.place)
 #event-details-info-end
