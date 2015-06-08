@@ -1,9 +1,4 @@
 jQuery ->
-	transitionalMessages = {
-		yes: ['Great!', 'Nice work.', 'All set.', 'Like it.', 'Looks great.', 'Sounds good.', 'Looks good!'],
-		skip: ['No problem, you can add at any time.', 'You can always add these later.', 'Always here if you need to add later.', 'No problem.', 'Maybe later.']
-	}
-
 	$(document).delegate ".task-completed-checkbox", "click", ->
 		$(@form).submit()
 
@@ -56,53 +51,6 @@ jQuery ->
 		window.EventDetails.closeMessage('fast')
 		$('#phases-container .phase-container:not(.active)').slideToggle()
 		false
-
-	showStep = (target, message) ->
-		return unless target
-		guidedBarNav = $('.guide-bar.event-details-scroll-spy')
-		$li = guidedBarNav.find("li>a[data-spytarget=\"#{target}\"]").parent('li')
-		$('body').scrollmultispy('activate', [target, guidedBarNav])
-		if $li.length > 0
-			$li.find('.transitional-message').text(message + ' ').end().on 'deactivate', () ->
-				$(this).find('.transitional-message').text('')
-
-	showNextStepYes = (currentStep) ->
-		guidedBarNav = $('.guide-bar.event-details-scroll-spy')
-		target = guidedBarNav.find("a[data-spytarget=\"#{currentStep}\"]").parent('li').data('next')
-		message = transitionalMessages.yes[Math.floor(Math.random()*transitionalMessages.skip.length)]
-		showStep target, message
-
-	$(document).on 'smooth-scroll:end', 'a.step-skip-link', () ->
-		target = $(this).parent('li').data('next')
-		message = transitionalMessages.skip[Math.floor(Math.random()*transitionalMessages.skip.length)]
-		showStep target, message
-
-	$(document).on 'smooth-scroll:end', 'a.step-back-link', () ->
-		target = $(this).parent('li').data('prev')
-		message = transitionalMessages.skip[Math.floor(Math.random()*transitionalMessages.skip.length)]
-		showStep target, message
-
-	$(document).on 'contact:added', () ->
-		showNextStepYes '#event-contacts'
-	$(document).on 'task:added', () ->
-		showNextStepYes '#event-tasks'
-	$(document).on 'document:added', () ->
-		showNextStepYes '#event-documents'
-	$(document).on 'per:completed', () ->
-		showNextStepYes '#event-per'
-	$(document).on 'activity:added', () ->
-		showNextStepYes '#event-activities'
-	$(document).on 'expense:added', () ->
-		showNextStepYes '#event-expenses'
-	$(document).on 'photo:added', () ->
-		showNextStepYes '#event-photos'
-	$(document).on 'comment:added', () ->
-		showNextStepYes '#event-comments'
-
-	$('.phase-steps').on 'click', 'li', (e) ->
-		if !$('.guide-bar.event-details-scroll-spy').hasClass('rejected')
-			showGuideBarWithTime()
-
 
 	$("#reject-post-event").submit (e) ->
 		e.preventDefault()
