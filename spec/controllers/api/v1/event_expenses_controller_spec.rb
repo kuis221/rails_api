@@ -9,11 +9,12 @@ describe Api::V1::EventExpensesController, type: :controller do
   before { set_api_authentication_headers user, company }
 
   describe "GET 'index'" do
-    it 'returns the list of expenses for the event' do
+    it 'returns the list of expenses for the event', :show_in_doc do
       event = create(:approved_event, company: company, campaign: campaign, place: place)
       receipt1 = build(:attached_asset, created_at: Time.zone.local(2013, 8, 22, 11, 59))
-      expense1 = create(:event_expense, amount: 99.99, name: 'Expense #1', receipt: receipt1, event: event)
-      expense2 = create(:event_expense, amount: 159.15, name: 'Expense #2', event: event)
+      expense1 = create(:event_expense, amount: 99.99, category: 'Entertainment', reimbursable: true,
+                                        receipt: receipt1, event: event)
+      expense2 = create(:event_expense, amount: 159.15, category: 'Fuel', event: event)
       Sunspot.commit
 
       get :index, event_id: event.to_param, format: :json
@@ -22,8 +23,14 @@ describe Api::V1::EventExpensesController, type: :controller do
       expect(result.count).to eq(2)
       expect(result).to eq([{
                              'id' => expense1.id,
-                             'name' => 'Expense #1',
+                             'category' => 'Entertainment',
                              'amount' => '99.99',
+                             'expense_date' => '01/01/2015',
+                             'brand_id' => nil,
+                             'reimbursable' => true,
+                             'billable' => false,
+                             'merchant' => nil,
+                             'description' => nil,
                              'receipt' => {
                                'id' => receipt1.id,
                                'file_file_name' => receipt1.file_file_name,
@@ -38,8 +45,14 @@ describe Api::V1::EventExpensesController, type: :controller do
                            },
                             {
                               'id' => expense2.id,
-                              'name' => 'Expense #2',
+                              'category' => 'Fuel',
                               'amount' => '159.15',
+                              'expense_date' => '01/01/2015',
+                              'brand_id' => nil,
+                              'reimbursable' => false,
+                              'billable' => false,
+                              'merchant' => nil,
+                              'description' => nil,
                               'receipt' => nil
                             }])
     end
@@ -47,7 +60,7 @@ describe Api::V1::EventExpensesController, type: :controller do
 
   describe "POST 'create'", strategy: :deletion do
     let(:event) { create(:approved_event, company: company, campaign: campaign, place: place) }
-    it 'create an expense and queue a job for processing the attached expense file' do
+    it 'create an expense and queue a job for processing the attached expense file', :show_in_doc do
       s3object = double
       allow(s3object).to receive(:copy_from).and_return(true)
       allow(s3object).to receive(:exists?).and_return(true)
@@ -58,13 +71,23 @@ describe Api::V1::EventExpensesController, type: :controller do
                                     }))
       expect_any_instance_of(Paperclip::Attachment).to receive(:path).at_least(:once).and_return('/attached_assets/original/test.jpg')
       expect do
-        post 'create', event_id: event.to_param, event_expense: { name: 'Expense #1', amount: '350', receipt_attributes: { direct_upload_url: 'https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg' } }, format: :json
+        post 'create', event_id: event.to_param, event_expense: {
+          category: 'Entertainment', amount: '350', expense_date: '01/01/2015',
+          reimbursable: 'true', billable: 'true', description: 'expense description',
+          merchant: 'merchant name',
+          receipt_attributes: { direct_upload_url: 'https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg' }
+        }, format: :json
       end.to change(AttachedAsset, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template('show')
       expense = EventExpense.last
-      expect(expense.name).to eq('Expense #1')
+      expect(expense.category).to eq('Entertainment')
+      expect(expense.expense_date.to_s(:slashes)).to eq('01/01/2015')
       expect(expense.amount).to eq(350)
+      expect(expense.description).to eq('expense description')
+      expect(expense.reimbursable).to be_truthy
+      expect(expense.billable).to be_truthy
+      expect(expense.merchant).to eq('merchant name')
       expect(expense.receipt.attachable).to eq(expense)
       expect(expense.receipt.asset_type).to eq(nil)
       expect(expense.receipt.direct_upload_url).to eq('https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg')
@@ -73,7 +96,7 @@ describe Api::V1::EventExpensesController, type: :controller do
   end
 
   describe "GET 'form'" do
-    it 'returns the required information' do
+    it 'returns the required information', :show_in_doc do
       event = create(:approved_event, company: company, campaign: campaign, place: place)
       Sunspot.commit
 

@@ -22,6 +22,7 @@
 #  description    :text
 #  kbmg_event_id  :string(255)
 #  rejected_at    :datetime
+#  submitted_at   :datetime
 #
 
 require 'rails_helper'

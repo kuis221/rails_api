@@ -63,14 +63,15 @@ describe Results::EventDataController, type: :controller do
       campaign.areas << area
       event = create(:approved_event, company: company, campaign: campaign, place: place,
         start_date: '01/23/2019', end_date: '01/23/2019',
-        start_time: '10:00 am', end_time: '12:00 pm')
+        start_time: '10:00 am', end_time: '12:00 pm',
+        event_expenses: [ build(:event_expense, amount: 99.99) ])
       event.users << company_user
       team = create(:team, company: company, name: 'zteam')
       event.teams << team
-      event.event_expenses.build(amount: 99.99, name: 'sample expense')
       set_event_results(event,
                         impressions: 10, interactions: 11, samples: 12, gender_male: 40, gender_female: 60,
-                        ethnicity_asian: 18, ethnicity_native_american: 19, ethnicity_black: 20, ethnicity_hispanic: 21, ethnicity_white: 22)
+                        ethnicity_asian: 18, ethnicity_native_american: 19, ethnicity_black: 20,
+                        ethnicity_hispanic: 21, ethnicity_white: 22)
       contact1 = create(:contact, first_name: 'Guillermo', last_name: 'Vargas', email: 'guilleva@gmail.com', company: company)
       contact2 = create(:contact, first_name: 'Chris', last_name: 'Jaskot', email: 'cjaskot@gmail.com', company: company)
       create(:contact_event, event: event, contactable: contact1)
@@ -186,9 +187,9 @@ describe Results::EventDataController, type: :controller do
         city: 'Los Angeles', state: 'California', country: 'US', td_linx_code: '344221')
       event = create(:approved_event, company: company, campaign: campaign, place: place,
         start_date: '01/23/2019', end_date: '01/23/2019',
-        start_time: '10:00 am', end_time: '12:00 pm')
+        start_time: '10:00 am', end_time: '12:00 pm',
+        event_expenses: [ build(:event_expense, amount: 99.99) ])
       event.users << company_user
-      event.event_expenses.build(amount: 99.99, name: 'sample expense')
       event.result_for_kpi(custom_kpi).value = 8899
       event.result_for_kpi(checkbox_kpi).value = [checkbox_kpi.kpis_segments.first.id]
       event.result_for_kpi(radio_kpi).value = radio_kpi.kpis_segments.first.id

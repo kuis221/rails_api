@@ -41,12 +41,12 @@ feature 'Results Expenses Page', js: true, search: true  do
     scenario 'GET index should display a table with the expenses' do
       event = build(:approved_event, campaign: campaign1, company: company, start_date: '08/21/2013', end_date: '08/21/2013',
                                      start_time: '8:00pm', end_time: '11:00pm', place: create(:place, name: 'Place 1'))
-      event.event_expenses.build(name: 'Expense #1 Event #1', event_id: event.id, amount: 10)
+      event.event_expenses.build(category: 'Entertainment', event_id: event.id, amount: 10, expense_date: '01/01/2015')
       event.save
 
       event2 = build(:approved_event, campaign: campaign1, company: company, start_date: '08/25/2013', end_date: '08/25/2013',
                                       start_time: '9:00am', end_time: '10:00am', place: create(:place, name: 'Place 2'))
-      event2.event_expenses.build(name: 'Expense #1 Event #2', event_id: event.id, amount: 20)
+      event2.event_expenses.build(category: 'Uncategorized', event_id: event.id, amount: 20, expense_date: '01/01/2015')
       event2.save
 
       Sunspot.commit
@@ -70,11 +70,9 @@ feature 'Results Expenses Page', js: true, search: true  do
     end
 
     scenario 'clicking on the expense item should redirect the user to the event' do
-      event = build(:approved_event, campaign: campaign1, company: company, start_date: '08/21/2013',
-                                     end_date: '08/21/2013', start_time: '8:00pm', end_time: '11:00pm')
-      event.event_expenses.build(name: 'Expense #1 Event #1', event_id: event.id, amount: 10)
-      event.save
-
+      event = create(:approved_event, campaign: campaign1, company: company, start_date: '08/21/2013',
+                                      end_date: '08/21/2013', start_time: '8:00pm', end_time: '11:00pm',
+                                      event_expenses: [ build(:event_expense, amount: 10) ])
       Sunspot.commit
       visit results_expenses_path
 
@@ -110,13 +108,13 @@ feature 'Results Expenses Page', js: true, search: true  do
                               start_date: '08/21/2013', end_date: '08/21/2013',
                               start_time: '8:00pm', end_time: '11:00pm', place: create(:place, name: 'Place 1'),
                               event_expenses: [
-                                build(:event_expense, name: 'Expense #1 Event #1', amount: 10, brand_id: brand.id)])
+                                build(:event_expense, category: 'Entertainment', amount: 10, brand_id: brand.id)])
 
-      create(:approved_event, campaign: campaign1,
+      create(:approved_event, campaign: campaign2,
                               start_date: '08/25/2013', end_date: '08/25/2013',
                               start_time: '9:00am', end_time: '10:00am', place: create(:place, name: 'Place 2'),
                               event_expenses: [
-                                build(:event_expense, name: 'Expense #1 Event #2', amount: 20)])
+                                build(:event_expense, category: 'Uncategorized', amount: 20)])
 
       Sunspot.commit
     end
@@ -134,11 +132,14 @@ feature 'Results Expenses Page', js: true, search: true  do
       ensure_modal_was_closed
 
       expect(ListExport.last).to have_rows([
-        ['CAMPAIGN NAME', 'BRAND', 'VENUE NAME', 'ADDRESS', 'START DATE', 'END DATE', 'EXPENSE', 'DESCRIPTION', 'ACTIVE STATE'],
-        [campaign1.name, 'Brand 1', 'Place 1', 'Place 1, 11 Main St., New York City, NY, 12345', '2013-08-21T20:00',
-         '2013-08-21T23:00', '10.0', 'Expense #1 Event #1', 'Active'],
-        [campaign1.name, nil, 'Place 2', 'Place 2, 11 Main St., New York City, NY, 12345', '2013-08-25T09:00',
-         '2013-08-25T10:00', '20.0', 'Expense #1 Event #2', 'Active']
+        ["CAMPAIGN NAME", "BRAND", "VENUE NAME", "ADDRESS", "EXPENSE DATE", "EVENT START DATE", "EVENT END DATE",
+         "AMOUNT", "CATEGORY", "REIMBURSABLE", "BILLABLE", "MERCHANT", "DESCRIPTION", "ACTIVE STATE"],
+        ["First Campaign", "Brand 1", "Place 1", "Place 1, 11 Main St., New York City, NY, 12345",
+         "2015-01-01T00:00", "2013-08-21T23:00", "2013-08-21T20:00", "10.0", "Entertainment", "No",
+         "No", nil, nil, "Active"],
+        ["Second Campaign", nil, "Place 2", "Place 2, 11 Main St., New York City, NY, 12345",
+         "2015-01-01T00:00", "2013-08-25T10:00", "2013-08-25T09:00", "20.0", "Uncategorized",
+         "No", "No", nil, nil, "Active"]
       ])
     end
   end

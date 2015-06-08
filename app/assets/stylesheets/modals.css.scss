@@ -50,38 +50,7 @@ ul.select2-results{
 		&.kpi_modal{
 			padding-bottom: 30px;
 		}
-		.select2-container:focus{
-			outline: none !important;
-		}
-		.select2-container-multi .select2-choices{
-			background-image: none !important;
-			border: 1px solid #c0c0c0 !important;
-			border-radius: 4px !important;
-			box-shadow: none !important;
-			height: 34px !important;
-			padding-top: 5px !important;
-			width: 398px !important;
-			.select2-search-choice{
-				background-color: $brand !important;
-				background-image: none !important;
-				border-radius: 12px;
-				border: 0;
-				box-shadow: none;
-				color: white;
-				padding: 5px 20px 6px 10px;
-			}
-			.select2-search-field{
-				input[type="text"]{
-					border:0 !important;
-				}
-			}
-			.select2-search-choice{
-				margin-top: 2px !important;
-			}
-		}
-		.select2-results{
-			width: 394px;
-		}
+
 		.chzn-container-multi{
 			.chzn-choices{
 				width: 400px !important;
@@ -994,7 +963,54 @@ div#spin{
 .eventexpense_modal{
 	width: 660px;
 	.expense-info-form{
+		display: inline-block;
+		position: relative;
 		width: 100%;
+		.checker{
+			display: inline-block !important;
+			span.checked:after{
+				top: 6px;
+			}
+		}
+		.expense-fields-wrapper {
+
+			position: relative;
+			.receipt-wrapper, .attachment-panel {
+				position: absolute;
+				top: 0;
+				bottom: 0;
+				height: 100%;
+				width: 300px;
+			}
+			.attachment-panel { 
+				.attachment-select-file-view {
+					padding-top: 110px;
+				}
+				.drag-box {
+					line-height: 90px;
+					p { 
+						font-size: 12px;
+						line-height: 17px;
+					}
+					.icon-upload:before {
+						top: -16px;
+					}
+				}
+			}
+		}
+		#expense-fields {
+			.split-expense {
+				margin-bottom: 10px;
+				.split-expense-link {
+					background: none!important;
+					border: none;
+					color: $primary-blue;
+					cursor: pointer;
+					outline: none;
+					padding: 0!important;
+				}
+			}
+		}
 		.inputs-side {
 			width: 60%;
 			.control-group{
@@ -1014,10 +1030,6 @@ div#spin{
 			}
 		}
 	}
-	.expense-info-form {
-		display: inline-block;
-		position: relative;
-	}
 	.expense-file-form {
 		top:0;
 		right:0;
@@ -1031,6 +1043,101 @@ div#spin{
 		display: inline-block;
 		&.inside-form{
 			margin-bottom:10px;
+		}
+	}
+}
+
+.spliteventexpense_modal {
+	margin-left: -400px !important;
+	width: 930px;
+	.add_nested_fields {
+		float: right;
+  		position: relative;
+  		bottom: 42px;
+  		right: -5px;
+  		font-size: 22px;
+  		color: $silver;
+	}
+	.form-inputs {
+		display: table;
+		table-layout: fixed;
+		width: 100%;
+		.expense-item {
+			display: table-row;
+			.control-group {
+				display: table-cell;
+				position: relative;
+				padding-left: 10px;
+				&:nth-child(1) { width:120px; padding-left: 0px; }
+				&:nth-child(2) { width:220px; }
+				&:nth-child(3) { width:220px; }
+				&:nth-child(4) { width:120px; }
+				&:nth-child(5) { width:100px; }
+				&:nth-child(6) { width:60px; padding-top: 15px; }
+				input.currency { width:80px; }
+				input.amount-percentage { width:55px; }
+			}
+		}
+	}
+	.expenses-list > .fields {
+		&:nth-child(1), &:nth-child(2) { 
+			.remove_nested_fields {
+				display:none;
+			}
+		}
+	}
+	.split-expense-form{
+
+		.form-inputs{
+			.percent-field{
+				margin-left: 80px;
+			}
+			.controls{
+				input{
+					&.amount-currency, &.amount-percentage{
+						text-align: right;
+					}
+				}
+			}
+			.remove-expense {
+				vertical-align: middle;
+				.icon {
+					color: $silver;
+					font-size: 22px;
+				}
+			}
+			.error .help-inline {
+				display: none !important;
+			}
+		}
+		.split-evenly-btn {
+			margin-bottom: 20px;
+		}
+		.expense-total{
+			border-top: 1px solid $silver;
+			font-size: 16px;
+			font-weight: bold;
+			margin-top: 15px;
+			padding-top: 15px;
+			.total-label{
+				color: $brand;
+			}
+			.total-amount{
+				color: $gray-dark;
+				&.text-error {
+					color: $primary-red;
+				}
+			}
+			.left-amount{
+				font-weight: normal;
+				color: $silver;
+				span {
+					font-weight: bold;
+				}
+			}
+			.row-fluid [class*="span"] {
+				min-height: 20px;
+			}
 		}
 	}
 }

@@ -484,6 +484,11 @@ class Ability
         can?(:show, expense.event)
       end
 
+      can :split, EventExpense do |expense|
+       (expense.new_record? && can?(:create_expense, expense.event)) ||
+       (expense.persisted? && can?(:edit_expense, expense.event))
+      end
+
       # Surveys permissions
       can :surveys, Event do |event|
         user.role.has_permission?(:index_surveys, Event) && can?(:show, event)

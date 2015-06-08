@@ -4,7 +4,8 @@ $.widget 'nmk.formBuilder', {
 		url: null,
 		exportUrl: null,
 		canEdit: false,
-		canActivateKpis: false
+		canActivateKpis: false,
+		defaultExpensesCategories: []
 	},
 	_create: () ->
 		@modified = false
@@ -1582,6 +1583,7 @@ ExpensesField = Module.extend {
 		}, attributes)
 
 		@attributes.settings ||= {}
+		@attributes.settings.categories ||= @form.options.defaultExpensesCategories
 
 		@
 
@@ -1595,10 +1597,24 @@ ExpensesField = Module.extend {
 		]
 
 	attributesForm: () ->
+		window.setTimeout () =>
+			$('input[name=categories].select2-field').show().select2
+				tags: @form.options.defaultExpensesCategories
+		, 100
+
 		[
 			$('<h4>').text('Module Settings'),
 			@rangeField(),
-			@requiredField('Receipts required')
+			@requiredField('Receipts required'),
+			$('<div class="control-group">').append [
+				$('<label class="control-label">').text('Categories'),
+				$('<div class="controls">').append $('<input type="text" name="categories" class="select2-field">').hide().val(@attributes.settings.categories).on "change", (e) =>
+					input = $(e.target)
+					@attributes.settings.categories = input.select2("val")
+					@form.setModified()
+					true
+			]
+
 		]
 }
 

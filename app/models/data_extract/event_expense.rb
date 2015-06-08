@@ -22,8 +22,13 @@
 class DataExtract::EventExpense < DataExtract
   include DataExtractEventsBase
 
-  define_columns name: 'event_expenses.name',
+  define_columns category: 'event_expenses.category',
                  amount: 'event_expenses.amount',
+                 expense_date: 'to_char(event_expenses.expense_date, \'MM/DD/YYYY\')',
+                 reimbursable: 'event_expenses.reimbursable',
+                 billable: 'event_expenses.billable',
+                 merchant: 'event_expenses.merchant',
+                 description: 'event_expenses.description',
                  campaign_name: 'campaigns.name',
                  end_date: proc { "to_char(events.#{date_field_prefix}end_at, 'MM/DD/YYYY')" },
                  end_time: proc { "to_char(events.#{date_field_prefix}end_at, 'HH12:MI AM')" },
@@ -70,7 +75,7 @@ class DataExtract::EventExpense < DataExtract
       super
     end
   end
-  
+
   def filters_include_calendar
     true
   end

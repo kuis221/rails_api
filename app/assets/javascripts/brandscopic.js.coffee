@@ -156,7 +156,7 @@ jQuery ->
 			onClose: (selectedDate) ->
 				$(@).valid();
 		$('input.timepicker').timepicker()
-		$('select.chosen-enabled').chosen()
+		$('select.chosen-enabled').chosen({allow_single_deselect: true})
 		$('.has-tooltip').tooltip({html: true, delay: 0, animation: false})
 		$('.has-popover').popover({html: true})
 		$("input:checkbox, input:radio").not('[data-no-uniform="true"], #uniform-is-ajax, .bs-checkbox').uniform()
@@ -723,6 +723,10 @@ jQuery ->
 		intVal = parseInt(value);
 		return ($.trim(value) == '' || intVal <= 100);
 	, "Field cannot exceed 100%");
+
+	$.validator.addMethod('greaterthan',  (value, el, param) ->
+	    return value > param;
+	,  jQuery.validator.format("Must be greater than {0}"));
 
 	$.validator.addClassRules("segment-total", { segmentTotalMax: true, segmentTotalRequired: true });
 

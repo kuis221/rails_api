@@ -19,8 +19,17 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
 
   def_param_group :event_expense do
     param :event_expense, Hash, required: true, action_aware: true do
-      param :name, String, required: true, desc: 'Event expense name/label'
-      param :amount, String, required: true, desc: 'Event expense amount'
+      param :category, String, required: true,
+                               desc: 'Event expense category, should be one of '\
+                                     'the category allowed categories, see '\
+                                     '/events/:id/event_expenses/catetories'
+      param :expense_date, %r{\A\d{1,2}/\d{1,2}/\d{4}\z}, required: true, desc: 'Event date. Must be in format MM/DD/YYYY.'
+      param :amount, String, required: true, desc: 'Event expense amount. Must be a number greater than 0'
+      param :brand_id, String, required: false, desc: 'A valid brand id'
+      param :reimbursable, ['true', 'false'], required: false, desc: 'Reimbursable attribute'
+      param :billable, ['true', 'false'], required: false, desc: 'Billable attribute'
+      param :merchant, String, required: false, desc: 'Merchant attribute'
+      param :description, String, required: false, desc: 'Event expense description'
       param :receipt_attributes, Hash do
         param :direct_upload_url, String, desc: "The receipt URL. This should be a valid Amazon S3's URL."
       end
@@ -50,44 +59,6 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
       * *file_medium:* URL for the medium size representation of the attached asset
       * *file_original:* URL for the original size representation of the attached asset
   EOS
-  example <<-EOS
-    An example with expenses for an event in the response
-    GET: /api/v1/events/1351/event_expenses.json
-    [
-      {
-        "id": 28,
-        "name": "Expense #1",
-        "amount": "200.0",
-        "receipt": {
-          "id": 26,
-          "file_file_name": "image1.jpg",
-          "file_content_type": "image/jpeg",
-          "file_file_size": 44705,
-          "created_at": "2013-10-22T13:30:12-07:00",
-          "active": true,
-          "file_small": "http://s3.amazonaws.com/brandscopic/attached_assets/files/000/000/026/small/image1.jpg?1382473842",
-          "file_medium": "http://s3.amazonaws.com/brandscopic/attached_assets/files/000/000/026/medium/image1.jpg?1382473842",
-          "file_original": "http://s3.amazonaws.com/brandscopic/attached_assets/files/000/000/026/original/image1.jpg?1382473842"
-        }
-      },
-      {
-        "id": 29,
-        "name": "Expense #2",
-        "amount": "359.0",
-        "receipt": {
-          "id": 27,
-          "file_file_name": "image2.jpg",
-          "file_content_type": "image/jpeg",
-          "file_file_size": 10461,
-          "created_at": "2013-10-22T14:25:13-07:00",
-          "active": true,
-          "file_small": "http://s3.amazonaws.com/brandscopic/attached_assets/files/000/000/027/small/image2.jpg?1382477120",
-          "file_medium": "http://s3.amazonaws.com/brandscopic/attached_assets/files/000/000/027/medium/image2.jpg?1382477120",
-          "file_original": "http://s3.amazonaws.com/brandscopic/attached_assets/files/000/000/027/original/image2.jpg?1382477120"
-        }
-      }
-    ]
-  EOS
   def index
     authorize!(:expenses, parent)
     @expenses = parent.event_expenses.sort_by(&:id)
@@ -107,37 +78,6 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
   * *bucket_name*: brandscopic-stage
   * *folder*: the folder name where the photo was uploaded to
   EOS
-  example <<-EOS
-  POST /api/v1/events/192/event_expenses.json
-  DATA:
-  {
-    event_expense: {
-      name: 'Expense #1',
-      amount: 350,
-      receipt_attributes: {
-        direct_upload_url: 'https://s3.amazonaws.com/brandscopic-dev/uploads/12390bs-25632sj-2-83KjsH984sd/SV-T101-P005-111413.jpg'
-      }
-    }
-  }
-
-  RESPONSE:
-  {
-    "id": 196,
-    "name": "Expense #1",
-    "amount": "350.0",
-    "receipt": {
-      "id": 45554,
-      "file_file_name": "SV-T101-P005-111413.JPG",
-      "file_content_type": "image/jpeg",
-      "file_file_size": 611320,
-      "created_at": "2013-11-19T00:49:24-08:00",
-      "active": true
-      "file_small": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/45554/small/SV-T101-P005-111413.jpg?1389026763",
-      "file_medium": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/45554/medium/SV-T101-P005-111413.jpg?1389026763",
-      "file_original": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/45554/original/SV-T101-P005-111413.jpg?1389026763"
-    }
-  }
-  EOS
   def create
     create! do |success, failure|
       success.json { render :show }
@@ -152,19 +92,6 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
   /uploads/9afa6775-2c8e-44f8-9cda-280e80446ced/My file.jpg
 
   The signature will expire 1 hour after it's generated, therefore, it's recommended to not cache these fields for long time.
-  EOS
-  example <<-EOS
-  GET /api/v1/events/123/event_expenses/form.json
-  {
-      "fields": {
-          "AWSAccessKeyId": "AKIAIJSENKEXXZNMLW3VQ",
-          "key": null,
-          "policy": "ioJleHBpcmF0S0zMVQyMTo0NToyNFoiLCJjb25kaXRpb25zIjsoOHYLSSdHMtd2l0aCIsIiRrZXkiLCJ1cGxvYWRzLyJdLHsiYnVja2V0IjoiYnJhbmRzY29waWMtZGV2In0sWyJzdGFydHMtd2l0aCIsIiRrZXkiLCIiXSx7IlNlY3VyZSI6InRydWTYosS",
-          "signature": "Q8TG16PD850JapPweQGAaK/o4NE=",
-          "Secure": "true"
-      },
-      "url": "https://bucket-name.s3.amazonaws.com/"
-  }
   EOS
   def form
     authorize!(:create_expense, parent)
@@ -206,7 +133,9 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
   end
 
   def permitted_params
-    params.permit(event_expense: [:amount, { receipt_attributes: [:direct_upload_url] }, :name])[:event_expense]
+    params.permit(event_expense: [
+      :amount, :category, :amount, :brand_id, :expense_date, :reimbursable,
+      :billable, :merchant, :description, { receipt_attributes: [:direct_upload_url] }])[:event_expense]
   end
 
   def skip_default_validation

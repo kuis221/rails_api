@@ -2,7 +2,8 @@
 |
   var resource_modal, container = $('#resource-form-modal');
   var content = "#{j render(partial: form_partial, locals: {remote: true})}";
-  if (!container.length) {
+  if (!container.length || !container.hasClass('in')) {
+    container.remove();
     bootbox.classes('#{@form_modal_class} #{resource_class.name.downcase}_modal resource-form-modal');
     container = $('<div id="resource-form-modal">'+content+'</div>');
     resource_modal = bootbox.dialog(container,[],{header: '#{j modal_dialog_title}',  'onEscape': true, animate: (!$.fx.off)});
@@ -17,6 +18,7 @@
   } else {
     container.closest('.resource-form-modal').find('.modal-header h3').text('#{j modal_dialog_title }');
     container.html(content);
+    resource_modal.modal('show');
   }
   makeFormValidatable($('form', container));
 
