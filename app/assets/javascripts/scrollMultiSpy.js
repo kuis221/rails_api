@@ -14,7 +14,7 @@
     this.options = $.extend({}, $.fn.scrollmultispy.defaults, options)
     this.$scrollElement = $element.on('scroll.scroll-spy.data-api', process)
     this.navs = $(this.options.target)
-    this.selector = ' ul li > a:not([data-spyignore])'
+    this.selector = 'a[data-spytarget]'
     this.$body = $('body')
     this.refresh()
     this.process()
@@ -94,8 +94,9 @@
 
         nav.activeTarget = target
 
+        $(nav).find(this.selector+'.active').removeClass('active scrollmultispy')
         $(nav).find(this.selector)
-          .parent('.active')
+          .parent('.active.scrollmultispy')
           .removeClass('active')
           .trigger('deactivate')
 
@@ -104,12 +105,13 @@
           + '[data-target="' + target + '"],'
           + this.selector + '[href="' + target + '"]'
 
+        $(nav).find(selector).addClass('active scrollmultispy')
         active = $(nav).find(selector)
           .parent('li')
-          .addClass('active')
+          .addClass('active scrollmultispy')
 
         if (active.parent('.dropdown-menu').length)  {
-          active = active.closest('li.dropdown').addClass('active')
+          active = active.closest('li.dropdown').addClass('active scrollmultispy')
         }
 
         active.trigger('activate')
