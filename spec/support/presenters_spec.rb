@@ -12,10 +12,11 @@ module Brandscopic
       end
 
       def present(obj, stubs={})
-        @@view_context.present(obj)
+        presenter = @@view_context.present(obj)
         stubs.each do |k, v|
           allow(@@view_context).to receive(k).and_return(v)
         end
+        presenter
       end
     end
   end
