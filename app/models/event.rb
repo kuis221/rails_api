@@ -53,7 +53,7 @@ class Event < ActiveRecord::Base
       where(form_field_id: proxy_association.owner.campaign.form_field_ids)
     end
   end
-  has_many :event_expenses, dependent: :destroy, inverse_of: :event, autosave: true
+  has_many :event_expenses, -> { order('category ASC') }, dependent: :destroy, inverse_of: :event, autosave: true
   has_many :activities, -> { order('activity_date ASC') }, as: :activitable, dependent: :destroy do
     def active
       joins(activity_type: :activity_type_campaigns)
