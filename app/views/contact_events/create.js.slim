@@ -2,6 +2,7 @@
   - render 'settings'
   = render 'form_dialog'
 - else
+  = update_event_details_bar(parent)
   |
     $('.contactevent_modal').modal('hide');
     $('#event-contacts-list').html('#{j render(partial: 'events/contacts', locals: {resource: parent, can_delete: can?(:delete_contact, parent)}) }');

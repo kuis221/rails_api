@@ -59,6 +59,7 @@ class EventsController < FilteredController
           email_message).deliver
       end
     end
+    flash[:event_message_success] = I18n.translate('instructive_messages.execute.submit.success')
     rescue AASM::InvalidTransition => e
       Rails.logger.debug e.message
   end
@@ -99,6 +100,7 @@ class EventsController < FilteredController
         ).deliver
       end
     end
+    flash[:event_message_fail] = I18n.translate('instructive_messages.results.rejected')
   end
 
   def calendar

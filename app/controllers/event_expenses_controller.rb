@@ -21,6 +21,12 @@ class EventExpensesController < InheritedResources::Base
     render :create
   end
 
+  def new
+    return true unless parent.campaign.range_module_settings?('expenses')
+    max = parent.campaign.module_setting('expenses', 'range_max')
+    resource.errors.add(:base, I18n.translate('instructive_messages.execute.expense.add_exceeded.new', expenses_max: max)) if parent.event_expenses.count >= max.to_i
+  end
+
   private
 
   def check_split_expense

@@ -27,6 +27,7 @@ class EventExpense < ActiveRecord::Base
   validates :expense_date, presence: true
   validates :amount, presence: true, numericality: { greater_than: 0 }
   validate :valid_receipt?, if: :receipt_required?
+  validate :event_expenses, before: :create
 
   after_save :update_event_data
 
@@ -64,5 +65,11 @@ class EventExpense < ActiveRecord::Base
   def valid_receipt?
     build_receipt unless receipt.present?
     receipt.errors.add(:file, :required)
+  end
+
+  def event_expenses
+    return true unless event.campaign.range_module_settings?('expenses')
+    max = event.campaign.module_setting('expenses', 'range_max')
+    errors.add(:base, I18n.translate('instructive_messages.execute.expense.add_exceeded.create', expenses_max: max)) if event.event_expenses.count >= max.to_i
   end
 end

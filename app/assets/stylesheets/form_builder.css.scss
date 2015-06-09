@@ -472,7 +472,10 @@ $margin-right: 240px;
 	.checker{
 		background-color: #c2c2c2;
 		margin: 0 10px 0 0;
-		span.checked{
+		span {
+			background-color: #c2c2c2;
+		}
+		span.checked {
 			background-color:$gray !important;
 		}
 	}

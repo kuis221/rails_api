@@ -1,32 +1,35 @@
 jQuery ->
-	transitionalMessages = {
-		yes: ['Great!', 'Nice work.', 'All set.', 'Like it.', 'Looks great.', 'Sounds good.', 'Looks good!'],
-		skip: ['No problem, you can add at any time.', 'You can always add these later.', 'Always here if you need to add later.', 'No problem.', 'Maybe later.']
-	}
-
 	$(document).delegate ".task-completed-checkbox", "click", ->
 		$(@form).submit()
 
 	EventDetails = ->
-		this.alertBox = $('.event-alert')
 		this.closeAlertTimeout = false
+
+		$('.event-alert').find('.close').show().on 'click', =>
+			this.permanentMessageOpen = false
+
 		this.showMessage = (message, color, close = false) ->
+			return if this.permanentMessageOpen
+			$('.event-alert').find('.close').hide()
 			clearTimeout this.closeAlertTimeout if this.closeAlertTimeout
 			$('.event-alert').removeClass (index, css) ->
 				(css.match(/(^|\s)alert-\S+/g) or []).join ' '
-			this.alertBox.addClass('alert-' + color).find('.alert-main-text').text(message)
+			$('.event-alert').addClass('alert-' + color).find('.alert-main-text').text(message)
 			if close
-				this.show().find('.close').show()
+				this.showPermanentMessage()
 			else
 				this.showMessageWithAutoClose()
+		this.showPermanentMessage = () ->
+			this.permanentMessageOpen = true
+			$('.event-alert').slideDown('fast').find('.close').show()
 
-		this.showMessageWithAutoClose = (time = 3000, duration='slow') ->
+		this.showMessageWithAutoClose = (time = 3000, duration='fast') ->
 			$('.event-alert').slideDown(duration)
 			this.closeAlertTimeout = setTimeout ->
 				$('.event-alert').slideUp(duration)
 			, time
-		this.closeMessage= (duration = 'slow') ->
-			this.alertBox.slideUp(duration)
+		this.closeMessage= (duration = 'fast') ->
+			$('.event-alert').slideUp(duration)
 		@
 
 	window.EventDetails = new EventDetails()
@@ -36,6 +39,7 @@ jQuery ->
 			window.EventDetails.closeMessage('fast')
 			$('#phases-container .phase-container:not(.active)').slideUp()
 		.on 'smooth-scroll:end', '.event-phase-step', (e) ->
+			$('#phases-container').scrollmultispy('activate',[$(this).data('spytarget'), $('#phases-container')[0]])
 			window.EventDetails.showMessage($(this).data('message'), $(this).data('message-color'))
 
 	$('.btn-dismiss-alert').on 'click', (e) ->
@@ -47,53 +51,6 @@ jQuery ->
 		window.EventDetails.closeMessage('fast')
 		$('#phases-container .phase-container:not(.active)').slideToggle()
 		false
-
-	showStep = (target, message) ->
-		return unless target
-		guidedBarNav = $('.guide-bar.event-details-scroll-spy')
-		$li = guidedBarNav.find("li>a[data-spytarget=\"#{target}\"]").parent('li')
-		$('body').scrollmultispy('activate', [target, guidedBarNav])
-		if $li.length > 0
-			$li.find('.transitional-message').text(message + ' ').end().on 'deactivate', () ->
-				$(this).find('.transitional-message').text('')
-
-	showNextStepYes = (currentStep) ->
-		guidedBarNav = $('.guide-bar.event-details-scroll-spy')
-		target = guidedBarNav.find("a[data-spytarget=\"#{currentStep}\"]").parent('li').data('next')
-		message = transitionalMessages.yes[Math.floor(Math.random()*transitionalMessages.skip.length)]
-		showStep target, message
-
-	$(document).on 'smooth-scroll:end', 'a.step-skip-link', () ->
-		target = $(this).parent('li').data('next')
-		message = transitionalMessages.skip[Math.floor(Math.random()*transitionalMessages.skip.length)]
-		showStep target, message
-
-	$(document).on 'smooth-scroll:end', 'a.step-back-link', () ->
-		target = $(this).parent('li').data('prev')
-		message = transitionalMessages.skip[Math.floor(Math.random()*transitionalMessages.skip.length)]
-		showStep target, message
-
-	$(document).on 'contact:added', () ->
-		showNextStepYes '#event-contacts'
-	$(document).on 'task:added', () ->
-		showNextStepYes '#event-tasks'
-	$(document).on 'document:added', () ->
-		showNextStepYes '#event-documents'
-	$(document).on 'per:completed', () ->
-		showNextStepYes '#event-per'
-	$(document).on 'activity:added', () ->
-		showNextStepYes '#event-activities'
-	$(document).on 'expense:added', () ->
-		showNextStepYes '#event-expenses'
-	$(document).on 'photo:added', () ->
-		showNextStepYes '#event-photos'
-	$(document).on 'comment:added', () ->
-		showNextStepYes '#event-comments'
-
-	$('.phase-steps').on 'click', 'li', (e) ->
-		if !$('.guide-bar.event-details-scroll-spy').hasClass('rejected')
-			showGuideBarWithTime()
-
 
 	$("#reject-post-event").submit (e) ->
 		e.preventDefault()

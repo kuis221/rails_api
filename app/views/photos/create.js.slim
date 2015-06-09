@@ -18,5 +18,6 @@
     }
 - else
   |
+    $('#processed_asset_#{params[:unique_id]}').remove();
     $('#upload_#{params[:unique_id]}').addClass('failed').find('div.progress').removeClass('active').end().find('.upload-file-error').text('#{j resource.errors.full_messages.to_sentence}');
     window.EventDetails.showMessage('#{resource.errors.full_messages.first}', 'red');

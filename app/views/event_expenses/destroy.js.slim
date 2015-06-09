@@ -1,2 +1,3 @@
 |
-  $('#event-expenses-container').replaceWith('#{j render(partial: 'events/expenses', locals: {resource: resource.event})}')
+  $('#event-expenses-container').replaceWith('#{j render(partial: 'events/expenses', locals: {resource: resource.event})}');
+  window.EventDetails.showMessage("#{j I18n.translate('instructive_messages.execute.expense.deactivated')}", 'green');

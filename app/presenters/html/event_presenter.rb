@@ -150,7 +150,7 @@ module Html
     end
 
     def phase_steps(phase, index, steps)
-      return if steps.nil?
+      return if steps.nil? || steps.empty?
       step_last_id = steps.last[:id]
       current_phase_index = phases[:phases].keys.index(phases[:current_phase])
       steps.map do |step|
@@ -169,9 +169,9 @@ module Html
       url = h.phase_event_path(@model, phase: phase) + target unless phase == current_phase
       h.link_to_if linked, content, url,
                  class: 'smooth-scroll event-phase-step',
-                 data: { message: I18n.t("instructive_messages.#{phase}.#{step[:id].to_s.singularize}.add"),
-                         message_color: 'green',
-                         target: target }
+                 data: { message: guided_message(phase, step),
+                         message_color: 'blue',
+                         spytarget: target }
     end
 
     def render_nav_phases
@@ -179,7 +179,7 @@ module Html
       current_phase_index = phases[:phases].keys.index(current_phase)
       phases[:phases].each_with_index.map do |phase, i|
         h.content_tag(:div, class: "phase-container #{i == current_phase_index ? 'active' : 'hide'}") do
-          render_nav_phase(phase, i)
+          render_nav_phase(phase, i) + phase_buttons(phase)
         end
       end.join.html_safe
     end
@@ -190,7 +190,7 @@ module Html
       completed = i < index_phase
       h.content_tag(:div, class: "step phase-id #{'active' if phase[0] == phases[:current_phase]}") do
         (if completed
-           h.content_tag(:div, '', class: "icon-check-circle")
+           h.content_tag(:div, '', class: 'icon-check-circle')
          else
            h.content_tag(:span, class: 'id') do
             "#{i + 1}#{icon(:lock) if i > index_phase}".html_safe
@@ -198,6 +198,77 @@ module Html
          end) +
           phase[0].upcase
       end + phase_steps(phase[0], i, phase[1])
+    end
+
+    def phase_buttons(phase)
+      buttons =
+        case phase[0]
+        when :execute
+          [submit_button]
+        when :results
+          approve_reject_buttons
+        else
+          []
+        end.compact
+      h.content_tag(:div, class: 'step actions') do
+        buttons.join.html_safe + complete_percentage(phase)
+      end
+    end
+
+    def complete_percentage(phase)
+      return '' if phase[1].nil? || phase[1].empty?
+      completed_steps = phase[1].count { |s| s[:complete] }
+      percentage = completed_steps * 100 / phase[1].count
+      h.content_tag(:span, "#{percentage.to_i}% COMPLETE", class: 'status-indicator')
+    end
+
+    def approve_reject_buttons
+      if approved?
+        [unapprove_button]
+      else
+        [approve_button, reject_button].compact
+      end
+    end
+
+    def unapprove_button
+      return unless can?(:unapprove)
+      h.button_to 'Unapprove', h.unapprove_event_path(@model, return: h.return_path),
+                  method: :put, class: 'btn btn-primary'
+    end
+
+    def approve_button
+      return unless can?(:approve)
+      h.button_to 'Approve', h.approve_event_path(@model, return: h.return_path),
+                  method: :put, class: 'btn btn-primary', disabled: !submitted?
+    end
+
+    def reject_button
+      return unless can?(:reject)
+      h.button_to 'Reject', h.reject_event_path(@model, format: :js, return: h.return_path),
+                  form: { id: 'reject-post-event' },
+                  method: :put, class: 'btn btn-primary', remote: true, disabled: !submitted?
+    end
+
+    def submit_button
+      return unless can?(:submit)
+      h.button_to 'Submit', h.submit_event_path(@model, format: :js, return: h.return_path),
+                  class: 'btn btn-cancel submit-event-data-link', method: :put,
+                  remote: true, data: { disable_with: 'submitting' },
+                  disabled: submitted? || approved? || !valid_results?
+    end
+
+    def guided_message(phase, step)
+      guided_message_presenter.send("#{phase}_#{step[:id]}") || ''
+    end
+
+    def initial_message_js
+      message, color, close = guided_message_presenter.initial_message
+      return unless message && color
+      "EventDetails.showMessage('#{h.j(message)}', '#{color}', #{close});".html_safe
+    end
+
+    def guided_message_presenter
+      @guided_message_presenter ||= Html::EventGuidedMessagePresenter.new(@model, h)
     end
   end
 end

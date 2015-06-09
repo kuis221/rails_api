@@ -1467,9 +1467,7 @@ feature 'Events section' do
 
         visit event_path(event)
 
-        expect(page).to have_content(
-          'Your post event report has been approved. '\
-          'Check out your post event results below for a recap of your event.')
+        expect(page).to have_content('Nice! Your event has been Approved.')
 
         click_js_button 'Unapprove'
 
@@ -1496,13 +1494,12 @@ feature 'Events section' do
           fill_in "comment[content]", with: 'This is a test comment'
           click_js_button 'Create'
         end
+        expect(page).to have_content 'Looks good. Your comment has been saved.'
         expect(page).to have_content 'This is a test comment'
-        expect(page).to have_content 'It looks like you\'ve collected all required post event info.'\
-                                     ' Are you ready to submit your report for approval?'
 
         click_js_button 'Submit'
 
-        expect(page).to have_content('Your post event report has been submitted for approval less than a minute ago.')
+        expect(page).to have_content('Great job! Your PER has been submitted for approval.')
       end
     end
   end
@@ -1517,5 +1514,9 @@ feature 'Events section' do
 
   def contact_list
     '#event-contacts-list'
+  end
+
+  def tracker_bar
+    '.trackers-bar'
   end
 end

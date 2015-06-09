@@ -744,11 +744,22 @@ en:
         added_more: '%{activities_count} activities have been added. Would you like to add more?'
         deactivated: 'Your %{activity_type} activity has been deactivated'
         view: 'View your event activities below'
+      attendance:
+        add: 'Do you have any attendances to add? This is optional.'
+        empty: 'There are no attendances to view at this time'
+        added: 'Nice work. %{attendances_count} attendances have been added.'
+        added_more: '%{attendances_count} attendances have been added. Would you like to add more?'
+        deactivated: 'Your %{attendances_type} attendances has been deactivated'
+        view: 'View your event attendances below'
       photo:
         add: 'Do you have any event photos to upload? This is optional.'
-        add_min: 'Do you have any event photos to upload? At least %{photos_min} photos are required.'
-        add_max: 'Do you have any event photos to upload? No more than %{photos_max} photos can be uploaded for this event.'
-        add_min_max: 'Do you have any event photos to upload? Between %{photos_min} and %{photos_max} photos are required.'
+        add_min: 
+          one: 'Do you have any event photos to upload? At least one photo is required.'
+          other: 'Do you have any event photos to upload? At least %{count} photos are required.'
+        add_max: 
+          one: 'Do you have any event photos to upload? Only one photo can be uploaded for this event.'
+          other: 'Do you have any event photos to upload? No more than %{count} photos can be uploaded for this event.'
+        add_min_max: 'Do you have any event photos to upload? Between %{min} and %{max} photos are required.'
         add_exceeded: 'No more than %{photos_max} photos can be uploaded for this event.'
         empty: 'There are no photos to view at this time'
         added: 'Looks great. The photos have been uploaded.'
@@ -756,9 +767,13 @@ en:
         view: 'View your event photos below'
       comment:
         add: 'Do you have consumer comments to add? This is optional.'
-        add_min: 'Do you have consumer comments to add? At least %{comments_min} comments are required.'
-        add_max: 'Do you have consumer comments to add? No more than %{comments_max} comments can be logged for this event.'
-        add_min_max: 'Do you have consumer comments to add? Between %{comments_min} and %{comments_max} comments are required.'
+        add_min: 
+          one: 'Do you have consumer comments to add? At least one comment is required.'
+          other: 'Do you have consumer comments to add? At least %{count} comments are required.'
+        add_max: 
+          one: 'Do you have consumer comments to add? Only one comment can be logged for this event.'
+          other: 'Do you have consumer comments to add? No more than %{count} comments can be logged for this event.'
+        add_min_max: 'Do you have consumer comments to add? Between %{min} and %{max} comments are required.'
         add_exceeded: 'Oops. No more than %{comments_max} comments can be added to this event. Your comment was not saved.'
         empty: 'There are no comments to view at this time'
         added: 'Looks good. Your comment has been saved.'
@@ -766,23 +781,34 @@ en:
         view: 'View consumer comments for your event below'
       expense:
         add: 'Do you have expenses to add? This is optional.'
-        add_min: 'Do you have expenses to add? At least %{expenses_min} expenses are required.'
-        add_max: 'Do you have expenses to add? No more than %{expenses_max} expenses can be logged for this event.'
-        add_min_max: 'Do you have expenses to add? Between %{expenses_min} and %{expenses_max} expenses are required.'
-        add_exceeded: 'Sorry. No more than %{expenses_max} expenses can be logged for this event. Your expense was not saved.'
+        add_min:
+          one: 'Do you have expenses to add? At least one expense is required.'
+          other: 'Do you have expenses to add? At least %{count} expenses are required.'
+        add_max: 
+          one: 'Do you have expenses to add? Only one expense can be logged for this event.'
+          other: 'Do you have expenses to add? No more than %{count} expenses can be logged for this event.'
+        add_min_max: 'Do you have expenses to add? Between %{min} and %{max} expenses are required.'
+        add_exceeded:
+          new: 'Sorry. No more than %{expenses_max} expenses can be logged for this event.'
+          create: 'Sorry. No more than %{expenses_max} expenses can be logged for this event. Your expense was not saved.'
         empty: 'There are no expenses logged at this time'
         added: 'Good work. Your expense has been recorded.'
         deactivated: 'Your Expense has been deactivated'
         split: 'Your expense has successfully been split'
         view: 'View expenses that have been logged for your event below'
-      submit: 'Oops! %{event_requirements} before you can submit your event for approval'
+      submit:
+        success: 'Great job! Your PER has been submitted for approval.'
+        fail: 'Oops! %{event_requirements} before you can submit your event for approval'
       approve: 'The Execute phase of your event is not complete. You can approve your event once it has been submitted for review.'
       reject: 'The Execute phase of your event is not complete. You can reject your event once it has been submitted for review.'
     results:
-      submit: 'Great job! Your PER has been submitted for approval.'
-      approve: 'Nice! Your event has been Approved.'
-      rejecte: 'Thanks. The event has been Rejected and the event team has been notified.'
-      rejected: 'Your event has been rejected for the following reason(s): %{reject_reason}. Please make the necessary updates and resubmit.'
+      approved: 'Nice! Your event has been Approved.'
+      rejected: 'Thanks. The event has been Rejected and the event team has been notified.'
+      rejected_info: 'Your event has been rejected %{rejected_at} for the following reason(s): %{reject_reason}. Please make the necessary updates and resubmit.'
+      approve_per:
+        can_approve: 'Your post event report has been submitted for approval %{submitted_at}. %{rejection_message}. Please review and either approve or reject.'
+        cannot_approve: 'Your post event report has been submitted for approval #{submitted_at}. Once your report has been reviewed you will be alerted in your notifications.'
+        rejection_reason: 'It was previously rejected %{rejected_at} for the following reason: <i>%{reason}.</i>'
 
   errors:
     result:
