@@ -32,7 +32,8 @@ class EventExpensesController < InheritedResources::Base
   def split_attributes
     params.require(:event).permit(
       event_expenses_attributes: [
-        :id, :expense_date, :category, :brand_id, :amount, :_destroy]).tap do |p|
+        :id, :expense_date, :category, :brand_id, :amount, :reimbursable,
+        :billable, :description, :merchant, :_destroy]).tap do |p|
       if receipt_url = receipt_url_from_params
         p[:event_expenses_attributes].each do |k, e|
           e[:receipt_attributes] = { direct_upload_url: AttachedAsset.copy_file_to_uploads_folder(receipt_url) }
