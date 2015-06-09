@@ -238,15 +238,21 @@ module Html
 
     def approve_button
       return unless can?(:approve)
-      h.button_to 'Approve', h.approve_event_path(@model, return: h.return_path),
-                  method: :put, class: 'btn btn-primary', disabled: !submitted?
+      h.content_tag(:div, class: 'action-event-wrapper') do
+        (h.button_to 'Approve', h.approve_event_path(@model, return: h.return_path),
+                     method: :put, class: 'btn btn-primary', disabled: !submitted?) +
+        (!submitted? ? h.content_tag(:div, '', id: 'approve-event-button', data: { message: I18n.t('instructive_messages.execute.approve') }) : '')
+      end
     end
 
     def reject_button
       return unless can?(:reject)
-      h.button_to 'Reject', h.reject_event_path(@model, format: :js, return: h.return_path),
-                  form: { id: 'reject-post-event' },
-                  method: :put, class: 'btn btn-primary', remote: true, disabled: !submitted?
+      h.content_tag(:div, class: 'action-event-wrapper') do
+        (h.button_to 'Reject', h.reject_event_path(@model, format: :js, return: h.return_path),
+                     form: { id: 'reject-post-event' },
+                     method: :put, class: 'btn btn-primary', remote: true, disabled: !submitted?) +
+        (!submitted? ? h.content_tag(:div, '', id: 'reject-event-button', data: { message: I18n.t('instructive_messages.execute.reject') }) : '')
+      end
     end
 
     def submit_button
