@@ -266,9 +266,6 @@ $phase-height: 66px;
       padding: 10px 2px 0 0;
       position: relative;
       width: auto;
-      .button_to:first-child:not(:last-child) {
-        margin-right: 10px;
-      }
       .status-indicator{
         color: $gray-light;
         bottom: 5px;
@@ -276,6 +273,26 @@ $phase-height: 66px;
         position: absolute;
         right: 8px;
         white-space: nowrap;
+      }
+      .action-event-wrapper {
+        display: inline-block;
+        &:first-child:not(:last-child) {
+          margin-right: 10px;
+        }
+        #approve-event-button {
+          bottom: 28px;
+          left: 0px;
+          position: absolute;
+          right: 104px;
+          top: 9px;
+        }
+        #reject-event-button {
+          bottom: 27px;
+          left: 91px;
+          position: absolute;
+          right: 11px;
+          top: 9px;
+        }
       }
     }
     &:nth-child(2){
