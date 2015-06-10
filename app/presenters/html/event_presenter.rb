@@ -217,8 +217,10 @@ module Html
 
     def complete_percentage(phase)
       return '' if phase[1].nil? || phase[1].empty?
-      completed_steps = phase[1].count { |s| s[:complete] }
-      percentage = completed_steps * 100 / phase[1].count
+      required_steps = phase[1].select { |s| s[:required] }
+      return '100% COMPLETE' if required_steps.empty?
+      completed_steps = phase[1].count { |s| s[:complete] && s[:required] }
+      percentage = completed_steps * 100 / required_steps.count
       h.content_tag(:span, "#{percentage.to_i}% COMPLETE", class: 'status-indicator')
     end
 

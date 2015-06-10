@@ -70,7 +70,7 @@ class EventExpense < ActiveRecord::Base
   def max_event_expenses
     return true unless event.campaign.range_module_settings?('expenses')
     max = event.campaign.module_setting('expenses', 'range_max')
-    return true if max.empty? || event.event_expenses.count < max.to_i
+    return true if max.blank? || event.event_expenses.count < max.to_i
     errors.add(:base, I18n.translate('instructive_messages.execute.expense.add_exceeded.create', count: max))
   end
 end
