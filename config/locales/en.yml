@@ -753,10 +753,10 @@ en:
         view: 'View your event attendances below'
       photo:
         add: 'Do you have any event photos to upload? This is optional.'
-        add_min: 
+        add_min:
           one: 'Do you have any event photos to upload? At least one photo is required.'
           other: 'Do you have any event photos to upload? At least %{count} photos are required.'
-        add_max: 
+        add_max:
           one: 'Do you have any event photos to upload? Only one photo can be uploaded for this event.'
           other: 'Do you have any event photos to upload? No more than %{count} photos can be uploaded for this event.'
         add_min_max: 'Do you have any event photos to upload? Between %{min} and %{max} photos are required.'
@@ -769,7 +769,7 @@ en:
         view: 'View your event photos below'
       comment:
         add: 'Do you have consumer comments to add? This is optional.'
-        add_min: 
+        add_min:
           one: 'Do you have consumer comments to add? At least one comment is required.'
           other: 'Do you have consumer comments to add? At least %{count} comments are required.'
         add_max: 
@@ -788,7 +788,7 @@ en:
         add_min:
           one: 'Do you have expenses to add? At least one expense is required.'
           other: 'Do you have expenses to add? At least %{count} expenses are required.'
-        add_max: 
+        add_max:
           one: 'Do you have expenses to add? Only one expense can be logged for this event.'
           other: 'Do you have expenses to add? No more than %{count} expenses can be logged for this event.'
         add_min_max: 'Do you have expenses to add? Between %{min} and %{max} expenses are required.'
@@ -815,6 +815,21 @@ en:
         can_approve: 'Your post event report has been submitted for approval %{submitted_at}. %{rejection_message}. Please review and either approve or reject.'
         cannot_approve: 'Your post event report has been submitted for approval #{submitted_at}. Once your report has been reviewed you will be alerted in your notifications.'
         rejection_reason: 'It was previously rejected %{rejected_at} for the following reason: <i>%{reason}.</i>'
+
+  invalid_submit_messages:
+    per: 'Your Post Event Recap must be saved'
+    photos:
+      min_max: 'Between %{range_min} and %{range_max} photos are required'
+      min: 'At least %{range_min} photos must be uploaded'
+      max: 'No more than %{range_max} photos can be uploaded'
+    expenses:
+      min_max: 'Between %{range_min} and %{range_max} expenses are required'
+      min: 'At least %{range_min} expenses must be logged'
+      max: 'No more than %{range_max} expenses can be logged'
+    comments:
+      min_max: 'Between %{range_min} and %{range_max} comments are required'
+      min: 'At least %{range_min} comments must be added'
+      max: 'No more than %{range_max} comments can be added'
 
   errors:
     result:

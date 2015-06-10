@@ -154,7 +154,11 @@ module Html
       step_last_id = steps.last[:id]
       current_phase_index = phases[:phases].keys.index(phases[:current_phase])
       steps.map do |step|
-        button = h.content_tag(:div, class: "step #{'last-step' if step_last_id == step[:id]} #{'pending' unless step[:complete]}") do
+        button = h.content_tag(:div,
+                                class: "step #{'last-step' if step_last_id == step[:id]} #{'pending' unless step[:complete]}",
+                                data: { toggle: 'tooltip',
+                                        title: step[:title].upcase,
+                                        placement: 'top'} ) do
           h.content_tag(:div, class: 'icon-connect') do
             h.content_tag(:i, '', class: "#{step[:complete] ? 'icon-check-circle' : 'icon-circle'}")
           end +
@@ -171,7 +175,8 @@ module Html
                  class: 'smooth-scroll event-phase-step',
                  data: { message: guided_message(phase, step),
                          message_color: 'blue',
-                         spytarget: target }
+                         spytarget: target,
+                        }
     end
 
     def render_nav_phases
@@ -196,7 +201,7 @@ module Html
             "#{i + 1}#{icon(:lock) if i > index_phase}".html_safe
            end
          end) +
-          phase[0].upcase
+          h.link_to(phase[0].upcase, h.phase_event_path(@model, phase: phase[0]))
       end + phase_steps(phase[0], i, phase[1])
     end
 
@@ -260,9 +265,9 @@ module Html
     def submit_button
       return unless can?(:submit)
       h.button_to 'Submit', h.submit_event_path(@model, format: :js, return: h.return_path),
-                  class: 'btn btn-cancel submit-event-data-link', method: :put,
+                  class: 'btn btn-primary submit-event-data-link', method: :put,
                   remote: true, data: { disable_with: 'submitting' },
-                  disabled: submitted? || approved? || !valid_results?
+                  disabled: submitted? || approved? || !valid_to_submit?
     end
 
     def guided_message(phase, step)
@@ -273,6 +278,11 @@ module Html
       message, color, close = guided_message_presenter.initial_message
       return unless message && color
       "EventDetails.showMessage('#{h.j(message)}', '#{color}', #{close});".html_safe
+    end
+
+    def submit_incomplete_message(requirements)
+      return unless requirements
+      I18n.translate('instructive_messages.execute.submit.fail', event_requirements: requirements)
     end
 
     def guided_message_presenter

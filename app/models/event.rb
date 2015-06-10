@@ -268,7 +268,7 @@ class Event < ActiveRecord::Base
     state :rejected
 
     event :submit do
-      transitions from: [:unsent, :rejected], to: :submitted, guard: :valid_results?
+      transitions from: [:unsent, :rejected], to: :submitted, guard: :valid_to_submit?
     end
 
     event :approve do
@@ -540,15 +540,21 @@ class Event < ActiveRecord::Base
   end
 
   # Returns true if all the results for the current campaign are valid
-  def valid_results?
+  def valid_to_submit?
     # Ensure all the results have been assigned/initialized
     if campaign.present?
-      results_for(campaign.form_fields).all?(&:valid?) && validate_modules_ranges
+      valid_results? && validate_modules_ranges
     end
+  end
+
+  def valid_results?
+    errors.add :base, I18n.translate('invalid_submit_messages.per') unless results_for(campaign.form_fields).all?(&:valid?)
+    errors.empty?
   end
 
   # Validates that the event meets the min and max items for the assigned modules
   def validate_modules_ranges
+    message = []
     campaign.modules.each do |campaign_module|
       if campaign.range_module_settings?(campaign_module[0])
         settings = campaign_module[1]['settings']
@@ -566,13 +572,14 @@ class Event < ActiveRecord::Base
         max_result = settings['range_max'].blank? || (items <= settings['range_max'].to_i)
 
         if !min_result || !max_result
-          message = []
-          message.push("at least #{settings['range_min']}") if settings['range_min'].present?
-          message.push("not more than #{settings['range_max']}") if settings['range_max'].present?
-          errors.add :base, "It is required #{message.join(' and ')} #{campaign_module[1]['name']}"
+          message.push(I18n.translate("invalid_submit_messages.#{campaign_module[1]['name']}.min", range_min: settings['range_min'])) if settings['range_min'].present? && !settings['range_max'].present?
+          message.push(I18n.translate("invalid_submit_messages.#{campaign_module[1]['name']}.max", range_max: settings['range_max'])) if !settings['range_min'].present? && settings['range_max'].present?
+          message.push(I18n.translate("invalid_submit_messages.#{campaign_module[1]['name']}.min_max", range_min: settings['range_min'], range_max: settings['range_max'])) if settings['range_min'].present? && settings['range_max'].present?
         end
       end
     end if campaign.modules.present?
+
+    errors.add :base, message.to_sentence(last_word_connector: ' and ') if message.present?
 
     errors.empty?
   end
