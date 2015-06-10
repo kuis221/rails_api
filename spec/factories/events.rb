@@ -55,7 +55,7 @@ FactoryGirl.define do
 
     before(:create) do |event, evaluator|
       evaluator.expenses.each do |attrs|
-        ex = event.event_expenses.build(attrs)
+        ex = event.event_expenses << build(:event_expense, attrs.merge(event: event))
       end
 
       if results = evaluator.results

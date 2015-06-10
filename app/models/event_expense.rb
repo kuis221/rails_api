@@ -46,7 +46,9 @@ class EventExpense < ActiveRecord::Base
   scope :for_user_accessible_events, ->(company_user) { joins('INNER JOIN events ec ON ec.id=event_id AND ec.id in (' + Event.select('events.id').where(company_id: company_user.company_id).accessible_by_user(company_user).to_sql + ')') }
 
   after_initialize do
-    self.expense_date ||= event.start_at.to_date if event.present? && new_record?
+    if event.present? && event.start_at.present? && new_record?
+      self.expense_date ||= event.start_at.to_date
+    end
   end
 
   def receipt_required?

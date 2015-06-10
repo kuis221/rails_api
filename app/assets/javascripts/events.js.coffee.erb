@@ -85,7 +85,7 @@ jQuery ->
 		return false
 
 
-	$('.step-buttons').on 'ajax:before.event_data', () ->
+	$('.step.actions').on 'ajax:before.event_data', () ->
 		form = $('form.event-data-form')
 		if form.length
 			if form.valid()

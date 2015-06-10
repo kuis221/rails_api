@@ -131,7 +131,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         ### Testing group by Campaign
         within('.container-kpi-trend') do
           expect(page).to have_content('Samples')
-          find('.progress').hover
+          find('.progress').trigger('mouseover')
           expect(page).to have_selector('.executed-label', text: '25')
           expect(page).to have_selector('.submitted-label', text: '20')
           expect(page).to have_selector('.rejected-label', text: '33')
@@ -161,7 +161,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         end
         within('#gva-result-Place' + place.id.to_s + ' .kpi-trend:nth-child(3)') do
           expect(page).to have_content('Samples')
-          find('.progress').hover
+          find('.progress').trigger('mouseover')
           expect(page).to have_selector('.executed-label', text: '25')
           expect(page).to have_selector('.submitted-label', text: '20')
           expect(page).to have_selector('.rejected-label', text: '33')
@@ -180,7 +180,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         end
         within('#gva-result-Place' + another_place.id.to_s + ' .kpi-trend:nth-child(1)') do
           expect(page).to have_content('Activity Type')
-          find('.progress').hover
+          find('.progress').trigger('mouseover')
           expect(page).to have_selector('.executed-label', text: '1')
           expect(page).to have_selector('.submitted-label', text: '0')
           expect(page).to have_selector('.rejected-label', text: '0')
@@ -200,7 +200,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         end
         within('#gva-result-Area' + area1.id.to_s + ' .kpi-trend:nth-child(1)') do
           expect(page).to have_content('Activity Type')
-          find('.progress').hover
+          find('.progress').trigger('mouseover')
           expect(page).to have_selector('.executed-label', text: '2')
           expect(page).to have_selector('.submitted-label', text: '0')
           expect(page).to have_selector('.rejected-label', text: '0')
@@ -219,7 +219,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         end
         within('#gva-result-Area' + area2.id.to_s + ' .kpi-trend:nth-child(1)') do
           expect(page).to have_content('Activity Type')
-          find('.progress').hover
+          find('.progress').trigger('mouseover')
           expect(page).to have_selector('.executed-label', text: '2')
           expect(page).to have_selector('.submitted-label', text: '0')
           expect(page).to have_selector('.rejected-label', text: '0')
@@ -246,7 +246,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         end
         within('#gva-result-CompanyUser' + company_user.id.to_s + ' .kpi-trend:nth-child(2)') do
           expect(page).to have_content('Samples')
-          find('.progress').hover
+          find('.progress').trigger('mouseover')
           expect(page).to have_selector('.executed-label', text: '25')
           expect(page).to have_selector('.submitted-label', text: '20')
           expect(page).to have_selector('.rejected-label', text: '33')
@@ -266,7 +266,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         end
         within('#gva-result-Team' + team1.id.to_s + ' .kpi-trend:nth-child(1)') do
           expect(page).to have_content('Activity Type')
-          find('.progress').hover
+          find('.progress').trigger('mouseover')
           expect(page).to have_selector('.executed-label', text: '2')
           expect(page).to have_selector('.submitted-label', text: '0')
           expect(page).to have_selector('.rejected-label', text: '0')
