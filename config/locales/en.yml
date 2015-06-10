@@ -773,12 +773,12 @@ en:
           one: 'Do you have consumer comments to add? At least one comment is required.'
           other: 'Do you have consumer comments to add? At least %{count} comments are required.'
         add_max: 
-          one: 'Do you have consumer comments to add? Only one comment can be logged for this event.'
           other: 'Do you have consumer comments to add? No more than %{count} comments can be logged for this event.'
+          one: 'Do you have consumer comments to add? Only one comment can be logged for this event.'
         add_min_max: 'Do you have consumer comments to add? Between %{min} and %{max} comments are required.'
         add_exceeded: 
-          one: 'Oops. No more than %{count} comments can be added to this event. Your comment was not saved.'
-          other: 'Oops. No more than one comment can be added to this event. Your comment was not saved.'
+          one: 'Oops. No more than one comment can be added to this event. Your comment was not saved.'
+          other: 'Oops. No more than %{count} comments can be added to this event. Your comment was not saved.'
         empty: 'There are no comments to view at this time'
         added: 'Looks good. Your comment has been saved.'
         deactivated: 'Your Comment has been deactivated'

@@ -96,7 +96,7 @@ class Comment < ActiveRecord::Base
   def max_event_comments
     return true unless commentable.campaign.range_module_settings?('comments')
     max = commentable.campaign.module_setting('comments', 'range_max')
-    return true if max.blank?
-    errors.add(:base, I18n.translate('instructive_messages.execute.comment.add_exceeded', count: max.to_i)) if commentable.comments.count >= max.to_i
+    return true if max.blank? || commentable.comments.count < max.to_i
+    errors.add(:base, I18n.translate('instructive_messages.execute.comment.add_exceeded', count: max.to_i))
   end
 end
