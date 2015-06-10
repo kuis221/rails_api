@@ -96,6 +96,49 @@ describe FormFieldResult, type: :model do
       it { is_expected.not_to allow_value(4.1).for(:value).with_message('is invalid') }
       it { is_expected.not_to allow_value('5').for(:value).with_message('is invalid') }
     end
+
+    describe 'when only have a min but not a max' do
+      let(:form_field) do
+        create(:form_field,
+               type: 'FormField::Number',
+               settings: { 'range_format' => 'value', 'range_min' => '2', 'range_max' => '' },
+               fieldable: create(:activity_type, company_id: 1),
+               required: false)
+      end
+      before { subject.form_field_id = form_field.id }
+      it { is_expected.to allow_value(nil).for(:value) }
+      it { is_expected.to allow_value('').for(:value) }
+      it { is_expected.to allow_value(2).for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value(3).for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value(500).for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value(4.0).for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value('4').for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value('5000').for(:value).with_message('is invalid') }
+      it { is_expected.not_to allow_value(1).for(:value).with_message('is invalid') }
+    end
+
+    describe 'when only have a max but not a min' do
+      let(:form_field) do
+        create(:form_field,
+               type: 'FormField::Number',
+               settings: { 'range_format' => 'value', 'range_min' => '', 'range_max' => '4' },
+               fieldable: create(:activity_type, company_id: 1),
+               required: false)
+      end
+      before { subject.form_field_id = form_field.id }
+      it { is_expected.to allow_value(nil).for(:value) }
+      it { is_expected.to allow_value('').for(:value) }
+      it { is_expected.to allow_value(-2).for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value(0).for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value(3).for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value(4.0).for(:value).with_message('is invalid') }
+      it { is_expected.to allow_value('4').for(:value).with_message('is invalid') }
+      it { is_expected.not_to allow_value(500).for(:value).with_message('is invalid') }
+      it { is_expected.not_to allow_value('5000').for(:value).with_message('is invalid') }
+      it { is_expected.not_to allow_value(4.1).for(:value).with_message('is invalid') }
+      it { is_expected.not_to allow_value(10).for(:value).with_message('is invalid') }
+      it { is_expected.not_to allow_value('10').for(:value).with_message('is invalid') }
+    end
   end
 
   describe 'for currency fields' do
