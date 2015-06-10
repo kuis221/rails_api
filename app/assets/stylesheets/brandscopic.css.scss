@@ -4437,7 +4437,9 @@ body.roles{
 }
 
 .details_first_container{
-	min-height: 270px;
+	&.phase-plan {
+		min-height: 270px;
+	}
 	overflow: hidden;
 	position: relative;
 	.highlight-text{
