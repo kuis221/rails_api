@@ -822,6 +822,7 @@ en:
       approved: 'Nice! Your event has been Approved.'
       rejected: 'Thanks. The event has been Rejected and the event team has been notified.'
       rejected_info: 'Your event has been rejected %{rejected_at} for the following reason(s): %{reject_reason}'
+      unapprove: 'Your event have been Unapproved.'
       approve_per:
         can_approve: 'Your post event report has been submitted for approval %{submitted_at}. %{rejection_message}. Please review and either approve or reject.'
         cannot_approve: 'Your post event report has been submitted for approval #{submitted_at}. Once your report has been reviewed you will be alerted in your notifications.'
