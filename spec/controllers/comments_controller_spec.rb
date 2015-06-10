@@ -51,7 +51,7 @@ describe CommentsController, type: :controller do
         xhr :post, 'create', event_id: event.to_param, comment: { content: '' }, format: :js
       end.not_to change(Comment, :count)
       expect(response).to render_template(:create)
-      expect(response).to render_template('comments/_form')
+      expect(response).to_not render_template('comments/_form')
       assigns(:comment).errors.count > 0
     end
 

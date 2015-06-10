@@ -43,7 +43,7 @@ Brandscopic::Application.routes.draw do
           get :status_facets, on: :collection
           get :requiring_attention, on: :collection
           post :filter, to: 'events#index', on: :collection
-          resources :photos, only: [:index, :create, :update]
+          resources :photos, only: [:index, :create, :update], concerns: [:api_attachable]
           resources :documents, only: [:index, :create, :update], concerns: [:api_attachable]
           resources :event_expenses, only: [:index, :create, :destroy], concerns: [:api_attachable]
           resources :tasks, only: [:index]
