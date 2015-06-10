@@ -116,7 +116,7 @@ feature 'Events section', js: true do
         within visible_modal do
           expect(page).to have_selector('.split-expense-form .expense-item', count: 2)
           expect(page).to have_content('TOTAL:$0')
-          expect(page).to have_content('$500 left')
+          expect(page).to have_content('$500.00 left')
 
           click_js_link 'Add Expense'
           expect(page).to have_selector('.split-expense-form .expense-item', count: 3)
@@ -128,7 +128,7 @@ feature 'Events section', js: true do
             fill_in 'Date', with: '01/01/2014'
             fill_in 'Amount', with: '300'
             expect(page).to have_field('event_expense_percentage', with: '60')
-            expect(page).to_not have_content('$200 left')
+            expect(page).to_not have_content('$200.00 left')
           end
 
           within expense_items[1] do
@@ -146,7 +146,7 @@ feature 'Events section', js: true do
 
           expect(page).to have_selector('.split-expense-form .expense-item', count: 2)
           expect(page).to have_content('TOTAL:$500')
-          expect(page).to_not have_content('$0 left')
+          expect(page).to_not have_content('$0.00 left')
 
           click_js_button 'Create Expenses'
           wait_for_ajax(15)
@@ -184,7 +184,7 @@ feature 'Events section', js: true do
         within visible_modal do
           expect(page).to have_selector('.split-expense-form .expense-item', count: 2)
           expect(page).to have_content('TOTAL:$0')
-          expect(page).to have_content('$200 left')
+          expect(page).to have_content('$200.00 left')
           click_js_button 'Split Evenly'
 
           within expense_items[0] do
@@ -268,7 +268,7 @@ feature 'Events section', js: true do
         within visible_modal do
           expect(page).to have_selector('.split-expense-form .expense-item', count: 2)
           expect(page).to have_content('TOTAL:$0')
-          expect(page).to have_content('$500 left')
+          expect(page).to have_content('$500.00 left')
 
           click_js_link 'Add Expense'
           expect(page).to have_selector('.split-expense-form .expense-item', count: 3)
@@ -299,7 +299,7 @@ feature 'Events section', js: true do
 
           expect(page).to have_selector('.split-expense-form .expense-item', count: 2)
           expect(page).to have_content('TOTAL:$500')
-          expect(page).to_not have_content('$0 left')
+          expect(page).to_not have_content('$0.00 left')
 
           click_js_button 'Create Expenses'
         end
