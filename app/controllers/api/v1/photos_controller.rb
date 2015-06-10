@@ -8,7 +8,7 @@ class Api::V1::PhotosController < Api::V1::FilteredController
   resource_description do
     short 'Photos'
     formats %w(json xml)
-    error 400, 'Bad Request. he server cannot or will not process the request due to something that is perceived to be a client error.'
+    error 400, 'Bad Request. The server cannot or will not process the request due to something that is perceived to be a client error.'
     error 404, 'Missing'
     error 401, 'Unauthorized access'
     error 500, 'Server crashed for some reason'
@@ -106,7 +106,6 @@ class Api::V1::PhotosController < Api::V1::FilteredController
       failure.xml { render xml: resource.errors, status: :unprocessable_entity }
     end
   end
-
 
   api :PUT, '/api/v1/events/:event_id/photos/:id', 'Updates a photo'
   param :event_id, :number, required: true, desc: 'Event ID'
