@@ -91,7 +91,7 @@ en:
       description: '<p>The Event Details page manages the entire event lifecycle from event planning to filling out post event recaps and reviewing post event results.</p><p>There are three event phases in Brandscopic, Plan, Execute and Results. Each phase guides you towards the next step to event completion. Click on the video to the left for a quick overview or visit our support site for more information about this section. Click on the video to the left for a quick overview or visit our <a href="http://support.brandscopic.com" target="_blank">support site</a> for more information about this section.<p>'
 
     results_activity_data:
-      title: 'Activity Data Report'
+      title: 'Getting Started: Activity Data Report'
       video: '//www.youtube.com/embed/0dsRGoq2XqQ?rel=0'
       description: '<p>The Activity Data report holds all collected activity data for easy review and exporting. Click on the video to the left for a quick overview or visit our <a href="http://support.brandscopic.com" target="_blank">support site</a> for more information about this section.<p>'
 
