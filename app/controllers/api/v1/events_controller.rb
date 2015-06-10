@@ -735,12 +735,10 @@ class Api::V1::EventsController < Api::V1::FilteredController
                  data: {} }
       respond_to do |format|
         format.json do
-          render status: 200,
-                 json: result
+          render status: 200, json: result
         end
         format.xml do
-          render status: 200,
-                 xml: result.to_xml(root: 'result')
+          render status: 200, xml: result.to_xml(root: 'result')
         end
       end
     else
@@ -782,16 +780,15 @@ class Api::V1::EventsController < Api::V1::FilteredController
   protected
 
   def permitted_params
-    parameters = {}
     allowed = []
     allowed += [:end_date, :end_time, :start_date, :start_time, :campaign_id, :place_id,
                 :place_reference, :description, :visit_id] if can?(:update, Event) || can?(:create, Event)
     allowed += [{ results_attributes: [:value, :id, { value: [] }] }] if can?(:edit_data, Event)
     allowed += [:active] if can?(:deactivate, Event)
     parameters = params.require(:event).permit(*allowed)
-    parameters.tap do |whielisted|
-      unless whielisted.nil? || whielisted[:results_attributes].nil?
-        whielisted[:results_attributes].each_with_index do |value, i|
+    parameters.tap do |whitelisted|
+      unless whitelisted.nil? || whitelisted[:results_attributes].nil?
+        whitelisted[:results_attributes].each_with_index do |value, i|
           value[:value] = params[:event][:results_attributes][i][:value]
         end
       end
@@ -799,8 +796,9 @@ class Api::V1::EventsController < Api::V1::FilteredController
   end
 
   def permitted_search_params
-    params.permit(:page, campaign: [], place: [], area: [], venue: [], start_date: [], end_date: [],
-                             user: [], team: [], brand: [], brand_porfolio: [], status: [], event_status: []).tap do |p|
+    params.permit(:page, campaign: [], place: [], area: [], venue: [],
+                         start_date: [], end_date: [], user: [], team: [],
+                         brand: [], brand_porfolio: [], status: [], event_status: []).tap do |p|
       p[:sorting] ||= Event.search_start_date_field
       p[:sorting_dir] ||= 'asc'
     end

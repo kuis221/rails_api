@@ -527,6 +527,7 @@ class Campaign < ActiveRecord::Base
   end
 
   def range_module_settings?(module_name)
+    return false unless modules.present? && modules.key?(module_name) && modules[module_name].key?('settings')
     settings = modules[module_name]['settings']
     settings &&
     (

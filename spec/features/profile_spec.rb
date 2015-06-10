@@ -30,10 +30,11 @@ feature 'User Profile', js: true do
         expect(page).to have_content("We will send you a message to #{user.phone_number} with a code.")
         click_button 'Send'
       end
-      expect(page).to_not have_content('Verify mobile phone number')
+
+      expect(page).to_not have_content('We will send you a message to')
 
       within visible_modal do
-        expect(page).to have_content('Send security code')
+        expect(page).to have_content('Verify mobile phone number')
         expect(page).to have_content("Enter the security code you've received into the filed below.")
         fill_in '6-digit code', with: user.reload.phone_number_verification
         click_button 'Verify'
@@ -44,12 +45,6 @@ feature 'User Profile', js: true do
 
       expect(page).to have_content 'Verified'
     end
-  end
-
-  feature 'Admin User' do
-    let(:role) { create(:role, company: company) }
-
-    it_behaves_like 'a user that can view his profile'
   end
 
   feature 'Non-Admin User' do

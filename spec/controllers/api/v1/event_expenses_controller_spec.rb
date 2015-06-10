@@ -109,7 +109,6 @@ describe Api::V1::EventExpensesController, type: :controller do
   end
 
   describe "DELETE 'destroy'", :show_in_doc do
-    let(:campaign) { create(:campaign, company: company) }
     let(:event) { create(:event, company: company, campaign: campaign) }
     let(:expense) { create(:event_expense, event: event) }
 

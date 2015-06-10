@@ -1,6 +1,6 @@
 #event-info.details_box class="#{(resource.place.nil? or resource.place.latitude.nil?) ?  'padding-top-close-bar' : ''}"
 
-  .row-fluid.details_first_container
+  .row-fluid.details_first_container class="phase-#{presenter.current_phase}"
     .span6
       .details-title
         h2.special.pull-left

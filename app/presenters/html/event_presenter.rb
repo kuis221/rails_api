@@ -154,7 +154,11 @@ module Html
       step_last_id = steps.last[:id]
       current_phase_index = phases[:phases].keys.index(phases[:current_phase])
       steps.map do |step|
-        button = h.content_tag(:div, class: "step #{'last-step' if step_last_id == step[:id]} #{'pending' unless step[:complete]}") do
+        button = h.content_tag(:div,
+                                class: "step #{'last-step' if step_last_id == step[:id]} #{'pending' unless step[:complete]}",
+                                data: { toggle: 'tooltip',
+                                        title: step[:title].upcase,
+                                        placement: 'top'} ) do
           h.content_tag(:div, class: 'icon-connect') do
             h.content_tag(:i, '', class: "#{step[:complete] ? 'icon-check-circle' : 'icon-circle'}")
           end +
@@ -171,7 +175,8 @@ module Html
                  class: 'smooth-scroll event-phase-step',
                  data: { message: guided_message(phase, step),
                          message_color: 'blue',
-                         spytarget: target }
+                         spytarget: target,
+                        }
     end
 
     def render_nav_phases
@@ -188,16 +193,16 @@ module Html
       return if phase.nil?
       index_phase = phases[:phases].keys.index(phases[:current_phase])
       completed = i < index_phase
-      h.content_tag(:div, class: "step phase-id #{'active' if phase[0] == phases[:current_phase]}") do
-        (if completed
-           h.content_tag(:div, '', class: 'icon-check-circle')
-         else
-           h.content_tag(:span, class: 'id') do
-            "#{i + 1}#{icon(:lock) if i > index_phase}".html_safe
-           end
-         end) +
-          phase[0].upcase
-      end + phase_steps(phase[0], i, phase[1])
+      h.link_to_if(i <= index_phase,
+        h.content_tag(:div, class: "step phase-id #{'active' if phase[0] == phases[:current_phase]}") do
+          (if completed
+             h.content_tag(:div, '', class: 'icon-check-circle')
+           else
+             h.content_tag(:span, class: 'id') do
+              "#{i + 1}#{icon(:lock) if i > index_phase}".html_safe
+             end
+           end) + phase[0].upcase
+        end, h.phase_event_path(@model, phase: phase[0])) + phase_steps(phase[0], i, phase[1])
     end
 
     def phase_buttons(phase)
@@ -217,8 +222,10 @@ module Html
 
     def complete_percentage(phase)
       return '' if phase[1].nil? || phase[1].empty?
-      completed_steps = phase[1].count { |s| s[:complete] }
-      percentage = completed_steps * 100 / phase[1].count
+      required_steps = phase[1].select { |s| s[:required] }
+      return '100% COMPLETE' if required_steps.empty?
+      completed_steps = phase[1].count { |s| s[:complete] && s[:required] }
+      percentage = completed_steps * 100 / required_steps.count
       h.content_tag(:span, "#{percentage.to_i}% COMPLETE", class: 'status-indicator')
     end
 
@@ -238,23 +245,30 @@ module Html
 
     def approve_button
       return unless can?(:approve)
-      h.button_to 'Approve', h.approve_event_path(@model, return: h.return_path),
-                  method: :put, class: 'btn btn-primary', disabled: !submitted?
+      h.content_tag(:div, class: 'action-event-wrapper') do
+        (h.button_to 'Approve', h.approve_event_path(@model, return: h.return_path),
+                     method: :put, class: 'btn btn-primary', disabled: !submitted?) +
+        (!submitted? ? h.content_tag(:div, '', id: 'approve-event-button', data: { message: I18n.t('instructive_messages.execute.approve') }) : '')
+      end
     end
 
     def reject_button
       return unless can?(:reject)
-      h.button_to 'Reject', h.reject_event_path(@model, format: :js, return: h.return_path),
-                  form: { id: 'reject-post-event' },
-                  method: :put, class: 'btn btn-primary', remote: true, disabled: !submitted?
+      h.content_tag(:div, class: 'action-event-wrapper') do
+        (h.button_to 'Reject', h.reject_event_path(@model, format: :js, return: h.return_path),
+                     form: { id: 'reject-post-event' },
+                     method: :put, class: 'btn btn-primary', remote: true, disabled: !submitted?) +
+        (!submitted? ? h.content_tag(:div, '', id: 'reject-event-button', data: { message: I18n.t('instructive_messages.execute.reject') }) : '')
+      end
     end
 
     def submit_button
       return unless can?(:submit)
+      disabled = phases[:current_phase] == :plan || submitted? || approved? || !valid_to_submit?
       h.button_to 'Submit', h.submit_event_path(@model, format: :js, return: h.return_path),
-                  class: 'btn btn-cancel submit-event-data-link', method: :put,
+                  class: 'btn btn-primary submit-event-data-link', method: :put,
                   remote: true, data: { disable_with: 'submitting' },
-                  disabled: submitted? || approved? || !valid_results?
+                  disabled: disabled
     end
 
     def guided_message(phase, step)
@@ -265,6 +279,11 @@ module Html
       message, color, close = guided_message_presenter.initial_message
       return unless message && color
       "EventDetails.showMessage('#{h.j(message)}', '#{color}', #{close});".html_safe
+    end
+
+    def submit_incomplete_message(requirements)
+      return unless requirements
+      I18n.translate('instructive_messages.execute.submit.fail', event_requirements: requirements)
     end
 
     def guided_message_presenter

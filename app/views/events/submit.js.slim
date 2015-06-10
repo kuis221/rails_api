@@ -1,6 +1,6 @@
 - unless resource.submitted?
   - if resource.errors.any?
-    | bootbox.alert('#{j resource.errors.full_messages.join("<br />").html_safe }')
+    | window.EventDetails.showMessage("#{j presenter.submit_incomplete_message(resource.errors.full_messages.join(', '))}", 'red');
   - else
     | bootbox.alert('This event cannot be submitted. Please make sure you have entered all the required data');
 - else

@@ -69,6 +69,9 @@ jQuery ->
 
 		false
 
+	$('#approve-event-button, #reject-event-button').on 'click', (e) ->
+		window.EventDetails.showMessage($(this).data('message'), 'red')
+
 	$(document).delegate 'a.load-comments-link', 'click', (e) ->
 		$row = $(this).parents('li');
 		if $("##{$row.attr('id')}_comments").length > 0
@@ -82,7 +85,7 @@ jQuery ->
 		return false
 
 
-	$('.step-buttons').on 'ajax:before.event_data', () ->
+	$('.step.actions').on 'ajax:before.event_data', () ->
 		form = $('form.event-data-form')
 		if form.length
 			if form.valid()

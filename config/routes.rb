@@ -17,6 +17,10 @@ Brandscopic::Application.routes.draw do
     get :items, on: :collection, format: :html
   end
 
+  concern :api_attachable do
+    get :form, on: :collection
+  end
+
   namespace :api do
     namespace :v1 do
       devise_scope :user do
@@ -39,12 +43,9 @@ Brandscopic::Application.routes.draw do
           get :status_facets, on: :collection
           get :requiring_attention, on: :collection
           post :filter, to: 'events#index', on: :collection
-          resources :photos, only: [:index, :create, :update] do
-            get :form, on: :collection
-          end
-          resources :event_expenses, only: [:index, :create, :destroy] do
-            get :form, on: :collection
-          end
+          resources :photos, only: [:index, :create, :update], concerns: [:api_attachable]
+          resources :documents, only: [:index, :create, :update], concerns: [:api_attachable]
+          resources :event_expenses, only: [:index, :create, :destroy], concerns: [:api_attachable]
           resources :tasks, only: [:index]
           resources :comments, only: [:index, :create, :update, :destroy]
           resources :surveys,  only: [:index, :create, :update, :show] do

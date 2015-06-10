@@ -164,3 +164,10 @@ $btnBackground:                     $silver;
 $btnPrimaryBackground:              $buttons;
 $btnPrimaryBackgroundHighlight:     $buttons;
 
+
+// Tables
+// -------------------------
+$tableBackground:                   transparent; // overall background-color
+$tableBackgroundAccent:             #f9f9f9; // for striping
+$tableBackgroundHover:              #f5f5f5; // for hover
+$tableBorder:                       $silver; // table and cell border

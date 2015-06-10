@@ -169,6 +169,10 @@ class Ability
         can?(:show, activity)
       end
 
+      can :update, DataExtract do |extract|
+        extract.created_by_id == user.id
+      end
+
       # Custom Reports
       # can :manage, Report do |report|
       #   report.created_by_id == user.id

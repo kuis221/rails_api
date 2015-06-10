@@ -24,7 +24,9 @@ class EventExpensesController < InheritedResources::Base
   def new
     return true unless parent.campaign.range_module_settings?('expenses')
     max = parent.campaign.module_setting('expenses', 'range_max')
-    resource.errors.add(:base, I18n.translate('instructive_messages.execute.expense.add_exceeded.new', expenses_max: max)) if parent.event_expenses.count >= max.to_i
+    unless max.blank? || parent.event_expenses.count < max.to_i
+      resource.errors.add(:base, I18n.translate('instructive_messages.execute.expense.add_exceeded.new', expenses_max: max))
+    end
   end
 
   private
@@ -38,7 +40,8 @@ class EventExpensesController < InheritedResources::Base
   def split_attributes
     params.require(:event).permit(
       event_expenses_attributes: [
-        :id, :expense_date, :category, :brand_id, :amount, :_destroy]).tap do |p|
+        :id, :expense_date, :category, :brand_id, :amount, :reimbursable,
+        :billable, :description, :merchant, :_destroy]).tap do |p|
       if receipt_url = receipt_url_from_params
         p[:event_expenses_attributes].each do |k, e|
           e[:receipt_attributes] = { direct_upload_url: AttachedAsset.copy_file_to_uploads_folder(receipt_url) }

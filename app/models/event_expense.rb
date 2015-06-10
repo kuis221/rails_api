@@ -27,7 +27,7 @@ class EventExpense < ActiveRecord::Base
   validates :expense_date, presence: true
   validates :amount, presence: true, numericality: { greater_than: 0 }
   validate :valid_receipt?, if: :receipt_required?
-  validate :event_expenses, before: :create
+  validate :max_event_expenses, on: :create
 
   after_save :update_event_data
 
@@ -46,7 +46,9 @@ class EventExpense < ActiveRecord::Base
   scope :for_user_accessible_events, ->(company_user) { joins('INNER JOIN events ec ON ec.id=event_id AND ec.id in (' + Event.select('events.id').where(company_id: company_user.company_id).accessible_by_user(company_user).to_sql + ')') }
 
   after_initialize do
-    self.expense_date = event.start_at.to_date if event.present? && new_record?
+    if event.present? && event.start_at.present? && new_record?
+      self.expense_date ||= event.start_at.to_date
+    end
   end
 
   def receipt_required?
@@ -67,9 +69,10 @@ class EventExpense < ActiveRecord::Base
     receipt.errors.add(:file, :required)
   end
 
-  def event_expenses
-    return true unless event.campaign.range_module_settings?('expenses')
+  def max_event_expenses
+    return true unless event.present? && event.campaign.range_module_settings?('expenses')
     max = event.campaign.module_setting('expenses', 'range_max')
-    errors.add(:base, I18n.translate('instructive_messages.execute.expense.add_exceeded.create', expenses_max: max)) if event.event_expenses.count >= max.to_i
+    return true if max.blank? || event.event_expenses.count < max.to_i
+    errors.add(:base, I18n.translate('instructive_messages.execute.expense.add_exceeded.create', count: max))
   end
 end

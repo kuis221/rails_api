@@ -1166,7 +1166,7 @@ feature 'Events section' do
     end
 
     feature '/events/:event_id', js: true do
-      scenario 'a user can play and dismiss the video tutorial (scheduled event)' do
+      scenario 'a user can play and dismiss the video tutorial' do
         event = create(:event,
                        start_date: '08/28/2013', end_date: '08/28/2013',
                        start_time: '8:00 PM', end_time: '11:00 PM',
@@ -1176,34 +1176,7 @@ feature 'Events section' do
         feature_name = 'GETTING STARTED: EVENT DETAILS'
 
         expect(page).to have_selector('h5', text: feature_name)
-        expect(page).to have_content('Welcome to the Event Details page')
-        click_link 'Play Video'
-
-        within visible_modal do
-          click_js_link 'Close'
-        end
-        ensure_modal_was_closed
-
-        within('.new-feature') do
-          click_js_link 'Dismiss'
-        end
-        wait_for_ajax
-
-        visit event_path(event)
-        expect(page).to have_no_selector('h5', text: feature_name)
-      end
-
-      scenario 'a user can play and dismiss the video tutorial (executed event)' do
-        event = create(:approved_event,
-                       start_date: '08/28/2013', end_date: '08/28/2013',
-                       start_time: '8:00 PM', end_time: '11:00 PM',
-                       campaign: campaign)
-        visit event_path(event)
-
-        feature_name = 'GETTING STARTED: EVENT DETAILS'
-
-        expect(page).to have_selector('h5', text: feature_name)
-        expect(page).to have_content('You are viewing the Event Details page for an executed event')
+        expect(page).to have_content('The Event Details page manages the entire event lifecycle')
         click_link 'Play Video'
 
         within visible_modal do
@@ -1349,7 +1322,7 @@ feature 'Events section' do
 
         # Test tooltip
         within contact_list do
-          find('.has-tooltip').click
+          find('.has-tooltip').trigger('click')
         end
 
         within '.tooltip.in' do
@@ -1364,7 +1337,7 @@ feature 'Events section' do
         expect(page).to have_selector('.tooltip.in')
 
         # Click outside the tooltip and make sure it's closed
-        find('.guide-bar').click
+        find('.trackers-bar').click
         expect(page).to_not have_selector('.tooltip.in')
 
         # Test removal of the contact
@@ -1428,10 +1401,9 @@ feature 'Events section' do
 
         fill_in 'Test Field', with: '98765'
 
-        click_js_link '(Skip)'
         click_js_button 'Submit'
 
-        expect(page).to have_content('Your post event report has been submitted for approval')
+        expect(page).to have_content('Great job! Your PER has been submitted for approval.')
         expect(page).to have_content('Test Field 98,765')
       end
 
@@ -1471,7 +1443,7 @@ feature 'Events section' do
 
         click_js_button 'Unapprove'
 
-        expect(page).to have_content('Your post event report has been submitted for approval less than a minute ago.')
+        expect(page).to have_content('Great job! Your PER has been submitted for approval.')
       end
 
       scenario "display errors when an event don't meet a campaign module range" do

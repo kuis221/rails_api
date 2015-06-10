@@ -418,6 +418,41 @@ body.events.show{
 			}
 		}
 	}
+	table#expenses-list {
+		border: 1px solid $silver;
+		margin-top: 20px;
+		td.actions {
+			width: 60px;
+		}
+		td.receipt-preview {
+			width: 30px;
+		}
+		.button_to_edit {
+			margin-right: 10px;
+		}
+
+		.button_to {
+			display: none;
+		}
+		tr:hover {
+			.button_to {
+				display: inline-block;
+			}			
+		}
+		.icon-receipt {
+			font-size: 26px;
+			position: relative;
+			top: 7px;
+			color: $brand;
+			&:before{
+				top: -4px;
+			}
+			img {
+				display: none;
+			}
+		}
+
+	}
 }
 
 .navbar-fixed-top {
@@ -4402,7 +4437,9 @@ body.roles{
 }
 
 .details_first_container{
-	min-height: 270px;
+	&.phase-plan {
+		min-height: 270px;
+	}
 	overflow: hidden;
 	position: relative;
 	.highlight-text{

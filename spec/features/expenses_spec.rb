@@ -34,7 +34,7 @@ feature 'Events section', js: true do
       with_resque do # So the document is processed
         visit event_path(event)
 
-        click_js_button 'Add Expense'
+        click_js_button 'Record Expense'
 
         within visible_modal do
           attach_file 'file', 'spec/fixtures/file.pdf'
@@ -63,7 +63,7 @@ feature 'Events section', js: true do
         expect(asset.file_file_name).to eql 'file.pdf'
 
         # Test user can preview and download the receipt
-        hover_and_click resource_item(1, list: '#expenses-list'), 'View Receipt'
+        hover_and_click expense_row(asset.attachable), 'View Receipt'
 
         within visible_modal do
           src = asset.preview_url(:medium, timestamp: false)
@@ -95,7 +95,7 @@ feature 'Events section', js: true do
       scenario 'can split an expense' do
         visit event_path(event)
 
-        click_js_button 'Add Expense'
+        click_js_button 'Record Expense'
 
         within visible_modal do
           expect(page).to_not have_button('Split Expense')
@@ -116,7 +116,7 @@ feature 'Events section', js: true do
         within visible_modal do
           expect(page).to have_selector('.split-expense-form .expense-item', count: 2)
           expect(page).to have_content('TOTAL:$0')
-          expect(page).to have_content('$500 left')
+          expect(page).to have_content('$500.00 left')
 
           click_js_link 'Add Expense'
           expect(page).to have_selector('.split-expense-form .expense-item', count: 3)
@@ -128,7 +128,7 @@ feature 'Events section', js: true do
             fill_in 'Date', with: '01/01/2014'
             fill_in 'Amount', with: '300'
             expect(page).to have_field('event_expense_percentage', with: '60')
-            expect(page).to_not have_content('$200 left')
+            expect(page).to_not have_content('$200.00 left')
           end
 
           within expense_items[1] do
@@ -146,7 +146,7 @@ feature 'Events section', js: true do
 
           expect(page).to have_selector('.split-expense-form .expense-item', count: 2)
           expect(page).to have_content('TOTAL:$500')
-          expect(page).to_not have_content('$0 left')
+          expect(page).to_not have_content('$0.00 left')
 
           click_js_button 'Create Expenses'
           wait_for_ajax(15)
@@ -169,7 +169,7 @@ feature 'Events section', js: true do
       scenario 'split evenly a expense' do
         visit event_path(event)
 
-        click_js_button 'Add Expense'
+        click_js_button 'Record Expense'
 
         within visible_modal do
           expect(page).to_not have_button('Split Expense')
@@ -184,7 +184,7 @@ feature 'Events section', js: true do
         within visible_modal do
           expect(page).to have_selector('.split-expense-form .expense-item', count: 2)
           expect(page).to have_content('TOTAL:$0')
-          expect(page).to have_content('$200 left')
+          expect(page).to have_content('$200.00 left')
           click_js_button 'Split Evenly'
 
           within expense_items[0] do
@@ -223,7 +223,7 @@ feature 'Events section', js: true do
       scenario 'canceling a split modal will show the new expense dialog' do
         visit event_path(event)
 
-        click_js_button 'Add Expense'
+        click_js_button 'Record Expense'
 
         within visible_modal do
           expect(page).to_not have_button('Split Expense')
@@ -257,8 +257,7 @@ feature 'Events section', js: true do
         event_expense
         visit event_path(event)
 
-        within resource_item(event_expense) do
-          find('.resource-item-link').hover
+        within expense_row(event_expense) do
           click_js_button 'Edit Expense'
         end
 
@@ -269,7 +268,7 @@ feature 'Events section', js: true do
         within visible_modal do
           expect(page).to have_selector('.split-expense-form .expense-item', count: 2)
           expect(page).to have_content('TOTAL:$0')
-          expect(page).to have_content('$500 left')
+          expect(page).to have_content('$500.00 left')
 
           click_js_link 'Add Expense'
           expect(page).to have_selector('.split-expense-form .expense-item', count: 3)
@@ -300,9 +299,22 @@ feature 'Events section', js: true do
 
           expect(page).to have_selector('.split-expense-form .expense-item', count: 2)
           expect(page).to have_content('TOTAL:$500')
-          expect(page).to_not have_content('$0 left')
+          expect(page).to_not have_content('$0.00 left')
 
-          #click_js_button 'Create Expenses'
+          click_js_button 'Create Expenses'
+        end
+        ensure_modal_was_closed
+
+        within expenses_list do
+          expect(page).to have_content 'Phone'
+          expect(page).to have_content 'Other'
+        end
+        event.event_expenses.each do |expense|
+          expect(expense.description).to eql 'this is the description'
+          expect(expense.merchant).to eql 'the merchant'
+          expect(expense.billable).to be_truthy
+          expect(expense.reimbursable).to be_truthy
+          expect(expense.receipt.file_file_name).to eql 'photo.jpg'
         end
       end
     end
@@ -310,6 +322,12 @@ feature 'Events section', js: true do
 
   def expenses_list
     '#expenses-list'
+  end
+
+  def expense_row(expense)
+    row = find("#expenses-list tr#event_expense_#{expense.id}")
+    row.hover
+    row
   end
 
   def expense_items

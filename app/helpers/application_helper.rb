@@ -303,8 +303,22 @@ module ApplicationHelper
   def user_new_feature(name, version = 1, &_block)
     return if current_company_user.dismissed_alert?(name, version)
     content_tag(:div, class: 'new-feature', 'data-alert' => name, 'data-version' => version) do
-      yield
+      if block_given?
+        yield
+      else
+        build_new_feature_box name
+      end
     end
+  end
+
+  def build_new_feature_box(name)
+    content_tag(:h5, t("new_features.#{name}.title")) +
+    link_to('', '#', class: 'close btn-dismiss-alert icon icon-close', title: 'Dismiss') +
+    link_to(image_tag('video_arrow.png', width: 70, height: 70), '#',
+            class: 'video-thumbnail', title: 'Play Video',
+                                      data: { video: t("new_features.#{name}.video"),
+                                              width: "640", height: "360" }) +
+    content_tag(:div, t("new_features.#{name}.description").html_safe, class: 'feature-description')
   end
 
   def user_company_dropdown(user)

@@ -3,7 +3,10 @@
   |
     $('.bootbox.modal').modal('hide');
     $('#event-expenses-container').replaceWith('#{j render(partial: 'events/expenses', locals: {resource: parent})}');
-    window.EventDetails.showMessage("#{j I18n.translate('instructive_messages.execute.expense.added')}", 'green');
+  - if action_name == 'split'
+    | window.EventDetails.showMessage("#{j I18n.translate('instructive_messages.execute.expense.split')}", 'green');
+  - else
+    | window.EventDetails.showMessage("#{j I18n.translate('instructive_messages.execute.expense.added')}", 'green');
 - else
   |
     $('.bootbox.modal').modal('hide');
