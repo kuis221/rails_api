@@ -74,10 +74,12 @@ class AttachedAsset < ActiveRecord::Base
 
   validates :attachable, presence: true
 
-  validates :direct_upload_url, allow_nil: true,
+  validates :direct_upload_url, allow_nil: true, on: :create,
                                 uniqueness: true,
                                 format: { with: DIRECT_UPLOAD_URL_FORMAT }
   validates :direct_upload_url, presence: true, unless: :file_file_name
+
+  validate :max_event_photos, on: :create, if: proc { |a| a.attachable.is_a?(Event) && a.asset_type == 'photo'}
 
   delegate :company_id, to: :attachable
 
@@ -155,7 +157,7 @@ class AttachedAsset < ActiveRecord::Base
   end
 
   def file_extension
-    File.extname(file_file_name)[1..-1]
+    File.extname(file_file_name)[1..-1] if file_file_name
   end
 
   # Store an unescaped version of the escaped URL that Amazon returns from direct upload.
@@ -276,6 +278,16 @@ class AttachedAsset < ActiveRecord::Base
       direct_upload_url_data[:path], acl: :public_read)
   end
 
+  def self.copy_file_to_uploads_folder(url)
+    path = CGI.unescape(URI.parse(URI.encode(url)).path.gsub("/#{ENV['S3_BUCKET_NAME']}/", ''))
+    paperclip_file_path = "uploads/#{Time.now.to_i}-#{rand(5000)}/#{File.basename(path)}"
+    AWS::S3.new.buckets[ENV['S3_BUCKET_NAME']].objects[paperclip_file_path].copy_from(
+      path, acl: :public_read)
+    "https://s3.amazonaws.com/#{ENV['S3_BUCKET_NAME']}/#{paperclip_file_path}"
+  rescue AWS::S3::Errors::NoSuchKey
+    nil
+  end
+
   # Rename existing file in S3
   def rename_existing_file
     return unless file_file_name_changed?
@@ -365,5 +377,12 @@ class AttachedAsset < ActiveRecord::Base
       transfer_and_cleanup
     end
     true
+  end
+
+  def max_event_photos
+    return true unless attachable.campaign.range_module_settings?('photos')
+    max = attachable.campaign.module_setting('photos', 'range_max')
+    return true if max.empty? || attachable.photos.active.count < max.to_i
+    errors.add(:base, I18n.translate('instructive_messages.execute.photo.add_exceeded', count: max.to_i))
   end
 end

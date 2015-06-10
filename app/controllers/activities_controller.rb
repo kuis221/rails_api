@@ -6,6 +6,8 @@ class ActivitiesController < FilteredController
   respond_to :js, only: [:new]
   custom_actions member: [:form]
 
+  before_action :copy_of_destroyed, only: [:destroy]
+
   layout 'empty', except: :show
 
   # This helper provide the methods to export HTML to PDF
@@ -55,6 +57,10 @@ class ActivitiesController < FilteredController
   end
 
   protected
+
+  def copy_of_destroyed
+    @activity = resource
+  end
 
   def pdf_form_file_name
     "#{resource.activity_type_name.parameterize}-#{Time.now.strftime('%Y%m%d%H%M%S')}.pdf"

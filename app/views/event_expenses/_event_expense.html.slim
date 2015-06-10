@@ -1,8 +1,12 @@
-div.resource-item id="event_expense_#{event_expense.id}"
-  .resource-item-link
-    .span9.text-large= event_expense.name
-    .span3.text-large= number_to_currency(event_expense.amount, precision: 2)
-  div.resource-item-actions
+- presenter = present(event_expense)
+tr id="event_expense_#{event_expense.id}"
+  td= presenter.category
+  td= presenter.expense_date
+  td= presenter.brand_name
+  td= presenter.merchant
+  td= presenter.description
+  td= presenter.amount
+  td.receipt-preview
     - if event_expense.receipt.present? && event_expense.receipt.file_file_name.present?
       = link_to event_expense.receipt.preview_url, 'data-toggle' => 'gallery', title: 'View Receipt', class: 'icon-receipt' do
           = image_tag 'blank.gif', id: 'expense_image_'+event_expense.receipt.id.to_s, data: {\
@@ -14,6 +18,6 @@ div.resource-item id="event_expense_#{event_expense.id}"
                 image_id: event_expense.receipt.id\
               }\
             }
-    = link_to '', edit_event_event_expense_path(event_expense.event, event_expense), remote: true, class: 'icon-edit' if can?(:edit, event_expense)
-    = "&nbsp;".html_safe
-    = link_to '', event_event_expense_path(event_expense.event, event_expense), remote: true, method: :delete, class: 'icon-rounded-disable' if can?(:destroy, event_expense)
+  td.actions
+    = button_to_edit event_expense, url: edit_event_event_expense_path(event_expense.event, event_expense) if can?(:edit, event_expense)
+    = button_to_destroy event_expense, url: event_event_expense_path(event_expense.event, event_expense) if can?(:destroy, event_expense)

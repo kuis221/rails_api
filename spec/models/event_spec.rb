@@ -21,6 +21,8 @@
 #  local_end_at   :datetime
 #  description    :text
 #  kbmg_event_id  :string(255)
+#  rejected_at    :datetime
+#  submitted_at   :datetime
 #
 
 require 'rails_helper'
@@ -951,22 +953,14 @@ describe Event, type: :model do
 
   describe 'validate_modules_ranges' do
     let(:event) { create(:event, campaign: create(:campaign, modules: { 'comments' => { 'name' => 'comments', 'field_type' => 'module', 'settings' => { 'range_min' => '1', 'range_max' => '2' } } })) }
-    it 'should validate ranges for event campaign modules' do
+
+    it 'validates the minimun number of comments' do
       expect(event.validate_modules_ranges).to be_falsey
-      expect(event.errors[:base]).to include('It is required at least 1 and not more than 2 comments')
+      expect(event.errors[:base]).to include('Between 1 and 2 comments are required')
+    end
 
-      comment_to_delete = create(:comment, content: 'Comment #1', commentable: event)
-      event.comments << comment_to_delete
-      event.comments << create(:comment, content: 'Comment #2', commentable: event)
-      event.comments << create(:comment, content: 'Comment #3', commentable: event)
-      event.save
-
-      expect(event.validate_modules_ranges).to be_falsey
-      expect(event.errors[:base]).to include('It is required at least 1 and not more than 2 comments')
-
-      event.comments.delete(comment_to_delete)
-      event.save
-
+    it 'returns valid if the minimun number of comments is covered' do
+      event.comments << create(:comment, content: 'Comment #1', commentable: event)
       expect(event.validate_modules_ranges).to be_truthy
       expect(event.errors[:base]).to be_empty
     end
@@ -1462,12 +1456,10 @@ describe Event, type: :model do
         expect(event.current_phase).to eql :execute
       end
 
-      it 'returns results for events happenning in the past with PER results' do
+      it 'returns results for submitted events' do
         field = create(:form_field_number, fieldable: campaign, required: true)
-        event = create(:event, start_date: Time.zone.now.to_s(:slashes),
+        event = create(:submitted_event, start_date: Time.zone.now.to_s(:slashes),
                                end_date: Time.zone.now.to_s(:slashes), campaign: campaign)
-        event.results_for([field]).each { |r| r.value = 100 }
-        event.save
         expect(event.current_phase).to eql :results
       end
     end

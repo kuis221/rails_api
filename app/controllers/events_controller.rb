@@ -18,6 +18,9 @@ class EventsController < FilteredController
   include EventsHelper
   include ApplicationHelper
 
+  # Handle the noticaitions for new events
+  include NotificableController
+
   helper_method :calendar_highlights, :event_activities
 
   respond_to :js, only: [:new, :create, :edit, :update, :edit_results,
@@ -25,8 +28,8 @@ class EventsController < FilteredController
   respond_to :json, only: [:map, :calendar_highlights]
   respond_to :xls, :pdf, only: :index
 
-  custom_actions member: [:tasks, :attendance, :edit_results, :edit_data, :edit_surveys]
-  layout false, only: [:tasks, :attendance]
+  custom_actions member: [:attendance, :edit_results, :edit_data, :edit_surveys]
+  layout false, only: [:attendance]
 
   skip_load_and_authorize_resource only: :update
   before_action :authorize_update, only: :update
@@ -56,6 +59,7 @@ class EventsController < FilteredController
           email_message).deliver
       end
     end
+    flash[:event_message_success] = I18n.translate('instructive_messages.execute.submit.success')
     rescue AASM::InvalidTransition => e
       Rails.logger.debug e.message
   end
@@ -77,7 +81,7 @@ class EventsController < FilteredController
     return unless resource.submitted? && reject_reason.present?
 
     resource.reject!
-    resource.update_column(:reject_reason, reject_reason)
+    resource.update_columns(reject_reason: reject_reason, rejected_at: Time.now)
     resource.users.each do |company_user|
       if company_user.allow_notification?('event_recap_rejected_sms')
         sms_message = I18n.translate(
@@ -96,6 +100,7 @@ class EventsController < FilteredController
         ).deliver
       end
     end
+    flash[:event_message_fail] = I18n.translate('instructive_messages.results.rejected')
   end
 
   def calendar
@@ -206,7 +211,7 @@ class EventsController < FilteredController
 
   def search_params
     @search_params || (super.tap do |p|
-      p[:sorting] ||= 'start_at'
+      p[:sorting] ||= Event.search_start_date_field
       p[:sorting_dir] ||= 'asc'
       p[:search_permission] = :view_list
 
@@ -230,4 +235,11 @@ class EventsController < FilteredController
   def list_exportable?
     params['mode'] == 'calendar' || super
   end
+
+  def default_url_options
+    options = super
+    options[:phase] = params[:phase] if params[:phase]
+    options
+  end
+
 end

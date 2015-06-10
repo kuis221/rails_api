@@ -2,16 +2,20 @@
 #
 # Table name: activity_types
 #
-#  id          :integer          not null, primary key
-#  name        :string(255)
-#  description :text
-#  active      :boolean          default(TRUE)
-#  company_id  :integer
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
+#  id            :integer          not null, primary key
+#  name          :string(255)
+#  description   :text
+#  active        :boolean          default(TRUE)
+#  company_id    :integer
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  created_by_id :integer
+#  updated_by_id :integer
 #
 
 class ActivityType < ActiveRecord::Base
+  # Created_by_id and updated_by_id fields
+  track_who_does_it
   belongs_to :company
   scoped_to_company
   has_many :form_fields, -> { order 'form_fields.ordering ASC' }, as: :fieldable

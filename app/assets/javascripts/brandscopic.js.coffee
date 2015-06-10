@@ -62,6 +62,11 @@ jQuery ->
 		$('.has-popover').each () ->
 			if !$(this).is(e.target) && $(this).has(e.target).length is 0 && $('.popover').has(e.target).length is 0
 				$(this).popover('hide')
+		return if $(e.target).closest('.tooltip').length > 0
+		$('.has-tooltip').each () ->
+			tooltipElement = if $(e.target).hasClass('.has-tooltip') then e.target else $(e.target).closest('.has-tooltip')
+			if !$(this).is(tooltipElement)
+				$(this).tooltip('hide')
 
 	bootbox.setBtnClasses {CANCEL: 'btn-cancel', OK: 'btn-primary', CONFIRM: 'btn-primary'}
 
@@ -81,7 +86,7 @@ jQuery ->
 		$this.parent().find('.toggle-input-hidden').val($this.data('value')).trigger 'click'
 		false
 
-	$(document).on 'keyup', '.segment-field', () ->
+	updateSegmentFields = () ->
 		total = 0;
 		segmentFieldId = $(this).data('segment-field-id')
 
@@ -99,10 +104,12 @@ jQuery ->
 		  .find('.progress').removeClass('progress-success progress-info progress-danger').addClass(progressClass).end()
 		  .find('.bar').css({width: total+'%'}).end().find('.counter').text(total+'%');
 
-
 		$("#total-field-" + segmentFieldId).val(if total then total else '')
-		$("#total-field-" + segmentFieldId).valid()
 		true
+
+	$(document).on 'keyup', '.segment-field', () ->
+		updateSegmentFields.apply this
+		$("#total-field-" + $(this).data('segment-field-id')).valid()
 
 	$('header .nav #notifications').notifications();
 
@@ -118,25 +125,28 @@ jQuery ->
 
 		# Check if we should automatically activate a tab on the app
 		if window.location.hash
+			link = $("a[href=#{window.location.hash}]")
 			if $(".nav-tabs a[href=#{window.location.hash}]").length > 0
 				smoothScrollTo $(".nav-tabs a[href=#{window.location.hash}]").tab('show')
+			else if $(window.location.hash).length > 0
+				smoothScrollTo $(window.location.hash), link
+		true
 
 
 	updateSummationTotals = () ->
 		for wrapper in $('.form_field_summation')
 			$wrapper = $(wrapper)
-			$options = $wrapper.find('.field-option:not(.summation-total-field) input')
+			$options = $wrapper.find('.field-option:not(.summation-total-field)')
 			$total   = $wrapper.find('.summation-total-field input')
-			$options.keyup () =>
-				total = $.map($options, (input) ->
+			$options.keyup () ->
+				siblings = $('.field-option[data-field-id=' + $(this).data('field-id') + ']:not(.summation-total-field) input')
+				total = $.map(siblings, (input) ->
 				  parseFloat($(input).val(), 10) || 0
 				).reduce((a, b) ->
 					a + b
 				, 0)
-				$total.val(total)
+				$('.summation-total-field[data-field-id=' + $(this).data('field-id') + '] input').val(total)
 			true
-
-	updateSummationTotals();
 
 	attachPluginsToElements = () ->
 		$('input.datepicker').datepicker
@@ -146,12 +156,13 @@ jQuery ->
 			onClose: (selectedDate) ->
 				$(@).valid();
 		$('input.timepicker').timepicker()
-		$('select.chosen-enabled').chosen()
+		$('select.chosen-enabled').chosen({allow_single_deselect: true})
 		$('.has-tooltip').tooltip({html: true, delay: 0, animation: false})
 		$('.has-popover').popover({html: true})
 		$("input:checkbox, input:radio").not('[data-no-uniform="true"], #uniform-is-ajax, .bs-checkbox').uniform()
 
-		$('.segment-field').keyup()
+		$('.segment-field').each (i, element) ->
+			updateSegmentFields.apply element
 
 		$(".fancybox").fancybox {
 			padding : 0,
@@ -165,8 +176,7 @@ jQuery ->
 
 		$("a.smooth-scroll[href^='#']").off('click.branscopic').on 'click.branscopic', (e) ->
 			e.preventDefault()
-			e.stopPropagation()
-			smoothScrollTo($(this.hash))
+			smoothScrollTo $(this.hash), this
 
 		$('form[data-watch-changes]').watchChanges();
 
@@ -179,10 +189,21 @@ jQuery ->
 
 		$('.select-list-seach-box').selectListSearch()
 
+		$("abbr.timeago").timeago();
+
 		updateSummationTotals()
 
-	window.smoothScrollTo = (element) ->
-		$('html, body').animate({ scrollTop: element.offset().top - ($('#resource-close-details').outerHeight() || 0) - ($('header').outerHeight() || 0) - 20 }, 300)
+	window.smoothScrollTo = (element, link) ->
+		return if element.length is 0
+		$('html, body').animate {
+			scrollTop: element.offset().top -
+						($('#resource-close-details').outerHeight() || 0) -
+						($('header').outerHeight() || 0) -
+						($('.details-bar').outerHeight() || 0) -
+						($('.guide-bar').outerHeight() || 0) -
+						20
+			}, 300, () ->
+				$(link).trigger('smooth-scroll:end') if link
 
 
 	$.validator.setDefaults {
@@ -197,7 +218,9 @@ jQuery ->
 				$(element).removeClass('valid').closest('.field-option').removeClass('success').addClass('error')
 			else
 				$(element).removeClass('valid').closest('.control-group').removeClass('success').addClass('error')
-
+				# For percentage fields
+				$('#progress-error-' + $(element).data('segment-field-id')).removeClass('success').addClass('error')
+				$('#progress-error-' + $(element).data('segment-field-id')).closest('.form_field_percentage').find('.control-group-label').find('.ok-message').remove()
 		errorPlacement: (error, element) ->
 			label = element.closest(".control-group").find("label.control-label[for=\"#{element.attr('id')}\"]")
 			label = element.closest(".control-group").find("label.control-label") if label.length is 0
@@ -206,10 +229,10 @@ jQuery ->
 			label.addClass('with_message')
 			if label.length > 0
 				error.insertAfter label
-
 		focusInvalid: false,
 		invalidHandler: (form, validator) ->
 			return unless validator.numberOfInvalids()
+			window.EventDetails.showMessage($('form.event-data-form').data('per-save-failed'), 'red');
 			element = $(validator.errorList[0].element)
 			while element.is(":hidden")
 				element = element.parent()
@@ -218,16 +241,39 @@ jQuery ->
 				scrollTop: element.offset().top - 200
 			, 1000
 		success: (element) ->
-			element.addClass('valid').append('<span class="ok-message"><span>OK!</span></span>')
-				.closest('.control-group').removeClass('error')
+			element.addClass('valid').append('<span class="ok-message"><span>OK!</span></span>').closest('.control-group').removeClass('error')
 			element.closest('.field-option').removeClass('error')
+			# For percentage fields
+			if (element.attr('id') && $('.segment-error-' + element.data('segment-field-id')).not('.valid').length == 0)
+				$('#progress-for-' + element.data('segment-field-id')).removeClass('error')
+				element.closest('.form_field_percentage').find('.control-group-label').find('.ok-message').remove()
+				element.closest('.form_field_percentage').find('.control-group-label').append('<span class="ok-message"><span>OK!</span></span>')
+		onkeyup: (element, event) ->
+			items = items_count(element)
+			$('#item-counter-' + $(element).data('field-id')).html(items);
+
+			if event.which == 9 and @elementValue(element) == ''
+				return true
 	}
 
 	window.makeFormValidatable = (e) ->
 		e.validate()
 
+	items_count = (field) ->
+		number = 0
+
+		if $(field).data('range-format') == 'characters'
+			number = field.value.length
+		else if $(field).data('range-format') == 'words'
+			matches = $(field).val().split(' ')
+			number = matches.filter((word) ->
+				word.length > 0
+			).length
+
+		number
+
 	# Check what graph labels are colliding with others and adjust the position
-	$(window).on 'resize ready', () ->
+	$(window).on 'resize ready load', () ->
 		adjustChartsPositions()
 		lazyLoadElements()
 
@@ -241,7 +287,6 @@ jQuery ->
 			for label, i in labels
 				$label = $(label)
 				# if $(label).text() is '101'
-				# 	debugger
 				position = $label.offset()
 				level = 0
 				for o, j in labels
@@ -538,6 +583,7 @@ jQuery ->
 				if not found and $link.data('default-content')
 					$link.html $link.data('default-content')
 					$link.data 'default-content', null
+		true
 
 
 	lazyLoadElements = () ->
@@ -547,7 +593,6 @@ jQuery ->
 		$(".lazyloaded").each () ->
 			ot = $(@).offset().top;
 			ob = ot + $(@).height();
-
 			if not $(@).attr("loaded") && wt <= ob && wb >= ot
 				$(@).removeClass "lazyloaded"
 				$(@).load $(@).data('content-url')
@@ -610,6 +655,7 @@ jQuery ->
 					true
 				else # On small screens, leave it static
 					$filterSidebar.css({position: ''}).addClass('responsive-mode')
+			true
 		).trigger('scroll')
 
 	$(document).on 'click', '[data-toggle="filterbar"]', (e) ->
@@ -629,7 +675,27 @@ jQuery ->
 
 	$('.totop a').click (e) ->
 		e.preventDefault()
-		$('body,html').animate {scrollTop: 0}, 500
+		$('body,html').animate { scrollTop: 0 }, 500
+
+	percentageTimeouts = {}
+	$(document).on 'blur', 'input.segment-field', () ->
+		if !$(this).val()
+			$(this).val(0).valid()
+		fieldId = $(this).data('segment-field-id')
+		percentageTimeouts[fieldId] = setTimeout () ->
+			$("input.segment-total[data-segment-field-id=#{fieldId}]").valid()
+		, 200
+
+	$(document).on 'focus', 'input.segment-field', () ->
+		fieldId = $(this).data('segment-field-id')
+		clearTimeout percentageTimeouts[fieldId] if percentageTimeouts[fieldId]
+
+	$(document).on 'blur', 'input.summation-field', () ->
+		if !$(this).val()
+			$(this).val(0).valid()
+
+	$(document).on 'change', 'select.select', () ->
+		$(this).valid()
 
 	$.validator.addMethod("oneupperletter",  (value, element) ->
 		return $.trim(value) == '' || /[A-Z]/.test(value);
@@ -651,18 +717,30 @@ jQuery ->
 
 	$.validator.addMethod("segmentTotalRequired", (value, element) ->
 		return ($(element).hasClass('optional') && ($.trim(value) == '' || $.trim(value) == '0')) || value == '100';
-	, "Field should sum 100%");
+	, "Field must sum to 100%");
 
 	$.validator.addMethod("segmentTotalMax", (value, element) ->
 		intVal = parseInt(value);
 		return ($.trim(value) == '' || intVal <= 100);
 	, "Field cannot exceed 100%");
 
+	$.validator.addMethod('greaterthan',  (value, el, param) ->
+	    return value > param;
+	,  jQuery.validator.format("Must be greater than {0}"));
+
 	$.validator.addClassRules("segment-total", { segmentTotalMax: true, segmentTotalRequired: true });
 
 	$.validator.addMethod("segment-field", (value, element) ->
+		if !$(element).val()
+			$(element).val(0).valid()
 		return (value == '' || (/^[0-9]+$/.test(value) && parseInt(value) <= 100));
-	, " ");
+	, ' ');
+
+	$.validator.addMethod("summation-field", (value, element) ->
+		if !$(element).val()
+			$(element).val(0).valid()
+		return true;
+	, ' ');
 
 	$.validator.addMethod("optional", (value, element) ->
 		return true;
@@ -688,27 +766,19 @@ jQuery ->
 				items = parseFloat(value, 10)
 			else if $element.data('range-format') is "digits"
 				items = val.replace(/[\s,\,\,]+/g, "").length
+		else if $element.data('range-format') is "characters" || $element.data('range-format') is "words"
+			items = 0
 
-		minResult = if $element.data('range-min') && items then items >= $element.data('range-min') else true
-		maxResult = if $element.data('range-max') && items then items <= $element.data('range-max') else true
+		if $.inArray($element.data('range-format'), ['value', 'characters', 'words']) > -1 && items == 0
+			# Special case when format is value, chars or words and items is zero because zero is evaluated as false
+			minResult = if $element.data('range-min') then items >= $element.data('range-min') else true
+			maxResult = if $element.data('range-max') then items <= $element.data('range-max') else true
+		else
+			minResult = if $element.data('range-min') && items then items >= $element.data('range-min') else true
+			maxResult = if $element.data('range-max') && items then items <= $element.data('range-max') else true
 
 		return minResult && maxResult
-	, (params, element) ->
-		$element = $(element)
-		if $element.data('range-format') is 'value'
-			if $element.data('range-min') && $element.data('range-max')
-				"should be between #{$element.data('range-min')} and #{$element.data('range-max')}"
-			else if $element.data('range-min')
-				"should be greater than #{$element.data('range-min')}"
-			else if $element.data('range-max')
-				"should be smaller than #{$element.data('range-max')}"
-		else
-			message = if $element.data('range-min') then "at least #{$element.data('range-min')}" else ''
-			message += if message.length > 0 && $element.data('range-max') then ' but ' else ''
-			message += if $element.data('range-max') then "no more than #{$element.data('range-max')}" else ''
-
-			"should have #{message} #{$element.data('range-format')}"
-	);
+	, ' ');
 
 	$(window).load () ->
 		setTimeout () ->
@@ -795,22 +865,6 @@ jQuery ->
 		goFullscreen $(this).data("fullscreen-element")
 		false
 
-	$(".reject-post-event").click (e) ->
-		e.preventDefault()
-		$link = $(this)
-		bootbox.classes('modal-med rejection-prompt')
-		bootbox.prompt "Why is the post event being rejected?", 'Cancel', 'Submit', (result) ->
-			if result isnt null and result isnt ""
-				$.ajax $link.attr("href"),
-					method: "PUT"
-					dataType: "script"
-					data:
-						reason: result
-			else if result isnt null
-				bootbox.alert "You must enter a reason for the rejection", ->
-					$link.click()
-
-		false
 
 	$(document).on 'click', '#select-specific-user', (e) ->
 		e.stopPropagation()
@@ -830,7 +884,6 @@ $.rails.allowAction = (element) ->
 		return true
 
 	if $.rails.fire(element, 'confirm')
-			bootbox.moda
 			bootbox.confirm message, (answer) ->
 				if answer
 					callback = $.rails.fire(element, 'confirm:complete', [answer])

@@ -1,6 +1,8 @@
 #form-container
   .activity-form
     = simple_form_for resource, url: url_for(params), method: :get do |f|
+      = hidden_field_tag :return, params[:return]
+      = hidden_field_tag :phase, params[:phase]
       - if activity_types.any? 
         = f.error_notification
         = resource.errors.full_messages.join("<br />").html_safe

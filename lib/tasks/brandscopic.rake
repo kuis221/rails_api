@@ -25,8 +25,12 @@ namespace :brandscopic do
     s3 = AWS::S3.new
     AttachedAsset.photos.where(attachable_type: 'Event')
       .joins('INNER JOIN events ON events.id=attachable_id').find_each do |at|
+      if at.file.exists?
+        Rails.logger.info "Skpping asset #{at.id} because it exists in the bucket #{ENV['S3_BUCKET_NAME']}"
+        next
+      end
       (at.file.styles.keys + [:original]).each do |style_name|
-        key =  at.file.path(style_name).gsub(/^\//,'')
+        key = at.file.path(style_name).gsub(/^\//,'')
         begin
           if s3.buckets[production_bucket].objects[key].exists?
             s3.buckets[production_bucket].objects[key].copy_to(
@@ -43,7 +47,7 @@ namespace :brandscopic do
     CSV($stdin, row_sep: "\n", col_sep: ',') do |csv|
       csv.each do |venue1, venue2, venue3, name, route, city, state, zip, td_linx_code|
         next if venue1.blank?
-        venues = Venue.where(id: [venue1, venue2, venue3])
+        venues = Venue.where(id: [venue1, venue2, venue3]).where(merged_with_place_id: nil)
         if [venue1, venue2, venue3].compact.count > venues.count
           puts "NOT ALL VENUES WHERE FOUND #{[venue1, venue2, venue3].compact}"
           next

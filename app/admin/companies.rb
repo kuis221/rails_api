@@ -21,6 +21,10 @@ ActiveAdmin.register Company do
                 ['All users', Notification::EVENT_ALERT_POLICY_ALL]
               ]
     end
+    f.inputs name: 'Expense Categories' do
+      f.input :expense_categories,
+              hint: 'Enter one category per line'
+    end
     f.inputs name: 'Brand Ambassadors' do
       f.input :brand_ambassadors_role_ids,
               label: 'Brand Ambassadors Roles',
@@ -83,7 +87,8 @@ ActiveAdmin.register Company do
 
   controller do
     def permitted_params
-      params.permit(company: [:name, :admin_email, :timezone_support, :event_alerts_policy, :ytd_dates_range, brand_ambassadors_role_ids: []])
+      params.permit(company: [:name, :admin_email, :timezone_support, :event_alerts_policy,
+                              :ytd_dates_range, :expense_categories, brand_ambassadors_role_ids: []])
     end
   end
 end

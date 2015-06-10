@@ -28,17 +28,20 @@ describe EventExpensesController, type: :controller do
   describe "POST 'create'" do
     it 'should not render form_dialog if no errors' do
       expect do
-        xhr :post, 'create', event_id: event.to_param, event_expense: { amount: '100', name: 'Test expense', brand_id: 12 }, format: :js
+        xhr :post, 'create', event_id: event.to_param, event_expense: {
+          amount: '100', category: 'Entertainment', brand_id: 12, expense_date: '01/03/2015'
+        }, format: :js
       end.to change(EventExpense, :count).by(1)
       expect(response).to be_success
       expect(response).to render_template(:create)
       expect(response).to render_template('events/_expenses')
       expect(response).not_to render_template('_form_dialog')
 
-      event_expense = EventExpense.last
-      expect(event_expense.amount).to eq(100)
-      expect(event_expense.name).to eq('Test expense')
-      expect(event_expense.brand_id).to eq(12)
+      expense = EventExpense.last
+      expect(expense.amount).to eq(100)
+      expect(expense.category).to eq('Entertainment')
+      expect(expense.expense_date.to_s(:slashes)).to eql '01/03/2015'
+      expect(expense.brand_id).to eq(12)
     end
 
     it 'should not render the template events/expenses if errors' do
@@ -49,17 +52,62 @@ describe EventExpensesController, type: :controller do
       expect(response).not_to render_template('events/expenses')
       assigns(:event_expense).errors.count > 0
     end
+
+    it 'renders the split template if the split button was clicked' do
+      expect do
+        xhr :post, 'create', event_id: event.to_param, event_expense: {
+          amount: '100', category: 'Entertainment', brand_id: 12, expense_date: '01/03/2015'
+        }, commit: 'Split Expense', format: :js
+      end.to_not change(EventExpense, :count)
+      expect(response).to render_template 'split_expense'
+    end
   end
 
   describe "DELETE 'destroy'" do
-    let(:event_expense) { create(:event_expense, event: event) }
     it 'should delete the expense' do
-      event_expense.save   # Make sure record is created before the expect block
+      event_expense   # Make sure record is created before the expect block
       expect do
         delete 'destroy', event_id: event.to_param, id: event_expense.to_param, format: :js
         expect(response).to be_success
         expect(response).to render_template(:destroy)
       end.to change(EventExpense, :count).by(-1)
+    end
+  end
+
+  describe 'POST split' do
+    it 'updates the existing expense' do
+      xhr :post, 'split', event_id: event.id, id: event_expense.id, event: { event_expenses_attributes: [
+        { id: event_expense.id, amount: '100' }
+      ] }, format: :js
+      expect(response).to be_success
+      expect(assigns(:event_expense)).to eql event_expense
+    end
+
+    it 'creates new expenses' do
+      expect do
+        xhr :post, 'split', event_id: event.id, id: nil, event: { event_expenses_attributes: [
+          { id: nil, amount: '100', category: 'Entertainment', expense_date: '01/02/2014' },
+          { id: nil, amount: '100', category: 'Entertainment', expense_date: '01/03/2014' }
+        ] }, format: :js
+      end.to change(EventExpense, :count).by(2)
+      expect(response).to be_success
+      expect(assigns(:event_expense).new_record?).to be_truthy
+      expect(event.event_expenses.count).to eql 2
+    end
+
+    it 'deletes expenses marked for destroy' do
+      event_expense
+      expect do
+        xhr :post, 'split', event_id: event.id, id: event_expense.id, event: { event_expenses_attributes: [
+          { id: event_expense.id, _destroy: true },
+          { id: nil, amount: '100', category: 'Entertainment', expense_date: '01/02/2014' },
+          { id: nil, amount: '100', category: 'Entertainment', expense_date: '01/03/2014' }
+        ] }, format: :js
+      end.to change(EventExpense, :count).by(1) # Two created minus one removed
+      expect(response).to be_success
+      expect(assigns(:event_expense)).to eql event_expense
+      expect(event.event_expenses.count).to eql 2
+      expect { event_expense.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 

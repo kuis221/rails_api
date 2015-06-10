@@ -1,6 +1,7 @@
+- presenter = present(event)
 .resource-item id="event_#{event.id}" class="#{active_class(event)} #{event.aasm_state}#{event.late? && event.unsent? ? ' late' : '' }"
   = link_to_if_permitted :show, event, event_url(event), title: 'Event Details', class: 'resource-item-link' do
-    .span5.date= format_date_range(event_date(event, :start_at), event_date(event, :end_at))
+    .span5.date= presenter.date_range
     .span7
       .text-large.crop-text= event.campaign_name
       = event_place_address(event, false, ', ')

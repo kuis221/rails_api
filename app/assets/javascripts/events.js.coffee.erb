@@ -2,6 +2,76 @@ jQuery ->
 	$(document).delegate ".task-completed-checkbox", "click", ->
 		$(@form).submit()
 
+	EventDetails = ->
+		this.closeAlertTimeout = false
+
+		$('.event-alert').find('.close').show().on 'click', =>
+			this.permanentMessageOpen = false
+
+		this.showMessage = (message, color, close = false) ->
+			return if this.permanentMessageOpen
+			$('.event-alert').find('.close').hide()
+			clearTimeout this.closeAlertTimeout if this.closeAlertTimeout
+			$('.event-alert').removeClass (index, css) ->
+				(css.match(/(^|\s)alert-\S+/g) or []).join ' '
+			$('.event-alert').addClass('alert-' + color).find('.alert-main-text').text(message)
+			if close
+				this.showPermanentMessage()
+			else
+				this.showMessageWithAutoClose()
+		this.showPermanentMessage = () ->
+			this.permanentMessageOpen = true
+			$('.event-alert').slideDown('fast').find('.close').show()
+
+		this.showMessageWithAutoClose = (time = 3000, duration='fast') ->
+			$('.event-alert').slideDown(duration)
+			this.closeAlertTimeout = setTimeout ->
+				$('.event-alert').slideUp(duration)
+			, time
+		this.closeMessage= (duration = 'fast') ->
+			$('.event-alert').slideUp(duration)
+		@
+
+	window.EventDetails = new EventDetails()
+
+	$(document)
+		.on 'click', '.event-phase-step', (e) ->
+			window.EventDetails.closeMessage('fast')
+			$('#phases-container .phase-container:not(.active)').slideUp()
+		.on 'smooth-scroll:end', '.event-phase-step', (e) ->
+			$('#phases-container').scrollmultispy('activate',[$(this).data('spytarget'), $('#phases-container')[0]])
+			window.EventDetails.showMessage($(this).data('message'), $(this).data('message-color'))
+
+	$('.btn-dismiss-alert').on 'click', (e) ->
+		$('.event-alert').slideUp()
+		$('.event-alert .close').hide()
+
+	$('#toggle-phases-steps').on 'click', (e) ->
+		e.preventDefault()
+		window.EventDetails.closeMessage('fast')
+		$('#phases-container .phase-container:not(.active)').slideToggle()
+		false
+
+	$("#reject-post-event").submit (e) ->
+		e.preventDefault()
+		$form = $(this)
+		bootbox.classes('modal-med rejection-prompt')
+		bootbox.prompt "Why is the post event being rejected?", 'Cancel', 'Submit', (result) ->
+			if result isnt null and result isnt ""
+				$.ajax $form.attr("action"),
+					method: "PUT"
+					dataType: "script"
+					data:
+						reason: result
+			else if result isnt null
+				bootbox.alert "You must enter a reason for the rejection", ->
+					$form.submit()
+
+		false
+
+	$('#approve-event-button, #reject-event-button').on 'click', (e) ->
+		window.EventDetails.showMessage($(this).data('message'), 'red')
+
 	$(document).delegate 'a.load-comments-link', 'click', (e) ->
 		$row = $(this).parents('li');
 		if $("##{$row.attr('id')}_comments").length > 0
@@ -15,15 +85,14 @@ jQuery ->
 		return false
 
 
-	$('.submit-event-data-link').on 'ajax:before.event_data', () ->
-		link = $(this)
+	$('.step.actions').on 'ajax:before.event_data', () ->
 		form = $('form.event-data-form')
 		if form.length
 			if form.valid()
 				$(document).off('ajaxComplete.event_data').on 'ajaxComplete.event_data', (event, xhr, settings) ->
 					$(document).off('ajaxComplete.event_data')
-					$('.submit-event-data-link').off('ajax:before.event_data')
-					link.trigger('click')
+					$('.step-buttons').off('ajax:before.event_data')
+					$('.submit-event-data-link').trigger('click')
 				form.submit()
 			false
 		else

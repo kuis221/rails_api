@@ -1,0 +1,133 @@
+= user_new_feature('results_gva_index') do
+  h5 Getting Started: Goals vs. Actual
+  a.close.btn-dismiss-alert.icon.icon-close href="#" title="Dismiss"
+  a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/DVKhYWO9cog?rel=0" data-width="640" data-height="360"
+    img src="#{image_path('video_arrow.png')}" width="70" height="70" /
+  .feature-description
+    p
+      'The Goals vs. Actual section allows you to quickly and easily track campaign goals. Monitor overall campaign goals, place specific goals, and staff goals - all by toggling between the three buttons below.  Click on the video to the left for a quick overview or check out our
+      a> href="http://support.brandscopic.com" target="_blank" support site
+      | for more information about this section.
+
+.tab-content.with-details-close-bar
+  = resource_details_bar("You are viewing the Goals vs. Actuals report. Click to close.")
+  #list-view.tab-pane.active
+    .details_box.tool-box.first
+      h5.results-title GOALS VS. ACTUAL
+      #list-tools
+        = simple_form_for :report, url: analysis_gva_path, remote: true, html: { id: 'report-settings' } do |f|
+          = f.input :campaign_id, collection: campaigns_list_for_dropdown, selected: params[:campaign_id] || params[:report].try(:[], :campaign_id), include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Select a campaign" } }
+          - group_permissions = report_group_permissions
+          - if group_permissions.length > 1
+            = f.input :group_by, label: 'GROUP BY:', checked: report_group_by, required: true, label_html: {id: '#group-by-title'}, wrapper: :btn_group, as: :radio_buttons, collection: report_group_permissions, wrapper_html: { id: 'group-by-criterion' }, item_wrapper_class: 'btn'
+          - elsif group_permissions.length == 1
+            = f.input :group_by, as: :hidden, input_html: { value: group_permissions.first.second }, wrapper: false, label: false
+          = f.input :view_mode, label: false, checked: report_view_mode, required: false, label_html: {id: '#group-by-title'}, wrapper: :btn_group, as: :radio_buttons, collection: [[content_tag(:i, '', class: 'icon-analysis'), 'graph'],[content_tag(:i, '', class: 'icon-list'), 'table']], wrapper_html: { id: 'group-by-criterion' }, item_wrapper_class: 'btn'
+
+        .export-xls.pull-right
+          .dropdown.btn-download
+            a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+              i.icon-download
+              i.icon-arrow-down-small
+            ul#download-gva-btn.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+              li
+                a href="#" role="menuitem" data-url="#{analysis_gva_path(format: :xls)}"
+                  | Download as XLS
+              li
+                a href="#" role="menuitem" data-url="#{analysis_gva_path(format: :pdf)}"
+                  | Download as PDF
+
+  #report-container
+    #kpis-trends-bars.details_box.content
+      .blank-state
+        .blank-state-arrow
+          img src="#{asset_path('blank-states-arrow.png')}"
+        h5.text-center = I18n.translate(:'blank_states.results_gva.empty.line1')
+        p.text-center = I18n.translate(:'blank_states.results_gva.empty.line2')
+        .blank-state-icon
+          img src="#{asset_path('blank-gva.png')}"
+
+= render partial: 'help_tutorial'
+
+javascript:
+  var currentView = null;
+
+  submitForm = function() {
+    var groupBy = $('input:radio[name="report[group_by]"]:checked').val()
+    if (typeof groupBy == 'undefined'){
+      groupBy = $('input:hidden[name="report[group_by]"]').val()
+    }
+    var view =  $('#report_campaign_id').val() + groupBy;
+    if (view != currentView) {
+      currentView = view;
+      if ( $('#report_campaign_id').val() && groupBy == 'campaign'){
+        $('form#report-settings').submit();
+      } else if ( $('#report_campaign_id').val() ) {
+        $('#report-container').load('#{analysis_report_groups_path}?'+$('#report-settings').serialize());
+      } else {
+        $('#download-gva-btn').attr('disabled', true);
+      }
+    }
+  }
+
+  $('#report_campaign_id').on('change', function(e){
+    if ($('#report_campaign_id').val() != '') {
+      $('#download-gva-btn').attr('disabled', false);
+      $('#kpis-trends-bars .content');
+      $('#kpis-trends-bars').empty().addClass('loading-spinner');
+      submitForm();
+      if (history.pushState) {
+        history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' + $('#report-settings').serialize());
+      }
+    } else {
+      $('#download-gva-btn').attr('disabled', true);
+      if (history.pushState) {
+        history.pushState('data', '', document.location.protocol + '//' + document.location.host + document.location.pathname + '?' + $('#report-settings').serialize());
+      }
+      $('#kpis-trends-bars').empty().addClass("details_box content empty-state").prepend('<p class="text-center empty-state">Select a campaign from the list above');
+    }
+  });
+
+  $('#report-settings input:radio[name="report[group_by]"]').on('click', function(e){
+    $('#report_campaign_id').trigger('change');
+  });
+
+  $('#report-settings input:radio[name="report[view_mode]"]').on('click', function(e) {
+    var view = $(this).val();
+    $('.accordion-body.in').collapse('hide');
+    $('.view-style').addClass('hide');
+    $('#'+view+'-view').removeClass('hide');
+  });
+
+  $('#download-gva-btn a').on('click', function(e){
+    var groupBy = $('input:radio[name="report[group_by]"]:checked').val();
+    var viewMode = $('input:radio[name="report[view_mode]"]:checked').val();
+    if ($('#report_campaign_id').val()) {
+      $.get($(this).data('url') + '?report[campaign_id]='+$('#report_campaign_id').val()+'&report[group_by]='+groupBy+'&report[view_mode]='+viewMode);
+    }
+    return false;
+  });
+
+  $(window).on('popstate', function(){
+    query = window.location.search.replace(/^\?/,"");
+    if (query != '') {
+      vars = query.split('&');
+      $('#group-by-criterion a.active').removeClass('active');
+      $('#group-by-criterion a.campaign').addClass('active');
+      for (i = 0; i<vars.length; i++ ) {
+        pair = vars[i].split('=');
+        pair[0] = decodeURIComponent(pair[0]);
+        if (pair[0] == 'campaign_id') {
+          $('#report_campaign_id').val(pair[1]).trigger('liszt:updated');
+        } else if (pair[0] === 'report[group_by]' || pair[0] === 'report[view_mode]') {
+          $('input:radio[name="'+pair[0]+'"]').attr('checked', false).each(function(i, radio){
+            $(radio).closest('.btn').removeClass('active');
+          });
+          $('input:radio[name="'+pair[0]+'"][value="'+pair[1]+'"]').attr('checked', true).closest('.btn').addClass('active');
+        }
+      }
+    }
+    submitForm();
+  });
+
+  submitForm();

@@ -1,4 +1,7 @@
 - if resource.errors.any?
   | alert('The document could not be saved!')
 - else
-  | $('#documents-list').prepend('#{j render(resource)}');
+  = update_event_details_bar(resource.attachable) if resource.attachable.is_a?(Event)
+  |
+    $('#documents-list').prepend('#{j render(resource)}');
+    window.EventDetails.showMessage("#{j I18n.translate('instructive_messages.plan.document.added')}", 'green');

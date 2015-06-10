@@ -6,7 +6,7 @@
 #  name                   :string(255)
 #  reference              :string(400)
 #  place_id               :string(100)
-#  types                  :string(255)
+#  types_old              :string(255)
 #  formatted_address      :string(255)
 #  street_number          :string(255)
 #  route                  :string(255)
@@ -27,6 +27,7 @@
 #  lonlat                 :spatial          point, 4326
 #  td_linx_confidence     :integer
 #  merged_with_place_id   :integer
+#  types                  :string(255)      is an Array
 #
 
 require 'base64'
@@ -72,10 +73,9 @@ class Place < ActiveRecord::Base
   before_save :update_locations
 
   after_commit :reindex_associated
-
-  serialize :types
-
+  scope :accessible_by_user, ->(user) { in_company(user.company_id) }
   scope :in_company, ->(company) { joins(:venues).where(venues: { company_id: company }) }
+  scope :filters_between_dates, ->(start_date, end_date) { where(venues: {created_at: DateTime.parse(start_date)..DateTime.parse(end_date)})}
 
   def self.linked_to_campaign(campaign)
     select('DISTINCT places.*')
@@ -315,6 +315,7 @@ class Place < ActiveRecord::Base
 
   # Merge the record with the given place
   def merge(place)
+    fail "Cannot merge a venue into a merged venued" unless merged_with_place_id.blank?
     fail "Cannot merge place with itself" if id == place.id
     self.class.connection.transaction do
       Venue.where(place_id: place.id).each do |venue|

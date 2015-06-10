@@ -1,0 +1,40 @@
+.details-bar
+  .info-bar
+    .back-arrow
+      a.close-details href="#{return_path || collection_path}" title="Close Event"
+        i.icon-angle-left
+    .details-bar-status
+      nav class="scrollspy-style event-details-scroll-spy"
+        ul.switch-list.unstyled.view-indicator
+          li
+            a data-spytarget="#application-body"
+              span Viewing event details. Click to expand the event menu.
+          li
+            a href="#event-details-collapse" data-toggle="collapse" data-spytarget="#event-details-info-end"
+              span.event-name.pull-left= resource.campaign_name
+              span.event-date.small = presenter.date_range_for_details_bar
+  .trackers-bar
+    .panel
+      .panel-heading role="tab"
+        // The heading of the panel changes depending on if it is collapsed or expanded. We should add the class .hide to the element that it is not active
+        .phases-expanded.hide
+          .phase-container
+            .step.phase-id
+            .phase-msg
+              h5.heading Viewing the event map
+              p Here we may put something more descriptive about the part below.
+
+        .event-alert.text-center style="display:none"
+          .alert-inner
+            .alert-msg
+              h4.alert-main-text
+            a.close.btn-dismiss-alert.hide title="Dismiss"
+              i.icon-close
+
+        #phases-container.event-details-scroll-spy
+          = presenter.render_nav_phases
+
+      .controller
+        a#toggle-phases-steps href="#event-details-collapse"
+          i.icon-hamburguer
+

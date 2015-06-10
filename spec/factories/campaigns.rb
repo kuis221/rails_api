@@ -33,6 +33,7 @@ FactoryGirl.define do
     color { Campaign::AVAILABLE_COLORS.sample }
     created_by_id 1
     updated_by_id 1
+    modules {}
 
     factory :inactive_campaign do
       aasm_state 'inactive'

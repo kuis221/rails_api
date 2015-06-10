@@ -44,6 +44,7 @@ Styleguide 4.1.5
 	color: $text;
 	width: 100%;
 	margin-top: 20px;
+	overflow: hidden;
 	&.no-top-margin{ margin-top: 0; }
 	a, a:hover {
 		color: $text;
@@ -57,6 +58,11 @@ Styleguide 4.1.5
 		font-size: 12px;
 		// To prevent page breaks on PDF exports
 		page-break-inside: avoid !important;
+		&:after {
+			content: ' ';
+			display: table;
+			clear: both;
+		}
 		&:last-child {
 			margin-bottom: 0;
 		}
@@ -96,12 +102,6 @@ Styleguide 4.1.5
 				&:first-child {
 					margin-left: 0;
 				}
-				&.icon-receipt {
-					font-size: 26px;
-					position: relative;
-					top: 7px;
-					margin-right: 5px;
-				}
 			}
 			a, .button-with-icon {
 				color: $brand;
@@ -117,11 +117,8 @@ Styleguide 4.1.5
 			.resource-item-actions {
 				display: inline-block;
 			}
-			.checker{
+			.checker, .checker span {
 				background-color: $user_menu;
-			}
-			&.complete {
-				border-color: $gray-lighter;
 			}
 			label.radio div.radio span {
 				border-color: $brand;
@@ -149,13 +146,13 @@ Styleguide 4.1.5
 			}
 		}
 
-		&.late {
-			border-left: 5px solid $late;
+		&.incomplete {
+			border-left: 5px solid $gray-light;
 		}
-		&.submitted {
+		&.submitted, &.unassigned {
 			border-left: 5px solid $submitted;
 		}
-		&.approved {
+		&.approved, &.complete {
 			border-left: 5px solid $approved;
 		}
 		&.rejected {
@@ -163,6 +160,9 @@ Styleguide 4.1.5
 		}
 		&.complete {
 			padding-left: ($resource-item-padding + 4);
+		}
+		&.late {
+			border-left: 5px solid $late;
 		}
 		.task-completed {
 			margin: 15px 10px 0 0;
@@ -255,7 +255,7 @@ Styleguide 4.1.5
 		}
 		&.single-line .resource-item {
 			.resource-item-link {
-				font-size: 16px;
+				//font-size: 16px;
 				padding-left: 0;
 				padding-top: 4px;
 			}

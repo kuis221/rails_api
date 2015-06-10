@@ -29,16 +29,16 @@ SimpleNavigation::Configuration.run do |navigation|
   # This turns it off globally (for the whole plugin)
   # navigation.auto_highlight = false
   navigation.items do |primary|
-    primary.item :dashboard, 'Dashboard', root_path,  highlights_on: %r{/$}, link: { icon_class: 'icon-dashboard menubar-icon' }
-    primary.item :events, 'Events', events_path, highlights_on: %r{/events}, link: { icon_class: 'icon-events menubar-icon' }, if: proc { can?(:index, Event) }
-    primary.item :tasks, 'Tasks', mine_tasks_path, highlights_on: %r{/tasks}, link: { icon_class: 'icon-tasks menubar-icon' }, if: proc { can?(:index_my, Task) || can?(:index_team, Task) } do |secondary|
-      secondary.item :mine_tasks, 'My Tasks', mine_tasks_path, highlights_on: %r{/tasks/mine}, if: proc { can?(:index_my, Task) }
-      secondary.item :team_tasks, 'Team Tasks', my_teams_tasks_path, highlights_on: %r{/tasks/my_teams}, if: proc { can?(:index_team, Task) }
+    primary.item :dashboard, 'Dashboard', root_path(return: nil, phase: nil),  highlights_on: %r{/$}, link: { icon_class: 'icon-dashboard menubar-icon' }
+    primary.item :events, 'Events', events_path(return: nil, phase: nil), highlights_on: %r{/events}, link: { icon_class: 'icon-events menubar-icon' }, if: proc { can?(:index, Event) }
+    primary.item :tasks, 'Tasks', mine_tasks_path(return: nil, phase: nil), highlights_on: %r{/tasks}, link: { icon_class: 'icon-tasks menubar-icon' }, if: proc { can?(:index_my, Task) || can?(:index_team, Task) } do |secondary|
+      secondary.item :mine_tasks, 'My Tasks', mine_tasks_path(return: nil, phase: nil), highlights_on: %r{/tasks/mine}, if: proc { can?(:index_my, Task) }
+      secondary.item :team_tasks, 'Team Tasks', my_teams_tasks_path(return: nil, phase: nil), highlights_on: %r{/tasks/my_teams}, if: proc { can?(:index_team, Task) }
     end
-    primary.item :venues, 'Venues', venues_path, highlights_on: %r{/research/venues}, link: { icon_class: 'icon-venue menubar-icon' }, if: proc { can?(:index, Venue) }
+    primary.item :venues, 'Venues', venues_path(return: nil, phase: nil), highlights_on: %r{/research/venues}, link: { icon_class: 'icon-venue menubar-icon' }, if: proc { can?(:index, Venue) }
 
-    primary.item :brand_ambassadors, 'Brand Ambassadors', brand_ambassadors_root_path, highlights_on: %r{/brand_ambassadors}, link: { icon_class: 'icon-campaign menubar-icon' }, if: proc { can?(:access, :brand_ambassadors) }
-    primary.item :results, 'Results', results_reports_path, highlights_on: %r{^/results}, link: { icon_class: 'icon-results menubar-icon' }, if: proc { can?(:access, :results) }
-    primary.item :analysis, 'Analysis', sources_analysis_trends_path, highlights_on: %r{/analysis/trends}, link: { icon_class: 'icon-analysis menubar-icon' }, if: proc { can?(:access, :trends_report ) }
+    primary.item :brand_ambassadors, 'Brand Ambassadors', brand_ambassadors_root_path(return: nil, phase: nil), highlights_on: %r{/brand_ambassadors}, link: { icon_class: 'icon-campaign menubar-icon' }, if: proc { can?(:access, :brand_ambassadors) }
+    primary.item :results, 'Results', results_reports_path(return: nil, phase: nil), highlights_on: %r{^/results}, link: { icon_class: 'icon-results menubar-icon' }, if: proc { can?(:access, :results) }
+    primary.item :analysis, 'Analysis', analysis_path(return: nil, phase: nil), highlights_on: %r{/analysis}, link: { icon_class: 'icon-analysis menubar-icon' }, if: proc { can?(:access, :analysis ) }
   end
 end

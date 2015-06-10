@@ -2,14 +2,16 @@
 #
 # Table name: roles
 #
-#  id          :integer          not null, primary key
-#  name        :string(255)
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
-#  company_id  :integer
-#  active      :boolean          default(TRUE)
-#  description :text
-#  is_admin    :boolean          default(FALSE)
+#  id            :integer          not null, primary key
+#  name          :string(255)
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  company_id    :integer
+#  active        :boolean          default(TRUE)
+#  description   :text
+#  is_admin      :boolean          default(FALSE)
+#  created_by_id :integer
+#  updated_by_id :integer
 #
 
 require 'rails_helper'

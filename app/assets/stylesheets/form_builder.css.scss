@@ -298,6 +298,8 @@ $margin-right: 240px;
 			width: 200px;
 		}
 		.group-name {
+			color: $brand;
+			font-size: 12px;
 			margin-left: 10px;
 			margin-bottom: 10px;
 			text-transform:uppercase;
@@ -357,7 +359,7 @@ $margin-right: 240px;
 				width: initial;
 				text-align: left;
 				height: 25px;
-				font-size: 12px;
+				font-size: 14px;
 				overflow: hidden;
 				width: 180px;
 				border: 0;
@@ -470,7 +472,10 @@ $margin-right: 240px;
 	.checker{
 		background-color: #c2c2c2;
 		margin: 0 10px 0 0;
-		span.checked{
+		span {
+			background-color: #c2c2c2;
+		}
+		span.checked {
 			background-color:$gray !important;
 		}
 	}
@@ -509,6 +514,10 @@ $margin-right: 240px;
 			.range-part {
 				width: 50%;
 			}
+		}
+
+		.select2-container-multi .select2-choices {
+			height: auto !important;
 		}
 	}
 	label.range {

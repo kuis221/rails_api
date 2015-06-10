@@ -1,0 +1,65 @@
+// This is an example markup for a KSS section.
+// The definition for `3.1` can be found in your app/assets/stylesheets/ folder.
+= kss_block '3.1' do |modifier_class|
+
+  ul.buttons-example
+    li
+      p Button Primary // 101px
+      button.btn.btn-primary Primary
+    li
+      p Button Cancel
+      button.btn.btn-cancel Primary
+    li
+      p Button Large // Only for dialogue boxes
+      button.btn.btn-large.btn-primary Primary
+    li
+      p Button for details pages // Only for details pages - 120px
+      button.btn.btn-details.btn-primary New Activity
+    li
+      p Button Download
+      .dropdown.btn-download
+        a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+          i.icon-download
+          i.icon-arrow-down-small
+    li
+      p Button Primary Disabled
+      button.btn.btn-primary disabled="" Primary
+    li
+      p Button Cancel Disabled
+      button.btn.btn-cancel disabled="" Primary
+    li
+      p Button Download Disabled
+      .dropdown.btn-download
+        a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download" disabled=""
+          i.icon-download
+          i.icon-arrow-down-small
+    li
+      p Button with arrow
+      button.btn.btn-primary type="submit"
+        | Next
+        i.icon-angle-right
+    li
+      p Group of buttons (two elements)
+      .btn-group
+        a.btn.active
+          i.icon-list
+        a.btn
+          i.icon-grid
+    li
+      p Group of buttons (three elements)
+      .btn-group
+        a.btn.active
+          i.icon-list
+        a.btn
+          i.icon-grid
+        a.btn
+          i.icon-venue
+    li
+      p Tooggle button
+      .switch-toggle.inactive
+        a.btn.btn-small.toggle-on-btn data-parent-id="2" data-parent-type="BrandPortfolio" href="#" id="toggle-bucket-off" title="Toggle OFF"
+          span
+          .on ALL
+        a.btn.btn-small.toggle-off-btn data-parent-id="2" data-parent-type="BrandPortfolio" href="#" id="toggle-bucket-on" title="Toggle ON"
+          span
+          .off

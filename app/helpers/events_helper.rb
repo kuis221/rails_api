@@ -2,6 +2,26 @@ module EventsHelper
   include ActionView::Helpers::NumberHelper
   include SurveySeriesHelper
 
+  def update_event_details_bar(event)
+    presenter = present(event)
+    contents = presenter.render_nav_phases
+    "
+      $('#phases-container').html('#{j contents }');
+      $('body').scrollmultispy('destroy');
+      #{create_scrollmultispy_js}
+      $(window).trigger('scroll');
+    \n".html_safe
+  end
+
+  def create_scrollmultispy_js
+    "
+      $('body').scrollmultispy({
+          target: '.event-details-scroll-spy',
+          offset: 200
+      });
+    ".html_safe
+  end
+
   def kpi_goal_progress_bar(goal, result)
     return unless goal.present?
     result ||= 0
@@ -13,11 +33,35 @@ module EventsHelper
   end
 
   def contact_info_tooltip(contact)
-    [
-      (contact.respond_to?(:title) ? contact.title : contact.role_name),
-      contact.email, contact.phone_number, contact.street_address,
-      [contact.city, contact.state, contact.country_name].delete_if(&:blank?).join(', ')
-    ].delete_if(&:blank?).join('<br />').html_safe
+    details = contact_details(contact)
+    details =
+      if details.any?
+        content_tag(:ul, class: 'unstyled contact-info') do
+          details.map { |d| content_tag(:li, tag(:i, class: d[:icon]) + d[:txt]) }.join.html_safe
+        end
+      else
+        ''.html_safe
+      end
+    content_tag(:div, class: 'contacts-tooltip') do
+      content_tag(:h6, contact.full_name, class: 'contact-name') +
+      content_tag(:span, (contact.respond_to?(:title) ? contact.title : contact.role_name), class: 'contact-role') +
+      details
+    end
+  end
+
+  def contact_details(contact)
+    [].tap do |a|
+      a.push(
+        icon: 'icon-wired-email',
+        txt: link_to(contact.email, "mailto:#{contact.email}")) unless contact.email.blank?
+      a.push(
+        icon: 'icon-mobile',
+        txt: link_to(contact.phone_number, "tel:#{contact.phone_number}")) unless contact.phone_number.blank?
+      address = [contact.street_address, contact.city, contact.state, contact.country_name].delete_if(&:blank?).join(', ')
+      a.push(
+        icon: 'icon-wired-venue',
+        txt: link_to(address, "https://maps.google.com?daddr=#{address}", target: '_blank')) unless address.blank?
+    end
   end
 
   def describe_before_event_alert(resource)

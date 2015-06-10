@@ -1,9 +1,15 @@
 - if resource.errors.empty?
   - if parent.is_a?(Event)
-    | $('#consumer-comments-container').html('#{escape_javascript(render(partial: 'events/comments', locals: { resource: parent }))}');
-    | $('.bootbox.modal').modal('hide');
+    = update_event_details_bar(parent)
+    |
+      $('#consumer-comments-container').html('#{ j render(partial: 'events/comments', locals: { resource: parent }) }');
+      $('.bootbox.modal').modal('hide');
+      window.EventDetails.showMessage("#{j I18n.translate('instructive_messages.execute.comment.added')}", 'green');
   - else
-    | $("#task_#{parent.id}_comments").html('#{escape_javascript(render('comments_list'))}')
+    |
+      $("#task_#{parent.id}_comments").html('#{j render('comments_list')}');
+      window.EventDetails.showMessage("#{j I18n.translate('instructive_messages.plan.task.commented')}", 'green');
 - else
-  = resource.errors.inspect
-  | $('#comment-form-container').html('#{escape_javascript(render('form'))}')
+  |
+    $('.bootbox.modal').modal('hide');
+    window.EventDetails.showMessage('#{resource.errors.full_messages.first}', 'red');

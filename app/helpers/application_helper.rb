@@ -4,17 +4,21 @@ module ApplicationHelper
   def present(model, format = :html)
     @presenters ||= {}
     format = format.to_s.capitalize
-    @presenters[model.class.to_s] ||= "#{format}::#{model.class}Presenter".constantize.new(model, self) rescue nil
-    @presenters[model.class.to_s] ||= "#{model.class}Presenter".constantize.new(model, self) rescue nil
-    return model unless @presenters[model.class.to_s]
+    @presenters[model.class] ||= "#{format}::#{model.class}Presenter".constantize.new(model, self) rescue nil
+    @presenters[model.class] ||= "#{model.class}Presenter".constantize.new(model, self) rescue nil
+    return model unless @presenters[model.class]
     # cache object so we dont create a new object when interacting through many objects
     # for example, when exporting thousands of records
-    @presenters[model.class.to_s].model = model
-    return @presenters[model.class.to_s] unless block_given?
-    yield(@presenters[model.class.to_s])
+    @presenters[model.class].model = model
+    return @presenters[model.class] unless block_given?
+    yield(@presenters[model.class])
   end
 
-  def place_address(place, link_name = false, line_separator = '<br />', name_separator = '<br />')
+  def presenter
+    @presenter ||= present(resource)
+  end
+
+  def place_address(place, link_name = false, line_separator = '<br />', name_separator = '<br />', concat_zip_code = false)
     return if place.nil?
     place_name = place.name
     place_city = place.city
@@ -35,8 +39,16 @@ module ApplicationHelper
     city_parts = []
     address.push place.street unless place.street.nil? || place.street.strip.empty? || place.name == place.street
     city_parts.push place_city if place.city.present? && place.name != place.city
-    city_parts.push place.state_code if place.state.present?
-    city_parts.push place.zipcode if place.zipcode.present?
+
+    if concat_zip_code
+      state_zipcode = []
+      state_zipcode.push place.state_code if place.state.present?
+      state_zipcode.push place.zipcode if place.zipcode.present?
+      city_parts.push state_zipcode.compact.join(' ') unless state_zipcode.empty?
+    else
+      city_parts.push place.state_code if place.state.present?
+      city_parts.push place.zipcode if place.zipcode.present?
+    end
 
     address.push city_parts.compact.join(', ') unless city_parts.empty? || !place.city
     address.push place.formatted_address if place.formatted_address.present? && city_parts.empty? && (place.city || !place.types.include?('political'))
@@ -76,19 +88,21 @@ module ApplicationHelper
   end
 
   def icon_button_to(icon, options = {}, html_options = {})
+    show_text = html_options.delete(:show_text)
     html_options[:class] ||= ''
     html_options[:class] = [html_options[:class], 'button-with-icon'].join(' ')
+    html_options[:class] += ' button-with-icon-and-text' if show_text
 
     button_to options, html_options do
-      content_tag(:i, nil, class: "icon #{icon}")
+      content_tag(:i, nil, class: "icon #{icon}") +
+      (show_text ? html_options[:title] : '')
     end
   end
 
   def button_to_add(title, url, options = {})
     icon_button_to 'icon-plus-sign', url, options.merge(
-      remote: true,
-      method: :get,
-      title: title,
+      remote: true, method: :get,
+      title: title, return: return_path,
       form_class: 'button_to button_to_add')
   end
 
@@ -99,6 +113,7 @@ module ApplicationHelper
                    remote: remote,
                    method: :get,
                    title: title,
+                   return: return_path,
                    form_class: 'button_to button_to_edit'
   end
 
@@ -116,6 +131,19 @@ module ApplicationHelper
     icon_button_to 'icon-rounded-disable', url,
                    remote: true,
                    method: :get,
+                   title: I18n.t("buttons.deactivate.#{resource.class.name.underscore}"),
+                   form_class: 'button_to button_to_edit active-toggle-btn-' + resource.class.name.underscore.gsub('/', '_').downcase + '-' + resource.id.to_s,
+                   data: { confirm: I18n.t("confirm.deactivate.#{resource.class.name.underscore}",
+                                           model: resource.class.model_name.human.downcase,
+                                           name: resource.try(:name)),
+                           url: url }
+  end
+
+  def button_to_destroy(resource, title: nil, url: nil)
+    url ||= url_for([:destroy, resource])
+    icon_button_to 'icon-rounded-disable', url,
+                   remote: true,
+                   method: :delete,
                    title: I18n.t("buttons.deactivate.#{resource.class.name.underscore}"),
                    form_class: 'button_to button_to_edit active-toggle-btn-' + resource.class.name.underscore.gsub('/', '_').downcase + '-' + resource.id.to_s,
                    data: { confirm: I18n.t("confirm.deactivate.#{resource.class.name.underscore}",
@@ -215,14 +243,6 @@ module ApplicationHelper
     end
   end
 
-  def format_date_with_time(the_date)
-    if the_date.strftime('%Y') == Time.zone.now.year.to_s
-      the_date.strftime('%^a <b>%b %e</b> at %l:%M %p').html_safe unless the_date.nil?
-    else
-      the_date.strftime('%^a <b>%b %e, %Y</b> at %l:%M %p').html_safe unless the_date.nil?
-    end
-  end
-
   def format_date(the_date, plain = false)
     unless the_date.nil?
       if plain
@@ -243,6 +263,14 @@ module ApplicationHelper
 
   def format_time(the_date)
     the_date.strftime('%l:%M %P') unless the_date.nil?
+  end
+
+  def format_date_with_time(date)
+    if date.strftime('%Y') == Time.zone.now.year.to_s
+      date.strftime('%^a <b>%b %e</b> at %l:%M %p').html_safe unless date.nil?
+    else
+      date.strftime('%^a <b>%b %e, %Y</b> at %l:%M %p').html_safe unless date.nil?
+    end
   end
 
   def format_date_range(start_at, end_at, options = {})
@@ -275,8 +303,22 @@ module ApplicationHelper
   def user_new_feature(name, version = 1, &_block)
     return if current_company_user.dismissed_alert?(name, version)
     content_tag(:div, class: 'new-feature', 'data-alert' => name, 'data-version' => version) do
-      yield
+      if block_given?
+        yield
+      else
+        build_new_feature_box name
+      end
     end
+  end
+
+  def build_new_feature_box(name)
+    content_tag(:h5, t("new_features.#{name}.title")) +
+    link_to('', '#', class: 'close btn-dismiss-alert icon icon-close', title: 'Dismiss') +
+    link_to(image_tag('video_arrow.png', width: 70, height: 70), '#',
+            class: 'video-thumbnail', title: 'Play Video',
+                                      data: { video: t("new_features.#{name}.video"),
+                                              width: "640", height: "360" }) +
+    content_tag(:div, t("new_features.#{name}.description").html_safe, class: 'feature-description')
   end
 
   def user_company_dropdown(user)
@@ -302,11 +344,17 @@ module ApplicationHelper
     return unless data.present? && data.values.max > 0
 
     content_tag(:div, class: :male) do
-      content_tag(:div, "#{data.try(:[], 'Male').try(:round) || 0} %", class: 'percent') +
+      content_tag(:div, class: 'percent') do
+        content_tag(:span, "#{data.try(:[], 'Male').try(:round) || 0}") +
+        content_tag(:span, '%', class: 'percent-sign')
+      end +
       content_tag(:div, 'MALE', class: 'gender')
     end +
     content_tag(:div, class: :female) do
-      content_tag(:div, "#{data.try(:[], 'Female').try(:round) || 0} %", class: 'percent') +
+      content_tag(:div, class: 'percent') do
+        content_tag(:span, "#{data.try(:[], 'Female').try(:round) || 0}") +
+        content_tag(:span, '%', class: 'percent-sign')
+      end +
       content_tag(:div, 'FEMALE', class: 'gender')
     end
   end

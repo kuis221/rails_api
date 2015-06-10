@@ -21,6 +21,8 @@
 #  local_end_at   :datetime
 #  description    :text
 #  kbmg_event_id  :string(255)
+#  rejected_at    :datetime
+#  submitted_at   :datetime
 #
 
 class Event < ActiveRecord::Base
@@ -51,7 +53,7 @@ class Event < ActiveRecord::Base
       where(form_field_id: proxy_association.owner.campaign.form_field_ids)
     end
   end
-  has_many :event_expenses, dependent: :destroy, inverse_of: :event, autosave: true
+  has_many :event_expenses, -> { order('category ASC') }, dependent: :destroy, inverse_of: :event, autosave: true
   has_many :activities, -> { order('activity_date ASC') }, as: :activitable, dependent: :destroy do
     def active
       joins(activity_type: :activity_type_campaigns)
@@ -74,6 +76,7 @@ class Event < ActiveRecord::Base
 
   has_many :invites, dependent: :destroy, inverse_of: :event
 
+  accepts_nested_attributes_for :event_expenses, allow_destroy: true
   accepts_nested_attributes_for :surveys
   accepts_nested_attributes_for :results
   accepts_nested_attributes_for :photos
@@ -87,6 +90,7 @@ class Event < ActiveRecord::Base
   scope :by_campaigns, ->(campaigns) { where(campaign_id: campaigns) }
   scope :in_past, -> { where('events.end_at < ?', Time.now) }
   scope :with_team, ->(team) { joins(:teamings).where(teamings: { team_id: team }) }
+  scope :filters_between_dates, ->(start_date, end_date) { where(start_at: DateTime.parse(start_date)..DateTime.parse(end_date))}
 
   def self.between_dates(start_date, end_date)
     prefix = ''
@@ -250,6 +254,7 @@ class Event < ActiveRecord::Base
   delegate :name, to: :campaign, prefix: true, allow_nil: true
   delegate :name, :state, :city, :zipcode, :neighborhood, :street_number, :route, :latitude,
            :state_name, :longitude, :formatted_address, :name_with_location, :td_linx_code,
+           :street,
            to: :place, prefix: true, allow_nil: true
 
   delegate :impressions, :interactions, :samples, :spent, :gender_female, :gender_male,
@@ -263,7 +268,7 @@ class Event < ActiveRecord::Base
     state :rejected
 
     event :submit do
-      transitions from: [:unsent, :rejected], to: :submitted, guard: :valid_results?
+      transitions from: [:unsent, :rejected], to: :submitted, guard: :valid_to_submit?
     end
 
     event :approve do
@@ -408,6 +413,17 @@ class Event < ActiveRecord::Base
       )
   end
 
+  def event_team_members
+    ActiveRecord::Base.connection.unprepared_statement do
+      ActiveRecord::Base.connection.select_values("
+        #{users.joins(:user).select('users.first_name || \' \' || users.last_name AS name').reorder(nil).to_sql}
+        UNION ALL
+        #{teams.select('teams.name').reorder(nil).to_sql}
+        ORDER BY name
+      ").join(', ')
+    end
+  end
+
   def venue
     return if place_id.nil?
     @venue ||= Venue.find_or_create_by(company_id: company_id, place_id: place_id)
@@ -524,15 +540,21 @@ class Event < ActiveRecord::Base
   end
 
   # Returns true if all the results for the current campaign are valid
-  def valid_results?
+  def valid_to_submit?
     # Ensure all the results have been assigned/initialized
     if campaign.present?
-      results_for(campaign.form_fields).all?(&:valid?) && validate_modules_ranges
+      valid_results? && validate_modules_ranges
     end
+  end
+
+  def valid_results?
+    errors.add :base, I18n.translate('invalid_submit_messages.per') unless results_for(campaign.form_fields).all?(&:valid?)
+    errors.empty?
   end
 
   # Validates that the event meets the min and max items for the assigned modules
   def validate_modules_ranges
+    message = []
     campaign.modules.each do |campaign_module|
       if campaign.range_module_settings?(campaign_module[0])
         settings = campaign_module[1]['settings']
@@ -550,13 +572,14 @@ class Event < ActiveRecord::Base
         max_result = settings['range_max'].blank? || (items <= settings['range_max'].to_i)
 
         if !min_result || !max_result
-          message = []
-          message.push("at least #{settings['range_min']}") if settings['range_min'].present?
-          message.push("not more than #{settings['range_max']}") if settings['range_max'].present?
-          errors.add :base, "It is required #{message.join(' and ')} #{campaign_module[1]['name']}"
+          message.push(I18n.translate("invalid_submit_messages.#{campaign_module[1]['name']}.min", range_min: settings['range_min'])) if settings['range_min'].present? && !settings['range_max'].present?
+          message.push(I18n.translate("invalid_submit_messages.#{campaign_module[1]['name']}.max", range_max: settings['range_max'])) if !settings['range_min'].present? && settings['range_max'].present?
+          message.push(I18n.translate("invalid_submit_messages.#{campaign_module[1]['name']}.min_max", range_min: settings['range_min'], range_max: settings['range_max'])) if settings['range_min'].present? && settings['range_max'].present?
         end
       end
     end if campaign.modules.present?
+
+    errors.add :base, message.to_sentence(last_word_connector: ' and ') if message.present?
 
     errors.empty?
   end

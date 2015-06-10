@@ -12,13 +12,13 @@
 - if can?(:index_invites, Event) && resource.campaign.enabled_modules.include?('attendance')
   = render 'attendance'
 
-- if can?(:photos, resource) && enabled_modules.include?('photos')
-  #event-photos.details_box.box_photos
-    = render partial: 'photos', locals: {allow_upload: true}
-
 - if can?(:expenses, resource) && enabled_modules.include?('expenses')
   #event-expenses.details_box
     = render 'expenses'
+
+- if can?(:photos, resource) && enabled_modules.include?('photos')
+  #event-photos.details_box.box_photos
+    = render partial: 'photos', locals: { allow_upload: true }
 
 - if can?(:surveys, resource) && enabled_modules.include?('surveys')
   #event-surveys.details_box

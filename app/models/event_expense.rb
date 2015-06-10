@@ -4,13 +4,18 @@
 #
 #  id            :integer          not null, primary key
 #  event_id      :integer
-#  name          :string(255)
-#  amount        :decimal(9, 2)    default(0.0)
+#  amount        :decimal(15, 2)   default(0.0)
 #  created_by_id :integer
 #  updated_by_id :integer
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  brand_id      :integer
+#  category      :string(255)
+#  expense_date  :date
+#  reimbursable  :boolean
+#  billable      :boolean
+#  merchant      :string(255)
+#  description   :text
 #
 
 class EventExpense < ActiveRecord::Base
@@ -18,9 +23,11 @@ class EventExpense < ActiveRecord::Base
   belongs_to :brand
 
   # validates :event_id, presence: true, numericality: true
-  validates :name, presence: true
-  validates :amount, presence: true, numericality: true
+  validates :category, presence: true
+  validates :expense_date, presence: true
+  validates :amount, presence: true, numericality: { greater_than: 0 }
   validate :valid_receipt?, if: :receipt_required?
+  validate :max_event_expenses, on: :create
 
   after_save :update_event_data
 
@@ -35,6 +42,14 @@ class EventExpense < ActiveRecord::Base
   accepts_nested_attributes_for :receipt,
                                 allow_destroy: true,
                                 reject_if: proc { |attributes| attributes['direct_upload_url'].blank? && attributes['_destroy'].blank? }
+
+  scope :for_user_accessible_events, ->(company_user) { joins('INNER JOIN events ec ON ec.id=event_id AND ec.id in (' + Event.select('events.id').where(company_id: company_user.company_id).accessible_by_user(company_user).to_sql + ')') }
+
+  after_initialize do
+    if event.present? && event.start_at.present? && new_record?
+      self.expense_date ||= event.start_at.to_date
+    end
+  end
 
   def receipt_required?
     return false unless event.present?
@@ -52,5 +67,12 @@ class EventExpense < ActiveRecord::Base
   def valid_receipt?
     build_receipt unless receipt.present?
     receipt.errors.add(:file, :required)
+  end
+
+  def max_event_expenses
+    return true unless event.present? && event.campaign.range_module_settings?('expenses')
+    max = event.campaign.module_setting('expenses', 'range_max')
+    return true if max.blank? || event.event_expenses.count < max.to_i
+    errors.add(:base, I18n.translate('instructive_messages.execute.expense.add_exceeded.create', count: max))
   end
 end

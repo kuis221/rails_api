@@ -17,6 +17,9 @@ class CampaignsController < FilteredController
   # This helper provide the methods to export HTML to PDF
   extend ExportableFormHelper
 
+  # Handle the noticaitions for new campaigns
+  include NotificableController
+
   skip_authorize_resource only: :tab
 
   layout false, only: :kpis
@@ -139,7 +142,7 @@ class CampaignsController < FilteredController
         survey_brand_ids: [],
         form_fields_attributes: [
           :id, :name, :field_type, :ordering, :required, :_destroy, :kpi_id,
-          { settings: [:description, :range_min, :range_max, :range_format,
+          { settings: [:description, :range_min, :range_max, :range_format, :campaigns,
                        { disabled_segments: [] }] },
           { options_attributes: [:id, :name, :_destroy, :ordering] },
           { statements_attributes: [:id, :name, :_destroy, :ordering] }])

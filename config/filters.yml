@@ -10,6 +10,17 @@ filters:
     status:
       items: [Active, Inactive]
       name: 'status'
+  data_extracts_event_data:
+    brands: [Brand, BrandPortfolio]
+    areas: [Area]
+    people: [CompanyUser, Team]
+    event_status:
+      items: [Submitted, Late, Due, Approved, Rejected]
+      name: 'event_status'
+    status:
+      items: [Active, Inactive]
+      name: 'status'
+
   user_tasks:
     campaigns: [Campaign]
     task_status:
@@ -94,6 +105,14 @@ filters:
       method: cities_bucket
   activities:
     activity_types: [ActivityType]
+    brands: [Brand]
+    campaigns: [Campaign]
+    areas: [Area]
+    users: [CompanyUser]
+    status:
+      items: [Active, Inactive]
+      name: 'status'
+  data_extract_activities:
     brands: [Brand]
     campaigns: [Campaign]
     areas: [Area]

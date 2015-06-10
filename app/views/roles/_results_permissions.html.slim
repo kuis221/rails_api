@@ -14,11 +14,6 @@
           = permission_checkbox(f, :index_results, Activity)
 
       .span12
-        .span2.crop-text Attendance by Neighborhood
-        .span1
-          = permission_checkbox(f, :attendance, Event)
-
-      .span12
         .span2 Comments
         .span1
           = permission_checkbox(f, :index_results, Comment)
@@ -37,44 +32,6 @@
         .span2 Surveys
         .span1
           = permission_checkbox(f, :index_results, Survey)
-
-      .span12
-        .span2.title.separate
-          h5 Goals vs. Actual
-
-      .span12
-        .span2 Group by campaign
-        .span1
-          = permission_checkbox(f, :gva_report_campaigns, Campaign)
-
-      .span12
-        .span2 Group by place
-        .span1
-          = permission_checkbox(f, :gva_report_places, Campaign)
-
-      .span12
-        .span2 Group by user
-        .span1
-          = permission_checkbox(f, :gva_report_users, Campaign)
-
-      .span12
-        .span2.title.separate
-          h5 Event Status
-
-      .span12
-        .span2 Group by campaign
-        .span1
-          = permission_checkbox(f, :event_status_campaigns, Campaign)
-
-      .span12
-        .span2 Group by place
-        .span1
-          = permission_checkbox(f, :event_status_places, Campaign)
-
-      .span12
-        .span2 Group by user
-        .span1
-          = permission_checkbox(f, :event_status_users, Campaign)
 
       .span12
         .span2.title.separate

@@ -20,10 +20,10 @@
         .calendar-data
           - if resource.has_date_range?
             i.icon-calendar
-            = format_date_range(resource.start_date, resource.end_date, date_separator: ' - ')
+            = presenter.date_range
           - else
             i.icon-calendar
-            = format_date_range(resource.first_event_at, resource.last_event_at, date_separator: ' - ')
+            = presenter.date_range
 
       - if resource.description.present?
         .description-data
@@ -36,9 +36,9 @@
         = resource.name
       span.secondary-info
         - if resource.has_date_range?
-          = format_date_range(resource.start_date, resource.end_date, date_separator: ' - ')
+          = presenter.date_range
         - else
-          = format_date_range(resource.first_event_at, resource.last_event_at, date_separator: ' - ')
+          = presenter.date_range
       = button_to_edit resource if can?(:edit, resource)
       = button_to_activate_or_deactivate(resource) if can?(:deactivate, resource)
 

@@ -7,7 +7,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
     sign_in user
   end
 
-  feature '/results/gva', js: true, search: true  do
+  feature '/analysis/gva', js: true, search: true  do
     feature 'with a non admin user', search: false do
       let(:company) { create(:company) }
       let(:user) { create(:user, first_name: 'Juanito', last_name: 'Bazooka', company: company, role_id: create(:non_admin_role, company: company).id) }
@@ -18,7 +18,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
       scenario 'a user can play and dismiss the video tutorial' do
         company_user.role.permissions.create(action: :gva_report_campaigns, subject_class: 'Campaign', mode: 'campaigns')
 
-        visit results_gva_path
+        visit analysis_gva_path
 
         feature_name = 'GETTING STARTED: GOALS VS. ACTUAL'
 
@@ -36,7 +36,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         end
         wait_for_ajax
 
-        visit results_gva_path
+        visit analysis_gva_path
         expect(page).to have_no_content(feature_name)
       end
 
@@ -124,14 +124,14 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
 
         Sunspot.commit
 
-        visit results_gva_path
+        visit analysis_gva_path
 
         choose_campaign('Test Campaign FY01')
 
         ### Testing group by Campaign
         within('.container-kpi-trend') do
           expect(page).to have_content('Samples')
-          find('.progress').hover
+          find('.progress').trigger('mouseover')
           expect(page).to have_selector('.executed-label', text: '25')
           expect(page).to have_selector('.submitted-label', text: '20')
           expect(page).to have_selector('.rejected-label', text: '33')
@@ -161,7 +161,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         end
         within('#gva-result-Place' + place.id.to_s + ' .kpi-trend:nth-child(3)') do
           expect(page).to have_content('Samples')
-          find('.progress').hover
+          find('.progress').trigger('mouseover')
           expect(page).to have_selector('.executed-label', text: '25')
           expect(page).to have_selector('.submitted-label', text: '20')
           expect(page).to have_selector('.rejected-label', text: '33')
@@ -180,7 +180,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         end
         within('#gva-result-Place' + another_place.id.to_s + ' .kpi-trend:nth-child(1)') do
           expect(page).to have_content('Activity Type')
-          find('.progress').hover
+          find('.progress').trigger('mouseover')
           expect(page).to have_selector('.executed-label', text: '1')
           expect(page).to have_selector('.submitted-label', text: '0')
           expect(page).to have_selector('.rejected-label', text: '0')
@@ -200,7 +200,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         end
         within('#gva-result-Area' + area1.id.to_s + ' .kpi-trend:nth-child(1)') do
           expect(page).to have_content('Activity Type')
-          find('.progress').hover
+          find('.progress').trigger('mouseover')
           expect(page).to have_selector('.executed-label', text: '2')
           expect(page).to have_selector('.submitted-label', text: '0')
           expect(page).to have_selector('.rejected-label', text: '0')
@@ -219,7 +219,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         end
         within('#gva-result-Area' + area2.id.to_s + ' .kpi-trend:nth-child(1)') do
           expect(page).to have_content('Activity Type')
-          find('.progress').hover
+          find('.progress').trigger('mouseover')
           expect(page).to have_selector('.executed-label', text: '2')
           expect(page).to have_selector('.submitted-label', text: '0')
           expect(page).to have_selector('.rejected-label', text: '0')
@@ -246,7 +246,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         end
         within('#gva-result-CompanyUser' + company_user.id.to_s + ' .kpi-trend:nth-child(2)') do
           expect(page).to have_content('Samples')
-          find('.progress').hover
+          find('.progress').trigger('mouseover')
           expect(page).to have_selector('.executed-label', text: '25')
           expect(page).to have_selector('.submitted-label', text: '20')
           expect(page).to have_selector('.rejected-label', text: '33')
@@ -266,7 +266,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         end
         within('#gva-result-Team' + team1.id.to_s + ' .kpi-trend:nth-child(1)') do
           expect(page).to have_content('Activity Type')
-          find('.progress').hover
+          find('.progress').trigger('mouseover')
           expect(page).to have_selector('.executed-label', text: '2')
           expect(page).to have_selector('.submitted-label', text: '0')
           expect(page).to have_selector('.rejected-label', text: '0')
@@ -297,7 +297,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         event1 = create(:approved_event, company: company, campaign: campaign, place: place)
         event1.save
 
-        visit results_gva_path
+        visit analysis_gva_path
 
         report_form.find('label', text: 'Place').click
 
@@ -329,7 +329,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         event1 = create(:approved_event, company: company, campaign: campaign, place: place)
         event1.save
 
-        visit results_gva_path
+        visit analysis_gva_path
 
         choose_campaign('Test Campaign FY01')
 
@@ -362,7 +362,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         event2.result_for_kpi(Kpi.samples).value = '20'
         event2.save
 
-        visit results_gva_path
+        visit analysis_gva_path
 
         choose_campaign('Test Campaign FY01')
 
@@ -404,7 +404,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         event2.result_for_kpi(kpi).value = '20'
         event2.save
 
-        visit results_gva_path
+        visit analysis_gva_path
 
         choose_campaign('Test Campaign FY01')
 
@@ -450,7 +450,7 @@ feature 'Results Goals vs Actuals Page', js: true, search: true  do
         event1.users << company_user
         event2.users << company_user
 
-        visit results_gva_path
+        visit analysis_gva_path
 
         choose_campaign('Test Campaign FY01')
 

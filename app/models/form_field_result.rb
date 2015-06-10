@@ -8,7 +8,7 @@
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #  hash_value      :hstore
-#  scalar_value    :decimal(10, 2)   default(0.0)
+#  scalar_value    :decimal(15, 2)   default(0.0)
 #  resultable_id   :integer
 #  resultable_type :string(255)
 #
@@ -53,6 +53,10 @@ class FormFieldResult < ActiveRecord::Base
 
   def to_csv
     form_field.format_csv self
+  end
+
+  def to_chart_data
+    form_field.format_chart_data self
   end
 
   protected

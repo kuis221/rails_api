@@ -1,7 +1,7 @@
 = user_new_feature('venue_details') do
   h5 Getting Started: Venue Details
   a.close.btn-dismiss-alert.icon.icon-close href="#" title="Dismiss"
-  a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/56AJmnAtWIU?rel=0" data-width="640" data-height="360"
+  a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/sf8Yz1-3KSM?rel=0" data-width="640" data-height="360"
     img src="#{image_path('video_arrow.png')}" width="70" height="70" /
   .feature-description
     p
@@ -16,13 +16,14 @@
   = resource_details_bar("Viewing #{resource.name} venue details page.")
 
   .details_box.padding-top-close-bar
-    .row-fluid.venue_details_container
+    .row-fluid.details_first_container
       .span6
-        h2= resource.name
-        / span.category
-        /   | Restaurant, Food
+        .details-title
+          h2.special
+            b= resource.name
+
         - if resource.price_level(fetch_from_google: true)
-          span.price
+          div.price
             = place_price(resource.price_level)
 
 
@@ -47,7 +48,7 @@
           - if resource.td_linx_code
             li
               b.highlight-text TD Linx Code:
-              = resource.td_linx_code
+              span = resource.td_linx_code
 
           - if resource.opening_hours && resource.opening_hours.key?('periods')
             li
@@ -64,7 +65,7 @@
 
         / p.small Quis nostrud exerci tation, ullamcorper suscipit lobortis nisl ut aliquip ex ea commodo consequat duis autem. Consuetudium lectorum mirum est notare quam littera gothica quam nunc putamus parum! Vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat vel illum dolore. Volutpat ut wisi enim ad minim veniam eu feugiat nulla. Imperdiet doming id quod mazim placerat facer possim assum typi non habent claritatem? Nunc nobis videntur parum clari fiant sollemnes in?
 
-        #venue-areas.areas
+        #venue-areas.add-details-info
           = render partial: 'areas', locals: {areas: resource.place.areas}
 
       .span6.map_container

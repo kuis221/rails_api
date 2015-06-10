@@ -30,10 +30,6 @@ describe 'routes for tasks', type: :routing do
     expect(get: '/tasks/user/items').to route_to('tasks#items', scope: 'user')
   end
 
-  it 'routes to #filters with teams as scope' do
-    expect(get: '/tasks/teams/filters').to route_to('tasks#filters', scope: 'teams')
-  end
-
   it 'routes to #items with teams as scope' do
     expect(get: '/tasks/teams/items').to route_to('tasks#items', scope: 'teams')
   end

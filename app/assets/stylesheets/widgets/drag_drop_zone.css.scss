@@ -16,7 +16,6 @@ Styleguide 7.1
 	border: 2px dashed $user_menu;
 	color: $user_menu;
 	line-height: 17px;
-	padding: 48px 16px 10px;
 	text-align: center;
 	height: 100px;
 
@@ -161,7 +160,7 @@ Styleguide 7.1
 			}
 			.document-name {
 				margin-right: 10px;
-				max-width: 180px;
+				max-width: 60%;
 				overflow: hidden;
 				display: inline-block;
 				white-space: nowrap;
@@ -242,11 +241,39 @@ Styleguide 7.1
 	}
 }
 
+.attachment-uploading-view {
+	padding: 48px 16px 10px;
+}
+
 .attachment-attached-view {
+	height: 100%;
 	&.photo {
 		height: 150px;
 		position: relative;
 		width: 240px;
+	}
+	&.asset-thumbnail {
+		@include box-sizing(border-box);
+		padding: 10px;
+		height: calc(100% + 4px);
+		position: absolute;
+		top: -2px;
+		left: -2px;
+		width: calc(100% + 4px);
+		background-color: $gray-light;
+		img {
+			display: block;
+			max-width: 100%;
+			max-height: 100%;
+			margin-left: auto;
+			margin-right: auto;
+		}
+		.remove-attachment {
+			position: absolute;
+			top: -10px;
+			right: -7px;
+			cursor: pointer;
+		}
 	}
 	.document {
 		.file-name {

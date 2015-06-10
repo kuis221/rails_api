@@ -2,13 +2,15 @@
 #
 # Table name: activity_types
 #
-#  id          :integer          not null, primary key
-#  name        :string(255)
-#  description :text
-#  active      :boolean          default(TRUE)
-#  company_id  :integer
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
+#  id            :integer          not null, primary key
+#  name          :string(255)
+#  description   :text
+#  active        :boolean          default(TRUE)
+#  company_id    :integer
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  created_by_id :integer
+#  updated_by_id :integer
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

@@ -1,0 +1,82 @@
+= user_new_feature('results_event_status_index') do
+  h5 Getting Started: Event Status Report
+  a.close.btn-dismiss-alert.icon.icon-close href="#" title="Dismiss"
+  a.video-thumbnail href="#" title="Play Video" data-video="//www.youtube.com/embed/bOHAqf5M6_E?rel=0" data-width="640" data-height="360"
+    img src="#{image_path('video_arrow.png')}" width="70" height="70" /
+  .feature-description
+    p
+      'This section allows you to quickly track your Event Status. Select your Campaign from the dropdown below for an at-a-glance visual representation of how many events have been scheduled and executed - and how many more you need to go to hit goals. Click on the video to the left for a quick overview or check out our
+      a> href="http://support.brandscopic.com" target="_blank" support site
+      | for more information about this section.
+
+.tab-content.with-details-close-bar
+  = resource_details_bar("You are viewing the Event Status report. Click to close.")
+  #list-view.tab-pane.active
+    .details_box.tool-box.first
+      h5.results-title EVENT STATUS
+      #list-tools
+        = simple_form_for :report, url: analysis_event_status_path, remote: true, html: { id: 'report-settings' } do |f|
+          = f.input :campaign_id, collection: campaigns_list_for_dropdown, selected: params[:campaign_id], include_blank: '', required: true, input_html: { class: 'chosen-enabled no-validate', data: { placeholder: "Select a campaign" } }
+          - group_permissions = report_group_permissions
+          - if group_permissions.length > 1
+            = f.input :group_by, label: 'GROUP BY:', checked: report_group_by, required: true, label_html: {id: '#group-by-title'}, wrapper: :btn_group, as: :radio_buttons, collection: report_group_permissions, wrapper_html: { id: 'group-by-criterion' }, item_wrapper_class: 'btn'
+          - elsif group_permissions.length == 1
+            = f.input :group_by, as: :hidden, input_html: { value: group_permissions.first.second }, wrapper: false, label: false
+
+        .export-xls.pull-right
+          .dropdown.btn-download
+            a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+              i.icon-download
+              i.icon-arrow-down-small
+            ul#download-status-btn.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+              li
+                a href="#" role="menuitem" data-url="#{analysis_event_status_path(format: :xls)}"
+                  | Download as XLS
+              li
+                a href="#" role="menuitem" data-url="#{analysis_event_status_path(format: :pdf)}"
+                  | Download as PDF
+
+  #report-container
+    #kpis-trends-module
+      .details_box
+        .content
+        .blank-state
+          .blank-state-arrow
+            img src="#{asset_path('blank-states-arrow.png')}"
+          h5.text-center = I18n.translate(:'blank_states.results_event_status.empty.line1')
+          p.text-center = I18n.translate(:'blank_states.results_event_status.empty.line2')
+          .blank-state-icon
+            img src="#{asset_path('blank-gva.png')}"
+
+= render partial: 'help_tutorial'
+
+javascript:
+  jQuery(function(){
+    $('#report_campaign_id').on('change', function(e){
+      if ( $(this).val() ){
+        $('#kpis-trends-module .details_box .blank-state').hide();
+        $('#kpis-trends-module .details_box .content').empty().addClass('loading-spinner');
+        $(this.form).submit();
+      } else {
+        $('#kpis-trends-module .details_box .content').empty();
+        $('#kpis-trends-module .details_box .blank-state').show();
+      }
+    });
+    $('#report-settings input:radio').on('click', function(e){
+      $('#report_campaign_id').trigger('change');
+    });
+    $(window).ready(function(){
+      $('#report_campaign_id').change()
+    })
+  })
+
+  $('#download-status-btn a').on('click', function(e){
+    var groupBy = $('input:radio[name="report[group_by]"]:checked').val();
+    if (typeof groupBy == 'undefined'){
+      groupBy = $('input:hidden[name="report[group_by]"]').val()
+    }
+    if ($('#report_campaign_id').val()) {
+      $.get($(this).data('url') + '?report[campaign_id]='+$('#report_campaign_id').val()+'&report[group_by]='+groupBy);
+    }
+    return false;
+  });

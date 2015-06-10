@@ -127,6 +127,9 @@ class Campaign < ActiveRecord::Base
   has_many :documents, -> { order('created_at DESC').where(asset_type: :document) },
            class_name: 'AttachedAsset', as: :attachable, inverse_of: :attachable
 
+  belongs_to :created_by, class_name: 'User'
+  delegate :full_name, to: :created_by, prefix: true, allow_nil: true
+
   accepts_nested_attributes_for :form_fields, allow_destroy: true
 
   aasm do
@@ -211,6 +214,14 @@ class Campaign < ActiveRecord::Base
         #{CompanyUser.active.where(company_id: company_id).joins(:brands).where(brands: { id: brand_ids }).to_sql} UNION
         #{CompanyUser.active.where(company_id: company_id).joins(:brand_portfolios).where(brand_portfolios: { id: brand_portfolio_ids }).to_sql}
       ")
+    end
+  end
+
+  def expense_categories
+    if enabled_modules.include?('expenses')
+      module_setting('expenses', 'categories')
+    else
+      []
     end
   end
 
@@ -442,6 +453,10 @@ class Campaign < ActiveRecord::Base
     clear_locations_cache(area)
   end
 
+  def campaign_brand_portfolios
+    self.brand_portfolios.pluck(:name).join(' ,')
+  end
+
   class << self
     def searchable_params
       [campaign: [], user: [], team: [], brand: [], status: [], venue: [],
@@ -512,6 +527,7 @@ class Campaign < ActiveRecord::Base
   end
 
   def range_module_settings?(module_name)
+    return false unless modules.present? && modules.key?(module_name) && modules[module_name].key?('settings')
     settings = modules[module_name]['settings']
     settings &&
     (

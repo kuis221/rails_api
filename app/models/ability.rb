@@ -88,7 +88,7 @@ class Ability
 
       can :edit_data, Event
 
-      can :access, [:results, :brand_ambassadors]
+      can :access, [:results, :brand_ambassadors, :analysis]
 
     # A logged in user
     elsif user.id
@@ -169,6 +169,10 @@ class Ability
         can?(:show, activity)
       end
 
+      can :update, DataExtract do |extract|
+        extract.created_by_id == user.id
+      end
+
       # Custom Reports
       # can :manage, Report do |report|
       #   report.created_by_id == user.id
@@ -198,9 +202,15 @@ class Ability
         company_user.role.has_permission?(:index_results, Comment) ||
         company_user.role.has_permission?(:index_results, EventExpense) ||
         company_user.role.has_permission?(:index_results, Survey) ||
-        company_user.role.has_permission?(:index_photo_results, AttachedAsset) ||
-        company_user.role.has_permission?(:view_gva_report, Campaign) ||
-        company_user.role.has_permission?(:view_event_status, Campaign)
+        company_user.role.has_permission?(:index_photo_results, AttachedAsset)
+      end
+
+      can :access, :analysis do
+        can?(:index, Analysis) ||
+        can?(:attendance, Event) ||
+        can?(:view_gva_report, Campaign) ||
+        can?(:view_event_status, Campaign) ||
+        can?(:access, :trends_report)
       end
 
       can :access, :brand_ambassadors do
@@ -476,6 +486,11 @@ class Ability
         (user.role.permission_for(:create_expense, Event).mode == 'all' ||
          company_user.accessible_campaign_ids.include?(expense.event.campaign_id)) &&
         can?(:show, expense.event)
+      end
+
+      can :split, EventExpense do |expense|
+       (expense.new_record? && can?(:create_expense, expense.event)) ||
+       (expense.persisted? && can?(:edit_expense, expense.event))
       end
 
       # Surveys permissions

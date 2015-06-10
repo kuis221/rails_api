@@ -21,6 +21,8 @@
 #  local_end_at   :datetime
 #  description    :text
 #  kbmg_event_id  :string(255)
+#  rejected_at    :datetime
+#  submitted_at   :datetime
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl
@@ -53,7 +55,7 @@ FactoryGirl.define do
 
     before(:create) do |event, evaluator|
       evaluator.expenses.each do |attrs|
-        ex = event.event_expenses.build(attrs)
+        ex = event.event_expenses << build(:event_expense, attrs.merge(event: event))
       end
 
       if results = evaluator.results

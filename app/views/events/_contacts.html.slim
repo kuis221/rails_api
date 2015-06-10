@@ -1,7 +1,8 @@
 - if resource.contact_events.any?
-  .row-fluid
+  .row-fluid.contacts-tags
     = render partial: 'contact_events/contact_event', collection: resource.contact_events, locals: {can_delete: can?(:delete_contact, resource), can_edit: can?(:edit_contacts, resource), parent: resource}
-  = button_to_add 'Add Contact', add_event_contact_events_path(resource) if can?(:create_contacts, resource)
+  = button_to_add 'Add Contacts', add_event_contact_events_path(resource), show_text: true if can?(:create_contacts, resource)
+
 - else
   = blank_state_module('event.contacts') do
-    = button_to 'Add Contact', add_event_contact_events_path(resource), remote: true, method: :get, class: 'btn btn-primary'  if can?(:create_contacts, resource)
+    = button_to 'Add Contacts', add_event_contact_events_path(resource), remote: true, method: :get, class: 'btn btn-primary'  if can?(:create_contacts, resource)

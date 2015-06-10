@@ -4,6 +4,7 @@
 # environment for the currently logged in user
 class ApplicationController < ActionController::Base
   include CurrentUser
+  include ReturnableControllerHelper
   protect_from_forgery
 
   skip_before_action :verify_authenticity_token, if: lambda {
@@ -59,12 +60,19 @@ class ApplicationController < ActionController::Base
   end
 
   def custom_body_class
-    @custom_body_class ||= ''
+    @custom_body_class ||= current_real_company_user.is_admin? ? 'with-login-as-bar' : ''
   end
 
   def modal_dialog_title
     I18n.translate(
       "modals.title.#{resource.new_record? ? 'new' : 'edit'}.#{resource.class.name.underscore}")
+  end
+
+  def default_url_options
+    options = {}
+    options[:return] = return_path if params[:return]
+    options[:phase] = params[:phase] if params[:phase]
+    options
   end
 
   # Allow GET methods for JS/JSON requests so PDF exports can work in background jobs

@@ -95,6 +95,8 @@ GEM
       activesupport (= 4.1.9)
       builder (~> 3.1)
       erubis (~> 2.7.0)
+    active_model_serializers (0.9.3)
+      activemodel (>= 3.2)
     activemodel (4.1.9)
       activesupport (= 4.1.9)
       builder (~> 3.1)
@@ -317,7 +319,7 @@ GEM
       mime-types (>= 1.16, < 3)
     memcachier (0.0.2)
     method_source (0.8.2)
-    mime-types (2.4.3)
+    mime-types (2.5)
     mini_portile (0.6.2)
     minitest (5.5.1)
     moneta (0.8.0)
@@ -363,7 +365,7 @@ GEM
       rake
     platform-api (0.2.0)
       heroics (~> 0.0.10)
-    poltergeist (1.5.1)
+    poltergeist (1.6.0)
       capybara (~> 2.1)
       cliver (~> 0.3.1)
       multi_json (~> 1.0)
@@ -392,7 +394,7 @@ GEM
       railties (>= 3.1, < 5.0)
     rabl (0.11.0)
       activesupport (>= 2.3.14)
-    rack (1.5.2)
+    rack (1.5.3)
     rack-cors (0.2.9)
     rack-livereload (0.3.15)
       rack
@@ -589,7 +591,9 @@ GEM
     webmock (1.20.4)
       addressable (>= 2.3.6)
       crack (>= 0.3.2)
-    websocket-driver (0.4.0)
+    websocket-driver (0.5.4)
+      websocket-extensions (>= 0.1.0)
+    websocket-extensions (0.1.2)
     wicked_pdf (0.11.0)
       rails
     xpath (2.0.0)
@@ -600,6 +604,7 @@ PLATFORMS
 
 DEPENDENCIES
   aasm
+  active_model_serializers
   activeadmin!
   activerecord-postgis-adapter
   activerecord-session_store

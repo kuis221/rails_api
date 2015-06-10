@@ -20,7 +20,7 @@ feature 'Results Event Status Page', js: true, search: true  do
     scenario 'a user can play and dismiss the video tutorial' do
       company_user.role.permissions.create(action: :event_status_campaigns, subject_class: 'Campaign', mode: 'campaigns')
 
-      visit results_event_status_path
+      visit analysis_event_status_path
 
       feature_name = 'GETTING STARTED: EVENT STATUS REPORT'
 
@@ -38,7 +38,7 @@ feature 'Results Event Status Page', js: true, search: true  do
       end
       wait_for_ajax
 
-      visit results_gva_path
+      visit analysis_gva_path
       expect(page).to have_no_content(feature_name)
     end
 
@@ -71,7 +71,7 @@ feature 'Results Event Status Page', js: true, search: true  do
             user_ids: [company_user.id],
             start_time: '08:00AM', end_time: '10:00AM', start_date: '01/23/2020', end_date: '01/23/2020')
 
-      visit results_event_status_path
+      visit analysis_event_status_path
 
       choose_campaign('Test Campaign FY01')
 
@@ -145,7 +145,7 @@ feature 'Results Event Status Page', js: true, search: true  do
             user_ids: [company_user.id],
             start_time: '08:00AM', end_time: '9:00AM', start_date: '01/23/2013', end_date: '01/23/2013')
 
-      visit results_event_status_path
+      visit analysis_event_status_path
 
       choose_campaign('Test Campaign FY01')
 
@@ -169,7 +169,7 @@ feature 'Results Event Status Page', js: true, search: true  do
       create(:approved_event, company: company, campaign: campaign, place: place)
       create(:submitted_event, company: company, campaign: campaign, place: place)
 
-      visit results_event_status_path
+      visit analysis_event_status_path
 
       choose_campaign('Test Campaign FY01')
 
@@ -199,7 +199,7 @@ feature 'Results Event Status Page', js: true, search: true  do
       create(:approved_event, company: company, campaign: campaign, place: place)
       create(:submitted_event, company: company, campaign: campaign, place: place)
 
-      visit results_event_status_path
+      visit analysis_event_status_path
 
       choose_campaign('Test Campaign FY01')
 
@@ -231,7 +231,7 @@ feature 'Results Event Status Page', js: true, search: true  do
       create(:approved_event, company: company, campaign: campaign, place: place, user_ids: [company_user.id])
       create(:submitted_event, company: company, campaign: campaign, place: place, user_ids: [company_user.id])
 
-      visit results_event_status_path
+      visit analysis_event_status_path
 
       choose_campaign('Test Campaign FY01')
 
@@ -262,7 +262,7 @@ feature 'Results Event Status Page', js: true, search: true  do
       create(:approved_event, company: company, campaign: campaign, place: place)
       create(:submitted_event, company: company, campaign: campaign, place: place)
 
-      visit results_event_status_path
+      visit analysis_event_status_path
 
       choose_campaign('Test Campaign FY01')
 
@@ -308,7 +308,7 @@ feature 'Results Event Status Page', js: true, search: true  do
       create(:approved_event, company: company, campaign: campaign, place: place)
       create(:submitted_event, company: company, campaign: campaign, place: place)
 
-      visit results_event_status_path
+      visit analysis_event_status_path
 
       choose_campaign('Test Campaign FY01')
 
@@ -360,7 +360,7 @@ feature 'Results Event Status Page', js: true, search: true  do
       create(:approved_event, company: company, campaign: campaign, place: place, user_ids: [company_user.id])
       create(:submitted_event, company: company, campaign: campaign, place: place, user_ids: [company_user.id])
 
-      visit results_event_status_path
+      visit analysis_event_status_path
 
       choose_campaign('Test Campaign FY01')
 

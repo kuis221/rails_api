@@ -1,7 +1,7 @@
 - items = (resource.invites.active.joins(:place).select("invites.*, places.name") + resource.invites.active.joins(:area).select("invites.*, areas.name")).sort_by(&:name)
 
 - if items.any?
-  #resource-invites-list.details_box
+  #resource-invites-list
 
     .dropdown.btn-download.pull-right
       a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"

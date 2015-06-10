@@ -44,6 +44,9 @@ class FormField < ActiveRecord::Base
   validates :kpi_id,
             uniqueness: { scope: [:fieldable_id, :fieldable_type], allow_blank: true, allow_nil: true }
 
+  scope :for_campaigns, ->(campaigns) { where(fieldable_type: 'Campaign', fieldable_id: campaigns) }
+  scope :for_activity_types, ->(activity_types) { where(fieldable_type: 'ActivityType', fieldable_id: activity_types) }
+
   def self.for_events_in_company(companies)
     joins(
       'INNER JOIN campaigns ON campaigns.id=form_fields.fieldable_id AND
@@ -115,6 +118,15 @@ class FormField < ActiveRecord::Base
 
   def format_csv(result)
     result.value
+  end
+
+  def format_chart_data(result)
+    return unless is_optionable?
+    if result.present?
+      Hash[options_for_input.map do |s|
+        [s[0], result.value[s[1].to_s].try(:to_f) || 0]
+      end]
+    end
   end
 
   def css_class
@@ -217,6 +229,33 @@ class FormField < ActiveRecord::Base
   def value_is_numeric?(value)
     true if Float(value) rescue false
   end
+
+  def range_message
+    return unless has_range_value_settings?
+    if settings['range_min'].present? && settings['range_max'].present?
+      range_format_msg = %w(Number Currency).include?(type_name) && settings['range_format'] == 'value' ? '' : settings['range_format']
+      I18n.translate("form_fields_ranges.#{type_name.downcase}.min_max",
+                     range_min: settings['range_min'],
+                     range_max: settings['range_max'],
+                     range_format: range_format_msg,
+                     field_id: id)
+    elsif settings['range_min'].present?
+      range_digits_msg = %w(Number Currency).include?(type_name) && settings['range_format'] == 'digits' ? 'min_digits' : 'min'
+      I18n.translate("form_fields_ranges.#{type_name.downcase}.#{range_digits_msg}",
+                     range_min: settings['range_min'],
+                     range_format: settings['range_format'],
+                     field_id: id)
+    elsif settings['range_max'].present?
+      range_digits_msg = %w(Number Currency).include?(type_name) && settings['range_format'] == 'digits' ? 'max_digits' : 'max'
+      I18n.translate("form_fields_ranges.#{type_name.downcase}.#{range_digits_msg}",
+                     range_max: settings['range_max'],
+                     range_format: settings['range_format'],
+                     field_id: id)
+    else
+      ''
+    end.html_safe
+  end
+
 
   protected
 

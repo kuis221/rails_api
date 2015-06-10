@@ -2,24 +2,29 @@
 #
 # Table name: contacts
 #
-#  id           :integer          not null, primary key
-#  company_id   :integer
-#  first_name   :string(255)
-#  last_name    :string(255)
-#  title        :string(255)
-#  email        :string(255)
-#  phone_number :string(255)
-#  street1      :string(255)
-#  street2      :string(255)
-#  country      :string(255)
-#  state        :string(255)
-#  city         :string(255)
-#  zip_code     :string(255)
-#  created_at   :datetime         not null
-#  updated_at   :datetime         not null
+#  id            :integer          not null, primary key
+#  company_id    :integer
+#  first_name    :string(255)
+#  last_name     :string(255)
+#  title         :string(255)
+#  email         :string(255)
+#  phone_number  :string(255)
+#  street1       :string(255)
+#  street2       :string(255)
+#  country       :string(255)
+#  state         :string(255)
+#  city          :string(255)
+#  zip_code      :string(255)
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  created_by_id :integer
+#  updated_by_id :integer
 #
 
 class Contact < ActiveRecord::Base
+  # Created_by_id and updated_by_id fields
+  track_who_does_it
+  
   scoped_to_company
 
   has_many :contact_events, dependent: :destroy, as: :contactable
@@ -33,7 +38,8 @@ class Contact < ActiveRecord::Base
   validates :city,    presence: true
 
   validates_format_of :email, with: /\A[^@\s]+@([^@\s]+\.)+[^@\s]+\z/, allow_blank: true, if: :email_changed?
-
+  scope :accessible_by_user, ->(user) { in_company(user.company_id) }
+  
   before_validation do
     self.country ||= 'US'
   end

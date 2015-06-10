@@ -98,7 +98,7 @@ header{
 			color: $white !important;
 		}
 	}
-	a.dropdown-toggle{
+	a.current-company-title{
 		color: $silver;
 		.icon-arrow-down{
 			font-size: 10px;
@@ -159,26 +159,34 @@ header{
 
 // Dropdown arrow for menu in header
 
-#company-name .header-menu, #user_menu.header-menu{
-	&:after{
-		content: "\e607";
-		font-size: 9px;
-		font-family: "icons";
-		color: $silver;
-		position: absolute;
-	}
-	&.open{
-		&:after{
-			content: "\e610";
-		}
-	}
-	&:hover{
-		background-color: $menu-hover;
-		a{
-			color: $white;
-		}
-	}
+.header-menu.dropdown:not(#admin){
+  &:after{
+    content: "\e607";
+    font-size: 9px;
+    font-family: "icons";
+    color: $silver;
+    position: absolute;
+  }
+  &.open{
+    &:after{
+      content: "\e610";
+    }
+  }
 }
+
+.header-menu{
+  &:hover{
+    background-color: $menu-hover;
+    a{
+      color: $white;
+    }
+  }
+}
+
+#company-name .header-menu:not(.dropdown) > a{
+  padding-right: 15px;
+}
+
 #user_menu.header-menu{
 	&:after{
 		top: 14px;
