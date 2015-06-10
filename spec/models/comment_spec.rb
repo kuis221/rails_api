@@ -21,4 +21,35 @@ describe Comment, type: :model do
   it { is_expected.to validate_presence_of(:commentable_id) }
   it { is_expected.to validate_numericality_of(:commentable_id) }
   it { is_expected.to validate_presence_of(:commentable_type) }
+
+  describe 'max_event_comments validation' do
+    let(:campaign) { create(:campaign) }
+    let(:event) { create(:event, campaign: campaign) }
+
+    describe "when a max is set for the campaign" do
+      before do
+        event.campaign.update_attribute(
+          :modules, {'comments' => {'settings' => { 'range_min' => '1',
+                                                    'range_max' => '2' }}})
+      end
+
+      it 'should not allow create more than two comments for the event' do
+        create_list(:comment, 2, commentable: event)
+        comment = build(:comment, commentable: event)
+        expect(comment.save).to be_falsey
+        expect(comment.errors.full_messages).to include(
+          'Oops. No more than 2 comments can be added to this event. Your comment was not saved.')
+      end
+
+      it 'correctly displays a message when max is set to 1' do
+        event.campaign.update_attribute(
+          :modules, {'comments' => {'settings' => { 'range_max' => '1' }}})
+        create(:comment, commentable: event)
+        comment = build(:comment, commentable: event)
+        expect(comment.save).to be_falsey
+        expect(comment.errors.full_messages).to include(
+          'Oops. No more than one comment can be added to this event. Your comment was not saved.')
+      end
+    end
+  end
 end

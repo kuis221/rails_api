@@ -36,6 +36,43 @@ describe AttachedAsset, type: :model do
     it { is_expected.to validate_presence_of(:direct_upload_url) }
   end
 
+  describe 'max_event_photos validation' do
+    let(:campaign) { create(:campaign) }
+    let(:event) { create(:event, campaign: campaign) }
+
+    describe "when a max is set for the campaign" do
+      before do
+        event.campaign.update_attribute(
+          :modules, {'photos' => {'settings' => { 'range_min' => '1',
+                                                  'range_max' => '2' }}})
+      end
+
+      it 'should not allow create more than two photos for the event' do
+        create_list(:photo, 2, attachable: event)
+        photo = build(:photo, attachable: event)
+        expect(photo.save).to be_falsey
+        expect(photo.errors.full_messages).to include(
+          'No more than 2 photos can be uploaded for this event.')
+      end
+
+      it 'does not count inactive photos' do
+        create_list(:photo, 2, attachable: event, active: false)
+        photo = build(:photo, attachable: event)
+        expect(photo.save).to be_truthy
+      end
+
+      it 'correctly displays a message when max is set to 1' do
+        event.campaign.update_attribute(
+          :modules, {'photos' => {'settings' => { 'range_max' => '1' }}})
+        create(:photo, attachable: event)
+        photo = build(:photo, attachable: event)
+        expect(photo.save).to be_falsey
+        expect(photo.errors.full_messages).to include(
+          'No more than one photo can be uploaded for this event.')
+      end
+    end
+  end
+
   describe '#activate' do
     let(:attached_asset) { build(:attached_asset, active: false) }
 

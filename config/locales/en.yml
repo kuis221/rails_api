@@ -760,7 +760,9 @@ en:
           one: 'Do you have any event photos to upload? Only one photo can be uploaded for this event.'
           other: 'Do you have any event photos to upload? No more than %{count} photos can be uploaded for this event.'
         add_min_max: 'Do you have any event photos to upload? Between %{min} and %{max} photos are required.'
-        add_exceeded: 'No more than %{photos_max} photos can be uploaded for this event.'
+        add_exceeded:
+          one: 'No more than one photo can be uploaded for this event.'
+          other: 'No more than %{count} photos can be uploaded for this event.'
         empty: 'There are no photos to view at this time'
         added: 'Looks great. The photos have been uploaded.'
         deactivated: 'Your Photo has been deactivated'
@@ -774,7 +776,9 @@ en:
           one: 'Do you have consumer comments to add? Only one comment can be logged for this event.'
           other: 'Do you have consumer comments to add? No more than %{count} comments can be logged for this event.'
         add_min_max: 'Do you have consumer comments to add? Between %{min} and %{max} comments are required.'
-        add_exceeded: 'Oops. No more than %{comments_max} comments can be added to this event. Your comment was not saved.'
+        add_exceeded: 
+          one: 'Oops. No more than %{count} comments can be added to this event. Your comment was not saved.'
+          other: 'Oops. No more than one comment can be added to this event. Your comment was not saved.'
         empty: 'There are no comments to view at this time'
         added: 'Looks good. Your comment has been saved.'
         deactivated: 'Your Comment has been deactivated'
