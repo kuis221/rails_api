@@ -201,7 +201,7 @@ module Html
             "#{i + 1}#{icon(:lock) if i > index_phase}".html_safe
            end
          end) +
-          phase[0].upcase
+          h.link_to(phase[0].upcase, h.phase_event_path(@model, phase: phase[0]))
       end + phase_steps(phase[0], i, phase[1])
     end
 
