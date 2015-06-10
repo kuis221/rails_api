@@ -1,3 +1,4 @@
+- resource.errors.clear
 - resource.results.each { |r| r.errors.clear }
 - allow_cancel ||= false
 #event-results-form.data-form-wrapper
@@ -12,8 +13,6 @@
 
     - fields = resource.campaign.form_fields.includes(:kpi)
     = simple_form_for(resource, remote: true, html: { class: 'event-data-form', data: { 'prompt-message' => 'Your post event form has not been saved', 'watch-changes' => true, 'per-save-failed' => I18n.translate('instructive_messages.execute.per.failed') } }) do |f|
-      = f.error_notification
-
       = render partial: 'event_data', locals: { fields: fields, f: f }
 
       .form-actions
