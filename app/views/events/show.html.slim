@@ -37,6 +37,10 @@
 - content_for :footer
   javascript:
     jQuery(function(){
+      $(document).not("#phases-container .phase-container").click(function() {
+        $('#phases-container .phase-container:not(.active)').slideUp()
+      });
+
       $('.event-phase-step .step').tooltip({
         html: true,
         container: this.element,
