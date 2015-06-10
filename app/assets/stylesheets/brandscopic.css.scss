@@ -437,7 +437,7 @@ body.events.show{
 		tr:hover {
 			.button_to {
 				display: inline-block;
-			}			
+			}
 		}
 		.icon-receipt {
 			font-size: 26px;
@@ -1376,6 +1376,9 @@ footer{
 				}
 				span {
 					border: 0;
+          &.checked:after{
+            display:none;
+          }
 				}
 			}
 		}
@@ -1437,25 +1440,23 @@ footer{
 			-moz-border-radius: 6px;
 			border-radius: 6px;
 			bottom: 32px;
-			padding: 13px 10px 3px 10px;
+			padding: 13px 10px 8px 10px;
 			position: absolute;
-			height: 150px;
 			width: 190px;
 			&:after{
-					content: '';
-					background: $gray-lighter;
-					height: 15px; width: 15px;
-					position: absolute;
-					bottom: -7px;
-					left: 47%;
-					z-index: 4;
-					-webkit-transform: rotate(45deg);
-					transform: rotate(45deg);
-					box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.15);
+        content: '';
+        background: $gray-lighter;
+        height: 15px; width: 15px;
+        position: absolute;
+        bottom: -7px;
+        left: 47%;
+        z-index: 4;
+        -webkit-transform: rotate(45deg);
+        transform: rotate(45deg);
+        box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.15);
 			}
 			.btn{
-				padding: 7px;
-				width: 45% !important;
+        min-width: 85px;
 				&+.btn{
 					margin-left: 10px;
 				}
