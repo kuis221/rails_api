@@ -193,16 +193,16 @@ module Html
       return if phase.nil?
       index_phase = phases[:phases].keys.index(phases[:current_phase])
       completed = i < index_phase
-      h.link_to(
-      h.content_tag(:div, class: "step phase-id #{'active' if phase[0] == phases[:current_phase]}") do
-        (if completed
-           h.content_tag(:div, '', class: 'icon-check-circle')
-         else
-           h.content_tag(:span, class: 'id') do
-            "#{i + 1}#{icon(:lock) if i > index_phase}".html_safe
-           end
-         end) + phase[0].upcase
-      end, h.phase_event_path(@model, phase: phase[0])) + phase_steps(phase[0], i, phase[1])
+      h.link_to_if(i <= index_phase,
+        h.content_tag(:div, class: "step phase-id #{'active' if phase[0] == phases[:current_phase]}") do
+          (if completed
+             h.content_tag(:div, '', class: 'icon-check-circle')
+           else
+             h.content_tag(:span, class: 'id') do
+              "#{i + 1}#{icon(:lock) if i > index_phase}".html_safe
+             end
+           end) + phase[0].upcase
+        end, h.phase_event_path(@model, phase: phase[0])) + phase_steps(phase[0], i, phase[1])
     end
 
     def phase_buttons(phase)
