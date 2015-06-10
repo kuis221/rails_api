@@ -264,10 +264,11 @@ module Html
 
     def submit_button
       return unless can?(:submit)
+      disabled = phases[:current_phase] == :plan || submitted? || approved? || !valid_to_submit?
       h.button_to 'Submit', h.submit_event_path(@model, format: :js, return: h.return_path),
                   class: 'btn btn-primary submit-event-data-link', method: :put,
                   remote: true, data: { disable_with: 'submitting' },
-                  disabled: submitted? || approved? || !valid_to_submit?
+                  disabled: disabled
     end
 
     def guided_message(phase, step)
