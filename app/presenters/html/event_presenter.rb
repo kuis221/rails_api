@@ -154,7 +154,11 @@ module Html
       step_last_id = steps.last[:id]
       current_phase_index = phases[:phases].keys.index(phases[:current_phase])
       steps.map do |step|
-        button = h.content_tag(:div, class: "step #{'last-step' if step_last_id == step[:id]} #{'pending' unless step[:complete]}") do
+        button = h.content_tag(:div, 
+                                class: "step #{'last-step' if step_last_id == step[:id]} #{'pending' unless step[:complete]}",
+                                data: { toggle: 'tooltip',
+                                        title: step[:title].upcase,
+                                        placement: 'top'} ) do
           h.content_tag(:div, class: 'icon-connect') do
             h.content_tag(:i, '', class: "#{step[:complete] ? 'icon-check-circle' : 'icon-circle'}")
           end +
@@ -171,7 +175,8 @@ module Html
                  class: 'smooth-scroll event-phase-step',
                  data: { message: guided_message(phase, step),
                          message_color: 'blue',
-                         spytarget: target }
+                         spytarget: target,
+                        }
     end
 
     def render_nav_phases
@@ -216,7 +221,6 @@ module Html
     end
 
     def complete_percentage(phase)
-      p phase[1].inspect
       completed_steps = phase[1].count { |s| s[:complete] }
       percentage = completed_steps * 100 / phase[1].count
       h.content_tag(:span, "#{percentage.to_i}% COMPLETE", class: 'status-indicator')

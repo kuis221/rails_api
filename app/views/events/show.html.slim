@@ -37,6 +37,24 @@
 - content_for :footer
   javascript:
     jQuery(function(){
+      $('.event-phase-step .step').tooltip({
+        html: true,
+        container: this.element,
+        delay: 0,
+        animation: false,
+        title: function(a, b) {
+          return $(this).data('title');
+        },
+        placement: function(tooltip, field) {        
+          window.setTimeout(function() {
+            return $(tooltip).css({
+              top: (parseInt($(field).position().top - 22)) + 'px',
+            });
+          });
+          10;
+          return 'top';
+        }
+      })
       $(window).bind('scroll', function() {
         if (($(window).scrollTop() + $('header').outerHeight()) >  ($('header').outerHeight() + ($('.new-feature').outerHeight() || 0)) ) {
           $('.details-bar').addClass('fixed');
