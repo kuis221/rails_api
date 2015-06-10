@@ -28,7 +28,7 @@ class Comment < ActiveRecord::Base
   validates :commentable_id, presence: true, numericality: true
   validates :commentable_type, presence: true
 
-  validate :max_event_comments, if: proc { |c| c.commentable.is_a?(Event) }
+  validate :max_event_comments, on: :create, if: proc { |c| c.commentable.is_a?(Event) }
 
   scope :for_places, ->(places, company) { joins('INNER JOIN events e ON e.id = commentable_id and commentable_type=\'Event\'').where(['e.place_id in (?) and e.company_id in (?)', places, company]) }
 
@@ -96,6 +96,7 @@ class Comment < ActiveRecord::Base
   def max_event_comments
     return true unless commentable.campaign.range_module_settings?('comments')
     max = commentable.campaign.module_setting('comments', 'range_max')
-    errors.add(:base, I18n.translate('instructive_messages.execute.comment.add_exceeded', count: max)) if commentable.comments.count >= max.to_i
+    return true if max.blank?
+    errors.add(:base, I18n.translate('instructive_messages.execute.comment.add_exceeded', count: max.to_i)) if commentable.comments.count >= max.to_i
   end
 end

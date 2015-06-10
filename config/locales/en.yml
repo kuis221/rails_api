@@ -794,7 +794,9 @@ en:
         add_min_max: 'Do you have expenses to add? Between %{min} and %{max} expenses are required.'
         add_exceeded:
           new: 'Sorry. No more than %{expenses_max} expenses can be logged for this event.'
-          create: 'Sorry. No more than %{expenses_max} expenses can be logged for this event. Your expense was not saved.'
+          create:
+            one: 'Sorry. No more than %{count} expenses can be logged for this event. Your expense was not saved.'
+            other: 'Sorry. No more than %{count} expenses can be logged for this event. Your expense was not saved.'
         empty: 'There are no expenses logged at this time'
         added: 'Good work. Your expense has been recorded.'
         deactivated: 'Your Expense has been deactivated'

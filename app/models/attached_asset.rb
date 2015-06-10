@@ -74,12 +74,12 @@ class AttachedAsset < ActiveRecord::Base
 
   validates :attachable, presence: true
 
-  validates :direct_upload_url, allow_nil: true,
+  validates :direct_upload_url, allow_nil: true, on: :create,
                                 uniqueness: true,
                                 format: { with: DIRECT_UPLOAD_URL_FORMAT }
   validates :direct_upload_url, presence: true, unless: :file_file_name
 
-  validate :max_event_photos, before: :create, if: proc { |a| a.attachable.is_a?(Event) && a.asset_type == 'photo'}
+  validate :max_event_photos, on: :create, if: proc { |a| a.attachable.is_a?(Event) && a.asset_type == 'photo'}
 
   delegate :company_id, to: :attachable
 
@@ -382,7 +382,7 @@ class AttachedAsset < ActiveRecord::Base
   def max_event_photos
     return true unless attachable.campaign.range_module_settings?('photos')
     max = attachable.campaign.module_setting('photos', 'range_max')
-    return true if max.nil? || attachable.photos.active.count < max.to_i
+    return true if max.empty? || attachable.photos.active.count < max.to_i
     errors.add(:base, I18n.translate('instructive_messages.execute.photo.add_exceeded', count: max.to_i))
   end
 end

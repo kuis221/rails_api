@@ -51,5 +51,18 @@ describe Comment, type: :model do
           'Oops. No more than one comment can be added to this event. Your comment was not saved.')
       end
     end
+
+    describe "when a max is not set for the campaing" do
+      before do
+        event.campaign.update_attribute(
+          :modules, {'comments' => {'settings' => { 'range_min' => '1',
+                                                    'range_max' => '' }}})
+      end
+
+      it 'should not allow create any number of comments for the event' do
+        comment = build(:comment, commentable: event)
+        expect(comment.save).to be_truthy
+      end
+    end
   end
 end

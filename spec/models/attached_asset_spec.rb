@@ -71,6 +71,19 @@ describe AttachedAsset, type: :model do
           'No more than one photo can be uploaded for this event.')
       end
     end
+
+    describe "when a max is not set for the campaing" do
+      before do
+        event.campaign.update_attribute(
+          :modules, {'photos' => {'settings' => { 'range_min' => '1',
+                                                    'range_max' => '' }}})
+      end
+
+      it 'allows create any number of photos for the event' do
+        photo = build(:photo, attachable: event)
+        expect(photo.save).to be_truthy
+      end
+    end
   end
 
   describe '#activate' do
