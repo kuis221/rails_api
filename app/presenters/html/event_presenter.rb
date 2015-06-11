@@ -154,6 +154,7 @@ module Html
       step_last_id = steps.last[:id]
       current_phase_index = phases[:phases].keys.index(phases[:current_phase])
       steps.map do |step|
+        next if step.key?(:if) && !h.instance_exec(@model, &step[:if])
         button = h.content_tag(:div,
                                 class: "step #{'last-step' if step_last_id == step[:id]} #{'pending' unless step[:complete]}",
                                 data: { toggle: 'tooltip',

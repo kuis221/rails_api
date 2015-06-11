@@ -119,7 +119,10 @@ module Html
     end
 
     def locked_in_phase_plan_message
-      actions = phases[:phases][:execute].map { |s| send("locked_#{s[:id]}_message") }
+      actions = phases[:phases][:execute].map do |s|
+        next if s.key?(:if) && !h.instance_exec(@model, &s[:if])
+        send("locked_#{s[:id]}_message")
+      end.compact
       h.t('instructive_messages.plan.still', date: start_at.strftime('%b %d'),
                                              actions: actions.to_sentence(last_word_connector: ' and '))
     end
