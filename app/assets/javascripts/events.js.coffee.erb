@@ -56,7 +56,8 @@ jQuery ->
 		$('.event-alert .close').hide()
 
 	$('#phases-container .phase-container').on 'click', (e) ->
-		$('#phases-container .phase-container:not(.active)').slideDown()
+		if !$(e.target).hasClass('.event-phase-step') && $(e.target).closest('.event-phase-step').length == 0
+			$('#phases-container .phase-container:not(.active)').slideDown()
 
 	$('#toggle-phases-steps').on 'click', (e) ->
 		e.preventDefault()
