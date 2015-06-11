@@ -24,6 +24,15 @@ class ContactEventsController < InheritedResources::Base
   def add
   end
 
+  def create
+    create! do |success, failure|
+      success.js do
+        session["create_count_#{params[:form_id]}"] ||= 0
+        @count = session["create_count_#{params[:form_id]}"] += 1
+      end
+    end
+  end
+
   def list
     @contacts = ContactEvent.contactables_for_event(parent, params[:term])
     render layout: false

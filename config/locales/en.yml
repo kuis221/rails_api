@@ -717,7 +717,9 @@ en:
         add: 'Do you want to keep track of any contacts? This is optional.'
         empty: 'There are not any contacts to view for this event'
         details: 'View the details of event contacts below'
-        added: 'Good work. %{contacts_count} contacts have been added.'
+        added:
+          one: 'Good work. One contact have been added.'
+          other: 'Good work. %{count} contacts have been added.'
         added_more: '%{contacts_count} contacts have been added. Would you like to include more?'
         removed: '%{contact_full_name} has been removed from the event contacts'
       task:

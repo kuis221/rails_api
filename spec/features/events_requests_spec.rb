@@ -1248,6 +1248,7 @@ feature 'Events section' do
           expect(page).to have_no_content('Pablo Baltodano')
         end
         close_modal
+        expect(page).to have_content('Good work. One contact have been added.')
 
         # Test the user was added to the list of event members and it can be removed
         within contact_list do
@@ -1264,6 +1265,8 @@ feature 'Events section' do
       scenario 'allows to add a contact as contact to the event', js: true do
         create(:contact, first_name: 'Pedro', last_name: 'Urrutia',
                          company_id: company.id)
+        create(:contact, first_name: 'Pedro', last_name: 'Guerra',
+                         company_id: company.id)
         Sunspot.commit
 
         visit event_path(event)
@@ -1271,21 +1274,29 @@ feature 'Events section' do
         click_js_button 'Add Contacts'
         within visible_modal do
           fill_in 'contact-search-box', with: 'Ped'
-          expect(page).to have_content('Pedro Urrutia')
-          within resource_item do
+          expect(page).to have_content('Pedro Guerra')
+          expect(page).to have_content 'Pedro Urrutia'
+          within resource_item(1) do
+            click_js_link 'Add'
+          end
+          expect(page).to have_no_content('Pedro Guerra')
+          within resource_item(1) do
             click_js_link 'Add'
           end
 
           expect(page).to have_no_content 'Pedro Urrutia'
         end
         close_modal
+        expect(page).to have_content('Good work. 2 contacts have been added.')
 
         # Test the user was added to the list of event members and it can be removed
         within contact_list do
+          expect(page).to have_content('Pedro Guerra')
           expect(page).to have_content('Pedro Urrutia')
-          click_js_link 'Remove Contact'
+          within find('.user-tag-option', text: 'Pedro Urrutia') do
+            click_js_link 'Remove Contact'
+          end
         end
-        ensure_modal_was_closed
         expect(page).to_not have_content('Pedro Urrutia')
 
         # Refresh the page and make sure the user is not there
