@@ -170,10 +170,10 @@ module Html
 
     def step_link(phase, step, content, linked)
       url = target = "#event-#{step[:id]}"
-      url = h.phase_event_path(@model, phase: phase) + target unless phase == current_phase
+      url = h.phase_event_path(@model, phase: phase, return: h.return_path) + target unless phase == current_phase
       h.link_to_if linked, content, url,
-                 class: 'smooth-scroll event-phase-step',
-                 data: { message: guided_message(phase, step),
+                  class: 'smooth-scroll event-phase-step',
+                  data: { message: guided_message(phase, step),
                          message_color: 'blue',
                          spytarget: target,
                         }
@@ -202,7 +202,7 @@ module Html
               "#{i + 1}#{icon(:lock) if i > index_phase}".html_safe
              end
            end) + phase[0].upcase
-        end, h.phase_event_path(@model, phase: phase[0])) + phase_steps(phase[0], i, phase[1])
+        end, h.phase_event_path(@model, phase: phase[0], return: h.return_path)) + phase_steps(phase[0], i, phase[1])
     end
 
     def phase_buttons(phase)
