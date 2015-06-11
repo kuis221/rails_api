@@ -8,6 +8,9 @@ jQuery ->
 		$('.event-alert').find('.close').show().on 'click', =>
 			this.permanentMessageOpen = false
 
+		$(document).on 'click', '.event-alert', (e) ->
+			e.stopPropagation()
+
 		this.showMessage = (message, color, close = false) ->
 			return if this.permanentMessageOpen
 			$('.event-alert').find('.close').hide()
@@ -52,11 +55,20 @@ jQuery ->
 		$('.event-alert').slideUp()
 		$('.event-alert .close').hide()
 
+	$('#phases-container .phase-container').on 'click', (e) ->
+		$('#phases-container .phase-container:not(.active)').slideDown()
+
 	$('#toggle-phases-steps').on 'click', (e) ->
 		e.preventDefault()
 		window.EventDetails.closeMessage('fast')
 		$('#phases-container .phase-container:not(.active)').slideToggle()
 		false
+
+	$(document).on 'click', (e) ->
+		if not $(e.target).hasClass('.phase-container') && $(e.target).closest('.phase-container').length == 0
+			$('#phases-container .phase-container:not(.active)').slideUp()
+		else
+
 
 	$("#reject-post-event").submit (e) ->
 		e.preventDefault()
