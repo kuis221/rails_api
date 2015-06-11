@@ -6,7 +6,9 @@
   |
     $('.contactevent_modal').modal('hide');
     $('#event-contacts-list').html('#{j render(partial: 'events/contacts', locals: {resource: parent, can_delete: can?(:delete_contact, parent)}) }');
-    window.EventDetails.showMessage("#{j I18n.translate('instructive_messages.plan.contact.added', contacts_count: '1')}", 'green');
+    $('.add_contact_modal').off('hidden.message').on('hidden.message', function(){
+      window.EventDetails.showMessage("#{j I18n.translate('instructive_messages.plan.contact.added', count: @count)}", 'green');
+    });
   - if params.has_key?(:contact_event) and params[:contact_event].has_key?(:contactable_id)
     | $('.modal #contacts-list #contact-#{params[:contact_event][:contactable_type].underscore}-#{params[:contact_event][:contactable_id]}').remove();
   | $(document).trigger('contact:added')
