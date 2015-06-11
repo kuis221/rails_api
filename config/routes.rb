@@ -81,6 +81,7 @@ Brandscopic::Application.routes.draw do
           resources :brands, only: [:index]
           get :stats, on: :member
           get :events, on: :member
+          get :expense_categories, on: :member
         end
 
         resources :activity_types, only: [:index] do
