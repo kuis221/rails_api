@@ -149,6 +149,7 @@ feature 'Activities management' do
 
       expect(page).to have_content('Thank You!')
       click_link 'Finish'
+      expect(page).to have_content 'Nice work. One Activity Type #1 activity has been added.'
 
       within resource_item do
         expect(page).to have_content('Juanito Bazooka')
@@ -158,7 +159,7 @@ feature 'Activities management' do
       end
 
       confirm_prompt 'Are you sure you want to deactivate this activity?'
-
+      expect(page).to have_content 'Your Activity Type #1 activity has been deactivated'
       within('#activities-list') do
         expect(page).to have_no_selector('li')
       end
