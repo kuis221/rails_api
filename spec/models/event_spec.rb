@@ -1535,6 +1535,40 @@ describe Event, type: :model do
         event = create(:event, campaign: campaign)
         expect(event.execute_phases.find { |s| s[:id] == :comments }).to be_nil
       end
+
+      it 'marks the comments module as completed if not range validation and at least one comment exists' do
+        event = create(:event, campaign: campaign)
+        campaign.update_attribute(:modules, 'comments' => {})
+        create(:comment, commentable: event)
+        expect(event.execute_phases.find { |s| s[:id] == :comments }[:complete]).to be_truthy
+      end
+
+      it 'does not mark the comments module as completed if not comments have been added' do
+        event = create(:event, campaign: campaign)
+        campaign.update_attribute(:modules, 'comments' => {})
+        expect(event.execute_phases.find { |s| s[:id] == :comments }[:complete]).to be_falsey
+      end
+
+      it 'does not mark the comments module as completed if does\'t meet the range validations' do
+        event = create(:event, campaign: campaign)
+        campaign.update_attribute(:modules, 'comments' => {'settings' => { 'range_max' => 4, 'range_min' => 2 }})
+        create(:comment, commentable: event)
+        expect(event.execute_phases.find { |s| s[:id] == :comments }[:complete]).to be_falsey
+      end
+
+      it 'marks the comments module as completed if meets the range validations' do
+        event = create(:event, campaign: campaign)
+        campaign.update_attribute(:modules, 'comments' => {'settings' => { 'range_max' => 4, 'range_min' => 2 }})
+        create(:comment, commentable: event)
+        create(:comment, commentable: event)
+        expect(event.execute_phases.find { |s| s[:id] == :comments }[:complete]).to be_truthy
+      end
+
+      it 'does not mark the comments module as completed only a max is specified and not comments have been created' do
+        event = create(:event, campaign: campaign)
+        campaign.update_attribute(:modules, 'comments' => {'settings' => { 'range_max' => 4, 'range_min' => nil }})
+        expect(event.execute_phases.find { |s| s[:id] == :comments }[:complete]).to be_falsey
+      end
     end
   end
 end

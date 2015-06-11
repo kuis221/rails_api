@@ -106,11 +106,17 @@ module EventPhases
   # only if those are met.
   def module_have_items_and_in_valid_range?(module_name, count)
     (module_range_settings_empty?(module_name) && count > 0) ||
-      (!module_range_settings_empty?(module_name) && module_items_valid?(module_name, count))
+      (!module_range_settings_empty?(module_name) &&
+       module_items_valid?(module_name, count) &&
+       (count > 0 || module_range_has_min?(module_name)))
   end
 
   def module_range_settings_empty?(module_name)
     campaign.module_setting(module_name, 'range_min').blank? &&
       campaign.module_setting(module_name, 'range_max').blank?
+  end
+
+  def module_range_has_min?(module_name)
+    !campaign.module_setting(module_name, 'range_min').blank?
   end
 end
