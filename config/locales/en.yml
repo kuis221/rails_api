@@ -753,7 +753,9 @@ en:
       activity:
         add: 'Do you have any activities to add? This is optional.'
         empty: 'There are no activities to view at this time'
-        added: 'Nice work. %{activities_count} %{activity_type} activities have been added.'
+        added: 
+          one: 'Nice work. One %{activity_type} activity has been added.'
+          other: 'Nice work. %{count} %{activity_type} activities have been added.'
         added_more: '%{activities_count} activities have been added. Would you like to add more?'
         deactivated: 'Your %{activity_type} activity has been deactivated'
         view: 'View your event activities below'

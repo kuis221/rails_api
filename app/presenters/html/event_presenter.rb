@@ -172,11 +172,10 @@ module Html
       url = target = "#event-#{step[:id]}"
       url = h.phase_event_path(@model, phase: phase, return: h.return_path) + target unless phase == current_phase
       h.link_to_if linked, content, url,
-                  class: 'smooth-scroll event-phase-step',
-                  data: { message: guided_message(phase, step),
-                         message_color: 'blue',
-                         spytarget: target,
-                        }
+                   class: 'smooth-scroll event-phase-step',
+                   data: { message: guided_message(phase, step),
+                           message_color: 'blue'
+                         }.merge(phase == current_phase ? { spytarget: target } : {})
     end
 
     def render_nav_phases

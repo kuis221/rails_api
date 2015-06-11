@@ -127,16 +127,14 @@ module Html
     end
 
     def initial_message
-      if approved?
+      if h.flash[:event_message_success].present?
+        [h.flash[:event_message_success], 'green', false]
+      elsif h.flash[:event_message_fail].present?
+        [h.flash[:event_message_fail], 'red', false]
+      elsif approved?
         [h.t('instructive_messages.results.approved'), 'green', true]
       elsif rejected?
-        if h.flash[:event_message_fail].present?
-          [h.flash[:event_message_fail], 'red', false]
-        else
-          [h.t('instructive_messages.results.rejected_info', rejected_at: rejected_at, reject_reason: reject_reason).html_safe, 'red', true]
-        end
-      elsif h.flash[:event_message_success].present?
-        [h.flash[:event_message_success], 'green', false]
+        [h.t('instructive_messages.results.rejected_info', rejected_at: rejected_at, reject_reason: reject_reason).html_safe, 'red', true]
       end
     end
 

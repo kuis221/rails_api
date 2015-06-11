@@ -1,6 +1,7 @@
 #form-container
   .activity-form.data-form-wrapper
     = simple_form_for [resource.new_record? ? parent : nil, resource], remote: (request.format.js? ) do |f|
+      = hidden_field_tag :form_id, params[:form_id]
       = f.input :activity_type_id, as: :hidden, wrapper: false
       - if resource.activity_type.present?
         = f.error_notification

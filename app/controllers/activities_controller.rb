@@ -42,7 +42,9 @@ class ActivitiesController < FilteredController
     create! do |success, failure|
       success.html do
         flash.clear
-        redirect_to url_for(action: :thanks, activity_type_id: resource.activity_type_id)
+        session["activity_create_#{params[:form_id]}"] ||= 0
+        session["activity_create_#{params[:form_id]}"] += 1
+        redirect_to url_for(action: :thanks, activity_type_id: resource.activity_type_id, form_id: params[:form_id])
       end
     end
   end
