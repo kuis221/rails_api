@@ -1443,7 +1443,7 @@ feature 'Events section' do
 
         click_js_button 'Unapprove'
 
-        expect(page).to have_content('Great job! Your PER has been submitted for approval.')
+        expect(page).to have_content('Your event have been Unapproved.')
       end
 
       scenario "display errors when an event don't meet a campaign module range" do

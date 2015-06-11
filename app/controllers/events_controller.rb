@@ -67,13 +67,13 @@ class EventsController < FilteredController
   def approve
     resource.approve! if resource.submitted?
     flash[:alert] = resource.errors.full_messages if resource.errors.any?
-    redirect_to resource_path(status: 'approved', return: params[:return])
+    redirect_to resource_path(status: 'approved')
   end
 
   def unapprove
     resource.unapprove! if resource.approved?
-    flash[:alert] = resource.errors.full_messages if resource.errors.any?
-    redirect_to resource_path(status: 'unapproved', return: params[:return])
+    flash[:event_message_success] = I18n.translate('instructive_messages.results.unapprove') if resource.errors.empty?
+    redirect_to resource_path(status: 'unapproved')
   end
 
   def reject

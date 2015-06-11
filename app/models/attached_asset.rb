@@ -382,7 +382,7 @@ class AttachedAsset < ActiveRecord::Base
   def max_event_photos
     return true unless attachable.campaign.range_module_settings?('photos')
     max = attachable.campaign.module_setting('photos', 'range_max')
-    return true if max.empty? || attachable.photos.active.count < max.to_i
+    return true if max.blank? || attachable.photos.active.count < max.to_i
     errors.add(:base, I18n.translate('instructive_messages.execute.photo.add_exceeded', count: max.to_i))
   end
 end
