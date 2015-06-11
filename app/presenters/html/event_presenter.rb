@@ -174,9 +174,8 @@ module Html
       h.link_to_if linked, content, url,
                  class: 'smooth-scroll event-phase-step',
                  data: { message: guided_message(phase, step),
-                         message_color: 'blue',
-                         spytarget: target,
-                        }
+                         message_color: 'blue'
+                        }.merge(phase == current_phase ? {spytarget: target} : {})
     end
 
     def render_nav_phases
