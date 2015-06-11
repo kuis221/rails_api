@@ -36,8 +36,13 @@ jQuery ->
 
 	$(document)
 		.on 'click', '.event-phase-step', (e) ->
-			window.EventDetails.closeMessage('fast')
-			$('#phases-container .phase-container:not(.active)').slideUp()
+			if not $(this).hasClass('smooth-scroll')
+				e.preventDefault()
+				e.stopPropagation()
+				window.EventDetails.showMessage($(this).data('message'), $(this).data('message-color'))
+			else
+				window.EventDetails.closeMessage('fast')
+				$('#phases-container .phase-container:not(.active)').slideUp()
 		.on 'smooth-scroll:end', '.event-phase-step', (e) ->
 			$('#phases-container').scrollmultispy('activate',[$(this).data('spytarget'), $('#phases-container')[0]])
 			if $(this).data('message')

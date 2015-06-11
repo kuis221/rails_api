@@ -702,17 +702,25 @@ en:
       max: 'No more than %{range_max} comments can be captured for this event.'
 
   incomplete_execute_steps:
-    per: '<a class="step-skip-link smooth-scroll" data-spyignore="ignore" href="#event-per">fill out your post event recap</a>'
-    activities: '<a class="step-skip-link smooth-scroll" data-spyignore="ignore" href="#event-activities">create activities</a>'
-    attendance: '<a class="step-skip-link smooth-scroll" data-spyignore="ignore" href="#event-attendance">report attendance</a>'
-    photos: '<a class="step-skip-link smooth-scroll" data-spyignore="ignore" href="#event-photos">upload photos</a>'
-    expenses: '<a class="step-skip-link smooth-scroll" data-spyignore="ignore" href="#event-expenses">create expenses</a>'
-    comments: '<a class="step-skip-link smooth-scroll" data-spyignore="ignore" href="#event-comments">capture consumer comments</a>'
-    surveys: '<a class="step-skip-link smooth-scroll" data-spyignore="ignore" href="#event-surveys">create surveys</a>'
+    per:
+      edit: 'complete your Post Event Recap'
+      read_only: 'view your Post Event Recap'
+    activities:
+      edit: 'create event activities'
+      read_only: 'view event activities'
+    photos:
+      edit: 'upload event photos'
+      read_only: 'view event photos'
+    expenses:
+      edit: 'log event expenses'
+      read_only: 'view event expenses'
+    comments:
+      edit: 'add consumer comments'
+      read_only: 'view consumer comments'
 
   instructive_messages:
     plan:
-      still: 'You are still in the planning phase of your event. Check back on %{event_start_date} to %{event_action}.'
+      still: 'You are still in the planning phase of your event. Check back on %{date} to %{actions}.'
       contact:
         add: 'Do you want to keep track of any contacts? This is optional.'
         empty: 'There are not any contacts to view for this event'
