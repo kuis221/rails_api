@@ -17,7 +17,7 @@ jQuery ->
 			clearTimeout this.closeAlertTimeout if this.closeAlertTimeout
 			$('.event-alert').removeClass (index, css) ->
 				(css.match(/(^|\s)alert-\S+/g) or []).join ' '
-			$('.event-alert').addClass('alert-' + color).find('.alert-main-text').text(message)
+			$('.event-alert').addClass('alert-' + color).find('.alert-main-text').html(message)
 			if close
 				this.showPermanentMessage()
 			else
