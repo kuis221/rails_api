@@ -1254,6 +1254,7 @@ feature 'Events section' do
         within contact_list do
           expect(page).to have_content('Pablo Baltodano')
           click_js_link 'Remove Contact'
+          expect(page).to_not have_content('Pablo Baltodano')
         end
 
         # Refresh the page and make sure the user is not there
