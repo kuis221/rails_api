@@ -56,9 +56,9 @@ Styleguide 6.1
 	.icon-close {
 		color: $white;
 		display: block;
-		font-size: 10px;
+		font-size: 9px;
+    line-height: 26px;
 		position: absolute;
-		top: 8px;
 		right: 7px;
 		&:hover {
 			text-decoration: none;
