@@ -1,20 +1,32 @@
 .help-overlay-definitions
   //For index
   div data-target="#application-content" data-intro="Click anywhere or press Esc to close" data-position="top" data-element-class="chardinjs-keep-back" data-tooltip-style="top: -26px;"
-  div data-target="#search-box-filter" data-intro="Search for specific Activity Types" data-position="left" data-tooltip-style="left: -76px; top: -3px; width: 160px;"
+  div data-target="#search-box-filter" data-intro="Search for specific Activity Types" data-position="top" data-tooltip-style="left: -1px; top: -34px; width: 160px;"
   div data-target="#activity_types-list li:nth-child(1) .pull-right" data-intro="Activity Types can be deactivated or edited" data-position="left" data-tooltip-style="left: -88px; top: -3px; width: 182px;"
-  div data-target=".form-facet-filters" data-intro="Filter Activity Types by selecting multiple criteria" data-position="bottom" data-helper-class="chardinjs-dashed" data-element-class="chardinjs-keep-back" data-tooltip-style="left: 0px; top: 165px; padding: 0px"
+    div data-target=".form-facet-filters" data-intro="Filter Activity Types by selecting multiple criteria" data-position="left" data-helper-class="chardinjs-dashed" data-element-class="chardinjs-keep-back" data-tooltip-style="left: -124px; top: -1px; padding: 0px"
+
   div data-target="#activity_types-list li:nth-child(1) span" data-intro="View the name and short description of the Activity Type" data-position="bottom" data-tooltip-style="left: -80px; top: 110px; width: 280px; max-width: 300px; padding: 0px"
 
   //For show
   div data-target=".padding-top-close-bar h2" data-intro="View the name and short description of the activity type" data-position="right" data-element-class="chardinjs-keep-back" data-tooltip-style="top: -15px; left: 270px; max-width: 270px; width: 263px;"
   div data-target=".links-data" data-intro="Edit or deactivate an activity type by clicking here" data-position="right"  data-tooltip-style="top: -6px; left: 83px; max-width: 230px;"
-  div data-target=".form-wrapper" data-intro="Add fields to the activity type by dragging and dropping from the right panel" data-position="top" data-helper-class="chardinjs-dashed" data-element-class="chardinjs-keep-back" data-tooltip-style="right: -50px; top: -60px; height: 47px; width:337px; max-width:350px;"
+  div data-target=".fields-wrapper" data-intro="Add fields to the activity type by dragging and dropping from the right panel" data-position="left" data-helper-class="chardinjs-dashed" data-element-class="chardinjs-keep-back" data-tooltip-style="right: 288px; top: 106px; height: 47px; width:337px; max-width:350px;"
   div data-target=".activity-form .fields-wrapper" data-intro="Drag and drop any activity type field to set it's position within the new/edit activity form" data-position="left" data-tooltip-style="top: 235px; left: -115px;"
-  div data-target="#save-report" data-intro="Save any changes you have made to the activity type form" data-position="right" data-tooltip-style="top: -15px; left: 117px; width: 200px"
-  div data-target=".form-fields div:nth-child(1)" data-intro="Remove fields from an activity type" data-position="bottom" data-tooltip-style="left: 0px; top: 162px; width: 280px; max-width: 300px"
+  div data-target="#save-report" data-intro="Save any changes you have made to the activity type form" data-position="right" data-tooltip-style="top: -24px; left: 149px; width: 200px"
+    div data-target=".form-fields div:nth-child(1)" data-intro="Remove fields from an activity type" data-position="bottom" data-tooltip-style="left: 0px; top: 162px; width: 280px; max-width: 300px"
+
+  div data-target="#list-tools .btn-primary" data-intro="Click the New Activity Type button to create a new activity type" data-position="right" data-tooltip-style="left: 176px; top: -22px; width: 215px; max-width: 250px;"
+
+  div data-target=".btn-download" data-intro="Export Activity Types to Excel or PDF" data-position="left" data-tooltip-style="left: -135px; top: -7px; width: 215px; max-width: 250px;"
+
+  div data-target=".btn.download" data-intro="Export Activity Type to PDF" data-position="left" data-tooltip-style="left: -135px; top: -7px; width: 215px; max-width: 250px;"
+
+
+  div data-target="#save-filters-btn" data-intro="Save filtering combinations that you regularly use" data-position="left" data-tooltip-style="left: -136px; top: 0px; width: 215px; max-width: 250px;"
+
+
   div data-target=".form-fields div:nth-child(1)" data-intro="Modify settings of any field on the activity type" data-position="right" data-tooltip-style="left: 670px; top: 66px; width: 215px; max-width: 250px;"
-  div data-target=".field-attributes-panel" data-intro=""
+    div data-target=".field-attributes-panel" data-intro=""
 
 javascript:
   $('body').on('chardinJs:start', function(){

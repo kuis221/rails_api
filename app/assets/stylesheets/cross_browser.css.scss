@@ -28,6 +28,11 @@
 			text-decoration: none;
 		}
 	}
+  .user-tag, .user-tag-option{
+    .icon-close {
+      line-height: 24px;
+    }
+  }
 	.btn{
 		&.calendar:after{
 			font-size: 14px;

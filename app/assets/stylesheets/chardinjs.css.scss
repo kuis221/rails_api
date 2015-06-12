@@ -53,11 +53,11 @@
 		padding-left: 21px;
 	}
 	&.chardinjs-inner-top, &.chardinjs-bottom {
-		margin-bottom: -50px;
+		margin-bottom: -65px;
 		padding-top: 10px;
 	}
 	&.chardinjs-top {
-		margin-top: -50px;
+		margin-top: -65px;
 		padding-bottom: 5px;
 	}
 	&.chardinjs-right:before {
@@ -75,7 +75,16 @@
 		display: inline-block;
 		position: absolute;
 	}
-	&.chardinjs-inner-top:before, &.chardinjs-bottom:before {
+  // Same arrow for bottom and top
+
+	&.chardinjs-inner-top:before{
+		content: "\e623" !important;
+		font-family: 'icons';
+		font-size: 60px;
+		display: inline-block;
+		position: absolute;
+	}
+  &.chardinjs-bottom:before {
 		content: "\e620" !important;
 		font-family: 'icons';
 		font-size: 60px;
@@ -83,7 +92,7 @@
 		position: absolute;
 	}
 	&.chardinjs-top:after {
-		content: "\e620" !important;
+		content: "\e623" !important;
 		font-family: 'icons';
 		font-size: 60px;
 		display: inline-block;
