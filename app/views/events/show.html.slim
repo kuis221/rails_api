@@ -11,10 +11,6 @@
 - content_for :footer
   javascript:
     jQuery(function(){
-      $(document).not("#phases-container .phase-container").click(function() {
-        $('#phases-container .phase-container:not(.active)').slideUp()
-      });
-
       $('.event-phase-step .step').tooltip({
         html: true,
         container: this.element,
@@ -36,11 +32,9 @@
       $(window).bind('scroll', function() {
         if (($(window).scrollTop() + $('header').outerHeight()) >  ($('header').outerHeight() + ($('.new-feature').outerHeight() || 0)) ) {
           $('.details-bar').addClass('fixed');
-          // $('#event-info.details_box').css({paddingTop: $('.trackers-bar').outerHeight() + $('.details-bar').outerHeight()});
         }
         else {
           $('.details-bar').removeClass('fixed');
-          // $('#event-info.details_box').css({paddingTop: $('.trackers-bar').outerHeight()});
         }
       })
 

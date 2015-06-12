@@ -23,7 +23,7 @@ javascript:
     }
     var value = $(this).val();
     contactRequest = $.ajax({
-        url: '#{j list_event_contact_events_path(term: 'TERM').html_safe}'.replace('TERM', escape(value)),
+        url: '#{j list_event_contact_events_path(term: 'TERM', form_id: rand(99999)).html_safe}'.replace('TERM', escape(value)),
         success: function(data){
           $('#contacts-list').html(data);
         }

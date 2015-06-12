@@ -467,8 +467,18 @@ describe Api::V1::EventsController, type: :controller do
       expect(response).to be_success
       result = JSON.parse(response.body)
       expect(result).to match_array([
-        { 'id' => users.last.id, 'first_name' => 'Pedro', 'last_name' => 'Guerra', 'full_name' => 'Pedro Guerra', 'role_name' => 'Coach', 'email' => 'pedro@gmail.com', 'phone_number' => '+1000000000', 'street_address' => 'ABC 1', 'unit_number' => '#123 2nd floor', 'city' => 'Curridabat', 'state' => 'SJ', 'zip_code' => '12345', 'time_zone' => 'Pacific Time (US & Canada)', 'country' => 'Costa Rica', 'type' => 'user' },
-        { 'id' => users.first.id, 'first_name' => 'Luis', 'last_name' => 'Perez', 'full_name' => 'Luis Perez', 'role_name' => 'Field Ambassador', 'email' => 'luis@gmail.com', 'phone_number' => '+1000000000', 'street_address' => 'ABC 1', 'unit_number' => '#123 2nd floor', 'city' => 'Curridabat', 'state' => 'SJ', 'zip_code' => '12345', 'time_zone' => 'Pacific Time (US & Canada)', 'country' => 'Costa Rica', 'type' => 'user' }
+        { 'id' => users.last.id, 'first_name' => 'Pedro', 'last_name' => 'Guerra',
+          'full_name' => 'Pedro Guerra', 'role_name' => 'Coach', 'email' => 'pedro@gmail.com',
+          'phone_number' => '+1000000000', 'street_address' => 'ABC 1',
+          'unit_number' => '#123 2nd floor', 'city' => 'Curridabat', 'state' => 'SJ',
+          'zip_code' => '12345', 'time_zone' => 'Pacific Time (US & Canada)',
+          'country' => 'Costa Rica', 'type' => 'user' },
+        { 'id' => users.first.id, 'first_name' => 'Luis', 'last_name' => 'Perez',
+          'full_name' => 'Luis Perez', 'role_name' => 'Field Ambassador',
+          'email' => 'luis@gmail.com', 'phone_number' => '+1000000000', 'street_address' => 'ABC 1',
+          'unit_number' => '#123 2nd floor', 'city' => 'Curridabat', 'state' => 'SJ',
+          'zip_code' => '12345', 'time_zone' => 'Pacific Time (US & Canada)', 'country' => 'Costa Rica',
+          'type' => 'user' }
       ])
     end
 
@@ -552,8 +562,14 @@ describe Api::V1::EventsController, type: :controller do
     let(:event) { create(:event, company: company, campaign: create(:campaign, company: company)) }
     it 'return a list of contacts' do
       contacts = [
-        create(:contact, first_name: 'Luis', last_name: 'Perez', email: 'luis@gmail.com', street1: 'ABC', street2: '1', zip_code: 12_345, title: 'Field Ambassador'),
-        create(:contact, first_name: 'Pedro', last_name: 'Guerra', email: 'pedro@gmail.com', street1: 'ABC', street2: '1', zip_code: 12_345, title: 'Coach')
+        create(:contact, first_name: 'Luis', last_name: 'Perez', email: 'luis@gmail.com',
+                         street1: 'ABC', street2: '1', zip_code: 12_345,
+                         city: 'Leon', country: 'MX', state: 'GUA',
+                         title: 'Field Ambassador', company_name: 'Tres Patitos Inc'),
+        create(:contact, first_name: 'Tony', last_name: 'Stark', email: 'tony@starkindustries.com',
+                         city: 'Los Angeles', country: 'US', state: 'CA',
+                         street1: 'ABC', street2: '1', zip_code: 23_222,
+                         title: 'CEO', company_name: 'Stark Industries')
       ]
       create(:contact_event, event: event, contactable: contacts.first)
       create(:contact_event, event: event, contactable: contacts.last)
@@ -563,8 +579,19 @@ describe Api::V1::EventsController, type: :controller do
       result = JSON.parse(response.body)
 
       expect(result).to match_array([
-        { 'id' => contacts.first.id, 'first_name' => 'Luis', 'last_name' => 'Perez', 'full_name' => 'Luis Perez', 'title' => 'Field Ambassador', 'email' => 'luis@gmail.com', 'phone_number' => '344-23333', 'street1' => 'ABC', 'street2' => '1', 'street_address' => 'ABC, 1', 'city' => 'Hollywood', 'state' => 'CA', 'zip_code' => '12345', 'country' => 'US', 'country_name' => 'United States', 'type' => 'contact' },
-        { 'id' => contacts.last.id, 'first_name' => 'Pedro', 'last_name' => 'Guerra', 'full_name' => 'Pedro Guerra', 'title' => 'Coach', 'email' => 'pedro@gmail.com', 'phone_number' => '344-23333', 'street1' => 'ABC', 'street2' => '1', 'street_address' => 'ABC, 1', 'city' => 'Hollywood', 'state' => 'CA', 'zip_code' => '12345', 'country' => 'US', 'country_name' => 'United States', 'type' => 'contact' }
+        { 'id' => contacts.first.id, 'first_name' => 'Luis', 'last_name' => 'Perez',
+          'full_name' => 'Luis Perez', 'title' => 'Field Ambassador',
+          'company_name' => 'Tres Patitos Inc', 'email' => 'luis@gmail.com',
+          'phone_number' => '344-23333', 'street1' => 'ABC', 'street2' => '1',
+          'street_address' => 'ABC, 1', 'city' => 'Leon', 'state' => 'GUA',
+          'zip_code' => '12345', 'country' => 'MX', 'country_name' => 'Mexico',
+          'type' => 'contact' },
+        { 'id' => contacts.last.id, 'first_name' => 'Tony', 'last_name' => 'Stark',
+          'full_name' => 'Tony Stark', 'title' => 'CEO', 'company_name' => 'Stark Industries',
+          'email' => 'tony@starkindustries.com', 'phone_number' => '344-23333', 'street1' => 'ABC',
+          'street2' => '1', 'street_address' => 'ABC, 1', 'city' => 'Los Angeles', 'state' => 'CA',
+          'zip_code' => '23222', 'country' => 'US', 'country_name' => 'United States',
+          'type' => 'contact' }
       ])
     end
 
@@ -577,14 +604,25 @@ describe Api::V1::EventsController, type: :controller do
       result = JSON.parse(response.body)
 
       expect(result).to match_array([
-        { 'id' => company_user.id, 'first_name' => 'Test', 'last_name' => 'User', 'full_name' => 'Test User', 'role_name' => 'Super Admin', 'email' => user.email, 'phone_number' => '+1000000000', 'street_address' => 'Street Address 123', 'unit_number' => 'Unit Number 456', 'city' => 'Curridabat', 'state' => 'SJ', 'zip_code' => '90210', 'time_zone' => 'Pacific Time (US & Canada)', 'country' => 'Costa Rica', 'type' => 'user' }
+        { 'id' => company_user.id, 'first_name' => 'Test', 'last_name' => 'User',
+          'full_name' => 'Test User', 'role_name' => 'Super Admin', 'email' => user.email,
+          'phone_number' => '+1000000000', 'street_address' => 'Street Address 123',
+          'unit_number' => 'Unit Number 456', 'city' => 'Curridabat', 'state' => 'SJ',
+          'zip_code' => '90210', 'time_zone' => 'Pacific Time (US & Canada)',
+          'country' => 'Costa Rica', 'type' => 'user' }
       ])
     end
 
     it 'return a mixed list of contacts and users', :show_in_doc do
       contacts = [
-        create(:contact, first_name: 'Luis', last_name: 'Perez', email: 'luis@gmail.com', street1: 'ABC', street2: '1', zip_code: 12_345, title: 'Field Ambassador'),
-        create(:contact, first_name: 'Pedro', last_name: 'Guerra', email: 'pedro@gmail.com', street1: 'ABC', street2: '1', zip_code: 12_345, title: 'Coach')
+        create(:contact, first_name: 'Luis', last_name: 'Perez',
+                         email: 'luis@gmail.com', street1: 'ABC', street2: '1',
+                         company_name: 'Internet Inc', city: 'Hollywood', state: 'CA',
+                         zip_code: 12_345, title: 'Field Ambassador'),
+        create(:contact, first_name: 'Pedro', last_name: 'Guerra',
+                         email: 'pedro@gmail.com', street1: 'ABC', street2: '1',
+                         company_name: 'Cable Inc', city: 'Hollywood', state: 'CA',
+                         zip_code: 12_345, title: 'Coach')
       ]
       create(:contact_event, event: event, contactable: contacts.first)
       create(:contact_event, event: event, contactable: contacts.last)
@@ -602,9 +640,26 @@ describe Api::V1::EventsController, type: :controller do
       result = JSON.parse(response.body)
 
       expect(result).to match_array([
-        { 'id' => company_user.id, 'first_name' => 'Albert', 'last_name' => 'Einstain', 'full_name' => 'Albert Einstain', 'role_name' => 'Physicist', 'email' => 'albert@einstain.com', 'phone_number' => '+1000000000', 'street_address' => 'Street Address 123', 'unit_number' => 'Unit Number 456', 'city' => 'Ulm', 'state' => 'BW', 'zip_code' => '90210', 'time_zone' => 'Pacific Time (US & Canada)', 'country' => 'Germany', 'type' => 'user'  },
-        { 'id' => contacts.first.id, 'first_name' => 'Luis', 'last_name' => 'Perez', 'full_name' => 'Luis Perez', 'title' => 'Field Ambassador', 'email' => 'luis@gmail.com', 'phone_number' => '344-23333', 'street1' => 'ABC', 'street2' => '1', 'street_address' => 'ABC, 1', 'city' => 'Hollywood', 'state' => 'CA', 'zip_code' => '12345', 'country' => 'US', 'country_name' => 'United States', 'type' => 'contact' },
-        { 'id' => contacts.last.id, 'first_name' => 'Pedro', 'last_name' => 'Guerra', 'full_name' => 'Pedro Guerra', 'title' => 'Coach', 'email' => 'pedro@gmail.com', 'phone_number' => '344-23333', 'street1' => 'ABC', 'street2' => '1', 'street_address' => 'ABC, 1', 'city' => 'Hollywood', 'state' => 'CA', 'zip_code' => '12345', 'country' => 'US', 'country_name' => 'United States', 'type' => 'contact' }
+        { 'id' => company_user.id, 'first_name' => 'Albert', 'last_name' => 'Einstain',
+          'full_name' => 'Albert Einstain', 'role_name' => 'Physicist',
+          'email' => 'albert@einstain.com', 'phone_number' => '+1000000000',
+          'street_address' => 'Street Address 123', 'unit_number' => 'Unit Number 456',
+          'city' => 'Ulm', 'state' => 'BW', 'zip_code' => '90210',
+          'time_zone' => 'Pacific Time (US & Canada)', 'country' => 'Germany',
+          'type' => 'user'  },
+        { 'id' => contacts.first.id, 'first_name' => 'Luis', 'last_name' => 'Perez',
+          'full_name' => 'Luis Perez', 'company_name' => 'Internet Inc',
+          'title' => 'Field Ambassador', 'email' => 'luis@gmail.com',
+          'phone_number' => '344-23333', 'street1' => 'ABC', 'street2' => '1',
+          'street_address' => 'ABC, 1', 'city' => 'Hollywood', 'state' => 'CA',
+          'zip_code' => '12345', 'country' => 'US', 'country_name' => 'United States',
+          'type' => 'contact' },
+        { 'id' => contacts.last.id, 'first_name' => 'Pedro', 'last_name' => 'Guerra',
+          'full_name' => 'Pedro Guerra', 'company_name' => 'Cable Inc', 'title' => 'Coach',
+          'email' => 'pedro@gmail.com', 'phone_number' => '344-23333', 'street1' => 'ABC',
+          'street2' => '1', 'street_address' => 'ABC, 1', 'city' => 'Hollywood',
+          'state' => 'CA', 'zip_code' => '12345', 'country' => 'US',
+          'country_name' => 'United States', 'type' => 'contact' }
       ])
     end
   end
@@ -613,8 +668,16 @@ describe Api::V1::EventsController, type: :controller do
     let(:event) { create(:event, company: company, campaign: create(:campaign, company: company)) }
     it 'return a list of users that are not assined to the event' do
       users = [
-        create(:company_user, user: create(:user, first_name: 'Luis', last_name: 'Perez', email: 'luis@gmail.com', street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12_345), role: create(:role, name: 'Field Ambassador', company: company), company: company),
-        create(:company_user, user: create(:user, first_name: 'Pedro', last_name: 'Guerra', email: 'pedro@gmail.com', street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12_345), role: create(:role, name: 'Coach', company: company), company: company)
+        create(:company_user, user: create(:user, first_name: 'Luis', last_name: 'Perez',
+                                                  email: 'luis@gmail.com', street_address: 'ABC 1',
+                                                  unit_number: '#123 2nd floor', zip_code: 12_345),
+                              role: create(:role, name: 'Field Ambassador', company: company),
+                              company: company),
+        create(:company_user, user: create(:user, first_name: 'Pedro', last_name: 'Guerra',
+                                                  email: 'pedro@gmail.com', street_address: 'ABC 1',
+                                                  unit_number: '#123 2nd floor', zip_code: 12_345),
+                              role: create(:role, name: 'Coach', company: company),
+                              company: company)
       ]
 
       event.users << user.company_users.first
@@ -683,13 +746,15 @@ describe Api::V1::EventsController, type: :controller do
     let(:event) { create(:event, company: company, campaign: create(:campaign, company: company)) }
 
     it 'should remove a member (type = user) from the event', :show_in_doc do
-      member_to_delete = create(:company_user, user: create(:user, first_name: 'Test', last_name: 'User', email: 'pedro@gmail.com', street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12_345), role: create(:role, name: 'Coach', company: company), company: company)
+      member_to_delete = create(:company_user, company: company)
       another_member = create(:team, name: 'A team', description: 'team 1 description')
       event.users << member_to_delete
       event.teams << another_member
 
       expect do
-        delete :delete_member, id: event.to_param, memberable_id: member_to_delete.id, memberable_type: 'user', format: :json
+        delete :delete_member, id: event.to_param,
+                               memberable_id: member_to_delete.id, memberable_type: 'user',
+                               format: :json
       end.to change(Membership, :count).by(-1)
       event.reload
       expect(event.users).to be_empty
@@ -698,17 +763,21 @@ describe Api::V1::EventsController, type: :controller do
       expect(response).to be_success
       expect(response.response_code).to eq(200)
       result = JSON.parse(response.body)
-      expect(result).to eq('success' => true, 'info' => 'Member successfully deleted from event', 'data' => {})
+      expect(result).to eq('success' => true,
+                           'info' => 'Member successfully deleted from event',
+                           'data' => {})
     end
 
     it 'should remove a member (type = team) from the event', :show_in_doc do
-      member_to_delete = create(:team, name: 'A team', description: 'team 1 description')
-      another_member = create(:company_user, user: create(:user, first_name: 'Test', last_name: 'User', email: 'pedro@gmail.com', street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12_345), role: create(:role, name: 'Coach', company: company), company: company)
+      member_to_delete = create(:team, company: company)
+      another_member = create(:company_user, company: company)
       event.users << another_member
       event.teams << member_to_delete
 
       expect do
-        delete :delete_member, id: event.to_param, memberable_id: member_to_delete.id, memberable_type: 'team', format: :json
+        delete :delete_member, id: event.to_param,
+                               memberable_id: member_to_delete.id,
+                               memberable_type: 'team', format: :json
       end.to change(Teaming, :count).by(-1)
       event.reload
       expect(event.users).to match_array([another_member])
@@ -717,14 +786,17 @@ describe Api::V1::EventsController, type: :controller do
       expect(response).to be_success
       expect(response.response_code).to eq(200)
       result = JSON.parse(response.body)
-      expect(result).to eq('success' => true, 'info' => 'Member successfully deleted from event', 'data' => {})
+      expect(result).to eq('success' => true,
+                           'info' => 'Member successfully deleted from event',
+                           'data' => {})
     end
 
     it 'return 404 if the member is not found' do
-      member = create(:company_user, user: create(:user, first_name: 'Test', last_name: 'User', email: 'pedro@gmail.com', street_address: 'ABC 1', unit_number: '#123 2nd floor', zip_code: 12_345), role: create(:role, name: 'Coach', company: company), company: company)
+      member = create(:company_user, company: company)
 
       expect do
-        delete :delete_member, id: event.to_param, memberable_id: member.id, memberable_type: 'user', format: :json
+        delete :delete_member, id: event.to_param, memberable_id: member.id,
+                               memberable_type: 'user', format: :json
       end.to_not change(Membership, :count)
       event.reload
       expect(event.users).to eq([])
@@ -733,7 +805,8 @@ describe Api::V1::EventsController, type: :controller do
       expect(response).not_to be_success
       expect(response.response_code).to eq(404)
       result = JSON.parse(response.body)
-      expect(result).to eq('success' => false, 'info' => 'Record not found', 'data' => {})
+      expect(result).to eq('success' => false,
+                           'info' => 'Record not found', 'data' => {})
     end
   end
 

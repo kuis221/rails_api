@@ -60,6 +60,13 @@ describe EventsController, type: :controller do
           expect(response).not_to render_template('show_results')
           expect(response).not_to render_template('edit_results')
         end
+
+        it 'sets the flash message after activities have been created' do
+          activity_type = create(:activity_type, name: 'POS Drop', company: company, campaigns: [event.campaign])
+          session["activity_create_123"] = 3
+          get 'show', id: event.id, activity_form: 123, activity_type_id: activity_type.id
+          expect(flash[:event_message_success]).to eql 'Nice work. 3 POS Drop activities have been added.'
+        end
       end
 
       describe 'for an event in the past' do

@@ -22,7 +22,7 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
       param :category, String, required: true,
                                desc: 'Event expense category, should be one of '\
                                      'the category allowed categories, see '\
-                                     '/events/:id/event_expenses/catetories'
+                                     '/api/v1/campaigns/:id/expense_catetories'
       param :expense_date, %r{\A\d{1,2}/\d{1,2}/\d{4}\z}, required: true, desc: 'Event date. Must be in format MM/DD/YYYY.'
       param :amount, String, required: true, desc: 'Event expense amount. Must be a number greater than 0'
       param :brand_id, String, required: false, desc: 'A valid brand id'
@@ -67,6 +67,7 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
   api :POST, '/api/v1/events/:event_id/event_expenses', 'Create a new event expense'
   param :event_id, :number, required: true, desc: 'Event ID'
   param_group :event_expense
+  see 'campaigns#expense_categories'
   description <<-EOS
   Allows to attach an expense file to the event. The expense file should first be uploaded to Amazon S3 using the
   method described in this article[http://aws.amazon.com/articles/1434]. Once uploaded to S3, the resulting
@@ -80,6 +81,28 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
   EOS
   def create
     create! do |success, failure|
+      success.json { render :show }
+      failure.json { render json: resource.errors }
+    end
+  end
+
+  api :PUT, '/api/v1/events/:event_id/event_expenses/:id', 'Update a expense'
+  param :event_id, :number, required: true, desc: 'Event ID'
+  param_group :event_expense
+  see 'campaigns#expense_categories'
+  description <<-EOS
+  Allows to attach an expense file to the event. The expense file should first be uploaded to Amazon S3 using the
+  method described in this article[http://aws.amazon.com/articles/1434]. Once uploaded to S3, the resulting
+  URL should be submitted to this method and the expense file will be attached to the event. Because the expense file is
+  generated asynchronously, the thumbnails are not inmediately available.
+
+  The format of the URL should be in the form: *https*://s3.amazonaws.com/<bucket_name>/uploads/<folder>/filename where:
+
+  * *bucket_name*: brandscopic-stage
+  * *folder*: the folder name where the photo was uploaded to
+  EOS
+  def update
+    update! do |success, failure|
       success.json { render :show }
       failure.json { render json: resource.errors }
     end

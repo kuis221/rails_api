@@ -58,7 +58,7 @@ describe Api::V1::EventExpensesController, type: :controller do
     end
   end
 
-  describe "POST 'create'", strategy: :deletion do
+  describe "POST 'create'", show_in_doc: true do
     let(:event) { create(:approved_event, company: company, campaign: campaign, place: place) }
     it 'create an expense and queue a job for processing the attached expense file', :show_in_doc do
       s3object = double
@@ -92,6 +92,22 @@ describe Api::V1::EventExpensesController, type: :controller do
       expect(expense.receipt.asset_type).to eq(nil)
       expect(expense.receipt.direct_upload_url).to eq('https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg')
       expect(AssetsUploadWorker).to have_queued(expense.receipt.id, 'AttachedAsset')
+    end
+  end
+
+  describe "PUT 'update'", show_in_doc: true do
+    let(:event) { create(:event, company: company, campaign: campaign) }
+    let(:expense) { create(:event_expense, event: event) }
+
+    it 'returns the required information', :show_in_doc do
+      put :update, event_id: event.to_param, id: expense.id, event_expense: {
+        category: 'Transportation', expense_date: '01/02/2014'
+      }, format: :json
+
+      expect(response).to be_success
+      expense.reload
+      expect(expense.category).to eq('Transportation')
+      expect(expense.expense_date.to_s(:slashes)).to eq('01/02/2014')
     end
   end
 

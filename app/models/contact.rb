@@ -19,6 +19,7 @@
 #  updated_at    :datetime         not null
 #  created_by_id :integer
 #  updated_by_id :integer
+#  company_name  :string(255)
 #
 
 class Contact < ActiveRecord::Base

@@ -154,6 +154,7 @@ module Html
       step_last_id = steps.last[:id]
       current_phase_index = phases[:phases].keys.index(phases[:current_phase])
       steps.map do |step|
+        next if step.key?(:if) && !h.instance_exec(@model, &step[:if])
         button = h.content_tag(:div,
                                 class: "step #{'last-step' if step_last_id == step[:id]} #{'pending' unless step[:complete]}",
                                 data: { toggle: 'tooltip',
@@ -170,13 +171,18 @@ module Html
 
     def step_link(phase, step, content, linked)
       url = target = "#event-#{step[:id]}"
-      url = h.phase_event_path(@model, phase: phase) + target unless phase == current_phase
-      h.link_to_if linked, content, url,
-                 class: 'smooth-scroll event-phase-step',
-                 data: { message: guided_message(phase, step),
-                         message_color: 'blue',
-                         spytarget: target,
-                        }
+      url = h.phase_event_path(@model, phase: phase, return: h.return_path) + target unless phase == current_phase
+      h.link_to_if(linked, content, url,
+                   class: 'smooth-scroll event-phase-step',
+                   data: { message: guided_message(phase, step),
+                           message_color: 'blue'
+                         }.merge(phase == current_phase ? { spytarget: target } : {})) do
+        if phase == :execute
+          h.link_to content, '#', class: 'event-phase-step', data: { message: guided_message_presenter.locked_in_phase_plan_message, message_color: 'blue' }
+        else
+          content
+        end
+      end
     end
 
     def render_nav_phases
@@ -198,11 +204,10 @@ module Html
           (if completed
              h.content_tag(:div, '', class: 'icon-check-circle')
            else
-             h.content_tag(:span, class: 'id') do
-              "#{i + 1}#{icon(:lock) if i > index_phase}".html_safe
-             end
+             phase_number = "#{i + 1}#{icon(:lock) if i > index_phase}".html_safe
+             h.content_tag(:span, phase_number.html_safe, class: 'id')
            end) + phase[0].upcase
-        end, h.phase_event_path(@model, phase: phase[0])) + phase_steps(phase[0], i, phase[1])
+        end, h.phase_event_path(@model, phase: phase[0], return: h.return_path)) + phase_steps(phase[0], i, phase[1])
     end
 
     def phase_buttons(phase)

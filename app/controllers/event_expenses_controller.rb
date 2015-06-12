@@ -25,7 +25,7 @@ class EventExpensesController < InheritedResources::Base
     return true unless parent.campaign.range_module_settings?('expenses')
     max = parent.campaign.module_setting('expenses', 'range_max')
     unless max.blank? || parent.event_expenses.count < max.to_i
-      resource.errors.add(:base, I18n.translate('instructive_messages.execute.expense.add_exceeded.new', expenses_max: max))
+      resource.errors.add(:base, I18n.translate('instructive_messages.execute.expense.add_exceeded.new', count: max.to_i))
     end
   end
 
