@@ -60,7 +60,7 @@ class ContactEventsController < InheritedResources::Base
         :id, :contactable_id, :contactable_type,
         { contactable_attributes: [
           :id, :street1, :street2, :city, :company_id, :country, :email, :first_name,
-          :last_name, :phone_number, :state, :title, :zip_code] }])[:contact_event]
+          :last_name, :phone_number, :state, :company_name, :title, :zip_code] }])[:contact_event]
   end
 
   def modal_dialog_title

@@ -7,18 +7,20 @@ describe Api::V1::ContactsController, type: :controller do
 
   before { set_api_authentication_headers user, company }
 
-  describe "GET 'index'" do
+  describe "GET 'index'", :show_in_doc do
     it 'returns the current user in the results' do
-      contact.reload
+      contact
+      create(:contact, company: company)
       get :index, format: :json
       expect(response).to be_success
-      result = JSON.parse(response.body)
-      expect(result).to eq([{
+      expect(json.count).to eql 2
+      expect(json.find { |c| c['id'] == contact.id }).to eq({
         'id' => contact.id,
         'first_name' => contact.first_name,
         'last_name' => contact.last_name,
         'full_name' => contact.full_name,
         'title' => contact.title,
+        'company_name' => contact.company_name,
         'email' => contact.email,
         'street1' => contact.street1,
         'street2' => contact.street2,
@@ -28,12 +30,12 @@ describe Api::V1::ContactsController, type: :controller do
         'state' => contact.state,
         'zip_code' => contact.zip_code,
         'country' => contact.country,
-        'country_name' => contact.country_name }])
+        'country_name' => contact.country_name })
     end
   end
 
   describe "GET 'show'" do
-    it 'should return the contact details' do
+    it 'should return the contact details', :show_in_doc do
       get 'show', id: contact.id, format: :json
       expect(response).to render_template('show')
       result = JSON.parse(response.body)
@@ -49,7 +51,7 @@ describe Api::V1::ContactsController, type: :controller do
   end
 
   describe '#create' do
-    it 'should create a new contact' do
+    it 'should create a new contact', :show_in_doc do
       expect do
         post :create, contact: {
           first_name: 'Juanito',
@@ -132,17 +134,19 @@ describe Api::V1::ContactsController, type: :controller do
 
   describe "PUT 'update'" do
     let(:contact) { create(:contact, company: company) }
-    it 'must update the event attributes' do
+    it 'must update the event attributes', :show_in_doc do
       put 'update', id: contact.to_param, contact: {
-        first_name: 'Updated Name',
-        last_name: 'Updated Last Name'
+        first_name: 'William',
+        last_name: 'Blake',
+        company_name: 'ACME',
       }, format: :json
       expect(assigns(:contact)).to eq(contact)
       expect(response).to be_success
 
       contact.reload
-      expect(contact.first_name).to eq('Updated Name')
-      expect(contact.last_name).to eq('Updated Last Name')
+      expect(contact.first_name).to eq('William')
+      expect(contact.last_name).to eq('Blake')
+      expect(contact.company_name).to eq('ACME')
     end
   end
 end

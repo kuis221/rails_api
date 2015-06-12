@@ -11,15 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150518215142) do
+ActiveRecord::Schema.define(version: 20150612020013) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "tablefunc"
   enable_extension "plpgsql"
   enable_extension "hstore"
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
   enable_extension "postgis"
-  enable_extension "tablefunc"
 
   create_table "active_admin_comments", force: true do |t|
     t.string   "resource_id",   null: false
@@ -350,6 +350,7 @@ ActiveRecord::Schema.define(version: 20150518215142) do
     t.datetime "updated_at",    null: false
     t.integer  "created_by_id"
     t.integer  "updated_by_id"
+    t.string   "company_name"
   end
 
   create_table "custom_filters", force: true do |t|

@@ -27,6 +27,8 @@ en:
         text: 'Name'
       event_expense:
         expense_date: 'Date'
+      contact:
+        company_name: 'Company'
       invite:
         invitees: '# Invites'
         rsvps_count: '# RSVPs'
