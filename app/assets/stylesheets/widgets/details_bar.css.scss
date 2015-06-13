@@ -5,6 +5,8 @@
 $detail-bar-height: 40px;
 $back-arrow-width: 38px;
 $phase-height: 66px;
+$phase-id-width: 70px;
+$phase-actions-width: 200px;
 
 
 .with-login-as-bar{
@@ -214,6 +216,26 @@ $phase-height: 66px;
       }
     }
   }
+
+
+  &.steps-1 .step {
+    width: calc(100% - #{$phase-id-width + $phase-actions-width}/4);
+  }
+  &.steps-2 .step {
+    width: calc(50% - #{$phase-id-width + $phase-actions-width}/4);
+  }
+  &.steps-3 .step {
+    width: calc(33.3% - #{$phase-id-width + $phase-actions-width}/4);
+  }
+  &.steps-4 .step {
+    width: calc(25% - #{$phase-id-width + $phase-actions-width}/4);
+  }
+  &.steps-5 .step {
+    width: calc(20% - #{$phase-id-width + $phase-actions-width}/4);
+  }
+  &.steps-6 .step {
+    width: calc(16.6% - #{$phase-id-width + $phase-actions-width}/4);
+  }
   .step{
     box-sizing: border-box;
     font-weight: bold;
@@ -221,14 +243,14 @@ $phase-height: 66px;
     height: $phase-height;
     padding: 17px 0;
     text-align: center;
-    width: 8.333%;
+    max-width: 400px;
     &.phase-id{
       background-color: $phase-bg;
       color: $gray-light;
       line-height: 32px;
       padding-top: 12px;
       font-size: 12px;
-      width: 70px;
+      width: $phase-id-width;
       &.active{
         .id{
           background-color: $gray-light;
@@ -279,7 +301,7 @@ $phase-height: 66px;
       float: right;
       padding: 10px 2px 0 0;
       position: relative;
-      width: auto;
+      width: $phase-actions-width;
       .status-indicator{
         color: $gray-light;
         bottom: 5px;

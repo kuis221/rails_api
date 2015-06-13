@@ -152,8 +152,6 @@ module Html
       return if steps.nil? || steps.empty?
       current_phase_index = phases[:phases].keys.index(phases[:current_phase])
       steps.map do |step|
-        next if step.key?(:if) && !h.instance_exec(@model, &step[:if])
-
         button = h.content_tag(:div,
                                 class: phase_step_clasess(step, steps.last[:id], steps.first[:id]),
                                 data: { toggle: 'tooltip',
@@ -193,11 +191,23 @@ module Html
       end
     end
 
+    def phases_with_accessible_steps
+      phases[:phases].map do |phase_name, steps|
+        [phase_name, user_accessible_steps(steps)]
+      end
+    end
+
+    def user_accessible_steps(steps)
+      steps.select { |s| !s.key?(:if) || h.instance_exec(@model, &s[:if]) }
+    end
+
     def render_nav_phases
       return if phases.nil?
+      event_phases = phases_with_accessible_steps
+      max_steps = event_phases.map { |p| p[1].count }.max
       current_phase_index = phases[:phases].keys.index(current_phase)
-      phases[:phases].each_with_index.map do |phase, i|
-        h.content_tag(:div, class: "phase-container #{i == current_phase_index ? 'active' : 'hide'}") do
+      event_phases.each_with_index.map do |phase, i|
+        h.content_tag(:div, class: "phase-container steps-#{max_steps} #{i == current_phase_index ? 'active' : 'hide'}") do
           render_nav_phase(phase, i) + phase_buttons(phase)
         end
       end.join.html_safe
