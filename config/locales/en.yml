@@ -27,6 +27,8 @@ en:
         text: 'Name'
       event_expense:
         expense_date: 'Date'
+      contact:
+        company_name: 'Company'
       invite:
         invitees: '# Invites'
         rsvps_count: '# RSVPs'
@@ -702,22 +704,32 @@ en:
       max: 'No more than %{range_max} comments can be captured for this event.'
 
   incomplete_execute_steps:
-    per: '<a class="step-skip-link smooth-scroll" data-spyignore="ignore" href="#event-per">fill out your post event recap</a>'
-    activities: '<a class="step-skip-link smooth-scroll" data-spyignore="ignore" href="#event-activities">create activities</a>'
-    attendance: '<a class="step-skip-link smooth-scroll" data-spyignore="ignore" href="#event-attendance">report attendance</a>'
-    photos: '<a class="step-skip-link smooth-scroll" data-spyignore="ignore" href="#event-photos">upload photos</a>'
-    expenses: '<a class="step-skip-link smooth-scroll" data-spyignore="ignore" href="#event-expenses">create expenses</a>'
-    comments: '<a class="step-skip-link smooth-scroll" data-spyignore="ignore" href="#event-comments">capture consumer comments</a>'
-    surveys: '<a class="step-skip-link smooth-scroll" data-spyignore="ignore" href="#event-surveys">create surveys</a>'
+    per:
+      edit: 'complete your Post Event Recap'
+      read_only: 'view your Post Event Recap'
+    activities:
+      edit: 'create event activities'
+      read_only: 'view event activities'
+    photos:
+      edit: 'upload event photos'
+      read_only: 'view event photos'
+    expenses:
+      edit: 'log event expenses'
+      read_only: 'view event expenses'
+    comments:
+      edit: 'add consumer comments'
+      read_only: 'view consumer comments'
 
   instructive_messages:
     plan:
-      still: 'You are still in the planning phase of your event. Check back on %{event_start_date} to %{event_action}.'
+      still: 'You are still in the planning phase of your event. Check back on %{date} to %{actions}.'
       contact:
         add: 'Do you want to keep track of any contacts? This is optional.'
         empty: 'There are not any contacts to view for this event'
         details: 'View the details of event contacts below'
-        added: 'Good work. %{contacts_count} contacts have been added.'
+        added:
+          one: 'Good work. One contact have been added.'
+          other: 'Good work. %{count} contacts have been added.'
         added_more: '%{contacts_count} contacts have been added. Would you like to include more?'
         removed: '%{contact_full_name} has been removed from the event contacts'
       task:
@@ -751,7 +763,9 @@ en:
       activity:
         add: 'Do you have any activities to add? This is optional.'
         empty: 'There are no activities to view at this time'
-        added: 'Nice work. %{activities_count} %{activity_type} activities have been added.'
+        added: 
+          one: 'Nice work. One %{activity_type} activity has been added.'
+          other: 'Nice work. %{count} %{activity_type} activities have been added.'
         added_more: '%{activities_count} activities have been added. Would you like to add more?'
         deactivated: 'Your %{activity_type} activity has been deactivated'
         view: 'View your event activities below'
@@ -804,7 +818,9 @@ en:
           other: 'Do you have expenses to add? No more than %{count} expenses can be logged for this event.'
         add_min_max: 'Do you have expenses to add? Between %{min} and %{max} expenses are required.'
         add_exceeded:
-          new: 'Sorry. No more than %{expenses_max} expenses can be logged for this event.'
+          new: 
+            one: 'Sorry. No more than one expense can be logged for this event.'
+            other: 'Sorry. No more than %{count} expenses can be logged for this event.'
           create:
             one: 'Sorry. No more than %{count} expenses can be logged for this event. Your expense was not saved.'
             other: 'Sorry. No more than %{count} expenses can be logged for this event. Your expense was not saved.'
@@ -821,7 +837,8 @@ en:
     results:
       approved: 'Nice! Your event has been Approved.'
       rejected: 'Thanks. The event has been Rejected and the event team has been notified.'
-      rejected_info: 'Your event has been rejected %{rejected_at} for the following reason(s): %{reject_reason}. Please make the necessary updates and resubmit.'
+      rejected_info: 'Your event has been rejected %{rejected_at} for the following reason(s): <span class="reject-reason">"%{reject_reason}"</span>'
+      unapprove: 'Your event have been Unapproved.'
       approve_per:
         can_approve: 'Your post event report has been submitted for approval %{submitted_at}. %{rejection_message}. Please review and either approve or reject.'
         cannot_approve: 'Your post event report has been submitted for approval #{submitted_at}. Once your report has been reviewed you will be alerted in your notifications.'

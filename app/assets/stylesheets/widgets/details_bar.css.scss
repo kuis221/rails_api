@@ -5,6 +5,8 @@
 $detail-bar-height: 40px;
 $back-arrow-width: 38px;
 $phase-height: 66px;
+$phase-id-width: 70px;
+$phase-actions-width: 200px;
 
 
 .with-login-as-bar{
@@ -21,7 +23,7 @@ $phase-height: 66px;
   display: block;
   position: absolute;
   width: 100%;
-  z-index: 2;
+  z-index: 4;
   text-align: center;
   .alert-inner {
     display: table;
@@ -34,6 +36,7 @@ $phase-height: 66px;
     font-weight: normal;
     line-height: 20px;
     margin: 0;
+    font-size: 16px;
   }
   .alert-secondary-text{
     color: $btn-red-hover;
@@ -51,6 +54,12 @@ $phase-height: 66px;
     position: absolute;
     right: 10px;
     top: 10px;
+    font-size: 16px;
+  }
+  .reject-reason {
+    display: block;
+    color: $red-dark;
+    font-size: 14px;
   }
 }
 
@@ -105,9 +114,6 @@ $phase-height: 66px;
 			padding: 9px 0 0 20px;
 			height: 40px;
 		}
-    &.view-indicator a{
-      font-size: 12px;
-    }
 	}
 	.back-arrow{
 		box-sizing: border-box;
@@ -203,28 +209,48 @@ $phase-height: 66px;
     .step{
       &:not(.phase-id){
         color: $primary-blue;
-        .active-circle:before{
-          content:"\2022";
-          font-size: 40px;
-          line-height: 12px;
+        .icon-circle:before, .icon-check-circle:before {
+          background-color: $primary-blue;
+          border-radius: 10px;
         }
       }
     }
   }
+
+
+  &.steps-1 .step {
+    width: calc(100% - #{$phase-id-width + $phase-actions-width}/4);
+  }
+  &.steps-2 .step {
+    width: calc(50% - #{$phase-id-width + $phase-actions-width}/4);
+  }
+  &.steps-3 .step {
+    width: calc(33.3% - #{$phase-id-width + $phase-actions-width}/4);
+  }
+  &.steps-4 .step {
+    width: calc(25% - #{$phase-id-width + $phase-actions-width}/4);
+  }
+  &.steps-5 .step {
+    width: calc(20% - #{$phase-id-width + $phase-actions-width}/4);
+  }
+  &.steps-6 .step {
+    width: calc(16.6% - #{$phase-id-width + $phase-actions-width}/4);
+  }
   .step{
     box-sizing: border-box;
-    font-size: 13px;
     font-weight: bold;
     float: left;
     height: $phase-height;
     padding: 17px 0;
     text-align: center;
-    width: 8.333%;
+    max-width: 400px;
     &.phase-id{
       background-color: $phase-bg;
       color: $gray-light;
       line-height: 32px;
       padding-top: 12px;
+      font-size: 12px;
+      width: $phase-id-width;
       &.active{
         .id{
           background-color: $gray-light;
@@ -236,6 +262,10 @@ $phase-height: 66px;
         position: absolute;
         top: -3px;
         right: -8px;
+        &:before {
+          top: -1px;
+          left: 1px;
+        }
       }
       .icon-check-circle{
         font-size: 22px;
@@ -254,6 +284,12 @@ $phase-height: 66px;
         position: relative;
       }
     }
+    &.locked {
+      color: $gray-lighter;
+      .id {
+        border-color: $gray-lighter
+      }
+    }
     &:not(.phase-id){
       color: $gray;
       font-size: 11px;
@@ -265,7 +301,8 @@ $phase-height: 66px;
       float: right;
       padding: 10px 2px 0 0;
       position: relative;
-      width: auto;
+      width: $phase-actions-width;
+      text-align: right;
       .status-indicator{
         color: $gray-light;
         bottom: 5px;
@@ -302,6 +339,13 @@ $phase-height: 66px;
         }
       }
     }
+    &.first-step{
+      .icon-connect{
+        &:before{
+          display:none;
+        }
+      }
+    }
     &.last-step{
       .icon-connect{
         &:after{
@@ -313,7 +357,7 @@ $phase-height: 66px;
       position: relative;
       &:before, &:after{
         content:"";
-        width: 43%;
+        width: calc(50% - 7px);
         border-bottom: solid 1px $gray-light;
         position: absolute;
         top: 50%;
@@ -329,6 +373,8 @@ $phase-height: 66px;
     .icon-check-circle, .icon-circle{
       display:block;
       font-size: 16px;
+      z-index: 2;
+      position: relative;
     }
   }
 }

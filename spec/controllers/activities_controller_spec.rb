@@ -26,12 +26,13 @@ describe ActivitiesController, type: :controller do
   describe "POST 'create'" do
     it 'should redirect to the thanks page if no errors' do
       expect do
-        xhr :post, 'create', venue_id: venue.to_param,
+        xhr :post, 'create', venue_id: venue.to_param, form_id: 123,
                              activity: { activity_type_id: activity_type.to_param,
                                          campaign_id: campaign.to_param,
                                          company_user_id: @company_user.to_param }
       end.to change(Activity, :count).by(1)
-      expect(response).to redirect_to(thanks_venue_activities_url(activity_type_id: activity_type.id))
+      expect(session['activity_create_123']).to eql 1
+      expect(response).to redirect_to(thanks_venue_activities_url(activity_type_id: activity_type.id, form_id: 123))
     end
 
     it 'should render the new template if errors' do

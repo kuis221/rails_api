@@ -19,6 +19,7 @@
 #  updated_at    :datetime         not null
 #  created_by_id :integer
 #  updated_by_id :integer
+#  company_name  :string(255)
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl
@@ -26,16 +27,17 @@
 FactoryGirl.define do
   factory :contact do
     company_id 1
-    first_name 'Julian'
-    last_name 'Guerra'
-    title 'Bar Owner'
-    email 'somecontact@email.com'
+    first_name { Faker::Name.first_name }
+    last_name { Faker::Name.last_name }
+    company_name { Faker::Company.name }
+    title { Faker::Name.title }
+    email { Faker::Internet.email }
     phone_number '344-23333'
-    street1 '12th St.'
+    street1 { Faker::Address.street_address }
     street2 ''
     country 'US'
-    state 'CA'
-    city 'Hollywood'
-    zip_code '43212'
+    state { Faker::Address.state_abbr }
+    city { Faker::Address.city }
+    zip_code { Faker::Address.zip_code }
   end
 end

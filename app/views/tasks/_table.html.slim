@@ -3,6 +3,7 @@
   .pull-left
     = button_to 'Add Task', new_task_path, {method: :get, remote: true, class: 'btn btn-primary', :id => 'new-task-btn'} if (params[:scope] == 'user' && can?(:create_my, Task)) || (params[:scope] == 'teams' && can?(:create_team, Task))
   .text-right
+    .tasks-progress-bar
     .dropdown.btn-download.task-download
       a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
         i.icon-download
@@ -14,7 +15,6 @@
         li
           a#pdf-export.xlsx-download-link href="#" role="menuitem" data-url="#{url_for(action: :index, scope: params[:scope], format: :pdf)}"
             | Download as PDF
-    .tasks-progress-bar
 
 div#tasks-list.resource-list
 

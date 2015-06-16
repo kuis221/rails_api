@@ -1248,11 +1248,13 @@ feature 'Events section' do
           expect(page).to have_no_content('Pablo Baltodano')
         end
         close_modal
+        expect(page).to have_content('Good work. One contact have been added.')
 
         # Test the user was added to the list of event members and it can be removed
         within contact_list do
           expect(page).to have_content('Pablo Baltodano')
           click_js_link 'Remove Contact'
+          expect(page).to_not have_content('Pablo Baltodano')
         end
 
         # Refresh the page and make sure the user is not there
@@ -1264,6 +1266,8 @@ feature 'Events section' do
       scenario 'allows to add a contact as contact to the event', js: true do
         create(:contact, first_name: 'Pedro', last_name: 'Urrutia',
                          company_id: company.id)
+        create(:contact, first_name: 'Pedro', last_name: 'Guerra',
+                         company_id: company.id)
         Sunspot.commit
 
         visit event_path(event)
@@ -1271,21 +1275,29 @@ feature 'Events section' do
         click_js_button 'Add Contacts'
         within visible_modal do
           fill_in 'contact-search-box', with: 'Ped'
-          expect(page).to have_content('Pedro Urrutia')
-          within resource_item do
+          expect(page).to have_content('Pedro Guerra')
+          expect(page).to have_content 'Pedro Urrutia'
+          within resource_item(1) do
+            click_js_link 'Add'
+          end
+          expect(page).to have_no_content('Pedro Guerra')
+          within resource_item(1) do
             click_js_link 'Add'
           end
 
           expect(page).to have_no_content 'Pedro Urrutia'
         end
         close_modal
+        expect(page).to have_content('Good work. 2 contacts have been added.')
 
         # Test the user was added to the list of event members and it can be removed
         within contact_list do
+          expect(page).to have_content('Pedro Guerra')
           expect(page).to have_content('Pedro Urrutia')
-          click_js_link 'Remove Contact'
+          within find('.user-tag-option', text: 'Pedro Urrutia') do
+            click_js_link 'Remove Contact'
+          end
         end
-        ensure_modal_was_closed
         expect(page).to_not have_content('Pedro Urrutia')
 
         # Refresh the page and make sure the user is not there
@@ -1374,17 +1386,27 @@ feature 'Events section' do
           expect(page).to have_content 'THU May 16'
         end
 
+        # Check that the totals where properly updated
+        expect(page).to have_text('1INCOMPLETE')
+        expect(page).to have_text('0UNASSIGNED')
+        expect(page).to have_text('1LATE')
+
         # Mark the tasks as completed
         within('#event-tasks') do
           checkbox = find('.task-completed-checkbox', visible: :false)
           expect(checkbox['checked']).to be_falsey
           find('.task-completed-checkbox').trigger('click')
-          wait_for_ajax
-
-          # refresh the page to make sure the checkbox remains selected
-          visit event_path(event)
-          expect(find('.task-completed-checkbox', visible: :false)['checked']).to be_truthy
         end
+        wait_for_ajax
+
+        # Check that the totals where properly updated
+        expect(page).to have_text('0INCOMPLETE')
+        expect(page).to have_text('0UNASSIGNED')
+        expect(page).to have_text('0LATE')
+
+        # refresh the page to make sure the checkbox remains selected
+        visit event_path(event)
+        expect(find('.task-completed-checkbox', visible: :false)['checked']).to be_truthy
       end
 
       scenario 'the entered data should be saved automatically when submitting the event recap' do
@@ -1443,7 +1465,7 @@ feature 'Events section' do
 
         click_js_button 'Unapprove'
 
-        expect(page).to have_content('Great job! Your PER has been submitted for approval.')
+        expect(page).to have_content('Your event have been Unapproved.')
       end
 
       scenario "display errors when an event don't meet a campaign module range" do

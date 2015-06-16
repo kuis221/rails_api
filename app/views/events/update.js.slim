@@ -12,6 +12,7 @@
       $('#edit_event_data_form').remove();
       $('.box_event_data').html("#{escape_javascript(render('results_event_data'))}").show();
       window.EventDetails.showMessage("#{j I18n.translate('instructive_messages.execute.per.completed')}", 'green');
+      smoothScrollTo($('#event-per'));
       setTimeout(function(){ $(window).resize() });
   - else
     |

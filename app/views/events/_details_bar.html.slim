@@ -7,8 +7,8 @@
       nav class="scrollspy-style event-details-scroll-spy"
         ul.switch-list.unstyled.view-indicator
           li
-            a data-spytarget="#application-body"
-              span Viewing event details. Click to expand the event menu.
+            a data-spytarget="#application-body" href="#{return_path || collection_path}"
+              span You are viewing event details. Click to close. 
           li
             a href="#event-details-collapse" data-toggle="collapse" data-spytarget="#event-details-info-end"
               span.event-name.pull-left= resource.campaign_name

@@ -45,7 +45,7 @@ Brandscopic::Application.routes.draw do
           post :filter, to: 'events#index', on: :collection
           resources :photos, only: [:index, :create, :update], concerns: [:api_attachable]
           resources :documents, only: [:index, :create, :update], concerns: [:api_attachable]
-          resources :event_expenses, only: [:index, :create, :destroy], concerns: [:api_attachable]
+          resources :event_expenses, only: [:index, :create, :destroy, :update], concerns: [:api_attachable]
           resources :tasks, only: [:index]
           resources :comments, only: [:index, :create, :update, :destroy]
           resources :surveys,  only: [:index, :create, :update, :show] do
@@ -81,6 +81,7 @@ Brandscopic::Application.routes.draw do
           resources :brands, only: [:index]
           get :stats, on: :member
           get :events, on: :member
+          get :expense_categories, on: :member
         end
 
         resources :activity_types, only: [:index] do

@@ -296,4 +296,10 @@ class Api::V1::CampaignsController < Api::V1::FilteredController
     date_field = current_company.timezone_support? ? :local_start_at : :end_at
     render json: resource.events.active.pluck(:id, date_field)
   end
+
+  api :GET, '/api/v1/campaigns/:id/expense_categories', 'Returns a list of available categories for expenses.'
+  def expense_categories
+    authorize! :show, resource
+    render json: resource.expense_categories
+  end
 end

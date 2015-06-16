@@ -4,6 +4,7 @@
   var content = "#{j render(partial: form_partial, locals: {remote: true})}";
   if (!container.length || !container.hasClass('in')) {
     container.remove();
+    if (resource_modal) { resource_modal.modal('hide'); }
     bootbox.classes('#{@form_modal_class} #{resource_class.name.downcase}_modal resource-form-modal');
     container = $('<div id="resource-form-modal">'+content+'</div>');
     resource_modal = bootbox.dialog(container,[],{header: '#{j modal_dialog_title}',  'onEscape': true, animate: (!$.fx.off)});

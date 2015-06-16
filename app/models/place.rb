@@ -173,7 +173,8 @@ class Place < ActiveRecord::Base
   end
 
   def state_code
-    load_country.states.find { |code, info| info['name'] == state }[0] rescue state if state and load_country
+    return unless state && load_country
+    load_country.states.find { |_, info| info['name'] == state }[0] rescue state
   end
 
   def continent_name
@@ -191,13 +192,6 @@ class Place < ActiveRecord::Base
   def update_info_from_api
     fetch_place_data
     save
-  end
-
-  def has_complete_info_for_denominator?
-    return true unless state.blank? || city.blank?
-    return true if state? && state.present?
-    return true if country? && country.present?
-    false
   end
 
   def country?
@@ -220,21 +214,6 @@ class Place < ActiveRecord::Base
     lonlat.lon if lonlat.present?
   end
 
-  # Try to find the latitude and logitude based on a physicical address and returns
-  # true if found or false if not
-  def set_lat_lng
-    return if do_not_connect_to_api
-    return if latitude.present? && longitude.present?
-    address_txt = URI.encode([street_number, route, city,
-                              state.to_s + ' ' + zipcode.to_s, country].compact.join(', '))
-
-    data = JSON.parse(open("http://maps.googleapis.com/maps/api/geocode/json?address=#{address_txt}&sensor=true").read)
-    return unless data['results'].count > 0
-    result = data['results'].find { |r| r['geometry'].present? && r['geometry']['location'].present? }
-    return unless result
-    self.lonlat = "POINT(#{result['geometry']['location']['lng']} #{result['geometry']['location']['lat']})"
-  end
-
   # First try to find comments in the app from events, then if there no enough comments in the app,
   # search for reviews from Google Places API
   def reviews(company_id)
@@ -249,16 +228,6 @@ class Place < ActiveRecord::Base
   def price_level(fetch_from_google: false)
     fetch_price_level if self[:price_level].nil? && fetch_from_google
     self[:price_level].present? && self[:price_level] >= 0 ? self[:price_level] : nil
-  end
-
-  def fetch_price_level
-    self[:price_level] =
-      if spot.present? && spot.price_level.present?
-        spot.price_level.to_i
-      else
-        -1
-      end
-    save
   end
 
   def formatted_phone_number
@@ -287,26 +256,14 @@ class Place < ActiveRecord::Base
     list_photos.slice(0, 10)
   end
 
-  def update_locations
-    ary = Place.political_division(self)
-    paths = ary.count.times.map { |i| ary.slice(0, i + 1).compact.join('/').downcase }.uniq
-    self.locations = Location.load_by_paths(paths)
-    self.location = locations.last
-    self.is_location = (
-      types.present? &&
-      (types & %w(
-        sublocality political locality administrative_area_level_1 administrative_area_level_2
-        administrative_area_level_3 country)).count > 0)
-    true
-  end
-
   def location_ids
-    @location_ids ||= if new_record?
-                        update_locations unless locations.any?
-                        locations.map(&:id)
-    else
-      locations.pluck('locations.id')
-    end
+    @location_ids ||=
+      if new_record?
+        update_locations unless locations.any?
+        locations.map(&:id)
+      else
+        locations.pluck('locations.id')
+      end
   end
 
   def td_linx_match
@@ -315,8 +272,8 @@ class Place < ActiveRecord::Base
 
   # Merge the record with the given place
   def merge(place)
-    fail "Cannot merge a venue into a merged venued" unless merged_with_place_id.blank?
-    fail "Cannot merge place with itself" if id == place.id
+    fail 'Cannot merge a venue into a merged venued' unless merged_with_place_id.blank?
+    fail 'Cannot merge place with itself' if id == place.id
     self.class.connection.transaction do
       Venue.where(place_id: place.id).each do |venue|
         real_venue = Venue.find_or_create_by(place_id: id, company_id: venue.company_id)
@@ -405,56 +362,56 @@ class Place < ActiveRecord::Base
   private
 
   def fetch_place_data
-    if reference && !do_not_connect_to_api
-      return unless spot
-      self.name = spot.name
-      self.lonlat = "POINT(#{spot.lng} #{spot.lat})"
-      self.formatted_address = spot.formatted_address
-      self.types = spot.types
-      self.types ||= []
-      sublocality = nil
+    return unless reference && !do_not_connect_to_api && spot
+    self.name = spot.name
+    self.lonlat = "POINT(#{spot.lng} #{spot.lat})"
+    self.formatted_address = spot.formatted_address
+    self.types = spot.types
+    self.types ||= []
 
-      # Parse the address components
-      if spot.address_components.present?
-        spot.address_components.each do |component|
-          if component['types'].include?('country')
-            self.country = component['short_name']
-          elsif component['types'].include?('administrative_area_level_1')
-            self.administrative_level_1 = component['short_name']
-            self.state = component['long_name']
-          elsif component['types'].include?('administrative_area_level_2')
-            self.administrative_level_2 = component['short_name']
-          elsif component['types'].include?('locality')
-            self.city = component['long_name']
-          elsif component['types'].include?('postal_code')
-            self.zipcode = component['long_name']
-          elsif component['types'].include?('street_number')
-            self.street_number = component['long_name']
-          elsif component['types'].include?('route')
-            self.route = component['long_name']
-          elsif component['types'].include?('neighborhood')
-            self.neighborhoods = [component['long_name']]
-          end
-        end
+    parse_address_components spot.address_components
+
+    return if types.include?('country')
+
+    # Sometimes the API doesn't provide the state's long_name
+    if country == 'US' && state =~ /^[A-Z]{1,2}$/
+      self.state = load_country.states[administrative_level_1]['name'] rescue state if load_country
+    end
+
+    return if types.include?('administrative_area_level_1')
+
+    find_city
+
+    city.strip! unless city.nil?
+    state.strip! unless state.nil?
+    country.strip! unless country.nil?
+
+    update_locations
+    self
+  end
+
+  def parse_address_components(address_components)
+    return unless address_components.present?
+    # Parse the address components
+    address_components.each do |component|
+      if component['types'].include?('country')
+        self.country = component['short_name']
+      elsif component['types'].include?('administrative_area_level_1')
+        self.administrative_level_1 = component['short_name']
+        self.state = component['long_name']
+      elsif component['types'].include?('administrative_area_level_2')
+        self.administrative_level_2 = component['short_name']
+      elsif component['types'].include?('locality')
+        self.city = component['long_name']
+      elsif component['types'].include?('postal_code')
+        self.zipcode = component['long_name']
+      elsif component['types'].include?('street_number')
+        self.street_number = component['long_name']
+      elsif component['types'].include?('route')
+        self.route = component['long_name']
+      elsif component['types'].include?('neighborhood')
+        self.neighborhoods = [component['long_name']]
       end
-
-      return if types.include?('country')
-
-      # Sometimes the API doesn't provide the state's long_name
-      if country == 'US' && state =~ /^[A-Z]{1,2}$/
-        self.state = load_country.states[administrative_level_1]['name'] rescue state if load_country
-      end
-
-      return if types.include?('administrative_area_level_1')
-
-      find_city
-
-      self.city.strip! unless self.city.nil?
-      state.strip! unless state.nil?
-      country.strip! unless country.nil?
-
-      update_locations
-      self
     end
   end
 
@@ -523,5 +480,43 @@ class Place < ActiveRecord::Base
     areas.each do |area|
       Area.update_common_denominators(area)
     end
+  end
+
+  def update_locations
+    ary = Place.political_division(self)
+    paths = ary.count.times.map { |i| ary.slice(0, i + 1).compact.join('/').downcase }.uniq
+    self.locations = Location.load_by_paths(paths)
+    self.location = locations.last
+    self.is_location = (
+      types.present? &&
+      (types & %w(
+        sublocality political locality administrative_area_level_1 administrative_area_level_2
+        administrative_area_level_3 country)).count > 0)
+    true
+  end
+
+  # Try to find the latitude and logitude based on a physicical address and returns
+  # true if found or false if not
+  def set_lat_lng
+    return if do_not_connect_to_api
+    return if latitude.present? && longitude.present?
+    address_txt = URI.encode([street_number, route, city,
+                              state.to_s + ' ' + zipcode.to_s, country].compact.join(', '))
+
+    data = JSON.parse(open("http://maps.googleapis.com/maps/api/geocode/json?address=#{address_txt}&sensor=true").read)
+    return unless data['results'].count > 0
+    result = data['results'].find { |r| r['geometry'].present? && r['geometry']['location'].present? }
+    return unless result
+    self.lonlat = "POINT(#{result['geometry']['location']['lng']} #{result['geometry']['location']['lat']})"
+  end
+
+  def fetch_price_level
+    self[:price_level] =
+      if spot.present? && spot.price_level.present?
+        spot.price_level.to_i
+      else
+        -1
+      end
+    save
   end
 end

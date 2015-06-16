@@ -31,6 +31,8 @@ class EventsController < FilteredController
   custom_actions member: [:attendance, :edit_results, :edit_data, :edit_surveys]
   layout false, only: [:attendance]
 
+  before_action :check_activities_message, only: :show
+
   skip_load_and_authorize_resource only: :update
   before_action :authorize_update, only: :update
 
@@ -67,13 +69,13 @@ class EventsController < FilteredController
   def approve
     resource.approve! if resource.submitted?
     flash[:alert] = resource.errors.full_messages if resource.errors.any?
-    redirect_to resource_path(status: 'approved', return: params[:return])
+    redirect_to resource_path(status: 'approved')
   end
 
   def unapprove
     resource.unapprove! if resource.approved?
-    flash[:alert] = resource.errors.full_messages if resource.errors.any?
-    redirect_to resource_path(status: 'unapproved', return: params[:return])
+    flash[:event_message_success] = I18n.translate('instructive_messages.results.unapprove') if resource.errors.empty?
+    redirect_to resource_path(status: 'unapproved')
   end
 
   def reject
@@ -242,4 +244,14 @@ class EventsController < FilteredController
     options
   end
 
+  def check_activities_message
+    return unless params[:activity_form].present? &&
+                  params[:activity_type_id].present? &&
+                  session["activity_create_#{params[:activity_form]}"]
+    activity_type = current_company.activity_types.find(params[:activity_type_id])
+    flash[:event_message_success] = I18n.translate('instructive_messages.execute.activity.added',
+                                                   count: session["activity_create_#{params[:activity_form]}"].to_i,
+                                                   activity_type: activity_type.name)
+    session.delete "activity_create_#{params[:activity_form]}"
+  end
 end

@@ -426,9 +426,9 @@ var bootbox = window.bootbox || (function(document, $) {
             div.find("a.btn-primary:first").focus();
         });
 
-        div.on('hidden', function() {
-            div.remove();
-        });
+        // div.on('hidden', function() {
+        //     div.remove();
+        // });
 
         // wire up button handlers
         div.on('click', '.modal-footer a', function(e) {

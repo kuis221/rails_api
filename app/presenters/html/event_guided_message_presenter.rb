@@ -118,6 +118,55 @@ module Html
       end
     end
 
+    def locked_in_phase_plan_message
+      actions = phases[:phases][:execute].map do |s|
+        next if s.key?(:if) && !h.instance_exec(@model, &s[:if])
+        send("locked_#{s[:id]}_message")
+      end.compact
+      h.t('instructive_messages.plan.still', date: start_at.strftime('%b %d'),
+                                             actions: actions.to_sentence(last_word_connector: ' and '))
+    end
+
+    def locked_per_message
+      if can?(:edit_data)
+        h.t('incomplete_execute_steps.per.edit')
+      else
+        h.t('incomplete_execute_steps.per.read_only')
+      end
+    end
+
+    def locked_activities_message
+      if h.can?(:create, Activity) || can?(:create_invite)
+        h.t('incomplete_execute_steps.activities.edit')
+      else
+        h.t('incomplete_execute_steps.activities.read_only')
+      end
+    end
+
+    def locked_photos_message
+      if can?(:edit_data)
+        h.t('incomplete_execute_steps.photos.edit')
+      else
+        h.t('incomplete_execute_steps.photos.read_only')
+      end
+    end
+
+    def locked_expenses_message
+      if can?(:create_expense)
+        h.t('incomplete_execute_steps.expenses.edit')
+      else
+        h.t('incomplete_execute_steps.expenses.read_only')
+      end
+    end
+
+    def locked_comments_message
+      if can?(:create_comment)
+        h.t('incomplete_execute_steps.comments.edit')
+      else
+        h.t('incomplete_execute_steps.comments.read_only')
+      end
+    end
+
     def execute_surveys
     end
 
@@ -127,16 +176,14 @@ module Html
     end
 
     def initial_message
-      if approved?
+      if h.flash[:event_message_success].present?
+        [h.flash[:event_message_success], 'green', false]
+      elsif h.flash[:event_message_fail].present?
+        [h.flash[:event_message_fail], 'red', false]
+      elsif approved?
         [h.t('instructive_messages.results.approved'), 'green', true]
       elsif rejected?
-        if h.flash[:event_message_fail].present?
-          [h.flash[:event_message_fail], 'red', false]
-        else
-          [h.t('instructive_messages.results.rejected_info', rejected_at: rejected_at, reject_reason: reject_reason).html_safe, 'red', true]
-        end
-      elsif h.flash[:event_message_success].present?
-        [h.flash[:event_message_success], 'green', false]
+        [h.t('instructive_messages.results.rejected_info', rejected_at: rejected_at, reject_reason: reject_reason).html_safe, 'red', true]
       end
     end
 

@@ -1,8 +1,10 @@
 - if resource.tasks.active.any?
-  = button_to 'Create Task', new_event_task_path(resource), method: :get, remote: true, class: 'btn btn-primary' if can? :create_task, resource
+  .pull-left
+    = button_to 'Create Task', new_event_task_path(resource), method: :get, remote: true, class: 'btn btn-primary' if can? :create_task, resource
+  #event-tasks-counters.pull-right
+    = render partial: 'events/tasks_counters', locals: { tasks: resource.tasks.active }
   div#tasks-list.resource-list
     = render collection: resource.tasks.active, partial: 'tasks/task', locals: {show_user: true}
-
 
 - else
   h5.module-title TASKS

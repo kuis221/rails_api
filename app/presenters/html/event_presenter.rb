@@ -83,7 +83,6 @@ module Html
       end
     end
 
-
     def format_date(the_date, plain = false, day_name = true)
       unless the_date.nil?
         if plain
@@ -151,11 +150,10 @@ module Html
 
     def phase_steps(phase, index, steps)
       return if steps.nil? || steps.empty?
-      step_last_id = steps.last[:id]
       current_phase_index = phases[:phases].keys.index(phases[:current_phase])
       steps.map do |step|
         button = h.content_tag(:div,
-                                class: "step #{'last-step' if step_last_id == step[:id]} #{'pending' unless step[:complete]}",
+                                class: phase_step_clasess(step, steps.last[:id], steps.first[:id]),
                                 data: { toggle: 'tooltip',
                                         title: step[:title].upcase,
                                         placement: 'top'} ) do
@@ -168,22 +166,48 @@ module Html
       end.join.html_safe
     end
 
+    def phase_step_clasess(step, step_last_id, step_first_id)
+      [
+        'step',
+        ('first-step' if step_first_id == step[:id]),
+        ('last-step' if step_last_id == step[:id]),
+        ('pending' unless step[:complete])
+      ].compact.join(' ')
+    end
+
     def step_link(phase, step, content, linked)
       url = target = "#event-#{step[:id]}"
-      url = h.phase_event_path(@model, phase: phase) + target unless phase == current_phase
-      h.link_to_if linked, content, url,
-                 class: 'smooth-scroll event-phase-step',
-                 data: { message: guided_message(phase, step),
-                         message_color: 'blue',
-                         spytarget: target,
-                        }
+      url = h.phase_event_path(@model, phase: phase, return: h.return_path) + target unless phase == current_phase
+      h.link_to_if(linked, content, url,
+                   class: 'smooth-scroll event-phase-step',
+                   data: { message: guided_message(phase, step),
+                           message_color: 'blue'
+                         }.merge(phase == current_phase ? { spytarget: target } : {})) do
+        if phase == :execute
+          h.link_to content, '#', class: 'event-phase-step', data: { message: guided_message_presenter.locked_in_phase_plan_message, message_color: 'blue' }
+        else
+          content
+        end
+      end
+    end
+
+    def phases_with_accessible_steps
+      phases[:phases].map do |phase_name, steps|
+        [phase_name, user_accessible_steps(steps)]
+      end
+    end
+
+    def user_accessible_steps(steps)
+      steps.select { |s| !s.key?(:if) || h.instance_exec(@model, &s[:if]) }
     end
 
     def render_nav_phases
       return if phases.nil?
+      event_phases = phases_with_accessible_steps
+      max_steps = event_phases.map { |p| p[1].count }.max
       current_phase_index = phases[:phases].keys.index(current_phase)
-      phases[:phases].each_with_index.map do |phase, i|
-        h.content_tag(:div, class: "phase-container #{i == current_phase_index ? 'active' : 'hide'}") do
+      event_phases.each_with_index.map do |phase, i|
+        h.content_tag(:div, class: "phase-container steps-#{max_steps} #{i == current_phase_index ? 'active' : 'hide'}") do
           render_nav_phase(phase, i) + phase_buttons(phase)
         end
       end.join.html_safe
@@ -194,15 +218,22 @@ module Html
       index_phase = phases[:phases].keys.index(phases[:current_phase])
       completed = i < index_phase
       h.link_to_if(i <= index_phase,
-        h.content_tag(:div, class: "step phase-id #{'active' if phase[0] == phases[:current_phase]}") do
+        h.content_tag(:div, class: phase_clasess(phase, i, index_phase)) do
           (if completed
              h.content_tag(:div, '', class: 'icon-check-circle')
            else
-             h.content_tag(:span, class: 'id') do
-              "#{i + 1}#{icon(:lock) if i > index_phase}".html_safe
-             end
+             phase_number = "#{i + 1}#{icon(:lock) if i > index_phase}".html_safe
+             h.content_tag(:span, phase_number.html_safe, class: 'id')
            end) + phase[0].upcase
-        end, h.phase_event_path(@model, phase: phase[0])) + phase_steps(phase[0], i, phase[1])
+        end, h.phase_event_path(@model, phase: phase[0], return: h.return_path)) + phase_steps(phase[0], i, phase[1])
+    end
+
+    def phase_clasess(phase, i, index_phase)
+      [
+        'step', 'phase-id',
+        ('active' if phase[0] == phases[:current_phase]),
+        ('locked' if i > index_phase)
+      ].compact.join(' ')
     end
 
     def phase_buttons(phase)
@@ -278,7 +309,7 @@ module Html
     def initial_message_js
       message, color, close = guided_message_presenter.initial_message
       return unless message && color
-      "EventDetails.showMessage('#{h.j(message)}', '#{color}', #{close});".html_safe
+      "EventDetails.showMessage('#{h.j(message.html_safe)}', '#{color}', #{close});".html_safe
     end
 
     def submit_incomplete_message(requirements)

@@ -1,3 +1,4 @@
+- presenter = Xls::EventExpensePresenter.new(nil, self)
 doctype xml
 
 Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
@@ -52,7 +53,7 @@ Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:ss="urn:sche
 
       - each_collection_item do |event|
         - event.event_expenses.each do |expense|
-          - presenter = present(expense, :xls)
+          - presenter.model = expense
           Row
             Cell
               Data ss:Type="String"= event.campaign_name
