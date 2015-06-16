@@ -5,10 +5,10 @@ module PlacesHelper
 
       if attributes[:country] && attributes[:state]
         country = Country.new(attributes[:country])
-        if country.valid? && country.states.key?(attributes[:state])
+        if country.present? && country.states.key?(attributes[:state])
           attributes[:state] = country.states[attributes[:state]]['name']
         else
-          attributes[:state] = nil unless country.valid? && country.states.find { |_k, v| v['name'] == attributes[:state] }.present?
+          attributes[:state] = nil unless country.present? && country.states.find { |_k, v| v['name'] == attributes[:state] }.present?
         end
       end
 
