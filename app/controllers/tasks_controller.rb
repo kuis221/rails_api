@@ -9,7 +9,7 @@ class TasksController < FilteredController
 
   has_scope :by_users
 
-  helper_method :assignable_users, :calendar_highlights
+  helper_method :assignable_users, :status_counters, :calendar_highlights
 
   before_action :set_body_class, only: :index
   after_action :force_resource_reindex, only: [:create, :update]
@@ -53,6 +53,15 @@ class TasksController < FilteredController
       authorize!(:index_team, Task)
     else
       authorize!(:index, Task)
+    end
+  end
+
+  def status_counters
+    @status_counters ||= Hash.new.tap do |counters|
+      counters['unassigned'] = 0
+      counters['incomplete'] = 0
+      counters['late'] = 0
+      collection_search.facet(:status).rows.map { |x| counters[x.value.to_s] = x.count }
     end
   end
 

@@ -1386,17 +1386,27 @@ feature 'Events section' do
           expect(page).to have_content 'THU May 16'
         end
 
+        # Check that the totals where properly updated
+        expect(page).to have_text('1INCOMPLETE')
+        expect(page).to have_text('0UNASSIGNED')
+        expect(page).to have_text('1LATE')
+
         # Mark the tasks as completed
         within('#event-tasks') do
           checkbox = find('.task-completed-checkbox', visible: :false)
           expect(checkbox['checked']).to be_falsey
           find('.task-completed-checkbox').trigger('click')
-          wait_for_ajax
-
-          # refresh the page to make sure the checkbox remains selected
-          visit event_path(event)
-          expect(find('.task-completed-checkbox', visible: :false)['checked']).to be_truthy
         end
+        wait_for_ajax
+
+        # Check that the totals where properly updated
+        expect(page).to have_text('0INCOMPLETE')
+        expect(page).to have_text('0UNASSIGNED')
+        expect(page).to have_text('0LATE')
+
+        # refresh the page to make sure the checkbox remains selected
+        visit event_path(event)
+        expect(find('.task-completed-checkbox', visible: :false)['checked']).to be_truthy
       end
 
       scenario 'the entered data should be saved automatically when submitting the event recap' do

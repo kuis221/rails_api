@@ -7,8 +7,12 @@
     $('.bootbox.modal').modal('hide');
     $('##{resource_class}_#{resource.id}').replaceWith('#{escape_javascript(render(resource))}');
     $(document).trigger('#{resource_class.pluralize}:change');
-  - if resource_class == 'task' && resource.event_id.present?
-    - if params[:task][:completed] == '1'
-      | window.EventDetails.showMessage("#{j I18n.translate('instructive_messages.plan.task.completed')}", 'green');
-    - elsif params[:task][:completed].blank?
-      | window.EventDetails.showMessage("#{j I18n.translate('instructive_messages.plan.task.updated')}", 'green');
+  - if resource_class == 'task'
+    - if resource.event_id.present?
+      | $('#event-tasks').html('#{j render(partial: 'events/tasks', locals: { resource: resource.event }) }');
+      - if params[:task][:completed] == '1'
+        | window.EventDetails.showMessage("#{j I18n.translate('instructive_messages.plan.task.completed')}", 'green');
+      - elsif params[:task][:completed].blank?
+        | window.EventDetails.showMessage("#{j I18n.translate('instructive_messages.plan.task.updated')}", 'green');
+    - else
+      | $(document).trigger('tasks:change');
