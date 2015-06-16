@@ -34,13 +34,13 @@ class Activity < ActiveRecord::Base
   scope :active, -> { where(active: true) }
 
   scope :with_results_for, ->(fields) {
-    select('DISTINCT activities.*')
-    .joins(:results)
-    .where(form_field_results: { form_field_id: fields })
-    .where('form_field_results.value is not NULL AND form_field_results.value !=\'\'')
+    select('DISTINCT activities.*').
+    joins(:results).
+    where(form_field_results: { form_field_id: fields }).
+    where('form_field_results.value is not NULL AND form_field_results.value !=\'\'')
   }
 
-  scope :accessible_by_user, ->(user) { self }
+  scope :accessible_by_user, ->(user) { in_company(user.company) }
 
   after_initialize :set_default_values
 
@@ -72,6 +72,12 @@ class Activity < ActiveRecord::Base
     date :activity_date
     string :status
     join(:events_active, target: Event, type: :boolean, join: { from: :id, to: :activitable_id }, as: :active_b)
+  end
+
+  def self.in_company(company)
+    joins('LEFT JOIN events ue ON activitable_type=\'Event\' AND ue.id=activitable_id').
+    joins('LEFT JOIN venues uv ON activitable_type=\'Venue\' AND uv.id=activitable_id').
+    where('ue.company_id=:company OR uv.company_id=:company', company: company)
   end
 
   def activate!

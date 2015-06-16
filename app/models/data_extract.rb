@@ -110,7 +110,7 @@ class DataExtract < ActiveRecord::Base
   end
 
   def to_hash
-    { data_extract: attributes.merge( source: source ) }
+    { data_extract: attributes.merge(source: source) }
   end
 
   def base_scope

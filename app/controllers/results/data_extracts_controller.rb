@@ -110,7 +110,12 @@ class Results::DataExtractsController < InheritedResources::Base
     params.require(:data_extract).permit([
       :name, :description, :default_sort_by, :default_sort_dir,
       columns: [], params: { campaign_id: [], activity_type_id: [] }
-    ]).merge(company: current_company)
+    ]).tap do |p|
+      if params[:data_extract] && params[:data_extract][:params]
+        p[:params][:activity_type_id] = params[:data_extract][:params][:activity_type_id]
+        p[:params][:campaign_id] = params[:data_extract][:params][:campaign_id]
+      end
+    end.merge(company: current_company)
   end
 
   def process_step

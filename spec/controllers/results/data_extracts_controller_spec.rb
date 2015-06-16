@@ -52,17 +52,20 @@ RSpec.describe Results::DataExtractsController, :type => :controller do
       expect(response).to be_success
     end
 
-    pending 'should not render form_dialog if no errors' do
+    it 'should succeed' do
       expect do
-        xhr :post, 'create', data_extract: { name: 'Test data extract report', description: 'Test data extract report description', source: 'area'},
-            step: 4, format: :js
+        xhr :post, 'create', data_extract: {
+            name: 'Test data extract report',
+            description: 'Test data extract report description',
+            source: 'activity',
+            params: { activity_type_id: 1 }},
+          step: 4, format: :js
       end.to change(DataExtract, :count).by(1)
-      expect(response).to be_success
-      expect(response).to render_template(:create)
-      expect(response).to_not render_template('_form_dialog')
+      expect(response).to redirect_to results_reports_path
 
       report = DataExtract.last
       expect(report.name).to eql 'Test data extract report'
+      expect(report.params).to eql({ 'activity_type_id' => 1, 'campaign_id' => nil })
       expect(report.description).to eql 'Test data extract report description'
     end
 

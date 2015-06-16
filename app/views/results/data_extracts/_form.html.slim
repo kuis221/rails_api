@@ -6,6 +6,12 @@
   = f.input :default_sort_dir, as: :hidden, wrapper: false
   - f.object.columns.each do |col|
     = hidden_field_tag 'data_extract[columns][]', col
+  - f.object.params.each do |k, v|
+    - if v.is_a?(Array)
+      - v.each do |item|
+        = hidden_field_tag "data_extract[params][#{k}][]", item
+    - else
+      = hidden_field_tag "data_extract[params][#{k}]", v
 
   .form-inputs
     .date-ranges

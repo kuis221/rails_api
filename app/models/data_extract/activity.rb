@@ -58,7 +58,7 @@ class DataExtract::Activity < DataExtract
     s = s.joins(:campaign) if columns.include?('campaign_name')
     s = s.joins(:activity_type) if columns.include?('activity_type')
     s = s.joins(company_user: :user) if columns.include?('user')
-    if columns.any? { |c| c.match(/^event_/)  }
+    if columns.any? { |c| c.match(/^event_/) || c == 'status'  }
       s = s.joins('LEFT JOIN events ON events.id=activities.activitable_id AND activities.activitable_type=\'Event\'')
     end
     if columns.any? { |c| c.match(/^place_/)  }
