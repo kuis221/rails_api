@@ -302,6 +302,7 @@ $phase-actions-width: 200px;
       padding: 10px 2px 0 0;
       position: relative;
       width: $phase-actions-width;
+      text-align: right;
       .status-indicator{
         color: $gray-light;
         bottom: 5px;
