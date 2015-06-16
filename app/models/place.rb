@@ -390,7 +390,7 @@ class Place < ActiveRecord::Base
     self
   end
 
-  def load_info_from_address_components(address_components)
+  def parse_address_components(address_components)
     return unless address_components.present?
     # Parse the address components
     address_components.each do |component|
