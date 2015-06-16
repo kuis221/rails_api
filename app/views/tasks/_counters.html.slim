@@ -1,0 +1,24 @@
+- incomplete = status_counters['incomplete']
+- unassigned = status_counters['unassigned']
+- late = status_counters['late']
+- total = (unassigned + incomplete + late).nonzero? || 1
+.task-counter-bar.pull-right
+  .task-counter-item.completed
+    span.count-completed= incomplete
+    label.completed Incomplete
+    .percentage-progress-bar.incomplete
+      .progress
+        .bar.progress-incomplete style="width: #{incomplete*100/total}%"
+  - if params['scope'] != 'user'
+    .task-counter-item.unassigned
+      span.count-unassigned= unassigned
+      label.unassigned Unassigned
+      .percentage-progress-bar.unassigned
+        .progress
+          .bar.progress-unassigned style="width: #{unassigned*100/total}%"
+  .task-counter-item.late
+    span.count-late= late
+    label.late Late
+    .percentage-progress-bar.late
+      .progress
+        .bar.progress-late style="width: #{late*100/total}%"
