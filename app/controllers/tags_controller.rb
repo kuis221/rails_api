@@ -12,9 +12,7 @@ class TagsController < InheritedResources::Base
 
   def activate
     authorize! :activate_tag, parent
-    @tag = current_company.tags.find_by_id params[:id] if params[:id] =~ /\A[0-9]+\z/
-    @tag ||= current_company.tags.find_or_create_by(name: params[:id]) if can?(:create, Tag)
-    parent.tags << @tag
+    parent.tags << load_tag
   end
 
   def index
@@ -24,6 +22,17 @@ class TagsController < InheritedResources::Base
   end
 
   protected
+
+  def load_tag
+    @tag = current_company.tags.find_by_id params[:id] if params[:id] =~ /\A[0-9]+\z/
+    @tag ||=
+      if can?(:create, Tag)
+        current_company.tags.find_or_create_by(name: params[:id])
+      else
+        current_company.tags.find_by(:name)
+      end
+    @tag
+  end
 
   def permitted_params
     params.permit(tag: [:name, :id])[:tag]
