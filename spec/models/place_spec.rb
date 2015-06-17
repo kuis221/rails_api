@@ -37,6 +37,13 @@ describe Place, type: :model do
   it { is_expected.to validate_presence_of(:place_id) }
   it { is_expected.to validate_presence_of(:reference) }
 
+  it { is_expected.to allow_value(['restaurant', 'bar']).for(:types) }
+  it { is_expected.to allow_value(['political']).for(:types) }
+
+  it { is_expected.to_not allow_value(nil).for(:types) }
+  it { is_expected.to_not allow_value(['foo']).for(:types) }
+  it { is_expected.to_not allow_value(['foo', 'bar']).for(:types) }
+
   it { is_expected.to allow_value(nil).for(:country) }
   it { is_expected.to allow_value('').for(:country) }
   it { is_expected.to allow_value('US').for(:country) }
@@ -46,7 +53,7 @@ describe Place, type: :model do
   it { is_expected.not_to allow_value('Costa Rica').for(:country).with_message('is not valid') }
   it { is_expected.not_to allow_value('United States').for(:country).with_message('is not valid') }
 
-  describe 'fetch_place_data', :vcr do
+  describe 'fetch_place_data' do
     it 'should correctly assign the attributes returned by the api call' do
       place = described_class.new(reference: 'YXZ', place_id: '123')
       api_client = double(:google_places_client)
@@ -57,7 +64,7 @@ describe Place, type: :model do
                lat: '12.345678',
                lng: '-87.654321',
                formatted_address: '123 Mi Casa, Costa Rica',
-               types: [1, 2, 3],
+               types: %w(bar establishment),
                address_components: [
                  { 'types' => ['country'], 'short_name' => 'CR', 'long_name' => 'Costa Rica' },
                  { 'types' => ['administrative_area_level_1'], 'short_name' => 'SJO', 'long_name' => 'San Jose' },
@@ -75,7 +82,7 @@ describe Place, type: :model do
       expect(place.latitude).to eq(12.345678)
       expect(place.longitude).to eq(-87.654321)
       expect(place.formatted_address).to eq('123 Mi Casa, Costa Rica')
-      expect(place.types).to eq(["1", "2", "3"])
+      expect(place.types).to eq(%w(bar establishment))
       expect(place.country).to eq('CR')
       expect(place.city).to eq('Curridabat')
       expect(place.state).to eq('San Jose')
@@ -96,7 +103,7 @@ describe Place, type: :model do
                lat: '12.345678',
                lng: '-87.654321',
                formatted_address: '123 Mi Casa, Costa Rica',
-               types: [1, 2, 3],
+               types: %w(bar establishment),
                address_components: [
                  { 'types' => ['country'], 'short_name' => 'US', 'long_name' => 'United States' },
                  { 'types' => ['administrative_area_level_1'], 'short_name' => 'CA', 'long_name' => 'CA' },

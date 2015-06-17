@@ -490,7 +490,8 @@ class Api::V1::VenuesController < Api::V1::FilteredController
   protected
 
   def permitted_params
-    params.permit(venue: [:name, :types, :street_number, :route, :city, :state, :zipcode, :country])[:venue]
+    params.permit(venue: [:name, :types, :street_number, :route, :city,
+                          :state, :zipcode, :country])[:venue]
   end
 
   def permitted_search_params

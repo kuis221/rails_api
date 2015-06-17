@@ -35,6 +35,17 @@ require 'base64'
 class Place < ActiveRecord::Base
   include GoalableModel
 
+  VALID_GOOGLE_TYPES = I18n.translate('venue_types').keys.map(&:to_s)
+
+  ADDITIONAL_GOOGLE_TYPES = %w(
+    administrative_area_level_1 administrative_area_level_2
+    administrative_area_level_3 administrative_area_level_4 administrative_area_level_5
+    colloquial_area country floor geocode intersection locality natural_feature neighborhood
+    political point_of_interest post_box postal_code postal_code_prefix postal_code_suffix
+    postal_town premise room route street_address street_number sublocality
+    sublocality_level_4 sublocality_level_5 sublocality_level_3 sublocality_level_2
+    sublocality_level_1 subpremise transit_station)
+
   validates :place_id, presence: true, uniqueness: true, unless: :is_custom_place, on: :create
   validates :reference, presence: true, uniqueness: true, unless: :is_custom_place, on: :create
 
@@ -66,11 +77,13 @@ class Place < ActiveRecord::Base
 
   before_create :set_lat_lng
 
-  before_create :fetch_place_data
+  before_validation :fetch_place_data, on: :create
 
   after_save :clear_cache
 
   before_save :update_locations
+
+  validate :valid_types?
 
   after_commit :reindex_associated
   scope :accessible_by_user, ->(user) { in_company(user.company_id) }
@@ -518,5 +531,13 @@ class Place < ActiveRecord::Base
         -1
       end
     save
+  end
+
+  def valid_types?
+    if types.nil? || types.empty?
+      errors.add :types, :blank
+    elsif (types - VALID_GOOGLE_TYPES - ADDITIONAL_GOOGLE_TYPES).any?
+      errors.add :types, :invalid
+    end
   end
 end

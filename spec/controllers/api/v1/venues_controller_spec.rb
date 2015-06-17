@@ -132,8 +132,19 @@ describe Api::V1::VenuesController, type: :controller do
       expect(place.state).to eql 'San José'
       expect(place.zipcode).to eql '12345'
       expect(place.country).to eql 'CR'
+      expect(place.types).to eql %w(bar restaurant)
       expect(place.latitude).to eql 1.2322
       expect(place.longitude).to eql -3.23455
+    end
+
+    it 'require valid data' do
+      expect do
+        post 'create', venue: {
+          name: "Guille's place", types: 'bar,restaurant',
+          country: nil, state: nil, street_number: nil, website: nil, zipcode: nil }, format: :json
+        expect(response.response_code).to eql 400
+      end.to_not change(Place, :count)
+      expect(json['success']).to be_falsey
     end
   end
 
