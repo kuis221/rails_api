@@ -6,6 +6,8 @@ class Api::V1::UsersController < Api::V1::FilteredController
 
   skip_authorization_check only: [:new_password, :index, :companies, :permissions, :notifications, :show]
 
+  skip_load_and_authorize_resource only: [:show]
+
   defaults resource_class: CompanyUser
 
   def_param_group :user do
