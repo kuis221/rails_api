@@ -428,7 +428,7 @@ class Api::V1::VenuesController < Api::V1::FilteredController
     }]
   EOS
   def search
-    authorize! :index, Venue
+    authorize! :search, Place
     @venues = Place.combined_search(company_id: current_company.id, q: params[:term], search_address: true)
 
     render json: @venues.first(10)
