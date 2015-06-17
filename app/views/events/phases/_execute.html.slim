@@ -2,7 +2,7 @@
 
 = render 'basic_info'
 
-- if resource.event_data? && can?(:view_data, resource)
+- if resource.event_data? && can?(:view_data, resource) && resource.campaign.form_fields.any?
   #event-results-form
     #event-results-container.details_box.box_event_data
       = render partial: 'results_event_data'
