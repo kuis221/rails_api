@@ -22,8 +22,9 @@ class PlacesController < FilteredController
   end
 
   def search
+    location = params[:location] || location_from_request
     results = Place.combined_search company_id: current_company.id,
-      q: params[:term], search_address: true,
+      q: params[:term], location: params[:location], search_address: true,
       current_company_user: current_company_user
     render json: results
   end
@@ -32,5 +33,11 @@ class PlacesController < FilteredController
 
   def place_params
     params.permit(place: [:name, :types, :street_number, :route, :city, :state, :zipcode, :country, :reference])[:place]
+  end
+
+  def location_from_request
+    location = request.location
+    return if location.nil? || location.latitude == 0.0
+    "#{location.latitude},#{location.longitude}"
   end
 end

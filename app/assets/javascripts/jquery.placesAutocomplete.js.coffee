@@ -1,35 +1,43 @@
-$.widget 'nmk.placesAutocomplete', {
+$.widget 'brandscopic.placesAutocomplete', {
 	options: {
 		select: false
 	},
 
 	_create: () ->
 		@value = @element.val()
-		@element.places_autocomplete({
-				source: '/places/search.json',
-				appendTo: @element.parent(),
-				select: ( event, ui ) =>
-					if ui.item.valid is false
-						event.preventDefault()
-						return false
+		@url = '/places/search.json'
+		@location = ''
+		@element.places_autocomplete
+			source: ( request, response ) =>
+				@xhr.abort() if @xhr
+				@xhr = $.ajax
+					url: "#{@url}?location=#{@location}"
+					data: request
+					dataType: 'json'
+					success: ( data ) -> response data
+					error: () -> response []
+			appendTo: @element.parent()
+			select: ( event, ui ) =>
+				if ui.item.valid is false
+					event.preventDefault()
+					return false
 
-					$(@element.data('hidden')).val ui.item.id
-					@value = ui.item.label
-					if typeof @options.select is 'function'
-						@options.select();
-		})
-
+				$(@element.data('hidden')).val ui.item.id
+				@value = ui.item.label
+				if typeof @options.select is 'function'
+					@options.select()
 
 		@element.blur (e) =>
 			@element.val @value
-		# @element.select2({
-		# 	minimumInputLength: 1,
-		# 	dropdownCssClass: 'ui-dialog',
-		# 	query: (query) =>
-		# 		$.get '/places/search.json',{term: query.term}, (results) =>
-		# 			query.callback {results: results}
-		# });
+
+		@getLocation()
+
+	getLocation: () ->
+		if navigator.geolocation
+			navigator.geolocation.getCurrentPosition (p) =>
+				@location = "#{p.coords.latitude},#{p.coords.longitude}"
 }
+
 
 $.widget "custom.places_autocomplete", $.ui.autocomplete, {
 	_renderMenu: ( ul, items ) ->

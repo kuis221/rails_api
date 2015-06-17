@@ -12,9 +12,31 @@ class CombinedSearch
     results = solr_search
     google_place_ids = google_place_ids_from_places(results.map { |p| p[:id] })
     google_results = filter_duplicated google_search, google_place_ids
-    sort_index = { true => 0, false => 1 } # elements with :valid=true should go first
     google_results.each_with_index { |_, i|  results[i] ||= nil  }
-    results.zip(google_results.sort! { |x, y| sort_index[x[:valid]] <=> sort_index[y[:valid]] }).flatten.compact.slice(0, 5)
+    sort_results (results + google_results).flatten.compact.slice(0, 10)
+  end
+
+  def sort_results(rows)
+    sort_index = { true => 0, false => 1 } # elements with :valid=true should go first
+    if params[:location] && params[:location] =~ /.+,.+/
+      add_distance_to_results(rows, params[:location])
+      rows.sort_by { |a| [sort_index[a[:valid]], a[:location][:distance]] }
+    else
+      rows.sort! { |x, y| sort_index[x[:valid]] <=> sort_index[y[:valid]] }
+    end
+  end
+
+  def add_distance_to_results(rows, location)
+    lat, lon = params[:location].split(',')
+    rows.each do |r|
+      r[:location][:distance] =
+        if r[:location] && r[:location][:latitude]
+          Geocoder::Calculations.distance_between(
+            [r[:location][:latitude], r[:location][:longitude]], [lat, lon])
+        else
+          99999
+        end
+    end
   end
 
   def solr_search
@@ -40,7 +62,7 @@ class CombinedSearch
   end
 
   def google_search
-    google_results = JSON.parse(open("https://maps.googleapis.com/maps/api/place/textsearch/json?key=#{GOOGLE_API_KEY}&sensor=false&query=#{CGI.escape(params[:q])}").read)
+    google_results = fetch_results_from_google
     return [] unless google_results && google_results['results'].present?
     google_results['results'].slice(0, 5).map do |p|
       name = p['formatted_address'].match(/\A#{Regexp.escape(p['name'])}/i) ? nil : p['name']
@@ -51,6 +73,12 @@ class CombinedSearch
   rescue OpenURI::HTTPError => e
     Rails.logger.info "failed to load results from Google: #{e.message}"
     []
+  end
+
+  def fetch_results_from_google
+    url = 'https://maps.googleapis.com/maps/api/place/textsearch/json?'\
+          "key=#{GOOGLE_API_KEY}&query=#{CGI.escape(params[:q])}&sensor=false"
+    JSON.parse(open(url).read)
   end
 
   def valid_place_for_user?(google_place)
