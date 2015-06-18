@@ -926,7 +926,8 @@
                 "id": "contacts",
                 "title": "Contacts",
                 "complete": false,
-                "required": false
+                "required": false,
+                "visible": true
               },
               "phases": {
                 "plan": [
@@ -934,25 +935,29 @@
                     "id": "info",
                     "title": "Basic Info",
                     "complete": true,
-                    "required": true
+                    "required": true,
+                    "visible": true
                   },
                   {
                     "id": "contacts",
                     "title": "Contacts",
                     "complete": false,
-                    "required": false
+                    "required": false,
+                    "visible": false
                   },
                   {
                     "id": "tasks",
                     "title": "Tasks",
                     "complete": false,
-                    "required": false
+                    "required": false,
+                    "visible": true
                   },
                   {
                     "id": "documents",
                     "title": "Documents",
                     "complete": false,
-                    "required": false
+                    "required": false,
+                    "visible": true
                   }
                 ],
                 "execute": [
@@ -963,7 +968,8 @@
                     "id": "approve_per",
                     "title": "Approve PER",
                     "complete": false,
-                    "required": true
+                    "required": true,
+                    "visible": true
                   }
                 ]
               }
@@ -999,7 +1005,8 @@
                 "id": "contacts",
                 "title": "Contacts",
                 "complete": false,
-                "required": false
+                "required": false,
+                "visible": true
               },
               "phases": {
                 "plan": [
@@ -1007,25 +1014,29 @@
                     "id": "info",
                     "title": "Basic Info",
                     "complete": true,
-                    "required": true
+                    "required": true,
+                    "visible": true
                   },
                   {
                     "id": "contacts",
                     "title": "Contacts",
                     "complete": false,
-                    "required": false
+                    "required": false,
+                    "visible": true
                   },
                   {
                     "id": "tasks",
                     "title": "Tasks",
                     "complete": false,
-                    "required": false
+                    "required": false,
+                    "visible": true
                   },
                   {
                     "id": "documents",
                     "title": "Documents",
                     "complete": false,
-                    "required": false
+                    "required": false,
+                    "visible": true
                   }
                 ],
                 "execute": [
@@ -1036,7 +1047,8 @@
                     "id": "approve_per",
                     "title": "Approve PER",
                     "complete": false,
-                    "required": true
+                    "required": true,
+                    "visible": true
                   }
                 ]
               }
@@ -1072,7 +1084,8 @@
                 "id": "contacts",
                 "title": "Contacts",
                 "complete": false,
-                "required": false
+                "required": false,
+                "visible": true
               },
               "phases": {
                 "plan": [
@@ -1080,25 +1093,29 @@
                     "id": "info",
                     "title": "Basic Info",
                     "complete": true,
-                    "required": true
+                    "required": true,
+                    "visible": true
                   },
                   {
                     "id": "contacts",
                     "title": "Contacts",
                     "complete": false,
-                    "required": false
+                    "required": false,
+                    "visible": true
                   },
                   {
                     "id": "tasks",
                     "title": "Tasks",
                     "complete": false,
-                    "required": false
+                    "required": false,
+                    "visible": true
                   },
                   {
                     "id": "documents",
                     "title": "Documents",
                     "complete": false,
-                    "required": false
+                    "required": false,
+                    "visible": true
                   }
                 ],
                 "execute": [
@@ -1109,7 +1126,8 @@
                     "id": "approve_per",
                     "title": "Approve PER",
                     "complete": false,
-                    "required": true
+                    "required": true,
+                    "visible": true
                   }
                 ]
               }
