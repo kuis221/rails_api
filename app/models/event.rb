@@ -131,12 +131,11 @@ class Event < ActiveRecord::Base
     if  company_user.is_admin?
       self
     else
-      joins(:place)
-        .where('events.place_id in (?) OR events.place_id in (
-                select place_id FROM locations_places where location_id in (?))',
-               company_user.accessible_places + [0],
-               company_user.accessible_locations + [0]
-        )
+      where('events.place_id in (?) OR events.place_id in (
+              select place_id FROM locations_places where location_id in (?))',
+             company_user.accessible_places + [0],
+             company_user.accessible_locations + [0]
+      )
     end
   end
 
