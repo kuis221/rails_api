@@ -275,7 +275,7 @@ describe Results::EventDataController, type: :controller do
          'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL', 'START', 'END',
          'PROMO HOURS', 'TEST KPI 1'],
         ['Test Campaign FY01', 'Angeles Area', '="344221"', 'Bar Prueba', 'Bar Prueba, 11 Main St., Los Angeles, California, 12345',
-         'Los Angeles', 'California', '12345', 'Active', 'Approved', "", "",
+         'Los Angeles', 'California', '12345', 'Active', 'Approved', '', '',
          "http://test.host/events/#{event.id}", '2019-01-23 10:00', '2019-01-23 12:00',
          '2.00', '8899.0']
       ])

@@ -14,9 +14,8 @@ class Results::EventDataController < FilteredController
       csv << [
         'CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS',
         'CITY', 'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS',
-        'CONTACTS', 'URL', 'START', 'END', 'PROMO HOURS'].concat(
-          expense_exporter.categories.concat(
-            exporter.custom_fields_to_export_headers))
+        'CONTACTS', 'URL', 'START', 'END', 'PROMO HOURS'
+      ].concat(expense_exporter.categories + exporter.custom_fields_to_export_headers)
       each_collection_item do |event|
         csv << [
           event.campaign_name, exporter.area_for_event(event),
