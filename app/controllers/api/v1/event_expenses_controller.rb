@@ -121,8 +121,8 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
     if parent.campaign.enabled_modules.include?('expenses') && can?(:expenses, parent) && can?(:create_expense, parent)
       bucket = AWS::S3.new.buckets[ENV['S3_BUCKET_NAME']]
       form = bucket.presigned_post(acl: 'public-read', success_action_status: 201)
-                  .where(:key).starts_with('uploads/')
-                  .where(:content_type).starts_with('')
+                   .where(:key).starts_with('uploads/')
+                   .where(:content_type).starts_with('')
       data = { fields: form.fields, url: "https://#{ENV['S3_BUCKET_NAME']}.s3.amazonaws.com/"  }
       respond_to do |format|
         format.json { render json: data }

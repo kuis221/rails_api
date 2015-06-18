@@ -6,6 +6,24 @@ class Results::ExpensesController < FilteredController
 
   private
 
+  def collection_to_csv
+    CSV.generate do |csv|
+      csv << [
+        'CAMPAIGN NAME', 'BRAND', 'VENUE NAME', 'ADDRESS', 'EXPENSE DATE',
+        'EVENT START DATE', 'EVENT END DATE', 'AMOUNT', 'CATEGORY', 'REIMBURSABLE', 'BILLABLE',
+        'MERCHANT', 'DESCRIPTION', 'ACTIVE STATE']
+      each_collection_item do |event|
+        csv << [
+          event.campaign_name, exporter.area_for_event(event), event.place_td_linx_code,
+          event.place_name, event.place_address, event.place_city, event.place_state,
+          event.place_zipcode, event.status, event.event_status, event.team_members,
+          event.contacts, event.url, event.start_date, event.end_date, event.promo_hours,
+          event.spent] +
+          exporter.custom_fields_to_export_values(event)
+      end
+    end
+  end
+
   def search_params
     @search_params || (super.tap do |p|
       p[:with_expenses_only] = true unless p.key?(:user) && p[:user].present?

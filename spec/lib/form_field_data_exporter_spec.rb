@@ -2,13 +2,12 @@ require 'rails_helper'
 
 describe FormFieldDataExporter, type: :model do
   let(:company) { campaign.company }
-  let(:campaign) { create(:campaign, name: 'Test Campaign FY01') }
+  let(:campaign) { create(:campaign) }
   let(:event) { create(:approved_event, campaign: campaign) }
-  let(:activity_type) { create(:activity_type, name: 'Test activity type', campaign_ids: [campaign.id], company: company) }
+  let(:activity_type) { create(:activity_type, campaign_ids: [campaign.id], company: company) }
   let(:activity) { create(:activity, activity_type: activity_type, activitable: event, company_user: company_user) }
   let(:company_user) { create(:company_user, company: campaign.company) }
   let(:params) { { campaign: [campaign.id] } }
-  let(:search_params) { params }
 
   before { Kpi.create_global_kpis }
 
@@ -18,8 +17,6 @@ describe FormFieldDataExporter, type: :model do
 
   describe '#custom_fields_to_export_values and #custom_fields_to_export_headers' do
     describe 'for event data' do
-
-
       it 'includes NUMBER fields that are not linked to a KPI' do
         field = create(:form_field_number, name: 'My Numeric Field', fieldable: campaign)
 

@@ -1,4 +1,4 @@
-class FormFieldDataExporter
+class FormFieldDataExporter < BaseExporter
   SEGMENTED_FIELD_TYPES = ['FormField::Percentage', 'FormField::Checkbox',
                            'FormField::Summation', 'FormField::LikertScale']
   PERCENTAGE_TYPE = 'FormField::Percentage'.freeze
@@ -11,8 +11,7 @@ class FormFieldDataExporter
   attr_accessor :params, :company_user, :resource_class
 
   def initialize(company_user, params, resource_class)
-    @company_user = company_user
-    @params = params
+    super company_user, params
     @resource_class = resource_class
   end
 
@@ -122,31 +121,10 @@ class FormFieldDataExporter
   end
 
   def custom_fields_to_export
-    @custom_fields_to_export ||= begin
-      campaign_ids = []
-      campaign_ids = params[:campaign].uniq.compact if params[:campaign] && params[:campaign].any?
-      unless company_user.is_admin?
-        if campaign_ids.any?
-          campaign_ids = campaign_ids.map(&:to_i) & company_user.accessible_campaign_ids
-        else
-          campaign_ids = company_user.accessible_campaign_ids
-        end
-      end
-      campaign_ids = filter_campaigns_by_brands(campaign_ids)
-      Hash[form_fields_for_resource(campaign_ids)]
-    end
+    @custom_fields_to_export ||= Hash[form_fields_for_resource]
   end
 
-  def filter_campaigns_by_brands(campaign_ids)
-    return campaign_ids unless params[:brand] && params[:brand].any?
-    if campaign_ids.any?
-      Campaign.with_brands(params[:brand]).where(id: campaign_ids).pluck(:id)
-    else
-      Campaign.with_brands(params[:brand]).pluck(:id)
-    end
-  end
-
-  def form_fields_for_resource(campaign_ids)
+  def form_fields_for_resource
     if resource_class == Event
       form_fields_for_events(campaign_ids)
     else
