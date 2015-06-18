@@ -150,6 +150,12 @@ class DataExtract < ActiveRecord::Base
     false
   end
 
+  def filtered_by?(keys)
+    keys = Array(keys)
+    return false if filters.nil? || filters.empty?
+    keys.any? { |k| filters.key?(k.to_s)  }
+  end
+
   def source
     self.class.name.split('::').last.underscore
   end
