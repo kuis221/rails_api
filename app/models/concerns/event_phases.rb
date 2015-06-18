@@ -34,45 +34,45 @@ module EventPhases
   end
 
   def api_execute_phase
-    phase = execute_phases
+    phase = execute_phases.dup
     if current_phase == :execute
       phase.push(id: :per, title: 'Submit',
-                  complete: false, required: false, visible: false) if phase.find{ |p| p[:complete] == false }.nil?
+                  complete: false, required: false) if phase.find{ |p| p[:complete] == false }.nil?
     end
     phase
   end
 
   def plan_phases
     @plan_phases ||= [].tap do |phases|
-      phases.push(id: :info, title: 'Basic Info', complete: true, required: true, visible: true)
-      phases.push(id: :contacts, title: 'Contacts', complete: contacts.any?, required: false, visible: true)
-      phases.push(id: :tasks, title: 'Tasks', complete: tasks.any?, required: false, visible: true)
-      phases.push(id: :documents, title: 'Documents', complete: documents.any?, required: false, visible: true)
+      phases.push(id: :info, title: 'Basic Info', complete: true, required: true)
+      phases.push(id: :contacts, title: 'Contacts', complete: contacts.any?, required: false)
+      phases.push(id: :tasks, title: 'Tasks', complete: tasks.any?, required: false)
+      phases.push(id: :documents, title: 'Documents', complete: documents.any?, required: false)
     end
   end
 
   def execute_phases
     @execute_phases ||= [].tap do |phases|
       phases.push(id: :per, title: 'Post Event Recap',
-                  complete: event_data?, required: true, visible: true
+                  complete: event_data?, required: true
                  ) if campaign.form_fields.any?
-      phases.push(id: :activities, title: 'Activities', visible: true,
+      phases.push(id: :activities, title: 'Activities',
                   complete: activities.any?,
                   if: proc { |_| can?(:show, Activity) }
                  ) if campaign.activity_types.any?
-      phases.push(id: :attendance, title: 'Attendance', visible: true,
+      phases.push(id: :attendance, title: 'Attendance',
                   complete: invites.any?, if: proc { |_| can?(:show, Activity) },
                   required: false
                  ) if campaign.enabled_modules.include?('attendance')
-      phases.push(id: :expenses, title: 'Expenses', visible: true,
+      phases.push(id: :expenses, title: 'Expenses',
                   complete: expenses_complete?, if: proc { |event| can?(:expenses, event) },
                   required: module_required?('expenses')
                  ) if campaign.enabled_modules.include?('expenses')
-      phases.push(id: :photos, title: 'Photos', visible: true,
+      phases.push(id: :photos, title: 'Photos',
                   complete: photos_complete?, if: proc { |event| can?(:photos, event) },
                   required: module_required?('photos')
                  ) if campaign.enabled_modules.include?('photos')
-      phases.push(id: :comments, title: 'Consumer Comments', visible: true,
+      phases.push(id: :comments, title: 'Consumer Comments',
                   complete: comments_complete?, if: proc { |event| can?(:comments, event) },
                   required: module_required?('comments')
                  ) if campaign.enabled_modules.include?('comments')
@@ -81,7 +81,7 @@ module EventPhases
 
   def results_phases
     @results_phases ||= [].tap do |phases|
-      phases.push(id: :approve_per, title: 'Approve PER', visible: true, complete: approved?, required: true,
+      phases.push(id: :approve_per, title: 'Approve PER', complete: approved?, required: true,
                   if: proc { |event| can?(:approve, event) })
     end
   end
