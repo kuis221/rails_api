@@ -23,7 +23,11 @@ describe PlacesController, type: :controller do
       expect_any_instance_of(GooglePlaces::Client).to receive(:spots).and_return([])
       expect_any_instance_of(described_class).to receive(:open).and_return(double(read: ActiveSupport::JSON.encode('results' => [{ 'geometry' => { 'location' => { 'lat' => '1.2322', lng: '-3.23455' } } }])))
       expect do
-        xhr :post, 'create', area_id: area.to_param, add_new_place: true, place: { name: "Guille's place", street_number: '123 st', route: 'xyz 321', city: 'Curridabat', state: 'San José', zipcode: '12345', country: 'CR' }, format: :js
+        xhr :post, 'create', area_id: area.to_param, add_new_place: true, place: {
+          name: "Guille's place", street_number: '123 st', route: 'xyz 321',
+          city: 'Curridabat', state: 'San José', zipcode: '12345',
+          types: 'bar',
+          country: 'CR' }, format: :js
       end.to change(Place, :count).by(1)
       place = Place.last
       expect(place.name).to eql "Guille's place"
@@ -49,7 +53,10 @@ describe PlacesController, type: :controller do
         expect_any_instance_of(GooglePlaces::Client).to receive(:spots).and_return([double(place_id: '123', name: "Guille's place", reference: 'XYZ')])
         expect_any_instance_of(described_class).to receive(:open).and_return(double(read: ActiveSupport::JSON.encode('results' => [{ 'geometry' => { 'location' => { 'lat' => '1.2322', lng: '-3.23455' } } }])))
         expect do
-          xhr :post, 'create', area_id: area.id, add_new_place: true, place: { name: "Guille's place", street_number: '123 st', route: 'xyz 321', city: 'Curridabat', state: 'San José', zipcode: '12345', country: 'CR' }, format: :js
+          xhr :post, 'create', area_id: area.id, add_new_place: true, place: {
+            name: "Guille's place", street_number: '123 st',
+            route: 'xyz 321', city: 'Curridabat', state: 'San José',
+            zipcode: '12345', country: 'CR' }, format: :js
         end.to change(Place, :count).by(1)
         place = Place.last
         expect(place.name).to eql 'APIs place name'
