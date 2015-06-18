@@ -15,7 +15,7 @@ class EventExpensesExporter < BaseExporter
 
   def categories
     @categories ||= begin
-      scope = EventExpense.joins(:event).where(events: { company_id: @company_user.id })
+      scope = EventExpense.joins(:event).where(events: { company_id: @company_user.company_id })
       scope = scope.where(events: { campaign_id: campaign_ids }) if campaign_ids.any?
       scope.order('1 ASC').pluck('DISTINCT(UPPER(category))')
     end
@@ -25,8 +25,8 @@ class EventExpensesExporter < BaseExporter
     @columns_hash ||= Hash[categories.map { |c| [c, nil] }]
 
     #Clear hash of values
-    @columns_hash.each { |k, v| @columns_hash[k] = nil }
-    expenses.each { |k, v| @columns_hash[k] = v }
+    @columns_hash.each { |k, _| @columns_hash[k] = nil }
+    expenses.each { |k, v| @columns_hash[k] = v if @columns_hash.key?(k) }
     @columns_hash.values
   end
 end

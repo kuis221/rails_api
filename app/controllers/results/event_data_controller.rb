@@ -9,29 +9,25 @@ class Results::EventDataController < FilteredController
   def collection_to_csv
     exporter = FormFieldDataExporter.new(current_company_user, search_params, resource_class)
     expense_exporter = EventExpensesExporter.new(current_company_user, search_params)
+    Rails.logger.debug "expense_exporter.categories ==> #{expense_exporter.categories}"
     CSV.generate do |csv|
       csv << [
         'CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS',
         'CITY', 'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS',
-        'CONTACTS', 'URL', 'START', 'END', 'PROMO HOURS'] +
-        expense_exporter.categories +
-        exporter.custom_fields_to_export_headers
+        'CONTACTS', 'URL', 'START', 'END', 'PROMO HOURS'].concat(
+          expense_exporter.categories.concat(
+            exporter.custom_fields_to_export_headers))
       each_collection_item do |event|
         csv << [
-          event.campaign_name, exporter.area_for_event(event), event.place_td_linx_code,
-          event.place_name, event.place_address, event.place_city, event.place_state,
-          event.place_zipcode, event.status, event.event_status, event.team_members,
-          event.contacts, event.url, event.start_date, event.end_date, event.promo_hours].concat(
-            expense_exporter.event_expenses(event).concat(exporter.custom_fields_to_export_values(event)))
+          event.campaign_name, exporter.area_for_event(event),
+          event.place_td_linx_code, event.place_name, event.place_address,
+          event.place_city, event.place_state, event.place_zipcode, event.status,
+          event.event_status, event.team_members, event.contacts, event.url,
+          event.start_date, event.end_date, event.promo_hours].concat(
+            expense_exporter.event_expenses(event).concat(
+              exporter.custom_fields_to_export_values(event)))
       end
     end
-  end
-
-  def search_params
-    @search_params || (super.tap do |p|
-      p[:with_event_data_only] = true unless p.key?(:user) && !p[:user].empty?
-      p[:event_data_stats] = true
-    end)
   end
 
   def data_totals
