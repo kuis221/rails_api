@@ -32,15 +32,13 @@ describe Results::ExpensesController, type: :controller do
     end
 
     it 'should return an empty xls with the correct headers' do
-      expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+      expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
       export = ListExport.last
       expect(ListExportWorker).to have_queued(export.id)
       ResqueSpec.perform_all(:export)
 
       expect(export.reload).to have_rows([
-        ['CAMPAIGN NAME', 'BRAND', 'VENUE NAME', 'ADDRESS', 'EXPENSE DATE', 'EVENT START DATE', 'EVENT END DATE',
-         'AMOUNT', 'CATEGORY', 'REIMBURSABLE', 'BILLABLE', 'MERCHANT', 'DESCRIPTION',
-         'ACTIVE STATE']
+        ['CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS', 'EVENT START DATE', 'EVENT END DATE']
       ])
     end
 
@@ -49,7 +47,7 @@ describe Results::ExpensesController, type: :controller do
                               start_date: '08/21/2013', end_date: '08/21/2013',
                               start_time: '8:00pm', end_time: '11:00pm', place: create(:place, name: 'Place 1'),
                               event_expenses: [
-                                build(:event_expense, category: 'Entertainment', amount: 10, brand_id: brand.id)])
+                                build(:event_expense, category: 'Entertainment', amount: 10)])
 
       create(:approved_event, campaign: campaign,
                               start_date: '08/25/2013', end_date: '08/25/2013',
@@ -58,20 +56,18 @@ describe Results::ExpensesController, type: :controller do
                                 build(:event_expense, category: 'Uncategorized', amount: 20)])
 
       Sunspot.commit
-      expect { xhr :get, 'index', format: :xls }.to change(ListExport, :count).by(1)
+      expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
       export = ListExport.last
       expect(ListExportWorker).to have_queued(export.id)
       ResqueSpec.perform_all(:export)
 
       expect(export.reload).to have_rows([
-        ["CAMPAIGN NAME", "BRAND", "VENUE NAME", "ADDRESS", "EXPENSE DATE", "EVENT START DATE", "EVENT END DATE",
-         "AMOUNT", "CATEGORY", "REIMBURSABLE", "BILLABLE", "MERCHANT", "DESCRIPTION", "ACTIVE STATE"],
-        ["Test Campaign FY01", "Brand 1", "Place 1", "Place 1, 11 Main St., New York City, NY, 12345",
-         "2015-01-01T00:00", "2013-08-21T23:00", "2013-08-21T20:00", "10.0", "Entertainment",
-         "No", "No", nil, nil, "Active"],
-         ["Test Campaign FY01", nil, "Place 2", "Place 2, 11 Main St., New York City, NY, 12345",
-          "2015-01-01T00:00", "2013-08-25T10:00", "2013-08-25T09:00", "20.0", "Uncategorized",
-          "No", "No", nil, nil, "Active"]
+        ['CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS', 'EVENT START DATE', 'EVENT END DATE',
+         'ENTERTAINMENT', 'UNCATEGORIZED'],
+        ['Test Campaign FY01', 'Place 1', 'Place 1, 11 Main St., New York City, NY, 12345',
+         '2013-08-21 20:00', '2013-08-21 23:00', '10.0', nil],
+        ['Test Campaign FY01', 'Place 2', 'Place 2, 11 Main St., New York City, NY, 12345',
+         '2013-08-25 09:00', '2013-08-25 10:00', nil, '20.0']
       ])
     end
   end

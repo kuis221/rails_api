@@ -1,25 +1,23 @@
 class Results::ExpensesController < FilteredController
   defaults resource_class: ::Event
-  respond_to :xls, only: :index
+  respond_to :csv, only: :index
 
   helper_method :expenses_total, :return_path
 
   private
 
   def collection_to_csv
+    exporter = EventExpensesExporter.new(current_company_user, search_params)
     CSV.generate do |csv|
       csv << [
-        'CAMPAIGN NAME', 'BRAND', 'VENUE NAME', 'ADDRESS', 'EXPENSE DATE',
-        'EVENT START DATE', 'EVENT END DATE', 'AMOUNT', 'CATEGORY', 'REIMBURSABLE', 'BILLABLE',
-        'MERCHANT', 'DESCRIPTION', 'ACTIVE STATE']
+        'CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS',
+        'EVENT START DATE', 'EVENT END DATE'].concat(
+          exporter.categories)
       each_collection_item do |event|
         csv << [
-          event.campaign_name, exporter.area_for_event(event), event.place_td_linx_code,
-          event.place_name, event.place_address, event.place_city, event.place_state,
-          event.place_zipcode, event.status, event.event_status, event.team_members,
-          event.contacts, event.url, event.start_date, event.end_date, event.promo_hours,
-          event.spent] +
-          exporter.custom_fields_to_export_values(event)
+          event.campaign_name, event.place_name,
+          event.place_address, event.start_date, event.end_date
+        ].concat(exporter.event_expenses(event))
       end
     end
   end

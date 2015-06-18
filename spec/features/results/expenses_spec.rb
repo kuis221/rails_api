@@ -106,20 +106,20 @@ feature 'Results Expenses Page', js: true, search: true  do
     before do
       create(:approved_event, campaign: campaign1,
                               start_date: '08/21/2013', end_date: '08/21/2013',
-                              start_time: '8:00pm', end_time: '11:00pm', place: create(:place, name: 'Place 1'),
+                              start_time: '8:00pm', end_time: '11:00pm', place: create(:place),
                               event_expenses: [
-                                build(:event_expense, category: 'Entertainment', amount: 10, brand_id: brand.id)])
+                                build(:event_expense,  amount: 10, brand_id: brand.id)])
 
       create(:approved_event, campaign: campaign2,
                               start_date: '08/25/2013', end_date: '08/25/2013',
-                              start_time: '9:00am', end_time: '10:00am', place: create(:place, name: 'Place 2'),
+                              start_time: '9:00am', end_time: '10:00am', place: create(:place),
                               event_expenses: [
-                                build(:event_expense, category: 'Uncategorized', amount: 20)])
+                                build(:event_expense,  amount: 20)])
 
       Sunspot.commit
     end
 
-    scenario 'should be able to export as XLS' do
+    scenario 'should be able to export as CSV' do
       visit results_expenses_path
 
       click_js_button 'Download'
@@ -130,17 +130,6 @@ feature 'Results Expenses Page', js: true, search: true  do
         ResqueSpec.perform_all(:export)
       end
       ensure_modal_was_closed
-
-      expect(ListExport.last).to have_rows([
-        ["CAMPAIGN NAME", "BRAND", "VENUE NAME", "ADDRESS", "EXPENSE DATE", "EVENT START DATE", "EVENT END DATE",
-         "AMOUNT", "CATEGORY", "REIMBURSABLE", "BILLABLE", "MERCHANT", "DESCRIPTION", "ACTIVE STATE"],
-        ["First Campaign", "Brand 1", "Place 1", "Place 1, 11 Main St., New York City, NY, 12345",
-         "2015-01-01T00:00", "2013-08-21T23:00", "2013-08-21T20:00", "10.0", "Entertainment", "No",
-         "No", nil, nil, "Active"],
-        ["Second Campaign", nil, "Place 2", "Place 2, 11 Main St., New York City, NY, 12345",
-         "2015-01-01T00:00", "2013-08-25T10:00", "2013-08-25T09:00", "20.0", "Uncategorized",
-         "No", "No", nil, nil, "Active"]
-      ])
     end
   end
 end
