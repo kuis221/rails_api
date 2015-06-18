@@ -26,10 +26,10 @@ class TagsController < InheritedResources::Base
   def load_tag
     @tag = current_company.tags.find_by_id params[:id] if params[:id] =~ /\A[0-9]+\z/
     @tag ||=
-      if can?(:create, Tag)
+      if can?(:create_tag, parent)
         current_company.tags.find_or_create_by(name: params[:id])
       else
-        current_company.tags.find_by(:name)
+        current_company.tags.find_by(name: params[:id])
       end
     @tag
   end

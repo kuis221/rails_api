@@ -449,7 +449,7 @@ class Ability
         can?(:show, asset.attachable)
       end
 
-      [:edit_rate, :view_rate, :index_tag, :activate_tag, :remove_tag].each do |action|
+      [:edit_rate, :view_rate, :index_tag, :create_tag, :activate_tag, :remove_tag].each do |action|
         cannot action, AttachedAsset do |asset|
           asset.asset_type == 'photo' &&
           (!user.role.has_permission?(action, AttachedAsset) ||
