@@ -29,8 +29,17 @@ module EventPhases
 
   def next_step
     { plan: plan_phases,
-      execute: execute_phases,
+      execute: api_execute_phase,
       results: results_phases }[current_phase].find { |p| p[:complete] == false }
+  end
+
+  def api_execute_phase
+    phase = execute_phases.dup
+    if current_phase == :execute
+      phase.push(id: :per, title: 'Submit',
+                  complete: false, required: false) if phase.all?{ |p| p[:complete] }
+    end
+    phase
   end
 
   def plan_phases
