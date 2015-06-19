@@ -9,13 +9,12 @@ class Results::EventDataController < FilteredController
   def collection_to_csv
     exporter = FormFieldDataExporter.new(current_company_user, search_params, resource_class)
     expense_exporter = EventExpensesExporter.new(current_company_user, search_params)
-    Rails.logger.debug "expense_exporter.categories ==> #{expense_exporter.categories}"
     CSV.generate do |csv|
       csv << [
         'CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS',
         'CITY', 'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS',
         'CONTACTS', 'URL', 'START', 'END', 'PROMO HOURS'
-      ].concat(expense_exporter.categories + exporter.custom_fields_to_export_headers)
+      ].concat(expense_exporter.expenses_columns + exporter.custom_fields_to_export_headers)
       each_collection_item do |event|
         csv << [
           event.campaign_name, exporter.area_for_event(event),

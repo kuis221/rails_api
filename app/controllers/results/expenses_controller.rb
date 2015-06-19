@@ -12,7 +12,7 @@ class Results::ExpensesController < FilteredController
       csv << [
         'CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS',
         'EVENT START DATE', 'EVENT END DATE'].concat(
-          exporter.categories)
+          exporter.expenses_columns)
       each_collection_item do |event|
         csv << [
           event.campaign_name, event.place_name,

@@ -25,7 +25,6 @@ describe Results::ExpensesController, type: :controller do
     end
   end
 
-
   describe "GET 'list_export'", search: true do
     before do
       Kpi.create_global_kpis
@@ -38,7 +37,7 @@ describe Results::ExpensesController, type: :controller do
       ResqueSpec.perform_all(:export)
 
       expect(export.reload).to have_rows([
-        ['CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS', 'EVENT START DATE', 'EVENT END DATE']
+        ['CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS', 'EVENT START DATE', 'EVENT END DATE', 'SPENT']
       ])
     end
 
@@ -63,11 +62,11 @@ describe Results::ExpensesController, type: :controller do
 
       expect(export.reload).to have_rows([
         ['CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS', 'EVENT START DATE', 'EVENT END DATE',
-         'ENTERTAINMENT', 'UNCATEGORIZED'],
+         'SPENT', 'ENTERTAINMENT', 'UNCATEGORIZED'],
         ['Test Campaign FY01', 'Place 1', 'Place 1, 11 Main St., New York City, NY, 12345',
-         '2013-08-21 20:00', '2013-08-21 23:00', '10.0', nil],
+         '2013-08-21 20:00', '2013-08-21 23:00', '10.0', '10.0', nil],
         ['Test Campaign FY01', 'Place 2', 'Place 2, 11 Main St., New York City, NY, 12345',
-         '2013-08-25 09:00', '2013-08-25 10:00', nil, '20.0']
+         '2013-08-25 09:00', '2013-08-25 10:00', '20.0', nil, '20.0']
       ])
     end
   end

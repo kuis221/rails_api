@@ -5,7 +5,7 @@ class EventExpensesExporter < BaseExporter
   end
 
   def expenses_columns
-    categories
+    ['SPENT'].concat categories
   end
 
   def event_expenses(event)
@@ -22,12 +22,13 @@ class EventExpensesExporter < BaseExporter
   end
 
   def values(expenses)
-    return [] if categories.empty?
+    return [0] if categories.empty?
     @columns_hash ||= Hash[categories.map { |c| [c, nil] }]
 
     #Clear hash of values
     @columns_hash.each { |k, _| @columns_hash[k] = nil }
     expenses.each { |k, v| @columns_hash[k] = v if @columns_hash.key?(k) }
-    @columns_hash.values
+    values = @columns_hash.values
+    [values.reject(&:blank?).inject(0, :+)].concat values
   end
 end
