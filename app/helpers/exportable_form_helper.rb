@@ -3,6 +3,7 @@ module ExportableFormHelper
     def export_fieldable
       respond_to do |format|
         format.pdf do
+          response.headers['Cache-Control']='private, max-age=0, no-cache'
           render pdf: pdf_form_file_name,
                  template: 'shared/fieldable.html.slim',
                  layout: 'application.pdf',

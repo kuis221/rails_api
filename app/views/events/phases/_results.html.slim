@@ -13,7 +13,8 @@
     = render 'activities'
 
 - if can?(:index_invites, Event) && resource.campaign.enabled_modules.include?('attendance')
-  = render 'attendance'
+  #event-attendance.details_box
+    = render 'attendance'
 
 - if can?(:photos, resource) && enabled_modules.include?('photos')
   #event-photos.details_box.box_photos
