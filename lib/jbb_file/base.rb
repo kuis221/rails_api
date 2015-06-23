@@ -100,7 +100,6 @@ module JbbFile
     end
 
     def find_files
-      raise 'testing'
       puts "Getting list of file from #{ftp_connection.pwd}"
       Rails.logger.info "Getting list of file from #{ftp_connection.pwd}"
       ftp_connection.nlst('*xlsx')
