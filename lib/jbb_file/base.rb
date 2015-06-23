@@ -66,6 +66,8 @@ module JbbFile
       close_connection
       sleep 1
       retry
+    ensure
+      close_connection
     end
 
     def get_file(dir, file)
