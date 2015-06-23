@@ -62,6 +62,7 @@ module JbbFile
       end
 
     rescue Errno::ECONNRESET
+      puts "Archive file #{file} failed, retrying..."
       sleep 1
       retry
     end
