@@ -453,7 +453,9 @@ class Api::V1::EventsController < Api::V1::FilteredController
         end
         v = field.value_is_numeric?(r.value) ? r.value.to_f : r.value
         if field.settings && field.settings.key?('range_format') && (!field.settings['range_min'].blank? || !field.settings['range_max'].blank?)
-          result[:range] = { format: field.settings['range_format'], min: field.settings['range_min'], max: field.settings['range_max'] }
+          result[:range] = { format: field.settings['range_format'],
+                             min: field.settings['range_min'].present? ? field.settings['range_min'].to_i : nil,
+                             max: field.settings['range_max'].present? ? field.settings['range_max'].to_i : nil }
         end
         result.merge!(value: v)
       end
