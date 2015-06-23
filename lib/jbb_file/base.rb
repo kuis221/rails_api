@@ -60,6 +60,10 @@ module JbbFile
           raise e
         end
       end
+
+    rescue Errno::ECONNRESET
+      sleep 1
+      retry
     end
 
     def get_file(dir, file)
