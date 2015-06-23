@@ -3,7 +3,7 @@ class Api::V1::PhotosController < Api::V1::FilteredController
 
   defaults resource_class: AttachedAsset
 
-  authorize_resource class: AttachedAsset, only: [:show, :update, :destroy]
+  authorize_resource class: AttachedAsset, only: [:show, :destroy]
 
   resource_description do
     short 'Photos'
@@ -114,6 +114,7 @@ class Api::V1::PhotosController < Api::V1::FilteredController
     param :active, %w(true false), required: true, desc: 'Photo status'
   end
   def update
+    authorize! :deactivate_photo, Event
     update! do |success, failure|
       success.json { render :show }
       success.xml  { render :show }

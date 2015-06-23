@@ -64,6 +64,7 @@ module JbbFile
                   invite = event.invites.create_with(
                     row.select { |k, _| self.class::INVITE_COLUMNS.include?(k) }.merge(invite_scope_params)
                   ).find_or_create_by(invite_scope_params)
+                  next unless invite.persisted?
                   if invite.rsvps.create(row.select { |k, _| self.class::RSVP_COLUMNS.include?(k) })
                     invite.increment!(:rsvps_count)
                   end
@@ -99,6 +100,7 @@ module JbbFile
         else
           row[:event_date]
         end
+      return if date.blank?
       date_str = date.to_date.to_s(:db)
       scope = campaign.events.where('events.local_start_at::date=?', date_str).active
       return @events[date_str] unless @events[date_str].nil?
