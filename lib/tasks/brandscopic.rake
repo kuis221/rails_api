@@ -20,8 +20,8 @@ namespace :brandscopic do
 
   desc 'Copy all assets production to this environment\'s bucket'
   task synch_assets: :environment do
-    production_bucket = 'brandscopic-prod'
-    fail 'Cannot copy to the same bucket' if ENV['S3_BUCKET_NAME'] == production_bucket
+    origin_bucket = ENV['ORIGIN'] || 'brandscopic-prod'
+    fail 'Cannot copy to the same bucket' if ENV['S3_BUCKET_NAME'] == origin_bucket
     start = ENV['START'] || 0
     s3 = AWS::S3.new
     AttachedAsset.photos.where('attached_assets.id >= ?', start).where(attachable_type: 'Event')
@@ -33,8 +33,8 @@ namespace :brandscopic do
       (at.file.styles.keys + [:original]).each do |style_name|
         key = at.file.path(style_name).gsub(/^\//,'')
         begin
-          if s3.buckets[production_bucket].objects[key].exists?
-            s3.buckets[production_bucket].objects[key].copy_to(
+          if s3.buckets[origin_bucket].objects[key].exists?
+            s3.buckets[origin_bucket].objects[key].copy_to(
               key, :bucket_name => ENV['S3_BUCKET_NAME'], acl: :public_read)
           end
         rescue
