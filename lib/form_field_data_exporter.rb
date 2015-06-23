@@ -35,8 +35,6 @@ class FormFieldDataExporter < BaseExporter
         @result.value = row['value']
       end
       if SEGMENTED_FIELD_TYPES.include?(@result.form_field.type)
-        # values = ActiveRecord::Coders::Hstore.load(row['hash_value'])
-        # TODO: we have to correctly map values for hash_value here
         if @result.form_field.type == PERCENTAGE_TYPE
           @result.form_field.options_for_input.each do |option|
             value = @result.value[option[1].to_s]
@@ -166,22 +164,31 @@ class FormFieldDataExporter < BaseExporter
     return @custom_columns unless @custom_columns.nil?
     @fields_mapping = {}
     @custom_columns = {}
-    custom_fields_to_export.each do |_, field|
-      segments =
-        if SEGMENTED_FIELD_TYPES.include?(field.type)
-          s = field.options_for_input.map { |option| ["#{field.id}_#{option[1]}", "#{field.name}: #{option[0]}"] }
-          s.sort! { |a, b| a[1] <=> b[1] }
-          s.push(["#{field.id}__TOTAL", "#{field.name}: TOTAL"]) if field.type == SUMMATION_TYPE
-          s
-        else
-          [[field.id, field.name]]
-        end
-      segments.each do |s|
-        id = unique_field_id(field, s[1])
+    last_name = nil
+    segments = []
+    append_fields = proc do |segs|
+      segs.each do |s|
+        id = unique_field_id(s[2], s[1])
         @fields_mapping[s[0]] = id
         @custom_columns[id] = s[1]
       end
     end
+    custom_fields_to_export.each do |_, field|
+      if last_name != field.name && segments.any?
+        append_fields.call(segments)
+        segments = []
+      end
+      last_name = field.name
+      segments.concat(
+        if SEGMENTED_FIELD_TYPES.include?(field.type)
+          s = field.options_for_input.map { |option| ["#{field.id}_#{option[1]}", "#{field.name}: #{option[0]}", field] }
+          s.push(["#{field.id}__TOTAL", "#{field.name}: TOTAL", field]) if field.type == SUMMATION_TYPE
+          s        else
+          [[field.id, field.name, field]]
+        end)
+      segments.sort! { |a, b| a[0].to_s.include?('__TOTAL') ? 1 : (a[1] <=> b[1]) }
+    end
+    append_fields.call(segments) if segments.any?
     @custom_columns
   end
 

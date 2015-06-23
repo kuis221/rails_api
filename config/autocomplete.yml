@@ -111,6 +111,7 @@ autocomplete:
     campaigns: [Campaign]
     brands: [Brand]
     places: [Venue]
+    people: [CompanyUser, Team]
     status:
       items: [Active, Inactive]
       name: 'status'

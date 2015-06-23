@@ -30,6 +30,7 @@ class Event < ActiveRecord::Base
   include EventPhases
   # Defines the method do_search
   include SolrSearchable
+  include EventBaseSolrSearchable
 
   track_who_does_it
 
@@ -664,39 +665,10 @@ class Event < ActiveRecord::Base
       end
     end
 
-    def apply_user_permissions_to_search(permission_class, permission, company_user)
-      proc do
-        unless company_user.role.is_admin?
-          if company_user.role.permission_for(permission, permission_class).mode == 'campaigns'
-            with_campaign company_user.accessible_campaign_ids + [0]
-          elsif company_user.role.permission_for(permission, permission_class).mode == 'none'
-            with_campaign [0]
-          end
-          within_user_locations(company_user)
-        end
-      end
-    end
-
     def searchable_params
       [:page, :sorting, :sorting_dir, :per_page, start_date: [], end_date: [],
        campaign: [], area: [], user: [], team: [], event_status: [], brand: [], status: [],
        venue: [], role: [], brand_portfolio: [], id: [], event: [], place: []]
-    end
-
-    def search_start_date_field
-      if Company.current && Company.current.timezone_support?
-        :local_start_at
-      else
-        :start_at
-      end
-    end
-
-    def search_end_date_field
-      if Company.current && Company.current.timezone_support?
-        :local_end_at
-      else
-        :end_at
-      end
     end
 
     def total_promo_hours_for_places(places)
@@ -862,7 +834,6 @@ class Event < ActiveRecord::Base
     reindex_campaign
 
     if @reindex_place
-      Resque.enqueue(EventPhotosIndexer, id)
       if place_id_was.present?
         previous_venue = Venue.find_by(company_id: company_id, place_id: place_id_was)
         Resque.enqueue(VenueIndexer, previous_venue.id) unless previous_venue.nil?

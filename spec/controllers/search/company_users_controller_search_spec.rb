@@ -360,7 +360,7 @@ describe CompanyUsersController, type: :controller, search: true do
 
     describe "GET 'notifications'" do
       let(:timestamp) { Time.now.to_datetime.strftime('%Q').to_i }
-      it "should return a notification if a user is added to a event's team" do
+      it "returns a notification if a user is added to a event's team" do
         Timecop.freeze do
           company_user.update_attributes(notifications_settings: ['new_event_team_app'])
           company_user.places << place
@@ -385,7 +385,7 @@ describe CompanyUsersController, type: :controller, search: true do
         end
       end
 
-      it 'should return a notification if the user have a late event recap' do
+      it 'returns a notification if the user have a late event recap' do
         company_user.update_attributes(notifications_settings: ['event_recap_late_app'])
         company_user.places << place
         campaign.places << place
@@ -409,7 +409,7 @@ describe CompanyUsersController, type: :controller, search: true do
           'type' => 'event_recaps_late')
       end
 
-      it 'should return a notification if the user have a submitted event recap that is waiting for approval' do
+      it 'returns a notification if the user have a submitted event recap that is waiting for approval' do
         company_user.update_attributes(notifications_settings: ['event_recap_pending_approval_app'])
         company_user.places << place
         campaign.places << place
@@ -433,7 +433,7 @@ describe CompanyUsersController, type: :controller, search: true do
           'type' => 'event_recaps_pending')
       end
 
-      it 'should return a notification if the user have a due event recap' do
+      it 'returns a notification if the user have a due event recap' do
         company_user.update_attributes(notifications_settings: ['event_recap_due_app'])
         company_user.places << place
         campaign.places << place
@@ -466,7 +466,7 @@ describe CompanyUsersController, type: :controller, search: true do
         before { campaign.places << city }
         before { campaign.users << company_user }
 
-        it 'should notify all users about late events that they have access to' do
+        it 'notifies all users about late events that they have access to' do
           company_user.update_attributes(notifications_settings: ['event_recap_late_app'])
           without_current_user { create(:late_event, campaign: campaign, place: place) }
 
@@ -489,7 +489,7 @@ describe CompanyUsersController, type: :controller, search: true do
             'type' => 'event_recaps_late')
         end
 
-        it 'should return a notification if the user have a submitted event recap that is waiting for approval' do
+        it 'returns a notification if the user have a submitted event recap that is waiting for approval' do
           company_user.update_attributes(notifications_settings: ['event_recap_pending_approval_app'])
           without_current_user { create(:submitted_event, campaign: campaign, place: place) }
 
@@ -512,7 +512,7 @@ describe CompanyUsersController, type: :controller, search: true do
             'type' => 'event_recaps_pending')
         end
 
-        it 'should return a notification if the user have a due event recap' do
+        it 'returns a notification if the user have a due event recap' do
           company_user.update_attributes(notifications_settings: ['event_recap_due_app'])
           without_current_user { create(:due_event, campaign: campaign, place: place) }
 

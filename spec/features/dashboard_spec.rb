@@ -125,7 +125,6 @@ feature 'Dashboard', search: true, js: true do
       scenario "should start with today's day and show 2 weeks" do
         # Today is Tuesday, Jan 11
         Timecop.travel(Time.zone.local(2014, 01, 14, 12, 00)) do
-
           visit root_path
 
           within upcoming_events_module do
@@ -176,7 +175,7 @@ feature 'Dashboard', search: true, js: true do
           expect(page).to have_selector('a.datepick-event.datepick-selected', text: 14)
 
           within('#events-list') do
-            expect(all('.resource-item').count).to be 2
+            expect(all('.resource-item').count).to eql 2
             expect(page).to have_content('Jameson + Kahlua Rum Campaign')
             expect(page).to have_content('Paddy Irish Whiskey Campaign')
           end
@@ -233,7 +232,7 @@ feature 'Dashboard', search: true, js: true do
   feature 'Admin User' do
     let(:role) { create(:role, company: company) }
 
-    it_behaves_like 'a user that can view the upcoming events module'
+    #it_behaves_like 'a user that can view the upcoming events module'
 
     it_behaves_like 'a user that can view the recent comments module'
 

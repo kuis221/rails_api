@@ -240,7 +240,7 @@ feature 'Campaigns', js: true do
       }.to_json))
       expect_any_instance_of(GooglePlaces::Client).to receive(:spot).with('xxxxx').and_return(double(
         name: 'Walt Disney World Dolphin', formatted_address: '123 Blvr', address_components: nil,
-        lat: '1.1111', lng: '2.2222', types: []
+        lat: '1.1111', lng: '2.2222', types: ['establishment']
       ))
       Kpi.create_global_kpis
       area = create(:area, name: 'Orlando', company: company)
@@ -266,7 +266,8 @@ feature 'Campaigns', js: true do
         click_js_button 'Add'
       end
 
-      wait_for_ajax
+      expect(page).to_not have_selector('h3', text: 'New Place')
+      expect(page).to have_selector('h3', text: 'Customize Orlando Area')
       new_place_id = Place.last.id
       expect(campaign.areas_campaigns.find_by(area_id: area.id).inclusions).to eql [new_place_id]
 

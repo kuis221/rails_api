@@ -41,16 +41,16 @@ module JbbFile
 
     def archive_file(file)
       begin
-        ftp_connecion.mkdir('OLD') unless ftp_connecion.list("*").any? { |dir| dir.match(/\sOLD$/) }
+        ftp_connection.mkdir('OLD') unless ftp_connection.list("*").any? { |dir| dir.match(/\sOLD$/) }
       rescue Net::FTPPermError
         p 'Archive directory already exists'
       end
-      ftp_connecion.rename(file, "OLD/#{file}")
+      ftp_connection.rename(file, "OLD/#{file}")
     end
 
     def get_file(dir, file)
       path = temp_file_path(dir, file)
-      ftp_connecion.getbinaryfile file, path
+      ftp_connection.getbinaryfile file, path
       { path: path, file_name: file, excel: Roo::Excelx.new(path) }
     end
 
@@ -72,9 +72,9 @@ module JbbFile
     end
 
     def close_connection
-      return unless @ftp_connecion
-      @ftp_connecion.close
-      @ftp_connecion = nil
+      return unless @ftp_connection
+      @ftp_connection.close
+      @ftp_connection = nil
     end
 
     def invalid_format
@@ -82,9 +82,9 @@ module JbbFile
       false
     end
 
-    def ftp_connecion
-      @ftp_connecion = nil if @ftp_connecion && @ftp_connecion.closed?
-      @ftp_connecion ||= Net::FTP.new(ftp_server).tap do |ftp|
+    def ftp_connection
+      @ftp_connection = nil if @ftp_connection && @ftp_connection.closed?
+      @ftp_connection ||= Net::FTP.new(ftp_server).tap do |ftp|
         ftp.passive = true
         ftp.login(ftp_username, ftp_password)
         puts "Changing directory to #{self.ftp_folder}" if self.ftp_folder
@@ -94,16 +94,19 @@ module JbbFile
         ftp
       end
     rescue Errno::ECONNRESET
-      @ftp_connecion = nil
+      @ftp_connection = nil
       sleep 1
       retry
     end
 
     def find_files
-      puts "Getting list of file from #{ftp_connecion.pwd}"
-      Rails.logger.info "Getting list of file from #{ftp_connecion.pwd}"
-      ftp_connecion.nlst('*xlsx')
-    rescue
+      raise 'testing'
+      puts "Getting list of file from #{ftp_connection.pwd}"
+      Rails.logger.info "Getting list of file from #{ftp_connection.pwd}"
+      ftp_connection.nlst('*xlsx')
+    rescue => e
+      Rails.logger.info e.message
+      Rails.logger.info "Backtrace:\n\t#{e.backtrace.join("\n\t")}"
       []
     end
 

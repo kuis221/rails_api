@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 describe AttachedAsset, type: :model, search: true do
+  let(:company)  { create(:company) }
   it 'should search for roles' do
     # First populate the Database with some data
-    company = create(:company)
     brand = create(:brand)
     brand2 = create(:brand)
     campaign = create(:campaign, company: company, brand_ids: [brand.id])
@@ -14,8 +14,12 @@ describe AttachedAsset, type: :model, search: true do
     venue2 = create(:venue, place: place2, company_id: company.id)
     event = create(:event, campaign: campaign, place: place, start_date: '02/22/2013', end_date: '02/23/2013')
     event2 = create(:event, campaign: campaign2, place: place2, start_date: '03/22/2013', end_date: '03/22/2013')
-    asset = create(:attached_asset, asset_type: 'photo', attachable: event)
-    asset2 = create(:attached_asset, asset_type: 'document', attachable: event2)
+    asset = create(:attached_asset, asset_type: 'photo', attachable: event, rating: 1)
+    asset2 = create(:attached_asset, asset_type: 'document', attachable: event2, rating: 2)
+    tag = create(:tag, company: company)
+    tag2 = create(:tag, company: company)
+    asset.tags << tag
+    asset2.tags << [tag, tag2]
 
     # Search for all Attached Assets
     expect(search(company_id: company.id)).to match_array([asset, asset2])
@@ -50,6 +54,22 @@ describe AttachedAsset, type: :model, search: true do
     expect(search(company_id: company.id, location: [place2.location_id]))
       .to match_array([asset2])
     expect(search(company_id: company.id, location: [place.location_id, place2.location_id]))
+      .to match_array([asset, asset2])
+
+    # Search for a specific tags
+    expect(search(company_id: company.id, tag: [tag.id]))
+      .to match_array([asset, asset2])
+    expect(search(company_id: company.id, tag: [tag2.id]))
+      .to match_array([asset2])
+    expect(search(company_id: company.id, tag: [tag.id, tag2.id]))
+      .to match_array([asset, asset2])
+
+    # Search by rating
+    expect(search(company_id: company.id, rating: [1]))
+      .to match_array([asset])
+    expect(search(company_id: company.id, rating: [2]))
+      .to match_array([asset2])
+    expect(search(company_id: company.id, rating: [1, 2]))
       .to match_array([asset, asset2])
 
     # Search for Attached Assets on a given date range

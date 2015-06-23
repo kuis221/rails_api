@@ -1,6 +1,5 @@
 # This module defines the do_search method and uses the helper methods
 # defined in lib/solr_extensions.rb for filtering by campaign/area/etc
-# TODO: we will probably want to
 
 module SolrSearchable
   extend ActiveSupport::Concern
@@ -23,10 +22,16 @@ module SolrSearchable
         with_venue params[:venue] if params[:venue]
         with_event_status params[:event_status] if params[:event_status]
         with_role params[:role] if params[:role]
+        with_asset_type params[:asset_type] if params[:asset_type]
+        with_tag params[:tag] if params[:tag]
+        with_rating params[:rating] if params[:rating]
+        with_event params[:event_id] if params[:event_id]
 
         between_date_range clazz, params[:start_date], params[:end_date]
 
         with_user_teams params
+
+        include_custom_queries # Should be done after all other conditions
 
         order_by(params[:sorting], params[:sorting_dir] || :asc) if params[:sorting]
         paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
@@ -34,13 +39,18 @@ module SolrSearchable
     end
 
     def do_search(params, include_facets = false, includes: nil, &block)
+      clazz = self
       search = build_solr_search(params)
       search.build(&block) if block
       search.build(&search_facets) if include_facets && respond_to?(:search_facets, true)
       if params[:current_company_user] && respond_to?(:apply_user_permissions_to_search, true)
-        search.build(&apply_user_permissions_to_search((params[:search_permission_class] || self),
-                                                       params[:search_permission],
-                                                       params[:current_company_user]))
+        search.build  do
+          instance_eval &apply_user_permissions_to_search((params[:search_permission_class] || clazz),
+                                           params[:search_permission_subject_id],
+                                           params[:search_permission],
+                                           params[:current_company_user])
+          include_custom_queries
+        end
       end
       solr_execute_search(include: includes) do
         search

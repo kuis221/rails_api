@@ -13,7 +13,7 @@ describe PlacesController, type: :controller do
 
   describe "POST 'create'" do
     it 'returns http success' do
-      expect_any_instance_of(Place).to receive(:fetch_place_data).and_return(true)
+      expect_any_instance_of(Place).to receive(:fetch_place_data).at_least(:once).and_return(true)
       xhr :post, 'create', area_id: area.id, place: { reference: ':ref||:id' }, format: :js
       expect(response).to be_success
     end

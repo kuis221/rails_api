@@ -124,6 +124,7 @@ filters:
     campaigns: [Campaign]
     brands: [Brand]
     areas: [Area]
+    people: [CompanyUser, Team]
     tags: [Tag]
     rating:
       items: [5, 4, 3, 2, 1, 0]

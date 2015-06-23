@@ -72,7 +72,6 @@ feature 'Roles', js: true do
       end
       ensure_modal_was_closed
 
-      find('h2', text: 'new role name') # Wait for the page to load
       expect(page).to have_selector('h2', text: 'new role name')
       expect(page).to have_selector('div.description-data', text: 'new role description')
     end

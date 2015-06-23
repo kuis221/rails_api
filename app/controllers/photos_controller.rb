@@ -19,8 +19,11 @@ class PhotosController < InheritedResources::Base
   def processing_status
     @photos = parent.photos.find(params[:photos])
     @photos.each do |p|
-      if p.processing? && p.processing_percentage < 90
-        p.increment!(:processing_percentage, 10)
+      if p.processing? && p.reload.processing_percentage < 90
+        p.processing_percentage += 10
+        # Use update_column instead of increment! to avoid calling callbacks
+        # that are causing indexing issues
+        p.update_column(:processing_percentage, p.processing_percentage)
       end
     end
     @photos

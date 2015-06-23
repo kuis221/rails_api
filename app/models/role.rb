@@ -17,7 +17,7 @@
 class Role < ActiveRecord::Base
   # Created_by_id and updated_by_id fields
   track_who_does_it
-  
+
   belongs_to :company
   scoped_to_company
 

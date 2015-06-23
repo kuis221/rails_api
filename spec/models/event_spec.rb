@@ -844,35 +844,6 @@ describe Event, type: :model do
 
   end
 
-  describe 'photos reindexing' do
-    before do
-      ResqueSpec.reset!
-    end
-    let(:event) { create(:event) }
-
-    it 'should queue a job to reindex photos after a event have been updated if place_id changed' do
-      event.place_id = 1
-      event.save
-      ResqueSpec.reset!
-
-      # Changing the place should reindex all photos for the event
-      event.place_id =  1199
-      expect(event.save).to be_truthy
-      expect(EventPhotosIndexer).to have_queued(event.id)
-    end
-
-    it 'should not queue a job to reindex if the place_id not changed' do
-      event.place_id = 1
-      event.save
-      ResqueSpec.reset!
-
-      # Changing the place should reindex all photos for the event
-      event.start_at = event.start_at - 1.hour
-      expect(event.save).to be_truthy
-      expect(EventPhotosIndexer).not_to have_queued(event.id)
-    end
-  end
-
   describe '#place_reference=' do
     it 'should not fail if nill' do
       event = build(:event, place: nil)

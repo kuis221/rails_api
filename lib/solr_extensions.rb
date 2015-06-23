@@ -3,6 +3,16 @@ require 'sunspot'
 module Sunspot
   module DSL
     class Scope
+      def add_custom_query(queries)
+        @custom_queries ||= []
+        @custom_queries.concat Array(queries)
+      end
+
+      def include_custom_queries
+        return if @custom_queries.nil?
+        adjust_solr_params { |params| params[:fq].concat @custom_queries }
+      end
+
       def with_campaign(campaigns)
         if field?(:campaign_id)
           with :campaign_id, campaigns
@@ -12,47 +22,60 @@ module Sunspot
       end
 
       def with_area(areas, campaigns=nil)
-        if field?(:area_id)
-          with :area_id, areas
-        elsif field?(:area_ids)
-          with :area_ids, areas
-        elsif field?(:place_id) && field?(:location)
-          if field?(:campaign_id)
-            all_of do
-              any_of do
-                with :place_id, Area.where(id: areas).joins(:places).where(places: { is_location: false }).pluck('places.id').uniq + [0]
-                with :location, Area.where(id: areas).map { |a| a.locations.map(&:id) }.flatten + [0]
+        field = nil
+        sq = subquery do
+          if field?(:area_id)
+            field = :area_id
+            with :area_id, areas
+          elsif field?(:area_ids)
+            field = :area_ids
+            with :area_ids, areas
+          elsif field?(:place_id) && field?(:location)
+            if field?(:campaign_id)
+              all_of do
+                any_of do
+                  with :place_id, Area.where(id: areas).joins(:places).where(places: { is_location: false }).pluck('places.id').uniq + [0]
+                  with :location, Area.where(id: areas).map { |a| a.locations.map(&:id) }.flatten + [0]
 
-                # Customized areas with INCLUDED places
-                area_campaigns = AreasCampaign.where(area_id: areas).where('array_length(areas_campaigns.inclusions, 1) >= 1')
-                area_campaigns = area_campaigns.where(campaign_id: campaigns) if campaigns
-                area_campaigns.each do |ac|
-                  all_of do
-                    with :campaign_id, ac.campaign_id
-                    any_of do
-                      with :place_id, ac.inclusions
-                      with :location, ac.location_ids
+                  # Customized areas with INCLUDED places
+                  area_campaigns = AreasCampaign.where(area_id: areas).where('array_length(areas_campaigns.inclusions, 1) >= 1')
+                  area_campaigns = area_campaigns.where(campaign_id: campaigns) if campaigns
+                  area_campaigns.each do |ac|
+                    all_of do
+                      with :campaign_id, ac.campaign_id
+                      any_of do
+                        with :place_id, ac.inclusions
+                        with :location, ac.location_ids
+                      end
                     end
                   end
                 end
-              end
 
-              # Customized areas with EXCLUDED places
-              area_campaigns = AreasCampaign.where(area_id: areas).where('array_length(areas_campaigns.exclusions, 1) >= 1')
-              area_campaigns = area_campaigns.where(campaign_id: campaigns) if campaigns
-              area_campaigns.each do |ac|
-                any_of do
-                  without :campaign_id, ac.campaign_id
-                  without :location, Place.where(id: ac.exclusions, is_location: true).pluck('DISTINCT places.location_id') + [-1]
+                # Customized areas with EXCLUDED places
+                area_campaigns = AreasCampaign.where(area_id: areas).where('array_length(areas_campaigns.exclusions, 1) >= 1')
+                area_campaigns = area_campaigns.where(campaign_id: campaigns) if campaigns
+                area_campaigns.each do |ac|
+                  any_of do
+                    without :campaign_id, ac.campaign_id
+                    without :location, Place.where(id: ac.exclusions, is_location: true).pluck('DISTINCT places.location_id') + [-1]
+                  end
                 end
               end
-            end
-          else
-            any_of do
-              with :place_id, Area.where(id: areas).joins(:places).where(places: { is_location: false }).pluck('places.id').uniq + [0]
-              with :location, Area.where(id: areas).map { |a| a.locations.map(&:id) }.flatten + [0]
+            else
+              any_of do
+                with :place_id, Area.where(id: areas).joins(:places).where(places: { is_location: false }).pluck('places.id').uniq + [0]
+                with :location, Area.where(id: areas).map { |a| a.locations.map(&:id) }.flatten + [0]
+              end
             end
           end
+        end
+        return unless sq.any?
+        # TODO: we should not assume that all the fields are join fields if one is
+        if join_field?(:area_id) || join_field?(:place_id) || join_field?(:campaign_id)
+          # TODO build the join dynamically based on field setup
+          add_custom_query "{!join from=id_is to=event_id_i}#{sq.join(' ')}"
+        else
+          add_custom_query sq
         end
       end
 
@@ -112,6 +135,22 @@ module Sunspot
         end
       end
 
+      def with_asset_type(types)
+        with :asset_type, types if field?(:asset_type)
+      end
+
+      def with_tag(tags)
+        with :tag, tags if field?(:tag)
+      end
+
+      def with_rating(rating)
+        with :rating, rating if field?(:rating)
+      end
+
+      def with_event(events)
+        with :event_id, events if field?(:event_id)
+      end
+
       def with_location(locations)
         with :location, locations if field?(:location)
       end
@@ -163,33 +202,43 @@ module Sunspot
             :end_date
           end
 
-        if start_date.present? && end_date.present?
-          start_date = Array(start_date)
-          end_date = Array(end_date)
-          any_of do
-            start_date.each_with_index do |start, index|
-              d1 = Timeliness.parse(start, zone: :current).beginning_of_day
-              d2 = Timeliness.parse(end_date[index], zone: :current).end_of_day
-              if d1 == d2
-                all_of do
-                  with(start_at_field).less_than(d1.end_of_day)
-                  with(end_at_field).greater_than(d1.beginning_of_day)
+        sq = subquery do
+          if start_date.present? && end_date.present?
+            start_date = Array(start_date)
+            end_date = Array(end_date)
+            any_of do
+              start_date.each_with_index do |start, index|
+                d1 = Timeliness.parse(start, zone: :current).beginning_of_day
+                d2 = Timeliness.parse(end_date[index], zone: :current).end_of_day
+                if d1 == d2
+                  all_of do
+                    with(start_at_field).less_than(d1.end_of_day)
+                    with(end_at_field).greater_than(d1.beginning_of_day)
+                  end
+                else
+                  with start_at_field, d1..d2
+                  with end_at_field, d1..d2
                 end
-              else
-                with start_at_field, d1..d2
-                with end_at_field, d1..d2
+              end
+            end
+          elsif start_date.present?
+            Array(start_date).each do |date|
+              d = Timeliness.parse(date, zone: :current)
+              next if d.nil?
+              all_of do
+                with(start_at_field).less_than(d.end_of_day)
+                with(end_at_field).greater_than(d.beginning_of_day)
               end
             end
           end
-        elsif start_date.present?
-          Array(start_date).each do |date|
-            d = Timeliness.parse(date, zone: :current)
-            next if d.nil?
-            all_of do
-              with(start_at_field).less_than(d.end_of_day)
-              with(end_at_field).greater_than(d.beginning_of_day)
-            end
-          end
+        end
+
+        return unless sq.any?
+        if join_field?(start_at_field)
+          # TODO build the join dynamically based on field setup
+          add_custom_query "{!join from=id_is to=event_id_i}#{sq.join(' ')}"
+        else
+          add_custom_query sq
         end
       end
 
@@ -203,7 +252,6 @@ module Sunspot
 
         current_company = Company.current || Company.new
         end_at_field = current_company.timezone_support? ? :local_end_at : :end_at
-
         any_of do
           with :status, event_status unless event_status.empty?
           unless late.nil?
@@ -228,9 +276,19 @@ module Sunspot
 
       def within_user_locations(company_user)
         return unless field?(:place_id) || field?(:location)
-        any_of do
-          with(:place_id, company_user.accessible_places + [0]) if field?(:place_id)
-          with(:location, company_user.accessible_locations + [0]) if field?(:location)
+        sq = subquery do
+          any_of do
+            with(:place_id, company_user.accessible_places + [0]) if field?(:place_id)
+            with(:location, company_user.accessible_locations + [0]) if field?(:location)
+          end
+        end
+        return unless sq.any?
+        # Sunspot doesn't handle correctly the any_of for join fields
+        if join_field?(:place_id) && join_field?(:location)
+          # TODO build the join dynamically based on field setup
+          add_custom_query "{!join from=id_is to=event_id_i}#{sq.join(' ')}"
+        else
+          add_custom_query sq
         end
       end
 
@@ -239,6 +297,16 @@ module Sunspot
       def field?(name)
         @field_names ||= @setup.fields.map(&:name)
         @field_names.include?(name)
+      end
+
+      def join_field?(name)
+        field = @setup.fields.detect{ |f| f.name ==  name }
+        field && field.is_a?(Sunspot::JoinField)
+      end
+
+      def subquery(&block)
+        s = Sunspot.new_search(Event).build(&block)
+        s.query.to_params[:fq][1..-1]
       end
     end
   end
