@@ -1,5 +1,6 @@
 namespace :sunspot do
-  task :sunspot do
+  namespace :sunspot do
+    desc 'Incementaly reindex a givel model'
     task :incremental_reindex do
       model = ENV['MODEL_NAME']
       raise 'Model not found' unless defined?(model)
