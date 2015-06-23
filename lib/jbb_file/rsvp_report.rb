@@ -99,6 +99,7 @@ module JbbFile
         else
           row[:event_date]
         end
+      return if date.blank?
       date_str = date.to_date.to_s(:db)
       scope = campaign.events.where('events.local_start_at::date=?', date_str).active
       return @events[date_str] unless @events[date_str].nil?
