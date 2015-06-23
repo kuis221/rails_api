@@ -61,8 +61,9 @@ module JbbFile
         end
       end
 
-    rescue Errno::ECONNRESET
+    rescue Errno::ECONNRESET, Errno::ENOTCONN
       puts "Archive file #{file} failed, retrying..."
+      close_connection
       sleep 1
       retry
     end
@@ -92,7 +93,7 @@ module JbbFile
 
     def close_connection
       return unless @ftp_connecion
-      @ftp_connecion.close
+      @ftp_connecion.close rescue true
       @ftp_connecion = nil
     end
 
