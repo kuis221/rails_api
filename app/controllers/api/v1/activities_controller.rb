@@ -11,7 +11,7 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
   def_param_group :activity do
     param :activity, Hash, required: true, action_aware: true do
       param :activity_type_id, :number, required: true, desc: 'Activity Type ID'
-      param :activity_date, %r{\A\d{1,2}/\d{1,2}/\d{4}\z}, required: true, desc: "Activity date. Should be in format MM/DD/YYYY."
+      param :activity_date, %r{\A\d{1,2}/\d{1,2}/\d{4}\z}, required: true, desc: 'Activity date. Should be in format MM/DD/YYYY.'
       param :results_attributes, :event_result, required: false, desc: "A list of activity results with the id and value. Eg: results_attributes: [{id: 1, value:'Some value'}, {id: 2, value: '123'}]"
       param :company_user_id, :number, desc: 'Company user ID'
       param :campaign_id, :number, desc: 'Campaign ID'
@@ -27,7 +27,7 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
     create! do |success, failure|
       success.json { render :show }
       success.xml { render :show }
-      failure.json { p resource.inspect; render json: resource.errors, status: :unprocessable_entity }
+      failure.json { render json: resource.errors, status: :unprocessable_entity }
       failure.xml { render xml: resource.errors, status: :unprocessable_entity }
     end
   end
@@ -56,7 +56,7 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
   def deactivate
     authorize! :deactivate, Activity
     resource.deactivate!
-    render json: "ok"
+    render json: 'ok'
   end
 
   api :GET, '/api/v1/events/:event_id/activities', 'Get a list of activities for an Event'
@@ -336,6 +336,21 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
         "required":false,
         "kpi_id":null,
         "id":10928
+      },
+      {
+        "field_id":25,
+        "name":"Price",
+        "value":null,
+        "type":"FormField::Currency",
+        "settings": {
+          "range_format":"digits",
+          "range_max":"3",
+          "range_min":"0"
+        },
+        "ordering":8,
+        "required":true,
+        "kpi_id":null,
+        "id":10930
       }
     ]
   }
@@ -609,6 +624,21 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
         "required":false,
         "kpi_id":null,
         "id":10928
+      },
+      {
+        "field_id":25,
+        "name":"Price",
+        "value":null,
+        "type":"FormField::Currency",
+        "settings": {
+          "range_format":"digits",
+          "range_max":"3",
+          "range_min":"0"
+        },
+        "ordering":8,
+        "required":true,
+        "kpi_id":null,
+        "id":10930
       }
     ]
   }
@@ -624,7 +654,7 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
           activity_date: resource.activity_date,
           campaign: {
             id: resource.campaign_id,
-            name: resource.campaign_name,
+            name: resource.campaign_name
           },
           company_user: {
             id: resource.company_user.id,
@@ -705,7 +735,7 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
       { statements: field.statements.order(:ordering).map { |s| { id: s.id, text: s.name, value: result ? result.value[s.id.to_s] : nil } },
         segments: field.options_for_input.map { |s| { id: s[1], text: s[0] } } }
     else
-      { value: result ? result.value || [] : nil}
+      { value: result ? result.value || [] : nil }
     end
   end
 
@@ -723,7 +753,7 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
   end
 
   def collection
-     @activities ||= end_of_association_chain.where(active: true)
+    @activities ||= end_of_association_chain.where(active: true)
   end
 
   def authorize_parent
