@@ -1,3 +1,5 @@
+require 'net/ftp'
+
 module JbbFile
   class Base
     COMPANY_ID = 2
@@ -45,7 +47,19 @@ module JbbFile
       rescue Net::FTPPermError
         p 'Archive directory already exists'
       end
-      ftp_connecion.rename(file, "OLD/#{file}")
+      dest_file = "OLD/#{file}"
+      i = 0
+      begin
+        ftp_connecion.rename(file, dest_file)
+      rescue Net::FTPPermError => e
+        i += 1
+        dest_file = "OLD/#{File.basename(file, '.xlsx')}-#{i}.xlsx"
+        if i < 100
+          retry
+        else
+          raise e
+        end
+      end
     end
 
     def get_file(dir, file)
