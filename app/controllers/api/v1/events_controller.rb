@@ -155,6 +155,8 @@ class Api::V1::EventsController < Api::V1::FilteredController
   * *campaign*: On object with the event's campaign information with the following attributes
     * *id*: the campaign's id
     * *name*: the campaign's name
+    * *enabled_modules*: names of module that are enabled for the event's campaign
+    * *modules*: details for modules that are enabled for the event's campaign
   EOS
   def show
     render if resource.present?

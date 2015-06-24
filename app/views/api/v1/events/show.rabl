@@ -41,7 +41,7 @@ child(venue: :place) do
 end
 
 child :campaign do
-  attributes :id, :name, :enabled_modules
+  attributes :id, :name, :enabled_modules, :modules
 end
 
 node :actions do |event|
