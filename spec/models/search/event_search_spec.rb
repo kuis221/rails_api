@@ -160,7 +160,7 @@ describe Event, type: :model, search: true do
       .to match_array([event, event2])
   end
 
-  it 'searches retricted to users params' do
+  it 'search retricted by users permissions' do
     # First populate the Database with some data
     campaign = create(:campaign, company: company)
     campaign2 = create(:campaign, company: company)

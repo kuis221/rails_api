@@ -221,6 +221,37 @@ describe CombinedSearch, type: :model do
           ]
         end
       end
+
+      describe 'allow small differences on city names' do
+        let(:google_results) do
+          {
+            results: [
+              {
+                'formatted_address' => 'Bayou Restaurant, 580 Gramatan Avenue, Mount Vernon, NY 10552, United States',
+                'place_id' => 'PLACEID1',
+                'name' => 'Los Angeles',
+                'reference' => 'REFERENCE1',
+                'types' => %w(locality political),
+                'geometry' => { 'location' => { 'lat' => 22.22, 'lng' => 33.33 }  }
+              }
+            ]
+          }
+        end
+
+        it 'finds a proper city for a user' do
+          company_user.places << create(:city, name: 'MT Vernon', state: 'New York', country: 'US')
+          params = { q: 'Bayou', current_company_user: company_user }
+          expect(described_class.new(params).results).to eql [
+            {
+              value: "Los Angeles, Bayou Restaurant, 580 Gramatan Avenue, Mount Vernon, NY 10552, United States",
+              label: "Los Angeles, Bayou Restaurant, 580 Gramatan Avenue, Mount Vernon, NY 10552, United States",
+              id: "REFERENCE1||PLACEID1",
+              location: { latitude: 22.22, longitude: 33.33 },
+              valid: true
+            }
+          ]
+        end
+      end
     end
   end
 end

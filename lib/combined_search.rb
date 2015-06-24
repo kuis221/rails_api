@@ -115,10 +115,17 @@ class CombinedSearch
       if (country_obj = Country.new(country)) && country_obj.data
         state = m[2]
         state.gsub!(/\s+[0-9\-]+\s*\z/, '') # Strip Zip code from stage if present
-        city = m[1]
         state = country_obj.states[state]['name'] if country_obj.states.key?(state)
+        city = find_city(m[1], state, country)
         Place.new(name: result['name'], city: city, state: state, country: country, types: result['types'])
       end
     end
+  end
+
+  def find_city(name, state, country)
+    search_name = name.downcase.gsub(/mt /, 'mount')
+    city = Place.where(state: state, country: country)
+           .where('? = ANY(types) AND similarity(replace(lower(name), \'mt \',\'mount \'), ?) >= 0.5', 'political', search_name).first
+    city ? city.name : name
   end
 end
