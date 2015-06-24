@@ -239,14 +239,14 @@ describe FormFieldDataExporter, type: :model do
       it 'merge custom segmented fields of different campaigns with the same name and type into the same column even with different options' do
           field1 = create(:form_field_percentage, name: 'My Perc Field',
             fieldable: campaign, options: [
-              option11 = create(:form_field_option, name: 'Perc Opt C'),
-              option12 = create(:form_field_option, name: 'Perc Opt A')])
+              option11 = create(:form_field_option, name: 'Perc Opt1'),
+              option12 = create(:form_field_option, name: 'Perc Opt2')])
 
           field2 = create(:form_field_percentage, name: 'My Perc Field',
             fieldable: campaign2, options: [
-              option21 = create(:form_field_option, name: 'Perc Opt B'),
-              option22 = create(:form_field_option, name: 'Perc Opt A'),
-              option23 = create(:form_field_option, name: 'Perc Opt C')])
+              option21 = create(:form_field_option, name: 'Perc Opt1'),
+              option22 = create(:form_field_option, name: 'Perc Opt2'),
+              option23 = create(:form_field_option, name: 'Perc Opt3')])
 
           # A numeric field with same name
           create(:form_field_number, name: 'My Perc Field', fieldable: campaign)
@@ -264,10 +264,10 @@ describe FormFieldDataExporter, type: :model do
           expect(event2.save).to be_truthy
 
           expect(subject.custom_fields_to_export_headers).to eq([
-            'MY PERC FIELD', 'MY PERC FIELD: PERC OPT A',
-            'MY PERC FIELD: PERC OPT B', 'MY PERC FIELD: PERC OPT C'])
-          expect(subject.custom_fields_to_export_values(event)).to eq([nil, 0.7, nil, 0.3])
-          expect(subject.custom_fields_to_export_values(event2)).to eq([nil, 0.2, 0.1, 0.7])
+            'MY PERC FIELD', 'MY PERC FIELD: PERC OPT1',
+            'MY PERC FIELD: PERC OPT2', 'MY PERC FIELD: PERC OPT3'])
+          expect(subject.custom_fields_to_export_values(event)).to eq([nil, 0.3, 0.7, nil])
+          expect(subject.custom_fields_to_export_values(event2)).to eq([nil, 0.1, 0.2, 0.7])
         end
 
         it 'does not merge custom fields of the same campaigns with the same name and type into the same column' do
@@ -303,8 +303,8 @@ describe FormFieldDataExporter, type: :model do
         event.result_for_kpi(kpi).value = { seg1.id.to_s => '88', seg2.id.to_s => '12' }
         expect(event.save).to be_truthy
 
-        expect(subject.custom_fields_to_export_headers).to eq(['MY KPI: DOS', 'MY KPI: UNO'])
-        expect(subject.custom_fields_to_export_values(event)).to eq([0.12, 0.88])
+        expect(subject.custom_fields_to_export_headers).to eq(['MY KPI: UNO', 'MY KPI: DOS'])
+        expect(subject.custom_fields_to_export_values(event)).to eq([0.88, 0.12])
       end
 
       it 'correctly include segmented kpis and non-segmented kpis together' do
@@ -324,15 +324,16 @@ describe FormFieldDataExporter, type: :model do
         event.save
 
         expect(subject.custom_fields_to_export_values(event)).to eq([
-          0.34, 0.66, nil])
+          0.66, 0.34, nil
+        ])
 
         event.result_for_kpi(kpi2).value = '666666'
         event.save
 
         expect(subject.custom_fields_to_export_headers).to eq([
-          'MY KPI: DOS', 'MY KPI: UNO', 'A CUSTOM KPI'])
+          'MY KPI: UNO', 'MY KPI: DOS', 'A CUSTOM KPI'])
         expect(subject.custom_fields_to_export_values(event)).to eq([
-          0.34, 0.66, 666_666])
+          0.66, 0.34, 666_666])
       end
 
       it "returns nil for the fields that doesn't apply to the event's campaign" do
@@ -405,6 +406,7 @@ describe FormFieldDataExporter, type: :model do
         expect(subject.custom_fields_to_export_values(event)).to eq([1111, 2222])
         expect(subject.custom_fields_to_export_values(event2)).to eq([3333, 4444])
       end
+
     end
 
     describe 'for activity data' do
