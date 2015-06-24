@@ -10,7 +10,12 @@ module Sunspot
 
       def include_custom_queries
         return if @custom_queries.nil?
-        adjust_solr_params { |params| params[:fq].concat @custom_queries }
+        # Chain any existing blocks
+        prev_block = @query.instance_variable_get(:@parameter_adjustment)
+        adjust_solr_params do |params|
+          prev_block.call(params) if prev_block
+          params[:fq].concat @custom_queries
+        end
       end
 
       def with_campaign(campaigns)
@@ -185,6 +190,7 @@ module Sunspot
       end
 
       def between_date_range(clazz, start_date, end_date)
+        return unless start_date.present? || end_date.present?
         start_at_field =
           if clazz.respond_to?(:search_start_date_field)
             clazz.search_start_date_field
@@ -232,8 +238,8 @@ module Sunspot
             end
           end
         end
-
         return unless sq.any?
+
         if join_field?(start_at_field)
           # TODO build the join dynamically based on field setup
           add_custom_query "{!join from=id_is to=event_id_i}#{sq.join(' ')}"
