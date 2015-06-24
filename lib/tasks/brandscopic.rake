@@ -25,7 +25,7 @@ namespace :brandscopic do
     first_id = ENV['START'] || 0
     last_id = ENV['END'] || AttachedAsset.last.id
     s3 = AWS::S3.new
-    AttachedAsset.photos.where(id: first_id..last_id).where(attachable_type: 'Event')
+    AttachedAsset.photos.where(id: first_id.to_i..last_id.to_i).where(attachable_type: 'Event')
       .joins('INNER JOIN events ON events.id=attachable_id').find_each do |at|
       if at.file.exists?
         Rails.logger.info "Skpping asset #{at.id} because it exists in the bucket #{ENV['S3_BUCKET_NAME']}"
