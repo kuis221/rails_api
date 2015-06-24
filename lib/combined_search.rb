@@ -108,15 +108,19 @@ class CombinedSearch
 
   def build_place_from_result(result)
     if result['formatted_address'] &&
-       (m = result['formatted_address'].match(/\A.*?,?\s*([^,]+)\s*,\s*([^,]+)\s*,\s*([^,]+)\s*\z/))
-      country = m[3]
+       (m = result['formatted_address'].match(/\A(.*?,?\s*(?<city>[^,]+)\s*,\s*)?(?<state>[^,]+)\s*,\s*(?<country>[^,]+)\s*\z/))
+      country = m[:country]
       country = Country.all.find(-> { [country, country] }) { |c| b = Country.new(c[1]); b.alpha3 == country }[1] if country.match(/\A[A-Z]{3}\z/)
       country = Country.all.find(-> { [country, country] }) { |c| c[0].downcase == country.downcase }[1] unless country.match(/\A[A-Z]{2}\z/)
       if (country_obj = Country.new(country)) && country_obj.data
-        state = m[2]
+        state = m[:state]
         state.gsub!(/\s+[0-9\-]+\s*\z/, '') # Strip Zip code from stage if present
         state = country_obj.states[state]['name'] if country_obj.states.key?(state)
-        city = find_city(m[1], state, country)
+        if result['types'].include?('administrative_area_level_1')
+          city = nil
+        else
+          city = find_city(m[:city], state, country)
+        end
         Place.new(name: result['name'], city: city, state: state, country: country, types: result['types'])
       end
     end

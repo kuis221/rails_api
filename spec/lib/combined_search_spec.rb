@@ -252,6 +252,68 @@ describe CombinedSearch, type: :model do
           ]
         end
       end
+
+      describe 'states' do
+        let(:google_results) do
+          {
+            results: [
+              {
+                'formatted_address' => 'New Jersey, USA',
+                'place_id' => 'PLACEID1',
+                'name' => 'New Jersey',
+                'reference' => 'REFERENCE1',
+                'types' => %w(administrative_area_level_1 political),
+                'geometry' => { 'location' => { 'lat' => 22.22, 'lng' => 33.33 }  }
+              }
+            ]
+          }
+        end
+
+        it 'allows the user if has geolocation permitions for the state' do
+          company_user.places << create(:country, name: 'United States')
+          params = { q: 'new', current_company_user: company_user }
+          expect(described_class.new(params).results).to eql [
+            {
+              value: "New Jersey, USA",
+              label: "New Jersey, USA",
+              id: "REFERENCE1||PLACEID1",
+              location: { latitude: 22.22, longitude: 33.33 },
+              valid: true
+            }
+          ]
+        end
+      end
+
+      describe 'cities' do
+        let(:google_results) do
+          {
+            results: [
+              {
+                'formatted_address' => 'Trenton, New Jersey, USA',
+                'place_id' => 'PLACEID1',
+                'name' => 'Trenton',
+                'reference' => 'REFERENCE1',
+                'types' => %w(locality political),
+                'geometry' => { 'location' => { 'lat' => 22.22, 'lng' => 33.33 }  }
+              }
+            ]
+          }
+        end
+
+        it 'allows the user if has geolocation permitions for the state' do
+          company_user.places << create(:country, name: 'United States')
+          params = { q: 'new', current_company_user: company_user }
+          expect(described_class.new(params).results).to eql [
+            {
+              value: "Trenton, New Jersey, USA",
+              label: "Trenton, New Jersey, USA",
+              id: "REFERENCE1||PLACEID1",
+              location: { latitude: 22.22, longitude: 33.33 },
+              valid: true
+            }
+          ]
+        end
+      end
     end
   end
 end
