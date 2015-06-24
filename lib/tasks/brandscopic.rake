@@ -22,9 +22,10 @@ namespace :brandscopic do
   task synch_assets: :environment do
     origin_bucket = ENV['ORIGIN'] || 'brandscopic-prod'
     fail 'Cannot copy to the same bucket' if ENV['S3_BUCKET_NAME'] == origin_bucket
-    start = ENV['START'] || 0
+    first_id = ENV['START'] || 0
+    last_id = ENV['END'] || AttachedAsset.last.id
     s3 = AWS::S3.new
-    AttachedAsset.photos.where('attached_assets.id >= ?', start).where(attachable_type: 'Event')
+    AttachedAsset.photos.where(id: first_id..last_id).where(attachable_type: 'Event')
       .joins('INNER JOIN events ON events.id=attachable_id').find_each do |at|
       if at.file.exists?
         Rails.logger.info "Skpping asset #{at.id} because it exists in the bucket #{ENV['S3_BUCKET_NAME']}"
