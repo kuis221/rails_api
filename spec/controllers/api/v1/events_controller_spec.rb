@@ -95,7 +95,7 @@ describe Api::V1::EventsController, type: :controller do
         id venue_id state name latitude longitude formatted_address
         country state_name city zipcode))
       expect(json['campaign'].keys).to eq(%w(
-        id name enabled_modules))
+        id name enabled_modules modules))
     end
   end
 
