@@ -1,5 +1,4 @@
 - allow_upload ||= false
 
 h5.module-title GALLERY
-- if allow_upload && can?(:create_photo, resource)
-  = render partial: 'attach_photos', locals: { close_button_class: 'hide' }
+= render partial: 'attach_photos', locals: { close_button_class: 'hide', allow_upload: allow_upload }
