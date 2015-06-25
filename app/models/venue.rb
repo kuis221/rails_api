@@ -283,7 +283,6 @@ class Venue < ActiveRecord::Base
 
   def self.do_search(params, include_facets = false)
     solr_search(include: [:place]) do
-
       with :company_id, params[:company_id] if params.key?(:company_id) && params[:company_id].present?
       with :id, params[:venue] if params.key?(:venue) && params[:venue].present?
 
@@ -381,12 +380,12 @@ class Venue < ActiveRecord::Base
         end
       end
       paginate page: (params[:page] || 1), per_page: (params[:per_page] || 30)
-
     end
   end
 
   def self.searchable_params
-    [:location, :q, events_count: [:min, :max],
+    [:location, :q,
+     events_count: [:min, :max],
      promo_hours: [:min, :max], impressions: [:min, :max],
      interactions: [:min, :max], sampled: [:min, :max], spent: [:min, :max],
      venue_score: [:min, :max], price: [], area: [], campaign: [], brand: []]

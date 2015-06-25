@@ -102,6 +102,7 @@ class CombinedSearch
   def search_params
     params.merge per_page: 5,
                  search_address: true,
+                 location: nil,
                  sorting: 'score',
                  sorting_dir: 'desc'
   end
