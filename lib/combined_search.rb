@@ -117,7 +117,7 @@ class CombinedSearch
         state = m[:state]
         state.gsub!(/\s+[0-9\-]+\s*\z/, '') # Strip Zip code from stage if present
         state = country_obj.states[state]['name'] if country_obj.states.key?(state)
-        if result['types'].include?('administrative_area_level_1')
+        if result['types'].present? && result['types'].include?('administrative_area_level_1')
           city = nil
         else
           city = find_city(m[:city], state, country)
