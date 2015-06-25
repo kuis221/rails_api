@@ -735,7 +735,12 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
       { statements: field.statements.order(:ordering).map { |s| { id: s.id, text: s.name, value: result ? result.value[s.id.to_s] : nil } },
         segments: field.options_for_input.map { |s| { id: s[1], text: s[0] } } }
     else
-      { value: result ? result.value || [] : nil }
+      value = if result
+                field.value_is_numeric?(result.value) ? result.value.to_f : result.value || []
+              else
+                nil
+              end
+      { value: value }
     end
   end
 
