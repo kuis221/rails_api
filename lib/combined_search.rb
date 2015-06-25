@@ -127,6 +127,7 @@ class CombinedSearch
   end
 
   def find_city(name, state, country)
+    return if name.blank?
     search_name = name.downcase.gsub(/mt /, 'mount')
     city = Place.where(state: state, country: country)
            .where('? = ANY(types) AND similarity(replace(lower(name), \'mt \',\'mount \'), ?) >= 0.5', 'political', search_name).first
