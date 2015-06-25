@@ -230,6 +230,12 @@ class FormField < ActiveRecord::Base
     true if Float(value) rescue false
   end
 
+  def string_to_value(value)
+    return value || [] unless value_is_numeric?(value)
+    return value.to_i if Integer(value) rescue false
+    return value.to_f if Float(value) rescue false
+  end
+
   def range_message
     return unless has_range_value_settings?
     if settings['range_min'].present? && settings['range_max'].present?
