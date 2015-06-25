@@ -231,7 +231,7 @@ class FormField < ActiveRecord::Base
   end
 
   def string_to_value(value)
-    return value || [] unless value_is_numeric?(value)
+    return value || [] unless is_numeric? && value_is_numeric?(value)
     return value.to_i if Integer(value) rescue false
     return value.to_f if Float(value) rescue false
   end
