@@ -83,7 +83,7 @@ class Place < ActiveRecord::Base
 
   before_save :update_locations
 
-  validate :valid_types?
+  validate :valid_types?, on: :create
 
   after_commit :reindex_associated
   scope :accessible_by_user, ->(user) { in_company(user.company_id) }
