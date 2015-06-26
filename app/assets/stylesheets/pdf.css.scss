@@ -87,7 +87,20 @@ body.app-layout {
 		min-height: 114px;
 	}
 }
-
+.calendar-data, .email-data, .phone-data, .place-data,
+.time-data, .description-data, .member-data{
+	width: 100%;
+	span { 
+		display: initial;
+	}
+}
+.details_box {
+	margin-bottom: 0px;
+	padding-bottom: 0px;
+}
+.result_user_date{
+	display: none;
+}
 #resource-close-details {
 	display: none;
 }

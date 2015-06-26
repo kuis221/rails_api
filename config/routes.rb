@@ -21,6 +21,11 @@ Brandscopic::Application.routes.draw do
     get :form, on: :collection
   end
 
+  concern :form_field_exportable do
+    get :form, action: :export_fieldable, on: :member
+    get :export_results, on: :member
+  end
+
   namespace :api do
     namespace :v1 do
       devise_scope :user do
@@ -359,7 +364,7 @@ Brandscopic::Application.routes.draw do
     resources :documents, only: [:create], concerns: [:deactivatable]
   end
 
-  resources :events, except: [:destroy], concerns: [:deactivatable, :filterable] do
+  resources :events, except: [:destroy], concerns: [:deactivatable, :filterable, :form_field_exportable] do
     get ':phase', to: 'events#show', on: :member,
                   as: :phase, constraints: { phase: /plan|execute|results/ }
     get :map, on: :collection, format: :json
@@ -399,8 +404,6 @@ Brandscopic::Application.routes.draw do
       put :approve
       put :unapprove
       put :reject
-      get :form, to: 'events#export_fieldable'
-      get :export_results, to: 'events#export_results'
       match 'members/:member_id' => 'events#delete_member', via: :delete, as: :delete_member
       match 'teams/:team_id' => 'events#delete_member', via: :delete, as: :delete_team
       match 'members/new' => 'events#new_member', via: :get, as: :new_member
@@ -466,11 +469,7 @@ Brandscopic::Application.routes.draw do
     resources :day_items, path: 'days', only: [:new, :create, :destroy]
   end
 
-  resources :activities, only: [:show, :edit, :update], concerns: [:deactivatable] do
-    member do
-      get :form, to: 'activities#export_fieldable'
-    end
-  end
+  resources :activities, only: [:show, :edit, :update], concerns: [:deactivatable, :form_field_exportable]
 
   resources :activity_types, except: [:destroy], concerns: [:deactivatable, :filterable] do
     member do

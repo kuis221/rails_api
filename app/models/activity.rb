@@ -50,6 +50,7 @@ class Activity < ActiveRecord::Base
   delegate :name, to: :campaign, allow_nil: true, prefix: true
   delegate :full_name, to: :company_user, allow_nil: true, prefix: true
   delegate :name, :description, to: :activity_type, allow_nil: true, prefix: true
+  delegate :form_fields, to: :activity_type
 
   accepts_nested_attributes_for :results, allow_destroy: true
 

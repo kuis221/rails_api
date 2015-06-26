@@ -161,11 +161,11 @@ class Ability
         can?(:show, activity_type)
       end
 
-      can :export_fieldable, Event do |event|
+      can [:export_fieldable, :export_results], Event do |event|
         can?(:view_data, event) || can?(:edit_data, event)
       end
 
-      can :export_fieldable, Activity do |activity|
+      can [:export_fieldable, :export_results], Activity do |activity|
         can?(:show, activity)
       end
 

@@ -1,6 +1,15 @@
 .row-fluid.with-details-close-bar
   = resource_details_bar("You are viewing activity details. Click to close.")
   .details_box.form-results-box
+    .pull-right
+      .dropdown.btn-download
+        a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+          i.icon-download
+          i.icon-arrow-down-small
+        ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+          li
+            = link_to 'Download as PDF', export_results_activity_path(format: :pdf)
+
     .details-main-title
       h2.pull-left= resource.activity_type.name
       .edition-links
