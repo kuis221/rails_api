@@ -68,7 +68,7 @@ class EventsController < FilteredController
 
   def approve
     resource.approve! if resource.submitted?
-    flash[:alert] = resource.errors.full_messages if resource.errors.any?
+    flash[:event_message_fail] = resource.errors.full_messages.join('<br>') if resource.errors.any?
     redirect_to resource_path(status: 'approved')
   end
 
