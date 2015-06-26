@@ -373,7 +373,7 @@ describe Api::V1::EventsController, type: :controller do
           'id' => result.id,
           'name' => 'Are you tall?',
           'type' => 'FormField::Dropdown',
-          'value' => segments.first.id,
+          'value' => "#{segments.first.id}",
           'description' => 'some description to show',
           'segments' => [
             { 'id' => segments.first.id, 'text' => 'Yes', 'goal' => nil },
