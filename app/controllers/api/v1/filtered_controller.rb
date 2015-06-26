@@ -19,6 +19,14 @@ class Api::V1::FilteredController < Api::V1::ApiController
 
   protected
 
+  def paginated_result
+    results = collection
+    PaginatedResult.new(
+      page: params[:page] || 1,
+      total: collection_count,
+      results: results)
+  end
+
   def search_params
     @search_params ||= permitted_search_params.tap do |p|  # Duplicate the params array to make some modifications
       p[:company_id] = current_company.id

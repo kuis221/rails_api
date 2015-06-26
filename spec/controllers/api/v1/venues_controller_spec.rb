@@ -92,11 +92,12 @@ describe Api::V1::VenuesController, type: :controller do
       Sunspot.commit
 
       get 'photos', id: event.venue.to_param, format: :json
-      result = JSON.parse(response.body)
       expect(response).to be_success
-      expect(response).to render_template('photos')
 
-      expect(result.count).to eq(3)
+      expect(json.count).to eq(3)
+      expect(json.first.keys).to match_array(%w(
+        id file_content_type file_file_name file_file_size created_at active file_medium
+        file_thumbnail file_original file_small processed))
     end
   end
 

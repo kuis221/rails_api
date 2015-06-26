@@ -8,7 +8,7 @@ describe Api::V1::PhotosController, type: :controller do
   before { set_api_authentication_headers user, company }
 
   describe "GET 'index'", search: true do
-    it 'return a list of photos' do
+    it 'return a list of photos', :show_in_doc do
       place = create(:place)
       event = create(:event, company: company, campaign: campaign, place: place)
       create_list(:photo, 3, attachable: event)
@@ -16,14 +16,13 @@ describe Api::V1::PhotosController, type: :controller do
 
       get :index, event_id: event.id, format: :json
       expect(response).to be_success
-      result = JSON.parse(response.body)
 
-      expect(result['results'].count).to eq(3)
-      expect(result['total']).to eq(3)
-      expect(result['page']).to eq(1)
-      expect(result['results'].first.keys).to match_array(%w(
+      expect(json['results'].count).to eq(3)
+      expect(json['total']).to eq(3)
+      expect(json['page']).to eq(1)
+      expect(json['results'].first.keys).to match_array(%w(
         id file_content_type file_file_name file_file_size created_at active file_medium
-        file_thumbnail file_original file_small))
+        file_thumbnail file_original file_small processed))
     end
 
     it 'return a list of photos filtered by brand id' do
@@ -39,9 +38,8 @@ describe Api::V1::PhotosController, type: :controller do
 
       get :index, event_id: event.id, brand: [brand.id], format: :json
       expect(response).to be_success
-      result = JSON.parse(response.body)
 
-      expect(result['results'].count).to eq(4)
+      expect(json['results'].count).to eq(4)
     end
 
     it 'return a list of photos filtered by place id' do
@@ -55,9 +53,8 @@ describe Api::V1::PhotosController, type: :controller do
 
       get :index, event_id: event.id, place_id: [place.id], format: :json
       expect(response).to be_success
-      result = JSON.parse(response.body)
 
-      expect(result['results'].count).to eq(5)
+      expect(json['results'].count).to eq(5)
     end
 
     it 'return a list of active photos filtered by status' do
@@ -70,13 +67,12 @@ describe Api::V1::PhotosController, type: :controller do
 
       get :index, event_id: event.id, status: ['Active'], format: :json
       expect(response).to be_success
-      result = JSON.parse(response.body)
 
-      expect(result['results'].count).to eq(6)
+      expect(json['results'].count).to eq(6)
     end
   end
 
-  describe "POST 'create'", strategy: :deletion  do
+  describe "POST 'create'", :show_in_doc  do
     let(:event) { create(:event, company: company, campaign: campaign) }
     it 'queue a job for processing the photos' do
       s3object = double
@@ -97,7 +93,9 @@ describe Api::V1::PhotosController, type: :controller do
           format: :json
       end.to change(AttachedAsset, :count).by(1)
       expect(response).to be_success
-      expect(response).to render_template('show')
+      expect(json.keys).to match_array(%w(
+        id file_content_type file_file_name file_file_size created_at active file_medium
+        file_thumbnail file_original file_small processed))
       photo = AttachedAsset.last
       expect(photo.attachable).to eq(event)
       expect(photo.asset_type).to eq('photo')
@@ -107,7 +105,7 @@ describe Api::V1::PhotosController, type: :controller do
   end
 
   describe "GET 'form'" do
-    it 'returns the required information' do
+    it 'returns the required information', :show_in_doc do
       event = create(:event, company: company, campaign: campaign)
       Sunspot.commit
 
@@ -119,7 +117,7 @@ describe Api::V1::PhotosController, type: :controller do
   end
 
   describe "PUT 'update'", :show_in_doc do
-    it 'deactivates the photo' do
+    it 'deactivates the photo', :show_in_doc do
       place = create(:place)
       event = create(:event, company: company, campaign: campaign, place: place)
       photo = create(:photo, attachable: event)

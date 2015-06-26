@@ -85,7 +85,7 @@ class AttachedAsset < ActiveRecord::Base
 
   delegate :company_id, to: :attachable
 
-  searchable if: proc { |asset| asset.processed? && asset.attachable_type == 'Event' }  do
+  searchable if: proc { |asset| asset.attachable_type == 'Event' }  do
     string :status
     string :asset_type
     string :attachable_type

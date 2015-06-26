@@ -4,6 +4,7 @@ class TasksController < FilteredController
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableController
   include ApplicationHelper
+  include SunspotIndexing
 
   respond_to :js, only: [:new, :create, :edit, :update, :show]
 

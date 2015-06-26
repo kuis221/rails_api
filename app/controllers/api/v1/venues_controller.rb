@@ -358,7 +358,7 @@ class Api::V1::VenuesController < Api::V1::FilteredController
   EOS
   def photos
     authorize! :view_photos, resource
-    @photos = resource.photos
+    render json: resource.photos
   end
 
   api :GET, '/api/v1/venues/:id/comments', 'Get a list of comments for a Venue'
