@@ -4,7 +4,7 @@
   - form_fields.each do |form_field|
     - result = resource.results_for([form_field]).first
     - partial_name = ['gender', 'age'].include?(form_field.name.downcase) ? form_field.name.downcase : form_field.type_name.underscore
-    div.form-result class="result_#{partial_name}"
+    div.form-result.pdf-keeptogether class="result_#{partial_name}"
       - if partial_field_types.include?(form_field.type)
         = render partial: 'form_fields/'+partial_name, locals: {form_field: form_field, result: result}
       - else

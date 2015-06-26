@@ -15,7 +15,7 @@ class CampaignsController < FilteredController
   extend TeamMembersHelper
 
   # This helper provide the methods to export HTML to PDF
-  extend ExportableFormHelper
+  include ExportableForm
 
   # Handle the noticaitions for new campaigns
   include NotificableController

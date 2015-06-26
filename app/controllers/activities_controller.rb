@@ -11,7 +11,7 @@ class ActivitiesController < FilteredController
   layout 'empty', except: :show
 
   # This helper provide the methods to export HTML to PDF
-  extend ExportableFormHelper
+  include ExportableForm
 
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableController

@@ -252,6 +252,7 @@ class Event < ActiveRecord::Base
   after_commit :create_notifications
 
   delegate :name, to: :campaign, prefix: true, allow_nil: true
+  delegate :form_fields, to: :campaign, allow_nil: true
   delegate :name, :state, :city, :zipcode, :neighborhood, :street_number, :route, :latitude,
            :state_name, :longitude, :formatted_address, :name_with_location, :td_linx_code,
            :street,

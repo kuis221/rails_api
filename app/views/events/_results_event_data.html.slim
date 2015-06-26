@@ -7,7 +7,12 @@
         = "POST EVENT RECAP"
         = link_to '', edit_data_event_path(resource), remote: true, id: 'edit-event-data-btn', class: 'icon-edit', title: 'Edit event data' if can?(:edit_data, resource)
     .pull-right
-      .btn.download title="Download"
-        = link_to '', form_event_path(format: :pdf), class: 'icon icon-download'
+      .dropdown.btn-download
+        a.btn.dropdown-toggle href="#" data-toggle="dropdown" data-target="#" title="Download"
+          i.icon-download
+          i.icon-arrow-down-small
+        ul.dropdown-menu.download-options-menu role="menu" aria-labelledby="dLabel"
+          li
+            = link_to 'Download as PDF', export_results_event_path(format: :pdf)
 
   = render partial: 'shared/form_field_results', locals: { form_fields: resource.campaign.form_fields }

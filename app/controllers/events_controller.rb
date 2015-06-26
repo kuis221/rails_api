@@ -11,7 +11,7 @@ class EventsController < FilteredController
   extend TeamMembersHelper
 
   # This helper provide the methods to export HTML to PDF
-  extend ExportableFormHelper
+  include ExportableForm
 
   # This helper provide the methods to activate/deactivate the resource
   include DeactivableController
@@ -76,6 +76,10 @@ class EventsController < FilteredController
     resource.unapprove! if resource.approved?
     flash[:event_message_success] = I18n.translate('instructive_messages.results.unapprove') if resource.errors.empty?
     redirect_to resource_path(status: 'unapproved')
+  end
+
+  def results
+
   end
 
   def reject
