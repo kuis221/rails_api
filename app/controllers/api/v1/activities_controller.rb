@@ -711,7 +711,7 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
   def custom_field_values(field, result)
     if field.type == 'FormField::Percentage'
       { segments: (field.options_for_input.map do|s|
-                    { id: s[1], text: s[0], value: result.value[s[1].to_s], goal: (resource.kpi_goals.key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][s[1]] : nil) }
+                    { id: s[1], text: s[0], value: result.value.present? ? result.value[s[1].to_s].to_i : nil, goal: (field.kpi_id.present? && resource.kpi_goals.key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][s[1]] : nil) }
                   end) }
     elsif field.type == 'FormField::Checkbox'
       { value: result ? result.value || [] : nil,
