@@ -453,7 +453,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
         if field.is_optionable?
           result.merge!(segments: field.options_for_input.map { |s| { id: s[1], text: s[0], goal: (field.kpi_id.present? && resource.kpi_goals.key?(field.kpi_id) ? resource.kpi_goals[field.kpi_id][s[1]] : nil) } })
         end
-        v = field.value_is_numeric?(r.value) ? r.value.to_f : r.value
+        v = field.string_to_value(r.value)
         if field.settings && field.settings.key?('range_format') && (!field.settings['range_min'].blank? || !field.settings['range_max'].blank?)
           result[:range] = { format: field.settings['range_format'],
                              min: field.settings['range_min'].present? ? field.settings['range_min'].to_i : nil,
