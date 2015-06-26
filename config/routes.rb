@@ -400,6 +400,7 @@ Brandscopic::Application.routes.draw do
       put :unapprove
       put :reject
       get :form, to: 'events#export_fieldable'
+      get :export_results, to: 'events#export_results'
       match 'members/:member_id' => 'events#delete_member', via: :delete, as: :delete_member
       match 'teams/:team_id' => 'events#delete_member', via: :delete, as: :delete_team
       match 'members/new' => 'events#new_member', via: :get, as: :new_member

@@ -12,7 +12,7 @@ class ActivityTypesController < FilteredController
   include DeactivableController
 
   # This helper provide the methods to export HTML to PDF
-  extend ExportableFormHelper
+  include ExportableForm
 
   def load_campaign
     @campaign = current_company.campaigns.find(params[:campaign_id])
