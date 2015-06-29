@@ -1,6 +1,23 @@
 /*
- *= require 'application'
+ *= require colors
+ *= require 'eventsCalendar.css'
+ *= require 'brandscopic.datepick.css'
+ *= require 'brandscopic'
  *= require 'forms'
+ *= require 'trends'
+ *= require 'chosen.css'
+ *= require 'modals'
+ *= require 'dashboard'
+ *= require 'date_ranges'
+ *= require 'day_parts'
+ *= require 'campaigns'
+ *= require 'users'
+ *= require 'cross_browser'
+ *= require 'icon-fonts'
+ *= require 'theme'
+ *= require 'fullcalendar-custom'
+ *= require 'responsive'
+ *= require 'header'
  */
 @import "variables";
 @font-face {
