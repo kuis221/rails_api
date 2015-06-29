@@ -7,6 +7,9 @@
 //= require jquery
 //= require jquery-ui-1.10.4.custom
 //= require bootstrap
-//= require jquery.photoGallery
-//= require jquery.uniform
 //= require highstock.src.js
+//= require jquery.photoGallery
+//= require jquery.eventsCalendar
+//= require jquery.filteredList
+//= require jquery.uniform
+//= require events
