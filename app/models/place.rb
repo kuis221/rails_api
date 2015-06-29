@@ -261,7 +261,7 @@ class Place < ActiveRecord::Base
     list_photos = []
     if persisted?
       search = AttachedAsset.do_search(
-        place_id: id, company_id: company_id, asset_type: 'photo', status: 'Active',
+        place: id, company_id: company_id, asset_type: 'photo', status: 'Active',
         sorting: :created_at, sorting_dir: :desc, per_page: 10)
       list_photos = search.results
     end

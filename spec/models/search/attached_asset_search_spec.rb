@@ -72,6 +72,14 @@ describe AttachedAsset, type: :model, search: true do
     expect(search(company_id: company.id, rating: [1, 2]))
       .to match_array([asset, asset2])
 
+    # Search by place
+    expect(search(company_id: company.id, place: [place.id]))
+      .to match_array([asset])
+    expect(search(company_id: company.id, place: [place2.id]))
+      .to match_array([asset2])
+    expect(search(company_id: company.id, place: [place.id, place2.id]))
+      .to match_array([asset, asset2])
+
     # Search for Attached Assets on a given date range
     expect(search(company_id: company.id, start_date: ['02/21/2013'], end_date: ['02/23/2013']))
       .to match_array([asset])
