@@ -2,7 +2,7 @@
   "campaigns#expense_categories": [
     {
       "verb": "GET",
-      "path": "/api/v1/campaigns/4/expense_categories.json",
+      "path": "/api/v1/campaigns/38/expense_categories.json",
       "versions": [
         "1.0"
       ],
@@ -43,7 +43,7 @@
         }
       },
       "response_data": {
-        "id": 1,
+        "id": 11,
         "first_name": "Juanito",
         "last_name": "Bazooka",
         "full_name": "Juanito Bazooka",
@@ -76,38 +76,38 @@
       "request_data": null,
       "response_data": [
         {
-          "id": 2,
-          "first_name": "Dakota",
-          "last_name": "Lynch",
-          "full_name": "Dakota Lynch",
-          "title": "Direct Solutions Orchestrator",
-          "company_name": "Murray, Greenholt and Jacobs",
-          "email": "anne_christiansen@kuhnwaelchi.info",
+          "id": 9,
+          "first_name": "Emelie",
+          "last_name": "Weimann",
+          "full_name": "Emelie Weimann",
+          "title": "Chief Data Architect",
+          "company_name": "Erdman, Collier and Kuvalis",
+          "email": "idell@green.info",
           "phone_number": "344-23333",
-          "street1": "75092 Dickens Lock",
+          "street1": "238 Mohr Park",
           "street2": "",
-          "street_address": "75092 Dickens Lock",
-          "city": "North Princesston",
-          "state": "NC",
-          "zip_code": "66713",
+          "street_address": "238 Mohr Park",
+          "city": "West Hoyt",
+          "state": "CT",
+          "zip_code": "85348-4074",
           "country": "US",
           "country_name": "United States"
         },
         {
-          "id": 3,
-          "first_name": "Ismael",
-          "last_name": "Collier",
-          "full_name": "Ismael Collier",
-          "title": "Dynamic Brand Architect",
-          "company_name": "Prohaska and Sons",
-          "email": "emil@feeney.biz",
+          "id": 10,
+          "first_name": "Jarvis",
+          "last_name": "Herman",
+          "full_name": "Jarvis Herman",
+          "title": "Corporate Solutions Facilitator",
+          "company_name": "Bruen-Hyatt",
+          "email": "louie@botsford.info",
           "phone_number": "344-23333",
-          "street1": "544 Jeromy Drive",
+          "street1": "8183 Judah Forest",
           "street2": "",
-          "street_address": "544 Jeromy Drive",
-          "city": "Westtown",
-          "state": "RI",
-          "zip_code": "32601",
+          "street_address": "8183 Judah Forest",
+          "city": "Port Richmond",
+          "state": "GA",
+          "zip_code": "10580-5435",
           "country": "US",
           "country_name": "United States"
         }
@@ -120,27 +120,27 @@
   "contacts#show": [
     {
       "verb": "GET",
-      "path": "/api/v1/contacts/5.json",
+      "path": "/api/v1/contacts/8.json",
       "versions": [
         "1.0"
       ],
       "query": "",
       "request_data": null,
       "response_data": {
-        "id": 5,
-        "first_name": "Abraham",
-        "last_name": "Bauch",
-        "full_name": "Abraham Bauch",
-        "title": "Legacy Markets Technician",
-        "company_name": "Treutel-Marquardt",
-        "email": "cecelia@bergnaum.biz",
+        "id": 8,
+        "first_name": "Emanuel",
+        "last_name": "Walker",
+        "full_name": "Emanuel Walker",
+        "title": "Regional Division Engineer",
+        "company_name": "McKenzie, Pfeffer and Mayer",
+        "email": "rowena@simonis.net",
         "phone_number": "344-23333",
-        "street1": "98700 Clovis Shoals",
+        "street1": "19379 Nienow Ramp",
         "street2": "",
-        "street_address": "98700 Clovis Shoals",
-        "city": "East Alethachester",
-        "state": "PA",
-        "zip_code": "46359",
+        "street_address": "19379 Nienow Ramp",
+        "city": "North Daphnee",
+        "state": "AZ",
+        "zip_code": "26464",
         "country": "US",
         "country_name": "United States"
       },
@@ -152,7 +152,7 @@
   "contacts#update": [
     {
       "verb": "PUT",
-      "path": "/api/v1/contacts/4.json",
+      "path": "/api/v1/contacts/7.json",
       "versions": [
         "1.0"
       ],
@@ -165,20 +165,20 @@
         }
       },
       "response_data": {
-        "id": 4,
+        "id": 7,
         "first_name": "William",
         "last_name": "Blake",
         "full_name": "William Blake",
-        "title": "Forward Research Manager",
+        "title": "Dynamic Quality Manager",
         "company_name": "ACME",
-        "email": "quinton_fisher@walker.net",
+        "email": "camron.stanton@stiedemann.name",
         "phone_number": "344-23333",
-        "street1": "79356 Hudson Ridges",
+        "street1": "4544 Bogisich Views",
         "street2": "",
-        "street_address": "79356 Hudson Ridges",
-        "city": "West Revafurt",
-        "state": "NJ",
-        "zip_code": "96937",
+        "street_address": "4544 Bogisich Views",
+        "city": "New Jaunitamouth",
+        "state": "MA",
+        "zip_code": "53823",
         "country": "US",
         "country_name": "United States"
       },
@@ -190,7 +190,7 @@
   "documents#create": [
     {
       "verb": "POST",
-      "path": "/api/v1/events/41/documents.json",
+      "path": "/api/v1/events/7/documents.json",
       "versions": [
 
       ],
@@ -201,24 +201,17 @@
         }
       },
       "response_data": {
-        "id": 9,
+        "id": 4,
         "file_file_name": "test.jpg",
-        "file_content_type": "image/jpeg",
         "file_file_size": 100,
-        "file_updated_at": "2015-06-26T13:44:57.107-07:00",
-        "asset_type": "document",
-        "attachable_id": 41,
-        "attachable_type": "Event",
-        "created_by_id": 54,
-        "updated_by_id": 54,
-        "created_at": "2015-06-26T13:44:57.186-07:00",
-        "updated_at": "2015-06-26T13:44:57.186-07:00",
+        "file_content_type": "image/jpeg",
+        "created_at": "2015-06-29T09:36:02.120-07:00",
         "active": true,
-        "direct_upload_url": "https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg",
-        "rating": 0,
-        "folder_id": null,
-        "status": "Active",
-        "processing_percentage": 0
+        "file_small": null,
+        "file_thumbnail": null,
+        "file_medium": null,
+        "file_original": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/original/test.jpg?1435595762",
+        "processed": false
       },
       "code": "201",
       "show_in_doc": 0,
@@ -228,7 +221,7 @@
   "documents#form": [
     {
       "verb": "GET",
-      "path": "/api/v1/events/38/documents/form.json",
+      "path": "/api/v1/events/9/documents/form.json",
       "versions": [
 
       ],
@@ -238,8 +231,8 @@
         "fields": {
           "AWSAccessKeyId": "AKIAIDG2GYLK4WMVHGPA",
           "key": null,
-          "policy": "eyJleHBpcmF0aW9uIjoiMjAxNS0wNi0yNlQyMTo0NDo1NloiLCJjb25kaXRpb25zIjpbWyJzdGFydHMtd2l0aCIsIiRrZXkiLCJ1cGxvYWRzLyJdLHsiYnVja2V0IjoiYnJhbmRzY29waWMtZGV2In0sWyJzdGFydHMtd2l0aCIsIiRrZXkiLCIiXSx7IlNlY3VyZSI6InRydWUifSx7ImFjbCI6InB1YmxpYy1yZWFkIn0seyJzdWNjZXNzX2FjdGlvbl9zdGF0dXMiOiIyMDEifV19",
-          "signature": "ZUsjtCpbvx15vXd57pKwNJSCpZA=",
+          "policy": "eyJleHBpcmF0aW9uIjoiMjAxNS0wNi0yOVQxNzozNjowMloiLCJjb25kaXRpb25zIjpbWyJzdGFydHMtd2l0aCIsIiRrZXkiLCJ1cGxvYWRzLyJdLHsiYnVja2V0IjoiYnJhbmRzY29waWMtZGV2In0sWyJzdGFydHMtd2l0aCIsIiRrZXkiLCIiXSx7IlNlY3VyZSI6InRydWUifSx7ImFjbCI6InB1YmxpYy1yZWFkIn0seyJzdWNjZXNzX2FjdGlvbl9zdGF0dXMiOiIyMDEifV19",
+          "signature": "A+yPIromaqO1qc2H6ZGJYBAy6Zk=",
           "Secure": "true",
           "acl": "public-read",
           "success_action_status": "201"
@@ -254,7 +247,7 @@
   "documents#index": [
     {
       "verb": "GET",
-      "path": "/api/v1/events/39/documents.json",
+      "path": "/api/v1/events/8/documents.json",
       "versions": [
 
       ],
@@ -262,73 +255,73 @@
       "request_data": null,
       "response_data": [
         {
-          "id": 5,
-          "name": "filetest",
-          "active": true,
-          "created_at": "2015-06-26T13:44:56.477-07:00",
-          "updated_at": "2015-06-26T13:44:56.477-07:00",
-          "type": "document",
-          "file_name": "filetest.jpg",
-          "file_size": 12345,
-          "content_type": "image/jpg",
-          "url": "https://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/005/original/filetest.jpg?AWSAccessKeyId=AKIAIDG2GYLK4WMVHGPA&Expires=1435437896&Signature=X6LNok0eDOKCd98o64sB2uqFIWE%3D&response-content-disposition=attachment%3B%20filename%3Dfiletest.jpg",
-          "thumbnail": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/005/small/filetest.jpg?1435351387",
-          "parent": "event"
-        },
-        {
-          "id": 4,
-          "name": "filetest",
-          "active": true,
-          "created_at": "2015-06-26T13:44:56.470-07:00",
-          "updated_at": "2015-06-26T13:44:56.470-07:00",
-          "type": "document",
-          "file_name": "filetest.jpg",
-          "file_size": 12345,
-          "content_type": "image/jpg",
-          "url": "https://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/004/original/filetest.jpg?AWSAccessKeyId=AKIAIDG2GYLK4WMVHGPA&Expires=1435437896&Signature=2RzPFuXuEo8AsyhZiivAyCO1SUs%3D&response-content-disposition=attachment%3B%20filename%3Dfiletest.jpg",
-          "thumbnail": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/004/small/filetest.jpg?1435351387",
-          "parent": "event"
-        },
-        {
-          "id": 3,
-          "name": "filetest",
-          "active": true,
-          "created_at": "2015-06-26T13:44:56.462-07:00",
-          "updated_at": "2015-06-26T13:44:56.462-07:00",
-          "type": "document",
-          "file_name": "filetest.jpg",
-          "file_size": 12345,
-          "content_type": "image/jpg",
-          "url": "https://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/003/original/filetest.jpg?AWSAccessKeyId=AKIAIDG2GYLK4WMVHGPA&Expires=1435437896&Signature=ldAgstFURG2vvTPSSm2f%2FA75oTk%3D&response-content-disposition=attachment%3B%20filename%3Dfiletest.jpg",
-          "thumbnail": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/003/small/filetest.jpg?1435351387",
-          "parent": "event"
-        },
-        {
           "id": 7,
           "name": "filetest",
           "active": true,
-          "created_at": "2015-06-26T13:44:56.491-07:00",
-          "updated_at": "2015-06-26T13:44:56.491-07:00",
+          "created_at": "2015-06-29T09:36:02.391-07:00",
+          "updated_at": "2015-06-29T09:36:02.391-07:00",
           "type": "document",
           "file_name": "filetest.jpg",
           "file_size": 12345,
           "content_type": "image/jpg",
-          "url": "https://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/007/original/filetest.jpg?AWSAccessKeyId=AKIAIDG2GYLK4WMVHGPA&Expires=1435437896&Signature=ENqMLHqwasswlyjPfv4Cjlj9AWM%3D&response-content-disposition=attachment%3B%20filename%3Dfiletest.jpg",
-          "thumbnail": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/007/small/filetest.jpg?1435351387",
-          "parent": "campaign"
+          "url": "https://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/007/original/filetest.jpg?AWSAccessKeyId=AKIAIDG2GYLK4WMVHGPA&Expires=1435682162&Signature=gNEvih%2FHbrv6bi6zA6pCRaq%2F0Yw%3D&response-content-disposition=attachment%3B%20filename%3Dfiletest.jpg",
+          "thumbnail": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/007/small/filetest.jpg?1435595487",
+          "parent": "event"
         },
         {
           "id": 6,
           "name": "filetest",
           "active": true,
-          "created_at": "2015-06-26T13:44:56.484-07:00",
-          "updated_at": "2015-06-26T13:44:56.484-07:00",
+          "created_at": "2015-06-29T09:36:02.384-07:00",
+          "updated_at": "2015-06-29T09:36:02.384-07:00",
           "type": "document",
           "file_name": "filetest.jpg",
           "file_size": 12345,
           "content_type": "image/jpg",
-          "url": "https://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/006/original/filetest.jpg?AWSAccessKeyId=AKIAIDG2GYLK4WMVHGPA&Expires=1435437896&Signature=JQCg5mKabNaECmalITtex3N%2FavM%3D&response-content-disposition=attachment%3B%20filename%3Dfiletest.jpg",
-          "thumbnail": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/006/small/filetest.jpg?1435351387",
+          "url": "https://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/006/original/filetest.jpg?AWSAccessKeyId=AKIAIDG2GYLK4WMVHGPA&Expires=1435682162&Signature=buVJc62pe2If9JqFnO6lSKIBmUM%3D&response-content-disposition=attachment%3B%20filename%3Dfiletest.jpg",
+          "thumbnail": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/006/small/filetest.jpg?1435595487",
+          "parent": "event"
+        },
+        {
+          "id": 5,
+          "name": "filetest",
+          "active": true,
+          "created_at": "2015-06-29T09:36:02.375-07:00",
+          "updated_at": "2015-06-29T09:36:02.375-07:00",
+          "type": "document",
+          "file_name": "filetest.jpg",
+          "file_size": 12345,
+          "content_type": "image/jpg",
+          "url": "https://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/005/original/filetest.jpg?AWSAccessKeyId=AKIAIDG2GYLK4WMVHGPA&Expires=1435682162&Signature=lxhk9FOSUV0QX8%2F%2F12kOzmgKzzE%3D&response-content-disposition=attachment%3B%20filename%3Dfiletest.jpg",
+          "thumbnail": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/005/small/filetest.jpg?1435595487",
+          "parent": "event"
+        },
+        {
+          "id": 9,
+          "name": "filetest",
+          "active": true,
+          "created_at": "2015-06-29T09:36:02.404-07:00",
+          "updated_at": "2015-06-29T09:36:02.404-07:00",
+          "type": "document",
+          "file_name": "filetest.jpg",
+          "file_size": 12345,
+          "content_type": "image/jpg",
+          "url": "https://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/009/original/filetest.jpg?AWSAccessKeyId=AKIAIDG2GYLK4WMVHGPA&Expires=1435682162&Signature=a6HSe3roDIcvcT80B18BUs%2BICEM%3D&response-content-disposition=attachment%3B%20filename%3Dfiletest.jpg",
+          "thumbnail": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/009/small/filetest.jpg?1435595487",
+          "parent": "campaign"
+        },
+        {
+          "id": 8,
+          "name": "filetest",
+          "active": true,
+          "created_at": "2015-06-29T09:36:02.398-07:00",
+          "updated_at": "2015-06-29T09:36:02.398-07:00",
+          "type": "document",
+          "file_name": "filetest.jpg",
+          "file_size": 12345,
+          "content_type": "image/jpg",
+          "url": "https://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/008/original/filetest.jpg?AWSAccessKeyId=AKIAIDG2GYLK4WMVHGPA&Expires=1435682162&Signature=9DnNmlhlEYhK3THJqlbq7r7dOB8%3D&response-content-disposition=attachment%3B%20filename%3Dfiletest.jpg",
+          "thumbnail": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/008/small/filetest.jpg?1435595487",
           "parent": "campaign"
         }
       ],
@@ -340,7 +333,7 @@
   "documents#update": [
     {
       "verb": "PUT",
-      "path": "/api/v1/events/40/documents/8.json",
+      "path": "/api/v1/events/6/documents/3.json",
       "versions": [
 
       ],
@@ -359,7 +352,7 @@
   "event_expenses#create": [
     {
       "verb": "POST",
-      "path": "/api/v1/events/5/event_expenses.json",
+      "path": "/api/v1/events/3/event_expenses.json",
       "versions": [
         "1.0"
       ],
@@ -379,7 +372,7 @@
         }
       },
       "response_data": {
-        "id": 5,
+        "id": 4,
         "category": "Entertainment",
         "amount": "350.0",
         "expense_date": "01/01/2015",
@@ -393,11 +386,11 @@
           "file_file_name": "test.jpg",
           "file_content_type": "image/jpeg",
           "file_file_size": 100,
-          "created_at": "2015-06-26T13:44:42.932-07:00",
+          "created_at": "2015-06-29T09:36:00.678-07:00",
           "active": true,
-          "file_small": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/original/test.jpg?1435351482",
-          "file_medium": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/original/test.jpg?1435351482",
-          "file_original": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/original/test.jpg?1435351482"
+          "file_small": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/original/test.jpg?1435595759",
+          "file_medium": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/original/test.jpg?1435595759",
+          "file_original": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/original/test.jpg?1435595759"
         }
       },
       "code": "200",
@@ -408,7 +401,7 @@
   "event_expenses#destroy": [
     {
       "verb": "DELETE",
-      "path": "/api/v1/events/1/event_expenses/1.json",
+      "path": "/api/v1/events/5/event_expenses/5.json",
       "versions": [
         "1.0"
       ],
@@ -428,7 +421,7 @@
   "event_expenses#form": [
     {
       "verb": "GET",
-      "path": "/api/v1/events/3/event_expenses/form.json",
+      "path": "/api/v1/events/4/event_expenses/form.json",
       "versions": [
         "1.0"
       ],
@@ -438,8 +431,8 @@
         "fields": {
           "AWSAccessKeyId": "AKIAIDG2GYLK4WMVHGPA",
           "key": null,
-          "policy": "eyJleHBpcmF0aW9uIjoiMjAxNS0wNi0yNlQyMTo0NDo0MloiLCJjb25kaXRpb25zIjpbWyJzdGFydHMtd2l0aCIsIiRrZXkiLCJ1cGxvYWRzLyJdLFsic3RhcnRzLXdpdGgiLCIkQ29udGVudC1UeXBlIiwiIl0seyJidWNrZXQiOiJicmFuZHNjb3BpYy1kZXYifSxbInN0YXJ0cy13aXRoIiwiJGtleSIsIiJdLHsiU2VjdXJlIjoidHJ1ZSJ9LHsiYWNsIjoicHVibGljLXJlYWQifSx7InN1Y2Nlc3NfYWN0aW9uX3N0YXR1cyI6IjIwMSJ9XX0=",
-          "signature": "gOoORJ1Xbna+/jEnyuYxkUrYRwA=",
+          "policy": "eyJleHBpcmF0aW9uIjoiMjAxNS0wNi0yOVQxNzozNjowMVoiLCJjb25kaXRpb25zIjpbWyJzdGFydHMtd2l0aCIsIiRrZXkiLCJ1cGxvYWRzLyJdLFsic3RhcnRzLXdpdGgiLCIkQ29udGVudC1UeXBlIiwiIl0seyJidWNrZXQiOiJicmFuZHNjb3BpYy1kZXYifSxbInN0YXJ0cy13aXRoIiwiJGtleSIsIiJdLHsiU2VjdXJlIjoidHJ1ZSJ9LHsiYWNsIjoicHVibGljLXJlYWQifSx7InN1Y2Nlc3NfYWN0aW9uX3N0YXR1cyI6IjIwMSJ9XX0=",
+          "signature": "uP75qSmU3kGG5PUMVVB9x31dw1g=",
           "Secure": "true",
           "acl": "public-read",
           "success_action_status": "201"
@@ -478,9 +471,9 @@
             "file_file_size": 12345,
             "created_at": "2013-08-22T11:59:00.000-07:00",
             "active": true,
-            "file_small": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/001/small/filetest.jpg?1435351387",
-            "file_medium": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/001/medium/filetest.jpg?1435351387",
-            "file_original": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/001/original/filetest.jpg?1435351387"
+            "file_small": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/001/small/filetest.jpg?1435595487",
+            "file_medium": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/001/medium/filetest.jpg?1435595487",
+            "file_original": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/001/original/filetest.jpg?1435595487"
           }
         },
         {
@@ -504,7 +497,7 @@
   "event_expenses#update": [
     {
       "verb": "PUT",
-      "path": "/api/v1/events/4/event_expenses/4.json",
+      "path": "/api/v1/events/1/event_expenses/1.json",
       "versions": [
         "1.0"
       ],
@@ -516,7 +509,7 @@
         }
       },
       "response_data": {
-        "id": 4,
+        "id": 1,
         "category": "Transportation",
         "amount": "9.99",
         "expense_date": "01/02/2014",
@@ -535,13 +528,13 @@
   "events#add_contact": [
     {
       "verb": "POST",
-      "path": "/api/v1/events/27/contacts.json",
+      "path": "/api/v1/events/36/contacts.json",
       "versions": [
         "1.0"
       ],
       "query": null,
       "request_data": {
-        "contactable_id": 11,
+        "contactable_id": 4,
         "contactable_type": "contact"
       },
       "response_data": {
@@ -558,14 +551,14 @@
   "events#add_member": [
     {
       "verb": "POST",
-      "path": "/api/v1/events/8/members.json",
+      "path": "/api/v1/events/32/members.json",
       "versions": [
         "1.0"
       ],
       "query": null,
       "request_data": {
-        "memberable_id": 3,
-        "memberable_type": "team"
+        "memberable_id": 41,
+        "memberable_type": "user"
       },
       "response_data": {
         "success": true,
@@ -579,14 +572,14 @@
     },
     {
       "verb": "POST",
-      "path": "/api/v1/events/9/members.json",
+      "path": "/api/v1/events/33/members.json",
       "versions": [
         "1.0"
       ],
       "query": null,
       "request_data": {
-        "memberable_id": 21,
-        "memberable_type": "user"
+        "memberable_id": 11,
+        "memberable_type": "team"
       },
       "response_data": {
         "success": true,
@@ -602,7 +595,7 @@
   "events#assignable_contacts": [
     {
       "verb": "GET",
-      "path": "/api/v1/events/20/assignable_contacts.json",
+      "path": "/api/v1/events/35/assignable_contacts.json",
       "versions": [
         "1.0"
       ],
@@ -610,19 +603,19 @@
       "request_data": null,
       "response_data": [
         {
-          "id": 29,
+          "id": 44,
           "full_name": "Test User",
           "title": "Super Admin",
           "type": "user"
         },
         {
-          "id": 7,
+          "id": 2,
           "full_name": "Luis Perez",
           "title": "Field Ambassador",
           "type": "contact"
         },
         {
-          "id": 8,
+          "id": 3,
           "full_name": "Pedro Guerra",
           "title": "Coach",
           "type": "contact"
@@ -636,7 +629,7 @@
   "events#assignable_members": [
     {
       "verb": "GET",
-      "path": "/api/v1/events/15/assignable_members.json",
+      "path": "/api/v1/events/41/assignable_members.json",
       "versions": [
         "1.0"
       ],
@@ -644,25 +637,25 @@
       "request_data": null,
       "response_data": [
         {
-          "id": "7",
+          "id": "13",
           "name": "Team A",
           "description": "team 1 description",
           "type": "team"
         },
         {
-          "id": "8",
+          "id": "14",
           "name": "Team B",
           "description": "team 2 description",
           "type": "team"
         },
         {
-          "id": "27",
+          "id": "49",
           "name": "Test User",
           "description": "Super Admin",
           "type": "user"
         },
         {
-          "id": "6",
+          "id": "12",
           "name": "Z Team",
           "description": "team 3 description",
           "type": "team"
@@ -761,7 +754,7 @@
   "events#contacts": [
     {
       "verb": "GET",
-      "path": "/api/v1/events/21/contacts.json",
+      "path": "/api/v1/events/40/contacts.json",
       "versions": [
         "1.0"
       ],
@@ -769,7 +762,7 @@
       "request_data": null,
       "response_data": [
         {
-          "id": 31,
+          "id": 48,
           "first_name": "Albert",
           "last_name": "Einstain",
           "full_name": "Albert Einstain",
@@ -786,7 +779,7 @@
           "type": "user"
         },
         {
-          "id": 9,
+          "id": 5,
           "first_name": "Luis",
           "last_name": "Perez",
           "full_name": "Luis Perez",
@@ -805,7 +798,7 @@
           "type": "contact"
         },
         {
-          "id": 10,
+          "id": 6,
           "first_name": "Pedro",
           "last_name": "Guerra",
           "full_name": "Pedro Guerra",
@@ -832,11 +825,11 @@
   "events#delete_contact": [
     {
       "verb": "DELETE",
-      "path": "/api/v1/events/6/contacts.json",
+      "path": "/api/v1/events/23/contacts.json",
       "versions": [
         "1.0"
       ],
-      "query": "contactable_id=17&contactable_type=user",
+      "query": "contactable_id=27&contactable_type=user",
       "request_data": null,
       "response_data": {
         "success": true,
@@ -852,11 +845,11 @@
   "events#delete_member": [
     {
       "verb": "DELETE",
-      "path": "/api/v1/events/13/members.json",
+      "path": "/api/v1/events/21/members.json",
       "versions": [
         "1.0"
       ],
-      "query": "memberable_id=24&memberable_type=user",
+      "query": "memberable_id=3&memberable_type=team",
       "request_data": null,
       "response_data": {
         "success": true,
@@ -870,11 +863,11 @@
     },
     {
       "verb": "DELETE",
-      "path": "/api/v1/events/14/members.json",
+      "path": "/api/v1/events/22/members.json",
       "versions": [
         "1.0"
       ],
-      "query": "memberable_id=5&memberable_type=team",
+      "query": "memberable_id=25&memberable_type=user",
       "request_data": null,
       "response_data": {
         "success": true,
@@ -894,7 +887,7 @@
       "versions": [
         "1.0"
       ],
-      "query": "campaign%5B%5D=14&place%5B%5D=5",
+      "query": "campaign%5B%5D=35&place%5B%5D=11",
       "request_data": null,
       "response_data": {
         "page": 1,
@@ -902,19 +895,19 @@
         "total": 3,
         "filters": [
           {
-            "label": "Campaign 8",
-            "name": "campaign:14",
+            "label": "Campaign 30",
+            "name": "campaign:35",
             "expandible": false
           },
           {
-            "label": "Place 5",
-            "name": "place:5",
+            "label": "Place 11",
+            "name": "place:11",
             "expandible": false
           }
         ],
         "results": [
           {
-            "id": 10,
+            "id": 37,
             "start_date": "01/23/2019",
             "start_time": "10:00 AM",
             "end_date": "01/23/2019",
@@ -970,12 +963,12 @@
             },
             "event_status": "Scheduled",
             "campaign": {
-              "id": 14,
-              "name": "Campaign 8"
+              "id": 35,
+              "name": "Campaign 30"
             },
             "place": {
-              "id": 5,
-              "name": "Place 5",
+              "id": 11,
+              "name": "Place 11",
               "latitude": null,
               "longitude": null,
               "formatted_address": "123 My Street",
@@ -987,7 +980,7 @@
             }
           },
           {
-            "id": 11,
+            "id": 38,
             "start_date": "01/23/2019",
             "start_time": "10:00 AM",
             "end_date": "01/23/2019",
@@ -1043,12 +1036,12 @@
             },
             "event_status": "Scheduled",
             "campaign": {
-              "id": 14,
-              "name": "Campaign 8"
+              "id": 35,
+              "name": "Campaign 30"
             },
             "place": {
-              "id": 5,
-              "name": "Place 5",
+              "id": 11,
+              "name": "Place 11",
               "latitude": null,
               "longitude": null,
               "formatted_address": "123 My Street",
@@ -1060,7 +1053,7 @@
             }
           },
           {
-            "id": 12,
+            "id": 39,
             "start_date": "01/23/2019",
             "start_time": "10:00 AM",
             "end_date": "01/23/2019",
@@ -1116,12 +1109,12 @@
             },
             "event_status": "Scheduled",
             "campaign": {
-              "id": 14,
-              "name": "Campaign 8"
+              "id": 35,
+              "name": "Campaign 30"
             },
             "place": {
-              "id": 5,
-              "name": "Place 5",
+              "id": 11,
+              "name": "Place 11",
               "latitude": null,
               "longitude": null,
               "formatted_address": "123 My Street",
@@ -1146,17 +1139,11 @@
       "versions": [
         "1.0"
       ],
-      "query": "",
+      "query": "type=user",
       "request_data": null,
       "response_data": [
         {
-          "id": 9,
-          "name": "A team",
-          "description": "team 1 description",
-          "type": "team"
-        },
-        {
-          "id": 36,
+          "id": 31,
           "first_name": "A",
           "last_name": "User",
           "full_name": "A User",
@@ -1173,18 +1160,12 @@
           "type": "user"
         },
         {
-          "id": 10,
-          "name": "Team 2",
-          "description": "team 2 description",
-          "type": "team"
-        },
-        {
-          "id": 35,
+          "id": 30,
           "first_name": "Test",
           "last_name": "User",
           "full_name": "Test User",
           "role_name": "Super Admin",
-          "email": "testadminuser27@brandscopic.com",
+          "email": "testadminuser24@brandscopic.com",
           "phone_number": "+1000000000",
           "street_address": "Street Address 123",
           "unit_number": "Unit Number 456",
@@ -1196,7 +1177,7 @@
           "type": "user"
         },
         {
-          "id": 37,
+          "id": 32,
           "first_name": "User",
           "last_name": "2",
           "full_name": "User 2",
@@ -1223,37 +1204,17 @@
       "versions": [
         "1.0"
       ],
-      "query": "type=team",
+      "query": "",
       "request_data": null,
       "response_data": [
         {
-          "id": 11,
+          "id": 7,
           "name": "A team",
           "description": "team 1 description",
           "type": "team"
         },
         {
-          "id": 12,
-          "name": "Team 2",
-          "description": "team 2 description",
-          "type": "team"
-        }
-      ],
-      "code": "200",
-      "show_in_doc": 0,
-      "recorded": true
-    },
-    {
-      "verb": "GET",
-      "path": "/api/v1/events/30/members.json",
-      "versions": [
-        "1.0"
-      ],
-      "query": "type=user",
-      "request_data": null,
-      "response_data": [
-        {
-          "id": 42,
+          "id": 34,
           "first_name": "A",
           "last_name": "User",
           "full_name": "A User",
@@ -1270,12 +1231,18 @@
           "type": "user"
         },
         {
-          "id": 41,
+          "id": 8,
+          "name": "Team 2",
+          "description": "team 2 description",
+          "type": "team"
+        },
+        {
+          "id": 33,
           "first_name": "Test",
           "last_name": "User",
           "full_name": "Test User",
           "role_name": "Super Admin",
-          "email": "testadminuser29@brandscopic.com",
+          "email": "testadminuser25@brandscopic.com",
           "phone_number": "+1000000000",
           "street_address": "Street Address 123",
           "unit_number": "Unit Number 456",
@@ -1287,7 +1254,7 @@
           "type": "user"
         },
         {
-          "id": 43,
+          "id": 35,
           "first_name": "User",
           "last_name": "2",
           "full_name": "User 2",
@@ -1307,6 +1274,32 @@
       "code": "200",
       "show_in_doc": 0,
       "recorded": true
+    },
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/30/members.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "type=team",
+      "request_data": null,
+      "response_data": [
+        {
+          "id": 9,
+          "name": "A team",
+          "description": "team 1 description",
+          "type": "team"
+        },
+        {
+          "id": 10,
+          "name": "Team 2",
+          "description": "team 2 description",
+          "type": "team"
+        }
+      ],
+      "code": "200",
+      "show_in_doc": 0,
+      "recorded": true
     }
   ],
   "events#requiring_attention": [
@@ -1320,10 +1313,10 @@
       "request_data": null,
       "response_data": [
         {
-          "id": 16,
-          "start_date": "06/05/2015",
+          "id": 24,
+          "start_date": "06/08/2015",
           "start_time": "10:00 AM",
-          "end_date": "06/05/2015",
+          "end_date": "06/08/2015",
           "end_time": "12:00 PM",
           "status": "Active",
           "phases": {
@@ -1395,12 +1388,12 @@
           },
           "event_status": "Late",
           "campaign": {
-            "id": 18,
-            "name": "Campaign 12"
+            "id": 25,
+            "name": "Campaign 20"
           },
           "place": {
-            "id": 6,
-            "name": "Place 6",
+            "id": 9,
+            "name": "Place 9",
             "latitude": null,
             "longitude": null,
             "formatted_address": "123 My Street",
@@ -1412,11 +1405,11 @@
           }
         },
         {
-          "id": 17,
-          "start_date": "06/25/2015",
-          "start_time": "2:00 PM",
-          "end_date": "06/25/2015",
-          "end_time": "3:00 PM",
+          "id": 25,
+          "start_date": "06/28/2015",
+          "start_time": "10:00 AM",
+          "end_date": "06/28/2015",
+          "end_time": "11:00 AM",
           "status": "Active",
           "phases": {
             "current_phase": "execute",
@@ -1487,12 +1480,12 @@
           },
           "event_status": "Due",
           "campaign": {
-            "id": 18,
-            "name": "Campaign 12"
+            "id": 25,
+            "name": "Campaign 20"
           },
           "place": {
-            "id": 6,
-            "name": "Place 6",
+            "id": 9,
+            "name": "Place 9",
             "latitude": null,
             "longitude": null,
             "formatted_address": "123 My Street",
@@ -1504,10 +1497,10 @@
           }
         },
         {
-          "id": 18,
-          "start_date": "06/26/2015",
+          "id": 26,
+          "start_date": "06/29/2015",
           "start_time": "10:00 AM",
-          "end_date": "06/26/2015",
+          "end_date": "06/29/2015",
           "end_time": "12:00 PM",
           "status": "Active",
           "phases": {
@@ -1577,14 +1570,14 @@
               ]
             }
           },
-          "event_status": "Due",
+          "event_status": "Scheduled",
           "campaign": {
-            "id": 18,
-            "name": "Campaign 12"
+            "id": 25,
+            "name": "Campaign 20"
           },
           "place": {
-            "id": 6,
-            "name": "Place 6",
+            "id": 9,
+            "name": "Place 9",
             "latitude": null,
             "longitude": null,
             "formatted_address": "123 My Street",
@@ -1604,7 +1597,7 @@
   "events#results": [
     {
       "verb": "GET",
-      "path": "/api/v1/events/31/results.json",
+      "path": "/api/v1/events/34/results.json",
       "versions": [
         "1.0"
       ],
@@ -1622,7 +1615,7 @@
               "description": null,
               "goal": null,
               "module": "custom",
-              "id": 1,
+              "id": 4,
               "value": [
 
               ]
@@ -1635,7 +1628,7 @@
               "description": null,
               "goal": null,
               "module": "custom",
-              "id": 2,
+              "id": 5,
               "value": [
 
               ]
@@ -1648,7 +1641,7 @@
               "description": null,
               "goal": null,
               "module": "custom",
-              "id": 3,
+              "id": 6,
               "value": [
 
               ]
@@ -1660,7 +1653,7 @@
               "required": false,
               "description": null,
               "module": "custom",
-              "id": 4,
+              "id": 7,
               "value": 0,
               "segments": [
 
@@ -1674,7 +1667,7 @@
               "description": null,
               "goal": null,
               "module": "custom",
-              "id": 5,
+              "id": 8,
               "value": [
 
               ]
@@ -1686,7 +1679,7 @@
               "required": false,
               "description": null,
               "module": "custom",
-              "id": 6,
+              "id": 9,
               "segments": [
 
               ],
@@ -1702,7 +1695,7 @@
               "description": null,
               "goal": null,
               "module": "custom",
-              "id": 7,
+              "id": 10,
               "value": [
 
               ]
@@ -1714,7 +1707,7 @@
               "required": true,
               "description": null,
               "module": "custom",
-              "id": 8,
+              "id": 11,
               "segments": [
                 {
                   "id": 10,
@@ -1743,7 +1736,7 @@
               "required": false,
               "description": null,
               "module": "custom",
-              "id": 9,
+              "id": 12,
               "statements": [
                 {
                   "id": 7,
@@ -1784,7 +1777,7 @@
               "description": null,
               "goal": null,
               "module": "custom",
-              "id": 10,
+              "id": 13,
               "range": {
                 "format": "words",
                 "min": 20,
@@ -1802,7 +1795,7 @@
               "description": "This is a section description",
               "goal": null,
               "module": "custom",
-              "id": 11,
+              "id": 14,
               "value": [
 
               ]
@@ -1815,7 +1808,7 @@
               "description": null,
               "goal": null,
               "module": "custom",
-              "id": 12,
+              "id": 15,
               "range": {
                 "format": "value",
                 "min": 1,
@@ -1832,7 +1825,7 @@
               "required": false,
               "description": null,
               "module": "custom",
-              "id": 13,
+              "id": 16,
               "value": [
 
               ],
@@ -1862,7 +1855,7 @@
               "description": null,
               "goal": null,
               "module": "custom",
-              "id": 14,
+              "id": 17,
               "value": 0,
               "segments": [
 
@@ -1876,7 +1869,7 @@
               "description": null,
               "goal": null,
               "module": "custom",
-              "id": 15,
+              "id": 18,
               "value": [
 
               ]
@@ -1893,14 +1886,14 @@
   "events#show": [
     {
       "verb": "GET",
-      "path": "/api/v1/events/7.json",
+      "path": "/api/v1/events/31.json",
       "versions": [
         "1.0"
       ],
       "query": "",
       "request_data": null,
       "response_data": {
-        "id": 7,
+        "id": 31,
         "start_date": "01/23/2019",
         "start_time": "10:00 AM",
         "end_date": "01/23/2019",
@@ -1963,10 +1956,10 @@
         "tasks_late_count": 0,
         "tasks_due_today_count": 0,
         "place": {
-          "id": 4,
-          "venue_id": 4,
+          "id": 10,
+          "venue_id": 10,
           "state": "NY",
-          "name": "Place 4",
+          "name": "Place 10",
           "latitude": null,
           "longitude": null,
           "formatted_address": "123 My Street",
@@ -1976,8 +1969,8 @@
           "zipcode": "12345"
         },
         "campaign": {
-          "id": 11,
-          "name": "Campaign 5",
+          "id": 29,
+          "name": "Campaign 24",
           "enabled_modules": [
 
           ],
@@ -2040,30 +2033,28 @@
   "events#update": [
     {
       "verb": "PUT",
-      "path": "/api/v1/events/32.json",
+      "path": "/api/v1/events/15.json",
       "versions": [
         "1.0"
       ],
       "query": null,
       "request_data": {
+        "partial": "event_data",
         "event": {
-          "results_attributes": [
-            {
-              "id": "16",
-              "value": {
-                "9": 50,
-                "10": 50
-              }
-            }
-          ]
+          "campaign_id": "15",
+          "start_date": "05/21/2020",
+          "start_time": "12:00pm",
+          "end_date": "05/22/2020",
+          "end_time": "01:00pm",
+          "place_id": 7
         }
       },
       "response_data": {
-        "id": 32,
-        "start_date": "01/23/2019",
-        "start_time": "10:00 AM",
-        "end_date": "01/23/2019",
-        "end_time": "12:00 PM",
+        "id": 15,
+        "start_date": "05/21/2020",
+        "start_time": "12:00pm",
+        "end_date": "05/22/2020",
+        "end_time": "01:00pm",
         "status": "Active",
         "description": null,
         "phases": {
@@ -2102,30 +2093,7 @@
               }
             ],
             "execute": [
-              {
-                "id": "per",
-                "title": "Post Event Recap",
-                "complete": true,
-                "required": true
-              },
-              {
-                "id": "expenses",
-                "title": "Expenses",
-                "complete": false,
-                "required": false
-              },
-              {
-                "id": "photos",
-                "title": "Photos",
-                "complete": false,
-                "required": false
-              },
-              {
-                "id": "comments",
-                "title": "Consumer Comments",
-                "complete": false,
-                "required": false
-              }
+
             ],
             "results": [
               {
@@ -2138,44 +2106,32 @@
           }
         },
         "event_status": "Scheduled",
-        "have_data": true,
-        "data": {
-          "spent_by_impression": "0.0",
-          "spent_by_interaction": "0.0",
-          "spent_by_sample": "0.0"
-        },
+        "have_data": false,
         "actions": [
-          "enter post event data",
-          "upload photos",
-          "conduct surveys",
-          "enter expenses",
-          "gather comments"
+          "enter post event data"
         ],
         "tasks_late_count": 0,
         "tasks_due_today_count": 0,
-        "place": null,
+        "place": {
+          "id": 7,
+          "venue_id": 7,
+          "state": "NY",
+          "name": "Place 7",
+          "latitude": null,
+          "longitude": null,
+          "formatted_address": "123 My Street",
+          "country": "US",
+          "state_name": "NY",
+          "city": "New York City",
+          "zipcode": "12345"
+        },
         "campaign": {
-          "id": 27,
-          "name": "Campaign 21",
+          "id": 15,
+          "name": "Campaign 10",
           "enabled_modules": [
-            "expenses",
-            "photos",
-            "surveys",
-            "videos",
-            "comments"
+
           ],
-          "modules": {
-            "expenses": {
-            },
-            "photos": {
-            },
-            "surveys": {
-            },
-            "videos": {
-            },
-            "comments": {
-            }
-          }
+          "modules": null
         }
       },
       "code": "200",
@@ -2184,14 +2140,14 @@
     },
     {
       "verb": "PUT",
-      "path": "/api/v1/events/33.json",
+      "path": "/api/v1/events/16.json",
       "versions": [
         "1.0"
       ],
       "query": null,
       "request_data": {
         "event": {
-          "campaign_id": 28,
+          "campaign_id": 16,
           "start_date": "05/21/2020",
           "start_time": "12:00pm",
           "end_date": "05/22/2020",
@@ -2201,7 +2157,7 @@
         }
       },
       "response_data": {
-        "id": 33,
+        "id": 16,
         "start_date": "05/21/2020",
         "start_time": "12:00pm",
         "end_date": "05/22/2020",
@@ -2277,8 +2233,8 @@
           "zipcode": "12345"
         },
         "campaign": {
-          "id": 28,
-          "name": "Campaign 22",
+          "id": 16,
+          "name": "Campaign 11",
           "enabled_modules": [
 
           ],
@@ -2291,7 +2247,96 @@
     },
     {
       "verb": "PUT",
-      "path": "/api/v1/events/34.json",
+      "path": "/api/v1/events/17.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "event": {
+          "active": "false"
+        }
+      },
+      "response_data": {
+        "id": 17,
+        "start_date": "01/23/2019",
+        "start_time": "10:00 AM",
+        "end_date": "01/23/2019",
+        "end_time": "12:00 PM",
+        "status": "Inactive",
+        "description": null,
+        "phases": {
+          "current_phase": "plan",
+          "next_step": {
+            "id": "contacts",
+            "title": "Contacts",
+            "complete": false,
+            "required": false
+          },
+          "phases": {
+            "plan": [
+              {
+                "id": "info",
+                "title": "Basic Info",
+                "complete": true,
+                "required": true
+              },
+              {
+                "id": "contacts",
+                "title": "Contacts",
+                "complete": false,
+                "required": false
+              },
+              {
+                "id": "tasks",
+                "title": "Tasks",
+                "complete": false,
+                "required": false
+              },
+              {
+                "id": "documents",
+                "title": "Documents",
+                "complete": false,
+                "required": false
+              }
+            ],
+            "execute": [
+
+            ],
+            "results": [
+              {
+                "id": "approve_per",
+                "title": "Approve PER",
+                "complete": false,
+                "required": true
+              }
+            ]
+          }
+        },
+        "event_status": "Scheduled",
+        "have_data": false,
+        "actions": [
+          "enter post event data"
+        ],
+        "tasks_late_count": 0,
+        "tasks_due_today_count": 0,
+        "place": null,
+        "campaign": {
+          "id": 18,
+          "name": "Campaign 13",
+          "enabled_modules": [
+
+          ],
+          "modules": null
+        }
+      },
+      "code": "200",
+      "show_in_doc": 0,
+      "recorded": true
+    },
+    {
+      "verb": "PUT",
+      "path": "/api/v1/events/18.json",
       "versions": [
         "1.0"
       ],
@@ -2300,14 +2345,43 @@
         "event": {
           "results_attributes": [
             {
-              "id": "17",
+              "id": "1",
+              "value": {
+                "9": 5,
+                "10": 5
+              }
+            }
+          ]
+        }
+      },
+      "response_data": {
+        "results.value": [
+          "is invalid"
+        ]
+      },
+      "code": "422",
+      "show_in_doc": 0,
+      "recorded": true
+    },
+    {
+      "verb": "PUT",
+      "path": "/api/v1/events/19.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "event": {
+          "results_attributes": [
+            {
+              "id": "2",
               "value": "987"
             }
           ]
         }
       },
       "response_data": {
-        "id": 34,
+        "id": 19,
         "start_date": "01/23/2019",
         "start_time": "10:00 AM",
         "end_date": "01/23/2019",
@@ -2403,8 +2477,8 @@
         "tasks_due_today_count": 0,
         "place": null,
         "campaign": {
-          "id": 30,
-          "name": "Campaign 24",
+          "id": 20,
+          "name": "Campaign 15",
           "enabled_modules": [
             "expenses",
             "photos",
@@ -2432,28 +2506,30 @@
     },
     {
       "verb": "PUT",
-      "path": "/api/v1/events/35.json",
+      "path": "/api/v1/events/20.json",
       "versions": [
         "1.0"
       ],
       "query": null,
       "request_data": {
-        "partial": "event_data",
         "event": {
-          "campaign_id": "32",
-          "start_date": "05/21/2020",
-          "start_time": "12:00pm",
-          "end_date": "05/22/2020",
-          "end_time": "01:00pm",
-          "place_id": 9
+          "results_attributes": [
+            {
+              "id": "3",
+              "value": {
+                "39": 50,
+                "40": 50
+              }
+            }
+          ]
         }
       },
       "response_data": {
-        "id": 35,
-        "start_date": "05/21/2020",
-        "start_time": "12:00pm",
-        "end_date": "05/22/2020",
-        "end_time": "01:00pm",
+        "id": 20,
+        "start_date": "01/23/2019",
+        "start_time": "10:00 AM",
+        "end_date": "01/23/2019",
+        "end_time": "12:00 PM",
         "status": "Active",
         "description": null,
         "phases": {
@@ -2492,108 +2568,30 @@
               }
             ],
             "execute": [
-
-            ],
-            "results": [
               {
-                "id": "approve_per",
-                "title": "Approve PER",
-                "complete": false,
-                "required": true
-              }
-            ]
-          }
-        },
-        "event_status": "Scheduled",
-        "have_data": false,
-        "actions": [
-          "enter post event data"
-        ],
-        "tasks_late_count": 0,
-        "tasks_due_today_count": 0,
-        "place": {
-          "id": 9,
-          "venue_id": 9,
-          "state": "NY",
-          "name": "Place 9",
-          "latitude": null,
-          "longitude": null,
-          "formatted_address": "123 My Street",
-          "country": "US",
-          "state_name": "NY",
-          "city": "New York City",
-          "zipcode": "12345"
-        },
-        "campaign": {
-          "id": 32,
-          "name": "Campaign 26",
-          "enabled_modules": [
-
-          ],
-          "modules": null
-        }
-      },
-      "code": "200",
-      "show_in_doc": 0,
-      "recorded": true
-    },
-    {
-      "verb": "PUT",
-      "path": "/api/v1/events/36.json",
-      "versions": [
-        "1.0"
-      ],
-      "query": null,
-      "request_data": {
-        "event": {
-          "active": "false"
-        }
-      },
-      "response_data": {
-        "id": 36,
-        "start_date": "01/23/2019",
-        "start_time": "10:00 AM",
-        "end_date": "01/23/2019",
-        "end_time": "12:00 PM",
-        "status": "Inactive",
-        "description": null,
-        "phases": {
-          "current_phase": "plan",
-          "next_step": {
-            "id": "contacts",
-            "title": "Contacts",
-            "complete": false,
-            "required": false
-          },
-          "phases": {
-            "plan": [
-              {
-                "id": "info",
-                "title": "Basic Info",
+                "id": "per",
+                "title": "Post Event Recap",
                 "complete": true,
                 "required": true
               },
               {
-                "id": "contacts",
-                "title": "Contacts",
+                "id": "expenses",
+                "title": "Expenses",
                 "complete": false,
                 "required": false
               },
               {
-                "id": "tasks",
-                "title": "Tasks",
+                "id": "photos",
+                "title": "Photos",
                 "complete": false,
                 "required": false
               },
               {
-                "id": "documents",
-                "title": "Documents",
+                "id": "comments",
+                "title": "Consumer Comments",
                 "complete": false,
                 "required": false
               }
-            ],
-            "execute": [
-
             ],
             "results": [
               {
@@ -2606,52 +2604,47 @@
           }
         },
         "event_status": "Scheduled",
-        "have_data": false,
+        "have_data": true,
+        "data": {
+          "spent_by_impression": "0.0",
+          "spent_by_interaction": "0.0",
+          "spent_by_sample": "0.0"
+        },
         "actions": [
-          "enter post event data"
+          "enter post event data",
+          "upload photos",
+          "conduct surveys",
+          "enter expenses",
+          "gather comments"
         ],
         "tasks_late_count": 0,
         "tasks_due_today_count": 0,
         "place": null,
         "campaign": {
-          "id": 33,
-          "name": "Campaign 27",
+          "id": 21,
+          "name": "Campaign 16",
           "enabled_modules": [
-
+            "expenses",
+            "photos",
+            "surveys",
+            "videos",
+            "comments"
           ],
-          "modules": null
+          "modules": {
+            "expenses": {
+            },
+            "photos": {
+            },
+            "surveys": {
+            },
+            "videos": {
+            },
+            "comments": {
+            }
+          }
         }
       },
       "code": "200",
-      "show_in_doc": 0,
-      "recorded": true
-    },
-    {
-      "verb": "PUT",
-      "path": "/api/v1/events/37.json",
-      "versions": [
-        "1.0"
-      ],
-      "query": null,
-      "request_data": {
-        "event": {
-          "results_attributes": [
-            {
-              "id": "18",
-              "value": {
-                "39": 5,
-                "40": 5
-              }
-            }
-          ]
-        }
-      },
-      "response_data": {
-        "results.value": [
-          "is invalid"
-        ]
-      },
-      "code": "422",
       "show_in_doc": 0,
       "recorded": true
     }
@@ -2671,16 +2664,16 @@
             "label": "Campaigns",
             "items": [
               {
-                "id": 1,
-                "label": "Campaign 1",
-                "value": 1,
+                "id": 10,
+                "label": "Campaign 5",
+                "value": 10,
                 "name": "campaign",
                 "selected": false
               },
               {
-                "id": 2,
-                "label": "Campaign 2",
-                "value": 2,
+                "id": 11,
+                "label": "Campaign 6",
+                "value": 11,
                 "name": "campaign",
                 "selected": false
               }
@@ -2728,9 +2721,9 @@
             "label": "People",
             "items": [
               {
-                "id": 5,
+                "id": 10,
                 "label": "Test User",
-                "value": 5,
+                "value": 10,
                 "name": "user",
                 "selected": false
               },
@@ -2822,6 +2815,122 @@
       "recorded": true
     }
   ],
+  "photos#create": [
+    {
+      "verb": "POST",
+      "path": "/api/v1/events/43/photos.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": null,
+      "request_data": {
+        "attached_asset": {
+          "direct_upload_url": "https://s3.amazonaws.com/brandscopic-dev/uploads/dummy/test.jpg"
+        }
+      },
+      "response_data": {
+        "id": 11,
+        "file_file_name": "test.jpg",
+        "file_file_size": 100,
+        "file_content_type": "image/jpeg",
+        "created_at": "2015-06-29T09:37:18.776-07:00",
+        "active": true,
+        "file_small": null,
+        "file_thumbnail": null,
+        "file_medium": null,
+        "file_original": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/original/test.jpg?1435595838",
+        "processed": false
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "photos#form": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/45/photos/form.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": {
+        "fields": {
+          "AWSAccessKeyId": "AKIAIDG2GYLK4WMVHGPA",
+          "key": null,
+          "policy": "eyJleHBpcmF0aW9uIjoiMjAxNS0wNi0yOVQxNzozNzoyOFoiLCJjb25kaXRpb25zIjpbWyJzdGFydHMtd2l0aCIsIiRrZXkiLCJ1cGxvYWRzLyJdLHsiYnVja2V0IjoiYnJhbmRzY29waWMtZGV2In0sWyJzdGFydHMtd2l0aCIsIiRrZXkiLCIiXSx7IlNlY3VyZSI6InRydWUifSx7ImFjbCI6InB1YmxpYy1yZWFkIn0seyJzdWNjZXNzX2FjdGlvbl9zdGF0dXMiOiIyMDEifV19",
+          "signature": "M5VUrjGpF4gZ8pIVf8qN6Izb2go=",
+          "Secure": "true",
+          "acl": "public-read",
+          "success_action_status": "201"
+        },
+        "url": "https://s3.amazonaws.com/brandscopic-dev/"
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
+  "photos#index": [
+    {
+      "verb": "GET",
+      "path": "/api/v1/events/44/photos.json",
+      "versions": [
+        "1.0"
+      ],
+      "query": "",
+      "request_data": null,
+      "response_data": {
+        "page": 1,
+        "total": 3,
+        "results": [
+          {
+            "id": 12,
+            "file_file_name": "filetest.jpg",
+            "file_file_size": 12345,
+            "file_content_type": "image/jpg",
+            "created_at": "2015-06-29T09:37:20.864-07:00",
+            "active": true,
+            "file_small": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/012/small/filetest.jpg?1435595487",
+            "file_thumbnail": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/012/thumbnail/filetest.jpg?1435595487",
+            "file_medium": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/012/medium/filetest.jpg?1435595487",
+            "file_original": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/012/original/filetest.jpg?1435595487",
+            "processed": true
+          },
+          {
+            "id": 13,
+            "file_file_name": "filetest.jpg",
+            "file_file_size": 12345,
+            "file_content_type": "image/jpg",
+            "created_at": "2015-06-29T09:37:21.178-07:00",
+            "active": true,
+            "file_small": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/013/small/filetest.jpg?1435595487",
+            "file_thumbnail": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/013/thumbnail/filetest.jpg?1435595487",
+            "file_medium": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/013/medium/filetest.jpg?1435595487",
+            "file_original": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/013/original/filetest.jpg?1435595487",
+            "processed": true
+          },
+          {
+            "id": 14,
+            "file_file_name": "filetest.jpg",
+            "file_file_size": 12345,
+            "file_content_type": "image/jpg",
+            "created_at": "2015-06-29T09:37:21.979-07:00",
+            "active": true,
+            "file_small": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/014/small/filetest.jpg?1435595487",
+            "file_thumbnail": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/014/thumbnail/filetest.jpg?1435595487",
+            "file_medium": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/014/medium/filetest.jpg?1435595487",
+            "file_original": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/014/original/filetest.jpg?1435595487",
+            "processed": true
+          }
+        ]
+      },
+      "code": "200",
+      "show_in_doc": 1,
+      "recorded": true
+    }
+  ],
   "photos#update": [
     {
       "verb": "PUT",
@@ -2835,19 +2944,8 @@
           "active": "false"
         }
       },
-      "response_data": {
-        "id": 10,
-        "file_file_name": "filetest.jpg",
-        "file_content_type": "image/jpg",
-        "file_file_size": 12345,
-        "created_at": "2015-06-26T13:44:57.461-07:00",
-        "active": false,
-        "file_small": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/010/small/filetest.jpg?1435351387",
-        "file_thumbnail": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/010/thumbnail/filetest.jpg?1435351387",
-        "file_medium": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/010/medium/filetest.jpg?1435351387",
-        "file_original": "http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/000/010/original/filetest.jpg?1435351387"
-      },
-      "code": "200",
+      "response_data": null,
+      "code": "204",
       "show_in_doc": 1,
       "recorded": true
     }
@@ -2871,7 +2969,7 @@
             "items": [
               {
                 "label": "Test User",
-                "id": 6,
+                "id": 11,
                 "name": "user",
                 "selected": false
               }
@@ -2881,9 +2979,9 @@
             "label": "Campaigns",
             "items": [
               {
-                "id": 3,
-                "label": "Campaign 3",
-                "value": 3,
+                "id": 12,
+                "label": "Campaign 7",
+                "value": 12,
                 "name": "campaign",
                 "selected": false
               }
@@ -2918,23 +3016,23 @@
             "id": 1,
             "visit_type": "brand_program",
             "visit_type_name": "Brand Program",
-            "start_date": "2015-06-26",
-            "end_date": "2015-06-26",
+            "start_date": "2015-06-29",
+            "end_date": "2015-06-29",
             "area_id": 1,
-            "campaign_id": 3,
+            "campaign_id": 12,
             "city": "Test City",
             "description": "Visit description",
             "status": "Active",
             "campaign": {
-              "id": 3,
-              "name": "Campaign 3"
+              "id": 12,
+              "name": "Campaign 7"
             },
             "area": {
               "id": 1,
               "name": null
             },
             "user": {
-              "id": 7,
+              "id": 12,
               "full_name": "Test User"
             }
           },
@@ -2942,23 +3040,23 @@
             "id": 2,
             "visit_type": "brand_program",
             "visit_type_name": "Brand Program",
-            "start_date": "2015-06-26",
-            "end_date": "2015-06-26",
+            "start_date": "2015-06-29",
+            "end_date": "2015-06-29",
             "area_id": 1,
-            "campaign_id": 3,
+            "campaign_id": 12,
             "city": "Test City",
             "description": "Visit description",
             "status": "Active",
             "campaign": {
-              "id": 3,
-              "name": "Campaign 3"
+              "id": 12,
+              "name": "Campaign 7"
             },
             "area": {
               "id": 1,
               "name": null
             },
             "user": {
-              "id": 8,
+              "id": 13,
               "full_name": "Test User"
             }
           },
@@ -2966,23 +3064,23 @@
             "id": 3,
             "visit_type": "brand_program",
             "visit_type_name": "Brand Program",
-            "start_date": "2015-06-26",
-            "end_date": "2015-06-26",
+            "start_date": "2015-06-29",
+            "end_date": "2015-06-29",
             "area_id": 1,
-            "campaign_id": 3,
+            "campaign_id": 12,
             "city": "Test City",
             "description": "Visit description",
             "status": "Active",
             "campaign": {
-              "id": 3,
-              "name": "Campaign 3"
+              "id": 12,
+              "name": "Campaign 7"
             },
             "area": {
               "id": 1,
               "name": null
             },
             "user": {
-              "id": 9,
+              "id": 14,
               "full_name": "Test User"
             }
           }
