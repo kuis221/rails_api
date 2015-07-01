@@ -57,7 +57,7 @@ Brandscopic::Application.routes.draw do
             get :brands, on: :collection
           end
           resources :invites, only: [:index, :show, :create, :update]
-          resources :activities, only: [:index, :create, :update], concerns: [:deactivatable] do
+          resources :activities, only: [:index, :create, :update], concerns: [:deactivatable, :api_attachable] do
             get :deactivate, on: :member
           end
           get :autocomplete,   on: :collection
