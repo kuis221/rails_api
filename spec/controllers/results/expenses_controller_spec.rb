@@ -37,7 +37,7 @@ describe Results::ExpensesController, type: :controller do
       ResqueSpec.perform_all(:export)
 
       expect(export.reload).to have_rows([
-        ['CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS', 'EVENT START DATE', 'EVENT END DATE', 'SPENT']
+        ['CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS', 'EVENT START DATE', 'EVENT END DATE', 'SUBMITTED AT', 'APPROVED AT', 'SPENT']
       ])
     end
 
@@ -45,6 +45,7 @@ describe Results::ExpensesController, type: :controller do
       create(:approved_event, campaign: campaign,
                               start_date: '08/21/2013', end_date: '08/21/2013',
                               start_time: '8:00pm', end_time: '11:00pm', place: create(:place, name: 'Place 1'),
+                              submitted_at: DateTime.parse('2015-07-01 10:00 -07:00'), approved_at: DateTime.parse('2015-07-02 10:00 -07:00'),
                               event_expenses: [
                                 build(:event_expense, category: 'Entertainment', amount: 10)])
 
@@ -61,12 +62,12 @@ describe Results::ExpensesController, type: :controller do
       ResqueSpec.perform_all(:export)
 
       expect(export.reload).to have_rows([
-        ['CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS', 'EVENT START DATE', 'EVENT END DATE',
+        ['CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS', 'EVENT START DATE', 'EVENT END DATE', 'SUBMITTED AT', 'APPROVED AT',
          'SPENT', 'ENTERTAINMENT', 'UNCATEGORIZED'],
         ['Test Campaign FY01', 'Place 1', 'Place 1, 11 Main St., New York City, NY, 12345',
-         '2013-08-21 20:00', '2013-08-21 23:00', '10.0', '10.0', nil],
+         '2013-08-21 20:00', '2013-08-21 23:00', '2015-07-01 10:00', '2015-07-02 10:00', '10.0', '10.0', nil],
         ['Test Campaign FY01', 'Place 2', 'Place 2, 11 Main St., New York City, NY, 12345',
-         '2013-08-25 09:00', '2013-08-25 10:00', '20.0', nil, '20.0']
+         '2013-08-25 09:00', '2013-08-25 10:00', nil, nil, '20.0', nil, '20.0']
       ])
     end
   end

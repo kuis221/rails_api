@@ -20,6 +20,14 @@ module Csv
       datetime @model.end_at
     end
 
+    def approved_date
+      datetime @model.approved_at if @model.approved_at.present?
+    end
+
+    def submitted_date
+      datetime @model.submitted_at if @model.submitted_at.present?
+    end
+
     def promo_hours
       number_with_precision(@model.promo_hours, precision: 2)
     end
