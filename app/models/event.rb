@@ -268,19 +268,19 @@ class Event < ActiveRecord::Base
     state :approved
     state :rejected
 
-    event :submit do
+    event :submit, before: -> { self.submitted_at = DateTime.now } do
       transitions from: [:unsent, :rejected], to: :submitted, guard: :valid_to_submit?
     end
 
-    event :approve do
+    event :approve, before: -> { self.approved_at = DateTime.now } do
       transitions from: :submitted, to: :approved
     end
 
-    event :unapprove do
+    event :unapprove, before: -> { self.approved_at = nil } do
       transitions from: :approved, to: :submitted
     end
 
-    event :reject do
+    event :reject, before: -> { self.rejected_at = DateTime.now } do
       transitions from: :submitted, to: :rejected
     end
   end

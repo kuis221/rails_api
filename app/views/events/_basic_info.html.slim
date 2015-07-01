@@ -29,6 +29,14 @@
             i.icon-team.indicate-icon
             = presenter.team_members
 
+      .event-state
+        - if resource.submitted_at.present?
+          .submitted_at
+            | Submitted at #{l resource.submitted_at, format: :long}
+        - if resource.approved_at.present?
+          .approved_at
+            | Approved at #{l resource.approved_at, format: :long}
+
     - if presenter.current_phase == :plan
       .span6.map_container
         - unless resource.place.nil? || resource.place.latitude.nil? || resource.place.latitude == 1.0
