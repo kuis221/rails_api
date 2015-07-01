@@ -1,7 +1,7 @@
 class Api::V1::EventsController < Api::V1::FilteredController
   extend TeamMembersHelper
 
-  # Handle the noticaitions for new events
+  # Handle the notifications for new events
   include NotificableController
 
   skip_load_and_authorize_resource only: :update
@@ -65,6 +65,7 @@ class Api::V1::EventsController < Api::V1::FilteredController
 
   EOS
   def index
+    @class_name = 'event'
     @filter_tags = FilterTags.new(params, current_company_user).tags
     collection
   end
