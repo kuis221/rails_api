@@ -1,12 +1,13 @@
 class Api::V1::EventsController < Api::V1::FilteredController
   extend TeamMembersHelper
 
-  # Handle the noticaitions for new events
+  # Handle the notifications for new events
   include NotificableController
 
   skip_load_and_authorize_resource only: :update
   skip_authorization_check only: :update
   before_action :authorize_update, only: :update
+  after_action :remove_resource_new_notifications, only: [:index, :show]
 
   resource_description do
     short 'Events'
