@@ -26,6 +26,11 @@ describe Results::ExpensesController, type: :controller do
   end
 
   describe "GET 'list_export'", search: true do
+    let!(:created_at) { DateTime.parse('2014-07-02 10:00 -07:00') }
+    let!(:updated_at) { DateTime.parse('2015-07-01 10:00 -07:00') }
+    let!(:approved_at) { DateTime.parse('2015-07-02 10:00 -07:00') }
+    let!(:submitted_at) { DateTime.parse('2015-07-01 10:00 -07:00') }
+
     before do
       Kpi.create_global_kpis
     end
@@ -37,23 +42,24 @@ describe Results::ExpensesController, type: :controller do
       ResqueSpec.perform_all(:export)
 
       expect(export.reload).to have_rows([
-        ['CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS', 'EVENT START DATE', 'EVENT END DATE', 'SUBMITTED AT', 'APPROVED AT', 'SPENT']
+        ['CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS', 'EVENT START DATE', 'EVENT END DATE', 'SUBMITTED AT', 'APPROVED AT',
+         'CREATED AT', 'CREATED BY', 'LAST MODIFIED', 'MODIFIED BY', 'SPENT']
       ])
     end
 
     it 'should return an empty xls with the correct headers' do
-      create(:approved_event, campaign: campaign,
-                              start_date: '08/21/2013', end_date: '08/21/2013',
-                              start_time: '8:00pm', end_time: '11:00pm', place: create(:place, name: 'Place 1'),
-                              submitted_at: DateTime.parse('2015-07-01 10:00 -07:00'), approved_at: DateTime.parse('2015-07-02 10:00 -07:00'),
-                              event_expenses: [
-                                build(:event_expense, category: 'Entertainment', amount: 10)])
+      create(:approved_event, campaign: campaign, created_at: created_at, updated_at: updated_at,
+              start_date: '08/21/2013', end_date: '08/21/2013',
+              start_time: '8:00pm', end_time: '11:00pm', place: create(:place, name: 'Place 1'),
+              submitted_at: submitted_at, approved_at: approved_at,
+              event_expenses: [
+                build(:event_expense, category: 'Entertainment', amount: 10)])
 
-      create(:approved_event, campaign: campaign,
-                              start_date: '08/25/2013', end_date: '08/25/2013',
-                              start_time: '9:00am', end_time: '10:00am', place: create(:place, name: 'Place 2'),
-                              event_expenses: [
-                                build(:event_expense, category: 'Uncategorized', amount: 20)])
+      create(:approved_event, campaign: campaign, created_at: created_at, updated_at: updated_at,
+              start_date: '08/25/2013', end_date: '08/25/2013',
+              start_time: '9:00am', end_time: '10:00am', place: create(:place, name: 'Place 2'),
+              event_expenses: [
+                build(:event_expense, category: 'Uncategorized', amount: 20)])
 
       Sunspot.commit
       expect { xhr :get, 'index', format: :csv }.to change(ListExport, :count).by(1)
@@ -63,11 +69,11 @@ describe Results::ExpensesController, type: :controller do
 
       expect(export.reload).to have_rows([
         ['CAMPAIGN NAME', 'VENUE NAME', 'ADDRESS', 'EVENT START DATE', 'EVENT END DATE', 'SUBMITTED AT', 'APPROVED AT',
-         'SPENT', 'ENTERTAINMENT', 'UNCATEGORIZED'],
+         "CREATED AT", "CREATED BY", "LAST MODIFIED", "MODIFIED BY", 'SPENT', 'ENTERTAINMENT', 'UNCATEGORIZED'],
         ['Test Campaign FY01', 'Place 1', 'Place 1, 11 Main St., New York City, NY, 12345',
-         '2013-08-21 20:00', '2013-08-21 23:00', '2015-07-01 10:00', '2015-07-02 10:00', '10.0', '10.0', nil],
+         '2013-08-21 20:00', '2013-08-21 23:00', '2015-07-01 10:00', '2015-07-02 10:00', "2014-07-02 10:00", "Test User", "2015-07-01 10:00", "Test User", '10.0', '10.0', nil],
         ['Test Campaign FY01', 'Place 2', 'Place 2, 11 Main St., New York City, NY, 12345',
-         '2013-08-25 09:00', '2013-08-25 10:00', nil, nil, '20.0', nil, '20.0']
+         '2013-08-25 09:00', '2013-08-25 10:00', nil, nil, "2014-07-02 10:00", "Test User", "2015-07-01 10:00", "Test User", '20.0', nil, '20.0']
       ])
     end
   end

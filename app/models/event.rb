@@ -36,6 +36,8 @@ class Event < ActiveRecord::Base
 
   attr_accessor :visit_id
 
+  belongs_to :created_by, class_name: 'User'
+  belongs_to :updated_by, class_name: 'User'
   belongs_to :campaign
   belongs_to :place, autosave: true
 
