@@ -114,7 +114,7 @@ class Api::V1::PhotosController < Api::V1::FilteredController
   def search_params
     @search_params ||= begin
       super
-      @search_params.merge(event_id: parent.id, asset_type: 'photo')
+      @search_params.merge(event_id: parent.id, asset_type: 'photo', search_permission_class: 'Event', search_permission: :index_photos)
     end
   end
 
