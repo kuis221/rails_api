@@ -1,3 +1,5 @@
+require 'open-uri'
+
 namespace :geojson do
   desc 'Parse and load the neighborhoods from the geojson files into the database'
   task load_neighborhoods: :environment do
@@ -5,11 +7,13 @@ namespace :geojson do
   end
 
   desc 'Parse and load the neighborhoods from the geojson files into the database'
-  task :load_file, [:state, :city] => [:environment] do |t, args|
+  task :load_file, [:file, :state, :city] => [:environment] do |t, args|
     scope = Neighborhood.where(city: args[:city], state: args[:state])
     zipcodes = scope.joins('INNER JOIN zipcode_locations z ON neighborhoods.gid=z.neighborhood_id').pluck('zipcode')
     scope.delete_all
-    JSON.parse($stdin.read)['features'].each do |neighborhood|
+    p "Downloading and parsing Geojson file"
+    JSON.parse(open(args[:file]).read)['features'].each do |neighborhood|
+      p "  Creating #{neighborhood['properties']['label']}"
       n = Neighborhood.create(
         name: neighborhood['properties']['label'],
         city: args[:city],
