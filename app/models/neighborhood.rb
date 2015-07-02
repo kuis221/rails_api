@@ -12,7 +12,6 @@
 #
 
 class Neighborhood < ActiveRecord::Base
-
   # This is how shp2pgsql generates the table
   self.primary_key = 'gid'
 
