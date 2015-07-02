@@ -639,6 +639,26 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
         "required":true,
         "kpi_id":null,
         "id":10930
+      },
+      {
+        "active":true,
+        "created_at":"2015-07-02T14:50:41.091-07:00",
+        "field_id":6400,
+        "file_content_type":"image/png",
+        "file_file_name":"blank-venues.png",
+        "file_file_size":4913,
+        "file_medium":"http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/310/473/medium/blank-venues.png?1435873842",
+        "file_original":"http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/310/473/original/blank-venues.png?1435873842",
+        "file_small":"http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/310/473/small/blank-venues.png?1435873842",
+        "file_thumbnail":"http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/310/473/thumbnail/blank-venues.png?1435873842",
+        "id":1268113,
+        "kpi_id":null,
+        "name":"Photo",
+        "ordering":11,
+        "required":false,
+        "settings":null,
+        "type":"FormField::Photo",
+        "value": null
       }
     ]
   }
@@ -758,22 +778,26 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
         value = result ? field.string_to_value(result.value) : nil
         { value: value }
       else
-        {
-          file_file_name: result.attached_asset.file_file_name,
-          file_content_type: result.attached_asset.file_content_type,
-          file_file_size: result.attached_asset.file_file_size,
-          created_at: result.attached_asset.created_at,
-          active: result.attached_asset.active,
-          file_small: result.attached_asset.file.url(:small),
-          file_thumbnail: result.attached_asset.file.url(:thumbnail),
-          file_medium: result.attached_asset.file.url(:medium),
-          file_original: result.attached_asset.file.url
-        }
+        photo_values(result)
       end
     else
       value = result ? field.string_to_value(result.value) : nil
       { value: value }
     end
+  end
+
+  def photo_values(result)
+    {
+      file_file_name: result.attached_asset.file_file_name,
+      file_content_type: result.attached_asset.file_content_type,
+      file_file_size: result.attached_asset.file_file_size,
+      created_at: result.attached_asset.created_at,
+      active: result.attached_asset.active,
+      file_small: result.attached_asset.file.url(:small),
+      file_thumbnail: result.attached_asset.file.url(:thumbnail),
+      file_medium: result.attached_asset.file.url(:medium),
+      file_original: result.attached_asset.file.url
+    }
   end
 
   def activity_params
