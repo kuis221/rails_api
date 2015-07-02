@@ -43,4 +43,8 @@
         span.event-data-column.ethnicity-white-box
           - if event.event_data.ethnicity_white.present?
             = number_to_percentage(event.event_data.ethnicity_white, precision: 0)
+        span.event-data-column.submitted-at-box
+          small= l event.submitted_at, format: :long if event.submitted_at.present?
+        span.event-data-column.approved-at-box
+          small= l event.approved_at, format: :long if event.approved_at.present?
     .clearfix
