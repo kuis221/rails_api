@@ -5,10 +5,4 @@
       .clean-date
         = format_date_range(event_date(event, :start_at), event_date(event, :end_at), date_separator: ', ')
       = place_address(event.place, false, ', ', ', ')
-      - if event.submitted_at.present?
-        .submitted_at
-          | Submitted at #{l event.submitted_at, format: :long}
-      - if event.approved_at.present?
-        .approved_at
-          | Approved at #{l event.approved_at, format: :long}
     .span1.expense-column.text-large.text-right= number_to_currency(event.event_data.spent)
