@@ -170,25 +170,33 @@ describe Event, type: :model do
 
       it 'should change to :submitted on :unsent or :rejected' do
         event.submit
+        expect(event.submitted_at).to be_present
         expect(event).to be_submitted
       end
 
       it 'should change to :approved on :submitted' do
         event.submit
+        expect(event.submitted_at).to be_present
         event.approve
+        expect(event.approved_at).to be_present
         expect(event).to be_approved
       end
 
       it 'should change to :submitted on :approved' do
         event.submit
+        expect(event.submitted_at).to be_present
         event.approve
+        expect(event.approved_at).to be_present
         event.unapprove
+        expect(event.approved_at).to be_nil
         expect(event).to be_submitted
       end
 
       it 'should change to :rejected on :submitted' do
         event.submit
+        expect(event.submitted_at).to be_present
         event.reject
+        expect(event.rejected_at).to be_present
         expect(event).to be_rejected
       end
     end

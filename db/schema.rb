@@ -11,15 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150612020013) do
+ActiveRecord::Schema.define(version: 20150701074911) do
 
   # These are extensions that must be enabled in order to support this database
-  enable_extension "tablefunc"
   enable_extension "plpgsql"
   enable_extension "hstore"
   enable_extension "pg_stat_statements"
   enable_extension "pg_trgm"
   enable_extension "postgis"
+  enable_extension "tablefunc"
 
   create_table "active_admin_comments", force: true do |t|
     t.string   "resource_id",   null: false
@@ -537,6 +537,7 @@ ActiveRecord::Schema.define(version: 20150612020013) do
     t.string   "kbmg_event_id"
     t.datetime "rejected_at"
     t.datetime "submitted_at"
+    t.datetime "approved_at"
   end
 
   add_index "events", ["aasm_state"], :name => "index_events_on_aasm_state"
