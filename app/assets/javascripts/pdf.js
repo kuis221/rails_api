@@ -12,4 +12,6 @@
 //= require jquery.eventsCalendar
 //= require jquery.filteredList
 //= require jquery.uniform
+//= require moment.min.js
+//= require fullcalendar
 //= require events
