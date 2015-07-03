@@ -280,7 +280,6 @@ feature 'Brand Ambassadors Documents', js: true do
 
         within drag_n_drop_zone do
           attach_file 'file', 'spec/fixtures/file.pdf'
-          expect(page).to have_content('Uploading document')
           wait_for_ajax(30) # For the file to upload to S3
         end
         ensure_modal_was_closed
