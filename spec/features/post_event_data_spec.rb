@@ -315,7 +315,8 @@ feature 'Post Event Data' do
 
       fill_in('Male', with: 35)
       fill_in('Female', with: 30)
-      expect(page).to have_content('Field must sum to 100%')
+      error_msg = 'Field must sum to 100%'
+      expect(page).to have_content(error_msg)
 
       within '#event-results-form' do
         expect(page).to have_content('65%')
@@ -323,9 +324,12 @@ feature 'Post Event Data' do
 
       fill_in('Female', with: 65)
 
+      expect(page).to_not have_content(error_msg)
+
       click_js_button 'Save'
 
-      expect(page).to have_no_content('Field should sum 100%')
+      expect(page).to_not have_content(error_msg)
+      expect(page).to have_content('Looks good! Your Post Event Recap is complete.')
     end
 
     scenario 'should display correct messages for range validations' do
@@ -481,10 +485,4 @@ feature 'Post Event Data' do
       end
     end
   end
-
-  # feature 'admin user', js: true do
-  #   let(:role) { create(:role, company: company) }
-
-  #   it_behaves_like 'a user with permissions to fill post event data'
-  # end
 end
