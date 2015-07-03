@@ -775,8 +775,7 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
         segments: field.options_for_input.map { |s| { id: s[1], text: s[0] } } }
     elsif field.type == 'FormField::Photo'
       if result.nil?
-        value = result ? field.string_to_value(result.value) : nil
-        { value: value }
+        { value: nil }
       else
         photo_values(result)
       end
@@ -787,17 +786,17 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
   end
 
   def photo_values(result)
-    {
-      file_file_name: result.attached_asset.file_file_name,
-      file_content_type: result.attached_asset.file_content_type,
-      file_file_size: result.attached_asset.file_file_size,
-      created_at: result.attached_asset.created_at,
-      active: result.attached_asset.active,
-      file_small: result.attached_asset.file.url(:small),
-      file_thumbnail: result.attached_asset.file.url(:thumbnail),
-      file_medium: result.attached_asset.file.url(:medium),
-      file_original: result.attached_asset.file.url
-    }
+     {
+        file_file_name: result.attached_asset.file_file_name,
+        file_content_type: result.attached_asset.file_content_type,
+        file_file_size: result.attached_asset.file_file_size,
+        created_at: result.attached_asset.created_at,
+        active: result.attached_asset.active,
+        file_small: result.attached_asset.file.url(:small),
+        file_thumbnail: result.attached_asset.file.url(:thumbnail),
+        file_medium: result.attached_asset.file.url(:medium),
+        file_original: result.attached_asset.file.url
+      } unless result.attached_asset.nil?
   end
 
   def activity_params
