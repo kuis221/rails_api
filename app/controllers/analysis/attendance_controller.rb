@@ -58,16 +58,8 @@ class Analysis::AttendanceController < ApplicationController
       .where.not(zip_code: '')
       .pluck('DISTINCT invite_rsvps.zip_code').each do |zipcode|
         next unless zipcode.match(/\A[0-9]{5}(-[0-9]+)?\z/)
-        latlng = get_latlng_for_zip_code(zipcode)
-        InviteRsvp.update_zip_code_location(zipcode, latlng)
+        InviteRsvp.update_zip_code_location(zipcode)
     end
-  end
-
-  def get_latlng_for_zip_code(zipcode)
-    data = JSON.parse(open(
-            'https://maps.googleapis.com/maps/api/geocode/json?components='\
-            "postal_code:#{zipcode}|country:US&sensor=true").read)
-    data['results'].first['geometry']['location'] rescue nil
   end
 
   def default_color

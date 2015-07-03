@@ -474,6 +474,8 @@ GEM
     rgeo-activerecord (1.2.0)
       activerecord (~> 4.0)
       rgeo (~> 0.3)
+    rgeo-geojson (0.3.1)
+      rgeo (~> 0.3)
     roo (1.13.2)
       nokogiri
       rubyzip
@@ -683,6 +685,7 @@ DEPENDENCIES
   resque-timeout
   resque_mailer
   resque_spec
+  rgeo-geojson
   roo
   rspec-mocks
   rspec-rails (~> 3.0.0)
