@@ -76,7 +76,7 @@ module Brandscopic
       admin/active_admin.css admin/active_admin.js
       jquery.placesAutocomplete.js
       reports.css jquery.reportBuilder.js jquery.reportTableScroller.js
-      form_builder.css jquery.formBuilder.js
+      form_builder.css jquery.formBuilder.js pdf.js
     )
 
     config.assets.paths << Rails.root.join('app', 'assets', 'stylesheets', 'font')

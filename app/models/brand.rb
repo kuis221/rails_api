@@ -17,6 +17,8 @@ class Brand < ActiveRecord::Base
 
   scoped_to_company
 
+  has_paper_trail
+
   # Required fields
   validates :name, presence: true, uniqueness: { scope: :company_id, case_sensitive: false }
 

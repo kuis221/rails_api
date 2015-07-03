@@ -20,6 +20,34 @@ module Csv
       datetime @model.end_at
     end
 
+    def approved_date
+      datetime @model.approved_at if @model.approved_at.present?
+    end
+
+    def submitted_date
+      datetime @model.submitted_at if @model.submitted_at.present?
+    end
+
+    def created_at
+      datetime @model.created_at if @model.created_at.present?
+    end
+
+    def created_by
+      if (created_by = @model.created_by).present?
+        created_by.full_name
+      end
+    end
+
+    def last_modified
+      datetime @model.updated_at if @model.updated_at.present?
+    end
+
+    def modified_by
+      if (updated_by = @model.updated_by).present?
+        updated_by.full_name
+      end
+    end
+
     def promo_hours
       number_with_precision(@model.promo_hours, precision: 2)
     end

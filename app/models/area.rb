@@ -21,6 +21,8 @@ class Area < ActiveRecord::Base
 
   scoped_to_company
 
+  has_paper_trail
+
   # Defines the method do_search
   include SolrSearchable
 

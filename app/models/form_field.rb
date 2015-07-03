@@ -16,6 +16,8 @@
 #
 
 class FormField < ActiveRecord::Base
+  has_paper_trail
+
   MIN_OPTIONS_ALLOWED = 1
   MIN_STATEMENTS_ALLOWED = 1
   VALID_RANGE_FORMATS = %w(digits characters words value)

@@ -54,6 +54,8 @@ class User < ActiveRecord::Base
 
   acts_as_reader
 
+  has_paper_trail
+
   include SentientUser
 
   # Include default devise modules. Others available are:

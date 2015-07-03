@@ -4,12 +4,6 @@
   = render partial: 'shared/form_field_results', locals: { form_fields: form_fields }, formats: [:html]
 
 - content_for :pdf_scripts
-  = wicked_pdf_javascript_include_tag 'jquery'
-  = wicked_pdf_javascript_include_tag 'jquery-ui-1.10.4.custom'
-  = wicked_pdf_javascript_include_tag 'bootstrap'
-  = wicked_pdf_javascript_include_tag 'jquery.photoGallery'
-  = wicked_pdf_javascript_include_tag 'jquery.uniform'
-  = wicked_pdf_javascript_include_tag 'highstock.src'
   javascript:
     jQuery(function(){
       $("input:checkbox, input:radio").not('[data-no-uniform="true"], #uniform-is-ajax, .bs-checkbox').uniform();

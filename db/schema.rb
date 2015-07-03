@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150702160650) do
+ActiveRecord::Schema.define(version: 20150703153407) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -764,6 +764,7 @@ ActiveRecord::Schema.define(version: 20150702160650) do
   end
 
   add_index "neighborhoods", ["geog"], :name => "index_neighborhoods_on_geog", :spatial => true
+  add_index "neighborhoods", ["geog"], :name => "neighborhoods_geog_idx", :spatial => true
 
   create_table "notifications", force: true do |t|
     t.integer  "company_user_id"
@@ -1058,6 +1059,30 @@ ActiveRecord::Schema.define(version: 20150702160650) do
   add_index "venues", ["company_id", "place_id"], :name => "index_venues_on_company_id_and_place_id", :unique => true
   add_index "venues", ["company_id"], :name => "index_venues_on_company_id"
   add_index "venues", ["place_id"], :name => "index_venues_on_place_id"
+
+  create_table "version_associations", force: true do |t|
+    t.integer "version_id"
+    t.string  "foreign_key_name", null: false
+    t.integer "foreign_key_id"
+  end
+
+  add_index "version_associations", ["foreign_key_name", "foreign_key_id"], :name => "index_version_associations_on_foreign_key"
+  add_index "version_associations", ["version_id"], :name => "index_version_associations_on_version_id"
+
+  create_table "versions", force: true do |t|
+    t.string   "item_type",      null: false
+    t.integer  "item_id",        null: false
+    t.string   "event",          null: false
+    t.string   "ip"
+    t.string   "user_agent"
+    t.string   "whodunnit"
+    t.text     "object"
+    t.datetime "created_at"
+    t.integer  "transaction_id"
+  end
+
+  add_index "versions", ["item_type", "item_id"], :name => "index_versions_on_item_type_and_item_id"
+  add_index "versions", ["transaction_id"], :name => "index_versions_on_transaction_id"
 
   create_table "views_for_data_extracts", force: true do |t|
   end

@@ -17,6 +17,8 @@ class FormFieldResult < ActiveRecord::Base
   belongs_to :resultable, polymorphic: true
   belongs_to :form_field
 
+  has_paper_trail
+
   validate :valid_value?
   validates :form_field_id, numericality: true, presence: true
 

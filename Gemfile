@@ -59,6 +59,8 @@ gem 'activerecord-postgis-adapter'
 gem 'clockwork', require: false
 gem 'pgbackups-archive'
 gem 'active_model_serializers'
+gem 'rgeo-geojson'
+gem 'paper_trail', '~> 4.0.0.rc'
 
 # For memory debugging
 # gem "allocation_stats"

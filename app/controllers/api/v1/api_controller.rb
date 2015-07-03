@@ -8,6 +8,7 @@ class Api::V1::ApiController < ActionController::Base
   rescue_from 'ActiveRecord::RecordNotFound', with: :record_not_found
   rescue_from 'Apipie::ParamInvalid', with: :invalid_argument
   rescue_from 'Apipie::ParamMissing', with: :invalid_argument
+  rescue_from 'CanCan::AccessDenied', with: :access_denied
 
   before_action :ensure_valid_request
   after_action :set_access_control_headers
@@ -47,6 +48,17 @@ class Api::V1::ApiController < ActionController::Base
     request.headers['X-Company-Id']
   end
 
+  def access_denied
+    respond_to do |format|
+      format.json do
+        render status: 403,
+               json: { success: false,
+                       info: 'Forbidden',
+                       data: {} }
+      end
+    end
+  end
+
   def invalid_token
     respond_to do |format|
       format.json do
@@ -54,12 +66,6 @@ class Api::V1::ApiController < ActionController::Base
                json: { success: false,
                        info: 'Invalid auth token',
                        data: {} }
-      end
-      format.xml do
-        render status: 401,
-               xml: { success: false,
-                      info: 'Invalid auth token',
-                      data: {} }.to_xml(root: 'response')
       end
     end
   end
@@ -72,12 +78,6 @@ class Api::V1::ApiController < ActionController::Base
                        info: 'Invalid company',
                        data: {} }
       end
-      format.xml do
-        render status: 401,
-               xml: { success: false,
-                      info: 'Invalid company',
-                      data: {} }.to_xml(root: 'response')
-      end
     end
   end
 
@@ -88,12 +88,6 @@ class Api::V1::ApiController < ActionController::Base
                json: { success: false,
                        info: 'Record not found',
                        data: {} }
-      end
-      format.xml do
-        render status: 404,
-               xml: { success: false,
-                      info: 'Record not found',
-                      data: {} }.to_xml(root: 'response')
       end
     end
   end
@@ -129,11 +123,6 @@ class Api::V1::ApiController < ActionController::Base
         render status: 400,
                json: { success: false,
                        info: exception.message }
-      end
-      format.xml do
-        render status: 400,
-               xml: { success: false,
-                      info: exception.message }.to_xml(root: 'response')
       end
     end
   end

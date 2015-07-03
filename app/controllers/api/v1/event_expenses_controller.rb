@@ -123,7 +123,7 @@ class Api::V1::EventExpensesController < Api::V1::ApiController
       form = bucket.presigned_post(acl: 'public-read', success_action_status: 201)
                    .where(:key).starts_with('uploads/')
                    .where(:content_type).starts_with('')
-      data = { fields: form.fields, url: "https://#{ENV['S3_BUCKET_NAME']}.s3.amazonaws.com/"  }
+      data = { fields: form.fields, url: "https://s3.amazonaws.com/#{ENV['S3_BUCKET_NAME']}/"  }
       respond_to do |format|
         format.json { render json: data }
         format.xml { render xml: data }

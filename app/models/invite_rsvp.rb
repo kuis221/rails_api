@@ -41,7 +41,8 @@ class InviteRsvp < ActiveRecord::Base
       .where('zl.zipcode IS NULL')
   end
 
-  def self.update_zip_code_location(zip_code, latlng)
+  def self.update_zip_code_location(zip_code)
+    latlng = get_latlng_for_zip_code(zip_code)
     neighborhood_id = find_closest_neighborhood(latlng)
     point = latlng ? connection.quote("POINT(#{latlng['lng']} #{latlng['lat']})") : 'NULL'
     connection.execute(<<-EOQ)
@@ -50,6 +51,13 @@ class InviteRsvp < ActiveRecord::Base
               #{point},
               #{neighborhood_id || 'NULL'})
     EOQ
+  end
+
+  def self.get_latlng_for_zip_code(zipcode)
+    data = JSON.parse(open(
+            'https://maps.googleapis.com/maps/api/geocode/json?components='\
+            "postal_code:#{zipcode}|country:US&sensor=true").read)
+    data['results'].first['geometry']['location'] rescue nil
   end
 
   def self.find_closest_neighborhood(latlng)

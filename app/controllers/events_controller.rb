@@ -21,6 +21,8 @@ class EventsController < FilteredController
   # Handle the noticaitions for new events
   include NotificableController
 
+  notifications_scope -> { current_company_user.notifications.events }
+
   helper_method :calendar_highlights, :event_activities
 
   respond_to :js, only: [:new, :create, :edit, :update, :edit_results,
@@ -220,21 +222,6 @@ class EventsController < FilteredController
       p[:sorting] ||= Event.search_start_date_field
       p[:sorting_dir] ||= 'asc'
       p[:search_permission] = :view_list
-
-      # Get a list of new events notifications to obtain the
-      # list of ids, then delete them as they are already seen, but
-      # store them in the session to allow the user to navigate, paginate, etc
-      if params.key?(:new_at) && params[:new_at]
-        p[:id] = session["new_events_at_#{params[:new_at].to_i}"] ||= begin
-          ids = if params.key?(:notification) && params[:notification] == 'new_team_event'
-                  current_company_user.notifications.new_team_events.pluck("params->'event_id'")
-                else
-                  current_company_user.notifications.new_events.pluck("params->'event_id'")
-                end
-          current_company_user.notifications.where("params->'event_id' in (?)", ids).destroy_all
-          ids
-        end
-      end
     end)
   end
 

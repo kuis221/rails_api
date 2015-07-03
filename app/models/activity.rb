@@ -26,6 +26,10 @@ class Activity < ActiveRecord::Base
   belongs_to :created_by, class_name: 'User'
   belongs_to :updated_by, class_name: 'User'
 
+  track_who_does_it
+
+  has_paper_trail
+
   has_many :results, class_name: 'FormFieldResult', inverse_of: :resultable, as: :resultable
 
   validates :activity_type_id, numericality: true, presence: true,
