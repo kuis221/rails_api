@@ -639,6 +639,26 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
         "required":true,
         "kpi_id":null,
         "id":10930
+      },
+      {
+        "active":true,
+        "created_at":"2015-07-02T14:50:41.091-07:00",
+        "field_id":6400,
+        "file_content_type":"image/png",
+        "file_file_name":"blank-venues.png",
+        "file_file_size":4913,
+        "file_medium":"http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/310/473/medium/blank-venues.png?1435873842",
+        "file_original":"http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/310/473/original/blank-venues.png?1435873842",
+        "file_small":"http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/310/473/small/blank-venues.png?1435873842",
+        "file_thumbnail":"http://s3.amazonaws.com/brandscopic-dev/attached_assets/files/000/310/473/thumbnail/blank-venues.png?1435873842",
+        "id":1268113,
+        "kpi_id":null,
+        "name":"Photo",
+        "ordering":11,
+        "required":false,
+        "settings":null,
+        "type":"FormField::Photo",
+        "value": null
       }
     ]
   }
@@ -671,6 +691,25 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
           data: serialize_fields_for_edit(resource.form_field_results)
         }
       end
+    end
+  end
+
+  api :GET, '/api/v1/events/:event_id/actvities/form', 'Returns a list of requred fields for uploading a file to S3'
+  description <<-EOS
+  This method returns all the info required to make a POST to Amazon S3 to upload a new file. The key sent to S3 should start with
+  /uploads and has to be created into a new folder with a unique generated name. Ideally using a GUID. Eg:
+  /uploads/9afa6775-2c8e-44f8-9cda-280e80446ced/My file.jpg
+
+  The signature will expire 1 hour after it's generated, therefore, it's recommended to not cache these fields for long time.
+  EOS
+  def form
+    bucket = AWS::S3.new.buckets[ENV['S3_BUCKET_NAME']]
+    form = bucket.presigned_post(acl: 'public-read', success_action_status: 201)
+                 .where(:key).starts_with('uploads/')
+    data = { fields: form.fields, url: "https://s3.amazonaws.com/#{ENV['S3_BUCKET_NAME']}/"  }
+    respond_to do |format|
+      format.json { render json: data }
+      format.xml { render xml: data }
     end
   end
 
@@ -734,9 +773,33 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
     elsif field.type == 'FormField::LikertScale'
       { statements: field.statements.order(:ordering).map { |s| { id: s.id, text: s.name, value: result ? result.value[s.id.to_s] : nil } },
         segments: field.options_for_input.map { |s| { id: s[1], text: s[0] } } }
+    elsif field.type == 'FormField::Photo'
+      if result.nil?
+        { value: nil }
+      else
+        photo_values(result)
+      end
     else
       value = result ? field.string_to_value(result.value) : nil
       { value: value }
+    end
+  end
+
+  def photo_values(result)
+    unless result.attached_asset.nil?
+     {
+        file_file_name: result.attached_asset.file_file_name,
+        file_content_type: result.attached_asset.file_content_type,
+        file_file_size: result.attached_asset.file_file_size,
+        created_at: result.attached_asset.created_at,
+        active: result.attached_asset.active,
+        file_small: result.attached_asset.file.url(:small),
+        file_thumbnail: result.attached_asset.file.url(:thumbnail),
+        file_medium: result.attached_asset.file.url(:medium),
+        file_original: result.attached_asset.file.url
+      }
+    else
+      { value: nil }
     end
   end
 
