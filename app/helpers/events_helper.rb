@@ -82,10 +82,14 @@ module EventsHelper
 
   def event_phases_and_steps_for_api(event)
     phases = event.phases
-    phases.merge(
+    phases.merge!(
       phases: Hash[phases[:phases].map do |k, steps|
                       [k, steps.select { |s| !s.key?(:if) || instance_exec(event, &s[:if]) }.map { |s| s.reject { |k, v| k == :if } }]
                    end]
+    )
+    # Make sure that the user is allowed to perform the next step
+    phases.merge!(
+      next_step: phases[:phases][phases[:current_phase]].find { |p| p[:complete] == false }
     )
   end
 

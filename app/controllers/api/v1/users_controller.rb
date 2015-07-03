@@ -5,8 +5,9 @@ class Api::V1::UsersController < Api::V1::FilteredController
                      if: proc { |c| c.request.format == 'application/json' }
 
   skip_authorization_check only: [:new_password, :index, :companies, :permissions, :notifications, :show]
+  skip_authorize_resource only: [:index]
 
-  skip_load_and_authorize_resource only: [:show]
+  skip_load_and_authorize_resource only: [:show, :index]
 
   defaults resource_class: CompanyUser
 
@@ -592,4 +593,5 @@ class Api::V1::UsersController < Api::V1::FilteredController
 
     permissions
   end
+
 end
