@@ -29,6 +29,8 @@ class Campaign < ActiveRecord::Base
   # Defines the method do_search
   include SolrSearchable
 
+  has_paper_trail
+
   # Created_by_id and updated_by_id fields
   track_who_does_it
 

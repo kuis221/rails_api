@@ -23,6 +23,7 @@
 #  kbmg_event_id  :string(255)
 #  rejected_at    :datetime
 #  submitted_at   :datetime
+#  approved_at    :datetime
 #
 
 class Event < ActiveRecord::Base
@@ -35,6 +36,8 @@ class Event < ActiveRecord::Base
   track_who_does_it
 
   attr_accessor :visit_id
+
+  has_paper_trail
 
   belongs_to :created_by, class_name: 'User'
   belongs_to :updated_by, class_name: 'User'

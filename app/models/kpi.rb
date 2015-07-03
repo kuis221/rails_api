@@ -20,6 +20,8 @@
 class Kpi < ActiveRecord::Base
   track_who_does_it
 
+  has_paper_trail
+
   scoped_to_company
 
   CUSTOM_TYPE_OPTIONS = { 'number'     => %w(integer decimal currency),
@@ -79,8 +81,8 @@ class Kpi < ActiveRecord::Base
 
   def self.campaign_eq(campaigns)
     joins(:form_fields)
-      .where( form_fields: { 
-        fieldable_type: 'Campaign', 
+      .where( form_fields: {
+        fieldable_type: 'Campaign',
         fieldable_id: campaigns })
   end
 

@@ -12,6 +12,8 @@
 #  activity_date    :datetime
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
+#  created_by_id    :integer
+#  updated_by_id    :integer
 #
 
 # Read about factories at https://github.com/thoughtbot/factory_girl

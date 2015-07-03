@@ -14,6 +14,8 @@
 class FormFieldOption < ActiveRecord::Base
   belongs_to :form_field
 
+  has_paper_trail
+
   validates :name, presence: true
   validates :option_type, presence: true
   validates :ordering, presence: true, numericality: true

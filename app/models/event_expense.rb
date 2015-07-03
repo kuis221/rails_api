@@ -22,6 +22,10 @@ class EventExpense < ActiveRecord::Base
   belongs_to :event
   belongs_to :brand
 
+  track_who_does_it
+
+  has_paper_trail
+
   # validates :event_id, presence: true, numericality: true
   validates :category, presence: true
   validates :expense_date, presence: true

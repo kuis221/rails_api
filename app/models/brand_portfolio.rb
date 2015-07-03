@@ -19,6 +19,8 @@ class BrandPortfolio < ActiveRecord::Base
 
   scoped_to_company
 
+  has_paper_trail
+
   validates :name, presence: true, uniqueness: { scope: :company_id }
   validates :company_id, presence: true
 

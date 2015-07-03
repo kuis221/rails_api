@@ -21,6 +21,8 @@ class CompanyUser < ActiveRecord::Base
   # Defines the method do_search
   include SolrSearchable
 
+  has_paper_trail
+
   belongs_to :user
   belongs_to :company
   belongs_to :role
