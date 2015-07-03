@@ -5,6 +5,9 @@ class TasksController < FilteredController
   include DeactivableController
   include ApplicationHelper
   include SunspotIndexing
+  include NotificableController
+
+  notifications_scope -> { current_company_user.notifications.new_tasks }
 
   respond_to :js, only: [:new, :create, :edit, :update, :show]
 
@@ -72,21 +75,6 @@ class TasksController < FilteredController
     else
       super
     end
-  end
-
-  def search_params
-    @search_params || (super.tap do |p|
-      # Get a list of new tasks notifications to obtain the list of ids, then delete them as they are already seen, but
-      # store them in the session to allow the user to navigate, paginate, etc
-      if params.key?(:new_at) && params[:new_at]
-        p[:id] = session["new_tasks_#{params[:scope]}_at_#{params[:new_at].to_i}"] ||= begin
-          notifications = current_company_user.notifications.new_tasks
-          ids = notifications.map { |n| n.params['task_id'] }.compact
-          notifications.destroy_all
-          ids
-        end
-      end
-    end)
   end
 
   def base_search_params

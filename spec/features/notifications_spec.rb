@@ -20,7 +20,6 @@ feature 'Notifications', search: true, js: true do
   end
 
   shared_examples_for 'a user that can see notifications' do
-
     it 'should receive notifications for new events' do
       company_user.update_attributes(notifications_settings: ['new_event_team_app'])
       without_current_user do
@@ -246,7 +245,7 @@ feature 'Notifications', search: true, js: true do
     it 'should receive notifications for new tasks assigned to him' do
       company_user.update_attributes(notifications_settings: ['new_task_assignment_app'])
       event = create(:event, company: company, users: [company_user], campaign: campaign, place: place)
-      task = create(:task, title: 'My Task #1', event: event, company_user: company_user, due_at: nil)
+      create(:task, title: 'My Task #1', event: event, company_user: company_user, due_at: nil)
 
       Sunspot.commit
 
@@ -329,14 +328,13 @@ feature 'Notifications', search: true, js: true do
       end
       Sunspot.commit
 
-      company_user.campaigns << campaign
-      company_user.campaigns << campaign2
+      company_user.campaigns << [campaign, campaign2]
 
       visit root_path
       expect(page).to have_notification 'You have 2 new campaigns'
 
       # New campaigns counter should be decreased by 1
-      visit campaign_path(company_user.campaigns.first)
+      visit campaign_path(campaign)
       expect(page).to have_notification 'You have a new campaign'
     end
 
@@ -412,12 +410,6 @@ feature 'Notifications', search: true, js: true do
         expect(page).to have_notification 'Your team has 3 late tasks'
       end
     end
-  end
-
-  feature 'Admin user' do
-    let(:role) { create(:role, company: company) }
-
-    it_behaves_like 'a user that can see notifications'
   end
 
   feature 'Non Admin User' do

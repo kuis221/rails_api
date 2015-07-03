@@ -62,7 +62,7 @@ describe Api::V1::EventsController, type: :controller do
       Sunspot.commit
 
       expect do
-        get :index, campaign: [campaign.id], place: [place.id], from_notifications: true, format: :json
+        get :index, campaign: [campaign.id], place: [place.id], new_at: 123456, format: :json
       end.to change(Notification, :count).by(-2)
       expect(response).to be_success
       result = JSON.parse(response.body)
