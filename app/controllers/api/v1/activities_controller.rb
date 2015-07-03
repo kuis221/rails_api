@@ -786,6 +786,7 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
   end
 
   def photo_values(result)
+    unless result.attached_asset.nil?
      {
         file_file_name: result.attached_asset.file_file_name,
         file_content_type: result.attached_asset.file_content_type,
@@ -796,7 +797,10 @@ class Api::V1::ActivitiesController < Api::V1::ApiController
         file_thumbnail: result.attached_asset.file.url(:thumbnail),
         file_medium: result.attached_asset.file.url(:medium),
         file_original: result.attached_asset.file.url
-      } unless result.attached_asset.nil?
+      }
+    else
+      { value: nil }
+    end
   end
 
   def activity_params
