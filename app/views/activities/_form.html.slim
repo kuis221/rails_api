@@ -18,7 +18,7 @@
                   .control-group
                     .row-fluid
                       .span8
-                        = f.input :company_user_id, label: 'User', collection: assignable_users, input_html: {class: 'chosen-enabled'}
+                        = f.input :company_user_id, label: 'User', collection: assignable_users, input_html: { class: 'chosen-enabled'}
                       .span4
                         = f.input :activity_date, input_html: {class: 'field-type-date', value: resource.activity_date.try(:to_s, :slashes)}, as: :date_picker, label: 'Date'
               - else
