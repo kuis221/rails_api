@@ -289,8 +289,9 @@ describe Kpi, type: :model do
         end.to change(described_class, :count).by(-1)
       end.to change(FormFieldResult, :count).by(-1)
 
+      kpi = described_class.where(id: [kpi1.id, kpi2.id]).first # Get the remaining kpi
       event = Event.find(event.id)
-      expect(event.result_for_kpi(kpi1).value.values).to eq(%w(10 90))
+      expect(event.result_for_kpi(kpi).value.values).to eq(%w(10 90))
 
       expect(event.results.count).to eq(1)
     end

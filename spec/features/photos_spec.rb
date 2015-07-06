@@ -39,7 +39,7 @@ feature 'Photos', js: true do
     end
 
     scenario 'A user can deactivate a photo' do
-      photo = create(:photo, attachable: event)
+      create(:photo, attachable: event)
       visit event_path(event)
 
       # Check that the image appears on the page
