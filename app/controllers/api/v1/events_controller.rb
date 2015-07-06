@@ -783,6 +783,12 @@ class Api::V1::EventsController < Api::V1::FilteredController
     @events = events_requiring_attention
   end
 
+  api :GET, '/api/v1/events/details_counters', 'Return a list of counters for each event component'
+  def details_counters
+    authorize! :index, Event
+    render if resource.present?
+  end
+
   protected
 
   def permitted_params

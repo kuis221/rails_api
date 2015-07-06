@@ -74,6 +74,7 @@ Brandscopic::Application.routes.draw do
             post :contacts, to: 'events#add_contact'
             delete :contacts, to: 'events#delete_contact'
             get :assignable_contacts
+            get :details_counters
           end
         end
 
