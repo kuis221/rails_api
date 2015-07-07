@@ -55,7 +55,7 @@ class Activity < ActiveRecord::Base
   after_initialize :set_default_values
 
   delegate :company_id, :company, :place, :place_id, to: :activitable, allow_nil: true
-  delegate :td_linx_code, :name, :city, :state, :zipcode, :street_number, :route, :formatted_address,
+  delegate :td_linx_code, :name, :city, :state, :zipcode, :street_number, :route, :formatted_address, :country,
            to: :place, allow_nil: true, prefix: true
   delegate :name, to: :campaign, allow_nil: true, prefix: true
   delegate :full_name, to: :company_user, allow_nil: true, prefix: true

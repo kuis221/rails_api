@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150703153407) do
+ActiveRecord::Schema.define(version: 20150703144127) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -764,7 +764,6 @@ ActiveRecord::Schema.define(version: 20150703153407) do
   end
 
   add_index "neighborhoods", ["geog"], :name => "index_neighborhoods_on_geog", :spatial => true
-  add_index "neighborhoods", ["geog"], :name => "neighborhoods_geog_idx", :spatial => true
 
   create_table "notifications", force: true do |t|
     t.integer  "company_user_id"
