@@ -335,10 +335,10 @@ describe Results::EventDataController, type: :controller do
       expect(ListExport.last).to have_rows([
         ['CAMPAIGN NAME', 'AREAS', 'TD LINX CODE', 'VENUE NAME', 'ADDRESS', 'CITY',
          'STATE', 'ZIP', 'ACTIVE STATE', 'EVENT STATUS', 'TEAM MEMBERS', 'CONTACTS', 'URL',
-         'START', 'END', 'SUBMITTED AT', 'APPROVED AT', 'PROMO HOURS', 'SPENT', 'ANOTHER KPI', 'A CUSTOM KPI'],
+         'START', 'END', 'SUBMITTED AT', 'APPROVED AT', 'PROMO HOURS', 'SPENT', 'A CUSTOM KPI', 'ANOTHER KPI'],
         ['Test Campaign FY01', nil, nil, nil, '', nil, nil, nil, 'Active', 'Approved', '', '',
          "http://test.host/events/#{event1.id}", '2013-01-23 10:00', '2013-01-23 12:00',
-         nil, nil, '2.00', '0', nil, '9876.0'],
+         nil, nil, '2.00', '0', '9876.0', nil],
         [campaign2.name, nil, nil, nil, '', nil, nil, nil, 'Active', 'Approved', '', '',
          "http://test.host/events/#{event2.id}", '2013-01-24 10:00', '2013-01-24 12:00',
          nil, nil, '2.00', '0', nil, '7654.0']
